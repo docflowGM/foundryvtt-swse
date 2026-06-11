@@ -76,6 +76,29 @@ async function actorFromUuid(uuid) {
   }
 }
 
+
+function getVehicleWeapon(vehicle, weaponId) {
+  if (!vehicle || !weaponId) return null;
+  const item = vehicle.items?.get?.(weaponId);
+  if (item) return item;
+  const match = String(weaponId).match(/^system-weapons-(\d+)$/);
+  if (!match) return null;
+  const index = Number(match[1]);
+  const weapon = vehicle.system?.weapons?.[index];
+  if (!weapon) return null;
+  return {
+    id: weaponId,
+    name: weapon.name || `Vehicle Weapon ${index + 1}`,
+    type: 'system-vehicle-weapon',
+    system: {
+      bonus: weapon.bonus ?? weapon.attackBonus ?? '+0',
+      attackBonus: weapon.attackBonus ?? weapon.bonus ?? '+0',
+      damage: weapon.damage ?? weapon.damageFormula ?? '1d10',
+      range: weapon.range ?? 'Close'
+    }
+  };
+}
+
 function getCrewEntry(vehicle, stationKey) {
   const system = vehicle?.system ?? {};
   const positions = system.crewPositions ?? {};
@@ -108,16 +131,22 @@ export async function resolveVehicleCrewActor(vehicle, stationKey) {
   };
 }
 
-function buildFallbackFormula(vehicle, skillKey) {
+function numericBonus(value, fallback = 0) {
+  if (value === null || value === undefined || value === '') return fallback;
+  const n = Number(String(value).replace(/[^0-9+\-.]/g, ''));
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function buildFallbackFormula(vehicle, skillKey, options = {}) {
   const quality = String(vehicle?.system?.crewQuality || 'normal').toLowerCase();
   const qualityBonus = CREW_QUALITY_BONUS[quality] ?? CREW_QUALITY_BONUS.normal;
-  const vehicleBonus = Number(vehicle?.system?.[skillKey] ?? vehicle?.system?.attackBonus ?? 0) || 0;
+  const vehicleBonus = numericBonus(options.attackBonus ?? vehicle?.system?.[skillKey] ?? vehicle?.system?.attackBonus, 0);
   const totalBonus = skillKey === 'attack' ? vehicleBonus + qualityBonus : qualityBonus;
   return { formula: `1d20 + ${totalBonus}`, quality, totalBonus };
 }
 
 async function rollFallback(vehicle, stationKey, skillKey, options = {}) {
-  const { formula, quality, totalBonus } = buildFallbackFormula(vehicle, skillKey);
+  const { formula, quality, totalBonus } = buildFallbackFormula(vehicle, skillKey, options);
   const roll = await globalThis.SWSE?.RollEngine?.safeRoll?.(formula) ?? await new Roll(formula).evaluate();
   const stationLabel = stationKey.charAt(0).toUpperCase() + stationKey.slice(1);
   const skillLabel = options.skillLabel || skillKey;
@@ -145,7 +174,7 @@ export async function rollVehicleCrewSkill(vehicle, stationKey, skillKey, option
 
   if (normalizedSkill === 'attack') {
     const weaponId = options.weaponId;
-    const weapon = weaponId ? vehicle.items?.get?.(weaponId) : null;
+    const weapon = weaponId ? getVehicleWeapon(vehicle, weaponId) : null;
     if (!weapon) {
       ui?.notifications?.warn?.('No vehicle weapon found for this gunner action.');
       return null;
@@ -155,7 +184,11 @@ export async function rollVehicleCrewSkill(vehicle, stationKey, skillKey, option
       ui?.notifications?.info?.(`${actor.name} fires ${weapon.name} from ${vehicle.name}.`);
       return { roll, actor, fallback: false, stationKey, skillKey: normalizedSkill, weapon };
     }
-    return rollFallback(vehicle, stationKey, normalizedSkill, { ...options, skillLabel: `${weapon.name} Attack` });
+    return rollFallback(vehicle, stationKey, normalizedSkill, {
+      ...options,
+      skillLabel: `${weapon.name} Attack`,
+      attackBonus: weapon.system?.attackBonus ?? weapon.system?.bonus
+    });
   }
 
   if (actor) {

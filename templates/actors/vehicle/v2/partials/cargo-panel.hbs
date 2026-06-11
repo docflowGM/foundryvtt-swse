@@ -1,11 +1,11 @@
 <div class="holo-panel">
   <div class="section-bar">
-    <h3 class="section-header">Cargo & Weight</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.CargoWeight"}}</h3>
   </div>
 
   <div class="swse-v2-cargo-display" style="padding: 12px;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-      <span class="label">Cargo Weight:</span>
+      <span class="label">{{localize "SWSE.ActorUI.CargoWeight2"}}</span>
       <span class="value {{#if (eq cargoState 'normal')}}success{{else if (eq cargoState 'near')}}warning{{else if (eq cargoState 'over')}}danger{{/if}}">
         {{totalCargoWeight}} / {{cargoCapacity}} kg
       </span>

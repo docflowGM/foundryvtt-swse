@@ -8,7 +8,7 @@
     <div class="swse-vehicle-concept-identity">
       <div class="swse-vehicle-concept-kicker">VEHICLE DATAPAD // {{vehicleTypeFlags.typeLabel}}</div>
       {{#if editable}}
-        <input class="swse-vehicle-name-input swse-vehicle-concept-name-input" name="name" type="text" value="{{actor.name}}" placeholder="Vehicle Name"/>
+        <input class="swse-vehicle-name-input swse-vehicle-concept-name-input" name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'SWSE.ActorUI.VehicleName'}}"/>
       {{else}}
         <h1 class="swse-vehicle-concept-name">{{actor.name}}</h1>
       {{/if}}
@@ -16,21 +16,21 @@
         <span class="swse-vehicle-chip swse-vehicle-chip--type">{{vehiclePanels.headerSummaryPanel.typeLabel}}</span>
         {{#if vehiclePanels.headerSummaryPanel.sizeLabel}}<span class="swse-vehicle-chip">{{vehiclePanels.headerSummaryPanel.sizeLabel}}</span>{{/if}}
         {{#if vehiclePanels.headerSummaryPanel.category}}<span class="swse-vehicle-chip">{{vehiclePanels.headerSummaryPanel.category}}</span>{{/if}}
-        {{#if vehicleTypeFlags.supportsHyperdrive}}<span class="swse-vehicle-chip swse-vehicle-chip--positive">Hyperdrive</span>{{/if}}
-        {{#if vehicleTypeFlags.supportsShields}}<span class="swse-vehicle-chip swse-vehicle-chip--positive">Shields</span>{{/if}}
+        {{#if vehicleTypeFlags.supportsHyperdrive}}<span class="swse-vehicle-chip swse-vehicle-chip--positive">{{localize "SWSE.ActorUI.Hyperdrive"}}</span>{{/if}}
+        {{#if vehicleTypeFlags.supportsShields}}<span class="swse-vehicle-chip swse-vehicle-chip--positive">{{localize "SWSE.ActorUI.Shields"}}</span>{{/if}}
       </div>
     </div>
 
     <div class="swse-vehicle-concept-actions">
-      <button type="button" class="swse-vehicle-action-btn swse-vehicle-action-btn--primary" data-action="customize-vehicle">Shipyard</button>
+      <button type="button" class="swse-vehicle-action-btn swse-vehicle-action-btn--primary" data-action="customize-vehicle">{{localize "SWSE.ActorUI.Shipyard"}}</button>
       {{#if editable}}
-        <button type="button" class="swse-vehicle-action-btn" data-action="import-vehicle">Import Vehicle</button>
-        <button type="submit" class="swse-vehicle-action-btn" data-action="save-vehicle">Save</button>
+        <button type="button" class="swse-vehicle-action-btn" data-action="import-vehicle">{{localize "SWSE.ActorUI.ImportVehicle"}}</button>
+        <button type="submit" class="swse-vehicle-action-btn" data-action="save-vehicle">{{localize "SWSE.ActorUI.Save"}}</button>
       {{/if}}
     </div>
   </header>
 
-  <section class="swse-vehicle-resource-strip" aria-label="Vehicle resource strip">
+  <section class="swse-vehicle-resource-strip" aria-label="{{localize 'SWSE.ActorUI.VehicleResourceStrip'}}">
     {{#each vehicleResourceStrip.entries as |resource|}}
       <div class="swse-vehicle-resource swse-vehicle-resource--{{resource.tone}}">
         <div class="swse-vehicle-resource__label">{{resource.label}}</div>
@@ -78,11 +78,11 @@
               <div class="swse-vehicle-scanner-caption">{{vehicleTypeFlags.typeLabel}}</div>
             </div>
             <div class="swse-vehicle-panel swse-vehicle-mini-panel">
-              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Flight Profile</h3></header>
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">{{localize "SWSE.ActorUI.FlightProfile"}}</h3></header>
               <div class="swse-vehicle-panel-body swse-vehicle-kv-list">
-                <div><span>Mode</span><strong>{{parsedSpeed.mode}}</strong></div>
-                <div><span>Character Scale</span><strong>{{parsedSpeed.character}}</strong></div>
-                <div><span>Starship Scale</span><strong>{{parsedSpeed.starship}}</strong></div>
+                <div><span>{{localize "SWSE.ActorUI.Mode2"}}</span><strong>{{parsedSpeed.mode}}</strong></div>
+                <div><span>{{localize "SWSE.ActorUI.CharacterScale"}}</span><strong>{{parsedSpeed.character}}</strong></div>
+                <div><span>{{localize "SWSE.ActorUI.StarshipScale"}}</span><strong>{{parsedSpeed.starship}}</strong></div>
               </div>
             </div>
           </div>
@@ -103,10 +103,10 @@
           {{/if}}
           {{#if vehicleTypeFlags.supportsShipyard}}
             <div class="swse-vehicle-panel swse-vehicle-overview-bottom__item swse-vehicle-shipyard-callout">
-              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Shipyard</h3><span class="swse-vehicle-mini-badge">Operational Gateway</span></header>
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">{{localize "SWSE.ActorUI.Shipyard"}}</h3><span class="swse-vehicle-mini-badge">{{localize "SWSE.ActorUI.OperationalGateway"}}</span></header>
               <div class="swse-vehicle-panel-body">
-                <p>Vehicle sheet is the operational view. Purchases, refits, component installs, removals, and rebuilds belong in Shipyard.</p>
-                <button type="button" class="swse-vehicle-action-btn swse-vehicle-action-btn--primary" data-action="customize-vehicle">Open Shipyard</button>
+                <p>{{localize "SWSE.ActorUI.VehicleSheetIsTheOperationalViewPurchasesRefits"}}</p>
+                <button type="button" class="swse-vehicle-action-btn swse-vehicle-action-btn--primary" data-action="customize-vehicle">{{localize "SWSE.ActorUI.OpenShipyard"}}</button>
               </div>
             </div>
           {{/if}}
@@ -128,7 +128,7 @@
             {{#if vehiclePanels.shieldManagementPanel}}
               {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-shield-management-panel.hbs" panel=vehiclePanels.shieldManagementPanel}}
             {{else}}
-              <div class="swse-vehicle-panel swse-vehicle-wire-panel"><header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Shields</h3><span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">PHASE 2</span></header><div class="swse-vehicle-panel-body">Enhanced shield management is designed and will populate here when its rule context is active.</div></div>
+              <div class="swse-vehicle-panel swse-vehicle-wire-panel"><header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">{{localize "SWSE.ActorUI.Shields"}}</h3><span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">{{localize "SWSE.ActorUI.PHASE2"}}</span></header><div class="swse-vehicle-panel-body">{{localize "SWSE.ActorUI.EnhancedShieldManagementIsDesignedAndWillPopulate"}}</div></div>
             {{/if}}
             {{#if vehiclePanels.powerSummaryPanel}}
               {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-power-summary-panel.hbs" panel=vehiclePanels.powerSummaryPanel}}
@@ -148,7 +148,7 @@
           {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-commander-order-panel.hbs" panel=vehiclePanels.commanderOrderPanel}}
         {{else}}
           {{#if vehicleTypeFlags.supportsCrewCommandPanel}}
-            <div class="swse-vehicle-panel swse-vehicle-wire-panel"><header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Commander Orders</h3><span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">PHASE 2</span></header><div class="swse-vehicle-panel-body">Commander order rules are not active yet. This area intentionally surfaces that gap instead of hiding the command deck.</div></div>
+            <div class="swse-vehicle-panel swse-vehicle-wire-panel"><header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">{{localize "SWSE.ActorUI.CommanderOrders"}}</h3><span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">{{localize "SWSE.ActorUI.PHASE2"}}</span></header><div class="swse-vehicle-panel-body">{{localize "SWSE.ActorUI.CommanderOrderRulesAreNotActiveYetThis"}}</div></div>
           {{/if}}
         {{/if}}
       </section>
@@ -165,7 +165,7 @@
       {{#if vehicleTypeFlags.supportsManeuversTab}}
       <section class="tab flexcol" data-group="primary" data-tab="maneuvers">
         <div class="swse-vehicle-panel">
-          <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Starship Maneuvers</h3></header>
+          <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">{{localize "SWSE.ActorUI.StarshipManeuvers"}}</h3></header>
           <div class="swse-vehicle-panel-body">
             {{#if starshipManeuvers.length}}
               <div class="swse-vehicle-card-list">
@@ -177,21 +177,21 @@
                       <div class="swse-vehicle-card-meta">
                         <span class="swse-vehicle-mini-badge">{{maneuver.sourceLabel}}</span>
                         <span class="swse-vehicle-mini-badge">{{maneuver.system.action}}</span>
-                        {{#if maneuver.spent}}<span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">Spent</span>{{/if}}
+                        {{#if maneuver.spent}}<span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">{{localize "SWSE.ActorUI.Spent2"}}</span>{{/if}}
                       </div>
                     </div>
                     <div class="swse-vehicle-card-actions">
                       {{#if maneuver.spent}}
-                        <button type="button" class="swse-vehicle-action-btn" data-action="regainManeuver" data-item-id="{{maneuver.itemId}}" data-actor-id="{{maneuver.actorId}}" data-item-uuid="{{maneuver.uuid}}">Ready</button>
+                        <button type="button" class="swse-vehicle-action-btn" data-action="regainManeuver" data-item-id="{{maneuver.itemId}}" data-actor-id="{{maneuver.actorId}}" data-item-uuid="{{maneuver.uuid}}">{{localize "SWSE.ActorUI.Ready"}}</button>
                       {{else}}
-                        <button type="button" class="swse-vehicle-action-btn" data-action="useManeuver" data-item-id="{{maneuver.itemId}}" data-actor-id="{{maneuver.actorId}}" data-item-uuid="{{maneuver.uuid}}">Use</button>
+                        <button type="button" class="swse-vehicle-action-btn" data-action="useManeuver" data-item-id="{{maneuver.itemId}}" data-actor-id="{{maneuver.actorId}}" data-item-uuid="{{maneuver.uuid}}">{{localize "SWSE.ActorUI.Use"}}</button>
                       {{/if}}
                     </div>
                   </article>
                 {{/each}}
               </div>
             {{else}}
-              <p>No starship maneuvers are available from the vehicle or assigned crew.</p>
+              <p>{{localize "SWSE.ActorUI.NoStarshipManeuversAreAvailableFromTheVehicle"}}</p>
             {{/if}}
           </div>
         </div>
@@ -215,13 +215,13 @@
         {{#if vehiclePanels.pilotManeuverPanel}}
           {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-pilot-maneuver-panel.hbs" panel=vehiclePanels.pilotManeuverPanel}}
         {{else}}
-          <div class="swse-vehicle-panel swse-vehicle-wire-panel"><header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Pilot Maneuvers</h3><span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">PHASE 2</span></header><div class="swse-vehicle-panel-body">Enhanced Pilot data is not active yet. Basic station skill actions remain available from the crew tab.</div></div>
+          <div class="swse-vehicle-panel swse-vehicle-wire-panel"><header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">{{localize "SWSE.ActorUI.PilotManeuvers"}}</h3><span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">{{localize "SWSE.ActorUI.PHASE2"}}</span></header><div class="swse-vehicle-panel-body">{{localize "SWSE.ActorUI.EnhancedPilotDataIsNotActiveYetBasic"}}</div></div>
         {{/if}}
         {{#if vehiclePanels.subsystemDetailPanel}}
           {{> "systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-subsystem-detail-panel.hbs" panel=vehiclePanels.subsystemDetailPanel}}
         {{else}}
           {{#if vehicleTypeFlags.supportsSubsystems}}
-            <div class="swse-vehicle-panel swse-vehicle-wire-panel"><header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Subsystems</h3><span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">PHASE 2</span></header><div class="swse-vehicle-panel-body">Capital subsystem context is pending. This panel is intentionally reserved for the enhanced subsystem engine.</div></div>
+            <div class="swse-vehicle-panel swse-vehicle-wire-panel"><header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">{{localize "SWSE.ActorUI.Subsystems"}}</h3><span class="swse-vehicle-mini-badge swse-vehicle-mini-badge--phase">{{localize "SWSE.ActorUI.PHASE2"}}</span></header><div class="swse-vehicle-panel-body">{{localize "SWSE.ActorUI.CapitalSubsystemContextIsPendingThisPanelIs"}}</div></div>
           {{/if}}
         {{/if}}
       </section>
@@ -231,53 +231,53 @@
         <section class="tab flexcol" data-group="primary" data-tab="edit">
           <div class="swse-vehicle-edit-grid">
             <section class="swse-vehicle-panel swse-vehicle-edit-panel">
-              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Identity</h3></header>
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">{{localize "SWSE.ActorUI.Identity"}}</h3></header>
               <div class="swse-vehicle-panel-body swse-vehicle-form-grid">
-                <label>Category<input name="system.category" type="text" value="{{editContext.identity.category}}"/></label>
-                <label>Type<input name="system.type" type="text" value="{{editContext.identity.type}}"/></label>
-                <label>Size<input name="system.size" type="text" value="{{editContext.identity.size}}"/></label>
-                <label>Challenge Level<input name="system.challengeLevel" type="number" value="{{editContext.details.challengeLevel}}" data-dtype="Number"/></label>
-                <label>Cost<input name="system.cost" type="text" value="{{editContext.details.cost}}"/></label>
-                <label>Availability<input name="system.availability" type="text" value="{{editContext.details.availability}}"/></label>
+                <label>{{localize "SWSE.ActorUI.Category"}}<input name="system.category" type="text" value="{{editContext.identity.category}}"/></label>
+                <label>{{localize "SWSE.ActorUI.Type"}}<input name="system.type" type="text" value="{{editContext.identity.type}}"/></label>
+                <label>{{localize "SWSE.ActorUI.Size2"}}<input name="system.size" type="text" value="{{editContext.identity.size}}"/></label>
+                <label>{{localize "SWSE.ActorUI.ChallengeLevel"}}<input name="system.challengeLevel" type="number" value="{{editContext.details.challengeLevel}}" data-dtype="Number"/></label>
+                <label>{{localize "SWSE.ActorUI.Cost"}}<input name="system.cost" type="text" value="{{editContext.details.cost}}"/></label>
+                <label>{{localize "SWSE.ActorUI.Availability"}}<input name="system.availability" type="text" value="{{editContext.details.availability}}"/></label>
               </div>
             </section>
 
             <section class="swse-vehicle-panel swse-vehicle-edit-panel">
-              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Hull / Shields</h3></header>
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">{{localize "SWSE.ActorUI.HullShields"}}</h3></header>
               <div class="swse-vehicle-panel-body swse-vehicle-form-grid">
-                <label>Hull Current<input name="system.hull.value" type="number" value="{{editContext.hull.value}}" data-dtype="Number"/></label>
-                <label>Hull Max<input name="system.hull.max" type="number" value="{{editContext.hull.max}}" data-dtype="Number"/></label>
-                <label>Shield Current<input name="system.shields.value" type="number" value="{{editContext.shields.value}}" data-dtype="Number"/></label>
-                <label>Shield Max<input name="system.shields.max" type="number" value="{{editContext.shields.max}}" data-dtype="Number"/></label>
-                <label>Shield Rating<input name="system.shieldRating" type="text" value="{{editContext.shields.sr}}"/></label>
-                <label>Damage Reduction<input name="system.damageReduction" type="number" value="{{editContext.defenses.damageReduction}}" data-dtype="Number"/></label>
+                <label>{{localize "SWSE.ActorUI.HullCurrent"}}<input name="system.hull.value" type="number" value="{{editContext.hull.value}}" data-dtype="Number"/></label>
+                <label>{{localize "SWSE.ActorUI.HullMax"}}<input name="system.hull.max" type="number" value="{{editContext.hull.max}}" data-dtype="Number"/></label>
+                <label>{{localize "SWSE.ActorUI.ShieldCurrent"}}<input name="system.shields.value" type="number" value="{{editContext.shields.value}}" data-dtype="Number"/></label>
+                <label>{{localize "SWSE.ActorUI.ShieldMax"}}<input name="system.shields.max" type="number" value="{{editContext.shields.max}}" data-dtype="Number"/></label>
+                <label>{{localize "SWSE.ActorUI.ShieldRating"}}<input name="system.shieldRating" type="text" value="{{editContext.shields.sr}}"/></label>
+                <label>{{localize "SWSE.ActorUI.DamageReduction"}}<input name="system.damageReduction" type="number" value="{{editContext.defenses.damageReduction}}" data-dtype="Number"/></label>
               </div>
             </section>
 
             <section class="swse-vehicle-panel swse-vehicle-edit-panel">
-              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Defenses / Movement</h3></header>
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">{{localize "SWSE.ActorUI.DefensesMovement"}}</h3></header>
               <div class="swse-vehicle-panel-body swse-vehicle-form-grid">
-                <label>Reflex Defense<input name="system.reflexDefense" type="number" value="{{editContext.defenses.reflex}}" data-dtype="Number"/></label>
-                <label>Fortitude Defense<input name="system.fortitudeDefense" type="number" value="{{editContext.defenses.fortitude}}" data-dtype="Number"/></label>
-                <label>Damage Threshold<input name="system.damageThreshold" type="number" value="{{editContext.defenses.damageThreshold}}" data-dtype="Number"/></label>
-                <label>Armor Bonus<input name="system.armorBonus" type="number" value="{{editContext.defenses.armorBonus}}" data-dtype="Number"/></label>
-                <label>Speed<input name="system.speed" type="text" value="{{editContext.movement.speed}}"/></label>
-                <label>Max Velocity<input name="system.maxVelocity" type="text" value="{{editContext.movement.maxVelocity}}"/></label>
-                <label>Maneuver<input name="system.maneuver" type="text" value="{{editContext.movement.maneuver}}"/></label>
-                <label>Hyperdrive<input name="system.hyperdrive_class" type="text" value="{{system.hyperdrive_class}}"/></label>
-                <label>Backup Hyperdrive<input name="system.backup_class" type="text" value="{{system.backup_class}}"/></label>
+                <label>{{localize "SWSE.ActorUI.ReflexDefense"}}<input name="system.reflexDefense" type="number" value="{{editContext.defenses.reflex}}" data-dtype="Number"/></label>
+                <label>{{localize "SWSE.ActorUI.FortitudeDefense"}}<input name="system.fortitudeDefense" type="number" value="{{editContext.defenses.fortitude}}" data-dtype="Number"/></label>
+                <label>{{localize "SWSE.ActorUI.DamageThreshold"}}<input name="system.damageThreshold" type="number" value="{{editContext.defenses.damageThreshold}}" data-dtype="Number"/></label>
+                <label>{{localize "SWSE.ActorUI.ArmorBonus"}}<input name="system.armorBonus" type="number" value="{{editContext.defenses.armorBonus}}" data-dtype="Number"/></label>
+                <label>{{localize "SWSE.ActorUI.Speed"}}<input name="system.speed" type="text" value="{{editContext.movement.speed}}"/></label>
+                <label>{{localize "SWSE.ActorUI.MaxVelocity"}}<input name="system.maxVelocity" type="text" value="{{editContext.movement.maxVelocity}}"/></label>
+                <label>{{localize "SWSE.ActorUI.Maneuver"}}<input name="system.maneuver" type="text" value="{{editContext.movement.maneuver}}"/></label>
+                <label>{{localize "SWSE.ActorUI.Hyperdrive"}}<input name="system.hyperdrive_class" type="text" value="{{system.hyperdrive_class}}"/></label>
+                <label>{{localize "SWSE.ActorUI.BackupHyperdrive"}}<input name="system.backup_class" type="text" value="{{system.backup_class}}"/></label>
               </div>
             </section>
 
             <section class="swse-vehicle-panel swse-vehicle-edit-panel">
-              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">Crew / Cargo</h3></header>
+              <header class="swse-vehicle-panel-header"><h3 class="swse-vehicle-panel-title">{{localize "SWSE.ActorUI.CrewCargo"}}</h3></header>
               <div class="swse-vehicle-panel-body swse-vehicle-form-grid">
-                <label>Crew<input name="system.crew" type="text" value="{{editContext.crew.crew}}"/></label>
-                <label>Crew Quality<input name="system.crewQuality" type="text" value="{{editContext.crew.crewQuality}}"/></label>
-                <label>Passengers<input name="system.passengers" type="text" value="{{editContext.crew.passengers}}"/></label>
-                <label>Cargo<input name="system.cargo" type="text" value="{{editContext.crew.cargo}}"/></label>
-                <label>Payload<input name="system.payload" type="text" value="{{editContext.crew.payload}}"/></label>
-                <label>Cover<input name="system.cover" type="text" value="{{editContext.details.cover}}"/></label>
+                <label>{{localize "SWSE.ActorUI.Crew"}}<input name="system.crew" type="text" value="{{editContext.crew.crew}}"/></label>
+                <label>{{localize "SWSE.ActorUI.CrewQuality"}}<input name="system.crewQuality" type="text" value="{{editContext.crew.crewQuality}}"/></label>
+                <label>{{localize "SWSE.ActorUI.Passengers"}}<input name="system.passengers" type="text" value="{{editContext.crew.passengers}}"/></label>
+                <label>{{localize "SWSE.ActorUI.Cargo"}}<input name="system.cargo" type="text" value="{{editContext.crew.cargo}}"/></label>
+                <label>{{localize "SWSE.ActorUI.Payload"}}<input name="system.payload" type="text" value="{{editContext.crew.payload}}"/></label>
+                <label>{{localize "SWSE.ActorUI.Cover"}}<input name="system.cover" type="text" value="{{editContext.details.cover}}"/></label>
               </div>
             </section>
           </div>

@@ -1,14 +1,14 @@
 <div class="holo-panel">
   <div class="section-bar">
-    <h3 class="section-header">Vehicle Identity</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.VehicleIdentity"}}</h3>
   </div>
 
   <div class="swse-v2-identity-grid">
-    <div class="field"><span class="label">Type</span><span class="value">{{system.type}}</span></div>
-    <div class="field"><span class="label">Size</span><span class="value">{{system.size}}</span></div>
-    <div class="field"><span class="label">Hyperdrive</span><input type="text" name="system.hyperdrive_class" value="{{system.hyperdrive_class}}" {{#unless editable}}disabled{{/unless}} /></div>
-    <div class="field"><span class="label">Backup Hyperdrive</span><input type="text" name="system.backup_class" value="{{system.backup_class}}" {{#unless editable}}disabled{{/unless}} /></div>
-    <div class="field"><span class="label">Armor Bonus</span><input type="number" name="system.armorBonus" value="{{system.armorBonus}}" min="0" {{#unless editable}}disabled{{/unless}} style="width: 60px;" /></div>
-    <div class="field"><span class="label">Scale</span><span class="value">{{system.scale}}</span></div>
+    <div class="field"><span class="label">{{localize "SWSE.ActorUI.Type"}}</span><span class="value">{{system.type}}</span></div>
+    <div class="field"><span class="label">{{localize "SWSE.ActorUI.Size2"}}</span><span class="value">{{system.size}}</span></div>
+    <div class="field"><span class="label">{{localize "SWSE.ActorUI.Hyperdrive"}}</span><input type="text" name="system.hyperdrive_class" value="{{system.hyperdrive_class}}" {{#unless editable}}disabled{{/unless}} /></div>
+    <div class="field"><span class="label">{{localize "SWSE.ActorUI.BackupHyperdrive"}}</span><input type="text" name="system.backup_class" value="{{system.backup_class}}" {{#unless editable}}disabled{{/unless}} /></div>
+    <div class="field"><span class="label">{{localize "SWSE.ActorUI.ArmorBonus"}}</span><input type="number" name="system.armorBonus" value="{{system.armorBonus}}" min="0" {{#unless editable}}disabled{{/unless}} style="width: 60px;" /></div>
+    <div class="field"><span class="label">{{localize "SWSE.ActorUI.Scale"}}</span><span class="value">{{system.scale}}</span></div>
   </div>
 </div>

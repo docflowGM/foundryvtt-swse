@@ -1,20 +1,20 @@
 <div class="holo-panel">
   <div class="section-bar">
-    <h3 class="section-header">Attacks</h3>
-    <div class="muted">Equipped weapons (data-only preview)</div>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.Attacks"}}</h3>
+    <div class="muted">{{localize "SWSE.ActorUI.EquippedWeaponsDataOnlyPreview"}}</div>
   </div>
 
   <div class="swse-v2-attacks">
     <div class="swse-v2-attack-header">
-      <span class="name">Weapon</span>
-      <span class="meta">Type</span>
-      <span class="meta">Range</span>
-      <span class="meta">Damage</span>
-      <span class="meta">Resources</span>
+      <span class="name">{{localize "SWSE.ActorUI.Weapon"}}</span>
+      <span class="meta">{{localize "SWSE.ActorUI.Type"}}</span>
+      <span class="meta">{{localize "SWSE.ActorUI.Range"}}</span>
+      <span class="meta">{{localize "SWSE.ActorUI.Damage"}}</span>
+      <span class="meta">{{localize "SWSE.ActorUI.Resources"}}</span>
       <span class="meta"></span>
     </div>
     {{#each derived.attacks.list}}
-      <div class="swse-v2-attack-row" title="Click name to open item">
+      <div class="swse-v2-attack-row" title="{{localize 'SWSE.ActorUI.ClickNameToOpenItem'}}">
         <a class="name swse-v2-open-item" data-item-id="{{this.id}}">{{this.name}}</a>
         <span class="meta">{{this.type}}</span>
         <span class="meta">{{this.range}}</span>
@@ -36,13 +36,13 @@
           {{/if}}
         </span>
         <span class="meta" style="text-align:right;">
-          <button type="button" class="swse-v2-btn" data-action="roll-weapon" data-item-id="{{this.id}}">Attack</button>
+          <button type="button" class="swse-v2-btn" data-action="roll-weapon" data-item-id="{{this.id}}">{{localize "SWSE.ActorUI.Attack"}}</button>
         </span>
       </div>
     {{/each}}
 
     {{#unless derived.attacks.list.length}}
-      <div class="muted" style="padding:6px 0;">No equipped weapons.</div>
+      <div class="muted" style="padding:6px 0;">{{localize "SWSE.ActorUI.NoEquippedWeapons"}}</div>
     {{/unless}}
   </div>
 </div>

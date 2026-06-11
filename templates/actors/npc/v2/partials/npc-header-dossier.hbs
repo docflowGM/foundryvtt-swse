@@ -1,20 +1,20 @@
 <header class="swse-npc-dossier-header">
   <div class="swse-npc-dossier-portrait">
-    <img class="swse-npc-dossier-img" src="{{actor.img}}" data-edit="img" title="{{npcConcept.displayName}}" alt="{{npcConcept.displayName}}"/>
+    <img class="swse-npc-dossier-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="{{actor.name}}"/>
   </div>
 
   <div class="swse-npc-dossier-identity">
     <h1 class="swse-npc-dossier-name">
-      <input name="name" type="text" value="{{npcConcept.displayName}}" placeholder="Name" {{#unless editable}}disabled{{/unless}}/>
+      <input name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'SWSE.ActorUI.Name'}}" {{#unless editable}}disabled{{/unless}}/>
     </h1>
 
     <div class="swse-npc-dossier-type">
       <span class="swse-npc-badge swse-npc-badge--kind">{{npcConcept.kindLabel}}</span>
       {{#if npcConcept.modeLabel}}<span class="swse-npc-badge swse-npc-badge--mode">{{npcConcept.modeLabel}}</span>{{/if}}
-      {{#if isFollowerNpc}}<span class="swse-npc-badge swse-npc-badge--subtype">Follower</span>{{/if}}
-      {{#if isMinionNpc}}<span class="swse-npc-badge swse-npc-badge--subtype">Minion</span>{{/if}}
-      {{#if isBeastNpc}}<span class="swse-npc-badge swse-npc-badge--subtype">Beast</span>{{/if}}
-      {{#if isMountNpc}}<span class="swse-npc-badge swse-npc-badge--subtype">Mount</span>{{/if}}
+      {{#if isFollowerNpc}}<span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.Follower"}}</span>{{/if}}
+      {{#if isMinionNpc}}<span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.Minion"}}</span>{{/if}}
+      {{#if isBeastNpc}}<span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.Beast"}}</span>{{/if}}
+      {{#if isMountNpc}}<span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.Mount"}}</span>{{/if}}
     </div>
 
     <div class="swse-npc-dossier-summary-line">
@@ -33,7 +33,7 @@
 
   <div class="swse-npc-dossier-vitals">
     <div class="swse-npc-vital-block">
-      <span class="swse-npc-vital-label">HP</span>
+      <span class="swse-npc-vital-label">{{localize "SWSE.ActorUI.HP"}}</span>
       <div class="swse-npc-vital-bar">
         <div class="swse-npc-vital-fill {{npcConcept.hpToneClass}}" style="width: {{npcConcept.hpPercent}}%;"></div>
       </div>
@@ -41,13 +41,13 @@
     </div>
 
     <div class="swse-npc-vital-stat">
-      <span class="swse-npc-vital-label">CT</span>
+      <span class="swse-npc-vital-label">{{localize "SWSE.ActorUI.CT"}}</span>
       <strong class="swse-npc-vital-stat-value">{{npcConcept.conditionCurrent}}</strong>
     </div>
 
-    <button type="button" class="swse-npc-vital-stat swse-npc-vital-stat--button" data-action="roll-initiative" title="Roll Initiative">
-      <span class="swse-npc-vital-label">Init</span>
+    <div class="swse-npc-vital-stat">
+      <span class="swse-npc-vital-label">{{localize "SWSE.ActorUI.Init"}}</span>
       <strong class="swse-npc-vital-stat-value">{{npcConcept.initiative}}</strong>
-    </button>
+    </div>
   </div>
 </header>

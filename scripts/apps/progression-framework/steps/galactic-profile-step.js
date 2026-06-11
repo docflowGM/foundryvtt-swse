@@ -6,6 +6,7 @@ import { TemplateTraversalPolicy } from '/systems/foundryvtt-swse/scripts/engine
 import { ActiveStepComputer } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/active-step-computer.js';
 import { getStepMentorContext, handleAskMentor, setSessionMentorContext } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/steps/mentor-step-integration.js';
 import { getMentorForClass, getMentorKey, resolveMentorData } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
+import { localizeMentorTemplateDialogues } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-localization.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 const ABILITIES = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
@@ -175,7 +176,7 @@ async function loadTemplateDialogues() {
   try {
     const response = await fetch('systems/foundryvtt-swse/data/mentor-template-dialogues.json');
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    TEMPLATE_DIALOGUE_CACHE = await response.json();
+    TEMPLATE_DIALOGUE_CACHE = localizeMentorTemplateDialogues(await response.json());
   } catch (err) {
     swseLogger.warn('[GalacticProfile] Could not load mentor-template-dialogues.json; falling back to template quotes and step guidance.', { error: err?.message || String(err) });
     TEMPLATE_DIALOGUE_CACHE = { mentors: {} };

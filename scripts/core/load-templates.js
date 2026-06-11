@@ -432,6 +432,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-related-actor-card.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-relationships-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-statblock-authority-panel.hbs',
+  'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-statblock-editor-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-manifest-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-cargo-summary-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-commander-order-panel.hbs',

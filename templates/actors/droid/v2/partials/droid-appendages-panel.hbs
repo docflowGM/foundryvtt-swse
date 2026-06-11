@@ -1,14 +1,14 @@
 <section class="swse-panel holo-panel swse-ui-panel swse-droid-part-panel" data-region="appendages">
   <header class="section-bar">
-    <h3 class="section-header">Appendages</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.Appendages"}}</h3>
     <span class="section-meta muted">{{droidPanels.appendages.totalCount}} installed</span>
   </header>
 
   <div class="swse-droid-unarmed-summary">
-    <span class="swse-weapon-integrated-badge">UNARMED</span>
+    <span class="swse-weapon-integrated-badge">{{localize "SWSE.ActorUI.UNARMED"}}</span>
     <strong>{{droidPanels.appendages.unarmedAttack.damage}}</strong>
-    <span class="muted">appendage strike damage before Strength modifier from roll pipeline</span>
-    <button type="button" class="holo-btn tiny" data-action="roll-unarmed-attack">Roll</button>
+    <span class="muted">{{localize "SWSE.ActorUI.AppendageStrikeDamageBeforeStrengthModifierFromRoll"}}</span>
+    <button type="button" class="holo-btn tiny" data-action="roll-unarmed-attack">{{localize "SWSE.ActorUI.Roll"}}</button>
   </div>
 
   <div class="appendages-list swse-droid-slot-list">
@@ -16,19 +16,19 @@
       <div class="appendage-entry swse-droid-slot {{#if slot.isEmpty}}is-empty{{/if}}" data-slot-id="{{slot.id}}">
         <div class="entry-header">
           <span class="entry-name">{{slot.label}}</span>
-          {{#if slot.canAdd}}<span class="swse-droid-chip">ADD LIMB</span>{{else if slot.canReplace}}<span class="swse-droid-chip">REPLACE OK</span>{{/if}}
+          {{#if slot.canAdd}}<span class="swse-droid-chip">{{localize "SWSE.ActorUI.ADDLIMB"}}</span>{{else if slot.canReplace}}<span class="swse-droid-chip">{{localize "SWSE.ActorUI.REPLACEOK"}}</span>{{/if}}
         </div>
         {{#if slot.item}}
           <strong>{{slot.item.name}}</strong>
           {{#if slot.item.appendageType}}<span class="swse-weapon-meta">{{slot.item.appendageType}}</span>{{/if}}
           {{#if slot.item.description}}<div class="entry-description muted">{{slot.item.description}}</div>{{/if}}
           <div class="swse-droid-slot-actions">
-            <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{slot.item.id}}" data-part-name="{{slot.item.name}}">Use / Describe</button>
-            <button type="button" class="holo-btn tiny" data-action="customize-droid" data-garage-region="appendage" data-garage-slot="{{slot.id}}" data-garage-mode="replace">Replace in Garage</button>
+            <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{slot.item.id}}" data-part-name="{{slot.item.name}}">{{localize "SWSE.ActorUI.UseDescribe"}}</button>
+            <button type="button" class="holo-btn tiny" data-action="customize-droid" data-garage-region="appendage" data-garage-slot="{{slot.id}}" data-garage-mode="replace">{{localize "SWSE.ActorUI.ReplaceInGarage"}}</button>
           </div>
         {{else}}
           <p class="swse-droid-default-hint">{{slot.defaultName}}</p>
-          <button type="button" class="holo-btn tiny" data-action="customize-droid" data-garage-region="appendage" data-garage-slot="{{slot.id}}" data-garage-mode="add">Add Limb in Garage</button>
+          <button type="button" class="holo-btn tiny" data-action="customize-droid" data-garage-region="appendage" data-garage-slot="{{slot.id}}" data-garage-mode="add">{{localize "SWSE.ActorUI.AddLimbInGarage"}}</button>
         {{/if}}
       </div>
     {{/each}}

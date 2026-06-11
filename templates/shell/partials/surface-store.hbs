@@ -28,58 +28,58 @@
       <span class="swse-store-surface__corner swse-store-surface__corner--br" aria-hidden="true"></span>
 
       <header class="swse-store-surface__hud">
-        <button class="swse-store-surface__hud-back" data-shell-action="return-to-home" type="button" title="Return to Home">
-          <i class="fas fa-arrow-left"></i> HOME
+        <button class="swse-store-surface__hud-back" data-shell-action="return-to-home" type="button" title="{{localize 'SWSE.ShellUI.ReturnToHome'}}">
+          <i class="fas fa-arrow-left"></i> {{localize "SWSE.ShellUI.HOME"}}
         </button>
         <div class="swse-store-surface__hud-center">
           <span class="swse-store-surface__signal"><span></span><span></span><span></span><span></span></span>
-          <span class="swse-store-surface__hud-title">RENDARR'S EXCHANGE</span>
+          <span class="swse-store-surface__hud-title">{{localize "SWSE.ShellUI.RENDARRSEXCHANGE"}}</span>
           <span class="swse-store-surface__hud-dot {{#if vm.storeContext.cartCount}}warn{{/if}}"></span>
         </div>
         <div class="swse-store-surface__hud-right">
-          <span class="swse-store-surface__hud-lbl">RESERVE</span>
-          <span class="swse-store-surface__hud-credits">{{vm.actorCredits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
+          <span class="swse-store-surface__hud-lbl">{{localize "SWSE.ShellUI.RESERVE"}}</span>
+          <span class="swse-store-surface__hud-credits">{{vm.actorCredits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></span>
         </div>
       </header>
 
       <header class="swse-store-surface__hero">
         <div class="swse-store-surface__rendarr-portrait">
           {{#if vm.storeContext.rendarrImage}}
-          <img src="{{vm.storeContext.rendarrImage}}" alt="Rendarr" class="swse-store-surface__rendarr-img"/>
+          <img src="{{vm.storeContext.rendarrImage}}" alt="{{localize 'SWSE.ShellUI.Rendarr'}}" class="swse-store-surface__rendarr-img"/>
           {{else}}
           <svg viewBox="0 0 64 64" class="swse-store-surface__rendarr-svg"><circle cx="32" cy="24" r="14" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M8 60 Q32 38 56 60" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
           {{/if}}
         </div>
         <div class="swse-store-surface__rendarr-meta">
-          <div class="swse-store-surface__rendarr-name"><span class="swse-store-surface__rendarr-mark">⚡</span>RENDARR'S EXCHANGE</div>
-          <div class="swse-store-surface__rendarr-sub">Quartermaster · Galactic Trade Network</div>
+          <div class="swse-store-surface__rendarr-name"><span class="swse-store-surface__rendarr-mark">⚡</span>{{localize "SWSE.ShellUI.RENDARRSEXCHANGE"}}</div>
+          <div class="swse-store-surface__rendarr-sub">{{localize "SWSE.ShellUI.QuartermasterGalacticTradeNetwork"}}</div>
           <div class="swse-store-surface__rendarr-quote">
             {{#if vm.storeContext.rendarrWelcome}}"{{vm.storeContext.rendarrWelcome}}"{{else}}"What can I do for you today?"{{/if}}
           </div>
         </div>
         <div class="swse-store-surface__credits-block">
-          <span class="swse-store-surface__credits-lbl">ACCOUNT</span>
-          <span class="swse-store-surface__credits-val">{{vm.actorCredits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
+          <span class="swse-store-surface__credits-lbl">{{localize "SWSE.ShellUI.ACCOUNT"}}</span>
+          <span class="swse-store-surface__credits-val">{{vm.actorCredits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></span>
           {{#if vm.storeContext.cartCount}}
-          <span class="swse-store-surface__credits-delta neg">−{{vm.storeContext.cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span> staged</span>
-          <span class="swse-store-surface__credits-reserve">{{vm.storeContext.cartRemainingActualLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span> after</span>
+          <span class="swse-store-surface__credits-delta neg">−{{vm.storeContext.cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span> {{localize "SWSE.ShellUI.Staged"}}</span>
+          <span class="swse-store-surface__credits-reserve">{{vm.storeContext.cartRemainingActualLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span> {{localize "SWSE.ShellUI.After"}}</span>
           {{/if}}
         </div>
       </header>
 
       <nav class="swse-store-surface__tabs">
         <button type="button" class="swse-store-surface__tab {{#if (eq vm.storeContext.currentView 'browse')}}active{{/if}} {{#if vm.storeContext.selectedProduct}}active{{/if}}" data-ss-tab="browse">
-          <span class="swse-store-surface__tab-glyph">⊞</span> BROWSE
+          <span class="swse-store-surface__tab-glyph">⊞</span> {{localize "SWSE.ShellUI.BROWSE"}}
         </button>
         <button type="button" class="swse-store-surface__tab {{#if (eq vm.storeContext.currentView 'cart')}}active{{/if}}" data-ss-tab="cart">
           <span class="swse-store-surface__tab-glyph">◳</span> CART
           {{#if vm.storeContext.cartCount}}<span class="swse-store-surface__tab-count">{{vm.storeContext.cartCount}}</span>{{/if}}
         </button>
         <button type="button" class="swse-store-surface__tab {{#if (eq vm.storeContext.currentView 'checkout')}}active{{/if}}" data-ss-tab="checkout">
-          <span class="swse-store-surface__tab-glyph">◈</span> CHECKOUT
+          <span class="swse-store-surface__tab-glyph">◈</span> {{localize "SWSE.ShellUI.CHECKOUT"}}
         </button>
         <button type="button" class="swse-store-surface__tab {{#if (eq vm.storeContext.currentView 'history')}}active{{/if}}" data-ss-tab="history">
-          <span class="swse-store-surface__tab-glyph">◎</span> HISTORY
+          <span class="swse-store-surface__tab-glyph">◎</span> {{localize "SWSE.ShellUI.HISTORY"}}
         </button>
       </nav>
 
@@ -89,36 +89,36 @@
         <section class="swse-store-surface__filters">
           <div class="swse-store-surface__filter-search">
             <i class="fas fa-search swse-store-surface__filter-ico"></i>
-            <input type="text" id="ss-search" class="swse-store-surface__search-input" placeholder="SEARCH LISTINGS…" aria-label="Search store" value="{{vm.storeContext.filters.search}}"/>
+            <input type="text" id="ss-search" class="swse-store-surface__search-input" placeholder="{{localize 'SWSE.ShellUI.SEARCHLISTINGS'}}" aria-label="{{localize 'SWSE.ShellUI.SearchStore'}}" value="{{vm.storeContext.filters.search}}"/>
           </div>
           <div class="swse-store-surface__filter-group">
-            <span class="swse-store-surface__filter-lbl">AVAIL</span>
+            <span class="swse-store-surface__filter-lbl">{{localize "SWSE.ShellUI.AVAIL"}}</span>
             <select id="ss-avail" class="swse-store-surface__select">
-              <option value="all">All</option>
-              <option value="standard">Standard</option>
-              <option value="licensed">Licensed</option>
-              <option value="restricted">Restricted</option>
-              <option value="military">Military</option>
-              <option value="illegal">Illegal</option>
-              <option value="rare">Rare</option>
+              <option value="all">{{localize "SWSE.ShellUI.All"}}</option>
+              <option value="standard">{{localize "SWSE.ShellUI.Standard"}}</option>
+              <option value="licensed">{{localize "SWSE.ShellUI.Licensed"}}</option>
+              <option value="restricted">{{localize "SWSE.ShellUI.Restricted"}}</option>
+              <option value="military">{{localize "SWSE.ShellUI.Military"}}</option>
+              <option value="illegal">{{localize "SWSE.ShellUI.Illegal"}}</option>
+              <option value="rare">{{localize "SWSE.ShellUI.Rare"}}</option>
             </select>
           </div>
           <div class="swse-store-surface__filter-group">
-            <span class="swse-store-surface__filter-lbl">SORT</span>
+            <span class="swse-store-surface__filter-lbl">{{localize "SWSE.ShellUI.SORT"}}</span>
             <select id="ss-sort" class="swse-store-surface__select">
-              <option value="default">Best Match</option>
-              <option value="price-asc">Price ↑</option>
-              <option value="price-desc">Price ↓</option>
-              <option value="name-asc">Name A–Z</option>
+              <option value="default">{{localize "SWSE.ShellUI.BestMatch"}}</option>
+              <option value="price-asc">{{localize "SWSE.ShellUI.Price"}}</option>
+              <option value="price-desc">{{localize "SWSE.ShellUI.Price2"}}</option>
+              <option value="name-asc">{{localize "SWSE.ShellUI.NameAZ"}}</option>
             </select>
           </div>
           <div class="swse-store-surface__filter-count">
-            <span data-results-count>{{vm.storeContext.renderedItemCount}}</span>/<span>{{vm.storeContext.visibleItemCount}}</span> listings
+            <span data-results-count>{{vm.storeContext.renderedItemCount}}</span>/<span>{{vm.storeContext.visibleItemCount}}</span> {{localize "SWSE.ShellUI.Listings"}}
           </div>
-          <button type="button" class="swse-store-surface__filter-clear" data-action="clear-filters">✕ CLEAR</button>
+          <button type="button" class="swse-store-surface__filter-clear" data-action="clear-filters">{{localize "SWSE.ShellUI.CLEAR"}}</button>
         </section>
 
-        <nav class="swse-store-surface__category-tabs" aria-label="Store departments">
+        <nav class="swse-store-surface__category-tabs" aria-label="{{localize 'SWSE.ShellUI.StoreDepartments'}}">
           {{#each vm.storeContext.categorySummary}}
           <button type="button" class="swse-store-surface__category-chip {{#if (eq ../vm.storeContext.currentCategory key)}}active{{/if}}" data-action="category-nav" data-category="{{key}}">
             {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
@@ -131,12 +131,12 @@
         {{#each vm.storeContext.navigationModel.topCategories}}
         {{#if (eq key ../vm.storeContext.currentCategory)}}
         {{#if children}}
-        <nav class="swse-store-surface__subnav" aria-label="Store department subcategories">
+        <nav class="swse-store-surface__subnav" aria-label="{{localize 'SWSE.ShellUI.StoreDepartmentSubcategories'}}">
           {{#if (eq key 'weapons')}}
-          <div class="swse-store-surface__family-tabs" aria-label="Weapon folders">
+          <div class="swse-store-surface__family-tabs" aria-label="{{localize 'SWSE.ShellUI.WeaponFolders'}}">
             <button type="button" class="swse-store-surface__family-chip {{#unless ../vm.storeContext.currentFamily}}active{{/unless}}"
                     data-action="family-nav" data-family="">
-              All Weapons<span class="swse-store-surface__chip-count">{{count}}</span>
+              {{localize "SWSE.ShellUI.AllWeapons"}}<span class="swse-store-surface__chip-count">{{count}}</span>
             </button>
             {{#each familyTabs}}
             <button type="button" class="swse-store-surface__family-chip {{#if active}}active{{/if}}"
@@ -146,7 +146,7 @@
             {{/each}}
           </div>
 
-          <div class="swse-store-surface__subcategory-strip" aria-label="Weapon subfolders">
+          <div class="swse-store-surface__subcategory-strip" aria-label="{{localize 'SWSE.ShellUI.WeaponSubfolders'}}">
             {{#each children}}
             <button type="button" class="swse-store-surface__subcat-chip swse-store-surface__subcat-chip--{{family}} {{#if active}}active{{/if}}"
                     data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
@@ -165,13 +165,13 @@
           {{#if (eq key 'vehicles')}}
           <button type="button" class="swse-store-surface__subcat-chip swse-store-surface__subcat-chip--builder"
                   data-action="store-build-from-scratch" data-builder-kind="vehicle">
-            + Create Custom Ship
+            {{localize "SWSE.ShellUI.CreateCustomShip"}}
           </button>
           {{/if}}
           {{#if (eq key 'droids')}}
           <button type="button" class="swse-store-surface__subcat-chip swse-store-surface__subcat-chip--builder"
                   data-action="store-build-from-scratch" data-builder-kind="droid">
-            + Create Custom Droid
+            {{localize "SWSE.ShellUI.CreateCustomDroid"}}
           </button>
           {{/if}}
           {{/if}}
@@ -214,23 +214,23 @@
               </div>
               <div class="swse-store-surface__card-foot">
                 {{#if this.costUsed}}
-                <span class="swse-store-surface__card-price">NEW {{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span> · USED {{this.costUsed}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
+                <span class="swse-store-surface__card-price">NEW {{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span> · USED {{this.costUsed}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></span>
                 {{else}}
-                <span class="swse-store-surface__card-price">{{this.finalCost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
+                <span class="swse-store-surface__card-price">{{this.finalCost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></span>
                 {{/if}}
                 <div class="swse-store-surface__card-actions">
                   <button type="button" class="swse-store-surface__card-btn" data-action="expand-product" data-item-id="{{this.id}}">{{#if (eq ../vm.storeContext.selectedProductId this.id)}}COLLAPSE{{else}}DETAILS{{/if}}</button>
                   {{#if (eq this.type 'vehicle')}}
-                  <button type="button" class="swse-store-surface__card-btn" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="used">USED</button>
-                  <button type="button" class="swse-store-surface__card-btn swse-store-surface__card-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="new">NEW</button>
+                  <button type="button" class="swse-store-surface__card-btn" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="used">{{localize "SWSE.ShellUI.USED"}}</button>
+                  <button type="button" class="swse-store-surface__card-btn swse-store-surface__card-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="new">{{localize "SWSE.ShellUI.NEW"}}</button>
                   {{else}}
-                  <button type="button" class="swse-store-surface__card-btn swse-store-surface__card-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="{{this.type}}">+ ADD</button>
+                  <button type="button" class="swse-store-surface__card-btn swse-store-surface__card-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="{{this.type}}">{{localize "SWSE.ShellUI.ADD"}}</button>
                   {{/if}}
                 </div>
               </div>
               {{#if (eq ../vm.storeContext.selectedProductId this.id)}}
               <div class="swse-store-surface__card-selected-note">
-                <span>LISTING ROUTED TO DETAIL RAIL</span>
+                <span>{{localize "SWSE.ShellUI.LISTINGROUTEDTODETAILRAIL"}}</span>
               </div>
               {{/if}}
             </div>
@@ -238,7 +238,7 @@
             {{#if vm.storeContext.hasMoreItems}}
             <div class="swse-store-surface__load-more-row">
               <button type="button" class="swse-store-surface__load-more" data-action="store-load-more" data-next-limit="{{vm.storeContext.nextRenderLimit}}">
-                LOAD MORE STOCK → <span>{{vm.storeContext.renderedItemCount}}/{{vm.storeContext.visibleItemCount}}</span>
+                {{localize "SWSE.ShellUI.LOADMORESTOCK"}} <span>{{vm.storeContext.renderedItemCount}}/{{vm.storeContext.visibleItemCount}}</span>
               </button>
             </div>
             {{/if}}
@@ -248,7 +248,7 @@
           <aside class="swse-store-surface__rail">
             <section class="swse-store-surface__side-card swse-store-surface__detail-card {{#if vm.storeContext.selectedProduct}}is-active{{else}}is-empty{{/if}}">
               <div class="swse-store-surface__side-head">
-                <span>◇ Listing Inspect</span>
+                <span>{{localize "SWSE.ShellUI.ListingInspect"}}</span>
                 <span class="hint">{{#if vm.storeContext.selectedProduct}}selected{{else}}idle{{/if}}</span>
               </div>
               {{#if vm.storeContext.selectedProduct}}
@@ -267,14 +267,14 @@
                       {{#if vm.storeContext.selectedProduct.suggestionTierLabel}}<span>{{vm.storeContext.selectedProduct.suggestionTierLabel}}</span>{{/if}}
                     </div>
                   </div>
-                  <button type="button" class="swse-store-surface__detail-close" data-action="detail-back" title="Clear selected listing">×</button>
+                  <button type="button" class="swse-store-surface__detail-close" data-action="detail-back" title="{{localize 'SWSE.ShellUI.ClearSelectedListing'}}">×</button>
                 </div>
 
                 <div class="swse-store-surface__detail-price-strip">
                   {{#each vm.storeContext.selectedProductDetail.priceOptions}}
                   <div class="swse-store-surface__detail-price-option">
                     <span>{{label}}</span>
-                    <strong>{{valueLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong>
+                    <strong>{{valueLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></strong>
                   </div>
                   {{/each}}
                 </div>
@@ -291,7 +291,7 @@
 
                 {{#if vm.storeContext.selectedProduct.suggestionBullets.length}}
                 <div class="swse-store-surface__detail-section">
-                  <div class="swse-store-surface__detail-section-title">Fit Notes</div>
+                  <div class="swse-store-surface__detail-section-title">{{localize "SWSE.ShellUI.FitNotes"}}</div>
                   <ul class="swse-store-surface__detail-bullets">
                     {{#each vm.storeContext.selectedProduct.suggestionBullets}}<li>{{this}}</li>{{/each}}
                   </ul>
@@ -300,29 +300,29 @@
 
                 {{#if vm.storeContext.selectedProduct.techDetailsHtml}}
                 <div class="swse-store-surface__detail-section swse-store-surface__detail-section--scroll">
-                  <div class="swse-store-surface__detail-section-title">Technical Readout</div>
+                  <div class="swse-store-surface__detail-section-title">{{localize "SWSE.ShellUI.TechnicalReadout"}}</div>
                   {{{vm.storeContext.selectedProduct.techDetailsHtml}}}
                 </div>
                 {{/if}}
 
                 {{#if vm.storeContext.selectedProduct.flavorReviewsHtml}}
                 <div class="swse-store-surface__detail-section swse-store-surface__detail-section--scroll">
-                  <div class="swse-store-surface__detail-section-title">Marketplace Reviews</div>
+                  <div class="swse-store-surface__detail-section-title">{{localize "SWSE.ShellUI.MarketplaceReviews"}}</div>
                   {{{vm.storeContext.selectedProduct.flavorReviewsHtml}}}
                 </div>
                 {{/if}}
 
                 <div class="swse-store-surface__detail-actions">
                   {{#if (eq vm.storeContext.selectedProduct.type 'vehicle')}}
-                  <button type="button" class="swse-store-surface__rail-btn" data-action="add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="vehicle" data-condition="used">USED MODEL</button>
-                  <button type="button" class="swse-store-surface__rail-btn swse-store-surface__rail-btn--primary" data-action="add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="vehicle" data-condition="new">NEW MODEL</button>
-                  <button type="button" class="swse-store-surface__rail-btn" data-action="store-build-from-scratch" data-builder-kind="vehicle">BUILD FROM SCRATCH</button>
+                  <button type="button" class="swse-store-surface__rail-btn" data-action="add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="vehicle" data-condition="used">{{localize "SWSE.ShellUI.USEDMODEL"}}</button>
+                  <button type="button" class="swse-store-surface__rail-btn swse-store-surface__rail-btn--primary" data-action="add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="vehicle" data-condition="new">{{localize "SWSE.ShellUI.NEWMODEL"}}</button>
+                  <button type="button" class="swse-store-surface__rail-btn" data-action="store-build-from-scratch" data-builder-kind="vehicle">{{localize "SWSE.ShellUI.BUILDFROMSCRATCH"}}</button>
                   {{else}}
                   {{#if (eq vm.storeContext.selectedProduct.type 'droid')}}
-                  <button type="button" class="swse-store-surface__rail-btn swse-store-surface__rail-btn--primary" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="droid">ADD DROID</button>
-                  <button type="button" class="swse-store-surface__rail-btn" data-action="store-build-from-scratch" data-builder-kind="droid">BUILD FROM SCRATCH</button>
+                  <button type="button" class="swse-store-surface__rail-btn swse-store-surface__rail-btn--primary" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="droid">{{localize "SWSE.ShellUI.ADDDROID"}}</button>
+                  <button type="button" class="swse-store-surface__rail-btn" data-action="store-build-from-scratch" data-builder-kind="droid">{{localize "SWSE.ShellUI.BUILDFROMSCRATCH"}}</button>
                   {{else}}
-                  <button type="button" class="swse-store-surface__rail-btn swse-store-surface__rail-btn--primary" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="{{vm.storeContext.selectedProduct.type}}">ADD TO CART</button>
+                  <button type="button" class="swse-store-surface__rail-btn swse-store-surface__rail-btn--primary" data-action="detail-add-to-cart" data-item-id="{{vm.storeContext.selectedProduct.id}}" data-item-type="{{vm.storeContext.selectedProduct.type}}">{{localize "SWSE.ShellUI.ADDTOCART"}}</button>
                   {{/if}}
                   {{/if}}
                 </div>
@@ -330,16 +330,16 @@
               {{else}}
               <div class="swse-store-surface__detail-empty">
                 <div class="swse-store-surface__detail-empty-glyph">⌁</div>
-                <div class="swse-store-surface__detail-empty-title">No listing selected</div>
-                <div class="swse-store-surface__detail-empty-copy">Click any market card to route its stats, pricing, and notes into this rail.</div>
+                <div class="swse-store-surface__detail-empty-title">{{localize "SWSE.ShellUI.NoListingSelected"}}</div>
+                <div class="swse-store-surface__detail-empty-copy">{{localize "SWSE.ShellUI.ClickAnyMarketCardToRouteItsStats"}}</div>
               </div>
               {{/if}}
             </section>
             {{#if vm.storeContext.hasBuilderActions}}
             <section class="swse-store-surface__side-card swse-store-surface__builder-card">
               <div class="swse-store-surface__side-head">
-                <span>Custom Build</span>
-                <span class="hint">Scratch</span>
+                <span>{{localize "SWSE.ShellUI.CustomBuild"}}</span>
+                <span class="hint">{{localize "SWSE.ShellUI.Scratch"}}</span>
               </div>
               <div class="swse-store-surface__builder-actions">
                 {{#each vm.storeContext.builderActions}}
@@ -360,7 +360,7 @@
 
             <section class="swse-store-surface__side-card swse-store-surface__cart-card">
               <div class="swse-store-surface__side-head">
-                <span>◇ Cart</span>
+                <span>{{localize "SWSE.ShellUI.Cart"}}</span>
                 <span class="hint">{{#if vm.storeContext.cartCount}}{{vm.storeContext.cartCount}} staged{{else}}empty{{/if}}</span>
               </div>
               <div class="swse-store-surface__mini-cart">
@@ -370,27 +370,26 @@
                   <div class="swse-store-surface__mini-cart-item">
                     <div class="swse-store-surface__mini-cart-name">{{this.name}}</div>
                     <div class="swse-store-surface__mini-cart-qty">×{{this.qty}}</div>
-                    <div class="swse-store-surface__mini-cart-price">{{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></div>
+                    <div class="swse-store-surface__mini-cart-price">{{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></div>
                   </div>
                   {{/each}}
                 </div>
                 <div class="swse-store-surface__mini-cart-summary">
-                  <div class="swse-store-surface__mini-cart-row"><span>SUBTOTAL</span><strong>{{vm.storeContext.cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong></div>
-                  <div class="swse-store-surface__mini-cart-row"><span>AFTER HAUL</span><strong>{{vm.storeContext.cartRemainingActualLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong></div>
+                  <div class="swse-store-surface__mini-cart-row"><span>{{localize "SWSE.ShellUI.SUBTOTAL"}}</span><strong>{{vm.storeContext.cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></strong></div>
+                  <div class="swse-store-surface__mini-cart-row"><span>{{localize "SWSE.ShellUI.AFTERHAUL"}}</span><strong>{{vm.storeContext.cartRemainingActualLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></strong></div>
                 </div>
                 <div class="swse-store-surface__rail-actions">
-                  <button type="button" class="swse-store-surface__rail-btn" data-ss-tab="cart">▸ OPEN CART</button>
-                  <button type="button" class="swse-store-surface__rail-btn" data-action="clear-cart">CLEAR ALL</button>
-                  <button type="button" class="swse-store-surface__rail-btn swse-store-surface__rail-btn--primary" data-action="proceed-checkout" {{#if vm.storeContext.checkoutBlocked}}disabled aria-disabled="true" title="{{vm.storeContext.checkoutBlockedReason}}"{{/if}}>SETTLE</button>
+                  <button type="button" class="swse-store-surface__rail-btn" data-ss-tab="cart">{{localize "SWSE.ShellUI.OPENCART"}}</button>
+                  <button type="button" class="swse-store-surface__rail-btn swse-store-surface__rail-btn--primary" data-action="proceed-checkout" {{#if vm.storeContext.checkoutBlocked}}disabled aria-disabled="true" title="{{vm.storeContext.checkoutBlockedReason}}"{{/if}}>{{localize "SWSE.ShellUI.SETTLE"}}</button>
                 </div>
                 {{else}}
                 <div class="swse-store-surface__mini-cart-empty">
                   <div class="swse-store-surface__mini-cart-empty-glyph">◳</div>
-                  <div class="swse-store-surface__mini-cart-empty-msg">No items staged</div>
-                  <div class="swse-store-surface__mini-cart-empty-sub">Click a card's <span>+ ADD</span> to start a haul.</div>
+                  <div class="swse-store-surface__mini-cart-empty-msg">{{localize "SWSE.ShellUI.NoItemsStaged"}}</div>
+                  <div class="swse-store-surface__mini-cart-empty-sub">{{localize "SWSE.ShellUI.ClickACardS"}} <span>{{localize "SWSE.ShellUI.ADD"}}</span> {{localize "SWSE.ShellUI.ToStartAHaul"}}</div>
                 </div>
                 <div class="swse-store-surface__rail-actions">
-                  <button type="button" class="swse-store-surface__rail-btn" data-ss-tab="browse">▸ BROWSE FLOOR</button>
+                  <button type="button" class="swse-store-surface__rail-btn" data-ss-tab="browse">{{localize "SWSE.ShellUI.BROWSEFLOOR"}}</button>
                 </div>
                 {{/if}}
               </div>
@@ -398,42 +397,42 @@
 
             <section class="swse-store-surface__side-card swse-store-surface__wallet-card">
               <div class="swse-store-surface__side-head">
-                <span>◇ Wallet</span>
-                <span class="hint">SAGA std.</span>
+                <span>{{localize "SWSE.ShellUI.Wallet"}}</span>
+                <span class="hint">{{localize "SWSE.ShellUI.SAGAStd"}}</span>
               </div>
               <div class="swse-store-surface__wallet-grid">
                 <div class="swse-store-surface__wallet-cell">
-                  <span>Balance</span>
-                  <strong>{{vm.actorCredits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong>
+                  <span>{{localize "SWSE.ShellUI.Balance"}}</span>
+                  <strong>{{vm.actorCredits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></strong>
                 </div>
                 <div class="swse-store-surface__wallet-cell {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}}">
-                  <span>After Haul</span>
-                  <strong>{{vm.storeContext.cartRemainingActualLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong>
+                  <span>{{localize "SWSE.ShellUI.AfterHaul"}}</span>
+                  <strong>{{vm.storeContext.cartRemainingActualLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></strong>
                 </div>
               </div>
             </section>
 
             <section class="swse-store-surface__side-card swse-store-surface__market-card">
               <div class="swse-store-surface__side-head">
-                <span>◇ Market Feed</span>
-                <span class="hint">Live</span>
+                <span>{{localize "SWSE.ShellUI.MarketFeed"}}</span>
+                <span class="hint">{{localize "SWSE.ShellUI.Live"}}</span>
               </div>
-              <div class="swse-store-surface__market-line"><span>Category</span><strong>{{vm.storeContext.currentCategoryLabel}}</strong></div>
-              <div class="swse-store-surface__market-line"><span>Listings</span><strong>{{vm.storeContext.visibleItemCount}}</strong></div>
-              <div class="swse-store-surface__market-line"><span>Rendered</span><strong>{{vm.storeContext.renderedItemCount}}</strong></div>
+              <div class="swse-store-surface__market-line"><span>{{localize "SWSE.ShellUI.Category"}}</span><strong>{{vm.storeContext.currentCategoryLabel}}</strong></div>
+              <div class="swse-store-surface__market-line"><span>{{localize "SWSE.ShellUI.Listings2"}}</span><strong>{{vm.storeContext.visibleItemCount}}</strong></div>
+              <div class="swse-store-surface__market-line"><span>{{localize "SWSE.ShellUI.Rendered"}}</span><strong>{{vm.storeContext.renderedItemCount}}</strong></div>
             </section>
 
             <section class="swse-store-surface__side-card swse-store-surface__chatter-card">
               <div class="swse-store-surface__side-head">
-                <span>◇ Floor Chatter</span>
-                <span class="hint">live</span>
+                <span>{{localize "SWSE.ShellUI.FloorChatter"}}</span>
+                <span class="hint">{{localize "SWSE.ShellUI.Live2"}}</span>
               </div>
-              <div class="swse-store-surface__ticker" aria-label="Store chatter feed">
+              <div class="swse-store-surface__ticker" aria-label="{{localize 'SWSE.ShellUI.StoreChatterFeed'}}">
                 <div class="swse-store-surface__ticker-track">
-                  <span>Rendarr: No refunds on thermal detonators.</span>
-                  <span>Outer Rim surplus just cleared customs.</span>
-                  <span>Licensed stock may need GM approval.</span>
-                  <span>Used vehicles are inspected, not blessed.</span>
+                  <span>{{localize "SWSE.ShellUI.RendarrNoRefundsOnThermalDetonators"}}</span>
+                  <span>{{localize "SWSE.ShellUI.OuterRimSurplusJustClearedCustoms"}}</span>
+                  <span>{{localize "SWSE.ShellUI.LicensedStockMayNeedGMApproval"}}</span>
+                  <span>{{localize "SWSE.ShellUI.UsedVehiclesAreInspectedNotBlessed"}}</span>
                 </div>
               </div>
             </section>
@@ -443,8 +442,8 @@
 
         <div class="swse-store-surface__empty" style="display:none">
           <div class="swse-store-surface__empty-glyph">◌</div>
-          <div class="swse-store-surface__empty-msg">No listings match the current filters.</div>
-          <div class="swse-store-surface__empty-sub">Try another category or clear the search parameters.</div>
+          <div class="swse-store-surface__empty-msg">{{localize "SWSE.ShellUI.NoListingsMatchTheCurrentFilters"}}</div>
+          <div class="swse-store-surface__empty-sub">{{localize "SWSE.ShellUI.TryAnotherCategoryOrClearTheSearchParameters"}}</div>
         </div>
         {{/if}}
 
@@ -460,23 +459,23 @@
                 <div class="swse-store-surface__cart-type">{{this.summary}}</div>
               </div>
               <div class="swse-store-surface__cart-qty">×{{this.qty}}</div>
-              <div class="swse-store-surface__cart-linecost">{{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></div>
-              <button type="button" class="swse-store-surface__btn swse-store-surface__btn--ghost" data-action="remove-from-cart" data-item-id="{{this.id}}" data-item-type="{{this.itemType}}" data-condition="{{this.condition}}">REMOVE</button>
+              <div class="swse-store-surface__cart-linecost">{{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></div>
+              <button type="button" class="swse-store-surface__btn swse-store-surface__btn--ghost" data-action="remove-from-cart" data-item-id="{{this.id}}" data-item-type="{{this.itemType}}" data-condition="{{this.condition}}">{{localize "SWSE.ShellUI.REMOVE"}}</button>
             </div>
             {{/each}}
           </div>
           <div class="swse-store-surface__cart-summary">
             <div class="swse-store-surface__cart-summary-row">
-              <span>TOTAL</span>
-              <span class="swse-store-surface__cart-total">{{vm.storeContext.cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
+              <span>{{localize "SWSE.ShellUI.TOTAL"}}</span>
+              <span class="swse-store-surface__cart-total">{{vm.storeContext.cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></span>
             </div>
             <div class="swse-store-surface__cart-summary-row dim">
-              <span>AVAILABLE</span>
-              <span>{{vm.actorCredits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
+              <span>{{localize "SWSE.ShellUI.AVAILABLE"}}</span>
+              <span>{{vm.actorCredits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></span>
             </div>
             <div class="swse-store-surface__cart-summary-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}}">
-              <span>RESERVE AFTER TRADE</span>
-              <span>{{vm.storeContext.cartRemainingActualLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
+              <span>{{localize "SWSE.ShellUI.RESERVEAFTERTRADE"}}</span>
+              <span>{{vm.storeContext.cartRemainingActualLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></span>
             </div>
             {{#if vm.storeContext.hasCheckoutWarnings}}
             <div class="swse-store-surface__checkout-status {{#if vm.storeContext.cartRemainingNeg}}warn{{/if}}">
@@ -486,16 +485,16 @@
             </div>
             {{/if}}
             <div class="swse-store-surface__cart-actions">
-              <button type="button" class="swse-store-surface__btn" data-action="clear-cart">CLEAR ALL</button>
-              <button type="button" class="swse-store-surface__btn swse-store-surface__btn--primary" data-action="proceed-checkout" {{#if vm.storeContext.checkoutBlocked}}disabled aria-disabled="true" title="{{vm.storeContext.checkoutBlockedReason}}"{{/if}}>PROCEED TO CHECKOUT →</button>
+              <button type="button" class="swse-store-surface__btn" data-action="clear-cart">{{localize "SWSE.ShellUI.CLEARCART"}}</button>
+              <button type="button" class="swse-store-surface__btn swse-store-surface__btn--primary" data-action="proceed-checkout" {{#if vm.storeContext.checkoutBlocked}}disabled aria-disabled="true" title="{{vm.storeContext.checkoutBlockedReason}}"{{/if}}>{{localize "SWSE.ShellUI.PROCEEDTOCHECKOUT"}}</button>
             </div>
           </div>
           {{else}}
           <div class="swse-store-surface__empty">
             <div class="swse-store-surface__empty-glyph">◳</div>
-            <div class="swse-store-surface__empty-msg">Your cart is empty.</div>
-            <div class="swse-store-surface__empty-sub">Browse listings and stage gear before checkout.</div>
-            <button type="button" class="swse-store-surface__btn swse-store-surface__btn--primary" data-ss-tab="browse">→ BROWSE LISTINGS</button>
+            <div class="swse-store-surface__empty-msg">{{localize "SWSE.ShellUI.YourCartIsEmpty"}}</div>
+            <div class="swse-store-surface__empty-sub">{{localize "SWSE.ShellUI.BrowseListingsAndStageGearBeforeCheckout"}}</div>
+            <button type="button" class="swse-store-surface__btn swse-store-surface__btn--primary" data-ss-tab="browse">{{localize "SWSE.ShellUI.BROWSELISTINGS"}}</button>
           </div>
           {{/if}}
         </section>
@@ -504,8 +503,8 @@
         {{#if (eq vm.storeContext.currentView 'checkout')}}
         <section class="swse-store-surface__pane swse-store-surface__pane-checkout">
           <div class="swse-store-surface__checkout-header">
-            <span class="swse-store-surface__checkout-title">◈ SETTLEMENT WINDOW</span>
-            <span class="swse-store-surface__checkout-sub">Review the locked manifest before confirming the trade.</span>
+            <span class="swse-store-surface__checkout-title">{{localize "SWSE.ShellUI.SETTLEMENTWINDOW"}}</span>
+            <span class="swse-store-surface__checkout-sub">{{localize "SWSE.ShellUI.ReviewTheLockedManifestBeforeConfirmingTheTrade"}}</span>
           </div>
           {{#if vm.storeContext.cartEntries.length}}
           <div class="swse-store-surface__checkout-manifest">
@@ -513,14 +512,14 @@
             <div class="swse-store-surface__checkout-row">
               <span class="swse-store-surface__checkout-row-name">{{this.name}}</span>
               <span class="swse-store-surface__checkout-row-type">{{this.summary}} · ×{{this.qty}}</span>
-              <span class="swse-store-surface__checkout-row-cost">{{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
+              <span class="swse-store-surface__checkout-row-cost">{{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></span>
             </div>
             {{/each}}
           </div>
           <div class="swse-store-surface__checkout-ledger">
-            <div class="swse-store-surface__checkout-ledger-row"><span>AVAILABLE CREDITS</span><span>{{vm.actorCredits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span></div>
-            <div class="swse-store-surface__checkout-ledger-row debit"><span>TRADE DEBIT</span><span>−{{vm.storeContext.cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span></div>
-            <div class="swse-store-surface__checkout-ledger-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}} total"><span>REMAINING RESERVE</span><span>{{vm.storeContext.cartRemainingActualLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span></div>
+            <div class="swse-store-surface__checkout-ledger-row"><span>{{localize "SWSE.ShellUI.AVAILABLECREDITS"}}</span><span>{{vm.actorCredits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></span></div>
+            <div class="swse-store-surface__checkout-ledger-row debit"><span>{{localize "SWSE.ShellUI.TRADEDEBIT"}}</span><span>−{{vm.storeContext.cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></span></div>
+            <div class="swse-store-surface__checkout-ledger-row {{#if vm.storeContext.cartRemainingNeg}}neg{{else}}pos{{/if}} total"><span>{{localize "SWSE.ShellUI.REMAININGRESERVE"}}</span><span>{{vm.storeContext.cartRemainingActualLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></span></div>
           </div>
           {{#if vm.storeContext.hasCheckoutWarnings}}
           <div class="swse-store-surface__checkout-status {{#if vm.storeContext.cartRemainingNeg}}warn{{/if}}">
@@ -530,14 +529,13 @@
           </div>
           {{/if}}
           <div class="swse-store-surface__checkout-actions">
-            <button type="button" class="swse-store-surface__btn" data-action="return-to-cart">← RETURN TO CART</button>
-            <button type="button" class="swse-store-surface__btn" data-action="clear-cart">CLEAR ALL</button>
-            <button type="button" class="swse-store-surface__btn swse-store-surface__btn--confirm" data-action="confirm-checkout" {{#if vm.storeContext.checkoutBlocked}}disabled aria-disabled="true" title="{{vm.storeContext.checkoutBlockedReason}}"{{/if}}>◈ CONFIRM TRADE</button>
+            <button type="button" class="swse-store-surface__btn" data-action="return-to-cart">{{localize "SWSE.ShellUI.RETURNTOCART"}}</button>
+            <button type="button" class="swse-store-surface__btn swse-store-surface__btn--confirm" data-action="confirm-checkout" {{#if vm.storeContext.checkoutBlocked}}disabled aria-disabled="true" title="{{vm.storeContext.checkoutBlockedReason}}"{{/if}}>{{localize "SWSE.ShellUI.CONFIRMTRADE"}}</button>
           </div>
           {{else}}
           <div class="swse-store-surface__empty">
-            <div class="swse-store-surface__empty-msg">Nothing to settle — cart is empty.</div>
-            <button type="button" class="swse-store-surface__btn" data-action="return-to-cart">← RETURN TO CART</button>
+            <div class="swse-store-surface__empty-msg">{{localize "SWSE.ShellUI.NothingToSettleCartIsEmpty"}}</div>
+            <button type="button" class="swse-store-surface__btn" data-action="return-to-cart">{{localize "SWSE.ShellUI.RETURNTOCART"}}</button>
           </div>
           {{/if}}
         </section>
@@ -551,11 +549,11 @@
             <div class="swse-store-surface__history-entry">
               <div class="swse-store-surface__history-entry-header">
                 <span class="swse-store-surface__history-date">{{this.timestamp}}</span>
-                <span class="swse-store-surface__history-total">{{this.total}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
+                <span class="swse-store-surface__history-total">{{this.total}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></span>
               </div>
               <div class="swse-store-surface__history-items">
                 {{#each this.items}}
-                <span class="swse-store-surface__history-item">{{this.name}} ×{{this.qty}} ({{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span>)</span>
+                <span class="swse-store-surface__history-item">{{this.name}} ×{{this.qty}} ({{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span>)</span>
                 {{/each}}
               </div>
             </div>
@@ -564,8 +562,8 @@
           {{else}}
           <div class="swse-store-surface__empty">
             <div class="swse-store-surface__empty-glyph">◎</div>
-            <div class="swse-store-surface__empty-msg">No purchase history.</div>
-            <div class="swse-store-surface__empty-sub">Previous exchange logs will appear here.</div>
+            <div class="swse-store-surface__empty-msg">{{localize "SWSE.ShellUI.NoPurchaseHistory"}}</div>
+            <div class="swse-store-surface__empty-sub">{{localize "SWSE.ShellUI.PreviousExchangeLogsWillAppearHere"}}</div>
           </div>
           {{/if}}
         </section>
@@ -578,7 +576,7 @@
   {{else}}
   <div class="swse-store-surface__error">
     <i class="fas fa-exclamation-triangle"></i>
-    <span>Unable to load store.</span>
+    <span>{{localize "SWSE.ShellUI.UnableToLoadStore"}}</span>
   </div>
   {{/if}}
 

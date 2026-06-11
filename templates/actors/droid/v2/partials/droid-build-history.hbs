@@ -11,7 +11,7 @@
 --}}
 <div class="holo-panel">
   <div class="section-bar">
-    <h3 class="section-header">Build History</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.BuildHistory"}}</h3>
   </div>
 
   {{#if droidPanels.buildHistory.hasEntries}}
@@ -32,13 +32,13 @@
 
             {{#if entry.mode}}
               <div class="entry-detail">
-                <small><strong>Mode:</strong> {{entry.mode}}</small>
+                <small><strong>{{localize "SWSE.ActorUI.Mode"}}</strong> {{entry.mode}}</small>
               </div>
             {{/if}}
 
             {{#if entry.costDelta}}
               <div class="entry-detail cost-delta">
-                <small><strong>Cost Delta:</strong> {{#if (gt entry.costDelta 0)}}+{{/if}}{{entry.costDelta}} credits</small>
+                <small><strong>{{localize "SWSE.ActorUI.CostDelta"}}</strong> {{#if (gt entry.costDelta 0)}}+{{/if}}{{entry.costDelta}} credits</small>
               </div>
             {{/if}}
 

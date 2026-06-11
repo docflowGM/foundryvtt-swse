@@ -1,8 +1,8 @@
 <section class="swse-panel holo-panel swse-ui-panel swse-droid-part-panel" data-region="processor">
   <header class="section-bar">
-    <h3 class="section-header">Processor</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.Processor"}}</h3>
     {{#if droidPanels.processor.hasBackupProcessorSlot}}
-      <span class="swse-droid-chip">Backup Slot Online</span>
+      <span class="swse-droid-chip">{{localize "SWSE.ActorUI.BackupSlotOnline"}}</span>
     {{/if}}
   </header>
 
@@ -12,20 +12,20 @@
         <div class="swse-droid-slot {{#if slot.active}}is-active{{/if}} {{#if slot.isEmpty}}is-empty{{/if}}" data-slot-id="{{slot.id}}">
           <div class="entry-header">
             <span class="entry-name">{{slot.label}}</span>
-            {{#if slot.active}}<span class="swse-droid-chip">ACTIVE</span>{{else}}<span class="swse-droid-chip muted">INACTIVE</span>{{/if}}
+            {{#if slot.active}}<span class="swse-droid-chip">{{localize "SWSE.ActorUI.ACTIVE"}}</span>{{else}}<span class="swse-droid-chip muted">{{localize "SWSE.ActorUI.INACTIVE"}}</span>{{/if}}
           </div>
           {{#if slot.item}}
             <div class="swse-droid-part-row" data-part-id="{{slot.item.id}}">
               <strong>{{slot.item.name}}</strong>
               {{#if slot.item.description}}<p class="entry-description muted">{{slot.item.description}}</p>{{/if}}
               <div class="swse-droid-slot-actions">
-                <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{slot.item.id}}" data-part-name="{{slot.item.name}}">Use / Describe</button>
-                <button type="button" class="holo-btn tiny" data-action="customize-droid" data-garage-region="processor" data-garage-slot="{{slot.id}}" data-garage-mode="replace">Manage</button>
+                <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{slot.item.id}}" data-part-name="{{slot.item.name}}">{{localize "SWSE.ActorUI.UseDescribe"}}</button>
+                <button type="button" class="holo-btn tiny" data-action="customize-droid" data-garage-region="processor" data-garage-slot="{{slot.id}}" data-garage-mode="replace">{{localize "SWSE.ActorUI.Manage"}}</button>
               </div>
             </div>
           {{else}}
             <p class="swse-droid-default-hint">{{slot.defaultName}}</p>
-            <button type="button" class="holo-btn tiny" data-action="customize-droid" data-garage-region="processor" data-garage-slot="{{slot.id}}" data-garage-mode="add">Purchase Processor</button>
+            <button type="button" class="holo-btn tiny" data-action="customize-droid" data-garage-region="processor" data-garage-slot="{{slot.id}}" data-garage-mode="add">{{localize "SWSE.ActorUI.PurchaseProcessor"}}</button>
           {{/if}}
         </div>
       {{/each}}

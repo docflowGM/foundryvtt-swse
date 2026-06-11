@@ -32,6 +32,45 @@
  * - Vehicle → hangar/wing (hangar tab - future)
  */
 
+
+function asArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+
+function firstEmptyCrewStation(positions = {}) {
+  const keys = ['pilot', 'copilot', 'gunner', 'engineer', 'shields', 'commander'];
+  return keys.find((key) => !positions?.[key]) || 'pilot';
+}
+
+function normalizeCrewStation(value, fallback = 'pilot') {
+  const key = String(value || fallback).trim().toLowerCase().replace(/[\s_-]+/g, '');
+  const map = {
+    pilot: 'pilot',
+    copilot: 'copilot',
+    coPilot: 'copilot',
+    gunner: 'gunner',
+    gunners: 'gunner',
+    engineer: 'engineer',
+    shields: 'shields',
+    shield: 'shields',
+    commander: 'commander',
+    command: 'commander'
+  };
+  return map[key] || fallback;
+}
+
+function crewReference(actor, station) {
+  return {
+    uuid: actor.uuid,
+    id: actor.id,
+    actorId: actor.id,
+    name: actor.name,
+    type: actor.type,
+    role: station,
+    position: station
+  };
+}
+
 export class VehicleDropEngine {
   /**
    * Main entry point: resolve vehicle drop to mutationPlan + UI feedback
@@ -41,7 +80,7 @@ export class VehicleDropEngine {
    * @param {Object} config.dropData - drag event data
    * @returns {Promise<Object|null>} { mutationPlan, uiTargetTab } or null if invalid/duplicate
    */
-  static async resolve({ actor, dropData }) {
+  static async resolve({ actor, dropData, station = null } = {}) {
     if (!actor || actor.type !== 'vehicle') {
       console.warn('VehicleDropEngine.resolve: actor must be a vehicle');
       return null;
@@ -63,7 +102,7 @@ export class VehicleDropEngine {
       }
 
       if (normalized.type === 'Actor') {
-        return this._handleActorDrop(actor, normalized.document);
+        return this._handleActorDrop(actor, normalized.document, station);
       }
 
       // Reject invalid document types
@@ -158,7 +197,7 @@ export class VehicleDropEngine {
    * @param {Actor} droppedVehicle - dropped vehicle
    * @returns {Object|null} mutationPlan or null
    */
-  static _handleActorDrop(vehicle, droppedActor) {
+  static _handleActorDrop(vehicle, droppedActor, station = null) {
     // Only accept actor drops for crew assignment
     // Crew must be: character, npc, or droid
     // Do NOT accept vehicle-to-vehicle transfers (hangar logic not implemented)
@@ -174,7 +213,7 @@ export class VehicleDropEngine {
     }
 
     // Route to crew assignment
-    return this._assignCrew(vehicle, droppedActor);
+    return this._assignCrew(vehicle, droppedActor, station);
   }
 
   /**
@@ -282,30 +321,25 @@ export class VehicleDropEngine {
    * @param {Actor} actor
    * @returns {Object|null} mutationPlan or null
    */
-  static _assignCrew(vehicle, actor) {
-    // Check if actor is already crew
-    const crew = vehicle.system?.crew ?? [];
-    const alreadyCrew = crew.some(c => c.uuid === actor.uuid);
-    if (alreadyCrew) {
-      console.debug(`Drop skipped: ${actor.name} already assigned to crew`);
-      return null;
-    }
+  static _assignCrew(vehicle, actor, station = null) {
+    const positions = vehicle.system?.crewPositions ?? {};
+    const targetStation = normalizeCrewStation(station, firstEmptyCrewStation(positions));
+    const ownedActors = asArray(vehicle.system?.ownedActors);
+    const relationships = asArray(vehicle.system?.relationships);
+    const member = crewReference(actor, targetStation);
 
-    // Build crew reference (UUID only, no embedding)
-    const crewMember = {
-      uuid: actor.uuid,
-      name: actor.name,
-      type: actor.type
-      // position: null  // To be set via sheet UI
-    };
+    const ownedWithoutDuplicate = ownedActors.filter((entry) => entry?.uuid !== actor.uuid && entry?.id !== actor.id && entry?.actorId !== actor.id);
+    const relationshipsWithoutDuplicate = relationships.filter((entry) => entry?.uuid !== actor.uuid && entry?.id !== actor.id && entry?.actorId !== actor.id);
 
     return {
       mutationPlan: {
         update: {
-          'system.crew': [...crew, crewMember]
+          [`system.crewPositions.${targetStation}`]: member,
+          'system.ownedActors': [...ownedWithoutDuplicate, member],
+          'system.relationships': [...relationshipsWithoutDuplicate, { uuid: actor.uuid, id: actor.id, name: actor.name, type: actor.type, role: targetStation }]
         }
       },
-      uiTargetTab: 'crew'  // Highlight crew tab
+      uiTargetTab: 'crew'
     };
   }
 }

@@ -9,11 +9,11 @@
     <div class="swse-allies-lane-header-actions">
       {{#if lane.hasOpenSlots}}
         {{#if (eq laneId "followers")}}
-        <button type="button" class="swse-allies-create-btn" data-allies-action="build-follower">＋ Add Follower</button>
+        <button type="button" class="swse-allies-create-btn" data-allies-action="build-follower">{{localize "SWSE.ShellUI.AddFollower"}}</button>
         {{else if (eq laneId "minions")}}
-        <button type="button" class="swse-allies-create-btn" data-allies-action="build-minion">＋ Add Minion</button>
+        <button type="button" class="swse-allies-create-btn" data-allies-action="build-minion">{{localize "SWSE.ShellUI.AddMinion"}}</button>
         {{else if (eq laneId "beasts")}}
-        <button type="button" class="swse-allies-create-btn" data-allies-action="build-beast">＋ Add Beast</button>
+        <button type="button" class="swse-allies-create-btn" data-allies-action="build-beast">{{localize "SWSE.ShellUI.AddBeast"}}</button>
         {{/if}}
       {{/if}}
       <b>{{lane.count}}</b>
@@ -32,13 +32,13 @@
     </div>
     <div class="swse-allies-card-actions">
       {{#if this.canBuildFollower}}
-      <button type="button" data-allies-action="build-follower" data-slot-id="{{this.id}}">Hire Follower</button>
+      <button type="button" data-allies-action="build-follower" data-slot-id="{{this.id}}">{{localize "SWSE.ShellUI.HireFollower"}}</button>
       {{/if}}
       {{#if this.canBuildMinion}}
       <button type="button" data-allies-action="build-minion" data-slot-id="{{this.id}}">Hire {{this.label}}</button>
       {{/if}}
       {{#if this.canBuildBeast}}
-      <button type="button" data-allies-action="build-beast" data-slot-id="{{this.id}}">Add Beast</button>
+      <button type="button" data-allies-action="build-beast" data-slot-id="{{this.id}}">{{localize "SWSE.ShellUI.AddBeast2"}}</button>
       {{/if}}
     </div>
   </article>
@@ -51,16 +51,16 @@
       <div>
         <h5>Open {{#if (eq laneId "followers")}}Follower{{else if (eq laneId "minions")}}Minion{{else}}Beast{{/if}} Slot</h5>
         <p>{{lane.openCapacityCount}} open {{#if (eq laneId "followers")}}follower{{else if (eq laneId "minions")}}minion/privateer{{else}}beast{{/if}} slot{{#unless (eq lane.openCapacityCount 1)}}s{{/unless}} can be filled.</p>
-        <small>Use this shortcut to start creation from the Allies app.</small>
+        <small>{{localize "SWSE.ShellUI.UseThisShortcutToStartCreationFromThe"}}</small>
       </div>
     </div>
     <div class="swse-allies-card-actions">
       {{#if (eq laneId "followers")}}
-      <button type="button" data-allies-action="build-follower">Build Follower</button>
+      <button type="button" data-allies-action="build-follower">{{localize "SWSE.ShellUI.BuildFollower"}}</button>
       {{else if (eq laneId "minions")}}
-      <button type="button" data-allies-action="build-minion">Build Minion</button>
+      <button type="button" data-allies-action="build-minion">{{localize "SWSE.ShellUI.BuildMinion"}}</button>
       {{else}}
-      <button type="button" data-allies-action="build-beast">Add Beast</button>
+      <button type="button" data-allies-action="build-beast">{{localize "SWSE.ShellUI.AddBeast2"}}</button>
       {{/if}}
     </div>
   </article>
@@ -79,23 +79,23 @@
     </div>
     <div class="swse-allies-card-actions">
       {{#if this.canLevelUpFollower}}
-      <button type="button" data-allies-action="level-up-follower" data-actor-id="{{this.id}}">Level Up</button>
+      <button type="button" data-allies-action="level-up-follower" data-actor-id="{{this.id}}">{{localize "SWSE.ShellUI.LevelUp"}}</button>
       {{/if}}
       {{#if this.canSyncMinion}}
-      <button type="button" data-allies-action="sync-minion" data-actor-id="{{this.id}}">Level Up</button>
+      <button type="button" data-allies-action="sync-minion" data-actor-id="{{this.id}}">{{localize "SWSE.ShellUI.LevelUp"}}</button>
       {{/if}}
       {{#if this.canRequestBeastLevelUp}}
-      <button type="button" data-allies-action="request-beast-level-up" data-actor-id="{{this.id}}">Request Level Up</button>
+      <button type="button" data-allies-action="request-beast-level-up" data-actor-id="{{this.id}}">{{localize "SWSE.ShellUI.RequestLevelUp"}}</button>
       {{/if}}
       {{#if this.beastLevelRequested}}
-      <button type="button" disabled>GM Review</button>
+      <button type="button" disabled>{{localize "SWSE.ShellUI.GMReview"}}</button>
       {{/if}}
-      <button type="button" data-allies-action="manage-ally" data-actor-id="{{this.id}}">Manage</button>
+      <button type="button" data-allies-action="manage-ally" data-actor-id="{{this.id}}">{{localize "SWSE.ShellUI.Manage"}}</button>
       {{#if this.canOpenGarage}}
-      <button type="button" data-allies-action="open-garage" data-actor-id="{{this.id}}">Garage</button>
+      <button type="button" data-allies-action="open-garage" data-actor-id="{{this.id}}">{{localize "SWSE.ShellUI.Garage"}}</button>
       {{/if}}
       {{#if this.canFire}}
-      <button type="button" class="is-danger" data-allies-action="fire-ally" data-actor-id="{{this.id}}">Fire</button>
+      <button type="button" class="is-danger" data-allies-action="fire-ally" data-actor-id="{{this.id}}">{{localize "SWSE.ShellUI.Fire"}}</button>
       {{/if}}
     </div>
   </article>
@@ -115,9 +115,9 @@
     </div>
     <div class="swse-allies-card-actions">
       {{#if this.canRehire}}
-      <button type="button" data-allies-action="rehire-ally" data-actor-id="{{this.id}}">Rehire</button>
+      <button type="button" data-allies-action="rehire-ally" data-actor-id="{{this.id}}">{{localize "SWSE.ShellUI.Rehire"}}</button>
       {{else}}
-      <button type="button" disabled>Actor Missing</button>
+      <button type="button" disabled>{{localize "SWSE.ShellUI.ActorMissing"}}</button>
       {{/if}}
     </div>
   </article>

@@ -1,9 +1,9 @@
 <section class="swse-npc-card swse-npc-play-statblock-card {{#if isStatblockMode}}is-statblock{{/if}}">
   <header class="swse-npc-card__header">
     <div class="swse-npc-card__header-main">
-      <h3 class="swse-section-title">Play Mode Statblock</h3>
+      <h3 class="swse-section-title">{{localize "SWSE.ActorUI.PlayModeStatblock"}}</h3>
       <p class="swse-npc-card__subhead">
-        Table-facing values from actor data, imported source text, and beast data. This does not legalize or rewrite the NPC.
+        {{localize "SWSE.ActorUI.TableFacingValuesFromActorDataImportedSource"}}
       </p>
     </div>
 
@@ -11,10 +11,10 @@
       <span class="swse-npc-badge swse-npc-badge--mode">{{npcModeLabel}}</span>
       <span class="swse-npc-badge swse-npc-badge--subtype">{{npcSourceAuthorityLabel}}</span>
       {{#if playStatblock.rawAvailable}}
-        <span class="swse-npc-badge swse-npc-badge--subtype">Raw Source</span>
+        <span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.RawSource"}}</span>
       {{/if}}
       {{#if playStatblock.beastDataAvailable}}
-        <span class="swse-npc-badge swse-npc-badge--subtype">Beast Data</span>
+        <span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.BeastData"}}</span>
       {{/if}}
     </div>
   </header>
@@ -22,7 +22,7 @@
   <div class="swse-npc-card__body swse-npc-statblock-stack">
     {{#if playStatblock.hasWarnings}}
       <div class="swse-npc-callout swse-npc-callout--statblock">
-        <strong>Play Mode:</strong>
+        <strong>{{localize "SWSE.ActorUI.PlayMode2"}}</strong>
         {{#each playStatblock.warnings as |warning|}}
           <div>{{warning}}</div>
         {{/each}}
@@ -31,22 +31,22 @@
 
     <div class="swse-npc-statblock-grid swse-npc-statblock-grid--core">
       <div class="swse-npc-progress-stat">
-        <label class="swse-npc-progress-stat__label">HP</label>
+        <label class="swse-npc-progress-stat__label">{{localize "SWSE.ActorUI.HP"}}</label>
         <div class="swse-npc-progress-stat__value">{{playStatblock.hp.value}} / {{playStatblock.hp.max}}</div>
       </div>
 
       <div class="swse-npc-progress-stat">
-        <label class="swse-npc-progress-stat__label">BAB</label>
+        <label class="swse-npc-progress-stat__label">{{localize "SWSE.ActorUI.BAB"}}</label>
         <div class="swse-npc-progress-stat__value">{{playStatblock.bab}}</div>
       </div>
 
       <div class="swse-npc-progress-stat">
-        <label class="swse-npc-progress-stat__label">Threshold</label>
+        <label class="swse-npc-progress-stat__label">{{localize "SWSE.ActorUI.Threshold"}}</label>
         <div class="swse-npc-progress-stat__value">{{playStatblock.damageThreshold}}</div>
       </div>
 
       <div class="swse-npc-progress-stat">
-        <label class="swse-npc-progress-stat__label">Speed</label>
+        <label class="swse-npc-progress-stat__label">{{localize "SWSE.ActorUI.Speed"}}</label>
         <div class="swse-npc-progress-stat__value">{{playStatblock.speed}}</div>
       </div>
     </div>
@@ -61,7 +61,7 @@
     </div>
 
     <section class="swse-npc-statblock-section">
-      <h4>Abilities</h4>
+      <h4>{{localize "SWSE.ActorUI.Abilities"}}</h4>
       {{#if playStatblock.abilities.length}}
         <div class="swse-npc-chip-row">
           {{#each playStatblock.abilities as |ability|}}
@@ -69,12 +69,12 @@
           {{/each}}
         </div>
       {{else}}
-        <p class="swse-npc-empty-state">No ability scores were found.</p>
+        <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoAbilityScoresWereFound"}}</p>
       {{/if}}
     </section>
 
     <section class="swse-npc-statblock-section">
-      <h4>Attacks</h4>
+      <h4>{{localize "SWSE.ActorUI.Attacks"}}</h4>
       {{#if playStatblock.attacks.length}}
         <div class="swse-npc-statblock-list swse-npc-statblock-list--attacks">
           {{#each playStatblock.attacks as |attack|}}
@@ -87,17 +87,6 @@
                 <span>Attack {{attack.attack}}</span>
                 <span>Damage {{attack.damage}}</span>
               </div>
-              <div class="swse-npc-attack-actions">
-                {{#if attack.canRollAttack}}
-                  <button type="button" class="swse-npc-action-button swse-npc-action-button--compact" data-action="roll-npc-statblock-attack" data-item-id="{{attack.itemId}}" data-attack-name="{{attack.name}}" data-attack-bonus="{{attack.attackBonus}}">Roll Attack</button>
-                {{/if}}
-                {{#if attack.canRollDamage}}
-                  <button type="button" class="swse-npc-action-button swse-npc-action-button--compact swse-npc-action-button--secondary" data-action="roll-npc-statblock-damage" data-attack-name="{{attack.name}}" data-damage-formula="{{attack.damageFormula}}">Roll Damage</button>
-                {{/if}}
-                {{#if attack.itemId}}
-                  <button type="button" class="swse-npc-action-button swse-npc-action-button--compact swse-npc-action-button--secondary swse-v2-open-item" data-item-id="{{attack.itemId}}">Open Item</button>
-                {{/if}}
-              </div>
               {{#if attack.notes}}
                 <p>{{attack.notes}}</p>
               {{/if}}
@@ -105,25 +94,25 @@
           {{/each}}
         </div>
       {{else}}
-        <p class="swse-npc-empty-state">No itemized or raw statblock attacks were found.</p>
+        <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoItemizedOrRawStatblockAttacksWereFound"}}</p>
       {{/if}}
     </section>
 
     <section class="swse-npc-statblock-section">
-      <h4>Skills</h4>
+      <h4>{{localize "SWSE.ActorUI.Skills"}}</h4>
       {{#if playStatblock.skills.length}}
         <div class="swse-npc-chip-row">
           {{#each playStatblock.skills as |skill|}}
-            <button type="button" class="swse-npc-chip swse-npc-chip--button" data-action="roll-skill" data-skill="{{skill.key}}" data-mod-dialog="true">{{skill.label}} {{skill.total}}{{#if skill.trained}} · trained{{/if}}</button>
+            <span class="swse-npc-chip">{{skill.label}} {{skill.total}}{{#if skill.trained}} · trained{{/if}}</span>
           {{/each}}
         </div>
       {{else}}
-        <p class="swse-npc-empty-state">No trained or notable skill rows were found.</p>
+        <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoTrainedOrNotableSkillRowsWereFound"}}</p>
       {{/if}}
     </section>
 
     <section class="swse-npc-statblock-section">
-      <h4>Special Traits / Immunities / Source Notes</h4>
+      <h4>{{localize "SWSE.ActorUI.SpecialTraitsImmunitiesSourceNotes"}}</h4>
       {{#if playStatblock.specials.length}}
         <div class="swse-npc-statblock-list">
           {{#each playStatblock.specials as |special|}}
@@ -137,13 +126,13 @@
           {{/each}}
         </div>
       {{else}}
-        <p class="swse-npc-empty-state">No structured special trait or immunity notes were found.</p>
+        <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoStructuredSpecialTraitOrImmunityNotesWere"}}</p>
       {{/if}}
     </section>
 
     {{#if playStatblock.forcePowers.length}}
       <section class="swse-npc-statblock-section">
-        <h4>Force Powers</h4>
+        <h4>{{localize "SWSE.ActorUI.ForcePowers"}}</h4>
         <div class="swse-npc-chip-row">
           {{#each playStatblock.forcePowers as |power|}}
             <span class="swse-npc-chip">{{power.name}}</span>
@@ -153,30 +142,30 @@
     {{/if}}
 
     <section class="swse-npc-statblock-section">
-      <h4>Feats / Talents</h4>
+      <h4>{{localize "SWSE.ActorUI.FeatsTalents"}}</h4>
       <div class="swse-npc-statblock-grid swse-npc-statblock-grid--features">
         <div>
-          <h5>Feats</h5>
+          <h5>{{localize "SWSE.ActorUI.Feats"}}</h5>
           {{#if playStatblock.featureGroups.feats.length}}
             <div class="swse-npc-chip-row">
               {{#each playStatblock.featureGroups.feats as |feat|}}
-                <button type="button" class="swse-npc-chip swse-npc-chip--button swse-v2-open-item" data-item-id="{{feat.id}}">{{feat.name}}</button>
+                <span class="swse-npc-chip">{{feat.name}}</span>
               {{/each}}
             </div>
           {{else}}
-            <p class="swse-npc-empty-state">No feat items.</p>
+            <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoFeatItems"}}</p>
           {{/if}}
         </div>
         <div>
-          <h5>Talents</h5>
+          <h5>{{localize "SWSE.ActorUI.Talents"}}</h5>
           {{#if playStatblock.featureGroups.talents.length}}
             <div class="swse-npc-chip-row">
               {{#each playStatblock.featureGroups.talents as |talent|}}
-                <button type="button" class="swse-npc-chip swse-npc-chip--button swse-v2-open-item" data-item-id="{{talent.id}}">{{talent.name}}</button>
+                <span class="swse-npc-chip">{{talent.name}}</span>
               {{/each}}
             </div>
           {{else}}
-            <p class="swse-npc-empty-state">No talent items.</p>
+            <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoTalentItems"}}</p>
           {{/if}}
         </div>
       </div>
@@ -184,7 +173,7 @@
 
     {{#if playStatblock.sourceLines.length}}
       <section class="swse-npc-statblock-section">
-        <h4>Raw Source Context</h4>
+        <h4>{{localize "SWSE.ActorUI.RawSourceContext"}}</h4>
         <div class="swse-npc-statblock-list">
           {{#each playStatblock.sourceLines as |line|}}
             <article class="swse-npc-statblock-row">
@@ -201,7 +190,7 @@
 
     {{#if playStatblock.hasLanguages}}
       <section class="swse-npc-statblock-section">
-        <h4>Languages</h4>
+        <h4>{{localize "SWSE.ActorUI.Languages"}}</h4>
         <div class="swse-npc-chip-row">
           {{#each playStatblock.languages as |language|}}
             <span class="swse-npc-chip">{{language}}</span>

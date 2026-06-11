@@ -16,6 +16,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getMentorAtomPhrase, MENTOR_ATOM_PHRASES } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-atom-phrases.js";
+import { localizeMentorGenericExplanation, localizeMentorJudgmentText } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-localization.js";
 
 export class MentorJudgmentEngine {
   /**
@@ -109,7 +110,7 @@ export class MentorJudgmentEngine {
    */
   static _combinePhrasesIntoExplanation(phrases, intensity) {
     if (phrases.length === 0) {
-      return "This is a sound choice.";
+      return localizeMentorJudgmentText(['EmptyExplanation'], "This is a sound choice.");
     }
 
     if (phrases.length === 1) {
@@ -176,7 +177,8 @@ export class MentorJudgmentEngine {
     };
 
     const mentorExplanations = explanations[mentorName] || explanations['default'];
-    return mentorExplanations[intensity] || mentorExplanations['medium'];
+    const fallback = mentorExplanations[intensity] || mentorExplanations['medium'];
+    return localizeMentorGenericExplanation(mentorName, intensity, fallback);
   }
 
   /**
@@ -258,7 +260,7 @@ export class MentorJudgmentEngine {
         return this._capitalize(phrases[0]);
 
       case 'detailed':
-        return this._combinePhrasesIntoExplanation(phrases, intensity) + ' Your choices shape your destiny.';
+        return `${this._combinePhrasesIntoExplanation(phrases, intensity)} ${localizeMentorJudgmentText(['DetailedSuffix'], 'Your choices shape your destiny.')}`;
 
       case 'simple':
       default:

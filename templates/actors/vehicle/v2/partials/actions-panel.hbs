@@ -1,7 +1,7 @@
 <div class="holo-panel">
   <div class="section-bar">
-    <h3 class="section-header">Actions</h3>
-    <div class="muted" style="opacity:0.85; font-size:0.85rem;">Read-only — click an item-linked action to inspect</div>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.Actions"}}</h3>
+    <div class="muted" style="opacity:0.85; font-size:0.85rem;">{{localize "SWSE.ActorUI.ReadOnlyClickAnItemLinkedActionTo"}}</div>
   </div>
 
   {{#if derived.actions.groups.length}}
@@ -34,7 +34,7 @@
                           <span class="tag">{{this.sourceName}}</span>
                         {{/if}}
                         {{#if this.active}}
-                          <span class="tag">Active</span>
+                          <span class="tag">{{localize "SWSE.ActorUI.Active"}}</span>
                         {{/if}}
                       </div>
                       <div class="right">
@@ -71,6 +71,6 @@
       {{/each}}
     </div>
   {{else}}
-    <div class="muted" style="opacity:0.8;">No actions available.</div>
+    <div class="muted" style="opacity:0.8;">{{localize "SWSE.ActorUI.NoActionsAvailable"}}</div>
   {{/if}}
 </div>

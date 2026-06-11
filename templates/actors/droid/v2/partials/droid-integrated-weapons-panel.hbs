@@ -1,6 +1,6 @@
 <section class="swse-panel holo-panel swse-ui-panel swse-droid-part-panel" data-region="integrated-weapons">
   <header class="section-bar">
-    <h3 class="section-header">Integrated Weapons</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.IntegratedWeapons"}}</h3>
     {{#if droidPanels.integratedWeapons.totalCount}}<span class="section-meta muted">({{droidPanels.integratedWeapons.totalCount}})</span>{{/if}}
   </header>
 
@@ -10,7 +10,7 @@
         <div class="weapon-entry swse-droid-part-row {{#if weapon.isSelfDestruct}}is-danger{{/if}}" data-weapon-id="{{weapon.id}}">
           <div class="entry-header">
             <span class="entry-name">{{weapon.name}}</span>
-            {{#if weapon.isSelfDestruct}}<span class="swse-droid-chip danger">SELF-DESTRUCT</span>{{else}}<span class="swse-droid-chip">INTEGRATED</span>{{/if}}
+            {{#if weapon.isSelfDestruct}}<span class="swse-droid-chip danger">{{localize "SWSE.ActorUI.SELFDESTRUCT"}}</span>{{else}}<span class="swse-droid-chip">{{localize "SWSE.ActorUI.INTEGRATED"}}</span>{{/if}}
           </div>
           <div class="swse-weapon-stats-row">
             {{#if weapon.damage}}<span class="swse-weapon-meta">{{weapon.damage}}</span>{{/if}}
@@ -20,7 +20,7 @@
           {{#if weapon.description}}<div class="entry-description muted">{{weapon.description}}</div>{{/if}}
           <div class="swse-inline-actions">
             {{#if weapon.canRoll}}
-              <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{weapon.id}}" data-part-name="{{weapon.name}}">Use</button>
+              <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{weapon.id}}" data-part-name="{{weapon.name}}">{{localize "SWSE.ActorUI.Use"}}</button>
             {{/if}}
           </div>
           {{#if weapon.canRoll}}

@@ -15,6 +15,7 @@ import CharacterTemplates from "/systems/foundryvtt-swse/scripts/apps/chargen/ch
 import { ClassesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/classes-registry.js";
 import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
 import { compendiumLoader } from "/systems/foundryvtt-swse/scripts/utils/compendium-loader.js";
+import { localizeMentorTemplateDialogues } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-localization.js";
 
 
 const TEMPLATE_PATH = 'systems/foundryvtt-swse/templates/apps/template-creator.hbs';
@@ -327,7 +328,7 @@ async _prepareContext(options) {
       if (!response.ok) {
         throw new Error(`Failed to load mentor dialogues: ${response.statusText}`);
       }
-      this.mentorDialogues = await response.json();
+      this.mentorDialogues = localizeMentorTemplateDialogues(await response.json());
       SWSELogger.log('SWSE | Loaded mentor dialogues');
     } catch (error) {
       SWSELogger.error('SWSE | Failed to load mentor dialogues:', error);

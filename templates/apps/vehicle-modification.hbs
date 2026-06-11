@@ -22,6 +22,10 @@
         <span>Frame</span>
         <strong>{{#if hasFrame}}{{frame.name}}{{else}}— None Selected —{{/if}}</strong>
       </div>
+      <label class="sy-config-block sy-config-block--field">
+        <span>Model</span>
+        <input type="text" data-role="shipyard-model-name" value="{{modelName}}" placeholder="{{modelPlaceholder}}"/>
+      </label>
       <div class="sy-config-block">
         <span>Size</span>
         <strong>{{#if hasFrame}}{{frame.sizeLabel}}{{else}}—{{/if}}</strong>

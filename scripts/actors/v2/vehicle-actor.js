@@ -15,10 +15,10 @@ import { computeCharacterDerived } from "/systems/foundryvtt-swse/scripts/actors
  * NOTE: Condition Track derived values are owned by SWSEV2BaseActor.
  */
 export function computeVehicleDerived(actor, system) {
-  // PHASE 1: Build vehicle-specific derived contract first
-  buildVehicleDerived(actor, system);
-
-  // Then inherit character derived for shared panels (attacks, actions, skills if needed)
-  // This gives vehicles the base v2 contract without overwriting vehicle-specific values
+  // Build the shared v2 contract first, then stamp vehicle statblock
+  // authority over it. Character defaults initialize useful shared surfaces,
+  // but vehicles must not keep PC-derived 10 defenses or generic hp when
+  // imported/GM-edited hull and defense values are present.
   computeCharacterDerived(actor, system);
+  buildVehicleDerived(actor, system);
 }

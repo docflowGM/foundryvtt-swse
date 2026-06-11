@@ -1,7 +1,7 @@
 <div class="holo-panel swse-hp-condition-panel">
 
   <div class="section-bar">
-    <h3 class="section-header">Hit Points & Condition</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.HitPointsCondition"}}</h3>
 
     <label class="inline-flag">
       <input
@@ -9,7 +9,7 @@
         class="swse-v2-condition-persistent"
         {{#if derived.damage.conditionPersistent}}checked{{/if}}
       />
-      Persistent
+      {{localize "SWSE.ActorUI.Persistent"}}
     </label>
   </div>
 
@@ -19,7 +19,7 @@
     <div class="swse-v2-hp-block" data-swse-tooltip="HitPoints">
 
       <div class="hp-header">
-        <div class="label">HP</div>
+        <div class="label">{{localize "SWSE.ActorUI.HP"}}</div>
 
         <div class="hp-display">
           <input
@@ -58,20 +58,20 @@
       <div class="condition-controls">
 
         <button type="button" class="swse-v2-condition-improve">
-          Improve
+          {{localize "SWSE.ActorUI.Improve"}}
         </button>
 
         <div class="condition-steps">
-          <button type="button" class="swse-v2-condition-step" data-step="0">Normal</button>
+          <button type="button" class="swse-v2-condition-step" data-step="0">{{localize "SWSE.ActorUI.Normal"}}</button>
           <button type="button" class="swse-v2-condition-step" data-step="1">-1</button>
           <button type="button" class="swse-v2-condition-step" data-step="2">-2</button>
           <button type="button" class="swse-v2-condition-step" data-step="3">-5</button>
           <button type="button" class="swse-v2-condition-step" data-step="4">-10</button>
-          <button type="button" class="swse-v2-condition-step" data-step="5">Helpless</button>
+          <button type="button" class="swse-v2-condition-step" data-step="5">{{localize "SWSE.ActorUI.Helpless"}}</button>
         </div>
 
         <button type="button" class="swse-v2-condition-worsen">
-          Worsen
+          {{localize "SWSE.ActorUI.Worsen"}}
         </button>
 
       </div>
@@ -79,7 +79,7 @@
       <!-- CONDITION READOUT -->
       <div class="condition-readout">
 
-        <span class="label">Penalty:</span>
+        <span class="label">{{localize "SWSE.ActorUI.Penalty"}}</span>
 
         <span class="
           condition-penalty
@@ -92,7 +92,7 @@
 
         {{#if derived.damage.conditionHelpless}}
           <span class="condition-badge-helpless">
-            HELPLESS
+            {{localize "SWSE.ActorUI.HELPLESS"}}
           </span>
         {{/if}}
 

@@ -22,20 +22,15 @@ function safeNumber(value, fallback = 0) {
  * Accepts raw numeric input or already-formed object
  */
 function buildDefenseValue(rawValue, base = 10) {
-  // If already properly formed, return as-is
-  if (rawValue && typeof rawValue === 'object' && 'total' in rawValue) {
-    return rawValue;
-  }
-
-  // Wrap raw numeric value in contract object
-  const total = safeNumber(rawValue, base);
-  const adjustment = total - base;
+  const total = safeNumber(rawValue?.total ?? rawValue, base);
+  const resolvedBase = safeNumber(rawValue?.base ?? base, base);
+  const adjustment = total - resolvedBase;
 
   return {
-    base,
+    base: resolvedBase,
     total,
     adjustment,
-    stateBonus: 0
+    stateBonus: safeNumber(rawValue?.stateBonus, 0)
   };
 }
 
@@ -47,16 +42,17 @@ function coerceVehicleHp(system) {
   let max = 1;
   let temp = 0;
 
-  // Priority: system.hp (modern) > system.hull (legacy)
-  if (system.hp && typeof system.hp === 'object') {
+  // Vehicle sheets treat the statblock hull field as the table-facing
+  // authority. Some imported actors also carry a generic system.hp shell
+  // default; do not let that shell value override real vehicle hull.
+  if (system.hull && typeof system.hull === 'object') {
+    value = safeNumber(system.hull.value, 0);
+    max = safeNumber(system.hull.max, 1);
+    temp = safeNumber(system.hull.temp, 0);
+  } else if (system.hp && typeof system.hp === 'object') {
     value = safeNumber(system.hp.value, 0);
     max = safeNumber(system.hp.max, 1);
     temp = safeNumber(system.hp.temp, 0);
-  } else if (system.hull && typeof system.hull === 'object') {
-    // Fallback to legacy hull field for older vehicles
-    value = safeNumber(system.hull.value, 0);
-    max = safeNumber(system.hull.max, 1);
-    temp = 0;
   }
 
   // Ensure max > 0 to prevent division by zero
@@ -124,41 +120,28 @@ export function buildVehicleDerived(actor, system) {
   // Convert to {base, total, adjustment, stateBonus} objects
   // ════════════════════════════════════════════════════════════════════════════
 
-  // REF defense
-  if (!system.derived.defenses.ref || typeof system.derived.defenses.ref !== 'object') {
-    const refValue = system.reflexDefense ?? 10;
-    system.derived.defenses.ref = buildDefenseValue(refValue, 10);
-  }
+  // Always mirror source/statblock vehicle values into both the vehicle
+  // shorthand keys (ref/fort) and the shared actor keys (reflex/fortitude).
+  // Character-derived defaults often initialize to 10 first; vehicles must not
+  // preserve those defaults over imported or GM-edited statblock values.
+  const refDefense = buildDefenseValue(system.reflexDefense ?? system.defenses?.reflex?.total ?? system.defenses?.reflex ?? 10, 10);
+  const fortDefense = buildDefenseValue(system.fortitudeDefense ?? system.defenses?.fortitude?.total ?? system.defenses?.fortitude ?? 10, 10);
+  const willDefense = buildDefenseValue(system.willDefense ?? system.defenses?.will?.total ?? system.defenses?.will ?? 10, 10);
+  const flatFootedDefense = buildDefenseValue(system.flatFooted ?? system.flatFootedDefense ?? system.defenses?.flatFooted?.total ?? system.defenses?.flatFooted ?? refDefense.total, 10);
 
-  // FORT defense
-  if (!system.derived.defenses.fort || typeof system.derived.defenses.fort !== 'object') {
-    const fortValue = system.fortitudeDefense ?? 10;
-    system.derived.defenses.fort = buildDefenseValue(fortValue, 10);
-  }
-
-  // WILL defense (vehicles may not have this)
-  if (!system.derived.defenses.will || typeof system.derived.defenses.will !== 'object') {
-    const willValue = system.willDefense ?? 10;
-    system.derived.defenses.will = buildDefenseValue(willValue, 10);
-  }
-
-  // FLAT-FOOTED defense
-  if (!system.derived.defenses.flatFooted || typeof system.derived.defenses.flatFooted !== 'object') {
-    const ffValue = system.flatFooted ?? 10;
-    system.derived.defenses.flatFooted = buildDefenseValue(ffValue, 10);
-  }
+  system.derived.defenses.ref = refDefense;
+  system.derived.defenses.reflex = refDefense;
+  system.derived.defenses.fort = fortDefense;
+  system.derived.defenses.fortitude = fortDefense;
+  system.derived.defenses.will = willDefense;
+  system.derived.defenses.flatFooted = flatFootedDefense;
 
   // ════════════════════════════════════════════════════════════════════════════
   // DAMAGE: Threshold, reduction, and state
   // ════════════════════════════════════════════════════════════════════════════
 
-  if (!system.derived.damage.threshold || typeof system.derived.damage.threshold !== 'number') {
-    system.derived.damage.threshold = safeNumber(system.damageThreshold, 10);
-  }
-
-  if (!Number.isFinite(system.derived.damage.reduction)) {
-    system.derived.damage.reduction = safeNumber(system.damageReduction, 0);
-  }
+  system.derived.damage.threshold = safeNumber(system.damageThreshold ?? system.threshold, 10);
+  system.derived.damage.reduction = safeNumber(system.damageReduction ?? system.damageReductionValue, 0);
 
   // Condition track help state
   system.derived.damage.conditionHelpless = false;

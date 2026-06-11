@@ -1,6 +1,6 @@
 <section class="swse-panel holo-panel swse-ui-panel swse-droid-part-panel" data-region="locomotion">
   <header class="section-bar">
-    <h3 class="section-header">Locomotion</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.Locomotion"}}</h3>
   </header>
 
   {{#if droidPanels.locomotion.hasEntries}}
@@ -9,15 +9,15 @@
         <div class="swse-droid-part-row {{#if loco.active}}is-active{{/if}}" data-part-id="{{loco.id}}">
           <div class="entry-header">
             <span class="entry-name">{{loco.name}}</span>
-            {{#if loco.active}}<span class="swse-droid-chip">ACTIVE</span>{{/if}}
+            {{#if loco.active}}<span class="swse-droid-chip">{{localize "SWSE.ActorUI.ACTIVE"}}</span>{{/if}}
           </div>
           {{#if loco.speed}}<span class="swse-weapon-meta">Speed {{loco.speed}}</span>{{/if}}
           {{#if loco.description}}<div class="entry-description muted">{{loco.description}}</div>{{/if}}
-          <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{loco.id}}" data-part-name="{{loco.name}}">Use / Describe</button>
+          <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{loco.id}}" data-part-name="{{loco.name}}">{{localize "SWSE.ActorUI.UseDescribe"}}</button>
         </div>
       {{/each}}
     </div>
   {{else}}
-    <div class="empty-state"><p><em>No locomotion system configured.</em></p></div>
+    <div class="empty-state"><p><em>{{localize "SWSE.ActorUI.NoLocomotionSystemConfigured"}}</em></p></div>
   {{/if}}
 </section>

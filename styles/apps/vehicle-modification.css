@@ -794,3 +794,14 @@
   text-transform: uppercase;
   letter-spacing: .1em;
 }
+
+.sy-config-block--field input {
+  min-width: 180px;
+  border: 1px solid var(--sy-border);
+  background: color-mix(in oklch, black 58%, transparent);
+  color: var(--sy-text);
+  padding: 4px 7px;
+  font-family: var(--swse-ui-mono, monospace);
+  font-size: 11px;
+  letter-spacing: .08em;
+}

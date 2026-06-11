@@ -2,16 +2,16 @@
 <div class="swse swse-sheet v2 flexcol swse-sheet-ui swse-ui-shell swse-npc-concept-sheet swse-npc-kind--{{npcConcept.kind}}">
   {{> "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-header-dossier.hbs"}}
 
-  <nav class="sheet-tabs tabs swse-ui-tabs swse-npc-concept-tabs" data-tab-group="primary" aria-label="NPC sheet tabs">
-    <a class="item swse-ui-tab active" data-action="tab" data-tab="overview">Overview</a>
-    <a class="item swse-ui-tab" data-action="tab" data-tab="combat">Combat</a>
-    <a class="item swse-ui-tab" data-action="tab" data-tab="stats">Stats</a>
-    <a class="item swse-ui-tab" data-action="tab" data-tab="features">Features</a>
-    {{#if npcConcept.showGearTab}}<a class="item swse-ui-tab" data-action="tab" data-tab="gear">Gear</a>{{/if}}
-    {{#if npcConcept.showRelationshipsTab}}<a class="item swse-ui-tab" data-action="tab" data-tab="relationships">Relationships</a>{{/if}}
+  <nav class="sheet-tabs tabs swse-ui-tabs swse-npc-concept-tabs" data-tab-group="primary" aria-label="{{localize 'SWSE.ActorUI.NPCSheetTabs'}}">
+    <a class="item swse-ui-tab active" data-action="tab" data-tab="overview">{{localize "SWSE.ActorUI.Overview"}}</a>
+    <a class="item swse-ui-tab" data-action="tab" data-tab="combat">{{localize "SWSE.ActorUI.Combat"}}</a>
+    <a class="item swse-ui-tab" data-action="tab" data-tab="stats">{{localize "SWSE.ActorUI.Stats"}}</a>
+    <a class="item swse-ui-tab" data-action="tab" data-tab="features">{{localize "SWSE.ActorUI.Features"}}</a>
+    {{#if npcConcept.showGearTab}}<a class="item swse-ui-tab" data-action="tab" data-tab="gear">{{localize "SWSE.ActorUI.Gear"}}</a>{{/if}}
+    {{#if npcConcept.showRelationshipsTab}}<a class="item swse-ui-tab" data-action="tab" data-tab="relationships">{{localize "SWSE.ActorUI.Relationships"}}</a>{{/if}}
     {{#if npcConcept.showBeastTab}}<a class="item swse-ui-tab" data-action="tab" data-tab="beast">{{npcConcept.beastTabLabel}}</a>{{/if}}
-    {{#if npcConcept.showForceTab}}<a class="item swse-ui-tab" data-action="tab" data-tab="force">Force</a>{{/if}}
-    {{#if npcConcept.showGmTab}}<a class="item swse-ui-tab swse-npc-gm-tab" data-action="tab" data-tab="gm">GM</a>{{/if}}
+    {{#if npcConcept.showForceTab}}<a class="item swse-ui-tab" data-action="tab" data-tab="force">{{localize "SWSE.ActorUI.Force"}}</a>{{/if}}
+    {{#if npcConcept.showGmTab}}<a class="item swse-ui-tab swse-npc-gm-tab" data-action="tab" data-tab="gm">{{localize "SWSE.ActorUI.GM"}}</a>{{/if}}
   </nav>
 
   <section class="sheet-body flexcol swse-npc-concept-body">
@@ -26,8 +26,8 @@
             <section class="swse-npc-card swse-npc-card--quickref">
               <header class="swse-npc-card__header">
                 <div>
-                  <h3 class="swse-section-title">Combat Reference</h3>
-                  <p class="swse-npc-card__subhead">Fast table-facing values for dependent NPC play.</p>
+                  <h3 class="swse-section-title">{{localize "SWSE.ActorUI.CombatReference"}}</h3>
+                  <p class="swse-npc-card__subhead">{{localize "SWSE.ActorUI.FastTableFacingValuesForDependentNPCPlay"}}</p>
                 </div>
               </header>
               <div class="swse-npc-card__body">
@@ -66,7 +66,7 @@
             </div>
             <aside class="swse-npc-col-stack">
               <section class="swse-npc-card swse-npc-card--quickref">
-                <header class="swse-npc-card__header"><h3 class="swse-section-title">Defenses</h3></header>
+                <header class="swse-npc-card__header"><h3 class="swse-section-title">{{localize "SWSE.ActorUI.Defenses"}}</h3></header>
                 <div class="swse-npc-card__body">
                   <div class="swse-npc-progress-grid swse-npc-progress-grid--compact">
                     {{#each npcConcept.defenseChips as |def|}}
@@ -88,7 +88,7 @@
             </div>
             <aside class="swse-npc-col-stack">
               <section class="swse-npc-card swse-npc-card--mode-summary">
-                <header class="swse-npc-card__header"><h3 class="swse-section-title">Rules Mode</h3></header>
+                <header class="swse-npc-card__header"><h3 class="swse-section-title">{{localize "SWSE.ActorUI.RulesMode"}}</h3></header>
                 <div class="swse-npc-card__body">
                   <div class="swse-npc-mode-grid">
                     {{#each npcConcept.modeCards as |mode|}}
@@ -118,8 +118,8 @@
         <section class="swse-npc-card swse-npc-card--action-economy">
           <header class="swse-npc-card__header">
             <div>
-              <h3 class="swse-section-title">Action Economy</h3>
-              <p class="swse-npc-card__subhead">Encounter telemetry appears when this NPC is in the combat tracker.</p>
+              <h3 class="swse-section-title">{{localize "SWSE.ActorUI.ActionEconomy"}}</h3>
+              <p class="swse-npc-card__subhead">{{localize "SWSE.ActorUI.EncounterTelemetryAppearsWhenThisNPCIsIn"}}</p>
             </div>
           </header>
           <div class="swse-npc-card__body">
@@ -131,7 +131,7 @@
                 <span class="swse-npc-chip">Swift {{actionEconomy.state.swift}}</span>
               </div>
             {{else}}
-              <p class="swse-npc-empty-state">Action economy tracking activates during active combat.</p>
+              <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.ActionEconomyTrackingActivatesDuringActiveCombat"}}</p>
             {{/if}}
           </div>
         </section>
@@ -139,8 +139,8 @@
         <section class="swse-npc-card swse-npc-card--attacks">
           <header class="swse-npc-card__header">
             <div>
-              <h3 class="swse-section-title">Attacks</h3>
-              <p class="swse-npc-card__subhead">Weapon, natural, and statblock attacks.</p>
+              <h3 class="swse-section-title">{{localize "SWSE.ActorUI.Attacks"}}</h3>
+              <p class="swse-npc-card__subhead">{{localize "SWSE.ActorUI.WeaponNaturalAndStatblockAttacks"}}</p>
             </div>
             <div class="swse-npc-badges"><span class="swse-npc-badge">BAB {{npcConcept.babDisplay}}</span></div>
           </header>
@@ -156,29 +156,18 @@
                     <span>Attack {{attack.attack}}</span>
                     <span>Damage {{attack.damage}}</span>
                   </div>
-                  <div class="swse-npc-attack-actions">
-                    {{#if attack.canRollAttack}}
-                      <button type="button" class="swse-npc-action-button swse-npc-action-button--compact" data-action="roll-npc-statblock-attack" data-item-id="{{attack.itemId}}" data-attack-name="{{attack.name}}" data-attack-bonus="{{attack.attackBonus}}">Roll Attack</button>
-                    {{/if}}
-                    {{#if attack.canRollDamage}}
-                      <button type="button" class="swse-npc-action-button swse-npc-action-button--compact swse-npc-action-button--secondary" data-action="roll-npc-statblock-damage" data-attack-name="{{attack.name}}" data-damage-formula="{{attack.damageFormula}}">Roll Damage</button>
-                    {{/if}}
-                    {{#if attack.canOpen}}
-                      <button type="button" class="swse-npc-action-button swse-npc-action-button--compact swse-npc-action-button--secondary swse-v2-open-item" data-item-id="{{attack.itemId}}">Open Item</button>
-                    {{/if}}
-                  </div>
                   {{#if attack.notes}}<p class="swse-npc-attack-notes">{{attack.notes}}</p>{{/if}}
                 </article>
               {{/each}}
             {{else}}
-              <p class="swse-npc-empty-state">No itemized or statblock attacks were found.</p>
+              <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoItemizedOrStatblockAttacksWereFound"}}</p>
             {{/if}}
           </div>
         </section>
 
         <div class="swse-npc-two-col-equal">
           <section class="swse-npc-card swse-npc-card--condition">
-            <header class="swse-npc-card__header"><h3 class="swse-section-title">Condition Track</h3></header>
+            <header class="swse-npc-card__header"><h3 class="swse-section-title">{{localize "SWSE.ActorUI.ConditionTrack"}}</h3></header>
             <div class="swse-npc-card__body">
               <div class="swse-npc-combat-stat-row swse-npc-combat-stat-row--condition">
                 {{#each npcConcept.conditionSteps as |step|}}
@@ -191,7 +180,7 @@
           </section>
 
           <section class="swse-npc-card swse-npc-card--defenses">
-            <header class="swse-npc-card__header"><h3 class="swse-section-title">Defenses</h3></header>
+            <header class="swse-npc-card__header"><h3 class="swse-section-title">{{localize "SWSE.ActorUI.Defenses"}}</h3></header>
             <div class="swse-npc-card__body">
               <div class="swse-npc-combat-stat-row">
                 {{#each npcConcept.defenseChips as |def|}}
@@ -209,31 +198,11 @@
 
     <section class="tab flexcol" data-tab-group="primary" data-tab="stats">
       <div class="swse-npc-col-stack">
-        {{#if editable}}
-        <section class="swse-npc-card swse-npc-card--edit-basics">
-          <header class="swse-npc-card__header">
-            <div>
-              <h3 class="swse-section-title">GM Quick Edit</h3>
-              <p class="swse-npc-card__subhead">Immediate table-use fields. Changes save when the field changes.</p>
-            </div>
-          </header>
-          <div class="swse-npc-card__body swse-npc-edit-grid">
-            <label><span>Species</span><input type="text" name="system.race" value="{{system.race}}"></label>
-            <label><span>Class</span><input type="text" name="system.className" value="{{system.className}}"></label>
-            <label><span>Level</span><input type="number" name="system.level" value="{{system.level}}" min="0" step="1"></label>
-            <label><span>Challenge</span><input type="text" name="system.challengeLevel" value="{{system.challengeLevel}}"></label>
-            <label><span>Size</span><input type="text" name="system.size" value="{{system.size}}"></label>
-            <label><span>Speed</span><input type="text" name="system.speed" value="{{system.speed}}"></label>
-            <label><span>HP</span><input type="number" name="system.hp.value" value="{{system.hp.value}}" min="0" step="1"></label>
-            <label><span>Credits</span><input type="number" name="system.credits" value="{{system.credits}}" min="0" step="1"></label>
-          </div>
-        </section>
-        {{/if}}
         <section class="swse-npc-card swse-npc-card--abilities">
           <header class="swse-npc-card__header">
             <div>
-              <h3 class="swse-section-title">Ability Scores</h3>
-              <p class="swse-npc-card__subhead">Conservative stat display; edit controls remain limited to safe direct fields.</p>
+              <h3 class="swse-section-title">{{localize "SWSE.ActorUI.AbilityScores"}}</h3>
+              <p class="swse-npc-card__subhead">{{localize "SWSE.ActorUI.ConservativeStatDisplayEditControlsRemainLimitedTo"}}</p>
             </div>
           </header>
           <div class="swse-npc-card__body">
@@ -244,39 +213,32 @@
                     <span class="swse-npc-ability-label">{{ability.abbr}}</span>
                     <strong class="swse-npc-ability-score">{{ability.score}}</strong>
                     <span class="swse-npc-ability-mod {{ability.modifierClass}}">{{ability.mod}}</span>
-                    {{#if ../editable}}
-                      <div class="swse-npc-ability-edit-grid">
-                        <label><span>Base</span><input class="swse-npc-ability-input" type="number" name="system.attributes.{{ability.key}}.base" value="{{ability.base}}" step="1"></label>
-                        <label><span>Bonus</span><input class="swse-npc-ability-input" type="number" name="system.attributes.{{ability.key}}.racial" value="{{ability.racial}}" step="1"></label>
-                        <label><span>Temp</span><input class="swse-npc-ability-input" type="number" name="system.attributes.{{ability.key}}.temp" value="{{ability.temp}}" step="1"></label>
-                      </div>
-                    {{/if}}
                   </div>
                 {{/each}}
               </div>
             {{else}}
-              <p class="swse-npc-empty-state">No ability scores were found.</p>
+              <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoAbilityScoresWereFound"}}</p>
             {{/if}}
           </div>
         </section>
 
         <section class="swse-npc-card swse-npc-card--skills">
           <header class="swse-npc-card__header">
-            <div><h3 class="swse-section-title">Skills</h3></div>
+            <div><h3 class="swse-section-title">{{localize "SWSE.ActorUI.Skills"}}</h3></div>
             <div class="swse-npc-badges"><span class="swse-npc-badge">{{npcConcept.trainedSkillCount}} trained</span></div>
           </header>
           <div class="swse-npc-card__body">
             {{#if npcConcept.hasSkills}}
               <div class="swse-npc-skills-grid">
                 {{#each npcConcept.skills as |skill|}}
-                  <button type="button" class="swse-npc-skill-row {{#if skill.trained}}is-trained{{/if}}" data-action="roll-skill" data-skill="{{skill.key}}" data-mod-dialog="true">
+                  <div class="swse-npc-skill-row {{#if skill.trained}}is-trained{{/if}}">
                     <span class="swse-npc-skill-name">{{#if skill.trained}}● {{/if}}{{skill.label}}</span>
                     <strong class="swse-npc-skill-total">{{skill.total}}</strong>
-                  </button>
+                  </div>
                 {{/each}}
               </div>
             {{else}}
-              <p class="swse-npc-empty-state">No trained or notable skill rows were found.</p>
+              <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoTrainedOrNotableSkillRowsWereFound"}}</p>
             {{/if}}
           </div>
         </section>
@@ -286,7 +248,7 @@
     <section class="tab flexcol" data-tab-group="primary" data-tab="features">
       <div class="swse-npc-two-col-equal swse-npc-features-layout">
         <section class="swse-npc-card swse-npc-card--features">
-          <header class="swse-npc-card__header"><h3 class="swse-section-title">Feats</h3><div class="swse-npc-badges"><span class="swse-npc-badge">{{npcConcept.feats.length}}</span></div></header>
+          <header class="swse-npc-card__header"><h3 class="swse-section-title">{{localize "SWSE.ActorUI.Feats"}}</h3><div class="swse-npc-badges"><span class="swse-npc-badge">{{npcConcept.feats.length}}</span></div></header>
           <div class="swse-npc-card__body swse-npc-feature-list">
             {{#if npcConcept.hasFeats}}
               {{#each npcConcept.feats as |feat|}}
@@ -296,13 +258,13 @@
                 </button>
               {{/each}}
             {{else}}
-              <p class="swse-npc-empty-state">No feat items are recorded.</p>
+              <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoFeatItemsAreRecorded"}}</p>
             {{/if}}
           </div>
         </section>
 
         <section class="swse-npc-card swse-npc-card--features">
-          <header class="swse-npc-card__header"><h3 class="swse-section-title">Talents</h3><div class="swse-npc-badges"><span class="swse-npc-badge">{{npcConcept.talents.length}}</span></div></header>
+          <header class="swse-npc-card__header"><h3 class="swse-section-title">{{localize "SWSE.ActorUI.Talents"}}</h3><div class="swse-npc-badges"><span class="swse-npc-badge">{{npcConcept.talents.length}}</span></div></header>
           <div class="swse-npc-card__body swse-npc-feature-list">
             {{#if npcConcept.hasTalents}}
               {{#each npcConcept.talents as |talent|}}
@@ -312,14 +274,14 @@
                 </button>
               {{/each}}
             {{else}}
-              <p class="swse-npc-empty-state">No talent items are recorded.</p>
+              <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoTalentItemsAreRecorded"}}</p>
             {{/if}}
           </div>
         </section>
       </div>
 
       <section class="swse-npc-card swse-npc-card--specials">
-        <header class="swse-npc-card__header"><h3 class="swse-section-title">Special Traits / Notes</h3></header>
+        <header class="swse-npc-card__header"><h3 class="swse-section-title">{{localize "SWSE.ActorUI.SpecialTraitsNotes"}}</h3></header>
         <div class="swse-npc-card__body swse-npc-statblock-list">
           {{#if npcConcept.hasSpecials}}
             {{#each npcConcept.specials as |special|}}
@@ -329,7 +291,7 @@
               </article>
             {{/each}}
           {{else}}
-            <p class="swse-npc-empty-state">No structured special trait notes were found.</p>
+            <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoStructuredSpecialTraitNotesWereFound"}}</p>
           {{/if}}
         </div>
       </section>
@@ -339,7 +301,7 @@
     <section class="tab flexcol" data-tab-group="primary" data-tab="gear">
       <section class="swse-npc-card swse-npc-card--gear">
         <header class="swse-npc-card__header">
-          <div><h3 class="swse-section-title">Inventory</h3></div>
+          <div><h3 class="swse-section-title">{{localize "SWSE.ActorUI.Inventory"}}</h3></div>
           <div class="swse-npc-badges"><span class="swse-npc-badge swse-npc-badge--subtype">{{npcConcept.creditsDisplay}}</span></div>
         </header>
         <div class="swse-npc-card__body swse-npc-gear-stack">
@@ -348,13 +310,10 @@
               <div class="swse-npc-gear-row">
                 <button type="button" class="swse-npc-gear-name {{#if item.canOpen}}swse-v2-open-item{{/if}}" data-item-id="{{item.id}}">{{item.name}}</button>
                 <div class="swse-npc-gear-meta"><span>{{item.typeLabel}}</span><span>×{{item.quantity}}</span></div>
-                {{#if item.canRollAttack}}
-                  <button type="button" class="swse-npc-gear-roll" data-action="roll-npc-weapon" data-item-id="{{item.id}}">Roll Attack</button>
-                {{/if}}
               </div>
             {{/each}}
           {{else}}
-            <p class="swse-npc-empty-state">No itemized gear. Add items via the item browser.</p>
+            <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoItemizedGearAddItemsViaTheItem"}}</p>
           {{/if}}
         </div>
       </section>
@@ -390,14 +349,14 @@
       {{#if system.forceSensitive}}
         {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/tabs/force-suite-tab.hbs"}}
       {{else}}
-        <section class="swse-npc-card"><div class="swse-npc-card__body"><p class="swse-npc-empty-state">No Force suite is active for this NPC.</p></div></section>
+        <section class="swse-npc-card"><div class="swse-npc-card__body"><p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.NoForceSuiteIsActiveForThisNPC"}}</p></div></section>
       {{/if}}
     </section>
     {{/if}}
 
     {{#if npcConcept.showGmTab}}
     <section class="tab flexcol" data-tab-group="primary" data-tab="gm">
-      <div class="swse-npc-gm-notice"><i class="fas fa-user-shield"></i><span>GM Utility Tab — hidden from players by default.</span></div>
+      <div class="swse-npc-gm-notice"><i class="fas fa-user-shield"></i><span>{{localize "SWSE.ActorUI.GMUtilityTabHiddenFromPlayersByDefault"}}</span></div>
       <div class="swse-npc-two-col">
         <div class="swse-npc-col-stack">
           {{> "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-statblock-authority-panel.hbs"}}
@@ -408,10 +367,10 @@
             {{> "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-progression-panel.hbs"}}
           {{else}}
             <section class="swse-npc-card">
-              <header class="swse-npc-card__header"><h3 class="swse-section-title">Progression</h3><div class="swse-npc-badges"><span class="swse-npc-badge swse-npc-badge--mode">Not Active</span></div></header>
+              <header class="swse-npc-card__header"><h3 class="swse-section-title">{{localize "SWSE.ActorUI.Progression"}}</h3><div class="swse-npc-badges"><span class="swse-npc-badge swse-npc-badge--mode">{{localize "SWSE.ActorUI.NotActive"}}</span></div></header>
               <div class="swse-npc-card__body">
-                <p class="swse-npc-empty-state">Progression panel is not active for this NPC mode.</p>
-                <div class="swse-npc-action-row"><button type="button" class="swse-npc-action-button" data-action="open-npc-levelup">Open NPC Level-Up</button></div>
+                <p class="swse-npc-empty-state">{{localize "SWSE.ActorUI.ProgressionPanelIsNotActiveForThisNPC"}}</p>
+                <div class="swse-npc-action-row"><button type="button" class="swse-npc-action-button" data-action="open-npc-levelup">{{localize "SWSE.ActorUI.OpenNPCLevelUp"}}</button></div>
               </div>
             </section>
           {{/if}}

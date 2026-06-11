@@ -1,6 +1,6 @@
 <section class="swse-panel holo-panel swse-ui-panel swse-droid-part-region swse-droid-armor-region">
   <header class="section-bar">
-    <h3 class="section-header">Armor / Body</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.ArmorBody"}}</h3>
     {{#if droid.resolvedSystems.armor.items.length}}
       <span class="section-meta muted">{{droid.resolvedSystems.armor.items.length}} installed</span>
     {{/if}}
@@ -22,7 +22,7 @@
     </div>
   {{else}}
     <div class="empty-state">
-      <p><em>No built-in armor installed.</em></p>
+      <p><em>{{localize "SWSE.ActorUI.NoBuiltInArmorInstalled"}}</em></p>
     </div>
   {{/if}}
 </section>

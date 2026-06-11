@@ -9,28 +9,28 @@
   <div class="section-bar">
     <h3 class="section-header">
       <i class="fas {{#if stockConversion}}fa-wand-magic-sparkles{{else}}fa-file-import{{/if}}"></i>
-      Stock Droid Source
+      {{localize "SWSE.ActorUI.StockDroidSource"}}
     </h3>
   </div>
 
   <div class="provenance-content">
     <!-- Source Information -->
     <div class="provenance-block">
-      <div class="block-label">Source</div>
+      <div class="block-label">{{localize "SWSE.ActorUI.Source"}}</div>
       <div class="block-value">{{#if stockConversion}}{{stockConversion.sourceName}}{{else if stockImport}}{{stockImport.sourceName}}{{else}}Unknown{{/if}}</div>
     </div>
 
     <!-- Mode -->
     <div class="provenance-block">
-      <div class="block-label">Mode</div>
+      <div class="block-label">{{localize "SWSE.ActorUI.Mode2"}}</div>
       <div class="block-value">
         {{#if stockConversion}}
           <span class="mode-badge converted">
-            <i class="fas fa-wand-magic-sparkles"></i> Converted Custom
+            <i class="fas fa-wand-magic-sparkles"></i> {{localize "SWSE.ActorUI.ConvertedCustom"}}
           </span>
         {{else}}
           <span class="mode-badge statblock">
-            <i class="fas fa-file-import"></i> Stock Statblock
+            <i class="fas fa-file-import"></i> {{localize "SWSE.ActorUI.StockStatblock"}}
           </span>
         {{/if}}
       </div>
@@ -39,7 +39,7 @@
     <!-- Confidence (if conversion) -->
     {{#if stockConversion}}
     <div class="provenance-block">
-      <div class="block-label">Confidence</div>
+      <div class="block-label">{{localize "SWSE.ActorUI.Confidence"}}</div>
       <div class="block-value">
         <span class="confidence-badge {{stockConversion.confidence}}">
           {{stockConversion.confidence}}
@@ -65,7 +65,7 @@
     <!-- Quality Metrics -->
     {{#if stockConversion}}
     <div class="provenance-block full-width">
-      <div class="block-label">Conversion Quality</div>
+      <div class="block-label">{{localize "SWSE.ActorUI.ConversionQuality"}}</div>
       <div class="quality-metrics">
         {{#if stockConversion.assumptions}}
         <div class="metric">
@@ -87,17 +87,17 @@
     {{#if editable}}
     <div class="provenance-actions">
       {{#if stockImport}}
-      <button class="action-btn compare-btn" data-action="compare-stock" title="Compare to original stock statblock">
-        <i class="fas fa-code-branch"></i> Compare
+      <button class="action-btn compare-btn" data-action="compare-stock" title="{{localize 'SWSE.ActorUI.CompareToOriginalStockStatblock'}}">
+        <i class="fas fa-code-branch"></i> {{localize "SWSE.ActorUI.Compare"}}
       </button>
       {{/if}}
 
       {{#if stockConversion}}
-      <button class="action-btn review-btn" data-action="view-conversion-details" title="Review conversion details and assumptions">
-        <i class="fas fa-clipboard-check"></i> Review
+      <button class="action-btn review-btn" data-action="view-conversion-details" title="{{localize 'SWSE.ActorUI.ReviewConversionDetailsAndAssumptions'}}">
+        <i class="fas fa-clipboard-check"></i> {{localize "SWSE.ActorUI.Review"}}
       </button>
-      <button class="action-btn compare-btn" data-action="compare-stock" title="Compare to original stock statblock">
-        <i class="fas fa-code-branch"></i> Compare
+      <button class="action-btn compare-btn" data-action="compare-stock" title="{{localize 'SWSE.ActorUI.CompareToOriginalStockStatblock'}}">
+        <i class="fas fa-code-branch"></i> {{localize "SWSE.ActorUI.Compare"}}
       </button>
       {{/if}}
     </div>
@@ -108,7 +108,7 @@
   {{#if stockConversion}}
   <div class="provenance-warning">
     <i class="fas fa-info-circle"></i>
-    <p>This droid was converted from a stock statblock. Later customizations may diverge from the original published values.</p>
+    <p>{{localize "SWSE.ActorUI.ThisDroidWasConvertedFromAStockStatblock"}}</p>
   </div>
   {{/if}}
 </div>

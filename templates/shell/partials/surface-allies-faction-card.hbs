@@ -3,15 +3,15 @@
     <input type="hidden" name="factionId" value="{{faction.factionId}}">
     <header class="swse-allies-faction-card-head">
       <div>
-        <span class="swse-allies-kicker">FACTION RECORD</span>
-        <input type="text" name="factionName" value="{{faction.name}}" placeholder="Faction name">
+        <span class="swse-allies-kicker">{{localize "SWSE.ShellUI.FACTIONRECORD"}}</span>
+        <input type="text" name="factionName" value="{{faction.name}}" placeholder="{{localize 'SWSE.ShellUI.FactionName'}}">
         {{#if faction.meta}}<small>{{faction.meta}}</small>{{/if}}
       </div>
       <div class="swse-allies-faction-score {{faction.scoreClass}}">
-        <span>Score</span>
+        <span>{{localize "SWSE.ShellUI.Score2"}}</span>
         <output>{{faction.scoreLabel}}</output>
         {{#if faction.canEditScore}}
-        <input type="number" name="score" step="1" value="{{faction.score}}" inputmode="numeric" aria-label="Faction score">
+        <input type="number" name="score" step="1" value="{{faction.score}}" inputmode="numeric" aria-label="{{localize 'SWSE.ShellUI.FactionScore'}}">
         {{else}}
         <input type="hidden" name="score" value="{{faction.score}}">
         {{/if}}
@@ -19,67 +19,67 @@
       </div>
       <div class="swse-allies-faction-actions">
         {{#if faction.canSave}}<button type="button" data-allies-action="save-faction" data-faction-id="{{faction.id}}">{{#if faction.isPending}}Submit{{else}}Save{{/if}}</button>{{/if}}
-        <button type="button" class="is-danger" data-allies-action="remove-faction" data-faction-id="{{faction.id}}">Remove</button>
+        <button type="button" class="is-danger" data-allies-action="remove-faction" data-faction-id="{{faction.id}}">{{localize "SWSE.ShellUI.Remove"}}</button>
       </div>
     </header>
 
     <div class="swse-allies-faction-grid">
       <label>
-        <span>Faction Type</span>
-        <input type="text" name="type" value="{{faction.type}}" placeholder="Crime syndicate, law enforcement, government...">
+        <span>{{localize "SWSE.ShellUI.FactionType"}}</span>
+        <input type="text" name="type" value="{{faction.type}}" placeholder="{{localize 'SWSE.ShellUI.CrimeSyndicateLawEnforcementGovernment'}}">
       </label>
       <label>
-        <span>Relationship</span>
+        <span>{{localize "SWSE.ShellUI.Relationship"}}</span>
         <select name="relationshipType">
-          <option value="known" {{#if (eq faction.relationshipType "known")}}selected{{/if}}>Known</option>
-          <option value="member" {{#if (eq faction.relationshipType "member")}}selected{{/if}}>Member</option>
-          <option value="enemy" {{#if (eq faction.relationshipType "enemy")}}selected{{/if}}>Enemy / Rival</option>
-          <option value="patron" {{#if (eq faction.relationshipType "patron")}}selected{{/if}}>Patron / Client</option>
-          <option value="founder" {{#if (eq faction.relationshipType "founder")}}selected{{/if}}>Founder / Leader</option>
-          <option value="ally" {{#if (eq faction.relationshipType "ally")}}selected{{/if}}>Ally</option>
-          <option value="neutral" {{#if (eq faction.relationshipType "neutral")}}selected{{/if}}>Neutral</option>
-          <option value="other" {{#if (eq faction.relationshipType "other")}}selected{{/if}}>Other</option>
+          <option value="known" {{#if (eq faction.relationshipType "known")}}selected{{/if}}>{{localize "SWSE.ShellUI.Known"}}</option>
+          <option value="member" {{#if (eq faction.relationshipType "member")}}selected{{/if}}>{{localize "SWSE.ShellUI.Member"}}</option>
+          <option value="enemy" {{#if (eq faction.relationshipType "enemy")}}selected{{/if}}>{{localize "SWSE.ShellUI.EnemyRival"}}</option>
+          <option value="patron" {{#if (eq faction.relationshipType "patron")}}selected{{/if}}>{{localize "SWSE.ShellUI.PatronClient"}}</option>
+          <option value="founder" {{#if (eq faction.relationshipType "founder")}}selected{{/if}}>{{localize "SWSE.ShellUI.FounderLeader"}}</option>
+          <option value="ally" {{#if (eq faction.relationshipType "ally")}}selected{{/if}}>{{localize "SWSE.ShellUI.Ally"}}</option>
+          <option value="neutral" {{#if (eq faction.relationshipType "neutral")}}selected{{/if}}>{{localize "SWSE.ShellUI.Neutral"}}</option>
+          <option value="other" {{#if (eq faction.relationshipType "other")}}selected{{/if}}>{{localize "SWSE.ShellUI.Other"}}</option>
         </select>
       </label>
       <label>
-        <span>Faction Scale</span>
-        <input type="text" name="scale" value="{{faction.scale}}" placeholder="Local, planetary, sector, galactic...">
+        <span>{{localize "SWSE.ShellUI.FactionScale"}}</span>
+        <input type="text" name="scale" value="{{faction.scale}}" placeholder="{{localize 'SWSE.ShellUI.LocalPlanetarySectorGalactic'}}">
       </label>
       <label>
-        <span>Planet</span>
-        <input type="text" name="planet" value="{{faction.planet}}" placeholder="Optional">
+        <span>{{localize "SWSE.ShellUI.Planet"}}</span>
+        <input type="text" name="planet" value="{{faction.planet}}" placeholder="{{localize 'SWSE.ShellUI.Optional'}}">
       </label>
       <label>
-        <span>System</span>
-        <input type="text" name="system" value="{{faction.system}}" placeholder="Optional">
+        <span>{{localize "SWSE.ShellUI.System"}}</span>
+        <input type="text" name="system" value="{{faction.system}}" placeholder="{{localize 'SWSE.ShellUI.Optional'}}">
       </label>
       <label class="swse-allies-faction-wide">
-        <span>Faction Leader</span>
-        <input type="text" name="leader" value="{{faction.leader}}" placeholder="Leader, council, cell handler, boss, or unknown">
+        <span>{{localize "SWSE.ShellUI.FactionLeader"}}</span>
+        <input type="text" name="leader" value="{{faction.leader}}" placeholder="{{localize 'SWSE.ShellUI.LeaderCouncilCellHandlerBossOrUnknown'}}">
       </label>
       <label class="swse-allies-faction-wide">
-        <span>Faction Benefits</span>
+        <span>{{localize "SWSE.ShellUI.FactionBenefits"}}</span>
         {{#if faction.canEditGoverned}}
-        <textarea name="benefits" rows="3" placeholder="GM-assessed benefits derived from the faction score.">{{faction.benefits}}</textarea>
+        <textarea name="benefits" rows="3" placeholder="{{localize 'SWSE.ShellUI.GMAssessedBenefitsDerivedFromTheFactionScore'}}">{{faction.benefits}}</textarea>
         {{else}}
-        <textarea name="benefits" rows="3" readonly placeholder="GM-assessed benefits derived from the faction score.">{{faction.benefits}}</textarea>
+        <textarea name="benefits" rows="3" readonly placeholder="{{localize 'SWSE.ShellUI.GMAssessedBenefitsDerivedFromTheFactionScore'}}">{{faction.benefits}}</textarea>
         {{/if}}
       </label>
       <label class="swse-allies-faction-wide">
-        <span>Player Notes / Suggestion Notes</span>
-        <textarea name="notes" rows="3" placeholder="What does this relationship mean to your character?">{{faction.notes}}</textarea>
+        <span>{{localize "SWSE.ShellUI.PlayerNotesSuggestionNotes"}}</span>
+        <textarea name="notes" rows="3" placeholder="{{localize 'SWSE.ShellUI.WhatDoesThisRelationshipMeanToYourCharacter'}}">{{faction.notes}}</textarea>
       </label>
       {{#if faction.canEditGoverned}}
       <label class="swse-allies-faction-wide">
-        <span>GM Notes</span>
-        <textarea name="gmNotes" rows="3" placeholder="Private or governance notes for this relationship.">{{faction.gmNotes}}</textarea>
+        <span>{{localize "SWSE.ShellUI.GMNotes"}}</span>
+        <textarea name="gmNotes" rows="3" placeholder="{{localize 'SWSE.ShellUI.PrivateOrGovernanceNotesForThisRelationship'}}">{{faction.gmNotes}}</textarea>
       </label>
       {{/if}}
     </div>
 
     {{#if faction.hasHistory}}
     <details class="swse-allies-faction-history">
-      <summary>Score History</summary>
+      <summary>{{localize "SWSE.ShellUI.ScoreHistory"}}</summary>
       <div class="swse-allies-faction-history-list">
         {{#each faction.history}}
         <div class="swse-allies-faction-history-row">

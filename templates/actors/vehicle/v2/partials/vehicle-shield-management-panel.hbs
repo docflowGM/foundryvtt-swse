@@ -1,17 +1,17 @@
 <section class="swse-vehicle-panel swse-vehicle-enhanced-panel" data-panel="enhanced-shields">
   <header class="swse-vehicle-panel-header">
     <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
-    <span class="swse-vehicle-rule-chip">Enhanced Shields</span>
+    <span class="swse-vehicle-rule-chip">{{localize "SWSE.ActorUI.EnhancedShields"}}</span>
   </header>
 
   <div class="swse-vehicle-panel-body">
     <div class="swse-vehicle-shield-summary">
       <div class="swse-vehicle-shield-stat">
-        <span class="swse-vehicle-shield-stat-label">Total</span>
+        <span class="swse-vehicle-shield-stat-label">{{localize "SWSE.ActorUI.Total2"}}</span>
         <span class="swse-vehicle-shield-stat-value">{{panel.total}}/{{panel.max}}</span>
       </div>
       <div class="swse-vehicle-shield-stat">
-        <span class="swse-vehicle-shield-stat-label">Recharge</span>
+        <span class="swse-vehicle-shield-stat-label">{{localize "SWSE.ActorUI.Recharge"}}</span>
         <span class="swse-vehicle-shield-stat-value">{{panel.rechargeRate}}/rd</span>
       </div>
     </div>
@@ -21,13 +21,13 @@
         <div class="swse-vehicle-shield-row is-{{zone.state}}">
           <div class="swse-vehicle-shield-label">{{zone.label}}</div>
           <div class="swse-vehicle-shield-value">{{zone.value}}</div>
-          <button type="button" class="swse-vehicle-mini-action" data-action="shield-focus" data-zone="{{zone.key}}">Focus</button>
+          <button type="button" class="swse-vehicle-mini-action" data-action="shield-focus" data-zone="{{zone.key}}">{{localize "SWSE.ActorUI.Focus"}}</button>
         </div>
       {{/each}}
     </div>
 
     <div class="swse-vehicle-panel-actions">
-      <button type="button" class="swse-v2-btn" data-action="shield-equalize">Equalize Shields</button>
+      <button type="button" class="swse-v2-btn" data-action="shield-equalize">{{localize "SWSE.ActorUI.EqualizeShields"}}</button>
     </div>
 
     {{#if panel.notes}}

@@ -1,14 +1,14 @@
 <section class="swse-npc-card swse-npc-beast-card">
   <header class="swse-npc-card__header">
     <div class="swse-npc-card__header-main">
-      <h3 class="swse-section-title">Beast Summary</h3>
+      <h3 class="swse-section-title">{{localize "SWSE.ActorUI.BeastSummary"}}</h3>
       <p class="swse-npc-card__subhead">
-        Creature-facing overview for this NPC profile.
+        {{localize "SWSE.ActorUI.CreatureFacingOverviewForThisNPCProfile"}}
       </p>
     </div>
 
     <div class="swse-npc-badges">
-      <span class="swse-npc-badge swse-npc-badge--subtype">Beast</span>
+      <span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.Beast"}}</span>
       {{#if beastSummary.size}}
         <span class="swse-npc-badge swse-npc-badge--kind">{{beastSummary.size}}</span>
       {{/if}}
@@ -18,21 +18,21 @@
   <div class="swse-npc-card__body">
     <div class="swse-npc-summary-grid">
       <div class="swse-npc-summary-stat">
-        <label class="swse-npc-summary-stat__label">Size</label>
+        <label class="swse-npc-summary-stat__label">{{localize "SWSE.ActorUI.Size2"}}</label>
         <div class="swse-npc-summary-stat__value">
           {{#if beastSummary.size}}{{beastSummary.size}}{{else}}—{{/if}}
         </div>
       </div>
 
       <div class="swse-npc-summary-stat">
-        <label class="swse-npc-summary-stat__label">Intelligence</label>
+        <label class="swse-npc-summary-stat__label">{{localize "SWSE.ActorUI.Intelligence"}}</label>
         <div class="swse-npc-summary-stat__value">
           {{#if beastSummary.intelligence}}{{beastSummary.intelligence}}{{else}}—{{/if}}
         </div>
       </div>
 
       <div class="swse-npc-summary-stat">
-        <label class="swse-npc-summary-stat__label">Speed</label>
+        <label class="swse-npc-summary-stat__label">{{localize "SWSE.ActorUI.Speed"}}</label>
         <div class="swse-npc-summary-stat__value">
           {{#if beastSummary.speedSummary}}{{beastSummary.speedSummary}}{{else}}—{{/if}}
         </div>
@@ -40,7 +40,7 @@
     </div>
 
     <div class="swse-npc-detail-block">
-      <div class="swse-npc-detail-block__label">Natural Attacks</div>
+      <div class="swse-npc-detail-block__label">{{localize "SWSE.ActorUI.NaturalAttacks"}}</div>
       {{#if beastSummary.naturalAttackNames.length}}
         <div class="swse-npc-chip-row">
           {{#each beastSummary.naturalAttackNames as |attackName|}}
@@ -49,13 +49,13 @@
         </div>
       {{else}}
         <p class="swse-npc-empty-state">
-          No natural attacks are summarized for this beast.
+          {{localize "SWSE.ActorUI.NoNaturalAttacksAreSummarizedForThisBeast"}}
         </p>
       {{/if}}
     </div>
 
     <div class="swse-npc-detail-block">
-      <div class="swse-npc-detail-block__label">Special Abilities</div>
+      <div class="swse-npc-detail-block__label">{{localize "SWSE.ActorUI.SpecialAbilities"}}</div>
       {{#if beastSummary.specialAbilityNames.length}}
         <div class="swse-npc-chip-row">
           {{#each beastSummary.specialAbilityNames as |abilityName|}}
@@ -64,14 +64,14 @@
         </div>
       {{else}}
         <p class="swse-npc-empty-state">
-          No special abilities are summarized for this beast.
+          {{localize "SWSE.ActorUI.NoSpecialAbilitiesAreSummarizedForThisBeast"}}
         </p>
       {{/if}}
     </div>
 
     {{#if beastSummary.traitNotes}}
       <div class="swse-npc-callout swse-npc-callout--beast">
-        <strong>Trait Notes:</strong>
+        <strong>{{localize "SWSE.ActorUI.TraitNotes"}}</strong>
         {{beastSummary.traitNotes}}
       </div>
     {{/if}}

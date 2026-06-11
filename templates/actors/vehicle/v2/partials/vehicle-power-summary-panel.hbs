@@ -1,7 +1,7 @@
 <section class="swse-vehicle-panel swse-vehicle-enhanced-panel {{#if panel.overAllocated}}is-overallocated{{/if}}" data-panel="enhanced-engineer">
   <header class="swse-vehicle-panel-header">
     <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
-    <span class="swse-vehicle-rule-chip">Enhanced Engineer</span>
+    <span class="swse-vehicle-rule-chip">{{localize "SWSE.ActorUI.EnhancedEngineer"}}</span>
   </header>
 
   <div class="swse-vehicle-panel-body">
@@ -11,32 +11,32 @@
 
     <div class="swse-vehicle-power-stats">
       <div class="swse-vehicle-stat-row">
-        <span class="swse-vehicle-stat-label">Available:</span>
+        <span class="swse-vehicle-stat-label">{{localize "SWSE.ActorUI.Available"}}</span>
         <span class="swse-vehicle-stat-value">{{panel.available}}</span>
       </div>
       <div class="swse-vehicle-stat-row">
-        <span class="swse-vehicle-stat-label">Allocated:</span>
+        <span class="swse-vehicle-stat-label">{{localize "SWSE.ActorUI.Allocated"}}</span>
         <span class="swse-vehicle-stat-value {{#if panel.overAllocated}}swse-vehicle-power-stat-over{{/if}}">{{panel.allocated}}</span>
       </div>
       <div class="swse-vehicle-stat-row">
-        <span class="swse-vehicle-stat-label">Budget:</span>
+        <span class="swse-vehicle-stat-label">{{localize "SWSE.ActorUI.Budget"}}</span>
         <span class="swse-vehicle-stat-value">{{panel.budget}}</span>
       </div>
     </div>
 
     <div class="swse-vehicle-power-controls">
       <div class="swse-vehicle-power-control-row">
-        <span>Weapons</span>
+        <span>{{localize "SWSE.ActorUI.Weapons2"}}</span>
         <button type="button" class="swse-vehicle-mini-action" data-action="power-adjust" data-system="weapons" data-direction="down">−</button>
         <button type="button" class="swse-vehicle-mini-action" data-action="power-adjust" data-system="weapons" data-direction="up">+</button>
       </div>
       <div class="swse-vehicle-power-control-row">
-        <span>Shields</span>
+        <span>{{localize "SWSE.ActorUI.Shields"}}</span>
         <button type="button" class="swse-vehicle-mini-action" data-action="power-adjust" data-system="shields" data-direction="down">−</button>
         <button type="button" class="swse-vehicle-mini-action" data-action="power-adjust" data-system="shields" data-direction="up">+</button>
       </div>
       <div class="swse-vehicle-power-control-row">
-        <span>Engines</span>
+        <span>{{localize "SWSE.ActorUI.Engines"}}</span>
         <button type="button" class="swse-vehicle-mini-action" data-action="power-adjust" data-system="engines" data-direction="down">−</button>
         <button type="button" class="swse-vehicle-mini-action" data-action="power-adjust" data-system="engines" data-direction="up">+</button>
       </div>
@@ -44,7 +44,7 @@
 
     {{#if panel.subsystemLoads}}
       <div class="swse-vehicle-subsystem-loads">
-        <h4 class="swse-vehicle-subsystem-loads-title">Subsystem Power Draw</h4>
+        <h4 class="swse-vehicle-subsystem-loads-title">{{localize "SWSE.ActorUI.SubsystemPowerDraw"}}</h4>
         <div class="swse-vehicle-load-list">
           {{#each panel.subsystemLoads as |load|}}
             <div class="swse-vehicle-load-row">

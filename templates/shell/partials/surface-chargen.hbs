@@ -25,7 +25,7 @@
   <div class="swse-shell-surface__body swse-shell-surface__body--loading">
     <div class="swse-shell-launching">
       <div class="swse-shell-launching__icon"><i class="fas fa-spinner fa-spin"></i></div>
-      <div class="swse-shell-launching__label">Initializing Character Creation…</div>
+      <div class="swse-shell-launching__label">{{localize "SWSE.ShellUI.InitializingCharacterCreation"}}</div>
     </div>
   </div>
 
@@ -45,12 +45,12 @@
   {{else if vm.vm}}
   <div class="swse-shell-surface__body swse-shell-surface__error">
     <i class="fas fa-exclamation-triangle"></i>
-    <span>Progression shell rendered no HTML. Check ProgressionSurfaceAdapter canonical render.</span>
+    <span>{{localize "SWSE.ShellUI.ProgressionShellRenderedNoHTMLCheckProgressionSurfaceAdapterCanonical"}}</span>
   </div>
 
   {{else}}
   <div class="swse-shell-surface__body swse-shell-surface__body--loading">
-    <div class="swse-shell-launching__label">Loading character creation…</div>
+    <div class="swse-shell-launching__label">{{localize "SWSE.ShellUI.LoadingCharacterCreation"}}</div>
   </div>
   {{/if}}
 

@@ -13,17 +13,17 @@
   <header class="swse-games-hud swse-games-hud--concept">
     <div class="swse-games-hud__left">
       <span class="swse-games-tag"><span class="swse-games-led {{#if vm.settings.enabled}}is-online{{else}}is-offline{{/if}}"></span>{{#if vm.settings.enabled}}ONLINE{{else}}DISABLED{{/if}}</span>
-      <span class="swse-games-hud__title">GAME CENTER</span>
+      <span class="swse-games-hud__title">{{localize "SWSE.ShellUI.GAMECENTER"}}</span>
       <span class="swse-games-tag"><span class="swse-games-led is-pink"></span>{{#if vm.hasActiveTable}}TABLE MODE · ACTIVE SESSION{{else}}HOLOPAD SIDE TABLES{{/if}}</span>
     </div>
     <div class="swse-games-hud__right">
-      <span class="swse-games-credit-chip">CR <b>{{vm.actorCreditsLabel}}</b></span>
+      <span class="swse-games-credit-chip">{{localize "SWSE.ShellUI.CR"}} <b>{{vm.actorCreditsLabel}}</b></span>
       <span>{{vm.sessionSummary.inviteCount}} INVITES</span>
       <span>{{vm.sessionSummary.activeCount}} ACTIVE</span>
       {{#if vm.hasActiveTable}}
-      <button type="button" class="swse-games-ghost" data-games-action="close-table">Library</button>
+      <button type="button" class="swse-games-ghost" data-games-action="close-table">{{localize "SWSE.ShellUI.Library"}}</button>
       {{else}}
-      <button type="button" class="swse-games-ghost" data-shell-action="return-to-home">Home</button>
+      <button type="button" class="swse-games-ghost" data-shell-action="return-to-home">{{localize "SWSE.ShellUI.Home"}}</button>
       {{/if}}
     </div>
   </header>

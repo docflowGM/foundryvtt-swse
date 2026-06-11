@@ -1,6 +1,6 @@
 <section class="swse-npc-card swse-npc-mode-card">
   <header class="swse-npc-card__header">
-    <h3 class="swse-section-title">Rules Authority</h3>
+    <h3 class="swse-section-title">{{localize "SWSE.ActorUI.RulesAuthority"}}</h3>
     <div class="swse-npc-badges">
       <span class="swse-npc-badge swse-npc-badge--mode">{{npcModeLabel}}</span>
       <span class="swse-npc-badge swse-npc-badge--kind">{{npcSourceAuthorityLabel}}</span>
@@ -14,32 +14,32 @@
 
     <div class="swse-npc-mode-grid">
       <div class="swse-npc-mode-grid__item {{#if isPlayMode}}is-active{{/if}}">
-        <label class="swse-npc-mode-grid__label">Play Mode</label>
+        <label class="swse-npc-mode-grid__label">{{localize "SWSE.ActorUI.PlayMode"}}</label>
         <div class="swse-npc-mode-grid__value">
           {{#if isPlayMode}}Active{{else}}Inactive{{/if}}
         </div>
         <p class="swse-npc-mode-grid__text">
-          Trust source/statblock values for table use. Missing progression legality does not block play.
+          {{localize "SWSE.ActorUI.TrustSourceStatblockValuesForTableUseMissing"}}
         </p>
       </div>
 
       <div class="swse-npc-mode-grid__item {{#if isProgressionMode}}is-active{{/if}}">
-        <label class="swse-npc-mode-grid__label">Progression Mode</label>
+        <label class="swse-npc-mode-grid__label">{{localize "SWSE.ActorUI.ProgressionMode"}}</label>
         <div class="swse-npc-mode-grid__value">
           {{#if isProgressionMode}}Active{{else}}Inactive{{/if}}
         </div>
         <p class="swse-npc-mode-grid__text">
-          Uses level/class/species progression as the main authority for derived values.
+          {{localize "SWSE.ActorUI.UsesLevelClassSpeciesProgressionAsTheMain"}}
         </p>
       </div>
 
       <div class="swse-npc-mode-grid__item {{#if isOwnerSyncMode}}is-active{{/if}}">
-        <label class="swse-npc-mode-grid__label">Owner Sync</label>
+        <label class="swse-npc-mode-grid__label">{{localize "SWSE.ActorUI.OwnerSync"}}</label>
         <div class="swse-npc-mode-grid__value">
           {{#if isOwnerSyncMode}}Active{{else}}Inactive{{/if}}
         </div>
         <p class="swse-npc-mode-grid__text">
-          Follower/minion context is resolved from an owner actor relationship.
+          {{localize "SWSE.ActorUI.FollowerMinionContextIsResolvedFromAnOwner"}}
         </p>
       </div>
     </div>

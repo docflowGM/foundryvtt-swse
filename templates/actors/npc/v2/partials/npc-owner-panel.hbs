@@ -1,16 +1,16 @@
 <section class="swse-npc-card swse-npc-owner-card swse-npc-follower-card">
   <header class="swse-npc-card__header">
     <div class="swse-npc-card__header-main">
-      <h3 class="swse-section-title">Follower / Minion Link</h3>
+      <h3 class="swse-section-title">{{localize "SWSE.ActorUI.FollowerMinionLink"}}</h3>
       <p class="swse-npc-card__subhead">
-        Owner, provenance, and dependent NPC relationship summary.
+        {{localize "SWSE.ActorUI.OwnerProvenanceAndDependentNPCRelationshipSummary"}}
       </p>
     </div>
 
     <div class="swse-npc-badges">
       <span class="swse-npc-badge swse-npc-badge--subtype">{{#if followerSummary.dependentKindLabel}}{{followerSummary.dependentKindLabel}}{{else}}Follower{{/if}}</span>
       {{#if followerSummary.isOwnerResolved}}
-        <span class="swse-npc-badge swse-npc-badge--kind">Owner Linked</span>
+        <span class="swse-npc-badge swse-npc-badge--kind">{{localize "SWSE.ActorUI.OwnerLinked"}}</span>
       {{/if}}
     </div>
   </header>
@@ -18,26 +18,26 @@
   <div class="swse-npc-card__body">
     <div class="swse-npc-summary-grid swse-npc-summary-grid--follower">
       <div class="swse-npc-summary-stat">
-        <label class="swse-npc-summary-stat__label">Owner</label>
+        <label class="swse-npc-summary-stat__label">{{localize "SWSE.ActorUI.Owner"}}</label>
         <div class="swse-npc-summary-stat__value">
           {{#if followerSummary.ownerName}}{{followerSummary.ownerName}}{{else}}—{{/if}}
         </div>
       </div>
 
       <div class="swse-npc-summary-stat">
-        <label class="swse-npc-summary-stat__label">Template / Kind</label>
+        <label class="swse-npc-summary-stat__label">{{localize "SWSE.ActorUI.TemplateKind"}}</label>
         <div class="swse-npc-summary-stat__value">
           {{#if followerSummary.templateName}}{{followerSummary.templateName}}{{else}}—{{/if}}
         </div>
       </div>
 
       <div class="swse-npc-summary-stat">
-        <label class="swse-npc-summary-stat__label">Rules Mode</label>
+        <label class="swse-npc-summary-stat__label">{{localize "SWSE.ActorUI.RulesMode"}}</label>
         <div class="swse-npc-summary-stat__value">{{npcMode}}</div>
       </div>
 
       <div class="swse-npc-summary-stat">
-        <label class="swse-npc-summary-stat__label">Scaling</label>
+        <label class="swse-npc-summary-stat__label">{{localize "SWSE.ActorUI.Scaling"}}</label>
         <div class="swse-npc-summary-stat__value">
           {{#if followerSummary.scalingMode}}{{followerSummary.scalingMode}}{{else}}—{{/if}}
         </div>
@@ -46,50 +46,50 @@
 
     <dl class="swse-npc-meta-list">
       <div class="swse-npc-meta-list__row">
-        <dt>Granting Talent</dt>
+        <dt>{{localize "SWSE.ActorUI.GrantingTalent"}}</dt>
         <dd>{{#if followerSummary.grantingTalentName}}{{followerSummary.grantingTalentName}}{{else}}No granting talent resolved.{{/if}}</dd>
       </div>
 
       <div class="swse-npc-meta-list__row">
-        <dt>Provenance</dt>
+        <dt>{{localize "SWSE.ActorUI.Provenance"}}</dt>
         <dd>{{#if followerSummary.provenance}}{{followerSummary.provenance}}{{else}}No follower provenance recorded.{{/if}}</dd>
       </div>
 
       <div class="swse-npc-meta-list__row">
-        <dt>Owner Heroic Level</dt>
+        <dt>{{localize "SWSE.ActorUI.OwnerHeroicLevel"}}</dt>
         <dd>{{#if followerSummary.ownerHeroicLevel}}{{followerSummary.ownerHeroicLevel}}{{else}}—{{/if}}</dd>
       </div>
 
       <div class="swse-npc-meta-list__row">
-        <dt>Dependent Level</dt>
+        <dt>{{localize "SWSE.ActorUI.DependentLevel"}}</dt>
         <dd>{{#if followerSummary.currentFollowerLevel}}{{followerSummary.currentFollowerLevel}}{{else}}—{{/if}}</dd>
       </div>
     </dl>
 
     {{#if hasOwnerLink}}
       <div class="swse-npc-detail-block">
-        <div class="swse-npc-detail-block__label">Linked Owner Sheet</div>
+        <div class="swse-npc-detail-block__label">{{localize "SWSE.ActorUI.LinkedOwnerSheet"}}</div>
         {{> "systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-related-actor-card.hbs" ownerLink}}
       </div>
     {{/if}}
 
     {{#if followerAuthorityDescription}}
       <div class="swse-npc-callout swse-npc-callout--follower">
-        <strong>Follower Authority:</strong>
+        <strong>{{localize "SWSE.ActorUI.FollowerAuthority"}}</strong>
         {{followerAuthorityDescription}}
       </div>
     {{/if}}
 
     {{#if followerScalingDescription}}
       <div class="swse-npc-callout swse-npc-callout--follower-secondary">
-        <strong>Scaling:</strong>
+        <strong>{{localize "SWSE.ActorUI.Scaling2"}}</strong>
         {{followerScalingDescription}}
       </div>
     {{/if}}
 
     {{#if followerSummary.canAdvance}}
       <div class="swse-npc-callout swse-npc-callout--follower-advance">
-        <strong>Ready to Recalculate:</strong>
+        <strong>{{localize "SWSE.ActorUI.ReadyToRecalculate"}}</strong>
         {{#if followerSummary.advanceReason}}
           {{followerSummary.advanceReason}}
         {{else}}
@@ -103,7 +103,7 @@
             type="button"
             class="swse-npc-action-button"
             data-action="open-follower-advancement">
-            Recalculate Follower
+            {{localize "SWSE.ActorUI.RecalculateFollower"}}
           </button>
         </div>
       {{/if}}
@@ -117,7 +117,7 @@
 
     {{#unless followerSummary.ownerName}}
       <p class="swse-npc-empty-state">
-        No owner is currently resolved for this dependent NPC.
+        {{localize "SWSE.ActorUI.NoOwnerIsCurrentlyResolvedForThisDependent"}}
       </p>
     {{/unless}}
   </div>

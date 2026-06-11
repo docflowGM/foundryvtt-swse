@@ -228,6 +228,7 @@ export class VehicleFactory {
           },
           lastModifiedAt: Date.now()
         },
+        'system.model': vehicleActor.system?.model || stockShip.name || vehicleActor.system?.buildMetadata?.frameName || vehicleActor.name || '',
         'system.cost': {
           ...(typeof vehicleActor.system?.cost === 'object' && vehicleActor.system?.cost ? vehicleActor.system.cost : {}),
           new: totalCost,
@@ -290,6 +291,7 @@ export class VehicleFactory {
       type: 'vehicle',
       img: buildSpec.img || 'icons/svg/rocket.svg',
       system: {
+        model: buildSpec.model || stockShip.model || stockShip.name || 'Custom Starship',
         category,
         vehicleType: category,
         type: 'Starship',
@@ -388,6 +390,7 @@ export class VehicleFactory {
       img: templateObj.img || template?.img || 'icons/svg/anchor.svg',
       system: {
         ...templateSystem,
+        model: templateSystem.model || templateSystem.vehicleModel || templateSystem.stockShip?.name || templateSystem.buildMetadata?.frameName || templateObj.name || template?.name || '',
         category: templateSystem.category || templateSystem.vehicleType || 'starfighter',
         domain: templateSystem.domain || 'starship',
         hull: {

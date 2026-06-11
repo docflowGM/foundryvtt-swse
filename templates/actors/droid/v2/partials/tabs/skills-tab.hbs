@@ -1,8 +1,8 @@
 <section class="swse-concept-panel swse-droid-panel">
   <header class="swse-concept-panel__header">
     <div>
-      <h3 class="swse-concept-panel__title">Skills</h3>
-      <p class="swse-concept-panel__hint">Uses the canonical derived skill model.</p>
+      <h3 class="swse-concept-panel__title">{{localize "SWSE.ActorUI.Skills"}}</h3>
+      <p class="swse-concept-panel__hint">{{localize "SWSE.ActorUI.UsesTheCanonicalDerivedSkillModel"}}</p>
     </div>
   </header>
   <div class="swse-list">
@@ -13,7 +13,7 @@
         <strong>{{skill.total}}</strong>
       </button>
     {{else}}
-      <div class="swse-empty">No skills configured yet.</div>
+      <div class="swse-empty">{{localize "SWSE.ActorUI.NoSkillsConfiguredYet"}}</div>
     {{/each}}
   </div>
 </section>

@@ -3,12 +3,12 @@
   {{#if vm.activeTable.dejarik.showDraft}}
   <section class="swse-dejarik-draft">
     <aside class="swse-dejarik-draft__side">
-      <span class="swse-games-kicker">PRE-MATCH DRAFT</span>
-      <h3>Choose 4 holomonsters</h3>
-      <p>Select exactly four creatures for your side of the holotable. The AI will deploy four from the same roster when you launch the board.</p>
+      <span class="swse-games-kicker">{{localize "SWSE.ShellUI.PREMATCHDRAFT"}}</span>
+      <h3>{{localize "SWSE.ShellUI.Choose4Holomonsters"}}</h3>
+      <p>{{localize "SWSE.ShellUI.SelectExactlyFourCreaturesForYourSideOf"}}</p>
       <div class="swse-dejarik-draft-count {{#if vm.activeTable.dejarik.draft.canDeploy}}is-ready{{/if}}">
         <strong>{{vm.activeTable.dejarik.draft.selectedCountLabel}}</strong>
-        <span>selected</span>
+        <span>{{localize "SWSE.ShellUI.Selected"}}</span>
       </div>
       {{#if vm.activeTable.dejarik.draft.hasSelected}}
       <div class="swse-dejarik-draft-tray">
@@ -17,17 +17,17 @@
         {{/each}}
       </div>
       {{else}}
-      <p class="swse-games-muted">No holomonsters selected yet.</p>
+      <p class="swse-games-muted">{{localize "SWSE.ShellUI.NoHolomonstersSelectedYet"}}</p>
       {{/if}}
       <form data-games-action="dejarik-clear-draft">
         <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
         <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
-        <button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.dejarik.draft.hasSelected}}disabled{{/unless}}>Clear Draft</button>
+        <button type="submit" class="swse-games-ghost" {{#unless vm.activeTable.dejarik.draft.hasSelected}}disabled{{/unless}}>{{localize "SWSE.ShellUI.ClearDraft"}}</button>
       </form>
       <form data-games-action="dejarik-deploy-team">
         <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
         <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
-        <button type="submit" class="swse-games-primary" {{#unless vm.activeTable.dejarik.draft.canDeploy}}disabled{{/unless}}>Deploy to Board</button>
+        <button type="submit" class="swse-games-primary" {{#unless vm.activeTable.dejarik.draft.canDeploy}}disabled{{/unless}}>{{localize "SWSE.ShellUI.DeployToBoard"}}</button>
       </form>
     </aside>
 
@@ -43,7 +43,7 @@
           <small>HP {{this.hp}} · ATK {{this.atk}} · MOV {{this.mov}} · RNG {{this.rng}}</small>
           <em>{{this.abilityLabel}}</em>
           <span>{{this.abilityDescription}}</span>
-          {{#if this.selected}}<i>Selected</i>{{/if}}
+          {{#if this.selected}}<i>{{localize "SWSE.ShellUI.Selected2"}}</i>{{/if}}
         </button>
       </form>
       {{/each}}
@@ -53,7 +53,7 @@
   <section class="swse-dejarik-layout">
     <aside class="swse-dejarik-rail swse-dejarik-rail--left">
       <div class="swse-dejarik-panel swse-dejarik-panel--opponent">
-        <span class="swse-games-kicker">OPPONENT READOUT</span>
+        <span class="swse-games-kicker">{{localize "SWSE.ShellUI.OPPONENTREADOUT"}}</span>
         {{#if vm.activeTable.dejarik.hasAiProfiles}}
           {{#each vm.activeTable.dejarik.aiProfiles}}
           <article class="swse-dejarik-opponent-card">
@@ -67,20 +67,20 @@
           </article>
           {{/each}}
         {{else}}
-          <p class="swse-games-muted">No AI opponent metadata is attached to this Dejarik board.</p>
+          <p class="swse-games-muted">{{localize "SWSE.ShellUI.NoAIOpponentMetadataIsAttachedToThis"}}</p>
         {{/if}}
       </div>
 
       <div class="swse-dejarik-panel swse-dejarik-panel--tactical">
-        <span class="swse-games-kicker">TACTICAL OVERLAY</span>
+        <span class="swse-games-kicker">{{localize "SWSE.ShellUI.TACTICALOVERLAY"}}</span>
         <b data-dejarik-selection-label>{{#if vm.activeTable.dejarik.canAct}}Select one of your pieces{{else}}Awaiting activation{{/if}}</b>
         <small data-dejarik-selection-help>{{#if vm.activeTable.dejarik.canAct}}Cyan sectors are legal moves. Red sectors are attack targets. Action model: {{vm.activeTable.dejarik.actionModelLabel}}.{{else}}Only the active player can move or attack.{{/if}}</small>
-        <div class="swse-dejarik-selection-stats" data-dejarik-selection-stats>Choose a holomonster to see HP, attack, range, movement, and ability notes.</div>
+        <div class="swse-dejarik-selection-stats" data-dejarik-selection-stats>{{localize "SWSE.ShellUI.ChooseAHolomonsterToSeeHPAttackRange"}}</div>
         {{#if vm.activeTable.dejarik.canAct}}
         <form data-games-action="dejarik-end-turn">
           <input type="hidden" name="sessionId" value="{{vm.activeTable.dejarik.id}}">
           <input type="hidden" name="seatId" value="{{vm.activeTable.dejarik.currentSeatId}}">
-          <button type="submit" class="swse-games-ghost">End Turn</button>
+          <button type="submit" class="swse-games-ghost">{{localize "SWSE.ShellUI.EndTurn"}}</button>
         </form>
         {{/if}}
       </div>
@@ -91,8 +91,8 @@
            data-dejarik-board
            data-session-id="{{vm.activeTable.dejarik.id}}"
            data-seat-id="{{vm.activeTable.dejarik.currentSeatId}}"
-           aria-label="Dejarik radial board">
-        <svg class="swse-dejarik-svg" viewBox="0 0 100 100" role="img" aria-label="Generated Dejarik radial board">
+           aria-label="{{localize 'SWSE.ShellUI.DejarikRadialBoard'}}">
+        <svg class="swse-dejarik-svg" viewBox="0 0 100 100" role="img" aria-label="{{localize 'SWSE.ShellUI.GeneratedDejarikRadialBoard'}}">
           <defs>
             <radialGradient id="swseDejarikBase" cx="50%" cy="42%" r="65%">
               <stop offset="0%" stop-color="rgba(57, 247, 255, 0.18)"/>
@@ -146,7 +146,7 @@
 
     <aside class="swse-dejarik-rail swse-dejarik-rail--right">
       <div class="swse-dejarik-panel swse-dejarik-panel--roster">
-        <span class="swse-games-kicker">YOUR HOLOMONSTERS</span>
+        <span class="swse-games-kicker">{{localize "SWSE.ShellUI.YOURHOLOMONSTERS"}}</span>
         {{#if vm.activeTable.dejarik.viewerPieces}}
           {{#each vm.activeTable.dejarik.viewerPieces}}
           <article class="swse-dejarik-piece-card">
@@ -170,7 +170,7 @@
                     data-piece-ability="{{this.abilityLabel}}: {{this.abilityDescription}}"
                     data-move-spaces="{{this.moveSpacesAttr}}"
                     data-attack-targets="{{this.attackTargetsAttr}}">
-              Highlight Moves
+              {{localize "SWSE.ShellUI.HighlightMoves"}}
             </button>
             {{/if}}
             {{#if this.hasTargets}}
@@ -179,7 +179,7 @@
               <input type="hidden" name="seatId" value="{{this.seatId}}">
               <input type="hidden" name="pieceId" value="{{this.id}}">
               <select name="targetPieceId">{{#each this.targetOptions}}<option value="{{this.id}}">{{this.label}}</option>{{/each}}</select>
-              <button type="submit" class="swse-games-primary">Attack</button>
+              <button type="submit" class="swse-games-primary">{{localize "SWSE.ShellUI.Attack"}}</button>
             </form>
             {{/if}}
             {{#if this.hasMoveOptions}}
@@ -188,19 +188,19 @@
               <input type="hidden" name="seatId" value="{{this.seatId}}">
               <input type="hidden" name="pieceId" value="{{this.id}}">
               <select name="toSpaceId">{{#each this.moveOptions}}<option value="{{this.id}}">{{this.label}}</option>{{/each}}</select>
-              <button type="submit" class="swse-games-ghost">Move</button>
+              <button type="submit" class="swse-games-ghost">{{localize "SWSE.ShellUI.Move"}}</button>
             </form>
             {{/if}}
           </article>
           {{/each}}
         {{else}}
-          <p class="swse-games-muted">No living viewer pieces are available.</p>
+          <p class="swse-games-muted">{{localize "SWSE.ShellUI.NoLivingViewerPiecesAreAvailable"}}</p>
         {{/if}}
       </div>
 
       {{#if vm.activeTable.dejarik.hasEventLog}}
       <div class="swse-dejarik-panel swse-dejarik-panel--log">
-        <span class="swse-games-kicker">BOARD LOG</span>
+        <span class="swse-games-kicker">{{localize "SWSE.ShellUI.BOARDLOG"}}</span>
         <div class="swse-dejarik-log">
           {{#each vm.activeTable.dejarik.eventLog}}
           <div class="tone-{{this.tone}}"><b>{{#if this.seatLabel}}{{this.seatLabel}}{{else}}{{this.type}}{{/if}}</b><span>{{this.message}}{{#if this.timeLabel}} · {{this.timeLabel}}{{/if}}</span></div>

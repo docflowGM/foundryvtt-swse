@@ -1,6 +1,6 @@
 <section class="swse-panel holo-panel swse-ui-panel swse-droid-part-region">
   <header class="section-bar">
-    <h3 class="section-header">Sensors</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.Sensors"}}</h3>
   </header>
 
   {{#if droid.resolvedSystems.sensors.isConfigured}}
@@ -14,7 +14,7 @@
     </div>
   {{else}}
     <div class="empty-state">
-      <p><em>No sensor upgrades installed.</em></p>
+      <p><em>{{localize "SWSE.ActorUI.NoSensorUpgradesInstalled"}}</em></p>
     </div>
   {{/if}}
 </section>

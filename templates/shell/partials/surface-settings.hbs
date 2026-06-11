@@ -3,10 +3,10 @@
     <button class="swse-shell-surface__back-btn" data-shell-action="{{vm.backAction}}" type="button">
       <i class="fas fa-arrow-left"></i><span>{{vm.backLabel}}</span>
     </button>
-    <div class="swse-shell-surface__title swse-settings-header__title">⚙ SETTINGS</div>
+    <div class="swse-shell-surface__title swse-settings-header__title">{{localize "SWSE.ShellUI.SETTINGS"}}</div>
     <div class="swse-settings-actions">
-      <button class="swse-btn ghost" data-shell-action="return-to-home" type="button">Home</button>
-      <button class="swse-btn ghost" data-action="reset-theme-defaults" type="button">Restore Defaults</button>
+      <button class="swse-btn ghost" data-shell-action="return-to-home" type="button">{{localize "SWSE.ShellUI.Home"}}</button>
+      <button class="swse-btn ghost" data-action="reset-theme-defaults" type="button">{{localize "SWSE.ShellUI.RestoreDefaults"}}</button>
     </div>
   </div>
 
@@ -18,7 +18,7 @@
 
     <div class="swse-settings-grid">
       <section class="swse-panel">
-        <div class="swse-panel-head">◆ Theme Presets</div>
+        <div class="swse-panel-head">{{localize "SWSE.ShellUI.ThemePresets"}}</div>
         <div class="swse-theme-presets">
           {{#each vm.presets}}
           <button class="swse-theme-preset {{#if this.selected}}active{{/if}}" data-theme-preset="{{this.id}}" type="button" style="--tc: {{this.cyan}}; --tp: {{this.pink}}; --tpu: {{this.purple}};">
@@ -30,7 +30,7 @@
       </section>
 
       <section class="swse-panel">
-        <div class="swse-panel-head">◇ Shell Color</div>
+        <div class="swse-panel-head">{{localize "SWSE.ShellUI.ShellColor"}}</div>
         <div class="swse-shell-colors">
           {{#each vm.shellColors}}
           <button class="swse-shell-color {{#if this.selected}}active{{/if}}" data-shell-color="{{this.id}}" type="button" title="{{this.label}}" style="--swse-shell-chip-start: {{this.start}}; --swse-shell-chip-mid: {{this.mid}}; --swse-shell-chip-end: {{this.end}}; background: linear-gradient(180deg, {{this.color}}, color-mix(in oklch, {{this.color}} 42%, black)); border-color: {{this.color}};"></button>
@@ -39,7 +39,7 @@
       </section>
 
       <section class="swse-panel">
-        <div class="swse-panel-head">◇ Motion Style</div>
+        <div class="swse-panel-head">{{localize "SWSE.ShellUI.MotionStyle"}}</div>
         <div class="swse-motion-options">
           {{#each vm.motionOptions}}
           <button class="swse-motion-option {{#if this.selected}}active{{/if}}" data-motion-style="{{this.id}}" type="button" title="{{this.description}}">
@@ -50,44 +50,44 @@
       </section>
 
       <section class="swse-panel">
-        <div class="swse-panel-head">▸ Display</div>
+        <div class="swse-panel-head">{{localize "SWSE.ShellUI.Display"}}</div>
         <div class="swse-settings-control">
-          <label>Scanlines <span>{{vm.controls.scanStrength}}</span></label>
+          <label>{{localize "SWSE.ShellUI.Scanlines"}} <span>{{vm.controls.scanStrength}}</span></label>
           <input type="range" min="0" max="0.12" step="0.005" value="{{vm.controls.scanStrength}}" data-theme-control="scanStrength">
         </div>
         <div class="swse-settings-control">
-          <label>Animation Speed <span>{{vm.controls.animSpeed}}</span></label>
+          <label>{{localize "SWSE.ShellUI.AnimationSpeed"}} <span>{{vm.controls.animSpeed}}</span></label>
           <input type="range" min="0.25" max="2.5" step="0.25" value="{{vm.controls.animSpeed}}" data-theme-control="animSpeed">
         </div>
         <div class="swse-settings-control">
-          <label>Glow <span>{{vm.controls.glow}}</span></label>
+          <label>{{localize "SWSE.ShellUI.Glow"}} <span>{{vm.controls.glow}}</span></label>
           <input type="range" min="0" max="2" step="0.1" value="{{vm.controls.glow}}" data-theme-control="glow">
         </div>
         <button class="swse-settings-toggle {{#if vm.controls.breathing}}on{{/if}}" data-theme-toggle="breathing" type="button">
-          <span>Tablet Breathing</span><span class="swse-toggle-pill"></span>
+          <span>{{localize "SWSE.ShellUI.TabletBreathing"}}</span><span class="swse-toggle-pill"></span>
         </button>
         <button class="swse-settings-toggle {{#if vm.controls.reducedMotion}}on{{/if}}" data-theme-toggle="reducedMotion" type="button">
-          <span>Reduced Motion</span><span class="swse-toggle-pill"></span>
+          <span>{{localize "SWSE.ShellUI.ReducedMotion"}}</span><span class="swse-toggle-pill"></span>
         </button>
       </section>
 
       <section class="swse-panel">
-        <div class="swse-panel-head">✦ Language</div>
+        <div class="swse-panel-head">{{localize "SWSE.ShellUI.Language"}}</div>
         <div class="swse-language-options">
-          <button class="swse-language-option {{#if (eq vm.controls.language 'basic')}}active{{/if}}" data-language-setting="basic" type="button">Basic</button>
-          <button class="swse-language-option {{#if (eq vm.controls.language 'aurabesh')}}active{{/if}}" data-language-setting="aurabesh" type="button">Aurabesh</button>
+          <button class="swse-language-option {{#if (eq vm.controls.language 'basic')}}active{{/if}}" data-language-setting="basic" type="button">{{localize "SWSE.ShellUI.Basic"}}</button>
+          <button class="swse-language-option {{#if (eq vm.controls.language 'aurabesh')}}active{{/if}}" data-language-setting="aurabesh" type="button">{{localize "SWSE.ShellUI.Aurabesh"}}</button>
         </div>
         <p class="swse-settings-warning">{{vm.aurabeshWarning}}</p>
       </section>
     </div>
 
-    <section class="swse-panel swse-system-manual" aria-label="System Manual">
+    <section class="swse-panel swse-system-manual" aria-label="{{localize 'SWSE.ShellUI.SystemManual'}}">
       <div class="swse-system-manual__header">
         <div>
-          <div class="swse-system-manual__kicker">HOLONET HELP FILE</div>
-          <h2>System Manual</h2>
+          <div class="swse-system-manual__kicker">{{localize "SWSE.ShellUI.HOLONETHELPFILE"}}</div>
+          <h2>{{localize "SWSE.ShellUI.SystemManual"}}</h2>
         </div>
-        <div class="swse-system-manual__chip">READABLE MODE</div>
+        <div class="swse-system-manual__chip">{{localize "SWSE.ShellUI.READABLEMODE"}}</div>
       </div>
 
       <div class="swse-system-manual__intro">

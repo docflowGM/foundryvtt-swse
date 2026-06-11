@@ -1,13 +1,13 @@
 <section class="swse-vehicle-panel swse-vehicle-enhanced-panel" data-panel="enhanced-pilot">
   <header class="swse-vehicle-panel-header">
     <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
-    <span class="swse-vehicle-rule-chip">Enhanced Pilot</span>
+    <span class="swse-vehicle-rule-chip">{{localize "SWSE.ActorUI.EnhancedPilot"}}</span>
   </header>
 
   <div class="swse-vehicle-panel-body">
     {{#if panel.currentManeuver}}
       <div class="swse-vehicle-active-readout">
-        <div class="swse-vehicle-active-label">Active Maneuver</div>
+        <div class="swse-vehicle-active-label">{{localize "SWSE.ActorUI.ActiveManeuver"}}</div>
         <div class="swse-vehicle-active-value">{{panel.currentManeuver.label}}</div>
       </div>
     {{/if}}
@@ -19,7 +19,7 @@
             <div class="swse-vehicle-maneuver-header">
               <span class="swse-vehicle-maneuver-name">{{maneuver.label}}</span>
               {{#if maneuver.active}}
-                <span class="swse-vehicle-active-badge">Active</span>
+                <span class="swse-vehicle-active-badge">{{localize "SWSE.ActorUI.Active"}}</span>
               {{/if}}
             </div>
             <div class="swse-vehicle-maneuver-summary">{{maneuver.summary}}</div>

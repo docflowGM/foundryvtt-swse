@@ -336,6 +336,29 @@ function normalizeConditionTrack(system) {
   return { current: 0, penalty: 0 };
 }
 
+
+function normalizeVehicleModel(system = {}, sourceName = '') {
+  const candidates = [
+    system.model,
+    system.vehicleModel,
+    system.modelName,
+    system.stockShip?.name,
+    system.modificationData?.stockShip?.name,
+    system.buildMetadata?.model,
+    system.buildMetadata?.modelName,
+    system.buildMetadata?.frameName,
+    system.shipyard?.model,
+    system.shipyard?.modelName,
+    system.shipyard?.frameName,
+    sourceName
+  ];
+  for (const candidate of candidates) {
+    const value = safeString(candidate).trim();
+    if (value) return value;
+  }
+  return '';
+}
+
 /**
  * Normalize vehicle identity fields: type, size, category, domain
  */
@@ -356,7 +379,7 @@ function normalizeIdentity(system) {
  * @param {Object} system - The vehicle system data object (actor.system)
  * @returns {Object} Normalized system data (safe to Object.assign into actor.system)
  */
-export function normalizeVehicleImportData(system) {
+export function normalizeVehicleImportData(system, options = {}) {
   if (!system || typeof system !== 'object') {
     SWSELogger.warn(`[${SYSTEM_ID}] normalizeVehicleImportData called with invalid system data`);
     return {};
@@ -373,6 +396,7 @@ export function normalizeVehicleImportData(system) {
     normalized.size = identity.size;
     normalized.category = identity.category;
     normalized.domain = identity.domain;
+    normalized.model = normalizeVehicleModel(system, options.sourceName || options.modelName || '');
 
     // ════════════════════════════════════════════════════════════════════════════
     // DEFENSES: Normalize all vehicle defenses to v2 contract shape
@@ -518,5 +542,6 @@ export {
   normalizePower,
   normalizeCrewPositions,
   normalizeConditionTrack,
-  normalizeIdentity
+  normalizeIdentity,
+  normalizeVehicleModel
 };

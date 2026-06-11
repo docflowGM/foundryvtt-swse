@@ -200,6 +200,7 @@ export class VehicleImportWizard extends HandlebarsApplicationMixin(ApplicationV
     const system = document?.system || entry.raw?.system || {};
     return {
       name: document?.name || entry.name,
+      model: system.model || entry.model || document?.name || entry.name,
       img: document?.img || entry.img,
       pack: entry.packLabel,
       type: entry.type,

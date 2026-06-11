@@ -1,23 +1,23 @@
 <section class="swse-npc-card swse-npc-profile-card">
   <header class="swse-npc-card__header">
     <div class="swse-npc-card__header-main">
-      <h3 class="swse-section-title">NPC Profile</h3>
+      <h3 class="swse-section-title">{{localize "SWSE.ActorUI.NPCProfile"}}</h3>
     </div>
 
     <div class="swse-npc-badges">
       <span class="swse-npc-badge swse-npc-badge--kind">{{npcKindLabel}}</span>
       <span class="swse-npc-badge swse-npc-badge--mode">{{npcModeLabel}}</span>
       {{#if npcImported}}
-        <span class="swse-npc-badge swse-npc-badge--subtype">Imported</span>
+        <span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.Imported"}}</span>
       {{/if}}
       {{#if isBeastNpc}}
-        <span class="swse-npc-badge swse-npc-badge--subtype">Creature</span>
+        <span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.Creature"}}</span>
       {{/if}}
       {{#if isMountNpc}}
-        <span class="swse-npc-badge swse-npc-badge--subtype">Mounted</span>
+        <span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.Mounted"}}</span>
       {{/if}}
       {{#if isOwnerSyncMode}}
-        <span class="swse-npc-badge swse-npc-badge--subtype">Owner Sync</span>
+        <span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.OwnerSync"}}</span>
       {{/if}}
     </div>
   </header>
@@ -29,55 +29,55 @@
 
     <dl class="swse-npc-meta-list">
       <div class="swse-npc-meta-list__row">
-        <dt>Profile</dt>
+        <dt>{{localize "SWSE.ActorUI.Profile"}}</dt>
         <dd>{{npcKindLabel}}</dd>
       </div>
 
       <div class="swse-npc-meta-list__row">
-        <dt>Sheet Mode</dt>
+        <dt>{{localize "SWSE.ActorUI.SheetMode"}}</dt>
         <dd>{{npcModeLabel}}</dd>
       </div>
 
       <div class="swse-npc-meta-list__row">
-        <dt>Source Authority</dt>
+        <dt>{{localize "SWSE.ActorUI.SourceAuthority"}}</dt>
         <dd>{{npcSourceAuthorityLabel}}</dd>
       </div>
 
       <div class="swse-npc-meta-list__row">
-        <dt>Legal Profile</dt>
+        <dt>{{localize "SWSE.ActorUI.LegalProfile"}}</dt>
         <dd>{{npcLegalProfileLabel}}</dd>
       </div>
 
       <div class="swse-npc-meta-list__row">
-        <dt>Legal State</dt>
+        <dt>{{localize "SWSE.ActorUI.LegalState"}}</dt>
         <dd>{{npcLegalStateLabel}}</dd>
       </div>
 
       <div class="swse-npc-meta-list__row">
-        <dt>Class Items</dt>
+        <dt>{{localize "SWSE.ActorUI.ClassItems"}}</dt>
         <dd>{{#if npcHasClassItems}}{{npcClassItemCount}}{{else}}None / statblock source{{/if}}</dd>
       </div>
 
       <div class="swse-npc-meta-list__row">
-        <dt>Relationships</dt>
+        <dt>{{localize "SWSE.ActorUI.Relationships"}}</dt>
         <dd>{{#if showRelationshipsTab}}Active{{else}}None{{/if}}</dd>
       </div>
 
       {{#if npcProfileMissing}}
         <div class="swse-npc-meta-list__row">
-          <dt>Profile Metadata</dt>
-          <dd>Inferred, not written</dd>
+          <dt>{{localize "SWSE.ActorUI.ProfileMetadata"}}</dt>
+          <dd>{{localize "SWSE.ActorUI.InferredNotWritten"}}</dd>
         </div>
       {{/if}}
 
       {{#if isFollowerNpc}}
         <div class="swse-npc-meta-list__row">
-          <dt>Owner Resolved</dt>
+          <dt>{{localize "SWSE.ActorUI.OwnerResolved"}}</dt>
           <dd>{{#if followerSummary.isOwnerResolved}}Yes{{else}}No{{/if}}</dd>
         </div>
 
         <div class="swse-npc-meta-list__row">
-          <dt>Template Resolved</dt>
+          <dt>{{localize "SWSE.ActorUI.TemplateResolved"}}</dt>
           <dd>{{#if followerSummary.isTemplateResolved}}Yes{{else}}No{{/if}}</dd>
         </div>
       {{/if}}

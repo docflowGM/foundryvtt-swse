@@ -1,25 +1,25 @@
 <section class="swse-panel holo-panel swse-ui-panel swse-droid-diagnostics-panel">
   <details class="swse-droid-diagnostics" open>
     <summary class="section-bar">
-      <h3 class="section-header">Build Status &amp; Diagnostics</h3>
+      <h3 class="section-header">{{localize "SWSE.ActorUI.BuildStatusAmpDiagnostics"}}</h3>
       {{#if droid.sourceStatus.sourceLabel}}<span class="section-meta muted">{{droid.sourceStatus.sourceLabel}}</span>{{/if}}
     </summary>
 
     <div class="validation-content">
       {{#if droid.sourceStatus}}
         <div class="config-item swse-metric-chip">
-          <span class="label">Source:</span>
+          <span class="label">{{localize "SWSE.ActorUI.Source2"}}</span>
           <span class="value">{{droid.sourceStatus.sourceLabel}}</span>
         </div>
         <div class="config-item swse-metric-chip">
-          <span class="label">Finalized:</span>
+          <span class="label">{{localize "SWSE.ActorUI.Finalized"}}</span>
           <span class="value">{{#if droid.sourceStatus.isFinalized}}Yes{{else}}No{{/if}}</span>
         </div>
       {{/if}}
 
       {{#if droid.partEffects.length}}
         <div class="swse-droid-modifier-list">
-          <div class="issues-header">Droid Part Roll Modifiers</div>
+          <div class="issues-header">{{localize "SWSE.ActorUI.DroidPartRollModifiers"}}</div>
           {{#each droid.partEffects as |effect|}}
             <div class="swse-droid-modifier-row">
               <span>{{effect.sourceName}}</span>
@@ -31,7 +31,7 @@
 
       {{#if droid.sourceStatus.hasValidationMessages}}
         <div class="validation-issues">
-          <div class="issues-header">Messages</div>
+          <div class="issues-header">{{localize "SWSE.ActorUI.Messages"}}</div>
           {{#each droid.sourceStatus.validationMessages as |message|}}
             <div class="issue-entry severity-{{message.severity}}">
               <small>{{message.text}}</small>
@@ -40,7 +40,7 @@
         </div>
       {{else}}
         <div class="validation-all-clear">
-          <small>✓ Droid systems are structurally readable.</small>
+          <small>{{localize "SWSE.ActorUI.DroidSystemsAreStructurallyReadable"}}</small>
         </div>
       {{/if}}
     </div>

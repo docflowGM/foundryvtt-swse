@@ -58,6 +58,19 @@ async function loadVehicleMapping() {
  * Also registers postCreate hook for weapon item creation
  */
 export function registerVehiclePreCreateHooks() {
+
+  // Preserve the compendium/template model separately from the actor name.
+  // GMs commonly rename ships to callsigns; the model must survive that rename.
+  Hooks.on('preCreateActor', async (document, data, options, userId) => {
+    if (document.type !== 'vehicle') return;
+    const system = data?.system || document.system || {};
+    const existingModel = String(system.model || system.vehicleModel || system.stockShip?.name || system.buildMetadata?.frameName || '').trim();
+    if (existingModel) return;
+    const sourceName = String(data?.name || document.name || '').trim();
+    if (!sourceName) return;
+    document.updateSource?.({ 'system.model': sourceName });
+  });
+
   // ═══════════════════════════════════════════════════════════════════════════
   // PRE-CREATE: Normalize vehicle data
   // ═══════════════════════════════════════════════════════════════════════════
@@ -75,7 +88,7 @@ export function registerVehiclePreCreateHooks() {
     // Phase 4: Normalize imported vehicle data (before category assignment)
     // Ensures downstream contracts (derived-builder, context-builder) are met
     try {
-      const normalized = normalizeVehicleImportData(document.system);
+      const normalized = normalizeVehicleImportData(document.system, { sourceName: data?.name || document.name });
       Object.assign(document.system, normalized);
       SWSELogger.debug(`[${SYSTEM_ID}] Normalized vehicle import data`);
     } catch (err) {

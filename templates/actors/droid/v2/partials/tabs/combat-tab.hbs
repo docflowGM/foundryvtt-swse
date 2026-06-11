@@ -5,27 +5,27 @@
 <section class="swse-concept-panel swse-droid-panel">
   <header class="swse-concept-panel__header">
     <div>
-      <h3 class="swse-concept-panel__title">Weapons</h3>
-      <p class="swse-concept-panel__hint">Handheld weapons, integrated weapons, and appendage attacks.</p>
+      <h3 class="swse-concept-panel__title">{{localize "SWSE.ActorUI.Weapons2"}}</h3>
+      <p class="swse-concept-panel__hint">{{localize "SWSE.ActorUI.HandheldWeaponsIntegratedWeaponsAndAppendageAttacks"}}</p>
     </div>
   </header>
   <div class="swse-list">
     <article class="swse-list-row weapon-entry swse-unarmed-attack-row" data-weapon-id="{{combatWeapons.unarmed.id}}">
-      <span class="swse-weapon-integrated-badge">UNARMED</span>
+      <span class="swse-weapon-integrated-badge">{{localize "SWSE.ActorUI.UNARMED"}}</span>
       <span class="weapon-name">{{combatWeapons.unarmed.name}}</span>
       <span class="swse-weapon-meta">{{combatWeapons.unarmed.damage}} {{combatWeapons.unarmed.damageType}}</span>
       {{#if combatWeapons.unarmed.martialArtsStep}}<span class="swse-weapon-meta">Martial Arts {{combatWeapons.unarmed.martialArtsStep}}</span>{{/if}}
-      {{#if combatWeapons.unarmed.noProvokeOpportunity}}<span class="swse-weapon-meta">No AoO</span>{{/if}}
-      <div class="swse-inline-actions"><button type="button" data-action="roll-unarmed-attack">Roll</button></div>
+      {{#if combatWeapons.unarmed.noProvokeOpportunity}}<span class="swse-weapon-meta">{{localize "SWSE.ActorUI.NoAoO"}}</span>{{/if}}
+      <div class="swse-inline-actions"><button type="button" data-action="roll-unarmed-attack">{{localize "SWSE.ActorUI.Roll"}}</button></div>
     </article>
 
     {{#each combatWeapons.integratedParts as |part|}}
       <article class="swse-list-row weapon-entry swse-weapon-integrated-row" data-part-id="{{part.id}}">
-        <span class="swse-weapon-integrated-badge">DROID PART</span>
+        <span class="swse-weapon-integrated-badge">{{localize "SWSE.ActorUI.DROIDPART"}}</span>
         <span class="weapon-name">{{part.name}}</span>
         {{#if part.damage}}<span class="swse-weapon-meta">{{part.damage}}</span>{{/if}}
         {{#if part.range}}<span class="swse-weapon-meta">{{part.range}}</span>{{/if}}
-        <div class="swse-inline-actions"><button type="button" data-action="use-droid-part" data-part-id="{{part.id}}" data-part-name="{{part.name}}">Use</button></div>
+        <div class="swse-inline-actions"><button type="button" data-action="use-droid-part" data-part-id="{{part.id}}" data-part-name="{{part.name}}">{{localize "SWSE.ActorUI.Use"}}</button></div>
       </article>
     {{/each}}
 
@@ -35,24 +35,24 @@
         {{#if weapon.damage}}<span class="swse-weapon-meta">{{weapon.damage}}</span>{{/if}}
         {{#if weapon.range}}<span class="swse-weapon-meta">{{weapon.range}}</span>{{/if}}
         <div class="swse-inline-actions">
-          <button type="button" data-action="roll-weapon" data-item-id="{{weapon.id}}">Roll</button>
-          <button type="button" data-action="delete-item" data-item-id="{{weapon.id}}">Delete</button>
+          <button type="button" data-action="roll-weapon" data-item-id="{{weapon.id}}">{{localize "SWSE.ActorUI.Roll"}}</button>
+          <button type="button" data-action="delete-item" data-item-id="{{weapon.id}}">{{localize "SWSE.ActorUI.Delete"}}</button>
         </div>
       </article>
     {{/each}}
 
     {{#each combatWeapons.integrated as |weapon|}}
       <article class="swse-list-row weapon-entry swse-weapon-integrated-row" data-item-id="{{weapon.id}}">
-        <span class="swse-weapon-integrated-badge">INTEGRATED</span>
+        <span class="swse-weapon-integrated-badge">{{localize "SWSE.ActorUI.INTEGRATED"}}</span>
         <span class="weapon-name">{{weapon.name}}</span>
         {{#if weapon.damage}}<span class="swse-weapon-meta">{{weapon.damage}}</span>{{/if}}
         {{#if weapon.range}}<span class="swse-weapon-meta">{{weapon.range}}</span>{{/if}}
-        <div class="swse-inline-actions"><button type="button" data-action="roll-weapon" data-item-id="{{weapon.id}}">Roll</button></div>
+        <div class="swse-inline-actions"><button type="button" data-action="roll-weapon" data-item-id="{{weapon.id}}">{{localize "SWSE.ActorUI.Roll"}}</button></div>
       </article>
     {{/each}}
 
     {{#unless combatWeapons.hasAny}}
-      <div class="swse-empty">No weapons recorded.</div>
+      <div class="swse-empty">{{localize "SWSE.ActorUI.NoWeaponsRecorded"}}</div>
     {{/unless}}
   </div>
 </section>

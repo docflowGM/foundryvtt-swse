@@ -7,17 +7,17 @@
   <div class="swse-vehicle-panel-body">
     <div class="swse-vehicle-shipyard-summary">
       <div>
-        <span>EP Used</span>
+        <span>{{localize "SWSE.ActorUI.EPUsed"}}</span>
         <strong>{{panel.ep.used}} / {{panel.ep.available}}</strong>
         <em>{{panel.ep.remaining}} remaining</em>
       </div>
       <div>
-        <span>Vehicle Value</span>
+        <span>{{localize "SWSE.ActorUI.VehicleValue"}}</span>
         <strong>{{panel.totalCost}} cr</strong>
         <em>{{panel.modificationCost}} cr systems</em>
       </div>
       <div>
-        <span>Last Refit</span>
+        <span>{{localize "SWSE.ActorUI.LastRefit"}}</span>
         <strong>{{panel.lastNetCost}} cr</strong>
         <em>{{panel.lastResaleCredit}} cr resale</em>
       </div>
@@ -51,7 +51,7 @@
 
     {{#if panel.hasRemoved}}
       <div class="swse-vehicle-shipyard-removed">
-        <h4>Removed / Resold Systems</h4>
+        <h4>{{localize "SWSE.ActorUI.RemovedResoldSystems"}}</h4>
         {{#each panel.removed as |mod|}}
           <span>{{mod.name}} · {{mod.cost}} cr base</span>
         {{/each}}

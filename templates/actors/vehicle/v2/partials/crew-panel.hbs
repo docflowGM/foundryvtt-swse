@@ -1,6 +1,6 @@
 <div class="holo-panel swse-ui-panel swse-crew-suite" data-drop-zone="crew">
   <div class="section-bar">
-    <h3 class="section-header">Crew Management</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.CrewManagement"}}</h3>
   </div>
 
   <div class="swse-store-section">
@@ -17,20 +17,20 @@
                     class="crew-open-btn swse-ui-button"
                     data-action="open-owned"
                     data-actor-id="{{this.id}}">
-              Open
+              {{localize "SWSE.ActorUI.Open"}}
             </button>
             <button type="button"
                     class="crew-remove-btn swse-ui-button"
                     data-action="remove-owned"
                     data-actor-id="{{this.id}}">
-              Remove
+              {{localize "SWSE.ActorUI.Remove"}}
             </button>
           </div>
           {{/with}}
         {{/each}}
       </div>
     {{else}}
-      <div class="muted empty-state">No crew members. Drag characters/NPCs here to add them.</div>
+      <div class="muted empty-state">{{localize "SWSE.ActorUI.NoCrewMembersDragCharactersNPCsHereTo"}}</div>
     {{/if}}
   </div>
 </div>

@@ -16,7 +16,7 @@
 --}}
 <div class="holo-panel">
   <div class="section-bar">
-    <h3 class="section-header">Followers & Assets</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.FollowersAssets"}}</h3>
   </div>
   <div style="padding: 12px;">
     {{#if actor.system.ownedActors}}
@@ -33,21 +33,21 @@
                     data-action="open-owned"
                     data-actor-id="{{this.id}}"
                     style="background: #0066cc; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.85em;">
-              Open
+              {{localize "SWSE.ActorUI.Open"}}
             </button>
             <button type="button"
                     class="owned-remove-btn"
                     data-action="remove-owned"
                     data-actor-id="{{this.id}}"
                     style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer; font-size: 0.85em;">
-              Remove
+              {{localize "SWSE.ActorUI.Remove"}}
             </button>
           </div>
           {{/with}}
         {{/each}}
       </div>
     {{else}}
-      <div class="muted" style="padding: 16px;">No followers or assets. Drag actors here to add them.</div>
+      <div class="muted" style="padding: 16px;">{{localize "SWSE.ActorUI.NoFollowersOrAssetsDragActorsHereTo"}}</div>
     {{/if}}
   </div>
 </div>

@@ -10,7 +10,7 @@
 --}}
 <section class="swse-panel holo-panel swse-ui-panel">
   <header class="section-bar">
-    <h3 class="section-header">Budget Breakdown</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.BudgetBreakdown"}}</h3>
     <span class="section-meta muted" style="font-size: 0.85em;">{{droidPanels.budgetBreakdown.totalSpent}} / {{droidPanels.budgetBreakdown.totalBudget}} credits</span>
   </header>
 
@@ -25,7 +25,7 @@
                 <span class="category-count muted" style="font-size: 0.85em; margin-left: 4px;">({{category.count}})</span>
               {{/if}}
               {{#if category.isLargest}}
-                <span class="largest-badge" style="font-size: 0.75em; background: rgba(200,150,50,0.3); padding: 2px 6px; border-radius: 2px; margin-left: 6px;">Largest</span>
+                <span class="largest-badge" style="font-size: 0.75em; background: rgba(200,150,50,0.3); padding: 2px 6px; border-radius: 2px; margin-left: 6px;">{{localize "SWSE.ActorUI.Largest"}}</span>
               {{/if}}
             </span>
             <span class="category-cost" style="font-weight: bold;">{{category.cost}} cr</span>
@@ -40,11 +40,11 @@
     <!-- Budget summary -->
     <div class="budget-summary" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.2);">
       <div class="summary-row" style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-        <span class="label">Total Budget:</span>
+        <span class="label">{{localize "SWSE.ActorUI.TotalBudget"}}</span>
         <span class="value">{{droidPanels.budgetBreakdown.totalBudget}} credits</span>
       </div>
       <div class="summary-row" style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-        <span class="label">Spent:</span>
+        <span class="label">{{localize "SWSE.ActorUI.Spent"}}</span>
         <span class="value">{{droidPanels.budgetBreakdown.totalSpent}} credits</span>
       </div>
       <div class="summary-row" style="display: flex; justify-content: space-between; {{#if droidPanels.budgetBreakdown.isOverBudget}}color: #c83232;{{else}}color: rgba(100, 180, 100, 1);{{/if}}">

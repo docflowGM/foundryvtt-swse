@@ -2,33 +2,33 @@
   <section class="swse-concept-panel swse-droid-panel">
     <header class="swse-concept-panel__header">
       <div>
-        <h3 class="swse-concept-panel__title">Identity</h3>
-        <p class="swse-concept-panel__hint">Core unit designation and bookkeeping.</p>
+        <h3 class="swse-concept-panel__title">{{localize "SWSE.ActorUI.Identity"}}</h3>
+        <p class="swse-concept-panel__hint">{{localize "SWSE.ActorUI.CoreUnitDesignationAndBookkeeping"}}</p>
       </div>
     </header>
     <div class="swse-droid-identity-summary">
       <div class="swse-droid-summary-readout">
-        <span>Designation</span>
+        <span>{{localize "SWSE.ActorUI.Designation"}}</span>
         <strong>{{document.name}}</strong>
       </div>
       <div class="swse-droid-summary-readout">
-        <span>Class / Model</span>
+        <span>{{localize "SWSE.ActorUI.ClassModel"}}</span>
         <strong>{{#if system.droidModel}}{{system.droidModel}}{{else}}{{#if system.class}}{{system.class}}{{else}}Droid Unit{{/if}}{{/if}}</strong>
       </div>
       <div class="swse-droid-summary-readout">
-        <span>Type</span>
+        <span>{{localize "SWSE.ActorUI.Type"}}</span>
         <strong>{{#if system.droidType}}{{system.droidType}}{{else}}Droid{{/if}}</strong>
       </div>
       <div class="swse-droid-summary-readout">
-        <span>Manufacturer</span>
+        <span>{{localize "SWSE.ActorUI.Manufacturer"}}</span>
         <strong>{{#if system.manufacturer}}{{system.manufacturer}}{{else}}Unknown{{/if}}</strong>
       </div>
       <div class="swse-droid-summary-readout">
-        <span>Level</span>
+        <span>{{localize "SWSE.ActorUI.Level"}}</span>
         <strong>{{system.level}}</strong>
       </div>
       <div class="swse-droid-summary-readout">
-        <span>Credits</span>
+        <span>{{localize "SWSE.ActorUI.Credits"}}</span>
         <strong>{{system.credits}}</strong>
       </div>
     </div>
@@ -37,8 +37,8 @@
   <section class="swse-concept-panel swse-droid-panel">
     <header class="swse-concept-panel__header">
       <div>
-        <h3 class="swse-concept-panel__title">Defenses</h3>
-        <p class="swse-concept-panel__hint">Canonical derived defenses for this droid.</p>
+        <h3 class="swse-concept-panel__title">{{localize "SWSE.ActorUI.Defenses"}}</h3>
+        <p class="swse-concept-panel__hint">{{localize "SWSE.ActorUI.CanonicalDerivedDefensesForThisDroid"}}</p>
       </div>
     </header>
     <div class="swse-defense-grid">
@@ -47,7 +47,7 @@
           <span>{{def.label}}</span><strong>{{def.total}}</strong>
         </button>
       {{else}}
-        <div class="swse-empty">No defenses computed.</div>
+        <div class="swse-empty">{{localize "SWSE.ActorUI.NoDefensesComputed"}}</div>
       {{/each}}
     </div>
   </section>
@@ -55,8 +55,8 @@
   <section class="swse-concept-panel swse-droid-panel">
     <header class="swse-concept-panel__header">
       <div>
-        <h3 class="swse-concept-panel__title">Build Status</h3>
-        <p class="swse-concept-panel__hint">Stock conversion and Garage status.</p>
+        <h3 class="swse-concept-panel__title">{{localize "SWSE.ActorUI.BuildStatus"}}</h3>
+        <p class="swse-concept-panel__hint">{{localize "SWSE.ActorUI.StockConversionAndGarageStatus"}}</p>
       </div>
     </header>
     {{> "systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-status-card.hbs"}}

@@ -1,6 +1,6 @@
 <section class="swse-panel holo-panel swse-ui-panel swse-droid-part-panel" data-region="integrated-systems">
   <header class="section-bar">
-    <h3 class="section-header">Integrated Systems</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.IntegratedSystems"}}</h3>
   </header>
 
   {{#if droidPanels.integratedSystems.hasEntries}}
@@ -19,7 +19,7 @@
               {{/each}}
             </ul>
           {{/if}}
-          <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{system.id}}" data-part-name="{{system.name}}">Use / Describe</button>
+          <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{system.id}}" data-part-name="{{system.name}}">{{localize "SWSE.ActorUI.UseDescribe"}}</button>
         </div>
       {{/each}}
     </div>

@@ -15,10 +15,10 @@
   </div>
 
   <div class="swse-games-spec-grid">
-    <div class="swse-games-spec"><div class="k">Players</div><div class="v cyan">{{vm.selectedGame.playerRange}}</div><div class="vs">at the table</div></div>
+    <div class="swse-games-spec"><div class="k">{{localize "SWSE.ShellUI.Players"}}</div><div class="v cyan">{{vm.selectedGame.playerRange}}</div><div class="vs">{{localize "SWSE.ShellUI.AtTheTable"}}</div></div>
     <div class="swse-games-spec"><div class="k">{{vm.selectedGame.targetLabel}}</div><div class="v">{{vm.selectedGame.targetValue}}</div><div class="vs">{{vm.selectedGame.targetHint}}</div></div>
-    <div class="swse-games-spec"><div class="k">Stakes</div><div class="v gold">{{vm.selectedGame.stakesValue}}</div><div class="vs">{{vm.selectedGame.stakesHint}}</div></div>
-    <div class="swse-games-spec"><div class="k">Build</div><div class="v pink">{{vm.selectedGame.phaseShort}}</div><div class="vs">{{vm.selectedGame.status}}</div></div>
+    <div class="swse-games-spec"><div class="k">{{localize "SWSE.ShellUI.Stakes"}}</div><div class="v gold">{{vm.selectedGame.stakesValue}}</div><div class="vs">{{vm.selectedGame.stakesHint}}</div></div>
+    <div class="swse-games-spec"><div class="k">{{localize "SWSE.ShellUI.Build"}}</div><div class="v pink">{{vm.selectedGame.phaseShort}}</div><div class="vs">{{vm.selectedGame.status}}</div></div>
   </div>
 
   <div class="swse-games-capset">
@@ -29,7 +29,7 @@
 
   {{#if vm.selectedGame.hasQuickRules}}
   <section class="swse-games-quick-rules">
-    <span class="swse-games-kicker">Table Pattern</span>
+    <span class="swse-games-kicker">{{localize "SWSE.ShellUI.TablePattern"}}</span>
     <div>
       {{#each vm.selectedGame.quickRules}}
       <p>{{this}}</p>
@@ -39,12 +39,12 @@
   {{/if}}
 
   <section class="swse-games-config-card">
-    <span class="swse-games-kicker">Start a Table</span>
+    <span class="swse-games-kicker">{{localize "SWSE.ShellUI.StartATable"}}</span>
     <h4>Configure {{vm.selectedGame.title}} session</h4>
 
     <div class="swse-games-config-row">
-      <span class="lbl">Rules</span>
-      <div class="swse-games-seg" role="group" aria-label="Game rules mode">
+      <span class="lbl">{{localize "SWSE.ShellUI.Rules"}}</span>
+      <div class="swse-games-seg" role="group" aria-label="{{localize 'SWSE.ShellUI.GameRulesMode'}}">
         {{#each vm.modeCards}}
         <button type="button"
                 class="{{#if this.selected}}on{{/if}} {{#unless this.enabled}}is-disabled{{/unless}}"
@@ -59,7 +59,7 @@
 
     {{#if vm.showCreditWagerControls}}
     <div class="swse-games-config-row">
-      <span class="lbl">Buy-In</span>
+      <span class="lbl">{{localize "SWSE.ShellUI.BuyIn"}}</span>
       <div class="swse-games-buyin-chip">{{vm.selectedCreditBuyIn}} cr <small>max {{vm.maxCreditWager}} cr</small></div>
     </div>
     {{/if}}
@@ -67,8 +67,8 @@
     {{#if vm.canStartSoloAiPazaak}}
     <form class="swse-games-invite-form swse-games-start-form" data-games-action="start-solo-pazaak">
       <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
-      <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
-      {{#if vm.showCreditWagerControls}}<label><span>Credit Buy-In</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
+      <label><span>{{localize "SWSE.ShellUI.TableName"}}</span><input type="text" name="title" maxlength="80" placeholder="{{localize 'SWSE.ShellUI.OptionalCustomTableName'}}"></label>
+      {{#if vm.showCreditWagerControls}}<label><span>{{localize "SWSE.ShellUI.CreditBuyIn"}}</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
       <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
     </form>
     {{/if}}
@@ -76,18 +76,18 @@
     {{#if vm.canStartSoloAiSabacc}}
     <form class="swse-games-invite-form swse-games-start-form" data-games-action="start-solo-sabacc">
       <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
-      <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
-      {{#if vm.showCreditWagerControls}}<label><span>Credit Buy-In</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
-      <label><span>Hand Limit</span><input type="number" name="handLimit" min="0" max="99" step="1" value="0"><small>0 = open-ended casino table</small></label>
-      <label class="swse-games-checkline"><input type="checkbox" name="marketEnabled" checked> <span>Enable Holopad Casino Market house rule</span></label>
+      <label><span>{{localize "SWSE.ShellUI.TableName"}}</span><input type="text" name="title" maxlength="80" placeholder="{{localize 'SWSE.ShellUI.OptionalCustomTableName'}}"></label>
+      {{#if vm.showCreditWagerControls}}<label><span>{{localize "SWSE.ShellUI.CreditBuyIn"}}</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
+      <label><span>{{localize "SWSE.ShellUI.HandLimit"}}</span><input type="number" name="handLimit" min="0" max="99" step="1" value="0"><small>{{localize "SWSE.ShellUI.Text0OpenEndedCasinoTable"}}</small></label>
+      <label class="swse-games-checkline"><input type="checkbox" name="marketEnabled" checked> <span>{{localize "SWSE.ShellUI.EnableHolopadCasinoMarketHouseRule"}}</span></label>
       <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
     </form>
     {{/if}}
 
     {{#if vm.canStartSoloAiDejarik}}
     <form class="swse-games-invite-form swse-games-start-form" data-games-action="start-solo-dejarik">
-      <label><span>Board Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom board name"></label>
-      <label><span>Rules Style</span><select name="dejarikRulesMode"><option value="holopad-skirmish">Holopad Skirmish — HP, reach, abilities</option><option value="classic-holochess">Classic Holochess — attack vs defense contest</option></select></label>
+      <label><span>{{localize "SWSE.ShellUI.BoardName"}}</span><input type="text" name="title" maxlength="80" placeholder="{{localize 'SWSE.ShellUI.OptionalCustomBoardName'}}"></label>
+      <label><span>{{localize "SWSE.ShellUI.RulesStyle"}}</span><select name="dejarikRulesMode"><option value="holopad-skirmish">{{localize "SWSE.ShellUI.HolopadSkirmishHPReachAbilities"}}</option><option value="classic-holochess">{{localize "SWSE.ShellUI.ClassicHolochessAttackVsDefenseContest"}}</option></select></label>
       <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
     </form>
     {{/if}}
@@ -95,9 +95,9 @@
     {{#if vm.canStartSoloAiHintaro}}
     <form class="swse-games-invite-form swse-games-start-form" data-games-action="start-solo-hintaro">
       <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
-      <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
-          <label><span>Hintaron Mode</span><select name="hintaronMode"><option value="rotating">Rotating table hintaron</option><option value="casino">Fixed casino hintaron</option></select></label>
-      {{#if vm.showCreditWagerControls}}<label><span>Credit Buy-In</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
+      <label><span>{{localize "SWSE.ShellUI.TableName"}}</span><input type="text" name="title" maxlength="80" placeholder="{{localize 'SWSE.ShellUI.OptionalCustomTableName'}}"></label>
+          <label><span>{{localize "SWSE.ShellUI.HintaronMode"}}</span><select name="hintaronMode"><option value="rotating">{{localize "SWSE.ShellUI.RotatingTableHintaron"}}</option><option value="casino">{{localize "SWSE.ShellUI.FixedCasinoHintaron"}}</option></select></label>
+      {{#if vm.showCreditWagerControls}}<label><span>{{localize "SWSE.ShellUI.CreditBuyIn"}}</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
       <div class="swse-games-start-row"><button type="submit" class="swse-games-primary">{{vm.selectedGame.actionLabel}}</button><span class="swse-games-start-note">{{vm.selectedGame.startNote}}</span></div>
     </form>
     {{/if}}
@@ -106,20 +106,20 @@
     <form class="swse-games-invite-form" data-games-action="create-game-invite">
       <input type="hidden" name="gameId" value="{{vm.selectedGame.id}}">
       <input type="hidden" name="rulesMode" value="{{vm.selectedRulesMode}}">
-      <div><span class="swse-games-kicker">Holonet Request</span><strong>Send Game Invite</strong><small>Creates a Messenger thread with an accept/decline game card.</small></div>
-      <label><span>Opponent</span><select name="recipientId" required>{{#each vm.inviteTargets}}<option value="{{this.id}}">{{this.label}} // {{this.typeLabel}}</option>{{/each}}</select></label>
-      <label><span>Table Name</span><input type="text" name="title" maxlength="80" placeholder="Optional custom table name"></label>
-      <label><span>Message</span><input type="text" name="memo" maxlength="140" placeholder="Optional table note"></label>
-      {{#if vm.showCreditWagerControls}}<label><span>Credit Buy-In</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
-      <button type="submit" class="swse-games-primary">Send Game Request</button>
+      <div><span class="swse-games-kicker">{{localize "SWSE.ShellUI.HolonetRequest"}}</span><strong>{{localize "SWSE.ShellUI.SendGameInvite"}}</strong><small>{{localize "SWSE.ShellUI.CreatesAMessengerThreadWithAnAcceptDecline"}}</small></div>
+      <label><span>{{localize "SWSE.ShellUI.Opponent"}}</span><select name="recipientId" required>{{#each vm.inviteTargets}}<option value="{{this.id}}">{{this.label}} // {{this.typeLabel}}</option>{{/each}}</select></label>
+      <label><span>{{localize "SWSE.ShellUI.TableName"}}</span><input type="text" name="title" maxlength="80" placeholder="{{localize 'SWSE.ShellUI.OptionalCustomTableName'}}"></label>
+      <label><span>{{localize "SWSE.ShellUI.Message"}}</span><input type="text" name="memo" maxlength="140" placeholder="{{localize 'SWSE.ShellUI.OptionalTableNote'}}"></label>
+      {{#if vm.showCreditWagerControls}}<label><span>{{localize "SWSE.ShellUI.CreditBuyIn"}}</span><input type="number" name="creditBuyIn" min="1" max="{{vm.maxCreditWager}}" step="1" value="{{vm.selectedCreditBuyIn}}"></label>{{/if}}
+      <button type="submit" class="swse-games-primary">{{localize "SWSE.ShellUI.SendGameRequest"}}</button>
     </form>
     {{else}}
     <div class="swse-games-next-box swse-games-next-box--concept">
-      <div><span class="swse-games-kicker">Next Milestone</span><strong>{{vm.selectedGame.nextMilestone}}</strong><small>{{#if vm.settings.useMessengerInvites}}No eligible invite targets are available for this table.{{else}}Messenger invites are disabled by GM settings.{{/if}}</small></div>
+      <div><span class="swse-games-kicker">{{localize "SWSE.ShellUI.NextMilestone"}}</span><strong>{{vm.selectedGame.nextMilestone}}</strong><small>{{#if vm.settings.useMessengerInvites}}No eligible invite targets are available for this table.{{else}}Messenger invites are disabled by GM settings.{{/if}}</small></div>
     </div>
     {{/if}}
   </section>
 </div>
 {{else}}
-<div class="swse-games-empty">No games are registered.</div>
+<div class="swse-games-empty">{{localize "SWSE.ShellUI.NoGamesAreRegistered"}}</div>
 {{/if}}

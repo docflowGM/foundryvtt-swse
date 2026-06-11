@@ -47,6 +47,81 @@ function lower(value) {
   return safeString(value).trim().toLowerCase();
 }
 
+function firstPresent(...values) {
+  for (const value of values) {
+    if (value === 0 || value === false) return value;
+    if (value !== null && value !== undefined && String(value).trim() !== '') return value;
+  }
+  return null;
+}
+
+function safeVehicleNumber(...values) {
+  const fallback = typeof values[values.length - 1] === 'number' ? values.pop() : 0;
+  const value = firstPresent(...values);
+  return safeNumber(value, fallback);
+}
+
+
+function vehicleModelName(system = {}, actor = null, fallback = '') {
+  const candidates = [
+    system.model,
+    system.vehicleModel,
+    system.modelName,
+    system.stockShip?.name,
+    system.modificationData?.stockShip?.name,
+    system.buildMetadata?.model,
+    system.buildMetadata?.modelName,
+    system.buildMetadata?.frameName,
+    system.shipyard?.model,
+    system.shipyard?.modelName,
+    system.shipyard?.frameName,
+    actor?.flags?.['foundryvtt-swse']?.shipyardBuild?.stockShip?.name,
+    fallback
+  ];
+  for (const candidate of candidates) {
+    const value = safeString(candidate).trim();
+    if (value) return value;
+  }
+  return '';
+}
+
+function signedNumberString(value, fallback = '+0') {
+  const raw = firstPresent(value);
+  if (raw === null) return fallback;
+  const n = Number(String(raw).replace(/[^0-9+\-.]/g, ''));
+  if (!Number.isFinite(n)) return String(raw);
+  return n >= 0 ? `+${n}` : `${n}`;
+}
+
+function normalizeVehicleWeaponEntry(weapon = {}, index = 0, source = 'system') {
+  const name = safeString(weapon.name || weapon.label || `Weapon ${index + 1}`, `Weapon ${index + 1}`);
+  const rawBonus = firstPresent(weapon.bonus, weapon.attackBonus, weapon.attack, weapon.toHit, weapon.total, '+0');
+  const attackSummary = signedNumberString(rawBonus, '+0');
+  const damageSummary = safeString(firstPresent(weapon.damage, weapon.damageFormula, weapon.formula, weapon.damageRoll, '1d10'), '1d10');
+  const rangeSummary = safeString(firstPresent(weapon.range, weapon.rangeSummary, weapon.rangeProfile, 'Close'), 'Close');
+  return {
+    key: weapon.key || weapon.id || weapon._id || `${source}-weapon-${index}`,
+    name,
+    arc: safeString(firstPresent(weapon.arc, weapon.firingArc, 'Forward'), 'Forward'),
+    linkedGroup: weapon.linkedGroup || null,
+    fireControl: firstPresent(weapon.fireControl, weapon.fireControlBonus, null),
+    weaponId: source === 'item' ? weapon.id : `system-weapons-${index}`,
+    source,
+    index,
+    gunner: 'Unassigned',
+    crewRole: weapon.crewRole || 'gunner',
+    attackSummary,
+    attackBonus: attackSummary,
+    damageSummary,
+    damageFormula: damageSummary,
+    rangeSummary,
+    notes: safeArray(weapon.notes ? [weapon.notes] : weapon.special ? [weapon.special] : []),
+    actions: getStationSkillActions('gunner').map((action) => ({ ...action, stationKey: 'gunner' })),
+    rawSource: weapon.rawSource || null,
+    parseConfidence: weapon.parseConfidence || (source === 'item' ? 'structured' : 'statblock')
+  };
+}
+
 /**
  * Parse the canonical vehicle cargo string field into a display object.
  * Examples: "100 Tons", "70 Kilograms", "5 kg", "not publicly available".
@@ -153,7 +228,7 @@ export function buildVehicleTypeFlags(system = {}) {
     crew: isCapital ? 'Command Deck' : isStarship ? 'Crew Stations' : isWalker ? 'Crew' : 'Crew',
     cargo: isCapital || isStarship ? 'Cargo Bay' : isSpeeder ? 'Payload' : 'Cargo',
     maneuvers: 'Maneuvers',
-    operations: isCapital ? 'Command Deck' : isStarship ? 'Operations' : isWalker ? 'Operations' : 'Operations'
+    operations: isCapital ? 'Combat' : isStarship ? 'Combat' : isWalker ? 'Combat' : 'Combat'
   };
 
   return {
@@ -217,7 +292,7 @@ function buildVehicleConceptTabs(typeFlags, editable) {
 }
 
 
-function buildVehicleEditContext(actor) {
+function buildVehicleEditContext(actor, options = {}) {
   const system = actor?.system ?? {};
   const derived = system.derived ?? {};
   const identity = derived.identity ?? {};
@@ -225,13 +300,14 @@ function buildVehicleEditContext(actor) {
   const shields = system.shields ?? {};
   return {
     identity: {
+      model: vehicleModelName(system, actor, options.sourceModelName),
       category: identity.category || system.category || '',
       type: identity.typeLabel || system.type || '',
       size: identity.sizeLabel || system.size || ''
     },
     details: {
       challengeLevel: system.challengeLevel ?? system.cl ?? '',
-      cost: system.cost ?? '',
+      cost: typeof system.cost === 'object' ? JSON.stringify(system.cost) : (system.cost ?? ''),
       availability: system.availability ?? '',
       cover: system.cover ?? ''
     },
@@ -240,9 +316,13 @@ function buildVehicleEditContext(actor) {
     defenses: {
       reflex: system.reflexDefense ?? derived.defenses?.ref?.total ?? '',
       fortitude: system.fortitudeDefense ?? derived.defenses?.fort?.total ?? '',
+      will: system.willDefense ?? derived.defenses?.will?.total ?? '',
+      flatFooted: system.flatFooted ?? derived.defenses?.flatFooted?.total ?? '',
       damageThreshold: system.damageThreshold ?? derived.damage?.threshold ?? '',
       armorBonus: system.armorBonus ?? '',
-      damageReduction: system.damageReduction ?? derived.damage?.reduction ?? ''
+      damageReduction: system.damageReduction ?? derived.damage?.reduction ?? '',
+      initiative: system.initiative ?? '',
+      baseAttackBonus: system.baseAttackBonus ?? ''
     },
     movement: {
       speed: system.speed ?? '',
@@ -255,7 +335,17 @@ function buildVehicleEditContext(actor) {
       passengers: system.passengers ?? '',
       cargo: system.cargo ?? '',
       payload: system.payload ?? ''
-    }
+    },
+    weapons: safeArray(system.weapons).map((weapon, index) => ({
+      index,
+      name: weapon?.name ?? '',
+      arc: weapon?.arc ?? 'Forward',
+      bonus: weapon?.bonus ?? weapon?.attackBonus ?? '+0',
+      damage: weapon?.damage ?? weapon?.damageFormula ?? '',
+      range: weapon?.range ?? 'Close',
+      fireControl: weapon?.fireControl ?? '',
+      notes: weapon?.notes ?? ''
+    }))
   };
 }
 
@@ -291,7 +381,7 @@ function buildVehicleAbilitiesPanel(actor) {
  * @param {Actor} actor
  * @returns {Object}
  */
-export function buildVehicleHeaderSummaryPanel(actor) {
+export function buildVehicleHeaderSummaryPanel(actor, options = {}) {
   const system = actor?.system ?? {};
   const derived = system.derived ?? {};
   const identity = derived.identity ?? {};
@@ -322,6 +412,7 @@ export function buildVehicleHeaderSummaryPanel(actor) {
   return {
     title: null,
     name: actor?.name || 'Unnamed Vehicle',
+    model: vehicleModelName(system, actor, options.sourceModelName),
     typeLabel: identity.typeLabel || 'Vehicle',
     sizeLabel: identity.sizeLabel || 'Medium',
     category: identity.category || system.category || 'Vehicle',
@@ -336,52 +427,26 @@ export function buildVehicleHeaderSummaryPanel(actor) {
  * @returns {Object|null}
  */
 export function buildVehicleDefensesPanel(actor) {
-  const derived = actor?.system?.derived ?? {};
+  const system = actor?.system ?? {};
+  const derived = system.derived ?? {};
   const defenses = derived.defenses ?? {};
 
-  if (!defenses.ref && !defenses.fort && !defenses.will && !defenses.flatFooted) {
-    return null;
-  }
+  const refTotal = safeVehicleNumber(system.reflexDefense, system.defenses?.reflex?.total, system.defenses?.reflex, defenses.ref?.total, defenses.reflex?.total, 10);
+  const fortTotal = safeVehicleNumber(system.fortitudeDefense, system.defenses?.fortitude?.total, system.defenses?.fortitude, defenses.fort?.total, defenses.fortitude?.total, 10);
+  const willTotal = safeVehicleNumber(system.willDefense, system.defenses?.will?.total, system.defenses?.will, defenses.will?.total, 10);
+  const flatTotal = safeVehicleNumber(system.flatFooted, system.flatFootedDefense, system.defenses?.flatFooted?.total, system.defenses?.flatFooted, defenses.flatFooted?.total, refTotal);
 
   const defenseArray = [
-    {
-      key: 'ref',
-      label: 'Reflex',
-      base: defenses.ref?.base ?? 10,
-      total: defenses.ref?.total ?? 10,
-      adjustment: defenses.ref?.adjustment ?? 0,
-      stateBonus: defenses.ref?.stateBonus ?? 0
-    },
-    {
-      key: 'fort',
-      label: 'Fortitude',
-      base: defenses.fort?.base ?? 10,
-      total: defenses.fort?.total ?? 10,
-      adjustment: defenses.fort?.adjustment ?? 0,
-      stateBonus: defenses.fort?.stateBonus ?? 0
-    },
-    {
-      key: 'will',
-      label: 'Will',
-      base: defenses.will?.base ?? 10,
-      total: defenses.will?.total ?? 10,
-      adjustment: defenses.will?.adjustment ?? 0,
-      stateBonus: defenses.will?.stateBonus ?? 0
-    },
-    {
-      key: 'flatFooted',
-      label: 'Flat-Footed',
-      base: defenses.flatFooted?.base ?? 10,
-      total: defenses.flatFooted?.total ?? 10,
-      adjustment: defenses.flatFooted?.adjustment ?? 0,
-      stateBonus: defenses.flatFooted?.stateBonus ?? 0
-    }
+    { key: 'ref', label: 'Reflex', base: defenses.ref?.base ?? 10, total: refTotal, adjustment: refTotal - 10, stateBonus: defenses.ref?.stateBonus ?? 0 },
+    { key: 'fort', label: 'Fortitude', base: defenses.fort?.base ?? 10, total: fortTotal, adjustment: fortTotal - 10, stateBonus: defenses.fort?.stateBonus ?? 0 },
+    { key: 'will', label: 'Will', base: defenses.will?.base ?? 10, total: willTotal, adjustment: willTotal - 10, stateBonus: defenses.will?.stateBonus ?? 0 },
+    { key: 'flatFooted', label: 'Flat-Footed', base: defenses.flatFooted?.base ?? 10, total: flatTotal, adjustment: flatTotal - 10, stateBonus: defenses.flatFooted?.stateBonus ?? 0 }
   ];
 
   return {
     title: 'Defenses',
     defenses: defenseArray,
-    damageThreshold: derived.damage?.threshold ?? 10
+    damageThreshold: safeVehicleNumber(system.damageThreshold, derived.damage?.threshold, 10)
   };
 }
 
@@ -394,13 +459,17 @@ export function buildVehicleDefensesPanel(actor) {
 export function buildVehicleHpConditionPanel(actor) {
   const system = actor?.system ?? {};
   const derived = system.derived ?? {};
-  const hp = derived.hp ?? {
-    value: 0,
-    max: 1,
-    temp: 0,
-    percent: 0,
-    warning: false,
-    critical: false
+  const derivedHp = derived.hp ?? {};
+  const hull = system.hull ?? system.hp ?? {};
+  const hullValue = safeVehicleNumber(hull.value, derivedHp.value, 0);
+  const hullMax = Math.max(1, safeVehicleNumber(hull.max, derivedHp.max, 1));
+  const hp = {
+    value: hullValue,
+    max: hullMax,
+    temp: safeVehicleNumber(hull.temp, derivedHp.temp, 0),
+    percent: Math.max(0, Math.min(100, (hullValue / hullMax) * 100)),
+    warning: hullValue / hullMax <= 0.5 && hullValue / hullMax > 0.25,
+    critical: hullValue / hullMax <= 0.25
   };
   const damage = derived.damage ?? {};
   const conditionTrack = system.conditionTrack ?? { current: 0, penalty: 0 };
@@ -429,8 +498,8 @@ export function buildVehicleHpConditionPanel(actor) {
       temp: safeNumber(hp.temp, 0),
       percent: safeNumber(hp.percent, 0)
     },
-    damageThreshold: safeNumber(damage.threshold, 10),
-    damageReduction: safeNumber(damage.reduction, 0),
+    damageThreshold: safeVehicleNumber(system.damageThreshold, damage.threshold, 10),
+    damageReduction: safeVehicleNumber(system.damageReduction, damage.reduction, 0),
     warning: Boolean(hp.warning),
     critical: Boolean(hp.critical),
     condition: {
@@ -453,53 +522,32 @@ export function buildVehicleWeaponMountPanel(actor) {
   const mounts = [];
   const items = safeArray(actor?.items);
 
-  const embeddedWeapons = items.filter((item) => item?.type === 'weapon');
+  const embeddedWeapons = items.filter((item) => ['weapon', 'vehicle-weapon', 'vehicleWeapon', 'vehicleWeaponRange'].includes(item?.type));
 
   for (const weapon of embeddedWeapons) {
     const itemSystem = weapon?.system ?? {};
     const vehicleMount = itemSystem.vehicleMount ?? {};
-
-    mounts.push({
-      key: vehicleMount.mountKey || `mount-${mounts.length}`,
-      name: weapon?.name || 'Unnamed Weapon',
-      arc: vehicleMount.arc || itemSystem.arc || 'unknown',
-      linkedGroup: vehicleMount.linkedGroup || null,
-      fireControl: vehicleMount.fireControl || itemSystem.fireControl || null,
-      weaponId: weapon.id,
-      gunner: 'Unassigned',
-      crewRole: vehicleMount.crewRole || 'gunner',
-      attackSummary: itemSystem.bonus || itemSystem.attackBonus || '+0',
-      damageSummary: itemSystem.damage || '1d10',
-      rangeSummary: itemSystem.range || null,
-      notes: itemSystem.notes ? [itemSystem.notes] : [],
-      actions: getStationSkillActions('gunner').map((action) => ({ ...action, stationKey: 'gunner' })),
-      rawSource: vehicleMount.rawSource || null,
-      parseConfidence: vehicleMount.parseConfidence || 'structured'
-    });
+    mounts.push(normalizeVehicleWeaponEntry({
+      id: weapon.id,
+      name: weapon?.name,
+      arc: vehicleMount.arc || itemSystem.arc,
+      linkedGroup: vehicleMount.linkedGroup,
+      fireControl: vehicleMount.fireControl || itemSystem.fireControl,
+      bonus: itemSystem.bonus || itemSystem.attackBonus || itemSystem.attack?.bonus,
+      damage: itemSystem.damage || itemSystem.damageFormula || itemSystem.combat?.damage?.dice,
+      range: itemSystem.range,
+      notes: itemSystem.notes,
+      rawSource: vehicleMount.rawSource,
+      parseConfidence: vehicleMount.parseConfidence || 'structured',
+      crewRole: vehicleMount.crewRole || 'gunner'
+    }, mounts.length, 'item'));
   }
 
-  if (mounts.length === 0 && Array.isArray(system.weapons)) {
+  if (Array.isArray(system.weapons)) {
     for (let i = 0; i < system.weapons.length; i += 1) {
       const weapon = system.weapons[i];
       if (!weapon || !weapon.name) continue;
-
-      mounts.push({
-        key: `mount-${i}`,
-        name: weapon.name,
-        arc: weapon.arc || 'unknown',
-        linkedGroup: null,
-        fireControl: weapon.fireControl || null,
-        weaponId: `system-weapons-${i}`,
-        gunner: 'Unassigned',
-        crewRole: 'gunner',
-        attackSummary: weapon.bonus || weapon.attackBonus || '+0',
-        damageSummary: weapon.damage || '1d10',
-        rangeSummary: weapon.range || null,
-        notes: [],
-        actions: [],
-        rawSource: null,
-        parseConfidence: 'fallback'
-      });
+      mounts.push(normalizeVehicleWeaponEntry(weapon, i, 'system'));
     }
   }
 
@@ -933,7 +981,7 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
   const parsedCargo = parseCargoString(actor?.system?.cargo);
   const parsedSpeed = parseVehicleSpeed(actor?.system?.speed);
 
-  const headerSummaryPanel = buildVehicleHeaderSummaryPanel(actor);
+  const headerSummaryPanel = buildVehicleHeaderSummaryPanel(actor, { sourceModelName: options.sourceModelName });
   const defensesPanel = buildVehicleDefensesPanel(actor);
   const hpConditionPanel = buildVehicleHpConditionPanel(actor);
   const weaponMountPanel = buildVehicleWeaponMountPanel(actor);
@@ -977,7 +1025,7 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
     vehicleAnnotation,
     parsedCargo,
     parsedSpeed,
-    editContext: buildVehicleEditContext(actor),
+    editContext: buildVehicleEditContext(actor, { sourceModelName: options.sourceModelName }),
     abilitiesPanel,
     abilities,
     conceptLayout: {

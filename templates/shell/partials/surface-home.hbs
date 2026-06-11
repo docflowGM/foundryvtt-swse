@@ -26,7 +26,7 @@
       {{!-- LOCK SCREEN OVERLAY (optional, stored in flags) --}}
       <div class="swse-home-lock-screen {{#unless vm.lockScreenEnabled}}hidden{{/unless}}" id="swse-home-lock-screen">
         <div class="swse-home-lock-toggle">
-          <span id="swse-home-lock-label">Lock screen · ON</span>
+          <span id="swse-home-lock-label">{{localize "SWSE.ShellUI.LockScreenON"}}</span>
           <div class="swse-home-lock-switch on" id="swse-home-lock-toggle"><div class="swse-home-lock-nub"></div></div>
         </div>
         <div class="swse-home-lock-time">
@@ -38,11 +38,11 @@
           <div class="swse-home-lock-class">{{vm.classDisplay}} · {{vm.species}}</div>
         </div>
         <div class="swse-home-lock-vitals">
-          <div><span class="k">HP</span><span class="v pos">{{vm.lockHp}}</span></div>
-          <div><span class="k">FP</span><span class="v cyan">{{vm.lockFp}}</span></div>
-          <div><span class="k">CR</span><span class="v pink">{{vm.lockCredits}}</span></div>
+          <div><span class="k">{{localize "SWSE.ShellUI.HP"}}</span><span class="v pos">{{vm.lockHp}}</span></div>
+          <div><span class="k">{{localize "SWSE.ShellUI.FP"}}</span><span class="v cyan">{{vm.lockFp}}</span></div>
+          <div><span class="k">{{localize "SWSE.ShellUI.CR"}}</span><span class="v pink">{{vm.lockCredits}}</span></div>
         </div>
-        <div class="swse-home-lock-prompt">▸ tap to enter ◂</div>
+        <div class="swse-home-lock-prompt">{{localize "SWSE.ShellUI.TapToEnter"}}</div>
         <div class="swse-home-lock-bars">
           <span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span>
           <span></span><span></span><span></span><span></span>
@@ -52,27 +52,27 @@
       {{!-- HUD (TOOLBAR) --}}
       <div class="swse-home-hud">
         <div class="swse-home-hud-left">
-          <span class="swse-home-tag"><span class="swse-home-dot"></span> ONLINE</span>
-          <span class="swse-home-hud-title">DATAPAD · HOME</span>
+          <span class="swse-home-tag"><span class="swse-home-dot"></span> {{localize "SWSE.ShellUI.ONLINE"}}</span>
+          <span class="swse-home-hud-title">{{localize "SWSE.ShellUI.DATAPADHOME"}}</span>
           <span class="swse-home-tag"><span class="swse-home-dot {{#if vm.alerts.total}}warn{{/if}}"></span> {{vm.alerts.total}} ALERTS</span>
         </div>
         <div class="swse-home-hud-right">
           <span id="swse-home-clock">—:—</span>
           <span class="swse-home-signal"><span></span><span></span><span></span><span></span></span>
           <span class="swse-home-battery"><span class="swse-home-cell"><span class="swse-home-fill"></span></span> 78%</span>
-          <span>SEC 2 · TIER 4</span>
+          <span>{{localize "SWSE.ShellUI.SEC2TIER4"}}</span>
         </div>
       </div>
 
       {{!-- PAGE HEADER --}}
       <div class="swse-home-page-header">
         <div>
-          <div class="swse-home-page-title">Welcome Back</div>
-          <div class="swse-home-page-kicker">ACTIVE DATAPAD NODE · READY FOR DEPLOYMENT</div>
-          <div class="swse-home-page-subtitle">▸ DATAPAD HOME · APP DRAWER · TIER 4 ACCESS</div>
+          <div class="swse-home-page-title">{{localize "SWSE.ShellUI.WelcomeBack"}}</div>
+          <div class="swse-home-page-kicker">{{localize "SWSE.ShellUI.ACTIVEDATAPADNODEREADYFORDEPLOYMENT"}}</div>
+          <div class="swse-home-page-subtitle">{{localize "SWSE.ShellUI.DATAPADHOMEAPPDRAWERTIER4ACCESS"}}</div>
         </div>
         <div class="swse-home-page-greeting">
-          <span class="em">{{actor.name}}</span> · last seen <span class="em">{{vm.lastSeenAgo}}</span><br>
+          <span class="em">{{actor.name}}</span> {{localize "SWSE.ShellUI.LastSeen"}} <span class="em">{{vm.lastSeenAgo}}</span><br>
           <span class="stardate">{{vm.stardate}} · GALACTIC STANDARD</span>
         </div>
       </div>
@@ -102,28 +102,28 @@
 
             <div class="swse-home-actor-vitals">
               <div class="swse-home-vital hp">
-                <span class="swse-home-vital-lbl">HP</span>
+                <span class="swse-home-vital-lbl">{{localize "SWSE.ShellUI.HP"}}</span>
                 <div class="swse-home-vital-bar">
                   <div class="swse-home-vital-fill" style="width: {{vm.hpPercent}}%;"></div>
                 </div>
                 <span class="swse-home-vital-val">{{vm.hpCurrent}} / {{vm.hpMax}}</span>
               </div>
               <div class="swse-home-vital fp">
-                <span class="swse-home-vital-lbl">FP</span>
+                <span class="swse-home-vital-lbl">{{localize "SWSE.ShellUI.FP"}}</span>
                 <div class="swse-home-vital-bar">
                   <div class="swse-home-vital-fill" style="width: {{vm.fpPercent}}%;"></div>
                 </div>
                 <span class="swse-home-vital-val">{{vm.fpCurrent}} / {{vm.fpMax}}</span>
               </div>
               <div class="swse-home-vital dt">
-                <span class="swse-home-vital-lbl">DT</span>
+                <span class="swse-home-vital-lbl">{{localize "SWSE.ShellUI.DT"}}</span>
                 <div class="swse-home-vital-bar">
                   <div class="swse-home-vital-fill" style="width: {{vm.dtPercent}}%;"></div>
                 </div>
                 <span class="swse-home-vital-val">{{vm.dt}}</span>
               </div>
               <div class="swse-home-vital xp">
-                <span class="swse-home-vital-lbl">XP</span>
+                <span class="swse-home-vital-lbl">{{localize "SWSE.ShellUI.XP"}}</span>
                 <div class="swse-home-vital-bar">
                   <div class="swse-home-vital-fill" style="width: {{vm.xpPercent}}%;"></div>
                 </div>
@@ -135,15 +135,15 @@
           {{!-- LAST SESSION / CURRENT STATUS --}}
           <div class="swse-home-side-card swse-home-session-card">
             <div class="swse-home-side-head">
-              <span>▸ Last Session</span>
-              <span class="swse-home-side-hint">status</span>
+              <span>{{localize "SWSE.ShellUI.LastSession"}}</span>
+              <span class="swse-home-side-hint">{{localize "SWSE.ShellUI.Status"}}</span>
             </div>
             <div class="swse-home-session-status">
               {{#if vm.currentState.situation}}
-              <span class="em">[STATUS]</span> {{vm.currentState.situation}}
+              <span class="em">{{localize "SWSE.ShellUI.STATUS"}}</span> {{vm.currentState.situation}}
               {{#if vm.currentState.updatedAt}}<br><span class="swse-home-session-updated">Updated {{vm.currentState.updatedAt}}</span>{{/if}}
               {{else}}
-              <span class="em">[STATUS]</span> No active objective. Awaiting orders.
+              <span class="em">{{localize "SWSE.ShellUI.STATUS"}}</span> No active objective. Awaiting orders.
               {{/if}}
             </div>
             {{#if vm.lastSession}}
@@ -154,14 +154,14 @@
               {{{vm.lastSession.preview}}}
             </div>
             {{else}}
-            <p class="swse-home-feed-empty">No recap has been published yet.</p>
+            <p class="swse-home-feed-empty">{{localize "SWSE.ShellUI.NoRecapHasBeenPublishedYet"}}</p>
             {{/if}}
           </div>
         </div>
 
         {{!-- CENTER COLUMN: HOLO-DISC LAUNCHER --}}
         <div class="swse-home-disc-wrap" id="swse-home-disc-wrap">
-          <div class="swse-home-disc-caption">Application Orbit</div>
+          <div class="swse-home-disc-caption">{{localize "SWSE.ShellUI.ApplicationOrbit"}}</div>
           <svg class="swse-home-disc-svg" viewBox="-50 -50 100 100">
             <!-- Spinning rotor -->
             <g class="swse-home-disc-rotor">
@@ -247,7 +247,7 @@
                   <circle cx="0" cy="-42" r="2.2" fill="var(--vapor-pink)"/>
                 </g>
               </svg>
-              <div class="swse-home-compass-label" id="swse-home-compass-label">▸ HOLD</div>
+              <div class="swse-home-compass-label" id="swse-home-compass-label">{{localize "SWSE.ShellUI.HOLD"}}</div>
               <div class="swse-home-compass-bearing" id="swse-home-compass-bearing">000°</div>
             </div>
           </div>
@@ -258,7 +258,7 @@
           {{!-- COMM FEED --}}
           <div class="swse-home-side-card swse-home-comm-card">
             <div class="swse-home-side-head">
-              <span>◆ Comm Feed</span>
+              <span>{{localize "SWSE.ShellUI.CommFeed"}}</span>
               <span class="swse-home-side-hint">
                 {{#if vm.commFeed.length}}
                 {{vm.commFeed.length}} unread
@@ -279,17 +279,17 @@
                   <span class="swse-home-feed-meta">
                     <span class="swse-home-feed-source">{{this.sender}}</span>
                     {{#if this.title}}<span class="swse-home-feed-title">{{this.title}}</span>{{/if}}
-                    {{#if this.isBreakingNews}}<span class="swse-home-feed-alert swse-home-feed-alert--breaking">BREAKING</span>{{else if this.isUrgent}}<span class="swse-home-feed-alert">ALERT</span>{{/if}}
+                    {{#if this.isBreakingNews}}<span class="swse-home-feed-alert swse-home-feed-alert--breaking">{{localize "SWSE.ShellUI.BREAKING"}}</span>{{else if this.isUrgent}}<span class="swse-home-feed-alert">{{localize "SWSE.ShellUI.ALERT"}}</span>{{/if}}
                   </span>
                   <span class="swse-home-feed-preview">{{{this.preview}}}</span>
                 </span>
                 <span class="swse-home-feed-side">
                   {{#if this.timestamp}}<span class="swse-home-feed-time">{{this.timestamp}}</span>{{/if}}
-                  {{#if this.isUnread}}<span class="swse-home-feed-ack">ACK</span>{{/if}}
+                  {{#if this.isUnread}}<span class="swse-home-feed-ack">{{localize "SWSE.ShellUI.ACK"}}</span>{{/if}}
                 </span>
               </button>
               {{else}}
-              <p class="swse-home-feed-empty">No Holonet traffic yet.</p>
+              <p class="swse-home-feed-empty">{{localize "SWSE.ShellUI.NoHolonetTrafficYet"}}</p>
               {{/each}}
             </div>
           </div>
@@ -300,37 +300,37 @@
       {{!-- FOOTER --}}
       <div class="swse-home-footer">
         <div class="swse-home-footer-left">
-          <div class="swse-home-footer-label">Quick Launch</div>
+          <div class="swse-home-footer-label">{{localize "SWSE.ShellUI.QuickLaunch"}}</div>
           {{#if vm.isVehicleHome}}
           <button class="swse-home-nav-pill" data-route-id="sheet" type="button">
-            <span class="swse-home-key">[1]</span> Vehicle
+            <span class="swse-home-key">[1]</span> {{localize "SWSE.ShellUI.Vehicle"}}
           </button>
           <button class="swse-home-nav-pill" data-route-id="customization" data-bay-mode="shipyard" data-context-mode="modifyExisting" type="button">
-            <span class="swse-home-key">[2]</span> Shipyard
+            <span class="swse-home-key">[2]</span> {{localize "SWSE.ShellUI.Shipyard"}}
           </button>
           <button class="swse-home-nav-pill" data-route-id="sheet" type="button">
-            <span class="swse-home-key">[3]</span> Stations
+            <span class="swse-home-key">[3]</span> {{localize "SWSE.ShellUI.Stations"}}
           </button>
           <button class="swse-home-nav-pill" data-route-id="store" type="button">
-            <span class="swse-home-key">[4]</span> Store
+            <span class="swse-home-key">[4]</span> {{localize "SWSE.ShellUI.Store"}}
           </button>
           {{else}}
           <button class="swse-home-nav-pill" data-route-id="sheet" type="button">
-            <span class="swse-home-key">[1]</span> Character
+            <span class="swse-home-key">[1]</span> {{localize "SWSE.ShellUI.Character"}}
           </button>
           <button class="swse-home-nav-pill" data-route-id="progression" type="button">
-            <span class="swse-home-key">[2]</span> Training
+            <span class="swse-home-key">[2]</span> {{localize "SWSE.ShellUI.Training"}}
           </button>
           <button class="swse-home-nav-pill" data-route-id="workbench" type="button">
-            <span class="swse-home-key">[3]</span> Workbench
+            <span class="swse-home-key">[3]</span> {{localize "SWSE.ShellUI.Workbench"}}
           </button>
           <button class="swse-home-nav-pill" data-route-id="store" type="button">
-            <span class="swse-home-key">[4]</span> Store
+            <span class="swse-home-key">[4]</span> {{localize "SWSE.ShellUI.Store"}}
           </button>
           {{/if}}
         </div>
         <div class="swse-home-footer-quote">
-          <span style="color: var(--vapor-cyan);">▸</span> "Use the datapad well, young one." <span style="color: var(--ink-faint);">— Master Tholos</span>
+          <span style="color: var(--vapor-cyan);">▸</span> {{localize "SWSE.ShellUI.UseTheDatapadWellYoungOne"}} <span style="color: var(--ink-faint);">{{localize "SWSE.ShellUI.MasterTholos"}}</span>
         </div>
       </div>
 </div>

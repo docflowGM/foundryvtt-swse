@@ -17,7 +17,7 @@
   <main class="swse-droid-frame-panel swse-panel">
     <header class="swse-droid-frame-header">
       <div>
-        <div class="swse-kicker">Droid Frame</div>
+        <div class="swse-kicker">{{localize "SWSE.ActorUI.DroidFrame"}}</div>
         <h2>{{document.name}} Systems</h2>
         <p>
           {{#if droid.degree.label}}{{droid.degree.label}}{{else}}Unclassified Droid{{/if}}
@@ -25,16 +25,16 @@
         </p>
       </div>
       {{#if droid.garage.canOpenGarage}}
-        <button type="button" class="edit-droid-systems swse-droid-garage-button" data-action="customize-droid" aria-label="Open Droid Garage">
+        <button type="button" class="edit-droid-systems swse-droid-garage-button" data-action="customize-droid" aria-label="{{localize 'SWSE.ActorUI.OpenDroidGarage'}}">
           <i class="fa-solid fa-screwdriver-wrench"></i>
-          Open Garage
+          {{localize "SWSE.ActorUI.OpenGarage"}}
         </button>
       {{/if}}
     </header>
 
     <div class="swse-droid-readonly-notice">
       <i class="fa-solid fa-circle-info"></i>
-      <span>This sheet is operational only. Paid installs, removals, sales, and rebuilds are handled in Garage.</span>
+      <span>{{localize "SWSE.ActorUI.ThisSheetIsOperationalOnlyPaidInstallsRemovals"}}</span>
     </div>
 
     {{#if droid.garage.systemsLocked}}
@@ -47,8 +47,8 @@
     <div class="swse-droid-silhouette-grid">
       <section class="swse-droid-system-node node-processor {{#unless droid.resolvedSystems.processor.isConfigured}}is-default{{/unless}}">
         <header>
-          <span class="node-label">Processor</span>
-          {{#unless droid.resolvedSystems.processor.isConfigured}}<span class="node-badge">Default</span>{{/unless}}
+          <span class="node-label">{{localize "SWSE.ActorUI.Processor"}}</span>
+          {{#unless droid.resolvedSystems.processor.isConfigured}}<span class="node-badge">{{localize "SWSE.ActorUI.Default"}}</span>{{/unless}}
         </header>
         <div class="node-body">
           {{#if droid.resolvedSystems.processor.isConfigured}}
@@ -56,7 +56,7 @@
               <div class="system-chip swse-v2-open-item" data-action="open-droid-system-item" data-item-id="{{item.id}}">
                 {{#if item.img}}<img src="{{item.img}}" alt=""/>{{/if}}
                 <div><strong>{{item.name}}</strong>{{#if item.rating}}<small>Rating {{item.rating}}</small>{{/if}}</div>
-                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">Use</button>
+                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">{{localize "SWSE.ActorUI.Use"}}</button>
               </div>
             {{/each}}
           {{else}}
@@ -66,31 +66,31 @@
       </section>
 
       <section class="swse-droid-system-node node-core {{#if droid.resolvedSystems.armor.isEmpty}}is-empty{{/if}}">
-        <header><span class="node-label">Core / Armor</span></header>
+        <header><span class="node-label">{{localize "SWSE.ActorUI.CoreArmor"}}</span></header>
         <div class="node-body">
           {{#if droid.resolvedSystems.armor.isConfigured}}
             {{#each droid.resolvedSystems.armor.items as |item|}}
               <div class="system-chip swse-v2-open-item" data-action="open-droid-system-item" data-item-id="{{item.id}}">
                 {{#if item.img}}<img src="{{item.img}}" alt=""/>{{/if}}
                 <div><strong>{{item.name}}</strong>{{#if item.bonus}}<small>Defense +{{item.bonus}}</small>{{/if}}</div>
-                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">Use</button>
+                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">{{localize "SWSE.ActorUI.Use"}}</button>
               </div>
             {{/each}}
           {{else}}
-            <div class="system-empty">No armor shell installed</div>
+            <div class="system-empty">{{localize "SWSE.ActorUI.NoArmorShellInstalled"}}</div>
           {{/if}}
         </div>
       </section>
 
       <section class="swse-droid-system-node node-left-arm {{#unless droid.resolvedSystems.appendages.isConfigured}}is-default{{/unless}}">
         <header>
-          <span class="node-label">Appendages</span>
-          {{#unless droid.resolvedSystems.appendages.isConfigured}}<span class="node-badge">Default</span>{{/unless}}
+          <span class="node-label">{{localize "SWSE.ActorUI.Appendages"}}</span>
+          {{#unless droid.resolvedSystems.appendages.isConfigured}}<span class="node-badge">{{localize "SWSE.ActorUI.Default"}}</span>{{/unless}}
         </header>
         <div class="node-body">
           {{#if droid.resolvedSystems.appendages.isConfigured}}
             {{#each droid.resolvedSystems.appendages.items as |item|}}
-              <div class="system-chip"><div><strong>{{item.name}}</strong>{{#if item.cost}}<small>{{item.cost}} cr</small>{{/if}}</div><button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">Use</button></div>
+              <div class="system-chip"><div><strong>{{item.name}}</strong>{{#if item.cost}}<small>{{item.cost}} cr</small>{{/if}}</div><button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">{{localize "SWSE.ActorUI.Use"}}</button></div>
             {{/each}}
           {{else}}
             <div class="system-chip ghost"><strong>{{droid.resolvedSystems.appendages.defaultName}}</strong><small>{{droid.resolvedSystems.appendages.warning}}</small></div>
@@ -99,7 +99,7 @@
       </section>
 
       <section class="swse-droid-system-node node-right-arm {{#if droid.resolvedSystems.integratedWeapons.isEmpty}}is-empty{{/if}}">
-        <header><span class="node-label">Integrated Weapons</span></header>
+        <header><span class="node-label">{{localize "SWSE.ActorUI.IntegratedWeapons"}}</span></header>
         <div class="node-body">
           {{#if droid.resolvedSystems.integratedWeapons.isConfigured}}
             {{#each droid.resolvedSystems.integratedWeapons.items as |weapon|}}
@@ -114,57 +114,57 @@
                 </div>
                 <div class="swse-droid-chip-actions">
                   {{#if weapon.canRoll}}
-                    <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="roll-weapon" data-item-id="{{weapon.id}}" aria-label="Roll {{weapon.name}}">Roll</button>
+                    <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="roll-weapon" data-item-id="{{weapon.id}}" aria-label="Roll {{weapon.name}}">{{localize "SWSE.ActorUI.Roll"}}</button>
                   {{/if}}
-                  <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{weapon.id}}" data-part-name="{{weapon.name}}">Use</button>
+                  <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{weapon.id}}" data-part-name="{{weapon.name}}">{{localize "SWSE.ActorUI.Use"}}</button>
                 </div>
               </div>
             {{/each}}
           {{else}}
-            <div class="system-empty">No chassis-mounted weapons</div>
+            <div class="system-empty">{{localize "SWSE.ActorUI.NoChassisMountedWeapons"}}</div>
           {{/if}}
         </div>
       </section>
 
       <section class="swse-droid-system-node node-equipment {{#if droid.resolvedSystems.integratedEquipment.isEmpty}}is-empty{{/if}}">
-        <header><span class="node-label">Integrated Equipment</span></header>
+        <header><span class="node-label">{{localize "SWSE.ActorUI.IntegratedEquipment"}}</span></header>
         <div class="node-body compact-list">
           {{#if droid.resolvedSystems.integratedEquipment.isConfigured}}
             {{#each droid.resolvedSystems.integratedEquipment.items as |item|}}
               <div class="system-chip swse-v2-open-item" data-action="open-droid-system-item" data-item-id="{{item.id}}">
                 {{#if item.img}}<img src="{{item.img}}" alt=""/>{{/if}}
                 <div><strong>{{item.name}}</strong>{{#if item.location}}<small>{{item.location}}</small>{{/if}}</div>
-                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">Use</button>
+                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">{{localize "SWSE.ActorUI.Use"}}</button>
               </div>
             {{/each}}
           {{else}}
-            <div class="system-empty">No integrated equipment</div>
+            <div class="system-empty">{{localize "SWSE.ActorUI.NoIntegratedEquipment"}}</div>
           {{/if}}
         </div>
       </section>
 
       <section class="swse-droid-system-node node-sensors {{#if droid.resolvedSystems.sensors.isEmpty}}is-empty{{/if}}">
-        <header><span class="node-label">Sensors</span></header>
+        <header><span class="node-label">{{localize "SWSE.ActorUI.Sensors"}}</span></header>
         <div class="node-body compact-list">
           {{#if droid.resolvedSystems.sensors.isConfigured}}
             {{#each droid.resolvedSystems.sensors.items as |sensor|}}
-              <div class="system-chip"><div><strong>{{sensor.name}}</strong>{{#if sensor.range}}<small>{{sensor.range}}</small>{{/if}}</div><button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{sensor.id}}" data-part-name="{{sensor.name}}">Use</button></div>
+              <div class="system-chip"><div><strong>{{sensor.name}}</strong>{{#if sensor.range}}<small>{{sensor.range}}</small>{{/if}}</div><button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{sensor.id}}" data-part-name="{{sensor.name}}">{{localize "SWSE.ActorUI.Use"}}</button></div>
             {{/each}}
           {{else}}
-            <div class="system-empty">No sensor package recorded</div>
+            <div class="system-empty">{{localize "SWSE.ActorUI.NoSensorPackageRecorded"}}</div>
           {{/if}}
         </div>
       </section>
 
       <section class="swse-droid-system-node node-locomotion {{#unless droid.resolvedSystems.locomotion.isConfigured}}is-default{{/unless}}">
         <header>
-          <span class="node-label">Locomotion</span>
-          {{#unless droid.resolvedSystems.locomotion.isConfigured}}<span class="node-badge">Default</span>{{/unless}}
+          <span class="node-label">{{localize "SWSE.ActorUI.Locomotion"}}</span>
+          {{#unless droid.resolvedSystems.locomotion.isConfigured}}<span class="node-badge">{{localize "SWSE.ActorUI.Default"}}</span>{{/unless}}
         </header>
         <div class="node-body">
           {{#if droid.resolvedSystems.locomotion.isConfigured}}
             {{#each droid.resolvedSystems.locomotion.items as |item|}}
-              <div class="system-chip"><div><strong>{{item.name}}</strong>{{#if item.speed}}<small>Speed {{item.speed}}</small>{{/if}}</div><button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">Use</button></div>
+              <div class="system-chip"><div><strong>{{item.name}}</strong>{{#if item.speed}}<small>Speed {{item.speed}}</small>{{/if}}</div><button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{item.id}}" data-part-name="{{item.name}}">{{localize "SWSE.ActorUI.Use"}}</button></div>
             {{/each}}
           {{else}}
             <div class="system-chip ghost"><strong>{{droid.resolvedSystems.locomotion.defaultName}}</strong><small>{{droid.resolvedSystems.locomotion.warning}}</small></div>
@@ -177,15 +177,15 @@
   <aside class="swse-droid-right-rail">
     <details class="swse-panel swse-droid-diagnostics" open>
       <summary>
-        <span>Diagnostics / Build Status</span>
+        <span>{{localize "SWSE.ActorUI.DiagnosticsBuildStatus"}}</span>
         <strong>{{droid.sourceStatus.sourceLabel}}</strong>
       </summary>
       <div class="swse-droid-rail-body">
         <div class="swse-droid-status-grid">
-          <div><span>Source</span><strong>{{droid.sourceStatus.sourceLabel}}</strong></div>
-          <div><span>Lock</span><strong>{{#if droid.garage.systemsLocked}}Garage Managed{{else}}Open{{/if}}</strong></div>
-          <div><span>Degree</span><strong>{{#if droid.degree.label}}{{droid.degree.label}}{{else}}Unset{{/if}}</strong></div>
-          <div><span>Credits</span><strong>{{system.credits}}</strong></div>
+          <div><span>{{localize "SWSE.ActorUI.Source"}}</span><strong>{{droid.sourceStatus.sourceLabel}}</strong></div>
+          <div><span>{{localize "SWSE.ActorUI.Lock"}}</span><strong>{{#if droid.garage.systemsLocked}}Garage Managed{{else}}Open{{/if}}</strong></div>
+          <div><span>{{localize "SWSE.ActorUI.Degree"}}</span><strong>{{#if droid.degree.label}}{{droid.degree.label}}{{else}}Unset{{/if}}</strong></div>
+          <div><span>{{localize "SWSE.ActorUI.Credits"}}</span><strong>{{system.credits}}</strong></div>
         </div>
 
         {{#if droid.sourceStatus.hasValidationMessages}}
@@ -195,44 +195,44 @@
             {{/each}}
           </ul>
         {{else}}
-          <div class="swse-droid-all-clear"><i class="fa-solid fa-circle-check"></i> Required systems detected.</div>
+          <div class="swse-droid-all-clear"><i class="fa-solid fa-circle-check"></i> {{localize "SWSE.ActorUI.RequiredSystemsDetected"}}</div>
         {{/if}}
 
         {{#if droid.sourceStatus.garageRecommended}}
           <div class="swse-droid-garage-cta">
-            <span class="swse-droid-garage-cta-text">Garage can complete or tune this droid frame.</span>
-            <button type="button" class="edit-droid-systems holo-btn small" data-action="customize-droid">Open Garage</button>
+            <span class="swse-droid-garage-cta-text">{{localize "SWSE.ActorUI.GarageCanCompleteOrTuneThisDroidFrame"}}</span>
+            <button type="button" class="edit-droid-systems holo-btn small" data-action="customize-droid">{{localize "SWSE.ActorUI.OpenGarage"}}</button>
           </div>
         {{/if}}
       </div>
     </details>
 
     <section class="swse-panel swse-droid-combat-bridge">
-      <header class="section-bar"><h3 class="section-header">Combat Bridge</h3></header>
+      <header class="section-bar"><h3 class="section-header">{{localize "SWSE.ActorUI.CombatBridge"}}</h3></header>
       <div class="swse-droid-rail-body">
         {{#if combatWeapons.hasIntegrated}}
           {{#each combatWeapons.integrated as |weapon|}}
             <div class="swse-droid-bridge-row">
-              <span class="swse-weapon-integrated-badge">Integrated</span>
+              <span class="swse-weapon-integrated-badge">{{localize "SWSE.ActorUI.Integrated"}}</span>
               <strong>{{weapon.name}}</strong>
               <div class="swse-droid-chip-actions">
-                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="roll-weapon" data-item-id="{{weapon.id}}">Roll</button>
-                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{weapon.id}}" data-part-name="{{weapon.name}}">Use</button>
+                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="roll-weapon" data-item-id="{{weapon.id}}">{{localize "SWSE.ActorUI.Roll"}}</button>
+                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{weapon.id}}" data-part-name="{{weapon.name}}">{{localize "SWSE.ActorUI.Use"}}</button>
               </div>
             </div>
           {{/each}}
         {{else}}
-          <div class="system-empty">No integrated attacks detected.</div>
+          <div class="system-empty">{{localize "SWSE.ActorUI.NoIntegratedAttacksDetected"}}</div>
         {{/if}}
         {{#if combatWeapons.hasHandheld}}
-          <div class="swse-droid-handheld-note">Handheld weapons remain on the Combat/Gear tabs.</div>
+          <div class="swse-droid-handheld-note">{{localize "SWSE.ActorUI.HandheldWeaponsRemainOnTheCombatGearTabs"}}</div>
         {{/if}}
       </div>
     </section>
 
     <section class="swse-panel swse-droid-attribute-note">
-      <header class="section-bar"><h3 class="section-header">Droid Attribute Rules</h3></header>
-      <div class="swse-droid-rail-body">Constitution is intentionally omitted for droid characters.</div>
+      <header class="section-bar"><h3 class="section-header">{{localize "SWSE.ActorUI.DroidAttributeRules"}}</h3></header>
+      <div class="swse-droid-rail-body">{{localize "SWSE.ActorUI.ConstitutionIsIntentionallyOmittedForDroidCharacters"}}</div>
     </section>
   </aside>
 </div>
@@ -240,10 +240,10 @@
 {{else}}
 <div class="holo-panel swse-ui-panel swse-droid-system-suite">
   <div class="section-bar">
-    <h3 class="section-header">Droid Systems</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.DroidSystems"}}</h3>
     {{#if editable}}
-      <button type="button" class="edit-droid-systems holo-btn small" data-action="customize-droid" aria-label="Open Droid Garage">
-        <i class="fa-solid fa-screwdriver-wrench"></i> Open Garage
+      <button type="button" class="edit-droid-systems holo-btn small" data-action="customize-droid" aria-label="{{localize 'SWSE.ActorUI.OpenDroidGarage'}}">
+        <i class="fa-solid fa-screwdriver-wrench"></i> {{localize "SWSE.ActorUI.OpenGarage"}}
       </button>
     {{/if}}
   </div>
@@ -251,30 +251,30 @@
   {{#if droidPanels.droidSummary.degree}}
     <div class="droid-config-summary swse-store-section">
       {{#if droidPanels.droidSummary.degree}}
-        <div class="config-item swse-metric-chip"><span class="label">Degree:</span><span class="value">{{droidPanels.droidSummary.degree}}</span></div>
+        <div class="config-item swse-metric-chip"><span class="label">{{localize "SWSE.ActorUI.Degree2"}}</span><span class="value">{{droidPanels.droidSummary.degree}}</span></div>
       {{/if}}
       {{#if droidPanels.droidSummary.size}}
-        <div class="config-item swse-metric-chip"><span class="label">Size:</span><span class="value">{{droidPanels.droidSummary.size}}</span></div>
+        <div class="config-item swse-metric-chip"><span class="label">{{localize "SWSE.ActorUI.Size"}}</span><span class="value">{{droidPanels.droidSummary.size}}</span></div>
       {{/if}}
       {{#if droidPanels.locomotion.name}}
-        <div class="config-item swse-metric-chip"><span class="label">Locomotion:</span><span class="value">{{droidPanels.locomotion.name}}</span></div>
+        <div class="config-item swse-metric-chip"><span class="label">{{localize "SWSE.ActorUI.Locomotion2"}}</span><span class="value">{{droidPanels.locomotion.name}}</span></div>
       {{/if}}
       {{#if droidPanels.configurationMetrics.appendagesCount}}
-        <div class="config-item swse-metric-chip"><span class="label">Appendages:</span><span class="value">{{droidPanels.configurationMetrics.appendagesCount}}</span></div>
+        <div class="config-item swse-metric-chip"><span class="label">{{localize "SWSE.ActorUI.Appendages2"}}</span><span class="value">{{droidPanels.configurationMetrics.appendagesCount}}</span></div>
       {{/if}}
       {{#if droidPanels.configurationMetrics.processorName}}
-        <div class="config-item swse-metric-chip"><span class="label">Processor:</span><span class="value">{{droidPanels.configurationMetrics.processorName}}</span></div>
+        <div class="config-item swse-metric-chip"><span class="label">{{localize "SWSE.ActorUI.Processor2"}}</span><span class="value">{{droidPanels.configurationMetrics.processorName}}</span></div>
       {{/if}}
       {{#if droidPanels.configurationMetrics.weaponsCount}}
-        <div class="config-item swse-metric-chip"><span class="label">Weapons:</span><span class="value">{{droidPanels.configurationMetrics.weaponsCount}}</span></div>
+        <div class="config-item swse-metric-chip"><span class="label">{{localize "SWSE.ActorUI.Weapons"}}</span><span class="value">{{droidPanels.configurationMetrics.weaponsCount}}</span></div>
       {{/if}}
     </div>
   {{else}}
     <div class="empty-state">
-      <p><em>No droid configuration yet.</em></p>
+      <p><em>{{localize "SWSE.ActorUI.NoDroidConfigurationYet"}}</em></p>
       {{#if editable}}
-        <button type="button" class="edit-droid-systems holo-btn" data-action="customize-droid" aria-label="Open Droid Garage">
-          <i class="fa-solid fa-screwdriver-wrench"></i> Open Garage
+        <button type="button" class="edit-droid-systems holo-btn" data-action="customize-droid" aria-label="{{localize 'SWSE.ActorUI.OpenDroidGarage'}}">
+          <i class="fa-solid fa-screwdriver-wrench"></i> {{localize "SWSE.ActorUI.OpenGarage"}}
         </button>
       {{/if}}
     </div>

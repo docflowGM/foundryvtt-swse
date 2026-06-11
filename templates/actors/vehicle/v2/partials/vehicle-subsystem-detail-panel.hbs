@@ -2,8 +2,8 @@
   <header class="swse-vehicle-panel-header">
     <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
     {{#if editable}}
-      <button class="btn btn-primary" data-action="customize-vehicle" title="Customize installed systems">
-        <i class="fas fa-cog"></i> Customize
+      <button class="btn btn-primary" data-action="customize-vehicle" title="{{localize 'SWSE.ActorUI.CustomizeInstalledSystems'}}">
+        <i class="fas fa-cog"></i> {{localize "SWSE.ActorUI.Customize"}}
       </button>
     {{/if}}
   </header>
@@ -41,7 +41,7 @@
 
           {{#if subsystem.canRepair}}
             <div class="swse-vehicle-panel-actions">
-              <button type="button" class="swse-vehicle-mini-action" data-action="repair-subsystem" data-subsystem="{{subsystem.key}}">Repair</button>
+              <button type="button" class="swse-vehicle-mini-action" data-action="repair-subsystem" data-subsystem="{{subsystem.key}}">{{localize "SWSE.ActorUI.Repair"}}</button>
             </div>
           {{/if}}
         </div>

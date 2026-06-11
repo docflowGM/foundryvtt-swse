@@ -1603,3 +1603,36 @@ button.swse-vehicle-order-card {
 .swse-vehicle-card-actions {
   justify-content: flex-end;
 }
+
+/* Vehicle model/callsign split: actor name may be a callsign, system.model stays the frame/model reference. */
+.swse-vehicle-model-field {
+  display: grid;
+  grid-template-columns: auto minmax(160px, 1fr);
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 6px;
+  font-family: var(--swse-ui-mono, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--swse-vehicle-concept-muted);
+}
+
+.swse-vehicle-model-field input {
+  min-width: 0;
+  border: 1px solid rgba(111, 215, 255, 0.22);
+  background: rgba(2, 10, 18, 0.62);
+  color: var(--swse-vehicle-concept-text);
+  padding: 3px 7px;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+}
+
+.swse-vehicle-concept-model {
+  margin: -2px 0 6px;
+  color: var(--swse-vehicle-concept-muted);
+  font-family: var(--swse-ui-mono, monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}

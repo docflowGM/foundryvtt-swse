@@ -1,7 +1,7 @@
 {{!-- Library right rail: active tables, pending invites, recent results, and system notes. --}}
 <aside class="swse-games-lib-col swse-games-lib-col--rail">
   <section class="swse-games-rail-card">
-    <div class="swse-games-rail-head"><span class="swse-games-kicker">Active Tables</span><span class="swse-games-rail-hint">{{vm.activeSessions.length}} live</span></div>
+    <div class="swse-games-rail-head"><span class="swse-games-kicker">{{localize "SWSE.ShellUI.ActiveTables"}}</span><span class="swse-games-rail-hint">{{vm.activeSessions.length}} live</span></div>
     {{#if vm.hasActiveSessions}}
       {{#each vm.activeSessions}}
       <article class="swse-games-table-row">
@@ -11,16 +11,16 @@
           <span class="meta">{{this.summaryLine}} · {{this.rulesMode}} · {{this.wagerLabel}}</span>
           <span class="hint">{{this.tableTheme}}</span>
         </button>
-        <button type="button" class="swse-games-table-row__cta" data-games-action="open-session" data-session-id="{{this.id}}">Resume</button>
+        <button type="button" class="swse-games-table-row__cta" data-games-action="open-session" data-session-id="{{this.id}}">{{localize "SWSE.ShellUI.Resume"}}</button>
       </article>
       {{/each}}
     {{else}}
-      <div class="swse-games-empty swse-games-empty--compact"><b>No active tables.</b><span>Accepted game envelopes appear here.</span></div>
+      <div class="swse-games-empty swse-games-empty--compact"><b>{{localize "SWSE.ShellUI.NoActiveTables"}}</b><span>{{localize "SWSE.ShellUI.AcceptedGameEnvelopesAppearHere"}}</span></div>
     {{/if}}
   </section>
 
   <section class="swse-games-rail-card">
-    <div class="swse-games-rail-head"><span class="swse-games-kicker">Pending Invites</span><span class="swse-games-rail-hint">{{vm.inviteSessions.length}}</span></div>
+    <div class="swse-games-rail-head"><span class="swse-games-kicker">{{localize "SWSE.ShellUI.PendingInvites"}}</span><span class="swse-games-rail-hint">{{vm.inviteSessions.length}}</span></div>
     {{#if vm.hasInviteSessions}}
       {{#each vm.inviteSessions}}
       <article class="swse-games-table-row invite">
@@ -32,20 +32,20 @@
         </button>
         <div class="swse-games-table-row__actions">
           {{#if this.canRespond}}
-          <button type="button" class="swse-games-table-row__cta" data-games-action="accept-invite" data-thread-id="{{this.holonetThreadId}}" data-record-id="{{this.holonetMessageId}}">Accept</button>
-          <button type="button" class="swse-games-ghost mini" data-games-action="decline-invite" data-thread-id="{{this.holonetThreadId}}" data-record-id="{{this.holonetMessageId}}">Decline</button>
+          <button type="button" class="swse-games-table-row__cta" data-games-action="accept-invite" data-thread-id="{{this.holonetThreadId}}" data-record-id="{{this.holonetMessageId}}">{{localize "SWSE.ShellUI.Accept"}}</button>
+          <button type="button" class="swse-games-ghost mini" data-games-action="decline-invite" data-thread-id="{{this.holonetThreadId}}" data-record-id="{{this.holonetMessageId}}">{{localize "SWSE.ShellUI.Decline"}}</button>
           {{/if}}
-          {{#if this.canOpenThread}}<button type="button" class="swse-games-ghost mini" data-games-action="open-thread" data-thread-id="{{this.holonetThreadId}}">Messenger</button>{{/if}}
+          {{#if this.canOpenThread}}<button type="button" class="swse-games-ghost mini" data-games-action="open-thread" data-thread-id="{{this.holonetThreadId}}">{{localize "SWSE.ShellUI.Messenger"}}</button>{{/if}}
         </div>
       </article>
       {{/each}}
     {{else}}
-      <div class="swse-games-empty swse-games-empty--compact"><b>No pending invites.</b><span>Holonet game requests appear here.</span></div>
+      <div class="swse-games-empty swse-games-empty--compact"><b>{{localize "SWSE.ShellUI.NoPendingInvites"}}</b><span>{{localize "SWSE.ShellUI.HolonetGameRequestsAppearHere"}}</span></div>
     {{/if}}
   </section>
 
   <section class="swse-games-rail-card">
-    <div class="swse-games-rail-head"><span class="swse-games-kicker">Recent Results</span><span class="swse-games-rail-hint">ledger</span></div>
+    <div class="swse-games-rail-head"><span class="swse-games-kicker">{{localize "SWSE.ShellUI.RecentResults"}}</span><span class="swse-games-rail-hint">{{localize "SWSE.ShellUI.Ledger"}}</span></div>
     {{#if vm.hasRecentSessions}}
       {{#each vm.recentSessions}}
       <button type="button" class="swse-games-feed-row" data-games-action="open-session" data-session-id="{{this.id}}">
@@ -55,12 +55,12 @@
       </button>
       {{/each}}
     {{else}}
-      <div class="swse-games-empty swse-games-empty--compact"><b>No completed games yet.</b><span>Settled tables will create this rail history.</span></div>
+      <div class="swse-games-empty swse-games-empty--compact"><b>{{localize "SWSE.ShellUI.NoCompletedGamesYet"}}</b><span>{{localize "SWSE.ShellUI.SettledTablesWillCreateThisRailHistory"}}</span></div>
     {{/if}}
   </section>
 
   <section class="swse-games-rail-card swse-games-rail-card--notes">
-    <div class="swse-games-rail-head"><span class="swse-games-kicker">Rules Guardrails</span><span class="swse-games-rail-hint">SSOT</span></div>
+    <div class="swse-games-rail-head"><span class="swse-games-kicker">{{localize "SWSE.ShellUI.RulesGuardrails"}}</span><span class="swse-games-rail-hint">{{localize "SWSE.ShellUI.SSOT"}}</span></div>
     <div class="swse-games-note-stack">
       {{#each vm.infrastructureNotes}}
       <p>{{this}}</p>

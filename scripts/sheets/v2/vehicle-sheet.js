@@ -32,6 +32,7 @@ import { ShellUiStatePreserver } from "/systems/foundryvtt-swse/scripts/ui/shell
 const VEHICLE_SHEET_WRITABLE_EXACT_PATHS = new Set([
   'name',
   'img',
+  'system.model',
   'system.category',
   'system.type',
   'system.size',
@@ -46,11 +47,15 @@ const VEHICLE_SHEET_WRITABLE_EXACT_PATHS = new Set([
   'system.damageReduction',
   'system.reflexDefense',
   'system.fortitudeDefense',
+  'system.willDefense',
+  'system.flatFooted',
   'system.damageThreshold',
   'system.armorBonus',
   'system.speed',
   'system.maxVelocity',
   'system.maneuver',
+  'system.initiative',
+  'system.baseAttackBonus',
   'system.hyperdrive',
   'system.hyperdrive_class',
   'system.backupHyperdrive',
@@ -67,7 +72,7 @@ const VEHICLE_SHEET_WRITABLE_EXACT_PATHS = new Set([
 ]);
 
 const VEHICLE_SHEET_WRITABLE_PATTERNS = [
-  /^system\.weapons\.\d+\.(name|arc|attackBonus|damage|range|fireControl|notes)$/,
+  /^system\.weapons\.\d+\.(name|arc|bonus|attackBonus|damage|range|fireControl|notes)$/,
   /^system\.attributes\.(str|dex|int|wis|cha)\.(base|racial|temp)$/
 ];
 
@@ -75,6 +80,7 @@ const VEHICLE_SHEET_WRITABLE_PATTERNS = [
 const VEHICLE_QUIET_FIELD_PATHS = new Set([
   'name',
   'img',
+  'system.model',
   'system.category',
   'system.type',
   'system.size',
@@ -125,6 +131,100 @@ function isVehicleSheetWritablePath(path) {
   if (VEHICLE_SHEET_BLOCKED_PREFIXES.some(prefix => path.startsWith(prefix))) return false;
   if (VEHICLE_SHEET_WRITABLE_EXACT_PATHS.has(path)) return true;
   return VEHICLE_SHEET_WRITABLE_PATTERNS.some(pattern => pattern.test(path));
+}
+
+
+function numericBonus(value, fallback = 0) {
+  if (value === null || value === undefined || value === '') return fallback;
+  const n = Number(String(value).replace(/[^0-9+\-.]/g, ''));
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function signedBonus(value, fallback = '+0') {
+  const n = numericBonus(value, null);
+  if (n === null) return fallback;
+  return n >= 0 ? `+${n}` : `${n}`;
+}
+
+function formulaWithBonus(baseDie, bonus) {
+  const n = numericBonus(bonus, 0);
+  if (!n) return baseDie;
+  return `${baseDie} ${n >= 0 ? '+' : '-'} ${Math.abs(n)}`;
+}
+
+function getSystemVehicleWeapon(actor, weaponId) {
+  const match = String(weaponId || '').match(/^system-weapons-(\d+)$/);
+  if (!match) return null;
+  const index = Number(match[1]);
+  const weapon = actor?.system?.weapons?.[index];
+  if (!weapon) return null;
+  return { ...weapon, id: weaponId, _systemWeaponIndex: index };
+}
+
+function getVehicleWeaponForAction(actor, weaponId) {
+  if (!actor || !weaponId) return null;
+  const item = actor.items?.get?.(weaponId);
+  if (item) {
+    const system = item.system ?? {};
+    return {
+      id: item.id,
+      name: item.name,
+      bonus: system.bonus ?? system.attackBonus ?? system.attack?.bonus ?? system.combat?.attack?.bonus ?? '+0',
+      damage: system.damage ?? system.damageFormula ?? system.combat?.damage?.dice ?? '1d10',
+      range: system.range ?? system.rangeProfile ?? '',
+      source: 'item'
+    };
+  }
+  return getSystemVehicleWeapon(actor, weaponId);
+}
+
+async function rollVehicleStatblockAttack(actor, weapon) {
+  const bonus = signedBonus(weapon?.bonus ?? weapon?.attackBonus ?? '+0');
+  const formula = formulaWithBonus('1d20', bonus);
+  const roll = await (globalThis.SWSE?.RollEngine?.safeRoll?.(formula) ?? new Roll(formula).evaluate());
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    flavor: `${actor.name} fires ${weapon?.name || 'Vehicle Weapon'} (${bonus})`,
+    rolls: [roll]
+  });
+  return roll;
+}
+
+async function rollVehicleStatblockDamage(actor, weapon) {
+  const formula = String(weapon?.damage ?? weapon?.damageFormula ?? '1d10').trim() || '1d10';
+  const roll = await (globalThis.SWSE?.RollEngine?.safeRoll?.(formula) ?? new Roll(formula).evaluate());
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor }),
+    flavor: `${actor.name} damage: ${weapon?.name || 'Vehicle Weapon'} (${formula})`,
+    rolls: [roll]
+  });
+  return roll;
+}
+
+
+async function resolveVehicleSourceModelName(actor) {
+  const explicit = String(actor?.system?.model || actor?.system?.vehicleModel || '').trim();
+  if (explicit) return explicit;
+
+  const sourceUuid = actor?._stats?.compendiumSource || actor?.flags?.core?.sourceId || actor?.flags?.['foundryvtt-swse']?.sourceUuid || '';
+  if (!sourceUuid || typeof sourceUuid !== 'string') return '';
+
+  try {
+    const doc = await fromUuid(sourceUuid);
+    if (doc?.name) return doc.name;
+  } catch (_err) {
+    // Fall through to manual compendium source parsing below.
+  }
+
+  const match = sourceUuid.match(/^Compendium\.([^.]+)\.([^.]+)\.(?:Actor\.)?([^.]+)$/);
+  if (!match) return '';
+  try {
+    const pack = game.packs?.get?.(`${match[1]}.${match[2]}`);
+    const doc = await pack?.getDocument?.(match[3]);
+    return doc?.name || '';
+  } catch (_err) {
+    return '';
+  }
 }
 
 function filterVehicleSheetUpdate(formDataObj) {
@@ -271,7 +371,9 @@ export class SWSEV2VehicleSheet extends
     // ════════════════════════════════════════════════════════════════════════════
     // PHASE 3: Build prepared panel contexts for template rendering
     // ════════════════════════════════════════════════════════════════════════════
+    const sourceModelName = await resolveVehicleSourceModelName(actor);
     const panelContext = buildVehicleSheetContext(actor, baseContext, {
+      sourceModelName,
       subsystemData: ruleContexts.subsystemData,
       subsystemPenalties: ruleContexts.subsystemPenalties,
       shieldZones: ruleContexts.shieldZones,
@@ -741,6 +843,36 @@ export class SWSEV2VehicleSheet extends
       }, { signal });
     }
 
+    /* ---- VEHICLE WEAPON ROLLS ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="vehicle-weapon-attack"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const weaponId = ev.currentTarget?.dataset?.weaponId;
+        const weapon = getVehicleWeaponForAction(this.actor, weaponId);
+        if (!weapon) {
+          ui?.notifications?.warn?.('No vehicle weapon found for this attack.');
+          return;
+        }
+        await rollVehicleStatblockAttack(this.actor, weapon);
+      }, { signal });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="vehicle-weapon-damage"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const weaponId = ev.currentTarget?.dataset?.weaponId;
+        const weapon = getVehicleWeaponForAction(this.actor, weaponId);
+        if (!weapon) {
+          ui?.notifications?.warn?.('No vehicle weapon found for this damage roll.');
+          return;
+        }
+        await rollVehicleStatblockDamage(this.actor, weapon);
+      }, { signal });
+    }
+
     /* ---- VEHICLE IMPORT WIZARD ---- */
 
     for (const btn of root.querySelectorAll('[data-action="import-vehicle"]')) {
@@ -825,10 +957,15 @@ export class SWSEV2VehicleSheet extends
       return this._handleVehicleAdoption(droppedDocument);
     }
 
+    const targetedStation = event.target?.closest?.('[data-crew-station]')?.dataset?.crewStation
+      || event.target?.closest?.('[data-station]')?.dataset?.station
+      || null;
+
     // Regular drops (items, non-vehicle actors)
     const result = await VehicleDropEngine.resolve({
       actor: this.actor,
-      dropData: data
+      dropData: data,
+      station: targetedStation
     });
 
     // If no plan (duplicate or invalid), silently skip

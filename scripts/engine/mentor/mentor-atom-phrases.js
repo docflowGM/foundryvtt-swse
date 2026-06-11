@@ -1,3 +1,5 @@
+import { localizeMentorAtomPhrase } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-localization.js";
+
 /**
  * MENTOR ATOM PHRASES
  *
@@ -378,5 +380,8 @@ export function getMentorAtomPhrase(atom, mentorName = 'default', intensity = 'm
   const phrases = getMentorAtomPhrases(atom, mentorName);
   if (!phrases) {return null;}
 
-  return phrases[intensity] || phrases['medium'] || null;
+  const fallback = phrases[intensity] || phrases['medium'] || null;
+  if (!fallback) return null;
+
+  return localizeMentorAtomPhrase(mentorName, atom, intensity, fallback);
 }

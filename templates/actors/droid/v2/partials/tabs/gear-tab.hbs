@@ -1,8 +1,8 @@
 <section class="swse-concept-panel swse-droid-panel">
   <header class="swse-concept-panel__header">
     <div>
-      <h3 class="swse-concept-panel__title">Inventory &amp; Workbench</h3>
-      <p class="swse-concept-panel__hint">Gear rows keep the existing item controls and sale/delete listeners.</p>
+      <h3 class="swse-concept-panel__title">{{localize "SWSE.ActorUI.InventoryAmpWorkbench"}}</h3>
+      <p class="swse-concept-panel__hint">{{localize "SWSE.ActorUI.GearRowsKeepTheExistingItemControlsAnd"}}</p>
     </div>
   </header>
   <div class="swse-list">
@@ -11,16 +11,16 @@
         <span>{{item.name}}</span>
         <span class="swse-item-type">{{item.type}}</span>
         <div class="swse-inline-actions">
-          <button type="button" data-action="sell-item" data-item-id="{{item.id}}">Sell</button>
-          <button type="button" data-action="delete-item" data-item-id="{{item.id}}">Delete</button>
+          <button type="button" data-action="sell-item" data-item-id="{{item.id}}">{{localize "SWSE.ActorUI.Sell"}}</button>
+          <button type="button" data-action="delete-item" data-item-id="{{item.id}}">{{localize "SWSE.ActorUI.Delete"}}</button>
         </div>
       </article>
     {{else}}
-      <div class="swse-empty">No inventory items found.</div>
+      <div class="swse-empty">{{localize "SWSE.ActorUI.NoInventoryItemsFound"}}</div>
     {{/each}}
   </div>
   <div class="swse-inline-actions">
-    <button type="button" data-action="cmd-store" class="swse-concept-btn">Open Store</button>
-    <button type="button" data-action="cmd-chargen" class="swse-concept-btn">Open Progression</button>
+    <button type="button" data-action="cmd-store" class="swse-concept-btn">{{localize "SWSE.ActorUI.OpenStore"}}</button>
+    <button type="button" data-action="cmd-chargen" class="swse-concept-btn">{{localize "SWSE.ActorUI.OpenProgression"}}</button>
   </div>
 </section>

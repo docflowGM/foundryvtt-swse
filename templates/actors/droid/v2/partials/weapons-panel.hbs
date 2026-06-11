@@ -18,7 +18,7 @@
   weapons section is hidden entirely when there are no weapons).
 --}}
 <section class="weapons-section">
-  <h3>Weapons</h3>
+  <h3>{{localize "SWSE.ActorUI.Weapons2"}}</h3>
   <div class="weapons-list" style="border-top: 1px solid #ddd;">
     {{#each weapons as |item|}}
       <div class="weapon-row" style="display: grid; grid-template-columns: 1fr 100px 100px 80px 80px; gap: 8px; padding: 8px; border-bottom: 1px solid #eee; align-items: center;">
@@ -41,14 +41,14 @@
                 data-action="sell-item"
                 data-item-id="{{item.id}}"
                 style="background: #4CAF50; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
-          Sell
+          {{localize "SWSE.ActorUI.Sell"}}
         </button>
         <button type="button"
                 class="weapon-delete"
                 data-action="delete-item"
                 data-item-id="{{item.id}}"
                 style="background: #cc0000; color: white; border: none; padding: 4px 8px; border-radius: 2px; cursor: pointer;">
-          Delete
+          {{localize "SWSE.ActorUI.Delete"}}
         </button>
       </div>
     {{/each}}

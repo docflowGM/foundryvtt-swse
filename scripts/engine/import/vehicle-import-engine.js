@@ -38,7 +38,8 @@ export class VehicleImportEngine {
     const mode = options.mode || 'replace';
     const preserve = options.preserve || {};
     const rawSystem = duplicate(sourceActor.system);
-    const normalizedSystem = normalizeVehicleImportData(rawSystem) ?? rawSystem;
+    const normalizedSystem = normalizeVehicleImportData(rawSystem, { sourceName: sourceActor.name }) ?? rawSystem;
+    if (!normalizedSystem.model) normalizedSystem.model = sourceActor.name || rawSystem.model || rawSystem.vehicleModel || '';
     const update = {};
 
     if (!preserve.name) update.name = sourceActor.name;

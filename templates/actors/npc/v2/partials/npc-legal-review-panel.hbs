@@ -6,7 +6,7 @@
 <section class="swse-npc-panel swse-npc-legal-review-panel">
   <header class="swse-npc-panel-header">
     <div>
-      <h3>Legal Review</h3>
+      <h3>{{localize "SWSE.ActorUI.LegalReview"}}</h3>
       <p class="swse-npc-panel-kicker">
         {{npcLegalReview.profileLabel}} · {{npcLegalReview.modeLabel}} · {{npcLegalReview.sourceAuthorityLabel}}
       </p>
@@ -16,10 +16,10 @@
         {{npcLegalReview.legalStateLabel}}
       </span>
       {{#if npcLegalReview.tablePlayable}}
-        <span class="swse-npc-mode-badge swse-npc-mode-badge--playable">Table Playable</span>
+        <span class="swse-npc-mode-badge swse-npc-mode-badge--playable">{{localize "SWSE.ActorUI.TablePlayable"}}</span>
       {{/if}}
       {{#if npcLegalReview.progressionLegal}}
-        <span class="swse-npc-mode-badge swse-npc-mode-badge--legal">Progression Legal</span>
+        <span class="swse-npc-mode-badge swse-npc-mode-badge--legal">{{localize "SWSE.ActorUI.ProgressionLegal"}}</span>
       {{/if}}
     </div>
   </header>
@@ -27,19 +27,19 @@
   <div class="swse-npc-legal-summary">
     <div class="swse-npc-legal-summary-card">
       <strong>{{npcLegalReview.summary.ok}}</strong>
-      <span>Ready</span>
+      <span>{{localize "SWSE.ActorUI.Ready"}}</span>
     </div>
     <div class="swse-npc-legal-summary-card swse-npc-legal-summary-card--warn">
       <strong>{{npcLegalReview.summary.warn}}</strong>
-      <span>Review</span>
+      <span>{{localize "SWSE.ActorUI.Review"}}</span>
     </div>
     <div class="swse-npc-legal-summary-card swse-npc-legal-summary-card--error">
       <strong>{{npcLegalReview.summary.error}}</strong>
-      <span>Fix</span>
+      <span>{{localize "SWSE.ActorUI.Fix"}}</span>
     </div>
     <div class="swse-npc-legal-summary-card">
       <strong>{{npcLegalReview.summary.info}}</strong>
-      <span>Notes</span>
+      <span>{{localize "SWSE.ActorUI.Notes"}}</span>
     </div>
   </div>
 
@@ -49,7 +49,7 @@
     <section class="swse-npc-legal-group swse-npc-skeleton-group">
       <header class="swse-npc-repair-header">
         <div>
-          <h4>Progression Skeleton</h4>
+          <h4>{{localize "SWSE.ActorUI.ProgressionSkeleton"}}</h4>
           <p class="swse-npc-legal-detail">
             {{npcLegalReview.progressionSkeleton.statusLabel}}
             {{#if npcLegalReview.progressionSkeleton.totalLevels}} · {{npcLegalReview.progressionSkeleton.totalLevels}} total level(s){{/if}}
@@ -70,7 +70,7 @@
         {{/each}}
       </div>
       {{#unless npcLegalReview.progressionSkeleton.classItemsCreated}}
-        <p class="swse-npc-legal-action">Next: Review &amp; Repair can propose class item/history creation from this skeleton. Safe normalization will not create those items automatically.</p>
+        <p class="swse-npc-legal-action">{{localize "SWSE.ActorUI.NextReviewAmpRepairCanProposeClassItem"}}</p>
       {{/unless}}
     </section>
   {{/if}}
@@ -78,15 +78,15 @@
   <section class="swse-npc-legal-group swse-npc-repair-group">
     <header class="swse-npc-repair-header">
       <div>
-        <h4>Review &amp; Repair</h4>
+        <h4>{{localize "SWSE.ActorUI.ReviewAmpRepair"}}</h4>
         <p class="swse-npc-legal-detail">{{npcRepairPlan.note}}</p>
       </div>
       <div class="swse-npc-repair-actions">
         <button type="button" class="swse-button" data-action="npc-repair-safe-normalize" {{#unless npcRepairPlan.canApplySafeFixes}}disabled{{/unless}}>
-          Apply Safe Normalization
+          {{localize "SWSE.ActorUI.ApplySafeNormalization"}}
         </button>
         <button type="button" class="swse-button" data-action="npc-repair-gm-approve" {{#unless npcRepairPlan.canMarkGmApproved}}disabled{{/unless}}>
-          GM Approve Overrides
+          {{localize "SWSE.ActorUI.GMApproveOverrides"}}
         </button>
       </div>
     </header>
@@ -97,7 +97,7 @@
           <article class="swse-npc-legal-check swse-npc-legal-check--info">
             <header>
               <strong>{{fix.label}}</strong>
-              <span>Safe</span>
+              <span>{{localize "SWSE.ActorUI.Safe"}}</span>
             </header>
             <p>{{fix.detail}}</p>
           </article>
@@ -105,10 +105,10 @@
       {{else}}
         <article class="swse-npc-legal-check swse-npc-legal-check--ok">
           <header>
-            <strong>Safe normalization</strong>
-            <span>Ready</span>
+            <strong>{{localize "SWSE.ActorUI.SafeNormalization"}}</strong>
+            <span>{{localize "SWSE.ActorUI.Ready"}}</span>
           </header>
-          <p>No deterministic safe normalization steps are currently needed.</p>
+          <p>{{localize "SWSE.ActorUI.NoDeterministicSafeNormalizationStepsAreCurrentlyNeeded"}}</p>
         </article>
       {{/if}}
 
@@ -117,12 +117,12 @@
           <article class="swse-npc-legal-check swse-npc-legal-check--warn">
             <header>
               <strong>{{proposal.label}}</strong>
-              <span>GM Decision</span>
+              <span>{{localize "SWSE.ActorUI.GMDecision"}}</span>
             </header>
             <p>{{proposal.detail}}</p>
             {{#if proposal.count}}<p class="swse-npc-legal-detail">Detected: {{proposal.count}}</p>{{/if}}
             {{#if proposal.path}}<p class="swse-npc-legal-detail">Path: {{proposal.path}}</p>{{/if}}
-            {{#if proposal.nonheroicFirstValid}}<p class="swse-npc-legal-detail">Nonheroic-first rule validated.</p>{{/if}}
+            {{#if proposal.nonheroicFirstValid}}<p class="swse-npc-legal-detail">{{localize "SWSE.ActorUI.NonheroicFirstRuleValidated"}}</p>{{/if}}
           </article>
         {{/each}}
       {{/if}}
@@ -145,8 +145,8 @@
                 {{#if check.detail}}<p class="swse-npc-legal-detail">{{check.detail}}</p>{{/if}}
                 {{#if check.action}}<p class="swse-npc-legal-action">Next: {{check.action}}</p>{{/if}}
                 <footer>
-                  {{#if check.canAutoFix}}<span>Repair candidate</span>{{/if}}
-                  {{#if check.requiresGm}}<span>GM decision</span>{{/if}}
+                  {{#if check.canAutoFix}}<span>{{localize "SWSE.ActorUI.RepairCandidate"}}</span>{{/if}}
+                  {{#if check.requiresGm}}<span>{{localize "SWSE.ActorUI.GMDecision2"}}</span>{{/if}}
                 </footer>
               </article>
             {{/each}}
@@ -155,6 +155,6 @@
       {{/each}}
     </div>
   {{else}}
-    <p class="swse-npc-empty">No Legal Review checks were generated.</p>
+    <p class="swse-npc-empty">{{localize "SWSE.ActorUI.NoLegalReviewChecksWereGenerated"}}</p>
   {{/if}}
 </section>

@@ -412,6 +412,7 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       }),
 
       // Other vehicle properties
+      model: new fields.StringField({ required: false, initial: '' }),
       type: new fields.StringField({ required: false, initial: '' }),
       size: new fields.StringField({
         required: false,

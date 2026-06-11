@@ -1,23 +1,23 @@
 <div class="holo-panel">
   <div class="section-bar">
-    <h3 class="section-header">Damage Threshold</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.DamageThreshold"}}</h3>
   </div>
 
   <div class="swse-v2-dt-breakdown">
     <div class="dt-row">
-      <span class="label">Fortitude:</span>
+      <span class="label">{{localize "SWSE.ActorUI.Fortitude"}}</span>
       <span class="value">{{system.defenses.fort.total}}</span>
     </div>
     <div class="dt-row">
-      <span class="label">Size:</span>
+      <span class="label">{{localize "SWSE.ActorUI.Size"}}</span>
       <span class="value">{{system.damageThreshold.size}}</span>
     </div>
     <div class="dt-row">
-      <span class="label">Misc:</span>
+      <span class="label">{{localize "SWSE.ActorUI.Misc"}}</span>
       <input type="number" name="system.damageThreshold.misc" value="{{system.damageThreshold.misc}}" {{#unless editable}}disabled{{/unless}} style="width: 60px;" />
     </div>
     <div class="dt-row" style="border-top: 1px solid currentColor; padding-top: 8px; margin-top: 8px; font-weight: bold;">
-      <span class="label">Total:</span>
+      <span class="label">{{localize "SWSE.ActorUI.Total"}}</span>
       <span class="value">{{derived.damage.threshold}}</span>
     </div>
   </div>

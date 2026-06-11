@@ -41,9 +41,9 @@
   {{#if droid.sourceStatus.garageRecommended}}
     {{#if droid.garage.canOpenGarage}}
       <div class="swse-droid-garage-cta">
-        <span class="swse-droid-garage-cta-text">Garage can complete this build.</span>
-        <button type="button" class="edit-droid-systems holo-btn small" aria-label="Open Garage to configure droid systems">
-          <i class="fa-solid fa-screwdriver-wrench"></i> Open Garage
+        <span class="swse-droid-garage-cta-text">{{localize "SWSE.ActorUI.GarageCanCompleteThisBuild"}}</span>
+        <button type="button" class="edit-droid-systems holo-btn small" aria-label="{{localize 'SWSE.ActorUI.OpenGarageToConfigureDroidSystems'}}">
+          <i class="fa-solid fa-screwdriver-wrench"></i> {{localize "SWSE.ActorUI.OpenGarage"}}
         </button>
       </div>
     {{/if}}
@@ -51,9 +51,9 @@
 
   {{#if droid.garage.canConvert}}
     <div class="swse-droid-garage-cta swse-droid-conversion-cta">
-      <span class="swse-droid-garage-cta-text">Stock import detected. Convert it into a Garage-managed custom build.</span>
-      <button type="button" class="convert-to-custom-droid holo-btn small" aria-label="Convert stock droid to custom Garage build">
-        <i class="fa-solid fa-wand-magic-sparkles"></i> Convert Stock Droid
+      <span class="swse-droid-garage-cta-text">{{localize "SWSE.ActorUI.StockImportDetectedConvertItIntoAGarage"}}</span>
+      <button type="button" class="convert-to-custom-droid holo-btn small" aria-label="{{localize 'SWSE.ActorUI.ConvertStockDroidToCustomGarageBuild'}}">
+        <i class="fa-solid fa-wand-magic-sparkles"></i> {{localize "SWSE.ActorUI.ConvertStockDroid"}}
       </button>
     </div>
   {{/if}}

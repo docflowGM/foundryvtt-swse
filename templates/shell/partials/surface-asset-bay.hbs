@@ -14,9 +14,9 @@
     <button class="swse-shell-surface__back-btn"
             data-shell-action="return-to-home"
             type="button"
-            title="Return to Home">
+            title="{{localize 'SWSE.ShellUI.ReturnToHome'}}">
       <i class="fas fa-arrow-left"></i>
-      <span>Home</span>
+      <span>{{localize "SWSE.ShellUI.Home"}}</span>
     </button>
     <div class="swse-shell-surface__title">
       <i class="fas {{vm.surfaceIcon}}"></i>
@@ -30,32 +30,32 @@
   <div class="swse-shell-surface__body swse-shell-surface__body--asset-bay">
     <div class="swse-asset-bay-toolbar">
       <div class="swse-asset-bay-toolbar__summary">
-        <span class="swse-asset-bay-count"><strong>{{vm.totalCount}}</strong> Assets</span>
-        <span class="swse-asset-bay-count"><strong>{{vm.droidCount}}</strong> Droids</span>
-        <span class="swse-asset-bay-count"><strong>{{vm.shipCount}}</strong> Ships / Vehicles</span>
+        <span class="swse-asset-bay-count"><strong>{{vm.totalCount}}</strong> {{localize "SWSE.ShellUI.Assets"}}</span>
+        <span class="swse-asset-bay-count"><strong>{{vm.droidCount}}</strong> {{localize "SWSE.ShellUI.Droids"}}</span>
+        <span class="swse-asset-bay-count"><strong>{{vm.shipCount}}</strong> {{localize "SWSE.ShellUI.ShipsVehicles"}}</span>
       </div>
       {{#if vm.showModeFilters}}
-      <div class="swse-asset-bay-mode-pills" role="group" aria-label="Asset filters">
+      <div class="swse-asset-bay-mode-pills" role="group" aria-label="{{localize 'SWSE.ShellUI.AssetFilters'}}">
         <button type="button"
                 class="swse-asset-bay-mode-pill {{#if vm.isAllMode}}is-active{{/if}}"
                 data-asset-bay-action="switch-mode"
                 data-bay-mode="all">
           <i class="fas fa-warehouse"></i>
-          <span>All Assets</span>
+          <span>{{localize "SWSE.ShellUI.AllAssets"}}</span>
         </button>
         <button type="button"
                 class="swse-asset-bay-mode-pill {{#if vm.isGarageMode}}is-active{{/if}}"
                 data-asset-bay-action="switch-mode"
                 data-bay-mode="garage">
           <i class="fas fa-robot"></i>
-          <span>Garage</span>
+          <span>{{localize "SWSE.ShellUI.Garage"}}</span>
         </button>
         <button type="button"
                 class="swse-asset-bay-mode-pill {{#if vm.isShipyardMode}}is-active{{/if}}"
                 data-asset-bay-action="switch-mode"
                 data-bay-mode="shipyard">
           <i class="fas fa-rocket"></i>
-          <span>Shipyard</span>
+          <span>{{localize "SWSE.ShellUI.Shipyard"}}</span>
         </button>
       </div>
       {{/if}}
@@ -63,7 +63,7 @@
 
     <div class="swse-asset-bay-boundary-note">
       <i class="fas fa-info-circle"></i>
-      <span><strong>Sheet</strong> opens the owned actor for play and status. <strong>Garage/Shipyard</strong> is where credits, requests, installs, removals, sales, and refits happen.</span>
+      <span><strong>{{localize "SWSE.ShellUI.Sheet"}}</strong> {{localize "SWSE.ShellUI.OpensTheOwnedActorForPlayAndStatus"}} <strong>{{localize "SWSE.ShellUI.GarageShipyard"}}</strong> {{localize "SWSE.ShellUI.IsWhereCreditsRequestsInstallsRemovalsSalesAnd"}}</span>
     </div>
 
     {{#if vm.error}}

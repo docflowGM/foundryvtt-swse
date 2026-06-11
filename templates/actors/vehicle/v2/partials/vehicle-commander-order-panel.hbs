@@ -1,13 +1,13 @@
 <section class="swse-vehicle-panel swse-vehicle-enhanced-panel" data-panel="enhanced-commander">
   <header class="swse-vehicle-panel-header">
     <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
-    <span class="swse-vehicle-rule-chip">Enhanced Commander</span>
+    <span class="swse-vehicle-rule-chip">{{localize "SWSE.ActorUI.EnhancedCommander"}}</span>
   </header>
 
   <div class="swse-vehicle-panel-body">
     {{#if panel.currentOrder}}
       <div class="swse-vehicle-active-readout">
-        <div class="swse-vehicle-active-label">Active Order</div>
+        <div class="swse-vehicle-active-label">{{localize "SWSE.ActorUI.ActiveOrder"}}</div>
         <div class="swse-vehicle-active-value">{{panel.currentOrder.label}}</div>
       </div>
     {{/if}}
@@ -19,7 +19,7 @@
             <div class="swse-vehicle-order-header">
               <span class="swse-vehicle-order-name">{{order.label}}</span>
               {{#if order.active}}
-                <span class="swse-vehicle-active-badge">Active</span>
+                <span class="swse-vehicle-active-badge">{{localize "SWSE.ActorUI.Active"}}</span>
               {{/if}}
             </div>
             <div class="swse-vehicle-order-summary">{{order.summary}}</div>

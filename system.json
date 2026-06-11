@@ -180,6 +180,91 @@
       "lang": "zh-CN",
       "name": "简体中文",
       "path": "lang/zh-CN.json"
+    },
+    {
+      "lang": "ko",
+      "name": "한국어",
+      "path": "lang/ko.json"
+    },
+    {
+      "lang": "da",
+      "name": "Dansk",
+      "path": "lang/da.json"
+    },
+    {
+      "lang": "fi",
+      "name": "Suomi",
+      "path": "lang/fi.json"
+    },
+    {
+      "lang": "it",
+      "name": "Italiano",
+      "path": "lang/it.json"
+    },
+    {
+      "lang": "hi",
+      "name": "हिन्दी",
+      "path": "lang/hi.json"
+    },
+    {
+      "lang": "ar",
+      "name": "العربية",
+      "path": "lang/ar.json"
+    },
+    {
+      "lang": "id",
+      "name": "Bahasa Indonesia",
+      "path": "lang/id.json"
+    },
+    {
+      "lang": "tr",
+      "name": "Türkçe",
+      "path": "lang/tr.json"
+    },
+    {
+      "lang": "pl",
+      "name": "Polski",
+      "path": "lang/pl.json"
+    },
+    {
+      "lang": "nl",
+      "name": "Nederlands",
+      "path": "lang/nl.json"
+    },
+    {
+      "lang": "vi",
+      "name": "Tiếng Việt",
+      "path": "lang/vi.json"
+    },
+    {
+      "lang": "th",
+      "name": "ไทย",
+      "path": "lang/th.json"
+    },
+    {
+      "lang": "bn",
+      "name": "বাংলা",
+      "path": "lang/bn.json"
+    },
+    {
+      "lang": "ur",
+      "name": "اردو",
+      "path": "lang/ur.json"
+    },
+    {
+      "lang": "sv",
+      "name": "Svenska",
+      "path": "lang/sv.json"
+    },
+    {
+      "lang": "uk",
+      "name": "Українська",
+      "path": "lang/uk.json"
+    },
+    {
+      "lang": "he",
+      "name": "עברית",
+      "path": "lang/he.json"
     }
   ],
   "socket": true,

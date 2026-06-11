@@ -36,6 +36,36 @@ const NPC_ABILITY_LABELS = {
   cha: 'Charisma'
 };
 
+const NPC_SKILL_DEFS = [
+  ['acrobatics', 'Acrobatics', 'dex'],
+  ['climb', 'Climb', 'str'],
+  ['deception', 'Deception', 'cha'],
+  ['endurance', 'Endurance', 'con'],
+  ['gatherInformation', 'Gather Information', 'cha'],
+  ['initiative', 'Initiative', 'dex'],
+  ['jump', 'Jump', 'str'],
+  ['knowledgeBureaucracy', 'Knowledge (Bureaucracy)', 'int'],
+  ['knowledgeGalacticLore', 'Knowledge (Galactic Lore)', 'int'],
+  ['knowledgeLifeSciences', 'Knowledge (Life Sciences)', 'int'],
+  ['knowledgePhysicalSciences', 'Knowledge (Physical Sciences)', 'int'],
+  ['knowledgeSocialSciences', 'Knowledge (Social Sciences)', 'int'],
+  ['knowledgeTactics', 'Knowledge (Tactics)', 'int'],
+  ['knowledgeTechnology', 'Knowledge (Technology)', 'int'],
+  ['mechanics', 'Mechanics', 'int'],
+  ['perception', 'Perception', 'wis'],
+  ['persuasion', 'Persuasion', 'cha'],
+  ['pilot', 'Pilot', 'dex'],
+  ['ride', 'Ride', 'dex'],
+  ['stealth', 'Stealth', 'dex'],
+  ['survival', 'Survival', 'wis'],
+  ['swim', 'Swim', 'str'],
+  ['treatInjury', 'Treat Injury', 'wis'],
+  ['useComputer', 'Use Computer', 'int'],
+  ['useTheForce', 'Use the Force', 'cha']
+];
+
+const NPC_SKILL_DEF_BY_KEY = Object.fromEntries(NPC_SKILL_DEFS.map(([key, label, ability]) => [key, { key, label, ability }]));
+
 
 function plainClone(value, fallback = {}) {
   if (value === null || value === undefined) return fallback;
@@ -436,6 +466,161 @@ function normalizeNpcSkillKey(value) {
 }
 
 
+function npcStatblockEditKey(value, index = 0) {
+  const slug = String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return slug || `row-${index}`;
+}
+
+function readNpcPath(source, path) {
+  return String(path || '').split('.').reduce((acc, part) => acc?.[part], source);
+}
+
+function firstPresent(...values) {
+  for (const value of values) {
+    if (value !== undefined && value !== null && value !== '') return value;
+  }
+  return null;
+}
+
+function formatNpcTotal(value, fallback = '+0') {
+  const n = Number(value);
+  if (!Number.isFinite(n)) return displayValue(value, fallback);
+  return n >= 0 ? `+${n}` : String(n);
+}
+
+function parseNpcStatblockSkillLines(rawSkills = []) {
+  const result = {};
+  const rows = Array.isArray(rawSkills)
+    ? rawSkills
+    : (typeof rawSkills === 'string' ? rawSkills.split(/[,;
+]+/) : []);
+  for (const row of rows) {
+    const text = String(row ?? '').replace(/ /g, ' ').trim();
+    if (!text) continue;
+    const match = text.match(/^(.+?)\s+([+-]?\d+)/);
+    if (!match) continue;
+    const key = normalizeNpcSkillKey(match[1]);
+    const total = Number(match[2]);
+    if (key && Number.isFinite(total)) result[key] = total;
+  }
+  return result;
+}
+
+function buildNpcSkillRows(actor, context = {}, play = {}, rawBeastData = null, npcStatblock = {}) {
+  const system = actor?.system ?? {};
+  const systemSkills = system?.skills ?? {};
+  const overrides = npcStatblock?.skills ?? {};
+  const statblockSkillTotals = parseNpcStatblockSkillLines(rawBeastData?.skills ?? []);
+  const playByKey = {};
+
+  for (const skill of play?.skills ?? []) {
+    const key = normalizeNpcSkillKey(skill.key || skill.id || skill.label);
+    if (!key) continue;
+    playByKey[key] = skill;
+  }
+
+  const seen = new Set();
+  const keys = [];
+  const addKey = (key) => {
+    const normalized = normalizeNpcSkillKey(key);
+    if (!normalized || seen.has(normalized)) return;
+    seen.add(normalized);
+    keys.push(normalized);
+  };
+
+  NPC_SKILL_DEFS.forEach(([key]) => addKey(key));
+  Object.keys(systemSkills).forEach(addKey);
+  Object.keys(overrides).forEach(addKey);
+  Object.keys(playByKey).forEach(addKey);
+  Object.keys(statblockSkillTotals).forEach(addKey);
+
+  return keys.map((key) => {
+    const def = NPC_SKILL_DEF_BY_KEY[key] ?? { key, label: labelFromKey(key), ability: systemSkills?.[key]?.selectedAbility || '' };
+    const sysSkill = systemSkills?.[key] ?? {};
+    const override = overrides?.[key] ?? {};
+    const playSkill = playByKey[key] ?? {};
+    const rawTotal = firstPresent(
+      override.total,
+      override.value,
+      playSkill.total,
+      statblockSkillTotals[key],
+      sysSkill.total,
+      system?.derived?.skills?.[key]?.total,
+      sysSkill.miscMod
+    );
+    const totalNumber = readFiniteNumber(rawTotal) ?? readFiniteNumber(String(rawTotal ?? '').replace('+', '')) ?? 0;
+    const trained = override.trained === true || override.trained === 'true'
+      || playSkill.trained === true
+      || sysSkill.trained === true;
+    return {
+      key,
+      id: key,
+      label: override.label || playSkill.label || def.label,
+      ability: override.ability || sysSkill.selectedAbility || sysSkill.ability || def.ability || '',
+      total: formatNpcTotal(totalNumber),
+      rawTotal: totalNumber,
+      trained,
+      canRoll: true,
+      editPath: `system.npcStatblock.skills.${key}.total`,
+      trainedEditPath: `system.npcStatblock.skills.${key}.trained`,
+      source: override.total !== undefined ? 'override' : (playSkill.total !== undefined ? 'statblock' : (sysSkill.total !== undefined ? 'system' : 'derived'))
+    };
+  });
+}
+
+function normalizeNpcStatblockAttackRows(sourceRows = [], overrideMap = {}) {
+  const rows = [];
+  const seen = new Set();
+
+  sourceRows.forEach((row, index) => {
+    const editKey = npcStatblockEditKey(row.editKey || row.key || row.name || row.id, index);
+    seen.add(editKey);
+    const override = overrideMap?.[editKey] ?? {};
+    const name = firstPresent(override.name, row.name, 'Attack');
+    const attack = firstPresent(override.attack, row.attack, '—');
+    const damage = firstPresent(override.damage, row.damage, '—');
+    rows.push({
+      ...row,
+      editKey,
+      name,
+      source: firstPresent(override.source, row.source, 'Statblock'),
+      mode: firstPresent(override.mode, row.mode, '—'),
+      attack,
+      damage,
+      notes: firstPresent(override.notes, row.notes, ''),
+      attackBonus: parseNpcAttackBonus(attack),
+      damageFormula: normalizeNpcDiceFormula(damage)
+    });
+  });
+
+  Object.entries(overrideMap || {}).forEach(([editKey, override], index) => {
+    if (seen.has(editKey)) return;
+    const name = firstPresent(override.name, labelFromKey(editKey), 'Attack');
+    const attack = firstPresent(override.attack, '—');
+    const damage = firstPresent(override.damage, '—');
+    rows.push({
+      id: null,
+      itemId: null,
+      editKey,
+      name,
+      source: firstPresent(override.source, 'GM Override'),
+      mode: firstPresent(override.mode, 'Statblock'),
+      attack,
+      damage,
+      notes: firstPresent(override.notes, ''),
+      attackBonus: parseNpcAttackBonus(attack),
+      damageFormula: normalizeNpcDiceFormula(damage)
+    });
+  });
+
+  return rows;
+}
+
+
 function normalizeNpcCombatAction(action, fallbackKey = '') {
   const key = action.key || action.id || fallbackKey || slugAction(action.name);
   const actionType = normalizeActionEconomyType(action.actionType || action.type || action.action?.type || action.costType || 'standard');
@@ -557,6 +742,7 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
   const play = context?.playStatblock ?? {};
   const allItems = Array.from(actor?.items ?? []);
   const rawBeastData = getNpcBeastData(actor);
+  const npcStatblock = system?.npcStatblock ?? {};
   const displayName = resolveNpcDisplayName(actor);
   const preferStatblockAuthority = context?.isStatblockMode === true
     || context?.npcSourceAuthority === 'statblock'
@@ -615,7 +801,17 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
     }
     return null;
   };
+  const overrideDefense = (keys = []) => {
+    const defenses = npcStatblock?.defenses ?? {};
+    for (const key of keys) {
+      const value = defenses?.[key];
+      if (value !== undefined && value !== null && value !== '') return value;
+    }
+    return null;
+  };
   const pickDefense = (statblockKey, systemKey, aliases = []) => {
+    const fromOverride = overrideDefense([statblockKey, systemKey, ...aliases]);
+    if (fromOverride !== null) return displayValue(fromOverride, '—');
     const fromStatblock = statblockDefense(statblockKey, '');
     if (preferStatblockAuthority && fromStatblock !== '') return fromStatblock;
     return displayValue(
@@ -675,9 +871,13 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
     fort: pickDefense('fortitude', 'fortitude', ['fort']),
     will: pickDefense('will', 'will'),
     dt: displayValue(
-      preferStatblockAuthority
-        ? (rawBeastData?.damageThreshold ?? play?.damageThreshold ?? derived?.damage?.threshold ?? derived?.threshold?.total ?? system?.damageThreshold?.total ?? system?.damageThreshold)
-        : (derived?.damage?.threshold ?? derived?.threshold?.total ?? system?.damageThreshold?.total ?? system?.damageThreshold ?? play?.damageThreshold ?? rawBeastData?.damageThreshold),
+      firstPresent(
+        npcStatblock?.defenses?.dt,
+        npcStatblock?.core?.dt,
+        preferStatblockAuthority
+          ? (rawBeastData?.damageThreshold ?? play?.damageThreshold ?? derived?.damage?.threshold ?? derived?.threshold?.total ?? system?.damageThreshold?.total ?? system?.damageThreshold)
+          : (derived?.damage?.threshold ?? derived?.threshold?.total ?? system?.damageThreshold?.total ?? system?.damageThreshold ?? play?.damageThreshold ?? rawBeastData?.damageThreshold)
+      ),
       '—'
     )
   };
@@ -689,17 +889,7 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
     { key: 'dt', label: 'DT', value: defenseValues.dt }
   ];
 
-  const skillRows = (play?.skills ?? []).map(skill => {
-    const key = normalizeNpcSkillKey(skill.key || skill.id || skill.label);
-    return {
-      key,
-      id: key,
-      label: skill.label || labelFromKey(key),
-      total: skill.total ?? '+0',
-      trained: skill.trained === true,
-      canRoll: Boolean(key)
-    };
-  });
+  const skillRows = buildNpcSkillRows(actor, context, play, rawBeastData, npcStatblock);
 
   const weaponFallbackRows = allItems.filter(item => item.type === 'weapon').map(item => ({
     id: item.id,
@@ -712,24 +902,33 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
     canOpen: true
   }));
 
-  const attackRows = (play?.attacks?.length ? play.attacks : weaponFallbackRows).map(row => {
+  const attackRows = normalizeNpcStatblockAttackRows(
+    play?.attacks?.length ? play.attacks : weaponFallbackRows,
+    npcStatblock?.attacks ?? {}
+  ).map(row => {
     const itemId = row.itemId ?? row.id ?? null;
-    const attackBonus = parseNpcAttackBonus(row.attack);
-    const damageFormula = normalizeNpcDiceFormula(row.damage);
     return {
       id: itemId,
       itemId,
+      editKey: row.editKey,
       name: row.name || 'Attack',
       source: row.source || 'Statblock',
       mode: row.mode || '—',
       attack: row.attack || '—',
       damage: row.damage || '—',
       notes: row.notes && row.notes !== '—' ? row.notes : '',
-      attackBonus,
-      damageFormula,
+      attackBonus: row.attackBonus,
+      damageFormula: row.damageFormula,
       canOpen: Boolean(itemId),
-      canRollAttack: Boolean(itemId || attackBonus !== null),
-      canRollDamage: Boolean(damageFormula)
+      canRollAttack: Boolean(itemId || row.attackBonus !== null),
+      canRollDamage: Boolean(row.damageFormula),
+      editPaths: {
+        name: `system.npcStatblock.attacks.${row.editKey}.name`,
+        mode: `system.npcStatblock.attacks.${row.editKey}.mode`,
+        attack: `system.npcStatblock.attacks.${row.editKey}.attack`,
+        damage: `system.npcStatblock.attacks.${row.editKey}.damage`,
+        notes: `system.npcStatblock.attacks.${row.editKey}.notes`
+      }
     };
   });
 
@@ -787,6 +986,10 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
     '—'
   );
 
+  const babValue = firstPresent(npcStatblock?.core?.bab, play?.bab, system?.baseAttackBonus, system?.bab?.total, system?.bab, rawBeastData?.baseAttackBonus);
+  const initiativeValue = firstPresent(npcStatblock?.core?.initiative, rawBeastData?.initiative, play?.initiative, derived?.initiative?.total, system?.initiative?.total, system?.skills?.init?.total, system?.skills?.initiative?.total);
+  const speedValue = firstPresent(npcStatblock?.core?.speed, play?.speed, system?.speed?.total, system?.speed, rawBeastData?.speed);
+
   const summaryLine = [];
   if (levelValue) summaryLine.push(`L${levelValue}`);
   if (species) summaryLine.push(species);
@@ -810,18 +1013,39 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
     hpPercent,
     hpToneClass,
     conditionCurrent,
-    initiative,
+    initiative: formatSignedNpc(initiativeValue, '—'),
     defenseChips,
-    babDisplay: play?.bab || displayValue(system?.baseAttackBonus ?? system?.bab?.total ?? system?.bab ?? rawBeastData?.baseAttackBonus, '—'),
+    babDisplay: displayValue(babValue, '—'),
+    editCore: {
+      name: displayName,
+      img: actor?.img || '',
+      species,
+      classDisplay,
+      level: levelValue,
+      challenge,
+      size: displayValue(system?.size ?? rawBeastData?.size, ''),
+      speed: displayValue(speedValue, ''),
+      hpCurrent,
+      hpMax,
+      bab: displayValue(babValue, ''),
+      dt: defenseValues.dt,
+      initiative: displayValue(initiativeValue, '')
+    },
+    editDefenses: {
+      reflex: defenseValues.ref,
+      fortitude: defenseValues.fort,
+      will: defenseValues.will,
+      flatFooted: pickDefense('flatfooted', 'flatFooted', ['flatfooted', 'flatFootedDefense'])
+    },
     quickStats: [
       { label: 'HP', value: hpMax > 0 ? `${hpCurrent}/${hpMax}` : displayValue(play?.hp?.value, '—') },
-      { label: 'BAB', value: play?.bab || displayValue(system?.baseAttackBonus ?? system?.bab?.total ?? system?.bab ?? rawBeastData?.baseAttackBonus, '—') },
+      { label: 'BAB', value: displayValue(babValue, '—') },
       { label: 'Threshold', value: defenseValues.dt },
-      { label: 'Speed', value: play?.speed || displayValue(system?.speed?.total ?? system?.speed, '—') }
+      { label: 'Speed', value: displayValue(speedValue, '—') }
     ],
     combatStats: [
-      { label: 'BAB', value: play?.bab || displayValue(system?.baseAttackBonus ?? system?.bab?.total ?? system?.bab ?? rawBeastData?.baseAttackBonus, '—') },
-      { label: 'Speed', value: play?.speed || displayValue(system?.speed?.total ?? system?.speed, '—') },
+      { label: 'BAB', value: displayValue(babValue, '—') },
+      { label: 'Speed', value: displayValue(speedValue, '—') },
       { label: 'Senses', value: play?.senses || displayValue(system?.senses, '—') },
       { label: 'DT', value: defenseValues.dt }
     ],
@@ -954,6 +1178,45 @@ const NPC_SHEET_BLOCKED_EXACT_PATHS = new Set([
   'system.damageThreshold'
 ]);
 
+const NPC_STATBLOCK_AUTHORITY_EXACT_PATHS = new Set([
+  'name',
+  'img',
+  'system.class',
+  'system.className',
+  'system.race',
+  'system.species',
+  'system.size',
+  'system.speed',
+  'system.challengeLevel',
+  'system.cl',
+  'system.level',
+  'system.credits',
+  'system.hp.value',
+  'system.hp.max',
+  'system.hp.temp',
+  'system.health.value',
+  'system.health.max',
+  'system.baseAttackBonus',
+  'system.bab',
+  'system.damageThreshold',
+  'system.conditionTrack.current',
+  'system.conditionTrack.value'
+]);
+
+const NPC_STATBLOCK_AUTHORITY_PATTERNS = [
+  /^system\.npcStatblock\./,
+  /^system\.defenses\.(reflex|ref|fortitude|fort|will|flatFooted|flatfooted)\.(total|value)$/,
+  /^system\.skills\.[^.]+\.(total|value|miscMod|trained|focused|selectedAbility)$/,
+  /^system\.attributes\.(str|dex|con|int|wis|cha)\.(base|racial|enhancement|temp|total)$/
+];
+
+function isNpcStatblockAuthorityPath(path) {
+  if (!path || typeof path !== 'string') return false;
+  if (path.startsWith('items.') || path.startsWith('effects.') || path.startsWith('system.derived.')) return false;
+  if (NPC_STATBLOCK_AUTHORITY_EXACT_PATHS.has(path)) return true;
+  return NPC_STATBLOCK_AUTHORITY_PATTERNS.some(pattern => pattern.test(path));
+}
+
 function isNpcSheetWritablePath(path) {
   if (!path || typeof path !== 'string') return false;
   if (NPC_SHEET_BLOCKED_EXACT_PATHS.has(path)) return false;
@@ -965,9 +1228,19 @@ function isNpcSheetWritablePath(path) {
 function filterNpcSheetUpdate(formDataObj) {
   const allowed = {};
   for (const [path, value] of Object.entries(formDataObj || {})) {
-    if (isNpcSheetWritablePath(path)) allowed[path] = value;
+    if (isNpcSheetWritablePath(path) || isNpcStatblockAuthorityPath(path)) allowed[path] = value;
   }
   return allowed;
+}
+
+function splitNpcSheetUpdate(flatUpdateData = {}) {
+  const statblock = {};
+  const governed = {};
+  for (const [path, value] of Object.entries(flatUpdateData || {})) {
+    if (isNpcStatblockAuthorityPath(path)) statblock[path] = value;
+    else governed[path] = value;
+  }
+  return { statblock, governed };
 }
 
 function isQuietNpcSheetPath(path) {
@@ -1512,6 +1785,100 @@ export class SWSEV2NpcSheet extends
       }, { signal });
     }
 
+    for (const el of root.querySelectorAll('[data-action="roll-npc-statblock-attack"]')) {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const itemId = ev.currentTarget?.dataset?.itemId;
+        const item = itemId ? this.actor?.items?.get(itemId) : null;
+        try {
+          if (item) {
+            await SWSERoll.rollAttack(this.actor, item, {
+              sourceElement: ev.currentTarget,
+              companionSource: ev.currentTarget,
+              sheet: this,
+              showRollCompanion: true,
+              showDialog: true
+            });
+            return;
+          }
+          const bonus = this._parseNpcSheetSignedNumber(ev.currentTarget?.dataset?.attackBonus);
+          if (bonus === null) {
+            ui?.notifications?.warn?.('This NPC attack does not have a parsable attack bonus.');
+            return;
+          }
+          const formula = bonus >= 0 ? `1d20 + ${bonus}` : `1d20 - ${Math.abs(bonus)}`;
+          await this._rollNpcSheetFlatFormula(formula, {
+            title: `${ev.currentTarget?.dataset?.attackName || 'Statblock Attack'} Attack`,
+            kind: 'npc-statblock-attack',
+            sourceElement: ev.currentTarget
+          });
+        } catch (err) {
+          console.error('NPC statblock attack roll failed:', err);
+          ui?.notifications?.error?.(`NPC attack roll failed: ${err.message}`);
+        }
+      }, { signal });
+    }
+
+    for (const el of root.querySelectorAll('[data-action="roll-npc-statblock-damage"]')) {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const formula = this._normalizeNpcSheetDiceFormula(ev.currentTarget?.dataset?.damageFormula);
+        if (!formula) {
+          ui?.notifications?.warn?.('This NPC attack does not have a parsable damage formula.');
+          return;
+        }
+        try {
+          await this._rollNpcSheetFlatFormula(formula, {
+            title: `${ev.currentTarget?.dataset?.attackName || 'Statblock Attack'} Damage`,
+            kind: 'npc-statblock-damage',
+            sourceElement: ev.currentTarget
+          });
+        } catch (err) {
+          console.error('NPC statblock damage roll failed:', err);
+          ui?.notifications?.error?.(`NPC damage roll failed: ${err.message}`);
+        }
+      }, { signal });
+    }
+
+    for (const el of root.querySelectorAll('[data-action="roll-skill"]')) {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const skillKey = ev.currentTarget?.dataset?.skill;
+        if (!skillKey) return;
+        try {
+          const total = this._parseNpcSheetSignedNumber(ev.currentTarget?.dataset?.statblockTotal);
+          if (total !== null) {
+            const { showRollModifiersDialog } = await import('/systems/foundryvtt-swse/scripts/rolls/roll-config.js');
+            const dialogResult = await showRollModifiersDialog({
+              title: `${ev.currentTarget?.dataset?.skillLabel || labelFromKey(skillKey)} Check`,
+              rollType: 'skill',
+              actor: this.actor,
+              skillKey,
+              sourceElement: ev.currentTarget,
+              sheet: this
+            });
+            if (dialogResult === null) return;
+            const extra = Number(dialogResult?.customModifier || 0) || 0;
+            const finalBonus = total + extra;
+            const formula = finalBonus >= 0 ? `1d20 + ${finalBonus}` : `1d20 - ${Math.abs(finalBonus)}`;
+            await this._rollNpcSheetFlatFormula(formula, {
+              title: `${ev.currentTarget?.dataset?.skillLabel || labelFromKey(skillKey)} Check`,
+              kind: 'npc-statblock-skill',
+              sourceElement: ev.currentTarget
+            });
+            return;
+          }
+          await SWSERoll.rollSkill(this.actor, skillKey, { showDialog: true });
+        } catch (err) {
+          console.error('NPC skill roll failed:', err);
+          ui?.notifications?.error?.(`NPC skill roll failed: ${err.message}`);
+        }
+      }, { signal });
+    }
+
     // Action execution
     for (const el of root.querySelectorAll('.swse-v2-use-action, [data-action="swse-v2-use-action"]')) {
       el.addEventListener('click', async (ev) => {
@@ -1684,7 +2051,8 @@ export class SWSEV2NpcSheet extends
         : null;
       if (!(field instanceof HTMLElement)) return;
       if (!field.name || field.hasAttribute('data-action') || field.disabled || field.hasAttribute('readonly')) return;
-      if (!isNpcSheetWritablePath(field.name)) return;
+      const statblockAuthority = field.dataset?.npcStatblockAuthority === 'true' || isNpcStatblockAuthorityPath(field.name);
+      if (!statblockAuthority && !isNpcSheetWritablePath(field.name)) return;
 
       const rawValue = field.matches('input[type="checkbox"]') ? field.checked : field.value;
       const update = {
@@ -1692,6 +2060,10 @@ export class SWSEV2NpcSheet extends
       };
 
       try {
+        if (statblockAuthority) {
+          await this._updateNpcStatblockAuthority(update, { fieldName: field.name });
+          return;
+        }
         const quiet = isQuietNpcSheetPath(field.name);
         await ActorEngine.updateActor(this.actor, update, {
           source: quiet ? 'npc-sheet-direct-field-quiet' : 'npc-sheet-direct-field',
@@ -1706,6 +2078,75 @@ export class SWSEV2NpcSheet extends
     }, { signal });
   }
 
+
+  async _updateNpcStatblockAuthority(update = {}, { fieldName = '' } = {}) {
+    const flat = { ...(update ?? {}) };
+    if (!Object.keys(flat).length) return;
+
+    const mirror = {};
+    for (const [path, value] of Object.entries(flat)) {
+      if (path === 'name') mirror['system.npcStatblock.core.name'] = value;
+      if (path === 'img') mirror['system.npcStatblock.core.img'] = value;
+      if (path === 'system.hp.value') mirror['system.npcStatblock.core.hpCurrent'] = value;
+      if (path === 'system.hp.max') mirror['system.npcStatblock.core.hpMax'] = value;
+      if (path === 'system.baseAttackBonus' || path === 'system.bab') mirror['system.npcStatblock.core.bab'] = value;
+      if (path === 'system.damageThreshold') mirror['system.npcStatblock.core.dt'] = value;
+      if (path === 'system.speed') mirror['system.npcStatblock.core.speed'] = value;
+      if (path === 'system.challengeLevel' || path === 'system.cl') mirror['system.npcStatblock.core.cl'] = value;
+      if (path === 'system.level') mirror['system.npcStatblock.core.level'] = value;
+    }
+
+    await this.actor.update({ ...flat, ...mirror }, {
+      render: false,
+      diff: true,
+      swse: {
+        source: 'npc-statblock-authority-edit',
+        fieldName
+      }
+    });
+    this.render(false);
+  }
+
+  _parseNpcSheetSignedNumber(value) {
+    const match = String(value ?? '').match(/[+-]?\d+/);
+    if (!match) return null;
+    const n = Number(match[0]);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  _normalizeNpcSheetDiceFormula(value) {
+    const formula = String(value ?? '')
+      .trim()
+      .replace(/[–—−]/g, '-')
+      .replace(/×/g, '*')
+      .replace(/\s+/g, '');
+    if (!formula || !/\d+d\d+/i.test(formula)) return '';
+    if (!/^[0-9dD+\-*/().]+$/.test(formula)) return '';
+    return formula;
+  }
+
+  async _rollNpcSheetFlatFormula(formula, { title = 'NPC Roll', kind = 'npc-roll', sourceElement = null } = {}) {
+    const rollData = this.actor?.getRollData?.() ?? {};
+    const roll = await new Roll(formula, rollData).evaluate({ async: true });
+    await SWSEChat.postRoll({
+      roll,
+      actor: this.actor,
+      flavor: title,
+      context: {
+        kind,
+        title,
+        sourceElement,
+        companionSource: sourceElement
+      },
+      flags: {
+        swse: {
+          source: kind,
+          actorId: this.actor?.id ?? null
+        }
+      }
+    });
+    return roll;
+  }
 
   _resolveNpcCombatActionData(actionId, element = null) {
     const key = String(actionId || '');
@@ -2049,20 +2490,23 @@ export class SWSEV2NpcSheet extends
     const formData = new FormData(form);
     const formDataObj = Object.fromEntries(formData.entries());
     const allowedFlat = filterNpcSheetUpdate(formDataObj);
-    const expanded = foundry.utils.expandObject(allowedFlat);
+    const { statblock, governed } = splitNpcSheetUpdate(allowedFlat);
 
-    if (!expanded || Object.keys(allowedFlat).length === 0) {return;}
+    if (Object.keys(allowedFlat).length === 0) {return;}
 
     try {
-      // Route safe source-field edits through governance. Derived math,
-      // statblock authority, import raw data, embedded items, and Legal Review
-      // repair data stay with their owning engines/surfaces.
-      const quiet = isQuietNpcSheetUpdate(allowedFlat);
-      await ActorEngine.updateActor(this.actor, expanded, {
-        source: quiet ? 'npc-sheet-form-submit-quiet' : 'npc-sheet-form-submit',
-        render: quiet ? false : undefined,
-        suppressAppRefresh: quiet
-      });
+      if (Object.keys(statblock).length) {
+        await this._updateNpcStatblockAuthority(statblock, { fieldName: 'form-submit' });
+      }
+      if (Object.keys(governed).length) {
+        const expanded = foundry.utils.expandObject(governed);
+        const quiet = isQuietNpcSheetUpdate(governed);
+        await ActorEngine.updateActor(this.actor, expanded, {
+          source: quiet ? 'npc-sheet-form-submit-quiet' : 'npc-sheet-form-submit',
+          render: quiet ? false : undefined,
+          suppressAppRefresh: quiet
+        });
+      }
     } catch (err) {
       console.error('Sheet submission failed:', err);
       ui.notifications.error(`Failed to update actor: ${err.message}`);

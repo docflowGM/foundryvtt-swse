@@ -2,54 +2,54 @@
   <form class="swse-allies-organization-form" data-organization-id="{{organization.id}}">
     <header class="swse-allies-organization-card-head">
       <div>
-        <span class="swse-allies-kicker">ORGANIZATION RECORD</span>
-        <input type="text" name="organizationName" value="{{organization.name}}" placeholder="Organization name">
+        <span class="swse-allies-kicker">{{localize "SWSE.ShellUI.ORGANIZATIONRECORD"}}</span>
+        <input type="text" name="organizationName" value="{{organization.name}}" placeholder="{{localize 'SWSE.ShellUI.OrganizationName'}}">
       </div>
       <div class="swse-allies-faction-score {{organization.scoreClass}}">
-        <span>GM Score</span>
+        <span>{{localize "SWSE.ShellUI.GMScore"}}</span>
         <output>{{organization.scoreLabel}}</output>
-        <input type="number" name="score" step="1" value="{{organization.score}}" inputmode="numeric" aria-label="Organization score" {{#unless organization.canEditGoverned}}disabled{{/unless}}>
+        <input type="number" name="score" step="1" value="{{organization.score}}" inputmode="numeric" aria-label="{{localize 'SWSE.ShellUI.OrganizationScore'}}" {{#unless organization.canEditGoverned}}disabled{{/unless}}>
         <small>{{organization.status}}</small>
       </div>
       <div class="swse-allies-faction-score is-scale">
-        <span>GM Scale</span>
+        <span>{{localize "SWSE.ShellUI.GMScale"}}</span>
         <output>{{organization.scaleLabel}}</output>
-        <input type="number" name="scale" min="1" max="20" step="1" value="{{organization.scale}}" inputmode="numeric" aria-label="Organization scale" {{#unless organization.canEditGoverned}}disabled{{/unless}}>
+        <input type="number" name="scale" min="1" max="20" step="1" value="{{organization.scale}}" inputmode="numeric" aria-label="{{localize 'SWSE.ShellUI.OrganizationScale'}}" {{#unless organization.canEditGoverned}}disabled{{/unless}}>
         <small>1–20</small>
       </div>
       <div class="swse-allies-organization-actions">
-        <button type="button" data-allies-action="save-organization" data-organization-id="{{organization.id}}">Save</button>
+        <button type="button" data-allies-action="save-organization" data-organization-id="{{organization.id}}">{{localize "SWSE.ShellUI.Save"}}</button>
         {{#if organization.canEditGoverned}}
-        <button type="button" class="is-danger" data-allies-action="remove-organization" data-organization-id="{{organization.id}}">Remove</button>
+        <button type="button" class="is-danger" data-allies-action="remove-organization" data-organization-id="{{organization.id}}">{{localize "SWSE.ShellUI.Remove"}}</button>
         {{/if}}
       </div>
     </header>
 
     {{#if organization.governedLocked}}
     <div class="swse-allies-governed-lock">
-      GM-governed fields are locked for players: scale, score, benefits, bases, and statistics.
+      {{localize "SWSE.ShellUI.GMGovernedFieldsAreLockedForPlayersScale"}}
     </div>
     {{/if}}
 
     <div class="swse-allies-organization-grid">
       <label>
-        <span>Organization Type</span>
-        <input type="text" name="type" value="{{organization.type}}" placeholder="Cell, crew, company, syndicate, temple, agency...">
+        <span>{{localize "SWSE.ShellUI.OrganizationType"}}</span>
+        <input type="text" name="type" value="{{organization.type}}" placeholder="{{localize 'SWSE.ShellUI.CellCrewCompanySyndicateTempleAgency'}}">
       </label>
       <label>
-        <span>Leader / Public Face</span>
-        <input type="text" name="leader" value="{{organization.leader}}" placeholder="Leader, council, handler, front, or unknown">
+        <span>{{localize "SWSE.ShellUI.LeaderPublicFace"}}</span>
+        <input type="text" name="leader" value="{{organization.leader}}" placeholder="{{localize 'SWSE.ShellUI.LeaderCouncilHandlerFrontOrUnknown'}}">
       </label>
       <label>
-        <span>Planet</span>
-        <input type="text" name="planet" value="{{organization.planet}}" placeholder="Optional">
+        <span>{{localize "SWSE.ShellUI.Planet"}}</span>
+        <input type="text" name="planet" value="{{organization.planet}}" placeholder="{{localize 'SWSE.ShellUI.Optional'}}">
       </label>
       <label>
-        <span>System</span>
-        <input type="text" name="system" value="{{organization.system}}" placeholder="Optional">
+        <span>{{localize "SWSE.ShellUI.System"}}</span>
+        <input type="text" name="system" value="{{organization.system}}" placeholder="{{localize 'SWSE.ShellUI.Optional'}}">
       </label>
       <label>
-        <span>Aligned With</span>
+        <span>{{localize "SWSE.ShellUI.AlignedWith"}}</span>
         <select name="alignedWithFactionId">
           {{#each organization.factionOptions}}
           <option value="{{this.id}}" {{#if this.selectedWith}}selected{{/if}}>{{this.name}}</option>
@@ -57,7 +57,7 @@
         </select>
       </label>
       <label>
-        <span>Aligned Against</span>
+        <span>{{localize "SWSE.ShellUI.AlignedAgainst"}}</span>
         <select name="alignedAgainstFactionId">
           {{#each organization.factionOptions}}
           <option value="{{this.id}}" {{#if this.selectedAgainst}}selected{{/if}}>{{this.name}}</option>
@@ -65,32 +65,32 @@
         </select>
       </label>
       <label class="swse-allies-organization-wide">
-        <span>Alignment Notes</span>
-        <textarea name="alignmentNotes" rows="2" placeholder="Who does this organization support, oppose, owe, fear, or secretly serve?">{{organization.alignmentNotes}}</textarea>
+        <span>{{localize "SWSE.ShellUI.AlignmentNotes"}}</span>
+        <textarea name="alignmentNotes" rows="2" placeholder="{{localize 'SWSE.ShellUI.WhoDoesThisOrganizationSupportOpposeOweFear'}}">{{organization.alignmentNotes}}</textarea>
       </label>
       <label class="swse-allies-organization-wide">
-        <span>Player Notes / Organization Concept</span>
-        <textarea name="notes" rows="3" placeholder="Freeform description, goals, culture, membership, methods, or public cover.">{{organization.notes}}</textarea>
+        <span>{{localize "SWSE.ShellUI.PlayerNotesOrganizationConcept"}}</span>
+        <textarea name="notes" rows="3" placeholder="{{localize 'SWSE.ShellUI.FreeformDescriptionGoalsCultureMembershipMethodsOrPublic'}}">{{organization.notes}}</textarea>
       </label>
     </div>
 
     <section class="swse-allies-governed-section">
       <div class="swse-allies-base-subhead">
-        <span class="swse-allies-kicker">GM-GOVERNED ORGANIZATION DETAILS</span>
-        <p>These fields are controlled by the GM so player-founded organizations do not grow beyond the campaign's intended scale.</p>
+        <span class="swse-allies-kicker">{{localize "SWSE.ShellUI.GMGOVERNEDORGANIZATIONDETAILS"}}</span>
+        <p>{{localize "SWSE.ShellUI.TheseFieldsAreControlledByTheGMSo"}}</p>
       </div>
       <div class="swse-allies-organization-grid">
         <label class="swse-allies-organization-wide">
-          <span>Organization Benefits</span>
-          <textarea name="benefits" rows="3" placeholder="Ranks, privileges, immunities, contacts, legal access, safehouses, favors, or obligations." {{#unless organization.canEditGoverned}}disabled{{/unless}}>{{organization.benefits}}</textarea>
+          <span>{{localize "SWSE.ShellUI.OrganizationBenefits"}}</span>
+          <textarea name="benefits" rows="3" placeholder="{{localize 'SWSE.ShellUI.RanksPrivilegesImmunitiesContactsLegalAccessSafehousesFavors'}}" {{#unless organization.canEditGoverned}}disabled{{/unless}}>{{organization.benefits}}</textarea>
         </label>
         <label class="swse-allies-organization-wide">
-          <span>Organization Bases / Holdings</span>
-          <textarea name="bases" rows="3" placeholder="GM-controlled bases, cells, offices, warehouses, safehouses, laboratories, or holdings." {{#unless organization.canEditGoverned}}disabled{{/unless}}>{{organization.bases}}</textarea>
+          <span>{{localize "SWSE.ShellUI.OrganizationBasesHoldings"}}</span>
+          <textarea name="bases" rows="3" placeholder="{{localize 'SWSE.ShellUI.GMControlledBasesCellsOfficesWarehousesSafehousesLaboratories'}}" {{#unless organization.canEditGoverned}}disabled{{/unless}}>{{organization.bases}}</textarea>
         </label>
         <label class="swse-allies-organization-wide">
-          <span>Organization Statistics</span>
-          <textarea name="statistics" rows="3" placeholder="GM-facing statistics: manpower, assets, defenses, security, reach, upkeep, complications, or campaign notes." {{#unless organization.canEditGoverned}}disabled{{/unless}}>{{organization.statistics}}</textarea>
+          <span>{{localize "SWSE.ShellUI.OrganizationStatistics"}}</span>
+          <textarea name="statistics" rows="3" placeholder="{{localize 'SWSE.ShellUI.GMFacingStatisticsManpowerAssetsDefensesSecurityReach'}}" {{#unless organization.canEditGoverned}}disabled{{/unless}}>{{organization.statistics}}</textarea>
         </label>
       </div>
     </section>

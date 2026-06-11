@@ -1,8 +1,8 @@
 <div class="swse-shell-surface swse-shell-surface--mentor" data-shell-region="surface-mentor" data-surface-id="{{vm.id}}">
   <div class="swse-shell-surface__header swse-mentor-header">
-    <button class="swse-shell-surface__back-btn" data-shell-action="return-to-home" type="button" title="Return to Home">
+    <button class="swse-shell-surface__back-btn" data-shell-action="return-to-home" type="button" title="{{localize 'SWSE.ShellUI.ReturnToHome'}}">
       <i class="fas fa-arrow-left"></i>
-      <span>Home</span>
+      <span>{{localize "SWSE.ShellUI.Home"}}</span>
     </button>
     <div class="swse-shell-surface__title">
       <span>✶</span>
@@ -14,7 +14,7 @@
   <div class="swse-shell-surface__body swse-mentor-surface">
     {{#if vm.hasMentors}}
       <aside class="swse-mentor-rail swse-panel">
-        <div class="swse-panel-head">◆ Mentors</div>
+        <div class="swse-panel-head">{{localize "SWSE.ShellUI.Mentors"}}</div>
         <div class="swse-mentor-list">
           {{#each vm.unlockedMentors}}
             <button class="swse-mentor-card {{#if (eq ../vm.selectedMentorKey this.key)}}active{{/if}}" data-mentor-key="{{this.key}}" type="button">
@@ -28,7 +28,7 @@
 
       <section class="swse-mentor-main">
         <div class="swse-panel swse-mentor-dialogue-panel">
-          <div class="swse-panel-head">◇ Mentor Channel</div>
+          <div class="swse-panel-head">{{localize "SWSE.ShellUI.MentorChannel"}}</div>
           {{#if vm.selectedMentor}}
             <div class="swse-mentor-identity">
               <div class="swse-mentor-identity__portrait">
@@ -53,7 +53,7 @@
 
             {{#if vm.currentResponse.reasonTexts.length}}
               <div class="swse-mentor-reasons">
-                <div class="swse-mentor-reasons__title">System Read</div>
+                <div class="swse-mentor-reasons__title">{{localize "SWSE.ShellUI.SystemRead"}}</div>
                 <ul>
                   {{#each vm.currentResponse.reasonTexts}}
                     <li>{{this.text}}</li>
@@ -64,7 +64,7 @@
 
             {{#if vm.currentResponse.availablePaths.length}}
               <div class="swse-mentor-paths">
-                <div class="swse-mentor-paths__title">Commit to a Path</div>
+                <div class="swse-mentor-paths__title">{{localize "SWSE.ShellUI.CommitToAPath"}}</div>
                 <div class="swse-mentor-paths__buttons">
                   {{#each vm.currentResponse.availablePaths}}
                     <button class="swse-btn" data-mentor-path="{{this.name}}" type="button">{{this.name}}</button>
@@ -73,12 +73,12 @@
               </div>
             {{/if}}
           {{else}}
-            <div class="swse-shell-surface__empty">No mentor channel is currently available.</div>
+            <div class="swse-shell-surface__empty">{{localize "SWSE.ShellUI.NoMentorChannelIsCurrentlyAvailable"}}</div>
           {{/if}}
         </div>
 
         <div class="swse-panel swse-mentor-topics-panel">
-          <div class="swse-panel-head">▸ Topics</div>
+          <div class="swse-panel-head">{{localize "SWSE.ShellUI.Topics"}}</div>
           {{#if vm.selectedMentor}}
             <div class="swse-mentor-topic-list">
               {{#each vm.topics}}
@@ -89,12 +89,12 @@
               {{/each}}
             </div>
           {{else}}
-            <div class="swse-shell-surface__empty">Select a mentor to open a conversation channel.</div>
+            <div class="swse-shell-surface__empty">{{localize "SWSE.ShellUI.SelectAMentorToOpenAConversationChannel"}}</div>
           {{/if}}
         </div>
       </section>
     {{else}}
-      <div class="swse-shell-surface__empty">No mentors are unlocked for this character yet.</div>
+      <div class="swse-shell-surface__empty">{{localize "SWSE.ShellUI.NoMentorsAreUnlockedForThisCharacterYet"}}</div>
     {{/if}}
   </div>
 </div>

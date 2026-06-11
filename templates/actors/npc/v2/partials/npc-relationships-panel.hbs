@@ -1,9 +1,9 @@
 <section class="swse-npc-card swse-npc-relationships-card">
   <header class="swse-npc-card__header">
     <div class="swse-npc-card__header-main">
-      <h3 class="swse-section-title">Relationships</h3>
+      <h3 class="swse-section-title">{{localize "SWSE.ActorUI.Relationships"}}</h3>
       <p class="swse-npc-card__subhead">
-        Owner, rider, follower provenance, and related linkage for this NPC.
+        {{localize "SWSE.ActorUI.OwnerRiderFollowerProvenanceAndRelatedLinkageFor"}}
       </p>
     </div>
   </header>
@@ -20,7 +20,7 @@
     {{#unless showOwnerPanel}}
       {{#unless showMountPanel}}
         <p class="swse-npc-empty-state">
-          No owner, rider, follower provenance, or mount relationship data is currently available for this NPC.
+          {{localize "SWSE.ActorUI.NoOwnerRiderFollowerProvenanceOrMountRelationship"}}
         </p>
       {{/unless}}
     {{/unless}}

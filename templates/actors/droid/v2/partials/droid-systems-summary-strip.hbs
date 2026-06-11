@@ -17,20 +17,20 @@
 --}}
 <div class="holo-panel swse-ui-panel swse-droid-system-suite">
   <div class="section-bar">
-    <h3 class="section-header">Droid Systems</h3>
+    <h3 class="section-header">{{localize "SWSE.ActorUI.DroidSystems"}}</h3>
     {{#if editable}}
       {{#if droid.flags.isStockDroid}}
-        <button type="button" class="convert-to-custom-droid holo-btn small" aria-label="Convert stock droid to custom system-native droid">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> Convert to Custom
+        <button type="button" class="convert-to-custom-droid holo-btn small" aria-label="{{localize 'SWSE.ActorUI.ConvertStockDroidToCustomSystemNativeDroid'}}">
+          <i class="fa-solid fa-wand-magic-sparkles"></i> {{localize "SWSE.ActorUI.ConvertToCustom"}}
         </button>
       {{else}}
-        <button type="button" class="edit-droid-systems holo-btn small" aria-label="Edit droid configuration">
-          <i class="fa-solid fa-edit"></i> Edit
+        <button type="button" class="edit-droid-systems holo-btn small" aria-label="{{localize 'SWSE.ActorUI.EditDroidConfiguration'}}">
+          <i class="fa-solid fa-edit"></i> {{localize "SWSE.ActorUI.Edit"}}
         </button>
       {{/if}}
       {{#if droidPanels.droidSummary.degree}}
-        <button type="button" data-action="customize-droid" class="holo-btn small" aria-label="Customize droid systems">
-          <i class="fas fa-cog"></i> Customize
+        <button type="button" data-action="customize-droid" class="holo-btn small" aria-label="{{localize 'SWSE.ActorUI.CustomizeDroidSystems'}}">
+          <i class="fas fa-cog"></i> {{localize "SWSE.ActorUI.Customize"}}
         </button>
       {{/if}}
     {{/if}}
@@ -40,25 +40,25 @@
     <div class="droid-config-summary swse-store-section">
       {{#if droidPanels.droidSummary.degree}}
         <div class="config-item swse-metric-chip">
-          <span class="label">Degree:</span>
+          <span class="label">{{localize "SWSE.ActorUI.Degree2"}}</span>
           <span class="value">{{droidPanels.droidSummary.degree}}</span>
         </div>
       {{/if}}
 
       {{#if droidPanels.droidSummary.size}}
         <div class="config-item swse-metric-chip">
-          <span class="label">Size:</span>
+          <span class="label">{{localize "SWSE.ActorUI.Size"}}</span>
           <span class="value">{{droidPanels.droidSummary.size}}</span>
         </div>
       {{/if}}
 
       {{#if droidPanels.droidSummary.creditsTotal}}
         <div class="config-item swse-metric-chip">
-          <span class="label">Budget:</span>
+          <span class="label">{{localize "SWSE.ActorUI.Budget"}}</span>
           <span class="value">{{droidPanels.droidSummary.creditsSpent}} / {{droidPanels.droidSummary.creditsTotal}}</span>
         </div>
         <div class="config-item swse-metric-chip">
-          <span class="label">Remaining:</span>
+          <span class="label">{{localize "SWSE.ActorUI.Remaining"}}</span>
           <span class="value {{#if droidPanels.droidSummary.isOverBudget}}over-budget{{else}}in-budget{{/if}}">
             {{droidPanels.droidSummary.creditsRemaining}}
           </span>
@@ -67,17 +67,17 @@
 
       {{#if droidPanels.droidSummary.readinessStatus}}
         <div class="config-item swse-metric-chip">
-          <span class="label">Status:</span>
+          <span class="label">{{localize "SWSE.ActorUI.Status"}}</span>
           <span class="value readiness-{{droidPanels.droidSummary.readinessStatus}}">{{droidPanels.droidSummary.readinessStatus}}</span>
         </div>
       {{/if}}
     </div>
   {{else}}
     <div class="empty-state">
-      <p><em>No droid configuration yet.</em></p>
+      <p><em>{{localize "SWSE.ActorUI.NoDroidConfigurationYet"}}</em></p>
       {{#if editable}}
-        <button type="button" class="edit-droid-systems holo-btn" aria-label="Create droid configuration">
-          <i class="fa-solid fa-robot"></i> Create Configuration
+        <button type="button" class="edit-droid-systems holo-btn" aria-label="{{localize 'SWSE.ActorUI.CreateDroidConfiguration'}}">
+          <i class="fa-solid fa-robot"></i> {{localize "SWSE.ActorUI.CreateConfiguration"}}
         </button>
       {{/if}}
     </div>

@@ -6,15 +6,15 @@
     <div class="header-left">
       <img class="profile" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" height="64" width="64"/>
       <div class="title-block">
-        <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="Name"/></h1>
+        <h1 class="charname"><input name="name" type="text" value="{{actor.name}}" placeholder="{{localize 'SWSE.ActorUI.Name'}}"/></h1>
         <div class="subline muted">NPC Combat Mode — Level {{system.level}}</div>
       </div>
     </div>
     <div class="header-right npc-combat-header-stats">
-      <div class="swse-stat"><div class="label">FORT</div><div class="value">{{derived.defenses.fort}}</div></div>
-      <div class="swse-stat"><div class="label">REF</div><div class="value">{{derived.defenses.ref}}</div></div>
-      <div class="swse-stat"><div class="label">WILL</div><div class="value">{{derived.defenses.will}}</div></div>
-      <div class="swse-stat"><div class="label">DT</div><div class="value">{{derived.damage.threshold}}</div></div>
+      <div class="swse-stat"><div class="label">{{localize "SWSE.ActorUI.FORT"}}</div><div class="value">{{derived.defenses.fort}}</div></div>
+      <div class="swse-stat"><div class="label">{{localize "SWSE.ActorUI.REF"}}</div><div class="value">{{derived.defenses.ref}}</div></div>
+      <div class="swse-stat"><div class="label">{{localize "SWSE.ActorUI.WILL"}}</div><div class="value">{{derived.defenses.will}}</div></div>
+      <div class="swse-stat"><div class="label">{{localize "SWSE.ActorUI.DT"}}</div><div class="value">{{derived.damage.threshold}}</div></div>
     </div>
   </header>
 
@@ -41,16 +41,16 @@
       <!-- INITIATIVE DISPLAY -->
       <div class="holo-panel initiative-panel">
         <div class="section-bar">
-          <h3 class="section-header">Initiative</h3>
+          <h3 class="section-header">{{localize "SWSE.ActorUI.Initiative"}}</h3>
         </div>
         <div class="initiative-panel-body initiative-panel-compact">
           <div class="initiative-mod-value">{{system.skills.initiative.total}}</div>
           <div class="initiative-controls">
             <button type="button" class="initiative-btn roll-initiative">
-              Roll
+              {{localize "SWSE.ActorUI.Roll"}}
             </button>
             <button type="button" class="initiative-btn take10-initiative">
-              Take 10
+              {{localize "SWSE.ActorUI.Take10"}}
             </button>
           </div>
         </div>
@@ -65,8 +65,8 @@
   <!-- Quick Actions Bar -->
   <footer class="npc-combat-footer swse-ui-frame">
     <div class="npc-combat-actions swse-control-cluster">
-      <button type="button" class="action-btn" data-action="level-up">Level Up</button>
-      <button type="button" class="action-btn" data-action="switch-full-mode">Full Mode</button>
+      <button type="button" class="action-btn" data-action="level-up">{{localize "SWSE.ActorUI.LevelUp"}}</button>
+      <button type="button" class="action-btn" data-action="switch-full-mode">{{localize "SWSE.ActorUI.FullMode"}}</button>
     </div>
   </footer>
 

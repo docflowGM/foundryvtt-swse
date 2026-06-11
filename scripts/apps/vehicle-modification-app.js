@@ -73,6 +73,7 @@ export class VehicleModificationApp extends SWSEApplication {
     this.selectedCategory = 'all';
     this.query = '';
     this.compatOnly = false;
+    this.vehicleModelName = options.vehicleModelName || options.modelName || options.vehicleModel || options.targetVehicle?.system?.model || options.vehicleActor?.system?.model || '';
     this.contextMode = options.contextMode || 'storeConstruction';
     this.mode = options.mode || 'shipyard';
     this.isSubmitting = false;
@@ -148,6 +149,8 @@ export class VehicleModificationApp extends SWSEApplication {
       stockShips: this._frameRows(),
       hasFrame: Boolean(this.stockShip),
       frame: this._frameSummary(),
+      modelName: this._currentModelName(),
+      modelPlaceholder: this.stockShip?.name || 'Custom model name',
       categories: this._categoryTabs(),
       selectedCategory: this.selectedCategory,
       query: this.query,
@@ -205,6 +208,13 @@ export class VehicleModificationApp extends SWSEApplication {
     root.querySelectorAll('[data-action]').forEach((element) => {
       element.addEventListener('click', (event) => this._handleAction(event));
     });
+
+    const modelInput = root.querySelector('[data-role="shipyard-model-name"]');
+    if (modelInput) {
+      modelInput.addEventListener('input', (event) => {
+        this.vehicleModelName = event.currentTarget.value || '';
+      });
+    }
 
     const search = root.querySelector('[data-role="shipyard-search"]');
     if (search) {
@@ -336,6 +346,9 @@ export class VehicleModificationApp extends SWSEApplication {
     const stockShip = modData.stockShip || system.stockShip || flagBuild?.stockShip || this._synthesizeStockShipFromVehicle(vehicle);
     const frameName = stockShip?.name || system.buildMetadata?.frameName || system.shipyard?.frameName || vehicle.name;
     this.stockShip = VehicleModificationManager.getStockShip(frameName) || stockShip;
+    if (!String(this.vehicleModelName || '').trim()) {
+      this.vehicleModelName = system.model || stockShip?.name || frameName || '';
+    }
 
     const storedMods = Array.isArray(modData.modifications)
       ? modData.modifications
@@ -751,7 +764,11 @@ export class VehicleModificationApp extends SWSEApplication {
       ui.notifications.warn('Ship frame not found.');
       return;
     }
+    const previousDefaultModel = this.stockShip?.name || '';
     this.stockShip = frame;
+    if (!String(this.vehicleModelName || '').trim() || this.vehicleModelName === previousDefaultModel) {
+      this.vehicleModelName = frame.name || '';
+    }
     this.modifications = [];
     this.focusedModId = null;
     this.selectedCategory = 'all';
@@ -835,10 +852,15 @@ export class VehicleModificationApp extends SWSEApplication {
     await this.render(false);
   }
 
+  _currentModelName() {
+    return String(this.vehicleModelName || this.targetVehicle?.system?.model || this.stockShip?.name || '').trim();
+  }
+
   _buildSpec(totalCost = this._buildTotal()) {
     const costSummary = this._costSummary();
     return {
       stockShip: foundry.utils.deepClone(this.stockShip),
+      model: this._currentModelName() || this.stockShip?.name || '',
       modifications: foundry.utils.deepClone(this.modifications),
       removedModifications: foundry.utils.deepClone(this.removedModifications),
       addedModifications: foundry.utils.deepClone(this._addedModifications()),

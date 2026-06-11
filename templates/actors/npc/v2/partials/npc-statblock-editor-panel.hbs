@@ -1,0 +1,57 @@
+{{#if editable}}
+<section class="swse-npc-card swse-npc-card--statblock-editor">
+  <header class="swse-npc-card__header">
+    <div>
+      <h3 class="swse-section-title">GM Statblock Authority Editor</h3>
+      <p class="swse-npc-card__subhead">NPCs and beasts are table-facing statblocks. These fields are GM overrides and do not need PC-style progression legality.</p>
+    </div>
+  </header>
+  <div class="swse-npc-card__body swse-npc-statblock-editor">
+    <div class="swse-npc-edit-grid swse-npc-edit-grid--authority">
+      <label><span>Name</span><input type="text" name="name" value="{{npcConcept.editCore.name}}" data-npc-statblock-authority="true"></label>
+      <label><span>Image</span><input type="text" name="img" value="{{npcConcept.editCore.img}}" data-npc-statblock-authority="true"></label>
+      <label><span>Species / Type</span><input type="text" name="system.race" value="{{system.race}}" placeholder="{{npcConcept.speciesLabel}}" data-npc-statblock-authority="true"></label>
+      <label><span>Class / Role</span><input type="text" name="system.className" value="{{system.className}}" placeholder="{{npcConcept.classDisplay}}" data-npc-statblock-authority="true"></label>
+      <label><span>Level</span><input type="number" name="system.level" value="{{system.level}}" step="1" data-npc-statblock-authority="true"></label>
+      <label><span>CL</span><input type="text" name="system.challengeLevel" value="{{system.challengeLevel}}" placeholder="{{npcConcept.challengeLabel}}" data-npc-statblock-authority="true"></label>
+      <label><span>Size</span><input type="text" name="system.size" value="{{system.size}}" placeholder="{{npcConcept.editCore.size}}" data-npc-statblock-authority="true"></label>
+      <label><span>Speed</span><input type="text" name="system.speed" value="{{system.speed}}" placeholder="{{npcConcept.editCore.speed}}" data-npc-statblock-authority="true"></label>
+      <label><span>HP Current</span><input type="number" name="system.hp.value" value="{{npcConcept.hpCurrent}}" step="1" data-npc-statblock-authority="true"></label>
+      <label><span>HP Max</span><input type="number" name="system.hp.max" value="{{npcConcept.hpMax}}" step="1" data-npc-statblock-authority="true"></label>
+      <label><span>BAB</span><input type="text" name="system.baseAttackBonus" value="{{npcConcept.editCore.bab}}" data-npc-statblock-authority="true"></label>
+      <label><span>Damage Threshold</span><input type="text" name="system.damageThreshold" value="{{npcConcept.editCore.dt}}" data-npc-statblock-authority="true"></label>
+      <label><span>Initiative</span><input type="text" name="system.npcStatblock.core.initiative" value="{{npcConcept.editCore.initiative}}" data-npc-statblock-authority="true"></label>
+      <label><span>Credits</span><input type="number" name="system.credits" value="{{system.credits}}" step="1" data-npc-statblock-authority="true"></label>
+    </div>
+
+    <div class="swse-npc-statblock-editor__section">
+      <h4>Defenses</h4>
+      <div class="swse-npc-edit-grid swse-npc-edit-grid--defenses">
+        <label><span>Reflex</span><input type="text" name="system.npcStatblock.defenses.reflex" value="{{npcConcept.editDefenses.reflex}}" data-npc-statblock-authority="true"></label>
+        <label><span>Fortitude</span><input type="text" name="system.npcStatblock.defenses.fortitude" value="{{npcConcept.editDefenses.fortitude}}" data-npc-statblock-authority="true"></label>
+        <label><span>Will</span><input type="text" name="system.npcStatblock.defenses.will" value="{{npcConcept.editDefenses.will}}" data-npc-statblock-authority="true"></label>
+        <label><span>Flat-Footed</span><input type="text" name="system.npcStatblock.defenses.flatFooted" value="{{npcConcept.editDefenses.flatFooted}}" data-npc-statblock-authority="true"></label>
+      </div>
+    </div>
+
+    <div class="swse-npc-statblock-editor__section">
+      <h4>Attacks</h4>
+      {{#if npcConcept.hasAttacks}}
+        <div class="swse-npc-statblock-editor__attack-list">
+          {{#each npcConcept.attacks as |attack|}}
+            <article class="swse-npc-statblock-editor__attack-row">
+              <label><span>Name</span><input type="text" name="{{attack.editPaths.name}}" value="{{attack.name}}" data-npc-statblock-authority="true"></label>
+              <label><span>Mode</span><input type="text" name="{{attack.editPaths.mode}}" value="{{attack.mode}}" data-npc-statblock-authority="true"></label>
+              <label><span>Attack</span><input type="text" name="{{attack.editPaths.attack}}" value="{{attack.attack}}" data-npc-statblock-authority="true"></label>
+              <label><span>Damage</span><input type="text" name="{{attack.editPaths.damage}}" value="{{attack.damage}}" data-npc-statblock-authority="true"></label>
+              <label class="swse-npc-statblock-editor__wide"><span>Notes</span><input type="text" name="{{attack.editPaths.notes}}" value="{{attack.notes}}" data-npc-statblock-authority="true"></label>
+            </article>
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="swse-npc-empty-state">No attack rows exist yet. Imported/statblock attacks will become editable here.</p>
+      {{/if}}
+    </div>
+  </div>
+</section>
+{{/if}}
