@@ -62,10 +62,29 @@ function buildSerializableBaseContext(baseContext = {}) {
   };
 }
 
+function isPlaceholderNpcName(value) {
+  const name = String(value ?? '').trim().toLowerCase();
+  return !name || ['name', 'npc', 'actor', 'new actor', 'new npc', 'unnamed npc'].includes(name);
+}
+
+function getNpcBeastData(actor) {
+  return actor?.flags?.swse?.beastData
+    ?? actor?.flags?.['foundryvtt-swse']?.beastData
+    ?? actor?.system?.beastData
+    ?? null;
+}
+
+function resolveNpcDisplayName(actor) {
+  const current = String(actor?.name ?? '').trim();
+  const beastName = String(getNpcBeastData(actor)?.name ?? '').trim();
+  if (actor?.type === 'npc' && isPlaceholderNpcName(current) && beastName) return beastName;
+  return current || beastName || 'NPC';
+}
+
 function buildSerializableActorContext(actor) {
   return {
     id: actor.id,
-    name: actor.name,
+    name: resolveNpcDisplayName(actor),
     type: actor.type,
     img: actor.img,
     _id: actor._id,
@@ -376,6 +395,46 @@ function buildNpcConceptItemRow(item, typeOverride = null) {
   };
 }
 
+function parseNpcAttackBonus(value) {
+  const match = String(value ?? '').match(/[+-]?\d+/);
+  if (!match) return null;
+  const n = Number(match[0]);
+  return Number.isFinite(n) ? n : null;
+}
+
+function normalizeNpcDiceFormula(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw || raw === '—') return '';
+  const formula = raw
+    .replace(/[–—−]/g, '-')
+    .replace(/×/g, '*')
+    .replace(/\s+/g, '');
+  if (!/^[0-9dD+\-*/().]+$/.test(formula)) return '';
+  if (!/\d+d\d+/i.test(formula)) return '';
+  return formula;
+}
+
+function normalizeNpcSkillKey(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw) return '';
+  const direct = raw.replace(/[^A-Za-z0-9]/g, '');
+  const lower = direct.toLowerCase();
+  const known = {
+    usecomputer: 'useComputer',
+    usetheforce: 'useTheForce',
+    gatherinformation: 'gatherInformation',
+    treatinjury: 'treatInjury',
+    knowledgebureaucracy: 'knowledgeBureaucracy',
+    knowledgegalacticlore: 'knowledgeGalacticLore',
+    knowledgelifesciences: 'knowledgeLifeSciences',
+    knowledgephysicalsciences: 'knowledgePhysicalSciences',
+    knowledgesocialsciences: 'knowledgeSocialSciences',
+    knowledgetactics: 'knowledgeTactics',
+    knowledgetechnology: 'knowledgeTechnology'
+  };
+  return known[lower] || raw;
+}
+
 
 function normalizeNpcCombatAction(action, fallbackKey = '') {
   const key = action.key || action.id || fallbackKey || slugAction(action.name);
@@ -497,17 +556,22 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
   const derived = context?.derived ?? system?.derived ?? {};
   const play = context?.playStatblock ?? {};
   const allItems = Array.from(actor?.items ?? []);
+  const rawBeastData = getNpcBeastData(actor);
+  const displayName = resolveNpcDisplayName(actor);
+  const preferStatblockAuthority = context?.isStatblockMode === true
+    || context?.npcSourceAuthority === 'statblock'
+    || Boolean(rawBeastData);
 
   const levelValue = displayValue(
     system?.attributes?.level ?? system?.level ?? derived?.identity?.level ?? derived?.level,
     ''
   );
   const challenge = displayValue(
-    system?.challengeLevel ?? system?.cl ?? derived?.identity?.challengeLevel ?? derived?.challengeLevel,
+    system?.challengeLevel ?? system?.cl ?? derived?.identity?.challengeLevel ?? derived?.challengeLevel ?? rawBeastData?.cl,
     ''
   );
   const species = displayValue(
-    derived?.identity?.species ?? system?.species ?? system?.race ?? system?.details?.species,
+    derived?.identity?.species ?? system?.species ?? system?.race ?? system?.details?.species ?? (rawBeastData ? 'Beast' : ''),
     ''
   );
   const classDisplay = displayValue(
@@ -526,7 +590,41 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
   const hpPercent = hpMax > 0 ? Math.max(0, Math.min(100, Math.round((hpCurrent / hpMax) * 100))) : 0;
   const hpToneClass = hpPercent <= 25 ? 'low' : hpPercent <= 60 ? 'mid' : 'healthy';
 
-  const defenseFallback = Object.fromEntries((play?.defenses ?? []).map(row => [String(row.key || row.label || '').toLowerCase(), row.value]));
+  const defenseFallback = Object.fromEntries((play?.defenses ?? []).flatMap(row => {
+    const keys = [row.key, row.label]
+      .map(value => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, ''))
+      .filter(Boolean);
+    return keys.map(key => [key, row.value]);
+  }));
+  const statblockDefense = (key, fallback = '—') => displayValue(defenseFallback[String(key).toLowerCase().replace(/[^a-z0-9]/g, '')], fallback);
+  const systemDefense = (primary, aliases = []) => {
+    const defs = system?.defenses ?? {};
+    for (const key of [primary, ...aliases]) {
+      const data = defs?.[key];
+      const value = data?.total ?? data?.value ?? data;
+      if (value !== undefined && value !== null && value !== '') return value;
+    }
+    return null;
+  };
+  const derivedDefense = (primary, aliases = []) => {
+    const defs = derived?.defenses ?? {};
+    for (const key of [primary, ...aliases]) {
+      const data = defs?.[key];
+      const value = data?.total ?? data?.value ?? data;
+      if (value !== undefined && value !== null && value !== '') return value;
+    }
+    return null;
+  };
+  const pickDefense = (statblockKey, systemKey, aliases = []) => {
+    const fromStatblock = statblockDefense(statblockKey, '');
+    if (preferStatblockAuthority && fromStatblock !== '') return fromStatblock;
+    return displayValue(
+      derivedDefense(systemKey, aliases)
+        ?? systemDefense(systemKey, aliases)
+        ?? (fromStatblock !== '' ? fromStatblock : null),
+      '—'
+    );
+  };
 
   const abilityRows = Array.isArray(context?.abilitiesPanel?.abilities) && context.abilitiesPanel.abilities.length
     ? context.abilitiesPanel.abilities.map(entry => ({
@@ -573,20 +671,13 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
     will: formatDefenseDisplay(followerDefenseValues.will),
     dt: formatDefenseDisplay(followerDefenseValues.dt)
   } : {
-    ref: displayValue(
-      derived?.defenses?.ref?.total ?? derived?.defenses?.ref ?? derived?.defenses?.reflex?.total ?? derived?.defenses?.reflex ?? system?.defenses?.ref?.total ?? system?.defenses?.ref ?? system?.defenses?.reflex?.total ?? defenseFallback.reflex,
-      '—'
-    ),
-    fort: displayValue(
-      derived?.defenses?.fort?.total ?? derived?.defenses?.fort ?? derived?.defenses?.fortitude?.total ?? derived?.defenses?.fortitude ?? system?.defenses?.fort?.total ?? system?.defenses?.fort ?? system?.defenses?.fortitude?.total ?? defenseFallback.fortitude,
-      '—'
-    ),
-    will: displayValue(
-      derived?.defenses?.will?.total ?? derived?.defenses?.will ?? system?.defenses?.will?.total ?? system?.defenses?.will ?? defenseFallback.will,
-      '—'
-    ),
+    ref: pickDefense('reflex', 'reflex', ['ref']),
+    fort: pickDefense('fortitude', 'fortitude', ['fort']),
+    will: pickDefense('will', 'will'),
     dt: displayValue(
-      derived?.damage?.threshold ?? derived?.threshold?.total ?? system?.damageThreshold?.total ?? system?.damageThreshold ?? play?.damageThreshold,
+      preferStatblockAuthority
+        ? (rawBeastData?.damageThreshold ?? play?.damageThreshold ?? derived?.damage?.threshold ?? derived?.threshold?.total ?? system?.damageThreshold?.total ?? system?.damageThreshold)
+        : (derived?.damage?.threshold ?? derived?.threshold?.total ?? system?.damageThreshold?.total ?? system?.damageThreshold ?? play?.damageThreshold ?? rawBeastData?.damageThreshold),
       '—'
     )
   };
@@ -598,12 +689,17 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
     { key: 'dt', label: 'DT', value: defenseValues.dt }
   ];
 
-  const skillRows = (play?.skills ?? []).map(skill => ({
-    key: skill.key,
-    label: skill.label || labelFromKey(skill.key),
-    total: skill.total ?? '+0',
-    trained: skill.trained === true
-  }));
+  const skillRows = (play?.skills ?? []).map(skill => {
+    const key = normalizeNpcSkillKey(skill.key || skill.id || skill.label);
+    return {
+      key,
+      id: key,
+      label: skill.label || labelFromKey(key),
+      total: skill.total ?? '+0',
+      trained: skill.trained === true,
+      canRoll: Boolean(key)
+    };
+  });
 
   const weaponFallbackRows = allItems.filter(item => item.type === 'weapon').map(item => ({
     id: item.id,
@@ -616,16 +712,26 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
     canOpen: true
   }));
 
-  const attackRows = (play?.attacks?.length ? play.attacks : weaponFallbackRows).map(row => ({
-    id: row.id ?? null,
-    name: row.name || 'Attack',
-    source: row.source || 'Statblock',
-    mode: row.mode || '—',
-    attack: row.attack || '—',
-    damage: row.damage || '—',
-    notes: row.notes && row.notes !== '—' ? row.notes : '',
-    canOpen: Boolean(row.id)
-  }));
+  const attackRows = (play?.attacks?.length ? play.attacks : weaponFallbackRows).map(row => {
+    const itemId = row.itemId ?? row.id ?? null;
+    const attackBonus = parseNpcAttackBonus(row.attack);
+    const damageFormula = normalizeNpcDiceFormula(row.damage);
+    return {
+      id: itemId,
+      itemId,
+      name: row.name || 'Attack',
+      source: row.source || 'Statblock',
+      mode: row.mode || '—',
+      attack: row.attack || '—',
+      damage: row.damage || '—',
+      notes: row.notes && row.notes !== '—' ? row.notes : '',
+      attackBonus,
+      damageFormula,
+      canOpen: Boolean(itemId),
+      canRollAttack: Boolean(itemId || attackBonus !== null),
+      canRollDamage: Boolean(damageFormula)
+    };
+  });
 
   const grouped = play?.featureGroups ?? {};
   const featureFromGroup = (rows = [], typeLabel = 'Feature') => rows.map(row => ({
@@ -688,6 +794,7 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
   if (challenge) summaryLine.push(String(challenge).startsWith('CL') ? challenge : `CL ${challenge}`);
 
   return {
+    displayName,
     kind: context?.npcKind || 'npc',
     kindLabel: context?.npcKindLabel || 'NPC',
     modeLabel: context?.npcModeLabel || 'Play Mode',
@@ -705,15 +812,15 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
     conditionCurrent,
     initiative,
     defenseChips,
-    babDisplay: play?.bab || displayValue(system?.baseAttackBonus ?? system?.bab?.total ?? system?.bab, '—'),
+    babDisplay: play?.bab || displayValue(system?.baseAttackBonus ?? system?.bab?.total ?? system?.bab ?? rawBeastData?.baseAttackBonus, '—'),
     quickStats: [
       { label: 'HP', value: hpMax > 0 ? `${hpCurrent}/${hpMax}` : displayValue(play?.hp?.value, '—') },
-      { label: 'BAB', value: play?.bab || displayValue(system?.baseAttackBonus ?? system?.bab?.total ?? system?.bab, '—') },
+      { label: 'BAB', value: play?.bab || displayValue(system?.baseAttackBonus ?? system?.bab?.total ?? system?.bab ?? rawBeastData?.baseAttackBonus, '—') },
       { label: 'Threshold', value: defenseValues.dt },
       { label: 'Speed', value: play?.speed || displayValue(system?.speed?.total ?? system?.speed, '—') }
     ],
     combatStats: [
-      { label: 'BAB', value: play?.bab || displayValue(system?.baseAttackBonus ?? system?.bab?.total ?? system?.bab, '—') },
+      { label: 'BAB', value: play?.bab || displayValue(system?.baseAttackBonus ?? system?.bab?.total ?? system?.bab ?? rawBeastData?.baseAttackBonus, '—') },
       { label: 'Speed', value: play?.speed || displayValue(system?.speed?.total ?? system?.speed, '—') },
       { label: 'Senses', value: play?.senses || displayValue(system?.senses, '—') },
       { label: 'DT', value: defenseValues.dt }

@@ -1,18 +1,18 @@
 {{#if xpEnabled}}
 <section class="swse-xp-panel v3-panel holo-panel swse-ui-panel swse-phase2-core-panel {{xpData.stateClass}} {{#if xpLevelReady}}xp-level-up{{/if}}">
   <header class="section-bar">
-    <h3 class="section-header">Experience Points</h3>
+    <h3 class="section-header">{{localize "SWSE.CharacterSheet.Sections.ExperiencePoints"}}</h3>
   </header>
 
   <div class="xp-content xp-content--numbers-only">
     <div class="xp-grid-top">
       <div class="xp-stat">
-        <div class="xp-label">Level</div>
+        <div class="xp-label">{{localize "SWSE.CharacterSheet.Labels.Level"}}</div>
         <div class="xp-level-value">{{xpData.level}}</div>
       </div>
 
       <div class="xp-stat">
-        <div class="xp-label">Total XP</div>
+        <div class="xp-label">{{localize "SWSE.CharacterSheet.Labels.TotalXP"}}</div>
         {{#if isGM}}
           <input type="number" name="system.xp.total" value="{{xpData.total}}" min="0" class="xp-total-input">
         {{else}}
@@ -23,25 +23,25 @@
 
     <div class="xp-grid-bottom">
       <div class="xp-substat">
-        <div class="xp-sub-label">Next Level</div>
+        <div class="xp-sub-label">{{localize "SWSE.CharacterSheet.Labels.NextLevel"}}</div>
         <div class="xp-sub-value">{{#if xpData.nextLevelAt}}{{xpData.nextLevelAt}}{{else}}—{{/if}}</div>
       </div>
 
       <div class="xp-substat">
-        <div class="xp-sub-label">XP to Next</div>
+        <div class="xp-sub-label">{{localize "SWSE.CharacterSheet.Labels.XPToNext"}}</div>
         <div class="xp-sub-value">{{#if xpData.nextLevelAt}}{{xpData.xpToNext}}{{else}}0{{/if}}</div>
       </div>
     </div>
 
     <div class="xp-readout-row">
       <div class="xp-readout-chip">
-        <span class="xp-readout-chip__label">Progress</span>
+        <span class="xp-readout-chip__label">{{localize "SWSE.CharacterSheet.Labels.Progress"}}</span>
         <span class="xp-readout-chip__value">{{xpData.percentRounded}}%</span>
       </div>
       {{#if xpLevelReady}}
       <div class="xp-readout-chip xp-readout-chip--ready">
-        <span class="xp-readout-chip__label">Status</span>
-        <span class="xp-readout-chip__value">Ready to Level Up</span>
+        <span class="xp-readout-chip__label">{{localize "SWSE.CharacterSheet.Labels.Status"}}</span>
+        <span class="xp-readout-chip__value">{{localize "SWSE.CharacterSheet.Status.ReadyToLevelUp"}}</span>
       </div>
       {{/if}}
     </div>

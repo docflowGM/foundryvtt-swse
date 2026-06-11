@@ -12,7 +12,7 @@
       </p>
     </div>
 
-    <div class="talent-planner-controls" role="toolbar" aria-label="{{localize "SWSE.Progression.Talent.Stage.PlannerControls"}}">
+    <div class="talent-planner-controls" role="toolbar" aria-label='{{localize "SWSE.Progression.Talent.Stage.PlannerControls"}}'>
       <button class="talent-planner-control {{#if (eq viewMode "both")}}is-active{{/if}}" data-action="set-talent-view" data-view-mode="both" type="button">
         <i class="fa-solid fa-table-columns"></i> {{localize "SWSE.Progression.Talent.View.Both"}}
       </button>
@@ -22,17 +22,17 @@
       <button class="talent-planner-control {{#if (eq viewMode "map")}}is-active{{/if}}" data-action="set-talent-view" data-view-mode="map" type="button">
         <i class="fa-solid fa-sitemap"></i> {{localize "SWSE.Progression.Talent.View.Map"}}
       </button>
-      <button class="talent-planner-control" data-action="fit-talent-tree" type="button" title="{{localize "SWSE.Progression.Talent.Actions.FitTitle"}}">
+      <button class="talent-planner-control" data-action="fit-talent-tree" type="button" title='{{localize "SWSE.Progression.Talent.Actions.FitTitle"}}'>
         <i class="fa-solid fa-up-right-and-down-left-from-center"></i> {{localize "SWSE.Progression.Talent.Actions.Fit"}}
       </button>
-      <button class="talent-graph-header__exit-btn" data-action="exit-tree" type="button" title="{{localize "SWSE.Progression.Talent.Actions.ReturnToTreeBrowser"}}">
+      <button class="talent-graph-header__exit-btn" data-action="exit-tree" type="button" title='{{localize "SWSE.Progression.Talent.Actions.ReturnToTreeBrowser"}}'>
         <i class="fa-solid fa-arrow-left"></i> {{localize "SWSE.Progression.Talent.Actions.BackToTrees"}}
       </button>
     </div>
   </div>
 
   <div class="talent-planner-grid talent-planner-grid--holomap">
-    <section class="talent-choice-panel talent-choice-panel--holomap" data-prog-scroll-key="talent-choice-panel" aria-label="{{localize "SWSE.Progression.Talent.Stage.TalentChoices"}}">
+    <section class="talent-choice-panel talent-choice-panel--holomap" data-prog-scroll-key="talent-choice-panel" aria-label='{{localize "SWSE.Progression.Talent.Stage.TalentChoices"}}'>
       <div class="talent-choice-panel__header">
         <div>
           <h4>{{localize "SWSE.Progression.Talent.Stage.AvailableChoices"}}</h4>
@@ -87,7 +87,7 @@
                    data-talent-id="{{id}}"
                    tabindex="0"
                    role="button"
-                   aria-label="{{localize "SWSE.Progression.Talent.Stage.InspectLockedTalent" name=name}}">
+                   aria-label='{{localize "SWSE.Progression.Talent.Stage.InspectLockedTalent" name=name}}'>
             <div class="talent-choice-card__main">
               <h6>{{name}}</h6>
               <p>{{lockReason}}</p>
@@ -114,13 +114,13 @@
       {{/unless}}
     </section>
 
-    <section class="talent-map-panel talent-map-panel--holomap" data-prog-scroll-key="talent-map-panel" aria-label="{{localize "SWSE.Progression.Talent.Stage.TalentTreeMap"}}">
+    <section class="talent-map-panel talent-map-panel--holomap" data-prog-scroll-key="talent-map-panel" aria-label='{{localize "SWSE.Progression.Talent.Stage.TalentTreeMap"}}'>
       <div class="talent-map-panel__header">
         <div>
           <h4>{{localize "SWSE.Progression.Talent.Stage.TreeHolomap"}}</h4>
           <p>{{localize "SWSE.Progression.Talent.Stage.TreeHolomapInstructions"}}</p>
         </div>
-        <button class="talent-planner-control" data-action="center-talent-node" type="button" title="{{localize "SWSE.Progression.Talent.Actions.CenterTitle"}}">
+        <button class="talent-planner-control" data-action="center-talent-node" type="button" title='{{localize "SWSE.Progression.Talent.Actions.CenterTitle"}}'>
           <i class="fa-solid fa-crosshairs"></i> {{localize "SWSE.Progression.Talent.Actions.Center"}}
         </button>
       </div>

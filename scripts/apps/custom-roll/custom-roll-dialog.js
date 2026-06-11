@@ -13,6 +13,14 @@ import { getActorSheetMotionStyle, buildActorSheetMotionStyle } from "/systems/f
 import { CustomRollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll/custom-roll-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
+function playerUiI18n(key, data = {}) {
+  try {
+    return game.i18n?.format?.(key, data) ?? game.i18n?.localize?.(key) ?? key;
+  } catch (_err) {
+    return key;
+  }
+}
+
 export class CustomRollDialog extends BaseSWSEAppV2 {
   static #instance = null;
 
@@ -21,7 +29,7 @@ export class CustomRollDialog extends BaseSWSEAppV2 {
     tag: 'section',
     position: { width: 520, height: 620 },
     window: {
-      title: 'Custom Roll',
+      title: 'SWSE.PlayerUI.CustomRoll.Title',
       resizable: true,
       draggable: true,
       frame: true
@@ -51,6 +59,7 @@ export class CustomRollDialog extends BaseSWSEAppV2 {
   }
 
   async _prepareContext(options) {
+    if (this.options?.window) this.options.window.title = playerUiI18n('SWSE.PlayerUI.CustomRoll.Title');
     const context = await super._prepareContext(options);
     const actor = CustomRollEngine.getDefaultActor();
     const themeKey = getActorSheetTheme(actor?.getFlag?.('foundryvtt-swse', 'sheetTheme') ?? SettingsHelper.getString('sheetTheme', 'holo'));
@@ -99,11 +108,11 @@ export class CustomRollDialog extends BaseSWSEAppV2 {
         modifier: data.modifier,
         dc: data.dc,
         rollMode: data.rollMode,
-        label: data.label || 'Custom Roll'
+        label: data.label || playerUiI18n('SWSE.PlayerUI.CustomRoll.DefaultLabel')
       });
     } catch (err) {
       SWSELogger.error('[CustomRollDialog] Custom roll failed:', err);
-      ui?.notifications?.error?.(err?.message ?? 'Custom roll failed.');
+      ui?.notifications?.error?.(err?.message ?? playerUiI18n('SWSE.PlayerUI.CustomRoll.Failed'));
     }
   }
 

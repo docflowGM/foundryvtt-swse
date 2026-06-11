@@ -2,12 +2,12 @@
   <header class="card-header">
     <h3>
       {{#if (eq mode "chargen")}}
-        Character Created!
+        {{localize 'SWSE.Chat.Progression.CharacterCreated'}}
       {{else}}
-        Level Up Complete!
+        {{localize 'SWSE.Chat.Progression.LevelUpComplete'}}
       {{/if}}
     </h3>
-    <div class="level-badge">Level {{newLevel}}</div>
+    <div class="level-badge">{{localize 'SWSE.Chat.Progression.Level' level=newLevel}}</div>
   </header>
 
   <div class="card-content">
@@ -17,10 +17,10 @@
 
     {{#if changes.classLevels}}
     <section class="class-levels">
-      <h4>Classes:</h4>
+      <h4>{{localize 'SWSE.Chat.Progression.Classes'}}</h4>
       <ul>
         {{#each changes.classLevels}}
-          <li><strong>{{this.classId}}</strong> level {{this.levelInClass}}</li>
+          <li><strong>{{this.classId}}</strong> {{localize 'SWSE.Chat.Progression.ClassLevel' level=this.levelInClass}}</li>
         {{/each}}
       </ul>
     </section>
@@ -28,21 +28,21 @@
 
     {{#if changes.species}}
     <section class="species">
-      <h4>Species:</h4>
+      <h4>{{localize 'SWSE.Chat.Progression.Species'}}</h4>
       <p>{{changes.species.speciesId}}</p>
     </section>
     {{/if}}
 
     {{#if changes.background}}
     <section class="background">
-      <h4>Background:</h4>
+      <h4>{{localize 'SWSE.Chat.Progression.Background'}}</h4>
       <p>{{changes.background}}</p>
     </section>
     {{/if}}
 
     {{#if changes.talents}}
     <section class="talents">
-      <h4>Talents Selected:</h4>
+      <h4>{{localize 'SWSE.Chat.Progression.TalentsSelected'}}</h4>
       <ul>
         {{#each changes.talents}}
           <li>{{this}}</li>
@@ -53,7 +53,7 @@
 
     {{#if changes.feats}}
     <section class="feats">
-      <h4>Feats Selected:</h4>
+      <h4>{{localize 'SWSE.Chat.Progression.FeatsSelected'}}</h4>
       <ul>
         {{#each changes.feats}}
           <li>{{this}}</li>
@@ -64,7 +64,7 @@
 
     {{#if changes.skills}}
     <section class="skills">
-      <h4>Skills Trained:</h4>
+      <h4>{{localize 'SWSE.Chat.Progression.SkillsTrained'}}</h4>
       <ul>
         {{#each changes.skills}}
           <li>{{this}}</li>
@@ -75,7 +75,7 @@
 
     {{#if changes.abilityIncreases}}
     <section class="ability-increases">
-      <h4>Ability Increases:</h4>
+      <h4>{{localize 'SWSE.Chat.Progression.AbilityIncreases'}}</h4>
       <ul>
         {{#each changes.abilityIncreases}}
           {{#if this}}
@@ -88,7 +88,7 @@
 
     {{#if changes.hp}}
     <section class="hp">
-      <h4>HP Gained:</h4>
+      <h4>{{localize 'SWSE.Chat.Progression.HPGained'}}</h4>
       <p>
         {{#each changes.hp}}
           +{{this}}{{#unless @last}}, {{/unless}}
@@ -99,19 +99,19 @@
 
     {{#if grants}}
     <section class="grants-summary">
-      <h4>Session Summary:</h4>
+      <h4>{{localize 'SWSE.Chat.Progression.SessionSummary'}}</h4>
       <ul>
         {{#if grants.talents}}
-          <li>Talent slots granted: {{grants.talents}}</li>
+          <li>{{localize 'SWSE.Chat.Progression.TalentSlotsGranted' count=grants.talents}}</li>
         {{/if}}
         {{#if grants.bonusFeats}}
-          <li>Bonus feats granted: {{grants.bonusFeats}}</li>
+          <li>{{localize 'SWSE.Chat.Progression.BonusFeatsGranted' count=grants.bonusFeats}}</li>
         {{/if}}
         {{#if grants.forcePoints}}
-          <li>Force points granted: {{grants.forcePoints}}</li>
+          <li>{{localize 'SWSE.Chat.Progression.ForcePointsGranted' count=grants.forcePoints}}</li>
         {{/if}}
         {{#if grants.features}}
-          <li>Features: {{#each grants.features}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</li>
+          <li>{{localize 'SWSE.Chat.Progression.Features'}} {{#each grants.features}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</li>
         {{/if}}
       </ul>
     </section>
@@ -119,7 +119,7 @@
   </div>
 
   <footer class="card-footer">
-    <span class="session-id">Session: {{sessionId}}</span>
+    <span class="session-id">{{localize 'SWSE.Chat.Progression.Session' id=sessionId}}</span>
   </footer>
 </div>
 

@@ -82,11 +82,11 @@
   </div>
 
   {{#if isCritical}}
-    <div class="crit-banner">★ Natural 20 — Critical Threat</div>
+    <div class="crit-banner">{{localize 'SWSE.Chat.Roll.Natural20CriticalThreat'}}</div>
   {{/if}}
 
   {{#if forceTierGauge.length}}
-    <div class="tier-gauge" aria-label="Force power DC tier reached">
+    <div class="tier-gauge" aria-label="{{localize 'SWSE.Chat.Roll.ForcePowerDCTierReached'}}">
       {{#each forceTierGauge}}
         <div class="seg {{#if hit}}hit{{/if}} {{#if top}}top{{/if}}">
           <span class="dc">{{dc}}</span>
@@ -119,7 +119,7 @@
                 data-outcome="{{outcome}}"
                 data-original-total="{{originalTotal}}"
                 data-formula="{{formula}}">
-          <span class="i">⟲</span>{{label}} Reroll
+          <span class="i">⟲</span>{{label}} {{localize 'SWSE.Chat.Roll.Reroll'}}
         </button>
       {{/each}}
     </div>
@@ -139,7 +139,7 @@
                 data-original-total="{{originalTotal}}"
                 data-formula="{{formula}}"
                 {{#unless canUse}}disabled{{/unless}}>
-          <span class="i">⟲</span>{{label}} Reroll
+          <span class="i">⟲</span>{{label}} {{localize 'SWSE.Chat.Roll.Reroll'}}
         </button>
         {{#if disabledReason}}<span class="notes swse-roll-hint">{{disabledReason}}</span>{{/if}}
       {{/each}}
@@ -254,12 +254,12 @@
   {{#if reactionContext.reactions.length}}
     <div class="reactions-strip swse-chat-reaction-strip"
          role="group"
-         aria-label="Available reactions"
+         aria-label="{{localize 'SWSE.Chat.Roll.AvailableReactions'}}"
          data-swse-reaction-owner="{{reactionContext.ownerUserId}}"
          data-swse-defender-id="{{reactionContext.defenderId}}"
          data-swse-attacker-id="{{reactionContext.attackerId}}">
       <div class="head-line">
-        <span>Reaction Window</span>
+        <span>{{localize 'SWSE.Chat.Roll.ReactionWindow'}}</span>
         {{#if reactionContext.defenderName}}<span class="you">— {{reactionContext.defenderName}}</span>{{/if}}
         {{#if reactionContext.timerLabel}}<span class="timer">{{reactionContext.timerLabel}}</span>{{/if}}
       </div>

@@ -5,6 +5,19 @@ import { SWSERollEngine } from "/systems/foundryvtt-swse/scripts/engine/rolls/sw
 import { showHolopadRollCompanion } from "/systems/foundryvtt-swse/scripts/ui/shell/roll-companion.js";
 
 
+
+function chatI18n(key, data = {}, fallback = '') {
+  const i18n = globalThis.game?.i18n;
+  try {
+    const localized = data && Object.keys(data).length > 0
+      ? i18n?.format?.(key, data)
+      : i18n?.localize?.(key);
+    return localized && localized !== key ? localized : (fallback || key);
+  } catch (_err) {
+    return fallback || key;
+  }
+}
+
 function sanitizeRollContextForChat(context = {}) {
   const safe = { ...(context ?? {}) };
   delete safe.sourceElement;
@@ -98,10 +111,10 @@ function normalizePriority(value = '') {
 
 function labelForPriority(value = '') {
   const p = normalizePriority(value);
-  if (p === 'urgent') return 'Urgent';
-  if (p === 'alert') return 'Alert';
-  if (p === 'secure') return 'Secure';
-  return 'Incoming';
+  if (p === 'urgent') return chatI18n('SWSE.Chat.Holonet.Urgent', {}, 'Urgent');
+  if (p === 'alert') return chatI18n('SWSE.Chat.Holonet.Alert', {}, 'Alert');
+  if (p === 'secure') return chatI18n('SWSE.Chat.Holonet.Secure', {}, 'Secure');
+  return chatI18n('SWSE.Chat.Holonet.Incoming', {}, 'Incoming');
 }
 
 function sourceForRecord(record = {}) {
@@ -118,7 +131,7 @@ function senderNameForRecord(record = {}) {
     || record?.sender?.systemLabel
     || record?.sender?.label
     || record?.sourceFamily
-    || 'Holonet Relay';
+    || chatI18n('SWSE.Chat.Holonet.HolonetRelay', {}, 'Holonet Relay');
 }
 
 function actorIdForRecord(record = {}) {
@@ -181,25 +194,25 @@ function formatSignedCredits(value) {
 
 function receiptKindLabel(sourceType = '') {
   switch (normalizeReceiptSourceType(sourceType)) {
-    case 'approval': return 'Approved';
-    case 'denial': return 'Denied';
-    case 'credit-transfer': return 'Transfer';
-    case 'credit-grant': return 'Grant';
-    case 'refund': return 'Refund';
-    case 'party-fund': return 'Party Fund';
-    default: return 'Purchase';
+    case 'approval': return chatI18n('SWSE.Chat.Holonet.Approved', {}, 'Approved');
+    case 'denial': return chatI18n('SWSE.Chat.Holonet.Denied', {}, 'Denied');
+    case 'credit-transfer': return chatI18n('SWSE.Chat.Holonet.Transfer', {}, 'Transfer');
+    case 'credit-grant': return chatI18n('SWSE.Chat.Holonet.Grant', {}, 'Grant');
+    case 'refund': return chatI18n('SWSE.Chat.Holonet.Refund', {}, 'Refund');
+    case 'party-fund': return chatI18n('SWSE.Chat.Holonet.PartyFund', {}, 'Party Fund');
+    default: return chatI18n('SWSE.Chat.Holonet.Purchase', {}, 'Purchase');
   }
 }
 
 function receiptMastLabel(sourceType = '') {
   switch (normalizeReceiptSourceType(sourceType)) {
-    case 'approval': return 'Approved · GM';
-    case 'denial': return 'Denied · GM';
-    case 'credit-transfer': return 'Transfer · Credits';
-    case 'credit-grant': return 'Grant · Credits';
-    case 'refund': return 'Receipt · Refund';
-    case 'party-fund': return 'Party · Fund';
-    default: return 'Receipt · Purchase';
+    case 'approval': return chatI18n('SWSE.Chat.Receipt.ApprovedGM', {}, 'Approved · GM');
+    case 'denial': return chatI18n('SWSE.Chat.Receipt.DeniedGM', {}, 'Denied · GM');
+    case 'credit-transfer': return chatI18n('SWSE.Chat.Receipt.TransferCredits', {}, 'Transfer · Credits');
+    case 'credit-grant': return chatI18n('SWSE.Chat.Receipt.GrantCredits', {}, 'Grant · Credits');
+    case 'refund': return chatI18n('SWSE.Chat.Receipt.ReceiptRefund', {}, 'Receipt · Refund');
+    case 'party-fund': return chatI18n('SWSE.Chat.Receipt.PartyFund', {}, 'Party · Fund');
+    default: return chatI18n('SWSE.Chat.Receipt.ReceiptPurchase', {}, 'Receipt · Purchase');
   }
 }
 
@@ -221,21 +234,21 @@ function normalizeCombatStatusForChat(status = {}) {
   const cover = String(status?.cover || 'none');
   const defensiveMode = String(status?.defensiveMode || 'normal');
   const coverLabels = {
-    none: 'No Cover',
-    partial: 'Partial Cover',
-    cover: 'Cover (+5 Reflex)',
-    improved: 'Enhanced Cover (+10 Reflex)',
-    total: 'Total Cover / Blocked'
+    none: chatI18n('SWSE.Chat.Combat.NoCover', {}, 'No Cover'),
+    partial: chatI18n('SWSE.Chat.Combat.PartialCover', {}, 'Partial Cover'),
+    cover: chatI18n('SWSE.Chat.Combat.CoverBonus', {}, 'Cover (+5 Reflex)'),
+    improved: chatI18n('SWSE.Chat.Combat.EnhancedCover', {}, 'Enhanced Cover (+10 Reflex)'),
+    total: chatI18n('SWSE.Chat.Combat.TotalCoverBlocked', {}, 'Total Cover / Blocked')
   };
   const defensiveLabels = {
-    normal: 'Normal',
-    fightingDefensively: 'Fighting Defensively (+2 Reflex / -5 attacks)',
-    fullDefense: 'Full Defense (+5 Reflex / attacks locked)'
+    normal: chatI18n('SWSE.Chat.Combat.Normal', {}, 'Normal'),
+    fightingDefensively: chatI18n('SWSE.Chat.Combat.FightingDefensively', {}, 'Fighting Defensively (+2 Reflex / -5 attacks)'),
+    fullDefense: chatI18n('SWSE.Chat.Combat.FullDefense', {}, 'Full Defense (+5 Reflex / attacks locked)')
   };
   const chips = [];
   if (cover !== 'none') chips.push({ label: coverLabels[cover] || cover, tone: cover === 'total' ? 'danger' : 'info' });
   if (defensiveMode !== 'normal') chips.push({ label: defensiveLabels[defensiveMode] || defensiveMode, tone: defensiveMode === 'fullDefense' ? 'warning' : 'info' });
-  if (status?.prone === true) chips.push({ label: 'Prone (+5 vs ranged / -5 vs melee)', tone: 'warning' });
+  if (status?.prone === true) chips.push({ label: chatI18n('SWSE.Chat.Combat.ProneStatus', {}, 'Prone (+5 vs ranged / -5 vs melee)'), tone: 'warning' });
   return {
     cover,
     defensiveMode,
@@ -434,7 +447,7 @@ export class SWSEChat {
     const metadata = record?.metadata ?? {};
     const priority = normalizePriority(options.priority || metadata.priority || metadata.level || record.priority);
     const senderName = options.senderName || senderNameForRecord(record);
-    const subject = options.subject || record.title || metadata.subject || 'Incoming Transmission';
+    const subject = options.subject || record.title || metadata.subject || chatI18n('SWSE.Chat.Holonet.IncomingTransmissionSubject', {}, 'Incoming Transmission');
     const body = options.preview || record.body || metadata.body || '';
     const threadId = options.threadId || record.threadId || record.threadContext?.threadId || metadata.threadId || '';
     const source = options.source || sourceForRecord(record);
@@ -450,11 +463,11 @@ export class SWSEChat {
       recordId: options.recordId || record.id || '',
       threadId,
       actorLabel: transfer.kind === 'creditRequest' ? (transfer.requesterLabel || senderName) : (transfer.fromLabel || senderName),
-      verb: transfer.kind === 'creditRequest' ? 'requests' : 'sent',
+      verb: transfer.kind === 'creditRequest' ? chatI18n('SWSE.Chat.Holonet.Requests', {}, 'requests') : chatI18n('SWSE.Chat.Holonet.Sent', {}, 'sent'),
       amountLabel: `${Number(transfer.amount || transfer.totalAmount || 0).toLocaleString()} cr`,
       memoPreview,
       primaryAction: transfer.kind === 'creditRequest' ? 'pay-credit-request' : 'accept-transfer',
-      primaryLabel: transfer.kind === 'creditRequest' ? 'Pay' : 'Deposit',
+      primaryLabel: transfer.kind === 'creditRequest' ? chatI18n('SWSE.Chat.Holonet.Pay', {}, 'Pay') : chatI18n('SWSE.Chat.Holonet.Deposit', {}, 'Deposit'),
       declineAction: transfer.kind === 'creditRequest' ? 'decline-credit-request' : 'decline-transfer'
     } : null;
     const itemTransfer = metadata.itemTransfer || null;
@@ -467,13 +480,13 @@ export class SWSEChat {
       recordId: options.recordId || record.id || '',
       threadId,
       actorLabel: materialTransfer.fromLabel || senderName,
-      verb: assetTransfer ? 'offers asset' : 'offers items',
+      verb: assetTransfer ? chatI18n('SWSE.Chat.Holonet.OffersAsset', {}, 'offers asset') : chatI18n('SWSE.Chat.Holonet.OffersItems', {}, 'offers items'),
       itemLabel: assetTransfer
         ? (assetTransfer.assets || []).map(a => a.name).filter(Boolean).join(', ')
-        : (itemTransfer.items || itemTransfer.attachments || []).map(i => `${i.name || 'Item'}${i.quantity ? ` x${i.quantity}` : ''}`).filter(Boolean).join(', '),
+        : (itemTransfer.items || itemTransfer.attachments || []).map(i => `${i.name || chatI18n('SWSE.Chat.Holonet.Item', {}, 'Item')}${i.quantity ? ` x${i.quantity}` : ''}`).filter(Boolean).join(', '),
       memoPreview: materialMemoPreview,
       primaryAction: assetTransfer ? 'accept-asset-transfer' : 'accept-item-transfer',
-      primaryLabel: assetTransfer ? 'Accept Asset' : 'Accept Items',
+      primaryLabel: assetTransfer ? chatI18n('SWSE.Chat.Holonet.AcceptAsset', {}, 'Accept Asset') : chatI18n('SWSE.Chat.Holonet.AcceptItems', {}, 'Accept Items'),
       declineAction: assetTransfer ? 'decline-asset-transfer' : 'decline-item-transfer'
     } : null;
 
@@ -485,15 +498,15 @@ export class SWSEChat {
       priority,
       priorityLabel: options.priorityLabel || labelForPriority(priority),
       source,
-      mastLabel: options.mastLabel || (priority === 'urgent' ? 'Incoming · Priority' : priority === 'secure' ? 'Encrypted · Secure' : 'Incoming · Transmission'),
-      channelLabel: options.channelLabel || metadata.channel || metadata.category || metadata.threadType || (threadId ? 'Direct Thread' : 'Holonet'),
+      mastLabel: options.mastLabel || (priority === 'urgent' ? chatI18n('SWSE.Chat.Holonet.IncomingPriority', {}, 'Incoming · Priority') : priority === 'secure' ? chatI18n('SWSE.Chat.Holonet.EncryptedSecure', {}, 'Encrypted · Secure') : chatI18n('SWSE.Chat.Holonet.IncomingTransmission', {}, 'Incoming · Transmission')),
+      channelLabel: options.channelLabel || metadata.channel || metadata.category || metadata.threadType || (threadId ? chatI18n('SWSE.Chat.Holonet.DirectThread', {}, 'Direct Thread') : chatI18n('SWSE.Chat.Holonet.Holonet', {}, 'Holonet')),
       relayLabel: options.relayLabel || metadata.relay || metadata.channelId || '',
       senderName,
       subject,
       preview: truncateText(stripHtml(body), 180),
       attachmentCount,
       unread: options.unread ?? true,
-      actionLabel: options.actionLabel || (action === 'open-thread' ? 'Open<br/>Holochat' : action === 'open-bulletin' ? 'Open<br/>Bulletin' : 'Open<br/>Notice'),
+      actionLabel: options.actionLabel || (action === 'open-thread' ? chatI18n('SWSE.Chat.Holonet.OpenHolochat', {}, 'Open<br/>Holochat') : action === 'open-bulletin' ? chatI18n('SWSE.Chat.Holonet.OpenBulletin', {}, 'Open<br/>Bulletin') : chatI18n('SWSE.Chat.Holonet.OpenNotice', {}, 'Open<br/>Notice')),
       creditAction,
       materialAction,
       timeLabel: options.timeLabel || formatTime(record.publishedAt || record.createdAt || null)
@@ -544,14 +557,14 @@ export class SWSEChat {
       kindLabel: receipt.kindLabel || receiptKindLabel(sourceType),
       mastLabel: receipt.mastLabel || receiptMastLabel(sourceType),
       iconClass: receipt.iconClass || receiptIconClass(sourceType),
-      vendorLabel: receipt.vendorLabel || receipt.sourceLabel || 'Galactic Treasury',
-      title: receipt.title || 'Credit transaction',
+      vendorLabel: receipt.vendorLabel || receipt.sourceLabel || chatI18n('SWSE.Chat.Receipt.GalacticTreasury', {}, 'Galactic Treasury'),
+      title: receipt.title || chatI18n('SWSE.Chat.Receipt.CreditTransaction', {}, 'Credit transaction'),
       items,
       itemSummary: receipt.itemSummary || items.map(item => item?.quantity && item.quantity > 1 ? `${item.quantity}× ${item.name}` : item?.name).filter(Boolean).join(' · '),
       reason: receipt.reason || receipt.note || '',
-      previousLabel: receipt.previousLabel || 'Previous',
-      newLabel: receipt.newLabel || (direction === 'neutral' ? 'Balance' : 'New Balance'),
-      deltaLabel: receipt.deltaLabel || (direction === 'positive' ? 'received' : direction === 'negative' ? 'spent' : 'no change'),
+      previousLabel: receipt.previousLabel || chatI18n('SWSE.Chat.Receipt.Previous', {}, 'Previous'),
+      newLabel: receipt.newLabel || (direction === 'neutral' ? chatI18n('SWSE.Chat.Receipt.Balance', {}, 'Balance') : chatI18n('SWSE.Chat.Receipt.NewBalance', {}, 'New Balance')),
+      deltaLabel: receipt.deltaLabel || (direction === 'positive' ? chatI18n('SWSE.Chat.Receipt.Received', {}, 'received') : direction === 'negative' ? chatI18n('SWSE.Chat.Receipt.Spent', {}, 'spent') : chatI18n('SWSE.Chat.Receipt.NoChange', {}, 'no change')),
       previousBalance: previous,
       newBalance,
       previousBalanceText: formatCredits(previous),
@@ -603,14 +616,14 @@ export class SWSEChat {
 
   static buildCombatStatusCardData({ actor = null, status = {}, title = '', kind = 'status', note = '', declaration = null } = {}) {
     const normalized = normalizeCombatStatusForChat(status);
-    const actorName = actor?.name || declaration?.actorName || 'Unknown Actor';
+    const actorName = actor?.name || declaration?.actorName || chatI18n('SWSE.Chat.Combat.UnknownActor', {}, 'Unknown Actor');
     const isSafeZone = kind === 'safe-zone';
-    const defaultTitle = isSafeZone ? 'Safe Zone Declared' : 'Combat Status Declared';
+    const defaultTitle = isSafeZone ? chatI18n('SWSE.Chat.Combat.SafeZoneDeclared', {}, 'Safe Zone Declared') : chatI18n('SWSE.Chat.Combat.CombatStatusDeclared', {}, 'Combat Status Declared');
     const safeZoneLines = isSafeZone ? [
-      'No map geometry is automated by this card.',
-      'GM confirms the 4×4 Safe Zone placement and affected allies.',
-      'Allies who start their turn in the Safe Zone gain +2 Fortitude and +2 Will Defense.',
-      'Safe Zones cannot overlap another Safe Zone.'
+      chatI18n('SWSE.Chat.Combat.SafeZoneNoGeometry', {}, 'No map geometry is automated by this card.'),
+      chatI18n('SWSE.Chat.Combat.SafeZonePlacement', {}, 'GM confirms the 4×4 Safe Zone placement and affected allies.'),
+      chatI18n('SWSE.Chat.Combat.SafeZoneBenefits', {}, 'Allies who start their turn in the Safe Zone gain +2 Fortitude and +2 Will Defense.'),
+      chatI18n('SWSE.Chat.Combat.SafeZoneOverlap', {}, 'Safe Zones cannot overlap another Safe Zone.')
     ] : [];
     return {
       title: title || defaultTitle,
@@ -620,7 +633,7 @@ export class SWSEChat {
       status: normalized,
       chips: normalized.chips,
       hasChips: normalized.chips.length > 0,
-      note: note || (isSafeZone ? 'This is a tactical declaration card. Resolve placement and affected tokens at the table.' : 'Current combat status declared for GM/player reference.'),
+      note: note || (isSafeZone ? chatI18n('SWSE.Chat.Combat.SafeZoneNote', {}, 'This is a tactical declaration card. Resolve placement and affected tokens at the table.') : chatI18n('SWSE.Chat.Combat.StatusNote', {}, 'Current combat status declared for GM/player reference.')),
       safeZoneLines,
       isSafeZone,
       round: game?.combat?.round ?? null,
@@ -654,7 +667,7 @@ export class SWSEChat {
 
   static async postCombatBanner({ combat = null, round = null, turnName = '', actor = null, whisper = null } = {}) {
     const resolvedRound = Number.isFinite(Number(round)) ? Number(round) : Number(combat?.round ?? 0);
-    const resolvedTurnName = turnName || combat?.combatant?.actor?.name || combat?.combatant?.name || actor?.name || 'Unknown Combatant';
+    const resolvedTurnName = turnName || combat?.combatant?.actor?.name || combat?.combatant?.name || actor?.name || chatI18n('SWSE.Chat.Combat.UnknownCombatant', {}, 'Unknown Combatant');
     const content = await foundry.applications.handlebars.renderTemplate(
       'systems/foundryvtt-swse/templates/chat/combat-banner.hbs',
       { round: resolvedRound, turnName: resolvedTurnName }

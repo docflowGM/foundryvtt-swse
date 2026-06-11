@@ -5,6 +5,14 @@ import { StoreSurfaceService } from "/systems/foundryvtt-swse/scripts/ui/shell/S
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
+function storeI18n(key, data = {}) {
+  try {
+    return game.i18n?.format?.(key, data) ?? game.i18n?.localize?.(key) ?? key;
+  } catch (_err) {
+    return key;
+  }
+}
+
 const STORE_TICKER_COMPANIES = [
   ['Adarian government', 'ADG'], ['AestheTech Incorporated', 'ATI'], ['Arlen-Dempler Luxury Speeders', 'ADLS'], ['Aurodiseal', 'AUR'],
   ['Bakiska\'s', 'BAK'], ['Begamor Heavy Industry Group', 'BHIG'], ['Binary Star Realty', 'BSR'], ['Blackwater Systems', 'BWS'],
@@ -438,7 +446,7 @@ export class SWSEStoreSplashV2 extends HandlebarsApplicationMixin(ApplicationV2)
       'store-splash-continue': '_onContinueAction',
     },
     window: {
-      title: "Rendarr's Outfitters",
+      title: "SWSE.Store.Splash.EnterAria",
       icon: 'fas fa-store',
       resizable: true,
       minimizable: false,
@@ -460,6 +468,9 @@ export class SWSEStoreSplashV2 extends HandlebarsApplicationMixin(ApplicationV2)
 
   constructor(options = {}) {
     super(options);
+    if (this.options?.window) {
+      this.options.window.title = storeI18n('SWSE.Store.Splash.EnterAria');
+    }
     this.actor = options.actor ?? null;
     this._complete = false;
     this._settled = false;

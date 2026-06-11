@@ -7,7 +7,7 @@
 --}}
 
 <div class="prog-species-browse">
-  <div class="prog-species-list" role="listbox" aria-label="Species">
+  <div class="prog-species-list" role="listbox" aria-label='{{localize 'SWSE.Progression.Core.Species.AriaLabel'}}'>
     {{#each species}}
       <button class="prog-species-row
                      {{#if (eq id ../focusedSpeciesId)}}prog-species-row--focused{{/if}}
@@ -37,12 +37,12 @@
                 <span class="swse-option-card__badge swse-option-card__badge--recommended">{{this.badgeLabel}}</span>
               {{/if}}
               {{#if this.hasVariants}}
-                <span class="swse-option-card__badge prog-species-row__variant-badge">{{this.variantCount}} options</span>
+                <span class="swse-option-card__badge prog-species-row__variant-badge">{{localize "SWSE.Progression.Core.Species.OptionsCount" count=this.variantCount}}</span>
               {{/if}}
             </div>
             {{#if this.size}}
               <div class="prog-species-row__stats">
-                <span>Size: {{this.size}}</span>
+                <span>{{localize "SWSE.Progression.Core.Species.SizeInline" size=this.size}}</span>
                 {{#if this.abilityRows.length}}
                   <span class="prog-species-row__sep">•</span>
                   {{#each this.abilityRows}}
@@ -54,11 +54,18 @@
             {{/if}}
           </div>
 
+          {{!-- RIGHT - source label (committed state removes this visually) --}}
+          <div class="prog-species-row__right">
+            {{#if this.source}}
+              <span class="prog-species-row__source" title="{{this.source}}">{{this.source}}</span>
+            {{/if}}
+          </div>
+
         </div>
 
       </button>
     {{else}}
-      <div class="prog-species-browse__empty">No species match your search or filters.</div>
+      <div class="prog-species-browse__empty">{{localize "SWSE.Progression.Core.Species.NoMatches"}}</div>
     {{/each}}
   </div>
 </div>

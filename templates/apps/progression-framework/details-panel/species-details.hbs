@@ -1,22 +1,9 @@
 <div class="prog-species-details">
 
-  <div class="prog-species-details__actions prog-species-details__actions--top">
-    {{#if isNearHuman}}
-      <button class="prog-btn prog-btn--primary" data-action="enter-near-human" type="button">
-        <i class="fas fa-cogs"></i> Customize Near-Human
-      </button>
-    {{else}}
-      <button class="prog-btn prog-btn--primary" data-action="commit-item"
-              data-item-id="{{species.id}}" type="button">
-        <i class="fas fa-check"></i> Confirm {{species.name}}
-      </button>
-    {{/if}}
-  </div>
-
   {{!-- 1. Variant/default selector first, when this species has options --}}
   {{#if speciesVariants.length}}
     <section class="prog-species-details__section prog-species-details__variants">
-      <h4>Species Options</h4>
+      <h4>{{localize "SWSE.Progression.Core.Species.Options"}}</h4>
       <div class="prog-species-variant-grid">
         <button class="prog-species-variant prog-species-variant--default {{#if defaultVariantSelected}}prog-species-variant--selected{{/if}}"
                 data-action="select-species-variant"
@@ -24,12 +11,12 @@
                 data-variant-id="default"
                 type="button">
           <div class="prog-species-variant__header">
-            <strong>Default</strong>
-            {{#if defaultVariantSelected}}<span class="prog-chip">Selected</span>{{else}}<span class="prog-chip">Base profile</span>{{/if}}
+            <strong>{{localize "SWSE.Progression.Core.Species.Default"}}</strong>
+            {{#if defaultVariantSelected}}<span class="prog-chip">{{localize "SWSE.Progression.Core.Species.Selected"}}</span>{{else}}<span class="prog-chip">{{localize "SWSE.Progression.Core.Species.BaseProfile"}}</span>{{/if}}
           </div>
           <div class="prog-species-variant__meta">
             {{#if abilityLine}}<span>{{abilityLine}}</span>{{/if}}
-            {{#if size}}<span>Size: {{size}}</span>{{/if}}
+            {{#if size}}<span>{{localize "SWSE.Progression.Core.Species.SizeInline" size=size}}</span>{{/if}}
             {{#if speed}}<span>{{speed}}</span>{{/if}}
           </div>
         </button>
@@ -42,13 +29,13 @@
                   type="button">
             <div class="prog-species-variant__header">
               <strong>{{this.label}}</strong>
-              {{#if this.isSelected}}<span class="prog-chip">Selected</span>{{else}}{{#if this.source}}<span class="prog-chip">{{this.source}}</span>{{/if}}{{/if}}
+              {{#if this.isSelected}}<span class="prog-chip">{{localize "SWSE.Progression.Core.Species.Selected"}}</span>{{else}}{{#if this.source}}<span class="prog-chip">{{this.source}}</span>{{/if}}{{/if}}
             </div>
             <div class="prog-species-variant__meta">
               {{#if this.abilities}}<span>{{this.abilities}}</span>{{/if}}
-              {{#if this.size}}<span>Size: {{this.size}}</span>{{/if}}
+              {{#if this.size}}<span>{{localize "SWSE.Progression.Core.Species.SizeInline" size=this.size}}</span>{{/if}}
               {{#if this.speed}}<span>{{this.speed}}</span>{{/if}}
-              {{#if this.languages.length}}<span>Languages: {{#each this.languages}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>{{/if}}
+              {{#if this.languages.length}}<span>{{localize "SWSE.Progression.Core.Species.Languages"}}: {{#each this.languages}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</span>{{/if}}
             </div>
             {{#if this.special.length}}
               <div class="prog-species-variant__list">
@@ -73,24 +60,24 @@
   <div class="prog-species-details__header">
     <div>
       <h2 class="prog-species-details__name">{{species.name}}</h2>
-      {{#if selectedVariantLabel}}<span class="prog-species-details__variant-label">{{selectedVariantLabel}} profile</span>{{/if}}
+      {{#if selectedVariantLabel}}<span class="prog-species-details__variant-label">{{localize "SWSE.Progression.Core.Species.Profile" label=selectedVariantLabel}}</span>{{/if}}
     </div>
     {{#if source}}<span class="prog-chip">{{source}}</span>{{/if}}
   </div>
 
   {{!-- 3. Description --}}
   <section class="prog-species-details__section">
-    <h4>Description</h4>
+    <h4>{{localize "SWSE.Progression.Core.Species.Description"}}</h4>
     {{#if canonicalDescription}}
       <p class="prog-species-details__desc">{{canonicalDescription}}</p>
     {{else}}
-      <p class="prog-species-details__desc prog-species-details__desc--unavailable">No description available.</p>
+      <p class="prog-species-details__desc prog-species-details__desc--unavailable">{{localize "SWSE.Progression.Core.Species.NoDescription"}}</p>
     {{/if}}
   </section>
 
   {{!-- 4. Attribute Adjustment --}}
   <section class="prog-species-details__section prog-species-details__attrs">
-    <h4>Attribute Adjustment</h4>
+    <h4>{{localize "SWSE.Progression.Core.Species.AttributeAdjustment"}}</h4>
     {{#if abilityRows.length}}
       {{#each abilityRows}}
         <div class="prog-species-details__attr-row">
@@ -99,25 +86,25 @@
         </div>
       {{/each}}
     {{else}}
-      <div class="prog-species-details__muted">None</div>
+      <div class="prog-species-details__muted">{{localize "SWSE.Progression.Core.Species.None"}}</div>
     {{/if}}
   </section>
 
   {{!-- 5. Size --}}
   <section class="prog-species-details__section prog-species-details__stats">
-    <h4>Size</h4>
-    <div>{{#if size}}{{size}}{{else}}Medium{{/if}}</div>
+    <h4>{{localize "SWSE.Progression.Core.Species.Size"}}</h4>
+    <div>{{#if size}}{{size}}{{else}}{{localize "SWSE.Progression.Core.Species.Medium"}}{{/if}}</div>
   </section>
 
   {{!-- 6. Speed --}}
   <section class="prog-species-details__section prog-species-details__stats">
-    <h4>Speed</h4>
-    <div>{{#if speed}}{{speed}}{{else}}Walk 6{{/if}}</div>
+    <h4>{{localize "SWSE.Progression.Core.Species.Speed"}}</h4>
+    <div>{{#if speed}}{{speed}}{{else}}{{localize "SWSE.Progression.Core.Species.WalkSix"}}{{/if}}</div>
   </section>
 
   {{!-- 7. Species Abilities --}}
   <section class="prog-species-details__section prog-species-details__special">
-    <h4>Species Abilities</h4>
+    <h4>{{localize "SWSE.Progression.Core.Species.Abilities"}}</h4>
     {{#if abilities.length}}
       {{#each abilities}}
         <div class="prog-species-details__ability">
@@ -125,14 +112,14 @@
         </div>
       {{/each}}
     {{else}}
-      <div class="prog-species-details__muted">None listed.</div>
+      <div class="prog-species-details__muted">{{localize "SWSE.Progression.Core.Species.NoneListed"}}</div>
     {{/if}}
   </section>
 
   {{!-- Ability choices such as Arkanian Offshoot --}}
   {{#if abilityChoices.length}}
     <section class="prog-species-details__section prog-species-details__ability-choice">
-      <h4>Required Species Choice</h4>
+      <h4>{{localize "SWSE.Progression.Core.Species.RequiredChoice"}}</h4>
       {{#each abilityChoices}}
         <button class="prog-species-ability-choice {{#if this.isSelected}}prog-species-ability-choice--selected{{/if}}"
                 data-action="select-species-ability-choice"
@@ -149,18 +136,18 @@
 
   {{!-- 8. Languages --}}
   <section class="prog-species-details__section prog-species-details__languages">
-    <h4>Languages</h4>
+    <h4>{{localize "SWSE.Progression.Core.Species.Languages"}}</h4>
     {{#if languages.length}}
       <div>{{#each languages}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</div>
     {{else}}
-      <div class="prog-species-details__muted">None listed.</div>
+      <div class="prog-species-details__muted">{{localize "SWSE.Progression.Core.Species.NoneListed"}}</div>
     {{/if}}
   </section>
 
   {{!-- 9. Build Signals --}}
   {{#if speciesTags.length}}
     <section class="prog-species-details__section prog-species-details__tags">
-      <h4>Build Signals</h4>
+      <h4>{{localize "SWSE.Progression.Core.Species.BuildSignals"}}</h4>
       <div class="prog-tags">
         {{#each speciesTags}}<span class="prog-chip">{{this.label}}</span>{{/each}}
       </div>
@@ -169,7 +156,7 @@
 
   {{#if attributeForecast.boosts.length}}
     <section class="prog-species-details__section prog-species-details__forecast">
-      <h4>Attribute Outlook</h4>
+      <h4>{{localize "SWSE.Progression.Core.Species.AttributeOutlook"}}</h4>
       {{#each attributeForecast.boosts}}
         <div class="prog-species-details__ability"><strong>{{this.signedValue}} {{this.ability}}</strong> — {{this.summary}}</div>
       {{/each}}
@@ -178,12 +165,24 @@
 
   {{#if attributeForecast.mitigations.length}}
     <section class="prog-species-details__section prog-species-details__forecast prog-species-details__forecast--mitigation">
-      <h4>Potential Weak Spots</h4>
+      <h4>{{localize "SWSE.Progression.Core.Species.WeakSpots"}}</h4>
       {{#each attributeForecast.mitigations}}
         <div class="prog-species-details__ability"><strong>{{this.signedValue}} {{this.ability}}</strong> — {{this.summary}}</div>
       {{/each}}
     </section>
   {{/if}}
 
+  <div class="prog-species-details__actions">
+    {{#if isNearHuman}}
+      <button class="prog-btn prog-btn--primary" data-action="enter-near-human" type="button">
+        <i class="fas fa-cogs"></i> {{localize "SWSE.Progression.Core.Species.CustomizeNearHuman"}}
+      </button>
+    {{else}}
+      <button class="prog-btn prog-btn--primary" data-action="commit-item"
+              data-item-id="{{species.id}}" type="button">
+        <i class="fas fa-check"></i> {{localize "SWSE.Progression.Core.Species.Confirm" name=species.name}}
+      </button>
+    {{/if}}
+  </div>
 
 </div>

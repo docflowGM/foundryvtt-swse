@@ -9583,3 +9583,104 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-cont
     justify-content: flex-start;
   }
 }
+
+
+.swse.sheet.actor.character.v2 .swse-concept-condition-track--summary,
+.swse-sheet--concept .swse-concept-condition-track--summary,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-track--summary {
+  margin-top: 12px !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-condition-track__header,
+.swse-sheet--concept .swse-concept-condition-track__header,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-track__header {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  gap: 12px !important;
+  margin-bottom: 10px !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-concept-condition-track__summary,
+.swse-sheet--concept .swse-concept-condition-track__summary,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-condition-track__summary {
+  color: color-mix(in srgb, var(--swse-concept-text-muted, #9fb6c5) 88%, transparent) !important;
+  font-family: var(--swse-font-mono, var(--font-mono, monospace)) !important;
+  font-size: 0.72rem !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+}
+
+/* Phase: explicit extra skill use expand/collapse affordance */
+form[id^="SWSEV2CharacterSheet"] .swse-concept-extra-uses-toggle,
+.swse.sheet.actor.character.v2 .swse-concept-extra-uses-toggle,
+.swse-character-sheet .swse-concept-extra-uses-toggle {
+  width: auto !important;
+  min-width: 0 !important;
+  height: 24px !important;
+  padding: 0 8px !important;
+  border-radius: 999px !important;
+  gap: 5px !important;
+  justify-content: center !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  font-size: 9px !important;
+  line-height: 1 !important;
+  color: var(--vapor-cyan, #37e8ff) !important;
+  border-color: rgba(55, 232, 255, 0.35) !important;
+  background: linear-gradient(90deg, rgba(55, 232, 255, 0.12), rgba(255, 48, 214, 0.08)) !important;
+  box-shadow: inset 0 0 0 1px rgba(55, 232, 255, 0.08) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-extra-uses-toggle:hover,
+.swse.sheet.actor.character.v2 .swse-concept-extra-uses-toggle:hover,
+.swse-character-sheet .swse-concept-extra-uses-toggle:hover {
+  color: var(--ink, #eafcff) !important;
+  border-color: rgba(55, 232, 255, 0.65) !important;
+  box-shadow: 0 0 12px rgba(55, 232, 255, 0.22) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-extra-uses-toggle .expand-chevron,
+.swse.sheet.actor.character.v2 .swse-concept-extra-uses-toggle .expand-chevron,
+.swse-character-sheet .swse-concept-extra-uses-toggle .expand-chevron,
+form[id^="SWSEV2CharacterSheet"] .skill-extra-uses-toggle .expand-chevron,
+.swse.sheet.actor.character.v2 .skill-extra-uses-toggle .expand-chevron,
+.swse-character-sheet .skill-extra-uses-toggle .expand-chevron {
+  transform: none !important;
+  font-size: 11px !important;
+  line-height: 1 !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-extra-uses-toggle .expand-count,
+.swse.sheet.actor.character.v2 .swse-concept-extra-uses-toggle .expand-count,
+.swse-character-sheet .swse-concept-extra-uses-toggle .expand-count,
+form[id^="SWSEV2CharacterSheet"] .skill-extra-uses-toggle .expand-count,
+.swse.sheet.actor.character.v2 .skill-extra-uses-toggle .expand-count,
+.swse-character-sheet .skill-extra-uses-toggle .expand-count {
+  min-width: 16px !important;
+  height: 16px !important;
+  padding: 0 4px !important;
+  border-radius: 999px !important;
+  background: rgba(55, 232, 255, 0.14) !important;
+  color: var(--ink, #eafcff) !important;
+}
+
+form[id^="SWSEV2CharacterSheet"] .skill-extra-uses-toggle,
+.swse.sheet.actor.character.v2 .skill-extra-uses-toggle,
+.swse-character-sheet .skill-extra-uses-toggle {
+  width: auto !important;
+  min-width: 0 !important;
+  height: 24px !important;
+  padding: 0 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  border-radius: 999px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  font-size: 9px !important;
+  color: var(--vapor-cyan, #37e8ff) !important;
+  border: 1px solid rgba(55, 232, 255, 0.35) !important;
+  background: linear-gradient(90deg, rgba(55, 232, 255, 0.12), rgba(255, 48, 214, 0.08)) !important;
+}

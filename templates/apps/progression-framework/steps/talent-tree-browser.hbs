@@ -27,7 +27,7 @@
                data-tree-id="{{id}}"
                tabindex="0"
                role="button"
-               aria-label="{{localize "SWSE.Progression.Talent.Stage.FocusTalentTree" name=name}}">
+               aria-label='{{localize "SWSE.Progression.Talent.Stage.FocusTalentTree" name=name}}'>
         <div class="talent-tree-card__backplate" aria-hidden="true"></div>
         <div class="talent-tree-card__scan" aria-hidden="true"></div>
         <div class="talent-tree-card__topline">
@@ -45,7 +45,7 @@
           </div>
         </div>
 
-        <div class="talent-tree-card__quickline" aria-label="{{localize "SWSE.Progression.Talent.Stage.QuickSummaryAria"}}">
+        <div class="talent-tree-card__quickline" aria-label='{{localize "SWSE.Progression.Talent.Stage.QuickSummaryAria"}}'>
           <span>{{localize "SWSE.Progression.Talent.Stage.TalentCount" count=nodeCount}}</span>
           {{#if investmentCount}}<span>{{localize "SWSE.Progression.Talent.Stage.KnownPendingCount" count=investmentCount}}</span>{{/if}}
           {{#if recommendationTalentName}}<span>{{localize "SWSE.Progression.Talent.Stage.MentorLead" talent=recommendationTalentName}}</span>{{/if}}

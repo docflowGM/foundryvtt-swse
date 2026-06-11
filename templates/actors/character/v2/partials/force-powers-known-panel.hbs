@@ -16,8 +16,8 @@
 <section class="force-powers-known-panel holo-panel">
 
   <header class="section-bar">
-    <h3 class="section-header">Force Powers Known</h3>
-    <button type="button" class="btn-small" data-action="tab" data-tab="force" data-group="primary" data-tab-group="primary" title="Open Force tab to manage powers">Manage →</button>
+    <h3 class="section-header">{{localize "SWSE.CharacterSheet.Sections.ForcePowersKnown"}}</h3>
+    <button type="button" class="btn-small" data-action="tab" data-tab="force" data-group="primary" data-tab-group="primary" title='{{localize "SWSE.CharacterSheet.Tooltips.OpenForceTab"}}'>{{localize "SWSE.CharacterSheet.Actions.ManageArrow"}}</button>
   </header>
 
   {{#if (or forcePowersPanel.hasHand forcePowersPanel.hasDiscard)}}
@@ -25,7 +25,7 @@
 
       {{#if forcePowersPanel.hasHand}}
       <div class="powers-group">
-        <div class="group-header">Available ({{forcePowersPanel.hand.length}})</div>
+        <div class="group-header">{{localize "SWSE.CharacterSheet.Labels.Available"}} ({{forcePowersPanel.hand.length}})</div>
         {{#each forcePowersPanel.hand}}
           <div class="power-row svg-row-backed" data-item-id="{{this.id}}">
             <div class="power-name">{{this.name}}</div>
@@ -41,7 +41,7 @@
 
       {{#if forcePowersPanel.hasDiscard}}
       <div class="powers-group">
-        <div class="group-header">Discarded ({{forcePowersPanel.discard.length}})</div>
+        <div class="group-header">{{localize "SWSE.CharacterSheet.Labels.Discarded"}} ({{forcePowersPanel.discard.length}})</div>
         {{#each forcePowersPanel.discard}}
           <div class="power-row discarded svg-row-backed" data-item-id="{{this.id}}">
             <div class="power-name">{{this.name}}</div>
@@ -58,8 +58,8 @@
     </div>
   {{else}}
     <div class="empty-state">
-      <p>No Force powers known.</p>
-      <p class="hint">Force powers are managed on the Force tab.</p>
+      <p>{{localize "SWSE.CharacterSheet.Empty.NoForcePowers"}}</p>
+      <p class="hint">{{localize "SWSE.CharacterSheet.Hints.ManageForcePowers"}}</p>
     </div>
   {{/if}}
 

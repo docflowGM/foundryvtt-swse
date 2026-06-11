@@ -29,11 +29,11 @@ export function buildChatStateContext(input = {}) {
   return {
     stateClass: normalized,
     statusLabel: input.statusLabel ?? (
-      normalized === "pending" ? "Pending Resolution" :
-      normalized === "success" ? "Resolved" :
-      normalized === "failure" ? "Failed" :
-      normalized === "final" ? "Final Result" :
-      "Roll Result"
+      normalized === "pending" ? game.i18n.localize("SWSE.Chat.Roll.PendingResolution") :
+      normalized === "success" ? game.i18n.localize("SWSE.Chat.Roll.Resolved") :
+      normalized === "failure" ? game.i18n.localize("SWSE.Chat.Roll.Failed") :
+      normalized === "final" ? game.i18n.localize("SWSE.Chat.Roll.FinalResult") :
+      game.i18n.localize("SWSE.Chat.Roll.RollResult")
     ),
     statusSubLabel: input.statusSubLabel ?? "",
     showStatusRail: input.showStatusRail ?? false,

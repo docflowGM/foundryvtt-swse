@@ -29,6 +29,19 @@ import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-
 import { isStoreItemPurchasable } from "/systems/foundryvtt-swse/scripts/engine/store/policy-service.js";
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 
+
+function storeI18n(key, data = {}) {
+  try {
+    return game.i18n?.format?.(key, data) ?? game.i18n?.localize?.(key) ?? key;
+  } catch (_err) {
+    return key;
+  }
+}
+
+function storeApprovalSuffix(requiresApproval) {
+  return requiresApproval ? storeI18n('SWSE.Store.Notifications.GmApprovalRequiredSuffix') : '';
+}
+
 /**
  * Add item to shopping cart
  * @param {Object} store - Store instance (this)
@@ -37,7 +50,7 @@ import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store
  */
 export async function addItemToCart(store, itemId, updateDialogueCallback, options = {}) {
     if (!itemId) {
-        ui.notifications.warn('Invalid item selection. The item may be missing an ID.');
+        ui.notifications.warn(storeI18n('SWSE.Store.Notifications.InvalidItemSelection'));
         SWSELogger.error('SWSE Store | addItemToCart called with empty itemId');
         return;
     }
@@ -62,10 +75,10 @@ export async function addItemToCart(store, itemId, updateDialogueCallback, optio
     if (!item) {
         // Check if this is a fallback ID (generated for items without proper IDs)
         if (itemId.startsWith('fallback-')) {
-            ui.notifications.error('This item has an invalid ID and cannot be purchased. Please contact the GM.');
+            ui.notifications.error(storeI18n('SWSE.Store.Notifications.InvalidItemId'));
             SWSELogger.error(`SWSE Store | Item with fallback ID cannot be purchased: ${itemId}`);
         } else {
-            ui.notifications.error(`Item not found: ${itemId}`);
+            ui.notifications.error(storeI18n('SWSE.Store.Notifications.ItemNotFound', { id: itemId }));
             SWSELogger.error(`SWSE Store | Item ID not found in world or store cache: ${itemId}`, {
                 itemId,
                 itemsByIdKeys: Array.from(store.itemsById.keys()).slice(0, 10)
@@ -76,7 +89,7 @@ export async function addItemToCart(store, itemId, updateDialogueCallback, optio
 
     const policyCheck = isStoreItemPurchasable(item, { allowApprovalRequired: true });
     if (!policyCheck.ok) {
-        ui.notifications.warn(policyCheck.reason || 'This listing cannot be purchased right now.');
+        ui.notifications.warn(policyCheck.reason || storeI18n('SWSE.Store.Notifications.ListingCannotPurchase'));
         return;
     }
 
@@ -95,7 +108,7 @@ export async function addItemToCart(store, itemId, updateDialogueCallback, optio
         requiresApproval: policyCheck.requiresApproval === true
     });
 
-    ui.notifications.info(`${item.name} added to cart${policyCheck.requiresApproval ? ' (GM approval required)' : ''}.`);
+    ui.notifications.info(storeI18n('SWSE.Store.Notifications.ItemAddedToCart', { name: item.name, approval: storeApprovalSuffix(policyCheck.requiresApproval) }));
 
     // Update Rendarr's dialogue
     const dialogue = getRandomDialogue('purchase');
@@ -112,7 +125,7 @@ export async function addItemToCart(store, itemId, updateDialogueCallback, optio
  */
 export async function addDroidToCart(store, actorId, updateDialogueCallback) {
     if (!actorId) {
-        ui.notifications.warn('Invalid droid selection.');
+        ui.notifications.warn(storeI18n('SWSE.Store.Notifications.InvalidDroidSelection'));
         return;
     }
 
@@ -120,14 +133,14 @@ export async function addDroidToCart(store, actorId, updateDialogueCallback) {
     let droidTemplate = store.itemsById.get(actorId);
 
     if (!droidTemplate) {
-        ui.notifications.error('Droid not found in inventory.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.DroidNotFound'));
         SWSELogger.error('SWSE Store | Droid not found:', { actorId });
         return;
     }
 
     const policyCheck = isStoreItemPurchasable(droidTemplate, { allowApprovalRequired: true });
     if (!policyCheck.ok) {
-        ui.notifications.warn(policyCheck.reason || 'This droid cannot be purchased right now.');
+        ui.notifications.warn(policyCheck.reason || storeI18n('SWSE.Store.Notifications.DroidCannotPurchase'));
         return;
     }
 
@@ -143,7 +156,7 @@ export async function addDroidToCart(store, actorId, updateDialogueCallback) {
         requiresApproval: policyCheck.requiresApproval === true
     });
 
-    ui.notifications.info(`${droidTemplate.name} added to cart${policyCheck.requiresApproval ? ' (GM approval required)' : ''}.`);
+    ui.notifications.info(storeI18n('SWSE.Store.Notifications.ItemAddedToCart', { name: droidTemplate.name, approval: storeApprovalSuffix(policyCheck.requiresApproval) }));
 
     // Update Rendarr's dialogue
     const dialogue = getRandomDialogue('purchase');
@@ -161,7 +174,7 @@ export async function addDroidToCart(store, actorId, updateDialogueCallback) {
  */
 export async function addVehicleToCart(store, templateId, condition, updateDialogueCallback) {
     if (!templateId) {
-        ui.notifications.warn('Invalid vehicle selection.');
+        ui.notifications.warn(storeI18n('SWSE.Store.Notifications.InvalidVehicleSelection'));
         return;
     }
 
@@ -169,13 +182,13 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
     const vehicleTemplate = store.itemsById?.get(templateId);
 
     if (!vehicleTemplate || vehicleTemplate.type !== 'vehicle') {
-        ui.notifications.error('Vehicle template not found.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.VehicleTemplateNotFound'));
         return;
     }
 
     const policyCheck = isStoreItemPurchasable(vehicleTemplate, { allowApprovalRequired: true });
     if (!policyCheck.ok) {
-        ui.notifications.warn(policyCheck.reason || 'This vehicle cannot be purchased right now.');
+        ui.notifications.warn(policyCheck.reason || storeI18n('SWSE.Store.Notifications.VehicleCannotPurchase'));
         return;
     }
 
@@ -193,7 +206,7 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
         requiresApproval: policyCheck.requiresApproval === true
     });
 
-    ui.notifications.info(`${condition === 'used' ? 'Used' : 'New'} ${vehicleTemplate.name} added to cart${policyCheck.requiresApproval ? ' (GM approval required)' : ''}.`);
+    ui.notifications.info(storeI18n('SWSE.Store.Notifications.VehicleAddedToCart', { condition: condition === 'used' ? storeI18n('SWSE.Store.Notifications.UsedCondition') : storeI18n('SWSE.Store.Notifications.NewCondition'), name: vehicleTemplate.name, approval: storeApprovalSuffix(policyCheck.requiresApproval) }));
 
     const dialogue = getRandomDialogue('purchase');
     if (updateDialogueCallback) {
@@ -336,7 +349,7 @@ async function revalidateCart(store, actor, originalTotal) {
  */
 export async function buyService(actor, serviceName, serviceCost, updateDialogueCallback, rerenderCallback) {
     if (!serviceName) {
-        ui.notifications.warn('Invalid service selection.');
+        ui.notifications.warn(storeI18n('SWSE.Store.Notifications.InvalidServiceSelection'));
         return;
     }
 
@@ -348,7 +361,7 @@ export async function buyService(actor, serviceName, serviceCost, updateDialogue
     });
 
     if (!eligible.canPurchase) {
-        ui.notifications.error(eligible.reason || 'Cannot purchase service.');
+        ui.notifications.error(eligible.reason || storeI18n('SWSE.Store.Notifications.CannotPurchaseService'));
         return;
     }
 
@@ -361,11 +374,11 @@ export async function buyService(actor, serviceName, serviceCost, updateDialogue
     });
 
     if (!result.success) {
-        ui.notifications.error(`Purchase failed: ${result.error}`);
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.PurchaseFailed', { error: result.error }));
         return;
     }
 
-    ui.notifications.info(`${serviceName} purchased for ${serviceCost} credits.`);
+    ui.notifications.info(storeI18n('SWSE.Store.Notifications.ServicePurchased', { name: serviceName, cost: serviceCost }));
 
     // Update Rendarr's dialogue
     const dialogue = getRandomDialogue('purchase');
@@ -388,7 +401,7 @@ export async function buyService(actor, serviceName, serviceCost, updateDialogue
  */
 export async function buyDroid(store, actorId) {
     if (!actorId) {
-        ui.notifications.warn('Invalid droid selection.');
+        ui.notifications.warn(storeI18n('SWSE.Store.Notifications.InvalidDroidSelection'));
         return;
     }
 
@@ -396,14 +409,14 @@ export async function buyDroid(store, actorId) {
     const droidTemplate = store.itemsById?.get(actorId);
 
     if (!droidTemplate || droidTemplate.type !== 'droid') {
-        ui.notifications.error('Droid not found in inventory.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.DroidNotFound'));
         SWSELogger.error('SWSE Store | Droid not found:', { actorId });
         return;
     }
 
     const policyCheck = isStoreItemPurchasable(droidTemplate);
     if (!policyCheck.ok) {
-        ui.notifications.warn(policyCheck.reason || 'This droid cannot be purchased right now.');
+        ui.notifications.warn(policyCheck.reason || storeI18n('SWSE.Store.Notifications.DroidCannotPurchase'));
         return;
     }
 
@@ -449,7 +462,7 @@ export async function buyDroid(store, actorId) {
         });
 
         if (!result.success) {
-            ui.notifications.error(`Purchase failed: ${result.error}`);
+            ui.notifications.error(storeI18n('SWSE.Store.Notifications.PurchaseFailed', { error: result.error }));
             return;
         }
 
@@ -457,7 +470,7 @@ export async function buyDroid(store, actorId) {
         store.render();
     } catch (err) {
         SWSELogger.error('SWSE Store | Droid purchase failed:', err);
-        ui.notifications.error('Failed to complete droid purchase.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedDroidPurchase'));
     }
 }
 
@@ -469,14 +482,14 @@ export async function buyDroid(store, actorId) {
  */
 export async function buyVehicle(store, actorId, condition) {
     if (!actorId) {
-        ui.notifications.warn('Invalid vehicle selection.');
+        ui.notifications.warn(storeI18n('SWSE.Store.Notifications.InvalidVehicleSelection'));
         return;
     }
 
     // Check if SWSE system is initialized
     if (!globalThis.SWSE?.ActorEngine) {
         SWSELogger.error('SWSE ActorEngine not initialized');
-        ui.notifications.error('Character system not ready. Please refresh and try again.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.CharacterSystemNotReady'));
         return;
     }
 
@@ -493,13 +506,13 @@ export async function buyVehicle(store, actorId, condition) {
     }
 
     if (!vehicleTemplate) {
-        ui.notifications.error('Vehicle not found.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.VehicleNotFound'));
         return;
     }
 
     const policyCheck = isStoreItemPurchasable(vehicleTemplate);
     if (!policyCheck.ok) {
-        ui.notifications.warn(policyCheck.reason || 'This vehicle cannot be purchased right now.');
+        ui.notifications.warn(policyCheck.reason || storeI18n('SWSE.Store.Notifications.VehicleCannotPurchase'));
         return;
     }
 
@@ -548,7 +561,7 @@ export async function buyVehicle(store, actorId, condition) {
         });
 
         if (!result.success) {
-            ui.notifications.error(`Purchase failed: ${result.error}`);
+            ui.notifications.error(storeI18n('SWSE.Store.Notifications.PurchaseFailed', { error: result.error }));
             return;
         }
 
@@ -556,7 +569,7 @@ export async function buyVehicle(store, actorId, condition) {
         store.render();
     } catch (err) {
         SWSELogger.error('SWSE Store | Vehicle purchase failed:', err);
-        ui.notifications.error('Failed to complete vehicle purchase.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedVehiclePurchase'));
     }
 }
 
@@ -576,7 +589,7 @@ export async function createCustomDroid(actor, closeCallback) {
 
     // Confirm
     const confirmed = await SWSEDialogV2.confirm({
-        title: 'Build Custom Droid',
+        title: storeI18n('SWSE.Store.Dialogs.BuildCustomDroid'),
         content: `<p>Enter the droid construction system?</p>
                  <p>You will design a non-heroic droid at level ${actor.system.level || 1}.</p>
                  <p><strong>This build will be submitted for GM approval.</strong></p>
@@ -595,11 +608,11 @@ export async function createCustomDroid(actor, closeCallback) {
         // NOTE: Droid builder draft mode workflows are pending implementation in the new progression shell
         // For now, show a notice that this feature is being refactored
         SWSELogger.warn('SWSE Store | Droid builder workflows pending implementation in new progression shell');
-        ui.notifications.info('Droid builder is being refactored for the new character progression system. This feature will be available soon.');
+        ui.notifications.info(storeI18n('SWSE.Store.Notifications.BuilderRefactorPending'));
         return;
     } catch (err) {
         SWSELogger.error('SWSE Store | Failed to launch droid builder:', err);
-        ui.notifications.error('Failed to open droid builder.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedOpenDroidBuilder'));
     }
 }
 
@@ -620,13 +633,13 @@ export async function createCustomStarship(actor, closeCallback) {
     const minimumFrameCost = frameCosts.length ? Math.min(...frameCosts) : 30000;
 
     if (credits < minimumFrameCost) {
-        ui.notifications.warn(`You need at least ${minimumFrameCost.toLocaleString()} credits to build a custom starship.`);
+        ui.notifications.warn(storeI18n('SWSE.Store.Notifications.NeedCreditsForStarship', { required: minimumFrameCost.toLocaleString() }));
         return;
     }
 
     // Confirm
     const confirmed = await SWSEDialogV2.confirm({
-        title: 'Build Custom Starship',
+        title: storeI18n('SWSE.Store.Dialogs.BuildCustomStarship'),
         content: `<p>Enter Marl Skindar's shipyard builder?</p>
                  <p>Select a stock frame, then customize it with real vehicle modification data.</p>
                  <p><strong>Budget:</strong> your current wallet (${credits.toLocaleString()} credits), not a fixed chargen pool.</p>
@@ -650,7 +663,7 @@ export async function createCustomStarship(actor, closeCallback) {
         });
     } catch (err) {
         SWSELogger.error('SWSE Store | Failed to launch starship builder:', err);
-        ui.notifications.error('Failed to open starship builder.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedOpenStarshipBuilder'));
     }
 }
 
@@ -1091,7 +1104,7 @@ async function submitStoreItemApprovalRequest(actor, approvalItems = []) {
 export async function checkout(store, animateNumberCallback) {
     const actor = store.actor;
     if (SettingsHelper.getSafe('storeOpen', true) !== true) {
-        ui.notifications.warn('The store is currently closed by GM policy.');
+        ui.notifications.warn(storeI18n('SWSE.Store.Notifications.StoreClosed'));
         return { success: false, error: 'store-closed' };
     }
     const credits = LedgerService.getCurrentCredits(actor);
@@ -1099,7 +1112,7 @@ export async function checkout(store, animateNumberCallback) {
     // Revalidate cart before checkout (re-price all items)
     const revalidationReport = revalidateCartItems(store);
     if (revalidationReport.removed.length > 0) {
-        ui.notifications.warn(`${revalidationReport.removed.length} item(s) no longer available and were removed.`);
+        ui.notifications.warn(storeI18n('SWSE.Store.Notifications.CartItemsRemoved', { count: revalidationReport.removed.length }));
     }
 
     const quantityValidation = validateCartQuantities(store);
@@ -1113,12 +1126,12 @@ export async function checkout(store, animateNumberCallback) {
         const approvalItems = approvalEntries.map(entry => entry.approvalItem);
         const approvalResult = await submitStoreItemApprovalRequest(actor, approvalItems);
         if (!approvalResult.success) {
-            ui.notifications.error(approvalResult.error || 'GM approval request failed.');
+            ui.notifications.error(approvalResult.error || storeI18n('SWSE.Store.Notifications.ApprovalFailed'));
             return { success: false, error: approvalResult.error || 'GM approval request failed.' };
         }
         removeApprovedRequestEntriesFromCart(store.cart, approvalEntries);
         await store._persistCart?.();
-        ui.notifications.info(`GM approval requested for ${approvalItems.length} store item${approvalItems.length === 1 ? '' : 's'}.`);
+        ui.notifications.info(storeI18n('SWSE.Store.Notifications.ApprovalRequested', { count: approvalItems.length, plural: approvalItems.length === 1 ? '' : 's' }));
     }
 
     // Calculate total using revalidated costs after approval-gated items have been queued.
@@ -1139,8 +1152,8 @@ export async function checkout(store, animateNumberCallback) {
     });
 
     if (!eligible.canPurchase) {
-        ui.notifications.warn(eligible.reason || 'Cannot complete purchase.');
-        return { success: false, error: eligible.reason || 'Cannot complete purchase.' };
+        ui.notifications.warn(eligible.reason || storeI18n('SWSE.Store.Notifications.CannotCompletePurchase'));
+        return { success: false, error: eligible.reason || storeI18n('SWSE.Store.Notifications.CannotCompletePurchase') };
     }
 
     try {
@@ -1179,7 +1192,7 @@ export async function checkout(store, animateNumberCallback) {
         });
 
         if (!result.success) {
-            ui.notifications.error(`Purchase failed: ${result.error}`);
+            ui.notifications.error(storeI18n('SWSE.Store.Notifications.PurchaseFailed', { error: result.error }));
             return { success: false, error: result.error };
         }
 
@@ -1187,7 +1200,7 @@ export async function checkout(store, animateNumberCallback) {
         const newCredits = LedgerService.getCurrentCredits(actor);
         await store.animateCreditReconciliation(credits, newCredits, 600);
 
-        ui.notifications.info(`Purchase complete! Spent ${total.toLocaleString()} credits.`);
+        ui.notifications.info(storeI18n('SWSE.Store.Notifications.PurchaseComplete', { total: total.toLocaleString() }));
 
         // Log purchase to history
         await logPurchaseToHistory(actor, store.cart, total, result.transactionId);
@@ -1217,7 +1230,7 @@ export async function checkout(store, animateNumberCallback) {
         };
     } catch (err) {
         SWSELogger.error('SWSE Store | Checkout failed:', err);
-        ui.notifications.error('Purchase failed. See console for details.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.PurchaseFailedConsole'));
         return { success: false, error: err.message };
     }
 }
@@ -1397,7 +1410,7 @@ function buildDraftVehicleActorData(modificationData, vehicleTemplate, ownerActo
  */
 export async function submitDraftDroidForApproval(chargenSnapshot, ownerActor, costCredits) {
     if (!chargenSnapshot || !ownerActor) {
-        ui.notifications.error('Invalid draft submission: missing data.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.InvalidDraftSubmission'));
         return false;
     }
 
@@ -1411,7 +1424,7 @@ export async function submitDraftDroidForApproval(chargenSnapshot, ownerActor, c
         const draftDroid = await createActor(draftDroidData);
 
         if (!draftDroid) {
-            ui.notifications.error('Failed to create draft droid.');
+            ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedCreateDraftDroid'));
             return false;
         }
 
@@ -1451,7 +1464,7 @@ export async function submitDraftDroidForApproval(chargenSnapshot, ownerActor, c
         return true;
     } catch (err) {
         SWSELogger.error('SWSE Store | Failed to submit draft droid:', err);
-        ui.notifications.error('Failed to submit droid for approval.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedSubmitDroidApproval'));
         return false;
     }
 }
@@ -1467,7 +1480,7 @@ export async function submitDraftDroidForApproval(chargenSnapshot, ownerActor, c
  */
 export async function submitDraftVehicleForApproval(modificationData, vehicleTemplate, ownerActor, costCredits) {
     if (!modificationData || !vehicleTemplate || !ownerActor) {
-        ui.notifications.error('Invalid vehicle draft submission: missing data.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.InvalidVehicleDraftSubmission'));
         return false;
     }
 
@@ -1480,7 +1493,7 @@ export async function submitDraftVehicleForApproval(modificationData, vehicleTem
         const draftVehicle = await createActor(draftVehicleData);
 
         if (!draftVehicle) {
-            ui.notifications.error('Failed to create draft vehicle.');
+            ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedCreateDraftVehicle'));
             return false;
         }
 
@@ -1520,7 +1533,7 @@ export async function submitDraftVehicleForApproval(modificationData, vehicleTem
         return true;
     } catch (err) {
         SWSELogger.error('SWSE Store | Failed to submit draft vehicle:', err);
-        ui.notifications.error('Failed to submit vehicle for approval.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedSubmitVehicleApproval'));
         return false;
     }
 }
@@ -1536,7 +1549,7 @@ export async function submitDraftVehicleForApproval(modificationData, vehicleTem
  */
 export async function buildDroidWithBuilder(actor, closeCallback) {
     if (!actor) {
-        ui.notifications.error('No actor provided for droid building.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.NoActorForDroid'));
         return;
     }
 
@@ -1546,20 +1559,18 @@ export async function buildDroidWithBuilder(actor, closeCallback) {
     // Check if player has minimum credits
     if (playerCredits < baseCredits) {
         ui.notifications.warn(
-            `You need at least ${baseCredits.toLocaleString()} credits to build a custom droid. You have ${playerCredits.toLocaleString()}.`
+            storeI18n('SWSE.Store.Notifications.NeedCreditsForDroid', { required: baseCredits.toLocaleString(), current: playerCredits.toLocaleString() })
         );
         return;
     }
 
     // Confirm droid building
     const confirmed = await SWSEDialogV2.confirm({
-        title: 'Build Custom Droid',
-        content: `
-            <p>Design a custom droid using the Droid Builder.</p>
-            <p><strong>Available credits:</strong> ${playerCredits.toLocaleString()}</p>
-            <p><strong>Minimum required:</strong> ${baseCredits.toLocaleString()}</p>
-            <p><em>Your GM may require approval before your droid is finalized.</em></p>
-        `,
+        title: storeI18n('SWSE.Store.Dialogs.BuildCustomDroid'),
+        content: storeI18n('SWSE.Store.Dialogs.BuildCustomDroidBody', {
+            credits: playerCredits.toLocaleString(),
+            minimum: baseCredits.toLocaleString()
+        }),
         defaultYes: true
     });
 
@@ -1586,14 +1597,14 @@ export async function buildDroidWithBuilder(actor, closeCallback) {
                 // If approval is NOT required, deduct credits immediately
                 if (!data.requireApproval) {
                     await deductDroidCredits(actor, data.cost);
-                    ui.notifications.info(`Custom droid built! ${data.cost} credits deducted.`);
+                    ui.notifications.info(storeI18n('SWSE.Store.Notifications.CustomDroidBuilt', { cost: data.cost }));
                     SWSELogger.log('SWSE Store | Custom droid finalized and credits deducted:', {
                         droidCost: data.cost,
                         actor: actor.name
                     });
                 } else {
                     // If approval required, mark as pending (handled by GM)
-                    ui.notifications.info('Custom droid submitted for GM approval. Please wait for approval before credits are deducted.');
+                    ui.notifications.info(storeI18n('SWSE.Store.Notifications.CustomDroidSubmitted'));
                     SWSELogger.log('SWSE Store | Custom droid submitted for GM approval:', {
                         droidCost: data.cost,
                         actor: actor.name
@@ -1601,7 +1612,7 @@ export async function buildDroidWithBuilder(actor, closeCallback) {
                 }
             } catch (err) {
                 SWSELogger.error('SWSE Store | Error handling droid finalization:', err);
-                ui.notifications.error('Error processing droid. Please contact your GM.');
+                ui.notifications.error(storeI18n('SWSE.Store.Notifications.ErrorProcessingDroid'));
             }
         });
 
@@ -1615,7 +1626,7 @@ export async function buildDroidWithBuilder(actor, closeCallback) {
         SWSELogger.log('SWSE Store | Launched DroidBuilderApp for actor:', { actor: actor.name });
     } catch (err) {
         SWSELogger.error('SWSE Store | Failed to launch DroidBuilderApp:', err);
-        ui.notifications.error('Failed to open droid builder.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedOpenDroidBuilder'));
     }
 }
 
@@ -1671,7 +1682,7 @@ async function deductDroidCredits(actor, cost) {
  */
 export async function buildDroidFromTemplate(actor, closeCallback) {
     if (!actor) {
-        ui.notifications.error('No actor provided for droid building.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.NoActorForDroid'));
         return;
     }
 
@@ -1680,10 +1691,7 @@ export async function buildDroidFromTemplate(actor, closeCallback) {
         const templatePack = game.packs.get('foundryvtt-swse.droid-templates');
 
         if (!templatePack) {
-            ui.notifications.warn(
-                'No droid-templates compendium found. ' +
-                'Please ask your GM to create a compendium named "droid-templates" with droid actors.'
-            );
+            ui.notifications.warn(storeI18n('SWSE.Store.Notifications.NoDroidTemplatesCompendium'));
             return;
         }
 
@@ -1692,13 +1700,13 @@ export async function buildDroidFromTemplate(actor, closeCallback) {
         const droidTemplates = templates.filter(d => d.type === 'droid');
 
         if (droidTemplates.length === 0) {
-            ui.notifications.warn('No droid templates found in the droid-templates compendium.');
+            ui.notifications.warn(storeI18n('SWSE.Store.Notifications.NoDroidTemplatesFound'));
             return;
         }
 
         // Create template selection dialog
         let templateHTML = '<div class="template-browser"><select id="template-select" style="width: 100%; padding: 8px; margin-bottom: 12px;">';
-        templateHTML += '<option value="">Select a template...</option>';
+        templateHTML += `<option value="">${storeI18n('SWSE.Store.Dialogs.SelectTemplatePlaceholder')}</option>`;
         droidTemplates.forEach(t => {
             const degree = t.system?.droidSystems?.degree || 'Unknown';
             const size = t.system?.droidSystems?.size || 'Medium';
@@ -1710,18 +1718,18 @@ export async function buildDroidFromTemplate(actor, closeCallback) {
         let selectedTemplateId = null;
         await new Promise(resolve => {
             const dialog = new SWSEDialogV2({
-                title: 'Select Droid Template',
+                title: storeI18n('SWSE.Store.Dialogs.SelectDroidTemplate'),
                 content: templateHTML,
                 buttons: {
                     select: {
-                        label: 'Select',
+                        label: storeI18n('SWSE.Store.Dialogs.Select'),
                         callback: (html) => {
                             selectedTemplateId = html.querySelector('#template-select').value;
                             resolve();
                         }
                     },
                     cancel: {
-                        label: 'Cancel',
+                        label: storeI18n('SWSE.Store.Dialogs.Cancel'),
                         callback: () => {
                             resolve();
                         }
@@ -1738,7 +1746,7 @@ export async function buildDroidFromTemplate(actor, closeCallback) {
         // Find the selected template
         const selectedTemplate = droidTemplates.find(t => t.id === selectedTemplateId);
         if (!selectedTemplate) {
-            ui.notifications.error('Selected template not found.');
+            ui.notifications.error(storeI18n('SWSE.Store.Notifications.SelectedTemplateNotFound'));
             return;
         }
 
@@ -1749,11 +1757,8 @@ export async function buildDroidFromTemplate(actor, closeCallback) {
 
         // Confirm before launching builder
         const confirmed = await SWSEDialogV2.confirm({
-            title: `Clone Droid Template: ${selectedTemplate.name}`,
-            content: `
-                <p>Create a new droid based on <strong>${selectedTemplate.name}</strong>?</p>
-                <p><em>You can customize this template before finalizing.</em></p>
-            `,
+            title: storeI18n('SWSE.Store.Dialogs.CloneDroidTemplate', { name: selectedTemplate.name }),
+            content: storeI18n('SWSE.Store.Dialogs.CloneDroidTemplateBody', { name: selectedTemplate.name }),
             defaultYes: true
         });
 
@@ -1770,13 +1775,13 @@ export async function buildDroidFromTemplate(actor, closeCallback) {
             try {
                 if (!data.requireApproval) {
                     await deductDroidCredits(actor, data.cost);
-                    ui.notifications.info(`Droid built! ${data.cost} credits deducted.`);
+                    ui.notifications.info(storeI18n('SWSE.Store.Notifications.DroidBuilt', { cost: data.cost }));
                 } else {
-                    ui.notifications.info('Droid submitted for GM approval. Awaiting review...');
+                    ui.notifications.info(storeI18n('SWSE.Store.Notifications.DroidSubmitted'));
                 }
             } catch (err) {
                 SWSELogger.error('SWSE Store | Error handling droid finalization:', err);
-                ui.notifications.error('Error processing droid.');
+                ui.notifications.error(storeI18n('SWSE.Store.Notifications.ErrorProcessingDroid'));
             }
         });
 
@@ -1795,6 +1800,6 @@ export async function buildDroidFromTemplate(actor, closeCallback) {
 
     } catch (err) {
         SWSELogger.error('SWSE Store | Failed to build from template:', err);
-        ui.notifications.error('Failed to load droid templates.');
+        ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedLoadDroidTemplates'));
     }
 }

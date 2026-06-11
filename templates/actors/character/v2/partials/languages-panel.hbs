@@ -3,62 +3,62 @@
      Reads: languagesPanel.* (from panel context)
 --}}
 
-<section class=”swse-languages-panel v3-panel holo-panel swse-ui-panel”>
+<section class="swse-languages-panel v3-panel holo-panel swse-ui-panel">
 
-  <header class=”section-bar”>
-    <h3 class=”section-header”>Languages</h3>
-    <button type=”button”
-            data-action=”add-language”
-            class=”swse-btn language-add”>
-      + Add Language
+  <header class="section-bar">
+    <h3 class="section-header">{{localize "SWSE.CharacterSheet.Sections.Languages"}}</h3>
+    <button type="button"
+            data-action="add-language"
+            class="swse-btn language-add">
+      {{localize "SWSE.CharacterSheet.Actions.AddLanguage"}}
     </button>
   </header>
 
-  <div class=”swse-v3-languages-list swse-dense-region”>
+  <div class="swse-v3-languages-list swse-dense-region">
 
     {{#if languagesPanel.hasEntries}}
 
-      <div class=”language-grid swse-dense-grid”>
+      <div class="language-grid swse-dense-grid">
 
         {{#each languagesPanel.entries as |lang index|}}
-          <div class=”language-card swse-dense-card swse-ui-panel swse-card-schema swse-card-schema--enumerated swse-card-schema--filled” data-index=”{{index}}”>
+          <div class="language-card swse-dense-card swse-ui-panel swse-card-schema swse-card-schema--enumerated swse-card-schema--filled" data-index="{{index}}">
 
-            <div class=”language-input-wrapper”>
-              <input type=”text”
-                     name=”system.languages.{{index}}”
-                     value=”{{lang}}”
-                     placeholder=”Enter language...”
-                     class=”language-input” />
+            <div class="language-input-wrapper">
+              <input type="text"
+                     name="system.languages.{{index}}"
+                     value="{{lang}}"
+                     placeholder='{{localize "SWSE.CharacterSheet.Placeholders.EnterLanguage"}}'
+                     class="language-input" />
             </div>
 
-            <button type=”button”
-                    class=”language-remove”
-                    data-action=”remove-language”
-                    data-index=”{{index}}”
-                    data-language=”{{lang}}”>
+            <button type="button"
+                    class="language-remove"
+                    data-action="remove-language"
+                    data-index="{{index}}"
+                    data-language="{{lang}}">
               ✕
             </button>
 
           </div>
         {{/each}}
 
-        <button type=”button”
-                data-action=”add-language”
-                class=”language-card swse-dense-card swse-ui-panel swse-card-schema swse-card-schema--choice swse-card-schema--placeholder swse-add-card”>
-          <span class=”swse-card-schema__eyebrow”>Choice Slot</span>
-          <span class=”swse-card-schema__title”>Add Language</span>
-          <span class=”swse-card-schema__body”>Create another language entry using the same card shape and size.</span>
+        <button type="button"
+                data-action="add-language"
+                class="language-card swse-dense-card swse-ui-panel swse-card-schema swse-card-schema--choice swse-card-schema--placeholder swse-add-card">
+          <span class="swse-card-schema__eyebrow">{{localize "SWSE.CharacterSheet.Labels.ChoiceSlot"}}</span>
+          <span class="swse-card-schema__title">{{localize "SWSE.CharacterSheet.Actions.AddLanguage"}}</span>
+          <span class="swse-card-schema__body">{{localize "SWSE.CharacterSheet.Hints.AddLanguageCard"}}</span>
         </button>
       </div>
 
     {{else}}
 
-      <div class=”languages-empty swse-ui-empty swse-card-schema swse-card-schema--choice swse-card-schema--placeholder”>
-        <div class=”swse-card-schema__slot-row”>
-          <span class=”swse-card-schema__icon”>🌐</span>
+      <div class="languages-empty swse-ui-empty swse-card-schema swse-card-schema--choice swse-card-schema--placeholder">
+        <div class="swse-card-schema__slot-row">
+          <span class="swse-card-schema__icon">🌐</span>
           <div>
-            <div class=”swse-card-schema__title”>No languages known</div>
-            <div class=”swse-card-schema__body”>Click “Add Language” to create the first standardized language card.</div>
+            <div class="swse-card-schema__title">{{localize "SWSE.CharacterSheet.Empty.NoLanguagesKnown"}}</div>
+            <div class="swse-card-schema__body">{{localize "SWSE.CharacterSheet.Hints.CreateFirstLanguage"}}</div>
           </div>
         </div>
       </div>

@@ -829,3 +829,46 @@
   overscroll-behavior: contain !important;
   scrollbar-gutter: stable !important;
 }
+
+/* Beta store repair: wider detail/cart rails and owned scroll panes. */
+.swse-app-store.card-grid-store .store-viewport,
+.swse-app-store .store-viewport {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-app-store.card-grid-store .store-pane,
+.swse-app-store .store-pane {
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.swse-app-store.card-grid-store .store-pane-browse .card-grid-container,
+.swse-app-store .store-pane-browse .card-grid-container {
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.swse-app-store.card-grid-store .store-detail-layout,
+.swse-app-store.card-grid-store .store-cart-layout,
+.swse-app-store.card-grid-store .store-checkout-layout,
+.swse-app-store .store-detail-layout,
+.swse-app-store .store-cart-layout,
+.swse-app-store .store-checkout-layout {
+  grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr);
+  min-height: 0;
+}
+
+.swse-app-store.card-grid-store .store-detail-main,
+.swse-app-store.card-grid-store .store-cart-list,
+.swse-app-store.card-grid-store .store-checkout-ledger,
+.swse-app-store .store-detail-main,
+.swse-app-store .store-cart-list,
+.swse-app-store .store-checkout-ledger {
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}

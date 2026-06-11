@@ -19,6 +19,112 @@ import { NpcProgressionEngine } from '/systems/foundryvtt-swse/scripts/engine/pr
 import { NpcLegalReviewEngine } from '/systems/foundryvtt-swse/scripts/engine/npc-legal-review/NpcLegalReviewEngine.js';
 import { NpcReviewRepairEngine } from '/systems/foundryvtt-swse/scripts/engine/npc-legal-review/NpcReviewRepairEngine.js';
 
+const NPC_STAT_SKILLS = [
+  ['acrobatics', 'Acrobatics', 'dex'],
+  ['climb', 'Climb', 'str'],
+  ['deception', 'Deception', 'cha'],
+  ['endurance', 'Endurance', 'con'],
+  ['gatherInformation', 'Gather Information', 'cha'],
+  ['initiative', 'Initiative', 'dex'],
+  ['jump', 'Jump', 'str'],
+  ['knowledgeBureaucracy', 'Knowledge (Bureaucracy)', 'int'],
+  ['knowledgeGalacticLore', 'Knowledge (Galactic Lore)', 'int'],
+  ['knowledgeLifeSciences', 'Knowledge (Life Sciences)', 'int'],
+  ['knowledgePhysicalSciences', 'Knowledge (Physical Sciences)', 'int'],
+  ['knowledgeSocialSciences', 'Knowledge (Social Sciences)', 'int'],
+  ['knowledgeTactics', 'Knowledge (Tactics)', 'int'],
+  ['knowledgeTechnology', 'Knowledge (Technology)', 'int'],
+  ['mechanics', 'Mechanics', 'int'],
+  ['perception', 'Perception', 'wis'],
+  ['persuasion', 'Persuasion', 'cha'],
+  ['pilot', 'Pilot', 'dex'],
+  ['ride', 'Ride', 'dex'],
+  ['stealth', 'Stealth', 'dex'],
+  ['survival', 'Survival', 'wis'],
+  ['swim', 'Swim', 'str'],
+  ['treatInjury', 'Treat Injury', 'wis'],
+  ['useComputer', 'Use Computer', 'int'],
+  ['useTheForce', 'Use the Force', 'cha']
+];
+
+const NPC_SKILL_KEY_ALIASES = Object.fromEntries(NPC_STAT_SKILLS.flatMap(([key, label]) => {
+  const canonical = normalizeSkillToken(key);
+  const display = normalizeSkillToken(label);
+  return [[canonical, key], [display, key]];
+}));
+
+function normalizeText(value) {
+  return String(value ?? '').replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function normalizeSkillToken(value) {
+  return normalizeText(value).toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function safeNumber(value, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function readNumber(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+function abilityScoreFromSystem(system, key) {
+  const attr = system?.attributes?.[key] ?? system?.abilities?.[key] ?? {};
+  if (typeof attr === 'number') return attr;
+  return readNumber(attr?.total)
+    ?? readNumber(attr?.score)
+    ?? readNumber(attr?.value)
+    ?? (readNumber(attr?.base ?? 10) + safeNumber(attr?.racial, 0) + safeNumber(attr?.enhancement, 0) + safeNumber(attr?.temp, 0));
+}
+
+function abilityModFromSystem(system, key) {
+  const attr = system?.attributes?.[key] ?? system?.abilities?.[key] ?? {};
+  const explicit = readNumber(attr?.mod ?? attr?.modifier);
+  if (explicit !== null) return explicit;
+  return Math.floor((abilityScoreFromSystem(system, key) - 10) / 2);
+}
+
+function skillKeyFromLabel(value) {
+  const token = normalizeSkillToken(value);
+  return NPC_SKILL_KEY_ALIASES[token] || value;
+}
+
+function parseSignedNumber(value) {
+  const match = normalizeText(value).match(/[+-]\d+/);
+  if (!match) return null;
+  const n = Number(match[0]);
+  return Number.isFinite(n) ? n : null;
+}
+
+function parseBeastSkillTotals(beastData = {}) {
+  const out = new Map();
+  const values = Array.isArray(beastData?.skills) ? beastData.skills : [];
+  for (const rawEntry of values) {
+    const entry = normalizeText(rawEntry);
+    if (!entry) continue;
+    const parts = entry.split(/,(?=\s*[^,]*[+-]\d+)/g).map(p => p.trim()).filter(Boolean);
+    for (const part of parts.length ? parts : [entry]) {
+      const match = part.match(/^(.+?)\s+([+-]\d+)/);
+      if (!match) continue;
+      const key = skillKeyFromLabel(match[1]);
+      if (!key) continue;
+      out.set(key, Number(match[2]));
+    }
+  }
+  const direct = [
+    ['perception', beastData?.perception],
+    ['initiative', beastData?.initiative]
+  ];
+  for (const [key, value] of direct) {
+    const n = readNumber(value);
+    if (n !== null && !out.has(key)) out.set(key, n);
+  }
+  return out;
+}
+
 export class NpcProfileBuilder {
   /**
    * Build NPC profile context for sheet rendering.
@@ -371,9 +477,20 @@ export class NpcProfileBuilder {
     const speedSummary = speed ? `${speed} ft.` : null;
 
     const weapons = actor.items?.filter((i) => i.type === 'weapon') || [];
+    const beastData = this._getRawBeastData(actor);
+    const parsedNaturalAttacks = this._getAttackRows(actor, [], null, beastData)
+      .filter(row => row?.name && row?.name !== '—')
+      .map(row => {
+        const attack = row.attack && row.attack !== '—' ? ` ${row.attack}` : '';
+        const damage = row.damage && row.damage !== '—' ? ` (${row.damage})` : '';
+        return `${row.name}${attack}${damage}`;
+      });
     const naturalAttackNames = weapons
       .map((w) => w.name || 'Unnamed Attack')
       .filter(Boolean);
+    for (const attack of parsedNaturalAttacks) {
+      if (attack && !naturalAttackNames.includes(attack)) naturalAttackNames.push(attack);
+    }
 
     const abilities = actor.items?.filter((i) => {
       const types = ['feat', 'talent', 'class_feature'];
@@ -579,9 +696,9 @@ export class NpcProfileBuilder {
     const items = Array.from(actor.items ?? []);
 
     const abilities = this._getAbilityRows(system);
-    const defenses = this._getDefenseRows(system);
-    const hp = this._getHpSummary(system);
-    const skills = this._getSkillRows(system).slice(0, 12);
+    const defenses = this._getDefenseRows(system, raw, beastData);
+    const hp = this._getHpSummary(system, beastData);
+    const skills = this._getSkillRows(system, beastData);
     const attacks = this._getAttackRows(actor, items, raw, beastData);
     const featureGroups = this._getFeatureGroups(items);
     const forcePowers = featureGroups.forcePowers;
@@ -740,27 +857,27 @@ export class NpcProfileBuilder {
     return String(value).split(/[,;]\s*/).map(v => v.trim()).filter(Boolean);
   }
 
-  static _getHpSummary(system) {
+  static _getHpSummary(system, beastData = {}) {
     return {
-      value: this._formatValue(this._firstDefined(system?.hp?.value, system?.health?.value, system?.derived?.hp?.value)),
-      max: this._formatValue(this._firstDefined(system?.hp?.max, system?.health?.max, system?.derived?.hp?.max)),
+      value: this._formatValue(this._firstDefined(system?.hp?.value, system?.health?.value, system?.derived?.hp?.value, beastData?.hitPoints)),
+      max: this._formatValue(this._firstDefined(system?.hp?.max, system?.health?.max, system?.derived?.hp?.max, beastData?.hitPoints)),
       temp: this._firstDefined(system?.hp?.temp, system?.health?.temp),
       wounds: this._firstDefined(system?.wounds?.value, system?.damage?.wounds)
     };
   }
 
-  static _getDefenseRows(system) {
+  static _getDefenseRows(system, raw = null, beastData = {}) {
     const defenses = system?.defenses ?? system?.derived?.defenses ?? {};
     const rows = [
-      ['reflex', 'Reflex', defenses?.reflex],
-      ['fortitude', 'Fortitude', defenses?.fortitude ?? defenses?.fort],
-      ['will', 'Will', defenses?.will],
-      ['flatFooted', 'Flat-Footed', defenses?.flatFooted ?? defenses?.flatfooted]
+      ['reflex', 'Reflex', defenses?.reflex, beastData?.reflexDefense ?? raw?.Reflex ?? raw?.['Reflex Defense']],
+      ['fortitude', 'Fortitude', defenses?.fortitude ?? defenses?.fort, beastData?.fortitudeDefense ?? raw?.Fortitude ?? raw?.['Fortitude Defense']],
+      ['will', 'Will', defenses?.will, beastData?.willDefense ?? raw?.Will ?? raw?.['Will Defense']],
+      ['flatFooted', 'Flat-Footed', defenses?.flatFooted ?? defenses?.flatfooted, beastData?.flatFootedDefense ?? raw?.['Flat-Footed'] ?? raw?.['Flat Footed']]
     ];
-    return rows.map(([key, label, data]) => ({
+    return rows.map(([key, label, data, statblockValue]) => ({
       key,
       label,
-      value: this._formatValue(this._firstDefined(data?.total, data?.value, data))
+      value: this._formatValue(this._firstDefined(statblockValue, data?.total, data?.value, data))
     })).filter(row => row.value !== '—');
   }
 
@@ -787,18 +904,50 @@ export class NpcProfileBuilder {
     return n >= 0 ? `+${n}` : String(n);
   }
 
-  static _getSkillRows(system) {
+  static _getSkillRows(system, beastData = {}) {
     const skills = system?.skills ?? {};
-    return Object.entries(skills).map(([key, data]) => {
-      const total = this._firstDefined(data?.total, data?.mod, data?.modifier, data?.value, data?.bonus);
+    const explicitBeastTotals = parseBeastSkillTotals(beastData);
+    const level = safeNumber(system?.level ?? system?.attributes?.level ?? beastData?.cl ?? beastData?.beastLevel, 0);
+    const halfLevel = Math.floor(level / 2);
+
+    const rows = NPC_STAT_SKILLS.map(([key, label, defaultAbility]) => {
+      const data = skills?.[key] ?? {};
+      const selectedAbility = data?.selectedAbility || data?.ability || defaultAbility;
       const trained = data?.trained === true || data?.isTrained === true;
+      const focused = data?.focused === true || data?.focus === true;
+      const explicit = explicitBeastTotals.get(key);
+      const stored = this._firstDefined(data?.total, data?.mod, data?.modifier, data?.value, data?.bonus);
+      const computed = abilityModFromSystem(system, selectedAbility)
+        + halfLevel
+        + (trained ? 5 : 0)
+        + (focused ? 5 : 0)
+        + safeNumber(data?.miscMod ?? data?.misc ?? data?.bonusMod, 0);
+      const total = explicit ?? readNumber(stored) ?? computed;
       return {
         key,
-        label: data?.label ?? data?.name ?? this._labelFromKey(key),
-        total: this._formatSigned(total ?? 0),
-        trained
+        label: data?.label ?? data?.name ?? label,
+        total: this._formatSigned(total),
+        trained,
+        focused,
+        ability: selectedAbility
       };
-    }).filter(row => row.total !== '+0' || row.trained).sort((a, b) => String(a.label).localeCompare(String(b.label)));
+    });
+
+    for (const [rawKey, data] of Object.entries(skills)) {
+      const key = skillKeyFromLabel(rawKey);
+      if (rows.some(row => row.key === key)) continue;
+      const total = this._firstDefined(data?.total, data?.mod, data?.modifier, data?.value, data?.bonus, 0);
+      rows.push({
+        key,
+        label: data?.label ?? data?.name ?? this._labelFromKey(rawKey),
+        total: this._formatSigned(total),
+        trained: data?.trained === true || data?.isTrained === true,
+        focused: data?.focused === true || data?.focus === true,
+        ability: data?.selectedAbility || data?.ability || ''
+      });
+    }
+
+    return rows.sort((a, b) => String(a.label).localeCompare(String(b.label)));
   }
 
   static _getFeatureGroups(items) {
@@ -838,12 +987,20 @@ export class NpcProfileBuilder {
     const rows = [];
     for (const weapon of items.filter(i => i.type === 'weapon')) {
       const sys = weapon.system ?? {};
+      const attack = this._formatValue(this._firstDefined(sys?.attackBonus, sys?.attack?.bonus, sys?.bonus, sys?.toHit));
+      const damage = this._formatValue(this._firstDefined(sys?.damage, sys?.damageFormula, sys?.damage?.formula, sys?.damage?.value));
       rows.push({
+        id: weapon.id,
+        itemId: weapon.id,
         name: weapon.name || 'Weapon',
         source: 'Item',
         mode: this._formatValue(this._firstDefined(sys?.weaponType, sys?.category, sys?.group, sys?.type)),
-        attack: this._formatValue(this._firstDefined(sys?.attackBonus, sys?.attack?.bonus, sys?.bonus, sys?.toHit)),
-        damage: this._formatValue(this._firstDefined(sys?.damage, sys?.damageFormula, sys?.damage?.formula, sys?.damage?.value)),
+        attack,
+        damage,
+        attackBonus: this._parseAttackBonus(attack),
+        damageFormula: this._normalizeDiceFormula(damage),
+        canRollAttack: true,
+        canRollDamage: Boolean(this._normalizeDiceFormula(damage)),
         notes: this._formatValue(this._firstDefined(sys?.description?.value, sys?.description, sys?.properties, sys?.special))
       });
     }
@@ -871,20 +1028,46 @@ export class NpcProfileBuilder {
     }).slice(0, 20);
   }
 
+  static _parseAttackBonus(value) {
+    const match = String(value ?? '').match(/[+-]?\d+/);
+    if (!match) return null;
+    const n = Number(match[0]);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  static _normalizeDiceFormula(value) {
+    const raw = String(value ?? '').trim();
+    if (!raw || raw === '—') return '';
+    const formula = raw
+      .replace(/[–—−]/g, '-')
+      .replace(/×/g, '*')
+      .replace(/\s+/g, '');
+    if (!/^[0-9dD+\-*/().]+$/.test(formula)) return '';
+    if (!/\d+d\d+/i.test(formula)) return '';
+    return formula;
+  }
+
   static _parseAttackLine(line, source) {
     const text = String(line ?? '').trim();
-    const match = text.match(/^(.+?)\s+([+-]\d+)\s*\(([^)]+)\)(.*)$/);
+    const match = text.match(/^(.+?)\s+([+-]\d+)\s*([*†‡]+)?\s*\(([^)]+)\)(.*)$/u);
     if (match) {
+      const damage = match[4].trim();
       return {
+        id: null,
+        itemId: null,
         name: match[1].trim(),
         source,
         mode: 'Statblock',
         attack: match[2],
-        damage: match[3].trim(),
-        notes: match[4]?.trim() || text
+        damage,
+        attackBonus: this._parseAttackBonus(match[2]),
+        damageFormula: this._normalizeDiceFormula(damage),
+        canRollAttack: true,
+        canRollDamage: Boolean(this._normalizeDiceFormula(damage)),
+        notes: [match[3] ? 'Special attack marker' : '', match[5]?.trim() || ''].filter(Boolean).join(' · ')
       };
     }
-    return { name: text || source, source, mode: 'Statblock', attack: '—', damage: '—', notes: text };
+    return { id: null, itemId: null, name: text || source, source, mode: 'Statblock', attack: '—', damage: '—', attackBonus: null, damageFormula: '', canRollAttack: false, canRollDamage: false, notes: text };
   }
 
   static _getSpecialRows(actor, raw, beastData, featureGroups) {

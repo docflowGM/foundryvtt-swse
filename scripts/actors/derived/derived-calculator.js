@@ -137,7 +137,6 @@ export class DerivedCalculator {
         adjustment: 0 // Adjustments are part of ActorEngine.recomputeHP, not derived
       };
       const bab = await BABCalculator.calculate(classLevels, { adjustment: babAdjustment });
-      const halfLevel = getEffectiveHalfLevel(actor);
       const defenses = await DefenseCalculator.calculate(actor, classLevels, { adjustments: defenseAdjustments });
 
       // Build update object (all writes go to system.derived.*)
@@ -226,10 +225,10 @@ export class DerivedCalculator {
       // Grapple Bonus Derived (BAB + STR + Size + Species bonuses)
       // ========================================
       const strMod = (updates['system.derived.attributes']?.str?.mod) || 0;
-      const sizeTable = { 'fine': -16, 'diminutive': -12, 'tiny': -8, 'small': -4, 'medium': 0, 'large': 4, 'huge': 8, 'gargantuan': 12, 'colossal': 16 };
-      const sizeMod = sizeTable[String(actor.system?.size ?? actor.system?.traits?.size ?? actor.system?.droidSize ?? 'medium').toLowerCase()] || 0;
-      const speciesGrapple = Number(actor.system?.speciesCombatBonuses?.grapple ?? actor.system?.speciesTraitBonuses?.combat?.grapple ?? 0) || 0;
-      const grappleBonus = Number(bab || 0) + strMod + halfLevel + sizeMod + speciesGrapple;
+      const sizeTable = { 'fine': -8, 'diminutive': -4, 'tiny': -2, 'small': -1, 'medium': 0, 'large': 4, 'huge': 8, 'gargantuan': 12, 'colossal': 16 };
+      const sizeMod = sizeTable[String(actor.system?.size || 'medium').toLowerCase()] || 0;
+      const speciesGrapple = actor.system?.speciesCombatBonuses?.grapple || actor.system?.speciesTraitBonuses?.combat?.grapple || 0;
+      const grappleBonus = bab.total + strMod + sizeMod + speciesGrapple;
       updates['system.derived.grappleBonus'] = grappleBonus;
 
       // Defenses
@@ -341,6 +340,7 @@ export class DerivedCalculator {
       // Half-level is derived from the level-split authority, not a persisted system field.
       // system.halfLevel can be absent/stale during Foundry prepareData/update cycles,
       // which caused trained skills to miss the +1 at level 2 and similar level-up flows.
+      const halfLevel = getEffectiveHalfLevel(actor);
       const isDroid = actor?.type === 'droid' || actor.system.isDroid || false;
       const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
       const hasForceIntuition = this._hasTalentNamed(actor, 'Force Intuition');
@@ -462,10 +462,13 @@ export class DerivedCalculator {
           total += halfLevel;
         }
 
-        // Add skill focus bonus
-        if (skill.focused) {
-          total += 5;
-        }
+        // Add skill focus bonus. A focused checkbox is the sheet-level
+        // representation of Skill Focus, while the Skill Focus feat may also
+        // contribute a selected-choice passive modifier. Treat those as the
+        // same source so checking Focus on a skill that already has the feat
+        // never double-counts the +5 competence bonus.
+        const focusedCheckboxBonus = skill.focused ? 5 : 0;
+        total += focusedCheckboxBonus;
 
         // Apply occupation bonus (only to untrained checks)
         let hasOccupationBonus = false;
@@ -476,12 +479,16 @@ export class DerivedCalculator {
 
         // Add feat/equipment/other modifiers from ModifierEngine (SSOT integration).
         // Skill Focus can be represented both by system.skills.<key>.focused and by
-        // a passive modifier item. If both are present, suppress the duplicate +5.
-        const rawFeatBonus = modifierMap[`skill.${skillKey}`] || 0;
-        const featBonus = (skill.focused && rawFeatBonus >= 5 && this._hasSkillFocusModifierForSkill(actor, skillKey))
-          ? rawFeatBonus - 5
+        // a passive modifier item. If both are present, suppress the Skill Focus
+        // modifier contribution entirely and keep the checkbox's single +5.
+        const rawFeatBonus = Number(modifierMap[`skill.${skillKey}`] || 0) || 0;
+        const skillFocusModifierBonus = skill.focused
+          ? this._getSkillFocusModifierBonusForSkill(allModifiers, skillKey)
+          : 0;
+        const featBonus = skillFocusModifierBonus > 0
+          ? rawFeatBonus - skillFocusModifierBonus
           : rawFeatBonus;
-        total += featBonus;
+        total += Math.max(0, featBonus);
 
         // PHASE 4: Get state-dependent modifiers for this skill
         let stateBonus = 0;
@@ -762,30 +769,76 @@ export class DerivedCalculator {
     return false;
   }
 
-  static _hasSkillFocusModifierForSkill(actor, skillKey) {
-    const target = String(skillKey || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    if (!target || !actor?.items) return false;
+
+  static _getSkillFocusModifierBonusForSkill(modifiers = [], skillKey) {
     const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const target = normalize(skillKey);
+    if (!target || !Array.isArray(modifiers)) return 0;
+
+    let total = 0;
+    for (const mod of modifiers) {
+      if (!mod || mod.enabled === false) continue;
+      const modTarget = String(mod.target || '').replace(/^skill\./i, '');
+      if (normalize(modTarget) !== target) continue;
+
+      const sourceText = `${mod.sourceName || ''} ${mod.description || ''} ${mod.id || ''} ${mod.sourceId || ''}`;
+      if (!/skill\s*focus|skill[_-]?focus/i.test(sourceText)) continue;
+      const value = Number(mod.value || 0) || 0;
+      if (value > 0) total += value;
+    }
+    return total;
+  }
+
+  static _hasSkillFocusModifierForSkill(actor, skillKey) {
+    const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const target = normalize(skillKey);
+    if (!target || !actor?.items) return false;
+
+    const visitChoice = (value, candidates) => {
+      if (value === undefined || value === null) return;
+      if (Array.isArray(value)) {
+        for (const entry of value) visitChoice(entry, candidates);
+        return;
+      }
+      if (typeof value === 'object') {
+        for (const key of ['id', 'value', 'key', 'slug', 'skill', 'skillKey', 'selectedSkill', 'label', 'name']) {
+          visitChoice(value[key], candidates);
+        }
+        return;
+      }
+      candidates.push(value);
+    };
+
     for (const item of actor.items) {
       const name = String(item?.name || '').toLowerCase();
-      if (!name.includes('skill focus')) continue;
-      const candidates = [
+      const slug = String(item?.system?.slug || item?.flags?.swse?.id || '').toLowerCase();
+      if (!name.includes('skill focus') && !slug.includes('skill_focus') && !slug.includes('skill-focus')) continue;
+
+      const candidates = [];
+      for (const value of [
         item.system?.skill,
         item.system?.skillKey,
         item.system?.selectedSkill,
         item.system?.choice,
         item.system?.selectedChoice,
+        item.system?.selectedChoices,
         item.flags?.swse?.skill,
         item.flags?.swse?.selectedSkill,
         item.flags?.foundryvttSwse?.skill,
-      ];
+      ]) {
+        visitChoice(value, candidates);
+      }
+
       const meta = item.system?.abilityMeta || {};
       if (Array.isArray(meta.modifiers)) {
         for (const mod of meta.modifiers) {
           const targets = Array.isArray(mod.target) ? mod.target : [mod.target];
           candidates.push(...targets.map(t => String(t || '').replace(/^skill\./i, '')));
+          visitChoice(mod.selectedChoice, candidates);
+          visitChoice(mod.selectedChoices, candidates);
         }
       }
+
       if (candidates.some(candidate => normalize(candidate) === target)) return true;
       const paren = name.match(/skill focus\s*\(([^)]+)\)/i);
       if (paren && normalize(paren[1]) === target) return true;

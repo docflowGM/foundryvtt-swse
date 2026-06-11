@@ -3861,3 +3861,110 @@ footer.swse-store-surface__footer {
   border-color: rgba(79, 209, 197, 0.75);
   color: #fff;
 }
+
+/* --------------------------------------------------------------------------
+   Beta store viewport repair: deduped catalog, wider inspection rail, and
+   deterministic scroll ownership for browse/cart/checkout.
+   -------------------------------------------------------------------------- */
+.swse-shell-surface--store .swse-store-surface__tablet {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__screen {
+  display: grid !important;
+  grid-template-rows: auto auto auto minmax(0, 1fr) !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+  gap: 8px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__browse-layout {
+  display: grid !important;
+  grid-row: 4 !important;
+  grid-template-columns: minmax(0, 2fr) minmax(320px, 1fr) !important;
+  gap: 10px !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+  align-items: stretch !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__cards-grid,
+.swse-shell-surface--store .swse-store-surface__grid {
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  scrollbar-gutter: stable !important;
+  align-content: start !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__rail {
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  scrollbar-gutter: stable !important;
+  padding-right: 4px !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__detail-card {
+  overflow: visible !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__detail-shell {
+  min-height: 0 !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__detail-section--scroll {
+  max-height: 220px !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  scrollbar-gutter: stable !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__pane-cart,
+.swse-shell-surface--store .swse-store-surface__pane-checkout,
+.swse-shell-surface--store .swse-store-surface__pane-history {
+  grid-row: 1 / -1 !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain !important;
+  scrollbar-gutter: stable !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__cart-list,
+.swse-shell-surface--store .swse-store-surface__checkout-manifest,
+.swse-shell-surface--store .swse-store-surface__history-list {
+  min-height: 0 !important;
+  overflow: visible !important;
+}
+
+.swse-shell-surface--store .swse-store-surface__cart-actions,
+.swse-shell-surface--store .swse-store-surface__checkout-actions,
+.swse-shell-surface--store .swse-store-surface__rail-actions {
+  flex-wrap: wrap !important;
+}
+
+@media (max-width: 1180px) {
+  .swse-shell-surface--store .swse-store-surface__browse-layout {
+    grid-template-columns: 1fr !important;
+    overflow-y: auto !important;
+  }
+
+  .swse-shell-surface--store .swse-store-surface__rail {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}

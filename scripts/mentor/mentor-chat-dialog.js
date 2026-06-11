@@ -9,7 +9,7 @@
  *   MentorChatDialog.show(actor);
  */
 
-import { MENTORS, getMentorForClass } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
+import { MENTORS, getMentorForClass, getMentorKey } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
 import { MentorSuggestionVoice } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-voice.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
 import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
@@ -26,76 +26,112 @@ import { BuildAnalysisEngine } from "/systems/foundryvtt-swse/scripts/engine/ana
 // V2 API base class
 import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/swse-form-application-v2.js";
 
+function mentorChatI18n(key, data = {}, fallback = '') {
+  const i18n = globalThis.game?.i18n;
+  try {
+    const localized = data && Object.keys(data).length > 0
+      ? i18n?.format?.(key, data)
+      : i18n?.localize?.(key);
+    return localized && localized !== key ? localized : (fallback || key);
+  } catch (_err) {
+    return fallback || key;
+  }
+}
+
+function mentorTopicKey(topicKey, field = 'Title') {
+  const map = {
+    who_am_i_becoming: 'WhoAmI',
+    paths_open: 'PathsOpen',
+    doing_well: 'DoingWell',
+    doing_wrong: 'DoingWrong',
+    how_should_i_fight: 'HowFight',
+    be_careful: 'Careful',
+    what_lies_ahead: 'Ahead',
+    how_would_you_play: 'PlayClass',
+    mentor_story: 'Story'
+  };
+  return `SWSE.MentorChat.Topics.${map[topicKey] || 'WhoAmI'}.${field}`;
+}
+
+function mentorPathKey(pathName = '') {
+  const key = String(pathName || '')
+    .replace(/[^A-Za-z0-9]+/g, ' ')
+    .trim()
+    .replace(/(?:^|\s)([A-Za-z0-9])/g, (_m, c) => c.toUpperCase());
+  const aliases = { HeavyWeapons: 'HeavyWeapons' };
+  return `SWSE.MentorChat.Paths.${aliases[key] || key || 'Default'}`;
+}
+
 const CHAT_TOPICS = [
   {
     key: 'who_am_i_becoming',
-    title: 'Who am I becoming?',
+    titleKey: mentorTopicKey('who_am_i_becoming', 'Title'),
     icon: 'fa-mask',
-    description: 'Reflect on your evolving role and identity',
+    descriptionKey: mentorTopicKey('who_am_i_becoming', 'Description'),
     contextType: 'introduction',
     gatesAt: 1
   },
   {
     key: 'paths_open',
-    title: 'What paths are open to me?',
+    titleKey: mentorTopicKey('paths_open', 'Title'),
     icon: 'fa-signs-post',
-    description: 'Explore archetype directions within your class',
+    descriptionKey: mentorTopicKey('paths_open', 'Description'),
     contextType: 'class_selection',
     gatesAt: 1
   },
   {
     key: 'doing_well',
-    title: 'What am I doing well?',
+    titleKey: mentorTopicKey('doing_well', 'Title'),
     icon: 'fa-thumbs-up',
-    description: 'Receive affirmation and analysis of your synergies',
+    descriptionKey: mentorTopicKey('doing_well', 'Description'),
     contextType: 'introduction',
     gatesAt: 3
   },
   {
     key: 'doing_wrong',
-    title: 'What am I doing wrong?',
+    titleKey: mentorTopicKey('doing_wrong', 'Title'),
     icon: 'fa-triangle-exclamation',
-    description: 'Identify gaps and inconsistencies in your build',
+    descriptionKey: mentorTopicKey('doing_wrong', 'Description'),
     contextType: 'introduction',
     gatesAt: 3
   },
   {
     key: 'how_should_i_fight',
-    title: 'How should I fight?',
+    titleKey: mentorTopicKey('how_should_i_fight', 'Title'),
     icon: 'fa-shield',
-    description: 'Learn your optimal combat role and battlefield positioning',
+    descriptionKey: mentorTopicKey('how_should_i_fight', 'Description'),
     contextType: 'introduction',
     gatesAt: 5
   },
   {
     key: 'be_careful',
-    title: 'What should I be careful of?',
+    titleKey: mentorTopicKey('be_careful', 'Title'),
     icon: 'fa-warning',
-    description: 'Understand risks, traps, and over-specialization',
+    descriptionKey: mentorTopicKey('be_careful', 'Description'),
     contextType: 'introduction',
     gatesAt: 5
   },
   {
     key: 'what_lies_ahead',
-    title: 'What lies ahead?',
+    titleKey: mentorTopicKey('what_lies_ahead', 'Title'),
     icon: 'fa-sparkles',
-    description: 'Explore prestige class options and future planning',
+    descriptionKey: mentorTopicKey('what_lies_ahead', 'Description'),
     contextType: 'class_selection',
     gatesAt: 6
   },
   {
     key: 'how_would_you_play',
-    title: 'How would you play this class?',
+    titleKey: mentorTopicKey('how_would_you_play', 'Title'),
     icon: 'fa-person',
-    description: "Experience your mentor's personal philosophy and priorities",
+    descriptionKey: mentorTopicKey('how_would_you_play', 'Description'),
     contextType: 'introduction',
     gatesAt: 1
   },
   {
     key: 'mentor_story',
-    title: 'What is your story?',
+    titleKey: mentorTopicKey('mentor_story', 'Title'),
     icon: 'fa-book',
-    description: "Learn about your mentor's past and what shaped them",
+    descriptionKey: mentorTopicKey('mentor_story', 'Description'),
     contextType: 'narrative',
     gatesAt: 1
   }
@@ -125,7 +161,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
   }
 
   get title() {
-    return `Talk to Your Mentors — ${this.actor.name}`;
+    return mentorChatI18n('SWSE.MentorChat.WindowTitle', { name: this.actor.name }, `Talk to Your Mentors — ${this.actor.name}`);
   }
 
   async _prepareContext() {
@@ -162,7 +198,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
       if (!className) return;
       const mentor = getMentorForClass(className);
       if (!mentor) return;
-      const mentorKey = Object.keys(MENTORS).find(k => MENTORS[k] === mentor);
+      const mentorKey = mentor?.mentorKey || getMentorKey(mentor);
       if (mentorKey && !mentorMap.has(mentorKey)) {
         mentorMap.set(mentorKey, {
           key: mentorKey,
@@ -207,7 +243,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     const introductions = Array.isArray(voiceData?.introduction) ? voiceData.introduction : [];
     const introduction = introductions.length > 0
       ? introductions[Math.floor(Math.random() * introductions.length)]
-      : `${mentor?.name || 'Your mentor'} studies you for a moment, then waits for your question.`;
+      : mentorChatI18n('SWSE.MentorChat.GreetingFallback', { name: mentor?.name || mentorChatI18n('SWSE.MentorChat.GreetingFallbackUnknown') }, `${mentor?.name || 'Your mentor'} studies you for a moment, then waits for your question.`);
 
     return {
       introduction,
@@ -228,7 +264,11 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     return CHAT_TOPICS.filter(topic => {
       const gateLevel = topic.gatesAt || 1;
       return level >= gateLevel;
-    });
+    }).map(topic => ({
+      ...topic,
+      title: mentorChatI18n(topic.titleKey, {}, topic.key),
+      description: mentorChatI18n(topic.descriptionKey, {}, '')
+    }));
   }
 
   async _onRender(context, options) {
@@ -269,7 +309,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     event.preventDefault();
     const topicKey = event.currentTarget.dataset.topic;
 
-    this.currentTopic = CHAT_TOPICS.find(t => t.key === topicKey);
+    this.currentTopic = this._getAvailableTopics().find(t => t.key === topicKey) || CHAT_TOPICS.find(t => t.key === topicKey);
 
     // Generate response based on topic
     try {
@@ -277,8 +317,8 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     } catch (err) {
       SWSELogger.error('Error generating mentor response:', err);
       this.currentResponse = {
-        introduction: "I apologize, but I'm having trouble forming my thoughts right now.",
-        advice: 'Please try again in a moment.',
+        introduction: mentorChatI18n('SWSE.MentorChat.ErrorIntro'),
+        advice: mentorChatI18n('SWSE.MentorChat.ErrorAdvice'),
         suggestions: []
       };
     }
@@ -325,7 +365,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
 
       // Show confirmation response from mentor
       this.currentResponse = {
-        introduction: `Ah, **${pathName}**. A wise choice.`,
+        introduction: mentorChatI18n('SWSE.MentorChat.PathSelectedIntro', { path: pathName }, `Ah, **${pathName}**. A wise choice.`),
         advice: this._generatePathConfirmation(pathName),
         pathSelected: pathName
       };
@@ -334,7 +374,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
 
     } catch (err) {
       SWSELogger.error('[Mentor Chat] Error selecting path:', err);
-      ui?.notifications?.error?.(`Failed to record path selection: ${err.message}`);
+      ui?.notifications?.error?.(mentorChatI18n('SWSE.MentorChat.PathSelectionFailed', { message: err.message }, `Failed to record path selection: ${err.message}`));
     }
   }
 
@@ -377,7 +417,8 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
       'default': 'This path suits you. Walk it with purpose, not pride.'
     };
 
-    return confirmations[pathName] || confirmations['default'];
+    const fallback = confirmations[pathName] || confirmations['default'];
+    return mentorChatI18n(mentorPathKey(pathName), {}, fallback);
   }
 
   /**
@@ -547,7 +588,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     const mentorContext = await this._getMentorContext();
 
     if (!mentorContext) {
-      return `At level ${level}, you are still finding your path.`;
+      return mentorChatI18n('SWSE.MentorChat.Analysis.FindingPath', { level }, `At level ${level}, you are still finding your path.`);
     }
 
     const primaryArchetype = mentorContext.archetype?.primary;
@@ -557,34 +598,32 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     let reflection = '';
 
     if (primaryArchetype) {
-      reflection += `At level ${level}, the galaxy sees you becoming a **${primaryArchetype.name}**.\n\n`;
-      reflection += `${primaryArchetype.description}\n\n`;
+      reflection += mentorChatI18n('SWSE.MentorChat.Analysis.LevelArchetype', { level, name: primaryArchetype.name, description: primaryArchetype.description }, `At level ${level}, the galaxy sees you becoming a **${primaryArchetype.name}**.\n\n${primaryArchetype.description}\n\n`);
     } else {
-      reflection += `At level ${level}, you are charting your own path.\n\n`;
+      reflection += mentorChatI18n('SWSE.MentorChat.Analysis.ChartingOwnPath', { level }, `At level ${level}, you are charting your own path.\n\n`);
     }
 
     if (themes.length > 0) {
-      reflection += `Your choices reveal strong themes: **${themes.slice(0, 2).join('** and **')}**. `;
-      reflection += `This shapes how you approach challenges and conflicts.\n\n`;
+      reflection += mentorChatI18n('SWSE.MentorChat.Analysis.Themes', { themes: themes.slice(0, 2).join('** and **') }, `Your choices reveal strong themes: **${themes.slice(0, 2).join('** and **')}**. This shapes how you approach challenges and conflicts.\n\n`);
     }
 
-    reflection += `Your combat approach is **${combatStyle}**. `;
+    reflection += mentorChatI18n('SWSE.MentorChat.Analysis.CombatApproach', { style: combatStyle }, `Your combat approach is **${combatStyle}**. `);
 
     if (combatStyle === 'melee') {
-      reflection += 'You face danger directly, relying on strength and proximity.';
+      reflection += mentorChatI18n('SWSE.MentorChat.Analysis.CombatMelee');
     } else if (combatStyle === 'ranged') {
-      reflection += 'You engage from distance, valuing positioning and precision.';
+      reflection += mentorChatI18n('SWSE.MentorChat.Analysis.CombatRanged');
     } else if (combatStyle === 'caster') {
-      reflection += 'You channel the Force, bending reality to your will.';
+      reflection += mentorChatI18n('SWSE.MentorChat.Analysis.CombatCaster');
     } else {
-      reflection += 'You adapt your tactics to each situation, refusing to be defined by a single method.';
+      reflection += mentorChatI18n('SWSE.MentorChat.Analysis.CombatMixed');
     }
 
     // Check DSP saturation if available
     const dspSaturation = DSPEngine.getSaturation(this.actor);
 
     if (dspSaturation > 0.5) {
-      reflection += `\n\n⚠️ The darkness grows within you. Your path is shifting in ways that may be difficult to reverse.`;
+      reflection += mentorChatI18n('SWSE.MentorChat.Analysis.DarknessWarning');
     }
 
     return reflection;
@@ -597,27 +636,27 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
    */
   async _generateArchetypePaths() {
     const classItems = this.actor.items.filter(i => i.type === 'class');
-    const className = classItems.map(c => c.name).join(', ') || 'Adventurer';
+    const className = classItems.map(c => c.name).join(', ') || mentorChatI18n('SWSE.MentorChat.Analysis.Adventurer');
 
-    let introduction = `Every path demands sacrifice. What you choose to master determines what you must forsake.\n\n`;
+    let introduction = mentorChatI18n('SWSE.MentorChat.Analysis.PathsIntro');
 
     // Get actual archetype options from data source
     const pathList = getArchetypeOptions(className);
 
     if (pathList.length === 0) {
-      introduction += `I cannot yet see the paths available to you. Your class is still being defined.`;
+      introduction += mentorChatI18n('SWSE.MentorChat.Analysis.PathsUnavailable');
       return {
         introduction,
         paths: []
       };
     }
 
-    introduction += `Consider your options carefully:\n\n`;
+    introduction += mentorChatI18n('SWSE.MentorChat.Analysis.PathsConsider');
 
     // Convert archetype data to display format
     const paths = pathList.map(archetype => ({
       name: archetype.name,
-      description: archetype.description || 'An archetype yet to be fully understood.'
+      description: archetype.description || mentorChatI18n('SWSE.MentorChat.Analysis.UnknownArchetype')
     }));
 
     return {
@@ -635,16 +674,16 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     const mentorContext = await this._getMentorContext();
 
     if (!mentorContext) {
-      return "Your build shows promise, though it's still being defined.";
+      return mentorChatI18n('SWSE.MentorChat.Analysis.SynergyFallback');
     }
 
-    let analysis = "Let me identify what's working:\n\n";
+    let analysis = mentorChatI18n('SWSE.MentorChat.Analysis.SynergyIntro');
 
     // Use strength signals from engine analysis (do NOT recompute)
     const strengthSignals = mentorContext.signals?.strengths || [];
 
     if (strengthSignals.length === 0) {
-      analysis += "Your build is still taking shape. Focus on developing coherence and synergy.";
+      analysis += mentorChatI18n('SWSE.MentorChat.Analysis.SynergyNone');
       return analysis;
     }
 
@@ -658,11 +697,11 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     if (affinities.length > 0) {
       const topPrestige = affinities[0];
       if (topPrestige.confidence >= 0.6) {
-        analysis += `\n✓ Your choices are building a clear path toward **${topPrestige.className}** (${Math.round(topPrestige.confidence * 100)}% alignment).\n`;
+        analysis += mentorChatI18n('SWSE.MentorChat.Analysis.PrestigeAlignment', { className: topPrestige.className, percent: Math.round(topPrestige.confidence * 100) }, `\n✓ Your choices are building a clear path toward **${topPrestige.className}** (${Math.round(topPrestige.confidence * 100)}% alignment).\n`);
       }
     }
 
-    analysis += `\nThese synergies compound. Continue building on what works.`;
+    analysis += mentorChatI18n('SWSE.MentorChat.Analysis.SynergyClosing');
 
     return analysis;
   }
@@ -676,16 +715,16 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     const mentorContext = await this._getMentorContext();
 
     if (!mentorContext) {
-      return "Your build is still being defined. Focus on finding coherence.";
+      return mentorChatI18n('SWSE.MentorChat.Analysis.GapFallback');
     }
 
-    let gaps = 'Every build has weaknesses. Let me point out yours:\n\n';
+    let gaps = mentorChatI18n('SWSE.MentorChat.Analysis.GapIntro');
 
     // Use conflict signals from engine analysis (do NOT recompute)
     const conflictSignals = mentorContext.signals?.conflicts || [];
 
     if (conflictSignals.length === 0) {
-      gaps = 'Your build shows no obvious gaps at this level. Continue as you are, but remain vigilant.';
+      gaps = mentorChatI18n('SWSE.MentorChat.Analysis.GapNone');
       return gaps;
     }
 
@@ -696,7 +735,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
 
     if (critical.length > 0) {
       critical.slice(0, 2).forEach(signal => {
-        gaps += `🔴 **Critical:** ${signal.evidence || signal.id}\n`;
+        gaps += `🔴 **${mentorChatI18n('SWSE.MentorChat.Analysis.Critical')}** ${signal.evidence || signal.id}\n`;
       });
     }
 
@@ -710,7 +749,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     const dspSaturation = DSPEngine.getSaturation(this.actor);
 
     if (dspSaturation > 0.3 && dspSaturation < 0.7) {
-      gaps += `\n⚠️ You're drifting toward the dark side without committing. This instability will cost you when clarity matters most.\n`;
+      gaps += mentorChatI18n('SWSE.MentorChat.Analysis.DarkDrift');
     }
 
     return gaps;
@@ -724,7 +763,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     const combatStyle = this.buildIntent.combatStyle;
     const level = this.actor.system.level;
 
-    let framing = 'Your role in combat defines your priorities:\n\n';
+    let framing = mentorChatI18n('SWSE.MentorChat.Analysis.RoleIntro');
 
     if (combatStyle === 'melee') {
       framing += `**Your Role: Frontline Enforcer**\n\n`;
@@ -764,7 +803,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     const level = this.actor.system.level;
     const dspSaturation = DSPEngine.getSaturation(this.actor);
 
-    let risks = 'These are the dangers you face:\n\n';
+    let risks = mentorChatI18n('SWSE.MentorChat.Analysis.RiskIntro');
 
     // Combat style-specific risks
     if (combatStyle === 'melee') {
@@ -783,9 +822,9 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
 
     // DSP-specific risks
     if (dspSaturation > 0.5) {
-      risks += `\n🔥 **Dark Side Corruption:** The darkness offers power, but it demands more than it gives. The further you go, the harder it becomes to turn back. Eventually, it will consume you.`;
+      risks += mentorChatI18n('SWSE.MentorChat.Analysis.RiskDarkCorruption');
     } else if (dspSaturation > 0.2) {
-      risks += `\n⚠️ **Temptation:** You're flirting with the dark side. Every step down that path makes the next step easier and the return harder.`;
+      risks += mentorChatI18n('SWSE.MentorChat.Analysis.RiskTemptation');
     }
 
     return risks;
@@ -800,23 +839,22 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     const level = this.actor.system.level;
 
     if (level < 6) {
-      return 'Prestige classes unlock at higher levels. For now, focus on mastering your current class and establishing your identity.';
+      return mentorChatI18n('SWSE.MentorChat.Analysis.PrestigeLow');
     }
 
-    let planning = 'The paths that lie ahead:\n\n';
+    let planning = mentorChatI18n('SWSE.MentorChat.Analysis.PrestigeIntro');
 
     if (prestigeAffinities.length === 0) {
-      planning += "Your build doesn't yet point toward a specific prestige class. Continue developing your core strengths, and a path will emerge.";
+      planning += mentorChatI18n('SWSE.MentorChat.Analysis.PrestigeNone');
       return planning;
     }
 
     prestigeAffinities.slice(0, 3).forEach((aff, idx) => {
-      const confidence = aff.confidence > 0 ? 'Recommended' : '';
-      planning += `**${aff.className}** (${confidence}% alignment)\n`;
-      planning += `This path builds on your current direction. It will deepen what you've started, not redirect it.\n\n`;
+      const confidence = aff.confidence > 0 ? mentorChatI18n('SWSE.MentorChat.Analysis.Recommended') : '';
+      planning += mentorChatI18n('SWSE.MentorChat.Analysis.PrestigePath', { className: aff.className, confidence }, `**${aff.className}** (${confidence}% alignment)\nThis path builds on your current direction. It will deepen what you've started, not redirect it.\n\n`);
     });
 
-    planning += `⚠️ **Tradeoff:** Prestige classes offer specialization, but they narrow your options. Choose the path that serves your purpose, not the one that sounds powerful.`;
+    planning += mentorChatI18n('SWSE.MentorChat.Analysis.PrestigeTradeoff');
 
     return planning;
   }
@@ -829,7 +867,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
     const mentorName = this.selectedMentor.mentor.name;
     const mentorClass = this.selectedMentor.key;
 
-    let doctrine = `You want to know how *I* would play this? Here's my truth:\n\n`;
+    let doctrine = mentorChatI18n('SWSE.MentorChat.Analysis.DoctrineIntro');
 
     // Mentor-specific doctrines
     if (mentorName === 'Miraj') {
@@ -876,7 +914,7 @@ export class MentorChatDialog extends SWSEFormApplicationV2 {
    */
   static show(actor) {
     if (!actor) {
-      ui.notifications.error('No character selected.');
+      ui.notifications.error(mentorChatI18n('SWSE.MentorChat.NoCharacterSelected'));
       return;
     }
 

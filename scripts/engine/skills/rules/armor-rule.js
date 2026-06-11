@@ -15,7 +15,12 @@
  * derived actor data retained as compatibility fallback.
  */
 
-import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import {
+  actorHasArmorProficiencyForArmor,
+  getArmorProficiencyPenalty,
+  isEnergyShieldItem,
+  resolveArmorData
+} from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 export function armorRule({ actor, skillKey }, result) {
   const skillDef = CONFIG.SWSE?.skills?.[skillKey] || {};
@@ -28,9 +33,13 @@ export function armorRule({ actor, skillKey }, result) {
 
   // Get armor check penalty from equipped body armor through the armor SSOT.
   const equippedArmor = actor?.items?.find?.(item => item?.type === "armor" && item?.system?.equipped && !isEnergyShieldItem(item));
-  const armorCheckPenalty = equippedArmor
+  let armorCheckPenalty = equippedArmor
     ? resolveArmorData(equippedArmor).armorCheckPenalty
     : actor.system.derived?.armor?.checkPenalty || actor.system.armor?.checkPenalty || 0;
+
+  if (equippedArmor && !actorHasArmorProficiencyForArmor(actor, equippedArmor)) {
+    armorCheckPenalty += getArmorProficiencyPenalty(resolveArmorData(equippedArmor).armorType);
+  }
 
   if (armorCheckPenalty !== 0) {
     result.penalties.push({

@@ -1,7 +1,7 @@
 <div class="destiny-spending-dialog">
   {{#if instantEffects}}
     <div class="effects-section">
-      <h3><i class="fa-solid fa-bolt"></i> Instant Effects</h3>
+      <h3><i class="fa-solid fa-bolt"></i> {{localize 'SWSE.PlayerUI.Destiny.InstantEffects'}}</h3>
       <div class="effects-list">
         {{#each instantEffects}}
           <div class="effect-option" data-effect-key="{{@key}}">
@@ -19,7 +19,7 @@
 
   {{#if timedEffects}}
     <div class="effects-section">
-      <h3><i class="fa-solid fa-hourglass-end"></i> Timed Bonuses (24h)</h3>
+      <h3><i class="fa-solid fa-hourglass-end"></i> {{localize 'SWSE.PlayerUI.Destiny.TimedBonuses'}}</h3>
       <div class="effects-list">
         {{#each timedEffects}}
           <div class="effect-option" data-effect-key="{{@key}}">

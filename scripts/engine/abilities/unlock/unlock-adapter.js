@@ -36,15 +36,17 @@ export class UnlockAdapter {
    */
   static register(actor, ability) {
     try {
+      const normalizedAbility = this._normalizeUnlockAbility(ability);
+
       // ── Validate contract ──────────────────────────────────────────────
-      UnlockContractValidator.assert(ability);
+      UnlockContractValidator.assert(normalizedAbility);
 
       // ── Route grants to handlers ───────────────────────────────────────
-      const grants = ability.system?.abilityMeta?.grants;
+      const grants = normalizedAbility.system?.abilityMeta?.grants;
       if (!Array.isArray(grants)) return;
 
       for (const grant of grants) {
-        this.processGrant(actor, ability, grant);
+        this.processGrant(actor, normalizedAbility, grant);
       }
 
       swseLogger.log(
@@ -58,6 +60,119 @@ export class UnlockAdapter {
       );
       // Non-fatal: log error but don't crash actor registration
     }
+  }
+
+
+  /**
+   * Normalize legacy UNLOCK metadata into the v2 abilityMeta.grants contract.
+   * Older feat/talent documents often stored proficiency grants under
+   * abilityMeta.proficiencyGrants or choiceMeta.grants instead of the canonical
+   * abilityMeta.grants array. Registration is read-only, so build a shallow
+   * normalized view rather than mutating the item during actor preparation.
+   *
+   * @param {Object} ability
+   * @returns {Object}
+   * @private
+   */
+  static _normalizeUnlockAbility(ability) {
+    const system = ability?.system ?? {};
+    const meta = system.abilityMeta ?? {};
+    const existingGrants = Array.isArray(meta.grants)
+      ? meta.grants.filter((grant) => grant && typeof grant === 'object')
+      : [];
+
+    if (existingGrants.length > 0) {
+      return ability;
+    }
+
+    const grants = [];
+    const normalizeArmorCategory = (value) => {
+      const text = String(value || '').toLowerCase().trim();
+      if (text.includes('heavy')) return 'heavy';
+      if (text.includes('medium')) return 'medium';
+      if (text.includes('light')) return 'light';
+      return '';
+    };
+
+    const normalizeWeaponProficiency = (value) => String(value || '')
+      .toLowerCase()
+      .replace(/^weapon\s+proficiency\s*[:(-]*/i, '')
+      .replace(/[()]/g, '')
+      .replace(/\s+weapons?$/i, '')
+      .trim();
+
+    if (Array.isArray(meta.proficiencyGrants)) {
+      for (const grant of meta.proficiencyGrants) {
+        const type = String(grant?.type || '').toUpperCase();
+        if (type === 'ARMOR_PROFICIENCY') {
+          const armorCategory = normalizeArmorCategory(grant?.armorCategory || grant?.category || grant?.value);
+          if (armorCategory) {
+            grants.push({
+              category: 'PROFICIENCY',
+              proficiencyType: 'armor',
+              proficiencies: [armorCategory],
+              description: grant?.description || `Armor proficiency: ${armorCategory}`
+            });
+          }
+        }
+        if (type === 'WEAPON_PROFICIENCY') {
+          const proficiency = normalizeWeaponProficiency(grant?.weaponGroup || grant?.proficiency || grant?.value);
+          if (proficiency) {
+            grants.push({
+              category: 'PROFICIENCY',
+              proficiencyType: 'weapon',
+              proficiencies: [proficiency],
+              description: grant?.description || `Weapon proficiency: ${proficiency}`
+            });
+          }
+        }
+      }
+    }
+
+    const choiceMeta = system.choiceMeta ?? {};
+    const choiceKind = String(choiceMeta.choiceKind || choiceMeta.choiceKey || '').toLowerCase();
+    if (choiceKind === 'armor_proficiency') {
+      const armorCategories = Array.isArray(choiceMeta.grants) && choiceMeta.grants.length > 0
+        ? choiceMeta.grants.map(normalizeArmorCategory).filter(Boolean)
+        : [normalizeArmorCategory(choiceMeta.value)].filter(Boolean);
+      if (armorCategories.length > 0) {
+        grants.push({
+          category: 'PROFICIENCY',
+          proficiencyType: 'armor',
+          proficiencies: [...new Set(armorCategories)],
+          description: `Armor proficiency: ${[...new Set(armorCategories)].join(', ')}`
+        });
+      }
+    }
+
+    if (choiceKind === 'weapon_proficiency') {
+      const weaponGroups = Array.isArray(choiceMeta.grants) && choiceMeta.grants.length > 0
+        ? choiceMeta.grants.map(normalizeWeaponProficiency).filter(Boolean)
+        : [normalizeWeaponProficiency(choiceMeta.value)].filter(Boolean);
+      if (weaponGroups.length > 0) {
+        grants.push({
+          category: 'PROFICIENCY',
+          proficiencyType: 'weapon',
+          proficiencies: [...new Set(weaponGroups)],
+          description: `Weapon proficiency: ${[...new Set(weaponGroups)].join(', ')}`
+        });
+      }
+    }
+
+    if (grants.length === 0) {
+      return ability;
+    }
+
+    return {
+      ...ability,
+      system: {
+        ...system,
+        abilityMeta: {
+          ...meta,
+          grants
+        }
+      }
+    };
   }
 
   /**

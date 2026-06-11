@@ -38,6 +38,7 @@ import { AlliesSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/she
 import { MessengerSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/MessengerSurfaceController.js";
 import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
+import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { buildUnarmedAttackContext, buildVirtualUnarmedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/unarmed-attack-helper.js";
 import { GrappleStateEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-state-engine.js";
 import { GrappleLegalityEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-legality-engine.js";
@@ -2271,6 +2272,9 @@ export class SWSEV2CharacterSheet extends
 
     // Wire listeners to the sheet root
     this.activateListeners(root, { signal });
+    if (this.document?.type === 'npc') {
+      this._wireNpcConceptSheetEvents(root, signal);
+    }
     activateCustomSkillsUI(this, root, { signal });
     applyResourceNumberAnimations(this, root);
     applyResourceBarAnimations(this, root);
@@ -4297,6 +4301,205 @@ const forcePoints = [];
     });
   }
 
+  _wireNpcConceptSheetEvents(root, signal) {
+    if (!(root instanceof HTMLElement) || this.actor?.type !== 'npc') return;
+
+    root.querySelectorAll('.swse-v2-condition-step').forEach((el) => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const rawStep = ev.currentTarget?.dataset?.step;
+        const step = rawStep === 'helpless' ? 5 : Number(rawStep);
+        if (!Number.isFinite(step)) return;
+        try {
+          if (typeof ActorEngine.setConditionStep === 'function') {
+            await ActorEngine.setConditionStep(this.actor, step, 'npc-concept-condition-step');
+          } else if (typeof this.actor?.setConditionTrackStep === 'function') {
+            await this.actor.setConditionTrackStep(step);
+          } else {
+            await ActorEngine.updateActor(this.actor, { 'system.conditionTrack.current': step }, { source: 'npc-concept-condition-step' });
+          }
+        } catch (err) {
+          swseLogger.error('[NPC Sheet] Condition update failed', { actor: this.actor?.name, step, error: err?.message });
+          ui?.notifications?.error?.(`Condition update failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    root.querySelectorAll('.swse-v2-open-item').forEach((el) => {
+      el.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
+        const item = itemId ? this.actor?.items?.get?.(itemId) : null;
+        if (!item) {
+          ui?.notifications?.warn?.('That NPC item could not be found.');
+          return;
+        }
+        item.sheet?.render?.(true);
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="roll-npc-weapon"], [data-action="roll-npc-statblock-attack"]').forEach((button) => {
+      button.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
+        const item = itemId ? this.actor?.items?.get?.(itemId) : null;
+        try {
+          if (item) {
+            await this._runCanonicalAttackWithPreroll(item, {
+              source: 'npc-concept-attack',
+              sourceElement: ev.currentTarget,
+              companionSource: ev.currentTarget,
+              sheet: this,
+              showRollCompanion: true
+            });
+            return;
+          }
+
+          const bonus = this._parseNpcSheetSignedNumber(ev.currentTarget?.dataset?.attackBonus);
+          if (bonus === null) {
+            ui?.notifications?.warn?.('This imported NPC attack does not have a parsable attack bonus yet.');
+            return;
+          }
+
+          const allowed = await this._applyActionEconomy?.('standard', {
+            source: 'npc-statblock-attack',
+            attackName: ev.currentTarget?.dataset?.attackName || 'Statblock Attack'
+          });
+          if (allowed === false) return;
+
+          const formula = bonus >= 0 ? `1d20 + ${bonus}` : `1d20 - ${Math.abs(bonus)}`;
+          await this._rollNpcSheetFlatFormula(formula, {
+            title: `${ev.currentTarget?.dataset?.attackName || 'Statblock Attack'} Attack`,
+            kind: 'npc-statblock-attack',
+            sourceElement: ev.currentTarget
+          });
+        } catch (err) {
+          swseLogger.error('[NPC Sheet] Attack roll failed', { actor: this.actor?.name, error: err?.message });
+          ui?.notifications?.error?.(`NPC attack roll failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="roll-npc-statblock-damage"]').forEach((button) => {
+      button.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const formula = this._normalizeNpcSheetDiceFormula(ev.currentTarget?.dataset?.damageFormula);
+        if (!formula) {
+          ui?.notifications?.warn?.('This imported NPC attack does not have a parsable damage formula yet.');
+          return;
+        }
+        try {
+          await this._rollNpcSheetFlatFormula(formula, {
+            title: `${ev.currentTarget?.dataset?.attackName || 'Statblock Attack'} Damage`,
+            kind: 'npc-statblock-damage',
+            sourceElement: ev.currentTarget
+          });
+        } catch (err) {
+          swseLogger.error('[NPC Sheet] Damage roll failed', { actor: this.actor?.name, error: err?.message });
+          ui?.notifications?.error?.(`NPC damage roll failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="open-npc-levelup"]').forEach((button) => {
+      button.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        try {
+          const { SWSENpcLevelUpEntry } = await import('/systems/foundryvtt-swse/scripts/apps/levelup/npc-levelup-entry.js');
+          new SWSENpcLevelUpEntry(this.actor).render(true);
+        } catch (err) {
+          ui?.notifications?.error?.(`NPC Level-Up failed to open: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="npc-repair-safe-normalize"]').forEach((button) => {
+      button.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        try {
+          const { NpcReviewRepairEngine } = await import('/systems/foundryvtt-swse/scripts/engine/npc-legal-review/NpcReviewRepairEngine.js');
+          const result = await NpcReviewRepairEngine.applySafeFixes(this.actor);
+          ui?.notifications?.info?.(result?.applied
+            ? `NPC Review & Repair applied ${result.updateCount} safe normalization update(s).`
+            : 'No safe NPC normalization updates were needed.');
+          await this.render(false);
+        } catch (err) {
+          ui?.notifications?.error?.(`NPC Review & Repair failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    root.querySelectorAll('[data-action="npc-repair-gm-approve"]').forEach((button) => {
+      button.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        try {
+          const ok = await Dialog.confirm({
+            title: 'GM Approve NPC Overrides',
+            content: '<p>This marks the NPC as table-approved with overrides. It does not recalculate progression legality.</p>',
+            yes: () => true,
+            no: () => false,
+            defaultYes: false
+          });
+          if (!ok) return;
+          const { NpcReviewRepairEngine } = await import('/systems/foundryvtt-swse/scripts/engine/npc-legal-review/NpcReviewRepairEngine.js');
+          await NpcReviewRepairEngine.markGmApproved(this.actor);
+          ui?.notifications?.info?.('NPC marked GM-approved with overrides.');
+          await this.render(false);
+        } catch (err) {
+          ui?.notifications?.error?.(`NPC GM approval failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+  }
+
+  _parseNpcSheetSignedNumber(value) {
+    const match = String(value ?? '').match(/[+-]?\d+/);
+    if (!match) return null;
+    const n = Number(match[0]);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  _normalizeNpcSheetDiceFormula(value) {
+    const formula = String(value ?? '')
+      .trim()
+      .replace(/[–—−]/g, '-')
+      .replace(/×/g, '*')
+      .replace(/\s+/g, '');
+    if (!formula || !/\d+d\d+/i.test(formula)) return '';
+    if (!/^[0-9dD+\-*/().]+$/.test(formula)) return '';
+    return formula;
+  }
+
+  async _rollNpcSheetFlatFormula(formula, { title = 'NPC Roll', kind = 'npc-roll', sourceElement = null } = {}) {
+    const rollData = this.actor?.getRollData?.() ?? {};
+    const roll = await new Roll(formula, rollData).evaluate({ async: true });
+    await SWSEChat.postRoll({
+      roll,
+      actor: this.actor,
+      flavor: title,
+      context: {
+        kind,
+        title,
+        sourceElement,
+        companionSource: sourceElement
+      },
+      flags: {
+        swse: {
+          source: kind,
+          actorId: this.actor?.id ?? null
+        }
+      }
+    });
+    return roll;
+  }
+
   _wireVehicleActorModeEvents(root, signal) {
     if (!(root instanceof HTMLElement)) return;
 
@@ -4367,12 +4570,18 @@ const forcePoints = [];
     root.querySelectorAll('[data-action="roll-weapon"], [data-action="roll-weapon-attack"]').forEach(el => {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
+        ev.stopPropagation();
+        ev.stopImmediatePropagation?.();
         const itemId = ev.currentTarget?.dataset?.itemId ?? ev.currentTarget?.dataset?.weaponId;
         if (!itemId || !this.actor) return;
         const item = this.actor.items?.get?.(itemId);
         if (!item) return;
-        if (typeof item.roll === 'function') await item.roll();
-        else await SWSERoll.rollAttack(this.actor, item, { showDialog: true });
+        await this._runCanonicalAttackWithPreroll(item, {
+          source: 'weapon-roll-button',
+          sourceElement: ev.currentTarget,
+          companionSource: ev.currentTarget,
+          sheet: this
+        });
       }, { signal });
     });
 
@@ -5220,6 +5429,10 @@ const forcePoints = [];
       if (!button) return;
 
       ev.preventDefault();
+      ev.stopPropagation();
+      ev.stopImmediatePropagation?.();
+      if (ev.__swseAttackHandled) return;
+      ev.__swseAttackHandled = true;
       const itemId = button.dataset.itemId;
       if (!itemId) return;
 
@@ -5227,32 +5440,10 @@ const forcePoints = [];
         const weapon = this.actor.items.get(itemId);
         if (!weapon) return;
 
-        const modResult = await showRollModifiersDialog({
-          title: `${weapon.name} Attack`,
-          rollType: 'attack',
-          actor: this.actor,
-          weapon,
-          sourceElement: button,
-          sheet: this
-        });
-
-        if (modResult === null) return; // Cancelled
-
-        if (modResult.fightingDefensively) {
-          try {
-            if (game.settings.get('foundryvtt-swse', 'fightDefensivelyActionMode') === 'swift') {
-              const swiftAllowed = await this._applyActionEconomy('swift', { source: 'fighting-defensively', weaponId: weapon?.id ?? null, weaponName: weapon?.name ?? null });
-              if (!swiftAllowed) return;
-            }
-          } catch (_err) {}
-          await SWSEActiveEffectsManager.applyCombatActionEffect(this.actor, 'fighting-defensively');
-        }
-        await this._runCanonicalAttack(weapon, {
-          ...modResult,
-          customModifier: modResult.customModifier || 0,
-          cover: modResult.cover || 'none',
-          concealment: modResult.concealment || 'none',
-          useForcePoint: modResult.useForcePoint || false,
+        await this._runCanonicalAttackWithPreroll(weapon, {
+          customModifier: 0,
+          cover: 'none',
+          concealment: 'none',
           sourceElement: button,
           companionSource: button,
           sheet: this,
@@ -5929,6 +6120,7 @@ const forcePoints = [];
     html.querySelectorAll('[data-action="swse-v2-use-action"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
+        event.stopPropagation();
         const actionId = button.dataset.actionId;
         if (!actionId) return;
 
@@ -5944,6 +6136,10 @@ const forcePoints = [];
     html.querySelectorAll('[data-action="roll-attack"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation?.();
+        if (event.__swseAttackHandled) return;
+        event.__swseAttackHandled = true;
         const weaponId = button.dataset.weaponId;
         if (!weaponId) return;
 
@@ -5954,26 +6150,7 @@ const forcePoints = [];
           || weapon.system?.weapon?.damage);
         if (!isRollableWeapon) return;
 
-        const modResult = await showRollModifiersDialog({
-          title: `${weapon.name} Attack`,
-          rollType: 'attack',
-          actor: this.actor,
-          weapon,
-          sourceElement: button,
-          sheet: this
-        });
-        if (modResult === null) return;
-        if (modResult.fightingDefensively) {
-          try {
-            if (game.settings.get('foundryvtt-swse', 'fightDefensivelyActionMode') === 'swift') {
-              const swiftAllowed = await this._applyActionEconomy('swift', { source: 'fighting-defensively', weaponId: weapon?.id ?? null, weaponName: weapon?.name ?? null });
-              if (!swiftAllowed) return;
-            }
-          } catch (_err) {}
-          await SWSEActiveEffectsManager.applyCombatActionEffect(this.actor, 'fighting-defensively');
-        }
-        await this._runCanonicalAttack(weapon, {
-          ...modResult,
+        await this._runCanonicalAttackWithPreroll(weapon, {
           source: "combat-tab",
           sourceElement: button,
           companionSource: button,
@@ -6105,9 +6282,25 @@ const forcePoints = [];
         }
 
         const isExpanded = button.getAttribute('aria-expanded') === 'true';
-        button.setAttribute('aria-expanded', String(!isExpanded));
-        const countBadge = button.querySelector('.expand-count');
-        if (!countBadge) button.textContent = isExpanded ? '▶' : '▼';
+        const nextExpanded = !isExpanded;
+        const label = nextExpanded ? 'Hide extra skill uses' : 'Show extra skill uses';
+        const chevronGlyph = nextExpanded ? '▴' : '▾';
+        const legacyGlyph = chevronGlyph;
+
+        html.querySelectorAll(`[data-action="toggle-skill-expand"][data-skill="${escapeSkillKey(skillKey)}"]`).forEach(toggleButton => {
+          toggleButton.setAttribute('aria-expanded', String(nextExpanded));
+          toggleButton.setAttribute('title', label);
+          toggleButton.classList.toggle('skill-expand-toggle--expanded', nextExpanded);
+
+          const labelNode = toggleButton.querySelector('.expand-label');
+          if (labelNode) labelNode.textContent = label;
+
+          const chevronNode = toggleButton.querySelector('.expand-chevron');
+          if (chevronNode) chevronNode.textContent = chevronGlyph;
+
+          const countBadge = toggleButton.querySelector('.expand-count');
+          if (!countBadge && !labelNode) toggleButton.textContent = legacyGlyph;
+        });
 
         if (isExpanded) {
           extraUsesSection.classList.remove('skill-extra-uses--expanded');
@@ -6970,8 +7163,9 @@ const forcePoints = [];
     html.querySelectorAll('[data-action="execute-extra-skill-use"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
+        event.stopPropagation();
         const skillKey = button.dataset.skill;
-        const useKey = button.dataset.useKey || button.dataset.key;
+        const useKey = button.dataset.useKey || button.dataset.key || button.dataset.use;
         const blocked = button.dataset.blocked === "true";
         const actionType = button.dataset.actionType || null;
         const sourceType = button.dataset.sourceType || null;
@@ -6988,7 +7182,11 @@ const forcePoints = [];
             source: "skills-tab",
             actionType,
             sourceType,
-            sourceLabel
+            sourceLabel,
+            sourceElement: button,
+            companionSource: button,
+            sheet: this,
+            showRollCompanion: true
           });
         } catch (err) {
           // console.error("Failed to use extra skill:", err);
@@ -7445,6 +7643,45 @@ const forcePoints = [];
     return await rollSkillCheck(this.actor, skillKey, options);
   }
 
+  async _runCanonicalAttackWithPreroll(weapon, options = {}) {
+    if (!weapon) return null;
+
+    const modResult = await showRollModifiersDialog({
+      title: `${weapon.name} Attack`,
+      rollType: 'attack',
+      actor: this.actor,
+      weapon,
+      sourceElement: options?.sourceElement ?? null,
+      sheet: this
+    });
+    if (modResult === null) return null;
+
+    if (modResult.fightingDefensively) {
+      try {
+        if (game.settings.get('foundryvtt-swse', 'fightDefensivelyActionMode') === 'swift') {
+          const swiftAllowed = await this._applyActionEconomy('swift', {
+            source: 'fighting-defensively',
+            weaponId: weapon?.id ?? null,
+            weaponName: weapon?.name ?? null
+          });
+          if (!swiftAllowed) return null;
+        }
+      } catch (_err) {}
+      await SWSEActiveEffectsManager.applyCombatActionEffect(this.actor, 'fighting-defensively');
+    }
+
+    return this._runCanonicalAttack(weapon, {
+      ...options,
+      ...modResult,
+      showDialog: false,
+      skipModifierDialog: true,
+      sourceElement: options?.sourceElement ?? null,
+      companionSource: options?.companionSource ?? options?.sourceElement ?? null,
+      sheet: this,
+      showRollCompanion: options?.showRollCompanion !== false
+    });
+  }
+
   async _runCanonicalAttack(weapon, options = {}) {
     if (!weapon) return null;
 
@@ -7465,7 +7702,11 @@ const forcePoints = [];
     });
     if (!allowed) return null;
 
-    return await SWSERoll.rollAttack(this.actor, weapon, options);
+    return await SWSERoll.rollAttack(this.actor, weapon, {
+      ...options,
+      showDialog: false,
+      skipModifierDialog: true
+    });
   }
 
   async _runCanonicalExtraSkillUse(skillKey, useKey, options = {}) {
@@ -7493,6 +7734,44 @@ const forcePoints = [];
       sourceType: options?.sourceType ?? selectedUse.sourceType ?? null,
       sourceLabel: options?.sourceLabel ?? selectedUse.sourceLabel ?? null
     };
+
+    if (options?.skipModifierDialog !== true && options?.showDialog !== false) {
+      const rollSkillKey = SkillUseFilter.getSkillKeyForApplication?.(selectedUse) || skillKey;
+      const rawSkill = this.actor?.system?.skills?.[rollSkillKey] ?? {};
+      const derivedSkills = this.actor?.system?.derived?.skills;
+      const derivedSkill = Array.isArray(derivedSkills?.list)
+        ? derivedSkills.list.find((row) => row?.key === rollSkillKey)
+        : derivedSkills?.[rollSkillKey];
+      const configSkill = CONFIG?.SWSE?.skills?.[rollSkillKey] ?? {};
+      const skillLabel = derivedSkill?.label
+        ?? rawSkill?.label
+        ?? configSkill?.label
+        ?? configSkill?.name
+        ?? String(rollSkillKey || skillKey).replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[\-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      const useLabel = selectedUse?.label ?? selectedUse?.name ?? selectedUse?.application ?? payload.sourceLabel ?? 'Skill Use';
+
+      const modResult = await showRollModifiersDialog({
+        title: `${useLabel} (${skillLabel})`,
+        rollType: 'skill',
+        actor: this.actor,
+        skillKey: rollSkillKey,
+        abilityKey: derivedSkill?.ability ?? derivedSkill?.selectedAbility ?? rawSkill?.selectedAbility ?? rawSkill?.ability ?? configSkill?.ability,
+        sourceElement: options?.sourceElement ?? null,
+        sheet: this
+      });
+
+      if (modResult === null) return null;
+
+      Object.assign(payload, {
+        ...modResult,
+        customModifier: Number(modResult.customModifier || 0),
+        useForcePoint: modResult.useForcePoint === true,
+        sourceElement: options?.sourceElement ?? modResult.sourceElement ?? null,
+        companionSource: options?.companionSource ?? options?.sourceElement ?? modResult.sourceElement ?? null,
+        sheet: options?.sheet ?? this,
+        showRollCompanion: options?.showRollCompanion !== false
+      });
+    }
 
     if (typeof SkillUseFilter?.rollSkillUseApplication === "function") {
       return await SkillUseFilter.rollSkillUseApplication(this.actor, selectedUse, payload);
@@ -7836,6 +8115,10 @@ const forcePoints = [];
     const grappleActionAllowed = await GrappleStateEngine.confirmAction(this.actor, { ...actionData, id: actionId, key: actionId }, { title: 'Confirm Grapple-Limited Action' });
     if (!grappleActionAllowed) return null;
 
+    if (this._isAimCombatAction(actionId, actionData)) {
+      return await this._executeAimCombatAction(actionId, actionData, options);
+    }
+
     // --- Manual/reference ability action cards ---
     // Multi-action feats/talents often unlock named actions whose real effect
     // still needs table or future engine resolution. Surface and track the
@@ -7951,7 +8234,9 @@ const forcePoints = [];
         showRollCompanion: true,
         combatContext: options?.combatContext ?? actionData?.workflowContext ?? null,
         actionData,
-        actionId
+        actionId,
+        showDialog: false,
+        skipModifierDialog: true
       });
     }
 
@@ -8083,7 +8368,39 @@ const forcePoints = [];
     }
   }
 
+  _isAimCombatAction(actionId, actionData = {}) {
+    const text = `${actionId || ''} ${actionData?.id || ''} ${actionData?.key || ''} ${actionData?.name || ''}`.toLowerCase();
+    return /(^|\b)aim(\b|$)/.test(text);
+  }
+
+  async _executeAimCombatAction(actionId, actionData = {}, options = {}) {
+    const swiftCount = Math.max(1, Number(actionData?.ruleData?.requiredSwiftCount ?? actionData?.swiftCount ?? 1) || 1);
+    for (let i = 0; i < swiftCount; i += 1) {
+      const allowed = await this._applyActionEconomy('swift', {
+        source: options?.source ?? 'aim',
+        actionId,
+        actionName: actionData?.name ?? 'Aim',
+        swiftIndex: i + 1,
+        swiftCount,
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
+      });
+      if (!allowed) return null;
+    }
+
+    return await this._announceManualCombatAction(actionId, {
+      ...actionData,
+      name: actionData?.name ?? 'Aim',
+      sourceName: actionData?.sourceName ?? 'Combat Action',
+      notes: actionData?.notes || 'The character aims. Their next applicable ranged attack may ignore the target's cover bonus to Reflex Defense, subject to the Aim action rules.',
+      description: actionData?.description || actionData?.notes || 'The character aims. Their next applicable ranged attack may ignore the target's cover bonus to Reflex Defense, subject to the Aim action rules.'
+    }, {
+      ...options,
+      actionType: swiftCount > 1 ? `${swiftCount} Swift Actions` : 'swift'
+    });
+  }
+
   _combatActionLooksLikeAttack(actionData = {}) {
+    if (this._isAimCombatAction(actionData?.id ?? actionData?.key, actionData)) return false;
     const values = [];
     const pushValue = (value) => {
       if (value === null || value === undefined) return;
@@ -8289,10 +8606,12 @@ const forcePoints = [];
 
   _deriveCombatActionEconomyType(actionData = {}) {
     return this._normalizeActionEconomyType(
-      actionData?.cost ??
-      actionData?.type ??
-      actionData?.action?.type ??
       actionData?.actionType ??
+      actionData?.action?.type ??
+      actionData?.type ??
+      actionData?.actionCost ??
+      actionData?.costType ??
+      (typeof actionData?.cost === 'string' ? actionData.cost : null) ??
       "standard"
     );
   }

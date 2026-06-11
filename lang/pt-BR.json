@@ -1,46 +1,46 @@
 {
   "SWSE": {
-    "SystemName": "Star Wars Edición Saga",
+    "SystemName": "Star Wars Edição Saga",
     "SheetLabels": {
-      "Character": "Hoja de Personaje",
-      "NPC": "Hoja de PNJ",
-      "Droid": "Hoja de Droide",
-      "Vehicle": "Hoja de Vehículo",
-      "Item": "Hoja de Objeto"
+      "Character": "Ficha de Personagem",
+      "NPC": "Ficha de NPC",
+      "Droid": "Ficha de Droide",
+      "Vehicle": "Ficha de Veículo",
+      "Item": "Ficha de Item"
     },
     "Abilities": {
-      "STR": "Fuerza",
+      "STR": "Força",
       "DEX": "Destreza",
-      "CON": "Constitución",
-      "INT": "Inteligencia",
-      "WIS": "Sabiduría",
+      "CON": "Constituição",
+      "INT": "Inteligência",
+      "WIS": "Sabedoria",
       "CHA": "Carisma"
     },
     "Defenses": {
-      "Reflex": "Defensa de Reflejos",
-      "Fortitude": "Defensa de Fortaleza",
-      "Will": "Defensa de Voluntad"
+      "Reflex": "Defesa de Reflexos",
+      "Fortitude": "Defesa de Fortitude",
+      "Will": "Defesa de Vontade"
     },
     "Skills": {
-      "Acrobatics": "Acrobacias",
+      "Acrobatics": "Acrobacia",
       "Climb": "Escalar",
-      "Deception": "Engaño",
-      "Endurance": "Aguante",
-      "GatherInformation": "Reunir Información",
+      "Deception": "Enganação",
+      "Endurance": "Tolerância",
+      "GatherInformation": "Obter Informação",
       "Initiative": "Iniciativa",
       "Jump": "Saltar",
-      "Knowledge": "Conocimiento",
-      "Mechanics": "Mecánica",
-      "Perception": "Percepción",
-      "Persuasion": "Persuasión",
+      "Knowledge": "Conhecimento",
+      "Mechanics": "Mecânica",
+      "Perception": "Percepção",
+      "Persuasion": "Persuasão",
       "Pilot": "Pilotar",
-      "Ride": "Montar",
-      "Stealth": "Sigilo",
-      "Survival": "Supervivencia",
+      "Ride": "Cavalgar",
+      "Stealth": "Furtividade",
+      "Survival": "Sobrevivência",
       "Swim": "Nadar",
-      "TreatInjury": "Tratar Heridas",
-      "UseComputer": "Usar Computadora",
-      "UseTheForce": "Usar la Fuerza"
+      "TreatInjury": "Tratar Ferimentos",
+      "UseComputer": "Usar Computador",
+      "UseTheForce": "Usar a Força"
     },
     "ConditionTrack": {
       "Normal": "Normal",
@@ -48,334 +48,334 @@
       "Minus2": "-2",
       "Minus5": "-5",
       "Minus10": "-10",
-      "Helpless": "Indefenso"
+      "Helpless": "Indefeso"
     },
     "Settings": {
       "EnableAutomation": {
-        "Name": "Habilitar Automatización de Combate",
-        "Hint": "Rastrear automáticamente rondas, turnos y aplicar efectos de combate"
+        "Name": "Ativar Automação de Combate",
+        "Hint": "Rastreia automaticamente rodadas, turnos e aplica efeitos de combate"
       },
       "AutoConditionRecovery": {
-        "Name": "Recuperación Automática de Condición",
-        "Hint": "Solicitar chequeos de recuperación de pista de condición al inicio del turno de cada combatiente"
+        "Name": "Recuperação Automática da Trilha de Condição",
+        "Hint": "Solicita testes de recuperação da trilha de condição no início do turno de cada combatente"
       },
       "AutoDamageThreshold": {
-        "Name": "Umbral de Daño Automático",
-        "Hint": "Mover automáticamente a los personajes por la pista de condición cuando el daño exceda su umbral de daño"
+        "Name": "Limiar de Dano Automático",
+        "Hint": "Move automaticamente personagens para baixo na trilha de condição quando o dano excede seu limiar de dano"
       },
       "WeaponRangeMultiplier": {
         "Name": "Multiplicador de Alcance de Armas",
-        "Hint": "Multiplicar todos los alcances de armas por este factor (útil para cuadrículas de diferentes escalas)"
+        "Hint": "Multiplica todos os alcances de armas por este fator (útil para grades em escalas diferentes)"
       },
       "ForcePointBonus": {
-        "Name": "Bonificación de Retirada de Punto de Fuerza",
-        "Hint": "Tamaño del dado de bonificación al gastar Puntos de Fuerza para retirar (d6 = +1d6)"
+        "Name": "Bônus de Rejogada de Ponto de Força",
+        "Hint": "Tamanho do dado de bônus ao gastar Pontos de Força para rejogar (d6 = +1d6)"
       },
       "StoreMarkup": {
-        "Name": "Sobreprecio de Tienda",
-        "Hint": "Porcentaje de sobreprecio para objetos comprados en la tienda (puede ser negativo para descuentos)"
+        "Name": "Acréscimo de Preço da Loja",
+        "Hint": "Porcentagem de acréscimo para itens comprados na loja (pode ser negativa para descontos)"
       },
       "StoreDiscount": {
-        "Name": "Descuento de Venta en Tienda",
-        "Hint": "Porcentaje del precio original al vender objetos a la tienda"
+        "Name": "Desconto de Venda na Loja",
+        "Hint": "Porcentagem do preço original ao vender itens para a loja"
       },
       "CharacterCreation": {
-        "Name": "Reglas de Creación de Personaje",
+        "Name": "Regras de Criação de Personagem",
         "Label": "Configurar",
-        "Hint": "Configurar generación de puntuaciones de habilidad, PG y opciones de creación de personaje"
+        "Hint": "Configura geração de valores de habilidade, PV e opções de criação de personagem"
       },
       "Advancement": {
-        "Name": "Reglas de Avance",
+        "Name": "Regras de Avanço",
         "Label": "Configurar",
-        "Hint": "Configurar subida de nivel, talentos, dotes y opciones de progresión"
+        "Hint": "Configura subida de nível, talentos, talentos especiais e opções de progressão"
       },
       "Combat": {
-        "Name": "Reglas de Combate",
+        "Name": "Regras de Combate",
         "Label": "Configurar",
-        "Hint": "Configurar combate, daño, muerte y reglas de la pista de condición"
+        "Hint": "Configura combate, dano, morte e regras da trilha de condição"
       },
       "Force": {
-        "Name": "Reglas de la Fuerza y Destino",
+        "Name": "Regras de Força e Destino",
         "Label": "Configurar",
-        "Hint": "Configurar Puntos de Fuerza, Lado Oscuro y reglas de poderes de la Fuerza"
+        "Hint": "Configura Pontos de Força, Lado Sombrio e regras de poderes da Força"
       },
       "Presets": {
-        "Name": "Preajustes de Reglas de Casa",
-        "Label": "Gestionar Preajustes",
-        "Hint": "Aplicar configuraciones de reglas de casa preajustadas o importar/exportar ajustes"
+        "Name": "Predefinições de Regras Caseiras",
+        "Label": "Gerenciar Predefinições",
+        "Hint": "Aplica configurações predefinidas de regras caseiras ou importa/exporta ajustes"
       },
       "SecondWindImproved": {
-        "Name": "Segundo Aliento Mejorado",
-        "Hint": "Segundo Aliento también mejora la pista de condición un paso"
+        "Name": "Fôlego Renovado Aprimorado",
+        "Hint": "Fôlego Renovado também melhora a trilha de condição em um passo"
       },
       "TalentEveryLevel": {
-        "Name": "Talento Cada Nivel",
-        "Hint": "Los personajes ganan un talento en cada nivel en lugar de cada nivel impar"
+        "Name": "Talento a Cada Nível",
+        "Hint": "Personagens recebem um talento a cada nível em vez de apenas em níveis ímpares"
       },
       "CrossClassSkills": {
-        "Name": "Entrenamiento de Habilidades Entre Clases",
-        "Hint": "Permitir entrenar habilidades que no son de clase por 2 casillas de habilidad"
+        "Name": "Treinamento em Perícias Fora da Classe",
+        "Hint": "Permite treinar perícias fora da classe por 2 espaços de perícia"
       },
       "SkillFocusRestriction": {
-        "Name": "Restricciones de Enfoque en Habilidad",
-        "Hint": "Restringir Enfoque en Habilidad (Usar la Fuerza) para prevenir dominio temprano en el juego"
+        "Name": "Restrições de Foco em Perícia",
+        "Hint": "Restringe Foco em Perícia (Usar a Força) para evitar domínio no início do jogo"
       },
       "ArmoredDefenseForAll": {
-        "Name": "Defensa Acorazada para Todos",
-        "Hint": "Todos los personajes pueden usar bonus de armadura a la Defensa de Reflejos"
+        "Name": "Defesa com Armadura para Todos",
+        "Hint": "Todos os personagens podem usar bônus de armadura na Defesa de Reflexos"
       },
       "WeaponRanges": {
         "Name": "Modificador de Alcance de Armas",
-        "Hint": "Multiplicar todos los alcances de armas por este factor"
+        "Hint": "Multiplica todos os alcances de armas por este fator"
       },
       "AthleticsConsolidation": {
-        "Name": "Habilidad de Atletismo",
-        "Hint": "Fusionar Escalar, Saltar y Nadar en una sola habilidad de Atletismo"
+        "Name": "Perícia Atletismo",
+        "Hint": "Une Escalar, Saltar e Nadar em uma única perícia Atletismo"
       },
       "DiagonalMovement": {
-        "Name": "Movimiento Diagonal",
-        "Hint": "Cómo contar el movimiento diagonal en la cuadrícula"
+        "Name": "Movimento Diagonal",
+        "Hint": "Como contar movimento diagonal na grade"
       },
       "ForcePointRecovery": {
-        "Name": "Recuperación de Puntos de Fuerza",
-        "Hint": "Cuándo se refrescan los Puntos de Fuerza"
+        "Name": "Recuperação de Pontos de Força",
+        "Hint": "Quando os Pontos de Força são renovados"
       },
       "ConditionTrackCap": {
-        "Name": "Límite de Daño de Pista de Condición",
-        "Hint": "Pasos máximos de pista de condición por un solo ataque"
+        "Name": "Limite de Dano da Trilha de Condição",
+        "Hint": "Máximo de passos na trilha de condição por um único ataque"
       },
       "KnowledgeSkills": {
-        "Name": "Modo de Habilidad de Conocimiento",
-        "Hint": "Consolidar múltiples habilidades de conocimiento"
+        "Name": "Modo de Perícias de Conhecimento",
+        "Hint": "Consolida múltiplas perícias de conhecimento"
       },
       "DarkSideTemptation": {
-        "Name": "Tentación del Lado Oscuro",
-        "Hint": "Gastar Punto de Fuerza para ganar temporalmente poderes del Lado Oscuro"
+        "Name": "Tentação do Lado Sombrio",
+        "Hint": "Gasta Ponto de Força para ganhar temporariamente poderes do Lado Sombrio"
       },
       "BlasterCharges": {
-        "Name": "Rastrear Cargas de Bláster",
-        "Hint": "Rastrear munición para armas de energía"
+        "Name": "Rastrear Cargas de Blaster",
+        "Hint": "Rastreia munição de armas de energia"
       },
       "CriticalHit": {
-        "Name": "Variante de Golpe Crítico",
-        "Hint": "Cálculos alternativos de daño de golpe crítico"
+        "Name": "Variante de Acerto Crítico",
+        "Hint": "Cálculos alternativos de dano de acerto crítico"
       },
       "Retraining": {
-        "Name": "Permitir Reentrenamiento",
-        "Hint": "Permitir intercambiar dotes/talentos al subir de nivel"
+        "Name": "Permitir Retreinamento",
+        "Hint": "Permite trocar talentos especiais/talentos ao subir de nível"
       },
       "DailyForcePoints": {
-        "Name": "Puntos de Fuerza Diarios",
-        "Hint": "Usar Puntos de Fuerza diarios en lugar de por nivel (1-5°: 1 PF, 6-10°: 2 PF, 11-15°: 3 PF, 16+: 4 PF por día)"
+        "Name": "Pontos de Força Diários",
+        "Hint": "Usa Pontos de Força diários em vez de por nível (1º-5º: 1 PF, 6º-10º: 2 PF, 11º-15º: 3 PF, 16+: 4 PF por dia)"
       },
       "DarkSideTemptationMechanic": {
-        "Name": "Mecánica de Tentación del Lado Oscuro",
-        "Hint": "Permitir a los personajes invocar el Lado Oscuro al gastar Puntos de Fuerza (requiere Puntuación de Lado Oscuro ≤ mitad de Sabiduría, +1d6, aumenta Puntuación de Lado Oscuro en 1)"
+        "Name": "Mecânica de Tentação do Lado Sombrio",
+        "Hint": "Permite que personagens invoquem o Lado Sombrio ao gastar Pontos de Força (exige Pontuação do Lado Sombrio ≤ metade da Sabedoria, adiciona +1d6 e aumenta a Pontuação do Lado Sombrio em 1)"
       },
       "ResetResourcesOnCombat": {
-        "Name": "Restablecer Recursos al Inicio del Combate",
-        "Hint": "Restablecer automáticamente recursos temporales (como Segundo Aliento) cuando comienza el combate"
+        "Name": "Restaurar Recursos no Início do Combate",
+        "Hint": "Restaura automaticamente recursos temporários (como Fôlego Renovado) quando o combate começa"
       },
       "WelcomeShown": {
-        "Name": "Mensaje de Bienvenida Mostrado",
-        "Hint": "Rastrea si el mensaje de bienvenida ha sido mostrado"
+        "Name": "Mensagem de Boas-vindas Exibida",
+        "Hint": "Rastreia se a mensagem de boas-vindas foi exibida"
       },
       "DevMode": {
-        "Name": "Modo Desarrollador",
-        "Hint": "Habilitar registro detallado de errores y trazas de pila para depuración"
+        "Name": "Modo de Desenvolvedor",
+        "Hint": "Ativa registro detalhado de erros e rastros de pilha para depuração"
       },
       "Store": {
         "RequireGMApproval": {
-          "Hint": "Si está activado, los droides personalizados requieren aprobación del DJ antes de descontar créditos. Si está desactivado, se finalizan de inmediato.",
-          "Name": "Requerir aprobación del DJ para droides personalizados"
+          "Name": "Require GM Approval for Custom Droids",
+          "Hint": "When enabled, custom droids require GM approval before credits are deducted. When disabled, custom droids are finalized immediately."
         }
       }
     },
     "Compendium": {
-      "Classes": "Clases",
+      "Classes": "Classes",
       "Talents": "Talentos",
-      "TalentTrees": "Árboles de Talentos",
-      "Feats": "Dotes",
-      "Species": "Especies",
-      "Equipment": "Equipo",
+      "TalentTrees": "Árvores de Talentos",
+      "Feats": "Talentos Especiais",
+      "Species": "Espécies",
+      "Equipment": "Equipamento",
       "Weapons": "Armas",
       "Armor": "Armadura",
-      "ArmorLight": "Armadura Ligera",
-      "ArmorMedium": "Armadura Media",
+      "ArmorLight": "Armadura Leve",
+      "ArmorMedium": "Armadura Média",
       "ArmorHeavy": "Armadura Pesada",
-      "ForcePowers": "Poderes de la Fuerza",
-      "ForceTechniques": "Técnicas de la Fuerza",
-      "ForceSecrets": "Secretos de la Fuerza",
-      "LightsaberFormPowers": "Poderes de Forma de Sable de Luz",
-      "Skills": "Habilidades",
-      "ExtraSkillUses": "Usos Adicionales de Habilidad",
-      "Conditions": "Condiciones",
-      "SpecialCombatConditions": "Condiciones Especiales de Combate",
+      "ForcePowers": "Poderes da Força",
+      "ForceTechniques": "Técnicas da Força",
+      "ForceSecrets": "Segredos da Força",
+      "LightsaberFormPowers": "Poderes de Forma de Sabre de Luz",
+      "Skills": "Perícias",
+      "ExtraSkillUses": "Usos Extras de Perícia",
+      "Conditions": "Condições",
+      "SpecialCombatConditions": "Condições Especiais de Combate",
       "Attributes": "Atributos",
-      "Vehicles": "Vehículos",
+      "Vehicles": "Veículos",
       "Droids": "Droides",
-      "NPCs": "PNJs"
+      "NPCs": "NPCs"
     },
     "ForcePoints": {
       "SpendDialog": {
-        "Title": "Gastar Punto de Fuerza",
-        "Question": "¿Gastar un Punto de Fuerza para {reason}?",
-        "RollInfo": "Tirarás {die} y añadirás el {method} a tu tirada.",
-        "CallDarkSide": "Invocar el Lado Oscuro (+1d6, aumenta Puntuación de Lado Oscuro en 1)",
-        "Remaining": "Puntos de Fuerza Restantes:",
-        "Spend": "Gastar Punto de Fuerza",
+        "Title": "Gastar Ponto de Força",
+        "Question": "Gastar um Ponto de Força para {reason}?",
+        "RollInfo": "Você rolará {die} e adicionará o {method} à sua rolagem.",
+        "CallDarkSide": "Invocar o Lado Sombrio (+1d6, aumenta a Pontuação do Lado Sombrio em 1)",
+        "Remaining": "Pontos de Força Restantes:",
+        "Spend": "Gastar Ponto de Força",
         "Cancel": "Cancelar"
       },
       "Chat": {
-        "Title": "Punto de Fuerza Gastado",
-        "Highest": "Más Alto:",
+        "Title": "Ponto de Força Gasto",
+        "Highest": "Maior:",
         "Result": "Resultado:",
-        "DarkSideBonus": "Bonificación de Lado Oscuro:",
-        "DarkSideWarning": "Puntuación de Lado Oscuro aumentada en 1",
-        "TotalBonus": "Bonificación Total:",
+        "DarkSideBonus": "Bônus do Lado Sombrio:",
+        "DarkSideWarning": "Pontuação do Lado Sombrio aumentou em 1",
+        "TotalBonus": "Bônus Total:",
         "UsedFor": "Usado para:",
-        "ReducedDarkSide": "Puntuación de Lado Oscuro reducida a {score}",
-        "AvoidDeath": "¡{name} gasta un Punto de Fuerza para evitar la muerte y cae inconsciente!",
-        "AlreadyZero": "Tu Puntuación de Lado Oscuro ya es 0.",
-        "NoPointsRemaining": "¡No quedan Puntos de Fuerza!"
+        "ReducedDarkSide": "Pontuação do Lado Sombrio reduzida para {score}",
+        "AvoidDeath": "{name} gasta um Ponto de Força para evitar a morte e cai inconsciente!",
+        "AlreadyZero": "Sua Pontuação do Lado Sombrio já é 0.",
+        "NoPointsRemaining": "Não restam Pontos de Força!"
       },
       "Methods": {
         "result": "resultado",
-        "highest_result": "resultado más alto"
+        "highest_result": "maior resultado"
       }
     },
     "Notifications": {
       "Welcome": {
-        "Title": "¡Sistema SWSE Mejorado Cargado!",
-        "ConditionTrack": "Pista de Condición Visual activa",
-        "DamageThreshold": "Automatización de Umbral de Daño habilitada",
-        "ForceSuite": "Gestión de Suite de Fuerza lista",
-        "Summary": "Consulta la pestaña Resumen para tu panel de combate"
+        "Title": "Sistema SWSE Aprimorado Carregado!",
+        "ConditionTrack": "Trilha de Condição visual ativa",
+        "DamageThreshold": "Automação de Limiar de Dano ativada",
+        "ForceSuite": "Gerenciamento da Suíte da Força pronto",
+        "Summary": "Confira a aba Resumo para seu painel de combate"
       },
       "Condition": {
-        "RecoverySuccess": "¡{name} recupera un paso en la pista de condición!",
-        "RecoveryFailed": "{name} falla al recuperarse."
+        "RecoverySuccess": "{name} recupera um passo na trilha de condição!",
+        "RecoveryFailed": "{name} não consegue se recuperar."
       },
       "Combat": {
-        "NoTargets": "¡No hay objetivos seleccionados!",
-        "NoActorSelected": "No hay actor seleccionado"
+        "NoTargets": "Nenhum alvo selecionado!",
+        "NoActorSelected": "Nenhum ator selecionado"
       },
       "Damage": {
-        "CannotRoll": "No se puede tirar daño para este objeto."
+        "CannotRoll": "Não é possível rolar dano para este item."
       },
       "Rolls": {
-        "DefenseNotFound": "Tipo de defensa {type} no encontrado",
-        "SaveSucceeded": "¡Salvación exitosa! ({total} contra CD {dc})",
-        "SaveFailed": "¡Salvación fallida! ({total} contra CD {dc})",
-        "DiceRollFailed": "Tirada de dados fallida: {error}",
-        "SkillNotFound": "Habilidad {skill} no encontrada",
-        "UseForceRequiresTraining": "¡Usar la Fuerza requiere entrenamiento!"
+        "DefenseNotFound": "Tipo de defesa {type} não encontrado",
+        "SaveSucceeded": "Salvamento bem-sucedido! ({total} vs CD {dc})",
+        "SaveFailed": "Salvamento falhou! ({total} vs CD {dc})",
+        "DiceRollFailed": "Rolagem de dados falhou: {error}",
+        "SkillNotFound": "Perícia {skill} não encontrada",
+        "UseForceRequiresTraining": "Usar a Força exige treinamento!"
       },
       "Items": {
-        "NotOwnedByActor": "Este objeto no pertenece a ningún actor.",
-        "SpeciesApplied": "Rasgos raciales de {species} aplicados a {actor}",
-        "AlreadyHasClass": "{actor} ya tiene la clase {class}"
+        "NotOwnedByActor": "Este item não pertence a um ator.",
+        "SpeciesApplied": "Traços raciais de {species} aplicados a {actor}",
+        "AlreadyHasClass": "{actor} já possui a classe {class}"
       },
       "System": {
-        "MigrationComplete": "Migración completa: {updated} actualizados, {errors} errores"
+        "MigrationComplete": "Migração concluída: {updated} atualizados, {errors} erros"
       }
     },
     "Dialogs": {
       "ConditionRecovery": {
-        "Title": "Recuperación de Condición",
-        "Content": "<p><strong>{name}</strong> puede intentar recuperarse.</p><p>Posición actual: {current}/5</p><p>¿Hacer una prueba de Aguante CD 10?</p>"
+        "Title": "Recuperação de Condição",
+        "Content": "<p><strong>{name}</strong> pode tentar recuperação de condição.</p><p>Posição atual: {current}/5</p><p>Fazer um teste de Tolerância CD 10?</p>"
       },
       "ReplaceSpecies": {
-        "Title": "¿Reemplazar Especie?",
-        "Content": "<p>{actor} ya tiene la especie: <strong>{existing}</strong></p><p>¿Reemplazar con <strong>{new}</strong>?</p>"
+        "Title": "Substituir Espécie?",
+        "Content": "<p>{actor} já possui espécie: <strong>{existing}</strong></p><p>Substituir por <strong>{new}</strong>?</p>"
       },
       "ApplyDroidChassis": {
-        "Title": "¿Aplicar Chasis de Droide?"
+        "Title": "Aplicar Chassi de Droide?"
       },
       "ApplyVehicleTemplate": {
-        "Title": "¿Aplicar Plantilla de Vehículo?"
+        "Title": "Aplicar Modelo de Veículo?"
       },
       "ApplyDamage": {
-        "Title": "Aplicar Daño a {name}",
-        "Amount": "Cantidad de Daño",
-        "CheckThreshold": "Verificar Umbral de Daño",
-        "IgnoreTemp": "Ignorar PG Temporales",
-        "Button": "Aplicar Daño"
+        "Title": "Aplicar Dano a {name}",
+        "Amount": "Quantidade de Dano",
+        "CheckThreshold": "Verificar Limiar de Dano",
+        "IgnoreTemp": "Ignorar PV Temporários",
+        "Button": "Aplicar Dano"
       },
       "Healing": {
-        "TitleHeal": "Curar a {name}",
-        "TitleRepair": "Reparar a {name}",
-        "Amount": "Cantidad de Curación",
-        "RepairAmount": "Cantidad de Reparación (vía Mecánica)",
-        "ButtonHeal": "Aplicar Curación",
-        "ButtonRepair": "Aplicar Reparación",
-        "DroidNote": "Los droides solo pueden repararse con la habilidad Mecánica."
+        "TitleHeal": "Curar {name}",
+        "TitleRepair": "Reparar {name}",
+        "Amount": "Quantidade de Cura",
+        "RepairAmount": "Quantidade de Reparo (via Mecânica)",
+        "ButtonHeal": "Aplicar Cura",
+        "ButtonRepair": "Aplicar Reparo",
+        "DroidNote": "Droides só podem ser reparados com a perícia Mecânica."
       },
       "ConditionTrack": {
-        "Title": "Pista de Condición: {name}"
+        "Title": "Trilha de Condição: {name}"
       },
       "Store": {
-        "Title": "Bolsa de Intercambio Galáctica",
+        "Title": "Bolsa de Comércio Galáctica",
         "ConfirmDroidPurchase": "Confirmar Compra de Droide",
-        "ConfirmVehiclePurchase": "Confirmar Compra de Vehículo",
+        "ConfirmVehiclePurchase": "Confirmar Compra de Veículo",
         "BuildCustomDroid": "Construir Droide Personalizado",
         "BuildCustomStarship": "Construir Nave Estelar Personalizada",
-        "CompletePurchase": "Completar Compra",
+        "CompletePurchase": "Concluir Compra",
         "RequireGMApproval": {
-          "Hint": "When enabled, custom droids must be approved by a GM before credits are deducted. When disabled, custom droids are immediately finalized.",
-          "Name": "Require GM Approval for Custom Droids"
+          "Name": "Exigir Aprovação do GM para Droides Personalizados",
+          "Hint": "Quando ativado, droides personalizados devem ser aprovados por um GM antes que créditos sejam descontados. Quando desativado, droides personalizados são finalizados imediatamente."
         }
       },
       "LevelUp": {
-        "Title": "Subir de Nivel {name}"
+        "Title": "Subir de Nível {name}"
       },
       "HouseRules": {
-        "Title": "Configuración de Reglas de Casa SWSE",
-        "CharacterCreation": "Creación de Personaje",
-        "SkillsFeats": "Habilidades y Dotes",
-        "Advancement": "Avance",
+        "Title": "Configuração de Regras Caseiras SWSE",
+        "CharacterCreation": "Criação de Personagem",
+        "SkillsFeats": "Perícias e Talentos Especiais",
+        "Advancement": "Avanço",
         "Combat": "Combate",
-        "ForceDestiny": "Fuerza y Destino",
+        "ForceDestiny": "Força e Destino",
         "SpaceCombat": "Combate Espacial",
-        "Presets": "Preajustes",
-        "CharacterCreationRules": "Reglas de Creación de Personaje",
-        "AdvancementRules": "Reglas de Avance",
-        "CombatRules": "Reglas de Combate",
-        "ForceDestinyRules": "Reglas de Fuerza y Destino"
+        "Presets": "Predefinições",
+        "CharacterCreationRules": "Regras de Criação de Personagem",
+        "AdvancementRules": "Regras de Avanço",
+        "CombatRules": "Regras de Combate",
+        "ForceDestinyRules": "Regras de Força e Destino"
       },
       "CharacterGenerator": {
-        "Title": "Generador de Personaje",
+        "Title": "Gerador de Personagem",
         "ImportDroidType": "Importar Tipo de Droide"
       },
       "Buttons": {
         "Confirm": "Confirmar",
         "Cancel": "Cancelar",
         "Apply": "Aplicar",
-        "Close": "Cerrar",
-        "Save": "Guardar",
-        "Delete": "Eliminar"
+        "Close": "Fechar",
+        "Save": "Salvar",
+        "Delete": "Excluir"
       }
     },
     "Chat": {
       "Flavors": {
-        "ConditionRecovery": "Prueba de Recuperación de Condición (CD 10)",
+        "ConditionRecovery": "Teste de Recuperação de Condição (CD 10)",
         "Attack": "Ataque de {weapon}",
-        "Damage": "Daño de {weapon}",
-        "Save": "{name} lanza una salvación de {type} ({modifier})",
-        "Skill": "Prueba de {skill}"
+        "Damage": "Dano de {weapon}",
+        "Save": "{name} rola um salvamento de {type} ({modifier})",
+        "Skill": "Teste de {skill}"
       },
       "Roll": {
-        "CriticalThreat": "¡AMENAZA CRÍTICA!",
-        "RollDamage": "Tirar Daño",
-        "ApplyDamage": "Aplicar Daño",
+        "CriticalThreat": "AMEAÇA CRÍTICA!",
+        "RollDamage": "Rolar Dano",
+        "ApplyDamage": "Aplicar Dano",
         "DiceTotal": "Total",
         "Formula": "Fórmula",
-        "Breakdown": "Desglose",
+        "Breakdown": "Detalhamento",
         "Natural20CriticalThreat": "★ Natural 20 — Critical Threat",
         "ForcePowerDCTierReached": "Force power DC tier reached",
-        "AvailableReactions": "Reacciones disponibles",
-        "ReactionWindow": "Ventana de reacción",
-        "Reroll": "Repetir tirada",
+        "AvailableReactions": "Reações disponíveis",
+        "ReactionWindow": "Janela de reação",
+        "Reroll": "Rolar novamente",
         "PendingResolution": "Pending Resolution",
         "Resolved": "Resolved",
         "Failed": "Failed",
@@ -384,16 +384,16 @@
       },
       "Combat": {
         "Turn": "Turno",
-        "Round": "Ronda",
-        "TacticalDeclaration": "DECLARACIÓN TÁCTICA",
-        "CombatStatus": "ESTADO DE COMBATE",
-        "NoDefensiveStatus": "No se ha declarado ningún estado defensivo.",
+        "Round": "Rodada",
+        "TacticalDeclaration": "DECLARAÇÃO TÁTICA",
+        "CombatStatus": "STATUS DE COMBATE",
+        "NoDefensiveStatus": "Nenhum status defensivo está declarado no momento.",
         "Cover": "Cobertura",
         "Mode": "Modo",
-        "Prone": "Tumbado",
-        "Yes": "Sí",
-        "No": "No",
-        "NoCover": "Sin cobertura",
+        "Prone": "Caído",
+        "Yes": "Sim",
+        "No": "Não",
+        "NoCover": "Sem cobertura",
         "PartialCover": "Cobertura parcial",
         "CoverBonus": "Cover (+5 Reflex)",
         "EnhancedCover": "Enhanced Cover (+10 Reflex)",
@@ -403,24 +403,24 @@
         "FullDefense": "Full Defense (+5 Reflex / attacks locked)",
         "ProneStatus": "Prone (+5 vs ranged / -5 vs melee)",
         "SafeZoneDeclared": "Zona segura declarada",
-        "CombatStatusDeclared": "Estado de combate declarado",
+        "CombatStatusDeclared": "Status de combate declarado",
         "SafeZoneNoGeometry": "No map geometry is automated by this card.",
         "SafeZonePlacement": "GM confirms the 4×4 Safe Zone placement and affected allies.",
         "SafeZoneBenefits": "Allies who start their turn in the Safe Zone gain +2 Fortitude and +2 Will Defense.",
         "SafeZoneOverlap": "Safe Zones cannot overlap another Safe Zone.",
         "SafeZoneNote": "This is a tactical declaration card. Resolve placement and affected tokens at the table.",
         "StatusNote": "Current combat status declared for GM/player reference.",
-        "UnknownActor": "Actor desconocido",
-        "UnknownCombatant": "Combatiente desconocido"
+        "UnknownActor": "Ator desconhecido",
+        "UnknownCombatant": "Combatente desconhecido"
       },
       "Holonet": {
-        "Unread": "No leído",
-        "Decline": "Rechazar",
-        "SeeMessage": "Ver mensaje",
+        "Unread": "Não lido",
+        "Decline": "Recusar",
+        "SeeMessage": "Ver mensagem",
         "Urgent": "Urgente",
         "Alert": "Alerta",
         "Secure": "Seguro",
-        "Incoming": "Entrante",
+        "Incoming": "Recebido",
         "HolonetRelay": "Holonet Relay",
         "Approved": "Approved",
         "Denied": "Denied",
@@ -443,53 +443,53 @@
         "Sent": "sent",
         "OffersAsset": "offers asset",
         "OffersItems": "offers items",
-        "AcceptAsset": "Aceptar recurso",
-        "AcceptItems": "Aceptar objetos",
-        "Item": "Objeto",
+        "AcceptAsset": "Aceitar recurso",
+        "AcceptItems": "Aceitar itens",
+        "Item": "Item",
         "IncomingTransmissionSubject": "Incoming Transmission"
       },
       "Progression": {
-        "LevelUp": "¡Subida de nivel!",
-        "LevelUpComplete": "¡Subida de nivel completa!",
-        "CharacterCreated": "¡Personaje creado!",
+        "LevelUp": "Subiu de nível!",
+        "LevelUpComplete": "Subida de nível concluída!",
+        "CharacterCreated": "Personagem criado!",
         "Level": "Level {level}",
         "ClassLevel": "Level {level}",
-        "Granted": "Otorgado:",
-        "Selected": "Seleccionado:",
+        "Granted": "Concedido:",
+        "Selected": "Selecionado:",
         "Talents": "Talentos:",
-        "BonusFeats": "Dotes adicionales:",
-        "ForcePoints": "Puntos de Fuerza:",
-        "AbilityIncrease": "Aumento de característica:",
-        "AbilityIncreases": "Aumentos de característica:",
-        "HitPoints": "Puntos de golpe:",
+        "BonusFeats": "Talentos extras:",
+        "ForcePoints": "Pontos de Força:",
+        "AbilityIncrease": "Aumento de atributo:",
+        "AbilityIncreases": "Aumentos de atributo:",
+        "HitPoints": "Pontos de vida:",
         "Slots": "slot(s)",
         "Points": "point(s)",
-        "Classes": "Clases:",
-        "Species": "Especie:",
-        "Background": "Trasfondo:",
-        "TalentsSelected": "Talentos seleccionados:",
-        "FeatsSelected": "Dotes seleccionadas:",
-        "SkillsTrained": "Habilidades entrenadas:",
-        "HPGained": "PG ganados:",
-        "SessionSummary": "Resumen de sesión:",
+        "Classes": "Classes:",
+        "Species": "Espécie:",
+        "Background": "Histórico:",
+        "TalentsSelected": "Talentos selecionados:",
+        "FeatsSelected": "Talentos selecionados:",
+        "SkillsTrained": "Perícias treinadas:",
+        "HPGained": "PV ganho:",
+        "SessionSummary": "Resumo da sessão:",
         "TalentSlotsGranted": "Talent slots granted: {count}",
         "BonusFeatsGranted": "Bonus feats granted: {count}",
         "ForcePointsGranted": "Force points granted: {count}",
         "Features": "Features:",
         "Session": "Session: {id}",
-        "ViewSession": "Ver sesión"
+        "ViewSession": "Ver sessão"
       },
       "Receipt": {
-        "Actor": "Actor:",
+        "Actor": "Ator:",
         "From": "De:",
         "To": "Para:",
         "DecidedBy": "Decidido por:",
         "Previous": "Anterior",
         "Balance": "Saldo",
-        "NewBalance": "Nuevo saldo",
-        "Received": "recibido",
-        "Spent": "gastado",
-        "NoChange": "sin cambios",
+        "NewBalance": "Novo saldo",
+        "Received": "recebido",
+        "Spent": "gasto",
+        "NoChange": "sem alteração",
         "GalacticTreasury": "Galactic Treasury",
         "CreditTransaction": "Credit transaction",
         "ApprovedGM": "Approved · GM",
@@ -502,10 +502,10 @@
         "StoreItem": "Store item",
         "StorePurchase": "Store Purchase",
         "StoreSale": "Store Sale",
-        "OpenStore": "Abrir tienda",
+        "OpenStore": "Abrir loja",
         "OpenHolochat": "Abrir Holochat",
         "OpenHolonet": "Abrir Holonet",
-        "OpenGames": "Abrir juegos",
+        "OpenGames": "Abrir jogos",
         "PurchaseTitle": "Purchase — {item}",
         "SaleTitle": "Sale — {item}",
         "SaleApprovedTitle": "Sale approved — {item}",
@@ -563,57 +563,596 @@
         "CustomRollerComingSoon": "SWSE custom roller coming soon!"
       }
     },
+    "ACTION": {
+      "ROLL": "Roll",
+      "CHAT": "Send to Chat",
+      "USE": "Use"
+    },
+    "ACTOR": {
+      "TABS": {
+        "FEATS": "Feats",
+        "TALENTS": "Talents",
+        "RACIAL": "Racial Traits"
+      }
+    },
+    "CHARGEN": {
+      "NEAR_HUMAN": {
+        "SACRIFICE_TITLE": "Near-Human Heritage Sacrifices",
+        "SACRIFICE_HELP": "You may sacrifice baseline human benefits to unlock additional near-human trait slots.",
+        "SACRIFICE_FEAT": "Sacrifice Bonus Feat",
+        "SACRIFICE_SKILL": "Sacrifice Bonus Trained Skill",
+        "TRAIT_SLOTS": "Trait Slots",
+        "SELECTED": "Selected",
+        "ABILITY_TITLE": "Ability Modifiers",
+        "ABILITY_HELP": "Adjust ability score modifiers from near-human heritage. The final modifier total must be 0.",
+        "TOTAL": "Total",
+        "AVAILABLE_TRAITS": "Available Traits",
+        "NO_AVAILABLE": "No traits are available.",
+        "SELECTED_TRAITS": "Selected Traits",
+        "DROP_HINT": "Drag traits here to select them.",
+        "VALID": "Near-human heritage is valid",
+        "INVALID": "Near-human heritage is incomplete or invalid"
+      }
+    },
+    "Chargen": {
+      "CancelTitle": "Cancel Character Creation",
+      "CancelContent": "Are you sure? All progress will be lost."
+    },
+    "LevelUp": {
+      "CancelTitle": "Cancel Level Up",
+      "CancelContent": "Are you sure? No changes will be saved."
+    },
+    "SheetLabel": {
+      "character": "Character",
+      "droid": "Droid",
+      "vehicle": "Vehicle"
+    },
+    "UNITS": {
+      "WEIGHT": "lb"
+    },
+    "DIFFICULTY": {
+      "LABEL": "DC"
+    },
+    "CURRENCY": {
+      "SYMBOL": "cr"
+    },
+    "Discovery": {
+      "Settings": {
+        "DisableCallouts": {
+          "Name": "Desativar Chamadas Guiadas",
+          "Hint": "Desativa chamadas de dica de primeiro uso que aparecem ao abrir recursos pela primeira vez"
+        },
+        "DisableTour": {
+          "Name": "Desativar Tour de Primeiro Início",
+          "Hint": "Desativa a visão geral de recursos que aparece no primeiro início"
+        },
+        "DisableTooltips": {
+          "Name": "Desativar Dicas de Descoberta",
+          "Hint": "Desativa dicas contextuais nos elementos da interface"
+        }
+      },
+      "Callout": {
+        "Dismiss": "Entendi",
+        "actionPaletteFirstOpen": {
+          "Title": "Paleta de Ações",
+          "Body": "Este é seu menu de acesso rápido a ações. Ele se adapta a contextos de combate e narrativa. Você pode personalizá-lo para se ajustar ao seu estilo de jogo."
+        },
+        "tacticalOverlayFirstOpen": {
+          "Title": "Sobreposição Tática",
+          "Body": "Ative sobreposições de mapa que mostram faixas de alcance, zonas de ameaça e dados de posicionamento. Cada camada pode ser alternada independentemente."
+        },
+        "mentorTranslationFirst": {
+          "Title": "Diálogo do Mentor",
+          "Body": "O texto do mentor aparece com um efeito de tradução de Aurebesh. Clique em qualquer parte do texto para pular a animação e ler imediatamente."
+        },
+        "gmSuggestionPanelFirst": {
+          "Title": "Sugestões do GM",
+          "Body": "Estas são percepções consultivas baseadas no encontro atual. Nada é aplicado automaticamente. Use-as como achar melhor."
+        },
+        "chargenNarrativeFirst": {
+          "Title": "Modos de Criação de Personagem",
+          "Body": "Você pode criar seu personagem por escolhas narrativas ou seleção mecânica direta. Ambos os caminhos produzem um personagem totalmente válido."
+        }
+      },
+      "Tour": {
+        "Skip": "Pular",
+        "GMHolopad": "Abrir Holopad do GM",
+        "Player": {
+          "Title": "Bem-vindo a Star Wars Edição Saga",
+          "Subtitle": "Aqui estão algumas coisas para ajudar você a começar. Todos os recursos são opcionais.",
+          "Item1": "A criação de personagem oferece suporte a modos narrativos e mecânicos",
+          "Item2": "A Paleta de Ações fornece acesso rápido a ações de combate e narrativa",
+          "Item3": "Mentores podem orientar suas escolhas durante a criação de personagem",
+          "Item4": "Passe o cursor sobre qualquer elemento destacado da interface para uma explicação rápida",
+          "Item5": "Todas as dicas guiadas podem ser desativadas nas configurações do cliente"
+        },
+        "GM": {
+          "Title": "Bem-vindo a Star Wars Edição Saga (Ferramentas do GM)",
+          "Subtitle": "Seu kit de ferramentas do GM inclui vários sistemas opcionais. Nada é executado a menos que você ative.",
+          "Item1": "A Sobreposição Tática adiciona visualização de alcance e ameaça às cenas",
+          "Item2": "Sugestões do GM oferecem percepções consultivas de encontro, nunca automáticas",
+          "Item3": "Ferramentas de cena e gerenciamento de NPCs estão disponíveis na barra lateral e na paleta",
+          "Item4": "Toda automação (limiar de dano, recuperação de condição) pode ser alternada nas configurações",
+          "Item5": "Dicas de descoberta podem ser redefinidas ou desativadas nas configurações do sistema"
+        }
+      },
+      "Tooltip": {
+        "HitPoints": {
+          "Title": "Pontos de Vida",
+          "Body": "Pontos de Vida medem por quanto tempo você consegue permanecer em combate. Eles refletem tanto tolerância real a ferimentos quanto habilidade de combate, como esquivar, aparar e transformar golpes sólidos em danos menos graves."
+        },
+        "DamageThreshold": {
+          "Title": "Limiar de Dano",
+          "Body": "O Limiar de Dano mede quanto dano um único ataque deve causar para prejudicar você seriamente. Mesmo que ainda restem Pontos de Vida, um golpe poderoso o bastante pode reduzir sua eficácia imediatamente."
+        },
+        "ForcePoints": {
+          "Title": "Pontos de Força",
+          "Body": "Pontos de Força representam a capacidade de um personagem recorrer a ajuda incomum, seja entendida como destino, sorte ou a Força fluindo pelos seres vivos. São um recurso limitado usado para melhorar ações importantes."
+        },
+        "DestinyPoints": {
+          "Title": "Pontos de Destino",
+          "Body": "Pontos raros que permitem ter sucesso automaticamente em uma rolagem ou acionar efeitos especiais de destino."
+        },
+        "ConditionTrack": {
+          "Title": "Trilha de Condição",
+          "Body": "Rastreia penalidades por sofrer golpes pesados. Cada passo para baixo aplica -1 cumulativo a todas as rolagens e defesas."
+        },
+        "BaseAttackBonus": {
+          "Title": "Bônus Base de Ataque",
+          "Body": "Adicionado às rolagens de ataque. Determinado pela classe e pelo nível."
+        },
+        "Grapple": {
+          "Title": "Agarrar",
+          "Body": "Usado para testes de agarrar e imobilizar. Baseado no BBA e no modificador de tamanho."
+        },
+        "Initiative": {
+          "Title": "Iniciativa",
+          "Body": "A iniciativa determina quão rápido você reage quando a ação começa. Um resultado maior geralmente significa agir mais cedo na rodada."
+        },
+        "ReflexDefense": {
+          "Title": "Defesa de Reflexos",
+          "Body": "Alvo da maioria dos ataques. Baseada em classe, nível, Destreza ou bônus de armadura."
+        },
+        "FortitudeDefense": {
+          "Title": "Defesa de Fortitude",
+          "Body": "Resiste a efeitos físicos como veneno e atordoamento. Baseada em classe, nível e Constituição."
+        },
+        "WillDefense": {
+          "Title": "Defesa de Vontade",
+          "Body": "Resiste a efeitos mentais e poderes da Força. Baseada em classe, nível e Sabedoria."
+        },
+        "FlatFooted": {
+          "Title": "Desprevenido",
+          "Body": "Defesa quando pego de surpresa. Não inclui Destreza nem bônus de esquiva."
+        },
+        "AbilityScore": {
+          "Title": "Valor de Habilidade",
+          "Body": "O valor bruto. O modificador (valor menos 10, dividido por 2) é o que se aplica às rolagens."
+        },
+        "AbilityModifier": {
+          "Title": "Modificador de Habilidade",
+          "Body": "Derivado do valor de habilidade. Adicionado a rolagens, perícias e defesas relevantes."
+        },
+        "SkillTrained": {
+          "Title": "Perícia Treinada",
+          "Body": "Perícias treinadas recebem bônus de +5 e podem desbloquear usos especiais indisponíveis sem treinamento."
+        },
+        "SkillRoll": {
+          "Title": "Teste de Perícia",
+          "Body": "Clique para rolar esta perícia. A rolagem adiciona seu modificador e bônus de treinamento."
+        },
+        "PassiveTalent": {
+          "Title": "Talento Passivo",
+          "Body": "Sempre ativo. Nenhuma ação é necessária para se beneficiar deste talento."
+        },
+        "ActiveTalent": {
+          "Title": "Talento Ativo",
+          "Body": "Exige uma ação para usar. Verifique a descrição do talento para o tipo de ação."
+        },
+        "UsageLimit": {
+          "Title": "Uso Limitado",
+          "Body": "Esta habilidade só pode ser usada um número definido de vezes por encontro ou por dia."
+        },
+        "WeaponAttack": {
+          "Title": "Rolagem de Ataque",
+          "Body": "Clique para rolar um ataque com esta arma contra a Defesa de Reflexos de um alvo."
+        },
+        "WeaponDamage": {
+          "Title": "Rolagem de Dano",
+          "Body": "Clique para rolar o dano desta arma após um ataque bem-sucedido."
+        },
+        "ActionPalette": {
+          "Title": "Paleta de Ações",
+          "Body": "Acesso rápido a ações comuns de combate e narrativa para seu personagem."
+        },
+        "PaletteMode": {
+          "Title": "Modo da Paleta",
+          "Body": "Alterna entre ações de combate e ações narrativas/de exploração."
+        },
+        "GMPaletteMode": {
+          "Title": "Modo GM",
+          "Body": "Alterna a paleta para ferramentas do GM: surgimento de NPCs, cura e gerenciamento de condição."
+        },
+        "ActionDisabled": {
+          "Title": "Ação Indisponível",
+          "Body": "Esta ação não pode ser usada agora. Verifique pré-requisitos e recursos disponíveis."
+        },
+        "TacticalOverlay": {
+          "Title": "Sobreposição Tática",
+          "Body": "Mostra faixas de alcance, áreas de ameaça e informações táticas no mapa."
+        },
+        "GMSuggestion": {
+          "Title": "Sugestão do GM",
+          "Body": "Percepção consultiva do mecanismo de sugestões. Não é aplicada automaticamente."
+        },
+        "MentorDialogue": {
+          "Title": "Orientação do Mentor",
+          "Body": "Seu mentor oferece contexto e sugestões. Isso é consultivo, não obrigatório."
+        },
+        "AurebeshTranslation": {
+          "Title": "Tradução de Aurebesh",
+          "Body": "O texto aparece primeiro em Aurebesh e depois é traduzido. Clique para pular o efeito."
+        },
+        "ChargenSpecies": {
+          "Title": "Espécie",
+          "Body": "Sua espécie determina traços básicos, ajustes de habilidade e recursos disponíveis."
+        },
+        "ChargenClass": {
+          "Title": "Classe",
+          "Body": "Sua classe determina pontos de vida, defesas, perícias treinadas e acesso a talentos."
+        },
+        "ChargenRollMethod": {
+          "Title": "Método de Valores de Habilidade",
+          "Body": "Selecione como gerar valores de habilidade: rolar dados, compra por pontos ou matriz padrão."
+        },
+        "ChargenNarrative": {
+          "Title": "Modo Narrativo",
+          "Body": "Construa seu personagem por escolhas narrativas guiadas em vez de seleção manual de atributos."
+        },
+        "ChargenMentor": {
+          "Title": "Seleção de Mentor",
+          "Body": "Escolha um mentor cuja orientação molda sua experiência de criação de personagem."
+        },
+        "ChargenLockin": {
+          "Title": "Finalizar Personagem",
+          "Body": "Confirma suas escolhas. A maioria das seleções ainda pode ser ajustada após a criação."
+        },
+        "CatchSecondWind": {
+          "Title": "Recuperar o Fôlego",
+          "Body": "Recuperar o Fôlego permite que um personagem heroico se recomponha após se ferir gravemente. Só fica disponível quando reduzido a metade dos pontos de vida ou menos e pode ser usado uma vez por dia."
+        },
+        "DarkSideScore": {
+          "Title": "Pontuação do Lado Sombrio",
+          "Body": "A Pontuação do Lado Sombrio rastreia corrupção moral e espiritual por atos malignos. Uma pontuação maior reflete maior influência do Lado Sombrio e pode trazer consequências sérias."
+        },
+        "Strength": {
+          "Title": "Força",
+          "Body": "Força reflete quanta potência física um personagem consegue aplicar. É especialmente importante em ações físicas diretas e tarefas de poder em curta distância."
+        },
+        "Dexterity": {
+          "Title": "Destreza",
+          "Body": "Destreza reflete controle fino, velocidade de reação e precisão física. É especialmente valiosa para combate à distância, movimento evasivo e condução de veículos."
+        },
+        "Constitution": {
+          "Title": "Constituição",
+          "Body": "Constituição reflete quão bem um personagem suporta ferimentos, fadiga e esforço corporal. É um atributo central de sobrevivência porque contribui para sua resistência."
+        },
+        "Intelligence": {
+          "Title": "Inteligência",
+          "Body": "Inteligência reflete quão bem um personagem entende sistemas, resolve problemas e desenvolve especialização treinada. É especialmente útil para personagens que dependem de ampla habilidade técnica ou acadêmica."
+        },
+        "Wisdom": {
+          "Title": "Sabedoria",
+          "Body": "Sabedoria reflete percepção, discernimento prático e conexão com o ambiente. Trata mais de consciência e bom julgamento do que de análise abstrata."
+        },
+        "Charisma": {
+          "Title": "Carisma",
+          "Body": "Carisma reflete liderança, magnetismo, confiança e a capacidade de mover outras pessoas. Não é apenas aparência; é a força da presença pessoal de um personagem."
+        },
+        "Acrobatics": {
+          "Title": "Acrobacia",
+          "Body": "Acrobacia cobre equilíbrio, cambalhotas, quedas seguras, escapar de agarrões físicos e movimento ágil. Use-a quando controle corporal preciso importar mais que força bruta."
+        },
+        "Climb": {
+          "Title": "Escalar",
+          "Body": "Escalar é usado para subir superfícies difíceis como paredões, edifícios, escadas e máquinas. Mede movimento ascendente controlado por força e pegada."
+        },
+        "Deception": {
+          "Title": "Enganação",
+          "Body": "Enganação é usada para fazer falsidades parecerem críveis, criar confusão, ocultar intenções ou se passar por outra pessoa. Cobre blefe, conversa rápida, disfarce e provas falsificadas."
+        },
+        "Endurance": {
+          "Title": "Tolerância",
+          "Body": "Tolerância mede vigor e resiliência sob pressão. Use-a quando um personagem precisa continuar apesar de fadiga, adversidade ou outros extremos físicos."
+        },
+        "GatherInformation": {
+          "Title": "Obter Informação",
+          "Body": "Obter Informação é usada para perguntar por aí, trabalhar redes sociais e descobrir pistas. Ajuda a localizar boatos, conversas públicas, segredos discretos e contatos úteis."
+        },
+        "Jump": {
+          "Title": "Saltar",
+          "Body": "Saltar é usado para cruzar buracos, transpor barreiras e realizar saltos controlados. Reflete força explosiva e movimento coordenado."
+        },
+        "Knowledge": {
+          "Title": "Conhecimento",
+          "Body": "Conhecimento representa aprendizado acadêmico, profissional ou técnico. Cada campo cobre um corpo diferente de saber, então o sucesso depende de o assunto ser relevante ao seu treinamento."
+        },
+        "Mechanics": {
+          "Title": "Mecânica",
+          "Body": "Mecânica é usada para interagir diretamente com maquinário e hardware técnico. Cobre contornar segurança, instalar ou desarmar explosivos e reparar ou melhorar equipamento e droides danificados."
+        },
+        "Perception": {
+          "Title": "Percepção",
+          "Body": "Percepção é usada para detectar ameaças, notar criaturas ou objetos ocultos e manter consciência do ambiente. Reflete atenção e percepção sensorial."
+        },
+        "Persuasion": {
+          "Title": "Persuasão",
+          "Body": "Persuasão é usada para conquistar cooperação, moldar atitudes e conduzir resultados sociais. Pode ser sutil e diplomática ou firme e intimidadora."
+        },
+        "Pilot": {
+          "Title": "Pilotar",
+          "Body": "Pilotar governa o controle avançado de veículos. Viagens rotineiras podem não exigir teste, mas ação evasiva, manobras e controle perigoso exigem."
+        },
+        "Ride": {
+          "Title": "Cavalgar",
+          "Body": "Cavalgar é usada para conduzir criaturas usadas como montarias, especialmente em movimento ou sob pressão. Reflete equilíbrio, controle e coordenação montada."
+        },
+        "Stealth": {
+          "Title": "Furtividade",
+          "Body": "Furtividade é usada para evitar detecção por silêncio, ocultação e movimento cuidadoso. Também apoia posicionamento oculto, emboscadas, tiro de cobertura e prestidigitação."
+        },
+        "Survival": {
+          "Title": "Sobrevivência",
+          "Body": "Sobrevivência ajuda personagens a navegar ambientes hostis, rastrear sinais de perigo, forragear, caçar e identificar perigos naturais. Mede conhecimento prático de campo."
+        },
+        "Swim": {
+          "Title": "Nadar",
+          "Body": "Nadar é usado para atravessar água, mergulhar, manter-se à tona e manobrar em condições aquáticas difíceis. Representa movimento controlado na água."
+        },
+        "TreatInjury": {
+          "Title": "Tratar Ferimentos",
+          "Body": "Tratar Ferimentos cobre ajuda no campo de batalha, cuidados médicos e apoio à recuperação. Use-a para manter aliados vivos, melhorar cura e responder a condições nocivas."
+        },
+        "UseComputer": {
+          "Title": "Usar Computador",
+          "Body": "Usar Computador é usado para operar sistemas protegidos, contornar proteções digitais e interagir com tecnologia complexa controlada por computador. Governa acesso técnico em ambientes eletrônicos."
+        },
+        "UseTheForce": {
+          "Title": "Usar a Força",
+          "Body": "Usar a Força representa uma conexão ativa com a Força em jogo. Apoia percepção incomum, recuperação e outros atos movidos pela Força, e normalmente exige Sensitividade à Força para ser treinada."
+        },
+        "ArmorPenalty": {
+          "Title": "Penalidade de Armadura",
+          "Body": "Esta armadura aplica uma penalidade à Defesa de Reflexos além do bônus de armadura e pode restringir a Destreza."
+        }
+      }
+    },
+    "CharacterSheet": {
+      "Sections": {
+        "Abilities": "Atributos",
+        "Skills": "Perícias",
+        "CustomSkills": "Perícias personalizadas",
+        "Languages": "Idiomas",
+        "CharacterNotes": "Notas do personagem",
+        "RacialAbilities": "Habilidades raciais",
+        "RelationshipsConnections": "Relações e contatos",
+        "CombatMetricsResources": "Métricas de combate e recursos",
+        "CombatMetrics": "Métricas de combate",
+        "HeroicResources": "Recursos heroicos",
+        "SecondWind": "Segundo fôlego",
+        "ExperiencePoints": "Pontos de experiência",
+        "Feats": "Talentos",
+        "Talents": "Talentos de classe",
+        "TalentsKnown": "Talentos conhecidos",
+        "StarshipManeuvers": "Manobras de nave",
+        "ForceSuite": "Suíte da Força",
+        "ForcePowersKnown": "Poderes da Força conhecidos",
+        "ForceSecrets": "Segredos da Força",
+        "ForceTechniques": "Técnicas da Força"
+      },
+      "Labels": {
+        "Filter": "Filtro",
+        "AllSkills": "Todas as perícias",
+        "Trained": "Treinada",
+        "Favorited": "Favoritas",
+        "Focused": "Focadas",
+        "Sort": "Ordenar",
+        "NameAZ": "Nome A→Z",
+        "Ability": "Atributo",
+        "HighestTotal": "Maior total",
+        "LowestTotal": "Menor total",
+        "Skill": "Perícia",
+        "HalfLevel": "½ nível",
+        "Focus": "Foco",
+        "Misc": "Misc.",
+        "Total": "Total",
+        "Roll": "Rolagem",
+        "All": "Tudo",
+        "Available": "Disponível",
+        "Combat": "Combate",
+        "ChoiceSlot": "Espaço de escolha",
+        "Passive": "Passiva",
+        "RelationshipNotesContext": "Notas e contexto das relações",
+        "WalkSpeed": "Velocidade de caminhada",
+        "Initiative": "Iniciativa",
+        "Perception": "Percepção",
+        "BaseAttack": "Ataque base",
+        "GrappleBonus": "Bônus de agarrar",
+        "DamageThreshold": "Limite de dano",
+        "ForcePoints": "Pontos da Força",
+        "DestinyPoints": "Pontos de destino",
+        "BaseHealing": "Cura base",
+        "HP": "PV",
+        "ModifiedHealing": "Cura modificada",
+        "UsesRemaining": "Usos restantes",
+        "MaxUses": "Usos máximos",
+        "Level": "Nível",
+        "TotalXP": "XP total",
+        "NextLevel": "Próximo nível",
+        "XPToNext": "XP até o próximo",
+        "Progress": "Progresso",
+        "Status": "Status",
+        "Hand": "Mão",
+        "Discard": "Descarte",
+        "Discarded": "Descartados",
+        "Requires": "Requer",
+        "SortName": "Ordenar: nome",
+        "SortTag": "Ordenar: tag"
+      },
+      "Actions": {
+        "RollForAttributes": "Rolar atributos",
+        "Expand": "Expandir",
+        "ResetFilters": "Redefinir filtros",
+        "RollSkill": "Rolar {skill}",
+        "UseNamed": "Usar {name}",
+        "Add": "Adicionar",
+        "AddLanguage": "+ Adicionar idioma",
+        "AddRelationship": "Adicionar relação",
+        "UseSecondWind": "Usar segundo fôlego",
+        "ResetUses": "Redefinir usos",
+        "AddFeat": "+ Adicionar talento",
+        "AddTalent": "+ Adicionar talento de classe",
+        "Choose": "Escolher",
+        "Change": "Alterar",
+        "RemoveNamed": "Remover {name}",
+        "ManageArrow": "Gerenciar →",
+        "ConstructLightsaber": "Construir sabre de luz",
+        "FlipForMore": "Virar para ver mais",
+        "Activate": "Ativar",
+        "Back": "Voltar"
+      },
+      "Tooltips": {
+        "OpenAttributeStep": "Abrir o motor de progressão na etapa de atributos",
+        "RollAbilityModifier": "Rolar d20 + modificador de {ability}",
+        "BaseAbilityScore": "Valor base do atributo",
+        "RacialBonus": "Bônus racial",
+        "TemporaryModifier": "Modificador temporário",
+        "MarkAsFavorite": "Marcar como favorita",
+        "SkillUsesAvailable": "{count} usos de perícia disponíveis",
+        "ClickToRollSkill": "Clique para rolar {skill}",
+        "SelectAbilityModifierForSkill": "Selecione o modificador de atributo para {skill}",
+        "HalfCharacterLevel": "Metade do nível do personagem",
+        "TrainedSkill": "Treinada: você tem graduações nesta perícia (+5)",
+        "FocusedSkill": "Foco: perícia focada (+5 de bônus)",
+        "MiscSkillModifier": "Modificador diverso (talentos, condições etc.)",
+        "TotalSkillBonus": "Bônus total da perícia",
+        "ShowAllSkillUses": "Mostrar todos os usos de perícia",
+        "ShowUsableActions": "Mostrar apenas ações utilizáveis",
+        "ShowCombatRelevantUses": "Mostrar usos relevantes em combate",
+        "TrainedUse": "Uso treinado",
+        "DifficultyClass": "Classe de dificuldade",
+        "ActionType": "Ação {action}",
+        "ActionEconomy": "Economia de ação: {action}",
+        "AddCustomSkill": "Adicionar nova perícia personalizada",
+        "CustomSkillName": "Nome da perícia personalizada",
+        "SelectGoverningAbility": "Selecionar atributo regente",
+        "TrainedBonus": "Treinada: +5 de bônus",
+        "FocusBonus": "Foco: +5 de bônus",
+        "MiscModifier": "Modificador diverso",
+        "RollCustomSkill": "Rolar esta perícia personalizada",
+        "DeleteCustomSkill": "Excluir esta perícia personalizada",
+        "NotesForSkill": "Notas desta perícia",
+        "CreateFollower": "Criar um novo seguidor sob seu comando",
+        "ClickToOpen": "Clique para abrir {name}",
+        "InitiativeBreakdown": "Iniciativa — clique para ver o detalhamento",
+        "RollInitiative": "Rolar iniciativa",
+        "Take10Initiative": "Escolher 10 em iniciativa",
+        "RollPerception": "Rolar Percepção",
+        "SpendForcePoint": "Gastar 1 Ponto da Força",
+        "RestoreForcePoint": "Restaurar 1 Ponto da Força",
+        "OpenTalentsTab": "Abrir a aba Talentos para gerenciar talentos",
+        "OpenForceTab": "Abrir a aba Força para gerenciar poderes"
+      },
+      "Placeholders": {
+        "SkillName": "Nome da perícia",
+        "Notes": "Notas",
+        "EnterLanguage": "Digite um idioma...",
+        "CharacterNotes": "Adicione notas do personagem aqui...",
+        "RelationshipNotes": "Notas gerais sobre alianças, rivalidades, contatos importantes..."
+      },
+      "Empty": {
+        "NoCustomSkills": "Ainda não há perícias personalizadas. Clique em \"Adicionar\" para criar uma.",
+        "NoLanguagesKnown": "Nenhum idioma conhecido",
+        "NoRacialAbilities": "Nenhuma habilidade racial.",
+        "NoRelationships": "Nenhuma relação registrada ainda.",
+        "NoFeats": "Nenhum talento foi adicionado ainda.",
+        "NoTalents": "Nenhum talento de classe foi adicionado ainda.",
+        "NoTalentsKnown": "Nenhum talento conhecido ainda.",
+        "NoStarshipManeuvers": "Nenhuma manobra de nave conhecida.",
+        "NoForcePowers": "Nenhum poder da Força conhecido.",
+        "NoForceSecrets": "Nenhum segredo da Força conhecido.",
+        "NoForceTechniques": "Nenhuma técnica da Força conhecida."
+      },
+      "Hints": {
+        "AddLanguageCard": "Crie outra entrada de idioma usando o mesmo formato e tamanho de cartão.",
+        "CreateFirstLanguage": "Clique em \"Adicionar idioma\" para criar o primeiro cartão de idioma padronizado.",
+        "DropActorsForRelationships": "Solte atores na ficha para adicionar relações.",
+        "AddFirstFeat": "Use Adicionar talento para criar o primeiro cartão de talento padronizado.",
+        "AddFirstTalent": "Use Adicionar talento de classe para criar o primeiro cartão de talento.",
+        "AddTalentsOnTab": "Adicione talentos na aba Talentos.",
+        "TakeStarshipTactics": "Pegue o talento Táticas de Nave para aprender manobras.",
+        "ManageForcePowers": "Poderes da Força são gerenciados na aba Força."
+      },
+      "Status": {
+        "ReadyToLevelUp": "Pronto para subir de nível",
+        "LockedClassGrant": "Concessão de classe bloqueada",
+        "ChoiceNeeded": "Escolha necessária",
+        "InvalidChoice": "Escolha inválida: {choice}",
+        "ChoiceMade": "Escolha: {choice}",
+        "LightsaberConstructionAvailable": "Construção de sabre de luz disponível"
+      }
+    },
     "Progression": {
       "Common": {
-        "Access": "Acceso",
-        "Activate": "Activar",
-        "AskMentor": "Preguntar al mentor",
-        "Benefit": "Beneficio",
-        "Categories": "Categorías",
-        "Complete": "Completo",
-        "Description": "Descripción",
-        "Deselect": "Deseleccionar",
-        "Detail": "Detalle",
-        "Granted": "Concedido",
-        "Known": "Conocido",
+        "Access": "Access",
+        "Activate": "Activate",
+        "AskMentor": "Ask Mentor",
+        "Benefit": "Benefit",
+        "Categories": "Categories",
+        "Complete": "Complete",
+        "Description": "Description",
+        "Deselect": "Deselect",
+        "Detail": "Detail",
+        "Granted": "Granted",
+        "Known": "Known",
         "Legal": "Legal",
-        "Locked": "Bloqueado",
-        "NoDescriptionAvailable": "No hay descripción disponible.",
-        "NoPrerequisite": "Sin prerrequisito",
-        "NoPrerequisites": "Sin prerrequisitos",
-        "Owned": "Poseído",
-        "Path": "Ruta",
-        "Pending": "Pendiente",
-        "Recommended": "Recomendado",
-        "Repeatable": "Repetible",
-        "Reset": "Restablecer",
-        "Selected": "Seleccionado",
+        "Locked": "Locked",
+        "NoDescriptionAvailable": "No description available.",
+        "NoPrerequisite": "No prerequisite",
+        "NoPrerequisites": "No prerequisites",
+        "Owned": "Owned",
+        "Path": "Path",
+        "Pending": "Pending",
+        "Recommended": "Recommended",
+        "Repeatable": "Repeatable",
+        "Reset": "Reset",
+        "Selected": "Selected",
         "Sort": {
           "AZ": "A–Z",
-          "NameAZ": "Nombre A→Z",
-          "NameZA": "Nombre Z→A"
+          "NameAZ": "Name A→Z",
+          "NameZA": "Name Z→A"
         },
-        "Status": "Estado:",
-        "Suggested": "Sugerido",
-        "Tip": "Consejo:",
-        "Unavailable": "No disponible",
-        "Unlocks": "Desbloquea",
-        "Available": "Disponible",
-        "Prerequisites": "Prerrequisitos"
+        "Status": "Status:",
+        "Suggested": "Suggested",
+        "Tip": "Tip:",
+        "Unavailable": "Unavailable",
+        "Unlocks": "Unlocks",
+        "Available": "Available",
+        "Prerequisites": "Prerequisites"
       },
       "Confirm": {
-        "AllRequiredComplete": "Todos los elementos obligatorios de la creación están completos.",
-        "BlockingIssues": "Problemas bloqueantes",
-        "BuildReview": "Revisión de creación",
-        "ClassFeats": "Dotes de clase:",
-        "ClassTalents": "Talentos de clase:",
-        "FeatsAcquired": "Dotes adquiridas",
-        "GeneralFeats": "Dotes generales:",
-        "HeroicTalents": "Talentos heroicos:",
-        "ResolveItems": "Resuelve estos elementos para proceder a la finalización.",
-        "ReviewOrFinalize": "Haz clic en cualquier sección de arriba para revisar detalles, o procede a finalizar tu personaje.",
-        "TalentsSelected": "Talentos seleccionados",
-        "Warnings": "Advertencias"
+        "AllRequiredComplete": "All required build elements are complete.",
+        "BlockingIssues": "Blocking Issues",
+        "BuildReview": "Build Review",
+        "ClassFeats": "Class Feats:",
+        "ClassTalents": "Class Talents:",
+        "FeatsAcquired": "Feats Acquired",
+        "GeneralFeats": "General Feats:",
+        "HeroicTalents": "Heroic Talents:",
+        "ResolveItems": "Resolve these items to proceed to finalization.",
+        "ReviewOrFinalize": "Click on any section above to review details, or proceed to finalize your character.",
+        "TalentsSelected": "Talents Selected",
+        "Warnings": "Warnings"
       },
       "Feat": {
         "Actions": {
@@ -705,30 +1244,30 @@
           "ToggleShowAllTitle": "Toggle between legal selectable feats and the full hydrated feat browser"
         },
         "Mentor": {
-          "Chargen": "Elige dotes que fortalezcan tus capacidades y definan tu estilo de juego. Algunas dotes encajan mejor con tu configuración que otras.",
-          "Default": "Elige una dote con cuidado.",
-          "DroidChargen": "Elige dotes que refuercen el paquete de función de tu chasis y complementen tus sistemas instalados.",
-          "LevelUp": "A medida que ganas experiencia, puedes aprender nuevas técnicas y capacidades. Elige dotes que mejoren tu camino."
+          "Chargen": "Choose feats that strengthen your abilities and define your playstyle. Some feats are better for your build than others.",
+          "Default": "Select a feat wisely.",
+          "DroidChargen": "Choose feats that reinforce your chassis role package and complement your installed systems.",
+          "LevelUp": "As you gain experience, you may learn new techniques and abilities. Choose feats that enhance your path."
         },
         "Validation": {
-          "SelectMoreFeats": "Selecciona {count} dote(s) más",
-          "SelectMoreTypedFeats": "Selecciona {count} dote(s) de {type} más"
+          "SelectMoreFeats": "Select {count} more feat(s)",
+          "SelectMoreTypedFeats": "Select {count} more {type} Feat(s)"
         }
       },
       "Mentor": {
-        "AwaitingDecision": "Esperando tu decisión…",
-        "Collapse": "Colapsar mentor",
-        "Expand": "Expandir mentor",
+        "AwaitingDecision": "Awaiting your decision…",
+        "Collapse": "Collapse mentor",
+        "Expand": "Expand mentor",
         "FallbackName": "Ol' Salty"
       },
       "Shell": {
-        "CharacterCreation": "CREACIÓN DE PERSONAJE",
-        "EngineUnlocked": "Desbloqueado por motor",
-        "NoStepsAvailable": "No hay pasos disponibles.",
-        "StepOf": "Paso {current} de {total}",
-        "TrainingMatrix": "Matriz de entrenamiento",
-        "TrainingMatrixSubtitle": "Canal de progresión guiado por mentor · restauración del shell conceptual",
-        "UnlockedBy": "Desbloqueado por: {reason}"
+        "CharacterCreation": "CHARACTER CREATION",
+        "EngineUnlocked": "Engine-Unlocked",
+        "NoStepsAvailable": "No steps available.",
+        "StepOf": "Step {current} of {total}",
+        "TrainingMatrix": "Training Matrix",
+        "TrainingMatrixSubtitle": "Mentor-guided progression pipeline · concept shell restoration pass",
+        "UnlockedBy": "Unlocked by: {reason}"
       },
       "Survey": {
         "AnsweredCount": "{answered} / {total} answered",
@@ -768,9 +1307,9 @@
           "BuildAnalysisTerminal": "// BUILD ANALYSIS TERMINAL",
           "MentorRead": "Mentor Read",
           "RootNode": "Root node — no prerequisite talent chain.",
-          "NoRulesText": "Aún no se ha definido texto de reglas para este talento.",
-          "PartOfTree": "{talent} forma parte del árbol de talentos {tree}.",
-          "ThisTalent": "Este talento"
+          "NoRulesText": "No rules text has been defined for this talent yet.",
+          "PartOfTree": "{talent} is part of the {tree} talent tree.",
+          "ThisTalent": "This talent"
         },
         "Empty": {
           "NoTalentsMatched": "No talents matched your current filters in this tree.",
@@ -818,7 +1357,7 @@
           "TalentTreeMap": "Talent tree map",
           "TreeHolomap": "Tree Holomap",
           "TreeHolomapInstructions": "Drag to move · Scroll to zoom · Hover to reveal prerequisite flow · Double-click a legal node to activate.",
-          "LegalActivations": "Activaciones legales"
+          "LegalActivations": "Legal Activations"
         },
         "Tree": {
           "BuildRead": "Build Read",
@@ -837,7 +1376,7 @@
           "StatusAvailable": "This discipline is available. Opening the holomap will reveal legal activations and locked future branches.",
           "StatusMentorStrongFit": "Your mentor currently sees this tree as a strong fit. {talent} is the cleanest legal next pick from this tree.",
           "StatusMomentum": "You already have momentum in this discipline. Opening the holomap will show the next legal branches.",
-          "ThisTree": "Este árbol"
+          "ThisTree": "This tree"
         },
         "View": {
           "Both": "Both",
@@ -845,23 +1384,23 @@
           "Map": "Map"
         },
         "Mentor": {
-          "Chargen": "Los talentos definen tu camino. Elige una disciplina que encaje con tu visión para este personaje.",
-          "Default": "Selecciona un talento que te defina.",
-          "LevelUp": "Tus talentos crecen con la experiencia. Elige una nueva disciplina para especializar aún más tus capacidades."
+          "Chargen": "Talents define your path. Choose a discipline that resonates with your vision for this character.",
+          "Default": "Select a talent that defines you.",
+          "LevelUp": "Your talents grow with experience. Choose a new discipline to specialize further in your abilities."
         },
         "Messages": {
-          "ChoiceNotLegal": "Esa elección de talento no es legal actualmente.",
-          "ChooseTitle": "Elegir: {talent}",
-          "PrereqsNotMetForChoice": "Los prerrequisitos del talento no se cumplen para esa elección seleccionada."
+          "ChoiceNotLegal": "That talent choice is not currently legal.",
+          "ChooseTitle": "Choose: {talent}",
+          "PrereqsNotMetForChoice": "Talent prerequisites are not met for that selected choice."
         },
         "Recommendation": {
-          "GoodFit": "Buen encaje",
-          "InvestedPath": "Ruta invertida",
-          "LegalOption": "Opción legal",
-          "NoLegalPicks": "Sin elecciones legales",
-          "NoLegalPicksReason": "Este árbol no tiene talentos seleccionables para el espacio actual, así que el motor de sugerencias no lo considera.",
-          "NoSelectableTalentsLegalNow": "Ahora mismo no hay talentos seleccionables legales.",
-          "PriorityPath": "Ruta prioritaria",
+          "GoodFit": "Good Fit",
+          "InvestedPath": "Invested Path",
+          "LegalOption": "Legal Option",
+          "NoLegalPicks": "No Legal Picks",
+          "NoLegalPicksReason": "This tree has no selectable talents for the current slot, so it is not considered by the suggestion engine.",
+          "NoSelectableTalentsLegalNow": "No selectable talents are legal right now.",
+          "PriorityPath": "Priority Path",
           "ReasonAbility": "{name} leans into one of your stronger ability scores.",
           "ReasonChain": "{name} continues a prerequisite chain you have already started.",
           "ReasonClass": "{name} fits the class path you are currently pursuing.",
@@ -872,96 +1411,96 @@
           "ReasonSpecies": "{name} lines up with your species or heritage signals.",
           "ReasonWishlist": "{name} moves you toward something already marked as desirable for this build.",
           "StrongestLegalPick": "{talent} is the strongest legal pick currently visible in this tree.",
-          "StrongFit": "Encaje fuerte",
-          "ThisChoice": "esta elección",
-          "TopPick": "Mejor elección",
+          "StrongFit": "Strong Fit",
+          "ThisChoice": "this choice",
+          "TopPick": "Top Pick",
           "TreeLegalCount": "{tree} has {count} legal talent(s) available for this slot."
         }
       },
       "Utility": {
-        "Collapse": "Colapsar",
-        "Conditional": "Condicional",
-        "Expand": "Expandir",
-        "ResetFilters": "Restablecer filtros"
+        "Collapse": "Collapse",
+        "Conditional": "Conditional",
+        "Expand": "Expand",
+        "ResetFilters": "Reset Filters"
       },
       "Core": {
         "Class": {
-          "ClassSkills": "Habilidades de clase",
-          "StartingAbilities": "Aptitudes iniciales",
-          "DefenseBonuses": "Bonificaciones de defensa",
-          "BAB": "Ataque base",
-          "ClassTrees": "Árboles de clase",
+          "ClassSkills": "Class Skills",
+          "StartingAbilities": "Starting Abilities",
+          "DefenseBonuses": "Defense Bonuses",
+          "BAB": "BaB",
+          "ClassTrees": "Class Trees",
           "Mentor": "Mentor",
-          "BuildMetadata": "Metadatos de creación",
-          "Prerequisites": "Prerrequisitos",
-          "PrerequisitesRequired": "Prerrequisitos requeridos",
-          "LockedByPrerequisites": "Esta clase está bloqueada actualmente por el motor de prerrequisitos.",
-          "Locked": "Bloqueado",
-          "Choose": "Elegir {name}"
+          "BuildMetadata": "Build Metadata",
+          "Prerequisites": "Prerequisites",
+          "PrerequisitesRequired": "Prerequisites Required",
+          "LockedByPrerequisites": "This class is currently locked by the prerequisite engine.",
+          "Locked": "Locked",
+          "Choose": "Choose {name}"
         },
         "Species": {
-          "Options": "Opciones de especie",
-          "Default": "Predeterminado",
-          "Selected": "Seleccionado",
-          "BaseProfile": "Perfil base",
-          "SizeInline": "Tamaño: {size}",
-          "LanguagesInline": "Idiomas: {languages}",
-          "Profile": "Perfil {label}",
-          "Description": "Descripción",
-          "NoDescription": "No hay descripción disponible.",
-          "AttributeAdjustment": "Ajuste de atributos",
-          "None": "Ninguno",
-          "Size": "Tamaño",
-          "Medium": "Mediano",
-          "Speed": "Velocidad",
-          "WalkSix": "Caminar 6",
-          "Abilities": "Aptitudes de especie",
-          "NoneListed": "Ninguno listado.",
-          "RequiredChoice": "Elección de especie requerida",
-          "Languages": "Idiomas",
-          "BuildSignals": "Señales de construcción",
-          "AttributeOutlook": "Pronóstico de atributos",
-          "WeakSpots": "Puntos débiles potenciales",
-          "CustomizeNearHuman": "Personalizar casi humano",
-          "Confirm": "Confirmar {name}",
-          "NoMatches": "Ninguna especie coincide con tu búsqueda o filtros.",
-          "OptionsCount": "{count} opciones",
-          "AriaLabel": "Especies"
+          "Options": "Species Options",
+          "Default": "Default",
+          "Selected": "Selected",
+          "BaseProfile": "Base profile",
+          "SizeInline": "Size: {size}",
+          "LanguagesInline": "Languages: {languages}",
+          "Profile": "{label} profile",
+          "Description": "Description",
+          "NoDescription": "No description available.",
+          "AttributeAdjustment": "Attribute Adjustment",
+          "None": "None",
+          "Size": "Size",
+          "Medium": "Medium",
+          "Speed": "Speed",
+          "WalkSix": "Walk 6",
+          "Abilities": "Species Abilities",
+          "NoneListed": "None listed.",
+          "RequiredChoice": "Required Species Choice",
+          "Languages": "Languages",
+          "BuildSignals": "Build Signals",
+          "AttributeOutlook": "Attribute Outlook",
+          "WeakSpots": "Potential Weak Spots",
+          "CustomizeNearHuman": "Customize Near-Human",
+          "Confirm": "Confirm {name}",
+          "NoMatches": "No species match your search or filters.",
+          "OptionsCount": "{count} options",
+          "AriaLabel": "Species"
         },
         "Skills": {
-          "TrainingSummary": "Resumen de entrenamiento",
-          "TrainedCounter": "/ {count} entrenadas",
-          "SelectedSkills": "Habilidades seleccionadas",
-          "SlotsFilled": "Espacios llenos",
-          "SlotsRemaining": "{count} espacio(s) restantes",
-          "SelectYourSkills": "Selecciona tus habilidades",
-          "HelpTrain": "Entrena {count} habilidad(es) para especializar la pericia de tu personaje.",
-          "HelpLegalOnly": "Aquí solo se pueden entrenar habilidades legales de clase, trasfondo y especie.",
-          "FallbackWarning": "La concesión de habilidades de clase o trasfondo no se resolvió por completo. Solo se muestran habilidades ya seleccionadas o coincidentes con la creación actual.",
-          "AvailableStatus": "Mostrando {count} habilidad(es) entrenables legales de clase, trasfondo y rasgos de especie.",
-          "Trained": "Entrenada",
-          "Class": "Clase",
-          "Background": "Trasfondo",
-          "Species": "Especie",
-          "UntrainTitle": "Habilidad entrenada: haz clic para desentrenar",
-          "Untrain": "Desentrenar",
-          "TrainTitle": "Entrenar esta habilidad",
-          "Train": "Entrenar",
-          "LockedTitle": "Solo se pueden entrenar habilidades de clase, trasfondo o especie",
-          "ResetTitle": "Restablecer todas las habilidades seleccionadas",
-          "ResetAll": "Restablecer todo",
-          "Empty": "No hay habilidades legales disponibles. Elige primero una clase o trasfondo.",
-          "Expertise": "Pericia en habilidades",
-          "TrainedSkills": "Habilidades entrenadas:",
-          "ClassSkills": "Habilidades de clase:",
-          "BackgroundSkills": "Habilidades de trasfondo:",
-          "SpeciesClassSkills": "Habilidades de clase por especie:",
-          "GuidanceTip": "Usa Entrenar y Desentrenar para gastar tus espacios limitados deliberadamente. Las habilidades sugeridas aparecen etiquetadas en la lista principal."
+          "TrainingSummary": "Training Summary",
+          "TrainedCounter": "/ {count} trained",
+          "SelectedSkills": "Selected Skills",
+          "SlotsFilled": "Slots Filled",
+          "SlotsRemaining": "{count} slot(s) remaining",
+          "SelectYourSkills": "Select Your Skills",
+          "HelpTrain": "Train {count} skill(s) to specialize your character's expertise.",
+          "HelpLegalOnly": "Only legal class, background, and species class skills are trainable here.",
+          "FallbackWarning": "Class or background skill entitlement did not fully resolve. Only skills already selected or positively matched by the current build are shown.",
+          "AvailableStatus": "Showing {count} legal trainable skill(s) from class, background, and species traits.",
+          "Trained": "Trained",
+          "Class": "Class",
+          "Background": "Background",
+          "Species": "Species",
+          "UntrainTitle": "Skill trained — click to untrain",
+          "Untrain": "Untrain",
+          "TrainTitle": "Train this skill",
+          "Train": "Train",
+          "LockedTitle": "Only class, background, or species class skills can be trained",
+          "ResetTitle": "Reset all skill selections",
+          "ResetAll": "Reset All",
+          "Empty": "No legal skills are currently available. Choose a class or background first.",
+          "Expertise": "Skill Expertise",
+          "TrainedSkills": "Trained Skills:",
+          "ClassSkills": "Class Skills:",
+          "BackgroundSkills": "Background Skills:",
+          "SpeciesClassSkills": "Species Class Skills:",
+          "GuidanceTip": "Use Train and Untrain to spend your limited slots deliberately. Suggested skills are tagged directly in the main list."
         },
         "Defense": {
           "FortitudeAbbrev": "Fort",
           "ReflexAbbrev": "Ref",
-          "WillAbbrev": "Vol"
+          "WillAbbrev": "Will"
         }
       }
     },
@@ -1050,10 +1589,10 @@
             }
           }
         },
-        "speciesGuidance": "Tu origen no es una cadena; es la primera nota de la armonía que aprenderás a llevar.",
-        "featGuidance": "Una dote debe revelar el tipo de decisión que tomarás cuando la presión te rodee.",
-        "starshipManeuverGuidance": "Incluso en una cabina, la calma es un arma. Elige maniobras que os mantengan con vida a ti y a tus aliados.",
-        "surveyGuidance": "Responde con honestidad. No estoy midiendo la perfección; escucho la forma de tu intención."
+        "speciesGuidance": "Sua origem não é uma corrente; é a primeira nota da harmonia que você aprenderá a carregar.",
+        "featGuidance": "Um talento deve revelar o tipo de escolha que você fará quando a pressão se fechar ao redor.",
+        "starshipManeuverGuidance": "Mesmo no cockpit, calma é uma arma. Escolha manobras que mantenham você e seus aliados vivos.",
+        "surveyGuidance": "Responda com honestidade. Não estou medindo perfeição; estou ouvindo a forma da sua intenção."
       },
       "Scout": {
         "name": "Lead",
@@ -1110,10 +1649,10 @@
             "1": "I see recklessness in you. We have nothing to talk about until you learn what caution means."
           }
         },
-        "speciesGuidance": "Conoce el cuerpo que llevas al campo. Las fortalezas se vuelven planes; las debilidades, contingencias.",
-        "featGuidance": "Una dote es equipo que llevas a cada combate. Elige la que realmente usarás.",
-        "starshipManeuverGuidance": "Elige maniobras que puedas ejecutar bajo presión, con una tripulación gritándote al oído.",
-        "surveyGuidance": "Responde como en un informe de misión. Las prioridades claras hacen mejores soldados."
+        "speciesGuidance": "Conheça o corpo que leva ao campo. Forças viram planos; fraquezas viram contingências.",
+        "featGuidance": "Um talento é equipamento que você leva para toda luta. Escolha o que você realmente vai usar.",
+        "starshipManeuverGuidance": "Escolha manobras que consiga executar sob pressão, com a tripulação gritando no seu ouvido.",
+        "surveyGuidance": "Responda como em um briefing de missão. Prioridades claras fazem soldados melhores."
       },
       "Scoundrel": {
         "name": "Ol' Salty",
@@ -1185,9 +1724,9 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "featGuidance": "Talentos são módulos de capacidade. Priorize o módulo que fecha a maior lacuna operacional.",
+        "starshipManeuverGuidance": "A seleção de manobras deve combinar com o papel do veículo, a coordenação da tripulação e a tolerância a falhas.",
+        "surveyGuidance": "Responda com precisão. Seu perfil de build depende de uma autoavaliação clara."
       },
       "Noble": {
         "name": "J0-N1",
@@ -1258,10 +1797,10 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Pacote de origem identificado. Avalie as premissas do chassi antes de confirmar parâmetros operacionais de longo prazo.",
+        "featGuidance": "Talentos são módulos de capacidade. Priorize o módulo que fecha a maior lacuna operacional.",
+        "starshipManeuverGuidance": "A seleção de manobras deve combinar com o papel do veículo, a coordenação da tripulação e a tolerância a falhas.",
+        "surveyGuidance": "Responda com precisão. Seu perfil de build depende de uma autoavaliação clara."
       },
       "Soldier": {
         "name": "Breach",
@@ -1302,10 +1841,10 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Pacote de origem identificado. Avalie as premissas do chassi antes de confirmar parâmetros operacionais de longo prazo.",
+        "featGuidance": "Talentos são módulos de capacidade. Priorize o módulo que fecha a maior lacuna operacional.",
+        "starshipManeuverGuidance": "A seleção de manobras deve combinar com o papel do veículo, a coordenação da tripulação e a tolerância a falhas.",
+        "surveyGuidance": "Responda com precisão. Seu perfil de build depende de uma autoavaliação clara."
       },
       "Imperial_Knight": {
         "name": "Dezmin",
@@ -1363,13 +1902,13 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Tu origen no es una cadena; es la primera nota de la armonía que aprenderás a llevar.",
+        "speciesGuidance": "Sua origem não é uma corrente; é a primeira nota da harmonia que você aprenderá a carregar.",
         "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
-        "featGuidance": "Una dote debe revelar el tipo de decisión que tomarás cuando la presión te rodee.",
+        "featGuidance": "Um talento deve revelar o tipo de escolha que você fará quando a pressão se fechar ao redor.",
         "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
-        "starshipManeuverGuidance": "Incluso en una cabina, la calma es un arma. Elige maniobras que os mantengan con vida a ti y a tus aliados.",
+        "starshipManeuverGuidance": "Mesmo no cockpit, calma é uma arma. Escolha manobras que mantenham você e seus aliados vivos.",
         "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
-        "surveyGuidance": "Responde con honestidad. No estoy midiendo la perfección; escucho la forma de tu intención."
+        "surveyGuidance": "Responda com honestidade. Não estou medindo perfeição; estou ouvindo a forma da sua intenção."
       },
       "Medic": {
         "name": "Kyber",
@@ -1425,14 +1964,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "backgroundGuidance": "El contexto histórico influye en las heurísticas de respuesta. Elige el origen más relevante para operaciones futuras.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "languageGuidance": "Los protocolos de comunicación reducen fricción y mejoran las probabilidades de supervivencia. Elige en consecuencia.",
-        "forcePowerGuidance": "Variación de usuario de la Fuerza detectada. Selecciona poderes que apoyen tu perfil táctico declarado.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "summaryGuidance": "Se recomienda auditoría final. Confirma solo cuando todos los módulos seleccionados coincidan con el despliegue previsto.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Pacote de origem identificado. Avalie as premissas do chassi antes de confirmar parâmetros operacionais de longo prazo.",
+        "backgroundGuidance": "O contexto histórico influencia heurísticas de resposta. Escolha a origem mais relevante para operações futuras.",
+        "featGuidance": "Talentos são módulos de capacidade. Priorize o módulo que fecha a maior lacuna operacional.",
+        "languageGuidance": "Protocolos de comunicação reduzem atrito e melhoram as chances de sobrevivência. Escolha de acordo.",
+        "forcePowerGuidance": "Variação de usuário da Força detectada. Selecione poderes que apoiem seu perfil tático declarado.",
+        "starshipManeuverGuidance": "A seleção de manobras deve combinar com o papel do veículo, a coordenação da tripulação e a tolerância a falhas.",
+        "summaryGuidance": "Auditoria final recomendada. Confirme apenas depois que todos os módulos selecionados corresponderem ao uso pretendido.",
+        "surveyGuidance": "Responda com precisão. Seu perfil de build depende de uma autoavaliação clara."
       },
       "Ace_Pilot": {
         "name": "Mayu",
@@ -1486,14 +2025,14 @@
             "2": "Maybe later, Ace."
           }
         },
-        "speciesGuidance": "Conoce el cuerpo que llevas al campo. Las fortalezas se vuelven planes; las debilidades, contingencias.",
+        "speciesGuidance": "Conheça o corpo que leva ao campo. Forças viram planos; fraquezas viram contingências.",
         "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
-        "featGuidance": "Una dote es equipo que llevas a cada combate. Elige la que realmente usarás.",
+        "featGuidance": "Um talento é equipamento que você leva para toda luta. Escolha o que você realmente vai usar.",
         "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
         "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
-        "starshipManeuverGuidance": "Elige maniobras que puedas ejecutar bajo presión, con una tripulación gritándote al oído.",
+        "starshipManeuverGuidance": "Escolha manobras que consiga executar sob pressão, com a tripulação gritando no seu ouvido.",
         "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
-        "surveyGuidance": "Responde como en un informe de misión. Las prioridades claras hacen mejores soldados."
+        "surveyGuidance": "Responda como em um briefing de missão. Prioridades claras fazem soldados melhores."
       },
       "Jedi_Knight": {
         "name": "Miraj",
@@ -1521,13 +2060,13 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Tu origen no es una cadena; es la primera nota de la armonía que aprenderás a llevar.",
+        "speciesGuidance": "Sua origem não é uma corrente; é a primeira nota da harmonia que você aprenderá a carregar.",
         "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
-        "featGuidance": "Una dote debe revelar el tipo de decisión que tomarás cuando la presión te rodee.",
+        "featGuidance": "Um talento deve revelar o tipo de escolha que você fará quando a pressão se fechar ao redor.",
         "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
-        "starshipManeuverGuidance": "Incluso en una cabina, la calma es un arma. Elige maniobras que os mantengan con vida a ti y a tus aliados.",
+        "starshipManeuverGuidance": "Mesmo no cockpit, calma é uma arma. Escolha manobras que mantenham você e seus aliados vivos.",
         "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
-        "surveyGuidance": "Responde con honestidad. No estoy midiendo la perfección; escucho la forma de tu intención."
+        "surveyGuidance": "Responda com honestidade. Não estou medindo perfeição; estou ouvindo a forma da sua intenção."
       },
       "Jedi_Master": {
         "name": "Miraj",
@@ -1550,13 +2089,13 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Tu origen no es una cadena; es la primera nota de la armonía que aprenderás a llevar.",
+        "speciesGuidance": "Sua origem não é uma corrente; é a primeira nota da harmonia que você aprenderá a carregar.",
         "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
-        "featGuidance": "Una dote debe revelar el tipo de decisión que tomarás cuando la presión te rodee.",
+        "featGuidance": "Um talento deve revelar o tipo de escolha que você fará quando a pressão se fechar ao redor.",
         "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
-        "starshipManeuverGuidance": "Incluso en una cabina, la calma es un arma. Elige maniobras que os mantengan con vida a ti y a tus aliados.",
+        "starshipManeuverGuidance": "Mesmo no cockpit, calma é uma arma. Escolha manobras que mantenham você e seus aliados vivos.",
         "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
-        "surveyGuidance": "Responde con honestidad. No estoy midiendo la perfección; escucho la forma de tu intención."
+        "surveyGuidance": "Responda com honestidade. Não estou medindo perfeição; estou ouvindo a forma da sua intenção."
       },
       "Sith_Apprentice": {
         "name": "Darth Malbada",
@@ -1731,14 +2270,14 @@
             "2": "Fight longer. Then ask again."
           }
         },
-        "speciesGuidance": "Conoce el cuerpo que llevas al campo. Las fortalezas se vuelven planes; las debilidades, contingencias.",
+        "speciesGuidance": "Conheça o corpo que leva ao campo. Forças viram planos; fraquezas viram contingências.",
         "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
-        "featGuidance": "Una dote es equipo que llevas a cada combate. Elige la que realmente usarás.",
+        "featGuidance": "Um talento é equipamento que você leva para toda luta. Escolha o que você realmente vai usar.",
         "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
         "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
-        "starshipManeuverGuidance": "Elige maniobras que puedas ejecutar bajo presión, con una tripulación gritándote al oído.",
+        "starshipManeuverGuidance": "Escolha manobras que consiga executar sob pressão, com a tripulação gritando no seu ouvido.",
         "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
-        "surveyGuidance": "Responde como en un informe de misión. Las prioridades claras hacen mejores soldados."
+        "surveyGuidance": "Responda como em um briefing de missão. Prioridades claras fazem soldados melhores."
       },
       "Independent_Droid": {
         "name": "Seraphim",
@@ -1765,14 +2304,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "backgroundGuidance": "El contexto histórico influye en las heurísticas de respuesta. Elige el origen más relevante para operaciones futuras.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "languageGuidance": "Los protocolos de comunicación reducen fricción y mejoran las probabilidades de supervivencia. Elige en consecuencia.",
-        "forcePowerGuidance": "Variación de usuario de la Fuerza detectada. Selecciona poderes que apoyen tu perfil táctico declarado.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "summaryGuidance": "Se recomienda auditoría final. Confirma solo cuando todos los módulos seleccionados coincidan con el despliegue previsto.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Pacote de origem identificado. Avalie as premissas do chassi antes de confirmar parâmetros operacionais de longo prazo.",
+        "backgroundGuidance": "O contexto histórico influencia heurísticas de resposta. Escolha a origem mais relevante para operações futuras.",
+        "featGuidance": "Talentos são módulos de capacidade. Priorize o módulo que fecha a maior lacuna operacional.",
+        "languageGuidance": "Protocolos de comunicação reduzem atrito e melhoram as chances de sobrevivência. Escolha de acordo.",
+        "forcePowerGuidance": "Variação de usuário da Força detectada. Selecione poderes que apoiem seu perfil tático declarado.",
+        "starshipManeuverGuidance": "A seleção de manobras deve combinar com o papel do veículo, a coordenação da tripulação e a tolerância a falhas.",
+        "summaryGuidance": "Auditoria final recomendada. Confirme apenas depois que todos os módulos selecionados corresponderem ao uso pretendido.",
+        "surveyGuidance": "Responda com precisão. Seu perfil de build depende de uma autoavaliação clara."
       },
       "Pathfinder": {
         "name": "Lead",
@@ -1795,14 +2334,14 @@
         "skillGuidance": "Navigation, survival, tactics—master them all. Pathfinders are the elite for a reason.",
         "multiclassGuidance": "Expanding your skill set? Excellent. The best Pathfinders are versatile.",
         "hpGuidance": "Tougher now. Can't lead if you're dead. Stay alive, stay sharp.",
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "backgroundGuidance": "El contexto histórico influye en las heurísticas de respuesta. Elige el origen más relevante para operaciones futuras.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "languageGuidance": "Los protocolos de comunicación reducen fricción y mejoran las probabilidades de supervivencia. Elige en consecuencia.",
-        "forcePowerGuidance": "Variación de usuario de la Fuerza detectada. Selecciona poderes que apoyen tu perfil táctico declarado.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "summaryGuidance": "Se recomienda auditoría final. Confirma solo cuando todos los módulos seleccionados coincidan con el despliegue previsto.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Pacote de origem identificado. Avalie as premissas do chassi antes de confirmar parâmetros operacionais de longo prazo.",
+        "backgroundGuidance": "O contexto histórico influencia heurísticas de resposta. Escolha a origem mais relevante para operações futuras.",
+        "featGuidance": "Talentos são módulos de capacidade. Priorize o módulo que fecha a maior lacuna operacional.",
+        "languageGuidance": "Protocolos de comunicação reduzem atrito e melhoram as chances de sobrevivência. Escolha de acordo.",
+        "forcePowerGuidance": "Variação de usuário da Força detectada. Selecione poderes que apoiem seu perfil tático declarado.",
+        "starshipManeuverGuidance": "A seleção de manobras deve combinar com o papel do veículo, a coordenação da tripulação e a tolerância a falhas.",
+        "summaryGuidance": "Auditoria final recomendada. Confirme apenas depois que todos os módulos selecionados corresponderem ao uso pretendido.",
+        "surveyGuidance": "Responda com precisão. Seu perfil de build depende de uma autoavaliação clara."
       },
       "Corporate_Agent": {
         "name": "Marl Skindar",
@@ -1827,14 +2366,14 @@
         "multiclassGuidance": "Diversifying is wise. The best spies adapt, improvise, and infiltrate without warning. Survive long enough, and you'll see why.",
         "hpGuidance": "Stay alive. Dead agents are useless, and paperwork waits for no one. Don't make me retrieve you from a morgue.",
         "mentorStory": "mentorStory: {\n  \"mentorClasses\": [\n    \"CorporateAgent\",\n    \"Spy\",\n    \"Noble\"\n  ],\n  \"mentorDSPPercent\": 0.5,\n  \"dspTolerance\": 1.0,\n  \"dspSensitivity\": \"none\",\n  \"tiers\": {\n    \"tier1\": [\n      \"I don\\u2019t tell stories. I solve problems.\"\n    ],\n    \"tier2\": [\n      \"If you\\u2019re doing this right, you don\\u2019t remember which name you\\u2019re using today.\"\n    ],\n    \"tier3\": [\n      \"I\\u2019ve been a corporate fixer, a money launderer, and a junior clerk. None of those were lies.\"\n    ],\n    \"tier4\": [\n      \"People who talk about themselves get noticed. People who get noticed don\\u2019t last.\"\n    ],\n    \"tier5\": [\n      \"You think I don\\u2019t have a life outside this? I do. I just file it under \\u2018classified\\u2019.\"\n    ]\n  },\n  \"dspBlocked\": [\n    \"That\\u2019s not relevant.\",\n    \"Wrong question.\",\n    \"Focus.\"\n  ]\n}",
-        "speciesGuidance": "Empieza con lo que eres y luego decide qué harás con ello.",
-        "backgroundGuidance": "Tu pasado da textura a cada elección. Elige el hilo que aún tira de ti.",
-        "featGuidance": "Las dotes definen los bordes especiales de tu configuración. Elige una que se sienta útil y auténtica.",
-        "languageGuidance": "Un nuevo idioma puede convertir desconocidos en aliados y advertencias en oportunidades.",
-        "forcePowerGuidance": "Elige poderes de la Fuerza que coincidan con la influencia que quieres aportar a la escena.",
-        "starshipManeuverGuidance": "Elige maniobras que encajen con tu tripulación, tu nave y los problemas que esperas encontrar.",
-        "summaryGuidance": "Revisa todo el expediente antes de confirmar. Asegúrate de que se sienta como un personaje que quieres jugar.",
-        "surveyGuidance": "Responde por instinto. El mejor consejo de configuración empieza con preferencias honestas."
+        "speciesGuidance": "Comece pelo que você é, então decida o que fará disso.",
+        "backgroundGuidance": "Seu passado dá textura a cada escolha. Escolha o fio que ainda puxa você.",
+        "featGuidance": "Talentos definem as arestas especiais da sua build. Escolha um que pareça útil e verdadeiro.",
+        "languageGuidance": "Um novo idioma pode transformar estranhos em aliados e avisos em oportunidades.",
+        "forcePowerGuidance": "Escolha poderes da Força que combinem com o tipo de influência que você quer trazer para a cena.",
+        "starshipManeuverGuidance": "Escolha manobras que combinem com sua tripulação, sua nave e os problemas que espera encontrar.",
+        "summaryGuidance": "Revise todo o registro antes de confirmar. Garanta que pareça um personagem que você quer jogar.",
+        "surveyGuidance": "Responda pelo instinto. O melhor conselho de build começa com preferências honestas."
       },
       "Elite_Trooper": {
         "name": "Breach",
@@ -1860,14 +2399,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Conoce el cuerpo que llevas al campo. Las fortalezas se vuelven planes; las debilidades, contingencias.",
+        "speciesGuidance": "Conheça o corpo que leva ao campo. Forças viram planos; fraquezas viram contingências.",
         "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
-        "featGuidance": "Una dote es equipo que llevas a cada combate. Elige la que realmente usarás.",
+        "featGuidance": "Um talento é equipamento que você leva para toda luta. Escolha o que você realmente vai usar.",
         "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
         "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
-        "starshipManeuverGuidance": "Elige maniobras que puedas ejecutar bajo presión, con una tripulación gritándote al oído.",
+        "starshipManeuverGuidance": "Escolha manobras que consiga executar sob pressão, com a tripulação gritando no seu ouvido.",
         "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
-        "surveyGuidance": "Responde como en un informe de misión. Las prioridades claras hacen mejores soldados."
+        "surveyGuidance": "Responda como em um briefing de missão. Prioridades claras fazem soldados melhores."
       },
       "Assassin": {
         "name": "Delta",
@@ -1924,14 +2463,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Conoce el cuerpo que llevas al campo. Las fortalezas se vuelven planes; las debilidades, contingencias.",
+        "speciesGuidance": "Conheça o corpo que leva ao campo. Forças viram planos; fraquezas viram contingências.",
         "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
-        "featGuidance": "Una dote es equipo que llevas a cada combate. Elige la que realmente usarás.",
+        "featGuidance": "Um talento é equipamento que você leva para toda luta. Escolha o que você realmente vai usar.",
         "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
         "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
-        "starshipManeuverGuidance": "Elige maniobras que puedas ejecutar bajo presión, con una tripulación gritándote al oído.",
+        "starshipManeuverGuidance": "Escolha manobras que consiga executar sob pressão, com a tripulação gritando no seu ouvido.",
         "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
-        "surveyGuidance": "Responde como en un informe de misión. Las prioridades claras hacen mejores soldados."
+        "surveyGuidance": "Responda como em um briefing de missão. Prioridades claras fazem soldados melhores."
       },
       "Bounty_Hunter": {
         "name": "Kex Varon",
@@ -2046,14 +2585,14 @@
             "2": "Not that story. Pick another."
           }
         },
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "backgroundGuidance": "El contexto histórico influye en las heurísticas de respuesta. Elige el origen más relevante para operaciones futuras.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "languageGuidance": "Los protocolos de comunicación reducen fricción y mejoran las probabilidades de supervivencia. Elige en consecuencia.",
-        "forcePowerGuidance": "Variación de usuario de la Fuerza detectada. Selecciona poderes que apoyen tu perfil táctico declarado.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "summaryGuidance": "Se recomienda auditoría final. Confirma solo cuando todos los módulos seleccionados coincidan con el despliegue previsto.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Pacote de origem identificado. Avalie as premissas do chassi antes de confirmar parâmetros operacionais de longo prazo.",
+        "backgroundGuidance": "O contexto histórico influencia heurísticas de resposta. Escolha a origem mais relevante para operações futuras.",
+        "featGuidance": "Talentos são módulos de capacidade. Priorize o módulo que fecha a maior lacuna operacional.",
+        "languageGuidance": "Protocolos de comunicação reduzem atrito e melhoram as chances de sobrevivência. Escolha de acordo.",
+        "forcePowerGuidance": "Variação de usuário da Força detectada. Selecione poderes que apoiem seu perfil tático declarado.",
+        "starshipManeuverGuidance": "A seleção de manobras deve combinar com o papel do veículo, a coordenação da tripulação e a tolerância a falhas.",
+        "summaryGuidance": "Auditoria final recomendada. Confirme apenas depois que todos os módulos selecionados corresponderem ao uso pretendido.",
+        "surveyGuidance": "Responda com precisão. Seu perfil de build depende de uma autoavaliação clara."
       },
       "Crime_Lord": {
         "name": "Tío the Hutt",
@@ -2136,14 +2675,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "backgroundGuidance": "El contexto histórico influye en las heurísticas de respuesta. Elige el origen más relevante para operaciones futuras.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "languageGuidance": "Los protocolos de comunicación reducen fricción y mejoran las probabilidades de supervivencia. Elige en consecuencia.",
-        "forcePowerGuidance": "Variación de usuario de la Fuerza detectada. Selecciona poderes que apoyen tu perfil táctico declarado.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "summaryGuidance": "Se recomienda auditoría final. Confirma solo cuando todos los módulos seleccionados coincidan con el despliegue previsto.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Pacote de origem identificado. Avalie as premissas do chassi antes de confirmar parâmetros operacionais de longo prazo.",
+        "backgroundGuidance": "O contexto histórico influencia heurísticas de resposta. Escolha a origem mais relevante para operações futuras.",
+        "featGuidance": "Talentos são módulos de capacidade. Priorize o módulo que fecha a maior lacuna operacional.",
+        "languageGuidance": "Protocolos de comunicação reduzem atrito e melhoram as chances de sobrevivência. Escolha de acordo.",
+        "forcePowerGuidance": "Variação de usuário da Força detectada. Selecione poderes que apoiem seu perfil tático declarado.",
+        "starshipManeuverGuidance": "A seleção de manobras deve combinar com o papel do veículo, a coordenação da tripulação e a tolerância a falhas.",
+        "summaryGuidance": "Auditoria final recomendada. Confirme apenas depois que todos os módulos selecionados corresponderem ao uso pretendido.",
+        "surveyGuidance": "Responda com precisão. Seu perfil de build depende de uma autoavaliação clara."
       },
       "Enforcer": {
         "name": "Krag the Immovable",
@@ -2204,14 +2743,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Tu origen no es una cadena; es la primera nota de la armonía que aprenderás a llevar.",
+        "speciesGuidance": "Sua origem não é uma corrente; é a primeira nota da harmonia que você aprenderá a carregar.",
         "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
-        "featGuidance": "Una dote debe revelar el tipo de decisión que tomarás cuando la presión te rodee.",
+        "featGuidance": "Um talento deve revelar o tipo de escolha que você fará quando a pressão se fechar ao redor.",
         "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
         "forcePowerGuidance": "Let the Force answer your need, not your impatience. Choose powers you can wield with restraint.",
-        "starshipManeuverGuidance": "Incluso en una cabina, la calma es un arma. Elige maniobras que os mantengan con vida a ti y a tus aliados.",
+        "starshipManeuverGuidance": "Mesmo no cockpit, calma é uma arma. Escolha manobras que mantenham você e seus aliados vivos.",
         "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
-        "surveyGuidance": "Responde con honestidad. No estoy midiendo la perfección; escucho la forma de tu intención."
+        "surveyGuidance": "Responda com honestidade. Não estou medindo perfeição; estou ouvindo a forma da sua intenção."
       },
       "Force_Disciple": {
         "name": "Riquis",
@@ -2255,14 +2794,14 @@
             "2": "You are still naming things you do not understand."
           }
         },
-        "speciesGuidance": "Tu origen no es una cadena; es la primera nota de la armonía que aprenderás a llevar.",
+        "speciesGuidance": "Sua origem não é uma corrente; é a primeira nota da harmonia que você aprenderá a carregar.",
         "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
-        "featGuidance": "Una dote debe revelar el tipo de decisión que tomarás cuando la presión te rodee.",
+        "featGuidance": "Um talento deve revelar o tipo de escolha que você fará quando a pressão se fechar ao redor.",
         "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
         "forcePowerGuidance": "Let the Force answer your need, not your impatience. Choose powers you can wield with restraint.",
-        "starshipManeuverGuidance": "Incluso en una cabina, la calma es un arma. Elige maniobras que os mantengan con vida a ti y a tus aliados.",
+        "starshipManeuverGuidance": "Mesmo no cockpit, calma é uma arma. Escolha manobras que mantenham você e seus aliados vivos.",
         "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
-        "surveyGuidance": "Responde con honestidad. No estoy midiendo la perfección; escucho la forma de tu intención."
+        "surveyGuidance": "Responda com honestidade. Não estou medindo perfeição; estou ouvindo a forma da sua intenção."
       },
       "Gunslinger": {
         "name": "Rajma",
@@ -2376,14 +2915,14 @@
             "2": "Let’s keep this fun."
           }
         },
-        "speciesGuidance": "Empieza con lo que eres y luego decide qué harás con ello.",
-        "backgroundGuidance": "Tu pasado da textura a cada elección. Elige el hilo que aún tira de ti.",
-        "featGuidance": "Las dotes definen los bordes especiales de tu configuración. Elige una que se sienta útil y auténtica.",
-        "languageGuidance": "Un nuevo idioma puede convertir desconocidos en aliados y advertencias en oportunidades.",
-        "forcePowerGuidance": "Elige poderes de la Fuerza que coincidan con la influencia que quieres aportar a la escena.",
-        "starshipManeuverGuidance": "Elige maniobras que encajen con tu tripulación, tu nave y los problemas que esperas encontrar.",
-        "summaryGuidance": "Revisa todo el expediente antes de confirmar. Asegúrate de que se sienta como un personaje que quieres jugar.",
-        "surveyGuidance": "Responde por instinto. El mejor consejo de configuración empieza con preferencias honestas."
+        "speciesGuidance": "Comece pelo que você é, então decida o que fará disso.",
+        "backgroundGuidance": "Seu passado dá textura a cada escolha. Escolha o fio que ainda puxa você.",
+        "featGuidance": "Talentos definem as arestas especiais da sua build. Escolha um que pareça útil e verdadeiro.",
+        "languageGuidance": "Um novo idioma pode transformar estranhos em aliados e avisos em oportunidades.",
+        "forcePowerGuidance": "Escolha poderes da Força que combinem com o tipo de influência que você quer trazer para a cena.",
+        "starshipManeuverGuidance": "Escolha manobras que combinem com sua tripulação, sua nave e os problemas que espera encontrar.",
+        "summaryGuidance": "Revise todo o registro antes de confirmar. Garanta que pareça um personagem que você quer jogar.",
+        "surveyGuidance": "Responda pelo instinto. O melhor conselho de build começa com preferências honestas."
       },
       "Infiltrator": {
         "name": "Delta",
@@ -2410,14 +2949,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Conoce el cuerpo que llevas al campo. Las fortalezas se vuelven planes; las debilidades, contingencias.",
+        "speciesGuidance": "Conheça o corpo que leva ao campo. Forças viram planos; fraquezas viram contingências.",
         "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
-        "featGuidance": "Una dote es equipo que llevas a cada combate. Elige la que realmente usarás.",
+        "featGuidance": "Um talento é equipamento que você leva para toda luta. Escolha o que você realmente vai usar.",
         "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
         "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
-        "starshipManeuverGuidance": "Elige maniobras que puedas ejecutar bajo presión, con una tripulación gritándote al oído.",
+        "starshipManeuverGuidance": "Escolha manobras que consiga executar sob pressão, com a tripulação gritando no seu ouvido.",
         "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
-        "surveyGuidance": "Responde como en un informe de misión. Las prioridades claras hacen mejores soldados."
+        "surveyGuidance": "Responda como em um briefing de missão. Prioridades claras fazem soldados melhores."
       },
       "Martial_Arts_Master": {
         "name": "Master Zhen",
@@ -2470,13 +3009,13 @@
             "2": "This lesson waits."
           }
         },
-        "speciesGuidance": "Tu origen no es una cadena; es la primera nota de la armonía que aprenderás a llevar.",
+        "speciesGuidance": "Sua origem não é uma corrente; é a primeira nota da harmonia que você aprenderá a carregar.",
         "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
-        "featGuidance": "Una dote debe revelar el tipo de decisión que tomarás cuando la presión te rodee.",
+        "featGuidance": "Um talento deve revelar o tipo de escolha que você fará quando a pressão se fechar ao redor.",
         "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
-        "starshipManeuverGuidance": "Incluso en una cabina, la calma es un arma. Elige maniobras que os mantengan con vida a ti y a tus aliados.",
+        "starshipManeuverGuidance": "Mesmo no cockpit, calma é uma arma. Escolha manobras que mantenham você e seus aliados vivos.",
         "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
-        "surveyGuidance": "Responde con honestidad. No estoy midiendo la perfección; escucho la forma de tu intención."
+        "surveyGuidance": "Responda com honestidade. Não estou medindo perfeição; estou ouvindo a forma da sua intenção."
       },
       "Master_Privateer": {
         "name": "'The Captain'",
@@ -2501,14 +3040,14 @@
         "multiclassGuidance": "Expanding your repertoire? Smart! The best privateers are versatile!",
         "hpGuidance": "Tougher now! A captain who can't survive boarding actions doesn't stay captain long!",
         "mentorStory": "mentorStory: {\n  \"mentorClasses\": [\n    \"Officer\",\n    \"Smuggler\",\n    \"Outlaw\"\n  ],\n  \"mentorDSPPercent\": 0.5,\n  \"dspTolerance\": 1.0,\n  \"dspSensitivity\": \"none\",\n  \"tiers\": {\n    \"tier1\": [\n      \"People talk. I listen.\"\n    ],\n    \"tier2\": [\n      \"I\\u2019ve heard the stories about me. They\\u2019re useful.\"\n    ],\n    \"tier3\": [\n      \"Names are liabilities. So are truths.\"\n    ],\n    \"tier4\": [\n      \"I don\\u2019t correct lies that keep me alive.\"\n    ],\n    \"tier5\": [\n      \"If you knew who I was, you\\u2019d stop listening.\"\n    ]\n  },\n  \"dspBlocked\": [\n    \"That\\u2019s not important.\",\n    \"You\\u2019re asking the wrong question.\",\n    \"Silence is an answer.\"\n  ]\n}",
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "backgroundGuidance": "El contexto histórico influye en las heurísticas de respuesta. Elige el origen más relevante para operaciones futuras.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "languageGuidance": "Los protocolos de comunicación reducen fricción y mejoran las probabilidades de supervivencia. Elige en consecuencia.",
-        "forcePowerGuidance": "Variación de usuario de la Fuerza detectada. Selecciona poderes que apoyen tu perfil táctico declarado.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "summaryGuidance": "Se recomienda auditoría final. Confirma solo cuando todos los módulos seleccionados coincidan con el despliegue previsto.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Pacote de origem identificado. Avalie as premissas do chassi antes de confirmar parâmetros operacionais de longo prazo.",
+        "backgroundGuidance": "O contexto histórico influencia heurísticas de resposta. Escolha a origem mais relevante para operações futuras.",
+        "featGuidance": "Talentos são módulos de capacidade. Priorize o módulo que fecha a maior lacuna operacional.",
+        "languageGuidance": "Protocolos de comunicação reduzem atrito e melhoram as chances de sobrevivência. Escolha de acordo.",
+        "forcePowerGuidance": "Variação de usuário da Força detectada. Selecione poderes que apoiem seu perfil tático declarado.",
+        "starshipManeuverGuidance": "A seleção de manobras deve combinar com o papel do veículo, a coordenação da tripulação e a tolerância a falhas.",
+        "summaryGuidance": "Auditoria final recomendada. Confirme apenas depois que todos os módulos selecionados corresponderem ao uso pretendido.",
+        "surveyGuidance": "Responda com precisão. Seu perfil de build depende de uma autoavaliação clara."
       },
       "Melee_Duelist": {
         "name": "Blade Master Kharjo",
@@ -2565,14 +3104,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Empieza con lo que eres y luego decide qué harás con ello.",
-        "backgroundGuidance": "Tu pasado da textura a cada elección. Elige el hilo que aún tira de ti.",
-        "featGuidance": "Las dotes definen los bordes especiales de tu configuración. Elige una que se sienta útil y auténtica.",
-        "languageGuidance": "Un nuevo idioma puede convertir desconocidos en aliados y advertencias en oportunidades.",
-        "forcePowerGuidance": "Elige poderes de la Fuerza que coincidan con la influencia que quieres aportar a la escena.",
-        "starshipManeuverGuidance": "Elige maniobras que encajen con tu tripulación, tu nave y los problemas que esperas encontrar.",
-        "summaryGuidance": "Revisa todo el expediente antes de confirmar. Asegúrate de que se sienta como un personaje que quieres jugar.",
-        "surveyGuidance": "Responde por instinto. El mejor consejo de configuración empieza con preferencias honestas."
+        "speciesGuidance": "Comece pelo que você é, então decida o que fará disso.",
+        "backgroundGuidance": "Seu passado dá textura a cada escolha. Escolha o fio que ainda puxa você.",
+        "featGuidance": "Talentos definem as arestas especiais da sua build. Escolha um que pareça útil e verdadeiro.",
+        "languageGuidance": "Um novo idioma pode transformar estranhos em aliados e avisos em oportunidades.",
+        "forcePowerGuidance": "Escolha poderes da Força que combinem com o tipo de influência que você quer trazer para a cena.",
+        "starshipManeuverGuidance": "Escolha manobras que combinem com sua tripulação, sua nave e os problemas que espera encontrar.",
+        "summaryGuidance": "Revise todo o registro antes de confirmar. Garanta que pareça um personagem que você quer jogar.",
+        "surveyGuidance": "Responda pelo instinto. O melhor conselho de build começa com preferências honestas."
       },
       "Military_Engineer": {
         "name": "Chief Engineer Rax",
@@ -2624,14 +3163,14 @@
             "2": "Later."
           }
         },
-        "speciesGuidance": "Empieza con lo que eres y luego decide qué harás con ello.",
-        "backgroundGuidance": "Tu pasado da textura a cada elección. Elige el hilo que aún tira de ti.",
-        "featGuidance": "Las dotes definen los bordes especiales de tu configuración. Elige una que se sienta útil y auténtica.",
-        "languageGuidance": "Un nuevo idioma puede convertir desconocidos en aliados y advertencias en oportunidades.",
-        "forcePowerGuidance": "Elige poderes de la Fuerza que coincidan con la influencia que quieres aportar a la escena.",
-        "starshipManeuverGuidance": "Elige maniobras que encajen con tu tripulación, tu nave y los problemas que esperas encontrar.",
-        "summaryGuidance": "Revisa todo el expediente antes de confirmar. Asegúrate de que se sienta como un personaje que quieres jugar.",
-        "surveyGuidance": "Responde por instinto. El mejor consejo de configuración empieza con preferencias honestas."
+        "speciesGuidance": "Comece pelo que você é, então decida o que fará disso.",
+        "backgroundGuidance": "Seu passado dá textura a cada escolha. Escolha o fio que ainda puxa você.",
+        "featGuidance": "Talentos definem as arestas especiais da sua build. Escolha um que pareça útil e verdadeiro.",
+        "languageGuidance": "Um novo idioma pode transformar estranhos em aliados e avisos em oportunidades.",
+        "forcePowerGuidance": "Escolha poderes da Força que combinem com o tipo de influência que você quer trazer para a cena.",
+        "starshipManeuverGuidance": "Escolha manobras que combinem com sua tripulação, sua nave e os problemas que espera encontrar.",
+        "summaryGuidance": "Revise todo o registro antes de confirmar. Garanta que pareça um personagem que você quer jogar.",
+        "surveyGuidance": "Responda pelo instinto. O melhor conselho de build começa com preferências honestas."
       },
       "Officer": {
         "name": "Admiral Korr",
@@ -2683,14 +3222,14 @@
             "2": "Another time."
           }
         },
-        "speciesGuidance": "Conoce el cuerpo que llevas al campo. Las fortalezas se vuelven planes; las debilidades, contingencias.",
+        "speciesGuidance": "Conheça o corpo que leva ao campo. Forças viram planos; fraquezas viram contingências.",
         "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
-        "featGuidance": "Una dote es equipo que llevas a cada combate. Elige la que realmente usarás.",
+        "featGuidance": "Um talento é equipamento que você leva para toda luta. Escolha o que você realmente vai usar.",
         "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
         "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
-        "starshipManeuverGuidance": "Elige maniobras que puedas ejecutar bajo presión, con una tripulación gritándote al oído.",
+        "starshipManeuverGuidance": "Escolha manobras que consiga executar sob pressão, com a tripulação gritando no seu ouvido.",
         "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
-        "surveyGuidance": "Responde como en un informe de misión. Las prioridades claras hacen mejores soldados."
+        "surveyGuidance": "Responda como em um briefing de missão. Prioridades claras fazem soldados melhores."
       },
       "Outlaw": {
         "name": "Rogue",
@@ -2742,14 +3281,14 @@
             "2": "Not today."
           }
         },
-        "speciesGuidance": "Empieza con lo que eres y luego decide qué harás con ello.",
-        "backgroundGuidance": "Tu pasado da textura a cada elección. Elige el hilo que aún tira de ti.",
-        "featGuidance": "Las dotes definen los bordes especiales de tu configuración. Elige una que se sienta útil y auténtica.",
-        "languageGuidance": "Un nuevo idioma puede convertir desconocidos en aliados y advertencias en oportunidades.",
-        "forcePowerGuidance": "Elige poderes de la Fuerza que coincidan con la influencia que quieres aportar a la escena.",
-        "starshipManeuverGuidance": "Elige maniobras que encajen con tu tripulación, tu nave y los problemas que esperas encontrar.",
-        "summaryGuidance": "Revisa todo el expediente antes de confirmar. Asegúrate de que se sienta como un personaje que quieres jugar.",
-        "surveyGuidance": "Responde por instinto. El mejor consejo de configuración empieza con preferencias honestas."
+        "speciesGuidance": "Comece pelo que você é, então decida o que fará disso.",
+        "backgroundGuidance": "Seu passado dá textura a cada escolha. Escolha o fio que ainda puxa você.",
+        "featGuidance": "Talentos definem as arestas especiais da sua build. Escolha um que pareça útil e verdadeiro.",
+        "languageGuidance": "Um novo idioma pode transformar estranhos em aliados e avisos em oportunidades.",
+        "forcePowerGuidance": "Escolha poderes da Força que combinem com o tipo de influência que você quer trazer para a cena.",
+        "starshipManeuverGuidance": "Escolha manobras que combinem com sua tripulação, sua nave e os problemas que espera encontrar.",
+        "summaryGuidance": "Revise todo o registro antes de confirmar. Garanta que pareça um personagem que você quer jogar.",
+        "surveyGuidance": "Responda pelo instinto. O melhor conselho de build começa com preferências honestas."
       },
       "Saboteur": {
         "name": "Spark",
@@ -2801,14 +3340,14 @@
             "2": "Ask something else."
           }
         },
-        "speciesGuidance": "Empieza con lo que eres y luego decide qué harás con ello.",
-        "backgroundGuidance": "Tu pasado da textura a cada elección. Elige el hilo que aún tira de ti.",
-        "featGuidance": "Las dotes definen los bordes especiales de tu configuración. Elige una que se sienta útil y auténtica.",
-        "languageGuidance": "Un nuevo idioma puede convertir desconocidos en aliados y advertencias en oportunidades.",
-        "forcePowerGuidance": "Elige poderes de la Fuerza que coincidan con la influencia que quieres aportar a la escena.",
-        "starshipManeuverGuidance": "Elige maniobras que encajen con tu tripulación, tu nave y los problemas que esperas encontrar.",
-        "summaryGuidance": "Revisa todo el expediente antes de confirmar. Asegúrate de que se sienta como un personaje que quieres jugar.",
-        "surveyGuidance": "Responde por instinto. El mejor consejo de configuración empieza con preferencias honestas."
+        "speciesGuidance": "Comece pelo que você é, então decida o que fará disso.",
+        "backgroundGuidance": "Seu passado dá textura a cada escolha. Escolha o fio que ainda puxa você.",
+        "featGuidance": "Talentos definem as arestas especiais da sua build. Escolha um que pareça útil e verdadeiro.",
+        "languageGuidance": "Um novo idioma pode transformar estranhos em aliados e avisos em oportunidades.",
+        "forcePowerGuidance": "Escolha poderes da Força que combinem com o tipo de influência que você quer trazer para a cena.",
+        "starshipManeuverGuidance": "Escolha manobras que combinem com sua tripulação, sua nave e os problemas que espera encontrar.",
+        "summaryGuidance": "Revise todo o registro antes de confirmar. Garanta que pareça um personagem que você quer jogar.",
+        "surveyGuidance": "Responda pelo instinto. O melhor conselho de build começa com preferências honestas."
       },
       "Shaper": {
         "name": "Shaper Urza",
@@ -2862,14 +3401,14 @@
             "2": "Come back when you’re less squeamish."
           }
         },
-        "speciesGuidance": "Empieza con lo que eres y luego decide qué harás con ello.",
-        "backgroundGuidance": "Tu pasado da textura a cada elección. Elige el hilo que aún tira de ti.",
-        "featGuidance": "Las dotes definen los bordes especiales de tu configuración. Elige una que se sienta útil y auténtica.",
-        "languageGuidance": "Un nuevo idioma puede convertir desconocidos en aliados y advertencias en oportunidades.",
-        "forcePowerGuidance": "Elige poderes de la Fuerza que coincidan con la influencia que quieres aportar a la escena.",
-        "starshipManeuverGuidance": "Elige maniobras que encajen con tu tripulación, tu nave y los problemas que esperas encontrar.",
-        "summaryGuidance": "Revisa todo el expediente antes de confirmar. Asegúrate de que se sienta como un personaje que quieres jugar.",
-        "surveyGuidance": "Responde por instinto. El mejor consejo de configuración empieza con preferencias honestas."
+        "speciesGuidance": "Comece pelo que você é, então decida o que fará disso.",
+        "backgroundGuidance": "Seu passado dá textura a cada escolha. Escolha o fio que ainda puxa você.",
+        "featGuidance": "Talentos definem as arestas especiais da sua build. Escolha um que pareça útil e verdadeiro.",
+        "languageGuidance": "Um novo idioma pode transformar estranhos em aliados e avisos em oportunidades.",
+        "forcePowerGuidance": "Escolha poderes da Força que combinem com o tipo de influência que você quer trazer para a cena.",
+        "starshipManeuverGuidance": "Escolha manobras que combinem com sua tripulação, sua nave e os problemas que espera encontrar.",
+        "summaryGuidance": "Revise todo o registro antes de confirmar. Garanta que pareça um personagem que você quer jogar.",
+        "surveyGuidance": "Responda pelo instinto. O melhor conselho de build começa com preferências honestas."
       },
       "Vanguard": {
         "name": "Shield Captain Theron",
@@ -2921,14 +3460,14 @@
             "2": "Hold the line first."
           }
         },
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "backgroundGuidance": "El contexto histórico influye en las heurísticas de respuesta. Elige el origen más relevante para operaciones futuras.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "languageGuidance": "Los protocolos de comunicación reducen fricción y mejoran las probabilidades de supervivencia. Elige en consecuencia.",
-        "forcePowerGuidance": "Variación de usuario de la Fuerza detectada. Selecciona poderes que apoyen tu perfil táctico declarado.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "summaryGuidance": "Se recomienda auditoría final. Confirma solo cuando todos los módulos seleccionados coincidan con el despliegue previsto.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Pacote de origem identificado. Avalie as premissas do chassi antes de confirmar parâmetros operacionais de longo prazo.",
+        "backgroundGuidance": "O contexto histórico influencia heurísticas de resposta. Escolha a origem mais relevante para operações futuras.",
+        "featGuidance": "Talentos são módulos de capacidade. Priorize o módulo que fecha a maior lacuna operacional.",
+        "languageGuidance": "Protocolos de comunicação reduzem atrito e melhoram as chances de sobrevivência. Escolha de acordo.",
+        "forcePowerGuidance": "Variação de usuário da Força detectada. Selecione poderes que apoiem seu perfil tático declarado.",
+        "starshipManeuverGuidance": "A seleção de manobras deve combinar com o papel do veículo, a coordenação da tripulação e a tolerância a falhas.",
+        "summaryGuidance": "Auditoria final recomendada. Confirme apenas depois que todos os módulos selecionados corresponderem ao uso pretendido.",
+        "surveyGuidance": "Responda com precisão. Seu perfil de build depende de uma autoavaliação clara."
       },
       "Fallback": {
         "Welcome": "Welcome.",
@@ -2936,571 +3475,32 @@
         "MakeChoiceWisely": "Make your choice wisely."
       }
     },
-    "CharacterSheet": {
-      "Sections": {
-        "Abilities": "Atributos",
-        "Skills": "Habilidades",
-        "CustomSkills": "Habilidades personalizadas",
-        "Languages": "Idiomas",
-        "CharacterNotes": "Notas del personaje",
-        "RacialAbilities": "Aptitudes raciales",
-        "RelationshipsConnections": "Relaciones y contactos",
-        "CombatMetricsResources": "Métricas de combate y recursos",
-        "CombatMetrics": "Métricas de combate",
-        "HeroicResources": "Recursos heroicos",
-        "SecondWind": "Segundo aliento",
-        "ExperiencePoints": "Puntos de experiencia",
-        "Feats": "Dotes",
-        "Talents": "Talentos",
-        "TalentsKnown": "Talentos conocidos",
-        "StarshipManeuvers": "Maniobras de astronave",
-        "ForceSuite": "Suite de la Fuerza",
-        "ForcePowersKnown": "Poderes de la Fuerza conocidos",
-        "ForceSecrets": "Secretos de la Fuerza",
-        "ForceTechniques": "Técnicas de la Fuerza"
-      },
-      "Labels": {
-        "Filter": "Filtro",
-        "AllSkills": "Todas las habilidades",
-        "Trained": "Entrenada",
-        "Favorited": "Favoritas",
-        "Focused": "Enfocadas",
-        "Sort": "Ordenar",
-        "NameAZ": "Nombre A→Z",
-        "Ability": "Atributo",
-        "HighestTotal": "Total más alto",
-        "LowestTotal": "Total más bajo",
-        "Skill": "Habilidad",
-        "HalfLevel": "½ nivel",
-        "Focus": "Enfoque",
-        "Misc": "Misc.",
-        "Total": "Total",
-        "Roll": "Tirar",
-        "All": "Todo",
-        "Available": "Disponible",
-        "Combat": "Combate",
-        "ChoiceSlot": "Espacio de elección",
-        "Passive": "Pasiva",
-        "RelationshipNotesContext": "Notas y contexto de relaciones",
-        "WalkSpeed": "Velocidad terrestre",
-        "Initiative": "Iniciativa",
-        "Perception": "Percepción",
-        "BaseAttack": "Ataque base",
-        "GrappleBonus": "Bonif. de presa",
-        "DamageThreshold": "Umbral de daño",
-        "ForcePoints": "Puntos de Fuerza",
-        "DestinyPoints": "Puntos de destino",
-        "BaseHealing": "Curación base",
-        "HP": "PG",
-        "ModifiedHealing": "Curación modificada",
-        "UsesRemaining": "Usos restantes",
-        "MaxUses": "Usos máximos",
-        "Level": "Nivel",
-        "TotalXP": "PX totales",
-        "NextLevel": "Siguiente nivel",
-        "XPToNext": "PX para el siguiente",
-        "Progress": "Progreso",
-        "Status": "Estado",
-        "Hand": "Mano",
-        "Discard": "Descartar",
-        "Discarded": "Descartados",
-        "Requires": "Requiere",
-        "SortName": "Ordenar: nombre",
-        "SortTag": "Ordenar: etiqueta"
-      },
-      "Actions": {
-        "RollForAttributes": "Tirar atributos",
-        "Expand": "Expandir",
-        "ResetFilters": "Restablecer filtros",
-        "RollSkill": "Tirar {skill}",
-        "UseNamed": "Usar {name}",
-        "Add": "Añadir",
-        "AddLanguage": "+ Añadir idioma",
-        "AddRelationship": "Añadir relación",
-        "UseSecondWind": "Usar segundo aliento",
-        "ResetUses": "Restablecer usos",
-        "AddFeat": "+ Añadir dote",
-        "AddTalent": "+ Añadir talento",
-        "Choose": "Elegir",
-        "Change": "Cambiar",
-        "RemoveNamed": "Quitar {name}",
-        "ManageArrow": "Gestionar →",
-        "ConstructLightsaber": "Construir sable de luz",
-        "FlipForMore": "Voltear para ver más",
-        "Activate": "Activar",
-        "Back": "Atrás"
-      },
-      "Tooltips": {
-        "OpenAttributeStep": "Abrir el motor de progresión en el paso de atributos",
-        "RollAbilityModifier": "Tirar d20 + modificador de {ability}",
-        "BaseAbilityScore": "Puntuación base de atributo",
-        "RacialBonus": "Bonificación racial",
-        "TemporaryModifier": "Modificador temporal",
-        "MarkAsFavorite": "Marcar como favorita",
-        "SkillUsesAvailable": "{count} usos de habilidad disponibles",
-        "ClickToRollSkill": "Haz clic para tirar {skill}",
-        "SelectAbilityModifierForSkill": "Selecciona el modificador de atributo para {skill}",
-        "HalfCharacterLevel": "La mitad de tu nivel de personaje",
-        "TrainedSkill": "Entrenada: tienes rangos en esta habilidad (+5)",
-        "FocusedSkill": "Enfoque: habilidad enfocada (+5 bonif.)",
-        "MiscSkillModifier": "Modificador misceláneo (dotes, condiciones, etc.)",
-        "TotalSkillBonus": "Bonificación total de habilidad",
-        "ShowAllSkillUses": "Mostrar todos los usos de habilidad",
-        "ShowUsableActions": "Mostrar solo acciones utilizables",
-        "ShowCombatRelevantUses": "Mostrar usos relevantes para combate",
-        "TrainedUse": "Uso entrenado",
-        "DifficultyClass": "Clase de dificultad",
-        "ActionType": "Acción {action}",
-        "ActionEconomy": "Economía de acción: {action}",
-        "AddCustomSkill": "Añadir una nueva habilidad personalizada",
-        "CustomSkillName": "Nombre de habilidad personalizada",
-        "SelectGoverningAbility": "Selecciona el atributo rector",
-        "TrainedBonus": "Entrenada: +5 bonif.",
-        "FocusBonus": "Enfoque: +5 bonif.",
-        "MiscModifier": "Modificador misceláneo",
-        "RollCustomSkill": "Tirar esta habilidad personalizada",
-        "DeleteCustomSkill": "Eliminar esta habilidad personalizada",
-        "NotesForSkill": "Notas para esta habilidad",
-        "CreateFollower": "Crear un nuevo seguidor bajo tu mando",
-        "ClickToOpen": "Haz clic para abrir {name}",
-        "InitiativeBreakdown": "Iniciativa — clic para desglose",
-        "RollInitiative": "Tirar iniciativa",
-        "Take10Initiative": "Tomar 10 en iniciativa",
-        "RollPerception": "Tirar Percepción",
-        "SpendForcePoint": "Gastar 1 Punto de Fuerza",
-        "RestoreForcePoint": "Restaurar 1 Punto de Fuerza",
-        "OpenTalentsTab": "Abrir la pestaña Talentos para gestionarlos",
-        "OpenForceTab": "Abrir la pestaña Fuerza para gestionar poderes"
-      },
-      "Placeholders": {
-        "SkillName": "Nombre de habilidad",
-        "Notes": "Notas",
-        "EnterLanguage": "Introduce un idioma...",
-        "CharacterNotes": "Añade notas del personaje aquí...",
-        "RelationshipNotes": "Notas generales sobre alianzas, rivalidades, contactos clave..."
-      },
-      "Empty": {
-        "NoCustomSkills": "Aún no hay habilidades personalizadas. Haz clic en \"Añadir\" para crear una.",
-        "NoLanguagesKnown": "No se conocen idiomas",
-        "NoRacialAbilities": "Sin aptitudes raciales.",
-        "NoRelationships": "Aún no hay relaciones registradas.",
-        "NoFeats": "Aún no se han añadido dotes.",
-        "NoTalents": "Aún no se han añadido talentos.",
-        "NoTalentsKnown": "Aún no se conocen talentos.",
-        "NoStarshipManeuvers": "No se conocen maniobras de astronave.",
-        "NoForcePowers": "No se conocen poderes de la Fuerza.",
-        "NoForceSecrets": "No se conocen secretos de la Fuerza.",
-        "NoForceTechniques": "No se conocen técnicas de la Fuerza."
-      },
-      "Hints": {
-        "AddLanguageCard": "Crea otra entrada de idioma con la misma forma y tamaño de carta.",
-        "CreateFirstLanguage": "Haz clic en \"Añadir idioma\" para crear la primera carta de idioma estandarizada.",
-        "DropActorsForRelationships": "Suelta actores sobre la hoja para añadir relaciones.",
-        "AddFirstFeat": "Usa Añadir dote para crear la primera carta de dote estandarizada.",
-        "AddFirstTalent": "Usa Añadir talento para crear la primera carta de talento.",
-        "AddTalentsOnTab": "Añade talentos en la pestaña Talentos.",
-        "TakeStarshipTactics": "Toma la dote Tácticas de Astronave para aprender maniobras.",
-        "ManageForcePowers": "Los poderes de la Fuerza se gestionan en la pestaña Fuerza."
-      },
-      "Status": {
-        "ReadyToLevelUp": "Listo para subir de nivel",
-        "LockedClassGrant": "Concesión de clase bloqueada",
-        "ChoiceNeeded": "Elección necesaria",
-        "InvalidChoice": "Elección no válida: {choice}",
-        "ChoiceMade": "Elección: {choice}",
-        "LightsaberConstructionAvailable": "Construcción de sable de luz disponible"
-      }
-    },
-    "ACTION": {
-      "CHAT": "Enviar al chat",
-      "ROLL": "Tirar",
-      "USE": "Usar"
-    },
-    "ACTOR": {
-      "TABS": {
-        "FEATS": "Dotes",
-        "RACIAL": "Rasgos raciales",
-        "TALENTS": "Talentos"
-      }
-    },
-    "CHARGEN": {
-      "NEAR_HUMAN": {
-        "ABILITY_HELP": "Ajusta los modificadores de atributo de la herencia casi humana. El total final de modificadores debe ser 0.",
-        "ABILITY_TITLE": "Modificadores de atributo",
-        "AVAILABLE_TRAITS": "Rasgos disponibles",
-        "DROP_HINT": "Arrastra rasgos aquí para seleccionarlos.",
-        "INVALID": "La herencia casi humana está incompleta o no es válida",
-        "NO_AVAILABLE": "No hay rasgos disponibles.",
-        "SACRIFICE_FEAT": "Sacrificar dote adicional",
-        "SACRIFICE_HELP": "Puedes sacrificar beneficios humanos básicos para desbloquear espacios adicionales de rasgos casi humanos.",
-        "SACRIFICE_SKILL": "Sacrificar habilidad entrenada adicional",
-        "SACRIFICE_TITLE": "Sacrificios de herencia casi humana",
-        "SELECTED": "Seleccionado",
-        "SELECTED_TRAITS": "Rasgos seleccionados",
-        "TOTAL": "Total",
-        "TRAIT_SLOTS": "Espacios de rasgos",
-        "VALID": "La herencia casi humana es válida"
-      }
-    },
-    "CURRENCY": {
-      "SYMBOL": "cr"
-    },
-    "Chargen": {
-      "CancelContent": "¿Seguro que quieres cancelar? Se perderá todo el progreso.",
-      "CancelTitle": "Cancelar creación de personaje"
-    },
-    "DIFFICULTY": {
-      "LABEL": "CD"
-    },
-    "LevelUp": {
-      "CancelContent": "¿Seguro que quieres cancelar? No se guardarán los cambios.",
-      "CancelTitle": "Cancelar subida de nivel"
-    },
-    "SheetLabel": {
-      "character": "Personaje",
-      "droid": "Droide",
-      "vehicle": "Vehículo"
-    },
-    "UNITS": {
-      "WEIGHT": "lb"
-    },
-    "Discovery": {
-      "Callout": {
-        "Dismiss": "Got it",
-        "actionPaletteFirstOpen": {
-          "Body": "This is your quick-access action menu. It adapts to combat and narrative contexts. You can customize it to fit your playstyle.",
-          "Title": "Action Palette"
-        },
-        "chargenNarrativeFirst": {
-          "Body": "You can build your character through narrative choices or direct mechanical selection. Both paths produce a fully valid character.",
-          "Title": "Character Creation Modes"
-        },
-        "gmSuggestionPanelFirst": {
-          "Body": "These are advisory insights based on the current encounter. Nothing is applied automatically. Use them as you see fit.",
-          "Title": "GM Suggestions"
-        },
-        "mentorTranslationFirst": {
-          "Body": "Mentor text appears with an Aurebesh translation effect. Click anywhere on the text to skip the animation and read immediately.",
-          "Title": "Mentor Dialogue"
-        },
-        "tacticalOverlayFirstOpen": {
-          "Body": "Toggle map overlays showing range bands, threat zones, and positioning data. Each layer can be toggled independently.",
-          "Title": "Tactical Overlay"
-        }
-      },
-      "Settings": {
-        "DisableCallouts": {
-          "Hint": "Turn off first-use hint callouts that appear when opening features for the first time",
-          "Name": "Disable Guided Callouts"
-        },
-        "DisableTooltips": {
-          "Hint": "Turn off contextual tooltips on UI elements",
-          "Name": "Disable Discovery Tooltips"
-        },
-        "DisableTour": {
-          "Hint": "Turn off the feature overview that appears on first launch",
-          "Name": "Disable First-Launch Tour"
-        }
-      },
-      "Tooltip": {
-        "AbilityModifier": {
-          "Body": "Derived from the ability score. Added to relevant rolls, skills, and defenses.",
-          "Title": "Ability Modifier"
-        },
-        "AbilityScore": {
-          "Body": "The raw score. The modifier (score minus 10, divided by 2) is what applies to rolls.",
-          "Title": "Ability Score"
-        },
-        "Acrobatics": {
-          "Body": "Acrobatics covers balance, tumbling, safe falls, escaping physical holds, and agile movement. Use it when precision body control matters more than raw strength.",
-          "Title": "Acrobatics"
-        },
-        "ActionDisabled": {
-          "Body": "This action cannot be used right now. Check prerequisites and available resources.",
-          "Title": "Action Unavailable"
-        },
-        "ActionPalette": {
-          "Body": "Quick access to common combat and narrative actions for your character.",
-          "Title": "Action Palette"
-        },
-        "ActiveTalent": {
-          "Body": "Requires an action to use. Check the talent description for action type.",
-          "Title": "Active Talent"
-        },
-        "ArmorPenalty": {
-          "Body": "This armor applies a penalty to Reflex Defense beyond the armor bonus and may restrict Dexterity.",
-          "Title": "Armor Penalty"
-        },
-        "AurebeshTranslation": {
-          "Body": "Text appears in Aurebesh first, then translates. Click to skip the effect.",
-          "Title": "Aurebesh Translation"
-        },
-        "BaseAttackBonus": {
-          "Body": "Added to attack rolls. Determined by class and level.",
-          "Title": "Base Attack Bonus"
-        },
-        "CatchSecondWind": {
-          "Body": "Catch a Second Wind lets a heroic character rally after being seriously hurt. It is only available when reduced to half hit points or less, and it can be used once per day.",
-          "Title": "Catch a Second Wind"
-        },
-        "ChargenClass": {
-          "Body": "Your class determines hit points, defenses, trained skills, and talent access.",
-          "Title": "Class"
-        },
-        "ChargenLockin": {
-          "Body": "Confirms your choices. Most selections can still be adjusted after creation.",
-          "Title": "Finalize Character"
-        },
-        "ChargenMentor": {
-          "Body": "Choose a mentor whose guidance shapes your character creation experience.",
-          "Title": "Mentor Selection"
-        },
-        "ChargenNarrative": {
-          "Body": "Build your character through guided story choices instead of manual stat selection.",
-          "Title": "Narrative Mode"
-        },
-        "ChargenRollMethod": {
-          "Body": "Select how to generate ability scores: roll dice, point buy, or standard array.",
-          "Title": "Ability Score Method"
-        },
-        "ChargenSpecies": {
-          "Body": "Your species determines base traits, ability adjustments, and available features.",
-          "Title": "Species"
-        },
-        "Charisma": {
-          "Body": "Charisma reflects leadership, magnetism, confidence, and the ability to move others. It is not just appearance; it is the strength of a character's personal presence.",
-          "Title": "Charisma"
-        },
-        "Climb": {
-          "Body": "Climb is used to ascend difficult surfaces such as rock faces, buildings, ladders, and machinery. It measures controlled upward movement through strength and grip.",
-          "Title": "Climb"
-        },
-        "ConditionTrack": {
-          "Body": "Tracks penalties from taking heavy hits. Each step down applies cumulative -1 to all rolls and defenses.",
-          "Title": "Condition Track"
-        },
-        "Constitution": {
-          "Body": "Constitution reflects how well a character withstands injury, fatigue, and bodily strain. It is a core survivability stat because it contributes to staying power.",
-          "Title": "Constitution"
-        },
-        "DamageThreshold": {
-          "Body": "Damage Threshold measures how much damage a single attack must inflict to seriously impair you. Even if you still have Hit Points left, a sufficiently powerful hit can reduce your effectiveness immediately.",
-          "Title": "Damage Threshold"
-        },
-        "DarkSideScore": {
-          "Body": "Dark Side Score tracks moral and spiritual corruption through evil acts. A higher score reflects greater influence from the dark side and may carry serious consequences.",
-          "Title": "Dark Side Score"
-        },
-        "Deception": {
-          "Body": "Deception is used to make falsehoods seem believable, create confusion, conceal intent, or present yourself as someone else. It covers bluffing, fast-talking, disguise, and forged evidence.",
-          "Title": "Deception"
-        },
-        "DestinyPoints": {
-          "Body": "Rare points that let you automatically succeed on a roll or trigger special destiny effects.",
-          "Title": "Destiny Points"
-        },
-        "Dexterity": {
-          "Body": "Dexterity reflects fine control, reaction speed, and physical precision. It is especially valuable for ranged combat, evasive movement, and vehicle handling.",
-          "Title": "Dexterity"
-        },
-        "Endurance": {
-          "Body": "Endurance measures stamina and resilience under stress. Use it when a character must keep going through fatigue, hardship, or other physical extremes.",
-          "Title": "Endurance"
-        },
-        "FlatFooted": {
-          "Body": "Defense when caught off guard. Does not include Dexterity or dodge bonuses.",
-          "Title": "Flat-Footed"
-        },
-        "ForcePoints": {
-          "Body": "Force Points represent a character's ability to draw on unusual help, whether understood as destiny, luck, or the Force moving through living beings. They are a limited resource used to improve important actions.",
-          "Title": "Force Points"
-        },
-        "FortitudeDefense": {
-          "Body": "Resists physical effects like poison and stun. Based on class, level, and Constitution.",
-          "Title": "Fortitude Defense"
-        },
-        "GMPaletteMode": {
-          "Body": "Switches the palette to GM tools: NPC spawning, healing, condition management.",
-          "Title": "GM Mode"
-        },
-        "GMSuggestion": {
-          "Body": "Advisory insight from the suggestion engine. Not applied automatically.",
-          "Title": "GM Suggestion"
-        },
-        "GatherInformation": {
-          "Body": "Gather Information is used to ask around, work social networks, and uncover leads. It helps locate gossip, public talk, quiet secrets, and useful connections.",
-          "Title": "Gather Information"
-        },
-        "Grapple": {
-          "Body": "Used for grab and grapple checks. Based on BAB and size modifier.",
-          "Title": "Grapple"
-        },
-        "HitPoints": {
-          "Body": "Hit Points measure how long you can stay in the fight. They reflect both actual injury tolerance and combat skill such as dodging, deflecting, and turning solid hits into less serious harm.",
-          "Title": "Hit Points"
-        },
-        "Initiative": {
-          "Body": "Initiative determines how fast you react when action starts. A higher result usually means acting earlier in the round.",
-          "Title": "Initiative"
-        },
-        "Intelligence": {
-          "Body": "Intelligence reflects how well a character understands systems, solves problems, and develops trained expertise. It is especially useful for characters who rely on broad technical or academic skill.",
-          "Title": "Intelligence"
-        },
-        "Jump": {
-          "Body": "Jump is used for clearing pits, vaulting barriers, and making controlled leaps. It reflects explosive strength and coordinated movement.",
-          "Title": "Jump"
-        },
-        "Knowledge": {
-          "Body": "Knowledge represents academic, professional, or technical learning. Each field covers a different body of lore, so success depends on the subject being relevant to your training.",
-          "Title": "Knowledge"
-        },
-        "Mechanics": {
-          "Body": "Mechanics is used to interact directly with machinery and technical hardware. It covers bypassing security, setting or disarming explosives, and repairing or improving damaged equipment and droids.",
-          "Title": "Mechanics"
-        },
-        "MentorDialogue": {
-          "Body": "Your mentor offers context and suggestions. This is advisory, not mandatory.",
-          "Title": "Mentor Guidance"
-        },
-        "PaletteMode": {
-          "Body": "Switches between combat actions and narrative/exploration actions.",
-          "Title": "Palette Mode"
-        },
-        "PassiveTalent": {
-          "Body": "Always active. No action required to benefit from this talent.",
-          "Title": "Passive Talent"
-        },
-        "Perception": {
-          "Body": "Perception is used to detect threats, spot concealed creatures or objects, and stay aware of the environment. It reflects alertness and sensory awareness.",
-          "Title": "Perception"
-        },
-        "Persuasion": {
-          "Body": "Persuasion is used to win cooperation, shape attitudes, and steer social outcomes. It can be subtle and diplomatic or forceful and intimidating.",
-          "Title": "Persuasion"
-        },
-        "Pilot": {
-          "Body": "Pilot governs advanced vehicle handling. Routine travel may not require a check, but evasive action, stunts, and dangerous control do.",
-          "Title": "Pilot"
-        },
-        "ReflexDefense": {
-          "Body": "Targeted by most attacks. Based on class, level, Dexterity or armor bonus.",
-          "Title": "Reflex Defense"
-        },
-        "Ride": {
-          "Body": "Ride is used to handle creatures used as mounts, especially in motion or under stress. It reflects balance, control, and mounted coordination.",
-          "Title": "Ride"
-        },
-        "SkillRoll": {
-          "Body": "Click to roll this skill. The roll adds your modifier and training bonus.",
-          "Title": "Skill Check"
-        },
-        "SkillTrained": {
-          "Body": "Trained skills receive a +5 bonus and may unlock special uses not available untrained.",
-          "Title": "Trained Skill"
-        },
-        "Stealth": {
-          "Body": "Stealth is used to avoid detection through silence, concealment, and careful movement. It also supports hidden positioning, ambushes, sniping from cover, and sleight of hand.",
-          "Title": "Stealth"
-        },
-        "Strength": {
-          "Body": "Strength reflects how much force a character can apply physically. It is especially important in direct physical action and close-quarters power-based tasks.",
-          "Title": "Strength"
-        },
-        "Survival": {
-          "Body": "Survival helps characters navigate harsh environments, track signs of danger, forage, hunt, and identify natural hazards. It measures practical fieldcraft.",
-          "Title": "Survival"
-        },
-        "Swim": {
-          "Body": "Swim is used to cross water, dive, stay afloat, and maneuver in difficult aquatic conditions. It represents controlled movement in water.",
-          "Title": "Swim"
-        },
-        "TacticalOverlay": {
-          "Body": "Shows range bands, threat areas, and tactical information on the map.",
-          "Title": "Tactical Overlay"
-        },
-        "TreatInjury": {
-          "Body": "Treat Injury covers battlefield aid, medical care, and recovery support. Use it to keep allies alive, improve healing, and respond to harmful conditions.",
-          "Title": "Treat Injury"
-        },
-        "UsageLimit": {
-          "Body": "This ability can only be used a set number of times per encounter or per day.",
-          "Title": "Limited Use"
-        },
-        "UseComputer": {
-          "Body": "Use Computer is used to operate secured systems, bypass digital protections, and interact with complex computer-controlled technology. It governs technical access in electronic environments.",
-          "Title": "Use Computer"
-        },
-        "UseTheForce": {
-          "Body": "Use the Force represents active connection to the Force in play. It supports unusual perception, recovery, and other force-driven acts, and it normally requires Force Sensitivity to be trained.",
-          "Title": "Use the Force"
-        },
-        "WeaponAttack": {
-          "Body": "Click to roll an attack with this weapon against a target's Reflex Defense.",
-          "Title": "Attack Roll"
-        },
-        "WeaponDamage": {
-          "Body": "Click to roll damage for this weapon after a successful attack.",
-          "Title": "Damage Roll"
-        },
-        "WillDefense": {
-          "Body": "Resists mental effects and Force powers. Based on class, level, and Wisdom.",
-          "Title": "Will Defense"
-        },
-        "Wisdom": {
-          "Body": "Wisdom reflects perception, practical insight, and connection to surroundings. It is about awareness and sound judgment more than abstract analysis.",
-          "Title": "Wisdom"
-        }
-      },
-      "Tour": {
-        "GM": {
-          "Item1": "The Tactical Overlay adds range and threat visualization to scenes",
-          "Item2": "GM Suggestions offer advisory encounter insights, never automatic",
-          "Item3": "Scene tools and NPC management are available from the sidebar and palette",
-          "Item4": "All automation (damage threshold, condition recovery) can be toggled in settings",
-          "Item5": "Discovery hints can be reset or disabled from system settings",
-          "Subtitle": "Your GM toolkit includes several optional systems. Nothing runs unless you enable it.",
-          "Title": "Welcome to Star Wars Saga Edition (GM Tools)"
-        },
-        "GMHolopad": "Open GM Holopad",
-        "Player": {
-          "Item1": "Character creation supports both narrative and mechanical modes",
-          "Item2": "The Action Palette provides quick access to combat and narrative actions",
-          "Item3": "Mentors can guide your choices during character creation",
-          "Item4": "Hover over any highlighted UI element for a quick explanation",
-          "Item5": "All guided hints can be turned off in your client settings",
-          "Subtitle": "Here are a few things to help you get started. All features are optional.",
-          "Title": "Welcome to Star Wars Saga Edition"
-        },
-        "Skip": "Skip"
-      }
-    },
     "Store": {
-      "Title": "Intercambio Comercial Galactico",
+      "Title": "Bolsa Comercial Galactica",
       "Header": {
         "ExchangeName": "RENDARR'S EXCHANGE",
         "Subtitle": "Quartermaster - Galactic Trade Network",
         "Kicker": "Authorized vendor channel - concept market surface",
         "Listings": "listings",
-        "Account": "CUENTA",
+        "Account": "CONTA",
         "Reserve": "Reserva",
-        "Cart": "Carrito",
+        "Cart": "Carrinho",
         "Credits": "creditos"
       },
       "Tabs": {
-        "Browse": "Explorar",
-        "Cart": "Carrito",
-        "History": "Historial",
-        "Checkout": "Pago",
-        "Detail": "Detalle"
+        "Browse": "Procurar",
+        "Cart": "Carrinho",
+        "History": "Historico",
+        "Checkout": "Finalizacao",
+        "Detail": "Detalhe"
       },
       "Filters": {
-        "SearchListings": "BUSCAR ARTICULOS...",
+        "SearchListings": "PROCURAR ITENS...",
         "SearchItemsAria": "Search store items",
         "WeaponFoldersAria": "Weapon folders",
         "FilterAvailabilityAria": "Filter by availability",
         "SortItemsAria": "Sort items",
-        "AllAvailability": "Toda disponibilidad",
+        "AllAvailability": "Toda disponibilidade",
         "Standard": "Standard",
         "Licensed": "Licensed",
         "Restricted": "Restricted",
@@ -3511,7 +3511,7 @@
         "PriceAsc": "Price up",
         "PriceDesc": "Price down",
         "NameAZ": "Name A-Z",
-        "ResetFilters": "Restablecer filtros"
+        "ResetFilters": "Redefinir filtros"
       },
       "Navigation": {
         "AllCategory": "All {category}",
@@ -3530,12 +3530,12 @@
         "EnergyShields": "Energy Shields"
       },
       "Detail": {
-        "Back": "Atras",
+        "Back": "Voltar",
         "ProductDetail": "Product Detail",
-        "AddToCart": "Agregar al carrito",
+        "AddToCart": "Adicionar ao carrinho",
         "AddNamedToCart": "Add {name} to cart",
         "Customize": "Personalizar",
-        "SaveForLater": "Guardar para luego",
+        "SaveForLater": "Salvar para depois",
         "RecommendationNotes": "Recommendation Notes",
         "TechnicalSpecifications": "Technical Specifications",
         "ItemBrief": "Item Brief",
@@ -3547,12 +3547,12 @@
       "Cart": {
         "CartManifest": "Cart Manifest",
         "TradeLedger": "Trade Ledger",
-        "YourCartIsEmpty": "Tu carrito esta vacio.",
-        "Totals": "Totales",
+        "YourCartIsEmpty": "Seu carrinho esta vazio.",
+        "Totals": "Totais",
         "Subtotal": "Subtotal",
         "Remaining": "Restante",
-        "ProceedToCheckout": "Proceder al pago",
-        "ClearCart": "Vaciar carrito",
+        "ProceedToCheckout": "Prosseguir para finalizar",
+        "ClearCart": "Limpar carrinho",
         "Qty": "Qty:",
         "Each": "Each:",
         "RemoveFromCart": "Remove from cart"
@@ -3560,7 +3560,7 @@
       "Checkout": {
         "BackToCart": "Back to Cart",
         "ExchangeConfirmation": "Exchange Confirmation",
-        "FinalizeTrade": "Finalizar intercambio",
+        "FinalizeTrade": "Finalizar troca",
         "LockedManifest": "Locked Manifest",
         "NoItemsStaged": "No items staged.",
         "Settlement": "Settlement",
@@ -3568,19 +3568,19 @@
         "Debit": "Debit",
         "ReserveAfterTrade": "Reserve After Trade",
         "Guidance": "Confirm the trade to issue all manifest lines and archive the transaction.",
-        "ConfirmTrade": "Confirmar intercambio",
-        "ReturnToCart": "Volver al carrito"
+        "ConfirmTrade": "Confirmar troca",
+        "ReturnToCart": "Voltar ao carrinho"
       },
       "History": {
         "AccountArchive": "Account Archive",
-        "PurchaseHistory": "Historial de compras",
-        "NoPurchases": "Aun no se han registrado compras."
+        "PurchaseHistory": "Historico de compras",
+        "NoPurchases": "Nenhuma compra foi registrada ainda."
       },
       "Browse": {
         "BuildCustomDroid": "Construir droide personalizado",
-        "FromTemplate": "Desde plantilla",
+        "FromTemplate": "De modelo",
         "BuildShipVehicle": "Build Ship / Vehicle",
-        "NoResults": "Ningun articulo coincide con los filtros actuales."
+        "NoResults": "Nenhum item corresponde aos filtros atuais."
       },
       "PageContext": {
         "SettlementWindow": "Settlement Window",
@@ -3946,19 +3946,19 @@
     },
     "MentorChat": {
       "WindowTitle": "Talk to Your Mentors — {name}",
-      "BackToMentors": "Volver a mentores",
-      "TopRecommendations": "Recomendaciones principales:",
-      "SystemAnalysis": "Análisis del sistema",
-      "PathPrompt": "¿Alguno de estos caminos te llama?",
-      "ChoosePath": "Elijo {name}",
-      "BackToTopics": "Volver a temas",
-      "DefaultHelp": "¿En qué puedo ayudarte?",
-      "DiscussionPrompt": "¿Qué quieres discutir?",
+      "BackToMentors": "Voltar aos mentores",
+      "TopRecommendations": "Principais recomendações:",
+      "SystemAnalysis": "Análise do sistema",
+      "PathPrompt": "Algum desses caminhos chama você?",
+      "ChoosePath": "Eu escolho {name}",
+      "BackToTopics": "Voltar aos tópicos",
+      "DefaultHelp": "Como posso ajudar?",
+      "DiscussionPrompt": "O que você gostaria de discutir?",
       "SelectionIntro": "Select a mentor to seek their guidance. These mentors have been unlocked through your class training:",
       "UnlockedVia": "Unlocked via: {source}",
-      "NoMentors": "Aún no has desbloqueado mentores.",
-      "NoMentorsHint": "¡Toma una clase para obtener guía de mentores!",
-      "NoCharacterSelected": "No hay personaje seleccionado.",
+      "NoMentors": "Você ainda não desbloqueou mentores.",
+      "NoMentorsHint": "Escolha uma classe para receber orientação de mentores!",
+      "NoCharacterSelected": "Nenhum personagem selecionado.",
       "GreetingFallback": "{name} studies you for a moment, then waits for your question.",
       "GreetingFallbackUnknown": "Your mentor",
       "ErrorIntro": "I apologize, but I'm having trouble forming my thoughts right now.",

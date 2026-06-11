@@ -1,12 +1,12 @@
 <section class="abilities-section feats-section v3-panel holo-panel">
 
   <header class="section-bar">
-    <h3 class="section-header">Feats</h3>
+    <h3 class="section-header">{{localize "SWSE.CharacterSheet.Sections.Feats"}}</h3>
     <button type="button"
             class="add-feat swse-btn"
             data-action="add-feat"
             {{#unless featPanel.canEdit}}disabled{{/unless}}>
-      + Add Feat
+      {{localize "SWSE.CharacterSheet.Actions.AddFeat"}}
     </button>
   </header>
 
@@ -24,8 +24,8 @@
                       class="swse-btn swse-btn--tiny swse-card-remove"
                       data-action="delete-item"
                       data-item-id="{{feat.id}}"
-                      title="Remove {{feat.name}}"
-                      aria-label="Remove {{feat.name}}">
+                      title='{{localize "SWSE.CharacterSheet.Actions.RemoveNamed" name=feat.name}}'
+                      aria-label='{{localize "SWSE.CharacterSheet.Actions.RemoveNamed" name=feat.name}}'>
                 ×
               </button>
             {{/if}}
@@ -40,20 +40,20 @@
           {{#if feat.requiresChoice}}
             <div class="swse-feat-choice-status {{#if feat.choiceMissing}}is-missing{{/if}} {{#if feat.choiceLocked}}is-locked{{/if}}">
               {{#if feat.choiceLocked}}
-                <span class="swse-choice-badge">Locked class grant</span>
+                <span class="swse-choice-badge">{{localize "SWSE.CharacterSheet.Status.LockedClassGrant"}}</span>
               {{else if feat.choiceMissing}}
-                <span class="swse-choice-badge warning">Choice needed</span>
+                <span class="swse-choice-badge warning">{{localize "SWSE.CharacterSheet.Status.ChoiceNeeded"}}</span>
               {{else if feat.choiceInvalid}}
-                <span class="swse-choice-badge warning" title="{{feat.choiceInvalidReason}}">Invalid choice: {{feat.choiceLabel}}</span>
+                <span class="swse-choice-badge warning" title="{{feat.choiceInvalidReason}}">{{localize "SWSE.CharacterSheet.Status.InvalidChoice" choice=feat.choiceLabel}}</span>
               {{else}}
-                <span class="swse-choice-badge">Choice: {{feat.choiceLabel}}</span>
+                <span class="swse-choice-badge">{{localize "SWSE.CharacterSheet.Status.ChoiceMade" choice=feat.choiceLabel}}</span>
               {{/if}}
               {{#if feat.choiceEditable}}
                 <button type="button"
                         class="swse-btn swse-btn--tiny"
                         data-action="resolve-feat-choice"
                         data-item-id="{{feat.id}}">
-                  {{#if feat.choiceMissing}}Choose{{else}}Change{{/if}}
+                  {{#if feat.choiceMissing}}{{localize "SWSE.CharacterSheet.Actions.Choose"}}{{else}}{{localize "SWSE.CharacterSheet.Actions.Change"}}{{/if}}
                 </button>
               {{/if}}
             </div>
@@ -64,9 +64,9 @@
     </div>
   {{else}}
     <div class="muted empty-state swse-card-schema swse-card-schema--choice swse-card-schema--placeholder">
-      <span class="swse-card-schema__eyebrow">Choice Slot</span>
+      <span class="swse-card-schema__eyebrow">{{localize "SWSE.CharacterSheet.Labels.ChoiceSlot"}}</span>
       <span class="swse-card-schema__title">{{featPanel.emptyMessage}}</span>
-      <span class="swse-card-schema__body">{{#if featPanel.canEdit}}Use Add Feat to create the first standardized feat card.{{else}}No feats have been added yet.{{/if}}</span>
+      <span class="swse-card-schema__body">{{#if featPanel.canEdit}}{{localize "SWSE.CharacterSheet.Hints.AddFirstFeat"}}{{else}}{{localize "SWSE.CharacterSheet.Empty.NoFeats"}}{{/if}}</span>
     </div>
   {{/if}}
 

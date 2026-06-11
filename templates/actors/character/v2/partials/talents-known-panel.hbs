@@ -11,8 +11,8 @@
 <section class="talents-known-panel holo-panel">
 
   <header class="section-bar">
-    <h3 class="section-header">Talents Known</h3>
-    <button type="button" class="btn-small" data-action="tab" data-tab="talents" data-group="primary" data-tab-group="primary" title="Open Talents tab to manage talents">Manage →</button>
+    <h3 class="section-header">{{localize "SWSE.CharacterSheet.Sections.TalentsKnown"}}</h3>
+    <button type="button" class="btn-small" data-action="tab" data-tab="talents" data-group="primary" data-tab-group="primary" title='{{localize "SWSE.CharacterSheet.Tooltips.OpenTalentsTab"}}'>{{localize "SWSE.CharacterSheet.Actions.ManageArrow"}}</button>
   </header>
 
   {{#if talentPanel.hasEntries}}
@@ -35,8 +35,8 @@
     </div>
   {{else}}
     <div class="empty-state">
-      <p>No talents known yet.</p>
-      <p class="hint">Add talents on the Talents tab.</p>
+      <p>{{localize "SWSE.CharacterSheet.Empty.NoTalentsKnown"}}</p>
+      <p class="hint">{{localize "SWSE.CharacterSheet.Hints.AddTalentsOnTab"}}</p>
     </div>
   {{/if}}
 

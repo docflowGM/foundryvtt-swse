@@ -41,7 +41,7 @@ export function registerChatCommands() {
 function getSelectedTokensOrWarn() {
   const tokens = canvas?.tokens?.controlled || [];
   if (!tokens.length) {
-    ui.notifications.warn('Select at least one token.');
+    ui.notifications.warn(game.i18n.localize('SWSE.Chat.Commands.SelectToken'));
     return null;
   }
   return tokens;
@@ -165,7 +165,7 @@ async function cmdXP(args) {
 
   const tokens = getSelectedTokensOrWarn();
   if (!tokens) {return false;}
-  if (!game.user.isGM) {return ui.notifications.warn('XP commands require GM permissions.');}
+  if (!game.user.isGM) {return ui.notifications.warn(game.i18n.localize('SWSE.Chat.Commands.XPRequiresGM'));}
 
   for (const t of tokens) {
     const actor = t.actor;
@@ -224,14 +224,14 @@ async function cmdRecalc() {
     await globalThis.SWSE.ActorEngine.recalcAll(t.actor);
   }
 
-  ui.notifications.info('Recalculated selected actors.');
+  ui.notifications.info(game.i18n.localize('SWSE.Chat.Commands.RecalculatedActors'));
 
   return false;
 }
 
 /** /rollswse <anything> (hook placeholder) */
 async function cmdRollSWSE(args) {
-  ui.notifications.info('SWSE custom roller coming soon!');
+  ui.notifications.info(game.i18n.localize('SWSE.Chat.Commands.CustomRollerComingSoon'));
 
   return false;
 }

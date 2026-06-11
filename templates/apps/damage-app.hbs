@@ -3,28 +3,28 @@
     <div class="hp-bar">
       <div class="hp-fill" style="width: {{hpStatus.percent}}%"></div>
     </div>
-    <span>{{hpStatus.current}} / {{hpStatus.max}} HP</span>
-    {{#if hpStatus.temp}}<span class="temp-hp">+{{hpStatus.temp}} temp</span>{{/if}}
+    <span>{{hpStatus.current}} / {{hpStatus.max}} {{localize 'SWSE.PlayerUI.Damage.HP'}}</span>
+    {{#if hpStatus.temp}}<span class="temp-hp">+{{hpStatus.temp}} {{localize 'SWSE.PlayerUI.Damage.Temp'}}</span>{{/if}}
   </div>
 
-  {{#if dt}}<div class="dt-info">DT: {{dt}}</div>{{/if}}
+  {{#if dt}}<div class="dt-info">{{localize 'SWSE.PlayerUI.Damage.DT'}}: {{dt}}</div>{{/if}}
 
   <div class="damage-input">
-    <input type="number" name="damage" placeholder="Damage" value="{{damageInput}}" />
+    <input type="number" name="damage" placeholder="{{localize 'SWSE.PlayerUI.Damage.Damage'}}" value="{{damageInput}}" />
     <label>
       <input type="checkbox" name="bypassDT" {{#if bypassDT}}checked{{/if}} />
-      Bypass DT
+      {{localize 'SWSE.PlayerUI.Damage.BypassDT'}}
     </label>
   </div>
 
   <div class="damage-buttons">
-    <button data-action="apply" class="btn">Apply</button>
-    <button data-action="apply-half" class="btn">Half</button>
-    <button data-action="apply-double" class="btn">×2</button>
+    <button data-action="apply" class="btn">{{localize 'SWSE.PlayerUI.Damage.Apply'}}</button>
+    <button data-action="apply-half" class="btn">{{localize 'SWSE.PlayerUI.Damage.Half'}}</button>
+    <button data-action="apply-double" class="btn">{{localize 'SWSE.PlayerUI.Damage.Double'}}</button>
   </div>
 
   <div class="healing-buttons">
-    <button data-action="heal" class="btn btn-heal">Heal</button>
-    <button data-action="restore-temp" class="btn btn-temp">Temp HP</button>
+    <button data-action="heal" class="btn btn-heal">{{localize 'SWSE.PlayerUI.Damage.Heal'}}</button>
+    <button data-action="restore-temp" class="btn btn-temp">{{localize 'SWSE.PlayerUI.Damage.TempHP'}}</button>
   </div>
 </div>

@@ -15,6 +15,14 @@ import SWSEFormApplicationV2 from "/systems/foundryvtt-swse/scripts/apps/base/sw
 import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatEngine.js";
 
 /** @deprecated See file-level deprecation notice above. */
+function playerUiI18n(key, data = {}) {
+  try {
+    return game.i18n?.format?.(key, data) ?? game.i18n?.localize?.(key) ?? key;
+  } catch (_err) {
+    return key;
+  }
+}
+
 export class CombatRollConfigDialog extends SWSEFormApplicationV2 {
 
   static DEFAULT_OPTIONS = foundry.utils.mergeObject(foundry.utils.deepClone(super.DEFAULT_OPTIONS ?? {}),
@@ -23,7 +31,7 @@ export class CombatRollConfigDialog extends SWSEFormApplicationV2 {
       classes: ["swse", "holo-console", "swse-combat-roll-config-app"],
       template: "systems/foundryvtt-swse/templates/apps/combat/combat-roll-config-dialog.hbs",
       position: { width: 940, height: 680 },
-      window: { title: "Tactical Targeting Console", resizable: true, draggable: true, frame: true }
+      window: { title: "SWSE.PlayerUI.CombatRoll.Title", resizable: true, draggable: true, frame: true }
     }
   );
 
@@ -68,7 +76,7 @@ export class CombatRollConfigDialog extends SWSEFormApplicationV2 {
       ?? this.actionData?.title
       ?? this.actionData?.key
       ?? this.actionData?.id
-      ?? (this.actionData?.domain === 'initiative' ? 'Initiative' : 'Combat Roll');
+      ?? (this.actionData?.domain === 'initiative' ? playerUiI18n('SWSE.PlayerUI.CombatRoll.InitiativeFallback') : playerUiI18n('SWSE.PlayerUI.CombatRoll.CombatRollFallback'));
 
     return foundry.utils.mergeObject(context, {
       action: this.actionData,

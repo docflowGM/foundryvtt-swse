@@ -2,17 +2,17 @@
 <section class="force-panel v3-panel holo-panel swse-ui-panel swse-force-suite">
 
   <header class="section-bar force-controls">
-    <h3 class="section-header">Force Suite</h3>
+    <h3 class="section-header">{{localize "SWSE.CharacterSheet.Sections.ForceSuite"}}</h3>
 
     <div class="force-filter-bar swse-control-cluster">
       {{#if lightsaberConstructionAvailable}}
         <button type="button" class="force-tag-filter construct-lightsaber-btn" data-action="construct-lightsaber">
-          {{#if lightsaberConstructionDeferred}}Construct Lightsaber{{else}}Lightsaber Construction Available{{/if}}
+          {{#if lightsaberConstructionDeferred}}{{localize "SWSE.CharacterSheet.Actions.ConstructLightsaber"}}{{else}}{{localize "SWSE.CharacterSheet.Status.LightsaberConstructionAvailable"}}{{/if}}
         </button>
       {{/if}}
       <select data-action="force-sort">
-        <option value="name">Sort: Name</option>
-        <option value="tag">Sort: Tag</option>
+        <option value="name">{{localize "SWSE.CharacterSheet.Labels.SortName"}}</option>
+        <option value="tag">{{localize "SWSE.CharacterSheet.Labels.SortTag"}}</option>
       </select>
 
       <div class="force-tag-filters">
@@ -28,7 +28,7 @@
 
   <div class="force-zone swse-ui-panel hand-zone {{#if lowHand}}low-hand{{/if}}">
     <div class="zone-label">
-      Hand ({{forceSuite.hand.length}})
+      {{localize "SWSE.CharacterSheet.Labels.Hand"}} ({{forceSuite.hand.length}})
     </div>
 
     <div class="force-card-grid swse-dense-grid">
@@ -53,7 +53,7 @@
               </div>
 
               <div class="flip-indicator">
-                Flip for more ⟳
+                {{localize "SWSE.CharacterSheet.Actions.FlipForMore"}} ⟳
               </div>
             </div>
 
@@ -69,10 +69,10 @@
                 <button type="button" data-action="activate-force"
                         data-item-id="{{power.id}}"
 >
-                  Activate
+                  {{localize "SWSE.CharacterSheet.Actions.Activate"}}
                 </button>
                 <button type="button" class="flip-back">
-                  ↺ Back
+                  ↺ {{localize "SWSE.CharacterSheet.Actions.Back"}}
                 </button>
               </div>
 
@@ -86,7 +86,7 @@
 
   <div class="force-zone swse-ui-panel discard-zone">
     <div class="zone-label">
-      Discard ({{forceSuite.discard.length}})
+      {{localize "SWSE.CharacterSheet.Labels.Discard"}} ({{forceSuite.discard.length}})
     </div>
 
     <div class="force-card-grid discard swse-dense-grid">

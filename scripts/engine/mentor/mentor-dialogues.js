@@ -1,6 +1,7 @@
 import { ProgressionEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/progression-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { MENTORS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.data.js";
+import { localizeMentorData, localizeMentorDialogueValue } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-localization.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 /**
@@ -130,13 +131,16 @@ export function resolveMentorPortraitPath(portraitPath) {
 
 export function resolveMentorData(ref) {
     let mentor;
+    let mentorKey = 'Scoundrel';
 
     if (!ref) {
         mentor = MENTORS.Scoundrel;
     } else if (typeof ref === 'object' && ref.name && ref.title) {
         mentor = ref;
+        mentorKey = getMentorKey(ref);
     } else if (MENTORS[ref]) {
         mentor = MENTORS[ref];
+        mentorKey = ref;
     } else {
         const normalized = _normalizeMentorLookup(ref);
         for (const [key, value] of Object.entries(MENTORS)) {
@@ -150,19 +154,24 @@ export function resolveMentorData(ref) {
             ];
             if (candidates.some(candidate => _normalizeMentorLookup(candidate) == normalized)) {
                 mentor = value;
+                mentorKey = key;
                 break;
             }
         }
         if (!mentor) {
             mentor = MENTORS.Scoundrel;
+            mentorKey = 'Scoundrel';
         }
     }
 
     if (!mentor) return null;
 
-    // Return a shallow copy so consumers do not mutate generated mentor data.
+    const localized = localizeMentorData(mentor, mentorKey) || mentor;
+
+    // Return a copy so consumers do not mutate generated mentor data.
     return {
-        ...mentor,
+        ...localized,
+        mentorKey,
         portrait: resolveMentorPortraitPath(mentor.portrait),
     };
 }
@@ -170,23 +179,29 @@ export function resolveMentorData(ref) {
 export function getMentorKey(ref) {
     if (!ref) return 'Scoundrel';
     if (MENTORS[ref]) return ref;
-    const mentor = resolveMentorData(ref);
-    const normalizedRef = _normalizeMentorLookup(ref?.name || ref);
+
+    const normalizedRef = _normalizeMentorLookup(ref?.mentorKey || ref?.mentorId || ref?.mentor_id || ref?.id || ref?.name || ref?.displayName || ref);
+    const normalizedTitle = typeof ref === 'object' ? _normalizeMentorLookup(ref?.title) : '';
+
     return Object.entries(MENTORS).find(([key, value]) => {
-        if (mentor && value?.name === mentor.name && value?.title === mentor.title) return true;
-        return [key, value?.id, value?.mentorId, value?.mentor_id, value?.name, value?.displayName]
-            .some(candidate => _normalizeMentorLookup(candidate) === normalizedRef);
+        const candidates = [key, value?.id, value?.mentorId, value?.mentor_id, value?.name, value?.displayName];
+        if (candidates.some(candidate => _normalizeMentorLookup(candidate) === normalizedRef)) return true;
+        return normalizedTitle && _normalizeMentorLookup(value?.name) === normalizedRef && _normalizeMentorLookup(value?.title) === normalizedTitle;
     })?.[0] || 'Scoundrel';
 }
 
 export function getMentorIntroText(ref, fallbackClassName = '') {
     const mentor = resolveMentorData(ref);
     if (!mentor) {
-        return fallbackClassName ? `Welcome, ${fallbackClassName}.` : 'Welcome.';
+        return fallbackClassName
+            ? (globalThis.game?.i18n?.format?.('SWSE.MentorDialogues.Fallback.WelcomeClass', { className: fallbackClassName }) || `Welcome, ${fallbackClassName}.`)
+            : (globalThis.game?.i18n?.localize?.('SWSE.MentorDialogues.Fallback.Welcome') || 'Welcome.');
     }
 
     const greeting = mentor.levelGreetings?.[1] || mentor.levelGreetings?.['1'] || mentor.summaryGuidance || mentor.classGuidance || '';
-    return greeting || (fallbackClassName ? `Welcome, ${fallbackClassName}.` : 'Welcome.');
+    return greeting || (fallbackClassName
+        ? (globalThis.game?.i18n?.format?.('SWSE.MentorDialogues.Fallback.WelcomeClass', { className: fallbackClassName }) || `Welcome, ${fallbackClassName}.`)
+        : (globalThis.game?.i18n?.localize?.('SWSE.MentorDialogues.Fallback.Welcome') || 'Welcome.'));
 }
 
 /**
@@ -199,13 +214,14 @@ export function getMentorForClass(className) {
 
     // Direct match
     if (MENTORS[className]) {
-        SWSELogger.log(`[MENTOR-DIALOGUES] getMentorForClass: Found mentor "${MENTORS[className].name}" for class "${className}"`);
-        return MENTORS[className];
+        const mentor = resolveMentorData(className);
+        SWSELogger.log(`[MENTOR-DIALOGUES] getMentorForClass: Found mentor "${mentor?.name}" for class "${className}"`);
+        return mentor;
     }
 
     // Default to Scoundrel's Ol' Salty for unknown classes (he's the general narrator)
     SWSELogger.warn(`[MENTOR-DIALOGUES] getMentorForClass: Class "${className}" not found, defaulting to Scoundrel mentor`);
-    return MENTORS.Scoundrel;
+    return resolveMentorData('Scoundrel');
 }
 
 /**
@@ -227,7 +243,9 @@ export function getMentorGreeting(mentor, level, actor = null) {
         greeting = greeting(actor);
     }
 
-    return greeting;
+    const mentorKey = getMentorKey(mentor);
+    const levelKey = String(level || 20);
+    return localizeMentorDialogueValue(mentorKey, ['levelGreetings', levelKey], greeting);
 }
 
 /**
@@ -275,24 +293,27 @@ export function getMentorGuidance(mentor, choiceType) {
 
     SWSELogger.log(`[MENTOR-DIALOGUES] getMentorGuidance: Getting guidance from "${mentor.name}" for choice type "${key}"`);
 
-    const guidanceMap = {
-        species: mentor.speciesGuidance,
-        class: mentor.classGuidance,
-        background: mentor.backgroundGuidance,
-        feat: mentor.featGuidance,
-        talent: mentor.talentGuidance,
-        ability: mentor.abilityGuidance,
-        skill: mentor.skillGuidance,
-        language: mentor.languageGuidance,
-        multiclass: mentor.multiclassGuidance,
-        force_power: mentor.forcePowerGuidance,
-        starship_maneuver: mentor.starshipManeuverGuidance,
-        hp: mentor.hpGuidance,
-        summary: mentor.summaryGuidance,
-        survey: mentor.surveyGuidance || mentor.classGuidance,
+    const guidancePathMap = {
+        species: 'speciesGuidance',
+        class: 'classGuidance',
+        background: 'backgroundGuidance',
+        feat: 'featGuidance',
+        talent: 'talentGuidance',
+        ability: 'abilityGuidance',
+        skill: 'skillGuidance',
+        language: 'languageGuidance',
+        multiclass: 'multiclassGuidance',
+        force_power: 'forcePowerGuidance',
+        starship_maneuver: 'starshipManeuverGuidance',
+        hp: 'hpGuidance',
+        summary: 'summaryGuidance',
+        survey: mentor.surveyGuidance ? 'surveyGuidance' : 'classGuidance',
     };
 
-    const guidance = guidanceMap[key] || mentor.summaryGuidance || mentor.classGuidance || 'Make your choice wisely.';
+    const guidancePath = guidancePathMap[key] || (mentor.summaryGuidance ? 'summaryGuidance' : 'classGuidance');
+    const fallback = mentor[guidancePath] || localizeMentorDialogueValue('Fallback', ['MakeChoiceWisely'], 'Make your choice wisely.');
+    const mentorKey = getMentorKey(mentor);
+    const guidance = localizeMentorDialogueValue(mentorKey, [guidancePath], fallback);
     SWSELogger.log(`[MENTOR-DIALOGUES] getMentorGuidance: Found guidance:`, guidance.substring(0, 50) + (guidance.length > 50 ? '...' : ''));
     return guidance;
 }
@@ -400,7 +421,7 @@ export function getActiveMentor(actor) {
     const override = actor.getFlag('foundryvtt-swse', 'mentorOverride');
     if (override && MENTORS[override]) {
         SWSELogger.log(`[MENTOR-DIALOGUES] getActiveMentor: Using mentor override: "${MENTORS[override].name}"`);
-        return MENTORS[override];
+        return resolveMentorData(override);
     }
     SWSELogger.log(`[MENTOR-DIALOGUES] getActiveMentor: No mentor override found`);
 
@@ -410,7 +431,7 @@ export function getActiveMentor(actor) {
     const mentor = getMentorForClass(startClass);
     SWSELogger.log(`[MENTOR-DIALOGUES] getActiveMentor: Active mentor is "${mentor?.name}"`);
 
-    return mentor || MENTORS['Scoundrel']; // Ultimate fallback
+    return mentor || resolveMentorData('Scoundrel'); // Ultimate fallback
 }
 
 /**

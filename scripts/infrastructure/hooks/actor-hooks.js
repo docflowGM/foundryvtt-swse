@@ -24,12 +24,46 @@ import { qs, qsa, setVisible, isVisible, text } from "/systems/foundryvtt-swse/s
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SpeciesConditionalGrantResolver } from "/systems/foundryvtt-swse/scripts/engine/species/SpeciesConditionalGrantResolver.js";
 
+function isPlaceholderNpcActorName(value) {
+    const name = String(value ?? '').trim().toLowerCase();
+    return !name || ['name', 'npc', 'actor', 'new actor', 'new npc', 'unnamed npc'].includes(name);
+}
+
+function resolveBeastImportName(source = {}, data = {}) {
+    return String(
+        source?.flags?.swse?.beastData?.name
+        ?? source?.flags?.['foundryvtt-swse']?.beastData?.name
+        ?? source?.system?.beastData?.name
+        ?? data?.flags?.swse?.beastData?.name
+        ?? data?.flags?.['foundryvtt-swse']?.beastData?.name
+        ?? data?.system?.beastData?.name
+        ?? ''
+    ).trim();
+}
+
+function normalizeBeastNpcPreCreate(actor, data = {}) {
+    if (!actor || actor.type !== 'npc') return;
+    const beastName = resolveBeastImportName(actor, data);
+    if (!beastName) return;
+    const currentName = String(actor.name ?? data?.name ?? '').trim();
+    if (!isPlaceholderNpcActorName(currentName)) return;
+    try {
+        actor.updateSource({ name: beastName });
+    } catch (_err) {
+        data.name = beastName;
+    }
+}
+
 /**
  * Register all actor-related hooks
  * Called during system initialization
  */
 export function registerActorHooks() {
     SWSELogger.log('Registering actor hooks');
+
+    Hooks.on('preCreateActor', (actor, data) => {
+        normalizeBeastNpcPreCreate(actor, data);
+    });
 
     // PHASE 4: Register PASSIVE abilities during actor preparation
     // Called when actors are loaded or recomputed

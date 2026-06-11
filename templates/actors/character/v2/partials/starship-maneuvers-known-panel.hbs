@@ -6,7 +6,7 @@
 <section class="starship-maneuvers-known-panel holo-panel">
 
   <header class="section-bar">
-    <h3 class="section-header">Starship Maneuvers ({{starshipManeuversPanel.totalCount}})</h3>
+    <h3 class="section-header">{{localize "SWSE.CharacterSheet.Sections.StarshipManeuvers"}} ({{starshipManeuversPanel.totalCount}})</h3>
   </header>
 
   {{#if starshipManeuversPanel.hasEntries}}
@@ -22,8 +22,8 @@
     </div>
   {{else}}
     <div class="empty-state">
-      <p>No starship maneuvers known.</p>
-      <p class="hint">Take the Starship Tactics feat to learn maneuvers.</p>
+      <p>{{localize "SWSE.CharacterSheet.Empty.NoStarshipManeuvers"}}</p>
+      <p class="hint">{{localize "SWSE.CharacterSheet.Hints.TakeStarshipTactics"}}</p>
     </div>
   {{/if}}
 

@@ -8,12 +8,20 @@ import { DestinyEffects } from "/systems/foundryvtt-swse/scripts/utils/destiny-e
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-swse-appv2.js";
 
+function playerUiI18n(key, data = {}) {
+  try {
+    return game.i18n?.format?.(key, data) ?? game.i18n?.localize?.(key) ?? key;
+  } catch (_err) {
+    return key;
+  }
+}
+
 export class DestinySpendingDialog extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
     classes: ['swse', 'swse-inwindow-modal'],
     id: 'destiny-spending-dialog',
     tag: 'div',
-    window: { icon: 'fa-solid fa-lightbulb', title: 'Mentor Suggestion', frame: false, resizable: false, draggable: false },
+    window: { icon: 'fa-solid fa-lightbulb', title: 'SWSE.PlayerUI.Destiny.MentorSuggestion', frame: false, resizable: false, draggable: false },
     position: { width: 500, height: 'auto' }
   };
 
@@ -32,22 +40,22 @@ export class DestinySpendingDialog extends BaseSWSEAppV2 {
    */
   static async open(actor) {
     if (!actor.system.destiny?.hasDestiny) {
-      ui.notifications.warn('This character does not have Destiny.');
+      ui.notifications.warn(playerUiI18n('SWSE.PlayerUI.Destiny.NoDestiny'));
       return;
     }
 
     if (actor.system.destiny.fulfilled) {
-      ui.notifications.warn('This character\'s Destiny has been fulfilled.');
+      ui.notifications.warn(playerUiI18n('SWSE.PlayerUI.Destiny.Fulfilled'));
       return;
     }
 
     if (actor.system.destinyPoints.value <= 0) {
-      ui.notifications.warn('No Destiny Points available.');
+      ui.notifications.warn(playerUiI18n('SWSE.PlayerUI.Destiny.NoneAvailable'));
       return;
     }
 
     const dialog = new DestinySpendingDialog(actor, {
-      window: { title: `Spend Destiny Point - ${actor.name}` }
+      window: { title: playerUiI18n('SWSE.PlayerUI.Destiny.WindowTitle', { name: actor.name }) }
     });
     dialog.render(true);
   }

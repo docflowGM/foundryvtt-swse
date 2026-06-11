@@ -19,7 +19,12 @@ import { StructuredRuleEvaluator } from "/systems/foundryvtt-swse/scripts/engine
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ConditionEvaluator } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/condition-evaluator.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
-import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import {
+  actorHasArmorProficiencyForArmor,
+  getArmorProficiencyPenalty,
+  isEnergyShieldItem,
+  resolveArmorData
+} from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
 
 export class ModifierEngine {
@@ -1251,18 +1256,12 @@ export class ModifierEngine {
       const armorType = armorStats.armorType || 'light';
 
       // ===== ARMOR PROFICIENCY CHECK =====
-      // PHASE 4: Structured proficiency lookup (legacy fallback removed)
-      // Proficiency is tracked via actor system flags for each armor type
-      const actorProfs = actor?.system?.proficiencies?.armor || {};
-      let isProficient = false;
-
-      if (armorType === 'light') {
-        isProficient = actorProfs.light === true;
-      } else if (armorType === 'medium') {
-        isProficient = actorProfs.medium === true;
-      } else if (armorType === 'heavy') {
-        isProficient = actorProfs.heavy === true;
-      }
+      // Proficiency can come from stored actor system flags, progression unlock
+      // grants, or feat/talent items.  This must use the same armor coverage
+      // ladder as defenses: Heavy covers all, Medium covers Medium/Light, Light
+      // covers Light.  Proficiency does not erase base armor check penalty; it
+      // only prevents the extra non-proficiency penalty.
+      const isProficient = actorHasArmorProficiencyForArmor(actor, equippedArmor);
 
       // ===== TALENT CHECKS =====
       // PHASE 4: Structured talent identifier lookup (legacy fallback removed)
@@ -1358,19 +1357,16 @@ export class ModifierEngine {
       let acpValue = armorStats.armorCheckPenalty || 0;
       if (!isProficient) {
         // Apply proficiency penalty if not proficient
-        const proficiencyPenalty = {
-          'light': -2,
-          'medium': -5,
-          'heavy': -10
-        }[armorType] || -2;
+        const proficiencyPenalty = getArmorProficiencyPenalty(armorType);
         acpValue = acpValue + proficiencyPenalty; // Combine with armor's base penalty
       }
 
-      // Apply ACP to affected skills
-      // Skills affected by armor: acrobatics, climb, escapeArtist, jump, sleightOfHand, stealth, swim, useRope
+      // Apply ACP to SWSE affected skills.
+      // Proficiency does not remove the armor's base ACP; it only prevents the
+      // extra non-proficiency penalty above.
       if (acpValue !== 0) {
         const acpSkills = [
-          'acrobatics', 'climb', 'escapeArtist', 'jump', 'sleightOfHand', 'stealth', 'swim', 'useRope'
+          'acrobatics', 'climb', 'endurance', 'initiative', 'jump', 'stealth', 'swim', 'athletics'
         ];
 
         for (const skillKey of acpSkills) {

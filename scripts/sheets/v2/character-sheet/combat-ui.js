@@ -129,6 +129,7 @@ export function activateCombatUI(sheet, html, { signal } = {}) {
   html.querySelectorAll('[data-action="swse-v2-use-action"]').forEach(button => {
     button.addEventListener("click", async (event) => {
       event.preventDefault();
+      event.stopPropagation();
       const actionId = button.dataset.actionId;
       if (!actionId) return;
 
@@ -144,6 +145,10 @@ export function activateCombatUI(sheet, html, { signal } = {}) {
   html.querySelectorAll('[data-action="roll-attack"]').forEach(button => {
     button.addEventListener("click", async (event) => {
       event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation?.();
+      if (event.__swseAttackHandled) return;
+      event.__swseAttackHandled = true;
       const weaponId = button.dataset.weaponId;
       if (!weaponId) return;
 
@@ -154,8 +159,12 @@ export function activateCombatUI(sheet, html, { signal } = {}) {
         || weapon.system?.weapon?.damage);
       if (!isRollableWeapon) return;
 
-      await sheet._runCanonicalAttack(weapon, {
-        source: "combat-tab"
+      await sheet._runCanonicalAttackWithPreroll(weapon, {
+        source: "combat-tab",
+        sourceElement: button,
+        companionSource: button,
+        sheet,
+        showRollCompanion: true
       });
     }, { signal });
   });

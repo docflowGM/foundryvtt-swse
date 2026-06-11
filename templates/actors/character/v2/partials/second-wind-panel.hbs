@@ -1,18 +1,18 @@
 <section class="swse-second-wind-panel v3-panel holo-panel swse-ui-panel">
   <header class="section-bar">
-    <h3 class="section-header">Second Wind</h3>
+    <h3 class="section-header">{{localize "SWSE.CharacterSheet.Sections.SecondWind"}}</h3>
   </header>
 
   <div class="sw-content sw-content--detailed">
     <div class="sw-readout-row">
       <div class="sw-readout-chip">
-        <span class="sw-readout-chip__label">Base Healing</span>
-        <span class="sw-readout-chip__value">{{secondWindPanel.baseHealing}} HP</span>
+        <span class="sw-readout-chip__label">{{localize "SWSE.CharacterSheet.Labels.BaseHealing"}}</span>
+        <span class="sw-readout-chip__value">{{secondWindPanel.baseHealing}} {{localize "SWSE.CharacterSheet.Labels.HP"}}</span>
       </div>    </div>
 
     <div class="sw-edit-grid">
       <div class="sw-field">
-        <label>Modified Healing</label>
+        <label>{{localize "SWSE.CharacterSheet.Labels.ModifiedHealing"}}</label>
         <input type="number"
                name="system.secondWind.healing"
                value="{{secondWindPanel.healing}}"
@@ -20,7 +20,7 @@
                {{#unless secondWindPanel.canEdit}}disabled{{/unless}} />
       </div>
       <div class="sw-field">
-        <label>Uses Remaining</label>
+        <label>{{localize "SWSE.CharacterSheet.Labels.UsesRemaining"}}</label>
         <input type="number"
                name="system.secondWind.uses"
                value="{{secondWindPanel.uses}}"
@@ -28,7 +28,7 @@
                {{#unless secondWindPanel.canEdit}}disabled{{/unless}} />
       </div>
       <div class="sw-field">
-        <label>Max Uses</label>
+        <label>{{localize "SWSE.CharacterSheet.Labels.MaxUses"}}</label>
         <input type="number"
                name="system.secondWind.max"
                value="{{secondWindPanel.max}}"
@@ -48,14 +48,14 @@
               class="sw-recover-btn"
               data-action="use-second-wind"
               {{#unless secondWindPanel.hasUses}}disabled{{/unless}}>
-        Use Second Wind
+        {{localize "SWSE.CharacterSheet.Actions.UseSecondWind"}}
       </button>
 
       <button type="button"
               class="sw-rest-btn"
               data-action="rest-second-wind"
               {{#unless secondWindPanel.canEdit}}disabled{{/unless}}>
-        Reset Uses
+        {{localize "SWSE.CharacterSheet.Actions.ResetUses"}}
       </button>
     </div>
   </div>

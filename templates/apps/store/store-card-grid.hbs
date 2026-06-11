@@ -6,19 +6,19 @@
       <img src="{{rendarrImage}}" alt="Rendarr" class="rendarr-image"/>
     </div>
     <div class="store-rendarr-meta">
-      <div class="store-rendarr-name">RENDARR'S EXCHANGE</div>
-      <div class="store-rendarr-sub">Quartermaster · Galactic Trade Network</div>
-      <div class="store-rendarr-kicker">Authorized vendor channel · concept market surface</div>
+      <div class="store-rendarr-name">{{localize 'SWSE.Store.Header.ExchangeName'}}</div>
+      <div class="store-rendarr-sub">{{localize 'SWSE.Store.Header.Subtitle'}}</div>
+      <div class="store-rendarr-kicker">{{localize 'SWSE.Store.Header.Kicker'}}</div>
       <div class="store-rendarr-quote">
         <span class="holo-message">"{{rendarrWelcome}}"</span>
       </div>
-      <div class="store-category-label">{{currentCategoryLabel}} · <span data-results-count>{{allItems.length}}</span> listings</div>
+      <div class="store-category-label">{{currentCategoryLabel}} · <span data-results-count>{{allItems.length}}</span> {{localize 'SWSE.Store.Header.Listings'}}</div>
     </div>
     <div class="store-credits-block">
-      <div class="store-credits-label">ACCOUNT</div>
-      <div class="store-credits-val">{{credits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></div>
-      <div class="store-credits-reserve">Reserve {{pageContext.cartRemaining}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></div>
-      <div class="store-credits-cart">Cart: <span data-cart-count>{{cartCount}}</span></div>
+      <div class="store-credits-label">{{localize 'SWSE.Store.Header.Account'}}</div>
+      <div class="store-credits-val">{{credits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.Store.Header.Credits'}}"></span></div>
+      <div class="store-credits-reserve">{{localize 'SWSE.Store.Header.Reserve'}} {{pageContext.cartRemaining}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.Store.Header.Credits'}}"></span></div>
+      <div class="store-credits-cart">{{localize 'SWSE.Store.Header.Cart'}}: <span data-cart-count>{{cartCount}}</span></div>
     </div>
   </div>
 
@@ -26,14 +26,14 @@
 
   <div class="store-tabs">
     <button type="button" class="store-tab {{#if (eq currentView 'browse')}}active{{/if}}" data-action="show-browse">
-      <span class="store-tab-glyph">⊞</span> Browse
+      <span class="store-tab-glyph">⊞</span> {{localize 'SWSE.Store.Tabs.Browse'}}
     </button>
     <button type="button" class="store-tab {{#if (eq currentView 'cart')}}active{{/if}}{{#if (eq currentView 'checkout')}} active{{/if}}" data-action="view-cart">
-      <span class="store-tab-glyph">◳</span> Cart
+      <span class="store-tab-glyph">◳</span> {{localize 'SWSE.Store.Tabs.Cart'}}
       {{#if cartCount}}<span class="store-tab-badge">{{cartCount}}</span>{{/if}}
     </button>
     <button type="button" class="store-tab {{#if (eq currentView 'history')}}active{{/if}}" data-action="show-history">
-      <span class="store-tab-glyph">◎</span> History
+      <span class="store-tab-glyph">◎</span> {{localize 'SWSE.Store.Tabs.History'}}
     </button>
   </div>
 
@@ -41,7 +41,7 @@
   <div class="store-filter-bar">
     <div class="store-filter-search">
       <i class="fa-solid fa-search store-filter-ico"></i>
-      <input type="text" id="store-search" class="store-search-input" placeholder="SEARCH LISTINGS..." aria-label="Search store items"/>
+      <input type="text" id="store-search" class="store-search-input" placeholder="{{localize 'SWSE.Store.Filters.SearchListings'}}" aria-label="{{localize 'SWSE.Store.Filters.SearchItemsAria'}}"/>
     </div>
     <div class="store-filter-cats">
       {{#each categorySummary}}
@@ -59,13 +59,13 @@
     <div class="store-subcat-nav">
       {{!-- "All [Category]" reset chip --}}
       <button type="button" class="store-chip store-subcat-chip {{#unless ../../../currentSubcategory}}active{{/unless}}" data-action="subcategory-nav" data-subcategory="" data-family="">
-        All {{label}}<span class="store-chip-count">{{count}}</span>
+        {{localize 'SWSE.Store.Navigation.AllCategory' category=label}}<span class="store-chip-count">{{count}}</span>
       </button>
 
       {{#if (eq key 'weapons')}}
-      <div class="store-family-tabs" aria-label="Weapon folders">
+      <div class="store-family-tabs" aria-label="{{localize 'SWSE.Store.Filters.WeaponFoldersAria'}}">
         <button type="button" class="store-chip store-family-chip {{#unless ../../../currentFamily}}active{{/unless}}" data-action="family-nav" data-family="">
-          All Weapons<span class="store-chip-count">{{count}}</span>
+          {{localize 'SWSE.Store.Navigation.AllWeapons'}}<span class="store-chip-count">{{count}}</span>
         </button>
         {{#each familyTabs}}
         <button type="button" class="store-chip store-family-chip {{#if active}}active{{/if}}" data-action="family-nav" data-family="{{family}}">
@@ -94,22 +94,22 @@
     {{/each}}
     {{/if}}
     <div class="store-filter-controls">
-      <select id="store-availability-filter" class="store-filter-select" aria-label="Filter by availability">
-        <option value="">All Availability</option>
-        <option value="Standard">Standard</option>
-        <option value="Licensed">Licensed</option>
-        <option value="Restricted">Restricted</option>
-        <option value="Military">Military</option>
-        <option value="Illegal">Illegal</option>
-        <option value="Rare">Rare</option>
+      <select id="store-availability-filter" class="store-filter-select" aria-label="{{localize 'SWSE.Store.Filters.FilterAvailabilityAria'}}">
+        <option value="">{{localize 'SWSE.Store.Filters.AllAvailability'}}</option>
+        <option value="Standard">{{localize 'SWSE.Store.Filters.Standard'}}</option>
+        <option value="Licensed">{{localize 'SWSE.Store.Filters.Licensed'}}</option>
+        <option value="Restricted">{{localize 'SWSE.Store.Filters.Restricted'}}</option>
+        <option value="Military">{{localize 'SWSE.Store.Filters.Military'}}</option>
+        <option value="Illegal">{{localize 'SWSE.Store.Filters.Illegal'}}</option>
+        <option value="Rare">{{localize 'SWSE.Store.Filters.Rare'}}</option>
       </select>
-      <select id="store-sort" class="store-filter-select" aria-label="Sort items">
-        <option value="suggested">Suggested</option>
-        <option value="price-asc">Price ↑</option>
-        <option value="price-desc">Price ↓</option>
-        <option value="name-asc">Name A-Z</option>
+      <select id="store-sort" class="store-filter-select" aria-label="{{localize 'SWSE.Store.Filters.SortItemsAria'}}">
+        <option value="suggested">{{localize 'SWSE.Store.Filters.Suggested'}}</option>
+        <option value="price-asc">{{localize 'SWSE.Store.Filters.PriceAsc'}}</option>
+        <option value="price-desc">{{localize 'SWSE.Store.Filters.PriceDesc'}}</option>
+        <option value="name-asc">{{localize 'SWSE.Store.Filters.NameAZ'}}</option>
       </select>
-      <button type="button" class="store-chip" data-action="clear-filters" title="Reset filters">
+      <button type="button" class="store-chip" data-action="clear-filters" title="{{localize 'SWSE.Store.Filters.ResetFilters'}}">
         <i class="fa-solid fa-filter-circle-xmark"></i>
       </button>
     </div>
@@ -122,10 +122,10 @@
     <div class="store-pane store-pane-detail">
       <div class="store-pane-header">
         <button type="button" class="store-back-btn holo-btn secondary" data-action="show-browse">
-          <i class="fa-solid fa-chevron-left"></i> Back
+          <i class="fa-solid fa-chevron-left"></i> {{localize 'SWSE.Store.Detail.Back'}}
         </button>
         <div class="store-pane-title-group">
-          <div class="store-page-kicker">Product Detail</div>
+          <div class="store-page-kicker">{{localize 'SWSE.Store.Detail.ProductDetail'}}</div>
           <h2 class="store-page-title">{{selectedProduct.name}}</h2>
         </div>
       </div>
@@ -138,21 +138,21 @@
               <div class="detail-chip">{{selectedProduct.availability}}</div>
               {{#if selectedProduct.suggestionTierLabel}}<div class="detail-chip highlight">{{selectedProduct.suggestionTierLabel}}</div>{{/if}}
             </div>
-            <div class="store-detail-price">{{selectedProduct.priceLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span>{{#if selectedProduct.priceOverrideApplied}} <span class="policy-price-chip">GM PRICE</span>{{/if}}</div>
+            <div class="store-detail-price">{{selectedProduct.priceLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.Store.Header.Credits'}}"></span>{{#if selectedProduct.priceOverrideApplied}} <span class="policy-price-chip">{{localize 'SWSE.Store.Detail.GmPrice'}}</span>{{/if}}</div>
             {{#unless selectedProduct.canPurchase}}<div class="store-policy-lock store-policy-lock--detail"><i class="fa-solid fa-lock"></i> {{selectedProduct.blockedReason}}</div>{{/unless}}
             <div class="store-detail-qty-row">
               <button type="button" class="detail-qty-minus holo-btn secondary">−</button>
               <input type="number" class="detail-qty-input" value="1" min="1" max="999" />
               <button type="button" class="detail-qty-plus holo-btn secondary">+</button>
-              <button type="button" class="detail-add-btn holo-btn" data-action="detail-add-to-cart" {{#unless selectedProduct.canPurchase}}disabled title="{{selectedProduct.blockedReason}}"{{/unless}}>Add to Cart</button>
-              <button type="button" class="detail-customize-btn holo-btn secondary" data-action="detail-customize-item">Customize</button>
-              <button type="button" class="detail-save-btn holo-btn secondary" data-action="detail-save-for-later">Save for Later</button>
+              <button type="button" class="detail-add-btn holo-btn" data-action="detail-add-to-cart" {{#unless selectedProduct.canPurchase}}disabled title="{{selectedProduct.blockedReason}}"{{/unless}}>{{localize 'SWSE.Store.Detail.AddToCart'}}</button>
+              <button type="button" class="detail-customize-btn holo-btn secondary" data-action="detail-customize-item">{{localize 'SWSE.Store.Detail.Customize'}}</button>
+              <button type="button" class="detail-save-btn holo-btn secondary" data-action="detail-save-for-later">{{localize 'SWSE.Store.Detail.SaveForLater'}}</button>
             </div>
           </div>
           <div class="store-detail-main">
             {{#if selectedProduct.suggestionBullets.length}}
               <section class="detail-section swse-holo-card">
-                <div class="detail-section-title">Recommendation Notes</div>
+                <div class="detail-section-title">{{localize 'SWSE.Store.Detail.RecommendationNotes'}}</div>
                 <ul class="detail-bullets">
                   {{#each selectedProduct.suggestionBullets}}<li>{{this}}</li>{{/each}}
                 </ul>
@@ -160,13 +160,13 @@
             {{/if}}
             {{#if selectedProduct.techDetailsHtml}}
               <section class="detail-section swse-holo-card">
-                <div class="detail-section-title">Technical Specifications</div>
+                <div class="detail-section-title">{{localize 'SWSE.Store.Detail.TechnicalSpecifications'}}</div>
                 <div class="detail-specs">{{{selectedProduct.techDetailsHtml}}}</div>
               </section>
             {{/if}}
             {{#if selectedProduct.description}}
               <section class="detail-section swse-holo-card">
-                <div class="detail-section-title">Item Brief</div>
+                <div class="detail-section-title">{{localize 'SWSE.Store.Detail.ItemBrief'}}</div>
                 <div class="detail-description store-item-brief" data-description-source="{{selectedProduct.descriptionSource}}">
                   <div class="store-item-brief-aurebesh" data-role="translation-text">{{selectedProduct.descriptionAurebesh}}</div>
                   <div class="store-item-brief-basic">{{selectedProduct.descriptionBasic}}</div>
@@ -175,13 +175,13 @@
             {{/if}}
             {{#if selectedProduct.mentorReview}}
               <section class="detail-section swse-holo-card mentor-review-card">
-                <div class="detail-section-title">Quartermaster Guidance</div>
+                <div class="detail-section-title">{{localize 'SWSE.Store.Detail.QuartermasterGuidance'}}</div>
                 <p class="mentor-review-text">"{{selectedProduct.mentorReview}}"</p>
               </section>
             {{/if}}
             {{#if selectedProduct.flavorReviewsHtml}}
               <section class="detail-section swse-holo-card">
-                <div class="detail-section-title">Marketplace Reviews</div>
+                <div class="detail-section-title">{{localize 'SWSE.Store.Detail.MarketplaceReviews'}}</div>
                 <div class="detail-reviews">{{{selectedProduct.flavorReviewsHtml}}}</div>
               </section>
             {{/if}}
@@ -195,11 +195,11 @@
     <div class="store-pane store-pane-cart">
       <div class="store-pane-header">
         <button type="button" class="store-back-btn holo-btn secondary" data-action="show-browse">
-          <i class="fa-solid fa-chevron-left"></i> Back
+          <i class="fa-solid fa-chevron-left"></i> {{localize 'SWSE.Store.Detail.Back'}}
         </button>
         <div class="store-pane-title-group">
-          <div class="store-page-kicker">Cart Manifest</div>
-          <h2 class="store-page-title">Trade Ledger</h2>
+          <div class="store-page-kicker">{{localize 'SWSE.Store.Cart.CartManifest'}}</div>
+          <h2 class="store-page-title">{{localize 'SWSE.Store.Cart.TradeLedger'}}</h2>
         </div>
       </div>
       <div class="store-cart-layout">
@@ -212,7 +212,7 @@
                   <div class="cart-item-name">{{name}}</div>
                   <div class="cart-item-type">{{type}}</div>
                 </div>
-                <div class="cart-item-cost">{{cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></div>
+                <div class="cart-item-cost">{{cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.Store.Header.Credits'}}"></span></div>
                 <button type="button" class="cart-item-remove holo-btn secondary" data-action="remove-cart-row" data-type="{{type}}" data-id="{{id}}">
                   <i class="fa-solid fa-times"></i>
                 </button>
@@ -221,17 +221,17 @@
           {{else}}
             <div class="empty-state compact">
               <i class="fa-solid fa-cart-shopping"></i>
-              <p>Your cart is empty.</p>
+              <p>{{localize 'SWSE.Store.Cart.YourCartIsEmpty'}}</p>
             </div>
           {{/if}}
         </div>
         <div class="store-cart-summary swse-holo-card">
-          <div class="detail-section-title">Totals</div>
-          <div class="summary-line"><span>Subtotal</span><strong>{{cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong></div>
-          <div class="summary-line"><span>Remaining</span><strong>{{cartRemaining}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong></div>
+          <div class="detail-section-title">{{localize 'SWSE.Store.Cart.Totals'}}</div>
+          <div class="summary-line"><span>{{localize 'SWSE.Store.Cart.Subtotal'}}</span><strong>{{cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.Store.Header.Credits'}}"></span></strong></div>
+          <div class="summary-line"><span>{{localize 'SWSE.Store.Cart.Remaining'}}</span><strong>{{cartRemaining}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.Store.Header.Credits'}}"></span></strong></div>
           <div class="rail-action-cluster stacked">
-            <button type="button" class="checkout-btn holo-btn" id="checkout-cart">Proceed to Checkout</button>
-            <button type="button" class="clear-cart-btn holo-btn secondary" id="clear-cart">Clear Cart</button>
+            <button type="button" class="checkout-btn holo-btn" id="checkout-cart">{{localize 'SWSE.Store.Cart.ProceedToCheckout'}}</button>
+            <button type="button" class="clear-cart-btn holo-btn secondary" id="clear-cart">{{localize 'SWSE.Store.Cart.ClearCart'}}</button>
           </div>
         </div>
       </div>
@@ -242,39 +242,39 @@
     <div class="store-pane store-pane-checkout">
       <div class="store-pane-header">
         <button type="button" class="store-back-btn holo-btn secondary" data-action="view-cart">
-          <i class="fa-solid fa-chevron-left"></i> Back to Cart
+          <i class="fa-solid fa-chevron-left"></i> {{localize 'SWSE.Store.Checkout.BackToCart'}}
         </button>
         <div class="store-pane-title-group">
-          <div class="store-page-kicker">Exchange Confirmation</div>
-          <h2 class="store-page-title">Finalize Trade</h2>
+          <div class="store-page-kicker">{{localize 'SWSE.Store.Checkout.ExchangeConfirmation'}}</div>
+          <h2 class="store-page-title">{{localize 'SWSE.Store.Checkout.FinalizeTrade'}}</h2>
         </div>
       </div>
       <div class="store-checkout-layout">
         <section class="store-checkout-ledger swse-holo-card">
-          <div class="detail-section-title">Locked Manifest</div>
+          <div class="detail-section-title">{{localize 'SWSE.Store.Checkout.LockedManifest'}}</div>
           {{#if cartEntries.length}}
             <div class="checkout-ledger-list">
               {{#each cartEntries}}
                 <div class="checkout-ledger-row">
                   <span class="checkout-ledger-name">{{name}}</span>
                   <span class="checkout-ledger-type">{{type}}</span>
-                  <span class="checkout-ledger-cost">{{cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
+                  <span class="checkout-ledger-cost">{{cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.Store.Header.Credits'}}"></span></span>
                 </div>
               {{/each}}
             </div>
           {{else}}
-            <div class="empty-state compact"><i class="fa-solid fa-cart-shopping"></i><p>No items staged.</p></div>
+            <div class="empty-state compact"><i class="fa-solid fa-cart-shopping"></i><p>{{localize 'SWSE.Store.Checkout.NoItemsStaged'}}</p></div>
           {{/if}}
         </section>
         <aside class="store-checkout-summary swse-holo-card">
-          <div class="detail-section-title">Settlement</div>
-          <div class="summary-line"><span>Available</span><strong>{{credits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong></div>
-          <div class="summary-line"><span>Debit</span><strong>{{cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong></div>
-          <div class="summary-line"><span>Reserve After Trade</span><strong><span id="cart-remaining">{{pageContext.cartRemaining}}</span><span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></strong></div>
-          <div class="checkout-guidance">Confirm the trade to issue all manifest lines and archive the transaction.</div>
+          <div class="detail-section-title">{{localize 'SWSE.Store.Checkout.Settlement'}}</div>
+          <div class="summary-line"><span>{{localize 'SWSE.Store.Checkout.Available'}}</span><strong>{{credits}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.Store.Header.Credits'}}"></span></strong></div>
+          <div class="summary-line"><span>{{localize 'SWSE.Store.Checkout.Debit'}}</span><strong>{{cartTotal}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.Store.Header.Credits'}}"></span></strong></div>
+          <div class="summary-line"><span>{{localize 'SWSE.Store.Checkout.ReserveAfterTrade'}}</span><strong><span id="cart-remaining">{{pageContext.cartRemaining}}</span><span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.Store.Header.Credits'}}"></span></strong></div>
+          <div class="checkout-guidance">{{localize 'SWSE.Store.Checkout.Guidance'}}</div>
           <div class="rail-action-cluster stacked">
-            <button type="button" class="checkout-btn holo-btn primary" id="confirm-checkout">Confirm Trade</button>
-            <button type="button" class="holo-btn secondary" data-action="view-cart">Return to Cart</button>
+            <button type="button" class="checkout-btn holo-btn primary" id="confirm-checkout">{{localize 'SWSE.Store.Checkout.ConfirmTrade'}}</button>
+            <button type="button" class="holo-btn secondary" data-action="view-cart">{{localize 'SWSE.Store.Checkout.ReturnToCart'}}</button>
           </div>
         </aside>
       </div>
@@ -285,11 +285,11 @@
     <div class="store-pane store-pane-history">
       <div class="store-pane-header">
         <button type="button" class="store-back-btn holo-btn secondary" data-action="show-browse">
-          <i class="fa-solid fa-chevron-left"></i> Back
+          <i class="fa-solid fa-chevron-left"></i> {{localize 'SWSE.Store.Detail.Back'}}
         </button>
         <div class="store-pane-title-group">
-          <div class="store-page-kicker">Account Archive</div>
-          <h2 class="store-page-title">Purchase History</h2>
+          <div class="store-page-kicker">{{localize 'SWSE.Store.History.AccountArchive'}}</div>
+          <h2 class="store-page-title">{{localize 'SWSE.Store.History.PurchaseHistory'}}</h2>
         </div>
       </div>
       <div class="store-history-layout swse-holo-card">
@@ -299,14 +299,14 @@
               <div class="history-entry">
                 <div class="history-header">
                   <span class="history-date"><i class="fa-solid fa-calendar"></i> {{timestamp}}</span>
-                  <span class="history-total">{{total}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
+                  <span class="history-total">{{total}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.Store.Header.Credits'}}"></span></span>
                 </div>
                 <div class="history-items">
                   {{#each items}}
                     <div class="history-item">
                       <span class="item-name">{{name}}</span>
                       <span class="item-qty">×{{qty}}</span>
-                      <span class="item-cost">{{cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span></span>
+                      <span class="item-cost">{{cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.Store.Header.Credits'}}"></span></span>
                     </div>
                   {{/each}}
                 </div>
@@ -316,7 +316,7 @@
         {{else}}
           <div class="empty-state compact store-history-empty">
             <i class="fa-solid fa-receipt"></i>
-            <p>No purchases have been logged yet.</p>
+            <p>{{localize 'SWSE.Store.History.NoPurchases'}}</p>
           </div>
         {{/if}}
       </div>
@@ -327,17 +327,17 @@
       {{#if (eq currentCategory 'droids')}}
       <div class="store-browse-actions">
         <button type="button" class="create-custom-droid holo-btn secondary">
-          <i class="fa-solid fa-robot"></i> Build Custom Droid
+          <i class="fa-solid fa-robot"></i> {{localize 'SWSE.Store.Browse.BuildCustomDroid'}}
         </button>
         <button type="button" class="build-droid-from-template holo-btn secondary">
-          <i class="fa-solid fa-clone"></i> From Template
+          <i class="fa-solid fa-clone"></i> {{localize 'SWSE.Store.Browse.FromTemplate'}}
         </button>
       </div>
       {{/if}}
       {{#if (eq currentCategory 'vehicles')}}
       <div class="store-browse-actions">
         <button type="button" class="create-custom-starship holo-btn secondary">
-          <i class="fa-solid fa-rocket"></i> Build Ship / Vehicle
+          <i class="fa-solid fa-rocket"></i> {{localize 'SWSE.Store.Browse.BuildShipVehicle'}}
         </button>
       </div>
       {{/if}}
@@ -362,11 +362,11 @@
                   <span class="detail-chip">{{this.category}}</span>
                   <span class="detail-chip">{{this.availability}}</span>
                 </div>
-                <div class="card-price"><span class="price-amount">{{this.priceLabel}}</span><span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="credits"></span>{{#if this.priceOverrideApplied}}<span class="policy-price-chip">GM PRICE</span>{{/if}}</div>
+                <div class="card-price"><span class="price-amount">{{this.priceLabel}}</span><span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.Store.Header.Credits'}}"></span>{{#if this.priceOverrideApplied}}<span class="policy-price-chip">{{localize 'SWSE.Store.Detail.GmPrice'}}</span>{{/if}}</div>
                 {{#unless this.canPurchase}}<div class="store-policy-lock"><i class="fa-solid fa-lock"></i> {{this.blockedReason}}</div>{{/unless}}
               </div>
               <div class="card-footer">
-                <button type="button" class="expand-btn holo-btn" data-action="expand-product" data-item-id="{{this.id}}">Open Listing</button>
+                <button type="button" class="expand-btn holo-btn" data-action="expand-product" data-item-id="{{this.id}}">{{localize 'SWSE.Store.Detail.OpenListing'}}</button>
                 <button type="button" class="add-to-cart-btn holo-btn secondary" data-action="add-to-cart" data-item-id="{{this.id}}" {{#unless this.canPurchase}}disabled title="{{this.blockedReason}}"{{/unless}}>
                   {{#if this.canPurchase}}<i class="fa-solid fa-plus"></i>{{else}}<i class="fa-solid fa-lock"></i>{{/if}}
                 </button>
@@ -376,7 +376,7 @@
         </div>
         <div class="empty-state store-no-results" style="display:none;">
           <i class="fa-solid fa-box-open"></i>
-          <p>No items match the current filters.</p>
+          <p>{{localize 'SWSE.Store.Browse.NoResults'}}</p>
         </div>
       </div>
     </div>

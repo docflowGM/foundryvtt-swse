@@ -174,6 +174,17 @@
                     <span>Attack {{attack.attack}}</span>
                     <span>Damage {{attack.damage}}</span>
                   </div>
+                  <div class="swse-npc-attack-actions">
+                    {{#if attack.canRollAttack}}
+                      <button type="button" class="swse-npc-action-button swse-npc-action-button--compact" data-action="roll-npc-statblock-attack" data-item-id="{{attack.itemId}}" data-attack-name="{{attack.name}}" data-attack-bonus="{{attack.attackBonus}}">Roll Attack</button>
+                    {{/if}}
+                    {{#if attack.canRollDamage}}
+                      <button type="button" class="swse-npc-action-button swse-npc-action-button--compact swse-npc-action-button--secondary" data-action="roll-npc-statblock-damage" data-attack-name="{{attack.name}}" data-damage-formula="{{attack.damageFormula}}">Roll Damage</button>
+                    {{/if}}
+                    {{#if attack.canOpen}}
+                      <button type="button" class="swse-npc-action-button swse-npc-action-button--compact swse-npc-action-button--secondary swse-v2-open-item" data-item-id="{{attack.itemId}}">Open Item</button>
+                    {{/if}}
+                  </div>
                   {{#if attack.notes}}<p class="swse-npc-attack-notes">{{attack.notes}}</p>{{/if}}
                 </article>
               {{/each}}
@@ -319,10 +330,10 @@
             {{#if npcConcept.hasSkills}}
               <div class="swse-npc-skills-grid">
                 {{#each npcConcept.skills as |skill|}}
-                  <div class="swse-npc-skill-row {{#if skill.trained}}is-trained{{/if}}">
+                  <button type="button" class="swse-npc-skill-row {{#if skill.trained}}is-trained{{/if}}" data-action="roll-skill" data-skill="{{skill.key}}" data-mod-dialog="true">
                     <span class="swse-npc-skill-name">{{#if skill.trained}}● {{/if}}{{skill.label}}</span>
                     <strong class="swse-npc-skill-total">{{skill.total}}</strong>
-                  </div>
+                  </button>
                 {{/each}}
               </div>
             {{else}}

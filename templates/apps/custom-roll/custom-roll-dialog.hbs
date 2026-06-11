@@ -6,35 +6,35 @@
       style="{{{themeStyleInline}}}; {{{motionStyleInline}}};">
   <header class="swse-custom-roll-dialog__header">
     <div>
-      <p class="swse-custom-roll-dialog__eyebrow">Unified Roller</p>
-      <h2>Custom Roll</h2>
+      <p class="swse-custom-roll-dialog__eyebrow">{{localize 'SWSE.PlayerUI.CustomRoll.Eyebrow'}}</p>
+      <h2>{{localize 'SWSE.PlayerUI.CustomRoll.Title'}}</h2>
       <p class="swse-custom-roll-dialog__subtitle">
-        {{#if hasActor}}Speaker: {{actorName}}{{else}}No controlled/user character selected{{/if}}
+        {{#if hasActor}}{{localize 'SWSE.PlayerUI.CustomRoll.Speaker' name=actorName}}{{else}}{{localize 'SWSE.PlayerUI.CustomRoll.NoActor'}}{{/if}}
       </p>
     </div>
   </header>
 
   <section class="swse-custom-roll-dialog__body">
     <label class="swse-custom-roll-field swse-custom-roll-field--full">
-      <span>Roll Label</span>
-      <input type="text" name="label" value="Custom Roll" autocomplete="off">
+      <span>{{localize 'SWSE.PlayerUI.CustomRoll.RollLabel'}}</span>
+      <input type="text" name="label" value="{{localize 'SWSE.PlayerUI.CustomRoll.DefaultLabel'}}" autocomplete="off">
     </label>
 
     <fieldset class="swse-custom-roll-choice">
-      <legend>Roll Source</legend>
+      <legend>{{localize 'SWSE.PlayerUI.CustomRoll.RollSource'}}</legend>
       <label>
         <input type="radio" name="rollSource" value="die" checked>
-        <span>Die</span>
+        <span>{{localize 'SWSE.PlayerUI.CustomRoll.Die'}}</span>
       </label>
       <label>
         <input type="radio" name="rollSource" value="formula">
-        <span>Formula</span>
+        <span>{{localize 'SWSE.PlayerUI.CustomRoll.Formula'}}</span>
       </label>
     </fieldset>
 
     <div class="swse-custom-roll-grid">
       <label class="swse-custom-roll-field swse-custom-roll-field--die">
-        <span>Die</span>
+        <span>{{localize 'SWSE.PlayerUI.CustomRoll.Die'}}</span>
         <select name="die">
           {{#each diceOptions}}
             <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
@@ -43,22 +43,22 @@
       </label>
 
       <label class="swse-custom-roll-field swse-custom-roll-field--formula">
-        <span>Formula</span>
+        <span>{{localize 'SWSE.PlayerUI.CustomRoll.Formula'}}</span>
         <input type="text" name="customFormula" placeholder="2d6 + 3" autocomplete="off">
       </label>
 
       <label class="swse-custom-roll-field">
-        <span>Modifier</span>
+        <span>{{localize 'SWSE.PlayerUI.CustomRoll.Modifier'}}</span>
         <input type="number" name="modifier" value="0" step="1">
       </label>
 
       <label class="swse-custom-roll-field">
-        <span>DC</span>
-        <input type="number" name="dc" placeholder="Optional" step="1">
+        <span>{{localize 'SWSE.PlayerUI.CustomRoll.DC'}}</span>
+        <input type="number" name="dc" placeholder="{{localize 'SWSE.PlayerUI.CustomRoll.Optional'}}" step="1">
       </label>
 
       <label class="swse-custom-roll-field swse-custom-roll-field--full">
-        <span>Visibility</span>
+        <span>{{localize 'SWSE.PlayerUI.CustomRoll.Visibility'}}</span>
         <select name="rollMode">
           {{#each rollModeOptions}}
             <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
@@ -69,8 +69,8 @@
   </section>
 
   <footer class="swse-custom-roll-dialog__footer">
-    <button type="button" class="swse-custom-roll-button secondary" data-action="reset">Reset</button>
-    <button type="button" class="swse-custom-roll-button ghost" data-action="cancel">Close</button>
-    <button type="submit" class="swse-custom-roll-button primary">Roll</button>
+    <button type="button" class="swse-custom-roll-button secondary" data-action="reset">{{localize 'SWSE.PlayerUI.CustomRoll.Reset'}}</button>
+    <button type="button" class="swse-custom-roll-button ghost" data-action="cancel">{{localize 'SWSE.PlayerUI.CustomRoll.Close'}}</button>
+    <button type="submit" class="swse-custom-roll-button primary">{{localize 'SWSE.PlayerUI.CustomRoll.Roll'}}</button>
   </footer>
 </form>

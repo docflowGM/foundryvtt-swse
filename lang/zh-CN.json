@@ -1,741 +1,1052 @@
 {
   "SWSE": {
-    "SystemName": "Star Wars Edición Saga",
+    "SystemName": "星球大战：传奇版",
     "SheetLabels": {
-      "Character": "Hoja de Personaje",
-      "NPC": "Hoja de PNJ",
-      "Droid": "Hoja de Droide",
-      "Vehicle": "Hoja de Vehículo",
-      "Item": "Hoja de Objeto"
+      "Character": "角色卡",
+      "NPC": "NPC 卡",
+      "Droid": "机器人卡",
+      "Vehicle": "载具卡",
+      "Item": "物品卡"
     },
     "Abilities": {
-      "STR": "Fuerza",
-      "DEX": "Destreza",
-      "CON": "Constitución",
-      "INT": "Inteligencia",
-      "WIS": "Sabiduría",
-      "CHA": "Carisma"
+      "STR": "力量",
+      "DEX": "敏捷",
+      "CON": "体质",
+      "INT": "智力",
+      "WIS": "感知",
+      "CHA": "魅力"
     },
     "Defenses": {
-      "Reflex": "Defensa de Reflejos",
-      "Fortitude": "Defensa de Fortaleza",
-      "Will": "Defensa de Voluntad"
+      "Reflex": "反射防御",
+      "Fortitude": "强韧防御",
+      "Will": "意志防御"
     },
     "Skills": {
-      "Acrobatics": "Acrobacias",
-      "Climb": "Escalar",
-      "Deception": "Engaño",
-      "Endurance": "Aguante",
-      "GatherInformation": "Reunir Información",
-      "Initiative": "Iniciativa",
-      "Jump": "Saltar",
-      "Knowledge": "Conocimiento",
-      "Mechanics": "Mecánica",
-      "Perception": "Percepción",
-      "Persuasion": "Persuasión",
-      "Pilot": "Pilotar",
-      "Ride": "Montar",
-      "Stealth": "Sigilo",
-      "Survival": "Supervivencia",
-      "Swim": "Nadar",
-      "TreatInjury": "Tratar Heridas",
-      "UseComputer": "Usar Computadora",
-      "UseTheForce": "Usar la Fuerza"
+      "Acrobatics": "杂技",
+      "Climb": "攀爬",
+      "Deception": "欺瞒",
+      "Endurance": "耐力",
+      "GatherInformation": "收集情报",
+      "Initiative": "先攻",
+      "Jump": "跳跃",
+      "Knowledge": "知识",
+      "Mechanics": "机械",
+      "Perception": "察觉",
+      "Persuasion": "说服",
+      "Pilot": "驾驶",
+      "Ride": "骑乘",
+      "Stealth": "潜行",
+      "Survival": "生存",
+      "Swim": "游泳",
+      "TreatInjury": "治疗伤害",
+      "UseComputer": "使用计算机",
+      "UseTheForce": "使用原力"
     },
     "ConditionTrack": {
-      "Normal": "Normal",
+      "Normal": "正常",
       "Minus1": "-1",
       "Minus2": "-2",
       "Minus5": "-5",
       "Minus10": "-10",
-      "Helpless": "Indefenso"
+      "Helpless": "无助"
     },
     "Settings": {
       "EnableAutomation": {
-        "Name": "Habilitar Automatización de Combate",
-        "Hint": "Rastrear automáticamente rondas, turnos y aplicar efectos de combate"
+        "Name": "启用战斗自动化",
+        "Hint": "自动追踪战斗轮、回合并应用战斗效果"
       },
       "AutoConditionRecovery": {
-        "Name": "Recuperación Automática de Condición",
-        "Hint": "Solicitar chequeos de recuperación de pista de condición al inicio del turno de cada combatiente"
+        "Name": "自动状态恢复",
+        "Hint": "在每名战斗者回合开始时提示进行状态轨道恢复检定"
       },
       "AutoDamageThreshold": {
-        "Name": "Umbral de Daño Automático",
-        "Hint": "Mover automáticamente a los personajes por la pista de condición cuando el daño exceda su umbral de daño"
+        "Name": "自动伤害阈值",
+        "Hint": "当伤害超过伤害阈值时，自动使角色沿状态轨道下降"
       },
       "WeaponRangeMultiplier": {
-        "Name": "Multiplicador de Alcance de Armas",
-        "Hint": "Multiplicar todos los alcances de armas por este factor (útil para cuadrículas de diferentes escalas)"
+        "Name": "武器射程倍率",
+        "Hint": "用此倍率调整所有武器射程（适用于不同尺度的网格）"
       },
       "ForcePointBonus": {
-        "Name": "Bonificación de Retirada de Punto de Fuerza",
-        "Hint": "Tamaño del dado de bonificación al gastar Puntos de Fuerza para retirar (d6 = +1d6)"
+        "Name": "原力点重掷加值",
+        "Hint": "花费原力点重掷时的奖励骰大小（d6 = +1d6）"
       },
       "StoreMarkup": {
-        "Name": "Sobreprecio de Tienda",
-        "Hint": "Porcentaje de sobreprecio para objetos comprados en la tienda (puede ser negativo para descuentos)"
+        "Name": "商店价格加价",
+        "Hint": "从商店购买物品时的百分比加价（可为负数表示折扣）"
       },
       "StoreDiscount": {
-        "Name": "Descuento de Venta en Tienda",
-        "Hint": "Porcentaje del precio original al vender objetos a la tienda"
+        "Name": "商店出售折扣",
+        "Hint": "向商店出售物品时按原价计算的百分比"
       },
       "CharacterCreation": {
-        "Name": "Reglas de Creación de Personaje",
-        "Label": "Configurar",
-        "Hint": "Configurar generación de puntuaciones de habilidad, PG y opciones de creación de personaje"
+        "Name": "角色创建规则",
+        "Label": "配置",
+        "Hint": "配置属性生成、生命值和角色创建选项"
       },
       "Advancement": {
-        "Name": "Reglas de Avance",
-        "Label": "Configurar",
-        "Hint": "Configurar subida de nivel, talentos, dotes y opciones de progresión"
+        "Name": "升级规则",
+        "Label": "配置",
+        "Hint": "配置升级、天赋、专长和成长选项"
       },
       "Combat": {
-        "Name": "Reglas de Combate",
-        "Label": "Configurar",
-        "Hint": "Configurar combate, daño, muerte y reglas de la pista de condición"
+        "Name": "战斗规则",
+        "Label": "配置",
+        "Hint": "配置战斗、伤害、死亡和状态轨道规则"
       },
       "Force": {
-        "Name": "Reglas de la Fuerza y Destino",
-        "Label": "Configurar",
-        "Hint": "Configurar Puntos de Fuerza, Lado Oscuro y reglas de poderes de la Fuerza"
+        "Name": "原力与命运规则",
+        "Label": "配置",
+        "Hint": "配置原力点、黑暗面和原力异能规则"
       },
       "Presets": {
-        "Name": "Preajustes de Reglas de Casa",
-        "Label": "Gestionar Preajustes",
-        "Hint": "Aplicar configuraciones de reglas de casa preajustadas o importar/exportar ajustes"
+        "Name": "自订规则预设",
+        "Label": "管理预设",
+        "Hint": "应用自订规则预设，或导入/导出设置"
       },
       "SecondWindImproved": {
-        "Name": "Segundo Aliento Mejorado",
-        "Hint": "Segundo Aliento también mejora la pista de condición un paso"
+        "Name": "强化喘息恢复",
+        "Hint": "喘息恢复也会使状态轨道改善一步"
       },
       "TalentEveryLevel": {
-        "Name": "Talento Cada Nivel",
-        "Hint": "Los personajes ganan un talento en cada nivel en lugar de cada nivel impar"
+        "Name": "每级获得天赋",
+        "Hint": "角色每级都获得天赋，而不是每个奇数等级"
       },
       "CrossClassSkills": {
-        "Name": "Entrenamiento de Habilidades Entre Clases",
-        "Hint": "Permitir entrenar habilidades que no son de clase por 2 casillas de habilidad"
+        "Name": "跨职业技能训练",
+        "Hint": "允许花费 2 个技能位训练非职业技能"
       },
       "SkillFocusRestriction": {
-        "Name": "Restricciones de Enfoque en Habilidad",
-        "Hint": "Restringir Enfoque en Habilidad (Usar la Fuerza) para prevenir dominio temprano en el juego"
+        "Name": "技能专攻限制",
+        "Hint": "限制技能专攻（使用原力）以避免前期过强"
       },
       "ArmoredDefenseForAll": {
-        "Name": "Defensa Acorazada para Todos",
-        "Hint": "Todos los personajes pueden usar bonus de armadura a la Defensa de Reflejos"
+        "Name": "全民装甲防御",
+        "Hint": "所有角色都可以将护甲加值用于反射防御"
       },
       "WeaponRanges": {
-        "Name": "Modificador de Alcance de Armas",
-        "Hint": "Multiplicar todos los alcances de armas por este factor"
+        "Name": "武器射程修正",
+        "Hint": "用此倍率调整所有武器射程"
       },
       "AthleticsConsolidation": {
-        "Name": "Habilidad de Atletismo",
-        "Hint": "Fusionar Escalar, Saltar y Nadar en una sola habilidad de Atletismo"
+        "Name": "运动技能",
+        "Hint": "将攀爬、跳跃和游泳合并为单一运动技能"
       },
       "DiagonalMovement": {
-        "Name": "Movimiento Diagonal",
-        "Hint": "Cómo contar el movimiento diagonal en la cuadrícula"
+        "Name": "斜向移动",
+        "Hint": "如何在网格上计算斜向移动"
       },
       "ForcePointRecovery": {
-        "Name": "Recuperación de Puntos de Fuerza",
-        "Hint": "Cuándo se refrescan los Puntos de Fuerza"
+        "Name": "原力点恢复",
+        "Hint": "原力点何时刷新"
       },
       "ConditionTrackCap": {
-        "Name": "Límite de Daño de Pista de Condición",
-        "Hint": "Pasos máximos de pista de condición por un solo ataque"
+        "Name": "状态轨道伤害上限",
+        "Hint": "单次攻击最多造成的状态轨道下降步数"
       },
       "KnowledgeSkills": {
-        "Name": "Modo de Habilidad de Conocimiento",
-        "Hint": "Consolidar múltiples habilidades de conocimiento"
+        "Name": "知识技能模式",
+        "Hint": "合并多个知识技能"
       },
       "DarkSideTemptation": {
-        "Name": "Tentación del Lado Oscuro",
-        "Hint": "Gastar Punto de Fuerza para ganar temporalmente poderes del Lado Oscuro"
+        "Name": "黑暗面诱惑",
+        "Hint": "花费原力点临时获得黑暗面异能"
       },
       "BlasterCharges": {
-        "Name": "Rastrear Cargas de Bláster",
-        "Hint": "Rastrear munición para armas de energía"
+        "Name": "追踪爆能武器弹药",
+        "Hint": "追踪能量武器弹药"
       },
       "CriticalHit": {
-        "Name": "Variante de Golpe Crítico",
-        "Hint": "Cálculos alternativos de daño de golpe crítico"
+        "Name": "重击变体",
+        "Hint": "替代重击伤害计算方式"
       },
       "Retraining": {
-        "Name": "Permitir Reentrenamiento",
-        "Hint": "Permitir intercambiar dotes/talentos al subir de nivel"
+        "Name": "允许重训",
+        "Hint": "允许升级时替换专长/天赋"
       },
       "DailyForcePoints": {
-        "Name": "Puntos de Fuerza Diarios",
-        "Hint": "Usar Puntos de Fuerza diarios en lugar de por nivel (1-5°: 1 PF, 6-10°: 2 PF, 11-15°: 3 PF, 16+: 4 PF por día)"
+        "Name": "每日原力点",
+        "Hint": "使用每日原力点而非按等级发放（1-5级：1 点，6-10级：2 点，11-15级：3 点，16级以上：每日 4 点）"
       },
       "DarkSideTemptationMechanic": {
-        "Name": "Mecánica de Tentación del Lado Oscuro",
-        "Hint": "Permitir a los personajes invocar el Lado Oscuro al gastar Puntos de Fuerza (requiere Puntuación de Lado Oscuro ≤ mitad de Sabiduría, +1d6, aumenta Puntuación de Lado Oscuro en 1)"
+        "Name": "黑暗面诱惑机制",
+        "Hint": "允许角色在花费原力点时呼唤黑暗面（要求黑暗面值 ≤ 感知一半，增加 +1d6，黑暗面值 +1）"
       },
       "ResetResourcesOnCombat": {
-        "Name": "Restablecer Recursos al Inicio del Combate",
-        "Hint": "Restablecer automáticamente recursos temporales (como Segundo Aliento) cuando comienza el combate"
+        "Name": "战斗开始时重置资源",
+        "Hint": "战斗开始时自动重置临时资源（如喘息恢复）"
       },
       "WelcomeShown": {
-        "Name": "Mensaje de Bienvenida Mostrado",
-        "Hint": "Rastrea si el mensaje de bienvenida ha sido mostrado"
+        "Name": "欢迎消息已显示",
+        "Hint": "追踪欢迎消息是否已经显示"
       },
       "DevMode": {
-        "Name": "Modo Desarrollador",
-        "Hint": "Habilitar registro detallado de errores y trazas de pila para depuración"
+        "Name": "开发者模式",
+        "Hint": "启用详细错误日志和堆栈追踪以便调试"
       },
       "Store": {
         "RequireGMApproval": {
-          "Hint": "Si está activado, los droides personalizados requieren aprobación del DJ antes de descontar créditos. Si está desactivado, se finalizan de inmediato.",
-          "Name": "Requerir aprobación del DJ para droides personalizados"
+          "Hint": "启用后，自定义机器人在扣除信用点前需要 GM 批准。禁用后，自定义机器人会立即完成。",
+          "Name": "自定义机器人需要 GM 批准"
         }
       }
     },
     "Compendium": {
-      "Classes": "Clases",
-      "Talents": "Talentos",
-      "TalentTrees": "Árboles de Talentos",
-      "Feats": "Dotes",
-      "Species": "Especies",
-      "Equipment": "Equipo",
-      "Weapons": "Armas",
-      "Armor": "Armadura",
-      "ArmorLight": "Armadura Ligera",
-      "ArmorMedium": "Armadura Media",
-      "ArmorHeavy": "Armadura Pesada",
-      "ForcePowers": "Poderes de la Fuerza",
-      "ForceTechniques": "Técnicas de la Fuerza",
-      "ForceSecrets": "Secretos de la Fuerza",
-      "LightsaberFormPowers": "Poderes de Forma de Sable de Luz",
-      "Skills": "Habilidades",
-      "ExtraSkillUses": "Usos Adicionales de Habilidad",
-      "Conditions": "Condiciones",
-      "SpecialCombatConditions": "Condiciones Especiales de Combate",
-      "Attributes": "Atributos",
-      "Vehicles": "Vehículos",
-      "Droids": "Droides",
-      "NPCs": "PNJs"
+      "Classes": "职业",
+      "Talents": "天赋",
+      "TalentTrees": "天赋树",
+      "Feats": "专长",
+      "Species": "种族",
+      "Equipment": "装备",
+      "Weapons": "武器",
+      "Armor": "护甲",
+      "ArmorLight": "轻型护甲",
+      "ArmorMedium": "中型护甲",
+      "ArmorHeavy": "重型护甲",
+      "ForcePowers": "原力异能",
+      "ForceTechniques": "原力技巧",
+      "ForceSecrets": "原力秘术",
+      "LightsaberFormPowers": "光剑剑型异能",
+      "Skills": "技能",
+      "ExtraSkillUses": "额外技能用法",
+      "Conditions": "状态",
+      "SpecialCombatConditions": "特殊战斗状态",
+      "Attributes": "属性",
+      "Vehicles": "载具",
+      "Droids": "机器人",
+      "NPCs": "NPC"
     },
     "ForcePoints": {
       "SpendDialog": {
-        "Title": "Gastar Punto de Fuerza",
-        "Question": "¿Gastar un Punto de Fuerza para {reason}?",
-        "RollInfo": "Tirarás {die} y añadirás el {method} a tu tirada.",
-        "CallDarkSide": "Invocar el Lado Oscuro (+1d6, aumenta Puntuación de Lado Oscuro en 1)",
-        "Remaining": "Puntos de Fuerza Restantes:",
-        "Spend": "Gastar Punto de Fuerza",
-        "Cancel": "Cancelar"
+        "Title": "花费原力点",
+        "Question": "要为 {reason} 花费 1 点原力点吗？",
+        "RollInfo": "你将掷 {die}，并把 {method} 加到检定中。",
+        "CallDarkSide": "呼唤黑暗面（+1d6，黑暗面值 +1）",
+        "Remaining": "剩余原力点：",
+        "Spend": "花费原力点",
+        "Cancel": "取消"
       },
       "Chat": {
-        "Title": "Punto de Fuerza Gastado",
-        "Highest": "Más Alto:",
-        "Result": "Resultado:",
-        "DarkSideBonus": "Bonificación de Lado Oscuro:",
-        "DarkSideWarning": "Puntuación de Lado Oscuro aumentada en 1",
-        "TotalBonus": "Bonificación Total:",
-        "UsedFor": "Usado para:",
-        "ReducedDarkSide": "Puntuación de Lado Oscuro reducida a {score}",
-        "AvoidDeath": "¡{name} gasta un Punto de Fuerza para evitar la muerte y cae inconsciente!",
-        "AlreadyZero": "Tu Puntuación de Lado Oscuro ya es 0.",
-        "NoPointsRemaining": "¡No quedan Puntos de Fuerza!"
+        "Title": "已花费原力点",
+        "Highest": "最高：",
+        "Result": "结果：",
+        "DarkSideBonus": "黑暗面加值：",
+        "DarkSideWarning": "黑暗面值增加 1",
+        "TotalBonus": "总加值：",
+        "UsedFor": "用途：",
+        "ReducedDarkSide": "黑暗面值降低到 {score}",
+        "AvoidDeath": "{name} 花费 1 点原力点避免死亡并陷入昏迷！",
+        "AlreadyZero": "你的黑暗面值已经是 0。",
+        "NoPointsRemaining": "没有剩余原力点！"
       },
       "Methods": {
-        "result": "resultado",
-        "highest_result": "resultado más alto"
+        "result": "结果",
+        "highest_result": "最高结果"
       }
     },
     "Notifications": {
       "Welcome": {
-        "Title": "¡Sistema SWSE Mejorado Cargado!",
-        "ConditionTrack": "Pista de Condición Visual activa",
-        "DamageThreshold": "Automatización de Umbral de Daño habilitada",
-        "ForceSuite": "Gestión de Suite de Fuerza lista",
-        "Summary": "Consulta la pestaña Resumen para tu panel de combate"
+        "Title": "SWSE 强化系统已加载！",
+        "ConditionTrack": "视觉状态轨道已启用",
+        "DamageThreshold": "伤害阈值自动化已启用",
+        "ForceSuite": "原力套件管理已就绪",
+        "Summary": "在摘要标签页查看你的战斗仪表板"
       },
       "Condition": {
-        "RecoverySuccess": "¡{name} recupera un paso en la pista de condición!",
-        "RecoveryFailed": "{name} falla al recuperarse."
+        "RecoverySuccess": "{name} 在状态轨道上恢复一步！",
+        "RecoveryFailed": "{name} 恢复失败。"
       },
       "Combat": {
-        "NoTargets": "¡No hay objetivos seleccionados!",
-        "NoActorSelected": "No hay actor seleccionado"
+        "NoTargets": "未选择目标！",
+        "NoActorSelected": "未选择角色"
       },
       "Damage": {
-        "CannotRoll": "No se puede tirar daño para este objeto."
+        "CannotRoll": "无法为此物品掷伤害。"
       },
       "Rolls": {
-        "DefenseNotFound": "Tipo de defensa {type} no encontrado",
-        "SaveSucceeded": "¡Salvación exitosa! ({total} contra CD {dc})",
-        "SaveFailed": "¡Salvación fallida! ({total} contra CD {dc})",
-        "DiceRollFailed": "Tirada de dados fallida: {error}",
-        "SkillNotFound": "Habilidad {skill} no encontrada",
-        "UseForceRequiresTraining": "¡Usar la Fuerza requiere entrenamiento!"
+        "DefenseNotFound": "未找到防御类型 {type}",
+        "SaveSucceeded": "豁免成功！（{total} 对抗 DC {dc}）",
+        "SaveFailed": "豁免失败！（{total} 对抗 DC {dc}）",
+        "DiceRollFailed": "掷骰失败：{error}",
+        "SkillNotFound": "未找到技能 {skill}",
+        "UseForceRequiresTraining": "使用原力！"
       },
       "Items": {
-        "NotOwnedByActor": "Este objeto no pertenece a ningún actor.",
-        "SpeciesApplied": "Rasgos raciales de {species} aplicados a {actor}",
-        "AlreadyHasClass": "{actor} ya tiene la clase {class}"
+        "NotOwnedByActor": "此物品不属于任何角色。",
+        "SpeciesApplied": "已将 {species} 的种族特性应用到 {actor}",
+        "AlreadyHasClass": "{actor} 已经拥有 {class} 职业"
       },
       "System": {
-        "MigrationComplete": "Migración completa: {updated} actualizados, {errors} errores"
+        "MigrationComplete": "迁移完成：已更新 {updated} 项，错误 {errors} 项"
       }
     },
     "Dialogs": {
       "ConditionRecovery": {
-        "Title": "Recuperación de Condición",
-        "Content": "<p><strong>{name}</strong> puede intentar recuperarse.</p><p>Posición actual: {current}/5</p><p>¿Hacer una prueba de Aguante CD 10?</p>"
+        "Title": "状态恢复",
+        "Content": "<p><strong>{name}</strong> 可以尝试状态恢复。</p><p>当前位置：{current}/5</p><p>进行一次 DC 10 的耐力检定？</p>"
       },
       "ReplaceSpecies": {
-        "Title": "¿Reemplazar Especie?",
-        "Content": "<p>{actor} ya tiene la especie: <strong>{existing}</strong></p><p>¿Reemplazar con <strong>{new}</strong>?</p>"
+        "Title": "替换种族？",
+        "Content": "<p>{actor} 已拥有种族：<strong>{existing}</strong></p><p>要替换为 <strong>{new}</strong> 吗？</p>"
       },
       "ApplyDroidChassis": {
-        "Title": "¿Aplicar Chasis de Droide?"
+        "Title": "应用机器人底盘？"
       },
       "ApplyVehicleTemplate": {
-        "Title": "¿Aplicar Plantilla de Vehículo?"
+        "Title": "应用载具模板？"
       },
       "ApplyDamage": {
-        "Title": "Aplicar Daño a {name}",
-        "Amount": "Cantidad de Daño",
-        "CheckThreshold": "Verificar Umbral de Daño",
-        "IgnoreTemp": "Ignorar PG Temporales",
-        "Button": "Aplicar Daño"
+        "Title": "对 {name} 应用伤害",
+        "Amount": "伤害数值",
+        "CheckThreshold": "检查伤害阈值",
+        "IgnoreTemp": "忽略临时生命值",
+        "Button": "应用伤害"
       },
       "Healing": {
-        "TitleHeal": "Curar a {name}",
-        "TitleRepair": "Reparar a {name}",
-        "Amount": "Cantidad de Curación",
-        "RepairAmount": "Cantidad de Reparación (vía Mecánica)",
-        "ButtonHeal": "Aplicar Curación",
-        "ButtonRepair": "Aplicar Reparación",
-        "DroidNote": "Los droides solo pueden repararse con la habilidad Mecánica."
+        "TitleHeal": "治疗 {name}",
+        "TitleRepair": "修理 {name}",
+        "Amount": "治疗量",
+        "RepairAmount": "修理量（通过机械）",
+        "ButtonHeal": "应用治疗",
+        "ButtonRepair": "应用修理",
+        "DroidNote": "机器人只能通过机械技能修理。"
       },
       "ConditionTrack": {
-        "Title": "Pista de Condición: {name}"
+        "Title": "状态轨道：{name}"
       },
       "Store": {
-        "Title": "Bolsa de Intercambio Galáctica",
-        "ConfirmDroidPurchase": "Confirmar Compra de Droide",
-        "ConfirmVehiclePurchase": "Confirmar Compra de Vehículo",
-        "BuildCustomDroid": "Construir Droide Personalizado",
-        "BuildCustomStarship": "Construir Nave Estelar Personalizada",
-        "CompletePurchase": "Completar Compra",
+        "Title": "银河贸易交易所",
+        "ConfirmDroidPurchase": "确认购买机器人",
+        "ConfirmVehiclePurchase": "确认购买载具",
+        "BuildCustomDroid": "建造自定义机器人",
+        "BuildCustomStarship": "建造自定义星舰",
+        "CompletePurchase": "完成购买",
         "RequireGMApproval": {
-          "Hint": "When enabled, custom droids must be approved by a GM before credits are deducted. When disabled, custom droids are immediately finalized.",
-          "Name": "Require GM Approval for Custom Droids"
+          "Name": "自定义机器人需要 GM 批准",
+          "Hint": "启用后，自定义机器人必须先由 GM 批准，然后才会扣除信用点。禁用后，自定义机器人会立即完成。"
         }
       },
       "LevelUp": {
-        "Title": "Subir de Nivel {name}"
+        "Title": "{name} 升级"
       },
       "HouseRules": {
-        "Title": "Configuración de Reglas de Casa SWSE",
-        "CharacterCreation": "Creación de Personaje",
-        "SkillsFeats": "Habilidades y Dotes",
-        "Advancement": "Avance",
-        "Combat": "Combate",
-        "ForceDestiny": "Fuerza y Destino",
-        "SpaceCombat": "Combate Espacial",
-        "Presets": "Preajustes",
-        "CharacterCreationRules": "Reglas de Creación de Personaje",
-        "AdvancementRules": "Reglas de Avance",
-        "CombatRules": "Reglas de Combate",
-        "ForceDestinyRules": "Reglas de Fuerza y Destino"
+        "Title": "SWSE 自订规则配置",
+        "CharacterCreation": "角色创建",
+        "SkillsFeats": "技能与专长",
+        "Advancement": "成长",
+        "Combat": "战斗",
+        "ForceDestiny": "原力与命运",
+        "SpaceCombat": "太空战斗",
+        "Presets": "预设",
+        "CharacterCreationRules": "角色创建规则",
+        "AdvancementRules": "升级规则",
+        "CombatRules": "战斗规则",
+        "ForceDestinyRules": "原力与命运规则"
       },
       "CharacterGenerator": {
-        "Title": "Generador de Personaje",
-        "ImportDroidType": "Importar Tipo de Droide"
+        "Title": "角色生成器",
+        "ImportDroidType": "导入机器人类型"
       },
       "Buttons": {
-        "Confirm": "Confirmar",
-        "Cancel": "Cancelar",
-        "Apply": "Aplicar",
-        "Close": "Cerrar",
-        "Save": "Guardar",
-        "Delete": "Eliminar"
+        "Confirm": "确认",
+        "Cancel": "取消",
+        "Apply": "应用",
+        "Close": "关闭",
+        "Save": "保存",
+        "Delete": "删除"
       }
     },
     "Chat": {
       "Flavors": {
-        "ConditionRecovery": "Prueba de Recuperación de Condición (CD 10)",
-        "Attack": "Ataque de {weapon}",
-        "Damage": "Daño de {weapon}",
-        "Save": "{name} lanza una salvación de {type} ({modifier})",
-        "Skill": "Prueba de {skill}"
+        "ConditionRecovery": "状态恢复检定（DC 10）",
+        "Attack": "{weapon} 攻击",
+        "Damage": "{weapon} 伤害",
+        "Save": "{name} 进行 {type} 豁免（{modifier}）",
+        "Skill": "{skill} 检定"
       },
       "Roll": {
-        "CriticalThreat": "¡AMENAZA CRÍTICA!",
-        "RollDamage": "Tirar Daño",
-        "ApplyDamage": "Aplicar Daño",
-        "DiceTotal": "Total",
-        "Formula": "Fórmula",
-        "Breakdown": "Desglose",
-        "Natural20CriticalThreat": "★ Natural 20 — Critical Threat",
-        "ForcePowerDCTierReached": "Force power DC tier reached",
-        "AvailableReactions": "Reacciones disponibles",
-        "ReactionWindow": "Ventana de reacción",
-        "Reroll": "Repetir tirada",
-        "PendingResolution": "Pending Resolution",
-        "Resolved": "Resolved",
-        "Failed": "Failed",
-        "FinalResult": "Final Result",
-        "RollResult": "Roll Result"
+        "CriticalThreat": "重击威胁！",
+        "RollDamage": "掷伤害",
+        "ApplyDamage": "应用伤害",
+        "DiceTotal": "总计",
+        "Formula": "公式",
+        "Breakdown": "明细",
+        "Natural20CriticalThreat": "★ 自然 20 — 重击威胁",
+        "ForcePowerDCTierReached": "达到原力异能 DC 档位",
+        "AvailableReactions": "可用反应",
+        "ReactionWindow": "反应窗口",
+        "Reroll": "重掷",
+        "PendingResolution": "等待结算",
+        "Resolved": "已结算",
+        "Failed": "失败",
+        "FinalResult": "最终结果",
+        "RollResult": "掷骰结果"
       },
       "Combat": {
-        "Turn": "Turno",
-        "Round": "Ronda",
-        "TacticalDeclaration": "DECLARACIÓN TÁCTICA",
-        "CombatStatus": "ESTADO DE COMBATE",
-        "NoDefensiveStatus": "No se ha declarado ningún estado defensivo.",
-        "Cover": "Cobertura",
-        "Mode": "Modo",
-        "Prone": "Tumbado",
-        "Yes": "Sí",
-        "No": "No",
-        "NoCover": "Sin cobertura",
-        "PartialCover": "Cobertura parcial",
-        "CoverBonus": "Cover (+5 Reflex)",
-        "EnhancedCover": "Enhanced Cover (+10 Reflex)",
-        "TotalCoverBlocked": "Total Cover / Blocked",
-        "Normal": "Normal",
-        "FightingDefensively": "Fighting Defensively (+2 Reflex / -5 attacks)",
-        "FullDefense": "Full Defense (+5 Reflex / attacks locked)",
-        "ProneStatus": "Prone (+5 vs ranged / -5 vs melee)",
-        "SafeZoneDeclared": "Zona segura declarada",
-        "CombatStatusDeclared": "Estado de combate declarado",
-        "SafeZoneNoGeometry": "No map geometry is automated by this card.",
-        "SafeZonePlacement": "GM confirms the 4×4 Safe Zone placement and affected allies.",
-        "SafeZoneBenefits": "Allies who start their turn in the Safe Zone gain +2 Fortitude and +2 Will Defense.",
-        "SafeZoneOverlap": "Safe Zones cannot overlap another Safe Zone.",
-        "SafeZoneNote": "This is a tactical declaration card. Resolve placement and affected tokens at the table.",
-        "StatusNote": "Current combat status declared for GM/player reference.",
-        "UnknownActor": "Actor desconocido",
-        "UnknownCombatant": "Combatiente desconocido"
+        "Turn": "回合",
+        "Round": "轮",
+        "TacticalDeclaration": "战术声明",
+        "CombatStatus": "战斗状态",
+        "NoDefensiveStatus": "当前没有声明防御状态。",
+        "Cover": "掩护",
+        "Mode": "模式",
+        "Prone": "倒地",
+        "Yes": "是",
+        "No": "否",
+        "NoCover": "无掩护",
+        "PartialCover": "部分掩护",
+        "CoverBonus": "掩护（+5 反射）",
+        "EnhancedCover": "强化掩护（+10 反射）",
+        "TotalCoverBlocked": "全掩护 / 被阻挡",
+        "Normal": "正常",
+        "FightingDefensively": "防御式战斗（+2 反射 / 攻击 -5）",
+        "FullDefense": "全防御（+5 反射 / 无法攻击）",
+        "ProneStatus": "倒地（对远程 +5 / 对近战 -5）",
+        "SafeZoneDeclared": "已声明安全区",
+        "CombatStatusDeclared": "已声明战斗状态",
+        "SafeZoneNoGeometry": "此卡不会自动处理地图几何。",
+        "SafeZonePlacement": "GM 确认 4×4 安全区位置及受影响盟友。",
+        "SafeZoneBenefits": "在安全区内开始自己回合的盟友获得 +2 强韧和 +2 意志防御。",
+        "SafeZoneOverlap": "安全区不能与另一个安全区重叠。",
+        "SafeZoneNote": "这是一张战术声明卡。请在桌面上结算位置和受影响的令牌。",
+        "StatusNote": "当前战斗状态已声明，供 GM/玩家参考。",
+        "UnknownActor": "未知角色",
+        "UnknownCombatant": "未知战斗者"
       },
       "Holonet": {
-        "Unread": "No leído",
-        "Decline": "Rechazar",
-        "SeeMessage": "Ver mensaje",
-        "Urgent": "Urgente",
-        "Alert": "Alerta",
-        "Secure": "Seguro",
-        "Incoming": "Entrante",
-        "HolonetRelay": "Holonet Relay",
-        "Approved": "Approved",
-        "Denied": "Denied",
-        "Transfer": "Transfer",
-        "Grant": "Grant",
-        "Refund": "Refund",
-        "PartyFund": "Party Fund",
-        "Purchase": "Purchase",
-        "IncomingPriority": "Incoming · Priority",
-        "EncryptedSecure": "Encrypted · Secure",
-        "IncomingTransmission": "Incoming · Transmission",
-        "DirectThread": "Direct Thread",
-        "Holonet": "Holonet",
-        "OpenHolochat": "Open<br/>Holochat",
-        "OpenBulletin": "Open<br/>Bulletin",
-        "OpenNotice": "Open<br/>Notice",
-        "Pay": "Pagar",
-        "Deposit": "Depositar",
-        "Requests": "requests",
-        "Sent": "sent",
-        "OffersAsset": "offers asset",
-        "OffersItems": "offers items",
-        "AcceptAsset": "Aceptar recurso",
-        "AcceptItems": "Aceptar objetos",
-        "Item": "Objeto",
-        "IncomingTransmissionSubject": "Incoming Transmission"
+        "Unread": "未读",
+        "Decline": "拒绝",
+        "SeeMessage": "查看消息",
+        "Urgent": "紧急",
+        "Alert": "警报",
+        "Secure": "安全",
+        "Incoming": "传入",
+        "HolonetRelay": "全息网中继",
+        "Approved": "已批准",
+        "Denied": "已拒绝",
+        "Transfer": "转账",
+        "Grant": "发放",
+        "Refund": "退款",
+        "PartyFund": "队伍资金",
+        "Purchase": "购买",
+        "IncomingPriority": "传入 · 优先",
+        "EncryptedSecure": "加密 · 安全",
+        "IncomingTransmission": "传入 · 通讯",
+        "DirectThread": "直接会话",
+        "Holonet": "全息网",
+        "OpenHolochat": "打开<br/>全息聊天",
+        "OpenBulletin": "打开<br/>公告",
+        "OpenNotice": "打开<br/>通知",
+        "Pay": "支付",
+        "Deposit": "存入",
+        "Requests": "请求",
+        "Sent": "已发送",
+        "OffersAsset": "提供资产",
+        "OffersItems": "提供物品",
+        "AcceptAsset": "接受资产",
+        "AcceptItems": "接受物品",
+        "Item": "物品",
+        "IncomingTransmissionSubject": "传入通讯"
       },
       "Progression": {
-        "LevelUp": "¡Subida de nivel!",
-        "LevelUpComplete": "¡Subida de nivel completa!",
-        "CharacterCreated": "¡Personaje creado!",
-        "Level": "Level {level}",
-        "ClassLevel": "Level {level}",
-        "Granted": "Otorgado:",
-        "Selected": "Seleccionado:",
-        "Talents": "Talentos:",
-        "BonusFeats": "Dotes adicionales:",
-        "ForcePoints": "Puntos de Fuerza:",
-        "AbilityIncrease": "Aumento de característica:",
-        "AbilityIncreases": "Aumentos de característica:",
-        "HitPoints": "Puntos de golpe:",
-        "Slots": "slot(s)",
-        "Points": "point(s)",
-        "Classes": "Clases:",
-        "Species": "Especie:",
-        "Background": "Trasfondo:",
-        "TalentsSelected": "Talentos seleccionados:",
-        "FeatsSelected": "Dotes seleccionadas:",
-        "SkillsTrained": "Habilidades entrenadas:",
-        "HPGained": "PG ganados:",
-        "SessionSummary": "Resumen de sesión:",
-        "TalentSlotsGranted": "Talent slots granted: {count}",
-        "BonusFeatsGranted": "Bonus feats granted: {count}",
-        "ForcePointsGranted": "Force points granted: {count}",
-        "Features": "Features:",
-        "Session": "Session: {id}",
-        "ViewSession": "Ver sesión"
+        "LevelUp": "升级！",
+        "LevelUpComplete": "升级完成！",
+        "CharacterCreated": "角色已创建！",
+        "Level": "等级 {level}",
+        "ClassLevel": "等级 {level}",
+        "Granted": "授予：",
+        "Selected": "已选择：",
+        "Talents": "天赋：",
+        "BonusFeats": "奖励专长：",
+        "ForcePoints": "原力点：",
+        "AbilityIncrease": "属性提升：",
+        "AbilityIncreases": "属性提升：",
+        "HitPoints": "生命值：",
+        "Slots": "个槽位",
+        "Points": "点",
+        "Classes": "职业：",
+        "Species": "种族：",
+        "Background": "背景：",
+        "TalentsSelected": "已选天赋：",
+        "FeatsSelected": "已选专长：",
+        "SkillsTrained": "已训练技能：",
+        "HPGained": "获得生命值：",
+        "SessionSummary": "阶段摘要：",
+        "TalentSlotsGranted": "授予天赋位：{count}",
+        "BonusFeatsGranted": "授予奖励专长：{count}",
+        "ForcePointsGranted": "授予原力点：{count}",
+        "Features": "特性：",
+        "Session": "阶段：{id}",
+        "ViewSession": "查看阶段"
       },
       "Receipt": {
-        "Actor": "Actor:",
-        "From": "De:",
-        "To": "Para:",
-        "DecidedBy": "Decidido por:",
-        "Previous": "Anterior",
-        "Balance": "Saldo",
-        "NewBalance": "Nuevo saldo",
-        "Received": "recibido",
-        "Spent": "gastado",
-        "NoChange": "sin cambios",
-        "GalacticTreasury": "Galactic Treasury",
-        "CreditTransaction": "Credit transaction",
-        "ApprovedGM": "Approved · GM",
-        "DeniedGM": "Denied · GM",
-        "TransferCredits": "Transfer · Credits",
-        "GrantCredits": "Grant · Credits",
-        "ReceiptRefund": "Receipt · Refund",
-        "PartyFund": "Party · Fund",
-        "ReceiptPurchase": "Receipt · Purchase",
-        "StoreItem": "Store item",
-        "StorePurchase": "Store Purchase",
-        "StoreSale": "Store Sale",
-        "OpenStore": "Abrir tienda",
-        "OpenHolochat": "Abrir Holochat",
-        "OpenHolonet": "Abrir Holonet",
-        "OpenGames": "Abrir juegos",
-        "PurchaseTitle": "Purchase — {item}",
-        "SaleTitle": "Sale — {item}",
-        "SaleApprovedTitle": "Sale approved — {item}",
-        "SaleDeniedTitle": "Sale denied — {item}",
-        "GMNote": "GM note: {reason}",
-        "NoCreditsChanged": "No credits changed.",
-        "PartyLedger": "Party Ledger",
-        "CreditsSentTitle": "Credits sent: {from} → {to}",
-        "CreditsReceivedTitle": "Credits received: {from} → {to}",
-        "Reason": "Reason: {reason}",
-        "QuestReward": "Quest Reward",
-        "PartyFundVendor": "Party Fund",
-        "PartyFundPayoutReceived": "Party fund payout received",
-        "CreditsReceived": "Credits received",
-        "RewardFor": "Reward for: {reason}",
-        "HolopadGames": "Holopad Games",
-        "GameBuyInEscrowed": "Game buy-in escrowed",
-        "GameEscrowAdjusted": "Game escrow adjusted",
-        "Escrowed": "escrowed",
-        "Credited": "credited",
-        "GameWagerEscrow": "Game wager escrow",
-        "GamePayoutReceived": "Game payout received",
-        "GamePayout": "Game payout",
-        "GameCreditsRefunded": "Game credits refunded",
-        "GamePayoutRollbackApplied": "Game payout rollback applied",
-        "Refunded": "refunded",
-        "Deducted": "deducted",
-        "GameCreditRefund": "Game credit refund",
-        "JobBoard": "Job Board",
-        "JobRewardReceived": "Job reward received",
-        "JobBoardPayout": "Job Board payout",
-        "GMLedger": "GM Ledger",
-        "GMCreditGrantReceived": "GM credit grant received",
-        "GMCreditGrant": "GM credit grant",
-        "GMStoreControl": "GM Store Control",
-        "CreditCorrectionReceived": "Credit correction received",
-        "CreditCorrectionApplied": "Credit correction applied",
-        "GMCreditCorrection": "GM credit correction",
-        "CustomOrder": "Custom order",
-        "GMApprovalDashboard": "GM Approval Dashboard",
-        "ApprovedTitle": "{name} approved",
-        "DeniedTitle": "{name} denied",
-        "CustomCommission": "{type} commission",
-        "Custom": "custom",
-        "Cost": "cost",
+        "Actor": "角色：",
+        "From": "来自：",
+        "To": "至：",
+        "DecidedBy": "决定者：",
+        "Previous": "之前",
+        "Balance": "余额",
+        "NewBalance": "新余额",
+        "Received": "收到",
+        "Spent": "已花费",
+        "NoChange": "无变化",
+        "GalacticTreasury": "银河金库",
+        "CreditTransaction": "信用点交易",
+        "ApprovedGM": "已批准 · GM",
+        "DeniedGM": "已拒绝 · GM",
+        "TransferCredits": "转账 · 信用点",
+        "GrantCredits": "发放 · 信用点",
+        "ReceiptRefund": "收据 · 退款",
+        "PartyFund": "队伍 · 资金",
+        "ReceiptPurchase": "收据 · 购买",
+        "StoreItem": "商店物品",
+        "StorePurchase": "商店购买",
+        "StoreSale": "商店出售",
+        "OpenStore": "打开商店",
+        "OpenHolochat": "打开全息聊天",
+        "OpenHolonet": "打开全息网",
+        "OpenGames": "打开游戏",
+        "PurchaseTitle": "购买 — {item}",
+        "SaleTitle": "出售 — {item}",
+        "SaleApprovedTitle": "出售已批准 — {item}",
+        "SaleDeniedTitle": "出售已拒绝 — {item}",
+        "GMNote": "GM 备注：{reason}",
+        "NoCreditsChanged": "信用点未变化。",
+        "PartyLedger": "队伍账本",
+        "CreditsSentTitle": "信用点已发送：{from} → {to}",
+        "CreditsReceivedTitle": "信用点已收到：{from} → {to}",
+        "Reason": "原因：{reason}",
+        "QuestReward": "任务奖励",
+        "PartyFundVendor": "队伍资金",
+        "PartyFundPayoutReceived": "已收到队伍资金支出",
+        "CreditsReceived": "已收到信用点",
+        "RewardFor": "奖励：{reason}",
+        "HolopadGames": "全息板游戏",
+        "GameBuyInEscrowed": "游戏买入已托管",
+        "GameEscrowAdjusted": "游戏托管已调整",
+        "Escrowed": "已托管",
+        "Credited": "已入账",
+        "GameWagerEscrow": "游戏赌注托管",
+        "GamePayoutReceived": "已收到游戏派奖",
+        "GamePayout": "游戏派奖",
+        "GameCreditsRefunded": "游戏信用点已退款",
+        "GamePayoutRollbackApplied": "游戏派奖回滚已应用",
+        "Refunded": "已退款",
+        "Deducted": "已扣除",
+        "GameCreditRefund": "游戏信用点退款",
+        "JobBoard": "任务板",
+        "JobRewardReceived": "已收到任务奖励",
+        "JobBoardPayout": "任务板支出",
+        "GMLedger": "GM 账本",
+        "GMCreditGrantReceived": "已收到 GM 发放信用点",
+        "GMCreditGrant": "GM 信用点发放",
+        "GMStoreControl": "GM 商店控制",
+        "CreditCorrectionReceived": "已收到信用点修正",
+        "CreditCorrectionApplied": "信用点修正已应用",
+        "GMCreditCorrection": "GM 信用点修正",
+        "CustomOrder": "自定义订单",
+        "GMApprovalDashboard": "GM 审批仪表板",
+        "ApprovedTitle": "{name} 已批准",
+        "DeniedTitle": "{name} 已拒绝",
+        "CustomCommission": "{type} 委托",
+        "Custom": "自定义",
+        "Cost": "花费",
         "GM": "GM",
-        "SentDelta": "sent",
-        "Recipient": "Recipient",
-        "Sender": "Sender"
+        "SentDelta": "已发送",
+        "Recipient": "接收者",
+        "Sender": "发送者"
       },
       "Commands": {
-        "SelectToken": "Select at least one token.",
-        "XPRequiresGM": "XP commands require GM permissions.",
-        "RecalculatedActors": "Recalculated selected actors.",
-        "CustomRollerComingSoon": "SWSE custom roller coming soon!"
+        "SelectToken": "请至少选择一个令牌。",
+        "XPRequiresGM": "XP 命令需要 GM 权限。",
+        "RecalculatedActors": "已重新计算所选角色。",
+        "CustomRollerComingSoon": "SWSE 自定义掷骰器即将推出！"
+      }
+    },
+    "Discovery": {
+      "Settings": {
+        "DisableCallouts": {
+          "Name": "禁用引导提示",
+          "Hint": "关闭首次打开功能时出现的初次使用提示"
+        },
+        "DisableTour": {
+          "Name": "禁用首次启动导览",
+          "Hint": "关闭首次启动时显示的功能概览"
+        },
+        "DisableTooltips": {
+          "Name": "禁用发现提示",
+          "Hint": "关闭 UI 元素上的上下文提示"
+        }
+      },
+      "Tooltip": {
+        "HitPoints": {
+          "Title": "生命值",
+          "Body": "生命值衡量你能在战斗中坚持多久。它既反映实际承伤能力，也反映闪避、格挡以及把重击化为轻伤的战斗技巧。"
+        },
+        "DamageThreshold": {
+          "Title": "伤害阈值",
+          "Body": "伤害阈值衡量单次攻击必须造成多少伤害才会严重削弱你。即使你仍有生命值，一次足够强力的打击也可能立即降低你的效能。"
+        },
+        "ForcePoints": {
+          "Title": "Force Points",
+          "Body": "原力点代表角色借助非凡助力的能力，无论那被理解为命运、运气，还是流经生命体的原力。它们是用于强化重要行动的有限资源。"
+        },
+        "DestinyPoints": {
+          "Title": "命运点",
+          "Body": "稀有点数，可让你自动成功一次掷骰，或触发特殊命运效果。"
+        },
+        "ConditionTrack": {
+          "Title": "状态轨道",
+          "Body": "追踪承受重击后的罚值。每下降一步，所有掷骰和防御累计 -1。"
+        },
+        "BaseAttackBonus": {
+          "Title": "基础攻击加值",
+          "Body": "加入攻击检定。由职业和等级决定。"
+        },
+        "Grapple": {
+          "Title": "擒抱",
+          "Body": "用于抓取和擒抱检定。基于 BAB 和体型修正。"
+        },
+        "Initiative": {
+          "Title": "先攻",
+          "Body": "Initiative determines how fast you react when action starts. A higher result usually means acting earlier in the round."
+        },
+        "ReflexDefense": {
+          "Title": "反射防御",
+          "Body": "大多数攻击的目标防御。基于职业、等级、敏捷或护甲加值。"
+        },
+        "FortitudeDefense": {
+          "Title": "强韧防御",
+          "Body": "抵抗毒素和震慑等物理效果。基于职业、等级和体质。"
+        },
+        "WillDefense": {
+          "Title": "意志防御",
+          "Body": "抵抗心灵效果和原力异能。基于职业、等级和感知。"
+        },
+        "FlatFooted": {
+          "Title": "措手不及",
+          "Body": "被打个措手不及时的防御。不包含敏捷或闪避加值。"
+        },
+        "AbilityScore": {
+          "Title": "属性值",
+          "Body": "原始属性值。实际用于掷骰的是调整值（属性值减 10 后除以 2）。"
+        },
+        "AbilityModifier": {
+          "Title": "属性调整值",
+          "Body": "由属性值推导。加入相关掷骰、技能和防御。"
+        },
+        "SkillTrained": {
+          "Title": "受训技能",
+          "Body": "受训技能获得 +5 加值，并可能解锁未受训时无法使用的特殊用法。"
+        },
+        "SkillRoll": {
+          "Title": "技能检定",
+          "Body": "点击掷此技能。掷骰会加入你的调整值和训练加值。"
+        },
+        "PassiveTalent": {
+          "Title": "被动天赋",
+          "Body": "始终生效。无需动作即可受益。"
+        },
+        "ActiveTalent": {
+          "Title": "主动天赋",
+          "Body": "需要动作才能使用。请查看天赋描述了解动作类型。"
+        },
+        "UsageLimit": {
+          "Title": "有限使用",
+          "Body": "此能力每次遭遇或每天只能使用限定次数。"
+        },
+        "WeaponAttack": {
+          "Title": "攻击检定",
+          "Body": "点击使用此武器对目标的反射防御进行攻击检定。"
+        },
+        "WeaponDamage": {
+          "Title": "伤害检定",
+          "Body": "攻击成功后点击为此武器掷伤害。"
+        },
+        "ArmorPenalty": {
+          "Title": "护甲罚值",
+          "Body": "这件护甲在提供护甲加值之外，还会对反射防御施加罚值，并可能限制敏捷。"
+        },
+        "ActionPalette": {
+          "Title": "动作面板",
+          "Body": "快速访问角色常用的战斗与叙事动作。"
+        },
+        "PaletteMode": {
+          "Title": "面板模式",
+          "Body": "在战斗动作和叙事/探索动作之间切换。"
+        },
+        "ActionDisabled": {
+          "Title": "动作不可用",
+          "Body": "当前无法使用此动作。请检查先决条件和可用资源。"
+        },
+        "ChargenNarrative": {
+          "Title": "叙事模式",
+          "Body": "Build your character through guided story choices instead of manual stat selection."
+        },
+        "ChargenMentor": {
+          "Title": "导师选择",
+          "Body": "选择一名导师，让其指导塑造你的角色创建体验。"
+        },
+        "ChargenRollMethod": {
+          "Title": "属性生成方式",
+          "Body": "选择生成属性值的方式：掷骰、购点或标准数组。"
+        },
+        "ChargenSpecies": {
+          "Title": "种族",
+          "Body": "你的种族决定基础特性、属性调整和可用能力。"
+        },
+        "ChargenClass": {
+          "Title": "职业",
+          "Body": "你的职业决定生命值、防御、受训技能和可用天赋。"
+        },
+        "ChargenLockin": {
+          "Title": "完成角色",
+          "Body": "确认你的选择。创建后大多数选择仍可调整。"
+        },
+        "MentorDialogue": {
+          "Title": "导师指导",
+          "Body": "导师会提供背景和建议。这只是建议，并非强制。"
+        },
+        "AurebeshTranslation": {
+          "Title": "奥里贝什翻译",
+          "Body": "文本会先以奥里贝什显示，然后翻译。点击可跳过效果。"
+        },
+        "TacticalOverlay": {
+          "Title": "战术叠层",
+          "Body": "在地图上显示射程带、威胁区域和战术信息。"
+        },
+        "GMSuggestion": {
+          "Title": "GM 建议",
+          "Body": "来自建议引擎的参考信息。不会自动应用。"
+        },
+        "GMPaletteMode": {
+          "Title": "GM 模式",
+          "Body": "将面板切换到 GM 工具：NPC 生成、治疗和状态管理。"
+        },
+        "Strength": {
+          "Title": "力量",
+          "Body": "力量反映角色能施加多少身体力量。它在直接体力行动和近距离力量任务中尤其重要。"
+        },
+        "Dexterity": {
+          "Title": "敏捷",
+          "Body": "敏捷反映精细控制、反应速度和身体精度。它对远程战斗、规避移动和载具操控尤其重要。"
+        },
+        "Constitution": {
+          "Title": "体质",
+          "Body": "体质反映角色承受伤害、疲劳和身体压力的能力。它是核心生存属性，因为它影响持久力。"
+        },
+        "Intelligence": {
+          "Title": "智力",
+          "Body": "智力反映角色理解系统、解决问题和发展专业训练的能力。它对依赖广泛技术或学术技能的角色尤其有用。"
+        },
+        "Wisdom": {
+          "Title": "感知",
+          "Body": "感知反映察觉、实践洞察和对周遭环境的联系。它更关乎意识和可靠判断，而非抽象分析。"
+        },
+        "Charisma": {
+          "Title": "魅力",
+          "Body": "魅力反映领导力、吸引力、自信以及影响他人的能力。它不只是外貌，而是角色个人气场的强度。"
+        },
+        "Acrobatics": {
+          "Title": "杂技",
+          "Body": "杂技涵盖平衡、翻滚、安全落地、挣脱身体控制和灵活动作。当精确身体控制比蛮力更重要时使用。"
+        },
+        "Climb": {
+          "Title": "攀爬",
+          "Body": "攀爬用于攀上岩壁、建筑、梯子和机械等困难表面。它衡量通过力量和抓握进行受控上升的能力。"
+        },
+        "Deception": {
+          "Title": "欺瞒",
+          "Body": "欺瞒用于让谎言显得可信、制造混乱、隐藏意图或伪装成他人。它涵盖虚张声势、快嘴说辞、易容和伪造证据。"
+        },
+        "Endurance": {
+          "Title": "耐力",
+          "Body": "耐力衡量压力下的体能和韧性。当角色必须在疲劳、困苦或其他身体极限中坚持时使用。"
+        },
+        "GatherInformation": {
+          "Title": "收集情报",
+          "Body": "收集情报用于打听消息、运作社交网络并发现线索。它能帮助找到流言、公开谈资、隐秘消息和有用关系。"
+        },
+        "Jump": {
+          "Title": "跳跃",
+          "Body": "跳跃用于越过坑洞、翻越障碍和进行受控跳跃。它反映爆发力和协调动作。"
+        },
+        "Knowledge": {
+          "Title": "知识",
+          "Body": "知识代表学术、专业或技术学习。每个领域涵盖不同知识体系，成功与否取决于主题是否与你的训练相关。"
+        },
+        "Mechanics": {
+          "Title": "机械",
+          "Body": "机械用于直接操作机械和技术硬件。它涵盖绕过安保、设置或拆除爆炸物，以及修理或改进受损装备和机器人。"
+        },
+        "Perception": {
+          "Title": "察觉",
+          "Body": "察觉用于发现威胁、注意隐藏生物或物体，并保持环境意识。它反映警觉和感官意识。"
+        },
+        "Persuasion": {
+          "Title": "说服",
+          "Body": "说服用于争取合作、塑造态度并引导社交结果。它可以含蓄而外交，也可以强硬而威吓。"
+        },
+        "Pilot": {
+          "Title": "驾驶",
+          "Body": "驾驶管理高级载具操控。例行旅行可能不需要检定，但规避动作、特技和危险操控需要。"
+        },
+        "Ride": {
+          "Title": "骑乘",
+          "Body": "骑乘用于操控坐骑，尤其是在移动或压力下。它反映平衡、控制和骑乘协调。"
+        },
+        "Stealth": {
+          "Title": "潜行",
+          "Body": "潜行用于通过安静、遮蔽和谨慎移动避免被发现。它也支持隐藏站位、伏击、从掩护中狙击和手上把戏。"
+        },
+        "Survival": {
+          "Title": "生存",
+          "Body": "生存帮助角色在严酷环境中导航、追踪危险迹象、觅食、狩猎并识别自然危害。它衡量实用野外技能。"
+        },
+        "Swim": {
+          "Title": "游泳",
+          "Body": "游泳用于渡水、潜水、保持漂浮，并在困难水域中移动。它代表在水中的受控动作。"
+        },
+        "TreatInjury": {
+          "Title": "治疗伤害",
+          "Body": "治疗伤害涵盖战场急救、医疗护理和恢复支援。用它让盟友存活、提高治疗并应对有害状态。"
+        },
+        "UseComputer": {
+          "Title": "使用计算机",
+          "Body": "使用计算机用于操作受保护系统、绕过数字防护，并与复杂计算机控制技术互动。它管理电子环境中的技术访问。"
+        },
+        "UseTheForce": {
+          "Title": "使用原力",
+          "Body": "使用原力代表游戏中与原力的主动联系。它支持非凡感知、恢复和其他原力驱动行为，通常需要原力敏感才能训练。"
+        },
+        "DarkSideScore": {
+          "Title": "黑暗面值",
+          "Body": "黑暗面值追踪邪恶行为造成的道德与精神腐化。数值越高，代表黑暗面的影响越深，并可能带来严重后果。"
+        },
+        "CatchSecondWind": {
+          "Title": "使用喘息恢复",
+          "Body": "喘息恢复让英雄角色在重伤后重新振作。只有生命值降至一半或更低时可用，且每天只能使用一次。"
+        }
+      },
+      "Callout": {
+        "Dismiss": "知道了",
+        "actionPaletteFirstOpen": {
+          "Title": "动作面板",
+          "Body": "这是你的快速动作菜单。它会适应战斗和叙事情境，并可按你的游玩风格自定义。"
+        },
+        "tacticalOverlayFirstOpen": {
+          "Title": "战术叠层",
+          "Body": "切换显示射程带、威胁区和站位数据的地图叠层。每个图层都可独立切换。"
+        },
+        "mentorTranslationFirst": {
+          "Title": "导师对话",
+          "Body": "导师文本会以奥里贝什翻译效果出现。点击文本任意位置可跳过动画并立即阅读。"
+        },
+        "gmSuggestionPanelFirst": {
+          "Title": "GM 建议",
+          "Body": "These are advisory insights based on the current encounter. Nothing is applied automatically. Use them as you see fit."
+        },
+        "chargenNarrativeFirst": {
+          "Title": "角色创建模式",
+          "Body": "你可以通过叙事选择或直接机制选择来创建角色。两种路径都会生成完全有效的角色。"
+        }
+      },
+      "Tour": {
+        "Skip": "跳过",
+        "GMHolopad": "打开 GM 全息板",
+        "Player": {
+          "Title": "欢迎来到星球大战：传奇版",
+          "Subtitle": "这里有几项帮助你开始的内容。所有功能都是可选的。",
+          "Item1": "角色创建同时支持叙事模式和机制模式",
+          "Item2": "动作面板可快速访问战斗和叙事动作",
+          "Item3": "导师可以在角色创建期间指导你的选择",
+          "Item4": "将鼠标悬停在高亮 UI 元素上可查看快速说明",
+          "Item5": "所有引导提示都可以在客户端设置中关闭"
+        },
+        "GM": {
+          "Title": "欢迎来到星球大战：传奇版（GM 工具）",
+          "Subtitle": "Your GM toolkit includes several optional systems. Nothing runs unless you enable it.",
+          "Item1": "战术叠层会为场景添加射程与威胁可视化",
+          "Item2": "GM 建议提供遭遇参考信息，不会自动执行",
+          "Item3": "场景工具和 NPC 管理可从侧边栏与面板访问",
+          "Item4": "所有自动化（伤害阈值、状态恢复）都可在设置中切换",
+          "Item5": "发现提示可在系统设置中重置或禁用"
+        }
       }
     },
     "Progression": {
       "Common": {
-        "Access": "Acceso",
-        "Activate": "Activar",
-        "AskMentor": "Preguntar al mentor",
-        "Benefit": "Beneficio",
-        "Categories": "Categorías",
-        "Complete": "Completo",
-        "Description": "Descripción",
-        "Deselect": "Deseleccionar",
-        "Detail": "Detalle",
-        "Granted": "Concedido",
-        "Known": "Conocido",
-        "Legal": "Legal",
-        "Locked": "Bloqueado",
-        "NoDescriptionAvailable": "No hay descripción disponible.",
-        "NoPrerequisite": "Sin prerrequisito",
-        "NoPrerequisites": "Sin prerrequisitos",
-        "Owned": "Poseído",
-        "Path": "Ruta",
-        "Pending": "Pendiente",
-        "Recommended": "Recomendado",
-        "Repeatable": "Repetible",
-        "Reset": "Restablecer",
-        "Selected": "Seleccionado",
+        "Access": "访问",
+        "Activate": "激活",
+        "AskMentor": "询问导师",
+        "Benefit": "收益",
+        "Categories": "分类",
+        "Complete": "完成",
+        "Description": "描述",
+        "Deselect": "取消选择",
+        "Detail": "详情",
+        "Granted": "已授予",
+        "Known": "已知",
+        "Legal": "合法",
+        "Locked": "锁定",
+        "NoDescriptionAvailable": "无可用描述。",
+        "NoPrerequisite": "无先决条件",
+        "NoPrerequisites": "无先决条件",
+        "Owned": "已拥有",
+        "Path": "路径",
+        "Pending": "待定",
+        "Recommended": "推荐",
+        "Repeatable": "可重复",
+        "Reset": "重置",
+        "Selected": "已选择",
         "Sort": {
           "AZ": "A–Z",
-          "NameAZ": "Nombre A→Z",
-          "NameZA": "Nombre Z→A"
+          "NameAZ": "Name A→Z",
+          "NameZA": "Name Z→A"
         },
-        "Status": "Estado:",
-        "Suggested": "Sugerido",
-        "Tip": "Consejo:",
-        "Unavailable": "No disponible",
-        "Unlocks": "Desbloquea",
-        "Available": "Disponible",
-        "Prerequisites": "Prerrequisitos"
+        "Status": "状态：",
+        "Suggested": "Suggested",
+        "Tip": "Tip：",
+        "Unavailable": "不可用",
+        "Unlocks": "Unlocks",
+        "Available": "可用",
+        "Prerequisites": "先决条件"
       },
       "Confirm": {
-        "AllRequiredComplete": "Todos los elementos obligatorios de la creación están completos.",
-        "BlockingIssues": "Problemas bloqueantes",
-        "BuildReview": "Revisión de creación",
-        "ClassFeats": "Dotes de clase:",
-        "ClassTalents": "Talentos de clase:",
-        "FeatsAcquired": "Dotes adquiridas",
-        "GeneralFeats": "Dotes generales:",
-        "HeroicTalents": "Talentos heroicos:",
-        "ResolveItems": "Resuelve estos elementos para proceder a la finalización.",
-        "ReviewOrFinalize": "Haz clic en cualquier sección de arriba para revisar detalles, o procede a finalizar tu personaje.",
-        "TalentsSelected": "Talentos seleccionados",
-        "Warnings": "Advertencias"
+        "AllRequiredComplete": "所有必需构筑元素均已完成。",
+        "BlockingIssues": "Blocking Issues",
+        "BuildReview": "Build Review",
+        "ClassFeats": "Class Feats：",
+        "ClassTalents": "Class Talents：",
+        "FeatsAcquired": "已获得专长",
+        "GeneralFeats": "通用专长：",
+        "HeroicTalents": "英雄天赋：",
+        "ResolveItems": "解决这些项目后才能进入最终确认。",
+        "ReviewOrFinalize": "点击上方任意区块查看详情，或继续完成角色。",
+        "TalentsSelected": "已选择天赋",
+        "Warnings": "警告"
       },
       "Feat": {
         "Actions": {
-          "ChooseThisFeat": "Choose This Feat",
+          "ChooseThisFeat": "选择此专长",
           "ReturnToSkills": "Return to Skills",
           "StayHere": "Stay Here"
         },
         "Details": {
-          "Category": "Category:",
-          "NotMetPrerequisites": "Not met prerequisites:",
-          "OtherBlockers": "Other blockers:",
-          "QuickSummary": "Quick summary:",
+          "Category": "Category：",
+          "NotMetPrerequisites": "Not met prerequisites：",
+          "OtherBlockers": "Other blockers：",
+          "QuickSummary": "Quick summary：",
           "RepeatableBody": "You can select this feat multiple times if you have additional feat picks.",
-          "Tags": "Tags:",
-          "WhySuggested": "Why suggested:",
-          "WhySuggestedBody": "This feat synergizes well with your build and class."
+          "Tags": "Tags：",
+          "WhySuggested": "Why suggested：",
+          "WhySuggestedBody": "此专长与你的构筑和职业有良好协同。"
         },
         "Empty": {
-          "CatalogUnavailable": "Feat Catalog Unavailable",
-          "DisplayRulesDescription": "No feats meet this slot's current display rules.",
+          "CatalogUnavailable": "专长目录不可用",
+          "DisplayRulesDescription": "没有专长符合此槽位当前的显示规则。",
           "NoAvailableFeats": "No Available Feats",
-          "NoFeatsInView": "No Feats in This View",
-          "NoFeatsInViewDescription": "Try another category, clear search, or toggle Show All to inspect locked options.",
-          "NoLegalStartingFeats": "No Legal Starting Feats",
-          "NoLegalStartingFeatsDescription": "No feat from this class's starting-feat pool currently meets your prerequisites.",
-          "NoMoreFeats": "No more Feats",
-          "NoSearchMatches": "No feats match “{query}” in the feat catalog.",
+          "NoFeatsInView": "此视图中没有专长",
+          "NoFeatsInViewDescription": "尝试其他分类、清除搜索，或切换显示全部来查看锁定选项。",
+          "NoLegalStartingFeats": "没有合法起始专长",
+          "NoLegalStartingFeatsDescription": "此职业的起始专长池中当前没有符合你先决条件的专长。",
+          "NoMoreFeats": "没有更多专长",
+          "NoSearchMatches": "专长目录中没有符合“{query}”的专长。",
           "SafeModeBrowserBody": "This feat step will not block character creation while the compendium is unavailable.",
           "SafeModeContinueBody": "Continue is allowed so chargen does not soft-lock.",
-          "SafeModeLabel": "Safe mode:",
-          "SearchHint": "Try a shorter name, prerequisite, or tag.",
-          "ShowAllTip": "Enable \"Show All\" to inspect blocked feat prerequisites."
+          "SafeModeLabel": "Safe mode：",
+          "SearchHint": "尝试更短的名称、先决条件或标签。",
+          "ShowAllTip": "启用“显示全部”以查看被阻挡专长的先决条件。"
         },
         "Footer": {
-          "CatalogUnavailableSafeToSkip": "{type} Feat: Catalog unavailable — safe to skip",
-          "NoLegalOptionsSafeToSkip": "{type} Feat: No legal options — safe to skip",
-          "NotYetChosen": "{type} Feat not yet chosen",
+          "CatalogUnavailableSafeToSkip": "{type} 专长：目录不可用 — 可安全跳过",
+          "NoLegalOptionsSafeToSkip": "{type} 专长：没有合法选项 — 可安全跳过",
+          "NotYetChosen": "尚未选择 {type} 专长",
           "Selected": "{type} Feat: {names}"
         },
         "Groups": {
-          "SuggestedForYourBuild": "Suggested for Your Build"
+          "SuggestedForYourBuild": "为你的构筑推荐"
         },
         "Messages": {
-          "CatalogHydrationFailed": "The feat catalog did not hydrate from the Foundry compendium. This step is safe to skip, but feat choices will not be available until the feats pack registers.",
+          "CatalogHydrationFailed": "专长目录未能从 Foundry 汇编包加载。此步骤可安全跳过，但在专长包注册前无法选择专长。",
           "CatalogUnavailableSkippable": "The feat catalog is unavailable because the feats compendium did not register. The step remains skippable so character creation can continue.",
-          "CatalogUnavailableWarning": "Feat catalog unavailable: no feats were loaded from the compendium. You can continue past this step.",
+          "CatalogUnavailableWarning": "专长目录不可用：未从汇编包加载任何专长。你可以继续越过此步骤。",
           "ChoiceNotLegal": "That feat choice is not currently legal.",
-          "ChooseTitle": "Choose: {feat}",
-          "ClassSkillsUpdatedTitle": "Class Skills Updated",
+          "ChooseTitle": "选择：{feat}",
+          "ClassSkillsUpdatedTitle": "职业技能已更新",
           "ForceSensitivityChangesClassSkills": "changes your class skill list.",
           "GeneralFeatLimit": "You have already selected {count} general feats. Remove one before choosing another.",
           "NotCurrentlyAvailable": "That feat is not currently available.",
-          "PrereqsNotMetForChoice": "Feat prerequisites are not met for that selected choice.",
+          "PrereqsNotMetForChoice": "所选专长不满足先决条件。",
           "ReturnToSkillsQuestion": "Would you like to return to Skill Selection now so you can rearrange your trained skills?",
           "SkillSelectionNotBehindCurrent": "Skill Selection is not behind the current step in this progression flow.",
-          "SkillsStepUnavailable": "The Skills step is not currently available.",
-          "UseTheForceNowClassSkill": "is now a class skill for this character.",
-          "WeaponProficiencyChosenGroup": "Weapon Proficiency with chosen weapon group or exotic weapon"
+          "SkillsStepUnavailable": "技能步骤当前不可用。",
+          "UseTheForceNowClassSkill": "现在是此角色的职业技能。",
+          "WeaponProficiencyChosenGroup": "所选武器组或异种武器的武器擅长"
         },
         "Progress": {
-          "ChooseMoreToContinue": "Choose {count} more {type} Feat(s) to continue",
+          "ChooseMoreToContinue": "再选择 {count} 个 {type} 专长以继续",
           "Remaining": "{count} feat(s) remaining",
           "SelectedOfRequired": "{selected} of {required} feat(s)"
         },
         "Search": {
-          "DroidPlaceholder": "Search droid feats…",
-          "Placeholder": "Search feats…"
+          "DroidPlaceholder": "搜索机器人专长…",
+          "Placeholder": "搜索专长…"
         },
         "Slot": {
           "CatalogUnavailable": "catalog unavailable",
-          "Class": "Class",
+          "Class": "职业",
           "ClassFeat": "Class Feat",
           "General": "General",
-          "GeneralFeat": "General Feat",
+          "GeneralFeat": "通用专长",
           "NoLegalOptions": "no legal options"
         },
         "Work": {
-          "ClearSearchAndFilters": "Clear feat search and filters",
+          "ClearSearchAndFilters": "清除专长搜索和过滤器",
           "CollapseCategories": "Collapse Categories",
-          "FeatCategories": "Feat categories",
-          "LegalOnly": "Legal Only",
-          "LegalStartingFeats": "Legal Starting Feats",
+          "FeatCategories": "专长分类",
+          "LegalOnly": "仅合法",
+          "LegalStartingFeats": "合法起始专长",
           "SearchLabel": "Search: {query}",
-          "SearchResults": "Search Results",
-          "SearchResultsHint": "Only feats related to your search are shown here.",
-          "SelectInspectHint": "Select a feat to inspect it in the detail rail.",
+          "SearchResults": "搜索结果",
+          "SearchResultsHint": "这里只显示与你的搜索相关的专长。",
+          "SelectInspectHint": "选择一个专长以在详情栏查看。",
           "ShowCategories": "Show Categories",
           "ShowingAll": "Showing All",
-          "ToggleShowAllTitle": "Toggle between legal selectable feats and the full hydrated feat browser"
+          "ToggleShowAllTitle": "在合法可选专长与完整加载的专长浏览器之间切换"
         },
         "Mentor": {
-          "Chargen": "Elige dotes que fortalezcan tus capacidades y definan tu estilo de juego. Algunas dotes encajan mejor con tu configuración que otras.",
-          "Default": "Elige una dote con cuidado.",
-          "DroidChargen": "Elige dotes que refuercen el paquete de función de tu chasis y complementen tus sistemas instalados.",
-          "LevelUp": "A medida que ganas experiencia, puedes aprender nuevas técnicas y capacidades. Elige dotes que mejoren tu camino."
+          "Chargen": "选择能强化能力并定义游玩风格的专长。有些专长比其他专长更适合你的构筑。",
+          "Default": "Select a feat wisely.",
+          "DroidChargen": "选择能强化底盘角色套件并配合已安装系统的专长。",
+          "LevelUp": "随着经验增长，你可以学习新的技巧与能力。选择能强化道路的专长。"
         },
         "Validation": {
-          "SelectMoreFeats": "Selecciona {count} dote(s) más",
-          "SelectMoreTypedFeats": "Selecciona {count} dote(s) de {type} más"
+          "SelectMoreFeats": "Select {count} more feat(s)",
+          "SelectMoreTypedFeats": "Select {count} more {type} Feat(s)"
         }
       },
       "Mentor": {
-        "AwaitingDecision": "Esperando tu decisión…",
-        "Collapse": "Colapsar mentor",
-        "Expand": "Expandir mentor",
+        "AwaitingDecision": "Awaiting your decision…",
+        "Collapse": "Collapse mentor",
+        "Expand": "Expand mentor",
         "FallbackName": "Ol' Salty"
       },
       "Shell": {
-        "CharacterCreation": "CREACIÓN DE PERSONAJE",
-        "EngineUnlocked": "Desbloqueado por motor",
-        "NoStepsAvailable": "No hay pasos disponibles.",
-        "StepOf": "Paso {current} de {total}",
-        "TrainingMatrix": "Matriz de entrenamiento",
-        "TrainingMatrixSubtitle": "Canal de progresión guiado por mentor · restauración del shell conceptual",
-        "UnlockedBy": "Desbloqueado por: {reason}"
+        "CharacterCreation": "CHARACTER CREATION",
+        "EngineUnlocked": "Engine-Unlocked",
+        "NoStepsAvailable": "没有可用步骤。",
+        "StepOf": "Step {current} of {total}",
+        "TrainingMatrix": "Training Matrix",
+        "TrainingMatrixSubtitle": "Mentor-guided progression pipeline · concept shell restoration pass",
+        "UnlockedBy": "Unlocked by: {reason}"
       },
       "Survey": {
         "AnsweredCount": "{answered} / {total} answered",
         "BeginSurvey": "Begin Survey",
         "ChangeAnswer": "Change Answer",
         "ClassIntentRead": "{class} Intent Read",
-        "Complete": "survey complete",
+        "Complete": "问卷完成",
         "CompleteSurvey": "Complete Survey",
         "ContinueToBackground": "Continue to Background",
         "CurrentMentorRead": "Current mentor read",
@@ -759,7 +1070,7 @@
           "CenterTitle": "Refocus the selected or inspected node",
           "DeselectPendingTalent": "Deselect Pending Talent",
           "ExploreHolomap": "Explore Holomap",
-          "Fit": "Fit",
+          "Fit": "适配",
           "FitTitle": "Fit the whole tree in the map panel",
           "OpenTreeHolomap": "Open Tree Holomap",
           "ReturnToTreeBrowser": "Return to tree browser"
@@ -768,12 +1079,12 @@
           "BuildAnalysisTerminal": "// BUILD ANALYSIS TERMINAL",
           "MentorRead": "Mentor Read",
           "RootNode": "Root node — no prerequisite talent chain.",
-          "NoRulesText": "Aún no se ha definido texto de reglas para este talento.",
-          "PartOfTree": "{talent} forma parte del árbol de talentos {tree}.",
-          "ThisTalent": "Este talento"
+          "NoRulesText": "No rules text has been defined for this talent yet.",
+          "PartOfTree": "{talent} is part of the {tree} talent tree.",
+          "ThisTalent": "This talent"
         },
         "Empty": {
-          "NoTalentsMatched": "No talents matched your current filters in this tree.",
+          "NoTalentsMatched": "没有符合当前过滤器的项目。",
           "NoTreesAvailable": "No talent trees available in your current context."
         },
         "Footer": {
@@ -783,22 +1094,22 @@
           "ViewingTree": "Viewing: {tree}"
         },
         "Search": {
-          "DroidTalentsPlaceholder": "Search droid talents…",
-          "DroidTreesPlaceholder": "Search droid talent trees…",
-          "TalentsPlaceholder": "Search talents…",
-          "TreesPlaceholder": "Search talent trees…"
+          "DroidTalentsPlaceholder": "搜索机器人天赋…",
+          "DroidTreesPlaceholder": "搜索机器人天赋树…",
+          "TalentsPlaceholder": "搜索天赋…",
+          "TreesPlaceholder": "搜索天赋树…"
         },
         "Slot": {
-          "Class": "Class",
-          "ClassTalent": "Class Talent",
-          "Heroic": "Heroic",
-          "HeroicTalent": "Heroic Talent"
+          "Class": "职业",
+          "ClassTalent": "职业天赋",
+          "Heroic": "英雄",
+          "HeroicTalent": "英雄天赋"
         },
         "Stage": {
           "ActiveTree": "// ACTIVE TREE",
           "AlreadyPicked": "Already Picked",
           "AvailableChoices": "Available Choices",
-          "ChooseTalentTree": "Choose a Talent Tree",
+          "ChooseTalentTree": "选择天赋树",
           "ClassDisciplineHint": "Select a class-specific discipline. Each card opens a tactical holomap of legal, known, and locked talents.",
           "FocusTalentTree": "Focus talent tree {name}",
           "HeroicDisciplineHint": "Select a heroic discipline. Each card opens a tactical holomap of legal, known, and locked talents.",
@@ -818,7 +1129,7 @@
           "TalentTreeMap": "Talent tree map",
           "TreeHolomap": "Tree Holomap",
           "TreeHolomapInstructions": "Drag to move · Scroll to zoom · Hover to reveal prerequisite flow · Double-click a legal node to activate.",
-          "LegalActivations": "Activaciones legales"
+          "LegalActivations": "Legal Activations"
         },
         "Tree": {
           "BuildRead": "Build Read",
@@ -837,139 +1148,139 @@
           "StatusAvailable": "This discipline is available. Opening the holomap will reveal legal activations and locked future branches.",
           "StatusMentorStrongFit": "Your mentor currently sees this tree as a strong fit. {talent} is the cleanest legal next pick from this tree.",
           "StatusMomentum": "You already have momentum in this discipline. Opening the holomap will show the next legal branches.",
-          "ThisTree": "Este árbol"
+          "ThisTree": "This tree"
         },
         "View": {
-          "Both": "Both",
-          "List": "List",
-          "Map": "Map"
+          "Both": "两者",
+          "List": "列表",
+          "Map": "地图"
         },
         "Mentor": {
-          "Chargen": "Los talentos definen tu camino. Elige una disciplina que encaje con tu visión para este personaje.",
-          "Default": "Selecciona un talento que te defina.",
-          "LevelUp": "Tus talentos crecen con la experiencia. Elige una nueva disciplina para especializar aún más tus capacidades."
+          "Chargen": "Talents define your path. Choose a discipline that resonates with your vision for this character.",
+          "Default": "Select a talent that defines you.",
+          "LevelUp": "Your talents grow with experience. Choose a new discipline to specialize further in your abilities."
         },
         "Messages": {
-          "ChoiceNotLegal": "Esa elección de talento no es legal actualmente.",
-          "ChooseTitle": "Elegir: {talent}",
-          "PrereqsNotMetForChoice": "Los prerrequisitos del talento no se cumplen para esa elección seleccionada."
+          "ChoiceNotLegal": "That talent choice is not currently legal.",
+          "ChooseTitle": "选择：{talent}",
+          "PrereqsNotMetForChoice": "Talent prerequisites are not met for that selected choice."
         },
         "Recommendation": {
-          "GoodFit": "Buen encaje",
-          "InvestedPath": "Ruta invertida",
-          "LegalOption": "Opción legal",
-          "NoLegalPicks": "Sin elecciones legales",
-          "NoLegalPicksReason": "Este árbol no tiene talentos seleccionables para el espacio actual, así que el motor de sugerencias no lo considera.",
-          "NoSelectableTalentsLegalNow": "Ahora mismo no hay talentos seleccionables legales.",
-          "PriorityPath": "Ruta prioritaria",
-          "ReasonAbility": "{name} leans into one of your stronger ability scores.",
-          "ReasonChain": "{name} continues a prerequisite chain you have already started.",
-          "ReasonClass": "{name} fits the class path you are currently pursuing.",
-          "ReasonLegalNow": "{name} is legal now and fits the current talent slot.",
-          "ReasonMeta": "{name} has a known synergy with your current build signals.",
-          "ReasonPrestige": "{name} supports a longer prestige or advanced path.",
-          "ReasonSkill": "{name} uses skills your character is already developing.",
-          "ReasonSpecies": "{name} lines up with your species or heritage signals.",
-          "ReasonWishlist": "{name} moves you toward something already marked as desirable for this build.",
-          "StrongestLegalPick": "{talent} is the strongest legal pick currently visible in this tree.",
-          "StrongFit": "Encaje fuerte",
-          "ThisChoice": "esta elección",
-          "TopPick": "Mejor elección",
-          "TreeLegalCount": "{tree} has {count} legal talent(s) available for this slot."
+          "GoodFit": "契合良好",
+          "InvestedPath": "已投入路径",
+          "LegalOption": "合法选项",
+          "NoLegalPicks": "没有合法选择",
+          "NoLegalPicksReason": "This tree has no selectable talents for the current slot, so it is not considered by the suggestion engine.",
+          "NoSelectableTalentsLegalNow": "No selectable talents are legal right now.",
+          "PriorityPath": "优先路径",
+          "ReasonAbility": "{name} 发挥了你的较强属性之一。",
+          "ReasonChain": "{name} 延续了你已经开始的先决条件链。",
+          "ReasonClass": "{name} 符合你当前追求的职业路径。",
+          "ReasonLegalNow": "{name} 当前合法，并适合当前天赋槽。",
+          "ReasonMeta": "{name} 与你当前构筑信号有已知协同。",
+          "ReasonPrestige": "{name} 支持更长远的威望职业或进阶路径。",
+          "ReasonSkill": "{name} 使用你的角色已经在发展的技能。",
+          "ReasonSpecies": "{name} 与你的种族或传承信号一致。",
+          "ReasonWishlist": "{name} 会推动你走向此构筑已标记为理想的方向。",
+          "StrongestLegalPick": "{talent} 是此树中当前可见的最强合法选择。",
+          "StrongFit": "强烈契合",
+          "ThisChoice": "此选择",
+          "TopPick": "首选",
+          "TreeLegalCount": "{tree} 对此槽位有 {count} 个可用合法天赋。"
         }
       },
       "Utility": {
-        "Collapse": "Colapsar",
-        "Conditional": "Condicional",
-        "Expand": "Expandir",
-        "ResetFilters": "Restablecer filtros"
+        "Collapse": "折叠",
+        "Conditional": "条件性",
+        "Expand": "展开",
+        "ResetFilters": "重置过滤器"
       },
       "Core": {
         "Class": {
-          "ClassSkills": "Habilidades de clase",
-          "StartingAbilities": "Aptitudes iniciales",
-          "DefenseBonuses": "Bonificaciones de defensa",
-          "BAB": "Ataque base",
-          "ClassTrees": "Árboles de clase",
-          "Mentor": "Mentor",
-          "BuildMetadata": "Metadatos de creación",
-          "Prerequisites": "Prerrequisitos",
-          "PrerequisitesRequired": "Prerrequisitos requeridos",
-          "LockedByPrerequisites": "Esta clase está bloqueada actualmente por el motor de prerrequisitos.",
-          "Locked": "Bloqueado",
-          "Choose": "Elegir {name}"
+          "ClassSkills": "职业技能",
+          "StartingAbilities": "起始能力",
+          "DefenseBonuses": "防御加值",
+          "BAB": "BAB",
+          "ClassTrees": "职业天赋树",
+          "Mentor": "导师",
+          "BuildMetadata": "构筑元数据",
+          "Prerequisites": "先决条件",
+          "PrerequisitesRequired": "需要先决条件",
+          "LockedByPrerequisites": "此职业当前被先决条件引擎锁定。",
+          "Locked": "锁定",
+          "Choose": "选择 {name}"
         },
         "Species": {
-          "Options": "Opciones de especie",
-          "Default": "Predeterminado",
-          "Selected": "Seleccionado",
-          "BaseProfile": "Perfil base",
-          "SizeInline": "Tamaño: {size}",
-          "LanguagesInline": "Idiomas: {languages}",
-          "Profile": "Perfil {label}",
-          "Description": "Descripción",
-          "NoDescription": "No hay descripción disponible.",
-          "AttributeAdjustment": "Ajuste de atributos",
-          "None": "Ninguno",
-          "Size": "Tamaño",
-          "Medium": "Mediano",
-          "Speed": "Velocidad",
-          "WalkSix": "Caminar 6",
-          "Abilities": "Aptitudes de especie",
-          "NoneListed": "Ninguno listado.",
-          "RequiredChoice": "Elección de especie requerida",
-          "Languages": "Idiomas",
-          "BuildSignals": "Señales de construcción",
-          "AttributeOutlook": "Pronóstico de atributos",
-          "WeakSpots": "Puntos débiles potenciales",
-          "CustomizeNearHuman": "Personalizar casi humano",
-          "Confirm": "Confirmar {name}",
-          "NoMatches": "Ninguna especie coincide con tu búsqueda o filtros.",
-          "OptionsCount": "{count} opciones",
-          "AriaLabel": "Especies"
+          "Options": "种族选项",
+          "Default": "默认",
+          "Selected": "已选择",
+          "BaseProfile": "基础档案",
+          "SizeInline": "体型：{size}",
+          "LanguagesInline": "语言：{languages}",
+          "Profile": "{label} 档案",
+          "Description": "描述",
+          "NoDescription": "无可用描述。",
+          "AttributeAdjustment": "属性调整",
+          "None": "无",
+          "Size": "体型",
+          "Medium": "中型",
+          "Speed": "速度",
+          "WalkSix": "步行 6",
+          "Abilities": "种族能力",
+          "NoneListed": "未列出。",
+          "RequiredChoice": "必选种族选择",
+          "Languages": "语言",
+          "BuildSignals": "构筑信号",
+          "AttributeOutlook": "属性展望",
+          "WeakSpots": "潜在弱点",
+          "CustomizeNearHuman": "自定义近人类",
+          "Confirm": "确认 {name}",
+          "NoMatches": "没有种族符合你的搜索或过滤器。",
+          "OptionsCount": "{count} 个选项",
+          "AriaLabel": "种族"
         },
         "Skills": {
-          "TrainingSummary": "Resumen de entrenamiento",
-          "TrainedCounter": "/ {count} entrenadas",
-          "SelectedSkills": "Habilidades seleccionadas",
-          "SlotsFilled": "Espacios llenos",
-          "SlotsRemaining": "{count} espacio(s) restantes",
-          "SelectYourSkills": "Selecciona tus habilidades",
-          "HelpTrain": "Entrena {count} habilidad(es) para especializar la pericia de tu personaje.",
-          "HelpLegalOnly": "Aquí solo se pueden entrenar habilidades legales de clase, trasfondo y especie.",
-          "FallbackWarning": "La concesión de habilidades de clase o trasfondo no se resolvió por completo. Solo se muestran habilidades ya seleccionadas o coincidentes con la creación actual.",
-          "AvailableStatus": "Mostrando {count} habilidad(es) entrenables legales de clase, trasfondo y rasgos de especie.",
-          "Trained": "Entrenada",
-          "Class": "Clase",
-          "Background": "Trasfondo",
-          "Species": "Especie",
-          "UntrainTitle": "Habilidad entrenada: haz clic para desentrenar",
-          "Untrain": "Desentrenar",
-          "TrainTitle": "Entrenar esta habilidad",
-          "Train": "Entrenar",
-          "LockedTitle": "Solo se pueden entrenar habilidades de clase, trasfondo o especie",
-          "ResetTitle": "Restablecer todas las habilidades seleccionadas",
-          "ResetAll": "Restablecer todo",
-          "Empty": "No hay habilidades legales disponibles. Elige primero una clase o trasfondo.",
-          "Expertise": "Pericia en habilidades",
-          "TrainedSkills": "Habilidades entrenadas:",
-          "ClassSkills": "Habilidades de clase:",
-          "BackgroundSkills": "Habilidades de trasfondo:",
-          "SpeciesClassSkills": "Habilidades de clase por especie:",
-          "GuidanceTip": "Usa Entrenar y Desentrenar para gastar tus espacios limitados deliberadamente. Las habilidades sugeridas aparecen etiquetadas en la lista principal."
+          "TrainingSummary": "训练摘要",
+          "TrainedCounter": "/ 已训练 {count}",
+          "SelectedSkills": "已选技能",
+          "SlotsFilled": "已填槽位",
+          "SlotsRemaining": "剩余 {count} 个槽位",
+          "SelectYourSkills": "选择你的技能",
+          "HelpTrain": "训练 {count} 个技能来专精你的角色能力。",
+          "HelpLegalOnly": "这里仅可训练合法的职业、背景和种族职业技能。",
+          "FallbackWarning": "Class or background skill entitlement did not fully resolve. Only skills already selected or positively matched by the current build are shown.",
+          "AvailableStatus": "Showing {count} legal trainable skill(s) from class, background, and species traits.",
+          "Trained": "已训练",
+          "Class": "职业",
+          "Background": "背景",
+          "Species": "种族",
+          "UntrainTitle": "技能已训练 — 点击取消训练",
+          "Untrain": "取消训练",
+          "TrainTitle": "训练此技能",
+          "Train": "训练",
+          "LockedTitle": "只能训练职业、背景或种族职业技能",
+          "ResetTitle": "重置所有技能选择",
+          "ResetAll": "全部重置",
+          "Empty": "当前没有可用的合法技能。请先选择职业或背景。",
+          "Expertise": "技能专精",
+          "TrainedSkills": "受训技能：",
+          "ClassSkills": "职业技能：",
+          "BackgroundSkills": "背景技能：",
+          "SpeciesClassSkills": "种族职业技能：",
+          "GuidanceTip": "Use Train and Untrain to spend your limited slots deliberately. Suggested skills are tagged directly in the main list."
         },
         "Defense": {
-          "FortitudeAbbrev": "Fort",
-          "ReflexAbbrev": "Ref",
-          "WillAbbrev": "Vol"
+          "FortitudeAbbrev": "强韧",
+          "ReflexAbbrev": "反射",
+          "WillAbbrev": "意志"
         }
       }
     },
     "MentorDialogues": {
       "Jedi": {
-        "name": "Miraj",
-        "title": "Jedi Master Miraj Taurus, Jedi Council Member",
-        "description": "A wise Jedi Master who encourages you to continue on your journey",
+        "name": "米拉吉",
+        "title": "绝地大师米拉吉·托鲁斯，绝地委员会成员",
+        "description": "一位睿智的绝地大师，鼓励你继续自己的旅程",
         "levelGreetings": {
           "1": "The Force stirs when one is ready to listen. Do not rush to act, young one. I have seen where haste leads.",
           "2": "Each step you take shapes not only you, but those around you. Learn to feel that weight early—it will never leave you.",
@@ -1050,15 +1361,15 @@
             }
           }
         },
-        "speciesGuidance": "Tu origen no es una cadena; es la primera nota de la armonía que aprenderás a llevar.",
-        "featGuidance": "Una dote debe revelar el tipo de decisión que tomarás cuando la presión te rodee.",
-        "starshipManeuverGuidance": "Incluso en una cabina, la calma es un arma. Elige maniobras que os mantengan con vida a ti y a tus aliados.",
-        "surveyGuidance": "Responde con honestidad. No estoy midiendo la perfección; escucho la forma de tu intención."
+        "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
+        "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
+        "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
+        "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
       },
       "Scout": {
-        "name": "Lead",
-        "title": "Argent Squad Commander",
-        "description": "A hardened mercenary who compliments success but scolds carelessness",
+        "name": "领队",
+        "title": "银色小队指挥官",
+        "description": "一名久经沙场的雇佣兵，会赞许成功，也会责备粗心",
         "levelGreetings": {
           "1": "You made it through your first mission. Not perfect, but you're learning. Stick with it.",
           "2": "Good work out there. Keep your eyes open and your footsteps silent. That's how scouts survive.",
@@ -1110,15 +1421,15 @@
             "1": "I see recklessness in you. We have nothing to talk about until you learn what caution means."
           }
         },
-        "speciesGuidance": "Conoce el cuerpo que llevas al campo. Las fortalezas se vuelven planes; las debilidades, contingencias.",
-        "featGuidance": "Una dote es equipo que llevas a cada combate. Elige la que realmente usarás.",
-        "starshipManeuverGuidance": "Elige maniobras que puedas ejecutar bajo presión, con una tripulación gritándote al oído.",
-        "surveyGuidance": "Responde como en un informe de misión. Las prioridades claras hacen mejores soldados."
+        "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
+        "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
+        "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
+        "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
       },
       "Scoundrel": {
-        "name": "Ol' Salty",
-        "title": "Space Pirate Captain",
-        "description": "A colorful space pirate",
+        "name": "老咸鱼",
+        "title": "太空海盗船长",
+        "description": "一名色彩鲜明的太空海盗",
         "levelGreetings": {
           "1": "Arr! Ye survived yer first scrap with the law! Welcome aboard me ship, ye scurvy spacer!",
           "2": "Har har! Look at ye, already gettin' the hang of this. Ye might even live through the next spice run!",
@@ -1144,7 +1455,7 @@
             "mentorClasses": {
               "0": "Scoundrel",
               "1": "Gunslinger",
-              "2": "Pilot"
+              "2": "驾驶"
             },
             "dspSensitivity": "none",
             "tiers": {
@@ -1185,14 +1496,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+        "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+        "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
       },
       "Noble": {
         "name": "J0-N1",
-        "title": "Protocol Droid & Personal Butler",
-        "description": "A sophisticated servant droid managing the character's accounts and affairs",
+        "title": "礼仪机器人兼私人管家",
+        "description": "一台精致的侍从机器人，负责管理角色的账户与事务",
         "levelGreetings": {
           "1": "Greetings, Master. Your recent accomplishments have been recorded and documented. Exceptional work.",
           "2": "Most satisfactory progress, Master. The estate has been notified of your continued development.",
@@ -1258,15 +1569,15 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+        "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+        "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+        "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
       },
       "Soldier": {
-        "name": "Breach",
-        "title": "Mandalorian Mercenary",
-        "description": "A battle-hardened Mandalorian who praises survival",
+        "name": "破门者",
+        "title": "曼达洛雇佣兵",
+        "description": "一名身经百战的曼达洛人，赞赏生存能力",
         "levelGreetings": {
           "1": "Hey kid. Wanna learn how to be a soldier? Okay, I guess I can teach you a thing or two.",
           "2": "You're getting sharper. Armor fits better too. Or maybe you just finally learned to move in it.",
@@ -1302,10 +1613,10 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+        "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+        "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+        "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
       },
       "Imperial_Knight": {
         "name": "Dezmin",
@@ -1363,13 +1674,13 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Tu origen no es una cadena; es la primera nota de la armonía que aprenderás a llevar.",
+        "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
         "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
-        "featGuidance": "Una dote debe revelar el tipo de decisión que tomarás cuando la presión te rodee.",
+        "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
         "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
-        "starshipManeuverGuidance": "Incluso en una cabina, la calma es un arma. Elige maniobras que os mantengan con vida a ti y a tus aliados.",
+        "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
         "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
-        "surveyGuidance": "Responde con honestidad. No estoy midiendo la perfección; escucho la forma de tu intención."
+        "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
       },
       "Medic": {
         "name": "Kyber",
@@ -1425,14 +1736,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "backgroundGuidance": "El contexto histórico influye en las heurísticas de respuesta. Elige el origen más relevante para operaciones futuras.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "languageGuidance": "Los protocolos de comunicación reducen fricción y mejoran las probabilidades de supervivencia. Elige en consecuencia.",
-        "forcePowerGuidance": "Variación de usuario de la Fuerza detectada. Selecciona poderes que apoyen tu perfil táctico declarado.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "summaryGuidance": "Se recomienda auditoría final. Confirma solo cuando todos los módulos seleccionados coincidan con el despliegue previsto.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+        "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+        "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+        "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+        "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+        "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+        "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+        "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
       },
       "Ace_Pilot": {
         "name": "Mayu",
@@ -1486,14 +1797,14 @@
             "2": "Maybe later, Ace."
           }
         },
-        "speciesGuidance": "Conoce el cuerpo que llevas al campo. Las fortalezas se vuelven planes; las debilidades, contingencias.",
+        "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
         "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
-        "featGuidance": "Una dote es equipo que llevas a cada combate. Elige la que realmente usarás.",
+        "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
         "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
         "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
-        "starshipManeuverGuidance": "Elige maniobras que puedas ejecutar bajo presión, con una tripulación gritándote al oído.",
+        "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
         "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
-        "surveyGuidance": "Responde como en un informe de misión. Las prioridades claras hacen mejores soldados."
+        "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
       },
       "Jedi_Knight": {
         "name": "Miraj",
@@ -1521,13 +1832,13 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Tu origen no es una cadena; es la primera nota de la armonía que aprenderás a llevar.",
+        "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
         "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
-        "featGuidance": "Una dote debe revelar el tipo de decisión que tomarás cuando la presión te rodee.",
+        "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
         "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
-        "starshipManeuverGuidance": "Incluso en una cabina, la calma es un arma. Elige maniobras que os mantengan con vida a ti y a tus aliados.",
+        "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
         "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
-        "surveyGuidance": "Responde con honestidad. No estoy midiendo la perfección; escucho la forma de tu intención."
+        "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
       },
       "Jedi_Master": {
         "name": "Miraj",
@@ -1550,13 +1861,13 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Tu origen no es una cadena; es la primera nota de la armonía que aprenderás a llevar.",
+        "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
         "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
-        "featGuidance": "Una dote debe revelar el tipo de decisión que tomarás cuando la presión te rodee.",
+        "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
         "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
-        "starshipManeuverGuidance": "Incluso en una cabina, la calma es un arma. Elige maniobras que os mantengan con vida a ti y a tus aliados.",
+        "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
         "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
-        "surveyGuidance": "Responde con honestidad. No estoy midiendo la perfección; escucho la forma de tu intención."
+        "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
       },
       "Sith_Apprentice": {
         "name": "Darth Malbada",
@@ -1731,14 +2042,14 @@
             "2": "Fight longer. Then ask again."
           }
         },
-        "speciesGuidance": "Conoce el cuerpo que llevas al campo. Las fortalezas se vuelven planes; las debilidades, contingencias.",
+        "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
         "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
-        "featGuidance": "Una dote es equipo que llevas a cada combate. Elige la que realmente usarás.",
+        "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
         "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
         "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
-        "starshipManeuverGuidance": "Elige maniobras que puedas ejecutar bajo presión, con una tripulación gritándote al oído.",
+        "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
         "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
-        "surveyGuidance": "Responde como en un informe de misión. Las prioridades claras hacen mejores soldados."
+        "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
       },
       "Independent_Droid": {
         "name": "Seraphim",
@@ -1765,14 +2076,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "backgroundGuidance": "El contexto histórico influye en las heurísticas de respuesta. Elige el origen más relevante para operaciones futuras.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "languageGuidance": "Los protocolos de comunicación reducen fricción y mejoran las probabilidades de supervivencia. Elige en consecuencia.",
-        "forcePowerGuidance": "Variación de usuario de la Fuerza detectada. Selecciona poderes que apoyen tu perfil táctico declarado.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "summaryGuidance": "Se recomienda auditoría final. Confirma solo cuando todos los módulos seleccionados coincidan con el despliegue previsto.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+        "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+        "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+        "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+        "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+        "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+        "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+        "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
       },
       "Pathfinder": {
         "name": "Lead",
@@ -1795,14 +2106,14 @@
         "skillGuidance": "Navigation, survival, tactics—master them all. Pathfinders are the elite for a reason.",
         "multiclassGuidance": "Expanding your skill set? Excellent. The best Pathfinders are versatile.",
         "hpGuidance": "Tougher now. Can't lead if you're dead. Stay alive, stay sharp.",
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "backgroundGuidance": "El contexto histórico influye en las heurísticas de respuesta. Elige el origen más relevante para operaciones futuras.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "languageGuidance": "Los protocolos de comunicación reducen fricción y mejoran las probabilidades de supervivencia. Elige en consecuencia.",
-        "forcePowerGuidance": "Variación de usuario de la Fuerza detectada. Selecciona poderes que apoyen tu perfil táctico declarado.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "summaryGuidance": "Se recomienda auditoría final. Confirma solo cuando todos los módulos seleccionados coincidan con el despliegue previsto.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+        "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+        "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+        "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+        "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+        "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+        "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+        "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
       },
       "Corporate_Agent": {
         "name": "Marl Skindar",
@@ -1827,14 +2138,14 @@
         "multiclassGuidance": "Diversifying is wise. The best spies adapt, improvise, and infiltrate without warning. Survive long enough, and you'll see why.",
         "hpGuidance": "Stay alive. Dead agents are useless, and paperwork waits for no one. Don't make me retrieve you from a morgue.",
         "mentorStory": "mentorStory: {\n  \"mentorClasses\": [\n    \"CorporateAgent\",\n    \"Spy\",\n    \"Noble\"\n  ],\n  \"mentorDSPPercent\": 0.5,\n  \"dspTolerance\": 1.0,\n  \"dspSensitivity\": \"none\",\n  \"tiers\": {\n    \"tier1\": [\n      \"I don\\u2019t tell stories. I solve problems.\"\n    ],\n    \"tier2\": [\n      \"If you\\u2019re doing this right, you don\\u2019t remember which name you\\u2019re using today.\"\n    ],\n    \"tier3\": [\n      \"I\\u2019ve been a corporate fixer, a money launderer, and a junior clerk. None of those were lies.\"\n    ],\n    \"tier4\": [\n      \"People who talk about themselves get noticed. People who get noticed don\\u2019t last.\"\n    ],\n    \"tier5\": [\n      \"You think I don\\u2019t have a life outside this? I do. I just file it under \\u2018classified\\u2019.\"\n    ]\n  },\n  \"dspBlocked\": [\n    \"That\\u2019s not relevant.\",\n    \"Wrong question.\",\n    \"Focus.\"\n  ]\n}",
-        "speciesGuidance": "Empieza con lo que eres y luego decide qué harás con ello.",
-        "backgroundGuidance": "Tu pasado da textura a cada elección. Elige el hilo que aún tira de ti.",
-        "featGuidance": "Las dotes definen los bordes especiales de tu configuración. Elige una que se sienta útil y auténtica.",
-        "languageGuidance": "Un nuevo idioma puede convertir desconocidos en aliados y advertencias en oportunidades.",
-        "forcePowerGuidance": "Elige poderes de la Fuerza que coincidan con la influencia que quieres aportar a la escena.",
-        "starshipManeuverGuidance": "Elige maniobras que encajen con tu tripulación, tu nave y los problemas que esperas encontrar.",
-        "summaryGuidance": "Revisa todo el expediente antes de confirmar. Asegúrate de que se sienta como un personaje que quieres jugar.",
-        "surveyGuidance": "Responde por instinto. El mejor consejo de configuración empieza con preferencias honestas."
+        "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+        "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+        "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+        "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+        "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+        "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+        "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+        "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
       },
       "Elite_Trooper": {
         "name": "Breach",
@@ -1860,14 +2171,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Conoce el cuerpo que llevas al campo. Las fortalezas se vuelven planes; las debilidades, contingencias.",
+        "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
         "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
-        "featGuidance": "Una dote es equipo que llevas a cada combate. Elige la que realmente usarás.",
+        "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
         "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
         "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
-        "starshipManeuverGuidance": "Elige maniobras que puedas ejecutar bajo presión, con una tripulación gritándote al oído.",
+        "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
         "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
-        "surveyGuidance": "Responde como en un informe de misión. Las prioridades claras hacen mejores soldados."
+        "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
       },
       "Assassin": {
         "name": "Delta",
@@ -1924,14 +2235,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Conoce el cuerpo que llevas al campo. Las fortalezas se vuelven planes; las debilidades, contingencias.",
+        "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
         "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
-        "featGuidance": "Una dote es equipo que llevas a cada combate. Elige la que realmente usarás.",
+        "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
         "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
         "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
-        "starshipManeuverGuidance": "Elige maniobras que puedas ejecutar bajo presión, con una tripulación gritándote al oído.",
+        "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
         "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
-        "surveyGuidance": "Responde como en un informe de misión. Las prioridades claras hacen mejores soldados."
+        "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
       },
       "Bounty_Hunter": {
         "name": "Kex Varon",
@@ -2046,14 +2357,14 @@
             "2": "Not that story. Pick another."
           }
         },
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "backgroundGuidance": "El contexto histórico influye en las heurísticas de respuesta. Elige el origen más relevante para operaciones futuras.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "languageGuidance": "Los protocolos de comunicación reducen fricción y mejoran las probabilidades de supervivencia. Elige en consecuencia.",
-        "forcePowerGuidance": "Variación de usuario de la Fuerza detectada. Selecciona poderes que apoyen tu perfil táctico declarado.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "summaryGuidance": "Se recomienda auditoría final. Confirma solo cuando todos los módulos seleccionados coincidan con el despliegue previsto.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+        "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+        "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+        "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+        "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+        "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+        "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+        "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
       },
       "Crime_Lord": {
         "name": "Tío the Hutt",
@@ -2136,14 +2447,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "backgroundGuidance": "El contexto histórico influye en las heurísticas de respuesta. Elige el origen más relevante para operaciones futuras.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "languageGuidance": "Los protocolos de comunicación reducen fricción y mejoran las probabilidades de supervivencia. Elige en consecuencia.",
-        "forcePowerGuidance": "Variación de usuario de la Fuerza detectada. Selecciona poderes que apoyen tu perfil táctico declarado.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "summaryGuidance": "Se recomienda auditoría final. Confirma solo cuando todos los módulos seleccionados coincidan con el despliegue previsto.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+        "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+        "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+        "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+        "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+        "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+        "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+        "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
       },
       "Enforcer": {
         "name": "Krag the Immovable",
@@ -2204,14 +2515,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Tu origen no es una cadena; es la primera nota de la armonía que aprenderás a llevar.",
+        "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
         "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
-        "featGuidance": "Una dote debe revelar el tipo de decisión que tomarás cuando la presión te rodee.",
+        "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
         "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
         "forcePowerGuidance": "Let the Force answer your need, not your impatience. Choose powers you can wield with restraint.",
-        "starshipManeuverGuidance": "Incluso en una cabina, la calma es un arma. Elige maniobras que os mantengan con vida a ti y a tus aliados.",
+        "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
         "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
-        "surveyGuidance": "Responde con honestidad. No estoy midiendo la perfección; escucho la forma de tu intención."
+        "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
       },
       "Force_Disciple": {
         "name": "Riquis",
@@ -2255,14 +2566,14 @@
             "2": "You are still naming things you do not understand."
           }
         },
-        "speciesGuidance": "Tu origen no es una cadena; es la primera nota de la armonía que aprenderás a llevar.",
+        "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
         "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
-        "featGuidance": "Una dote debe revelar el tipo de decisión que tomarás cuando la presión te rodee.",
+        "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
         "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
         "forcePowerGuidance": "Let the Force answer your need, not your impatience. Choose powers you can wield with restraint.",
-        "starshipManeuverGuidance": "Incluso en una cabina, la calma es un arma. Elige maniobras que os mantengan con vida a ti y a tus aliados.",
+        "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
         "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
-        "surveyGuidance": "Responde con honestidad. No estoy midiendo la perfección; escucho la forma de tu intención."
+        "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
       },
       "Gunslinger": {
         "name": "Rajma",
@@ -2376,14 +2687,14 @@
             "2": "Let’s keep this fun."
           }
         },
-        "speciesGuidance": "Empieza con lo que eres y luego decide qué harás con ello.",
-        "backgroundGuidance": "Tu pasado da textura a cada elección. Elige el hilo que aún tira de ti.",
-        "featGuidance": "Las dotes definen los bordes especiales de tu configuración. Elige una que se sienta útil y auténtica.",
-        "languageGuidance": "Un nuevo idioma puede convertir desconocidos en aliados y advertencias en oportunidades.",
-        "forcePowerGuidance": "Elige poderes de la Fuerza que coincidan con la influencia que quieres aportar a la escena.",
-        "starshipManeuverGuidance": "Elige maniobras que encajen con tu tripulación, tu nave y los problemas que esperas encontrar.",
-        "summaryGuidance": "Revisa todo el expediente antes de confirmar. Asegúrate de que se sienta como un personaje que quieres jugar.",
-        "surveyGuidance": "Responde por instinto. El mejor consejo de configuración empieza con preferencias honestas."
+        "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+        "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+        "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+        "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+        "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+        "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+        "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+        "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
       },
       "Infiltrator": {
         "name": "Delta",
@@ -2410,14 +2721,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Conoce el cuerpo que llevas al campo. Las fortalezas se vuelven planes; las debilidades, contingencias.",
+        "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
         "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
-        "featGuidance": "Una dote es equipo que llevas a cada combate. Elige la que realmente usarás.",
+        "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
         "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
         "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
-        "starshipManeuverGuidance": "Elige maniobras que puedas ejecutar bajo presión, con una tripulación gritándote al oído.",
+        "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
         "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
-        "surveyGuidance": "Responde como en un informe de misión. Las prioridades claras hacen mejores soldados."
+        "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
       },
       "Martial_Arts_Master": {
         "name": "Master Zhen",
@@ -2470,13 +2781,13 @@
             "2": "This lesson waits."
           }
         },
-        "speciesGuidance": "Tu origen no es una cadena; es la primera nota de la armonía que aprenderás a llevar.",
+        "speciesGuidance": "Your origin is not a chain; it is the first note in the harmony you will learn to carry.",
         "backgroundGuidance": "Your past has already shaped your instincts. Name it clearly, then decide what it will teach you.",
-        "featGuidance": "Una dote debe revelar el tipo de decisión que tomarás cuando la presión te rodee.",
+        "featGuidance": "A feat should reveal the kind of choice you intend to make when pressure closes around you.",
         "languageGuidance": "Language is more than vocabulary. Each tongue is a bridge to someone the Force has placed in your path.",
-        "starshipManeuverGuidance": "Incluso en una cabina, la calma es un arma. Elige maniobras que os mantengan con vida a ti y a tus aliados.",
+        "starshipManeuverGuidance": "Even in a cockpit, calm is a weapon. Choose maneuvers that keep you and your allies alive.",
         "summaryGuidance": "Pause before you confirm. Review each choice, and step forward only when your path feels clear.",
-        "surveyGuidance": "Responde con honestidad. No estoy midiendo la perfección; escucho la forma de tu intención."
+        "surveyGuidance": "Answer honestly. I am not measuring perfection; I am listening for the shape of your intent."
       },
       "Master_Privateer": {
         "name": "'The Captain'",
@@ -2501,14 +2812,14 @@
         "multiclassGuidance": "Expanding your repertoire? Smart! The best privateers are versatile!",
         "hpGuidance": "Tougher now! A captain who can't survive boarding actions doesn't stay captain long!",
         "mentorStory": "mentorStory: {\n  \"mentorClasses\": [\n    \"Officer\",\n    \"Smuggler\",\n    \"Outlaw\"\n  ],\n  \"mentorDSPPercent\": 0.5,\n  \"dspTolerance\": 1.0,\n  \"dspSensitivity\": \"none\",\n  \"tiers\": {\n    \"tier1\": [\n      \"People talk. I listen.\"\n    ],\n    \"tier2\": [\n      \"I\\u2019ve heard the stories about me. They\\u2019re useful.\"\n    ],\n    \"tier3\": [\n      \"Names are liabilities. So are truths.\"\n    ],\n    \"tier4\": [\n      \"I don\\u2019t correct lies that keep me alive.\"\n    ],\n    \"tier5\": [\n      \"If you knew who I was, you\\u2019d stop listening.\"\n    ]\n  },\n  \"dspBlocked\": [\n    \"That\\u2019s not important.\",\n    \"You\\u2019re asking the wrong question.\",\n    \"Silence is an answer.\"\n  ]\n}",
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "backgroundGuidance": "El contexto histórico influye en las heurísticas de respuesta. Elige el origen más relevante para operaciones futuras.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "languageGuidance": "Los protocolos de comunicación reducen fricción y mejoran las probabilidades de supervivencia. Elige en consecuencia.",
-        "forcePowerGuidance": "Variación de usuario de la Fuerza detectada. Selecciona poderes que apoyen tu perfil táctico declarado.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "summaryGuidance": "Se recomienda auditoría final. Confirma solo cuando todos los módulos seleccionados coincidan con el despliegue previsto.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+        "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+        "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+        "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+        "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+        "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+        "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+        "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
       },
       "Melee_Duelist": {
         "name": "Blade Master Kharjo",
@@ -2565,14 +2876,14 @@
         "mentorStory": {
           "dspSensitivity": "strict"
         },
-        "speciesGuidance": "Empieza con lo que eres y luego decide qué harás con ello.",
-        "backgroundGuidance": "Tu pasado da textura a cada elección. Elige el hilo que aún tira de ti.",
-        "featGuidance": "Las dotes definen los bordes especiales de tu configuración. Elige una que se sienta útil y auténtica.",
-        "languageGuidance": "Un nuevo idioma puede convertir desconocidos en aliados y advertencias en oportunidades.",
-        "forcePowerGuidance": "Elige poderes de la Fuerza que coincidan con la influencia que quieres aportar a la escena.",
-        "starshipManeuverGuidance": "Elige maniobras que encajen con tu tripulación, tu nave y los problemas que esperas encontrar.",
-        "summaryGuidance": "Revisa todo el expediente antes de confirmar. Asegúrate de que se sienta como un personaje que quieres jugar.",
-        "surveyGuidance": "Responde por instinto. El mejor consejo de configuración empieza con preferencias honestas."
+        "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+        "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+        "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+        "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+        "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+        "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+        "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+        "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
       },
       "Military_Engineer": {
         "name": "Chief Engineer Rax",
@@ -2624,14 +2935,14 @@
             "2": "Later."
           }
         },
-        "speciesGuidance": "Empieza con lo que eres y luego decide qué harás con ello.",
-        "backgroundGuidance": "Tu pasado da textura a cada elección. Elige el hilo que aún tira de ti.",
-        "featGuidance": "Las dotes definen los bordes especiales de tu configuración. Elige una que se sienta útil y auténtica.",
-        "languageGuidance": "Un nuevo idioma puede convertir desconocidos en aliados y advertencias en oportunidades.",
-        "forcePowerGuidance": "Elige poderes de la Fuerza que coincidan con la influencia que quieres aportar a la escena.",
-        "starshipManeuverGuidance": "Elige maniobras que encajen con tu tripulación, tu nave y los problemas que esperas encontrar.",
-        "summaryGuidance": "Revisa todo el expediente antes de confirmar. Asegúrate de que se sienta como un personaje que quieres jugar.",
-        "surveyGuidance": "Responde por instinto. El mejor consejo de configuración empieza con preferencias honestas."
+        "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+        "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+        "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+        "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+        "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+        "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+        "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+        "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
       },
       "Officer": {
         "name": "Admiral Korr",
@@ -2683,14 +2994,14 @@
             "2": "Another time."
           }
         },
-        "speciesGuidance": "Conoce el cuerpo que llevas al campo. Las fortalezas se vuelven planes; las debilidades, contingencias.",
+        "speciesGuidance": "Know the body you are taking into the field. Strengths become plans; weaknesses become contingencies.",
         "backgroundGuidance": "Your background tells me what pressure trained you. Choose the lesson that still holds.",
-        "featGuidance": "Una dote es equipo que llevas a cada combate. Elige la que realmente usarás.",
+        "featGuidance": "A feat is kit you carry into every fight. Pick the one you will actually use.",
         "languageGuidance": "A useful phrase at the right time can beat a full magazine. Pick languages with mission value.",
         "forcePowerGuidance": "If you can use the Force, use it like any other asset: controlled, timed, and accountable.",
-        "starshipManeuverGuidance": "Elige maniobras que puedas ejecutar bajo presión, con una tripulación gritándote al oído.",
+        "starshipManeuverGuidance": "Choose maneuvers you can execute under pressure with a crew shouting in your ear.",
         "summaryGuidance": "Last check. Gear, training, instincts, and plan all need to line up before you deploy.",
-        "surveyGuidance": "Responde como en un informe de misión. Las prioridades claras hacen mejores soldados."
+        "surveyGuidance": "Answer like a mission brief. Clear priorities make better soldiers."
       },
       "Outlaw": {
         "name": "Rogue",
@@ -2742,14 +3053,14 @@
             "2": "Not today."
           }
         },
-        "speciesGuidance": "Empieza con lo que eres y luego decide qué harás con ello.",
-        "backgroundGuidance": "Tu pasado da textura a cada elección. Elige el hilo que aún tira de ti.",
-        "featGuidance": "Las dotes definen los bordes especiales de tu configuración. Elige una que se sienta útil y auténtica.",
-        "languageGuidance": "Un nuevo idioma puede convertir desconocidos en aliados y advertencias en oportunidades.",
-        "forcePowerGuidance": "Elige poderes de la Fuerza que coincidan con la influencia que quieres aportar a la escena.",
-        "starshipManeuverGuidance": "Elige maniobras que encajen con tu tripulación, tu nave y los problemas que esperas encontrar.",
-        "summaryGuidance": "Revisa todo el expediente antes de confirmar. Asegúrate de que se sienta como un personaje que quieres jugar.",
-        "surveyGuidance": "Responde por instinto. El mejor consejo de configuración empieza con preferencias honestas."
+        "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+        "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+        "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+        "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+        "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+        "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+        "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+        "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
       },
       "Saboteur": {
         "name": "Spark",
@@ -2801,14 +3112,14 @@
             "2": "Ask something else."
           }
         },
-        "speciesGuidance": "Empieza con lo que eres y luego decide qué harás con ello.",
-        "backgroundGuidance": "Tu pasado da textura a cada elección. Elige el hilo que aún tira de ti.",
-        "featGuidance": "Las dotes definen los bordes especiales de tu configuración. Elige una que se sienta útil y auténtica.",
-        "languageGuidance": "Un nuevo idioma puede convertir desconocidos en aliados y advertencias en oportunidades.",
-        "forcePowerGuidance": "Elige poderes de la Fuerza que coincidan con la influencia que quieres aportar a la escena.",
-        "starshipManeuverGuidance": "Elige maniobras que encajen con tu tripulación, tu nave y los problemas que esperas encontrar.",
-        "summaryGuidance": "Revisa todo el expediente antes de confirmar. Asegúrate de que se sienta como un personaje que quieres jugar.",
-        "surveyGuidance": "Responde por instinto. El mejor consejo de configuración empieza con preferencias honestas."
+        "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+        "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+        "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+        "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+        "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+        "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+        "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+        "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
       },
       "Shaper": {
         "name": "Shaper Urza",
@@ -2862,14 +3173,14 @@
             "2": "Come back when you’re less squeamish."
           }
         },
-        "speciesGuidance": "Empieza con lo que eres y luego decide qué harás con ello.",
-        "backgroundGuidance": "Tu pasado da textura a cada elección. Elige el hilo que aún tira de ti.",
-        "featGuidance": "Las dotes definen los bordes especiales de tu configuración. Elige una que se sienta útil y auténtica.",
-        "languageGuidance": "Un nuevo idioma puede convertir desconocidos en aliados y advertencias en oportunidades.",
-        "forcePowerGuidance": "Elige poderes de la Fuerza que coincidan con la influencia que quieres aportar a la escena.",
-        "starshipManeuverGuidance": "Elige maniobras que encajen con tu tripulación, tu nave y los problemas que esperas encontrar.",
-        "summaryGuidance": "Revisa todo el expediente antes de confirmar. Asegúrate de que se sienta como un personaje que quieres jugar.",
-        "surveyGuidance": "Responde por instinto. El mejor consejo de configuración empieza con preferencias honestas."
+        "speciesGuidance": "Start with what you are, then decide what you will make of it.",
+        "backgroundGuidance": "Your past gives texture to every choice. Pick the thread that still pulls at you.",
+        "featGuidance": "Feats define the special edges of your build. Choose one that feels useful and true.",
+        "languageGuidance": "A new language can turn strangers into allies and warnings into opportunities.",
+        "forcePowerGuidance": "Choose Force powers that match the kind of influence you want to bring into the scene.",
+        "starshipManeuverGuidance": "Pick maneuvers that fit your crew, your ship, and the trouble you expect to find.",
+        "summaryGuidance": "Review the whole record before you confirm. Make sure it feels like a character you want to play.",
+        "surveyGuidance": "Answer from instinct. The best build advice starts with honest preferences."
       },
       "Vanguard": {
         "name": "Shield Captain Theron",
@@ -2921,14 +3232,14 @@
             "2": "Hold the line first."
           }
         },
-        "speciesGuidance": "Paquete de origen identificado. Evalúa las premisas del chasis antes de fijar parámetros operativos a largo plazo.",
-        "backgroundGuidance": "El contexto histórico influye en las heurísticas de respuesta. Elige el origen más relevante para operaciones futuras.",
-        "featGuidance": "Las dotes son módulos de capacidad. Prioriza el módulo que cierre la mayor brecha operativa.",
-        "languageGuidance": "Los protocolos de comunicación reducen fricción y mejoran las probabilidades de supervivencia. Elige en consecuencia.",
-        "forcePowerGuidance": "Variación de usuario de la Fuerza detectada. Selecciona poderes que apoyen tu perfil táctico declarado.",
-        "starshipManeuverGuidance": "La selección de maniobras debe ajustarse al rol del vehículo, la coordinación de la tripulación y la tolerancia al fallo.",
-        "summaryGuidance": "Se recomienda auditoría final. Confirma solo cuando todos los módulos seleccionados coincidan con el despliegue previsto.",
-        "surveyGuidance": "Responde con precisión. Tu perfil de configuración depende de una autoevaluación clara."
+        "speciesGuidance": "Origin package identified. Evaluate chassis assumptions before committing long-term operating parameters.",
+        "backgroundGuidance": "Historical context influences response heuristics. Choose the origin most relevant to future operations.",
+        "featGuidance": "Feats are capability modules. Prioritize the module that closes the largest operational gap.",
+        "languageGuidance": "Communication protocols reduce friction and improve survival odds. Choose accordingly.",
+        "forcePowerGuidance": "Force-user variance detected. Select powers that support your declared tactical profile.",
+        "starshipManeuverGuidance": "Maneuver package selection should match vehicle role, crew coordination, and failure tolerance.",
+        "summaryGuidance": "Final audit recommended. Confirm only after all selected modules match intended deployment.",
+        "surveyGuidance": "Answer inputs precisely. Your build profile depends on clean self-reporting."
       },
       "Fallback": {
         "Welcome": "Welcome.",
@@ -2938,604 +3249,293 @@
     },
     "CharacterSheet": {
       "Sections": {
-        "Abilities": "Atributos",
-        "Skills": "Habilidades",
-        "CustomSkills": "Habilidades personalizadas",
-        "Languages": "Idiomas",
-        "CharacterNotes": "Notas del personaje",
-        "RacialAbilities": "Aptitudes raciales",
-        "RelationshipsConnections": "Relaciones y contactos",
-        "CombatMetricsResources": "Métricas de combate y recursos",
-        "CombatMetrics": "Métricas de combate",
-        "HeroicResources": "Recursos heroicos",
-        "SecondWind": "Segundo aliento",
-        "ExperiencePoints": "Puntos de experiencia",
-        "Feats": "Dotes",
-        "Talents": "Talentos",
-        "TalentsKnown": "Talentos conocidos",
-        "StarshipManeuvers": "Maniobras de astronave",
-        "ForceSuite": "Suite de la Fuerza",
-        "ForcePowersKnown": "Poderes de la Fuerza conocidos",
-        "ForceSecrets": "Secretos de la Fuerza",
-        "ForceTechniques": "Técnicas de la Fuerza"
+        "Abilities": "属性",
+        "Skills": "技能",
+        "CustomSkills": "自定义技能",
+        "Languages": "语言",
+        "CharacterNotes": "角色笔记",
+        "RacialAbilities": "种族能力",
+        "RelationshipsConnections": "关系与联系",
+        "CombatMetricsResources": "战斗数值与资源",
+        "CombatMetrics": "战斗数值",
+        "HeroicResources": "英雄资源",
+        "SecondWind": "喘息恢复",
+        "ExperiencePoints": "经验值",
+        "Feats": "专长",
+        "Talents": "天赋",
+        "TalentsKnown": "已知天赋",
+        "StarshipManeuvers": "星舰机动",
+        "ForceSuite": "原力套件",
+        "ForcePowersKnown": "已知原力异能",
+        "ForceSecrets": "原力秘术",
+        "ForceTechniques": "原力技巧"
       },
       "Labels": {
-        "Filter": "Filtro",
-        "AllSkills": "Todas las habilidades",
-        "Trained": "Entrenada",
-        "Favorited": "Favoritas",
-        "Focused": "Enfocadas",
-        "Sort": "Ordenar",
-        "NameAZ": "Nombre A→Z",
-        "Ability": "Atributo",
-        "HighestTotal": "Total más alto",
-        "LowestTotal": "Total más bajo",
-        "Skill": "Habilidad",
-        "HalfLevel": "½ nivel",
-        "Focus": "Enfoque",
-        "Misc": "Misc.",
-        "Total": "Total",
-        "Roll": "Tirar",
-        "All": "Todo",
-        "Available": "Disponible",
-        "Combat": "Combate",
-        "ChoiceSlot": "Espacio de elección",
-        "Passive": "Pasiva",
-        "RelationshipNotesContext": "Notas y contexto de relaciones",
-        "WalkSpeed": "Velocidad terrestre",
-        "Initiative": "Iniciativa",
-        "Perception": "Percepción",
-        "BaseAttack": "Ataque base",
-        "GrappleBonus": "Bonif. de presa",
-        "DamageThreshold": "Umbral de daño",
-        "ForcePoints": "Puntos de Fuerza",
-        "DestinyPoints": "Puntos de destino",
-        "BaseHealing": "Curación base",
-        "HP": "PG",
-        "ModifiedHealing": "Curación modificada",
-        "UsesRemaining": "Usos restantes",
-        "MaxUses": "Usos máximos",
-        "Level": "Nivel",
-        "TotalXP": "PX totales",
-        "NextLevel": "Siguiente nivel",
-        "XPToNext": "PX para el siguiente",
-        "Progress": "Progreso",
-        "Status": "Estado",
-        "Hand": "Mano",
-        "Discard": "Descartar",
-        "Discarded": "Descartados",
-        "Requires": "Requiere",
-        "SortName": "Ordenar: nombre",
-        "SortTag": "Ordenar: etiqueta"
+        "Filter": "过滤",
+        "AllSkills": "全部技能",
+        "Trained": "已训练",
+        "Favorited": "已收藏",
+        "Focused": "已专攻",
+        "Sort": "排序",
+        "NameAZ": "Name A→Z",
+        "Ability": "属性",
+        "HighestTotal": "总值最高",
+        "LowestTotal": "总值最低",
+        "Skill": "技能",
+        "HalfLevel": "½ 等级",
+        "Focus": "专攻",
+        "Misc": "杂项",
+        "Total": "总计",
+        "Roll": "掷骰",
+        "All": "全部",
+        "Available": "可用",
+        "Combat": "战斗",
+        "ChoiceSlot": "选择槽",
+        "Passive": "被动",
+        "RelationshipNotesContext": "关系笔记与背景",
+        "WalkSpeed": "步行速度",
+        "Initiative": "先攻",
+        "Perception": "察觉",
+        "BaseAttack": "基础攻击",
+        "GrappleBonus": "擒抱加值",
+        "DamageThreshold": "伤害阈值",
+        "ForcePoints": "Force Points",
+        "DestinyPoints": "命运点",
+        "BaseHealing": "基础治疗",
+        "HP": "生命值",
+        "ModifiedHealing": "修正后治疗",
+        "UsesRemaining": "剩余使用次数",
+        "MaxUses": "最大使用次数",
+        "Level": "等级",
+        "TotalXP": "总经验值",
+        "NextLevel": "下一级",
+        "XPToNext": "距离下一级经验",
+        "Progress": "Progress",
+        "Status": "状态",
+        "Hand": "Hand",
+        "Discard": "Discard",
+        "Discarded": "Discarded",
+        "Requires": "Requires",
+        "SortName": "Sort: Name",
+        "SortTag": "Sort: Tag"
       },
       "Actions": {
-        "RollForAttributes": "Tirar atributos",
-        "Expand": "Expandir",
-        "ResetFilters": "Restablecer filtros",
-        "RollSkill": "Tirar {skill}",
-        "UseNamed": "Usar {name}",
-        "Add": "Añadir",
-        "AddLanguage": "+ Añadir idioma",
-        "AddRelationship": "Añadir relación",
-        "UseSecondWind": "Usar segundo aliento",
-        "ResetUses": "Restablecer usos",
-        "AddFeat": "+ Añadir dote",
-        "AddTalent": "+ Añadir talento",
-        "Choose": "Elegir",
-        "Change": "Cambiar",
-        "RemoveNamed": "Quitar {name}",
-        "ManageArrow": "Gestionar →",
-        "ConstructLightsaber": "Construir sable de luz",
-        "FlipForMore": "Voltear para ver más",
-        "Activate": "Activar",
-        "Back": "Atrás"
+        "RollForAttributes": "Roll for Attributes",
+        "Expand": "展开",
+        "ResetFilters": "重置过滤器",
+        "RollSkill": "Roll {skill}",
+        "UseNamed": "Use {name}",
+        "Add": "Add",
+        "AddLanguage": "+ Add Language",
+        "AddRelationship": "Add Relationship",
+        "UseSecondWind": "Use Second Wind",
+        "ResetUses": "Reset Uses",
+        "AddFeat": "+ Add Feat",
+        "AddTalent": "+ Add Talent",
+        "Choose": "Choose",
+        "Change": "Change",
+        "RemoveNamed": "Remove {name}",
+        "ManageArrow": "Manage →",
+        "ConstructLightsaber": "Construct Lightsaber",
+        "FlipForMore": "Flip for more",
+        "Activate": "激活",
+        "Back": "Back"
       },
       "Tooltips": {
-        "OpenAttributeStep": "Abrir el motor de progresión en el paso de atributos",
-        "RollAbilityModifier": "Tirar d20 + modificador de {ability}",
-        "BaseAbilityScore": "Puntuación base de atributo",
-        "RacialBonus": "Bonificación racial",
-        "TemporaryModifier": "Modificador temporal",
-        "MarkAsFavorite": "Marcar como favorita",
-        "SkillUsesAvailable": "{count} usos de habilidad disponibles",
-        "ClickToRollSkill": "Haz clic para tirar {skill}",
-        "SelectAbilityModifierForSkill": "Selecciona el modificador de atributo para {skill}",
-        "HalfCharacterLevel": "La mitad de tu nivel de personaje",
-        "TrainedSkill": "Entrenada: tienes rangos en esta habilidad (+5)",
-        "FocusedSkill": "Enfoque: habilidad enfocada (+5 bonif.)",
-        "MiscSkillModifier": "Modificador misceláneo (dotes, condiciones, etc.)",
-        "TotalSkillBonus": "Bonificación total de habilidad",
-        "ShowAllSkillUses": "Mostrar todos los usos de habilidad",
-        "ShowUsableActions": "Mostrar solo acciones utilizables",
-        "ShowCombatRelevantUses": "Mostrar usos relevantes para combate",
-        "TrainedUse": "Uso entrenado",
-        "DifficultyClass": "Clase de dificultad",
-        "ActionType": "Acción {action}",
-        "ActionEconomy": "Economía de acción: {action}",
-        "AddCustomSkill": "Añadir una nueva habilidad personalizada",
-        "CustomSkillName": "Nombre de habilidad personalizada",
-        "SelectGoverningAbility": "Selecciona el atributo rector",
-        "TrainedBonus": "Entrenada: +5 bonif.",
-        "FocusBonus": "Enfoque: +5 bonif.",
-        "MiscModifier": "Modificador misceláneo",
-        "RollCustomSkill": "Tirar esta habilidad personalizada",
-        "DeleteCustomSkill": "Eliminar esta habilidad personalizada",
-        "NotesForSkill": "Notas para esta habilidad",
-        "CreateFollower": "Crear un nuevo seguidor bajo tu mando",
-        "ClickToOpen": "Haz clic para abrir {name}",
-        "InitiativeBreakdown": "Iniciativa — clic para desglose",
-        "RollInitiative": "Tirar iniciativa",
-        "Take10Initiative": "Tomar 10 en iniciativa",
-        "RollPerception": "Tirar Percepción",
-        "SpendForcePoint": "Gastar 1 Punto de Fuerza",
-        "RestoreForcePoint": "Restaurar 1 Punto de Fuerza",
-        "OpenTalentsTab": "Abrir la pestaña Talentos para gestionarlos",
-        "OpenForceTab": "Abrir la pestaña Fuerza para gestionar poderes"
+        "OpenAttributeStep": "Open the progression engine on the attribute step",
+        "RollAbilityModifier": "Roll d20 + {ability} modifier",
+        "BaseAbilityScore": "Base ability score",
+        "RacialBonus": "Racial bonus",
+        "TemporaryModifier": "Temporary modifier",
+        "MarkAsFavorite": "Mark as favorite",
+        "SkillUsesAvailable": "{count} skill uses available",
+        "ClickToRollSkill": "Click to roll {skill}",
+        "SelectAbilityModifierForSkill": "Select ability modifier for {skill}",
+        "HalfCharacterLevel": "Half your character level",
+        "TrainedSkill": "Trained: You have ranks in this skill (+5)",
+        "FocusedSkill": "Focus: Focused skill (+5 bonus)",
+        "MiscSkillModifier": "Miscellaneous modifier (feats, conditions, etc.)",
+        "TotalSkillBonus": "Total skill bonus",
+        "ShowAllSkillUses": "Show all skill uses",
+        "ShowUsableActions": "Show only usable actions",
+        "ShowCombatRelevantUses": "Show combat-relevant uses",
+        "TrainedUse": "Trained use",
+        "DifficultyClass": "Difficulty Class",
+        "ActionType": "{action} action",
+        "ActionEconomy": "Action economy: {action}",
+        "AddCustomSkill": "Add a new custom skill",
+        "CustomSkillName": "Custom skill name",
+        "SelectGoverningAbility": "Select governing ability",
+        "TrainedBonus": "Trained: +5 bonus",
+        "FocusBonus": "Focus: +5 bonus",
+        "MiscModifier": "Miscellaneous modifier",
+        "RollCustomSkill": "Roll this custom skill",
+        "DeleteCustomSkill": "Delete this custom skill",
+        "NotesForSkill": "Notes for this skill",
+        "CreateFollower": "Create a new follower under your command",
+        "ClickToOpen": "Click to open {name}",
+        "InitiativeBreakdown": "Initiative — click for breakdown",
+        "RollInitiative": "Roll initiative",
+        "Take10Initiative": "Take 10 initiative",
+        "RollPerception": "Roll Perception",
+        "SpendForcePoint": "Spend 1 Force Point",
+        "RestoreForcePoint": "Restore 1 Force Point",
+        "OpenTalentsTab": "Open Talents tab to manage talents",
+        "OpenForceTab": "Open Force tab to manage powers"
       },
       "Placeholders": {
-        "SkillName": "Nombre de habilidad",
-        "Notes": "Notas",
-        "EnterLanguage": "Introduce un idioma...",
-        "CharacterNotes": "Añade notas del personaje aquí...",
-        "RelationshipNotes": "Notas generales sobre alianzas, rivalidades, contactos clave..."
+        "SkillName": "Skill name",
+        "Notes": "Notes",
+        "EnterLanguage": "Enter language...",
+        "CharacterNotes": "Add character notes here...",
+        "RelationshipNotes": "Overall notes about alliances, rivalries, key contact information..."
       },
       "Empty": {
-        "NoCustomSkills": "Aún no hay habilidades personalizadas. Haz clic en \"Añadir\" para crear una.",
-        "NoLanguagesKnown": "No se conocen idiomas",
-        "NoRacialAbilities": "Sin aptitudes raciales.",
-        "NoRelationships": "Aún no hay relaciones registradas.",
-        "NoFeats": "Aún no se han añadido dotes.",
-        "NoTalents": "Aún no se han añadido talentos.",
-        "NoTalentsKnown": "Aún no se conocen talentos.",
-        "NoStarshipManeuvers": "No se conocen maniobras de astronave.",
-        "NoForcePowers": "No se conocen poderes de la Fuerza.",
-        "NoForceSecrets": "No se conocen secretos de la Fuerza.",
-        "NoForceTechniques": "No se conocen técnicas de la Fuerza."
+        "NoCustomSkills": "No custom skills yet. Click \"Add\" to create one.",
+        "NoLanguagesKnown": "No languages known",
+        "NoRacialAbilities": "No racial abilities.",
+        "NoRelationships": "No relationships recorded yet.",
+        "NoFeats": "No feats have been added yet.",
+        "NoTalents": "No talents have been added yet.",
+        "NoTalentsKnown": "No talents known yet.",
+        "NoStarshipManeuvers": "No starship maneuvers known.",
+        "NoForcePowers": "No Force powers known.",
+        "NoForceSecrets": "No Force secrets known.",
+        "NoForceTechniques": "No Force techniques known."
       },
       "Hints": {
-        "AddLanguageCard": "Crea otra entrada de idioma con la misma forma y tamaño de carta.",
-        "CreateFirstLanguage": "Haz clic en \"Añadir idioma\" para crear la primera carta de idioma estandarizada.",
-        "DropActorsForRelationships": "Suelta actores sobre la hoja para añadir relaciones.",
-        "AddFirstFeat": "Usa Añadir dote para crear la primera carta de dote estandarizada.",
-        "AddFirstTalent": "Usa Añadir talento para crear la primera carta de talento.",
-        "AddTalentsOnTab": "Añade talentos en la pestaña Talentos.",
-        "TakeStarshipTactics": "Toma la dote Tácticas de Astronave para aprender maniobras.",
-        "ManageForcePowers": "Los poderes de la Fuerza se gestionan en la pestaña Fuerza."
+        "AddLanguageCard": "Create another language entry using the same card shape and size.",
+        "CreateFirstLanguage": "Click \"Add Language\" to create the first standardized language card.",
+        "DropActorsForRelationships": "Drop actors onto the sheet to add relationships.",
+        "AddFirstFeat": "Use Add Feat to create the first standardized feat card.",
+        "AddFirstTalent": "Use Add Talent to create the first talent card.",
+        "AddTalentsOnTab": "Add talents on the Talents tab.",
+        "TakeStarshipTactics": "Take the Starship Tactics feat to learn maneuvers.",
+        "ManageForcePowers": "Force powers are managed on the Force tab."
       },
       "Status": {
-        "ReadyToLevelUp": "Listo para subir de nivel",
-        "LockedClassGrant": "Concesión de clase bloqueada",
-        "ChoiceNeeded": "Elección necesaria",
-        "InvalidChoice": "Elección no válida: {choice}",
-        "ChoiceMade": "Elección: {choice}",
-        "LightsaberConstructionAvailable": "Construcción de sable de luz disponible"
+        "ReadyToLevelUp": "Ready to Level Up",
+        "LockedClassGrant": "Locked class grant",
+        "ChoiceNeeded": "Choice needed",
+        "InvalidChoice": "Invalid choice: {choice}",
+        "ChoiceMade": "Choice: {choice}",
+        "LightsaberConstructionAvailable": "Lightsaber Construction Available"
       }
     },
     "ACTION": {
-      "CHAT": "Enviar al chat",
-      "ROLL": "Tirar",
-      "USE": "Usar"
+      "CHAT": "Send to Chat",
+      "ROLL": "掷骰",
+      "USE": "Use"
     },
     "ACTOR": {
       "TABS": {
-        "FEATS": "Dotes",
-        "RACIAL": "Rasgos raciales",
-        "TALENTS": "Talentos"
+        "FEATS": "专长",
+        "RACIAL": "Racial Traits",
+        "TALENTS": "天赋"
       }
     },
     "CHARGEN": {
       "NEAR_HUMAN": {
-        "ABILITY_HELP": "Ajusta los modificadores de atributo de la herencia casi humana. El total final de modificadores debe ser 0.",
-        "ABILITY_TITLE": "Modificadores de atributo",
-        "AVAILABLE_TRAITS": "Rasgos disponibles",
-        "DROP_HINT": "Arrastra rasgos aquí para seleccionarlos.",
-        "INVALID": "La herencia casi humana está incompleta o no es válida",
-        "NO_AVAILABLE": "No hay rasgos disponibles.",
-        "SACRIFICE_FEAT": "Sacrificar dote adicional",
-        "SACRIFICE_HELP": "Puedes sacrificar beneficios humanos básicos para desbloquear espacios adicionales de rasgos casi humanos.",
-        "SACRIFICE_SKILL": "Sacrificar habilidad entrenada adicional",
-        "SACRIFICE_TITLE": "Sacrificios de herencia casi humana",
-        "SELECTED": "Seleccionado",
-        "SELECTED_TRAITS": "Rasgos seleccionados",
-        "TOTAL": "Total",
-        "TRAIT_SLOTS": "Espacios de rasgos",
-        "VALID": "La herencia casi humana es válida"
+        "ABILITY_HELP": "Adjust ability score modifiers from near-human heritage. The final modifier total must be 0.",
+        "ABILITY_TITLE": "Ability Modifiers",
+        "AVAILABLE_TRAITS": "Available Traits",
+        "DROP_HINT": "Drag traits here to select them.",
+        "INVALID": "Near-human heritage is incomplete or invalid",
+        "NO_AVAILABLE": "没有可用特性。",
+        "SACRIFICE_FEAT": "Sacrifice Bonus Feat",
+        "SACRIFICE_HELP": "You may sacrifice baseline human benefits to unlock additional near-human trait slots.",
+        "SACRIFICE_SKILL": "Sacrifice Bonus Trained Skill",
+        "SACRIFICE_TITLE": "Near-Human Heritage Sacrifices",
+        "SELECTED": "已选择",
+        "SELECTED_TRAITS": "Selected Traits",
+        "TOTAL": "总计",
+        "TRAIT_SLOTS": "Trait Slots",
+        "VALID": "Near-human heritage is valid"
       }
     },
     "CURRENCY": {
       "SYMBOL": "cr"
     },
     "Chargen": {
-      "CancelContent": "¿Seguro que quieres cancelar? Se perderá todo el progreso.",
-      "CancelTitle": "Cancelar creación de personaje"
+      "CancelContent": "Are you sure? All progress will be lost.",
+      "CancelTitle": "Cancel Character Creation"
     },
     "DIFFICULTY": {
-      "LABEL": "CD"
+      "LABEL": "DC"
     },
     "LevelUp": {
-      "CancelContent": "¿Seguro que quieres cancelar? No se guardarán los cambios.",
-      "CancelTitle": "Cancelar subida de nivel"
+      "CancelContent": "Are you sure? No changes will be saved.",
+      "CancelTitle": "Cancel Level Up"
     },
     "SheetLabel": {
-      "character": "Personaje",
-      "droid": "Droide",
-      "vehicle": "Vehículo"
+      "character": "Character",
+      "droid": "Droid",
+      "vehicle": "Vehicle"
     },
     "UNITS": {
       "WEIGHT": "lb"
     },
-    "Discovery": {
-      "Callout": {
-        "Dismiss": "Got it",
-        "actionPaletteFirstOpen": {
-          "Body": "This is your quick-access action menu. It adapts to combat and narrative contexts. You can customize it to fit your playstyle.",
-          "Title": "Action Palette"
-        },
-        "chargenNarrativeFirst": {
-          "Body": "You can build your character through narrative choices or direct mechanical selection. Both paths produce a fully valid character.",
-          "Title": "Character Creation Modes"
-        },
-        "gmSuggestionPanelFirst": {
-          "Body": "These are advisory insights based on the current encounter. Nothing is applied automatically. Use them as you see fit.",
-          "Title": "GM Suggestions"
-        },
-        "mentorTranslationFirst": {
-          "Body": "Mentor text appears with an Aurebesh translation effect. Click anywhere on the text to skip the animation and read immediately.",
-          "Title": "Mentor Dialogue"
-        },
-        "tacticalOverlayFirstOpen": {
-          "Body": "Toggle map overlays showing range bands, threat zones, and positioning data. Each layer can be toggled independently.",
-          "Title": "Tactical Overlay"
-        }
-      },
-      "Settings": {
-        "DisableCallouts": {
-          "Hint": "Turn off first-use hint callouts that appear when opening features for the first time",
-          "Name": "Disable Guided Callouts"
-        },
-        "DisableTooltips": {
-          "Hint": "Turn off contextual tooltips on UI elements",
-          "Name": "Disable Discovery Tooltips"
-        },
-        "DisableTour": {
-          "Hint": "Turn off the feature overview that appears on first launch",
-          "Name": "Disable First-Launch Tour"
-        }
-      },
-      "Tooltip": {
-        "AbilityModifier": {
-          "Body": "Derived from the ability score. Added to relevant rolls, skills, and defenses.",
-          "Title": "Ability Modifier"
-        },
-        "AbilityScore": {
-          "Body": "The raw score. The modifier (score minus 10, divided by 2) is what applies to rolls.",
-          "Title": "Ability Score"
-        },
-        "Acrobatics": {
-          "Body": "Acrobatics covers balance, tumbling, safe falls, escaping physical holds, and agile movement. Use it when precision body control matters more than raw strength.",
-          "Title": "Acrobatics"
-        },
-        "ActionDisabled": {
-          "Body": "This action cannot be used right now. Check prerequisites and available resources.",
-          "Title": "Action Unavailable"
-        },
-        "ActionPalette": {
-          "Body": "Quick access to common combat and narrative actions for your character.",
-          "Title": "Action Palette"
-        },
-        "ActiveTalent": {
-          "Body": "Requires an action to use. Check the talent description for action type.",
-          "Title": "Active Talent"
-        },
-        "ArmorPenalty": {
-          "Body": "This armor applies a penalty to Reflex Defense beyond the armor bonus and may restrict Dexterity.",
-          "Title": "Armor Penalty"
-        },
-        "AurebeshTranslation": {
-          "Body": "Text appears in Aurebesh first, then translates. Click to skip the effect.",
-          "Title": "Aurebesh Translation"
-        },
-        "BaseAttackBonus": {
-          "Body": "Added to attack rolls. Determined by class and level.",
-          "Title": "Base Attack Bonus"
-        },
-        "CatchSecondWind": {
-          "Body": "Catch a Second Wind lets a heroic character rally after being seriously hurt. It is only available when reduced to half hit points or less, and it can be used once per day.",
-          "Title": "Catch a Second Wind"
-        },
-        "ChargenClass": {
-          "Body": "Your class determines hit points, defenses, trained skills, and talent access.",
-          "Title": "Class"
-        },
-        "ChargenLockin": {
-          "Body": "Confirms your choices. Most selections can still be adjusted after creation.",
-          "Title": "Finalize Character"
-        },
-        "ChargenMentor": {
-          "Body": "Choose a mentor whose guidance shapes your character creation experience.",
-          "Title": "Mentor Selection"
-        },
-        "ChargenNarrative": {
-          "Body": "Build your character through guided story choices instead of manual stat selection.",
-          "Title": "Narrative Mode"
-        },
-        "ChargenRollMethod": {
-          "Body": "Select how to generate ability scores: roll dice, point buy, or standard array.",
-          "Title": "Ability Score Method"
-        },
-        "ChargenSpecies": {
-          "Body": "Your species determines base traits, ability adjustments, and available features.",
-          "Title": "Species"
-        },
-        "Charisma": {
-          "Body": "Charisma reflects leadership, magnetism, confidence, and the ability to move others. It is not just appearance; it is the strength of a character's personal presence.",
-          "Title": "Charisma"
-        },
-        "Climb": {
-          "Body": "Climb is used to ascend difficult surfaces such as rock faces, buildings, ladders, and machinery. It measures controlled upward movement through strength and grip.",
-          "Title": "Climb"
-        },
-        "ConditionTrack": {
-          "Body": "Tracks penalties from taking heavy hits. Each step down applies cumulative -1 to all rolls and defenses.",
-          "Title": "Condition Track"
-        },
-        "Constitution": {
-          "Body": "Constitution reflects how well a character withstands injury, fatigue, and bodily strain. It is a core survivability stat because it contributes to staying power.",
-          "Title": "Constitution"
-        },
-        "DamageThreshold": {
-          "Body": "Damage Threshold measures how much damage a single attack must inflict to seriously impair you. Even if you still have Hit Points left, a sufficiently powerful hit can reduce your effectiveness immediately.",
-          "Title": "Damage Threshold"
-        },
-        "DarkSideScore": {
-          "Body": "Dark Side Score tracks moral and spiritual corruption through evil acts. A higher score reflects greater influence from the dark side and may carry serious consequences.",
-          "Title": "Dark Side Score"
-        },
-        "Deception": {
-          "Body": "Deception is used to make falsehoods seem believable, create confusion, conceal intent, or present yourself as someone else. It covers bluffing, fast-talking, disguise, and forged evidence.",
-          "Title": "Deception"
-        },
-        "DestinyPoints": {
-          "Body": "Rare points that let you automatically succeed on a roll or trigger special destiny effects.",
-          "Title": "Destiny Points"
-        },
-        "Dexterity": {
-          "Body": "Dexterity reflects fine control, reaction speed, and physical precision. It is especially valuable for ranged combat, evasive movement, and vehicle handling.",
-          "Title": "Dexterity"
-        },
-        "Endurance": {
-          "Body": "Endurance measures stamina and resilience under stress. Use it when a character must keep going through fatigue, hardship, or other physical extremes.",
-          "Title": "Endurance"
-        },
-        "FlatFooted": {
-          "Body": "Defense when caught off guard. Does not include Dexterity or dodge bonuses.",
-          "Title": "Flat-Footed"
-        },
-        "ForcePoints": {
-          "Body": "Force Points represent a character's ability to draw on unusual help, whether understood as destiny, luck, or the Force moving through living beings. They are a limited resource used to improve important actions.",
-          "Title": "Force Points"
-        },
-        "FortitudeDefense": {
-          "Body": "Resists physical effects like poison and stun. Based on class, level, and Constitution.",
-          "Title": "Fortitude Defense"
-        },
-        "GMPaletteMode": {
-          "Body": "Switches the palette to GM tools: NPC spawning, healing, condition management.",
-          "Title": "GM Mode"
-        },
-        "GMSuggestion": {
-          "Body": "Advisory insight from the suggestion engine. Not applied automatically.",
-          "Title": "GM Suggestion"
-        },
-        "GatherInformation": {
-          "Body": "Gather Information is used to ask around, work social networks, and uncover leads. It helps locate gossip, public talk, quiet secrets, and useful connections.",
-          "Title": "Gather Information"
-        },
-        "Grapple": {
-          "Body": "Used for grab and grapple checks. Based on BAB and size modifier.",
-          "Title": "Grapple"
-        },
-        "HitPoints": {
-          "Body": "Hit Points measure how long you can stay in the fight. They reflect both actual injury tolerance and combat skill such as dodging, deflecting, and turning solid hits into less serious harm.",
-          "Title": "Hit Points"
-        },
-        "Initiative": {
-          "Body": "Initiative determines how fast you react when action starts. A higher result usually means acting earlier in the round.",
-          "Title": "Initiative"
-        },
-        "Intelligence": {
-          "Body": "Intelligence reflects how well a character understands systems, solves problems, and develops trained expertise. It is especially useful for characters who rely on broad technical or academic skill.",
-          "Title": "Intelligence"
-        },
-        "Jump": {
-          "Body": "Jump is used for clearing pits, vaulting barriers, and making controlled leaps. It reflects explosive strength and coordinated movement.",
-          "Title": "Jump"
-        },
-        "Knowledge": {
-          "Body": "Knowledge represents academic, professional, or technical learning. Each field covers a different body of lore, so success depends on the subject being relevant to your training.",
-          "Title": "Knowledge"
-        },
-        "Mechanics": {
-          "Body": "Mechanics is used to interact directly with machinery and technical hardware. It covers bypassing security, setting or disarming explosives, and repairing or improving damaged equipment and droids.",
-          "Title": "Mechanics"
-        },
-        "MentorDialogue": {
-          "Body": "Your mentor offers context and suggestions. This is advisory, not mandatory.",
-          "Title": "Mentor Guidance"
-        },
-        "PaletteMode": {
-          "Body": "Switches between combat actions and narrative/exploration actions.",
-          "Title": "Palette Mode"
-        },
-        "PassiveTalent": {
-          "Body": "Always active. No action required to benefit from this talent.",
-          "Title": "Passive Talent"
-        },
-        "Perception": {
-          "Body": "Perception is used to detect threats, spot concealed creatures or objects, and stay aware of the environment. It reflects alertness and sensory awareness.",
-          "Title": "Perception"
-        },
-        "Persuasion": {
-          "Body": "Persuasion is used to win cooperation, shape attitudes, and steer social outcomes. It can be subtle and diplomatic or forceful and intimidating.",
-          "Title": "Persuasion"
-        },
-        "Pilot": {
-          "Body": "Pilot governs advanced vehicle handling. Routine travel may not require a check, but evasive action, stunts, and dangerous control do.",
-          "Title": "Pilot"
-        },
-        "ReflexDefense": {
-          "Body": "Targeted by most attacks. Based on class, level, Dexterity or armor bonus.",
-          "Title": "Reflex Defense"
-        },
-        "Ride": {
-          "Body": "Ride is used to handle creatures used as mounts, especially in motion or under stress. It reflects balance, control, and mounted coordination.",
-          "Title": "Ride"
-        },
-        "SkillRoll": {
-          "Body": "Click to roll this skill. The roll adds your modifier and training bonus.",
-          "Title": "Skill Check"
-        },
-        "SkillTrained": {
-          "Body": "Trained skills receive a +5 bonus and may unlock special uses not available untrained.",
-          "Title": "Trained Skill"
-        },
-        "Stealth": {
-          "Body": "Stealth is used to avoid detection through silence, concealment, and careful movement. It also supports hidden positioning, ambushes, sniping from cover, and sleight of hand.",
-          "Title": "Stealth"
-        },
-        "Strength": {
-          "Body": "Strength reflects how much force a character can apply physically. It is especially important in direct physical action and close-quarters power-based tasks.",
-          "Title": "Strength"
-        },
-        "Survival": {
-          "Body": "Survival helps characters navigate harsh environments, track signs of danger, forage, hunt, and identify natural hazards. It measures practical fieldcraft.",
-          "Title": "Survival"
-        },
-        "Swim": {
-          "Body": "Swim is used to cross water, dive, stay afloat, and maneuver in difficult aquatic conditions. It represents controlled movement in water.",
-          "Title": "Swim"
-        },
-        "TacticalOverlay": {
-          "Body": "Shows range bands, threat areas, and tactical information on the map.",
-          "Title": "Tactical Overlay"
-        },
-        "TreatInjury": {
-          "Body": "Treat Injury covers battlefield aid, medical care, and recovery support. Use it to keep allies alive, improve healing, and respond to harmful conditions.",
-          "Title": "Treat Injury"
-        },
-        "UsageLimit": {
-          "Body": "This ability can only be used a set number of times per encounter or per day.",
-          "Title": "Limited Use"
-        },
-        "UseComputer": {
-          "Body": "Use Computer is used to operate secured systems, bypass digital protections, and interact with complex computer-controlled technology. It governs technical access in electronic environments.",
-          "Title": "Use Computer"
-        },
-        "UseTheForce": {
-          "Body": "Use the Force represents active connection to the Force in play. It supports unusual perception, recovery, and other force-driven acts, and it normally requires Force Sensitivity to be trained.",
-          "Title": "Use the Force"
-        },
-        "WeaponAttack": {
-          "Body": "Click to roll an attack with this weapon against a target's Reflex Defense.",
-          "Title": "Attack Roll"
-        },
-        "WeaponDamage": {
-          "Body": "Click to roll damage for this weapon after a successful attack.",
-          "Title": "Damage Roll"
-        },
-        "WillDefense": {
-          "Body": "Resists mental effects and Force powers. Based on class, level, and Wisdom.",
-          "Title": "Will Defense"
-        },
-        "Wisdom": {
-          "Body": "Wisdom reflects perception, practical insight, and connection to surroundings. It is about awareness and sound judgment more than abstract analysis.",
-          "Title": "Wisdom"
-        }
-      },
-      "Tour": {
-        "GM": {
-          "Item1": "The Tactical Overlay adds range and threat visualization to scenes",
-          "Item2": "GM Suggestions offer advisory encounter insights, never automatic",
-          "Item3": "Scene tools and NPC management are available from the sidebar and palette",
-          "Item4": "All automation (damage threshold, condition recovery) can be toggled in settings",
-          "Item5": "Discovery hints can be reset or disabled from system settings",
-          "Subtitle": "Your GM toolkit includes several optional systems. Nothing runs unless you enable it.",
-          "Title": "Welcome to Star Wars Saga Edition (GM Tools)"
-        },
-        "GMHolopad": "Open GM Holopad",
-        "Player": {
-          "Item1": "Character creation supports both narrative and mechanical modes",
-          "Item2": "The Action Palette provides quick access to combat and narrative actions",
-          "Item3": "Mentors can guide your choices during character creation",
-          "Item4": "Hover over any highlighted UI element for a quick explanation",
-          "Item5": "All guided hints can be turned off in your client settings",
-          "Subtitle": "Here are a few things to help you get started. All features are optional.",
-          "Title": "Welcome to Star Wars Saga Edition"
-        },
-        "Skip": "Skip"
-      }
-    },
     "Store": {
-      "Title": "Intercambio Comercial Galactico",
+      "Title": "银河贸易交易所",
       "Header": {
         "ExchangeName": "RENDARR'S EXCHANGE",
         "Subtitle": "Quartermaster - Galactic Trade Network",
         "Kicker": "Authorized vendor channel - concept market surface",
         "Listings": "listings",
-        "Account": "CUENTA",
-        "Reserve": "Reserva",
-        "Cart": "Carrito",
-        "Credits": "creditos"
+        "Account": "ACCOUNT",
+        "Reserve": "Reserve",
+        "Cart": "购物车",
+        "Credits": "credits"
       },
       "Tabs": {
-        "Browse": "Explorar",
-        "Cart": "Carrito",
-        "History": "Historial",
-        "Checkout": "Pago",
-        "Detail": "Detalle"
+        "Browse": "Browse",
+        "Cart": "购物车",
+        "History": "History",
+        "Checkout": "结账",
+        "Detail": "详情"
       },
       "Filters": {
-        "SearchListings": "BUSCAR ARTICULOS...",
+        "SearchListings": "SEARCH LISTINGS...",
         "SearchItemsAria": "Search store items",
         "WeaponFoldersAria": "Weapon folders",
         "FilterAvailabilityAria": "Filter by availability",
         "SortItemsAria": "Sort items",
-        "AllAvailability": "Toda disponibilidad",
+        "AllAvailability": "All Availability",
         "Standard": "Standard",
         "Licensed": "Licensed",
         "Restricted": "Restricted",
         "Military": "Military",
         "Illegal": "Illegal",
         "Rare": "Rare",
-        "Suggested": "Sugerido",
+        "Suggested": "Suggested",
         "PriceAsc": "Price up",
         "PriceDesc": "Price down",
         "NameAZ": "Name A-Z",
-        "ResetFilters": "Restablecer filtros"
+        "ResetFilters": "Reset filters"
       },
       "Navigation": {
         "AllCategory": "All {category}",
         "AllWeapons": "All Weapons",
-        "Ranged": "Ranged",
-        "Melee": "Melee",
+        "Ranged": "远程",
+        "Melee": "近战",
         "Other": "Other",
-        "Weapons": "Weapons",
-        "Armor": "Armor",
-        "Equipment": "Equipment",
-        "Vehicles": "Vehicles",
-        "Droids": "Droids",
-        "LightArmor": "Light Armor",
-        "MediumArmor": "Medium Armor",
-        "HeavyArmor": "Heavy Armor",
-        "EnergyShields": "Energy Shields"
+        "Weapons": "武器",
+        "Armor": "护甲",
+        "Equipment": "装备",
+        "Vehicles": "载具",
+        "Droids": "机器人",
+        "LightArmor": "轻型护甲",
+        "MediumArmor": "中型护甲",
+        "HeavyArmor": "重型护甲",
+        "EnergyShields": "能量护盾"
       },
       "Detail": {
-        "Back": "Atras",
+        "Back": "Back",
         "ProductDetail": "Product Detail",
-        "AddToCart": "Agregar al carrito",
+        "AddToCart": "Add to Cart",
         "AddNamedToCart": "Add {name} to cart",
-        "Customize": "Personalizar",
-        "SaveForLater": "Guardar para luego",
+        "Customize": "Customize",
+        "SaveForLater": "Save for Later",
         "RecommendationNotes": "Recommendation Notes",
         "TechnicalSpecifications": "Technical Specifications",
         "ItemBrief": "Item Brief",
@@ -3547,40 +3547,40 @@
       "Cart": {
         "CartManifest": "Cart Manifest",
         "TradeLedger": "Trade Ledger",
-        "YourCartIsEmpty": "Tu carrito esta vacio.",
-        "Totals": "Totales",
-        "Subtotal": "Subtotal",
-        "Remaining": "Restante",
-        "ProceedToCheckout": "Proceder al pago",
-        "ClearCart": "Vaciar carrito",
-        "Qty": "Qty:",
-        "Each": "Each:",
+        "YourCartIsEmpty": "Your cart is empty.",
+        "Totals": "Totals",
+        "Subtotal": "小计",
+        "Remaining": "Remaining",
+        "ProceedToCheckout": "Proceed to Checkout",
+        "ClearCart": "Clear Cart",
+        "Qty": "Qty：",
+        "Each": "Each：",
         "RemoveFromCart": "Remove from cart"
       },
       "Checkout": {
         "BackToCart": "Back to Cart",
         "ExchangeConfirmation": "Exchange Confirmation",
-        "FinalizeTrade": "Finalizar intercambio",
+        "FinalizeTrade": "Finalize Trade",
         "LockedManifest": "Locked Manifest",
         "NoItemsStaged": "No items staged.",
         "Settlement": "Settlement",
-        "Available": "Available",
+        "Available": "可用",
         "Debit": "Debit",
         "ReserveAfterTrade": "Reserve After Trade",
         "Guidance": "Confirm the trade to issue all manifest lines and archive the transaction.",
-        "ConfirmTrade": "Confirmar intercambio",
-        "ReturnToCart": "Volver al carrito"
+        "ConfirmTrade": "Confirm Trade",
+        "ReturnToCart": "Return to Cart"
       },
       "History": {
         "AccountArchive": "Account Archive",
-        "PurchaseHistory": "Historial de compras",
-        "NoPurchases": "Aun no se han registrado compras."
+        "PurchaseHistory": "Purchase History",
+        "NoPurchases": "No purchases have been logged yet."
       },
       "Browse": {
-        "BuildCustomDroid": "Construir droide personalizado",
-        "FromTemplate": "Desde plantilla",
+        "BuildCustomDroid": "建造自定义机器人",
+        "FromTemplate": "From Template",
         "BuildShipVehicle": "Build Ship / Vehicle",
-        "NoResults": "Ningun articulo coincide con los filtros actuales."
+        "NoResults": "No items match the current filters."
       },
       "PageContext": {
         "SettlementWindow": "Settlement Window",
@@ -3590,7 +3590,7 @@
         "HistoryBody": "Previous exchange logs are stored here for reference.",
         "BrowseBody": "Browse the exchange, inspect listings, and stage gear in your cart.",
         "Category": "Category",
-        "Inventory": "Inventory",
+        "Inventory": "库存",
         "Reserve": "Reserve"
       },
       "Tier": {
@@ -3618,20 +3618,20 @@
         "DamageType": "Damage Type",
         "Range": "Range",
         "Proficiency": "Proficiency",
-        "Size": "Size",
+        "Size": "体型",
         "Properties": "Properties",
-        "Class": "Class",
-        "Quantity": "Quantity",
+        "Class": "职业",
+        "Quantity": "数量",
         "Degree": "Degree",
-        "HitPoints": "Hit Points",
-        "DamageThreshold": "Damage Threshold",
+        "HitPoints": "生命值",
+        "DamageThreshold": "伤害阈值",
         "Reflex": "Reflex",
         "Fortitude": "Fortitude",
-        "Will": "Will",
-        "Speed": "Speed",
-        "Perception": "Perception",
-        "Melee": "Melee",
-        "Ranged": "Ranged",
+        "Will": "意志",
+        "Speed": "速度",
+        "Perception": "察觉",
+        "Melee": "近战",
+        "Ranged": "远程",
         "Hull": "Hull",
         "Shields": "Shields",
         "DamageReduction": "Damage Reduction",
@@ -3641,15 +3641,15 @@
         "Cargo": "Cargo",
         "Consumables": "Consumables",
         "Hyperdrive": "Hyperdrive",
-        "Weapons": "Weapons",
+        "Weapons": "武器",
         "Availability": "Availability",
-        "Armor": "Armor",
+        "Armor": "护甲",
         "Uncapped": "Uncapped",
         "Dash": "-",
-        "Item": "Item"
+        "Item": "物品"
       },
       "Pagination": {
-        "Previous": "Previous",
+        "Previous": "之前",
         "Next": "Next",
         "PageOf": "Page {current} of {total}"
       },
@@ -3708,20 +3708,20 @@
         "FailedSubmitVehicleApproval": "Failed to submit vehicle for approval."
       },
       "Dialogs": {
-        "BuildCustomDroid": "Build Custom Droid",
+        "BuildCustomDroid": "建造自定义机器人",
         "BuildCustomDroidBody": "<p>Design a custom droid using the Droid Builder.</p><p><strong>Available credits:</strong> {credits}</p><p><strong>Minimum required:</strong> {minimum}</p><p><em>Your GM may require approval before your droid is finalized.</em></p>",
-        "BuildCustomStarship": "Build Custom Starship",
+        "BuildCustomStarship": "建造自定义星舰",
         "SelectDroidTemplate": "Select Droid Template",
         "SelectTemplatePlaceholder": "Select a template...",
         "Select": "Select",
-        "Cancel": "Cancel",
+        "Cancel": "取消",
         "CloneDroidTemplate": "Clone Droid Template: {name}",
         "CloneDroidTemplateBody": "<p>Create a new droid based on <strong>{name}</strong>?</p><p><em>You can customize this template before finalizing.</em></p>"
       },
       "GMSettings": {
         "BuyPriceMultiplier": "Buy Price Multiplier",
         "SellPriceMultiplier": "Sell Price Multiplier",
-        "Save": "Save"
+        "Save": "保存"
       },
       "Splash": {
         "Aria": "Rendarr's Outfitters market splash screen",
@@ -3876,14 +3876,14 @@
         "TargetContext": "Target Context",
         "Range": "Range",
         "PointBlank": "Point Blank",
-        "Normal": "Normal",
+        "Normal": "正常",
         "Long": "Long",
         "Extreme": "Extreme",
-        "Cover": "Cover",
-        "None": "None",
+        "Cover": "掩护",
+        "None": "无",
         "Partial": "Partial",
         "Improved": "Improved",
-        "Total": "Total",
+        "Total": "总计",
         "Concealment": "Concealment",
         "MiscModifier": "Misc Modifier",
         "Resources": "Resources",
@@ -3895,21 +3895,21 @@
         "ProjectedOutcome": "Projected Outcome",
         "CombatEnginePreview": "CombatEngine preview",
         "CurrentTotal": "current total",
-        "Breakdown": "Breakdown",
+        "Breakdown": "明细",
         "Execution": "Execution",
         "ExecutionNote": "The final click delegates to the existing CombatEngine roll path. This panel is configuration only.",
         "Execute": "Execute",
-        "InitiativeFallback": "Initiative",
+        "InitiativeFallback": "先攻",
         "CombatRollFallback": "Combat Roll"
       },
       "Damage": {
-        "Title": "Apply Damage",
-        "HP": "HP",
+        "Title": "应用伤害",
+        "HP": "生命值",
         "Temp": "temp",
         "DT": "DT",
         "Damage": "Damage",
         "BypassDT": "Bypass DT",
-        "Apply": "Apply",
+        "Apply": "应用",
         "Half": "Half",
         "Double": "x2",
         "Heal": "Heal",
@@ -3923,14 +3923,14 @@
         "RollLabel": "Roll Label",
         "RollSource": "Roll Source",
         "Die": "Die",
-        "Formula": "Formula",
+        "Formula": "公式",
         "Modifier": "Modifier",
         "DC": "DC",
         "Optional": "Optional",
         "Visibility": "Visibility",
-        "Reset": "Reset",
-        "Close": "Close",
-        "Roll": "Roll",
+        "Reset": "重置",
+        "Close": "关闭",
+        "Roll": "掷骰",
         "DefaultLabel": "Custom Roll",
         "Failed": "Custom roll failed."
       },
@@ -3939,133 +3939,133 @@
         "MentorSuggestion": "Mentor Suggestion",
         "NoDestiny": "This character does not have Destiny.",
         "Fulfilled": "This character's Destiny has been fulfilled.",
-        "NoneAvailable": "No Destiny Points available.",
+        "NoneAvailable": "没有可用的命运点。",
         "InstantEffects": "Instant Effects",
         "TimedBonuses": "Timed Bonuses (24h)"
       }
     },
     "MentorChat": {
-      "WindowTitle": "Talk to Your Mentors — {name}",
-      "BackToMentors": "Volver a mentores",
-      "TopRecommendations": "Recomendaciones principales:",
-      "SystemAnalysis": "Análisis del sistema",
-      "PathPrompt": "¿Alguno de estos caminos te llama?",
-      "ChoosePath": "Elijo {name}",
-      "BackToTopics": "Volver a temas",
-      "DefaultHelp": "¿En qué puedo ayudarte?",
-      "DiscussionPrompt": "¿Qué quieres discutir?",
-      "SelectionIntro": "Select a mentor to seek their guidance. These mentors have been unlocked through your class training:",
-      "UnlockedVia": "Unlocked via: {source}",
-      "NoMentors": "Aún no has desbloqueado mentores.",
-      "NoMentorsHint": "¡Toma una clase para obtener guía de mentores!",
-      "NoCharacterSelected": "No hay personaje seleccionado.",
-      "GreetingFallback": "{name} studies you for a moment, then waits for your question.",
-      "GreetingFallbackUnknown": "Your mentor",
-      "ErrorIntro": "I apologize, but I'm having trouble forming my thoughts right now.",
-      "ErrorAdvice": "Please try again in a moment.",
-      "PathSelectedIntro": "Ah, **{path}**. A wise choice.",
-      "PathSelectionFailed": "Failed to record path selection: {message}",
+      "WindowTitle": "与你的导师交谈 — {name}",
+      "BackToMentors": "返回导师",
+      "TopRecommendations": "最佳推荐：",
+      "SystemAnalysis": "系统分析",
+      "PathPrompt": "这些道路中是否有一条在召唤你？",
+      "ChoosePath": "我选择 {name}",
+      "BackToTopics": "返回话题",
+      "DefaultHelp": "我能帮你什么？",
+      "DiscussionPrompt": "你想讨论什么？",
+      "SelectionIntro": "选择一名导师寻求指导。这些导师已通过你的职业训练解锁：",
+      "UnlockedVia": "通过以下来源解锁：{source}",
+      "NoMentors": "你还没有解锁任何导师。",
+      "NoMentorsHint": "选择一个职业以获得导师指导！",
+      "NoCharacterSelected": "未选择角色。",
+      "GreetingFallback": "{name} 打量了你片刻，然后等待你的问题。",
+      "GreetingFallbackUnknown": "你的导师",
+      "ErrorIntro": "抱歉，我现在有些难以组织思路。",
+      "ErrorAdvice": "请稍后再试。",
+      "PathSelectedIntro": "啊，**{path}**。明智的选择。",
+      "PathSelectionFailed": "记录路径选择失败：{message}",
       "Topics": {
         "WhoAmI": {
-          "Title": "Who am I becoming?",
-          "Description": "Reflect on your evolving role and identity"
+          "Title": "我正在成为什么样的人？",
+          "Description": "反思你不断发展的角色定位与身份"
         },
         "PathsOpen": {
-          "Title": "What paths are open to me?",
-          "Description": "Explore archetype directions within your class"
+          "Title": "我有哪些可选道路？",
+          "Description": "探索你职业内的原型方向"
         },
         "DoingWell": {
-          "Title": "What am I doing well?",
-          "Description": "Receive affirmation and analysis of your synergies"
+          "Title": "我做得好的地方是什么？",
+          "Description": "获得对你协同点的肯定与分析"
         },
         "DoingWrong": {
-          "Title": "What am I doing wrong?",
-          "Description": "Identify gaps and inconsistencies in your build"
+          "Title": "我哪里做错了？",
+          "Description": "找出构筑中的缺口与不一致"
         },
         "HowFight": {
-          "Title": "How should I fight?",
-          "Description": "Learn your optimal combat role and battlefield positioning"
+          "Title": "我该如何战斗？",
+          "Description": "了解最适合你的战斗角色与战场站位"
         },
         "Careful": {
-          "Title": "What should I be careful of?",
-          "Description": "Understand risks, traps, and over-specialization"
+          "Title": "我应该小心什么？",
+          "Description": "了解风险、陷阱和过度专精"
         },
         "Ahead": {
-          "Title": "What lies ahead?",
-          "Description": "Explore prestige class options and future planning"
+          "Title": "前方有什么？",
+          "Description": "探索威望职业选项与未来规划"
         },
         "PlayClass": {
-          "Title": "How would you play this class?",
-          "Description": "Experience your mentor's personal philosophy and priorities"
+          "Title": "你会如何游玩这个职业？",
+          "Description": "了解导师的个人理念与优先事项"
         },
         "Story": {
-          "Title": "What is your story?",
-          "Description": "Learn about your mentor's past and what shaped them"
+          "Title": "你的故事是什么？",
+          "Description": "了解导师的过去以及塑造他们的经历"
         }
       },
       "Paths": {
-        "Guardian": "This path will demand discipline and endurance. You must be willing to stand between harm and those you protect.",
-        "Defender": "You choose to be the wall. Remember: a wall that breaks serves no one. Build your strength accordingly.",
-        "Striker": "Offense is a commitment. You will excel at destruction, but you must guard against becoming careless.",
-        "Gunslinger": "Speed wins fights. But speed without accuracy is just noise. Master both.",
-        "HeavyWeapons": "Power demands respect. Respect demands control. Do not mistake one for the other.",
-        "Consular": "The Force speaks in many languages. Listen before you speak.",
-        "Sentinel": "Balance is harder than specialization. But it is far more valuable.",
-        "Diplomat": "Words are weapons. Use them wisely.",
-        "Commander": "Leadership is not about making the right choice. It is about living with the wrong ones.",
-        "Tracker": "Awareness is your first weapon. Everything else follows from it.",
-        "Infiltrator": "Shadows are not your home—they are your tools. Do not forget the difference.",
-        "Pathfinder": "You will show others the way. Make sure you know where it leads.",
-        "Charmer": "Persuasion is power. But it is a power that turns on you when you believe your own lies.",
-        "Smuggler": "Freedom has a price. Make sure you can afford it.",
-        "Aristocrat": "Wealth is influence. Influence is power. And power without wisdom is just cruelty with a crown.",
-        "Default": "This path suits you. Walk it with purpose, not pride."
+        "Guardian": "这条道路要求纪律与耐力。你必须愿意站在危险与被你守护之人之间。",
+        "Defender": "你选择成为那堵墙。记住：会倒塌的墙保护不了任何人。按这个目标锤炼你的力量。",
+        "Striker": "进攻是一种承诺。你会擅长毁灭，但必须避免变得鲁莽。",
+        "Gunslinger": "速度能赢下战斗。但没有精度的速度只是噪音。两者都要掌握。",
+        "HeavyWeapons": "力量要求敬畏。敬畏要求控制。不要把两者混为一谈。",
+        "Consular": "原力会用许多语言说话。先聆听，再开口。",
+        "Sentinel": "平衡比专精更难，但也更有价值。",
+        "Diplomat": "言语也是武器。明智地使用它们。",
+        "Commander": "领导力不只是做出正确选择，而是承担错误选择的后果。",
+        "Tracker": "觉察是你的第一件武器。其他一切都源于它。",
+        "Infiltrator": "阴影不是你的家，而是你的工具。不要忘记这区别。",
+        "Pathfinder": "你会为他人指路。确保你知道那条路通向何方。",
+        "Charmer": "说服就是力量。但当你开始相信自己的谎言时，这份力量会反噬你。",
+        "Smuggler": "自由有代价。确保你付得起。",
+        "Aristocrat": "财富就是影响力。影响力就是权力。而没有智慧的权力，只是戴着王冠的残酷。",
+        "Default": "这条道路适合你。带着目的前行，而不是骄傲。"
       },
       "Analysis": {
-        "FindingPath": "At level {level}, you are still finding your path.",
-        "LevelArchetype": "At level {level}, the galaxy sees you becoming a **{name}**.\n\n{description}\n\n",
-        "ChartingOwnPath": "At level {level}, you are charting your own path.\n\n",
-        "Themes": "Your choices reveal strong themes: **{themes}**. This shapes how you approach challenges and conflicts.\n\n",
-        "CombatApproach": "Your combat approach is **{style}**. ",
-        "CombatMelee": "You face danger directly, relying on strength and proximity.",
-        "CombatRanged": "You engage from distance, valuing positioning and precision.",
-        "CombatCaster": "You channel the Force, bending reality to your will.",
-        "CombatMixed": "You adapt your tactics to each situation, refusing to be defined by a single method.",
-        "DarknessWarning": "\n\n⚠️ The darkness grows within you. Your path is shifting in ways that may be difficult to reverse.",
-        "Adventurer": "Adventurer",
-        "PathsIntro": "Every path demands sacrifice. What you choose to master determines what you must forsake.\n\n",
-        "PathsUnavailable": "I cannot yet see the paths available to you. Your class is still being defined.",
-        "PathsConsider": "Consider your options carefully:\n\n",
-        "UnknownArchetype": "An archetype yet to be fully understood.",
-        "SynergyFallback": "Your build shows promise, though it's still being defined.",
-        "SynergyIntro": "Let me identify what's working:\n\n",
-        "SynergyNone": "Your build is still taking shape. Focus on developing coherence and synergy.",
-        "PrestigeAlignment": "\n✓ Your choices are building a clear path toward **{className}** ({percent}% alignment).\n",
-        "SynergyClosing": "\nThese synergies compound. Continue building on what works.",
-        "GapFallback": "Your build is still being defined. Focus on finding coherence.",
-        "GapIntro": "Every build has weaknesses. Let me point out yours:\n\n",
-        "GapNone": "Your build shows no obvious gaps at this level. Continue as you are, but remain vigilant.",
-        "Critical": "Critical:",
-        "DarkDrift": "\n⚠️ You're drifting toward the dark side without committing. This instability will cost you when clarity matters most.\n",
-        "RoleIntro": "Your role in combat defines your priorities:\n\n",
+        "FindingPath": "在 {level} 级时，你仍在寻找自己的道路。",
+        "LevelArchetype": "在 {level} 级时，银河正看见你成为 **{name}**。\n\n{description}\n\n",
+        "ChartingOwnPath": "在 {level} 级时，你正在开辟自己的道路。\n\n",
+        "Themes": "你的选择显露出强烈主题：**{themes}**。这会塑造你面对挑战与冲突的方式。\n\n",
+        "CombatApproach": "你的战斗方式是 **{style}**。",
+        "CombatMelee": "你直面危险，依靠力量与近距离压迫。",
+        "CombatRanged": "你从远处交战，重视站位与精度。",
+        "CombatCaster": "你引导原力，让现实服从你的意志。",
+        "CombatMixed": "你根据每种情况调整战术，不愿被单一方式定义。",
+        "DarknessWarning": "\n\n⚠️ 黑暗正在你体内增长。你的道路正以可能难以逆转的方式偏移。",
+        "Adventurer": "冒险者",
+        "PathsIntro": "每条道路都要求牺牲。你选择掌握什么，就决定你必须放弃什么。\n\n",
+        "PathsUnavailable": "我还看不清你可走的道路。你的职业仍在成形。",
+        "PathsConsider": "仔细考虑你的选项：\n\n",
+        "UnknownArchetype": "尚未完全理解的原型。",
+        "SynergyFallback": "你的构筑展现出潜力，尽管仍在成形。",
+        "SynergyIntro": "让我指出哪些地方正在奏效：\n\n",
+        "SynergyNone": "你的构筑仍在成形。专注于发展一致性与协同。",
+        "PrestigeAlignment": "\n✓ 你的选择正在通向 **{className}** 的清晰道路（{percent}% 契合）。\n",
+        "SynergyClosing": "\n这些协同会彼此叠加。继续强化有效的部分。",
+        "GapFallback": "你的构筑仍在定义中。专注于找到一致性。",
+        "GapIntro": "每个构筑都有弱点。让我指出你的弱点：\n\n",
+        "GapNone": "在此等级，你的构筑没有明显缺口。继续保持，但仍要警惕。",
+        "Critical": "关键：",
+        "DarkDrift": "\n⚠️ 你正在向黑暗面漂移，却没有真正投入。这种不稳定会在最需要清晰时让你付出代价。\n",
+        "RoleIntro": "你在战斗中的角色决定你的优先事项：\n\n",
         "RoleMelee": "**Your Role: Frontline Enforcer**\n\n• **Positioning:** Engage the most dangerous threats directly. Draw fire away from allies.\n• **Pacing:** Aggressive. Close distance quickly, control space, deny retreats.\n• **Priorities:** Eliminate high-damage enemies first. Protect vulnerable allies second.\n\nYou are the anvil. Stand firm.",
         "RoleRanged": "**Your Role: Precision Striker**\n\n• **Positioning:** Stay mobile. Use cover. Maintain firing lanes.\n• **Pacing:** Controlled. Pick targets deliberately. Reposition between volleys.\n• **Priorities:** Eliminate enemy ranged threats first. Exploit weakened foes second.\n\nYou are the scalpel. Strike cleanly.",
         "RoleCaster": "**Your Role: Force Conduit**\n\n• **Positioning:** Stay protected but central. Maintain awareness of all combatants.\n• **Pacing:** Adaptive. Control the battlefield tempo. Save resources for critical moments.\n• **Priorities:** Disable enemy Force users first. Support allies second. Damage last.\n\nYou are the fulcrum. Tip the balance.",
         "RoleMixed": "**Your Role: Adaptive Tactician**\n\n• **Positioning:** Read the situation. Fill gaps as they appear.\n• **Pacing:** Reactive. Shift roles as the fight evolves.\n• **Priorities:** Exploit enemy mistakes. Cover ally weaknesses.\n\nYou are the wildcard. Adapt or die.",
-        "RiskIntro": "These are the dangers you face:\n\n",
+        "RiskIntro": "这些是你面临的危险：\n\n",
         "RiskMelee": "**Overcommitment:** Charging into melee leaves you vulnerable to focus fire and area attacks. Know when to retreat.\n\n**Mobility Denial:** Slow speed or lack of initiative means enemies can kite you. You'll chase while they strike.\n",
         "RiskRanged": "**Cover Dependence:** If enemies close distance or destroy your cover, you become fragile quickly.\n\n**Tunnel Vision:** Focusing on damage output while ignoring positioning gets you flanked or surrounded.\n",
         "RiskCaster": "**Resource Depletion:** The Force is finite. Spending power too early leaves you helpless when it matters most.\n\n**Fragility:** Low defenses mean a single focused assault can disable you before you act.\n",
         "RiskMixed": "**Jack-of-All-Trades Trap:** Versatility without focus means you're competent at everything but exceptional at nothing.\n\n**Identity Drift:** Without a clear role, you risk making choices that contradict each other instead of synergizing.\n",
         "RiskDarkCorruption": "\n🔥 **Dark Side Corruption:** The darkness offers power, but it demands more than it gives. The further you go, the harder it becomes to turn back. Eventually, it will consume you.",
         "RiskTemptation": "\n⚠️ **Temptation:** You're flirting with the dark side. Every step down that path makes the next step easier and the return harder.",
-        "PrestigeLow": "Prestige classes unlock at higher levels. For now, focus on mastering your current class and establishing your identity.",
-        "PrestigeIntro": "The paths that lie ahead:\n\n",
-        "PrestigeNone": "Your build doesn't yet point toward a specific prestige class. Continue developing your core strengths, and a path will emerge.",
-        "Recommended": "Recommended",
-        "PrestigePath": "**{className}** ({confidence}% alignment)\nThis path builds on your current direction. It will deepen what you've started, not redirect it.\n\n",
-        "PrestigeTradeoff": "⚠️ **Tradeoff:** Prestige classes offer specialization, but they narrow your options. Choose the path that serves your purpose, not the one that sounds powerful.",
-        "DoctrineIntro": "You want to know how *I* would play this? Here's my truth:\n\n",
+        "PrestigeLow": "威望职业会在更高等级解锁。现在，专注于掌握当前职业并确立你的身份。",
+        "PrestigeIntro": "前方的道路：\n\n",
+        "PrestigeNone": "你的构筑尚未指向特定威望职业。继续发展核心优势，道路会逐渐显现。",
+        "Recommended": "推荐",
+        "PrestigePath": "**{className}**（{confidence}% 契合）\n这条道路建立在你当前方向之上。它会深化你已经开始的内容，而不是改变方向。\n\n",
+        "PrestigeTradeoff": "⚠️ **取舍：** 威望职业提供专精，但也会缩窄选项。选择服务于你目标的道路，而不是听起来强大的道路。",
+        "DoctrineIntro": "你想知道 *我* 会如何游玩这个职业？这是我的真实看法：\n\n",
         "DoctrineMiraj": "I value **balance**, **wisdom**, and **service**.\n\nI would prioritize the Force above all else—not for power, but for understanding. Every decision would ask: does this bring balance, or does it serve ego?\n\nI would invest in **Wisdom** and **Charisma**, train **Persuasion** and **Use the Force**, and never stop seeking knowledge.\n\nI would avoid the dark side not out of fear, but because I know where it leads.",
         "DoctrineLead": "I value **efficiency**, **survival**, and **mission success**.\n\nI would build for adaptability—**Dexterity** and **Wisdom** first, skills that keep me alive and aware.\n\nI would master **Stealth**, **Perception**, and **Survival**. I'd never take a fight I could avoid, and I'd never leave a teammate behind.\n\nFlashy moves get you killed. Smart moves get you home.",
         "DoctrineSalty": "I value **freedom**, **profit**, and **survival**.\n\nI'd max **Charisma** and **Dexterity**, charm me way out of most fights, and shoot me way out of the rest.\n\nI'd train **Deception**, **Persuasion**, and **Pilot**. Why fight when ye can talk yer way to riches?\n\nRules be for fools. I play to win, and I don't mind bendin' a few laws along the way.",

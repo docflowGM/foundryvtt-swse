@@ -57,6 +57,15 @@ import {
   createCustomStarship
 } from "/systems/foundryvtt-swse/scripts/apps/store/store-checkout.js";
 
+
+function storeI18n(key, data = {}) {
+  try {
+    return game.i18n?.format?.(key, data) ?? game.i18n?.localize?.(key) ?? key;
+  } catch (_err) {
+    return key;
+  }
+}
+
 const CART_FLAG_SCOPE = 'foundryvtt-swse';
 const CART_FLAG_KEY = 'storeCart';
 
@@ -128,7 +137,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
     id: 'swse-store',
     tag: 'section',
     window: {
-      title: 'Galactic Trade Exchange',
+      title: 'SWSE.Store.Title',
       width: 1200,
       height: 800,
       resizable: true
@@ -161,6 +170,9 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
   constructor(actor = null, options = {}) {
     super(options);
+    if (this.options?.window) {
+      this.options.window.title = storeI18n('SWSE.Store.Title');
+    }
     this.actor = actor ?? null;
     this.object = actor ?? null; // AppV2 contract: object is the document being edited
 
@@ -334,7 +346,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       pushEntry({
         id: item.id,
         name: item.name,
-        type: 'Item',
+        type: storeI18n('SWSE.Store.Technical.Item'),
         itemType: 'item',
         img: item.img || '',
         unitCost: item.cost ?? 0,
@@ -345,7 +357,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       pushEntry({
         id: droid.id,
         name: droid.name,
-        type: 'Droid',
+        type: storeI18n('SWSE.Store.Navigation.Droids'),
         itemType: 'droid',
         img: droid.img || droid.actor?.img || '',
         unitCost: droid.cost ?? 0,
@@ -356,7 +368,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       pushEntry({
         id: vehicle.id,
         name: vehicle.name,
-        type: 'Vehicle',
+        type: storeI18n('SWSE.Store.Navigation.Vehicles'),
         itemType: 'vehicle',
         img: vehicle.img || vehicle.template?.img || '',
         unitCost: vehicle.cost ?? 0,
@@ -381,9 +393,9 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const history = this.actor?.getFlag?.('foundryvtt-swse', 'purchaseHistory') || [];
     return history.slice().reverse().map(entry => {
       const items = [
-        ...(entry.items || []).map(i => ({ name: i.name || 'Unknown Item', qty: 1, cost: i.cost ?? 0 })),
-        ...(entry.droids || []).map(i => ({ name: i.name || 'Unknown Droid', qty: 1, cost: i.cost ?? 0 })),
-        ...(entry.vehicles || []).map(i => ({ name: i.name || 'Unknown Vehicle', qty: 1, cost: i.cost ?? 0 }))
+        ...(entry.items || []).map(i => ({ name: i.name || storeI18n('SWSE.Store.Unknown.Item'), qty: 1, cost: i.cost ?? 0 })),
+        ...(entry.droids || []).map(i => ({ name: i.name || storeI18n('SWSE.Store.Unknown.Droid'), qty: 1, cost: i.cost ?? 0 })),
+        ...(entry.vehicles || []).map(i => ({ name: i.name || storeI18n('SWSE.Store.Unknown.Vehicle'), qty: 1, cost: i.cost ?? 0 }))
       ];
       return {
         timestamp: new Date(entry.timestamp || Date.now()).toLocaleString(),
@@ -395,12 +407,12 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
   _buildCategorySummary(allItems = []) {
     const canonicalLabels = {
-      weapons: 'Weapons',
-      armor: 'Armor',
-      gear: 'Equipment',
-      equipment: 'Equipment',
-      vehicles: 'Vehicles',
-      droids: 'Droids'
+      weapons: storeI18n('SWSE.Store.Navigation.Weapons'),
+      armor: storeI18n('SWSE.Store.Navigation.Armor'),
+      gear: storeI18n('SWSE.Store.Navigation.Equipment'),
+      equipment: storeI18n('SWSE.Store.Navigation.Equipment'),
+      vehicles: storeI18n('SWSE.Store.Navigation.Vehicles'),
+      droids: storeI18n('SWSE.Store.Navigation.Droids')
     };
     const canonicalOrder = ['weapons', 'armor', 'gear', 'equipment', 'vehicles', 'droids'];
     const labels = new Map();
@@ -427,31 +439,31 @@ export class SWSEStore extends BaseSWSEAppV2 {
   }
 
   _getCurrentCategoryLabel(categorySummary = []) {
-    if (!this.currentCategory) {return 'Weapons';}
+    if (!this.currentCategory) {return storeI18n('SWSE.Store.Navigation.Weapons');}
     return categorySummary.find(category => category.key === this.currentCategory)?.label || this.currentCategory;
   }
 
   _buildPageContext({ currentView, currentCategoryLabel, cartRemaining }) {
     const labels = {
-      browse: 'Browse',
-      cart: 'Cart',
-      checkout: 'Checkout',
-      history: 'History',
-      detail: 'Detail'
+      browse: storeI18n('SWSE.Store.Tabs.Browse'),
+      cart: storeI18n('SWSE.Store.Tabs.Cart'),
+      checkout: storeI18n('SWSE.Store.Tabs.Checkout'),
+      history: storeI18n('SWSE.Store.Tabs.History'),
+      detail: storeI18n('SWSE.Store.Tabs.Detail')
     };
     return {
-      pageLabel: labels[currentView] || 'Browse',
+      pageLabel: labels[currentView] || storeI18n('SWSE.Store.Tabs.Browse'),
       currentCategoryLabel,
-      briefTitle: currentView === 'checkout' ? 'Settlement Window' : currentView === 'history' ? 'Archive Access' : 'Listings Routed',
+      briefTitle: currentView === 'checkout' ? storeI18n('SWSE.Store.PageContext.SettlementWindow') : currentView === 'history' ? storeI18n('SWSE.Store.PageContext.ArchiveAccess') : storeI18n('SWSE.Store.PageContext.ListingsRouted'),
       briefBody: currentView === 'checkout'
-        ? 'Review the locked manifest before confirming the trade.'
+        ? storeI18n('SWSE.Store.PageContext.CheckoutBody')
         : currentView === 'history'
-          ? 'Previous exchange logs are stored here for reference.'
-          : 'Browse the exchange, inspect listings, and stage gear in your cart.',
+          ? storeI18n('SWSE.Store.PageContext.HistoryBody')
+          : storeI18n('SWSE.Store.PageContext.BrowseBody'),
       briefTags: [
-        { label: 'Category', value: currentCategoryLabel },
-        { label: 'Inventory', value: String(this.storeInventory?.allItems?.length || 0) },
-        { label: 'Reserve', value: `${this.storeCurrencySymbol} ${cartRemaining}` }
+        { label: storeI18n('SWSE.Store.PageContext.Category'), value: currentCategoryLabel },
+        { label: storeI18n('SWSE.Store.PageContext.Inventory'), value: String(this.storeInventory?.allItems?.length || 0) },
+        { label: storeI18n('SWSE.Store.PageContext.Reserve'), value: `${this.storeCurrencySymbol} ${cartRemaining}` }
       ],
       cartRemaining
     };
@@ -833,16 +845,16 @@ export class SWSEStore extends BaseSWSEAppV2 {
   _tierToDisplayLabel(tier) {
     // Convert tier to display with canonical labels
     const tierMap = {
-      'Perfect': 'Perfect',
-      'Excellent': 'Excellent',
-      'Good': 'Good',
-      'Viable': 'Viable',
-      'Marginal': 'Marginal',
-      'Poor': 'Poor',
+      'Perfect': storeI18n('SWSE.Store.Tier.Perfect'),
+      'Excellent': storeI18n('SWSE.Store.Tier.Excellent'),
+      'Good': storeI18n('SWSE.Store.Tier.Good'),
+      'Viable': storeI18n('SWSE.Store.Tier.Viable'),
+      'Marginal': storeI18n('SWSE.Store.Tier.Marginal'),
+      'Poor': storeI18n('SWSE.Store.Tier.Poor'),
       // Legacy support
-      'STRONG_FIT': 'Excellent',
-      'SITUATIONAL': 'Marginal',
-      'OUTPERFORMED': 'Poor'
+      'STRONG_FIT': storeI18n('SWSE.Store.Tier.Excellent'),
+      'SITUATIONAL': storeI18n('SWSE.Store.Tier.Marginal'),
+      'OUTPERFORMED': storeI18n('SWSE.Store.Tier.Poor')
     };
     return tierMap[tier] || tier;
   }
@@ -1088,7 +1100,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
         const item = this.itemsById.get(this.selectedProductId);
         const policyCheck = isStoreItemPurchasable(item);
         if (!policyCheck.ok) {
-          ui.notifications.warn(policyCheck.reason || 'This listing cannot be purchased right now.');
+          ui.notifications.warn(policyCheck.reason || storeI18n('SWSE.Store.Notifications.ListingCannotPurchase'));
           return;
         }
         const qty = parseInt(detailQtyInput?.value) || 1;
@@ -1137,7 +1149,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
           });
           await this.actor.setFlag('foundryvtt-swse', 'storeSavedForLater', current);
         }
-        ui.notifications.info(`${item.name} saved for later.`);
+        ui.notifications.info(storeI18n('SWSE.Store.Notifications.SavedForLater', { name: item.name }));
       }, { signal });
     });
     // Card expand buttons → Detail view
@@ -1161,7 +1173,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
         const item = this.itemsById.get(id);
         const policyCheck = isStoreItemPurchasable(item);
         if (!policyCheck.ok) {
-          ui.notifications.warn(policyCheck.reason || 'This listing cannot be purchased right now.');
+          ui.notifications.warn(policyCheck.reason || storeI18n('SWSE.Store.Notifications.ListingCannotPurchase'));
           return;
         }
         addItemToCart(this, id, line => this._setRendarrLine(line));
@@ -1367,9 +1379,9 @@ export class SWSEStore extends BaseSWSEAppV2 {
     }
 
     paginationContainer.innerHTML = `
-      <button id="prev-page-btn" class="pagination-btn" ${currentPage <= 1 ? 'disabled' : ''}>← Previous</button>
-      <span id="page-info" style="font-size: 0.9em; color: #888;">Page ${currentPage} of ${totalPages}</span>
-      <button id="next-page-btn" class="pagination-btn" ${currentPage >= totalPages ? 'disabled' : ''}>Next →</button>
+      <button id="prev-page-btn" class="pagination-btn" ${currentPage <= 1 ? 'disabled' : ''}>← ${storeI18n('SWSE.Store.Pagination.Previous')}</button>
+      <span id="page-info" style="font-size: 0.9em; color: #888;">${storeI18n('SWSE.Store.Pagination.PageOf', { current: currentPage, total: totalPages })}</span>
+      <button id="next-page-btn" class="pagination-btn" ${currentPage >= totalPages ? 'disabled' : ''}>${storeI18n('SWSE.Store.Pagination.Next')} →</button>
     `;
 
     const prevBtn = paginationContainer.querySelector('#prev-page-btn');
@@ -1406,79 +1418,79 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
     if (itemType === 'armor') {
       const armor = resolveArmorData(item);
-      add('Type', armor.armorTypeLabel || item.subcategory || 'Armor');
-      add('Reflex Bonus', armor.reflexBonus !== undefined && armor.reflexBonus !== null ? `+${armor.reflexBonus}` : '');
-      add('Fortitude Bonus', armor.fortitudeBonus !== undefined && armor.fortitudeBonus !== null ? `+${armor.fortitudeBonus}` : '');
+      add(storeI18n('SWSE.Store.Technical.Type'), armor.armorTypeLabel || item.subcategory || storeI18n('SWSE.Store.Technical.Armor'));
+      add(storeI18n('SWSE.Store.Technical.ReflexBonus'), armor.reflexBonus !== undefined && armor.reflexBonus !== null ? `+${armor.reflexBonus}` : '');
+      add(storeI18n('SWSE.Store.Technical.FortitudeBonus'), armor.fortitudeBonus !== undefined && armor.fortitudeBonus !== null ? `+${armor.fortitudeBonus}` : '');
       if (armor.isEnergyShield) {
-        add('Shield Rating', armor.shieldRating ? `SR ${armor.shieldRating}` : '—');
-        add('Current SR', armor.currentSR ?? 0);
-        add('Charges', `${armor.chargesCurrent}/${armor.chargesMax}`);
+        add(storeI18n('SWSE.Store.Technical.ShieldRating'), armor.shieldRating ? `SR ${armor.shieldRating}` : storeI18n('SWSE.Store.Technical.Dash'));
+        add(storeI18n('SWSE.Store.Technical.CurrentSR'), armor.currentSR ?? 0);
+        add(storeI18n('SWSE.Store.Technical.Charges'), `${armor.chargesCurrent}/${armor.chargesMax}`);
       }
-      add('Max Dex', armor.maxDexLabel ?? 'Uncapped');
-      add('Armor Check', armor.armorCheckPenalty);
-      add('Speed Penalty', armor.speedPenalty);
-      add('Weight', sys.weight);
-      add('Source', sys.sourcebook);
+      add(storeI18n('SWSE.Store.Technical.MaxDex'), armor.maxDexLabel ?? storeI18n('SWSE.Store.Technical.Uncapped'));
+      add(storeI18n('SWSE.Store.Technical.ArmorCheck'), armor.armorCheckPenalty);
+      add(storeI18n('SWSE.Store.Technical.SpeedPenalty'), armor.speedPenalty);
+      add(storeI18n('SWSE.Store.Technical.Weight'), sys.weight);
+      add(storeI18n('SWSE.Store.Technical.Source'), sys.sourcebook);
     }
 
     if (itemType === 'weapon') {
-      add('Category', item.subcategory || sys.category || sys.weaponCategory);
-      add('Damage', sys.damage);
-      add('Damage Type', sys.damageType);
-      add('Range', sys.range);
-      add('Proficiency', sys.proficiency);
-      add('Size', sys.size);
-      add('Weight', sys.weight);
-      add('Properties', Array.isArray(sys.properties) ? sys.properties.join(', ') : sys.properties);
-      add('Source', sys.sourcebook);
+      add(storeI18n('SWSE.Store.Technical.Category'), item.subcategory || sys.category || sys.weaponCategory);
+      add(storeI18n('SWSE.Store.Technical.Damage'), sys.damage);
+      add(storeI18n('SWSE.Store.Technical.DamageType'), sys.damageType);
+      add(storeI18n('SWSE.Store.Technical.Range'), sys.range);
+      add(storeI18n('SWSE.Store.Technical.Proficiency'), sys.proficiency);
+      add(storeI18n('SWSE.Store.Technical.Size'), sys.size);
+      add(storeI18n('SWSE.Store.Technical.Weight'), sys.weight);
+      add(storeI18n('SWSE.Store.Technical.Properties'), Array.isArray(sys.properties) ? sys.properties.join(', ') : sys.properties);
+      add(storeI18n('SWSE.Store.Technical.Source'), sys.sourcebook);
     }
 
     if (itemType === 'equipment') {
-      add('Class', item.subcategory || (Array.isArray(sys.tags) ? sys.tags.join(', ') : sys.category));
-      add('Size', sys.size);
-      add('Weight', sys.weight);
-      add('Quantity', sys.quantity);
-      add('Source', sys.sourcebook);
+      add(storeI18n('SWSE.Store.Technical.Class'), item.subcategory || (Array.isArray(sys.tags) ? sys.tags.join(', ') : sys.category));
+      add(storeI18n('SWSE.Store.Technical.Size'), sys.size);
+      add(storeI18n('SWSE.Store.Technical.Weight'), sys.weight);
+      add(storeI18n('SWSE.Store.Technical.Quantity'), sys.quantity);
+      add(storeI18n('SWSE.Store.Technical.Source'), sys.sourcebook);
     }
 
     if (itemType === 'droid') {
-      add('Degree', sys.degree);
-      add('Size', sys.size);
-      add('Hit Points', sys.HP);
-      add('Damage Threshold', sys.damageThreshold);
-      add('Reflex', sys.reflexDefense);
-      add('Fortitude', sys.fortitudeDefense);
-      add('Will', sys.willDefense);
-      add('Speed', sys.speed || item.flags?.swse?.speedText || item.doc?.flags?.swse?.speedText);
-      add('Perception', sys.perception);
+      add(storeI18n('SWSE.Store.Technical.Degree'), sys.degree);
+      add(storeI18n('SWSE.Store.Technical.Size'), sys.size);
+      add(storeI18n('SWSE.Store.Technical.HitPoints'), sys.HP);
+      add(storeI18n('SWSE.Store.Technical.DamageThreshold'), sys.damageThreshold);
+      add(storeI18n('SWSE.Store.Technical.Reflex'), sys.reflexDefense);
+      add(storeI18n('SWSE.Store.Technical.Fortitude'), sys.fortitudeDefense);
+      add(storeI18n('SWSE.Store.Technical.Will'), sys.willDefense);
+      add(storeI18n('SWSE.Store.Technical.Speed'), sys.speed || item.flags?.swse?.speedText || item.doc?.flags?.swse?.speedText);
+      add(storeI18n('SWSE.Store.Technical.Perception'), sys.perception);
       const melee = Array.isArray(sys.attacks?.melee) ? sys.attacks.melee.map(a => `${a.name} ${a.damage ? `(${a.damage})` : ''}`.trim()).join(', ') : '';
       const ranged = Array.isArray(sys.attacks?.ranged) ? sys.attacks.ranged.map(a => `${a.name} ${a.damage ? `(${a.damage})` : ''}`.trim()).join(', ') : '';
-      add('Melee', melee);
-      add('Ranged', ranged);
+      add(storeI18n('SWSE.Store.Technical.Melee'), melee);
+      add(storeI18n('SWSE.Store.Technical.Ranged'), ranged);
     }
 
     if (itemType === 'vehicle') {
-      add('Class', sys.type || item.subcategory);
-      add('Size', sys.size);
-      add('Hull', sys.hull?.max ?? sys.hull?.value ?? sys.hull);
-      add('Shields', sys.shields?.max ?? sys.shields?.value ?? sys.shields);
-      add('Damage Reduction', sys.damageReduction);
-      add('Damage Threshold', sys.damageThreshold);
-      add('Reflex', sys.reflexDefense);
-      add('Fortitude', sys.fortitudeDefense);
+      add(storeI18n('SWSE.Store.Technical.Class'), sys.type || item.subcategory);
+      add(storeI18n('SWSE.Store.Technical.Size'), sys.size);
+      add(storeI18n('SWSE.Store.Technical.Hull'), sys.hull?.max ?? sys.hull?.value ?? sys.hull);
+      add(storeI18n('SWSE.Store.Technical.Shields'), sys.shields?.max ?? sys.shields?.value ?? sys.shields);
+      add(storeI18n('SWSE.Store.Technical.DamageReduction'), sys.damageReduction);
+      add(storeI18n('SWSE.Store.Technical.DamageThreshold'), sys.damageThreshold);
+      add(storeI18n('SWSE.Store.Technical.Reflex'), sys.reflexDefense);
+      add(storeI18n('SWSE.Store.Technical.Fortitude'), sys.fortitudeDefense);
       add('Speed', sys.speed || sys.maxVelocity);
-      add('Maneuver', sys.maneuver);
-      add('Crew', sys.crew);
-      add('Passengers', sys.passengers);
-      add('Cargo', sys.cargo);
-      add('Consumables', sys.consumables);
-      add('Hyperdrive', sys.hyperdrive_class);
+      add(storeI18n('SWSE.Store.Technical.Maneuver'), sys.maneuver);
+      add(storeI18n('SWSE.Store.Technical.Crew'), sys.crew);
+      add(storeI18n('SWSE.Store.Technical.Passengers'), sys.passengers);
+      add(storeI18n('SWSE.Store.Technical.Cargo'), sys.cargo);
+      add(storeI18n('SWSE.Store.Technical.Consumables'), sys.consumables);
+      add(storeI18n('SWSE.Store.Technical.Hyperdrive'), sys.hyperdrive_class);
       if (Array.isArray(sys.weapons) && sys.weapons.length) {
-        add('Weapons', sys.weapons.map(w => `${w.name}${w.damage ? ` (${w.damage})` : ''}`).join(', '));
+        add(storeI18n('SWSE.Store.Technical.Weapons'), sys.weapons.map(w => `${w.name}${w.damage ? ` (${w.damage})` : ''}`).join(', '));
       }
     }
 
-    add('Availability', sys.availability);
+    add(storeI18n('SWSE.Store.Technical.Availability'), sys.availability);
 
     return details.length > 0 ? details.join('') : '';
   }

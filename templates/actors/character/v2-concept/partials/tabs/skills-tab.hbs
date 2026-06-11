@@ -76,16 +76,14 @@
               <div class="swse-concept-skill-row__titleline">
                 {{#if skill.hasExtraUses}}
                   <button type="button"
-                          class="skill-expand-toggle swse-concept-expand-toggle {{#if (gte skill.extraUsesCount 3)}}skill-expand-toggle--many{{/if}}"
+                          class="skill-expand-toggle swse-concept-expand-toggle swse-concept-extra-uses-toggle"
                           data-action="toggle-skill-expand"
                           data-skill="{{skill.key}}"
                           aria-expanded="false"
-                          title="Expand extra uses">
-                    {{#if (gte skill.extraUsesCount 3)}}
-                      <span class="expand-count">{{skill.extraUsesCount}}</span>
-                    {{else}}
-                      ▶
-                    {{/if}}
+                          title="Show extra skill uses">
+                    <span class="expand-chevron" aria-hidden="true">▾</span>
+                    <span class="expand-label">Show extra skill uses</span>
+                    <span class="expand-count">{{skill.extraUsesCount}}</span>
                   </button>
                 {{/if}}
 

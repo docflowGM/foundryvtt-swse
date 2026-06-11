@@ -9,7 +9,7 @@
      data-holonet-thread-id="{{threadId}}"
      data-holonet-action="{{action}}"
      {{#if actorId}}data-actor-id="{{actorId}}"{{/if}}>
-  {{#if unread}}<span class="unread" aria-label="Unread"></span>{{/if}}
+  {{#if unread}}<span class="unread" aria-label="{{localize 'SWSE.Chat.Holonet.Unread'}}"></span>{{/if}}
   <div class="mast">
     <span class="antenna" aria-hidden="true">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
@@ -33,16 +33,16 @@
     <div class="ht-credit-quickline"><strong>{{creditAction.actorLabel}}</strong> {{creditAction.verb}} <strong>{{creditAction.amountLabel}}</strong>{{#if creditAction.memoPreview}} · “{{creditAction.memoPreview}}”{{/if}}</div>
     <div class="ht-credit-actions">
       <button type="button" data-holonet-action="{{creditAction.primaryAction}}" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">{{creditAction.primaryLabel}}</button>
-      <button type="button" data-holonet-action="{{creditAction.declineAction}}" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">Decline</button>
-      <button type="button" data-holonet-action="open-thread" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">See Message</button>
+      <button type="button" data-holonet-action="{{creditAction.declineAction}}" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">{{localize 'SWSE.Chat.Holonet.Decline'}}</button>
+      <button type="button" data-holonet-action="open-thread" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">{{localize 'SWSE.Chat.Holonet.SeeMessage'}}</button>
     </div>
     {{else}}
     {{#if materialAction}}
     <div class="ht-credit-quickline"><strong>{{materialAction.actorLabel}}</strong> {{materialAction.verb}} <strong>{{materialAction.itemLabel}}</strong>{{#if materialAction.memoPreview}} · “{{materialAction.memoPreview}}”{{/if}}</div>
     <div class="ht-credit-actions">
       <button type="button" data-holonet-action="{{materialAction.primaryAction}}" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">{{materialAction.primaryLabel}}</button>
-      <button type="button" data-holonet-action="{{materialAction.declineAction}}" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">Decline</button>
-      <button type="button" data-holonet-action="open-thread" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">See Message</button>
+      <button type="button" data-holonet-action="{{materialAction.declineAction}}" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">{{localize 'SWSE.Chat.Holonet.Decline'}}</button>
+      <button type="button" data-holonet-action="open-thread" data-holonet-record-id="{{recordId}}" data-holonet-thread-id="{{threadId}}">{{localize 'SWSE.Chat.Holonet.SeeMessage'}}</button>
     </div>
     {{else}}
     {{#if preview}}<div class="htprev">{{preview}}{{#if attachmentCount}} <span class="att">📎 <b>{{attachmentCount}}</b></span>{{/if}}</div>{{/if}}

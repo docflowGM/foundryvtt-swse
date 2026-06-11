@@ -380,6 +380,7 @@
                 </div>
                 <div class="swse-store-surface__rail-actions">
                   <button type="button" class="swse-store-surface__rail-btn" data-ss-tab="cart">▸ OPEN CART</button>
+                  <button type="button" class="swse-store-surface__rail-btn" data-action="clear-cart">CLEAR ALL</button>
                   <button type="button" class="swse-store-surface__rail-btn swse-store-surface__rail-btn--primary" data-action="proceed-checkout" {{#if vm.storeContext.checkoutBlocked}}disabled aria-disabled="true" title="{{vm.storeContext.checkoutBlockedReason}}"{{/if}}>SETTLE</button>
                 </div>
                 {{else}}
@@ -485,7 +486,7 @@
             </div>
             {{/if}}
             <div class="swse-store-surface__cart-actions">
-              <button type="button" class="swse-store-surface__btn" data-action="clear-cart">CLEAR CART</button>
+              <button type="button" class="swse-store-surface__btn" data-action="clear-cart">CLEAR ALL</button>
               <button type="button" class="swse-store-surface__btn swse-store-surface__btn--primary" data-action="proceed-checkout" {{#if vm.storeContext.checkoutBlocked}}disabled aria-disabled="true" title="{{vm.storeContext.checkoutBlockedReason}}"{{/if}}>PROCEED TO CHECKOUT →</button>
             </div>
           </div>
@@ -530,6 +531,7 @@
           {{/if}}
           <div class="swse-store-surface__checkout-actions">
             <button type="button" class="swse-store-surface__btn" data-action="return-to-cart">← RETURN TO CART</button>
+            <button type="button" class="swse-store-surface__btn" data-action="clear-cart">CLEAR ALL</button>
             <button type="button" class="swse-store-surface__btn swse-store-surface__btn--confirm" data-action="confirm-checkout" {{#if vm.storeContext.checkoutBlocked}}disabled aria-disabled="true" title="{{vm.storeContext.checkoutBlockedReason}}"{{/if}}>◈ CONFIRM TRADE</button>
           </div>
           {{else}}

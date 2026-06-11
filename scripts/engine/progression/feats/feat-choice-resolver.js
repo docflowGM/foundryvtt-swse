@@ -1011,21 +1011,17 @@ export class FeatChoiceResolver {
   }
 
   static getWeaponSpecializationEligibleChoices(actor, registry = this._registry || {}, pending = {}) {
-    const existingFocus = this.getWeaponFocusChoices(actor, pending);
-    if (existingFocus.length > 0) {
-      return existingFocus.map((entry) => ({
-        ...entry,
-        prerequisiteSource: 'weapon_focus',
-        providerLocked: Boolean(entry?.locked),
-        providerSource: entry?.source || null,
-        locked: false,
-        editable: true
-      }));
-    }
-    return this.getWeaponFocusEligibleChoices(actor, registry, pending).map((entry) => ({
+    // Weapon Specialization is a consumer of Weapon Focus, not Weapon
+    // Proficiency. Older fallback behavior exposed proficiency-derived options
+    // as selectable and then rejected them after the choice dialog, which made
+    // the talent look legal when the actor did not actually possess Weapon
+    // Focus. Fail closed here: no Weapon Focus means no legal specialization
+    // choices.
+    return this.getWeaponFocusChoices(actor, pending).map((entry) => ({
       ...entry,
-      prerequisiteSource: 'weapon_proficiency_fallback',
-      unresolvedPrerequisite: true,
+      prerequisiteSource: 'weapon_focus',
+      providerLocked: Boolean(entry?.locked),
+      providerSource: entry?.source || null,
       locked: false,
       editable: true
     }));
@@ -1078,15 +1074,37 @@ export class FeatChoiceResolver {
 
   static _getChoiceEntriesByKind(actor, kind, pending = {}) {
     const owned = [];
-    for (const item of this.getAvailableFeatItems(actor, pending)) {
+    const inspectItem = (item, sourceType = item?.type || 'item') => {
+      if (!item) return;
       const meta = this.getChoiceMeta(item);
-      if (meta?.choiceKind !== kind) continue;
+      if (meta?.choiceKind !== kind) return;
       const stored = this.getStoredChoice(actor, item);
       for (const entry of asArray(stored)) {
         const normalized = normalizeChoiceEntry(entry);
-        if (normalized) owned.push({ ...normalized, source: `feat:${item.name}`, itemId: item.id || item._id });
+        if (normalized) owned.push({
+          ...normalized,
+          source: `${sourceType}:${item.name || item.label || kind}`,
+          itemId: item.id || item._id || item.itemId || null
+        });
       }
+    };
+
+    for (const item of this.getAvailableFeatItems(actor, pending)) inspectItem(item, 'feat');
+
+    // Talents such as Weapon Specialization carry the same choice metadata as
+    // feats, and follow-up talents (Crushing Assault, Impaling Assault, etc.)
+    // need to recognize the actor's selected specialization. The old helper only
+    // scanned feats, so talent-backed choices were invisible to prerequisite
+    // checks.
+    for (const item of this.getActorTalentItems(actor)) inspectItem(item, 'talent');
+    for (const item of asArray(pending?.selectedTalents || pending?.talents)) {
+      inspectItem({
+        ...item,
+        type: item?.type || 'talent',
+        system: { ...(item?.system || {}), sourceType: item?.system?.sourceType || 'pending' }
+      }, 'pending.talent');
     }
+
     if (owned.length) return uniqueById(owned);
     const choices = this.getActorChoiceState(actor);
     const candidates = [kind, stableKey(kind), nameKey(kind)].filter(Boolean);

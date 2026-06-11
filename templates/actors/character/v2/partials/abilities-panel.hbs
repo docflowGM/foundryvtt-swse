@@ -2,20 +2,20 @@
 <section class="abilities-panel v3-panel holo-panel">
 
   <header class="section-bar">
-    <h3 class="section-header">Abilities</h3>
+    <h3 class="section-header">{{localize "SWSE.CharacterSheet.Sections.Abilities"}}</h3>
     <div class="section-bar__actions">
       {{#if (eq actor.type "character")}}
       <button type="button"
               data-action="roll-attributes"
               class="swse-btn"
-              title="Open the progression engine on the attribute step">
-        Roll for Attributes
+              title='{{localize "SWSE.CharacterSheet.Tooltips.OpenAttributeStep"}}'>
+        {{localize "SWSE.CharacterSheet.Actions.RollForAttributes"}}
       </button>
       {{/if}}
       <button type="button"
               data-action="toggle-abilities"
               class="swse-btn">
-        Expand
+        {{localize "SWSE.CharacterSheet.Actions.Expand"}}
       </button>
     </div>
   </header>
@@ -25,7 +25,7 @@
     {{#each abilities as |ability|}}
 
       <div class="ability-row ability-{{ability.key}}"
-           data-swse-tooltip="{{#if (eq ability.key 'str')}}Strength{{else if (eq ability.key 'dex')}}Dexterity{{else if (eq ability.key 'con')}}Constitution{{else if (eq ability.key 'int')}}Intelligence{{else if (eq ability.key 'wis')}}Wisdom{{else if (eq ability.key 'cha')}}Charisma{{/if}}">
+           data-swse-tooltip="{{ability.label}}">
 
         <!-- COLLAPSED VIEW -->
         <div class="ability-collapsed">
@@ -46,7 +46,7 @@
                   data-action="roll-ability"
                   data-ability="{{ability.key}}"
                   class="swse-btn roll-btn"
-                  title="Roll d20 + {{ability.key}} modifier">
+                  title='{{localize "SWSE.CharacterSheet.Tooltips.RollAbilityModifier" ability=ability.key}}'>
             <i class="fa-solid fa-dice-d20"></i>
           </button>
 
@@ -61,7 +61,7 @@
                    data-field="base"
                    name="system.attributes.{{ability.key}}.base"
                    value="{{ability.base}}"
-                   title="Base ability score">
+                   title='{{localize "SWSE.CharacterSheet.Tooltips.BaseAbilityScore"}}'>
           </div>
 
           <div class="math-operator">+</div>
@@ -71,7 +71,7 @@
                    data-field="racial"
                    name="system.attributes.{{ability.key}}.racial"
                    value="{{ability.racial}}"
-                   title="Racial bonus">
+                   title='{{localize "SWSE.CharacterSheet.Tooltips.RacialBonus"}}'>
           </div>
 
           <div class="math-operator">+</div>
@@ -81,7 +81,7 @@
                    data-field="temp"
                    name="system.attributes.{{ability.key}}.temp"
                    value="{{ability.temp}}"
-                   title="Temporary modifier">
+                   title='{{localize "SWSE.CharacterSheet.Tooltips.TemporaryModifier"}}'>
           </div>
 
           <div class="math-operator">=</div>
@@ -98,7 +98,7 @@
                   data-action="roll-ability"
                   data-ability="{{ability.key}}"
                   class="swse-btn roll-btn"
-                  title="Roll d20 + {{ability.key}} modifier">
+                  title='{{localize "SWSE.CharacterSheet.Tooltips.RollAbilityModifier" ability=ability.key}}'>
             <i class="fa-solid fa-dice-d20"></i>
           </button>
 

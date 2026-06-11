@@ -206,6 +206,89 @@ export function isEnergyShieldItem(itemOrSystem = {}) {
   return /energy[\s_-]*shield/.test(tokens) || (tokens.includes('shield') && hasValue(shieldRating));
 }
 
+
+
+export function armorProficiencyRank(value) {
+  const raw = String(value ?? '').trim().toLowerCase();
+  if (!raw) return 0;
+  if (raw.includes('heavy')) return 3;
+  if (raw.includes('medium')) return 2;
+  if (raw.includes('light')) return 1;
+  return 0;
+}
+
+export function armorProficiencyCovers(candidate, required) {
+  const candidateRank = armorProficiencyRank(candidate);
+  const requiredRank = armorProficiencyRank(required);
+  if (!requiredRank) return true;
+  return candidateRank >= requiredRank;
+}
+
+export function getArmorProficiencyPenalty(armorType) {
+  const rank = armorProficiencyRank(armorType);
+  if (rank >= 3) return -10;
+  if (rank === 2) return -5;
+  if (rank === 1) return -2;
+  return 0;
+}
+
+function collectTruthyKeys(object, target) {
+  if (!object || typeof object !== 'object') return;
+  if (object instanceof Set) {
+    for (const value of object) target.add(String(value ?? '').trim());
+    return;
+  }
+  if (Array.isArray(object)) {
+    for (const value of object) target.add(String(value ?? '').trim());
+    return;
+  }
+  for (const [key, value] of Object.entries(object)) {
+    if (value === true || value === 1 || value === 'true') target.add(String(key ?? '').trim());
+    else if (typeof value === 'string' && armorProficiencyRank(value)) target.add(value);
+  }
+}
+
+export function collectActorArmorProficiencies(actor) {
+  const candidates = new Set();
+  collectTruthyKeys(actor?.system?.armorProficiency, candidates);
+  collectTruthyKeys(actor?.system?.proficiencies?.armor, candidates);
+  collectTruthyKeys(actor?.system?.armorProficiencies, candidates);
+  collectTruthyKeys(actor?._unlockGrants?.proficiencies?.armor, candidates);
+
+  for (const item of actor?.items ?? []) {
+    if (!['feat', 'talent', 'feature'].includes(item?.type)) continue;
+    const haystack = [
+      item?.name,
+      item?.system?.name,
+      item?.system?.slug,
+      item?.system?.selectedChoice,
+      item?.system?.choice,
+      item?.system?.specialization,
+      item?.flags?.swse?.slug
+    ].filter(Boolean).join(' ').toLowerCase();
+    if (!haystack.includes('armor proficiency')) continue;
+    if (haystack.includes('heavy')) candidates.add('heavy');
+    else if (haystack.includes('medium')) candidates.add('medium');
+    else if (haystack.includes('light')) candidates.add('light');
+  }
+
+  return Array.from(candidates).filter(Boolean);
+}
+
+export function actorHasArmorProficiencyForType(actor, armorType) {
+  const required = normalizeArmorType(armorType, '');
+  if (!required || required === 'shield') return true;
+  const candidates = collectActorArmorProficiencies(actor);
+  return candidates.some((candidate) => armorProficiencyCovers(candidate, required));
+}
+
+export function actorHasArmorProficiencyForArmor(actor, armorOrSystem) {
+  if (!armorOrSystem) return false;
+  const armor = resolveArmorData(armorOrSystem);
+  const required = armor.proficiencyRequired || armor.armorType;
+  return actorHasArmorProficiencyForType(actor, required);
+}
+
 export function resolveArmorData(itemOrSystem = {}) {
   const system = unwrapDocument(itemOrSystem);
   const name = sourceName(itemOrSystem);

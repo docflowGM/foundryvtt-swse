@@ -2,18 +2,18 @@
   <header class="rcd-header">
     <div class="rcd-header-bg"></div>
     <div class="rcd-header-content">
-      <span class="rcd-type-chip">⊕ {{#if (eq action.domain "initiative")}}initiative{{else}}attack{{/if}}</span>
+      <span class="rcd-type-chip">⊕ {{#if (eq action.domain "initiative")}}{{localize 'SWSE.PlayerUI.CombatRoll.Initiative'}}{{else}}{{localize 'SWSE.PlayerUI.CombatRoll.Attack'}}{{/if}}</span>
       <span class="rcd-roll-name">{{actionTitle}}</span>
-      <span class="rcd-actor">Tactical Targeting Console</span>
+      <span class="rcd-actor">{{localize 'SWSE.PlayerUI.CombatRoll.Title'}}</span>
     </div>
   </header>
 
   <div class="rcd-formula-strip">
-    <span class="rcd-formula-text">Projected total {{preview.total}}</span>
-    <span class="rcd-formula-base-mod">combat action resolver</span>
+    <span class="rcd-formula-text">{{localize 'SWSE.PlayerUI.CombatRoll.ProjectedTotal' total=preview.total}}</span>
+    <span class="rcd-formula-base-mod">{{localize 'SWSE.PlayerUI.CombatRoll.Resolver'}}</span>
     <span class="rcd-formula-chips">
-      <span class="rcd-fchip">{{#if (eq action.domain "initiative")}}initiative{{else}}weapon{{/if}}</span>
-      <span class="rcd-fchip">live preview</span>
+      <span class="rcd-fchip">{{#if (eq action.domain "initiative")}}{{localize 'SWSE.PlayerUI.CombatRoll.Initiative'}}{{else}}{{localize 'SWSE.PlayerUI.CombatRoll.Weapon'}}{{/if}}</span>
+      <span class="rcd-fchip">{{localize 'SWSE.PlayerUI.CombatRoll.LivePreview'}}</span>
     </span>
   </div>
 
@@ -21,47 +21,47 @@
     <main class="rcd-main">
       {{#unless (eq action.domain "initiative")}}
       <section class="swse-roll-config-panel">
-        <h4>Target Context</h4>
+        <h4>{{localize 'SWSE.PlayerUI.CombatRoll.TargetContext'}}</h4>
         <div class="swse-roll-config-grid">
-          <label>Range
+          <label>{{localize 'SWSE.PlayerUI.CombatRoll.Range'}}
             <select name="range">
-              <option value="pointblank" {{#if (eq options.range "pointblank")}}selected{{/if}}>Point Blank</option>
-              <option value="normal" {{#if (eq options.range "normal")}}selected{{/if}}>Normal</option>
-              <option value="long" {{#if (eq options.range "long")}}selected{{/if}}>Long</option>
-              <option value="extreme" {{#if (eq options.range "extreme")}}selected{{/if}}>Extreme</option>
+              <option value="pointblank" {{#if (eq options.range "pointblank")}}selected{{/if}}>{{localize 'SWSE.PlayerUI.CombatRoll.PointBlank'}}</option>
+              <option value="normal" {{#if (eq options.range "normal")}}selected{{/if}}>{{localize 'SWSE.PlayerUI.CombatRoll.Normal'}}</option>
+              <option value="long" {{#if (eq options.range "long")}}selected{{/if}}>{{localize 'SWSE.PlayerUI.CombatRoll.Long'}}</option>
+              <option value="extreme" {{#if (eq options.range "extreme")}}selected{{/if}}>{{localize 'SWSE.PlayerUI.CombatRoll.Extreme'}}</option>
             </select>
           </label>
-          <label>Cover
+          <label>{{localize 'SWSE.PlayerUI.CombatRoll.Cover'}}
             <select name="cover">
-              <option value="none" {{#if (eq options.cover "none")}}selected{{/if}}>None</option>
-              <option value="partial" {{#if (eq options.cover "partial")}}selected{{/if}}>Partial</option>
-              <option value="improved" {{#if (eq options.cover "improved")}}selected{{/if}}>Improved</option>
-              <option value="total" {{#if (eq options.cover "total")}}selected{{/if}}>Total</option>
+              <option value="none" {{#if (eq options.cover "none")}}selected{{/if}}>{{localize 'SWSE.PlayerUI.CombatRoll.None'}}</option>
+              <option value="partial" {{#if (eq options.cover "partial")}}selected{{/if}}>{{localize 'SWSE.PlayerUI.CombatRoll.Partial'}}</option>
+              <option value="improved" {{#if (eq options.cover "improved")}}selected{{/if}}>{{localize 'SWSE.PlayerUI.CombatRoll.Improved'}}</option>
+              <option value="total" {{#if (eq options.cover "total")}}selected{{/if}}>{{localize 'SWSE.PlayerUI.CombatRoll.Total'}}</option>
             </select>
           </label>
-          <label>Concealment
+          <label>{{localize 'SWSE.PlayerUI.CombatRoll.Concealment'}}
             <select name="concealment">
-              <option value="none" {{#if (eq options.concealment "none")}}selected{{/if}}>None</option>
-              <option value="partial" {{#if (eq options.concealment "partial")}}selected{{/if}}>Partial</option>
-              <option value="total" {{#if (eq options.concealment "total")}}selected{{/if}}>Total</option>
+              <option value="none" {{#if (eq options.concealment "none")}}selected{{/if}}>{{localize 'SWSE.PlayerUI.CombatRoll.None'}}</option>
+              <option value="partial" {{#if (eq options.concealment "partial")}}selected{{/if}}>{{localize 'SWSE.PlayerUI.CombatRoll.Partial'}}</option>
+              <option value="total" {{#if (eq options.concealment "total")}}selected{{/if}}>{{localize 'SWSE.PlayerUI.CombatRoll.Total'}}</option>
             </select>
           </label>
-          <label>Misc Modifier
+          <label>{{localize 'SWSE.PlayerUI.CombatRoll.MiscModifier'}}
             <input type="number" name="misc" value="{{options.misc}}" step="1">
           </label>
         </div>
       </section>
 
       <section class="swse-roll-config-panel swse-roll-config-panel--resources">
-        <h4>Resources</h4>
+        <h4>{{localize 'SWSE.PlayerUI.CombatRoll.Resources'}}</h4>
         <div class="rcd-resources">
           <label class="rcd-resource {{#if options.aim}}rcd-res-active{{/if}}">
-            <span class="rcd-res-header"><input type="checkbox" name="aim" {{#if options.aim}}checked{{/if}}> <span class="rcd-res-icon">⌖</span><span class="rcd-res-name">Aim</span></span>
-            <span class="rcd-res-detail">Apply the aiming state when the action economy allows it.</span>
+            <span class="rcd-res-header"><input type="checkbox" name="aim" {{#if options.aim}}checked{{/if}}> <span class="rcd-res-icon">⌖</span><span class="rcd-res-name">{{localize 'SWSE.PlayerUI.CombatRoll.Aim'}}</span></span>
+            <span class="rcd-res-detail">{{localize 'SWSE.PlayerUI.CombatRoll.AimDetail'}}</span>
           </label>
           <label class="rcd-resource {{#if options.force}}rcd-res-active{{/if}}">
-            <span class="rcd-res-header"><input type="checkbox" name="force" {{#if options.force}}checked{{/if}}> <span class="rcd-res-icon">✦</span><span class="rcd-res-name">Force Point</span></span>
-            <span class="rcd-res-detail">Spend a Force Point through the existing combat roll pipeline.</span>
+            <span class="rcd-res-header"><input type="checkbox" name="force" {{#if options.force}}checked{{/if}}> <span class="rcd-res-icon">✦</span><span class="rcd-res-name">{{localize 'SWSE.PlayerUI.CombatRoll.ForcePoint'}}</span></span>
+            <span class="rcd-res-detail">{{localize 'SWSE.PlayerUI.CombatRoll.ForcePointDetail'}}</span>
           </label>
         </div>
       </section>
@@ -69,7 +69,7 @@
 
       {{#if preview.attackOptions.length}}
       <section class="swse-roll-config-panel combat-options">
-        <h4>Attack Options</h4>
+        <h4>{{localize 'SWSE.PlayerUI.CombatRoll.AttackOptions'}}</h4>
         {{#each preview.attackOptions}}
           <div class="swse-roll-config-option combat-option-row combat-option-{{this.control}} {{#if this.disabled}}swse-roll-config-option--disabled{{/if}}">
             {{#if (eq this.control "slider")}}
@@ -89,25 +89,25 @@
 
     <aside class="rcd-rail">
       <section class="rcd-rail-sec rcd-rail-sec--preview">
-        <div class="rcd-rail-lbl">Projected Outcome</div>
-        <div class="rcd-preview-formula">CombatEngine preview</div>
+        <div class="rcd-rail-lbl">{{localize 'SWSE.PlayerUI.CombatRoll.ProjectedOutcome'}}</div>
+        <div class="rcd-preview-formula">{{localize 'SWSE.PlayerUI.CombatRoll.CombatEnginePreview'}}</div>
         <div class="rcd-preview-total">{{preview.total}}</div>
-        <div class="rcd-preview-label">current total</div>
+        <div class="rcd-preview-label">{{localize 'SWSE.PlayerUI.CombatRoll.CurrentTotal'}}</div>
       </section>
       <section class="rcd-rail-sec">
-        <div class="rcd-rail-lbl">Breakdown</div>
+        <div class="rcd-rail-lbl">{{localize 'SWSE.PlayerUI.CombatRoll.Breakdown'}}</div>
         {{#each preview.breakdown}}
           <div class="rcd-bd-row"><span class="rcd-bd-label">{{this.label}}</span><span class="rcd-bd-val">{{this.value}}</span></div>
         {{/each}}
       </section>
       <section class="rcd-rail-sec">
-        <div class="rcd-rail-lbl">Execution</div>
-        <p class="swse-roll-config-note">The final click delegates to the existing CombatEngine roll path. This panel is configuration only.</p>
+        <div class="rcd-rail-lbl">{{localize 'SWSE.PlayerUI.CombatRoll.Execution'}}</div>
+        <p class="swse-roll-config-note">{{localize 'SWSE.PlayerUI.CombatRoll.ExecutionNote'}}</p>
       </section>
     </aside>
   </div>
 
   <footer class="rcd-footer">
-    <button type="button" class="rcd-btn rcd-btn-pri roll-attack"><i class="fa-solid fa-dice-d20"></i> Execute</button>
+    <button type="button" class="rcd-btn rcd-btn-pri roll-attack"><i class="fa-solid fa-dice-d20"></i> {{localize 'SWSE.PlayerUI.CombatRoll.Execute'}}</button>
   </footer>
 </div>

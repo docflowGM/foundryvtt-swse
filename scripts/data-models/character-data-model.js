@@ -6,6 +6,7 @@ import { warnIfMixedTracks } from '../utils/hardening.js';
 import { getNpcMode } from '../actors/npc/npc-mode-adapter.js';
 import { ActorAbilityBridge } from '../adapters/ActorAbilityBridge.js';
 import { getDamageThresholdSizeBonus } from '../engine/combat/combat-stat-rules.js';
+import { actorHasArmorProficiencyForArmor, getArmorProficiencyPenalty } from '../items/armor-data-resolver.js';
 
 export class SWSECharacterDataModel extends SWSEActorDataModel {
 
@@ -508,20 +509,9 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
     const armorType = equippedArmor.system.armorType?.toLowerCase() || 'light';
 
-    // Check for armor proficiency
-    const armorProficiencies = actor?.items?.filter(i =>
-      (i.type === 'feat' || i.type === 'talent') &&
-      i.name.toLowerCase().includes('armor proficiency')
-    ) || [];
-
-    // Determine if character is proficient with this armor
-    let isProficient = false;
-    for (const prof of armorProficiencies) {
-      const profName = prof.name.toLowerCase();
-      if (profName.includes('light') && armorType === 'light') {isProficient = true;}
-      if (profName.includes('medium') && (armorType === 'light' || armorType === 'medium')) {isProficient = true;}
-      if (profName.includes('heavy')) {isProficient = true;} // Heavy includes all armor
-    }
+    // Determine proficiency through the shared armor authority. This covers
+    // stored system flags, progression unlock grants, and feat/talent items.
+    const isProficient = actorHasArmorProficiencyForArmor(actor, equippedArmor);
 
     // Store proficiency status for use in defense calculations
     this.armorProficient = isProficient;
@@ -533,11 +523,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     } else {
       // Not proficient: Additional penalties based on armor type
       const basePenalty = equippedArmor.system.armorCheckPenalty || 0;
-      const proficiencyPenalty = {
-        'light': -2,
-        'medium': -5,
-        'heavy': -10
-      }[armorType] || -2;
+      const proficiencyPenalty = getArmorProficiencyPenalty(armorType);
       this.armorCheckPenalty = basePenalty + proficiencyPenalty;
     }
 

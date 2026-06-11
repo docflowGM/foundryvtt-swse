@@ -5,6 +5,14 @@ import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-s
 import { DamageEngine } from "/systems/foundryvtt-swse/engine/combat/damage-engine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
+function playerUiI18n(key, data = {}) {
+  try {
+    return game.i18n?.format?.(key, data) ?? game.i18n?.localize?.(key) ?? key;
+  } catch (_err) {
+    return key;
+  }
+}
+
 export class DamageApp extends BaseSWSEAppV2 {
   constructor(actor, options = {}) {
     super(options);
@@ -16,7 +24,7 @@ export class DamageApp extends BaseSWSEAppV2 {
   static get defaultOptions() {
     return foundry.utils.mergeObject(super.defaultOptions, {
       id: 'damage-app',
-      title: 'Apply Damage',
+      title: playerUiI18n('SWSE.PlayerUI.Damage.Title'),
       template: 'modules/foundryvtt-swse/templates/apps/damage-app.hbs',
       position: {
         width: 300,

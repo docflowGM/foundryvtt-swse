@@ -1,12 +1,12 @@
 <section class="abilities-section talents-section v3-panel holo-panel swse-ui-panel">
 
   <header class="section-bar">
-    <h3 class="section-header">Talents</h3>
+    <h3 class="section-header">{{localize "SWSE.CharacterSheet.Sections.Talents"}}</h3>
     <button type="button"
             class="add-talent swse-btn"
             data-action="add-talent"
             {{#unless talentPanel.canEdit}}disabled{{/unless}}>
-      + Add Talent
+      {{localize "SWSE.CharacterSheet.Actions.AddTalent"}}
     </button>
   </header>
 
@@ -35,8 +35,8 @@
                           class="swse-btn swse-btn--tiny swse-card-remove"
                           data-action="delete-item"
                           data-item-id="{{talent.id}}"
-                          title="Remove {{talent.name}}"
-                          aria-label="Remove {{talent.name}}">
+                          title='{{localize "SWSE.CharacterSheet.Actions.RemoveNamed" name=talent.name}}'
+                          aria-label='{{localize "SWSE.CharacterSheet.Actions.RemoveNamed" name=talent.name}}'>
                     ×
                   </button>
                 {{/if}}
@@ -56,9 +56,9 @@
     {{/each}}
   {{else}}
     <div class="muted empty-state swse-ui-empty swse-card-schema swse-card-schema--choice swse-card-schema--placeholder">
-      <span class="swse-card-schema__eyebrow">Choice Slot</span>
+      <span class="swse-card-schema__eyebrow">{{localize "SWSE.CharacterSheet.Labels.ChoiceSlot"}}</span>
       <span class="swse-card-schema__title">{{talentPanel.emptyMessage}}</span>
-      <span class="swse-card-schema__body">{{#if talentPanel.canEdit}}Use Add Talent to create the first talent card.{{else}}No talents have been added yet.{{/if}}</span>
+      <span class="swse-card-schema__body">{{#if talentPanel.canEdit}}{{localize "SWSE.CharacterSheet.Hints.AddFirstTalent"}}{{else}}{{localize "SWSE.CharacterSheet.Empty.NoTalents"}}{{/if}}</span>
     </div>
   {{/if}}
 

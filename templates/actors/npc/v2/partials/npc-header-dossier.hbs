@@ -1,11 +1,11 @@
 <header class="swse-npc-dossier-header">
   <div class="swse-npc-dossier-portrait">
-    <img class="swse-npc-dossier-img" src="{{actor.img}}" data-edit="img" title="{{actor.name}}" alt="{{actor.name}}"/>
+    <img class="swse-npc-dossier-img" src="{{actor.img}}" data-edit="img" title="{{npcConcept.displayName}}" alt="{{npcConcept.displayName}}"/>
   </div>
 
   <div class="swse-npc-dossier-identity">
     <h1 class="swse-npc-dossier-name">
-      <input name="name" type="text" value="{{actor.name}}" placeholder="Name" {{#unless editable}}disabled{{/unless}}/>
+      <input name="name" type="text" value="{{npcConcept.displayName}}" placeholder="Name" {{#unless editable}}disabled{{/unless}}/>
     </h1>
 
     <div class="swse-npc-dossier-type">
@@ -45,9 +45,9 @@
       <strong class="swse-npc-vital-stat-value">{{npcConcept.conditionCurrent}}</strong>
     </div>
 
-    <div class="swse-npc-vital-stat">
+    <button type="button" class="swse-npc-vital-stat swse-npc-vital-stat--button" data-action="roll-initiative" title="Roll Initiative">
       <span class="swse-npc-vital-label">Init</span>
       <strong class="swse-npc-vital-stat-value">{{npcConcept.initiative}}</strong>
-    </div>
+    </button>
   </div>
 </header>

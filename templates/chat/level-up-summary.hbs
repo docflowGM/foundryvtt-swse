@@ -1,29 +1,29 @@
 <div class="swse-level-up-summary">
   <header class="card-header">
-    <h3>Level Up!</h3>
-    <div class="level-badge">Level {{newLevel}}</div>
+    <h3>{{localize 'SWSE.Chat.Progression.LevelUp'}}</h3>
+    <div class="level-badge">{{localize 'SWSE.Chat.Progression.Level' level=newLevel}}</div>
   </header>
 
   <div class="card-content">
     <div class="class-info">
-      <strong>{{className}}</strong> Level {{levelInClass}}
+      <strong>{{className}}</strong> {{localize 'SWSE.Chat.Progression.ClassLevel' level=levelInClass}}
     </div>
 
     {{#if grants}}
     <section class="grants">
-      <h4>Granted:</h4>
+      <h4>{{localize 'SWSE.Chat.Progression.Granted'}}</h4>
       <ul>
         {{#if grants.talents}}
-          <li><strong>Talents:</strong> {{grants.talents}} slot(s)</li>
+          <li><strong>{{localize 'SWSE.Chat.Progression.Talents'}}</strong> {{grants.talents}} {{localize 'SWSE.Chat.Progression.Slots'}}</li>
         {{/if}}
         {{#if grants.bonusFeats}}
-          <li><strong>Bonus Feats:</strong> {{grants.bonusFeats}}</li>
+          <li><strong>{{localize 'SWSE.Chat.Progression.BonusFeats'}}</strong> {{grants.bonusFeats}}</li>
         {{/if}}
         {{#if grants.forcePoints}}
-          <li><strong>Force Points:</strong> +{{grants.forcePoints}}</li>
+          <li><strong>{{localize 'SWSE.Chat.Progression.ForcePoints'}}</strong> +{{grants.forcePoints}}</li>
         {{/if}}
         {{#if grants.abilityIncrease}}
-          <li><strong>Ability Increase:</strong> {{grants.abilityIncrease}} point(s)</li>
+          <li><strong>{{localize 'SWSE.Chat.Progression.AbilityIncrease'}}</strong> {{grants.abilityIncrease}} {{localize 'SWSE.Chat.Progression.Points'}}</li>
         {{/if}}
         {{#if grants.features}}
           {{#each grants.features}}
@@ -36,23 +36,23 @@
 
     {{#if choices}}
     <section class="selections">
-      <h4>Selected:</h4>
+      <h4>{{localize 'SWSE.Chat.Progression.Selected'}}</h4>
       <ul>
         {{#if choices.talents}}
-          <li><strong>Talents:</strong> {{#each choices.talents}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</li>
+          <li><strong>{{localize 'SWSE.Chat.Progression.Talents'}}</strong> {{#each choices.talents}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</li>
         {{/if}}
         {{#if choices.feats}}
-          <li><strong>Feats:</strong> {{#each choices.feats}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</li>
+          <li><strong>{{localize 'SWSE.Chat.Progression.FeatsSelected'}}</strong> {{#each choices.feats}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</li>
         {{/if}}
         {{#if choices.abilityIncrease}}
-          <li><strong>Ability Increases:</strong>
+          <li><strong>{{localize 'SWSE.Chat.Progression.AbilityIncreases'}}</strong>
             {{#each choices.abilityIncrease}}
               {{#if this}}{{@key}} +{{this}}{{/if}}
             {{/each}}
           </li>
         {{/if}}
         {{#if choices.hp}}
-          <li><strong>Hit Points:</strong> +{{choices.hp}}</li>
+          <li><strong>{{localize 'SWSE.Chat.Progression.HitPoints'}}</strong> +{{choices.hp}}</li>
         {{/if}}
       </ul>
     </section>
@@ -60,7 +60,7 @@
   </div>
 
   <footer class="card-footer">
-    <a href="https://claude.ai/code/session_{{sessionId}}">View Session</a>
+    <a href="https://claude.ai/code/session_{{sessionId}}">{{localize 'SWSE.Chat.Progression.ViewSession'}}</a>
   </footer>
 </div>
 

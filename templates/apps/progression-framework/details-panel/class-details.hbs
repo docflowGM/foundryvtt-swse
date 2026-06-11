@@ -21,7 +21,7 @@
 
   {{#if classSkills.length}}
   <section class="prog-class-details__section prog-class-details__class-skills">
-    <h4 class="prog-class-details__section-title">Class Skills</h4>
+    <h4 class="prog-class-details__section-title">{{localize "SWSE.Progression.Core.Class.ClassSkills"}}</h4>
     <div class="prog-class-details__skill-chip-list">
       {{#each classSkills}}
         <span class="prog-class-details__skill-chip {{this.abilityClass}}">
@@ -35,34 +35,34 @@
 
   {{#if startingAbilities.length}}
   <section class="prog-class-details__section prog-class-details__abilities">
-    <h4 class="prog-class-details__section-title">Starting Abilities</h4>
+    <h4 class="prog-class-details__section-title">{{localize "SWSE.Progression.Core.Class.StartingAbilities"}}</h4>
     <ul class="prog-class-details__list">{{#each startingAbilities}}<li>{{this.name}}</li>{{/each}}</ul>
   </section>
   {{/if}}
 
   <section class="prog-class-details__section prog-class-details__defenses">
-    <h4 class="prog-class-details__section-title">Defense Bonuses</h4>
+    <h4 class="prog-class-details__section-title">{{localize "SWSE.Progression.Core.Class.DefenseBonuses"}}</h4>
     <div class="prog-class-details__defense-row">
-      <span class="prog-class-details__defense"><strong>Fort</strong> +{{defenses.fortitude}}</span>
-      <span class="prog-class-details__defense"><strong>Ref</strong> +{{defenses.reflex}}</span>
-      <span class="prog-class-details__defense"><strong>Will</strong> +{{defenses.will}}</span>
+      <span class="prog-class-details__defense"><strong>{{localize "SWSE.Progression.Core.Defense.FortitudeAbbrev"}}</strong> +{{defenses.fortitude}}</span>
+      <span class="prog-class-details__defense"><strong>{{localize "SWSE.Progression.Core.Defense.ReflexAbbrev"}}</strong> +{{defenses.reflex}}</span>
+      <span class="prog-class-details__defense"><strong>{{localize "SWSE.Progression.Core.Defense.WillAbbrev"}}</strong> +{{defenses.will}}</span>
     </div>
   </section>
 
   <section class="prog-class-details__section prog-class-details__bab">
-    <h4 class="prog-class-details__section-title">BaB</h4>
+    <h4 class="prog-class-details__section-title">{{localize "SWSE.Progression.Core.Class.BAB"}}</h4>
     <div class="prog-class-details__bab-value">{{bab}}</div>
   </section>
 
   {{#if classTrees.length}}
   <section class="prog-class-details__section prog-class-details__trees">
-    <h4 class="prog-class-details__section-title">Class Trees</h4>
+    <h4 class="prog-class-details__section-title">{{localize "SWSE.Progression.Core.Class.ClassTrees"}}</h4>
     <ul class="prog-class-details__list prog-class-details__tree-list">{{#each classTrees}}<li>{{this}}</li>{{/each}}</ul>
   </section>
   {{/if}}
 
   <section class="prog-class-details__section prog-class-details__mentor">
-    <h4 class="prog-class-details__section-title">Mentor</h4>
+    <h4 class="prog-class-details__section-title">{{localize "SWSE.Progression.Core.Class.Mentor"}}</h4>
     {{#if mentorPortrait}}
       <img class="prog-class-details__mentor-portrait" src="{{mentorPortrait}}" alt="{{mentorName}}">
     {{/if}}
@@ -72,7 +72,7 @@
 
   {{#if buildMetadata.length}}
   <section class="prog-class-details__section prog-class-details__metadata">
-    <h4 class="prog-class-details__section-title">Build Metadata</h4>
+    <h4 class="prog-class-details__section-title">{{localize "SWSE.Progression.Core.Class.BuildMetadata"}}</h4>
     <div class="prog-class-details__metadata-chips">
       {{#each buildMetadata}}<span class="prog-chip">{{this}}</span>{{/each}}
     </div>
@@ -81,7 +81,7 @@
 
   {{#if hasPrerequisiteRows}}
   <section class="prog-class-details__section prog-class-details__prereqs">
-    <h4 class="prog-class-details__section-title"><i class="fas fa-clipboard-check"></i> Prerequisites</h4>
+    <h4 class="prog-class-details__section-title"><i class="fas fa-clipboard-check"></i> {{localize "SWSE.Progression.Core.Class.Prerequisites"}}</h4>
     <ul class="prog-class-details__list prog-class-details__prereq-list">
       {{#each prerequisiteRows}}
         <li class="prog-class-details__prereq-row {{cssClass}}">
@@ -93,16 +93,16 @@
   </section>
   {{else if isLocked}}
   <section class="prog-class-details__section prog-class-details__locked">
-    <h4 class="prog-class-details__section-title"><i class="fas fa-lock"></i> Prerequisites Required</h4>
-    <p class="prog-class-details__description">This class is currently locked by the prerequisite engine.</p>
+    <h4 class="prog-class-details__section-title"><i class="fas fa-lock"></i> {{localize "SWSE.Progression.Core.Class.PrerequisitesRequired"}}</h4>
+    <p class="prog-class-details__description">{{localize "SWSE.Progression.Core.Class.LockedByPrerequisites"}}</p>
   </section>
   {{/if}}
 
   <div class="prog-class-details__actions">
     {{#if isLocked}}
-      <button class="prog-btn prog-btn--primary" data-action="commit-item" data-item-id="{{class.id}}" type="button" disabled title="{{lockReason}}"><i class="fas fa-lock"></i> Locked</button>
+      <button class="prog-btn prog-btn--primary" data-action="commit-item" data-item-id="{{class.id}}" type="button" disabled title="{{lockReason}}"><i class="fas fa-lock"></i> {{localize "SWSE.Progression.Core.Class.Locked"}}</button>
     {{else}}
-      <button class="prog-btn prog-btn--primary" data-action="commit-item" data-item-id="{{class.id}}" type="button"><i class="fas fa-check"></i> Choose {{class.name}}</button>
+      <button class="prog-btn prog-btn--primary" data-action="commit-item" data-item-id="{{class.id}}" type="button"><i class="fas fa-check"></i> {{localize "SWSE.Progression.Core.Class.Choose" name=class.name}}</button>
     {{/if}}
   </div>
 </div>

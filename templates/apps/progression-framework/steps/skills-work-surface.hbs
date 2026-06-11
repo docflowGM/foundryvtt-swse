@@ -1,7 +1,7 @@
 <div class="prog-skills-surface">
 
   <div class="prog-panel prog-panel--left">
-    <h3 class="prog-panel-title">Training Summary</h3>
+    <h3 class="prog-panel-title">{{localize "SWSE.Progression.Core.Skills.TrainingSummary"}}</h3>
 
     <div class="prog-skills-counter">
       <div class="prog-counter-bar">
@@ -9,13 +9,13 @@
       </div>
       <div class="prog-counter-text">
         <span class="prog-counter-value">{{trainedCount}}</span>
-        <span class="prog-counter-label">/ {{allowedCount}} trained</span>
+        <span class="prog-counter-label">{{localize "SWSE.Progression.Core.Skills.TrainedCounter" count=allowedCount}}</span>
       </div>
     </div>
 
     {{#if (gt trainedCount 0)}}
       <div class="prog-trained-skills-list">
-        <h4 class="prog-list-title">Selected Skills</h4>
+        <h4 class="prog-list-title">{{localize "SWSE.Progression.Core.Skills.SelectedSkills"}}</h4>
         {{#each allSkills}}
           {{#if this.isTrained}}
             <div class="prog-trained-skill-badge">
@@ -28,30 +28,30 @@
 
     {{#if (eq trainedCount allowedCount)}}
       <div class="prog-skills-complete">
-        <i class="fas fa-star"></i> Slots Filled
+        <i class="fas fa-star"></i> {{localize "SWSE.Progression.Core.Skills.SlotsFilled"}}
       </div>
     {{else}}
       <div class="prog-skills-remaining">
-        {{remainingSkillSlots}} slot(s) remaining
+        {{localize "SWSE.Progression.Core.Skills.SlotsRemaining" count=remainingSkillSlots}}
       </div>
     {{/if}}
   </div>
 
   <div class="prog-panel prog-panel--center">
-    <h3 class="prog-panel-title">Select Your Skills</h3>
+    <h3 class="prog-panel-title">{{localize "SWSE.Progression.Core.Skills.SelectYourSkills"}}</h3>
 
     <p class="prog-help-text">
-      Train {{allowedCount}} skill{{#unless (eq allowedCount 1)}}s{{/unless}} to specialize your character's expertise.
-      Only legal class, background, and species class skills are trainable here.
+      {{localize "SWSE.Progression.Core.Skills.HelpTrain" count=allowedCount}}
+      {{localize "SWSE.Progression.Core.Skills.HelpLegalOnly"}}
     </p>
 
     {{#if isFallbackFullChart}}
       <div class="prog-skills-status prog-skills-status--warning">
-        Class or background skill entitlement did not fully resolve. Only skills already selected or positively matched by the current build are shown.
+        {{localize "SWSE.Progression.Core.Skills.FallbackWarning"}}
       </div>
     {{else}}
       <div class="prog-skills-status prog-skills-status--info">
-        Showing {{availableSkillCount}} legal trainable skill{{#unless (eq availableSkillCount 1)}}s{{/unless}} from class, background, and species traits.
+        {{localize "SWSE.Progression.Core.Skills.AvailableStatus" count=availableSkillCount}}
       </div>
     {{/if}}
 
@@ -70,21 +70,21 @@
                 <div class="prog-skill-name-wrap">
                   <div class="prog-skill-name">{{this.name}}</div>
                   {{#if this.isTrained}}
-                    <span class="prog-skill-state-chip">Trained</span>
+                    <span class="prog-skill-state-chip">{{localize "SWSE.Progression.Core.Skills.Trained"}}</span>
                   {{/if}}
                 </div>
 
                 <div class="prog-skill-tags">
                   {{#if this.isClassSkill}}
-                    <span class="prog-skill-tag prog-skill-tag--class">Class</span>
+                    <span class="prog-skill-tag prog-skill-tag--class">{{localize "SWSE.Progression.Core.Skills.Class"}}</span>
                   {{/if}}
 
                   {{#if this.isBackgroundSkill}}
-                    <span class="prog-skill-tag prog-skill-tag--background">Background</span>
+                    <span class="prog-skill-tag prog-skill-tag--background">{{localize "SWSE.Progression.Core.Skills.Background"}}</span>
                   {{/if}}
 
                   {{#if this.isSpeciesClassSkill}}
-                    <span class="prog-skill-tag prog-skill-tag--species">Species</span>
+                    <span class="prog-skill-tag prog-skill-tag--species">{{localize "SWSE.Progression.Core.Skills.Species"}}</span>
                   {{/if}}
 
                   {{#if this.badgeLabel}}
@@ -103,8 +103,8 @@
                           class="prog-btn prog-btn--small prog-btn--selected"
                           data-action="skill-untrain"
                           data-skill="{{this.key}}"
-                          title="Skill trained — click to untrain">
-                    <i class="fas fa-check"></i> Untrain
+                          title='{{localize 'SWSE.Progression.Core.Skills.UntrainTitle'}}'>
+                    <i class="fas fa-check"></i> {{localize "SWSE.Progression.Core.Skills.Untrain"}}
                   </button>
                 {{else if this.canTrain}}
                   <button type="button"
@@ -112,12 +112,12 @@
                           data-action="skill-train"
                           data-skill="{{this.key}}"
                           {{#if (eq ../trainedCount ../allowedCount)}}disabled{{/if}}
-                          title="Train this skill">
-                    <i class="fas fa-plus"></i> Train
+                          title='{{localize 'SWSE.Progression.Core.Skills.TrainTitle'}}'>
+                    <i class="fas fa-plus"></i> {{localize "SWSE.Progression.Core.Skills.Train"}}
                   </button>
                 {{else}}
-                  <div class="prog-skill-controls__placeholder" title="Only class, background, or species class skills can be trained">
-                    <i class="fas fa-lock"></i> Locked
+                  <div class="prog-skill-controls__placeholder" title='{{localize 'SWSE.Progression.Core.Skills.LockedTitle'}}'>
+                    <i class="fas fa-lock"></i> {{localize "SWSE.Progression.Core.Class.Locked"}}
                   </div>
                 {{/if}}
               </div>
@@ -130,41 +130,41 @@
         <button type="button"
                 class="prog-btn prog-btn--secondary prog-btn--small"
                 data-action="skill-reset"
-                title="Reset all skill selections">
-          <i class="fas fa-redo"></i> Reset All
+                title='{{localize 'SWSE.Progression.Core.Skills.ResetTitle'}}'>
+          <i class="fas fa-redo"></i> {{localize "SWSE.Progression.Core.Skills.ResetAll"}}
         </button>
       </div>
     {{else}}
       <div class="prog-skills-empty">
         <i class="fas fa-triangle-exclamation"></i>
-        No legal skills are currently available. Choose a class or background first.
+        {{localize "SWSE.Progression.Core.Skills.Empty"}}
       </div>
     {{/if}}
   </div>
 
   <div class="prog-panel prog-panel--right">
-    <h3 class="prog-panel-title">Skill Expertise</h3>
+    <h3 class="prog-panel-title">{{localize "SWSE.Progression.Core.Skills.Expertise"}}</h3>
 
     <div class="prog-details-text">
       <p>
-        <strong>Trained Skills:</strong> These are the skills your character is explicitly trained in at character creation.
+        <strong>{{localize "SWSE.Progression.Core.Skills.TrainedSkills"}}</strong> These are the skills your character is explicitly trained in at character creation.
       </p>
 
       <p>
-        <strong>Class Skills:</strong> Skills granted by your class are legal to train here and receive the normal class-skill benefits.
+        <strong>{{localize "SWSE.Progression.Core.Skills.ClassSkills"}}</strong> Skills granted by your class are legal to train here and receive the normal class-skill benefits.
       </p>
 
       <p>
-        <strong>Background Skills:</strong> Some backgrounds expand what you can legally train during chargen.
+        <strong>{{localize "SWSE.Progression.Core.Skills.BackgroundSkills"}}</strong> Some backgrounds expand what you can legally train during chargen.
       </p>
 
       <p>
-        <strong>Species Class Skills:</strong> Some species make a specific skill count as a class skill. Those skills are also legal training choices here.
+        <strong>{{localize "SWSE.Progression.Core.Skills.SpeciesClassSkills"}}</strong> Some species make a specific skill count as a class skill. Those skills are also legal training choices here.
       </p>
 
       <p class="prog-guidance-tip">
         <i class="fas fa-lightbulb"></i>
-        Use Train and Untrain to spend your limited slots deliberately. Suggested skills are tagged directly in the main list.
+        {{localize "SWSE.Progression.Core.Skills.GuidanceTip"}}
       </p>
     </div>
   </div>

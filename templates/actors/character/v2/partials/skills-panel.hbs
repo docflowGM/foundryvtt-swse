@@ -1,43 +1,43 @@
 <section class="skills-panel v2-skills-grid swse-ui-panel">
 
   <header class="section-header swse-ui-titlebar">
-    <h3>Skills</h3>
+    <h3>{{localize "SWSE.CharacterSheet.Sections.Skills"}}</h3>
   </header>
 
   <div class="skills-tools-row">
     <div class="skills-tool skills-tool--filter">
-      <label for="skills-filter-select">Filter</label>
+      <label for="skills-filter-select">{{localize "SWSE.CharacterSheet.Labels.Filter"}}</label>
       <select id="skills-filter-select" data-action="filter-skills">
-        <option value="all">All Skills</option>
-        <option value="trained">Trained</option>
-        <option value="favorited">Favorited</option>
-        <option value="focused">Focused</option>
+        <option value="all">{{localize "SWSE.CharacterSheet.Labels.AllSkills"}}</option>
+        <option value="trained">{{localize "SWSE.CharacterSheet.Labels.Trained"}}</option>
+        <option value="favorited">{{localize "SWSE.CharacterSheet.Labels.Favorited"}}</option>
+        <option value="focused">{{localize "SWSE.CharacterSheet.Labels.Focused"}}</option>
       </select>
     </div>
     <div class="skills-tool skills-tool--sort">
-      <label for="skills-sort-select">Sort</label>
+      <label for="skills-sort-select">{{localize "SWSE.CharacterSheet.Labels.Sort"}}</label>
       <select id="skills-sort-select" data-action="sort-skills">
-        <option value="name">Name A→Z</option>
-        <option value="ability">Ability</option>
-        <option value="total-desc">Highest Total</option>
-        <option value="total-asc">Lowest Total</option>
+        <option value="name">{{localize "SWSE.CharacterSheet.Labels.NameAZ"}}</option>
+        <option value="ability">{{localize "SWSE.CharacterSheet.Labels.Ability"}}</option>
+        <option value="total-desc">{{localize "SWSE.CharacterSheet.Labels.HighestTotal"}}</option>
+        <option value="total-asc">{{localize "SWSE.CharacterSheet.Labels.LowestTotal"}}</option>
       </select>
     </div>
-    <button type="button" class="skills-tool-reset" data-action="reset-skills-tools">Reset Filters</button>
+    <button type="button" class="skills-tool-reset" data-action="reset-skills-tools">{{localize "SWSE.CharacterSheet.Actions.ResetFilters"}}</button>
   </div>
 
   <!-- Skills Grid Header (Sticky) -->
   <div class="skills-grid-header swse-grid-header">
     <div class="col-favorite">★</div>
-    <div class="col-skill-name">Skill</div>
+    <div class="col-skill-name">{{localize "SWSE.CharacterSheet.Labels.Skill"}}</div>
     <div class="col-equals">=</div>
-    <div class="col-ability-mod">Ability</div>
-    <div class="col-half-level">½ Lvl</div>
-    <div class="col-trained">Trained</div>
-    <div class="col-focus">Focus</div>
-    <div class="col-misc">Misc</div>
-    <div class="col-total">Total</div>
-    <div class="col-roll">Roll</div>
+    <div class="col-ability-mod">{{localize "SWSE.CharacterSheet.Labels.Ability"}}</div>
+    <div class="col-half-level">{{localize "SWSE.CharacterSheet.Labels.HalfLevel"}}</div>
+    <div class="col-trained">{{localize "SWSE.CharacterSheet.Labels.Trained"}}</div>
+    <div class="col-focus">{{localize "SWSE.CharacterSheet.Labels.Focus"}}</div>
+    <div class="col-misc">{{localize "SWSE.CharacterSheet.Labels.Misc"}}</div>
+    <div class="col-total">{{localize "SWSE.CharacterSheet.Labels.Total"}}</div>
+    <div class="col-roll">{{localize "SWSE.CharacterSheet.Labels.Roll"}}</div>
   </div>
 
   <!-- Skills Grid Body -->
@@ -62,7 +62,7 @@
                   class="favorite-btn {{#if skill.favorite}}favorited{{/if}}"
                   data-action="toggle-favorite"
                   data-skill="{{skill.key}}"
-                  title="Mark as favorite">
+                  title='{{localize "SWSE.CharacterSheet.Tooltips.MarkAsFavorite"}}'>
             ★
           </button>
         </div>
@@ -76,7 +76,7 @@
                       class="skill-expand-toggle skill-expand-toggle--many"
                       data-action="toggle-skill-expand"
                       data-skill="{{skill.key}}"
-                      title="{{skill.extraUsesCount}} skill uses available"
+                      title='{{localize "SWSE.CharacterSheet.Tooltips.SkillUsesAvailable" count=skill.extraUsesCount}}'
                       aria-expanded="false">
                 <span class="expand-count">{{skill.extraUsesCount}}</span>
               </button>
@@ -86,7 +86,7 @@
                       class="skill-expand-toggle"
                       data-action="toggle-skill-expand"
                       data-skill="{{skill.key}}"
-                      title="{{skill.extraUsesCount}} skill {{#if (eq skill.extraUsesCount 1)}}use{{else}}uses{{/if}} available"
+                      title='{{localize "SWSE.CharacterSheet.Tooltips.SkillUsesAvailable" count=skill.extraUsesCount}}'
                       aria-expanded="false">
                 ▶
               </button>
@@ -96,7 +96,7 @@
                   class="skill-name-btn rollable"
                   data-skill="{{skill.key}}"
                   data-mod-dialog="true"
-                  title="Click to roll {{skill.label}}">
+                  title='{{localize "SWSE.CharacterSheet.Tooltips.ClickToRollSkill" skill=skill.label}}'>
             {{skill.label}}
           </button>
         </div>
@@ -109,7 +109,7 @@
           <select name="system.skills.{{skill.key}}.selectedAbility"
                   class="ability-select ability-select--{{skill.selectedAbility}}"
                   data-ability-select="{{skill.selectedAbility}}"
-                  title="Select ability modifier for {{skill.label}}">
+                  title='{{localize "SWSE.CharacterSheet.Tooltips.SelectAbilityModifierForSkill" skill=skill.label}}'>
             {{#each @root.derived.identity.abilities as |ab|}}
               <option value="{{ab.key}}"
                 class="ability-option ability-option--{{ab.key}}"
@@ -127,7 +127,7 @@
         <!-- Half-Level Bonus (non-editable) -->
         <div class="col-half-level">
           <span class="number-display {{#if (gt skill.halfLevel 0)}}positive{{else if (lt skill.halfLevel 0)}}negative{{else}}zero{{/if}}"
-                title="Half your character level">
+                title='{{localize "SWSE.CharacterSheet.Tooltips.HalfCharacterLevel"}}'>
             {{numberFormat skill.halfLevel decimals=0 sign=true}}
           </span>
         </div>
@@ -138,7 +138,7 @@
                  class="skill-checkbox"
                  name="system.skills.{{skill.key}}.trained"
                  {{checked skill.trained}}
-                 title="Trained: You have ranks in this skill (+5)">
+                 title='{{localize "SWSE.CharacterSheet.Tooltips.TrainedSkill"}}'>
         </div>
 
         <!-- Focus Checkbox -->
@@ -147,7 +147,7 @@
                  class="skill-checkbox"
                  name="system.skills.{{skill.key}}.focused"
                  {{checked skill.focused}}
-                 title="Focus: Focused skill (+5 bonus)">
+                 title='{{localize "SWSE.CharacterSheet.Tooltips.FocusedSkill"}}'>
         </div>
 
         <!-- Miscellaneous Modifier -->
@@ -157,13 +157,13 @@
                  name="system.skills.{{skill.key}}.miscMod"
                  value="{{skill.miscMod}}"
                  placeholder="0"
-                 title="Miscellaneous modifier (feats, conditions, etc.)">
+                 title='{{localize "SWSE.CharacterSheet.Tooltips.MiscSkillModifier"}}'>
         </div>
 
         <!-- Skill Total Display -->
         <div class="col-total">
           <span class="number-display {{#if (gt skill.total 0)}}positive{{else if (lt skill.total 0)}}negative{{else}}zero{{/if}}"
-                title="Total skill bonus">
+                title='{{localize "SWSE.CharacterSheet.Tooltips.TotalSkillBonus"}}'>
             {{numberFormat skill.total decimals=0 sign=true}}
           </span>
         </div>
@@ -174,8 +174,8 @@
                   class="skill-roll-btn"
                   data-skill="{{skill.key}}"
                   data-mod-dialog="true"
-                  aria-label="Roll {{skill.label}}"
-                  title="Roll {{skill.label}}">
+                  aria-label='{{localize "SWSE.CharacterSheet.Actions.RollSkill" skill=skill.label}}'
+                  title='{{localize "SWSE.CharacterSheet.Actions.RollSkill" skill=skill.label}}'>
             🎲
           </button>
         </div>
@@ -188,9 +188,9 @@
         <!-- COMPACT FILTER TOGGLE (visible only when expanded) -->
         <div class="extra-uses-filter-bar skill-extra-uses-hidden">
           <div class="filter-buttons">
-            <button class="filter-btn filter-btn--active" data-filter="all" title="Show all skill uses">All</button>
-            <button class="filter-btn" data-filter="available" title="Show only usable actions">Available</button>
-            <button class="filter-btn" data-filter="combat" title="Show combat-relevant uses">Combat</button>
+            <button class="filter-btn filter-btn--active" data-filter="all" title='{{localize "SWSE.CharacterSheet.Tooltips.ShowAllSkillUses"}}'>{{localize "SWSE.CharacterSheet.Labels.All"}}</button>
+            <button class="filter-btn" data-filter="available" title='{{localize "SWSE.CharacterSheet.Tooltips.ShowUsableActions"}}'>{{localize "SWSE.CharacterSheet.Labels.Available"}}</button>
+            <button class="filter-btn" data-filter="combat" title='{{localize "SWSE.CharacterSheet.Tooltips.ShowCombatRelevantUses"}}'>{{localize "SWSE.CharacterSheet.Labels.Combat"}}</button>
           </div>
         </div>
 
@@ -208,7 +208,7 @@
                     {{#if use.isBlocked}}
                       <span class="use-status use-status--blocked" title="">🔒</span>
                     {{else if (and use.requiresTrained use.skillTrained)}}
-                      <span class="use-status use-status--trained" title="Trained use">⭐</span>
+                      <span class="use-status use-status--trained" title='{{localize "SWSE.CharacterSheet.Tooltips.TrainedUse"}}'>⭐</span>
                     {{/if}}
                   </div>
                   {{#if use.description}}
@@ -219,10 +219,10 @@
                 <!-- Center: DC & Type -->
                 <div class="extra-use-meta">
                   {{#if use.dc}}
-                    <span class="extra-use-dc" title="Difficulty Class">{{use.dc}}</span>
+                    <span class="extra-use-dc" title='{{localize "SWSE.CharacterSheet.Tooltips.DifficultyClass"}}'>{{use.dc}}</span>
                   {{/if}}
                   {{#if use.actionTypeLabel.label}}
-                    <span class="action-type-tag {{use.actionType}}" title="{{use.actionTypeLabel.label}} action">
+                    <span class="action-type-tag {{use.actionType}}" title='{{localize "SWSE.CharacterSheet.Tooltips.ActionType" action=use.actionTypeLabel.label}}'>
                       {{use.actionTypeLabel.icon}}
                     </span>
                   {{/if}}
@@ -231,7 +231,7 @@
                 <!-- Right: Economy & Action -->
                 <div class="extra-use-action-right">
                   {{#if use.timeLabel}}
-                    <span class="extra-use-time {{use.timeClass}}" title="Action economy: {{use.timeLabel}}">
+                    <span class="extra-use-time {{use.timeClass}}" title='{{localize "SWSE.CharacterSheet.Tooltips.ActionEconomy" action=use.timeLabel}}'>
                       {{use.timeLabel}}
                     </span>
                   {{/if}}
@@ -245,7 +245,7 @@
                           data-action-type="{{use.actionType}}"
                           data-source-type="{{use.sourceType}}"
                           data-source-label="{{use.sourceLabel}}"
-                          {{#if use.isBlocked}}disabled title="{{use.blockedReason}}"{{else}}title="Use {{use.label}}"{{/if}}>
+                          {{#if use.isBlocked}}disabled title="{{use.blockedReason}}"{{else}}title='{{localize "SWSE.CharacterSheet.Actions.UseNamed" name=use.label}}'{{/if}}>
                     {{use.actionTypeLabel.action}}
                   </button>
                 </div>
@@ -266,13 +266,13 @@
   <div class="custom-skills-section swse-ui-frame">
 
     <div class="custom-skills-header swse-ui-titlebar">
-      <h4>Custom Skills</h4>
+      <h4>{{localize "SWSE.CharacterSheet.Sections.CustomSkills"}}</h4>
       {{#if customSkillsEditable}}
       <button type="button"
               class="custom-skill-add-btn"
               data-action="add-custom-skill"
-              title="Add a new custom skill">
-        + Add
+              title='{{localize "SWSE.CharacterSheet.Tooltips.AddCustomSkill"}}'>
+        {{localize "SWSE.CharacterSheet.Actions.Add"}}
       </button>
       {{/if}}
     </div>
@@ -292,8 +292,8 @@
                    class="custom-skill-label-input"
                    name="system.customSkills.{{@index}}.label"
                    value="{{customSkill.label}}"
-                   placeholder="Skill name"
-                   title="Custom skill name">
+                   placeholder='{{localize "SWSE.CharacterSheet.Placeholders.SkillName"}}'
+                   title='{{localize "SWSE.CharacterSheet.Tooltips.CustomSkillName"}}'>
           </div>
 
           <!-- Equals Operator -->
@@ -304,7 +304,7 @@
             <select name="system.customSkills.{{@index}}.ability"
                     class="ability-select ability-select--{{customSkill.ability}}"
                     data-ability-select="{{customSkill.ability}}"
-                    title="Select governing ability">
+                    title='{{localize "SWSE.CharacterSheet.Tooltips.SelectGoverningAbility"}}'>
               {{#each @root.derived.identity.abilities as |ab|}}
                 <option value="{{ab.key}}"
                   class="ability-option ability-option--{{ab.key}}"
@@ -326,7 +326,7 @@
           <!-- Half-Level Bonus -->
           <div class="col-half-level">
             <span class="number-display {{#if (gt @root.derived.identity.level 0)}}positive{{else}}zero{{/if}}"
-                  title="Half your character level">
+                  title='{{localize "SWSE.CharacterSheet.Tooltips.HalfCharacterLevel"}}'>
               {{#if @root.system.level}}
                 {{numberFormat (halfLevel @root.system.level) decimals=0 sign=true}}
               {{else}}
@@ -341,7 +341,7 @@
                    class="skill-checkbox"
                    name="system.customSkills.{{@index}}.trained"
                    {{checked customSkill.trained}}
-                   title="Trained: +5 bonus">
+                   title='{{localize "SWSE.CharacterSheet.Tooltips.TrainedBonus"}}'>
           </div>
 
           <!-- Focus Checkbox -->
@@ -350,7 +350,7 @@
                    class="skill-checkbox"
                    name="system.customSkills.{{@index}}.focused"
                    {{checked customSkill.focused}}
-                   title="Focus: +5 bonus">
+                   title='{{localize "SWSE.CharacterSheet.Tooltips.FocusBonus"}}'>
           </div>
 
           <!-- Miscellaneous Modifier -->
@@ -360,7 +360,7 @@
                    name="system.customSkills.{{@index}}.miscMod"
                    value="{{customSkill.miscMod}}"
                    placeholder="0"
-                   title="Miscellaneous modifier">
+                   title='{{localize "SWSE.CharacterSheet.Tooltips.MiscModifier"}}'>
           </div>
 
           <!-- Total Bonus Display -->
@@ -380,7 +380,7 @@
                     class="custom-skill-roll-btn"
                     data-action="roll-custom-skill"
                     data-custom-skill-id="{{customSkill.id}}"
-                    title="Roll this custom skill">
+                    title='{{localize "SWSE.CharacterSheet.Tooltips.RollCustomSkill"}}'>
               🎲
             </button>
           </div>
@@ -391,7 +391,7 @@
                     class="custom-skill-delete-btn"
                     data-action="delete-custom-skill"
                     data-custom-skill-id="{{customSkill.id}}"
-                    title="Delete this custom skill">
+                    title='{{localize "SWSE.CharacterSheet.Tooltips.DeleteCustomSkill"}}'>
               ✕
             </button>
           </div>
@@ -402,8 +402,8 @@
         <div class="custom-skill-notes" data-custom-skill-id="{{customSkill.id}}">
           <textarea name="system.customSkills.{{@index}}.notes"
                     class="custom-skill-notes-input"
-                    placeholder="Notes"
-                    title="Notes for this skill">{{customSkill.notes}}</textarea>
+                    placeholder='{{localize "SWSE.CharacterSheet.Placeholders.Notes"}}'
+                    title='{{localize "SWSE.CharacterSheet.Tooltips.NotesForSkill"}}'>{{customSkill.notes}}</textarea>
         </div>
         {{/if}}
 
@@ -413,7 +413,7 @@
     {{else}}
       {{#if customSkillsEditable}}
       <div class="custom-skills-empty">
-        <p>No custom skills yet. Click "Add" to create one.</p>
+        <p>{{localize "SWSE.CharacterSheet.Empty.NoCustomSkills"}}</p>
       </div>
       {{/if}}
     {{/if}}

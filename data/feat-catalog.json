@@ -24452,6 +24452,16 @@
             "armorCategory": "light",
             "description": "Grants proficiency with light armor."
           }
+        ],
+        "grants": [
+          {
+            "category": "PROFICIENCY",
+            "proficiencyType": "armor",
+            "proficiencies": [
+              "light"
+            ],
+            "description": "Armor proficiency: light"
+          }
         ]
       },
       "choiceMeta": {
@@ -26429,6 +26439,18 @@
             "type": "ARMOR_PROFICIENCY",
             "armorCategory": "heavy",
             "description": "Grants proficiency with heavy armor."
+          }
+        ],
+        "grants": [
+          {
+            "category": "PROFICIENCY",
+            "proficiencyType": "armor",
+            "proficiencies": [
+              "light",
+              "medium",
+              "heavy"
+            ],
+            "description": "Armor proficiency: light, medium, heavy"
           }
         ]
       },
@@ -42133,6 +42155,17 @@
             "type": "ARMOR_PROFICIENCY",
             "armorCategory": "medium",
             "description": "Grants proficiency with medium armor."
+          }
+        ],
+        "grants": [
+          {
+            "category": "PROFICIENCY",
+            "proficiencyType": "armor",
+            "proficiencies": [
+              "light",
+              "medium"
+            ],
+            "description": "Armor proficiency: light, medium"
           }
         ]
       },

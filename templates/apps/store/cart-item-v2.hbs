@@ -14,7 +14,7 @@
 
     <!-- Quantity Controls -->
     <div class="qty-controls">
-      <span class="qty-label">Qty:</span>
+      <span class="qty-label">{{localize 'SWSE.Store.Cart.Qty'}}</span>
       <button class="qty-btn qty-dec" data-item-id="{{id}}" data-condition="{{condition}}">
         <i class="{{getIconClass 'minus'}}"></i>
       </button>
@@ -27,14 +27,14 @@
 
   <!-- Line Total -->
   <div class="cart-total">
-    <div class="line-total-label">Each:</div>
+    <div class="line-total-label">{{localize 'SWSE.Store.Cart.Each'}}</div>
     <div class="line-total-price">
       <span class="credits-icon">◈</span>{{cost}}
     </div>
   </div>
 
   <!-- Remove Button -->
-  <button class="cart-remove-btn" data-item-id="{{id}}" data-condition="{{condition}}" title="Remove from cart">
+  <button class="cart-remove-btn" data-item-id="{{id}}" data-condition="{{condition}}" title="{{localize 'SWSE.Store.Cart.RemoveFromCart'}}">
     <i class="{{getIconClass 'trash'}}"></i>
   </button>
 </div>

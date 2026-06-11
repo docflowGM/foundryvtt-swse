@@ -98,6 +98,34 @@
           <strong>No active conditions or mechanical effects are currently impacting this actor.</strong>
         </div>
       {{/if}}
+
+
+      <div class="swse-concept-subsection swse-concept-condition-track swse-concept-condition-track--summary" data-swse-tooltip="ConditionTrack">
+        <div class="swse-concept-condition-track__header">
+          <span class="swse-concept-subsection__label">Condition Track</span>
+          <span class="swse-concept-condition-track__summary">Current: {{healthPanel.currentConditionPenalty.label}}</span>
+        </div>
+        <div class="swse-concept-chip-row swse-concept-chip-row--wrap">
+          {{#each healthPanel.conditionSlots as |slot|}}
+            <button type="button"
+                    class="swse-concept-chip swse-concept-condition-chip {{slot.severityClass}} {{#if slot.active}}swse-concept-chip--warn is-current{{else}}swse-concept-chip--neutral{{/if}}"
+                    data-action="set-condition-step"
+                    data-step="{{slot.step}}"
+                    title="{{slot.description}}"
+                    {{#unless slot.canEdit}}disabled{{/unless}}>
+              {{slot.label}}
+            </button>
+          {{/each}}
+        </div>
+        <label class="swse-concept-checkpill">
+          <input type="checkbox"
+                 name="system.conditionTrack.persistent"
+                 data-action="toggle-condition-persistent"
+                 {{#if healthPanel.conditionTrack.persistent}}checked{{/if}}
+                 {{#unless healthPanel.conditionTrack.canEdit}}disabled{{/unless}}>
+          <span>Persistent Condition</span>
+        </label>
+      </div>
     </section>
 
     {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/second-wind-panel.hbs"}}

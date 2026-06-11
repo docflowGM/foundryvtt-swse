@@ -3,7 +3,7 @@
   <div class="headtick" aria-hidden="true"></div>
 
   <header class="head">
-    <div class="type-chip"><span class="dot"></span>{{#if isSafeZone}}TACTICAL DECLARATION{{else}}COMBAT STATUS{{/if}}</div>
+    <div class="type-chip"><span class="dot"></span>{{#if isSafeZone}}{{localize 'SWSE.Chat.Combat.TacticalDeclaration'}}{{else}}{{localize 'SWSE.Chat.Combat.CombatStatus'}}{{/if}}</div>
     <div class="who">{{actorName}}</div>
     {{#if round}}<div class="ts">R{{round}}{{#if turn}} · T{{turn}}{{/if}}</div>{{/if}}
   </header>
@@ -18,7 +18,7 @@
         {{/each}}
       </div>
     {{else}}
-      <div class="notes">No defensive status is currently declared.</div>
+      <div class="notes">{{localize 'SWSE.Chat.Combat.NoDefensiveStatus'}}</div>
     {{/if}}
 
     {{#if isSafeZone}}
@@ -29,9 +29,9 @@
       </div>
     {{else}}
       <div class="meta swse-combat-status-chat-meta">
-        <span class="k">Cover</span><span class="v">{{status.coverLabel}}</span>
-        <span class="k">Mode</span><span class="v">{{status.defensiveModeLabel}}</span>
-        <span class="k">Prone</span><span class="v">{{#if status.prone}}Yes{{else}}No{{/if}}</span>
+        <span class="k">{{localize 'SWSE.Chat.Combat.Cover'}}</span><span class="v">{{status.coverLabel}}</span>
+        <span class="k">{{localize 'SWSE.Chat.Combat.Mode'}}</span><span class="v">{{status.defensiveModeLabel}}</span>
+        <span class="k">{{localize 'SWSE.Chat.Combat.Prone'}}</span><span class="v">{{#if status.prone}}{{localize 'SWSE.Chat.Combat.Yes'}}{{else}}{{localize 'SWSE.Chat.Combat.No'}}{{/if}}</span>
       </div>
     {{/if}}
 

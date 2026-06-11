@@ -42,10 +42,10 @@
     </div>
 
     <div class="rc-foot">
-      {{#if actorName}}<span class="who">Actor: <b>{{actorName}}</b></span>{{/if}}
-      {{#if fromName}}<span class="who">From: <b>{{fromName}}</b></span>{{/if}}
-      {{#if toName}}<span class="who">To: <b>{{toName}}</b></span>{{/if}}
-      {{#if decidedBy}}<span class="who">Decided by: <b>{{decidedBy}}</b></span>{{/if}}
+      {{#if actorName}}<span class="who">{{localize 'SWSE.Chat.Receipt.Actor'}} <b>{{actorName}}</b></span>{{/if}}
+      {{#if fromName}}<span class="who">{{localize 'SWSE.Chat.Receipt.From'}} <b>{{fromName}}</b></span>{{/if}}
+      {{#if toName}}<span class="who">{{localize 'SWSE.Chat.Receipt.To'}} <b>{{toName}}</b></span>{{/if}}
+      {{#if decidedBy}}<span class="who">{{localize 'SWSE.Chat.Receipt.DecidedBy'}} <b>{{decidedBy}}</b></span>{{/if}}
       <span class="tx">{{transactionId}}</span>
     </div>
 

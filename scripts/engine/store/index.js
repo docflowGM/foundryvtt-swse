@@ -24,6 +24,91 @@ import { categorizeItem } from "/systems/foundryvtt-swse/scripts/engine/store/ca
 import { applyPricing } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
+
+/* ----------------------------------------------------------- */
+/* DEDUPE HELPERS                                              */
+/* ----------------------------------------------------------- */
+
+function normalizeListingToken(value = '') {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function getComparableStoreCost(item = {}) {
+  const candidates = [
+    item.finalCost,
+    item.finalCostNew,
+    item.cost,
+    item.costNew,
+    item.finalCostUsed,
+    item.costUsed
+  ];
+  for (const candidate of candidates) {
+    const numeric = Number(candidate);
+    if (Number.isFinite(numeric) && numeric > 0) return numeric;
+  }
+  return 0;
+}
+
+function buildStoreListingDedupeKey(item = {}) {
+  const sys = item.system || {};
+  const damage = sys.damage || sys.damageFormula || sys.baseDamage || '';
+  const damageType = sys.damageType || sys.damageTypes || '';
+  const availability = item.availability || sys.availability || '';
+  return [
+    normalizeListingToken(item.type || 'item'),
+    normalizeListingToken(item.category || ''),
+    normalizeListingToken(item.subcategory || ''),
+    normalizeListingToken(item.name || ''),
+    normalizeListingToken(availability),
+    normalizeListingToken(damage),
+    normalizeListingToken(Array.isArray(damageType) ? damageType.join(' ') : damageType),
+    String(getComparableStoreCost(item))
+  ].join('::');
+}
+
+function getStoreSourcePriority(item = {}) {
+  const pack = String(item.sourcePack || item.doc?.__storeSource?.pack || '').toLowerCase();
+  if (!pack || pack === 'world') return 30;
+  // Split subtype packs are the intended store-facing inventory.  Aggregate
+  // master packs are fallback/reference packs and should lose duplicate races.
+  if ([
+    'foundryvtt-swse.weapons',
+    'foundryvtt-swse.armor',
+    'foundryvtt-swse.equipment',
+    'foundryvtt-swse.vehicles'
+  ].includes(pack)) return 20;
+  return 10;
+}
+
+function choosePreferredStoreListing(current, candidate) {
+  if (!current) return candidate;
+  const currentPriority = getStoreSourcePriority(current);
+  const candidatePriority = getStoreSourcePriority(candidate);
+  if (candidatePriority < currentPriority) return candidate;
+  if (candidatePriority > currentPriority) return current;
+
+  // If both are from the same kind of source, keep the one with richer system
+  // data so the detail rail has the best available readout.
+  const currentFields = Object.keys(current.system || {}).length;
+  const candidateFields = Object.keys(candidate.system || {}).length;
+  if (candidateFields > currentFields) return candidate;
+  return current;
+}
+
+function dedupeStoreListings(items = []) {
+  const deduped = new Map();
+  for (const item of items) {
+    const key = buildStoreListingDedupeKey(item);
+    deduped.set(key, choosePreferredStoreListing(deduped.get(key), item));
+  }
+  return Array.from(deduped.values());
+}
+
 /* ----------------------------------------------------------- */
 /* CATEGORY STRUCTURE BUILDER                                   */
 /* ----------------------------------------------------------- */
@@ -121,9 +206,9 @@ export async function buildStoreIndex({ useCache = true } = {}) {
   /* -------------------------------------- */
   /* 3. Categorize + apply pricing           */
   /* -------------------------------------- */
-  const processed = filtered
+  const processed = dedupeStoreListings(filtered
     .map(i => categorizeItem(i))
-    .map(i => applyPricing(i));
+    .map(i => applyPricing(i)));
 
   /* -------------------------------------- */
   /* 4. Build index structures               */

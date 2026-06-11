@@ -6,8 +6,8 @@
 <section class="abilities-section racial-section v3-panel holo-panel">
 
   <header class="section-bar">
-    <h3 class="section-header">Racial Abilities</h3>
-    <div class="muted">Passive</div>
+    <h3 class="section-header">{{localize "SWSE.CharacterSheet.Sections.RacialAbilities"}}</h3>
+    <div class="muted">{{localize "SWSE.CharacterSheet.Labels.Passive"}}</div>
   </header>
 
   {{#if racialAbilitiesPanel.hasEntries}}
@@ -32,7 +32,7 @@
     </div>
   {{else}}
     <div class="muted empty-state">
-      No racial abilities.
+      {{localize "SWSE.CharacterSheet.Empty.NoRacialAbilities"}}
     </div>
   {{/if}}
 

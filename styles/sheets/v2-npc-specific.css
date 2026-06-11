@@ -2298,3 +2298,63 @@ button.swse-npc-gear-name {
   font-size: 10px;
   text-transform: uppercase;
 }
+
+/* NPC immediate-action hardening: rollable attacks/skills/vitals */
+.swse-npc-attack-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.swse-npc-action-button--compact {
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 0.66rem;
+  line-height: 1.1;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+button.swse-npc-skill-row {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--swse-npc-muted);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+button.swse-npc-skill-row:hover,
+button.swse-npc-skill-row:focus-visible {
+  background: rgba(0, 223, 255, 0.10);
+  outline: 1px solid rgba(0, 223, 255, 0.35);
+  color: var(--swse-npc-text);
+}
+
+.swse-npc-vital-stat--button {
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+.swse-npc-vital-stat--button:hover,
+.swse-npc-vital-stat--button:focus-visible {
+  border-color: rgba(0, 223, 255, 0.42);
+  background: rgba(0, 223, 255, 0.10);
+  outline: none;
+}
+
+.swse-npc-chip--button {
+  border: 1px solid rgba(0, 223, 255, 0.22);
+  cursor: pointer;
+  font: inherit;
+}
+
+.swse-npc-chip--button:hover,
+.swse-npc-chip--button:focus-visible {
+  border-color: rgba(0, 223, 255, 0.48);
+  background: rgba(0, 223, 255, 0.16);
+  outline: none;
+}

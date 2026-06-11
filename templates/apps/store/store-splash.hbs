@@ -5,7 +5,7 @@
          data-hot-rotation-ms="7000"
          data-theme="{{sheetTheme}}"
          tabindex="0"
-         aria-label="Rendarr's Outfitters market splash screen">
+         aria-label="{{localize 'SWSE.Store.Splash.Aria'}}">
   <script type="application/json" data-store-hot-deals-json>{{{hotDealsJson}}}</script>
 
   <!-- Scanline + corner HUD overlays (screen effects, not a second shell) -->
@@ -24,21 +24,21 @@
       <button type="button"
               class="ren-hud-home"
               data-shell-action="return-to-home"
-              title="Return to Holopad Home"
-              aria-label="Return to Holopad Home">⌂ HOME</button>
-      <span><span class="ren-dot"></span>HOLONET · 4 bars</span>
-      <span><span class="ren-dot ren-dot--warn"></span>encrypted · class 3</span>
+              title="{{localize 'SWSE.Store.Splash.ReturnHome'}}"
+              aria-label="{{localize 'SWSE.Store.Splash.ReturnHome'}}">⌂ {{localize 'SWSE.Store.Splash.Home'}}</button>
+      <span><span class="ren-dot"></span>{{localize 'SWSE.Store.Splash.HoloNet'}}</span>
+      <span><span class="ren-dot ren-dot--warn"></span>{{localize 'SWSE.Store.Splash.Encrypted'}}</span>
       <span data-ren-clock>00:00:00 · GST</span>
     </div>
   </div>
 
   <!-- GEX Live Ticker -->
-  <div class="ren-ticker-wrap" aria-label="Galactic Exchange live feed">
-    <div class="ren-ticker-tag">GEX · LIVE</div>
+  <div class="ren-ticker-wrap" aria-label="{{localize 'SWSE.Store.Splash.TickerAria'}}">
+    <div class="ren-ticker-tag">{{localize 'SWSE.Store.Splash.TickerLive'}}</div>
     <div class="ren-ticker" aria-hidden="true">
       <div class="ren-ticker__track" data-store-ticker-track></div>
     </div>
-    <div class="ren-ticker-end">RX // FLOOR FEED</div>
+    <div class="ren-ticker-end">{{localize 'SWSE.Store.Splash.FloorFeed'}}</div>
   </div>
 
   <!-- Hero: neon sign + open sign + rate card -->
@@ -46,15 +46,15 @@
     <div class="ren-neon-stack">
       <div class="ren-eyebrow" aria-hidden="true">
         <span class="ren-eyebrow__pip"></span>
-        EST. 14 ABY <span class="ren-eyebrow__x">×</span> DOCK 9 · NAR SHADDAA
-        <span class="ren-eyebrow__pip"></span> ALL CREDITS HONORED
+        {{localize 'SWSE.Store.Splash.EstDock'}}
+        <span class="ren-eyebrow__pip"></span> {{localize 'SWSE.Store.Splash.CreditsHonored'}}
       </div>
       <div class="ren-neon-sign" aria-label="Rendarr's Outfitters">
         <span class="ren-neon-line">Rendarr<span class="ren-neon-amp">'s</span></span>
-        <span class="ren-neon-line ren-neon-line--two">Outfitters</span>
+        <span class="ren-neon-line ren-neon-line--two">{{localize 'SWSE.Store.Splash.Outfitters'}}</span>
       </div>
       <div class="ren-tube-rail" aria-hidden="true"></div>
-      <div class="ren-tagline" aria-hidden="true">Guns <span class="ren-tagline__star">★</span> Gear <span class="ren-tagline__star">★</span> Glory <span class="ren-tagline__star">★</span> No&nbsp;Questions</div>
+      <div class="ren-tagline" aria-hidden="true">{{localize 'SWSE.Store.Splash.Tagline'}}</div>
     </div>
 
     <div class="ren-hero-right">
@@ -62,21 +62,21 @@
       <div class="ren-open-sign {{#if storeOpen}}is-open{{else}}is-closed{{/if}}" aria-live="polite">
         <span class="ren-open-sign__chain ren-open-sign__chain--l" aria-hidden="true"></span>
         <span class="ren-open-sign__chain ren-open-sign__chain--r" aria-hidden="true"></span>
-        <div class="ren-open-sign__word">{{#if storeOpen}}<span class="ren-open-sign__o">O</span>PEN{{else}}CLOSED{{/if}}</div>
+        <div class="ren-open-sign__word">{{#if storeOpen}}{{localize 'SWSE.Store.Splash.Open'}}{{else}}{{localize 'SWSE.Store.Splash.Closed'}}{{/if}}</div>
         <div class="ren-open-sign__sub" data-store-status-label>{{storeStatusLabel}}</div>
       </div>
 
       <!-- GM tax / discount rate card -->
       <div class="ren-rate-card" data-ren-rate-card data-buy-modifier="{{marketControls.buyModifier}}">
         <div class="ren-rate-card__head">
-          <span class="ren-rate-card__label" data-ren-rate-label>GM MARKET</span>
+          <span class="ren-rate-card__label" data-ren-rate-label>{{localize 'SWSE.Store.Splash.GmMarket'}}</span>
           <span class="ren-rate-card__pulse" aria-hidden="true"></span>
         </div>
         <div class="ren-rate-card__val" data-ren-rate-val>
           {{#if marketControls.taxLabel}}{{marketControls.taxLabel}}{{else}}±0%{{/if}}
         </div>
         <div class="ren-rate-card__reason" data-ren-rate-reason>
-          <span class="ren-em">MARKET</span> stable · no active modifiers
+          {{localize 'SWSE.Store.Splash.MarketStable'}}
         </div>
       </div>
     </div>
@@ -93,14 +93,14 @@
     <div class="ren-rendarr-greet">
       <div class="ren-rendarr-greet__name">
         <span class="ren-rendarr-greet__mark">⚐</span>RENDARR
-        <span class="ren-rendarr-greet__sub">— PROPRIETOR · EX-CLONE · INDEX 4,712</span>
+        <span class="ren-rendarr-greet__sub">— {{localize 'SWSE.Store.Splash.Proprietor'}}</span>
       </div>
       <div class="ren-rendarr-greet__line" data-ren-greeting>
-        Boot the terminal, friend. I don't care why you're here — I care what you're spending.<span class="ren-cursor" aria-hidden="true"></span>
+        {{localize 'SWSE.Store.Splash.Greeting'}}<span class="ren-cursor" aria-hidden="true"></span>
       </div>
     </div>
     <div class="ren-strip-meta">
-      <div class="ren-strip-meta__label">WALLET</div>
+      <div class="ren-strip-meta__label">{{localize 'SWSE.Store.Splash.Wallet'}}</div>
       <div class="ren-strip-meta__val" data-ren-wallet>{{#if credits}}{{credits}}{{else}}—{{/if}}</div>
       <div class="ren-strip-meta__label">{{actorName}}</div>
     </div>
@@ -109,8 +109,8 @@
   <!-- Hot Items Tonight -->
   <div class="ren-hot-section">
     <div class="ren-hot-head">
-      <div class="ren-hot-head__title"><span class="ren-hot-head__flame">▲</span>HOT ITEMS · TONIGHT</div>
-      <div class="ren-hot-head__sub">moves fast · <span class="ren-em">tap to jump</span> · rotates</div>
+      <div class="ren-hot-head__title"><span class="ren-hot-head__flame">▲</span>{{localize 'SWSE.Store.Splash.HotItemsTonight'}}</div>
+      <div class="ren-hot-head__sub">{{localize 'SWSE.Store.Splash.HotItemsSub'}}</div>
     </div>
     <div class="ren-hot-grid-wrap">
       <div class="ren-hot-grid" data-hot-grid></div>
@@ -120,36 +120,36 @@
   <!-- CTA bar -->
   <div class="ren-cta-bar">
     <div class="ren-cta-side">
-      <div class="ren-cta-side__label">FLOOR FOOTFALL</div>
+      <div class="ren-cta-side__label">{{localize 'SWSE.Store.Splash.FloorFootfall'}}</div>
       <div class="ren-cta-side__big">23 / hr</div>
-      <div class="ren-cta-side__label">3 BROWSING NOW</div>
+      <div class="ren-cta-side__label">{{localize 'SWSE.Store.Splash.BrowsingNow'}}</div>
     </div>
     <button type="button"
             class="ren-enter-btn{{#unless storeOpen}} is-closed{{/unless}}"
             data-action="store-splash-continue"
             data-store-splash-enter="true"
-            aria-label="Enter Rendarr's Outfitters">
-      {{#if storeOpen}}ENTER OUTFITTERS →{{else}}STORE CLOSED{{/if}}
+            aria-label="{{localize 'SWSE.Store.Splash.EnterAria'}}">
+      {{#if storeOpen}}{{localize 'SWSE.Store.Splash.EnterOutfitters'}}{{else}}{{localize 'SWSE.Store.Splash.StoreClosed'}}{{/if}}
     </button>
     <div class="ren-cta-side ren-cta-side--right">
-      <div class="ren-cta-side__label">HAGGLE WINDOW</div>
+      <div class="ren-cta-side__label">{{localize 'SWSE.Store.Splash.HaggleWindow'}}</div>
       <div class="ren-cta-side__big ren-cta-side__big--alt">2H 14M</div>
-      <div class="ren-cta-side__label">BEFORE STOCK ROTATES</div>
+      <div class="ren-cta-side__label">{{localize 'SWSE.Store.Splash.BeforeStockRotates'}}</div>
     </div>
   </div>
 
   <!-- Footer -->
   <div class="ren-footer">
     <div class="ren-footer__left">
-      <span><span class="ren-footer__pulse" aria-hidden="true"></span>UPLINK · STABLE</span>
-      <span data-store-boot-label>{{#if storeOpen}}Opening Rendarr vendor channel{{else}}Catalog frozen // vendor channel closed{{/if}}</span>
+      <span><span class="ren-footer__pulse" aria-hidden="true"></span>{{localize 'SWSE.Store.Splash.UplinkStable'}}</span>
+      <span data-store-boot-label>{{#if storeOpen}}{{localize 'SWSE.Store.Splash.OpeningChannel'}}{{else}}{{localize 'SWSE.Store.Splash.CatalogFrozen'}}{{/if}}</span>
     </div>
     <div class="ren-footer__actions">
-      <button type="button" class="ren-footer-btn" data-shell-action="return-to-home">← GO BACK</button>
+      <button type="button" class="ren-footer-btn" data-shell-action="return-to-home">{{localize 'SWSE.Store.Splash.GoBack'}}</button>
     </div>
     <div class="ren-footer__right">
-      <span>© RENDARR INDUSTRIES</span>
-      <span>NO REFUNDS · NO QUESTIONS</span>
+      <span>© {{localize 'SWSE.Store.Splash.Industries'}}</span>
+      <span>{{localize 'SWSE.Store.Splash.NoRefunds'}}</span>
     </div>
   </div>
 </section>

@@ -87,6 +87,17 @@
                 <span>Attack {{attack.attack}}</span>
                 <span>Damage {{attack.damage}}</span>
               </div>
+              <div class="swse-npc-attack-actions">
+                {{#if attack.canRollAttack}}
+                  <button type="button" class="swse-npc-action-button swse-npc-action-button--compact" data-action="roll-npc-statblock-attack" data-item-id="{{attack.itemId}}" data-attack-name="{{attack.name}}" data-attack-bonus="{{attack.attackBonus}}">Roll Attack</button>
+                {{/if}}
+                {{#if attack.canRollDamage}}
+                  <button type="button" class="swse-npc-action-button swse-npc-action-button--compact swse-npc-action-button--secondary" data-action="roll-npc-statblock-damage" data-attack-name="{{attack.name}}" data-damage-formula="{{attack.damageFormula}}">Roll Damage</button>
+                {{/if}}
+                {{#if attack.itemId}}
+                  <button type="button" class="swse-npc-action-button swse-npc-action-button--compact swse-npc-action-button--secondary swse-v2-open-item" data-item-id="{{attack.itemId}}">Open Item</button>
+                {{/if}}
+              </div>
               {{#if attack.notes}}
                 <p>{{attack.notes}}</p>
               {{/if}}
@@ -103,7 +114,7 @@
       {{#if playStatblock.skills.length}}
         <div class="swse-npc-chip-row">
           {{#each playStatblock.skills as |skill|}}
-            <span class="swse-npc-chip">{{skill.label}} {{skill.total}}{{#if skill.trained}} · trained{{/if}}</span>
+            <button type="button" class="swse-npc-chip swse-npc-chip--button" data-action="roll-skill" data-skill="{{skill.key}}" data-mod-dialog="true">{{skill.label}} {{skill.total}}{{#if skill.trained}} · trained{{/if}}</button>
           {{/each}}
         </div>
       {{else}}
@@ -149,7 +160,7 @@
           {{#if playStatblock.featureGroups.feats.length}}
             <div class="swse-npc-chip-row">
               {{#each playStatblock.featureGroups.feats as |feat|}}
-                <span class="swse-npc-chip">{{feat.name}}</span>
+                <button type="button" class="swse-npc-chip swse-npc-chip--button swse-v2-open-item" data-item-id="{{feat.id}}">{{feat.name}}</button>
               {{/each}}
             </div>
           {{else}}
@@ -161,7 +172,7 @@
           {{#if playStatblock.featureGroups.talents.length}}
             <div class="swse-npc-chip-row">
               {{#each playStatblock.featureGroups.talents as |talent|}}
-                <span class="swse-npc-chip">{{talent.name}}</span>
+                <button type="button" class="swse-npc-chip swse-npc-chip--button swse-v2-open-item" data-item-id="{{talent.id}}">{{talent.name}}</button>
               {{/each}}
             </div>
           {{else}}

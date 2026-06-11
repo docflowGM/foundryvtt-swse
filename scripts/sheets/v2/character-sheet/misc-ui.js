@@ -396,6 +396,7 @@ export function activateMiscUI(sheet, html, { signal } = {}) {
   html.querySelectorAll('[data-action="execute-extra-skill-use"]').forEach(button => {
     button.addEventListener("click", async (event) => {
       event.preventDefault();
+      event.stopPropagation();
       const skillKey = button.dataset.skill;
       const useKey = button.dataset.useKey || button.dataset.key || button.dataset.use;
       const blocked = button.dataset.blocked === "true";
@@ -414,7 +415,11 @@ export function activateMiscUI(sheet, html, { signal } = {}) {
           source: "skills-tab",
           actionType,
           sourceType,
-          sourceLabel
+          sourceLabel,
+          sourceElement: button,
+          companionSource: button,
+          sheet,
+          showRollCompanion: true
         });
       } catch (err) {
         // console.error("Failed to use extra skill:", err);

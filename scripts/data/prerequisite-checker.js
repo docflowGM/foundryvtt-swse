@@ -1446,9 +1446,10 @@ export class PrerequisiteChecker {
     static _checkWeaponSpecializationCondition(prereq, actor, pending) {
         const target = this._getPrereqWeaponTarget(prereq, pending);
         const providers = FeatChoiceResolver._getChoiceEntriesByKind(actor, 'weapon_specialization', pending);
+        const hasNamedSpecialization = this._actorHasNamedItem(actor, pending, 'talent', 'Weapon Specialization');
         const hasSpec = target
             ? this._choiceProviderHasTarget(providers, target)
-            : providers.length > 0;
+            : (providers.length > 0 || hasNamedSpecialization);
         const label = this._formatPrereqTarget(target);
         return {
             met: hasSpec,
@@ -1560,6 +1561,20 @@ export class PrerequisiteChecker {
         // FIX MEDIUM #2: Normalize whitespace before parsing
         // Collapse multiple spaces to single space for consistent parsing
         const normalized = prereqString.replace(/\s+/g, ' ').trim();
+
+        // Choice-scoped weapon prerequisites contain prose such as
+        // "Weapon Focus with chosen Exotic Weapon or Weapon Group". Do not split
+        // that on the word "or" or the trailing "Weapon Group" becomes an
+        // advisory branch that incorrectly makes the whole prerequisite legal.
+        if (/^weapon\s+focus\s+with\s+(?:the\s+)?(?:selected|chosen)\s+(?:exotic\s+)?weapon(?:\s+or\s+weapon\s+group|\s+group)?$/i.test(normalized)
+            || /^weapon\s+focus\s*\((?:selected|chosen|chosen weapon|selected weapon|chosen weapon group|selected weapon group)\)$/i.test(normalized)) {
+            return [{ type: 'weapon_focus' }];
+        }
+
+        if (/^weapon\s+specialization\s+with\s+(?:the\s+)?(?:selected|chosen)\s+(?:exotic\s+)?weapon(?:\s+or\s+weapon\s+group|\s+group)?$/i.test(normalized)
+            || /^weapon\s+specialization\s*\((?:selected|chosen|chosen weapon|selected weapon|chosen weapon group|selected weapon group)\)$/i.test(normalized)) {
+            return [{ type: 'weapon_specialization' }];
+        }
 
         // Tree-count talent requirements contain prose ORs that should not be
         // split into generic groups before the tree parser sees the full clause.

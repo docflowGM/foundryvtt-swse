@@ -4,9 +4,9 @@
     <!-- MENTOR SELECTED - SHOW CHAT INTERFACE -->
     <div class="chat-view">
 
-      <!-- Back to Mentors Button -->
+      <!-- {{localize 'SWSE.MentorChat.BackToMentors'}} Button -->
       <button class="back-to-mentors" type="button">
-        <i class="{{getIconClass 'arrowLeft'}}"></i> Back to Mentors
+        <i class="{{getIconClass 'arrowLeft'}}"></i> {{localize 'SWSE.MentorChat.BackToMentors'}}
       </button>
 
       <!-- Mentor Conversation Box (KOTOR-style) -->
@@ -45,7 +45,7 @@
 
               {{#if currentResponse.suggestions}}
                 <div class="dialogue-suggestions">
-                  <p class="suggestions-header">Top Recommendations:</p>
+                  <p class="suggestions-header">{{localize 'SWSE.MentorChat.TopRecommendations'}}</p>
                   <ul>
                     {{#each currentResponse.suggestions}}
                       <li><span class="suggestion-name">{{this.name}}</span> — {{this.reason}}</li>
@@ -55,11 +55,11 @@
               {{/if}}
             </div>
 
-            <!-- System Analysis Panel (Reasoning) -->
+            <!-- {{localize 'SWSE.MentorChat.SystemAnalysis'}} Panel (Reasoning) -->
             {{#if currentResponse.reasonTexts}}
               {{#if currentResponse.reasonTexts.length}}
                 <div class="system-analysis-panel">
-                  <p class="analysis-label">System Analysis</p>
+                  <p class="analysis-label">{{localize 'SWSE.MentorChat.SystemAnalysis'}}</p>
                   <ul class="reason-list">
                     {{#each currentResponse.reasonTexts}}
                       <li class="reason-item">{{this.text}}</li>
@@ -72,10 +72,10 @@
             <!-- Path Selection Options (only for paths_open topic) -->
             {{#if currentResponse.availablePaths}}
               <div class="path-selection-options">
-                <p class="options-label">Does one of these paths call to you?</p>
+                <p class="options-label">{{localize 'SWSE.MentorChat.PathPrompt'}}</p>
                 {{#each currentResponse.availablePaths}}
                   <button class="path-option response-option" data-path="{{this.name}}" type="button">
-                    <i class="fa-solid fa-check"></i> I choose <strong>{{this.name}}</strong>
+                    <i class="fa-solid fa-check"></i> {{localize 'SWSE.MentorChat.ChoosePath' name=this.name}}
                   </button>
                 {{/each}}
               </div>
@@ -84,7 +84,7 @@
             <!-- Response Options -->
             <div class="kotor-response-options">
               <button class="back-to-topics response-option" type="button">
-                <i class="{{getIconClass 'arrowLeft'}}"></i> Back to Topics
+                <i class="{{getIconClass 'arrowLeft'}}"></i> {{localize 'SWSE.MentorChat.BackToTopics'}}
               </button>
             </div>
 
@@ -99,13 +99,13 @@
               {{#if currentResponse.introduction}}
                 <p class="dialogue-line">{{{currentResponse.introduction}}}</p>
               {{else}}
-                <p class="dialogue-line">What can I help you with?</p>
+                <p class="dialogue-line">{{localize 'SWSE.MentorChat.DefaultHelp'}}</p>
               {{/if}}
             </div>
 
             <!-- Topic Selection (conversation options) -->
             <div class="kotor-response-options topics-options">
-              <p class="options-label">What would you like to discuss?</p>
+              <p class="options-label">{{localize 'SWSE.MentorChat.DiscussionPrompt'}}</p>
               {{#each topics}}
                 <button class="topic-button response-option" data-topic="{{this.key}}" type="button">
                   <i class="fa-solid {{this.icon}}"></i>
@@ -128,7 +128,7 @@
       {{#if hasMentors}}
         <!-- Intro Text -->
         <div class="selection-intro">
-          <p>Select a mentor to seek their guidance. These mentors have been unlocked through your class training:</p>
+          <p>{{localize 'SWSE.MentorChat.SelectionIntro'}}</p>
         </div>
 
         <!-- Mentor Grid -->
@@ -141,7 +141,7 @@
               <div class="mentor-card-info">
                 <h4>{{this.mentor.name}}</h4>
                 <p class="mentor-card-title">{{this.mentor.title}}</p>
-                <p class="mentor-card-unlocked">Unlocked via: <em>{{this.unlockedBy}}</em></p>
+                <p class="mentor-card-unlocked">{{localize 'SWSE.MentorChat.UnlockedVia' source=this.unlockedBy}}</p>
               </div>
             </div>
           {{/each}}
@@ -151,8 +151,8 @@
         <!-- No Mentors Available -->
         <div class="no-mentors">
           <i class="{{getIconClass 'user'}}-slash" style="font-size: 48px; opacity: 0.3; margin-bottom: 15px;"></i>
-          <p>You haven't unlocked any mentors yet.</p>
-          <p>Take a class to gain access to mentor guidance!</p>
+          <p>{{localize 'SWSE.MentorChat.NoMentors'}}</p>
+          <p>{{localize 'SWSE.MentorChat.NoMentorsHint'}}</p>
         </div>
       {{/if}}
 

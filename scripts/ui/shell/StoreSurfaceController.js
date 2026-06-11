@@ -318,6 +318,14 @@ export class StoreSurfaceController {
           if (!result?.success) {
             ui.notifications?.warn?.(result?.error || 'Checkout did not complete. Review the cart and try again.');
           }
+          if (result?.success) {
+            // Belt-and-suspenders cart cleanup for the shell surface.  Checkout
+            // already clears on success, but the shell uses a cached store
+            // instance and actor flags; make both reflect an empty cart before
+            // the post-checkout render.
+            clearCart(store.cart);
+            await store._persistCart?.();
+          }
           const view = result?.success ? 'history' : 'cart';
           this._setOptions({ currentView: view, selectedProductId: null });
 

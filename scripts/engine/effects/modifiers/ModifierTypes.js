@@ -21,6 +21,9 @@ export const ModifierType = Object.freeze({
   ENHANCEMENT: 'enhancement',
   MORALE: 'morale',
   INSIGHT: 'insight',
+  ARMOR: 'armor',
+  EQUIPMENT: 'equipment',
+  RESTRICTION: 'restriction',
   CIRCUMSTANCE: 'circumstance',
   PENALTY: 'penalty',
   DODGE: 'dodge',
@@ -49,7 +52,7 @@ export const STACKING_RULES = Object.freeze({
  */
 export const VALID_TARGET_PATTERNS = Object.freeze({
   skill: /^skill\.\w+$/,
-  defense: /^defense\.(fort|reflex|will|damageThreshold)$/i,
+  defense: /^defense\.(fort|reflex|will|damageThreshold|dexLimit)$/i,
   ability: /^ability\.(str|dex|con|int|wis|cha)$/i,
   hp: /^hp\.max$/,
   speed: /^speed\.(base|run)$/,

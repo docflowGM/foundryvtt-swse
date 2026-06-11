@@ -6,10 +6,10 @@
   <!-- Content layer: normal flow content -->
   <div class="swse-panel__content">
     <header class="section-bar">
-      <h3 class="section-header">Relationships & Connections</h3>
+      <h3 class="section-header">{{localize "SWSE.CharacterSheet.Sections.RelationshipsConnections"}}</h3>
       {{#if relationshipsPanel.hasAvailableFollowerSlots}}
-      <button class="build-follower-btn" data-action="build-follower" title="Create a new follower under your command">
-        <i class="fas fa-user-plus"></i> Add Relationship
+      <button class="build-follower-btn" data-action="build-follower" title='{{localize "SWSE.CharacterSheet.Tooltips.CreateFollower"}}'>
+        <i class="fas fa-user-plus"></i> {{localize "SWSE.CharacterSheet.Actions.AddRelationship"}}
       </button>
       {{/if}}
     </header>
@@ -19,7 +19,7 @@
       {{#each relationshipsPanel.relationships}}
         <div class="swse-relationship-roster-card swse-relationship-roster-card--{{this.type}}" data-uuid="{{this.uuid}}" role="button" tabindex="0">
           <div class="swse-relationship-roster-card__media">
-            <img class="swse-relationship-roster-card__img" src="{{this.img}}" alt="{{this.name}}" title="Click to open {{this.name}}" />
+            <img class="swse-relationship-roster-card__img" src="{{this.img}}" alt="{{this.name}}" title='{{localize "SWSE.CharacterSheet.Tooltips.ClickToOpen" name=this.name}}' />
           </div>
           <div class="swse-relationship-roster-card__content">
             <div class="swse-relationship-roster-card__name">{{this.name}}</div>
@@ -33,15 +33,15 @@
     </div>
   {{else}}
     <div class="empty-state">
-      <p>No relationships recorded yet.</p>
-      <p class="hint">Drop actors onto the sheet to add relationships.</p>
+      <p>{{localize "SWSE.CharacterSheet.Empty.NoRelationships"}}</p>
+      <p class="hint">{{localize "SWSE.CharacterSheet.Hints.DropActorsForRelationships"}}</p>
     </div>
   {{/if}}
 
   <!-- Relationship Notes Section -->
   <div class="relationships-notes-section">
-    <label class="section-subheader">Relationship Notes & Context</label>
-    <textarea name="flags.swse.character.relationshipNotes" class="bio-textarea" placeholder="Overall notes about alliances, rivalries, key contact information...">{{relationshipsPanel.relationshipNotes}}</textarea>
+    <label class="section-subheader">{{localize "SWSE.CharacterSheet.Labels.RelationshipNotesContext"}}</label>
+    <textarea name="flags.swse.character.relationshipNotes" class="bio-textarea" placeholder='{{localize "SWSE.CharacterSheet.Placeholders.RelationshipNotes"}}'>{{relationshipsPanel.relationshipNotes}}</textarea>
     </div>
   </div>
 

@@ -9,6 +9,31 @@
  * Also contains Rendarr dialogue and utility helpers for categorization/sorting.
  */
 
+
+function storeI18n(key, data = {}) {
+  try {
+    return game.i18n?.format?.(key, data) ?? game.i18n?.localize?.(key) ?? key;
+  } catch (_err) {
+    return key;
+  }
+}
+
+function storeTranslationValue(path) {
+  try {
+    return foundry.utils?.getProperty?.(game.i18n?.translations || {}, path);
+  } catch (_err) {
+    return undefined;
+  }
+}
+
+function localizedStoreArray(path, fallback = []) {
+  const value = storeTranslationValue(path);
+  if (Array.isArray(value) && value.length) {
+    return value.filter(line => typeof line === 'string' && line.trim());
+  }
+  return Array.isArray(fallback) ? fallback : [];
+}
+
 export function normalizeNumber(value) {
   if (value === undefined || value === null) {return null;}
   if (typeof value === 'number') {return Number.isFinite(value) ? value : null;}
@@ -175,9 +200,10 @@ export function getRendarrDialogue() {
 }
 
 export function getRandomDialogue(context) {
-    const dialogues = getRendarrDialogue()[context];
+    const fallback = getRendarrDialogue()[context];
+    const dialogues = localizedStoreArray(`SWSE.Store.Rendarr.${context}`, fallback);
     if (!dialogues || dialogues.length === 0) {
-        return "I've got what you need, lad!";
+        return storeI18n('SWSE.Store.RendarrFallback', { default: "I've got what you need, lad!" });
     }
     return dialogues[Math.floor(Math.random() * dialogues.length)];
 }
@@ -215,7 +241,12 @@ export function getRarityClass(availability) {
 }
 
 export function getRarityLabel(rarityClass) {
-    const labels = { 'rare': 'Rare', 'illegal': 'Illegal', 'military': 'Military', 'restricted': 'Restricted' };
+    const labels = {
+      rare: storeI18n('SWSE.Store.Filters.Rare'),
+      illegal: storeI18n('SWSE.Store.Filters.Illegal'),
+      military: storeI18n('SWSE.Store.Filters.Military'),
+      restricted: storeI18n('SWSE.Store.Filters.Restricted')
+    };
     return labels[rarityClass] || '';
 }
 
@@ -339,11 +370,11 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
   };
 
   const canonicalCategoryLabels = {
-    weapons: 'Weapons',
-    armor: 'Armor',
-    gear: 'Equipment',
-    vehicles: 'Vehicles',
-    droids: 'Droids'
+    weapons: storeI18n('SWSE.Store.Navigation.Weapons'),
+    armor: storeI18n('SWSE.Store.Navigation.Armor'),
+    gear: storeI18n('SWSE.Store.Navigation.Equipment'),
+    vehicles: storeI18n('SWSE.Store.Navigation.Vehicles'),
+    droids: storeI18n('SWSE.Store.Navigation.Droids')
   };
 
   const normalizedCategories = new Map();
@@ -506,7 +537,7 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
       topCategory.familyTabs = Array.from(byFamily.entries())
         .map(([family, group]) => ({
           family,
-          label: family === 'ranged' ? 'Ranged' : family === 'melee' ? 'Melee' : 'Other',
+          label: family === 'ranged' ? storeI18n('SWSE.Store.Navigation.Ranged') : family === 'melee' ? storeI18n('SWSE.Store.Navigation.Melee') : storeI18n('SWSE.Store.Navigation.Other'),
           count: group.reduce((sum, child) => sum + (Number(child.count) || 0), 0),
           active: activeFamily === family
         }))

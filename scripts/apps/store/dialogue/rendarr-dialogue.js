@@ -13,6 +13,28 @@
  *  - Smart selector function
  */
 
+
+function getStoreTranslationValue(path) {
+  try {
+    return foundry.utils?.getProperty?.(game.i18n?.translations || {}, path);
+  } catch (_err) {
+    return undefined;
+  }
+}
+
+function getLocalizedRendarrLines(context, fallback = []) {
+  const direct = getStoreTranslationValue(`SWSE.Store.Rendarr.${context}`);
+  if (Array.isArray(direct) && direct.length) {
+    return direct.filter(line => typeof line === 'string' && line.trim());
+  }
+  return Array.isArray(fallback) ? fallback : [];
+}
+
+function chooseLine(list = []) {
+  if (!Array.isArray(list) || !list.length) return '';
+  return list[Math.floor(Math.random() * list.length)];
+}
+
 export const RENDARR_LINES = {
   'welcome': [
     'Hey there! Welcome to the Galactic Marketplace, friend.',
@@ -215,20 +237,17 @@ export function getRendarrLine(context = 'welcome', {
 
   /* GM mode override */
   if (isGMPanel) {
-    const list = RENDARR_LINES['gm'];
-    return list[Math.floor(Math.random() * list.length)];
+    return chooseLine(getLocalizedRendarrLines('gm', RENDARR_LINES['gm']));
   }
 
   /* Broke player override */
   if (isBroke) {
-    const list = RENDARR_LINES['broke'];
-    return list[Math.floor(Math.random() * list.length)];
+    return chooseLine(getLocalizedRendarrLines('broke', RENDARR_LINES['broke']));
   }
 
   /* Big purchase override */
   if (bigPurchase) {
-    const list = RENDARR_LINES['big_purchase'];
-    return list[Math.floor(Math.random() * list.length)];
+    return chooseLine(getLocalizedRendarrLines('big_purchase', RENDARR_LINES['big_purchase']));
   }
 
   /* Weapon subtype override */
@@ -244,12 +263,11 @@ export function getRendarrLine(context = 'welcome', {
     }[subtype];
 
     if (subKey && RENDARR_LINES[subKey]) {
-      const s = RENDARR_LINES[subKey];
-      return s[Math.floor(Math.random() * s.length)];
+      return chooseLine(getLocalizedRendarrLines(subKey, RENDARR_LINES[subKey]));
     }
   }
 
   /* Normal category lines */
-  const list = RENDARR_LINES[context] || RENDARR_LINES['welcome'];
-  return list[Math.floor(Math.random() * list.length)];
+  const fallbackList = RENDARR_LINES[context] || RENDARR_LINES['welcome'];
+  return chooseLine(getLocalizedRendarrLines(context, fallbackList));
 }

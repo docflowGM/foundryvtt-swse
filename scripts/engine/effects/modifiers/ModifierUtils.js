@@ -143,7 +143,7 @@ export class ModifierUtils {
           break;
 
         case 'highestOnly': {
-          // Competence, enhancement, morale, insight: only highest applies
+          // Competence, enhancement, morale, insight, armor, and equipment: only highest applies
           let highest = modsOfType[0];
           for (const mod of modsOfType) {
             if (Math.abs(mod.value) > Math.abs(highest.value)) {
@@ -151,6 +151,18 @@ export class ModifierUtils {
             }
           }
           resolved.push(highest);
+          break;
+        }
+
+        case 'lowestOnly': {
+          // Restriction caps are positive limits; the lowest cap is the most restrictive.
+          let lowest = modsOfType[0];
+          for (const mod of modsOfType) {
+            if (Number(mod.value) < Number(lowest.value)) {
+              lowest = mod;
+            }
+          }
+          resolved.push(lowest);
           break;
         }
 
