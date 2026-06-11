@@ -691,6 +691,109 @@ function getForceDcRows(power) {
   })).filter((row) => row.dc || row.effect);
 }
 
+function isTelekineticForcePowerEntry(power) {
+  const system = power?.system ?? {};
+  const values = [
+    ...(Array.isArray(system.descriptor) ? system.descriptor : []),
+    ...(Array.isArray(system.descriptors) ? system.descriptors : []),
+    ...(Array.isArray(system.tags) ? system.tags : []),
+    system.discipline,
+    system.category,
+    system.subcategory
+  ]
+    .filter(value => value != null)
+    .map(value => String(value).trim().toLowerCase().replace(/[\s_-]+/g, '-'));
+  return values.includes('telekinetic') || values.includes('telekinesis');
+}
+
+function isMindAffectingForcePowerEntry(power) {
+  const system = power?.system ?? {};
+  const values = [
+    power?.name,
+    ...(Array.isArray(system.descriptor) ? system.descriptor : []),
+    ...(Array.isArray(system.descriptors) ? system.descriptors : []),
+    ...(Array.isArray(system.tags) ? system.tags : []),
+    system.discipline,
+    system.category,
+    system.subcategory,
+    system.effect,
+    system.summary
+  ].filter(Boolean).join(' ').toLowerCase();
+  return /mind[-\s]?affecting|mind|telepathic|illusion|influence|mind trick|fear/.test(values);
+}
+
+function getTalentMaxUses(actor, talentName) {
+  if (!actor?.items) return 0;
+  const wanted = String(talentName ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
+  let total = 0;
+  for (const item of actor.items) {
+    const rawName = String(item?.name ?? '').trim();
+    const normalized = rawName.toLowerCase().replace(/\s+/g, ' ');
+    const base = normalized.replace(/\s*\(\d+\)\s*$/, '');
+    if (base !== wanted) continue;
+    const parenthetical = normalized.match(/\((\d+)\)/)?.[1];
+    const systemQty = Number(item?.system?.quantity ?? item?.system?.rank ?? item?.system?.ranks ?? item?.system?.uses?.max ?? 0) || 0;
+    total += Math.max(1, Number(parenthetical ?? systemQty ?? 1) || 1);
+  }
+  return total;
+}
+
+function getTelekineticSavantMaxUses(actor) {
+  if (!actor?.items) return 0;
+  let total = 0;
+  for (const item of actor.items) {
+    const rawName = String(item?.name ?? '').trim();
+    const normalized = rawName.toLowerCase().replace(/\s+/g, ' ');
+    if (!/^telekinetic savant(?:\s*\((\d+)\))?$/.test(normalized)) continue;
+    const parenthetical = normalized.match(/\((\d+)\)/)?.[1];
+    const systemQty = Number(item?.system?.quantity ?? item?.system?.rank ?? item?.system?.ranks ?? item?.system?.uses?.max ?? 0) || 0;
+    total += Math.max(1, Number(parenthetical ?? systemQty ?? 1) || 1);
+  }
+  return total;
+}
+
+function getTelekineticSavantState(actor) {
+  const max = getTelekineticSavantMaxUses(actor);
+  const encounterId = game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
+  const flag = actor?.getFlag?.('foundryvtt-swse', 'telekineticSavantUses') ?? actor?.flags?.['foundryvtt-swse']?.telekineticSavantUses ?? {};
+  const used = flag?.encounterId === encounterId ? Math.max(0, Number(flag.used ?? 0) || 0) : 0;
+  return { max, used, remaining: Math.max(0, max - used), encounterId };
+}
+
+function getInfluenceSavantState(actor) {
+  const max = getTalentMaxUses(actor, 'Influence Savant');
+  const encounterId = game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
+  const flag = actor?.getFlag?.('foundryvtt-swse', 'influenceSavantUses') ?? actor?.flags?.['foundryvtt-swse']?.influenceSavantUses ?? {};
+  const used = flag?.encounterId === encounterId ? Math.max(0, Number(flag.used ?? 0) || 0) : 0;
+  return { max, used, remaining: Math.max(0, max - used), encounterId };
+}
+
+
+function actorHasTalentByName(actor, talentName) {
+  const wanted = String(talentName ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
+  if (!wanted || !actor?.items) return false;
+  return Array.from(actor.items).some(item => item?.type === 'talent' && String(item.name ?? '').trim().toLowerCase().replace(/\s+/g, ' ') === wanted);
+}
+
+function getForceTalentActionState(actor) {
+  const forceFlowFlag = actor?.getFlag?.('foundryvtt-swse', 'forceFlowTemporaryForcePoints') ?? actor?.flags?.['foundryvtt-swse']?.forceFlowTemporaryForcePoints ?? {};
+  const encounterId = game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
+  const forceFlowTemporary = forceFlowFlag?.encounterId === encounterId ? Math.max(0, Number(forceFlowFlag.total ?? 0) || 0) : 0;
+  return {
+    aversion: { available: actorHasTalentByName(actor, 'Aversion') },
+    illusion: {
+      available: actorHasTalentByName(actor, 'Illusion'),
+      illusionBond: actorHasTalentByName(actor, 'Illusion Bond'),
+      masquerade: actorHasTalentByName(actor, 'Masquerade')
+    },
+    link: { available: actorHasTalentByName(actor, 'Link') },
+    suppressForce: { available: actorHasTalentByName(actor, 'Suppress Force') },
+    telepathicLink: { available: actorHasTalentByName(actor, 'Telepathic Link') },
+    telepathicInfluence: { available: actorHasTalentByName(actor, 'Telepathic Influence') },
+    forceFlow: { available: actorHasTalentByName(actor, 'Force Flow'), temporary: forceFlowTemporary }
+  };
+}
+
 function normalizeForcePower(power, discarded = false, options = {}) {
   const isForm = options.type === 'form';
   const p = getForceCardP(power, isForm);
@@ -720,6 +823,8 @@ function normalizeForcePower(power, discarded = false, options = {}) {
     dcRows,
     hasDcRows: dcRows.length > 0,
     fpOk: p !== 'dark',
+    telekinetic: isTelekineticForcePowerEntry(power),
+    mindAffecting: isMindAffectingForcePowerEntry(power),
     discarded,
     // Legacy fields kept for backward compat with old force-tab
     summary: forceTextExcerpt(system.summary || system.description || power?.summary || '', 160)
@@ -831,6 +936,16 @@ export function buildForceTab(context) {
     ?? ''
   ).trim();
 
+  const telekineticSavant = getTelekineticSavantState(actor);
+  telekineticSavant.recoverableCount = discard.filter((power) => power.telekinetic).length;
+  telekineticSavant.hasRecoverable = telekineticSavant.recoverableCount > 0;
+  telekineticSavant.available = telekineticSavant.max > 0 && telekineticSavant.remaining > 0 && telekineticSavant.hasRecoverable;
+
+  const influenceSavant = getInfluenceSavantState(actor);
+  influenceSavant.recoverableCount = discard.filter((power) => power.mindAffecting).length;
+  influenceSavant.hasRecoverable = influenceSavant.recoverableCount > 0;
+  influenceSavant.available = influenceSavant.max > 0 && influenceSavant.remaining > 0 && influenceSavant.hasRecoverable;
+
   const forceSuite = {
     actorName: actor?.name || 'Unknown Force User',
     actorSubtitle,
@@ -858,6 +973,9 @@ export function buildForceTab(context) {
       discard: discard.length
     },
     forcefulRecovery,
+    telekineticSavant,
+    influenceSavant,
+    forceTalentActions: getForceTalentActionState(actor),
     hasDarkSideScore: (Number(context.darkSidePanel?.value) || 0) > 0
   };
 

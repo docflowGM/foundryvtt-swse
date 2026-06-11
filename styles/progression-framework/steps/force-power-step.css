@@ -682,3 +682,103 @@
 .prog-force-regimen-card__state { margin-top: 0.7rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; opacity: 0.8; }
 .prog-force-regimen-dc-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
 .prog-force-regimen-dc-table th, .prog-force-regimen-dc-table td { border-bottom: 1px solid rgba(255,255,255,0.12); padding: 0.35rem; text-align: left; vertical-align: top; }
+
+/* Feat-picker style Force Power browser */
+.progression-shell .force-power-browser-toolbar,
+.progression-shell .force-power-browser {
+  margin: var(--prog-space-sm) var(--prog-space-md) 0;
+}
+
+.progression-shell .force-power-browser {
+  flex: 1 1 auto;
+}
+
+.progression-shell .force-power-category-button--major {
+  margin-top: 0.25rem;
+  border-color: rgba(0, 229, 255, 0.26);
+  background: linear-gradient(90deg, rgba(0, 229, 255, 0.14), rgba(0, 0, 0, 0.16));
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.progression-shell .force-power-category-button--major:first-child {
+  margin-top: 0;
+}
+
+.progression-shell .force-power-category-button--sub {
+  width: calc(100% - 0.8rem);
+  margin-left: 0.8rem;
+  padding-block: 0.48rem;
+  opacity: 0.94;
+}
+
+.progression-shell .force-power-category-button--sub .feat-category-button__main {
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.progression-shell .force-power-results-pane .feat-compact-list,
+.progression-shell .force-power-compact-list {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.progression-shell .force-power-compact-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.progression-shell .force-power-compact-row .feat-name {
+  max-width: 38%;
+}
+
+.progression-shell .force-power-compact-row__controls {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.32rem;
+  min-width: 5.6rem;
+  color: rgba(184, 238, 255, 0.78);
+}
+
+.progression-shell .force-power-compact-row__controls .prog-quantity-display {
+  min-width: 1.6rem;
+  text-align: center;
+}
+
+.progression-shell .force-power-compact-row .feat-subcategory-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.14rem 0.42rem;
+  border: 1px solid rgba(0, 229, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(0, 229, 255, 0.055);
+  color: rgba(199, 243, 255, 0.82);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+@media (max-width: 1100px) {
+  .progression-shell .force-power-compact-row .feat-name {
+    max-width: 52%;
+  }
+}
+
+@media (max-width: 820px) {
+  .progression-shell .force-power-category-button--sub {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .progression-shell .force-power-compact-row .feat-name {
+    max-width: 100%;
+  }
+
+  .progression-shell .force-power-compact-row {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .progression-shell .force-power-compact-row__controls {
+    justify-content: flex-start;
+  }
+}

@@ -30,7 +30,6 @@ import { SWSEGrappling } from "./scripts/combat/systems/grappling-system.js";
 import { repairActorForcePowerAbilityMeta, repairWorldForcePowerAbilityMeta } from "./scripts/engine/abilities/force-power/force-power-ability-meta.js";
 import { installItemEditorTrace } from "./scripts/debug/item-editor-trace.js";
 import { registerCompendiumDirectoryClickRepair } from "./scripts/core/compendium-directory-click-repair.js";
-import { registerCompendiumPackRegistrationRepair } from "./scripts/core/compendium-pack-registration-repair.js";
 import { DefenseCalculator } from "./scripts/actors/derived/defense-calculator.js";
 import { initializeHolonet } from "./scripts/holonet/integration/holonet-init.js";
 import { initializeGames } from "./scripts/games/game-init.js";
@@ -41,6 +40,10 @@ import { FeatEffectRegistry } from "./scripts/engine/features/feat-effect-regist
 import { FeatEffectApplier, initializeFeatEffectsHooks } from "./scripts/engine/features/feat-effect-applier.js";
 import { FeatPackSeeder } from "./scripts/registries/feat-pack-seeder.js";
 import { RollEngine } from "./scripts/engine/roll-engine.js";
+import { registerForceExecutorChatHooks } from "./scripts/engine/force/force-executor.js";
+import { registerConsularTalentActions } from "./scripts/engine/talent/consular-talent-actions.js";
+import { registerSentinelTalentActions } from "./scripts/engine/talent/sentinel-talent-actions.js";
+import { registerLightsaberTalentActions } from "./scripts/engine/talent/lightsaber-talent-actions.js";
 import { registerTokenNameSyncHooks } from "./scripts/core/token-name-sync.js";
 import "./scripts/talents/squad-actions-init.js";
 import "./scripts/talents/minion-actions-init.js";
@@ -158,8 +161,11 @@ Hooks.once("init", async () => {
   initializeSceneControls();
   initializeDiscoverySystem();
   initializeSentinelGovernance();
-  registerCompendiumPackRegistrationRepair();
   registerCompendiumDirectoryClickRepair();
+  registerForceExecutorChatHooks();
+  registerConsularTalentActions();
+  registerSentinelTalentActions();
+  registerLightsaberTalentActions();
   // -------------------------------
   // Feat Effect Registry + lifecycle hooks
   // Mechanical effect definitions formerly embedded in feat compendium items

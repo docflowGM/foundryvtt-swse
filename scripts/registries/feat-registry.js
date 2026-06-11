@@ -52,6 +52,7 @@ export class FeatRegistry {
     static _byName = new Map();             // lowercase name -> entry
     static _byCategory = new Map();         // category -> entry[]
     static _byTag = new Map();              // tag -> entry[]
+    static _bySlug = new Map();             // lowercase slug -> entry
     static _fallbackDocsById = new Map();   // id -> JSONL-backed doc-like object
     static _sourcePackKey = null;           // resolved pack key or fallback source
 
@@ -180,6 +181,7 @@ export class FeatRegistry {
         this._byName.clear();
         this._byCategory.clear();
         this._byTag.clear();
+        this._bySlug.clear();
         this._fallbackDocsById.clear();
         this._sourcePackKey = null;
     }
@@ -192,6 +194,11 @@ export class FeatRegistry {
             this._entries.push(entry);
             this._byId.set(entry.id, entry);
             this._byName.set(entry.name.toLowerCase(), entry);
+
+            const slug = doc.system?.slug || entry.system?.slug;
+            if (slug) {
+                this._bySlug.set(String(slug).toLowerCase(), entry);
+            }
 
             if (fallback) {
                 this._fallbackDocsById.set(entry.id, doc);
@@ -718,12 +725,89 @@ export class FeatRegistry {
         }) : null);
     }
 
+    /**
+     * Get feat entry by slug (case-insensitive)
+     * @param {string} slug
+     * @returns {FeatRegistryEntry|null}
+     */
+    static getBySlug(slug) {
+        if (!slug) return null;
+        return this._bySlug.get(String(slug).toLowerCase()) || null;
+    }
+
+    /**
+     * Deterministic canonical-UUID scheme for feats. This is a synthetic,
+     * stable SSOT lookup key (NOT a Foundry document UUID): `swse.feat.<slug>`.
+     * It is the primary key the fallback stub pack stores and the drop-hydration
+     * interceptor resolves against. Because it is derived from the slug, it
+     * stays valid even if the stub compendium is regenerated.
+     */
+    static CANONICAL_UUID_PREFIX = 'swse.feat.';
+
+    static canonicalUuidForSlug(slug) {
+        const normalized = String(slug || '').toLowerCase().trim();
+        return normalized ? `${this.CANONICAL_UUID_PREFIX}${normalized}` : null;
+    }
+
+    static canonicalUuidForEntry(entry) {
+        return this.canonicalUuidForSlug(entry?.system?.slug || entry?.slug);
+    }
+
+    /**
+     * Resolve an entry from a canonical UUID (`swse.feat.<slug>`).
+     * @param {string} uuid
+     * @returns {FeatRegistryEntry|null}
+     */
+    static getByCanonicalUuid(uuid) {
+        if (!uuid) return null;
+        const s = String(uuid).trim();
+        if (s.toLowerCase().startsWith(this.CANONICAL_UUID_PREFIX)) {
+            return this.getBySlug(s.slice(this.CANONICAL_UUID_PREFIX.length));
+        }
+        return null;
+    }
+
     static resolveEntry(ref) {
         if (!ref) return null;
         if (typeof ref === 'string') {
-            return this.getById(ref) || this.getByName(ref);
+            // Priority: exact id, canonical UUID, slug, then name (diagnostic).
+            return this.getById(ref)
+                || this.getByCanonicalUuid(ref)
+                || this.getBySlug(ref)
+                || this.getByName(ref);
         }
-        return this.getById(ref.id || ref._id || ref.internalId) || this.getByName(ref.name || ref.label);
+        return this.getById(ref.id || ref._id || ref.internalId)
+            || this.getByCanonicalUuid(ref.canonicalUuid)
+            || this.getBySlug(ref.slug || ref.system?.slug)
+            || this.getByName(ref.name || ref.label);
+    }
+
+    /**
+     * Resolve a canonical, fully-formed feat Item data object from the SSOT.
+     * Synchronous (uses the in-memory index + cached fallback docs) so it is
+     * safe to call inside non-awaited hooks like preCreateItem.
+     *
+     * @param {string|object} ref - feat id, slug, name, or a partial record
+     * @returns {{name:string,type:string,img:string,system:object,effects:Array,flags:object}|null}
+     */
+    static getCanonicalItemData(ref) {
+        const entry = this.resolveEntry(ref);
+        if (!entry) return null;
+
+        const fallbackDoc = this._fallbackDocsById.get(entry.id);
+        const base = fallbackDoc?.toObject ? fallbackDoc.toObject() : null;
+
+        return {
+            id: entry.id,
+            canonicalUuid: this.canonicalUuidForEntry(entry),
+            slug: entry.system?.slug || null,
+            name: entry.name,
+            type: 'feat',
+            img: entry.img,
+            system: base?.system || entry.system || {},
+            effects: Array.isArray(base?.effects) ? base.effects : [],
+            flags: base?.flags ? foundry?.utils?.deepClone?.(base.flags) ?? base.flags : {}
+        };
     }
 
     static async getDocumentById(id) {

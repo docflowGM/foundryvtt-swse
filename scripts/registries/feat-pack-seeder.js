@@ -9,6 +9,19 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
+// ---------------------------------------------------------------------------
+// Debug gate
+// ---------------------------------------------------------------------------
+function _isDebug() {
+  if (globalThis.SWSE_DEBUG_COMPENDIUMS === true) return true;
+  try { return game?.settings?.get?.("foundryvtt-swse", "debugMode") === true; } catch (_e) { return false; }
+}
+
+function _dlog(...args) {
+  if (!_isDebug()) return;
+  console.log("[SWSE-FEAT-SEEDER]", ...args);
+}
+
 const FEAT_PACK_NAME = "feats";
 const FEAT_CATALOG_PATH = "data/feat-catalog.json";
 const DEFAULT_BATCH_SIZE = 50;
@@ -52,7 +65,14 @@ export class FeatPackSeeder {
 
     static async inspectPack(pack = this.resolvePack()) {
         if (!pack) return { exists: false, indexSize: 0, collection: null, metadata: null };
-        const index = await pack.getIndex({ fields: ["name", "type", "img", "system.slug", "system.iconPath"] });
+        let index;
+        try {
+            index = await pack.getIndex({ fields: ["name", "type", "img", "system.slug", "system.iconPath"] });
+            _dlog(`inspectPack: getIndex() succeeded for "${pack.collection}" — size=${index?.size ?? index?.length ?? 0}`);
+        } catch (err) {
+            console.error("[SWSE-FEAT-SEEDER] inspectPack: getIndex() threw:", err?.message, err?.stack || err);
+            index = null;
+        }
         return {
             exists: true,
             indexSize: Number(index?.size ?? index?.length ?? 0),
@@ -71,8 +91,24 @@ export class FeatPackSeeder {
     }
 
     static async _seedIfEmpty({ pack = null, force = false, reason = "manual", batchSize = DEFAULT_BATCH_SIZE } = {}) {
+        _dlog(`_seedIfEmpty called reason="${reason}" force=${force}`);
+
         pack ||= this.resolvePack();
+
+        // Diagnostic: log pack resolution result
+        if (_isDebug()) {
+            const systemId = game?.system?.id || "foundryvtt-swse";
+            const byDirect = game?.packs?.get?.(`${systemId}.${FEAT_PACK_NAME}`);
+            const byFallback = game?.packs?.get?.(`foundryvtt-swse.${FEAT_PACK_NAME}`);
+            _dlog(`  resolvePack result:`, pack ? `found "${pack.collection}"` : "null");
+            _dlog(`  game.packs.get("${systemId}.feats"):`, byDirect ? `found "${byDirect.collection}"` : "null");
+            _dlog(`  game.packs.get("foundryvtt-swse.feats"):`, byFallback ? `found "${byFallback.collection}"` : "null");
+            _dlog(`  game.packs total size:`, game?.packs?.size ?? "?");
+        }
+
         const before = await this.inspectPack(pack);
+        _dlog(`  inspectPack before:`, before);
+
         const summary = {
             ok: false,
             reason,
@@ -87,6 +123,7 @@ export class FeatPackSeeder {
         if (!pack) {
             summary.status = "missing-pack";
             SWSELogger.warn("[FeatPackSeeder] Cannot seed feats because foundryvtt-swse.feats is not registered.", summary);
+            console.warn("[SWSE-FEAT-SEEDER] feats pack is not in game.packs — seeding cannot proceed. Run SWSE.debug.repairCriticalCompendiumPacks() first.");
             return summary;
         }
 
@@ -94,20 +131,34 @@ export class FeatPackSeeder {
             summary.ok = true;
             summary.status = "already-populated";
             SWSELogger.log(`[FeatPackSeeder] Feats pack already contains ${before.indexSize} entries; seed skipped.`);
+            _dlog(`  Seed skipped — pack has ${before.indexSize} entries`);
             return summary;
         }
+
+        _dlog(`  Pack is empty (indexSize=${before.indexSize}) or force=${force}; proceeding with seed`);
 
         if (!game?.user?.isGM) {
             summary.status = "requires-gm";
             SWSELogger.warn("[FeatPackSeeder] Feats pack is empty, but only a GM client can seed the system compendium.", summary);
+            _dlog(`  Cannot seed — current user is not GM`);
             return summary;
         }
 
-        const catalogDocs = await this.loadCatalog();
+        _dlog(`  Loading fallback catalog from ${FEAT_CATALOG_PATH}...`);
+        let catalogDocs;
+        try {
+            catalogDocs = await this.loadCatalog();
+            _dlog(`  Fallback catalog loaded: ${catalogDocs.length} feat documents`);
+        } catch (err) {
+            console.error("[SWSE-FEAT-SEEDER] loadCatalog() threw:", err?.message, err?.stack || err);
+            catalogDocs = [];
+        }
         summary.attempted = catalogDocs.length;
+
         if (!catalogDocs.length) {
             summary.status = "empty-catalog";
             SWSELogger.warn("[FeatPackSeeder] Served feat catalog is empty; nothing to seed.", summary);
+            console.warn(`[SWSE-FEAT-SEEDER] data/feat-catalog.json loaded but contained 0 feat documents`);
             return summary;
         }
 
@@ -116,35 +167,54 @@ export class FeatPackSeeder {
         if (!ItemDocument?.createDocuments) {
             summary.status = "missing-item-document-class";
             SWSELogger.warn("[FeatPackSeeder] Item document class is unavailable; cannot seed feats.", summary);
+            console.warn("[SWSE-FEAT-SEEDER] Item.createDocuments is not available — cannot create docs in pack");
             return summary;
         }
 
+        _dlog(`  Seeding ${catalogDocs.length} docs into pack collection="${collection}" batchSize=${batchSize}`);
+
         const wasLocked = Boolean(pack.locked);
+        _dlog(`  Pack locked=${wasLocked}; will unlock before writing`);
         try {
             await this._setPackLocked(pack, false);
+            _dlog(`  Pack unlocked`);
 
             if (force && before.indexSize > 0) {
+                _dlog(`  force=true and indexSize=${before.indexSize} — deleting existing docs first`);
                 const ids = Array.from(await pack.getIndex()).map((entry) => entry?._id || entry?.id).filter(Boolean);
+                _dlog(`  Deleting ${ids.length} existing docs`);
                 for (let i = 0; i < ids.length; i += batchSize) {
                     await ItemDocument.deleteDocuments(ids.slice(i, i + batchSize), { pack: collection });
                 }
             }
 
             const prepared = catalogDocs.map((doc) => this._prepareDocument(doc));
+            _dlog(`  Prepared ${prepared.length} documents for creation`);
             for (let i = 0; i < prepared.length; i += batchSize) {
                 const chunk = prepared.slice(i, i + batchSize);
-                const created = await ItemDocument.createDocuments(chunk, {
-                    pack: collection,
-                    keepId: true,
-                    keepEmbeddedIds: true
-                });
-                summary.created += Number(created?.length || 0);
+                _dlog(`  Creating batch ${Math.floor(i / batchSize) + 1}: docs ${i}–${i + chunk.length - 1}`);
+                try {
+                    const created = await ItemDocument.createDocuments(chunk, {
+                        pack: collection,
+                        keepId: true,
+                        keepEmbeddedIds: true
+                    });
+                    summary.created += Number(created?.length || 0);
+                    _dlog(`  Batch created ${created?.length ?? 0} docs (running total: ${summary.created})`);
+                } catch (batchErr) {
+                    console.error(`[SWSE-FEAT-SEEDER] Batch ${Math.floor(i / batchSize) + 1} threw:`, batchErr?.message, batchErr?.stack || batchErr);
+                    summary.errors.push({ message: batchErr?.message || String(batchErr), stack: batchErr?.stack || null, batchStart: i });
+                }
             }
 
             const after = await this.inspectPack(pack);
             summary.ok = after.indexSize > 0;
             summary.status = summary.ok ? "seeded" : "seeded-but-index-empty";
             summary.indexAfter = after.indexSize;
+            _dlog(`  Seed complete. indexBefore=${before.indexSize} → indexAfter=${after.indexSize} created=${summary.created}`);
+            if (!summary.ok) {
+                console.warn("[SWSE-FEAT-SEEDER] Seed ran but index is still empty after creation. Created:", summary.created, "Errors:", summary.errors);
+            }
             SWSELogger.log("[FeatPackSeeder] Feats pack seed result:", summary);
             return summary;
         } catch (err) {
@@ -152,9 +222,11 @@ export class FeatPackSeeder {
             summary.error = err?.message || String(err);
             summary.errors.push({ message: summary.error, stack: err?.stack || null });
             SWSELogger.error("[FeatPackSeeder] Failed to seed feats pack:", err, summary);
+            console.error("[SWSE-FEAT-SEEDER] _seedIfEmpty top-level catch:", err?.message, err?.stack || err);
             return summary;
         } finally {
             if (wasLocked) await this._setPackLocked(pack, true).catch(() => {});
+            _dlog(`  Pack lock restored to locked=${wasLocked}`);
         }
     }
 

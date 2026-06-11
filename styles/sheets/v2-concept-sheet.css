@@ -9684,3 +9684,31 @@ form[id^="SWSEV2CharacterSheet"] .skill-extra-uses-toggle,
   border: 1px solid rgba(55, 232, 255, 0.35) !important;
   background: linear-gradient(90deg, rgba(55, 232, 255, 0.12), rgba(255, 48, 214, 0.08)) !important;
 }
+
+/* Telekinetic Savant recovery affordance */
+.swse-force-suite-tab .rbtn.tks {
+  border-color: color-mix(in oklch, oklch(0.82 0.19 145) 70%, var(--swse-concept-line, rgba(255,255,255,0.2)) 30%);
+  color: oklch(0.82 0.19 145);
+}
+
+.swse-force-suite-tab .rbtn.tks.disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.35);
+}
+
+.swse-force-suite-tab.is-picking-telekinetic-savant .disc-pile {
+  outline: 1px dashed oklch(0.82 0.19 145);
+  border-radius: 4px;
+  padding: 0.25rem;
+}
+
+.swse-force-suite-tab.is-picking-telekinetic-savant .disc-chip[data-telekinetic="true"] {
+  border-color: oklch(0.82 0.19 145);
+  color: oklch(0.82 0.19 145);
+  background: color-mix(in oklch, oklch(0.82 0.19 145) 18%, transparent);
+}
+
+.swse-force-suite-tab.is-picking-telekinetic-savant .disc-chip[data-telekinetic="false"] {
+  opacity: 0.45;
+}

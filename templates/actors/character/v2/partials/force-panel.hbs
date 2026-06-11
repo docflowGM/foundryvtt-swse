@@ -26,6 +26,20 @@
     </div>
   </header>
 
+
+  <div class="force-zone swse-ui-panel bonus-force-points">
+    <div class="zone-label">Bonus Force Points</div>
+    <div class="bonus-force-points__row">
+      <strong>{{bonusForcePoints.value}}</strong><span>/ {{bonusForcePoints.max}}</span>
+      <button type="button" data-action="spend-bonus-force-point" title="Spend Bonus Force Point">-1</button>
+      <button type="button" data-action="gain-bonus-force-point" title="Add Bonus Force Point">+1</button>
+      {{#if hasGuardianSpiritTalent}}
+        <button type="button" data-action="claim-guardian-bonus-fp">Claim Guardian Spirit FP</button>
+      {{/if}}
+    </div>
+    {{#if bonusForcePoints.note}}<p class="notes">{{bonusForcePoints.note}}</p>{{else}}<p class="notes">Bonus Force Points are spent before normal Force Points and may have source-specific restrictions.</p>{{/if}}
+  </div>
+
   <div class="force-zone swse-ui-panel hand-zone {{#if lowHand}}low-hand{{/if}}">
     <div class="zone-label">
       {{localize "SWSE.CharacterSheet.Labels.Hand"}} ({{forceSuite.hand.length}})

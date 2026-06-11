@@ -1,5 +1,5 @@
 {{!-- Force Power Selection Work Surface --}}
-{{!-- Shows browsable force power cards with owned/pending/reselection counts. --}}
+{{!-- Feat-step-style browser for Force Powers and Lightsaber Form Powers. --}}
 
 <div class="prog-force-power-browse swse-force-selector swse-store-stage">
   {{#if noNewPowerChoices}}
@@ -32,111 +32,202 @@
     </section>
   {{/if}}
 
-  {{#if powers.length}}
-    <div class="prog-force-power-grid" role="list">
-      {{#each powers}}
-        <div class="prog-force-power-card
-                    {{#if (lookup ../pendingCounts this.stateId)}}prog-force-power-card--selected{{/if}}
-                    {{#if this.isSuggested}}prog-power-card--suggested prog-power-card--suggested-{{this.confidenceLevel}}{{/if}}"
-             data-action="focus-item"
-             data-item-id="{{this.lookupId}}" data-power-id="{{this.stateId}}"
-             data-recommended="{{#if this.isSuggested}}true{{/if}}"
-             data-confidence-level="{{this.confidenceLevel}}"
-             tabindex="0" role="option"
-             aria-selected="{{#if (lookup ../pendingCounts this.stateId)}}true{{else}}false{{/if}}">
+  <div class="feat-browser-toolbar force-power-browser-toolbar">
+    <div class="feat-browser-toolbar__left">
+      {{#if hasSearchQuery}}
+        <span class="feat-browser-mode-pill feat-browser-mode-pill--search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          Search: {{searchQueryLabel}}
+        </span>
+      {{else}}
+        <span class="feat-browser-mode-pill">
+          <i class="fa-solid {{activeCategoryIcon}}"></i>
+          {{activeCategoryLabel}}
+        </span>
+      {{/if}}
+    </div>
 
-          {{#if this.img}}
-            <div class="prog-forcepower-card__media prog-holo-media prog-holo-media--wide" data-item-id="{{this.lookupId}}">
-              <img class="prog-forcepower-card__image prog-holo-media__image" src="{{this.img}}" alt="{{this.name}}" data-item-id="{{this.lookupId}}">
-              <div class="prog-holo-scan"></div>
-            </div>
-          {{/if}}
+    <div class="feat-browser-toolbar__right">
+      <button class="feat-filter-btn" data-action="reset-force-power-browser" type="button" title="Clear search and filters">
+        <i class="fa-solid fa-rotate-left"></i>
+        <span>Reset</span>
+      </button>
+      {{#unless hasSearchQuery}}
+        <button class="feat-filter-btn feat-category-collapse-toggle" data-action="toggle-force-power-category-sidebar" type="button">
+          <i class="fa-solid {{#if categorySidebarCollapsed}}fa-angles-right{{else}}fa-angles-left{{/if}}"></i>
+          <span>{{#if categorySidebarCollapsed}}Show Categories{{else}}Collapse Categories{{/if}}</span>
+        </button>
+      {{/unless}}
+    </div>
+  </div>
 
-          <div class="prog-force-power-card__header">
-            <h3 class="prog-force-power-card__name">
-              {{this.name}}
-              {{#if this.badgeLabel}}
-                <span class="swse-option-card__badge swse-option-card__badge--recommended">{{this.badgeLabel}}</span>
-              {{/if}}
-            </h3>
-            {{#with (lookup ../cardStates this.stateId)}}
-              {{#if totalCount}}
-                <span class="prog-force-power-card__count-badge">×{{totalCount}}</span>
-              {{/if}}
-            {{/with}}
+  <section class="feat-browser force-power-browser {{#if categorySidebarCollapsed}}feat-browser--sidebar-collapsed{{/if}} {{#if hasSearchQuery}}feat-browser--search-mode{{/if}}">
+    {{#unless hasSearchQuery}}
+      {{#unless categorySidebarCollapsed}}
+        <aside class="feat-category-sidebar force-power-category-sidebar" aria-label="Force Power categories">
+          <div class="feat-category-sidebar__header">
+            <span>Categories</span>
+            <button class="feat-category-sidebar__collapse" data-action="toggle-force-power-category-sidebar" type="button" title="Collapse categories">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
           </div>
+          <div class="feat-category-list force-power-category-list">
+            {{#each categoryOptions as |category|}}
+              <button class="feat-category-button force-power-category-button {{#if category.isActive}}active{{/if}} {{#if category.isMajor}}force-power-category-button--major{{/if}} {{#if category.isSubcategory}}force-power-category-button--sub{{/if}}"
+                      data-action="select-force-power-category"
+                      data-category="{{category.key}}"
+                      type="button">
+                <span class="feat-category-button__main">
+                  <i class="fa-solid {{category.icon}}"></i>
+                  <span>{{category.label}}</span>
+                </span>
+                <span class="feat-category-button__count">{{category.totalCount}}</span>
+              </button>
+            {{/each}}
+          </div>
+        </aside>
+      {{/unless}}
+    {{/unless}}
 
-          {{#if this.description}}
-            <p class="prog-force-power-card__description">
-              {{truncate this.description 100}}
-            </p>
-          {{/if}}
+    <main class="feat-results-pane force-power-results-pane">
+      {{#if hasSearchQuery}}
+        <header class="feat-results-pane__header feat-results-pane__header--search">
+          <div>
+            <h3><i class="fa-solid fa-magnifying-glass"></i> Search Results</h3>
+            <p>Matching Force Powers and Lightsaber Form Powers.</p>
+          </div>
+          <span class="feat-count-badge">{{searchResultCount}}</span>
+        </header>
 
-          {{#if (lookup ../cardStates this.stateId)}}
-            {{#with (lookup ../cardStates this.stateId)}}
-              <div class="prog-force-power-card__state-section">
-                {{#if isCommitted}}
-                  <span class="prog-force-power-card__status-badge prog-force-power-card__status-badge--committed">
-                    <i class="fas fa-lock" aria-hidden="true"></i>
-                    Known ({{effectiveOwnedCount}})
-                  </span>
-                {{/if}}
-                {{#if isPending}}
-                  <span class="prog-force-power-card__status-badge prog-force-power-card__status-badge--pending">
-                    <i class="fas fa-hourglass-end" aria-hidden="true"></i>
-                    Pending ({{pendingCount}})
-                  </span>
-                {{/if}}
-                {{#if isRemoved}}
-                  <span class="prog-force-power-card__status-badge prog-force-power-card__status-badge--removed">
-                    <i class="fas fa-rotate-left" aria-hidden="true"></i>
-                    Reselecting ({{removedCount}})
-                  </span>
-                {{/if}}
-
-                {{#if (or canIncrement canDecrement)}}
-                  <div class="prog-force-power-card__quantity-control">
-                    <button class="prog-quantity-btn prog-quantity-btn--decrement"
-                            data-action="decrement-quantity"
-                            data-item-id="{{powerId}}"
-                            type="button"
-                            aria-label="Remove one selection"
-                            title="Remove"
-                            {{#unless canDecrement}}disabled{{/unless}}>
-                      <i class="fas fa-minus" aria-hidden="true"></i>
-                    </button>
-                    <span class="prog-quantity-display">{{totalCount}}</span>
-                    <button class="prog-quantity-btn prog-quantity-btn--increment"
-                            data-action="increment-quantity"
-                            data-item-id="{{powerId}}"
-                            type="button"
-                            aria-label="Add one more"
-                            title="Add"
-                            {{#unless canIncrement}}disabled{{/unless}}>
-                      <i class="fas fa-plus" aria-hidden="true"></i>
-                    </button>
-                  </div>
-                {{else}}
-                  <div class="prog-force-power-card__state-hint prog-force-power-card__state-hint--available">
-                    <i class="fas fa-plus-circle" aria-hidden="true"></i>
-                    Available
-                  </div>
-                {{/if}}
-              </div>
-            {{/with}}
-          {{else}}
-            <div class="prog-force-power-card__state-hint prog-force-power-card__state-hint--available">
-              <i class="fas fa-plus-circle" aria-hidden="true"></i>
-              Available
-            </div>
-          {{/if}}
-        </div>
-      {{/each}}
+        {{#if searchResults.length}}
+          <div class="feat-compact-list feat-search-results-list force-power-compact-list">
+            {{#each searchResults as |power|}}
+              <div class="feat-compact-row force-power-compact-row {{#if power.isFocused}}focused{{/if}} {{#if power.isSelected}}selected{{/if}} {{#if power.isSuggested}}suggested{{/if}}"
+       data-power-id="{{power.stateId}}"
+       data-item-id="{{power.stateId}}"
+       data-action="focus-item"
+       tabindex="0"
+       role="option">
+    <div class="feat-compact-row__content">
+      <div class="feat-compact-row__line feat-compact-row__line--primary">
+        <span class="feat-name">{{power.name}}</span>
+        {{#if power.shortSummary}}<span class="feat-quick-summary">{{truncate power.shortSummary 120}}</span>{{/if}}
+      </div>
+      <div class="feat-compact-row__line feat-compact-row__line--meta">
+        <span class="feat-subcategory-pill">{{power.searchCategoryLabel}}</span>
+        {{#if power.prerequisiteText}}<span class="feat-prereq-line"><i class="fa-solid fa-link"></i> {{power.prerequisiteText}}</span>{{/if}}
+        {{#if power.isSuggested}}<span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Recommended</span>{{/if}}
+        {{#with (lookup ../cardStates power.stateId)}}
+          {{#if isCommitted}}<span class="feat-owned-pill">Known {{effectiveOwnedCount}}</span>{{/if}}
+          {{#if isPending}}<span class="feat-owned-pill">Pending {{pendingCount}}</span>{{/if}}
+          {{#if isRemoved}}<span class="feat-unavail-badge"><i class="fa-solid fa-rotate-left"></i> Reselecting {{removedCount}}</span>{{/if}}
+        {{/with}}
+      </div>
     </div>
-  {{else}}
-    <div class="prog-force-power-browse__empty">
-      <i class="fas fa-hand-sparkles" aria-hidden="true"></i>
-      <p>No Force Powers match your search or filters.</p>
+    <div class="force-power-compact-row__controls">
+      {{#with (lookup ../cardStates power.stateId)}}
+        <button class="prog-quantity-btn prog-quantity-btn--decrement"
+                data-action="decrement-quantity"
+                data-item-id="{{powerId}}"
+                type="button"
+                aria-label="Remove one selection"
+                title="Remove"
+                {{#unless canDecrement}}disabled{{/unless}}>
+          <i class="fas fa-minus" aria-hidden="true"></i>
+        </button>
+        <span class="prog-quantity-display">{{totalCount}}</span>
+        <button class="prog-quantity-btn prog-quantity-btn--increment"
+                data-action="increment-quantity"
+                data-item-id="{{powerId}}"
+                type="button"
+                aria-label="Add one more"
+                title="Add"
+                {{#unless canIncrement}}disabled{{/unless}}>
+          <i class="fas fa-plus" aria-hidden="true"></i>
+        </button>
+      {{else}}
+        <i class="fa-solid fa-chevron-right"></i>
+      {{/with}}
     </div>
-  {{/if}}
+  </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="feat-search-empty">
+            <i class="fa-solid fa-radar"></i>
+            <span>No Force Powers match “{{searchQueryLabel}}”.</span>
+            <span class="feat-search-empty__hint">Try a power name, descriptor, form, or keyword.</span>
+          </div>
+        {{/if}}
+      {{else}}
+        <header class="feat-results-pane__header">
+          <div>
+            <h3><i class="fa-solid {{activeCategoryIcon}}"></i> {{activeCategoryLabel}}</h3>
+            <p>Select a power to inspect it. Use + / − to add or remove selections.</p>
+          </div>
+          <span class="feat-count-badge">{{activeCategoryCount}}</span>
+        </header>
+
+        {{#if activeCategoryPowers.length}}
+          <div class="feat-compact-list force-power-compact-list">
+            {{#each activeCategoryPowers as |power|}}
+              <div class="feat-compact-row force-power-compact-row {{#if power.isFocused}}focused{{/if}} {{#if power.isSelected}}selected{{/if}} {{#if power.isSuggested}}suggested{{/if}}"
+       data-power-id="{{power.stateId}}"
+       data-item-id="{{power.stateId}}"
+       data-action="focus-item"
+       tabindex="0"
+       role="option">
+    <div class="feat-compact-row__content">
+      <div class="feat-compact-row__line feat-compact-row__line--primary">
+        <span class="feat-name">{{power.name}}</span>
+        {{#if power.shortSummary}}<span class="feat-quick-summary">{{truncate power.shortSummary 120}}</span>{{/if}}
+      </div>
+      <div class="feat-compact-row__line feat-compact-row__line--meta">
+        <span class="feat-subcategory-pill">{{power.searchCategoryLabel}}</span>
+        {{#if power.prerequisiteText}}<span class="feat-prereq-line"><i class="fa-solid fa-link"></i> {{power.prerequisiteText}}</span>{{/if}}
+        {{#if power.isSuggested}}<span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Recommended</span>{{/if}}
+        {{#with (lookup ../cardStates power.stateId)}}
+          {{#if isCommitted}}<span class="feat-owned-pill">Known {{effectiveOwnedCount}}</span>{{/if}}
+          {{#if isPending}}<span class="feat-owned-pill">Pending {{pendingCount}}</span>{{/if}}
+          {{#if isRemoved}}<span class="feat-unavail-badge"><i class="fa-solid fa-rotate-left"></i> Reselecting {{removedCount}}</span>{{/if}}
+        {{/with}}
+      </div>
+    </div>
+    <div class="force-power-compact-row__controls">
+      {{#with (lookup ../cardStates power.stateId)}}
+        <button class="prog-quantity-btn prog-quantity-btn--decrement"
+                data-action="decrement-quantity"
+                data-item-id="{{powerId}}"
+                type="button"
+                aria-label="Remove one selection"
+                title="Remove"
+                {{#unless canDecrement}}disabled{{/unless}}>
+          <i class="fas fa-minus" aria-hidden="true"></i>
+        </button>
+        <span class="prog-quantity-display">{{totalCount}}</span>
+        <button class="prog-quantity-btn prog-quantity-btn--increment"
+                data-action="increment-quantity"
+                data-item-id="{{powerId}}"
+                type="button"
+                aria-label="Add one more"
+                title="Add"
+                {{#unless canIncrement}}disabled{{/unless}}>
+          <i class="fas fa-plus" aria-hidden="true"></i>
+        </button>
+      {{else}}
+        <i class="fa-solid fa-chevron-right"></i>
+      {{/with}}
+    </div>
+  </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="empty-message feat-browser-empty prog-force-power-browse__empty">
+            <i class="fas fa-hand-sparkles" aria-hidden="true"></i>
+            <p>No Force Powers are available in this category.</p>
+          </div>
+        {{/if}}
+      {{/if}}
+    </main>
+  </section>
 </div>

@@ -23,6 +23,10 @@ import { CombatEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/Com
 import { CombatActionsMapper } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-actions-mapper.js";
 import { AbilityCombatActionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/ability-combat-action-resolver.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
+import { GuardianSpiritActions } from "/systems/foundryvtt-swse/scripts/engine/talent/guardian-spirit-actions.js";
+import { ConsularTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/consular-talent-actions.js";
+import { SentinelTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/sentinel-talent-actions.js";
+import { LightsaberTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-talent-actions.js";
 import { promptForcePowerRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { ActionEconomyIntegration } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-integration.js";
@@ -3070,6 +3074,8 @@ export class SWSEV2CharacterSheet extends
     // Force Points visual array (value as dots, with used state)
     const fpValue = Number(system.forcePoints?.value ?? 0) || 0;
     const fpMax = Number(system.forcePoints?.max ?? 0) || 0;
+    const bonusForcePoints = GuardianSpiritActions.getBonusForcePoints(actor);
+    const hasGuardianSpiritTalent = GuardianSpiritActions.hasTalent(actor, 'Guardian Spirit');
 
     const destinyPointsValue = Number(system.destinyPoints?.value ?? 0) || 0;
     const destinyPointsMax = Number(system.destinyPoints?.max ?? 0) || 0;
@@ -4005,6 +4011,8 @@ const forcePoints = [];
       grappleBonus,                 // Grapple bonus (BAB + STR + size modifiers)
       forcePointsValue: fpValue,    // Current force points (from system.forcePoints.value)
       forcePointsMax: fpMax,        // Max force points (from system.forcePoints.max)
+      bonusForcePoints,
+      hasGuardianSpiritTalent,
       destinyPointsValue,           // Current destiny points (from system.destinyPoints.value)
       destinyPointsMax,             // Max destiny points (from system.destinyPoints.max)
       forcePoints,                  // Visual array of force point dots
@@ -6437,6 +6445,37 @@ const forcePoints = [];
       }, { signal });
     });
 
+    html.querySelectorAll('[data-action="claim-guardian-bonus-fp"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        try {
+          await mutateAndRepaint(this, () => GuardianSpiritActions.claimGuardianBonusForcePoint(this.actor), {
+            reason: 'guardian-spirit-bonus-force-point',
+            surfaceId: this._shellSurface ?? 'sheet',
+            preserveUi: true
+          });
+        } catch (err) {
+          ui?.notifications?.error?.(`Guardian Spirit bonus Force Point failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    html.querySelectorAll('[data-action="gain-bonus-force-point"], [data-action="spend-bonus-force-point"]').forEach(button => {
+      button.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const delta = button.dataset.action === 'gain-bonus-force-point' ? 1 : -1;
+        try {
+          await mutateAndRepaint(this, () => GuardianSpiritActions.adjustBonusForcePoints(this.actor, delta, 'Manual'), {
+            reason: 'adjust-bonus-force-points',
+            surfaceId: this._shellSurface ?? 'sheet',
+            preserveUi: true
+          });
+        } catch (err) {
+          ui?.notifications?.error?.(`Bonus Force Point adjustment failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
     // Item action bar: Customize item
     html.querySelectorAll('[data-action="customize-item"]').forEach(button => {
       button.addEventListener("click", async (event) => {
@@ -6609,64 +6648,60 @@ const forcePoints = [];
   }
 
   /**
-   * Show a two-option Add Feat / Add Talent chooser.
-   * Uses the system AppV2 dialog shim; the "Pick from Compendium" branch launches
-   * the inline progression shell as a single-step direct-add surface, not level-up.
+   * Show a two-option dialog when the player clicks Add Feat / Add Talent.
+   * - "Pick from Compendium" → opens the progression feat/talent step inline
+   * - "Add Custom" → creates a blank item and opens its sheet for editing
    */
   async _showAddAbilityDialog(itemType) {
     const label = itemType === 'feat' ? 'Feat' : 'Talent';
     const stepId = itemType === 'feat' ? 'general-feat' : 'general-talent';
-    const domain = itemType === 'feat' ? 'feats' : 'talents';
 
-    const choice = await SWSEDialogV2.wait({
-      title: `Add ${label}`,
-      content: `
-        <p style="margin:0 0 6px;font-size:13px;color:rgba(255,255,255,.75);">
-          How would you like to add a ${label.toLowerCase()}?
-        </p>`,
-      buttons: {
-        legal: {
-          icon: '<i class="fa-solid fa-book-open"></i>',
-          label: 'Pick from Compendium'
+    return new Promise((resolve) => {
+      new Dialog({
+        title: `Add ${label}`,
+        content: `
+          <p style="margin:0 0 6px;font-size:13px;color:rgba(255,255,255,.75);">
+            How would you like to add a ${label.toLowerCase()}?
+          </p>`,
+        buttons: {
+          legal: {
+            icon: '<i class="fa-solid fa-book-open"></i>',
+            label: `Pick from Compendium`,
+            callback: async () => {
+              try {
+                await this.setSurface('progression', {
+                  source: 'sheet',
+                  stepId,
+                  currentStep: stepId,
+                  mode: 'freeAdd'
+                });
+                await this.requestSurfaceRender({ reason: `${itemType}-step-launch`, surfaceId: 'progression' });
+              } catch (err) {
+                swseLogger.error(`[CharacterSheet] ${label} step launch failed:`, err);
+              }
+              resolve();
+            }
+          },
+          custom: {
+            icon: '<i class="fa-solid fa-pen"></i>',
+            label: `Add Custom ${label}`,
+            callback: async () => {
+              await this._createAndOpenBlankItem(itemType);
+              resolve();
+            }
+          },
+          cancel: {
+            icon: '<i class="fa-solid fa-times"></i>',
+            label: 'Cancel',
+            callback: () => resolve()
+          }
         },
-        custom: {
-          icon: '<i class="fa-solid fa-pen"></i>',
-          label: `Add Custom ${label}`
-        },
-        cancel: {
-          icon: '<i class="fa-solid fa-times"></i>',
-          label: 'Cancel'
-        }
-      },
-      default: 'legal'
-    }, {
-      classes: ['swse', 'swse-dialog'],
-      width: 340
+        default: 'legal'
+      }, {
+        classes: ['swse', 'swse-dialog'],
+        width: 340
+      }).render(true);
     });
-
-    if (choice === 'custom') {
-      await this._createAndOpenBlankItem(itemType);
-      return;
-    }
-
-    if (choice !== 'legal') return;
-
-    try {
-      await this.setSurface('progression', {
-        source: 'sheet-direct-add',
-        stepId,
-        targetStep: stepId,
-        currentStep: stepId,
-        skipIntro: true,
-        singleStep: true,
-        singleStepDomain: domain,
-        directAdd: true
-      });
-      await this.requestSurfaceRender({ reason: `${itemType}-direct-add-step-launch`, surfaceId: 'progression' });
-    } catch (err) {
-      swseLogger.error(`[CharacterSheet] ${label} direct-add step launch failed:`, err);
-      ui?.notifications?.error?.(`Failed to open ${label.toLowerCase()} picker: ${err?.message || err}`);
-    }
   }
 
   /**
@@ -8123,6 +8158,26 @@ const forcePoints = [];
       return await this._executeAimCombatAction(actionId, actionData, options);
     }
 
+    if (actionData?.resolutionMode === 'guardianSpirit' || actionData?.guardianSpiritAction) {
+      return await this._executeGuardianSpiritCombatAction(actionId, actionData, options);
+    }
+
+    if (actionData?.resolutionMode === 'forceTalent' || actionData?.forceTalentAction || actionData?.ruleData?.forceTalentAction) {
+      return await this._executeForceTalentCombatAction(actionId, actionData, options);
+    }
+
+    if (actionData?.resolutionMode === 'consularTalent' || actionData?.consularTalentAction || actionData?.ruleData?.consularTalentAction) {
+      return await this._executeConsularTalentCombatAction(actionId, actionData, options);
+    }
+
+    if (actionData?.resolutionMode === 'sentinelTalent' || actionData?.sentinelTalentAction || actionData?.ruleData?.sentinelTalentAction) {
+      return await this._executeSentinelTalentCombatAction(actionId, actionData, options);
+    }
+
+    if (actionData?.resolutionMode === 'lightsaberTalent' || actionData?.lightsaberTalentAction || actionData?.ruleData?.lightsaberTalentAction) {
+      return await this._executeLightsaberTalentCombatAction(actionId, actionData, options);
+    }
+
     // --- Manual/reference ability action cards ---
     // Multi-action feats/talents often unlock named actions whose real effect
     // still needs table or future engine resolution. Surface and track the
@@ -8330,6 +8385,178 @@ const forcePoints = [];
     return null;
   }
 
+
+  async _executeConsularTalentCombatAction(actionId, actionData = {}, options = {}) {
+    const kind = actionData?.consularTalentAction ?? actionData?.ruleData?.consularTalentAction ?? actionId;
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+
+    if (actionData?.spendAction !== false) {
+      const allowed = await this._applyActionEconomy(actionType, {
+        source: options?.source ?? "consular-talent",
+        actionId,
+        actionName: actionData?.name ?? actionId,
+        sourceName: actionData?.sourceName ?? 'Jedi Consular Talent',
+        sourceType: 'talent',
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
+      });
+      if (!allowed) return null;
+    }
+
+    if (kind === 'adeptNegotiator') return ConsularTalentActions.promptAdeptNegotiator(this.actor, { sourceElement: options?.sourceElement ?? null });
+    if (kind === 'skilledAdvisor') return ConsularTalentActions.promptSkilledAdvisor(this.actor);
+    if (kind === 'adversaryLore') return ConsularTalentActions.promptAdversaryLore(this.actor, { sourceElement: options?.sourceElement ?? null });
+    if (kind === 'cleanseMind') return ConsularTalentActions.promptCleanseMind(this.actor);
+    if (kind === 'consularsVitality') return ConsularTalentActions.promptConsularsVitality(this.actor);
+    if (kind === 'consularsWisdom') return ConsularTalentActions.promptConsularsWisdom(this.actor);
+    if (kind === 'collectiveVisions') return ConsularTalentActions.announceCollectiveVisions(this.actor);
+    if (kind === 'aggressiveNegotiator') return ConsularTalentActions.announceAggressiveNegotiator(this.actor);
+    if (kind === 'entreatAid') return ConsularTalentActions.promptEntreatAid(this.actor);
+    if (kind === 'forceOfWill') return ConsularTalentActions.promptForceOfWill(this.actor);
+    if (kind === 'guidingStrikes') return ConsularTalentActions.promptGuidingStrikes(this.actor);
+    if (kind === 'improvedConsularsVitality') return ConsularTalentActions.promptImprovedConsularsVitality(this.actor);
+    if (kind === 'renewVision') return ConsularTalentActions.promptRenewVision(this.actor);
+    if (kind === 'visionaryAttack') return ConsularTalentActions.promptVisionaryAttack(this.actor, { sourceElement: options?.sourceElement ?? null });
+    if (kind === 'visionaryDefense') return ConsularTalentActions.promptVisionaryDefense(this.actor, { sourceElement: options?.sourceElement ?? null });
+    if (kind === 'watchcircleInitiate') return ConsularTalentActions.promptWatchCircleInitiate(this.actor, { sourceElement: options?.sourceElement ?? null });
+    if (kind === 'acrobaticRecovery') return ConsularTalentActions.promptAcrobaticRecovery(this.actor, { sourceElement: options?.sourceElement ?? null });
+    if (kind === 'battleMeditation') return ConsularTalentActions.promptBattleMeditation(this.actor, { improved: false });
+    if (kind === 'improvedBattleMeditation') return ConsularTalentActions.promptBattleMeditation(this.actor, { improved: true });
+    if (kind === 'resilience') return ConsularTalentActions.promptResilience(this.actor);
+    if (kind === 'closeManeuvering') return ConsularTalentActions.promptCloseManeuvering(this.actor);
+    if (kind === 'exposingStrike') return ConsularTalentActions.promptExposingStrike(this.actor);
+    if (kind === 'grenadeDefense') return ConsularTalentActions.promptGrenadeDefense(this.actor, { sourceElement: options?.sourceElement ?? null });
+    if (kind === 'immovable') return ConsularTalentActions.promptImmovable(this.actor);
+    if (kind === 'mobileCombatant') return ConsularTalentActions.promptMobileCombatant(this.actor);
+    if (kind === 'coverEscape') return ConsularTalentActions.announcePassiveTalent(this.actor, 'Cover Escape', '<p>When you successfully spend a Force Point to negate an attack against an adjacent ally with Block or Deflect, that ally can move up to 2 squares as a Free Action without provoking Attacks of Opportunity.</p>');
+    if (kind === 'defensiveAcuity') return ConsularTalentActions.announcePassiveTalent(this.actor, 'Defensive Acuity', '<p>When you take the Fight Defensively action, your lightsaber attacks deal +1 die of damage and you gain +2 circumstance bonus on Use the Force checks to negate attacks with Block or Deflect until the end of your next turn.</p>');
+    if (kind === 'elusiveTarget') return ConsularTalentActions.announcePassiveTalent(this.actor, 'Elusive Target', '<p>When you are fighting one or more opponents in melee, other opponents take an additional -5 penalty on ranged attacks targeting you. This stacks with the normal -5 firing-into-melee penalty.</p>');
+    if (kind === 'guardianStrike') return ConsularTalentActions.announcePassiveTalent(this.actor, 'Guardian Strike', '<p>Passive: when you damage a target with a lightsaber, that target takes -2 on attack rolls against any target other than you until the beginning of your next turn. The attack hook tags targets when it can prove the lightsaber damage event.</p>');
+    if (kind === 'holdTheLine') return ConsularTalentActions.announcePassiveTalent(this.actor, 'Hold the Line', '<p>When you make a successful Attack of Opportunity against a target leaving your threatened area, you stop the target's movement and end its action.</p>');
+    if (kind === 'forcefulWarrior') return ConsularTalentActions.announcePassiveTalent(this.actor, 'Forceful Warrior', '<p>Passive: when you score a critical hit with a lightsaber, you gain 1 temporary Force Point that expires at the end of the encounter.</p>');
+
+    return this._announceManualCombatAction(actionId, actionData, { ...options, actionType });
+  }
+
+
+  async _executeSentinelTalentCombatAction(actionId, actionData = {}, options = {}) {
+    const kind = actionData?.sentinelTalentAction ?? actionData?.ruleData?.sentinelTalentAction ?? actionId;
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+
+    if (actionData?.spendAction !== false) {
+      const allowed = await this._applyActionEconomy(actionType, {
+        source: options?.source ?? "sentinel-talent",
+        actionId,
+        actionName: actionData?.name ?? actionId,
+        sourceName: actionData?.sourceName ?? 'Jedi Sentinel Talent',
+        sourceType: 'talent',
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
+      });
+      if (!allowed) return null;
+    }
+
+    if (kind === 'clearMind') return SentinelTalentActions.announceClearMind(this.actor);
+    if (kind === 'darkSideSense') return SentinelTalentActions.announceDarkSideSense(this.actor);
+    if (kind === 'darkSideScourge') return SentinelTalentActions.announceDarkSideScourge(this.actor);
+    if (kind === 'forceHaze') return SentinelTalentActions.promptForceHaze(this.actor, { sourceElement: options?.sourceElement ?? null });
+    if (kind === 'resistTheDarkSide') return SentinelTalentActions.announceResistTheDarkSide(this.actor);
+    if (kind === 'dampenPresence') return SentinelTalentActions.promptDampenPresence(this.actor, { sourceElement: options?.sourceElement ?? null });
+    if (kind === 'darkRetaliation') return SentinelTalentActions.promptDarkRetaliation(this.actor);
+    if (kind === 'darkSideBane') return SentinelTalentActions.announceDarkSideBane(this.actor);
+    if (kind === 'gradualResistance') return SentinelTalentActions.promptGradualResistance(this.actor);
+    if (kind === 'masterOfTheGreatHunt') return SentinelTalentActions.announceMasterOfTheGreatHunt(this.actor);
+    if (kind === 'persistentHaze') return SentinelTalentActions.announcePersistentHaze(this.actor);
+    if (kind === 'primeTargets') return SentinelTalentActions.announcePrimeTargets(this.actor);
+    if (kind === 'reapRetribution') return SentinelTalentActions.promptReapRetribution(this.actor);
+    if (kind === 'sensePrimalForce') return SentinelTalentActions.announceSensePrimalForce(this.actor);
+    if (kind === 'sentinelStrike') return SentinelTalentActions.announceSentinelStrike(this.actor);
+    if (kind === 'sentinelsGambit') return SentinelTalentActions.promptSentinelsGambit(this.actor);
+    if (kind === 'sentinelsObservation') return SentinelTalentActions.announceSentinelsObservation(this.actor);
+    if (kind === 'steelResolve') return SentinelTalentActions.promptSteelResolve(this.actor);
+    if (kind === 'unseenEyes') return SentinelTalentActions.announceUnseenEyes(this.actor);
+
+    return this._announceManualCombatAction(actionId, actionData, { ...options, actionType });
+  }
+
+  async _executeLightsaberTalentCombatAction(actionId, actionData = {}, options = {}) {
+    const kind = actionData?.lightsaberTalentAction ?? actionData?.ruleData?.lightsaberTalentAction ?? actionId;
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+
+    if (actionData?.spendAction !== false) {
+      const allowed = await this._applyActionEconomy(actionType, {
+        source: options?.source ?? "lightsaber-talent",
+        actionId,
+        actionName: actionData?.name ?? actionId,
+        sourceName: actionData?.sourceName ?? 'Lightsaber Combat Talent',
+        sourceType: 'talent',
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
+      });
+      if (!allowed) return null;
+    }
+
+    if (kind === 'block') return LightsaberTalentActions.promptBlock(this.actor, { sourceElement: options?.sourceElement ?? null });
+    if (kind === 'deflect') return LightsaberTalentActions.promptDeflect(this.actor, { sourceElement: options?.sourceElement ?? null });
+    if (kind === 'lightsaberDefense') return LightsaberTalentActions.promptLightsaberDefense(this.actor);
+    if (kind === 'lightsaberThrow') return LightsaberTalentActions.promptLightsaberThrow(this.actor, { sourceElement: options?.sourceElement ?? null });
+    if (kind === 'redirectShot') return LightsaberTalentActions.promptRedirectShot(this.actor);
+    if (kind === 'cortosisGauntletBlock') return LightsaberTalentActions.announceCortosisGauntletBlock(this.actor);
+    if (kind === 'preciseRedirect') return LightsaberTalentActions.announcePreciseRedirect(this.actor);
+    if (kind === 'precision') return LightsaberTalentActions.promptPrecision(this.actor);
+    if (kind === 'riposte') return LightsaberTalentActions.promptRiposte(this.actor);
+    if (kind === 'shotoFocus') return LightsaberTalentActions.announceShotoFocus(this.actor);
+    if (kind === 'weaponSpecializationLightsabers') return LightsaberTalentActions.announceWeaponSpecializationLightsabers(this.actor);
+
+    return this._announceManualCombatAction(actionId, actionData, { ...options, actionType });
+  }
+
+  async _executeForceTalentCombatAction(actionId, actionData = {}, options = {}) {
+    const kind = actionData?.forceTalentAction ?? actionData?.ruleData?.forceTalentAction ?? actionId;
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+
+    if (actionData?.spendAction !== false) {
+      const allowed = await this._applyActionEconomy(actionType, {
+        source: options?.source ?? "force-talent",
+        actionId,
+        actionName: actionData?.name ?? actionId,
+        sourceName: actionData?.sourceName ?? 'Force Talent',
+        sourceType: 'talent',
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
+      });
+      if (!allowed) return null;
+    }
+
+    if (kind === 'aversion') return ForceExecutor.activateAversion(this.actor);
+    if (kind === 'illusion') return ForceExecutor.promptIllusion(this.actor, { sourceElement: options?.sourceElement ?? null });
+    if (kind === 'link') return ForceExecutor.promptLink(this.actor);
+    if (kind === 'suppressForce') return ForceExecutor.promptSuppressForce(this.actor);
+    if (kind === 'telepathicLink') return ForceExecutor.promptTelepathicLink(this.actor);
+
+    return this._announceManualCombatAction(actionId, actionData, { ...options, actionType });
+  }
+
+  async _executeGuardianSpiritCombatAction(actionId, actionData = {}, options = {}) {
+    const kind = actionData?.guardianSpiritAction ?? actionData?.ruleData?.guardianSpiritAction ?? actionId;
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+
+    if (actionData?.spendAction !== false) {
+      const allowed = await this._applyActionEconomy(actionType, {
+        source: options?.source ?? "guardian-spirit",
+        actionId,
+        actionName: actionData?.name ?? actionId,
+        sourceName: actionData?.sourceName ?? 'Guardian Spirit',
+        sourceType: 'talent',
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
+      });
+      if (!allowed) return null;
+    }
+
+    if (kind === 'claimBonusForcePoint') return GuardianSpiritActions.claimGuardianBonusForcePoint(this.actor);
+    if (kind === 'manifest') return GuardianSpiritActions.manifest(this.actor);
+    if (kind === 'vitalEncouragement') return GuardianSpiritActions.vitalEncouragement(this.actor);
+    if (kind === 'crucialAdvice') return GuardianSpiritActions.promptCrucialAdvice(this.actor);
+
+    return this._announceManualCombatAction(actionId, actionData, { ...options, actionType });
+  }
+
   async _announceManualCombatAction(actionId, actionData = {}, options = {}) {
     const escape = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
       '&': '&amp;',
@@ -8395,8 +8622,8 @@ const forcePoints = [];
       ...actionData,
       name: actionData?.name ?? 'Aim',
       sourceName: actionData?.sourceName ?? 'Combat Action',
-      notes: actionData?.notes || `The character aims. Their next applicable ranged attack may ignore the target's cover bonus to Reflex Defense, subject to the Aim action rules.`,
-      description: actionData?.description || actionData?.notes || `The character aims. Their next applicable ranged attack may ignore the target's cover bonus to Reflex Defense, subject to the Aim action rules.`
+      notes: actionData?.notes || 'The character aims. Their next applicable ranged attack may ignore the target's cover bonus to Reflex Defense, subject to the Aim action rules.',
+      description: actionData?.description || actionData?.notes || 'The character aims. Their next applicable ranged attack may ignore the target's cover bonus to Reflex Defense, subject to the Aim action rules.'
     }, {
       ...options,
       actionType: swiftCount > 1 ? `${swiftCount} Swift Actions` : 'swift'

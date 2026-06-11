@@ -300,7 +300,54 @@ export function activateForceUI(sheet, html, { signal } = {}) {
         ui?.notifications?.info?.('Discard pile is empty.');
         return;
       }
+      root?.classList.remove('is-picking-telekinetic-savant');
+      root?.classList.remove('is-picking-influence-savant');
       root?.classList.toggle('is-picking-recovery');
+      html.querySelectorAll('[data-action="force-suite-pick-telekinetic-savant"]').forEach(other => other.classList.remove('sel'));
+      button.classList.toggle('sel');
+    }, { signal });
+  });
+
+  // Force Suite: enter Telekinetic Savant recovery mode
+  html.querySelectorAll('[data-action="force-suite-pick-telekinetic-savant"]').forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (button.classList.contains('disabled') || button.disabled) {
+        ui?.notifications?.warn?.('Telekinetic Savant has no eligible spent [Telekinetic] powers or no uses remaining.');
+        return;
+      }
+      const root = button.closest('[data-force-suite-tab]');
+      const hasEligible = !!root?.querySelector('[data-force-discard-pile] [data-action="force-suite-recover-one"][data-telekinetic="true"]');
+      if (!hasEligible) {
+        ui?.notifications?.info?.('No spent [Telekinetic] Force powers to recover.');
+        return;
+      }
+      root?.classList.remove('is-picking-recovery');
+      root?.classList.remove('is-picking-influence-savant');
+      root?.classList.toggle('is-picking-telekinetic-savant');
+      html.querySelectorAll('[data-action="force-suite-pick-recovery"]').forEach(other => other.classList.remove('sel'));
+      button.classList.toggle('sel');
+    }, { signal });
+  });
+
+  // Force Suite: enter Influence Savant recovery mode
+  html.querySelectorAll('[data-action="force-suite-pick-influence-savant"]').forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (button.classList.contains('disabled') || button.disabled) {
+        ui?.notifications?.warn?.('Influence Savant has no eligible spent [Mind-Affecting] powers or no uses remaining.');
+        return;
+      }
+      const root = button.closest('[data-force-suite-tab]');
+      const hasEligible = !!root?.querySelector('[data-force-discard-pile] [data-action="force-suite-recover-one"][data-mind-affecting="true"]');
+      if (!hasEligible) {
+        ui?.notifications?.info?.('No spent [Mind-Affecting] Force powers to recover.');
+        return;
+      }
+      root?.classList.remove('is-picking-recovery');
+      root?.classList.remove('is-picking-telekinetic-savant');
+      root?.classList.toggle('is-picking-influence-savant');
+      html.querySelectorAll('[data-action="force-suite-pick-recovery"], [data-action="force-suite-pick-telekinetic-savant"]').forEach(other => other.classList.remove('sel'));
       button.classList.toggle('sel');
     }, { signal });
   });
@@ -314,13 +361,35 @@ export function activateForceUI(sheet, html, { signal } = {}) {
 
       const root = button.closest('[data-force-suite-tab]');
       const spendingForcePoint = root?.classList.contains('is-picking-recovery');
+      const usingTelekineticSavant = root?.classList.contains('is-picking-telekinetic-savant');
+      const usingInfluenceSavant = root?.classList.contains('is-picking-influence-savant');
+
+      if (!spendingForcePoint && !usingTelekineticSavant && !usingInfluenceSavant) {
+        ui?.notifications?.info?.('Choose Spend Force Point, Telekinetic Savant, or Influence Savant before recovering a spent power.');
+        return;
+      }
+
+      if (usingTelekineticSavant && button.dataset.telekinetic !== 'true') {
+        ui?.notifications?.warn?.('Telekinetic Savant can only recover spent powers with the [Telekinetic] descriptor.');
+        return;
+      }
+      if (usingInfluenceSavant && button.dataset.mindAffecting !== 'true') {
+        ui?.notifications?.warn?.('Influence Savant can only recover spent powers with the [Mind-Affecting] descriptor.');
+        return;
+      }
 
       try {
-        const result = await ForceExecutor.recoverForcePowers(sheet.actor, [itemId]);
+        const result = usingTelekineticSavant
+          ? await ForceExecutor.recoverTelekineticSavantPower(sheet.actor, itemId)
+          : usingInfluenceSavant
+            ? await ForceExecutor.recoverInfluenceSavantPower(sheet.actor, itemId)
+            : await ForceExecutor.recoverForcePowers(sheet.actor, [itemId]);
         if (result?.success) {
-          const spentMsg = spendingForcePoint ? ' (Force Point spent)' : '';
+          const spentMsg = usingTelekineticSavant ? ' (Telekinetic Savant)' : usingInfluenceSavant ? ' (Influence Savant)' : ' (Force Point spent)';
           ui?.notifications?.info?.(`Force power recovered${spentMsg}.`);
           root?.classList.remove('is-picking-recovery');
+          root?.classList.remove('is-picking-telekinetic-savant');
+          root?.classList.remove('is-picking-influence-savant');
           sheet.render?.(false);
         } else {
           ui?.notifications?.warn?.(result?.error || 'Could not recover that Force power.');
@@ -332,7 +401,70 @@ export function activateForceUI(sheet, html, { signal } = {}) {
   });
 
 
-  // Force Regimens: roll UTF, resolve the DC tier, then move the card to active/discard lane.
+
+
+  // Force Talent: Aversion active aura
+  html.querySelectorAll('[data-action="force-talent-aversion"]').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      try {
+        const result = await mutateAndRepaint(sheet, () => ForceExecutor.activateAversion(sheet.actor), {
+          reason: 'force-talent-aversion',
+          surfaceId: sheet._shellSurface ?? 'sheet',
+          preserveUi: true
+        });
+        if (result?.success) ui?.notifications?.info?.('Aversion activated.');
+      } catch (err) {
+        ui?.notifications?.error?.(`Aversion failed: ${err.message}`);
+      }
+    }, { signal });
+  });
+
+  // Force Talent: Illusion UTF dialog with size penalty
+  html.querySelectorAll('[data-action="force-talent-illusion"]').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      try {
+        const result = await mutateAndRepaint(sheet, () => ForceExecutor.promptIllusion(sheet.actor, { sourceElement: button }), {
+          reason: 'force-talent-illusion',
+          surfaceId: sheet._shellSurface ?? 'sheet',
+          preserveUi: true
+        });
+        if (result?.success) ui?.notifications?.info?.('Illusion resolved.');
+      } catch (err) {
+        ui?.notifications?.error?.(`Illusion failed: ${err.message}`);
+      }
+    }, { signal });
+  });
+
+  // Force Talent: Link
+  html.querySelectorAll('[data-action="force-talent-link"]').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const result = await mutateAndRepaint(sheet, () => ForceExecutor.promptLink(sheet.actor), { reason: 'force-talent-link', surfaceId: sheet._shellSurface ?? 'sheet', preserveUi: true });
+      if (result?.success) ui?.notifications?.info?.('Link created.');
+    }, { signal });
+  });
+
+  // Force Talent: Telepathic Link
+  html.querySelectorAll('[data-action="force-talent-telepathic-link"]').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const result = await mutateAndRepaint(sheet, () => ForceExecutor.promptTelepathicLink(sheet.actor), { reason: 'force-talent-telepathic-link', surfaceId: sheet._shellSurface ?? 'sheet', preserveUi: true });
+      if (result?.success) ui?.notifications?.info?.('Telepathic Link established.');
+    }, { signal });
+  });
+
+  // Force Talent: Suppress Force
+  html.querySelectorAll('[data-action="force-talent-suppress-force"]').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const result = await mutateAndRepaint(sheet, () => ForceExecutor.promptSuppressForce(sheet.actor), { reason: 'force-talent-suppress-force', surfaceId: sheet._shellSurface ?? 'sheet', preserveUi: true });
+      if (result?.success) ui?.notifications?.info?.('Suppress Force resolved.');
+    }, { signal });
+  });
+
+    // Force Regimens: roll UTF, resolve the DC tier, then move the card to active/discard lane.
   html.querySelectorAll('[data-action="use-force-regimen"]').forEach(button => {
     button.addEventListener('click', async (event) => {
       event.preventDefault();

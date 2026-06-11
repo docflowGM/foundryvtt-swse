@@ -36,6 +36,8 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     this._filteredPowers = [];         // After search + filter + sort
     this._searchQuery = '';
     this._focusedPowerId = null;
+    this._activeCategory = 'force-all';
+    this._categorySidebarCollapsed = false;
 
     /**
      * CRITICAL (Wave 10): Force Powers allow duplicate selections.
@@ -57,6 +59,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     this._renderAbort = null;
     this._utilityUnlisteners = [];
     this._noChoiceAutoAdvanceStepId = null;
+    this._currentActor = null;
   }
 
   get descriptor() { return this._descriptor; }
@@ -70,6 +73,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    */
   async onStepEnter(shell) {
     try {
+      this._currentActor = shell?.actor ?? null;
       // Initialize force registry if needed
       if (!ForceRegistry._initialized) {
         await ForceRegistry.init();
@@ -160,6 +164,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    * PHASE 8: Distinguishes pending counts (current session) from committed counts (already on actor).
    */
   async getStepData(context) {
+    this._currentActor = context?.actor ?? this._currentActor ?? null;
     const actorEntries = this._getActorForcePowerEntries(context?.actor);
     this._actorPowerCounts = new Map(actorEntries.map((entry) => [entry.id, entry.count]));
 
@@ -189,6 +194,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
 
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedPowers);
     const formattedPowers = this._filteredPowers.map(p => this._formatPowerCard(p, suggestedIds, confidenceMap));
+    const browserModel = this._buildBrowserModel(formattedPowers);
 
     const cardStates = new Map();
     const allPowerIds = new Set([
@@ -241,8 +247,11 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       committedSummary.push({ id, name: power?.name || id, count, status: 'pending' });
     }
 
+    const telekineticProdigy = this._getTelekineticProdigyState(context?.actor);
+
     return {
       powers: formattedPowers,
+      ...browserModel,
       focusedPowerId: this._focusedPowerId,
       pendingCounts: Object.fromEntries(pendingCounts),
       committedCounts: Object.fromEntries(actorCommittedCounts),
@@ -257,7 +266,8 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       knownPowerCount: Math.max(0, this._sumCounts(actorCommittedCounts) - removedTotal + pendingSelectedTotal),
       removedPowerCount: removedTotal,
       pendingPowerCount: pendingSelectedTotal,
-      entitlementReasons: [...this._entitlementReasons],
+      entitlementReasons: [...this._entitlementReasons, ...(telekineticProdigy.active ? [`Telekinetic Prodigy: Move Object selected; +${telekineticProdigy.bonusSlots} bonus [Telekinetic] slot${telekineticProdigy.bonusSlots === 1 ? '' : 's'}`] : [])],
+      telekineticProdigy,
       hasTrainingSummary: this._totalPowerTraining > 0 || this._entitlementReasons.length > 0 || removedTotal > 0,
       hasSuggestions,
       noNewPowerChoices: this._hasNoNewPowerChoices(),
@@ -334,6 +344,12 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       if (nextRemoved > 0) this._removedPowerCounts.set(resolvedPowerId, nextRemoved);
       else this._removedPowerCounts.delete(resolvedPowerId);
     } else if (totalSelected < effectiveBudget) {
+      const baseBudget = Math.max(0, Number(this._baseRemainingPicks ?? this._remainingPicks) || 0) + this._sumCounts(this._removedPowerCounts);
+      const spendingOnlyProdigySlot = totalSelected >= baseBudget && this._getTelekineticProdigyBonusSlots(shell?.actor ?? this._currentActor) > 0;
+      if (spendingOnlyProdigySlot && !this._isTelekineticPower(resolvedPowerId)) {
+        ui?.notifications?.warn?.('Telekinetic Prodigy bonus slot can only select a [Telekinetic] Force Power.');
+        return;
+      }
       const currentCount = this._committedPowerCounts.get(resolvedPowerId) ?? 0;
       this._committedPowerCounts.set(resolvedPowerId, currentCount + 1);
     } else {
@@ -373,6 +389,39 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     this._focusedPowerId = resolvedPowerId;
     shell.focusedItem = this._formatPowerCard(power);
     shell.render();
+  }
+
+  async handleAction(action, event, target, shell) {
+    if (action === 'select-force-power-category') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      const category = target?.dataset?.category || target?.closest?.('[data-category]')?.dataset?.category;
+      if (!category) return true;
+      this._activeCategory = category;
+      this._searchQuery = '';
+      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-power-category' }) ?? shell?.render?.());
+      return true;
+    }
+
+    if (action === 'toggle-force-power-category-sidebar') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
+      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-power-category-sidebar' }) ?? shell?.render?.());
+      return true;
+    }
+
+    if (action === 'reset-force-power-browser') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      this._searchQuery = '';
+      this._activeCategory = 'force-all';
+      this._categorySidebarCollapsed = false;
+      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-power-browser-reset' }) ?? shell?.render?.());
+      return true;
+    }
+
+    return false;
   }
 
   /**
@@ -803,21 +852,42 @@ export class ForcePowerStep extends ProgressionStepPlugin {
   }
 
   /**
-   * Apply search + filter + sort to compute _filteredPowers.
+   * Apply search + sort to compute _filteredPowers. Category filtering is applied
+   * in the browser view model so the left rail can still show accurate counts.
    */
   _applyFilters() {
     let filtered = [...this._legalPowers];
 
-    // Search by name
     if (this._searchQuery) {
-      const q = this._searchQuery.toLowerCase();
-      filtered = filtered.filter(p => p.name.toLowerCase().includes(q));
+      const q = this._normalizeSearchText(this._searchQuery);
+      filtered = filtered.filter((power) => this._powerSearchText(power).includes(q));
     }
 
-    // Sort: alphabetical (default)
-    filtered.sort((a, b) => a.name.localeCompare(b.name));
-
+    filtered.sort((a, b) => String(a?.name || '').localeCompare(String(b?.name || '')));
     this._filteredPowers = filtered;
+  }
+
+  _normalizeSearchText(value) {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  _powerSearchText(power) {
+    const tags = this._collectPowerTags(power).join(' ');
+    return this._normalizeSearchText([
+      power?.name,
+      power?.description,
+      power?.system?.description,
+      power?.category,
+      power?.system?.category,
+      power?.category,
+      power?.system?.category,
+      power?.form,
+      power?.discipline,
+      power?.system?.form,
+      power?.system?.discipline,
+      power?.meta?.discipline,
+      tags,
+    ].filter(Boolean).join(' '));
   }
 
   // ---------------------------------------------------------------------------
@@ -892,7 +962,60 @@ export class ForcePowerStep extends ProgressionStepPlugin {
   }
 
   _getEffectiveSelectionBudget() {
-    return Math.max(0, Number(this._baseRemainingPicks ?? this._remainingPicks) || 0) + this._sumCounts(this._removedPowerCounts);
+    const base = Math.max(0, Number(this._baseRemainingPicks ?? this._remainingPicks) || 0) + this._sumCounts(this._removedPowerCounts);
+    return base + this._getTelekineticProdigyBonusSlots(this._currentActor);
+  }
+
+  _actorHasTalent(actor, talentName) {
+    const wanted = String(talentName || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    return Array.from(actor?.items ?? []).some((item) => item?.type === 'talent' && String(item?.name || '').trim().toLowerCase().replace(/\s+/g, ' ').replace(/\s*\(\d+\)\s*$/, '') === wanted);
+  }
+
+  _isMoveObjectPowerId(powerId) {
+    const power = this._resolvePower(powerId);
+    return /move\s*object/i.test(String(power?.name || powerId || ''));
+  }
+
+  _isTelekineticPower(powerId) {
+    const power = this._resolvePower(powerId);
+    const system = power?.system ?? {};
+    const haystack = [
+      power?.name,
+      system.discipline,
+      system.category,
+      system.subcategory,
+      ...(Array.isArray(system.descriptor) ? system.descriptor : []),
+      ...(Array.isArray(system.descriptors) ? system.descriptors : []),
+      ...(Array.isArray(system.tags) ? system.tags : [])
+    ].join(' ').toLowerCase();
+    return /telekinetic|telekinesis|move object|force slam|force thrust|force grip|ballistakinesis/.test(haystack);
+  }
+
+  _getTelekineticProdigyBonusSlots(actor) {
+    if (!this._actorHasTalent(actor, 'Telekinetic Prodigy')) return 0;
+    const hasSelectedMoveObject = Array.from(this._committedPowerCounts.keys()).some((id) => this._isMoveObjectPowerId(id));
+    if (!hasSelectedMoveObject) return 0;
+    // One bonus slot for this Force Training selection packet when Move Object is selected.
+    return 1;
+  }
+
+  _getTelekineticProdigyState(actor) {
+    const hasTalent = this._actorHasTalent(actor, 'Telekinetic Prodigy');
+    const moveObjectSelected = Array.from(this._committedPowerCounts.keys()).some((id) => this._isMoveObjectPowerId(id));
+    const bonusSlots = this._getTelekineticProdigyBonusSlots(actor);
+    const pendingTelekineticSelections = Array.from(this._committedPowerCounts.entries())
+      .filter(([id]) => this._isTelekineticPower(id))
+      .reduce((sum, [, count]) => sum + (Number(count) || 0), 0);
+    return {
+      available: hasTalent,
+      active: hasTalent && moveObjectSelected,
+      moveObjectSelected,
+      bonusSlots,
+      pendingTelekineticSelections,
+      note: hasTalent
+        ? (moveObjectSelected ? 'Bonus slot unlocked. Use it for one extra [Telekinetic] Force Power.' : 'Select Move Object with Force Training to unlock one extra [Telekinetic] Force Power.')
+        : ''
+    };
   }
 
   _getActorForcePowerEntries(actor) {
@@ -1065,6 +1188,147 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     if (Array.isArray(raw)) return raw.filter(Boolean).join(', ');
     if (raw && typeof raw === 'object') return Object.values(raw).filter(Boolean).join(', ');
     return String(raw || '').trim();
+  }
+
+  _collectPowerTags(power) {
+    const raw = [
+      power?.tags,
+      power?.system?.tags,
+      power?.descriptor,
+      power?.system?.descriptor,
+      power?.system?.descriptors,
+    ];
+    const tags = [];
+    for (const value of raw) {
+      if (Array.isArray(value)) tags.push(...value);
+      else if (value) tags.push(...String(value).split(/[,;]/));
+    }
+    return tags.map((tag) => String(tag || '').trim()).filter(Boolean);
+  }
+
+  _powerHasTag(power, candidates = []) {
+    const haystack = [
+      ...this._collectPowerTags(power),
+      power?.name,
+      power?.description,
+      power?.category,
+      power?.system?.category,
+      power?.form,
+      power?.discipline,
+      power?.system?.form,
+      power?.system?.discipline,
+      power?.meta?.discipline,
+    ].filter(Boolean).map((value) => this._normalizePowerLookupKey(value));
+    return candidates.some((candidate) => haystack.includes(this._normalizePowerLookupKey(candidate)));
+  }
+
+  _isLightsaberFormPower(power) {
+    return Boolean(
+      String(power?.category || power?.system?.category || '').toLowerCase() === 'lightsaber-form'
+      || power?.form
+      || power?.system?.form
+      || power?.discipline?.match?.(/form\s+[ivx]+/i)
+      || power?.system?.discipline?.match?.(/form\s+[ivx]+/i)
+      || this._powerHasTag(power, ['lightsaber-form', 'lightsaber form', 'lightsaber_form'])
+    );
+  }
+
+  _getLightsaberFormName(power) {
+    const raw = power?.form || power?.system?.form || power?.system?.discipline || power?.discipline || power?.category || '';
+    const text = String(raw || '').trim();
+    if (!text) return 'Other Forms';
+    const afterColon = text.includes(':') ? text.split(':').pop().trim() : text;
+    return afterColon || text;
+  }
+
+  _getForcePowerSubcategories(power) {
+    const categories = [];
+    if (this._powerHasTag(power, ['light-side', 'light side', 'light_side'])) categories.push('light-side');
+    if (this._powerHasTag(power, ['dark-side', 'dark side', 'dark_side'])) categories.push('dark-side');
+    if (this._powerHasTag(power, ['telekinesis', 'telekinetic', 'move-object', 'move object', 'force-thrust', 'force thrust'])) categories.push('telekinesis');
+    if (this._powerHasTag(power, ['mind-affecting', 'mind affecting', 'mind_affecting', 'telepathic', 'mind trick', 'mind-trick'])) categories.push('mind-affecting');
+    return categories;
+  }
+
+  _getPowerCategoryKeys(power) {
+    if (this._isLightsaberFormPower(power)) {
+      const formName = this._getLightsaberFormName(power);
+      return ['lfp-all', `lfp-form:${this._normalizePowerLookupKey(formName)}`];
+    }
+    return ['force-all', ...this._getForcePowerSubcategories(power)];
+  }
+
+  _makeCategoryOption(key, label, icon, powers, options = {}) {
+    const matching = powers.filter((power) => this._getPowerCategoryKeys(power).includes(key));
+    return {
+      key,
+      label,
+      icon,
+      totalCount: matching.length,
+      isActive: this._activeCategory === key,
+      isMajor: options.isMajor === true,
+      isSubcategory: options.isSubcategory === true,
+    };
+  }
+
+  _buildBrowserModel(formattedPowers) {
+    const allPowers = Array.isArray(formattedPowers) ? formattedPowers : [];
+    const allLegalFormatted = (this._legalPowers || []).map((power) => this._formatPowerCard(power));
+    const formNames = Array.from(new Set(
+      allLegalFormatted
+        .filter((power) => this._isLightsaberFormPower(power))
+        .map((power) => this._getLightsaberFormName(power))
+        .filter(Boolean)
+    )).sort((a, b) => a.localeCompare(b));
+
+    const categoryOptions = [
+      this._makeCategoryOption('force-all', 'Force Powers', 'fa-hand-sparkles', allLegalFormatted, { isMajor: true }),
+      this._makeCategoryOption('light-side', 'Light Side', 'fa-sun', allLegalFormatted, { isSubcategory: true }),
+      this._makeCategoryOption('dark-side', 'Dark Side', 'fa-moon', allLegalFormatted, { isSubcategory: true }),
+      this._makeCategoryOption('telekinesis', 'Telekinesis', 'fa-wind', allLegalFormatted, { isSubcategory: true }),
+      this._makeCategoryOption('mind-affecting', 'Mind Affecting', 'fa-brain', allLegalFormatted, { isSubcategory: true }),
+      this._makeCategoryOption('lfp-all', 'Lightsaber Form Powers', 'fa-sword-laser', allLegalFormatted, { isMajor: true }),
+      ...formNames.map((formName) => this._makeCategoryOption(
+        `lfp-form:${this._normalizePowerLookupKey(formName)}`,
+        formName,
+        'fa-jedi',
+        allLegalFormatted,
+        { isSubcategory: true }
+      )),
+    ];
+
+    const hasSearchQuery = Boolean(this._searchQuery);
+    const activeCategory = categoryOptions.find((category) => category.key === this._activeCategory)
+      || categoryOptions.find((category) => category.key === 'force-all')
+      || null;
+    if (activeCategory && this._activeCategory !== activeCategory.key) this._activeCategory = activeCategory.key;
+
+    const activeCategoryPowers = hasSearchQuery
+      ? []
+      : allPowers.filter((power) => this._getPowerCategoryKeys(power).includes(this._activeCategory));
+    const searchResults = hasSearchQuery ? allPowers : [];
+
+    const decorate = (power) => ({
+      ...power,
+      isFocused: this._focusedPowerId && String(power.stateId || power.id) === String(this._focusedPowerId),
+      isSelected: this._committedPowerCounts.has(power.stateId) || ((this._actorPowerCounts.get(power.stateId) || 0) - (this._removedPowerCounts.get(power.stateId) || 0) > 0),
+      shortSummary: power.description || power.system?.description || '',
+      searchCategoryLabel: this._isLightsaberFormPower(power) ? `Lightsaber Form: ${this._getLightsaberFormName(power)}` : 'Force Power',
+    });
+
+    return {
+      hasSearchQuery,
+      searchQueryLabel: this._searchQuery,
+      categorySidebarCollapsed: this._categorySidebarCollapsed,
+      categoryOptions,
+      activeCategoryLabel: activeCategory?.label || 'Force Powers',
+      activeCategoryIcon: activeCategory?.icon || 'fa-hand-sparkles',
+      activeCategoryCount: activeCategoryPowers.length,
+      activeCategoryPowers: activeCategoryPowers.map(decorate),
+      searchResults: searchResults.map(decorate),
+      searchResultCount: searchResults.length,
+      totalLegalPowerCount: allLegalFormatted.length,
+    };
   }
 
   _formatPowerCard(power, suggestedIds = new Set(), confidenceMap = new Map()) {

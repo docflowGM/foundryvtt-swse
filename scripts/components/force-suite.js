@@ -298,9 +298,13 @@ export class ForceSuiteComponent {
   }
 
   static async _fpRegain(actor) {
-    if (actor.system.forcePoints?.value < 1) {return ui.notifications.warn('No Force Points left!');}
+    const bonusPool = actor.getFlag?.('swse', 'bonusForcePoints') ?? {};
+    const bonusValue = Array.isArray(bonusPool.entries)
+      ? bonusPool.entries.reduce((sum, entry) => sum + Math.max(0, Number(entry?.value ?? 0) || 0), 0)
+      : Math.max(0, Number(bonusPool.value ?? 0) || 0);
+    if (((Number(actor.system.forcePoints?.value) || 0) + bonusValue) < 1) {return ui.notifications.warn('No Force Points left!');}
 
-    // Spend force point atomically
+    // Spend force point atomically. Bonus Force Points are consumed before normal Force Points.
     await ActorEngine.spendForcePoints(actor, 1);
 
     // Find one spent power

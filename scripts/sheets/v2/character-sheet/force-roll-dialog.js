@@ -47,6 +47,15 @@ function getBaseDc(power) {
   return toNumber(system.useTheForce ?? system.dc ?? system.DC ?? firstChartDc, 10) || 10;
 }
 
+function actorHasTalent(actor, talentName) {
+  const wanted = String(talentName || '').trim().toLowerCase().replace(/\s+/g, ' ');
+  return Array.from(actor?.items ?? []).some(item => item?.type === 'talent' && String(item?.name || '').trim().toLowerCase().replace(/\s+/g, ' ').replace(/\s*\(\d+\)\s*$/, '') === wanted);
+}
+
+function isMoveObjectPower(power) {
+  return /move\s*object/i.test(String(power?.name || power?.system?.slug || ''));
+}
+
 function fieldValue(html, name) {
   const root = html?.[0] ?? html;
   const found = root?.querySelector?.(`[name="${name}"]`);
@@ -103,6 +112,10 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
           </section>
           <section class="swse-roll-config-panel swse-roll-config-panel--resources">
             <h4>Resources</h4>
+            ${actorHasTalent(actor, 'Move Massive Object') && isMoveObjectPower(power) ? `<label class="rcd-resource ${fpValue <= 0 ? 'rcd-resource-disabled' : ''}">
+              <span class="rcd-res-header"><input type="checkbox" name="moveMassiveObject" ${fpValue <= 0 ? 'disabled' : ''}> <span class="rcd-res-icon">▦</span><span class="rcd-res-name">Move Massive Object Area Attack</span></span>
+              <span class="rcd-res-detail">Spend 1 Force Point to affect an area with a Large or larger object. Large 2x2, Huge 3x3, Gargantuan 4x4, Colossal+ 6x6.</span>
+            </label>` : ''}
             <label class="rcd-resource ${boosted ? 'rcd-res-active' : ''} ${fpValue <= 0 ? 'rcd-resource-disabled' : ''}">
               <span class="rcd-res-header"><input type="checkbox" name="useForce" ${boosted ? 'checked' : ''} ${fpValue <= 0 ? 'disabled' : ''}> <span class="rcd-res-icon">✦</span><span class="rcd-res-name">Spend Force Point</span></span>
               <span class="rcd-res-detail">${fpValue <= 0 ? 'No Force Points available.' : `${fpValue} Force Points available.`}</span>
@@ -144,7 +157,8 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
             baseBonus: toNumber(fieldValue(html, 'baseBonus'), baseBonus),
             customModifier: toNumber(fieldValue(html, 'customModifier'), 0),
             baseDC: toNumber(fieldValue(html, 'baseDC'), baseDC),
-            useForce: fieldValue(html, 'useForce') === true
+            useForce: fieldValue(html, 'useForce') === true,
+            moveMassiveObject: fieldValue(html, 'moveMassiveObject') === true
           })
         },
         cancel: {
@@ -214,6 +228,10 @@ export async function promptForceRegimenRollOptions({ actor, regimen, sourceElem
           </section>
           <section class="swse-roll-config-panel swse-roll-config-panel--resources">
             <h4>Resources</h4>
+            ${actorHasTalent(actor, 'Move Massive Object') && isMoveObjectPower(power) ? `<label class="rcd-resource ${fpValue <= 0 ? 'rcd-resource-disabled' : ''}">
+              <span class="rcd-res-header"><input type="checkbox" name="moveMassiveObject" ${fpValue <= 0 ? 'disabled' : ''}> <span class="rcd-res-icon">▦</span><span class="rcd-res-name">Move Massive Object Area Attack</span></span>
+              <span class="rcd-res-detail">Spend 1 Force Point to affect an area with a Large or larger object. Large 2x2, Huge 3x3, Gargantuan 4x4, Colossal+ 6x6.</span>
+            </label>` : ''}
             <label class="rcd-resource ${boosted ? 'rcd-res-active' : ''} ${fpValue <= 0 ? 'rcd-resource-disabled' : ''}">
               <span class="rcd-res-header"><input type="checkbox" name="useForce" ${boosted ? 'checked' : ''} ${fpValue <= 0 ? 'disabled' : ''}> <span class="rcd-res-icon">✦</span><span class="rcd-res-name">Spend Force Point</span></span>
               <span class="rcd-res-detail">${fpValue <= 0 ? 'No Force Points available.' : `${fpValue} Force Points available.`}</span>
@@ -255,7 +273,8 @@ export async function promptForceRegimenRollOptions({ actor, regimen, sourceElem
             baseBonus: toNumber(fieldValue(html, 'baseBonus'), baseBonus),
             customModifier: toNumber(fieldValue(html, 'customModifier'), 0),
             baseDC: toNumber(fieldValue(html, 'baseDC'), baseDC),
-            useForce: fieldValue(html, 'useForce') === true
+            useForce: fieldValue(html, 'useForce') === true,
+            moveMassiveObject: fieldValue(html, 'moveMassiveObject') === true
           })
         },
         cancel: {

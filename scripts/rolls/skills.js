@@ -68,6 +68,9 @@ export async function rollSkill(actor, skillKey, options = {}) {
   skillContext.contextFlags = RageEngine.getSkillContextFlags(actor, skillContext.contextFlags ?? skillContext.flags ?? []);
   skillContext.flags = skillContext.contextFlags;
   const featSkillBonuses = SkillFeatResolver.getSkillCheckBonuses(actor, skillKey, skillContext);
+  const skillCheckMode = String(options?.checkMode || (options?.take20 === true ? 'take20' : options?.take10 === true ? 'take10' : 'roll')).toLowerCase();
+  const skillTakeXValue = skillCheckMode === 'take20' ? 20 : skillCheckMode === 'take10' ? 10 : 10;
+  const skillIsTakeX = skillCheckMode === 'take10' || skillCheckMode === 'take20';
 
   // === UNIFIED ROLL EXECUTION via RollCore ===
   // Pass derived.skills[skillKey].total as baseBonus so formula is:
@@ -79,14 +82,18 @@ export async function rollSkill(actor, skillKey, options = {}) {
     baseBonus: canonicalTotal + Number(options?.customModifier || 0) + Number(featSkillBonuses.total || 0),
     rollOptions: {
       baseDice: '1d20',
-      useForce: options?.useForcePoint === true
+      useForce: options?.useForcePoint === true,
+      isTakeX: skillIsTakeX,
+      takeXValue: skillTakeXValue
     },
     context: {
       skillKey,
       trained: isTrained,
       skillUse: skillContext.skillUse,
       useKey: skillContext.useKey,
-      featSkillBonuses: featSkillBonuses.bonuses
+      featSkillBonuses: featSkillBonuses.bonuses,
+      checkMode: skillCheckMode,
+      takeXValue: skillIsTakeX ? skillTakeXValue : null
     }
   });
 
@@ -97,15 +104,19 @@ export async function rollSkill(actor, skillKey, options = {}) {
 
   // === RENDER TO CHAT ===
   const skillLabel = skill.label || utils?.string?.capitalize?.(skillKey) || String(skillKey || 'Skill').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[\-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-  if (rollResult.roll) {
+  let chatRoll = rollResult.roll;
+  if (!chatRoll && rollResult.isTakeX) {
+    chatRoll = await new Roll(String(rollResult.finalTotal), actor.getRollData?.() ?? {}).evaluate({ async: true });
+  }
+  if (chatRoll) {
     // Build detailed modifier breakdown
-    const total = rollResult.roll?.total ?? 'unknown';
+    const total = chatRoll?.total ?? rollResult.finalTotal ?? 'unknown';
     const flavor = `${actor.name} used ${skillLabel} and got ${total}.`;
 
-    const rerollOptions = SkillFeatResolver.buildRerollChatOptions(actor, skillKey, rollResult.roll, skillContext);
+    const rerollOptions = SkillFeatResolver.buildRerollChatOptions(actor, skillKey, chatRoll, skillContext);
 
     await SWSEChat.postRoll({
-      roll: rollResult.roll,
+      roll: chatRoll,
       actor,
       flavor,
       flags: {
@@ -142,17 +153,17 @@ export async function rollSkill(actor, skillKey, options = {}) {
     // Check if actor has applicable species reroll rights for this skill
     const applicableRerolls = SpeciesRerollHandler.getApplicableRerolls(actor, skillKey);
     if (applicableRerolls && applicableRerolls.length > 0) {
-      const rerollResult = await SpeciesRerollHandler.offerReroll(actor, skillKey, rollResult.roll, {
+      const rerollResult = await SpeciesRerollHandler.offerReroll(actor, skillKey, chatRoll, {
         skillKey
       });
       // If reroll was accepted, return the rerolled result
-      if (rerollResult && rerollResult.total !== rollResult.roll.total) {
+      if (rerollResult && rerollResult.total !== chatRoll.total) {
         return rerollResult;
       }
     }
   }
 
-  return rollResult.roll;
+  return chatRoll;
 }
 
 /**

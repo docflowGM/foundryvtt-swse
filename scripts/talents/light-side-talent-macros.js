@@ -8,6 +8,7 @@ import LightSideTalentMechanics from "/systems/foundryvtt-swse/scripts/engine/ta
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { ConsularTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/consular-talent-actions.js";
 
 export class LightSideTalentMacros {
 
@@ -42,6 +43,8 @@ export class LightSideTalentMacros {
       ui.notifications.error('Please select a character to use Consular\'s Wisdom');
       return;
     }
+
+    return ConsularTalentActions.promptConsularsWisdom(selectedActor);
 
     if (!LightSideTalentMechanics.hasConsularsWisdom(selectedActor)) {
       ui.notifications.warn(`${selectedActor.name} does not have the Consular's Wisdom talent`);
@@ -216,6 +219,8 @@ export class LightSideTalentMacros {
       return;
     }
 
+    return ConsularTalentActions.promptSkilledAdvisor(selectedActor);
+
     if (!LightSideTalentMechanics.hasSkilledAdvisor(selectedActor)) {
       ui.notifications.warn(`${selectedActor.name} does not have the Skilled Advisor talent`);
       return;
@@ -355,16 +360,7 @@ export class LightSideTalentMacros {
       return;
     }
 
-    if (!LightSideTalentMechanics.hasRenewVision(selectedActor)) {
-      ui.notifications.warn(`${selectedActor.name} does not have the Renew Vision talent`);
-      return;
-    }
-
-    const result = await LightSideTalentMechanics.triggerRenewVision(selectedActor);
-
-    if (!result.success) {
-      ui.notifications.warn(result.message);
-    }
+    return ConsularTalentActions.promptRenewVision(selectedActor);
   }
 
   /**
@@ -516,6 +512,8 @@ export class LightSideTalentMacros {
       ui.notifications.error('Please select a character to use Adept Negotiator');
       return;
     }
+
+    return ConsularTalentActions.promptAdeptNegotiator(selectedActor);
 
     if (!LightSideTalentMechanics.hasAdeptNegotiator(selectedActor)) {
       ui.notifications.warn(`${selectedActor.name} does not have the Adept Negotiator talent`);

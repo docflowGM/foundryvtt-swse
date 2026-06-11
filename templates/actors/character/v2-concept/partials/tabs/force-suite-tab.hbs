@@ -125,6 +125,37 @@
           <button type="button" class="rbtn rest" data-action="force-suite-recover-all" data-recovery-source="rest">⟲ Rest (1 min)</button>
           <button type="button" class="rbtn n20" data-action="force-suite-recover-all" data-recovery-source="nat20">★ Natural 20</button>
           <button type="button" class="rbtn fpr" data-action="force-suite-pick-recovery">◆ Spend Force Point</button>
+          {{#if conceptLayout.force.forceSuite.telekineticSavant.max}}
+          <button type="button"
+                  class="rbtn tks {{#unless conceptLayout.force.forceSuite.telekineticSavant.available}}disabled{{/unless}}"
+                  data-action="force-suite-pick-telekinetic-savant"
+                  title="Swift Action: recover one spent [Telekinetic] Force Power without spending a Force Point. Uses remaining: {{conceptLayout.force.forceSuite.telekineticSavant.remaining}}/{{conceptLayout.force.forceSuite.telekineticSavant.max}}">
+            ✦ Telekinetic Savant {{conceptLayout.force.forceSuite.telekineticSavant.remaining}}/{{conceptLayout.force.forceSuite.telekineticSavant.max}}
+          </button>
+          {{/if}}
+          {{#if conceptLayout.force.forceSuite.influenceSavant.max}}
+          <button type="button"
+                  class="rbtn tks {{#unless conceptLayout.force.forceSuite.influenceSavant.available}}disabled{{/unless}}"
+                  data-action="force-suite-pick-influence-savant"
+                  title="Swift Action: recover one spent [Mind-Affecting] Force Power without spending a Force Point. Uses remaining: {{conceptLayout.force.forceSuite.influenceSavant.remaining}}/{{conceptLayout.force.forceSuite.influenceSavant.max}}">
+            ◉ Influence Savant {{conceptLayout.force.forceSuite.influenceSavant.remaining}}/{{conceptLayout.force.forceSuite.influenceSavant.max}}
+          </button>
+          {{/if}}
+          {{#if conceptLayout.force.forceSuite.forceTalentActions.aversion.available}}
+          <button type="button" class="rbtn talent" data-action="force-talent-aversion" title="Swift Action: spend 1 Force Point; enemies treat all squares within 2 squares as difficult terrain until encounter end.">☉ Aversion</button>
+          {{/if}}
+          {{#if conceptLayout.force.forceSuite.forceTalentActions.illusion.available}}
+          <button type="button" class="rbtn talent" data-action="force-talent-illusion" title="Standard Action: spend 1 Force Point and roll Use the Force; choose illusion size penalty.">◈ Illusion</button>
+          {{/if}}
+          {{#if conceptLayout.force.forceSuite.forceTalentActions.link.available}}
+          <button type="button" class="rbtn talent" data-action="force-talent-link" title="Standard Action: link with a willing ally trained in Use the Force.">⛓ Link</button>
+          {{/if}}
+          {{#if conceptLayout.force.forceSuite.forceTalentActions.telepathicLink.available}}
+          <button type="button" class="rbtn talent" data-action="force-talent-telepathic-link" title="Swift Action: create a Telepathic Link with one willing Force-sensitive ally.">☌ Telepathic Link</button>
+          {{/if}}
+          {{#if conceptLayout.force.forceSuite.forceTalentActions.suppressForce.available}}
+          <button type="button" class="rbtn talent" data-action="force-talent-suppress-force" title="Reaction: spend one use of Mind Trick to negate a target Use the Force check.">⊘ Suppress Force</button>
+          {{/if}}
         </div>
       </div>
 
@@ -132,6 +163,21 @@
         <div class="rbtn-rule">After 1 min rest, regain all spent Force Powers.</div>
         <div class="rbtn-rule">Nat 20 on UTF check: regain all at end of turn.</div>
         <div class="rbtn-rule">Spend Force Point as Reaction: recover one spent power.</div>
+        {{#if conceptLayout.force.forceSuite.telekineticSavant.max}}
+        <div class="rbtn-rule">Telekinetic Savant: Swift Action, recover one spent [Telekinetic] power without spending a Force Point.</div>
+        {{/if}}
+        {{#if conceptLayout.force.forceSuite.influenceSavant.max}}
+        <div class="rbtn-rule">Influence Savant: Swift Action, recover one spent [Mind-Affecting] power without spending a Force Point.</div>
+        {{/if}}
+        {{#if conceptLayout.force.forceSuite.forceTalentActions.aversion.available}}
+        <div class="rbtn-rule">Aversion: Swift Action, spend 1 Force Point; enemies treat squares within 2 squares as difficult terrain until encounter end.</div>
+        {{/if}}
+        {{#if conceptLayout.force.forceSuite.forceTalentActions.illusion.available}}
+        <div class="rbtn-rule">Illusion: Standard Action, spend 1 Force Point; choose size, then roll Use the Force vs Will Defense.</div>
+        {{/if}}
+        {{#if conceptLayout.force.forceSuite.forceTalentActions.forceFlow.available}}
+        <div class="rbtn-rule">Force Flow: Natural 1 on an attack or Use the Force check grants 1 temporary Force Point until encounter end. Current temporary: {{conceptLayout.force.forceSuite.forceTalentActions.forceFlow.temporary}}</div>
+        {{/if}}
       </div>
 
       <div class="disc-body">
@@ -149,8 +195,10 @@
                       class="disc-chip"
                       data-action="force-suite-recover-one"
                       data-item-id="{{power.id}}"
-                      data-p="{{power.p}}">
-                {{power.name}}
+                      data-p="{{power.p}}"
+                      data-telekinetic="{{#if power.telekinetic}}true{{else}}false{{/if}}"
+                      data-mind-affecting="{{#if power.mindAffecting}}true{{else}}false{{/if}}">
+                {{#if power.telekinetic}}✦ {{/if}}{{#if power.mindAffecting}}◉ {{/if}}{{power.name}}
               </button>
             {{/each}}
           {{else}}

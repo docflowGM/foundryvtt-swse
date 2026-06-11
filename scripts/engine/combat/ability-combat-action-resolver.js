@@ -8,6 +8,8 @@
  * manual or be delegated to existing engines later.
  */
 
+import featActionsCatalog from "/systems/foundryvtt-swse/data/feat-combat-actions.json" with { type: 'json' };
+
 const ACTION_CARD_FIELDS = [
   "combatActions",
   "actionCards",
@@ -145,6 +147,28 @@ function collectRawActionCards(item) {
   return rawCards.filter(card => card && typeof card === "object");
 }
 
+
+function collectCatalogActionCards(item) {
+  const cards = [];
+  const itemName = String(item?.name ?? "");
+  const itemType = String(item?.type ?? "").toLowerCase();
+  for (const [key, action] of Object.entries(featActionsCatalog ?? {})) {
+    if (!action || typeof action !== "object") continue;
+    const matchesFeat = itemType === "feat" && action.requiredFeat === itemName;
+    const matchesTalent = itemType === "talent" && action.requiredTalent === itemName;
+    if (!matchesFeat && !matchesTalent) continue;
+    cards.push({
+      ...cloneData(action),
+      id: action.id ?? key,
+      key,
+      sourceName: itemName,
+      sourceType: itemType,
+      itemId: item?.id ?? item?._id ?? null
+    });
+  }
+  return cards;
+}
+
 function normalizeActionCard(item, rawCard, index = 0) {
   const actionId = normalizeKey(rawCard.id ?? rawCard.key ?? rawCard.name ?? `action-${index}`);
   const itemId = item?.id ?? item?._id ?? normalizeKey(item?.name);
@@ -210,7 +234,7 @@ export class AbilityCombatActionResolver {
       if (type === "talent" && !includeTalents) continue;
       if (type !== "feat" && type !== "talent") continue;
 
-      const rawCards = collectRawActionCards(item);
+      const rawCards = [...collectRawActionCards(item), ...collectCatalogActionCards(item)];
       rawCards.forEach((rawCard, index) => {
         const card = normalizeActionCard(item, rawCard, index);
         if (!card?.key || seen.has(card.key)) return;

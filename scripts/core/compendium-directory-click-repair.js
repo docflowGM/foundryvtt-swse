@@ -14,6 +14,19 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
+// ---------------------------------------------------------------------------
+// Debug gate — same pattern as compendium-pack-registration-repair.js
+// ---------------------------------------------------------------------------
+function _isDebug() {
+  if (globalThis.SWSE_DEBUG_COMPENDIUMS === true) return true;
+  try { return game?.settings?.get?.("foundryvtt-swse", "debugMode") === true; } catch (_e) { return false; }
+}
+
+function _dlog(...args) {
+  if (!_isDebug()) return;
+  console.log("[SWSE-COMPENDIUM-CLICK]", ...args);
+}
+
 const REPAIR_FLAG = 'swseCompendiumClickRepairInstalled';
 const DOCUMENT_FLAG = '__swseCompendiumClickRepairDocumentInstalled';
 const ROOT_FLAG = '__swseCompendiumClickRepairRoots';
@@ -398,22 +411,68 @@ async function _openPackFromEvent(event, source = 'document') {
     if (event.defaultPrevented) return false;
     if (!(event.target instanceof Element)) return false;
 
+    // --- Diagnostic: log every click that reaches this handler when debug is on ---
+    if (_isDebug()) {
+      const tgt = event.target;
+      _dlog(`Click intercepted [source=${source}]`, {
+        tag: tgt.tagName,
+        id: tgt.id || null,
+        className: tgt.className || null,
+        dataset: { ...tgt.dataset },
+        insideCompendiumDir: _isInsideCompendiumDirectory(tgt)
+      });
+    }
+
     const resolved = _findPackElementFromEvent(event);
-    if (!resolved?.packId) return false;
-    if (_isControlClick(event.target, resolved.element)) return false;
+
+    if (!resolved?.packId) {
+      _dlog(`  → could not resolve pack id from click target; skipping`);
+      return false;
+    }
+
+    _dlog(`  → resolved packId="${resolved.packId}" from element`, {
+      tag: resolved.element?.tagName,
+      className: resolved.element?.className || null,
+      dataset: { ...resolved.element?.dataset }
+    });
+
+    if (_isControlClick(event.target, resolved.element)) {
+      _dlog(`  → control click detected; skipping`);
+      return false;
+    }
 
     const pack = game.packs?.get?.(resolved.packId);
-    if (!pack) return false;
+    if (!pack) {
+      // This is important diagnostic info: we resolved an id but game.packs doesn't have it.
+      console.warn(`[SWSE-COMPENDIUM-CLICK] Resolved packId="${resolved.packId}" but game.packs.get() returned undefined.`, {
+        gamePacks: game.packs?.size ?? "?",
+        allKeys: Array.from(game.packs?.keys?.() || []).filter(k => k.includes("swse") || k.includes("foundryvtt"))
+      });
+      return false;
+    }
+
+    _dlog(`  → game.packs.get("${resolved.packId}") OK`, {
+      collection: pack.collection,
+      label: pack.metadata?.label,
+      locked: pack.locked
+    });
 
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation?.();
 
     SWSELogger.log(`[CompendiumDirectoryClickRepair] Opening ${resolved.packId} from ${source} fallback`);
-    await pack.render(true);
+    _dlog(`  → calling pack.render(true) for "${resolved.packId}"`);
+    try {
+      await pack.render(true);
+      _dlog(`  → pack.render(true) resolved for "${resolved.packId}"`);
+    } catch (renderErr) {
+      console.error(`[SWSE-COMPENDIUM-CLICK] pack.render(true) threw for "${resolved.packId}":`, renderErr?.message, renderErr?.stack || renderErr);
+    }
     return true;
   } catch (err) {
     SWSELogger.warn('[CompendiumDirectoryClickRepair] Failed to open pack from sidebar click:', err);
+    console.error('[SWSE-COMPENDIUM-CLICK] _openPackFromEvent threw:', err?.message, err?.stack || err);
     return false;
   }
 }
@@ -480,6 +539,33 @@ export function registerCompendiumDirectoryClickRepair() {
       const root = _getApplicationElement(html) || _getApplicationElement(app);
       if (root) _installOnRoot(root);
       _installAllRoots();
+
+      // Diagnostic: log which packs the sidebar DOM actually shows vs what game.packs has.
+      if (_isDebug()) {
+        const domRoot = root || document.querySelector('#compendium, .compendium-sidebar');
+        const domPackIds = domRoot
+          ? Array.from(domRoot.querySelectorAll('[data-pack],[data-pack-id],[data-collection],[data-collection-id]'))
+              .map(el => el.dataset.pack || el.dataset.packId || el.dataset.collection || el.dataset.collectionId)
+              .filter(Boolean)
+          : [];
+        const gamePacks = Array.from(game?.packs?.keys?.() || []).filter(k => k.startsWith(game?.system?.id || "foundryvtt-swse"));
+        const watchKeys = [
+          "foundryvtt-swse.feats",
+          "foundryvtt-swse.lightsaberformpowers",
+          "foundryvtt-swse.heroic",
+          "foundryvtt-swse.nonheroic"
+        ];
+        console.group("[SWSE-COMPENDIUM-CLICK] renderCompendiumDirectory fired");
+        _dlog(`  DOM pack elements (${domPackIds.length}):`, domPackIds);
+        _dlog(`  game.packs system keys (${gamePacks.length}):`, gamePacks);
+        for (const k of watchKeys) {
+          const inGamePacks = game?.packs?.has?.(k) ?? false;
+          const inDom = domPackIds.some(id => id === k || id.endsWith(`.${k.split(".")[1]}`));
+          const marker = inGamePacks && inDom ? "✅" : inGamePacks && !inDom ? "⚠️ in game.packs but NOT in DOM" : "❌ NOT in game.packs";
+          _dlog(`  ${marker}  ${k}`);
+        }
+        console.groupEnd();
+      }
     });
 
     Hooks.on('renderSidebar', () => _installAllRoots());

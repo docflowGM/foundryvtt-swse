@@ -1949,3 +1949,42 @@
 .chat-message .swse-combat-status-chat-rules p:last-child {
   margin-bottom: 0;
 }
+
+/* Force talent callouts: Disciplined Strike / Telekinetic Power */
+.chat-message .swse-roll-card--force[data-swse-chat-card-v2="true"] .swse-force-talent-notes {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0.55rem 0;
+}
+
+.chat-message .swse-roll-card--force[data-swse-chat-card-v2="true"] .swse-force-talent-note {
+  border: 1px solid color-mix(in srgb, var(--rail, #7ee7ff) 45%, transparent);
+  border-radius: 8px;
+  padding: 0.45rem 0.55rem;
+  background: color-mix(in srgb, var(--rail, #7ee7ff) 12%, transparent);
+  font-size: 0.82rem;
+  line-height: 1.25;
+}
+
+.chat-message .swse-roll-card--force[data-swse-chat-card-v2="true"] .swse-force-talent-note strong {
+  display: inline-block;
+  margin-right: 0.4rem;
+  color: var(--rail, #7ee7ff);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.72rem;
+}
+
+.chat-message .swse-roll-card--force[data-swse-chat-card-v2="true"] .swse-force-talent-note .k {
+  display: inline-block;
+  margin-right: 0.4rem;
+  opacity: 0.78;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+}
+
+.chat-message .swse-roll-card--force[data-swse-chat-card-v2="true"] .swse-force-talent-actions {
+  display: grid;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+}

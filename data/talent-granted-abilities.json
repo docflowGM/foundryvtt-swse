@@ -13,7 +13,7 @@
       "name": "Block",
       "talentName": "Block",
       "talentTree": "Lightsaber Combat",
-      "description": "Make a Use the Force check to negate a melee attack. If your check equals or exceeds the attack roll, the attack deals no damage.",
+      "description": "Reaction: make a Use the Force check against a melee attack roll to negate it; cumulative -5 applies for each Block or Deflect used since the beginning of your last turn. You may spend a Force Point to protect an adjacent character.",
       "actionType": "reaction",
       "trigger": "When hit by a melee attack",
       "roll": {
@@ -33,7 +33,7 @@
         "reaction"
       ],
       "icon": "fas fa-shield-alt",
-      "linkedAction": "block-defense",
+      "linkedAction": "block-feat",
       "alsoFeat": true
     },
     "deflect": {
@@ -41,7 +41,7 @@
       "name": "Deflect",
       "talentName": "Deflect",
       "talentTree": "Lightsaber Combat",
-      "description": "Make a Use the Force check to negate a ranged attack. If your check equals or exceeds the attack roll, the attack deals no damage.",
+      "description": "Reaction: make a Use the Force check against a ranged attack roll to negate it; cumulative -5 applies for each Block or Deflect used since the beginning of your last turn. You may spend a Force Point to protect an adjacent character.",
       "actionType": "reaction",
       "trigger": "When hit by a ranged attack",
       "roll": {
@@ -61,7 +61,7 @@
         "reaction"
       ],
       "icon": "fas fa-shield-alt",
-      "linkedAction": "deflect-defense",
+      "linkedAction": "deflect-feat",
       "alsoFeat": true
     },
     "redirect-shot": {
@@ -69,7 +69,7 @@
       "name": "Redirect Shot",
       "talentName": "Redirect Shot",
       "talentTree": "Lightsaber Combat",
-      "description": "When you successfully deflect a ranged attack, you may redirect the attack at any target within 6 squares. Make a Use the Force check; if it equals or exceeds the new target's Reflex Defense, the attack hits. Alternatively, spend a Force Point to automatically hit.",
+      "description": "Once per round after successfully Deflecting a single blaster bolt, make an immediate ranged attack against another target in line of sight. Autofire barrages and other projectiles cannot be redirected.",
       "actionType": "reaction",
       "trigger": "After successfully using Deflect",
       "prerequisites": [
@@ -79,13 +79,6 @@
         "skillKey": "useTheForce",
         "vsDefense": "reflex",
         "label": "Redirect Shot (Use the Force)"
-      },
-      "alternativeAction": {
-        "name": "Auto-Hit Redirect",
-        "cost": {
-          "forcePoints": 1
-        },
-        "effect": "Automatically redirect and hit any target within 6 squares"
       },
       "uses": {
         "max": null,
@@ -100,7 +93,8 @@
         "force-point"
       ],
       "icon": "fas fa-exchange-alt",
-      "alsoFeat": true
+      "alsoFeat": true,
+      "linkedAction": "redirect-shot-feat"
     },
     "adept-negotiator": {
       "id": "adept-negotiator",

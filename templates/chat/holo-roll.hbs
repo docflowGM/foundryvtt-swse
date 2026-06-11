@@ -96,6 +96,32 @@
     </div>
   {{/if}}
 
+
+  {{#if context.forceTalentNotes.length}}
+    <div class="swse-force-talent-notes">
+      {{#each context.forceTalentNotes}}
+        <div class="swse-force-talent-note swse-force-talent-note--{{key}}">
+          <strong>{{label}}</strong>
+          {{#if action}}<span class="k">{{action}}</span>{{/if}}
+          <span class="v">{{value}}</span>
+        </div>
+      {{/each}}
+    </div>
+  {{/if}}
+
+  {{#if context.telekineticPowerRepeatAction}}
+    <div class="actions swse-force-talent-actions swse-telekinetic-power-actions">
+      <button type="button"
+              class="btn swse-telekinetic-power-repeat"
+              data-action="telekinetic-power-repeat"
+              data-actor-id="{{context.telekineticPowerRepeatAction.actorId}}"
+              data-item-id="{{context.telekineticPowerRepeatAction.itemId}}">
+        <span class="i">◆</span>{{context.telekineticPowerRepeatAction.label}}
+      </button>
+      <span class="notes swse-roll-hint">{{context.telekineticPowerRepeatAction.hint}}</span>
+    </div>
+  {{/if}}
+
   {{#if outcome}}
     <div class="outcome">
       {{#each outcome.meta}}

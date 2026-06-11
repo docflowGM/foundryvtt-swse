@@ -1,5 +1,6 @@
 import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
@@ -464,6 +465,13 @@ export async function rollAttack(actor, weapon, options = {}) {
     }
   });
 
+  if (Number(d20) === 1) {
+    await ForceExecutor.handleForceFlowNaturalOne(actor, { source: weapon?.name ?? 'Attack', rollType: 'attack roll' });
+  }
+  if (Number(d20) === 20) {
+    await ForceExecutor.grantTelepathicInfluenceForcePoint(actor);
+  }
+
   const attackResult = {
     roll,
     total: roll.total,
@@ -685,6 +693,13 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
       targetEffectsOnHit: optionModifiers.targetEffectsOnHit || []
     }
   });
+
+  if (Number(attackD20) === 1) {
+    await ForceExecutor.handleForceFlowNaturalOne(actor, { source: weapon?.name ?? 'Attack', rollType: 'attack roll' });
+  }
+  if (Number(attackD20) === 20) {
+    await ForceExecutor.grantTelepathicInfluenceForcePoint(actor);
+  }
 
   // Post damage roll card
   await SWSEChat.postRoll({

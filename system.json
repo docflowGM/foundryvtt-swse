@@ -333,6 +333,13 @@
       "private": false
     },
     {
+      "name": "feats-stub",
+      "label": "Feats (Fallback)",
+      "type": "Item",
+      "system": "foundryvtt-swse",
+      "path": "packs/feats-stub.db"
+    },
+    {
       "name": "forcepowers",
       "label": "Force Powers",
       "type": "Item",

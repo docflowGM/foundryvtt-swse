@@ -24,7 +24,9 @@
       }
     ],
     "notes": "Take -{value} to melee attack rolls, gain +{value} to melee damage",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "defensive-fighting": {
     "name": "Defensive Fighting",
@@ -81,7 +83,9 @@
     "toggleable": false,
     "effects": [],
     "notes": "Full-round action. Make one extra ranged attack. All attacks take -2 penalty.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "double-attack": {
     "name": "Double Attack",
@@ -91,7 +95,9 @@
     "toggleable": false,
     "effects": [],
     "notes": "Full-round action. Make two attacks, each at -5 penalty. Requires BAB +6.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "running-attack": {
     "name": "Running Attack",
@@ -101,7 +107,9 @@
     "toggleable": false,
     "effects": [],
     "notes": "Make a single melee or ranged attack at any point during a move action.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "charging-fire": {
     "name": "Charging Fire",
@@ -117,7 +125,9 @@
       }
     ],
     "notes": "Make a ranged attack at the end of a charge, taking -2 penalty on the attack roll.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "cleave": {
     "name": "Cleave",
@@ -128,7 +138,9 @@
     "trigger": "You drop an enemy to 0 HP with a melee attack",
     "effects": [],
     "notes": "When you drop an enemy to 0 HP with a melee attack, you can immediately make one melee attack against another adjacent enemy.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "combat-reflexes": {
     "name": "Combat Reflexes",
@@ -168,7 +180,9 @@
       }
     ],
     "notes": "Negates the -2 penalty from Rapid Shot feat. Requires Gunslinger talent tree.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "controlled-burst": {
     "name": "Controlled Burst",
@@ -183,7 +197,9 @@
       }
     ],
     "notes": "Reduce autofire or burst-fire penalty by 2. If braced, no penalty. Requires Weapon Master talent tree.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "multiattack-proficiency-rifles": {
     "name": "Multiattack Proficiency (Rifles)",
@@ -199,7 +215,9 @@
       }
     ],
     "notes": "Reduce multiattack penalty by 2 when using rifles. Requires Weapon Master talent tree.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "multiattack-proficiency-pistols": {
     "name": "Multiattack Proficiency (Pistols)",
@@ -215,7 +233,9 @@
       }
     ],
     "notes": "Reduce multiattack penalty by 2 when using pistols. Requires Gunslinger talent tree.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "multiattack-proficiency-heavy": {
     "name": "Multiattack Proficiency (Heavy)",
@@ -231,7 +251,9 @@
       }
     ],
     "notes": "Reduce multiattack penalty by 2 when using heavy weapons. Requires Weapon Master talent tree.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "dash-and-blast": {
     "name": "Dash and Blast",
@@ -241,7 +263,9 @@
     "toggleable": false,
     "effects": [],
     "notes": "Once per encounter. Move twice your speed and make attacks with each pistol. Requires Pistoleer talent tree.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "hailfire": {
     "name": "Hailfire",
@@ -251,7 +275,9 @@
     "toggleable": false,
     "effects": [],
     "notes": "With two pistols, attack as if using autofire even without autofire, applying autofire penalties. Requires Pistoleer talent tree.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "improved-suppression-fire": {
     "name": "Improved Suppression Fire",
@@ -261,7 +287,9 @@
     "toggleable": false,
     "effects": [],
     "notes": "When you suppress an enemy, that enemy takes -5 attack. If targeting with autofire, each enemy in the area takes -2 attack. Requires Weapon Specialist talent tree.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "draw-fire": {
     "name": "Draw Fire",
@@ -271,7 +299,9 @@
     "toggleable": false,
     "effects": [],
     "notes": "Make Persuasion vs Will. Target cannot attack anyone within 6 squares if you do not have cover. Requires Commando talent tree.",
-    "relatedSkills": ["persuasion"]
+    "relatedSkills": [
+      "persuasion"
+    ]
   },
   "cover-fire": {
     "name": "Cover Fire",
@@ -281,7 +311,9 @@
     "toggleable": true,
     "effects": [],
     "notes": "When you make a ranged attack, allies within 6 squares gain +1 Defense until your next turn. Requires Commando talent tree.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "melee-defense": {
     "name": "Melee Defense",
@@ -319,7 +351,10 @@
       }
     ],
     "notes": "Use Acrobatics to tumble through enemy space. Gain +2 on your next melee attack against that enemy.",
-    "relatedSkills": ["acrobatics", "attack"]
+    "relatedSkills": [
+      "acrobatics",
+      "attack"
+    ]
   },
   "whirlwind-attack": {
     "name": "Whirlwind Attack",
@@ -329,40 +364,60 @@
     "toggleable": false,
     "effects": [],
     "notes": "Full-round action. Make one melee attack against each adjacent enemy. Requires BAB +4, Dex 13, Dodge, Mobility.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "block-feat": {
-    "name": "Block (Feat)",
+    "name": "Block",
     "actionType": "reaction",
-    "requiredFeat": "Block",
-    "description": "Negate melee attack with Use the Force",
+    "description": "Negate a melee attack with a Use the Force check against the attack roll; cumulative Block/Deflect penalty applies.",
     "toggleable": false,
-    "trigger": "You are hit by a melee attack",
+    "trigger": "You are targeted by a melee attack",
     "effects": [],
-    "notes": "Once per round. Make Use the Force check. If result >= attack roll, the attack is negated. Requires lightsaber.",
-    "relatedSkills": ["useTheForce"]
+    "notes": "Requires active lightsaber, awareness, and not being Flat-Footed. Can spend a Force Point to protect an adjacent character.",
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "requiredTalent": "Block",
+    "manualResolution": false,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "block",
+    "spendAction": true
   },
   "deflect-feat": {
-    "name": "Deflect (Feat)",
+    "name": "Deflect",
     "actionType": "reaction",
-    "requiredFeat": "Deflect",
-    "description": "Negate ranged attack with Use the Force",
+    "description": "Negate a ranged attack with a Use the Force check against the attack roll; cumulative Block/Deflect penalty applies.",
     "toggleable": false,
-    "trigger": "You are hit by a ranged attack",
+    "trigger": "You are targeted by a ranged attack",
     "effects": [],
-    "notes": "Once per round. Make Use the Force check. If result >= attack roll, the attack is negated. Requires lightsaber.",
-    "relatedSkills": ["useTheForce"]
+    "notes": "Requires active lightsaber, awareness, and not being Flat-Footed. Can spend a Force Point to protect an adjacent character.",
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "requiredTalent": "Deflect",
+    "manualResolution": false,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "deflect",
+    "spendAction": true
   },
   "redirect-shot-feat": {
-    "name": "Redirect Shot (Feat)",
-    "actionType": "reaction",
-    "requiredFeat": "Redirect Shot",
-    "description": "Redirect deflected shot to new target",
+    "name": "Redirect Shot",
+    "actionType": "free",
+    "description": "Once per round after successfully Deflecting a single blaster bolt, redirect it as an immediate ranged attack.",
     "toggleable": false,
-    "trigger": "You successfully negate a ranged attack with Deflect",
+    "trigger": "You successfully Deflect a single blaster bolt",
     "effects": [],
-    "notes": "When you successfully Deflect, you may redirect the shot. Make Use the Force check vs target's Reflex Defense.",
-    "relatedSkills": ["useTheForce"]
+    "notes": "Autofire barrages and non-blaster projectiles cannot be redirected.",
+    "relatedSkills": [
+      "attack"
+    ],
+    "requiredTalent": "Redirect Shot",
+    "manualResolution": false,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "redirectShot",
+    "spendAction": false
   },
   "bantha-rush": {
     "name": "Bantha Rush",
@@ -373,7 +428,9 @@
     "trigger": "You hit with a melee attack",
     "effects": [],
     "notes": "Swift action after melee hit. Make a free bull rush attempt against the target.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "mighty-swing": {
     "name": "Mighty Swing",
@@ -387,7 +444,9 @@
     },
     "effects": [],
     "notes": "Once per encounter. Reroll a melee attack roll and take the better result.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "pin": {
     "name": "Pin",
@@ -397,7 +456,9 @@
     "toggleable": false,
     "effects": [],
     "notes": "Standard action. Make grapple check. If successful, target is immobilized until they escape.",
-    "relatedSkills": ["grapple"]
+    "relatedSkills": [
+      "grapple"
+    ]
   },
   "trip": {
     "name": "Trip",
@@ -407,7 +468,9 @@
     "toggleable": false,
     "effects": [],
     "notes": "Standard action. Make attack roll vs Reflex Defense. If successful, target is knocked prone.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "shake-it-off": {
     "name": "Shake It Off",
@@ -438,7 +501,9 @@
       }
     ],
     "notes": "After using Aim action, add +5 damage to next ranged attack. Stacks with Aim bonus.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "improved-disarm": {
     "name": "Improved Disarm",
@@ -454,7 +519,9 @@
       }
     ],
     "notes": "+5 to disarm attempts. No attack of opportunity provoked.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
   },
   "improved-grapple": {
     "name": "Improved Grapple",
@@ -470,7 +537,9 @@
       }
     ],
     "notes": "+5 to grapple checks. No attack of opportunity provoked.",
-    "relatedSkills": ["grapple"]
+    "relatedSkills": [
+      "grapple"
+    ]
   },
   "elusive-target-feat": {
     "name": "Elusive Target",
@@ -512,7 +581,9 @@
       }
     ],
     "notes": "Passive +1 bonus to Use the Force checks.",
-    "relatedSkills": ["useTheForce"]
+    "relatedSkills": [
+      "useTheForce"
+    ]
   },
   "force-sensitivity": {
     "name": "Force Sensitivity",
@@ -521,7 +592,9 @@
     "description": "Enables Use the Force skill",
     "effects": [],
     "notes": "You can use the Force. This feat is a prerequisite for many Force-related abilities.",
-    "relatedSkills": ["useTheForce"]
+    "relatedSkills": [
+      "useTheForce"
+    ]
   },
   "skill-focus": {
     "name": "Skill Focus",
@@ -555,6 +628,1130 @@
     "toggleable": false,
     "effects": [],
     "notes": "Full-round action. Make an autofire attack against a single target instead of an area. Takes -5 penalty on attack roll. Adds 2 extra dice of the weapon's damage type (e.g., if weapon is 3d10, damage becomes 5d10). Consumes 5 shots instead of 10. This is not considered an area attack, so Evasion talent does not reduce damage.",
-    "relatedSkills": ["attack"]
+    "relatedSkills": [
+      "attack"
+    ]
+  },
+  "guardian-spirit-consult": {
+    "name": "Consult Guardian Spirit",
+    "actionType": "standard",
+    "requiredTalent": "Guardian Spirit",
+    "description": "Use Search Your Feelings by consulting your Guardian Spirit; GM reveals immediate consequences and destiny implications.",
+    "manualResolution": true,
+    "resolutionMode": "manual",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Use the existing Search Your Feelings / Use the Force roll workflow as needed. This talent expands the information received; final details are GM-adjudicated.",
+    "relatedSkills": [
+      "useTheForce"
+    ]
+  },
+  "guardian-spirit-claim-bonus-fp": {
+    "name": "Claim Guardian Spirit Bonus Force Point",
+    "actionType": "free",
+    "requiredTalent": "Guardian Spirit",
+    "description": "After at least 6 hours of rest, claim the daily bonus Force Point granted by Guardian Spirit.",
+    "manualResolution": false,
+    "resolutionMode": "guardianSpirit",
+    "guardianSpiritAction": "claimBonusForcePoint",
+    "spendAction": false,
+    "effects": [],
+    "notes": "The bonus Force Point can only be used to improve a Force Power or activate a Force Technique or Force Secret and is lost if unused by the next day.",
+    "relatedSkills": []
+  },
+  "crucial-advice": {
+    "name": "Crucial Advice",
+    "actionType": "reaction",
+    "requiredTalent": "Crucial Advice",
+    "description": "Once per encounter after failing a Skill Check, reroll that Skill Check with a +2 circumstance bonus.",
+    "manualResolution": false,
+    "resolutionMode": "guardianSpirit",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Opens a skill reroll chooser and rolls the failed skill with a +2 circumstance bonus. Once per encounter.",
+    "relatedSkills": [
+      "skill"
+    ],
+    "guardianSpiritAction": "crucialAdvice"
+  },
+  "manifest-guardian-spirit": {
+    "name": "Manifest Guardian Spirit",
+    "actionType": "swift",
+    "requiredTalent": "Manifest Guardian Spirit",
+    "description": "Spend a Force Point as a Swift Action to manifest your Guardian Spirit for the encounter.",
+    "manualResolution": false,
+    "resolutionMode": "guardianSpirit",
+    "guardianSpiritAction": "manifest",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Marks the Guardian Spirit as manifested. Positioning and morale bonuses are adjudicated by the GM/player.",
+    "relatedSkills": []
+  },
+  "move-guardian-spirit": {
+    "name": "Move Guardian Spirit",
+    "actionType": "swift",
+    "requiredTalent": "Manifest Guardian Spirit",
+    "description": "Move your manifested Guardian Spirit up to 6 squares once per turn.",
+    "manualResolution": true,
+    "resolutionMode": "manual",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Only available while the Guardian Spirit is manifested. Move it up to 6 squares; table adjudicates position.",
+    "relatedSkills": []
+  },
+  "vital-encouragement": {
+    "name": "Vital Encouragement",
+    "actionType": "free",
+    "requiredTalent": "Vital Encouragement",
+    "description": "Once per encounter, gain Bonus Hit Points equal to 10 + one-half your Heroic Level.",
+    "manualResolution": false,
+    "resolutionMode": "guardianSpirit",
+    "guardianSpiritAction": "vitalEncouragement",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Bonus Hit Points from multiple sources do not stack and expire at encounter end.",
+    "relatedSkills": []
+  },
+  "distracting-apparition": {
+    "name": "Distracting Apparition",
+    "actionType": "passive",
+    "requiredTalent": "Distracting Apparition",
+    "description": "While your Guardian Spirit is manifested, enemies within 3 squares of it take -2 Will Defense and -2 attack rolls against you.",
+    "manualResolution": true,
+    "resolutionMode": "reference",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Positional aura is GM/player adjudicated from the Guardian Spirit location.",
+    "relatedSkills": []
+  },
+  "aversion": {
+    "name": "Aversion",
+    "actionType": "swift",
+    "requiredTalent": "Aversion",
+    "description": "Spend a Force Point as a Swift Action to radiate an aura; enemies treat squares within 2 squares of you as difficult terrain until encounter end.",
+    "manualResolution": false,
+    "resolutionMode": "forceTalent",
+    "forceTalentAction": "aversion",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Mind-Affecting effect. ActiveEffect marks the aura; enemy movement is table-adjudicated.",
+    "relatedSkills": []
+  },
+  "illusion": {
+    "name": "Illusion",
+    "actionType": "standard",
+    "requiredTalent": "Illusion",
+    "description": "Spend a Force Point and roll Use the Force to create an illusion. The dialog applies the selected size penalty.",
+    "manualResolution": false,
+    "resolutionMode": "forceTalent",
+    "forceTalentAction": "illusion",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Uses the Illusion UTF dialog with size selection, optional Will Defense, Illusion Bond, and Masquerade toggles.",
+    "relatedSkills": [
+      "useTheForce"
+    ]
+  },
+  "link": {
+    "name": "Link",
+    "actionType": "standard",
+    "requiredTalent": "Link",
+    "description": "Designate a willing trained Use the Force ally within 12 squares and line of sight; aid each other on UTF checks as a Reaction.",
+    "manualResolution": false,
+    "resolutionMode": "forceTalent",
+    "forceTalentAction": "link",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Stores linked ally metadata and posts the Link rules to chat.",
+    "relatedSkills": [
+      "useTheForce"
+    ]
+  },
+  "suppress-force": {
+    "name": "Suppress Force",
+    "actionType": "reaction",
+    "requiredTalent": "Suppress Force",
+    "description": "Spend one ready use of Mind Trick as a Reaction and roll Use the Force against the target's UTF result to negate its Force check.",
+    "manualResolution": false,
+    "resolutionMode": "forceTalent",
+    "forceTalentAction": "suppressForce",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Requires a ready Mind Trick power. Dialog asks for target name/result and rolls UTF.",
+    "relatedSkills": [
+      "useTheForce"
+    ]
+  },
+  "telepathic-link": {
+    "name": "Telepathic Link",
+    "actionType": "swift",
+    "requiredTalent": "Telepathic Link",
+    "description": "Establish a telepathic link with one willing Force-sensitive ally; once per encounter, share a Force Power with consent.",
+    "manualResolution": false,
+    "resolutionMode": "forceTalent",
+    "forceTalentAction": "telepathicLink",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Stores one active linked ally and posts the shared-power reminder.",
+    "relatedSkills": []
+  },
+  "telekinetic-savant": {
+    "name": "Telekinetic Savant",
+    "actionType": "swift",
+    "requiredTalent": "Telekinetic Savant",
+    "description": "Recover one spent [Telekinetic] Force Power without spending a Force Point.",
+    "manualResolution": true,
+    "resolutionMode": "reference",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Use the Force Suite recovery controls to choose the spent [Telekinetic] power. Uses remaining are tracked per encounter.",
+    "relatedSkills": []
+  },
+  "influence-savant": {
+    "name": "Influence Savant",
+    "actionType": "swift",
+    "requiredTalent": "Influence Savant",
+    "description": "Recover one spent [Mind-Affecting] Force Power without spending a Force Point.",
+    "manualResolution": true,
+    "resolutionMode": "reference",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Use the Force Suite recovery controls to choose the spent [Mind-Affecting] power. Uses remaining are tracked per encounter.",
+    "relatedSkills": []
+  },
+  "telekinetic-power": {
+    "name": "Telekinetic Power",
+    "actionType": "free",
+    "requiredTalent": "Telekinetic Power",
+    "description": "On a natural 20 UTF check to activate a [Telekinetic] Force Power, use that power again immediately as a Free Action.",
+    "manualResolution": true,
+    "resolutionMode": "reference",
+    "spendAction": false,
+    "effects": [],
+    "notes": "The repeat button appears on the Force Power roll card when the trigger occurs.",
+    "relatedSkills": [
+      "useTheForce"
+    ]
+  },
+  "disciplined-strike": {
+    "name": "Disciplined Strike",
+    "actionType": "passive",
+    "requiredTalent": "Disciplined Strike",
+    "description": "When using an area Force Power, exclude targets equal to Wisdom modifier, minimum 1.",
+    "manualResolution": true,
+    "resolutionMode": "reference",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Area Force Power roll cards display the exclusion count when applicable.",
+    "relatedSkills": [
+      "useTheForce"
+    ]
+  },
+  "move-massive-object": {
+    "name": "Move Massive Object",
+    "actionType": "passive",
+    "requiredTalent": "Move Massive Object",
+    "description": "When activating Move Object on a Large or larger object, spend a Force Point to make an area attack with the object.",
+    "manualResolution": true,
+    "resolutionMode": "reference",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Use the Move Object activation option; area size depends on object size.",
+    "relatedSkills": [
+      "useTheForce"
+    ]
+  },
+  "adept-negotiator": {
+    "name": "Adept Negotiator",
+    "actionType": "standard",
+    "requiredTalent": "Adept Negotiator",
+    "description": "Make a Persuasion check, or Use the Force with Force Persuasion, against one opponent's Will Defense to move them down the Condition Track.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "adeptNegotiator",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Applies Condition Track movement only. It does not deal HP damage or physical damage and affects the specific character, not a starship.",
+    "relatedSkills": [
+      "persuasion",
+      "useTheForce"
+    ],
+    "targetHint": "Opponent with Intelligence 3+ within 12 squares who can see, hear, and understand you. Higher-level targets add +5 to Will Defense."
+  },
+  "force-persuasion": {
+    "name": "Force Persuasion",
+    "actionType": "passive",
+    "requiredTalent": "Force Persuasion",
+    "description": "Use your Use the Force modifier instead of Persuasion and count as trained in Persuasion.",
+    "manualResolution": true,
+    "resolutionMode": "reference",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Adept Negotiator automatically uses Use the Force when this talent is owned. Persuasion training is handled by the derived skill calculator.",
+    "relatedSkills": [
+      "persuasion",
+      "useTheForce"
+    ]
+  },
+  "master-negotiator": {
+    "name": "Master Negotiator",
+    "actionType": "passive",
+    "requiredTalent": "Master Negotiator",
+    "description": "Successful Adept Negotiator use moves the target an additional -1 step down the Condition Track.",
+    "manualResolution": true,
+    "resolutionMode": "reference",
+    "spendAction": false,
+    "effects": [],
+    "notes": "The Adept Negotiator action applies the extra Condition Track step automatically when this talent is owned. No HP damage is dealt.",
+    "relatedSkills": [
+      "persuasion",
+      "useTheForce"
+    ]
+  },
+  "skilled-advisor": {
+    "name": "Skilled Advisor",
+    "actionType": "full-round",
+    "requiredTalent": "Skilled Advisor",
+    "description": "Advise an ally to grant +5 on their next Skill Check, or +10 if you spend a Force Point.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "skilledAdvisor",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Prompts for an ally, skill, and optional Force Point spend. Bonus Force Points are spent before normal Force Points.",
+    "relatedSkills": []
+  },
+  "adversary-lore": {
+    "name": "Adversary Lore",
+    "actionType": "standard",
+    "requiredTalent": "Adversary Lore",
+    "description": "Roll Use the Force against a target creature's Will Defense; on success, it takes -2 Reflex Defense against you and allies who can hear and understand you until the end of your next turn.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "adversaryLore",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Creates a target-scoped reminder effect; does not globally lower Reflex Defense for all attackers.",
+    "relatedSkills": [
+      "useTheForce"
+    ]
+  },
+  "aggressive-negotiator": {
+    "name": "Aggressive Negotiator",
+    "actionType": "passive",
+    "requiredTalent": "Aggressive Negotiator",
+    "description": "After damaging an opponent with a lightsaber attack, you can Take 10 on Persuasion checks before the end of your next turn.",
+    "manualResolution": true,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "aggressiveNegotiator",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Also has a passive hook for attack-resolution events when the system emits them.",
+    "relatedSkills": [
+      "persuasion"
+    ]
+  },
+  "cleanse-mind": {
+    "name": "Cleanse Mind",
+    "actionType": "swift",
+    "requiredTalent": "Cleanse Mind",
+    "description": "Remove one ongoing Mind-Affecting effect from one allied target within line of sight.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "cleanseMind",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Can remove the special Adept Negotiator condition marker and restore the recorded previous Condition Track step.",
+    "relatedSkills": []
+  },
+  "collective-visions": {
+    "name": "Collective Visions",
+    "actionType": "passive",
+    "requiredTalent": "Collective Visions",
+    "description": "When you use Farseeing or a prerequisite-linked power/talent, nearby Force-users with Farseeing can Aid Another as a Reaction.",
+    "manualResolution": true,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "collectiveVisions",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Posts the Aid Another reminder; the Farseeing roll remains the normal roll path.",
+    "relatedSkills": [
+      "useTheForce"
+    ]
+  },
+  "consulars-vitality": {
+    "name": "Consular's Vitality",
+    "actionType": "swift",
+    "requiredTalent": "Consular's Vitality",
+    "description": "Grant one ally Bonus Hit Points equal to 5 + your Charisma modifier until the beginning of your next turn; you take -5 on UTF checks until then.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "consularsVitality",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Bonus Hit Points do not stack; damage comes from Bonus Hit Points first.",
+    "relatedSkills": []
+  },
+  "consulars-wisdom": {
+    "name": "Consular's Wisdom",
+    "actionType": "swift",
+    "requiredTalent": "Consular's Wisdom",
+    "description": "Once per encounter, one ally adds your Wisdom bonus to Will Defense against Mind-Affecting effects until the end of the encounter.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "consularsWisdom",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Creates a conditional reminder effect instead of globally increasing Will Defense.",
+    "relatedSkills": []
+  },
+  "entreat-aid": {
+    "name": "Entreat Aid",
+    "actionType": "swift",
+    "requiredTalent": "Entreat Aid",
+    "description": "Spend a Force Point to let one adjacent ally use Aid Another as a Reaction to assist your next Skill Check before the end of your turn.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "entreatAid",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Tracks the chosen ally for the current turn so the same ally cannot be targeted again since the end of your last turn.",
+    "relatedSkills": []
+  },
+  "force-of-will": {
+    "name": "Force of Will",
+    "actionType": "swift",
+    "requiredTalent": "Force of Will",
+    "description": "Spend a Force Point to give allies within 6 squares a +2 insight bonus to Will Defense for the encounter while they remain within 6 squares.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "forceOfWill",
+    "spendAction": true,
+    "effects": [],
+    "notes": "The owner's personal +2 insight Will bonus is passive; this action handles the ally aura and uses the shared Force Point spender.",
+    "relatedSkills": []
+  },
+  "guiding-strikes": {
+    "name": "Guiding Strikes",
+    "actionType": "swift",
+    "requiredTalent": "Guiding Strikes",
+    "description": "After damaging a target with a lightsaber attack on your turn, adjacent allies gain +2 circumstance bonus to melee attacks against that target until your next turn.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "guidingStrikes",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Creates a target-scoped reminder effect; adjacency and lightsaber-damage timing remain GM/player adjudicated if the attack hook cannot prove them.",
+    "relatedSkills": []
+  },
+  "improved-consulars-vitality": {
+    "name": "Improved Consular's Vitality",
+    "actionType": "free",
+    "requiredTalent": "Improved Consular's Vitality",
+    "description": "After damaging a target with a lightsaber attack, use Consular's Vitality as a Free Action until the start of your next turn.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "improvedConsularsVitality",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Uses the same Consular's Vitality dialog/effect, but the combat action itself does not consume a Swift Action.",
+    "relatedSkills": []
+  },
+  "know-weakness": {
+    "name": "Know Weakness",
+    "actionType": "passive",
+    "requiredTalent": "Know Weakness",
+    "description": "Successful Adversary Lore causes the target to take +1d6 damage from successful attacks by you or allies who can hear and understand you until the end of your next turn.",
+    "manualResolution": true,
+    "resolutionMode": "reference",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Automatically tags successful Adversary Lore targets with a reminder effect.",
+    "relatedSkills": []
+  },
+  "recall": {
+    "name": "Recall",
+    "actionType": "passive",
+    "requiredTalent": "Recall",
+    "description": "Whenever you spend a Force Point to return a Force Power to your suite, regain two Force Powers instead of one.",
+    "manualResolution": true,
+    "resolutionMode": "reference",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Implemented in Force Suite Force Point recovery: selected spent power plus one additional spent power are recovered when available.",
+    "relatedSkills": []
+  },
+  "renew-vision": {
+    "name": "Renew Vision",
+    "actionType": "swift",
+    "requiredTalent": "Renew Vision",
+    "description": "Once per encounter, regain all expended uses of the Farseeing Force Power as a Swift Action.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "renewVision",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Does not spend a Force Point. Recovers all spent/discarded Farseeing items and tracks once-per-encounter use.",
+    "relatedSkills": [
+      "useTheForce"
+    ]
+  },
+  "visionary-attack": {
+    "name": "Visionary Attack",
+    "actionType": "reaction",
+    "requiredTalent": "Visionary Attack",
+    "description": "After you or an ally within 12 squares misses, expend a ready Farseeing use and roll UTF vs the target's Will Defense; on success the attacker rerolls.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "visionaryAttack",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Consumes one ready Farseeing use and applies the cumulative -5 UTF penalty until the beginning of your next turn.",
+    "relatedSkills": [
+      "useTheForce"
+    ]
+  },
+  "visionary-defense": {
+    "name": "Visionary Defense",
+    "actionType": "reaction",
+    "requiredTalent": "Visionary Defense",
+    "description": "When you or an ally within 12 squares is targeted by an attack, expend a ready Farseeing use and roll UTF vs the attacker's Will; on success grant +5 Reflex against that attack.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "visionaryDefense",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Consumes one ready Farseeing use and applies the cumulative -5 UTF penalty until the beginning of your next turn.",
+    "relatedSkills": [
+      "useTheForce"
+    ]
+  },
+  "watchcircle-initiate": {
+    "name": "WatchCircle Initiate",
+    "actionType": "reaction",
+    "requiredTalent": "WatchCircle Initiate",
+    "description": "Expend a ready Farseeing use and make a DC 15 UTF check; on success lose 1 normal Force Point and grant 1 Force Point to an ally in line of sight.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "watchcircleInitiate",
+    "spendAction": true,
+    "effects": [],
+    "notes": "The self cost cannot be paid from temporary/bonus Force Points and does not count as spending a Force Point.",
+    "relatedSkills": [
+      "useTheForce"
+    ]
+  },
+  "acrobatic-recovery": {
+    "name": "Acrobatic Recovery",
+    "actionType": "reaction",
+    "requiredTalent": "Acrobatic Recovery",
+    "description": "When an effect would knock you Prone, make a DC 20 Acrobatics check to remain standing.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "acrobaticRecovery",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Triggered by falling Prone; uses the normal skill roll dialog.",
+    "relatedSkills": [
+      "acrobatics"
+    ]
+  },
+  "battle-meditation": {
+    "name": "Battle Meditation",
+    "actionType": "full-round",
+    "requiredTalent": "Battle Meditation",
+    "description": "Spend a Force Point to give you and allies within 6 squares +1 insight bonus on attack rolls for the encounter.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "battleMeditation",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Creates range-conditioned reminder effects; allied Gunners are included at Starship Scale.",
+    "relatedSkills": []
+  },
+  "elusive-target": {
+    "name": "Elusive Target",
+    "actionType": "passive",
+    "requiredTalent": "Elusive Target",
+    "description": "Ranged attacks against you while you are in melee take an additional -5 penalty.",
+    "manualResolution": true,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "elusiveTarget",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Conditional penalty; not a permanent Reflex Defense increase.",
+    "relatedSkills": []
+  },
+  "force-intuition": {
+    "name": "Force Intuition",
+    "actionType": "passive",
+    "requiredTalent": "Force Intuition",
+    "description": "Use Use the Force instead of Initiative and count as trained in Initiative; applies to starship Initiative if piloting.",
+    "manualResolution": true,
+    "resolutionMode": "reference",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Implemented in the derived skill/initiative calculator; this entry documents the passive behavior.",
+    "relatedSkills": [
+      "initiative",
+      "useTheForce"
+    ]
+  },
+  "resilience": {
+    "name": "Resilience",
+    "actionType": "full-round",
+    "requiredTalent": "Resilience",
+    "description": "Spend a Full-Round Action to move +2 steps up the Condition Track.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "resilience",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Uses ConditionEngine to improve the actor condition step by 2.",
+    "relatedSkills": []
+  },
+  "close-maneuvering": {
+    "name": "Close Maneuvering",
+    "actionType": "swift",
+    "requiredTalent": "Close Maneuvering",
+    "description": "Designate a target; your movement does not provoke AoO from that target if you end adjacent.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "closeManeuvering",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Stores the designated target for GM/player adjudication.",
+    "relatedSkills": []
+  },
+  "cover-escape": {
+    "name": "Cover Escape",
+    "actionType": "free",
+    "requiredTalent": "Cover Escape",
+    "description": "After you spend a Force Point to Block or Deflect an attack against an adjacent ally, that ally may move 2 squares as a Free Action without provoking.",
+    "manualResolution": true,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "coverEscape",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Triggered by successful Block/Deflect; posts a reminder.",
+    "relatedSkills": []
+  },
+  "defensive-acuity": {
+    "name": "Defensive Acuity",
+    "actionType": "passive",
+    "requiredTalent": "Defensive Acuity",
+    "description": "When you Fight Defensively, lightsaber attacks deal +1 die and Block/Deflect UTF checks gain +2 until the end of your next turn.",
+    "manualResolution": true,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "defensiveAcuity",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Conditional Fight Defensively benefit; not a permanent lightsaber damage bonus.",
+    "relatedSkills": []
+  },
+  "exposing-strike": {
+    "name": "Exposing Strike",
+    "actionType": "free",
+    "requiredTalent": "Exposing Strike",
+    "description": "After damaging a target with a lightsaber, spend a Force Point to make it Flat-Footed until the end of your next turn.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "exposingStrike",
+    "spendAction": false,
+    "effects": [],
+    "notes": "The action itself is a triggered rider; Force Point spending happens in the talent action.",
+    "relatedSkills": []
+  },
+  "forceful-warrior": {
+    "name": "Forceful Warrior",
+    "actionType": "passive",
+    "requiredTalent": "Forceful Warrior",
+    "description": "When you score a critical hit with a lightsaber, gain 1 temporary Force Point until encounter end.",
+    "manualResolution": true,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "forcefulWarrior",
+    "spendAction": false,
+    "effects": [],
+    "notes": "The attack hook grants a source-aware bonus Force Point when a lightsaber critical can be detected.",
+    "relatedSkills": []
+  },
+  "grenade-defense": {
+    "name": "Grenade Defense",
+    "actionType": "reaction",
+    "requiredTalent": "Grenade Defense",
+    "description": "When attacked by a grenade, roll Use the Force against the attack roll DC to hurl it aside and negate the attack.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "grenadeDefense",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Applies the required -5 UTF penalty until the start of your next turn whether successful or not.",
+    "relatedSkills": [
+      "useTheForce"
+    ]
+  },
+  "guardian-strike": {
+    "name": "Guardian Strike",
+    "actionType": "passive",
+    "requiredTalent": "Guardian Strike",
+    "description": "When you damage a target with a lightsaber, it takes -2 on attack rolls against anyone other than you until your next turn.",
+    "manualResolution": true,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "guardianStrike",
+    "spendAction": false,
+    "effects": [],
+    "notes": "The attack hook tags the target when it can prove a lightsaber damage event.",
+    "relatedSkills": []
+  },
+  "hold-the-line": {
+    "name": "Hold the Line",
+    "actionType": "passive",
+    "requiredTalent": "Hold the Line",
+    "description": "A successful Attack of Opportunity against a target leaving your threatened area stops its movement and ends its action.",
+    "manualResolution": true,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "holdTheLine",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Triggered by successful AoO; GM adjudicates exact movement timing.",
+    "relatedSkills": []
+  },
+  "immovable": {
+    "name": "Immovable",
+    "actionType": "swift",
+    "requiredTalent": "Immovable",
+    "description": "Until the start of your next turn, attempts to move you involuntarily take -5.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "immovable",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Creates a one-turn reminder effect on the actor.",
+    "relatedSkills": []
+  },
+  "improved-battle-meditation": {
+    "name": "Improved Battle Meditation",
+    "actionType": "swift",
+    "requiredTalent": "Improved Battle Meditation",
+    "description": "Activate Battle Meditation as a Swift Action, range 12 squares, and opponents in the radius take -1 on attack rolls.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "improvedBattleMeditation",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Requires Battle Meditation. Uses the same Battle Meditation implementation with improved range and enemy penalty.",
+    "relatedSkills": []
+  },
+  "mobile-combatant": {
+    "name": "Mobile Combatant",
+    "actionType": "swift",
+    "requiredTalent": "Mobile Combatant",
+    "description": "After ending movement adjacent to an opponent, shadow that opponent if it moves or withdraws before your next turn.",
+    "manualResolution": false,
+    "resolutionMode": "consularTalent",
+    "consularTalentAction": "mobileCombatant",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Stores the selected opponent and posts the movement/AoO reminder.",
+    "relatedSkills": []
+  },
+  "clear-mind": {
+    "name": "Clear Mind",
+    "actionType": "reaction",
+    "requiredTalent": "Clear Mind",
+    "description": "Reroll an opposed Use the Force check made to oppose Sense Force; keep the reroll.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "clearMind",
+    "manualResolution": false,
+    "relatedSkills": [
+      {
+        "skill": "useTheForce",
+        "label": "Use the Force"
+      }
+    ],
+    "resources": [
+      "Reroll"
+    ],
+    "notes": "Use when opposing a Sense Force check."
+  },
+  "dark-side-sense": {
+    "name": "Dark Side Sense",
+    "actionType": "reaction",
+    "requiredTalent": "Dark Side Sense",
+    "description": "Reroll a Use the Force check made to sense the presence and relative location of characters with Dark Side Score 1+; keep the reroll.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "darkSideSense",
+    "manualResolution": false,
+    "relatedSkills": [
+      {
+        "skill": "useTheForce",
+        "label": "Use the Force"
+      }
+    ],
+    "resources": [
+      "Reroll"
+    ],
+    "notes": "Use when sensing dark-side presences."
+  },
+  "dark-side-scourge": {
+    "name": "Dark Side Scourge",
+    "actionType": "passive",
+    "requiredTalent": "Dark Side Scourge",
+    "description": "Conditional extra melee damage equal to Charisma bonus, minimum +1, against creatures with Dark Side Score 1+.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "darkSideScourge",
+    "spendAction": false,
+    "relatedSkills": [
+      "Attack Roll"
+    ],
+    "resources": [
+      "Conditional damage"
+    ],
+    "notes": "Conditional; not a global damage bonus."
+  },
+  "force-haze": {
+    "name": "Force Haze",
+    "actionType": "standard",
+    "requiredTalent": "Force Haze",
+    "description": "Spend a Force Point and make a Use the Force check to hide yourself and allies from perception for up to 1 minute.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "forceHaze",
+    "relatedSkills": [
+      {
+        "skill": "useTheForce",
+        "label": "Use the Force"
+      }
+    ],
+    "resources": [
+      "Spend 1 Force Point"
+    ],
+    "notes": "Hides a number of creatures in line of sight up to class level; compare UTF to Will of opponents entering line of sight."
+  },
+  "resist-the-dark-side": {
+    "name": "Resist the Dark Side",
+    "actionType": "passive",
+    "requiredTalent": "Resist the Dark Side",
+    "description": "+5 Force bonus to all defenses only against [Dark Side] Force Powers and Force Powers from dark Force-users.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "resistTheDarkSide",
+    "spendAction": false,
+    "resources": [
+      "Conditional defense"
+    ],
+    "notes": "Conditional; not a global permanent defense bonus."
+  },
+  "dampen-presence": {
+    "name": "Dampen Presence",
+    "actionType": "swift",
+    "requiredTalent": "Dampen Presence",
+    "description": "After interacting with a sentient creature, make a Use the Force check; if it exceeds Will Defense, the target does not remember the interaction once you are gone.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "dampenPresence",
+    "relatedSkills": [
+      {
+        "skill": "useTheForce",
+        "label": "Use the Force"
+      }
+    ],
+    "resources": [
+      "Mind-Affecting"
+    ],
+    "notes": "Higher-level targets gain +5 Will Defense."
+  },
+  "dark-retaliation": {
+    "name": "Dark Retaliation",
+    "actionType": "reaction",
+    "requiredTalent": "Dark Retaliation",
+    "description": "Once per encounter, spend a Force Point to activate a Force Power as a Reaction when targeted by a [Dark Side] Force Power.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "darkRetaliation",
+    "resources": [
+      "Spend 1 Force Point",
+      "Once per encounter"
+    ],
+    "notes": "Select and expend a ready Force Power if tracked."
+  },
+  "dark-side-bane": {
+    "name": "Dark Side Bane",
+    "actionType": "passive",
+    "requiredTalent": "Dark Side Bane",
+    "description": "Conditional extra damage equal to Charisma bonus, minimum +1, when a damage-dealing Force Power hits a creature with Dark Side Score 1+.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "darkSideBane",
+    "spendAction": false,
+    "resources": [
+      "Conditional damage"
+    ],
+    "notes": "Conditional; not a global Force damage bonus."
+  },
+  "gradual-resistance": {
+    "name": "Gradual Resistance",
+    "actionType": "reaction",
+    "requiredTalent": "Gradual Resistance",
+    "description": "After taking damage from a Force Power, gain +2 Force bonus to all defenses against that specific Force Power until the end of the encounter.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "gradualResistance",
+    "resources": [
+      "Encounter"
+    ],
+    "notes": "Conditional defense bonus against one named Force Power only."
+  },
+  "master-of-the-great-hunt": {
+    "name": "Master of the Great Hunt",
+    "actionType": "passive",
+    "requiredTalent": "Master of the Great Hunt",
+    "description": "+1 Force bonus on attack rolls and +1 damage die on Lightsaber attacks against a Beast with Dark Side Score 1+.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "masterOfTheGreatHunt",
+    "spendAction": false,
+    "resources": [
+      "Conditional attack/damage"
+    ],
+    "notes": "Conditional; not a global attack or damage bonus."
+  },
+  "persistent-haze": {
+    "name": "Persistent Haze",
+    "actionType": "passive",
+    "requiredTalent": "Persistent Haze",
+    "description": "When someone concealed by your Force Haze attacks, only that attacker loses Total Concealment; non-attackers remain concealed.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "persistentHaze",
+    "spendAction": false,
+    "resources": [
+      "Modifies Force Haze"
+    ],
+    "notes": "Applied as Force Haze metadata when Force Haze is activated."
+  },
+  "prime-targets": {
+    "name": "Prime Targets",
+    "actionType": "passive",
+    "requiredTalent": "Prime Targets",
+    "description": "When you hit a target with a Lightsaber attack, if the target has not been attacked since the end of your last turn, deal +1 damage die.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "primeTargets",
+    "spendAction": false,
+    "resources": [
+      "Conditional damage"
+    ],
+    "notes": "Requires table confirmation of target attack history."
+  },
+  "reap-retribution": {
+    "name": "Reap Retribution",
+    "actionType": "reaction",
+    "requiredTalent": "Reap Retribution",
+    "description": "After taking damage from a Force Power, deal +2 damage against the creature that used that Force Power against you until the end of the encounter.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "reapRetribution",
+    "resources": [
+      "Encounter"
+    ],
+    "notes": "Target-scoped conditional damage."
+  },
+  "sense-primal-force": {
+    "name": "Sense Primal Force",
+    "actionType": "passive",
+    "requiredTalent": "Sense Primal Force",
+    "description": "In natural wilderness, Sense Surroundings can detect targets out to 30 squares regardless of line of sight.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "sensePrimalForce",
+    "spendAction": false,
+    "relatedSkills": [
+      {
+        "skill": "useTheForce",
+        "label": "Use the Force"
+      }
+    ],
+    "resources": [
+      "Wilderness"
+    ],
+    "notes": "Environment-dependent."
+  },
+  "sentinel-strike": {
+    "name": "Sentinel Strike",
+    "actionType": "passive",
+    "requiredTalent": "Sentinel Strike",
+    "description": "Conditional +1d6 damage per selection, max +5d6, against flat-footed/denied-Dex targets with qualifying attacks.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "sentinelStrike",
+    "spendAction": false,
+    "resources": [
+      "Conditional damage",
+      "Stacks"
+    ],
+    "notes": "Applies to damage-dealing Force Powers or lightsaber attacks; excludes [Dark Side] Force Powers."
+  },
+  "sentinels-gambit": {
+    "name": "Sentinel's Gambit",
+    "actionType": "swift",
+    "requiredTalent": "Sentinel's Gambit",
+    "description": "Once per encounter, designate an adjacent opponent with Dark Side Score 1+; it loses Dex bonus to Reflex Defense against your attacks until the end of your next turn.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "sentinelsGambit",
+    "resources": [
+      "Once per encounter"
+    ],
+    "notes": "Target must be adjacent and have Dark Side Score 1+."
+  },
+  "sentinels-observation": {
+    "name": "Sentinel's Observation",
+    "actionType": "passive",
+    "requiredTalent": "Sentinel's Observation",
+    "description": "If you have Concealment against a target, gain +2 circumstance bonus on attack rolls against that target.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "sentinelsObservation",
+    "spendAction": false,
+    "resources": [
+      "Conditional attack"
+    ],
+    "notes": "Conditional; not a global attack bonus."
+  },
+  "steel-resolve": {
+    "name": "Steel Resolve",
+    "actionType": "standard",
+    "requiredTalent": "Steel Resolve",
+    "description": "Make a standard-action melee attack with a -1 to -5 attack penalty and gain twice that value as insight bonus to Will Defense until your next turn, capped by BAB.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "steelResolve",
+    "relatedSkills": [
+      "Attack Roll"
+    ],
+    "resources": [
+      "Variable penalty"
+    ],
+    "notes": "The selected attack penalty applies to the melee attack roll; Will bonus is temporary."
+  },
+  "unseen-eyes": {
+    "name": "Unseen Eyes",
+    "actionType": "passive",
+    "requiredTalent": "Unseen Eyes",
+    "description": "Allies hidden by your Force Haze can reroll Perception checks and gain +2 damage against foes unaware of them.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "unseenEyes",
+    "spendAction": false,
+    "relatedSkills": [
+      {
+        "skill": "perception",
+        "label": "Perception"
+      }
+    ],
+    "resources": [
+      "Modifies Force Haze"
+    ],
+    "notes": "Applied as Force Haze metadata when Force Haze is activated."
+  },
+  "lightsaber-defense": {
+    "name": "Lightsaber Defense",
+    "actionType": "swift",
+    "requiredTalent": "Lightsaber Defense",
+    "description": "Gain a temporary deflection bonus to Reflex Defense until the start of your next turn.",
+    "manualResolution": false,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "lightsaberDefense",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Bonus is +1 per talent selection, maximum +3; requires a drawn and ignited lightsaber and does not apply while Flat-Footed.",
+    "relatedSkills": []
+  },
+  "lightsaber-throw": {
+    "name": "Lightsaber Throw",
+    "actionType": "standard",
+    "requiredTalent": "Lightsaber Throw",
+    "description": "Throw a lightsaber as a normal thrown weapon; optionally pull it back with a DC 20 Use the Force check if within 6 squares.",
+    "manualResolution": false,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "lightsaberThrow",
+    "spendAction": true,
+    "effects": [],
+    "notes": "The thrown attack itself uses the normal attack roller and range penalties.",
+    "relatedSkills": [
+      "attack",
+      "useTheForce"
+    ]
+  },
+  "cortosis-gauntlet-block": {
+    "name": "Cortosis Gauntlet Block",
+    "actionType": "passive",
+    "requiredTalent": "Cortosis Gauntlet Block",
+    "description": "Use Block with a Cortosis Gauntlet; successful Blocks against lightsabers deactivate the attacking lightsaber.",
+    "manualResolution": true,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "cortosisGauntletBlock",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Contextual modifier to Block requirements.",
+    "relatedSkills": []
+  },
+  "precise-redirect": {
+    "name": "Precise Redirect",
+    "actionType": "passive",
+    "requiredTalent": "Precise Redirect",
+    "description": "Successful Redirect Shot hits deal +1 damage die.",
+    "manualResolution": true,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "preciseRedirect",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Triggered rider; not a permanent damage bonus.",
+    "relatedSkills": []
+  },
+  "precision": {
+    "name": "Precision",
+    "actionType": "standard",
+    "requiredTalent": "Precision",
+    "description": "Make a lightsaber attack against an adjacent opponent; on hit, reduce speed to 2 squares until the end of your next turn.",
+    "manualResolution": false,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "precision",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Attack and speed rider require target adjudication.",
+    "relatedSkills": [
+      "attack"
+    ]
+  },
+  "riposte": {
+    "name": "Riposte",
+    "actionType": "reaction",
+    "requiredTalent": "Riposte",
+    "description": "Once per encounter after successfully Blocking a non-area melee attack, make a lightsaber attack against the attacker.",
+    "manualResolution": false,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "riposte",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Cannot be used after blocking melee area attacks.",
+    "relatedSkills": [
+      "attack"
+    ]
+  },
+  "shoto-focus": {
+    "name": "Shoto Focus",
+    "actionType": "passive",
+    "requiredTalent": "Shoto Focus",
+    "description": "+2 competence bonus on attacks with a short lightsaber/guard shoto while wielding it with a one-handed lightsaber.",
+    "manualResolution": true,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "shotoFocus",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Conditional weapon/loadout bonus; not global.",
+    "relatedSkills": [
+      "attack"
+    ]
+  },
+  "weapon-specialization-lightsabers": {
+    "name": "Weapon Specialization (Lightsabers)",
+    "actionType": "passive",
+    "requiredTalent": "Weapon Specialization (Lightsabers)",
+    "description": "+2 melee damage with lightsabers.",
+    "manualResolution": true,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "weaponSpecializationLightsabers",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Applied in lightsaber damage context, not as a global damage bonus.",
+    "relatedSkills": [
+      "damage"
+    ]
   }
 }

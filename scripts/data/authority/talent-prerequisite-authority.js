@@ -1307,8 +1307,8 @@ export const TALENT_PREREQUISITE_AUTHORITY = {
   "entreat_aid": {
     "name": "Entreat Aid",
     "prerequisite": "",
-    "benefit": "Once per turn as a Swift Action, you can spend a Force Point to let one adjacent ally use the Aid Another Action (as a Reaction) to assist you with a Skill Check. You must make the Skill Check before the end of your turn, or the benefit of the Aid Another Action is lost.",
-    "description": "Once per turn as a Swift Action, you can spend a Force Point to let one adjacent ally use the Aid Another Action (as a Reaction) to assist you with a Skill Check. You must make the Skill Check before the end of your turn, or the benefit of the Aid Another Action is lost."
+    "benefit": "Once per turn as a Swift Action, you can spend a Force Point to let one adjacent ally use the Aid Another Action (as a Reaction) to assist you with a Skill Check. You must make the Skill Check before the end of your turn, or the benefit of the Aid Another Action is lost. An ally that has already used the Aid Another Action to assist you since the end of your last turn may not be targeted by this Talent.",
+    "description": "Once per turn as a Swift Action, you can spend a Force Point to let one adjacent ally use the Aid Another Action (as a Reaction) to assist you with a Skill Check. You must make the Skill Check before the end of your turn, or the benefit of the Aid Another Action is lost. An ally that has already used the Aid Another Action to assist you since the end of your last turn may not be targeted by this Talent."
   },
   "force_of_will": {
     "name": "Force of Will",
@@ -1337,8 +1337,8 @@ export const TALENT_PREREQUISITE_AUTHORITY = {
   "recall": {
     "name": "Recall",
     "prerequisite": "",
-    "benefit": "",
-    "description": ""
+    "benefit": "Whenever you spend a Force Point to return a Force Power to your Force Power Suite, you regain two Force Powers instead of one.",
+    "description": "Whenever you spend a Force Point to return a Force Power to your Force Power Suite, you regain two Force Powers instead of one."
   },
   "renew_vision": {
     "name": "Renew Vision",
@@ -5995,9 +5995,6 @@ export const TALENT_PREREQUISITE_AUTHORITY = {
   "heavy_duty_actuators": {"name": "Heavy-Duty Actuators", "prerequisite": "Medium or larger size", "benefit": "Your Heavy-Duty Actuators allow you to release your power and speed in a quick burst. You can double your Strength bonus to your melee and unarmed damage rolls.", "description": "Your Heavy-Duty Actuators allow you to release your power and speed in a quick burst. You can double your Strength bonus to your melee and unarmed damage rolls."},
   "load_launcher": {"name": "Load Launcher", "prerequisite": "", "benefit": "You are considered proficient with improvised thrown weapons when making a ranged attack by throwing an object. Objects up to one size category larger than you can be thrown up to a number of squares equal to 2 x your Strength bonus, minimum 1 square. Additionally, you add your Strength bonus to any damage dealt.", "description": "You are considered proficient with improvised thrown weapons when making a ranged attack by throwing an object. Objects up to one size category larger than you can be thrown up to a number of squares equal to 2 x your Strength bonus, minimum 1 square. Additionally, you add your Strength bonus to any damage dealt."},
   "task_optimization": {"name": "Task Optimization", "prerequisite": "Select a Skill you are Trained in", "benefit": "Select a skill you are Trained in. Once per encounter, you can perform any application of that skill as one action quicker than normal, but as at least a Swift Action. Tasks requiring more than one round cannot be optimized with this talent.", "description": "Select a skill you are Trained in. Once per encounter, you can perform any application of that skill as one action quicker than normal, but as at least a Swift Action. Tasks requiring more than one round cannot be optimized with this talent."},
-  "akk_dog_trainers_actions": {"name": "Akk Dog Trainer's Actions", "prerequisite": "Akk Dog Master", "benefit": "You can use Akk Dog-specific follower actions on your turn: Attack in Concert, Fall Upon Prey, and Paired Maul. These actions affect only your Akk Dog Follower, not other followers.", "description": "You and your Akk Dog have bonded through The Force and can fight in concert. You can use the Attack in Concert, Fall Upon Prey, and Paired Maul follower actions on your turn. These actions require your Akk Dog Follower and do not apply to other followers."},
-  "akk_dog_attack_training": {"name": "Akk Dog Attack Training", "prerequisite": "Akk Dog Master", "benefit": "Your Akk Dog Follower gains the Powerful Charge feat. Other followers are not affected.", "description": "Your Akk Dog Follower gains the Powerful Charge feat. This applies only to your Akk Dog Follower."},
-  "protective_reaction": {"name": "Protective Reaction", "prerequisite": "Akk Dog Master", "benefit": "Whenever you are targeted by an attack made by an enemy adjacent to your Akk Dog Follower, that attacker provokes an Attack of Opportunity from your Akk Dog Follower.", "description": "Whenever you are targeted by an attack made by an enemy adjacent to your Akk Dog Follower, that attacker provokes an Attack of Opportunity from your Akk Dog Follower. This applies only to your Akk Dog Follower."},
 };
 
 export { normalizeAuthorityKey };

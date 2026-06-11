@@ -1,54 +1,68 @@
 /**
- * Compendium Pack Registration Repair
+ * Compendium Pack Registration Diagnostics
  *
- * P0 safety net for the packs that must always exist at runtime. The manifest
- * is still the source of truth, but during the v13 migration Foundry can serve
- * an older install-state/cache that omits specific packs even while the data
- * files are present. When that happens, critical systems fall back to JSON data
- * and the sidebar cannot show/open the compendiums.
+ * Formerly a "repair" that tried to construct and inject missing packs into
+ * `game.packs` at runtime. That strategy is unsafe and has been removed:
  *
- * This repair is intentionally narrow: it only attempts to register the known
- * critical SWSE packs when Foundry has not already registered them.
+ *   - `game.packs` is empty at `init` by design, so every pack looks "missing"
+ *     during init and the old code spammed false failures.
+ *   - Foundry v13 server-hydrates pack metadata (folders, sortable fields, etc.).
+ *     Calling `new CompendiumCollection(metadata)` from outside Foundry's own
+ *     boot sequence throws `Cannot read properties of undefined (reading 'sort')`
+ *     because the manually-built metadata lacks those server fields.
+ *   - There is no safe way to register a pack Foundry itself skipped.
+ *
+ * This module therefore only DIAGNOSES. It snapshots watched packs at each boot
+ * phase and, at `ready`, emits a single focused warning for any pack that is
+ * declared in the manifest (`game.system.packs`) but absent from `game.packs`.
+ * All `SWSE.debug.*` helpers are preserved.
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 
-const VISIBILITY = {
-  PLAYER: "OBSERVER",
-  ASSISTANT: "OBSERVER",
-  TRUSTED: "OBSERVER",
-  GAMEMASTER: "OWNER"
-};
-
-const CRITICAL_PACKS = [
+/**
+ * The only pack currently known to be skipped by Foundry under certain corrupt
+ * LevelDB states. Watched as a problem pack so the ready-time warning can call
+ * out the FeatRegistry fallback caveat explicitly. LFP/heroic/nonheroic were
+ * confirmed to register natively and are intentionally not treated as problems.
+ */
+const PROBLEM_PACKS = [
   {
     name: "feats",
     label: "Feats",
     type: "Item",
     path: "packs/feats.db"
-  },
-  {
-    name: "lightsaberformpowers",
-    label: "Lightsaber Form Powers",
-    type: "Item",
-    path: "packs/lightsaberformpowers.db"
-  },
-  {
-    name: "heroic",
-    label: "Heroic NPCs",
-    type: "Actor",
-    path: "packs/heroic.db"
-  },
-  {
-    name: "nonheroic",
-    label: "Nonheroic NPCs",
-    type: "Actor",
-    path: "packs/nonheroic.db"
   }
 ];
 
+/** Names used for the hook-level snapshot diagnostic (informational only). */
+const WATCH_PACKS = [
+  "foundryvtt-swse.feats",
+  "foundryvtt-swse.lightsaberformpowers",
+  "foundryvtt-swse.heroic",
+  "foundryvtt-swse.nonheroic"
+];
+
 let registered = false;
-let repairRuns = [];
+let diagnosticRuns = [];
+
+// ---------------------------------------------------------------------------
+// Debug gate
+// ---------------------------------------------------------------------------
+
+function _isDebug() {
+  if (globalThis.SWSE_DEBUG_COMPENDIUMS === true) return true;
+  try { return game?.settings?.get?.("foundryvtt-swse", "debugMode") === true; } catch (_e) { return false; }
+}
+
+function _dlog(...args) {
+  if (!_isDebug()) return;
+  console.log("[SWSE-COMPENDIUM-REG]", ...args);
+}
+
+// ---------------------------------------------------------------------------
+// Internal helpers
+// ---------------------------------------------------------------------------
 
 function _systemId() {
   return game?.system?.id || "foundryvtt-swse";
@@ -56,12 +70,6 @@ function _systemId() {
 
 function _collectionKey(spec, systemId = _systemId()) {
   return `${systemId}.${spec.name}`;
-}
-
-function _getCollectionClass() {
-  return foundry?.documents?.collections?.CompendiumCollection
-    || globalThis.CompendiumCollection
-    || null;
 }
 
 function _allPackKeys() {
@@ -72,159 +80,179 @@ function _allPackKeys() {
   }
 }
 
-function _findExistingPack(spec, systemId = _systemId()) {
-  const key = _collectionKey(spec, systemId);
-  const direct = game?.packs?.get?.(key);
-  if (direct) return direct;
-
-  const packs = Array.from(game?.packs?.values?.() || []);
-  return packs.find((pack) => {
-    const meta = pack?.metadata || {};
-    const packageName = String(meta.packageName || meta.package || pack?.packageName || pack?.collection?.split(".")?.[0] || "");
-    const name = String(meta.name || pack?.collection?.split(".")?.pop?.() || "");
-    return name === spec.name && (!packageName || packageName === systemId || packageName === "foundryvtt-swse");
-  }) || null;
-}
-
-function _hasPack(spec, systemId = _systemId()) {
-  return Boolean(_findExistingPack(spec, systemId));
-}
-
-function _patchPackMetadata(pack, spec, systemId = _systemId()) {
-  if (!pack?.metadata) return false;
-  let changed = false;
-  const assignments = {
-    name: spec.name,
-    label: spec.label,
-    type: spec.type,
-    path: spec.path,
-    system: systemId,
-    packageName: systemId,
-    packageType: "system",
-    ownership: VISIBILITY,
-    private: false
-  };
-  for (const [key, value] of Object.entries(assignments)) {
-    if (JSON.stringify(pack.metadata[key]) !== JSON.stringify(value)) {
-      try {
-        pack.metadata[key] = value;
-        changed = true;
-      } catch (_err) {
-        // Some Foundry metadata fields may be sealed; ignore and keep going.
-      }
-    }
-  }
-  return changed;
-}
-
-function _metadataFor(spec, systemId = _systemId()) {
-  return {
-    id: _collectionKey(spec, systemId),
-    name: spec.name,
-    label: spec.label,
-    type: spec.type,
-    path: spec.path,
-    system: systemId,
-    package: "system",
-    packageName: systemId,
-    packageType: "system",
-    ownership: VISIBILITY,
-    private: false
-  };
-}
-
-function _ensureRuntimeManifestEntry(spec, systemId = _systemId()) {
-  const packs = game?.system?.packs;
-  if (!Array.isArray(packs)) return false;
-  const existing = packs.find((pack) => pack?.name === spec.name);
-  if (existing) {
-    existing.path = spec.path;
-    existing.ownership = existing.ownership || VISIBILITY;
-    existing.private = false;
+function _hasPack(key) {
+  try {
+    return Boolean(game?.packs?.get?.(key));
+  } catch (_err) {
     return false;
   }
-
-  packs.push(_metadataFor(spec, systemId));
-  return true;
 }
 
-function _registerPack(spec, phase) {
-  const systemId = _systemId();
-  const key = _collectionKey(spec, systemId);
+/** The manifest declaration for a pack name, if present in game.system.packs. */
+function _manifestEntry(name) {
+  const packs = game?.system?.packs;
+  if (!Array.isArray(packs)) return null;
+  return packs.find((p) => p?.name === name) || null;
+}
 
-  _ensureRuntimeManifestEntry(spec, systemId);
+// ---------------------------------------------------------------------------
+// Diagnostic snapshot helpers
+// ---------------------------------------------------------------------------
 
-  const existing = _findExistingPack(spec, systemId);
-  if (existing) {
-    const metadataPatched = _patchPackMetadata(existing, spec, systemId);
-    return { key, name: spec.name, status: "already-registered", metadataPatched };
-  }
-
-  const CollectionClass = _getCollectionClass();
-  if (!CollectionClass) {
-    return { key, name: spec.name, status: "missing-constructor" };
-  }
-
-  if (typeof game?.packs?.set !== "function") {
-    return { key, name: spec.name, status: "game-packs-not-mutable" };
-  }
-
+/**
+ * Build a metadata snapshot for a single pack for diagnostic output.
+ */
+function _packMetaSnapshot(pack) {
+  if (!pack) return null;
+  const meta = pack.metadata || {};
+  let indexSize = null;
   try {
-    const metadata = _metadataFor(spec, systemId);
-    const pack = new CollectionClass(metadata);
-    const collection = pack?.collection || metadata.id || key;
-    game.packs.set(collection, pack);
+    // index may be a Map, Collection, or Array depending on load state
+    const idx = pack.index;
+    if (idx != null) indexSize = Number(idx?.size ?? idx?.length ?? 0);
+  } catch (_e) { /* not yet loaded */ }
+  return {
+    collection: pack.collection ?? null,
+    label: meta.label ?? null,
+    type: meta.type ?? null,
+    name: meta.name ?? null,
+    packageName: meta.packageName ?? meta.package ?? null,
+    path: meta.path ?? null,
+    ownership: meta.ownership ?? null,
+    private: meta.private ?? null,
+    locked: pack.locked ?? null,
+    documentName: meta.documentName ?? meta.type ?? null,
+    indexSize
+  };
+}
 
-    // Also guarantee the canonical key resolves even if the constructor chose a
-    // slightly different collection identifier from the metadata shape.
-    if (collection !== key && !game.packs.get(key)) {
-      game.packs.set(key, pack);
-    }
-
-    return { key, name: spec.name, status: "registered", collection };
-  } catch (err) {
+/**
+ * Log a full hook-phase snapshot of all watched packs and total pack count.
+ * Snapshot only — never warns, never mutates. Gated behind the debug flag.
+ */
+function _logHookSnapshot(phase) {
+  if (!_isDebug()) return;
+  const totalPacks = game?.packs?.size ?? "?";
+  const snapshots = WATCH_PACKS.map((key) => {
+    const pack = game?.packs?.get?.(key);
     return {
       key,
-      name: spec.name,
-      status: "failed",
-      error: err?.message || String(err),
-      phase
+      present: Boolean(pack),
+      meta: _packMetaSnapshot(pack)
     };
+  });
+
+  console.group(`[SWSE-COMPENDIUM-REG] Hook snapshot @ ${phase} — game.packs.size=${totalPacks}`);
+  for (const s of snapshots) {
+    if (s.present) {
+      console.log(`  ✅ ${s.key}`, s.meta);
+    } else {
+      console.log(`  ⛔ ${s.key} — not (yet) in game.packs`);
+    }
   }
+  const ourKeys = _allPackKeys().filter(k => k.includes(_systemId()));
+  console.log(`  System pack keys in game.packs (${ourKeys.length}):`, ourKeys);
+  console.groupEnd();
 }
 
+/**
+ * At ready, emit ONE focused warning per problem pack that is declared in the
+ * manifest but absent from game.packs. Returns the list of missing pack keys.
+ */
+function _warnMissingProblemPacks(phase) {
+  const missing = [];
+  const systemId = _systemId();
+
+  for (const spec of PROBLEM_PACKS) {
+    const key = _collectionKey(spec, systemId);
+    if (_hasPack(key)) continue;
+
+    const manifest = _manifestEntry(spec.name);
+    const declared = Boolean(manifest);
+    if (!declared) {
+      // Not declared in system.json and not in game.packs — nothing to warn about.
+      continue;
+    }
+
+    missing.push(key);
+
+    const lines = [
+      `[SWSE] Pack "${key}" is declared in system.json but was NOT registered by Foundry.`,
+      `  Manifest entry: ${JSON.stringify({
+        name: manifest.name,
+        label: manifest.label,
+        type: manifest.type,
+        path: manifest.path
+      })}`,
+      `  Expected LevelDB path: packs/${spec.name}/`,
+      `  LevelDB directory exists: (cannot check from client)`,
+      `  .db file exists: (cannot check from client)`,
+      `  Recommendation: Inspect packs/${spec.name}/ on disk. Foundry may have skipped`,
+      `    it due to a corrupted or unexpected LevelDB state.`
+    ];
+
+    if (spec.name === "feats") {
+      lines.push(
+        `  Note: FeatRegistry fallback (data/feat-catalog.json) is active, so chargen/`,
+        `    progression can still see feats. This does NOT mean the native Feats`,
+        `    compendium is healthy — the sidebar browser remains broken until the pack`,
+        `    registers. Do not run SWSE.debug.seedFeatsPack() until the pack appears in`,
+        `    game.packs; seeding cannot fix registration.`
+      );
+    }
+
+    SWSELogger.warn(lines.join("\n"));
+    console.warn(lines.join("\n"));
+  }
+
+  return missing;
+}
+
+// ---------------------------------------------------------------------------
+// Diagnostic entry point
+// ---------------------------------------------------------------------------
+
+/**
+ * Diagnose (never repair) critical compendium pack registration.
+ *
+ *  - init / setup: snapshot only (game.packs is empty/partial by design here).
+ *  - ready: snapshot + one focused warning per missing problem pack.
+ *
+ * Retains the historical export name so docs and SWSE.debug.* keep working, but
+ * it no longer constructs, registers, or mutates anything.
+ */
 export function repairCriticalCompendiumPacks(phase = "manual") {
-  const before = _allPackKeys();
-  const results = CRITICAL_PACKS.map((spec) => _registerPack(spec, phase));
-  const after = _allPackKeys();
-  const repaired = results.filter((result) => result.status === "registered");
-  const metadataPatched = results.filter((result) => result.metadataPatched);
-  const failed = results.filter((result) => result.status === "failed" || result.status === "missing-constructor" || result.status === "game-packs-not-mutable");
+  _logHookSnapshot(phase);
+
+  const totalPacks = game?.packs?.size ?? null;
+  const evaluate = phase === "ready" || phase === "manual";
+  const missing = evaluate ? _warnMissingProblemPacks(phase) : [];
 
   const snapshot = {
     phase,
-    repaired: repaired.map((result) => result.key),
-    metadataPatched: metadataPatched.map((result) => result.key),
-    failed,
-    critical: results,
-    packCountBefore: before.length,
-    packCountAfter: after.length,
-    criticalPresent: CRITICAL_PACKS.map((spec) => ({
-      key: _collectionKey(spec),
-      present: Boolean(game?.packs?.get?.(_collectionKey(spec))) || _hasPack(spec)
-    }))
+    packCount: totalPacks,
+    problemPacks: PROBLEM_PACKS.map((spec) => {
+      const key = _collectionKey(spec);
+      return {
+        key,
+        declaredInManifest: Boolean(_manifestEntry(spec.name)),
+        registered: _hasPack(key),
+        indexSize: _packMetaSnapshot(game?.packs?.get?.(key))?.indexSize ?? null
+      };
+    }),
+    missing
   };
 
-  repairRuns.push(snapshot);
+  diagnosticRuns.push(snapshot);
 
-  if (repaired.length || metadataPatched.length) {
-    SWSELogger.warn("[CompendiumPackRegistrationRepair] Runtime-repaired critical pack registration/metadata", snapshot);
-  } else if (failed.length) {
-    SWSELogger.warn("[CompendiumPackRegistrationRepair] Critical pack repair could not register one or more packs", snapshot);
+  if (missing.length) {
+    // Warning already emitted above; keep the structured log quiet at WARN level.
+    SWSELogger.warn("[CompendiumPackRegistrationDiagnostics] Missing problem pack(s) after " + phase, snapshot);
   } else {
-    SWSELogger.log("[CompendiumPackRegistrationRepair] Critical packs are registered", snapshot.criticalPresent);
+    SWSELogger.log("[CompendiumPackRegistrationDiagnostics] Problem packs healthy @ " + phase, snapshot.problemPacks);
   }
 
+  _dlog(`diagnose phase="${phase}" packCount=${totalPacks} missing=${missing.length}`);
   return snapshot;
 }
 
@@ -234,34 +262,38 @@ export function registerCompendiumPackRegistrationRepair() {
 
   const run = (phase) => {
     try {
-      const snapshot = repairCriticalCompendiumPacks(phase);
-      if (phase === "ready" && (snapshot.repaired.length || snapshot.metadataPatched.length) && ui?.compendium?.render) {
-        ui.compendium.render(true);
-      }
-      return snapshot;
+      return repairCriticalCompendiumPacks(phase);
     } catch (err) {
-      SWSELogger.warn("[CompendiumPackRegistrationRepair] Repair run failed", err);
+      SWSELogger.warn("[CompendiumPackRegistrationDiagnostics] Diagnostic run failed", err);
+      console.error("[SWSE-COMPENDIUM-REG] Diagnostic run threw:", err?.message, err?.stack || err);
       return null;
     }
   };
 
+  // At init game.packs is empty by design — snapshot only, never evaluate.
   run("init");
   Hooks.once("setup", () => run("setup"));
   Hooks.once("ready", () => run("ready"));
 
   globalThis.SWSE ??= {};
   globalThis.SWSE.debug ??= {};
+  // Preserved name for backward compatibility; now diagnostic-only (no mutation).
   globalThis.SWSE.debug.repairCriticalCompendiumPacks = () => run("manual");
   globalThis.SWSE.debug.criticalCompendiumPackStatus = () => ({
-    runs: repairRuns,
+    runs: diagnosticRuns,
     keys: _allPackKeys(),
-    critical: CRITICAL_PACKS.map((spec) => ({
-      key: _collectionKey(spec),
-      registered: Boolean(game?.packs?.get?.(_collectionKey(spec))),
-      hasPack: _hasPack(spec),
-      metadata: game?.packs?.get?.(_collectionKey(spec))?.metadata || null
-    }))
+    problem: PROBLEM_PACKS.map((spec) => {
+      const key = _collectionKey(spec);
+      return {
+        key,
+        declaredInManifest: Boolean(_manifestEntry(spec.name)),
+        registered: _hasPack(key),
+        metadata: game?.packs?.get?.(key)?.metadata || null,
+        indexSize: _packMetaSnapshot(game?.packs?.get?.(key))?.indexSize ?? null
+      };
+    })
   });
+  globalThis.SWSE.debug.logCompendiumHookSnapshot = (phase = "manual") => _logHookSnapshot(phase);
 }
 
 export default registerCompendiumPackRegistrationRepair;

@@ -65,7 +65,7 @@ export const TALENT_EFFECTS = {
 
   'Resilience': {
     effects: [],
-    description: '+1 Fortitude Defense'
+    description: 'Full-Round Action: move +2 steps up the Condition Track. Runtime handled by combat action tracker.'
   },
 
   'Iron Will': {
@@ -598,23 +598,13 @@ export const TALENT_EFFECTS = {
   },
 
   'Telekinetic Savant': {
-    effects: [{
-      key: 'system.useTheForce.telekinetic',
-      mode: 2,
-      value: '5',
-      priority: 20
-    }],
-    description: '+5 to telekinetic Force power checks'
+    effects: [],
+    description: 'Once per encounter as a Swift Action, recover one spent [Telekinetic] Force Power without spending a Force Point. Each additional selection grants one additional use per encounter.'
   },
 
   'Telekinetic Prodigy': {
-    effects: [{
-      key: 'system.useTheForce.telekinetic',
-      mode: 2,
-      value: '2',
-      priority: 20
-    }],
-    description: '+2 to telekinetic Force power checks'
+    effects: [],
+    description: 'When taking Force Training and selecting Move Object, gain one extra free [Telekinetic] Force Power selection for that Force Training instance.'
   },
 
   'Force Perception': {

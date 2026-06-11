@@ -1921,23 +1921,83 @@ export const ActorEngine = {
         throw new Error(`Invalid force point amount: ${amount}`);
       }
 
-      // Delegate calculation to ForcePointsService; mutation stays here
-      const { newValue: newFP, actualSpent } = ForcePointsService.calcSpend(actor, amount);
+      const normalizeBonusEntries = (pool = {}) => {
+        const entries = Array.isArray(pool.entries) ? pool.entries.map((entry, index) => ({
+          id: String(entry?.id ?? `bonus-${index}`),
+          source: String(entry?.source ?? 'Bonus Force Point'),
+          value: Math.max(0, Number(entry?.value ?? 0) || 0),
+          max: Math.max(0, Number(entry?.max ?? entry?.value ?? 0) || 0),
+          restrictions: entry?.restrictions ?? entry?.restriction ?? '',
+          expires: entry?.expires ?? '',
+          encounterId: entry?.encounterId ?? null,
+          createdAt: entry?.createdAt ?? null
+        })).filter(entry => entry.value > 0) : [];
+        const legacyValue = Math.max(0, Number(pool.value ?? 0) || 0);
+        const entryTotal = entries.reduce((sum, entry) => sum + entry.value, 0);
+        if (!entries.length && legacyValue > 0) {
+          entries.push({ id: 'legacy-bonus-force-points', source: Array.isArray(pool.sources) && pool.sources.length ? pool.sources.join(', ') : 'Bonus Force Point', value: legacyValue, max: Math.max(legacyValue, Number(pool.max ?? legacyValue) || legacyValue), restrictions: pool.note ?? '', expires: '', encounterId: null, createdAt: null });
+        } else if (legacyValue > entryTotal) {
+          entries.push({ id: 'legacy-bonus-force-points', source: 'Bonus Force Point', value: legacyValue - entryTotal, max: legacyValue - entryTotal, restrictions: pool.note ?? '', expires: '', encounterId: null, createdAt: null });
+        }
+        return entries;
+      };
+      const buildBonusPool = (entries = [], existing = {}) => {
+        const clean = entries.filter(entry => Math.max(0, Number(entry.value) || 0) > 0);
+        const value = clean.reduce((sum, entry) => sum + Math.max(0, Number(entry.value) || 0), 0);
+        const max = clean.reduce((sum, entry) => sum + Math.max(0, Number(entry.max ?? entry.value) || 0), 0);
+        return {
+          ...existing,
+          value,
+          max: Math.max(value, max),
+          sources: [...new Set(clean.map(entry => entry.source).filter(Boolean))],
+          entries: clean,
+          note: existing.note || 'Bonus Force Points are spent before normal Force Points and may have source-specific restrictions.'
+        };
+      };
+
+      const bonusPool = actor.getFlag?.('swse', 'bonusForcePoints') ?? {};
+      const bonusEntries = normalizeBonusEntries(bonusPool);
+      const bonusCurrent = bonusEntries.reduce((sum, entry) => sum + entry.value, 0);
+      const bonusSpent = Math.min(bonusCurrent, amount);
+      const normalToSpend = Math.max(0, amount - bonusSpent);
+
+      let remainingBonusSpend = bonusSpent;
+      const remainingEntries = [];
+      for (const entry of bonusEntries) {
+        if (remainingBonusSpend <= 0) {
+          remainingEntries.push(entry);
+          continue;
+        }
+        const used = Math.min(entry.value, remainingBonusSpend);
+        remainingBonusSpend -= used;
+        const left = entry.value - used;
+        if (left > 0) remainingEntries.push({ ...entry, value: left });
+      }
+
+      // Delegate normal FP calculation to ForcePointsService; mutation stays here.
+      const { newValue: newFP, actualSpent: normalSpent } = ForcePointsService.calcSpend(actor, normalToSpend);
+      const actualSpent = bonusSpent + normalSpent;
 
       if (actualSpent === 0) {
         SWSELogger.debug(`${actor.name} has no force points to spend`);
-        return { spent: 0, remaining: newFP };
+        return { spent: 0, remaining: newFP, bonusSpent: 0, normalSpent: 0, bonusRemaining: bonusCurrent };
       }
 
-      await this.updateActor(actor, {
-        'system.forcePoints.value': newFP
+      const update = { 'system.forcePoints.value': newFP };
+      if (bonusSpent > 0) {
+        update['flags.swse.bonusForcePoints'] = buildBonusPool(remainingEntries, bonusPool);
+      }
+
+      await this.updateActor(actor, update);
+
+      SWSELogger.log(`Force points spent: ${actor.name} used ${actualSpent}FP (${bonusSpent} bonus, ${normalSpent} normal; normal now: ${newFP})`, {
+        amount: actualSpent,
+        bonusSpent,
+        normalSpent,
+        bonusRemaining: remainingEntries.reduce((sum, entry) => sum + Number(entry.value || 0), 0)
       });
 
-      SWSELogger.log(`Force points spent: ${actor.name} used ${actualSpent}FP (now: ${newFP})`, {
-        amount: actualSpent
-      });
-
-      return { spent: actualSpent, remaining: newFP };
+      return { spent: actualSpent, remaining: newFP, bonusSpent, normalSpent, bonusRemaining: remainingEntries.reduce((sum, entry) => sum + Number(entry.value || 0), 0) };
 
     } catch (err) {
       SWSELogger.error(`ActorEngine.spendForcePoints failed for ${actor?.name ?? 'unknown actor'}`, {
