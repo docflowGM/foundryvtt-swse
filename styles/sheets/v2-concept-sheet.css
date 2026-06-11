@@ -9712,3 +9712,88 @@ form[id^="SWSEV2CharacterSheet"] .skill-extra-uses-toggle,
 .swse-force-suite-tab.is-picking-telekinetic-savant .disc-chip[data-telekinetic="false"] {
   opacity: 0.45;
 }
+
+
+/* Lightsaber Forms: exactly one tracked active form */
+.swse-force-suite-tab .lf-active-panel {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.9fr) minmax(320px, 1.6fr);
+  gap: 12px;
+  padding: 12px;
+  margin: 10px 0 14px;
+  border: 1px solid rgba(109, 212, 255, 0.28);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(20, 38, 58, 0.88), rgba(36, 20, 58, 0.72));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03), 0 0 18px rgba(78, 194, 255, 0.08);
+}
+.swse-force-suite-tab .lf-active-panel__main {
+  min-width: 0;
+}
+.swse-force-suite-tab .lf-active-panel__eyebrow {
+  display: block;
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(153, 221, 255, 0.78);
+  margin-bottom: 4px;
+}
+.swse-force-suite-tab .lf-active-panel__main strong {
+  display: block;
+  font-size: 1.2rem;
+  color: #f4fbff;
+  margin-bottom: 4px;
+}
+.swse-force-suite-tab .lf-active-panel__main p,
+.swse-force-suite-tab .lf-active-panel__main small {
+  margin: 0;
+  color: rgba(224, 239, 255, 0.78);
+  line-height: 1.35;
+}
+.swse-force-suite-tab .lf-active-panel__main small {
+  display: block;
+  margin-top: 6px;
+  color: rgba(255, 221, 160, 0.8);
+}
+.swse-force-suite-tab .lf-active-panel__forms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-content: flex-start;
+}
+.swse-force-suite-tab .lf-form-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(123, 200, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(8, 18, 31, 0.72);
+  color: rgba(231, 245, 255, 0.9);
+  padding: 7px 10px;
+  cursor: pointer;
+  font: inherit;
+  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+.swse-force-suite-tab .lf-form-chip:hover {
+  border-color: rgba(123, 220, 255, 0.62);
+  background: rgba(23, 47, 74, 0.86);
+  transform: translateY(-1px);
+}
+.swse-force-suite-tab .lf-form-chip.active {
+  border-color: rgba(255, 210, 110, 0.86);
+  background: rgba(96, 67, 22, 0.72);
+  box-shadow: 0 0 14px rgba(255, 198, 76, 0.18);
+}
+.swse-force-suite-tab .lf-form-chip em {
+  font-style: normal;
+  font-size: 0.64rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+.swse-force-suite-tab .lf-form-chip--clear {
+  border-style: dashed;
+  color: rgba(255, 220, 220, 0.86);
+}
+@media (max-width: 900px) {
+  .swse-force-suite-tab .lf-active-panel { grid-template-columns: 1fr; }
+}

@@ -697,128 +697,53 @@ export const TALENT_EFFECTS = {
   // ============================================================================
 
   'Shii-Cho': {
-    effects: [{
-      key: 'system.lightsaberForm.shiicho',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }],
-    description: 'Shii-Cho lightsaber form'
+    effects: [],
+    description: 'Lightsaber Form: while active, Block/Deflect cumulative penalties are -2 per previous use instead of -5.'
   },
 
   'Makashi': {
-    effects: [{
-      key: 'system.lightsaberForm.makashi',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }, {
-      key: 'system.defenses.reflex.vsMelee',
-      mode: 2,
-      value: '1',
-      priority: 20
-    }],
-    description: 'Makashi form +1 Reflex vs melee'
+    effects: [],
+    description: 'Lightsaber Form: while active, Lightsaber Defense increases by +2, maximum +5, with a single one-handed lightsaber.'
   },
 
   'Soresu': {
-    effects: [{
-      key: 'system.lightsaberForm.soresu',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }, {
-      key: 'system.defenses.reflex.vsRanged',
-      mode: 2,
-      value: '1',
-      priority: 20
-    }],
-    description: 'Soresu form +1 Reflex vs ranged'
+    effects: [],
+    description: 'Lightsaber Form: while active, reroll a failed UTF check when using Block or Deflect.'
   },
 
   'Shien': {
-    effects: [{
-      key: 'system.lightsaberForm.shien',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }],
-    description: 'Shien lightsaber form'
+    effects: [],
+    description: 'Lightsaber Form: while active, gain +5 on Redirect Shot ranged attacks.'
   },
 
   'Djem So': {
-    effects: [{
-      key: 'system.lightsaberForm.djemso',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }, {
-      key: 'system.damage.lightsaber',
-      mode: 2,
-      value: '1',
-      priority: 20
-    }],
-    description: 'Djem So form +1 lightsaber damage'
+    effects: [],
+    description: 'Lightsaber Form: while active, spend a Force Point as a Reaction once per round after being hit in melee to attack that opponent.'
   },
 
   'Niman': {
-    effects: [{
-      key: 'system.lightsaberForm.niman',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }],
-    description: 'Niman lightsaber form'
+    effects: [],
+    description: 'Lightsaber Form: while active and wielding a lightsaber, gain +1 Reflex Defense and +1 Will Defense.'
   },
 
   'Juyo': {
-    effects: [{
-      key: 'system.lightsaberForm.juyo',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }, {
-      key: 'system.attacks.lightsaber',
-      mode: 2,
-      value: '2',
-      priority: 20
-    }],
-    description: 'Juyo form +2 lightsaber attack'
+    effects: [],
+    description: 'Lightsaber Form: while active, spend a Force Point once per encounter to designate a target for first-attack rerolls each round.'
   },
 
   'Vaapad': {
-    effects: [{
-      key: 'system.lightsaberForm.vaapad',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }],
-    description: 'Vaapad lightsaber form'
+    effects: [],
+    description: 'Lightsaber Form: while active, lightsaber critical threat is 19-20; natural 19 is not an automatic hit.'
   },
 
   'Sokan': {
-    effects: [{
-      key: 'system.lightsaberForm.sokan',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }, {
-      key: 'system.speed.bonus',
-      mode: 2,
-      value: '1',
-      priority: 20
-    }],
-    description: 'Sokan form +1 square speed'
+    effects: [],
+    description: 'Lightsaber Form: while active, Take 10 on Acrobatics checks to Tumble even when threatened.'
   },
 
   'Trakata': {
-    effects: [{
-      key: 'system.lightsaberForm.trakata',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }],
-    description: 'Trakata lightsaber form'
+    effects: [],
+    description: 'Lightsaber Form: while active, spend two Swift Actions to make a Deception check to Feint in combat.'
   },
 
   // ============================================================================

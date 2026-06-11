@@ -1918,231 +1918,189 @@
       "name": "Ataru",
       "talentName": "Ataru",
       "talentTree": "Lightsaber Forms",
-      "description": "When making acrobatic maneuvers, gain +2 to attack rolls but -2 to Reflex Defense until your next turn.",
-      "actionType": "passive",
+      "description": "While active, use Dexterity instead of Strength for lightsaber damage; double Dexterity when wielded two-handed. Only one Lightsaber Form can be active at a time; inactive forms provide no benefits.",
+      "actionType": "swift",
       "toggleable": true,
-      "effects": [
-        {
-          "type": "attackBonus",
-          "value": 2,
-          "condition": "acrobaticManeuvers"
-        },
-        {
-          "type": "defensePenalty",
-          "defense": "reflex",
-          "value": -2
-        }
-      ],
+      "effects": [],
       "tags": [
         "lightsaber",
         "form",
-        "toggleable"
+        "active-form-only"
       ],
-      "icon": "fas fa-wind",
-      "linkedAction": "lightsaber-acrobatic"
+      "icon": "fas fa-jedi",
+      "linkedAction": "adopt-lightsaber-form-ataru",
+      "requiresActiveLightsaberForm": true,
+      "exclusiveGroup": "lightsaber-form",
+      "activationAction": "swift"
     },
     "djem-so": {
       "id": "djem-so",
       "name": "Djem So",
       "talentName": "Djem So",
       "talentTree": "Lightsaber Forms",
-      "description": "When you successfully block or deflect an attack, you may make an immediate counterattack against the attacker.",
-      "actionType": "reaction",
+      "description": "While active, once per round when hit by a melee attack, spend a Force Point as a Reaction to attack that opponent. Only one Lightsaber Form can be active at a time; inactive forms provide no benefits.",
+      "actionType": "swift",
       "trigger": "After successfully using Block or Deflect",
       "prerequisites": [
         "block",
         "deflect"
       ],
-      "effects": [
-        {
-          "type": "counterattack",
-          "target": "attacker"
-        }
-      ],
+      "effects": [],
       "tags": [
         "lightsaber",
         "form",
-        "reaction"
+        "active-form-only"
       ],
-      "icon": "fas fa-exchange-alt",
-      "linkedAction": "lightsaber-counterattack"
+      "icon": "fas fa-jedi",
+      "linkedAction": "adopt-lightsaber-form-djem-so",
+      "requiresActiveLightsaberForm": true,
+      "exclusiveGroup": "lightsaber-form",
+      "activationAction": "swift"
     },
     "makashi": {
       "id": "makashi",
       "name": "Makashi",
       "talentName": "Makashi",
       "talentTree": "Lightsaber Forms",
-      "description": "When wielding a lightsaber in one hand with nothing in the other, gain +2 to attack rolls against targets wielding melee weapons.",
-      "actionType": "passive",
+      "description": "While active, increase Lightsaber Defense by +2, maximum +5, when wielding a single lightsaber in one hand. Only one Lightsaber Form can be active at a time; inactive forms provide no benefits.",
+      "actionType": "swift",
       "condition": "Lightsaber in one hand, other hand empty",
-      "effects": [
-        {
-          "type": "attackBonus",
-          "value": 2,
-          "condition": "vsmeleeWielders"
-        }
-      ],
+      "effects": [],
       "tags": [
         "lightsaber",
         "form",
-        "passive"
+        "active-form-only"
       ],
-      "icon": "fas fa-fencing",
-      "linkedAction": "lightsaber-duel"
+      "icon": "fas fa-jedi",
+      "linkedAction": "adopt-lightsaber-form-makashi",
+      "requiresActiveLightsaberForm": true,
+      "exclusiveGroup": "lightsaber-form",
+      "activationAction": "swift"
     },
     "niman": {
       "id": "niman",
       "name": "Niman",
       "talentName": "Niman",
       "talentTree": "Lightsaber Forms",
-      "description": "When you use a Force power as a standard action, you may make a single lightsaber attack as a swift action.",
+      "description": "While active and wielding a lightsaber, gain +1 Reflex Defense and +1 Will Defense. Only one Lightsaber Form can be active at a time; inactive forms provide no benefits.",
       "actionType": "swift",
       "trigger": "After using a Force power as standard action",
-      "effects": [
-        {
-          "type": "bonusAttack",
-          "weapon": "lightsaber",
-          "actionType": "swift"
-        }
-      ],
+      "effects": [],
       "tags": [
         "lightsaber",
         "form",
-        "swift"
+        "active-form-only"
       ],
-      "icon": "fas fa-atom",
-      "linkedAction": "lightsaber-force-combo"
+      "icon": "fas fa-jedi",
+      "linkedAction": "adopt-lightsaber-form-niman",
+      "requiresActiveLightsaberForm": true,
+      "exclusiveGroup": "lightsaber-form",
+      "activationAction": "swift"
     },
     "shien": {
       "id": "shien",
       "name": "Shien",
       "talentName": "Shien",
       "talentTree": "Lightsaber Forms",
-      "description": "When you successfully deflect a ranged attack, you may spend a Force Point to automatically redirect it back at the attacker.",
-      "actionType": "reaction",
+      "description": "While active, gain +5 on ranged attack rolls made with Redirect Shot. Only one Lightsaber Form can be active at a time; inactive forms provide no benefits.",
+      "actionType": "swift",
       "trigger": "After successfully using Deflect",
       "cost": {
         "forcePoints": 1
       },
-      "effects": [
-        {
-          "type": "autoRedirect",
-          "target": "attacker"
-        }
-      ],
+      "effects": [],
       "tags": [
         "lightsaber",
         "form",
-        "reaction",
-        "force-point"
+        "active-form-only"
       ],
-      "icon": "fas fa-shield-alt",
-      "linkedAction": "lightsaber-deflect-redirect"
+      "icon": "fas fa-jedi",
+      "linkedAction": "adopt-lightsaber-form-shien",
+      "requiresActiveLightsaberForm": true,
+      "exclusiveGroup": "lightsaber-form",
+      "activationAction": "swift"
     },
     "shii-cho": {
       "id": "shii-cho",
       "name": "Shii-Cho",
       "talentName": "Shii-Cho",
       "talentTree": "Lightsaber Forms",
-      "description": "When wielding a lightsaber and fighting multiple opponents, gain +1 to attack and damage for each opponent beyond the first adjacent to you.",
-      "actionType": "passive",
+      "description": "While active, Block/Deflect cumulative penalties are -2 per previous attempt instead of -5. Only one Lightsaber Form can be active at a time; inactive forms provide no benefits.",
+      "actionType": "swift",
       "condition": "Multiple adjacent opponents",
-      "effects": [
-        {
-          "type": "attackBonus",
-          "value": 1,
-          "perAdditionalOpponent": true
-        },
-        {
-          "type": "damageBonus",
-          "value": 1,
-          "perAdditionalOpponent": true
-        }
-      ],
+      "effects": [],
       "tags": [
         "lightsaber",
         "form",
-        "passive"
+        "active-form-only"
       ],
-      "icon": "fas fa-users",
-      "linkedAction": "lightsaber-multiattack"
+      "icon": "fas fa-jedi",
+      "linkedAction": "adopt-lightsaber-form-shii-cho",
+      "requiresActiveLightsaberForm": true,
+      "exclusiveGroup": "lightsaber-form",
+      "activationAction": "swift"
     },
     "soresu": {
       "id": "soresu",
       "name": "Soresu",
       "talentName": "Soresu",
       "talentTree": "Lightsaber Forms",
-      "description": "While wielding a lightsaber, once per round you may Block or Deflect without using your reaction.",
-      "actionType": "passive",
-      "effects": [
-        {
-          "type": "freeReaction",
-          "ability": "block-or-deflect",
-          "perRound": 1
-        }
-      ],
+      "description": "While active, reroll a failed Use the Force check when using Block or Deflect. Only one Lightsaber Form can be active at a time; inactive forms provide no benefits.",
+      "actionType": "swift",
+      "effects": [],
       "tags": [
         "lightsaber",
         "form",
-        "passive"
+        "active-form-only"
       ],
-      "icon": "fas fa-shield-alt",
-      "linkedAction": "lightsaber-defense-free"
+      "icon": "fas fa-jedi",
+      "linkedAction": "adopt-lightsaber-form-soresu",
+      "requiresActiveLightsaberForm": true,
+      "exclusiveGroup": "lightsaber-form",
+      "activationAction": "swift"
     },
     "juyo": {
       "id": "juyo",
       "name": "Juyo",
       "talentName": "Juyo",
       "talentTree": "Lightsaber Forms",
-      "description": "When making a full attack with a lightsaber, gain +2 to damage rolls but -2 to all defenses until your next turn.",
-      "actionType": "passive",
+      "description": "While active, once per encounter spend a Force Point as a Swift Action to designate a target; reroll the first attack each round against that target. Only one Lightsaber Form can be active at a time; inactive forms provide no benefits.",
+      "actionType": "swift",
       "toggleable": true,
-      "effects": [
-        {
-          "type": "damageBonus",
-          "value": 2,
-          "condition": "fullAttack"
-        },
-        {
-          "type": "defensePenalty",
-          "defense": "all",
-          "value": -2
-        }
-      ],
+      "effects": [],
       "tags": [
         "lightsaber",
         "form",
-        "toggleable"
+        "active-form-only"
       ],
-      "icon": "fas fa-skull",
-      "linkedAction": "lightsaber-aggressive"
+      "icon": "fas fa-jedi",
+      "linkedAction": "adopt-lightsaber-form-juyo",
+      "requiresActiveLightsaberForm": true,
+      "exclusiveGroup": "lightsaber-form",
+      "activationAction": "swift"
     },
     "vaapad": {
       "id": "vaapad",
       "name": "Vaapad",
       "talentName": "Vaapad",
       "talentTree": "Lightsaber Forms",
-      "description": "When you score a critical hit with a lightsaber, move the target -1 step on the condition track in addition to extra damage.",
-      "actionType": "passive",
+      "description": "While active, lightsaber attacks threaten critical hits on natural 19-20; natural 19 is not an automatic hit. Only one Lightsaber Form can be active at a time; inactive forms provide no benefits.",
+      "actionType": "swift",
       "trigger": "Critical hit with lightsaber",
       "prerequisites": [
         "juyo"
       ],
-      "effects": [
-        {
-          "type": "conditionTrack",
-          "value": -1,
-          "target": "enemy",
-          "trigger": "criticalHit"
-        }
-      ],
+      "effects": [],
       "tags": [
         "lightsaber",
         "form",
-        "passive"
+        "active-form-only"
       ],
-      "icon": "fas fa-bolt",
-      "linkedAction": "lightsaber-critical-combo"
+      "icon": "fas fa-jedi",
+      "linkedAction": "adopt-lightsaber-form-vaapad",
+      "requiresActiveLightsaberForm": true,
+      "exclusiveGroup": "lightsaber-form",
+      "activationAction": "swift"
     },
     "acrobatic-recovery": {
       "id": "acrobatic-recovery",
@@ -8457,6 +8415,63 @@
         "swift"
       ],
       "icon": "fas fa-shield-alt"
+    },
+    "jar-kai": {
+      "id": "jar-kai",
+      "name": "Jar'Kai",
+      "talentName": "Jar'Kai",
+      "talentTree": "Lightsaber Forms",
+      "description": "While active, double the normal Lightsaber Defense deflection bonus when wielding two lightsabers. Only one Lightsaber Form can be active at a time; inactive forms provide no benefits.",
+      "actionType": "swift",
+      "requiresActiveLightsaberForm": true,
+      "exclusiveGroup": "lightsaber-form",
+      "activationAction": "swift",
+      "effects": [],
+      "tags": [
+        "lightsaber",
+        "form",
+        "active-form-only"
+      ],
+      "icon": "fas fa-jedi",
+      "linkedAction": "adopt-lightsaber-form-jar-kai"
+    },
+    "sokan": {
+      "id": "sokan",
+      "name": "Sokan",
+      "talentName": "Sokan",
+      "talentTree": "Lightsaber Forms",
+      "description": "While active, Take 10 on Acrobatics checks to Tumble even when threatened; threatened/occupied squares count as 1 square. Only one Lightsaber Form can be active at a time; inactive forms provide no benefits.",
+      "actionType": "swift",
+      "requiresActiveLightsaberForm": true,
+      "exclusiveGroup": "lightsaber-form",
+      "activationAction": "swift",
+      "effects": [],
+      "tags": [
+        "lightsaber",
+        "form",
+        "active-form-only"
+      ],
+      "icon": "fas fa-jedi",
+      "linkedAction": "adopt-lightsaber-form-sokan"
+    },
+    "trakata": {
+      "id": "trakata",
+      "name": "Trakata",
+      "talentName": "Trakata",
+      "talentTree": "Lightsaber Forms",
+      "description": "While active, spend two Swift Actions while wielding a lightsaber to make a Deception check to Feint in combat. Only one Lightsaber Form can be active at a time; inactive forms provide no benefits.",
+      "actionType": "swift",
+      "requiresActiveLightsaberForm": true,
+      "exclusiveGroup": "lightsaber-form",
+      "activationAction": "swift",
+      "effects": [],
+      "tags": [
+        "lightsaber",
+        "form",
+        "active-form-only"
+      ],
+      "icon": "fas fa-jedi",
+      "linkedAction": "adopt-lightsaber-form-trakata"
     }
   }
 }

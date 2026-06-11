@@ -1,5 +1,6 @@
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
+import { LightsaberFormEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-form-engine.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
 import { CANONICAL_SKILL_DEFS, canonicalizeSkillKey, normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 function toSignedClass(value) {
@@ -981,6 +982,17 @@ export function buildForceTab(context) {
   lightsaberFormSavant.hasRecoverable = lightsaberFormSavant.recoverableCount > 0;
   lightsaberFormSavant.available = lightsaberFormSavant.max > 0 && lightsaberFormSavant.remaining > 0 && lightsaberFormSavant.hasRecoverable;
 
+  const knownLightsaberForms = LightsaberFormEngine.getKnownForms(actor);
+  const activeLightsaberForm = LightsaberFormEngine.getActiveForm(actor);
+  const lightsaberFormState = {
+    known: knownLightsaberForms,
+    active: activeLightsaberForm,
+    hasKnown: knownLightsaberForms.length > 0,
+    activeName: activeLightsaberForm?.name || 'None',
+    activeSummary: activeLightsaberForm?.summary || 'Choose one known Lightsaber Form to make it active. Only the active form grants benefits.',
+    ruleNote: 'Only one Lightsaber Form can be active at a time. Switching forms replaces the previous form; inactive forms provide no benefits.'
+  };
+
   const forceSuite = {
     actorName: actor?.name || 'Unknown Force User',
     actorSubtitle,
@@ -1011,6 +1023,7 @@ export function buildForceTab(context) {
     telekineticSavant,
     influenceSavant,
     lightsaberFormSavant,
+    lightsaberFormState,
     forceTalentActions: getForceTalentActionState(actor),
     hasDarkSideScore: (Number(context.darkSidePanel?.value) || 0) > 0
   };

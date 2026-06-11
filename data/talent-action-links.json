@@ -97,7 +97,6 @@
     "Distracting Attack": "reflex-defense",
     "Distracting Shout": "reflex-defense",
     "Distress to Discord": "reflex-defense",
-    "Djem So": "melee-attack",
     "Dogfight Gunner": "pilot-check",
     "Double Agent": "reflex-defense",
     "Double Up": "ranged-attack",
@@ -208,11 +207,9 @@
     "Intentional Crash": "pilot-check",
     "Intimate Knowledge": "knowledge-check",
     "Intimidating Defense": "reflex-defense",
-    "Jar'Kai": "reflex-defense",
     "Jet Pack Training": "pilot-check",
     "Juke": "melee-attack",
     "Jury-Rigger": "mechanics-check",
-    "Juyo": "melee-attack",
     "Keep It Together": "condition-track-shift",
     "Keep Them Reeling": "initiative-roll",
     "Keep Them Reeling (Piracy)": "melee-attack",
@@ -328,7 +325,6 @@
     "Sheltering Stance": "block-defense",
     "Shield Expert": "swift-action",
     "Shift": "melee-attack",
-    "Shii-Cho": "block-defense",
     "Shoot from the Hip": "melee-attack",
     "Shoto Master": "reflex-defense",
     "Shoto Pin Block": "melee-attack",
@@ -347,8 +343,6 @@
     "Sniping Marksman": "ranged-attack",
     "Sniping Master": "swift-action",
     "Soften the Target": "ranged-attack",
-    "Sokan": "acrobatics-check",
-    "Soresu": "block-defense",
     "Sow Confusion": "reflex-defense",
     "Spacehound": "melee-attack",
     "Speed Implant": "movement-action",
@@ -386,7 +380,6 @@
     "Terrify": "persuasion-check",
     "The Will to Resist": "reflex-defense",
     "Trace": "use-computer-check",
-    "Trakata": "deception-check",
     "Transfer Power": "use-the-force-check",
     "Transposing Strike": "melee-attack",
     "Treacherous": "melee-attack",
@@ -452,8 +445,7 @@
   },
   "actionToTalents": {
     "acrobatics-check": [
-      "Acrobatic Recovery",
-      "Sokan"
+      "Acrobatic Recovery"
     ],
     "perception-check": [
       "Acute Senses",
@@ -502,7 +494,6 @@
       "Incite Rage",
       "Innocuous",
       "Intimidating Defense",
-      "Jar'Kai",
       "Knowledge is Life",
       "Known Dissident",
       "Lure Closer",
@@ -571,7 +562,6 @@
       "Devastating Melee Smash",
       "Dirty Tactics",
       "Disciplined Strike",
-      "Djem So",
       "Draw Fire",
       "Dual Weapon Flourish II",
       "Elusive Dogfighter",
@@ -603,7 +593,6 @@
       "Improved Suppression Fire",
       "Inspire Zeal",
       "Juke",
-      "Juyo",
       "Keep Them Reeling (Piracy)",
       "Knockdown Shot",
       "Knowledge is Strength",
@@ -852,9 +841,7 @@
       "Improved Riposte",
       "Praetoria Ishu",
       "Sheltering Stance",
-      "Shii-Cho",
-      "Slashing Charge",
-      "Soresu"
+      "Slashing Charge"
     ],
     "lightsaber-attack": [
       "Cortosis Retaliation",
@@ -894,8 +881,7 @@
       "Leading Feint",
       "Masquerade",
       "Seducer",
-      "Surprise Strike",
-      "Trakata"
+      "Surprise Strike"
     ],
     "fortitude-defense": [
       "Dark Healing Field"

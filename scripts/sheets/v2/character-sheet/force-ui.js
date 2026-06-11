@@ -18,6 +18,7 @@ import { createSafeEmbeddedItem } from "/systems/foundryvtt-swse/scripts/engine/
 import { mutateAndRepaint } from "/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js";
 import { promptForcePowerRollOptions, promptForceRegimenRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
 import { ForceRegimenExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-regimen-executor.js";
+import { LightsaberFormEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-form-engine.js";
 
 /**
  * Handle force card discard animation
@@ -517,6 +518,52 @@ export function activateForceUI(sheet, html, { signal } = {}) {
       event.preventDefault();
       const result = await mutateAndRepaint(sheet, () => ForceExecutor.promptSuppressForce(sheet.actor), { reason: 'force-talent-suppress-force', surfaceId: sheet._shellSurface ?? 'sheet', preserveUi: true });
       if (result?.success) ui?.notifications?.info?.('Suppress Force resolved.');
+    }, { signal });
+  });
+
+  // Lightsaber Forms: choose exactly one active form. The Force tab may track action economy when available.
+  html.querySelectorAll('[data-action="set-lightsaber-form"]').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      const form = button.dataset.form;
+      if (!form) return;
+      try {
+        if (typeof sheet._applyActionEconomy === 'function') {
+          const allowed = await sheet._applyActionEconomy('swift', {
+            source: 'lightsaber-form',
+            actionId: `lightsaber-form-${form}`,
+            actionName: `Adopt Lightsaber Form: ${button.dataset.formName || form}`,
+            sourceName: 'Lightsaber Form',
+            sourceType: 'talent'
+          });
+          if (!allowed) return;
+        }
+        const result = await mutateAndRepaint(sheet, () => LightsaberFormEngine.setActiveForm(sheet.actor, form), {
+          reason: 'set-lightsaber-form',
+          surfaceId: sheet._shellSurface ?? 'sheet',
+          preserveUi: true
+        });
+        if (result?.success) ui?.notifications?.info?.(`${result.activeForm?.name || 'Lightsaber Form'} is now active.`);
+        else if (result?.error) ui?.notifications?.warn?.(result.error);
+      } catch (err) {
+        ui?.notifications?.error?.(`Lightsaber Form activation failed: ${err.message}`);
+      }
+    }, { signal });
+  });
+
+  html.querySelectorAll('[data-action="clear-lightsaber-form"]').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      try {
+        const result = await mutateAndRepaint(sheet, () => LightsaberFormEngine.clearActiveForm(sheet.actor), {
+          reason: 'clear-lightsaber-form',
+          surfaceId: sheet._shellSurface ?? 'sheet',
+          preserveUi: true
+        });
+        if (result?.success) ui?.notifications?.info?.('Active Lightsaber Form cleared.');
+      } catch (err) {
+        ui?.notifications?.error?.(`Could not clear Lightsaber Form: ${err.message}`);
+      }
     }, { signal });
   });
 

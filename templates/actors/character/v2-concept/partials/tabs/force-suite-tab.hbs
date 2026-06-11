@@ -44,6 +44,37 @@
     <div class="suite-badge">◈ Force Suite</div>
   </section>
 
+
+
+  {{#if conceptLayout.force.forceSuite.lightsaberFormState.hasKnown}}
+  <section class="lf-active-panel" data-lightsaber-form-panel>
+    <div class="lf-active-panel__main">
+      <span class="lf-active-panel__eyebrow">Active Lightsaber Form</span>
+      <strong>{{conceptLayout.force.forceSuite.lightsaberFormState.activeName}}</strong>
+      <p>{{conceptLayout.force.forceSuite.lightsaberFormState.activeSummary}}</p>
+      <small>{{conceptLayout.force.forceSuite.lightsaberFormState.ruleNote}}</small>
+    </div>
+    <div class="lf-active-panel__forms">
+      {{#each conceptLayout.force.forceSuite.lightsaberFormState.known as |form|}}
+        <button type="button"
+                class="lf-form-chip {{#if form.active}}active{{/if}}"
+                data-action="set-lightsaber-form"
+                data-form="{{form.slug}}"
+                data-form-name="{{form.name}}"
+                title="Swift Action: make {{form.name}} your one active Lightsaber Form.">
+          <span>{{form.name}}</span>
+          {{#if form.active}}<em>Active</em>{{else}}<em>Swift</em>{{/if}}
+        </button>
+      {{/each}}
+      {{#if conceptLayout.force.forceSuite.lightsaberFormState.active}}
+        <button type="button" class="lf-form-chip lf-form-chip--clear" data-action="clear-lightsaber-form" title="Clear the tracked active Lightsaber Form.">
+          <span>Clear Form</span><em>Track</em>
+        </button>
+      {{/if}}
+    </div>
+  </section>
+  {{/if}}
+
   <section class="fsuite" data-screen-label="Force Suite">
     <div class="fs-section fs-section--force">
       <div class="fs-head">

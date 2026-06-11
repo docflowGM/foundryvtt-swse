@@ -27,6 +27,7 @@ import { GuardianSpiritActions } from "/systems/foundryvtt-swse/scripts/engine/t
 import { ConsularTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/consular-talent-actions.js";
 import { SentinelTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/sentinel-talent-actions.js";
 import { LightsaberTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-talent-actions.js";
+import { LightsaberFormEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-form-engine.js";
 import { ArmorTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/armor-talent-actions.js";
 import { promptForcePowerRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
@@ -8485,6 +8486,24 @@ const forcePoints = [];
   async _executeLightsaberTalentCombatAction(actionId, actionData = {}, options = {}) {
     const kind = actionData?.lightsaberTalentAction ?? actionData?.ruleData?.lightsaberTalentAction ?? actionId;
     let actionType = this._deriveCombatActionEconomyType(actionData);
+    if (kind === 'trakata') {
+      if (actionData?.spendAction !== false) {
+        for (let i = 0; i < 2; i += 1) {
+          const allowed = await this._applyActionEconomy('swift', {
+            source: options?.source ?? 'lightsaber-form',
+            actionId,
+            actionName: actionData?.name ?? 'Trakata',
+            sourceName: actionData?.sourceName ?? 'Lightsaber Form',
+            sourceType: 'talent',
+            swiftIndex: i + 1,
+            swiftCount: 2,
+            combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
+          });
+          if (!allowed) return null;
+        }
+      }
+      return LightsaberFormEngine.promptTrakata(this.actor);
+    }
     if (kind === 'lightsaberDefense') {
       const hasShotoMaster = this.actor?.items?.some?.(item => item?.type === 'talent' && String(item?.name ?? '').trim().toLowerCase().replace(/\s*\(\d+\)\s*$/, '') === 'shoto master');
       if (hasShotoMaster) actionType = 'free';
@@ -8523,6 +8542,23 @@ const forcePoints = [];
     if (kind === 'shotoFocus') return LightsaberTalentActions.announceShotoFocus(this.actor);
     if (kind === 'shotoMaster') return LightsaberTalentActions.announceShotoMaster(this.actor);
     if (kind === 'weaponSpecializationLightsabers') return LightsaberTalentActions.announceWeaponSpecializationLightsabers(this.actor);
+
+    if (kind?.startsWith?.('setLightsaberForm:')) {
+      const form = kind.split(':')[1];
+      return LightsaberFormEngine.setActiveForm(this.actor, form);
+    }
+    if (kind === 'djemSo') return LightsaberFormEngine.promptDjemSo(this.actor);
+    if (kind === 'juyo') return LightsaberFormEngine.promptJuyo(this.actor);
+    if (kind === 'sokan') return LightsaberFormEngine.announceSokan(this.actor);
+    if (kind === 'trakata') return LightsaberFormEngine.promptTrakata(this.actor);
+    if (kind === 'ataru') return LightsaberFormEngine.announceActiveFormBenefit(this.actor, 'ataru');
+    if (kind === 'jarKai') return LightsaberFormEngine.announceActiveFormBenefit(this.actor, 'jar-kai');
+    if (kind === 'makashi') return LightsaberFormEngine.announceActiveFormBenefit(this.actor, 'makashi');
+    if (kind === 'niman') return LightsaberFormEngine.announceActiveFormBenefit(this.actor, 'niman');
+    if (kind === 'shien') return LightsaberFormEngine.announceActiveFormBenefit(this.actor, 'shien');
+    if (kind === 'shiiCho') return LightsaberFormEngine.announceActiveFormBenefit(this.actor, 'shii-cho');
+    if (kind === 'soresu') return LightsaberFormEngine.announceActiveFormBenefit(this.actor, 'soresu');
+    if (kind === 'vaapad') return LightsaberFormEngine.announceActiveFormBenefit(this.actor, 'vaapad');
 
     return this._announceManualCombatAction(actionId, actionData, { ...options, actionType });
   }

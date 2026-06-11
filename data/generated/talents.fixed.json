@@ -15253,44 +15253,29 @@
     "system": {
       "talent_tree": "Lightsaber Forms",
       "prerequisites": null,
-      "benefit": "May apply Dexterity modifier to damage or double Dexterity bonus if two-handed instead of Strength.",
-      "description": "Add Dexterity modifier to damage, or double Dexterity bonus if two-handed, instead of Strength.",
+      "benefit": "You may add your Dexterity bonus (instead of your Strength bonus) on damage rolls when wielding a Lightsaber. When you wield a Lightsaber two-handed, you may apply double your Dexterity bonus (instead of double your Strength bonus) to the damage.",
+      "description": "While Ataru is your active Lightsaber Form, you may add your Dexterity bonus instead of your Strength bonus on damage rolls when wielding a Lightsaber. When you wield a Lightsaber two-handed, you may apply double your Dexterity bonus instead of double your Strength bonus to the damage. Only one Lightsaber Form can be active at a time.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Lightsaber Forms",
       "treeId": "lightsaber-forms"
     },
-    "effects": [
-      {
-        "_id": "51d31037-d4be-4c4d-a5e5-b405e21aa08a",
-        "name": "Ataru - Apply DEX to Damage",
-        "type": "talent-effect",
-        "icon": "icons/svg/wind.svg",
-        "changes": [
-          {
-            "key": "system.abilities.dex.applyToDamage",
-            "mode": 5,
-            "value": "true",
-            "priority": 20
-          }
-        ],
-        "disabled": false,
-        "duration": {},
-        "flags": {
-          "swse": {
-            "source": "talent",
-            "talentName": "Ataru"
-          }
-        }
-      }
-    ],
+    "effects": [],
     "folder": null,
     "sort": 0,
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "lightsaberFormImplementation": {
+          "status": "active-form-only",
+          "rule": "Only one Lightsaber Form can be active at a time; inactive forms grant no benefits.",
+          "updated": "2026-06-11"
+        }
+      }
+    }
   },
   {
     "_id": "9dfce712a60a097f",
@@ -15300,8 +15285,8 @@
     "system": {
       "talent_tree": "Lightsaber Forms",
       "prerequisites": null,
-      "benefit": "Once per round, if hit in melee, make an immediate attack against that opponent.",
-      "description": "Once per round, when hit in melee, make an immediate attack against the attacker.",
+      "benefit": "Once per round when an opponent hits you with a melee attack, you may spend a Force Point as a Reaction to make an immediate attack against that opponent.",
+      "description": "While Djem So is your active Lightsaber Form, once per round when an opponent hits you with a melee attack, you may spend a Force Point as a Reaction to make an immediate attack against that opponent. Only one Lightsaber Form can be active at a time.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
@@ -15314,7 +15299,15 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "lightsaberFormImplementation": {
+          "status": "active-form-only",
+          "rule": "Only one Lightsaber Form can be active at a time; inactive forms grant no benefits.",
+          "updated": "2026-06-11"
+        }
+      }
+    }
   },
   {
     "_id": "4552785ad56d90d4",
@@ -15324,8 +15317,8 @@
     "system": {
       "talent_tree": "Lightsaber Forms",
       "prerequisites": "Lightsaber Defense, Niman",
-      "benefit": "Apply Lightsaber Defense twice when wielding two lightsabers.",
-      "description": "Double your Lightsaber Defense bonus when wielding two lightsabers.",
+      "benefit": "When you use the Lightsaber Defense Talent, you gain twice the normal deflection bonus to your Reflex Defense when you are wielding two Lightsabers.",
+      "description": "While Jar'Kai is your active Lightsaber Form, when you use the Lightsaber Defense Talent, you gain twice the normal deflection bonus to your Reflex Defense when you are wielding two Lightsabers. Only one Lightsaber Form can be active at a time.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
@@ -15338,7 +15331,15 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "lightsaberFormImplementation": {
+          "status": "active-form-only",
+          "rule": "Only one Lightsaber Form can be active at a time; inactive forms grant no benefits.",
+          "updated": "2026-06-11"
+        }
+      }
+    }
   },
   {
     "_id": "5fd19be0deca1115",
@@ -15347,9 +15348,9 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Lightsaber Forms",
-      "prerequisites": "Base attack bonus +10, Weapon Specialization",
-      "benefit": "Once per encounter against a single enemy in line of sight, reroll your first attack roll and keep the best.",
-      "description": "Once per encounter, reroll your first attack roll against a chosen enemy and keep the better result.",
+      "prerequisites": "Weapon Focus (Lightsabers), Weapon Specialization (Lightsabers), Base Attack Bonus +10",
+      "benefit": "Once per encounter, you may spend a Force Point as a Swift Action to designate a single opponent in your line of sight. For the remainder of the encounter, you may reroll your first attack roll each round against that opponent, keeping the better of the two results.",
+      "description": "While Juyo is your active Lightsaber Form, once per encounter you may spend a Force Point as a Swift Action to designate a single opponent in your line of sight. For the remainder of the encounter, you may reroll your first attack roll each round against that opponent, keeping the better of the two results. Only one Lightsaber Form can be active at a time.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
@@ -15362,7 +15363,15 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "lightsaberFormImplementation": {
+          "status": "active-form-only",
+          "rule": "Only one Lightsaber Form can be active at a time; inactive forms grant no benefits.",
+          "updated": "2026-06-11"
+        }
+      }
+    }
   },
   {
     "_id": "8ddbb7f6d4a11725",
@@ -15371,44 +15380,30 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Lightsaber Forms",
-      "prerequisites": null,
-      "benefit": "Increase Lightsaber Defense bonus by +2 (maximum +5).",
-      "description": "Increase Lightsaber Defense bonus by 2 (maximum 5).",
+      "prerequisites": "Lightsaber Defense",
+      "benefit": "When wielding a single Lightsaber in one hand, the deflection bonus you gain from the Lightsaber Defense Talent increases by 2 (to a maximum of +5).",
+      "description": "While Makashi is your active Lightsaber Form, when wielding a single Lightsaber in one hand, the deflection bonus you gain from the Lightsaber Defense Talent increases by 2, to a maximum of +5. Only one Lightsaber Form can be active at a time.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Lightsaber Forms",
       "treeId": "lightsaber-forms"
     },
-    "effects": [
-      {
-        "_id": "d5bb4cb2-4f93-42de-89df-a8b7d08de4bf",
-        "name": "Makashi",
-        "type": "talent-effect",
-        "icon": "icons/svg/shield.svg",
-        "changes": [
-          {
-            "key": "system.defenses.reflex",
-            "mode": 2,
-            "value": "2"
-          }
-        ],
-        "disabled": false,
-        "duration": {},
-        "flags": {
-          "swse": {
-            "source": "talent",
-            "talentName": "Makashi"
-          }
-        }
-      }
-    ],
+    "effects": [],
     "folder": null,
     "sort": 0,
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "lightsaberFormImplementation": {
+          "status": "active-form-only",
+          "rule": "Only one Lightsaber Form can be active at a time; inactive forms grant no benefits.",
+          "updated": "2026-06-11"
+        }
+      }
+    }
   },
   {
     "_id": "7842befd5a8713c5",
@@ -15418,48 +15413,29 @@
     "system": {
       "talent_tree": "Lightsaber Forms",
       "prerequisites": null,
-      "benefit": "+1 Reflex and +1 Will Defense while wielding a lightsaber.",
-      "description": "Gain +1 Reflex Defense and +1 Will Defense while wielding a lightsaber.",
+      "benefit": "When wielding a Lightsaber, you gain a +1 bonus to your Reflex Defense and Will Defense.",
+      "description": "While Niman is your active Lightsaber Form and you are wielding a Lightsaber, you gain a +1 bonus to your Reflex Defense and Will Defense. Only one Lightsaber Form can be active at a time.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Lightsaber Forms",
       "treeId": "lightsaber-forms"
     },
-    "effects": [
-      {
-        "_id": "e56b443f-3c7f-4450-9993-b3cdfb3f5b72",
-        "name": "Niman",
-        "type": "talent-effect",
-        "icon": "icons/svg/shield.svg",
-        "changes": [
-          {
-            "key": "system.defenses.reflex",
-            "mode": 2,
-            "value": "1"
-          },
-          {
-            "key": "system.defenses.will",
-            "mode": 2,
-            "value": "1"
-          }
-        ],
-        "disabled": false,
-        "duration": {},
-        "flags": {
-          "swse": {
-            "source": "talent",
-            "talentName": "Niman"
-          }
-        }
-      }
-    ],
+    "effects": [],
     "folder": null,
     "sort": 0,
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "lightsaberFormImplementation": {
+          "status": "active-form-only",
+          "rule": "Only one Lightsaber Form can be active at a time; inactive forms grant no benefits.",
+          "updated": "2026-06-11"
+        }
+      }
+    }
   },
   {
     "_id": "e0223a2b572f2ef5",
@@ -15469,43 +15445,29 @@
     "system": {
       "talent_tree": "Lightsaber Forms",
       "prerequisites": "Deflect, Redirect Shot",
-      "benefit": "+5 on ranged attack rolls for deflected shots.",
-      "description": "Gain +5 on ranged attack rolls made with redirected blaster bolts.",
+      "benefit": "Whenever you redirect a deflected blaster bolt (see the Redirect Shot Talent), you gain a +5 bonus on your ranged attack roll.",
+      "description": "While Shien is your active Lightsaber Form, whenever you redirect a deflected blaster bolt with the Redirect Shot Talent, you gain a +5 bonus on your ranged attack roll. Only one Lightsaber Form can be active at a time.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Lightsaber Forms",
       "treeId": "lightsaber-forms"
     },
-    "effects": [
-      {
-        "_id": "6fbfd19c-910f-4e8f-b19c-8ba1a795ea7a",
-        "name": "Shien",
-        "type": "talent-effect",
-        "icon": "icons/svg/item-bag.svg",
-        "changes": [
-          {
-            "key": "system.attacks.deflect",
-            "mode": 2,
-            "value": "5"
-          }
-        ],
-        "disabled": false,
-        "duration": {},
-        "flags": {
-          "swse": {
-            "source": "talent",
-            "talentName": "Shien"
-          }
-        }
-      }
-    ],
+    "effects": [],
     "folder": null,
     "sort": 0,
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "lightsaberFormImplementation": {
+          "status": "active-form-only",
+          "rule": "Only one Lightsaber Form can be active at a time; inactive forms grant no benefits.",
+          "updated": "2026-06-11"
+        }
+      }
+    }
   },
   {
     "_id": "c116f6249f4f47c9",
@@ -15515,48 +15477,29 @@
     "system": {
       "talent_tree": "Lightsaber Forms",
       "prerequisites": "Block, Deflect",
-      "benefit": "Take only a -2 penalty on Use the Force checks for each Block or Deflect made last turn.",
-      "description": "Take only a –2 penalty on Use the Force checks for each Block or Deflect in the previous turn.",
+      "benefit": "When using the Block or Deflect Talents, you only take a -2 penalty on your Use the Force check for every previous Block or Deflect attempt since your last turn.",
+      "description": "While Shii-Cho is your active Lightsaber Form, when using the Block or Deflect Talents, you only take a -2 penalty on your Use the Force check for every previous Block or Deflect attempt since your last turn. Only one Lightsaber Form can be active at a time.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Lightsaber Forms",
       "treeId": "lightsaber-forms"
     },
-    "effects": [
-      {
-        "_id": "e6768174-75e7-4b9d-ac19-c67693139c62",
-        "name": "Shii-Cho",
-        "type": "talent-effect",
-        "icon": "icons/svg/sword.svg",
-        "changes": [
-          {
-            "key": "system.attacks.melee",
-            "mode": 2,
-            "value": "1"
-          },
-          {
-            "key": "system.damage.melee",
-            "mode": 2,
-            "value": "1"
-          }
-        ],
-        "disabled": false,
-        "duration": {},
-        "flags": {
-          "swse": {
-            "source": "talent",
-            "talentName": "Shii-Cho"
-          }
-        }
-      }
-    ],
+    "effects": [],
     "folder": null,
     "sort": 0,
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "lightsaberFormImplementation": {
+          "status": "active-form-only",
+          "rule": "Only one Lightsaber Form can be active at a time; inactive forms grant no benefits.",
+          "updated": "2026-06-11"
+        }
+      }
+    }
   },
   {
     "_id": "c95b1077ab31f9b0",
@@ -15566,8 +15509,8 @@
     "system": {
       "talent_tree": "Lightsaber Forms",
       "prerequisites": "Acrobatic Recovery",
-      "benefit": "Take 10 on Acrobatics checks to tumble even when distracted; each occupied square counts as 1.",
-      "description": "You may take 10 on Acrobatics checks to tumble even when distracted; occupied squares count as 1.",
+      "benefit": "You may Take 10 on Acrobatics checks to Tumble, even when distracted or threatened. Additionally, each threatened or occupied square that you Tumble through only counts as 1 square of movement.",
+      "description": "While Sokan is your active Lightsaber Form, you may Take 10 on Acrobatics checks to Tumble, even when distracted or threatened. Additionally, each threatened or occupied square that you Tumble through only counts as 1 square of movement. Only one Lightsaber Form can be active at a time.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
@@ -15580,7 +15523,15 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "lightsaberFormImplementation": {
+          "status": "active-form-only",
+          "rule": "Only one Lightsaber Form can be active at a time; inactive forms grant no benefits.",
+          "updated": "2026-06-11"
+        }
+      }
+    }
   },
   {
     "_id": "af8c6f9b6c06b448",
@@ -15590,8 +15541,8 @@
     "system": {
       "talent_tree": "Lightsaber Forms",
       "prerequisites": "Block, Deflect",
-      "benefit": "Reroll Use the Force checks for Block and Deflect.",
-      "description": "When using Block or Deflect, you may reroll your Use the Force check.",
+      "benefit": "You may reroll a failed Use the Force check when using the Block or Deflect Talents.",
+      "description": "While Soresu is your active Lightsaber Form, you may reroll a failed Use the Force check when using the Block or Deflect Talents. Only one Lightsaber Form can be active at a time.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
@@ -15604,7 +15555,15 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "lightsaberFormImplementation": {
+          "status": "active-form-only",
+          "rule": "Only one Lightsaber Form can be active at a time; inactive forms grant no benefits.",
+          "updated": "2026-06-11"
+        }
+      }
+    }
   },
   {
     "_id": "629a0efa292511b7",
@@ -15613,9 +15572,9 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Lightsaber Forms",
-      "prerequisites": "Base attack bonus +12, Weapon Specialization",
-      "benefit": "Use Deception to feint and shut off and reignite lightsaber as part of form actions.",
-      "description": "Use Deception to feint by deactivating and reigniting your lightsaber.",
+      "prerequisites": "Weapon Focus (Lightsabers), Weapon Specialization (Lightsabers), Base Attack Bonus +12",
+      "benefit": "By harnessing the unique characteristics of a Lightsaber, you can catch your opponent off guard by quickly shutting off and reigniting the blade. When wielding a Lightsaber, you may spend two Swift Actions to make a Deception check to Feint in combat.",
+      "description": "While Trakata is your active Lightsaber Form and you are wielding a Lightsaber, you may spend two Swift Actions to make a Deception check to Feint in combat by quickly shutting off and reigniting the blade. Only one Lightsaber Form can be active at a time.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
@@ -15628,7 +15587,15 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "lightsaberFormImplementation": {
+          "status": "active-form-only",
+          "rule": "Only one Lightsaber Form can be active at a time; inactive forms grant no benefits.",
+          "updated": "2026-06-11"
+        }
+      }
+    }
   },
   {
     "_id": "87c0a929a04eb870",
@@ -15637,9 +15604,9 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Lightsaber Forms",
-      "prerequisites": "Base attack bonus +12, Juyo",
-      "benefit": "Critical range extends to 19–20 and 19 is not an automatic hit.",
-      "description": "Critical hits occur on a 19–20; a 19 is not an automatic hit.",
+      "prerequisites": "Juyo, Weapon Focus (Lightsabers), Weapon Specialization (Lightsabers), Base Attack Bonus +12",
+      "benefit": "When attacking with a Lightsaber, you score a critical hit on a natural roll of 19 or 20. However, a natural 19 is not considered an automatic hit; if you roll a natural 19 and still miss the target, you do not score a critical hit.",
+      "description": "While Vaapad is your active Lightsaber Form, when attacking with a Lightsaber, you score a critical hit on a natural roll of 19 or 20. However, a natural 19 is not considered an automatic hit; if you roll a natural 19 and still miss the target, you do not score a critical hit. Only one Lightsaber Form can be active at a time.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
@@ -15652,7 +15619,15 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "lightsaberFormImplementation": {
+          "status": "active-form-only",
+          "rule": "Only one Lightsaber Form can be active at a time; inactive forms grant no benefits.",
+          "updated": "2026-06-11"
+        }
+      }
+    }
   },
   {
     "_id": "e58a8ad63c1d8771",
