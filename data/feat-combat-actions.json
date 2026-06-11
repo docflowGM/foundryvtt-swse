@@ -1753,5 +1753,183 @@
     "relatedSkills": [
       "damage"
     ]
+  },
+  "shield-expert": {
+    "name": "Shield Expert",
+    "actionType": "swift",
+    "requiredTalent": "Shield Expert",
+    "description": "Once per encounter, regain 10 SR on an active Energy Shield, up to the shield maximum.",
+    "manualResolution": false,
+    "resolutionMode": "armorTalent",
+    "armorTalentAction": "shieldExpert",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Once per encounter",
+      "Active Energy Shield"
+    ],
+    "notes": "Restores Shield Rating only; it does not recharge shield uses/charges.",
+    "relatedSkills": []
+  },
+  "force-fortification": {
+    "name": "Force Fortification",
+    "actionType": "reaction",
+    "requiredTalent": "Force Fortification",
+    "description": "Spend 1 Force Point to negate a Critical Hit scored against you; take normal damage instead.",
+    "manualResolution": false,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "forceFortification",
+    "spendAction": true,
+    "effects": [],
+    "notes": "The Force Point may be spent even if you already spent a Force Point earlier in the round.",
+    "relatedSkills": []
+  },
+  "greater-weapon-focus-lightsabers": {
+    "name": "Greater Weapon Focus (Lightsabers)",
+    "actionType": "passive",
+    "requiredTalent": "Greater Weapon Focus (Lightsabers)",
+    "description": "+1 melee attack rolls with lightsabers; stacks with Weapon Focus (Lightsabers).",
+    "manualResolution": true,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "greaterWeaponFocusLightsabers",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Applied through lightsaber melee attack context.",
+    "relatedSkills": [
+      "attack"
+    ]
+  },
+  "greater-weapon-specialization-lightsabers": {
+    "name": "Greater Weapon Specialization (Lightsabers)",
+    "actionType": "passive",
+    "requiredTalent": "Greater Weapon Specialization (Lightsabers)",
+    "description": "+2 melee damage rolls with lightsabers; stacks with Weapon Specialization (Lightsabers).",
+    "manualResolution": true,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "greaterWeaponSpecializationLightsabers",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Applied through lightsaber melee damage context.",
+    "relatedSkills": [
+      "damage"
+    ]
+  },
+  "multiattack-proficiency-lightsabers": {
+    "name": "Multiattack Proficiency (Lightsabers)",
+    "actionType": "passive",
+    "requiredTalent": "Multiattack Proficiency (Lightsabers)",
+    "description": "Reduce Full Attack multiattack penalties with lightsabers by 2 per rank/copy.",
+    "manualResolution": true,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "multiattackProficiencyLightsabers",
+    "spendAction": false,
+    "effects": [],
+    "notes": "This talent can be selected multiple times. Each rank adds another +2 penalty reduction.",
+    "relatedSkills": [
+      "attack"
+    ]
+  },
+  "severing-strike": {
+    "name": "Severing Strike",
+    "actionType": "free",
+    "requiredTalent": "Severing Strike",
+    "description": "When qualifying lightsaber damage would kill the target, deal half damage instead, move it -1 CT, and sever a limb.",
+    "manualResolution": false,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "severingStrike",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Use after confirming the damage equals/exceeds both current HP and Damage Threshold. Creates persistent injury; surgery/cybernetics adjudicated by GM.",
+    "relatedSkills": [
+      "damage"
+    ]
+  },
+  "improved-lightsaber-throw": {
+    "name": "Improved Lightsaber Throw",
+    "actionType": "standard",
+    "requiredTalent": "Improved Lightsaber Throw",
+    "description": "Spend 1 Force Point to throw a lightsaber through a 6-square line as an Area Attack.",
+    "manualResolution": false,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "improvedLightsaberThrow",
+    "spendAction": true,
+    "effects": [],
+    "notes": "Make one ranged attack roll vs each target Reflex; hit normal damage, miss half damage. Optional DC 20 UTF pull-back.",
+    "relatedSkills": [
+      "attack",
+      "useTheForce"
+    ]
+  },
+  "improved-riposte": {
+    "name": "Improved Riposte",
+    "actionType": "passive",
+    "requiredTalent": "Improved Riposte",
+    "description": "Successful Riposte causes the triggering Block not to count toward cumulative Block/Deflect penalties.",
+    "manualResolution": true,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "improvedRiposte",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Applied automatically by the Riposte action when a tracked Block use exists.",
+    "relatedSkills": [
+      "attack",
+      "useTheForce"
+    ]
+  },
+  "improved-redirect": {
+    "name": "Improved Redirect",
+    "actionType": "passive",
+    "requiredTalent": "Improved Redirect",
+    "description": "Once per turn, successful Redirect causes the triggering Deflect not to count toward cumulative Block/Deflect penalties.",
+    "manualResolution": true,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "improvedRedirect",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Applied automatically by the Redirect Shot action when a tracked Deflect use exists.",
+    "relatedSkills": [
+      "attack",
+      "useTheForce"
+    ]
+  },
+  "lightsaber-form-savant": {
+    "name": "Lightsaber Form Savant",
+    "actionType": "swift",
+    "requiredTalent": "Lightsaber Form Savant",
+    "description": "Once per encounter per rank, recover one spent [Lightsaber Form] Force Power without spending a Force Point.",
+    "manualResolution": true,
+    "resolutionMode": "forceSuite",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Handled from the Force Suite discard pile, like Telekinetic Savant and Influence Savant.",
+    "relatedSkills": []
+  },
+  "thrown-lightsaber-mastery": {
+    "name": "Thrown Lightsaber Mastery",
+    "actionType": "passive",
+    "requiredTalent": "Thrown Lightsaber Mastery",
+    "description": "Targets successfully struck by a thrown lightsaber move at half Speed until the beginning of your next turn.",
+    "manualResolution": true,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "thrownLightsaberMastery",
+    "spendAction": false,
+    "effects": [],
+    "notes": "Improved Lightsaber Throw reminds users of this rider.",
+    "relatedSkills": [
+      "damage"
+    ]
+  },
+  "shoto-master": {
+    "name": "Shoto Master",
+    "actionType": "passive",
+    "requiredTalent": "Shoto Master",
+    "description": "Treat a one-handed lightsaber as light when wielding it with a light lightsaber/shoto; Lightsaber Defense may be free with that loadout.",
+    "manualResolution": true,
+    "resolutionMode": "lightsaberTalent",
+    "lightsaberTalentAction": "shotoMaster",
+    "spendAction": false,
+    "effects": [],
+    "notes": "When owned, the Lightsaber Defense action uses Free action economy; loadout requirement remains player/GM adjudicated.",
+    "relatedSkills": []
   }
 }

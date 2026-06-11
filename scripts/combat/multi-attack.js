@@ -346,30 +346,39 @@ function weaponGroupToSystemKey(weaponGroup) {
 export function getMultiattackReduction(actor, weaponGroup) {
   if (!actor || !weaponGroup) {return 0;}
 
-  // Try AE-derived system path first
+  // Active Effect-derived system path. Keep it, but do not trust it as the only
+  // source because repeatable talents are sometimes represented as one owned
+  // item with a rank/quantity or a name suffix like "(2)".
   const systemKey = weaponGroupToSystemKey(weaponGroup);
+  let aeTotal = 0;
   if (systemKey) {
     const aeValue = actor.system?.attacks?.[systemKey]?.multiattack;
     if (Number.isFinite(Number(aeValue)) && Number(aeValue) > 0) {
-      return Number(aeValue);
+      aeTotal = Number(aeValue);
     }
   }
 
-  // Fallback: scan owned talents/feats for matching Multiattack Proficiency entries
+  // Fallback/direct scan: each owned rank/copy reduces the penalty by 2.
   const normalizedGroup = String(weaponGroup).toLowerCase();
-  let total = 0;
+  let scannedTotal = 0;
   for (const item of actor.items ?? []) {
     if (item.type !== 'talent' && item.type !== 'feat') {continue;}
     const name = (item.name ?? '').toLowerCase();
     if (!name.includes('multiattack proficiency')) {continue;}
-    // Match the weapon group in the name, e.g. "multiattack proficiency (rifles)"
-    if (name.includes(normalizedGroup) ||
+    const matchesGroup = name.includes(normalizedGroup) ||
         (normalizedGroup === WEAPON_GROUPS.ADVANCED_MELEE && (name.includes('advanced melee') || name.includes('advanced-melee'))) ||
-        (normalizedGroup === WEAPON_GROUPS.HEAVY && name.includes('heavy weapon'))) {
-      total += 2;
-    }
+        (normalizedGroup === WEAPON_GROUPS.HEAVY && name.includes('heavy weapon')) ||
+        (normalizedGroup === WEAPON_GROUPS.LIGHTSABERS && name.includes('lightsaber'));
+    if (!matchesGroup) continue;
+
+    const parentheticalRank = Number(name.match(/\((\d+)\)\s*$/)?.[1] ?? 0) || 0;
+    const systemRank = Number(item.system?.quantity ?? item.system?.rank ?? item.system?.ranks ?? item.system?.uses?.max ?? 0) || 0;
+    const ranks = Math.max(1, parentheticalRank || systemRank || 1);
+    scannedTotal += 2 * ranks;
   }
-  return total;
+
+  // Use whichever source best represents the actor's current state.
+  return Math.max(aeTotal, scannedTotal);
 }
 
 // ============================================================================

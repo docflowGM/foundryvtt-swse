@@ -849,13 +849,22 @@
     "system": {
       "talent_tree": "Armor Specialist",
       "prerequisites": "Armored Defense",
-      "benefit": "Increase the maximum Dexterity bonus you can apply while wearing armor by +1.",
-      "description": "Your Reflex Defense bonus equals heroic level plus half armor bonus or armor bonus; counts as Armored and Improved Armored Defense.",
+      "benefit": "The maximum Dexterity bonus of your Armor improves by +1. You must be proficient with the Armor you are wearing to gain this benefit.",
+      "description": "The maximum Dexterity bonus of your Armor improves by +1. You must be proficient with the Armor you are wearing to gain this benefit.",
       "class": "Soldier",
       "costNumeric": null,
       "category": "Soldier",
-      "tree": "Knight's Armor",
-      "treeId": "knight-s-armor"
+      "tree": "Armor Specialist",
+      "treeId": "armor-specialist",
+      "implementationNote": "Handled by defense/armor calculators. Applies only while wearing proficient armor.",
+      "effects": [],
+      "abilityMeta": {
+        "implementationNote": "Handled by defense/armor calculators. Applies only while wearing proficient armor.",
+        "runtime": "armor-calculator",
+        "tags": [
+          "armor-specialist"
+        ]
+      }
     },
     "effects": [],
     "folder": null,
@@ -872,14 +881,23 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Armor Specialist",
-      "prerequisites": null,
-      "benefit": "Your Reflex Defense bonus equals either your heroic level or your armor bonus.",
-      "description": "Your Reflex Defense bonus equals either your heroic level or your armor bonus.",
+      "prerequisites": "",
+      "benefit": "When calculating your Reflex Defense, you may add either your Heroic Level or your Armor bonus, whichever is higher. You must be proficient with the Armor you are wearing to gain this benefit.",
+      "description": "When calculating your Reflex Defense, you may add either your Heroic Level or your Armor bonus, whichever is higher. You must be proficient with the Armor you are wearing to gain this benefit.",
       "class": "Soldier",
       "costNumeric": null,
       "category": "Soldier",
       "tree": "Armor Specialist",
-      "treeId": "armor-specialist"
+      "treeId": "armor-specialist",
+      "implementationNote": "Handled by defense calculator. Applies only while wearing proficient armor.",
+      "effects": [],
+      "abilityMeta": {
+        "implementationNote": "Handled by defense calculator. Applies only while wearing proficient armor.",
+        "runtime": "armor-calculator",
+        "tags": [
+          "armor-specialist"
+        ]
+      }
     },
     "effects": [
       {
@@ -920,13 +938,22 @@
     "system": {
       "talent_tree": "Armor Specialist",
       "prerequisites": "Armored Defense",
-      "benefit": "Your Reflex Defense bonus equals either your heroic level + half your armor bonus, or your armor bonus.",
-      "description": "Your Reflex Defense bonus equals either your heroic level plus half your armor bonus or your armor bonus.",
+      "benefit": "When calculating your Reflex Defense, you may add your Heroic Level plus one-half your Armor bonus (rounded down), or your Armor bonus, whichever is higher. You must be proficient with the Armor you are wearing to gain this benefit.",
+      "description": "When calculating your Reflex Defense, you may add your Heroic Level plus one-half your Armor bonus (rounded down), or your Armor bonus, whichever is higher. You must be proficient with the Armor you are wearing to gain this benefit.",
       "class": "Soldier",
       "costNumeric": null,
       "category": "Soldier",
       "tree": "Armor Specialist",
-      "treeId": "armor-specialist"
+      "treeId": "armor-specialist",
+      "implementationNote": "Handled by defense calculator. Applies only while wearing proficient armor.",
+      "effects": [],
+      "abilityMeta": {
+        "implementationNote": "Handled by defense calculator. Applies only while wearing proficient armor.",
+        "runtime": "armor-calculator",
+        "tags": [
+          "armor-specialist"
+        ]
+      }
     },
     "effects": [
       {
@@ -966,13 +993,22 @@
     "system": {
       "talent_tree": "Armor Specialist",
       "prerequisites": "Armored Defense",
-      "benefit": "Armor does not reduce speed or distance moved.",
-      "description": "Armor does not reduce your speed or distance moved.",
+      "benefit": "Your Armor does not reduce your Speed or the distance you can move while Running. You must be proficient with the Armor you are wearing to gain this benefit.",
+      "description": "Your Armor does not reduce your Speed or the distance you can move while Running. You must be proficient with the Armor you are wearing to gain this benefit.",
       "class": "Soldier",
       "costNumeric": null,
       "category": "Soldier",
       "tree": "Armor Specialist",
-      "treeId": "armor-specialist"
+      "treeId": "armor-specialist",
+      "implementationNote": "Handled by armor movement calculation. Applies only while wearing proficient armor.",
+      "effects": [],
+      "abilityMeta": {
+        "implementationNote": "Handled by armor movement calculation. Applies only while wearing proficient armor.",
+        "runtime": "armor-calculator",
+        "tags": [
+          "armor-specialist"
+        ]
+      }
     },
     "effects": [
       {
@@ -1013,13 +1049,22 @@
     "system": {
       "talent_tree": "Armor Specialist",
       "prerequisites": "Armored Defense",
-      "benefit": "Increase your armor bonus to Reflex Defense and equipment bonus to Fortitude Defense by +1.",
-      "description": "Increase armor bonus to Reflex Defense and equipment bonus to Fortitude Defense by +1.",
+      "benefit": "When wearing Armor with which you are proficient, your Armor bonus to your Reflex Defense and Equipment bonus to your Fortitude Defense each increases by +1.",
+      "description": "When wearing Armor with which you are proficient, your Armor bonus to your Reflex Defense and Equipment bonus to your Fortitude Defense each increases by +1.",
       "class": "Soldier",
       "costNumeric": null,
       "category": "Soldier",
       "tree": "Armor Specialist",
-      "treeId": "armor-specialist"
+      "treeId": "armor-specialist",
+      "implementationNote": "Handled by defense calculator. Applies only while wearing proficient armor.",
+      "effects": [],
+      "abilityMeta": {
+        "implementationNote": "Handled by defense calculator. Applies only while wearing proficient armor.",
+        "runtime": "armor-calculator",
+        "tags": [
+          "armor-specialist"
+        ]
+      }
     },
     "effects": [
       {
@@ -1059,14 +1104,35 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Armor Specialist",
-      "prerequisites": "Armor Proficiency (light)",
-      "benefit": "Once per encounter, spend a swift action to regain 10 shield rating (SR), up to the shield’s maximum, on an active personal shield.",
-      "description": "Once per encounter, spend a swift action to regain 10 shield rating up to its maximum.",
+      "prerequisites": "Armor Proficiency (Light)",
+      "benefit": "You are an expert in using Energy Shields for maximum effectiveness. Once per encounter, you can spend a Swift Action to regain 10 points of SR (up to the shield's maximum) on an active Energy Shield.",
+      "description": "You are an expert in using Energy Shields for maximum effectiveness. Once per encounter, you can spend a Swift Action to regain 10 points of SR (up to the shield's maximum) on an active Energy Shield.",
       "class": "Soldier",
       "costNumeric": null,
       "category": "Soldier",
       "tree": "Armor Specialist",
-      "treeId": "armor-specialist"
+      "treeId": "armor-specialist",
+      "implementationNote": "Implemented through ArmorTalentActions.promptShieldExpert and the combat action tracker.",
+      "effects": [],
+      "abilityMeta": {
+        "implementationNote": "Implemented through ArmorTalentActions.promptShieldExpert and the combat action tracker.",
+        "runtime": "armor-talent-action",
+        "tags": [
+          "armor-specialist"
+        ],
+        "grantedCombatActions": [
+          {
+            "id": "shield-expert",
+            "name": "Shield Expert",
+            "actionType": "swift",
+            "resolutionMode": "armorTalent",
+            "armorTalentAction": "shieldExpert",
+            "spendAction": true,
+            "description": "You are an expert in using Energy Shields for maximum effectiveness. Once per encounter, you can spend a Swift Action to regain 10 points of SR (up to the shield's maximum) on an active Energy Shield.",
+            "notes": "Once per encounter, restores 10 SR to an active Energy Shield up to its maximum."
+          }
+        ]
+      }
     },
     "effects": [],
     "folder": null,
@@ -5606,13 +5672,24 @@
     "system": {
       "talent_tree": "Duelist",
       "prerequisites": null,
-      "benefit": "Negate critical hits and take normal damage instead.",
-      "description": "When you would suffer a critical hit, negate the critical and take normal damage instead.",
+      "benefit": "As a Reaction, you can spend a Force Point to negate a Critical Hit scored against you, taking normal damage instead. You can spend this Force Point even if you have already spent a Force Point earlier in the round.",
+      "description": "As a Reaction, you can spend a Force Point to negate a Critical Hit scored against you, taking normal damage instead. You can spend this Force Point even if you have already spent a Force Point earlier in the round.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Duelist",
-      "treeId": "duelist"
+      "treeId": "duelist",
+      "abilityMeta": {
+        "mechanicsMode": "active_reaction_force_point_critical_negation",
+        "applicationScope": "critical_hit_response",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "manualResolution": false,
+        "actionType": "reaction",
+        "spendsForcePoint": 1
+      },
+      "executionModel": "PASSIVE",
+      "subType": "STATE"
     },
     "effects": [],
     "folder": null,
@@ -5630,43 +5707,41 @@
   },
   {
     "_id": "3038f4c26de19e39",
-    "name": "Greater Weapon Focus (lightsabers)",
+    "name": "Greater Weapon Focus (Lightsabers)",
     "type": "talent",
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Duelist",
       "prerequisites": "Weapon Focus (lightsabers)",
-      "benefit": "Gain an additional +1 attack with lightsabers.",
-      "description": "Gain +1 attack with lightsabers.",
+      "benefit": "You gain a +1 bonus on melee attack rolls with Lightsabers. This bonus stacks with the bonus granted by the Weapon Focus (Lightsabers) feat.",
+      "description": "You gain a +1 bonus on melee attack rolls with Lightsabers. This bonus stacks with the bonus granted by the Weapon Focus (Lightsabers) feat.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Duelist",
-      "treeId": "duelist"
-    },
-    "effects": [
-      {
-        "_id": "e871f71e-474b-4e58-b378-9ebb4f6702c3",
-        "name": "Greater Weapon Focus (lightsabers)",
-        "type": "talent-effect",
-        "icon": "icons/svg/item-bag.svg",
-        "changes": [
+      "treeId": "duelist",
+      "abilityMeta": {
+        "mechanicsMode": "passive_lightsaber_melee_attack_bonus",
+        "applicationScope": "lightsaber_melee_attack_roll",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "manualResolution": false,
+        "rules": [
           {
-            "key": "system.attacks.lightsaber",
-            "mode": 2,
-            "value": "1"
+            "type": "WEAPON_ATTACK_BONUS",
+            "weaponGroups": [
+              "lightsabers"
+            ],
+            "requiresAttackType": "melee",
+            "value": 1,
+            "label": "Greater Weapon Focus (Lightsabers)"
           }
-        ],
-        "disabled": false,
-        "duration": {},
-        "flags": {
-          "swse": {
-            "source": "talent",
-            "talentName": "Greater Weapon Focus (lightsabers)"
-          }
-        }
-      }
-    ],
+        ]
+      },
+      "executionModel": "PASSIVE",
+      "subType": "STATE"
+    },
+    "effects": [],
     "folder": null,
     "sort": 0,
     "ownership": {
@@ -5676,43 +5751,41 @@
   },
   {
     "_id": "9cda854b5448414f",
-    "name": "Greater Weapon Specialization (lightsabers)",
+    "name": "Greater Weapon Specialization (Lightsabers)",
     "type": "talent",
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Duelist",
       "prerequisites": "Weapon Specialization (lightsabers)",
-      "benefit": "Gain +2 damage with lightsabers.",
-      "description": "Gain +2 damage with lightsabers.",
+      "benefit": "You gain a +2 bonus on melee damage rolls with Lightsabers. This bonus stacks with the bonus granted by the Weapon Specialization (Lightsabers) Talent.",
+      "description": "You gain a +2 bonus on melee damage rolls with Lightsabers. This bonus stacks with the bonus granted by the Weapon Specialization (Lightsabers) Talent.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Duelist",
-      "treeId": "duelist"
-    },
-    "effects": [
-      {
-        "_id": "bd567e20-34f0-482d-8cc0-94ada4b95c53",
-        "name": "Greater Weapon Specialization (lightsabers)",
-        "type": "talent-effect",
-        "icon": "icons/svg/item-bag.svg",
-        "changes": [
+      "treeId": "duelist",
+      "abilityMeta": {
+        "mechanicsMode": "passive_lightsaber_melee_damage_bonus",
+        "applicationScope": "lightsaber_melee_damage_roll",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "manualResolution": false,
+        "rules": [
           {
-            "key": "system.damage.lightsaber",
-            "mode": 2,
-            "value": "2"
+            "type": "WEAPON_DAMAGE_BONUS",
+            "weaponGroups": [
+              "lightsabers"
+            ],
+            "requiresAttackType": "melee",
+            "value": 2,
+            "label": "Greater Weapon Specialization (Lightsabers)"
           }
-        ],
-        "disabled": false,
-        "duration": {},
-        "flags": {
-          "swse": {
-            "source": "talent",
-            "talentName": "Greater Weapon Specialization (lightsabers)"
-          }
-        }
-      }
-    ],
+        ]
+      },
+      "executionModel": "PASSIVE",
+      "subType": "STATE"
+    },
+    "effects": [],
     "folder": null,
     "sort": 0,
     "ownership": {
@@ -5728,13 +5801,25 @@
     "system": {
       "talent_tree": "Duelist",
       "prerequisites": null,
-      "benefit": "Make a single ranged attack with a thrown lightsaber comparing to Reflex of all targets in a 6-square line; on miss target takes half; DC 20 to return.",
-      "description": "Make a single ranged attack with a thrown lightsaber against all targets in a 6-square line; half damage on a miss, DC 20 to return.",
+      "benefit": "As a Standard Action, spend a Force Point to throw your Lightsaber through a 6-square line. Make one ranged attack roll and compare it to each target's Reflex Defense; targets hit take normal lightsaber damage, and targets missed take half damage. This attack is an Area Attack. You can pull your Lightsaber back with a Swift Action and a DC 20 Use the Force check.",
+      "description": "As a Standard Action, spend a Force Point to throw your Lightsaber through a 6-square line. Make one ranged attack roll and compare it to each target's Reflex Defense; targets hit take normal lightsaber damage, and targets missed take half damage. This attack is an Area Attack. You can pull your Lightsaber back with a Swift Action and a DC 20 Use the Force check.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Duelist",
-      "treeId": "duelist"
+      "treeId": "duelist",
+      "abilityMeta": {
+        "mechanicsMode": "active_force_point_thrown_lightsaber_area_attack",
+        "applicationScope": "standard_action_area_attack",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "manualResolution": false,
+        "actionType": "standard",
+        "spendsForcePoint": 1,
+        "areaAttack": true
+      },
+      "executionModel": "PASSIVE",
+      "subType": "STATE"
     },
     "effects": [],
     "folder": null,
@@ -5752,13 +5837,26 @@
     "system": {
       "talent_tree": "Duelist",
       "prerequisites": "Redirect Shot, Deflect",
-      "benefit": "Once per turn when you redirect an attack, do not count the initial deflect penalty.",
-      "description": "Once per turn, when you redirect an attack, the initial Deflect penalty does not apply.",
+      "benefit": "Once per turn, when you successfully Redirect an attack using the Redirect Shot Talent, you do not count the Deflect Talent use that triggered the redirected attack; subsequent Deflect attempts before your next turn impose penalties as normal.",
+      "description": "Once per turn, when you successfully Redirect an attack using the Redirect Shot Talent, you do not count the Deflect Talent use that triggered the redirected attack; subsequent Deflect attempts before your next turn impose penalties as normal.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Duelist",
-      "treeId": "duelist"
+      "treeId": "duelist",
+      "abilityMeta": {
+        "mechanicsMode": "triggered_deflect_penalty_credit_after_redirect",
+        "applicationScope": "redirect_shot_runtime",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "manualResolution": false,
+        "uses": {
+          "max": 1,
+          "perTurn": true
+        }
+      },
+      "executionModel": "PASSIVE",
+      "subType": "STATE"
     },
     "effects": [],
     "folder": null,
@@ -5776,13 +5874,22 @@
     "system": {
       "talent_tree": "Duelist",
       "prerequisites": "Riposte, Block",
-      "benefit": "When you make a riposte, you do not count the initial block penalty.",
-      "description": "When you make a riposte, the initial Block penalty does not apply.",
+      "benefit": "When you successfully make a Riposte attack using the Riposte Talent, you do not count the Block Talent use that triggered the Riposte; subsequent Block attempts before your next turn impose penalties as normal.",
+      "description": "When you successfully make a Riposte attack using the Riposte Talent, you do not count the Block Talent use that triggered the Riposte; subsequent Block attempts before your next turn impose penalties as normal.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Duelist",
-      "treeId": "duelist"
+      "treeId": "duelist",
+      "abilityMeta": {
+        "mechanicsMode": "triggered_block_penalty_credit_after_riposte",
+        "applicationScope": "riposte_runtime",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "manualResolution": false
+      },
+      "executionModel": "PASSIVE",
+      "subType": "STATE"
     },
     "effects": [],
     "folder": null,
@@ -5800,13 +5907,25 @@
     "system": {
       "talent_tree": "Duelist",
       "prerequisites": null,
-      "benefit": "Once per encounter, return one lightsaber form to your suite without spending a Force Point.",
-      "description": "Once per encounter, return one expended lightsaber form to your suite without spending a Force Point.",
+      "benefit": "Once per encounter as a Swift Action, you can return any one spent Force Power with the [Lightsaber Form] descriptor to your Force Power Suite without spending a Force Point. You can select this Talent multiple times; each time you select it, you can use it one additional time per encounter.",
+      "description": "Once per encounter as a Swift Action, you can return any one spent Force Power with the [Lightsaber Form] descriptor to your Force Power Suite without spending a Force Point. You can select this Talent multiple times; each time you select it, you can use it one additional time per encounter.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Duelist",
-      "treeId": "duelist"
+      "treeId": "duelist",
+      "abilityMeta": {
+        "mechanicsMode": "encounter_limited_lightsaber_form_recovery",
+        "applicationScope": "force_suite_discard_recovery",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "manualResolution": false,
+        "actionType": "swift",
+        "repeatable": true,
+        "descriptor": "Lightsaber Form"
+      },
+      "executionModel": "PASSIVE",
+      "subType": "STATE"
     },
     "effects": [],
     "folder": null,
@@ -5818,19 +5937,33 @@
   },
   {
     "_id": "317400e9ea2b66c7",
-    "name": "Multiattack Proficiency (lightsabers)",
+    "name": "Multiattack Proficiency (Lightsabers)",
     "type": "talent",
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Duelist",
       "prerequisites": null,
-      "benefit": "Reduce multiattack penalties with lightsabers by 2; may be taken multiple times.",
-      "description": "Reduce the attack penalty for multiple attacks with lightsabers by 2; may be taken multiple times.",
+      "benefit": "Whenever you make multiple attacks with any type of Lightsaber as part of a Full Attack, you reduce the penalty on your attack rolls by 2. You can take this Talent multiple times; each time you take this Talent, you reduce the penalty on your attack rolls by an additional 2.",
+      "description": "Whenever you make multiple attacks with any type of Lightsaber as part of a Full Attack, you reduce the penalty on your attack rolls by 2. You can take this Talent multiple times; each time you take this Talent, you reduce the penalty on your attack rolls by an additional 2.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Duelist",
-      "treeId": "duelist"
+      "treeId": "duelist",
+      "abilityMeta": {
+        "mechanicsMode": "repeatable_multiattack_penalty_reduction",
+        "applicationScope": "lightsaber_full_attack_penalty_math",
+        "staticSheetPolicy": "include",
+        "requiresRuntimeContext": true,
+        "manualResolution": false,
+        "repeatable": true,
+        "rankValue": 2,
+        "weaponGroups": [
+          "lightsabers"
+        ]
+      },
+      "executionModel": "PASSIVE",
+      "subType": "STATE"
     },
     "effects": [],
     "folder": null,
@@ -5848,37 +5981,26 @@
     "system": {
       "talent_tree": "Duelist",
       "prerequisites": null,
-      "benefit": "If you deal damage exceeding current HP and threshold, deal half damage and sever (special effect) while moving down the track.",
-      "description": "If damage exceeds the target's current hit points and damage threshold, deal half damage again, move the target down the condition track, and sever a limb.",
+      "benefit": "When lightsaber damage would kill your target by equaling or exceeding both its current Hit Points and Damage Threshold, you may instead deal half damage, move the target -1 step on the Condition Track, and sever one arm or leg. The injury creates a Persistent Condition that can only be removed by Surgery; a cybernetic prosthesis negates the reductions and penalties.",
+      "description": "When lightsaber damage would kill your target by equaling or exceeding both its current Hit Points and Damage Threshold, you may instead deal half damage, move the target -1 step on the Condition Track, and sever one arm or leg. Arm injuries prevent use of that hand and impose -5 on Strength/Dexterity checks and skills. Leg injuries knock the target Prone, halve Speed and carrying capacity, and impose the same -5 penalty. The injury is a Persistent Condition until Surgery or cybernetics resolves it.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Duelist",
-      "treeId": "duelist"
+      "treeId": "duelist",
+      "abilityMeta": {
+        "mechanicsMode": "triggered_lightsaber_nonlethal_maiming_replacement",
+        "applicationScope": "post_damage_before_kill_resolution",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "manualResolution": false,
+        "conditionTrackOnly": true,
+        "persistentCondition": true
+      },
+      "executionModel": "PASSIVE",
+      "subType": "STATE"
     },
-    "effects": [
-      {
-        "_id": "8a7d9568-c68f-4b0e-a64a-0064e0dd2330",
-        "name": "Severing Strike",
-        "type": "talent-effect",
-        "icon": "icons/svg/item-bag.svg",
-        "changes": [
-          {
-            "key": "system.damage.limb_loss",
-            "mode": 5,
-            "value": "true"
-          }
-        ],
-        "disabled": false,
-        "duration": {},
-        "flags": {
-          "swse": {
-            "source": "talent",
-            "talentName": "Severing Strike"
-          }
-        }
-      }
-    ],
+    "effects": [],
     "folder": null,
     "sort": 0,
     "ownership": {
@@ -5894,13 +6016,23 @@
     "system": {
       "talent_tree": "Duelist",
       "prerequisites": "Shoto Focus",
-      "benefit": "One-handed lightsabers are treated as light for shoto; may activate Lightsaber Defense as a free action with a shoto.",
-      "description": "A one-handed lightsaber is considered light when used with a shoto; you may activate Lightsaber Defense as a free action when wielding a shoto.",
+      "benefit": "When you wield both a One-Handed Lightsaber and a Light Lightsaber, typically a Shoto or Guard Shoto, you can consider the One-Handed Lightsaber to be a Light Weapon. Additionally, if you have the Lightsaber Defense Talent, you can activate it as a Free Action on your turn instead of a Swift Action while wielding both weapons.",
+      "description": "When you wield both a One-Handed Lightsaber and a Light Lightsaber, typically a Shoto or Guard Shoto, you can consider the One-Handed Lightsaber to be a Light Weapon. Additionally, if you have the Lightsaber Defense Talent, you can activate it as a Free Action on your turn instead of a Swift Action while wielding both weapons.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Duelist",
-      "treeId": "duelist"
+      "treeId": "duelist",
+      "abilityMeta": {
+        "mechanicsMode": "dual_lightsaber_loadout_modifier",
+        "applicationScope": "weapon_loadout_and_lightsaber_defense_action_cost",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "manualResolution": true,
+        "lightsaberDefenseActionType": "free"
+      },
+      "executionModel": "PASSIVE",
+      "subType": "STATE"
     },
     "effects": [],
     "folder": null,
@@ -5918,13 +6050,22 @@
     "system": {
       "talent_tree": "Duelist",
       "prerequisites": "Improved Lightsaber Throw",
-      "benefit": "Targets struck by a thrown lightsaber move at half speed (round down) until your next turn.",
-      "description": "Targets struck by a thrown lightsaber move at half speed until the end of your next turn.",
+      "benefit": "Any target successfully struck by a Lightsaber you Throw moves at half Speed, rounded down, until the beginning of your next turn.",
+      "description": "Any target successfully struck by a Lightsaber you Throw moves at half Speed, rounded down, until the beginning of your next turn.",
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Duelist",
-      "treeId": "duelist"
+      "treeId": "duelist",
+      "abilityMeta": {
+        "mechanicsMode": "thrown_lightsaber_hit_speed_rider",
+        "applicationScope": "post_hit_thrown_lightsaber",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "manualResolution": true
+      },
+      "executionModel": "PASSIVE",
+      "subType": "STATE"
     },
     "effects": [],
     "folder": null,
@@ -15062,7 +15203,7 @@
       "talent_tree": "Lightsaber Combat",
       "prerequisites": "Weapon Focus (Lightsabers)",
       "benefit": "You gain a +2 bonus on melee damage rolls with Lightsabers.",
-      "description": "Gain +2 melee damage with lightsabers.",
+      "description": "You gain a +2 bonus on melee damage rolls with Lightsabers.",
       "class": "Jedi",
       "costNumeric": null,
       "category": "Jedi",
@@ -15071,25 +15212,20 @@
       "executionModel": "PASSIVE",
       "subType": "STATE",
       "abilityMeta": {
-        "mechanicsMode": "conditional",
-        "applicationScope": "damage_context",
-        "staticSheetPolicy": "roll_context_only",
+        "mechanicsMode": "passive_lightsaber_melee_damage_bonus",
+        "applicationScope": "lightsaber_melee_damage_roll",
+        "staticSheetPolicy": "exclude",
         "requiresRuntimeContext": true,
-        "conditionSummary": "Weapon Specialization (Lightsabers): +2 damage on melee damage rolls with lightsabers.",
-        "modifiers": [
+        "manualResolution": false,
+        "rules": [
           {
-            "target": "damage.melee",
-            "value": 2,
-            "type": "untyped",
-            "predicates": [
-              "attack.with-melee",
-              "weapon.lightsaber"
+            "type": "WEAPON_DAMAGE_BONUS",
+            "weaponGroups": [
+              "lightsabers"
             ],
-            "enabled": true,
-            "priority": 500,
-            "staticSheetPolicy": "roll_context_only",
-            "requiresRuntimeContext": true,
-            "description": "Weapon Specialization (Lightsabers): +2 damage on melee damage rolls with lightsabers."
+            "requiresAttackType": "melee",
+            "value": 2,
+            "label": "Weapon Specialization (Lightsabers)"
           }
         ]
       }

@@ -540,6 +540,11 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
       }
     }
 
+    const hasJuggernaut = actor?.items?.some(i => i.type === 'talent' && i.name === 'Juggernaut') || false;
+    if (isProficient && hasJuggernaut) {
+      speedPenalty = 0;
+    }
+
     this.effectiveSpeed = Math.max(1, baseSpeed - speedPenalty);
   }
 
@@ -578,8 +583,13 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     const hasImprovedArmoredDefense = actor?.items?.some(i =>
       i.type === 'talent' && i.name === 'Improved Armored Defense'
     ) || false;
-    const hasArmorMastery = actor?.items?.some(i =>
-      i.type === 'talent' && i.name === 'Armor Mastery'
+    const hasArmorMastery = actor?.items?.some(i => {
+      if (i.type !== 'talent' || i.name !== 'Armor Mastery') return false;
+      const text = [i.system?.description?.value ?? i.system?.description, i.system?.benefit, i.system?.tree, i.system?.treeId].filter(Boolean).join(' ').toLowerCase();
+      return text.includes('maximum dexterity') || text.includes('max dex') || text.includes('armor-specialist') || text.includes('17cec542331cb4e4');
+    }) || false;
+    const hasSecondSkin = actor?.items?.some(i =>
+      i.type === 'talent' && i.name === 'Second Skin'
     ) || false;
 
     // Check for armoredDefenseForAll house rule - all characters get Armored Defense benefit
@@ -597,13 +607,16 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     if (equippedArmor) {
       // Get armor bonus (use defenseBonus or armorBonus field)
       armorBonus = equippedArmor.system.defenseBonus || equippedArmor.system.armorBonus || 0;
+      if (this.armorProficient && hasSecondSkin) {
+        armorBonus += 1;
+      }
 
       // Apply max ability bonus restriction (from armor max dex bonus or other limit)
       // This restriction applies to the configured ability modifier, not just DEX
       let maxAbilityBonus = equippedArmor.system.maxDexBonus;
       if (Number.isInteger(maxAbilityBonus)) {
         // Armor Mastery talent increases max ability bonus by +1
-        if (hasArmorMastery) {
+        if (this.armorProficient && hasArmorMastery) {
           maxAbilityBonus += 1;
         }
         reflexAbilityMod = Math.min(reflexAbilityMod, maxAbilityBonus);
@@ -611,10 +624,10 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
 
       // Calculate reflex defense based on armor and talents
       // SWSE Rules: Armor bonus REPLACES heroic level unless you have talents
-      if (hasImprovedArmoredDefense) {
+      if (this.armorProficient && hasImprovedArmoredDefense) {
         // Reflex Defense = max(level + floor(armor/2), armor)
         reflexBase += Math.max(level + Math.floor(armorBonus / 2), armorBonus);
-      } else if (hasArmoredDefense) {
+      } else if (this.armorProficient && hasArmoredDefense) {
         // Reflex Defense = max(level, armor)
         reflexBase += Math.max(level, armorBonus);
       } else {
@@ -673,6 +686,7 @@ export class SWSECharacterDataModel extends SWSEActorDataModel {
     let armorFortBonus = 0;
     if (equippedArmor && this.armorProficient) {
       armorFortBonus = equippedArmor.system.equipmentBonus || equippedArmor.system.fortBonus || 0;
+      if (hasSecondSkin) armorFortBonus += 1;
     }
 
     // Get species trait bonus for fortitude

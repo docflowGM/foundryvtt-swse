@@ -648,6 +648,24 @@ function collectWeaponRuleModifiers(actor, weapon, context = {}) {
           result.breakdown.push({ label: item.name, value, type: "attackAbilityBonus" });
           break;
         }
+        case "WEAPON_ATTACK_BONUS": {
+          if (!weaponMatchesGroup(weapon, rule.weaponGroups ?? rule.groups ?? [], context)) continue;
+          if (rule.requiresAttackType && getAttackType(weapon, context) !== String(rule.requiresAttackType).toLowerCase()) continue;
+          const value = Number(rule.value ?? rule.bonus ?? rule.params?.bonus ?? 0);
+          if (!Number.isFinite(value) || value === 0) continue;
+          result.attackBonus += value;
+          result.breakdown.push({ label: rule.label || item.name, value, type: "attack" });
+          break;
+        }
+        case "WEAPON_DAMAGE_BONUS": {
+          if (!weaponMatchesGroup(weapon, rule.weaponGroups ?? rule.groups ?? [], context)) continue;
+          if (rule.requiresAttackType && getAttackType(weapon, context) !== String(rule.requiresAttackType).toLowerCase()) continue;
+          const value = Number(rule.value ?? rule.bonus ?? rule.params?.bonus ?? 0);
+          if (!Number.isFinite(value) || value === 0) continue;
+          result.damageBonus += value;
+          result.breakdown.push({ label: rule.label || item.name, value, type: "damage" });
+          break;
+        }
         case "CRITICAL_DAMAGE_DIE_STEP": {
           if (rule.requiresUnarmed && !isUnarmedWeapon(weapon, context)) continue;
           if (rule.selectedChoice === true && !weaponMatchesSelectedChoice(item, weapon, context)) continue;

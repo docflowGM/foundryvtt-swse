@@ -27,6 +27,7 @@ import { GuardianSpiritActions } from "/systems/foundryvtt-swse/scripts/engine/t
 import { ConsularTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/consular-talent-actions.js";
 import { SentinelTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/sentinel-talent-actions.js";
 import { LightsaberTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-talent-actions.js";
+import { ArmorTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/armor-talent-actions.js";
 import { promptForcePowerRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
 import { AnimationEngine } from "/systems/foundryvtt-swse/scripts/engine/animation-engine.js";
 import { ActionEconomyIntegration } from "/systems/foundryvtt-swse/scripts/ui/combat/action-economy-integration.js";
@@ -8178,6 +8179,10 @@ const forcePoints = [];
       return await this._executeLightsaberTalentCombatAction(actionId, actionData, options);
     }
 
+    if (actionData?.resolutionMode === 'armorTalent' || actionData?.armorTalentAction || actionData?.ruleData?.armorTalentAction) {
+      return await this._executeArmorTalentCombatAction(actionId, actionData, options);
+    }
+
     // --- Manual/reference ability action cards ---
     // Multi-action feats/talents often unlock named actions whose real effect
     // still needs table or future engine resolution. Surface and track the
@@ -8479,7 +8484,11 @@ const forcePoints = [];
 
   async _executeLightsaberTalentCombatAction(actionId, actionData = {}, options = {}) {
     const kind = actionData?.lightsaberTalentAction ?? actionData?.ruleData?.lightsaberTalentAction ?? actionId;
-    const actionType = this._deriveCombatActionEconomyType(actionData);
+    let actionType = this._deriveCombatActionEconomyType(actionData);
+    if (kind === 'lightsaberDefense') {
+      const hasShotoMaster = this.actor?.items?.some?.(item => item?.type === 'talent' && String(item?.name ?? '').trim().toLowerCase().replace(/\s*\(\d+\)\s*$/, '') === 'shoto master');
+      if (hasShotoMaster) actionType = 'free';
+    }
 
     if (actionData?.spendAction !== false) {
       const allowed = await this._applyActionEconomy(actionType, {
@@ -8502,8 +8511,40 @@ const forcePoints = [];
     if (kind === 'preciseRedirect') return LightsaberTalentActions.announcePreciseRedirect(this.actor);
     if (kind === 'precision') return LightsaberTalentActions.promptPrecision(this.actor);
     if (kind === 'riposte') return LightsaberTalentActions.promptRiposte(this.actor);
+    if (kind === 'forceFortification') return LightsaberTalentActions.promptForceFortification(this.actor);
+    if (kind === 'improvedLightsaberThrow') return LightsaberTalentActions.promptImprovedLightsaberThrow(this.actor, { sourceElement: options?.sourceElement ?? null });
+    if (kind === 'severingStrike') return LightsaberTalentActions.promptSeveringStrike(this.actor);
+    if (kind === 'greaterWeaponFocusLightsabers') return LightsaberTalentActions.announceGreaterWeaponFocusLightsabers(this.actor);
+    if (kind === 'greaterWeaponSpecializationLightsabers') return LightsaberTalentActions.announceGreaterWeaponSpecializationLightsabers(this.actor);
+    if (kind === 'multiattackProficiencyLightsabers') return LightsaberTalentActions.announceMultiattackProficiencyLightsabers(this.actor);
+    if (kind === 'improvedRiposte') return LightsaberTalentActions.announceImprovedRiposte(this.actor);
+    if (kind === 'improvedRedirect') return LightsaberTalentActions.announceImprovedRedirect(this.actor);
+    if (kind === 'thrownLightsaberMastery') return LightsaberTalentActions.announceThrownLightsaberMastery(this.actor);
     if (kind === 'shotoFocus') return LightsaberTalentActions.announceShotoFocus(this.actor);
+    if (kind === 'shotoMaster') return LightsaberTalentActions.announceShotoMaster(this.actor);
     if (kind === 'weaponSpecializationLightsabers') return LightsaberTalentActions.announceWeaponSpecializationLightsabers(this.actor);
+
+    return this._announceManualCombatAction(actionId, actionData, { ...options, actionType });
+  }
+
+
+  async _executeArmorTalentCombatAction(actionId, actionData = {}, options = {}) {
+    const kind = actionData?.armorTalentAction ?? actionData?.ruleData?.armorTalentAction ?? actionId;
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+
+    if (actionData?.spendAction !== false) {
+      const allowed = await this._applyActionEconomy(actionType, {
+        source: options?.source ?? "armor-talent",
+        actionId,
+        actionName: actionData?.name ?? actionId,
+        sourceName: actionData?.sourceName ?? 'Armor Specialist Talent',
+        sourceType: 'talent',
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
+      });
+      if (!allowed) return null;
+    }
+
+    if (kind === 'shieldExpert') return ArmorTalentActions.promptShieldExpert(this.actor);
 
     return this._announceManualCombatAction(actionId, actionData, { ...options, actionType });
   }

@@ -5,6 +5,10 @@
  */
 
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
+
+function slugifyActionId(value) {
+  return String(value ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { ShellOverlayManager } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellOverlayManager.js";
@@ -302,8 +306,9 @@ export function activateForceUI(sheet, html, { signal } = {}) {
       }
       root?.classList.remove('is-picking-telekinetic-savant');
       root?.classList.remove('is-picking-influence-savant');
+      root?.classList.remove('is-picking-lightsaber-form-savant');
       root?.classList.toggle('is-picking-recovery');
-      html.querySelectorAll('[data-action="force-suite-pick-telekinetic-savant"]').forEach(other => other.classList.remove('sel'));
+      html.querySelectorAll('[data-action="force-suite-pick-telekinetic-savant"], [data-action="force-suite-pick-influence-savant"], [data-action="force-suite-pick-lightsaber-form-savant"]').forEach(other => other.classList.remove('sel'));
       button.classList.toggle('sel');
     }, { signal });
   });
@@ -324,8 +329,9 @@ export function activateForceUI(sheet, html, { signal } = {}) {
       }
       root?.classList.remove('is-picking-recovery');
       root?.classList.remove('is-picking-influence-savant');
+      root?.classList.remove('is-picking-lightsaber-form-savant');
       root?.classList.toggle('is-picking-telekinetic-savant');
-      html.querySelectorAll('[data-action="force-suite-pick-recovery"]').forEach(other => other.classList.remove('sel'));
+      html.querySelectorAll('[data-action="force-suite-pick-recovery"], [data-action="force-suite-pick-influence-savant"], [data-action="force-suite-pick-lightsaber-form-savant"]').forEach(other => other.classList.remove('sel'));
       button.classList.toggle('sel');
     }, { signal });
   });
@@ -346,8 +352,32 @@ export function activateForceUI(sheet, html, { signal } = {}) {
       }
       root?.classList.remove('is-picking-recovery');
       root?.classList.remove('is-picking-telekinetic-savant');
+      root?.classList.remove('is-picking-lightsaber-form-savant');
       root?.classList.toggle('is-picking-influence-savant');
-      html.querySelectorAll('[data-action="force-suite-pick-recovery"], [data-action="force-suite-pick-telekinetic-savant"]').forEach(other => other.classList.remove('sel'));
+      html.querySelectorAll('[data-action="force-suite-pick-recovery"], [data-action="force-suite-pick-telekinetic-savant"], [data-action="force-suite-pick-lightsaber-form-savant"]').forEach(other => other.classList.remove('sel'));
+      button.classList.toggle('sel');
+    }, { signal });
+  });
+
+  // Force Suite: enter Lightsaber Form Savant recovery mode
+  html.querySelectorAll('[data-action="force-suite-pick-lightsaber-form-savant"]').forEach(button => {
+    button.addEventListener('click', (event) => {
+      event.preventDefault();
+      if (button.classList.contains('disabled') || button.disabled) {
+        ui?.notifications?.warn?.('Lightsaber Form Savant has no eligible spent [Lightsaber Form] powers or no uses remaining.');
+        return;
+      }
+      const root = button.closest('[data-force-suite-tab]');
+      const hasEligible = !!root?.querySelector('[data-force-discard-pile] [data-action="force-suite-recover-one"][data-lightsaber-form="true"]');
+      if (!hasEligible) {
+        ui?.notifications?.info?.('No spent [Lightsaber Form] Force powers to recover.');
+        return;
+      }
+      root?.classList.remove('is-picking-recovery');
+      root?.classList.remove('is-picking-telekinetic-savant');
+      root?.classList.remove('is-picking-influence-savant');
+      root?.classList.toggle('is-picking-lightsaber-form-savant');
+      html.querySelectorAll('[data-action="force-suite-pick-recovery"], [data-action="force-suite-pick-telekinetic-savant"], [data-action="force-suite-pick-influence-savant"]').forEach(other => other.classList.remove('sel'));
       button.classList.toggle('sel');
     }, { signal });
   });
@@ -363,9 +393,10 @@ export function activateForceUI(sheet, html, { signal } = {}) {
       const spendingForcePoint = root?.classList.contains('is-picking-recovery');
       const usingTelekineticSavant = root?.classList.contains('is-picking-telekinetic-savant');
       const usingInfluenceSavant = root?.classList.contains('is-picking-influence-savant');
+      const usingLightsaberFormSavant = root?.classList.contains('is-picking-lightsaber-form-savant');
 
-      if (!spendingForcePoint && !usingTelekineticSavant && !usingInfluenceSavant) {
-        ui?.notifications?.info?.('Choose Spend Force Point, Telekinetic Savant, or Influence Savant before recovering a spent power.');
+      if (!spendingForcePoint && !usingTelekineticSavant && !usingInfluenceSavant && !usingLightsaberFormSavant) {
+        ui?.notifications?.info?.('Choose Spend Force Point, Telekinetic Savant, Influence Savant, or Lightsaber Form Savant before recovering a spent power.');
         return;
       }
 
@@ -377,19 +408,44 @@ export function activateForceUI(sheet, html, { signal } = {}) {
         ui?.notifications?.warn?.('Influence Savant can only recover spent powers with the [Mind-Affecting] descriptor.');
         return;
       }
+      if (usingLightsaberFormSavant && button.dataset.lightsaberForm !== 'true') {
+        ui?.notifications?.warn?.('Lightsaber Form Savant can only recover spent powers with the [Lightsaber Form] descriptor.');
+        return;
+      }
+
+      const talentRecoveryName = usingTelekineticSavant
+        ? 'Telekinetic Savant'
+        : usingInfluenceSavant
+          ? 'Influence Savant'
+          : usingLightsaberFormSavant
+            ? 'Lightsaber Form Savant'
+            : null;
+      if (talentRecoveryName && typeof sheet._applyActionEconomy === 'function') {
+        const allowed = await sheet._applyActionEconomy('swift', {
+          source: 'force-suite-talent-recovery',
+          actionId: slugifyActionId(talentRecoveryName),
+          actionName: talentRecoveryName,
+          sourceName: talentRecoveryName,
+          sourceType: 'talent'
+        });
+        if (!allowed) return;
+      }
 
       try {
         const result = usingTelekineticSavant
           ? await ForceExecutor.recoverTelekineticSavantPower(sheet.actor, itemId)
           : usingInfluenceSavant
             ? await ForceExecutor.recoverInfluenceSavantPower(sheet.actor, itemId)
-            : await ForceExecutor.recoverForcePowers(sheet.actor, [itemId]);
+            : usingLightsaberFormSavant
+              ? await ForceExecutor.recoverLightsaberFormSavantPower(sheet.actor, itemId)
+              : await ForceExecutor.recoverForcePowers(sheet.actor, [itemId]);
         if (result?.success) {
-          const spentMsg = usingTelekineticSavant ? ' (Telekinetic Savant)' : usingInfluenceSavant ? ' (Influence Savant)' : ' (Force Point spent)';
+          const spentMsg = usingTelekineticSavant ? ' (Telekinetic Savant)' : usingInfluenceSavant ? ' (Influence Savant)' : usingLightsaberFormSavant ? ' (Lightsaber Form Savant)' : ' (Force Point spent)';
           ui?.notifications?.info?.(`Force power recovered${spentMsg}.`);
           root?.classList.remove('is-picking-recovery');
           root?.classList.remove('is-picking-telekinetic-savant');
           root?.classList.remove('is-picking-influence-savant');
+          root?.classList.remove('is-picking-lightsaber-form-savant');
           sheet.render?.(false);
         } else {
           ui?.notifications?.warn?.(result?.error || 'Could not recover that Force power.');

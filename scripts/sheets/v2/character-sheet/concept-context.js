@@ -722,6 +722,27 @@ function isMindAffectingForcePowerEntry(power) {
   return /mind[-\s]?affecting|mind|telepathic|illusion|influence|mind trick|fear/.test(values);
 }
 
+function isLightsaberFormForcePowerEntry(power) {
+  const system = power?.system ?? {};
+  const values = [
+    power?.name,
+    power?.type,
+    system.type,
+    ...(Array.isArray(system.descriptor) ? system.descriptor : []),
+    ...(Array.isArray(system.descriptors) ? system.descriptors : []),
+    ...(Array.isArray(system.tags) ? system.tags : []),
+    system.discipline,
+    system.category,
+    system.subcategory,
+    system.powerType,
+    system.form,
+    system.lightsaberForm,
+    system.effect,
+    system.summary
+  ].filter(Boolean).join(' ').toLowerCase();
+  return /lightsaber[-\s]?form|form power|shii-cho|makashi|soresu|ataru|shien|djem so|niman|juyo|vaapad/.test(values);
+}
+
 function getTalentMaxUses(actor, talentName) {
   if (!actor?.items) return 0;
   const wanted = String(talentName ?? '').trim().toLowerCase().replace(/\s+/g, ' ');
@@ -764,6 +785,14 @@ function getInfluenceSavantState(actor) {
   const max = getTalentMaxUses(actor, 'Influence Savant');
   const encounterId = game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
   const flag = actor?.getFlag?.('foundryvtt-swse', 'influenceSavantUses') ?? actor?.flags?.['foundryvtt-swse']?.influenceSavantUses ?? {};
+  const used = flag?.encounterId === encounterId ? Math.max(0, Number(flag.used ?? 0) || 0) : 0;
+  return { max, used, remaining: Math.max(0, max - used), encounterId };
+}
+
+function getLightsaberFormSavantState(actor) {
+  const max = getTalentMaxUses(actor, 'Lightsaber Form Savant');
+  const encounterId = game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
+  const flag = actor?.getFlag?.('foundryvtt-swse', 'lightsaberFormSavantUses') ?? actor?.flags?.['foundryvtt-swse']?.lightsaberFormSavantUses ?? {};
   const used = flag?.encounterId === encounterId ? Math.max(0, Number(flag.used ?? 0) || 0) : 0;
   return { max, used, remaining: Math.max(0, max - used), encounterId };
 }
@@ -825,6 +854,7 @@ function normalizeForcePower(power, discarded = false, options = {}) {
     fpOk: p !== 'dark',
     telekinetic: isTelekineticForcePowerEntry(power),
     mindAffecting: isMindAffectingForcePowerEntry(power),
+    lightsaberForm: isForm || isLightsaberFormForcePowerEntry(power),
     discarded,
     // Legacy fields kept for backward compat with old force-tab
     summary: forceTextExcerpt(system.summary || system.description || power?.summary || '', 160)
@@ -946,6 +976,11 @@ export function buildForceTab(context) {
   influenceSavant.hasRecoverable = influenceSavant.recoverableCount > 0;
   influenceSavant.available = influenceSavant.max > 0 && influenceSavant.remaining > 0 && influenceSavant.hasRecoverable;
 
+  const lightsaberFormSavant = getLightsaberFormSavantState(actor);
+  lightsaberFormSavant.recoverableCount = discard.filter((power) => power.lightsaberForm).length;
+  lightsaberFormSavant.hasRecoverable = lightsaberFormSavant.recoverableCount > 0;
+  lightsaberFormSavant.available = lightsaberFormSavant.max > 0 && lightsaberFormSavant.remaining > 0 && lightsaberFormSavant.hasRecoverable;
+
   const forceSuite = {
     actorName: actor?.name || 'Unknown Force User',
     actorSubtitle,
@@ -975,6 +1010,7 @@ export function buildForceTab(context) {
     forcefulRecovery,
     telekineticSavant,
     influenceSavant,
+    lightsaberFormSavant,
     forceTalentActions: getForceTalentActionState(actor),
     hasDarkSideScore: (Number(context.darkSidePanel?.value) || 0) > 0
   };

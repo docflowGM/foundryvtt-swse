@@ -53,23 +53,8 @@ export const PHASE_2_TEST_FEATS = {
     executionModel: "PASSIVE",
     subType: "MODIFIER",
     abilityMeta: {
-      modifiers: [
-        {
-          target: "defense.fortitude",
-          type: "untyped",
-          value: 1,
-          enabled: true,
-          priority: 500,
-          description: "Armored Defense: +1 fortitude while wearing armor",
-          // PHASE 2: Condition on wearing armor
-          conditions: [
-            {
-              type: "EQUIPPED_ITEM_TYPE",
-              value: "armor"
-            }
-          ]
-        }
-      ]
+      modifiers: [],
+      implementationNote: "Armored Defense is formula logic owned by DefenseCalculator, not a flat defense modifier."
     }
   },
 

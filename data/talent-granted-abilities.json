@@ -2,7 +2,7 @@
   "_meta": {
     "version": "1.0.5",
     "description": "Comprehensive talent ability definitions for SWSE Foundry system",
-    "totalAbilities": 468,
+    "totalAbilities": 443,
     "lastModified": "2026-02-17",
     "multiOptionTalents": 9,
     "notes": "Includes 9 multi-option talents with 27 total sub-abilities (Pistol Duelist, Fool's Luck, Beloved, Dumb Luck, Cunning Strategist, Experienced Brawler, Shadow Striker, Swift Strider, Two-Faced) (27 Starship Maneuvers from Ace Pilot tree) (27 Starship Maneuvers from Ace Pilot tree)"
@@ -825,15 +825,15 @@
       "name": "Armored Defense",
       "talentName": "Armored Defense",
       "talentTree": "Armored Defense",
-      "description": "When wearing armor, gain +1 bonus to Reflex Defense. This stacks with the armor's bonus.",
+      "description": "When calculating Reflex Defense while wearing armor you are proficient with, use either your heroic level or your armor bonus, whichever is higher.",
       "actionType": "passive",
-      "condition": "Wearing armor",
+      "condition": "Wearing armor you are proficient with",
       "effects": [
         {
-          "type": "defenseBonus",
+          "type": "defenseFormula",
           "defense": "reflex",
-          "value": 1,
-          "condition": "wearingArmor"
+          "formula": "max(heroicLevel, armorBonus)",
+          "condition": "proficientArmor"
         }
       ],
       "tags": [
@@ -848,7 +848,7 @@
       "name": "Improved Armored Defense",
       "talentName": "Improved Armored Defense",
       "talentTree": "Armored Defense",
-      "description": "Increase armored defense bonus to +2.",
+      "description": "When calculating Reflex Defense while wearing armor you are proficient with, use either heroic level plus one-half armor bonus or armor bonus, whichever is higher.",
       "actionType": "passive",
       "prerequisites": [
         "armored-defense"
@@ -856,10 +856,10 @@
       "modifies": "armored-defense",
       "effects": [
         {
-          "type": "defenseBonus",
+          "type": "defenseFormula",
           "defense": "reflex",
-          "value": 1,
-          "stacks": true
+          "formula": "max(heroicLevel + floor(armorBonus / 2), armorBonus)",
+          "condition": "proficientArmor"
         }
       ],
       "tags": [
@@ -868,22 +868,23 @@
         "passive",
         "modifier"
       ],
-      "icon": "fas fa-shield-alt"
+      "icon": "fas fa-shield-alt",
+      "condition": "Wearing armor you are proficient with"
     },
     "juggernaut": {
       "id": "juggernaut",
       "name": "Juggernaut",
       "talentName": "Juggernaut",
       "talentTree": "Armored Defense",
-      "description": "While wearing heavy armor, reduce damage from non-area attacks by an amount equal to your armor's equipment bonus to Reflex Defense.",
+      "description": "Your armor does not reduce your speed or the distance you can move while running while you are proficient with the armor you are wearing.",
       "actionType": "passive",
-      "condition": "Wearing heavy armor",
+      "condition": "Wearing armor you are proficient with",
       "effects": [
         {
-          "type": "damageReduction",
-          "value": "armorBonus",
-          "condition": "heavyArmor",
-          "excludes": "areaAttacks"
+          "type": "movementRule",
+          "ignoreArmorSpeedPenalty": true,
+          "ignoreArmorRunPenalty": true,
+          "condition": "proficientArmor"
         }
       ],
       "tags": [
@@ -898,12 +899,22 @@
       "name": "Second Skin",
       "talentName": "Second Skin",
       "talentTree": "Armored Defense",
-      "description": "Increase your armor's maximum Dexterity bonus by +1.",
+      "description": "When wearing armor you are proficient with, your armor bonus to Reflex Defense and equipment bonus to Fortitude Defense each increase by +1.",
       "actionType": "passive",
       "effects": [
         {
-          "type": "armorEnhancement",
-          "maxDexBonus": 1
+          "type": "defenseBonus",
+          "defense": "reflex",
+          "value": 1,
+          "bonusAppliesTo": "armorBonus",
+          "condition": "proficientArmor"
+        },
+        {
+          "type": "defenseBonus",
+          "defense": "fortitude",
+          "value": 1,
+          "bonusAppliesTo": "equipmentBonus",
+          "condition": "proficientArmor"
         }
       ],
       "tags": [
@@ -911,7 +922,8 @@
         "mobility",
         "passive"
       ],
-      "icon": "fas fa-tshirt"
+      "icon": "fas fa-tshirt",
+      "condition": "Wearing armor you are proficient with"
     },
     "melee-smash": {
       "id": "melee-smash",
@@ -8395,6 +8407,56 @@
       ],
       "icon": "fas fa-spiral",
       "linkedAction": "starship-maneuver"
+    },
+    "armor-mastery": {
+      "id": "armor-mastery",
+      "name": "Armor Mastery",
+      "talentName": "Armor Mastery",
+      "talentTree": "Armor Specialist",
+      "description": "The maximum Dexterity bonus of your armor improves by +1 while you are proficient with the armor you are wearing.",
+      "actionType": "passive",
+      "condition": "Wearing armor you are proficient with",
+      "effects": [
+        {
+          "type": "armorEnhancement",
+          "maxDexBonus": 1,
+          "condition": "proficientArmor"
+        }
+      ],
+      "tags": [
+        "defense",
+        "armor",
+        "passive"
+      ],
+      "icon": "fas fa-user-shield"
+    },
+    "shield-expert": {
+      "id": "shield-expert",
+      "name": "Shield Expert",
+      "talentName": "Shield Expert",
+      "talentTree": "Armor Specialist",
+      "description": "Once per encounter as a Swift Action, regain 10 SR on an active Energy Shield, up to the shield maximum.",
+      "actionType": "swift",
+      "linkedAction": "shield-expert",
+      "uses": {
+        "max": 1,
+        "perEncounter": true
+      },
+      "effects": [
+        {
+          "type": "shieldRecovery",
+          "value": 10,
+          "target": "activeEnergyShield",
+          "cap": "shieldMaximum"
+        }
+      ],
+      "tags": [
+        "defense",
+        "armor",
+        "shield",
+        "swift"
+      ],
+      "icon": "fas fa-shield-alt"
     }
   }
 }

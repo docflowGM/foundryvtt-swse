@@ -141,6 +141,14 @@
             ◉ Influence Savant {{conceptLayout.force.forceSuite.influenceSavant.remaining}}/{{conceptLayout.force.forceSuite.influenceSavant.max}}
           </button>
           {{/if}}
+          {{#if conceptLayout.force.forceSuite.lightsaberFormSavant.max}}
+          <button type="button"
+                  class="rbtn tks {{#unless conceptLayout.force.forceSuite.lightsaberFormSavant.available}}disabled{{/unless}}"
+                  data-action="force-suite-pick-lightsaber-form-savant"
+                  title="Swift Action: recover one spent [Lightsaber Form] Force Power without spending a Force Point. Uses remaining: {{conceptLayout.force.forceSuite.lightsaberFormSavant.remaining}}/{{conceptLayout.force.forceSuite.lightsaberFormSavant.max}}">
+            ◆ Form Savant {{conceptLayout.force.forceSuite.lightsaberFormSavant.remaining}}/{{conceptLayout.force.forceSuite.lightsaberFormSavant.max}}
+          </button>
+          {{/if}}
           {{#if conceptLayout.force.forceSuite.forceTalentActions.aversion.available}}
           <button type="button" class="rbtn talent" data-action="force-talent-aversion" title="Swift Action: spend 1 Force Point; enemies treat all squares within 2 squares as difficult terrain until encounter end.">☉ Aversion</button>
           {{/if}}
@@ -168,6 +176,9 @@
         {{/if}}
         {{#if conceptLayout.force.forceSuite.influenceSavant.max}}
         <div class="rbtn-rule">Influence Savant: Swift Action, recover one spent [Mind-Affecting] power without spending a Force Point.</div>
+        {{/if}}
+        {{#if conceptLayout.force.forceSuite.lightsaberFormSavant.max}}
+        <div class="rbtn-rule">Lightsaber Form Savant: Swift Action, recover one spent [Lightsaber Form] power without spending a Force Point.</div>
         {{/if}}
         {{#if conceptLayout.force.forceSuite.forceTalentActions.aversion.available}}
         <div class="rbtn-rule">Aversion: Swift Action, spend 1 Force Point; enemies treat squares within 2 squares as difficult terrain until encounter end.</div>
@@ -197,8 +208,9 @@
                       data-item-id="{{power.id}}"
                       data-p="{{power.p}}"
                       data-telekinetic="{{#if power.telekinetic}}true{{else}}false{{/if}}"
-                      data-mind-affecting="{{#if power.mindAffecting}}true{{else}}false{{/if}}">
-                {{#if power.telekinetic}}✦ {{/if}}{{#if power.mindAffecting}}◉ {{/if}}{{power.name}}
+                      data-mind-affecting="{{#if power.mindAffecting}}true{{else}}false{{/if}}"
+                      data-lightsaber-form="{{#if power.lightsaberForm}}true{{else}}false{{/if}}">
+                {{#if power.telekinetic}}✦ {{/if}}{{#if power.mindAffecting}}◉ {{/if}}{{#if power.lightsaberForm}}◆ {{/if}}{{power.name}}
               </button>
             {{/each}}
           {{else}}

@@ -1264,15 +1264,26 @@ export class ModifierEngine {
       const isProficient = actorHasArmorProficiencyForArmor(actor, equippedArmor);
 
       // ===== TALENT CHECKS =====
-      // PHASE 4: Structured talent identifier lookup (legacy fallback removed)
-      // Talents are identified by structured flags on actor system
+      // Talent flags are preferred, but owned talent items remain the SSOT for
+      // actors that have not been reconciled through the v2 progression engine.
       const talentFlags = actor?.system?.talentFlags || {};
-      let hasArmoredDefense = talentFlags.armoredDefense === true;
-      let hasImprovedArmoredDefense = talentFlags.improvedArmoredDefense === true;
-      let hasArmorMastery = talentFlags.armorMastery === true;
+      const hasNamedTalent = (name) => Array.from(actor?.items ?? []).some(item =>
+        item?.type === 'talent' && String(item?.name || '').trim().toLowerCase() === String(name).toLowerCase()
+      );
+      const hasArmorSpecialistArmorMasteryItem = Array.from(actor?.items ?? []).some(item => {
+        if (item?.type !== 'talent' || String(item?.name || '').trim().toLowerCase() !== 'armor mastery') return false;
+        const text = [item.system?.treeId, item.system?.tree, item.system?.description?.value ?? item.system?.description, item.system?.benefit]
+          .filter(Boolean).join(' ').toLowerCase();
+        return text.includes('17cec542331cb4e4') || text.includes('armor-specialist') || text.includes('maximum dexterity') || text.includes('max dex');
+      });
+      let hasArmoredDefense = isProficient && (talentFlags.armoredDefense === true || hasNamedTalent('Armored Defense'));
+      let hasImprovedArmoredDefense = isProficient && (talentFlags.improvedArmoredDefense === true || hasNamedTalent('Improved Armored Defense'));
+      let hasArmorMastery = isProficient && (talentFlags.armorMastery === true || hasArmorSpecialistArmorMasteryItem);
+      const hasSecondSkin = isProficient && hasNamedTalent('Second Skin');
+      const hasJuggernaut = isProficient && hasNamedTalent('Juggernaut');
 
       // ===== REFLEX DEFENSE BONUS =====
-      const baseArmorBonus = armorStats.reflexBonus || 0;
+      const baseArmorBonus = (armorStats.reflexBonus || 0) + (hasSecondSkin ? 1 : 0);
       const actorLevel = actor?.system?.level || 1;
       if (baseArmorBonus !== 0) {
         // Calculate talent-adjusted armor bonus
@@ -1306,7 +1317,7 @@ export class ModifierEngine {
       // ===== FORTITUDE DEFENSE BONUS (Equipment) =====
       // Only apply equipment bonus if proficient
       if (isProficient) {
-        const fortBonus = armorStats.fortitudeBonus || 0;
+        const fortBonus = (armorStats.fortitudeBonus || 0) + (hasSecondSkin ? 1 : 0);
         if (fortBonus !== 0) {
           try {
             modifiers.push(createModifier({
@@ -1403,6 +1414,10 @@ export class ModifierEngine {
       } else {
         // Negate the penalty for modifier (which adds to speed)
         speedPenalty = -speedPenalty;
+      }
+
+      if (hasJuggernaut) {
+        speedPenalty = 0;
       }
 
       if (speedPenalty !== 0) {

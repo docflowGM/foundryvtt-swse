@@ -34,23 +34,13 @@ export const TALENT_EFFECTS = {
 },
 
   'Second Skin': {
-    effects: [{
-      key: 'system.defenses.reflex.armorBonus',
-      mode: 2,
-      value: '1',
-      priority: 20
-    }],
-    description: '+1 armor bonus to Reflex Defense'
+    effects: [],
+    description: 'When wearing proficient armor, increase armor Reflex bonus and Fortitude equipment bonus by +1. Runtime handled by defense calculator.'
   },
 
   'Juggernaut': {
-    effects: [{
-      key: 'system.damageThreshold.misc',
-      mode: 2,
-      value: '5',
-      priority: 20
-    }],
-    description: '+5 Damage Threshold'
+    effects: [],
+    description: 'When wearing proficient armor, armor does not reduce speed or running distance. Runtime handled by armor movement calculation.'
   },
 
   'Tough as Nails': {
@@ -1165,24 +1155,24 @@ export const TALENT_EFFECTS = {
     description: '+1d6 rifle melee damage'
   },
 
+  'Armor Mastery': {
+    effects: [],
+    description: 'When wearing proficient armor, improve the armor maximum Dexterity bonus by +1. Runtime handled by defense calculator.'
+  },
+
   'Armored Defense': {
-    effects: [{
-      key: 'system.defenses.reflex.armoredDefense',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }],
-    description: 'Armored Defense ability'
+    effects: [],
+    description: 'When wearing proficient armor, Reflex contribution is the higher of heroic level or armor bonus. Runtime handled by defense calculator.'
   },
 
   'Improved Armored Defense': {
-    effects: [{
-      key: 'system.defenses.reflex.improvedArmoredDefense',
-      mode: 5,
-      value: 'true',
-      priority: 20
-    }],
-    description: 'Improved Armored Defense'
+    effects: [],
+    description: 'When wearing proficient armor, Reflex contribution is the higher of heroic level plus half armor bonus or armor bonus. Runtime handled by defense calculator.'
+  },
+
+  'Shield Expert': {
+    effects: [],
+    description: 'Once per encounter as a Swift Action, regain 10 SR on an active Energy Shield. Runtime handled by ArmorTalentActions.'
   },
 
   // ============================================================================

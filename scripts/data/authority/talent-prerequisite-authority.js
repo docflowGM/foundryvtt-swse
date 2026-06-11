@@ -533,8 +533,8 @@ export const TALENT_PREREQUISITE_AUTHORITY = {
   "multiattack_proficiency_lightsabers": {
     "name": "Multiattack Proficiency (Lightsabers)",
     "prerequisite": "",
-    "benefit": "",
-    "description": ""
+    "benefit": "Whenever you make multiple attacks with any type of Lightsaber as part of a Full Attack, you reduce the penalty on your attack rolls by 2. You can take this Talent multiple times; each time you take this Talent, you reduce the penalty on your attack rolls by an additional 2.",
+    "description": "Whenever you make multiple attacks with any type of Lightsaber as part of a Full Attack, you reduce the penalty on your attack rolls by 2. You can take this Talent multiple times; each time you take this Talent, you reduce the penalty on your attack rolls by an additional 2."
   },
   "severing_strike": {
     "name": "Severing Strike",

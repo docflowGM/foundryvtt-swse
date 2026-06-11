@@ -318,6 +318,11 @@ export class ForceExecutor {
     return /mind[-\s]?affecting|mind|telepathic|illusion|influence|mind trick|fear/.test(haystack);
   }
 
+  /** Return true when a Force power is a Lightsaber Form Power. */
+  static isLightsaberFormPower(power) {
+    return this._isLightsaberFormPower(power);
+  }
+
   static _countSpentDescriptorPowers(actor, predicate) {
     return Array.from(actor?.items ?? []).filter(item => isForcePowerItem(item) && item.system?.discarded && predicate.call(this, item)).length;
   }
@@ -370,6 +375,10 @@ export class ForceExecutor {
 
   static getInfluenceSavantState(actor) {
     return this._getEncounterLimitedTalentState(actor, 'Influence Savant', 'influenceSavantUses');
+  }
+
+  static getLightsaberFormSavantState(actor) {
+    return this._getEncounterLimitedTalentState(actor, 'Lightsaber Form Savant', 'lightsaberFormSavantUses');
   }
 
   static async _recoverDescriptorPowerViaTalent(actor, powerId, { talentName, flagKey, predicate, descriptorLabel, sourceSlug, icon = '✦' } = {}) {
@@ -427,6 +436,18 @@ export class ForceExecutor {
       descriptorLabel: '[Mind-Affecting]',
       sourceSlug: 'influence-savant',
       icon: '◉'
+    });
+  }
+
+  /** Recover one spent Lightsaber Form power via Lightsaber Form Savant without spending a Force Point. */
+  static async recoverLightsaberFormSavantPower(actor, powerId) {
+    return this._recoverDescriptorPowerViaTalent(actor, powerId, {
+      talentName: 'Lightsaber Form Savant',
+      flagKey: 'lightsaberFormSavantUses',
+      predicate: this.isLightsaberFormPower,
+      descriptorLabel: '[Lightsaber Form]',
+      sourceSlug: 'lightsaber-form-savant',
+      icon: '◆'
     });
   }
 
@@ -1123,6 +1144,27 @@ export class ForceExecutor {
     return /telekinetic|\btk\b|move object|force slam|force thrust|force disarm|force grip|repulse|ballistakinesis|detonate|force blast/.test(haystack);
   }
 
+  static _isLightsaberFormPower(power, descriptors = null) {
+    const system = power?.system ?? {};
+    const values = descriptors ?? this._getPowerDescriptors(power);
+    const haystack = [
+      power?.name,
+      power?.type,
+      system.type,
+      system.discipline,
+      system.category,
+      system.subcategory,
+      system.powerType,
+      system.form,
+      system.lightsaberForm,
+      ...(Array.isArray(values) ? values : []),
+      ...(Array.isArray(system.tags) ? system.tags : []),
+      system.effect,
+      system.special
+    ].join(' ').toLowerCase();
+    return /lightsaber[-\s]?form|form power|shii-cho|makashi|soresu|ataru|shien|djem so|niman|juyo|vaapad/.test(haystack);
+  }
+
   static _isAreaForcePower(power, descriptors = null) {
     const system = power?.system ?? {};
     const values = descriptors ?? this._getPowerDescriptors(power);
@@ -1309,6 +1351,7 @@ export function registerForceExecutorChatHooks() {
         await ForceExecutor.resetForceFlowTemporaryForcePoints(actor, { encounterId: combat?.id ?? null });
         await actor.unsetFlag?.('foundryvtt-swse', 'telekineticSavantUses');
         await actor.unsetFlag?.('foundryvtt-swse', 'influenceSavantUses');
+        await actor.unsetFlag?.('foundryvtt-swse', 'lightsaberFormSavantUses');
         await actor.unsetFlag?.('foundryvtt-swse', 'aversionActive');
         await actor.unsetFlag?.('foundryvtt-swse', 'forceLink');
         await actor.unsetFlag?.('foundryvtt-swse', 'telepathicLink');

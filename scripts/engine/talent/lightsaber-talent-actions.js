@@ -16,12 +16,27 @@ function slug(value) {
   return String(value ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
+function normalizedTalentName(value) {
+  return String(value ?? '').trim().toLowerCase().replace(/\s+/g, ' ').replace(/\s*\((\d+)\)\s*$/, '');
+}
+
 function hasTalent(actor, name) {
-  return !!actor?.items?.some?.(item => item?.type === 'talent' && String(item?.name ?? '').toLowerCase() === String(name ?? '').toLowerCase());
+  const wanted = normalizedTalentName(name);
+  return !!actor?.items?.some?.(item => item?.type === 'talent' && normalizedTalentName(item?.name) === wanted);
 }
 
 function countTalent(actor, name) {
-  return Array.from(actor?.items ?? []).filter(item => item?.type === 'talent' && String(item?.name ?? '').toLowerCase() === String(name ?? '').toLowerCase()).length;
+  const wanted = normalizedTalentName(name);
+  let total = 0;
+  for (const item of actor?.items ?? []) {
+    if (item?.type !== 'talent') continue;
+    if (normalizedTalentName(item?.name) !== wanted) continue;
+    const rawName = String(item?.name ?? '').trim().toLowerCase();
+    const parenthetical = Number(rawName.match(/\((\d+)\)\s*$/)?.[1] ?? 0) || 0;
+    const systemQty = Number(item?.system?.quantity ?? item?.system?.rank ?? item?.system?.ranks ?? item?.system?.uses?.max ?? 0) || 0;
+    total += Math.max(1, parenthetical || systemQty || 1);
+  }
+  return total;
 }
 
 function encounterId() {
@@ -101,6 +116,44 @@ async function promptNamedTarget(title, note = '') {
   });
 }
 
+function selectedTargetToken() {
+  return Array.from(game?.user?.targets ?? [])[0] ?? canvas?.tokens?.controlled?.[0] ?? null;
+}
+
+async function promptSeveringStrikeDetails(actor) {
+  const target = selectedTargetToken();
+  const targetName = target?.name ?? target?.actor?.name ?? '';
+  const content = `<form class="swse-dialog swse-lightsaber-severing-dialog">
+    <p>Use only when your lightsaber damage would kill the target: damage is at least both the target's current HP and Damage Threshold.</p>
+    <div class="form-group"><label>Target</label><input name="targetName" type="text" value="${esc(targetName)}" placeholder="Target name" /></div>
+    <div class="form-group"><label>Limb severed</label>
+      <select name="limb">
+        <option value="arm">Arm/wrist/elbow</option>
+        <option value="leg">Leg/knee/ankle</option>
+      </select>
+    </div>
+    <label class="checkbox"><input type="checkbox" name="applyCondition" ${target?.actor ? 'checked' : ''} /> Apply -1 Condition Track and Persistent Condition to selected/targeted token</label>
+    <p class="notes">The damage replacement itself is GM/player adjudicated: deal half damage instead of full damage. Limb penalties and surgery/cybernetic recovery are recorded in chat.</p>
+  </form>`;
+  return SWSEDialogV2.prompt({
+    title: 'Severing Strike',
+    content,
+    label: 'Use Severing Strike',
+    callback: (html) => {
+      const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
+      const form = root?.querySelector?.('form') ?? root;
+      const fd = new FormData(form);
+      return {
+        targetToken: target,
+        targetActor: target?.actor ?? null,
+        targetName: String(fd.get('targetName') || targetName || 'target').trim() || 'target',
+        limb: String(fd.get('limb') || 'arm'),
+        applyCondition: fd.get('applyCondition') === 'on'
+      };
+    }
+  });
+}
+
 export class LightsaberTalentActions {
   static hasTalent(actor, name) { return hasTalent(actor, name); }
 
@@ -117,6 +170,18 @@ export class LightsaberTalentActions {
       lastSuccess: success === true,
       updatedAt: Date.now()
     });
+  }
+
+  static async _creditBackBlockDeflectUse(actor, reason = '') {
+    const state = currentBlockDeflectState(actor);
+    if (state.uses <= 0) return false;
+    await actor?.setFlag?.(NS, BLOCK_DEFLECT_FLAG, {
+      ...state,
+      uses: Math.max(0, state.uses - 1),
+      creditedBackReason: reason,
+      creditedBackAt: Date.now()
+    });
+    return true;
   }
 
   static async promptBlock(actor, { sourceElement = null } = {}) {
@@ -232,7 +297,8 @@ export class LightsaberTalentActions {
       duration: { rounds: 1, turns: 1 },
       flags: { swse: { talentName: 'Lightsaber Defense', deflectionBonus: bonus, expiresStartOfSourceNextTurn: true, requiresActiveLightsaber: true, notFlatFooted: true } }
     }, { source: 'lightsaber-defense' });
-    await postCard(actor, 'Lightsaber Defense', `<p>${esc(actor.name)} gains a +${bonus} deflection bonus to Reflex Defense until the start of their next turn.</p><p>Requires a drawn and ignited lightsaber; the bonus does not apply while Flat-Footed or unaware.</p>`, { talentName: 'Lightsaber Defense', bonus });
+    const shotoMasterNote = hasTalent(actor, 'Shoto Master') ? '<p><strong>Shoto Master:</strong> this may be activated as a Free Action while wielding both a one-handed lightsaber and a light lightsaber/shoto.</p>' : '';
+    await postCard(actor, 'Lightsaber Defense', `<p>${esc(actor.name)} gains a +${bonus} deflection bonus to Reflex Defense until the start of their next turn.</p><p>Requires a drawn and ignited lightsaber; the bonus does not apply while Flat-Footed or unaware.</p>${shotoMasterNote}`, { talentName: 'Lightsaber Defense', bonus, shotoMaster: hasTalent(actor, 'Shoto Master') });
     return { success: true, bonus };
   }
 
@@ -276,8 +342,10 @@ export class LightsaberTalentActions {
     const target = await promptNamedTarget('Redirect Shot', 'Use after successfully Deflecting a single blaster bolt. Autofire barrages and other projectiles cannot be redirected.');
     if (!target) return null;
     await actor?.setFlag?.(NS, 'redirectShot', { roundKey, used: true, targetName: target.targetName, usedAt: Date.now() });
-    await postCard(actor, 'Redirect Shot', `<p>${esc(actor.name)} redirects a deflected blaster bolt toward <strong>${esc(target.targetName)}</strong>.</p><p>Make the immediate ranged attack using normal range penalties, not counting the distance the bolt traveled to reach you. If it hits, it deals normal weapon damage.</p>`, { talentName: 'Redirect Shot', targetName: target.targetName });
-    return { success: true, targetName: target.targetName };
+    const improved = hasTalent(actor, 'Improved Redirect');
+    const credited = improved ? await this._creditBackBlockDeflectUse(actor, 'Improved Redirect') : false;
+    await postCard(actor, 'Redirect Shot', `<p>${esc(actor.name)} redirects a deflected blaster bolt toward <strong>${esc(target.targetName)}</strong>.</p><p>Make the immediate ranged attack using normal range penalties, not counting the distance the bolt traveled to reach you. If it hits, it deals normal weapon damage.</p>${improved ? `<p><strong>Improved Redirect:</strong> the Deflect use that triggered this Redirect ${credited ? 'does not count toward the cumulative Block/Deflect penalty.' : 'would not count toward the cumulative Block/Deflect penalty; no tracked Deflect use was available to credit back.'}</p>` : ''}`, { talentName: 'Redirect Shot', targetName: target.targetName, improvedRedirect: improved, creditedBack: credited });
+    return { success: true, targetName: target.targetName, improvedRedirect: improved, creditedBack: credited };
   }
 
   static async promptPrecision(actor) {
@@ -304,8 +372,101 @@ export class LightsaberTalentActions {
     const target = await promptNamedTarget('Riposte', 'Use after successfully negating a non-area melee attack with Block.');
     if (!target) return null;
     await actor?.setFlag?.(NS, 'encounterUses.riposte', { encounterId: encounterId(), used: true, targetName: target.targetName, usedAt: Date.now() });
-    await postCard(actor, 'Riposte', `<p>${esc(actor.name)} makes a lightsaber attack against <strong>${esc(target.targetName)}</strong>, whose non-area melee attack was successfully negated with Block.</p><p>Once per encounter. Cannot be used against melee area attacks such as Whirlwind Attack.</p>`, { talentName: 'Riposte', targetName: target.targetName });
-    return { success: true, targetName: target.targetName };
+    const improved = hasTalent(actor, 'Improved Riposte');
+    const credited = improved ? await this._creditBackBlockDeflectUse(actor, 'Improved Riposte') : false;
+    await postCard(actor, 'Riposte', `<p>${esc(actor.name)} makes a lightsaber attack against <strong>${esc(target.targetName)}</strong>, whose non-area melee attack was successfully negated with Block.</p><p>Once per encounter. Cannot be used against melee area attacks such as Whirlwind Attack.</p>${improved ? `<p><strong>Improved Riposte:</strong> the Block use that triggered this Riposte ${credited ? 'does not count toward the cumulative Block/Deflect penalty.' : 'would not count toward the cumulative Block/Deflect penalty; no tracked Block use was available to credit back.'}</p>` : ''}`, { talentName: 'Riposte', targetName: target.targetName, improvedRiposte: improved, creditedBack: credited });
+    return { success: true, targetName: target.targetName, improvedRiposte: improved, creditedBack: credited };
+  }
+
+  static async promptForceFortification(actor) {
+    if (!hasTalent(actor, 'Force Fortification')) {
+      ui?.notifications?.warn?.('Force Fortification talent required.');
+      return null;
+    }
+    const spend = await ActorEngine.spendForcePoints(actor, 1);
+    if (!spend?.spent) {
+      ui?.notifications?.warn?.('Force Fortification requires spending 1 Force Point.');
+      return null;
+    }
+    await postCard(actor, 'Force Fortification', `<p>${esc(actor.name)} spends 1 Force Point as a Reaction to negate a Critical Hit, taking normal damage instead.</p><p>This Force Point can be spent even if a Force Point has already been spent earlier this round.</p>`, { talentName: 'Force Fortification', forcePointSpent: true });
+    return { success: true, forcePointSpent: true };
+  }
+
+  static async promptImprovedLightsaberThrow(actor, { sourceElement = null } = {}) {
+    if (!hasTalent(actor, 'Improved Lightsaber Throw')) {
+      ui?.notifications?.warn?.('Improved Lightsaber Throw talent required.');
+      return null;
+    }
+    const content = `<form class="swse-dialog"><p>Spend 1 Force Point as a Standard Action to throw your lightsaber in a 6-square line. Make one ranged attack roll and compare it to each target's Reflex Defense.</p><div class="form-group"><label>Line / target group</label><input name="targetName" type="text" placeholder="Targets in 6-square line" /></div><label class="checkbox"><input type="checkbox" name="pullBack" checked /> Attempt DC 20 Use the Force to pull the lightsaber back as a Swift Action</label><p class="notes">Hit: normal lightsaber damage. Miss/fails to exceed Reflex: half damage. This is an Area Attack.</p></form>`;
+    const choice = await SWSEDialogV2.prompt({ title: 'Improved Lightsaber Throw', content, label: 'Use Improved Lightsaber Throw', callback: (html) => {
+      const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
+      const form = root?.querySelector?.('form') ?? root;
+      const fd = new FormData(form);
+      return { targetName: String(fd.get('targetName') || 'targets in a 6-square line').trim() || 'targets in a 6-square line', pullBack: fd.get('pullBack') === 'on' };
+    }});
+    if (!choice) return null;
+    const spend = await ActorEngine.spendForcePoints(actor, 1);
+    if (!spend?.spent) {
+      ui?.notifications?.warn?.('Improved Lightsaber Throw requires spending 1 Force Point.');
+      return null;
+    }
+    let pullBackResult = null;
+    if (choice.pullBack) {
+      const modResult = await showRollModifiersDialog({ title: 'Improved Lightsaber Throw Pull-Back - DC 20 Use the Force', rollType: 'force', actor, skillKey: 'useTheForce', sourceElement, showCover: false, showConcealment: false });
+      if (modResult !== null) {
+        pullBackResult = await rollSkillCheck(actor, 'useTheForce', { ...modResult, dc: 20, source: 'improved-lightsaber-throw-pullback', skillUse: { key: 'improved-lightsaber-throw-pullback', label: 'Improved Lightsaber Throw Pull-Back' }, sourceElement });
+      }
+    }
+    await postCard(actor, 'Improved Lightsaber Throw', `<p>${esc(actor.name)} throws a lightsaber through <strong>${esc(choice.targetName)}</strong>.</p><p><strong>Area Attack:</strong> make one ranged attack roll and compare it to each target's Reflex Defense. Success deals normal lightsaber damage; failure deals half damage.</p>${hasTalent(actor, 'Thrown Lightsaber Mastery') ? '<p><strong>Thrown Lightsaber Mastery:</strong> targets successfully struck move at half Speed until the beginning of your next turn.</p>' : ''}${choice.pullBack ? `<p><strong>Pull-back:</strong> DC 20 Use the Force ${pullBackResult ? (pullBackResult.success ? 'succeeded' : 'failed') : 'was not rolled'}.</p>` : ''}`, { talentName: 'Improved Lightsaber Throw', forcePointSpent: true, areaAttack: true, targetName: choice.targetName, pullBackSuccess: pullBackResult?.success ?? null });
+    return { success: true, forcePointSpent: true, pullBackResult };
+  }
+
+  static async promptSeveringStrike(actor) {
+    if (!hasTalent(actor, 'Severing Strike')) {
+      ui?.notifications?.warn?.('Severing Strike talent required.');
+      return null;
+    }
+    const choice = await promptSeveringStrikeDetails(actor);
+    if (!choice) return null;
+    let conditionApplied = null;
+    if (choice.applyCondition && choice.targetActor) {
+      conditionApplied = await ActorEngine.applyConditionShift(choice.targetActor, 1, 'severing-strike');
+      await ActorEngine.updateActor(choice.targetActor, { 'system.conditionTrack.persistent': true }, { source: 'severing-strike-persistent-condition' });
+    }
+    const limbText = choice.limb === 'leg'
+      ? 'The target is knocked Prone, speed is halved, carrying capacity is halved, and Strength/Dexterity checks and skills take a -5 penalty until Surgery or cybernetics resolve the persistent injury.'
+      : 'The target cannot wield weapons or use tools with that hand, and Strength/Dexterity checks and skills take a -5 penalty until Surgery or cybernetics resolve the persistent injury.';
+    await postCard(actor, 'Severing Strike', `<p>${esc(actor.name)} uses Severing Strike against <strong>${esc(choice.targetName)}</strong>.</p><p><strong>Requirement:</strong> the triggering lightsaber damage would have killed the target by equaling or exceeding both current Hit Points and Damage Threshold.</p><p><strong>Replacement:</strong> deal half damage instead of full damage, move the target -1 step on the Condition Track, and sever ${choice.limb === 'leg' ? 'part of a leg' : 'part of an arm'}.</p><p>${esc(limbText)}</p>${conditionApplied ? `<p><strong>Applied:</strong> Condition Track worsened by ${conditionApplied.applied ?? 0}; Persistent Condition marked on target actor.</p>` : '<p><em>Condition Track/persistent injury not applied automatically; adjudicate on the target sheet if needed.</em></p>'}`, { talentName: 'Severing Strike', targetActorId: choice.targetActor?.id ?? null, limb: choice.limb, conditionApplied: !!conditionApplied });
+    return { success: true, targetName: choice.targetName, limb: choice.limb, conditionApplied };
+  }
+
+  static async announceGreaterWeaponFocusLightsabers(actor) {
+    return postCard(actor, 'Greater Weapon Focus (Lightsabers)', '<p>You gain a +1 bonus on melee attack rolls with lightsabers. This stacks with Weapon Focus (Lightsabers).</p>', { talentName: 'Greater Weapon Focus (Lightsabers)' });
+  }
+
+  static async announceGreaterWeaponSpecializationLightsabers(actor) {
+    return postCard(actor, 'Greater Weapon Specialization (Lightsabers)', '<p>You gain a +2 bonus on melee damage rolls with lightsabers. This stacks with Weapon Specialization (Lightsabers).</p>', { talentName: 'Greater Weapon Specialization (Lightsabers)' });
+  }
+
+  static async announceMultiattackProficiencyLightsabers(actor) {
+    const ranks = countTalent(actor, 'Multiattack Proficiency (Lightsabers)') || countTalent(actor, 'Multiattack Proficiency (lightsabers)') || 1;
+    return postCard(actor, 'Multiattack Proficiency (Lightsabers)', `<p>When making multiple attacks with lightsabers as part of a Full Attack, reduce the attack penalty by ${2 * ranks}.</p><p>This talent may be taken multiple times; current detected ranks: ${ranks}.</p>`, { talentName: 'Multiattack Proficiency (Lightsabers)', ranks });
+  }
+
+  static async announceImprovedRiposte(actor) {
+    return postCard(actor, 'Improved Riposte', '<p>When you successfully make a Riposte attack, the Block use that triggered the Riposte does not count toward your cumulative Block/Deflect penalty. This is applied automatically by the Riposte action when possible.</p>', { talentName: 'Improved Riposte' });
+  }
+
+  static async announceImprovedRedirect(actor) {
+    return postCard(actor, 'Improved Redirect', '<p>Once per turn, when you successfully Redirect an attack, the Deflect use that triggered the Redirect does not count toward your cumulative Block/Deflect penalty. This is applied automatically by the Redirect Shot action when possible.</p>', { talentName: 'Improved Redirect' });
+  }
+
+  static async announceThrownLightsaberMastery(actor) {
+    return postCard(actor, 'Thrown Lightsaber Mastery', '<p>Any target successfully struck by a thrown lightsaber moves at half Speed until the beginning of your next turn. Improved Lightsaber Throw chat output reminds you of this rider.</p>', { talentName: 'Thrown Lightsaber Mastery' });
+  }
+
+  static async announceShotoMaster(actor) {
+    return postCard(actor, 'Shoto Master', '<p>When wielding both a one-handed lightsaber and a light lightsaber/guard shoto, treat the one-handed lightsaber as a light weapon. If you have Lightsaber Defense, you may activate it as a Free Action while using that loadout.</p>', { talentName: 'Shoto Master' });
   }
 
   static async announceCortosisGauntletBlock(actor) {
