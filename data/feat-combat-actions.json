@@ -1393,6 +1393,75 @@
     ],
     "notes": "Use when sensing dark-side presences."
   },
+  "dark-deception": {
+    "name": "Dark Deception",
+    "actionType": "free",
+    "requiredTalent": "Dark Deception",
+    "description": "Toggle the Force-sensing mask: when another character attempts to sense you through the Force, you may choose to act as though your Dark Side Score equals your Wisdom score. Deception is a class skill.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "darkDeception",
+    "spendAction": false,
+    "resources": [
+      "Force sensing",
+      "Class skill: Deception"
+    ],
+    "notes": "Force-sensing choice; no global bonus is applied."
+  },
+  "improved-sentinel-strike": {
+    "name": "Improved Sentinel Strike",
+    "actionType": "passive",
+    "requiredTalent": "Improved Sentinel Strike",
+    "description": "Sentinel Strike damage dice are d8s instead of d6s.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "improvedSentinelStrike",
+    "spendAction": false,
+    "resources": [
+      "Sentinel Strike upgrade"
+    ],
+    "notes": "Upgrades existing Sentinel Strike conditional damage; not a separate damage bonus."
+  },
+  "improved-sentinels-gambit": {
+    "name": "Improved Sentinel's Gambit",
+    "actionType": "passive",
+    "requiredTalent": "Improved Sentinel's Gambit",
+    "description": "Use Sentinel's Gambit additional times per encounter equal to half your Class Level (minimum 1).",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "improvedSentinelsGambit",
+    "spendAction": false,
+    "resources": [
+      "Encounter uses"
+    ],
+    "notes": "The Sentinel's Gambit action consumes the shared encounter-use tracker."
+  },
+  "rebuke-the-dark": {
+    "name": "Rebuke the Dark",
+    "actionType": "passive",
+    "requiredTalent": "Rebuke the Dark",
+    "description": "When using Rebuke against a Force Power with the [Dark Side] descriptor, roll two dice and keep the better result.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "rebukeTheDark",
+    "spendAction": false,
+    "resources": [
+      "Rebuke",
+      "[Dark Side] descriptor"
+    ],
+    "notes": "Only applies to Rebuke attempts against [Dark Side] Force Powers."
+  },
+  "taint-of-the-dark-side": {
+    "name": "Taint of the Dark Side",
+    "actionType": "passive",
+    "requiredTalent": "Taint of the Dark Side",
+    "description": "Choose one [Dark Side] Force Power to add to your suite. Once per encounter, use that chosen power without increasing Dark Side Score unless modified by a Force Point or Destiny Point.",
+    "resolutionMode": "sentinelTalent",
+    "sentinelTalentAction": "taintOfTheDarkSide",
+    "spendAction": false,
+    "resources": [
+      "Force Power Suite",
+      "Once per encounter",
+      "Dark Side Score"
+    ],
+    "notes": "Creates/records the selected power; ForceExecutor suppresses the first unmodified DSS increase for that selected power each encounter."
+  },
   "dark-side-scourge": {
     "name": "Dark Side Scourge",
     "actionType": "passive",
@@ -2253,5 +2322,732 @@
     "relatedSkills": [
       "attack"
     ]
+  },
+  "force-warning": {
+    "name": "Force Warning",
+    "actionType": "passive",
+    "requiredTalent": "Force Warning",
+    "description": "Allies within 12 squares may reroll Initiative at combat start and surprised allies may be designated as no longer surprised.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Initiative",
+      "Surprise Round"
+    ],
+    "notes": "Start-of-combat reminder; exact ally selection remains GM/player adjudicated.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "forceWarning"
+  },
+  "improved-quick-draw-lightsabers": {
+    "name": "Improved Quick Draw (Lightsabers)",
+    "actionType": "free",
+    "requiredTalent": "Improved Quick Draw (Lightsabers)",
+    "description": "Draw, ignite, and attack with a lightsaber during the Surprise Round, and draw/ignite once per turn as a free action.",
+    "resolutionMode": "lightsaberTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Surprise Round",
+      "Lightsabers"
+    ],
+    "notes": "Draw, ignite, and attack with a lightsaber during the Surprise Round, and draw/ignite once per turn as a free action.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "lightsaberTalentAction": "improvedQuickDrawLightsabers"
+  },
+  "sheltering-stance": {
+    "name": "Sheltering Stance",
+    "actionType": "passive",
+    "requiredTalent": "Sheltering Stance",
+    "description": "When adjacent to an ally, use Block or Deflect against attacks targeting that ally without spending a Force Point.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Block",
+      "Deflect"
+    ],
+    "notes": "Block/Deflect dialogs include the Sheltering Stance protection option.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "shelteringStance"
+  },
+  "vigilance": {
+    "name": "Vigilance",
+    "actionType": "swift",
+    "requiredTalent": "Vigilance",
+    "description": "Designate one adjacent ally; that ally gains +1 deflection bonus to Reflex Defense while you remain adjacent.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Reflex Defense"
+    ],
+    "notes": "Applies a temporary +1 Reflex effect to the selected ally; adjacency/duration is table-managed.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "vigilance"
+  },
+  "watchmans-advance": {
+    "name": "Watchman's Advance",
+    "actionType": "passive",
+    "requiredTalent": "Watchman's Advance",
+    "description": "During the Surprise Round, you and allies can take one extra Move Action; a character can gain only one such extra Move Action.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Surprise Round",
+      "Move Action"
+    ],
+    "notes": "During the Surprise Round, you and allies can take one extra Move Action; a character can gain only one such extra Move Action.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "watchmansAdvance"
+  },
+  "defensive-circle": {
+    "name": "Defensive Circle",
+    "actionType": "swift",
+    "requiredTalent": "Defensive Circle",
+    "description": "You and allies affected by your Battle Meditation gain +2 insight Reflex; you also gain +1 to Block/Deflect UTF checks per adjacent lightsaber-wielding ally.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Battle Meditation",
+      "Reflex Defense",
+      "Block",
+      "Deflect"
+    ],
+    "notes": "Applies +2 Reflex to selected Battle Meditation targets; adjacent lightsaber bonus is surfaced as a callout.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "defensiveCircle"
+  },
+  "force-revive": {
+    "name": "Force Revive",
+    "actionType": "reaction",
+    "requiredTalent": "Force Revive",
+    "description": "Spend a Force Point as a Reaction when an ally affected by Battle Meditation drops to 0 HP, allowing the ally to take Second Wind as a Reaction.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Second Wind",
+      "Battle Meditation"
+    ],
+    "notes": "Spend a Force Point as a Reaction when an ally affected by Battle Meditation drops to 0 HP, allowing the ally to take Second Wind as a Reaction.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "forceRevive"
+  },
+  "jedi-battle-commander": {
+    "name": "Jedi Battle Commander",
+    "actionType": "passive",
+    "requiredTalent": "Jedi Battle Commander",
+    "description": "Your Battle Meditation grants +2 insight bonus on attack rolls instead of +1.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Battle Meditation"
+    ],
+    "notes": "Battle Meditation runtime reads this talent and upgrades the attack bonus to +2.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "jediBattleCommander"
+  },
+  "slashing-charge": {
+    "name": "Slashing Charge",
+    "actionType": "free",
+    "requiredTalent": "Slashing Charge",
+    "description": "Once per encounter while charging, ignore cumulative Block penalties during the Charge and apply the Charge attack bonus to Riposte attacks.",
+    "resolutionMode": "lightsaberTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Charge",
+      "Block",
+      "Riposte",
+      "Once per encounter"
+    ],
+    "notes": "Encounter rider/reminder; Block/Riposte timing remains player declared.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "lightsaberTalentAction": "slashingCharge"
+  },
+  "mobile-attack-lightsabers": {
+    "name": "Mobile Attack (Lightsabers)",
+    "actionType": "free",
+    "requiredTalent": "Mobile Attack (Lightsabers)",
+    "description": "After a Full Attack with two lightsabers or a double-bladed lightsaber, move up to Speed as a free action.",
+    "resolutionMode": "lightsaberTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Full Attack",
+      "Movement"
+    ],
+    "notes": "After a Full Attack with two lightsabers or a double-bladed lightsaber, move up to Speed as a free action.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "lightsaberTalentAction": "mobileAttackLightsabers"
+  },
+  "direct": {
+    "name": "Direct",
+    "actionType": "standard",
+    "requiredTalent": "Direct",
+    "description": "Return one spent Force Power to the Force Power Suite of an ally within 6 squares and line of sight.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Power Suite"
+    ],
+    "notes": "Opens selected ally/power flow and readies one spent power on that ally.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "direct"
+  },
+  "impart-knowledge": {
+    "name": "Impart Knowledge",
+    "actionType": "reaction",
+    "requiredTalent": "Impart Knowledge",
+    "description": "Aid Another on a Knowledge check of an ally within 6 squares as a Reaction for Knowledge skills you are trained in.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Knowledge",
+      "Aid Another"
+    ],
+    "notes": "Roll helper/callout; ally range and trained Knowledge skill are table-verified.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "impartKnowledge"
+  },
+  "insight-of-the-force": {
+    "name": "Insight of the Force",
+    "actionType": "passive",
+    "requiredTalent": "Insight of the Force",
+    "description": "Use Use the Force instead of untrained Knowledge checks; treated as trained for this talent.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Use the Force",
+      "Knowledge"
+    ],
+    "notes": "Derived skill calculator substitutes Use the Force for untrained Knowledge skills.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "insightOfTheForce"
+  },
+  "master-advisor": {
+    "name": "Master Advisor",
+    "actionType": "passive",
+    "requiredTalent": "Master Advisor",
+    "description": "When you use Skilled Advisor, the ally gains one temporary Force Point at the end of their next turn, lost at encounter end if unspent.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Skilled Advisor",
+      "Bonus Force Point"
+    ],
+    "notes": "Skilled Advisor marks the ally; the combat-turn hook grants the temporary Force Point at the end of their next turn.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "masterAdvisor"
+  },
+  "scholarly-knowledge": {
+    "name": "Scholarly Knowledge",
+    "actionType": "swift",
+    "requiredTalent": "Scholarly Knowledge",
+    "description": "Reroll a trained Knowledge check as a Swift Action and keep the better result.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Knowledge",
+      "Reroll"
+    ],
+    "notes": "Reroll a trained Knowledge check as a Swift Action and keep the better result.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "scholarlyKnowledge"
+  },
+  "force-treatment": {
+    "name": "Force Treatment",
+    "actionType": "passive",
+    "requiredTalent": "Force Treatment",
+    "description": "Use Use the Force in place of Treat Injury and count as trained for purposes of this talent.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Use the Force",
+      "Treat Injury"
+    ],
+    "notes": "Derived skill calculator already substitutes Use the Force for Treat Injury when present.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "forceTreatment"
+  },
+  "healing-boost": {
+    "name": "Healing Boost",
+    "actionType": "passive",
+    "requiredTalent": "Healing Boost",
+    "description": "Vital Transfer heals additional damage equal to your class level.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Vital Transfer"
+    ],
+    "notes": "Vital Transfer healing rider; surfaced as action reminder for the existing Force Power flow.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "healingBoost"
+  },
+  "improved-healing-boost": {
+    "name": "Improved Healing Boost",
+    "actionType": "passive",
+    "requiredTalent": "Improved Healing Boost",
+    "description": "Vital Transfer heals additional damage equal to 2 x your class level.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Vital Transfer"
+    ],
+    "notes": "Overrides Healing Boost magnitude when both are present; surfaced as action reminder for existing Force Power flow.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "improvedHealingBoost"
+  },
+  "soothe": {
+    "name": "Soothe",
+    "actionType": "passive",
+    "requiredTalent": "Soothe",
+    "description": "When using Vital Transfer, move the target +1 step on the Condition Track instead of healing damage; you move -1 step.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Vital Transfer",
+      "Condition Track"
+    ],
+    "notes": "Condition-track alternative reminder; table chooses this mode during Vital Transfer.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "soothe"
+  },
+  "cover-your-tracks": {
+    "name": "Cover Your Tracks",
+    "actionType": "passive",
+    "requiredTalent": "Cover Your Tracks",
+    "description": "Attempts to locate you using Gather Information suffer a -5 penalty.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Gather Information"
+    ],
+    "notes": "Attempts to locate you using Gather Information suffer a -5 penalty.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "coverYourTracks"
+  },
+  "difficult-to-sense": {
+    "name": "Difficult to Sense",
+    "actionType": "passive",
+    "requiredTalent": "Difficult to Sense",
+    "description": "Reroll opposed Use the Force checks made to conceal your presence from Force-users and keep the better result.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Use the Force",
+      "Reroll"
+    ],
+    "notes": "Reroll opposed Use the Force checks made to conceal your presence from Force-users and keep the better result.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "difficultToSense"
+  },
+  "force-veil": {
+    "name": "Force Veil",
+    "actionType": "passive",
+    "requiredTalent": "Force Veil",
+    "description": "Reduce the detection radius for sensing you to 10 kilometers instead of 100 kilometers.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Force detection"
+    ],
+    "notes": "Reduce the detection radius for sensing you to 10 kilometers instead of 100 kilometers.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "forceVeil"
+  },
+  "jedi-network": {
+    "name": "Jedi Network",
+    "actionType": "full-round",
+    "requiredTalent": "Jedi Network",
+    "description": "Once per game session in a civilized area, call on Jedi sympathizers for equipment/funds, information, medical attention, or a safe house.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Once per session",
+      "GM adjudication"
+    ],
+    "notes": "Once per game session in a civilized area, call on Jedi sympathizers for equipment/funds, information, medical attention, or a safe house.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "jediNetwork"
+  },
+  "call-weapon": {
+    "name": "Call Weapon",
+    "actionType": "free",
+    "requiredTalent": "Call Weapon",
+    "description": "Use Move Light Object to call a lightsaber you built into your hand and ignite it as a free action if it is in line of sight.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Use the Force",
+      "Lightsabers"
+    ],
+    "notes": "Free-action helper/reminder; actual Move Light Object check uses existing Use the Force flow as needed.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "callWeapon"
+  },
+  "lightsaber-specialist": {
+    "name": "Lightsaber Specialist",
+    "actionType": "passive",
+    "requiredTalent": "Lightsaber Specialist",
+    "description": "With a lightsaber you built, gain +2 morale bonus on Use the Force checks for Block and Deflect.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Block",
+      "Deflect"
+    ],
+    "notes": "Block/Deflect dialogs include an optional Lightsaber Specialist +2 modifier.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "lightsaberSpecialist"
+  },
+  "masterwork-lightsaber": {
+    "name": "Masterwork Lightsaber",
+    "actionType": "passive",
+    "requiredTalent": "Masterwork Lightsaber",
+    "description": "When building a lightsaber, add one extra accessory/modification; reroll one damage die on hits with your own lightsaber; mentor construction at -5 DC.",
+    "resolutionMode": "lightsaberTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Lightsaber construction",
+      "Damage reroll"
+    ],
+    "notes": "When building a lightsaber, add one extra accessory/modification; reroll one damage die on hits with your own lightsaber; mentor construction at -5 DC.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "lightsaberTalentAction": "masterworkLightsaber"
+  },
+  "perfect-attunement": {
+    "name": "Perfect Attunement",
+    "actionType": "passive",
+    "requiredTalent": "Perfect Attunement",
+    "description": "When you spend a Force Point on a lightsaber attack roll with a lightsaber you built, add the same amount to damage if the attack hits.",
+    "resolutionMode": "lightsaberTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Lightsaber attack"
+    ],
+    "notes": "When you spend a Force Point on a lightsaber attack roll with a lightsaber you built, add the same amount to damage if the attack hits.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "lightsaberTalentAction": "perfectAttunement"
+  },
+  "quick-modification": {
+    "name": "Quick Modification",
+    "actionType": "full-round",
+    "requiredTalent": "Quick Modification",
+    "description": "Spend 1 minute modifying a lightsaber you built, swapping one accessory/modification for another.",
+    "resolutionMode": "lightsaberTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Lightsaber modification"
+    ],
+    "notes": "Spend 1 minute modifying a lightsaber you built, swapping one accessory/modification for another.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "lightsaberTalentAction": "quickModification"
+  },
+  "apprentice-boon": {
+    "name": "Apprentice Boon",
+    "actionType": "reaction",
+    "requiredTalent": "Apprentice Boon",
+    "description": "Spend a Force Point as a Reaction to add to an ally's Use the Force check if they are within 12 squares and have a lower UTF bonus.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Use the Force"
+    ],
+    "notes": "Spend a Force Point as a Reaction to add to an ally's Use the Force check if they are within 12 squares and have a lower UTF bonus.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "apprenticeBoon"
+  },
+  "share-force-secret": {
+    "name": "Share Force Secret",
+    "actionType": "swift",
+    "requiredTalent": "Share Force Secret",
+    "description": "Grant one chosen Force Secret you know to a trained ally within 12 squares until the end of your next turn.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Secret",
+      "Use the Force"
+    ],
+    "notes": "Grant one chosen Force Secret you know to a trained ally within 12 squares until the end of your next turn.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "shareForceSecret"
+  },
+  "share-force-technique": {
+    "name": "Share Force Technique",
+    "actionType": "swift",
+    "requiredTalent": "Share Force Technique",
+    "description": "Grant one chosen Force Technique you know, except Force Point Recovery, to a trained ally within 12 squares until the end of your next turn.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Technique",
+      "Use the Force"
+    ],
+    "notes": "Grant one chosen Force Technique you know, except Force Point Recovery, to a trained ally within 12 squares until the end of your next turn.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "shareForceTechnique"
+  },
+  "share-talent": {
+    "name": "Share Talent",
+    "actionType": "standard",
+    "requiredTalent": "Share Talent",
+    "description": "Once per day, spend a Force Point to share a chosen eligible lightsaber talent with trained allies within 12 squares for the encounter.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Shared Talent",
+      "Once per day"
+    ],
+    "notes": "Once per day, spend a Force Point to share a chosen eligible lightsaber talent with trained allies within 12 squares for the encounter.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "shareTalent"
+  },
+  "transfer-power": {
+    "name": "Transfer Power",
+    "actionType": "standard",
+    "requiredTalent": "Transfer Power",
+    "description": "Spend one use of a Force Power in your suite to add a one-use copy to an ally trained in Use the Force within 12 squares and line of sight.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Power Suite",
+      "Use the Force"
+    ],
+    "notes": "Spend one use of a Force Power in your suite to add a one-use copy to an ally trained in Use the Force within 12 squares and line of sight.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "transferPower"
+  },
+  "echoes-of-the-force": {
+    "name": "Echoes of the Force",
+    "actionType": "full-round",
+    "requiredTalent": "Echoes of the Force",
+    "description": "Use Farseeing on a location instead of a creature to view the location's past while standing there.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Farseeing",
+      "Use the Force"
+    ],
+    "notes": "Use Farseeing on a location instead of a creature to view the location's past while standing there.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "echoesOfTheForce"
+  },
+  "jedi-quarry": {
+    "name": "Jedi Quarry",
+    "actionType": "swift",
+    "requiredTalent": "Jedi Quarry",
+    "description": "Designate one target; gain +2 Speed when using a Move Action if you end adjacent to that target until the encounter condition ends.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Movement"
+    ],
+    "notes": "Designate one target; gain +2 Speed when using a Move Action if you end adjacent to that target until the encounter condition ends.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "jediQuarry"
+  },
+  "prepared-for-danger": {
+    "name": "Prepared for Danger",
+    "actionType": "swift",
+    "requiredTalent": "Prepared for Danger",
+    "description": "Spend an unspent Farseeing Force Power to regain any one other Force Power as a Swift Action.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Farseeing",
+      "Force Power Suite"
+    ],
+    "notes": "Spend an unspent Farseeing Force Power to regain any one other Force Power as a Swift Action.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "preparedForDanger"
+  },
+  "sense-deception": {
+    "name": "Sense Deception",
+    "actionType": "reaction",
+    "requiredTalent": "Sense Deception",
+    "description": "When Deception or Persuasion targets your Will Defense, roll Use the Force and use it in place of Will Defense if higher.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Use the Force",
+      "Will Defense"
+    ],
+    "notes": "When Deception or Persuasion targets your Will Defense, roll Use the Force and use it in place of Will Defense if higher.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "senseDeception"
+  },
+  "unclouded-judgement": {
+    "name": "Unclouded Judgement",
+    "actionType": "reaction",
+    "requiredTalent": "Unclouded Judgement",
+    "description": "Spend a Force Point as a Reaction to negate a Mind-Affecting Force Power or Force Talent targeting you.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Mind-Affecting"
+    ],
+    "notes": "Spend a Force Point as a Reaction to negate a Mind-Affecting Force Power or Force Talent targeting you.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "uncloudedJudgement"
+  },
+  "combat-trance": {
+    "name": "Combat Trance",
+    "actionType": "passive",
+    "requiredTalent": "Combat Trance",
+    "description": "After using Battle Strike, keep its attack bonus on your first melee attack each round until encounter end; the effect ends if you skip attacking in a round.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Battle Strike",
+      "Melee attack"
+    ],
+    "notes": "After using Battle Strike, keep its attack bonus on your first melee attack each round until encounter end; the effect ends if you skip attacking in a round.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "combatTrance"
+  },
+  "improvised-weapon-mastery": {
+    "name": "Improvised Weapon Mastery",
+    "actionType": "passive",
+    "requiredTalent": "Improvised Weapon Mastery",
+    "description": "Take no penalty on attacks made with improvised weapons.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Improvised Weapons"
+    ],
+    "notes": "Take no penalty on attacks made with improvised weapons.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "improvisedWeaponMastery"
+  },
+  "twin-weapon-style": {
+    "name": "Twin Weapon Style",
+    "actionType": "standard",
+    "requiredTalent": "Twin Weapon Style",
+    "description": "As a Standard Action while wielding two weapons or a double weapon, make one attack with each weapon/end against different targets.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Two weapons",
+      "Double weapon"
+    ],
+    "notes": "As a Standard Action while wielding two weapons or a double weapon, make one attack with each weapon/end against different targets.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "twinWeaponStyle"
+  },
+  "twin-weapon-mastery": {
+    "name": "Twin Weapon Mastery",
+    "actionType": "passive",
+    "requiredTalent": "Twin Weapon Mastery",
+    "description": "When using Twin Weapon Style, move 2 squares between each attack; this movement does not provoke attacks of opportunity.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Twin Weapon Style",
+      "Movement"
+    ],
+    "notes": "When using Twin Weapon Style, move 2 squares between each attack; this movement does not provoke attacks of opportunity.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "twinWeaponMastery"
+  },
+  "shoto-pin": {
+    "name": "Shoto Pin",
+    "actionType": "passive",
+    "requiredTalent": "Shoto Pin",
+    "description": "With a light lightsaber, after successfully using Block to negate a melee attack, prevent the attacker from making further melee attacks until the start of its next turn or until the effect ends.",
+    "resolutionMode": "jediPrestigeTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Block",
+      "Light Lightsaber"
+    ],
+    "notes": "Block chat surfaces this rider when you mark Shoto Pin.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "jediPrestigeTalentAction": "shotoPin"
   }
 }

@@ -52,6 +52,22 @@ function getAbilityMod(actor, key) {
   return Number(actor?.system?.derived?.attributes?.[key]?.mod ?? actor?.system?.abilities?.[key]?.mod ?? actor?.system?.attributes?.[key]?.mod ?? 0) || 0;
 }
 
+function getAbilityScore(actor, key) {
+  const candidates = [
+    actor?.system?.derived?.attributes?.[key]?.value,
+    actor?.system?.derived?.attributes?.[key]?.score,
+    actor?.system?.abilities?.[key]?.value,
+    actor?.system?.abilities?.[key]?.score,
+    actor?.system?.attributes?.[key]?.value,
+    actor?.system?.attributes?.[key]?.score
+  ];
+  for (const candidate of candidates) {
+    const n = Number(candidate);
+    if (Number.isFinite(n) && n > 0) return Math.floor(n);
+  }
+  return 10;
+}
+
 function getBab(actor) {
   const candidates = [
     actor?.system?.derived?.bab,
@@ -174,6 +190,44 @@ function forcePowerOptions(actor) {
     .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 }
 
+function hasDarkSideDescriptor(item) {
+  const values = [
+    item?.system?.descriptor,
+    item?.system?.descriptors,
+    item?.system?.tags,
+    item?.system?.keywords,
+    item?.system?.discipline,
+    item?.system?.darkSideOption === true ? 'dark side' : '',
+    item?.name
+  ].flat().map(value => String(value ?? '').toLowerCase()).join(' ');
+  return values.includes('dark side') || values.includes('dark_side') || values.includes('dark-side');
+}
+
+async function loadDarkSideForcePowerOptions(actor) {
+  const owned = Array.from(actor?.items ?? [])
+    .filter(item => isForcePowerItem(item) && hasDarkSideDescriptor(item))
+    .map(item => ({ id: `owned:${item.id}`, name: item.name, source: 'Owned', item }));
+  const pack = game?.packs?.get?.('foundryvtt-swse.forcepowers') ?? game?.packs?.get?.('swse.forcepowers') ?? null;
+  const packed = [];
+  if (pack) {
+    const docs = await pack.getDocuments();
+    for (const doc of docs) {
+      const data = doc?.toObject ? doc.toObject() : doc;
+      if (!isForcePowerItem(data) || !hasDarkSideDescriptor(data)) continue;
+      packed.push({ id: `pack:${doc.id ?? data._id}`, name: data.name, source: 'Compendium', item: doc });
+    }
+  }
+  const seen = new Set();
+  return [...owned, ...packed]
+    .filter(row => {
+      const key = String(row.name || '').toLowerCase();
+      if (!key || seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .sort((a, b) => String(a.name).localeCompare(String(b.name)));
+}
+
 async function spendReadyForcePower(actor, powerId, source) {
   const power = actor?.items?.get?.(powerId) ?? null;
   if (!power || !isForcePowerItem(power)) throw new Error('A ready Force Power is required.');
@@ -241,6 +295,20 @@ export class SentinelTalentActions {
 
   static async announceClearMind(actor) {
     return postCard(actor, 'Clear Mind', '<p>You may reroll any opposed Use the Force check made to oppose Sense Force checks. You must keep the reroll, even if it is worse.</p>', { talentName: 'Clear Mind' });
+  }
+
+  static async promptDarkDeception(actor) {
+    if (!hasTalent(actor, 'Dark Deception')) {
+      ui?.notifications?.warn?.('Dark Deception talent required.');
+      return null;
+    }
+    const wisdomScore = getAbilityScore(actor, 'wis');
+    const currentDss = getDarkSideScore(actor);
+    const active = actor.getFlag?.(NS, 'darkDeception.active') === true;
+    const nextActive = !active;
+    await actor.setFlag(NS, 'darkDeception', { active: nextActive, effectiveDarkSideScore: wisdomScore, actualDarkSideScore: currentDss, updatedAt: Date.now() });
+    await postCard(actor, 'Dark Deception', `<p>${nextActive ? 'Activated' : 'Deactivated'} Dark Deception.</p><p>When another character attempts to sense ${esc(actor.name)} through the Force in any way, ${esc(actor.name)} may choose to act as though their Dark Side Score equals their Wisdom score.</p><p><strong>Current actual DSS:</strong> ${currentDss}. <strong>Masked DSS while chosen:</strong> ${wisdomScore}.</p><p>Deception is a class skill for this character.</p>`, { talentName: 'Dark Deception', active: nextActive, effectiveDarkSideScore: wisdomScore });
+    return { success: true, active: nextActive, effectiveDarkSideScore: wisdomScore };
   }
 
   static async announceDarkSideSense(actor) {
@@ -420,8 +488,11 @@ export class SentinelTalentActions {
       return null;
     }
     const flag = actor.getFlag?.(NS, 'encounterUses.sentinelsGambit') ?? {};
-    if (flag?.encounterId === this._encounterId() && flag?.used === true) {
-      ui?.notifications?.warn?.("Sentinel's Gambit has already been used this encounter.");
+    const improvedExtraUses = hasTalent(actor, "Improved Sentinel's Gambit") ? Math.max(1, Math.floor(getClassLevel(actor) / 2)) : 0;
+    const maxUses = 1 + improvedExtraUses;
+    const usedCount = flag?.encounterId === this._encounterId() ? Math.max(0, Number(flag?.usedCount ?? (flag?.used ? 1 : 0)) || 0) : 0;
+    if (usedCount >= maxUses) {
+      ui?.notifications?.warn?.(`Sentinel's Gambit has no uses remaining this encounter (${usedCount}/${maxUses}).`);
       return null;
     }
     const target = await promptToken(actor, "Sentinel's Gambit", { relation: 'enemy', maxSquares: 1, fallbackLabel: 'adjacent dark-side opponent', requireDarkSide: true, note: 'Choose an adjacent opponent with Dark Side Score 1+.' });
@@ -434,8 +505,9 @@ export class SentinelTalentActions {
     if (target.actor) {
       await createEffectOnActor(target.actor, { name: `Sentinel's Gambit (${actor.name})`, icon: 'icons/svg/eye.svg', changes: [], disabled: false, duration: { rounds: 1, turns: 1 }, flags: { swse: { talentName: "Sentinel's Gambit", sourceActorId: actor.id, sourceActorName: actor.name, deniedDexToReflexAgainstSource: true, expiresEndOfSourceNextTurn: true } } }, { source: 'sentinels-gambit' });
     }
-    await actor.setFlag(NS, 'encounterUses.sentinelsGambit', { encounterId: this._encounterId(), used: true, targetName: target.name, targetActorId: target.actor?.id ?? null, usedAt: Date.now() });
-    await postCard(actor, "Sentinel's Gambit", `<p><strong>${esc(target.name)}</strong> loses its Dexterity bonus to Reflex Defense against ${esc(actor.name)}'s attacks until the end of ${esc(actor.name)}'s next turn.</p>`, { talentName: "Sentinel's Gambit", targetActorId: target.actor?.id ?? null });
+    const nextUsedCount = usedCount + 1;
+    await actor.setFlag(NS, 'encounterUses.sentinelsGambit', { encounterId: this._encounterId(), used: nextUsedCount >= maxUses, usedCount: nextUsedCount, maxUses, targetName: target.name, targetActorId: target.actor?.id ?? null, usedAt: Date.now() });
+    await postCard(actor, "Sentinel's Gambit", `<p><strong>${esc(target.name)}</strong> loses its Dexterity bonus to Reflex Defense against ${esc(actor.name)}'s attacks until the end of ${esc(actor.name)}'s next turn.</p><p><strong>Encounter uses:</strong> ${nextUsedCount}/${maxUses}${improvedExtraUses ? ` (includes +${improvedExtraUses} from Improved Sentinel's Gambit)` : ''}.</p>`, { talentName: "Sentinel's Gambit", targetActorId: target.actor?.id ?? null, usedCount: nextUsedCount, maxUses });
     return { success: true, targetName: target.name };
   }
 
@@ -480,9 +552,57 @@ export class SentinelTalentActions {
     return postCard(actor, 'Sense Primal Force', '<p>When within a natural wilderness area, you can use Sense Surroundings to detect targets out to a 30-square radius, regardless of line of sight.</p>', { talentName: 'Sense Primal Force' });
   }
 
+  static async announceImprovedSentinelStrike(actor) {
+    return postCard(actor, 'Improved Sentinel Strike', '<p>Your Sentinel Strike damage dice are d8s instead of d6s. This upgrades the existing Sentinel Strike conditional damage path; it does not create a separate always-on damage bonus.</p>', { talentName: 'Improved Sentinel Strike', dieSize: 8 });
+  }
+
+  static async announceImprovedSentinelsGambit(actor) {
+    const extraUses = Math.max(1, Math.floor(getClassLevel(actor) / 2));
+    return postCard(actor, "Improved Sentinel's Gambit", `<p>You can use Sentinel's Gambit an additional number of times per encounter equal to half your Class Level (minimum 1).</p><p><strong>Detected extra uses:</strong> +${extraUses}. Use the Sentinel's Gambit action to spend them from the shared encounter tracker.</p>`, { talentName: "Improved Sentinel's Gambit", extraUses });
+  }
+
+  static async announceRebukeTheDark(actor) {
+    return postCard(actor, 'Rebuke the Dark', '<p>When using the Rebuke Force Power against a Force Power with the [Dark Side] descriptor, roll two dice for the Rebuke attempt and keep the better result.</p><p>This applies only to Rebuke attempts against [Dark Side] Force Powers.</p>', { talentName: 'Rebuke the Dark' });
+  }
+
+  static async promptTaintOfTheDarkSide(actor) {
+    if (!hasTalent(actor, 'Taint of the Dark Side')) {
+      ui?.notifications?.warn?.('Taint of the Dark Side talent required.');
+      return null;
+    }
+    const current = actor.getFlag?.(NS, 'taintOfTheDarkSide') ?? {};
+    const options = await loadDarkSideForcePowerOptions(actor);
+    if (!options.length) {
+      await postCard(actor, 'Taint of the Dark Side', '<p>No [Dark Side] Force Powers were found in the actor or force power compendium. Add one manually, then record it as the Taint of the Dark Side power.</p>', { talentName: 'Taint of the Dark Side' });
+      return { success: false, reason: 'no-dark-side-powers-found' };
+    }
+    const rows = options.map(row => `<option value="${esc(row.id)}" ${current?.powerName === row.name ? 'selected' : ''}>${esc(row.name)} — ${esc(row.source)}</option>`).join('');
+    const content = `<form class="swse-dialog"><p>Choose one Force Power with the [Dark Side] descriptor to add to your Force Power Suite. Once per encounter, you can use that chosen power without increasing your Dark Side Score unless you spend a Force Point or Destiny Point to modify it.</p><div class="form-group"><label>Dark Side Force Power</label><select name="powerRef">${rows}</select></div><p class="notes">If the selected power is from the compendium and not already owned, it will be added to the actor's Force Power Suite.</p></form>`;
+    const choice = await SWSEDialogV2.prompt({ title: 'Taint of the Dark Side', content, label: 'Choose Power', callback: (html) => {
+      const root = html instanceof HTMLElement ? html : html?.[0] ?? html;
+      const form = root?.querySelector?.('form') ?? root;
+      return { powerRef: String(new FormData(form).get('powerRef') || '') };
+    }});
+    if (!choice) return null;
+    const selected = options.find(row => row.id === choice.powerRef) ?? null;
+    if (!selected) return null;
+    let ownedItem = selected.id.startsWith('owned:') ? selected.item : Array.from(actor?.items ?? []).find(item => isForcePowerItem(item) && String(item.name).toLowerCase() === String(selected.name).toLowerCase());
+    if (!ownedItem && selected.item) {
+      const data = selected.item.toObject ? selected.item.toObject() : selected.item;
+      data.system = foundry.utils.mergeObject(data.system || {}, { inSuite: true, grantedBy: 'Taint of the Dark Side' }, { inplace: false, recursive: true });
+      data.flags = foundry.utils.mergeObject(data.flags || {}, { swse: { taintOfTheDarkSideGranted: true } }, { inplace: false, recursive: true });
+      const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [data], { source: 'taint-of-the-dark-side', render: false });
+      ownedItem = Array.isArray(created) ? created[0] : created;
+    }
+    await actor.setFlag(NS, 'taintOfTheDarkSide', { powerId: ownedItem?.id ?? null, powerName: selected.name, selectedAt: Date.now() });
+    await postCard(actor, 'Taint of the Dark Side', `<p><strong>${esc(selected.name)}</strong> is recorded as ${esc(actor.name)}'s Taint of the Dark Side power.</p><p>Once per encounter, using this specific [Dark Side] Force Power does not increase Dark Side Score unless it is modified by a Force Point or Destiny Point.</p>`, { talentName: 'Taint of the Dark Side', powerId: ownedItem?.id ?? null, powerName: selected.name });
+    return { success: true, powerId: ownedItem?.id ?? null, powerName: selected.name };
+  }
+
   static async announceSentinelStrike(actor) {
     const dice = Math.min(5, Math.max(1, countTalent(actor, 'Sentinel Strike')));
-    return postCard(actor, 'Sentinel Strike', `<p>When you attack a flat-footed opponent, or one denied its Dexterity bonus to Reflex Defense against you, with a damage-dealing Force Power or a Lightsaber, you deal +${dice}d6 damage.</p><p>This does not affect Force Powers with the [Dark Side] descriptor. Multiple selections stack to a maximum of +5d6.</p>`, { talentName: 'Sentinel Strike', dice });
+    const dieSize = hasTalent(actor, 'Improved Sentinel Strike') ? 8 : 6;
+    return postCard(actor, 'Sentinel Strike', `<p>When you attack a flat-footed opponent, or one denied its Dexterity bonus to Reflex Defense against you, with a damage-dealing Force Power or a Lightsaber, you deal +${dice}d${dieSize} damage.</p><p>This does not affect Force Powers with the [Dark Side] descriptor. Multiple Sentinel Strike selections stack to a maximum of 5 dice. Improved Sentinel Strike upgrades those dice to d8s.</p>`, { talentName: 'Sentinel Strike', dice, dieSize });
   }
 
   static async announceSentinelsObservation(actor) {
@@ -529,7 +649,8 @@ export class SentinelTalentActions {
         }
         if (hasTalent(actor, 'Sentinel Strike') && (lightsaber || (forcePower && !forceDarkSide)) && targetDeniedDex) {
           const dice = Math.min(5, Math.max(1, countTalent(actor, 'Sentinel Strike')));
-          ui?.notifications?.info?.(`Sentinel Strike: +${dice}d6 damage applies against the denied-Dex/flat-footed target.`);
+          const dieSize = hasTalent(actor, 'Improved Sentinel Strike') ? 8 : 6;
+          ui?.notifications?.info?.(`Sentinel Strike: +${dice}d${dieSize} damage applies against the denied-Dex/flat-footed target.`);
         }
       } catch (err) {
         console.warn('[SWSE] Sentinel attack hook failed:', err);

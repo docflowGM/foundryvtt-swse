@@ -27,6 +27,7 @@ import { GuardianSpiritActions } from "/systems/foundryvtt-swse/scripts/engine/t
 import { ConsularTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/consular-talent-actions.js";
 import { SentinelTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/sentinel-talent-actions.js";
 import { LightsaberTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-talent-actions.js";
+import { JediPrestigeTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/jedi-prestige-talent-actions.js";
 import { LightsaberFormEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-form-engine.js";
 import { ArmorTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/armor-talent-actions.js";
 import { promptForcePowerRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
@@ -8180,6 +8181,10 @@ const forcePoints = [];
       return await this._executeLightsaberTalentCombatAction(actionId, actionData, options);
     }
 
+    if (actionData?.resolutionMode === 'jediPrestigeTalent' || actionData?.jediPrestigeTalentAction || actionData?.ruleData?.jediPrestigeTalentAction) {
+      return await this._executeJediPrestigeTalentCombatAction(actionId, actionData, options);
+    }
+
     if (actionData?.resolutionMode === 'armorTalent' || actionData?.armorTalentAction || actionData?.ruleData?.armorTalentAction) {
       return await this._executeArmorTalentCombatAction(actionId, actionData, options);
     }
@@ -8461,6 +8466,7 @@ const forcePoints = [];
     }
 
     if (kind === 'clearMind') return SentinelTalentActions.announceClearMind(this.actor);
+    if (kind === 'darkDeception') return SentinelTalentActions.promptDarkDeception(this.actor);
     if (kind === 'darkSideSense') return SentinelTalentActions.announceDarkSideSense(this.actor);
     if (kind === 'darkSideScourge') return SentinelTalentActions.announceDarkSideScourge(this.actor);
     if (kind === 'forceHaze') return SentinelTalentActions.promptForceHaze(this.actor, { sourceElement: options?.sourceElement ?? null });
@@ -8474,13 +8480,36 @@ const forcePoints = [];
     if (kind === 'primeTargets') return SentinelTalentActions.announcePrimeTargets(this.actor);
     if (kind === 'reapRetribution') return SentinelTalentActions.promptReapRetribution(this.actor);
     if (kind === 'sensePrimalForce') return SentinelTalentActions.announceSensePrimalForce(this.actor);
+    if (kind === 'rebukeTheDark') return SentinelTalentActions.announceRebukeTheDark(this.actor);
     if (kind === 'sentinelStrike') return SentinelTalentActions.announceSentinelStrike(this.actor);
+    if (kind === 'improvedSentinelStrike') return SentinelTalentActions.announceImprovedSentinelStrike(this.actor);
+    if (kind === 'improvedSentinelsGambit') return SentinelTalentActions.announceImprovedSentinelsGambit(this.actor);
     if (kind === 'sentinelsGambit') return SentinelTalentActions.promptSentinelsGambit(this.actor);
     if (kind === 'sentinelsObservation') return SentinelTalentActions.announceSentinelsObservation(this.actor);
     if (kind === 'steelResolve') return SentinelTalentActions.promptSteelResolve(this.actor);
+    if (kind === 'taintOfTheDarkSide') return SentinelTalentActions.promptTaintOfTheDarkSide(this.actor);
     if (kind === 'unseenEyes') return SentinelTalentActions.announceUnseenEyes(this.actor);
 
     return this._announceManualCombatAction(actionId, actionData, { ...options, actionType });
+  }
+
+  async _executeJediPrestigeTalentCombatAction(actionId, actionData = {}, options = {}) {
+    const kind = actionData?.jediPrestigeTalentAction ?? actionData?.ruleData?.jediPrestigeTalentAction ?? actionId;
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+
+    if (actionData?.spendAction !== false) {
+      const allowed = await this._applyActionEconomy(actionType, {
+        source: options?.source ?? 'jedi-prestige-talent',
+        actionId,
+        actionName: actionData?.name ?? actionId,
+        sourceName: actionData?.sourceName ?? 'Jedi Prestige Talent',
+        sourceType: 'talent',
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
+      });
+      if (!allowed) return null;
+    }
+
+    return JediPrestigeTalentActions.execute(this.actor, kind, actionData, options);
   }
 
   async _executeLightsaberTalentCombatAction(actionId, actionData = {}, options = {}) {
@@ -8542,6 +8571,12 @@ const forcePoints = [];
     if (kind === 'shotoFocus') return LightsaberTalentActions.announceShotoFocus(this.actor);
     if (kind === 'shotoMaster') return LightsaberTalentActions.announceShotoMaster(this.actor);
     if (kind === 'weaponSpecializationLightsabers') return LightsaberTalentActions.announceWeaponSpecializationLightsabers(this.actor);
+    if (kind === 'improvedQuickDrawLightsabers') return LightsaberTalentActions.announceImprovedQuickDrawLightsabers(this.actor);
+    if (kind === 'slashingCharge') return LightsaberTalentActions.announceSlashingCharge(this.actor);
+    if (kind === 'mobileAttackLightsabers') return LightsaberTalentActions.announceMobileAttackLightsabers(this.actor);
+    if (kind === 'masterworkLightsaber') return LightsaberTalentActions.announceMasterworkLightsaber(this.actor);
+    if (kind === 'perfectAttunement') return LightsaberTalentActions.announcePerfectAttunement(this.actor);
+    if (kind === 'quickModification') return LightsaberTalentActions.announceQuickModification(this.actor);
 
     if (kind?.startsWith?.('setLightsaberForm:')) {
       const form = kind.split(':')[1];

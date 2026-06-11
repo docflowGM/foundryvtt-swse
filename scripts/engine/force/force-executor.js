@@ -23,6 +23,57 @@ import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-ad
 import { ForcePowerEffectsEngine } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js";
 import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 
+function forcePowerHasDarkSideDescriptor(power) {
+  const values = [
+    power?.system?.darkSideOption === true ? 'dark side' : '',
+    power?.system?.descriptor,
+    power?.system?.descriptors,
+    power?.system?.tags,
+    power?.system?.keywords,
+    power?.system?.discipline,
+    power?.name
+  ].flat().map(value => String(value ?? '').toLowerCase()).join(' ');
+  return values.includes('dark side') || values.includes('dark_side') || values.includes('dark-side');
+}
+
+function getEncounterId() {
+  return game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
+}
+
+function forcePowerMatchesTaintSelection(actor, power) {
+  const taint = actor?.getFlag?.('swse', 'taintOfTheDarkSide') ?? {};
+  if (!taint?.powerId && !taint?.powerName) return false;
+  if (taint.powerId && String(taint.powerId) === String(power?.id ?? power?._id)) return true;
+  return String(taint.powerName ?? '').toLowerCase() === String(power?.name ?? '').toLowerCase();
+}
+
+function forcePowerUseModifiedByPoint(options = {}) {
+  return options?.forcePointSpent === true
+    || options?.destinyPointSpent === true
+    || options?.spentForcePoint === true
+    || options?.spentDestinyPoint === true
+    || options?.modifiers?.forcePointSpent === true
+    || options?.modifiers?.destinyPointSpent === true;
+}
+
+async function shouldSuppressTaintDarkSideIncrease(actor, power, options = {}) {
+  if (!actor?.items?.some?.(item => item?.type === 'talent' && item?.name === 'Taint of the Dark Side')) return false;
+  if (!forcePowerMatchesTaintSelection(actor, power)) return false;
+  if (forcePowerUseModifiedByPoint(options)) return false;
+  const encounterId = getEncounterId();
+  const flag = actor.getFlag?.('swse', 'encounterUses.taintOfTheDarkSide') ?? {};
+  if (flag?.encounterId === encounterId && flag?.used === true) return false;
+  await actor.setFlag('swse', 'encounterUses.taintOfTheDarkSide', {
+    encounterId,
+    used: true,
+    powerId: power?.id ?? null,
+    powerName: power?.name ?? 'selected Dark Side Force Power',
+    usedAt: Date.now()
+  });
+  return true;
+}
+
+
 export class ForceExecutor {
   /**
    * Activate/recover a force power
@@ -31,7 +82,7 @@ export class ForceExecutor {
    * @param {boolean} recover - Is this a recovery action?
    * @returns {Object} Activation result
    */
-  static async activateForce(actor, powerId, recover = false) {
+  static async activateForce(actor, powerId, recover = false, options = {}) {
     try {
       const power = actor.items.get(powerId);
       if (!power || power.type !== "force-power") {
@@ -60,10 +111,16 @@ export class ForceExecutor {
       }], { source: recover ? 'force-power-recover' : 'force-power-use', render: false });
 
       // Check for dark side usage (optional mechanic)
-      const hasDarkSide = power.system?.darkSideOption || false;
+      const hasDarkSide = forcePowerHasDarkSideDescriptor(power);
+      let taintSuppressedDarkSideIncrease = false;
       if (hasDarkSide && !recover) {
-        // Player used dark side - increase DSP
-        await ForceEngine.gainDarkSidePoint(actor, `Used ${power.name} with dark side`);
+        taintSuppressedDarkSideIncrease = await shouldSuppressTaintDarkSideIncrease(actor, power, options);
+        if (taintSuppressedDarkSideIncrease) {
+          ui?.notifications?.info?.(`Taint of the Dark Side: ${power.name} does not increase Dark Side Score for this encounter use.`);
+        } else {
+          // Player used dark side - increase DSP
+          await ForceEngine.gainDarkSidePoint(actor, `Used ${power.name} with dark side`);
+        }
       }
 
       // Generate chat message
@@ -83,7 +140,8 @@ export class ForceExecutor {
         success: true,
         power: power.name,
         recovered: recover,
-        darkSideUsed: hasDarkSide && !recover
+        darkSideUsed: hasDarkSide && !recover,
+        taintSuppressedDarkSideIncrease
       };
     } catch (err) {
       console.error("Force activation failed:", err);

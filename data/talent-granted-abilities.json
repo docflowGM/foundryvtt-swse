@@ -2,8 +2,8 @@
   "_meta": {
     "version": "1.0.5",
     "description": "Comprehensive talent ability definitions for SWSE Foundry system",
-    "totalAbilities": 443,
-    "lastModified": "2026-02-17",
+    "totalAbilities": 476,
+    "lastModified": "2026-06-11",
     "multiOptionTalents": 9,
     "notes": "Includes 9 multi-option talents with 27 total sub-abilities (Pistol Duelist, Fool's Luck, Beloved, Dumb Luck, Cunning Strategist, Experienced Brawler, Shadow Striker, Swift Strider, Two-Faced) (27 Starship Maneuvers from Ace Pilot tree) (27 Starship Maneuvers from Ace Pilot tree)"
   },
@@ -1224,8 +1224,8 @@
       "name": "Force Warning",
       "talentName": "Force Warning",
       "talentTree": "Force Sensitivity",
-      "description": "You cannot be surprised. You always act during a surprise round, even if you would not normally be aware of your opponents.",
-      "actionType": "passive",
+      "description": "Allies within 12 squares may reroll Initiative, and selected surprised allies may act if you are not surprised.",
+      "actionType": "initiative-roll",
       "effects": [
         {
           "type": "immunity",
@@ -1236,12 +1236,26 @@
         }
       ],
       "tags": [
-        "force",
-        "defense",
-        "passive"
+        "talent",
+        "backchecked",
+        "contextual"
       ],
       "icon": "fas fa-exclamation-triangle",
-      "linkedAction": "perception-surprise"
+      "linkedAction": "initiative-roll",
+      "trigger": "Allies within 12 squares may reroll Initiative, and selected surprised allies may act if you are not surprised.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "rulesText": "Allies within 12 squares can choose to reroll their Initiative checks at the start of combat, but must keep the result of the reroll, even if it is worse.\n\nFurthermore, if any allies within 12 squares are Surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered Surprised, and can act normally during the Surprise Round.",
+      "prerequisite": "",
+      "automation": {
+        "mode": "encounter_start_support",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
     },
     "gauge-force-potential": {
       "id": "gauge-force-potential",
@@ -1281,20 +1295,34 @@
       "name": "Force Treatment",
       "talentName": "Force Treatment",
       "talentTree": "Force Sensitivity",
-      "description": "As a standard action, make a Use the Force check instead of a Treat Injury check to treat an injured creature.",
-      "actionType": "standard",
+      "description": "Use Use the Force in place of Treat Injury; rerolls transfer to the UtF check.",
+      "actionType": "use-the-force-check",
       "roll": {
         "skillKey": "useTheForce",
         "substitutesFor": "treatInjury",
         "label": "Force Treatment (Use the Force)"
       },
       "tags": [
-        "force",
-        "healing",
-        "standard"
+        "talent",
+        "backchecked",
+        "contextual"
       ],
       "icon": "fas fa-hand-holding-medical",
-      "linkedAction": "treat-injury"
+      "linkedAction": "use-the-force-check",
+      "trigger": "Use Use the Force in place of Treat Injury; rerolls transfer to the UtF check.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "rulesText": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill for purposes of using this Talent. If you are entitled to a Treat Injury check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+      "prerequisite": "",
+      "automation": {
+        "mode": "skill_substitution_treat_injury",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
     },
     "temporal-awareness": {
       "id": "temporal-awareness",
@@ -3205,14 +3233,31 @@
       "name": "Call Weapon",
       "talentName": "Call Weapon",
       "talentTree": "Jedi Knight",
-      "description": "Call and ignite a lightsaber you built as a free action if it is within line of sight.",
-      "actionType": "free_action",
+      "description": "Call and ignite a lightsaber you built as a free action using Move Light Object if it is in line of sight.",
+      "actionType": "move-light-object",
       "effect": "weapon_summon",
       "tags": [
-        "conditional",
-        "complex"
+        "talent",
+        "backchecked",
+        "contextual"
       ],
-      "icon": "fas fa-sword"
+      "icon": "fas fa-sword",
+      "id": "call-weapon",
+      "trigger": "Call and ignite a lightsaber you built as a free action using Move Light Object if it is in line of sight.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "linkedAction": "move-light-object",
+      "rulesText": "You can use the Move Light Object application of the Use the Force Skill to call a Lightsaber you built into your hand and ignite it as a Free Action. The Weapon must be in your line of sight to call it to your hand.",
+      "prerequisite": "",
+      "automation": {
+        "mode": "lightsaber_built_free_draw_ignite",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
     },
     "cause-mutation": {
       "name": "Cause Mutation",
@@ -3383,19 +3428,6 @@
       ],
       "icon": "fas fa-star"
     },
-    "echoes-in-the-force": {
-      "name": "Echoes in the Force",
-      "talentName": "Echoes in the Force",
-      "talentTree": "Jedi Knight",
-      "description": "Use Farseeing on a location to view the past; DC 20 plus one per day into the past.",
-      "actionType": "passive",
-      "effect": "unknown",
-      "tags": [
-        "conditional",
-        "complex"
-      ],
-      "icon": "fas fa-star"
-    },
     "emergency-team": {
       "name": "Emergency Team",
       "talentName": "Emergency Team",
@@ -3504,14 +3536,31 @@
       "name": "Force Revive",
       "talentName": "Force Revive",
       "talentTree": "Jedi Knight",
-      "description": "An ally affected by Battle Meditation reduced to 0 hp may take Second Wind as a reaction and falls unconscious.",
-      "actionType": "passive",
+      "description": "Spend a Force Point as a Reaction to let a Battle Meditation ally at 0 HP take Second Wind immediately.",
+      "actionType": "reaction",
       "effect": "unknown",
       "tags": [
-        "conditional",
-        "complex"
+        "talent",
+        "backchecked",
+        "contextual"
       ],
-      "icon": "fas fa-star"
+      "icon": "fas fa-star",
+      "id": "force-revive",
+      "trigger": "Spend a Force Point as a Reaction to let a Battle Meditation ally at 0 HP take Second Wind immediately.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "linkedAction": "reaction",
+      "rulesText": "When an ally affected by your Battle Meditation is reduced to 0 hit points, you can spend a Force Point as a Reaction, allowing that ally to take its Second Wind as a Reaction immediately (though the target still falls Unconscious before the Second Wind is triggered).",
+      "prerequisite": "Battle Meditation, Jedi Battle Commander",
+      "automation": {
+        "mode": "battle_meditation_second_wind_reaction",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
     },
     "fortified-body": {
       "name": "Fortified Body",
@@ -3595,14 +3644,31 @@
       "name": "Healing Boost",
       "talentName": "Healing Boost",
       "talentTree": "Jedi Knight",
-      "description": "Damage healed with Vital Transfer increases by 1 point per class level.",
-      "actionType": "passive",
+      "description": "Vital Transfer heals +1 point per class level.",
+      "actionType": "vital-transfer",
       "effect": "damage_bonus",
       "tags": [
-        "special",
-        "complex"
+        "talent",
+        "backchecked",
+        "contextual"
       ],
-      "icon": "fas fa-sword"
+      "icon": "fas fa-sword",
+      "id": "healing-boost",
+      "trigger": "Vital Transfer heals +1 point per class level.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "linkedAction": "vital-transfer",
+      "rulesText": "When healing somebody through Vital Transfer, the amount of damage healed increases by 1 point per your Class Level.",
+      "prerequisite": "Vital Transfer",
+      "automation": {
+        "mode": "vital_transfer_healing_bonus",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
     },
     "hyperdriven": {
       "name": "Hyperdriven",
@@ -3673,14 +3739,31 @@
       "name": "Improved Healing Boost",
       "talentName": "Improved Healing Boost",
       "talentTree": "Jedi Knight",
-      "description": "Healing Boost increases damage healed by 2 points per class level.",
-      "actionType": "passive",
+      "description": "Vital Transfer heals +2 points per class level.",
+      "actionType": "vital-transfer",
       "effect": "damage_bonus",
       "tags": [
-        "special",
-        "complex"
+        "talent",
+        "backchecked",
+        "contextual"
       ],
-      "icon": "fas fa-sword"
+      "icon": "fas fa-sword",
+      "id": "improved-healing-boost",
+      "trigger": "Vital Transfer heals +2 points per class level.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "linkedAction": "vital-transfer",
+      "rulesText": "When healing somebody through Vital Transfer, the amount of damage healed increases by 2 points per your Class Level.",
+      "prerequisite": "Healing Boost, Vital Transfer",
+      "automation": {
+        "mode": "vital_transfer_healing_bonus_improved",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
     },
     "improved-sentinels-gambit": {
       "name": "Improved Sentinel's Gambit",
@@ -3707,19 +3790,6 @@
         "complex"
       ],
       "icon": "fas fa-star"
-    },
-    "improvised-weapon-master": {
-      "name": "Improvised Weapon Master",
-      "talentName": "Improvised Weapon Master",
-      "talentTree": "Jedi Knight",
-      "description": "No penalty when using improvised weapons.",
-      "actionType": "passive",
-      "effect": "damage_bonus",
-      "tags": [
-        "special",
-        "complex"
-      ],
-      "icon": "fas fa-sword"
     },
     "indomitable-will": {
       "name": "Indomitable Will",
@@ -3752,14 +3822,31 @@
       "name": "Jedi Network",
       "talentName": "Jedi Network",
       "talentTree": "Jedi Knight",
-      "description": "Includes Acquire Equipment or Funds, Obtain Info, Receive Medical Attention, and Secure Safe House benefits.",
-      "actionType": "passive",
+      "description": "Once per session in a civilized area, call on Jedi sympathizers for equipment/funds, information, medical aid, or a safe house.",
+      "actionType": "session-resource",
       "effect": "special",
       "tags": [
-        "special",
-        "complex"
+        "talent",
+        "backchecked",
+        "contextual"
       ],
-      "icon": "fas fa-star"
+      "icon": "fas fa-star",
+      "id": "jedi-network",
+      "trigger": "Once per session in a civilized area, call on Jedi sympathizers for equipment/funds, information, medical aid, or a safe house.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "linkedAction": "session-resource",
+      "rulesText": "You have access to a network of Jedi sympathizers. While in a civilized area, you can call upon this network of allies once per game session for one of the following purposes:\n\nAcquire Equipment or Funds: You can use your contacts to obtain material that might otherwise be Licensed, Restricted, Military, or Illegal, provided the total value of the Equipment does not exceed your Jedi Knight Level x 500 credits. Alternatively, you can obtain a number of credits from your contacts equal to this amount to spend as you see fit.\n\nObtain Information: Your contacts provide you with information, automatically succeeding on a Gather Information check (and covering the credit cost of the check) provided the DC does not exceed 20.\n\nReceive Medical Attention: Your contacts provide you and up to three of your allies with medical attention as dispensed by a skilled physician or healer. The length of the treatment cannot exceed 24 hours, but is otherwise free of charge and completely private.\n\nSecure Safe House: One of your contacts provides a safe redoubt for you and up to three of your allies, for a number of days equal to your Jedi Knight Class Level. While in hiding, you have no contact with anyone other than the individual who is hiding you. Once the allotted time is up, you must leave the Safe House or risk discovery. For each day you remain in hiding past this deadline, the Gamemaster should roll 1d20. On a result of 15 or higher, your Safe House is discovered, and your contact's complicity in keeping you hidden is exposed.",
+      "prerequisite": "",
+      "automation": {
+        "mode": "once_per_session_network_support",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
     },
     "keep-it-going": {
       "name": "Keep It Going",
@@ -3804,14 +3891,31 @@
       "name": "Masterwork Lightsaber",
       "talentName": "Masterwork Lightsaber",
       "talentTree": "Jedi Knight",
-      "description": "Add one extra accessory to a lightsaber you built; reroll one damage die if you built it; mentoring another reduces their DC by 5.",
-      "actionType": "passive",
+      "description": "Add one extra accessory/modification when building a lightsaber, reroll one damage die, and mentor construction at -5 DC.",
+      "actionType": "lightsaber-construction",
       "effect": "damage_bonus",
       "tags": [
-        "special",
-        "complex"
+        "talent",
+        "backchecked",
+        "contextual"
       ],
-      "icon": "fas fa-sword"
+      "icon": "fas fa-sword",
+      "id": "masterwork-lightsaber",
+      "trigger": "Add one extra accessory/modification when building a lightsaber, reroll one damage die, and mentor construction at -5 DC.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "linkedAction": "lightsaber-construction",
+      "rulesText": "Whenever you build a Lightsaber (see Advanced Lightsaber Construction), you do so with such expertise that it makes the Weapon even more refined and elegant. When you build a Lightsaber, you can choose to add one extra Lightsaber Accessory or Modification at the time of creation.\n\nAnd, when you hit a target with a Lightsaber that you built, you can always choose to reroll one damage die from your damage roll, but you must accept the result of the reroll, even if it is worse.\n\nIn addition, you can mentor another character while they construct their own Lightsaber. When you do so, you reduce the Use the Force check DC for Advanced Lightsaber Construction by -5.",
+      "prerequisite": "",
+      "automation": {
+        "mode": "lightsaber_construction_upgrade",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
     },
     "mercenarys-determination": {
       "name": "Mercenary's Determination",
@@ -3961,14 +4065,31 @@
       "name": "Quick Modification",
       "talentName": "Quick Modification",
       "talentTree": "Jedi Knight",
-      "description": "Spend 1 minute to remove an accessory and add another to a lightsaber you built.",
-      "actionType": "passive",
+      "description": "Spend 1 minute to swap one accessory/modification on a lightsaber you built, subject to GM limits.",
+      "actionType": "lightsaber-modification",
       "effect": "special",
       "tags": [
-        "special",
-        "complex"
+        "talent",
+        "backchecked",
+        "contextual"
       ],
-      "icon": "fas fa-star"
+      "icon": "fas fa-star",
+      "id": "quick-modification",
+      "trigger": "Spend 1 minute to swap one accessory/modification on a lightsaber you built, subject to GM limits.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "linkedAction": "lightsaber-modification",
+      "rulesText": "You can spend 1 minute modifying a Lightsaber you have built, removing one Lightsaber Accessory or Lightsaber Modification and putting a different one its place.\n\nGamemasters may rule that some modifications cannot be added or removed in this way due to rarity of materials or the difficulty of the Lightsaber Modification (such as adding or removing the Electrum Detail).",
+      "prerequisite": "Masterwork Lightsaber",
+      "automation": {
+        "mode": "one_minute_lightsaber_mod_swap",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
     },
     "quick-modifications": {
       "name": "Quick Modifications",
@@ -4078,14 +4199,31 @@
       "name": "Share Talent",
       "talentName": "Share Talent",
       "talentTree": "Jedi Knight",
-      "description": "Once per day, grant use of a Lightsaber Combat tree, Duelist, or Forms talent to allies within 12 squares equal to half your class level for the encounter.",
-      "actionType": "passive",
+      "description": "Choose one eligible talent; once per day spend a Force Point as a Standard Action to share it with trained allies for the encounter.",
+      "actionType": "standard-action",
       "effect": "special",
       "tags": [
-        "special",
-        "complex"
+        "talent",
+        "backchecked",
+        "contextual"
       ],
-      "icon": "fas fa-star"
+      "icon": "fas fa-star",
+      "id": "share-talent",
+      "trigger": "Choose one eligible talent; once per day spend a Force Point as a Standard Action to share it with trained allies for the encounter.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": true
+      },
+      "linkedAction": "standard-action",
+      "rulesText": "Choose a Talent that you already possess. The Talent you select must be from the Lightsaber Combat Talent Tree, the Duelist Talent Tree, or the Lightsaber Forms Talent Tree. Once per day, as a Standard Action, you can spend a Force Point to impart the benefits of the chosen Talent to one or more allies, effectively granting them the Talent (even if they don't meet the prerequisites).\n\nAn ally must be within 12 squares of you, and must be able to see and hear you to gain the Talent; once gained, its benefits last until the end of the encounter.\n\nYou can share the Talent with a number of allies equal to one-half your Class Level (rounded down). Only allies who are Trained in the Use the Force Skill can gain the benefits of the Shared Talent.\n\nYou can take this Talent multiple times. Each time you do so, you must select a different Talent to share with this ability. You can share each Talent with your allies only once per day.",
+      "prerequisite": "At least 1 Talent from Lightsaber Combat Talent Tree, Duelist Talent Tree, or Lightsaber Forms Talent Tree",
+      "automation": {
+        "mode": "choice_share_talent_daily",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
     },
     "signature-item": {
       "name": "Signature Item",
@@ -6503,8 +6641,8 @@
       "name": "Master Advisor",
       "talentName": "Master Advisor",
       "talentTree": "Jedi Archivist",
-      "description": "An ally you aid with Skilled Advisor gains a Force Point to spend before the end of the encounter. Your guidance is so insightful it empowers others.",
-      "actionType": "modifier",
+      "description": "Skilled Advisor grants the aided ally one temporary Force Point at the end of their next turn.",
+      "actionType": "skilled-advisor",
       "modifies": "skilled-advisor",
       "prerequisites": [
         "skilled-advisor"
@@ -6519,12 +6657,26 @@
         }
       ],
       "tags": [
-        "force",
-        "support",
-        "modifier",
-        "jedi"
+        "talent",
+        "backchecked",
+        "contextual"
       ],
-      "icon": "fas fa-graduation-cap"
+      "icon": "fas fa-graduation-cap",
+      "trigger": "Skilled Advisor grants the aided ally one temporary Force Point at the end of their next turn.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "linkedAction": "skilled-advisor",
+      "rulesText": "When you use the Skilled Advisor Talent, the ally you aid gains one temporary Force Point at the end of their next turn. If the Force Point is not spent before the end of the encounter, it is lost.",
+      "prerequisite": "Skilled Advisor",
+      "automation": {
+        "mode": "temporary_force_point_grant",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
     },
     "penetrating-attack": {
       "id": "penetrating-attack",
@@ -8472,6 +8624,911 @@
       ],
       "icon": "fas fa-jedi",
       "linkedAction": "adopt-lightsaber-form-trakata"
+    },
+    "improved-quick-draw-lightsabers": {
+      "id": "improved-quick-draw-lightsabers",
+      "name": "Improved Quick Draw (Lightsabers)",
+      "talentName": "Improved Quick Draw (Lightsabers)",
+      "description": "Draw, ignite, and attack with a lightsaber in the Surprise Round; once per turn draw and ignite as a free action.",
+      "actionType": "lightsaber-attack",
+      "trigger": "Draw, ignite, and attack with a lightsaber in the Surprise Round; once per turn draw and ignite as a free action.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "lightsaber-attack",
+      "rulesText": "If you are carrying a Lightsaber (either in your hand or at your belt), you can draw the Lightsaber, ignite it, and make a single attack during the Surprise Round, even if you are Surprised. If you are not Surprised, you can take any single Action of your choice, as normal.\n\nAdditionally, once per turn you may draw and ignite a Lightsaber as a Free Action on your turn.",
+      "prerequisite": "Quick Draw, Weapon Focus (Lightsabers)",
+      "automation": {
+        "mode": "surprise_round_option",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "sheltering-stance": {
+      "id": "sheltering-stance",
+      "name": "Sheltering Stance",
+      "talentName": "Sheltering Stance",
+      "description": "Use Block or Deflect for adjacent allies without spending a Force Point.",
+      "actionType": "block-deflect-reaction",
+      "trigger": "Use Block or Deflect for adjacent allies without spending a Force Point.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "block-deflect-reaction",
+      "rulesText": "Whenever you are adjacent to an ally, you may use the Block or Deflect Talents on attacks that target that ally without the need to spend a Force Point.",
+      "prerequisite": "Block or Deflect, Vigilance",
+      "automation": {
+        "mode": "adjacent_ally_reaction",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "vigilance": {
+      "id": "vigilance",
+      "name": "Vigilance",
+      "talentName": "Vigilance",
+      "description": "Designate an adjacent ally to gain +1 deflection bonus to Reflex Defense while adjacent.",
+      "actionType": "swift-action",
+      "trigger": "Designate an adjacent ally to gain +1 deflection bonus to Reflex Defense while adjacent.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "swift-action",
+      "rulesText": "As a Swift Action you may designate one adjacent ally as the target of this Talent. That target gains a +1 deflection bonus to their Reflex Defense as long as you remain adjacent to them. You may change the target of this Talent as a Swift Action.",
+      "prerequisite": "",
+      "automation": {
+        "mode": "active_adjacent_ally_deflection",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      },
+      "effects": [
+        {
+          "type": "defenseBonus",
+          "defense": "reflex",
+          "value": 1,
+          "bonusType": "deflection",
+          "condition": "designated adjacent ally while adjacent"
+        }
+      ]
+    },
+    "watchman-s-advance": {
+      "id": "watchman-s-advance",
+      "name": "Watchman's Advance",
+      "talentName": "Watchman's Advance",
+      "description": "During the Surprise Round, you and allies can take one extra Move Action.",
+      "actionType": "surprise-round",
+      "trigger": "During the Surprise Round, you and allies can take one extra Move Action.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "surprise-round",
+      "rulesText": "When acting in the Surprise Round, you and your allies can take an extra Move Action. Any character can gain only one extra Move Action during the Surprise Round, regardless of the number of characters with this Talent in your group.",
+      "prerequisite": "Force Warning",
+      "automation": {
+        "mode": "surprise_round_move_action",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "defensive-circle": {
+      "id": "defensive-circle",
+      "name": "Defensive Circle",
+      "talentName": "Defensive Circle",
+      "description": "Battle Meditation allies gain +2 Reflex; gain +1 UtF to Block/Deflect per adjacent lightsaber-wielding ally.",
+      "actionType": "swift-action",
+      "trigger": "Battle Meditation allies gain +2 Reflex; gain +1 UtF to Block/Deflect per adjacent lightsaber-wielding ally.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "swift-action",
+      "rulesText": "As a Swift Action, you and any allies affected by your Battle Meditation gain a +2 insight bonus to their Reflex Defense, lasting as long as they are affected by your Battle Meditation. Additionally, you gain a +1 bonus to your Use the Force checks to Block and Deflect (as per the Talents) for each adjacent ally wielding a Lightsaber.",
+      "prerequisite": "Battle Meditation, Block or Deflect, Jedi Battle Commander",
+      "automation": {
+        "mode": "battle_meditation_defense_upgrade",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      },
+      "effects": [
+        {
+          "type": "defenseBonus",
+          "defense": "reflex",
+          "value": 2,
+          "bonusType": "insight",
+          "condition": "affected by your Battle Meditation"
+        }
+      ]
+    },
+    "jedi-battle-commander": {
+      "id": "jedi-battle-commander",
+      "name": "Jedi Battle Commander",
+      "talentName": "Jedi Battle Commander",
+      "description": "Battle Meditation grants +2 insight bonus on attack rolls instead of +1.",
+      "actionType": "battle-meditation",
+      "trigger": "Battle Meditation grants +2 insight bonus on attack rolls instead of +1.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "battle-meditation",
+      "rulesText": "You are trained to direct Jedi in pitched battles. Your Battle Meditation grants a +2 insight bonus on attack rolls instead of the normal +1.",
+      "prerequisite": "Battle Meditation",
+      "automation": {
+        "mode": "battle_meditation_attack_bonus_upgrade",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      },
+      "effects": [
+        {
+          "type": "battleMeditationAttackBonusOverride",
+          "value": 2
+        }
+      ]
+    },
+    "slashing-charge": {
+      "id": "slashing-charge",
+      "name": "Slashing Charge",
+      "talentName": "Slashing Charge",
+      "description": "Once per encounter during a Charge, no cumulative Block penalties and Charge bonus applies to Ripostes.",
+      "actionType": "charge",
+      "trigger": "Once per encounter during a Charge, no cumulative Block penalties and Charge bonus applies to Ripostes.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "charge",
+      "rulesText": "Once per encounter, while making a Charge, you take no cumulative penalty to Use the Force checks for each Block attempt you make during the Charge. When performing Slashing Charge, you can apply the attack bonus granted by the Charge to all Riposte attacks as well. You can declare the use of this ability after you begin the Charge, but must do so before you make your first Riposte attack.",
+      "prerequisite": "Block, Riposte, Weapon Focus (Lightsabers)",
+      "automation": {
+        "mode": "encounter_charge_riposte_option",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "mobile-attack-lightsabers": {
+      "id": "mobile-attack-lightsabers",
+      "name": "Mobile Attack (Lightsabers)",
+      "talentName": "Mobile Attack (Lightsabers)",
+      "description": "After a Full Attack with two lightsabers or a double-bladed lightsaber, move up to Speed as a free action.",
+      "actionType": "full-attack",
+      "trigger": "After a Full Attack with two lightsabers or a double-bladed lightsaber, move up to Speed as a free action.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "full-attack",
+      "rulesText": "Immediately after making a Full Attack where you attacked with two Lightsabers (or both ends of a Double-Bladed Lightsaber), you may Move up to your Speed as a Free Action.",
+      "prerequisite": "Multiattack Proficiency (Lightsabers), Dual Weapon Mastery I, Weapon Focus (Lightsabers)",
+      "automation": {
+        "mode": "post_full_attack_free_movement",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "direct": {
+      "id": "direct",
+      "name": "Direct",
+      "talentName": "Direct",
+      "description": "Standard Action: return one spent Force Power to an ally's Force Power Suite.",
+      "actionType": "standard-action",
+      "trigger": "Standard Action: return one spent Force Power to an ally's Force Power Suite.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "standard-action",
+      "rulesText": "As a Standard Action, you can return one spent Force Power to the Force Power Suite of any ally within 6 squares of you and in your line of sight. The Force Power must have been spent by the ally you designate.",
+      "prerequisite": "",
+      "automation": {
+        "mode": "force_suite_recovery_ally",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "impart-knowledge": {
+      "id": "impart-knowledge",
+      "name": "Impart Knowledge",
+      "talentName": "Impart Knowledge",
+      "description": "Aid Another on trained Knowledge checks for an ally within 6 squares as a Reaction.",
+      "actionType": "knowledge-check",
+      "trigger": "Aid Another on trained Knowledge checks for an ally within 6 squares as a Reaction.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "knowledge-check",
+      "rulesText": "You can Aid Another on the Knowledge checks of an ally within 6 squares of you as a Reaction for Knowledge skills you are Trained in.",
+      "prerequisite": "Skilled Advisor",
+      "automation": {
+        "mode": "reaction_aid_another_knowledge",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "insight-of-the-force": {
+      "id": "insight-of-the-force",
+      "name": "Insight of the Force",
+      "talentName": "Insight of the Force",
+      "description": "Use Use the Force in place of untrained Knowledge checks; rerolls transfer to the UtF check.",
+      "actionType": "use-the-force-check",
+      "trigger": "Use Use the Force in place of untrained Knowledge checks; rerolls transfer to the UtF check.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "use-the-force-check",
+      "rulesText": "You can make a Use the Force check in place of a Knowledge check for any Knowledge skill you are not Trained in. You are considered Trained in that Knowledge skill for the purposes of using this Talent. If you are entitled to a Knowledge check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+      "prerequisite": "",
+      "automation": {
+        "mode": "skill_substitution_knowledge",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "scholarly-knowledge": {
+      "id": "scholarly-knowledge",
+      "name": "Scholarly Knowledge",
+      "talentName": "Scholarly Knowledge",
+      "description": "Swift Action: reroll a trained Knowledge check and keep the better result.",
+      "actionType": "knowledge-check",
+      "trigger": "Swift Action: reroll a trained Knowledge check and keep the better result.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "knowledge-check",
+      "rulesText": "As a Swift Action, you can reroll a Knowledge check and keep the better of the two results. This can be used with any Knowledge skill you are Trained in.",
+      "prerequisite": "",
+      "automation": {
+        "mode": "trained_knowledge_reroll",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "soothe": {
+      "id": "soothe",
+      "name": "Soothe",
+      "talentName": "Soothe",
+      "description": "Vital Transfer can move the target +1 CT instead of healing damage; you move -1 CT.",
+      "actionType": "vital-transfer",
+      "trigger": "Vital Transfer can move the target +1 CT instead of healing damage; you move -1 CT.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "vital-transfer",
+      "rulesText": "When using Vital Transfer to heal somebody, you can move the target +1 step on the Condition Track instead of healing damage. When doing so, you move -1 step on the Condition Track.",
+      "prerequisite": "Vital Transfer",
+      "automation": {
+        "mode": "vital_transfer_condition_track_option",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "cover-your-tracks": {
+      "id": "cover-your-tracks",
+      "name": "Cover Your Tracks",
+      "talentName": "Cover Your Tracks",
+      "description": "Gather Information checks to locate you take a -5 penalty.",
+      "actionType": "gather-information-check",
+      "trigger": "Gather Information checks to locate you take a -5 penalty.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "gather-information-check",
+      "rulesText": "You are adept at living beneath society's radar. Anyone who attempts to locate you using the Gather Information skill suffers a -5 penalty on their Gather Information checks.",
+      "prerequisite": "",
+      "automation": {
+        "mode": "opposed_locate_penalty",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      },
+      "effects": [
+        {
+          "type": "opponentSkillPenalty",
+          "skill": "gatherInformation",
+          "value": -5,
+          "condition": "attempting to locate you"
+        }
+      ]
+    },
+    "difficult-to-sense": {
+      "id": "difficult-to-sense",
+      "name": "Difficult to Sense",
+      "talentName": "Difficult to Sense",
+      "description": "Reroll opposed Use the Force checks to conceal your presence and keep the better result.",
+      "actionType": "use-the-force-check",
+      "trigger": "Reroll opposed Use the Force checks to conceal your presence and keep the better result.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "use-the-force-check",
+      "rulesText": "You are skilled at concealing your presence from other Force-users. You may reroll any opposed Use the Force check made to conceal your presence from someone who attempts to sense other Force-users, keeping the better of the two results.",
+      "prerequisite": "",
+      "automation": {
+        "mode": "force_presence_concealment_reroll",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "force-veil": {
+      "id": "force-veil",
+      "name": "Force Veil",
+      "talentName": "Force Veil",
+      "description": "Reduce Force detection radius to 10 kilometers instead of 100 kilometers.",
+      "actionType": "sense-force",
+      "trigger": "Reduce Force detection radius to 10 kilometers instead of 100 kilometers.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "sense-force",
+      "rulesText": "Your ability to conceal yourself from other Force-users allows you to reduce the radius within which you can be detected to 10 kilometers (instead of 100 kilometers).",
+      "prerequisite": "Difficult to Sense",
+      "automation": {
+        "mode": "force_detection_radius_reduction",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "lightsaber-specialist": {
+      "id": "lightsaber-specialist",
+      "name": "Lightsaber Specialist",
+      "talentName": "Lightsaber Specialist",
+      "description": "Gain +2 morale bonus on Use the Force checks to Block and Deflect with a lightsaber you built.",
+      "actionType": "block-deflect-reaction",
+      "trigger": "Gain +2 morale bonus on Use the Force checks to Block and Deflect with a lightsaber you built.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "block-deflect-reaction",
+      "rulesText": "Whenever you are armed with a Lightsaber that you built, you gain a +2 morale bonus on Use the Force checks made to use the Block and Deflect Talents.",
+      "prerequisite": "Masterwork Lightsaber",
+      "automation": {
+        "mode": "built_lightsaber_block_deflect_bonus",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      },
+      "effects": [
+        {
+          "type": "skillBonus",
+          "skill": "useTheForce",
+          "value": 2,
+          "bonusType": "morale",
+          "condition": "Block or Deflect with a lightsaber you built"
+        }
+      ]
+    },
+    "perfect-attunement": {
+      "id": "perfect-attunement",
+      "name": "Perfect Attunement",
+      "talentName": "Perfect Attunement",
+      "description": "When a Force Point modifies an attack with a lightsaber you built, add the same amount to damage if it hits.",
+      "actionType": "lightsaber-attack",
+      "trigger": "When a Force Point modifies an attack with a lightsaber you built, add the same amount to damage if it hits.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "lightsaber-attack",
+      "rulesText": "Whenever you spend a Force Point to add to a Lightsaber attack roll made with a Lightsaber you built, you can add that same amount to the damage roll if the attack hits.",
+      "prerequisite": "Masterwork Lightsaber",
+      "automation": {
+        "mode": "force_point_attack_to_damage",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "apprentice-boon": {
+      "id": "apprentice-boon",
+      "name": "Apprentice Boon",
+      "talentName": "Apprentice Boon",
+      "description": "Spend a Force Point as a Reaction to add to an ally's Use the Force check if their UtF bonus is lower than yours.",
+      "actionType": "use-the-force-check",
+      "trigger": "Spend a Force Point as a Reaction to add to an ally's Use the Force check if their UtF bonus is lower than yours.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "use-the-force-check",
+      "rulesText": "Whenever an ally within 12 squares with a lower Use the Force skill bonus than you makes a Use the Force check, you can spend a Force Point as a Reaction to add to that Use the Force check.\n\nUse your level to determine how many dice to roll for the Force Point.",
+      "prerequisite": "",
+      "automation": {
+        "mode": "reaction_force_point_ally_utf",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "share-force-secret": {
+      "id": "share-force-secret",
+      "name": "Share Force Secret",
+      "talentName": "Share Force Secret",
+      "description": "Choose a known Force Secret; once per turn, grant it to a trained ally within 12 squares until end of next turn.",
+      "actionType": "swift-action",
+      "trigger": "Choose a known Force Secret; once per turn, grant it to a trained ally within 12 squares until end of next turn.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "swift-action",
+      "rulesText": "When you take this Talent, choose one Force Secret that you know. Once per turn as a Swift Action, you can grant the use of this Force Secret to one ally within 12 squares of you who is Trained in the Use the Force Skill.\n\nThe target gains the benefit of this Force Secret until the end of your next turn.",
+      "prerequisite": "At least 1 Force Secret",
+      "automation": {
+        "mode": "choice_grant_force_secret",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "share-force-technique": {
+      "id": "share-force-technique",
+      "name": "Share Force Technique",
+      "talentName": "Share Force Technique",
+      "description": "Choose a known Force Technique except Force Point Recovery; once per turn, grant it to a trained ally within 12 squares until end of next turn.",
+      "actionType": "swift-action",
+      "trigger": "Choose a known Force Technique except Force Point Recovery; once per turn, grant it to a trained ally within 12 squares until end of next turn.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "swift-action",
+      "rulesText": "When you take this Talent, choose one Force Technique that you know. Once per turn as a Swift Action, you can grant the use of this Force Technique to one ally within 12 squares of you who is Trained in the Use the Force Skill.\n\nThe target gains the benefit of this Force Technique until the end of your next turn. You cannot choose the Force Point Recovery Technique for this Talent.",
+      "prerequisite": "At least 1 Force Technique",
+      "automation": {
+        "mode": "choice_grant_force_technique",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "transfer-power": {
+      "id": "transfer-power",
+      "name": "Transfer Power",
+      "talentName": "Transfer Power",
+      "description": "Standard Action: spend one Force Power use to grant that power once to a trained ally within 12 squares and line of sight.",
+      "actionType": "standard-action",
+      "trigger": "Standard Action: spend one Force Power use to grant that power once to a trained ally within 12 squares and line of sight.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "standard-action",
+      "rulesText": "As a Standard Action, you can spend any one use of a Force Power currently in your Force Power Suite, adding a use of that Force Power to the Force Power Suite of any ally Trained in the Use the Force skill. The ally must be within 12 squares of you and in your line of sight.\n\nWhen your ally uses that Force Power, it disappears from his or her Force Power Suite. If the ally does not use the Force Power before the end of the encounter, it is permanently removed from his or her Force Power Suite.",
+      "prerequisite": "Force Training",
+      "automation": {
+        "mode": "force_suite_power_transfer",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "echoes-of-the-force": {
+      "id": "echoes-of-the-force",
+      "name": "Echoes of the Force",
+      "talentName": "Echoes of the Force",
+      "description": "Use Farseeing on a location's past; DC 20 +1 per day into the past while standing there.",
+      "actionType": "farseeing",
+      "trigger": "Use Farseeing on a location's past; DC 20 +1 per day into the past while standing there.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "farseeing",
+      "rulesText": "You can use the Farseeing Force Power on a location instead of on an individual creature, peering into the location's past to view events that occurred there. Unlike the normal use of the Farseeing Force Power, you are actually looking into the location's past (at a time you designate), and you must be standing in the location being viewed.\n\nThe target DC for your Use the Force check is 20, +1 for each day into the past that you are attempt to scry. When you look into the past, you need only specify a time in a number of days, as you can sense tremors in The Force that focus you visions on meaningful events that day.",
+      "prerequisite": "Farseeing",
+      "automation": {
+        "mode": "farseeing_location_past",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "jedi-quarry": {
+      "id": "jedi-quarry",
+      "name": "Jedi Quarry",
+      "talentName": "Jedi Quarry",
+      "description": "Swift Action designate quarry; gain +2 Speed when moving if you end adjacent to the target.",
+      "actionType": "swift-action",
+      "trigger": "Swift Action designate quarry; gain +2 Speed when moving if you end adjacent to the target.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "swift-action",
+      "rulesText": "As a Swift Action, you can designate a single target creature as the focus of your attentions. You gain a +2 bonus to your Speed any time you spend a Move Action to Move, provided that you end your movement adjacent to the target.\n\nYou retain this bonus (and may not use this Talent again) until your target surrenders, is reduced to 0 Hit Points, moves to the bottom of the Condition Track, or until the encounter ends.",
+      "prerequisite": "",
+      "automation": {
+        "mode": "quarry_movement_bonus",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "prepared-for-danger": {
+      "id": "prepared-for-danger",
+      "name": "Prepared for Danger",
+      "talentName": "Prepared for Danger",
+      "description": "Spend an unspent Farseeing as a Swift Action to regain one other Force Power.",
+      "actionType": "swift-action",
+      "trigger": "Spend an unspent Farseeing as a Swift Action to regain one other Force Power.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "swift-action",
+      "rulesText": "Whenever you have at least one unspent Farseeing Force Power in your Force Power Suite, you can spend that Farseeing Force Power to regain any one other Force Power as a Swift Action.",
+      "prerequisite": "Farseeing",
+      "automation": {
+        "mode": "farseeing_trade_recover_force_power",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "sense-deception": {
+      "id": "sense-deception",
+      "name": "Sense Deception",
+      "talentName": "Sense Deception",
+      "description": "Use a Use the Force check in place of Will Defense against Deception or Persuasion if higher.",
+      "actionType": "use-the-force-check",
+      "trigger": "Use a Use the Force check in place of Will Defense against Deception or Persuasion if higher.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "use-the-force-check",
+      "rulesText": "Whenever someone makes a Deception or Persuasion Skill Check against your Will Defense, you can make a Use the Force check, replacing your Will Defense with the result of your Use the Force check if it is higher.",
+      "prerequisite": "",
+      "automation": {
+        "mode": "will_defense_replacement",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "unclouded-judgement": {
+      "id": "unclouded-judgement",
+      "name": "Unclouded Judgement",
+      "talentName": "Unclouded Judgement",
+      "description": "Spend a Force Point as a Reaction to negate a Mind-Affecting Force Power or Force Talent targeting you.",
+      "actionType": "reaction",
+      "trigger": "Spend a Force Point as a Reaction to negate a Mind-Affecting Force Power or Force Talent targeting you.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "reaction",
+      "rulesText": "Whenever you are the target of a Mind-Affecting Force Power or Force Talent, you can spend a Force Point as a Reaction to negate the effects of that Force Power or Force Talent (no Skill Check required).",
+      "prerequisite": "Sense Deception",
+      "automation": {
+        "mode": "mind_affecting_negation",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "combat-trance": {
+      "id": "combat-trance",
+      "name": "Combat Trance",
+      "talentName": "Combat Trance",
+      "description": "Battle Strike's attack bonus applies to your first melee attack each round until encounter end, ending if you do not attack in a round.",
+      "actionType": "battle-strike",
+      "trigger": "Battle Strike's attack bonus applies to your first melee attack each round until encounter end, ending if you do not attack in a round.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "battle-strike",
+      "rulesText": "Whenever you use the Battle Strike Force Power, you gain the Force Power's bonus on attack rolls on your first melee attack made each round until the end of the encounter. If you do not attack in a round, this effect ends.",
+      "prerequisite": "Battle Strike",
+      "automation": {
+        "mode": "battle_strike_persistent_melee_bonus",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "improvised-weapon-mastery": {
+      "id": "improvised-weapon-mastery",
+      "name": "Improvised Weapon Masteryy",
+      "talentName": "Improvised Weapon Masteryy",
+      "description": "Take no penalty on attack rolls with improvised weapons.",
+      "actionType": "attack-roll",
+      "trigger": "Take no penalty on attack rolls with improvised weapons.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "attack-roll",
+      "rulesText": "You take no penalty on attack rolls made with Improvised Weapons.",
+      "prerequisite": "",
+      "automation": {
+        "mode": "improvised_weapon_no_penalty",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "twin-weapon-style": {
+      "id": "twin-weapon-style",
+      "name": "Twin Weapon Style",
+      "talentName": "Twin Weapon Style",
+      "description": "Standard Action: with two weapons or a double weapon, attack once with each against different targets.",
+      "actionType": "standard-action",
+      "trigger": "Standard Action: with two weapons or a double weapon, attack once with each against different targets.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "standard-action",
+      "rulesText": "As a Standard Action, whenever you are wielding two Weapons (or a Double Weapon), you can make one attack with each Weapon (or each end of a Double Weapon). Each attack must be against a different target.",
+      "prerequisite": "",
+      "automation": {
+        "mode": "two_weapon_standard_attack",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "twin-weapon-mastery": {
+      "id": "twin-weapon-mastery",
+      "name": "Twin Weapon Mastery",
+      "talentName": "Twin Weapon Mastery",
+      "description": "Move 2 squares between Twin Weapon Style attacks without provoking attacks of opportunity.",
+      "actionType": "twin-weapon-style",
+      "trigger": "Move 2 squares between Twin Weapon Style attacks without provoking attacks of opportunity.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "twin-weapon-style",
+      "rulesText": "Whenever you use the Twin Weapon Style Talent, you can move 2 squares between each attack. This movement does not provoke Attacks of Opportunity.",
+      "prerequisite": "Twin Weapon Style",
+      "automation": {
+        "mode": "between_attacks_movement",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
+    },
+    "shoto-pin": {
+      "id": "shoto-pin",
+      "name": "Shoto Pin",
+      "talentName": "Shoto Pin",
+      "description": "After blocking with a light lightsaber, the attacker can make no further melee attacks until its next turn or until adjacency/effect ends.",
+      "actionType": "block-reaction",
+      "trigger": "After blocking with a light lightsaber, the attacker can make no further melee attacks until its next turn or until adjacency/effect ends.",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "talent",
+        "backchecked",
+        "contextual"
+      ],
+      "linkedAction": "block-reaction",
+      "rulesText": "Whenever you are wielding a light Lightsaber (typically a Shoto Lightsaber) and successfully use the Block Talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it. The effect ends early if you move, attack, or use an action.",
+      "prerequisite": "Block",
+      "automation": {
+        "mode": "light_lightsaber_block_lockout",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "gmAdjudication": true
+      }
     }
   }
 }

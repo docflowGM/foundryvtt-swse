@@ -162,33 +162,12 @@ export class LightSideTalentMechanics {
   }
 
   /**
-   * DIRECT - Return one Force power to any ally within 6 squares
-   * Swift action, once per encounter
+   * DIRECT - Return one spent Force Power to an ally within 6 squares and line of sight.
+   * Standard Action. Not encounter-limited.
    */
   static async triggerDirect(actor) {
     if (!this.hasDirect(actor)) {
       return { success: false, message: 'Actor does not have Direct talent' };
-    }
-
-    // Check encounter status
-    const combatEncounterActive = game.combats?.active;
-    if (!combatEncounterActive) {
-      return {
-        success: false,
-        message: 'Direct can only be used during an encounter (combat active)'
-      };
-    }
-
-    // Check if already used this encounter
-    const combatId = combatEncounterActive.id;
-    const directUsageFlag = `direct_${combatId}`;
-    const alreadyUsed = actor.getFlag('foundryvtt-swse', directUsageFlag);
-
-    if (alreadyUsed) {
-      return {
-        success: false,
-        message: 'Direct has already been used this encounter. It resets at the start of the next encounter.'
-      };
     }
 
     // Get all allies within 6 squares
@@ -205,8 +184,8 @@ export class LightSideTalentMechanics {
       success: true,
       requiresSelection: true,
       allies: allies,
-      combatId: combatId,
-      directUsageFlag: directUsageFlag
+      combatId: game.combats?.active?.id ?? null,
+      directUsageFlag: null
     };
   }
 
@@ -565,22 +544,35 @@ export class LightSideTalentMechanics {
   }
 
   /**
-   * REBUKE THE DARK - Roll twice for rebuke attempts
+   * REBUKE THE DARK - Roll twice only for Rebuke attempts against [Dark Side] Force Powers.
    */
-  static async applyRebukeBonus(actor, roll) {
+  static async applyRebukeBonus(actor, roll, context = {}) {
     if (!this.hasRebukeTheDark(actor)) {
       return roll;
     }
 
-    // Roll a second d20 and take the better result
-    const secondRoll = await RollEngine.safeRoll('1d20');
-    if (!secondRoll) {
-      return roll; // Fallback to original if reroll fails
-    }
-    const betterRoll = secondRoll.total > roll.terms[0].results[0].result ? secondRoll : roll;
+    const values = [
+      context?.descriptor,
+      context?.descriptors,
+      context?.forceDescriptor,
+      context?.forceDescriptors,
+      context?.power?.system?.descriptor,
+      context?.power?.system?.descriptors,
+      context?.power?.system?.tags,
+      context?.power?.system?.keywords,
+      context?.power?.name
+    ].flat().map(value => String(value ?? '').toLowerCase()).join(' ');
+    const isDarkSidePower = values.includes('dark side') || values.includes('dark_side') || values.includes('dark-side') || context?.isDarkSidePower === true;
+    if (!isDarkSidePower) return roll;
 
-    SWSELogger.log(`SWSE Talents | ${actor.name} used Rebuke the Dark. Original: ${roll.total}, Second: ${secondRoll.total}, Using: ${betterRoll.total}`);
-    ui.notifications.info(`Rebuke the Dark: Rolled ${roll.total} and ${secondRoll.total}, using better result!`);
+    const secondRoll = await RollEngine.safeRoll('1d20');
+    if (!secondRoll) return roll;
+
+    const originalDie = Number(roll?.terms?.[0]?.results?.[0]?.result ?? roll?.total ?? 0) || 0;
+    const betterRoll = secondRoll.total > originalDie ? secondRoll : roll;
+
+    SWSELogger.log(`SWSE Talents | ${actor.name} used Rebuke the Dark against a [Dark Side] Force Power. Original: ${roll.total}, Second: ${secondRoll.total}, Using: ${betterRoll.total}`);
+    ui.notifications.info(`Rebuke the Dark: Rolled ${roll.total} and ${secondRoll.total}, using better result against the [Dark Side] Force Power!`);
 
     return betterRoll;
   }

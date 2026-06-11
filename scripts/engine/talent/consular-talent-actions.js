@@ -395,8 +395,23 @@ export class ConsularTalentActions {
         flags: { swse: { talentName: 'Skilled Advisor', sourceActorId: actor.id, mindAffecting: true, nextSkillCheckOnly: true, skillKey, bonus, forcePointSpent: useForcePoint } }
       }, { source: 'skilled-advisor' });
     }
-    await postCard(actor, 'Skilled Advisor', `<p>${esc(actor.name)} advises <strong>${esc(ally?.name ?? allyActor?.name ?? 'an ally')}</strong>.</p><p><strong>Effect:</strong> +${bonus} on the ally's next ${esc(getSkillLabel(allyActor ?? actor, skillKey))} check.${useForcePoint ? ' One Force Point was spent.' : ''}</p><p><strong>Descriptor:</strong> Mind-Affecting.</p>`, { talentName: 'Skilled Advisor', bonus, skillKey });
-    return { success: true, bonus, skillKey };
+    let masterAdvisorPending = false;
+    if (hasTalent(actor, 'Master Advisor') && allyActor) {
+      await allyActor.setFlag?.('swse', 'pendingMasterAdvisorForcePoint', {
+        sourceActorId: actor.id,
+        sourceActorName: actor.name,
+        allyActorId: allyActor.id,
+        allyActorName: allyActor.name,
+        encounterId: this._encounterId(),
+        skillKey,
+        granted: false,
+        createdAt: Date.now(),
+        note: 'Grant one temporary Force Point at the end of this ally\'s next turn. Expires at the end of the encounter if unspent.'
+      });
+      masterAdvisorPending = true;
+    }
+    await postCard(actor, 'Skilled Advisor', `<p>${esc(actor.name)} advises <strong>${esc(ally?.name ?? allyActor?.name ?? 'an ally')}</strong>.</p><p><strong>Effect:</strong> +${bonus} on the ally's next ${esc(getSkillLabel(allyActor ?? actor, skillKey))} check.${useForcePoint ? ' One Force Point was spent.' : ''}</p>${masterAdvisorPending ? '<p><strong>Master Advisor:</strong> one temporary Force Point is queued for that ally at the end of their next turn; it expires at the end of the encounter if unspent.</p>' : ''}<p><strong>Descriptor:</strong> Mind-Affecting.</p>`, { talentName: 'Skilled Advisor', bonus, skillKey, masterAdvisorPending });
+    return { success: true, bonus, skillKey, masterAdvisorPending };
   }
 
   static async promptAdversaryLore(actor, { sourceElement = null } = {}) {
@@ -736,6 +751,7 @@ export class ConsularTalentActions {
       return null;
     }
     const range = useImproved ? 12 : 6;
+    const attackBonus = hasTalent(actor, 'Jedi Battle Commander') ? 2 : 1;
     const allies = tokenOptions(actor, { relation: 'ally', maxSquares: range });
     const enemies = useImproved ? tokenOptions(actor, { relation: 'enemy', maxSquares: range }) : [];
     const affectedAllies = [actor.name];
@@ -745,7 +761,7 @@ export class ConsularTalentActions {
       changes: [],
       disabled: false,
       duration: { rounds: 999 },
-      flags: { swse: { talentName: 'Battle Meditation', sourceActorId: actor.id, insightAttackBonus: 1, rangeSquares: range, mindAffecting: true, starshipScaleGunners: true, manualAttackAdjustment: true, expires: 'encounter' } }
+      flags: { swse: { talentName: 'Battle Meditation', sourceActorId: actor.id, insightAttackBonus: attackBonus, rangeSquares: range, mindAffecting: true, starshipScaleGunners: true, manualAttackAdjustment: true, expires: 'encounter' } }
     }, { source: 'battle-meditation' });
     for (const row of allies) {
       const token = canvas?.tokens?.get?.(row.id);
@@ -758,7 +774,7 @@ export class ConsularTalentActions {
         changes: [],
         disabled: false,
         duration: { rounds: 999 },
-        flags: { swse: { talentName: 'Battle Meditation', sourceActorId: actor.id, insightAttackBonus: 1, rangeSquares: range, mindAffecting: true, starshipScaleGunners: true, manualAttackAdjustment: true, expires: 'encounter', note: 'Retain the bonus only while within the Battle Meditation radius and while the source is conscious/alive.' } }
+        flags: { swse: { talentName: 'Battle Meditation', sourceActorId: actor.id, insightAttackBonus: attackBonus, rangeSquares: range, mindAffecting: true, starshipScaleGunners: true, manualAttackAdjustment: true, expires: 'encounter', note: 'Retain the bonus only while within the Battle Meditation radius and while the source is conscious/alive.' } }
       }, { source: 'battle-meditation' });
     }
     const affectedEnemies = [];
@@ -781,7 +797,7 @@ export class ConsularTalentActions {
       : '';
     await postCard(actor, useImproved ? 'Improved Battle Meditation' : 'Battle Meditation',
       '<p>' + esc(actor.name) + ' spends 1 Force Point and enters Battle Meditation.</p>'
-      + '<p><strong>Allied effect:</strong> ' + esc(affectedAllies.join(', ')) + ' gain a +1 insight bonus on attack rolls while eligible and within ' + range + ' squares until the end of the encounter. This also affects allied Gunners at Starship Scale.</p>'
+      + '<p><strong>Allied effect:</strong> ' + esc(affectedAllies.join(', ')) + ' gain a +' + attackBonus + ' insight bonus on attack rolls while eligible and within ' + range + ' squares until the end of the encounter. This also affects allied Gunners at Starship Scale.</p>'
       + improvedLine
       + '<p><strong>Descriptor:</strong> Mind-Affecting. Range changes after activation remain GM/player adjudicated.</p>',
       { talentName: useImproved ? 'Improved Battle Meditation' : 'Battle Meditation', rangeSquares: range, affectedAllies, affectedEnemies });

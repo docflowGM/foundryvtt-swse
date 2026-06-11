@@ -347,6 +347,7 @@ export class DerivedCalculator {
       const hasForceDeception = this._hasTalentNamed(actor, 'Force Deception');
       const hasForceTreatment = this._hasTalentNamed(actor, 'Force Treatment');
       const hasForcePersuasion = this._hasTalentNamed(actor, 'Force Persuasion');
+      const hasInsightOfTheForce = this._hasTalentNamed(actor, 'Insight of the Force');
 
       // Get occupation bonus from actor flags
       let occupationBonus = null;
@@ -612,6 +613,28 @@ export class DerivedCalculator {
       }
       if (hasForcePersuasion) {
         applyUseTheForceSkillSubstitution('persuasion', 'forcePersuasionSubstitution');
+      }
+      if (hasInsightOfTheForce) {
+        for (const [knowledgeKey, targetSkill] of Object.entries(updates['system.derived.skills'] ?? {})) {
+          if (!String(knowledgeKey).startsWith('knowledge')) continue;
+          const sourceSkill = normalizedSkills?.[knowledgeKey] ?? actor?.system?.skills?.[knowledgeKey] ?? {};
+          const rankedMode = isRankedModeEnabled();
+          const trainedByRanks = rankedMode ? deriveTrainedFromRanks(Number(sourceSkill?.ranks ?? 0) || 0) : false;
+          const isActuallyTrained = Boolean(sourceSkill?.trained || trainedByRanks);
+          if (isActuallyTrained) continue;
+          const useTheForceSkill = updates['system.derived.skills']?.useTheForce;
+          const useTheForceTotal = Number(useTheForceSkill?.total);
+          const targetTotal = Number(targetSkill?.total);
+          if (!Number.isFinite(useTheForceTotal) || !Number.isFinite(targetTotal)) continue;
+          updates['system.derived.skills'][knowledgeKey] = {
+            ...targetSkill,
+            total: useTheForceTotal,
+            trained: true,
+            insightOfTheForceSubstitution: true,
+            substitutedFromSkill: 'useTheForce',
+            substitutedBaseTotal: targetTotal
+          };
+        }
       }
 
       // Initiative is a skill in SWSE.  The early derived.initiative seed keeps

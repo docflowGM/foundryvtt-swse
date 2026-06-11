@@ -1063,7 +1063,7 @@
       "Defensive Circle",
       "Force Revive",
       "Jedi Battle Commander",
-      "Mobile Attack (lightsabers)",
+      "Mobile Attack (Lightsabers)",
       "Multiattack Proficiency (lightsabers)",
       "Slashing Charge"
     ]
@@ -1149,11 +1149,11 @@
     "displayName": "Jedi Investigator",
     "talentCount": 5,
     "talents": [
-      "Echoes in the Force",
+      "Echoes of the Force",
       "Jedi Quarry",
       "Prepared for Danger",
       "Sense Deception",
-      "Unclouded Judgment"
+      "Unclouded Judgement"
     ]
   },
   {
@@ -1161,7 +1161,7 @@
     "displayName": "Jedi Knight",
     "talentCount": 1,
     "talents": [
-      "Shoto Pin Block"
+      "Shoto Pin"
     ]
   },
   {
@@ -1217,7 +1217,7 @@
     "talentCount": 5,
     "talents": [
       "Force Warning",
-      "Improved Quick Draw (lightsabers)",
+      "Improved Quick Draw (Lightsabers)",
       "Sheltering Stance",
       "Vigilance",
       "Watchman's Advance"
@@ -1229,8 +1229,8 @@
     "talentCount": 5,
     "talents": [
       "Combat Trance",
-      "Improvised Weapon Master",
-      "Shoto Pin Block",
+      "Improvised Weapon Masteryy",
+      "Shoto Pin",
       "Twin Weapon Mastery",
       "Twin Weapon Style"
     ]
@@ -1460,7 +1460,7 @@
       "Ignore Damage Reduction",
       "Teras Kasi Basics",
       "Teras Kasi Mastery",
-      "Ter\u00e4s K\u00e4si Basics",
+      "Teräs Käsi Basics",
       "Unarmed Counterstrike",
       "Unarmed Parry"
     ]

@@ -70,12 +70,15 @@ function weaponOptions(actor) {
     .sort((a, b) => String(a.name).localeCompare(String(b.name)));
 }
 
-async function promptAttackRollDc(title, { note = '', includeArea = false, includeProtectAdjacent = false, includeCortosis = false } = {}) {
+async function promptAttackRollDc(title, { note = '', includeArea = false, includeProtectAdjacent = false, includeCortosis = false, includeShelteringStance = false, includeLightsaberSpecialist = false, includeShotoPin = false } = {}) {
   const content = `<form class="swse-dialog swse-lightsaber-defense-dialog">
     ${note ? `<p>${esc(note)}</p>` : ''}
     <div class="form-group"><label>Incoming attack roll result / DC</label><input name="dc" type="number" min="1" step="1" value="20" /></div>
     ${includeArea ? '<label class="checkbox"><input type="checkbox" name="area" /> This is an area attack/autofire/Force Lightning-style barrage</label>' : ''}
-    ${includeProtectAdjacent ? '<label class="checkbox"><input type="checkbox" name="protectAdjacent" /> Spend 1 Force Point to protect an adjacent character instead of yourself</label>' : ''}
+    ${includeProtectAdjacent ? '<label class="checkbox"><input type="checkbox" name="protectAdjacent" /> Protect an adjacent character instead of yourself</label>' : ''}
+    ${includeShelteringStance ? '<label class="checkbox"><input type="checkbox" name="shelteringStance" /> Sheltering Stance applies: adjacent ally protection does not cost a Force Point</label>' : ''}
+    ${includeLightsaberSpecialist ? '<label class="checkbox"><input type="checkbox" name="lightsaberSpecialist" /> Lightsaber Specialist applies: I am armed with a lightsaber I built (+2 UTF)</label>' : ''}
+    ${includeShotoPin ? '<label class="checkbox"><input type="checkbox" name="shotoPin" /> Shoto Pin applies: I am Blocking with a light/shoto lightsaber</label>' : ''}
     ${includeCortosis ? '<label class="checkbox"><input type="checkbox" name="cortosis" /> I am using a Cortosis Gauntlet for Block</label>' : ''}
     <p class="notes">You must be aware of the attack and not Flat-Footed. Lightsaber requirements remain table-adjudicated unless a talent explicitly changes them.</p>
   </form>`;
@@ -91,6 +94,9 @@ async function promptAttackRollDc(title, { note = '', includeArea = false, inclu
         dc: Math.max(1, Number(fd.get('dc') || 20) || 20),
         area: fd.get('area') === 'on',
         protectAdjacent: fd.get('protectAdjacent') === 'on',
+        shelteringStance: fd.get('shelteringStance') === 'on',
+        lightsaberSpecialist: fd.get('lightsaberSpecialist') === 'on',
+        shotoPin: fd.get('shotoPin') === 'on',
         cortosis: fd.get('cortosis') === 'on'
       };
     }
@@ -193,15 +199,19 @@ export class LightsaberTalentActions {
     const choice = await promptAttackRollDc('Block', {
       includeArea: true,
       includeProtectAdjacent: true,
+      includeShelteringStance: hasTalent(actor, 'Sheltering Stance'),
+      includeLightsaberSpecialist: hasTalent(actor, 'Lightsaber Specialist'),
+      includeShotoPin: hasTalent(actor, 'Shoto Pin') || hasTalent(actor, 'Shoto Pin Block'),
       includeCortosis: hasCortosis,
       note: 'Reaction: negate a melee attack with a Use the Force check against the attack roll result.'
     });
     if (!choice) return null;
 
-    if (choice.protectAdjacent) {
+    const shelteringApplies = choice.protectAdjacent && choice.shelteringStance && hasTalent(actor, 'Sheltering Stance');
+    if (choice.protectAdjacent && !shelteringApplies) {
       const spend = await ActorEngine.spendForcePoints(actor, 1);
       if (!spend?.spent) {
-        ui?.notifications?.warn?.('Block against an adjacent character requires spending 1 Force Point.');
+        ui?.notifications?.warn?.('Block against an adjacent character requires spending 1 Force Point unless Sheltering Stance applies.');
         return null;
       }
     }
@@ -212,7 +222,7 @@ export class LightsaberTalentActions {
     if (modResult === null) return null;
     const roll = await rollSkillCheck(actor, 'useTheForce', {
       ...modResult,
-      customModifier: Number(modResult.customModifier || 0) + penalty,
+      customModifier: Number(modResult.customModifier || 0) + penalty + ((choice.lightsaberSpecialist && hasTalent(actor, 'Lightsaber Specialist')) ? 2 : 0),
       dc: choice.dc,
       source: 'block-talent',
       skillUse: { key: 'block', label: 'Block' },
@@ -228,10 +238,12 @@ export class LightsaberTalentActions {
     await postCard(actor, 'Block', `<p>${esc(actor.name)} attempts to Block a melee attack (${roll.roll?.total ?? '?'} vs DC ${choice.dc}).</p>
       <p><strong>${success ? 'Success' : 'Failure'}:</strong> ${success ? (choice.area ? 'For a melee area attack, take half damage if the attack hit or no damage if it missed.' : 'The melee attack is negated.') : 'The melee attack is not negated.'}</p>
       ${penalty ? `<p><strong>Cumulative Block/Deflect penalty:</strong> ${penalty}</p>` : ''}
-      ${choice.protectAdjacent ? '<p><strong>Adjacent ally:</strong> 1 Force Point spent to protect an adjacent character.</p>' : ''}
+      ${choice.protectAdjacent ? `<p><strong>Adjacent ally:</strong> ${shelteringApplies ? 'Sheltering Stance waives the normal Force Point cost.' : '1 Force Point spent to protect an adjacent character.'}</p>` : ''}
+      ${(choice.lightsaberSpecialist && hasTalent(actor, 'Lightsaber Specialist')) ? '<p><strong>Lightsaber Specialist:</strong> +2 morale bonus included for Block with a lightsaber you built.</p>' : ''}
+      ${(success && choice.shotoPin && (hasTalent(actor, 'Shoto Pin') || hasTalent(actor, 'Shoto Pin Block'))) ? '<p><strong>Shoto Pin:</strong> the attacker can make no further melee attacks until the start of its next turn, until you are no longer adjacent, or until you move, attack, or use an action.</p>' : ''}
       ${choice.cortosis ? '<p><strong>Cortosis Gauntlet:</strong> if this successfully Blocks a lightsaber attack, the attacking lightsaber is deactivated.</p>' : ''}
       <p><strong>Requirements:</strong> active lightsaber unless using Cortosis Gauntlet Block, aware of attack, not Flat-Footed.</p>`,
-      { talentName: 'Block', success, dc: choice.dc, penalty, protectAdjacent: choice.protectAdjacent });
+      { talentName: 'Block', success, dc: choice.dc, penalty, protectAdjacent: choice.protectAdjacent, shelteringStance: shelteringApplies, lightsaberSpecialist: choice.lightsaberSpecialist === true, shotoPin: choice.shotoPin === true });
     return { success, roll: roll.roll, dc: choice.dc, penalty };
   }
 
@@ -243,14 +255,17 @@ export class LightsaberTalentActions {
     const choice = await promptAttackRollDc('Deflect', {
       includeArea: true,
       includeProtectAdjacent: true,
+      includeShelteringStance: hasTalent(actor, 'Sheltering Stance'),
+      includeLightsaberSpecialist: hasTalent(actor, 'Lightsaber Specialist'),
       note: 'Reaction: negate a ranged attack with a Use the Force check against the attack roll result.'
     });
     if (!choice) return null;
 
-    if (choice.protectAdjacent) {
+    const shelteringApplies = choice.protectAdjacent && choice.shelteringStance && hasTalent(actor, 'Sheltering Stance');
+    if (choice.protectAdjacent && !shelteringApplies) {
       const spend = await ActorEngine.spendForcePoints(actor, 1);
       if (!spend?.spent) {
-        ui?.notifications?.warn?.('Deflect against an adjacent character requires spending 1 Force Point.');
+        ui?.notifications?.warn?.('Deflect against an adjacent character requires spending 1 Force Point unless Sheltering Stance applies.');
         return null;
       }
     }
@@ -261,7 +276,7 @@ export class LightsaberTalentActions {
     if (modResult === null) return null;
     const roll = await rollSkillCheck(actor, 'useTheForce', {
       ...modResult,
-      customModifier: Number(modResult.customModifier || 0) + penalty,
+      customModifier: Number(modResult.customModifier || 0) + penalty + ((choice.lightsaberSpecialist && hasTalent(actor, 'Lightsaber Specialist')) ? 2 : 0),
       dc: choice.dc,
       source: 'deflect-talent',
       skillUse: { key: 'deflect', label: 'Deflect' },
@@ -277,9 +292,10 @@ export class LightsaberTalentActions {
     await postCard(actor, 'Deflect', `<p>${esc(actor.name)} attempts to Deflect a ranged attack (${roll.roll?.total ?? '?'} vs DC ${choice.dc}).</p>
       <p><strong>${success ? 'Success' : 'Failure'}:</strong> ${success ? (choice.area ? 'For autofire/Force Lightning-style barrages, take half damage if the attack hit or no damage if it missed.' : 'The ranged attack is negated.') : 'The ranged attack is not negated.'}</p>
       ${penalty ? `<p><strong>Cumulative Block/Deflect penalty:</strong> ${penalty}</p>` : ''}
-      ${choice.protectAdjacent ? '<p><strong>Adjacent ally:</strong> 1 Force Point spent to protect an adjacent character.</p>' : ''}
+      ${choice.protectAdjacent ? `<p><strong>Adjacent ally:</strong> ${shelteringApplies ? 'Sheltering Stance waives the normal Force Point cost.' : '1 Force Point spent to protect an adjacent character.'}</p>` : ''}
+      ${(choice.lightsaberSpecialist && hasTalent(actor, 'Lightsaber Specialist')) ? '<p><strong>Lightsaber Specialist:</strong> +2 morale bonus included for Deflect with a lightsaber you built.</p>' : ''}
       <p><strong>Limits:</strong> requires active lightsaber, awareness, not Flat-Footed; cannot negate Colossal (Frigate)+ vehicle attacks unless point-defense.</p>`,
-      { talentName: 'Deflect', success, dc: choice.dc, penalty, protectAdjacent: choice.protectAdjacent });
+      { talentName: 'Deflect', success, dc: choice.dc, penalty, protectAdjacent: choice.protectAdjacent, shelteringStance: shelteringApplies, lightsaberSpecialist: choice.lightsaberSpecialist === true });
     return { success, roll: roll.roll, dc: choice.dc, penalty };
   }
 
@@ -483,6 +499,30 @@ export class LightsaberTalentActions {
 
   static async announceWeaponSpecializationLightsabers(actor) {
     return postCard(actor, 'Weapon Specialization (Lightsabers)', '<p>You gain +2 bonus on melee damage rolls with lightsabers. This is applied in lightsaber damage context, not as a global damage modifier.</p>', { talentName: 'Weapon Specialization (Lightsabers)' });
+  }
+
+  static async announceImprovedQuickDrawLightsabers(actor) {
+    return postCard(actor, 'Improved Quick Draw (Lightsabers)', '<p>During the Surprise Round, if you carry a lightsaber in hand or at your belt, you may draw it, ignite it, and make a single attack even if Surprised. If not Surprised, you may take any single action as normal.</p><p>Once per turn on your turn, you may draw and ignite a lightsaber as a Free Action.</p>', { talentName: 'Improved Quick Draw (Lightsabers)' });
+  }
+
+  static async announceSlashingCharge(actor) {
+    return postCard(actor, 'Slashing Charge', '<p>Once per encounter, while making a Charge, you take no cumulative penalty to Use the Force checks for each Block attempt you make during the Charge.</p><p>The Charge attack bonus also applies to all Riposte attacks made during the Slashing Charge. Declare after beginning the Charge but before your first Riposte attack.</p>', { talentName: 'Slashing Charge', oncePerEncounter: true });
+  }
+
+  static async announceMobileAttackLightsabers(actor) {
+    return postCard(actor, 'Mobile Attack (Lightsabers)', '<p>Immediately after making a Full Attack where you attacked with two lightsabers or both ends of a double-bladed lightsaber, you may move up to your Speed as a Free Action.</p>', { talentName: 'Mobile Attack (Lightsabers)' });
+  }
+
+  static async announceMasterworkLightsaber(actor) {
+    return postCard(actor, 'Masterwork Lightsaber', '<p>When you build a lightsaber, you may add one extra lightsaber accessory or modification at creation.</p><p>When you hit with a lightsaber you built, you may reroll one damage die, keeping the reroll. When mentoring another character through Advanced Lightsaber Construction, reduce the Use the Force DC by 5.</p>', { talentName: 'Masterwork Lightsaber' });
+  }
+
+  static async announcePerfectAttunement(actor) {
+    return postCard(actor, 'Perfect Attunement', '<p>Whenever you spend a Force Point to add to a lightsaber attack roll made with a lightsaber you built, add the same amount to the damage roll if the attack hits.</p>', { talentName: 'Perfect Attunement' });
+  }
+
+  static async announceQuickModification(actor) {
+    return postCard(actor, 'Quick Modification', '<p>You can spend 1 minute modifying a lightsaber you built, removing one lightsaber accessory/modification and replacing it with a different one. The GM may rule rare or difficult modifications cannot be swapped this way.</p>', { talentName: 'Quick Modification' });
   }
 
   static registerHooks() {

@@ -581,7 +581,7 @@ export class TalentEffectEngine {
     sourceActor,
     allyActor,
     power,
-    directUsageFlag
+    directUsageFlag = null
   }) {
     if (!allyActor || !power) {
       return { success: false, reason: "Invalid ally or power" };
@@ -594,14 +594,16 @@ export class TalentEffectEngine {
       type: "updateOwnedItems",
       items: [{ _id: power.id, "system.spent": false }]
     });
-    mutations.push({
-      actor: sourceActor,
-      actorId: sourceActor.id,
-      type: "setFlag",
-      scope: "foundryvtt-swse",
-      key: directUsageFlag,
-      value: true
-    });
+    if (directUsageFlag) {
+      mutations.push({
+        actor: sourceActor,
+        actorId: sourceActor.id,
+        type: "setFlag",
+        scope: "foundryvtt-swse",
+        key: directUsageFlag,
+        value: true
+      });
+    }
 
     return {
       success: true,

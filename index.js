@@ -44,6 +44,7 @@ import { registerForceExecutorChatHooks } from "./scripts/engine/force/force-exe
 import { registerConsularTalentActions } from "./scripts/engine/talent/consular-talent-actions.js";
 import { registerSentinelTalentActions } from "./scripts/engine/talent/sentinel-talent-actions.js";
 import { registerLightsaberTalentActions } from "./scripts/engine/talent/lightsaber-talent-actions.js";
+import { registerJediPrestigeTalentActions } from "./scripts/engine/talent/jedi-prestige-talent-actions.js";
 import { registerTokenNameSyncHooks } from "./scripts/core/token-name-sync.js";
 import "./scripts/talents/squad-actions-init.js";
 import "./scripts/talents/minion-actions-init.js";
@@ -166,6 +167,7 @@ Hooks.once("init", async () => {
   registerConsularTalentActions();
   registerSentinelTalentActions();
   registerLightsaberTalentActions();
+  registerJediPrestigeTalentActions();
   // -------------------------------
   // Feat Effect Registry + lifecycle hooks
   // Mechanical effect definitions formerly embedded in feat compendium items

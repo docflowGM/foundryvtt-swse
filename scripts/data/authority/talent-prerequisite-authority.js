@@ -2813,26 +2813,14 @@ export const TALENT_PREREQUISITE_AUTHORITY = {
   "dark_deception": {
     "name": "Dark Deception",
     "prerequisite": "",
-    "benefit": "You can cloak your intentions with a veil of anger and hate. When another character attempts to sense you through The Force in any way, you can choose to act as though your Dark Side Score equals your Wisdom score.",
-    "description": "You can cloak your intentions with a veil of anger and hate. When another character attempts to sense you through The Force in any way, you can choose to act as though your Dark Side Score equals your Wisdom score."
-  },
-  "additionally_deception_is_now_a_class_skill_for_you": {
-    "name": "Additionally, Deception is now a Class Skill for you.",
-    "prerequisite": "",
-    "benefit": "",
-    "description": ""
+    "benefit": "You can cloak your intentions with a veil of anger and hate. When another character attempts to sense you through The Force in any way, you can choose to act as though your Dark Side Score equals your Wisdom score. Additionally, Deception is now a Class Skill for you.",
+    "description": "You can cloak your intentions with a veil of anger and hate. When another character attempts to sense you through The Force in any way, you can choose to act as though your Dark Side Score equals your Wisdom score. Additionally, Deception is now a Class Skill for you."
   },
   "improved_sentinel_strike": {
     "name": "Improved Sentinel Strike",
     "prerequisite": "Sentinel Strike",
-    "benefit": "",
-    "description": ""
-  },
-  "increase_the_damage_dice_of_your_sentinel_strike_to_d8_instead_of_d6": {
-    "name": "Increase the damage dice of your Sentinel Strike to d8, instead of d6.",
-    "prerequisite": "",
-    "benefit": "",
-    "description": ""
+    "benefit": "Increase the damage dice of your Sentinel Strike to d8, instead of d6.",
+    "description": "Increase the damage dice of your Sentinel Strike to d8, instead of d6."
   },
   "improved_sentinels_gambit": {
     "name": "Improved Sentinel's Gambit",

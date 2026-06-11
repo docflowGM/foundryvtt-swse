@@ -6775,14 +6775,45 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Force Adept",
-      "prerequisites": null,
-      "benefit": "Use the Force replaces Treat Injury; you can treat without a medkit or medpac and are considered trained.",
-      "description": "Use the Force replaces Treat Injury; you may treat without a medkit or medpac.",
+      "prerequisites": "",
+      "benefit": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill for purposes of using this Talent. If you are entitled to a Treat Injury check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+      "description": {
+        "value": "<p>You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill for purposes of using this Talent. If you are entitled to a Treat Injury check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations).</p>"
+      },
       "class": "Force Adept",
       "costNumeric": null,
       "category": "Force Adept",
       "tree": "Jedi Healer",
-      "treeId": "jedi-healer"
+      "treeId": "jedi-healer",
+      "effect": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill for purposes of using this Talent. If you are entitled to a Treat Injury check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+      "shortSummary": "Use Use the Force in place of Treat Injury; rerolls transfer to the UtF check.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Use Use the Force in place of Treat Injury; rerolls transfer to the UtF check.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "skill_substitution_treat_injury",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Use Use the Force in place of Treat Injury; rerolls transfer to the UtF check.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "force_treatment",
+            "label": "Force Treatment",
+            "summary": "Use Use the Force in place of Treat Injury; rerolls transfer to the UtF check.",
+            "action": "use-the-force-check",
+            "mode": "skill_substitution_treat_injury",
+            "text": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill for purposes of using this Talent. If you are entitled to a Treat Injury check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations)."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [
       {
@@ -6811,7 +6842,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "6714ab8e28708f50",
@@ -10737,14 +10783,47 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Archivist",
-      "prerequisites": null,
-      "benefit": "Return one Force power to any ally within 6 squares and line of sight (one ally’s spent use).",
-      "description": "Return one Force power to any ally within 6 squares and line of sight.",
+      "prerequisites": "",
+      "benefit": "As a Standard Action, you can return one spent Force Power to the Force Power Suite of any ally within 6 squares of you and in your line of sight. The Force Power must have been spent by the ally you designate.",
+      "description": {
+        "value": "<p>As a Standard Action, you can return one spent Force Power to the Force Power Suite of any ally within 6 squares of you and in your line of sight. The Force Power must have been spent by the ally you designate.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Archivist",
-      "treeId": "jedi-archivist"
+      "treeId": "jedi-archivist",
+      "effect": "As a Standard Action, you can return one spent Force Power to the Force Power Suite of any ally within 6 squares of you and in your line of sight. The Force Power must have been spent by the ally you designate.",
+      "shortSummary": "Standard Action: return one spent Force Power to an ally's Force Power Suite.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Standard Action: return one spent Force Power to an ally's Force Power Suite.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "force_suite_recovery_ally",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Standard Action: return one spent Force Power to an ally's Force Power Suite.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "direct",
+            "label": "Direct",
+            "summary": "Standard Action: return one spent Force Power to an ally's Force Power Suite.",
+            "action": "standard-action",
+            "mode": "force_suite_recovery_ally",
+            "text": "As a Standard Action, you can return one spent Force Power to the Force Power Suite of any ally within 6 squares of you and in your line of sight. The Force Power must have been spent by the ally you designate."
+          }
+        ]
+      },
+      "grantsActions": [
+        "standard-action"
+      ]
     },
     "effects": [],
     "folder": null,
@@ -10752,7 +10831,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "5d682aa33468b683",
@@ -10762,13 +10856,44 @@
     "system": {
       "talent_tree": "Jedi Archivist",
       "prerequisites": "Skilled Advisor",
-      "benefit": "Aid on Knowledge checks for an ally within 6 squares if you are trained in that Knowledge.",
-      "description": "Aid an ally's Knowledge checks if you are trained and within 6 squares.",
+      "benefit": "You can Aid Another on the Knowledge checks of an ally within 6 squares of you as a Reaction for Knowledge skills you are Trained in.",
+      "description": {
+        "value": "<p>You can Aid Another on the Knowledge checks of an ally within 6 squares of you as a Reaction for Knowledge skills you are Trained in.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Archivist",
-      "treeId": "jedi-archivist"
+      "treeId": "jedi-archivist",
+      "effect": "You can Aid Another on the Knowledge checks of an ally within 6 squares of you as a Reaction for Knowledge skills you are Trained in.",
+      "shortSummary": "Aid Another on trained Knowledge checks for an ally within 6 squares as a Reaction.",
+      "prerequisite": "Skilled Advisor",
+      "prerequisitesText": "Skilled Advisor",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Aid Another on trained Knowledge checks for an ally within 6 squares as a Reaction.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "reaction_aid_another_knowledge",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Aid Another on trained Knowledge checks for an ally within 6 squares as a Reaction.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "impart_knowledge",
+            "label": "Impart Knowledge",
+            "summary": "Aid Another on trained Knowledge checks for an ally within 6 squares as a Reaction.",
+            "action": "knowledge-check",
+            "mode": "reaction_aid_another_knowledge",
+            "text": "You can Aid Another on the Knowledge checks of an ally within 6 squares of you as a Reaction for Knowledge skills you are Trained in."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [],
     "folder": null,
@@ -10776,7 +10901,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "0adc25cfaa35147a",
@@ -10785,14 +10925,45 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Archivist",
-      "prerequisites": null,
-      "benefit": "Use the Force replaces Knowledge when untrained and is treated as trained.",
-      "description": "Use the Force replaces Knowledge skills if untrained; you are considered trained.",
+      "prerequisites": "",
+      "benefit": "You can make a Use the Force check in place of a Knowledge check for any Knowledge skill you are not Trained in. You are considered Trained in that Knowledge skill for the purposes of using this Talent. If you are entitled to a Knowledge check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+      "description": {
+        "value": "<p>You can make a Use the Force check in place of a Knowledge check for any Knowledge skill you are not Trained in. You are considered Trained in that Knowledge skill for the purposes of using this Talent. If you are entitled to a Knowledge check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations).</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Archivist",
-      "treeId": "jedi-archivist"
+      "treeId": "jedi-archivist",
+      "effect": "You can make a Use the Force check in place of a Knowledge check for any Knowledge skill you are not Trained in. You are considered Trained in that Knowledge skill for the purposes of using this Talent. If you are entitled to a Knowledge check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+      "shortSummary": "Use Use the Force in place of untrained Knowledge checks; rerolls transfer to the UtF check.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Use Use the Force in place of untrained Knowledge checks; rerolls transfer to the UtF check.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "skill_substitution_knowledge",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Use Use the Force in place of untrained Knowledge checks; rerolls transfer to the UtF check.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "insight_of_the_force",
+            "label": "Insight of the Force",
+            "summary": "Use Use the Force in place of untrained Knowledge checks; rerolls transfer to the UtF check.",
+            "action": "use-the-force-check",
+            "mode": "skill_substitution_knowledge",
+            "text": "You can make a Use the Force check in place of a Knowledge check for any Knowledge skill you are not Trained in. You are considered Trained in that Knowledge skill for the purposes of using this Talent. If you are entitled to a Knowledge check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations)."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [],
     "folder": null,
@@ -10800,7 +10971,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "e6c4f05db6ac6c06",
@@ -10810,13 +10996,44 @@
     "system": {
       "talent_tree": "Jedi Archivist",
       "prerequisites": "Skilled Advisor",
-      "benefit": "An ally you aid with Skilled Advisor gains a Force Point to spend before the end of the encounter.",
-      "description": "An ally you assist with Skilled Advisor gains a Force Point usable before the end of the encounter.",
+      "benefit": "When you use the Skilled Advisor Talent, the ally you aid gains one temporary Force Point at the end of their next turn. If the Force Point is not spent before the end of the encounter, it is lost.",
+      "description": {
+        "value": "<p>When you use the Skilled Advisor Talent, the ally you aid gains one temporary Force Point at the end of their next turn. If the Force Point is not spent before the end of the encounter, it is lost.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Archivist",
-      "treeId": "jedi-archivist"
+      "treeId": "jedi-archivist",
+      "effect": "When you use the Skilled Advisor Talent, the ally you aid gains one temporary Force Point at the end of their next turn. If the Force Point is not spent before the end of the encounter, it is lost.",
+      "shortSummary": "Skilled Advisor grants the aided ally one temporary Force Point at the end of their next turn.",
+      "prerequisite": "Skilled Advisor",
+      "prerequisitesText": "Skilled Advisor",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Skilled Advisor grants the aided ally one temporary Force Point at the end of their next turn.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "temporary_force_point_grant",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Skilled Advisor grants the aided ally one temporary Force Point at the end of their next turn.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "master_advisor",
+            "label": "Master Advisor",
+            "summary": "Skilled Advisor grants the aided ally one temporary Force Point at the end of their next turn.",
+            "action": "skilled-advisor",
+            "mode": "temporary_force_point_grant",
+            "text": "When you use the Skilled Advisor Talent, the ally you aid gains one temporary Force Point at the end of their next turn. If the Force Point is not spent before the end of the encounter, it is lost."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [
       {
@@ -10843,7 +11060,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "63143040b7c229a7",
@@ -10852,14 +11084,45 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Archivist",
-      "prerequisites": "Trained in Knowledge",
-      "benefit": "Reroll Knowledge checks when you are trained in that Knowledge.",
-      "description": "Reroll Knowledge checks for skills in which you are trained.",
+      "prerequisites": "",
+      "benefit": "As a Swift Action, you can reroll a Knowledge check and keep the better of the two results. This can be used with any Knowledge skill you are Trained in.",
+      "description": {
+        "value": "<p>As a Swift Action, you can reroll a Knowledge check and keep the better of the two results. This can be used with any Knowledge skill you are Trained in.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Archivist",
-      "treeId": "jedi-archivist"
+      "treeId": "jedi-archivist",
+      "effect": "As a Swift Action, you can reroll a Knowledge check and keep the better of the two results. This can be used with any Knowledge skill you are Trained in.",
+      "shortSummary": "Swift Action: reroll a trained Knowledge check and keep the better result.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Swift Action: reroll a trained Knowledge check and keep the better result.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "trained_knowledge_reroll",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Swift Action: reroll a trained Knowledge check and keep the better result.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "scholarly_knowledge",
+            "label": "Scholarly Knowledge",
+            "summary": "Swift Action: reroll a trained Knowledge check and keep the better result.",
+            "action": "knowledge-check",
+            "mode": "trained_knowledge_reroll",
+            "text": "As a Swift Action, you can reroll a Knowledge check and keep the better of the two results. This can be used with any Knowledge skill you are Trained in."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [],
     "folder": null,
@@ -10867,7 +11130,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "bec7535325ee1eb1",
@@ -10876,14 +11154,45 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Artisan",
-      "prerequisites": null,
-      "benefit": "Call and ignite a lightsaber you built as a free action if it is within line of sight.",
-      "description": "Call and ignite a lightsaber you built as a free action if it is within line of sight.",
+      "prerequisites": "",
+      "benefit": "You can use the Move Light Object application of the Use the Force Skill to call a Lightsaber you built into your hand and ignite it as a Free Action. The Weapon must be in your line of sight to call it to your hand.",
+      "description": {
+        "value": "<p>You can use the Move Light Object application of the Use the Force Skill to call a Lightsaber you built into your hand and ignite it as a Free Action. The Weapon must be in your line of sight to call it to your hand.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Artisan",
-      "treeId": "jedi-artisan"
+      "treeId": "jedi-artisan",
+      "effect": "You can use the Move Light Object application of the Use the Force Skill to call a Lightsaber you built into your hand and ignite it as a Free Action. The Weapon must be in your line of sight to call it to your hand.",
+      "shortSummary": "Call and ignite a lightsaber you built as a free action using Move Light Object if it is in line of sight.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Call and ignite a lightsaber you built as a free action using Move Light Object if it is in line of sight.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "lightsaber_built_free_draw_ignite",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Call and ignite a lightsaber you built as a free action using Move Light Object if it is in line of sight.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "call_weapon",
+            "label": "Call Weapon",
+            "summary": "Call and ignite a lightsaber you built as a free action using Move Light Object if it is in line of sight.",
+            "action": "move-light-object",
+            "mode": "lightsaber_built_free_draw_ignite",
+            "text": "You can use the Move Light Object application of the Use the Force Skill to call a Lightsaber you built into your hand and ignite it as a Free Action. The Weapon must be in your line of sight to call it to your hand."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [],
     "folder": null,
@@ -10891,7 +11200,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "6fe17dc4f0f03c12",
@@ -10901,13 +11225,44 @@
     "system": {
       "talent_tree": "Jedi Artisan",
       "prerequisites": "Masterwork Lightsaber",
-      "benefit": "Gain +2 to Block and Deflect with a lightsaber you built.",
-      "description": "Gain +2 on Block and Deflect when using a lightsaber you built.",
+      "benefit": "Whenever you are armed with a Lightsaber that you built, you gain a +2 morale bonus on Use the Force checks made to use the Block and Deflect Talents.",
+      "description": {
+        "value": "<p>Whenever you are armed with a Lightsaber that you built, you gain a +2 morale bonus on Use the Force checks made to use the Block and Deflect Talents.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Artisan",
-      "treeId": "jedi-artisan"
+      "treeId": "jedi-artisan",
+      "effect": "Whenever you are armed with a Lightsaber that you built, you gain a +2 morale bonus on Use the Force checks made to use the Block and Deflect Talents.",
+      "shortSummary": "Gain +2 morale bonus on Use the Force checks to Block and Deflect with a lightsaber you built.",
+      "prerequisite": "Masterwork Lightsaber",
+      "prerequisitesText": "Masterwork Lightsaber",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Gain +2 morale bonus on Use the Force checks to Block and Deflect with a lightsaber you built.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "built_lightsaber_block_deflect_bonus",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Gain +2 morale bonus on Use the Force checks to Block and Deflect with a lightsaber you built.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "lightsaber_specialist",
+            "label": "Lightsaber Specialist",
+            "summary": "Gain +2 morale bonus on Use the Force checks to Block and Deflect with a lightsaber you built.",
+            "action": "block-deflect-reaction",
+            "mode": "built_lightsaber_block_deflect_bonus",
+            "text": "Whenever you are armed with a Lightsaber that you built, you gain a +2 morale bonus on Use the Force checks made to use the Block and Deflect Talents."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [
       {
@@ -10937,7 +11292,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "a64c01df9eba3147",
@@ -10946,14 +11316,45 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Artisan",
-      "prerequisites": null,
-      "benefit": "Add one extra accessory to a lightsaber you built; reroll one damage die if you built it; mentoring another reduces their DC by 5.",
-      "description": "Add one extra accessory to a lightsaber you built and reroll one damage die; you may mentor another builder.",
+      "prerequisites": "",
+      "benefit": "Whenever you build a Lightsaber (see Advanced Lightsaber Construction), you do so with such expertise that it makes the Weapon even more refined and elegant. When you build a Lightsaber, you can choose to add one extra Lightsaber Accessory or Modification at the time of creation.\n\nAnd, when you hit a target with a Lightsaber that you built, you can always choose to reroll one damage die from your damage roll, but you must accept the result of the reroll, even if it is worse.\n\nIn addition, you can mentor another character while they construct their own Lightsaber. When you do so, you reduce the Use the Force check DC for Advanced Lightsaber Construction by -5.",
+      "description": {
+        "value": "<p>Whenever you build a Lightsaber (see Advanced Lightsaber Construction), you do so with such expertise that it makes the Weapon even more refined and elegant. When you build a Lightsaber, you can choose to add one extra Lightsaber Accessory or Modification at the time of creation.</p><p>And, when you hit a target with a Lightsaber that you built, you can always choose to reroll one damage die from your damage roll, but you must accept the result of the reroll, even if it is worse.</p><p>In addition, you can mentor another character while they construct their own Lightsaber. When you do so, you reduce the Use the Force check DC for Advanced Lightsaber Construction by -5.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Artisan",
-      "treeId": "jedi-artisan"
+      "treeId": "jedi-artisan",
+      "effect": "Whenever you build a Lightsaber (see Advanced Lightsaber Construction), you do so with such expertise that it makes the Weapon even more refined and elegant. When you build a Lightsaber, you can choose to add one extra Lightsaber Accessory or Modification at the time of creation.\n\nAnd, when you hit a target with a Lightsaber that you built, you can always choose to reroll one damage die from your damage roll, but you must accept the result of the reroll, even if it is worse.\n\nIn addition, you can mentor another character while they construct their own Lightsaber. When you do so, you reduce the Use the Force check DC for Advanced Lightsaber Construction by -5.",
+      "shortSummary": "Add one extra accessory/modification when building a lightsaber, reroll one damage die, and mentor construction at -5 DC.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Add one extra accessory/modification when building a lightsaber, reroll one damage die, and mentor construction at -5 DC.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "lightsaber_construction_upgrade",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Add one extra accessory/modification when building a lightsaber, reroll one damage die, and mentor construction at -5 DC.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "masterwork_lightsaber",
+            "label": "Masterwork Lightsaber",
+            "summary": "Add one extra accessory/modification when building a lightsaber, reroll one damage die, and mentor construction at -5 DC.",
+            "action": "lightsaber-construction",
+            "mode": "lightsaber_construction_upgrade",
+            "text": "Whenever you build a Lightsaber (see Advanced Lightsaber Construction), you do so with such expertise that it makes the Weapon even more refined and elegant. When you build a Lightsaber, you can choose to add one extra Lightsaber Accessory or Modification at the time of creation.\n\nAnd, when you hit a target with a Lightsaber that you built, you can always choose to reroll one damage die from your damage roll, but you must accept the result of the reroll, even if it is worse.\n\nIn addition, you can mentor another character while they construct their own Lightsaber. When you do so, you reduce the Use the Force check DC for Advanced Lightsaber Construction by -5."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [],
     "folder": null,
@@ -10961,7 +11362,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "c67e45ac79e6f0d7",
@@ -10971,13 +11387,44 @@
     "system": {
       "talent_tree": "Jedi Artisan",
       "prerequisites": "Masterwork Lightsaber",
-      "benefit": "If you spend a Force Point on a lightsaber attack with a lightsaber you built, add that amount to damage.",
-      "description": "When you spend a Force Point on an attack with a lightsaber you built, add the Force Point result to damage.",
+      "benefit": "Whenever you spend a Force Point to add to a Lightsaber attack roll made with a Lightsaber you built, you can add that same amount to the damage roll if the attack hits.",
+      "description": {
+        "value": "<p>Whenever you spend a Force Point to add to a Lightsaber attack roll made with a Lightsaber you built, you can add that same amount to the damage roll if the attack hits.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Artisan",
-      "treeId": "jedi-artisan"
+      "treeId": "jedi-artisan",
+      "effect": "Whenever you spend a Force Point to add to a Lightsaber attack roll made with a Lightsaber you built, you can add that same amount to the damage roll if the attack hits.",
+      "shortSummary": "When a Force Point modifies an attack with a lightsaber you built, add the same amount to damage if it hits.",
+      "prerequisite": "Masterwork Lightsaber",
+      "prerequisitesText": "Masterwork Lightsaber",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "When a Force Point modifies an attack with a lightsaber you built, add the same amount to damage if it hits.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "force_point_attack_to_damage",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "When a Force Point modifies an attack with a lightsaber you built, add the same amount to damage if it hits.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "perfect_attunement",
+            "label": "Perfect Attunement",
+            "summary": "When a Force Point modifies an attack with a lightsaber you built, add the same amount to damage if it hits.",
+            "action": "lightsaber-attack",
+            "mode": "force_point_attack_to_damage",
+            "text": "Whenever you spend a Force Point to add to a Lightsaber attack roll made with a Lightsaber you built, you can add that same amount to the damage roll if the attack hits."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [],
     "folder": null,
@@ -10985,7 +11432,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "ac11f849b15c784c",
@@ -10995,13 +11457,44 @@
     "system": {
       "talent_tree": "Jedi Artisan",
       "prerequisites": "Masterwork Lightsaber",
-      "benefit": "Spend 1 minute to remove an accessory and add another to a lightsaber you built.",
-      "description": "Spend 1 minute to remove and add accessories on a lightsaber you built.",
+      "benefit": "You can spend 1 minute modifying a Lightsaber you have built, removing one Lightsaber Accessory or Lightsaber Modification and putting a different one its place.\n\nGamemasters may rule that some modifications cannot be added or removed in this way due to rarity of materials or the difficulty of the Lightsaber Modification (such as adding or removing the Electrum Detail).",
+      "description": {
+        "value": "<p>You can spend 1 minute modifying a Lightsaber you have built, removing one Lightsaber Accessory or Lightsaber Modification and putting a different one its place.</p><p>Gamemasters may rule that some modifications cannot be added or removed in this way due to rarity of materials or the difficulty of the Lightsaber Modification (such as adding or removing the Electrum Detail).</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Artisan",
-      "treeId": "jedi-artisan"
+      "treeId": "jedi-artisan",
+      "effect": "You can spend 1 minute modifying a Lightsaber you have built, removing one Lightsaber Accessory or Lightsaber Modification and putting a different one its place.\n\nGamemasters may rule that some modifications cannot be added or removed in this way due to rarity of materials or the difficulty of the Lightsaber Modification (such as adding or removing the Electrum Detail).",
+      "shortSummary": "Spend 1 minute to swap one accessory/modification on a lightsaber you built, subject to GM limits.",
+      "prerequisite": "Masterwork Lightsaber",
+      "prerequisitesText": "Masterwork Lightsaber",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Spend 1 minute to swap one accessory/modification on a lightsaber you built, subject to GM limits.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "one_minute_lightsaber_mod_swap",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Spend 1 minute to swap one accessory/modification on a lightsaber you built, subject to GM limits.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "quick_modification",
+            "label": "Quick Modification",
+            "summary": "Spend 1 minute to swap one accessory/modification on a lightsaber you built, subject to GM limits.",
+            "action": "lightsaber-modification",
+            "mode": "one_minute_lightsaber_mod_swap",
+            "text": "You can spend 1 minute modifying a Lightsaber you have built, removing one Lightsaber Accessory or Lightsaber Modification and putting a different one its place.\n\nGamemasters may rule that some modifications cannot be added or removed in this way due to rarity of materials or the difficulty of the Lightsaber Modification (such as adding or removing the Electrum Detail)."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [],
     "folder": null,
@@ -11009,7 +11502,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "d838141fe404a9fb",
@@ -11018,14 +11526,47 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Battlemaster",
-      "prerequisites": "Block or Deflect, Jedi Battle Commander",
-      "benefit": "You and allies affected by Battle Meditation gain +2 Reflex Defense; you gain +1 on Use the Force to Block/Deflect for each adjacent ally.",
-      "description": "You and allies affected by Battle Meditation gain +2 Reflex Defense; you gain bonuses to Block and Deflect for adjacent allies.",
+      "prerequisites": "Battle Meditation, Block or Deflect, Jedi Battle Commander",
+      "benefit": "As a Swift Action, you and any allies affected by your Battle Meditation gain a +2 insight bonus to their Reflex Defense, lasting as long as they are affected by your Battle Meditation. Additionally, you gain a +1 bonus to your Use the Force checks to Block and Deflect (as per the Talents) for each adjacent ally wielding a Lightsaber.",
+      "description": {
+        "value": "<p>As a Swift Action, you and any allies affected by your Battle Meditation gain a +2 insight bonus to their Reflex Defense, lasting as long as they are affected by your Battle Meditation. Additionally, you gain a +1 bonus to your Use the Force checks to Block and Deflect (as per the Talents) for each adjacent ally wielding a Lightsaber.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Battlemaster",
-      "treeId": "jedi-battlemaster"
+      "treeId": "jedi-battlemaster",
+      "effect": "As a Swift Action, you and any allies affected by your Battle Meditation gain a +2 insight bonus to their Reflex Defense, lasting as long as they are affected by your Battle Meditation. Additionally, you gain a +1 bonus to your Use the Force checks to Block and Deflect (as per the Talents) for each adjacent ally wielding a Lightsaber.",
+      "shortSummary": "Battle Meditation allies gain +2 Reflex; gain +1 UtF to Block/Deflect per adjacent lightsaber-wielding ally.",
+      "prerequisite": "Battle Meditation, Block or Deflect, Jedi Battle Commander",
+      "prerequisitesText": "Battle Meditation, Block or Deflect, Jedi Battle Commander",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Battle Meditation allies gain +2 Reflex; gain +1 UtF to Block/Deflect per adjacent lightsaber-wielding ally.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "battle_meditation_defense_upgrade",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Battle Meditation allies gain +2 Reflex; gain +1 UtF to Block/Deflect per adjacent lightsaber-wielding ally.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "defensive_circle",
+            "label": "Defensive Circle",
+            "summary": "Battle Meditation allies gain +2 Reflex; gain +1 UtF to Block/Deflect per adjacent lightsaber-wielding ally.",
+            "action": "swift-action",
+            "mode": "battle_meditation_defense_upgrade",
+            "text": "As a Swift Action, you and any allies affected by your Battle Meditation gain a +2 insight bonus to their Reflex Defense, lasting as long as they are affected by your Battle Meditation. Additionally, you gain a +1 bonus to your Use the Force checks to Block and Deflect (as per the Talents) for each adjacent ally wielding a Lightsaber."
+          }
+        ]
+      },
+      "grantsActions": [
+        "swift-action"
+      ]
     },
     "effects": [
       {
@@ -11055,7 +11596,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "83dce0bf42928741",
@@ -11064,14 +11620,47 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Battlemaster",
-      "prerequisites": "Jedi Battle Commander",
-      "benefit": "An ally affected by Battle Meditation reduced to 0 hp may take Second Wind as a reaction and falls unconscious.",
-      "description": "When an ally under your Battle Meditation is reduced to 0 hit points, they may take a Second Wind as a reaction.",
+      "prerequisites": "Battle Meditation, Jedi Battle Commander",
+      "benefit": "When an ally affected by your Battle Meditation is reduced to 0 hit points, you can spend a Force Point as a Reaction, allowing that ally to take its Second Wind as a Reaction immediately (though the target still falls Unconscious before the Second Wind is triggered).",
+      "description": {
+        "value": "<p>When an ally affected by your Battle Meditation is reduced to 0 hit points, you can spend a Force Point as a Reaction, allowing that ally to take its Second Wind as a Reaction immediately (though the target still falls Unconscious before the Second Wind is triggered).</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Battlemaster",
-      "treeId": "jedi-battlemaster"
+      "treeId": "jedi-battlemaster",
+      "effect": "When an ally affected by your Battle Meditation is reduced to 0 hit points, you can spend a Force Point as a Reaction, allowing that ally to take its Second Wind as a Reaction immediately (though the target still falls Unconscious before the Second Wind is triggered).",
+      "shortSummary": "Spend a Force Point as a Reaction to let a Battle Meditation ally at 0 HP take Second Wind immediately.",
+      "prerequisite": "Battle Meditation, Jedi Battle Commander",
+      "prerequisitesText": "Battle Meditation, Jedi Battle Commander",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Spend a Force Point as a Reaction to let a Battle Meditation ally at 0 HP take Second Wind immediately.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "battle_meditation_second_wind_reaction",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Spend a Force Point as a Reaction to let a Battle Meditation ally at 0 HP take Second Wind immediately.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "force_revive",
+            "label": "Force Revive",
+            "summary": "Spend a Force Point as a Reaction to let a Battle Meditation ally at 0 HP take Second Wind immediately.",
+            "action": "reaction",
+            "mode": "battle_meditation_second_wind_reaction",
+            "text": "When an ally affected by your Battle Meditation is reduced to 0 hit points, you can spend a Force Point as a Reaction, allowing that ally to take its Second Wind as a Reaction immediately (though the target still falls Unconscious before the Second Wind is triggered)."
+          }
+        ]
+      },
+      "grantsActions": [
+        "reaction"
+      ]
     },
     "effects": [],
     "folder": null,
@@ -11079,7 +11668,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "57823500e878124a",
@@ -11089,13 +11693,46 @@
     "system": {
       "talent_tree": "Jedi Battlemaster",
       "prerequisites": "Battle Meditation",
-      "benefit": "Your Battle Meditation grants +2 to attack instead of +1.",
-      "description": "Your Battle Meditation grants +2 attack instead of +1.",
+      "benefit": "You are trained to direct Jedi in pitched battles. Your Battle Meditation grants a +2 insight bonus on attack rolls instead of the normal +1.",
+      "description": {
+        "value": "<p>You are trained to direct Jedi in pitched battles. Your Battle Meditation grants a +2 insight bonus on attack rolls instead of the normal +1.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Battlemaster",
-      "treeId": "jedi-battlemaster"
+      "treeId": "jedi-battlemaster",
+      "effect": "You are trained to direct Jedi in pitched battles. Your Battle Meditation grants a +2 insight bonus on attack rolls instead of the normal +1.",
+      "shortSummary": "Battle Meditation grants +2 insight bonus on attack rolls instead of +1.",
+      "prerequisite": "Battle Meditation",
+      "prerequisitesText": "Battle Meditation",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Battle Meditation grants +2 insight bonus on attack rolls instead of +1.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "battle_meditation_attack_bonus_upgrade",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Battle Meditation grants +2 insight bonus on attack rolls instead of +1.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "jedi_battle_commander",
+            "label": "Jedi Battle Commander",
+            "summary": "Battle Meditation grants +2 insight bonus on attack rolls instead of +1.",
+            "action": "battle-meditation",
+            "mode": "battle_meditation_attack_bonus_upgrade",
+            "text": "You are trained to direct Jedi in pitched battles. Your Battle Meditation grants a +2 insight bonus on attack rolls instead of the normal +1."
+          }
+        ]
+      },
+      "grantsActions": [
+        "battle-meditation"
+      ]
     },
     "effects": [
       {
@@ -11125,23 +11762,65 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "eb701499ba157c6a",
-    "name": "Mobile Attack (lightsabers)",
+    "name": "Mobile Attack (Lightsabers)",
     "type": "talent",
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Battlemaster",
-      "prerequisites": "Multiattack Proficiency (lightsabers), Dual Weapon Mastery I, Weapon Focus (lightsabers)",
-      "benefit": "After a full attack with two lightsabers, may move your speed as a free action.",
-      "description": "After making a full attack with two lightsabers, move your speed as a free action.",
+      "prerequisites": "Multiattack Proficiency (Lightsabers), Dual Weapon Mastery I, Weapon Focus (Lightsabers)",
+      "benefit": "Immediately after making a Full Attack where you attacked with two Lightsabers (or both ends of a Double-Bladed Lightsaber), you may Move up to your Speed as a Free Action.",
+      "description": {
+        "value": "<p>Immediately after making a Full Attack where you attacked with two Lightsabers (or both ends of a Double-Bladed Lightsaber), you may Move up to your Speed as a Free Action.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Battlemaster",
-      "treeId": "jedi-battlemaster"
+      "treeId": "jedi-battlemaster",
+      "slug": "mobile-attack-lightsabers",
+      "effect": "Immediately after making a Full Attack where you attacked with two Lightsabers (or both ends of a Double-Bladed Lightsaber), you may Move up to your Speed as a Free Action.",
+      "shortSummary": "After a Full Attack with two lightsabers or a double-bladed lightsaber, move up to Speed as a free action.",
+      "prerequisite": "Multiattack Proficiency (Lightsabers), Dual Weapon Mastery I, Weapon Focus (Lightsabers)",
+      "prerequisitesText": "Multiattack Proficiency (Lightsabers), Dual Weapon Mastery I, Weapon Focus (Lightsabers)",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "After a Full Attack with two lightsabers or a double-bladed lightsaber, move up to Speed as a free action.",
+        "applicationScope": "renamed_alias_record",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Renamed stale imported title to match user-provided talent text.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "mobile-attack-lightsabers",
+            "label": "Mobile Attack (Lightsabers)",
+            "summary": "After a Full Attack with two lightsabers or a double-bladed lightsaber, move up to Speed as a free action.",
+            "action": "full-attack",
+            "text": "Immediately after making a Full Attack where you attacked with two Lightsabers (or both ends of a Double-Bladed Lightsaber), you may Move up to your Speed as a Free Action."
+          }
+        ]
+      }
     },
     "effects": [],
     "folder": null,
@@ -11149,7 +11828,11 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "renamedFrom": "Mobile Attack (lightsabers)"
+      }
+    }
   },
   {
     "_id": "d587fb91aedddd09",
@@ -11158,14 +11841,47 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Battlemaster",
-      "prerequisites": "Block, Riposte, Weapon Focus (lightsabers), Weapon Specialization (lightsabers)",
-      "benefit": "Once per encounter when you charge with lightsabers, ignore the Use the Force penalty on Block for the charge; applies to Riposte.",
-      "description": "Once per encounter during a charge, ignore Use the Force penalties for Block and Riposte.",
+      "prerequisites": "Block, Riposte, Weapon Focus (Lightsabers)",
+      "benefit": "Once per encounter, while making a Charge, you take no cumulative penalty to Use the Force checks for each Block attempt you make during the Charge. When performing Slashing Charge, you can apply the attack bonus granted by the Charge to all Riposte attacks as well. You can declare the use of this ability after you begin the Charge, but must do so before you make your first Riposte attack.",
+      "description": {
+        "value": "<p>Once per encounter, while making a Charge, you take no cumulative penalty to Use the Force checks for each Block attempt you make during the Charge. When performing Slashing Charge, you can apply the attack bonus granted by the Charge to all Riposte attacks as well. You can declare the use of this ability after you begin the Charge, but must do so before you make your first Riposte attack.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Battlemaster",
-      "treeId": "jedi-battlemaster"
+      "treeId": "jedi-battlemaster",
+      "effect": "Once per encounter, while making a Charge, you take no cumulative penalty to Use the Force checks for each Block attempt you make during the Charge. When performing Slashing Charge, you can apply the attack bonus granted by the Charge to all Riposte attacks as well. You can declare the use of this ability after you begin the Charge, but must do so before you make your first Riposte attack.",
+      "shortSummary": "Once per encounter during a Charge, no cumulative Block penalties and Charge bonus applies to Ripostes.",
+      "prerequisite": "Block, Riposte, Weapon Focus (Lightsabers)",
+      "prerequisitesText": "Block, Riposte, Weapon Focus (Lightsabers)",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Once per encounter during a Charge, no cumulative Block penalties and Charge bonus applies to Ripostes.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "encounter_charge_riposte_option",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Once per encounter during a Charge, no cumulative Block penalties and Charge bonus applies to Ripostes.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "slashing_charge",
+            "label": "Slashing Charge",
+            "summary": "Once per encounter during a Charge, no cumulative Block penalties and Charge bonus applies to Ripostes.",
+            "action": "charge",
+            "mode": "encounter_charge_riposte_option",
+            "text": "Once per encounter, while making a Charge, you take no cumulative penalty to Use the Force checks for each Block attempt you make during the Charge. When performing Slashing Charge, you can apply the attack bonus granted by the Charge to all Riposte attacks as well. You can declare the use of this ability after you begin the Charge, but must do so before you make your first Riposte attack."
+          }
+        ]
+      },
+      "grantsActions": [
+        "charge"
+      ]
     },
     "effects": [],
     "folder": null,
@@ -11173,7 +11889,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "7acc479dee2d3b10",
@@ -12555,14 +13286,45 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Healer",
-      "prerequisites": null,
-      "benefit": "Use the Force replaces Treat Injury; can treat without a medkit or medpac and is considered trained.",
-      "description": "Use the Force replaces Treat Injury; you may treat without a medkit or medpac.",
+      "prerequisites": "",
+      "benefit": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill for purposes of using this Talent. If you are entitled to a Treat Injury check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+      "description": {
+        "value": "<p>You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill for purposes of using this Talent. If you are entitled to a Treat Injury check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations).</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Healer",
-      "treeId": "jedi-healer"
+      "treeId": "jedi-healer",
+      "effect": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill for purposes of using this Talent. If you are entitled to a Treat Injury check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+      "shortSummary": "Use Use the Force in place of Treat Injury; rerolls transfer to the UtF check.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Use Use the Force in place of Treat Injury; rerolls transfer to the UtF check.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "skill_substitution_treat_injury",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Use Use the Force in place of Treat Injury; rerolls transfer to the UtF check.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "force_treatment",
+            "label": "Force Treatment",
+            "summary": "Use Use the Force in place of Treat Injury; rerolls transfer to the UtF check.",
+            "action": "use-the-force-check",
+            "mode": "skill_substitution_treat_injury",
+            "text": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill for purposes of using this Talent. If you are entitled to a Treat Injury check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations)."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [
       {
@@ -12591,7 +13353,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "0e6a784501100693",
@@ -12601,13 +13378,46 @@
     "system": {
       "talent_tree": "Jedi Healer",
       "prerequisites": "Vital Transfer",
-      "benefit": "Damage healed with Vital Transfer increases by 1 point per class level.",
-      "description": "Increase damage healed by Vital Transfer by 1 point per class level.",
+      "benefit": "When healing somebody through Vital Transfer, the amount of damage healed increases by 1 point per your Class Level.",
+      "description": {
+        "value": "<p>When healing somebody through Vital Transfer, the amount of damage healed increases by 1 point per your Class Level.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Healer",
-      "treeId": "jedi-healer"
+      "treeId": "jedi-healer",
+      "effect": "When healing somebody through Vital Transfer, the amount of damage healed increases by 1 point per your Class Level.",
+      "shortSummary": "Vital Transfer heals +1 point per class level.",
+      "prerequisite": "Vital Transfer",
+      "prerequisitesText": "Vital Transfer",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Vital Transfer heals +1 point per class level.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "vital_transfer_healing_bonus",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Vital Transfer heals +1 point per class level.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "healing_boost",
+            "label": "Healing Boost",
+            "summary": "Vital Transfer heals +1 point per class level.",
+            "action": "vital-transfer",
+            "mode": "vital_transfer_healing_bonus",
+            "text": "When healing somebody through Vital Transfer, the amount of damage healed increases by 1 point per your Class Level."
+          }
+        ]
+      },
+      "grantsActions": [
+        "vital-transfer"
+      ]
     },
     "effects": [],
     "folder": null,
@@ -12615,7 +13425,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "fb2bb5613e7edd49",
@@ -12624,14 +13449,47 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Healer",
-      "prerequisites": "Healing Boost",
-      "benefit": "Healing Boost increases damage healed by 2 points per class level.",
-      "description": "Increase damage healed by Vital Transfer by 2 points per class level.",
+      "prerequisites": "Healing Boost, Vital Transfer",
+      "benefit": "When healing somebody through Vital Transfer, the amount of damage healed increases by 2 points per your Class Level.",
+      "description": {
+        "value": "<p>When healing somebody through Vital Transfer, the amount of damage healed increases by 2 points per your Class Level.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Healer",
-      "treeId": "jedi-healer"
+      "treeId": "jedi-healer",
+      "effect": "When healing somebody through Vital Transfer, the amount of damage healed increases by 2 points per your Class Level.",
+      "shortSummary": "Vital Transfer heals +2 points per class level.",
+      "prerequisite": "Healing Boost, Vital Transfer",
+      "prerequisitesText": "Healing Boost, Vital Transfer",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Vital Transfer heals +2 points per class level.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "vital_transfer_healing_bonus_improved",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Vital Transfer heals +2 points per class level.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "improved_healing_boost",
+            "label": "Improved Healing Boost",
+            "summary": "Vital Transfer heals +2 points per class level.",
+            "action": "vital-transfer",
+            "mode": "vital_transfer_healing_bonus_improved",
+            "text": "When healing somebody through Vital Transfer, the amount of damage healed increases by 2 points per your Class Level."
+          }
+        ]
+      },
+      "grantsActions": [
+        "vital-transfer"
+      ]
     },
     "effects": [],
     "folder": null,
@@ -12639,7 +13497,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "3713870862584269",
@@ -12649,13 +13522,46 @@
     "system": {
       "talent_tree": "Jedi Healer",
       "prerequisites": "Vital Transfer",
-      "benefit": "Use Vital Transfer to move a target +1 up the condition track instead of healing; you move -1 down the track.",
-      "description": "Use Vital Transfer to move a target one step up the condition track instead of healing; you move –1 down the track.",
+      "benefit": "When using Vital Transfer to heal somebody, you can move the target +1 step on the Condition Track instead of healing damage. When doing so, you move -1 step on the Condition Track.",
+      "description": {
+        "value": "<p>When using Vital Transfer to heal somebody, you can move the target +1 step on the Condition Track instead of healing damage. When doing so, you move -1 step on the Condition Track.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Healer",
-      "treeId": "jedi-healer"
+      "treeId": "jedi-healer",
+      "effect": "When using Vital Transfer to heal somebody, you can move the target +1 step on the Condition Track instead of healing damage. When doing so, you move -1 step on the Condition Track.",
+      "shortSummary": "Vital Transfer can move the target +1 CT instead of healing damage; you move -1 CT.",
+      "prerequisite": "Vital Transfer",
+      "prerequisitesText": "Vital Transfer",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Vital Transfer can move the target +1 CT instead of healing damage; you move -1 CT.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "vital_transfer_condition_track_option",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Vital Transfer can move the target +1 CT instead of healing damage; you move -1 CT.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "soothe",
+            "label": "Soothe",
+            "summary": "Vital Transfer can move the target +1 CT instead of healing damage; you move -1 CT.",
+            "action": "vital-transfer",
+            "mode": "vital_transfer_condition_track_option",
+            "text": "When using Vital Transfer to heal somebody, you can move the target +1 step on the Condition Track instead of healing damage. When doing so, you move -1 step on the Condition Track."
+          }
+        ]
+      },
+      "grantsActions": [
+        "vital-transfer"
+      ]
     },
     "effects": [
       {
@@ -12685,7 +13591,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "53c5a847e3396d13",
@@ -12694,14 +13615,45 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Instructor",
-      "prerequisites": null,
-      "benefit": "Add your Force Point result to an ally within 12 squares whose Use the Force modifier is lower than yours.",
-      "description": "Add your Force Point result to an ally's roll if they have a lower Use the Force modifier.",
+      "prerequisites": "",
+      "benefit": "Whenever an ally within 12 squares with a lower Use the Force skill bonus than you makes a Use the Force check, you can spend a Force Point as a Reaction to add to that Use the Force check.\n\nUse your level to determine how many dice to roll for the Force Point.",
+      "description": {
+        "value": "<p>Whenever an ally within 12 squares with a lower Use the Force skill bonus than you makes a Use the Force check, you can spend a Force Point as a Reaction to add to that Use the Force check.</p><p>Use your level to determine how many dice to roll for the Force Point.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Instructor",
-      "treeId": "jedi-instructor"
+      "treeId": "jedi-instructor",
+      "effect": "Whenever an ally within 12 squares with a lower Use the Force skill bonus than you makes a Use the Force check, you can spend a Force Point as a Reaction to add to that Use the Force check.\n\nUse your level to determine how many dice to roll for the Force Point.",
+      "shortSummary": "Spend a Force Point as a Reaction to add to an ally's Use the Force check if their UtF bonus is lower than yours.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Spend a Force Point as a Reaction to add to an ally's Use the Force check if their UtF bonus is lower than yours.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "reaction_force_point_ally_utf",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Spend a Force Point as a Reaction to add to an ally's Use the Force check if their UtF bonus is lower than yours.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "apprentice_boon",
+            "label": "Apprentice Boon",
+            "summary": "Spend a Force Point as a Reaction to add to an ally's Use the Force check if their UtF bonus is lower than yours.",
+            "action": "use-the-force-check",
+            "mode": "reaction_force_point_ally_utf",
+            "text": "Whenever an ally within 12 squares with a lower Use the Force skill bonus than you makes a Use the Force check, you can spend a Force Point as a Reaction to add to that Use the Force check.\n\nUse your level to determine how many dice to roll for the Force Point."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [],
     "folder": null,
@@ -12709,7 +13661,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "2dc6ad1667133f2d",
@@ -12718,14 +13685,47 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Instructor",
-      "prerequisites": "Force Secret",
-      "benefit": "Once per turn, grant use of a Force Secret to an ally within 12 squares who is trained in Use the Force.",
-      "description": "Once per turn, grant use of a Force Secret to an ally within 12 squares trained in Use the Force.",
+      "prerequisites": "At least 1 Force Secret",
+      "benefit": "When you take this Talent, choose one Force Secret that you know. Once per turn as a Swift Action, you can grant the use of this Force Secret to one ally within 12 squares of you who is Trained in the Use the Force Skill.\n\nThe target gains the benefit of this Force Secret until the end of your next turn.",
+      "description": {
+        "value": "<p>When you take this Talent, choose one Force Secret that you know. Once per turn as a Swift Action, you can grant the use of this Force Secret to one ally within 12 squares of you who is Trained in the Use the Force Skill.</p><p>The target gains the benefit of this Force Secret until the end of your next turn.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Instructor",
-      "treeId": "jedi-instructor"
+      "treeId": "jedi-instructor",
+      "effect": "When you take this Talent, choose one Force Secret that you know. Once per turn as a Swift Action, you can grant the use of this Force Secret to one ally within 12 squares of you who is Trained in the Use the Force Skill.\n\nThe target gains the benefit of this Force Secret until the end of your next turn.",
+      "shortSummary": "Choose a known Force Secret; once per turn, grant it to a trained ally within 12 squares until end of next turn.",
+      "prerequisite": "At least 1 Force Secret",
+      "prerequisitesText": "At least 1 Force Secret",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Choose a known Force Secret; once per turn, grant it to a trained ally within 12 squares until end of next turn.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "choice_grant_force_secret",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": true,
+        "conditionSummary": "Choose a known Force Secret; once per turn, grant it to a trained ally within 12 squares until end of next turn.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "share_force_secret",
+            "label": "Share Force Secret",
+            "summary": "Choose a known Force Secret; once per turn, grant it to a trained ally within 12 squares until end of next turn.",
+            "action": "swift-action",
+            "mode": "choice_grant_force_secret",
+            "text": "When you take this Talent, choose one Force Secret that you know. Once per turn as a Swift Action, you can grant the use of this Force Secret to one ally within 12 squares of you who is Trained in the Use the Force Skill.\n\nThe target gains the benefit of this Force Secret until the end of your next turn."
+          }
+        ]
+      },
+      "grantsActions": [
+        "swift-action"
+      ]
     },
     "effects": [],
     "folder": null,
@@ -12733,7 +13733,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "7d02251f13fd5645",
@@ -12742,14 +13757,47 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Instructor",
-      "prerequisites": "Force Technique",
-      "benefit": "Once per turn, grant use of a Force Technique to an ally within 12 squares who is trained in Use the Force; not for Force Point recovery.",
-      "description": "Once per turn, grant use of a Force Technique to an ally within 12 squares trained in Use the Force.",
+      "prerequisites": "At least 1 Force Technique",
+      "benefit": "When you take this Talent, choose one Force Technique that you know. Once per turn as a Swift Action, you can grant the use of this Force Technique to one ally within 12 squares of you who is Trained in the Use the Force Skill.\n\nThe target gains the benefit of this Force Technique until the end of your next turn. You cannot choose the Force Point Recovery Technique for this Talent.",
+      "description": {
+        "value": "<p>When you take this Talent, choose one Force Technique that you know. Once per turn as a Swift Action, you can grant the use of this Force Technique to one ally within 12 squares of you who is Trained in the Use the Force Skill.</p><p>The target gains the benefit of this Force Technique until the end of your next turn. You cannot choose the Force Point Recovery Technique for this Talent.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Instructor",
-      "treeId": "jedi-instructor"
+      "treeId": "jedi-instructor",
+      "effect": "When you take this Talent, choose one Force Technique that you know. Once per turn as a Swift Action, you can grant the use of this Force Technique to one ally within 12 squares of you who is Trained in the Use the Force Skill.\n\nThe target gains the benefit of this Force Technique until the end of your next turn. You cannot choose the Force Point Recovery Technique for this Talent.",
+      "shortSummary": "Choose a known Force Technique except Force Point Recovery; once per turn, grant it to a trained ally within 12 squares until end of next turn.",
+      "prerequisite": "At least 1 Force Technique",
+      "prerequisitesText": "At least 1 Force Technique",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Choose a known Force Technique except Force Point Recovery; once per turn, grant it to a trained ally within 12 squares until end of next turn.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "choice_grant_force_technique",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": true,
+        "conditionSummary": "Choose a known Force Technique except Force Point Recovery; once per turn, grant it to a trained ally within 12 squares until end of next turn.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "share_force_technique",
+            "label": "Share Force Technique",
+            "summary": "Choose a known Force Technique except Force Point Recovery; once per turn, grant it to a trained ally within 12 squares until end of next turn.",
+            "action": "swift-action",
+            "mode": "choice_grant_force_technique",
+            "text": "When you take this Talent, choose one Force Technique that you know. Once per turn as a Swift Action, you can grant the use of this Force Technique to one ally within 12 squares of you who is Trained in the Use the Force Skill.\n\nThe target gains the benefit of this Force Technique until the end of your next turn. You cannot choose the Force Point Recovery Technique for this Talent."
+          }
+        ]
+      },
+      "grantsActions": [
+        "swift-action"
+      ]
     },
     "effects": [],
     "folder": null,
@@ -12757,7 +13805,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "2f00c50f3bf6bf5a",
@@ -12766,14 +13829,47 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Instructor",
-      "prerequisites": null,
-      "benefit": "Once per day, grant use of a Lightsaber Combat tree, Duelist, or Forms talent to allies within 12 squares equal to half your class level for the encounter.",
-      "description": "Once per day, grant allies use of Lightsaber Combat, Lightsaber Forms, or Duelist talents until the end of the encounter.",
+      "prerequisites": "At least 1 Talent from Lightsaber Combat Talent Tree, Duelist Talent Tree, or Lightsaber Forms Talent Tree",
+      "benefit": "Choose a Talent that you already possess. The Talent you select must be from the Lightsaber Combat Talent Tree, the Duelist Talent Tree, or the Lightsaber Forms Talent Tree. Once per day, as a Standard Action, you can spend a Force Point to impart the benefits of the chosen Talent to one or more allies, effectively granting them the Talent (even if they don't meet the prerequisites).\n\nAn ally must be within 12 squares of you, and must be able to see and hear you to gain the Talent; once gained, its benefits last until the end of the encounter.\n\nYou can share the Talent with a number of allies equal to one-half your Class Level (rounded down). Only allies who are Trained in the Use the Force Skill can gain the benefits of the Shared Talent.\n\nYou can take this Talent multiple times. Each time you do so, you must select a different Talent to share with this ability. You can share each Talent with your allies only once per day.",
+      "description": {
+        "value": "<p>Choose a Talent that you already possess. The Talent you select must be from the Lightsaber Combat Talent Tree, the Duelist Talent Tree, or the Lightsaber Forms Talent Tree. Once per day, as a Standard Action, you can spend a Force Point to impart the benefits of the chosen Talent to one or more allies, effectively granting them the Talent (even if they don't meet the prerequisites).</p><p>An ally must be within 12 squares of you, and must be able to see and hear you to gain the Talent; once gained, its benefits last until the end of the encounter.</p><p>You can share the Talent with a number of allies equal to one-half your Class Level (rounded down). Only allies who are Trained in the Use the Force Skill can gain the benefits of the Shared Talent.</p><p>You can take this Talent multiple times. Each time you do so, you must select a different Talent to share with this ability. You can share each Talent with your allies only once per day.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Instructor",
-      "treeId": "jedi-instructor"
+      "treeId": "jedi-instructor",
+      "effect": "Choose a Talent that you already possess. The Talent you select must be from the Lightsaber Combat Talent Tree, the Duelist Talent Tree, or the Lightsaber Forms Talent Tree. Once per day, as a Standard Action, you can spend a Force Point to impart the benefits of the chosen Talent to one or more allies, effectively granting them the Talent (even if they don't meet the prerequisites).\n\nAn ally must be within 12 squares of you, and must be able to see and hear you to gain the Talent; once gained, its benefits last until the end of the encounter.\n\nYou can share the Talent with a number of allies equal to one-half your Class Level (rounded down). Only allies who are Trained in the Use the Force Skill can gain the benefits of the Shared Talent.\n\nYou can take this Talent multiple times. Each time you do so, you must select a different Talent to share with this ability. You can share each Talent with your allies only once per day.",
+      "shortSummary": "Choose one eligible talent; once per day spend a Force Point as a Standard Action to share it with trained allies for the encounter.",
+      "prerequisite": "At least 1 Talent from Lightsaber Combat Talent Tree, Duelist Talent Tree, or Lightsaber Forms Talent Tree",
+      "prerequisitesText": "At least 1 Talent from Lightsaber Combat Talent Tree, Duelist Talent Tree, or Lightsaber Forms Talent Tree",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Choose one eligible talent; once per day spend a Force Point as a Standard Action to share it with trained allies for the encounter.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "choice_share_talent_daily",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": true,
+        "conditionSummary": "Choose one eligible talent; once per day spend a Force Point as a Standard Action to share it with trained allies for the encounter.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "share_talent",
+            "label": "Share Talent",
+            "summary": "Choose one eligible talent; once per day spend a Force Point as a Standard Action to share it with trained allies for the encounter.",
+            "action": "standard-action",
+            "mode": "choice_share_talent_daily",
+            "text": "Choose a Talent that you already possess. The Talent you select must be from the Lightsaber Combat Talent Tree, the Duelist Talent Tree, or the Lightsaber Forms Talent Tree. Once per day, as a Standard Action, you can spend a Force Point to impart the benefits of the chosen Talent to one or more allies, effectively granting them the Talent (even if they don't meet the prerequisites).\n\nAn ally must be within 12 squares of you, and must be able to see and hear you to gain the Talent; once gained, its benefits last until the end of the encounter.\n\nYou can share the Talent with a number of allies equal to one-half your Class Level (rounded down). Only allies who are Trained in the Use the Force Skill can gain the benefits of the Shared Talent.\n\nYou can take this Talent multiple times. Each time you do so, you must select a different Talent to share with this ability. You can share each Talent with your allies only once per day."
+          }
+        ]
+      },
+      "grantsActions": [
+        "standard-action"
+      ]
     },
     "effects": [],
     "folder": null,
@@ -12781,7 +13877,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "488aaac69a9829bc",
@@ -12791,13 +13902,46 @@
     "system": {
       "talent_tree": "Jedi Instructor",
       "prerequisites": "Force Training",
-      "benefit": "Spend a power from your suite and give it to an ally trained in Use the Force within 12 squares and line of sight; lost if unused by end of encounter.",
-      "description": "Spend a Force power to grant it to an ally trained in Use the Force; it is lost if unused by the end of the encounter.",
+      "benefit": "As a Standard Action, you can spend any one use of a Force Power currently in your Force Power Suite, adding a use of that Force Power to the Force Power Suite of any ally Trained in the Use the Force skill. The ally must be within 12 squares of you and in your line of sight.\n\nWhen your ally uses that Force Power, it disappears from his or her Force Power Suite. If the ally does not use the Force Power before the end of the encounter, it is permanently removed from his or her Force Power Suite.",
+      "description": {
+        "value": "<p>As a Standard Action, you can spend any one use of a Force Power currently in your Force Power Suite, adding a use of that Force Power to the Force Power Suite of any ally Trained in the Use the Force skill. The ally must be within 12 squares of you and in your line of sight.</p><p>When your ally uses that Force Power, it disappears from his or her Force Power Suite. If the ally does not use the Force Power before the end of the encounter, it is permanently removed from his or her Force Power Suite.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Instructor",
-      "treeId": "jedi-instructor"
+      "treeId": "jedi-instructor",
+      "effect": "As a Standard Action, you can spend any one use of a Force Power currently in your Force Power Suite, adding a use of that Force Power to the Force Power Suite of any ally Trained in the Use the Force skill. The ally must be within 12 squares of you and in your line of sight.\n\nWhen your ally uses that Force Power, it disappears from his or her Force Power Suite. If the ally does not use the Force Power before the end of the encounter, it is permanently removed from his or her Force Power Suite.",
+      "shortSummary": "Standard Action: spend one Force Power use to grant that power once to a trained ally within 12 squares and line of sight.",
+      "prerequisite": "Force Training",
+      "prerequisitesText": "Force Training",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Standard Action: spend one Force Power use to grant that power once to a trained ally within 12 squares and line of sight.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "force_suite_power_transfer",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Standard Action: spend one Force Power use to grant that power once to a trained ally within 12 squares and line of sight.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "transfer_power",
+            "label": "Transfer Power",
+            "summary": "Standard Action: spend one Force Power use to grant that power once to a trained ally within 12 squares and line of sight.",
+            "action": "standard-action",
+            "mode": "force_suite_power_transfer",
+            "text": "As a Standard Action, you can spend any one use of a Force Power currently in your Force Power Suite, adding a use of that Force Power to the Force Power Suite of any ally Trained in the Use the Force skill. The ally must be within 12 squares of you and in your line of sight.\n\nWhen your ally uses that Force Power, it disappears from his or her Force Power Suite. If the ally does not use the Force Power before the end of the encounter, it is permanently removed from his or her Force Power Suite."
+          }
+        ]
+      },
+      "grantsActions": [
+        "standard-action"
+      ]
     },
     "effects": [],
     "folder": null,
@@ -12805,23 +13949,65 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "a76198e5da0f6368",
-    "name": "Echoes in the Force",
+    "name": "Echoes of the Force",
     "type": "talent",
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Investigator",
-      "prerequisites": null,
-      "benefit": "Use Farseeing on a location to view the past; DC 20 plus one per day into the past.",
-      "description": "Use Farseeing on a location you are standing in to view past events.",
+      "prerequisites": "Farseeing",
+      "benefit": "You can use the Farseeing Force Power on a location instead of on an individual creature, peering into the location's past to view events that occurred there. Unlike the normal use of the Farseeing Force Power, you are actually looking into the location's past (at a time you designate), and you must be standing in the location being viewed.\n\nThe target DC for your Use the Force check is 20, +1 for each day into the past that you are attempt to scry. When you look into the past, you need only specify a time in a number of days, as you can sense tremors in The Force that focus you visions on meaningful events that day.",
+      "description": {
+        "value": "<p>You can use the Farseeing Force Power on a location instead of on an individual creature, peering into the location's past to view events that occurred there. Unlike the normal use of the Farseeing Force Power, you are actually looking into the location's past (at a time you designate), and you must be standing in the location being viewed.</p><p>The target DC for your Use the Force check is 20, +1 for each day into the past that you are attempt to scry. When you look into the past, you need only specify a time in a number of days, as you can sense tremors in The Force that focus you visions on meaningful events that day.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Investigator",
-      "treeId": "jedi-investigator"
+      "treeId": "jedi-investigator",
+      "slug": "echoes-of-the-force",
+      "effect": "You can use the Farseeing Force Power on a location instead of on an individual creature, peering into the location's past to view events that occurred there. Unlike the normal use of the Farseeing Force Power, you are actually looking into the location's past (at a time you designate), and you must be standing in the location being viewed.\n\nThe target DC for your Use the Force check is 20, +1 for each day into the past that you are attempt to scry. When you look into the past, you need only specify a time in a number of days, as you can sense tremors in The Force that focus you visions on meaningful events that day.",
+      "shortSummary": "Use Farseeing on a location's past; DC 20 +1 per day into the past while standing there.",
+      "prerequisite": "Farseeing",
+      "prerequisitesText": "Farseeing",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Use Farseeing on a location's past; DC 20 +1 per day into the past while standing there.",
+        "applicationScope": "renamed_alias_record",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Renamed stale imported title to match user-provided talent text.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "echoes-of-the-force",
+            "label": "Echoes of the Force",
+            "summary": "Use Farseeing on a location's past; DC 20 +1 per day into the past while standing there.",
+            "action": "farseeing",
+            "text": "You can use the Farseeing Force Power on a location instead of on an individual creature, peering into the location's past to view events that occurred there. Unlike the normal use of the Farseeing Force Power, you are actually looking into the location's past (at a time you designate), and you must be standing in the location being viewed.\n\nThe target DC for your Use the Force check is 20, +1 for each day into the past that you are attempt to scry. When you look into the past, you need only specify a time in a number of days, as you can sense tremors in The Force that focus you visions on meaningful events that day."
+          }
+        ]
+      }
     },
     "effects": [],
     "folder": null,
@@ -12829,7 +14015,11 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "renamedFrom": "Echoes in the Force"
+      }
+    }
   },
   {
     "_id": "dfb9e58c7bcb095c",
@@ -12838,14 +14028,47 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Investigator",
-      "prerequisites": null,
-      "benefit": "Gain +2 speed if you end your movement adjacent to your target.",
-      "description": "Gain +2 speed if you end your movement adjacent to a target.",
+      "prerequisites": "",
+      "benefit": "As a Swift Action, you can designate a single target creature as the focus of your attentions. You gain a +2 bonus to your Speed any time you spend a Move Action to Move, provided that you end your movement adjacent to the target.\n\nYou retain this bonus (and may not use this Talent again) until your target surrenders, is reduced to 0 Hit Points, moves to the bottom of the Condition Track, or until the encounter ends.",
+      "description": {
+        "value": "<p>As a Swift Action, you can designate a single target creature as the focus of your attentions. You gain a +2 bonus to your Speed any time you spend a Move Action to Move, provided that you end your movement adjacent to the target.</p><p>You retain this bonus (and may not use this Talent again) until your target surrenders, is reduced to 0 Hit Points, moves to the bottom of the Condition Track, or until the encounter ends.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Investigator",
-      "treeId": "jedi-investigator"
+      "treeId": "jedi-investigator",
+      "effect": "As a Swift Action, you can designate a single target creature as the focus of your attentions. You gain a +2 bonus to your Speed any time you spend a Move Action to Move, provided that you end your movement adjacent to the target.\n\nYou retain this bonus (and may not use this Talent again) until your target surrenders, is reduced to 0 Hit Points, moves to the bottom of the Condition Track, or until the encounter ends.",
+      "shortSummary": "Swift Action designate quarry; gain +2 Speed when moving if you end adjacent to the target.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Swift Action designate quarry; gain +2 Speed when moving if you end adjacent to the target.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "quarry_movement_bonus",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Swift Action designate quarry; gain +2 Speed when moving if you end adjacent to the target.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "jedi_quarry",
+            "label": "Jedi Quarry",
+            "summary": "Swift Action designate quarry; gain +2 Speed when moving if you end adjacent to the target.",
+            "action": "swift-action",
+            "mode": "quarry_movement_bonus",
+            "text": "As a Swift Action, you can designate a single target creature as the focus of your attentions. You gain a +2 bonus to your Speed any time you spend a Move Action to Move, provided that you end your movement adjacent to the target.\n\nYou retain this bonus (and may not use this Talent again) until your target surrenders, is reduced to 0 Hit Points, moves to the bottom of the Condition Track, or until the encounter ends."
+          }
+        ]
+      },
+      "grantsActions": [
+        "swift-action"
+      ]
     },
     "effects": [
       {
@@ -12875,7 +14098,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "aa5b9fe99274274a",
@@ -12884,14 +14122,47 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Investigator",
-      "prerequisites": null,
-      "benefit": "Spend a remaining Farseeing power to regain any other expended Force power.",
-      "description": "Spend a Farseeing power to regain any other Force power.",
+      "prerequisites": "Farseeing",
+      "benefit": "Whenever you have at least one unspent Farseeing Force Power in your Force Power Suite, you can spend that Farseeing Force Power to regain any one other Force Power as a Swift Action.",
+      "description": {
+        "value": "<p>Whenever you have at least one unspent Farseeing Force Power in your Force Power Suite, you can spend that Farseeing Force Power to regain any one other Force Power as a Swift Action.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Investigator",
-      "treeId": "jedi-investigator"
+      "treeId": "jedi-investigator",
+      "effect": "Whenever you have at least one unspent Farseeing Force Power in your Force Power Suite, you can spend that Farseeing Force Power to regain any one other Force Power as a Swift Action.",
+      "shortSummary": "Spend an unspent Farseeing as a Swift Action to regain one other Force Power.",
+      "prerequisite": "Farseeing",
+      "prerequisitesText": "Farseeing",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Spend an unspent Farseeing as a Swift Action to regain one other Force Power.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "farseeing_trade_recover_force_power",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Spend an unspent Farseeing as a Swift Action to regain one other Force Power.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "prepared_for_danger",
+            "label": "Prepared for Danger",
+            "summary": "Spend an unspent Farseeing as a Swift Action to regain one other Force Power.",
+            "action": "swift-action",
+            "mode": "farseeing_trade_recover_force_power",
+            "text": "Whenever you have at least one unspent Farseeing Force Power in your Force Power Suite, you can spend that Farseeing Force Power to regain any one other Force Power as a Swift Action."
+          }
+        ]
+      },
+      "grantsActions": [
+        "swift-action"
+      ]
     },
     "effects": [
       {
@@ -12921,7 +14192,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "467accea4a3c8cbd",
@@ -12930,14 +14216,45 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Investigator",
-      "prerequisites": null,
-      "benefit": "Use the Force replaces Will Defense against Deception or Persuasion.",
-      "description": "Use the Force replaces Will Defense against Deception or Persuasion.",
+      "prerequisites": "",
+      "benefit": "Whenever someone makes a Deception or Persuasion Skill Check against your Will Defense, you can make a Use the Force check, replacing your Will Defense with the result of your Use the Force check if it is higher.",
+      "description": {
+        "value": "<p>Whenever someone makes a Deception or Persuasion Skill Check against your Will Defense, you can make a Use the Force check, replacing your Will Defense with the result of your Use the Force check if it is higher.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Investigator",
-      "treeId": "jedi-investigator"
+      "treeId": "jedi-investigator",
+      "effect": "Whenever someone makes a Deception or Persuasion Skill Check against your Will Defense, you can make a Use the Force check, replacing your Will Defense with the result of your Use the Force check if it is higher.",
+      "shortSummary": "Use a Use the Force check in place of Will Defense against Deception or Persuasion if higher.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Use a Use the Force check in place of Will Defense against Deception or Persuasion if higher.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "will_defense_replacement",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Use a Use the Force check in place of Will Defense against Deception or Persuasion if higher.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "sense_deception",
+            "label": "Sense Deception",
+            "summary": "Use a Use the Force check in place of Will Defense against Deception or Persuasion if higher.",
+            "action": "use-the-force-check",
+            "mode": "will_defense_replacement",
+            "text": "Whenever someone makes a Deception or Persuasion Skill Check against your Will Defense, you can make a Use the Force check, replacing your Will Defense with the result of your Use the Force check if it is higher."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [],
     "folder": null,
@@ -12945,23 +14262,65 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "cc938ba0542c97e4",
-    "name": "Unclouded Judgment",
+    "name": "Unclouded Judgement",
     "type": "talent",
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Investigator",
       "prerequisites": "Sense Deception",
-      "benefit": "Spend a Force Point to automatically negate a mind-affecting Force power or talent.",
-      "description": "Spend a Force Point to automatically negate a mind-affecting Force power or talent.",
+      "benefit": "Whenever you are the target of a Mind-Affecting Force Power or Force Talent, you can spend a Force Point as a Reaction to negate the effects of that Force Power or Force Talent (no Skill Check required).",
+      "description": {
+        "value": "<p>Whenever you are the target of a Mind-Affecting Force Power or Force Talent, you can spend a Force Point as a Reaction to negate the effects of that Force Power or Force Talent (no Skill Check required).</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Investigator",
-      "treeId": "jedi-investigator"
+      "treeId": "jedi-investigator",
+      "slug": "unclouded-judgement",
+      "effect": "Whenever you are the target of a Mind-Affecting Force Power or Force Talent, you can spend a Force Point as a Reaction to negate the effects of that Force Power or Force Talent (no Skill Check required).",
+      "shortSummary": "Spend a Force Point as a Reaction to negate a Mind-Affecting Force Power or Force Talent targeting you.",
+      "prerequisite": "Sense Deception",
+      "prerequisitesText": "Sense Deception",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Spend a Force Point as a Reaction to negate a Mind-Affecting Force Power or Force Talent targeting you.",
+        "applicationScope": "renamed_alias_record",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Renamed stale imported title to match user-provided talent text.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "unclouded-judgement",
+            "label": "Unclouded Judgement",
+            "summary": "Spend a Force Point as a Reaction to negate a Mind-Affecting Force Power or Force Talent targeting you.",
+            "action": "reaction",
+            "text": "Whenever you are the target of a Mind-Affecting Force Power or Force Talent, you can spend a Force Point as a Reaction to negate the effects of that Force Power or Force Talent (no Skill Check required)."
+          }
+        ]
+      }
     },
     "effects": [],
     "folder": null,
@@ -12969,7 +14328,11 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "renamedFrom": "Unclouded Judgment"
+      }
+    }
   },
   {
     "_id": "43ee5741f4b2375c",
@@ -12978,14 +14341,45 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Refugee",
-      "prerequisites": null,
-      "benefit": "Gather Information checks to find you suffer a -5 penalty.",
-      "description": "Gather Information checks made to track you take a –5 penalty.",
+      "prerequisites": "",
+      "benefit": "You are adept at living beneath society's radar. Anyone who attempts to locate you using the Gather Information skill suffers a -5 penalty on their Gather Information checks.",
+      "description": {
+        "value": "<p>You are adept at living beneath society's radar. Anyone who attempts to locate you using the Gather Information skill suffers a -5 penalty on their Gather Information checks.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Refugee",
-      "treeId": "jedi-refugee"
+      "treeId": "jedi-refugee",
+      "effect": "You are adept at living beneath society's radar. Anyone who attempts to locate you using the Gather Information skill suffers a -5 penalty on their Gather Information checks.",
+      "shortSummary": "Gather Information checks to locate you take a -5 penalty.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Gather Information checks to locate you take a -5 penalty.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "opposed_locate_penalty",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Gather Information checks to locate you take a -5 penalty.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "cover_your_tracks",
+            "label": "Cover Your Tracks",
+            "summary": "Gather Information checks to locate you take a -5 penalty.",
+            "action": "gather-information-check",
+            "mode": "opposed_locate_penalty",
+            "text": "You are adept at living beneath society's radar. Anyone who attempts to locate you using the Gather Information skill suffers a -5 penalty on their Gather Information checks."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [],
     "folder": null,
@@ -12993,7 +14387,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "8c47c02ec74fa858",
@@ -13002,14 +14411,45 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Refugee",
-      "prerequisites": null,
-      "benefit": "Reroll opposed Use the Force checks to conceal your presence.",
-      "description": "Reroll opposed Use the Force checks to conceal your presence.",
+      "prerequisites": "",
+      "benefit": "You are skilled at concealing your presence from other Force-users. You may reroll any opposed Use the Force check made to conceal your presence from someone who attempts to sense other Force-users, keeping the better of the two results.",
+      "description": {
+        "value": "<p>You are skilled at concealing your presence from other Force-users. You may reroll any opposed Use the Force check made to conceal your presence from someone who attempts to sense other Force-users, keeping the better of the two results.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Refugee",
-      "treeId": "jedi-refugee"
+      "treeId": "jedi-refugee",
+      "effect": "You are skilled at concealing your presence from other Force-users. You may reroll any opposed Use the Force check made to conceal your presence from someone who attempts to sense other Force-users, keeping the better of the two results.",
+      "shortSummary": "Reroll opposed Use the Force checks to conceal your presence and keep the better result.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Reroll opposed Use the Force checks to conceal your presence and keep the better result.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "force_presence_concealment_reroll",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Reroll opposed Use the Force checks to conceal your presence and keep the better result.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "difficult_to_sense",
+            "label": "Difficult to Sense",
+            "summary": "Reroll opposed Use the Force checks to conceal your presence and keep the better result.",
+            "action": "use-the-force-check",
+            "mode": "force_presence_concealment_reroll",
+            "text": "You are skilled at concealing your presence from other Force-users. You may reroll any opposed Use the Force check made to conceal your presence from someone who attempts to sense other Force-users, keeping the better of the two results."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [],
     "folder": null,
@@ -13017,7 +14457,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "4fa3e301abad7a48",
@@ -13027,13 +14482,44 @@
     "system": {
       "talent_tree": "Jedi Refugee",
       "prerequisites": "Difficult to Sense",
-      "benefit": "The detection radius for you is 10 km instead of 100 km.",
-      "description": "Reduce the range at which you can be detected by the Force to 10 km.",
+      "benefit": "Your ability to conceal yourself from other Force-users allows you to reduce the radius within which you can be detected to 10 kilometers (instead of 100 kilometers).",
+      "description": {
+        "value": "<p>Your ability to conceal yourself from other Force-users allows you to reduce the radius within which you can be detected to 10 kilometers (instead of 100 kilometers).</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Refugee",
-      "treeId": "jedi-refugee"
+      "treeId": "jedi-refugee",
+      "effect": "Your ability to conceal yourself from other Force-users allows you to reduce the radius within which you can be detected to 10 kilometers (instead of 100 kilometers).",
+      "shortSummary": "Reduce Force detection radius to 10 kilometers instead of 100 kilometers.",
+      "prerequisite": "Difficult to Sense",
+      "prerequisitesText": "Difficult to Sense",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Reduce Force detection radius to 10 kilometers instead of 100 kilometers.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "force_detection_radius_reduction",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Reduce Force detection radius to 10 kilometers instead of 100 kilometers.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "force_veil",
+            "label": "Force Veil",
+            "summary": "Reduce Force detection radius to 10 kilometers instead of 100 kilometers.",
+            "action": "sense-force",
+            "mode": "force_detection_radius_reduction",
+            "text": "Your ability to conceal yourself from other Force-users allows you to reduce the radius within which you can be detected to 10 kilometers (instead of 100 kilometers)."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [
       {
@@ -13063,7 +14549,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "251462d5e3aaa4ce",
@@ -13072,14 +14573,45 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Refugee",
-      "prerequisites": null,
-      "benefit": "Includes Acquire Equipment or Funds, Obtain Info, Receive Medical Attention, and Secure Safe House benefits.",
-      "description": "Gain access to Acquire Equipment or Funds, Obtain Information, Medical Aid, or a Safe House.",
+      "prerequisites": "",
+      "benefit": "You have access to a network of Jedi sympathizers. While in a civilized area, you can call upon this network of allies once per game session for one of the following purposes:\n\nAcquire Equipment or Funds: You can use your contacts to obtain material that might otherwise be Licensed, Restricted, Military, or Illegal, provided the total value of the Equipment does not exceed your Jedi Knight Level x 500 credits. Alternatively, you can obtain a number of credits from your contacts equal to this amount to spend as you see fit.\nObtain Information: Your contacts provide you with information, automatically succeeding on a Gather Information check (and covering the credit cost of the check) provided the DC does not exceed 20.\nReceive Medical Attention: Your contacts provide you and up to three of your allies with medical attention as dispensed by a skilled physician or healer. The length of the treatment cannot exceed 24 hours, but is otherwise free of charge and completely private.\nSecure Safe House: One of your contacts provides a safe redoubt for you and up to three of your allies, for a number of days equal to your Jedi Knight Class Level. While in hiding, you have no contact with anyone other than the individual who is hiding you. Once the allotted time is up, you must leave the Safe House or risk discovery. For each day you remain in hiding past this deadline, the Gamemaster should roll 1d20. On a result of 15 or higher, your Safe House is discovered, and your contact's complicity in keeping you hidden is exposed.",
+      "description": {
+        "value": "<p>You have access to a network of Jedi sympathizers. While in a civilized area, you can call upon this network of allies once per game session for one of the following purposes:</p><p>Acquire Equipment or Funds: You can use your contacts to obtain material that might otherwise be Licensed, Restricted, Military, or Illegal, provided the total value of the Equipment does not exceed your Jedi Knight Level x 500 credits. Alternatively, you can obtain a number of credits from your contacts equal to this amount to spend as you see fit.\nObtain Information: Your contacts provide you with information, automatically succeeding on a Gather Information check (and covering the credit cost of the check) provided the DC does not exceed 20.\nReceive Medical Attention: Your contacts provide you and up to three of your allies with medical attention as dispensed by a skilled physician or healer. The length of the treatment cannot exceed 24 hours, but is otherwise free of charge and completely private.\nSecure Safe House: One of your contacts provides a safe redoubt for you and up to three of your allies, for a number of days equal to your Jedi Knight Class Level. While in hiding, you have no contact with anyone other than the individual who is hiding you. Once the allotted time is up, you must leave the Safe House or risk discovery. For each day you remain in hiding past this deadline, the Gamemaster should roll 1d20. On a result of 15 or higher, your Safe House is discovered, and your contact's complicity in keeping you hidden is exposed.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Refugee",
-      "treeId": "jedi-refugee"
+      "treeId": "jedi-refugee",
+      "effect": "You have access to a network of Jedi sympathizers. While in a civilized area, you can call upon this network of allies once per game session for one of the following purposes:\n\nAcquire Equipment or Funds: You can use your contacts to obtain material that might otherwise be Licensed, Restricted, Military, or Illegal, provided the total value of the Equipment does not exceed your Jedi Knight Level x 500 credits. Alternatively, you can obtain a number of credits from your contacts equal to this amount to spend as you see fit.\n\nObtain Information: Your contacts provide you with information, automatically succeeding on a Gather Information check (and covering the credit cost of the check) provided the DC does not exceed 20.\n\nReceive Medical Attention: Your contacts provide you and up to three of your allies with medical attention as dispensed by a skilled physician or healer. The length of the treatment cannot exceed 24 hours, but is otherwise free of charge and completely private.\n\nSecure Safe House: One of your contacts provides a safe redoubt for you and up to three of your allies, for a number of days equal to your Jedi Knight Class Level. While in hiding, you have no contact with anyone other than the individual who is hiding you. Once the allotted time is up, you must leave the Safe House or risk discovery. For each day you remain in hiding past this deadline, the Gamemaster should roll 1d20. On a result of 15 or higher, your Safe House is discovered, and your contact's complicity in keeping you hidden is exposed.",
+      "shortSummary": "Once per session in a civilized area, call on Jedi sympathizers for equipment/funds, information, medical aid, or a safe house.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Once per session in a civilized area, call on Jedi sympathizers for equipment/funds, information, medical aid, or a safe house.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "once_per_session_network_support",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Once per session in a civilized area, call on Jedi sympathizers for equipment/funds, information, medical aid, or a safe house.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "jedi_network",
+            "label": "Jedi Network",
+            "summary": "Once per session in a civilized area, call on Jedi sympathizers for equipment/funds, information, medical aid, or a safe house.",
+            "action": "session-resource",
+            "mode": "once_per_session_network_support",
+            "text": "You have access to a network of Jedi sympathizers. While in a civilized area, you can call upon this network of allies once per game session for one of the following purposes:\n\nAcquire Equipment or Funds: You can use your contacts to obtain material that might otherwise be Licensed, Restricted, Military, or Illegal, provided the total value of the Equipment does not exceed your Jedi Knight Level x 500 credits. Alternatively, you can obtain a number of credits from your contacts equal to this amount to spend as you see fit.\n\nObtain Information: Your contacts provide you with information, automatically succeeding on a Gather Information check (and covering the credit cost of the check) provided the DC does not exceed 20.\n\nReceive Medical Attention: Your contacts provide you and up to three of your allies with medical attention as dispensed by a skilled physician or healer. The length of the treatment cannot exceed 24 hours, but is otherwise free of charge and completely private.\n\nSecure Safe House: One of your contacts provides a safe redoubt for you and up to three of your allies, for a number of days equal to your Jedi Knight Class Level. While in hiding, you have no contact with anyone other than the individual who is hiding you. Once the allotted time is up, you must leave the Safe House or risk discovery. For each day you remain in hiding past this deadline, the Gamemaster should roll 1d20. On a result of 15 or higher, your Safe House is discovered, and your contact's complicity in keeping you hidden is exposed."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [],
     "folder": null,
@@ -13087,7 +14619,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "8bd201bb22c8da3a",
@@ -13560,9 +15107,11 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Shadow",
-      "prerequisites": null,
-      "benefit": "When opponents attempt to sense you with Use the Force, you may act as if your Dark Side equals your Wisdom; Deception is a class skill.",
-      "description": "Force attempts to sense you treat you as having a Dark Side Score equal to your Wisdom; Deception becomes a class skill.",
+      "prerequisites": "",
+      "benefit": "You can cloak your intentions with a veil of anger and hate. When another character attempts to sense you through The Force in any way, you can choose to act as though your Dark Side Score equals your Wisdom score.\n\nAdditionally, Deception is now a Class Skill for you.",
+      "description": {
+        "value": "<p>You can cloak your intentions with a veil of anger and hate. When another character attempts to sense you through The Force in any way, you can choose to act as though your Dark Side Score equals your Wisdom score.</p><p>Additionally, Deception is now a Class Skill for you.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
@@ -13605,9 +15154,11 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Shadow",
-      "prerequisites": null,
-      "benefit": "Increase Sentinel Strike damage die to d8 instead of d6.",
-      "description": "Increase Sentinel Strike damage dice from d6 to d8.",
+      "prerequisites": "Sentinel Strike",
+      "benefit": "Increase the damage dice of your Sentinel Strike to d8, instead of d6.",
+      "description": {
+        "value": "<p>Increase the damage dice of your Sentinel Strike to d8, instead of d6.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
@@ -13652,8 +15203,10 @@
     "system": {
       "talent_tree": "Jedi Shadow",
       "prerequisites": "Sentinel's Gambit",
-      "benefit": "You may use Sentinel's Gambit additional times per encounter equal to half your class level.",
-      "description": "You may use Sentinel's Gambit additional times per encounter equal to half your class level.",
+      "benefit": "You can use Sentinel's Gambit an additional number of times equal to half your Class Level (minimum 1).",
+      "description": {
+        "value": "<p>You can use Sentinel's Gambit an additional number of times equal to half your Class Level (minimum 1).</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
@@ -13675,9 +15228,11 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Shadow",
-      "prerequisites": null,
-      "benefit": "When targeted by a dark side power, roll two dice for rebuke attempt and take the better result.",
-      "description": "When rebuking a Dark Side power, roll twice and take the better result.",
+      "prerequisites": "Rebuke",
+      "benefit": "When using the Rebuke Force Power against a Force Power with the [Dark Side] descriptor, roll two dice for the Rebuke attempt, keeping the better of the two results.",
+      "description": {
+        "value": "<p>When using the Rebuke Force Power against a Force Power with the [Dark Side] descriptor, roll two dice for the Rebuke attempt, keeping the better of the two results.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
@@ -13700,8 +15255,10 @@
     "system": {
       "talent_tree": "Jedi Shadow",
       "prerequisites": "Dark Deception",
-      "benefit": "Add one dark side Force power to your suite; once per encounter use it without increasing your Dark Side score.",
-      "description": "Add one Dark Side Force power and once per encounter use it without increasing Dark Side Score.",
+      "benefit": "Add one Force Power with the [Dark Side] descriptor to your Force Power Suite. Once per encounter you can use that Force Power with the [Dark Side] descriptor without increasing your Dark Side Score. If you spend a Force Point or Destiny Point to modify this Force Power in any way, you increase your Dark Side Score as normal.",
+      "description": {
+        "value": "<p>Add one Force Power with the [Dark Side] descriptor to your Force Power Suite. Once per encounter you can use that Force Power with the [Dark Side] descriptor without increasing your Dark Side Score. If you spend a Force Point or Destiny Point to modify this Force Power in any way, you increase your Dark Side Score as normal.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
@@ -13723,14 +15280,45 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Watchman",
-      "prerequisites": null,
-      "benefit": "Allies within 12 squares may reroll Initiative; if allies are surprised but not you, prevent surprise for up to one ally per your Wisdom modifier.",
-      "description": "Allies within 12 squares may reroll Initiative; a number of allies avoid surprise.",
+      "prerequisites": "",
+      "benefit": "Allies within 12 squares can choose to reroll their Initiative checks at the start of combat, but must keep the result of the reroll, even if it is worse.\n\nFurthermore, if any allies within 12 squares are Surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered Surprised, and can act normally during the Surprise Round.",
+      "description": {
+        "value": "<p>Allies within 12 squares can choose to reroll their Initiative checks at the start of combat, but must keep the result of the reroll, even if it is worse.</p><p>Furthermore, if any allies within 12 squares are Surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered Surprised, and can act normally during the Surprise Round.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Watchman",
-      "treeId": "jedi-watchman"
+      "treeId": "jedi-watchman",
+      "effect": "Allies within 12 squares can choose to reroll their Initiative checks at the start of combat, but must keep the result of the reroll, even if it is worse.\n\nFurthermore, if any allies within 12 squares are Surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered Surprised, and can act normally during the Surprise Round.",
+      "shortSummary": "Allies within 12 squares may reroll Initiative, and selected surprised allies may act if you are not surprised.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Allies within 12 squares may reroll Initiative, and selected surprised allies may act if you are not surprised.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "encounter_start_support",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Allies within 12 squares may reroll Initiative, and selected surprised allies may act if you are not surprised.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "force_warning",
+            "label": "Force Warning",
+            "summary": "Allies within 12 squares may reroll Initiative, and selected surprised allies may act if you are not surprised.",
+            "action": "initiative-roll",
+            "mode": "encounter_start_support",
+            "text": "Allies within 12 squares can choose to reroll their Initiative checks at the start of combat, but must keep the result of the reroll, even if it is worse.\n\nFurthermore, if any allies within 12 squares are Surprised at the start of an encounter, but you are not, you can designate a number of those allies equal to your Wisdom modifier (minimum 1); those allies are no longer considered Surprised, and can act normally during the Surprise Round."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [],
     "folder": null,
@@ -13738,23 +15326,65 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "acb9d2dddeea7efd",
-    "name": "Improved Quick Draw (lightsabers)",
+    "name": "Improved Quick Draw (Lightsabers)",
     "type": "talent",
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Watchman",
-      "prerequisites": "Quick Draw, Weapon Focus (lightsabers)",
-      "benefit": "Draw, ignite, and attack with a lightsaber even if surprised; may draw and ignite as a free action.",
-      "description": "You may draw, ignite, and attack with a lightsaber even if surprised.",
+      "prerequisites": "Quick Draw, Weapon Focus (Lightsabers)",
+      "benefit": "If you are carrying a Lightsaber (either in your hand or at your belt), you can draw the Lightsaber, ignite it, and make a single attack during the Surprise Round, even if you are Surprised. If you are not Surprised, you can take any single Action of your choice, as normal.\n\nAdditionally, once per turn you may draw and ignite a Lightsaber as a Free Action on your turn.",
+      "description": {
+        "value": "<p>If you are carrying a Lightsaber (either in your hand or at your belt), you can draw the Lightsaber, ignite it, and make a single attack during the Surprise Round, even if you are Surprised. If you are not Surprised, you can take any single Action of your choice, as normal.</p><p>Additionally, once per turn you may draw and ignite a Lightsaber as a Free Action on your turn.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Watchman",
-      "treeId": "jedi-watchman"
+      "treeId": "jedi-watchman",
+      "slug": "improved-quick-draw-lightsabers",
+      "effect": "If you are carrying a Lightsaber (either in your hand or at your belt), you can draw the Lightsaber, ignite it, and make a single attack during the Surprise Round, even if you are Surprised. If you are not Surprised, you can take any single Action of your choice, as normal.\n\nAdditionally, once per turn you may draw and ignite a Lightsaber as a Free Action on your turn.",
+      "shortSummary": "Draw, ignite, and attack with a lightsaber in the Surprise Round; once per turn draw and ignite as a free action.",
+      "prerequisite": "Quick Draw, Weapon Focus (Lightsabers)",
+      "prerequisitesText": "Quick Draw, Weapon Focus (Lightsabers)",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Draw, ignite, and attack with a lightsaber in the Surprise Round; once per turn draw and ignite as a free action.",
+        "applicationScope": "renamed_alias_record",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Renamed stale imported title to match user-provided talent text.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "improved-quick-draw-lightsabers",
+            "label": "Improved Quick Draw (Lightsabers)",
+            "summary": "Draw, ignite, and attack with a lightsaber in the Surprise Round; once per turn draw and ignite as a free action.",
+            "action": "lightsaber-attack",
+            "text": "If you are carrying a Lightsaber (either in your hand or at your belt), you can draw the Lightsaber, ignite it, and make a single attack during the Surprise Round, even if you are Surprised. If you are not Surprised, you can take any single Action of your choice, as normal.\n\nAdditionally, once per turn you may draw and ignite a Lightsaber as a Free Action on your turn."
+          }
+        ]
+      }
     },
     "effects": [],
     "folder": null,
@@ -13762,7 +15392,11 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "renamedFrom": "Improved Quick Draw (lightsabers)"
+      }
+    }
   },
   {
     "_id": "f541b5e57c5af27e",
@@ -13772,13 +15406,44 @@
     "system": {
       "talent_tree": "Jedi Watchman",
       "prerequisites": "Block or Deflect, Vigilance",
-      "benefit": "May use Block or Deflect to protect an adjacent ally without spending a Force Point.",
-      "description": "Use Block or Deflect to protect adjacent allies without spending a Force Point.",
+      "benefit": "Whenever you are adjacent to an ally, you may use the Block or Deflect Talents on attacks that target that ally without the need to spend a Force Point.",
+      "description": {
+        "value": "<p>Whenever you are adjacent to an ally, you may use the Block or Deflect Talents on attacks that target that ally without the need to spend a Force Point.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Watchman",
-      "treeId": "jedi-watchman"
+      "treeId": "jedi-watchman",
+      "effect": "Whenever you are adjacent to an ally, you may use the Block or Deflect Talents on attacks that target that ally without the need to spend a Force Point.",
+      "shortSummary": "Use Block or Deflect for adjacent allies without spending a Force Point.",
+      "prerequisite": "Block or Deflect, Vigilance",
+      "prerequisitesText": "Block or Deflect, Vigilance",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Use Block or Deflect for adjacent allies without spending a Force Point.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "adjacent_ally_reaction",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Use Block or Deflect for adjacent allies without spending a Force Point.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "sheltering_stance",
+            "label": "Sheltering Stance",
+            "summary": "Use Block or Deflect for adjacent allies without spending a Force Point.",
+            "action": "block-deflect-reaction",
+            "mode": "adjacent_ally_reaction",
+            "text": "Whenever you are adjacent to an ally, you may use the Block or Deflect Talents on attacks that target that ally without the need to spend a Force Point."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [],
     "folder": null,
@@ -13786,7 +15451,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "abe485644b195f0b",
@@ -13795,14 +15475,47 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Watchman",
-      "prerequisites": null,
-      "benefit": "Grant one adjacent ally +1 Reflex Defense while they remain adjacent.",
-      "description": "One adjacent ally gains +1 Reflex Defense as long as they remain adjacent.",
+      "prerequisites": "",
+      "benefit": "As a Swift Action you may designate one adjacent ally as the target of this Talent. That target gains a +1 deflection bonus to their Reflex Defense as long as you remain adjacent to them. You may change the target of this Talent as a Swift Action.",
+      "description": {
+        "value": "<p>As a Swift Action you may designate one adjacent ally as the target of this Talent. That target gains a +1 deflection bonus to their Reflex Defense as long as you remain adjacent to them. You may change the target of this Talent as a Swift Action.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Watchman",
-      "treeId": "jedi-watchman"
+      "treeId": "jedi-watchman",
+      "effect": "As a Swift Action you may designate one adjacent ally as the target of this Talent. That target gains a +1 deflection bonus to their Reflex Defense as long as you remain adjacent to them. You may change the target of this Talent as a Swift Action.",
+      "shortSummary": "Designate an adjacent ally to gain +1 deflection bonus to Reflex Defense while adjacent.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Designate an adjacent ally to gain +1 deflection bonus to Reflex Defense while adjacent.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "active_adjacent_ally_deflection",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Designate an adjacent ally to gain +1 deflection bonus to Reflex Defense while adjacent.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "vigilance",
+            "label": "Vigilance",
+            "summary": "Designate an adjacent ally to gain +1 deflection bonus to Reflex Defense while adjacent.",
+            "action": "swift-action",
+            "mode": "active_adjacent_ally_deflection",
+            "text": "As a Swift Action you may designate one adjacent ally as the target of this Talent. That target gains a +1 deflection bonus to their Reflex Defense as long as you remain adjacent to them. You may change the target of this Talent as a Swift Action."
+          }
+        ]
+      },
+      "grantsActions": [
+        "swift-action"
+      ]
     },
     "effects": [
       {
@@ -13832,7 +15545,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "e3927fc5314cc492",
@@ -13842,13 +15570,44 @@
     "system": {
       "talent_tree": "Jedi Watchman",
       "prerequisites": "Force Warning",
-      "benefit": "When acting in the surprise round, you and allies gain +1 move maximum.",
-      "description": "When acting in a surprise round, you and allies gain +1 move.",
+      "benefit": "When acting in the Surprise Round, you and your allies can take an extra Move Action. Any character can gain only one extra Move Action during the Surprise Round, regardless of the number of characters with this Talent in your group.",
+      "description": {
+        "value": "<p>When acting in the Surprise Round, you and your allies can take an extra Move Action. Any character can gain only one extra Move Action during the Surprise Round, regardless of the number of characters with this Talent in your group.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Watchman",
-      "treeId": "jedi-watchman"
+      "treeId": "jedi-watchman",
+      "effect": "When acting in the Surprise Round, you and your allies can take an extra Move Action. Any character can gain only one extra Move Action during the Surprise Round, regardless of the number of characters with this Talent in your group.",
+      "shortSummary": "During the Surprise Round, you and allies can take one extra Move Action.",
+      "prerequisite": "Force Warning",
+      "prerequisitesText": "Force Warning",
+      "executionModel": "PASSIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "During the Surprise Round, you and allies can take one extra Move Action.",
+        "mechanicsMode": "conditional_or_metadata",
+        "applicationScope": "surprise_round_move_action",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "During the Surprise Round, you and allies can take one extra Move Action.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "watchman_s_advance",
+            "label": "Watchman's Advance",
+            "summary": "During the Surprise Round, you and allies can take one extra Move Action.",
+            "action": "surprise-round",
+            "mode": "surprise_round_move_action",
+            "text": "When acting in the Surprise Round, you and your allies can take an extra Move Action. Any character can gain only one extra Move Action during the Surprise Round, regardless of the number of characters with this Talent in your group."
+          }
+        ]
+      },
+      "grantsActions": []
     },
     "effects": [
       {
@@ -13878,7 +15637,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "675bfa10691b60f6",
@@ -13887,14 +15661,47 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Weapon Master",
-      "prerequisites": null,
-      "benefit": "Battle Strike applies to your first attack each round until the end of the encounter.",
-      "description": "Battle Strike applies to the first attack you make each round until the end of the encounter.",
+      "prerequisites": "Battle Strike",
+      "benefit": "Whenever you use the Battle Strike Force Power, you gain the Force Power's bonus on attack rolls on your first melee attack made each round until the end of the encounter. If you do not attack in a round, this effect ends.",
+      "description": {
+        "value": "<p>Whenever you use the Battle Strike Force Power, you gain the Force Power's bonus on attack rolls on your first melee attack made each round until the end of the encounter. If you do not attack in a round, this effect ends.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Weapon Master",
-      "treeId": "jedi-weapon-master"
+      "treeId": "jedi-weapon-master",
+      "effect": "Whenever you use the Battle Strike Force Power, you gain the Force Power's bonus on attack rolls on your first melee attack made each round until the end of the encounter. If you do not attack in a round, this effect ends.",
+      "shortSummary": "Battle Strike's attack bonus applies to your first melee attack each round until encounter end, ending if you do not attack in a round.",
+      "prerequisite": "Battle Strike",
+      "prerequisitesText": "Battle Strike",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Battle Strike's attack bonus applies to your first melee attack each round until encounter end, ending if you do not attack in a round.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "battle_strike_persistent_melee_bonus",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Battle Strike's attack bonus applies to your first melee attack each round until encounter end, ending if you do not attack in a round.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "combat_trance",
+            "label": "Combat Trance",
+            "summary": "Battle Strike's attack bonus applies to your first melee attack each round until encounter end, ending if you do not attack in a round.",
+            "action": "battle-strike",
+            "mode": "battle_strike_persistent_melee_bonus",
+            "text": "Whenever you use the Battle Strike Force Power, you gain the Force Power's bonus on attack rolls on your first melee attack made each round until the end of the encounter. If you do not attack in a round, this effect ends."
+          }
+        ]
+      },
+      "grantsActions": [
+        "battle-strike"
+      ]
     },
     "effects": [],
     "folder": null,
@@ -13902,23 +15709,65 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "4dfad6e363c11acf",
-    "name": "Improvised Weapon Master",
+    "name": "Improvised Weapon Masteryy",
     "type": "talent",
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Weapon Master",
-      "prerequisites": null,
-      "benefit": "No penalty when using improvised weapons.",
-      "description": "You take no penalties when using improvised weapons.",
+      "prerequisites": "",
+      "benefit": "You take no penalty on attack rolls made with Improvised Weapons.",
+      "description": {
+        "value": "<p>You take no penalty on attack rolls made with Improvised Weapons.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Weapon Master",
-      "treeId": "jedi-weapon-master"
+      "treeId": "jedi-weapon-master",
+      "slug": "improvised-weapon-mastery",
+      "effect": "You take no penalty on attack rolls made with Improvised Weapons.",
+      "shortSummary": "Take no penalty on attack rolls with improvised weapons.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Take no penalty on attack rolls with improvised weapons.",
+        "applicationScope": "renamed_alias_record",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Renamed stale imported title to match user-provided talent text.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "improvised-weapon-mastery",
+            "label": "Improvised Weapon Masteryy",
+            "summary": "Take no penalty on attack rolls with improvised weapons.",
+            "action": "attack-roll",
+            "text": "You take no penalty on attack rolls made with Improvised Weapons."
+          }
+        ]
+      }
     },
     "effects": [],
     "folder": null,
@@ -13926,22 +15775,53 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "renamedFrom": "Improvised Weapon Master"
+      }
+    }
   },
   {
     "_id": "ab4b51be30dfa9bc",
-    "name": "Shoto Pin Block",
+    "name": "Shoto Pin",
     "type": "talent",
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Weapon Master",
-      "prerequisites": "Shoto Focus",
-      "benefit": "When you Block with a shoto, the attacker cannot make a melee attack until its next turn or until you are no longer adjacent.",
-      "description": "",
+      "prerequisites": "Block",
+      "benefit": "Whenever you are wielding a light Lightsaber (typically a Shoto Lightsaber) and successfully use the Block Talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it. The effect ends early if you move, attack, or use an action",
+      "description": {
+        "value": "<p>Whenever you are wielding a light Lightsaber (typically a Shoto Lightsaber) and successfully use the Block Talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it. The effect ends early if you move, attack, or use an action</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
-      "treeId": "unknown"
+      "treeId": "unknown",
+      "slug": "shoto-pin",
+      "effect": "Whenever you are wielding a light Lightsaber (typically a Shoto Lightsaber) and successfully use the Block Talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it. The effect ends early if you move, attack, or use an action.",
+      "shortSummary": "After blocking with a light lightsaber, the attacker can make no further melee attacks until its next turn or until adjacency/effect ends.",
+      "prerequisite": "Block",
+      "prerequisitesText": "Block",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "After blocking with a light lightsaber, the attacker can make no further melee attacks until its next turn or until adjacency/effect ends.",
+        "applicationScope": "renamed_alias_record",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Renamed stale imported title to match user-provided talent text.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "shoto-pin",
+            "label": "Shoto Pin",
+            "summary": "After blocking with a light lightsaber, the attacker can make no further melee attacks until its next turn or until adjacency/effect ends.",
+            "action": "block-reaction",
+            "text": "Whenever you are wielding a light Lightsaber (typically a Shoto Lightsaber) and successfully use the Block Talent to negate a melee attack, the attacker can make no further melee attacks until the start of its next turn or until you are no longer adjacent to it. The effect ends early if you move, attack, or use an action."
+          }
+        ]
+      }
     },
     "effects": [],
     "folder": null,
@@ -13949,7 +15829,11 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "renamedFrom": "Shoto Pin Block"
+      }
+    }
   },
   {
     "_id": "cb4984135c665c4b",
@@ -13959,13 +15843,46 @@
     "system": {
       "talent_tree": "Jedi Weapon Master",
       "prerequisites": "Twin Weapon Style",
-      "benefit": "You may move 2 squares between attacks without provoking attacks of opportunity.",
-      "description": "You may move 2 squares between attacks without provoking attacks of opportunity.",
+      "benefit": "Whenever you use the Twin Weapon Style Talent, you can move 2 squares between each attack. This movement does not provoke Attacks of Opportunity.",
+      "description": {
+        "value": "<p>Whenever you use the Twin Weapon Style Talent, you can move 2 squares between each attack. This movement does not provoke Attacks of Opportunity.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Weapon Master",
-      "treeId": "jedi-weapon-master"
+      "treeId": "jedi-weapon-master",
+      "effect": "Whenever you use the Twin Weapon Style Talent, you can move 2 squares between each attack. This movement does not provoke Attacks of Opportunity.",
+      "shortSummary": "Move 2 squares between Twin Weapon Style attacks without provoking attacks of opportunity.",
+      "prerequisite": "Twin Weapon Style",
+      "prerequisitesText": "Twin Weapon Style",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Move 2 squares between Twin Weapon Style attacks without provoking attacks of opportunity.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "between_attacks_movement",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Move 2 squares between Twin Weapon Style attacks without provoking attacks of opportunity.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "twin_weapon_mastery",
+            "label": "Twin Weapon Mastery",
+            "summary": "Move 2 squares between Twin Weapon Style attacks without provoking attacks of opportunity.",
+            "action": "twin-weapon-style",
+            "mode": "between_attacks_movement",
+            "text": "Whenever you use the Twin Weapon Style Talent, you can move 2 squares between each attack. This movement does not provoke Attacks of Opportunity."
+          }
+        ]
+      },
+      "grantsActions": [
+        "twin-weapon-style"
+      ]
     },
     "effects": [],
     "folder": null,
@@ -13973,7 +15890,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "5ea9a4c30dff1ac8",
@@ -13982,14 +15914,47 @@
     "img": "icons/svg/item-bag.svg",
     "system": {
       "talent_tree": "Jedi Weapon Master",
-      "prerequisites": null,
-      "benefit": "You can attack with both weapons or a double-sided weapon against different targets.",
-      "description": "You may attack with both weapons or a double weapon against different targets.",
+      "prerequisites": "",
+      "benefit": "As a Standard Action, whenever you are wielding two Weapons (or a Double Weapon), you can make one attack with each Weapon (or each end of a Double Weapon). Each attack must be against a different target.",
+      "description": {
+        "value": "<p>As a Standard Action, whenever you are wielding two Weapons (or a Double Weapon), you can make one attack with each Weapon (or each end of a Double Weapon). Each attack must be against a different target.</p>"
+      },
       "class": "Jedi Knight",
       "costNumeric": null,
       "category": "Jedi Knight",
       "tree": "Jedi Weapon Master",
-      "treeId": "jedi-weapon-master"
+      "treeId": "jedi-weapon-master",
+      "effect": "As a Standard Action, whenever you are wielding two Weapons (or a Double Weapon), you can make one attack with each Weapon (or each end of a Double Weapon). Each attack must be against a different target.",
+      "shortSummary": "Standard Action: with two weapons or a double weapon, attack once with each against different targets.",
+      "prerequisite": "",
+      "prerequisitesText": "",
+      "executionModel": "ACTIVE",
+      "abilityMeta": {
+        "status": "talent_backcheck_user_text_2026_06_11",
+        "description": "Standard Action: with two weapons or a double weapon, attack once with each against different targets.",
+        "mechanicsMode": "action_or_contextual",
+        "applicationScope": "two_weapon_standard_attack",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Standard Action: with two weapons or a double weapon, attack once with each against different targets.",
+        "metadataPhase": "jedi-prestige-talent-backcheck",
+        "metadataNotes": "Updated from user-provided source text; non-automatable targeting/LOS/session adjudication remains GM/player confirmed.",
+        "rules": [
+          {
+            "type": "TALENT_RULE",
+            "id": "twin_weapon_style",
+            "label": "Twin Weapon Style",
+            "summary": "Standard Action: with two weapons or a double weapon, attack once with each against different targets.",
+            "action": "standard-action",
+            "mode": "two_weapon_standard_attack",
+            "text": "As a Standard Action, whenever you are wielding two Weapons (or a Double Weapon), you can make one attack with each Weapon (or each end of a Double Weapon). Each attack must be against a different target."
+          }
+        ]
+      },
+      "grantsActions": [
+        "standard-action"
+      ]
     },
     "effects": [],
     "folder": null,
@@ -13997,7 +15962,22 @@
     "ownership": {
       "default": 0
     },
-    "flags": {}
+    "flags": {
+      "swse": {
+        "talentBackcheck": {
+          "source": "user-pasted-rules",
+          "date": "2026-06-11",
+          "updatedFields": [
+            "system.description",
+            "system.benefit",
+            "system.effect",
+            "system.shortSummary",
+            "system.prerequisite",
+            "system.abilityMeta"
+          ]
+        }
+      }
+    }
   },
   {
     "_id": "d9e707f23fffc2af",
