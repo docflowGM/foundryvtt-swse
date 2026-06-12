@@ -96,6 +96,8 @@ export class StoreSurfaceController {
           storeRenderLimit: 36,
           currentSubcategory: null,
           currentFamily: null,
+          currentVehicleSize: null,
+          currentVehicleCl: null,
           currentView: 'browse',
           selectedProductId: null
         });
@@ -141,6 +143,8 @@ export class StoreSurfaceController {
           currentCategory: 'weapons',
           currentSubcategory: null,  // Phase 2: Clear secondary nav
           currentFamily: null,        // Phase 2: Clear family filter
+          currentVehicleSize: null,
+          currentVehicleCl: null,
           currentView: 'browse',
           selectedProductId: null,
           storeRenderLimit: 36,
@@ -181,6 +185,28 @@ export class StoreSurfaceController {
       sortSel.addEventListener('change', () => {
         this._setOptions({ sort: sortSel.value ?? 'default' }, false);
         this._clientSort(root);
+      }, { signal });
+    }
+
+    const vehicleSizeSel = root.querySelector('#ss-vehicle-size');
+    if (vehicleSizeSel) {
+      vehicleSizeSel.addEventListener('change', () => {
+        this._setOptions({
+          currentVehicleSize: vehicleSizeSel.value || null,
+          storeRenderLimit: 36,
+          selectedProductId: null
+        });
+      }, { signal });
+    }
+
+    const vehicleClSel = root.querySelector('#ss-vehicle-cl');
+    if (vehicleClSel) {
+      vehicleClSel.addEventListener('change', () => {
+        this._setOptions({
+          currentVehicleCl: vehicleClSel.value || null,
+          storeRenderLimit: 36,
+          selectedProductId: null
+        });
       }, { signal });
     }
 
@@ -536,6 +562,10 @@ export class StoreSurfaceController {
     if (availability) availability.value = state.availability ?? 'all';
     const sort = root.querySelector('#ss-sort');
     if (sort) sort.value = state.sort ?? 'default';
+    const vehicleSize = root.querySelector('#ss-vehicle-size');
+    if (vehicleSize) vehicleSize.value = state.currentVehicleSize ?? '';
+    const vehicleCl = root.querySelector('#ss-vehicle-cl');
+    if (vehicleCl) vehicleCl.value = state.currentVehicleCl ?? '';
   }
 
   async _addToCart({ id, itemType = 'item', condition = '', rerenderPatch = null }) {
@@ -599,6 +629,8 @@ export class StoreSurfaceController {
     const categoryVal = (this._host._shellSurfaceOptions?.currentCategory ?? '').toLowerCase();
     const subcategoryVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentSubcategory ?? '');
     const familyVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentFamily ?? '');
+    const vehicleSizeVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleSize ?? '');
+    const vehicleClVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleCl ?? '');
 
     let visible = 0;
     root.querySelectorAll('.store-card[data-item-id], .swse-store-surface__card[data-item-id]').forEach(card => {
@@ -607,6 +639,8 @@ export class StoreSurfaceController {
       const subtype = (card.dataset.subcategory ?? '').toLowerCase();
       const subtypeKey = normalizeStoreFilterValue(card.dataset.subcategory || '');
       const familyKey = normalizeStoreFilterValue(card.dataset.family || '');
+      const vehicleSizeKey = normalizeStoreFilterValue(card.dataset.vehicleSize || '');
+      const vehicleClKey = normalizeStoreFilterValue(card.dataset.vehicleCl || '');
       const avail = normalizeAvailabilityText(card.dataset.availability ?? '');
       const requestedAvail = normalizeAvailabilityText(availVal);
 
@@ -614,9 +648,11 @@ export class StoreSurfaceController {
       const matchAvail = !requestedAvail || requestedAvail === 'all' || avail.split(/\s+/).includes(requestedAvail) || avail.includes(requestedAvail);
       const matchCategory = !categoryVal || cat === categoryVal;
       const matchSubcategory = !subcategoryVal || subtypeKey === subcategoryVal;
-      const matchFamily = !(categoryVal === 'weapons' && familyVal) || familyKey === familyVal;
+      const matchFamily = !(['weapons', 'droids', 'vehicles'].includes(categoryVal) && familyVal) || familyKey === familyVal;
+      const matchVehicleSize = !(categoryVal === 'vehicles' && vehicleSizeVal) || vehicleSizeKey === vehicleSizeVal;
+      const matchVehicleCl = !(categoryVal === 'vehicles' && vehicleClVal) || vehicleClKey === vehicleClVal;
 
-      const show = matchSearch && matchAvail && matchCategory && matchSubcategory && matchFamily;
+      const show = matchSearch && matchAvail && matchCategory && matchSubcategory && matchFamily && matchVehicleSize && matchVehicleCl;
       card.style.display = show ? '' : 'none';
       if (show) visible += 1;
     });

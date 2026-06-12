@@ -747,18 +747,6 @@
       "chainOrder": 1,
       "summary": "Use the Force to negate a ranged attack while wielding a lightsaber."
     },
-    "Redirect Shot": {
-      "category": "force",
-      "tags": [
-        "force",
-        "defense",
-        "counterattack"
-      ],
-      "chain": "Deflect Chain",
-      "chainOrder": 2,
-      "prerequisiteFeat": "Deflect",
-      "summary": "When you successfully negate a ranged attack with Deflect, you may redirect the shot to another target within line of sight."
-    },
     "Saber Throw": {
       "category": "force",
       "tags": [

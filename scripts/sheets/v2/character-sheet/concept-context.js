@@ -2,6 +2,7 @@ import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/en
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { LightsaberFormEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-form-engine.js";
 import { CapabilityRegistry } from "/systems/foundryvtt-swse/scripts/engine/capabilities/capability-registry.js";
+import { getLightsaberFormAccentKey } from "/systems/foundryvtt-swse/scripts/engine/force/lightsaber-form-accents.js";
 import { CANONICAL_SKILL_DEFS, canonicalizeSkillKey, normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 function toSignedClass(value) {
   const n = Number(value) || 0;
@@ -644,7 +645,11 @@ function getForceDescriptorTokens(power) {
 }
 
 function getForceCardP(power, isForm = false) {
-  if (isForm) return 'form';
+  if (isForm) {
+    const system = power?.system ?? {};
+    const formKey = getLightsaberFormAccentKey(system.form, system.lightsaberForm, system.discipline, power?.form, power?.name);
+    return formKey ? `form-${formKey}` : 'form';
+  }
   const tokens = getForceDescriptorTokens(power).join(' ');
   if (tokens.includes('dark')) return 'dark';
   if (tokens.includes('light') || tokens.includes('vital') || tokens.includes('healing')) return 'light';
@@ -663,6 +668,7 @@ function getForceDescriptorLabels(power, p) {
     else if (p === 'light') labels.push('Light Side');
     else if (p === 'tk') labels.push('Telekinetic');
     else if (p === 'mind') labels.push('Mind-Affecting');
+    else if (String(p || '').startsWith('form')) labels.push('Lightsaber Form');
   }
   return labels.slice(0, 3);
 }
@@ -672,7 +678,7 @@ function getForceSymbol(power, p) {
   if (p === 'light') return '✦';
   if (p === 'tk') return '◎';
   if (p === 'mind') return '◉';
-  if (p === 'form') return '◆';
+  if (String(p || '').startsWith('form')) return '◆';
   return '✧';
 }
 

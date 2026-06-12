@@ -469,7 +469,6 @@
         "Jedi Familiarity",
         "Keen Force Mind",
         "Pall of the Dark Side",
-        "Redirect Shot",
         "Saber Throw",
         "Strong in the Force",
         "Unstoppable Force"
@@ -807,7 +806,6 @@
         "Reckless Charge",
         "Recovering Surge",
         "Recurring Success",
-        "Redirect Shot",
         "Regenerative Healing",
         "Relentless Attack",
         "Republic Military Training",
@@ -1234,7 +1232,6 @@
         "Reckless Charge",
         "Recovering Surge",
         "Recurring Success",
-        "Redirect Shot",
         "Regenerative Healing",
         "Relentless Attack",
         "Republic Military Training",
@@ -3993,21 +3990,6 @@
       "prerequisites": [],
       "description": "{'value': 'Improve your chances of success with <a href=\"/wiki/Climb\" title=\"Climb\">Climb</a> or <a href=\"/wiki/Jump\" title=\"Jump\">Jump</a> checks.'}",
       "shortSummary": "Improve your chances of success with Climb or Jump checks."
-    },
-    {
-      "id": "6f98dd888bef8d7b",
-      "name": "Redirect Shot",
-      "category": "force",
-      "source": "Unknown",
-      "role": "general",
-      "tags": [
-        "force",
-        "defense",
-        "counterattack"
-      ],
-      "prerequisites": [],
-      "description": "{}",
-      "shortSummary": "When you successfully negate a ranged attack with Deflect, you may redirect the shot to another target within line of sight."
     },
     {
       "id": "6fb0f56dd9b9b75c",

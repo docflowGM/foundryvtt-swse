@@ -1506,6 +1506,11 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         return;
       }
 
+      case 'open-lightsaber-blade-color-editor': {
+        this._openLightsaberBladeColorEditor(target);
+        return;
+      }
+
       case 'toggle-lightsaber-accessory': {
         const id = target?.dataset?.key;
         if (!id) return;
@@ -1828,6 +1833,11 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       const preferred = this._resolveBladeColorOptions(crystal)[0];
       if (preferred) this._lightsaber.selectedBladeColor = preferred;
       await this._renderPreservingUi();
+    });
+
+    this.onRoot('click', '[data-action="open-lightsaber-blade-color-editor"]', async (event, target) => {
+      event.preventDefault();
+      this._openLightsaberBladeColorEditor(target);
     });
 
     this.onRoot('click', '[data-action="toggle-lightsaber-accessory"]', async (event, target) => {
@@ -2466,6 +2476,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       techSpecialist: editItem ? TechSpecialistModificationService.getUiContext(this.actor, editItem, { subjectKind: 'item', subjectType: 'weapon' }) : TechSpecialistModificationService.getUiContext(this.actor, { name: 'Lightsaber Construction', type: 'weapon', system: { cost: totalCost || 0 }, flags: {} }, { subjectKind: 'item', subjectType: 'weapon' }),
       lightsaber: {
         mode: editItem ? 'tuning existing blade' : (canChangeChassis ? 'construct' : 'construction locked'),
+        editItemId: editItem?.id || (editItem ? getWorkbenchItemId(editItem) : null),
         constructionMode,
         route: constructionSummary.route,
         activeTab,
@@ -2604,6 +2615,21 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     this.close();
   }
 
+
+  _openLightsaberBladeColorEditor(target = null) {
+    const itemId = target?.dataset?.itemId || this._lightsaber?.selectedOwnedSaberId || null;
+    const item = itemId ? this._getActorItemById(itemId) : null;
+    if (!item) {
+      ui?.notifications?.warn?.('Build or select an owned lightsaber before editing blade color.');
+      return;
+    }
+    try {
+      item.sheet?.render?.(true);
+    } catch (err) {
+      console.error('[ItemCustomizationWorkbench] Failed to open lightsaber item sheet', err);
+      ui?.notifications?.error?.(`Could not open lightsaber edit sheet: ${err.message}`);
+    }
+  }
 
   async _emitLightsaberConstructionComplete(result = {}) {
     try {

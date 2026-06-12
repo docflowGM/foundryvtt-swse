@@ -589,12 +589,12 @@ export const TALENT_EFFECTS = {
 
   'Telekinetic Savant': {
     effects: [],
-    description: 'Once per encounter as a Swift Action, recover one spent [Telekinetic] Force Power without spending a Force Point. Each additional selection grants one additional use per encounter.'
+    description: 'Once per encounter as a Swift Action, you may return one Force Power with the [Telekinetic] descriptor to your suite without spending a Force Point. You may take this Talent multiple times. Each time you select it, you may use this Talent one additional time per encounter.'
   },
 
   'Telekinetic Prodigy': {
     effects: [],
-    description: 'When taking Force Training and selecting Move Object, gain one extra free [Telekinetic] Force Power selection for that Force Training instance.'
+    description: 'When you take the Force Training Feat and select Move Object as one of your Force Powers, you can also select one extra Force Power to add to your Force Power Suite for free. This extra Force Power must contain the [Telekinetic] descriptor. You can only gain one extra Force Power each time you take the Force Training Feat, regardless of how many times you choose the Move Object Force Power. If you increase your Wisdom score at a later time and select the Move Object power, you only gain an additional power if you did not take the Move Object power when you first chose that Feat. Otherwise, you gain an additional Force Power as normal.'
   },
 
   'Force Perception': {

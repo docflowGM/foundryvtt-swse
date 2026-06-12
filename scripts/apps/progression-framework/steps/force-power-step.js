@@ -23,6 +23,8 @@ import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engin
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-grant-entitlement-resolver.js';
+import { getLightsaberFormAccentKey } from '/systems/foundryvtt-swse/scripts/engine/force/lightsaber-form-accents.js';
+import { resolveTelekineticProdigyBonusSlots } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-suite-resolution.js';
 
 /**
  * Force Power step — both Generic (force-powers) for level-up use.
@@ -60,6 +62,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     this._utilityUnlisteners = [];
     this._noChoiceAutoAdvanceStepId = null;
     this._currentActor = null;
+    this._currentShell = null;
   }
 
   get descriptor() { return this._descriptor; }
@@ -74,6 +77,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
   async onStepEnter(shell) {
     try {
       this._currentActor = shell?.actor ?? null;
+      this._currentShell = shell ?? null;
       // Initialize force registry if needed
       if (!ForceRegistry._initialized) {
         await ForceRegistry.init();
@@ -165,6 +169,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
    */
   async getStepData(context) {
     this._currentActor = context?.actor ?? this._currentActor ?? null;
+    this._currentShell = context?.shell ?? this._currentShell ?? null;
     const actorEntries = this._getActorForcePowerEntries(context?.actor);
     this._actorPowerCounts = new Map(actorEntries.map((entry) => [entry.id, entry.count]));
 
@@ -966,9 +971,24 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     return base + this._getTelekineticProdigyBonusSlots(this._currentActor);
   }
 
-  _actorHasTalent(actor, talentName) {
+  _actorHasTalent(actor, talentName, shell = this._currentShell) {
     const wanted = String(talentName || '').trim().toLowerCase().replace(/\s+/g, ' ');
-    return Array.from(actor?.items ?? []).some((item) => item?.type === 'talent' && String(item?.name || '').trim().toLowerCase().replace(/\s+/g, ' ').replace(/\s*\(\d+\)\s*$/, '') === wanted);
+    const matches = (entry) => String(entry?.name || entry?.label || entry || '')
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, ' ')
+      .replace(/\s*\(\d+\)\s*$/, '') === wanted;
+    if (Array.from(actor?.items ?? []).some((item) => item?.type === 'talent' && matches(item))) return true;
+    const pendingTalents = [
+      shell?.getSelection?.('talents'),
+      shell?.buildIntent?.getSelection?.('talents'),
+      shell?.draftSelections?.talents,
+      shell?.draftSelections?.get?.('talents'),
+      shell?.committedSelections?.get?.('talents'),
+      shell?.progressionSession?.draftSelections?.talents,
+      shell?.progressionSession?.getSelection?.('talents'),
+    ];
+    return pendingTalents.some((value) => (Array.isArray(value) ? value : (value ? [value] : [])).some(matches));
   }
 
   _isMoveObjectPowerId(powerId) {
@@ -991,29 +1011,42 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     return /telekinetic|telekinesis|move object|force slam|force thrust|force grip|ballistakinesis/.test(haystack);
   }
 
+  _getPendingForcePowerEntriesForProdigy() {
+    return Array.from(this._committedPowerCounts.entries()).map(([id, count]) => {
+      const power = this._resolvePower(id);
+      return { id, name: power?.name || id, count };
+    });
+  }
+
+  _getTelekineticProdigyResolution(actor) {
+    return resolveTelekineticProdigyBonusSlots(this._currentShell, actor, {
+      pendingForcePowers: this._getPendingForcePowerEntriesForProdigy(),
+    });
+  }
+
   _getTelekineticProdigyBonusSlots(actor) {
-    if (!this._actorHasTalent(actor, 'Telekinetic Prodigy')) return 0;
-    const hasSelectedMoveObject = Array.from(this._committedPowerCounts.keys()).some((id) => this._isMoveObjectPowerId(id));
-    if (!hasSelectedMoveObject) return 0;
-    // One bonus slot for this Force Training selection packet when Move Object is selected.
-    return 1;
+    return Math.max(0, Number(this._getTelekineticProdigyResolution(actor)?.slots || 0) || 0);
   }
 
   _getTelekineticProdigyState(actor) {
+    const resolution = this._getTelekineticProdigyResolution(actor);
     const hasTalent = this._actorHasTalent(actor, 'Telekinetic Prodigy');
     const moveObjectSelected = Array.from(this._committedPowerCounts.keys()).some((id) => this._isMoveObjectPowerId(id));
-    const bonusSlots = this._getTelekineticProdigyBonusSlots(actor);
+    const bonusSlots = Math.max(0, Number(resolution?.slots || 0) || 0);
     const pendingTelekineticSelections = Array.from(this._committedPowerCounts.entries())
       .filter(([id]) => this._isTelekineticPower(id))
       .reduce((sum, [, count]) => sum + (Number(count) || 0), 0);
     return {
       available: hasTalent,
-      active: hasTalent && moveObjectSelected,
+      active: hasTalent && bonusSlots > 0,
       moveObjectSelected,
       bonusSlots,
+      trigger: resolution?.trigger || '',
       pendingTelekineticSelections,
       note: hasTalent
-        ? (moveObjectSelected ? 'Bonus slot unlocked. Use it for one extra [Telekinetic] Force Power.' : 'Select Move Object with Force Training to unlock one extra [Telekinetic] Force Power.')
+        ? (bonusSlots > 0
+          ? 'Bonus slot unlocked. Use it for one extra [Telekinetic] Force Power.'
+          : 'Select Move Object with Force Training to unlock one extra [Telekinetic] Force Power.')
         : ''
     };
   }
@@ -1110,6 +1143,8 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       'battlemind': 'Battlemind.png',
       'beam-of-light': 'beam-of-light.png',
       'cleanse-mind': 'cleanse-mind.png',
+      'cloak': 'Force-Cloak.png',
+      'cryokinesis': 'force-power-58.png',
       'drain-energy': 'Drain-energy.png',
       'drain-life': 'Drain-life.png',
       'farseeing': 'Farseeing.png',
@@ -1128,13 +1163,16 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       'force-sense': 'Force Sense.png',
       'force-stasis': 'force-stasis.png',
       'force-storm': 'Force-Storm.png',
+      'force-storm-fucg': 'Force-Storm.png',
       'force-strike': 'Force Strike.png',
       'force-thrust': 'Force-Thrust.png',
       'force-track': 'Force Track.png',
       'force-valor': 'force-valor.png',
       'force-weapon': 'Force Weapon.png',
       'inspire': 'inspire.png',
+      'ionize': 'ionize.png',
       'mind-trick': 'mind-trick.png',
+      'morichro': 'morichro.png',
       'move-object': 'Move-object.png',
       'negate-energy': 'Negate-Energy.png',
       'plant-surge': 'plant-surge.png',
@@ -1239,6 +1277,33 @@ export class ForcePowerStep extends ProgressionStepPlugin {
     if (!text) return 'Other Forms';
     const afterColon = text.includes(':') ? text.split(':').pop().trim() : text;
     return afterColon || text;
+  }
+
+  _getPowerToneCssClass(power) {
+    if (this._isLightsaberFormPower(power)) {
+      const formKey = getLightsaberFormAccentKey(
+        power?.form,
+        power?.system?.form,
+        power?.system?.lightsaberForm,
+        power?.system?.discipline,
+        power?.discipline,
+        power?.name
+      );
+      return ['force-power-compact-row--lightsaber', formKey ? `force-power-compact-row--form-${formKey}` : '']
+        .filter(Boolean)
+        .join(' ');
+    }
+    const tokens = [
+      ...this._formatDescriptorList(power),
+      ...this._collectPowerTags(power),
+      power?.system?.discipline,
+      power?.discipline,
+    ].map((value) => this._normalizePowerLookupKey(value));
+    if (tokens.some((token) => ['dark-side', 'dark'].includes(token))) return 'force-power-compact-row--dark';
+    if (tokens.some((token) => ['light-side', 'light'].includes(token))) return 'force-power-compact-row--light';
+    if (tokens.some((token) => ['telekinetic', 'telekinesis'].includes(token))) return 'force-power-compact-row--telekinetic';
+    if (tokens.some((token) => ['mind-affecting', 'telepathic'].includes(token))) return 'force-power-compact-row--mind';
+    return 'force-power-compact-row--neutral';
   }
 
   _getForcePowerSubcategories(power) {
@@ -1349,6 +1414,7 @@ export class ForcePowerStep extends ProgressionStepPlugin {
       badgeLabel: isSuggested ? 'Recommended' : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
       confidenceLevel: confidenceData?.confidenceLevel || null,
+      toneCssClass: this._getPowerToneCssClass(power),
     };
     return formatted;
   }

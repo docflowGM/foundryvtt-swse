@@ -352,6 +352,211 @@ export function normalizeArmorSubcategory(item = {}) {
  *   activeFamily: string | null (weapons only)
  * }
  */
+
+
+const DROID_DEGREE_DEFINITIONS = [
+  { key: '1st-degree', label: '1st-Degree', subcategory: '1st-Degree: Medical & Analytical', description: 'Medical and analytical Droids' },
+  { key: '2nd-degree', label: '2nd-Degree', subcategory: '2nd-Degree: Mechanical & Technical', description: 'Mechanical and technical Droids' },
+  { key: '3rd-degree', label: '3rd-Degree', subcategory: '3rd-Degree: Protocol & Domestic', description: 'Protocol and domestic Droids' },
+  { key: '4th-degree', label: '4th-Degree', subcategory: '4th-Degree: Security & Battle', description: 'Security and battle Droids' },
+  { key: '5th-degree', label: '5th-Degree', subcategory: '5th-Degree: Labor & Utility', description: 'Labor and utility Droids' }
+];
+
+const VEHICLE_SUBCATEGORY_DEFINITIONS = [
+  { key: 'speeders', label: 'Speeders', family: 'ground', familyLabel: 'Ground Vehicles' },
+  { key: 'tracked-vehicles', label: 'Tracked Vehicles', family: 'ground', familyLabel: 'Ground Vehicles' },
+  { key: 'walkers', label: 'Walkers', family: 'ground', familyLabel: 'Ground Vehicles' },
+  { key: 'wheeled-vehicles', label: 'Wheeled Vehicles', family: 'ground', familyLabel: 'Ground Vehicles' },
+  { key: 'weapon-emplacements', label: 'Weapon Emplacements', family: 'ground', familyLabel: 'Ground Vehicles' },
+  { key: 'airspeeders', label: 'Airspeeders', family: 'air', familyLabel: 'Air Vehicles' },
+  { key: 'starfighters', label: 'Starfighters', family: 'starship', familyLabel: 'Starships' },
+  { key: 'space-transports', label: 'Space Transports', family: 'starship', familyLabel: 'Starships' },
+  { key: 'capital-ships', label: 'Capital Ships', family: 'starship', familyLabel: 'Starships' },
+  { key: 'space-stations', label: 'Space Stations', family: 'starship', familyLabel: 'Starships' }
+];
+
+function slugifyStoreLabel(value, fallback = '') {
+  const slug = String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return slug || fallback;
+}
+
+function droidDegreeFromValue(value = '') {
+  const raw = String(value ?? '').toLowerCase();
+  const compact = raw.replace(/[^a-z0-9]+/g, '');
+  if (compact.includes('1st') || compact.includes('first') || compact === '1') return DROID_DEGREE_DEFINITIONS[0];
+  if (compact.includes('2nd') || compact.includes('second') || compact === '2') return DROID_DEGREE_DEFINITIONS[1];
+  if (compact.includes('3rd') || compact.includes('third') || compact === '3') return DROID_DEGREE_DEFINITIONS[2];
+  if (compact.includes('4th') || compact.includes('fourth') || compact === '4') return DROID_DEGREE_DEFINITIONS[3];
+  if (compact.includes('5th') || compact.includes('fifth') || compact === '5') return DROID_DEGREE_DEFINITIONS[4];
+  return null;
+}
+
+function droidDegreeFromText(itemOrDegree = {}) {
+  const sys = itemOrDegree?.system ?? itemOrDegree?.data ?? {};
+  const text = [
+    itemOrDegree?.name,
+    sys.name,
+    sys.class,
+    sys.role,
+    sys.category,
+    sys.type,
+    itemOrDegree?.subcategory,
+    itemOrDegree
+  ].filter(Boolean).join(' ').toLowerCase();
+  if (/medical|medic|surgical|midwife|analytical|analysis|archive|interrogat/.test(text)) return DROID_DEGREE_DEFINITIONS[0];
+  if (/astromech|maintenance|mechanic|repair|tech|slicer|weapons maintenance|demolition|pilot|comm|communications|infrastructure|spaceport|control|minesweeper/.test(text)) return DROID_DEGREE_DEFINITIONS[1];
+  if (/protocol|secretary|administrative|administration|valet|hospitality|service|footman|messenger|dealer|luxury|domestic|supervisor/.test(text)) return DROID_DEGREE_DEFINITIONS[2];
+  if (/assassin|assault|battle|combat|commando|destroyer|spider|guardian|guard|patrol|sentinel|sentry|seeker|probe|surveillance|espionage|infiltrat|scout|recon|observation|tactical|artillery|infantry|legionnaire|hunter.?killer|warden|war|turret|lightsaber|sabotage|annihilator|picket|training|security|crab|buzz|lancer|hk-|hk_|gunnery|shadow|viper/.test(text)) return DROID_DEGREE_DEFINITIONS[3];
+  if (/utility|labor|loader|loading|mining|smelter|power|construction|worker|excavation|sifter|mule|gatekeeper|pit|agromech|exploration|explorer|surveyor|survey|spelunker|junk|holocam|ro-d/.test(text)) return DROID_DEGREE_DEFINITIONS[4];
+  return null;
+}
+
+export function getDroidDegreeDefinitions() {
+  return DROID_DEGREE_DEFINITIONS.map(def => ({ ...def }));
+}
+
+export function normalizeDroidSubcategory(itemOrDegree = {}) {
+  const sys = itemOrDegree?.system ?? itemOrDegree?.data ?? {};
+  const degree = droidDegreeFromValue(sys.degree ?? itemOrDegree.degree ?? itemOrDegree.subcategory ?? itemOrDegree.category ?? itemOrDegree)
+    || droidDegreeFromText(itemOrDegree);
+  return degree?.subcategory || 'General Droid Models';
+}
+
+export function getDroidFamily(itemOrSubcategory = {}) {
+  const sys = itemOrSubcategory?.system ?? itemOrSubcategory?.data ?? {};
+  const degree = droidDegreeFromValue(sys.degree ?? itemOrSubcategory.degree ?? itemOrSubcategory.subcategory ?? itemOrSubcategory.category ?? itemOrSubcategory)
+    || droidDegreeFromText(itemOrSubcategory);
+  return degree?.key || '';
+}
+
+export function getDroidFamilyLabel(familyKey = '') {
+  return DROID_DEGREE_DEFINITIONS.find(def => def.key === familyKey)?.label || 'Other Droids';
+}
+
+function vehicleDefinitionFromValue(value = '') {
+  const normalized = slugifyStoreLabel(value);
+  if (!normalized) return null;
+  return VEHICLE_SUBCATEGORY_DEFINITIONS.find(def => def.key === normalized)
+    || VEHICLE_SUBCATEGORY_DEFINITIONS.find(def => slugifyStoreLabel(def.label) === normalized)
+    || null;
+}
+
+export function getVehicleSubcategoryDefinitions() {
+  return VEHICLE_SUBCATEGORY_DEFINITIONS.map(def => ({ ...def }));
+}
+
+export function getVehicleFamily(itemOrSubcategory = {}) {
+  const sys = itemOrSubcategory?.system ?? itemOrSubcategory?.data ?? {};
+  const value = itemOrSubcategory?.subcategory ?? sys.subcategory ?? sys.category ?? sys.type ?? itemOrSubcategory;
+  const def = vehicleDefinitionFromValue(value);
+  return def?.family || '';
+}
+
+export function getVehicleFamilyLabel(familyKey = '') {
+  return VEHICLE_SUBCATEGORY_DEFINITIONS.find(def => def.family === familyKey)?.familyLabel || 'Other Vehicles';
+}
+
+export function normalizeVehicleSubcategory(item = {}) {
+  const sys = item.system ?? item.data ?? {};
+  const direct = vehicleDefinitionFromValue(item.subcategory ?? sys.subcategory ?? sys.vehicleSubtype ?? sys.category ?? sys.type);
+  if (direct) return direct.label;
+
+  const weaponLabels = Array.isArray(sys.weapons)
+    ? sys.weapons.map(w => w?.name || '').join(' ')
+    : '';
+  const tags = Array.isArray(sys.tags) ? sys.tags.join(' ') : '';
+  const sourcePack = String(item.sourcePack ?? item.doc?.__storeSource?.pack ?? '');
+  const text = [item.name, sys.name, sys.category, sys.type, tags, weaponLabels, sourcePack]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+
+  const phraseMatches = [
+    ['weapon emplacements', 'Weapon Emplacements'],
+    ['weapon emplacement', 'Weapon Emplacements'],
+    ['space stations', 'Space Stations'],
+    ['space station', 'Space Stations'],
+    ['capital ships', 'Capital Ships'],
+    ['capital ship', 'Capital Ships'],
+    ['space transports', 'Space Transports'],
+    ['space transport', 'Space Transports'],
+    ['starfighters', 'Starfighters'],
+    ['starfighter', 'Starfighters'],
+    ['airspeeders', 'Airspeeders'],
+    ['airspeeder', 'Airspeeders'],
+    ['tracked vehicles', 'Tracked Vehicles'],
+    ['tracked vehicle', 'Tracked Vehicles'],
+    ['wheeled vehicles', 'Wheeled Vehicles'],
+    ['wheeled vehicle', 'Wheeled Vehicles'],
+    ['walkers', 'Walkers'],
+    ['walker', 'Walkers'],
+    ['speeders', 'Speeders'],
+    ['speeder', 'Speeders']
+  ];
+  for (const [needle, label] of phraseMatches) {
+    if (text.includes(needle)) return label;
+  }
+
+  if (/\b(at-at|at-st|at-ap|at-rt|at-te|at-pt|at-xt|at-ct|at-kt|at-rct|at-aht|spider droid|tri-droid)\b/.test(text)) return 'Walkers';
+  if (/\b(crawler|tracked|landmaster|sandcrawler|tread|treads)\b/.test(text)) return 'Tracked Vehicles';
+  if (/\b(wheel|wheeled|roller|groundcar|juggernaut|hailfire)\b/.test(text)) return 'Wheeled Vehicles';
+  if (/\b(emplacement|battery|anti-aircraft|anti-infantry|planet defender|p-tower|sonic cannon|antivehicle cannon)\b/.test(text)) return 'Weapon Emplacements';
+  if (/\b(spha|self-propelled heavy artillery|self propelled heavy artillery|at-ut|ut-at)\b/.test(text)) return 'Walkers';
+  if (/\b(cloud car|drop pod|fluttercraft|aerosled|radair|air-2|gnasp|jet catamaran|aerial artillery|laati|laatc|laat|stap|landing sphere|hovercraft|refinery platform|basilisk war droid)\b/.test(text)) return 'Airspeeders';
+  if (/\b(freighter|transport|shuttle|courier|yacht|scout ship|gunship|landing craft|sloop|hauler|blastboat|salvage ship|caravel cabin|bloody credit|shackles of nizon|grinning liar|last resort|ebon hawk|mynock|millennium falcon|visionary|doomtreader)\b/.test(text)) return 'Space Transports';
+  if (/\b(corvette|frigate|cruiser|destroyer|dreadnaught|dreadnought|battlecruiser|battleship|carrier|star destroyer|crimson axe|indomitable|invisible hand|outbound flight|sabertooth-class assault\/rescue vessel|ipv-1 system patrol craft|acclamator i-class assault ship|acclamator ii-class assault ship)\b/.test(text)) return 'Capital Ships';
+  if (/\b(station|spacedock|platform|beacon|starforge|star forge|executor|eclipse|lusankya|viscount|the wheel)\b/.test(text)) return 'Space Stations';
+  if (/\b(fighter|interceptor|bomber|x-wing|y-wing|tie|headhunter|clawcraft|dartship|subfighter|escape pod|virago|coralskipper)\b/.test(text)) return 'Starfighters';
+  if (/\b(swoop|landspeeder|speeder|skiff|repulsor|tank|sled|speeder bike|chariot|u-lav|mr\/rv|mrrv|mtt|pac|rtt|aat-1|laser borer|m[ae]kuun heavy tracker|kaac freerunner)\b/.test(text)) return 'Speeders';
+
+  return 'General Vehicles';
+}
+
+export function getVehicleChallengeLevel(item = {}) {
+  const sys = item.system ?? item.data ?? {};
+  const raw = sys.challengeLevel ?? sys.challenge ?? sys.cl ?? sys.CL ?? sys.challengeRating ?? item.challengeLevel ?? item.cl ?? item.CL ?? null;
+  if (raw === undefined || raw === null || raw === '') return null;
+  const match = String(raw).match(/-?\d+/);
+  return match ? Number(match[0]) : null;
+}
+
+export function getVehicleChallengeBand(item = {}) {
+  const cl = getVehicleChallengeLevel(item);
+  if (!Number.isFinite(cl)) return '';
+  if (cl <= 3) return '0-3';
+  if (cl <= 7) return '4-7';
+  if (cl <= 11) return '8-11';
+  if (cl <= 15) return '12-15';
+  return '16-plus';
+}
+
+export function getVehicleChallengeBandLabel(band = '') {
+  return ({
+    '0-3': 'CL 0–3',
+    '4-7': 'CL 4–7',
+    '8-11': 'CL 8–11',
+    '12-15': 'CL 12–15',
+    '16-plus': 'CL 16+'
+  })[band] || '';
+}
+
+export function getVehicleSizeKey(item = {}) {
+  const sys = item.system ?? item.data ?? {};
+  return slugifyStoreLabel(sys.size ?? item.size ?? '');
+}
+
+export function getVehicleSizeLabel(item = {}) {
+  const sys = item.system ?? item.data ?? {};
+  const raw = String(sys.size ?? item.size ?? '').trim();
+  if (!raw) return '';
+  return raw.replace(/\b\w/g, c => c.toUpperCase()).replace(/\(([^)]+)\)/g, (_, inner) => `(${inner.replace(/\b\w/g, c => c.toUpperCase())})`);
+}
+
 export function buildStoreNavigationModel(inventory = {}, options = {}) {
   const { activeCategory = 'weapons', activeSubcategory = null, activeFamily = null } = options;
 
@@ -499,11 +704,77 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
         if (bIdx === -1) return -1;
         return aIdx - bIdx;
       });
+    } else if (categoryKey === 'droids') {
+      const byDegree = new Map();
+
+      for (const [subcategory, items] of subMap.entries()) {
+        for (const item of items) {
+          const normalized = normalizeDroidSubcategory(item);
+          if (!byDegree.has(normalized)) byDegree.set(normalized, []);
+          byDegree.get(normalized).push(item);
+        }
+      }
+
+      const droidOrder = getDroidDegreeDefinitions().map(def => def.subcategory);
+      for (const [normalized, items] of byDegree.entries()) {
+        const family = getDroidFamily(normalized);
+        children.push({
+          key: slugifyStoreLabel(normalized),
+          label: normalized,
+          count: items.length,
+          category: categoryKey,
+          subcategory: normalized,
+          family,
+          active: activeSubcategory === normalized
+        });
+      }
+
+      children.sort((a, b) => {
+        const aIdx = droidOrder.indexOf(a.label);
+        const bIdx = droidOrder.indexOf(b.label);
+        if (aIdx === -1 && bIdx === -1) return a.label.localeCompare(b.label);
+        if (aIdx === -1) return 1;
+        if (bIdx === -1) return -1;
+        return aIdx - bIdx;
+      });
+    } else if (categoryKey === 'vehicles') {
+      const normalizedByVehicleType = new Map();
+
+      for (const [subcategory, items] of subMap.entries()) {
+        for (const item of items) {
+          const normalized = normalizeVehicleSubcategory({ ...item, subcategory: item.subcategory || subcategory });
+          if (!normalizedByVehicleType.has(normalized)) normalizedByVehicleType.set(normalized, []);
+          normalizedByVehicleType.get(normalized).push(item);
+        }
+      }
+
+      const vehicleOrder = getVehicleSubcategoryDefinitions().map(def => def.label);
+      for (const [normalized, items] of normalizedByVehicleType.entries()) {
+        const family = getVehicleFamily(normalized);
+        children.push({
+          key: slugifyStoreLabel(normalized),
+          label: normalized,
+          count: items.length,
+          category: categoryKey,
+          subcategory: normalized,
+          family,
+          active: activeSubcategory === normalized
+        });
+      }
+
+      children.sort((a, b) => {
+        const aIdx = vehicleOrder.indexOf(a.label);
+        const bIdx = vehicleOrder.indexOf(b.label);
+        if (aIdx === -1 && bIdx === -1) return a.label.localeCompare(b.label);
+        if (aIdx === -1) return 1;
+        if (bIdx === -1) return -1;
+        return aIdx - bIdx;
+      });
     } else {
       // OTHER CATEGORIES: Use raw subcategories
       for (const [subcategory, items] of subMap.entries()) {
         children.push({
-          key: subcategory.toLowerCase().replace(/\s+/g, '-'),
+          key: slugifyStoreLabel(subcategory),
           label: subcategory,
           count: items.length,
           category: categoryKey,
@@ -517,27 +788,50 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
       children.sort((a, b) => a.label.localeCompare(b.label));
     }
 
+    const allLabels = {
+      weapons: storeI18n('SWSE.Store.Navigation.AllWeapons'),
+      armor: storeI18n('SWSE.Store.Navigation.AllCategory', { category }),
+      gear: storeI18n('SWSE.Store.Navigation.AllCategory', { category }),
+      droids: 'All Droids',
+      vehicles: 'All Vehicles'
+    };
     const topCategory = {
       key: categoryKey,
       label: category,
+      allLabel: allLabels[categoryKey] || storeI18n('SWSE.Store.Navigation.AllCategory', { category }),
       count: categoryCount,
       active: activeCategory === categoryKey,
       children: children.length > 0 ? children : undefined
     };
 
-    if (categoryKey === 'weapons' && children.length > 0) {
+    if (['weapons', 'droids', 'vehicles'].includes(categoryKey) && children.length > 0) {
       const byFamily = new Map();
       for (const child of children) {
-        const family = child.family || getWeaponFamily(child.label);
+        const family = child.family
+          || (categoryKey === 'weapons' ? getWeaponFamily(child.label) : '')
+          || (categoryKey === 'droids' ? getDroidFamily(child.label) : '')
+          || (categoryKey === 'vehicles' ? getVehicleFamily(child.label) : '')
+          || 'other';
         if (!byFamily.has(family)) byFamily.set(family, []);
         byFamily.get(family).push({ ...child, family, active: activeSubcategory === child.label });
       }
       topCategory.familyGroups = Object.fromEntries(byFamily);
-      const familyOrder = ['ranged', 'melee', 'other'];
+      const familyOrderByCategory = {
+        weapons: ['ranged', 'melee', 'other'],
+        droids: ['1st-degree', '2nd-degree', '3rd-degree', '4th-degree', '5th-degree', 'other'],
+        vehicles: ['ground', 'air', 'starship', 'other']
+      };
+      const familyOrder = familyOrderByCategory[categoryKey] || ['other'];
       topCategory.familyTabs = Array.from(byFamily.entries())
         .map(([family, group]) => ({
           family,
-          label: family === 'ranged' ? storeI18n('SWSE.Store.Navigation.Ranged') : family === 'melee' ? storeI18n('SWSE.Store.Navigation.Melee') : storeI18n('SWSE.Store.Navigation.Other'),
+          label: categoryKey === 'weapons'
+            ? (family === 'ranged' ? storeI18n('SWSE.Store.Navigation.Ranged') : family === 'melee' ? storeI18n('SWSE.Store.Navigation.Melee') : storeI18n('SWSE.Store.Navigation.Other'))
+            : categoryKey === 'droids'
+              ? getDroidFamilyLabel(family)
+              : categoryKey === 'vehicles'
+                ? getVehicleFamilyLabel(family)
+                : storeI18n('SWSE.Store.Navigation.Other'),
           count: group.reduce((sum, child) => sum + (Number(child.count) || 0), 0),
           active: activeFamily === family
         }))

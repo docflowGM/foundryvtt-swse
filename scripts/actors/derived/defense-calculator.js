@@ -491,7 +491,14 @@ export class DefenseCalculator {
     let reflexAbilityMod = reflexAbilityResolution.mod;
     const reflexClassBonus = Number(computedRefClassBonus ?? reflexState.classBonus ?? 0) || 0;
     const reflexMiscBonus = getMiscBonus(reflexState);
-    let reflexArmorBonus = Number(reflexState.armor ?? equippedArmorStats?.reflexBonus ?? 0) || 0;
+    // Equipped armor is the SSOT for armor Reflex contribution.  Older actor
+    // records may retain system.defenses.reflex.armor from a previous sheet
+    // edit/recalc; do not let that stale stored value override the equipped
+    // item and inflate armor math.  The manual field remains a no-equipped-
+    // armor fallback for legacy actors.
+    let reflexArmorBonus = equippedArmor
+      ? Number(equippedArmorStats?.reflexBonus ?? 0) || 0
+      : Number(reflexState.armor ?? 0) || 0;
     if (equippedArmor && armorProficient && hasSecondSkin) {
       reflexArmorBonus += 1;
     }

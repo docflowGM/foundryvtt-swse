@@ -719,11 +719,12 @@ export class ActiveStepComputer {
    */
   async _hasForcePowerChoices(actor, progressionSession) {
     try {
-      const { resolveForcePowerEntitlements } = await import(
+      const { resolveForcePowerEntitlements, resolveTelekineticProdigyBonusSlots } = await import(
         '/systems/foundryvtt-swse/scripts/engine/progression/utils/force-suite-resolution.js'
       );
       const entitlements = await resolveForcePowerEntitlements(progressionSession, actor);
-      if (!(entitlements.remaining > 0)) return false;
+      const prodigyBonus = resolveTelekineticProdigyBonusSlots(progressionSession, actor);
+      if (!(entitlements.remaining > 0) && !(prodigyBonus.slots > 0)) return false;
       const isLevelUpLike = progressionSession?.mode === 'levelup';
       if (!isLevelUpLike) return true;
 
@@ -734,9 +735,9 @@ export class ActiveStepComputer {
       const manifest = buildLevelUpEntitlementManifest(actor, progressionSession);
       const classGrantCount = Number(manifest?.choices?.forcePowerChoices || 0) || 0;
       const hasConcreteReason = (entitlements.reasons || []).some(reason =>
-        /force training|force_power_grants|force power entitlement|class level/i.test(String(reason || ''))
+        /force training|force_power_grants|force power entitlement|class level|telekinetic prodigy/i.test(String(reason || ''))
       );
-      return classGrantCount > 0 || hasConcreteReason;
+      return classGrantCount > 0 || hasConcreteReason || prodigyBonus.slots > 0;
     } catch (err) {
       swseLogger.warn('[ActiveStepComputer] Error checking force power grants:', err);
       return false;

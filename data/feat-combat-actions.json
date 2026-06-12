@@ -572,18 +572,10 @@
     "name": "Strong in the Force",
     "actionType": "passive",
     "requiredFeat": "Strong in the Force",
-    "description": "+1 to Use the Force checks",
-    "effects": [
-      {
-        "type": "bonus",
-        "target": "system.skills.useTheForce.miscMod",
-        "value": 1
-      }
-    ],
-    "notes": "Passive +1 bonus to Use the Force checks.",
-    "relatedSkills": [
-      "useTheForce"
-    ]
+    "description": "When you spend a Force Point to adjust an attack roll, skill check, or ability check, roll d8s instead of d6s.",
+    "effects": [],
+    "notes": "Resource rule only: changes Force Point die size to d8; it is not a passive Use the Force bonus.",
+    "relatedSkills": []
   },
   "force-sensitivity": {
     "name": "Force Sensitivity",

@@ -11,6 +11,7 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSELanguageModule } from "/systems/foundryvtt-swse/scripts/engine/progression/modules/language-module.js";
+import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
 
 export class AttributeIncreaseHandler {
   /**
@@ -127,9 +128,11 @@ export class AttributeIncreaseHandler {
   static async _handleWisdomIncrease(actor, modIncrease) {
     if (modIncrease <= 0) {return;}
 
-    // Check if using Charisma instead of Wisdom for Force Powers (houserule)
-    const useCharisma = game.settings?.get('foundryvtt-swse', 'forceTrainingAttribute') || false;
-    if (useCharisma) {
+    // Check if using Charisma instead of Wisdom for Force Training. The setting
+    // stores a string ('wisdom' or 'charisma'), so do not treat any non-empty
+    // value as truthy Charisma.
+    const forceTrainingAttribute = String(ForceRules.getTrainingAttribute?.() || 'wisdom').toLowerCase();
+    if (forceTrainingAttribute === 'charisma') {
       swseLogger.log('SWSE | Wisdom increase skipped: Force Powers use Charisma (houserule)');
       return;
     }

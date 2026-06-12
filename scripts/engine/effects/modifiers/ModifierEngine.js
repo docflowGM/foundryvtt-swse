@@ -1282,60 +1282,15 @@ export class ModifierEngine {
       const hasSecondSkin = isProficient && hasNamedTalent('Second Skin');
       const hasJuggernaut = isProficient && hasNamedTalent('Juggernaut');
 
-      // ===== REFLEX DEFENSE BONUS =====
+      // ===== DEFENSE CONTRIBUTION =====
+      // DefenseCalculator is the single source of truth for armor Reflex/Fortitude
+      // math, including Armored Defense, Improved Armored Defense, Second Skin,
+      // proficiency, and max-Dex clamping.  Do not also emit base armor defense
+      // modifiers here: DerivedCalculator aggregates ModifierEngine defense
+      // adjustments and passes them into DefenseCalculator, so registering armor
+      // here double-counts armor and makes equipped characters too high.
       const baseArmorBonus = (armorStats.reflexBonus || 0) + (hasSecondSkin ? 1 : 0);
-      const actorLevel = actor?.system?.level || 1;
-      if (baseArmorBonus !== 0) {
-        // Calculate talent-adjusted armor bonus
-        let armorBonusForReflex = baseArmorBonus;
-        if (hasImprovedArmoredDefense) {
-          // Improved Armored Defense: Use max(level + floor(armor/2), armor)
-          armorBonusForReflex = Math.max(baseArmorBonus, actorLevel + Math.floor(baseArmorBonus / 2));
-        } else if (hasArmoredDefense) {
-          // Armored Defense: Use max(level, armor)
-          armorBonusForReflex = Math.max(baseArmorBonus, actorLevel);
-        }
-        // No talent: Armor bonus is used as-is
-
-        try {
-          modifiers.push(createModifier({
-            source: ModifierSource.ITEM,
-            sourceId: armorId,
-            sourceName: `${armorName} (Armor Bonus)`,
-            target: 'defense.reflex',
-            type: ModifierType.ARMOR,
-            value: armorBonusForReflex,
-            enabled: true,
-            priority: 30, // After base calculations
-            description: `${armorName} provides +${armorBonusForReflex} armor bonus to Reflex Defense`
-          }));
-        } catch (err) {
-          swseLogger.warn(`Failed to create armor reflex defense modifier:`, err);
-        }
-      }
-
-      // ===== FORTITUDE DEFENSE BONUS (Equipment) =====
-      // Only apply equipment bonus if proficient
-      if (isProficient) {
-        const fortBonus = (armorStats.fortitudeBonus || 0) + (hasSecondSkin ? 1 : 0);
-        if (fortBonus !== 0) {
-          try {
-            modifiers.push(createModifier({
-              source: ModifierSource.ITEM,
-              sourceId: armorId,
-              sourceName: `${armorName} (Equipment Bonus)`,
-              target: 'defense.fortitude',
-              type: ModifierType.EQUIPMENT,
-              value: fortBonus,
-              enabled: true,
-              priority: 30,
-              description: `${armorName} provides +${fortBonus} equipment bonus to Fortitude (proficiency)`
-            }));
-          } catch (err) {
-            swseLogger.warn(`Failed to create armor fort defense modifier:`, err);
-          }
-        }
-      }
+      void baseArmorBonus;
 
       // ===== MAX DEX BONUS ENFORCEMENT =====
       let maxDex = armorStats.maxDexBonus ?? null;
@@ -1439,28 +1394,8 @@ export class ModifierEngine {
       }
 
       // ===== LEGACY REFLEX EQUIPMENT BONUS (deprecated ambiguous field) =====
-      // New armor data should use defenseBonus/reflexBonus via resolveArmorData().
-      // Keep this fallback readable for old compendium/world armor until migration.
-      if (isProficient) {
-        const reflexEquipmentBonus = armorStats.legacyEquipmentBonus || 0;
-        if (reflexEquipmentBonus !== 0) {
-          try {
-            modifiers.push(createModifier({
-              source: ModifierSource.ITEM,
-              sourceId: armorId,
-              sourceName: `${armorName} (Reflex Equipment Bonus)`,
-              target: 'defense.reflex',
-              type: ModifierType.EQUIPMENT,
-              value: reflexEquipmentBonus,
-              enabled: true,
-              priority: 30,
-              description: `${armorName} provides +${reflexEquipmentBonus} equipment bonus to Reflex (proficiency)`
-            }));
-          } catch (err) {
-            swseLogger.warn(`Failed to create armor reflex equipment modifier:`, err);
-          }
-        }
-      }
+      // Also handled by resolveArmorData() and DefenseCalculator.  Keeping it in
+      // ModifierEngine would double-count legacy armor records.
 
       // ===== PHASE 5: ARMOR UPGRADE MODIFIERS =====
       // Register modifiers from installed upgrades on the armor

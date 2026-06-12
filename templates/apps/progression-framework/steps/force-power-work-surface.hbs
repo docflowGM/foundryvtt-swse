@@ -102,7 +102,7 @@
         {{#if searchResults.length}}
           <div class="feat-compact-list feat-search-results-list force-power-compact-list">
             {{#each searchResults as |power|}}
-              <div class="feat-compact-row force-power-compact-row {{#if power.isFocused}}focused{{/if}} {{#if power.isSelected}}selected{{/if}} {{#if power.isSuggested}}suggested{{/if}}"
+              <div class="feat-compact-row force-power-compact-row {{power.toneCssClass}} {{#if power.isFocused}}focused{{/if}} {{#if power.isSelected}}selected{{/if}} {{#if power.isSuggested}}suggested{{/if}}"
        data-power-id="{{power.stateId}}"
        data-item-id="{{power.stateId}}"
        data-action="focus-item"
@@ -169,7 +169,7 @@
         {{#if activeCategoryPowers.length}}
           <div class="feat-compact-list force-power-compact-list">
             {{#each activeCategoryPowers as |power|}}
-              <div class="feat-compact-row force-power-compact-row {{#if power.isFocused}}focused{{/if}} {{#if power.isSelected}}selected{{/if}} {{#if power.isSuggested}}suggested{{/if}}"
+              <div class="feat-compact-row force-power-compact-row {{power.toneCssClass}} {{#if power.isFocused}}focused{{/if}} {{#if power.isSelected}}selected{{/if}} {{#if power.isSuggested}}suggested{{/if}}"
        data-power-id="{{power.stateId}}"
        data-item-id="{{power.stateId}}"
        data-action="focus-item"

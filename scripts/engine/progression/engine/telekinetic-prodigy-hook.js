@@ -1,85 +1,67 @@
 /**
  * telekinetic-prodigy-hook.js
- * Telekinetic Prodigy Selection Modifier Hook (Phase 3.5)
+ * Telekinetic Prodigy Selection Modifier Hook
  *
- * Implements Telekinetic Prodigy's effect on force power selection.
- *
- * TALENT EFFECT (SWSE):
- *   When you take Force Training, you may select one Telekinetic-descriptor
- *   force power (e.g., Move Object) without it counting against your known
- *   force powers for that Force Training instance.
- *
- * IMPLEMENTATION RULES:
- *   - One conditional bonus slot per Force Training feat instance
- *   - Bonus slot requires telekinetic descriptor or power name "Move Object"
- *   - Base capacity formula is NOT modified
- *   - Hook checks actor items fresh every call — no per-actor state stored
- *   - Per-instance tracking: N Force Training feats → N bonus slots
- *
- * HOOK ID: 'telekinetic-prodigy'
- *
- * Registration:
- *   Call registerTelekineticProdigyHook() once at system init.
- *   The hook itself checks for talent presence each derivation call.
+ * Correct SWSE behavior:
+ *   Prerequisite: Telekinetic Savant.
+ *   When the current Force Training selection includes Move Object, add one
+ *   extra [Telekinetic] Force Power selection. The slot is event-scoped; it is
+ *   not a permanent increase to the actor's baseline Force Power capacity.
  */
 
 import { SelectionModifierHookRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/selection-modifier-hook-registry.js";
-import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
 
 export const TELEKINETIC_PRODIGY_HOOK_ID = 'telekinetic-prodigy';
 
-/**
- * Telekinetic Prodigy hook function
- *
- * Pure: reads actor items, pushes conditional bonus slots into context.
- * Does NOT mutate actor. Does NOT modify context.baseCapacity.
- *
- * @param {Actor} actor - The actor being evaluated
- * @param {Object} context - SelectionContext (conditionalBonusSlots mutated in place)
- */
-function telekineticProdigyHook(actor, context) {
-  // Require the talent to be present on this actor
-  const hasTalent = actor.items.some(
-    i => i.type === 'talent' && i.name.toLowerCase().includes('telekinetic prodigy')
-  );
-  if (!hasTalent) return;
+function normalize(value) {
+  return String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
 
-  // SSOT ENFORCEMENT: replaced direct actor.items access with ActorAbilityBridge
-  // One conditional bonus slot per Force Training feat instance
-  const forceTrainingFeats = ActorAbilityBridge.getFeats(actor).filter(
-    f => f.name.toLowerCase().includes('force training')
-  );
+function actorHasTelekineticProdigy(actor) {
+  return Array.from(actor?.items || []).some((item) => (
+    item?.type === 'talent' && normalize(item?.name) === 'telekineticprodigy'
+  ));
+}
 
-  for (let i = 0; i < forceTrainingFeats.length; i++) {
-    context.conditionalBonusSlots.push({
-      id: `${TELEKINETIC_PRODIGY_HOOK_ID}-slot-${i}`,
-      sourceHookId: TELEKINETIC_PRODIGY_HOOK_ID,
-      // Tracks which Force Training instance grants this slot (0-based index)
-      sourceFeatInstanceIndex: i,
-      // Power must have the telekinetic descriptor OR be Move Object
-      descriptorRestrictions: ['telekinetic'],
-      powerNameHint: ['Move Object']
-    });
-  }
+function currentSelectionIncludesMoveObject(context = {}) {
+  const candidates = [
+    ...(Array.isArray(context.selectedPowerIds) ? context.selectedPowerIds : []),
+    ...(Array.isArray(context.selectedPowerNames) ? context.selectedPowerNames : []),
+    ...(Array.isArray(context.pendingPowerIds) ? context.pendingPowerIds : []),
+    ...(Array.isArray(context.pendingPowerNames) ? context.pendingPowerNames : []),
+    ...(Array.isArray(context.selectedForcePowers) ? context.selectedForcePowers : []),
+  ];
+
+  return candidates.some((entry) => {
+    const values = [entry?.name, entry?.label, entry?.title, entry?.id, entry?._id, entry?.powerId, entry]
+      .filter(Boolean)
+      .map(normalize);
+    return values.some((value) => value === 'moveobject' || value.endsWith('moveobject'));
+  });
 }
 
 /**
- * Register the Telekinetic Prodigy selection modifier hook
- *
- * Call once at system initialization (e.g., Hooks.once('init', ...)).
- * Safe to call multiple times — registry replaces on duplicate id.
+ * Pure hook: reads actor/context and appends a single conditional bonus slot
+ * only when the current selection event includes Move Object.
  */
+function telekineticProdigyHook(actor, context) {
+  if (!actorHasTelekineticProdigy(actor)) return;
+  if (!currentSelectionIncludesMoveObject(context)) return;
+
+  context.conditionalBonusSlots.push({
+    id: `${TELEKINETIC_PRODIGY_HOOK_ID}-move-object-slot`,
+    sourceHookId: TELEKINETIC_PRODIGY_HOOK_ID,
+    sourcePowerName: 'Move Object',
+    descriptorRestrictions: ['telekinetic'],
+    powerNameHint: ['Move Object'],
+    currentEventOnly: true,
+  });
+}
+
 export function registerTelekineticProdigyHook() {
   SelectionModifierHookRegistry.register(TELEKINETIC_PRODIGY_HOOK_ID, telekineticProdigyHook);
 }
 
-/**
- * Unregister the Telekinetic Prodigy hook
- *
- * For system teardown or test cleanup only.
- * Normal talent removal does NOT need to unregister — the hook checks
- * actor items each call and returns early if the talent is absent.
- */
 export function unregisterTelekineticProdigyHook() {
   SelectionModifierHookRegistry.unregister(TELEKINETIC_PRODIGY_HOOK_ID);
 }

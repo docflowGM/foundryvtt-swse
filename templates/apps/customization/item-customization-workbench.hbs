@@ -257,10 +257,10 @@
                   <span class="ls-crossguard ls-crossguard-a"></span>
                   <span class="ls-crossguard ls-crossguard-b"></span>
                 </div>
-                <div class="ls-color-cta ls-color-cta--readonly" style="--blade-color: {{lightsaber.bladeHex}};">
+                <button type="button" class="ls-color-cta ls-color-cta--readonly ls-color-cta--editable" data-action="open-lightsaber-blade-color-editor" data-item-id="{{lightsaber.editItemId}}" style="--blade-color: {{lightsaber.bladeHex}};" {{#unless lightsaber.editItemId}}disabled{{/unless}} title="Open the item edit sheet to change this lightsaber blade color.">
                   <span class="ls-color-current"><span class="ls-color-dot"></span><span class="ls-color-name-strip">{{#each lightsaber.review.bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</span> blade</span>
-                  <small>Color selection now lives on the item edit sheet.</small>
-                </div>
+                  <small>{{#if lightsaber.editItemId}}Click to edit blade color.{{else}}Color selection unlocks after construction.{{/if}}</small>
+                </button>
                 {{#unless lightsaber.showChassis}}
                 <div class="ls-locked-chassis-card ls-rail-lock-note">
                   <div class="card-top"><span class="card-name">{{lightsaber.selectedChassisName}}</span><span class="card-cost">Fixed</span></div>
@@ -284,17 +284,6 @@
                 </article>
               </section>
 
-              <section class="detail-panel panel ls-build-summary">
-                <div class="panel-head"><span>Build Summary</span><span class="hint">DC {{lightsaber.buildSummary.finalDc}}</span></div>
-                <div class="ls-dc-row">
-                  <span>DC {{lightsaber.buildSummary.baseDc}}</span>
-                  <span>{{lightsaber.buildSummary.crystalDcText}}</span>
-                  <span>{{lightsaber.buildSummary.accessoryDcText}}</span>
-                  <strong>{{lightsaber.buildSummary.finalDc}}</strong>
-                </div>
-                <div class="ls-summary-line {{#if lightsaber.buildSummary.canTake10}}ok{{else}}bad{{/if}}">{{lightsaber.buildSummary.take10Text}}</div>
-                <div class="ls-summary-line {{#if lightsaber.buildSummary.affordable}}ok{{else}}bad{{/if}}">{{lightsaber.buildSummary.totalCost}} cr total · {{lightsaber.buildSummary.credits}} cr available</div>
-              </section>
             </aside>
 
             {{#if lightsaber.showSuccessOverlay}}

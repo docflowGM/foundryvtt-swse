@@ -197,7 +197,6 @@
         "Crossfire",
         "Deadeye",
         "Risk Taker",
-        "Redirect Shot",
         "Deadly Sniper",
         "Gunnery Specialist",
         "Perfect Swimmer",
@@ -624,7 +623,6 @@
         "Crossfire",
         "Deadeye",
         "Risk Taker",
-        "Redirect Shot",
         "Deadly Sniper",
         "Gunnery Specialist",
         "Perfect Swimmer",
@@ -1051,7 +1049,6 @@
         "Crossfire",
         "Deadeye",
         "Risk Taker",
-        "Redirect Shot",
         "Deadly Sniper",
         "Gunnery Specialist",
         "Perfect Swimmer",
@@ -3422,16 +3419,6 @@
         "value": "Improve your chances of success with <a href=\"/wiki/Climb\" title=\"Climb\">Climb</a> or <a href=\"/wiki/Jump\" title=\"Jump\">Jump</a> checks."
       },
       "shortSummary": "Improve your chances of success with Climb or Jump checks."
-    },
-    {
-      "id": "6f98dd888bef8d7b",
-      "name": "Redirect Shot",
-      "category": "Uncategorized",
-      "source": "Unknown",
-      "role": "general",
-      "prerequisites": [],
-      "description": {},
-      "shortSummary": "When you successfully negate a ranged attack with Deflect, you may redirect the shot to another target within line of sight."
     },
     {
       "id": "6fb0f56dd9b9b75c",

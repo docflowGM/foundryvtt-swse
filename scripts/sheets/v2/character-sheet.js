@@ -320,7 +320,11 @@ function buildEffectiveDefensesViewModel(actor, defensePanel = null) {
       chips,
       parts: [
         { label: 'Base', value: 10, readonly: true },
-        { label: 'Heroic/Armor', value: Number(def?.levelContribution ?? 0) + Number(def?.armorBonus ?? 0), readonly: true },
+        {
+          label: 'Heroic/Armor',
+          value: Number(def?.levelContribution ?? 0) + (String(def?.systemKey || '').toLowerCase() === 'reflex' ? 0 : Number(def?.armorBonus ?? 0)),
+          readonly: true
+        },
         {
           label: 'Ability', value: Number(def?.abilityMod ?? 0),
           isSelect: true,

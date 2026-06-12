@@ -761,11 +761,31 @@ export class TalentStep extends ProgressionStepPlugin {
     return String(this.descriptor?.stepId || this.descriptor?.id || this._slotType || 'talent-slot');
   }
 
+  _normalizeSlotIdentityKey(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+  }
+
+  _getTalentSlotIdentities(entry = null) {
+    return [entry?.slotKey, entry?.stepId, entry?.sourceStep, entry?.step, entry?.source, entry?.slotType]
+      .filter(Boolean)
+      .map(value => this._normalizeSlotIdentityKey(value))
+      .filter(Boolean);
+  }
+
+  _isSameTalentSlot(entry, currentSlotKey = this._slotKey()) {
+    const currentKey = this._normalizeSlotIdentityKey(currentSlotKey);
+    const slotType = this._normalizeSlotIdentityKey(this._slotType);
+    const identities = new Set(this._getTalentSlotIdentities(entry));
+    if (currentKey && identities.has(currentKey)) return true;
+    if (slotType && identities.has(slotType)) return true;
+    return false;
+  }
+
   _entryMatchesCurrentSlot(entry) {
-    const key = this._slotKey();
-    const entryKey = entry?.slotKey || entry?.stepId || entry?.sourceStep || entry?.source;
-    if (entryKey) return String(entryKey) === key;
-    return entry?.slotType === this._slotType;
+    return this._isSameTalentSlot(entry);
   }
 
   /**
@@ -1186,6 +1206,7 @@ export class TalentStep extends ProgressionStepPlugin {
       talents: selections?.talents || committed?.get?.('talents') || [],
       skills: selections?.skills || committed?.get?.('skills') || {},
       abilityIncreases: selections?.attributes || committed?.get?.('attributes') || {},
+      forcePowers: selections?.forcePowers || committed?.get?.('forcePowers') || [],
     };
   }
 
@@ -1205,6 +1226,7 @@ export class TalentStep extends ProgressionStepPlugin {
       selectedFeats: characterData.feats || [],
       selectedTalents: characterData.talents || [],
       selectedSkills,
+      selectedForcePowers: characterData.forcePowers || [],
       skillRanks: {},
       grantedFeats: [],
       pendingSpeciesContext: shell?.progressionSession?.draftSelections?.pendingSpeciesContext || null,
@@ -1241,9 +1263,21 @@ export class TalentStep extends ProgressionStepPlugin {
   }
 
   _getCommittedTalentSelections(shell) {
-    return Array.isArray(shell?.progressionSession?.draftSelections?.talents)
+    const selections = Array.isArray(shell?.progressionSession?.draftSelections?.talents)
       ? [...shell.progressionSession.draftSelections.talents]
       : [];
+    return selections.filter((entry, index, list) => {
+      const hasSpecificSlot = !!(entry?.slotKey || entry?.stepId || entry?.sourceStep || entry?.step);
+      if (hasSpecificSlot) return true;
+      const broadIdentities = this._getTalentSlotIdentities(entry);
+      if (!broadIdentities.length) return true;
+      return !list.some((other, otherIndex) => {
+        if (otherIndex === index) return false;
+        if (!(other?.slotKey || other?.stepId || other?.sourceStep || other?.step)) return false;
+        const otherIdentities = this._getTalentSlotIdentities(other);
+        return otherIdentities.some(identity => broadIdentities.includes(identity));
+      });
+    });
   }
 
   _getCommittedTalentForSlot(shell) {
@@ -2358,11 +2392,7 @@ export class TalentStep extends ProgressionStepPlugin {
 
       const currentSelections = this._getCommittedTalentSelections(shell);
       const currentSlotKey = this._slotKey();
-      const slotSelections = currentSelections.filter(entry => {
-        const entryKey = entry?.slotKey || entry?.stepId || entry?.sourceStep || entry?.source;
-        if (entryKey) return String(entryKey) !== currentSlotKey;
-        return entry?.slotType !== this._slotType;
-      });
+      const slotSelections = currentSelections.filter(entry => !this._isSameTalentSlot(entry, currentSlotKey));
       const isTogglingOff = this._selectedTalentId === talentId;
 
       if (!isTogglingOff && this._isTalentAlreadyTakenElsewhere(talent, shell)) {
@@ -2449,10 +2479,13 @@ export class TalentStep extends ProgressionStepPlugin {
 
       this._selectedTalentId = nextSelection?.id || null;
 
-      const expectedSlots = new Set([currentSlotKey, ...slotSelections.map(entry => entry?.slotKey || entry?.stepId || entry?.sourceStep || entry?.source || entry?.slotType).filter(Boolean).map(String)]);
+      const expectedSlots = new Set([currentSlotKey, ...slotSelections
+        .map(entry => this._getTalentSlotIdentities(entry)[0] || entry?.slotKey || entry?.stepId || entry?.sourceStep || entry?.source || entry?.slotType)
+        .filter(Boolean)
+        .map(String)]);
       const cappedSelections = nextSelections.filter((entry, index, list) => {
-        const entryKey = String(entry?.slotKey || entry?.stepId || entry?.sourceStep || entry?.source || entry?.slotType || `legacy-${index}`);
-        return list.findIndex(other => String(other?.slotKey || other?.stepId || other?.sourceStep || other?.source || other?.slotType || '') === entryKey) === index;
+        const entryKey = String(this._getTalentSlotIdentities(entry)[0] || `legacy-${index}`);
+        return list.findIndex((other, otherIndex) => String(this._getTalentSlotIdentities(other)[0] || `legacy-${otherIndex}`) === entryKey) === index;
       }).slice(0, Math.max(1, expectedSlots.size));
 
       emitTalentStepTrace('ITEM_COMMIT_TALENT_RESULT', {

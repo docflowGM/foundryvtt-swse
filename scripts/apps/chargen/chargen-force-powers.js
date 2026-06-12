@@ -7,6 +7,7 @@ import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities
 import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
 import { _findClassItem } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-shared.js";
 import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
+import { ForceTrainingEngine } from "/systems/foundryvtt-swse/scripts/engine/force/ForceTrainingEngine.js";
 
 /**
  * Handle force power selection
@@ -149,10 +150,10 @@ export function _getForcePowersNeeded() {
   );
 
   if (forceTrainingFeats.length > 0) {
-    // Get the force ability modifier (WIS or CHA based on game setting)
-    const forceAbility = ForceRules.getTrainingAttribute();
-    const abilityKey = forceAbility === 'charisma' ? 'cha' : 'wis';
-    const modifier = this.characterData.abilities[abilityKey]?.mod || 0;
+    // Get the force ability modifier (WIS or CHA based on game setting).
+    // Character creation ability data is not always actor-shaped, so normalize
+    // both the in-progress form data and the temporary actor fallback.
+    const modifier = _getChargenForceTrainingModifier(this);
 
     // Each Force Training grants 1 + modifier powers (minimum 1)
     const powersPerTraining = Math.max(1, 1 + modifier);
@@ -305,4 +306,30 @@ export function _bindForcePowerCardUI(root) {
       doc?.sheet?.render(true);
     }
   };
+}
+
+
+function _getChargenForceTrainingModifier(app) {
+  const forceAbility = ForceRules.getTrainingAttribute();
+  const abilityKey = forceAbility === 'charisma' ? 'cha' : 'wis';
+  const ability = app?.characterData?.abilities?.[abilityKey] || {};
+
+  for (const field of ['mod', 'modifier']) {
+    const value = Number(ability?.[field]);
+    if (Number.isFinite(value)) return value;
+  }
+
+  for (const field of ['score', 'total', 'value']) {
+    const value = Number(ability?.[field]);
+    if (Number.isFinite(value)) return Math.floor((value - 10) / 2);
+  }
+
+  try {
+    const tempActor = app?._createTempActorForValidation?.();
+    if (tempActor) return ForceTrainingEngine.getForceAbilityModifier(tempActor);
+  } catch (err) {
+    SWSELogger.warn('CharGen | Failed to resolve Force Training modifier from temp actor', err);
+  }
+
+  return 0;
 }

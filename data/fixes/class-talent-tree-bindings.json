@@ -117,7 +117,7 @@
       "Camouflage",
       "Commando",
       "Weapon Master",
-      "Master of Ter\u00c3\u00a4s K\u00c3\u00a4si",
+      "Master of TerÃ¤s KÃ¤si",
       "Mandalorian Warrior",
       "Critical Master",
       "Melee Specialist",
@@ -319,7 +319,7 @@
     ],
     "trees": [
       "Awareness",
-      "Master of Ter\u00c3\u00a4s K\u00c3\u00a4si"
+      "Master of TerÃ¤s KÃ¤si"
     ]
   },
   {
@@ -385,7 +385,8 @@
       "collaborator",
       "loyal-protector",
       "provocateur",
-      "gambling-leader"
+      "gambling-leader",
+      "superior-skills"
     ],
     "trees": [
       "Influence",
@@ -398,7 +399,8 @@
       "Collaborator",
       "Loyal Protector",
       "Provocateur",
-      "Gambling Leader"
+      "Gambling Leader",
+      "Superior Skills"
     ]
   },
   {

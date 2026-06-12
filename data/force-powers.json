@@ -1,147 +1,1859 @@
 [
   {
-    "id": "force-power-vital-transfer",
+    "id": "force-power-ballistakinesis",
     "sourceType": "forcePower",
-    "name": "Vital Transfer",
-    "description": "You channel the Force to heal injuries and restore vitality. The target recovers hit points based on your Use the Force check result.",
-    "actionType": "action",
+    "sourceId": "fp_ballistakinesis",
+    "name": "Ballistakinesis",
+    "description": "You use The Force to spray an area with dangerous debris.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
     "tags": [
-      "ability_con",
-      "durability",
       "Force",
       "force",
-      "force-defense",
-      "force-support",
-      "force_defense",
-      "force_execution",
       "force_power",
-      "force_power_check",
-      "force_support",
-      "Healing",
-      "healing",
-      "hit_points",
-      "medicine",
-      "skill_use_the_force",
-      "support",
-      "use_the_force",
-      "Vital",
-      "vital"
+      "force_power_selector",
+      "telekinetic",
+      "official",
+      "offense_ranged",
+      "control",
+      "weapon_buff",
+      "standard_action",
+      "blaster_synergy"
     ],
     "usage": {
-      "charges": 0,
-      "recovery": "none"
+      "charges": null,
+      "recovery": "encounter"
     },
     "resourceCost": {
-      "forcePoints": 15
+      "forcePowerUse": 1,
+      "forcePoint": null
     },
     "resolution": {
       "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
       "dcChart": [
         {
           "dc": 15,
-          "effect": "2d6 healing",
-          "description": "Target heals 2d6 hit points"
+          "effect": "3d8 damage",
+          "description": "Targets take 3d8 damage and suffer -2 to attack rolls until the start of your next turn."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "3d8 damage",
+          "description": "Targets take 3d8 damage and suffer -2 to attack rolls until the start of your next turn."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "Instantaneous",
+      "range": "12 squares",
+      "target": "2x2 area",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-battle-strike",
+    "sourceType": "forcePower",
+    "sourceId": "f177dc6d65f76de9",
+    "name": "Battle Strike",
+    "description": "Increases attack and damage for next attack.",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "offense_melee",
+      "self_buff",
+      "damage_buff",
+      "swift_action",
+      "melee_buff"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "general",
+      "duration": "1 round",
+      "range": "Personal",
+      "target": "You",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 94,
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-blind",
+    "sourceType": "forcePower",
+    "sourceId": "fp_blind",
+    "name": "Blind",
+    "description": "You hurl dirt, dust, and debris at your foe, affecting its sight.",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "telekinetic",
+      "official",
+      "control",
+      "debuff",
+      "single_target",
+      "standard_action",
+      "vision_denial"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "Flat-footed",
+          "description": "Target becomes Flat-Footed and all other creatures gain Concealment from the target."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "Flat-footed",
+          "description": "Target becomes Flat-Footed and all other creatures gain Concealment from the target."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "Until the start of your next turn",
+      "range": "12 squares",
+      "target": "One creature",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-cloak",
+    "sourceType": "forcePower",
+    "sourceId": "18e79be8d48946ba",
+    "name": "Cloak",
+    "description": "You bend light around your body, rendering yourself invisible to anyone looking in your direction.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "stealth",
+      "concealment",
+      "invisibility",
+      "self_buff",
+      "standard_action",
+      "mobility"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "Total Concealment",
+          "description": "You are considered to have Total Concealment against all targets until the beginning of your next turn."
         },
         {
           "dc": 20,
-          "effect": "4d6 healing",
-          "description": "Target heals 4d6 hit points"
+          "effect": "Total Concealment, Stealth +2",
+          "description": "Total Concealment and a +2 Force bonus to Stealth until the beginning of your next turn."
         },
         {
           "dc": 25,
-          "effect": "6d6 healing + condition",
-          "description": "Target heals 6d6 hit points and removes one ongoing condition"
+          "effect": "Total Concealment, Stealth +3",
+          "description": "Total Concealment and a +3 Force bonus to Stealth until the beginning of your next turn."
         },
         {
           "dc": 30,
-          "effect": "8d6 healing + all conditions",
-          "description": "Target heals 8d6 hit points and removes all ongoing conditions"
+          "effect": "Total Concealment, Stealth +5",
+          "description": "Total Concealment and a +5 Force bonus to Stealth until the beginning of your next turn."
         }
-      ]
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "Total Concealment",
+          "description": "You are considered to have Total Concealment against all targets until the beginning of your next turn."
+        },
+        {
+          "min": 20,
+          "effectSummary": "Total Concealment, Stealth +2",
+          "description": "Total Concealment and a +2 Force bonus to Stealth until the beginning of your next turn."
+        },
+        {
+          "min": 25,
+          "effectSummary": "Total Concealment, Stealth +3",
+          "description": "Total Concealment and a +3 Force bonus to Stealth until the beginning of your next turn."
+        },
+        {
+          "min": 30,
+          "effectSummary": "Total Concealment, Stealth +5",
+          "description": "Total Concealment and a +5 Force bonus to Stealth until the beginning of your next turn."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
     },
     "meta": {
-      "powerLevel": 3,
-      "discipline": "vital",
+      "powerLevel": 1,
+      "discipline": "general",
+      "duration": "Until beginning of your next turn; maintainable",
+      "range": "Personal",
+      "target": "Self",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": 95,
+      "maintainable": true,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-combustion",
+    "sourceType": "forcePower",
+    "sourceId": "fp_combustion",
+    "name": "Combustion",
+    "description": "You use The Force to agitate particles in the air to create a pyrokinetic spray of sparks.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "offense_force",
+      "damage",
+      "fire",
+      "single_target",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "4d6 fire",
+          "description": "Targets take 4d6 fire damage and catch on fire."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "4d6 fire",
+          "description": "Targets take 4d6 fire damage and catch on fire."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "pyrokinesis",
+      "duration": "Instantaneous",
+      "range": "12 squares",
+      "target": "2x2 area",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-convection",
+    "sourceType": "forcePower",
+    "sourceId": "fp_convection",
+    "name": "Convection",
+    "description": "You alter your body chemistry, causing your skin to burn with incredible heat.",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "offense_force",
+      "area",
+      "fire",
+      "hazard",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "+1d6 fire damage",
+          "description": "Your unarmed attacks deal +1d6 fire damage and targets catch on fire."
+        },
+        {
+          "dc": 20,
+          "effect": "+2d6 fire damage",
+          "description": "Your unarmed attacks deal +2d6 fire damage and targets catch on fire."
+        },
+        {
+          "dc": 25,
+          "effect": "+3d6 fire damage",
+          "description": "Your unarmed attacks deal +3d6 fire damage and targets catch on fire."
+        },
+        {
+          "dc": 30,
+          "effect": "+4d6 fire damage",
+          "description": "Your unarmed attacks deal +4d6 fire damage and targets catch on fire."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "+1d6 fire damage",
+          "description": "Your unarmed attacks deal +1d6 fire damage and targets catch on fire."
+        },
+        {
+          "min": 20,
+          "effectSummary": "+2d6 fire damage",
+          "description": "Your unarmed attacks deal +2d6 fire damage and targets catch on fire."
+        },
+        {
+          "min": 25,
+          "effectSummary": "+3d6 fire damage",
+          "description": "Your unarmed attacks deal +3d6 fire damage and targets catch on fire."
+        },
+        {
+          "min": 30,
+          "effectSummary": "+4d6 fire damage",
+          "description": "Your unarmed attacks deal +4d6 fire damage and targets catch on fire."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "pyrokinesis",
+      "duration": "Until the start of your next turn",
+      "range": "Self",
+      "target": "Self",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-corruption",
+    "sourceType": "forcePower",
+    "sourceId": "fp_corruption",
+    "name": "Corruption",
+    "description": "You use The Force to send a bolt of pure Dark Side vileness into an enemy.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "dark-side",
+      "official",
+      "dark_side",
+      "offense_force",
+      "ongoing_damage",
+      "debuff",
+      "single_target",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "2d6 damage",
+          "description": "Target takes 2d6 Force damage and half that again at the start of its turn."
+        },
+        {
+          "dc": 20,
+          "effect": "3d6 damage",
+          "description": "Target takes 3d6 Force damage and half again next round."
+        },
+        {
+          "dc": 25,
+          "effect": "4d6 damage",
+          "description": "Target takes 4d6 Force damage and half again next round."
+        },
+        {
+          "dc": 30,
+          "effect": "5d6 damage",
+          "description": "Target takes 5d6 Force damage and half again next round."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "2d6 damage",
+          "description": "Target takes 2d6 Force damage and half that again at the start of its turn."
+        },
+        {
+          "min": 20,
+          "effectSummary": "3d6 damage",
+          "description": "Target takes 3d6 Force damage and half again next round."
+        },
+        {
+          "min": 25,
+          "effectSummary": "4d6 damage",
+          "description": "Target takes 4d6 Force damage and half again next round."
+        },
+        {
+          "min": 30,
+          "effectSummary": "5d6 damage",
+          "description": "Target takes 5d6 Force damage and half again next round."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "dark-side",
+      "duration": "Multiple rounds",
+      "range": "12 squares",
+      "target": "One creature",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Dark Side"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-crucitorn",
+    "sourceType": "forcePower",
+    "sourceId": "fp_crucitorn",
+    "name": "Crucitorn",
+    "description": "You ignore the debilitating effects of physical pain, and focus despite great physical trauma.",
+    "actionType": "reaction",
+    "actionLabel": "Reaction",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "offense_force",
+      "dark_side",
+      "pain",
+      "control",
+      "single_target",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "+5 Damage Threshold",
+          "description": "Gain +5 Force bonus to Damage Threshold against the triggering attack."
+        },
+        {
+          "dc": 20,
+          "effect": "+10 Damage Threshold",
+          "description": "Gain +10 Force bonus to Damage Threshold against the triggering attack."
+        },
+        {
+          "dc": 25,
+          "effect": "+15 Damage Threshold",
+          "description": "Gain +15 Force bonus to Damage Threshold against the triggering attack."
+        },
+        {
+          "dc": 30,
+          "effect": "+20 Damage Threshold",
+          "description": "Gain +20 Force bonus to Damage Threshold against the triggering attack."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "+5 Damage Threshold",
+          "description": "Gain +5 Force bonus to Damage Threshold against the triggering attack."
+        },
+        {
+          "min": 20,
+          "effectSummary": "+10 Damage Threshold",
+          "description": "Gain +10 Force bonus to Damage Threshold against the triggering attack."
+        },
+        {
+          "min": 25,
+          "effectSummary": "+15 Damage Threshold",
+          "description": "Gain +15 Force bonus to Damage Threshold against the triggering attack."
+        },
+        {
+          "min": 30,
+          "effectSummary": "+20 Damage Threshold",
+          "description": "Gain +20 Force bonus to Damage Threshold against the triggering attack."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "control",
+      "duration": "Instantaneous",
+      "range": "Self",
+      "target": "Self",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-cryokinesis",
+    "sourceType": "forcePower",
+    "sourceId": "285e0ea06e20c38a",
+    "name": "Cryokinesis",
+    "description": "You can use The Force to draw heat away from a target, causing its temperature to drop rapidly.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "DR -5",
+          "description": "Reduce the target's Damage Reduction by 5; mechanical or electronic targets also move -1 step on the condition track."
+        },
+        {
+          "dc": 25,
+          "effect": "DR -10",
+          "description": "Reduce the target's Damage Reduction by 10; mechanical or electronic targets also move -1 step on the condition track."
+        },
+        {
+          "dc": 30,
+          "effect": "DR -15",
+          "description": "Reduce the target's Damage Reduction by 15; mechanical or electronic targets also move -1 step on the condition track."
+        },
+        {
+          "dc": 35,
+          "effect": "DR -20",
+          "description": "Reduce the target's Damage Reduction by 20; mechanical or electronic targets also move -1 step on the condition track."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 20,
+          "effectSummary": "DR -5",
+          "description": "Reduce the target's Damage Reduction by 5; mechanical or electronic targets also move -1 step on the condition track."
+        },
+        {
+          "min": 25,
+          "effectSummary": "DR -10",
+          "description": "Reduce the target's Damage Reduction by 10; mechanical or electronic targets also move -1 step on the condition track."
+        },
+        {
+          "min": 30,
+          "effectSummary": "DR -15",
+          "description": "Reduce the target's Damage Reduction by 15; mechanical or electronic targets also move -1 step on the condition track."
+        },
+        {
+          "min": 35,
+          "effectSummary": "DR -20",
+          "description": "Reduce the target's Damage Reduction by 20; mechanical or electronic targets also move -1 step on the condition track."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "general",
+      "duration": "Until end of your next turn; maintainable",
+      "range": "",
+      "target": "One unattended object within 12 squares and line of sight",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-dark-rage",
+    "sourceType": "forcePower",
+    "sourceId": "fp_darkrage",
+    "name": "Dark Rage",
+    "description": "Increases Melee attack and damage for 1 turn.",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "dark-side",
+      "official",
+      "dark_side",
+      "offense_melee",
+      "self_buff",
+      "damage_buff",
+      "swift_action",
+      "risk_reward"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "+2 rage bonus",
+          "description": "+2 bonus to melee attack and damage rolls."
+        },
+        {
+          "dc": 20,
+          "effect": "+4 rage bonus",
+          "description": "+4 bonus to melee attack and damage rolls."
+        },
+        {
+          "dc": 25,
+          "effect": "+6 rage bonus",
+          "description": "+6 bonus to melee attack and damage rolls."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "+2 rage bonus",
+          "description": "+2 bonus to melee attack and damage rolls."
+        },
+        {
+          "min": 20,
+          "effectSummary": "+4 rage bonus",
+          "description": "+4 bonus to melee attack and damage rolls."
+        },
+        {
+          "min": 25,
+          "effectSummary": "+6 rage bonus",
+          "description": "+6 bonus to melee attack and damage rolls."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "dark-side",
+      "duration": "Until end of your turn",
+      "range": "Self",
+      "target": "Self",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Dark Side"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-dark-transfer",
+    "sourceType": "forcePower",
+    "sourceId": "fp_darktransfer",
+    "name": "Dark Transfer",
+    "description": "You use the Dark Side of The Force to restore vitality to a living being.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "dark-side",
+      "official",
+      "dark_side",
+      "healing",
+      "support",
+      "touch",
+      "standard_action",
+      "resource_cost"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "Heal level HP",
+          "description": "Target heals HP equal to your character level."
+        },
+        {
+          "dc": 20,
+          "effect": "Heal 2x level",
+          "description": "Target heals twice your character level."
+        },
+        {
+          "dc": 25,
+          "effect": "Heal 3x level",
+          "description": "Target heals three times your character level."
+        },
+        {
+          "dc": 30,
+          "effect": "Heal 4x level",
+          "description": "Target heals four times your character level."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "Heal level HP",
+          "description": "Target heals HP equal to your character level."
+        },
+        {
+          "min": 20,
+          "effectSummary": "Heal 2x level",
+          "description": "Target heals twice your character level."
+        },
+        {
+          "min": 25,
+          "effectSummary": "Heal 3x level",
+          "description": "Target heals three times your character level."
+        },
+        {
+          "min": 30,
+          "effectSummary": "Heal 4x level",
+          "description": "Target heals four times your character level."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "dark-side",
       "duration": "Instantaneous",
       "range": "Touch",
       "target": "One living creature",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 99,
-      "maintainable": false
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Dark Side"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-detonate",
+    "sourceType": "forcePower",
+    "sourceId": "fp_detonate",
+    "name": "Detonate",
+    "description": "You can perceive points of weakness within an object and use The Force to shatter the object.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "telekinetic",
+      "official",
+      "offense_force",
+      "area",
+      "explosive",
+      "standard_action",
+      "object_interaction"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "4d6 damage",
+          "description": "The object takes 4d6 damage."
+        },
+        {
+          "dc": 25,
+          "effect": "6d6 damage",
+          "description": "The object takes 6d6 damage."
+        },
+        {
+          "dc": 30,
+          "effect": "8d6 damage",
+          "description": "The object takes 8d6 damage."
+        },
+        {
+          "dc": 35,
+          "effect": "10d6 damage",
+          "description": "The object takes 10d6 damage."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 20,
+          "effectSummary": "4d6 damage",
+          "description": "The object takes 4d6 damage."
+        },
+        {
+          "min": 25,
+          "effectSummary": "6d6 damage",
+          "description": "The object takes 6d6 damage."
+        },
+        {
+          "min": 30,
+          "effectSummary": "8d6 damage",
+          "description": "The object takes 8d6 damage."
+        },
+        {
+          "min": 35,
+          "effectSummary": "10d6 damage",
+          "description": "The object takes 10d6 damage."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "Instantaneous",
+      "range": "12 squares",
+      "target": "One unattended object",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-drain-energy",
+    "sourceType": "forcePower",
+    "sourceId": "d5d13cf231f71929",
+    "name": "Drain Energy",
+    "description": "You can draw the energy out of a powered object, such as a blaster's power pack or a power generator.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "anti_droid",
+      "anti_vehicle",
+      "offense_force",
+      "single_target",
+      "standard_action",
+      "ionic"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "2d6 energy damage",
+          "description": "Target takes 2d6 energy damage"
+        },
+        {
+          "dc": 20,
+          "effect": "4d6 energy damage",
+          "description": "Target takes 4d6 energy damage"
+        },
+        {
+          "dc": 25,
+          "effect": "6d6 energy damage + disabled",
+          "description": "Target takes 6d6 energy damage and is disabled for 1 round"
+        },
+        {
+          "dc": 30,
+          "effect": "8d6 energy damage + shutdown",
+          "description": "Target takes 8d6 energy damage and shuts down for 1d4 rounds"
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "2d6 energy damage",
+          "description": "Target takes 2d6 energy damage"
+        },
+        {
+          "min": 20,
+          "effectSummary": "4d6 energy damage",
+          "description": "Target takes 4d6 energy damage"
+        },
+        {
+          "min": 25,
+          "effectSummary": "6d6 energy damage + disabled",
+          "description": "Target takes 6d6 energy damage and is disabled for 1 round"
+        },
+        {
+          "min": 30,
+          "effectSummary": "8d6 energy damage + shutdown",
+          "description": "Target takes 8d6 energy damage and shuts down for 1d4 rounds"
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "general",
+      "duration": "Instantaneous",
+      "range": "6 squares",
+      "target": "One droid or electronic device",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 95,
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-energy-resistance",
+    "sourceType": "forcePower",
+    "sourceId": "fp_energyresistance",
+    "name": "Energy Resistance",
+    "description": "You use The Force to protect you from damage caused by energy, sonic, fire, cold, and electrical sources.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "defense",
+      "energy_defense",
+      "ally_support",
+      "self_buff",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "DR 5",
+          "description": "Gain Damage Reduction 5 vs energy damage."
+        },
+        {
+          "dc": 25,
+          "effect": "DR 10",
+          "description": "Gain Damage Reduction 10 vs energy damage."
+        },
+        {
+          "dc": 30,
+          "effect": "DR 15",
+          "description": "Gain Damage Reduction 15 vs energy damage."
+        },
+        {
+          "dc": 35,
+          "effect": "DR 20",
+          "description": "Gain Damage Reduction 20 vs energy damage."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 20,
+          "effectSummary": "DR 5",
+          "description": "Gain Damage Reduction 5 vs energy damage."
+        },
+        {
+          "min": 25,
+          "effectSummary": "DR 10",
+          "description": "Gain Damage Reduction 10 vs energy damage."
+        },
+        {
+          "min": 30,
+          "effectSummary": "DR 15",
+          "description": "Gain Damage Reduction 15 vs energy damage."
+        },
+        {
+          "min": 35,
+          "effectSummary": "DR 20",
+          "description": "Gain Damage Reduction 20 vs energy damage."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "control",
+      "duration": "Until beginning of next turn",
+      "range": "Self",
+      "target": "Self",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-enlighten",
+    "sourceType": "forcePower",
+    "sourceId": "fp_enlighten",
+    "name": "Enlighten",
+    "description": "You reach out to an ally telepathically, sharing visions of the near future.",
+    "actionType": "swift",
+    "actionLabel": "Reaction or Swift Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "light-side",
+      "mind-affecting",
+      "official",
+      "light_side",
+      "mind_affecting",
+      "utility",
+      "knowledge",
+      "intel",
+      "perception",
+      "standard_action",
+      "investigation"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "Insight replacement",
+          "description": "Target may replace one attack roll, skill check, or Defense with your Use the Force result."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "Insight replacement",
+          "description": "Target may replace one attack roll, skill check, or Defense with your Use the Force result."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "light-side",
+      "duration": "Until start of your next turn",
+      "range": "12 squares",
+      "target": "One ally",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Light Side",
+        "Mind-Affecting"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
     }
   },
   {
     "id": "force-power-farseeing",
     "sourceType": "forcePower",
+    "sourceId": "0419ecb55f011f81",
     "name": "Farseeing",
-    "description": "You peer through the Force to see distant locations or events. You can observe a place you've been before or a person you know, regardless of distance.",
-    "actionType": "extended",
+    "description": "You use The Force to detect an individual over a long distance.",
+    "actionType": "full-round",
+    "actionLabel": "Full-Round Action",
     "tags": [
-      "activated",
       "Force",
       "force",
       "force_power",
-      "gateway",
-      "Mind-Affecting",
-      "mind_affecting",
-      "prereq_force_disciple",
-      "Scrying",
-      "scrying"
+      "force_power_selector",
+      "official",
+      "utility",
+      "divination",
+      "intel",
+      "perception",
+      "standard_action",
+      "ritual_like"
     ],
     "usage": {
-      "charges": 0,
-      "recovery": "none"
+      "charges": null,
+      "recovery": "encounter"
     },
     "resourceCost": {
-      "forcePoints": 20
+      "forcePowerUse": 1,
+      "forcePoint": null
     },
     "resolution": {
       "type": "flat",
-      "description": "No check required"
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
     },
     "meta": {
-      "powerLevel": 2,
-      "discipline": "telepathic",
+      "powerLevel": 1,
+      "discipline": "general",
       "duration": "Concentration",
       "range": "Unlimited",
       "target": "Special",
       "sourcebook": "Saga Edition Core Rulebook",
       "page": 95,
-      "maintainable": true
+      "maintainable": true,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-fear",
+    "sourceType": "forcePower",
+    "sourceId": "fp_fear",
+    "name": "Fear",
+    "description": "You summon The Dark Side to instill fear in your enemies.",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "dark-side",
+      "mind-affecting",
+      "official",
+      "dark_side",
+      "mind_affecting",
+      "control",
+      "debuff",
+      "area",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "Standard only",
+          "description": "Target can take only one Standard Action."
+        },
+        {
+          "dc": 20,
+          "effect": "Move only",
+          "description": "Target can take only one Move Action."
+        },
+        {
+          "dc": 25,
+          "effect": "Swift only",
+          "description": "Target can take only one Swift Action."
+        },
+        {
+          "dc": 30,
+          "effect": "No actions",
+          "description": "Target cannot take actions on its next turn."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "Standard only",
+          "description": "Target can take only one Standard Action."
+        },
+        {
+          "min": 20,
+          "effectSummary": "Move only",
+          "description": "Target can take only one Move Action."
+        },
+        {
+          "min": 25,
+          "effectSummary": "Swift only",
+          "description": "Target can take only one Swift Action."
+        },
+        {
+          "min": 30,
+          "effectSummary": "No actions",
+          "description": "Target cannot take actions on its next turn."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "dark-side",
+      "duration": "1 round",
+      "range": "12 squares",
+      "target": "One creature",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Dark Side",
+        "Mind-Affecting"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-fold-space",
+    "sourceType": "forcePower",
+    "sourceId": "fp_foldspace",
+    "name": "Fold Space",
+    "description": "You can use The Force to bend space, transporting an object almost instantaneously from one place to another.",
+    "actionType": "full-round",
+    "actionLabel": "Full-Round Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "mobility",
+      "teleport",
+      "utility",
+      "standard_action",
+      "positioning"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "Medium, 6 sq",
+          "description": "You can move a Medium or smaller object up to 6 squares."
+        },
+        {
+          "dc": 25,
+          "effect": "Large, 12 sq",
+          "description": "You can move a Large or smaller object up to 12 squares."
+        },
+        {
+          "dc": 30,
+          "effect": "Huge, 18 sq",
+          "description": "You can move a Huge or smaller object up to 18 squares."
+        },
+        {
+          "dc": 35,
+          "effect": "Gargantuan, 24 sq",
+          "description": "You can move a Gargantuan or smaller object up to 24 squares."
+        },
+        {
+          "dc": 40,
+          "effect": "Colossal, 30 sq",
+          "description": "You can move a Colossal or smaller object up to 30 squares."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 20,
+          "effectSummary": "Medium, 6 sq",
+          "description": "You can move a Medium or smaller object up to 6 squares."
+        },
+        {
+          "min": 25,
+          "effectSummary": "Large, 12 sq",
+          "description": "You can move a Large or smaller object up to 12 squares."
+        },
+        {
+          "min": 30,
+          "effectSummary": "Huge, 18 sq",
+          "description": "You can move a Huge or smaller object up to 18 squares."
+        },
+        {
+          "min": 35,
+          "effectSummary": "Gargantuan, 24 sq",
+          "description": "You can move a Gargantuan or smaller object up to 24 squares."
+        },
+        {
+          "min": 40,
+          "effectSummary": "Colossal, 30 sq",
+          "description": "You can move a Colossal or smaller object up to 30 squares."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "general",
+      "duration": "Instantaneous",
+      "range": "6 squares",
+      "target": "One held or unattended object or Vehicle",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-force-blast",
+    "sourceType": "forcePower",
+    "sourceId": "fp_forceblast",
+    "name": "Force Blast",
+    "description": "You use The Force to create a ball of compressed air and debris that you can hurl at enemy targets.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "telekinetic",
+      "offense_force",
+      "area",
+      "push",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "2d6 damage",
+          "description": "The Force Blast deals 2d6 points of damage to the target."
+        },
+        {
+          "dc": 20,
+          "effect": "3d6 damage",
+          "description": "The Force Blast deals 3d6 points of damage to the target."
+        },
+        {
+          "dc": 25,
+          "effect": "4d6 damage",
+          "description": "The Force Blast deals 4d6 points of damage to the target."
+        },
+        {
+          "dc": 30,
+          "effect": "5d6 damage",
+          "description": "The Force Blast deals 5d6 points of damage to the target."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "2d6 damage",
+          "description": "The Force Blast deals 2d6 points of damage to the target."
+        },
+        {
+          "min": 20,
+          "effectSummary": "3d6 damage",
+          "description": "The Force Blast deals 3d6 points of damage to the target."
+        },
+        {
+          "min": 25,
+          "effectSummary": "4d6 damage",
+          "description": "The Force Blast deals 4d6 points of damage to the target."
+        },
+        {
+          "min": 30,
+          "effectSummary": "5d6 damage",
+          "description": "The Force Blast deals 5d6 points of damage to the target."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "general",
+      "duration": "Instantaneous",
+      "range": "12 squares",
+      "target": "One creature",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-force-disarm",
+    "sourceType": "forcePower",
+    "sourceId": "18f33f87a1ebee74",
+    "name": "Force Disarm",
+    "description": "Disarms an opponent using The Force.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "telekinetic",
+      "official",
+      "control",
+      "disarm",
+      "single_target",
+      "standard_action",
+      "weapon_denial"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "Instantaneous",
+      "range": "6 squares",
+      "target": "One creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 96,
+      "maintainable": false,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-force-grip",
+    "sourceType": "forcePower",
+    "sourceId": "b318fc3d5dadd9f3",
+    "name": "Force Grip",
+    "description": "Chokes or crushes an opponent, and may force the opponent to lose their Standard Action.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "telekinetic",
+      "official"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": null,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "",
+      "range": "",
+      "target": "",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-force-light",
+    "sourceType": "forcePower",
+    "sourceId": "fp_forcelight",
+    "name": "Force Light",
+    "description": "You can draw The Force into yourself, turning you into a beacon of light that purges the taint of the Dark Side.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "light-side",
+      "official",
+      "light_side",
+      "dark_side",
+      "anti_dark_side",
+      "support",
+      "area",
+      "standard_action",
+      "purification"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "1d6 damage",
+          "description": "Any creature with a Dark Side Score of 1+, that begins its turn within 6 squares of you, automatically takes 1d6 points of Force damage, and takes a -1 penalty on attack rolls."
+        },
+        {
+          "dc": 25,
+          "effect": "2d6 damage",
+          "description": "Any creature with a Dark Side Score of 1+, that begins its turn within 6 squares of you, automatically takes 2d6 points of Force damage, and takes a -1 penalty on attack rolls."
+        },
+        {
+          "dc": 30,
+          "effect": "3d6 damage",
+          "description": "Any creature with a Dark Side Score of 1+, that begins its turn within 6 squares of you, automatically takes 3d6 points of Force damage, and takes a -1 penalty on attack rolls."
+        },
+        {
+          "dc": 35,
+          "effect": "4d6 damage",
+          "description": "Any creature with a Dark Side Score of 1+, that begins its turn within 6 squares of you, automatically takes 4d6 points of Force damage, and takes a -1 penalty on attack rolls."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 20,
+          "effectSummary": "1d6 damage",
+          "description": "Any creature with a Dark Side Score of 1+, that begins its turn within 6 squares of you, automatically takes 1d6 points of Force damage, and takes a -1 penalty on attack rolls."
+        },
+        {
+          "min": 25,
+          "effectSummary": "2d6 damage",
+          "description": "Any creature with a Dark Side Score of 1+, that begins its turn within 6 squares of you, automatically takes 2d6 points of Force damage, and takes a -1 penalty on attack rolls."
+        },
+        {
+          "min": 30,
+          "effectSummary": "3d6 damage",
+          "description": "Any creature with a Dark Side Score of 1+, that begins its turn within 6 squares of you, automatically takes 3d6 points of Force damage, and takes a -1 penalty on attack rolls."
+        },
+        {
+          "min": 35,
+          "effectSummary": "4d6 damage",
+          "description": "Any creature with a Dark Side Score of 1+, that begins its turn within 6 squares of you, automatically takes 4d6 points of Force damage, and takes a -1 penalty on attack rolls."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "light-side",
+      "duration": "Until the start of your next turn",
+      "range": "6 squares",
+      "target": "All creatures with Dark Side Score",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [
+        "Light Side"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
     }
   },
   {
     "id": "force-power-force-lightning",
     "sourceType": "forcePower",
+    "sourceId": "0a422b939edfad56",
     "name": "Force Lightning",
-    "description": "You unleash devastating arcs of Force Lightning from your fingertips. The target takes lightning damage based on your Use the Force check result.",
-    "actionType": "action",
+    "description": "Electrocutes an opponent and deals automatic damage.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
     "tags": [
-      "Dark Side",
-      "dark-side",
-      "dark_side",
       "Force",
       "force",
-      "Force Lightning",
-      "force-offense",
-      "force_execution",
-      "force_lightning",
-      "force_offense",
       "force_power",
-      "force_power_check",
-      "offense_ranged",
-      "skill_use_the_force",
-      "use_the_force"
+      "force_power_selector",
+      "dark-side",
+      "official",
+      "dark_side",
+      "offense_force",
+      "damage",
+      "lightning",
+      "single_target",
+      "standard_action",
+      "force_execution"
     ],
     "usage": {
-      "charges": 0,
-      "recovery": "none"
+      "charges": null,
+      "recovery": "encounter"
     },
     "resourceCost": {
-      "forcePoints": 15
+      "forcePowerUse": 1,
+      "forcePoint": null
     },
     "resolution": {
       "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
       "dcChart": [
         {
           "dc": 15,
@@ -163,224 +1875,1734 @@
           "effect": "8d6 lightning damage + stun 1d4",
           "description": "Target takes 8d6 lightning damage and is stunned for 1d4 rounds"
         }
-      ]
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "2d6 lightning damage",
+          "description": "Target takes 2d6 lightning damage"
+        },
+        {
+          "min": 20,
+          "effectSummary": "4d6 lightning damage",
+          "description": "Target takes 4d6 lightning damage"
+        },
+        {
+          "min": 25,
+          "effectSummary": "6d6 lightning damage + stun",
+          "description": "Target takes 6d6 lightning damage and is stunned for 1 round"
+        },
+        {
+          "min": 30,
+          "effectSummary": "8d6 lightning damage + stun 1d4",
+          "description": "Target takes 8d6 lightning damage and is stunned for 1d4 rounds"
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
     },
     "meta": {
-      "powerLevel": 4,
+      "powerLevel": 1,
       "discipline": "dark-side",
       "duration": "Instantaneous",
       "range": "6 squares",
       "target": "One creature",
       "sourcebook": "Saga Edition Core Rulebook",
       "page": 96,
-      "maintainable": true
+      "maintainable": true,
+      "descriptors": [
+        "Dark Side"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
     }
   },
   {
-    "id": "force-power-force-cloak",
+    "id": "force-power-force-scream",
     "sourceType": "forcePower",
-    "name": "Force Cloak",
-    "description": "You bend light and perceptions around yourself, becoming invisible. You gain total concealment and a +10 bonus to Stealth checks.",
-    "actionType": "action",
+    "sourceId": "64d987296e6bb054",
+    "name": "Force Scream",
+    "description": "You create an intense sonic scream, amplified by The Force.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
     "tags": [
-      "ability_dex",
-      "concealment",
-      "cover",
-      "defense",
       "Force",
       "force",
       "force_power",
-      "Mind-Affecting",
-      "mind_affecting",
-      "positioning",
-      "skill_stealth",
-      "skirmisher",
-      "stealth"
+      "force_power_selector",
+      "dark-side",
+      "official",
+      "dark_side",
+      "offense_force",
+      "area",
+      "sonic",
+      "debuff",
+      "standard_action"
     ],
     "usage": {
-      "charges": 0,
-      "recovery": "none"
+      "charges": null,
+      "recovery": "encounter"
     },
     "resourceCost": {
-      "forcePoints": 20
+      "forcePowerUse": 1,
+      "forcePoint": null
     },
     "resolution": {
       "type": "flat",
-      "description": "No check required"
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
     },
     "meta": {
-      "powerLevel": 2,
-      "discipline": "telepathic",
-      "duration": "Concentration",
-      "range": "Personal",
-      "target": "You",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 95,
-      "maintainable": true
+      "powerLevel": 1,
+      "discipline": "dark-side",
+      "duration": "Instantaneous",
+      "range": "6-square cone",
+      "target": "All creatures in area",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": 88,
+      "maintainable": false,
+      "descriptors": [
+        "Dark Side"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
     }
   },
   {
-    "id": "force-power-force-disarm",
+    "id": "force-power-force-shield",
     "sourceType": "forcePower",
-    "name": "Force Disarm",
-    "description": "You use telekinetic force to wrench a weapon or object from your target's grasp. Make a Use the Force check opposed by the target's Strength check or Will Defense (whichever is higher).",
-    "actionType": "action",
+    "sourceId": "fp_forceshield",
+    "name": "Force Shield",
+    "description": "You use The Force to create a bubble of telekinetic energy around yourself, protecting you from harm.",
+    "actionType": "reaction",
+    "actionLabel": "Reaction",
     "tags": [
-      "ability_wis",
-      "defense",
       "Force",
       "force",
-      "force_execution",
       "force_power",
-      "force_power_check",
-      "skill_use_the_force",
-      "Telekinetic",
+      "force_power_selector",
       "telekinetic",
-      "use_the_force",
-      "will"
+      "official",
+      "defense",
+      "shielding",
+      "self_buff",
+      "standard_action",
+      "survivability"
     ],
     "usage": {
-      "charges": 0,
-      "recovery": "none"
+      "charges": null,
+      "recovery": "encounter"
     },
     "resourceCost": {
-      "forcePoints": 15
+      "forcePowerUse": 1,
+      "forcePoint": null
     },
     "resolution": {
-      "type": "opposed",
-      "defender": "Use the Force",
-      "vs": "Defense"
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "SR 5",
+          "description": "You gain a Shield Rating (SR) of 5 until the beginning of your next turn."
+        },
+        {
+          "dc": 20,
+          "effect": "SR 10",
+          "description": "You gain a Shield Rating (SR) of 10 until the beginning of your next turn."
+        },
+        {
+          "dc": 25,
+          "effect": "SR 15",
+          "description": "You gain a Shield Rating (SR) of 15 until the beginning of your next turn."
+        },
+        {
+          "dc": 30,
+          "effect": "SR 20",
+          "description": "You gain a Shield Rating (SR) of 20 until the beginning of your next turn."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "SR 5",
+          "description": "You gain a Shield Rating (SR) of 5 until the beginning of your next turn."
+        },
+        {
+          "min": 20,
+          "effectSummary": "SR 10",
+          "description": "You gain a Shield Rating (SR) of 10 until the beginning of your next turn."
+        },
+        {
+          "min": 25,
+          "effectSummary": "SR 15",
+          "description": "You gain a Shield Rating (SR) of 15 until the beginning of your next turn."
+        },
+        {
+          "min": 30,
+          "effectSummary": "SR 20",
+          "description": "You gain a Shield Rating (SR) of 20 until the beginning of your next turn."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "Until beginning of next turn",
+      "range": "Self",
+      "target": "Self",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-force-slam",
+    "sourceType": "forcePower",
+    "sourceId": "462a6c23e00c4dfc",
+    "name": "Force Slam",
+    "description": "Pounds multiple opponents, and may knock them prone.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "telekinetic",
+      "official",
+      "offense_force",
+      "area",
+      "forced_movement",
+      "knockdown",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
     },
     "meta": {
       "powerLevel": 1,
       "discipline": "telekinetic",
       "duration": "Instantaneous",
       "range": "6 squares",
-      "target": "One creature",
+      "target": "One creature or object",
       "sourcebook": "Saga Edition Core Rulebook",
-      "page": 96,
-      "maintainable": false
+      "page": 97,
+      "maintainable": false,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
     }
   },
   {
-    "id": "force-power-surge",
+    "id": "force-power-force-storm",
     "sourceType": "forcePower",
-    "name": "Surge",
-    "description": "You use the Force to push your body beyond normal limits. You gain an additional move action this turn.",
-    "actionType": "free",
+    "sourceId": "aef6dad242fd225b",
+    "name": "Force Storm",
+    "description": "You can create a storm that draws upon The Dark Side of The Force, focusing its malicious intent on a certain area.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
     "tags": [
-      "controller",
       "Force",
       "force",
-      "force-control",
-      "force_control",
-      "force_execution",
       "force_power",
-      "force_power_check",
-      "mobility",
-      "move_action",
-      "multiplier",
-      "new_action",
-      "positioning",
-      "scaling",
-      "skill_use_the_force",
-      "use_the_force",
-      "Vital",
-      "vital"
+      "force_power_selector",
+      "dark-side",
+      "official",
+      "dark_side",
+      "offense_force",
+      "area",
+      "lightning",
+      "standard_action",
+      "burst"
     ],
     "usage": {
-      "charges": 0,
-      "recovery": "none"
+      "charges": null,
+      "recovery": "encounter"
     },
     "resourceCost": {
-      "forcePoints": 15
+      "forcePowerUse": 1,
+      "forcePoint": null
     },
     "resolution": {
-      "type": "flat",
-      "description": "No check required"
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "3x3 area",
+          "description": "Create a Force Storm covering a 3x3 square area. Acid rain provides concealment and deals 2d6 acid damage to creatures that enter or begin their turn in the area."
+        },
+        {
+          "dc": 25,
+          "effect": "4x4 area",
+          "description": "Create a Force Storm covering a 4x4 square area. Acid rain provides concealment and deals 2d6 acid damage to creatures that enter or begin their turn in the area."
+        },
+        {
+          "dc": 30,
+          "effect": "5x5 area",
+          "description": "Create a Force Storm covering a 5x5 square area. Acid rain provides concealment and deals 2d6 acid damage to creatures that enter or begin their turn in the area."
+        },
+        {
+          "dc": 35,
+          "effect": "6x6 area",
+          "description": "Create a Force Storm covering a 6x6 square area. Acid rain provides concealment and deals 2d6 acid damage to creatures that enter or begin their turn in the area."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 20,
+          "effectSummary": "3x3 area",
+          "description": "Create a Force Storm covering a 3x3 square area. Acid rain provides concealment and deals 2d6 acid damage to creatures that enter or begin their turn in the area."
+        },
+        {
+          "min": 25,
+          "effectSummary": "4x4 area",
+          "description": "Create a Force Storm covering a 4x4 square area. Acid rain provides concealment and deals 2d6 acid damage to creatures that enter or begin their turn in the area."
+        },
+        {
+          "min": 30,
+          "effectSummary": "5x5 area",
+          "description": "Create a Force Storm covering a 5x5 square area. Acid rain provides concealment and deals 2d6 acid damage to creatures that enter or begin their turn in the area."
+        },
+        {
+          "min": 35,
+          "effectSummary": "6x6 area",
+          "description": "Create a Force Storm covering a 6x6 square area. Acid rain provides concealment and deals 2d6 acid damage to creatures that enter or begin their turn in the area."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
     },
     "meta": {
       "powerLevel": 1,
-      "discipline": "vital",
+      "discipline": "dark-side",
+      "duration": "Until end of your next turn; maintainable",
+      "range": "12 squares",
+      "target": "One designated area within 12 squares and line of sight",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 97,
+      "maintainable": true,
+      "descriptors": [
+        "Dark Side"
+      ],
+      "damage": "2d6 acid",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-force-storm-fucg",
+    "sourceType": "forcePower",
+    "sourceId": "0707cdeac3391953",
+    "name": "Force Storm (FUCG)",
+    "description": "You use The Force to create a swirling whirlwind of Dark Side energy around yourself.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "dark-side",
+      "telekinetic",
+      "official",
+      "dark_side"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "2 rounds",
+          "description": "The Force Storm manifests for 2 rounds, following your movement."
+        },
+        {
+          "dc": 25,
+          "effect": "4 rounds",
+          "description": "The Force Storm manifests for 4 rounds, following your movement."
+        },
+        {
+          "dc": 30,
+          "effect": "6 rounds",
+          "description": "The Force Storm manifests for 6 rounds, following your movement."
+        },
+        {
+          "dc": 35,
+          "effect": "8 rounds",
+          "description": "The Force Storm manifests for 8 rounds, following your movement."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 20,
+          "effectSummary": "2 rounds",
+          "description": "The Force Storm manifests for 2 rounds, following your movement."
+        },
+        {
+          "min": 25,
+          "effectSummary": "4 rounds",
+          "description": "The Force Storm manifests for 4 rounds, following your movement."
+        },
+        {
+          "min": 30,
+          "effectSummary": "6 rounds",
+          "description": "The Force Storm manifests for 6 rounds, following your movement."
+        },
+        {
+          "min": 35,
+          "effectSummary": "8 rounds",
+          "description": "The Force Storm manifests for 8 rounds, following your movement."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "dark-side",
+      "duration": "Varies by Use the Force check",
+      "range": "",
+      "target": "Self",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Dark Side",
+        "Telekinetic"
+      ],
+      "damage": "2d6 to adjacent targets at end of your turn",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-force-stun",
+    "sourceType": "forcePower",
+    "sourceId": "a214d4f56b4abe11",
+    "name": "Force Stun",
+    "description": "Stuns an opponent, and damages their overall condition.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "control",
+      "stun",
+      "single_target",
+      "standard_action",
+      "telepathic"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "general",
       "duration": "1 round",
-      "range": "Personal",
-      "target": "You",
+      "range": "6 squares",
+      "target": "One creature",
       "sourcebook": "Saga Edition Core Rulebook",
-      "page": 99,
-      "maintainable": false
+      "page": 97,
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-force-thrust",
+    "sourceType": "forcePower",
+    "sourceId": "d51bf85903366b6b",
+    "name": "Force Thrust",
+    "description": "You use The Force to push back an opponent several meters, and possibly deal damage.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "telekinetic",
+      "official",
+      "offense_force",
+      "forced_movement",
+      "single_target",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "Instantaneous",
+      "range": "6 squares",
+      "target": "One creature or object",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 97,
+      "maintainable": false,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
     }
   },
   {
     "id": "force-power-force-track",
     "sourceType": "forcePower",
+    "sourceId": "2466fc76adef817b",
     "name": "Force Track",
-    "description": "You place a Force 'mark' on your target, allowing you to track them through the Force. You always know the target's direction and approximate distance for the duration.",
-    "actionType": "extended",
+    "description": "You peer into The Force for guidance, picking up the trail of your quarry.",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
     "tags": [
-      "ability_wis",
-      "awareness",
       "Force",
       "force",
       "force_power",
-      "Mind-Affecting",
-      "mind_affecting",
-      "skill_survival",
-      "utility"
+      "force_power_selector",
+      "official",
+      "tracking",
+      "survival",
+      "intel",
+      "divination",
+      "standard_action"
     ],
     "usage": {
-      "charges": 0,
-      "recovery": "none"
+      "charges": null,
+      "recovery": "encounter"
     },
     "resourceCost": {
-      "forcePoints": 15
+      "forcePowerUse": 1,
+      "forcePoint": null
     },
     "resolution": {
       "type": "flat",
-      "description": "No check required"
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "general",
+      "duration": "24 hours",
+      "range": "Touch",
+      "target": "One creature",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 97,
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-force-whirlwind",
+    "sourceType": "forcePower",
+    "sourceId": "fp_forcewhirlwind",
+    "name": "Force Whirlwind",
+    "description": "You call upon The Force to surround an enemy in a swirling vortex of Force energy.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "telekinetic",
+      "official",
+      "control",
+      "forced_movement",
+      "lift",
+      "single_target",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "1d6 damage, -5 penalty",
+          "description": "Target takes 1d6 Force damage and is immobilized with -5 penalty to attacks/checks."
+        },
+        {
+          "dc": 20,
+          "effect": "2d6 damage, -5 penalty",
+          "description": "Target takes 2d6 Force damage and is immobilized with -5 penalty to attacks/checks."
+        },
+        {
+          "dc": 25,
+          "effect": "3d6 damage, -5 penalty",
+          "description": "Target takes 3d6 Force damage and is immobilized with -5 penalty to attacks/checks."
+        },
+        {
+          "dc": 30,
+          "effect": "4d6 damage, -5 penalty",
+          "description": "Target takes 4d6 Force damage and is immobilized with -5 penalty to attacks/checks."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "1d6 damage, -5 penalty",
+          "description": "Target takes 1d6 Force damage and is immobilized with -5 penalty to attacks/checks."
+        },
+        {
+          "min": 20,
+          "effectSummary": "2d6 damage, -5 penalty",
+          "description": "Target takes 2d6 Force damage and is immobilized with -5 penalty to attacks/checks."
+        },
+        {
+          "min": 25,
+          "effectSummary": "3d6 damage, -5 penalty",
+          "description": "Target takes 3d6 Force damage and is immobilized with -5 penalty to attacks/checks."
+        },
+        {
+          "min": 30,
+          "effectSummary": "4d6 damage, -5 penalty",
+          "description": "Target takes 4d6 Force damage and is immobilized with -5 penalty to attacks/checks."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "Until beginning of next turn",
+      "range": "12 squares",
+      "target": "One creature or Droid",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-hatred",
+    "sourceType": "forcePower",
+    "sourceId": "fp_hatred",
+    "name": "Hatred",
+    "description": "You give yourself over to the Dark Side, letting your hate radiate out from your body in palpable waves.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "dark-side",
+      "official",
+      "dark_side",
+      "self_buff",
+      "force_point_recovery",
+      "swift_action",
+      "resource_recovery"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "1d6 damage, -1 Defense",
+          "description": "Any creature that starts its turn within 6 squares of you takes 1d6 Force damage and -1 penalty to all Defenses."
+        },
+        {
+          "dc": 20,
+          "effect": "2d6 damage, -1 Defense",
+          "description": "Any creature that starts its turn within 6 squares of you takes 2d6 Force damage and -1 penalty to all Defenses."
+        },
+        {
+          "dc": 25,
+          "effect": "3d6 damage, -1 Defense",
+          "description": "Any creature that starts its turn within 6 squares of you takes 3d6 Force damage and -1 penalty to all Defenses."
+        },
+        {
+          "dc": 30,
+          "effect": "4d6 damage, -1 Defense",
+          "description": "Any creature that starts its turn within 6 squares of you takes 4d6 Force damage and -1 penalty to all Defenses."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "1d6 damage, -1 Defense",
+          "description": "Any creature that starts its turn within 6 squares of you takes 1d6 Force damage and -1 penalty to all Defenses."
+        },
+        {
+          "min": 20,
+          "effectSummary": "2d6 damage, -1 Defense",
+          "description": "Any creature that starts its turn within 6 squares of you takes 2d6 Force damage and -1 penalty to all Defenses."
+        },
+        {
+          "min": 25,
+          "effectSummary": "3d6 damage, -1 Defense",
+          "description": "Any creature that starts its turn within 6 squares of you takes 3d6 Force damage and -1 penalty to all Defenses."
+        },
+        {
+          "min": 30,
+          "effectSummary": "4d6 damage, -1 Defense",
+          "description": "Any creature that starts its turn within 6 squares of you takes 4d6 Force damage and -1 penalty to all Defenses."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "dark-side",
+      "duration": "Until end of your next turn",
+      "range": "6 squares",
+      "target": "All creatures within 6 squares",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [
+        "Dark Side"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-inertia",
+    "sourceType": "forcePower",
+    "sourceId": "fp_inertia",
+    "name": "Inertia",
+    "description": "You can use The Force to shift your body's inertia, allowing you to perform impossible stunts.",
+    "actionType": "move",
+    "actionLabel": "Move Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "defense",
+      "damage_mitigation",
+      "fall_protection",
+      "self_buff",
+      "reaction"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "Half speed, walls",
+          "description": "You can move up to half your Speed along a wall, ignoring gravity."
+        },
+        {
+          "dc": 20,
+          "effect": "Full speed, walls",
+          "description": "You can move up to your full Speed along a wall, ignoring gravity."
+        },
+        {
+          "dc": 25,
+          "effect": "Speed +2, walls",
+          "description": "You can move up to your full Speed, +2 additional squares, along a wall, ignoring gravity."
+        },
+        {
+          "dc": 30,
+          "effect": "Speed +4, walls",
+          "description": "You can move up to your full Speed, +4 additional squares, along a wall, ignoring gravity."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "Half speed, walls",
+          "description": "You can move up to half your Speed along a wall, ignoring gravity."
+        },
+        {
+          "min": 20,
+          "effectSummary": "Full speed, walls",
+          "description": "You can move up to your full Speed along a wall, ignoring gravity."
+        },
+        {
+          "min": 25,
+          "effectSummary": "Speed +2, walls",
+          "description": "You can move up to your full Speed, +2 additional squares, along a wall, ignoring gravity."
+        },
+        {
+          "min": 30,
+          "effectSummary": "Speed +4, walls",
+          "description": "You can move up to your full Speed, +4 additional squares, along a wall, ignoring gravity."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "control",
+      "duration": "Instantaneous",
+      "range": "Self",
+      "target": "Self",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-inspire",
+    "sourceType": "forcePower",
+    "sourceId": "dc331021badb59ed",
+    "name": "Inspire",
+    "description": "You fill your allies with hope and courage, allowing them to face even the most daunting of odds.",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "light-side",
+      "official",
+      "light_side",
+      "ally_support",
+      "team_buff",
+      "morale",
+      "standard_action",
+      "leader"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "light-side",
+      "duration": "1 round",
+      "range": "6 squares",
+      "target": "One ally",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": 98,
+      "maintainable": false,
+      "descriptors": [
+        "Light Side"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-intercept",
+    "sourceType": "forcePower",
+    "sourceId": "fp_intercept",
+    "name": "Intercept",
+    "description": "You use The Force to telekinetically hurl a small object in the path of an incoming projectile, preventing it from striking you.",
+    "actionType": "reaction",
+    "actionLabel": "Reaction",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "telekinetic",
+      "official",
+      "defense",
+      "reaction",
+      "ranged_defense",
+      "projectile_intercept"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "Negate attack",
+          "description": "If your Use the Force check equals or exceeds the attack roll result, you negate the attack against you."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "Negate attack",
+          "description": "If your Use the Force check equals or exceeds the attack roll result, you negate the attack against you."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "Instantaneous",
+      "range": "Self",
+      "target": "One incoming ranged attack",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-ionize",
+    "sourceType": "forcePower",
+    "sourceId": "fp_ionize",
+    "name": "Ionize",
+    "description": "You call upon The Force to overload electrical systems and Droids, damaging or even destroying the unit.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "anti_droid",
+      "anti_vehicle",
+      "ionic",
+      "single_target",
+      "standard_action",
+      "control"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "4d6 ion",
+          "description": "The target takes 4d6 points of Ion damage."
+        },
+        {
+          "dc": 25,
+          "effect": "5d6 ion",
+          "description": "The target takes 5d6 points of Ion damage."
+        },
+        {
+          "dc": 30,
+          "effect": "6d6 ion",
+          "description": "The target takes 6d6 points of Ion damage."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 20,
+          "effectSummary": "4d6 ion",
+          "description": "The target takes 4d6 points of Ion damage."
+        },
+        {
+          "min": 25,
+          "effectSummary": "5d6 ion",
+          "description": "The target takes 5d6 points of Ion damage."
+        },
+        {
+          "min": 30,
+          "effectSummary": "6d6 ion",
+          "description": "The target takes 6d6 points of Ion damage."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "general",
+      "duration": "Instantaneous",
+      "range": "6 squares",
+      "target": "One target",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-kinetic-combat",
+    "sourceType": "forcePower",
+    "sourceId": "fp_kineticcombat",
+    "name": "Kinetic Combat",
+    "description": "You use The Force to manipulate your chosen weapon, allowing it to operate independent of your grasp.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "telekinetic",
+      "official",
+      "offense_melee",
+      "weapon_buff",
+      "self_buff",
+      "swift_action",
+      "lightsaber_adjacent"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "Wield remotely",
+          "description": "You can telekinetically move a one-handed melee weapon up to 12 squares away and make an attack with it using Charisma modifier."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 20,
+          "effectSummary": "Wield remotely",
+          "description": "You can telekinetically move a one-handed melee weapon up to 12 squares away and make an attack with it using Charisma modifier."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "Until beginning of next turn",
+      "range": "12 squares",
+      "target": "One one-handed Melee Weapon",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-levitate",
+    "sourceType": "forcePower",
+    "sourceId": "fp_levitate",
+    "name": "Levitate",
+    "description": "You can float up or down without anything or anyone to assist you.",
+    "actionType": "move",
+    "actionLabel": "Move Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "telekinetic",
+      "official",
+      "mobility",
+      "vertical_movement",
+      "utility",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "Fly 2 sq vertical",
+          "description": "You gain a Fly Speed of 2 squares but can only move vertically."
+        },
+        {
+          "dc": 20,
+          "effect": "Fly 4 sq vertical",
+          "description": "You gain a Fly Speed of 4 squares but can only move vertically."
+        },
+        {
+          "dc": 25,
+          "effect": "Fly 6 sq vertical",
+          "description": "You gain a Fly Speed of 6 squares but can only move vertically."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "Fly 2 sq vertical",
+          "description": "You gain a Fly Speed of 2 squares but can only move vertically."
+        },
+        {
+          "min": 20,
+          "effectSummary": "Fly 4 sq vertical",
+          "description": "You gain a Fly Speed of 4 squares but can only move vertically."
+        },
+        {
+          "min": 25,
+          "effectSummary": "Fly 6 sq vertical",
+          "description": "You gain a Fly Speed of 6 squares but can only move vertically."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "Until beginning of next turn",
+      "range": "Self",
+      "target": "Self",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-lightning-burst",
+    "sourceType": "forcePower",
+    "sourceId": "fp_lightningburst",
+    "name": "Lightning Burst",
+    "description": "You call upon The Dark Side to cause lightning to arc out from your body, striking adjacent enemies.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "dark-side",
+      "official",
+      "dark_side",
+      "offense_force",
+      "area",
+      "lightning",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "3d6 damage, -1 Condition",
+          "description": "Target takes 3d6 Force damage and moves -1 step along the Condition Track."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 20,
+          "effectSummary": "3d6 damage, -1 Condition",
+          "description": "Target takes 3d6 Force damage and moves -1 step along the Condition Track."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "dark-side",
+      "duration": "Instantaneous",
+      "range": "Adjacent",
+      "target": "All enemies adjacent to you",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [
+        "Dark Side"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-malacia",
+    "sourceType": "forcePower",
+    "sourceId": "68353e70defb7efa",
+    "name": "Malacia",
+    "description": "You create dizziness and nausea by disrupting your target's equilibrium.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "light-side",
+      "official",
+      "light_side",
+      "control",
+      "condition_track",
+      "debuff",
+      "single_target",
+      "standard_action",
+      "telepathic"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "light-side",
+      "duration": "1 round/level",
+      "range": "6 squares",
+      "target": "One living creature",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": 98,
+      "maintainable": false,
+      "descriptors": [
+        "Light Side"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-memory-walk",
+    "sourceType": "forcePower",
+    "sourceId": "fp_memorywalk",
+    "name": "Memory Walk",
+    "description": "You torment an enemy by causing them to relive their most horrible memories.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "dark-side",
+      "mind-affecting",
+      "official",
+      "dark_side",
+      "mind_affecting",
+      "intel",
+      "investigation",
+      "telepathic",
+      "mind_probe",
+      "standard_action",
+      "single_target"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "2d6 damage, -Swift",
+          "description": "Target takes 2d6 Force damage and loses its Swift Action on its next turn."
+        },
+        {
+          "dc": 25,
+          "effect": "2d6 damage, -Move",
+          "description": "Target takes 2d6 Force damage and loses its Move Action on its next turn."
+        },
+        {
+          "dc": 30,
+          "effect": "2d6 damage, -Standard",
+          "description": "Target takes 2d6 Force damage and loses its Standard Action on its next turn."
+        },
+        {
+          "dc": 35,
+          "effect": "2d6 damage, -Standard/-Swift",
+          "description": "Target takes 2d6 Force damage and loses both Standard and Swift Actions on its next turn."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 20,
+          "effectSummary": "2d6 damage, -Swift",
+          "description": "Target takes 2d6 Force damage and loses its Swift Action on its next turn."
+        },
+        {
+          "min": 25,
+          "effectSummary": "2d6 damage, -Move",
+          "description": "Target takes 2d6 Force damage and loses its Move Action on its next turn."
+        },
+        {
+          "min": 30,
+          "effectSummary": "2d6 damage, -Standard",
+          "description": "Target takes 2d6 Force damage and loses its Standard Action on its next turn."
+        },
+        {
+          "min": 35,
+          "effectSummary": "2d6 damage, -Standard/-Swift",
+          "description": "Target takes 2d6 Force damage and loses both Standard and Swift Actions on its next turn."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "dark-side",
+      "duration": "Until beginning of next turn",
+      "range": "6 squares",
+      "target": "One creature with Intelligence 3+",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [
+        "Dark Side",
+        "Mind-Affecting"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-mind-shard",
+    "sourceType": "forcePower",
+    "sourceId": "fp_mindshard",
+    "name": "Mind Shard",
+    "description": "You use The Force to splinter the mind of an opponent, wracking it with pain.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "mind-affecting",
+      "official",
+      "mind_affecting",
+      "offense_force",
+      "telepathic",
+      "single_target",
+      "debuff",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "2d8 damage, -1 Condition",
+          "description": "Target takes 2d8 Force damage and moves -1 step down the Condition Track."
+        },
+        {
+          "dc": 20,
+          "effect": "3d8 damage, -1 Condition",
+          "description": "Target takes 3d8 Force damage and moves -1 step down the Condition Track."
+        },
+        {
+          "dc": 25,
+          "effect": "4d8 damage, -1 Condition",
+          "description": "Target takes 4d8 Force damage and moves -1 step down the Condition Track."
+        },
+        {
+          "dc": 30,
+          "effect": "5d8 damage, -1 Condition",
+          "description": "Target takes 5d8 Force damage and moves -1 step down the Condition Track."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "2d8 damage, -1 Condition",
+          "description": "Target takes 2d8 Force damage and moves -1 step down the Condition Track."
+        },
+        {
+          "min": 20,
+          "effectSummary": "3d8 damage, -1 Condition",
+          "description": "Target takes 3d8 Force damage and moves -1 step down the Condition Track."
+        },
+        {
+          "min": 25,
+          "effectSummary": "4d8 damage, -1 Condition",
+          "description": "Target takes 4d8 Force damage and moves -1 step down the Condition Track."
+        },
+        {
+          "min": 30,
+          "effectSummary": "5d8 damage, -1 Condition",
+          "description": "Target takes 5d8 Force damage and moves -1 step down the Condition Track."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
     },
     "meta": {
       "powerLevel": 1,
       "discipline": "telepathic",
-      "duration": "24 hours",
-      "range": "Touch",
+      "duration": "Instantaneous",
+      "range": "12 squares",
+      "target": "One creature",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Mind-Affecting"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-mind-trick",
+    "sourceType": "forcePower",
+    "sourceId": "e6649f366d6c5737",
+    "name": "Mind Trick",
+    "description": "You influence the mind of a target by dominating their will.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "mind-affecting",
+      "official",
+      "mind_affecting",
+      "social",
+      "control",
+      "single_target",
+      "standard_action",
+      "deception"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telepathic",
+      "duration": "1 minute or until completed",
+      "range": "6 squares",
       "target": "One creature",
       "sourcebook": "Saga Edition Core Rulebook",
-      "page": 97,
-      "maintainable": false
+      "page": 98,
+      "maintainable": false,
+      "descriptors": [
+        "Mind-Affecting"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-morichro",
+    "sourceType": "forcePower",
+    "sourceId": "fp_morichro",
+    "name": "Morichro",
+    "description": "You slow the vital functions of a target, causing them to slip into a deep sleep or even die.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "control",
+      "single_target",
+      "save_or_sleep",
+      "dark_side",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "Move -1 Condition",
+          "description": "Target moves -1 step down the Condition Track."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 20,
+          "effectSummary": "Move -1 Condition",
+          "description": "Target moves -1 step down the Condition Track."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "control",
+      "duration": "Until beginning of next turn",
+      "range": "Touch",
+      "target": "One living creature you have Grabbed",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
     }
   },
   {
     "id": "force-power-move-object",
     "sourceType": "forcePower",
+    "sourceId": "289013a32bd179ad",
     "name": "Move Object",
-    "description": "You move objects or creatures through the air using telekinesis. The maximum size/weight you can move depends on your Use the Force check result.",
-    "actionType": "action",
+    "description": "You use The Force to hold, move, or crush one target.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
     "tags": [
-      "activated",
-      "controller",
       "Force",
       "force",
-      "force-control",
-      "force_control",
-      "force_execution",
       "force_power",
-      "force_power_check",
-      "mobility",
-      "positioning",
-      "skill_use_the_force",
-      "Telekinetic",
+      "force_power_selector",
       "telekinetic",
-      "use_the_force"
+      "official",
+      "control",
+      "offense_force",
+      "forced_movement",
+      "utility",
+      "standard_action",
+      "single_target"
     ],
     "usage": {
-      "charges": 0,
-      "recovery": "none"
+      "charges": null,
+      "recovery": "encounter"
     },
     "resourceCost": {
-      "forcePoints": 15
+      "forcePowerUse": 1,
+      "forcePoint": null
     },
     "resolution": {
       "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
       "dcChart": [
         {
           "dc": 15,
@@ -407,1083 +3629,1464 @@
           "effect": "Colossal (20 tons)",
           "description": "Move objects up to Colossal size or 20 metric tons (starfighter-sized)"
         }
-      ]
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "Medium (50 kg)",
+          "description": "Move objects up to Medium size or 50 kg"
+        },
+        {
+          "min": 20,
+          "effectSummary": "Large (250 kg)",
+          "description": "Move objects up to Large size or 250 kg"
+        },
+        {
+          "min": 25,
+          "effectSummary": "Huge (1 ton)",
+          "description": "Move objects up to Huge size or 1 metric ton"
+        },
+        {
+          "min": 30,
+          "effectSummary": "Gargantuan (5 tons)",
+          "description": "Move objects up to Gargantuan size or 5 metric tons"
+        },
+        {
+          "min": 35,
+          "effectSummary": "Colossal (20 tons)",
+          "description": "Move objects up to Colossal size or 20 metric tons (starfighter-sized)"
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
     },
     "meta": {
-      "powerLevel": 2,
+      "powerLevel": 1,
       "discipline": "telekinetic",
       "duration": "Concentration",
       "range": "12 squares",
       "target": "One object or creature",
       "sourcebook": "Saga Edition Core Rulebook",
       "page": 98,
-      "maintainable": true
-    }
-  },
-  {
-    "id": "force-power-rebuke",
-    "sourceType": "forcePower",
-    "name": "Rebuke",
-    "description": "You overwhelm a Force user with a powerful Force presence. If the target is Force-sensitive, they must make a Will save (DC = your UTF check) or be dazed for 1 round.",
-    "actionType": "action",
-    "tags": [
-      "ability_wis",
-      "Force",
-      "force",
-      "force_execution",
-      "force_power",
-      "force_power_check",
-      "Mind-Affecting",
-      "mind_affecting",
-      "use_the_force",
-      "will"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 20
-    },
-    "resolution": {
-      "type": "flat",
-      "description": "No check required"
-    },
-    "meta": {
-      "powerLevel": 2,
-      "discipline": "telepathic",
-      "duration": "1 round",
-      "range": "6 squares",
-      "target": "One Force-sensitive creature",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 99,
-      "maintainable": false
-    }
-  },
-  {
-    "id": "force-power-force-slam",
-    "sourceType": "forcePower",
-    "name": "Force Slam",
-    "description": "You use telekinetic force to violently slam your target against a surface. The target takes 4d6 damage and is knocked prone.",
-    "actionType": "action",
-    "tags": [
-      "control",
-      "debuff",
-      "Force",
-      "force",
-      "force_power",
-      "Telekinetic",
-      "telekinetic"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 20
-    },
-    "resolution": {
-      "type": "flat",
-      "description": "No check required"
-    },
-    "meta": {
-      "powerLevel": 2,
-      "discipline": "telekinetic",
-      "duration": "Instantaneous",
-      "range": "6 squares",
-      "target": "One creature or object",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 97,
-      "maintainable": false
-    }
-  },
-  {
-    "id": "force-power-force-defense",
-    "sourceType": "forcePower",
-    "name": "Force Defense",
-    "description": "You use the Force to deflect an incoming attack. You gain a +5 Force bonus to your Reflex Defense against one attack.",
-    "actionType": "reaction",
-    "tags": [
-      "ability_dex",
-      "action-economy",
-      "action_economy",
-      "defense",
-      "deflect",
-      "Force",
-      "force",
-      "force_execution",
-      "force_power",
-      "force_power_check",
-      "new_action",
-      "reaction",
-      "reflex",
-      "skill_use_the_force",
-      "Telekinetic",
-      "telekinetic",
-      "use_the_force"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 15
-    },
-    "resolution": {
-      "type": "flat",
-      "description": "No check required"
-    },
-    "meta": {
-      "powerLevel": 1,
-      "discipline": "telekinetic",
-      "duration": "Instantaneous",
-      "range": "Personal",
-      "target": "You",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 96,
-      "maintainable": false
-    }
-  },
-  {
-    "id": "force-power-force-scream",
-    "sourceType": "forcePower",
-    "name": "Force Scream",
-    "description": "You unleash a Force-amplified scream that can shatter objects and stun enemies. All creatures in the area must make a Fortitude save (DC = your Use the Force check) or be stunned for 1 round.",
-    "actionType": "action",
-    "tags": [
-      "ability_con",
-      "area_effect",
-      "control",
-      "controller",
-      "Dark Side",
-      "dark-side",
-      "dark_side",
-      "debuff",
-      "Force",
-      "force",
-      "force-control",
-      "force_control",
-      "force_execution",
-      "force_power",
-      "force_power_check",
-      "fortitude",
-      "skill_use_the_force",
-      "Sonic",
-      "sonic",
-      "use_the_force"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 20
-    },
-    "resolution": {
-      "type": "flat",
-      "description": "No check required"
-    },
-    "meta": {
-      "powerLevel": 3,
-      "discipline": "dark-side",
-      "duration": "Instantaneous",
-      "range": "6-square cone",
-      "target": "All creatures in area",
-      "sourcebook": "Force Unleashed Campaign Guide",
-      "page": 88,
-      "maintainable": false
-    }
-  },
-  {
-    "id": "force-power-malacia",
-    "sourceType": "forcePower",
-    "name": "Malacia",
-    "description": "You disrupt your target's inner ear and equilibrium through the Force. The target must make a Fortitude save (DC = your UTF check) or become nauseated for the duration.",
-    "actionType": "action",
-    "tags": [
-      "ability_con",
-      "Force",
-      "force",
-      "force_execution",
-      "force_power",
-      "force_power_check",
-      "fortitude",
-      "Light Side",
-      "light-side",
-      "light_side",
-      "Mind-Affecting",
-      "mind_affecting",
-      "use_the_force",
-      "Vital",
-      "vital"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 20
-    },
-    "resolution": {
-      "type": "flat",
-      "description": "No check required"
-    },
-    "meta": {
-      "powerLevel": 2,
-      "discipline": "vital",
-      "duration": "1 round/level",
-      "range": "6 squares",
-      "target": "One living creature",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 98,
-      "maintainable": false
-    }
-  },
-  {
-    "id": "force-power-battle-meditation",
-    "sourceType": "forcePower",
-    "name": "Battle Meditation",
-    "description": "You bolster the morale and combat effectiveness of your allies through the Force. All allies within range gain a +2 morale bonus to attack rolls, damage rolls, and Will Defense.",
-    "actionType": "action",
-    "tags": [
-      "ability_wis",
-      "accuracy",
-      "ally_support",
-      "defense",
-      "Force",
-      "force",
-      "force_power",
-      "Light Side",
-      "light-side",
-      "light_side",
-      "Mind-Affecting",
-      "mind_affecting",
-      "support",
-      "sustained_damage",
-      "will"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 20
-    },
-    "resolution": {
-      "type": "flat",
-      "description": "No check required"
-    },
-    "meta": {
-      "powerLevel": 2,
-      "discipline": "telepathic",
-      "duration": "Concentration (up to 1 minute)",
-      "range": "12 squares",
-      "target": "Allies within range",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 94,
-      "maintainable": true
-    }
-  },
-  {
-    "id": "force-power-force-weapon",
-    "sourceType": "forcePower",
-    "name": "Force Weapon",
-    "description": "You imbue a weapon with the Force, allowing it to bypass damage reduction and strike incorporeal creatures normally.",
-    "actionType": "free",
-    "tags": [
-      "damage-reduction",
-      "damage_reduction",
-      "defense",
-      "durability",
-      "Force",
-      "force",
-      "force_power",
-      "Telekinetic",
-      "telekinetic"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 15
-    },
-    "resolution": {
-      "type": "flat",
-      "description": "No check required"
-    },
-    "meta": {
-      "powerLevel": 1,
-      "discipline": "telekinetic",
-      "duration": "1 minute",
-      "range": "Touch",
-      "target": "One weapon",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 98,
-      "maintainable": false
-    }
-  },
-  {
-    "id": "force-power-drain-life",
-    "sourceType": "forcePower",
-    "name": "Drain Life",
-    "description": "You drain the life force from your target, transferring their vitality to yourself. The target takes damage and you heal an equal amount.",
-    "actionType": "action",
-    "tags": [
-      "Dark Side",
-      "dark-side",
-      "dark_side",
-      "Force",
-      "force",
-      "force-defense",
-      "force-support",
-      "force_defense",
-      "force_power",
-      "force_support",
-      "healing",
-      "Life Drain",
-      "life_drain",
-      "medicine",
-      "support"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 15
-    },
-    "resolution": {
-      "type": "dc-tier",
-      "dcChart": [
-        {
-          "dc": 15,
-          "effect": "2d6 damage/heal",
-          "description": "Target takes 2d6 damage; you heal 2d6 hit points"
-        },
-        {
-          "dc": 20,
-          "effect": "4d6 damage/heal",
-          "description": "Target takes 4d6 damage; you heal 4d6 hit points"
-        },
-        {
-          "dc": 25,
-          "effect": "6d6 damage/heal + weakened",
-          "description": "Target takes 6d6 damage and is weakened; you heal 6d6 hit points"
-        },
-        {
-          "dc": 30,
-          "effect": "8d6 damage/heal + exhausted",
-          "description": "Target takes 8d6 damage and is exhausted; you heal 8d6 hit points"
-        }
-      ]
-    },
-    "meta": {
-      "powerLevel": 4,
-      "discipline": "dark-side",
-      "duration": "Instantaneous",
-      "range": "6 squares",
-      "target": "One living creature",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 95,
-      "maintainable": false
-    }
-  },
-  {
-    "id": "force-power-force-stun",
-    "sourceType": "forcePower",
-    "name": "Force Stun",
-    "description": "You use the Force to overwhelm your target's mind, stunning them. The target must make a Will save (DC = your UTF check) or be stunned for 1 round.",
-    "actionType": "action",
-    "tags": [
-      "ability_wis",
-      "control",
-      "controller",
-      "debuff",
-      "Force",
-      "force",
-      "force-control",
-      "force_control",
-      "force_execution",
-      "force_power",
-      "force_power_check",
-      "Mind-Affecting",
-      "mind_affecting",
-      "skill_use_the_force",
-      "use_the_force",
-      "will"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 20
-    },
-    "resolution": {
-      "type": "flat",
-      "description": "No check required"
-    },
-    "meta": {
-      "powerLevel": 2,
-      "discipline": "telepathic",
-      "duration": "1 round",
-      "range": "6 squares",
-      "target": "One creature",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 97,
-      "maintainable": false
-    }
-  },
-  {
-    "id": "force-power-sever-force-lesser",
-    "sourceType": "forcePower",
-    "name": "Sever Force (Lesser)",
-    "description": "You temporarily sever your target's connection to the Force. The target cannot use Force Powers or Force Talents for the duration.",
-    "actionType": "action",
-    "tags": [
-      "Dark Side",
-      "dark-side",
-      "dark_side",
-      "Force",
-      "force",
-      "Force Drain",
-      "force_drain",
-      "force_power"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 25
-    },
-    "resolution": {
-      "type": "flat",
-      "description": "No check required"
-    },
-    "meta": {
-      "powerLevel": 3,
-      "discipline": "dark-side",
-      "duration": "1 encounter",
-      "range": "6 squares",
-      "target": "One Force-sensitive creature",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 99,
-      "maintainable": false
-    }
-  },
-  {
-    "id": "force-power-force-storm",
-    "sourceType": "forcePower",
-    "name": "Force Storm",
-    "description": "You create a massive Force storm of lightning and violent energy. All creatures in the area take 10d6 lightning damage each round (Reflex half, DC = your UTF check).",
-    "actionType": "action",
-    "tags": [
-      "ability_dex",
-      "Area",
-      "area",
-      "area_effect",
-      "controller",
-      "Dark Side",
-      "dark-side",
-      "dark_side",
-      "Force",
-      "force",
-      "Force Lightning",
-      "force-offense",
-      "force_execution",
-      "force_lightning",
-      "force_offense",
-      "force_power",
-      "force_power_check",
-      "offense_ranged",
-      "reflex",
-      "use_the_force"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 30
-    },
-    "resolution": {
-      "type": "dc-tier",
-      "dcChart": [
-        {
-          "dc": 30,
-          "effect": "10d6 to all in area",
-          "description": "All creatures in 20-square radius take 10d6 lightning damage (Reflex half)"
-        },
-        {
-          "dc": 35,
-          "effect": "12d6 to all + stun",
-          "description": "All creatures take 12d6 damage (Reflex half) and are stunned 1 round (Fort negates)"
-        },
-        {
-          "dc": 40,
-          "effect": "15d6 to all + disintegrate",
-          "description": "All creatures take 15d6 damage; those reduced to 0 HP are disintegrated"
-        }
-      ]
-    },
-    "meta": {
-      "powerLevel": 6,
-      "discipline": "dark-side",
-      "duration": "Concentration",
-      "range": "12 squares",
-      "target": "20-square radius",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 97,
-      "maintainable": true
-    }
-  },
-  {
-    "id": "force-power-sever-force",
-    "sourceType": "forcePower",
-    "name": "Sever Force",
-    "description": "You permanently sever a Force user's connection to the Force. The target loses all Force abilities permanently.",
-    "actionType": "extended",
-    "tags": [
-      "Dark Side",
-      "dark-side",
-      "dark_side",
-      "Force",
-      "force",
-      "Force Drain",
-      "force_drain",
-      "force_power"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 30
-    },
-    "resolution": {
-      "type": "flat",
-      "description": "No check required"
-    },
-    "meta": {
-      "powerLevel": 6,
-      "discipline": "dark-side",
-      "duration": "Permanent",
-      "range": "Touch",
-      "target": "One Force-sensitive creature",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 99,
-      "maintainable": false
-    }
-  },
-  {
-    "id": "force-power-force-body",
-    "sourceType": "forcePower",
-    "name": "Force Body",
-    "description": "You use the Force to push your body beyond its normal limits. You gain Damage Reduction 10 and a +4 bonus to Strength until the start of your next turn.",
-    "actionType": "reaction",
-    "tags": [
-      "action-economy",
-      "action_economy",
-      "controller",
-      "damage-reduction",
-      "damage_reduction",
-      "defense",
-      "durability",
-      "Force",
-      "force",
-      "force-control",
-      "force_control",
-      "force_execution",
-      "force_power",
-      "force_power_check",
-      "new_action",
-      "reaction",
-      "skill_use_the_force",
-      "use_the_force",
-      "Vital",
-      "vital"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 25
-    },
-    "resolution": {
-      "type": "flat",
-      "description": "No check required"
-    },
-    "meta": {
-      "powerLevel": 3,
-      "discipline": "vital",
-      "duration": "1 round",
-      "range": "Personal",
-      "target": "You",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 95,
-      "maintainable": false
+      "maintainable": true,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
     }
   },
   {
     "id": "force-power-negate-energy",
     "sourceType": "forcePower",
+    "sourceId": "be1ae263c498af3b",
     "name": "Negate Energy",
-    "description": "You use the Force to absorb or deflect energy damage. The target gains energy resistance 20 against one energy attack.",
+    "description": "You dissipate an energy attack.",
     "actionType": "reaction",
+    "actionLabel": "Reaction",
     "tags": [
-      "action-economy",
-      "action_economy",
-      "defense",
-      "deflect",
       "Force",
       "force",
-      "force_execution",
       "force_power",
-      "force_power_check",
-      "new_action",
+      "force_power_selector",
+      "official",
+      "defense",
       "reaction",
-      "skill_use_the_force",
-      "Telekinetic",
-      "telekinetic",
-      "use_the_force"
+      "energy_defense",
+      "anti_blaster",
+      "survivability"
     ],
     "usage": {
-      "charges": 0,
-      "recovery": "none"
+      "charges": null,
+      "recovery": "encounter"
     },
     "resourceCost": {
-      "forcePoints": 20
+      "forcePowerUse": 1,
+      "forcePoint": null
     },
     "resolution": {
       "type": "flat",
-      "description": "No check required"
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
     },
     "meta": {
-      "powerLevel": 2,
-      "discipline": "telekinetic",
+      "powerLevel": 1,
+      "discipline": "general",
       "duration": "Instantaneous",
       "range": "Personal or touch",
       "target": "You or one creature",
       "sourcebook": "Saga Edition Core Rulebook",
       "page": 99,
-      "maintainable": false
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
     }
   },
   {
-    "id": "force-power-force-sense",
+    "id": "force-power-obscure",
     "sourceType": "forcePower",
-    "name": "Force Sense",
-    "description": "You open yourself to the Force, sensing danger and gaining heightened awareness. You cannot be surprised and gain a +5 bonus to Perception checks until the start of your next turn.",
-    "actionType": "free",
+    "sourceId": "fp_obscure",
+    "name": "Obscure",
+    "description": "You use The Force to cloud an enemy's mind, making it harder for the enemy to see its target.",
+    "actionType": "reaction",
+    "actionLabel": "Reaction",
     "tags": [
-      "ability_wis",
-      "awareness",
       "Force",
       "force",
       "force_power",
-      "Mind-Affecting",
+      "force_power_selector",
+      "mind-affecting",
+      "official",
       "mind_affecting",
-      "skill_perception",
-      "utility"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 15
-    },
-    "resolution": {
-      "type": "flat",
-      "description": "No check required"
-    },
-    "meta": {
-      "powerLevel": 1,
-      "discipline": "telepathic",
-      "duration": "1 round",
-      "range": "Personal",
-      "target": "You",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 96,
-      "maintainable": false
-    }
-  },
-  {
-    "id": "force-power-battlemind",
-    "sourceType": "forcePower",
-    "name": "Battlemind",
-    "description": "You focus your mind through the Force, gaining tactical clarity. You gain a +2 insight bonus to Reflex Defense until the start of your next turn.",
-    "actionType": "free",
-    "tags": [
-      "ability_dex",
-      "defense",
-      "Force",
-      "force",
-      "force_power",
-      "Mind-Affecting",
-      "mind_affecting",
-      "reflex"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 15
-    },
-    "resolution": {
-      "type": "flat",
-      "description": "No check required"
-    },
-    "meta": {
-      "powerLevel": 1,
-      "discipline": "telepathic",
-      "duration": "1 round",
-      "range": "Personal",
-      "target": "You",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 94,
-      "maintainable": false
-    }
-  },
-  {
-    "id": "force-power-force-thrust",
-    "sourceType": "forcePower",
-    "name": "Force Thrust",
-    "description": "You violently push your target away with telekinetic force. The target is pushed 6 squares away from you and knocked prone, taking 2d6 damage.",
-    "actionType": "action",
-    "tags": [
-      "control",
-      "controller",
-      "debuff",
-      "Force",
-      "force",
-      "force-control",
-      "force_control",
-      "force_power",
-      "Telekinetic",
-      "telekinetic"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 20
-    },
-    "resolution": {
-      "type": "flat",
-      "description": "No check required"
-    },
-    "meta": {
-      "powerLevel": 2,
-      "discipline": "telekinetic",
-      "duration": "Instantaneous",
-      "range": "6 squares",
-      "target": "One creature or object",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 97,
-      "maintainable": false
-    }
-  },
-  {
-    "id": "force-power-drain-energy",
-    "sourceType": "forcePower",
-    "name": "Drain Energy",
-    "description": "You drain the energy from technological devices through the Force. The target takes energy damage based on your Use the Force check result.",
-    "actionType": "action",
-    "tags": [
-      "Dark Side",
-      "dark-side",
-      "dark_side",
-      "droid",
-      "Force",
-      "force",
-      "force_execution",
-      "force_power",
-      "force_power_check",
-      "racial",
-      "skill_use_the_force",
-      "species_droid",
-      "species_locked",
-      "use_the_force"
-    ],
-    "usage": {
-      "charges": 0,
-      "recovery": "none"
-    },
-    "resourceCost": {
-      "forcePoints": 15
-    },
-    "resolution": {
-      "type": "dc-tier",
-      "dcChart": [
-        {
-          "dc": 15,
-          "effect": "2d6 energy damage",
-          "description": "Target takes 2d6 energy damage"
-        },
-        {
-          "dc": 20,
-          "effect": "4d6 energy damage",
-          "description": "Target takes 4d6 energy damage"
-        },
-        {
-          "dc": 25,
-          "effect": "6d6 energy damage + disabled",
-          "description": "Target takes 6d6 energy damage and is disabled for 1 round"
-        },
-        {
-          "dc": 30,
-          "effect": "8d6 energy damage + shutdown",
-          "description": "Target takes 8d6 energy damage and shuts down for 1d4 rounds"
-        }
-      ]
-    },
-    "meta": {
-      "powerLevel": 3,
-      "discipline": "dark-side",
-      "duration": "Instantaneous",
-      "range": "6 squares",
-      "target": "One droid or electronic device",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 95,
-      "maintainable": false
-    }
-  },
-  {
-    "id": "force-power-inspire",
-    "sourceType": "forcePower",
-    "name": "Inspire",
-    "description": "You inspire an ally through the Force, granting them confidence and clarity. The target gains a +2 morale bonus to their next attack roll or skill check.",
-    "actionType": "free",
-    "tags": [
-      "ability_cha",
-      "accuracy",
+      "stealth",
+      "concealment",
       "ally_support",
-      "Force",
-      "force",
-      "force_power",
-      "leadership",
-      "Mind-Affecting",
-      "mind_affecting",
-      "racial",
-      "species_gran",
-      "species_locked",
-      "support"
+      "area",
+      "standard_action"
     ],
     "usage": {
-      "charges": 0,
-      "recovery": "none"
+      "charges": null,
+      "recovery": "encounter"
     },
     "resourceCost": {
-      "forcePoints": 15
+      "forcePowerUse": 1,
+      "forcePoint": null
     },
     "resolution": {
-      "type": "flat",
-      "description": "No check required"
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "-5 penalty",
+          "description": "Target takes a -5 penalty on the attack roll."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "-5 penalty",
+          "description": "Target takes a -5 penalty on the attack roll."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
     },
     "meta": {
       "powerLevel": 1,
       "discipline": "telepathic",
-      "duration": "1 round",
-      "range": "6 squares",
-      "target": "One ally",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 98,
-      "maintainable": false
+      "duration": "Instantaneous",
+      "range": "12 squares",
+      "target": "One target that just made an attack",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Mind-Affecting"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
     }
   },
   {
-    "id": "force-power-force-strike",
+    "id": "force-power-phase",
     "sourceType": "forcePower",
-    "name": "Force Strike",
-    "description": "You strike your target with a telekinetic blow. The target takes 2d6 Force damage and must make a Fortitude save (DC = your UTF check) or be knocked prone.",
-    "actionType": "action",
+    "sourceId": "fp_phase",
+    "name": "Phase",
+    "description": "You can pass through solid objects, such as walls and doors.",
+    "actionType": "move",
+    "actionLabel": "Move Action",
     "tags": [
-      "ability_con",
-      "control",
-      "debuff",
       "Force",
       "force",
-      "force_execution",
       "force_power",
-      "force_power_check",
-      "fortitude",
-      "Telekinetic",
-      "telekinetic",
-      "use_the_force"
+      "force_power_selector",
+      "official",
+      "mobility",
+      "defense",
+      "escape",
+      "self_buff",
+      "standard_action",
+      "intangibility"
     ],
     "usage": {
-      "charges": 0,
-      "recovery": "none"
+      "charges": null,
+      "recovery": "encounter"
     },
     "resourceCost": {
-      "forcePoints": 15
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 25,
+      "dcChart": [
+        {
+          "dc": 25,
+          "effect": "Phase 2 sq",
+          "description": "You gain a Phasing Speed of 2 squares."
+        },
+        {
+          "dc": 30,
+          "effect": "Phase 4 sq",
+          "description": "You gain a Phasing Speed of 4 squares."
+        },
+        {
+          "dc": 35,
+          "effect": "Phase 6 sq",
+          "description": "You gain a Phasing Speed of 6 squares."
+        },
+        {
+          "dc": 40,
+          "effect": "Phase 8 sq",
+          "description": "You gain a Phasing Speed of 8 squares."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 25,
+          "effectSummary": "Phase 2 sq",
+          "description": "You gain a Phasing Speed of 2 squares."
+        },
+        {
+          "min": 30,
+          "effectSummary": "Phase 4 sq",
+          "description": "You gain a Phasing Speed of 4 squares."
+        },
+        {
+          "min": 35,
+          "effectSummary": "Phase 6 sq",
+          "description": "You gain a Phasing Speed of 6 squares."
+        },
+        {
+          "min": 40,
+          "effectSummary": "Phase 8 sq",
+          "description": "You gain a Phasing Speed of 8 squares."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "general",
+      "duration": "Until beginning of next turn",
+      "range": "Self",
+      "target": "Self",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-plant-surge",
+    "sourceType": "forcePower",
+    "sourceId": "fp_plantsurge",
+    "name": "Plant Surge",
+    "description": "You reach out with The Force to entreat the aid of plants, causing them to lash out at your opponents.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "control",
+      "terrain",
+      "area",
+      "standard_action",
+      "nature"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "Speed reduced to 0",
+          "description": "Target's Speed is reduced to 0 until the start of your next turn."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "Speed reduced to 0",
+          "description": "Target's Speed is reduced to 0 until the start of your next turn."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "control",
+      "duration": "Until beginning of next turn",
+      "range": "12 squares",
+      "target": "One creature",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-prescience",
+    "sourceType": "forcePower",
+    "sourceId": "fp_prescience",
+    "name": "Prescience",
+    "description": "The Force grants you a flash of insight in dealing with your enemies.",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "awareness",
+      "defense",
+      "initiative",
+      "self_buff",
+      "swift_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "+1 insight bonus",
+          "description": "You gain a +1 insight bonus to all Defenses and attack rolls against the target."
+        },
+        {
+          "dc": 20,
+          "effect": "+2 insight bonus",
+          "description": "You gain a +2 insight bonus to all Defenses and attack rolls against the target."
+        },
+        {
+          "dc": 25,
+          "effect": "+3 insight bonus",
+          "description": "You gain a +3 insight bonus to all Defenses and attack rolls against the target."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "+1 insight bonus",
+          "description": "You gain a +1 insight bonus to all Defenses and attack rolls against the target."
+        },
+        {
+          "min": 20,
+          "effectSummary": "+2 insight bonus",
+          "description": "You gain a +2 insight bonus to all Defenses and attack rolls against the target."
+        },
+        {
+          "min": 25,
+          "effectSummary": "+3 insight bonus",
+          "description": "You gain a +3 insight bonus to all Defenses and attack rolls against the target."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "general",
+      "duration": "Until end of next turn",
+      "range": "Line of sight",
+      "target": "One target",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-rebuke",
+    "sourceType": "forcePower",
+    "sourceId": "390074b44aedfa2a",
+    "name": "Rebuke",
+    "description": "You deflect a Force Power used against you.",
+    "actionType": "reaction",
+    "actionLabel": "Reaction",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "anti_force",
+      "control",
+      "daze",
+      "single_target",
+      "standard_action",
+      "force_execution"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
     },
     "resolution": {
       "type": "flat",
-      "description": "No check required"
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "general",
+      "duration": "1 round",
+      "range": "6 squares",
+      "target": "One Force-sensitive creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 99,
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-rend",
+    "sourceType": "forcePower",
+    "sourceId": "fp_rend",
+    "name": "Rend",
+    "description": "You can move a single target, whether it is a creature or object, in two different directions simultaneously.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "dark-side",
+      "official",
+      "dark_side",
+      "telekinetic",
+      "offense_force",
+      "single_target",
+      "damage",
+      "standard_action",
+      "armor_break"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "3d6 damage",
+          "description": "Target takes 3d6 points of damage."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "3d6 damage",
+          "description": "Target takes 3d6 points of damage."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "dark-side",
+      "duration": "Instantaneous",
+      "range": "6 squares",
+      "target": "One target",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Dark Side"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-repulse",
+    "sourceType": "forcePower",
+    "sourceId": "fp_repulse",
+    "name": "Repulse",
+    "description": "You use The Force to clear an area around yourself.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "telekinetic",
+      "official",
+      "offense_force",
+      "area",
+      "push",
+      "standard_action",
+      "battlefield_control"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "Push 1+ squares",
+          "description": "Push target back 1 square plus 1 additional square for every 5 points by which you exceeded the target's Strength check."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 20,
+          "effectSummary": "Push 1+ squares",
+          "description": "Push target back 1 square plus 1 additional square for every 5 points by which you exceeded the target's Strength check."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
     },
     "meta": {
       "powerLevel": 1,
       "discipline": "telekinetic",
       "duration": "Instantaneous",
-      "range": "6 squares",
-      "target": "One creature",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 97,
-      "maintainable": false
+      "range": "Adjacent",
+      "target": "All adjacent targets",
+      "sourcebook": "Force Unleashed Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
     }
   },
   {
-    "id": "force-power-mind-trick",
+    "id": "force-power-resist-force",
     "sourceType": "forcePower",
-    "name": "Mind Trick",
-    "description": "You influence a weak mind to believe what you tell them or follow a simple suggestion. The target must make a Will save (DC = your UTF check) or be affected.",
-    "actionType": "action",
+    "sourceId": "fp_resistforce",
+    "name": "Resist Force",
+    "description": "You use The Force to protect yourself from an opponent's Force Powers.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
     "tags": [
-      "ability_wis",
-      "controller",
       "Force",
       "force",
-      "force-control",
-      "force_control",
-      "force_execution",
       "force_power",
-      "force_power_check",
-      "Mind-Affecting",
-      "mind_affecting",
-      "use_the_force",
-      "will"
+      "force_power_selector",
+      "official",
+      "defense",
+      "anti_force",
+      "reaction",
+      "utf_defense",
+      "survivability"
     ],
     "usage": {
-      "charges": 0,
-      "recovery": "none"
+      "charges": null,
+      "recovery": "encounter"
     },
     "resourceCost": {
-      "forcePoints": 15
+      "forcePowerUse": 1,
+      "forcePoint": null
     },
     "resolution": {
-      "type": "flat",
-      "description": "No check required"
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "+1 Defense",
+          "description": "You gain +1 to one Defense score of your choice against Force Powers."
+        },
+        {
+          "dc": 20,
+          "effect": "+2 Defense",
+          "description": "You gain +2 to one Defense score of your choice against Force Powers."
+        },
+        {
+          "dc": 25,
+          "effect": "+3 Defense",
+          "description": "You gain +3 to one Defense score of your choice against Force Powers."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "+1 Defense",
+          "description": "You gain +1 to one Defense score of your choice against Force Powers."
+        },
+        {
+          "min": 20,
+          "effectSummary": "+2 Defense",
+          "description": "You gain +2 to one Defense score of your choice against Force Powers."
+        },
+        {
+          "min": 25,
+          "effectSummary": "+3 Defense",
+          "description": "You gain +3 to one Defense score of your choice against Force Powers."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
     },
     "meta": {
       "powerLevel": 1,
-      "discipline": "telepathic",
-      "duration": "1 minute or until completed",
-      "range": "6 squares",
-      "target": "One creature",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 98,
-      "maintainable": false
+      "discipline": "control",
+      "duration": "Until beginning of next turn",
+      "range": "Self",
+      "target": "Self",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
     }
   },
   {
-    "id": "force-power-battle-strike",
+    "id": "force-power-sever-force",
     "sourceType": "forcePower",
-    "name": "Battle Strike",
-    "description": "You channel the Force to enhance your next melee attack. Your next melee attack this round gains a +1d6 bonus to damage.",
-    "actionType": "free",
+    "sourceId": "b52769dd11b4e52c",
+    "name": "Sever Force",
+    "description": "You temporarily block a Force-user's access to The Force.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
     "tags": [
-      "ability_str",
       "Force",
       "force",
       "force_power",
-      "melee",
-      "offense_melee",
-      "Telekinetic",
-      "telekinetic"
+      "force_power_selector",
+      "light-side",
+      "official",
+      "light_side",
+      "anti_force",
+      "control",
+      "single_target",
+      "standard_action",
+      "force_denial",
+      "high_tier"
     ],
     "usage": {
-      "charges": 0,
-      "recovery": "none"
+      "charges": null,
+      "recovery": "encounter"
     },
     "resourceCost": {
-      "forcePoints": 15
+      "forcePowerUse": 1,
+      "forcePoint": null
     },
     "resolution": {
       "type": "flat",
-      "description": "No check required"
+      "skill": "Use the Force",
+      "baseDC": 30,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "light-side",
+      "duration": "Permanent",
+      "range": "Touch",
+      "target": "One Force-sensitive creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 99,
+      "maintainable": false,
+      "descriptors": [
+        "Light Side"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-shatterpoint",
+    "sourceType": "forcePower",
+    "sourceId": "fp_shatterpoint",
+    "name": "Shatterpoint",
+    "description": "You can see the critical point of something, whether it is a person or object, that would shatter if struck at the right time.",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "offense_melee",
+      "offense_ranged",
+      "critical_setup",
+      "swift_action",
+      "damage_spike"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 25,
+      "dcChart": [
+        {
+          "dc": 25,
+          "effect": "DT -5",
+          "description": "If your next attack hits, treat the target's Damage Threshold as 5 points lower than normal."
+        },
+        {
+          "dc": 30,
+          "effect": "DT -10",
+          "description": "If your next attack hits, treat the target's Damage Threshold as 10 points lower than normal."
+        },
+        {
+          "dc": 35,
+          "effect": "DT -15",
+          "description": "If your next attack hits, treat the target's Damage Threshold as 15 points lower than normal."
+        },
+        {
+          "dc": 40,
+          "effect": "DT -20",
+          "description": "If your next attack hits, treat the target's Damage Threshold as 20 points lower than normal."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 25,
+          "effectSummary": "DT -5",
+          "description": "If your next attack hits, treat the target's Damage Threshold as 5 points lower than normal."
+        },
+        {
+          "min": 30,
+          "effectSummary": "DT -10",
+          "description": "If your next attack hits, treat the target's Damage Threshold as 10 points lower than normal."
+        },
+        {
+          "min": 35,
+          "effectSummary": "DT -15",
+          "description": "If your next attack hits, treat the target's Damage Threshold as 15 points lower than normal."
+        },
+        {
+          "min": 40,
+          "effectSummary": "DT -20",
+          "description": "If your next attack hits, treat the target's Damage Threshold as 20 points lower than normal."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "control",
+      "duration": "Until end of encounter",
+      "range": "Self",
+      "target": "Self",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-slow",
+    "sourceType": "forcePower",
+    "sourceId": "fp_slow",
+    "name": "Slow",
+    "description": "The Force enables you to slow your targets as if they are encumbered by an extremely heavy load.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "telekinetic",
+      "official",
+      "control",
+      "debuff",
+      "single_target",
+      "speed_reduction",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "Speed -1, Encumbered",
+          "description": "Target's Speed is reduced by 1 square until the beginning of your next turn."
+        },
+        {
+          "dc": 20,
+          "effect": "Speed -2, Encumbered",
+          "description": "Target's Speed is reduced by 2 squares until the beginning of your next turn."
+        },
+        {
+          "dc": 25,
+          "effect": "Speed -3, Encumbered",
+          "description": "Target's Speed is reduced by 3 squares until the beginning of your next turn."
+        },
+        {
+          "dc": 30,
+          "effect": "Speed -4, Encumbered",
+          "description": "Target's Speed is reduced by 4 squares until the beginning of your next turn."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "Speed -1, Encumbered",
+          "description": "Target's Speed is reduced by 1 square until the beginning of your next turn."
+        },
+        {
+          "min": 20,
+          "effectSummary": "Speed -2, Encumbered",
+          "description": "Target's Speed is reduced by 2 squares until the beginning of your next turn."
+        },
+        {
+          "min": 25,
+          "effectSummary": "Speed -3, Encumbered",
+          "description": "Target's Speed is reduced by 3 squares until the beginning of your next turn."
+        },
+        {
+          "min": 30,
+          "effectSummary": "Speed -4, Encumbered",
+          "description": "Target's Speed is reduced by 4 squares until the beginning of your next turn."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
     },
     "meta": {
       "powerLevel": 1,
       "discipline": "telekinetic",
+      "duration": "Until beginning of next turn",
+      "range": "12 squares",
+      "target": "One creature or Droid",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-stagger",
+    "sourceType": "forcePower",
+    "sourceId": "fp_stagger",
+    "name": "Stagger",
+    "description": "You use The Force to lash out at a nearby enemy, causing it to stumble.",
+    "actionType": "swift",
+    "actionLabel": "Swift Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "telekinetic",
+      "official",
+      "control",
+      "debuff",
+      "single_target",
+      "action_denial",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "2d6 damage, push 1",
+          "description": "Target takes 2d6 Force damage and is pushed 1 square away from you."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "2d6 damage, push 1",
+          "description": "Target takes 2d6 Force damage and is pushed 1 square away from you."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telekinetic",
+      "duration": "Instantaneous",
+      "range": "Adjacent",
+      "target": "One target adjacent to you",
+      "sourcebook": "Legacy Era Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Telekinetic"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-surge",
+    "sourceType": "forcePower",
+    "sourceId": "1ac1084ca8f07114",
+    "name": "Surge",
+    "description": "You use The Force to assist in a supernatural Jump.",
+    "actionType": "free",
+    "actionLabel": "Free Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "official",
+      "mobility",
+      "self_buff",
+      "swift_action",
+      "action_economy",
+      "extra_move",
+      "movement_boost"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "flat",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [],
+      "tiers": [],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "general",
       "duration": "1 round",
       "range": "Personal",
       "target": "You",
       "sourcebook": "Saga Edition Core Rulebook",
-      "page": 94,
-      "maintainable": false
+      "page": 99,
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
     }
   },
   {
-    "id": "force-power-force-grip",
+    "id": "force-power-technometry",
     "sourceType": "forcePower",
-    "name": "Force Grip",
-    "description": "You use the Force to telekinetically choke or crush your target. The target takes damage each round based on your Use the Force check result.",
-    "actionType": "action",
+    "sourceId": "fp_technometry",
+    "name": "Technometry",
+    "description": "You can tap into and read technological devices and, in some cases, control them.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
     "tags": [
-      "Dark Side",
-      "dark-side",
-      "dark_side",
       "Force",
       "force",
-      "force-offense",
-      "force_execution",
-      "force_offense",
       "force_power",
-      "force_power_check",
-      "offense_ranged",
-      "skill_use_the_force",
-      "Telekinetic",
-      "telekinetic",
-      "use_the_force"
+      "force_power_selector",
+      "official",
+      "tech",
+      "droid",
+      "device_control",
+      "utility",
+      "standard_action",
+      "skill_use_computer"
     ],
     "usage": {
-      "charges": 0,
-      "recovery": "none"
+      "charges": null,
+      "recovery": "encounter"
     },
     "resourceCost": {
-      "forcePoints": 15
+      "forcePowerUse": 1,
+      "forcePoint": null
     },
     "resolution": {
       "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
       "dcChart": [
         {
-          "dc": 15,
-          "effect": "2d6 damage/round",
-          "description": "Target takes 2d6 damage per round and is immobilized"
-        },
-        {
           "dc": 20,
-          "effect": "4d6 damage/round",
-          "description": "Target takes 4d6 damage per round and is immobilized"
+          "effect": "Read device",
+          "description": "You discover one piece of information contained within the target's memory."
         },
         {
           "dc": 25,
-          "effect": "6d6 damage/round + lift",
-          "description": "Target takes 6d6 damage per round, is immobilized, and lifted off ground"
+          "effect": "Control Droid",
+          "description": "You can jam the Droid's senses, deny Dexterity bonus, or force it to flee at top speed."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 20,
+          "effectSummary": "Read device",
+          "description": "You discover one piece of information contained within the target's memory."
+        },
+        {
+          "min": 25,
+          "effectSummary": "Control Droid",
+          "description": "You can jam the Droid's senses, deny Dexterity bonus, or force it to flee at top speed."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "general",
+      "duration": "Instantaneous",
+      "range": "Touch",
+      "target": "One Droid or device",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-thought-bomb",
+    "sourceType": "forcePower",
+    "sourceId": "fp_thoughtbomb",
+    "name": "Thought Bomb",
+    "description": "You use The Force to radiate out harmful waves of telepathy, damaging the minds of nearby foes.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "mind-affecting",
+      "official",
+      "mind_affecting",
+      "offense_force",
+      "area",
+      "dark_side",
+      "standard_action",
+      "burst"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 20,
+      "dcChart": [
+        {
+          "dc": 20,
+          "effect": "2d6 damage, -Swift",
+          "description": "Target takes 2d6 Force damage and loses its Swift Action on its next turn."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 20,
+          "effectSummary": "2d6 damage, -Swift",
+          "description": "Target takes 2d6 Force damage and loses its Swift Action on its next turn."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "telepathic",
+      "duration": "Instantaneous",
+      "range": "2 squares",
+      "target": "All opponents within 2 squares",
+      "sourcebook": "Jedi Academy Training Manual",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Mind-Affecting"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-valor",
+    "sourceType": "forcePower",
+    "sourceId": "fp_valor",
+    "name": "Valor",
+    "description": "You call upon the strength of The Force, reaching out to your ally and sharing your strength with them.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "light-side",
+      "official",
+      "light_side",
+      "ally_support",
+      "team_buff",
+      "morale",
+      "defense",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "+1 Will Defense",
+          "description": "The target gains a +1 bonus to their Will Defense against Mind-Affecting and Fear effects."
+        },
+        {
+          "dc": 20,
+          "effect": "+2 Will Defense",
+          "description": "The target gains a +2 bonus to their Will Defense against Mind-Affecting and Fear effects."
+        },
+        {
+          "dc": 25,
+          "effect": "+5 Will Defense",
+          "description": "The target gains a +5 bonus to their Will Defense against Mind-Affecting and Fear effects."
         },
         {
           "dc": 30,
-          "effect": "8d6 damage/round + crush",
-          "description": "Target takes 8d6 damage per round and is being crushed (fort save or die)"
+          "effect": "+10 Will Defense",
+          "description": "The target gains a +10 bonus to their Will Defense against Mind-Affecting and Fear effects."
         }
-      ]
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "+1 Will Defense",
+          "description": "The target gains a +1 bonus to their Will Defense against Mind-Affecting and Fear effects."
+        },
+        {
+          "min": 20,
+          "effectSummary": "+2 Will Defense",
+          "description": "The target gains a +2 bonus to their Will Defense against Mind-Affecting and Fear effects."
+        },
+        {
+          "min": 25,
+          "effectSummary": "+5 Will Defense",
+          "description": "The target gains a +5 bonus to their Will Defense against Mind-Affecting and Fear effects."
+        },
+        {
+          "min": 30,
+          "effectSummary": "+10 Will Defense",
+          "description": "The target gains a +10 bonus to their Will Defense against Mind-Affecting and Fear effects."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
     },
     "meta": {
-      "powerLevel": 3,
+      "powerLevel": 1,
+      "discipline": "light-side",
+      "duration": "Until beginning of next turn",
+      "range": "12 squares",
+      "target": "One ally",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": null,
+      "maintainable": true,
+      "descriptors": [
+        "Light Side"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-vital-transfer",
+    "sourceType": "forcePower",
+    "sourceId": "00b65e47a4dd7d76",
+    "name": "Vital Transfer",
+    "description": "You heal another through The Force.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "light-side",
+      "official",
+      "light_side",
+      "healing",
+      "support",
+      "touch",
+      "standard_action",
+      "force_execution",
+      "skill_treat_injury",
+      "life_transfer"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "2d6 healing",
+          "description": "Target heals 2d6 hit points"
+        },
+        {
+          "dc": 20,
+          "effect": "4d6 healing",
+          "description": "Target heals 4d6 hit points"
+        },
+        {
+          "dc": 25,
+          "effect": "6d6 healing + condition",
+          "description": "Target heals 6d6 hit points and removes one ongoing condition"
+        },
+        {
+          "dc": 30,
+          "effect": "8d6 healing + all conditions",
+          "description": "Target heals 8d6 hit points and removes all ongoing conditions"
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "2d6 healing",
+          "description": "Target heals 2d6 hit points"
+        },
+        {
+          "min": 20,
+          "effectSummary": "4d6 healing",
+          "description": "Target heals 4d6 hit points"
+        },
+        {
+          "min": 25,
+          "effectSummary": "6d6 healing + condition",
+          "description": "Target heals 6d6 hit points and removes one ongoing condition"
+        },
+        {
+          "min": 30,
+          "effectSummary": "8d6 healing + all conditions",
+          "description": "Target heals 8d6 hit points and removes all ongoing conditions"
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
+      "discipline": "light-side",
+      "duration": "Instantaneous",
+      "range": "Touch",
+      "target": "One living creature",
+      "sourcebook": "Saga Edition Core Rulebook",
+      "page": 99,
+      "maintainable": false,
+      "descriptors": [
+        "Light Side"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
+    }
+  },
+  {
+    "id": "force-power-wound",
+    "sourceType": "forcePower",
+    "sourceId": "fp_wound",
+    "name": "Wound",
+    "description": "You cause spasms in the lungs of your targets, painfully injuring them.",
+    "actionType": "standard",
+    "actionLabel": "Standard Action",
+    "tags": [
+      "Force",
+      "force",
+      "force_power",
+      "force_power_selector",
+      "dark-side",
+      "official",
+      "dark_side",
+      "offense_force",
+      "damage",
+      "single_target",
+      "standard_action"
+    ],
+    "usage": {
+      "charges": null,
+      "recovery": "encounter"
+    },
+    "resourceCost": {
+      "forcePowerUse": 1,
+      "forcePoint": null
+    },
+    "resolution": {
+      "type": "dc-tier",
+      "skill": "Use the Force",
+      "baseDC": 15,
+      "dcChart": [
+        {
+          "dc": 15,
+          "effect": "4d6 damage",
+          "description": "Target receives 4d6 points of Force damage."
+        }
+      ],
+      "tiers": [
+        {
+          "min": 15,
+          "effectSummary": "4d6 damage",
+          "description": "Target receives 4d6 points of Force damage."
+        }
+      ],
+      "onHit": null,
+      "onMiss": null
+    },
+    "meta": {
+      "powerLevel": 1,
       "discipline": "dark-side",
-      "duration": "Concentration",
+      "duration": "Instantaneous",
       "range": "6 squares",
       "target": "One creature",
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 96,
-      "maintainable": true
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "page": null,
+      "maintainable": false,
+      "descriptors": [
+        "Dark Side"
+      ],
+      "damage": "",
+      "official": true,
+      "homebrew": false
     }
   }
 ]

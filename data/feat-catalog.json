@@ -6115,7 +6115,7 @@
       "source": "Jedi Academy Training Manual",
       "slug": "force-regimen-mastery",
       "featType": "force",
-      "subType": "RULE",
+      "subType": "STATE",
       "prerequisites": "Force Sensitivity, Trained in Use the Force",
       "prerequisite": "Force Sensitivity, Trained in Use the Force",
       "prerequisitesText": "Force Sensitivity, Trained in Use the Force",
@@ -6133,7 +6133,7 @@
       "effect": "You learn a number of\nForce Regimens\nequal to 1 + your\nWisdom\nmodifier (minimum 1).",
       "normalText": "",
       "special": "You can take this Feat more than once. Each time you take this Feat, you learn a number of additional Force Regimens equal to 1 + your Wisdom modifier (minimum 1). If your Wisdom modifier permanently increases, you immediately gain a number of Force Regimens equal to the number of Force Regimen Mastery Feats you have taken.",
-      "shortSummary": "Learn a number of Force Regimens equal to 1 + your Wisdom modifier (minimum of 1).",
+      "shortSummary": "Learn a number of Force Regimens equal to 1 + your configured Force Training ability modifier (minimum 1).",
       "sourcebook": "Jedi Academy Training Manual",
       "page": 31,
       "sourceUrl": "https://swse.fandom.com/wiki/Force_Regimen_Mastery",
@@ -6157,18 +6157,18 @@
       "executionModel": "PASSIVE",
       "abilityMeta": {
         "executionModel": "PASSIVE",
-        "subType": "RULE",
+        "subType": "STATE",
         "mechanicsMode": "grant_unlock",
         "applicationScope": "force_regimen_picker_and_force_tab_cards",
         "staticSheetPolicy": "exclude",
         "requiresRuntimeContext": false,
         "requiresSelectedChoice": false,
-        "conditionSummary": "Force Regimen Mastery now has Force Regimen data/pack stubs, but selection and active-regimen UI are intentionally pending dedicated picker/sheet work.",
+        "conditionSummary": "Creates Force Regimen picks equal to 1 + the configured Force Training ability modifier through progression entitlement logic.",
         "predicateRequirements": [],
         "metadataPhase": "phase18-force-regimen-stubs",
         "metadataNotes": "Phase 18 creates Force Regimen data/pack stubs by name only; individual regimen text/effects are pending.",
         "implementationStatus": "implemented_selection_and_activation_phase22",
-        "description": "Grants Force Regimen selections through the Force Regimen progression step. Known regimens appear as Force-tab cards and roll Use the Force when performed.",
+        "description": "Grants Force Regimen selections through the Force Regimen progression step using the same configured ability formula as Force Training. Known regimens appear as Force-tab cards and roll Use the Force when performed.",
         "modifiers": [
           {
             "target": "metadata",
@@ -6182,8 +6182,7 @@
             "staticSheetPolicy": "exclude",
             "metadataPhase": "phase18-force-regimen-stubs"
           }
-        ],
-        "deferredReason": "Requires dedicated Force Regimen selection step and Force-tab UI before learned regimens can be chosen or activated."
+        ]
       },
       "grantsActions": [],
       "grantsBonuses": {
@@ -6198,7 +6197,21 @@
       "archetype": "",
       "playstyle": "",
       "tier": 0,
-      "iconPath": "icons/svg/upgrade.svg"
+      "iconPath": "icons/svg/upgrade.svg",
+      "choiceMeta": {
+        "resolution": "grant_entitlement",
+        "required": true,
+        "status": "deferred_grant_step_not_immediate_choice",
+        "choiceKind": "force_regimen_pick",
+        "storagePath": "flags.swse.pendingEntitlements.force_regimen_pick",
+        "choiceSource": "grantPool",
+        "grantType": "force_regimen",
+        "grantRegistry": "forceRegimen",
+        "countFormula": "max(1, 1 + configuredForceTrainingAbilityModifier)",
+        "minimum": 1,
+        "dynamic": true,
+        "repeatable": true
+      }
     },
     "effects": [],
     "folder": null,
@@ -23201,7 +23214,7 @@
       "source": "Saga Edition Core Rulebook",
       "slug": "strong-in-the-force",
       "featType": "force",
-      "subType": "MODIFIER",
+      "subType": "RESOURCE",
       "prerequisites": "None",
       "prerequisite": "None",
       "prerequisitesText": "None",

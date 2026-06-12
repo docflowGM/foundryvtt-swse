@@ -6668,6 +6668,19 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
 .swse-force-suite-tab .fcard[data-p="tk"]      { --force-card-accent: oklch(0.72 0.22 290); }
 .swse-force-suite-tab .fcard[data-p="mind"]    { --force-card-accent: oklch(0.82 0.18 65); }
 .swse-force-suite-tab .fcard[data-p="form"]    { --force-card-accent: oklch(0.72 0.26 350); }
+.swse-force-suite-tab .fcard[data-p^="form-"] { --force-card-accent: oklch(0.72 0.26 350); }
+.swse-force-suite-tab .fcard[data-p="form-shii-cho"] { --force-card-accent: oklch(0.86 0.12 215); }
+.swse-force-suite-tab .fcard[data-p="form-makashi"] { --force-card-accent: oklch(0.72 0.22 295); }
+.swse-force-suite-tab .fcard[data-p="form-soresu"] { --force-card-accent: oklch(0.68 0.22 255); }
+.swse-force-suite-tab .fcard[data-p="form-ataru"] { --force-card-accent: oklch(0.78 0.22 150); }
+.swse-force-suite-tab .fcard[data-p="form-shien"] { --force-card-accent: oklch(0.82 0.18 80); }
+.swse-force-suite-tab .fcard[data-p="form-djem-so"] { --force-card-accent: oklch(0.72 0.24 42); }
+.swse-force-suite-tab .fcard[data-p="form-niman"] { --force-card-accent: oklch(0.86 0.16 98); }
+.swse-force-suite-tab .fcard[data-p="form-juyo"] { --force-card-accent: oklch(0.64 0.27 24); }
+.swse-force-suite-tab .fcard[data-p="form-vaapad"] { --force-card-accent: oklch(0.68 0.28 350); }
+.swse-force-suite-tab .fcard[data-p="form-jarkai"] { --force-card-accent: oklch(0.75 0.25 325); }
+.swse-force-suite-tab .fcard[data-p="form-trakata"] { --force-card-accent: oklch(0.72 0.24 305); }
+.swse-force-suite-tab .fcard[data-p="form-sokan"] { --force-card-accent: oklch(0.76 0.20 200); }
 .swse-force-suite-tab .fcard[data-p="neutral"] { --force-card-accent: var(--swse-accent, oklch(0.72 0.18 250)); }
 
 .swse-force-suite-tab .fcard {

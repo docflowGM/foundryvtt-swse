@@ -4086,3 +4086,13 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store
   top: auto !important;
 }
 
+
+/* Store vehicle/droid refinement controls */
+.swse-store-surface__filter-group--vehicle .swse-store-surface__select {
+  min-width: 104px;
+}
+
+.swse-store-surface__select[disabled] {
+  opacity: 0.48;
+  cursor: not-allowed;
+}

@@ -65,7 +65,13 @@ export class PassiveContractValidator {
    * @throws {Error}
    */
   static validateModifier(meta) {
-    if (!meta?.modifiers) throw new Error("PASSIVE MODIFIER missing modifiers array");
+    if (!meta?.modifiers) {
+      // Resource-only passive metadata, such as Strong in the Force, is not a
+      // sheet modifier. Older items may still be tagged as MODIFIER; accept
+      // resourceRules here so actor preparation remains deterministic.
+      if (meta?.resourceRules && typeof meta.resourceRules === 'object') return true;
+      throw new Error("PASSIVE MODIFIER missing modifiers array");
+    }
 
     // Allowed Wave 2 condition types
     const allowedConditionTypes = ['action', 'attack_type', 'defense_vs', 'damage_type'];
@@ -482,6 +488,15 @@ export class PassiveContractValidator {
    */
   static validateRule(meta) {
     // RULE and rule definitions imported at module level (ES compatible)
+
+    const rules = Array.isArray(meta?.rules) ? meta.rules : (meta?.rule ? [meta.rule] : []);
+    const isProgressionOwnedGrant = !rules.length && (
+      meta?.mechanicsMode === 'grant_unlock'
+      || String(meta?.applicationScope || '').includes('picker')
+      || String(meta?.applicationScope || '').includes('progression')
+      || String(meta?.implementationStatus || '').includes('selection')
+    );
+    if (isProgressionOwnedGrant) return true;
 
     if (!meta?.rules) {
       throw new Error("PASSIVE RULE missing rules array");

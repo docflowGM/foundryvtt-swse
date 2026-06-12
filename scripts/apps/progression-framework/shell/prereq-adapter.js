@@ -64,14 +64,19 @@ export class PrereqAdapter {
       return { items: [], system: {} };
     }
 
-    // Shallow copy the actor and its system
+    const rawItems = actor.items?.contents || actor.items || [];
+    const items = Array.isArray(rawItems) ? [...rawItems] : Array.from(rawItems || []);
+
+    // Shallow copy the actor and its system. Preserve Foundry collection-backed
+    // embedded items; otherwise BAB/class prerequisite checks see an empty item
+    // list and report +0 for valid level-up actors.
     const mockActor = {
       id: actor.id || null,
       name: actor.name || 'Draft Character',
       type: actor.type || 'character',
       system: {
         ...(actor.system || {}),
-        // These will be overwritten by projected state
+        // These may be overwritten by projected state
         level: actor.system?.level || 1,
         bab: actor.system?.bab || 0,
         skills: { ...(actor.system?.skills || {}) },
@@ -82,7 +87,7 @@ export class PrereqAdapter {
           talents: [],
         },
       },
-      items: Array.isArray(actor.items) ? [...actor.items] : [],
+      items,
     };
 
     return mockActor;
@@ -108,16 +113,35 @@ export class PrereqAdapter {
    * @private
    */
   static _applyProjectedAttributes(mockActor, projection) {
-    if (!projection?.attributes) return;
+    if (!projection) return;
 
-    // For now, in chargen, we haven't changed class yet so level/BAB are 1/0.
-    // In levelup, these would be computed from the selected class.
-    // This is a placeholder for future work when we compute level/BAB from projection.
+    const projectedLevel = Number(projection?.derived?.level ?? projection?.level);
+    if (Number.isFinite(projectedLevel) && projectedLevel > 0) {
+      mockActor.system.level = Math.max(Number(mockActor.system.level || 1), projectedLevel);
+    }
 
-    // Projected attributes (str, dex, con, etc.) would affect ability checks
-    // but PrerequisiteChecker doesn't directly check ability scores yet.
-    // Store them for future use.
-    mockActor.system.projectedAttributes = { ...projection.attributes };
+    const projectedBab = this._coerceNumber(projection?.derived?.bab ?? projection?.derived?.baseAttackBonus ?? projection?.bab);
+    if (projectedBab !== null) {
+      const currentBab = this._coerceNumber(mockActor.system?.bab?.total ?? mockActor.system?.bab) ?? 0;
+      mockActor.system.bab = Math.max(currentBab, projectedBab);
+    }
+
+    if (projection?.attributes) {
+      // Projected attributes (str, dex, con, etc.) affect ability prerequisites.
+      mockActor.system.projectedAttributes = { ...projection.attributes };
+    }
+  }
+
+  static _coerceNumber(value) {
+    if (value === null || value === undefined) return null;
+    if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+    if (typeof value === 'string') {
+      const cleaned = value.replace(/[^0-9+\-.]/g, '');
+      if (!cleaned || cleaned === '+' || cleaned === '-' || cleaned === '.') return null;
+      const num = Number(cleaned);
+      return Number.isFinite(num) ? num : null;
+    }
+    return null;
   }
 
   /**

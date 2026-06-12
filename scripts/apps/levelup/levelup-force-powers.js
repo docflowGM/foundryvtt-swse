@@ -7,6 +7,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ForcePowerEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-power-engine.js";
 import { getClassLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { CAPABILITY_SLUGS } from "/systems/foundryvtt-swse/scripts/constants/capability-slugs.js";
+import { ForceTrainingEngine } from "/systems/foundryvtt-swse/scripts/engine/force/ForceTrainingEngine.js";
 
 /**
  * Determine if character gains force powers on this level up
@@ -68,11 +69,10 @@ export async function countForcePowersGained(actor, selectedFeats = []) {
     const featName = typeof feat === 'string' ? feat : feat.name;
     const featSlug = typeof feat === 'string' ? feat : (feat.system?.slug || featName?.toLowerCase().replace(/\s+/g, '-'));
     if (featSlug === CAPABILITY_SLUGS.FORCE_TRAINING || featName === 'Force Training') {
-      // Force Training grants 1 + WIS/CHA mod (based on game setting), minimum 1
-      const forceAbility = game.settings?.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
-      const mod = forceAbility === 'charisma'
-        ? (actor.system.abilities?.cha?.mod ?? 0)
-        : (actor.system.abilities?.wis?.mod ?? 0);
+      // Force Training grants 1 + configured ability modifier, minimum 1.
+      // Use the shared resolver so WIS/CHA and actor data-shape variants agree
+      // with the progression framework.
+      const mod = ForceTrainingEngine.getForceAbilityModifier(actor);
 
       count += Math.max(1, 1 + mod);
     }

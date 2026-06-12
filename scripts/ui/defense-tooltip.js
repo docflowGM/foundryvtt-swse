@@ -242,13 +242,17 @@ export class DefenseTooltip {
       ? 0
       : (defense.abilityMod ?? SchemaAdapters.getAbilityMod(actor, defenseInfo.abilityKey));
     const heroicLevel = getHeroicLevel(actor) || Number(system.derived?.heroicLevel ?? system.heroicLevel ?? system.level ?? 0) || 0;
+    const levelContribution = Number(defense.levelContribution ?? defense.armorContribution ?? heroicLevel) || 0;
     const classBonus = defense.classBonus || 0;
     const miscMod = defense.miscBonus ?? defense.miscMod ?? 0;
     const sizeModifier = defense.sizeModifier ?? 0;
     const armorBonus = defense.armorBonus ?? 0;
+    const armorSubtotalTerm = canonicalKey === 'reflex' || canonicalKey === 'flatFooted' ? 0 : armorBonus;
 
-    // Calculate subtotal from RAW components used by DefenseCalculator.
-    const subtotal = 10 + heroicLevel + abilityMod + classBonus + miscMod + sizeModifier + armorBonus;
+    // Calculate subtotal from the same terms used by DefenseCalculator. Reflex
+    // stores the SWSE heroic/armor replacement as levelContribution, so do not
+    // add armorBonus a second time in the tooltip.
+    const subtotal = 10 + levelContribution + abilityMod + classBonus + miscMod + sizeModifier + armorSubtotalTerm;
 
     // Get modifiers from ModifierEngine
     const modifierTarget = `defense.${defenseInfo.key}`;
@@ -261,6 +265,7 @@ export class DefenseTooltip {
       label: defenseInfo.label,
       key: defenseInfo.key,
       heroicLevel,
+      levelContribution,
       abilityMod,
       classBonus,
       miscMod,

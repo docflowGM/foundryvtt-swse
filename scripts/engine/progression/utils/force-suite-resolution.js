@@ -16,6 +16,100 @@ import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/e
 import { buildClassGrantLedger } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 import { PendingEntitlementService } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/services/pending-entitlement-service.js';
 
+function normalizeForceChoiceName(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’'`]/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function forceSelectionEntries(value) {
+  if (!value) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
+function collectShellSelectionEntries(shell, key) {
+  const containers = [
+    shell?.getSelection?.(key),
+    shell?.buildIntent?.getSelection?.(key),
+    shell?.draftSelections?.[key],
+    shell?.draftSelections?.get?.(key),
+    shell?.committedSelections?.get?.(key),
+    shell?.progressionSession?.draftSelections?.[key],
+    shell?.progressionSession?.getSelection?.(key),
+  ];
+  const entries = [];
+  const seen = new Set();
+  for (const value of containers) {
+    for (const entry of forceSelectionEntries(value)) {
+      if (!entry) continue;
+      const identity = entry.id || entry._id || entry.name || entry.label || entry;
+      const identityKey = `${typeof entry}:${identity}`;
+      if (seen.has(identityKey)) continue;
+      seen.add(identityKey);
+      entries.push(entry);
+    }
+  }
+  return entries;
+}
+
+function selectionHasNamedEntry(entries, wantedName) {
+  const wanted = normalizeForceChoiceName(wantedName);
+  return (entries || []).some((entry) => {
+    const names = [entry?.name, entry?.label, entry?.title, entry?.id, entry?._id, entry?.powerId, entry]
+      .filter(Boolean)
+      .map(normalizeForceChoiceName);
+    return names.some((name) => name === wanted || name.endsWith(` ${wanted}`) || wanted.endsWith(` ${name}`));
+  });
+}
+
+function actorHasNamedItem(actor, type, wantedName) {
+  const wanted = normalizeForceChoiceName(wantedName);
+  const wantedType = String(type || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+  return Array.from(actor?.items || []).some((item) => {
+    const itemType = String(item?.type || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+    if (wantedType && itemType !== wantedType) return false;
+    const name = normalizeForceChoiceName(item?.name);
+    return name === wanted || name.replace(/\s*\d+$/, '') === wanted;
+  });
+}
+
+/**
+ * Telekinetic Prodigy does not permanently raise Force Training capacity. It
+ * creates one current-event bonus slot when either:
+ * - the current Force Training packet selects Move Object, or
+ * - the player is taking Telekinetic Prodigy now and already knows Move Object
+ *   from an earlier Force Training packet (retroactive catch-up).
+ */
+export function resolveTelekineticProdigyBonusSlots(shell, actor, options = {}) {
+  const pendingTalents = collectShellSelectionEntries(shell, 'talents');
+  const pendingForcePowers = [
+    ...collectShellSelectionEntries(shell, 'forcePowers'),
+    ...forceSelectionEntries(options.pendingForcePowers),
+  ];
+  const hasPendingProdigy = selectionHasNamedEntry(pendingTalents, 'Telekinetic Prodigy');
+  const hasOwnedProdigy = actorHasNamedItem(actor, 'talent', 'Telekinetic Prodigy');
+  if (!hasPendingProdigy && !hasOwnedProdigy) {
+    return { slots: 0, active: false, trigger: '', hasPendingProdigy, hasOwnedProdigy };
+  }
+
+  const pendingMoveObject = selectionHasNamedEntry(pendingForcePowers, 'Move Object');
+  const ownedMoveObject = actorHasNamedItem(actor, 'force-power', 'Move Object');
+
+  if (pendingMoveObject) {
+    return { slots: 1, active: true, trigger: 'pending-move-object', hasPendingProdigy, hasOwnedProdigy, pendingMoveObject, ownedMoveObject };
+  }
+  if (hasPendingProdigy && ownedMoveObject) {
+    return { slots: 1, active: true, trigger: 'new-prodigy-retroactive-move-object', hasPendingProdigy, hasOwnedProdigy, pendingMoveObject, ownedMoveObject };
+  }
+
+  return { slots: 0, active: false, trigger: '', hasPendingProdigy, hasOwnedProdigy, pendingMoveObject, ownedMoveObject };
+}
+
+
 /**
  * Resolve Force Power entitlements from shell and engine state
  *
@@ -55,6 +149,29 @@ export async function resolveForcePowerEntitlements(shell, actor) {
     ?? fallback
   );
 
+  const asFiniteNumber = (value) => {
+    const number = Number(value);
+    return Number.isFinite(number) ? number : null;
+  };
+
+  const getAbilityScoreFromBlock = (block) => {
+    if (!block || typeof block !== 'object') return null;
+    for (const scoreKey of ['score', 'total', 'value']) {
+      const number = asFiniteNumber(block[scoreKey]);
+      if (number !== null) return number;
+    }
+    const parts = ['base', 'racial', 'enhancement', 'misc', 'miscMod', 'temp'];
+    let total = 0;
+    let seen = false;
+    for (const part of parts) {
+      const number = asFiniteNumber(block[part]);
+      if (number === null) continue;
+      total += number;
+      seen = true;
+    }
+    return seen ? total : null;
+  };
+
   const getAbilityModifier = (abilityKey) => {
     const key = String(abilityKey || '').toLowerCase();
     const aliases = key === 'cha' || key === 'charisma' ? ['cha', 'charisma'] : ['wis', 'wisdom'];
@@ -64,11 +181,14 @@ export async function resolveForcePowerEntitlements(shell, actor) {
       const pendingScore = pendingState?.attributes?.[alias]?.value ?? pendingState?.abilities?.[alias]?.value;
       const pendingMod = pendingState?.attributes?.[alias]?.mod ?? pendingState?.attributes?.[alias]?.modifier ?? pendingState?.abilities?.[alias]?.mod ?? pendingState?.abilities?.[alias]?.modifier;
       for (const value of [pendingMod, system.abilities?.[alias]?.mod, system.abilities?.[alias]?.modifier, system.attributes?.[alias]?.mod, system.attributes?.[alias]?.modifier, system.stats?.[alias]?.mod, system.stats?.[alias]?.modifier]) {
-        const number = Number(value);
-        if (Number.isFinite(number)) return number;
+        const number = asFiniteNumber(value);
+        if (number !== null) return number;
       }
-      const score = Number(pendingScore ?? system.abilities?.[alias]?.value ?? system.attributes?.[alias]?.value ?? system.attributes?.[alias]?.total);
-      if (Number.isFinite(score)) return Math.floor((score - 10) / 2);
+      const score = asFiniteNumber(pendingScore)
+        ?? getAbilityScoreFromBlock(system.attributes?.[alias])
+        ?? getAbilityScoreFromBlock(system.abilities?.[alias])
+        ?? getAbilityScoreFromBlock(system.stats?.[alias]);
+      if (score !== null) return Math.floor((score - 10) / 2);
     }
     return 0;
   };

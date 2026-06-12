@@ -40,9 +40,18 @@ export class ForceAuthorityEngine {
     }
   }
 
-  static async getSelectionContext(actor) {
+  static async getSelectionContext(actor, options = {}) {
     const baseCapacity = await this.getForceCapacity(actor);
-    const context = { baseCapacity, conditionalBonusSlots: [], totalCapacity: baseCapacity };
+    const context = {
+      baseCapacity,
+      conditionalBonusSlots: [],
+      totalCapacity: baseCapacity,
+      selectedPowerIds: Array.isArray(options.selectedPowerIds) ? options.selectedPowerIds : [],
+      selectedPowerNames: Array.isArray(options.selectedPowerNames) ? options.selectedPowerNames : [],
+      pendingPowerIds: Array.isArray(options.pendingPowerIds) ? options.pendingPowerIds : [],
+      pendingPowerNames: Array.isArray(options.pendingPowerNames) ? options.pendingPowerNames : [],
+      selectedForcePowers: Array.isArray(options.selectedForcePowers) ? options.selectedForcePowers : [],
+    };
     if (actor) SelectionModifierHookRegistry.applyAll(actor, context);
     return context;
   }
@@ -113,7 +122,7 @@ export class ForceAuthorityEngine {
     if (!actor) return { valid: false, reason: 'No actor provided' };
     if (!Array.isArray(powerIds)) return { valid: false, reason: 'powerIds must be an array' };
     try {
-      const selectionContext = await this.getSelectionContext(actor);
+      const selectionContext = await this.getSelectionContext(actor, { selectedPowerIds: powerIds });
       const uniqueIds = new Set(powerIds);
       if (uniqueIds.size !== powerIds.length) return { valid: false, reason: 'Duplicate force power selection' };
       if (powerIds.length > selectionContext.totalCapacity) return { valid: false, reason: `Over capacity: ${powerIds.length} > ${selectionContext.totalCapacity}` };

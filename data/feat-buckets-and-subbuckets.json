@@ -1959,7 +1959,6 @@
         "Forceful Will",
         "Intuitive Initiative",
         "Keen Force Mind",
-        "Redirect Shot",
         "Saber Throw",
         "Strong in the Force",
         "Unstoppable Force"
@@ -1987,7 +1986,6 @@
           "Forceful Will",
           "Intuitive Initiative",
           "Keen Force Mind",
-          "Redirect Shot",
           "Saber Throw",
           "Strong in the Force",
           "Unstoppable Force"
@@ -2016,7 +2014,6 @@
           "Forceful Weapon",
           "Forceful Will",
           "Keen Force Mind",
-          "Redirect Shot",
           "Saber Throw",
           "Unstoppable Force"
         ],
@@ -2053,7 +2050,6 @@
           "Forceful Will",
           "Intuitive Initiative",
           "Keen Force Mind",
-          "Redirect Shot",
           "Saber Throw",
           "Unstoppable Force"
         ],
@@ -2093,7 +2089,6 @@
           "Forceful Will",
           "Intuitive Initiative",
           "Keen Force Mind",
-          "Redirect Shot",
           "Saber Throw",
           "Unstoppable Force"
         ],
@@ -6560,32 +6555,6 @@
       "sourcebook": "Galaxy at War",
       "page": 27,
       "prerequisite": null
-    },
-    "Redirect Shot": {
-      "id": "6f98dd888bef8d7b",
-      "featType": "force",
-      "metadataCategory": "force",
-      "metadataTags": [
-        "counterattack",
-        "defense",
-        "force"
-      ],
-      "packTags": [
-        "feat-chain",
-        "jedi",
-        "positioning",
-        "ranged"
-      ],
-      "uiBroadTags": [
-        "Combat",
-        "Skill"
-      ],
-      "uiSkillTags": [
-        "Use the Force"
-      ],
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 94,
-      "prerequisite": "Trained in Use the Force, Deflect"
     },
     "Deadly Sniper": {
       "id": "6fb0f56dd9b9b75c",

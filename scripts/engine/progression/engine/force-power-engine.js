@@ -97,14 +97,34 @@ export class ForcePowerEngine {
    * @returns {number} Number of powers (minimum 1)
    */
   static _countFromAbilityMod(actor) {
-    if (!actor?.system?.abilities) {
-      return 1; // Default minimum if no ability data
-    }
+    if (!actor?.system) return 1; // Default minimum if no ability data
 
     // Use canonical setting to determine which ability modifier to apply
-    const forceAbility = game.settings?.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom';
-    const abilityKey = forceAbility === 'charisma' ? 'cha' : 'wis';
-    const mod = actor.system.abilities[abilityKey]?.mod ?? 0;
+    const forceAbility = String(game.settings?.get('foundryvtt-swse', 'forceTrainingAttribute') || 'wisdom').toLowerCase();
+    const abilityKey = forceAbility === 'charisma' || forceAbility === 'cha' ? 'cha' : 'wis';
+    const aliases = abilityKey === 'cha' ? ['cha', 'charisma'] : ['wis', 'wisdom'];
+    const ability = aliases.map((key) => actor.system.abilities?.[key]
+      || actor.system.attributes?.[key]
+      || actor.system.stats?.[key]).find(Boolean) || {};
+    const explicitModifier = Number(ability.mod ?? ability.modifier);
+    let mod = Number.isFinite(explicitModifier) ? Math.floor(explicitModifier) : 0;
+
+    if (!Number.isFinite(explicitModifier)) {
+      let score = Number(ability.score ?? ability.total ?? ability.value);
+      if (!Number.isFinite(score)) {
+        const parts = ['base', 'racial', 'enhancement', 'misc', 'miscMod', 'temp'];
+        let total = 0;
+        let seen = false;
+        for (const part of parts) {
+          const number = Number(ability[part]);
+          if (!Number.isFinite(number)) continue;
+          total += number;
+          seen = true;
+        }
+        score = seen ? total : 10;
+      }
+      mod = Math.floor((score - 10) / 2);
+    }
 
     return Math.max(1, 1 + mod);
   }

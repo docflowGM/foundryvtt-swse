@@ -37,6 +37,7 @@ import {
   resolveCanonicalTalentName,
 } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
 import { isForceSensitivityName } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
+import { resolveClassModel } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 // ── Internals ────────────────────────────────────────────────────
@@ -148,40 +149,160 @@ function getChoiceLabels(entry) {
 
 // ── BAB calculation (mirrors prerequisite-checker logic) ─────────
 
-function calculateBab(actor) {
+function coerceNumber(value) {
+  if (value === null || value === undefined) return null;
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  if (typeof value === 'string') {
+    const cleaned = value.replace(/[^0-9+\-.]/g, '');
+    if (!cleaned || cleaned === '+' || cleaned === '-' || cleaned === '.') return null;
+    const num = Number(cleaned);
+    return Number.isFinite(num) ? num : null;
+  }
+  return null;
+}
+
+function maxNumeric(values) {
+  let max = 0;
+  for (const value of values || []) {
+    const num = coerceNumber(value);
+    if (num !== null && num > max) max = num;
+  }
+  return max;
+}
+
+function normalizeClassKey(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function classIdentityKey(entry) {
+  const model = resolveClassModel(entry);
+  return normalizeClassKey(
+    model?.id || entry?.classId || entry?.id || entry?._id || entry?.system?.classId ||
+    model?.name || entry?.className || entry?.class || entry?.name || entry?.system?.class_name
+  );
+}
+
+function collectClassItemEntries(actor) {
+  return safeItems(actor)
+    .filter(item => item?.type === 'class')
+    .map(item => ({
+      id: item.id || item._id || item.system?.classId || null,
+      classId: item.system?.classId || item.id || item._id || null,
+      name: item.name || item.system?.class_name || item.system?.name || item.system?.classId || 'Class',
+      level: Number(item.system?.level ?? item.level ?? 1) || 1,
+      system: item.system || {},
+    }));
+}
+
+function collectProgressionClassEntries(actor) {
+  const rawLevels = actor?.system?.progression?.classLevels || [];
+  if (!Array.isArray(rawLevels)) return [];
+  return rawLevels.map(entry => ({
+    id: entry.classId || entry.id || null,
+    classId: entry.classId || entry.id || null,
+    name: entry.className || entry.class || entry.name || entry.classId || 'Class',
+    className: entry.className || entry.class || entry.name || null,
+    level: Number(entry.level ?? 1) || 1,
+    system: entry.system || {},
+  })).filter(entry => entry.name || entry.classId);
+}
+
+function collectSystemClassEntries(actor) {
+  const classes = actor?.system?.classes;
+  if (!classes || typeof classes !== 'object' || Array.isArray(classes)) return [];
+  return Object.entries(classes).map(([name, data]) => ({
+    id: data?.id || data?.classId || name,
+    classId: data?.classId || data?.id || name,
+    name: data?.name || data?.className || name,
+    className: data?.className || data?.name || name,
+    level: Number(data?.level ?? data?.levels ?? 1) || 1,
+    system: data || {},
+  }));
+}
+
+function collectBaseClassEntries(actor) {
+  const itemEntries = collectClassItemEntries(actor);
+  if (itemEntries.length > 0) return itemEntries;
+  const progressionEntries = collectProgressionClassEntries(actor);
+  if (progressionEntries.length > 0) return progressionEntries;
+  return collectSystemClassEntries(actor);
+}
+
+function getPendingClassEntry(pending) {
+  const selected = pending?.selectedClass || pending?.classDoc || pending?.classSelection || pending?.progressionClass || null;
+  if (!selected) return null;
+  if (typeof selected === 'string') return { id: selected, classId: selected, name: selected, className: selected, level: 1, system: {} };
+  return {
+    id: selected.id || selected._id || selected.classId || selected.sourceId || null,
+    classId: selected.classId || selected.id || selected._id || selected.sourceId || null,
+    name: selected.name || selected.className || selected.class || selected.id || 'Class',
+    className: selected.className || selected.name || selected.class || null,
+    level: 1,
+    system: selected.system || selected,
+  };
+}
+
+function withPendingClassLevel(entries, pending) {
+  const pendingClass = getPendingClassEntry(pending);
+  if (!pendingClass) return entries;
+  const projected = (entries || []).map(entry => ({ ...entry, system: { ...(entry.system || {}) } }));
+  const pendingKey = classIdentityKey(pendingClass);
+  const match = pendingKey ? projected.find(entry => classIdentityKey(entry) === pendingKey) : null;
+  if (match) match.level = (Number(match.level) || 0) + 1;
+  else projected.push({ ...pendingClass, level: 1 });
+  return projected;
+}
+
+function getClassBabAtLevel(entry) {
+  const level = Math.max(0, Number(entry?.level ?? 0) || 0);
+  if (level <= 0) return 0;
+  const sys = entry?.system || {};
+  const model = resolveClassModel(entry) || resolveClassModel({ id: entry?.classId || entry?.id, classId: entry?.classId || entry?.id, name: entry?.className || entry?.name, system: sys });
+  const lp = sys.levelProgression || sys.level_progression || model?.levelProgression || [];
+  if (Array.isArray(lp) && lp.length > 0) {
+    const exact = lp.find(row => Number(row?.level) === level);
+    const fallback = lp[level - 1];
+    const bab = coerceNumber(exact?.bab ?? exact?.baseAttackBonus ?? fallback?.bab ?? fallback?.baseAttackBonus);
+    if (bab !== null) return bab;
+  }
+  const prog = String(sys.babProgression || sys.bab_progression || model?.babProgression || model?.baseAttackBonus || '').toLowerCase();
+  if (prog === 'fast' || prog === 'full' || prog === 'high') return level;
+  if (prog === 'slow' || prog === 'poor' || prog === 'low') return Math.floor(level * 0.5);
+  if (prog === 'medium' || prog === 'average') return Math.floor(level * 0.75);
+  const cn = String(model?.name || entry?.name || entry?.className || entry?.classId || '').trim().toLowerCase();
+  return /^(jedi|soldier)$/.test(cn) ? level : Math.floor(level * 0.75);
+}
+
+function calculateBabFromEntries(entries) {
+  return (entries || []).reduce((total, entry) => total + getClassBabAtLevel(entry), 0);
+}
+
+function calculateBab(actor, pending = {}) {
   if (!actor) return 0;
 
-  const directBab = Number(
-    actor.system?.bab
-    ?? actor.system?.derived?.bab?.total
-    ?? actor.system?.derived?.baseAttackBonus
-    ?? actor.system?.combat?.bab?.total
-    ?? 0
-  );
+  const directBab = maxNumeric([
+    actor.system?.bab?.total,
+    actor.system?.bab?.value,
+    actor.system?.bab,
+    actor.system?.baseAttackBonus,
+    actor.system?.derived?.bab?.total,
+    actor.system?.derived?.bab?.value,
+    actor.system?.derived?.bab,
+    actor.system?.derived?.baseAttackBonus,
+    actor.system?.combat?.bab?.total,
+    actor.system?.combat?.bab?.value,
+    actor.system?.combat?.bab,
+    actor.system?.combat?.baseAttackBonus,
+  ]);
 
-  let classBab = 0;
-  const items = safeItems(actor);
-  for (const item of items) {
-    if (item?.type !== 'class') continue;
-    const sys = item.system || {};
-    const level = Number(sys.level ?? item.level ?? 1) || 1;
-    const lp = sys.levelProgression || sys.level_progression || [];
-    if (Array.isArray(lp) && lp.length > 0) {
-      const ld = lp.find((e) => Number(e?.level) === level);
-      const bab = Number(ld?.bab ?? ld?.baseAttackBonus);
-      if (Number.isFinite(bab)) { classBab += bab; continue; }
-    }
-    const prog = String(sys.babProgression || sys.bab_progression || '').toLowerCase();
-    if (prog === 'fast' || prog === 'full') { classBab += level; }
-    else if (prog === 'slow' || prog === 'poor') { classBab += Math.floor(level * 0.5); }
-    else if (prog === 'medium' || prog === 'average') { classBab += Math.floor(level * 0.75); }
-    else {
-      const cn = String(item.name || sys.class_name || sys.classId || '').toLowerCase();
-      classBab += /^(jedi|soldier)$/.test(cn) ? level : Math.floor(level * 0.75);
-    }
-  }
-
-  return Math.max(Number.isFinite(directBab) ? directBab : 0, classBab);
+  const entries = collectBaseClassEntries(actor);
+  const baseBab = calculateBabFromEntries(entries);
+  const projectedBab = calculateBabFromEntries(withPendingClassLevel(entries, pending));
+  return Math.max(directBab, baseBab, projectedBab);
 }
 
 // ── Snapshot sections ────────────────────────────────────────────
@@ -397,7 +518,7 @@ function buildClassesSection(actor, pending) {
   }
 
   const totalLevel = (actor?.system?.level ?? Array.from(levelsByClass.values()).reduce((a, b) => a + b, 0)) || 1;
-  const bab = calculateBab(actor);
+  const bab = calculateBab(actor, pending);
 
   return {
     items,
@@ -508,6 +629,15 @@ function buildForceSection(actor, pending) {
   const traditions = new Set();
   const disciplines = new Set();
 
+  const ingestPower = (entry) => {
+    const names = [entry?.name, entry?.label, entry?.title, entry?.powerName, entry?.id, entry?._id, entry?.powerId, entry]
+      .filter(Boolean)
+      .map(looseKey);
+    for (const name of names) {
+      if (name) powers.add(name);
+    }
+  };
+
   for (const item of items) {
     const t = item?.type || '';
     const name = looseKey(item?.name);
@@ -529,7 +659,12 @@ function buildForceSection(actor, pending) {
     }
   }
 
-  // Count pending Force Training grants
+  // Count pending Force Training grants and pending Force Power choices
+  for (const entry of coercePendingArray(pending?.selectedForcePowers)) ingestPower(entry);
+  for (const entry of coercePendingArray(pending?.grantedForcePowers)) ingestPower(entry);
+  for (const entry of coercePendingArray(actor?.system?.progression?.forcePowers)) ingestPower(entry);
+  for (const entry of coercePendingArray(actor?.system?.progression?.powers)) ingestPower(entry);
+
   for (const entry of coercePendingArray(pending?.selectedFeats)) {
     if (isForceTraining(entry?.name)) forceTrainingCount++;
   }

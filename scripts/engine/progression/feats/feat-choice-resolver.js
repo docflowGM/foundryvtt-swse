@@ -507,6 +507,10 @@ export class FeatChoiceResolver {
       return this._resolveSkillChoiceOptions(actor, context, { excludeTrained: true });
     }
 
+    if (kind === 'skill') {
+      return this._resolveSkillChoiceOptions(actor, context);
+    }
+
     if (kind === 'droid_untrained_skill') {
       const options = this._resolveSkillChoiceOptions(actor, context, { excludeTrained: true });
       return options.filter(option => !['use_the_force', 'usetheforce', 'useTheForce'].includes(String(option?.id || option?.value || '').trim()));

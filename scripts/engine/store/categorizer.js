@@ -169,6 +169,125 @@ function categorizeEquipment(item) {
   return { cat: Category.EQUIPMENT, sub: 'General Gear' };
 }
 
+
+
+const DROID_DEGREE_LABELS = {
+  '1': '1st-Degree: Medical & Analytical',
+  '2': '2nd-Degree: Mechanical & Technical',
+  '3': '3rd-Degree: Protocol & Domestic',
+  '4': '4th-Degree: Security & Battle',
+  '5': '5th-Degree: Labor & Utility'
+};
+
+const VEHICLE_CANONICAL_SUBCATEGORIES = [
+  'Speeders',
+  'Tracked Vehicles',
+  'Walkers',
+  'Wheeled Vehicles',
+  'Weapon Emplacements',
+  'Airspeeders',
+  'Starfighters',
+  'Space Transports',
+  'Capital Ships',
+  'Space Stations'
+];
+
+function normalizeLooseText(value = '') {
+  return String(value ?? '')
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
+function droidDegreeKey(value = '') {
+  const compact = String(value ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+  if (compact.includes('1st') || compact.includes('first') || compact === '1') return '1';
+  if (compact.includes('2nd') || compact.includes('second') || compact === '2') return '2';
+  if (compact.includes('3rd') || compact.includes('third') || compact === '3') return '3';
+  if (compact.includes('4th') || compact.includes('fourth') || compact === '4') return '4';
+  if (compact.includes('5th') || compact.includes('fifth') || compact === '5') return '5';
+  return '';
+}
+
+function vehicleLabelFromCanonicalText(value = '') {
+  const text = normalizeLooseText(value);
+  if (!text) return '';
+  for (const label of VEHICLE_CANONICAL_SUBCATEGORIES) {
+    if (text === normalizeLooseText(label)) return label;
+  }
+  return '';
+}
+
+function vehicleTextBlob(item) {
+  const sys = item.system || {};
+  const weaponLabels = Array.isArray(sys.weapons)
+    ? sys.weapons.map(w => w?.name || '').join(' ')
+    : '';
+  const tags = Array.isArray(sys.tags) ? sys.tags.join(' ') : '';
+  return normalizeLooseText([
+    item.name,
+    sys.name,
+    sys.vehicleSubtype,
+    sys.subcategory,
+    sys.category,
+    sys.type,
+    tags,
+    weaponLabels,
+    item.sourcePack
+  ].filter(Boolean).join(' '));
+}
+
+function categorizeVehicleSubtype(item) {
+  const sys = item.system || {};
+
+  // Explicit authored category/type/subtype wins when it is one of the store buckets.
+  for (const value of [sys.vehicleSubtype, sys.subcategory, sys.category, sys.type]) {
+    const direct = vehicleLabelFromCanonicalText(value);
+    if (direct) return direct;
+  }
+
+  // Imported vehicle weapons often preserve the exact source-page section name.
+  if (Array.isArray(sys.weapons)) {
+    for (const weapon of sys.weapons) {
+      const direct = vehicleLabelFromCanonicalText(weapon?.name);
+      if (direct) return direct;
+    }
+  }
+
+  const text = vehicleTextBlob(item);
+  const phraseRules = [
+    [/\bweapon emplacements?\b/, 'Weapon Emplacements'],
+    [/\bspace stations?\b/, 'Space Stations'],
+    [/\bcapital ships?\b/, 'Capital Ships'],
+    [/\bspace transports?\b/, 'Space Transports'],
+    [/\bstarfighters?\b/, 'Starfighters'],
+    [/\bairspeeders?\b/, 'Airspeeders'],
+    [/\btracked vehicles?\b/, 'Tracked Vehicles'],
+    [/\bwheeled vehicles?\b/, 'Wheeled Vehicles'],
+    [/\bwalkers?\b/, 'Walkers'],
+    [/\bspeeders?\b/, 'Speeders']
+  ];
+  for (const [rx, label] of phraseRules) {
+    if (rx.test(text)) return label;
+  }
+
+  // Name/tag fallbacks for imperfect imports.
+  if (/\b(at at|at st|at ap|at rt|at te|at pt|at xt|at ct|at kt|at rct|at aht|spider droid|tri droid)\b/.test(text)) return 'Walkers';
+  if (/\b(crawler|tracked|landmaster|sandcrawler|tread|treads)\b/.test(text)) return 'Tracked Vehicles';
+  if (/\b(wheel|wheeled|roller|groundcar|juggernaut|hailfire)\b/.test(text)) return 'Wheeled Vehicles';
+  if (/\b(emplacement|battery|anti aircraft|anti infantry|planet defender|p tower|sonic cannon|antivehicle cannon)\b/.test(text)) return 'Weapon Emplacements';
+  if (/\b(spha|self propelled heavy artillery|at ut|ut at)\b/.test(text)) return 'Walkers';
+  if (/\b(cloud car|drop pod|fluttercraft|aerosled|radair|air 2|gnasp|jet catamaran|aerial artillery|laati|laatc|laat|stap|landing sphere|hovercraft|refinery platform|basilisk war droid)\b/.test(text)) return 'Airspeeders';
+  if (/\b(station|spacedock|platform|beacon|starforge|star forge|executor|eclipse|lusankya|viscount|the wheel)\b/.test(text)) return 'Space Stations';
+  if (/\b(corvette|frigate|cruiser|destroyer|dreadnaught|dreadnought|battlecruiser|battleship|carrier|star destroyer|crimson axe|indomitable|invisible hand|outbound flight|sabertooth class assault rescue vessel|ipv 1 system patrol craft|acclamator i class assault ship|acclamator ii class assault ship)\b/.test(text)) return 'Capital Ships';
+  if (/\b(freighter|transport|shuttle|courier|yacht|scout ship|gunship|landing craft|sloop|hauler|blastboat|salvage ship|caravel cabin|bloody credit|shackles of nizon|grinning liar|last resort|ebon hawk|mynock|millennium falcon|visionary|doomtreader)\b/.test(text)) return 'Space Transports';
+  if (/\b(fighter|interceptor|bomber|x wing|y wing|tie|headhunter|clawcraft|dartship|subfighter|escape pod|virago|coralskipper)\b/.test(text)) return 'Starfighters';
+  if (/\b(swoop|landspeeder|speeder|skiff|repulsor|tank|sled|speeder bike|chariot|u lav|mr rv|mrrv|mtt|pac|rtt|aat 1|laser borer|meekun heavy tracker|mekuun heavy tracker|kaac freerunner)\b/.test(text)) return 'Speeders';
+
+  return 'General Vehicles';
+}
+
 /* ---------------------------------------------------------- */
 /* DROID LOGIC                                                 */
 /* ---------------------------------------------------------- */
@@ -176,16 +295,20 @@ function categorizeEquipment(item) {
 function categorizeDroid(item) {
   const name = item.name.toLowerCase();
   const sys = item.system || {};
+  const degreeKey = droidDegreeKey(sys.degree || sys.droidDegree || sys.class || name);
+  if (degreeKey && DROID_DEGREE_LABELS[degreeKey]) {
+    return { cat: Category.DROIDS, sub: DROID_DEGREE_LABELS[degreeKey] };
+  }
 
-  if (sys.class?.toLowerCase().includes('protocol')) {return { cat: Category.DROIDS, sub: 'Protocol' };}
-  if (sys.class?.toLowerCase().includes('astromech')) {return { cat: Category.DROIDS, sub: 'Astromech' };}
-  if (sys.class?.toLowerCase().includes('combat')) {return { cat: Category.DROIDS, sub: 'Combat' };}
-  if (sys.class?.toLowerCase().includes('utility')) {return { cat: Category.DROIDS, sub: 'Utility' };}
+  // Conservative fallbacks for legacy/homebrew droids missing system.degree.
+  const droidText = `${name} ${safeString(sys.class || '')} ${safeString(sys.role || '')} ${safeString(sys.category || '')}`.toLowerCase();
+  if (/medical|medic|surgical|midwife|analytical|analysis|archive|interrogat/.test(droidText)) {return { cat: Category.DROIDS, sub: DROID_DEGREE_LABELS['1'] };}
+  if (/astromech|maintenance|mechanic|repair|tech|slicer|weapons maintenance|demolition|pilot|comm|communications|infrastructure|spaceport|control|minesweeper/.test(droidText)) {return { cat: Category.DROIDS, sub: DROID_DEGREE_LABELS['2'] };}
+  if (/protocol|secretary|administrative|administration|valet|hospitality|service|footman|messenger|dealer|luxury|domestic|supervisor/.test(droidText)) {return { cat: Category.DROIDS, sub: DROID_DEGREE_LABELS['3'] };}
+  if (/assassin|assault|battle|combat|commando|destroyer|spider|guardian|guard|patrol|sentinel|sentry|seeker|probe|surveillance|espionage|infiltrat|scout|recon|observation|tactical|artillery|infantry|legionnaire|hunter.?killer|warden|war|turret|lightsaber|sabotage|annihilator|picket|training|security|crab|buzz|lancer|hk-|hk_|gunnery|shadow|viper/.test(droidText)) {return { cat: Category.DROIDS, sub: DROID_DEGREE_LABELS['4'] };}
+  if (/utility|labor|loader|loading|mining|smelter|power|construction|worker|excavation|sifter|mule|gatekeeper|pit|agromech|exploration|explorer|surveyor|survey|spelunker|junk|holocam|ro-d/.test(droidText)) {return { cat: Category.DROIDS, sub: DROID_DEGREE_LABELS['5'] };}
 
-  if (name.includes('protocol')) {return { cat: Category.DROIDS, sub: 'Protocol' };}
-  if (name.includes('astromech')) {return { cat: Category.DROIDS, sub: 'Astromech' };}
-
-  return { cat: Category.DROIDS, sub: 'General Droid' };
+  return { cat: Category.DROIDS, sub: 'General Droid Models' };
 }
 
 /* ---------------------------------------------------------- */
@@ -193,19 +316,7 @@ function categorizeDroid(item) {
 /* ---------------------------------------------------------- */
 
 function categorizeVehicle(item) {
-  const name = item.name.toLowerCase();
-
-  if (name.includes('swoop') || name.includes('speeder')) {
-    return { cat: Category.VEHICLES, sub: 'Speeders' };
-  }
-  if (name.includes('starship') || name.includes('freighter') || name.includes('fighter')) {
-    return { cat: Category.VEHICLES, sub: 'Starships' };
-  }
-  if (name.includes('walker') || name.includes('at-st') || name.includes('at-te')) {
-    return { cat: Category.VEHICLES, sub: 'Walkers' };
-  }
-
-  return { cat: Category.VEHICLES, sub: 'General Vehicle' };
+  return { cat: Category.VEHICLES, sub: categorizeVehicleSubtype(item) };
 }
 
 /* ---------------------------------------------------------- */

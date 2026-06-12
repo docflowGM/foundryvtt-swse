@@ -813,21 +813,97 @@
 }
 
 
-/* Dense Force Power picker cards: the detail rail owns descriptions and type text. */
+/* Dense Force Power picker rows: the detail rail owns descriptions and type text.
+   Keep every Force Power/Lightsaber Form row tall enough for status badges so
+   Known, Pending, Reselecting, and Recommended chips sit cleanly inside the bar. */
 .force-power-compact-row .feat-quick-summary,
 .force-power-compact-row .feat-subcategory-pill {
   display: none;
 }
 
-.force-power-compact-row .feat-compact-row__line--meta:empty {
-  display: none;
+.progression-shell .force-power-compact-row {
+  min-height: 3.55rem;
+  padding-block: 0.58rem;
+  align-items: center;
 }
 
-.force-power-compact-row {
-  min-height: 0;
-  padding-block: 0.45rem;
+.progression-shell .force-power-compact-row .feat-compact-row__content {
+  justify-content: center;
+  gap: 0.26rem;
 }
 
-.force-power-compact-row .feat-compact-row__line--primary {
+.progression-shell .force-power-compact-row .feat-compact-row__line--primary {
   min-height: 1.25rem;
+  align-items: center;
+}
+
+.progression-shell .force-power-compact-row .feat-compact-row__line--meta {
+  min-height: 1.05rem;
+  align-items: center;
+  gap: 0.38rem;
+}
+
+.progression-shell .force-power-compact-row .feat-suggestion-badge,
+.progression-shell .force-power-compact-row .feat-owned-pill,
+.progression-shell .force-power-compact-row .feat-unavail-badge {
+  margin-top: 0;
+  line-height: 1;
+  padding-block: 0.16rem;
+}
+
+
+/* Force power row tone accents: subtle at-a-glance category color without adding description clutter. */
+.progression-shell .force-power-compact-row {
+  --force-power-row-accent: rgba(0, 229, 255, 0.28);
+  --force-power-row-wash: rgba(0, 229, 255, 0.045);
+}
+
+.progression-shell .force-power-compact-row--dark {
+  --force-power-row-accent: rgba(255, 80, 108, 0.72);
+  --force-power-row-wash: rgba(255, 80, 108, 0.08);
+}
+
+.progression-shell .force-power-compact-row--light {
+  --force-power-row-accent: rgba(126, 205, 255, 0.72);
+  --force-power-row-wash: rgba(126, 205, 255, 0.075);
+}
+
+.progression-shell .force-power-compact-row--telekinetic {
+  --force-power-row-accent: rgba(0, 229, 255, 0.68);
+  --force-power-row-wash: rgba(0, 229, 255, 0.07);
+}
+
+.progression-shell .force-power-compact-row--mind {
+  --force-power-row-accent: rgba(184, 136, 255, 0.68);
+  --force-power-row-wash: rgba(184, 136, 255, 0.07);
+}
+
+.progression-shell .force-power-compact-row--lightsaber {
+  --force-power-row-accent: rgba(124, 255, 178, 0.62);
+  --force-power-row-wash: rgba(124, 255, 178, 0.06);
+}
+
+.progression-shell .force-power-compact-row--form-shii-cho { --force-power-row-accent: rgba(178, 238, 255, 0.78); --force-power-row-wash: rgba(178, 238, 255, 0.065); }
+.progression-shell .force-power-compact-row--form-makashi { --force-power-row-accent: rgba(184, 136, 255, 0.78); --force-power-row-wash: rgba(184, 136, 255, 0.07); }
+.progression-shell .force-power-compact-row--form-soresu { --force-power-row-accent: rgba(88, 158, 255, 0.78); --force-power-row-wash: rgba(88, 158, 255, 0.07); }
+.progression-shell .force-power-compact-row--form-ataru { --force-power-row-accent: rgba(89, 255, 164, 0.76); --force-power-row-wash: rgba(89, 255, 164, 0.065); }
+.progression-shell .force-power-compact-row--form-shien { --force-power-row-accent: rgba(255, 196, 92, 0.8); --force-power-row-wash: rgba(255, 196, 92, 0.07); }
+.progression-shell .force-power-compact-row--form-djem-so { --force-power-row-accent: rgba(255, 122, 74, 0.8); --force-power-row-wash: rgba(255, 122, 74, 0.075); }
+.progression-shell .force-power-compact-row--form-niman { --force-power-row-accent: rgba(244, 218, 114, 0.82); --force-power-row-wash: rgba(244, 218, 114, 0.07); }
+.progression-shell .force-power-compact-row--form-juyo { --force-power-row-accent: rgba(255, 64, 92, 0.82); --force-power-row-wash: rgba(255, 64, 92, 0.08); }
+.progression-shell .force-power-compact-row--form-vaapad { --force-power-row-accent: rgba(255, 72, 150, 0.82); --force-power-row-wash: rgba(255, 72, 150, 0.08); }
+.progression-shell .force-power-compact-row--form-jarkai { --force-power-row-accent: rgba(255, 90, 220, 0.78); --force-power-row-wash: rgba(255, 90, 220, 0.075); }
+.progression-shell .force-power-compact-row--form-trakata { --force-power-row-accent: rgba(218, 112, 255, 0.78); --force-power-row-wash: rgba(218, 112, 255, 0.075); }
+.progression-shell .force-power-compact-row--form-sokan { --force-power-row-accent: rgba(90, 224, 255, 0.76); --force-power-row-wash: rgba(90, 224, 255, 0.07); }
+
+.progression-shell .force-power-compact-row--dark,
+.progression-shell .force-power-compact-row--light,
+.progression-shell .force-power-compact-row--telekinetic,
+.progression-shell .force-power-compact-row--mind,
+.progression-shell .force-power-compact-row--lightsaber {
+  border-color: color-mix(in srgb, var(--force-power-row-accent) 50%, rgba(255,255,255,0.12));
+  box-shadow: inset 3px 0 0 var(--force-power-row-accent);
+  background:
+    linear-gradient(90deg, var(--force-power-row-wash), rgba(255,255,255,0.018) 46%, transparent),
+    var(--row-bg, rgba(7, 14, 26, 0.58));
 }

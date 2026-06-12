@@ -2429,3 +2429,37 @@
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Lightsaber workbench: the blade-color readout is an edit affordance, and
+   removing the old build summary lets component intel use the freed rail space. */
+.swse-item-customization-workbench .ls-color-cta--editable,
+.swse-customization-stage .ls-color-cta--editable {
+  width: 100%;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.swse-item-customization-workbench .ls-color-cta--editable:not(:disabled):hover,
+.swse-customization-stage .ls-color-cta--editable:not(:disabled):hover {
+  border-color: color-mix(in oklch, var(--blade-color), white 18%);
+  box-shadow: 0 0 16px color-mix(in oklch, var(--blade-color), transparent 70%);
+}
+
+.swse-item-customization-workbench .ls-color-cta--editable:disabled,
+.swse-customization-stage .ls-color-cta--editable:disabled {
+  cursor: not-allowed;
+  opacity: 0.72;
+}
+
+.swse-item-customization-workbench .ls-component-intel,
+.swse-customization-stage .ls-component-intel {
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.swse-item-customization-workbench .ls-component-intel .rail-detail-card,
+.swse-customization-stage .ls-component-intel .rail-detail-card {
+  flex: 1 1 auto !important;
+}

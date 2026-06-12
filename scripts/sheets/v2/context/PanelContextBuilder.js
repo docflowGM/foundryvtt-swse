@@ -286,9 +286,12 @@ export class PanelContextBuilder {
       const rulesBonus = (Number(derivedDefense?.stateBonus ?? 0) || 0) + (Number(derivedDefense?.adjustment ?? 0) || 0);
       const sizeModifier = Number(derivedDefense?.sizeModifier ?? 0) || 0;
       const conditionPenalty = Number(derivedDefense?.conditionPenalty ?? this.derived?.damage?.conditionPenalty ?? 0) || 0;
+      // Reflex levelContribution already represents the SWSE heroic/armor
+      // replacement term. Fortitude/Will armor bonuses are still additive.
+      const armorTotalTerm = systemKey === 'reflex' ? 0 : armorBonus;
       const computedTotal = 10
         + levelContribution
-        + armorBonus
+        + armorTotalTerm
         + abilityMod
         + classDef
         + speciesBonus

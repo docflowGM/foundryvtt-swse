@@ -300,7 +300,7 @@ export class FeatGrantEntitlementResolver {
   }
 
   static getForceRegimenSlotsPerInstance(actor, shell = null) {
-    return Math.max(1, 1 + getAbilityModifier(actor, 'wis', shell));
+    return Math.max(1, 1 + getForceTrainingAbilityModifier(actor, shell));
   }
 
   static getStarshipTacticsSlotsPerInstance(actor, shell = null) {
@@ -377,8 +377,8 @@ export class FeatGrantEntitlementResolver {
         sourceName,
         sourceIndex: index,
         count,
-        countFormula: 'max(1, 1 + wisdomModifier)',
-        ability: 'wis',
+        countFormula: 'max(1, 1 + configuredForceTrainingAbilityModifier)',
+        ability: 'forceTraining',
         minimum: 1,
         repeatable: true,
         dynamic: true,
@@ -396,8 +396,8 @@ export class FeatGrantEntitlementResolver {
         sourceName,
         sourceIndex: index,
         count,
-        countFormula: 'max(1, 1 + wisdomModifier)',
-        ability: 'wis',
+        countFormula: 'max(1, 1 + configuredForceTrainingAbilityModifier)',
+        ability: 'forceTraining',
         minimum: 1,
         repeatable: true,
         dynamic: true,

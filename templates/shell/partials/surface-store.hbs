@@ -112,6 +112,26 @@
               <option value="name-asc">{{localize "SWSE.ShellUI.NameAZ"}}</option>
             </select>
           </div>
+          {{#if (eq vm.storeContext.currentCategory 'vehicles')}}
+          <div class="swse-store-surface__filter-group swse-store-surface__filter-group--vehicle">
+            <span class="swse-store-surface__filter-lbl">SIZE</span>
+            <select id="ss-vehicle-size" class="swse-store-surface__select">
+              <option value="">All Sizes</option>
+              {{#each vm.storeContext.vehicleSizeOptions}}
+              <option value="{{key}}" {{#if active}}selected{{/if}}>{{label}}</option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="swse-store-surface__filter-group swse-store-surface__filter-group--vehicle">
+            <span class="swse-store-surface__filter-lbl">CL</span>
+            <select id="ss-vehicle-cl" class="swse-store-surface__select" {{#unless vm.storeContext.vehicleClOptions.length}}disabled{{/unless}}>
+              <option value="">{{#if vm.storeContext.vehicleClOptions.length}}All CL{{else}}Unavailable{{/if}}</option>
+              {{#each vm.storeContext.vehicleClOptions}}
+              <option value="{{key}}" {{#if active}}selected{{/if}}>{{label}} ({{count}})</option>
+              {{/each}}
+            </select>
+          </div>
+          {{/if}}
           <div class="swse-store-surface__filter-count">
             <span data-results-count>{{vm.storeContext.renderedItemCount}}</span>/<span>{{vm.storeContext.visibleItemCount}}</span> {{localize "SWSE.ShellUI.Listings"}}
           </div>
@@ -132,11 +152,12 @@
         {{#if (eq key ../vm.storeContext.currentCategory)}}
         {{#if children}}
         <nav class="swse-store-surface__subnav" aria-label="{{localize 'SWSE.ShellUI.StoreDepartmentSubcategories'}}">
-          {{#if (eq key 'weapons')}}
-          <div class="swse-store-surface__family-tabs" aria-label="{{localize 'SWSE.ShellUI.WeaponFolders'}}">
+          {{#if familyTabs}}
+          {{#unless (eq key 'vehicles')}}
+          <div class="swse-store-surface__family-tabs" aria-label="{{label}} folders">
             <button type="button" class="swse-store-surface__family-chip {{#unless ../vm.storeContext.currentFamily}}active{{/unless}}"
                     data-action="family-nav" data-family="">
-              {{localize "SWSE.ShellUI.AllWeapons"}}<span class="swse-store-surface__chip-count">{{count}}</span>
+              {{#if allLabel}}{{allLabel}}{{else}}{{label}}{{/if}}<span class="swse-store-surface__chip-count">{{count}}</span>
             </button>
             {{#each familyTabs}}
             <button type="button" class="swse-store-surface__family-chip {{#if active}}active{{/if}}"
@@ -145,8 +166,11 @@
             </button>
             {{/each}}
           </div>
+          {{/unless}}
+          {{/if}}
 
-          <div class="swse-store-surface__subcategory-strip" aria-label="{{localize 'SWSE.ShellUI.WeaponSubfolders'}}">
+          {{#unless (eq key 'droids')}}
+          <div class="swse-store-surface__subcategory-strip" aria-label="{{label}} subfolders">
             {{#each children}}
             <button type="button" class="swse-store-surface__subcat-chip swse-store-surface__subcat-chip--{{family}} {{#if active}}active{{/if}}"
                     data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
@@ -154,14 +178,7 @@
             </button>
             {{/each}}
           </div>
-          {{else}}
-          {{!-- OTHER CATEGORIES: List all subcategories --}}
-          {{#each children}}
-          <button type="button" class="swse-store-surface__subcat-chip {{#if active}}active{{/if}}"
-                  data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
-            {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
-          </button>
-          {{/each}}
+          {{/unless}}
           {{#if (eq key 'vehicles')}}
           <button type="button" class="swse-store-surface__subcat-chip swse-store-surface__subcat-chip--builder"
                   data-action="store-build-from-scratch" data-builder-kind="vehicle">
@@ -173,7 +190,6 @@
                   data-action="store-build-from-scratch" data-builder-kind="droid">
             {{localize "SWSE.ShellUI.CreateCustomDroid"}}
           </button>
-          {{/if}}
           {{/if}}
         </nav>
         {{/if}}
@@ -193,7 +209,9 @@
                  data-category-key="{{this.categoryKey}}"
                  data-subcategory="{{this.subcategory}}"
                  data-subcategory-key="{{this.subcategoryKey}}"
-                 data-family="{{this.weaponFamily}}"
+                 data-family="{{#if this.navigationFamily}}{{this.navigationFamily}}{{else}}{{this.weaponFamily}}{{/if}}"
+                 data-vehicle-size="{{this.vehicleSizeKey}}"
+                 data-vehicle-cl="{{this.vehicleChallengeBand}}"
                  data-availability="{{this.availability}}"
                  data-price="{{#if this.cost}}{{this.cost}}{{else}}{{this.finalCost}}{{/if}}"
                  data-score="{{#if this.suggestion}}{{this.suggestion.score}}{{else}}0{{/if}}">
@@ -208,6 +226,8 @@
                 <div class="swse-store-surface__card-name">{{this.name}}</div>
                 <div class="swse-store-surface__card-cat">{{this.typeLabel}} · {{this.category}}{{#if this.subcategory}} · {{this.subcategory}}{{/if}}</div>
                 <div class="swse-store-surface__card-meta-row">
+                  {{#if this.vehicleSizeLabel}}<span class="swse-store-surface__card-meta-pill">{{this.vehicleSizeLabel}}</span>{{/if}}
+                  {{#if this.vehicleChallengeLabel}}<span class="swse-store-surface__card-meta-pill">{{this.vehicleChallengeLabel}}</span>{{/if}}
                   <span class="swse-store-surface__card-meta-pill">{{this.availability}}</span>
                   {{#if this.suggestion.tierLabel}}<span class="swse-store-surface__card-tier swse-store-surface__card-tier--{{this.suggestion.tier}}">{{this.suggestion.tierLabel}}</span>{{/if}}
                 </div>

@@ -24,14 +24,27 @@ export class ForceTrainingEngine {
    */
   static getForceAbilityModifier(actor) {
     const attribute = ForceTrainingEngine.getTrainingAttribute();
-    const abilityKey = attribute === 'charisma' ? 'cha' : 'wis';
+    const abilityKey = attribute === 'charisma' || attribute === 'cha' ? 'cha' : 'wis';
+    const aliases = abilityKey === 'cha' ? ['cha', 'charisma'] : ['wis', 'wisdom'];
     const system = actor?.system || {};
-    const ability = system.abilities?.[abilityKey] || system.attributes?.[abilityKey] || system.stats?.[abilityKey] || {};
+    const ability = aliases.map((key) => system.abilities?.[key] || system.attributes?.[key] || system.stats?.[key]).find(Boolean) || {};
 
     const explicitModifier = Number(ability.mod ?? ability.modifier);
     if (Number.isFinite(explicitModifier)) return Math.floor(explicitModifier);
 
-    const score = Number(ability.total ?? ability.value ?? ability.base ?? 10);
+    let score = Number(ability.score ?? ability.total ?? ability.value);
+    if (!Number.isFinite(score)) {
+      const parts = ['base', 'racial', 'enhancement', 'misc', 'miscMod', 'temp'];
+      let total = 0;
+      let seen = false;
+      for (const part of parts) {
+        const number = Number(ability[part]);
+        if (!Number.isFinite(number)) continue;
+        total += number;
+        seen = true;
+      }
+      score = seen ? total : 10;
+    }
     return Number.isFinite(score) ? Math.floor((score - 10) / 2) : 0;
   }
 

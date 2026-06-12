@@ -56,9 +56,11 @@ export class PassiveAdapter {
       this.handleRule(actor, ability, ruleCollector);
     } else if (subType === PASSIVE_SUBTYPES.STATE) {
       this.handleState(actor, ability);
+    } else if (subType === PASSIVE_SUBTYPES.RESOURCE) {
+      this.handleResource(actor, ability);
     } else {
       throw new Error(
-        `PASSIVE ${subType} not supported. Use: MODIFIER, DERIVED_OVERRIDE, RULE, STATE`
+        `PASSIVE ${subType} not supported. Use: MODIFIER, DERIVED_OVERRIDE, RULE, STATE, RESOURCE`
       );
     }
   }
@@ -130,6 +132,13 @@ export class PassiveAdapter {
     // Get modifier metadata
     const meta = ability.system.abilityMeta;
     if (!meta?.modifiers || !Array.isArray(meta.modifiers)) {
+      // Legacy data can carry resource-only metadata under PASSIVE/MODIFIER.
+      // It is valid content, but it is not a numeric modifier. Treat it as a
+      // no-op resource note so actor preparation does not spam warnings.
+      if (meta?.resourceRules && typeof meta.resourceRules === 'object') {
+        this.handleResource(actor, ability);
+        return;
+      }
       throw new Error(
         `PASSIVE MODIFIER ${ability.name} missing or invalid modifiers array`
       );
@@ -469,6 +478,22 @@ export class PassiveAdapter {
    * @throws {Error} If configuration is invalid or mixing detected
    */
   static handleRule(actor, ability, ruleCollector = null) {
+    // Progression-owned grant metadata is not a runtime boolean rule. Older
+    // content may still be typed PASSIVE/RULE with no rule tokens; accept it as
+    // a no-op note instead of aborting actor ability registration.
+    const meta = ability.system.abilityMeta;
+    const rules = Array.isArray(meta?.rules) ? meta.rules : (meta?.rule ? [meta.rule] : []);
+    const isProgressionOwnedGrant = !rules.length && (
+      meta?.mechanicsMode === 'grant_unlock'
+      || String(meta?.applicationScope || '').includes('picker')
+      || String(meta?.applicationScope || '').includes('progression')
+      || String(meta?.implementationStatus || '').includes('selection')
+    );
+    if (isProgressionOwnedGrant) {
+      this.handleState(actor, ability);
+      return;
+    }
+
     // Guard against UNLOCK mixing
     if (ability.system.grants) {
       throw new Error(
@@ -508,8 +533,6 @@ export class PassiveAdapter {
     }
 
     // Get rule metadata
-    const meta = ability.system.abilityMeta;
-    const rules = Array.isArray(meta?.rules) ? meta.rules : (meta?.rule ? [meta.rule] : []);
     if (!rules.length) {
       throw new Error(
         `PASSIVE RULE ${ability.name} missing or invalid rules array`
@@ -579,6 +602,31 @@ export class PassiveAdapter {
     swseLogger.debug(
       `[PassiveAdapter] STATE ${ability.name} ` +
       `registered for ${actor.name} (${modifiers.length} state predicates)`
+    );
+  }
+
+
+  /**
+   * Handle RESOURCE subtype integration.
+   * Resource passives are consumed by dedicated resource/metadata resolvers
+   * such as Force Point spending rules. They do not inject sheet modifiers.
+   *
+   * @param {Object} actor - The actor document
+   * @param {Object} ability - The ability item
+   */
+  static handleResource(actor, ability) {
+    const meta = ability.system?.abilityMeta ?? {};
+    if (!actor._passiveResourceNotes) actor._passiveResourceNotes = {};
+    actor._passiveResourceNotes[ability.id] = {
+      id: ability.id,
+      name: ability.name,
+      status: meta.status || null,
+      description: meta.description || '',
+      resourceRules: meta.resourceRules || {}
+    };
+
+    swseLogger.debug(
+      `[PassiveAdapter] RESOURCE ${ability.name} registered for ${actor.name}`
     );
   }
 

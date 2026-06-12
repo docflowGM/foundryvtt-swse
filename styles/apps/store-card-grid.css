@@ -872,3 +872,25 @@
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+/* Store vehicle/droid refinement controls */
+.store-family-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  width: 100%;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed rgba(79, 209, 197, 0.22);
+}
+
+.store-family-chip.active,
+.store-family-chip.is-active {
+  background: rgba(79, 209, 197, 0.18);
+  border-color: rgba(79, 209, 197, 0.72);
+  color: #fff;
+}
+
+.store-filter-select[disabled] {
+  opacity: 0.48;
+  cursor: not-allowed;
+}

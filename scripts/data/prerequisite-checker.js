@@ -688,7 +688,7 @@ export class PrerequisiteChecker {
 
         // Check minimum BAB
         if (prereqs.minBAB) {
-            const bab = getBaseAttackBonus(actor);
+            const bab = getBaseAttackBonus(actor, pending);
             details.bab = { required: prereqs.minBAB, actual: bab };
             if (bab < prereqs.minBAB) {
                 missing.push(`Base Attack Bonus +${prereqs.minBAB} (you have +${bab})`);
@@ -733,7 +733,7 @@ export class PrerequisiteChecker {
 
         // Check Force Powers
         if (prereqs.forcePowers) {
-            const powerCheck = checkForcePowers(actor, prereqs.forcePowers);
+            const powerCheck = checkForcePowers(actor, prereqs.forcePowers, pending);
             details.forcePowers = powerCheck;
             if (!powerCheck.met) {
                 missing.push(`Force Powers: ${powerCheck.missing.join(', ')}`);
@@ -1002,7 +1002,7 @@ export class PrerequisiteChecker {
             case 'ability':
                 return this._checkAbilityRequirement(prereq, actor, 10, pending);
             case 'bab': {
-                const bab = getBaseAttackBonus(actor);
+                const bab = getBaseAttackBonus(actor, pending);
                 const required = prereq.minimum ?? prereq.min ?? 0;
                 const met = bab >= required;
                 return {
@@ -1315,7 +1315,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkBabCondition(prereq, actor, pending) {
-        const bab = getBaseAttackBonus(actor);
+        const bab = getBaseAttackBonus(actor, pending);
         const required = prereq.minimum ?? prereq.min ?? 0;
         const met = bab >= required;
         return {
@@ -1395,12 +1395,11 @@ export class PrerequisiteChecker {
     }
 
     static _checkForcePowerCondition(prereq, actor, pending) {
-        const hasPower = actor.items?.some(i =>
-            (i.type === 'force-power' || i.type === 'force-power') && i.name === prereq.name
-        );
+        const powerName = prereq.name || prereq.power || prereq.key || '';
+        const powerCheck = checkForcePowers(actor, [powerName], pending);
         return {
-            met: hasPower,
-            message: !hasPower ? `Requires Force Power: ${prereq.name}` : ''
+            met: powerCheck.met,
+            message: !powerCheck.met ? `Requires Force Power: ${powerName}` : ''
         };
     }
 
@@ -2124,7 +2123,7 @@ export class PrerequisiteChecker {
     }
 
     static _checkBABLegacy(prereq, actor, pending) {
-        const bab = actor.system?.bab ?? 0;
+        const bab = getBaseAttackBonus(actor, pending);
         const met = bab >= prereq.value;
         return {
             met,
@@ -2567,58 +2566,197 @@ function getTotalLevel(actor) {
  * Get Base Attack Bonus.
  * v2 Architecture: Trusts progression-owned BAB from system.bab
  */
-function getBaseAttackBonus(actor) {
+function getBaseAttackBonus(actor, pending = {}) {
     if (!actor) {return 0;}
 
-    const directBab = Number(
-        actor.system?.bab
-        ?? actor.system?.derived?.bab?.total
-        ?? actor.system?.derived?.baseAttackBonus
-        ?? actor.system?.combat?.bab?.total
-        ?? 0
-    );
+    const directBab = maxNumeric([
+        actor.system?.bab?.total,
+        actor.system?.bab?.value,
+        actor.system?.bab,
+        actor.system?.baseAttackBonus,
+        actor.system?.derived?.bab?.total,
+        actor.system?.derived?.bab?.value,
+        actor.system?.derived?.bab,
+        actor.system?.derived?.baseAttackBonus,
+        actor.system?.combat?.bab?.total,
+        actor.system?.combat?.bab?.value,
+        actor.system?.combat?.bab,
+        actor.system?.combat?.baseAttackBonus,
+    ]);
 
-    // Some migrated/progression actors can have a stale system.bab of 0 while
-    // their embedded class items already describe the real progression. Use the
-    // higher of the explicit statblock value and the class-derived fallback so
-    // prestige prerequisites do not report +0 for multiclass heroic actors.
-    const classBab = calculateBabFromClassItems(actor);
-    return Math.max(Number.isFinite(directBab) ? directBab : 0, classBab);
+    // P0 hardening: progression UIs often evaluate prerequisites against a
+    // draft/mock actor before the actor document has been finalized. In that
+    // state system.bab may be missing, stale, or an object shell, and the real
+    // BAB must be derived from class items or the progression class-level ledger.
+    const classBab = calculateBabFromClassState(actor, pending);
+    return Math.max(directBab, classBab);
 }
 
-function calculateBabFromClassItems(actor) {
+function coerceNumber(value) {
+    if (value === null || value === undefined) {return null;}
+    if (typeof value === 'number') {return Number.isFinite(value) ? value : null;}
+    if (typeof value === 'string') {
+        const cleaned = value.replace(/[^0-9+\-.]/g, '');
+        if (!cleaned || cleaned === '+' || cleaned === '-' || cleaned === '.') {return null;}
+        const num = Number(cleaned);
+        return Number.isFinite(num) ? num : null;
+    }
+    return null;
+}
+
+function maxNumeric(values) {
+    let max = 0;
+    for (const value of values || []) {
+        const num = coerceNumber(value);
+        if (num !== null && num > max) {max = num;}
+    }
+    return max;
+}
+
+function safeEmbeddedItems(actor) {
     const rawItems = actor?.items?.contents || actor?.items || [];
-    const items = Array.isArray(rawItems) ? rawItems : Array.from(rawItems || []);
-    let total = 0;
+    return Array.isArray(rawItems) ? rawItems : Array.from(rawItems || []);
+}
 
-    for (const item of items) {
-        if (item?.type !== 'class') {continue;}
-        const system = item.system || {};
-        const level = Number(system.level ?? item.level ?? 1) || 1;
-        const levelProgression = system.levelProgression || system.level_progression || [];
-        if (Array.isArray(levelProgression) && levelProgression.length > 0) {
-            const levelData = levelProgression.find(entry => Number(entry?.level) === level);
-            const bab = Number(levelData?.bab ?? levelData?.baseAttackBonus);
-            if (Number.isFinite(bab)) {
-                total += bab;
-                continue;
-            }
-        }
+function normalizeClassKey(value) {
+    return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
 
-        const progression = String(system.babProgression || system.bab_progression || '').toLowerCase();
-        if (progression === 'fast' || progression === 'full') {
-            total += level;
-        } else if (progression === 'slow' || progression === 'poor') {
-            total += Math.floor(level * 0.5);
-        } else if (progression === 'medium' || progression === 'average') {
-            total += Math.floor(level * 0.75);
-        } else {
-            const className = String(item.name || system.class_name || system.classId || '').toLowerCase();
-            total += /^(jedi|soldier)$/.test(className) ? level : Math.floor(level * 0.75);
-        }
+function classIdentityKey(entry) {
+    const model = resolveClassModel(entry);
+    return normalizeClassKey(
+        model?.id || entry?.classId || entry?.id || entry?._id || entry?.system?.classId ||
+        model?.name || entry?.className || entry?.class || entry?.name || entry?.system?.class_name
+    );
+}
+
+function collectClassItemEntries(actor) {
+    return safeEmbeddedItems(actor)
+        .filter(item => item?.type === 'class')
+        .map(item => ({
+            id: item.id || item._id || item.system?.classId || null,
+            classId: item.system?.classId || item.id || item._id || null,
+            name: item.name || item.system?.class_name || item.system?.name || item.system?.classId || 'Class',
+            level: Number(item.system?.level ?? item.level ?? 1) || 1,
+            system: item.system || {},
+        }));
+}
+
+function collectProgressionClassEntries(actor) {
+    const rawLevels = actor?.system?.progression?.classLevels || [];
+    if (!Array.isArray(rawLevels)) {return [];}
+    return rawLevels.map(entry => ({
+        id: entry.classId || entry.id || null,
+        classId: entry.classId || entry.id || null,
+        name: entry.className || entry.class || entry.name || entry.classId || 'Class',
+        className: entry.className || entry.class || entry.name || null,
+        level: Number(entry.level ?? 1) || 1,
+        system: entry.system || {},
+    })).filter(entry => entry.name || entry.classId);
+}
+
+function collectSystemClassEntries(actor) {
+    const classes = actor?.system?.classes;
+    if (!classes || typeof classes !== 'object' || Array.isArray(classes)) {return [];}
+    return Object.entries(classes).map(([name, data]) => ({
+        id: data?.id || data?.classId || name,
+        classId: data?.classId || data?.id || name,
+        name: data?.name || data?.className || name,
+        className: data?.className || data?.name || name,
+        level: Number(data?.level ?? data?.levels ?? 1) || 1,
+        system: data || {},
+    }));
+}
+
+function collectBaseClassEntries(actor) {
+    // Prefer embedded class items. If a mock actor lost its collection shape,
+    // fall back to the v2 progression ledger, then the legacy system.classes map.
+    const itemEntries = collectClassItemEntries(actor);
+    if (itemEntries.length > 0) {return itemEntries;}
+    const progressionEntries = collectProgressionClassEntries(actor);
+    if (progressionEntries.length > 0) {return progressionEntries;}
+    return collectSystemClassEntries(actor);
+}
+
+function cloneClassEntries(entries) {
+    return (entries || []).map(entry => ({ ...entry, system: { ...(entry.system || {}) } }));
+}
+
+function getPendingClassEntry(pending) {
+    const selected = pending?.selectedClass || pending?.classDoc || pending?.classSelection || pending?.progressionClass || null;
+    if (!selected) {return null;}
+    if (typeof selected === 'string') {
+        return { id: selected, classId: selected, name: selected, className: selected, level: 1, system: {} };
+    }
+    return {
+        id: selected.id || selected._id || selected.classId || selected.sourceId || null,
+        classId: selected.classId || selected.id || selected._id || selected.sourceId || null,
+        name: selected.name || selected.className || selected.class || selected.id || 'Class',
+        className: selected.className || selected.name || selected.class || null,
+        level: 1,
+        system: selected.system || selected,
+    };
+}
+
+function withPendingClassLevel(entries, pending) {
+    const pendingClass = getPendingClassEntry(pending);
+    if (!pendingClass) {return entries;}
+
+    const projected = cloneClassEntries(entries);
+    const pendingKey = classIdentityKey(pendingClass);
+    const match = pendingKey
+        ? projected.find(entry => classIdentityKey(entry) === pendingKey)
+        : null;
+
+    if (match) {
+        match.level = (Number(match.level) || 0) + 1;
+    } else {
+        projected.push({ ...pendingClass, level: 1 });
+    }
+    return projected;
+}
+
+function getClassBabAtLevel(entry) {
+    const level = Math.max(0, Number(entry?.level ?? 0) || 0);
+    if (level <= 0) {return 0;}
+
+    const system = entry?.system || {};
+    const model = resolveClassModel(entry) || resolveClassModel({
+        id: entry?.classId || entry?.id,
+        classId: entry?.classId || entry?.id,
+        name: entry?.className || entry?.name,
+        system,
+    });
+
+    const levelProgression = system.levelProgression || system.level_progression || model?.levelProgression || [];
+    if (Array.isArray(levelProgression) && levelProgression.length > 0) {
+        const exact = levelProgression.find(row => Number(row?.level) === level);
+        const fallback = levelProgression[level - 1];
+        const bab = coerceNumber(exact?.bab ?? exact?.baseAttackBonus ?? fallback?.bab ?? fallback?.baseAttackBonus);
+        if (bab !== null) {return bab;}
     }
 
-    return total;
+    const progression = String(system.babProgression || system.bab_progression || model?.babProgression || model?.baseAttackBonus || '').toLowerCase();
+    if (progression === 'fast' || progression === 'full' || progression === 'high') {return level;}
+    if (progression === 'slow' || progression === 'poor' || progression === 'low') {return Math.floor(level * 0.5);}
+    if (progression === 'medium' || progression === 'average') {return Math.floor(level * 0.75);}
+
+    const className = String(model?.name || entry?.name || entry?.className || entry?.classId || '').trim().toLowerCase();
+    return /^(jedi|soldier)$/.test(className) ? level : Math.floor(level * 0.75);
+}
+
+function calculateBabFromEntries(entries) {
+    return (entries || []).reduce((total, entry) => total + getClassBabAtLevel(entry), 0);
+}
+
+function calculateBabFromClassState(actor, pending = {}) {
+    const baseEntries = collectBaseClassEntries(actor);
+    const baseBab = calculateBabFromEntries(baseEntries);
+    const projectedBab = calculateBabFromEntries(withPendingClassLevel(baseEntries, pending));
+    return Math.max(baseBab, projectedBab);
 }
 
 /**
@@ -2993,18 +3131,24 @@ function checkTalents(actor, talentReq) {
  * Check Force Power requirements.
  * Includes both finalized powers (actor.items) and pending powers (actor.system.progression.powers)
  */
-function checkForcePowers(actor, requiredPowers) {
+function checkForcePowers(actor, requiredPowers, pending = {}) {
     if (!actor || !requiredPowers || requiredPowers.length === 0) {
         return { met: true, missing: [] };
     }
 
     // Get finalized force power items
-    const actorPowers = actor.items?.filter(i =>
-        i.type === 'force-power' || i.type === 'force-power'
-    ) || [];
+    const actorPowers = actor.items?.filter(i => {
+        const type = String(i?.type || '').toLowerCase();
+        return type === 'force-power' || type === 'forcepower' || type === 'power';
+    }) || [];
 
-    // Also include pending force powers from progression
-    const pendingPowerNames = actor.system?.progression?.powers || [];
+    // Also include pending force powers from progression and current shell evaluation.
+    const pendingPowerNames = [
+        ...(actor.system?.progression?.powers || []),
+        ...(actor.system?.progression?.forcePowers || []),
+        ...(pending?.selectedForcePowers || []),
+        ...(pending?.grantedForcePowers || [])
+    ];
     const allPowerNames = [
         ...actorPowers.map(p => p.name),
         ...pendingPowerNames
