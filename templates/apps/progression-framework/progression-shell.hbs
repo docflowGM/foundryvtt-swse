@@ -89,18 +89,10 @@
     {{!-- ====================================================================
       PROGRESS RAIL — compact horizontal step progression
     ==================================================================== --}}
-    <div data-region="progress-rail">
+    <div data-region="progress-rail"
+         data-collapsed="{{progressRailCollapsed}}">
       {{{parts.progressRail}}}
     </div>{{!-- /progress-rail --}}
-
-    {{!-- ====================================================================
-      UTILITY BAR — always present; content varies by step
-    ==================================================================== --}}
-    <div data-region="utility-bar"
-         data-collapsed="{{utilityBarCollapsed}}"
-         data-mode="{{utilityBarConfig.mode}}">
-      {{{parts.utilityBar}}}
-    </div>{{!-- /utility-bar --}}
 
     {{!-- ====================================================================
       DIAGNOSTIC BANNERS — Phase 8 hydration diagnostics (errors/warnings)
@@ -110,15 +102,47 @@
     {{!-- ====================================================================
       CONTENT ROW — summary-panel (left) + work-surface (center) + details-panel (right)
     ==================================================================== --}}
-    <div class="prog-content-row">
+    <div class="prog-content-row" data-summary-collapsed="{{summaryPanelCollapsed}}">
+      {{#if hasCollapsedTopRail}}
+        <div class="prog-collapsed-rail-tray" aria-label="Collapsed progression rails">
+          {{#if mentorCollapsed}}
+            <button class="prog-collapsed-rail-tray__btn swse-ui-button" data-action="toggle-mentor" type="button" title="Restore mentor rail">
+              <i class="fas fa-chevron-down"></i><span>Mentor</span>
+            </button>
+          {{/if}}
+          {{#if progressRailCollapsed}}
+            <button class="prog-collapsed-rail-tray__btn swse-ui-button" data-action="toggle-progress-rail" type="button" title="Restore step rail">
+              <i class="fas fa-chevron-down"></i><span>Steps</span>
+            </button>
+          {{/if}}
+          {{#if utilityBarCollapsed}}
+            <button class="prog-collapsed-rail-tray__btn swse-ui-button" data-action="toggle-utility-bar" type="button" title="Restore utility rail">
+              <i class="fas fa-chevron-down"></i><span>Tools</span>
+            </button>
+          {{/if}}
+        </div>
+      {{/if}}
+      {{#if summaryPanelCollapsed}}
+        <button class="prog-summary-restore swse-ui-button" data-action="toggle-summary-panel" type="button" title="Restore summary rail">
+          <i class="fas fa-chevron-right"></i><span>Summary</span>
+        </button>
+      {{/if}}
       <div class="prog-content-gridline prog-content-gridline--h"></div>
       <div class="prog-content-gridline prog-content-gridline--v"></div>
 
       {{!-- ==================================================================
         SUMMARY PANEL — left column, compact build snapshot
       ================================================================== --}}
-      <aside data-region="summary-panel">
+      <aside data-region="summary-panel"
+             data-collapsed="{{summaryPanelCollapsed}}">
 
+        <button class="prog-summary-panel__collapse swse-ui-button" data-action="toggle-summary-panel" type="button"
+                title="{{#if summaryPanelCollapsed}}Restore summary rail{{else}}Collapse summary rail{{/if}}">
+          <i class="fas fa-chevron-{{#if summaryPanelCollapsed}}right{{else}}left{{/if}}"></i>
+          <span>{{#if summaryPanelCollapsed}}Summary{{else}}Hide{{/if}}</span>
+        </button>
+
+        <div class="prog-summary-panel__body">
         {{#if summaryPanelHtml}}
           {{{summaryPanelHtml}}}
         {{else}}
@@ -128,6 +152,7 @@
             {{/if}}
           </div>
         {{/if}}
+        </div>
 
       </aside>{{!-- /summary-panel --}}
 
@@ -145,6 +170,14 @@
           {{/if}}
         </div>
         {{/if}}
+
+        {{!-- Inline utility rail: step search/filter/sort now lives at the top of the body rail. --}}
+        <div class="prog-inline-utility-region"
+             data-region="utility-bar"
+             data-collapsed="{{utilityBarCollapsed}}"
+             data-mode="{{utilityBarConfig.mode}}">
+          {{{parts.utilityBar}}}
+        </div>{{!-- /utility-bar --}}
 
         {{#if workSurfaceHtml}}
           {{{workSurfaceHtml}}}

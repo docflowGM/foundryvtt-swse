@@ -6,11 +6,7 @@
           <div class="item-editor__grid item-editor__grid--two-col">
             <div class="form-field">
               <label>Blade Color</label>
-              <select name="flags.swse.bladeColor">
-                {{#each bladeColorOptions as |opt|}}
-                  <option value="{{opt.name}}" {{#if (eq ../item.flags.swse.bladeColor opt.name)}}selected{{/if}}>{{opt.label}}</option>
-                {{/each}}
-              </select>
+              <input type="color" name="flags.swse.bladeColor" value="{{entityDialog.weapon.bladeColorHex}}" />
             </div>
           </div>
         </section>

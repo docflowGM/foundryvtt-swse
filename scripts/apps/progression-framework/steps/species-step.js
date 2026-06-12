@@ -47,6 +47,10 @@ export class SpeciesStep extends ProgressionStepPlugin {
       'source': '',                     // selected source book/package name
     };
     this._sortBy = 'source';          // 'source' | 'alpha' — source groups Humans/Near-Humans first
+    this._activeSizeCategory = 'all';
+    this._activeAbilityCategory = 'all';
+    this._categorySidebarCollapsed = false;
+    this._expandedSizeCategories = new Set(['medium']);
 
     // Near-Human builder
     this._nearHumanBuilder = new NearHumanBuilder();
@@ -273,6 +277,64 @@ export class SpeciesStep extends ProgressionStepPlugin {
       shell?.render?.();
       return true;
     }
+
+    if (action === 'select-species-category') {
+      event?.preventDefault?.();
+      const size = String(target?.dataset?.size || 'all').toLowerCase();
+      const ability = String(target?.dataset?.ability || 'all').toLowerCase();
+      this._activeSizeCategory = ['all', 'recommended', 'medium', 'small', 'large'].includes(size) ? size : 'all';
+      this._activeAbilityCategory = this._activeSizeCategory === 'recommended'
+        ? 'all'
+        : (['all', 'none', 'str', 'dex', 'con', 'int', 'wis', 'cha'].includes(ability) ? ability : 'all');
+      if (['medium', 'small', 'large'].includes(this._activeSizeCategory)) {
+        this._expandedSizeCategories.add(this._activeSizeCategory);
+      }
+      shell?.render?.();
+      return true;
+    }
+
+    if (action === 'toggle-species-size-accordion') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      const size = String(target?.dataset?.size || '').toLowerCase();
+      if (['medium', 'small', 'large'].includes(size)) {
+        if (this._expandedSizeCategories.has(size)) {
+          this._expandedSizeCategories.delete(size);
+        } else {
+          this._expandedSizeCategories.add(size);
+        }
+      }
+      shell?.render?.();
+      return true;
+    }
+
+    if (action === 'toggle-species-category-sidebar') {
+      event?.preventDefault?.();
+      this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
+      shell?.render?.();
+      return true;
+    }
+
+    if (action === 'reset-species-browser') {
+      event?.preventDefault?.();
+      this._searchQuery = '';
+      this._activeSizeCategory = 'all';
+      this._activeAbilityCategory = 'all';
+      this._expandedSizeCategories = new Set(['medium']);
+      this._filters = {
+        size: null,
+        small: false,
+        medium: false,
+        large: false,
+        'bonus-stat': '',
+        'penalty-stat': '',
+        'source': '',
+      };
+      this._applyFilters();
+      if (shell?.utilityBar?._searchQuery !== undefined) shell.utilityBar._searchQuery = '';
+      shell?.render?.();
+      return true;
+    }
     return false;
   }
 
@@ -288,6 +350,8 @@ export class SpeciesStep extends ProgressionStepPlugin {
   async getStepData(context) {
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedSpecies);
     const cards = this._filteredSpecies.map(s => this._formatSpeciesCard(s, suggestedIds, confidenceMap));
+    const recommendedSpecies = this._getRecommendedSpeciesCards(cards);
+    const hasSearchQuery = !!String(this._searchQuery || '').trim();
 
     // DIAGNOSTICS: Check for missing ids in rendered cards
     const missingIds = cards.filter(c => !c.id).map(c => c.name);
@@ -302,6 +366,15 @@ export class SpeciesStep extends ProgressionStepPlugin {
     return {
       mode: this._mode,
       species: cards,
+      recommendedSpecies,
+      speciesCategoryTree: this._buildSpeciesCategoryTree(cards, recommendedSpecies),
+      speciesCategoryGroups: this._buildSpeciesCategoryGroups(cards, recommendedSpecies),
+      searchResults: hasSearchQuery ? cards : [],
+      hasSearchQuery,
+      searchQueryLabel: String(this._searchQuery || '').trim(),
+      activeSizeCategory: this._activeSizeCategory,
+      activeAbilityCategory: this._activeAbilityCategory,
+      categorySidebarCollapsed: this._categorySidebarCollapsed,
       focusedSpeciesId: context.focusedItem?.id ?? null,
       committedSpeciesId: context.committedSelections?.get('species')?.speciesId ?? null,
       nearHuman: this._nearHumanBuilder.getBuilderData(),
@@ -890,13 +963,6 @@ export class SpeciesStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   getUtilityBarConfig() {
-    // Build dynamic source options from unique sources in all species
-    const uniqueSources = [...new Set(this._allSpecies.map(s => s.source || 'Unknown'))].sort();
-    const sourceOptions = [
-      { value: '', label: '— All Sources —' },
-      ...uniqueSources.map(source => ({ value: source, label: source }))
-    ];
-
     return {
       mode: 'rich',
       search: {
@@ -904,53 +970,8 @@ export class SpeciesStep extends ProgressionStepPlugin {
         placeholder: 'Search species…',
         supportsWildcards: false,
       },
-      filters: [
-        { id: 'size', label: 'Size', type: 'toggle-group', defaultOn: false },
-        { id: 'small', label: 'Small', type: 'toggle', defaultOn: false },
-        { id: 'medium', label: 'Medium', type: 'toggle', defaultOn: false },
-        { id: 'large', label: 'Large', type: 'toggle', defaultOn: false },
-      ],
-      bonusDropdown: {
-        id: 'bonus-stat',
-        label: 'Has Bonus:',
-        type: 'select',
-        options: [
-          { value: '', label: '—' },
-          { value: 'str', label: 'Strength' },
-          { value: 'dex', label: 'Dexterity' },
-          { value: 'con', label: 'Constitution' },
-          { value: 'int', label: 'Intelligence' },
-          { value: 'wis', label: 'Wisdom' },
-          { value: 'cha', label: 'Charisma' },
-        ],
-        defaultValue: '',
-      },
-      penaltyDropdown: {
-        id: 'penalty-stat',
-        label: 'Has Penalty:',
-        type: 'select',
-        options: [
-          { value: '', label: '—' },
-          { value: 'str', label: 'Strength' },
-          { value: 'dex', label: 'Dexterity' },
-          { value: 'con', label: 'Constitution' },
-          { value: 'int', label: 'Intelligence' },
-          { value: 'wis', label: 'Wisdom' },
-          { value: 'cha', label: 'Charisma' },
-        ],
-        defaultValue: '',
-      },
-      sourceDropdown: {
-        id: 'source',
-        label: 'Source:',
-        type: 'select',
-        options: sourceOptions,
-        defaultValue: '',
-      },
-      sorts: [
-        { id: 'source', label: 'Source', isDefault: true },
-        { id: 'alpha', label: 'A–Z' },
-      ],
+      filters: [],
+      sorts: [],
     };
   }
 
@@ -1043,143 +1064,31 @@ export class SpeciesStep extends ProgressionStepPlugin {
 
   _applyFilters() {
     let filtered = [...this._allSpecies];
-    console.log('[SpeciesStep] ═══════════════════════════════════════════════════════════');
-    console.log('[SpeciesStep] FILTER PIPELINE START');
-    console.log('[SpeciesStep] Initial species count:', filtered.length);
-    console.log('[SpeciesStep] Search query:', this._searchQuery || '(none)');
-    console.log('[SpeciesStep] Active filters:', JSON.stringify(this._filters));
-    console.log('[SpeciesStep] Sort mode:', this._sortBy);
+    const hasSearchQuery = !!String(this._searchQuery || '').trim();
 
-    // Log sample species structure for debugging
-    if (filtered.length > 0) {
-      const sample = filtered[0];
-      console.log('[SpeciesStep] Sample species structure:', {
-        name: sample.name,
-        size: sample.size,
-        abilityScores: sample.abilityScores,
-        source: sample.source,
-        allKeys: Object.keys(sample).slice(0, 15),
+    if (hasSearchQuery) {
+      const q = String(this._searchQuery || '').toLowerCase().trim();
+      filtered = filtered.filter((species) => {
+        const haystack = [
+          species.name,
+          species.source,
+          species.size,
+          this._formatAbilityLine(species.abilityScores),
+          ...(species.tags || []),
+          ...(species.languages || []),
+          ...(species.abilities || []).map(ability => typeof ability === 'string' ? ability : ability?.name),
+        ].filter(Boolean).join(' ').toLowerCase();
+        return haystack.includes(q);
       });
     }
 
-    // Search by name — supports wildcard regex if * is present, otherwise substring match
-    if (this._searchQuery) {
-      const before = filtered.length;
-
-      // Wildcard mode: if query contains *, treat as regex pattern
-      if (this._searchQuery.includes('*')) {
-        try {
-          // Convert * to .* for regex matching, escape other special chars
-          const pattern = this._searchQuery
-            .replace(/[.+^${}()|[\]\\]/g, '\\$&')  // Escape regex special chars except *
-            .replace(/\*/g, '.*');                  // * → .*
-          const regex = new RegExp(`^${pattern}$`, 'i');  // Case-insensitive anchored match
-          filtered = filtered.filter(s => regex.test(s.name));
-          console.log('[SpeciesStep] After wildcard search "' + this._searchQuery + '" (regex: ^' + pattern + '$):', before, '→', filtered.length);
-        } catch (err) {
-          console.warn('[SpeciesStep] Wildcard regex error:', err.message);
-          // Fallback: substring search if regex fails
-          filtered = filtered.filter(s => s.name.toLowerCase().includes(this._searchQuery.toLowerCase()));
-        }
-      } else {
-        // Substring mode: case-insensitive contains
-        const q = this._searchQuery.toLowerCase();
-        filtered = filtered.filter(s => s.name.toLowerCase().includes(q));
-        console.log('[SpeciesStep] After substring search "' + this._searchQuery + '":', before, '→', filtered.length);
-      }
-      console.log('[SpeciesStep]   Matching species:', filtered.map(s => s.name).slice(0, 5));
-    }
-
-    // Size filters (small, medium, large) — combinable toggle buttons
-    const sizeFilters = ['small', 'medium', 'large'];
-    const activeSizeFilters = sizeFilters.filter(size => this._filters[size]);
-    if (activeSizeFilters.length > 0) {
-      const before = filtered.length;
-      filtered = filtered.filter(s => {
-        const speciesSize = (s.size || 'Medium').toLowerCase();
-        return activeSizeFilters.some(size => speciesSize === size.toLowerCase());
-      });
-      console.log('[SpeciesStep] After size filter [' + activeSizeFilters.join(', ') + ']:', before, '→', filtered.length);
-    }
-
-    // Bonus stat filter (dropdown) — filters for specific ability with positive bonus
-    if (this._filters['bonus-stat']) {
-      const targetAbility = this._filters['bonus-stat'];
-      const before = filtered.length;
-      console.log('[SpeciesStep] Bonus filter: looking for ability "' + targetAbility + '"');
-
-      // Debug: inspect ability structure in sample
-      if (filtered.length > 0) {
-        const sample = filtered[0];
-        console.log('[SpeciesStep]   Sample abilityScores:', sample.abilityScores);
-        if (sample.abilityScores) {
-          console.log('[SpeciesStep]   Ability keys:', Object.keys(sample.abilityScores));
-          console.log('[SpeciesStep]   Value for "' + targetAbility + '":', sample.abilityScores[targetAbility]);
-        }
-      }
-
-      filtered = filtered.filter(s => {
-        const abilityScores = s.abilityScores || {};
-        const value = abilityScores[targetAbility];
-        return value && value > 0;  // Check that value exists and is > 0
-      });
-      console.log('[SpeciesStep] After bonus-stat filter (' + targetAbility + '):', before, '→', filtered.length);
-      if (filtered.length > 0) {
-        console.log('[SpeciesStep]   Matching species:', filtered.map(s => s.name).slice(0, 5));
-      }
-    }
-
-    // Penalty stat filter (dropdown) — filters for specific ability with negative penalty
-    if (this._filters['penalty-stat']) {
-      const targetAbility = this._filters['penalty-stat'];
-      const before = filtered.length;
-      console.log('[SpeciesStep] Penalty filter: looking for ability "' + targetAbility + '"');
-
-      filtered = filtered.filter(s => {
-        const abilityScores = s.abilityScores || {};
-        const value = abilityScores[targetAbility];
-        return value && value < 0;  // Check that value exists and is < 0
-      });
-      console.log('[SpeciesStep] After penalty-stat filter (' + targetAbility + '):', before, '→', filtered.length);
-      if (filtered.length > 0) {
-        console.log('[SpeciesStep]   Matching species:', filtered.map(s => s.name).slice(0, 5));
-      }
-    }
-
-    // Source filter (dropdown) — NEW IMPLEMENTATION
-    if (this._filters['source'] && this._filters['source'] !== '') {
+    if (this._filters['source']) {
       const targetSource = this._filters['source'];
-      const before = filtered.length;
-      console.log('[SpeciesStep] Source filter: looking for source "' + targetSource + '"');
-
-      filtered = filtered.filter(s => {
-        return (s.source || 'Unknown') === targetSource;
-      });
-      console.log('[SpeciesStep] After source filter (' + targetSource + '):', before, '→', filtered.length);
-      if (filtered.length > 0) {
-        console.log('[SpeciesStep]   Matching species:', filtered.map(s => s.name).slice(0, 5));
-      }
+      filtered = filtered.filter(s => (s.source || 'Unknown') === targetSource);
     }
 
-    // Sort
-    filtered.sort((a, b) => {
-      if (this._sortBy === 'alpha') {
-        return a.name.localeCompare(b.name);
-      }
-
-      // Default: 'source' — Human first, Near-Human second, Core, then others, then alpha
-      const sourceOrder = { 'Human': 0, 'Near-Human': 1, 'Core Rulebook': 2 };
-      const aOrder = sourceOrder[a.source] ?? 3;
-      const bOrder = sourceOrder[b.source] ?? 3;
-      if (aOrder !== bOrder) return aOrder - bOrder;
-
-      return a.name.localeCompare(b.name);
-    });
-
+    filtered.sort((a, b) => this._compareSpeciesForDisplay(a, b));
     this._filteredSpecies = filtered;
-    console.log('[SpeciesStep] ═══════════════════════════════════════════════════════════');
-    console.log('[SpeciesStep] FINAL RESULT: ' + filtered.length + ' species (sorted by ' + this._sortBy + ')');
-    console.log('[SpeciesStep] ═══════════════════════════════════════════════════════════');
   }
 
   /**
@@ -1556,6 +1465,221 @@ export class SpeciesStep extends ProgressionStepPlugin {
     return parts.length ? parts.join(', ') : (species?.speed ?? null);
   }
 
+
+  _normalizeAbilityKey(key) {
+    const lower = String(key || '').toLowerCase();
+    return ({
+      strength: 'str',
+      dexterity: 'dex',
+      constitution: 'con',
+      intelligence: 'int',
+      wisdom: 'wis',
+      charisma: 'cha',
+    })[lower] || lower;
+  }
+
+  _getPositiveAbilityKeys(speciesOrCard) {
+    const scores = speciesOrCard?.abilityScores || speciesOrCard?.rawAbilityScores || {};
+    const keys = Object.entries(scores || {})
+      .map(([key, value]) => [this._normalizeAbilityKey(key), Number(value)])
+      .filter(([key, value]) => ['str', 'dex', 'con', 'int', 'wis', 'cha'].includes(key) && Number.isFinite(value) && value > 0)
+      .map(([key]) => key);
+    return Array.from(new Set(keys));
+  }
+
+  _normalizeSpeciesSize(size) {
+    const lower = String(size || 'Medium').toLowerCase();
+    if (lower.includes('small')) return 'small';
+    if (lower.includes('large')) return 'large';
+    return 'medium';
+  }
+
+  _sourceOrderValue(source) {
+    const normalized = String(source || 'Unknown').trim().toLowerCase();
+    const sourceOrder = {
+      core: 0,
+      'core rulebook': 0,
+      cr: 0,
+      'saga edition core rulebook': 0,
+    };
+    return sourceOrder[normalized] ?? 10;
+  }
+
+  _compareSpeciesForDisplay(a, b) {
+    const aSourceOrder = this._sourceOrderValue(a.source);
+    const bSourceOrder = this._sourceOrderValue(b.source);
+    if (aSourceOrder !== bSourceOrder) return aSourceOrder - bSourceOrder;
+
+    const sourceCompare = String(a.source || 'Unknown').localeCompare(String(b.source || 'Unknown'));
+    if (sourceCompare !== 0) return sourceCompare;
+
+    return String(a.name || '').localeCompare(String(b.name || ''));
+  }
+
+  _compareSpeciesCards(a, b) {
+    return this._compareSpeciesForDisplay(a, b);
+  }
+
+  _compareSpeciesCardsForCategory(a, b, sizeKey, abilityKey) {
+    if (sizeKey === 'medium' && abilityKey === 'none') {
+      const aHuman = String(a?.name || '').trim().toLowerCase() === 'human';
+      const bHuman = String(b?.name || '').trim().toLowerCase() === 'human';
+      if (aHuman !== bHuman) return aHuman ? -1 : 1;
+    }
+    return this._compareSpeciesCards(a, b);
+  }
+
+  _getSpeciesSuggestionKeys(suggestion) {
+    return [suggestion?._id, suggestion?.id, suggestion?.name]
+      .filter(Boolean)
+      .map(value => String(value));
+  }
+
+  _getRecommendedSpeciesCards(cards = []) {
+    const suggestions = Array.isArray(this._suggestedSpecies) ? this._suggestedSpecies.slice(0, 5) : [];
+    if (!suggestions.length || !cards.length) return [];
+
+    const cardByKey = new Map();
+    for (const card of cards) {
+      [card?.id, card?.name].filter(Boolean).forEach(value => cardByKey.set(String(value), card));
+    }
+
+    const recommended = [];
+    const used = new Set();
+    for (const suggestion of suggestions) {
+      const card = this._getSpeciesSuggestionKeys(suggestion)
+        .map(key => cardByKey.get(key))
+        .find(Boolean);
+      const key = card ? String(card.id || card.name || '') : '';
+      if (!card || !key || used.has(key)) continue;
+      recommended.push(card);
+      used.add(key);
+      if (recommended.length >= 5) break;
+    }
+
+    return recommended;
+  }
+
+  _abilityCategoryDefinitions() {
+    return [
+      { key: 'none', label: 'None' },
+      { key: 'str', label: 'Strength' },
+      { key: 'dex', label: 'Dexterity' },
+      { key: 'con', label: 'Constitution' },
+      { key: 'int', label: 'Intelligence' },
+      { key: 'wis', label: 'Wisdom' },
+      { key: 'cha', label: 'Charisma' },
+    ];
+  }
+
+  _sizeCategoryDefinitions() {
+    return [
+      { key: 'medium', label: 'Medium' },
+      { key: 'small', label: 'Small' },
+      { key: 'large', label: 'Large' },
+    ];
+  }
+
+  _cardMatchesAbilityCategory(card, abilityKey) {
+    const positiveKeys = Array.isArray(card.abilityBonusKeys) ? card.abilityBonusKeys : [];
+    if (abilityKey === 'none') return positiveKeys.length === 0;
+    return positiveKeys.includes(abilityKey);
+  }
+
+  _buildSpeciesCategoryGroups(cards = [], recommendedCards = []) {
+    const groups = [];
+
+    if (this._activeSizeCategory === 'all' || this._activeSizeCategory === 'recommended') {
+      const recommended = [...(recommendedCards || [])];
+      if (recommended.length) {
+        groups.push({
+          key: 'recommended',
+          label: 'Recommended',
+          count: recommended.length,
+          isRecommended: true,
+          abilityGroups: [{
+            key: 'recommended',
+            label: 'Curated Picks',
+            count: recommended.length,
+            species: recommended,
+          }],
+        });
+      }
+      if (this._activeSizeCategory === 'recommended') return groups;
+    }
+
+    const filteredCards = cards.filter(card => {
+      const sizeKey = this._normalizeSpeciesSize(card.size);
+      if (this._activeSizeCategory !== 'all' && sizeKey !== this._activeSizeCategory) return false;
+      if (this._activeAbilityCategory !== 'all' && !this._cardMatchesAbilityCategory(card, this._activeAbilityCategory)) return false;
+      return true;
+    });
+
+    for (const sizeDef of this._sizeCategoryDefinitions()) {
+      if (this._activeSizeCategory !== 'all' && this._activeSizeCategory !== sizeDef.key) continue;
+      const sizeCards = filteredCards.filter(card => this._normalizeSpeciesSize(card.size) === sizeDef.key);
+      const abilityGroups = [];
+      for (const abilityDef of this._abilityCategoryDefinitions()) {
+        if (this._activeAbilityCategory !== 'all' && this._activeAbilityCategory !== abilityDef.key) continue;
+        const abilityCards = sizeCards
+          .filter(card => this._cardMatchesAbilityCategory(card, abilityDef.key))
+          .sort((a, b) => this._compareSpeciesCardsForCategory(a, b, sizeDef.key, abilityDef.key));
+        if (abilityCards.length) {
+          abilityGroups.push({
+            key: abilityDef.key,
+            label: abilityDef.label,
+            count: abilityCards.length,
+            species: abilityCards,
+          });
+        }
+      }
+      if (abilityGroups.length) {
+        groups.push({
+          key: sizeDef.key,
+          label: sizeDef.label,
+          count: abilityGroups.reduce((sum, group) => sum + group.count, 0),
+          abilityGroups,
+        });
+      }
+    }
+    return groups;
+  }
+
+  _buildSpeciesCategoryTree(cards = [], recommendedCards = []) {
+    const total = cards.length;
+    const recommendedCount = Array.isArray(recommendedCards) ? recommendedCards.length : 0;
+    const sizes = this._sizeCategoryDefinitions().map(sizeDef => {
+      const sizeCards = cards.filter(card => this._normalizeSpeciesSize(card.size) === sizeDef.key);
+      const isExpanded = this._expandedSizeCategories?.has?.(sizeDef.key) || this._activeSizeCategory === sizeDef.key;
+      const abilities = this._abilityCategoryDefinitions().map(abilityDef => {
+        const count = sizeCards.filter(card => this._cardMatchesAbilityCategory(card, abilityDef.key)).length;
+        return {
+          ...abilityDef,
+          count,
+          isActive: this._activeSizeCategory === sizeDef.key && this._activeAbilityCategory === abilityDef.key,
+        };
+      });
+      return {
+        ...sizeDef,
+        count: sizeCards.length,
+        isActive: this._activeSizeCategory === sizeDef.key && this._activeAbilityCategory === 'all',
+        isExpanded,
+        abilities,
+      };
+    });
+    return {
+      total,
+      recommended: {
+        key: 'recommended',
+        label: 'Recommended',
+        count: recommendedCount,
+        isActive: this._activeSizeCategory === 'recommended',
+      },
+      allActive: this._activeSizeCategory === 'all' && this._activeAbilityCategory === 'all',
+      sizes,
+    };
+  }
+
   _formatSpeciesCard(species, suggestedIds = new Set(), confidenceMap = new Map()) {
     species = this._ensureSpeciesIdentity(species);
 
@@ -1569,9 +1693,10 @@ export class SpeciesStep extends ProgressionStepPlugin {
     }
 
     const abilityRows = this._formatAbilityRows(species.abilityScores);
-    const abilityModLine = abilityRows
-      .map(row => `${row.signedValue} ${row.shortLabel}`)
-      .join(', ');
+    const abilityModLine = abilityRows.length
+      ? abilityRows.map(row => `${row.signedValue} ${row.shortLabel}`).join(', ')
+      : 'None';
+    const abilityBonusKeys = this._getPositiveAbilityKeys(species);
     const isSuggested = this.isSuggestedItem(species.id, suggestedIds);
     const confidenceData = confidenceMap.get ? confidenceMap.get(species.id) : confidenceMap[species.id];
 
@@ -1586,6 +1711,8 @@ export class SpeciesStep extends ProgressionStepPlugin {
       description: species.description ?? '',
       abilityModLine,
       abilityRows,
+      rawAbilityScores: species.abilityScores || {},
+      abilityBonusKeys,
       tags: this._getDisplaySpeciesTags(species).slice(0, 3),
       abilities: species.abilities ?? [],
       variantCount: Array.isArray(species.variants) ? species.variants.length : 0,
@@ -1735,8 +1862,8 @@ export class SpeciesStep extends ProgressionStepPlugin {
         persist: true
       });
 
-      // Store top suggestions
-      this._suggestedSpecies = (suggested || []).slice(0, 6);
+      // Store the five curated recommendations for the duplicate Recommended bucket.
+      this._suggestedSpecies = (suggested || []).slice(0, 5);
     } catch (err) {
       swseLogger.warn('[SpeciesStep] Suggestion service error:', err);
       this._suggestedSpecies = [];

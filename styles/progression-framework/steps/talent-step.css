@@ -3239,3 +3239,28 @@
     max-height: 44vh;
   }
 }
+
+
+/* Compact the list rail only when the talent planner is in split Both mode.
+   List-only mode keeps descriptions because the detail rail is not competing with the graph. */
+.talent-planner-stage--both .talent-choice-card__main > p,
+.talent-planner-stage--both .talent-choice-card__recommendation {
+  display: none;
+}
+
+.talent-planner-stage--both .talent-choice-panel--holomap {
+  min-width: 260px;
+}
+
+.talent-planner-stage--both .talent-map-panel--holomap {
+  min-width: 0;
+}
+
+.talent-planner-stage--both .talent-choice-card {
+  padding-top: 0.45rem;
+  padding-bottom: 0.45rem;
+}
+
+.talent-planner-stage--both .talent-choice-card__main h6 {
+  margin-bottom: 0;
+}

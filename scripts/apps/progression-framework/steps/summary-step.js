@@ -232,8 +232,8 @@ export class SummaryStep extends ProgressionStepPlugin {
       hasCaution: validation.warnings.caution.length > 0,
       cautionCount: validation.warnings.caution.length,
       cautions: validation.warnings.caution,
-      isReadyToFinalize: validation.isValid && this._isReviewComplete && this._hasCharacterName(context?.shell),
-      finalizationStatus: validation.isValid && this._isReviewComplete && this._hasCharacterName(context?.shell)
+      isReadyToFinalize: validation.isValid && this._isReviewComplete,
+      finalizationStatus: validation.isValid && this._isReviewComplete
         ? 'Ready to create character'
         : validation.errors.length > 0
           ? `${validation.errors.length} error${validation.errors.length === 1 ? '' : 's'} to fix`
@@ -278,9 +278,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       };
     }
 
-    if (!this._hasCharacterName(shell || this._lastShell)) {
-      errors.push('Character name is required (enter or generate a name above)');
-    }
+    // Character name is intentionally non-blocking. If left blank, finalization keeps the actor's current name.
     if (this._startingLevel < 1 || this._startingLevel > 20) {
       errors.push('Starting level must be between 1 and 20');
     }
@@ -369,7 +367,7 @@ export class SummaryStep extends ProgressionStepPlugin {
       hasErrors: validation.errors.length > 0,
       errorCount: validation.errors.length,
       errors: validation.errors,
-      isReadyToFinalize: validation.isValid && this._isReviewComplete && this._hasCharacterName(shell || this._lastShell),
+      isReadyToFinalize: validation.isValid && this._isReviewComplete,
     };
     return {
       template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/summary-business-details.hbs',

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
-  "description": "Mapping of talents to generic bonus-bearing base actions. Pasted Jedi prestige/shadow/watchman talents are intentionally routed through feat-combat-actions/runtime handlers instead of this generic +1 linker.",
-  "totalTalents": 609,
-  "unmapped": 197,
+  "description": "Mapping of talents to generic base actions. Numeric bonuses are applied only when talent-granted-abilities supplies explicit numeric metadata; contextual Sith/Jedi talents are routed through dedicated combat-action handlers.",
+  "totalTalents": 449,
+  "unmapped": 191,
   "talentToAction": {
     "Acrobatic Recovery": "acrobatics-check",
     "Acute Senses": "perception-check",
@@ -38,8 +38,8 @@
     "Call Out": "melee-attack",
     "Capture Droid": "reflex-defense",
     "Castigate": "reflex-defense",
-    "Channel Aggression": "reflex-defense",
-    "Charm Beast": "persuasion-check",
+    "Channel Aggression": "channel-aggression",
+    "Charm Beast": "charm-beast",
     "Cheap Shot": "melee-attack",
     "Clear Mind": "use-the-force-check",
     "Close Maneuvering": "melee-attack",
@@ -62,8 +62,8 @@
     "Cunning Strategist": "melee-attack",
     "Damaging Deception": "reflex-defense",
     "Dampen Presence": "use-the-force-check",
-    "Dark Healing": "ranged-attack",
-    "Dark Healing Field": "fortitude-defense",
+    "Dark Healing": "dark-healing",
+    "Dark Healing Field": "dark-healing-field",
     "Dark Retaliation": "use-the-force-check",
     "Dark Side Savant": "dark-side-force-check",
     "Dark Side Sense": "use-the-force-check",
@@ -78,7 +78,7 @@
     "Demand Surrender": "reflex-defense",
     "Demoralizing Defense": "melee-attack",
     "Deployment Tactics": "reflex-defense",
-    "Desperate Measures": "melee-attack",
+    "Desperate Measures": "desperate-measures",
     "Devastating Melee Smash": "melee-attack",
     "Device Jammer": "mechanics-check",
     "Direct Fire": "reflex-defense",
@@ -106,10 +106,10 @@
     "Electronic Sabotage": "reflex-defense",
     "Elusive Dogfighter": "melee-attack",
     "Elusive Target": "melee-attack",
-    "Embrace Dark Side": "use-the-force-check",
+    "Embrace Dark Side": "embrace-the-dark-side",
     "Engineer": "mechanics-check",
     "Enhanced Vision": "perception-check",
-    "Entreat Beast": "reflex-defense",
+    "Entreat Beast": "entreat-beast",
     "Equilibrium": "condition-track-shift",
     "Escort Fighter": "movement-action",
     "Evasion": "melee-attack",
@@ -128,19 +128,19 @@
     "Flanking Foe": "melee-attack",
     "Flurry Attack": "melee-attack",
     "Fluster": "reflex-defense",
-    "Focus Terror": "condition-track-shift",
-    "Focused Force Talisman": "use-the-force-check",
+    "Focus Terror": "focus-terror",
+    "Focused Force Talisman": "focused-force-talisman",
     "Force Blank": "use-the-force-check",
     "Force Deception": "deception-check",
     "Force Exertion": "use-the-force-check",
     "Force Focus": "use-the-force-check",
     "Force Haze": "melee-attack",
-    "Force Interrogation": "persuasion-check",
+    "Force Interrogation": "force-interrogation",
     "Force Perception": "perception-check",
-    "Force Power Adept": "use-the-force-check",
+    "Force Power Adept": "force-power-adept",
     "Force Reflexes": "pilot-check",
     "Force Suppression": "use-the-force-check",
-    "Force Throw": "use-the-force-check",
+    "Force Throw": "force-throw",
     "Friend or Foe": "ranged-attack",
     "Friendly Fire": "melee-attack",
     "Gauge Force Potential": "use-the-force-check",
@@ -183,7 +183,7 @@
     "Improved Stunning Strike": "melee-attack",
     "Improved Suppression Fire": "melee-attack",
     "Improvised Device": "mechanics-check",
-    "Incite Rage": "reflex-defense",
+    "Incite Rage": "incite-rage",
     "Incognito": "deception-check",
     "Indomitable": "condition-track-shift",
     "Influence Savant": "use-the-force-check",
@@ -233,7 +233,7 @@
     "Medical Miracle": "treat-injury-check",
     "Melee Brute": "melee-attack",
     "Melee Opportunist": "melee-attack",
-    "Mind Probe": "gather-information-check",
+    "Mind Probe": "mind-probe",
     "Mine Mastery": "standard-action",
     "Misplaced Loyalty": "reflex-defense",
     "Mobile Attack (pistols)": "melee-attack",
@@ -268,14 +268,14 @@
     "Precision Implant": "melee-attack",
     "Presence": "persuasion-check",
     "Preternatural Senses": "reflex-defense",
-    "Primitive Block": "melee-attack",
+    "Primitive Block": "primitive-block",
     "Problem Solver": "pilot-check",
     "Protection": "reflex-defense",
     "Pulling the Strings": "reflex-defense",
     "Quick Trigger": "melee-attack",
     "Raider's Surge": "melee-attack",
     "Ranged Disarm": "ranged-attack",
-    "Rapid Alchemy": "melee-attack",
+    "Rapid Alchemy": "rapid-alchemy",
     "Rapid Reload": "swift-action",
     "Reactionary Attack": "melee-attack",
     "Recruit Enemy": "reflex-defense",
@@ -371,7 +371,7 @@
     "Uncanny Defense": "reflex-defense",
     "Uncanny Instincts": "melee-attack",
     "Unlikely Shot": "melee-attack",
-    "Unsettling Presence": "use-the-force-check",
+    "Unsettling Presence": "unsettling-presence",
     "Unstoppable": "condition-track-shift",
     "Unwavering Ally": "reflex-defense",
     "Vehicle Sneak": "stealth-check",
@@ -382,8 +382,8 @@
     "Walk the Line": "reflex-defense",
     "WatchCircle Initiate": "use-the-force-check",
     "Weaken Resolve": "reflex-defense",
-    "Wicked Strike": "condition-track-shift",
-    "Wild Sense": "perception-check",
+    "Wicked Strike": "lightsaber-attack",
+    "Wild Sense": "wild-sense",
     "Willful Resolve": "reflex-defense",
     "Willpower": "reflex-defense",
     "Wingman": "pilot-check",
@@ -415,7 +415,44 @@
     "Target Lock": "pilot-check",
     "Target Sense": "use-the-force-check",
     "Thruster Hit": "pilot-check",
-    "Wotan Weave": "pilot-check"
+    "Wotan Weave": "pilot-check",
+    "Improved Dark Healing": "dark-healing",
+    "Dark Scourge": "lightsaber-attack",
+    "Dark Side Adept": "use-the-force-check",
+    "Dark Side Master": "use-the-force-check",
+    "Sith Alchemy": "sith-alchemy",
+    "Stolen Form": "lightsaber-attack",
+    "Cause Mutation": "cause-mutation",
+    "Sith Alchemy Specialist": "sith-alchemy-specialist",
+    "Power of Hatred": "power-of-hatred",
+    "Bonded Mount": "bonded-mount",
+    "Soothing Presence": "soothing-presence",
+    "Channel Anger": "channel-anger",
+    "Crippling Strike": "crippling-strike",
+    "Embrace the Dark Side": "embrace-the-dark-side",
+    "Dark Side Talisman": "dark-side-talisman",
+    "Greater Dark Side Talisman": "greater-dark-side-talisman",
+    "Force Treatment": "force-treatment",
+    "Fortified Body": "fortified-body",
+    "Instrument of the Force": "instrument-of-the-force",
+    "Long Call": "long-call",
+    "Mystical Link": "mystical-link",
+    "Attune Weapon": "attune-weapon",
+    "Empower Weapon": "empower-weapon",
+    "Force Talisman": "force-talisman",
+    "Greater Force Talisman": "greater-force-talisman",
+    "Greater Focused Force Talisman": "greater-focused-force-talisman",
+    "Cower Enemies": "cower-enemies",
+    "Inquisition": "inquisition",
+    "Channel Vitality": "channel-vitality",
+    "Closed Mind": "closed-mind",
+    "Esoteric Technique": "esoteric-technique",
+    "Mystic Mastery": "mystic-mastery",
+    "Regimen Mastery": "regimen-mastery",
+    "Perfect Telepathy": "perfect-telepathy",
+    "Psychic Citadel": "psychic-citadel",
+    "Psychic Defenses": "psychic-defenses",
+    "Telepathic Intruder": "telepathic-intruder"
   },
   "actionToTalents": {
     "acrobatics-check": [
@@ -465,7 +502,6 @@
       "Hesitate",
       "Illusion",
       "Improved Manipulating Strike",
-      "Incite Rage",
       "Innocuous",
       "Intimidating Defense",
       "Knowledge is Life",
@@ -504,6 +540,7 @@
       "Wrong Decision"
     ],
     "melee-attack": [
+      "Shoto Pin",
       "Advantageous Opening",
       "Assault Gambit",
       "Beloved",
@@ -530,7 +567,6 @@
       "Debilitating Shot",
       "Deep-Space Gambit",
       "Demoralizing Defense",
-      "Desperate Measures",
       "Devastating Melee Smash",
       "Dirty Tactics",
       "Disciplined Strike",
@@ -598,7 +634,6 @@
       "Primitive Block",
       "Quick Trigger",
       "Raider's Surge",
-      "Rapid Alchemy",
       "Reactionary Attack",
       "Risk for Reward",
       "Run Interference",
@@ -608,7 +643,6 @@
       "Shellshock",
       "Shift",
       "Shoot from the Hip",
-      "Shoto Pin",
       "Single Weapon Flourish II",
       "Slip By",
       "Slippery Strike",
@@ -641,15 +675,20 @@
       "Wingman Retribution"
     ],
     "use-the-force-check": [
-      "Affliction",
       "Apprentice Boon",
+      "Difficult to Sense",
+      "Force Treatment",
+      "Insight of the Force",
+      "Sense Deception",
+      "Taint of the Dark Side",
+      "Unclouded Judgement",
+      "Affliction",
       "Clear Mind",
       "Competitive Drive",
       "Consular's Vitality",
       "Dampen Presence",
       "Dark Retaliation",
       "Dark Side Sense",
-      "Difficult to Sense",
       "Drain Force",
       "Embrace Dark Side",
       "Focused Force Talisman",
@@ -659,25 +698,22 @@
       "Force Power Adept",
       "Force Suppression",
       "Force Throw",
-      "Force Treatment",
       "Gauge Force Potential",
       "Influence Savant",
-      "Insight of the Force",
       "Inspire Fear I",
       "Instruction",
       "Lightsaber Throw",
       "Link",
-      "Sense Deception",
       "Swift Power",
-      "Taint of the Dark Side",
-      "Target Sense",
       "Telekinetic Power",
       "Telekinetic Resistance",
       "Telepathic Link",
-      "Unclouded Judgement",
       "Unsettling Presence",
       "Visionary Attack",
-      "WatchCircle Initiate"
+      "WatchCircle Initiate",
+      "Target Sense",
+      "Dark Side Adept",
+      "Dark Side Master"
     ],
     "persuasion-check": [
       "Aggressive Negotiator",
@@ -695,8 +731,8 @@
       "Terrify"
     ],
     "initiative-roll": [
-      "Always Ready",
       "Force Warning",
+      "Always Ready",
       "Improved Initiative",
       "Keep Them Reeling",
       "Reset Initiative",
@@ -716,21 +752,24 @@
       "Vehicle Sneak"
     ],
     "knowledge-check": [
+      "Impart Knowledge",
+      "Scholarly Knowledge",
       "Battle Analysis",
       "Biotech Adept",
       "Educated",
-      "Impart Knowledge",
       "Intimate Knowledge",
       "Know Your Enemy",
       "Knowledge is Power",
       "Modify Poison",
-      "Scholarly Knowledge",
       "Six Questions",
       "Tech Savant"
     ],
     "standard-action": [
-      "Battlefield Medic",
       "Direct",
+      "Share Talent",
+      "Transfer Power",
+      "Twin Weapon Style",
+      "Battlefield Medic",
       "Expedient Mending",
       "Impel Ally II",
       "Impel Ally III",
@@ -739,16 +778,12 @@
       "Mine Mastery",
       "Repairs on the Fly",
       "Ruthless",
-      "Share Talent",
       "Strong Grab",
-      "Transfer Power",
-      "Trust",
-      "Twin Weapon Style"
+      "Trust"
     ],
     "ranged-attack": [
       "Bayonet Master",
       "Boarder",
-      "Dark Healing",
       "Deflect",
       "Double Up",
       "Friend or Foe",
@@ -772,25 +807,26 @@
       "Vehicular Boost"
     ],
     "pilot-check": [
-      "Ackbar Slash",
-      "Afterburn",
       "Blind Spot",
       "Close Scrape",
-      "Corellian Slip",
-      "Darklighter Spin",
-      "Devastating Hit",
       "Dogfight Gunner",
-      "Engine Hit",
-      "Evasive Action",
-      "Explosive Shot",
       "Force Reflexes",
-      "I Have You Now",
       "Intentional Crash",
-      "Intercept",
       "Jet Pack Training",
       "Problem Solver",
       "Relentless Pursuit",
       "Renowned Pilot",
+      "Wingman",
+      "Ackbar Slash",
+      "Afterburn",
+      "Corellian Slip",
+      "Darklighter Spin",
+      "Devastating Hit",
+      "Engine Hit",
+      "Evasive Action",
+      "Explosive Shot",
+      "I Have You Now",
+      "Intercept",
       "Segnor's Loop",
       "Shield Hit",
       "Skim the Surface",
@@ -799,12 +835,11 @@
       "Tallon Roll",
       "Target Lock",
       "Thruster Hit",
-      "Wingman",
       "Wotan Weave"
     ],
     "gather-information-check": [
-      "Bothan Resources",
       "Cover Your Tracks",
+      "Bothan Resources",
       "Mind Probe",
       "Nowhere to Hide"
     ],
@@ -817,40 +852,43 @@
       "Praetoria Ishu"
     ],
     "lightsaber-attack": [
+      "Improved Quick Draw (Lightsabers)",
+      "Improved Quick Draw (Lightsabers)",
+      "Mobile Attack (Lightsabers)",
+      "Perfect Attunement",
       "Cortosis Retaliation",
       "Guardian Strike",
-      "Improved Quick Draw (Lightsabers)",
-      "Improved Quick Draw (Lightsabers)",
       "Lightsaber Evasion",
-      "Mobile Attack (Lightsabers)",
       "Multiattack Proficiency (lightsabers)",
-      "Perfect Attunement",
       "Precision",
-      "Riposte"
+      "Riposte",
+      "Wicked Strike",
+      "Dark Scourge",
+      "Stolen Form"
     ],
     "swift-action": [
-      "Angle Deflector Shields",
-      "Attack Formation Zeta Nine",
-      "Attack Pattern Delta",
-      "Cover Bracing",
       "Defensive Circle",
-      "Find an Opening",
-      "Hidden Weapons",
-      "Howlrunner Formation",
       "Jedi Quarry",
-      "Overwhelming Assault",
       "Prepared for Danger",
-      "Rapid Reload",
-      "Sabotage Device",
       "Share Force Secret",
       "Share Force Technique",
+      "Vigilance",
+      "Cover Bracing",
+      "Find an Opening",
+      "Hidden Weapons",
+      "Rapid Reload",
+      "Sabotage Device",
       "Shield Expert",
       "Skilled Demolitionist",
       "Sniping Master",
-      "Strike Formation",
       "Tactical Edge",
       "Tactical Withdrawal",
-      "Vigilance"
+      "Angle Deflector Shields",
+      "Attack Formation Zeta Nine",
+      "Attack Pattern Delta",
+      "Howlrunner Formation",
+      "Overwhelming Assault",
+      "Strike Formation"
     ],
     "deception-check": [
       "Dark Deception",
@@ -863,12 +901,10 @@
       "Seducer",
       "Surprise Strike"
     ],
-    "fortitude-defense": [
-      "Dark Healing Field"
-    ],
+    "fortitude-defense": [],
     "dark-side-force-check": [
-      "Dark Side Savant",
-      "Rebuke the Dark"
+      "Rebuke the Dark",
+      "Dark Side Savant"
     ],
     "use-computer-check": [
       "Electronic Forgery",
@@ -880,7 +916,6 @@
     ],
     "condition-track-shift": [
       "Equilibrium",
-      "Focus Terror",
       "Implant (general)",
       "Indomitable",
       "Keep It Together",
@@ -889,8 +924,7 @@
       "Relentless",
       "Seize the Moment",
       "Slowing Stun",
-      "Unstoppable",
-      "Wicked Strike"
+      "Unstoppable"
     ],
     "movement-action": [
       "Escort Fighter",
@@ -923,9 +957,9 @@
       "Twin Weapon Mastery"
     ],
     "reaction": [
-      "Counter",
       "Force Revive",
-      "Unclouded Judgement"
+      "Unclouded Judgement",
+      "Counter"
     ],
     "surprise-round": [
       "Watchman's Advance"
@@ -967,6 +1001,122 @@
     ],
     "block-reaction": [
       "Shoto Pin"
+    ],
+    "dark-healing": [
+      "Dark Healing",
+      "Improved Dark Healing"
+    ],
+    "dark-healing-field": [
+      "Dark Healing Field"
+    ],
+    "full-round-action": [],
+    "desperate-measures": [
+      "Desperate Measures"
+    ],
+    "focus-terror": [
+      "Focus Terror"
+    ],
+    "incite-rage": [
+      "Incite Rage"
+    ],
+    "rapid-alchemy": [
+      "Rapid Alchemy"
+    ],
+    "sith-alchemy": [
+      "Sith Alchemy"
+    ],
+    "cause-mutation": [
+      "Cause Mutation"
+    ],
+    "sith-alchemy-specialist": [
+      "Sith Alchemy Specialist"
+    ],
+    "power-of-hatred": [
+      "Power of Hatred"
+    ],
+    "force-power-adept": [
+      "Force Power Adept"
+    ],
+    "force-treatment": [
+      "Force Treatment"
+    ],
+    "fortified-body": [
+      "Fortified Body"
+    ],
+    "instrument-of-the-force": [
+      "Instrument of the Force"
+    ],
+    "long-call": [
+      "Long Call"
+    ],
+    "mystical-link": [
+      "Mystical Link"
+    ],
+    "attune-weapon": [
+      "Attune Weapon"
+    ],
+    "empower-weapon": [
+      "Empower Weapon"
+    ],
+    "force-talisman": [
+      "Force Talisman"
+    ],
+    "greater-force-talisman": [
+      "Greater Force Talisman"
+    ],
+    "focused-force-talisman": [
+      "Focused Force Talisman"
+    ],
+    "force-throw": [
+      "Force Throw"
+    ],
+    "greater-focused-force-talisman": [
+      "Greater Focused Force Talisman"
+    ],
+    "primitive-block": [
+      "Primitive Block"
+    ],
+    "cower-enemies": [
+      "Cower Enemies"
+    ],
+    "force-interrogation": [
+      "Force Interrogation"
+    ],
+    "inquisition": [
+      "Inquisition"
+    ],
+    "unsettling-presence": [
+      "Unsettling Presence"
+    ],
+    "channel-vitality": [
+      "Channel Vitality"
+    ],
+    "closed-mind": [
+      "Closed Mind"
+    ],
+    "esoteric-technique": [
+      "Esoteric Technique"
+    ],
+    "mystic-mastery": [
+      "Mystic Mastery"
+    ],
+    "regimen-mastery": [
+      "Regimen Mastery"
+    ],
+    "mind-probe": [
+      "Mind Probe"
+    ],
+    "perfect-telepathy": [
+      "Perfect Telepathy"
+    ],
+    "psychic-citadel": [
+      "Psychic Citadel"
+    ],
+    "psychic-defenses": [
+      "Psychic Defenses"
+    ],
+    "telepathic-intruder": [
+      "Telepathic Intruder"
     ]
   },
   "unmappedTalents": [
@@ -987,7 +1137,6 @@
     "Bring Them Back",
     "Bunker Blaster",
     "Call Weapon",
-    "Cause Mutation",
     "Channel Energy",
     "Cleanse Mind",
     "Close Contact",
@@ -1004,8 +1153,6 @@
     "Curved Throw",
     "Custom Model",
     "Dark Deception",
-    "Dark Side Adept",
-    "Dark Side Master",
     "Defensive Circle",
     "Defensive Measures",
     "Deny Move",
@@ -1090,7 +1237,6 @@
     "Perfect Attunement",
     "Perfect Telepathy",
     "Phalanx",
-    "Power of Hatred",
     "Prepared Explosive",
     "Prepared for Danger",
     "Psychic Defenses",
@@ -1123,7 +1269,6 @@
     "Signature Item",
     "Single Weapon Flourish I",
     "Sith Alchemy (craft)",
-    "Sith Alchemy Specialist",
     "Slashing Charge",
     "Soothe",
     "Soothing Presence",
@@ -1135,7 +1280,6 @@
     "Stalwart Subordinates",
     "Stay in the Fight (Recruit)",
     "Stick Together",
-    "Stolen Form",
     "Strength Implant",
     "Strike and Run",
     "Stymie",
@@ -1199,5 +1343,6 @@
     "sentinel-strike": [],
     "sentinel-gambit": [],
     "dark-side-force-check": []
-  }
+  },
+  "_notes": "Dark Side Devotee and Beastwarden pasted talent batch backchecked; talisman talents are UI-deferred/manual only."
 }

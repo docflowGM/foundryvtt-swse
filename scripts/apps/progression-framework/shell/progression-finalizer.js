@@ -340,11 +340,10 @@ export class ProgressionFinalizer {
     }
 
     if (sessionState.mode === 'chargen') {
-      const hasName = !!(summarySelection.characterName || this._getUsableActorName(sessionState.actor));
       const hasClass = !!selections.class;
       const hasAttributes = !!selections.attributes;
-      if (!hasName || !hasClass || !hasAttributes) {
-        throw new Error('Chargen incomplete: missing required name, class, or attributes in canonical session');
+      if (!hasClass || !hasAttributes) {
+        throw new Error('Chargen incomplete: missing required class or attributes in canonical session');
       }
       const creditMode = ProgressionRules.getStartingCreditMode?.() || 'roll';
       const autoCredits = ProgressionRules.getMaxStartingCreditsEnabled?.() === true || creditMode === 'max' || creditMode === 'maximum' || creditMode === 'average';

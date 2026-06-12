@@ -1,71 +1,170 @@
-{{!--
-  species-work-surface.hbs
-  CENTER PANEL — full-width row list for species selection.
+{{!-- species-work-surface.hbs — compact category browser. Full rules/prose stay in the detail rail. --}}
 
-  Each species is rendered as a true full-width horizontal row component with CSS-based styling.
-  Rows are clickable for focus (preview); Confirm button in details panel commits selection.
---}}
+<div class="prog-species-browse prog-category-picker prog-category-picker--species {{#if categorySidebarCollapsed}}prog-category-picker--sidebar-collapsed{{/if}} {{#if hasSearchQuery}}prog-category-picker--search-mode{{/if}}">
+  {{#if (eq mode 'near-human-builder')}}
+    {{!-- The Near-Human builder data is still rendered by the details workflow; browsing is hidden while configuring. --}}
+    <div class="prog-species-browse__empty">Complete the Near-Human configuration in the detail rail.</div>
+  {{else}}
+    <div class="feat-browser-toolbar prog-category-toolbar prog-species-toolbar">
+      <div class="feat-browser-toolbar__left">
+        {{#if hasSearchQuery}}
+          <span class="feat-browser-mode-pill feat-browser-mode-pill--search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Search: {{searchQueryLabel}}
+          </span>
+        {{else}}
+          <span class="feat-browser-mode-pill">
+            <i class="fa-solid fa-dna"></i>
+            Size / Ability Bonus
+          </span>
+        {{/if}}
+      </div>
 
-<div class="prog-species-browse">
-  <div class="prog-species-list" role="listbox" aria-label='{{localize 'SWSE.Progression.Core.Species.AriaLabel'}}'>
-    {{#each species}}
-      <button class="prog-species-row
-                     {{#if (eq id ../focusedSpeciesId)}}prog-species-row--focused{{/if}}
-                     {{#if (eq id ../committedSpeciesId)}}prog-species-row--committed{{/if}}
-                     {{#if this.isSuggested}}prog-species-row--suggested prog-species-row--suggested-{{this.confidenceLevel}}{{/if}}"
-              data-action="focus-item"
-              data-item-id="{{this.id}}"
-              data-recommended="{{#if this.isSuggested}}true{{/if}}"
-              data-confidence-level="{{this.confidenceLevel}}"
-              type="button"
-              role="option"
-              {{#if (eq id ../committedSpeciesId)}}aria-selected="true"{{/if}}>
+      <div class="feat-browser-toolbar__right">
+        <button class="feat-filter-btn" data-action="reset-species-browser" type="button" title="Clear search and category filters">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span>Reset</span>
+        </button>
+        {{#unless hasSearchQuery}}
+          <button class="feat-filter-btn feat-category-collapse-toggle" data-action="toggle-species-category-sidebar" type="button">
+            <i class="fa-solid {{#if categorySidebarCollapsed}}fa-angles-right{{else}}fa-angles-left{{/if}}"></i>
+            <span>{{#if categorySidebarCollapsed}}Show Categories{{else}}Collapse Categories{{/if}}</span>
+          </button>
+        {{/unless}}
+      </div>
+    </div>
 
-        {{!-- SAFE CONTENT ZONE - SVG frame defines the bounds; content stays inside guide --}}
-        <div class="prog-species-row__content">
-
-          {{!-- LEFT: compact code badge only. Portraits belong in the right details rail. --}}
-          <div class="prog-species-row__thumb prog-species-row__thumb--badge-only" aria-hidden="true">
-            <span class="prog-species-row__thumb-badge">{{#if this.thumbLabel}}{{this.thumbLabel}}{{else}}◇{{/if}}</span>
-          </div>
-
-          {{!-- CENTER - name, size, and modifiers --}}
-          <div class="prog-species-row__center">
-            <div class="prog-species-row__name">
-              {{this.name}}
-              {{#if this.badgeLabel}}
-                <span class="swse-option-card__badge swse-option-card__badge--recommended">{{this.badgeLabel}}</span>
-              {{/if}}
-              {{#if this.hasVariants}}
-                <span class="swse-option-card__badge prog-species-row__variant-badge">{{localize "SWSE.Progression.Core.Species.OptionsCount" count=this.variantCount}}</span>
-              {{/if}}
+    <section class="feat-browser prog-species-browser {{#if categorySidebarCollapsed}}feat-browser--sidebar-collapsed{{/if}} {{#if hasSearchQuery}}feat-browser--search-mode{{/if}}">
+      {{#unless hasSearchQuery}}
+        {{#unless categorySidebarCollapsed}}
+          <aside class="feat-category-sidebar prog-species-category-sidebar" aria-label="Species categories">
+            <div class="feat-category-sidebar__header">
+              <span>Size</span>
+              <button class="feat-category-sidebar__collapse" data-action="toggle-species-category-sidebar" type="button" title="Collapse categories">
+                <i class="fa-solid fa-chevron-left"></i>
+              </button>
             </div>
-            {{#if this.size}}
-              <div class="prog-species-row__stats">
-                <span>{{localize "SWSE.Progression.Core.Species.SizeInline" size=this.size}}</span>
-                {{#if this.abilityRows.length}}
-                  <span class="prog-species-row__sep">•</span>
-                  {{#each this.abilityRows}}
-                    <span class="prog-species-row__mods {{this.cssClass}}">{{this.signedValue}} {{this.shortLabel}}</span>
-                    {{#unless @last}}<span class="prog-species-row__sep">,</span>{{/unless}}
-                  {{/each}}
-                {{/if}}
-              </div>
-            {{/if}}
-          </div>
+            <div class="feat-category-list prog-species-category-list">
+              {{#if speciesCategoryTree.recommended.count}}
+                <button class="feat-category-button prog-species-category-button prog-species-category-button--recommended {{#if speciesCategoryTree.recommended.isActive}}active{{/if}}"
+                        data-action="select-species-category"
+                        data-size="recommended"
+                        data-ability="all"
+                        type="button">
+                  <span class="feat-category-button__main"><i class="fa-solid fa-star"></i><span>Recommended</span></span>
+                  <span class="feat-category-button__count">{{speciesCategoryTree.recommended.count}}</span>
+                </button>
+              {{/if}}
+              {{#each speciesCategoryTree.sizes as |size|}}
+                <div class="prog-species-size-category {{#if size.isExpanded}}is-expanded{{/if}} {{#if size.isActive}}active{{/if}}">
+                  <div class="prog-species-size-category__row">
+                    <button class="feat-category-button prog-species-category-button prog-species-category-button--size {{#if size.isActive}}active{{/if}}"
+                            data-action="select-species-category"
+                            data-size="{{size.key}}"
+                            data-ability="all"
+                            type="button">
+                      <span class="feat-category-button__main"><i class="fa-solid fa-ruler-vertical"></i><span>{{size.label}}</span></span>
+                      <span class="feat-category-button__count">{{size.count}}</span>
+                    </button>
+                    <button class="prog-species-size-category__toggle"
+                            data-action="toggle-species-size-accordion"
+                            data-size="{{size.key}}"
+                            type="button"
+                            title="{{#if size.isExpanded}}Collapse {{size.label}}{{else}}Expand {{size.label}}{{/if}}">
+                      <i class="fa-solid fa-chevron-{{#if size.isExpanded}}down{{else}}right{{/if}}"></i>
+                    </button>
+                  </div>
+                  {{#if size.isExpanded}}
+                    <div class="prog-species-size-category__abilities">
+                      {{#each size.abilities as |ability|}}
+                        <button class="feat-category-button prog-species-category-button prog-species-category-button--ability {{#if ability.isActive}}active{{/if}}"
+                                data-action="select-species-category"
+                                data-size="{{size.key}}"
+                                data-ability="{{ability.key}}"
+                                type="button"
+                                {{#unless ability.count}}disabled aria-disabled="true"{{/unless}}>
+                          <span class="feat-category-button__main"><span>{{ability.label}}</span></span>
+                          <span class="feat-category-button__count">{{ability.count}}</span>
+                        </button>
+                      {{/each}}
+                    </div>
+                  {{/if}}
+                </div>
+              {{/each}}
+            </div>
+          </aside>
+        {{/unless}}
+      {{/unless}}
 
-          {{!-- RIGHT - source label (committed state removes this visually) --}}
-          <div class="prog-species-row__right">
-            {{#if this.source}}
-              <span class="prog-species-row__source" title="{{this.source}}">{{this.source}}</span>
-            {{/if}}
-          </div>
-
-        </div>
-
-      </button>
-    {{else}}
-      <div class="prog-species-browse__empty">{{localize "SWSE.Progression.Core.Species.NoMatches"}}</div>
-    {{/each}}
-  </div>
+      <main class="feat-results-pane prog-species-results-pane">
+        {{#if hasSearchQuery}}
+          <header class="feat-results-pane__header feat-results-pane__header--search">
+            <div>
+              <h3><i class="fa-solid fa-magnifying-glass"></i> Search Results</h3>
+              <p>Matching species. Full species rules stay in the detail rail.</p>
+            </div>
+            <span class="feat-count-badge">{{searchResults.length}}</span>
+          </header>
+          {{#if searchResults.length}}
+            <div class="prog-species-compact-list feat-search-results-list" role="listbox" aria-label="Species search results">
+              {{#each searchResults as |species|}}
+                <button class="prog-species-compact-row {{#if (eq species.id ../focusedSpeciesId)}}focused{{/if}} {{#if (eq species.id ../committedSpeciesId)}}selected{{/if}} {{#if species.isSuggested}}suggested{{/if}}"
+                        data-action="focus-item"
+                        data-item-id="{{species.id}}"
+                        data-recommended="{{#if species.isSuggested}}true{{/if}}"
+                        data-confidence-level="{{species.confidenceLevel}}"
+                        type="button"
+                        role="option"
+                        {{#if (eq species.id ../committedSpeciesId)}}aria-selected="true"{{/if}}>
+                  <span class="prog-species-compact-row__name">{{species.name}}</span>
+                  <span class="prog-species-compact-row__mods">{{species.abilityModLine}}</span>
+                  <span class="prog-species-compact-row__state">{{#if (eq species.id ../committedSpeciesId)}}<i class="fa-solid fa-check-circle selected-icon"></i>{{else}}<i class="fa-solid fa-chevron-right"></i>{{/if}}</span>
+                </button>
+              {{/each}}
+            </div>
+          {{else}}
+            <div class="feat-search-empty">
+              <i class="fa-solid fa-radar"></i>
+              <span>No species match “{{searchQueryLabel}}”.</span>
+            </div>
+          {{/if}}
+        {{else}}
+          {{#each speciesCategoryGroups as |sizeGroup|}}
+            <section class="prog-species-size-group">
+              <header class="feat-results-pane__header prog-species-size-group__header">
+                <div>
+                  <h3>{{sizeGroup.label}}</h3>
+                  <p>{{#if sizeGroup.isRecommended}}Curated recommendations. These species also remain in their normal size/ability buckets.{{else}}Grouped by ability-score bonuses.{{/if}}</p>
+                </div>
+                <span class="feat-count-badge">{{sizeGroup.count}}</span>
+              </header>
+              {{#each sizeGroup.abilityGroups as |abilityGroup|}}
+                <section class="prog-species-ability-group">
+                  <h4 class="prog-species-ability-group__title">{{abilityGroup.label}}</h4>
+                  <div class="prog-species-compact-list" role="listbox" aria-label="{{sizeGroup.label}} {{abilityGroup.label}} species">
+                    {{#each abilityGroup.species as |species|}}
+                      <button class="prog-species-compact-row {{#if (eq species.id ../../../focusedSpeciesId)}}focused{{/if}} {{#if (eq species.id ../../../committedSpeciesId)}}selected{{/if}} {{#if species.isSuggested}}suggested{{/if}}"
+                              data-action="focus-item"
+                              data-item-id="{{species.id}}"
+                              data-recommended="{{#if species.isSuggested}}true{{/if}}"
+                              data-confidence-level="{{species.confidenceLevel}}"
+                              type="button"
+                              role="option"
+                              {{#if (eq species.id ../../../committedSpeciesId)}}aria-selected="true"{{/if}}>
+                        <span class="prog-species-compact-row__name">{{species.name}}</span>
+                        <span class="prog-species-compact-row__mods">{{species.abilityModLine}}</span>
+                        <span class="prog-species-compact-row__state">{{#if (eq species.id ../../../committedSpeciesId)}}<i class="fa-solid fa-check-circle selected-icon"></i>{{else}}<i class="fa-solid fa-chevron-right"></i>{{/if}}</span>
+                      </button>
+                    {{/each}}
+                  </div>
+                </section>
+              {{/each}}
+            </section>
+          {{else}}
+            <div class="prog-species-browse__empty">No species match the current category.</div>
+          {{/each}}
+        {{/if}}
+      </main>
+    </section>
+  {{/if}}
 </div>

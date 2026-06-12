@@ -847,3 +847,151 @@
     color-mix(in srgb, var(--sheet-bg-panel, #07131d) 72%, transparent));
   border-bottom: 1px solid color-mix(in srgb, var(--sheet-accent-primary, #00d8ff) 22%, transparent);
 }
+
+/* Compact category browser rows: keep the picker dense and let the detail rail carry rules text. */
+.progression-shell .prog-species-browser,
+.progression-shell .prog-background-browser {
+  min-height: 0;
+}
+
+.progression-shell .prog-species-results-pane {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.progression-shell .prog-species-size-group,
+.progression-shell .prog-species-ability-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progression-shell .prog-species-size-group + .prog-species-size-group {
+  margin-top: 10px;
+}
+
+.progression-shell .prog-species-ability-group__title {
+  margin: 4px 0 0;
+  padding: 2px 6px;
+  font-size: 10px;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--prog-text-dim, rgba(215, 235, 255, 0.72));
+  border-left: 2px solid var(--prog-accent, #61dafb);
+}
+
+.progression-shell .prog-species-compact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.progression-shell .prog-species-compact-row {
+  appearance: none;
+  width: 100%;
+  min-height: 28px;
+  display: grid;
+  grid-template-columns: minmax(110px, 1fr) minmax(120px, auto) 18px;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 7px;
+  border: 1px solid var(--prog-border, rgba(116, 203, 255, 0.22));
+  border-radius: 6px;
+  background: rgba(5, 18, 32, 0.58);
+  color: var(--prog-text, #d9f3ff);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.progression-shell .prog-species-compact-row:hover,
+.progression-shell .prog-species-compact-row.focused {
+  border-color: var(--prog-accent, #61dafb);
+  background: rgba(30, 132, 190, 0.14);
+}
+
+.progression-shell .prog-species-compact-row.selected {
+  border-color: var(--prog-positive, #54f29b);
+  background: rgba(84, 242, 155, 0.10);
+}
+
+.progression-shell .prog-species-compact-row.suggested {
+  box-shadow: inset 2px 0 0 rgba(255, 210, 90, 0.7);
+}
+
+.progression-shell .prog-species-compact-row__name,
+.progression-shell .prog-species-compact-row__mods {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.progression-shell .prog-species-compact-row__name {
+  font-weight: 700;
+}
+
+.progression-shell .prog-species-compact-row__mods {
+  color: var(--prog-text-dim, rgba(215, 235, 255, 0.75));
+  font-size: 11px;
+  text-align: right;
+}
+
+.progression-shell .prog-species-compact-row__state {
+  text-align: right;
+  color: var(--prog-text-dim, rgba(215, 235, 255, 0.7));
+}
+
+.progression-shell .prog-species-category-button--recommended {
+  border-color: rgba(255, 210, 90, 0.45);
+}
+
+/* Size accordion category rail: keeps the species category list dense and readable. */
+.progression-shell .prog-species-size-category {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.progression-shell .prog-species-size-category__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 28px;
+  gap: 4px;
+  align-items: stretch;
+}
+
+.progression-shell .prog-species-size-category__toggle {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 28px;
+  border: 1px solid rgba(80, 220, 255, 0.18);
+  border-radius: 7px;
+  background: rgba(5, 18, 32, 0.72);
+  color: rgba(210, 240, 255, 0.82);
+  cursor: pointer;
+}
+
+.progression-shell .prog-species-size-category__toggle:hover {
+  border-color: rgba(80, 220, 255, 0.44);
+  color: var(--prog-accent, #61dafb);
+  background: rgba(30, 132, 190, 0.16);
+}
+
+.progression-shell .prog-species-size-category__abilities {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-left: 14px;
+  border-left: 1px solid rgba(80, 220, 255, 0.16);
+  margin-left: 10px;
+}
+
+.progression-shell .prog-species-size-category__abilities .prog-species-category-button--ability {
+  min-height: 24px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+}

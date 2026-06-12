@@ -2068,6 +2068,7 @@ export class TalentStep extends ProgressionStepPlugin {
       graphData: this._graphData,
       orderedSelections,
       viewMode: this._viewMode,
+      showTalentListDescriptions: this._viewMode === 'list',
       availableTalents,
       lockedTalents,
       lockedTalentCount: lockedTalents.length,

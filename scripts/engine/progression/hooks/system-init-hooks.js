@@ -167,7 +167,9 @@ export const SystemInitHooks = {
 
             for (const talent of TalentDB.talents) {
                 const talentId = talent.id || talent._id;
-                const treeId = TalentTreeDB.getTreeForTalent(talentId);
+                const treeId = talent.treeId
+                    || TalentTreeDB.getTreeForTalent(talentId)
+                    || TalentTreeDB.getTreeForTalent(talent.name);
 
                 if (!treeId) {
                     orphaned.push(talent.name);

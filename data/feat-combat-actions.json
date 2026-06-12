@@ -2582,20 +2582,22 @@
   },
   "force-treatment": {
     "name": "Force Treatment",
-    "actionType": "passive",
+    "actionType": "standard",
     "requiredTalent": "Force Treatment",
-    "description": "Use Use the Force in place of Treat Injury and count as trained for purposes of this talent.",
-    "resolutionMode": "jediPrestigeTalent",
-    "spendAction": false,
+    "description": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill. If you are entitled to a Treat Injury check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": true,
     "effects": [],
     "resources": [
       "Use the Force",
       "Treat Injury"
     ],
-    "notes": "Derived skill calculator already substitutes Use the Force for Treat Injury when present.",
+    "notes": "Use Use the Force in place of Treat Injury; administer First Aid, Treat Disease, Treat Poison, and Treat Radiation without Medical Kit or Medpac.",
     "manualResolution": false,
-    "relatedSkills": [],
-    "jediPrestigeTalentAction": "forceTreatment"
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "forceTreatment"
   },
   "healing-boost": {
     "name": "Healing Boost",
@@ -3049,5 +3051,1106 @@
     "manualResolution": false,
     "relatedSkills": [],
     "jediPrestigeTalentAction": "shotoPin"
+  },
+  "dark-healing": {
+    "name": "Dark Healing",
+    "actionType": "standard",
+    "requiredTalent": "Dark Healing",
+    "description": "Spend a Force Point as a Standard Action to make a ranged attack against one creature within 6 squares; on hit, deal 1d6 Force damage per Sith class level and heal the same amount.",
+    "resolutionMode": "sithTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Ranged attack",
+      "Fortitude Defense"
+    ],
+    "notes": "Spend a Force Point as a Standard Action to make a ranged attack against one creature within 6 squares; on hit, deal 1d6 Force damage per Sith class level and heal the same amount.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "darkHealing"
+  },
+  "improved-dark-healing": {
+    "name": "Improved Dark Healing",
+    "actionType": "passive",
+    "requiredTalent": "Improved Dark Healing",
+    "description": "Dark Healing range increases to 12 squares and misses deal/heal half damage.",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Dark Healing"
+    ],
+    "notes": "Dark Healing range increases to 12 squares and misses deal/heal half damage.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "improvedDarkHealing"
+  },
+  "dark-healing-field": {
+    "name": "Dark Healing Field",
+    "actionType": "standard",
+    "requiredTalent": "Dark Healing Field",
+    "description": "Once per encounter, spend a Force Point to make Use the Force checks against up to three targets within 12 squares, dealing Sith-level d6 Force damage and healing half the total damage dealt.",
+    "resolutionMode": "sithTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Use the Force",
+      "Fortitude Defense"
+    ],
+    "notes": "Once per encounter, spend a Force Point to make Use the Force checks against up to three targets within 12 squares, dealing Sith-level d6 Force damage and healing half the total damage dealt.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "sithTalentAction": "darkHealingField"
+  },
+  "dark-scourge": {
+    "name": "Dark Scourge",
+    "actionType": "passive",
+    "requiredTalent": "Dark Scourge",
+    "description": "Gain a conditional +1 Dark Side bonus on attack rolls against Jedi characters.",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Jedi target"
+    ],
+    "notes": "Gain a conditional +1 Dark Side bonus on attack rolls against Jedi characters.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "darkScourge"
+  },
+  "dark-side-adept": {
+    "name": "Dark Side Adept",
+    "actionType": "passive",
+    "requiredTalent": "Dark Side Adept",
+    "description": "Reroll Use the Force checks to activate [Dark Side] Force Powers, keeping the reroll.",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "[Dark Side] Force Power"
+    ],
+    "notes": "Reroll Use the Force checks to activate [Dark Side] Force Powers, keeping the reroll.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "sithTalentAction": "darkSideAdept"
+  },
+  "dark-side-master": {
+    "name": "Dark Side Master",
+    "actionType": "passive",
+    "requiredTalent": "Dark Side Master",
+    "description": "Reroll Use the Force checks to activate [Dark Side] Force Powers and may spend a Force Point to keep the better result.",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "[Dark Side] Force Power",
+      "Force Point optional"
+    ],
+    "notes": "Reroll Use the Force checks to activate [Dark Side] Force Powers and may spend a Force Point to keep the better result.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "sithTalentAction": "darkSideMaster"
+  },
+  "force-deception": {
+    "name": "Force Deception",
+    "actionType": "passive",
+    "requiredTalent": "Force Deception",
+    "description": "Use Use the Force in place of Deception and count as trained for those checks.",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Use the Force",
+      "Deception"
+    ],
+    "notes": "Use Use the Force in place of Deception and count as trained for those checks.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "deception",
+      "useTheForce"
+    ],
+    "sithTalentAction": "forceDeception"
+  },
+  "wicked-strike": {
+    "name": "Wicked Strike",
+    "actionType": "free",
+    "requiredTalent": "Wicked Strike",
+    "description": "Spend a Force Point after a lightsaber critical hit to move the target two steps down the condition track.",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Lightsaber critical hit",
+      "Condition Track"
+    ],
+    "notes": "Spend a Force Point after a lightsaber critical hit to move the target two steps down the condition track.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "wickedStrike"
+  },
+  "affliction": {
+    "name": "Affliction",
+    "actionType": "passive",
+    "requiredTalent": "Affliction",
+    "description": "After damaging one opponent with a Force Power, mark it to take 2d6 Force damage at the beginning of its next turn.",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Force Power damage",
+      "Delayed Force damage"
+    ],
+    "notes": "After damaging one opponent with a Force Power, mark it to take 2d6 Force damage at the beginning of its next turn.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "affliction"
+  },
+  "drain-force": {
+    "name": "Drain Force",
+    "actionType": "reaction",
+    "requiredTalent": "Drain Force",
+    "description": "Once per encounter as a Reaction after damaging a Force-sensitive opponent, regain one spent Force Power and make the target lose one Force Point.",
+    "resolutionMode": "sithTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Spent Force Power",
+      "Target Force Point"
+    ],
+    "notes": "Once per encounter as a Reaction after damaging a Force-sensitive opponent, regain one spent Force Power and make the target lose one Force Point.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "drainForce"
+  },
+  "sith-alchemy": {
+    "name": "Sith Alchemy",
+    "actionType": "downtime",
+    "requiredTalent": "Sith Alchemy",
+    "description": "UI-dependent Sith Alchemy crafting/transformation talent; data cleaned, full alchemy/talisman/weapon/armor implementation deferred.",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Sith Amulet",
+      "Sith Armor",
+      "Sith Talisman",
+      "Sith Weapon",
+      "Dedicated UI needed"
+    ],
+    "notes": "Sith Alchemy is cleaned and surfaced as a manual card. Full implementation is deferred until the item/transformation UI exists.",
+    "manualResolution": true,
+    "relatedSkills": [],
+    "sithTalentAction": "sithAlchemy",
+    "id": "sith-alchemy",
+    "label": "Sith Alchemy"
+  },
+  "stolen-form": {
+    "name": "Stolen Form",
+    "actionType": "passive",
+    "requiredTalent": "Stolen Form",
+    "description": "Choose a Lightsaber Forms talent; gain its benefits and count as having it for prerequisites. May be selected multiple times for different forms.",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Lightsaber Forms talent"
+    ],
+    "notes": "Choose a Lightsaber Forms talent; gain its benefits and count as having it for prerequisites. May be selected multiple times for different forms.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "stolenForm"
+  },
+  "cause-mutation": {
+    "name": "Cause Mutation",
+    "actionType": "downtime",
+    "requiredTalent": "Cause Mutation",
+    "description": "You can use your mastery of Sith Alchemy to create mutated abominations. You must have access to a willing (or unconscious) creature to which you will apply the Sith Abomination Template or the Chrysalis Beast Template. You also need a medical lab outfitted for the process, which requires a number of days equal to creature's modified CL. You must spend a Force Point at the completion of the process to complete the transformation. A creature you have mutated is considered to be a domesticated creature, but for you only (unless it was already a domesticated creature before its mutation).",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Sith Alchemy",
+      "Force Point",
+      "Medical lab",
+      "Downtime"
+    ],
+    "notes": "UI/engine deferred. Use this card to record the mutation process, target template, required days, and Force Point spend.",
+    "manualResolution": true,
+    "relatedSkills": [],
+    "sithTalentAction": "causeMutation",
+    "id": "cause-mutation",
+    "label": "Cause Mutation"
+  },
+  "rapid-alchemy": {
+    "name": "Rapid Alchemy",
+    "actionType": "standard",
+    "requiredTalent": "Rapid Alchemy",
+    "description": "As a Standard Action, you can perform minor alchemical alterations to a Melee Weapon you wield. For the remainder of the encounter, you gain a +2 Equipment bonus on attack rolls with that Weapon. Additionally, once before the end of the encounter, you can sacrifice this bonus as a Free Action to gain a +5 Equipment bonus on a single damage roll you make with that Weapon.",
+    "resolutionMode": "sithTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Melee weapon",
+      "Encounter buff"
+    ],
+    "notes": "Choose a wielded melee weapon. It gains +2 Equipment bonus on attack rolls for the encounter until sacrificed.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "rapidAlchemy",
+    "id": "rapid-alchemy",
+    "label": "Rapid Alchemy"
+  },
+  "rapid-alchemy-sacrifice": {
+    "name": "Rapid Alchemy: Sacrifice Bonus",
+    "actionType": "free",
+    "requiredTalent": "Rapid Alchemy",
+    "description": "Sacrifice the active Rapid Alchemy +2 attack bonus as a Free Action to gain +5 Equipment bonus on one damage roll with that weapon.",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Rapid Alchemy active",
+      "Once per encounter"
+    ],
+    "notes": "Consumes the active Rapid Alchemy attack bonus and applies +5 to the next damage roll made with the chosen weapon.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "rapidAlchemySacrifice",
+    "id": "rapid-alchemy-sacrifice",
+    "label": "Rapid Alchemy: Sacrifice Bonus"
+  },
+  "sith-alchemy-specialist": {
+    "name": "Sith Alchemy Specialist",
+    "actionType": "downtime",
+    "requiredTalent": "Sith Alchemy Specialist",
+    "description": "Modify a Sith Alchemy object to add one permitted trait. Full item trait UI is deferred.",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "1 hour",
+      "Dark Side Score +1",
+      "Dedicated UI needed"
+    ],
+    "notes": "UI/engine deferred. Use this card to record trait selection and object modification until the dedicated Sith Alchemy UI exists.",
+    "manualResolution": true,
+    "relatedSkills": [],
+    "sithTalentAction": "sithAlchemySpecialist",
+    "id": "sith-alchemy-specialist",
+    "label": "Sith Alchemy Specialist"
+  },
+  "desperate-measures": {
+    "name": "Desperate Measures",
+    "actionType": "swift",
+    "requiredTalent": "Desperate Measures",
+    "description": "Desperation stems from fear. Once per encounter as a Swift Action, you can instill desperation in all allies within 12 squares of you and in your line of sight, allowing each of them to make an immediate attack at a -5 penalty.",
+    "resolutionMode": "sithTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Once per encounter",
+      "Allies within 12 squares/LOS",
+      "Immediate attack -5"
+    ],
+    "notes": "Targets selected allies and posts immediate-attack instructions. Range and line of sight remain GM/player adjudicated.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "desperateMeasures",
+    "id": "desperate-measures",
+    "label": "Desperate Measures"
+  },
+  "focus-terror": {
+    "name": "Focus Terror",
+    "actionType": "swift",
+    "requiredTalent": "Focus Terror",
+    "description": "Once per encounter as a Swift Action, you can harness the fear felt by your allies and transform it into a powerful motivational tool. All allies within 12 squares of you and in your line of sight move +2 steps along the Condition Track, but suffer a -2 penalty on attack rolls and Skill Checks for a number of rounds equal to your Character Level.",
+    "resolutionMode": "sithTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Once per encounter",
+      "Condition Track +2",
+      "Attack/skill penalty"
+    ],
+    "notes": "Targets selected allies, improves condition track by 2 steps, and flags the -2 attack/skill penalty for character-level rounds. Range and line of sight remain adjudicated.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "focusTerror",
+    "id": "focus-terror",
+    "label": "Focus Terror"
+  },
+  "incite-rage": {
+    "name": "Incite Rage",
+    "actionType": "swift",
+    "requiredTalent": "Incite Rage",
+    "description": "Once per encounter as a Swift Action, you can channel your anger and hatred into your allies. All allies within 12 squares of you and in your line of sight gain a +1 rage bonus on attack rolls, but take a -2 penalty to their Reflex Defense. This effect lasts until the encounter ends, or until you are knocked unconscious or killed.",
+    "resolutionMode": "sithTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Once per encounter",
+      "Rage attack bonus",
+      "Reflex penalty"
+    ],
+    "notes": "Targets selected allies and flags +1 attack / -2 Reflex until encounter end or the Sith commander is incapacitated. Range and line of sight remain adjudicated.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "inciteRage",
+    "id": "incite-rage",
+    "label": "Incite Rage"
+  },
+  "power-of-hatred": {
+    "name": "Power of Hatred",
+    "actionType": "swift",
+    "requiredTalent": "Power of Hatred",
+    "description": "Once per encounter as a Swift Action, you can inflame the passions of your allies. Each ally within your line of sight who has fewer than half its normal Hit Points gains bonus Hit Points equal to your Character Level. Damage is subtracted from the bonus Hit Points first, and any bonus Hit Points remaining at the end of the encounter go away. Bonus Hit Points from multiple sources do not stack.",
+    "resolutionMode": "sithTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Once per encounter",
+      "Temporary HP",
+      "Below half HP"
+    ],
+    "notes": "Targets selected eligible allies and grants temporary HP equal to your character level when below half normal HP. Bonus HP do not stack.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "powerOfHatred",
+    "id": "power-of-hatred",
+    "label": "Power of Hatred"
+  },
+  "charm-beast": {
+    "name": "Charm Beast",
+    "actionType": "special",
+    "requiredTalent": "Charm Beast",
+    "description": "You can make a Use the Force check in place of a Persuasion check when attempting to change the Attitude of an undomesticated creature with an Intelligence score of 2 or less. Additionally, you do not take the normal -5 penalty on the check if the creature can't speak or understand your language.\n\nThis Talent is identical to the Dathomiri Witch Talent of the same name, and both are considered to be the same Talent for the purposes of satisfying prerequisites.",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Use the Force",
+      "Persuasion attitude check",
+      "Undomesticated Int 2 or less creature"
+    ],
+    "notes": "Roll Use the Force in place of Persuasion when changing an eligible beast attitude; no -5 language penalty. Context remains GM adjudicated.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce",
+      "persuasion"
+    ],
+    "sithTalentAction": "charmBeast",
+    "id": "charm-beast",
+    "label": "Charm Beast"
+  },
+  "bonded-mount": {
+    "name": "Bonded Mount",
+    "actionType": "full-round",
+    "requiredTalent": "Bonded Mount",
+    "description": "Whenever you encounter a domesticated Beast with a Friendly or Helpful Attitude toward you, you can spend a Force Point as a Full-Round Action to bond the Beast to you as a mount. A Bonded Mount shares an emphatic link with you, allowing you to sense its emotions as a Free Action.\n\nWhen you Ride a Bonded Mount, your mount uses your Reflex Defense and Will Defense instead of its own. Additionally, if your mount has any special senses (such as Scent, Darkvision, or Low-Light Vision) that you do not possess, you gain the benefits of its special senses as long as you are riding that mount.",
+    "resolutionMode": "sithTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Domesticated Friendly/Helpful beast",
+      "Mount"
+    ],
+    "notes": "Targets a beast, spends a Force Point, and records the bonded mount relationship. Riding defense/sense sharing is surfaced for GM/player adjudication.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "bondedMount",
+    "id": "bonded-mount",
+    "label": "Bonded Mount"
+  },
+  "entreat-beast": {
+    "name": "Entreat Beast",
+    "actionType": "swift",
+    "requiredTalent": "Entreat Beast",
+    "description": "You can use The Force to convince a small Beast to carry objects, deliver messages, or perform other minor tasks for you. If you are near a Beast that is at least Indifferent to you (whether this be a pet you bring with you or a Beast encountered in the wild), you can make a Use the Force check against the Beast's Will Defense as a Swift Action.\n\nIf your Skill Check equals or exceeds the Beast's Will Defense, the Beast performs one task for you from the following list:\n\nDeliver an Object: The Beast attempts, to the best of its ability, to deliver one object from your person to another target within 30 squares of you.\nRetrieve an Object: The Beast attempts, to the best of its ability, to retrieve one unattended object within 30 squares of it and its line of sight and bring it to you.\nManipulate a Small Object: The Beast attempts, to the best of its ability, to press a button, pull a lever, or otherwise perform some minor activation of an unattended item within 30 squares.",
+    "resolutionMode": "sithTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Use the Force",
+      "Beast Will Defense",
+      "Minor task"
+    ],
+    "notes": "Roll Use the Force vs the target beast Will Defense and choose the minor task if successful.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "sithTalentAction": "entreatBeast",
+    "id": "entreat-beast",
+    "label": "Entreat Beast"
+  },
+  "soothing-presence": {
+    "name": "Soothing Presence",
+    "actionType": "passive",
+    "requiredTalent": "Soothing Presence",
+    "description": "Whenever you encounter a Beast with an Unfriendly Attitude toward you, you automatically shift its Attitude to Indifferent (no Skill Check required).",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Unfriendly beast attitude"
+    ],
+    "notes": "Reminder card: an unfriendly beast encountered by you automatically shifts to indifferent.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "persuasion"
+    ],
+    "sithTalentAction": "soothingPresence",
+    "id": "soothing-presence",
+    "label": "Soothing Presence"
+  },
+  "wild-sense": {
+    "name": "Wild Sense",
+    "actionType": "swift",
+    "requiredTalent": "Wild Sense",
+    "description": "As a Swift Action once per turn, you can make a Use the Force check to touch the mind of a Beast with an Indifferent or better Attitude toward you, provided it is within 12 squares of you and in your line of sight. When you do so, the Beast makes an immediate active Perception check, and you are considered to perceive everything the Beast does, including noticing targets, as though you had made the check.\n\nAdditionally, until the end of your turn, you are considered to have line of sight to anything the Beast has line of sight to.",
+    "resolutionMode": "sithTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Use the Force",
+      "Beast Perception",
+      "Line of sight"
+    ],
+    "notes": "Once per turn, roll the target beast Perception and record that you share its perception and line of sight until end of turn.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce",
+      "perception"
+    ],
+    "sithTalentAction": "wildSense",
+    "id": "wild-sense",
+    "label": "Wild Sense"
+  },
+  "channel-aggression": {
+    "name": "Channel Aggression",
+    "actionType": "free",
+    "requiredTalent": "Channel Aggression",
+    "description": "If you succeed on an attack against a Flanked opponent, or any target that is denied its Dexterity bonus to Reflex Defense, you may spend a Force Point as a Free Action to deal additional damage to the target equal to 1d6 per Class Level (maximum 10d6).",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Flanked/no-Dex target",
+      "Bonus damage"
+    ],
+    "notes": "After a qualifying successful attack, spend a Force Point to roll and apply 1d6 per Dark Side Devotee class level, maximum 10d6.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "channelAggression",
+    "id": "channel-aggression",
+    "label": "Channel Aggression"
+  },
+  "channel-anger": {
+    "name": "Channel Anger",
+    "actionType": "swift",
+    "requiredTalent": "Channel Anger",
+    "description": "You let your anger swell into a Rage. As a Swift Action, you may spend a Force Point to gain a +2 Rage bonus on melee attack rolls and melee damage rolls for a number of rounds equal to 5 + your Constitution modifier. At the end of this duration, you move -1 step along the Condition Track.\n\nWhile Raging, you cannot use Skills that require patience and concentration, such as Mechanics, Stealth, or Use the Force.",
+    "resolutionMode": "sithTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Rage bonus",
+      "Condition Track penalty on end"
+    ],
+    "notes": "Spend a Force Point to set a timed rage flag: +2 melee attack and damage for 5 + Con modifier rounds, then move -1 step on the Condition Track.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "channelAnger",
+    "id": "channel-anger",
+    "label": "Channel Anger"
+  },
+  "crippling-strike": {
+    "name": "Crippling Strike",
+    "actionType": "free",
+    "requiredTalent": "Crippling Strike",
+    "description": "Whenever you score a Critical Hit, you may spend a Force Point to also reduce the target's Speed by half until they are fully healed (that is, restored to maximum Hit Points).",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Critical hit",
+      "Speed reduction"
+    ],
+    "notes": "After a critical hit, spend a Force Point to flag the target speed as halved until fully healed.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "sithTalentAction": "cripplingStrike",
+    "id": "crippling-strike",
+    "label": "Crippling Strike"
+  },
+  "embrace-the-dark-side": {
+    "name": "Embrace the Dark Side",
+    "actionType": "passive",
+    "requiredTalent": "Embrace the Dark Side",
+    "description": "Whenever you use a Force Power with the [Dark Side] descriptor, you may reroll your Use the Force check, but you must accept the result of the reroll, even if it is worse.\n\nUpon choosing this Talent, you can no longer use Force Powers with the [Light Side] descriptor.",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Dark Side Force Power",
+      "Light Side prohibition"
+    ],
+    "notes": "Reminder/action card for [Dark Side] Force Power rerolls. ForceExecutor blocks [Light Side] Force Powers while this talent is present.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "sithTalentAction": "embraceTheDarkSide",
+    "id": "embrace-the-dark-side",
+    "label": "Embrace the Dark Side"
+  },
+  "dark-side-talisman": {
+    "name": "Dark Side Talisman",
+    "actionType": "full-round",
+    "requiredTalent": "Dark Side Talisman",
+    "description": "You can spend a Force Point to imbue a Weapon or some other portable object with the Dark Side of The Force, creating a Talisman that grants you protection from the Light Side. Creating the Dark Side Talisman takes a Full-Round Action.\n\nWhile you wear or carry the Talisman, you gain a +2 Force bonus to one of your Defenses (Reflex, Fortitude, or Will) against Force Powers with the [Light Side] descriptor.\n\nYou can only have one Dark Side Talisman active at a given time (though you can have both a Dark Side Talisman and a Force Talisman active at the same time), and if your Dark Side Talisman is destroyed, you cannot create another one for 24 hours.",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Talisman UI deferred"
+    ],
+    "notes": "UI-deferred/manual only. Do not apply automatic defense bonuses yet.",
+    "manualResolution": true,
+    "relatedSkills": [],
+    "sithTalentAction": "darkSideTalisman",
+    "id": "dark-side-talisman",
+    "label": "Dark Side Talisman"
+  },
+  "greater-dark-side-talisman": {
+    "name": "Greater Dark Side Talisman",
+    "actionType": "full-round",
+    "requiredTalent": "Greater Dark Side Talisman",
+    "description": "You can spend a Force Point to imbue a Weapon or some other portable object with the Dark Side of The Force, creating a Talisman that grants you protection from the Light Side. Creating the Greater Dark Side Talisman takes a Full-Round Action.\n\nWhile you wear or carry the Talisman, you gain a +2 Force bonus to all of your Defenses against Force Powers with the [Light Side] descriptor.\n\nYou can only have one Greater Dark Side Talisman, or Dark Side Talisman, active at a given time (though you can have both a Greater Dark Side Talisman and a Greater Force Talisman active at the same time), and if your Greater Dark Side Talisman is destroyed, you cannot create another one for 24 hours.",
+    "resolutionMode": "sithTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Talisman UI deferred"
+    ],
+    "notes": "UI-deferred/manual only. Do not apply automatic defense bonuses yet.",
+    "manualResolution": true,
+    "relatedSkills": [],
+    "sithTalentAction": "greaterDarkSideTalisman",
+    "id": "greater-dark-side-talisman",
+    "label": "Greater Dark Side Talisman"
+  },
+  "force-power-adept": {
+    "name": "Force Power Adept",
+    "actionType": "free",
+    "requiredTalent": "Force Power Adept",
+    "description": "You are skilled at using a particular Force Power. Select one Force Power you know. When using that Force Power, you have the option of spending a Force Point to make two Use the Force checks, keeping the better result.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Selected Force Power"
+    ],
+    "notes": "Spend a Force Point while using the selected Force Power to make two Use the Force checks and keep the better result.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "forcePowerAdept"
+  },
+  "fortified-body": {
+    "name": "Fortified Body",
+    "actionType": "passive",
+    "requiredTalent": "Fortified Body",
+    "description": "The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Disease",
+      "Poison",
+      "Radiation"
+    ],
+    "notes": "Passive immunity to Disease, Poison, and Radiation.",
+    "manualResolution": true,
+    "relatedSkills": [],
+    "forceAdeptTalentAction": "fortifiedBody"
+  },
+  "instrument-of-the-force": {
+    "name": "Instrument of the Force",
+    "actionType": "passive",
+    "requiredTalent": "Instrument of the Force",
+    "description": "You are particularly in tune with The Living Force. When you successfully use Search Your Feelings, you gain a Force Point that must be used before the end of the encounter.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Search Your Feelings",
+      "Bonus Force Point",
+      "Dark Side Score"
+    ],
+    "notes": "After Search Your Feelings succeeds, gain an encounter Force Point; this action can also record the Dark Side Score consequence from spending that point.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "instrumentOfTheForce"
+  },
+  "long-call": {
+    "name": "Long Call",
+    "actionType": "standard",
+    "requiredTalent": "Long Call",
+    "description": "When using the Telepathy ability of Use the Force, you reduce the DC of the Use the Force check by half, as do those Force-users for whom you are a willing telepathic recipient. When attempting to contact an unwilling target, you can reroll and take the better result.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Telepathy",
+      "Force Point"
+    ],
+    "notes": "Halve Telepathy DC for willing recipients; reroll and keep better against unwilling targets; spend a Force Point to contact multiple targets.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "longCall"
+  },
+  "mystical-link": {
+    "name": "Mystical Link",
+    "actionType": "standard",
+    "requiredTalent": "Mystical Link",
+    "description": "The Force guides you in unexpected ways. As a Standard Action, make a DC 30 Use the Force check. If the check is successful, you gain one of the following benefits, as selected by the Gamemaster:",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Use the Force",
+      "Force Power Suite",
+      "Bonus Force Point"
+    ],
+    "notes": "Standard Action DC 30 Use the Force; on success GM selects one Mystical Link benefit.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "mysticalLink"
+  },
+  "attune-weapon": {
+    "name": "Attune Weapon",
+    "actionType": "full-round",
+    "requiredTalent": "Attune Weapon",
+    "description": "You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action. From that point forward, whenever you wield the attuned weapon, you gain a +1 Force bonus on attack rolls.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Melee Weapon"
+    ],
+    "notes": "Spend a Force Point as a Full-Round Action to attune a melee weapon; attack roller reads the stored +1 Force attack bonus for that actor/weapon.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "attuneWeapon"
+  },
+  "empower-weapon": {
+    "name": "Empower Weapon",
+    "actionType": "full-round",
+    "requiredTalent": "Empower Weapon",
+    "description": "You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action. From that point forward, the Empowered Weapon deals an additional die of damage, but only when wielded by you.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Melee Weapon"
+    ],
+    "notes": "Spend a Force Point as a Full-Round Action to empower a melee weapon; damage roller reads the stored extra damage die for that actor/weapon.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "empowerWeapon"
+  },
+  "force-talisman": {
+    "name": "Force Talisman",
+    "actionType": "full-round",
+    "requiredTalent": "Force Talisman",
+    "description": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Talisman"
+    ],
+    "notes": "Manual/deferred talisman creation and equipment card. No always-on defense bonus is applied until talisman UI exists.",
+    "manualResolution": true,
+    "relatedSkills": [],
+    "forceAdeptTalentAction": "forceTalisman"
+  },
+  "greater-force-talisman": {
+    "name": "Greater Force Talisman",
+    "actionType": "full-round",
+    "requiredTalent": "Greater Force Talisman",
+    "description": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Talisman"
+    ],
+    "notes": "Manual/deferred greater talisman creation and equipment card. No always-on defense bonus is applied until talisman UI exists.",
+    "manualResolution": true,
+    "relatedSkills": [],
+    "forceAdeptTalentAction": "greaterForceTalisman"
+  },
+  "focused-force-talisman": {
+    "name": "Focused Force Talisman",
+    "actionType": "free",
+    "requiredTalent": "Focused Force Talisman",
+    "description": "When you create a Force Talisman, you can select a single Force Power from your Force Power Suite. Whenever you are wearing this Focused Force Talisman and activate the selected Force Power, you can spend a Force Point to immediately regain all your expended uses of that spent Force Power, adding it to your Force Power Suite.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Selected Force Power"
+    ],
+    "notes": "Record selected talisman power or spend a Force Point to recover all expended uses of that selected Force Power.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "focusedForceTalisman"
+  },
+  "greater-focused-force-talisman": {
+    "name": "Greater Focused Force Talisman",
+    "actionType": "free",
+    "requiredTalent": "Greater Focused Force Talisman",
+    "description": "As the Focused Force Talisman Talent, except that a Force Point spent to immediately recover the selected Force Power does not count against the \"one per turn\" restriction on spending Force Points.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Selected Force Power"
+    ],
+    "notes": "As Focused Force Talisman; the recovery Force Point does not count against one-per-turn spending.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "greaterFocusedForceTalisman"
+  },
+  "force-throw": {
+    "name": "Force Throw",
+    "actionType": "standard",
+    "requiredTalent": "Force Throw",
+    "description": "You can hurl Simple Weapons (Melee), or Advanced Melee Weapons your size or smaller as a Standard Action, treating it as a Thrown Weapon. The Thrown Weapon deals normal weapon damage if it hits.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Empowered Weapon",
+      "Thrown attack"
+    ],
+    "notes": "Throw an Empowered Simple or Advanced melee weapon as a Standard Action against a target within 6 squares.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "forceAdeptTalentAction": "forceThrow"
+  },
+  "primitive-block": {
+    "name": "Primitive Block",
+    "actionType": "reaction",
+    "requiredTalent": "Primitive Block",
+    "description": "As a Reaction, you may negate a melee attack by making a successful Use the Force check. The DC of the Use the Force check is equal to the result of the attack roll you wish to negate, and you take a cumulative -5 penalty on your Use the Force checks to use this Talent for every time you have used Primitive Block since the beginning of your last turn.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Reaction",
+      "Use the Force",
+      "Empowered Weapon"
+    ],
+    "notes": "Reaction against an incoming melee attack; reaction registry handles the Use the Force roll against the incoming attack total.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "primitiveBlock"
+  },
+  "cower-enemies": {
+    "name": "Cower Enemies",
+    "actionType": "standard",
+    "requiredTalent": "Cower Enemies",
+    "description": "When you use the Persuasion skill to Intimidate, you can Intimidate all targets in a 6-Square Cone (originating from your square) instead of Intimidating a single target. All other limitations to the Intimidation use of the Persuasion skill still apply.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Persuasion",
+      "6-square cone"
+    ],
+    "notes": "Roll/announce a cone Intimidate use. Cone placement and eligible targets remain GM/player adjudicated.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "persuasion"
+    ],
+    "forceAdeptTalentAction": "cowerEnemies"
+  },
+  "force-interrogation": {
+    "name": "Force Interrogation",
+    "actionType": "free",
+    "requiredTalent": "Force Interrogation",
+    "description": "When you deal damage to one or more creatures by using a Force Power, you can immediately make a Persuasion check as a Free Action to Intimidate a single target you damaged.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Persuasion",
+      "Damaging Force Power"
+    ],
+    "notes": "Immediate Free Action after damaging a creature with a Force Power.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "persuasion"
+    ],
+    "forceAdeptTalentAction": "forceInterrogation"
+  },
+  "inquisition": {
+    "name": "Inquisition",
+    "actionType": "passive",
+    "requiredTalent": "Inquisition",
+    "description": "You are particularly adept at dealing with Force-sensitive foes. You gain a +1 bonus on attack rolls and deal +1 die of damage against targets that have the Force Sensitivity feat.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Force-sensitive target"
+    ],
+    "notes": "Attack/damage roller applies this when the target has Force Sensitivity and the target actor is available.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "forceAdeptTalentAction": "inquisition"
+  },
+  "unsettling-presence": {
+    "name": "Unsettling Presence",
+    "actionType": "standard",
+    "requiredTalent": "Unsettling Presence",
+    "description": "You can spend a Force Point as a Standard Action to create an aura of unsettling discomfort around you. You make a Use the Force check when you activate this Talent and compare the check result to the Will Defense of any creature that comes within 6 squares of you.\n\nIf your Use the Force check result equals or exceeds the creature's Will Defense, that target takes a -2 penalty on attack rolls and Skill Checks while within 6 squares of you. This aura lasts for the remainder of the encounter.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Force Point",
+      "Use the Force",
+      "Aura"
+    ],
+    "notes": "Spend a Force Point and roll Use the Force; selected targets that fail are flagged with the attack penalty. Range/LoS remains adjudicated.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "unsettlingPresence"
+  },
+  "channel-vitality": {
+    "name": "Channel Vitality",
+    "actionType": "swift",
+    "requiredTalent": "Channel Vitality",
+    "description": "You can fuel your mastery of The Force with your own vitality. As a Swift Action, you can move -1 step down the Condition Track to gain a temporary Force Point. This temporary Force Point lasts until the end of your turn, at which point it is lost if it has not been used.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Condition Track",
+      "Temporary Force Point"
+    ],
+    "notes": "Moves the actor one step down the Condition Track and grants one temporary Force Point that expires at end of turn.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "channelVitality"
+  },
+  "closed-mind": {
+    "name": "Closed Mind",
+    "actionType": "passive",
+    "requiredTalent": "Closed Mind",
+    "description": "Whenever a creature uses a Mind-Affecting effect on you that targets your Will Defense, it must roll the attack roll or Skill Check twice, taking the lower result.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Will Defense",
+      "Mind-Affecting"
+    ],
+    "notes": "Passive defensive rule; action card rolls a manual lower-of-two reminder when the automatic caller cannot enforce it.",
+    "manualResolution": true,
+    "relatedSkills": [],
+    "forceAdeptTalentAction": "closedMind"
+  },
+  "esoteric-technique": {
+    "name": "Esoteric Technique",
+    "actionType": "free",
+    "requiredTalent": "Esoteric Technique",
+    "description": "When you spend a Force Point to activate a Force Technique or Force Secret, you gain Bonus Hit Points equal to 10 + your Class Level until the end of the encounter.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Force Technique",
+      "Force Secret",
+      "Bonus HP"
+    ],
+    "notes": "Applies bonus HP after a Force Point is spent to activate a Force Technique or Force Secret.",
+    "manualResolution": false,
+    "relatedSkills": [],
+    "forceAdeptTalentAction": "esotericTechnique"
+  },
+  "mystic-mastery": {
+    "name": "Mystic Mastery",
+    "actionType": "passive",
+    "requiredTalent": "Mystic Mastery",
+    "description": "Whenever you gain a level, you also gain a number of additional Force Points equal to the number of Force Talents you possess (maximum +6).",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Level-up Force Points"
+    ],
+    "notes": "Progression/reconciliation reminder; applies at level gain, capped at +6.",
+    "manualResolution": true,
+    "relatedSkills": [],
+    "forceAdeptTalentAction": "mysticMastery"
+  },
+  "regimen-mastery": {
+    "name": "Regimen Mastery",
+    "actionType": "passive",
+    "requiredTalent": "Regimen Mastery",
+    "description": "You gain a +5 Force bonus on Skill Checks made to perform a Force Regimen.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Force Regimen",
+      "Skill Check"
+    ],
+    "notes": "Force Regimen performance checks gain +5 Force bonus. Force Regimen UI remains the authority for selected regimens.",
+    "manualResolution": true,
+    "relatedSkills": [],
+    "forceAdeptTalentAction": "regimenMastery"
+  },
+  "mind-probe": {
+    "name": "Mind Probe",
+    "actionType": "full-round",
+    "requiredTalent": "Mind Probe",
+    "description": "When you touch a living creature with an Intelligence score of 3 or higher, you can use The Force to probe its mind for secrets. You must be adjacent to the target, and using the Mind Probe is a Full-Round Action. If the target is unwilling, you must succeed on a Use the Force check, equaling or exceeding the target's Will Defense. This ability otherwise functions exactly as the Gather Information skill's Learn News and Rumors, Learn Secret Information, and Locate Individual applications.\n\nYour Use the Force check must still exceed the base Gather Information skill DCs in order to retrieve the information you seek, but you need not pay anything in bribes, and you retrieve the information as a part of the Full-Round Action. Failing the Skill Check by 5 or more does not cause someone to notice that you are seeking the information.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": true,
+    "effects": [],
+    "resources": [
+      "Use the Force",
+      "Will Defense",
+      "Gather Information DC"
+    ],
+    "notes": "Roll Use the Force against Will if unwilling and compare to the normal Gather Information DC for the information sought.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "mindProbe"
+  },
+  "perfect-telepathy": {
+    "name": "Perfect Telepathy",
+    "actionType": "passive",
+    "requiredTalent": "Perfect Telepathy",
+    "description": "You can communicate in full sentences and complete thoughts when you use the Telepathy aspect of the Use the Force skill, instead of just in basic phrases. However, the target of your Telepathy can still only communicate in basic emotions or single thoughts.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Telepathy"
+    ],
+    "notes": "Passive Telepathy upgrade reminder.",
+    "manualResolution": true,
+    "relatedSkills": [],
+    "forceAdeptTalentAction": "perfectTelepathy"
+  },
+  "psychic-citadel": {
+    "name": "Psychic Citadel",
+    "actionType": "passive",
+    "requiredTalent": "Psychic Citadel",
+    "description": "You gain a Force bonus to your Will Defense equal to your Class Level.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Will Defense",
+      "Class Level"
+    ],
+    "notes": "Defense calculator adds the actor's Force Adept/class level as a Force bonus to Will Defense.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "psychicCitadel"
+  },
+  "psychic-defenses": {
+    "name": "Psychic Defenses",
+    "actionType": "reaction",
+    "requiredTalent": "Psychic Defenses",
+    "description": "Whenever another creature targets you with a Force Power with the [Mind-Affecting] descriptor, it automatically takes Force damage equal to 1d6 x your Wisdom modifier (minimum x1).",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Mind-Affecting Force Power",
+      "Force damage"
+    ],
+    "notes": "Rolls the automatic Force damage dice when a Mind-Affecting Force Power targets this actor.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "psychicDefenses"
+  },
+  "telepathic-intruder": {
+    "name": "Telepathic Intruder",
+    "actionType": "free",
+    "requiredTalent": "Telepathic Intruder",
+    "description": "Whenever you use a Force Power with the [Mind-Affecting] descriptor successfully against a target, until the end of your next turn you gain a +2 Force bonus on Skill Checks made to activate [Mind-Affecting] Force Powers and Force Talents against that same target.",
+    "resolutionMode": "forceAdeptTalent",
+    "spendAction": false,
+    "effects": [],
+    "resources": [
+      "Mind-Affecting target",
+      "Use the Force"
+    ],
+    "notes": "Records the target after a successful [Mind-Affecting] Force Power; the Force executor applies +2 when that target is passed into later [Mind-Affecting] activations.",
+    "manualResolution": false,
+    "relatedSkills": [
+      "useTheForce"
+    ],
+    "forceAdeptTalentAction": "telepathicIntruder"
   }
 }

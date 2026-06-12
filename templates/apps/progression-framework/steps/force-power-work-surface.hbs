@@ -111,10 +111,8 @@
     <div class="feat-compact-row__content">
       <div class="feat-compact-row__line feat-compact-row__line--primary">
         <span class="feat-name">{{power.name}}</span>
-        {{#if power.shortSummary}}<span class="feat-quick-summary">{{truncate power.shortSummary 120}}</span>{{/if}}
       </div>
       <div class="feat-compact-row__line feat-compact-row__line--meta">
-        <span class="feat-subcategory-pill">{{power.searchCategoryLabel}}</span>
         {{#if power.prerequisiteText}}<span class="feat-prereq-line"><i class="fa-solid fa-link"></i> {{power.prerequisiteText}}</span>{{/if}}
         {{#if power.isSuggested}}<span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Recommended</span>{{/if}}
         {{#with (lookup ../cardStates power.stateId)}}
@@ -180,10 +178,8 @@
     <div class="feat-compact-row__content">
       <div class="feat-compact-row__line feat-compact-row__line--primary">
         <span class="feat-name">{{power.name}}</span>
-        {{#if power.shortSummary}}<span class="feat-quick-summary">{{truncate power.shortSummary 120}}</span>{{/if}}
       </div>
       <div class="feat-compact-row__line feat-compact-row__line--meta">
-        <span class="feat-subcategory-pill">{{power.searchCategoryLabel}}</span>
         {{#if power.prerequisiteText}}<span class="feat-prereq-line"><i class="fa-solid fa-link"></i> {{power.prerequisiteText}}</span>{{/if}}
         {{#if power.isSuggested}}<span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Recommended</span>{{/if}}
         {{#with (lookup ../cardStates power.stateId)}}

@@ -1,69 +1,151 @@
+<div class="prog-background-surface prog-category-picker prog-category-picker--background {{#if categorySidebarCollapsed}}prog-category-picker--sidebar-collapsed{{/if}} {{#if hasSearchQuery}}prog-category-picker--search-mode{{/if}}">
 
-<div class="prog-background-surface">
+  <div class="feat-browser-toolbar prog-category-toolbar prog-background-toolbar">
+    <div class="feat-browser-toolbar__left">
+      {{#if hasSearchQuery}}
+        <span class="feat-browser-mode-pill feat-browser-mode-pill--search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          Search: {{searchQueryLabel}}
+        </span>
+      {{else}}
+        <span class="feat-browser-mode-pill">
+          <i class="fa-solid fa-clock-rotate-left"></i>
+          Backgrounds
+        </span>
+      {{/if}}
+      <button class="feat-filter-btn prog-background-new-skills-toggle {{#if showOnlyNewSkillBackgrounds}}is-active{{/if}}"
+              data-action="toggle-background-new-skills-filter"
+              type="button"
+              title="Only show backgrounds that add new skill options for this character">
+        <i class="fa-solid {{#if showOnlyNewSkillBackgrounds}}fa-filter-circle-xmark{{else}}fa-filter{{/if}}"></i>
+        <span>New Skills Only</span>
+      </button>
+    </div>
 
-  <div class="prog-background-custom-actions">
-    <button class="swse-option-card swse-option-card--compact prog-background-custom-button"
-            type="button"
-            data-action="create-custom-planet">
-      <span class="prog-background-custom-button__icon"><i class="fa-solid fa-globe"></i></span>
-      <span class="prog-background-custom-button__label">Create Custom Planet</span>
-    </button>
+    <div class="feat-browser-toolbar__right">
+      <button class="feat-filter-btn" data-action="reset-background-browser" type="button" title="Clear search and filters">
+        <i class="fa-solid fa-rotate-left"></i>
+        <span>Reset</span>
+      </button>
+      {{#unless hasSearchQuery}}
+        <button class="feat-filter-btn feat-category-collapse-toggle" data-action="toggle-background-category-sidebar" type="button">
+          <i class="fa-solid {{#if categorySidebarCollapsed}}fa-angles-right{{else}}fa-angles-left{{/if}}"></i>
+          <span>{{#if categorySidebarCollapsed}}Show Categories{{else}}Collapse Categories{{/if}}</span>
+        </button>
+      {{/unless}}
+    </div>
   </div>
 
-  <div class="prog-background-items">
-    {{#each backgroundsByCategory}}
-      <div class="prog-background-group">
-        <div class="swse-section-header">
-          <h4 class="swse-section-header__title">{{label}}</h4>
-        </div>
-
-        <div class="prog-background-grid" role="listbox" aria-label="{{label}} backgrounds">
-          {{#each backgrounds}}
-            <button class="swse-option-card prog-background-item
-                           {{#if isFocused}}swse-option-card--focused{{/if}}
-                           {{#if isCommitted}}swse-option-card--selected{{/if}}
-                           {{#if isSuggested}}prog-background-item--suggested prog-background-item--suggested-{{confidenceLevel}}{{/if}}"
-                    data-action="focus-item"
-                    data-item-id="{{id}}"
-                    data-selected="{{#if isCommitted}}true{{else}}false{{/if}}"
-                    data-focused="{{#if isFocused}}true{{else}}false{{/if}}"
-                    data-recommended="{{#if isSuggested}}true{{/if}}"
-                    data-confidence-level="{{confidenceLevel}}"
-                    type="button"
-                    role="option"
-                    {{#if isCommitted}}aria-selected="true"{{/if}}>
-              <div class="swse-option-card__header">
-                <h3 class="swse-option-card__title prog-background-item__name">
-                  {{name}}
-                  {{#if badgeLabel}}
-                    <span class="swse-option-card__badge swse-option-card__badge--recommended">{{badgeLabel}}</span>
-                  {{/if}}
-                </h3>
-              </div>
-              {{#if shortDesc}}
-                <div class="swse-option-card__body prog-background-item__desc">{{shortDesc}}</div>
-              {{/if}}
-              {{#if trainedSkills.length}}
-                <div class="swse-option-card__meta">
-                  {{#each trainedSkills}}
-                    <span class="swse-option-card__badge prog-skill-token {{this.abilityClass}} {{this.statusClass}}" data-ability="{{this.ability}}" title="{{this.abilityLabel}} • {{this.statusLabel}}">{{this.label}}</span>
-                  {{/each}}
-                </div>
-              {{/if}}
-              {{#if isCommitted}}
-                <div class="swse-option-card__meta">
-                  <span class="swse-option-card__badge"><i class="fas fa-check"></i> Selected</span>
-                </div>
-              {{/if}}
+  <section class="feat-browser prog-background-browser {{#if categorySidebarCollapsed}}feat-browser--sidebar-collapsed{{/if}} {{#if hasSearchQuery}}feat-browser--search-mode{{/if}}">
+    {{#unless hasSearchQuery}}
+      {{#unless categorySidebarCollapsed}}
+        <aside class="feat-category-sidebar prog-background-category-sidebar" aria-label="Background categories">
+          <div class="feat-category-sidebar__header">
+            <span>Categories</span>
+            <button class="feat-category-sidebar__collapse" data-action="toggle-background-category-sidebar" type="button" title="Collapse categories">
+              <i class="fa-solid fa-chevron-left"></i>
             </button>
-          {{/each}}
-        </div>
-      </div>
-    {{else}}
-      <div class="prog-background-empty">
-        <i class="fas fa-search"></i>
-        <p>No backgrounds match your search.</p>
-      </div>
-    {{/each}}
-  </div>
+          </div>
+          <div class="feat-category-list prog-background-category-list">
+            {{#each categories as |category|}}
+              <button class="feat-category-button prog-background-category-button {{#if category.isActive}}active{{/if}}"
+                      data-action="select-background-category"
+                      data-category="{{category.id}}"
+                      type="button">
+                <span class="feat-category-button__main">
+                  <i class="fa-solid {{category.icon}}"></i>
+                  <span>{{category.label}}</span>
+                </span>
+                <span class="feat-category-button__count">{{category.count}}</span>
+              </button>
+            {{/each}}
+          </div>
+        </aside>
+      {{/unless}}
+    {{/unless}}
+
+    <main class="feat-results-pane prog-background-results-pane">
+      {{#if hasSearchQuery}}
+        <header class="feat-results-pane__header feat-results-pane__header--search">
+          <div>
+            <h3><i class="fa-solid fa-magnifying-glass"></i> Search Results</h3>
+            <p>Matching backgrounds. Cards are condensed; inspect the detail rail for the full background text.</p>
+          </div>
+          <span class="feat-count-badge">{{searchResults.length}}</span>
+        </header>
+
+        {{#if searchResults.length}}
+          <div class="prog-background-compact-list feat-search-results-list" role="listbox" aria-label="Background search results">
+            {{#each searchResults as |background|}}
+              <button class="prog-background-compact-row {{#if background.isFocused}}focused{{/if}} {{#if background.isCommitted}}selected{{/if}} {{#if background.isSuggested}}suggested{{/if}}"
+                      data-action="focus-item"
+                      data-item-id="{{background.id}}"
+                      data-recommended="{{#if background.isSuggested}}true{{/if}}"
+                      data-confidence-level="{{background.confidenceLevel}}"
+                      type="button"
+                      role="option"
+                      {{#if background.isCommitted}}aria-selected="true"{{/if}}>
+                <span class="prog-background-compact-row__name">{{background.name}}</span>
+                <span class="prog-background-compact-row__skills">
+                  {{#each background.compactSkills as |skill|}}
+                    <span class="prog-skill-token {{skill.abilityClass}} {{skill.statusClass}}" title="{{skill.abilityLabel}} • {{skill.statusLabel}}">{{skill.label}}</span>
+                  {{/each}}
+                  {{#if background.hasMore}}<span class="prog-background-more-chip">+{{background.extraSkillCount}}</span>{{/if}}
+                </span>
+                <span class="prog-background-compact-row__state">
+                  {{#if background.isCommitted}}<i class="fa-solid fa-check-circle selected-icon"></i>{{else}}<i class="fa-solid fa-chevron-right"></i>{{/if}}
+                </span>
+              </button>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="feat-search-empty">
+            <i class="fa-solid fa-radar"></i>
+            <span>No backgrounds match “{{searchQueryLabel}}”.</span>
+          </div>
+        {{/if}}
+      {{else}}
+        {{#each backgroundsByCategory as |group|}}
+          <section class="prog-background-category-group">
+            <header class="feat-results-pane__header prog-background-category-group__header">
+              <div>
+                <h3>{{group.label}}</h3>
+                <p>{{group.description}}</p>
+              </div>
+              <span class="feat-count-badge">{{group.backgrounds.length}}</span>
+            </header>
+
+            <div class="prog-background-compact-list" role="listbox" aria-label="{{group.label}} backgrounds">
+              {{#each group.backgrounds as |background|}}
+                <button class="prog-background-compact-row {{#if background.isFocused}}focused{{/if}} {{#if background.isCommitted}}selected{{/if}} {{#if background.isSuggested}}suggested{{/if}}"
+                        data-action="focus-item"
+                        data-item-id="{{background.id}}"
+                        data-recommended="{{#if background.isSuggested}}true{{/if}}"
+                        data-confidence-level="{{background.confidenceLevel}}"
+                        type="button"
+                        role="option"
+                        {{#if background.isCommitted}}aria-selected="true"{{/if}}>
+                  <span class="prog-background-compact-row__name">{{background.name}}</span>
+                  <span class="prog-background-compact-row__skills">
+                    {{#each background.compactSkills as |skill|}}
+                      <span class="prog-skill-token {{skill.abilityClass}} {{skill.statusClass}}" title="{{skill.abilityLabel}} • {{skill.statusLabel}}">{{skill.label}}</span>
+                    {{/each}}
+                    {{#if background.hasMore}}<span class="prog-background-more-chip">+{{background.extraSkillCount}}</span>{{/if}}
+                  </span>
+                  <span class="prog-background-compact-row__state">
+                    {{#if background.isCommitted}}<i class="fa-solid fa-check-circle selected-icon"></i>{{else}}<i class="fa-solid fa-chevron-right"></i>{{/if}}
+                  </span>
+                </button>
+              {{/each}}
+            </div>
+          </section>
+        {{else}}
+          <div class="prog-background-empty">
+            <i class="fas fa-search"></i>
+            <p>No backgrounds match the current filters.</p>
+          </div>
+        {{/each}}
+      {{/if}}
+    </main>
+  </section>
 </div>

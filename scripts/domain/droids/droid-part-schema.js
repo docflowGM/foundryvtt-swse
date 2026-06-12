@@ -17,6 +17,31 @@ import { DROID_SYSTEMS } from "/systems/foundryvtt-swse/scripts/data/droid-syste
 
 const SIZE_ORDER = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
 
+const DROID_SYSTEM_UUID_PREFIX = 'swse.droid-system';
+
+const DROID_SYSTEM_ALIAS_OVERLAY = Object.freeze({
+  heuristic: ['Heuristic Processor', 'Heuristic'],
+  basic: ['Basic Processor'],
+  standard: ['Standard Processor'],
+  advanced: ['Advanced Processor'],
+  remote: ['Remote Processor'],
+  walking: ['Walking Locomotion', 'Walker Legs', 'Walking', 'Walker'],
+  wheeled: ['Wheeled Locomotion', 'Wheeled'],
+  tracked: ['Tracked Locomotion', 'Tracked'],
+  hovering: ['Hovering Locomotion', 'Hovering', 'Hover Platform'],
+  flying: ['Flying Locomotion', 'Flying', 'Flight System'],
+  stationary: ['Stationary Locomotion', 'Stationary'],
+  burrower: ['Burrower Drive', 'Burrowing Locomotion'],
+  underwater: ['Underwater Drive', 'Underwater Locomotion'],
+  hand: ['Hand Appendage', 'Droid Hand', 'Droid Arm', 'Droid Arm / Hand', '2 Droid Arms', 'Hand'],
+  claw: ['Claw Appendage', 'Claw'],
+  tool: ['Tool Appendage', 'Tool'],
+  probe: ['Probe Appendage', 'Probe'],
+  instrument: ['Instrument Appendage', 'Instrument'],
+  mount: ['Mount Appendage', 'Weapon Mount Appendage', 'Mount']
+});
+
+
 export const DROID_PART_CATEGORIES = Object.freeze({
   processor: 'processor',
   processorEnhancement: 'processorEnhancement',
@@ -305,6 +330,58 @@ function coerceArray(value) {
   return [value];
 }
 
+function uniqueStrings(values) {
+  return [...new Set((values || [])
+    .flatMap(value => coerceArray(value))
+    .map(value => String(value ?? '').trim())
+    .filter(Boolean))];
+}
+
+function droidSystemUuid(category, id) {
+  const scope = slugify(category || 'system') || 'system';
+  const key = slugify(id || 'unknown') || 'unknown';
+  return `${DROID_SYSTEM_UUID_PREFIX}.${scope}.${key}`;
+}
+
+function buildDroidSystemAliases(raw, overlay, id, name, category, slot, path = []) {
+  const generated = [
+    id,
+    name,
+    raw?.id,
+    raw?.name,
+    raw?.label,
+    raw?.type,
+    ...coerceArray(raw?.aliases),
+    ...coerceArray(overlay.aliases),
+    ...coerceArray(DROID_SYSTEM_ALIAS_OVERLAY[id]),
+  ];
+
+  if (slot === 'appendage' && name) generated.push(`${name} Appendage`);
+  if (category === 'locomotion' && name) generated.push(`${name} Locomotion`);
+  if (slot === 'processor' && name) generated.push(`${name} Processor`);
+
+  return uniqueStrings(generated);
+}
+
+function buildDroidSystemTraits(raw, overlay, id, category, slot) {
+  const traits = [
+    ...coerceArray(raw?.traits),
+    ...coerceArray(overlay.traits),
+    id,
+    `id:${id}`,
+    `category:${category}`,
+    `slot:${slot}`
+  ];
+
+  if (slot === 'appendage') traits.push('appendage');
+  if (category === 'locomotion') traits.push('locomotion');
+  if (slot === 'processor') traits.push('processor');
+  if (overlay.appendageType) traits.push(`appendage:${overlay.appendageType}`);
+  if (overlay.movementMode) traits.push(`movement:${overlay.movementMode}`);
+
+  return uniqueStrings(traits);
+}
+
 function normalizeRawDefinition(raw, path = []) {
   const id = slugify(raw?.id || raw?.name);
   if (!id) return null;
@@ -316,11 +393,17 @@ function normalizeRawDefinition(raw, path = []) {
     ...coerceArray(raw?.effects),
     ...coerceArray(overlay.effects)
   ];
+  const name = raw?.name ?? id;
+  const uuid = raw?.uuid || overlay.uuid || droidSystemUuid(category, id);
+  const aliases = buildDroidSystemAliases(raw, overlay, id, name, category, slot, path);
+  const traits = buildDroidSystemTraits(raw, overlay, id, category, slot);
 
   return Object.freeze({
     id,
     key: id,
-    name: raw?.name ?? id,
+    uuid,
+    name,
+    aliases,
     category,
     subcategory: path[1] ?? raw?.category ?? '',
     slot,
@@ -336,7 +419,7 @@ function normalizeRawDefinition(raw, path = []) {
     requiresAny: coerceArray(overlay.requiresAny ?? raw?.requiredSystems ?? raw?.requires ?? raw?.requiredLocomotion ?? raw?.requiresLocomtion),
     blocks: coerceArray(overlay.blocks),
     blocksSkills: coerceArray(overlay.blocksSkills),
-    traits: coerceArray(overlay.traits ?? raw?.traits),
+    traits,
     comboTags: coerceArray(overlay.comboTags),
     comboEffects: coerceArray(overlay.comboEffects),
     grants: overlay.grants ?? raw?.grants ?? {},
@@ -398,6 +481,220 @@ export function getDroidPartsBySlot(slot) {
   return DROID_PART_DEFINITIONS.filter(def => def.slot === slot);
 }
 
+export function normalizeDroidSystemIdentityKey(value) {
+  if (value === undefined || value === null) return '';
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/\+/g, ' plus ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function candidateIdentityValues(value) {
+  if (!value) return [];
+  if (typeof value === 'string') return [value];
+  if (Array.isArray(value)) return value.flatMap(candidateIdentityValues);
+  if (typeof value === 'object') {
+    return [
+      value.uuid,
+      value.systemUuid,
+      value.system?.uuid,
+      value.id,
+      value.key,
+      value.slug,
+      value.name,
+      value.label,
+      value.type,
+      value.category,
+      value.slot,
+      value.appendageType,
+      value.movementMode,
+      value.system?.id,
+      value.system?.key,
+      value.system?.slug,
+      value.system?.name,
+      value.system?.droidPart?.uuid,
+      value.system?.droidPart?.id,
+      value.system?.droidPart?.slot,
+      value.system?.droidPart?.category,
+      value.system?.droidPart?.appendageType,
+      ...coerceArray(value.traits),
+      ...coerceArray(value.aliases),
+      ...coerceArray(value.system?.droidPart?.traits),
+      ...coerceArray(value.system?.droidPart?.aliases)
+    ].filter(Boolean);
+  }
+  return [String(value)];
+}
+
+export function resolveDroidSystemIdentity(value) {
+  const candidates = candidateIdentityValues(value);
+  for (const candidate of candidates) {
+    const raw = String(candidate || '').trim();
+    if (!raw) continue;
+    const key = normalizeDroidSystemIdentityKey(raw);
+    const direct = DROID_PART_DEFINITION_MAP[raw] || DROID_PART_DEFINITION_MAP[key];
+    if (direct) return direct;
+    const found = DROID_PART_DEFINITIONS.find(def => {
+      const values = [def.uuid, def.id, def.key, def.name, def.category, def.slot, ...(def.aliases || []), ...(def.traits || [])];
+      return values.some(v => normalizeDroidSystemIdentityKey(v) === key);
+    });
+    if (found) return found;
+  }
+  return null;
+}
+
+export function collectActorDroidSystemIdentities(actor, pending = {}) {
+  const identities = new Set();
+  for (const part of collectActorDroidSystemParts(actor, pending)) {
+    const def = part.definition || resolveDroidSystemIdentity(part);
+    const values = [
+      part.uuid,
+      part.id,
+      part.key,
+      part.name,
+      part.category,
+      part.slot,
+      part.appendageType,
+      part.movementMode,
+      ...(part.aliases || []),
+      ...(part.traits || []),
+      def?.uuid,
+      def?.id,
+      def?.key,
+      def?.name,
+      def?.category,
+      def?.slot,
+      ...(def?.aliases || []),
+      ...(def?.traits || [])
+    ];
+    for (const value of values) {
+      const key = normalizeDroidSystemIdentityKey(value);
+      if (key) identities.add(key);
+    }
+  }
+  return identities;
+}
+
+function collectPendingDroidSystems(pending = {}) {
+  return pending?.droidSystems
+    || pending?.selectedDroidSystems
+    || pending?.droid?.droidSystems
+    || pending?.draft?.droid?.droidSystems
+    || pending?.draftDroid?.droidSystems
+    || pending?.progression?.droid?.droidSystems
+    || pending?.progression?.droidSystems
+    || null;
+}
+
+function addDroidSystemPartEntry(parts, value, options = {}) {
+  if (!value) return;
+  if (Array.isArray(value)) {
+    value.forEach(entry => addDroidSystemPartEntry(parts, entry, options));
+    return;
+  }
+  if (typeof value === 'object') {
+    const looksLikePart = Boolean(
+      value.uuid || value.id || value.key || value.slug || value.name || value.label || value.type
+      || value.system?.droidPart?.id || value.system?.droidPart?.uuid || value.system?.name
+    );
+    if (looksLikePart) {
+      const normalized = normalizeDroidPartSource(value, options);
+      const def = resolveDroidSystemIdentity(normalized) || resolveDroidSystemIdentity(value);
+      parts.push({
+        ...normalized,
+        uuid: normalized.uuid || def?.uuid,
+        aliases: uniqueStrings([...(normalized.aliases || []), ...(def?.aliases || [])]),
+        traits: uniqueStrings([...(normalized.traits || []), ...(def?.traits || [])]),
+        definition: def || null
+      });
+      return;
+    }
+    for (const nested of Object.values(value)) {
+      if (nested && (Array.isArray(nested) || typeof nested === 'object')) addDroidSystemPartEntry(parts, nested, options);
+    }
+    return;
+  }
+  const def = resolveDroidSystemIdentity(value);
+  if (def) parts.push({ ...def, definition: def });
+}
+
+export function collectActorDroidSystemParts(actor, pending = {}) {
+  const parts = [];
+  const add = (value, options = {}) => addDroidSystemPartEntry(parts, value, options);
+
+  add(actor?.system?.droidSystems || actor?.system?.systems || {});
+  add(collectPendingDroidSystems(pending));
+
+  const itemArray = typeof actor?.items?.toObject === 'function'
+    ? actor.items.contents ?? [...actor.items]
+    : Array.isArray(actor?.items) ? actor.items : [];
+  for (const item of itemArray) {
+    if (item?.system?.droidPart?.enabled || item?.system?.integrated || item?.flags?.swse?.integrated || item?.type === 'droid-system') {
+      add(item, { type: item.type });
+    }
+  }
+
+  const actorType = String(actor?.type || '').toLowerCase();
+  const species = String(actor?.system?.species || actor?.system?.race || '').toLowerCase();
+  const looksDroid = actorType === 'droid' || /droid/.test(species) || !!actor?.system?.droidSystems || !!collectPendingDroidSystems(pending);
+  const hasProcessor = parts.some(part => normalizeDroidSystemIdentityKey(part.slot) === 'processor' || normalizeDroidSystemIdentityKey(part.category) === 'processor');
+  if (looksDroid && !hasProcessor) {
+    const heuristic = resolveDroidSystemIdentity('heuristic');
+    if (heuristic) parts.push({ ...heuristic, definition: heuristic });
+  }
+
+  return parts;
+}
+
+function identitySetHasAny(identitySet, values = []) {
+  return values.some(value => identitySet.has(normalizeDroidSystemIdentityKey(value)));
+}
+
+export function actorMeetsDroidSystemRequirement(actor, requirement = {}, pending = {}) {
+  const identities = collectActorDroidSystemIdentities(actor, pending);
+  const parts = collectActorDroidSystemParts(actor, pending);
+  const label = requirement.label || requirement.name || requirement.system || requirement.uuid || 'Droid system';
+  const rawSystems = coerceArray(requirement.systems || requirement.any || requirement.system || requirement.uuid || requirement.id || requirement.name);
+  const resolved = rawSystems.map(value => resolveDroidSystemIdentity(value)).filter(Boolean);
+  const expectedValues = [
+    ...rawSystems,
+    ...resolved.flatMap(def => [def.uuid, def.id, def.key, def.name, ...(def.aliases || [])])
+  ];
+
+  if (requirement.type === 'droid_system_slot_count' || requirement.slot) {
+    const slotKey = normalizeDroidSystemIdentityKey(requirement.slot || requirement.category);
+    const count = parts.filter(part => normalizeDroidSystemIdentityKey(part.slot) === slotKey || normalizeDroidSystemIdentityKey(part.category) === slotKey).length;
+    const min = Number(requirement.min || requirement.minimum || requirement.count || 1);
+    return { met: count >= min, missing: count >= min ? [] : [label], actual: count, required: min };
+  }
+
+  if (requirement.type === 'droid_system_count') {
+    const min = Number(requirement.min || requirement.minimum || requirement.count || 1);
+    const count = resolved.length
+      ? parts.filter(part => resolved.some(def => {
+          const expected = [def.uuid, def.id, def.name, ...(def.aliases || [])];
+          const actual = [part.uuid, part.id, part.name, part.category, part.slot, ...(part.aliases || []), ...(part.traits || [])];
+          return actual.some(value => expected.some(required => normalizeDroidSystemIdentityKey(value) === normalizeDroidSystemIdentityKey(required)));
+        })).length
+      : parts.filter(part => rawSystems.some(system => {
+          const actual = [part.uuid, part.id, part.name, part.category, part.slot, ...(part.aliases || []), ...(part.traits || [])];
+          return actual.some(value => normalizeDroidSystemIdentityKey(value) === normalizeDroidSystemIdentityKey(system));
+        })).length;
+    return { met: count >= min, missing: count >= min ? [] : [label], actual: count, required: min };
+  }
+
+  const hasAny = identitySetHasAny(identities, expectedValues);
+  return {
+    met: hasAny,
+    missing: hasAny ? [] : [label],
+    actual: hasAny ? 1 : 0,
+    required: 1
+  };
+}
+
 export function normalizeDroidPartSource(source, options = {}) {
   const system = source?.system ?? source ?? {};
   const partData = system?.droidPart ?? {};
@@ -411,6 +708,9 @@ export function normalizeDroidPartSource(source, options = {}) {
 
   return {
     id: normalizedId,
+    key: normalizedId,
+    uuid: def?.uuid || droidSystemUuid(category, normalizedId),
+    aliases: uniqueStrings([name, normalizedId, ...(def?.aliases || []), ...(partData.aliases || [])]),
     itemId: source?.id ?? source?._id ?? null,
     name,
     img: source?.img ?? null,
@@ -433,7 +733,9 @@ export function normalizeDroidPartSource(source, options = {}) {
     requiresAny: coerceArray(partData.requiresAny).length ? coerceArray(partData.requiresAny) : coerceArray(def?.requiresAny),
     comboTags: coerceArray(partData.comboTags).length ? coerceArray(partData.comboTags) : coerceArray(def?.comboTags),
     comboEffects: coerceArray(def?.comboEffects),
-    traits: coerceArray(partData.traits).length ? coerceArray(partData.traits) : coerceArray(def?.traits),
+    traits: uniqueStrings([...(def?.traits || []), ...coerceArray(partData.traits)]),
+    appendageType: partData.appendageType || system.appendageType || def?.appendageType || '',
+    movementMode: partData.movementMode || system.movementMode || def?.movementMode || '',
     asWeapon,
     countsAsWeapon: Boolean(asWeapon?.countsAsWeapon || partData.weapon?.countsAsWeapon || def?.countsAsWeapon),
     selfDestruct: Boolean(asWeapon?.selfDestruct || def?.selfDestruct),

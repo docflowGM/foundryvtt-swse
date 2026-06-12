@@ -20,19 +20,21 @@ import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { resolveSelectedClassFromShell, getClassSkills } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js';
 import { buildPendingBackgroundContext } from '/systems/foundryvtt-swse/scripts/engine/progression/backgrounds/background-pending-context-builder.js';
 import SkillRegistry from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
-import { buildClassSkillKeySet, buildSkillDisplay, buildSkillDisplays } from '../utils/skill-display.js';
+import { buildClassSkillKeySet, buildSkillDisplay, buildSkillDisplays, normalizeSkillKey } from '../utils/skill-display.js';
 import { LanguageRegistry } from '/systems/foundryvtt-swse/scripts/registries/language-registry.js';
 import { CustomPlanetBackgroundDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-planet-background-dialog.js';
 import { BackgroundChoiceDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/background-choice-dialog.js';
 import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
 
 const CATEGORY_LABELS = {
+  recommended: 'Recommended',
   event: 'Event',
   occupation: 'Profession',
   planet: 'Planet',
 };
 
 const CATEGORY_DESCRIPTIONS = {
+  recommended: 'Curated backgrounds for this build',
   event: 'A pivotal moment that shaped you',
   occupation: 'Your profession or trade',
   planet: 'Your homeworld or origin',
@@ -50,6 +52,8 @@ export class BackgroundStep extends ProgressionStepPlugin {
     this._committedBackgroundIds = [];  // May contain 1+ based on house rule
     this._searchQuery = '';
     this._activeCategory = 'all';  // which category tab is active
+    this._categorySidebarCollapsed = false;
+    this._showOnlyNewSkillBackgrounds = false;
     this._sortBy = 'alpha';
     this._customBackgrounds = [];
     this._backgroundSkillChoices = {};
@@ -135,7 +139,7 @@ async onDataReady(shell) {
   const onFilter = (e) => {
     const { filterId, value } = e.detail || {};
     if (!filterId || !value) return;
-    if (['event', 'occupation', 'planet'].includes(filterId)) {
+    if (['recommended', 'event', 'occupation', 'planet'].includes(filterId)) {
       this._activeCategory = value ? filterId : 'all';
       if (shell.utilityBar?._filterState) {
         shell.utilityBar._filterState.event = value && filterId === 'event';
@@ -165,11 +169,13 @@ async onStepExit(shell) {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
-    const filtered = this._getFilteredBackgrounds();
+    const filtered = this._getFilteredBackgrounds(context?.shell);
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedBackgrounds);
+    const hasSearchQuery = !!String(this._searchQuery || '').trim();
     return {
-      categories: this._getCategoryChips(),
+      categories: this._getCategoryChips(context?.shell),
       backgroundsByCategory: this._formatCategoryGroups(filtered, suggestedIds, confidenceMap, context?.shell),
+      searchResults: hasSearchQuery ? filtered.map(bg => this._formatBackgroundCard(bg, suggestedIds, confidenceMap, context?.shell)) : [],
       activeCategory: this._activeCategory,
       focusedBackgroundId: this._focusedBackgroundId,
       committedBackgroundIds: this._committedBackgroundIds,
@@ -177,6 +183,10 @@ async onStepExit(shell) {
       maxBackgrounds: this._maxBackgrounds,
       selectionCount: this._committedBackgroundIds.length,
       searchQuery: this._searchQuery,
+      searchQueryLabel: String(this._searchQuery || '').trim(),
+      hasSearchQuery,
+      categorySidebarCollapsed: this._categorySidebarCollapsed,
+      showOnlyNewSkillBackgrounds: this._showOnlyNewSkillBackgrounds,
       hasSuggestions,
       suggestedBackgroundIds: Array.from(suggestedIds),
       confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
@@ -445,13 +455,9 @@ getUtilityBarConfig() {
       enabled: true,
       placeholder: 'Search backgrounds…',
     },
-    filters: [
-      { id: 'event', label: 'Event', defaultOn: this._activeCategory === 'event' },
-      { id: 'occupation', label: 'Occupation', defaultOn: this._activeCategory === 'occupation' },
-      { id: 'planet', label: 'Homeworld', defaultOn: this._activeCategory === 'planet' },
-    ],
+    filters: [],
     sorts: [
-      { id: 'alpha', label: 'Sort: A–Z' },
+      { id: 'alpha', label: 'Sort: A-Z' },
       { id: 'source', label: 'Sort: Source' },
     ],
     customControls: [
@@ -480,6 +486,39 @@ getUtilityBarConfig() {
       await this._openCustomPlanetDialog(shell);
       return true;
     }
+
+    if (action === 'select-background-category') {
+      event?.preventDefault?.();
+      const category = String(target?.dataset?.category || 'all').toLowerCase();
+      this._activeCategory = ['all', 'recommended', 'event', 'occupation', 'planet'].includes(category) ? category : 'all';
+      shell?.render?.();
+      return true;
+    }
+
+    if (action === 'toggle-background-category-sidebar') {
+      event?.preventDefault?.();
+      this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
+      shell?.render?.();
+      return true;
+    }
+
+    if (action === 'toggle-background-new-skills-filter') {
+      event?.preventDefault?.();
+      this._showOnlyNewSkillBackgrounds = !this._showOnlyNewSkillBackgrounds;
+      shell?.render?.();
+      return true;
+    }
+
+    if (action === 'reset-background-browser') {
+      event?.preventDefault?.();
+      this._searchQuery = '';
+      this._activeCategory = 'all';
+      this._showOnlyNewSkillBackgrounds = false;
+      if (shell?.utilityBar?._searchQuery !== undefined) shell.utilityBar._searchQuery = '';
+      shell?.render?.();
+      return true;
+    }
+
     return false;
   }
 
@@ -586,25 +625,40 @@ getUtilityBarConfig() {
   }
 
   _selectBestBackgroundSuggestionByCategory(suggestions = []) {
-    const wantedOrder = ['event', 'occupation', 'planet'];
-    const byCategory = new Map();
-
     const sorted = SuggestionService.sortBySuggestion?.(suggestions || []) || [...(suggestions || [])];
-    for (const background of sorted) {
-      const category = String(background?.category || background?.system?.category || 'event').toLowerCase();
-      if (!wantedOrder.includes(category)) continue;
-      if (byCategory.has(category)) continue;
-      byCategory.set(category, background);
-    }
+    const wantedOrder = ['event', 'occupation', 'planet'];
+    const selected = [];
+    const used = new Set();
 
-    // Fallback per category if the suggestion service returns sparse data.
+    // Keep the first pass diverse across Event / Profession / Planet.
     for (const category of wantedOrder) {
-      if (byCategory.has(category)) continue;
-      const fallback = (this._groupedBackgrounds?.[category] || [])[0];
-      if (fallback) byCategory.set(category, fallback);
+      const match = sorted.find(background => String(background?.category || background?.system?.category || 'event').toLowerCase() === category);
+      const key = String(match?.id || match?._id || match?.name || '');
+      if (match && key && !used.has(key)) {
+        selected.push(match);
+        used.add(key);
+      }
     }
 
-    return wantedOrder.map(category => byCategory.get(category)).filter(Boolean);
+    // Fill to five from the remaining suggestion score order.
+    for (const background of sorted) {
+      const key = String(background?.id || background?._id || background?.name || '');
+      if (!key || used.has(key)) continue;
+      selected.push(background);
+      used.add(key);
+      if (selected.length >= 5) break;
+    }
+
+    // Fallback if the suggestion service is sparse.
+    for (const background of this._sortBackgrounds(this._allBackgrounds || [])) {
+      const key = String(background?.id || background?._id || background?.name || '');
+      if (!key || used.has(key)) continue;
+      selected.push(background);
+      used.add(key);
+      if (selected.length >= 5) break;
+    }
+
+    return selected.slice(0, 5);
   }
 
   /**
@@ -621,11 +675,20 @@ getUtilityBarConfig() {
   }
 
 
-_getFilteredBackgrounds() {
-  let filtered = this._allBackgrounds.filter((bg) => this._activeCategory === 'all' || (bg.category || 'event') === this._activeCategory);
+_getFilteredBackgrounds(shell = null) {
+  const hasSearchQuery = !!String(this._searchQuery || '').trim();
+  let filtered = [...this._allBackgrounds];
 
-  if (this._searchQuery) {
-    const q = this._searchQuery.toLowerCase().trim();
+  if (!hasSearchQuery && this._activeCategory !== 'all' && this._activeCategory !== 'recommended') {
+    filtered = filtered.filter((bg) => (bg.category || 'event') === this._activeCategory);
+  }
+
+  if (this._showOnlyNewSkillBackgrounds) {
+    filtered = filtered.filter((bg) => this._backgroundHasNewSkillOptions(bg, shell));
+  }
+
+  if (hasSearchQuery) {
+    const q = String(this._searchQuery || '').toLowerCase().trim();
     filtered = filtered.filter((bg) => {
       const haystack = [
         bg.name,
@@ -634,6 +697,7 @@ _getFilteredBackgrounds() {
         bg.specialAbility,
         bg.bonusLanguage,
         bg.source,
+        CATEGORY_LABELS[bg.category] || bg.category,
         ...(bg.trainedSkills || []),
         ...(bg.relevantSkills || []),
         bg.mechanicalEffect?.description,
@@ -642,29 +706,39 @@ _getFilteredBackgrounds() {
     });
   }
 
-  if (this._sortBy === 'source') {
-    filtered = filtered.slice().sort((a, b) => String(a.source || '').localeCompare(String(b.source || '')) || String(a.name || '').localeCompare(String(b.name || '')));
-  } else {
-    filtered = filtered.slice().sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
-  }
-
-  return filtered;
+  return this._sortBackgrounds(filtered);
 }
 
+  _sortBackgrounds(backgrounds = []) {
+    const ordered = [...backgrounds];
+    if (this._sortBy === 'source') {
+      ordered.sort((a, b) => this._compareSources(a.source, b.source) || String(a.name || '').localeCompare(String(b.name || '')));
+    } else {
+      ordered.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
+    }
+    return ordered;
+  }
+
+  _compareSources(aSource, bSource) {
+    const normalize = (value) => String(value || 'Unknown').trim().toLowerCase();
+    const sourceOrder = {
+      core: 0,
+      'core rulebook': 0,
+      cr: 0,
+      'saga edition core rulebook': 0,
+    };
+    const aOrder = sourceOrder[normalize(aSource)] ?? 10;
+    const bOrder = sourceOrder[normalize(bSource)] ?? 10;
+    if (aOrder !== bOrder) return aOrder - bOrder;
+    return String(aSource || 'Unknown').localeCompare(String(bSource || 'Unknown'));
+  }
 
   _getClassSkillKeys(shell) {
-    const selectedClass = resolveSelectedClassFromShell(shell);
-    const classSkillRefs = selectedClass ? getClassSkills(selectedClass) : [];
-    return buildClassSkillKeySet(classSkillRefs);
+    return this._getClassSkillCoverage(shell).classSkillKeys;
   }
 
   _buildRelevantSkillDisplay(background, shell) {
-    const rawSkills = Array.from(new Set([
-      ...(background?.relevantSkills || []),
-      ...(background?.trainedSkills || []),
-    ].filter(Boolean).map(skill => String(skill).trim()).filter(Boolean)));
-
-    return buildSkillDisplays(rawSkills, { classSkillKeys: this._getClassSkillKeys(shell) });
+    return this._buildBackgroundSkillDisplays(background, shell);
   }
 
 _extractMechanicalBonuses(background, shell = null) {
@@ -685,46 +759,177 @@ _extractMechanicalBonuses(background, shell = null) {
   return bonuses;
 }
 
-_getCategoryChips() {
-    return ['event', 'occupation', 'planet'].map(category => ({
-      id: category,
-      label: CATEGORY_LABELS[category],
-      isActive: category === this._activeCategory,
-      count: this._groupedBackgrounds[category]?.length || 0,
-    }));
+
+  _getBackgroundSkillRefs(background) {
+    return Array.from(new Set([
+      ...(background?.relevantSkills || []),
+      ...(background?.trainedSkills || []),
+    ].filter(Boolean).map(skill => String(skill).trim()).filter(Boolean)));
+  }
+
+  _getClassSkillCoverage(shell) {
+    const selectedClass = resolveSelectedClassFromShell(shell);
+    const classSkillRefs = selectedClass ? getClassSkills(selectedClass) : [];
+    const classSkillKeys = buildClassSkillKeySet(classSkillRefs);
+    const className = String(selectedClass?.name || selectedClass?.className || '').trim().toLowerCase();
+    const isSoldier = className === 'soldier';
+    const hasAnyKnowledge = Array.from(classSkillKeys).some(key => this._isKnowledgeSkillKey(key));
+    return {
+      selectedClass,
+      classSkillKeys,
+      hasBroadKnowledge: hasAnyKnowledge && !isSoldier,
+    };
+  }
+
+  _isKnowledgeSkillKey(key) {
+    return String(key || '').toLowerCase().replace(/[^a-z0-9]/g, '').startsWith('knowledge');
+  }
+
+  _skillIsCoveredByClass(skill, coverage = null) {
+    const info = coverage || this._getClassSkillCoverage(null);
+    const key = normalizeSkillKey(skill);
+    if (!key) return false;
+    if (info.classSkillKeys?.has?.(key)) return true;
+    return info.hasBroadKnowledge && this._isKnowledgeSkillKey(key);
+  }
+
+  _buildBackgroundSkillDisplays(background, shell, { limit = null, newFirst = false } = {}) {
+    const coverage = this._getClassSkillCoverage(shell);
+    let displays = buildSkillDisplays(this._getBackgroundSkillRefs(background), { classSkillKeys: coverage.classSkillKeys })
+      .map(entry => {
+        const covered = this._skillIsCoveredByClass(entry.key, coverage);
+        return {
+          ...entry,
+          isClassSkill: covered,
+          statusClass: covered ? 'prog-skill-token--covered' : 'prog-skill-token--novel',
+          statusLabel: covered ? 'Already a class skill' : 'New class skill option',
+        };
+      });
+
+    if (newFirst) {
+      displays = displays.sort((a, b) => Number(a.isClassSkill) - Number(b.isClassSkill) || String(a.label || '').localeCompare(String(b.label || '')));
+    }
+
+    return Number.isFinite(limit) ? displays.slice(0, limit) : displays;
+  }
+
+  _backgroundHasNewSkillOptions(background, shell) {
+    const coverage = this._getClassSkillCoverage(shell);
+    return this._getBackgroundSkillRefs(background).some(skill => !this._skillIsCoveredByClass(skill, coverage));
+  }
+
+_getCategoryChips(shell = null) {
+    const baseFiltered = this._showOnlyNewSkillBackgrounds
+      ? this._allBackgrounds.filter(bg => this._backgroundHasNewSkillOptions(bg, shell))
+      : [...this._allBackgrounds];
+    const counts = baseFiltered.reduce((acc, bg) => {
+      const key = bg.category || 'event';
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {});
+    const total = baseFiltered.length;
+    const recommendedCount = this._getRecommendedBackgrounds(baseFiltered).length;
+    return [
+      { id: 'all', label: 'All', isActive: this._activeCategory === 'all', count: total, icon: 'fa-layer-group' },
+      ...(recommendedCount ? [{ id: 'recommended', label: 'Recommended', isActive: this._activeCategory === 'recommended', count: recommendedCount, icon: 'fa-star' }] : []),
+      ...['event', 'occupation', 'planet'].map(category => ({
+        id: category,
+        label: CATEGORY_LABELS[category],
+        isActive: category === this._activeCategory,
+        count: counts[category] || 0,
+        icon: category === 'event' ? 'fa-bolt' : category === 'occupation' ? 'fa-briefcase' : 'fa-globe',
+      })),
+    ];
+  }
+
+  _getBackgroundKeys(background) {
+    return [background?._id, background?.id, background?.name]
+      .filter(Boolean)
+      .map(value => String(value));
+  }
+
+  _getRecommendedBackgrounds(candidateBackgrounds = null) {
+    const suggestions = Array.isArray(this._suggestedBackgrounds) ? this._suggestedBackgrounds.slice(0, 5) : [];
+    if (!suggestions.length) return [];
+
+    const source = Array.isArray(candidateBackgrounds) ? candidateBackgrounds : this._allBackgrounds;
+    const byKey = new Map();
+    for (const background of source || []) {
+      this._getBackgroundKeys(background).forEach(key => byKey.set(key, background));
+    }
+
+    const recommended = [];
+    const used = new Set();
+    for (const suggestion of suggestions) {
+      const background = this._getBackgroundKeys(suggestion)
+        .map(key => byKey.get(key))
+        .find(Boolean);
+      const key = background ? String(background.id || background._id || background.name || '') : '';
+      if (!background || !key || used.has(key)) continue;
+      recommended.push(background);
+      used.add(key);
+      if (recommended.length >= 5) break;
+    }
+    return recommended;
+  }
+
+  _formatBackgroundCard(bg, suggestedIds = new Set(), confidenceMap = new Map(), shell = null) {
+    const category = bg.category || 'event';
+    const isCommitted = this._committedBackgroundIds.includes(bg.id);
+    const isFocused = bg.id === this._focusedBackgroundId;
+    const isSuggested = this.isSuggestedItem(bg.id, suggestedIds);
+    const confidenceData = confidenceMap.get ? confidenceMap.get(bg.id) : confidenceMap[bg.id];
+    const allSkillDisplays = this._buildBackgroundSkillDisplays(bg, shell, { newFirst: true });
+    const compactSkills = allSkillDisplays.slice(0, 3);
+    return {
+      id: bg.id,
+      name: bg.name,
+      category,
+      categoryLabel: CATEGORY_LABELS[category],
+      compactSkills,
+      trainedSkills: compactSkills,
+      hasMore: allSkillDisplays.length > compactSkills.length,
+      extraSkillCount: Math.max(0, allSkillDisplays.length - compactSkills.length),
+      hasNewSkillOptions: allSkillDisplays.some(skill => !skill.isClassSkill),
+      isFocused,
+      isCommitted,
+      isSuggested,
+      badgeLabel: isSuggested ? 'Recommended' : null,
+      badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
+      confidenceLevel: confidenceData?.confidenceLevel || null,
+    };
   }
 
   _formatCategoryGroups(filtered, suggestedIds = new Set(), confidenceMap = new Map(), shell = null) {
     const result = {};
-    const classSkillKeys = this._getClassSkillKeys(shell);
+    const filteredKeys = new Set((filtered || []).map(bg => String(bg?.id || bg?._id || bg?.name || '')));
+
+    if (this._activeCategory === 'all' || this._activeCategory === 'recommended') {
+      const recommended = this._getRecommendedBackgrounds(this._allBackgrounds)
+        .filter(bg => filteredKeys.has(String(bg?.id || bg?._id || bg?.name || '')))
+        .map(bg => this._formatBackgroundCard(bg, suggestedIds, confidenceMap, shell));
+
+      if (recommended.length > 0) {
+        result.recommended = {
+          id: 'recommended',
+          label: CATEGORY_LABELS.recommended,
+          description: 'Curated recommendations. These backgrounds also remain in their normal categories.',
+          backgrounds: recommended,
+          isRecommended: true,
+        };
+      }
+
+      if (this._activeCategory === 'recommended') return result;
+    }
+
     for (const category of ['event', 'occupation', 'planet']) {
       if (this._activeCategory !== 'all' && category !== this._activeCategory) continue;
-      const backgrounds = (this._groupedBackgrounds[category] || [])
-        .filter(bg => filtered.includes(bg))
-        .map(bg => {
-          const isCommitted = this._committedBackgroundIds.includes(bg.id);
-          const isFocused = bg.id === this._focusedBackgroundId;
-          const isSuggested = this.isSuggestedItem(bg.id, suggestedIds);
-          const confidenceData = confidenceMap.get ? confidenceMap.get(bg.id) : confidenceMap[bg.id];
-          return {
-            id: bg.id,
-            name: bg.name,
-            category,
-            categoryLabel: CATEGORY_LABELS[category],
-            shortDesc: (bg.narrativeDescription || bg.description || '').slice(0, 120),
-            trainedSkills: buildSkillDisplays((bg.trainedSkills || []).slice(0, 3), { classSkillKeys }),
-            hasMore: (bg.trainedSkills || []).length > 3,
-            isFocused,
-            isCommitted,
-            isSuggested,
-            badgeLabel: isSuggested ? 'Recommended' : null,
-            badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
-            confidenceLevel: confidenceData?.confidenceLevel || null,
-          };
-        });
+      const backgrounds = this._sortBackgrounds((this._groupedBackgrounds[category] || []).filter(bg => filtered.includes(bg)))
+        .map(bg => this._formatBackgroundCard(bg, suggestedIds, confidenceMap, shell));
 
       if (backgrounds.length > 0) {
         result[category] = {
+          id: category,
           label: CATEGORY_LABELS[category],
           description: CATEGORY_DESCRIPTIONS[category],
           backgrounds,

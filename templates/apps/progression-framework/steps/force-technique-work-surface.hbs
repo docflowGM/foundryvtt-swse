@@ -1,56 +1,147 @@
 {{!-- Force Technique Selection Work Surface --}}
+{{!-- Feat/Force-style compact category browser for Force Techniques. --}}
 
-<div class="prog-force-technique-browse">
-  {{#if techniques.length}}
-    <div class="prog-force-technique-grid" role="list">
-      {{#each techniques}}
-        <div class="prog-force-technique-card
-                    {{#if (arrayIncludes ../committedCounts @key)}}prog-force-technique-card--selected{{/if}}
-                    {{#if this.isSuggested}}prog-technique-card--suggested prog-technique-card--suggested-{{this.confidenceLevel}}{{/if}}"
-             data-action="focus-item"
-             data-item-id="{{this.id}}"
-             data-recommended="{{#if this.isSuggested}}true{{/if}}"
-             data-confidence-level="{{this.confidenceLevel}}"
-             tabindex="0" role="option">
+<div class="prog-force-technique-browse swse-force-selector swse-store-stage">
+  <div class="feat-browser-toolbar force-technique-browser-toolbar">
+    <div class="feat-browser-toolbar__left">
+      {{#if hasSearchQuery}}
+        <span class="feat-browser-mode-pill feat-browser-mode-pill--search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          Search: {{searchQueryLabel}}
+        </span>
+      {{else}}
+        <span class="feat-browser-mode-pill">
+          <i class="fa-solid {{activeCategoryIcon}}"></i>
+          {{activeCategoryLabel}}
+        </span>
+      {{/if}}
+    </div>
 
-          <div class="prog-force-technique-card__header">
-            <h3 class="prog-force-technique-card__name">
-              {{this.name}}
-              {{#if this.badgeLabel}}
-                <span class="swse-option-card__badge swse-option-card__badge--recommended">{{this.badgeLabel}}</span>
-              {{/if}}
-            </h3>
-            {{#if (lookup ../committedCounts this.id)}}
-              <span class="prog-force-technique-card__count-badge">
-                ×{{lookup ../committedCounts this.id}}
-              </span>
-            {{/if}}
+    <div class="feat-browser-toolbar__right">
+      <button class="feat-filter-btn" data-action="reset-force-technique-browser" type="button" title="Clear search and filters">
+        <i class="fa-solid fa-rotate-left"></i>
+        <span>Reset</span>
+      </button>
+      {{#unless hasSearchQuery}}
+        <button class="feat-filter-btn feat-category-collapse-toggle" data-action="toggle-force-technique-category-sidebar" type="button">
+          <i class="fa-solid {{#if categorySidebarCollapsed}}fa-angles-right{{else}}fa-angles-left{{/if}}"></i>
+          <span>{{#if categorySidebarCollapsed}}Show Categories{{else}}Collapse Categories{{/if}}</span>
+        </button>
+      {{/unless}}
+    </div>
+  </div>
+
+  <section class="feat-browser force-technique-browser {{#if categorySidebarCollapsed}}feat-browser--sidebar-collapsed{{/if}} {{#if hasSearchQuery}}feat-browser--search-mode{{/if}}">
+    {{#unless hasSearchQuery}}
+      {{#unless categorySidebarCollapsed}}
+        <aside class="feat-category-sidebar force-technique-category-sidebar" aria-label="Force Technique categories">
+          <div class="feat-category-sidebar__header">
+            <span>Categories</span>
+            <button class="feat-category-sidebar__collapse" data-action="toggle-force-technique-category-sidebar" type="button" title="Collapse categories">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
           </div>
+          <div class="feat-category-list force-technique-category-list">
+            {{#each categoryOptions as |category|}}
+              <button class="feat-category-button force-technique-category-button {{#if category.isActive}}active{{/if}} {{#if category.isMajor}}force-technique-category-button--major{{/if}} {{#if category.isSubcategory}}force-technique-category-button--sub{{/if}}"
+                      data-action="select-force-technique-category"
+                      data-category="{{category.key}}"
+                      type="button">
+                <span class="feat-category-button__main">
+                  <i class="fa-solid {{category.icon}}"></i>
+                  <span>{{category.label}}</span>
+                </span>
+                <span class="feat-category-button__count">{{category.totalCount}}</span>
+              </button>
+            {{/each}}
+          </div>
+        </aside>
+      {{/unless}}
+    {{/unless}}
 
-          {{#if this.description}}
-            <p class="prog-force-technique-card__description">
-              {{truncate this.description 100}}
-            </p>
-          {{/if}}
+    <main class="feat-results-pane force-technique-results-pane">
+      {{#if hasSearchQuery}}
+        <header class="feat-results-pane__header feat-results-pane__header--search">
+          <div>
+            <h3><i class="fa-solid fa-magnifying-glass"></i> Search Results</h3>
+            <p>Matching Force Techniques.</p>
+          </div>
+          <span class="feat-count-badge">{{searchResultCount}}</span>
+        </header>
 
-          {{#if (lookup ../committedCounts this.id)}}
-            <div class="prog-force-technique-card__state-hint">
-              <i class="fas fa-star" aria-hidden="true"></i>
-              Selected {{lookup ../committedCounts this.id}} {{plural (lookup ../committedCounts this.id) "time" "times"}}
-            </div>
-          {{else}}
-            <div class="prog-force-technique-card__state-hint prog-force-technique-card__state-hint--available">
-              <i class="fas fa-plus-circle" aria-hidden="true"></i>
-              Available
-            </div>
-          {{/if}}
-        </div>
-      {{/each}}
-    </div>
-  {{else}}
-    <div class="prog-force-technique-browse__empty">
-      <i class="fas fa-book-sparkles" aria-hidden="true"></i>
-      <p>No Force Techniques match your search.</p>
-    </div>
-  {{/if}}
+        {{#if searchResults.length}}
+          <div class="feat-compact-list feat-search-results-list force-technique-compact-list" role="list">
+            {{#each searchResults as |technique|}}
+              <div class="feat-compact-row force-technique-compact-row {{#if technique.isFocused}}focused{{/if}} {{#if technique.isSelected}}selected{{/if}} {{#if technique.isSuggested}}suggested{{/if}}"
+                   data-technique-id="{{technique.id}}"
+                   data-item-id="{{technique.id}}"
+                   data-action="focus-item"
+                   data-recommended="{{#if technique.isSuggested}}true{{/if}}"
+                   tabindex="0"
+                   role="option">
+                <div class="feat-compact-row__content">
+                  <div class="feat-compact-row__line feat-compact-row__line--primary">
+                    <span class="feat-name">{{technique.name}}</span>
+                    {{#if technique.relatedPower}}<span class="feat-subcategory-pill">{{technique.relatedPower}}</span>{{/if}}
+                  </div>
+                  <div class="feat-compact-row__line feat-compact-row__line--meta">
+                    <span class="feat-subcategory-pill">{{technique.searchCategoryLabel}}</span>
+                    {{#if technique.isSuggested}}<span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Recommended</span>{{/if}}
+                    {{#if (lookup ../committedCounts technique.id)}}<span class="feat-owned-pill">Selected ×{{lookup ../committedCounts technique.id}}</span>{{/if}}
+                  </div>
+                </div>
+                <i class="fa-solid fa-chevron-right"></i>
+              </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="feat-search-empty">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <span>No Force Techniques match “{{searchQueryLabel}}”.</span>
+            <span class="feat-search-empty__hint">Try a technique, related power, or category keyword.</span>
+          </div>
+        {{/if}}
+      {{else}}
+        <header class="feat-results-pane__header">
+          <div>
+            <h3><i class="fa-solid {{activeCategoryIcon}}"></i> {{activeCategoryLabel}}</h3>
+            <p>Select a technique to inspect it in the detail rail.</p>
+          </div>
+          <span class="feat-count-badge">{{activeCategoryCount}}</span>
+        </header>
+
+        {{#if activeCategoryTechniques.length}}
+          <div class="feat-compact-list force-technique-compact-list" role="list">
+            {{#each activeCategoryTechniques as |technique|}}
+              <div class="feat-compact-row force-technique-compact-row {{#if technique.isFocused}}focused{{/if}} {{#if technique.isSelected}}selected{{/if}} {{#if technique.isSuggested}}suggested{{/if}}"
+                   data-technique-id="{{technique.id}}"
+                   data-item-id="{{technique.id}}"
+                   data-action="focus-item"
+                   data-recommended="{{#if technique.isSuggested}}true{{/if}}"
+                   tabindex="0"
+                   role="option">
+                <div class="feat-compact-row__content">
+                  <div class="feat-compact-row__line feat-compact-row__line--primary">
+                    <span class="feat-name">{{technique.name}}</span>
+                    {{#if technique.relatedPower}}<span class="feat-subcategory-pill">{{technique.relatedPower}}</span>{{/if}}
+                  </div>
+                  <div class="feat-compact-row__line feat-compact-row__line--meta">
+                    <span class="feat-subcategory-pill">{{technique.searchCategoryLabel}}</span>
+                    {{#if technique.isSuggested}}<span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Recommended</span>{{/if}}
+                    {{#if (lookup ../committedCounts technique.id)}}<span class="feat-owned-pill">Selected ×{{lookup ../committedCounts technique.id}}</span>{{/if}}
+                  </div>
+                </div>
+                <i class="fa-solid fa-chevron-right"></i>
+              </div>
+            {{/each}}
+          </div>
+        {{else}}
+          <div class="empty-message feat-browser-empty prog-force-technique-browse__empty">
+            <i class="fas fa-book-sparkles" aria-hidden="true"></i>
+            <p>No Force Techniques are available in this category.</p>
+          </div>
+        {{/if}}
+      {{/if}}
+    </main>
+  </section>
 </div>

@@ -76,7 +76,9 @@ export function normalizeTalent(rawTalent, treeMap = null) {
 
     // Primary source: inverse index from TalentTreeDB
     if (treeMap && treeMap.talentToTree instanceof Map) {
-        treeId = treeMap.talentToTree.get(rawTalent._id) || null;
+        treeId = treeMap.talentToTree.get(rawTalent._id)
+            || treeMap.talentToTree.get(name)
+            || null;
     }
 
     // Explicit compendium fallback: some legacy talent rows have a valid treeId

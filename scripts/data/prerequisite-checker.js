@@ -62,12 +62,13 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { normalizeClassPrerequisites } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prereq-normalizer.js";
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 import { actorIsDroidLike, actorMeetsMinimumSize, getActorSpeciesNames, namesMatchLoosely, normalizeLooseLookupKey, normalizePendingSkillKeys, parseRegistryBackedLegacyPrerequisite, resolveCanonicalFeatName, resolveCanonicalSkillKey, resolveCanonicalTalentName } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
-import { isForceSensitivityName } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
+import { actorIsCyborgLike, getOrganicDroidAcquisitionBlockReason, isForceSensitivityName } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
 import { resolveClassModel } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
 import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
 import { getCanonicalBenefitText, getCanonicalContentAuthority, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/prerequisite-authority.js";
 import { FeatChoiceResolver, normalizeFeatChoiceKey } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
 import { CANONICAL_SKILL_DEFS } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
+import { actorMeetsDroidSystemRequirement, resolveDroidSystemIdentity } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-part-schema.js";
 
 function matchesForceSensitivity(value) {
     return isForceSensitivityName(value) || namesMatchLoosely(value, 'Force Sensitivity');
@@ -451,6 +452,22 @@ export class PrerequisiteChecker {
         const canonicalPrereqText = this._getCanonicalPrerequisiteText('feat', feat);
         const prereqData = canonicalPrereqText || feat.system?.prerequisite || feat.system?.prerequisites || '';
         const structuredPrereqs = this._extractStructuredPrerequisites(feat.system?.prerequisitesStructured);
+        const droidGateCandidate = {
+            ...feat,
+            system: {
+                ...(feat.system || {}),
+                prerequisite: prereqData,
+                prerequisites: prereqData,
+            }
+        };
+        const droidOnlyBlockReason = getOrganicDroidAcquisitionBlockReason(actor, droidGateCandidate, pending);
+        if (droidOnlyBlockReason) {
+            return {
+                met: false,
+                missing: [droidOnlyBlockReason],
+                details: { droidChassisGate: droidOnlyBlockReason }
+            };
+        }
 
         // Canon raw prerequisite text is treated as the current source of truth.
         if (typeof prereqData === 'string' && prereqData.trim() && prereqData.trim().toLowerCase() !== 'none') {
@@ -505,6 +522,22 @@ export class PrerequisiteChecker {
         const canonicalPrereqText = this._getCanonicalPrerequisiteText('talent', talent);
         const prereqData = canonicalPrereqText || talent.system?.prerequisites || talent.system?.prerequisite || '';
         const structuredPrereqs = this._extractStructuredPrerequisites(talent.system?.prerequisitesStructured);
+        const droidGateCandidate = {
+            ...talent,
+            system: {
+                ...(talent.system || {}),
+                prerequisite: prereqData,
+                prerequisites: prereqData,
+            }
+        };
+        const droidOnlyBlockReason = getOrganicDroidAcquisitionBlockReason(actor, droidGateCandidate, pending);
+        if (droidOnlyBlockReason) {
+            return {
+                met: false,
+                missing: [droidOnlyBlockReason],
+                details: { droidChassisGate: droidOnlyBlockReason }
+            };
+        }
 
         if (typeof prereqData === 'string' && prereqData.trim() && prereqData.trim().toLowerCase() !== 'none') {
             return this._evaluateLegacyStringPrerequisites(
@@ -552,6 +585,15 @@ export class PrerequisiteChecker {
         // Support both document and name
         if (typeof classDoc === 'string') {
             classDoc = { name: classDoc, system: {} };
+        }
+
+        const droidOnlyBlockReason = getOrganicDroidAcquisitionBlockReason(actor, classDoc, pending);
+        if (droidOnlyBlockReason) {
+            return {
+                met: false,
+                missing: [droidOnlyBlockReason],
+                details: { droidChassisGate: droidOnlyBlockReason }
+            };
         }
 
         const prereqData = classDoc.system?.prerequisites || '';
@@ -727,7 +769,7 @@ export class PrerequisiteChecker {
 
         // Check Droid Systems
         if (prereqs.droidSystems) {
-            const droidCheck = checkDroidSystems(actor, prereqs.droidSystems);
+            const droidCheck = checkDroidSystems(actor, prereqs.droidSystems, pending);
             details.droidSystems = droidCheck;
             if (!droidCheck.met) {
                 missing.push(`Droid Systems: ${droidCheck.missing.join(', ')}`);
@@ -903,8 +945,21 @@ export class PrerequisiteChecker {
                 return this._checkSpeciesCondition(prereq, actor, pending);
             case 'droidDegree':
                 return this._checkDroidDegreeCondition(prereq, actor, pending);
+            case 'droid_system':
+            case 'droidSystem':
+            case 'droid_system_any':
+            case 'droidSystemAny':
+            case 'droid_system_count':
+            case 'droidSystemCount':
+            case 'droid_system_slot_count':
+            case 'droidSystemSlotCount':
+                return this._checkDroidSystemCondition(prereq, actor, pending);
             case 'isDroid':
                 return this._checkIsDroidCondition(prereq, actor, pending);
+            case 'cyborg_or_implant':
+            case 'cyborgHybrid':
+            case 'cyborg':
+                return this._checkCyborgOrImplantCondition(prereq, actor, pending);
             case 'forcePower':
                 return this._checkForcePowerCondition(prereq, actor, pending);
             case 'forceTechnique':
@@ -1084,6 +1139,19 @@ export class PrerequisiteChecker {
             case 'isDroid':
             case 'is_droid':
                 return this._checkIsDroidCondition(prereq, actor, pending);
+            case 'droid_system':
+            case 'droidSystem':
+            case 'droid_system_any':
+            case 'droidSystemAny':
+            case 'droid_system_count':
+            case 'droidSystemCount':
+            case 'droid_system_slot_count':
+            case 'droidSystemSlotCount':
+                return this._checkDroidSystemCondition(prereq, actor, pending);
+            case 'cyborg_or_implant':
+            case 'cyborgHybrid':
+            case 'cyborg':
+                return this._checkCyborgOrImplantCondition(prereq, actor, pending);
             case 'species_trait':
                 return this._checkSpeciesTraitCondition(prereq, actor, pending);
             case 'advisory':
@@ -1303,6 +1371,26 @@ export class PrerequisiteChecker {
         return {
             met: isDroid,
             message: !isDroid ? `Requires being a Droid` : ''
+        };
+    }
+
+    static _checkDroidSystemCondition(prereq, actor, pending) {
+        if (!actorIsDroidLike(actor, pending)) {
+            return { met: false, message: 'Requires being a Droid' };
+        }
+        const result = actorMeetsDroidSystemRequirement(actor, prereq, pending);
+        const label = prereq.label || prereq.name || prereq.system || prereq.uuid || 'required droid system';
+        return {
+            met: result.met,
+            message: result.met ? '' : `Requires droid system: ${result.missing?.join(', ') || label}`
+        };
+    }
+
+    static _checkCyborgOrImplantCondition(prereq, actor, pending) {
+        const isCyborg = actorIsCyborgLike(actor, pending);
+        return {
+            met: isCyborg,
+            message: !isCyborg ? `Requires being a Cyborg Hybrid or having an implant` : ''
         };
     }
 
@@ -1555,6 +1643,112 @@ export class PrerequisiteChecker {
     // LEGACY STRING PARSING & CHECKING
     // ============================================================
 
+    static _parseDroidSystemPrerequisiteString(normalized, owningType = 'feat') {
+        const prereqs = [];
+        let working = String(normalized || '');
+        const addSystem = (condition) => {
+            prereqs.push(condition);
+            return ' ';
+        };
+
+        if (/\bdroid\b/i.test(working)) {
+            prereqs.push({ type: 'isDroid' });
+            working = working.replace(/\bdroid\b/ig, ' ');
+        }
+
+        working = working.replace(/claw\s+or\s+hand\s+appendage/ig, () => addSystem({
+            type: 'droid_system_any',
+            systems: ['swse.droid-system.appendage.claw', 'swse.droid-system.appendage.hand'],
+            label: 'Claw or Hand Appendage'
+        }));
+
+        working = working.replace(/(\d+)\+?\s*tool\s+appendages?/ig, (_m, count) => addSystem({
+            type: 'droid_system_count',
+            systems: ['swse.droid-system.appendage.tool'],
+            min: Number(count) || 1,
+            label: `${count}+ Tool Appendages`
+        }));
+
+        working = working.replace(/(\d+)\+?\s*appendages?/ig, (_m, count) => addSystem({
+            type: 'droid_system_slot_count',
+            slot: 'appendage',
+            min: Number(count) || 1,
+            label: `${count}+ Appendages`
+        }));
+
+        working = working.replace(/hovering\s+or\s+flying\s+locomotion/ig, () => addSystem({
+            type: 'droid_system_any',
+            systems: ['swse.droid-system.locomotion.hovering', 'swse.droid-system.locomotion.flying'],
+            label: 'Hovering or Flying Locomotion'
+        }));
+
+        working = working.replace(/hovering\s*,\s*flying\s*,\s*wheeled\s*,?\s*or\s+tracked\s+locomotion/ig, () => addSystem({
+            type: 'droid_system_any',
+            systems: [
+                'swse.droid-system.locomotion.hovering',
+                'swse.droid-system.locomotion.flying',
+                'swse.droid-system.locomotion.wheeled',
+                'swse.droid-system.locomotion.tracked'
+            ],
+            label: 'Hovering, Flying, Wheeled, or Tracked Locomotion'
+        }));
+
+        working = working.replace(/(?:droid\s+with\s+)?hovering\s*,?\s*flying\s*,?\s*wheeled\s*,?\s*(?:or\s+)?tracked\s+locomotion/ig, () => addSystem({
+            type: 'droid_system_any',
+            systems: [
+                'swse.droid-system.locomotion.hovering',
+                'swse.droid-system.locomotion.flying',
+                'swse.droid-system.locomotion.wheeled',
+                'swse.droid-system.locomotion.tracked'
+            ],
+            label: 'Hovering, Flying, Wheeled, or Tracked Locomotion'
+        }));
+
+        working = working.replace(/(?:droid\s+with\s+)?hovering\s+or\s+flying\s+locomotion/ig, () => addSystem({
+            type: 'droid_system_any',
+            systems: ['swse.droid-system.locomotion.hovering', 'swse.droid-system.locomotion.flying'],
+            label: 'Hovering or Flying Locomotion'
+        }));
+
+        working = working.replace(/heuristic\s+processor/ig, () => addSystem({
+            type: 'droid_system',
+            system: 'swse.droid-system.processor.heuristic',
+            label: 'Heuristic Processor'
+        }));
+
+        working = working.replace(/basic\s+processor/ig, () => addSystem({
+            type: 'droid_system',
+            system: 'swse.droid-system.processor.basic',
+            label: 'Basic Processor'
+        }));
+
+        working = working.replace(/shield\s+generator\s*(?:\(\s*(?:droid\s+)?accessory\s*\))?/ig, () => addSystem({
+            type: 'droid_system_slot_count',
+            slot: 'shield',
+            min: 1,
+            label: 'Shield Generator'
+        }));
+
+        working = working.replace(/(fine|diminutive|tiny|small|medium|large|huge|gargantuan|colossal)\s+size\s+or\s+larger/ig, (_m, size) => addSystem({
+            type: 'size_at_least',
+            minimum: String(size).toLowerCase(),
+            label: `${size} size or larger`
+        }));
+
+        const cleaned = working
+            .replace(/\bor\b/ig, ' ')
+            .replace(/\s+/g, ' ')
+            .replace(/^[,;\s]+|[,;\s]+$/g, '')
+            .trim();
+        const parts = cleaned.split(/[,;]|\s+and\s+/i).map(p => p.trim()).filter(Boolean);
+        for (const part of parts) {
+            const prereq = this._parseLegacyPrerequisitePart(part, owningType);
+            if (prereq && prereq.type !== 'advisory') prereqs.push(prereq);
+        }
+
+        return prereqs;
+    }
+
     static _parseLegacyPrerequisites(prereqString, owningType = 'feat') {
         const prereqs = [];
 
@@ -1590,6 +1784,10 @@ export class PrerequisiteChecker {
             return [{ type: 'talent_tree_count', trees, count }];
         }
 
+        if (/\bdroid\b/i.test(normalized) && /(appendage|locomotion|processor|shield\s+generator)/i.test(normalized)) {
+            return this._parseDroidSystemPrerequisiteString(normalized, owningType);
+        }
+
         // Check for OR logic (case-insensitive, handles multiple spaces)
         const hasOr = /\s+or\s+/i.test(normalized);
 
@@ -1612,8 +1810,49 @@ export class PrerequisiteChecker {
         }
     }
 
+    static _parseDroidSystemPrerequisitePart(part) {
+        const text = String(part || '').trim();
+        if (!text) return null;
+
+        const any = (systems, label) => ({ type: 'droid_system_any', systems, label });
+        if (/^claw\s+or\s+hand\s+appendage$/i.test(text)) {
+            return any(['swse.droid-system.appendage.claw', 'swse.droid-system.appendage.hand'], 'Claw or Hand Appendage');
+        }
+        const toolCount = text.match(/^(\d+)\+?\s*tool\s+appendages?$/i);
+        if (toolCount) {
+            return { type: 'droid_system_count', systems: ['swse.droid-system.appendage.tool'], min: Number(toolCount[1]) || 1, label: `${toolCount[1]}+ Tool Appendages` };
+        }
+        const appendageCount = text.match(/^(\d+)\+?\s*appendages?$/i);
+        if (appendageCount) {
+            return { type: 'droid_system_slot_count', slot: 'appendage', min: Number(appendageCount[1]) || 1, label: `${appendageCount[1]}+ Appendages` };
+        }
+        if (/^(?:droid\s+with\s+)?hovering\s+or\s+flying\s+locomotion$/i.test(text)) {
+            return any(['swse.droid-system.locomotion.hovering', 'swse.droid-system.locomotion.flying'], 'Hovering or Flying Locomotion');
+        }
+        if (/^(?:hovering|flying|wheeled|tracked|walking|stationary|burrower|underwater)\s+locomotion$/i.test(text)) {
+            const mode = text.replace(/\s+locomotion$/i, '');
+            const def = resolveDroidSystemIdentity(mode);
+            if (def) return { type: 'droid_system', system: def.uuid || def.id, label: `${def.name} Locomotion` };
+        }
+        if (/^(?:basic|heuristic|standard|advanced|remote)\s+processor$/i.test(text)) {
+            const processor = text.replace(/\s+processor$/i, '');
+            const def = resolveDroidSystemIdentity(processor);
+            if (def) return { type: 'droid_system', system: def.uuid || def.id, label: def.name };
+        }
+        if (/^(?:claw|hand|tool|probe|instrument|mount)\s+appendage$/i.test(text)) {
+            const appendage = text.replace(/\s+appendage$/i, '');
+            const def = resolveDroidSystemIdentity(appendage);
+            if (def) return { type: 'droid_system', system: def.uuid || def.id, label: `${def.name} Appendage` };
+        }
+        if (/^shield\s+generator\s*(?:\(\s*(?:droid\s+)?accessory\s*\)?)?$/i.test(text)) {
+            return { type: 'droid_system_slot_count', slot: 'shield', min: 1, label: 'Shield Generator' };
+        }
+
+        return null;
+    }
+
     static _parseLegacyPrerequisitePart(part, owningType = 'feat') {
-        part = part.trim();
+        part = part.trim().replace(/^[([{]+|[)\]}]+$/g, '').trim();
 
         // Choice/proficiency prose must be parsed before registry-backed feat-name
         // lookup, otherwise strings like "Armor Proficiency (Light)" are treated
@@ -1764,16 +2003,23 @@ export class PrerequisiteChecker {
             return { type: 'darkSideScore', minimum: parseInt(darkSideMatch[1], 10) };
         }
 
+        const sizeAtLeastMatch = part.match(/^(fine|diminutive|tiny|small|medium|large|huge|gargantuan|colossal)\s+size\s+or\s+larger$/i);
+        if (sizeAtLeastMatch) {
+            return { type: 'size_at_least', minimum: sizeAtLeastMatch[1].toLowerCase(), label: `${sizeAtLeastMatch[1]} size or larger` };
+        }
+
         // Droid / cyborg / biological chassis requirements. These should be
-        // semantic actor predicates, not fake feat-name prerequisites.
+        // semantic actor predicates, not fake feat-name prerequisites. This also
+        // prevents droid-only feat OR clauses such as "Droid, Claw or Hand
+        // Appendage" from accidentally allowing organic characters.
         if (/^droid$/i.test(part)) {
             return { type: 'isDroid' };
         }
-        if (/^non[-\s]?droid$/i.test(part)) {
+        if (/^non[-\s]?droid$/i.test(part) || /^cannot\s+be\s+a?\s*droid$/i.test(part)) {
             return { type: 'non_droid' };
         }
         if (/^(cyborg hybrid|possess an implant|have an implant|implant)$/i.test(part)) {
-            return { type: 'advisory', label: part, reason: 'implant-or-cyborg-requirement' };
+            return { type: 'cyborg_or_implant', label: part };
         }
 
         // Choice-based feat prerequisites. During list building there may be no
@@ -1805,15 +2051,9 @@ export class PrerequisiteChecker {
             return { type: 'species_trait', trait: speciesTraitMatch[1].trim() };
         }
 
-        // Common droid accessory / locomotion / processor prerequisites are not
-        // represented as feats in actor inventory today. Do not convert them into
-        // false feat requirements; leave them advisory until the droid equipment
-        // pipeline owns them.
-        if (/^(?:basic processor|shield generator \(droid accessory\)|droid with hovering|flying locomotion)$/i.test(part)
-            || /droid with/i.test(part)
-            || /locomotion/i.test(part)
-            || /appendages/i.test(part)) {
-            return { type: 'advisory', label: part, reason: 'droid-equipment-requirement' };
+        const explicitDroidSystem = this._parseDroidSystemPrerequisitePart(part);
+        if (explicitDroidSystem) {
+            return explicitDroidSystem;
         }
 
         // Force Sensitive
@@ -2858,54 +3098,22 @@ function checkSpecies(actor, allowedSpecies) {
 /**
  * Check droid systems requirement.
  */
-function checkDroidSystems(actor, requiredSystems) {
+function checkDroidSystems(actor, requiredSystems, pending = {}) {
     if (!actor || !requiredSystems || requiredSystems.length === 0) {
         return { met: true, missing: [] };
     }
 
-    if (!actorIsDroidLike(actor)) {
+    if (!actorIsDroidLike(actor, pending)) {
         return { met: false, missing: ['Droid'] };
     }
 
-    const rawSystems = actor.system?.droidSystems || actor.system?.systems || {};
-    const entries = [];
-    const pushSystem = (value) => {
-        if (!value) return;
-        if (typeof value === 'string') {
-            entries.push(value);
-            return;
-        }
-        if (Array.isArray(value)) {
-            value.forEach(pushSystem);
-            return;
-        }
-        if (typeof value === 'object') {
-            const named = value.name || value.label || value.id || value.type || value.category;
-            if (named) entries.push(named);
-            for (const nested of Object.values(value)) {
-                if (nested && (Array.isArray(nested) || typeof nested === 'object')) pushSystem(nested);
-            }
-        }
-    };
-    pushSystem(rawSystems);
-
-    // Droid player/follower construction grants a heuristic processor by rule;
-    // the actor data may store it as a nested processor object, a granted system,
-    // or only through droid actor flags. Treat droid actors as having it unless
-    // a non-heuristic processor is explicitly modeled in the future.
-    if (actorIsDroidLike(actor) && !entries.some(entry => /heuristic/i.test(String(entry)))) {
-        entries.push('Heuristic Processor');
-    }
-
-    const normalizedEntries = entries.map(entry => String(entry).toLowerCase().replace(/[^a-z0-9]/g, ''));
     const missing = [];
-
-    for (const system of requiredSystems) {
-        const normalized = String(system).toLowerCase().replace(/[^a-z0-9]/g, '');
-        const found = normalizedEntries.some(entry => entry === normalized || entry.includes(normalized) || normalized.includes(entry));
-        if (!found) {
-            missing.push(system);
-        }
+    for (const requirement of requiredSystems) {
+        const structured = typeof requirement === 'object'
+            ? requirement
+            : { type: 'droid_system', system: requirement, label: String(requirement) };
+        const result = actorMeetsDroidSystemRequirement(actor, structured, pending);
+        if (!result.met) missing.push(...(result.missing || [structured.label || structured.system || 'Droid system']));
     }
 
     return { met: missing.length === 0, missing };

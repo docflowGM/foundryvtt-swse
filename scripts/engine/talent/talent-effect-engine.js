@@ -2233,7 +2233,6 @@ export class TalentEffectEngine {
   static async buildWickedStrikePlan({
     sourceActor,
     targetActor,
-    damageAmount,
     spendFP = true
   }) {
     // --- Validation ---
@@ -2245,16 +2244,15 @@ export class TalentEffectEngine {
       };
     }
 
-    if (!targetActor || damageAmount <= 0) {
+    if (!targetActor) {
       return {
         success: false,
-        reason: "Invalid target or damage"
+        reason: "Invalid target"
       };
     }
 
-    // --- Compute mutations ---
-    const targetHp = targetActor.system.hp?.value ?? 0;
-    const newTargetHp = Math.max(0, targetHp - damageAmount);
+    const currentCondition = Math.max(0, Number(targetActor.system.conditionTrack?.current ?? 0) || 0);
+    const newCondition = Math.min(5, currentCondition + 2);
 
     // --- Build mutations ---
     const mutations = [];
@@ -2275,7 +2273,7 @@ export class TalentEffectEngine {
       actorId: targetActor.id,
       type: "update",
       data: {
-        "system.hp.value": newTargetHp
+        "system.conditionTrack.current": newCondition
       }
     });
 
@@ -2284,11 +2282,12 @@ export class TalentEffectEngine {
       effect: "wickedStrike",
       sourceActor: sourceActor,
       targetActor: targetActor,
-      damageAmount: damageAmount,
-      newTargetHp: newTargetHp,
+      previousCondition: currentCondition,
+      newCondition: newCondition,
       mutations
     };
   }
+
 
   /**
    * Build Drain Force plan

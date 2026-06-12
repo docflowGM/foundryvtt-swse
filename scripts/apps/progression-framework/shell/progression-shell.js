@@ -2222,21 +2222,36 @@ export class ProgressionShell extends SWSEApplicationV2 {
       const rawTarget = event?.target;
       if (!(rawTarget instanceof Element)) return;
 
-      // Do not hijack native controls. Double-clicking a button should behave
-      // like a button; double-clicking the card background should select it.
-      if (rawTarget.closest('button, a, input, textarea, select, option')) return;
+      const focusRowControl = rawTarget.closest('[data-action="focus-item"][data-item-id], [data-action="focus-item"][data-id]');
 
-      const row = rawTarget.closest([
-        '[data-action="focus-item"]',
+      // Do not hijack native controls unless the control itself is the canonical
+      // focus-item row. Condensed species/background cards are buttons, so they
+      // still need double-click-to-confirm behavior.
+      if (!focusRowControl && rawTarget.closest('button, a, input, textarea, select, option')) return;
+
+      const row = focusRowControl || rawTarget.closest([
         '[data-item-id]',
         '[data-feat-id]',
         '[data-talent-id]',
+        '[data-tree-id]',
+        '[data-node-id]',
         '[data-skill-row]',
         '[data-skill-id]',
+        '[data-skill-key]',
         '[data-skill]',
         '[data-power-id]',
+        '[data-secret-id]',
+        '[data-technique-id]',
         '[data-maneuver-id]',
-        '[data-language-id]'
+        '[data-system-id]',
+        '[data-class-id]',
+        '[data-background-id]',
+        '[data-species-id]',
+        '[data-variant-id]',
+        '[data-language-id]',
+        '[data-id]',
+        '[data-key]',
+        '[data-slug]'
       ].join(','));
 
       if (!row || !html.contains(row)) return;

@@ -19,6 +19,46 @@ import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engin
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 
+
+const SECRET_RECOMMENDED_NAMES = new Set([
+  'Quicken Power',
+  'Distant Power',
+  'Devastating Power',
+  'Debilitating Power',
+  'Shaped Power',
+]);
+
+const SECRET_CATEGORY_DEFS = [
+  { key: 'recommended', label: 'Recommended', icon: 'fa-lightbulb', isMajor: true },
+  { key: 'reach-shape', label: 'Reach / Shape', icon: 'fa-draw-polygon', isMajor: true },
+  { key: 'action-economy', label: 'Action Economy', icon: 'fa-bolt', isMajor: true },
+  { key: 'damage-condition', label: 'Damage / Condition', icon: 'fa-burst', isMajor: true },
+  { key: 'reliability-resistance', label: 'Reliability / Resistance', icon: 'fa-shield-halved', isMajor: true },
+  { key: 'knowledge-mentorship', label: 'Knowledge / Mentorship', icon: 'fa-book-open-reader', isMajor: true },
+];
+
+const SECRET_CATEGORY_BY_NAME = Object.freeze({
+  'distant power': ['reach-shape'],
+  'remote power': ['reach-shape'],
+  'enlarged power': ['reach-shape'],
+  'multitarget power': ['reach-shape'],
+  'shaped power': ['reach-shape'],
+
+  'quicken power': ['action-economy'],
+  'linked power': ['action-economy'],
+  'extend power': ['action-economy'],
+
+  'devastating power': ['damage-condition'],
+  'debilitating power': ['damage-condition'],
+  'corrupted power': ['damage-condition'],
+
+  'pure power': ['reliability-resistance'],
+  'unconditional power': ['reliability-resistance'],
+
+  'mentor': ['knowledge-mentorship'],
+  'holocron loremaster': ['knowledge-mentorship'],
+});
+
 export class ForceSecretStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
@@ -27,6 +67,8 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     this._filteredSecrets = [];
     this._searchQuery = '';
     this._focusedSecretId = null;
+    this._activeCategory = 'recommended';
+    this._categorySidebarCollapsed = false;
 
     // Stacking model: secret -> count (same as Force Powers)
     this._committedSecretCounts = new Map();
@@ -127,9 +169,11 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     });
 
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedSecrets);
+    const secrets = this._filteredSecrets.map(s => this._formatSecretCard(s, suggestedIds, confidenceMap));
+    const browserModel = this._buildBrowserModel(secrets, suggestedIds, confidenceMap);
 
     return {
-      secrets: this._filteredSecrets.map(s => this._formatSecretCard(s, suggestedIds, confidenceMap)),
+      secrets,
       focusedSecretId: this._focusedSecretId,
       committedCounts: Object.fromEntries(this._committedSecretCounts),
       committedSummary,
@@ -140,6 +184,7 @@ export class ForceSecretStep extends ProgressionStepPlugin {
         acc[id] = data;
         return acc;
       }, {}),
+      ...browserModel,
     };
   }
 
@@ -191,6 +236,40 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     this._focusedSecretId = secretId;
     shell.focusedItem = secret;
     shell.render();
+  }
+
+
+  async handleAction(action, event, target, shell) {
+    if (action === 'select-force-secret-category') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      const category = target?.dataset?.category || target?.closest?.('[data-category]')?.dataset?.category;
+      if (!category) return true;
+      this._activeCategory = category;
+      this._searchQuery = '';
+      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-category' }) ?? shell?.render?.());
+      return true;
+    }
+
+    if (action === 'toggle-force-secret-category-sidebar') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
+      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-category-sidebar' }) ?? shell?.render?.());
+      return true;
+    }
+
+    if (action === 'reset-force-secret-browser') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      this._searchQuery = '';
+      this._activeCategory = 'recommended';
+      this._categorySidebarCollapsed = false;
+      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-secret-browser-reset' }) ?? shell?.render?.());
+      return true;
+    }
+
+    return false;
   }
 
   renderWorkSurface(stepData) {
@@ -402,11 +481,11 @@ export class ForceSecretStep extends ProgressionStepPlugin {
     let filtered = [...this._legalSecrets];
 
     if (this._searchQuery) {
-      const q = this._searchQuery.toLowerCase();
-      filtered = filtered.filter(s => s.name.toLowerCase().includes(q));
+      const q = this._normalizeSearchText(this._searchQuery);
+      filtered = filtered.filter(s => this._secretSearchText(s).includes(q));
     }
 
-    filtered.sort((a, b) => a.name.localeCompare(b.name));
+    filtered.sort((a, b) => String(a?.name || '').localeCompare(String(b?.name || '')));
     this._filteredSecrets = filtered;
   }
 
@@ -455,14 +534,119 @@ export class ForceSecretStep extends ProgressionStepPlugin {
   }
 
   _formatSecretCard(secret, suggestedIds = new Set(), confidenceMap = new Map()) {
-    const isSuggested = this.isSuggestedItem(secret.id, suggestedIds);
-    const confidenceData = confidenceMap.get ? confidenceMap.get(secret.id) : confidenceMap[secret.id];
+    const id = String(secret?.id || secret?._id || this._normalizeLookupKey(secret?.name));
+    const isSuggested = this.isSuggestedItem(id, suggestedIds) || this.isSuggestedItem(secret?.id, suggestedIds);
+    const confidenceData = confidenceMap.get ? (confidenceMap.get(id) || confidenceMap.get(secret?.id)) : (confidenceMap[id] || confidenceMap[secret?.id]);
+    const categoryKeys = this._getSecretCategoryKeys(secret);
+    const primaryCategory = SECRET_CATEGORY_DEFS.find(category => categoryKeys.includes(category.key) && category.key !== 'recommended')
+      || SECRET_CATEGORY_DEFS.find(category => categoryKeys.includes(category.key))
+      || SECRET_CATEGORY_DEFS[0];
     return {
       ...secret,
+      id,
+      _id: secret?._id || id,
+      categoryKeys,
+      searchCategoryLabel: primaryCategory?.label || 'Force Secret',
+      costLabel: this._getSecretCostLabel(secret),
       isSuggested,
+      isFocused: this._focusedSecretId && String(id) === String(this._focusedSecretId),
+      isSelected: this._committedSecretCounts.has(id),
+      shortSummary: this._stripHtml(secret?.description || secret?.system?.description || secret?.system?.benefit || ''),
       badgeLabel: isSuggested ? 'Recommended' : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
       confidenceLevel: confidenceData?.confidenceLevel || null,
+    };
+  }
+
+  _normalizeSearchText(value) {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  _normalizeLookupKey(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[’']/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  _stripHtml(value) {
+    return String(value || '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  _getSecretCostLabel(secret) {
+    const system = secret?.system || {};
+    return String(system.cost || system.costText || system.alternativeCost || '').trim();
+  }
+
+  _secretSearchText(secret) {
+    const system = secret?.system || {};
+    return this._normalizeSearchText([
+      secret?.name,
+      secret?.description,
+      system.description,
+      system.benefit,
+      system.cost,
+      system.alternativeCost,
+      ...(Array.isArray(secret?.tags) ? secret.tags : []),
+      ...(Array.isArray(system.tags) ? system.tags : []),
+      this._getSecretCategoryKeys(secret).join(' '),
+    ].filter(Boolean).join(' '));
+  }
+
+  _getSecretCategoryKeys(secret) {
+    const name = String(secret?.name || '').trim();
+    const normalizedName = this._normalizeSearchText(name);
+    const keys = new Set();
+    if (SECRET_RECOMMENDED_NAMES.has(name)) keys.add('recommended');
+    for (const key of SECRET_CATEGORY_BY_NAME[normalizedName] || []) keys.add(key);
+    if (keys.size === 0) keys.add('knowledge-mentorship');
+    return Array.from(keys);
+  }
+
+  _makeCategoryOption(def, secrets) {
+    const matching = secrets.filter(secret => this._getSecretCategoryKeys(secret).includes(def.key));
+    return {
+      ...def,
+      totalCount: matching.length,
+      isActive: this._activeCategory === def.key,
+    };
+  }
+
+  _buildBrowserModel(formattedSecrets, suggestedIds = new Set(), confidenceMap = new Map()) {
+    const allSecrets = Array.isArray(formattedSecrets) ? formattedSecrets : [];
+    const allLegalFormatted = (this._legalSecrets || []).map(secret => this._formatSecretCard(secret, suggestedIds, confidenceMap));
+    const categoryOptions = SECRET_CATEGORY_DEFS.map(def => this._makeCategoryOption(def, allLegalFormatted));
+    const hasSearchQuery = Boolean(this._searchQuery);
+    const activeCategory = categoryOptions.find(category => category.key === this._activeCategory)
+      || categoryOptions.find(category => category.key === 'recommended')
+      || categoryOptions[0]
+      || null;
+    if (activeCategory && this._activeCategory !== activeCategory.key) this._activeCategory = activeCategory.key;
+
+    const activeCategorySecrets = hasSearchQuery
+      ? []
+      : allSecrets.filter(secret => this._getSecretCategoryKeys(secret).includes(this._activeCategory));
+    const searchResults = hasSearchQuery ? allSecrets : [];
+
+    return {
+      hasSearchQuery,
+      searchQueryLabel: this._searchQuery,
+      categorySidebarCollapsed: this._categorySidebarCollapsed,
+      categoryOptions,
+      activeCategoryLabel: activeCategory?.label || 'Recommended',
+      activeCategoryIcon: activeCategory?.icon || 'fa-lightbulb',
+      activeCategoryCount: activeCategorySecrets.length,
+      activeCategorySecrets,
+      searchResults,
+      searchResultCount: searchResults.length,
+      totalLegalSecretCount: allLegalFormatted.length,
     };
   }
   getAutoAdvanceConfig(shell) {

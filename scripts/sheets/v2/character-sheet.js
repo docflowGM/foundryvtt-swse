@@ -28,6 +28,8 @@ import { ConsularTalentActions } from "/systems/foundryvtt-swse/scripts/engine/t
 import { SentinelTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/sentinel-talent-actions.js";
 import { LightsaberTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-talent-actions.js";
 import { JediPrestigeTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/jedi-prestige-talent-actions.js";
+import { SithTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/sith-talent-actions.js";
+import { ForceAdeptTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/force-adept-talent-actions.js";
 import { LightsaberFormEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-form-engine.js";
 import { ArmorTalentActions } from "/systems/foundryvtt-swse/scripts/engine/talent/armor-talent-actions.js";
 import { promptForcePowerRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
@@ -8185,6 +8187,14 @@ const forcePoints = [];
       return await this._executeJediPrestigeTalentCombatAction(actionId, actionData, options);
     }
 
+    if (actionData?.resolutionMode === 'sithTalent' || actionData?.sithTalentAction || actionData?.ruleData?.sithTalentAction) {
+      return await this._executeSithTalentCombatAction(actionId, actionData, options);
+    }
+
+    if (actionData?.resolutionMode === 'forceAdeptTalent' || actionData?.forceAdeptTalentAction || actionData?.ruleData?.forceAdeptTalentAction) {
+      return await this._executeForceAdeptTalentCombatAction(actionId, actionData, options);
+    }
+
     if (actionData?.resolutionMode === 'armorTalent' || actionData?.armorTalentAction || actionData?.ruleData?.armorTalentAction) {
       return await this._executeArmorTalentCombatAction(actionId, actionData, options);
     }
@@ -8442,7 +8452,7 @@ const forcePoints = [];
     if (kind === 'defensiveAcuity') return ConsularTalentActions.announcePassiveTalent(this.actor, 'Defensive Acuity', '<p>When you take the Fight Defensively action, your lightsaber attacks deal +1 die of damage and you gain +2 circumstance bonus on Use the Force checks to negate attacks with Block or Deflect until the end of your next turn.</p>');
     if (kind === 'elusiveTarget') return ConsularTalentActions.announcePassiveTalent(this.actor, 'Elusive Target', '<p>When you are fighting one or more opponents in melee, other opponents take an additional -5 penalty on ranged attacks targeting you. This stacks with the normal -5 firing-into-melee penalty.</p>');
     if (kind === 'guardianStrike') return ConsularTalentActions.announcePassiveTalent(this.actor, 'Guardian Strike', '<p>Passive: when you damage a target with a lightsaber, that target takes -2 on attack rolls against any target other than you until the beginning of your next turn. The attack hook tags targets when it can prove the lightsaber damage event.</p>');
-    if (kind === 'holdTheLine') return ConsularTalentActions.announcePassiveTalent(this.actor, 'Hold the Line', '<p>When you make a successful Attack of Opportunity against a target leaving your threatened area, you stop the target's movement and end its action.</p>');
+    if (kind === 'holdTheLine') return ConsularTalentActions.announcePassiveTalent(this.actor, 'Hold the Line', "<p>When you make a successful Attack of Opportunity against a target leaving your threatened area, you stop the target's movement and end its action.</p>");
     if (kind === 'forcefulWarrior') return ConsularTalentActions.announcePassiveTalent(this.actor, 'Forceful Warrior', '<p>Passive: when you score a critical hit with a lightsaber, you gain 1 temporary Force Point that expires at the end of the encounter.</p>');
 
     return this._announceManualCombatAction(actionId, actionData, { ...options, actionType });
@@ -8510,6 +8520,46 @@ const forcePoints = [];
     }
 
     return JediPrestigeTalentActions.execute(this.actor, kind, actionData, options);
+  }
+
+
+  async _executeSithTalentCombatAction(actionId, actionData = {}, options = {}) {
+    const kind = actionData?.sithTalentAction ?? actionData?.ruleData?.sithTalentAction ?? actionId;
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+
+    if (actionData?.spendAction !== false) {
+      const allowed = await this._applyActionEconomy(actionType, {
+        source: options?.source ?? 'sith-talent',
+        actionId,
+        actionName: actionData?.name ?? actionId,
+        sourceName: actionData?.sourceName ?? 'Sith Talent',
+        sourceType: 'talent',
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
+      });
+      if (!allowed) return null;
+    }
+
+    return SithTalentActions.execute(this.actor, kind, actionData, options);
+  }
+
+
+  async _executeForceAdeptTalentCombatAction(actionId, actionData = {}, options = {}) {
+    const kind = actionData?.forceAdeptTalentAction ?? actionData?.ruleData?.forceAdeptTalentAction ?? actionId;
+    const actionType = this._deriveCombatActionEconomyType(actionData);
+
+    if (actionData?.spendAction !== false) {
+      const allowed = await this._applyActionEconomy(actionType, {
+        source: options?.source ?? 'force-adept-talent',
+        actionId,
+        actionName: actionData?.name ?? actionId,
+        sourceName: actionData?.sourceName ?? 'Force Adept Talent',
+        sourceType: 'talent',
+        combatContext: options?.combatContext ?? actionData?.workflowContext ?? null
+      });
+      if (!allowed) return null;
+    }
+
+    return ForceAdeptTalentActions.execute(this.actor, kind, actionData, options);
   }
 
   async _executeLightsaberTalentCombatAction(actionId, actionData = {}, options = {}) {
@@ -8734,8 +8784,8 @@ const forcePoints = [];
       ...actionData,
       name: actionData?.name ?? 'Aim',
       sourceName: actionData?.sourceName ?? 'Combat Action',
-      notes: actionData?.notes || 'The character aims. Their next applicable ranged attack may ignore the target's cover bonus to Reflex Defense, subject to the Aim action rules.',
-      description: actionData?.description || actionData?.notes || 'The character aims. Their next applicable ranged attack may ignore the target's cover bonus to Reflex Defense, subject to the Aim action rules.'
+      notes: actionData?.notes || "The character aims. Their next applicable ranged attack may ignore the target's cover bonus to Reflex Defense, subject to the Aim action rules.",
+      description: actionData?.description || actionData?.notes || "The character aims. Their next applicable ranged attack may ignore the target's cover bonus to Reflex Defense, subject to the Aim action rules."
     }, {
       ...options,
       actionType: swiftCount > 1 ? `${swiftCount} Swift Actions` : 'swift'

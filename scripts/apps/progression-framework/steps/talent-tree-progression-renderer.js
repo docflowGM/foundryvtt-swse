@@ -245,16 +245,30 @@ function createDefs(documentRef) {
   return defs;
 }
 
-function attachPanZoom(svg, width, height) {
+function parseViewBox(value, fallback) {
+  const parts = String(value || '').trim().split(/\s+/).map(Number);
+  if (parts.length === 4 && parts.every(Number.isFinite) && parts[2] > 0 && parts[3] > 0) {
+    return { x: parts[0], y: parts[1], width: parts[2], height: parts[3] };
+  }
+  return { ...fallback };
+}
+
+function attachPanZoom(svg, width, height, initialViewBox = null) {
   const minViewWidth = Math.max(260, width * 0.38);
   const maxViewWidth = Math.max(width, width * 1.55);
-  let viewBox = { x: 0, y: 0, width, height };
+  let viewBox = parseViewBox(initialViewBox, { x: 0, y: 0, width, height });
   let dragging = false;
   let last = null;
 
   const apply = () => {
-    svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`);
+    const nextViewBox = `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`;
+    svg.setAttribute('viewBox', nextViewBox);
+    svg.dataset.viewBoxState = nextViewBox;
+    const graphId = svg.closest?.('[data-graph-id]')?.dataset?.graphId || svg.parentElement?.dataset?.graphId;
+    if (graphId) svg.ownerDocument?.defaultView?.sessionStorage?.setItem?.(`swse.talentGraph.viewBox.${graphId}`, nextViewBox);
   };
+
+  apply();
 
   const clientPoint = (event) => {
     const rect = svg.getBoundingClientRect();
@@ -348,6 +362,9 @@ export function renderProgressionTalentTree(container, options = {}) {
     return;
   }
 
+  const previousSvg = container.querySelector?.('svg.prog-talent-tree-svg');
+  const graphId = container?.dataset?.graphId || 'default';
+  const storedViewBox = previousSvg?.dataset?.viewBoxState || previousSvg?.getAttribute?.('viewBox') || container.ownerDocument?.defaultView?.sessionStorage?.getItem?.(`swse.talentGraph.viewBox.${graphId}`);
   const { width, height, positions } = computePositions(graphData);
   const documentRef = container.ownerDocument;
   const relations = collectRelations(graphData);
@@ -397,7 +414,7 @@ export function renderProgressionTalentTree(container, options = {}) {
   }
 
   svg.appendChild(nodesGroup);
-  attachPanZoom(svg, width, height);
+  attachPanZoom(svg, width, height, storedViewBox);
   svg.addEventListener('mouseleave', () => clearHoverState(svg));
   container.replaceChildren(svg);
 }

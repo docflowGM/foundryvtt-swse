@@ -15,6 +15,101 @@ import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engin
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 
+
+const TECHNIQUE_RECOMMENDED_NAMES = new Set([
+  'Force Point Recovery',
+  'Force Power Mastery',
+  'Improved Rebuke',
+  'Improved Vital Transfer',
+  'Improved Battle Strike',
+]);
+
+const TECHNIQUE_CATEGORY_DEFS = [
+  { key: 'recommended', label: 'Recommended', icon: 'fa-lightbulb', isMajor: true },
+  { key: 'related-powers', label: 'Related Force Power', icon: 'fa-hand-sparkles', isMajor: true },
+  { key: 'light-side', label: 'Light Side', icon: 'fa-sun', isSubcategory: true },
+  { key: 'dark-side', label: 'Dark Side', icon: 'fa-moon', isSubcategory: true },
+  { key: 'telekinesis', label: 'Telekinesis', icon: 'fa-wind', isSubcategory: true },
+  { key: 'mind-affecting', label: 'Mind Affecting', icon: 'fa-brain', isSubcategory: true },
+  { key: 'vital-healing', label: 'Vital / Healing', icon: 'fa-kit-medical', isSubcategory: true },
+  { key: 'protection', label: 'Protection', icon: 'fa-shield-halved', isSubcategory: true },
+  { key: 'other-power-upgrades', label: 'Other Power Upgrades', icon: 'fa-wand-magic-sparkles', isSubcategory: true },
+  { key: 'utf-applications', label: 'Use the Force Applications', icon: 'fa-circle-nodes', isMajor: true },
+  { key: 'telepathy', label: 'Telepathy', icon: 'fa-comments', isSubcategory: true },
+  { key: 'sense-force', label: 'Sense Force', icon: 'fa-radar', isSubcategory: true },
+  { key: 'sense-surroundings', label: 'Sense Surroundings', icon: 'fa-eye', isSubcategory: true },
+  { key: 'force-point-economy', label: 'Force Point Economy', icon: 'fa-coins', isMajor: true },
+  { key: 'general-mastery', label: 'General Force Power Mastery', icon: 'fa-star', isMajor: true },
+];
+
+const TECHNIQUE_CATEGORY_BY_NAME = Object.freeze({
+  'improved force light': ['light-side'],
+  'improved enlighten': ['light-side', 'mind-affecting'],
+  'improved malacia': ['light-side', 'mind-affecting', 'vital-healing'],
+  'improved valor': ['light-side', 'protection'],
+
+  'improved dark rage': ['dark-side'],
+  'improved force lightning': ['dark-side'],
+  'improved force storm': ['dark-side'],
+  'improved lightning burst': ['dark-side'],
+  'improved thought bomb': ['dark-side', 'mind-affecting'],
+  'improved crucitorn': ['dark-side', 'protection'],
+  'improved rend': ['dark-side'],
+  'improved dark transfer': ['dark-side', 'vital-healing'],
+
+  'extended blind': ['telekinesis'],
+  'extended force disarm': ['telekinesis'],
+  'extended force thrust': ['telekinesis'],
+  'extended move object': ['telekinesis'],
+  'improved ballistakinesis': ['telekinesis'],
+  'improved battle strike': ['telekinesis'],
+  'improved detonate': ['telekinesis'],
+  'improved fold space': ['telekinesis'],
+  'improved force disarm': ['telekinesis'],
+  'improved force slam': ['telekinesis'],
+  'improved force thrust': ['telekinesis'],
+  'improved ionize': ['telekinesis'],
+  'improved kinetic combat': ['telekinesis'],
+  'improved levitate': ['telekinesis'],
+  'improved repulse': ['telekinesis'],
+  'improved stagger': ['telekinesis'],
+  'improved force shield': ['telekinesis', 'protection'],
+  'improved phase': ['telekinesis', 'protection'],
+
+  'dominate mind': ['mind-affecting'],
+  'improved force stun': ['mind-affecting'],
+  'improved mind trick': ['mind-affecting'],
+  'improved obscure': ['mind-affecting'],
+  'improved rebuke': ['mind-affecting'],
+  'improved technometry': ['mind-affecting'],
+
+  'advanced vital transfer': ['vital-healing'],
+  'cure disease': ['vital-healing'],
+  'detoxify poison': ['vital-healing'],
+  'improved force trance': ['vital-healing'],
+  'improved vital transfer': ['vital-healing'],
+
+  'improved energy resistance': ['protection'],
+  'improved resist force': ['protection'],
+
+  'extended force grip': ['other-power-upgrades'],
+  'improved cloak': ['other-power-upgrades'],
+  'improved convection': ['other-power-upgrades'],
+  'improved cryokinesis': ['other-power-upgrades'],
+  'improved force grip': ['other-power-upgrades'],
+  'improved move light object': ['other-power-upgrades'],
+  'improved plant surge': ['other-power-upgrades'],
+  'improved shatterpoint': ['other-power-upgrades'],
+
+  'improved telepathy': ['utf-applications', 'telepathy'],
+  'language absorption': ['utf-applications', 'telepathy'],
+  'improved sense force': ['utf-applications', 'sense-force'],
+  'improved sense surroundings': ['utf-applications', 'sense-surroundings'],
+
+  'force point recovery': ['force-point-economy'],
+  'force power mastery': ['general-mastery'],
+});
+
 export class ForceTechniqueStep extends ProgressionStepPlugin {
   constructor(descriptor) {
     super(descriptor);
@@ -23,6 +118,8 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     this._filteredTechniques = [];
     this._searchQuery = '';
     this._focusedTechniqueId = null;
+    this._activeCategory = 'recommended';
+    this._categorySidebarCollapsed = false;
     this._committedTechniqueCounts = new Map();
     this._remainingPicks = 0;
     this._suggestedTechniques = [];  // Suggested force techniques
@@ -116,9 +213,11 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     });
 
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedTechniques);
+    const techniques = this._filteredTechniques.map(t => this._formatTechniqueCard(t, suggestedIds, confidenceMap));
+    const browserModel = this._buildBrowserModel(techniques, suggestedIds, confidenceMap);
 
     return {
-      techniques: this._filteredTechniques.map(t => this._formatTechniqueCard(t, suggestedIds, confidenceMap)),
+      techniques,
       focusedTechniqueId: this._focusedTechniqueId,
       committedCounts: Object.fromEntries(this._committedTechniqueCounts),
       committedSummary,
@@ -129,6 +228,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
         acc[id] = data;
         return acc;
       }, {}),
+      ...browserModel,
     };
   }
 
@@ -178,6 +278,40 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     this._focusedTechniqueId = techniqueId;
     shell.focusedItem = technique;
     shell.render();
+  }
+
+
+  async handleAction(action, event, target, shell) {
+    if (action === 'select-force-technique-category') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      const category = target?.dataset?.category || target?.closest?.('[data-category]')?.dataset?.category;
+      if (!category) return true;
+      this._activeCategory = category;
+      this._searchQuery = '';
+      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-category' }) ?? shell?.render?.());
+      return true;
+    }
+
+    if (action === 'toggle-force-technique-category-sidebar') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      this._categorySidebarCollapsed = !this._categorySidebarCollapsed;
+      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-category-sidebar' }) ?? shell?.render?.());
+      return true;
+    }
+
+    if (action === 'reset-force-technique-browser') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      this._searchQuery = '';
+      this._activeCategory = 'recommended';
+      this._categorySidebarCollapsed = false;
+      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-browser-reset' }) ?? shell?.render?.());
+      return true;
+    }
+
+    return false;
   }
 
   renderWorkSurface(stepData) {
@@ -376,10 +510,10 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
   _applyFilters() {
     let filtered = [...this._legalTechniques];
     if (this._searchQuery) {
-      const q = this._searchQuery.toLowerCase();
-      filtered = filtered.filter(t => t.name.toLowerCase().includes(q));
+      const q = this._normalizeSearchText(this._searchQuery);
+      filtered = filtered.filter(t => this._techniqueSearchText(t).includes(q));
     }
-    filtered.sort((a, b) => a.name.localeCompare(b.name));
+    filtered.sort((a, b) => this._compareTechniques(a, b));
     this._filteredTechniques = filtered;
   }
 
@@ -433,14 +567,142 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
   }
 
   _formatTechniqueCard(technique, suggestedIds = new Set(), confidenceMap = new Map()) {
-    const isSuggested = this.isSuggestedItem(technique.id, suggestedIds);
-    const confidenceData = confidenceMap.get ? confidenceMap.get(technique.id) : confidenceMap[technique.id];
+    const id = String(technique?.id || technique?._id || this._normalizeLookupKey(technique?.name));
+    const isSuggested = this.isSuggestedItem(id, suggestedIds) || this.isSuggestedItem(technique?.id, suggestedIds);
+    const confidenceData = confidenceMap.get ? (confidenceMap.get(id) || confidenceMap.get(technique?.id)) : (confidenceMap[id] || confidenceMap[technique?.id]);
+    const relatedPower = this._getTechniqueRelatedPower(technique);
+    const categoryKeys = this._getTechniqueCategoryKeys(technique);
+    const primaryCategory = TECHNIQUE_CATEGORY_DEFS.find(category => categoryKeys.includes(category.key) && !category.isMajor)
+      || TECHNIQUE_CATEGORY_DEFS.find(category => categoryKeys.includes(category.key))
+      || TECHNIQUE_CATEGORY_DEFS[0];
     return {
       ...technique,
+      id,
+      _id: technique?._id || id,
+      relatedPower,
+      categoryKeys,
+      searchCategoryLabel: relatedPower || primaryCategory?.label || 'Force Technique',
       isSuggested,
+      isFocused: this._focusedTechniqueId && String(id) === String(this._focusedTechniqueId),
+      isSelected: this._committedTechniqueCounts.has(id),
+      shortSummary: this._stripHtml(technique?.description || technique?.system?.description || technique?.system?.benefit || ''),
       badgeLabel: isSuggested ? 'Recommended' : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
       confidenceLevel: confidenceData?.confidenceLevel || null,
+    };
+  }
+
+  _normalizeSearchText(value) {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  _normalizeLookupKey(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[’']/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  _stripHtml(value) {
+    return String(value || '')
+      .replace(/<[^>]+>/g, ' ')
+      .replace(/&nbsp;/g, ' ')
+      .replace(/&amp;/g, '&')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  _getTechniqueRelatedPower(technique) {
+    const system = technique?.system || {};
+    const explicit = system.relatedPower || system.related_power || system.power || technique?.relatedPower;
+    if (explicit) return String(explicit).trim();
+    const prereq = String(system.prerequisite || system.prerequisites || technique?.prerequisites?.raw || '').trim();
+    if (prereq && !/^at least|force training|use the force/i.test(prereq)) return prereq;
+    const name = String(technique?.name || '').trim();
+    const match = name.match(/^(?:Improved|Extended|Advanced)\s+(.+)$/i);
+    if (match) return match[1].trim();
+    return '';
+  }
+
+  _techniqueSearchText(technique) {
+    const system = technique?.system || {};
+    return this._normalizeSearchText([
+      technique?.name,
+      technique?.description,
+      system.description,
+      system.benefit,
+      system.prerequisite,
+      system.prerequisites,
+      system.relatedPower,
+      ...(Array.isArray(technique?.tags) ? technique.tags : []),
+      ...(Array.isArray(system.tags) ? system.tags : []),
+      this._getTechniqueCategoryKeys(technique).join(' '),
+    ].filter(Boolean).join(' '));
+  }
+
+  _getTechniqueCategoryKeys(technique) {
+    const name = String(technique?.name || '').trim();
+    const normalizedName = this._normalizeSearchText(name);
+    const keys = new Set();
+    if (TECHNIQUE_RECOMMENDED_NAMES.has(name)) keys.add('recommended');
+
+    const mapped = TECHNIQUE_CATEGORY_BY_NAME[normalizedName] || [];
+    for (const key of mapped) keys.add(key);
+
+    const relatedPower = this._getTechniqueRelatedPower(technique);
+    if (relatedPower && !['Force Point Recovery', 'Force Power Mastery'].includes(name)) keys.add('related-powers');
+
+    if (keys.size === 0) keys.add('other-power-upgrades');
+    return Array.from(keys);
+  }
+
+  _compareTechniques(a, b) {
+    const relatedA = this._getTechniqueRelatedPower(a) || '';
+    const relatedB = this._getTechniqueRelatedPower(b) || '';
+    const byRelated = relatedA.localeCompare(relatedB);
+    if (byRelated !== 0) return byRelated;
+    return String(a?.name || '').localeCompare(String(b?.name || ''));
+  }
+
+  _makeCategoryOption(def, techniques) {
+    const matching = techniques.filter((technique) => this._getTechniqueCategoryKeys(technique).includes(def.key));
+    return {
+      ...def,
+      totalCount: matching.length,
+      isActive: this._activeCategory === def.key,
+    };
+  }
+
+  _buildBrowserModel(formattedTechniques, suggestedIds = new Set(), confidenceMap = new Map()) {
+    const allTechniques = Array.isArray(formattedTechniques) ? formattedTechniques : [];
+    const allLegalFormatted = (this._legalTechniques || []).map((technique) => this._formatTechniqueCard(technique, suggestedIds, confidenceMap));
+    const categoryOptions = TECHNIQUE_CATEGORY_DEFS.map(def => this._makeCategoryOption(def, allLegalFormatted));
+    const hasSearchQuery = Boolean(this._searchQuery);
+    const activeCategory = categoryOptions.find(category => category.key === this._activeCategory)
+      || categoryOptions.find(category => category.key === 'recommended')
+      || categoryOptions[0]
+      || null;
+    if (activeCategory && this._activeCategory !== activeCategory.key) this._activeCategory = activeCategory.key;
+
+    const activeCategoryTechniques = hasSearchQuery
+      ? []
+      : allTechniques.filter(technique => this._getTechniqueCategoryKeys(technique).includes(this._activeCategory));
+    const searchResults = hasSearchQuery ? allTechniques : [];
+
+    return {
+      hasSearchQuery,
+      searchQueryLabel: this._searchQuery,
+      categorySidebarCollapsed: this._categorySidebarCollapsed,
+      categoryOptions,
+      activeCategoryLabel: activeCategory?.label || 'Recommended',
+      activeCategoryIcon: activeCategory?.icon || 'fa-lightbulb',
+      activeCategoryCount: activeCategoryTechniques.length,
+      activeCategoryTechniques,
+      searchResults,
+      searchResultCount: searchResults.length,
+      totalLegalTechniqueCount: allLegalFormatted.length,
     };
   }
   getAutoAdvanceConfig(shell) {

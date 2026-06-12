@@ -739,6 +739,21 @@ function getTake10State(model) {
 
 function buildCheckModeCards(model) {
   const base = Number(model.baseTotal ?? 0) || 0;
+  const rollType = String(model.rollType || '').toLowerCase();
+  const attackLike = rollType === 'attack' || rollType === 'damage';
+  if (attackLike) {
+    return `<section class="swse-roll-config-panel swse-roll-config-panel--checks">
+      <h4>Check Mode</h4>
+      <input type="hidden" name="checkMode" value="roll" data-rcd-check-mode />
+      <div class="rcd-check-cards" data-rcd-check-cards>
+        <button type="button" class="rcd-check-card rcd-check-active" data-check-mode="roll">
+          <span class="rcd-check-name">Roll</span>
+          <span class="rcd-check-total">1d20 ${signNumber(base)}</span>
+          <span class="rcd-check-note">Attack and damage rolls cannot Take 10 or Take 20.</span>
+        </button>
+      </div>
+    </section>`;
+  }
   const take10 = getTake10State(model);
   const take20Available = take10.available && model.rollType !== 'ability' && model.rollType !== 'initiative';
   return `<section class="swse-roll-config-panel swse-roll-config-panel--checks">
@@ -773,10 +788,6 @@ function buildResourceCards(model, showForcePoint) {
       <button type="button" class="rcd-resource ${fpDisabled ? 'rcd-resource-disabled' : ''}" data-resource-toggle="forcePoint" ${fpDisabled}>
         <span class="rcd-res-header"><span class="rcd-res-icon">✦</span><span class="rcd-res-name">Force Point</span></span>
         <span class="rcd-res-detail">${model.fp.value}/${model.fp.max} available. Add the system Force Point bonus during roll execution.</span>
-      </button>
-      <button type="button" class="rcd-resource rcd-resource-disabled" disabled>
-        <span class="rcd-res-header"><span class="rcd-res-icon">◆</span><span class="rcd-res-name">Destiny Point</span></span>
-        <span class="rcd-res-detail">Reserved for Destiny workflows. Not spent by this modifier dialog.</span>
       </button>
     </div>
   </section>`;
@@ -815,7 +826,7 @@ function buildRollPreviewRail(model) {
     <section class="rcd-rail-sec">
       <div class="rcd-rail-lbl">Source Intel</div>
       <div class="swse-roll-config-source"><b>${escapeHTML(source)}</b><span>${escapeHTML(model.actorName || 'No actor')}</span></div>
-      ${model.rangeProfile ? `<p class="swse-roll-config-note">Range profile: ${escapeHTML(model.rangeProfile.profileName ?? model.rangeProfile.profileSlug ?? 'Custom')}</p>` : ''}
+      ${model.rangeProfile && model.ranged ? `<p class="swse-roll-config-note">Range profile: ${escapeHTML(model.rangeProfile.profileName ?? model.rangeProfile.profileSlug ?? 'Custom')}</p>` : ''}
       ${model.weapon ? `<p class="swse-roll-config-note">${model.ranged ? 'Ranged' : 'Melee'} attack profile. Combat options below are filtered from known actor/item capabilities.</p>` : ''}
     </section>
     <section class="rcd-rail-sec">
@@ -961,6 +972,15 @@ function buildTargetPanel(model) {
   if (!needsTarget) return '';
   const targetOptions = model.targetRows.map(t => `<option value="${escapeHTML(t.id)}">${escapeHTML(t.name)} · Ref ${escapeHTML(t.defense)}</option>`).join('');
   const combatantOptions = model.combatantRows.map(t => `<option value="${escapeHTML(t.id)}">${escapeHTML(t.name)} · Ref ${escapeHTML(t.defense)}</option>`).join('');
+  const rangeBandField = model.melee ? '' : `<label>Range Band
+        <select name="rangeBand">
+          <option value="pointBlank">Point Blank</option>
+          <option value="short">Short</option>
+          <option value="medium">Medium</option>
+          <option value="long">Long</option>
+          <option value="custom">Custom / GM</option>
+        </select>
+      </label>`;
   return `<section class="swse-roll-config-panel">
     <h4>Target Context</h4>
     <div class="swse-roll-config-grid swse-roll-config-grid--target">
@@ -989,15 +1009,7 @@ function buildTargetPanel(model) {
       <label>Manual Value
         <input type="number" name="targetDefenseValue" value="${model.targetRows[0]?.defense ?? ''}" placeholder="e.g. 18" />
       </label>
-      <label>Range Band
-        <select name="rangeBand">
-          <option value="pointBlank">Point Blank</option>
-          <option value="short">Short</option>
-          <option value="medium">Medium</option>
-          <option value="long">Long</option>
-          <option value="custom">Custom / GM</option>
-        </select>
-      </label>
+      ${rangeBandField}
     </div>
     <p class="swse-roll-config-note">Tokens are optional. Manual and GM-adjudication modes support theater-of-the-mind play.</p>
   </section>`;
@@ -1016,6 +1028,12 @@ function buildWeaponPanel(model) {
       <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.burstFire" ${(model.supportsAutofire && model.hasBurstFire) ? '' : 'disabled'} /> <span><b>Burst Fire</b><small>${model.hasBurstFire ? 'Unlocked by feat.' : 'Requires Burst Fire.'}</small></span></label>
       <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.rapidShot" ${model.hasRapidShot ? '' : 'disabled'} /> <span><b>Rapid Shot</b><small>${model.hasRapidShot ? '-2 attack, +1 damage die.' : 'Requires Rapid Shot.'}</small></span></label>
     </div>` : '';
+  const meleeAttackOptions = [
+    model.hasPowerAttack ? `<label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.powerAttack" /> <span><b>Power Attack</b><small>Trade accuracy for damage.</small></span></label>` : '',
+    model.hasFlurry ? `<label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.flurry" /> <span><b>Flurry / Rapid Strike</b><small>Unlocked melee multi-strike option.</small></span></label>` : '',
+    model.hasDoubleStrike ? `<label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.doubleStrike" /> <span><b>Double Strike</b><small>Full-round multiattack.</small></span></label>` : '',
+    model.hasTripleStrike ? `<label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.tripleStrike" /> <span><b>Triple Strike</b><small>Full-round multiattack.</small></span></label>` : ''
+  ].filter(Boolean).join('');
   const meleePanel = model.melee ? `<div class="swse-roll-config-subpanel">
       <h5>Melee Options</h5>
       <label>Grip
@@ -1025,10 +1043,7 @@ function buildWeaponPanel(model) {
           <option value="dual-wield">Dual wielding</option>
         </select>
       </label>
-      <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.powerAttack" ${model.hasPowerAttack ? '' : 'disabled'} /> <span><b>Power Attack</b><small>${model.hasPowerAttack ? 'Trade accuracy for damage.' : 'Requires Power Attack.'}</small></span></label>
-      <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.flurry" ${model.hasFlurry ? '' : 'disabled'} /> <span><b>Flurry / Rapid Strike</b><small>${model.hasFlurry ? 'Unlocked melee multi-strike option.' : 'Requires unlock.'}</small></span></label>
-      <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.doubleStrike" ${model.hasDoubleStrike ? '' : 'disabled'} /> <span><b>Double Strike</b><small>${model.hasDoubleStrike ? 'Full-round multiattack.' : 'Unlocks contextually later.'}</small></span></label>
-      <label class="swse-roll-config-option"><input type="checkbox" name="attackOptions.tripleStrike" ${model.hasTripleStrike ? '' : 'disabled'} /> <span><b>Triple Strike</b><small>${model.hasTripleStrike ? 'Full-round multiattack.' : 'Unlocks contextually later.'}</small></span></label>
+      ${meleeAttackOptions}
     </div>` : '';
 
   const modeChoices = Array.isArray(model.damageModeChoices) ? model.damageModeChoices : [];
@@ -1053,7 +1068,7 @@ function buildWeaponPanel(model) {
 }
 
 function buildDefenseActionPanel(model) {
-  if (model.rollType !== 'attack') return '';
+  if (model.rollType !== 'attack' || model.melee) return '';
   const fdBonus = model.trainedAcrobatics ? 5 : 2;
   const tdBonus = model.trainedAcrobatics ? 10 : 5;
   const mode = model.fightDefensivelyMode || 'default';
@@ -1161,7 +1176,7 @@ export async function showRollModifiersDialog(options = {}) {
           ${buildTargetPanel(model)}
           ${buildWeaponPanel(model)}
           ${buildDefenseActionPanel(model)}
-          ${showCover && rollType === 'attack' ? `<section class="swse-roll-config-panel"><h4>Cover / Concealment</h4><div class="swse-roll-config-grid"><label>Cover<select name="cover"><option value="none">No Cover</option><option value="partial">Partial Cover (+2 Ref)</option><option value="cover">Cover (+5 Ref)</option><option value="improved">Improved Cover (+10 Ref)</option></select></label>${showConcealment ? `<label>Concealment<select name="concealment"><option value="none">No Concealment</option><option value="partial">Concealment (20%)</option><option value="total">Total Concealment (50%)</option></select></label>` : ''}</div></section>` : ''}
+          ${showCover && rollType === 'attack' && !model.melee ? `<section class="swse-roll-config-panel"><h4>Cover / Concealment</h4><div class="swse-roll-config-grid"><label>Cover<select name="cover"><option value="none">No Cover</option><option value="partial">Partial Cover (+2 Ref)</option><option value="cover">Cover (+5 Ref)</option><option value="improved">Improved Cover (+10 Ref)</option></select></label>${showConcealment ? `<label>Concealment<select name="concealment"><option value="none">No Concealment</option><option value="partial">Concealment (20%)</option><option value="total">Total Concealment (50%)</option></select></label>` : ''}</div></section>` : ''}
           ${buildResourceCards(model, showForcePoint)}
           ${buildRollModeRow(model)}
           <section class="swse-roll-config-panel">
@@ -1172,11 +1187,11 @@ export async function showRollModifiersDialog(options = {}) {
             </div>
             ${rollType !== 'initiative' ? `<div class="swse-roll-config-subpanel">
               <h5>Quick Toggles</h5>
-              <label class="swse-roll-config-option"><input type="checkbox" name="aiming" /> <span><b>Aiming</b><small>+2 attack when the action applies.</small></span></label>
+              ${model.melee ? '' : `<label class="swse-roll-config-option"><input type="checkbox" name="aiming" /> <span><b>Aiming</b><small>+2 attack when the action applies.</small></span></label>`}
               <label class="swse-roll-config-option"><input type="checkbox" name="charging" /> <span><b>Charging</b><small>${_chargingLabel(actor)}</small></span></label>
               <label class="swse-roll-config-option"><input type="checkbox" name="flanking" /> <span><b>Flanking</b><small>+2 melee attack when applicable.</small></span></label>
-              <label class="swse-roll-config-option"><input type="checkbox" name="higherGround" /> <span><b>Higher Ground</b><small>+1 when applicable.</small></span></label>
-              <label class="swse-roll-config-option"><input type="checkbox" name="pointBlank" /> <span><b>Point Blank</b><small>+1 attack/damage in close range.</small></span></label>
+              ${model.melee ? '' : `<label class="swse-roll-config-option"><input type="checkbox" name="higherGround" /> <span><b>Higher Ground</b><small>+1 when applicable.</small></span></label>`}
+              ${model.melee ? '' : `<label class="swse-roll-config-option"><input type="checkbox" name="pointBlank" /> <span><b>Point Blank</b><small>+1 attack/damage in close range.</small></span></label>`}
             </div>` : ''}
           </section>
         </main>

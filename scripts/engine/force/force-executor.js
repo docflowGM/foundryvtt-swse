@@ -36,6 +36,23 @@ function forcePowerHasDarkSideDescriptor(power) {
   return values.includes('dark side') || values.includes('dark_side') || values.includes('dark-side');
 }
 
+function forcePowerHasLightSideDescriptor(power) {
+  const values = [
+    power?.system?.lightSideOption === true ? 'light side' : '',
+    power?.system?.descriptor,
+    power?.system?.descriptors,
+    power?.system?.tags,
+    power?.system?.keywords,
+    power?.system?.discipline,
+    power?.name
+  ].flat().map(value => String(value ?? '').toLowerCase()).join(' ');
+  return values.includes('light side') || values.includes('light_side') || values.includes('light-side');
+}
+
+function actorHasEmbraceTheDarkSide(actor) {
+  return !!actor?.items?.some?.(item => item?.type === 'talent' && /^(embrace the dark side|embrace dark side)$/i.test(String(item?.name ?? '').trim()));
+}
+
 function getEncounterId() {
   return game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
 }
@@ -87,6 +104,10 @@ export class ForceExecutor {
       const power = actor.items.get(powerId);
       if (!power || power.type !== "force-power") {
         throw new Error("Force power not found");
+      }
+
+      if (!recover && actorHasEmbraceTheDarkSide(actor) && forcePowerHasLightSideDescriptor(power)) {
+        throw new Error(`${actor.name} cannot use ${power.name}: Embrace the Dark Side prohibits Force Powers with the [Light Side] descriptor.`);
       }
 
       const isDiscarded = power.system?.discarded || false;
@@ -165,6 +186,9 @@ export class ForceExecutor {
       const power = actor.items.get(powerId);
       if (!power) throw new Error("Force power not found");
       if (power.type !== "force-power") throw new Error(`${power.name} is not a Force power`);
+      if (actorHasEmbraceTheDarkSide(actor) && forcePowerHasLightSideDescriptor(power)) {
+        throw new Error(`${actor.name} cannot use ${power.name}: Embrace the Dark Side prohibits Force Powers with the [Light Side] descriptor.`);
+      }
 
       // Check if power is already discarded. Talent-granted immediate repeats may reuse
       // the just-spent power without requiring it to be ready again.
@@ -183,7 +207,7 @@ export class ForceExecutor {
           ? Number(options.bonus)
           : defaultBonus;
       const customModifier = Number(options.customModifier ?? options.situationalModifier ?? 0) || 0;
-      const rollBonus = baseBonus + customModifier;
+      let rollBonus = baseBonus + customModifier;
       const useForce = options.useForce === true;
 
       // Validate Force Point expenditure before rolling.
@@ -200,7 +224,9 @@ export class ForceExecutor {
       const dcChart = this._getPowerDcRows(power);
       const descriptors = this._getPowerDescriptors(power);
       const primaryDescriptor = this._resolvePrimaryDescriptor(descriptors);
-      const talentContext = this._buildForceTalentContext(actor, power, descriptors, options);
+      const telepathicIntruderBonus = this._getTelepathicIntruderBonus(actor, power, descriptors, options);
+      if (telepathicIntruderBonus) rollBonus += telepathicIntruderBonus;
+      const talentContext = this._buildForceTalentContext(actor, power, descriptors, { ...options, telepathicIntruderBonus });
 
       // Roll the force power check through the shared roll execution layer.
       const rollResult = await RollCore.execute({
@@ -228,6 +254,7 @@ export class ForceExecutor {
           baseDC,
           baseBonus,
           customModifier,
+          telepathicIntruderBonus,
           forceDescriptor: primaryDescriptor,
           forceDescriptors: descriptors,
           descriptors,
@@ -843,7 +870,7 @@ export class ForceExecutor {
           forceTalentNotes: [
             { key: 'illusion-size', label: 'Size', action: options.sizeLabel || 'Selected size', value: `${sizePenalty >= 0 ? '+' : ''}${sizePenalty} modifier` },
             { key: 'illusion-duration', label: 'Duration', action: 'Heroic level minutes', value: `${heroicLevel} minute${heroicLevel === 1 ? '' : 's'}` },
-            ...(options.humanoid ? [{ key: 'illusion-bond', label: 'Illusion Bond', action: 'Humanoid illusion', value: 'You can see and hear as though standing in the illusion's space.' }] : []),
+            ...(options.humanoid ? [{ key: 'illusion-bond', label: 'Illusion Bond', action: 'Humanoid illusion', value: "You can see and hear as though standing in the illusion's space." }] : []),
             ...(options.masquerade ? [{ key: 'masquerade', label: 'Masquerade', action: 'Deceptive Appearance', value: 'Use this Use the Force result for your disguise/Deception appearance.' }] : []),
             ...(options.description ? [{ key: 'illusion-description', label: 'Illusion', action: 'Description', value: options.description }] : [])
           ],
@@ -1266,6 +1293,69 @@ export class ForceExecutor {
       });
     }
 
+    const hasDarkSideAdept = this._actorHasTalent(actor, 'Dark Side Adept');
+    const hasDarkSideMaster = this._actorHasTalent(actor, 'Dark Side Master');
+    const isDarkSidePower = forcePowerHasDarkSideDescriptor(power);
+    if (isDarkSidePower && (hasDarkSideAdept || hasDarkSideMaster)) {
+      notes.push({
+        key: hasDarkSideMaster ? 'dark-side-master' : 'dark-side-adept',
+        label: hasDarkSideMaster ? 'Dark Side Master' : 'Dark Side Adept',
+        action: 'Optional reroll',
+        value: hasDarkSideMaster
+          ? 'May reroll this Use the Force check for a [Dark Side] Force Power; after the reroll, may spend a Force Point to keep the better result.'
+          : 'May reroll this Use the Force check for a [Dark Side] Force Power, but must keep the reroll even if it is worse.'
+      });
+    }
+
+    const hasEmbraceDarkSide = actorHasEmbraceTheDarkSide(actor);
+    if (isDarkSidePower && hasEmbraceDarkSide) {
+      notes.push({
+        key: 'embrace-the-dark-side',
+        label: 'Embrace the Dark Side',
+        action: 'Optional reroll',
+        value: 'May reroll this Use the Force check for a [Dark Side] Force Power, but must keep the reroll even if it is worse. [Light Side] Force Powers are blocked for this actor.'
+      });
+    }
+
+    const hasForcePowerAdept = this._actorHasTalent(actor, 'Force Power Adept');
+    const forcePowerAdept = actor?.getFlag?.('swse', 'forcePowerAdept') ?? {};
+    const adeptPowerNames = Array.isArray(forcePowerAdept?.powers) ? forcePowerAdept.powers : (forcePowerAdept?.powerName ? [forcePowerAdept.powerName] : []);
+    const adeptPowerNameSet = new Set(adeptPowerNames.map(name => String(name ?? '').trim().toLowerCase()).filter(Boolean));
+    const currentPowerName = String(power?.name ?? '').trim().toLowerCase();
+    if (hasForcePowerAdept && (!adeptPowerNameSet.size || adeptPowerNameSet.has(currentPowerName))) {
+      notes.push({
+        key: 'force-power-adept',
+        label: 'Force Power Adept',
+        action: 'Optional Force Point reroll',
+        value: adeptPowerNameSet.size
+          ? 'May spend a Force Point to make two Use the Force checks for this selected Force Power and keep the better result.'
+          : 'This actor has Force Power Adept. Record selected Force Powers from the talent action, then spend a Force Point to roll twice and keep the better result when using one of those powers.'
+      });
+    }
+
+    const focusedTalisman = actor?.getFlag?.('swse', 'focusedForceTalisman') ?? {};
+    const focusedPowerName = String(focusedTalisman?.powerName ?? '').trim().toLowerCase();
+    const hasFocusedForceTalisman = this._actorHasTalent(actor, 'Focused Force Talisman') || this._actorHasTalent(actor, 'Greater Focused Force Talisman');
+    if (hasFocusedForceTalisman && focusedPowerName && focusedPowerName === currentPowerName) {
+      notes.push({
+        key: focusedTalisman?.greater ? 'greater-focused-force-talisman' : 'focused-force-talisman',
+        label: focusedTalisman?.greater ? 'Greater Focused Force Talisman' : 'Focused Force Talisman',
+        action: 'Optional Force Point recovery',
+        value: focusedTalisman?.greater
+          ? 'May spend a Force Point to immediately recover all expended uses of this selected Force Power; the Force Point does not count against the one-per-turn limit.'
+          : 'May spend a Force Point to immediately recover all expended uses of this selected Force Power.'
+      });
+    }
+
+    if (Number(options.telepathicIntruderBonus ?? 0) !== 0) {
+      notes.push({
+        key: 'telepathic-intruder',
+        label: 'Telepathic Intruder',
+        action: 'Force bonus',
+        value: `+${Number(options.telepathicIntruderBonus)} Force bonus applied against the recorded [Mind-Affecting] target.`
+      });
+    }
+
     const hasMoveMassiveObject = this._actorHasTalent(actor, 'Move Massive Object');
     const isMoveObject = /move\s*object/i.test(String(power?.name || ''));
     if (hasMoveMassiveObject && isMoveObject) {
@@ -1279,7 +1369,7 @@ export class ForceExecutor {
       });
     }
 
-    return { notes, hasDisciplinedStrike, hasTelekineticPower, isArea, isTelekinetic, hasMoveMassiveObject, isMoveObject };
+    return { notes, hasDisciplinedStrike, hasTelekineticPower, isArea, isTelekinetic, hasMoveMassiveObject, isMoveObject, hasDarkSideAdept, hasDarkSideMaster, hasEmbraceDarkSide, isDarkSidePower };
   }
 
   static _buildTelekineticPowerRepeatAction(actor, power, context = {}) {

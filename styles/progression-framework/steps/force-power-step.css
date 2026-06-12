@@ -782,3 +782,52 @@
     justify-content: flex-start;
   }
 }
+
+
+/* Force Techniques / Force Secrets use the Force Power picker visual language. */
+.progression-shell .force-technique-browser-toolbar,
+.progression-shell .force-technique-browser,
+.progression-shell .force-secret-browser-toolbar,
+.progression-shell .force-secret-browser {
+  width: 100%;
+}
+
+.progression-shell .force-technique-category-button--major,
+.progression-shell .force-secret-category-button--major {
+  margin-top: 0.35rem;
+}
+
+.progression-shell .force-technique-category-button--sub {
+  padding-left: 1.35rem;
+  font-size: 0.84rem;
+}
+
+.progression-shell .force-technique-compact-row,
+.progression-shell .force-secret-compact-row {
+  min-height: 2.6rem;
+}
+
+.progression-shell .force-technique-compact-row .feat-subcategory-pill,
+.progression-shell .force-secret-compact-row .feat-subcategory-pill {
+  white-space: nowrap;
+}
+
+
+/* Dense Force Power picker cards: the detail rail owns descriptions and type text. */
+.force-power-compact-row .feat-quick-summary,
+.force-power-compact-row .feat-subcategory-pill {
+  display: none;
+}
+
+.force-power-compact-row .feat-compact-row__line--meta:empty {
+  display: none;
+}
+
+.force-power-compact-row {
+  min-height: 0;
+  padding-block: 0.45rem;
+}
+
+.force-power-compact-row .feat-compact-row__line--primary {
+  min-height: 1.25rem;
+}

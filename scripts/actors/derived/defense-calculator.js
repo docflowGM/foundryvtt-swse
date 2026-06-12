@@ -15,7 +15,7 @@
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { getHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { getHeroicLevel, getClassLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { getClassData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js"; // STATIC import (no dynamic)
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { getReflexSizeModifier } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
@@ -204,6 +204,16 @@ function actorHasTalent(actor, talentName) {
   );
 }
 
+
+function getForceAdeptTalentClassLevel(actor, fallbackHeroicLevel = 1) {
+  const direct = getClassLevel(actor, 'force_adept') || getClassLevel(actor, 'force adept') || getClassLevel(actor, 'adept');
+  return Math.max(1, Number(direct || fallbackHeroicLevel || 1) || 1);
+}
+
+function getPsychicCitadelWillBonus(actor, fallbackHeroicLevel = 1) {
+  return actorHasTalent(actor, 'Psychic Citadel') ? getForceAdeptTalentClassLevel(actor, fallbackHeroicLevel) : 0;
+}
+
 function actorHasArmorSpecialistArmorMastery(actor) {
   return Array.from(actor?.items ?? []).some(item => {
     if (item?.type !== 'talent') return false;
@@ -267,6 +277,30 @@ function hasDefenseArmorRule(actor, ruleType) {
   return false;
 }
 
+
+function currentCombatEncounterId() {
+  return game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
+}
+
+function actorHpValueForSithCommander(actor) {
+  return Number(actor?.system?.hp?.value ?? actor?.system?.hitPoints?.value ?? actor?.system?.attributes?.hp?.value ?? 1) || 0;
+}
+
+function sourceActorStillThreateningForSithCommander(sourceActorId) {
+  if (!sourceActorId) return true;
+  const source = game?.actors?.get?.(sourceActorId) ?? null;
+  if (!source) return true;
+  return actorHpValueForSithCommander(source) > 0;
+}
+
+function getSithCommanderDefenseBonus(actor, defenseType) {
+  if (String(defenseType ?? '').toLowerCase() !== 'reflex') return 0;
+  const state = actor?.getFlag?.('swse', 'sithCommander.inciteRage') ?? null;
+  if (!state || state.encounterId !== currentCombatEncounterId()) return 0;
+  if (!sourceActorStillThreateningForSithCommander(state.sourceActorId)) return 0;
+  return Number(state.reflexPenalty ?? -2) || -2;
+}
+
 function getSystemActiveDefenseBonus(actor, defenseType) {
   const effects = Array.isArray(actor?.system?.activeEffects) ? actor.system.activeEffects : [];
   let total = 0;
@@ -277,7 +311,7 @@ function getSystemActiveDefenseBonus(actor, defenseType) {
     const value = Number(effect?.value ?? 0);
     if (Number.isFinite(value)) total += value;
   }
-  return total;
+  return total + getSithCommanderDefenseBonus(actor, defenseType);
 }
 
 export class DefenseCalculator {
@@ -514,7 +548,8 @@ export class DefenseCalculator {
       ? Number(equippedArmorStats?.fortitudeBonus ?? 0) || 0
       : 0;
     const willBase = 10 + heroicLevel + willClassBonus + willAbilityMod;
-    const willTotal = Math.max(1, willBase + willMiscBonus + willSpeciesBonus + willArmorBonus + willStateBonus + willAdjust + conditionPenalty);
+    const psychicCitadelBonus = getPsychicCitadelWillBonus(actor, heroicLevel);
+    const willTotal = Math.max(1, willBase + willMiscBonus + willSpeciesBonus + willArmorBonus + psychicCitadelBonus + willStateBonus + willAdjust + conditionPenalty);
 
     const flatFootedBase = reflexBase;
     // Flat-footed removes a positive Dexterity bonus, but never removes a
@@ -565,6 +600,7 @@ export class DefenseCalculator {
         speciesBonus: willSpeciesBonus,
         miscBonus: willMiscBonus,
         armorBonus: willArmorBonus,
+        psychicCitadelBonus,
         abilityKey: willAbilityKey,
         abilityMod: willAbilityMod,
         conditionPenalty

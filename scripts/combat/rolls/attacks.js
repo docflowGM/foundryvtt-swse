@@ -48,6 +48,36 @@ function actorHasTalentNamed(actor, names = []) {
   }
 }
 
+
+function actorHasFeatNamed(actor, names = []) {
+  const wanted = new Set((Array.isArray(names) ? names : [names])
+    .map(name => String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ''))
+    .filter(Boolean));
+  if (!wanted.size) return false;
+  try {
+    return Array.from(actor?.items ?? []).some(item => {
+      if (item?.type !== 'feat') return false;
+      const key = String(item.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+      return wanted.has(key);
+    });
+  } catch (_err) {
+    return false;
+  }
+}
+
+function inquisitionAttackBonus(actor, context = {}) {
+  if (!actorHasTalentNamed(actor, 'Inquisition')) return 0;
+  const target = getTargetActorFromOptions(context);
+  if (!target || !actorHasFeatNamed(target, 'Force Sensitivity')) return 0;
+  return 1;
+}
+
+function unsettlingPresenceAttackPenalty(actor) {
+  const state = actor?.getFlag?.('swse', 'forceAdept.unsettlingPresence') ?? null;
+  if (!state || state.encounterId !== currentCombatEncounterId()) return 0;
+  return Number(state.attackPenalty ?? -2) || -2;
+}
+
 function actorIsProficientForAttack(actor, weapon) {
   const explicit = weapon?.system?.proficient;
   if (explicit !== false) return true;
@@ -117,6 +147,95 @@ function getBasicEffectIntentBonus(actor, target, weapon, options = {}, extra = 
     console.warn(`[SWSE] Failed to apply Basic effect intents for ${target}`, err);
     return 0;
   }
+}
+
+
+function currentCombatEncounterId() {
+  return game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
+}
+
+function actorHpValueForSithEffects(actor) {
+  return Number(actor?.system?.hp?.value ?? actor?.system?.hitPoints?.value ?? actor?.system?.attributes?.hp?.value ?? 1) || 0;
+}
+
+function sourceActorStillThreatening(sourceActorId) {
+  if (!sourceActorId) return true;
+  const source = game?.actors?.get?.(sourceActorId) ?? null;
+  if (!source) return true;
+  return actorHpValueForSithEffects(source) > 0;
+}
+
+function activeSithCommanderEffect(actor, key) {
+  const state = actor?.getFlag?.('swse', `sithCommander.${key}`) ?? null;
+  if (!state || state.encounterId !== currentCombatEncounterId()) return null;
+  if (key === 'focusTerror') {
+    const round = Number(game?.combat?.round ?? 0) || 0;
+    const expires = Number(state.expiresAfterRound ?? 0) || 0;
+    if (expires > 0 && round > expires) return null;
+  }
+  if (key === 'inciteRage' && !sourceActorStillThreatening(state.sourceActorId)) return null;
+  return state;
+}
+
+function sithCommanderAttackModifier(actor) {
+  let total = 0;
+  const focus = activeSithCommanderEffect(actor, 'focusTerror');
+  if (focus) total += Number(focus.attackPenalty ?? -2) || -2;
+  const rage = activeSithCommanderEffect(actor, 'inciteRage');
+  if (rage) total += Number(rage.attackBonus ?? 1) || 1;
+  return total;
+}
+
+function weaponMatchesId(weapon, id) {
+  if (!weapon || !id) return false;
+  return String(weapon.id ?? weapon._id ?? '') === String(id);
+}
+
+function rapidAlchemyState(actor) {
+  const state = actor?.getFlag?.('swse', 'rapidAlchemy') ?? null;
+  if (!state || state.encounterId !== currentCombatEncounterId()) return null;
+  return state;
+}
+
+function rapidAlchemyAttackBonus(actor, weapon) {
+  const state = rapidAlchemyState(actor);
+  if (!state?.active || state?.sacrificed === true) return 0;
+  return weaponMatchesId(weapon, state.weaponId) ? Number(state.attackBonus ?? 2) || 2 : 0;
+}
+
+function rapidAlchemyDamageBonus(actor, weapon) {
+  const state = rapidAlchemyState(actor);
+  if (!state?.sacrificePending) return 0;
+  return weaponMatchesId(weapon, state.weaponId) ? Number(state.damageBonus ?? 5) || 5 : 0;
+}
+
+async function clearRapidAlchemyDamageBonus(actor, weapon) {
+  const state = rapidAlchemyState(actor);
+  if (!state?.sacrificePending || !weaponMatchesId(weapon, state.weaponId)) return;
+  await actor?.setFlag?.('swse', 'rapidAlchemy', { ...state, sacrificePending: false, consumedAt: Date.now() });
+}
+
+function forceItemState(weapon) {
+  return weapon?.getFlag?.('swse', 'forceItem') ?? weapon?.flags?.swse?.forceItem ?? null;
+}
+
+function forceItemAttackBonus(actor, weapon) {
+  const state = forceItemState(weapon);
+  if (String(state?.attuned?.actorId ?? '') !== String(actor?.id ?? '')) return 0;
+  return Number(state.attuned.attackBonus ?? 1) || 1;
+}
+
+function firstWeaponDamageDieFormula(weapon) {
+  const formula = String(weapon?.system?.damage ?? weapon?.system?.damageFormula ?? '1d6');
+  const match = formula.match(/(\d*)d(\d+)/i);
+  if (!match) return '';
+  return `1d${match[2]}`;
+}
+
+function forceItemExtraDamageFormula(actor, weapon) {
+  const state = forceItemState(weapon);
+  if (String(state?.empowered?.actorId ?? '') !== String(actor?.id ?? '')) return '';
+  return firstWeaponDamageDieFormula(weapon);
 }
 
 function getFightingDefensivelyAttackPenalty(actor, options = {}) {
@@ -356,6 +475,11 @@ function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
     stateBonus +
     (attackOptionModifiers.attackBonus || 0) +
     (rageModifiers.attackBonus || 0) +
+    sithCommanderAttackModifier(actor) +
+    inquisitionAttackBonus(actor, context) +
+    unsettlingPresenceAttackPenalty(actor) +
+    rapidAlchemyAttackBonus(actor, weapon) +
+    forceItemAttackBonus(actor, weapon) +
     basicEffectBonus
   );
 }
@@ -536,6 +660,7 @@ function computeDamageBonus(actor, weapon, context = {}) {
   let bonus = halfLvl + getWeaponFlatDamageBonus(weapon);
   bonus += getDamageAbilityContribution(actor, weapon);
   bonus += RageEngine.collectAttackModifiers(actor, weapon, context).damageBonus || 0;
+  bonus += rapidAlchemyDamageBonus(actor, weapon);
   bonus += getBasicEffectIntentBonus(actor, 'global.damage', weapon, context, { rollType: 'damage' });
 
   return bonus;
@@ -579,6 +704,8 @@ export async function rollDamage(actor, weapon, options = {}) {
     flags: { swse: { damageRoll: true, weaponId: weapon.id, workflowContext } },
     context: { type: 'damage', weaponId: weapon.id, weapon, workflowContext, target: rollOptions.target ?? null, damageType: resolveDamagePacketType({ weapon, workflowContext, options: rollOptions }), sourceElement: rollOptions?.sourceElement ?? null, companionSource: rollOptions?.companionSource ?? null, sheet: rollOptions?.sheet ?? null, showRollCompanion: rollOptions?.showRollCompanion !== false, targetContext: rollOptions?.targetContext ?? null }
   });
+
+  await clearRapidAlchemyDamageBonus(actor, weapon);
 
   return roll;
 }

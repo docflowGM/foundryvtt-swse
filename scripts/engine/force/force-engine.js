@@ -75,6 +75,7 @@ export class ForceEngine {
     // Write to canonical location via ActorEngine
     await ActorEngine.updateActor(actor, {
       'system.darkSide.value': newValue,
+      'system.darkSideScore': newValue,
       'system.dspLog': log
     });
 

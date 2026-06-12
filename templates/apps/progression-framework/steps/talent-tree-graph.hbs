@@ -56,7 +56,7 @@
                    aria-label="Inspect {{name}}">
             <div class="talent-choice-card__main">
               <h6>{{name}}</h6>
-              <p>{{summary}}</p>
+              {{#if ../showTalentListDescriptions}}<p>{{summary}}</p>{{/if}}
               <div class="talent-choice-card__meta">
                 {{#if isSuggestedTalent}}<span class="talent-choice-badge talent-choice-badge--suggested"><i class="fa-solid fa-star"></i> {{recommendationLabel}}</span>{{/if}}
                 <span class="talent-choice-badge talent-choice-badge--available">{{localize "SWSE.Progression.Common.Legal"}}</span>
@@ -64,8 +64,10 @@
                 {{#if chosenElsewhere}}<span class="talent-choice-badge talent-choice-badge--locked">{{localize "SWSE.Progression.Talent.Stage.AlreadyPicked"}}</span>{{/if}}
                 {{#if isActorOwned}}<span class="talent-choice-badge talent-choice-badge--locked">{{localize "SWSE.Progression.Common.Known"}}</span>{{/if}}
               </div>
-              {{#if recommendationReason}}
-              <p class="talent-choice-card__recommendation">{{recommendationReason}}</p>
+              {{#if ../showTalentListDescriptions}}
+                {{#if recommendationReason}}
+                <p class="talent-choice-card__recommendation">{{recommendationReason}}</p>
+                {{/if}}
               {{/if}}
             </div>
             <button class="talent-choice-card__choose" data-action="commit-item" data-item-id="{{id}}" type="button">

@@ -15,6 +15,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { loadFeatCatalogDocuments } from "/systems/foundryvtt-swse/scripts/registries/feat-pack-seeder.js";
+import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
 
 export const FeatureIndex = {
     // Lookup maps - keyed by lowercase name for case-insensitive lookup
@@ -87,11 +88,12 @@ export const FeatureIndex = {
             // Load main packs — use defensive resolver so a stale manifest doesn't silently break feats
             await this._loadPack('feats', this.feats);
             await this._loadPack('talents', this.talents);
-            await this._loadPack('forcepowers', this.powers);
+            await this._loadForceRegistryType('power', this.powers, 'Force powers');
 
-            // Load optional packs (may not exist in all installations)
-            await this._tryLoadPack('forcetechniques', this.techniques);
-            await this._tryLoadPack('forcesecrets', this.secrets);
+            // Load optional force domains through the same ForceRegistry SSOT so
+            // raw compendium counts cannot drift from normalized picker counts.
+            await this._loadForceRegistryType('technique', this.techniques, 'Force techniques');
+            await this._loadForceRegistryType('secret', this.secrets, 'Force secrets');
 
             this.isBuilt = true;
             this.buildTimestamp = Date.now();
@@ -172,6 +174,25 @@ export const FeatureIndex = {
         } catch (err) {
             SWSELogger.warn('FeatureIndex: Failed to load data/feat-catalog.json fallback:', err);
             return [];
+        }
+    },
+
+    async _loadForceRegistryType(type, map, label = 'Force content') {
+        try {
+            await ForceRegistry.initialize?.();
+            const entries = (ForceRegistry.byType?.(type) || [])
+                .filter(entry => entry?.name);
+            for (const entry of entries) {
+                map.set(String(entry.name).toLowerCase(), entry);
+            }
+            SWSELogger.log(`FeatureIndex: Loaded ${entries.length} normalized ${label} from ForceRegistry`);
+            return true;
+        } catch (err) {
+            SWSELogger.warn(`FeatureIndex: ForceRegistry load failed for ${label}; falling back to compendium`, err);
+            const packName = type === 'power' ? 'forcepowers' : type === 'technique' ? 'forcetechniques' : 'forcesecrets';
+            if (type === 'power') await this._loadPack(packName, map);
+            else await this._tryLoadPack(packName, map);
+            return false;
         }
     },
 

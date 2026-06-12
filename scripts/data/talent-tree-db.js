@@ -385,7 +385,13 @@ byName(name) {
             const talentRefs = [...(tree.talentIds || []), ...(tree.talentNames || [])];
 
             for (const talentId of talentRefs) {
-                this.talentToTree.set(talentId, tree.id);
+                const raw = String(talentId || '').trim();
+                if (!raw) continue;
+                this.talentToTree.set(raw, tree.id);
+                const stable = toStableKey(raw);
+                if (stable) this.talentToTree.set(stable, tree.id);
+                const normalized = normalizeTalentTreeId(raw);
+                if (normalized && normalized !== 'unknown') this.talentToTree.set(normalized, tree.id);
             }
         }
 
@@ -411,7 +417,12 @@ byName(name) {
      */
     getTreeForTalent(talentId) {
         if (!talentId) {return null;}
-        return this.talentToTree.get(talentId) ?? null;
+        const raw = String(talentId || '').trim();
+        if (!raw) return null;
+        return this.talentToTree.get(raw)
+            ?? this.talentToTree.get(toStableKey(raw))
+            ?? this.talentToTree.get(normalizeTalentTreeId(raw))
+            ?? null;
     },
 
     /**

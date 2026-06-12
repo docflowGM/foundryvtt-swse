@@ -2,10 +2,10 @@
   "_meta": {
     "version": "1.0.5",
     "description": "Comprehensive talent ability definitions for SWSE Foundry system",
-    "totalAbilities": 476,
-    "lastModified": "2026-06-11",
+    "totalAbilities": 503,
+    "lastModified": "2026-06-12",
     "multiOptionTalents": 9,
-    "notes": "Includes 9 multi-option talents with 27 total sub-abilities (Pistol Duelist, Fool's Luck, Beloved, Dumb Luck, Cunning Strategist, Experienced Brawler, Shadow Striker, Swift Strider, Two-Faced) (27 Starship Maneuvers from Ace Pilot tree) (27 Starship Maneuvers from Ace Pilot tree)"
+    "notes": "Includes 9 multi-option talents with 27 total sub-abilities (Pistol Duelist, Fool's Luck, Beloved, Dumb Luck, Cunning Strategist, Experienced Brawler, Shadow Striker, Swift Strider, Two-Faced) (27 Starship Maneuvers from Ace Pilot tree) (27 Starship Maneuvers from Ace Pilot tree) Sith/Dark Side pasted talent batch backchecked; Sith Alchemy talisman UI deferred. Dark Side Devotee and Beastwarden pasted talent batch backchecked; Dark Side Talisman automation deferred."
   },
   "abilities": {
     "block": {
@@ -1294,9 +1294,9 @@
       "id": "force-treatment",
       "name": "Force Treatment",
       "talentName": "Force Treatment",
-      "talentTree": "Force Sensitivity",
-      "description": "Use Use the Force in place of Treat Injury; rerolls transfer to the UtF check.",
-      "actionType": "use-the-force-check",
+      "talentTree": "Force Adept",
+      "description": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill. If you are entitled to a Treat Injury check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+      "actionType": "standard",
       "roll": {
         "skillKey": "useTheForce",
         "substitutesFor": "treatInjury",
@@ -1304,25 +1304,28 @@
       },
       "tags": [
         "talent",
+        "force",
         "backchecked",
         "contextual"
       ],
-      "icon": "fas fa-hand-holding-medical",
-      "linkedAction": "use-the-force-check",
+      "icon": "fas fa-hand-sparkles",
+      "linkedAction": "force-treatment",
       "trigger": "Use Use the Force in place of Treat Injury; rerolls transfer to the UtF check.",
       "uses": {
         "max": null,
         "perEncounter": false,
         "perDay": false
       },
-      "rulesText": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill for purposes of using this Talent. If you are entitled to a Treat Injury check reroll, you can reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+      "rulesText": "You can make a Use the Force check in place of a Treat Injury check. You are considered Trained in the Treat Injury Skill. If you are entitled to a Treat Injury check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).\n\nIn addition, you can administer First Aid, Treat Disease, Treat Poison, and Treat Radiation without the requisite Medical Kit or Medpac.",
       "prerequisite": "",
       "automation": {
-        "mode": "skill_substitution_treat_injury",
+        "resolutionMode": "forceAdeptTalent",
+        "forceAdeptTalentAction": "forceTreatment",
         "staticSheetPolicy": "exclude",
         "requiresRuntimeContext": true,
-        "gmAdjudication": true
-      }
+        "implementationDeferred": false
+      },
+      "contributesGenericBonus": false
     },
     "temporal-awareness": {
       "id": "temporal-awareness",
@@ -3325,17 +3328,27 @@
       "icon": "fas fa-chess"
     },
     "crippling-strike": {
+      "id": "crippling-strike",
       "name": "Crippling Strike",
       "talentName": "Crippling Strike",
-      "talentTree": "Force Adept",
-      "description": "On a critical hit, you can reduce the target’s speed by half until fully healed.",
-      "actionType": "passive_trigger",
-      "effect": "speed_reduction",
+      "talentTree": "Dark Side Devotee",
+      "description": "Whenever you score a Critical Hit, you may spend a Force Point to also reduce the target's Speed by half until they are fully healed (that is, restored to maximum Hit Points).",
+      "actionType": "free",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
       "tags": [
-        "conditional",
-        "complex"
+        "force",
+        "talent",
+        "dark-side"
       ],
-      "icon": "fas fa-walking"
+      "contributesGenericBonus": false,
+      "linkedAction": "crippling-strike",
+      "resolutionMode": "sithTalent",
+      "sithTalentAction": "cripplingStrike",
+      "manualResolution": false
     },
     "cunning-distraction": {
       "name": "Cunning Distraction",
@@ -3379,28 +3392,54 @@
     "dark-side-adept": {
       "name": "Dark Side Adept",
       "talentName": "Dark Side Adept",
-      "talentTree": "Sith Apprentice",
-      "description": "Reroll one Dark Side skill check.",
+      "talentTree": "Sith",
+      "prerequisite": "",
+      "description": "Force Powers that are strongly tied to The Dark Side flow through you more easily. You can reroll any Use the Force check made when activating Force Powers with the [Dark Side] descriptor, but you must keep the result of the reroll, even if it is worse.",
+      "shortDescription": "Reroll Use the Force checks to activate [Dark Side] Force Powers, keeping the reroll.",
       "actionType": "passive",
-      "effect": "unknown",
+      "effect": "runtime_force_power_reroll",
+      "contributesGenericBonus": false,
+      "manualResolution": false,
       "tags": [
-        "conditional",
-        "complex"
+        "sith",
+        "dark_side",
+        "talent",
+        "dark_side_force_power_activation",
+        "runtime_force_power_reroll"
       ],
-      "icon": "fas fa-star"
+      "icon": "fas fa-skull",
+      "runtime": {
+        "resolutionMode": "sithTalent",
+        "sithTalentAction": "darkSideAdept",
+        "applicationScope": "dark_side_force_power_activation",
+        "implementationStatus": "implemented"
+      }
     },
     "dark-side-master": {
       "name": "Dark Side Master",
       "talentName": "Dark Side Master",
-      "talentTree": "Sith Apprentice",
-      "description": "Reroll any Dark Side skill check.",
+      "talentTree": "Sith",
+      "prerequisite": "Dark Side Adept",
+      "description": "Force Powers that are strongly tied to the Dark Side flow through you more easily. You can reroll any Use the Force check made when activating Force Powers with the [Dark Side] descriptor, and can spend a Force Point to keep the better of the two results.",
+      "shortDescription": "Reroll Use the Force checks to activate [Dark Side] Force Powers and may spend a Force Point to keep the better result.",
       "actionType": "passive",
-      "effect": "unknown",
+      "effect": "runtime_force_power_reroll_force_point_upgrade",
+      "contributesGenericBonus": false,
+      "manualResolution": false,
       "tags": [
-        "conditional",
-        "complex"
+        "sith",
+        "dark_side",
+        "talent",
+        "dark_side_force_power_activation",
+        "runtime_force_power_reroll_force_point_upgrade"
       ],
-      "icon": "fas fa-star"
+      "icon": "fas fa-skull",
+      "runtime": {
+        "resolutionMode": "sithTalent",
+        "sithTalentAction": "darkSideMaster",
+        "applicationScope": "dark_side_force_power_activation",
+        "implementationStatus": "implemented"
+      }
     },
     "deny-move": {
       "name": "Deny Move",
@@ -3444,15 +3483,29 @@
     "empower-weapon": {
       "name": "Empower Weapon",
       "talentName": "Empower Weapon",
-      "talentTree": "Force Adept",
-      "description": "Add one damage die to the empowered weapon.",
-      "actionType": "passive",
+      "talentTree": "Force Item",
+      "description": "You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action. From that point forward, the Empowered Weapon deals an additional die of damage, but only when wielded by you.",
+      "actionType": "full-round",
       "effect": "unknown",
       "tags": [
-        "conditional",
-        "complex"
+        "talent",
+        "force",
+        "backchecked",
+        "contextual"
       ],
-      "icon": "fas fa-star"
+      "icon": "fas fa-hand-sparkles",
+      "id": "empower-weapon",
+      "rulesText": "You may spend a Force Point to empower a melee weapon. Empowering the weapon takes a Full-Round Action. From that point forward, the Empowered Weapon deals an additional die of damage, but only when wielded by you.\n\nFor example, an empowered Lightsaber deals 3d8 points of damage, instead of 2d8 points of damage. Others who wield the weapon do not gain the bonus damage die.",
+      "prerequisite": "",
+      "contributesGenericBonus": false,
+      "linkedAction": "empower-weapon",
+      "automation": {
+        "resolutionMode": "forceAdeptTalent",
+        "forceAdeptTalentAction": "empowerWeapon",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "implementationDeferred": false
+      }
     },
     "exotic-weapon-mastery": {
       "name": "Exotic Weapon Mastery",
@@ -3566,14 +3619,28 @@
       "name": "Fortified Body",
       "talentName": "Fortified Body",
       "talentTree": "Force Adept",
-      "description": "Immune to disease, poison, and radiation.",
+      "description": "The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.",
       "actionType": "passive",
       "effect": "unknown",
       "tags": [
-        "conditional",
-        "complex"
+        "talent",
+        "force",
+        "backchecked",
+        "contextual"
       ],
-      "icon": "fas fa-star"
+      "icon": "fas fa-hand-sparkles",
+      "id": "fortified-body",
+      "rulesText": "The Force shields you against ailments, toxins, and radiation poisoning, making you immune to Disease, Poison, and Radiation.",
+      "prerequisite": "Equilibrium",
+      "contributesGenericBonus": false,
+      "linkedAction": "fortified-body",
+      "automation": {
+        "resolutionMode": "forceAdeptTalent",
+        "forceAdeptTalentAction": "fortifiedBody",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "implementationDeferred": false
+      }
     },
     "grabber": {
       "name": "Grabber",
@@ -3591,15 +3658,29 @@
     "greater-focused-force-talisman": {
       "name": "Greater Focused Force Talisman",
       "talentName": "Greater Focused Force Talisman",
-      "talentTree": "Force Adept",
-      "description": "As Focused Force Talisman but the Force Point does not count toward the one-per-turn limit.",
-      "actionType": "passive",
+      "talentTree": "Force Item",
+      "description": "As the Focused Force Talisman Talent, except that a Force Point spent to immediately recover the selected Force Power does not count against the \"one per turn\" restriction on spending Force Points.",
+      "actionType": "free",
       "effect": "unknown",
       "tags": [
-        "conditional",
-        "complex"
+        "talent",
+        "force",
+        "backchecked",
+        "contextual"
       ],
-      "icon": "fas fa-star"
+      "icon": "fas fa-hand-sparkles",
+      "id": "greater-focused-force-talisman",
+      "rulesText": "As the Focused Force Talisman Talent, except that a Force Point spent to immediately recover the selected Force Power does not count against the \"one per turn\" restriction on spending Force Points.",
+      "prerequisite": "Force Talisman, Focused Force Talisman",
+      "contributesGenericBonus": false,
+      "linkedAction": "greater-focused-force-talisman",
+      "automation": {
+        "resolutionMode": "forceAdeptTalent",
+        "forceAdeptTalentAction": "greaterFocusedForceTalisman",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "implementationDeferred": false
+      }
     },
     "guaranteed-shot": {
       "name": "Guaranteed Shot",
@@ -4278,17 +4359,27 @@
       "icon": "fas fa-star"
     },
     "soothing-presence": {
+      "id": "soothing-presence",
       "name": "Soothing Presence",
       "talentName": "Soothing Presence",
-      "talentTree": "Force Adept",
-      "description": "Automatically shift an unfriendly beast to indifferent.",
+      "talentTree": "Beastwarden",
+      "description": "Whenever you encounter a Beast with an Unfriendly Attitude toward you, you automatically shift its Attitude to Indifferent (no Skill Check required).",
       "actionType": "passive",
-      "effect": "special",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
       "tags": [
-        "special",
-        "complex"
+        "force",
+        "talent",
+        "beast"
       ],
-      "icon": "fas fa-star"
+      "contributesGenericBonus": false,
+      "linkedAction": "soothing-presence",
+      "resolutionMode": "sithTalent",
+      "sithTalentAction": "soothingPresence",
+      "manualResolution": false
     },
     "spontaneous-skill": {
       "name": "Spontaneous Skill",
@@ -4371,15 +4462,28 @@
     "stolen-form": {
       "name": "Stolen Form",
       "talentName": "Stolen Form",
-      "talentTree": "Sith Apprentice",
-      "description": "Choose any Force Technique or a lightsaber form and add it to your usable options.",
+      "talentTree": "Sith",
+      "prerequisite": "Any One Force Technique, Weapon Focus (Lightsabers)",
+      "description": "You have learned how to use a Jedi fighting technique to defeat Jedi in combat. Choose one Talent from the Lightsaber Forms Talent Tree; you gain the benefits of this Talent and are considered to have this Talent for the purpose of satisfying prerequisites. You must meet all the prerequisites as normal for the chosen Talent, in addition to the prerequisites of this Talent.\n\nYou can select this Talent multiple times. Each time you select it, choose a different Talent from the Lightsaber Forms Talent Tree.",
+      "shortDescription": "Choose a Lightsaber Forms talent; gain its benefits and count as having it for prerequisites. May be selected multiple times for different forms.",
       "actionType": "passive",
-      "effect": "force_ability",
+      "effect": "runtime_choice_grant",
+      "contributesGenericBonus": false,
+      "manualResolution": false,
       "tags": [
-        "special",
-        "complex"
+        "sith",
+        "dark_side",
+        "talent",
+        "lightsaber_forms_talent_picker",
+        "runtime_choice_grant"
       ],
-      "icon": "fas fa-star"
+      "icon": "fas fa-skull",
+      "runtime": {
+        "resolutionMode": "sithTalent",
+        "sithTalentAction": "stolenForm",
+        "applicationScope": "lightsaber_forms_talent_picker",
+        "implementationStatus": "implemented"
+      }
     },
     "stymie": {
       "name": "Stymie",
@@ -4715,28 +4819,54 @@
     "dark-healing": {
       "name": "Dark Healing",
       "talentName": "Dark Healing",
-      "talentTree": "Sith Apprentice",
-      "description": "Life-drain attack vs a creature within 6 squares: ranged attack vs Fortitude; on hit deals and heals d6 per class level.",
-      "actionType": "passive",
-      "effect": "special",
+      "talentTree": "Sith",
+      "prerequisite": "",
+      "description": "You can spend a Force Point to heal wounds by drawing life energy from another creature within 6 squares of you. Using this ability is a Standard Action, and you must succeed on a ranged attack roll. If the attack equals or exceeds the target's Fortitude Defense, you deal 1d6 points of damage per Class Level to the target, and you heal an equal amount of damage. If the attack fails, there is no effect.",
+      "shortDescription": "Spend a Force Point as a Standard Action to make a ranged attack against one creature within 6 squares; on hit, deal 1d6 Force damage per Sith class level and heal the same amount.",
+      "actionType": "standard",
+      "effect": "runtime_action",
+      "contributesGenericBonus": false,
+      "manualResolution": false,
       "tags": [
-        "follower",
-        "special"
+        "sith",
+        "dark_side",
+        "talent",
+        "standard_action_force_point_ranged_attack",
+        "runtime_action"
       ],
-      "icon": "fas fa-users"
+      "icon": "fas fa-skull",
+      "runtime": {
+        "resolutionMode": "sithTalent",
+        "sithTalentAction": "darkHealing",
+        "applicationScope": "standard_action_force_point_ranged_attack",
+        "implementationStatus": "implemented"
+      }
     },
     "dark-healing-field": {
       "name": "Dark Healing Field",
       "talentName": "Dark Healing Field",
-      "talentTree": "Sith Apprentice",
-      "description": "Once per encounter, affect up to 3 creatures within 12 squares with Dark Healing using Use the Force vs Fortitude; on success you heal half the damage dealt.",
-      "actionType": "passive",
-      "effect": "special",
+      "talentTree": "Sith",
+      "prerequisite": "Dark Healing, Improved Dark Healing",
+      "description": "You can spend a Force Point to heal wounds by drawing life energy from up to three targeted creatures within 12 squares of you. Once per encounter, you can make a Use the Force check. If the check result equals or exceeds a target's Fortitude Defense, the target takes 1d6 points of Force damage per every Sith Apprentice and Sith Lord Class Level you possess.\n\nYou heal half the total damage dealt (cumulative from all targets). If the attack fails, the target takes half damage, and you heal that amount.",
+      "shortDescription": "Once per encounter, spend a Force Point to make Use the Force checks against up to three targets within 12 squares, dealing Sith-level d6 Force damage and healing half the total damage dealt.",
+      "actionType": "standard",
+      "effect": "runtime_encounter_action",
+      "contributesGenericBonus": false,
+      "manualResolution": false,
       "tags": [
-        "follower",
-        "special"
+        "sith",
+        "dark_side",
+        "talent",
+        "multi_target_force_point_healing",
+        "runtime_encounter_action"
       ],
-      "icon": "fas fa-users"
+      "icon": "fas fa-skull",
+      "runtime": {
+        "resolutionMode": "sithTalent",
+        "sithTalentAction": "darkHealingField",
+        "applicationScope": "multi_target_force_point_healing",
+        "implementationStatus": "implemented"
+      }
     },
     "dark-side-bane": {
       "name": "Dark Side Bane",
@@ -9528,6 +9658,678 @@
         "staticSheetPolicy": "exclude",
         "requiresRuntimeContext": true,
         "gmAdjudication": true
+      }
+    },
+    "dark-scourge": {
+      "name": "Dark Scourge",
+      "talentName": "Dark Scourge",
+      "talentTree": "Sith",
+      "prerequisite": "",
+      "description": "You have dedicated your life to wiping out the Jedi, and your hatred of them knows no bounds. Against Jedi characters (that is, characters belonging to The Jedi), you gain a +1 Dark Side bonus on attack rolls.",
+      "shortDescription": "Gain a conditional +1 Dark Side bonus on attack rolls against Jedi characters.",
+      "actionType": "passive",
+      "effect": "conditional_runtime_or_manual",
+      "contributesGenericBonus": false,
+      "manualResolution": true,
+      "tags": [
+        "sith",
+        "dark_side",
+        "talent",
+        "attack_vs_jedi",
+        "conditional_runtime_or_manual"
+      ],
+      "icon": "fas fa-skull",
+      "runtime": {
+        "resolutionMode": "sithTalent",
+        "sithTalentAction": "darkScourge",
+        "applicationScope": "attack_vs_jedi",
+        "implementationStatus": "implemented"
+      }
+    },
+    "force-deception": {
+      "name": "Force Deception",
+      "talentName": "Force Deception",
+      "talentTree": "Sith",
+      "prerequisite": "",
+      "description": "You can use your Use the Force modifier instead of your Deception check modifier when making Deception checks, as you use The Force to cloak your vile treachery. You are considered Trained in the Deception skill. If you are entitled to a Deception check reroll, you may reroll your Use the Force check instead (subject to the same circumstances and limitations).",
+      "shortDescription": "Use Use the Force in place of Deception and count as trained for those checks.",
+      "actionType": "passive",
+      "effect": "derived_skill_substitution",
+      "contributesGenericBonus": false,
+      "manualResolution": false,
+      "tags": [
+        "sith",
+        "dark_side",
+        "talent",
+        "deception_skill",
+        "derived_skill_substitution"
+      ],
+      "icon": "fas fa-skull",
+      "runtime": {
+        "resolutionMode": "sithTalent",
+        "sithTalentAction": "forceDeception",
+        "applicationScope": "deception_skill",
+        "implementationStatus": "implemented"
+      }
+    },
+    "improved-dark-healing": {
+      "name": "Improved Dark Healing",
+      "talentName": "Improved Dark Healing",
+      "talentTree": "Sith",
+      "prerequisite": "Dark Healing",
+      "description": "Your Dark Healing Talent improves. The range of this ability increases to 12 squares, and even if that attack fails, the target takes half damage, while you heal an equal amount of damage.",
+      "shortDescription": "Dark Healing range increases to 12 squares and misses deal/heal half damage.",
+      "actionType": "passive",
+      "effect": "runtime_upgrade",
+      "contributesGenericBonus": false,
+      "manualResolution": false,
+      "tags": [
+        "sith",
+        "dark_side",
+        "talent",
+        "dark_healing_upgrade",
+        "runtime_upgrade"
+      ],
+      "icon": "fas fa-skull",
+      "runtime": {
+        "resolutionMode": "sithTalent",
+        "sithTalentAction": "improvedDarkHealing",
+        "applicationScope": "dark_healing_upgrade",
+        "implementationStatus": "implemented"
+      }
+    },
+    "wicked-strike": {
+      "name": "Wicked Strike",
+      "talentName": "Wicked Strike",
+      "talentTree": "Sith",
+      "prerequisite": "Weapon Focus (Lightsabers), Weapon Specialization (Lightsabers)",
+      "description": "When you score a critical hit with a Lightsaber, you may spend a Force Point to move the target -2 steps along the Condition Track.",
+      "shortDescription": "Spend a Force Point after a lightsaber critical hit to move the target two steps down the condition track.",
+      "actionType": "free",
+      "effect": "runtime_critical_rider",
+      "contributesGenericBonus": false,
+      "manualResolution": false,
+      "tags": [
+        "sith",
+        "dark_side",
+        "talent",
+        "lightsaber_critical_condition_track",
+        "runtime_critical_rider"
+      ],
+      "icon": "fas fa-skull",
+      "runtime": {
+        "resolutionMode": "sithTalent",
+        "sithTalentAction": "wickedStrike",
+        "applicationScope": "lightsaber_critical_condition_track",
+        "implementationStatus": "implemented"
+      }
+    },
+    "affliction": {
+      "name": "Affliction",
+      "talentName": "Affliction",
+      "talentTree": "Sith",
+      "prerequisite": "",
+      "description": "Your Force Powers carries the taint of The Dark Side more so than even other Dark Side users. When you damage a single opponent with one of your Force Powers, that target also takes 2d6 points of Force damage at the beginning of its next turn, before taking any Actions.",
+      "shortDescription": "After damaging one opponent with a Force Power, mark it to take 2d6 Force damage at the beginning of its next turn.",
+      "actionType": "passive",
+      "effect": "runtime_delayed_damage",
+      "contributesGenericBonus": false,
+      "manualResolution": false,
+      "tags": [
+        "sith",
+        "dark_side",
+        "talent",
+        "single_target_force_power_damage",
+        "runtime_delayed_damage"
+      ],
+      "icon": "fas fa-skull",
+      "runtime": {
+        "resolutionMode": "sithTalent",
+        "sithTalentAction": "affliction",
+        "applicationScope": "single_target_force_power_damage",
+        "implementationStatus": "implemented"
+      }
+    },
+    "drain-force": {
+      "name": "Drain Force",
+      "talentName": "Drain Force",
+      "talentTree": "Sith",
+      "prerequisite": "Affliction",
+      "description": "Once per encounter, as a Reaction when you damage a Force-sensitive opponent, the dark taint of your power allows you to sap some of the opponent's strength, and convert it to personal power, regaining one spent Force Power. Additionally, the target loses one Force Point.",
+      "shortDescription": "Once per encounter as a Reaction after damaging a Force-sensitive opponent, regain one spent Force Power and make the target lose one Force Point.",
+      "actionType": "reaction",
+      "effect": "runtime_reaction_encounter_recovery",
+      "contributesGenericBonus": false,
+      "manualResolution": false,
+      "tags": [
+        "sith",
+        "dark_side",
+        "talent",
+        "force_sensitive_target_damage",
+        "runtime_reaction_encounter_recovery"
+      ],
+      "icon": "fas fa-skull",
+      "runtime": {
+        "resolutionMode": "sithTalent",
+        "sithTalentAction": "drainForce",
+        "applicationScope": "force_sensitive_target_damage",
+        "implementationStatus": "implemented"
+      }
+    },
+    "sith-alchemy": {
+      "name": "Sith Alchemy",
+      "talentName": "Sith Alchemy",
+      "talentTree": "Sith Alchemy",
+      "prerequisite": "Dark Side Adept, Dark Side Master",
+      "description": "Your knowledge of Sith sorcery allows you to imbue talismans and other objects with the power of the Dark Side.\n\nCreate Sith Talisman: You can spend one Force Point to imbue a portable object with the Dark Side, creating a Sith Talisman that provides offensive strength to a Force Power or Lightsaber attack. Creating the talisman takes a Full-Round Action.\nWhile you wear or carry a Sith Talisman on your person, add 1d6 to damage rolls with your Force Powers. You increase your Dark Side Score by one when you first put on or carry a Sith Talisman.\nYou can only have one Sith Talisman active at any given time, and if it is destroyed, you cannot create another one for 24 hours.\nCreate Sith Weapon: You can alchemically treat a properly prepared weapon to become a Sith Weapon. You may spend a Force Point to imbue the weapon with the properties of the Sith Alchemical Weapon Template (this process takes one hour to complete).",
+      "shortDescription": "UI-dependent Sith Alchemy crafting/talisman/weapon talent; data cleaned, full talisman implementation deferred.",
+      "actionType": "full-round",
+      "effect": "ui_deferred_manual",
+      "contributesGenericBonus": false,
+      "manualResolution": true,
+      "tags": [
+        "sith",
+        "dark_side",
+        "talent",
+        "sith_talisman_and_weapon_crafting",
+        "ui_deferred_manual"
+      ],
+      "icon": "fas fa-skull",
+      "runtime": {
+        "resolutionMode": "sithTalent",
+        "sithTalentAction": "sithAlchemy",
+        "applicationScope": "sith_talisman_and_weapon_crafting",
+        "implementationStatus": "ui_deferred"
+      }
+    },
+    "charm-beast": {
+      "id": "charm-beast",
+      "name": "Charm Beast",
+      "talentName": "Charm Beast",
+      "talentTree": "Beastwarden",
+      "description": "You can make a Use the Force check in place of a Persuasion check when attempting to change the Attitude of an undomesticated creature with an Intelligence score of 2 or less. Additionally, you do not take the normal -5 penalty on the check if the creature can't speak or understand your language.\n\nThis Talent is identical to the Dathomiri Witch Talent of the same name, and both are considered to be the same Talent for the purposes of satisfying prerequisites.",
+      "actionType": "special",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "force",
+        "talent",
+        "beast"
+      ],
+      "contributesGenericBonus": false,
+      "linkedAction": "charm-beast",
+      "resolutionMode": "sithTalent",
+      "sithTalentAction": "charmBeast",
+      "manualResolution": false
+    },
+    "bonded-mount": {
+      "id": "bonded-mount",
+      "name": "Bonded Mount",
+      "talentName": "Bonded Mount",
+      "talentTree": "Beastwarden",
+      "description": "Whenever you encounter a domesticated Beast with a Friendly or Helpful Attitude toward you, you can spend a Force Point as a Full-Round Action to bond the Beast to you as a mount. A Bonded Mount shares an emphatic link with you, allowing you to sense its emotions as a Free Action.\n\nWhen you Ride a Bonded Mount, your mount uses your Reflex Defense and Will Defense instead of its own. Additionally, if your mount has any special senses (such as Scent, Darkvision, or Low-Light Vision) that you do not possess, you gain the benefits of its special senses as long as you are riding that mount.",
+      "actionType": "full-round",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "force",
+        "talent",
+        "beast"
+      ],
+      "contributesGenericBonus": false,
+      "linkedAction": "bonded-mount",
+      "resolutionMode": "sithTalent",
+      "sithTalentAction": "bondedMount",
+      "manualResolution": false
+    },
+    "entreat-beast": {
+      "id": "entreat-beast",
+      "name": "Entreat Beast",
+      "talentName": "Entreat Beast",
+      "talentTree": "Beastwarden",
+      "description": "You can use The Force to convince a small Beast to carry objects, deliver messages, or perform other minor tasks for you. If you are near a Beast that is at least Indifferent to you (whether this be a pet you bring with you or a Beast encountered in the wild), you can make a Use the Force check against the Beast's Will Defense as a Swift Action.\n\nIf your Skill Check equals or exceeds the Beast's Will Defense, the Beast performs one task for you from the following list:\n\nDeliver an Object: The Beast attempts, to the best of its ability, to deliver one object from your person to another target within 30 squares of you.\nRetrieve an Object: The Beast attempts, to the best of its ability, to retrieve one unattended object within 30 squares of it and its line of sight and bring it to you.\nManipulate a Small Object: The Beast attempts, to the best of its ability, to press a button, pull a lever, or otherwise perform some minor activation of an unattended item within 30 squares.",
+      "actionType": "swift",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "force",
+        "talent",
+        "beast"
+      ],
+      "contributesGenericBonus": false,
+      "linkedAction": "entreat-beast",
+      "resolutionMode": "sithTalent",
+      "sithTalentAction": "entreatBeast",
+      "manualResolution": false
+    },
+    "wild-sense": {
+      "id": "wild-sense",
+      "name": "Wild Sense",
+      "talentName": "Wild Sense",
+      "talentTree": "Beastwarden",
+      "description": "As a Swift Action once per turn, you can make a Use the Force check to touch the mind of a Beast with an Indifferent or better Attitude toward you, provided it is within 12 squares of you and in your line of sight. When you do so, the Beast makes an immediate active Perception check, and you are considered to perceive everything the Beast does, including noticing targets, as though you had made the check.\n\nAdditionally, until the end of your turn, you are considered to have line of sight to anything the Beast has line of sight to.",
+      "actionType": "swift",
+      "uses": {
+        "max": 1,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "force",
+        "talent",
+        "beast"
+      ],
+      "contributesGenericBonus": false,
+      "linkedAction": "wild-sense",
+      "resolutionMode": "sithTalent",
+      "sithTalentAction": "wildSense",
+      "manualResolution": false
+    },
+    "channel-aggression": {
+      "id": "channel-aggression",
+      "name": "Channel Aggression",
+      "talentName": "Channel Aggression",
+      "talentTree": "Dark Side Devotee",
+      "description": "If you succeed on an attack against a Flanked opponent, or any target that is denied its Dexterity bonus to Reflex Defense, you may spend a Force Point as a Free Action to deal additional damage to the target equal to 1d6 per Class Level (maximum 10d6).",
+      "actionType": "free",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "force",
+        "talent",
+        "dark-side"
+      ],
+      "contributesGenericBonus": false,
+      "linkedAction": "channel-aggression",
+      "resolutionMode": "sithTalent",
+      "sithTalentAction": "channelAggression",
+      "manualResolution": false
+    },
+    "channel-anger": {
+      "id": "channel-anger",
+      "name": "Channel Anger",
+      "talentName": "Channel Anger",
+      "talentTree": "Dark Side Devotee",
+      "description": "You let your anger swell into a Rage. As a Swift Action, you may spend a Force Point to gain a +2 Rage bonus on melee attack rolls and melee damage rolls for a number of rounds equal to 5 + your Constitution modifier. At the end of this duration, you move -1 step along the Condition Track.\n\nWhile Raging, you cannot use Skills that require patience and concentration, such as Mechanics, Stealth, or Use the Force.",
+      "actionType": "swift",
+      "uses": {
+        "max": null,
+        "perEncounter": true,
+        "perDay": false
+      },
+      "tags": [
+        "force",
+        "talent",
+        "dark-side"
+      ],
+      "contributesGenericBonus": false,
+      "linkedAction": "channel-anger",
+      "resolutionMode": "sithTalent",
+      "sithTalentAction": "channelAnger",
+      "manualResolution": false
+    },
+    "embrace-the-dark-side": {
+      "id": "embrace-the-dark-side",
+      "name": "Embrace the Dark Side",
+      "talentName": "Embrace the Dark Side",
+      "talentTree": "Dark Side Devotee",
+      "description": "Whenever you use a Force Power with the [Dark Side] descriptor, you may reroll your Use the Force check, but you must accept the result of the reroll, even if it is worse.\n\nUpon choosing this Talent, you can no longer use Force Powers with the [Light Side] descriptor.",
+      "actionType": "passive",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "force",
+        "talent",
+        "dark-side"
+      ],
+      "contributesGenericBonus": false,
+      "linkedAction": "embrace-the-dark-side",
+      "resolutionMode": "sithTalent",
+      "sithTalentAction": "embraceTheDarkSide",
+      "manualResolution": false
+    },
+    "dark-side-talisman": {
+      "id": "dark-side-talisman",
+      "name": "Dark Side Talisman",
+      "talentName": "Dark Side Talisman",
+      "talentTree": "Dark Side Devotee",
+      "description": "You can spend a Force Point to imbue a Weapon or some other portable object with the Dark Side of The Force, creating a Talisman that grants you protection from the Light Side. Creating the Dark Side Talisman takes a Full-Round Action.\n\nWhile you wear or carry the Talisman, you gain a +2 Force bonus to one of your Defenses (Reflex, Fortitude, or Will) against Force Powers with the [Light Side] descriptor.\n\nYou can only have one Dark Side Talisman active at a given time (though you can have both a Dark Side Talisman and a Force Talisman active at the same time), and if your Dark Side Talisman is destroyed, you cannot create another one for 24 hours.",
+      "actionType": "full-round",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "force",
+        "talent",
+        "dark-side"
+      ],
+      "contributesGenericBonus": false,
+      "linkedAction": "dark-side-talisman",
+      "resolutionMode": "sithTalent",
+      "sithTalentAction": "darkSideTalisman",
+      "manualResolution": true
+    },
+    "greater-dark-side-talisman": {
+      "id": "greater-dark-side-talisman",
+      "name": "Greater Dark Side Talisman",
+      "talentName": "Greater Dark Side Talisman",
+      "talentTree": "Dark Side Devotee",
+      "description": "You can spend a Force Point to imbue a Weapon or some other portable object with the Dark Side of The Force, creating a Talisman that grants you protection from the Light Side. Creating the Greater Dark Side Talisman takes a Full-Round Action.\n\nWhile you wear or carry the Talisman, you gain a +2 Force bonus to all of your Defenses against Force Powers with the [Light Side] descriptor.\n\nYou can only have one Greater Dark Side Talisman, or Dark Side Talisman, active at a given time (though you can have both a Greater Dark Side Talisman and a Greater Force Talisman active at the same time), and if your Greater Dark Side Talisman is destroyed, you cannot create another one for 24 hours.",
+      "actionType": "full-round",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "force",
+        "talent",
+        "dark-side"
+      ],
+      "contributesGenericBonus": false,
+      "linkedAction": "greater-dark-side-talisman",
+      "resolutionMode": "sithTalent",
+      "sithTalentAction": "greaterDarkSideTalisman",
+      "manualResolution": true
+    },
+    "embrace-dark-side": {
+      "id": "embrace-dark-side",
+      "name": "Embrace Dark Side",
+      "talentName": "Embrace Dark Side",
+      "talentTree": "Dark Side Devotee",
+      "description": "Whenever you use a Force Power with the [Dark Side] descriptor, you may reroll your Use the Force check, but you must accept the result of the reroll, even if it is worse.\n\nUpon choosing this Talent, you can no longer use Force Powers with the [Light Side] descriptor.",
+      "actionType": "passive",
+      "uses": {
+        "max": null,
+        "perEncounter": false,
+        "perDay": false
+      },
+      "tags": [
+        "force",
+        "talent",
+        "dark-side"
+      ],
+      "contributesGenericBonus": false,
+      "linkedAction": "embrace-the-dark-side",
+      "resolutionMode": "sithTalent",
+      "sithTalentAction": "embraceTheDarkSide",
+      "manualResolution": false
+    },
+    "force-power-adept": {
+      "id": "force-power-adept",
+      "name": "Force Power Adept",
+      "talentName": "Force Power Adept",
+      "talentTree": "Force Adept",
+      "description": "You are skilled at using a particular Force Power. Select one Force Power you know. When using that Force Power, you have the option of spending a Force Point to make two Use the Force checks, keeping the better result.",
+      "rulesText": "You are skilled at using a particular Force Power. Select one Force Power you know. When using that Force Power, you have the option of spending a Force Point to make two Use the Force checks, keeping the better result.\n\nThis Talent may be selected multiple times. Its effects do not stack. Each time you select this Talent, you must choose a different Force Power.",
+      "prerequisite": "",
+      "actionType": "free",
+      "contributesGenericBonus": false,
+      "linkedAction": "force-power-adept",
+      "icon": "fas fa-hand-sparkles",
+      "tags": [
+        "talent",
+        "force",
+        "backchecked",
+        "contextual"
+      ],
+      "automation": {
+        "resolutionMode": "forceAdeptTalent",
+        "forceAdeptTalentAction": "forcePowerAdept",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "implementationDeferred": false
+      }
+    },
+    "instrument-of-the-force": {
+      "id": "instrument-of-the-force",
+      "name": "Instrument of the Force",
+      "talentName": "Instrument of the Force",
+      "talentTree": "Force Adept",
+      "description": "You are particularly in tune with The Living Force. When you successfully use Search Your Feelings, you gain a Force Point that must be used before the end of the encounter.",
+      "rulesText": "You are particularly in tune with The Living Force. When you successfully use Search Your Feelings, you gain a Force Point that must be used before the end of the encounter.\n\nIf you use this Force Point in a manner that would end in unfavorable results (per Search Your Feelings), you raise your Dark Side Score by 1. If you use the Force Point in an action that would normally raise your Dark Side Score, you raise your Dark Side Score by 2 instead.",
+      "prerequisite": "",
+      "actionType": "passive",
+      "contributesGenericBonus": false,
+      "linkedAction": "instrument-of-the-force",
+      "icon": "fas fa-hand-sparkles",
+      "tags": [
+        "talent",
+        "force",
+        "backchecked",
+        "contextual"
+      ],
+      "automation": {
+        "resolutionMode": "forceAdeptTalent",
+        "forceAdeptTalentAction": "instrumentOfTheForce",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "implementationDeferred": false
+      }
+    },
+    "long-call": {
+      "id": "long-call",
+      "name": "Long Call",
+      "talentName": "Long Call",
+      "talentTree": "Force Adept",
+      "description": "When using the Telepathy ability of Use the Force, you reduce the DC of the Use the Force check by half, as do those Force-users for whom you are a willing telepathic recipient. When attempting to contact an unwilling target, you can reroll and take the better result.",
+      "rulesText": "When using the Telepathy ability of Use the Force, you reduce the DC of the Use the Force check by half, as do those Force-users for whom you are a willing telepathic recipient. When attempting to contact an unwilling target, you can reroll and take the better result.\n\nBy spending a Force Point, you can simultaneously contact a number of targets equal to your Charisma modifier (minimum two) with a single Use the Force check.",
+      "prerequisite": "Mystical Link",
+      "actionType": "standard",
+      "contributesGenericBonus": false,
+      "linkedAction": "long-call",
+      "icon": "fas fa-hand-sparkles",
+      "tags": [
+        "talent",
+        "force",
+        "backchecked",
+        "contextual"
+      ],
+      "automation": {
+        "resolutionMode": "forceAdeptTalent",
+        "forceAdeptTalentAction": "longCall",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "implementationDeferred": false
+      }
+    },
+    "mystical-link": {
+      "id": "mystical-link",
+      "name": "Mystical Link",
+      "talentName": "Mystical Link",
+      "talentTree": "Force Adept",
+      "description": "The Force guides you in unexpected ways. As a Standard Action, make a DC 30 Use the Force check. If the check is successful, you gain one of the following benefits, as selected by the Gamemaster:",
+      "rulesText": "The Force guides you in unexpected ways. As a Standard Action, make a DC 30 Use the Force check. If the check is successful, you gain one of the following benefits, as selected by the Gamemaster:\n\nOne Force Power is returned to your Force Power Suite.\nGain one Force Point that is lost if it is not spent before the end of the encounter.\nGain an additional use of a Force-related Talent or Feat normally restricted to once per encounter.\nRoll an additional die when making a Use the Force check and select the highest die rolled.",
+      "prerequisite": "",
+      "actionType": "standard",
+      "contributesGenericBonus": false,
+      "linkedAction": "mystical-link",
+      "icon": "fas fa-hand-sparkles",
+      "tags": [
+        "talent",
+        "force",
+        "backchecked",
+        "contextual"
+      ],
+      "automation": {
+        "resolutionMode": "forceAdeptTalent",
+        "forceAdeptTalentAction": "mysticalLink",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "implementationDeferred": false
+      }
+    },
+    "attune-weapon": {
+      "id": "attune-weapon",
+      "name": "Attune Weapon",
+      "talentName": "Attune Weapon",
+      "talentTree": "Force Item",
+      "description": "You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action. From that point forward, whenever you wield the attuned weapon, you gain a +1 Force bonus on attack rolls.",
+      "rulesText": "You may spend a Force Point to attune a melee weapon. Attuning the weapon takes a Full-Round Action. From that point forward, whenever you wield the attuned weapon, you gain a +1 Force bonus on attack rolls.\n\nThe weapon is attuned to you alone; others who wield the weapon do not gain the Force bonus.",
+      "prerequisite": "",
+      "actionType": "full-round",
+      "contributesGenericBonus": false,
+      "linkedAction": "attune-weapon",
+      "icon": "fas fa-hand-sparkles",
+      "tags": [
+        "talent",
+        "force",
+        "backchecked",
+        "contextual"
+      ],
+      "automation": {
+        "resolutionMode": "forceAdeptTalent",
+        "forceAdeptTalentAction": "attuneWeapon",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "implementationDeferred": false
+      }
+    },
+    "force-talisman": {
+      "id": "force-talisman",
+      "name": "Force Talisman",
+      "talentName": "Force Talisman",
+      "talentTree": "Force Item",
+      "description": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.",
+      "rulesText": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.\n\nWhile you wear or carry the Talisman on your person, you gain a +1 Force bonus to one of your Defenses (Reflex Defense, Fortitude Defense, or Will Defense).\n\nYou may only have one Force Talisman active at a given time, and if your Force Talisman is destroyed, you may not create another Force Talisman for 24 hours.",
+      "prerequisite": "",
+      "actionType": "full-round",
+      "contributesGenericBonus": false,
+      "linkedAction": "force-talisman",
+      "icon": "fas fa-hand-sparkles",
+      "tags": [
+        "talent",
+        "force",
+        "backchecked",
+        "contextual"
+      ],
+      "automation": {
+        "resolutionMode": "forceAdeptTalent",
+        "forceAdeptTalentAction": "forceTalisman",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "implementationDeferred": true
+      }
+    },
+    "greater-force-talisman": {
+      "id": "greater-force-talisman",
+      "name": "Greater Force Talisman",
+      "talentName": "Greater Force Talisman",
+      "talentTree": "Force Item",
+      "description": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.",
+      "rulesText": "You may spend a Force Point to imbue a weapon or some other portable object with The Force, creating a Talisman that provides protection to you. Creating the Talisman takes a Full-Round Action.\n\nWhile you wear or carry the Talisman on your person, you gain a +1 Force bonus to all of your Defenses (Reflex Defense, Fortitude Defense, and Will Defense).\n\nYou may only have one Greater Force Talisman active at a given time, and if your Greater Force Talisman is destroyed, you may not create another Greater Force Talisman (or regular Force Talisman) for 24 hours.",
+      "prerequisite": "Force Talisman",
+      "actionType": "full-round",
+      "contributesGenericBonus": false,
+      "linkedAction": "greater-force-talisman",
+      "icon": "fas fa-hand-sparkles",
+      "tags": [
+        "talent",
+        "force",
+        "backchecked",
+        "contextual"
+      ],
+      "automation": {
+        "resolutionMode": "forceAdeptTalent",
+        "forceAdeptTalentAction": "greaterForceTalisman",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "implementationDeferred": true
+      }
+    },
+    "focused-force-talisman": {
+      "id": "focused-force-talisman",
+      "name": "Focused Force Talisman",
+      "talentName": "Focused Force Talisman",
+      "talentTree": "Force Item",
+      "description": "When you create a Force Talisman, you can select a single Force Power from your Force Power Suite. Whenever you are wearing this Focused Force Talisman and activate the selected Force Power, you can spend a Force Point to immediately regain all your expended uses of that spent Force Power, adding it to your Force Power Suite.",
+      "rulesText": "When you create a Force Talisman, you can select a single Force Power from your Force Power Suite. Whenever you are wearing this Focused Force Talisman and activate the selected Force Power, you can spend a Force Point to immediately regain all your expended uses of that spent Force Power, adding it to your Force Power Suite.",
+      "prerequisite": "Force Talisman",
+      "actionType": "free",
+      "contributesGenericBonus": false,
+      "linkedAction": "focused-force-talisman",
+      "icon": "fas fa-hand-sparkles",
+      "tags": [
+        "talent",
+        "force",
+        "backchecked",
+        "contextual"
+      ],
+      "automation": {
+        "resolutionMode": "forceAdeptTalent",
+        "forceAdeptTalentAction": "focusedForceTalisman",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "implementationDeferred": false
+      }
+    },
+    "force-throw": {
+      "id": "force-throw",
+      "name": "Force Throw",
+      "talentName": "Force Throw",
+      "talentTree": "Force Item",
+      "description": "You can hurl Simple Weapons (Melee), or Advanced Melee Weapons your size or smaller as a Standard Action, treating it as a Thrown Weapon. The Thrown Weapon deals normal weapon damage if it hits.",
+      "rulesText": "You can hurl Simple Weapons (Melee), or Advanced Melee Weapons your size or smaller as a Standard Action, treating it as a Thrown Weapon. The Thrown Weapon deals normal weapon damage if it hits.\n\nIf the weapon deals piercing or slashing damage, it becomes embedded in your target, remaining there and causing an additional die of damage each round at the end of the target's turn, and also when it is removed (removing the embedded weapon is a Swift Action, and an adjacent ally can remove the embedded weapon for you).\n\nYour target must be within 6 squares of you. The weapon does not automatically return to you, but you can retrieve it with the Move Object Force Power (dealing an additional die of damage in the process, if the weapon is embedded in the target, as above).",
+      "prerequisite": "Empower Weapon",
+      "actionType": "standard",
+      "contributesGenericBonus": false,
+      "linkedAction": "force-throw",
+      "icon": "fas fa-hand-sparkles",
+      "tags": [
+        "talent",
+        "force",
+        "backchecked",
+        "contextual"
+      ],
+      "automation": {
+        "resolutionMode": "forceAdeptTalent",
+        "forceAdeptTalentAction": "forceThrow",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "implementationDeferred": false
+      }
+    },
+    "primitive-block": {
+      "id": "primitive-block",
+      "name": "Primitive Block",
+      "talentName": "Primitive Block",
+      "talentTree": "Force Item",
+      "description": "As a Reaction, you may negate a melee attack by making a successful Use the Force check. The DC of the Use the Force check is equal to the result of the attack roll you wish to negate, and you take a cumulative -5 penalty on your Use the Force checks to use this Talent for every time you have used Primitive Block since the beginning of your last turn.",
+      "rulesText": "As a Reaction, you may negate a melee attack by making a successful Use the Force check. The DC of the Use the Force check is equal to the result of the attack roll you wish to negate, and you take a cumulative -5 penalty on your Use the Force checks to use this Talent for every time you have used Primitive Block since the beginning of your last turn.\n\nYou must have an Empowered Weapon drawn to use this Talent, and you must be aware of the attack and not Flat-Footed. You may spend a Force Point to use this Talent to negate an attack against an adjacent character.\n\nYou may use the Primitive Block Talent to negate melee Area Attacks, such as those made by the Whirlwind Attack feat. If you succeed on the Use the Force check, you take half damage if the attack hit, and no damage if the attack missed.",
+      "prerequisite": "Empower Weapon",
+      "actionType": "reaction",
+      "contributesGenericBonus": false,
+      "linkedAction": "primitive-block",
+      "icon": "fas fa-hand-sparkles",
+      "tags": [
+        "talent",
+        "force",
+        "backchecked",
+        "contextual"
+      ],
+      "automation": {
+        "resolutionMode": "forceAdeptTalent",
+        "forceAdeptTalentAction": "primitiveBlock",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "implementationDeferred": false
       }
     }
   }

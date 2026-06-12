@@ -655,13 +655,15 @@
   {
     "id": "force-adept",
     "displayName": "Force Adept",
-    "talentCount": 6,
+    "talentCount": 8,
     "talents": [
       "Equilibrium",
       "Force Power Adept",
       "Force Treatment",
       "Fortified Body",
       "Indomitable class feature",
+      "Instrument of the Force",
+      "Long Call",
       "Mystical Link"
     ]
   },
@@ -1460,7 +1462,7 @@
       "Ignore Damage Reduction",
       "Teras Kasi Basics",
       "Teras Kasi Mastery",
-      "Teräs Käsi Basics",
+      "Ter\u00e4s K\u00e4si Basics",
       "Unarmed Counterstrike",
       "Unarmed Parry"
     ]
@@ -1662,7 +1664,7 @@
       "Closed Mind",
       "Esoteric Technique",
       "Mystic Mastery",
-      "Regimen Aptitude"
+      "Regimen Mastery"
     ]
   },
   {

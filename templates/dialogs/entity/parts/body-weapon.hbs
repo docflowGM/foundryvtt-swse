@@ -12,10 +12,6 @@
   </div>
 </section>
 
-<section class="item-editor__section swse-entity-dialog__callout swse-entity-dialog__callout--resolver">
-  <h3 class="item-editor__section-title">Weapon Data Source</h3>
-  <p class="swse-entity-dialog__hint">This editor uses the repo's existing weapon range resolver and current <code>system.*</code> fields. Changing Branch or Group re-renders the category list and hydrates range bands without creating a second weapon model.</p>
-</section>
 
 <div class="item-editor__grid item-editor__grid--two-col swse-entity-dialog__weapon-grid">
   <section class="item-editor__section">
@@ -248,11 +244,6 @@
   <h3 class="item-editor__section-title">Lightsaber Runtime</h3>
 
   <div class="item-editor__grid item-editor__grid--two-col">
-    <div class="form-field">
-      <label>Blade Color</label>
-      <input type="color" name="flags.swse.bladeColor" value="{{entityDialog.weapon.bladeColorHex}}" />
-    </div>
-
     <div class="form-field form-field--checkbox">
       <label>
         <input type="checkbox" class="emit-light-toggle" {{#if item.flags.swse.emitLight}}checked{{/if}} />

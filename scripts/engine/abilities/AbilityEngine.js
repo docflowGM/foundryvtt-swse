@@ -44,7 +44,7 @@
 import { PrerequisiteChecker } from "/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js";
 import { PRESTIGE_PREREQUISITES } from "/systems/foundryvtt-swse/scripts/data/prestige-prerequisites.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { getDroidAcquisitionBlockReason } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
+import { getDroidAcquisitionBlockReason, getOrganicDroidAcquisitionBlockReason } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
 
 function emitAbilityTrace(label, payload = {}) {
   // Only emit trace logs when debug mode is enabled
@@ -97,13 +97,21 @@ export class AbilityEngine {
           : null,
         pendingKeys: Object.keys(pending || {}),
       });
-      const droidBlockReason = getDroidAcquisitionBlockReason(actor, candidate, pending);
+      const droidBlockReason = getDroidAcquisitionBlockReason(actor, candidate, pending)
+        || getOrganicDroidAcquisitionBlockReason(actor, candidate, pending);
       if (droidBlockReason) {
         return {
           legal: false,
+          eligible: false,
           permanentlyBlocked: true,
           missingPrereqs: [droidBlockReason],
+          missing: [droidBlockReason],
           blockingReasons: [droidBlockReason],
+          reasons: [droidBlockReason],
+          unresolved: [],
+          advisory: [],
+          warnings: [],
+          evaluation: { details: { droidChassisGate: droidBlockReason }, met: false },
         };
       }
 
@@ -300,6 +308,23 @@ export class AbilityEngine {
     }
 
     try {
+      const droidBlockReason = getOrganicDroidAcquisitionBlockReason(actor, { name: className, type: 'class' }, pending);
+      if (droidBlockReason) {
+        return {
+          legal: false,
+          eligible: false,
+          permanentlyBlocked: true,
+          missingPrereqs: [droidBlockReason],
+          missing: [droidBlockReason],
+          blockingReasons: [droidBlockReason],
+          reasons: [droidBlockReason],
+          unresolved: [],
+          advisory: [],
+          warnings: [],
+          evaluation: { details: { droidChassisGate: droidBlockReason }, met: false },
+        };
+      }
+
       const result = PrerequisiteChecker.checkPrestigeClassPrerequisites(actor, className, pending);
       const missing = result.missing || [];
       const unresolved = result.unresolved || [];

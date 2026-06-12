@@ -3968,3 +3968,121 @@ footer.swse-store-surface__footer {
     overflow: visible !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   P0 store viewport clamp: the store must fit inside the holopad surface host.
+   Runtime inspection showed the host was 951px tall while .swse-shell-surface--store
+   and .swse-store-surface__tablet content-sized to 1400px+, causing the bottom of
+   the store to be clipped by the datapad bezel with no global scroll. This final
+   block deliberately wins over older store-generation overrides above.
+   -------------------------------------------------------------------------- */
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-shell-screen-surface--store,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-shell-screen-surface--store > .swse-shell-surface-host[data-shell-surface="store"],
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-shell-surface-host[data-shell-surface="store"],
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-shell-surface-host[data-shell-surface="store"] > .swse-shell-surface--store,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-shell-screen-surface--store,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-shell-surface-host[data-shell-surface="store"],
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-shell-surface-host[data-shell-surface="store"] > .swse-shell-surface--store {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  align-self: stretch !important;
+  inline-size: 100% !important;
+  block-size: 100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-inline-size: 0 !important;
+  min-block-size: 0 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-inline-size: 100% !important;
+  max-block-size: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__tablet,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__tablet {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  inline-size: 100% !important;
+  block-size: 100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  min-inline-size: 0 !important;
+  min-block-size: 0 !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  max-inline-size: 100% !important;
+  max-block-size: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__hud,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__hero,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__tabs {
+  flex: 0 0 auto !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__screen,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__screen {
+  display: grid !important;
+  grid-template-rows: auto auto auto minmax(0, 1fr) !important;
+  flex: 1 1 auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__filters,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__category-tabs,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__subnav {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__browse,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__browse-layout,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__browse,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__browse-layout {
+  grid-row: 4 !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  align-items: stretch !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__grid,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__cards-grid,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__rail,
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__pane,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__grid,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__cards-grid,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__rail,
+form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store-surface__pane {
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  align-content: start !important;
+  overscroll-behavior: contain !important;
+  scrollbar-gutter: stable !important;
+}
+
+.swse.sheet.actor.character.v2 .swse-sheet-v2-shell--surface-store .swse-store-surface__rail {
+  position: relative !important;
+  top: auto !important;
+}
+

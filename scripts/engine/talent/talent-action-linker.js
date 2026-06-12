@@ -82,27 +82,31 @@ class TalentActionLinker {
       const ability = this._findAbilityForTalent(talentName);
 
       if (ability) {
-        // Check for direct bonus value in roll.conditionalBonus or effects
-        let talentBonus = 1; // Default to +1 if no specific bonus found
+        // Only numeric, always-bonus metadata should contribute to the generic
+        // action linker. Contextual/reminder talent cards must not silently become
+        // a fake +1 just because they are linked to a base action.
+        let talentBonus = 0;
 
-        if (ability.roll?.conditionalBonus?.bonus) {
-          talentBonus = ability.roll.conditionalBonus.bonus;
-        } else if (ability.effects) {
-          // Look for skill or attack bonuses in effects
-          const bonusEffect = ability.effects.find(e =>
-            e.type === 'skillBonus' || e.type === 'attackBonus' || e.type === 'bonus'
-          );
-          if (bonusEffect?.value) {
-            talentBonus = bonusEffect.value;
+        if (ability.contributesGenericBonus !== false) {
+          if (Number.isFinite(Number(ability.roll?.conditionalBonus?.bonus))) {
+            talentBonus = Number(ability.roll.conditionalBonus.bonus);
+          } else if (Array.isArray(ability.effects)) {
+            const bonusEffect = ability.effects.find(e =>
+              (e.type === 'skillBonus' || e.type === 'attackBonus' || e.type === 'bonus')
+              && Number.isFinite(Number(e.value))
+            );
+            if (bonusEffect) {
+              talentBonus = Number(bonusEffect.value);
+            }
           }
         }
 
         totalBonus += talentBonus;
         bonusDetails.push({ name: talentName, bonus: talentBonus, ability: ability });
       } else {
-        // Fallback: +1 if ability definition not found
-        totalBonus += 1;
-        bonusDetails.push({ name: talentName, bonus: 1, ability: null });
+        // Unknown talent action links are display-only until metadata proves a
+        // numeric modifier. Do not invent a +1.
+        bonusDetails.push({ name: talentName, bonus: 0, ability: null });
       }
     }
 

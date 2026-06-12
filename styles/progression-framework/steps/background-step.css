@@ -474,3 +474,104 @@
 .swse-custom-planet-dialog__skill-option .prog-skill-token {
   font-weight: 700;
 }
+
+/* Compact category browser rows: background cards should stay one line; detail rail carries prose. */
+.progression-shell .prog-background-surface {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.progression-shell .prog-background-results-pane {
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.progression-shell .prog-background-category-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progression-shell .prog-background-category-group + .prog-background-category-group {
+  margin-top: 10px;
+}
+
+.progression-shell .prog-background-compact-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.progression-shell .prog-background-compact-row {
+  appearance: none;
+  width: 100%;
+  min-height: 28px;
+  display: grid;
+  grid-template-columns: minmax(120px, 0.8fr) minmax(160px, 1.2fr) 18px;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 7px;
+  border: 1px solid var(--prog-border, rgba(116, 203, 255, 0.22));
+  border-radius: 6px;
+  background: rgba(5, 18, 32, 0.58);
+  color: var(--prog-text, #d9f3ff);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.progression-shell .prog-background-compact-row:hover,
+.progression-shell .prog-background-compact-row.focused {
+  border-color: var(--prog-accent, #61dafb);
+  background: rgba(30, 132, 190, 0.14);
+}
+
+.progression-shell .prog-background-compact-row.selected {
+  border-color: var(--prog-positive, #54f29b);
+  background: rgba(84, 242, 155, 0.10);
+}
+
+.progression-shell .prog-background-compact-row.suggested {
+  box-shadow: inset 2px 0 0 rgba(255, 210, 90, 0.7);
+}
+
+.progression-shell .prog-background-compact-row__name,
+.progression-shell .prog-background-compact-row__skills {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.progression-shell .prog-background-compact-row__name {
+  font-weight: 700;
+  text-overflow: ellipsis;
+}
+
+.progression-shell .prog-background-compact-row__skills {
+  display: flex;
+  gap: 3px;
+  justify-content: flex-end;
+}
+
+.progression-shell .prog-background-more-chip,
+.progression-shell .prog-background-compact-row .prog-skill-token {
+  flex: 0 1 auto;
+  max-width: 112px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  line-height: 1.2;
+  padding: 2px 5px;
+}
+
+.progression-shell .prog-background-more-chip {
+  border: 1px solid var(--prog-border, rgba(116, 203, 255, 0.22));
+  border-radius: 999px;
+  color: var(--prog-text-dim, rgba(215, 235, 255, 0.75));
+}
+
+.progression-shell .prog-background-compact-row__state {
+  text-align: right;
+  color: var(--prog-text-dim, rgba(215, 235, 255, 0.7));
+}

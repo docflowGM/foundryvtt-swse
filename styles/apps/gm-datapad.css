@@ -8761,3 +8761,47 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-cont
     gap: 10px !important;
   }
 }
+
+/* --------------------------------------------------------------------------
+   P0 GM store viewport contract
+   The generic GM datapad surface host intentionally lets most GM pages scroll.
+   The store console is different: it has its own tab body, so the host must be
+   bounded or the console content-sizes below the datapad viewport.
+   -------------------------------------------------------------------------- */
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-store"] .swse-shell-surface-host,
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-store"] .swse-shell-surface {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+  padding-bottom: 0 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-store"] .gm-datapad-store,
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-store"] .gm-store-control-console {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: hidden !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-store"] .gm-store-header,
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-store"] .gm-store-tabs {
+  flex: 0 0 auto !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad[data-shell-surface="gm-store"] .gm-store-tab-content {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}

@@ -221,21 +221,22 @@ export class ReactionRegistry {
       key: 'primitiveBlock',
       label: 'Primitive Block',
       trigger: 'ON_ATTACK_DECLARED',
-      description: 'Negate an incoming melee attack by rolling Use the Force against the incoming attack roll.',
+      description: 'Negate an incoming melee attack by rolling Use the Force against the incoming attack roll. Requires Primitive Block and an Empowered Weapon drawn.',
 
       conditions: {
         validAttackTypes: ['melee'],
         validDamageTypes: null,
         requiresWeaponTag: null,
-        requiresTalents: null,
+        requiresTalents: ['Primitive Block'],
         requiresDefense: null,
         requiresNotFlatFooted: true
       },
 
       usage: {
-        perRound: true,
+        perRound: false,
         perEncounter: false,
-        maxPerRound: 1
+        maxPerRound: null,
+        cumulativePenalty: -5
       },
 
       cost: {

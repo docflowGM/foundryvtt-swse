@@ -43,6 +43,50 @@ export async function resolveForcePowerEntitlements(shell, actor) {
   let fallbackUsed = false;
   const isLevelUpLike = shell?.mode === 'levelup';
 
+
+  const getRegisteredSetting = (moduleId, key, fallback = null) => {
+    try { return globalThis.game?.settings?.get?.(moduleId, key) ?? fallback; } catch (_err) { return fallback; }
+  };
+
+  const getSetting = (key, fallback = null) => (
+    getRegisteredSetting(globalThis.game?.system?.id || 'foundryvtt-swse', key, null)
+    ?? getRegisteredSetting('foundryvtt-swse', key, null)
+    ?? getRegisteredSetting('swse', key, null)
+    ?? fallback
+  );
+
+  const getAbilityModifier = (abilityKey) => {
+    const key = String(abilityKey || '').toLowerCase();
+    const aliases = key === 'cha' || key === 'charisma' ? ['cha', 'charisma'] : ['wis', 'wisdom'];
+    const system = actor?.system || {};
+    const pendingState = shell?.buildIntent?.toCharacterData?.() || shell?.progressionSession?.toCharacterData?.() || {};
+    for (const alias of aliases) {
+      const pendingScore = pendingState?.attributes?.[alias]?.value ?? pendingState?.abilities?.[alias]?.value;
+      const pendingMod = pendingState?.attributes?.[alias]?.mod ?? pendingState?.attributes?.[alias]?.modifier ?? pendingState?.abilities?.[alias]?.mod ?? pendingState?.abilities?.[alias]?.modifier;
+      for (const value of [pendingMod, system.abilities?.[alias]?.mod, system.abilities?.[alias]?.modifier, system.attributes?.[alias]?.mod, system.attributes?.[alias]?.modifier, system.stats?.[alias]?.mod, system.stats?.[alias]?.modifier]) {
+        const number = Number(value);
+        if (Number.isFinite(number)) return number;
+      }
+      const score = Number(pendingScore ?? system.abilities?.[alias]?.value ?? system.attributes?.[alias]?.value ?? system.attributes?.[alias]?.total);
+      if (Number.isFinite(score)) return Math.floor((score - 10) / 2);
+    }
+    return 0;
+  };
+
+  const getForceTrainingFormulaLabel = (instances = 1) => {
+    const configured = String(getSetting('forceTrainingAttribute', 'wisdom') || 'wisdom').toLowerCase();
+    const abilityKey = configured === 'cha' || configured === 'charisma' ? 'cha' : 'wis';
+    const abilityLabel = abilityKey === 'cha' ? 'CHA' : 'WIS';
+    const modifier = getAbilityModifier(abilityKey);
+    const perInstance = Math.max(1, 1 + modifier);
+    const count = Math.max(1, Number(instances) || 1);
+    const total = count * perInstance;
+    const core = `Force Training: ${abilityLabel} ${modifier >= 0 ? '+' : ''}${modifier} + 1 = ${perInstance} Force Power${perInstance === 1 ? '' : 's'}`;
+    return count > 1
+      ? `${core} each × ${count} = ${total} Force Powers`
+      : core;
+  };
+
   const normalizeGrantName = (value) => String(value || '')
     .trim()
     .toLowerCase()
@@ -237,7 +281,14 @@ export async function resolveForcePowerEntitlements(shell, actor) {
         pendingFeat: pendingForceSensitivityFeat,
       };
       if (classGrantsForceSensitivity || ownedForceSensitivity || pendingForceSensitivityFeat) {
-        reasons.push('Force Sensitive access detected (no Force Power slot granted)');
+        const forceSensitivityGrantsPower = getSetting('forceSensitivityGrantsForcePower', false) === true;
+        if (forceSensitivityGrantsPower) {
+          totalEntitlements += 1;
+          reasons.push('Force Sensitive = 1 Force Power');
+          diagnostics.forceSensitivityAccess.grantsPower = true;
+        } else {
+          diagnostics.forceSensitivityAccess.grantsPower = false;
+        }
       }
     } catch (forceSensitivityErr) {
       swseLogger.error(`[ForceSuiteResolution.ForcePower] Force Sensitive access exception for ${actorName}`, {
@@ -287,7 +338,7 @@ export async function resolveForcePowerEntitlements(shell, actor) {
         const formulaSlots = pendingForceTrainingCount * slotsPerInstance;
         if (formulaSlots > finalForceTrainingSlots) {
           finalForceTrainingSlots = formulaSlots;
-          reasons.push(`Pending Force Training formula slots: ${finalForceTrainingSlots}`);
+          reasons.push(getForceTrainingFormulaLabel(pendingForceTrainingCount));
         }
       }
       if (pendingEntitlementSlots > finalForceTrainingSlots) {
@@ -297,7 +348,7 @@ export async function resolveForcePowerEntitlements(shell, actor) {
 
       if (finalForceTrainingSlots > 0) {
         totalEntitlements += finalForceTrainingSlots;
-        reasons.push(`Force Training entitlement slots: ${finalForceTrainingSlots}`);
+        if (!reasons.some(reason => String(reason).startsWith('Force Training:'))) reasons.push(getForceTrainingFormulaLabel(Math.max(1, pendingForceTrainingCount || forceTrainingEntitlements.length || 1)));
         diagnostics.forceTrainingEntitlements = {
           total: finalForceTrainingSlots,
           entries: forceTrainingEntitlements.length,
@@ -320,7 +371,7 @@ export async function resolveForcePowerEntitlements(shell, actor) {
 
         if (forceTrainingSlots > 0) {
           totalEntitlements = forceTrainingSlots;
-          reasons.push(`Force Training feats (actor fallback): ${totalEntitlements}`);
+          reasons.push(getForceTrainingFormulaLabel(1));
           fallbackUsed = true;
           diagnostics.fallbackUsed = true;
 

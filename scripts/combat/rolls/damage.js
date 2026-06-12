@@ -1,3 +1,98 @@
+
+function currentCombatEncounterId() {
+  return game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
+}
+
+function weaponMatchesId(weapon, id) {
+  if (!weapon || !id) return false;
+  return String(weapon.id ?? weapon._id ?? '') === String(id);
+}
+
+function rapidAlchemyState(actor) {
+  const state = actor?.getFlag?.('swse', 'rapidAlchemy') ?? null;
+  if (!state || state.encounterId !== currentCombatEncounterId()) return null;
+  return state;
+}
+
+function rapidAlchemyDamageBonus(actor, weapon) {
+  const state = rapidAlchemyState(actor);
+  if (!state?.sacrificePending) return 0;
+  return weaponMatchesId(weapon, state.weaponId) ? Number(state.damageBonus ?? 5) || 5 : 0;
+}
+
+async function clearRapidAlchemyDamageBonus(actor, weapon) {
+  const state = rapidAlchemyState(actor);
+  if (!state?.sacrificePending || !weaponMatchesId(weapon, state.weaponId)) return;
+  await actor?.setFlag?.('swse', 'rapidAlchemy', { ...state, sacrificePending: false, consumedAt: Date.now() });
+}
+
+function forceItemState(weapon) {
+  return weapon?.getFlag?.('swse', 'forceItem') ?? weapon?.flags?.swse?.forceItem ?? null;
+}
+
+function forceItemAttackBonus(actor, weapon) {
+  const state = forceItemState(weapon);
+  if (String(state?.attuned?.actorId ?? '') !== String(actor?.id ?? '')) return 0;
+  return Number(state.attuned.attackBonus ?? 1) || 1;
+}
+
+function firstWeaponDamageDieFormula(weapon) {
+  const formula = String(weapon?.system?.damage ?? weapon?.system?.damageFormula ?? '1d6');
+  const match = formula.match(/(\d*)d(\d+)/i);
+  if (!match) return '';
+  return `1d${match[2]}`;
+}
+
+function forceItemExtraDamageFormula(actor, weapon) {
+  const state = forceItemState(weapon);
+  if (String(state?.empowered?.actorId ?? '') !== String(actor?.id ?? '')) return '';
+  return firstWeaponDamageDieFormula(weapon);
+}
+
+
+function actorHasTalentNamed(actor, names = []) {
+  const wanted = new Set((Array.isArray(names) ? names : [names])
+    .map(name => String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ''))
+    .filter(Boolean));
+  if (!wanted.size) return false;
+  try {
+    return Array.from(actor?.items ?? []).some(item => {
+      if (item?.type !== 'talent') return false;
+      const key = String(item.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+      return wanted.has(key);
+    });
+  } catch (_err) {
+    return false;
+  }
+}
+
+function actorHasFeatNamed(actor, names = []) {
+  const wanted = new Set((Array.isArray(names) ? names : [names])
+    .map(name => String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ''))
+    .filter(Boolean));
+  if (!wanted.size) return false;
+  try {
+    return Array.from(actor?.items ?? []).some(item => {
+      if (item?.type !== 'feat') return false;
+      const key = String(item.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
+      return wanted.has(key);
+    });
+  } catch (_err) {
+    return false;
+  }
+}
+
+function targetActorFromDamageContext(context = {}) {
+  return context?.target ?? context?.targetActor ?? game?.user?.targets?.first?.()?.actor ?? null;
+}
+
+function inquisitionExtraDamageFormula(actor, weapon, context = {}) {
+  if (!actorHasTalentNamed(actor, 'Inquisition')) return '';
+  const target = targetActorFromDamageContext(context);
+  if (!target || !actorHasFeatNamed(target, 'Force Sensitivity')) return '';
+  return firstWeaponDamageDieFormula(weapon);
+}
+
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
@@ -282,7 +377,7 @@ export async function rollDamage(actor, weapon, context = {}) {
   const dmgBonus = computeDamageBonus(actor, weapon, {
     ...rollContext,
     forceTwoHanded: rollContext.twoHanded || false
-  });
+  }) + rapidAlchemyDamageBonus(actor, weapon);
 
   // Calculate talent-based damage bonuses
   const talentContext = { ...rollContext, weapon };
@@ -295,6 +390,16 @@ export async function rollDamage(actor, weapon, context = {}) {
   }
   if (talentBonus.formula) {
     formulaParts.push(talentBonus.formula);
+  }
+
+  const forceItemDamageFormula = forceItemExtraDamageFormula(actor, weapon);
+  if (forceItemDamageFormula) {
+    formulaParts.push(forceItemDamageFormula);
+  }
+
+  const inquisitionDamageFormula = inquisitionExtraDamageFormula(actor, weapon, rollContext);
+  if (inquisitionDamageFormula) {
+    formulaParts.push(inquisitionDamageFormula);
   }
 
   // Add Force Point bonus if present
@@ -372,6 +477,8 @@ export async function rollDamage(actor, weapon, context = {}) {
       }
     });
   }
+
+  await clearRapidAlchemyDamageBonus(actor, weapon);
 
   return roll;
 }

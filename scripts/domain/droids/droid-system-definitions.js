@@ -1,4 +1,4 @@
-import { DROID_PART_DEFINITION_MAP } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-part-schema.js";
+import { DROID_PART_DEFINITION_MAP, resolveDroidSystemIdentity } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-part-schema.js";
 
 /**
  * DROID SYSTEM DEFINITIONS — Canonical Registry
@@ -178,7 +178,11 @@ export function getDroidSystemDefinition(systemId) {
   if (!systemId) return null;
   const key = String(systemId).trim();
   const slug = key.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
-  return DROID_SYSTEM_DEFINITIONS[key] || DROID_SYSTEM_DEFINITIONS[slug] || Object.values(DROID_SYSTEM_DEFINITIONS).find(def => String(def.name ?? '').toLowerCase() === key.toLowerCase()) || null;
+  return DROID_SYSTEM_DEFINITIONS[key]
+    || DROID_SYSTEM_DEFINITIONS[slug]
+    || resolveDroidSystemIdentity(systemId)
+    || Object.values(DROID_SYSTEM_DEFINITIONS).find(def => String(def.name ?? '').toLowerCase() === key.toLowerCase())
+    || null;
 }
 
 /**

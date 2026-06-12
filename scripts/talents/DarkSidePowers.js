@@ -14,6 +14,7 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { createChatMessage, createEffectOnActor, createItemInActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { getClassLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
 
 export class DarkSidePowers {
 
@@ -1139,14 +1140,11 @@ export class DarkSidePowers {
     }
 
     const targetActor = targetToken.actor;
-    const currentCondition = targetActor.system.conditionTrack?.current || 0;
-    const newCondition = Math.max(0, currentCondition - 2);
 
     // PHASE 1: BUILD PLAN
     const plan = await TalentEffectEngine.buildWickedStrikePlan({
       sourceActor: actor,
       targetActor: targetActor,
-      damageAmount: 0, // No HP damage, only condition track change
       spendFP: spendFP
     });
 
@@ -1155,15 +1153,8 @@ export class DarkSidePowers {
       return { success: false, message: plan.reason };
     }
 
-    // Add condition track update to plan mutations
-    plan.mutations.push({
-      actor: targetActor,
-      actorId: targetActor.id,
-      type: "update",
-      data: {
-        "system.conditionTrack.current": newCondition
-      }
-    });
+    const currentCondition = plan.previousCondition;
+    const newCondition = plan.newCondition;
 
     // PHASE 2: APPLY MUTATIONS
     const result = await ActorEngine.applyTalentEffect(plan);

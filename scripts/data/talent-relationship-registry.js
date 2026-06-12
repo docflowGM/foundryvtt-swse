@@ -8,6 +8,9 @@
 //
 // ============================================
 
+import { toStableKey } from "/systems/foundryvtt-swse/scripts/utils/stable-key.js";
+import { normalizeTalentTreeId } from "/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js";
+
 export const TalentRelationshipRegistry = {
 
     talentToTree: new Map(),
@@ -19,16 +22,20 @@ export const TalentRelationshipRegistry = {
         this.treeToTalents.clear();
 
         for (const tree of TalentTreeDB.trees.values()) {
-            const talentIds = tree.talentIds || [];
+            const talentIds = [...(tree.talentIds || []), ...(tree.talentNames || [])];
 
             for (const talentId of talentIds) {
-                this.talentToTree.set(talentId, tree.id);
+                const raw = String(talentId || '').trim();
+                if (!raw) continue;
+                for (const key of [raw, toStableKey(raw), normalizeTalentTreeId(raw)].filter(Boolean)) {
+                    this.talentToTree.set(key, tree.id);
+                }
 
                 if (!this.treeToTalents.has(tree.id)) {
                     this.treeToTalents.set(tree.id, []);
                 }
 
-                this.treeToTalents.get(tree.id).push(talentId);
+                this.treeToTalents.get(tree.id).push(raw);
             }
         }
 
@@ -36,7 +43,12 @@ export const TalentRelationshipRegistry = {
     },
 
     getTreeForTalent(talentId) {
-        return this.talentToTree.get(talentId) || null;
+        const raw = String(talentId || '').trim();
+        if (!raw) return null;
+        return this.talentToTree.get(raw)
+            || this.talentToTree.get(toStableKey(raw))
+            || this.talentToTree.get(normalizeTalentTreeId(raw))
+            || null;
     },
 
     getTalentsForTree(treeId) {
@@ -48,7 +60,7 @@ export const TalentRelationshipRegistry = {
 
         for (const talent of TalentDB.talents) {
             const id = talent.id;
-            if (!this.talentToTree.has(id)) {
+            if (!this.getTreeForTalent(id) && !this.getTreeForTalent(talent.name)) {
                 orphaned.push(talent.name);
             }
         }

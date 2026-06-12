@@ -40,6 +40,7 @@ import { FeatGrantEntitlementResolver } from '/systems/foundryvtt-swse/scripts/e
 import { buildLevelUpEntitlementManifest, getManifestStartingFeatNameSet, normalizeManifestName } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-entitlement-manifest.js';
 import { isDroidProgressionActor } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js';
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
+import { ForceRules } from '/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js';
 
 function resolveClassLookupKeysForFeatStep(shell) {
   try {
@@ -1021,11 +1022,8 @@ export class FeatStep extends ProgressionStepPlugin {
       };
     }
 
-    const suggestedIds = new Set(this._suggestedFeats.map(s => String(s?._id || s?.id || s?.name)));
     const categoryMap = {};
     for (const feat of featsForDisplay || []) {
-      const featId = String(feat?._id || feat?.id || feat?.name);
-      if (!this._showAll && suggestedIds.has(featId)) continue;
       const category = this._getFeatCategory(feat);
       if (!categoryMap[category]) categoryMap[category] = [];
       categoryMap[category].push(feat);
@@ -1185,7 +1183,17 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   _getFeatDescription(feat) {
-    return extractDescriptionText(feat);
+    const description = extractDescriptionText(feat);
+    const name = String(feat?.name || '').trim().toLowerCase();
+    if (name !== 'force training') return description;
+
+    const attr = String(ForceRules.getForceTrainingAttribute?.() || ForceRules.getTrainingAttribute?.() || 'wisdom').toLowerCase();
+    const label = attr === 'charisma' ? 'Charisma' : 'Wisdom';
+    const other = attr === 'charisma' ? 'Wisdom' : 'Charisma';
+    return String(description || '')
+      .replace(new RegExp(`\\b${other}\\b`, 'g'), label)
+      .replace(/\bWIS(?:DOM)?\b/g, label)
+      .replace(/\bCHA(?:RISMA)?\b/g, label);
   }
 
   _formatChoicePrerequisiteText(feat, text = '') {
@@ -1693,7 +1701,12 @@ export class FeatStep extends ProgressionStepPlugin {
     const otherSlotSelections = currentSelections.filter(entry => !this._isFeatSelectionForThisSlot(entry));
     const currentSlotSelections = currentSelections.filter(entry => this._isFeatSelectionForThisSlot(entry));
     const requiredCount = Math.max(0, Number(this._getRequiredFeatCount(shell) || 0));
-    const isTogglingOff = currentSlotSelections.some(entry => String(entry?.id || entry?._id || entry?.name || '') === String(featId));
+    const isRepeatableFeat = this._isRepeatable(feat?.name);
+    const matchingCurrentSelections = currentSlotSelections.filter(entry => String(entry?.id || entry?._id || entry?.name || '') === String(featId));
+    const hasRemainingMultiSlot = requiredCount > 1 && currentSlotSelections.length < requiredCount;
+    // Repeatable feats such as Force Training can fill multiple picks in the same
+    // multi-feat budget. Only toggle them off when there is no remaining slot to add.
+    const isTogglingOff = matchingCurrentSelections.length > 0 && !(isRepeatableFeat && hasRemainingMultiSlot);
     let nextSelection = isTogglingOff ? null : this._buildCanonicalFeatSelection(feat, shell);
     if (nextSelection) {
       const choiceMeta = FeatChoiceResolver.getChoiceMeta(feat);
