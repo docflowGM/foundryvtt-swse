@@ -134,7 +134,15 @@ export class LevelupShell extends ProgressionShell {
       // picker so it cannot mutate level, class, HP, or any unrelated level-up data.
       const requestedStep = this.options?.targetStep || this.options?.currentStep || this.options?.stepId || null;
       const injectableSteps = new Set([
+        'attribute',
+        'background',
+        'skills',
+        'languages',
         'force-powers',
+        'force-regimens',
+        'force-secrets',
+        'force-techniques',
+        'medical-secrets',
         'starship-maneuvers',
         'general-feat',
         'class-feat',

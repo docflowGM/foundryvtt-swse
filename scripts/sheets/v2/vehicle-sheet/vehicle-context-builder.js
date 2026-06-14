@@ -657,7 +657,7 @@ export function buildVehicleCrewAssignmentPanel(actor) {
       occupantName: occupant?.name ?? 'Unassigned',
       occupantId: occupant?.id ?? null,
       occupantUuid: occupant?.uuid ?? null,
-      notes: occupant ? null : 'Fallback crew quality applies until a crew actor is assigned.',
+      notes: occupant ? 'Assigned crew actor controls this station.' : 'Fallback crew quality applies until a crew actor is assigned.',
       actions
     };
   });

@@ -247,6 +247,9 @@ export class ProgressionShell extends SWSEApplicationV2 {
     this.mode = mode;
     this._targetStepId = options.currentStep || null;  // Store target step to navigate after init
     this._minStepIndex = null;  // Prevent back-navigation past this index (set when targeting step)
+    this._singleStepMode = options?.singleStep === true;
+    this._singleStepDomain = options?.singleStepDomain || null;
+    this._singleStepJob = options?.singleStepJob || null;
 
     // ═══ PHASE 1: CANONICAL PROGRESSION SESSION ═══
     // Determine subtype based on mode and options (can be overridden by subclasses)
@@ -2999,12 +3002,19 @@ export class ProgressionShell extends SWSEApplicationV2 {
         sessionId: this.element?.dataset.sessionId || 'unknown',
       };
 
-      // Hand to finalizer (not direct actor.update())
-      const result = await ProgressionFinalizer.finalize(sessionState, this.actor);
+      // Hand to finalizer (not direct actor.update()). Single-step mode uses the same
+      // finalizer seam, scoped to the current vertebra instead of the whole spine.
+      const result = this._singleStepMode === true
+        ? await ProgressionFinalizer.finalizeSingleStep(sessionState, this.actor, {
+            domain: this._singleStepDomain || ProgressionFinalizer.singleStepDomainForStep?.(currentDescriptor?.stepId),
+            stepId: currentDescriptor?.stepId || null,
+            job: this._singleStepJob || null,
+          })
+        : await ProgressionFinalizer.finalize(sessionState, this.actor);
 
       if (result.success) {
         swseLogger.log('[ProgressionShell] Finalization successful');
-        ui.notifications.info('Character progression complete!');
+        ui.notifications.info(result.message || (this._singleStepMode === true ? 'Progression choice resolved.' : 'Character progression complete!'));
 
         // Phase 3: Clear checkpoints after successful finalization
         await this.clearCheckpoints();
@@ -3013,7 +3023,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
         // character sheet surface. This makes Confirm feel like a completed
         // handoff instead of leaving the player in a dead progression screen.
         if (this._embeddedInHolopad && this._inlineSurfaceAdapter?.completeAndReturnToSheet) {
-          await this._inlineSurfaceAdapter.completeAndReturnToSheet();
+          await this._inlineSurfaceAdapter.completeAndReturnToSheet({ sheetAnchor: result.sheetAnchor || null });
           return;
         }
 

@@ -218,6 +218,273 @@ export class ProgressionFinalizer {
   }
 
   /**
+   * Finalize one scoped progression vertebra without validating or committing the
+   * entire level-up/chargen spine. This is the shared single-step seam used by
+   * sheet buttons, Holonet task actions, and standalone maintenance launches.
+   *
+   * @param {Object} sessionState
+   * @param {Actor} actor
+   * @param {Object} options
+   * @returns {Promise<{success:boolean,result?:object,error?:string,message?:string,sheetAnchor?:string}>}
+   */
+  static async finalizeSingleStep(sessionState, actor, options = {}) {
+    try {
+      if (!actor) throw new Error('No actor provided for single-step progression.');
+      if (!sessionState?.progressionSession) throw new Error('Single-step finalization requires canonical progressionSession.');
+
+      const stepId = options.stepId || sessionState.steps?.[0]?.stepId || sessionState.progressionSession?.currentStepId || null;
+      const domain = options.domain || this.singleStepDomainForStep(stepId);
+      if (!domain) throw new Error(`Unsupported single-step progression job: ${stepId || options.job || '(unknown)'}`);
+
+      const mutationPlan = await this._compileSingleStepMutationPlan(sessionState, actor, { ...options, domain, stepId });
+      const itemDomains = new Set(['feats', 'talents', 'forcePowers', 'forceRegimens', 'forceTechniques', 'forceSecrets', 'medicalSecrets', 'starshipManeuvers']);
+      if (itemDomains.has(domain)) {
+        const itemCount = Number(mutationPlan?.add?.items?.length || 0);
+        const deleteCount = Number(mutationPlan?.delete?.items?.length || 0);
+        if (itemCount <= 0 && deleteCount <= 0) throw new Error('Choose a new progression item before confirming.');
+      }
+      const validation = this._validateMutationPlan(mutationPlan, actor);
+      if (!validation.isValid) {
+        throw new Error(`Mutation plan invalid: ${validation.errors.join('; ')}`);
+      }
+
+      const result = await this._applyMutationPlan(actor, mutationPlan);
+      if (!result.success) return result;
+
+      return {
+        success: true,
+        result: { actorId: actor.id, domain, stepId },
+        message: this._singleStepSuccessMessage(domain, mutationPlan),
+        sheetAnchor: this.singleStepSheetAnchorForDomain(domain),
+      };
+    } catch (error) {
+      swseLogger.error('[ProgressionFinalizer] Single-step finalization failed', error);
+      return { success: false, error: error.message || 'Single-step finalization failed' };
+    }
+  }
+
+  static singleStepDomainForStep(stepId) {
+    const key = String(stepId || '').trim();
+    if (!key) return null;
+    if (/feat/i.test(key)) return 'feats';
+    if (/talent/i.test(key)) return 'talents';
+    if (key === 'attribute' || key === 'attributes') return 'attributes';
+    if (key === 'background') return 'background';
+    if (key === 'skills') return 'skills';
+    if (key === 'languages') return 'languages';
+    if (key === 'force-powers') return 'forcePowers';
+    if (key === 'force-regimens') return 'forceRegimens';
+    if (key === 'force-techniques') return 'forceTechniques';
+    if (key === 'force-secrets') return 'forceSecrets';
+    if (key === 'medical-secrets') return 'medicalSecrets';
+    if (key === 'starship-maneuvers' || key === 'starship-maneuver') return 'starshipManeuvers';
+    return null;
+  }
+
+  static singleStepSheetAnchorForDomain(domain) {
+    const map = {
+      attributes: 'ability-increases',
+      feats: 'feat-ledger',
+      talents: 'talent-ledger',
+      forcePowers: 'force-powers',
+      forceRegimens: 'force-regimens',
+      forceTechniques: 'force-powers',
+      forceSecrets: 'force-powers',
+      medicalSecrets: 'talent-ledger',
+      starshipManeuvers: 'starship-maneuvers',
+      background: 'identity',
+      skills: 'skills',
+      languages: 'languages',
+    };
+    return map[domain] || null;
+  }
+
+  static _singleStepSuccessMessage(domain, mutationPlan = {}) {
+    const itemCount = Number(mutationPlan?.add?.items?.length || 0);
+    const labels = {
+      attributes: 'Ability score increase recorded.',
+      feats: itemCount ? `Added ${itemCount} feat${itemCount === 1 ? '' : 's'}.` : 'Feat selection recorded.',
+      talents: itemCount ? `Added ${itemCount} talent${itemCount === 1 ? '' : 's'}.` : 'Talent selection recorded.',
+      forcePowers: itemCount ? `Updated force powers.` : 'Force power selection recorded.',
+      forceRegimens: itemCount ? `Updated force regimens.` : 'Force regimen selection recorded.',
+      forceTechniques: itemCount ? `Updated Force techniques.` : 'Force technique selection recorded.',
+      forceSecrets: itemCount ? `Updated Force secrets.` : 'Force secret selection recorded.',
+      medicalSecrets: itemCount ? `Updated medical secrets.` : 'Medical secret selection recorded.',
+      starshipManeuvers: itemCount ? `Updated starship maneuvers.` : 'Starship maneuver selection recorded.',
+      background: 'Background selection recorded.',
+      skills: 'Skill selections recorded.',
+      languages: 'Language selections recorded.',
+    };
+    return labels[domain] || 'Progression choice resolved.';
+  }
+
+  static async _compileSingleStepMutationPlan(sessionState, actor, options = {}) {
+    const domain = options.domain;
+    const selections = sessionState.progressionSession?.draftSelections || {};
+    await ProgressionContentAuthority.initialize?.();
+
+    const set = {};
+    const add = { items: [] };
+    const update = { items: [] };
+    const deletePlan = {};
+    let postApply = {};
+
+    const abilityDomains = new Set(['feats', 'talents', 'forcePowers', 'forceRegimens', 'forceTechniques', 'forceSecrets', 'medicalSecrets', 'starshipManeuvers']);
+    if (abilityDomains.has(domain)) {
+      const scopedSelections = {
+        feats: domain === 'feats' ? (Array.isArray(selections.feats) ? selections.feats : []) : [],
+        talents: domain === 'talents' ? (Array.isArray(selections.talents) ? selections.talents : []) : [],
+        forcePowers: domain === 'forcePowers' ? (Array.isArray(selections.forcePowers) ? selections.forcePowers : []) : [],
+        forceRegimens: domain === 'forceRegimens' ? (Array.isArray(selections.forceRegimens) ? selections.forceRegimens : []) : [],
+        forceTechniques: domain === 'forceTechniques' ? (Array.isArray(selections.forceTechniques) ? selections.forceTechniques : []) : [],
+        forceSecrets: domain === 'forceSecrets' ? (Array.isArray(selections.forceSecrets) ? selections.forceSecrets : []) : [],
+        medicalSecrets: domain === 'medicalSecrets' ? (Array.isArray(selections.medicalSecrets) ? selections.medicalSecrets : []) : [],
+        starshipManeuvers: domain === 'starshipManeuvers' ? (Array.isArray(selections.starshipManeuvers) ? selections.starshipManeuvers : []) : [],
+      };
+      const compiled = await this._compileProgressionAbilityItems(actor, scopedSelections, {
+        ...sessionState,
+        mode: 'levelup',
+        sessionId: sessionState.sessionId || `single-step-${domain}-${Date.now()}`,
+      });
+      add.items.push(...filterDroidForbiddenItemSpecs(compiled.items || [], actor, {
+        subtype: sessionState.progressionSession?.subtype,
+        droidContext: sessionState.progressionSession?.droidContext,
+      }));
+      if (Array.isArray(compiled.deleteItems) && compiled.deleteItems.length) deletePlan.items = compiled.deleteItems;
+      postApply = compiled.postApply || {};
+    } else if (domain === 'attributes') {
+      Object.assign(set, this._compileSingleStepAttributeSet(actor, selections.attributes || {}, options));
+    } else if (domain === 'skills') {
+      Object.assign(set, this._compileSingleStepSkillSet(selections.skills || []));
+    } else if (domain === 'languages') {
+      Object.assign(set, this._compileSingleStepLanguageSet(actor, selections.languages || []));
+    } else if (domain === 'background') {
+      Object.assign(set, await this._compileSingleStepBackgroundSet(actor, selections));
+    } else {
+      throw new Error(`Unsupported single-step progression domain: ${domain}`);
+    }
+
+    return {
+      create: {},
+      set,
+      update,
+      add,
+      delete: deletePlan,
+      metadata: {
+        mode: 'single-step',
+        domain,
+        stepId: options.stepId || null,
+        job: options.job || null,
+        timestamp: new Date().toISOString(),
+        actorId: actor.id,
+        sourceSession: sessionState.sessionId || 'single-step',
+        postApply,
+      },
+    };
+  }
+
+  static _compileSingleStepAttributeSet(actor, attr = {}, _options = {}) {
+    const set = {};
+    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+    const isIncreaseMode = attr?.mode === 'levelup-ability-increase' || !!attr?.increases;
+
+    if (!isIncreaseMode) {
+      const values = attr?.finalValues || attr?.values || attr || {};
+      let wrote = 0;
+      for (const key of abilityKeys) {
+        const value = Number(values?.[key]?.base ?? values?.[key]?.score ?? values?.[key]?.value ?? values?.[key]);
+        if (!Number.isFinite(value) || value <= 0) continue;
+        set[`system.attributes.${key}.base`] = Math.floor(value);
+        wrote += 1;
+      }
+      if (!wrote) throw new Error('Choose ability scores before confirming.');
+      return set;
+    }
+
+    const increases = attr?.increases || {};
+    const normalized = {};
+    for (const key of abilityKeys) {
+      const delta = Math.max(0, Math.min(1, Number(increases?.[key] || 0) || 0));
+      if (delta <= 0) continue;
+      const currentBase = Number(actor?.system?.attributes?.[key]?.base ?? actor?.system?.abilities?.[key]?.base ?? actor?.system?.abilities?.[key]?.value ?? 10) || 10;
+      set[`system.attributes.${key}.base`] = currentBase + delta;
+      normalized[key] = delta;
+    }
+    if (!Object.keys(normalized).length) throw new Error('Choose at least one ability score increase before confirming.');
+
+    const level = Number(attr?.abilityIncreaseLevel || attr?.characterLevel || attr?.level || actor?.system?.level || actor?.system?.details?.level || 0) || null;
+    const record = {
+      level,
+      characterLevel: level,
+      increases: normalized,
+      timestamp: new Date().toISOString(),
+      source: 'single-step-progression',
+    };
+    const history = Array.isArray(actor?.system?.progression?.abilityIncreaseHistory)
+      ? actor.system.progression.abilityIncreaseHistory
+      : [];
+    const filtered = level
+      ? history.filter(entry => Number(entry?.level ?? entry?.characterLevel ?? 0) !== level)
+      : history;
+    set['system.progression.lastAbilityIncrease'] = record;
+    set['system.progression.abilityIncreaseHistory'] = [...filtered, record]
+      .sort((a, b) => Number(a?.level ?? a?.characterLevel ?? 0) - Number(b?.level ?? b?.characterLevel ?? 0));
+    return set;
+  }
+
+  static _compileSingleStepSkillSet(skills = []) {
+    const set = {};
+    const skillEntries = this._normalizeSkillSelectionEntries(skills);
+    if (!skillEntries.length) throw new Error('Choose at least one skill before confirming.');
+    for (const s of skillEntries) {
+      const key = this._canonicalSkillKey(s?.key || s?.id || s?.skill);
+      if (!key) continue;
+      set[`system.skills.${key}.trained`] = s.trained !== undefined ? !!s.trained : true;
+      if (s.miscMod !== undefined) set[`system.skills.${key}.miscMod`] = s.miscMod || 0;
+      if (s.focused !== undefined) set[`system.skills.${key}.focused`] = !!s.focused;
+      if (s.selectedAbility !== undefined) set[`system.skills.${key}.selectedAbility`] = s.selectedAbility || '';
+    }
+    return set;
+  }
+
+  static _compileSingleStepLanguageSet(actor, languages = []) {
+    const entries = Array.isArray(languages) ? languages : [];
+    if (!entries.length) throw new Error('Choose at least one language before confirming.');
+    const languageNames = entries.map(l => typeof l === 'string' ? l : l?.name || l?.label || l?.language || l?.value || l?.id || l?._id || l?.internalId || l?.slug).filter(Boolean);
+    const languageIds = entries.map(l => typeof l === 'string' ? l : l?.internalId || l?._id || l?.id || l?.slug || l?.name).filter(Boolean);
+    const existingLanguageNames = this._extractActorLanguageNames(actor);
+    const existingLanguageIds = this._extractActorLanguageIds(actor);
+    return {
+      'system.languages': Array.from(new Set([...existingLanguageNames, ...languageNames])),
+      'system.languageIds': Array.from(new Set([...existingLanguageIds, ...languageIds])),
+    };
+  }
+
+  static async _compileSingleStepBackgroundSet(_actor, selections = {}) {
+    const background = selections.background || null;
+    const pendingBackgroundContext = selections.pendingBackgroundContext || background?.pendingContext || null;
+    const set = {};
+    if (pendingBackgroundContext) {
+      const materialization = await applyCanonicalBackgroundsToActor(_actor, pendingBackgroundContext);
+      if (!materialization.success) throw new Error(materialization.error || 'Background materialization failed.');
+      for (const [key, value] of Object.entries(materialization.mutations || {})) {
+        if (key.startsWith('system.') || key.startsWith('flags.')) set[key] = value;
+      }
+      return set;
+    }
+    if (!background) throw new Error('Choose a background before confirming.');
+    if (typeof background === 'string') {
+      set['system.background'] = background;
+      return set;
+    }
+    set['system.background'] = background.name || background.label || background.id || '';
+    if (background.category === 'occupation' && background.name) set['system.profession'] = background.name;
+    if (background.category === 'planet' && background.name) set['system.planetOfOrigin'] = background.name;
+    if (background.category === 'event' && background.name) set['system.event'] = background.name;
+    return set;
+  }
+
+  /**
    * Validate a compiled mutation plan.
    * Checks for:
    * - required fields present
@@ -753,11 +1020,25 @@ export class ProgressionFinalizer {
         // Write to canonical system.attributes; system.abilities is a read-only compatibility mirror
         set[`system.attributes.${key}.base`] = nextBase;
       }
-      set['system.progression.lastAbilityIncrease'] = {
+      const abilityIncreaseRecord = {
         level: levelUpManifest?.characterLevel || null,
+        characterLevel: levelUpManifest?.characterLevel || null,
         increases,
         timestamp: new Date().toISOString(),
+        source: 'progression-finalizer',
       };
+      const existingAbilityIncreaseHistory = Array.isArray(actor?.system?.progression?.abilityIncreaseHistory)
+        ? actor.system.progression.abilityIncreaseHistory
+        : [];
+      const filteredAbilityIncreaseHistory = existingAbilityIncreaseHistory.filter((entry) => {
+        const entryLevel = Number(entry?.level ?? entry?.characterLevel ?? 0) || 0;
+        return entryLevel !== Number(abilityIncreaseRecord.level || 0);
+      });
+      set['system.progression.lastAbilityIncrease'] = abilityIncreaseRecord;
+      set['system.progression.abilityIncreaseHistory'] = [
+        ...filteredAbilityIncreaseHistory,
+        abilityIncreaseRecord,
+      ].sort((a, b) => Number(a?.level ?? a?.characterLevel ?? 0) - Number(b?.level ?? b?.characterLevel ?? 0));
     } else {
       const finalAttrValues = this._normalizeFinalAttributeValues(attr, attrValues, pendingSpeciesContext, actor);
       for (const [k, v] of Object.entries(attrValues || {})) {

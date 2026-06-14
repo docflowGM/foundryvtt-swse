@@ -65,6 +65,75 @@ function slugify(value) {
   return base || randomId();
 }
 
+function normalizeTags(value) {
+  if (Array.isArray(value)) return value.map(entry => cleanText(entry)).filter(Boolean);
+  return cleanText(value).split(',').map(entry => cleanText(entry)).filter(Boolean);
+}
+
+function normalizeJobDefaults(record = {}, fallback = {}) {
+  const source = record.jobDefaults && typeof record.jobDefaults === 'object'
+    ? { ...record.jobDefaults, ...record }
+    : record;
+  const successDelta = normalizeScore(source.defaultSuccessDelta ?? source.successDelta ?? fallback.defaultSuccessDelta ?? fallback.successDelta ?? 1);
+  const failureDelta = normalizeScore(source.defaultFailureDelta ?? source.failureDelta ?? fallback.defaultFailureDelta ?? fallback.failureDelta ?? -1);
+  return {
+    tone: cleanText(source.defaultJobTone || source.tone || fallback.defaultJobTone || fallback.tone || ''),
+    rewardStyle: cleanText(source.defaultRewardStyle || source.rewardStyle || fallback.defaultRewardStyle || fallback.rewardStyle || ''),
+    objective: cleanText(source.defaultObjective || source.objective || fallback.defaultObjective || fallback.objective || ''),
+    briefing: cleanText(source.defaultBriefing || source.briefing || fallback.defaultBriefing || fallback.briefing || ''),
+    instructions: cleanText(source.defaultInstructions || source.instructions || fallback.defaultInstructions || fallback.instructions || ''),
+    credits: Math.max(0, normalizeScore(source.defaultCredits ?? source.credits ?? fallback.defaultCredits ?? fallback.credits ?? 0)),
+    xp: Math.max(0, normalizeScore(source.defaultXp ?? source.xp ?? fallback.defaultXp ?? fallback.xp ?? 0)),
+    successDelta,
+    failureDelta,
+    visibility: cleanText(source.defaultVisibility || source.visibility || fallback.defaultVisibility || fallback.visibility || 'posted'),
+    legality: cleanText(source.defaultLegality || source.legality || fallback.defaultLegality || fallback.legality || ''),
+    payStyle: cleanText(source.defaultPayStyle || source.payStyle || fallback.defaultPayStyle || fallback.payStyle || ''),
+    rivalFactionName: cleanText(source.defaultRivalFactionName || source.rivalFactionName || source.rivalFaction || fallback.defaultRivalFactionName || fallback.rivalFactionName || fallback.rivalFaction || ''),
+    rivalSuccessDelta: normalizeScore(source.defaultRivalSuccessDelta ?? source.rivalSuccessDelta ?? fallback.defaultRivalSuccessDelta ?? fallback.rivalSuccessDelta ?? -1),
+    rivalFailureDelta: normalizeScore(source.defaultRivalFailureDelta ?? source.rivalFailureDelta ?? fallback.defaultRivalFailureDelta ?? fallback.rivalFailureDelta ?? 1),
+    consequenceNotes: cleanText(source.defaultConsequenceNotes || source.consequenceNotes || fallback.defaultConsequenceNotes || fallback.consequenceNotes || '')
+  };
+}
+
+function normalizeContact(record = {}) {
+  const name = cleanText(record.name || record.contactName || 'Unnamed Contact');
+  const role = cleanText(record.role || record.contactRole || record.title || 'Faction Contact');
+  return {
+    id: cleanText(record.id || record.contactId) || slugify(`${name}-${role}`),
+    name,
+    role,
+    title: cleanText(record.title || ''),
+    description: cleanText(record.description || record.notes || ''),
+    image: cleanText(record.image || record.img || record.imageUrl || ''),
+    actorId: cleanText(record.actorId || record.promotedActorId || ''),
+    actorUuid: cleanText(record.actorUuid || record.promotedActorUuid || ''),
+    actorName: cleanText(record.actorName || record.promotedActorName || ''),
+    promotedAt: cleanText(record.promotedAt || ''),
+    tags: normalizeTags(record.tags),
+    defaultJobTone: cleanText(record.defaultJobTone || record.jobDefaults?.tone || ''),
+    defaultRewardStyle: cleanText(record.defaultRewardStyle || record.jobDefaults?.rewardStyle || ''),
+    defaultObjective: cleanText(record.defaultObjective || record.jobDefaults?.objective || ''),
+    defaultBriefing: cleanText(record.defaultBriefing || record.jobDefaults?.briefing || ''),
+    defaultInstructions: cleanText(record.defaultInstructions || record.jobDefaults?.instructions || ''),
+    defaultCredits: Math.max(0, normalizeScore(record.defaultCredits ?? record.jobDefaults?.credits ?? 0)),
+    defaultXp: Math.max(0, normalizeScore(record.defaultXp ?? record.jobDefaults?.xp ?? 0)),
+    defaultSuccessDelta: normalizeScore(record.defaultSuccessDelta ?? record.jobDefaults?.successDelta ?? 1),
+    defaultFailureDelta: normalizeScore(record.defaultFailureDelta ?? record.jobDefaults?.failureDelta ?? -1),
+    defaultVisibility: cleanText(record.defaultVisibility || record.jobDefaults?.visibility || 'posted'),
+    defaultLegality: cleanText(record.defaultLegality || record.jobDefaults?.legality || ''),
+    defaultPayStyle: cleanText(record.defaultPayStyle || record.jobDefaults?.payStyle || ''),
+    defaultRivalFactionName: cleanText(record.defaultRivalFactionName || record.jobDefaults?.rivalFactionName || record.rivalFactionName || ''),
+    defaultRivalSuccessDelta: normalizeScore(record.defaultRivalSuccessDelta ?? record.jobDefaults?.rivalSuccessDelta ?? -1),
+    defaultRivalFailureDelta: normalizeScore(record.defaultRivalFailureDelta ?? record.jobDefaults?.rivalFailureDelta ?? 1),
+    defaultConsequenceNotes: cleanText(record.defaultConsequenceNotes || record.jobDefaults?.consequenceNotes || ''),
+    jobDefaults: normalizeJobDefaults(record),
+    active: record.active === false ? false : true,
+    createdAt: cleanText(record.createdAt || nowIso()),
+    updatedAt: cleanText(record.updatedAt || record.createdAt || nowIso())
+  };
+}
+
 function labelFor(list, value) {
   return list.find(entry => entry.value === value)?.label ?? value;
 }
@@ -89,6 +158,24 @@ async function setSetting(value = []) {
 
 function actorLabel(actor) {
   return actor?.name || 'Unknown Actor';
+}
+
+function actorUuid(actor) {
+  if (!actor) return '';
+  try { return actor.uuid || `Actor.${actor.id}`; } catch (_err) { return actor.id ? `Actor.${actor.id}` : ''; }
+}
+
+async function resolveActorReference({ uuid = '', actorId = '' } = {}) {
+  const byUuid = cleanText(uuid);
+  if (byUuid && typeof fromUuid === 'function') {
+    try {
+      const resolved = await fromUuid(byUuid);
+      if (resolved?.documentName === 'Actor' || resolved?.constructor?.documentName === 'Actor') return resolved;
+      if (resolved?.actor) return resolved.actor;
+    } catch (_err) {}
+  }
+  const id = cleanText(actorId);
+  return id ? game.actors?.get?.(id) || null : null;
 }
 
 function parsePlanetSystem(value = '') {
@@ -201,6 +288,117 @@ export class FactionRegistryService {
     const next = this.getRegistry().filter(record => record.id !== id);
     await this.saveRegistry(next);
     return true;
+  }
+
+  static getFactionContacts(factionId = '') {
+    const faction = this.findFaction(factionId);
+    return faction ? safeArray(faction.contacts).map(contact => normalizeContact(contact)) : [];
+  }
+
+  static getAllFactionContacts() {
+    return this.getRegistry().flatMap(faction => safeArray(faction.contacts).map(contact => ({
+      ...normalizeContact(contact),
+      factionId: faction.id,
+      factionName: faction.name,
+      factionType: faction.type,
+      factionImage: faction.image || faction.sigil || '',
+      factionScore: faction.score
+    })));
+  }
+
+  static findFactionContact(factionId = '', contactId = '') {
+    const faction = this.findFaction(factionId);
+    const needle = cleanText(contactId).toLowerCase();
+    if (!faction || !needle) return null;
+    const contact = safeArray(faction.contacts).map(entry => normalizeContact(entry)).find(entry => (
+      entry.id === contactId
+      || entry.id.toLowerCase() === needle
+      || entry.name.toLowerCase() === needle
+    ));
+    return contact ? { faction, contact } : null;
+  }
+
+  static async upsertFactionContact(factionId = '', data = {}) {
+    const faction = this.findFaction(factionId || data.factionId || data.factionName);
+    if (!faction) throw new Error('Faction is required to save a notable NPC/contact.');
+    const existingContacts = safeArray(faction.contacts).map(contact => normalizeContact(contact));
+    const requestedId = cleanText(data.id || data.contactId);
+    const name = cleanText(data.name || data.contactName);
+    if (!name) throw new Error('Contact name is required.');
+    const existing = existingContacts.find(contact => contact.id === requestedId || contact.name.toLowerCase() === name.toLowerCase()) || null;
+    const contact = normalizeContact({
+      ...existing,
+      ...data,
+      id: existing?.id || requestedId || slugify(`${faction.name}-${name}`),
+      name,
+      updatedAt: nowIso(),
+      createdAt: existing?.createdAt || nowIso()
+    });
+    const contacts = existing
+      ? existingContacts.map(entry => entry.id === existing.id ? contact : entry)
+      : [...existingContacts, contact];
+    const records = this.getRegistry();
+    const next = records.map(record => record.id === faction.id ? this._normalizeFactionRecord({ ...record, contacts, updatedAt: nowIso() }) : record);
+    await this.saveRegistry(next);
+    return { faction: this.findFaction(faction.id), contact };
+  }
+
+  static async deleteFactionContact(factionId = '', contactId = '') {
+    const faction = this.findFaction(factionId);
+    const id = cleanText(contactId);
+    if (!faction || !id) return false;
+    const contacts = safeArray(faction.contacts).map(contact => normalizeContact(contact)).filter(contact => contact.id !== id);
+    const records = this.getRegistry();
+    const next = records.map(record => record.id === faction.id ? this._normalizeFactionRecord({ ...record, contacts, updatedAt: nowIso() }) : record);
+    await this.saveRegistry(next);
+    return true;
+  }
+
+  static async promoteFactionContactToActor(factionId = '', contactId = '') {
+    const found = this.findFactionContact(factionId, contactId);
+    if (!found) throw new Error('Faction contact could not be found.');
+    const { faction, contact } = found;
+
+    const existingActor = await resolveActorReference({ uuid: contact.actorUuid, actorId: contact.actorId });
+    if (existingActor) {
+      await this.upsertFactionContact(faction.id, {
+        ...contact,
+        actorId: existingActor.id,
+        actorUuid: actorUuid(existingActor),
+        actorName: existingActor.name,
+        promotedAt: contact.promotedAt || nowIso()
+      });
+      return { faction: this.findFaction(faction.id), contact: this.findFactionContact(faction.id, contact.id)?.contact, actor: existingActor, created: false };
+    }
+
+    if (!game.user?.isGM) throw new Error('Only a GM can promote a faction contact to an actor.');
+    const actorData = {
+      name: contact.name,
+      type: 'npc',
+      img: contact.image || faction.image || 'icons/svg/mystery-man.svg',
+      flags: {
+        [MODULE_ID]: {
+          factionContact: {
+            factionId: faction.id,
+            factionName: faction.name,
+            contactId: contact.id,
+            contactName: contact.name,
+            contactRole: contact.role,
+            source: 'faction-registry',
+            promotedAt: nowIso()
+          }
+        }
+      }
+    };
+    const actor = await Actor.create(actorData, { renderSheet: false });
+    await this.upsertFactionContact(faction.id, {
+      ...contact,
+      actorId: actor.id,
+      actorUuid: actorUuid(actor),
+      actorName: actor.name,
+      promotedAt: nowIso()
+    });
+    return { faction: this.findFaction(faction.id), contact: this.findFactionContact(faction.id, contact.id)?.contact, actor, created: true };
   }
 
   static getActorRelationships(actor) {
@@ -584,6 +782,26 @@ export class FactionRegistryService {
       benefits: cleanText(record.benefits || ''),
       notes: cleanText(record.notes || ''),
       gmNotes: cleanText(record.gmNotes || ''),
+      image: cleanText(record.image || record.img || record.imageUrl || record.sigil || ''),
+      jobDefaults: normalizeJobDefaults(record, {
+        defaultJobTone: record.defaultJobTone,
+        defaultRewardStyle: record.defaultRewardStyle,
+        defaultObjective: record.defaultObjective,
+        defaultBriefing: record.defaultBriefing,
+        defaultInstructions: record.defaultInstructions,
+        defaultCredits: record.defaultCredits,
+        defaultXp: record.defaultXp,
+        defaultSuccessDelta: record.defaultSuccessDelta,
+        defaultFailureDelta: record.defaultFailureDelta,
+        defaultVisibility: record.defaultVisibility,
+        defaultLegality: record.defaultLegality,
+        defaultPayStyle: record.defaultPayStyle,
+        defaultRivalFactionName: record.defaultRivalFactionName,
+        defaultRivalSuccessDelta: record.defaultRivalSuccessDelta,
+        defaultRivalFailureDelta: record.defaultRivalFailureDelta,
+        defaultConsequenceNotes: record.defaultConsequenceNotes
+      }),
+      contacts: safeArray(record.contacts).map(contact => normalizeContact(contact)),
       source,
       status: cleanText(record.status || 'active'),
       createdAt: cleanText(record.createdAt || nowIso()),

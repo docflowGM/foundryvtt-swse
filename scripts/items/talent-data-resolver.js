@@ -15,13 +15,26 @@ function asArray(value) {
 }
 
 function asText(value, fallback = '') {
-  if (value == null) return fallback;
-  if (typeof value === 'object') {
-    if (typeof value.value === 'string') return value.value;
-    if (typeof value.text === 'string') return value.text;
+  let candidate = value;
+  if (Array.isArray(candidate)) {
+    candidate = '';
+    for (let i = value.length - 1; i >= 0; i -= 1) {
+      const entry = value[i];
+      if (entry !== undefined && entry !== null && String(entry).trim() !== '') {
+        candidate = entry;
+        break;
+      }
+    }
+  }
+  if (candidate == null || candidate === '') return fallback;
+  if (typeof candidate === 'object') {
+    for (const key of ['label', 'name', 'value', 'text', 'id', 'slug']) {
+      if (typeof candidate[key] === 'string' && candidate[key].trim()) return candidate[key].trim();
+    }
     return fallback;
   }
-  return String(value);
+  const text = String(candidate).trim();
+  return text || fallback;
 }
 
 function toNumber(value, fallback = 0) {

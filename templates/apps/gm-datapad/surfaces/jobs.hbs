@@ -1,5 +1,5 @@
-{{!-- GM Datapad jobs surface — Phase 2 command board + contract wizard overlay. --}}
-<div class="gm-datapad-page gm-datapad-jobs gm-phase2-page gm-phase9-jobs" data-gm-wizard-scope="jobs">
+{{!-- GM Datapad jobs surface — command tabs + contract wizard overlay. --}}
+<div class="gm-datapad-page gm-datapad-jobs gm-phase2-page gm-phase9-jobs" data-gm-wizard-scope="jobs" data-job-board-tabs>
   <div class="page-header job-board-header gm-phase2-header">
     <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
     <div class="gm-app-header-copy">
@@ -10,11 +10,23 @@
     <div class="job-board-header-actions gm-phase2-header-actions">
       <span class="job-board-chip attention">{{jobBoard.stats.review}} Review</span>
       <span class="job-board-chip payout">{{jobBoard.stats.payout}} Payout</span>
-      <button type="button" class="swse-ui-button primary gm-phase2-primary" data-gm-wizard-open="contract">
+      <button type="button" class="swse-ui-button primary gm-phase2-primary" data-gm-wizard-open="contract" data-clear-job-prefill="true">
         <i class="fa-solid fa-plus"></i> New Contract
       </button>
     </div>
   </div>
+
+  <section class="gm-job-draft-recovery swse-ui-panel" data-job-draft-recovery hidden>
+    <div>
+      <span class="gm-command-eyebrow">RECOVERABLE CONTRACT DRAFT</span>
+      <strong>Unconfirmed job draft saved locally</strong>
+      <p>Last autosave: <span data-job-draft-time>unknown</span>. Continue where you left off or discard it.</p>
+    </div>
+    <div class="gm-faction-row-actions">
+      <button type="button" class="swse-ui-button primary" data-job-draft-restore>Continue Draft</button>
+      <button type="button" class="swse-ui-button danger" data-job-draft-discard>Discard Draft</button>
+    </div>
+  </section>
 
   <div class="job-board-metrics gm-phase2-metrics gm-phase9-metrics" aria-label="Job board status">
     <span class="gm-phase9-metric"><strong>{{jobBoard.stats.total}}</strong>Total</span>
@@ -25,23 +37,52 @@
     <span class="gm-phase9-metric muted"><strong>{{jobBoard.stats.archived}}</strong>Archived</span>
   </div>
 
-  <section class="gm-phase9-job-ops-strip swse-ui-panel" aria-label="Job board operations summary">
+  {{#if jobBoard.hasIssuerFilter}}
+  <section class="gm-job-issuer-filter-banner swse-ui-panel" aria-label="Active job board issuer filter">
     <div>
-      <span class="gm-command-eyebrow">OPS SUMMARY</span>
-      <strong>{{jobBoard.stats.review}} objective review{{#unless (eq jobBoard.stats.review 1)}}s{{/unless}}</strong>
-      <p>Claims awaiting GM review before payout.</p>
+      <span class="gm-command-eyebrow">ISSUER FILTER ACTIVE</span>
+      <strong>{{jobBoard.issuerFilter.label}}</strong>
+      <p>Showing {{jobBoard.stats.total}} of {{jobBoard.stats.unfilteredTotal}} contract{{#unless (eq jobBoard.stats.unfilteredTotal 1)}}s{{/unless}}. {{jobBoard.stats.hiddenByFilter}} hidden by this faction/contact filter.</p>
     </div>
-    <div>
-      <span class="gm-command-eyebrow">PAYOUT</span>
-      <strong>{{jobBoard.stats.payout}} contract{{#unless (eq jobBoard.stats.payout 1)}}s{{/unless}}</strong>
-      <p>Completed work ready for credit, XP, item, or asset settlement.</p>
-    </div>
-    <div>
-      <span class="gm-command-eyebrow">VISIBILITY</span>
-      <strong>{{#if jobBoard.creation.hasRecipients}}Player-linked{{else}}GM draft only{{/if}}</strong>
-      <p>{{#if jobBoard.creation.hasRecipients}}New contracts can target linked player characters.{{else}}No linked player characters found for public posting.{{/if}}</p>
+    <div class="gm-faction-row-actions">
+      <button type="button" class="swse-ui-button" data-job-filter-clear>Show All Jobs</button>
+      <button type="button" class="swse-ui-button primary" data-gm-wizard-open="contract">New Contract From This Issuer</button>
     </div>
   </section>
+  {{/if}}
+
+  <section class="gm-phase9-job-ops-strip swse-ui-panel" aria-label="Job board operations summary">
+    <div>
+      <span class="gm-command-eyebrow">PIPELINE</span>
+      <strong>{{jobBoard.stats.open}} open / {{jobBoard.stats.active}} active</strong>
+      <p>Track contract lifecycle without mixing review and payout controls into the board.</p>
+    </div>
+    <div>
+      <span class="gm-command-eyebrow">REVIEW</span>
+      <strong>{{jobBoard.stats.review}} objective review{{#unless (eq jobBoard.stats.review 1)}}s{{/unless}}</strong>
+      <p>Claims awaiting GM review before settlement.</p>
+    </div>
+    <div>
+      <span class="gm-command-eyebrow">SETTLEMENT</span>
+      <strong>{{jobBoard.stats.payout}} ready to pay</strong>
+      <p>Credits, XP, items, and shared assets are handled in the Settlement tab.</p>
+    </div>
+  </section>
+
+  <nav class="gm-job-tabbar swse-ui-panel" aria-label="Job board sections">
+    <button type="button" class="gm-job-tab is-active" data-job-tab-switch="board">
+      <span>Pipeline</span><em>{{jobBoard.stats.total}}</em>
+    </button>
+    <button type="button" class="gm-job-tab" data-job-tab-switch="dossier">
+      <span>Dossier</span><em>{{#if jobBoard.selectedJob}}1{{else}}0{{/if}}</em>
+    </button>
+    <button type="button" class="gm-job-tab" data-job-tab-switch="review">
+      <span>Review</span><em>{{jobBoard.reviewItems.length}}</em>
+    </button>
+    <button type="button" class="gm-job-tab" data-job-tab-switch="settlement">
+      <span>Settlement</span><em>{{jobBoard.payoutItems.length}}</em>
+    </button>
+  </nav>
 
   {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/contract-wizard.hbs" }}
 

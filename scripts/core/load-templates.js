@@ -344,6 +344,8 @@ export const SWSE_TEMPLATES = [
   // ==============================
   'systems/foundryvtt-swse/templates/apps/store/store-splash.hbs',
 
+  'systems/foundryvtt-swse/templates/apps/gm-grant-dialog.hbs',
+
   // ==============================
   // Shell Surfaces (Phase 12+13)
   // ==============================

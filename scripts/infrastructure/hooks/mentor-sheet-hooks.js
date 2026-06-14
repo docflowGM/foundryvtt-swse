@@ -9,13 +9,12 @@
  */
 import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { MentorChatDialog } from "/systems/foundryvtt-swse/scripts/mentor/mentor-chat-dialog.js";
 import { decayAllMentorCommitments } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-memory.js";
 
 // Track actor levels for decay detection (prevents false triggers on unrelated updates)
 const _actorLevelMap = new Map();
 
-function onClickMentor(app) {
+async function onClickMentor(app) {
   const actor = app?.actor ?? app?.document;
   if (!actor) {
     console.warn('[SWSE Mentor] No actor found in app:', app);
@@ -27,13 +26,17 @@ function onClickMentor(app) {
     return;
   }
 
-  SWSELogger.log(`[Mentor Header] Opening Mentor Dialog for: ${actor.name}`);
+  SWSELogger.log(`[Mentor Header] Opening Mentor surface for: ${actor.name}`);
   try {
-    const mentorDialog = new MentorChatDialog(actor);
-    mentorDialog.render(true);
+    if (typeof app?.setSurface === 'function') {
+      await app.setSurface('mentor', { source: 'header-control', topicsOpen: true });
+      await app.requestSurfaceRender?.({ reason: 'mentor-header-control', surfaceId: 'mentor' });
+      return;
+    }
+    ui?.notifications?.warn?.('Open the character sheet Holopad to talk to your mentor.');
   } catch (err) {
-    SWSELogger.error('[Mentor Header] Error opening mentor dialog:', err);
-    ui?.notifications?.error?.(`Failed to open mentor dialog: ${err.message}`);
+    SWSELogger.error('[Mentor Header] Error opening mentor surface:', err);
+    ui?.notifications?.error?.(`Failed to open mentor surface: ${err.message}`);
   }
 }
 

@@ -5734,6 +5734,12 @@ const forcePoints = [];
         e.preventDefault();
         return;
       }
+      // Vehicle crew stations can be rendered inside a shell hosted by a character sheet.
+      // Let the station-level vehicle handler receive actor drops instead of treating
+      // them as character-sheet relationship/adoption drops.
+      if (e.target?.closest?.('[data-drop-zone="crew-station"][data-crew-station]')) {
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation?.();
@@ -9173,6 +9179,9 @@ const forcePoints = [];
   ============================================================ */
 
   async _onDrop(event) {
+    if (event.target?.closest?.('[data-drop-zone="crew-station"][data-crew-station]')) {
+      return;
+    }
     event.preventDefault();
 
     // File drops (images, etc.) are handled by PortraitUploadController on the

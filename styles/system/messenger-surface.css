@@ -2671,3 +2671,98 @@
   border-color: rgba(247, 211, 108, 0.35);
   color: var(--hl-warn);
 }
+
+/* Phase 6 Faction Job Bridge: player-facing issuer dossier cards */
+.swse-shell-surface--messenger.swse-holonet-comm .hl-job-issuer-strip {
+  display: grid !important;
+  grid-template-columns: auto 1fr !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 7px 8px !important;
+  border: 1px solid oklch(var(--hl-accent-raw) / 0.16) !important;
+  border-radius: 10px !important;
+  background: linear-gradient(90deg, oklch(var(--hl-accent-raw) / 0.08), rgba(0,0,0,.20)) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-job-issuer-strip img,
+.swse-holonet-comm .hl-job-issuer-card img {
+  width: 34px !important;
+  height: 34px !important;
+  object-fit: cover !important;
+  border-radius: 8px !important;
+  border: 1px solid oklch(var(--hl-accent-raw) / 0.34) !important;
+  box-shadow: 0 0 12px oklch(var(--hl-accent-raw) / 0.12) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-job-issuer-strip strong,
+.swse-holonet-comm .hl-job-issuer-card strong {
+  display: block !important;
+  color: var(--hl-ink) !important;
+  font: 900 11px/1.15 var(--swse-font-display, var(--swse-font-mono, monospace)) !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-job-issuer-strip span,
+.swse-holonet-comm .hl-job-issuer-card small {
+  color: var(--hl-ink-faint) !important;
+  font: 700 8px/1.35 var(--swse-font-mono, monospace) !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+.swse-holonet-comm .hl-job-issuer-card,
+.swse-holonet-comm .hl-job-consequence-card {
+  display: grid;
+  gap: 8px;
+  margin: 9px 0;
+  padding: 10px;
+  border: 1px solid rgba(127,223,230,.20);
+  border-radius: 10px;
+  background: rgba(0,0,0,.22);
+}
+
+.swse-holonet-comm .hl-job-issuer-card {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  background: linear-gradient(90deg, rgba(127,223,230,.10), rgba(0,0,0,.24));
+}
+
+.swse-holonet-comm .hl-job-consequence-row {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 4px 8px;
+  padding: 7px 0;
+  border-top: 1px dashed rgba(127,223,230,.16);
+}
+
+.swse-holonet-comm .hl-job-consequence-row:first-of-type {
+  border-top: 0;
+}
+
+.swse-holonet-comm .hl-job-consequence-row span {
+  color: var(--hl-ink-faint);
+  font: 800 8px/1.3 var(--swse-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-holonet-comm .hl-job-consequence-row strong {
+  color: var(--hl-ink);
+  font: 900 10px/1.3 var(--swse-font-display, var(--swse-font-mono, monospace));
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: right;
+}
+
+.swse-holonet-comm .hl-job-consequence-row small {
+  grid-column: 1 / -1;
+  color: var(--hl-pos);
+  font: 800 8px/1.35 var(--swse-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-holonet-comm .hl-job-consequence-row.is-rival small {
+  color: var(--hl-warn, #ffd166);
+}

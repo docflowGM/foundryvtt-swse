@@ -21,20 +21,37 @@
     </div>
     <div class="gm-faction-registry-list gm-phase2-registry-list">
       {{#each factionManager.registry}}
-      <article class="gm-faction-registry-card gm-phase2-faction-card" data-search="{{this.searchText}}">
+      <article class="gm-faction-registry-card gm-phase2-faction-card {{#if this.isFocused}}is-focused{{/if}}" data-search="{{this.searchText}}" data-faction-name="{{this.name}}">
+        <div class="gm-faction-card-glow" aria-hidden="true"></div>
         <form class="gm-faction-registry-form" data-gm-faction-registry-form>
           <input type="hidden" name="id" value="{{this.id}}">
-          <div class="gm-faction-registry-card-header">
-            <div>
-              <strong>{{this.name}}</strong>
-              <span>{{this.type}} · Scale {{this.scale}}{{#if this.planetSystem}} · {{this.planetSystem}}{{/if}}</span>
-              {{#if this.leader}}<small>Leader: {{this.leader}}</small>{{/if}}
+          <div class="gm-faction-card-command gm-faction-card-shell">
+            <div class="gm-faction-card-title-block">
+              <span class="gm-command-eyebrow">Faction Dossier</span>
+              <h4>{{this.name}}</h4>
+              <div class="gm-faction-meta-strip">
+                <span>{{this.type}}</span>
+                <span>Scale {{this.scale}}</span>
+                {{#if this.planetSystem}}<span>{{this.planetSystem}}</span>{{/if}}
+                {{#if this.leader}}<span>Leader: {{this.leader}}</span>{{/if}}
+              </div>
             </div>
-            <div class="gm-faction-score-chip {{this.scoreClass}}"><span>Score</span><strong>{{this.scoreLabel}}</strong></div>
-            <div class="gm-faction-row-actions">
-              <button type="submit" class="swse-ui-button approve">Save</button>
-              <button type="button" class="swse-ui-button danger" data-gm-faction-action="delete-registry" data-faction-id="{{this.id}}">Delete</button>
+            <div class="gm-faction-command-side">
+              <div class="gm-faction-score-chip {{this.scoreClass}}"><span>Standing</span><strong>{{this.scoreLabel}}</strong></div>
+              <div class="gm-faction-row-actions gm-faction-primary-actions">
+                <button type="button" class="swse-ui-button primary gm-faction-action-button" data-gm-faction-action="make-job-faction" data-faction-id="{{this.id}}" data-faction-name="{{this.name}}"><i class="fa-solid fa-clipboard-list"></i> Make Job</button>
+                <button type="button" class="swse-ui-button" data-gm-faction-action="view-jobs-faction" data-faction-id="{{this.id}}" data-faction-name="{{this.name}}"><i class="fa-solid fa-filter"></i> View Jobs</button>
+                <button type="submit" class="swse-ui-button approve"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+                <button type="button" class="swse-ui-button danger" data-gm-faction-action="delete-registry" data-faction-id="{{this.id}}"><i class="fa-solid fa-trash"></i> Delete</button>
+              </div>
             </div>
+          </div>
+          <div class="gm-faction-card-intel-grid" aria-label="Faction quick intelligence">
+            <div class="gm-faction-intel-chip"><span>Jobs</span><strong>{{this.jobStats.total}}</strong></div>
+            <div class="gm-faction-intel-chip"><span>Open</span><strong>{{this.jobStats.open}}</strong></div>
+            <div class="gm-faction-intel-chip"><span>Active</span><strong>{{this.jobStats.active}}</strong></div>
+            <div class="gm-faction-intel-chip"><span>Payout</span><strong>{{this.jobStats.payout}}</strong></div>
+            <div class="gm-faction-intel-chip"><span>Contacts</span><strong>{{this.contactCount}}</strong></div>
           </div>
           <details class="gm-phase2-details">
             <summary>Edit registry details</summary>
@@ -53,8 +70,139 @@
               <label class="is-wide">Public Notes<textarea name="notes" rows="2">{{this.notes}}</textarea></label>
               <label class="is-wide">GM Notes<textarea name="gmNotes" rows="2">{{this.gmNotes}}</textarea></label>
             </div>
+            <div class="gm-faction-job-defaults">
+              <span class="gm-command-eyebrow">Job Defaults</span>
+              <div class="gm-faction-form-grid compact">
+                <label>Default Objective<input type="text" name="defaultObjective" value="{{this.jobDefaults.objective}}" placeholder="Secure the shipment"></label>
+                <label>Default Credits<input type="number" name="defaultCredits" min="0" step="500" value="{{this.jobDefaults.credits}}"></label>
+                <label>Default XP<input type="number" name="defaultXp" min="0" step="100" value="{{this.jobDefaults.xp}}"></label>
+                <label>Success Rep<input type="number" name="defaultSuccessDelta" step="1" value="{{this.jobDefaults.successDelta}}"></label>
+                <label>Failure Rep<input type="number" name="defaultFailureDelta" step="1" value="{{this.jobDefaults.failureDelta}}"></label>
+                <label>Status<select name="defaultVisibility"><option value="posted" {{#if (eq this.jobDefaults.visibility "posted")}}selected{{/if}}>Post Open</option><option value="draft" {{#if (eq this.jobDefaults.visibility "draft")}}selected{{/if}}>Save Draft</option></select></label>
+                <label>Tone<input type="text" name="defaultJobTone" value="{{this.jobDefaults.tone}}" placeholder="formal, threatening..."></label>
+                <label>Reward Style<input type="text" name="defaultRewardStyle" value="{{this.jobDefaults.rewardStyle}}" placeholder="credits, favors..."></label>
+                <label>Pay Style<input type="text" name="defaultPayStyle" value="{{this.jobDefaults.payStyle}}" placeholder="flat, bounty, favor"></label>
+                <label>Legality<input type="text" name="defaultLegality" value="{{this.jobDefaults.legality}}" placeholder="legal, gray, illegal"></label>
+                <label>Rival Faction<input type="text" name="defaultRivalFactionName" value="{{this.jobDefaults.rivalFactionName}}" placeholder="Optional opposed faction"></label>
+                <label>Rival Success Rep<input type="number" name="defaultRivalSuccessDelta" step="1" value="{{this.jobDefaults.rivalSuccessDelta}}"></label>
+                <label>Rival Failure Rep<input type="number" name="defaultRivalFailureDelta" step="1" value="{{this.jobDefaults.rivalFailureDelta}}"></label>
+                <label class="is-wide">Consequence Notes<textarea name="defaultConsequenceNotes" rows="2">{{this.jobDefaults.consequenceNotes}}</textarea></label>
+                <label class="is-wide">Default Briefing<textarea name="defaultBriefing" rows="2">{{this.jobDefaults.briefing}}</textarea></label>
+                <label class="is-wide">Default Instructions<textarea name="defaultInstructions" rows="2">{{this.jobDefaults.instructions}}</textarea></label>
+              </div>
+            </div>
           </details>
         </form>
+        <section class="gm-faction-contacts-panel">
+          <header class="job-board-section-header compact">
+            <div><span class="gm-command-eyebrow">NOTABLE NPCS</span><h4>Faction Contacts</h4></div>
+            <span class="job-board-chip">{{this.contactCount}} Contact{{#unless (eq this.contactCount 1)}}s{{/unless}}</span>
+          </header>
+          <div class="gm-faction-job-stats gm-faction-job-stats--secondary">
+            <span>Completed: <strong>{{this.jobStats.completed}}</strong></span>
+            <span>Failed: <strong>{{this.jobStats.failed}}</strong></span>
+          </div>
+          {{#if this.jobStats.hasJobs}}
+          <div class="gm-faction-recent-jobs">
+            <span class="gm-command-eyebrow">Recent Jobs</span>
+            {{#each this.recentJobs}}
+            <button type="button" class="gm-faction-recent-job" data-gm-faction-action="view-jobs-faction" data-faction-id="{{../id}}" data-faction-name="{{../name}}">
+              <strong>{{this.title}}</strong><span>{{this.statusLabel}}</span>
+            </button>
+            {{/each}}
+          </div>
+          {{/if}}
+          <div class="gm-faction-contact-list">
+            {{#each this.contacts}}
+            <article class="gm-faction-contact-card {{#if this.isFocused}}is-focused{{/if}}">
+              <div class="gm-faction-contact-summary">
+                <span class="gm-command-eyebrow">Contact Ledger</span>
+                <strong>{{this.name}}</strong>
+                <span>{{this.role}}{{#if this.defaultRewardLabel}} · {{this.defaultRewardLabel}}{{/if}}</span>
+                {{#if this.hasActorLink}}<small class="gm-faction-contact-actor">Linked Actor: {{this.actorLinkLabel}}</small>{{else}}<small class="gm-faction-contact-actor muted">Lightweight contact · no actor created</small>{{/if}}
+                <div class="gm-faction-job-stats mini">
+                  <span>Jobs: <strong>{{this.jobStats.total}}</strong></span>
+                  <span>Open: <strong>{{this.jobStats.open}}</strong></span>
+                  <span>Active: <strong>{{this.jobStats.active}}</strong></span>
+                  <span>Done: <strong>{{this.jobStats.completed}}</strong></span>
+                </div>
+                {{#if this.jobStats.hasJobs}}
+                <div class="gm-faction-recent-jobs mini">
+                  {{#each this.recentJobs}}
+                  <button type="button" class="gm-faction-recent-job" data-gm-faction-action="view-jobs-contact" data-faction-id="{{../../id}}" data-faction-name="{{../../name}}" data-contact-id="{{../id}}" data-contact-name="{{../name}}">
+                    <strong>{{this.title}}</strong><span>{{this.statusLabel}}</span>
+                  </button>
+                  {{/each}}
+                </div>
+                {{/if}}
+              </div>
+              <form class="gm-faction-contact-form" data-gm-faction-contact-form>
+                <input type="hidden" name="factionId" value="{{../id}}">
+                <input type="hidden" name="contactId" value="{{this.id}}">
+                <input type="hidden" name="actorId" value="{{this.actorId}}">
+                <input type="hidden" name="actorUuid" value="{{this.actorUuid}}">
+                <input type="hidden" name="actorName" value="{{this.actorName}}">
+                <input type="hidden" name="promotedAt" value="{{this.promotedAt}}">
+                <div class="gm-faction-row-actions gm-faction-contact-actions">
+                  <button type="button" class="swse-ui-button primary" data-gm-faction-action="make-job-contact" data-faction-id="{{../id}}" data-faction-name="{{../name}}" data-contact-id="{{this.id}}" data-contact-name="{{this.name}}"><i class="fa-solid fa-clipboard-list"></i> Make Job</button>
+                  <button type="button" class="swse-ui-button" data-gm-faction-action="view-jobs-contact" data-faction-id="{{../id}}" data-faction-name="{{../name}}" data-contact-id="{{this.id}}" data-contact-name="{{this.name}}"><i class="fa-solid fa-filter"></i> View Jobs</button>
+                  {{#if this.hasActorLink}}
+                  <button type="button" class="swse-ui-button" data-gm-faction-action="open-contact-actor" data-actor-id="{{this.actorId}}" data-actor-uuid="{{this.actorUuid}}"><i class="fa-solid fa-user"></i> Open Actor</button>
+                  {{else}}
+                  <button type="button" class="swse-ui-button" data-gm-faction-action="promote-contact" data-faction-id="{{../id}}" data-contact-id="{{this.id}}"><i class="fa-solid fa-user-plus"></i> Promote</button>
+                  {{/if}}
+                  <button type="submit" class="swse-ui-button approve"><i class="fa-solid fa-floppy-disk"></i> Save Contact</button>
+                  <button type="button" class="swse-ui-button danger" data-gm-faction-action="delete-contact" data-faction-id="{{../id}}" data-contact-id="{{this.id}}"><i class="fa-solid fa-trash"></i> Delete</button>
+                </div>
+                <details class="gm-faction-contact-edit">
+                  <summary>Edit contact profile and job defaults</summary>
+                  <div class="gm-faction-form-grid compact">
+                    <label>Name<input type="text" name="name" value="{{this.name}}" required></label>
+                    <label>Role<input type="text" name="role" value="{{this.role}}"></label>
+                    <label>Title<input type="text" name="title" value="{{this.title}}"></label>
+                    <label>Image<input type="text" name="image" value="{{this.image}}"></label>
+                    <label class="is-wide">Description<textarea name="description" rows="2">{{this.description}}</textarea></label>
+                    <label>Tags<input type="text" name="tags" value="{{this.tagsLabel}}" placeholder="broker, underworld"></label>
+                    <label>Job Tone<input type="text" name="defaultJobTone" value="{{this.defaultJobTone}}" placeholder="threatening, formal..."></label>
+                    <label>Reward Style<input type="text" name="defaultRewardStyle" value="{{this.defaultRewardStyle}}" placeholder="credits, favors..."></label>
+                    <label>Default Objective<input type="text" name="defaultObjective" value="{{this.defaultObjective}}" placeholder="Recover the asset"></label>
+                    <label>Credits<input type="number" name="defaultCredits" min="0" step="500" value="{{this.defaultCredits}}"></label>
+                    <label>XP<input type="number" name="defaultXp" min="0" step="100" value="{{this.defaultXp}}"></label>
+                    <label>Success Rep<input type="number" name="defaultSuccessDelta" step="1" value="{{this.defaultSuccessDelta}}"></label>
+                    <label>Failure Rep<input type="number" name="defaultFailureDelta" step="1" value="{{this.defaultFailureDelta}}"></label>
+                    <label>Status<select name="defaultVisibility"><option value="posted" {{#if (eq this.defaultVisibility "posted")}}selected{{/if}}>Post Open</option><option value="draft" {{#if (eq this.defaultVisibility "draft")}}selected{{/if}}>Save Draft</option></select></label>
+                    <label>Rival Faction<input type="text" name="defaultRivalFactionName" value="{{this.defaultRivalFactionName}}" placeholder="Optional opposed faction"></label>
+                    <label>Rival Success Rep<input type="number" name="defaultRivalSuccessDelta" step="1" value="{{this.defaultRivalSuccessDelta}}"></label>
+                    <label>Rival Failure Rep<input type="number" name="defaultRivalFailureDelta" step="1" value="{{this.defaultRivalFailureDelta}}"></label>
+                    <label class="is-wide">Consequence Notes<textarea name="defaultConsequenceNotes" rows="2">{{this.defaultConsequenceNotes}}</textarea></label>
+                    <label class="is-wide">Default Briefing<textarea name="defaultBriefing" rows="2">{{this.defaultBriefing}}</textarea></label>
+                    <label class="is-wide">Default Instructions<textarea name="defaultInstructions" rows="2">{{this.defaultInstructions}}</textarea></label>
+                  </div>
+                </details>
+              </form>
+            </article>
+            {{else}}
+            <p class="placeholder">No lightweight NPC contacts yet. Add a job broker, commander, handler, or faction face below.</p>
+            {{/each}}
+          </div>
+          <details class="gm-faction-add-contact-drawer">
+            <summary><i class="fa-solid fa-user-plus"></i> Add notable NPC contact</summary>
+            <form class="gm-faction-contact-create-form" data-gm-faction-contact-form>
+              <input type="hidden" name="factionId" value="{{this.id}}">
+              <div class="gm-faction-form-grid compact">
+                <label>New Contact Name<input type="text" name="name" placeholder="Vigo Sarn Kel"></label>
+                <label>Role<input type="text" name="role" placeholder="Job Broker"></label>
+                <label class="is-wide">Description<textarea name="description" rows="2" placeholder="The public face who issues jobs for this faction."></textarea></label>
+                <label>Default Credits<input type="number" name="defaultCredits" min="0" step="500" placeholder="0"></label>
+                <label>Default XP<input type="number" name="defaultXp" min="0" step="100" placeholder="0"></label>
+                <label>Rival Faction<input type="text" name="defaultRivalFactionName" placeholder="Optional opposed faction"></label>
+              </div>
+              <div class="gm-faction-row-actions">
+                <button type="submit" class="swse-ui-button approve">Add Notable NPC</button>
+              </div>
+            </form>
+          </details>
+        </section>
       </article>
       {{else}}
       <p class="placeholder">No GM registry factions yet.</p>
@@ -106,7 +254,7 @@
             </div>
             <span class="gm-faction-rel-badge {{this.relationshipType}}">{{this.relationshipType}}</span>
             <div class="gm-faction-score {{this.scoreClass}}"><span>Score</span><input type="number" name="score" step="1" value="{{this.score}}"></div>
-            <button type="submit" class="swse-ui-button approve">Save</button>
+            <button type="submit" class="swse-ui-button approve"><i class="fa-solid fa-floppy-disk"></i> Save</button>
             <button type="button" class="swse-ui-button danger" data-gm-faction-action="remove-relationship" data-actor-id="{{this.actorId}}" data-relationship-id="{{this.id}}">Remove</button>
           </header>
           <details class="gm-phase2-details">
@@ -122,7 +270,7 @@
               <label class="is-wide">Player Notes<textarea name="notes" rows="2">{{this.notes}}</textarea></label>
               <label class="is-wide">GM Notes<textarea name="gmNotes" rows="2">{{this.gmNotes}}</textarea></label>
             </div>
-          </details>
+                      </details>
         </form>
         <form class="gm-faction-adjust-form" data-gm-faction-adjust-form>
           <input type="hidden" name="actorId" value="{{this.actorId}}">

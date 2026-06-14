@@ -13,6 +13,8 @@ import { HolonetSender } from '../contracts/holonet-sender.js';
 import { HolonetAudience } from '../contracts/holonet-audience.js';
 import { HolonetProjectionSurface } from '../contracts/holonet-projection-surface.js';
 import { INTENT_TYPE, SOURCE_FAMILY, SURFACE_TYPE, DELIVERY_STATE } from '../contracts/enums.js';
+import { MentorResolver } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-resolver.js';
+import { resolveMentorData } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js';
 
 function uniqueStrings(values = []) {
   return [...new Set(values.map(value => String(value || '').trim()).filter(Boolean))];
@@ -37,11 +39,11 @@ export class HomeFeedTaskEmitter {
     }
   }
 
-  static async emitHomeTasks({ actor, recipientIds = [], progressionSummary = {}, upgradeSummary = {}, alliesSummary = {}, lightsaberConstructionSummary = {} } = {}) {
+  static async emitHomeTasks({ actor, recipientIds = [], progressionSummary = {}, progressionAudit = {}, upgradeSummary = {}, alliesSummary = {}, lightsaberConstructionSummary = {} } = {}) {
     const recipients = uniqueStrings(recipientIds);
     if (!actor || !recipients.length) return [];
 
-    const tasks = this._buildTasks(actor, progressionSummary, upgradeSummary, alliesSummary, lightsaberConstructionSummary);
+    const tasks = this._buildTasks(actor, progressionSummary, progressionAudit, upgradeSummary, alliesSummary, lightsaberConstructionSummary);
     const emitted = [];
     const now = Date.now();
     this._pruneRecent(now);
@@ -71,7 +73,7 @@ export class HomeFeedTaskEmitter {
     return emitted;
   }
 
-  static _buildTasks(actor, progressionSummary = {}, upgradeSummary = {}, alliesSummary = {}, lightsaberConstructionSummary = {}) {
+  static _buildTasks(actor, progressionSummary = {}, progressionAudit = {}, upgradeSummary = {}, alliesSummary = {}, lightsaberConstructionSummary = {}) {
     const actorId = actor?.id ?? 'unknown';
     const entries = [];
 
@@ -92,6 +94,9 @@ export class HomeFeedTaskEmitter {
         icon: '▲'
       });
     }
+
+    const reconciliationTask = this._buildProgressionReconciliationTask(actor, progressionAudit);
+    if (reconciliationTask) entries.push(reconciliationTask);
 
     if (upgradeSummary.visible && upgradeSummary.enabled && upgradeSummary.badge && !lightsaberConstructionSummary.available) {
       const count = String(upgradeSummary.badge);
@@ -158,6 +163,67 @@ export class HomeFeedTaskEmitter {
     return entries;
   }
 
+
+  static _buildProgressionReconciliationTask(actor, progressionAudit = {}) {
+    const tasks = Array.isArray(progressionAudit?.tasks) ? progressionAudit.tasks : [];
+    const visibleTasks = tasks.filter(task => Number(task?.count || 0) > 0);
+    if (!actor || !visibleTasks.length) return null;
+
+    const mentor = this._resolveMentor(actor);
+    mentor.name = mentor.name || mentor.label || 'Mentor';
+    const counts = Object.fromEntries(visibleTasks.map(task => [task.type, Number(task.count || 0)]));
+    const parts = [];
+    const abilityCount = Number(counts['ability-increase'] || 0);
+    const featCount = Number(counts.feat || 0);
+    const talentCount = Number(counts.talent || 0);
+    if (abilityCount > 0) parts.push(`${abilityCount} ability score increase${abilityCount === 1 ? '' : 's'}`);
+    if (featCount > 0) parts.push(`${featCount} feat${featCount === 1 ? '' : 's'} to learn`);
+    if (talentCount > 0) parts.push(`${talentCount} talent${talentCount === 1 ? '' : 's'} to learn`);
+
+    const first = visibleTasks[0] || {};
+    const anchor = first.sheetAnchor || 'ability-ledger';
+    const countKey = parts.join(',') || String(visibleTasks.length);
+    return {
+      key: `home-task:${actor.id}:progression-reconciliation:${countKey}`,
+      routeId: 'sheet',
+      route: {
+        surface: 'sheet',
+        tab: 'abilities',
+        sheetAnchor: anchor,
+        routeIntent: 'progression-reconciliation',
+        entryPoint: 'home-feed'
+      },
+      title: 'Training ledger needs attention',
+      body: `${mentor.name}: Your training record has ${parts.join(', ')} waiting. Open your character sheet to review the ledger and resolve the open slots.`,
+      badge: String(abilityCount + featCount + talentCount),
+      intent: INTENT_TYPE.MENTOR_TRAINING_REMINDER,
+      sourceFamily: SOURCE_FAMILY.MENTOR,
+      senderLabel: mentor.name,
+      category: 'MENTOR',
+      level: 'warning',
+      priority: 'high',
+      icon: '✶',
+      tab: 'abilities',
+      sheetAnchor: anchor,
+      progressionIssues: visibleTasks.map(task => ({
+        type: task.type,
+        count: Number(task.count || 0),
+        stepId: task.stepId || null,
+        sheetAnchor: task.sheetAnchor || null,
+        label: task.label || null
+      }))
+    };
+  }
+
+  static _resolveMentor(actor) {
+    try {
+      const resolved = MentorResolver.resolveFor(actor, { phase: 'levelup' });
+      return resolveMentorData(resolved) || resolved || { name: 'Mentor' };
+    } catch (_err) {
+      return resolveMentorData('Scoundrel') || { name: 'Mentor' };
+    }
+  }
+
   static async _hasMatchingRecord({ actor, task, recipients, fingerprint } = {}) {
     for (const recipientId of recipients) {
       const records = await HolonetEngine.storage.getRecordsByRecipient(recipientId, [DELIVERY_STATE.PUBLISHED]).catch(() => []);
@@ -192,9 +258,13 @@ export class HomeFeedTaskEmitter {
         route: task.route ?? null,
         workbenchCategory: task.route?.category ?? null,
         initialCategory: task.route?.initialCategory ?? null,
-        mode: task.route?.mode ?? null,
-        routeIntent: task.route?.routeIntent ?? null,
-        entryPoint: task.route?.entryPoint ?? null,
+        mode: task.route?.mode ?? task.mode ?? null,
+        routeIntent: task.route?.routeIntent ?? task.routeIntent ?? null,
+        entryPoint: task.route?.entryPoint ?? task.entryPoint ?? null,
+        tab: task.route?.tab ?? task.tab ?? null,
+        sheetAnchor: task.route?.sheetAnchor ?? task.sheetAnchor ?? null,
+        progressionIssues: task.progressionIssues ?? null,
+        actionSurface: task.routeId === 'sheet' ? 'sheet' : null,
         badge: task.badge ?? null,
         homeTaskKey: task.key,
         homeTaskFingerprint: fingerprint,

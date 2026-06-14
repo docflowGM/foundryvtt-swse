@@ -8,6 +8,8 @@
  */
 
 import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js';
+import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
+import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/FactionJobBridgeService.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 
@@ -25,8 +27,11 @@ export class GMJobBoardSurfaceController {
     if (!pageElement) return;
     if (!this._assertGM('open the GM Job Board')) return;
 
+    this._wireJobBoardTabs(pageElement, signal);
     this._wireWizardControls(pageElement, signal);
     this._wireContractWizardEnhancements(pageElement, signal);
+    this._wireContractRewardDrops(pageElement, signal);
+    this._wireContractDraftRecovery(pageElement, signal);
     this._wireCreateForms(pageElement, signal);
     this._wireDistributionForms(pageElement, signal);
     this._wireXpForms(pageElement, signal);
@@ -36,6 +41,7 @@ export class GMJobBoardSurfaceController {
     this._wirePayoutForms(pageElement, signal);
     this._wireItemAwardForms(pageElement, signal);
     this._wireAssetAwardForms(pageElement, signal);
+    this._wireIssuerButtons(pageElement, signal);
   }
 
   destroy() {
@@ -47,6 +53,50 @@ export class GMJobBoardSurfaceController {
     if (game.user?.isGM) return true;
     ui?.notifications?.warn?.(`Only a GM can ${action}.`);
     return false;
+  }
+
+  _wireJobBoardTabs(pageElement, signal) {
+    const storageKey = 'swse.gmDatapad.jobBoard.activeTab';
+    const buttons = Array.from(pageElement.querySelectorAll('[data-job-tab-switch]'));
+    const panels = Array.from(pageElement.querySelectorAll('[data-job-tab-panel]'));
+    if (!buttons.length || !panels.length) return;
+
+    const validTabs = new Set(panels.map(panel => panel.dataset.jobTabPanel).filter(Boolean));
+    const hasSelectedJob = Boolean(pageElement.querySelector('.gm-job-quick-rail .gm-phase9-dossier-header, .gm-job-dossier-main .gm-phase9-dossier-header'));
+
+    const setActiveTab = (requestedTab = 'board', { persist = true } = {}) => {
+      let tab = validTabs.has(requestedTab) ? requestedTab : 'board';
+      if (!hasSelectedJob && (tab === 'dossier' || tab === 'settlement')) tab = 'board';
+
+      pageElement.dataset.activeJobTab = tab;
+      buttons.forEach(button => {
+        const active = button.dataset.jobTabSwitch === tab;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+      panels.forEach(panel => {
+        const active = panel.dataset.jobTabPanel === tab;
+        panel.classList.toggle('is-active', active);
+        panel.hidden = !active;
+      });
+
+      if (persist) {
+        try { globalThis.localStorage?.setItem?.(storageKey, tab); } catch (_err) {}
+      }
+    };
+
+    pageElement.addEventListener('click', (event) => {
+      const button = event.target?.closest?.('[data-job-tab-switch]');
+      if (!button || !pageElement.contains(button)) return;
+      const tab = button.dataset.jobTabSwitch;
+      if (!tab) return;
+      event.preventDefault();
+      setActiveTab(tab);
+    }, { signal });
+
+    let initial = 'board';
+    try { initial = globalThis.localStorage?.getItem?.(storageKey) || 'board'; } catch (_err) {}
+    setActiveTab(initial, { persist: false });
   }
 
   _wireWizardControls(pageElement, signal) {
@@ -84,8 +134,13 @@ export class GMJobBoardSurfaceController {
       button.addEventListener('click', (event) => {
         event.preventDefault();
         const id = event.currentTarget.dataset.gmWizardOpen;
+        const clearJobPrefill = id === 'contract' && event.currentTarget.dataset.clearJobPrefill === 'true';
+        if (clearJobPrefill) {
+          this.host?.patchSurfaceState?.('jobs', { pendingJobDraft: null, openWizard: false }, { render: false });
+        }
         const wizard = pageElement.querySelector(`[data-gm-wizard="${CSS.escape(id)}"]`);
         if (!wizard) return;
+        if (clearJobPrefill) this._clearContractPrefill(wizard);
         wizard.hidden = false;
         wizard.classList.add('is-open');
         setPage(wizard, 1);
@@ -99,6 +154,9 @@ export class GMJobBoardSurfaceController {
         if (!wizard) return;
         wizard.classList.remove('is-open');
         wizard.hidden = true;
+        if (wizard.dataset.gmWizard === 'contract') {
+          this.host?.patchSurfaceState?.('jobs', { pendingJobDraft: null, openWizard: false }, { render: false });
+        }
       }, { signal });
     });
 
@@ -130,6 +188,43 @@ export class GMJobBoardSurfaceController {
     });
   }
 
+
+  _clearContractPrefill(wizard) {
+    const form = wizard?.querySelector?.('form[data-job-create-form]');
+    if (!form) return;
+    const clearNames = [
+      'issuerType', 'issuerSource', 'issuerFactionId', 'issuerFactionName', 'issuerContactId', 'issuerContactName', 'issuerContactRole', 'issuerContactActorId', 'issuerContactActorUuid', 'issuerContactActorName', 'issuerName', 'issuerImage',
+      'clientName', 'clientFaction', 'clientImage', 'title', 'primaryObjective', 'primaryDescription', 'primaryCredits', 'primaryXp', 'primaryItems',
+      'secondaryObjective', 'secondaryDescription', 'secondaryCredits', 'secondaryXp', 'secondaryItems',
+      'tertiaryObjective', 'tertiaryDescription', 'tertiaryCredits', 'tertiaryXp', 'tertiaryItems',
+      'briefing', 'instructions', 'oocNote', 'status', 'flatCredits', 'flatItems', 'factionSuccessDelta', 'factionFailureDelta', 'factionNotes', 'rivalFactionName', 'rivalSuccessDelta', 'rivalFailureDelta', 'rivalNotes'
+    ];
+    const setControlValue = (control, value) => {
+      if (!control || typeof control !== 'object') return;
+      const type = String(control.type || '').toLowerCase();
+      if (type === 'checkbox' || type === 'radio') control.checked = String(control.value ?? '') === String(value) || value === true;
+      else if ('value' in control) control.value = value ?? '';
+      if (typeof control.dispatchEvent === 'function') {
+        control.dispatchEvent(new Event('input', { bubbles: true }));
+        control.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    };
+    for (const name of clearNames) {
+      const field = form.elements?.[name];
+      if (!field) continue;
+      const value = name === 'factionSuccessDelta' || name === 'factionFailureDelta' ? '0' : '';
+      if (typeof field.dispatchEvent === 'function') setControlValue(field, value);
+      else Array.from(field).forEach((control) => setControlValue(control, value));
+    }
+    if (form.elements?.clientType) setControlValue(form.elements.clientType, 'npc');
+    if (form.elements?.status) {
+      const statusField = form.elements.status;
+      if (typeof statusField.dispatchEvent === 'function') setControlValue(statusField, 'posted');
+      else Array.from(statusField).forEach((control) => setControlValue(control, 'posted'));
+    }
+    form.querySelectorAll('[data-known-issuer-select]').forEach(select => { select.value = ''; });
+    this._refreshContractWizardSummary(form);
+  }
 
   _wireContractWizardEnhancements(pageElement, signal) {
     const form = pageElement.querySelector('form[data-gm-wizard-form="contract"]');
@@ -201,12 +296,54 @@ export class GMJobBoardSurfaceController {
       }
     };
 
+    const dispatchFieldEvents = (field) => {
+      if (!field || typeof field.dispatchEvent !== 'function') return;
+      field.dispatchEvent(new Event('input', { bubbles: true }));
+      field.dispatchEvent(new Event('change', { bubbles: true }));
+    };
+
+    const setSingleField = (field, value) => {
+      if (!field || typeof field !== 'object') return;
+      const normalized = value ?? '';
+      const type = String(field.type || '').toLowerCase();
+
+      if (type === 'checkbox') {
+        field.checked = normalized === true || normalized === 'true' || normalized === 'on' || normalized === '1' || normalized === 1;
+        dispatchFieldEvents(field);
+        return;
+      }
+
+      if (type === 'radio') {
+        field.checked = String(field.value ?? '') === String(normalized);
+        if (field.checked) dispatchFieldEvents(field);
+        return;
+      }
+
+      if ('value' in field) {
+        field.value = normalized;
+        dispatchFieldEvents(field);
+      }
+    };
+
     const setField = (name, value) => {
       const field = form.elements?.[name];
       if (!field) return;
-      field.value = value ?? '';
-      field.dispatchEvent(new Event('input', { bubbles: true }));
-      field.dispatchEvent(new Event('change', { bubbles: true }));
+
+      // HTMLFormControlsCollection can return a RadioNodeList/collection when the
+      // wizard has multiple controls with the same name.  RadioNodeList has a
+      // value property but it is not an EventTarget, so calling dispatchEvent on
+      // it crashes the Known Issuer prefill flow.
+      if (typeof field.dispatchEvent === 'function') {
+        setSingleField(field, value);
+        return;
+      }
+
+      const controls = Array.from(field).filter((entry) => entry && typeof entry === 'object');
+      if (!controls.length) {
+        try { field.value = value ?? ''; } catch (_err) {}
+        return;
+      }
+      controls.forEach((control) => setSingleField(control, value));
     };
 
     form.querySelectorAll('[data-contract-template]').forEach((button) => {
@@ -219,11 +356,86 @@ export class GMJobBoardSurfaceController {
       }, { signal });
     });
 
+    form.querySelectorAll('[data-known-issuer-select]').forEach((select) => {
+      select.addEventListener('change', (event) => {
+        const option = event.currentTarget.selectedOptions?.[0];
+        if (!option || !option.value) return;
+        const map = {
+          clientType: option.dataset.clientType,
+          clientName: option.dataset.clientName,
+          clientFaction: option.dataset.clientFaction,
+          clientImage: option.dataset.clientImage,
+          issuerType: option.dataset.issuerType,
+          issuerSource: option.dataset.issuerSource,
+          issuerFactionId: option.dataset.issuerFactionId,
+          issuerFactionName: option.dataset.issuerFactionName,
+          issuerContactId: option.dataset.issuerContactId,
+          issuerContactName: option.dataset.issuerContactName,
+          issuerContactRole: option.dataset.issuerContactRole,
+          issuerContactActorId: option.dataset.issuerContactActorId,
+          issuerContactActorUuid: option.dataset.issuerContactActorUuid,
+          issuerContactActorName: option.dataset.issuerContactActorName,
+          issuerName: option.dataset.issuerName,
+          issuerImage: option.dataset.issuerImage,
+          title: option.dataset.title,
+          primaryObjective: option.dataset.primaryObjective,
+          primaryCredits: option.dataset.primaryCredits,
+          primaryXp: option.dataset.primaryXp,
+          briefing: option.dataset.briefing,
+          instructions: option.dataset.instructions,
+          status: option.dataset.status,
+          factionSuccessDelta: option.dataset.factionSuccessDelta,
+          factionFailureDelta: option.dataset.factionFailureDelta,
+          factionNotes: option.dataset.factionNotes,
+          rivalFactionName: option.dataset.rivalFactionName,
+          rivalSuccessDelta: option.dataset.rivalSuccessDelta,
+          rivalFailureDelta: option.dataset.rivalFailureDelta,
+          rivalNotes: option.dataset.rivalNotes
+        };
+        Object.entries(map).forEach(([key, value]) => setField(key, value));
+        this._refreshContractWizardSummary(form);
+      }, { signal });
+    });
+
     form.querySelectorAll('input, textarea, select').forEach((field) => {
       field.addEventListener('input', () => this._refreshContractWizardSummary(form), { signal });
       field.addEventListener('change', () => this._refreshContractWizardSummary(form), { signal });
     });
     this._refreshContractWizardSummary(form);
+  }
+
+  async _saveClientAsContact({ factionName = '', clientName = '', clientType = '', clientImage = '', role = 'Job Contact', objective = '', briefing = '', instructions = '', credits = 0, xp = 0, successDelta = 1, failureDelta = -1, rivalFactionName = '', rivalSuccessDelta = -1, rivalFailureDelta = 1, rivalNotes = '', status = 'posted' } = {}) {
+    const factionLabel = String(factionName || '').trim();
+    const contactName = String(clientName || '').trim();
+    if (!factionLabel || !contactName) return null;
+    if (String(clientType || '').toLowerCase() === 'faction' && factionLabel.toLowerCase() === contactName.toLowerCase()) return null;
+    return mutateShellOnly(this.host, async () => {
+      const faction = FactionRegistryService.findFaction(factionLabel) || await FactionRegistryService.upsertFaction({
+        name: factionLabel,
+        type: 'Faction',
+        source: 'job',
+        status: 'active',
+        historyNote: 'Created from Job Board reusable contact.'
+      });
+      return FactionRegistryService.upsertFactionContact(faction.id, {
+        name: contactName,
+        role,
+        image: clientImage,
+        description: `Reusable Job Board contact for ${factionLabel}.`,
+        defaultObjective: objective,
+        defaultBriefing: briefing,
+        defaultInstructions: instructions,
+        defaultCredits: credits,
+        defaultXp: xp,
+        defaultSuccessDelta: successDelta,
+        defaultFailureDelta: failureDelta,
+        defaultRivalFactionName: rivalFactionName,
+        defaultRivalSuccessDelta: rivalSuccessDelta,
+        defaultRivalFailureDelta: rivalFailureDelta,
+        defaultConsequenceNotes: rivalNotes,
+        defaultVisibility: status || 'posted'
+      });
+    }, { reason: 'gm-job-save-client-contact', surfaceId: 'jobs' });
   }
 
   _refreshContractWizardSummary(form) {
@@ -239,8 +451,266 @@ export class GMJobBoardSurfaceController {
     if (rewardLabel) rewardLabel.textContent = `${rewardTotal.toLocaleString()} cr · ${xpTotal.toLocaleString()} XP`;
     const clientLabel = form.querySelector('[data-contract-summary-client]');
     if (clientLabel) clientLabel.textContent = [text('clientName'), text('clientFaction')].filter(Boolean).join(' · ') || 'No client selected';
+    const consequenceLabel = form.querySelector('[data-contract-summary-consequences]');
+    if (consequenceLabel) {
+      const main = text('clientFaction') ? `${text('clientFaction')} ${Number(data.get('factionSuccessDelta') || 0) >= 0 ? '+' : ''}${data.get('factionSuccessDelta') || 0}/${data.get('factionFailureDelta') || 0}` : '';
+      const rival = text('rivalFactionName') ? `${text('rivalFactionName')} ${Number(data.get('rivalSuccessDelta') || 0) >= 0 ? '+' : ''}${data.get('rivalSuccessDelta') || 0}/${data.get('rivalFailureDelta') || 0}` : '';
+      consequenceLabel.textContent = [main, rival].filter(Boolean).join(' · ') || 'No faction consequence preview';
+    }
   }
 
+
+
+  _issuerFilterFromButton(button) {
+    const factionId = String(button?.dataset?.issuerFactionId || '').trim();
+    const factionName = String(button?.dataset?.issuerFactionName || '').trim();
+    const contactId = String(button?.dataset?.issuerContactId || '').trim();
+    const contactName = String(button?.dataset?.issuerContactName || '').trim();
+    const label = String(button?.dataset?.issuerLabel || [factionName, contactName].filter(Boolean).join(' - ') || factionName || contactName || 'Issuer').trim();
+    return { factionId, factionName, contactId, contactName, label };
+  }
+
+  async _resolveActorReference({ uuid = '', actorId = '' } = {}) {
+    const id = String(actorId || '').trim();
+    if (id) {
+      const byId = game.actors?.get?.(id);
+      if (byId) return byId;
+    }
+    const ref = String(uuid || '').trim();
+    if (ref && typeof fromUuid === 'function') {
+      try {
+        const doc = await fromUuid(ref);
+        if (doc?.documentName === 'Actor' || doc?.constructor?.documentName === 'Actor') return doc;
+        if (doc?.actor) return doc.actor;
+      } catch (_err) {}
+    }
+    return null;
+  }
+
+  _wireIssuerButtons(pageElement, signal) {
+    pageElement.querySelectorAll('[data-job-filter-clear]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        this.host?.patchSurfaceState?.('jobs', { issuerFilter: null, pendingJobDraft: null, openWizard: false }, { render: false });
+        await requestShellRender(this.host, { reason: 'gm-job-clear-issuer-filter', surfaceId: 'jobs' });
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('[data-job-filter-issuer]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const filter = this._issuerFilterFromButton(event.currentTarget);
+        this.host?.patchSurfaceState?.('jobs', { issuerFilter: filter, pendingJobDraft: null, openWizard: false }, { render: false });
+        await requestShellRender(this.host, { reason: 'gm-job-filter-issuer', surfaceId: 'jobs' });
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('[data-job-open-faction]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const filter = this._issuerFilterFromButton(event.currentTarget);
+        this.host?.patchSurfaceState?.('factions', { focusedFactionId: filter.factionId, focusedFactionName: filter.factionName, focusedContactId: filter.contactId }, { render: false });
+        if (typeof this.host?._navigateTo === 'function') await this.host._navigateTo('factions');
+        else {
+          this.host.currentPage = 'factions';
+          await requestShellRender(this.host, { reason: 'gm-job-open-faction', surfaceId: 'factions' });
+        }
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('[data-job-open-issuer-actor]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const actor = await this._resolveActorReference({ uuid: event.currentTarget.dataset.actorUuid, actorId: event.currentTarget.dataset.actorId });
+        if (!actor) {
+          ui.notifications?.warn?.('Linked issuer actor could not be found.');
+          return;
+        }
+        actor.sheet?.render?.(true);
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('[data-job-followup-contract]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const filter = this._issuerFilterFromButton(event.currentTarget);
+        const draft = filter.contactId
+          ? FactionJobBridgeService.buildDraftFromContact(filter.factionId || filter.factionName, filter.contactId || filter.contactName)
+          : FactionJobBridgeService.buildDraftFromFaction(filter.factionId || filter.factionName);
+        if (!draft) {
+          ui.notifications?.warn?.('Could not build a follow-up contract from that issuer.');
+          return;
+        }
+        this.host?.patchSurfaceState?.('jobs', { pendingJobDraft: draft, openWizard: true, issuerFilter: filter }, { render: false });
+        await requestShellRender(this.host, { reason: 'gm-job-followup-contract', surfaceId: 'jobs' });
+      }, { signal });
+    });
+  }
+
+
+  _draftStorageKey() {
+    const worldId = String(game?.world?.id || 'world');
+    const userId = String(game?.user?.id || 'gm');
+    return `swse.gm-datapad.job-draft.${worldId}.${userId}`;
+  }
+
+  _readSavedContractDraft() {
+    try {
+      const raw = globalThis.localStorage?.getItem?.(this._draftStorageKey());
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object') return null;
+      return parsed;
+    } catch (_err) {
+      return null;
+    }
+  }
+
+  _writeSavedContractDraft(form, { immediate = false } = {}) {
+    if (!form) return;
+    const write = () => {
+      try {
+        const data = new FormData(form);
+        const fields = {};
+        for (const [key, value] of data.entries()) {
+          if (fields[key] == null) fields[key] = value;
+          else if (Array.isArray(fields[key])) fields[key].push(value);
+          else fields[key] = [fields[key], value];
+        }
+        const hasMeaningfulText = ['title', 'clientName', 'clientFaction', 'primaryObjective', 'briefing', 'instructions', 'flatItems', 'primaryItems', 'secondaryItems', 'tertiaryItems']
+          .some((key) => String(fields[key] || '').trim());
+        const hasNumericReward = ['flatCredits', 'primaryCredits', 'secondaryCredits', 'tertiaryCredits', 'primaryXp', 'secondaryXp', 'tertiaryXp']
+          .some((key) => Number(fields[key] || 0) > 0);
+        if (!hasMeaningfulText && !hasNumericReward) return;
+        globalThis.localStorage?.setItem?.(this._draftStorageKey(), JSON.stringify({
+          savedAt: Date.now(),
+          fields
+        }));
+        form.closest('[data-gm-wizard]')?.querySelector?.('[data-job-draft-saved-label]')?.replaceChildren(document.createTextNode('Draft autosaved'));
+      } catch (_err) {}
+    };
+    if (immediate) {
+      write();
+      return;
+    }
+    window.clearTimeout(this._jobDraftAutosaveTimer);
+    this._jobDraftAutosaveTimer = window.setTimeout(write, 250);
+  }
+
+  _clearSavedContractDraft() {
+    try { globalThis.localStorage?.removeItem?.(this._draftStorageKey()); } catch (_err) {}
+  }
+
+  _restoreSavedContractDraft(form, saved = null) {
+    const draft = saved || this._readSavedContractDraft();
+    if (!form || !draft?.fields) return false;
+    const setField = (name, value) => {
+      const field = form.elements?.[name];
+      if (!field) return;
+      const values = Array.isArray(value) ? value.map(String) : [String(value ?? '')];
+      const controls = typeof field.dispatchEvent === 'function' ? [field] : Array.from(field).filter(Boolean);
+      if (!controls.length && 'value' in field) {
+        field.value = values[0] ?? '';
+        return;
+      }
+      controls.forEach((control) => {
+        const type = String(control.type || '').toLowerCase();
+        if (type === 'checkbox' || type === 'radio') control.checked = values.includes(String(control.value ?? '')) || values.includes('on');
+        else if ('value' in control) control.value = values[0] ?? '';
+        if (typeof control.dispatchEvent === 'function') {
+          control.dispatchEvent(new Event('input', { bubbles: true }));
+          control.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+    };
+    Object.entries(draft.fields).forEach(([key, value]) => setField(key, value));
+    this._refreshContractWizardSummary(form);
+    return true;
+  }
+
+  _wireContractDraftRecovery(pageElement, signal) {
+    const form = pageElement.querySelector('form[data-job-create-form]');
+    if (!form) return;
+    const saved = this._readSavedContractDraft();
+    const banner = pageElement.querySelector('[data-job-draft-recovery]');
+    if (banner) {
+      banner.hidden = !saved;
+      const stamp = banner.querySelector('[data-job-draft-time]');
+      if (stamp && saved?.savedAt) stamp.textContent = new Date(saved.savedAt).toLocaleString();
+    }
+    form.querySelectorAll('input, textarea, select').forEach((field) => {
+      field.addEventListener('input', () => this._writeSavedContractDraft(form), { signal });
+      field.addEventListener('change', () => this._writeSavedContractDraft(form), { signal });
+    });
+    pageElement.querySelectorAll('[data-job-draft-restore]').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const wizard = form.closest('[data-gm-wizard]');
+        if (wizard) {
+          wizard.hidden = false;
+          wizard.classList.add('is-open');
+        }
+        this._restoreSavedContractDraft(form, saved);
+      }, { signal });
+    });
+    pageElement.querySelectorAll('[data-job-draft-discard]').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        this._clearSavedContractDraft();
+        if (banner) banner.hidden = true;
+      }, { signal });
+    });
+  }
+
+  _appendRewardItemToField(field, item) {
+    if (!field || !item) return;
+    const label = item.uuid ? `${item.name} [${item.uuid}]` : item.name;
+    const current = String(field.value || '').trim();
+    field.value = current ? `${current}; ${label}` : label;
+    field.dispatchEvent(new Event('input', { bubbles: true }));
+    field.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  async _resolveDroppedRewardItem(event) {
+    let data = null;
+    try {
+      const raw = event.dataTransfer?.getData?.('text/plain') || event.dataTransfer?.getData?.('application/json');
+      if (raw) data = JSON.parse(raw);
+    } catch (_err) {}
+    if (!data) return null;
+    const uuid = data.uuid || data.itemUuid || (data.pack && data.id ? `Compendium.${data.pack}.${data.id}` : '');
+    let doc = null;
+    if (uuid && typeof fromUuid === 'function') {
+      try { doc = await fromUuid(uuid); } catch (_err) {}
+    }
+    if (!doc && data.id && data.type === 'Item') doc = game.items?.get?.(data.id) || null;
+    if (doc?.documentName !== 'Item' && doc?.constructor?.documentName !== 'Item') return null;
+    return { name: doc.name || data.name || 'Dropped Item', uuid: doc.uuid || uuid };
+  }
+
+  _wireContractRewardDrops(pageElement, signal) {
+    pageElement.querySelectorAll('[data-job-reward-drop]').forEach((zone) => {
+      const fieldName = zone.dataset.jobRewardDrop;
+      const field = zone.querySelector(`[name="${CSS.escape(fieldName)}"]`) || zone.closest('form')?.elements?.[fieldName];
+      zone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        zone.classList.add('is-drop-hover');
+      }, { signal });
+      zone.addEventListener('dragleave', () => zone.classList.remove('is-drop-hover'), { signal });
+      zone.addEventListener('drop', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        zone.classList.remove('is-drop-hover');
+        const item = await this._resolveDroppedRewardItem(event);
+        if (!item) {
+          ui.notifications?.warn?.('Drop an Item or compendium Item onto the reward field.');
+          return;
+        }
+        this._appendRewardItemToField(field, item);
+        this._writeSavedContractDraft(zone.closest('form'), { immediate: true });
+      }, { signal });
+    });
+  }
 
   _wireCreateForms(pageElement, signal) {
     pageElement.querySelectorAll('form[data-job-create-form]').forEach((form) => {
@@ -305,6 +775,20 @@ export class GMJobBoardSurfaceController {
             imageUrl: text('clientImage'),
             saveForReuse: data.get('clientSave') === 'on'
           },
+          issuer: {
+            type: text('issuerType') || text('clientType'),
+            source: text('issuerSource') || 'job-board',
+            factionId: text('issuerFactionId'),
+            factionName: text('issuerFactionName') || text('clientFaction'),
+            contactId: text('issuerContactId'),
+            contactName: text('issuerContactName'),
+            contactRole: text('issuerContactRole'),
+            contactActorId: text('issuerContactActorId'),
+            contactActorUuid: text('issuerContactActorUuid'),
+            contactActorName: text('issuerContactActorName'),
+            name: text('issuerName') || text('clientName'),
+            image: text('issuerImage') || text('clientImage')
+          },
           objectives,
           briefing: {
             body: text('briefing'),
@@ -315,7 +799,14 @@ export class GMJobBoardSurfaceController {
             factionName: text('clientFaction'),
             successDelta: Number(data.get('factionSuccessDelta') || 0) || 0,
             failureDelta: Number(data.get('factionFailureDelta') || 0) || 0,
-            notes: text('factionNotes')
+            notes: text('factionNotes'),
+            additionalConsequences: text('rivalFactionName') ? [{
+              type: 'rival',
+              factionName: text('rivalFactionName'),
+              successDelta: Number(data.get('rivalSuccessDelta') || 0) || 0,
+              failureDelta: Number(data.get('rivalFailureDelta') || 0) || 0,
+              notes: text('rivalNotes') || text('factionNotes')
+            }] : []
           },
           status: text('status') || 'posted'
         }), { reason: 'gm-job-contract-create', surfaceId: 'jobs' });
@@ -324,7 +815,29 @@ export class GMJobBoardSurfaceController {
           ui.notifications?.error?.('Job contract creation failed.');
           return;
         }
+        if (data.get('clientSave') === 'on') {
+          await this._saveClientAsContact({
+            factionName: text('clientFaction'),
+            clientName: text('clientName'),
+            clientType: text('clientType'),
+            clientImage: text('clientImage'),
+            role: text('issuerContactRole') || 'Job Contact',
+            objective: text('primaryObjective'),
+            briefing: text('briefing'),
+            instructions: text('instructions'),
+            credits: number('primaryCredits'),
+            xp: number('primaryXp'),
+            successDelta: Number(data.get('factionSuccessDelta') || 1) || 1,
+            failureDelta: Number(data.get('factionFailureDelta') || -1) || -1,
+            rivalFactionName: text('rivalFactionName'),
+            rivalSuccessDelta: Number(data.get('rivalSuccessDelta') || -1) || -1,
+            rivalFailureDelta: Number(data.get('rivalFailureDelta') || 1) || 1,
+            rivalNotes: text('rivalNotes'),
+            status: text('status') || 'posted'
+          });
+        }
         this.host.selectedJobThreadId = result.threadId || this.host.selectedJobThreadId;
+        this._clearSavedContractDraft();
         ui.notifications?.info?.(`Job contract ${text('status') === 'draft' ? 'drafted' : 'posted'}.`);
         const wizard = form.closest('[data-gm-wizard]');
         form.reset();
@@ -333,7 +846,8 @@ export class GMJobBoardSurfaceController {
           wizard.classList.remove('is-open');
           wizard.hidden = true;
         }
-        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
+        this.host?.patchSurfaceState?.('jobs', { pendingJobDraft: null, openWizard: false }, { render: false });
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh', surfaceId: 'jobs' }));
       }, { signal });
     });
   }

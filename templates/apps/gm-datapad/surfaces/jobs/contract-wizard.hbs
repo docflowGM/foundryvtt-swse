@@ -1,6 +1,6 @@
 {{!-- GM Jobs contract wizard — Phase 2 step-through overlay. Field names preserve data-job-create-form contract. --}}
-<section class="gm-wizard-overlay gm-phase9-contract-wizard" data-gm-wizard="contract" hidden aria-label="Contract Wizard">
-  <form class="gm-wizard-panel job-contract-form" data-job-create-form data-gm-wizard-form="contract" novalidate>
+<section class="gm-wizard-overlay gm-phase9-contract-wizard {{#if jobBoard.creation.openWizard}}is-open{{/if}}" data-gm-wizard="contract" {{#unless jobBoard.creation.openWizard}}hidden{{/unless}} aria-label="Contract Wizard">
+  <form class="gm-wizard-panel job-contract-form" data-job-create-form data-gm-wizard-form="contract" data-job-has-prefill="{{#if jobBoard.creation.prefill}}true{{else}}false{{/if}}" novalidate>
     <header class="gm-wizard-bar">
       <div class="gm-wizard-steps" aria-label="Contract wizard steps">
         <button type="button" class="gm-wizard-step is-active" data-gm-wizard-step-button="1"><span>1</span>Client</button>
@@ -11,7 +11,7 @@
         <i></i>
         <button type="button" class="gm-wizard-step" data-gm-wizard-step-button="4"><span>4</span>Publish</button>
       </div>
-      <button type="button" class="gm-wizard-close" data-gm-wizard-close>✕ Cancel</button>
+      <div class="gm-wizard-auto-save"><span data-job-draft-saved-label>Draft autosaves locally</span><button type="button" class="gm-wizard-close" data-gm-wizard-close>✕ Cancel</button></div>
     </header>
 
     <div class="gm-wizard-body">
@@ -27,58 +27,118 @@
           </div>
         </div>
         <div class="gm-wizard-card">
+          <span class="gm-command-eyebrow">KNOWN ISSUER</span>
+          {{#if jobBoard.creation.hasKnownIssuers}}
+          <div class="gm-wizard-grid two">
+            <label>Known Faction / NPC / Previous Client
+              <select data-known-issuer-select>
+                <option value="">Independent / Custom</option>
+                {{#each jobBoard.creation.knownIssuers}}
+                <option value="{{this.key}}"
+                  data-client-type="{{this.draft.client.type}}"
+                  data-client-name="{{this.draft.client.name}}"
+                  data-client-faction="{{this.draft.client.factionName}}"
+                  data-client-image="{{this.draft.client.imageUrl}}"
+                  data-issuer-type="{{this.draft.issuer.type}}"
+                  data-issuer-source="{{this.draft.issuer.source}}"
+                  data-issuer-faction-id="{{this.draft.issuer.factionId}}"
+                  data-issuer-faction-name="{{this.draft.issuer.factionName}}"
+                  data-issuer-contact-id="{{this.draft.issuer.contactId}}"
+                  data-issuer-contact-name="{{this.draft.issuer.contactName}}"
+                  data-issuer-contact-role="{{this.draft.issuer.contactRole}}"
+                  data-issuer-contact-actor-id="{{this.draft.issuer.contactActorId}}"
+                  data-issuer-contact-actor-uuid="{{this.draft.issuer.contactActorUuid}}"
+                  data-issuer-contact-actor-name="{{this.draft.issuer.contactActorName}}"
+                  data-issuer-name="{{this.draft.issuer.name}}"
+                  data-issuer-image="{{this.draft.issuer.image}}"
+                  data-title="{{this.draft.title}}"
+                  data-primary-objective="{{this.draft.primaryObjective}}"
+                  data-primary-credits="{{this.draft.primaryCredits}}"
+                  data-primary-xp="{{this.draft.primaryXp}}"
+                  data-briefing="{{this.draft.briefing}}"
+                  data-instructions="{{this.draft.instructions}}"
+                  data-status="{{this.draft.status}}"
+                  data-faction-success-delta="{{this.draft.factionConsequences.successDelta}}"
+                  data-faction-failure-delta="{{this.draft.factionConsequences.failureDelta}}"
+                  data-faction-notes="{{this.draft.factionConsequences.notes}}"
+                  data-rival-faction-name="{{this.draft.factionConsequences.additionalConsequences.0.factionName}}"
+                  data-rival-success-delta="{{this.draft.factionConsequences.additionalConsequences.0.successDelta}}"
+                  data-rival-failure-delta="{{this.draft.factionConsequences.additionalConsequences.0.failureDelta}}"
+                  data-rival-notes="{{this.draft.factionConsequences.additionalConsequences.0.notes}}">{{this.group}} — {{this.label}}</option>
+                {{/each}}
+              </select>
+            </label>
+            <p class="placeholder">Choose a known faction contact, lightweight NPC, or previous client to prefill the issuer fields.</p>
+          </div>
+          {{else}}
+          <p class="placeholder">No known factions, notable NPCs, or previous job clients yet. Use the custom client fields below.</p>
+          {{/if}}
+        </div>
+        <div class="gm-wizard-card">
           <span class="gm-command-eyebrow">CLIENT IDENTIFICATION</span>
+          <input type="hidden" name="issuerType" value="{{jobBoard.creation.prefill.issuer.type}}">
+          <input type="hidden" name="issuerSource" value="{{jobBoard.creation.prefill.issuer.source}}">
+          <input type="hidden" name="issuerFactionId" value="{{jobBoard.creation.prefill.issuer.factionId}}">
+          <input type="hidden" name="issuerFactionName" value="{{jobBoard.creation.prefill.issuer.factionName}}">
+          <input type="hidden" name="issuerContactId" value="{{jobBoard.creation.prefill.issuer.contactId}}">
+          <input type="hidden" name="issuerContactName" value="{{jobBoard.creation.prefill.issuer.contactName}}">
+          <input type="hidden" name="issuerContactRole" value="{{jobBoard.creation.prefill.issuer.contactRole}}">
+          <input type="hidden" name="issuerContactActorId" value="{{jobBoard.creation.prefill.issuer.contactActorId}}">
+          <input type="hidden" name="issuerContactActorUuid" value="{{jobBoard.creation.prefill.issuer.contactActorUuid}}">
+          <input type="hidden" name="issuerContactActorName" value="{{jobBoard.creation.prefill.issuer.contactActorName}}">
+          <input type="hidden" name="issuerName" value="{{jobBoard.creation.prefill.issuer.name}}">
+          <input type="hidden" name="issuerImage" value="{{jobBoard.creation.prefill.issuer.image}}">
           <div class="gm-wizard-grid two">
             <label>Client Type
               <select name="clientType">
-                {{#each jobBoard.creation.clientTypes}}<option value="{{this.value}}">{{this.label}}</option>{{/each}}
+                {{#each jobBoard.creation.clientTypes}}<option value="{{this.value}}" {{#if (eq this.value ../jobBoard.creation.prefill.client.type)}}selected{{/if}}>{{this.label}}</option>{{/each}}
               </select>
             </label>
-            <label>Client / NPC Name<input type="text" name="clientName" placeholder="Rebel Alliance · Black Sun Vigo · Master Tholos"></label>
-            <label>Faction Anchor<input type="text" name="clientFaction" placeholder="Optional faction relationship anchor"></label>
-            <label>Client Image / Sigil<input type="text" name="clientImage" placeholder="icons/svg/mystery-man.svg"></label>
+            <label>Client / NPC Name<input type="text" name="clientName" placeholder="Rebel Alliance · Black Sun Vigo · Master Tholos" value="{{jobBoard.creation.prefill.client.name}}"></label>
+            <label>Faction Anchor<input type="text" name="clientFaction" placeholder="Optional faction relationship anchor" value="{{jobBoard.creation.prefill.client.factionName}}"></label>
+            <label>Client Image / Sigil<input type="text" name="clientImage" placeholder="icons/svg/mystery-man.svg" value="{{jobBoard.creation.prefill.client.imageUrl}}"></label>
           </div>
-          <label class="gm-inline-check"><input type="checkbox" name="clientSave"> Save as reusable contact</label>
+          <label class="gm-inline-check"><input type="checkbox" name="clientSave" {{#if jobBoard.creation.prefill.client.saveForReuse}}checked{{/if}}> Save as reusable contact</label>
         </div>
       </section>
 
       <section class="gm-wizard-page" data-gm-wizard-page="2">
         <div class="gm-wizard-objective is-required">
           <header><span class="job-board-chip attention">Required</span><strong>Primary Objective</strong></header>
-          <label>Objective Title<input type="text" name="primaryObjective" placeholder="Required primary objective description"></label>
+          <label>Objective Title<input type="text" name="primaryObjective" placeholder="Required primary objective description" value="{{jobBoard.creation.prefill.primaryObjective}}"></label>
           <textarea name="primaryDescription" rows="2" placeholder="Player-facing detail or GM memo"></textarea>
-          <div class="gm-wizard-rewards"><input type="number" name="primaryCredits" min="0" step="500" placeholder="Credits"><input type="number" name="primaryXp" min="0" step="250" placeholder="XP"><input type="text" name="primaryItems" placeholder="Item rewards"></div>
+          <div class="gm-wizard-rewards"><input type="number" name="primaryCredits" min="0" step="500" placeholder="Credits" value="{{jobBoard.creation.prefill.primaryCredits}}"><input type="number" name="primaryXp" min="0" step="250" placeholder="XP" value="{{jobBoard.creation.prefill.primaryXp}}"><span class="gm-job-reward-drop" data-job-reward-drop="primaryItems"><input type="text" name="primaryItems" placeholder="Drop item or type reward"></span></div>
         </div>
         <div class="gm-wizard-objective">
           <header><span class="job-board-chip">Optional</span><label class="gm-inline-check"><input type="checkbox" name="secondaryRequired"> Make Required</label><strong>Secondary Objective</strong></header>
           <label>Objective Title<input type="text" name="secondaryObjective" placeholder="Optional secondary objective"></label>
           <textarea name="secondaryDescription" rows="2" placeholder="Optional memo"></textarea>
-          <div class="gm-wizard-rewards"><input type="number" name="secondaryCredits" min="0" step="500" placeholder="Credits"><input type="number" name="secondaryXp" min="0" step="250" placeholder="XP"><input type="text" name="secondaryItems" placeholder="Item rewards"></div>
+          <div class="gm-wizard-rewards"><input type="number" name="secondaryCredits" min="0" step="500" placeholder="Credits"><input type="number" name="secondaryXp" min="0" step="250" placeholder="XP"><span class="gm-job-reward-drop" data-job-reward-drop="secondaryItems"><input type="text" name="secondaryItems" placeholder="Drop item or type reward"></span></div>
         </div>
         <div class="gm-wizard-objective is-bonus">
           <header><span class="job-board-chip payout">Bonus</span><strong>Tertiary Objective</strong></header>
           <label>Objective Title<input type="text" name="tertiaryObjective" placeholder="Always-optional bonus objective"></label>
           <textarea name="tertiaryDescription" rows="2" placeholder="Tertiary memo"></textarea>
-          <div class="gm-wizard-rewards"><input type="number" name="tertiaryCredits" min="0" step="250" placeholder="Credits"><input type="number" name="tertiaryXp" min="0" step="100" placeholder="XP"><input type="text" name="tertiaryItems" placeholder="Item rewards"></div>
+          <div class="gm-wizard-rewards"><input type="number" name="tertiaryCredits" min="0" step="250" placeholder="Credits"><input type="number" name="tertiaryXp" min="0" step="100" placeholder="XP"><span class="gm-job-reward-drop" data-job-reward-drop="tertiaryItems"><input type="text" name="tertiaryItems" placeholder="Drop item or type reward"></span></div>
         </div>
       </section>
 
       <section class="gm-wizard-page" data-gm-wizard-page="3">
         <div class="gm-wizard-card">
           <span class="gm-command-eyebrow">CONTRACT TITLE</span>
-          <input type="text" name="title" placeholder="Retrieve artifact from Korriban" class="gm-wizard-title-input">
+          <input type="text" name="title" placeholder="Retrieve artifact from Korriban" class="gm-wizard-title-input" value="{{jobBoard.creation.prefill.title}}">
         </div>
         <div class="gm-wizard-card">
           <span class="gm-command-eyebrow">PLAYER-FACING BRIEFING</span>
-          <textarea name="briefing" rows="4" placeholder="What the players are told about this contract. Supports @mentions and #locations."></textarea>
-          <textarea name="instructions" rows="2" placeholder="Rendezvous / delivery instructions / conditions"></textarea>
+          <textarea name="briefing" rows="4" placeholder="What the players are told about this contract. Supports @mentions and #locations.">{{jobBoard.creation.prefill.briefing}}</textarea>
+          <textarea name="instructions" rows="2" placeholder="Rendezvous / delivery instructions / conditions">{{jobBoard.creation.prefill.instructions}}</textarea>
           <textarea name="oocNote" rows="2" placeholder="Optional out-of-character GM note to players"></textarea>
         </div>
         <div class="gm-wizard-card">
           <span class="gm-command-eyebrow">FLAT REWARDS</span>
           <div class="gm-wizard-grid two">
             <label>Flat Credits<input type="number" name="flatCredits" min="0" step="500" placeholder="0"></label>
-            <label>Flat Item Notes<input type="text" name="flatItems" placeholder="Key, ship deed, access pass…"></label>
+            <label>Flat Item Notes<span class="gm-job-reward-drop" data-job-reward-drop="flatItems"><input type="text" name="flatItems" placeholder="Drop item or type reward notes…"></span></label>
           </div>
         </div>
       </section>
@@ -90,13 +150,14 @@
             <strong class="gm-wizard-summary-title" data-contract-summary-title>New Contract</strong>
             <p data-contract-summary-client>No client selected</p>
             <p><span class="gm-command-chip stable" data-contract-summary-rewards>0 cr · 0 XP</span></p>
+            <p><span class="gm-command-chip warning" data-contract-summary-consequences>No faction consequence preview</span></p>
             <p>Client, objectives, rewards, recipients, and faction consequences are routed through the existing Job Board/Holonet controller.</p>
           </div>
           <div class="gm-wizard-card">
             <span class="gm-command-eyebrow">STATUS</span>
             <div class="gm-wizard-choice-row">
-              <label><input type="radio" name="status" value="posted" checked> Post Now</label>
-              <label><input type="radio" name="status" value="draft"> Save Draft</label>
+              <label><input type="radio" name="status" value="posted" {{#unless (eq jobBoard.creation.prefill.status "draft")}}checked{{/unless}}> Post Now</label>
+              <label><input type="radio" name="status" value="draft" {{#if (eq jobBoard.creation.prefill.status "draft")}}checked{{/if}}> Save Draft</label>
             </div>
           </div>
         </div>
@@ -113,10 +174,16 @@
         <div class="gm-wizard-card">
           <span class="gm-command-eyebrow">FACTION CONSEQUENCES</span>
           <div class="gm-wizard-grid two">
-            <label>Success Reputation Delta<input type="number" name="factionSuccessDelta" step="1" value="0" class="gm-wizard-delta-positive"></label>
-            <label>Failure Reputation Delta<input type="number" name="factionFailureDelta" step="1" value="0" class="gm-wizard-delta-negative"></label>
+            <label>Success Reputation Delta<input type="number" name="factionSuccessDelta" step="1" value="{{jobBoard.creation.prefill.factionConsequences.successDelta}}" class="gm-wizard-delta-positive"></label>
+            <label>Failure Reputation Delta<input type="number" name="factionFailureDelta" step="1" value="{{jobBoard.creation.prefill.factionConsequences.failureDelta}}" class="gm-wizard-delta-negative"></label>
           </div>
-          <textarea name="factionNotes" rows="2" placeholder="GM-only faction consequence notes"></textarea>
+          <textarea name="factionNotes" rows="2" placeholder="GM-only faction consequence notes">{{jobBoard.creation.prefill.factionConsequences.notes}}</textarea>
+          <div class="gm-wizard-grid three gm-consequence-grid">
+            <label>Rival / Opposed Faction<input type="text" name="rivalFactionName" value="{{jobBoard.creation.prefill.factionConsequences.additionalConsequences.0.factionName}}" placeholder="Optional rival faction"></label>
+            <label>Rival Success Delta<input type="number" name="rivalSuccessDelta" step="1" value="{{jobBoard.creation.prefill.factionConsequences.additionalConsequences.0.successDelta}}" class="gm-wizard-delta-negative"></label>
+            <label>Rival Failure Delta<input type="number" name="rivalFailureDelta" step="1" value="{{jobBoard.creation.prefill.factionConsequences.additionalConsequences.0.failureDelta}}" class="gm-wizard-delta-positive"></label>
+          </div>
+          <textarea name="rivalNotes" rows="2" placeholder="Optional notes for rival/opposed faction consequences">{{jobBoard.creation.prefill.factionConsequences.additionalConsequences.0.notes}}</textarea>
         </div>
       </section>
     </div>

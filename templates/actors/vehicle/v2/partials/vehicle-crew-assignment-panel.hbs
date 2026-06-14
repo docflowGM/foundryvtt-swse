@@ -1,6 +1,7 @@
-<section class="swse-vehicle-panel">
+<section class="swse-vehicle-panel swse-vehicle-panel--crew-assignment">
   <header class="swse-vehicle-panel-header">
     <h3 class="swse-vehicle-panel-title">{{panel.title}}</h3>
+    <span class="swse-vehicle-panel-kicker">Drag a character, NPC, or droid onto a station, or use Assign Crew.</span>
   </header>
 
   <div class="swse-vehicle-panel-body">
@@ -11,11 +12,43 @@
              data-drop-zone="crew-station">
           <div class="swse-vehicle-station-meta">
             <div class="swse-vehicle-station-name">{{station.label}}</div>
-            <div class="swse-vehicle-station-status">{{station.occupantName}}</div>
+            <div class="swse-vehicle-station-status">
+              {{#if station.occupied}}
+                <span class="swse-vehicle-crew-status swse-vehicle-crew-status--assigned">{{station.occupantName}}</span>
+              {{else}}
+                <span class="swse-vehicle-crew-status swse-vehicle-crew-status--empty">Unassigned</span>
+              {{/if}}
+            </div>
           </div>
+
           {{#if station.notes}}
             <div class="swse-vehicle-station-notes">{{station.notes}}</div>
           {{/if}}
+
+          <div class="swse-vehicle-station-controls">
+            <button type="button"
+                    class="swse-vehicle-action-btn swse-vehicle-action-btn--assign"
+                    data-action="vehicle-assign-crew"
+                    data-station="{{station.key}}">
+              {{#if station.occupied}}Reassign{{else}}Assign Crew{{/if}}
+            </button>
+
+            {{#if station.occupied}}
+              <button type="button"
+                      class="swse-vehicle-action-btn swse-vehicle-action-btn--open"
+                      data-action="vehicle-open-crew"
+                      data-station="{{station.key}}">
+                Open Sheet
+              </button>
+              <button type="button"
+                      class="swse-vehicle-action-btn swse-vehicle-action-btn--remove"
+                      data-action="vehicle-remove-crew"
+                      data-station="{{station.key}}">
+                Remove
+              </button>
+            {{/if}}
+          </div>
+
           {{#if station.actions}}
             <div class="swse-vehicle-station-actions">
               {{#each station.actions as |action|}}

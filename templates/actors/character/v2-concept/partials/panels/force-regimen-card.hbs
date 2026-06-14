@@ -1,25 +1,101 @@
-<article class="force-card swse-concept-force-card swse-force-regimen-card swse-force-regimen-card--{{regimen.type}}" data-item-id="{{regimen.id}}" data-tags="{{regimen.tagString}}">
-  <div class="swse-concept-force-card__copy">
-    <strong class="force-name">{{regimen.name}}</strong>
-    <p>{{regimen.blurb}}</p>
-  </div>
-  <div class="swse-concept-chip-row">
-    {{#each regimen.tags as |tag|}}
-      <span class="swse-concept-chip swse-concept-chip--neutral">{{tag}}</span>
-    {{/each}}
-    {{#if regimen.time}}<span class="swse-concept-chip swse-concept-chip--neutral">{{regimen.time}}</span>{{/if}}
-  </div>
-  {{#if regimen.activeTier}}
-    <div class="swse-force-regimen-card__active-result">
-      <strong>Active:</strong> DC {{regimen.activeTier.dc}}{{#if regimen.activeRollTotal}} · UTF {{regimen.activeRollTotal}}{{/if}}
-      <span>{{regimen.activeEffectText}}</span>
+<article class="fcard force-card swse-force-regimen-card swse-force-regimen-card--{{regimen.type}} {{#if regimen.discarded}}spent discarded{{/if}}"
+         data-item-id="{{regimen.id}}"
+         data-tags="{{regimen.tagString}}"
+         data-p="{{regimen.p}}"
+         data-type="{{regimen.type}}">
+  <div class="fcard-inner">
+    <div class="fc-face front">
+      <div class="fc-strip"></div>
+
+      <div class="fc-icon">
+        {{#if regimen.img}}
+          <img class="fc-img" src="{{regimen.img}}" alt="{{regimen.name}}">
+        {{else}}
+          <span class="fc-sym">⬢</span>
+        {{/if}}
+      </div>
+
+      <div class="fc-body">
+        <div class="fc-name force-name">{{regimen.name}}</div>
+        <div class="fc-tags">
+          {{#each regimen.tags as |tag|}}
+            <span class="dtag">{{tag}}</span>
+          {{/each}}
+          {{#if regimen.time}}<span class="dtag">{{regimen.time}}</span>{{/if}}
+        </div>
+        <div class="fc-blurb">{{regimen.blurb}}</div>
+        {{#if regimen.activeTier}}
+          <div class="swse-force-regimen-card__active-result swse-force-regimen-card__active-result--front">
+            <strong>Active:</strong> DC {{regimen.activeTier.dc}}{{#if regimen.activeRollTotal}} · UTF {{regimen.activeRollTotal}}{{/if}}
+          </div>
+        {{/if}}
+      </div>
+
+      <div class="fc-foot">
+        {{#if regimen.discarded}}
+          <button type="button" class="fc-use" data-action="end-force-regimen" data-item-id="{{regimen.id}}">END EFFECT</button>
+        {{else}}
+          <button type="button" class="fc-use" data-action="use-force-regimen" data-item-id="{{regimen.id}}">▶ USE</button>
+        {{/if}}
+        <button type="button" class="fc-flip" data-action="force-suite-flip-card" data-item-id="{{regimen.id}}" title="Full details">▿</button>
+      </div>
     </div>
-  {{/if}}
-  <div class="swse-concept-ledger-row__actions">
-    {{#if regimen.discarded}}
-      <button type="button" class="swse-concept-btn" data-action="end-force-regimen" data-item-id="{{regimen.id}}">End Effect</button>
-    {{else}}
-      <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="use-force-regimen" data-item-id="{{regimen.id}}">Use</button>
-    {{/if}}
+
+    <div class="fc-face back">
+      <div class="fc-strip"></div>
+
+      <div class="fc-bback">
+        <div class="fc-bname">{{regimen.name}}</div>
+        <div class="fc-bdesc">{{regimen.desc}}</div>
+
+        {{#if regimen.metadataRows.length}}
+          <div class="fc-meta">
+            {{#each regimen.metadataRows as |row|}}
+              <div class="fc-meta-row">
+                <span>{{row.label}}</span>
+                <strong>{{row.value}}</strong>
+              </div>
+            {{/each}}
+          </div>
+        {{/if}}
+
+        {{#if regimen.hasDcRows}}
+          <table class="dct">
+            <thead>
+              <tr>
+                <th>UTF DC</th>
+                <th>Effect</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each regimen.dcRows as |row|}}
+                <tr>
+                  <td class="dn">{{row.dc}}</td>
+                  <td>{{row.effect}}</td>
+                </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        {{/if}}
+
+        {{#if regimen.activeTier}}
+          <div class="swse-force-regimen-card__active-result">
+            <strong>Active:</strong> DC {{regimen.activeTier.dc}}{{#if regimen.activeRollTotal}} · UTF {{regimen.activeRollTotal}}{{/if}}
+            <span>{{regimen.activeEffectText}}</span>
+          </div>
+        {{/if}}
+      </div>
+
+      <div class="fc-bfoot">
+        {{#if regimen.discarded}}
+          <button type="button" class="fc-use" data-action="end-force-regimen" data-item-id="{{regimen.id}}">END EFFECT</button>
+        {{else}}
+          <button type="button" class="fc-use" data-action="use-force-regimen" data-item-id="{{regimen.id}}">▶ USE</button>
+        {{/if}}
+        <button type="button" class="fc-flip" data-action="force-suite-flip-card" data-item-id="{{regimen.id}}" title="Flip back">▵</button>
+      </div>
+    </div>
+
+    {{#if regimen.discarded}}<div class="fc-spent">ACTIVE</div>{{/if}}
   </div>
 </article>

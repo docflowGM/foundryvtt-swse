@@ -8,6 +8,8 @@ import { StoreEngine } from "/systems/foundryvtt-swse/scripts/engine/store/store
 import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-session-store.js";
 import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js";
 import { requestShellRender } from "/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js";
+import { mutateShellOnly } from "/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js";
+import { VehicleFactory } from "/systems/foundryvtt-swse/scripts/engine/vehicles/vehicle-factory.js";
 
 /**
  * GMApprovalOperationsService
@@ -134,12 +136,12 @@ export class GMApprovalOperationsService {
     };
   }
 
-  static async _removeApprovalFromQueue(approval = {}, fallbackIndex = -1) {
+  static async _removeApprovalFromQueue(approval = {}, fallbackIndex = -1, host = null) {
     const approvals = SettingsHelper.getArray('pendingCustomPurchases', []);
     const index = this._findApprovalIndexById(approvals, approval, fallbackIndex);
     if (index < 0) return false;
     approvals.splice(index, 1);
-    await SettingsHelper.set('pendingCustomPurchases', approvals);
+    await this._setPendingCustomPurchases(approvals, host);
     return true;
   }
 
@@ -383,11 +385,16 @@ export class GMApprovalOperationsService {
       const gmNotes = edits.metadataUpdates['metadata.gmNotes'];
       const systemsSummary = edits.metadataUpdates['metadata.systemsSummary'];
       if (gmNotes || systemsSummary) {
-        await actor.setFlag('foundryvtt-swse', 'gmApprovalNotes', {
-          notes: gmNotes || '',
-          systemsSummary: systemsSummary || '',
-          updatedAt: Date.now(),
-          updatedBy: game.user?.id ?? null
+        await ActorEngine.updateActor(actor, {
+          'flags.foundryvtt-swse.gmApprovalNotes': {
+            notes: gmNotes || '',
+            systemsSummary: systemsSummary || '',
+            updatedAt: Date.now(),
+            updatedBy: game.user?.id ?? null
+          }
+        }, {
+          source: 'GMApprovalOperationsService.applyInlineApprovalEdits.droidNotes',
+          skipValidation: true
         });
       }
       return true;
@@ -400,6 +407,7 @@ export class GMApprovalOperationsService {
 
       for (const [path, value] of Object.entries(edits.approvalUpdates)) this._setNestedValue(approval, path, value);
       for (const [path, value] of Object.entries(edits.metadataUpdates)) this._setNestedValue(approval, path, value);
+      this._normalizeShipyardApprovalPayload(approval);
 
       const draftActor = game.actors.get(approval.draftActorId);
       const actorUpdates = { ...edits.actorUpdates };
@@ -407,10 +415,10 @@ export class GMApprovalOperationsService {
         actorUpdates['system.droidSystems.credits.spent'] = edits.approvalUpdates.costCredits;
         actorUpdates['system.droidSystems.totalCost'] = edits.approvalUpdates.costCredits;
       }
-      if (draftActor && Object.keys(actorUpdates).length) await ActorEngine.updateActor(draftActor, actorUpdates);
+      if (draftActor) await this._synchronizeApprovalToDraftActor(draftActor, approval, actorUpdates);
 
       approvals[parsed.index] = approval;
-      await SettingsHelper.set('pendingCustomPurchases', approvals);
+      await this._setPendingCustomPurchases(approvals, _host);
       return true;
     }
 
@@ -491,7 +499,7 @@ export class GMApprovalOperationsService {
         skipValidation: true
       });
 
-      await this._removeApprovalFromQueue(approval, index);
+      await this._removeApprovalFromQueue(approval, index, host);
 
       Hooks.callAll?.('swseCustomPurchaseApproved', {
         approval,
@@ -525,7 +533,7 @@ export class GMApprovalOperationsService {
       const draftActor = game.actors.get(denial.draftActorId);
 
       if (draftActor) await draftActor.delete();
-      await this._removeApprovalFromQueue(denial, index);
+      await this._removeApprovalFromQueue(denial, index, host);
 
       Hooks.callAll?.('swseCustomPurchaseDenied', {
         approval: denial,
@@ -582,7 +590,7 @@ export class GMApprovalOperationsService {
       return false;
     }
 
-    await this._removeApprovalFromQueue(approval, index);
+    await this._removeApprovalFromQueue(approval, index, host);
 
     Hooks.callAll?.('swseCustomPurchaseApproved', {
       approval,
@@ -675,10 +683,94 @@ export class GMApprovalOperationsService {
 
       if (name.startsWith('metadata.')) {
         edits.metadataUpdates[name] = String(rawValue ?? '').trim();
+        continue;
+      }
+
+      if (name.startsWith('modificationData.') || name.startsWith('buildSpec.') || name.startsWith('stockShip.')) {
+        edits.approvalUpdates[name] = value;
       }
     }
 
     return edits;
+  }
+
+  static async _setPendingCustomPurchases(approvals, host = null) {
+    const mutation = () => SettingsHelper.set('pendingCustomPurchases', approvals);
+    if (host) return mutateShellOnly(host, mutation, { reason: 'gm-approval-pending-custom-update', surfaceId: 'approvals' });
+    return mutation();
+  }
+
+  static _normalizeShipyardApprovalPayload(approval = {}) {
+    const build = approval.modificationData ?? approval.buildSpec;
+    if (!build || typeof build !== 'object') return approval;
+
+    build.stockShip ??= approval.stockShip ?? {};
+    build.modifications = Array.isArray(build.modifications) ? build.modifications : [];
+    build.modifications = build.modifications
+      .filter((mod) => !(mod?._remove === true || mod?._remove === 'true'))
+      .map((mod) => {
+        const copy = this._cloneApprovalPayload(mod) || {};
+        delete copy._remove;
+        if (copy.ep !== undefined && copy.emplacementPoints === undefined) copy.emplacementPoints = copy.ep;
+        if (copy.cost !== undefined && copy.finalCost === undefined) copy.finalCost = copy.cost;
+        return copy;
+      });
+
+    const frameCost = normalizeCredits(build.stockShip?.cost ?? build.frameCost ?? 0);
+    const modCost = build.modifications.reduce((sum, mod) => sum + normalizeCredits(mod?.finalCost ?? mod?.cost ?? 0), 0);
+    build.frameCost = frameCost;
+    build.modificationCost = modCost;
+    build.totalCost = normalizeCredits(approval.costCredits ?? build.totalCost ?? (frameCost + modCost));
+    approval.modificationData = build;
+    approval.buildSpec = build;
+    return approval;
+  }
+
+  static _vehicleSyncUpdatesFromApproval(approval = {}, draftActor = null) {
+    const build = approval.modificationData ?? approval.buildSpec;
+    if (!build?.stockShip) return {};
+
+    const actorData = VehicleFactory.buildVehicleActorData({
+      ...this._cloneApprovalPayload(build),
+      name: approval.draftData?.name ?? draftActor?.name,
+      totalCost: normalizeCredits(approval.costCredits ?? build.totalCost ?? 0),
+      contextMode: build.contextMode || 'storeConstruction'
+    });
+
+    actorData.system ??= {};
+    actorData.system.storeAcquisition = {
+      ...(draftActor?.system?.storeAcquisition || {}),
+      ...(actorData.system.storeAcquisition || {}),
+      pendingApproval: true,
+      costCredits: normalizeCredits(approval.costCredits ?? build.totalCost ?? 0)
+    };
+
+    const updates = {
+      name: actorData.name ?? draftActor?.name,
+      img: actorData.img ?? draftActor?.img,
+      system: actorData.system
+    };
+
+    return updates;
+  }
+
+  static async _synchronizeApprovalToDraftActor(draftActor, approval = {}, actorUpdates = {}) {
+    const updates = { ...(actorUpdates || {}) };
+    const type = approval.type === 'starship' ? 'vehicle' : (approval.type || draftActor?.type);
+
+    if (draftActor?.type === 'vehicle' || type === 'vehicle') {
+      Object.assign(updates, this._vehicleSyncUpdatesFromApproval(approval, draftActor));
+    }
+
+    if (!Object.keys(updates).length) return false;
+    const flat = foundry.utils.flattenObject(updates);
+    const writesHpMax = Object.prototype.hasOwnProperty.call(flat, 'system.hp.max');
+    await ActorEngine.updateActor(draftActor, updates, {
+      source: 'GMApprovalOperationsService.applyInlineApprovalEdits.draftSync',
+      skipValidation: true,
+      isRecomputeHPCall: writesHpMax
+    });
+    return true;
   }
 
   static _approvalNumberValue(value) {
@@ -689,7 +781,7 @@ export class GMApprovalOperationsService {
   }
 
   static _approvalInputValue(name, value) {
-    if (/credits|cost|hp|max|value|rating|damageReduction|total|misc|base/i.test(name)) {
+    if (/credits|cost|hp|max|value|rating|damageReduction|total|misc|base|armor|dr|crew|passengers|strength|dexterity|intelligence|emplacementPoints|finalCost/i.test(name)) {
       const numeric = this._approvalNumberValue(value);
       return numeric ?? value;
     }

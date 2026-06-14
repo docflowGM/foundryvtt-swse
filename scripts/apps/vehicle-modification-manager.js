@@ -30,11 +30,11 @@ export class VehicleModificationManager {
         fetch('systems/foundryvtt-swse/data/vehicle-modifications/accessories.json').then(r => r.json())
       ]);
 
-      this._stockShips = stockShips;
-      this._movementSystems = movement;
-      this._defenseSystems = defense;
-      this._weaponSystems = weapons;
-      this._accessories = accessories;
+      this._stockShips = (Array.isArray(stockShips) ? stockShips : []).map(ship => this.normalizeStockShip(ship));
+      this._movementSystems = (Array.isArray(movement) ? movement : []).map(mod => this.normalizeModification(mod));
+      this._defenseSystems = (Array.isArray(defense) ? defense : []).map(mod => this.normalizeModification(mod));
+      this._weaponSystems = (Array.isArray(weapons) ? weapons : []).map(mod => this.normalizeModification(mod));
+      this._accessories = (Array.isArray(accessories) ? accessories : []).map(mod => this.normalizeModification(mod));
 
       this._initialized = true;
       SWSELogger.log('SWSE | Vehicle Modification Manager initialized');
@@ -51,6 +51,48 @@ export class VehicleModificationManager {
       this._weaponSystems = [];
       this._accessories = [];
     }
+  }
+
+  static _numberFromAny(...values) {
+    for (const value of values) {
+      if (value == null || value === '') continue;
+      const n = Number(typeof value === 'string' ? value.replace(/[^0-9.-]/g, '') : value);
+      if (Number.isFinite(n)) return n;
+    }
+    return 0;
+  }
+
+  static getEmplacementPoints(modification = {}) {
+    return this._numberFromAny(
+      modification.emplacementPoints,
+      modification.ep,
+      modification.system?.emplacementPoints,
+      modification.system?.ep,
+      modification.system?.emplacement?.points,
+      modification.system?.emplacement?.value,
+      modification.flags?.['foundryvtt-swse']?.emplacementPoints
+    );
+  }
+
+  static normalizeModification(modification = {}) {
+    const ep = this.getEmplacementPoints(modification);
+    const category = this.normalizeCategory(modification.category ?? modification.system?.category ?? modification.type);
+    return {
+      ...modification,
+      category,
+      emplacementPoints: ep,
+      ep
+    };
+  }
+
+  static normalizeStockShip(stockShip = {}) {
+    const used = this._numberFromAny(stockShip.emplacementPoints, stockShip.usedEmplacementPoints, stockShip.epUsed, stockShip.system?.emplacementPoints);
+    const unused = this._numberFromAny(stockShip.unusedEmplacementPoints, stockShip.remainingEmplacementPoints, stockShip.ep, stockShip.unusedEP, stockShip.system?.unusedEmplacementPoints);
+    return {
+      ...stockShip,
+      emplacementPoints: used,
+      unusedEmplacementPoints: unused
+    };
   }
 
   /**
@@ -234,7 +276,7 @@ export class VehicleModificationManager {
   static calculateEmplacementPoints(modification, _isNonstandard = false) {
     // Store construction uses the real unusedEmplacementPoints pool.
     // Nonstandard systems are a cost multiplier only; they do not double EP.
-    return modification?.emplacementPoints || 0;
+    return this.getEmplacementPoints(modification);
   }
 
   /**
@@ -410,7 +452,7 @@ export class VehicleModificationManager {
    */
   static calculateInstallationTime(modification, stockShip, workers = null, lacksEmplacementPoints = 0) {
     if (!modification) {return 1;}
-    if (!stockShip) {return Math.max(1, Math.ceil(modification.emplacementPoints || 0));}
+    if (!stockShip) {return Math.max(1, Math.ceil(this.calculateEmplacementPoints(modification)));}
 
     // Minimum work force by size (normalized to lowercase)
     const minWorkForce = {
@@ -425,7 +467,7 @@ export class VehicleModificationManager {
 
     const shipSize = (stockShip.size || 'colossal').toLowerCase();
     const actualWorkers = workers || minWorkForce[shipSize] || 1;
-    const ep = modification.emplacementPoints || 0;
+    const ep = this.calculateEmplacementPoints(modification);
     const costMod = stockShip.costModifier || 1;
 
     let baseTime = (ep * costMod) / actualWorkers;
@@ -446,7 +488,7 @@ export class VehicleModificationManager {
    */
   static calculateInstallationDC(modification, lacksEmplacementPoints = 0) {
     const baseDC = 20;
-    const ep = modification.emplacementPoints || 0;
+    const ep = this.calculateEmplacementPoints(modification);
     let dc = baseDC + ep;
 
     // Add +5 per lacking emplacement point

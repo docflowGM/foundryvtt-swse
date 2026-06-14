@@ -63,6 +63,30 @@ function baseSystem(description = '', source = 'Manual') {
   return { description, source };
 }
 
+function normalizeScalarText(value, fallback = '') {
+  let candidate = value;
+  if (Array.isArray(candidate)) {
+    candidate = '';
+    for (let i = value.length - 1; i >= 0; i -= 1) {
+      const entry = value[i];
+      if (entry !== undefined && entry !== null && String(entry).trim() !== '') {
+        candidate = entry;
+        break;
+      }
+    }
+  }
+  if (candidate && typeof candidate === 'object') {
+    for (const key of ['label', 'name', 'value', 'id', 'slug']) {
+      if (candidate[key] !== undefined && candidate[key] !== null && String(candidate[key]).trim() !== '') {
+        candidate = candidate[key];
+        break;
+      }
+    }
+  }
+  const text = String(candidate ?? '').trim();
+  return text || fallback;
+}
+
 function buildSystemData(type, options = {}) {
   switch (type) {
     case 'weapon':
@@ -250,6 +274,13 @@ export function createSafeItemData(kind, options = {}) {
   const system = type === 'armor'
     ? buildArmorSystemData(rawSystem, { shieldMode: !!options.shieldMode || rawSystem.armorType === 'shield' })
     : rawSystem;
+
+  if (type === 'talent') {
+    const tree = normalizeScalarText(system.tree ?? system.talentTree ?? system.talent_tree, 'Custom');
+    system.tree = tree;
+    system.talentTree = normalizeScalarText(system.talentTree ?? system.talent_tree ?? tree, tree);
+    if (system.talent_tree !== undefined) system.talent_tree = normalizeScalarText(system.talent_tree, tree);
+  }
 
   return {
     name,

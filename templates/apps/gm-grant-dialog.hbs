@@ -1,0 +1,63 @@
+<div class="swse-gm-grant-dialog">
+  <div class="grant-dialog__header">
+    <div class="grant-dialog__glyph"><i class="fas fa-award"></i></div>
+    <div>
+      <div class="grant-dialog__eyebrow">GM Feat/Talent Intercept</div>
+      <h2>{{itemName}}</h2>
+      <p>{{actorName}} is receiving a {{itemType}}. How should the character ledger account for it?</p>
+    </div>
+  </div>
+
+  <label class="grant-dialog__field">
+    <span>Reason</span>
+    <input type="text" name="reason" placeholder="Story reward, trainer, holocron, faction favor…">
+  </label>
+
+  <label class="grant-dialog__field">
+    <span>Notes</span>
+    <textarea name="notes" rows="3" placeholder="Optional accounting note for the GM/player ledger."></textarea>
+  </label>
+
+  <div class="grant-dialog__options">
+    <button type="button" class="grant-dialog__option" data-grant-mode="slot">
+      <strong>Count Against Progression</strong>
+      <span>Use this when the drop is meant to fill a feat/talent slot from leveling or class progression.</span>
+    </button>
+
+    <button type="button" class="grant-dialog__option grant-dialog__option--reward" data-grant-mode="gm-reward">
+      <strong>Grant as GM Reward</strong>
+      <span>Award this outside normal progression. It will not count against open feat/talent slots.</span>
+    </button>
+
+    <button type="button" class="grant-dialog__option" data-grant-mode="manual">
+      <strong>Add as Manual / Unassigned</strong>
+      <span>Place it on the sheet for later accounting without treating it as a normal slot choice.</span>
+    </button>
+  </div>
+
+  <div class="grant-dialog__footer">
+    <button type="button" class="grant-dialog__cancel" data-action="cancel">Cancel Drop</button>
+  </div>
+<style>
+.swse-gm-grant-dialog { padding: 16px; display: flex; flex-direction: column; gap: 12px; color: #d8f7ff; background: radial-gradient(ellipse at 20% 0%, rgba(126,231,255,.14), transparent 45%), #080914; }
+.grant-dialog__header { display: grid; grid-template-columns: 52px 1fr; gap: 12px; align-items: center; border-bottom: 1px solid rgba(126,231,255,.25); padding-bottom: 12px; }
+.grant-dialog__glyph { width: 52px; height: 52px; display: grid; place-items: center; color: #ffc857; border: 1px solid rgba(255,200,87,.5); background: rgba(255,200,87,.08); font-size: 24px; }
+.grant-dialog__eyebrow { font: 10px var(--swse-font-mono, monospace); letter-spacing: .22em; text-transform: uppercase; color: #8fb8c5; }
+.swse-gm-grant-dialog h2 { margin: 2px 0 4px; font: 700 18px var(--swse-font-orbit, sans-serif); letter-spacing: .08em; text-transform: uppercase; color: #7ee7ff; }
+.swse-gm-grant-dialog p { margin: 0; color: #8fb8c5; line-height: 1.45; }
+.grant-dialog__field { display: flex; flex-direction: column; gap: 5px; }
+.grant-dialog__field span { font: 10px var(--swse-font-mono, monospace); letter-spacing: .18em; text-transform: uppercase; color: #7ee7ff; }
+.grant-dialog__field input, .grant-dialog__field textarea { background: rgba(0,0,0,.35); color: #d8f7ff; border: 1px solid rgba(126,231,255,.25); padding: 8px 10px; font-family: var(--swse-font-body, sans-serif); }
+.grant-dialog__field input:focus, .grant-dialog__field textarea:focus { outline: 1px solid #7ee7ff; border-color: #7ee7ff; }
+.grant-dialog__options { display: grid; gap: 8px; }
+.grant-dialog__option { text-align: left; display: flex; flex-direction: column; gap: 3px; padding: 10px 12px; background: rgba(0,0,0,.35); color: #d8f7ff; border: 1px solid rgba(126,231,255,.22); border-left: 3px solid rgba(126,231,255,.55); cursor: pointer; }
+.grant-dialog__option:hover { background: rgba(126,231,255,.1); border-color: rgba(126,231,255,.55); }
+.grant-dialog__option--reward { border-left-color: #ffc857; }
+.grant-dialog__option--reward:hover { background: rgba(255,200,87,.1); border-color: rgba(255,200,87,.55); }
+.grant-dialog__option strong { font: 700 12px var(--swse-font-orbit, sans-serif); letter-spacing: .08em; text-transform: uppercase; color: #d8f7ff; }
+.grant-dialog__option span { color: #8fb8c5; font-size: 12px; line-height: 1.35; }
+.grant-dialog__footer { border-top: 1px solid rgba(126,231,255,.16); padding-top: 10px; display: flex; justify-content: flex-end; }
+.grant-dialog__cancel { background: transparent; color: #ff6b6b; border: 1px solid rgba(255,107,107,.35); padding: 7px 10px; cursor: pointer; }
+.grant-dialog__cancel:hover { background: rgba(255,107,107,.1); }
+</style>
+</div>

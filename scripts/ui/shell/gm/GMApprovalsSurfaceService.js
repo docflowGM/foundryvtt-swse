@@ -83,6 +83,19 @@ function makeTextAreaRow(label, value, inputName, extra = {}) {
   };
 }
 
+function makeCheckboxRow(label, checked, inputName, extra = {}) {
+  return {
+    label,
+    value: checked ? 'true' : 'false',
+    displayValue: checked ? 'Yes' : 'No',
+    inputName,
+    inputType: 'checkbox',
+    checked: !!checked,
+    editable: true,
+    ...extra
+  };
+}
+
 function actorDefense(actor, key) {
   return safeGet(actor, `system.defenses.${key}.total`,
     safeGet(actor, `system.derived.defenses.${key}.total`,
@@ -524,18 +537,27 @@ function buildShipyardRequestCategories({ actor, approval, ownerActor, cost, cur
   const modifications = asArray(build.modifications ?? approval?.modifications);
   const frameName = stockShip?.name ?? approval?.vehicleTemplateName ?? approval?.draftData?.baseTemplate ?? 'Unknown frame';
   const frameCost = numberOrNull(stockShip?.cost) ?? 0;
-  const modCost = modifications.reduce((sum, mod) => sum + (numberOrNull(mod?.finalCost ?? mod?.cost) ?? 0), 0);
-  const epUsed = modifications.reduce((sum, mod) => sum + (numberOrNull(mod?.emplacementPoints ?? mod?.ep) ?? 0), 0);
+  const modCost = modifications
+    .filter((mod) => !mod?._remove)
+    .reduce((sum, mod) => sum + (numberOrNull(mod?.finalCost ?? mod?.cost) ?? 0), 0);
+  const epUsed = modifications
+    .filter((mod) => !mod?._remove)
+    .reduce((sum, mod) => sum + (numberOrNull(mod?.emplacementPoints ?? mod?.ep) ?? 0), 0);
   const epAvailable = numberOrNull(stockShip?.unusedEmplacementPoints ?? stockShip?.unusedEP) ?? null;
   const approvalReason = approval?.metadata?.approvalReason ?? approval?.approvalReason ?? 'GM approval required.';
-  const modSummary = modifications.length
-    ? modifications.map((mod) => {
-      const ep = numberOrNull(mod?.emplacementPoints ?? mod?.ep) ?? 0;
-      const price = numberOrNull(mod?.finalCost ?? mod?.cost) ?? 0;
-      const marker = mod?.nonstandard ? ' · nonstandard ×5' : '';
-      return `${mod?.name ?? mod?.id ?? 'Modification'} — ${ep} EP — ${displayCredits(price)}${marker}`;
-    }).join('\n')
-    : (approval?.draftData?.details ?? 'No modification payload recorded.');
+
+  const modRows = modifications.length
+    ? modifications.flatMap((mod, index) => {
+      const name = mod?.name ?? mod?.id ?? `Modification ${index + 1}`;
+      return [
+        makeEditableRow(`${name} · Name`, name, `modificationData.modifications.${index}.name`, 'text', { wide: true }),
+        makeEditableRow(`${name} · Category`, mod?.category ?? '', `modificationData.modifications.${index}.category`, 'text'),
+        makeEditableRow(`${name} · EP`, numberOrNull(mod?.emplacementPoints ?? mod?.ep) ?? 0, `modificationData.modifications.${index}.emplacementPoints`, 'number'),
+        makeEditableRow(`${name} · Final Cost`, numberOrNull(mod?.finalCost ?? mod?.cost) ?? 0, `modificationData.modifications.${index}.finalCost`, 'number', { suffix: 'cr' }),
+        makeCheckboxRow(`${name} · Remove`, !!mod?._remove, `modificationData.modifications.${index}._remove`)
+      ];
+    })
+    : [makeTextAreaRow('Installed Modifications', approval?.draftData?.details ?? '', 'metadata.modificationSummary', { wide: true, placeholder: 'No modification payload recorded.' })];
 
   const categories = [
     {
@@ -543,7 +565,8 @@ function buildShipyardRequestCategories({ actor, approval, ownerActor, cost, cur
       label: 'Shipyard Build',
       icon: 'fa-solid fa-rocket',
       rows: [
-        makeReadonlyRow('Frame', frameName),
+        makeEditableRow('Frame', frameName, 'modificationData.stockShip.name', 'text'),
+        makeEditableRow('Model Name', approval?.draftData?.name ?? actor?.name ?? frameName, 'name', 'text'),
         makeReadonlyRow('Requested For', ownerActor?.name ?? approval?.ownerActorName ?? 'Unknown'),
         makeReadonlyRow('Draft Actor', actor?.name ?? 'No draft actor linked'),
         makeReadonlyRow('Submitted', submitted),
@@ -558,7 +581,7 @@ function buildShipyardRequestCategories({ actor, approval, ownerActor, cost, cur
         makeReadonlyRow('Current Credits', displayCredits(currentCredits)),
         makeEditableRow('Approved Cost', cost, 'costCredits', 'number', { suffix: 'cr' }),
         makeReadonlyRow('Credits After Approval', displayCredits(currentCredits - cost)),
-        makeReadonlyRow('Frame Cost', displayCredits(frameCost)),
+        makeEditableRow('Frame Cost', frameCost, 'modificationData.stockShip.cost', 'number', { suffix: 'cr' }),
         makeReadonlyRow('Modification Cost', displayCredits(modCost))
       ]
     },
@@ -567,10 +590,11 @@ function buildShipyardRequestCategories({ actor, approval, ownerActor, cost, cur
       label: 'Emplacement & Systems',
       icon: 'fa-solid fa-screwdriver-wrench',
       rows: [
-        makeReadonlyRow('Unused EP Pool', epAvailable === null ? EMPTY : epAvailable),
+        makeEditableRow('Base EP', numberOrNull(stockShip?.emplacementPoints) ?? 0, 'modificationData.stockShip.emplacementPoints', 'number'),
+        makeEditableRow('Unused EP Pool', epAvailable === null ? 0 : epAvailable, 'modificationData.stockShip.unusedEmplacementPoints', 'number'),
         makeReadonlyRow('EP Used', epUsed),
         makeReadonlyRow('EP Remaining', epAvailable === null ? EMPTY : epAvailable - epUsed),
-        makeReadonlyRow('Installed Modifications', modSummary, { wide: true })
+        ...modRows
       ]
     },
     {
@@ -578,12 +602,19 @@ function buildShipyardRequestCategories({ actor, approval, ownerActor, cost, cur
       label: 'Frame Stats',
       icon: 'fa-solid fa-gauge-high',
       rows: [
-        makeReadonlyRow('Size', stockShip?.size ?? safeGet(actor, 'system.size', EMPTY)),
-        makeReadonlyRow('HP', stockShip?.hitPoints ?? safeGet(actor, 'system.hp.max', EMPTY)),
-        makeReadonlyRow('DR', stockShip?.dr ?? safeGet(actor, 'system.dr', EMPTY)),
-        makeReadonlyRow('Armor', stockShip?.armor ?? safeGet(actor, 'system.armor', EMPTY)),
-        makeReadonlyRow('Crew / Passengers', `${stockShip?.crew ?? safeGet(actor, 'system.crew', EMPTY)} / ${stockShip?.passengers ?? safeGet(actor, 'system.passengers', EMPTY)}`),
-        makeReadonlyRow('Cargo', stockShip?.cargoCapacity ?? safeGet(actor, 'system.cargo', EMPTY))
+        makeEditableRow('Size', stockShip?.size ?? safeGet(actor, 'system.size', ''), 'modificationData.stockShip.size', 'text'),
+        makeEditableRow('HP', stockShip?.hitPoints ?? safeGet(actor, 'system.hp.max', 1), 'modificationData.stockShip.hitPoints', 'number'),
+        makeEditableRow('DR', stockShip?.dr ?? safeGet(actor, 'system.dr', 0), 'modificationData.stockShip.dr', 'number'),
+        makeEditableRow('Armor', stockShip?.armor ?? safeGet(actor, 'system.armor', 0), 'modificationData.stockShip.armor', 'number'),
+        makeEditableRow('Strength', stockShip?.strength ?? safeGet(actor, 'system.attributes.str.value', ''), 'modificationData.stockShip.strength', 'number'),
+        makeEditableRow('Dexterity', stockShip?.dexterity ?? safeGet(actor, 'system.attributes.dex.value', ''), 'modificationData.stockShip.dexterity', 'number'),
+        makeEditableRow('Intelligence', stockShip?.intelligence ?? safeGet(actor, 'system.attributes.int.value', ''), 'modificationData.stockShip.intelligence', 'number'),
+        makeEditableRow('Crew', stockShip?.crew ?? safeGet(actor, 'system.crew', 0), 'modificationData.stockShip.crew', 'number'),
+        makeEditableRow('Passengers', stockShip?.passengers ?? safeGet(actor, 'system.passengers', 0), 'modificationData.stockShip.passengers', 'number'),
+        makeEditableRow('Cargo', stockShip?.cargoCapacity ?? safeGet(actor, 'system.cargoCapacity', ''), 'modificationData.stockShip.cargoCapacity', 'text'),
+        makeEditableRow('Consumables', stockShip?.consumables ?? safeGet(actor, 'system.consumables', ''), 'modificationData.stockShip.consumables', 'text'),
+        makeEditableRow('Character Speed', stockShip?.speedCharacter ?? safeGet(actor, 'system.speedCharacter', ''), 'modificationData.stockShip.speedCharacter', 'text'),
+        makeEditableRow('Starship Speed', stockShip?.speedStarship ?? safeGet(actor, 'system.speedStarship', ''), 'modificationData.stockShip.speedStarship', 'text')
       ]
     },
     {

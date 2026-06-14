@@ -18,8 +18,8 @@
 
     <div class="form-field">
       <label>Talent Tree</label>
-      <input type="text" name="system.tree" value="{{entityDialog.talent.tree}}" placeholder="Jedi Guardian" />
-      <p class="swse-entity-dialog__field-note">Canonical display field for the dialog. Compatibility aliases are preserved by the item data.</p>
+      <input type="text" value="{{entityDialog.talent.treeLabel}}" disabled aria-label="Talent Tree" />
+      <p class="swse-entity-dialog__field-note">Edit the Talent Tree field in the header. Keeping only one submitted system.tree field prevents Foundry from saving this value as an array.</p>
     </div>
 
     <div class="form-field">

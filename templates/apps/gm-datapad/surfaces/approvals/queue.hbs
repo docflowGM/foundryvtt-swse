@@ -53,6 +53,11 @@
                       {{#if @root.approvalEditMode}}
                         {{#if (eq this.inputType "textarea")}}
                           <textarea id="{{this.fieldId}}" name="{{this.inputName}}" rows="4" data-approval-edit-field data-label="{{this.label}}" data-original="{{this.originalValue}}" placeholder="{{this.placeholder}}">{{this.value}}</textarea>
+                        {{else if (eq this.inputType "checkbox")}}
+                          <span class="gm-approval-input-wrap is-checkbox">
+                            <input id="{{this.fieldId}}" type="checkbox" name="{{this.inputName}}" value="true" data-approval-edit-field data-label="{{this.label}}" data-original="{{this.originalValue}}" {{#if this.checked}}checked{{/if}}>
+                            <span>Remove from approval</span>
+                          </span>
                         {{else}}
                           <span class="gm-approval-input-wrap">
                             <input id="{{this.fieldId}}" type="{{this.inputType}}" name="{{this.inputName}}" value="{{this.value}}" data-approval-edit-field data-label="{{this.label}}" data-original="{{this.originalValue}}" placeholder="{{this.placeholder}}">

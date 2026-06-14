@@ -69,6 +69,7 @@ export class ProgressionSurfaceAdapter {
       if (existing._app) {
         existing._app._singleStepMode = options?.singleStep === true;
         existing._app._singleStepDomain = options?.singleStepDomain || null;
+        existing._app._singleStepJob = options?.singleStepJob || null;
       }
       await existing._navigateToRequestedStep(options);
       return existing;
@@ -558,34 +559,34 @@ export class ProgressionSurfaceAdapter {
       await plugin.onStepExit?.(this._app, { direction: 'single-step-confirm' });
       this._app._syncLegacyCommittedSelectionsFromSession?.();
 
-      const domain = this._app._singleStepDomain || (/talent/i.test(descriptor.stepId) ? 'talents' : 'feats');
-      const selections = this._app.progressionSession?.draftSelections || {};
-      const scopedSelections = {
-        feats: domain === 'feats' ? (Array.isArray(selections.feats) ? selections.feats : []) : [],
-        talents: domain === 'talents' ? (Array.isArray(selections.talents) ? selections.talents : []) : []
-      };
-      const compiled = await ProgressionFinalizer._compileProgressionAbilityItems(
-        this._app.actor,
-        scopedSelections,
-        {
-          mode: 'sheet-add',
-          sessionId: `sheet-add-${domain}-${Date.now()}`,
-          progressionSession: this._app.progressionSession
-        }
-      );
+      const domain = this._app._singleStepDomain
+        || ProgressionFinalizer.singleStepDomainForStep?.(descriptor.stepId)
+        || (/talent/i.test(descriptor.stepId) ? 'talents' : 'feats');
+      const result = await ProgressionFinalizer.finalizeSingleStep({
+        mode: this._app.mode || 'levelup',
+        actor: this._app.actor,
+        progressionSession: this._app.progressionSession,
+        committedSelections: this._app.committedSelections,
+        steps: [descriptor],
+        stepData: this._app.stepData,
+        mentor: this._app.mentor,
+        sessionId: `single-step-${domain}-${Date.now()}`,
+      }, this._app.actor, {
+        domain,
+        stepId: descriptor.stepId,
+        job: this._app._singleStepJob || null,
+      });
 
-      const items = Array.isArray(compiled?.items) ? compiled.items : [];
-      if (!items.length) {
-        ui?.notifications?.warn?.(`Choose a ${domain === 'feats' ? 'feat' : 'talent'} before confirming.`);
+      if (!result?.success) {
+        ui?.notifications?.error?.(`Could not resolve selection: ${result?.error || 'Unknown error'}`);
         return;
       }
 
-      await ActorEngine.createEmbeddedDocuments(this._app.actor, 'Item', items, { source: `sheet-direct-add-${domain}` });
-      ui?.notifications?.info?.(`Added ${items.map(item => item.name).filter(Boolean).join(', ') || (domain === 'feats' ? 'feat' : 'talent')}.`);
-      await this.completeAndReturnToSheet();
+      ui?.notifications?.info?.(result.message || 'Progression choice resolved.');
+      await this.completeAndReturnToSheet({ sheetAnchor: result.sheetAnchor || null });
     } catch (err) {
       SWSELogger.error('[ProgressionSurfaceAdapter] Single-step confirmation failed:', err);
-      ui?.notifications?.error?.(`Could not add selection: ${err?.message || err}`);
+      ui?.notifications?.error?.(`Could not resolve selection: ${err?.message || err}`);
     }
   }
 
@@ -618,6 +619,7 @@ export class ProgressionSurfaceAdapter {
       app._inlineShellHost = this._shellHost;
       app._singleStepMode = options?.singleStep === true;
       app._singleStepDomain = options?.singleStepDomain || null;
+      app._singleStepJob = options?.singleStepJob || null;
 
       // Inline holopad launches must never spawn a standalone recovery dialog.
       // The old RecoverySessionDialog is an ApplicationV2 window and currently
@@ -778,7 +780,7 @@ export class ProgressionSurfaceAdapter {
    * Returns the hosting character sheet to the primary sheet surface and tears
    * down this adapter so the next level-up/chargen launch starts fresh.
    */
-  async completeAndReturnToSheet() {
+  async completeAndReturnToSheet(options = {}) {
     const host = this._shellHost;
     const key = `${this._actorId}-${this.mode}`;
     this._ready = false;
@@ -786,10 +788,13 @@ export class ProgressionSurfaceAdapter {
     ProgressionSurfaceAdapter._registry.delete(key);
 
     if (host?.setSurface) {
-      await host.setSurface('sheet', {
+      const surfaceOptions = {
         source: 'progression-finalized',
         mode: this.mode
-      });
+      };
+      if (options.tab || options.sheetAnchor) surfaceOptions.tab = options.tab || 'abilities';
+      if (options.sheetAnchor) surfaceOptions.sheetAnchor = options.sheetAnchor;
+      await host.setSurface('sheet', surfaceOptions);
     }
 
     if (typeof host?.render === 'function') {

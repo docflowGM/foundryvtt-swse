@@ -579,41 +579,11 @@ export async function buyVehicle(store, actorId, condition) {
  * @param {Function} closeCallback - Callback to close the store
  */
 export async function createCustomDroid(actor, closeCallback) {
-    const baseCredits = ProgressionRules.getDroidConstructionCredits();
-    const credits = LedgerService.getCurrentCredits(actor);
-
-    if (credits < baseCredits) {
-        ui.notifications.warn(`You need at least ${baseCredits.toLocaleString()} credits to build a custom droid.`);
-        return;
-    }
-
-    // Confirm
-    const confirmed = await SWSEDialogV2.confirm({
-        title: storeI18n('SWSE.Store.Dialogs.BuildCustomDroid'),
-        content: `<p>Enter the droid construction system?</p>
-                 <p>You will design a non-heroic droid at level ${actor.system.level || 1}.</p>
-                 <p><strong>This build will be submitted for GM approval.</strong></p>
-                 <p><strong>Minimum cost:</strong> ${baseCredits.toLocaleString()} credits</p>`,
-        defaultYes: true
-    });
-
-    if (!confirmed) {return;}
-
-    try {
-        // Close this store window
-        if (closeCallback) {
-            closeCallback();
-        }
-
-        // NOTE: Droid builder draft mode workflows are pending implementation in the new progression shell
-        // For now, show a notice that this feature is being refactored
-        SWSELogger.warn('SWSE Store | Droid builder workflows pending implementation in new progression shell');
-        ui.notifications.info(storeI18n('SWSE.Store.Notifications.BuilderRefactorPending'));
-        return;
-    } catch (err) {
-        SWSELogger.error('SWSE Store | Failed to launch droid builder:', err);
-        ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedOpenDroidBuilder'));
-    }
+    // Legacy store callers should use the same live DroidBuilderApp lane as
+    // the shell-native Build Droid From Scratch button. Keeping this as a
+    // delegating alias prevents one store path from showing the old
+    // "builder refactor pending" dead end while the other opens correctly.
+    return buildDroidWithBuilder(actor, closeCallback);
 }
 
 /**

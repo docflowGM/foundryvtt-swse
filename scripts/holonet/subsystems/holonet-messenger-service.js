@@ -354,6 +354,84 @@ function jobObjectiveStatusLabel(status = 'open') {
   return map[status] || String(status || 'Open');
 }
 
+
+function jobIssuerTypeLabel(type = '') {
+  const key = String(type || '').toLowerCase();
+  if (key.includes('contact')) return 'Faction Contact';
+  if (key.includes('faction')) return 'Faction';
+  if (key.includes('npc')) return 'NPC Contact';
+  if (key.includes('previous')) return 'Known Client';
+  if (key.includes('organization')) return 'Organization';
+  return type ? String(type) : 'Holonet Contact';
+}
+
+function normalizeJobIssuerDisplay(job = {}) {
+  const issuer = job?.issuer && typeof job.issuer === 'object' ? job.issuer : {};
+  const client = job?.client && typeof job.client === 'object' ? job.client : {};
+  const consequences = job?.factionConsequences && typeof job.factionConsequences === 'object' ? job.factionConsequences : {};
+  const factionName = String(issuer.factionName || client.factionName || consequences.factionName || '').trim();
+  const contactName = String(issuer.contactName || '').trim();
+  const name = String(contactName || issuer.name || client.name || job.contactLabel || factionName || 'Holonet Contact').trim();
+  const role = String(issuer.contactRole || client.notes || '').trim();
+  const type = String(issuer.type || client.type || (factionName ? 'faction' : 'custom')).trim();
+  const image = String(issuer.image || client.imageUrl || '').trim();
+  const hasFaction = Boolean(factionName);
+  const hasContact = Boolean(contactName || (name && factionName && name.toLowerCase() !== factionName.toLowerCase()));
+  const roleLine = [role, hasContact && factionName ? factionName : ''].filter(Boolean).join(' · ');
+  const subline = roleLine || (hasFaction ? factionName : jobIssuerTypeLabel(type));
+  return {
+    type,
+    typeLabel: jobIssuerTypeLabel(type),
+    name,
+    label: name,
+    factionName,
+    contactName,
+    role,
+    image,
+    subline,
+    hasImage: Boolean(image),
+    hasFaction,
+    hasContact,
+    hasActor: Boolean(issuer.contactActorId || issuer.contactActorUuid || client.actorId || client.actorUuid),
+    actorId: String(issuer.contactActorId || client.actorId || '').trim(),
+    actorUuid: String(issuer.contactActorUuid || client.actorUuid || '').trim(),
+    actorName: String(issuer.contactActorName || client.actorName || '').trim()
+  };
+}
+
+function signedDelta(value = 0) {
+  const n = Number(value || 0);
+  if (!Number.isFinite(n)) return '+0';
+  return n > 0 ? `+${Math.trunc(n)}` : String(Math.trunc(n));
+}
+
+function normalizeJobConsequenceEntries(job = {}) {
+  const c = job?.factionConsequences && typeof job.factionConsequences === 'object' ? job.factionConsequences : null;
+  if (!c) return [];
+  const entries = [];
+  const add = (entry = {}, label = 'Faction') => {
+    const factionName = String(entry?.factionName || '').trim();
+    if (!factionName) return;
+    const type = String(entry?.type || label || 'faction').trim();
+    const isRival = type.toLowerCase().includes('rival') || type.toLowerCase().includes('opposed');
+    entries.push({
+      type,
+      label: isRival ? 'Rival Faction' : label,
+      factionName,
+      successDelta: Number(entry?.successDelta || 0) || 0,
+      failureDelta: Number(entry?.failureDelta || 0) || 0,
+      successDeltaLabel: signedDelta(entry?.successDelta || 0),
+      failureDeltaLabel: signedDelta(entry?.failureDelta || 0),
+      notes: String(entry?.notes || '').trim(),
+      isRival
+    });
+  };
+  add(c, 'Issuer Faction');
+  for (const entry of safeArray(c.additionalConsequences)) add(entry, entry?.type || 'Additional Faction');
+  for (const entry of safeArray(c.rivalConsequences)) add({ type: 'rival', ...entry }, 'Rival Faction');
+  return entries;
+}
+
 function uniqueRecipients(recipients = []) {
   const unique = new Map();
   for (const recipient of recipients) {
@@ -1023,6 +1101,10 @@ export class HolonetMessengerService {
           ...meta.job,
           status: meta.job.status || 'posted',
           statusLabel: this._jobStatusLabel(meta.job.status || 'posted'),
+          issuer: normalizeJobIssuerDisplay(meta.job),
+          hasIssuer: true,
+          consequenceEntries: normalizeJobConsequenceEntries(meta.job),
+          hasFactionConsequences: normalizeJobConsequenceEntries(meta.job).length > 0,
           rewardCreditsLabel: meta.job.rewardCredits ? formatCredits(meta.job.rewardCredits) : '',
           rewardItemUuids: safeArray(meta.job.rewardItemUuids),
           hasItemRewards: safeArray(meta.job.rewardItemUuids).length > 0,
@@ -1358,6 +1440,11 @@ export class HolonetMessengerService {
         ...meta.job,
         status: meta.job.status || 'posted',
         statusLabel: this._jobStatusLabel(meta.job.status || 'posted'),
+        issuer: normalizeJobIssuerDisplay(meta.job),
+        hasIssuer: true,
+        consequenceEntries: normalizeJobConsequenceEntries(meta.job),
+        hasFactionConsequences: normalizeJobConsequenceEntries(meta.job).length > 0,
+        rewardCreditsLabel: meta.job.rewardCredits ? formatCredits(meta.job.rewardCredits) : '',
         rewardItemUuids: safeArray(meta.job.rewardItemUuids),
         hasItemRewards: safeArray(meta.job.rewardItemUuids).length > 0,
         objectives: normalizeJobObjectiveEntries(meta.job).map(objective => ({
@@ -1830,7 +1917,7 @@ export class HolonetMessengerService {
     });
   }
 
-  static async createJobPosting({ actor, title = '', body = '', recipientIds = [], contactRecipientId = '', rewardCredits = 0, rewardItems = '', rewardItemUuids = [], attachments = [], client = null, objectives = [], briefing = null, factionConsequences = null, status = 'posted' }) {
+  static async createJobPosting({ actor, title = '', body = '', recipientIds = [], contactRecipientId = '', rewardCredits = 0, rewardItems = '', rewardItemUuids = [], attachments = [], client = null, issuer = null, objectives = [], briefing = null, factionConsequences = null, status = 'posted' }) {
     if (!game.user?.isGM) return false;
     const payload = {
       actorId: actor?.id ?? null,
@@ -1843,6 +1930,7 @@ export class HolonetMessengerService {
       rewardItemUuids: safeArray(rewardItemUuids).map(String).filter(Boolean),
       attachments: normalizeAttachmentList(attachments),
       client,
+      issuer,
       objectives,
       briefing,
       factionConsequences,
@@ -1853,7 +1941,7 @@ export class HolonetMessengerService {
     return this._gmCreateJobPosting(payload);
   }
 
-  static async _gmCreateJobPosting({ actorId, title = 'Job Board Posting', body = '', recipientIds = [], contactRecipientId = '', rewardCredits = 0, rewardItems = '', rewardItemUuids = [], attachments = [], client = null, objectives = [], briefing = null, factionConsequences = null, status = 'posted', senderUserId = null, senderRecipientId = null, requestId = null, requesterId = null } = {}) {
+  static async _gmCreateJobPosting({ actorId, title = 'Job Board Posting', body = '', recipientIds = [], contactRecipientId = '', rewardCredits = 0, rewardItems = '', rewardItemUuids = [], attachments = [], client = null, issuer = null, objectives = [], briefing = null, factionConsequences = null, status = 'posted', senderUserId = null, senderRecipientId = null, requestId = null, requesterId = null } = {}) {
     const actor = actorId ? game.actors?.get(actorId) : null;
     const senderRecipient = this._recipientForActorContext(actor, { senderUserId, senderRecipientId });
     const rawRecipientIds = this._normalizeRecipientIds(recipientIds);
@@ -1865,6 +1953,7 @@ export class HolonetMessengerService {
     const participants = uniqueRecipients(initialStatus === 'draft' ? [senderRecipient] : [senderRecipient, ...requested]);
     const normalizedObjectives = this._normalizeJobContractObjectives(objectives, { title, rewardCredits, rewardItems });
     const normalizedClient = this._normalizeJobClient(client, contactRecipient);
+    const normalizedIssuer = this._normalizeJobIssuer(issuer, normalizedClient);
     const thread = await HolonetThreadService.createThread(title || 'Job Board Posting', participants, {
       sourceFamily: SOURCE_FAMILY.MESSENGER,
       threadType: THREAD_TYPE.JOB,
@@ -1881,6 +1970,7 @@ export class HolonetMessengerService {
         contactRecipientId: contactRecipient?.id ?? null,
         contactLabel: normalizedClient?.name || (contactRecipient ? recipientDisplayName(contactRecipient) : 'Job Board'),
         client: normalizedClient,
+        issuer: normalizedIssuer,
         briefing: briefing && typeof briefing === 'object' ? { ...briefing } : { body: String(body || '').trim() },
         objectives: normalizedObjectives,
         factionConsequences: factionConsequences && typeof factionConsequences === 'object' ? { ...factionConsequences } : null,
@@ -1920,6 +2010,28 @@ export class HolonetMessengerService {
   }
 
 
+  static _normalizeJobIssuer(issuer = null, client = null) {
+    if (!issuer || typeof issuer !== 'object') return null;
+    const type = String(issuer.type || client?.type || 'custom').trim() || 'custom';
+    const factionName = String(issuer.factionName || client?.factionName || '').trim();
+    const contactName = String(issuer.contactName || '').trim();
+    const name = String(issuer.name || contactName || factionName || client?.name || '').trim();
+    return {
+      type,
+      source: String(issuer.source || 'job-board').trim(),
+      factionId: String(issuer.factionId || '').trim(),
+      factionName,
+      contactId: String(issuer.contactId || '').trim(),
+      contactName,
+      contactRole: String(issuer.contactRole || '').trim(),
+      contactActorId: String(issuer.contactActorId || client?.actorId || '').trim(),
+      contactActorUuid: String(issuer.contactActorUuid || client?.actorUuid || '').trim(),
+      contactActorName: String(issuer.contactActorName || client?.actorName || '').trim(),
+      name,
+      image: String(issuer.image || client?.imageUrl || '').trim()
+    };
+  }
+
   static _normalizeJobClient(client = null, contactRecipient = null) {
     if (!client || typeof client !== 'object') {
       return contactRecipient ? {
@@ -1936,6 +2048,8 @@ export class HolonetMessengerService {
       name,
       factionName: String(client.factionName || '').trim(),
       actorId: String(client.actorId || '').trim() || contactRecipient?.actorId || null,
+      actorUuid: String(client.actorUuid || '').trim(),
+      actorName: String(client.actorName || '').trim(),
       imageUrl: String(client.imageUrl || client.avatar || '').trim(),
       saveForReuse: Boolean(client.saveForReuse),
       notes: String(client.notes || '').trim()
@@ -3202,60 +3316,112 @@ export class HolonetMessengerService {
   }
 
 
+  static _jobFactionConsequenceEntries(job = {}) {
+    const consequences = job?.factionConsequences || job?.relationshipConsequences || {};
+    const entries = [];
+    const add = (entry = {}, fallbackKey = '') => {
+      const factionName = String(entry?.factionName || '').trim();
+      if (!factionName) return;
+      const keyBase = String(entry?.key || fallbackKey || `${entry?.type || 'faction'}:${factionName}`).trim().toLowerCase();
+      const key = keyBase.replace(/[^a-z0-9:_-]+/g, '-');
+      if (entries.some(row => row.key === key)) return;
+      entries.push({
+        key,
+        type: String(entry?.type || 'issuer').trim() || 'issuer',
+        factionName,
+        successDelta: Number(entry?.successDelta || 0) || 0,
+        failureDelta: Number(entry?.failureDelta || 0) || 0,
+        notes: String(entry?.notes || '').trim()
+      });
+    };
+
+    add({
+      key: 'primary',
+      type: 'issuer',
+      factionName: consequences?.factionName || job?.issuer?.factionName || job?.client?.factionName || job?.client?.name || '',
+      successDelta: consequences?.successDelta,
+      failureDelta: consequences?.failureDelta,
+      notes: consequences?.notes || `Job consequence for ${job?.title || 'Holonet Job'}.`
+    }, 'primary');
+
+    for (const entry of safeArray(consequences?.additionalConsequences)) add(entry);
+    for (const entry of safeArray(consequences?.rivalConsequences)) add({ type: 'rival', ...entry });
+    return entries;
+  }
+
   static async _applyJobFactionConsequences({ thread, status = '', requesterId = null } = {}) {
     const job = thread?.metadata?.job ?? null;
     if (!job) return [];
     const normalizedStatus = String(status || job.status || '').trim();
     if (!['complete', 'failed'].includes(normalizedStatus)) return [];
-    const consequences = job.factionConsequences || job.relationshipConsequences || null;
-    const factionName = String(consequences?.factionName || job.client?.factionName || '').trim();
-    if (!factionName) return [];
 
-    job.factionConsequences ??= consequences && typeof consequences === 'object' ? { ...consequences } : {};
+    job.factionConsequences ??= job.relationshipConsequences && typeof job.relationshipConsequences === 'object' ? { ...job.relationshipConsequences } : {};
     job.factionConsequences.applied ??= {};
     job.factionConsequences.reversed ??= {};
+    job.factionConsequences.appliedByKey ??= {};
+    job.factionConsequences.reversedByKey ??= {};
 
-    const delta = this._jobFactionDeltaForStatus(job.factionConsequences, normalizedStatus);
+    const entries = this._jobFactionConsequenceEntries(job);
+    if (!entries.length) return [];
+
     const currentAppliedStatus = this._currentAppliedJobFactionStatus(job.factionConsequences);
     if (currentAppliedStatus === normalizedStatus) return [];
 
-    const existingFaction = FactionRegistryService.findFaction(factionName);
     const correctionResults = currentAppliedStatus
       ? await this._reverseJobFactionConsequences({ thread, fromStatus: currentAppliedStatus, toStatus: normalizedStatus, requesterId })
       : [];
 
-    if (!delta) {
-      job.factionConsequences.currentAppliedStatus = '';
-      await HolonetStorage.saveThread(thread);
-      if (correctionResults.length) await this._emitJobFactionSync({ thread, factionName, status: normalizedStatus, delta: 0, results: correctionResults, requesterId, autoCreated: false, correction: true });
-      return correctionResults;
+    const results = [];
+    const appliedEntries = [];
+    const autoCreatedEntries = [];
+    for (const entry of entries) {
+      const delta = this._jobFactionDeltaForStatus(entry, normalizedStatus);
+      if (!delta) continue;
+      const existingFaction = FactionRegistryService.findFaction(entry.factionName);
+      const reason = entry.notes || `Job ${normalizedStatus}: ${job.title || thread?.title || 'Holonet Job'}`;
+      const entryResults = await FactionRegistryService.applyJobFactionDelta({
+        thread,
+        factionName: entry.factionName,
+        delta,
+        source: 'job',
+        reason,
+        requesterId,
+        status: normalizedStatus,
+        metadata: { status: normalizedStatus, consequenceKey: entry.key, consequenceType: entry.type }
+      });
+      if (!entryResults.length) continue;
+      results.push(...entryResults);
+      appliedEntries.push({ key: entry.key, type: entry.type, factionName: entry.factionName, delta, resultCount: entryResults.length });
+      job.factionConsequences.appliedByKey[entry.key] = { at: nowIso(), status: normalizedStatus, delta, factionName: entry.factionName, type: entry.type };
+      if (!existingFaction && entryResults.some(result => result.factionId)) autoCreatedEntries.push(entry.factionName);
+      await this._emitJobFactionSync({ thread, factionName: entry.factionName, status: normalizedStatus, delta, results: entryResults, requesterId, autoCreated: !existingFaction, correction: correctionResults.length > 0 });
     }
 
-    const results = await FactionRegistryService.applyJobConsequences({ thread, status: normalizedStatus, requesterId });
     const combinedResults = [...correctionResults, ...results];
     if (!combinedResults.length) return [];
+
     job.factionConsequences.applied[normalizedStatus] = {
       at: nowIso(),
-      delta,
-      correctionOf: currentAppliedStatus || ''
+      delta: appliedEntries.reduce((sum, entry) => sum + (Number(entry.delta) || 0), 0),
+      correctionOf: currentAppliedStatus || '',
+      entries: appliedEntries
     };
     job.factionConsequences.currentAppliedStatus = normalizedStatus;
     await HolonetStorage.saveThread(thread);
 
-    const autoCreated = !existingFaction && results.some(result => result.factionId);
-    await this._emitJobFactionSync({ thread, factionName, status: normalizedStatus, delta, results: combinedResults, requesterId, autoCreated, correction: correctionResults.length > 0 });
-    const summary = combinedResults.map(result => `${result.actorName}: ${result.before >= 0 ? '+' : ''}${result.before} → ${result.after >= 0 ? '+' : ''}${result.after}`).join('; ');
-    if (autoCreated) ui.notifications?.warn?.(`Job faction "${factionName}" was not in the GM registry; it was created automatically.`);
-    await this._publishSystemMessage(thread, `${autoCreated ? 'Created GM registry faction and updated' : correctionResults.length ? 'Corrected faction relationship and updated' : 'Faction relationship updated for'} ${factionName}: ${summary}.`, {
+    if (autoCreatedEntries.length) ui.notifications?.warn?.(`Job faction(s) not in the GM registry were created automatically: ${Array.from(new Set(autoCreatedEntries)).join(', ')}.`);
+    const summary = combinedResults.map(result => `${result.factionName || 'Faction'} / ${result.actorName}: ${result.before >= 0 ? '+' : ''}${result.before} → ${result.after >= 0 ? '+' : ''}${result.after}`).join('; ');
+    await this._publishSystemMessage(thread, `${correctionResults.length ? 'Corrected faction relationships and updated' : 'Faction relationships updated'}: ${summary}.`, {
       eventType: 'job-faction-score-changed',
-      factionName,
+      factionName: appliedEntries.map(entry => entry.factionName).join(', '),
       factionIds: Array.from(new Set(combinedResults.map(result => result.factionId).filter(Boolean))),
       status: normalizedStatus,
-      delta,
+      delta: appliedEntries.reduce((sum, entry) => sum + (Number(entry.delta) || 0), 0),
       affectedActorIds: Array.from(new Set(combinedResults.map(result => result.actorId).filter(Boolean))),
-      autoCreated,
+      autoCreated: autoCreatedEntries.length > 0,
       correctedPriorStatus: currentAppliedStatus || '',
-      requesterId
+      requesterId,
+      entries: appliedEntries
     });
     return combinedResults;
   }
@@ -3281,49 +3447,36 @@ export class HolonetMessengerService {
   static async _reverseJobFactionConsequences({ thread, fromStatus = '', toStatus = '', requesterId = null } = {}) {
     const job = thread?.metadata?.job ?? null;
     if (!job) return [];
-    const consequences = job.factionConsequences || job.relationshipConsequences || {};
     const normalizedFrom = String(fromStatus || '').trim();
     if (!['complete', 'failed'].includes(normalizedFrom)) return [];
-    const priorDelta = this._jobFactionDeltaForStatus(consequences, normalizedFrom);
-    const factionName = String(consequences?.factionName || job.client?.factionName || '').trim();
-    if (!factionName || !priorDelta) return [];
-    const reason = `Correction: job status changed from ${this._jobStatusLabel(normalizedFrom)} to ${this._jobStatusLabel(toStatus)} for ${job.title || thread?.title || 'Holonet Job'}.`;
-    const results = await FactionRegistryService.applyJobFactionDelta({
-      thread,
-      factionName,
-      delta: -priorDelta,
-      source: 'job',
-      reason,
-      requesterId,
-      status: toStatus,
-      metadata: { correction: true, reversedStatus: normalizedFrom }
-    });
+    const entries = this._jobFactionConsequenceEntries(job);
+    if (!entries.length) return [];
+    const results = [];
+    for (const entry of entries) {
+      const priorDelta = this._jobFactionDeltaForStatus(entry, normalizedFrom);
+      if (!priorDelta) continue;
+      const reason = `Correction: job status changed from ${this._jobStatusLabel(normalizedFrom)} to ${this._jobStatusLabel(toStatus)} for ${job.title || thread?.title || 'Holonet Job'}.`;
+      const entryResults = await FactionRegistryService.applyJobFactionDelta({
+        thread,
+        factionName: entry.factionName,
+        delta: -priorDelta,
+        source: 'job',
+        reason,
+        requesterId,
+        status: toStatus,
+        metadata: { correction: true, reversedStatus: normalizedFrom, consequenceKey: entry.key, consequenceType: entry.type }
+      });
+      if (!entryResults.length) continue;
+      results.push(...entryResults);
+      job.factionConsequences.reversedByKey ??= {};
+      job.factionConsequences.reversedByKey[entry.key] = { at: nowIso(), delta: -priorDelta, toStatus, factionName: entry.factionName, type: entry.type };
+      await this._emitJobFactionSync({ thread, factionName: entry.factionName, status: toStatus, delta: -priorDelta, results: entryResults, requesterId, autoCreated: false, correction: true });
+    }
     if (results.length) {
       job.factionConsequences.reversed ??= {};
-      job.factionConsequences.reversed[normalizedFrom] = { at: nowIso(), delta: -priorDelta, toStatus };
+      job.factionConsequences.reversed[normalizedFrom] = { at: nowIso(), toStatus, resultCount: results.length };
     }
     return results;
-  }
-
-  static async _emitJobFactionSync({ thread, factionName = '', status = '', delta = 0, results = [], requesterId = null, autoCreated = false, correction = false } = {}) {
-    const factionIds = Array.from(new Set(results.map(result => result.factionId).filter(Boolean)));
-    const actorIds = Array.from(new Set(results.map(result => result.actorId).filter(Boolean)));
-    const syncPayload = {
-      type: 'faction-score-changed',
-      source: 'job-board',
-      threadId: thread?.id,
-      factionName,
-      factionIds,
-      actorIds,
-      status,
-      delta,
-      requesterId,
-      autoCreated,
-      correction
-    };
-    Hooks.callAll('swseHolonetUpdated', syncPayload);
-    HolonetSocketService.emitSync(syncPayload);
-    return syncPayload;
   }
 
   static async _gmAtomicJobCreditPayout({ thread, amount, recipientId, targetActor = null, requesterId = null, senderRecipientId = null, partyFundCutPercent = null } = {}) {

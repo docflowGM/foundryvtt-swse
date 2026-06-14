@@ -283,9 +283,9 @@ export class StoreAcquisitionService {
         ...metadata,
         approvedFromDraft: true
       },
-      [`flags.-=${SYSTEM_ID}.pendingApproval`]: null,
-      [`flags.-=${SYSTEM_ID}.draftOnly`]: null,
-      [`flags.-=${SYSTEM_ID}.ownerPlayerId`]: null,
+      [`flags.${SYSTEM_ID}.pendingApproval`]: null,
+      [`flags.${SYSTEM_ID}.draftOnly`]: null,
+      [`flags.${SYSTEM_ID}.ownerPlayerId`]: null,
       'system.ownedByActorId': metadata.ownerActorId,
       'system.ownedByActorName': metadata.ownerActorName,
       'system.storeAcquisition': {

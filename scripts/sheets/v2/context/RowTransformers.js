@@ -16,6 +16,35 @@ function safeNumber(value, fallback = 0) {
   return Number.isFinite(numeric) ? numeric : fallback;
 }
 
+function safeText(value, fallback = '') {
+  let candidate = value;
+  if (Array.isArray(candidate)) {
+    candidate = '';
+    for (let i = value.length - 1; i >= 0; i -= 1) {
+      const entry = value[i];
+      if (entry !== undefined && entry !== null && String(entry).trim() !== '') {
+        candidate = entry;
+        break;
+      }
+    }
+  }
+  if (candidate && typeof candidate === 'object') {
+    for (const key of ['label', 'name', 'value', 'id', 'slug']) {
+      if (candidate[key] !== undefined && candidate[key] !== null && String(candidate[key]).trim() !== '') {
+        candidate = candidate[key];
+        break;
+      }
+    }
+  }
+  const text = String(candidate ?? '').trim();
+  return text || fallback;
+}
+
+function cssSlug(value, fallback = 'general') {
+  const text = safeText(value, fallback).toLowerCase();
+  return text.replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || fallback;
+}
+
 /**
  * RowTransformers
  *
@@ -141,6 +170,8 @@ export class RowTransformers {
    * Transform a talent item into a ledger row
    */
   static toTalentRow(item, isEditable) {
+    const tree = safeText(item.system?.tree ?? item.system?.talentTree ?? item.system?.talent_tree, 'General');
+
     return {
       id: item.id,
       uuid: item.uuid,
@@ -148,17 +179,17 @@ export class RowTransformers {
       img: item.img || '/images/icons/svg/mystery-man.svg',
       type: 'talent',
       label: item.name,
-      source: item.system?.source || 'Unknown',
-      sourceType: item.system?.sourceType || 'talent',
-      tree: item.system?.tree || 'General',
-      group: item.system?.tree || 'General',
+      source: safeText(item.system?.source, 'Unknown'),
+      sourceType: safeText(item.system?.sourceType, 'talent'),
+      tree,
+      group: tree,
       cost: safeNumber(item.system?.cost, 1),
-      prerequisites: item.system?.prerequisites || '',
-      description: item.system?.description || '',
+      prerequisites: safeText(item.system?.prerequisites ?? item.system?.prerequisite, ''),
+      description: safeText(item.system?.description ?? item.system?.benefit, ''),
       tags: this._extractTags(item),
       cssClass: [
         'talent-row',
-        item.system?.tree ? `tree-${item.system.tree.toLowerCase()}` : 'tree-general'
+        `tree-${cssSlug(tree)}`
       ].filter(Boolean).join(' '),
       canEdit: isEditable,
       canDelete: isEditable

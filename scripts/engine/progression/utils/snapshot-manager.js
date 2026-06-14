@@ -8,6 +8,19 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
+const SYSTEM_ID = 'foundryvtt-swse';
+
+function stripNestedSnapshots(actorData = {}) {
+    const data = foundry.utils.deepClone(actorData || {});
+    try {
+        if (data.flags?.[SYSTEM_ID]?.snapshots) delete data.flags[SYSTEM_ID].snapshots;
+        if (data.flags?.swse?.snapshots) delete data.flags.swse.snapshots;
+    } catch (_err) {
+        // Snapshot history is a rollback ledger, not part of the rollback payload.
+    }
+    return data;
+}
+
 export class SnapshotManager {
 
     /**
@@ -24,11 +37,12 @@ export class SnapshotManager {
                 actorId: actor.id,
                 actorName: actor.name,
                 level: actor.system.level || 1,
-                actorData: actor.toObject(false)
+                actorData: stripNestedSnapshots(actor.toObject(false))
             };
 
             // Store in actor flags (persistent across sessions)
-            const history = actor.getFlag('foundryvtt-swse', 'snapshots') || [];
+            const history = (foundry.utils.deepClone(actor.getFlag(SYSTEM_ID, 'snapshots') || []))
+                .map((entry) => entry?.actorData ? { ...entry, actorData: stripNestedSnapshots(entry.actorData) } : entry);
 
             // Keep only last 10 snapshots to avoid bloat
             if (history.length >= 10) {

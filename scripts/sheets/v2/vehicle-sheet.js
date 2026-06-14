@@ -10,6 +10,7 @@ import { launchProgression } from "/systems/foundryvtt-swse/scripts/apps/progres
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
 import { VehicleDropEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/vehicle-drop-engine.js";
+import { VehicleCrewAssignmentService } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-assignment-service.js";
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { StarshipManeuversEngine } from "/systems/foundryvtt-swse/scripts/engine/StarshipManeuversEngine.js";
@@ -826,6 +827,58 @@ export class SWSEV2VehicleSheet extends
       }, { signal });
     }
 
+    /* ---- CREW ASSIGNMENT ---- */
+
+    for (const btn of root.querySelectorAll('[data-action="vehicle-assign-crew"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const station = ev.currentTarget?.dataset?.station;
+        if (!station || !this.actor) return;
+        await VehicleCrewAssignmentService.openCrewPicker(this.actor, station);
+        await this.render();
+      }, { signal });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="vehicle-remove-crew"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const station = ev.currentTarget?.dataset?.station;
+        if (!station || !this.actor) return;
+        await VehicleCrewAssignmentService.removeCrew(this.actor, station, { source: 'vehicle-sheet-remove-crew' });
+        await this.render();
+      }, { signal });
+    }
+
+    for (const btn of root.querySelectorAll('[data-action="vehicle-open-crew"]')) {
+      btn.addEventListener("click", async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const station = ev.currentTarget?.dataset?.station;
+        if (!station || !this.actor) return;
+        await VehicleCrewAssignmentService.openCrewSheet(this.actor, station);
+      }, { signal });
+    }
+
+    for (const stationRow of root.querySelectorAll('[data-drop-zone="crew-station"][data-crew-station]')) {
+      stationRow.addEventListener("dragover", (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        stationRow.classList.add('swse-vehicle-station-row--drop-hover');
+      }, { signal });
+      stationRow.addEventListener("dragleave", () => {
+        stationRow.classList.remove('swse-vehicle-station-row--drop-hover');
+      }, { signal });
+      stationRow.addEventListener("drop", async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        ev.stopImmediatePropagation?.();
+        stationRow.classList.remove('swse-vehicle-station-row--drop-hover');
+        await this._handleCrewStationDrop(ev, stationRow.dataset.crewStation);
+      }, { signal, capture: true });
+    }
+
     /* ---- CREW STATION SKILLS ---- */
 
     for (const btn of root.querySelectorAll('[data-action="vehicle-crew-skill"]')) {
@@ -918,11 +971,14 @@ export class SWSEV2VehicleSheet extends
     // Bind drop event to authoritative _onDrop handler
     // This routes drops through appropriate engine for unified item/actor handling
     root.addEventListener("drop", (e) => {
+      if (e.target?.closest?.('[data-drop-zone="crew-station"][data-crew-station]')) {
+        return;
+      }
       e.preventDefault();
       e.stopPropagation();
       e.stopImmediatePropagation?.();
       this._onDrop(e);
-    }, { capture: true });
+    }, { signal, capture: true });
 
     RenderAssertions.assertRenderComplete(
       this,
@@ -933,6 +989,33 @@ export class SWSEV2VehicleSheet extends
   /* -------- -------- -------- -------- -------- -------- -------- -------- */
   /* DRAG & DROP HANDLING                                                     */
   /* -------- -------- -------- -------- -------- -------- -------- -------- */
+
+  async _handleCrewStationDrop(event, station) {
+    if (!this.actor) return;
+    const data = TextEditor.getDragEventData(event);
+    if (!data) return;
+
+    let droppedDocument = null;
+    try {
+      if (data.uuid) droppedDocument = await fromUuid(data.uuid);
+      else if (data.pack && data.id) {
+        const pack = game.packs?.get?.(data.pack);
+        droppedDocument = await pack?.getDocument?.(data.id);
+      }
+    } catch (_err) {
+      droppedDocument = null;
+    }
+
+    if (!VehicleCrewAssignmentService.canBeCrew(droppedDocument)) {
+      ui?.notifications?.warn?.('Drop a character, NPC, or droid actor onto a crew station.');
+      return;
+    }
+
+    await VehicleCrewAssignmentService.assignCrew(this.actor, station, droppedDocument, {
+      source: 'vehicle-sheet-crew-drop'
+    });
+    await this.render();
+  }
 
   async _onDrop(event) {
     event.preventDefault();

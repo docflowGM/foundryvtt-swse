@@ -10,6 +10,11 @@
  * - Build declarative mutationPlan
  * - Include UI target tab for post-drop feedback
  * - Return plan + tab only (no mutations)
+ */
+
+import { VehicleCrewAssignmentService } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-assignment-service.js";
+
+/**
  *
  * Architecture:
  * - Vehicle-only (separate from character/NPC/droid drops)
@@ -37,39 +42,6 @@ function asArray(value) {
   return Array.isArray(value) ? value : [];
 }
 
-function firstEmptyCrewStation(positions = {}) {
-  const keys = ['pilot', 'copilot', 'gunner', 'engineer', 'shields', 'commander'];
-  return keys.find((key) => !positions?.[key]) || 'pilot';
-}
-
-function normalizeCrewStation(value, fallback = 'pilot') {
-  const key = String(value || fallback).trim().toLowerCase().replace(/[\s_-]+/g, '');
-  const map = {
-    pilot: 'pilot',
-    copilot: 'copilot',
-    coPilot: 'copilot',
-    gunner: 'gunner',
-    gunners: 'gunner',
-    engineer: 'engineer',
-    shields: 'shields',
-    shield: 'shields',
-    commander: 'commander',
-    command: 'commander'
-  };
-  return map[key] || fallback;
-}
-
-function crewReference(actor, station) {
-  return {
-    uuid: actor.uuid,
-    id: actor.id,
-    actorId: actor.id,
-    name: actor.name,
-    type: actor.type,
-    role: station,
-    position: station
-  };
-}
 
 export class VehicleDropEngine {
   /**
@@ -322,24 +294,11 @@ export class VehicleDropEngine {
    * @returns {Object|null} mutationPlan or null
    */
   static _assignCrew(vehicle, actor, station = null) {
-    const positions = vehicle.system?.crewPositions ?? {};
-    const targetStation = normalizeCrewStation(station, firstEmptyCrewStation(positions));
-    const ownedActors = asArray(vehicle.system?.ownedActors);
-    const relationships = asArray(vehicle.system?.relationships);
-    const member = crewReference(actor, targetStation);
-
-    const ownedWithoutDuplicate = ownedActors.filter((entry) => entry?.uuid !== actor.uuid && entry?.id !== actor.id && entry?.actorId !== actor.id);
-    const relationshipsWithoutDuplicate = relationships.filter((entry) => entry?.uuid !== actor.uuid && entry?.id !== actor.id && entry?.actorId !== actor.id);
-
-    return {
-      mutationPlan: {
-        update: {
-          [`system.crewPositions.${targetStation}`]: member,
-          'system.ownedActors': [...ownedWithoutDuplicate, member],
-          'system.relationships': [...relationshipsWithoutDuplicate, { uuid: actor.uuid, id: actor.id, name: actor.name, type: actor.type, role: targetStation }]
-        }
-      },
-      uiTargetTab: 'crew'
-    };
+    const plan = VehicleCrewAssignmentService.buildAssignmentMutationPlan(vehicle, station, actor);
+    if (!plan) {
+      console.debug('Drop rejected: actor is not valid vehicle crew');
+      return null;
+    }
+    return plan;
   }
 }

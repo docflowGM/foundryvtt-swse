@@ -115,6 +115,30 @@ function normalizeTextList(value) {
   return [];
 }
 
+function normalizeScalarText(value, fallback = '') {
+  let candidate = value;
+  if (Array.isArray(candidate)) {
+    candidate = '';
+    for (let i = value.length - 1; i >= 0; i -= 1) {
+      const entry = value[i];
+      if (entry !== undefined && entry !== null && String(entry).trim() !== '') {
+        candidate = entry;
+        break;
+      }
+    }
+  }
+  if (candidate && typeof candidate === 'object') {
+    for (const key of ['label', 'name', 'value', 'id', 'slug']) {
+      if (candidate[key] !== undefined && candidate[key] !== null && String(candidate[key]).trim() !== '') {
+        candidate = candidate[key];
+        break;
+      }
+    }
+  }
+  const text = String(candidate ?? '').trim();
+  return text || fallback;
+}
+
 function normalizeDcTable(value, { withDescription = false } = {}) {
   return objectToOrderedArray(value).map((entry) => ({
     dc: toNumber(entry?.dc, 0),
@@ -498,6 +522,17 @@ export function normalizeItemSystem(type, currentSystem = {}, submittedSystem = 
 
   if (safeType === 'feat' || safeType === 'talent') {
     merged.prereqClauses = normalizePrereqClauses(merged.prereqClauses ?? merged.prerequisitesStructured?.conditions ?? merged.structuredPrerequisites?.conditions ?? []);
+  }
+
+  if (safeType === 'talent') {
+    const tree = normalizeScalarText(merged.tree ?? merged.talentTree ?? merged.talent_tree, 'General');
+    const talentTree = normalizeScalarText(merged.talentTree ?? merged.talent_tree ?? tree, tree);
+    merged.tree = tree;
+    merged.talentTree = talentTree || tree;
+    if (merged.talent_tree !== undefined) merged.talent_tree = normalizeScalarText(merged.talent_tree, tree);
+    if (merged.category !== undefined) merged.category = normalizeScalarText(merged.category, '');
+    merged.prerequisite = normalizeScalarText(merged.prerequisite, '');
+    merged.prerequisites = normalizeScalarText(merged.prerequisites ?? merged.prerequisite, merged.prerequisite || '');
   }
 
   if (safeType === 'force-power') {

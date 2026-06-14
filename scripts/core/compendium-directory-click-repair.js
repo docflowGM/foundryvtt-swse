@@ -411,6 +411,11 @@ async function _openPackFromEvent(event, source = 'document') {
     if (event.defaultPrevented) return false;
     if (!(event.target instanceof Element)) return false;
 
+    // The document-level capture fallback must be silent outside the native
+    // compendium directory. Otherwise every holopad/sheet click looks like a
+    // failed compendium click in debug mode, which masks the real action path.
+    if (!_isInsideCompendiumDirectory(event.target)) return false;
+
     // --- Diagnostic: log every click that reaches this handler when debug is on ---
     if (_isDebug()) {
       const tgt = event.target;

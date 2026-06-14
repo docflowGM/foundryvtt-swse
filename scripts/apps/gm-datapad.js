@@ -84,11 +84,26 @@ export class GMDatapad extends BaseSWSEAppV2 {
       return null;
     }
 
-    const targetPage = GMSurfaceRegistry.hasSurface(pageId) ? pageId : 'home';
+    const requestedPage = String(pageId || 'home');
+    const targetPage = GMSurfaceRegistry.hasSurface(requestedPage) ? requestedPage : 'home';
     const existing = this._activeInstance;
-    const app = existing && !existing.closing ? existing : new this(options);
-    this._activeInstance = app;
 
+    if (existing && !existing.closing) {
+      this._activeInstance = existing;
+      // Re-opening the GM Datapad from the sidebar should behave like
+      // bring-to-front, not like a hard reset back to Home and center screen.
+      if (targetPage !== 'home' || options?.forcePage === true) {
+        existing.currentPage = targetPage;
+      }
+      existing._shouldCenterOnRender = false;
+      existing._gmTabletHasManualPlacement = true;
+      existing.render(false);
+      existing.bringToFront?.();
+      return existing;
+    }
+
+    const app = new this(options);
+    this._activeInstance = app;
     app.currentPage = targetPage;
     app._shouldCenterOnRender = true;
     app.render(true);
@@ -143,6 +158,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this._gmTabletExpanded = false;
     this._gmTabletPreExpandRect = null;
     this._shouldCenterOnRender = true;
+    this._gmTabletHasManualPlacement = false;
   }
 
 
@@ -799,7 +815,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
 
   _centerGmDatapadOnFirstRender() {
-    if (!this._shouldCenterOnRender || !this.setPosition) return;
+    if (!this._shouldCenterOnRender || !this.setPosition || this._gmTabletHasManualPlacement) return;
     this._shouldCenterOnRender = false;
 
     const pos = this._computeGmDatapadSafePosition({
@@ -807,7 +823,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       height: Number(this.position?.height) || GM_TABLET_BASE_HEIGHT,
       expanded: false
     });
-    this._applyGmDatapadPosition(pos);
+    this._applyGmDatapadPosition(pos, { manual: false });
 
     SWSELogger.log('[GM Datapad] Centered on first render', pos);
   }
@@ -836,19 +852,40 @@ export class GMDatapad extends BaseSWSEAppV2 {
     return pos;
   }
 
-  _applyGmDatapadPosition(pos = {}) {
-    this.setPosition(pos);
+  _clampGmDatapadPosition(pos = {}) {
+    const viewportW = Math.max(1, window.innerWidth || GM_TABLET_BASE_WIDTH);
+    const viewportH = Math.max(1, window.innerHeight || GM_TABLET_BASE_HEIGHT);
+    const width = Math.min(Math.max(Number(pos.width) || GM_TABLET_BASE_WIDTH, GM_TABLET_MIN_WIDTH), Math.max(GM_TABLET_MIN_WIDTH, viewportW - 16));
+    const height = Math.min(Math.max(Number(pos.height) || GM_TABLET_BASE_HEIGHT, GM_TABLET_MIN_HEIGHT), Math.max(GM_TABLET_MIN_HEIGHT, viewportH - 16));
+    const maxLeft = Math.max(8, viewportW - width - 8);
+    const maxTop = Math.max(8, viewportH - height - 8);
+    return {
+      left: Math.min(Math.max(Number(pos.left) || 8, 8), maxLeft),
+      top: Math.min(Math.max(Number(pos.top) || 8, 8), maxTop),
+      width,
+      height
+    };
+  }
+
+  _applyGmDatapadPosition(pos = {}, { manual = false } = {}) {
+    const next = this._clampGmDatapadPosition(pos);
+    if (manual) {
+      this._gmTabletHasManualPlacement = true;
+      this._shouldCenterOnRender = false;
+    }
+    this.setPosition(next);
 
     const el = this.element instanceof HTMLElement ? this.element : this.element?.[0];
     if (el) {
       el.style.setProperty('position', 'absolute', 'important');
-      el.style.setProperty('left', `${pos.left}px`, 'important');
-      el.style.setProperty('top', `${pos.top}px`, 'important');
-      el.style.setProperty('width', `${pos.width}px`, 'important');
-      el.style.setProperty('height', `${pos.height}px`, 'important');
-      el.style.setProperty('--swse-tablet-scaled-width', `${pos.width}px`);
-      el.style.setProperty('--swse-tablet-scaled-height', `${pos.height}px`);
+      el.style.setProperty('left', `${next.left}px`, 'important');
+      el.style.setProperty('top', `${next.top}px`, 'important');
+      el.style.setProperty('width', `${next.width}px`, 'important');
+      el.style.setProperty('height', `${next.height}px`, 'important');
+      el.style.setProperty('--swse-tablet-scaled-width', `${next.width}px`);
+      el.style.setProperty('--swse-tablet-scaled-height', `${next.height}px`);
     }
+    return next;
   }
 
 
@@ -969,7 +1006,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
   _toggleSharedHolopadExpand() {
     if (this._gmTabletExpanded) {
       const saved = this._gmTabletPreExpandRect;
-      if (saved) this.setPosition(saved);
+      if (saved) this._applyGmDatapadPosition(saved, { manual: true });
       this._gmTabletPreExpandRect = null;
       this._gmTabletExpanded = false;
       return;
@@ -987,7 +1024,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       height: GM_TABLET_BASE_HEIGHT,
       expanded: true
     });
-    this._applyGmDatapadPosition(pos);
+    this._applyGmDatapadPosition(pos, { manual: true });
     this._gmTabletExpanded = true;
   }
 
@@ -1015,7 +1052,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
             top: startTop + (moveEv.clientY - startY),
             width: Number(this.position?.width) || root.getBoundingClientRect().width || GM_TABLET_BASE_WIDTH,
             height: Number(this.position?.height) || root.getBoundingClientRect().height || GM_TABLET_BASE_HEIGHT
-          });
+          }, { manual: true });
         };
         const onEnd = () => {
           window.removeEventListener('pointermove', onMove);
@@ -1074,7 +1111,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
             height = clamp(startBottom - top, GM_TABLET_MIN_HEIGHT, startBottom - 8);
           }
           this._gmTabletExpanded = false;
-          this._applyGmDatapadPosition({ left, top, width, height });
+          this._applyGmDatapadPosition({ left, top, width, height }, { manual: true });
         };
         const onEnd = (upEv) => {
           handle.releasePointerCapture?.(upEv?.pointerId ?? ev.pointerId);

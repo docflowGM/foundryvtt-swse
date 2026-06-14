@@ -2,6 +2,7 @@
 
 import { HolonetStorage } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js';
 import { AssetGrantService } from '/systems/foundryvtt-swse/scripts/engine/assets/AssetGrantService.js';
+import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/FactionJobBridgeService.js';
 
 const THREAD_TYPE_JOB = 'job';
 const PARTY_FUND_RECIPIENT_ID = 'party-fund';
@@ -296,6 +297,38 @@ function rewardSummary(job, objectives) {
   };
 }
 
+
+function factionConsequenceEntries(job = {}) {
+  const c = job?.factionConsequences || job?.relationshipConsequences || {};
+  const rows = [];
+  const add = (entry = {}, role = 'Issuer') => {
+    const factionName = String(entry?.factionName || '').trim();
+    if (!factionName) return;
+    const successDelta = asNumber(entry?.successDelta, 0);
+    const failureDelta = asNumber(entry?.failureDelta, 0);
+    rows.push({
+      role: String(entry?.role || entry?.type || role || 'Faction'),
+      factionName,
+      successDelta,
+      failureDelta,
+      successLabel: successDelta > 0 ? `+${successDelta}` : String(successDelta),
+      failureLabel: failureDelta > 0 ? `+${failureDelta}` : String(failureDelta),
+      notes: String(entry?.notes || '').trim(),
+      isRival: String(entry?.type || '').toLowerCase() === 'rival'
+    });
+  };
+  add({
+    type: 'issuer',
+    factionName: c?.factionName || job?.issuer?.factionName || job?.client?.factionName || '',
+    successDelta: c?.successDelta,
+    failureDelta: c?.failureDelta,
+    notes: c?.notes
+  }, 'Issuer');
+  for (const entry of safeArray(c?.additionalConsequences)) add(entry, entry?.type || 'Additional');
+  for (const entry of safeArray(c?.rivalConsequences)) add({ type: 'rival', ...entry }, 'Rival');
+  return rows;
+}
+
 function buildTimeline(thread, job, recordsById) {
   const history = safeArray(job?.statusHistory).map(entry => ({
     id: `status-${entry.at || Math.random()}`,
@@ -329,7 +362,10 @@ export class GMJobBoardSurfaceService {
     const records = await HolonetStorage.getAllRecords();
     const recordsById = new Map(records.map(record => [record.id, record]));
     const jobThreads = threads.filter(thread => metadataForThread(thread).threadType === THREAD_TYPE_JOB);
-    const jobs = jobThreads.map(thread => this._buildJobCard(thread, recordsById));
+    const allJobs = jobThreads.map(thread => this._buildJobCard(thread, recordsById));
+    const surfaceState = host?.getSurfaceState?.('jobs') || {};
+    const issuerFilter = surfaceState.issuerFilter || null;
+    const jobs = FactionJobBridgeService.filterJobsByIssuer(allJobs, issuerFilter);
 
     const selectedId = host?.selectedJobThreadId && jobs.some(job => job.threadId === host.selectedJobThreadId)
       ? host.selectedJobThreadId
@@ -349,6 +385,13 @@ export class GMJobBoardSurfaceService {
     const payoutItems = jobs.filter(job => job.status === 'complete');
 
     const assetCandidates = assetRewardCandidates();
+    const filterDraft = issuerFilter
+      ? (issuerFilter.contactId
+        ? FactionJobBridgeService.buildDraftFromContact(issuerFilter.factionId || issuerFilter.factionName, issuerFilter.contactId || issuerFilter.contactName)
+        : FactionJobBridgeService.buildDraftFromFaction(issuerFilter.factionId || issuerFilter.factionName))
+      : null;
+    const pendingDraft = surfaceState.pendingJobDraft || filterDraft || null;
+    const knownIssuers = FactionJobBridgeService.buildKnownIssuerOptions({ jobs: allJobs });
 
     return {
       pageTitle: 'GM Job Board',
@@ -366,12 +409,23 @@ export class GMJobBoardSurfaceService {
           active: jobs.filter(job => ['accepted', 'inProgress', 'review'].includes(job.status)).length,
           review: reviewItems.length,
           payout: payoutItems.length,
-          archived: jobs.filter(job => ['paid', 'archived', 'failed'].includes(job.status)).length
+          archived: jobs.filter(job => ['paid', 'archived', 'failed'].includes(job.status)).length,
+          unfilteredTotal: allJobs.length,
+          hiddenByFilter: Math.max(0, allJobs.length - jobs.length)
         },
+        issuerFilter: issuerFilter ? {
+          ...issuerFilter,
+          label: issuerFilter.label || [issuerFilter.factionName, issuerFilter.contactName || issuerFilter.name].filter(Boolean).join(' - ') || 'Issuer Filter'
+        } : null,
+        hasIssuerFilter: Boolean(issuerFilter),
         creation: {
           recipients: jobCreationRecipients(),
           clientTypes: clientTypeOptions(),
-          hasRecipients: jobCreationRecipients().length > 0
+          hasRecipients: jobCreationRecipients().length > 0,
+          prefill: pendingDraft,
+          openWizard: Boolean(surfaceState.openWizard && pendingDraft),
+          knownIssuers,
+          hasKnownIssuers: knownIssuers.length > 0
         },
         payoutModes: payoutModeOptions(),
         xpPayoutModes: xpPayoutModeOptions(),
@@ -379,7 +433,7 @@ export class GMJobBoardSurfaceService {
         assetRewardCandidates: assetCandidates,
         hasAssetRewardCandidates: assetCandidates.length > 0,
         partyFundEnabled: isPartyFundEnabled(),
-        hasJobs: jobs.length > 0,
+        hasJobs: allJobs.length > 0,
         hasReview: reviewItems.length > 0,
         hasPayout: payoutItems.length > 0
       }
@@ -400,6 +454,7 @@ export class GMJobBoardSurfaceService {
     const objectives = normalizeObjectives(job);
     const participants = nonGmParticipants(thread);
     const rewards = rewardSummary(job, objectives);
+    const consequenceEntries = factionConsequenceEntries(job);
     const requiredObjectives = objectives.filter(objective => objective.required);
     const optionalObjectives = objectives.filter(objective => !objective.required);
     const approvedRequired = requiredObjectives.filter(objective => objective.isApproved).length;
@@ -415,11 +470,21 @@ export class GMJobBoardSurfaceService {
       status,
       statusLabel: statusLabel(status),
       statusTone: this._statusTone(status, reviewCount),
-      clientLabel: job?.client?.name || job?.contactLabel || 'Job Board',
-      clientTypeLabel: job?.client?.type || (job?.contactRecipientId ? 'Contact' : 'Client'),
-      clientImage: job?.client?.imageUrl || job?.client?.avatar || null,
-      factionName: job?.client?.factionName || job?.faction?.name || '',
-      hasFactionConsequences: Boolean(job?.factionConsequences || job?.relationshipConsequences),
+      clientLabel: job?.issuer?.contactName || job?.issuer?.name || job?.client?.name || job?.contactLabel || 'Job Board',
+      clientTypeLabel: job?.issuer?.type || job?.client?.type || (job?.contactRecipientId ? 'Contact' : 'Client'),
+      clientImage: job?.issuer?.image || job?.client?.imageUrl || job?.client?.avatar || null,
+      factionName: job?.issuer?.factionName || job?.client?.factionName || job?.faction?.name || '',
+      issuer: job?.issuer || null,
+      issuerLabel: [job?.issuer?.contactName || job?.issuer?.name || job?.client?.name, job?.issuer?.factionName || job?.client?.factionName].filter(Boolean).join(' · '),
+      issuerFactionId: job?.issuer?.factionId || '',
+      issuerContactId: job?.issuer?.contactId || '',
+      issuerContactActorId: job?.issuer?.contactActorId || job?.client?.actorId || '',
+      issuerContactActorUuid: job?.issuer?.contactActorUuid || job?.client?.actorUuid || '',
+      hasIssuerContactActor: Boolean(job?.issuer?.contactActorUuid || job?.issuer?.contactActorId || job?.client?.actorUuid || job?.client?.actorId),
+      canOpenIssuerFaction: Boolean(job?.issuer?.factionId || job?.issuer?.factionName || job?.client?.factionName),
+      hasIssuer: Boolean(job?.issuer || job?.client),
+      hasFactionConsequences: consequenceEntries.length > 0,
+      consequenceEntries,
       objectives,
       requiredProgressLabel: `${approvedRequired}/${Math.max(1, requiredObjectives.length)} required`,
       optionalProgressLabel: `${approvedOptional}/${optionalObjectives.length} optional`,

@@ -1,100 +1,208 @@
-<div class="swse-shell-surface swse-shell-surface--mentor" data-shell-region="surface-mentor" data-surface-id="{{vm.id}}">
-  <div class="swse-shell-surface__header swse-mentor-header">
-    <button class="swse-shell-surface__back-btn" data-shell-action="return-to-home" type="button" title="{{localize 'SWSE.ShellUI.ReturnToHome'}}">
+<div class="swse-shell-surface swse-shell-surface--mentor mentor-kotor-surface"
+     data-shell-region="surface-mentor"
+     data-surface-id="{{vm.id}}"
+     style="--m-accent: {{vm.selectedMentorAccent}}; --m-accent-soft: color-mix(in oklab, {{vm.selectedMentorAccent}} 15%, transparent);">
+  <header class="ms-header">
+    <button class="ms-back" data-shell-action="return-to-home" type="button" title="{{localize 'SWSE.ShellUI.ReturnToHome'}}">
       <i class="fas fa-arrow-left"></i>
       <span>{{localize "SWSE.ShellUI.Home"}}</span>
     </button>
-    <div class="swse-shell-surface__title">
-      <span>✶</span>
-      <span>{{vm.title}}</span>
-    </div>
-    <div class="swse-mentor-header__actor">{{vm.actorName}}</div>
-  </div>
+    {{#if vm.selectedMentor}}
+      <button class="ms-back ms-back--sub" data-mentor-ui-action="roster" type="button" title="Change mentor">
+        <i class="fas fa-users"></i>
+        <span>Mentors</span>
+      </button>
+    {{/if}}
+    <div class="ms-header-title">{{vm.title}}</div>
+    <div class="ms-header-actor">{{vm.actorName}}</div>
+  </header>
 
-  <div class="swse-shell-surface__body swse-mentor-surface">
-    {{#if vm.hasMentors}}
-      <aside class="swse-mentor-rail swse-panel">
-        <div class="swse-panel-head">{{localize "SWSE.ShellUI.Mentors"}}</div>
-        <div class="swse-mentor-list">
+  {{#if vm.hasMentors}}
+    {{#if vm.showRoster}}
+      <section class="ms-roster" aria-label="Mentor roster">
+        <div class="ms-roster-intro">Select a mentor channel to begin the conversation</div>
+        <div class="ms-mentor-grid">
           {{#each vm.unlockedMentors}}
-            <button class="swse-mentor-card {{#if (eq ../vm.selectedMentorKey this.key)}}active{{/if}}" data-mentor-key="{{this.key}}" type="button">
-              <span class="swse-mentor-card__name">{{this.mentor.name}}</span>
-              <span class="swse-mentor-card__title">{{this.mentor.title}}</span>
-              <span class="swse-mentor-card__class">{{this.unlockedBy}}</span>
+            <button class="ms-mentor-card" type="button" data-mentor-key="{{this.key}}" style="--card-accent: {{this.accent}};">
+              {{#if this.mentor.portrait}}
+                <img src="{{this.mentor.portrait}}" alt="{{this.mentor.name}}">
+              {{else}}
+                <span class="ms-mentor-fallback">✶</span>
+              {{/if}}
+              <span class="ms-card-footer">
+                <span class="ms-card-name">{{this.mentor.name}}</span>
+                <span class="ms-card-class">{{this.classLabel}}</span>
+                <span class="ms-card-call">Open channel</span>
+              </span>
             </button>
           {{/each}}
         </div>
-      </aside>
-
-      <section class="swse-mentor-main">
-        <div class="swse-panel swse-mentor-dialogue-panel">
-          <div class="swse-panel-head">{{localize "SWSE.ShellUI.MentorChannel"}}</div>
-          {{#if vm.selectedMentor}}
-            <div class="swse-mentor-identity">
-              <div class="swse-mentor-identity__portrait">
-                {{#if vm.selectedMentor.mentor.portrait}}
-                  <img src="{{vm.selectedMentor.mentor.portrait}}" alt="{{vm.selectedMentor.mentor.name}}">
-                {{else}}
-                  <span>✶</span>
-                {{/if}}
-              </div>
-              <div class="swse-mentor-identity__meta">
-                <div class="swse-mentor-identity__name">{{vm.selectedMentor.mentor.name}}</div>
-                <div class="swse-mentor-identity__title">{{vm.selectedMentor.mentor.title}}</div>
-              </div>
-            </div>
-
-            {{#if vm.currentResponse.introduction}}
-              <div class="swse-mentor-dialogue-line">{{{vm.currentResponse.introduction}}}</div>
-            {{/if}}
-            {{#if vm.currentResponse.advice}}
-              <div class="swse-mentor-dialogue-line swse-mentor-dialogue-line--advice">{{{vm.currentResponse.advice}}}</div>
-            {{/if}}
-
-            {{#if vm.currentResponse.reasonTexts.length}}
-              <div class="swse-mentor-reasons">
-                <div class="swse-mentor-reasons__title">{{localize "SWSE.ShellUI.SystemRead"}}</div>
-                <ul>
-                  {{#each vm.currentResponse.reasonTexts}}
-                    <li>{{this.text}}</li>
-                  {{/each}}
-                </ul>
-              </div>
-            {{/if}}
-
-            {{#if vm.currentResponse.availablePaths.length}}
-              <div class="swse-mentor-paths">
-                <div class="swse-mentor-paths__title">{{localize "SWSE.ShellUI.CommitToAPath"}}</div>
-                <div class="swse-mentor-paths__buttons">
-                  {{#each vm.currentResponse.availablePaths}}
-                    <button class="swse-btn" data-mentor-path="{{this.name}}" type="button">{{this.name}}</button>
-                  {{/each}}
-                </div>
-              </div>
-            {{/if}}
-          {{else}}
-            <div class="swse-shell-surface__empty">{{localize "SWSE.ShellUI.NoMentorChannelIsCurrentlyAvailable"}}</div>
-          {{/if}}
-        </div>
-
-        <div class="swse-panel swse-mentor-topics-panel">
-          <div class="swse-panel-head">{{localize "SWSE.ShellUI.Topics"}}</div>
-          {{#if vm.selectedMentor}}
-            <div class="swse-mentor-topic-list">
-              {{#each vm.topics}}
-                <button class="swse-topic-card {{#if (eq ../vm.currentTopic.key this.key)}}active{{/if}}" data-mentor-topic="{{this.key}}" type="button">
-                  <span class="swse-topic-card__title">{{this.title}}</span>
-                  <span class="swse-topic-card__desc">{{this.description}}</span>
-                </button>
-              {{/each}}
-            </div>
-          {{else}}
-            <div class="swse-shell-surface__empty">{{localize "SWSE.ShellUI.SelectAMentorToOpenAConversationChannel"}}</div>
-          {{/if}}
+        <div class="ms-roster-note">
+          Unlocked mentors are based on your class history and training record.
+          {{#if vm.surveyCompleted}}<span class="ms-roster-chip">Survey bias recorded</span>{{/if}}
         </div>
       </section>
     {{else}}
-      <div class="swse-shell-surface__empty">{{localize "SWSE.ShellUI.NoMentorsAreUnlockedForThisCharacterYet"}}</div>
+      <section class="ms-scene" aria-label="Mentor conversation">
+        <div class="ms-theatre">
+          <div class="ms-ambient"></div>
+          {{#if vm.selectedMentor.mentor.portrait}}
+            <img class="ms-portrait idle" src="{{vm.selectedMentor.mentor.portrait}}" alt="{{vm.selectedMentor.mentor.name}}">
+          {{else}}
+            <div class="ms-portrait ms-portrait--fallback idle">✶</div>
+          {{/if}}
+
+          <div class="ms-nameplate">
+            <div class="ms-nameplate-name">{{vm.selectedMentor.mentor.name}}</div>
+            <div class="ms-nameplate-divider"></div>
+            <div class="ms-nameplate-title">{{vm.selectedMentor.mentor.displayTitle}}</div>
+          </div>
+
+          <aside class="ms-topics-layer {{#if vm.topicsOpen}}open{{/if}}" data-mentor-topics-layer>
+            <div class="ms-topics-heading">
+              <span>Dialogue Options</span>
+              <button class="ms-topic-mini" type="button" data-mentor-ui-action="roster">Mentors</button>
+              <button class="ms-topic-mini" type="button" data-mentor-ui-action="close-topics">Close</button>
+            </div>
+            {{#each vm.topics}}
+              <button class="ms-topic-btn {{#if (eq ../vm.currentTopic.key this.key)}}active{{/if}}" type="button" data-mentor-topic="{{this.key}}">
+                <span class="ms-topic-ico">{{this.glyph}}</span>
+                <span class="ms-topic-text">
+                  <span class="ms-topic-label">{{this.title}}</span>
+                  <span class="ms-topic-hint">{{this.hint}}</span>
+                </span>
+              </button>
+            {{/each}}
+            <button class="ms-topic-btn ms-topic-farewell" type="button" data-shell-action="return-to-home">
+              <span class="ms-topic-ico">×</span>
+              <span class="ms-topic-text">
+                <span class="ms-topic-label">End conversation.</span>
+                <span class="ms-topic-hint">Return to Holonet</span>
+              </span>
+            </button>
+          </aside>
+
+          {{#if (eq vm.currentTopic.key "l1_survey")}}
+            <div class="ms-survey-bar visible">
+              <span>Mentor Survey</span>
+              <div class="ms-survey-pips">
+                {{#each vm.survey.pips}}
+                  <span class="ms-pip {{#if this.done}}done{{/if}}"></span>
+                {{/each}}
+              </div>
+              <span>{{vm.survey.progress}} / {{vm.survey.total}}</span>
+            </div>
+          {{/if}}
+        </div>
+
+        <div class="ms-dialogue-bar" data-mentor-dialogue-bar>
+          <div class="ms-npc-col" data-mentor-npc-col title="Click to skip typing">
+            <div class="ms-speaker-lbl">{{vm.selectedMentor.mentor.name}}</div>
+            <div class="ms-npc-text" data-mentor-typewriter data-typewriter-text="{{vm.currentResponse.dialogueTextPlain}}">{{vm.currentResponse.dialogueTextPlain}}</div>
+            <div class="ms-skip-hint">Click dialogue or press Space to skip transmission</div>
+          </div>
+
+          <div class="ms-choices-col">
+            <div class="ms-choices-lbl">
+              {{#if (eq vm.currentTopic.key "l1_survey")}}
+                Choose an answer
+              {{else}}
+                Response Options
+              {{/if}}
+            </div>
+
+            {{#if vm.currentResponse.pathSelected}}
+              <div class="ms-status-panel ms-status-panel--path">
+                <span class="ms-status-label">Committed Path</span>
+                <strong>{{vm.currentResponse.pathSelected}}</strong>
+              </div>
+            {{/if}}
+
+            {{#if vm.currentResponse.reasonTexts.length}}
+              <div class="ms-reason-stack">
+                {{#each vm.currentResponse.reasonTexts}}
+                  <div class="ms-reason-chip">{{this.text}}</div>
+                {{/each}}
+              </div>
+            {{/if}}
+
+            {{#if vm.currentResponse.suggestions.length}}
+              <div class="ms-suggestion-panel">
+                <div class="ms-suggestion-title">Suggested direction</div>
+                {{#each vm.currentResponse.suggestions}}
+                  <div class="ms-suggestion-row">
+                    <span class="ms-suggestion-index">{{add @index 1}}</span>
+                    <span class="ms-suggestion-copy">
+                      <strong>{{this.title}}</strong>
+                      {{#if this.subtitle}}<em>{{this.subtitle}}</em>{{/if}}
+                    </span>
+                    {{#if this.score}}<span class="ms-suggestion-score">{{this.score}}</span>{{/if}}
+                  </div>
+                {{/each}}
+              </div>
+            {{/if}}
+
+            {{#if (eq vm.currentTopic.key "l1_survey")}}
+              {{#if vm.survey.completed}}
+                <div class="ms-survey-readout">
+                  <div class="ms-survey-readout__title">{{vm.survey.archetype.name}}</div>
+                  <div class="ms-survey-readout__body">Suggestion bias saved to this character.</div>
+                  <div class="ms-score-chips">
+                    {{#each vm.survey.scores}}
+                      <span class="ms-score-chip">{{@key}} {{this}}</span>
+                    {{/each}}
+                  </div>
+                </div>
+                <button class="ms-choice" type="button" data-mentor-ui-action="open-topics">
+                  <span class="ms-choice-num">1</span>
+                  <span>Ask about something else.</span>
+                </button>
+                <button class="ms-choice" type="button" data-mentor-survey-retake="1">
+                  <span class="ms-choice-num">2</span>
+                  <span>Retake the mentor survey.</span>
+                </button>
+              {{else}}
+                {{#each vm.survey.currentQuestion.choices}}
+                  <button class="ms-choice" type="button" data-mentor-survey-answer="{{this.index}}" data-survey-question-index="{{../vm.survey.index}}">
+                    <span class="ms-choice-num">{{add this.index 1}}</span>
+                    <span>{{this.text}}</span>
+                  </button>
+                {{/each}}
+              {{/if}}
+            {{else}}
+              {{#if vm.currentResponse.availablePaths.length}}
+                {{#each vm.currentResponse.availablePaths}}
+                  <button class="ms-choice" type="button" data-mentor-path="{{this.name}}">
+                    <span class="ms-choice-num">{{add @index 1}}</span>
+                    <span>Commit to {{this.name}}</span>
+                  </button>
+                {{/each}}
+              {{/if}}
+
+              <button class="ms-choice" type="button" data-mentor-ui-action="open-topics">
+                <span class="ms-choice-num">{{#if vm.currentResponse.availablePaths.length}}{{add vm.currentResponse.availablePaths.length 1}}{{else}}1{{/if}}</span>
+                <span>Ask another question.</span>
+              </button>
+              <button class="ms-choice" type="button" data-mentor-topic="l1_survey">
+                <span class="ms-choice-num">{{#if vm.currentResponse.availablePaths.length}}{{add vm.currentResponse.availablePaths.length 2}}{{else}}2{{/if}}</span>
+                <span>Help me find my path.</span>
+              </button>
+              <button class="ms-choice" type="button" data-mentor-ui-action="roster">
+                <span class="ms-choice-num">{{#if vm.currentResponse.availablePaths.length}}{{add vm.currentResponse.availablePaths.length 3}}{{else}}3{{/if}}</span>
+                <span>Speak to another mentor.</span>
+              </button>
+              <button class="ms-choice" type="button" data-shell-action="return-to-home">
+                <span class="ms-choice-num">{{#if vm.currentResponse.availablePaths.length}}{{add vm.currentResponse.availablePaths.length 4}}{{else}}4{{/if}}</span>
+                <span>End the conversation.</span>
+              </button>
+            {{/if}}
+          </div>
+        </div>
+
+        <div class="ms-kb-hint">{{vm.keyboardHint}}</div>
+      </section>
     {{/if}}
-  </div>
+  {{else}}
+    <div class="swse-shell-surface__empty ms-empty">{{localize "SWSE.ShellUI.NoMentorsAreUnlockedForThisCharacterYet"}}</div>
+  {{/if}}
 </div>

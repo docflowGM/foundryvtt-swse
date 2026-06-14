@@ -56,7 +56,7 @@ export class DropResolutionEngine {
    * @param {Object} config.dropData - drag event data
    * @returns {Promise<Object|null>} { mutationPlan, uiTargetTab } or null if invalid/duplicate
    */
-  static async resolve({ actor, dropData }) {
+  static async resolve({ actor, dropData, acquisition = null } = {}) {
     if (!actor) {
       console.warn('DropResolutionEngine.resolve: no actor provided');
       return null;
@@ -79,7 +79,7 @@ export class DropResolutionEngine {
 
       // Route by document type
       if (normalized.type === 'Item') {
-        return this._handleItemDrop(actor, normalized.document);
+        return this._handleItemDrop(actor, normalized.document, { acquisition });
       }
 
       if (normalized.type === 'Actor') {
@@ -93,6 +93,19 @@ export class DropResolutionEngine {
       console.error('DropResolutionEngine.resolve failed:', err);
       return null;
     }
+  }
+
+
+  /**
+   * Public helper for sheet-level drop intercepts that need to inspect the
+   * dropped document before resolving the final mutation plan.
+   *
+   * @param {Object} dropData
+   * @returns {Promise<Document|null>}
+   */
+  static async resolveDroppedDocument(dropData) {
+    const normalized = await this._normalizeDrop(dropData);
+    return normalized?.document || null;
   }
 
   /**
@@ -153,7 +166,7 @@ export class DropResolutionEngine {
    * @param {Item} item
    * @returns {Object|null} { mutationPlan, uiTargetTab } or null
    */
-  static _handleItemDrop(actor, item) {
+  static _handleItemDrop(actor, item, context = {}) {
     const itemType = item.type;
 
     // Route to handler by type
@@ -163,7 +176,7 @@ export class DropResolutionEngine {
       return null;
     }
 
-    return handler(actor, item);
+    return handler(actor, item, context);
   }
 
   /**
@@ -220,7 +233,7 @@ export class DropResolutionEngine {
  * Handlers check for duplicates and return null for skip, or { mutationPlan, uiTargetTab } for create.
  */
 
-function handleTalent(actor, item) {
+function handleTalent(actor, item, context = {}) {
   // Talents are unique per name (no duplicates)
   const exists = actor.items.some(i => i.type === 'talent' && i.name === item.name);
   if (exists) {
@@ -229,12 +242,12 @@ function handleTalent(actor, item) {
   }
 
   return {
-    mutationPlan: _createItemMutation(item),
+    mutationPlan: _createItemMutation(item, context.acquisition),
     uiTargetTab: 'talents'  // Highlight talents tab
   };
 }
 
-function handleFeat(actor, item) {
+function handleFeat(actor, item, context = {}) {
   // Feats are unique unless flagged repeatable
   const repeatable = item.system?.repeatable === true;
 
@@ -247,7 +260,7 @@ function handleFeat(actor, item) {
   }
 
   return {
-    mutationPlan: _createItemMutation(item),
+    mutationPlan: _createItemMutation(item, context.acquisition),
     uiTargetTab: 'talents'  // Highlight talents tab (feats usually on talents tab)
   };
 }
@@ -519,12 +532,28 @@ function handleClass(actor, item) {
  * @param {Item} item
  * @returns {Object} mutationPlan with createEmbedded
  */
-function _createItemMutation(item) {
+function _createItemMutation(item, acquisition = null) {
+  const data = item.toObject?.() ?? foundry.utils.deepClone(item);
+
+  if (acquisition && typeof acquisition === 'object') {
+    data.system = { ...(data.system ?? {}) };
+    data.system.acquisition = {
+      ...(data.system.acquisition ?? {}),
+      ...acquisition
+    };
+
+    data.flags = foundry.utils.mergeObject(data.flags ?? {}, {
+      'foundryvtt-swse': {
+        acquisition: data.system.acquisition
+      }
+    }, { inplace: false, insertKeys: true, overwrite: true });
+  }
+
   return {
     createEmbedded: [
       {
         type: 'Item',
-        data: item.toObject()
+        data
       }
     ]
   };

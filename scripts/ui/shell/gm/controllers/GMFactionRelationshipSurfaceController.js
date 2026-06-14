@@ -1,11 +1,29 @@
 /** GM Faction Relationship Manager controller. */
 
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
+import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/FactionJobBridgeService.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 
 function text(formData, key) { return String(formData.get(key) ?? '').trim(); }
 function number(formData, key) { return Number(formData.get(key) || 0) || 0; }
+
+async function resolveActorForContact({ uuid = '', actorId = '' } = {}) {
+  const id = String(actorId || '').trim();
+  if (id) {
+    const byId = game.actors?.get?.(id);
+    if (byId) return byId;
+  }
+  const ref = String(uuid || '').trim();
+  if (ref && typeof fromUuid === 'function') {
+    try {
+      const doc = await fromUuid(ref);
+      if (doc?.documentName === 'Actor' || doc?.constructor?.documentName === 'Actor') return doc;
+      if (doc?.actor) return doc.actor;
+    } catch (_err) {}
+  }
+  return null;
+}
 
 export class GMFactionRelationshipSurfaceController {
   constructor(host) {
@@ -41,6 +59,22 @@ export class GMFactionRelationshipSurfaceController {
           benefits: text(data, 'benefits'),
           notes: text(data, 'notes'),
           gmNotes: text(data, 'gmNotes'),
+          defaultJobTone: text(data, 'defaultJobTone'),
+          defaultRewardStyle: text(data, 'defaultRewardStyle'),
+          defaultObjective: text(data, 'defaultObjective'),
+          defaultBriefing: text(data, 'defaultBriefing'),
+          defaultInstructions: text(data, 'defaultInstructions'),
+          defaultCredits: number(data, 'defaultCredits'),
+          defaultXp: number(data, 'defaultXp'),
+          defaultSuccessDelta: text(data, 'defaultSuccessDelta') === '' ? 1 : number(data, 'defaultSuccessDelta'),
+          defaultFailureDelta: text(data, 'defaultFailureDelta') === '' ? -1 : number(data, 'defaultFailureDelta'),
+          defaultVisibility: text(data, 'defaultVisibility') || 'posted',
+          defaultLegality: text(data, 'defaultLegality'),
+          defaultPayStyle: text(data, 'defaultPayStyle'),
+          defaultRivalFactionName: text(data, 'defaultRivalFactionName'),
+          defaultRivalSuccessDelta: text(data, 'defaultRivalSuccessDelta') === '' ? -1 : number(data, 'defaultRivalSuccessDelta'),
+          defaultRivalFailureDelta: text(data, 'defaultRivalFailureDelta') === '' ? 1 : number(data, 'defaultRivalFailureDelta'),
+          defaultConsequenceNotes: text(data, 'defaultConsequenceNotes'),
           source: 'gm',
           status: 'active'
         }), 'gm-faction-create-upsert');
@@ -94,6 +128,22 @@ export class GMFactionRelationshipSurfaceController {
           benefits: text(data, 'benefits'),
           notes: text(data, 'notes'),
           gmNotes: text(data, 'gmNotes'),
+          defaultJobTone: text(data, 'defaultJobTone'),
+          defaultRewardStyle: text(data, 'defaultRewardStyle'),
+          defaultObjective: text(data, 'defaultObjective'),
+          defaultBriefing: text(data, 'defaultBriefing'),
+          defaultInstructions: text(data, 'defaultInstructions'),
+          defaultCredits: number(data, 'defaultCredits'),
+          defaultXp: number(data, 'defaultXp'),
+          defaultSuccessDelta: text(data, 'defaultSuccessDelta') === '' ? 1 : number(data, 'defaultSuccessDelta'),
+          defaultFailureDelta: text(data, 'defaultFailureDelta') === '' ? -1 : number(data, 'defaultFailureDelta'),
+          defaultVisibility: text(data, 'defaultVisibility') || 'posted',
+          defaultLegality: text(data, 'defaultLegality'),
+          defaultPayStyle: text(data, 'defaultPayStyle'),
+          defaultRivalFactionName: text(data, 'defaultRivalFactionName'),
+          defaultRivalSuccessDelta: text(data, 'defaultRivalSuccessDelta') === '' ? -1 : number(data, 'defaultRivalSuccessDelta'),
+          defaultRivalFailureDelta: text(data, 'defaultRivalFailureDelta') === '' ? 1 : number(data, 'defaultRivalFailureDelta'),
+          defaultConsequenceNotes: text(data, 'defaultConsequenceNotes'),
           source: text(data, 'source') || 'gm',
           status: text(data, 'status') || 'active',
           historyNote: 'GM registry edit'
@@ -182,12 +232,117 @@ export class GMFactionRelationshipSurfaceController {
       }, { signal });
     });
 
+    pageElement.querySelectorAll('form[data-gm-faction-contact-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!this._assertGM('change faction contacts')) return;
+        const data = new FormData(form);
+        const factionId = text(data, 'factionId');
+        if (!factionId) return;
+        const result = await this._mutate(() => FactionRegistryService.upsertFactionContact(factionId, {
+          id: text(data, 'contactId'),
+          name: text(data, 'name'),
+          role: text(data, 'role') || 'Faction Contact',
+          title: text(data, 'title'),
+          image: text(data, 'image'),
+          actorId: text(data, 'actorId'),
+          actorUuid: text(data, 'actorUuid'),
+          actorName: text(data, 'actorName'),
+          promotedAt: text(data, 'promotedAt'),
+          description: text(data, 'description'),
+          tags: text(data, 'tags'),
+          defaultJobTone: text(data, 'defaultJobTone'),
+          defaultRewardStyle: text(data, 'defaultRewardStyle'),
+          defaultObjective: text(data, 'defaultObjective'),
+          defaultBriefing: text(data, 'defaultBriefing'),
+          defaultInstructions: text(data, 'defaultInstructions'),
+          defaultCredits: number(data, 'defaultCredits'),
+          defaultXp: number(data, 'defaultXp'),
+          defaultSuccessDelta: text(data, 'defaultSuccessDelta') === '' ? 1 : number(data, 'defaultSuccessDelta'),
+          defaultFailureDelta: text(data, 'defaultFailureDelta') === '' ? -1 : number(data, 'defaultFailureDelta'),
+          defaultVisibility: text(data, 'defaultVisibility') || 'posted',
+          defaultLegality: text(data, 'defaultLegality'),
+          defaultPayStyle: text(data, 'defaultPayStyle'),
+          defaultRivalFactionName: text(data, 'defaultRivalFactionName'),
+          defaultRivalSuccessDelta: text(data, 'defaultRivalSuccessDelta') === '' ? -1 : number(data, 'defaultRivalSuccessDelta'),
+          defaultRivalFailureDelta: text(data, 'defaultRivalFailureDelta') === '' ? 1 : number(data, 'defaultRivalFailureDelta'),
+          defaultConsequenceNotes: text(data, 'defaultConsequenceNotes'),
+          active: data.get('active') !== 'off'
+        }), 'gm-faction-contact-save');
+        ui.notifications?.info?.(`Notable NPC ${result?.contact?.name || 'contact'} saved.`);
+        if (!text(data, 'contactId')) form.reset();
+        await this._refresh();
+      }, { signal });
+    });
+
     pageElement.querySelectorAll('[data-gm-faction-action]').forEach((button) => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         if (!this._assertGM('change faction records')) return;
         const target = event.currentTarget;
         const action = target.dataset.gmFactionAction;
+        if (action === 'make-job-faction') {
+          const draft = FactionJobBridgeService.buildDraftFromFaction(target.dataset.factionId);
+          await this._openJobDraft(draft);
+          return;
+        }
+        if (action === 'make-job-contact') {
+          const draft = FactionJobBridgeService.buildDraftFromContact(target.dataset.factionId, target.dataset.contactId);
+          await this._openJobDraft(draft);
+          return;
+        }
+        if (action === 'view-jobs-faction') {
+          await this._openJobFilter({
+            factionId: target.dataset.factionId || '',
+            factionName: target.dataset.factionName || target.closest('[data-faction-name]')?.dataset?.factionName || '',
+            label: target.dataset.factionName || 'Faction Jobs'
+          });
+          return;
+        }
+        if (action === 'view-jobs-contact') {
+          await this._openJobFilter({
+            factionId: target.dataset.factionId || '',
+            factionName: target.dataset.factionName || '',
+            contactId: target.dataset.contactId || '',
+            contactName: target.dataset.contactName || '',
+            label: [target.dataset.factionName, target.dataset.contactName].filter(Boolean).join(' - ') || 'Contact Jobs'
+          });
+          return;
+        }
+        if (action === 'promote-contact') {
+          const factionId = target.dataset.factionId;
+          const contactId = target.dataset.contactId;
+          if (!factionId || !contactId) return;
+          const result = await this._mutate(() => FactionRegistryService.promoteFactionContactToActor(factionId, contactId), 'gm-faction-contact-promote');
+          const actor = result?.actor;
+          ui.notifications?.info?.(`${result?.created ? 'Created NPC actor' : 'Linked NPC actor'}: ${actor?.name || 'Faction Contact'}.`);
+          if (actor?.sheet?.render) actor.sheet.render(true);
+          await this._refresh();
+          return;
+        }
+        if (action === 'open-contact-actor') {
+          const actor = await resolveActorForContact({ uuid: target.dataset.actorUuid, actorId: target.dataset.actorId });
+          if (!actor) {
+            ui.notifications?.warn?.('Linked NPC actor could not be found.');
+            return;
+          }
+          actor.sheet?.render?.(true);
+          return;
+        }
+        if (action === 'delete-contact') {
+          const factionId = target.dataset.factionId;
+          const contactId = target.dataset.contactId;
+          if (!factionId || !contactId) return;
+          const confirmed = await Dialog.confirm({
+            title: 'Delete Notable NPC?',
+            content: '<p>This removes the lightweight faction contact. It does not delete any linked NPC actor.</p>',
+            defaultYes: false
+          });
+          if (!confirmed) return;
+          await this._mutate(() => FactionRegistryService.deleteFactionContact(factionId, contactId), 'gm-faction-contact-delete');
+          await this._refresh();
+          return;
+        }
         if (action === 'delete-registry') {
           const factionId = target.dataset.factionId;
           if (!factionId) return;
@@ -222,6 +377,30 @@ export class GMFactionRelationshipSurfaceController {
         }
       }, { signal });
     });
+  }
+
+  async _openJobFilter(filter) {
+    this.host?.patchSurfaceState?.('jobs', { issuerFilter: filter, pendingJobDraft: null, openWizard: false }, { render: false });
+    if (typeof this.host?._navigateTo === 'function') {
+      await this.host._navigateTo('jobs');
+      return;
+    }
+    this.host.currentPage = 'jobs';
+    await requestShellRender(this.host, { reason: 'gm-faction-view-jobs', surfaceId: 'jobs' });
+  }
+
+  async _openJobDraft(draft) {
+    if (!draft) {
+      ui.notifications?.warn?.('Could not build a job draft from that faction/contact.');
+      return;
+    }
+    this.host?.patchSurfaceState?.('jobs', { pendingJobDraft: draft, openWizard: true }, { render: false });
+    if (typeof this.host?._navigateTo === 'function') {
+      await this.host._navigateTo('jobs');
+      return;
+    }
+    this.host.currentPage = 'jobs';
+    await requestShellRender(this.host, { reason: 'gm-faction-make-job', surfaceId: 'jobs' });
   }
 
   _assertGM(action = 'use GM faction controls') {

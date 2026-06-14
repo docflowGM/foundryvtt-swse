@@ -27,6 +27,30 @@ function collectDialogFormData(form) {
   return Object.fromEntries(new FormData(form).entries());
 }
 
+function scalarFormValue(value, fallback = '') {
+  let candidate = value;
+  if (Array.isArray(candidate)) {
+    candidate = '';
+    for (let i = value.length - 1; i >= 0; i -= 1) {
+      const entry = value[i];
+      if (entry !== undefined && entry !== null && String(entry).trim() !== '') {
+        candidate = entry;
+        break;
+      }
+    }
+  }
+  if (candidate && typeof candidate === 'object') {
+    for (const key of ['label', 'name', 'value', 'id', 'slug']) {
+      if (candidate[key] !== undefined && candidate[key] !== null && String(candidate[key]).trim() !== '') {
+        candidate = candidate[key];
+        break;
+      }
+    }
+  }
+  const text = String(candidate ?? '').trim();
+  return text || fallback;
+}
+
 
 export class CustomItemDialog {
 
@@ -529,7 +553,7 @@ export class CustomItemDialog {
                   bonusFeatFor: bonusFeatFor,
                   uses: {
                     current: 0,
-                    max: parseInt(formData.usesMax, 10) || 0,
+                    max: parseInt(scalarFormValue(formData.usesMax, '0'), 10) || 0,
                     perDay: formData.usesPerDay === 'on'
                   }
                 }
@@ -623,18 +647,21 @@ export class CustomItemDialog {
               const form = root?.querySelector?.('form');
               const formData = collectDialogFormData(form);
 
+              const tree = scalarFormValue(formData.tree, 'Custom');
+              const prerequisite = scalarFormValue(formData.prerequisite, '');
+
               const itemData = createSafeItemData('talent', {
-                name: formData.name || 'Custom Talent',
+                name: scalarFormValue(formData.name, 'Custom Talent'),
                 system: {
-                  tree: formData.tree || 'Custom',
-                  talentTree: formData.tree || 'Custom',
-                  prerequisite: formData.prerequisite || '',
-                  prerequisites: formData.prerequisite || '',
-                  benefit: formData.benefit || '',
-                  special: formData.special || '',
+                  tree,
+                  talentTree: tree,
+                  prerequisite,
+                  prerequisites: prerequisite,
+                  benefit: scalarFormValue(formData.benefit, ''),
+                  special: scalarFormValue(formData.special, ''),
                   uses: {
                     current: 0,
-                    max: parseInt(formData.usesMax, 10) || 0,
+                    max: parseInt(scalarFormValue(formData.usesMax, '0'), 10) || 0,
                     perEncounter: formData.usesPerEncounter === 'on',
                     perDay: formData.usesPerDay === 'on'
                   }

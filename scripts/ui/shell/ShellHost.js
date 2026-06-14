@@ -463,6 +463,8 @@ export function ShellHostMixin(BaseClass) {
       homeRoot.querySelectorAll('[data-route-id]').forEach(el => {
         el.addEventListener('click', async (ev) => {
           ev.preventDefault();
+          ev.stopPropagation();
+          ev.stopImmediatePropagation?.();
           if (el.disabled) return;
           const routeId = el.dataset.routeId;
           if (!routeId) return;
@@ -470,6 +472,18 @@ export function ShellHostMixin(BaseClass) {
           if (el.dataset.bayMode) surfaceOptions.bayMode = el.dataset.bayMode;
           if (el.dataset.contextMode) surfaceOptions.contextMode = el.dataset.contextMode;
           if (el.dataset.tabTarget) surfaceOptions.tab = el.dataset.tabTarget;
+
+          const actor = this.actor || this.document;
+          if (routeId === 'customization' && surfaceOptions.bayMode === 'shipyard' && actor?.type === 'vehicle') {
+            ev.stopPropagation();
+            ev.stopImmediatePropagation?.();
+            await this._openShipyardForAsset(actor, {
+              source: 'vehicle-home',
+              contextMode: surfaceOptions.contextMode || 'modifyExisting'
+            });
+            return;
+          }
+
           await this.setSurface(routeId, surfaceOptions);
           await this.requestSurfaceRender({ reason: `${routeId}-home-launch`, surfaceId: routeId });
         });
@@ -558,6 +572,8 @@ export function ShellHostMixin(BaseClass) {
       surfaceRoot.querySelectorAll('[data-asset-bay-action]').forEach(el => {
         el.addEventListener('click', async (ev) => {
           ev.preventDefault();
+          ev.stopPropagation();
+          ev.stopImmediatePropagation?.();
           if (el.disabled) return;
           const action = el.dataset.assetBayAction;
           if (!action) return;
@@ -590,6 +606,15 @@ export function ShellHostMixin(BaseClass) {
 
           if (action === 'modify') {
             const bayMode = el.dataset.bayMode || (targetActor.type === 'vehicle' ? 'shipyard' : 'garage');
+            if (bayMode === 'shipyard' && targetActor.type === 'vehicle') {
+              await this._openShipyardForAsset(targetActor, {
+                source: 'asset-bay',
+                ownerActor: this.actor || this.document,
+                contextMode: 'modifyExisting'
+              });
+              return;
+            }
+
             await this.setSurface('customization', {
               source: 'asset-bay',
               returnSurface: 'asset-bay',
@@ -610,6 +635,97 @@ export function ShellHostMixin(BaseClass) {
           }
         });
       });
+    }
+
+
+    _normalizeAssetActorId(value) {
+      return String(value ?? '').replace(/^Actor\./, '').replace(/^Compendium\.[^.]+\.[^.]+\.Actor\./, '').trim();
+    }
+
+    _idsFromAssetReference(value) {
+      const ids = new Set();
+      const add = (candidate) => {
+        const id = this._normalizeAssetActorId(candidate);
+        if (id) ids.add(id);
+      };
+
+      if (!value) return ids;
+      if (Array.isArray(value)) {
+        for (const entry of value) {
+          if (typeof entry === 'object') add(entry?.id ?? entry?.actorId ?? entry?.ownerActorId ?? entry?.uuid);
+          else add(entry);
+        }
+        return ids;
+      }
+
+      if (typeof value === 'object') {
+        add(value.id ?? value.actorId ?? value.ownerActorId ?? value.uuid);
+        for (const key of ['ownerActorIds', 'accessActorIds', 'recipientActorIds']) {
+          const entries = Array.isArray(value[key]) ? value[key] : value[key] ? Object.values(value[key]) : [];
+          for (const entry of entries) add(entry?.id ?? entry?.actorId ?? entry);
+        }
+        return ids;
+      }
+
+      add(value);
+      return ids;
+    }
+
+    _resolveAssetOwnerActor(assetActor) {
+      const current = this.actor || this.document || null;
+      if (current?.type !== 'vehicle') return current;
+
+      const system = assetActor?.system ?? {};
+      const flags = assetActor?.flags ?? {};
+      const candidates = [
+        system.ownedByActorId,
+        system.ownerActorId,
+        system.ownerId,
+        system.ownerUuid,
+        system.ownedBy,
+        system.storeAcquisition?.ownerActorId,
+        system.assetOwnership?.primaryOwnerActorId,
+        flags['foundryvtt-swse']?.assetGrant?.primaryOwnerActorId,
+        flags['foundryvtt-swse']?.storeAcquisition?.ownerActorId
+      ];
+
+      for (const value of candidates) {
+        for (const id of this._idsFromAssetReference(value)) {
+          const actor = game.actors?.get?.(id);
+          if (actor && actor.type !== 'vehicle') return actor;
+        }
+      }
+
+      const userActor = game.user?.character ?? null;
+      if (userActor?.type !== 'vehicle') return userActor;
+      return current;
+    }
+
+    async _openShipyardForAsset(targetVehicle, options = {}) {
+      if (!targetVehicle || targetVehicle.type !== 'vehicle') {
+        ui.notifications?.warn?.('Select a vehicle actor before opening the Shipyard.');
+        return false;
+      }
+
+      try {
+        const { VehicleModificationApp } = await import('/systems/foundryvtt-swse/scripts/apps/vehicle-modification-app.js');
+        const ownerActor = options.ownerActor?.type && options.ownerActor.type !== 'vehicle'
+          ? options.ownerActor
+          : this._resolveAssetOwnerActor(targetVehicle);
+
+        await VehicleModificationApp.open(ownerActor, {
+          targetVehicle,
+          vehicleActor: targetVehicle,
+          mode: 'shipyard',
+          contextMode: options.contextMode || 'modifyExisting',
+          source: options.source || 'asset-shipyard'
+        });
+        return true;
+      } catch (err) {
+        SWSELogger.error('[ShellHost] Failed to open Shipyard Builder:', err);
+        ui.notifications?.error?.('Failed to open the Shipyard Builder. See console for details.');
+        return false;
+      }
     }
 
 

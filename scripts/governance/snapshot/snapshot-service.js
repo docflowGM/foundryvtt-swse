@@ -53,7 +53,11 @@ export class SnapshotService {
         img,
         system,
         prototypeToken
-      }, options);
+      }, {
+        ...options,
+        source: options.source ?? 'snapshot-restore',
+        isRecomputeHPCall: true
+      });
 
       // ====================================================================
       // PHASE 2: ITEM RESTORATION (delete all, recreate from snapshot)

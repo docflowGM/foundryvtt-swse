@@ -87,9 +87,18 @@
           {{#each vm.jobThreads}}
           <button class="hl-job-card swse-messenger-thread" data-thread-id="{{this.id}}" type="button">
             <div class="hl-job-card-top">
-              <span class="hl-job-giver">{{#if this.ownerLabel}}{{this.ownerLabel}}{{else}}Holonet Contact{{/if}}</span>
+              <span class="hl-job-giver">{{#if this.job.issuer.label}}{{this.job.issuer.label}}{{else}}{{#if this.ownerLabel}}{{this.ownerLabel}}{{else}}Holonet Contact{{/if}}{{/if}}</span>
               <span class="hl-job-status">{{#if this.job.statusLabel}}{{this.job.statusLabel}}{{else}}Open{{/if}}</span>
             </div>
+            {{#if this.job.issuer}}
+            <div class="hl-job-issuer-strip">
+              {{#if this.job.issuer.hasImage}}<img src="{{this.job.issuer.image}}" alt="{{this.job.issuer.label}}">{{/if}}
+              <div>
+                <strong>{{this.job.issuer.label}}</strong>
+                <span>{{this.job.issuer.typeLabel}}{{#if this.job.issuer.subline}} · {{this.job.issuer.subline}}{{/if}}</span>
+              </div>
+            </div>
+            {{/if}}
             <h3>{{this.title}}</h3>
             <p>{{this.preview}}</p>
             <div class="hl-job-tags">
@@ -762,8 +771,30 @@
             <div class="swse-messenger-detail-card__title hl-info-label">{{localize "SWSE.ShellUI.JobBoard"}}</div>
             <div class="hl-title">{{vm.selectedThread.job.title}}</div>
             <div class="hl-chip job">{{vm.selectedThread.job.statusLabel}}</div>
+            {{#if vm.selectedThread.job.issuer}}
+            <div class="hl-job-issuer-card">
+              {{#if vm.selectedThread.job.issuer.hasImage}}<img src="{{vm.selectedThread.job.issuer.image}}" alt="{{vm.selectedThread.job.issuer.label}}">{{/if}}
+              <div>
+                <span class="hl-info-label">Issuer</span>
+                <strong>{{vm.selectedThread.job.issuer.label}}</strong>
+                <small>{{vm.selectedThread.job.issuer.typeLabel}}{{#if vm.selectedThread.job.issuer.subline}} · {{vm.selectedThread.job.issuer.subline}}{{/if}}</small>
+              </div>
+            </div>
+            {{/if}}
             {{#if vm.selectedThread.job.rewardCredits}}<div class="hl-credit-line">Credits: {{vm.selectedThread.job.rewardCredits}} cr</div>{{/if}}
             {{#if vm.selectedThread.job.rewardItems}}<div class="hl-credit-line">Items: {{vm.selectedThread.job.rewardItems}}</div>{{/if}}
+            {{#if vm.selectedThread.job.hasFactionConsequences}}
+            <div class="hl-job-consequence-card">
+              <div class="hl-info-label">Faction Consequences</div>
+              {{#each vm.selectedThread.job.consequenceEntries}}
+              <div class="hl-job-consequence-row {{#if this.isRival}}is-rival{{/if}}">
+                <span>{{this.label}}</span>
+                <strong>{{this.factionName}}</strong>
+                <small>Success {{this.successDeltaLabel}} · Failure {{this.failureDeltaLabel}}</small>
+              </div>
+              {{/each}}
+            </div>
+            {{/if}}
             {{#if vm.selectedThread.job.hasObjectives}}
             <div class="hl-job-objectives">
               <div class="hl-info-label">{{localize "SWSE.ShellUI.Objectives"}}</div>

@@ -1,6 +1,8 @@
 /** GM Faction Relationship Manager surface view-model. */
 
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
+import { HolonetStorage } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js';
+import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/FactionJobBridgeService.js';
 
 function asArray(value) { return Array.isArray(value) ? value : []; }
 function scoreClass(score) { return score > 0 ? 'is-positive' : score < 0 ? 'is-negative' : 'is-neutral'; }
@@ -12,6 +14,50 @@ function splitPlanetSystem(value = '') {
   return { planet: planet || raw, system: system || '' };
 }
 function searchText(...parts) { return parts.map(part => String(part || '').toLowerCase()).join(' '); }
+
+function safeJob(job = {}, thread = {}) {
+  const issuer = FactionJobBridgeService.normalizeJobIssuer(job);
+  return {
+    threadId: thread.id || job.threadId || job.id || '',
+    title: job.title || thread.title || 'Job Board Posting',
+    status: job.status || 'posted',
+    issuer,
+    client: job.client || {},
+    factionConsequences: job.factionConsequences || {},
+    createdAt: thread.createdAt || job.createdAt || '',
+    updatedAt: thread.updatedAt || job.updatedAt || thread.createdAt || '',
+    rawJob: job
+  };
+}
+
+function defaultRewardLabel(record = {}) {
+  const credits = Number(record.defaultCredits ?? record.jobDefaults?.credits ?? 0) || 0;
+  const xp = Number(record.defaultXp ?? record.jobDefaults?.xp ?? 0) || 0;
+  const bits = [];
+  if (credits) bits.push(`${credits.toLocaleString()} cr`);
+  if (xp) bits.push(`${xp.toLocaleString()} XP`);
+  if (record.defaultRewardStyle || record.jobDefaults?.rewardStyle) bits.push(record.defaultRewardStyle || record.jobDefaults.rewardStyle);
+  return bits.join(' · ');
+}
+
+function contactVm(contact = {}, faction = {}, jobs = []) {
+  const jobStats = FactionJobBridgeService.summarizeJobsByIssuer(jobs, {
+    factionId: faction.id,
+    factionName: faction.name,
+    contactId: contact.id,
+    contactName: contact.name
+  });
+  return {
+    ...contact,
+    tagsLabel: Array.isArray(contact.tags) ? contact.tags.join(', ') : String(contact.tags || ''),
+    hasActorLink: Boolean(contact.actorId || contact.actorUuid),
+    actorLinkLabel: contact.actorName || contact.actorUuid || contact.actorId || '',
+    defaultRewardLabel: defaultRewardLabel(contact),
+    jobStats,
+    recentJobs: jobStats.recentJobs
+  };
+}
+
 function actorOption(actor) {
   return {
     id: actor.id,
@@ -22,8 +68,13 @@ function actorOption(actor) {
 }
 
 export class GMFactionRelationshipSurfaceService {
-  static async buildViewModel(_host) {
+  static async buildViewModel(host) {
+    const surfaceState = host?.getSurfaceState?.('factions') || {};
+    const focusedFactionId = String(surfaceState.focusedFactionId || '').trim();
+    const focusedFactionName = String(surfaceState.focusedFactionName || '').trim().toLowerCase();
+    const focusedContactId = String(surfaceState.focusedContactId || '').trim();
     const registrySummary = FactionRegistryService.summarizeForWorkspace();
+    const jobs = await this._loadJobRows();
     const relationships = FactionRegistryService.getAllActorRelationshipRows().map((row) => ({
       ...row,
       scoreClass: scoreClass(row.score),
@@ -53,12 +104,27 @@ export class GMFactionRelationshipSurfaceService {
       factionManager: {
         registry: registrySummary.factions.map((record) => {
           const location = splitPlanetSystem(record.planetSystem);
+          const jobStats = FactionJobBridgeService.summarizeJobsByIssuer(jobs, {
+            factionId: record.id,
+            factionName: record.name
+          });
+          const contacts = asArray(record.contacts).map(contact => ({
+            ...contactVm(contact, record, jobs),
+            isFocused: Boolean(focusedContactId && contact.id === focusedContactId)
+          }));
+          const isFocused = Boolean((focusedFactionId && record.id === focusedFactionId) || (focusedFactionName && String(record.name || '').trim().toLowerCase() === focusedFactionName));
           return {
             ...record,
             planet: location.planet,
             system: location.system,
             scoreClass: scoreClass(record.score),
             scoreLabel: scoreLabel(record.score),
+            contactCount: contacts.length,
+            contacts,
+            jobStats,
+            recentJobs: jobStats.recentJobs,
+            defaultRewardLabel: defaultRewardLabel(record),
+            isFocused,
             searchText: searchText(record.name, record.type, record.planetSystem, record.leader, record.status, record.sourceLabel)
           };
         }),
@@ -75,7 +141,9 @@ export class GMFactionRelationshipSurfaceService {
           registry: registrySummary.count,
           relationships: activeRelationships.length,
           suggestions: suggestions.length,
-          actorsWithRelationships: new Set(activeRelationships.map(row => row.actorId)).size
+          actorsWithRelationships: new Set(activeRelationships.map(row => row.actorId)).size,
+          jobs: jobs.length,
+          contacts: registrySummary.factions.reduce((sum, faction) => sum + asArray(faction.contacts).length, 0)
         },
         hasRegistry: registrySummary.factions.length > 0,
         hasRelationships: activeRelationships.length > 0,
@@ -83,5 +151,16 @@ export class GMFactionRelationshipSurfaceService {
         hasActors: actors.length > 0
       }
     };
+  }
+
+  static async _loadJobRows() {
+    try {
+      const threads = await HolonetStorage.getAllThreads();
+      return asArray(threads)
+        .filter(thread => thread?.metadata?.threadType === 'job')
+        .map(thread => safeJob(thread?.metadata?.job || {}, thread));
+    } catch (_err) {
+      return [];
+    }
   }
 }

@@ -312,20 +312,3 @@
     </div>
   {{/if}}
 </div>
-
-<template id="droid-builder-budget">
-  <div class="budget-display">
-    <div class="budget-bar-label">
-      Credits: {{this.spent}} / {{this.total}}
-      {{#if (gte this.remaining 0)}}
-        <span class="budget-remaining">({{this.remaining}} remaining)</span>
-      {{else}}
-        <span class="budget-over">OVER BUDGET by {{this.remaining}} credits</span>
-      {{/if}}
-    </div>
-    <div class="budget-bar" data-budget-total="{{this.total}}" data-budget-spent="{{this.spent}}">
-      <div class="budget-spent"></div>
-    </div>
-  </div>
-</template>
-

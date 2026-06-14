@@ -15,6 +15,10 @@
     </article>
     {{/unless}}
     <article class="swse-concept-info-card swse-concept-info-card--stat">
+      <span>Class Features</span>
+      <strong>{{conceptLayout.talents.classFeatureCount}}</strong>
+    </article>
+    <article class="swse-concept-info-card swse-concept-info-card--stat">
       <span>Total Abilities</span>
       <strong>{{conceptLayout.talents.abilityCount}}</strong>
     </article>
@@ -56,7 +60,7 @@
   {{/unless}}
 
   <div class="swse-concept-grid swse-concept-grid--two">
-    <section class="swse-concept-panel swse-concept-panel--ledger">
+    <section class="swse-concept-panel swse-concept-panel--ledger" data-sheet-anchor="feat-ledger">
       <header class="swse-concept-panel__header">
         <div>
           <h3 class="swse-concept-panel__title">Feat Ledger</h3>
@@ -95,7 +99,7 @@
       {{/if}}
     </section>
 
-    <section class="swse-concept-panel swse-concept-panel--ledger">
+    <section class="swse-concept-panel swse-concept-panel--ledger" data-sheet-anchor="talent-ledger">
       <header class="swse-concept-panel__header">
         <div>
           <h3 class="swse-concept-panel__title">Talent Trees</h3>
@@ -143,4 +147,6 @@
       {{/if}}
     </section>
   </div>
+
+  {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/class-features-panel.hbs"}}
 </div>

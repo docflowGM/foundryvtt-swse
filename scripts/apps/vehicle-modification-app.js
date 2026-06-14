@@ -20,6 +20,19 @@ import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
+const SHIPYARD_STYLESHEET_ID = 'swse-shipyard-builder-stylesheet';
+const SHIPYARD_STYLESHEET_HREF = 'systems/foundryvtt-swse/styles/apps/vehicle-modification.css';
+
+function ensureShipyardStylesheet() {
+  if (typeof document === 'undefined') return;
+  if (document.getElementById(SHIPYARD_STYLESHEET_ID)) return;
+  const link = document.createElement('link');
+  link.id = SHIPYARD_STYLESHEET_ID;
+  link.rel = 'stylesheet';
+  link.href = SHIPYARD_STYLESHEET_HREF;
+  document.head?.appendChild?.(link);
+}
+
 const CATEGORY_META = Object.freeze({
   movement: { key: 'movement', label: 'Movement & Propulsion', tab: 'Movement', icon: 'fa-rocket' },
   defense: { key: 'defense', label: 'Defense Systems', tab: 'Defense', icon: 'fa-shield-halved' },
@@ -62,6 +75,7 @@ function numberOrZero(value) {
 export class VehicleModificationApp extends SWSEApplication {
   constructor(options = {}) {
     super(options);
+    ensureShipyardStylesheet();
     this.actor = options.actor ?? null; // wallet / owner actor
     this.targetVehicle = options.targetVehicle ?? options.vehicleActor ?? null;
     this.stockShip = null;
@@ -102,6 +116,7 @@ export class VehicleModificationApp extends SWSEApplication {
   };
 
   async _prepareContext(options) {
+    ensureShipyardStylesheet();
     const context = await super._prepareContext(options);
 
     if (!VehicleModificationManager._initialized) {
@@ -288,12 +303,14 @@ export class VehicleModificationApp extends SWSEApplication {
 
   _normalizeStoredModification(mod = {}, sourceStatus = 'existing') {
     const base = mod?.id ? (VehicleModificationManager.getModification(mod.id) || {}) : {};
-    const merged = { ...base, ...this._clone(mod) };
+    const merged = VehicleModificationManager.normalizeModification({ ...base, ...this._clone(mod) });
     const nonstandard = Boolean(merged.nonstandard ?? this._isNonstandard(merged));
     const finalCost = numberOrZero(merged.finalCost ?? VehicleModificationManager.calculateModificationCost(merged, this.stockShip, nonstandard, this.modifications));
     return {
       ...merged,
       category: normalizeCategory(merged.category),
+      emplacementPoints: VehicleModificationManager.calculateEmplacementPoints(merged),
+      ep: VehicleModificationManager.calculateEmplacementPoints(merged),
       finalCost,
       nonstandard,
       sourceStatus
@@ -311,7 +328,7 @@ export class VehicleModificationApp extends SWSEApplication {
         : numberOrZero(String(cost || '').replace(/[^0-9.-]/g, ''));
     const unused = numberOrZero(system.unusedEmplacementPoints ?? system.remainingCustomizationEmplacementPoints ?? 0);
     const used = numberOrZero(system.emplacementPoints ?? system.usedCustomizationEmplacementPoints ?? 0);
-    return {
+    return VehicleModificationManager.normalizeStockShip({
       name: system.buildMetadata?.frameName || system.shipyard?.frameName || vehicle?.name || 'Existing Vehicle',
       size: system.size || 'Colossal',
       strength: numberOrZero(attrs.str?.base ?? system.strength ?? 10),
@@ -330,7 +347,7 @@ export class VehicleModificationApp extends SWSEApplication {
       consumables: system.consumables || '',
       emplacementPoints: used,
       unusedEmplacementPoints: unused
-    };
+    });
   }
 
   _hydrateExistingVehicleState() {
@@ -345,7 +362,7 @@ export class VehicleModificationApp extends SWSEApplication {
     const modData = system.modificationData || system.shipyard || flagBuild || {};
     const stockShip = modData.stockShip || system.stockShip || flagBuild?.stockShip || this._synthesizeStockShipFromVehicle(vehicle);
     const frameName = stockShip?.name || system.buildMetadata?.frameName || system.shipyard?.frameName || vehicle.name;
-    this.stockShip = VehicleModificationManager.getStockShip(frameName) || stockShip;
+    this.stockShip = VehicleModificationManager.getStockShip(frameName) || VehicleModificationManager.normalizeStockShip(stockShip);
     if (!String(this.vehicleModelName || '').trim()) {
       this.vehicleModelName = system.model || stockShip?.name || frameName || '';
     }
@@ -539,12 +556,12 @@ export class VehicleModificationApp extends SWSEApplication {
       cost,
       costLabel: formatCredits(cost),
       baseCostLabel: formatCredits(mod.cost || 0),
-      ep: numberOrZero(mod.emplacementPoints),
-      epLabel: `${numberOrZero(mod.emplacementPoints)} EP`,
+      ep: VehicleModificationManager.calculateEmplacementPoints(mod),
+      epLabel: `${VehicleModificationManager.calculateEmplacementPoints(mod)} EP`,
       availabilityLabel: mod.availability || 'Common',
       restrictedBadge: isRestricted,
       militaryBadge: String(mod.availability || '').toLowerCase() === 'military',
-      zeroEpBadge: numberOrZero(mod.emplacementPoints) === 0,
+      zeroEpBadge: VehicleModificationManager.calculateEmplacementPoints(mod) === 0,
       nonstandardBadge: nonstandard,
       actionLabel: installed ? 'Installed' : eligibility.canInstall ? 'Install' : 'Blocked'
     };
@@ -614,7 +631,7 @@ export class VehicleModificationApp extends SWSEApplication {
       showCostModifier: base.costType === 'base',
       nonstandardCostLabel: formatCredits(adjustedBase * 5),
       epRemainingLabel: `${epRemaining} EP remaining`,
-      epBadgeClass: numberOrZero(mod.emplacementPoints) > epRemaining && !mod.installed ? 'ep-short' : 'ep-ok',
+      epBadgeClass: VehicleModificationManager.calculateEmplacementPoints(mod) > epRemaining && !mod.installed ? 'ep-short' : 'ep-ok',
       effectLabel: base.effect || '—',
       description: base.description || 'No description available.',
       availabilityLabel: base.availability || 'Common',
@@ -765,7 +782,7 @@ export class VehicleModificationApp extends SWSEApplication {
       return;
     }
     const previousDefaultModel = this.stockShip?.name || '';
-    this.stockShip = frame;
+    this.stockShip = VehicleModificationManager.normalizeStockShip(frame);
     if (!String(this.vehicleModelName || '').trim() || this.vehicleModelName === previousDefaultModel) {
       this.vehicleModelName = frame.name || '';
     }
@@ -827,9 +844,12 @@ export class VehicleModificationApp extends SWSEApplication {
 
     const nonstandard = this._isNonstandard(mod);
     const finalCost = VehicleModificationManager.calculateModificationCost(mod, this.stockShip, nonstandard, this.modifications);
+    const normalizedMod = VehicleModificationManager.normalizeModification(foundry.utils.deepClone(mod));
     this.modifications.push({
-      ...foundry.utils.deepClone(mod),
-      category: normalizeCategory(mod.category),
+      ...normalizedMod,
+      category: normalizeCategory(normalizedMod.category),
+      emplacementPoints: VehicleModificationManager.calculateEmplacementPoints(normalizedMod),
+      ep: VehicleModificationManager.calculateEmplacementPoints(normalizedMod),
       finalCost,
       nonstandard,
       sourceStatus: this._isModifyExisting() ? 'added' : 'newBuild',
@@ -1133,6 +1153,7 @@ export class VehicleModificationApp extends SWSEApplication {
   }
 
   static async open(actor, options = {}) {
+    ensureShipyardStylesheet();
     if (!VehicleModificationManager._initialized) {
       await VehicleModificationManager.init();
     }

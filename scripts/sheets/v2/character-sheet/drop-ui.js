@@ -90,6 +90,22 @@ async function handleActorDrop(sheet, droppedActor) {
   }).render(true);
 }
 
+async function maybePromptForFeatTalentGrant(sheet, item) {
+  if (!item || !['feat', 'talent'].includes(item.type)) return null;
+  if (!game.user?.isGM) return null;
+  if (sheet.actor?.type !== 'character') return null;
+  if (item.system?.acquisition || item.flags?.['foundryvtt-swse']?.acquisition) return null;
+
+  try {
+    const { GMGrantDialog } = await import('/systems/foundryvtt-swse/scripts/apps/gm-grant-dialog.js');
+    const result = await GMGrantDialog.prompt({ actor: sheet.actor, item });
+    return result || false;
+  } catch (err) {
+    ui?.notifications?.error?.(`GM grant prompt failed: ${err.message}`);
+    return false;
+  }
+}
+
 /**
  * Handle drop events on the character sheet
  * @param {SWSEV2CharacterSheet} sheet - The character sheet instance
@@ -102,14 +118,12 @@ export async function onDrop(sheet, event) {
   const data = TextEditor.getDragEventData(event);
   if (!data) return;
 
-  // Check if this is an actor drop
+  // Resolve the dropped document once so sheet-level intercepts can inspect it.
   let droppedDocument = null;
-  if (data.uuid) {
-    try {
-      droppedDocument = await fromUuid(data.uuid);
-    } catch (err) {
-      // Not a valid UUID, treat as item drop
-    }
+  try {
+    droppedDocument = await DropResolutionEngine.resolveDroppedDocument(data);
+  } catch (err) {
+    // Not a resolvable Foundry document; treat as a normal item drop attempt.
   }
 
   // ACTOR DROP: Check if GM can adopt
@@ -117,10 +131,17 @@ export async function onDrop(sheet, event) {
     return handleActorDrop(sheet, droppedDocument);
   }
 
-  // ITEM DROP: Use standard resolution
+  // ITEM DROP: optionally intercept GM feat/talent grants before standard resolution.
+  let acquisition = null;
+  if (droppedDocument && droppedDocument.documentName === 'Item') {
+    acquisition = await maybePromptForFeatTalentGrant(sheet, droppedDocument);
+    if (acquisition === false) return;
+  }
+
   const result = await DropResolutionEngine.resolve({
     actor: sheet.actor,
-    dropData: data
+    dropData: data,
+    acquisition
   });
 
   // If no plan (duplicate or invalid), silently skip

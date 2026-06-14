@@ -17,6 +17,7 @@ import { HolonetStateService } from '/systems/foundryvtt-swse/scripts/holonet/su
 import { HolonetMarkupService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-markup-service.js';
 import { HolonetNoticeCenterService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-notice-center-service.js';
 import { HomeFeedTaskEmitter } from '/systems/foundryvtt-swse/scripts/holonet/emitters/home-feed-task-emitter.js';
+import { ProgressionReconciler } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js';
 import { SOURCE_FAMILY, SURFACE_TYPE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
 import { ThemeResolutionService } from '/systems/foundryvtt-swse/scripts/ui/theme/theme-resolution-service.js';
 
@@ -234,8 +235,9 @@ export class HomeSurfaceService {
       this._getUpgradeSummary(actor),
       this._getAlliesSummary(actor)
     ]);
+    const progressionAudit = this._getProgressionAudit(actor);
 
-    await this._publishHomeTasks(actor, progressionSummary, upgradeSummary, alliesSummary);
+    await this._publishHomeTasks(actor, progressionSummary, upgradeSummary, alliesSummary, progressionAudit);
     const holonetSummary = await this._getHolonetSummary(actor);
 
     const apps = this._buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary);
@@ -468,7 +470,7 @@ export class HomeSurfaceService {
   }
 
 
-  static async _publishHomeTasks(actor, progressionSummary = {}, upgradeSummary = {}, alliesSummary = {}) {
+  static async _publishHomeTasks(actor, progressionSummary = {}, upgradeSummary = {}, alliesSummary = {}, progressionAudit = {}) {
     try {
       const recipientIds = this._homeRecipientIds(actor);
       if (!actor || !recipientIds.length) return;
@@ -477,10 +479,22 @@ export class HomeSurfaceService {
         recipientIds,
         progressionSummary,
         upgradeSummary,
-        alliesSummary
+        alliesSummary,
+        progressionAudit
       });
     } catch (err) {
       SWSELogger.warn('[HomeSurfaceService] Holonet home task sync failed:', err);
+    }
+  }
+
+
+  static _getProgressionAudit(actor) {
+    try {
+      if (!actor || !supportedTypesForMentor(actor)) return null;
+      return ProgressionReconciler.reconcileActor(actor, { output: 'sheet' });
+    } catch (err) {
+      SWSELogger.warn('[HomeSurfaceService] Progression reconciliation audit failed:', err);
+      return null;
     }
   }
 
@@ -575,6 +589,8 @@ export class HomeSurfaceService {
 
   static _mapFeedRecord(record, recipientIds, { featured = false } = {}) {
     const body = record?.body || '';
+    const metadata = record?.metadata || {};
+    const route = metadata.route || {};
     return {
       id: record.id,
       recordId: record.id,
@@ -585,10 +601,18 @@ export class HomeSurfaceService {
       icon: sourceIcon(record),
       preview: featured ? HolonetMarkupService.render(body) : HolonetMarkupService.preview(previewText(body, 150)),
       timestamp: formatTimestamp(record.publishedAt || record.createdAt),
-      imageUrl: record.metadata?.imageUrl || record.sender?.avatar || '',
-      priority: record.priority || record.metadata?.priority || 'normal',
-      isBreakingNews: record.metadata?.breakingNews === true,
-      isUrgent: record.metadata?.breakingNews === true || record.metadata?.urgent === true || record.priority === 'critical',
+      imageUrl: metadata.imageUrl || record.sender?.avatar || '',
+      priority: record.priority || metadata.priority || 'normal',
+      routeId: metadata.routeId || route.surface || route.routeId || null,
+      workbenchCategory: metadata.workbenchCategory || route.category || null,
+      initialCategory: metadata.initialCategory || route.initialCategory || null,
+      mode: metadata.mode || route.mode || null,
+      routeIntent: metadata.routeIntent || route.routeIntent || null,
+      entryPoint: metadata.entryPoint || route.entryPoint || null,
+      tab: metadata.tab || route.tab || null,
+      sheetAnchor: metadata.sheetAnchor || route.sheetAnchor || null,
+      isBreakingNews: metadata.breakingNews === true,
+      isUrgent: metadata.breakingNews === true || metadata.urgent === true || record.priority === 'critical',
       isUnread: uniqueStrings(Array.isArray(recipientIds) ? recipientIds : [recipientIds]).some(id => Boolean(record.isUnreadBy?.(id)))
     };
   }

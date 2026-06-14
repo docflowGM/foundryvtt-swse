@@ -70,8 +70,46 @@ export function isForcePowerItem(item) {
   return includesAny(text, ['force power']) && !includesAny(text, ['force training', 'force sensitivity']);
 }
 
-export function isFeatLikeItem(item) {
+export function isClassFeatureItem(item) {
   if (!item || isForcePowerItem(item)) return false;
+  const type = normalizeText(item.type).replace(/\s+/g, '');
+  const system = item.system ?? {};
+  const flags = item.flags?.swse ?? {};
+  const progression = flags.progression ?? {};
+
+  // Classes themselves are source records, not granted class features.
+  // Talents remain in the talent ledger even if their rules text references a
+  // class feature. This ledger is specifically for non-feat, non-talent class
+  // features that legacy/progression code often materializes as feat items.
+  if (type === 'class' || type === 'talent') return false;
+
+  const directFeatureType = normalizeText(
+    system.type
+    ?? system.featureType
+    ?? system.sourceType
+    ?? system.grantType
+    ?? flags.sourceType
+    ?? progression.sourceType
+    ?? progression.selectionKey
+  );
+
+  if (system.classFeature === true || system.isClassFeature === true) return true;
+  if (flags.classFeature === true || flags.classGranted === true) return true;
+  if (system.grantedByClass === true && system.autoGranted === true) return true;
+  if (system.sourceType === 'class-feature' || system.sourceType === 'class_feature') return true;
+  if (flags.sourceType === 'class-feature' || flags.sourceType === 'class_feature') return true;
+  if (includesAny(directFeatureType, [
+    'class feature',
+    'class automatic feature',
+    'scaling feature',
+    'class grant'
+  ])) return true;
+
+  return false;
+}
+
+export function isFeatLikeItem(item) {
+  if (!item || isForcePowerItem(item) || isClassFeatureItem(item)) return false;
   const type = normalizeText(item.type).replace(/\s+/g, '');
   const system = item.system ?? {};
   const progressionKey = normalizeText(item.flags?.swse?.progression?.selectionKey);
