@@ -120,5 +120,41 @@
         </div>
       </section>
     {{/if}}
+
+
+    {{#if conceptLayout.progressionAudit.derivedStats.rows.length}}
+      <section class="swse-concept-ability-reconciliation swse-concept-ability-reconciliation--derived" data-sheet-anchor="derived-class-stats">
+        <header class="swse-concept-ability-reconciliation__header">
+          <div>
+            <h4>Derived Class Stat Audit</h4>
+            <p>HP, BAB, and class defense bonuses are checked against the merged class ledger and class progression SSOT.</p>
+          </div>
+          {{#if conceptLayout.progressionAudit.derivedStats.hasIssues}}
+            <span class="swse-concept-chip swse-concept-chip--warn">{{conceptLayout.progressionAudit.derivedStats.issueCount}} review</span>
+          {{else}}
+            <span class="swse-concept-chip swse-concept-chip--ok">Reconciled</span>
+          {{/if}}
+        </header>
+
+        <div class="swse-concept-ledger swse-concept-ability-reconciliation__slots">
+          {{#each conceptLayout.progressionAudit.derivedStats.rows as |row|}}
+            <article class="swse-concept-ledger-row {{#if row.needsAttention}}swse-concept-ledger-row--open-slot{{/if}}" data-audit-row-id="{{row.id}}">
+              <div class="swse-concept-ledger-row__main">
+                <div class="swse-concept-ledger-row__title">{{row.label}}</div>
+                <div class="swse-concept-ledger-row__meta">
+                  <span>Current {{row.currentLabel}}</span>
+                  <span>Expected {{row.expectedLabel}}</span>
+                  {{#if row.issue}}<span>{{row.issue}}</span>{{/if}}
+                </div>
+              </div>
+              <div class="swse-concept-ledger-row__actions">
+                <span class="swse-concept-chip swse-concept-chip--{{row.tone}}">{{row.statusLabel}}</span>
+              </div>
+            </article>
+          {{/each}}
+        </div>
+      </section>
+    {{/if}}
+
   </section>
 </div>

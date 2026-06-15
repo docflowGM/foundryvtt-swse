@@ -374,6 +374,53 @@ class GalacticProfileBaseStep extends ProgressionStepPlugin {
   getMentorContext(shell) {
     return getStepMentorContext(shell?.actor ?? null, this.descriptor?.stepId || 'profile-review', '', shell ?? this._shell);
   }
+
+  async _selectProfileClass(shell, classId, phase = this.descriptor?.stepId || 'profile-class') {
+    await this._ensureProfileData(shell);
+    const cleanId = String(classId || '').trim();
+    if (!cleanId) return false;
+    const groups = groupTemplates(this._templates);
+    const group = groups.find(g => g.id === cleanId);
+    if (!group) return false;
+
+    const state = getProfileState(shell);
+    state.classId = group.id;
+    if (!state.templateId || !group.templates.some(template => template.id === state.templateId)) {
+      state.templateId = group.templates[0]?.id || null;
+    }
+
+    await syncProfileMentor(shell, group.name, phase);
+    await shell?.render?.();
+    return true;
+  }
+
+  async _selectProfileTemplate(shell, templateId, phase = this.descriptor?.stepId || 'profile-archetype') {
+    await this._ensureProfileData(shell);
+    const cleanId = String(templateId || '').trim();
+    const template = this._templates.find(t => t.id === cleanId);
+    if (!template) return false;
+
+    const state = getProfileState(shell);
+    state.templateId = template.id;
+    state.classId = classKeyForTemplate(template);
+    await syncProfileMentor(shell, classNameForTemplate(template), phase);
+    await shell?.render?.();
+    return true;
+  }
+
+  async handleAction(action, event, target, shell) {
+    if (action === 'profile-select-class') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      return this._selectProfileClass(shell, target?.dataset?.profileClassId, this.descriptor?.stepId || 'profile-class');
+    }
+    if (action === 'profile-select-template') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      return this._selectProfileTemplate(shell, target?.dataset?.profileTemplateId, this.descriptor?.stepId || 'profile-archetype');
+    }
+    return false;
+  }
 }
 
 export class ProfileClassStep extends GalacticProfileBaseStep {
@@ -403,16 +450,12 @@ export class ProfileClassStep extends GalacticProfileBaseStep {
 
   async onDataReady(shell) {
     shell.element?.querySelectorAll?.('[data-profile-class-id]')?.forEach(btn => {
+      if (btn.dataset.profileBound === 'true') return;
+      btn.dataset.profileBound = 'true';
       btn.addEventListener('click', async ev => {
         ev.preventDefault();
-        const id = btn.dataset.profileClassId;
-        const state = getProfileState(shell);
-        state.classId = id;
-        state.templateId = null;
-        const group = groupTemplates(this._templates).find(g => g.id === id);
-        if (group?.templates?.[0]) state.templateId = group.templates[0].id;
-        await syncProfileMentor(shell, group?.name, 'profile-class');
-        await shell.render();
+        ev.stopPropagation();
+        await this._selectProfileClass(shell, btn.dataset.profileClassId, 'profile-class');
       });
     });
   }
@@ -439,6 +482,7 @@ export class ProfileArchetypeStep extends GalacticProfileBaseStep {
     if (!state.classId && groups[0]) state.classId = groups[0].id;
     const selectedGroup = groups.find(g => g.id === state.classId) || groups[0] || null;
     const templates = this._templates.filter(t => classKeyForTemplate(t) === state.classId);
+    if (state.templateId && !templates.some(t => t.id === state.templateId)) state.templateId = templates[0]?.id || null;
     if (!state.templateId && templates[0]) state.templateId = templates[0].id;
     const dialogueData = await loadTemplateDialogues();
 
@@ -463,28 +507,22 @@ export class ProfileArchetypeStep extends GalacticProfileBaseStep {
 
   async onDataReady(shell) {
     shell.element?.querySelectorAll?.('[data-profile-class-id]')?.forEach(btn => {
+      if (btn.dataset.profileBound === 'true') return;
+      btn.dataset.profileBound = 'true';
       btn.addEventListener('click', async ev => {
         ev.preventDefault();
-        const state = getProfileState(shell);
-        state.classId = btn.dataset.profileClassId;
-        const first = this._templates.find(t => classKeyForTemplate(t) === state.classId);
-        state.templateId = first?.id || null;
-        await syncProfileMentor(shell, classNameForTemplate(first), 'profile-archetype');
-        await shell.render();
+        ev.stopPropagation();
+        await this._selectProfileClass(shell, btn.dataset.profileClassId, 'profile-archetype');
       });
     });
 
     shell.element?.querySelectorAll?.('[data-profile-template-id]')?.forEach(card => {
+      if (card.dataset.profileBound === 'true') return;
+      card.dataset.profileBound = 'true';
       card.addEventListener('click', async ev => {
         ev.preventDefault();
-        const state = getProfileState(shell);
-        state.templateId = card.dataset.profileTemplateId;
-        const tpl = this._templates.find(t => t.id === state.templateId);
-        if (tpl) {
-          state.classId = classKeyForTemplate(tpl);
-          await syncProfileMentor(shell, classNameForTemplate(tpl), 'profile-archetype');
-        }
-        await shell.render();
+        ev.stopPropagation();
+        await this._selectProfileTemplate(shell, card.dataset.profileTemplateId, 'profile-archetype');
       });
     });
   }

@@ -1225,6 +1225,7 @@ export class ProgressionFinalizer {
       const nextDomains = Array.from(new Set([...(Array.isArray(existingDomains) ? existingDomains : []), 'force']));
       set['system.progression.unlockedDomains'] = nextDomains;
       set['system.progression.forceSensitive'] = true;
+      set['system.forceSensitive'] = true;
       set['system.skills.useTheForce.classSkill'] = true;
       set['system.skills.useTheForce.selectedAbility'] = set['system.skills.useTheForce.selectedAbility'] || 'cha';
     }
@@ -1337,6 +1338,49 @@ export class ProgressionFinalizer {
     if (sessionState.mode === 'levelup' && levelUpManifest) {
       set['flags.swse.levelUpEntitlementManifest'] = levelUpManifest;
       set['flags.swse.levelUpFinalizationReceipt'] = buildLevelUpFinalizationReceipt(levelUpManifest, sessionState.progressionSession);
+    }
+
+    const selectedForcePowerCount = this._countSelectionEntries(selections.forcePowers);
+    const expectedForcePowerSlots = this._countForcePowerSlotsFromSelections(actor, selections, sessionState, attrValues);
+    if (!isDroidProgression && (selectedForcePowerCount > 0 || expectedForcePowerSlots > 0 || set['system.progression.forceSensitive'] === true)) {
+      const currentMax = Number(actor?.system?.freeForcePowers?.max || 0) || 0;
+      const nextMax = Math.max(currentMax, expectedForcePowerSlots);
+      set['system.freeForcePowers.max'] = nextMax;
+      set['system.freeForcePowers.current'] = nextMax;
+      set['system.progression.forcePowerSlots'] = {
+        expected: nextMax,
+        selected: selectedForcePowerCount,
+        overage: Math.max(0, selectedForcePowerCount - nextMax),
+        source: 'progression-finalizer',
+        lastReconciledAt: new Date().toISOString(),
+      };
+      set['system.forceGrantLedger.lastReconciled'] = new Date().toISOString();
+      set['system.forceGrantLedger.lastReconciliationContext'] = 'progression-finalizer';
+      set['system.forceGrantLedger.legacy'] = {
+        ...(actor?.system?.forceGrantLedger?.legacy || {}),
+        unknownPowers: Math.max(0, selectedForcePowerCount - nextMax),
+        issues: selectedForcePowerCount > nextMax
+          ? [`Actor has ${selectedForcePowerCount} selected Force Power${selectedForcePowerCount === 1 ? '' : 's'} against ${nextMax} expected Force Training slot${nextMax === 1 ? '' : 's'}. This is allowed but should be reviewed.`]
+          : [],
+      };
+    }
+
+    const completedSessionId = sessionState.sessionId || sessionState.progressionSession?.sessionId || 'unknown';
+    const completedAt = new Date().toISOString();
+    set[`flags.foundryvtt-swse.progression.${sessionState.mode}.completed`] = {
+      completed: true,
+      mode: sessionState.mode,
+      sessionId: completedSessionId,
+      currentStepId: sessionState.progressionSession?.currentStepId || null,
+      completedAt,
+      source: 'progression-finalizer',
+    };
+    set['system.progression.lastCompletedMode'] = sessionState.mode;
+    set['system.progression.completedSessionId'] = completedSessionId;
+    set['system.progression.completedAt'] = completedAt;
+    if (sessionState.mode === 'chargen') {
+      set['system.progression.chargenComplete'] = true;
+      set['flags.foundryvtt-swse.progression.chargen.completedAt'] = completedAt;
     }
 
     return {
@@ -1644,11 +1688,54 @@ export class ProgressionFinalizer {
   }
 
   static _canonicalSkillKey(value) {
-    const raw = String(value || '').trim();
+    const firstScalar = (input) => {
+      if (input === null || input === undefined) return '';
+      if (typeof input === 'object') {
+        return firstScalar(
+          input.key ?? input.slug ?? input.system?.key ?? input.skillKey ?? input.skillId ?? input.skill
+          ?? input.value?.key ?? input.value?.slug ?? input.value?.skillKey ?? input.value?.skillId
+          ?? input.name ?? input.label ?? input.displayName ?? input.value?.name ?? input.value?.label
+          ?? input.id ?? input._id ?? input.internalId
+        );
+      }
+      const text = String(input).trim();
+      return text && text !== '[object Object]' ? text : '';
+    };
+
+    const raw = firstScalar(value);
     if (!raw) return '';
     const normalized = raw.toLowerCase().replace(/[^a-z0-9]+/g, '');
+    const idMap = {
+      '2b9e43f710664b31': 'useTheForce',
+      '34a9c3f170eb9f40': 'climb',
+      '35df8faa4878f2c5': 'endurance',
+      '426945d1fc765a5d': 'survival',
+      '43c5941072ec78af': 'perception',
+      '633a13c5fa6101d7': 'treatInjury',
+      '6d2ac22d9fcf402f': 'stealth',
+      '745a5686d6f21e8c': 'mechanics',
+      '8f5e21f92d6d976b': 'useComputer',
+      '9410ce2dfb6cefcb': 'deception',
+      '97f68d85ad68b921': 'jump',
+      'a3855d8f08016487': 'knowledge',
+      'a6c5e98148aad9a9': 'acrobatics',
+      'b554f3e5a55ad53f': 'persuasion',
+      'b8dad0c963f046c6': 'pilot',
+      'c9bf381579013b18': 'gatherInformation',
+      'cb5493f65f0bdb62': 'initiative',
+      'd0b0f5e45327b476': 'ride',
+      'f77c3576d22552fe': 'swim',
+    };
     const map = {
+      acrobatics: 'acrobatics',
+      climb: 'climb',
+      deception: 'deception',
+      endurance: 'endurance',
       gatherinformation: 'gatherInformation',
+      gatherinfo: 'gatherInformation',
+      initiative: 'initiative',
+      jump: 'jump',
+      knowledge: 'knowledge',
       knowledgebureaucracy: 'knowledgeBureaucracy',
       knowledgegalacticlore: 'knowledgeGalacticLore',
       knowledgelifesciences: 'knowledgeLifeSciences',
@@ -1656,14 +1743,46 @@ export class ProgressionFinalizer {
       knowledgesocialsciences: 'knowledgeSocialSciences',
       knowledgetactics: 'knowledgeTactics',
       knowledgetechnology: 'knowledgeTechnology',
+      mechanics: 'mechanics',
+      perception: 'perception',
+      persuasion: 'persuasion',
+      pilot: 'pilot',
+      ride: 'ride',
+      stealth: 'stealth',
+      survival: 'survival',
+      swim: 'swim',
       treatinjury: 'treatInjury',
       usecomputer: 'useComputer',
       usetheforce: 'useTheForce',
+      useforce: 'useTheForce',
+      utf: 'useTheForce',
     };
-    const resolved = map[normalized] || raw;
+
+    let resolved = idMap[normalized] || map[normalized] || '';
+
+    if (!resolved) {
+      try {
+        const packIndex = globalThis.game?.packs?.get?.('foundryvtt-swse.skills')?.index;
+        const contents = packIndex?.contents || (typeof packIndex?.values === 'function' ? Array.from(packIndex.values()) : []);
+        const hit = contents.find(entry => [entry?.id, entry?._id, entry?.name]
+          .some(candidate => String(candidate || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '') === normalized));
+        if (hit?.name) resolved = map[String(hit.name).toLowerCase().replace(/[^a-z0-9]+/g, '')] || idMap[String(hit.id || hit._id || '').toLowerCase()] || '';
+      } catch (_err) {
+        // Registry lookup is best-effort only; fall through to validation below.
+      }
+    }
+
+    // Do not create arbitrary system.skills.<randomId> or system.skills.null
+    // paths. Unknown values are unsafe and should be ignored until the picker
+    // can provide a real canonical skill key.
+    if (!resolved) {
+      swseLogger.warn('[ProgressionFinalizer] Ignoring unknown skill key during finalization', { raw });
+      return '';
+    }
+
     // Athletics consolidation: redirect component keys → 'athletics' when house rule is on.
     const athleticsComponents = new Set(['acrobatics', 'climb', 'jump', 'swim']);
-    if (athleticsComponents.has(resolved.toLowerCase())) {
+    if (athleticsComponents.has(resolved)) {
       try { if (game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true) return 'athletics'; } catch { /* off */ }
     }
     return resolved;
@@ -1685,12 +1804,100 @@ export class ProgressionFinalizer {
     for (const feat of feats) {
       const name = String(feat?.name || feat?.label || feat || '').trim();
       const match = name.match(/^Skill\s+Focus\s*\(([^)]+)\)/i);
-      if (!match) continue;
-      const skillName = match[1].trim();
-      const key = this._canonicalSkillKey(skillName);
-      if (key) keys.push(key);
+      if (match) {
+        const key = this._canonicalSkillKey(match[1].trim());
+        if (key) keys.push(key);
+      }
+
+      const selectedChoice = feat?.system?.selectedChoice || feat?.selectedChoice || feat?.choice || feat?.choiceValue || null;
+      const choiceKey = this._canonicalSkillKey(selectedChoice);
+      if (choiceKey) keys.push(choiceKey);
     }
-    return keys;
+    return Array.from(new Set(keys));
+  }
+
+  static _countSelectionEntries(entries = []) {
+    if (!Array.isArray(entries)) return 0;
+    return entries.reduce((sum, entry) => sum + Math.max(0, Number(entry?.count ?? 1) || 0), 0);
+  }
+
+  static _configuredForceTrainingAbilityKey() {
+    const getSetting = (moduleId, key) => {
+      try { return globalThis.game?.settings?.get?.(moduleId, key); } catch (_err) { return null; }
+    };
+    const configured = String(
+      getSetting(globalThis.game?.system?.id || 'foundryvtt-swse', 'forceTrainingAttribute')
+      ?? getSetting('foundryvtt-swse', 'forceTrainingAttribute')
+      ?? getSetting('swse', 'forceTrainingAttribute')
+      ?? 'wisdom'
+    ).toLowerCase();
+    return configured === 'cha' || configured === 'charisma' ? 'cha' : 'wis';
+  }
+
+  static _abilityModifierFromProgression(actor, abilityKey, attrValues = {}) {
+    const key = abilityKey === 'cha' ? 'cha' : 'wis';
+    const pendingValue = attrValues?.[key];
+    const pendingScore = typeof pendingValue === 'object'
+      ? Number(pendingValue.score ?? pendingValue.total ?? pendingValue.value ?? pendingValue.base)
+      : Number(pendingValue);
+    if (Number.isFinite(pendingScore) && pendingScore > 0) return Math.floor((pendingScore - 10) / 2);
+
+    const system = actor?.system || {};
+    for (const block of [system.attributes?.[key], system.abilities?.[key], system.stats?.[key]]) {
+      if (!block || typeof block !== 'object') continue;
+      for (const modKey of ['mod', 'modifier']) {
+        const mod = Number(block[modKey]);
+        if (Number.isFinite(mod)) return mod;
+      }
+      let total = null;
+      for (const scoreKey of ['score', 'total', 'value']) {
+        const score = Number(block[scoreKey]);
+        if (Number.isFinite(score)) { total = score; break; }
+      }
+      if (total === null) {
+        const base = Number(block.base ?? 10) || 10;
+        const racial = Number(block.racial ?? block.species ?? 0) || 0;
+        const enhancement = Number(block.enhancement ?? 0) || 0;
+        const temp = Number(block.temp ?? 0) || 0;
+        total = base + racial + enhancement + temp;
+      }
+      if (Number.isFinite(total)) return Math.floor((total - 10) / 2);
+    }
+    return 0;
+  }
+
+  static _selectionNameMatches(entry, wantedName) {
+    const normalizedWanted = this._normalizeNameKey(wantedName);
+    return [entry?.name, entry?.label, entry?.title, entry?.id, entry?._id, entry]
+      .some(candidate => this._normalizeNameKey(candidate) === normalizedWanted);
+  }
+
+  static _countForceTrainingInstancesFromSelections(selections = {}) {
+    const feats = Array.isArray(selections.feats) ? selections.feats : [];
+    const pending = Array.isArray(selections.pendingEntitlements) ? selections.pendingEntitlements : [];
+    const featCount = feats.reduce((sum, feat) => this._selectionNameMatches(feat, 'Force Training')
+      ? sum + (Number(feat?.count || 1) || 1)
+      : sum, 0);
+    const pendingSeen = new Set();
+    const pendingCount = pending.reduce((sum, entry) => {
+      const sourceName = entry?.source?.featName || entry?.sourceName || entry?.name || '';
+      const type = String(entry?.type || entry?.grantType || '').toLowerCase();
+      if (this._normalizeNameKey(sourceName) !== 'forcetraining' && !/force[_ -]?power/.test(type)) return sum;
+      const sourceKey = entry?.source?.featId || entry?.sourceItemId || entry?.sourceId || entry?.id || sourceName || type;
+      const dedupeKey = `${this._normalizeNameKey(sourceName)}::${sourceKey}`;
+      if (pendingSeen.has(dedupeKey)) return sum;
+      pendingSeen.add(dedupeKey);
+      return sum + (Number(entry?.source?.count || 1) || 1);
+    }, 0);
+    return featCount > 0 ? featCount : pendingCount;
+  }
+
+  static _countForcePowerSlotsFromSelections(actor, selections = {}, sessionState = {}, attrValues = {}) {
+    const instances = this._countForceTrainingInstancesFromSelections(selections);
+    if (instances <= 0) return 0;
+    const abilityKey = this._configuredForceTrainingAbilityKey();
+    const modifier = this._abilityModifierFromProgression(actor, abilityKey, attrValues);
+    return instances * Math.max(1, 1 + modifier);
   }
 
   static _extractActorLanguageNames(actor) {
@@ -1751,8 +1958,14 @@ export class ProgressionFinalizer {
     if (typeof skills === 'object') {
       return Object.entries(skills)
         .map(([key, entry]) => {
-          if (entry === true) return { key: this._canonicalSkillKey(key), trained: true };
-          if (entry?.trained === true) return { ...entry, key: this._canonicalSkillKey(entry?.key || entry?.id || key), trained: true };
+          if (entry === true) {
+            const canonical = this._canonicalSkillKey(key);
+            return canonical ? { key: canonical, trained: true } : null;
+          }
+          if (entry?.trained === true) {
+            const canonical = this._canonicalSkillKey(entry?.key || entry?.id || key);
+            return canonical ? { ...entry, key: canonical, trained: true } : null;
+          }
           return null;
         })
         .filter(Boolean);
@@ -2610,11 +2823,45 @@ export class ProgressionFinalizer {
             recursive: true,
             overwrite: true
           });
-          if (domain.type === 'feat' && String(rawEntry?.source || '').includes('class')) {
+
+          const rawSlotType = String(rawEntry?.slotType || rawEntry?.source || '').trim().toLowerCase();
+          const acquisitionMeta = {
+            source: rawEntry?.source || rawEntry?.slotType || domain.key,
+            slotType: rawEntry?.slotType || rawEntry?.source || null,
+            slotKey: rawEntry?.slotKey || null,
+            stepId: rawEntry?.stepId || null,
+            classId: rawEntry?.classId || rawEntry?.sourceClassId || null,
+            className: rawEntry?.className || rawEntry?.sourceClass || null,
+            classLevel: rawEntry?.classLevel || rawEntry?.sourceClassLevel || rawEntry?.grantedClassLevel || null,
+            characterLevel: rawEntry?.characterLevel || rawEntry?.sourceCharacterLevel || null,
+            sourceSession: sessionId,
+            selectionKey: domain.key,
+            selectionId: rawEntry?.id || resolvedName,
+          };
+          baseItem.system.acquisition = foundry.utils.mergeObject(baseItem.system.acquisition || {}, acquisitionMeta, {
+            inplace: false,
+            recursive: true,
+            overwrite: false
+          });
+          if (rawSlotType) baseItem.system.slotType = baseItem.system.slotType || rawSlotType;
+
+          if ((domain.key === 'feats' || domain.key === 'talents') && rawSlotType.includes('class')) {
             baseItem.system.sourceType = baseItem.system.sourceType || 'class';
-            baseItem.system.locked = true;
-            baseItem.system.choiceEditable = false;
             baseItem.system.grantedByClass = true;
+            if (domain.key === 'feats') {
+              baseItem.system.locked = true;
+              baseItem.system.choiceEditable = false;
+            }
+          }
+          if (domain.key === 'forcePowers') {
+            baseItem.system.inSuite = true;
+            baseItem.system.executionModel = baseItem.system.executionModel || 'FORCE_POWER';
+            baseItem.system.provenance = {
+              ...(baseItem.system.provenance || {}),
+              grantSourceType: baseItem.system.provenance?.grantSourceType || 'force-training',
+              grantSourceId: baseItem.system.provenance?.grantSourceId || rawEntry?.source?.featId || null,
+              grantSubtype: baseItem.system.provenance?.grantSubtype || 'progression',
+            };
           }
           if (domain.key === 'medicalSecrets') {
             baseItem.system.medicalSecret = true;
@@ -2631,11 +2878,16 @@ export class ProgressionFinalizer {
           }
           baseItem.flags = foundry.utils.mergeObject(baseItem.flags || {}, {
             swse: {
+              acquisition: acquisitionMeta,
               progression: {
                 sourceSession: sessionId,
                 selectionKey: domain.key,
                 selectionId: rawEntry?.id || resolvedName,
                 countIndex: idx,
+                slotType: rawEntry?.slotType || rawEntry?.source || null,
+                source: rawEntry?.source || rawEntry?.slotType || null,
+                slotKey: rawEntry?.slotKey || null,
+                stepId: rawEntry?.stepId || null,
               },
             },
           }, { inplace: false, recursive: true });

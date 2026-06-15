@@ -1,181 +1,215 @@
-<div class="prog-attribute-surface">
-  <div class="prog-attribute-header">
-    <h3 class="prog-attribute-title">{{#if attributeIncreaseMode}}Increase Your Abilities{{else}}Assign Your Attributes{{/if}}</h3>
-    <p class="prog-attribute-help">
-      {{#if attributeIncreaseMode}}At this level, choose two different ability scores to increase by +1.{{else}}{{#if attributeIncreaseMode}}At this level, choose two different ability scores to increase by +1.{{else}}Choose your base scores, then species modifiers will be applied automatically.{{/if}}{{/if}}
-    </p>
-  </div>
+<div class="prog-attribute-surface prog-attribute-surface--v2 {{#if isCommitted}}is-locked{{/if}}" data-attribute-method="{{method}}">
+  <header class="prog-attr-v2-header">
+    <div class="prog-attr-v2-stepnum">{{#if attributeIncreaseMode}}LV{{else}}03{{/if}}</div>
+    <div class="prog-attr-v2-titleblock">
+      <h3>{{#if attributeIncreaseMode}}Ability Increase Calibration{{else}}Ability Calibration{{/if}}</h3>
+      <p>{{stepSubtitle}}</p>
+    </div>
+    <div class="prog-attr-v2-status-chip {{lockButtonTone}}">
+      <i class="fas {{lockButtonIcon}}"></i>
+      <span>{{#if isCommitted}}Locked{{else}}Unlocked{{/if}}</span>
+    </div>
+  </header>
 
   {{#if showMethodSelector}}
-  <div class="prog-attribute-method-selector">
-    <label class="prog-attribute-method-label">Method:</label>
-    <div class="prog-attribute-method-buttons">
-      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "point-buy")}}active{{/if}}" data-method="point-buy" type="button">
-        <i class="fas fa-coins"></i> Point Buy
-      </button>
-      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "array")}}active{{/if}}" data-method="array" type="button">
-        <i class="fas fa-th-large"></i> Array
-      </button>
-      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "standard")}}active{{/if}}" data-method="standard" type="button">
-        <i class="fas fa-dice-d6"></i> Standard
-      </button>
-      <button class="prog-btn prog-btn--method attr-method-btn {{#if (eq method "organic")}}active{{/if}}" data-method="organic" type="button">
-        <i class="fas fa-dice"></i> Organic
-      </button>
-    </div>
-  </div>
-  {{/if}}
-
-  {{#if isSpeciesFixed}}
-    <div class="prog-attribute-fixed-species">
-      <strong>{{attributeOverride.label}}</strong>
-      <span>{{attributeOverride.helpText}}</span>
-      {{#if speciesFixedAllocation}}
-        <div class="prog-attribute-fixed-species__meter">
-          Clone increases: {{speciesFixedAllocation.spent}} / {{speciesFixedAllocation.total}} allocated
-          {{#if speciesFixedAllocation.remaining}}({{speciesFixedAllocation.remaining}} remaining){{/if}}
-        </div>
-      {{/if}}
+    <div class="prog-attr-v2-methods" role="tablist" aria-label="Attribute generation method">
+      {{#each methodCards}}
+        <button class="prog-attr-v2-method attr-method-btn {{#if isActive}}active{{/if}}" data-method="{{id}}" type="button" role="tab" aria-selected="{{#if isActive}}true{{else}}false{{/if}}" {{#if disabled}}disabled{{/if}}>
+          <i class="fas {{icon}}"></i>
+          <span class="label">{{label}}</span>
+          <span class="sub">{{sub}}</span>
+        </button>
+      {{/each}}
     </div>
   {{/if}}
 
   {{#if showArrayTypeSelector}}
-    <div class="prog-attribute-submethod-selector">
-      <button class="prog-btn prog-btn--submethod attr-array-type-btn {{#if (eq arrayType "standard")}}active{{/if}}" data-array-type="standard" type="button">
-        Standard Array
-      </button>
-      <button class="prog-btn prog-btn--submethod attr-array-type-btn {{#if (eq arrayType "highPower")}}active{{/if}}" data-array-type="highPower" type="button">
-        High Power Array
-      </button>
+    <div class="prog-attr-v2-array-toggle">
+      <button class="attr-array-type-btn {{#if (eq arrayType "standard")}}active{{/if}}" data-array-type="standard" type="button">Standard Array</button>
+      <button class="attr-array-type-btn {{#if (eq arrayType "highPower")}}active{{/if}}" data-array-type="highPower" type="button">High Power Array</button>
     </div>
   {{/if}}
 
-  <div class="prog-attribute-toolbar">
-    <div class="prog-attribute-toolbar__status">
-      {{currentMethodDescription}}
-      {{#if poolInstruction}}
-        <div class="prog-attribute-toolbar__hint">{{poolInstruction}}</div>
+  {{#if isSpeciesFixed}}
+    <section class="prog-attr-v2-alert">
+      <strong>{{attributeOverride.label}}</strong>
+      <span>{{attributeOverride.helpText}}</span>
+      {{#if speciesFixedAllocation}}
+        <em>{{speciesFixedAllocation.spent}} / {{speciesFixedAllocation.total}} clone increases allocated{{#if speciesFixedAllocation.remaining}} · {{speciesFixedAllocation.remaining}} remaining{{/if}}</em>
       {{/if}}
-    </div>
-    <div class="prog-attribute-toolbar__actions">
-      {{#if showUtilityActions}}{{#unless isSpeciesFixed}}
-        <button class="prog-btn prog-btn--secondary" data-attr-reroll type="button">
-          <i class="fas fa-rotate-right"></i> {{rerollButtonLabel}}
-        </button>
-        <button class="prog-btn prog-btn--secondary" data-attr-auto-assign type="button">
-          <i class="fas fa-wand-magic-sparkles"></i> Auto Assign
-        </button>
-      {{/unless}}{{/if}}
-      {{#if showSpeciesFixedOverride}}
-        <button class="prog-btn prog-btn--secondary" data-action="attribute-override-species-fixed" type="button">
-          <i class="fas fa-user-shield"></i> Override Method / Notify GM
-        </button>
-      {{/if}}
-      <button class="prog-btn prog-btn--primary" data-action="attribute-lock" type="button">
-        <i class="fas fa-lock"></i> {{lockButtonLabel}}
-      </button>
-    </div>
-  </div>
-
-  {{#if showPointBuy}}
-    <div class="prog-attribute-pointbuy-status {{#if pointBuyStatus.isComplete}}prog-attribute-pointbuy--complete{{/if}}">
-      <div class="prog-attribute-pointbuy-bar">
-        <div class="prog-attribute-pointbuy-used" style="width: {{pointBuyStatus.percent}}%"></div>
-      </div>
-      <div class="prog-attribute-pointbuy-text">
-        {{pointBuyStatus.spent}} / {{pointBuyPool}} points allocated — {{pointBuyStatus.status}}
-      </div>
-    </div>
+    </section>
   {{/if}}
 
-  {{#if showGeneratedPool}}
-    <div class="prog-attribute-pool-panel">
-      <div class="prog-attribute-pool-panel__header">
-        <div>
-          <h4>{{#if (eq method "organic")}}Organic Dice Pool{{else}}Generated Results{{/if}}</h4>
-          <p>
-            {{#if remainingPoolAssignments}}
-              {{remainingPoolAssignments}} attributes still need a result.
-            {{else}}
-              All generated results are placed. You can still reassign them before locking.
-            {{/if}}
-          </p>
+  <div class="prog-attr-v2-layout">
+    <main class="prog-attr-v2-board">
+      {{#if hasGeneratedPool}}
+        <section class="prog-attr-v2-pool">
+          <div class="prog-attr-v2-pool-head">
+            <div>
+              <span>{{#if (eq method "organic")}}Organic Dice Pool{{else}}Generated Results{{/if}}</span>
+              <p>{{poolInstruction}}</p>
+            </div>
+            <div class="prog-attr-v2-pool-meter">
+              <b>{{poolAssigned}}</b><small>/ {{poolTotal}} placed</small>
+            </div>
+          </div>
+          <div class="prog-attr-v2-pool-grid {{#if (eq method "organic")}}is-organic{{/if}}">
+            {{#each scorePool}}
+              <button class="prog-attr-v2-pool-chip {{#if isSelected}}is-focused{{/if}} {{#if isUsed}}is-assigned{{/if}}" data-score-pool-id="{{id}}" draggable="{{#if isDraggable}}true{{else}}false{{/if}}" type="button">
+                <span>{{value}}</span>
+                <em>{{assignedLabel}}</em>
+              </button>
+            {{/each}}
+          </div>
+        </section>
+      {{/if}}
+
+      <section class="prog-attr-v2-cluster">
+        <div class="prog-attr-v2-cluster-head">
+          <span class="ico">◈</span>
+          <span>Physical Series</span>
+          <em>STR · DEX · CON</em>
         </div>
-      </div>
-      <div class="prog-attribute-tile-grid {{#if (eq method "organic")}}prog-attribute-tile-grid--organic{{/if}}">
-        {{#each scorePool}}
-          <button
-            class="prog-attribute-tile {{#if isSelected}}is-focused{{/if}} {{#if isUsed}}is-assigned{{/if}}"
-            data-score-pool-id="{{id}}"
-            draggable="{{#if isDraggable}}true{{else}}false{{/if}}"
-            type="button"
-          >
-            <span class="prog-attribute-tile__value">{{value}}</span>
-            <span class="prog-attribute-tile__label swse-ability-pool-label" data-assigned-label="{{assignedLabel}}">{{assignedLabel}}</span>
-          </button>
+        <div class="prog-attr-v2-cells">
+          {{#each physicalAbilities}}
+            <article class="prog-attr-v2-cell attr-v2--{{colorClass}} {{#if isFocused}}is-focused{{/if}} {{#if isUnassigned}}is-pending{{/if}} {{#if isExcluded}}is-excluded{{/if}}" data-ability-row="{{id}}" data-ability="{{id}}" role="button" tabindex="0">
+              <div class="prog-attr-v2-cell-code">{{label}}<span>{{fullName}}</span></div>
+              <div class="prog-attr-v2-mod {{modTone}}">{{modifierFormatted}}</div>
+              <div class="prog-attr-v2-value-row">
+                {{#if canAdjust}}
+                  <button class="prog-attr-v2-stepper minus" data-ability="{{id}}" data-delta="-1" type="button" {{#unless canDecrease}}disabled aria-disabled="true"{{/unless}}>−</button>
+                {{else}}
+                  <span class="prog-attr-v2-stepper ghost"></span>
+                {{/if}}
+                <div class="prog-attr-v2-score {{valueTone}}">{{finalDisplay}}</div>
+                {{#if canAdjust}}
+                  <button class="prog-attr-v2-stepper plus" data-ability="{{id}}" data-delta="1" type="button" {{#unless canIncrease}}disabled aria-disabled="true"{{/unless}}>+</button>
+                {{else}}
+                  <span class="prog-attr-v2-stepper ghost"></span>
+                {{/if}}
+              </div>
+              <div class="prog-attr-v2-math">
+                <span><b>{{baseDisplay}}</b> base</span>
+                <span class="species {{speciesModClass}}">{{#if (gt speciesMod 0)}}+{{/if}}{{speciesMod}} {{#if ../secondColumnLabel}}{{../secondColumnLabel}}{{else}}species{{/if}}</span>
+                {{#if costLabel}}<span class="cost">{{costLabel}}</span>{{/if}}
+              </div>
+              {{#if assignedPoolItems.length}}
+                <div class="prog-attr-v2-assigned">
+                  {{#each assignedPoolItems}}
+                    <button class="prog-attr-v2-assigned-chip {{#if isSelected}}is-focused{{/if}}" data-score-pool-id="{{id}}" type="button">{{value}}</button>
+                  {{/each}}
+                  {{#if showClear}}
+                    <button class="prog-attr-v2-clear" data-clear-ability="{{id}}" type="button" aria-label="Clear {{label}} assignment"><i class="fas fa-rotate-left"></i></button>
+                  {{/if}}
+                </div>
+              {{else}}
+                {{#if assignmentHint}}<div class="prog-attr-v2-hint">{{assignmentHint}}</div>{{/if}}
+              {{/if}}
+            </article>
+          {{/each}}
+        </div>
+      </section>
+
+      <section class="prog-attr-v2-cluster">
+        <div class="prog-attr-v2-cluster-head">
+          <span class="ico">◇</span>
+          <span>Mental Series</span>
+          <em>INT · WIS · CHA</em>
+        </div>
+        <div class="prog-attr-v2-cells">
+          {{#each mentalAbilities}}
+            <article class="prog-attr-v2-cell attr-v2--{{colorClass}} {{#if isFocused}}is-focused{{/if}} {{#if isUnassigned}}is-pending{{/if}} {{#if isExcluded}}is-excluded{{/if}}" data-ability-row="{{id}}" data-ability="{{id}}" role="button" tabindex="0">
+              <div class="prog-attr-v2-cell-code">{{label}}<span>{{fullName}}</span></div>
+              <div class="prog-attr-v2-mod {{modTone}}">{{modifierFormatted}}</div>
+              <div class="prog-attr-v2-value-row">
+                {{#if canAdjust}}
+                  <button class="prog-attr-v2-stepper minus" data-ability="{{id}}" data-delta="-1" type="button" {{#unless canDecrease}}disabled aria-disabled="true"{{/unless}}>−</button>
+                {{else}}
+                  <span class="prog-attr-v2-stepper ghost"></span>
+                {{/if}}
+                <div class="prog-attr-v2-score {{valueTone}}">{{finalDisplay}}</div>
+                {{#if canAdjust}}
+                  <button class="prog-attr-v2-stepper plus" data-ability="{{id}}" data-delta="1" type="button" {{#unless canIncrease}}disabled aria-disabled="true"{{/unless}}>+</button>
+                {{else}}
+                  <span class="prog-attr-v2-stepper ghost"></span>
+                {{/if}}
+              </div>
+              <div class="prog-attr-v2-math">
+                <span><b>{{baseDisplay}}</b> base</span>
+                <span class="species {{speciesModClass}}">{{#if (gt speciesMod 0)}}+{{/if}}{{speciesMod}} {{#if ../secondColumnLabel}}{{../secondColumnLabel}}{{else}}species{{/if}}</span>
+                {{#if costLabel}}<span class="cost">{{costLabel}}</span>{{/if}}
+              </div>
+              {{#if assignedPoolItems.length}}
+                <div class="prog-attr-v2-assigned">
+                  {{#each assignedPoolItems}}
+                    <button class="prog-attr-v2-assigned-chip {{#if isSelected}}is-focused{{/if}}" data-score-pool-id="{{id}}" type="button">{{value}}</button>
+                  {{/each}}
+                  {{#if showClear}}
+                    <button class="prog-attr-v2-clear" data-clear-ability="{{id}}" type="button" aria-label="Clear {{label}} assignment"><i class="fas fa-rotate-left"></i></button>
+                  {{/if}}
+                </div>
+              {{else}}
+                {{#if assignmentHint}}<div class="prog-attr-v2-hint">{{assignmentHint}}</div>{{/if}}
+              {{/if}}
+            </article>
+          {{/each}}
+        </div>
+      </section>
+    </main>
+
+    <aside class="prog-attr-v2-rail">
+      <div class="prog-attr-v2-rail-head">◆ Live Derivations</div>
+      <div class="prog-attr-v2-derived-grid">
+        {{#each derivedStats}}
+          <div class="prog-attr-v2-derived">
+            <span>{{label}}</span>
+            <b class="{{tone}}">{{value}}</b>
+            <em>{{source}}</em>
+          </div>
         {{/each}}
       </div>
-    </div>
-  {{/if}}
 
-  <div class="prog-attribute-rows">
-    {{#each abilities}}
-      <div class="prog-attribute-row swse-ability-surface swse-ability-surface--{{id}} {{#if isFocused}}prog-attribute-row--focused{{/if}} {{#if isUnassigned}}prog-attribute-row--pending{{/if}}" data-ability-row="{{id}}" data-ability="{{id}}" role="button" tabindex="0">
-        <div class="prog-attribute-row__header">
-          <div>
-            <div class="prog-attribute-row__label swse-ability-label swse-ability-label--{{id}}" data-ability="{{id}}">{{label}}</div>
-            {{#if assignmentHint}}
-              <div class="prog-attribute-row__subtext">{{assignmentHint}}</div>
-            {{/if}}
-          </div>
-          <div class="prog-attribute-row__header-actions">
-            {{#if showClear}}
-              <button class="prog-attribute-row__clear" data-clear-ability="{{id}}" type="button" aria-label="Clear {{label}} assignment">
-                <i class="fas fa-rotate-left"></i>
-              </button>
-            {{/if}}
-          </div>
-        </div>
+      {{#if focusedAbility}}
+        <section class="prog-attr-v2-detail attr-v2--{{focusedAbility.colorClass}}">
+          <div class="prog-attr-v2-detail-kicker">Selected Attribute</div>
+          <h4>{{focusedAbility.fullName}} <span>{{focusedAbility.label}}</span></h4>
+          <p>{{focusedAbility.detail}}</p>
+          <div class="prog-attr-v2-detail-row"><span>Base</span><b>{{focusedAbility.baseDisplay}}</b></div>
+          <div class="prog-attr-v2-detail-row"><span>Final</span><b>{{focusedAbility.finalDisplay}}</b></div>
+          <div class="prog-attr-v2-detail-row"><span>Modifier</span><b>{{focusedAbility.modifierFormatted}}</b></div>
+          {{#if focusedAbility.assignmentHint}}<div class="prog-attr-v2-detail-note">{{focusedAbility.assignmentHint}}</div>{{/if}}
+        </section>
+      {{/if}}
 
-        {{#if assignedValues.length}}
-          <div class="prog-attribute-row__assignments">
-            {{#each assignedValues}}
-              <span class="prog-attribute-assignment-chip">{{this}}</span>
-            {{/each}}
-            {{#if (lt assignedValues.length assignmentCapacity)}}
-              <span class="prog-attribute-assignment-chip prog-attribute-assignment-chip--empty">+ drag more</span>
-            {{/if}}
-          </div>
-        {{/if}}
-
-        <div class="prog-attribute-row__stats">
-          <div class="prog-attribute-stat">
-            <span class="prog-attribute-stat__label">Base</span>
-            <span class="prog-attribute-stat__value">{{baseDisplay}}</span>
-          </div>
-          <div class="prog-attribute-stat">
-            <span class="prog-attribute-stat__label">{{#if ../secondColumnLabel}}{{../secondColumnLabel}}{{else}}Species{{/if}}</span>
-            <span class="prog-attribute-stat__value {{speciesModClass}}">
-              {{#if (gt speciesMod 0)}}+{{/if}}{{speciesMod}}
-            </span>
-          </div>
-          <div class="prog-attribute-stat">
-            <span class="prog-attribute-stat__label">Final</span>
-            <span class="prog-attribute-stat__value prog-attribute-stat__value--final">{{finalDisplay}}</span>
-          </div>
-          <div class="prog-attribute-stat">
-            <span class="prog-attribute-stat__label">Mod</span>
-            <span class="prog-attribute-stat__value {{modClass}}">{{modifierFormatted}}</span>
-          </div>
-        </div>
-
-        {{#if canAdjust}}
-          <div class="prog-attribute-row__pointbuy">
-            <button class="prog-attribute-btn prog-attribute-btn--minus" data-ability="{{id}}" data-delta="-1" type="button" {{#unless canDecrease}}disabled aria-disabled="true"{{/unless}}>−</button>
-            <button class="prog-attribute-btn prog-attribute-btn--plus" data-ability="{{id}}" data-delta="1" type="button" {{#unless canIncrease}}disabled aria-disabled="true"{{/unless}}>+</button>
-          </div>
-        {{/if}}
-      </div>
-    {{/each}}
+      <section class="prog-attr-v2-advice">
+        <span>◉ Vocation Read</span>
+        <p>{{currentMethodDescription}}</p>
+      </section>
+    </aside>
   </div>
+
+  <footer class="prog-attr-v2-dock">
+    <div class="prog-attr-v2-meter">
+      {{#if showPointBuy}}
+        <div class="prog-attr-v2-meter-label"><span>Point Budget</span><b>{{pointBuyStatus.spent}} / {{pointBuyPool}}</b></div>
+        <div class="prog-attr-v2-meter-bar"><i style="width: {{pointBuyStatus.percent}}%"></i></div>
+        <em>{{pointBuyStatus.status}}</em>
+      {{else}}
+        <div class="prog-attr-v2-meter-label"><span>{{methodCopy.label}}</span><b>{{#if hasGeneratedPool}}{{poolAssigned}} / {{poolTotal}}{{else}}{{#if attributeIncreaseMode}}{{pointBuyStatus.spent}}{{else}}{{methodCopy.sub}}{{/if}}{{/if}}</b></div>
+        <div class="prog-attr-v2-meter-bar"><i style="width: {{#if hasGeneratedPool}}{{poolPercent}}{{else}}{{#if pointBuyStatus.percent}}{{pointBuyStatus.percent}}{{else}}100{{/if}}{{/if}}%"></i></div>
+        <em>{{poolInstruction}}</em>
+      {{/if}}
+    </div>
+
+    <div class="prog-attr-v2-actions">
+      {{#if showUtilityActions}}{{#unless isSpeciesFixed}}
+        <button class="prog-attr-v2-btn" data-attr-reroll type="button"><i class="fas fa-rotate-right"></i>{{rerollButtonLabel}}</button>
+        <button class="prog-attr-v2-btn" data-attr-auto-assign type="button"><i class="fas fa-wand-magic-sparkles"></i>Auto Assign</button>
+      {{/unless}}{{/if}}
+      {{#if showSpeciesFixedOverride}}
+        <button class="prog-attr-v2-btn warn" data-action="attribute-override-species-fixed" type="button"><i class="fas fa-user-shield"></i>Override</button>
+      {{/if}}
+      <button class="prog-attr-v2-btn primary {{lockButtonTone}}" data-action="attribute-lock" type="button"><i class="fas {{lockButtonIcon}}"></i>{{lockButtonLabel}}</button>
+    </div>
+  </footer>
 </div>

@@ -453,14 +453,43 @@ export function ShellHostMixin(BaseClass) {
     }
 
     /**
-     * Wire home surface tile click events.
-     * Each tile carries a data-route-id that maps to a shell surface.
+     * Wire home surface tile and CommFeed click events.
+     * HoloNet rows are routed before generic app tiles because feed rows can
+     * carry both data-holonet-record-id and data-route-id.
      */
     _wireHomeSurfaceEvents(root) {
       const homeRoot = root.querySelector('[data-shell-region="surface-home"]');
       if (!homeRoot) return;
 
-      homeRoot.querySelectorAll('[data-route-id]').forEach(el => {
+      homeRoot.querySelectorAll('[data-holonet-record-id]').forEach(el => {
+        el.addEventListener('click', async (ev) => {
+          ev.preventDefault();
+          ev.stopPropagation();
+          ev.stopImmediatePropagation?.();
+          const recordId = el.dataset.holonetRecordId;
+          if (!recordId) return;
+          try {
+            const { HolonetEngine } = await import('/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js');
+            const { HolonetDeliveryRouter } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-delivery-router.js');
+            const recipientId = HolonetDeliveryRouter.getCurrentRecipientId();
+            const record = await HolonetEngine.getRecord?.(recordId);
+            if (recipientId) await HolonetEngine.markRead(recordId, recipientId);
+            if (record && await this._routeHolonetRecordAction(record, el)) return;
+            SWSELogger.warn('[ShellHost] HoloNet feed record had no actionable route', {
+              recordId,
+              routeId: el.dataset.routeId || null,
+              sourceFamily: record?.sourceFamily || null,
+              intent: record?.intent || null
+            });
+            await this.requestSurfaceRender({ reason: 'holonet-record-read' });
+          } catch (err) {
+            SWSELogger.error('[ShellHost] Failed to process HoloNet feed record:', err);
+            ui?.notifications?.warn?.('Unable to open that HoloNet item. See console for details.');
+          }
+        });
+      });
+
+      homeRoot.querySelectorAll('[data-route-id]:not([data-holonet-record-id])').forEach(el => {
         el.addEventListener('click', async (ev) => {
           ev.preventDefault();
           ev.stopPropagation();
@@ -475,8 +504,6 @@ export function ShellHostMixin(BaseClass) {
 
           const actor = this.actor || this.document;
           if (routeId === 'customization' && surfaceOptions.bayMode === 'shipyard' && actor?.type === 'vehicle') {
-            ev.stopPropagation();
-            ev.stopImmediatePropagation?.();
             await this._openShipyardForAsset(actor, {
               source: 'vehicle-home',
               contextMode: surfaceOptions.contextMode || 'modifyExisting'
@@ -488,32 +515,7 @@ export function ShellHostMixin(BaseClass) {
           await this.requestSurfaceRender({ reason: `${routeId}-home-launch`, surfaceId: routeId });
         });
       });
-
-      homeRoot.querySelectorAll('[data-holonet-record-id]').forEach(el => {
-        el.addEventListener('click', async (ev) => {
-          ev.preventDefault();
-          const recordId = el.dataset.holonetRecordId;
-          if (!recordId) return;
-          try {
-            const { HolonetEngine } = await import('/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js');
-            const { HolonetDeliveryRouter } = await import('/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-delivery-router.js');
-            const recipientId = HolonetDeliveryRouter.getCurrentRecipientId();
-            let record = null;
-            if (recipientId) {
-              record = await HolonetEngine.getRecord?.(recordId);
-              await HolonetEngine.markRead(recordId, recipientId);
-            }
-            if (record && await this._routeHolonetRecordAction(record, el)) {
-              return;
-            }
-            await this.requestSurfaceRender({ reason: 'holonet-record-read' });
-          } catch (err) {
-            SWSELogger.error('[ShellHost] Failed to mark Holonet record read:', err);
-          }
-        });
-      });
     }
-
 
 
 
@@ -567,19 +569,47 @@ export function ShellHostMixin(BaseClass) {
      */
     _wireAssetBaySurfaceEvents(root) {
       const surfaceRoot = root.querySelector('[data-shell-region="surface-asset-bay"]');
-      if (!surfaceRoot) return;
+      if (!surfaceRoot) {
+        SWSELogger.warn('[AssetBay] Surface root not found while wiring events.');
+        return;
+      }
 
-      surfaceRoot.querySelectorAll('[data-asset-bay-action]').forEach(el => {
-        el.addEventListener('click', async (ev) => {
-          ev.preventDefault();
-          ev.stopPropagation();
-          ev.stopImmediatePropagation?.();
-          if (el.disabled) return;
-          const action = el.dataset.assetBayAction;
-          if (!action) return;
+      if (surfaceRoot.dataset.assetBayWired === 'true') return;
+      surfaceRoot.dataset.assetBayWired = 'true';
+      SWSELogger.debug('[AssetBay] Wiring delegated action handler', {
+        mode: surfaceRoot.dataset.bayMode || this._shellSurfaceOptions?.bayMode || 'all'
+      });
 
+      surfaceRoot.addEventListener('click', async (ev) => {
+        const el = ev.target?.closest?.('[data-asset-bay-action]');
+        if (!el || !surfaceRoot.contains(el)) return;
+        ev.preventDefault();
+        ev.stopPropagation();
+        ev.stopImmediatePropagation?.();
+
+        const action = el.dataset.assetBayAction;
+        const rawActorId = el.dataset.actorId || '';
+        const bayModeFromEl = el.dataset.bayMode || surfaceRoot.dataset.bayMode || this._shellSurfaceOptions?.bayMode || this._shellSurfaceOptions?.mode || 'all';
+        SWSELogger.log('[AssetBay] action clicked', {
+          action,
+          actorId: rawActorId || null,
+          bayMode: bayModeFromEl,
+          disabled: !!el.disabled
+        });
+
+        if (el.disabled) {
+          SWSELogger.debug('[AssetBay] Ignored disabled action', { action, actorId: rawActorId || null });
+          return;
+        }
+        if (!action) {
+          SWSELogger.warn('[AssetBay] Clicked asset bay control without action dataset', { dataset: { ...el.dataset } });
+          return;
+        }
+
+        try {
           if (action === 'switch-mode') {
             const bayMode = el.dataset.bayMode || 'all';
+            SWSELogger.log('[AssetBay] switching mode', { bayMode });
             await this.setSurface('asset-bay', {
               source: 'asset-bay-filter',
               bayMode,
@@ -589,29 +619,48 @@ export function ShellHostMixin(BaseClass) {
             return;
           }
 
-          const actorId = el.dataset.actorId;
-          if (!actorId) return;
+          if (!rawActorId) {
+            SWSELogger.warn('[AssetBay] Missing actor id for action', { action, dataset: { ...el.dataset } });
+            ui.notifications?.warn?.('That asset action is missing an actor id. See console for details.');
+            return;
+          }
 
-          const targetActor = game.actors?.get?.(String(actorId).replace(/^Actor\./, '')) ?? null;
+          const actorId = this._normalizeAssetActorId(rawActorId);
+          const targetActor = game.actors?.get?.(actorId) ?? null;
           if (!targetActor) {
-            ui.notifications?.warn?.('That owned actor could not be found.');
+            SWSELogger.warn('[AssetBay] Actor not found for action', { action, rawActorId, actorId });
+            ui.notifications?.warn?.('That owned actor could not be found. See console for details.');
             await this.requestSurfaceRender({ reason: 'asset-bay-missing-actor', surfaceId: 'asset-bay' });
             return;
           }
 
+          SWSELogger.debug('[AssetBay] resolved target actor', {
+            action,
+            actorId: targetActor.id,
+            actorName: targetActor.name,
+            actorType: targetActor.type
+          });
+
           if (action === 'open-sheet') {
-            targetActor.sheet?.render?.(true);
+            if (!targetActor.sheet?.render) {
+              SWSELogger.warn('[AssetBay] Target actor has no renderable sheet', { actorId: targetActor.id, actorName: targetActor.name });
+              ui.notifications?.warn?.(`${targetActor.name} does not have an openable sheet.`);
+              return;
+            }
+            targetActor.sheet.render(true);
             return;
           }
 
           if (action === 'modify') {
-            const bayMode = el.dataset.bayMode || (targetActor.type === 'vehicle' ? 'shipyard' : 'garage');
+            const bayMode = bayModeFromEl || (targetActor.type === 'vehicle' ? 'shipyard' : 'garage');
+            SWSELogger.log('[AssetBay] launching modification route', { bayMode, actorId: targetActor.id, actorType: targetActor.type });
             if (bayMode === 'shipyard' && targetActor.type === 'vehicle') {
-              await this._openShipyardForAsset(targetActor, {
+              const opened = await this._openShipyardForAsset(targetActor, {
                 source: 'asset-bay',
                 ownerActor: this.actor || this.document,
                 contextMode: 'modifyExisting'
               });
+              if (!opened) SWSELogger.warn('[AssetBay] Shipyard route failed', { actorId: targetActor.id });
               return;
             }
 
@@ -629,11 +678,24 @@ export function ShellHostMixin(BaseClass) {
           }
 
           if (action === 'grant-access') {
-            const bayMode = el.dataset.bayMode || (targetActor.type === 'vehicle' ? 'shipyard' : 'garage');
+            const bayMode = bayModeFromEl || (targetActor.type === 'vehicle' ? 'shipyard' : 'garage');
+            SWSELogger.log('[AssetBay] opening grant access dialog', { bayMode, actorId: targetActor.id });
             await this._promptGrantAssetAccess(targetActor, bayMode);
             return;
           }
-        });
+
+          SWSELogger.warn('[AssetBay] Unknown asset bay action', { action, dataset: { ...el.dataset } });
+          ui.notifications?.warn?.(`Unknown asset action: ${action}`);
+        } catch (err) {
+          SWSELogger.error('[AssetBay] action failed', {
+            action,
+            actorId: rawActorId || null,
+            bayMode: bayModeFromEl,
+            error: err?.message,
+            stack: err?.stack
+          });
+          ui.notifications?.error?.(`Asset Bay action failed: ${err.message}`);
+        }
       });
     }
 
@@ -829,25 +891,192 @@ export function ShellHostMixin(BaseClass) {
       return String(dataset.holonetSourceRecordId || actionOptions.sourceRecordId || metadata.sourceRecordId || metadata.recordId || record?.id || '');
     }
 
-    async _routeHolonetRecordAction(record, element = null) {
+    _holonetRecordRouteData(record, element = null) {
+      const dataset = element?.dataset || {};
       const metadata = record?.metadata || {};
+      const route = metadata.route || {};
       const actionOptions = metadata.actionOptions || {};
-      const actionSurface = String(element?.dataset?.holonetActionSurface || actionOptions.surface || metadata.actionSurface || '').toLowerCase();
+      const sourceFamily = String(record?.sourceFamily || '').toLowerCase();
+      const intent = String(record?.intent || '').toLowerCase();
+      const surface = String(
+        dataset.holonetActionSurface
+        || actionOptions.surface
+        || metadata.actionSurface
+        || dataset.routeId
+        || metadata.routeId
+        || route.surface
+        || route.routeId
+        || ''
+      ).toLowerCase();
       const threadId = this._holonetMessengerThreadId(record, element);
-      if (actionSurface && actionSurface !== 'messenger') return false;
-      if (!threadId) return false;
-      const highlightRecordId = this._holonetMessengerSourceRecordId(record, element);
-      await this.setSurface('messenger', {
-        source: 'holonet-notice',
+      const sourceRecordId = this._holonetMessengerSourceRecordId(record, element);
+      const appMode = String(dataset.appMode || actionOptions.appMode || metadata.appMode || route.appMode || '').toLowerCase();
+      const routeIntent = String(dataset.routeIntent || actionOptions.routeIntent || metadata.routeIntent || route.routeIntent || intent || '').toLowerCase();
+      const targetActorId = this._normalizeAssetActorId(
+        dataset.actorId
+        || actionOptions.targetActorId
+        || actionOptions.actorId
+        || metadata.targetActorId
+        || metadata.actorId
+        || metadata.draftActorId
+        || route.targetActorId
+        || route.actorId
+        || ''
+      );
+      const bayMode = String(dataset.bayMode || actionOptions.bayMode || metadata.bayMode || route.bayMode || '').toLowerCase();
+      return {
+        sourceFamily,
+        intent,
+        surface,
         threadId,
-        compose: false,
-        ...(highlightRecordId ? { highlightRecordId } : {})
-      });
-      if (this._shellDrawer?.drawerId === 'holonet-notifications') {
-        await this.closeDrawer();
-      }
-      await this.requestSurfaceRender({ reason: 'holonet-open-messenger-thread', surfaceId: 'messenger' });
+        sourceRecordId,
+        appMode,
+        routeIntent,
+        targetActorId,
+        bayMode,
+        tab: dataset.tabTarget || actionOptions.tab || metadata.tab || route.tab || null,
+        sheetAnchor: dataset.sheetAnchor || actionOptions.sheetAnchor || metadata.sheetAnchor || route.sheetAnchor || null,
+        workbenchCategory: dataset.workbenchCategory || actionOptions.category || metadata.workbenchCategory || route.category || null,
+        initialCategory: dataset.initialCategory || actionOptions.initialCategory || metadata.initialCategory || route.initialCategory || null,
+        mode: dataset.mode || actionOptions.mode || metadata.mode || route.mode || null,
+        entryPoint: dataset.entryPoint || actionOptions.entryPoint || metadata.entryPoint || route.entryPoint || null
+      };
+    }
+
+    _inferHolonetBayMode(record, routeData = {}) {
+      if (routeData.bayMode) return routeData.bayMode;
+      const family = routeData.sourceFamily;
+      const approvalType = String(record?.metadata?.approvalType || record?.metadata?.assetType || '').toLowerCase();
+      const targetActor = routeData.targetActorId ? game.actors?.get?.(routeData.targetActorId) : null;
+      const type = String(targetActor?.type || approvalType || '').toLowerCase();
+      if (family === 'garage' || family === 'droid' || type.includes('droid')) return 'garage';
+      if (family === 'shipyard' || family === 'ship' || type.includes('vehicle') || type.includes('ship')) return 'shipyard';
+      return 'all';
+    }
+
+    async _openHolonetSurface(surfaceId, options = {}, reason = 'holonet-route') {
+      await this.setSurface(surfaceId, options);
+      if (this._shellDrawer?.drawerId === 'holonet-notifications') await this.closeDrawer();
+      await this.requestSurfaceRender({ reason, surfaceId });
       return true;
+    }
+
+    async _routeHolonetRecordAction(record, element = null) {
+      const routeData = this._holonetRecordRouteData(record, element);
+      const family = routeData.sourceFamily;
+      const surface = routeData.surface;
+      const intent = routeData.intent;
+      const routeIntent = routeData.routeIntent;
+      const isJob = routeData.appMode === 'jobs'
+        || routeIntent.includes('job')
+        || intent.includes('job')
+        || String(record?.metadata?.category || '').toLowerCase().includes('job');
+
+      SWSELogger.debug('[ShellHost] Routing HoloNet record', {
+        recordId: record?.id,
+        family,
+        surface,
+        intent,
+        routeIntent,
+        threadId: routeData.threadId || null,
+        targetActorId: routeData.targetActorId || null
+      });
+
+      if (routeData.threadId && (family === 'messenger' || surface === 'messenger' || isJob)) {
+        return this._openHolonetSurface('messenger', {
+          source: 'holonet-notice',
+          appMode: isJob ? 'jobs' : 'chat',
+          threadId: routeData.threadId,
+          compose: false,
+          ...(routeData.sourceRecordId ? { highlightRecordId: routeData.sourceRecordId } : {})
+        }, isJob ? 'holonet-open-job-thread' : 'holonet-open-messenger-thread');
+      }
+
+      if (surface === 'store' || family === 'store') {
+        return this._openHolonetSurface('store', {
+          source: 'holonet-notice',
+          mode: routeData.mode || null,
+          initialCategory: routeData.initialCategory || null,
+          tab: routeData.tab || null,
+          entryPoint: routeData.entryPoint || null,
+          highlightRecordId: record?.id || null
+        }, 'holonet-open-store');
+      }
+
+      if (surface === 'asset-bay' || family === 'approvals' || family === 'garage' || family === 'shipyard' || family === 'droid' || family === 'ship') {
+        const bayMode = this._inferHolonetBayMode(record, routeData);
+        return this._openHolonetSurface('asset-bay', {
+          source: 'holonet-notice',
+          bayMode,
+          mode: bayMode,
+          targetActorId: routeData.targetActorId || null,
+          highlightActorId: routeData.targetActorId || null,
+          highlightRecordId: record?.id || null
+        }, 'holonet-open-asset-bay');
+      }
+
+      if (surface === 'workbench' || family === 'workbench') {
+        return this._openHolonetSurface('workbench', {
+          source: 'holonet-notice',
+          selectedCategoryId: routeData.workbenchCategory || routeData.initialCategory || null,
+          category: routeData.workbenchCategory || routeData.initialCategory || null,
+          mode: routeData.mode || null,
+          highlightRecordId: record?.id || null
+        }, 'holonet-open-workbench');
+      }
+
+      if (surface === 'allies' || family === 'allies' || family === 'faction' || family === 'follower') {
+        return this._openHolonetSurface('allies', {
+          source: 'holonet-notice',
+          tab: routeData.tab || null,
+          targetActorId: routeData.targetActorId || null,
+          highlightRecordId: record?.id || null
+        }, 'holonet-open-allies');
+      }
+
+      if (surface === 'games' || family === 'games') {
+        return this._openHolonetSurface('games', {
+          source: 'holonet-notice',
+          mode: routeData.mode || null,
+          highlightRecordId: record?.id || null
+        }, 'holonet-open-games');
+      }
+
+      if (surface === 'training' || surface === 'progression' || family === 'training' || family === 'progression') {
+        return this._openHolonetSurface('progression', {
+          source: 'holonet-notice',
+          stepId: routeData.entryPoint || routeData.mode || null,
+          highlightRecordId: record?.id || null
+        }, 'holonet-open-training');
+      }
+
+      if (surface === 'mentor' || family === 'mentor') {
+        return this._openHolonetSurface('mentor', {
+          source: 'holonet-notice',
+          highlightRecordId: record?.id || null
+        }, 'holonet-open-mentor');
+      }
+
+      if (surface === 'sheet' || family === 'healing') {
+        await this.setSurface('sheet', {
+          source: 'holonet-notice',
+          tab: routeData.tab || 'overview',
+          sheetAnchor: routeData.sheetAnchor || 'health',
+          highlightRecordId: record?.id || null
+        });
+        if (this._shellDrawer?.drawerId === 'holonet-notifications') await this.closeDrawer();
+        await this.requestSurfaceRender({ reason: 'holonet-open-sheet', surfaceId: 'sheet' });
+        return true;
+      }
+
+      SWSELogger.warn('[ShellHost] HoloNet record has no actionable route', {
+        recordId: record?.id,
+        family,
+        surface,
+        intent,
+        routeData
+      });
+      return false;
     }
 
     async _wireHolonetNotificationDrawerEvents(root) {

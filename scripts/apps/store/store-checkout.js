@@ -20,7 +20,7 @@ import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/ch
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { VehicleModificationApp } from "/systems/foundryvtt-swse/scripts/apps/vehicle-modification-app.js";
 import { VehicleModificationManager } from "/systems/foundryvtt-swse/scripts/apps/vehicle-modification-manager.js";
-import { DroidBuilderApp } from "/systems/foundryvtt-swse/scripts/apps/droid-builder-app.js";
+import { launchNewProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 import { SWSEVehicleHandler } from "/systems/foundryvtt-swse/scripts/actors/vehicle/swse-vehicle-handler.js";
 import { createActor } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
@@ -579,7 +579,7 @@ export async function buyVehicle(store, actorId, condition) {
  * @param {Function} closeCallback - Callback to close the store
  */
 export async function createCustomDroid(actor, closeCallback) {
-    // Legacy store callers should use the same live DroidBuilderApp lane as
+    // Legacy store callers should use the same live progression Droid Builder lane as
     // the shell-native Build Droid From Scratch button. Keeping this as a
     // delegating alias prevents one store path from showing the old
     // "builder refactor pending" dead end while the other opens correctly.
@@ -1315,7 +1315,7 @@ function buildDraftDroidActorData(chargenSnapshot, ownerActor, costCredits) {
         ...(data.system.droidSystems || {}),
         degree: data.system.droidSystems?.degree ?? characterData.droidDegree ?? characterData.degree ?? 'Unknown',
         size: data.system.droidSystems?.size ?? characterData.droidSize ?? characterData.size ?? 'medium',
-        stateMode: data.system.droidSystems?.stateMode ?? 'PENDING_APPROVAL',
+        stateMode: data.system.droidSystems?.stateMode ?? 'PENDING',
         totalCost: normalizeCredits(data.system.droidSystems?.totalCost ?? costCredits),
         credits: {
             ...(data.system.droidSystems?.credits || {}),
@@ -1509,7 +1509,7 @@ export async function submitDraftVehicleForApproval(modificationData, vehicleTem
 }
 
 /**
- * Phase 3b: Build custom droid using new DroidBuilderApp
+ * Phase 3b: Build custom droid using the progression Droid Builder
  *
  * Launches the builder for a player to design a custom droid.
  * Handles credit deduction via hook listener.
@@ -1552,50 +1552,32 @@ export async function buildDroidWithBuilder(actor, closeCallback) {
     }
 
     try {
-        // Determine if GM approval is required (world setting)
-        const requireApproval = true; // Store-side custom builds always route through GM approval.
-
-        // Set up hook listener for droid finalization
-        const hookId = Hooks.on('swse:droidFinalized', async (data) => {
-            // Only handle our actor's droid
-            if (data.actor.id !== actor.id) return;
-
-            // Unregister this hook listener
-            Hooks.off('swse:droidFinalized', hookId);
-
-            try {
-                // If approval is NOT required, deduct credits immediately
-                if (!data.requireApproval) {
-                    await deductDroidCredits(actor, data.cost);
-                    ui.notifications.info(storeI18n('SWSE.Store.Notifications.CustomDroidBuilt', { cost: data.cost }));
-                    SWSELogger.log('SWSE Store | Custom droid finalized and credits deducted:', {
-                        droidCost: data.cost,
-                        actor: actor.name
-                    });
-                } else {
-                    // If approval required, mark as pending (handled by GM)
-                    ui.notifications.info(storeI18n('SWSE.Store.Notifications.CustomDroidSubmitted'));
-                    SWSELogger.log('SWSE Store | Custom droid submitted for GM approval:', {
-                        droidCost: data.cost,
-                        actor: actor.name
-                    });
-                }
-            } catch (err) {
-                SWSELogger.error('SWSE Store | Error handling droid finalization:', err);
-                ui.notifications.error(storeI18n('SWSE.Store.Notifications.ErrorProcessingDroid'));
+        await launchNewProgression({
+            actorType: 'droid',
+            subtype: 'droid',
+            isDroid: true,
+            name: 'Custom Droid',
+            source: 'store-custom-droid',
+            currentStep: 'droid-builder',
+            targetStep: 'droid-builder',
+            singleStep: true,
+            singleStepDomain: 'droidBuilder',
+            ownerActorId: actor.id,
+            storeMode: true,
+            requireApproval: true,
+            storeDroidApproval: {
+                enabled: true,
+                mode: 'NEW',
+                ownerActorId: actor.id,
+                ownerActorName: actor.name,
+                requireApproval: true,
+                source: 'store-custom-droid'
             }
         });
 
-        // Launch builder
-        await DroidBuilderApp.open(actor, {
-            mode: 'NEW',
-            requireApproval: requireApproval,
-            onSubmitForApproval: async ({ snapshot, cost }) => submitDraftDroidForApproval(snapshot, actor, cost)
-        });
-
-        SWSELogger.log('SWSE Store | Launched DroidBuilderApp for actor:', { actor: actor.name });
+        SWSELogger.log('SWSE Store | Launched progression droid builder for actor:', { actor: actor.name });
     } catch (err) {
-        SWSELogger.error('SWSE Store | Failed to launch DroidBuilderApp:', err);
+        SWSELogger.error('SWSE Store | Failed to launch progression droid builder:', err);
         ui.notifications.error(storeI18n('SWSE.Store.Notifications.FailedOpenDroidBuilder'));
     }
 }
@@ -1734,36 +1716,34 @@ export async function buildDroidFromTemplate(actor, closeCallback) {
 
         if (!confirmed) return;
 
-        // Launch builder in TEMPLATE mode
-        const requireApproval = true; // Store-side custom builds always route through GM approval.
-
-        // Set up hook listener (same as buildDroidWithBuilder)
-        const hookId = Hooks.on('swse:droidFinalized', async (data) => {
-            if (data.actor.id !== actor.id) return;
-            Hooks.off('swse:droidFinalized', hookId);
-
-            try {
-                if (!data.requireApproval) {
-                    await deductDroidCredits(actor, data.cost);
-                    ui.notifications.info(storeI18n('SWSE.Store.Notifications.DroidBuilt', { cost: data.cost }));
-                } else {
-                    ui.notifications.info(storeI18n('SWSE.Store.Notifications.DroidSubmitted'));
-                }
-            } catch (err) {
-                SWSELogger.error('SWSE Store | Error handling droid finalization:', err);
-                ui.notifications.error(storeI18n('SWSE.Store.Notifications.ErrorProcessingDroid'));
+        await launchNewProgression({
+            actorType: 'droid',
+            subtype: 'droid',
+            isDroid: true,
+            name: selectedTemplate.name || 'Custom Droid',
+            source: 'store-custom-droid-template',
+            currentStep: 'droid-builder',
+            targetStep: 'droid-builder',
+            singleStep: true,
+            singleStepDomain: 'droidBuilder',
+            ownerActorId: actor.id,
+            storeMode: true,
+            requireApproval: true,
+            templateId: selectedTemplate.id,
+            initialTemplateId: selectedTemplate.id,
+            storeDroidApproval: {
+                enabled: true,
+                mode: 'TEMPLATE',
+                ownerActorId: actor.id,
+                ownerActorName: actor.name,
+                templateId: selectedTemplate.id,
+                templateName: selectedTemplate.name,
+                requireApproval: true,
+                source: 'store-custom-droid-template'
             }
         });
 
-        // Launch builder
-        await DroidBuilderApp.open(actor, {
-            mode: 'TEMPLATE',
-            templateId: selectedTemplate.id,
-            requireApproval: requireApproval,
-            onSubmitForApproval: async ({ snapshot, cost }) => submitDraftDroidForApproval(snapshot, actor, cost)
-        });
-
-        SWSELogger.log('SWSE Store | Launched DroidBuilderApp from template:', {
+        SWSELogger.log('SWSE Store | Launched progression droid builder from template:', {
             actor: actor.name,
             template: selectedTemplate.name
         });

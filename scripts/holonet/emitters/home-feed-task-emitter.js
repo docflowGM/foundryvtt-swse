@@ -171,31 +171,50 @@ export class HomeFeedTaskEmitter {
 
     const mentor = this._resolveMentor(actor);
     mentor.name = mentor.name || mentor.label || 'Mentor';
-    const counts = Object.fromEntries(visibleTasks.map(task => [task.type, Number(task.count || 0)]));
+    const countType = (type) => visibleTasks
+      .filter(task => task.type === type)
+      .reduce((sum, task) => sum + (Number(task.count || 0) || 0), 0);
     const parts = [];
-    const abilityCount = Number(counts['ability-increase'] || 0);
-    const featCount = Number(counts.feat || 0);
-    const talentCount = Number(counts.talent || 0);
+    const abilityCount = countType('ability-increase');
+    const generalFeatCount = countType('general-feat') + countType('feat');
+    const classFeatCount = countType('class-feat');
+    const heroicTalentCount = countType('heroic-talent') + countType('talent');
+    const classTalentCount = countType('class-talent');
+    const derivedStatsCount = countType('derived-stats');
+    const featCount = generalFeatCount + classFeatCount;
+    const talentCount = heroicTalentCount + classTalentCount;
     if (abilityCount > 0) parts.push(`${abilityCount} ability score increase${abilityCount === 1 ? '' : 's'}`);
-    if (featCount > 0) parts.push(`${featCount} feat${featCount === 1 ? '' : 's'} to learn`);
-    if (talentCount > 0) parts.push(`${talentCount} talent${talentCount === 1 ? '' : 's'} to learn`);
+    if (generalFeatCount > 0) parts.push(`${generalFeatCount} general feat${generalFeatCount === 1 ? '' : 's'}`);
+    if (classFeatCount > 0) parts.push(`${classFeatCount} class feat${classFeatCount === 1 ? '' : 's'}`);
+    if (heroicTalentCount > 0) parts.push(`${heroicTalentCount} heroic talent${heroicTalentCount === 1 ? '' : 's'}`);
+    if (classTalentCount > 0) parts.push(`${classTalentCount} class talent${classTalentCount === 1 ? '' : 's'}`);
+    if (derivedStatsCount > 0) parts.push(`${derivedStatsCount} derived class stat${derivedStatsCount === 1 ? '' : 's'} to review`);
 
     const first = visibleTasks[0] || {};
     const anchor = first.sheetAnchor || 'ability-ledger';
+    const classificationCount = visibleTasks
+      .filter(task => task.taskType === 'classification')
+      .reduce((sum, task) => sum + (Number(task.count || 0) || 0), 0);
+    const missingCount = visibleTasks
+      .filter(task => task.taskType !== 'classification')
+      .reduce((sum, task) => sum + (Number(task.count || 0) || 0), 0);
     const countKey = parts.join(',') || String(visibleTasks.length);
+    const issueSummary = classificationCount > 0 && missingCount <= 0
+      ? `${classificationCount} existing item${classificationCount === 1 ? '' : 's'} waiting for classification`
+      : parts.join(', ');
     return {
       key: `home-task:${actor.id}:progression-reconciliation:${countKey}`,
       routeId: 'sheet',
       route: {
         surface: 'sheet',
-        tab: 'abilities',
+        tab: first.tab || 'abilities',
         sheetAnchor: anchor,
         routeIntent: 'progression-reconciliation',
         entryPoint: 'home-feed'
       },
       title: 'Training ledger needs attention',
-      body: `${mentor.name}: Your training record has ${parts.join(', ')} waiting. Open your character sheet to review the ledger and resolve the open slots.`,
-      badge: String(abilityCount + featCount + talentCount),
+      body: `${mentor.name}: Your training record has ${issueSummary} waiting. Open your character sheet to review the ledger and resolve the ${classificationCount > 0 && missingCount <= 0 ? 'classification review' : 'open slots'}.`,
+      badge: String(abilityCount + featCount + talentCount + derivedStatsCount),
       intent: INTENT_TYPE.MENTOR_TRAINING_REMINDER,
       sourceFamily: SOURCE_FAMILY.MENTOR,
       senderLabel: mentor.name,
@@ -203,7 +222,7 @@ export class HomeFeedTaskEmitter {
       level: 'warning',
       priority: 'high',
       icon: '✶',
-      tab: 'abilities',
+      tab: first.tab || 'abilities',
       sheetAnchor: anchor,
       progressionIssues: visibleTasks.map(task => ({
         type: task.type,

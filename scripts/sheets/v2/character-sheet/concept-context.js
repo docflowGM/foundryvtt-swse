@@ -413,10 +413,18 @@ function buildSheetProgressionAudit(actor) {
       },
       classChoices: {
         expected: 0,
+        filled: 0,
         open: 0,
         hasOpenSlots: false,
         openSlots: []
-      }
+      },
+      generalFeats: { expected: 0, filled: 0, current: 0, open: 0, overfilled: 0, slots: [], openSlots: [], overfilledSlots: [] },
+      classFeats: { expected: 0, filled: 0, current: 0, open: 0, overfilled: 0, slots: [], openSlots: [], overfilledSlots: [] },
+      heroicTalents: { expected: 0, filled: 0, current: 0, open: 0, overfilled: 0, slots: [], openSlots: [], overfilledSlots: [] },
+      classTalents: { expected: 0, filled: 0, current: 0, open: 0, overfilled: 0, slots: [], openSlots: [], overfilledSlots: [] },
+      trainingLedgers: [],
+      byClass: [],
+      tasks: []
     };
   }
 }

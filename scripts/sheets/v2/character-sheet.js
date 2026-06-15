@@ -574,6 +574,130 @@ function debounce(fn, ms = 500) {
 }
 
 /**
+ * AppV2 render contexts must be plain structured-cloneable data. The live
+ * Foundry Actor/Item documents and inline shell adapters can hold Application
+ * instances, DOM windows, listeners, and debounced callbacks. Those objects are
+ * useful at runtime but fatal when placed directly in a Handlebars context.
+ */
+function duplicateDataForContext(value, fallback = {}) {
+  if (value == null) return value;
+  try {
+    return foundry?.utils?.duplicate?.(value) ?? structuredClone(value);
+  } catch (_err) {
+    try {
+      return structuredClone(value);
+    } catch (_cloneErr) {
+      try {
+        return JSON.parse(JSON.stringify(value));
+      } catch (_jsonErr) {
+        return fallback;
+      }
+    }
+  }
+}
+
+function documentToTemplateData(doc) {
+  if (!doc || typeof doc !== 'object') return doc;
+  const type = doc.type ?? doc.documentName ?? doc.constructor?.documentName ?? '';
+  const system = duplicateDataForContext(doc.system ?? {}, {});
+  const flags = duplicateDataForContext(doc.flags ?? {}, {});
+  const ownership = duplicateDataForContext(doc.ownership ?? {}, {});
+  const out = {
+    id: doc.id ?? doc._id ?? null,
+    _id: doc.id ?? doc._id ?? null,
+    uuid: doc.uuid ?? null,
+    name: doc.name ?? '',
+    type,
+    img: doc.img ?? '',
+    system,
+    flags,
+    ownership,
+    isOwner: doc.isOwner === true,
+    limited: doc.limited === true
+  };
+
+  // Some legacy/partial templates still read actor.items directly. Provide a
+  // safe item list instead of the live Collection/Document graph.
+  if ((doc.documentName === 'Actor' || doc.constructor?.documentName === 'Actor' || doc.items) && doc.items) {
+    try {
+      out.items = Array.from(doc.items ?? []).map(item => documentToTemplateData(item));
+    } catch (_err) {
+      out.items = [];
+    }
+  }
+
+  if ((doc.documentName === 'Actor' || doc.constructor?.documentName === 'Actor' || doc.effects) && doc.effects) {
+    try {
+      out.effects = Array.from(doc.effects ?? []).map(effect => documentToTemplateData(effect));
+    } catch (_err) {
+      out.effects = [];
+    }
+  }
+
+  return out;
+}
+
+function sanitizeSheetRenderContext(value, options = {}) {
+  const seen = new WeakSet();
+  const rootKey = options.rootKey || 'context';
+
+  const sanitize = (entry, key = rootKey) => {
+    if (entry == null) return entry;
+
+    const type = typeof entry;
+    if (type === 'string' || type === 'number' || type === 'boolean') return entry;
+    if (type === 'bigint') return String(entry);
+    if (type === 'function' || type === 'symbol') return undefined;
+
+    if (entry instanceof Date) return entry.toISOString();
+    if (typeof window !== 'undefined' && entry === window) return undefined;
+    if (typeof globalThis !== 'undefined' && entry === globalThis) return undefined;
+    if (typeof Window !== 'undefined' && entry instanceof Window) return undefined;
+    if (typeof Document !== 'undefined' && entry instanceof Document) return undefined;
+    if (typeof HTMLElement !== 'undefined' && entry instanceof HTMLElement) return undefined;
+    if (typeof Node !== 'undefined' && entry instanceof Node) return undefined;
+    if (typeof AbortController !== 'undefined' && entry instanceof AbortController) return undefined;
+    if (typeof AbortSignal !== 'undefined' && entry instanceof AbortSignal) return undefined;
+
+    if (entry?.documentName || entry?.constructor?.documentName) {
+      return sanitize(documentToTemplateData(entry), key);
+    }
+
+    if (seen.has(entry)) return undefined;
+    seen.add(entry);
+
+    if (Array.isArray(entry)) {
+      return entry.map((child, index) => sanitize(child, `${key}[${index}]`)).filter(child => child !== undefined);
+    }
+
+    if (entry instanceof Map) {
+      return Object.fromEntries(
+        Array.from(entry.entries())
+          .map(([mapKey, mapValue]) => [String(mapKey), sanitize(mapValue, String(mapKey))])
+          .filter(([, mapValue]) => mapValue !== undefined)
+      );
+    }
+
+    if (entry instanceof Set) {
+      return Array.from(entry.values()).map((child, index) => sanitize(child, `${key}<${index}>`)).filter(child => child !== undefined);
+    }
+
+    const out = {};
+    for (const [entryKey, entryValue] of Object.entries(entry)) {
+      if (entryKey === 'app' || entryKey === 'document' || entryKey === 'shellHost') continue;
+      if (entryKey === 'window' || entryKey === 'ownerDocument' || entryKey === 'defaultView' || entryKey === 'view') continue;
+      if (entryKey === 'element' || entryKey === 'html' || entryKey === 'form' || entryKey === 'listeners') continue;
+      if (entryKey.startsWith('_') && entryKey !== '_id') continue;
+      const clean = sanitize(entryValue, entryKey);
+      if (clean !== undefined) out[entryKey] = clean;
+    }
+    return out;
+  };
+
+  return sanitize(value, rootKey);
+}
+
+/**
  * Field type schema for form coercion
  * Maps field names or patterns to their expected types: 'number', 'boolean', 'string'
  * Used instead of string pattern matching for reliable type coercion
@@ -3726,6 +3850,10 @@ const forcePoints = [];
         // objects are useful to the adapter internally, but they are not needed by
         // the inline surface partials and they fail structuredClone().
         if (value instanceof Date) return value.toISOString();
+        if (typeof window !== 'undefined' && value === window) return undefined;
+        if (typeof globalThis !== 'undefined' && value === globalThis) return undefined;
+        if (typeof Window !== 'undefined' && value instanceof Window) return undefined;
+        if (typeof Document !== 'undefined' && value instanceof Document) return undefined;
         if (typeof HTMLElement !== 'undefined' && value instanceof HTMLElement) return undefined;
         if (typeof Node !== 'undefined' && value instanceof Node) return undefined;
         if (typeof AbortController !== 'undefined' && value instanceof AbortController) return undefined;
@@ -3761,6 +3889,8 @@ const forcePoints = [];
         const out = {};
         for (const [entryKey, entryValue] of Object.entries(value)) {
           if (entryKey === 'app' || entryKey === 'actor' || entryKey === 'document' || entryKey === 'shellHost') continue;
+          if (entryKey === 'window' || entryKey === 'ownerDocument' || entryKey === 'defaultView' || entryKey === 'view') continue;
+          if (entryKey === 'element' || entryKey === 'html' || entryKey === 'form' || entryKey === 'listeners') continue;
           if (entryKey.startsWith('_') && entryKey !== '_id') continue;
           const clean = sanitize(entryValue, entryKey);
           if (clean !== undefined) out[entryKey] = clean;
@@ -3835,6 +3965,10 @@ const forcePoints = [];
         shellDrawerVm = { error: err.message };
       }
     }
+
+    const safeShellSurfaceOptions = sanitizeSheetRenderContext(this._shellSurfaceOptions, { rootKey: 'shellSurfaceOptions' }) || {};
+    const safeShellOverlay = sanitizeSheetRenderContext(this._shellOverlay, { rootKey: 'shellOverlay' }) || null;
+    const safeShellDrawer = sanitizeSheetRenderContext(this._shellDrawer, { rootKey: 'shellDrawer' }) || null;
 
     // Log panel contract version for debugging
     const _sheetContractVersion = 1;
@@ -4053,9 +4187,9 @@ const forcePoints = [];
       // ─── Phase 11: Shell Host Context ──────────────────────────────────
       customSkillsEditable: this.isEditable,
       shellSurface: this._shellSurface,
-      shellSurfaceOptions: this._shellSurfaceOptions,
-      shellOverlay: this._shellOverlay,
-      shellDrawer: this._shellDrawer,
+      shellSurfaceOptions: safeShellSurfaceOptions,
+      shellOverlay: safeShellOverlay,
+      shellDrawer: safeShellDrawer,
       shellIsSheet: this._shellSurface === 'sheet',
       shellSurfaceVm,
       shellOverlayVm,
@@ -4063,16 +4197,21 @@ const forcePoints = [];
       conceptLayout
     };
 
+    // Final AppV2 safety barrier. Keep live sheet/actor/application objects out
+    // of the template payload; they can hold Window, DOM, and debounced callback
+    // references that structuredClone cannot copy.
+    const serializableContext = sanitizeSheetRenderContext(finalContext, { rootKey: 'context' });
+
     // Verify context is serializable (no Document refs, circular refs, etc.)
-    RenderAssertions.assertContextSerializable(finalContext, "SWSEV2CharacterSheet");
+    RenderAssertions.assertContextSerializable(serializableContext, "SWSEV2CharacterSheet");
 
     // GUARDRAIL 1: Validate context contract to prevent silent template failures
-    validateContextContract(finalContext, "SWSEV2CharacterSheet");
+    validateContextContract(serializableContext, "SWSEV2CharacterSheet");
 
     // Store context for post-render assertions
-    this._currentContext = finalContext;
+    this._currentContext = serializableContext;
 
-    return finalContext;
+    return serializableContext;
   }
 
   async _prepareVehicleActorSheetContext({ actor, context = {}, actorModeContext, derived = {} } = {}) {
@@ -4215,6 +4354,9 @@ const forcePoints = [];
 
     const hp = derived.hp ?? { value: 0, max: 1, percent: 0, warning: false, critical: false };
     const sheetThemeContext = ThemeResolutionService.buildSurfaceContext({ actor });
+    const safeShellSurfaceOptions = sanitizeSheetRenderContext(this._shellSurfaceOptions, { rootKey: 'vehicleShellSurfaceOptions' }) || {};
+    const safeShellOverlay = sanitizeSheetRenderContext(this._shellOverlay, { rootKey: 'vehicleShellOverlay' }) || null;
+    const safeShellDrawer = sanitizeSheetRenderContext(this._shellDrawer, { rootKey: 'vehicleShellDrawer' }) || null;
     const finalContext = {
       ...context,
       _sheetContractVersion: 1,
@@ -4283,18 +4425,19 @@ const forcePoints = [];
       },
       starshipManeuvers: StarshipManeuversEngine.getManeuversForActor(actor),
       shellSurface: this._shellSurface,
-      shellSurfaceOptions: this._shellSurfaceOptions,
-      shellOverlay: this._shellOverlay,
-      shellDrawer: this._shellDrawer,
+      shellSurfaceOptions: safeShellSurfaceOptions,
+      shellOverlay: safeShellOverlay,
+      shellDrawer: safeShellDrawer,
       shellIsSheet: this._shellSurface === 'sheet',
       shellSurfaceVm,
       shellOverlayVm,
       shellDrawerVm
     };
 
-    RenderAssertions.assertContextSerializable(finalContext, 'SWSEV2CharacterSheet.vehicle');
-    this._currentContext = finalContext;
-    return finalContext;
+    const serializableContext = sanitizeSheetRenderContext(finalContext, { rootKey: 'vehicleContext' });
+    RenderAssertions.assertContextSerializable(serializableContext, 'SWSEV2CharacterSheet.vehicle');
+    this._currentContext = serializableContext;
+    return serializableContext;
   }
 
   _requestedVehicleTab() {
@@ -6608,6 +6751,45 @@ const forcePoints = [];
       }
     }, { signal, capture: false });
 
+    // Summary audit rows can jump the player to the sheet area that explains the problem.
+    html.addEventListener("click", async (event) => {
+      const target = event.target.closest('[data-action="open-audit-target"]');
+      if (!target) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      try {
+        await this._openAuditTarget(target.dataset);
+      } catch (err) {
+        swseLogger.error('[SWSEV2CharacterSheet] Audit navigation failed:', err);
+        ui?.notifications?.warn?.(`Could not open audit target: ${err.message}`);
+      }
+    }, { signal, capture: false });
+
+    // Progression reconciliation audit actions
+    html.addEventListener("click", async (event) => {
+      const button = event.target.closest('[data-action="resolve-progression-slot"], [data-action="classify-progression-slot"], [data-action="review-progression-slot"]');
+      if (!button) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+
+      try {
+        const action = button.dataset.action;
+        if (action === 'resolve-progression-slot') {
+          await this._openProgressionReconciliationStep(button.dataset);
+        } else if (action === 'classify-progression-slot') {
+          await this._classifyProgressionSlot(button.dataset);
+        } else if (action === 'review-progression-slot') {
+          await this._reviewProgressionSlot(button.dataset);
+        }
+      } catch (err) {
+        swseLogger.error('[SWSEV2CharacterSheet] Progression reconciliation action failed:', err);
+        ui?.notifications?.error?.(`Progression reconciliation action failed: ${err.message}`);
+      }
+    }, { signal, capture: false });
+
     // Add feat button
     html.querySelectorAll('[data-action="add-feat"]').forEach(button => {
       button.addEventListener("click", async (event) => {
@@ -6662,6 +6844,221 @@ const forcePoints = [];
     });
   }
 
+
+  async _openAuditTarget(dataset = {}) {
+    const tabName = String(dataset.tabTarget || dataset.tab || 'abilities').trim() || 'abilities';
+    const sheetAnchor = String(dataset.sheetAnchor || '').trim();
+    const rowId = String(dataset.rowId || '').trim();
+    const root = this.element instanceof HTMLElement
+      ? this.element
+      : (this.element?.[0] || document);
+    const escapeSelector = (value) => {
+      if (globalThis.CSS?.escape) return globalThis.CSS.escape(String(value));
+      return String(value).replace(/[^a-zA-Z0-9_-]/g, '\\$&');
+    };
+
+    const tabLink = root?.querySelector?.(`[data-action='sheet-tab'][data-sheet-tab='${escapeSelector(tabName)}'], [data-action='tab'][data-tab='${escapeSelector(tabName)}']`);
+    if (tabLink) {
+      this.visibilityManager?.setActiveTab?.(tabName);
+      this.uiStateManager?._activateTab?.(tabLink);
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 0));
+    const anchorSelector = sheetAnchor ? `[data-sheet-anchor='${escapeSelector(sheetAnchor)}']` : '';
+    const rowSelector = rowId ? `[data-audit-row-id='${escapeSelector(rowId)}']` : '';
+    const target = (rowSelector && root?.querySelector?.(rowSelector))
+      || (anchorSelector && root?.querySelector?.(anchorSelector))
+      || null;
+    target?.scrollIntoView?.({ block: 'center', behavior: 'smooth' });
+    target?.classList?.add?.('swse-audit-target-pulse');
+    target?.classList?.add?.('swse-route-anchor-pulse');
+    if (target) setTimeout(() => {
+      target.classList?.remove?.('swse-audit-target-pulse');
+      target.classList?.remove?.('swse-route-anchor-pulse');
+    }, 1600);
+  }
+
+
+  async _openProgressionReconciliationStep(dataset = {}) {
+    const slotType = String(dataset.slotType || '').trim();
+    const stepId = String(dataset.stepId || this._stepIdForProgressionSlot(slotType)).trim() || 'summary';
+    const reconciliation = {
+      source: 'sheet-audit',
+      slotId: dataset.slotId || null,
+      slotType,
+      classId: dataset.classId || '',
+      className: dataset.className || '',
+      classLevel: Number(dataset.classLevel || 0) || 0,
+      characterLevel: Number(dataset.characterLevel || 0) || 0,
+      openedAt: new Date().toISOString(),
+    };
+
+    await this.setSurface('progression', {
+      source: 'sheet-reconciliation',
+      mode: 'reconcile',
+      stepId,
+      currentStep: stepId,
+      targetStep: stepId,
+      targetStepId: stepId,
+      singleStep: true,
+      singleStepDomain: slotType.includes('talent') ? 'talents' : (slotType.includes('feat') ? 'feats' : null),
+      singleStepJob: `reconcile-${slotType || stepId}`,
+      skipIntro: true,
+      forceFreshAdapter: true,
+      reconciliation,
+    });
+    await this.requestSurfaceRender({ reason: `progression-reconciliation-${slotType || stepId}`, surfaceId: 'progression' });
+    ui?.notifications?.info?.(`Opening ${this._labelForProgressionStep(stepId)} to resolve ${dataset.slotId || slotType || 'progression debt'}.`);
+  }
+
+  async _classifyProgressionSlot(dataset = {}) {
+    const itemId = String(dataset.itemId || '').trim();
+    const item = itemId ? this.actor.items.get(itemId) : null;
+    if (!item) {
+      ui?.notifications?.warn?.('The item selected for classification could not be found on this actor.');
+      return;
+    }
+
+    const slotType = String(dataset.slotType || '').trim();
+    const itemType = String(item.type || '').trim();
+    if ((slotType.includes('feat') && itemType !== 'feat') || (slotType.includes('talent') && itemType !== 'talent')) {
+      ui?.notifications?.warn?.(`${item.name} is a ${itemType || 'unknown item'}, so it cannot satisfy ${slotType || 'this slot'}.`);
+      return;
+    }
+
+    const confirmed = await new Promise((resolve) => {
+      new Dialog({
+        title: `Classify ${item.name}`,
+        content: `
+          <p style="margin:0 0 8px;">Classify <strong>${item.name}</strong> as <strong>${this._labelForProgressionSlot(slotType)}</strong>?</p>
+          <p style="margin:0;color:rgba(255,255,255,.72);font-size:12px;">This writes acquisition metadata only. It does not grant a new item or remove anything.</p>
+        `,
+        buttons: {
+          confirm: {
+            icon: '<i class="fa-solid fa-check"></i>',
+            label: 'Classify',
+            callback: () => resolve(true),
+          },
+          cancel: {
+            icon: '<i class="fa-solid fa-times"></i>',
+            label: 'Cancel',
+            callback: () => resolve(false),
+          },
+        },
+        default: 'confirm',
+        close: () => resolve(false),
+      }, {
+        classes: ['swse', 'swse-dialog'],
+        width: 420,
+      }).render(true);
+    });
+
+    if (!confirmed) return;
+
+    const stepId = String(dataset.stepId || this._stepIdForProgressionSlot(slotType)).trim() || '';
+    const slotSource = this._slotSourceForProgressionSlot(slotType);
+    const classLevel = Number(dataset.classLevel || 0) || 0;
+    const characterLevel = Number(dataset.characterLevel || 0) || 0;
+    const acquisition = {
+      source: slotType,
+      sourceType: slotType,
+      slotType: slotSource,
+      selectionKey: stepId,
+      slotId: dataset.slotId || null,
+      classId: dataset.classId || '',
+      className: dataset.className || '',
+      classLevel,
+      sourceClassLevel: classLevel,
+      characterLevel,
+      classifiedAt: new Date().toISOString(),
+      classifiedBy: game?.user?.id || null,
+      classificationSource: 'sheet-reconciliation',
+    };
+
+    const update = {
+      _id: item.id,
+      'system.acquisition': acquisition,
+      'system.slotType': slotSource,
+      'system.sourceType': slotType,
+      'flags.swse.acquisition': acquisition,
+      'flags.swse.progression.slotType': slotSource,
+      'flags.swse.progression.selectionKey': stepId,
+      'flags.swse.progression.reconciledSlotId': dataset.slotId || null,
+      'flags.swse.progression.classId': dataset.classId || '',
+      'flags.swse.progression.className': dataset.className || '',
+      'flags.swse.progression.classLevel': classLevel,
+      'flags.swse.progression.characterLevel': characterLevel,
+      'flags.swse.progression.classifiedByReconciler': true,
+    };
+
+    await ActorEngine.updateEmbeddedDocuments(this.actor, 'Item', [update], {
+      source: 'progression-reconciliation-classify-item',
+      render: false,
+      suppressAppRefresh: true,
+    });
+    await this.requestSurfaceRender({ reason: 'progression-reconciliation-classified', preserveUi: true });
+    ui?.notifications?.info?.(`${item.name} classified as ${this._labelForProgressionSlot(slotType)}.`);
+  }
+
+  async _reviewProgressionSlot(dataset = {}) {
+    const itemId = String(dataset.itemId || '').trim();
+    const item = itemId ? this.actor.items.get(itemId) : null;
+    if (item) {
+      item.sheet.render(true);
+      return;
+    }
+    ui?.notifications?.warn?.('The extra item could not be found on this actor.');
+  }
+
+  _stepIdForProgressionSlot(slotType = '') {
+    switch (String(slotType || '').toLowerCase()) {
+      case 'ability-increase': return 'attribute';
+      case 'class-feat': return 'class-feat';
+      case 'class-talent': return 'class-talent';
+      case 'heroic-talent': return 'general-talent';
+      case 'general-feat':
+      case 'feat': return 'general-feat';
+      case 'talent': return 'general-talent';
+      default: return 'summary';
+    }
+  }
+
+  _slotSourceForProgressionSlot(slotType = '') {
+    switch (String(slotType || '').toLowerCase()) {
+      case 'class-feat':
+      case 'class-talent': return 'class';
+      case 'heroic-talent': return 'heroic';
+      case 'general-feat':
+      case 'feat': return 'general';
+      case 'talent': return 'heroic';
+      default: return String(slotType || 'manual');
+    }
+  }
+
+  _labelForProgressionSlot(slotType = '') {
+    switch (String(slotType || '').toLowerCase()) {
+      case 'ability-increase': return 'ability score increase';
+      case 'class-feat': return 'class feat';
+      case 'class-talent': return 'class talent';
+      case 'heroic-talent': return 'heroic talent';
+      case 'general-feat':
+      case 'feat': return 'general feat';
+      case 'talent': return 'heroic talent';
+      default: return 'progression slot';
+    }
+  }
+
+  _labelForProgressionStep(stepId = '') {
+    switch (String(stepId || '').toLowerCase()) {
+      case 'attribute': return 'the attribute step';
+      case 'class-feat': return 'the class feat step';
+      case 'class-talent': return 'the class talent step';
+      case 'general-talent': return 'the heroic talent step';
+      case 'general-feat': return 'the general feat step';
+      default: return 'progression';
+    }
+  }
+
   /**
    * Show a two-option dialog when the player clicks Add Feat / Add Talent.
    * - "Pick from Compendium" → opens the progression feat/talent step inline
@@ -6685,12 +7082,19 @@ const forcePoints = [];
             callback: async () => {
               try {
                 await this.setSurface('progression', {
-                  source: 'sheet',
+                  source: 'sheet-free-add',
                   stepId,
                   currentStep: stepId,
-                  mode: 'freeAdd'
+                  targetStep: stepId,
+                  targetStepId: stepId,
+                  mode: 'freeAdd',
+                  singleStep: true,
+                  singleStepDomain: itemType === 'talent' ? 'talents' : 'feats',
+                  singleStepJob: itemType === 'talent' ? 'add-talent-from-compendium' : 'add-feat-from-compendium',
+                  skipIntro: true,
+                  forceFreshAdapter: true,
                 });
-                await this.requestSurfaceRender({ reason: `${itemType}-step-launch`, surfaceId: 'progression' });
+                await this.requestSurfaceRender({ reason: `${itemType}-single-step-launch`, surfaceId: 'progression' });
               } catch (err) {
                 swseLogger.error(`[CharacterSheet] ${label} step launch failed:`, err);
               }

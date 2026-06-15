@@ -23,8 +23,9 @@ function cardVm(card = {}, reveal = true) {
     isSpecial: card.type === 'special' || card.type === 'sylop',
     isSylop: card.type === 'sylop',
     sign: card.sign || (Number(card.value || 0) > 0 ? 'positive' : (Number(card.value || 0) < 0 ? 'negative' : 'neutral')),
-    revealCue: reveal ? 'card-face' : 'card-back'
-  } : { id: card.id, label: 'Hidden Card', shortLabel: '??', valueLabel: 'Hidden', suitLabel: 'Hidden', image: '', hasImage: false, isSpecial: false, isSylop: false, sign: 'hidden' };
+    revealCue: reveal ? 'card-face' : 'card-back',
+    get cssClass() { return sabaccCardCssClass(this); }
+  } : { id: card.id, label: 'Hidden Card', shortLabel: '??', valueLabel: 'Hidden', suitLabel: 'Hidden', image: '', hasImage: false, isSpecial: false, isSylop: false, sign: 'hidden', revealCue: 'card-back', cssClass: 'sign-hidden card-back' };
 }
 
 function marketSlotVm(slot = {}) {
@@ -44,6 +45,38 @@ function titleCase(value = '') {
   return text ? text.charAt(0).toUpperCase() + text.slice(1) : '';
 }
 
+
+function avatarGlyphForName(name = '') {
+  const clean = String(name || '').trim();
+  return clean ? clean[0].toUpperCase() : 'S';
+}
+
+const SABACC_SEAT_POSITIONS = Object.freeze({
+  1: [{ l: 50, t: 24 }],
+  2: [{ l: 30, t: 25 }, { l: 70, t: 25 }],
+  3: [{ l: 20, t: 38 }, { l: 50, t: 22 }, { l: 80, t: 38 }],
+  4: [{ l: 16, t: 45 }, { l: 34, t: 24 }, { l: 66, t: 24 }, { l: 84, t: 45 }],
+  5: [{ l: 13, t: 50 }, { l: 29, t: 27 }, { l: 50, t: 20 }, { l: 71, t: 27 }, { l: 87, t: 50 }],
+  6: [{ l: 12, t: 54 }, { l: 24, t: 32 }, { l: 41, t: 21 }, { l: 59, t: 21 }, { l: 76, t: 32 }, { l: 88, t: 54 }]
+});
+
+function sabaccSeatStyleFor(index, total) {
+  const count = Math.max(1, Math.min(6, Number(total || 1)));
+  const positions = SABACC_SEAT_POSITIONS[count] || SABACC_SEAT_POSITIONS[3];
+  const pos = positions[index] || positions[positions.length - 1];
+  return `left:${pos.l}%;top:${pos.t}%`;
+}
+
+function sabaccCardCssClass(card = {}) {
+  const parts = [];
+  const sign = String(card.sign || '').toLowerCase();
+  if (sign) parts.push(`sign-${sign}`);
+  if (card.isSpecial) parts.push('special');
+  if (card.isSylop) parts.push('sylop');
+  if (card.revealCue) parts.push(card.revealCue);
+  return parts.join(' ');
+}
+
 function seatVm(session, state, seat, viewerSeatId) {
   const player = state.players?.[seat.seatId] || {};
   const isViewer = seat.seatId === viewerSeatId;
@@ -59,21 +92,40 @@ function seatVm(session, state, seat, viewerSeatId) {
   const aiLastDecision = isAi && aiDecision
     ? (reveal && aiDecision.reason ? aiDecision.reason : `${SabaccAi.labelForDifficulty(aiProfile.difficulty)} model sampled ${Number(aiDecision.samples || 0)} outcomes.`)
     : '';
+  const isCurrent = state.activeSeatId === seat.seatId;
+  const folded = Boolean(player.folded);
+  const bombedOut = Boolean(evaluation.bombedOut);
+  const specialWinner = reveal && Boolean(evaluation.specialWinner);
+  const avatar = seat.avatar || seat.img || seat.image || seat.actorImg || '';
+  const cssClass = [
+    isViewer ? 'is-viewer' : '',
+    isCurrent ? 'is-current' : '',
+    folded ? 'folded' : '',
+    bombedOut ? 'bomb' : '',
+    specialWinner ? 'special' : '',
+    isShowdownReveal ? 'is-revealed' : ''
+  ].filter(Boolean).join(' ');
   return {
     seatId: seat.seatId,
     displayName: seat.displayName || 'Seat',
     isViewer,
-    isCurrent: state.activeSeatId === seat.seatId,
+    isCurrent,
     isAi,
+    avatar,
+    hasAvatar: Boolean(avatar),
+    avatarGlyph: avatarGlyphForName(seat.displayName || 'Seat'),
+    cssClass,
     aiDifficultyLabel: isAi ? SabaccAi.labelForDifficulty(aiProfile.difficulty) : '',
     aiProfileLabel,
     aiLastDecision,
     profession: seat.profession || '',
     tableFact: seat.tableFact || '',
-    statusLabel: player.folded ? 'Folded' : (player.bombedOut ? 'Bombed Out' : 'In Hand'),
+    statusLabel: folded ? 'Folded' : (bombedOut ? 'Bombed Out' : (player.called ? 'Called' : 'In Hand')),
+    statusClass: folded ? 'fold' : (bombedOut ? 'fold' : (player.called ? 'called' : 'in')),
     totalLabel: reveal ? evaluation.label : hiddenTotalLabel,
-    bombedOut: Boolean(evaluation.bombedOut),
-    specialWinner: reveal && Boolean(evaluation.specialWinner),
+    totalClass: bombedOut ? 'bomb' : (specialWinner ? 'special' : ''),
+    bombedOut,
+    specialWinner,
     cards: (player.hand || []).map(card => cardVm(card, reveal)),
     hasCards: Boolean(handCount),
     handCount,
@@ -102,6 +154,13 @@ export class SabaccViewModel {
       winnerLabel: state.showdown.winnerSeatId ? (playableSeats(session).find(seat => seat.seatId === state.showdown.winnerSeatId)?.displayName || 'Unknown Seat') : '',
       tiedLabels: (state.showdown.tiedSeatIds || []).map(id => playableSeats(session).find(seat => seat.seatId === id)?.displayName || id).join(', ')
     } : null;
+    const seats = playableSeats(session).map(seat => seatVm(session, state, seat, viewerSeatId));
+    const tableSeats = seats.filter(seat => !seat.isViewer).map((seat, index, arr) => ({
+      ...seat,
+      seatNumber: index + 1,
+      seatStyle: sabaccSeatStyleFor(index, arr.length)
+    }));
+    const viewerSeatVm = seats.find(seat => seat.isViewer) || null;
     return {
       id: session.id,
       title: session.title,
@@ -166,8 +225,11 @@ export class SabaccViewModel {
       ante: Number(state.ante || 0),
       sabaccAnte: Number(state.sabaccAnte || 0),
       winnerLabel: state.winnerSeatId ? (playableSeats(session).find(seat => seat.seatId === state.winnerSeatId)?.displayName || 'Unknown Seat') : '',
-      seats: playableSeats(session).map(seat => seatVm(session, state, seat, viewerSeatId)),
+      seats,
+      tableSeats,
+      hasTableSeats: tableSeats.length > 0,
       viewerSeat: {
+        ...(viewerSeatVm || {}),
         canAct,
         canBettingAct: Boolean(canAct && state.phase === 'betting'),
         canCardAct: Boolean(canAct && state.phase === 'drawing'),
@@ -181,8 +243,12 @@ export class SabaccViewModel {
           canShift: Boolean(canAct && state.phase === 'drawing'),
           canDiscard: false,
           market: (state.marketEnabled && Array.isArray(state.market) ? state.market : []).map(marketSlotVm)
-        }))
+        })),
+        tableCredits: Number(viewerPlayer?.tableCredits || 0),
+        totalLabel: viewerSeatVm?.totalLabel || '',
+        statusLabel: viewerSeatVm?.statusLabel || ''
       },
+      hasPrivateHand: Boolean((viewerPlayer?.hand || []).length),
       handHistory: (state.handHistory || []).map(hand => ({ ...hand, timeLabel: formatTime(hand.at) })),
       hasHandHistory: Boolean((state.handHistory || []).length),
       eventLog: publicEvents.map(event => ({ ...event, timeLabel: formatTime(event.at) })),

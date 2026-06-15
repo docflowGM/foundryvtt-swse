@@ -77,6 +77,85 @@ export class SessionStorage {
   }
 
   /**
+   * Read the completion marker for a progression mode.
+   * A completed session is final actor state, not recoverable draft state.
+   */
+  static getCompletedMarker(actor, mode = 'chargen') {
+    if (!actor) return null;
+    try {
+      return actor.getFlag?.('foundryvtt-swse', `progression.${mode}.completed`) || null;
+    } catch (_err) {
+      return null;
+    }
+  }
+
+  /**
+   * Mark a progression session as finalized.
+   * Used as a second guard so stale saved sessions from older paths are never
+   * auto-resumed after a successful Confirm/Finish.
+   */
+  static async markSessionCompleted(actor, sessionData = {}, mode = 'chargen') {
+    if (!actor) return false;
+    try {
+      const marker = {
+        completed: true,
+        mode,
+        sessionId: sessionData?.sessionId || null,
+        currentStepId: sessionData?.currentStepId || null,
+        completedAt: new Date().toISOString(),
+        source: 'progression-finalization'
+      };
+      await actor.setFlag?.('foundryvtt-swse', `progression.${mode}.completed`, marker);
+      swseLogger.debug('[SessionStorage] Session marked complete', {
+        actorId: actor.id,
+        mode,
+        sessionId: marker.sessionId,
+      });
+      return true;
+    } catch (err) {
+      swseLogger.warn('[SessionStorage] Failed to mark session complete', err);
+      return false;
+    }
+  }
+
+  /**
+   * Some actors were finalized before completion markers existed. Detect those
+   * stale chargen sessions conservatively: a saved session parked at Summary
+   * plus actor-owned class/progression items means the finalizer already ran.
+   */
+  static _looksLikeFinalizedActor(actor, sessionData = {}, mode = 'chargen') {
+    if (!actor || mode !== 'chargen' || !sessionData) return false;
+    try {
+      if (actor.system?.progression?.chargenComplete === true) return true;
+      const completed = actor.getFlag?.('foundryvtt-swse', 'progression.chargen.completed');
+      if (completed?.completed === true) return true;
+
+      const currentStepId = String(sessionData.currentStepId || sessionData.lastStepId || '').toLowerCase();
+      const completedSteps = new Set((Array.isArray(sessionData.completedStepIds) ? sessionData.completedStepIds : [])
+        .map(step => String(step || '').toLowerCase()));
+      const atFinalSummary = currentStepId === 'summary' || completedSteps.has('summary');
+      if (!atFinalSummary) return false;
+
+      const items = Array.from(actor.items || []);
+      const hasProgressionItems = items.some(item => ['class', 'feat', 'talent', 'force-power', 'force-regimen', 'maneuver'].includes(String(item?.type || '').toLowerCase()));
+      const hasFinalizedIdentity = !!(actor.system?.class || actor.system?.species || actor.system?.background);
+      const hasHp = Number(actor.system?.hp?.max || 0) > 1;
+      return hasProgressionItems && (hasFinalizedIdentity || hasHp);
+    } catch (_err) {
+      return false;
+    }
+  }
+
+  static _isCompletedSession(actor, sessionData = {}, mode = 'chargen') {
+    const marker = this.getCompletedMarker(actor, mode);
+    if (marker?.completed === true) {
+      const markerSessionId = marker.sessionId || marker.completedSessionId || null;
+      if (!markerSessionId || !sessionData?.sessionId || markerSessionId === sessionData.sessionId) return true;
+    }
+    return this._looksLikeFinalizedActor(actor, sessionData, mode);
+  }
+
+  /**
    * Load session state from actor flags.
    * Called during shell init to restore progression.
    *
@@ -97,6 +176,16 @@ export class SessionStorage {
         swseLogger.debug('[SessionStorage] No saved session found', {
           actorId: actor.id,
           mode,
+        });
+        return null;
+      }
+
+      if (this._isCompletedSession(actor, sessionData, mode)) {
+        swseLogger.warn('[SessionStorage] Ignoring completed/stale progression session', {
+          actorId: actor.id,
+          mode,
+          sessionId: sessionData.sessionId || null,
+          currentStepId: sessionData.currentStepId || null,
         });
         return null;
       }
@@ -169,7 +258,11 @@ export class SessionStorage {
     if (!actor) return false;
 
     try {
-      await actor.setFlag('foundryvtt-swse', `progression.${mode}.session`, null);
+      if (typeof actor.unsetFlag === 'function') {
+        await actor.unsetFlag('foundryvtt-swse', `progression.${mode}.session`);
+      } else {
+        await actor.setFlag('foundryvtt-swse', `progression.${mode}.session`, null);
+      }
 
       swseLogger.debug('[SessionStorage] Session cleared', {
         actorId: actor.id,

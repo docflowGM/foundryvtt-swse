@@ -16,7 +16,7 @@
 
   <section class="prog-profile-class-grid" aria-label="Profile classes">
     {{#each classes}}
-      <button type="button" class="prog-profile-class-card {{#if selected}}is-selected{{else}}is-dimmed{{/if}}" data-profile-class-id="{{id}}">
+      <button type="button" class="prog-profile-class-card {{#if selected}}is-selected{{else}}is-dimmed{{/if}}" data-action="profile-select-class" data-profile-class-id="{{id}}">
         <span class="profile-card-index">{{index}}</span>
         <span class="holo-img holo-img--class"><img src="{{image}}" alt="{{name}}" /></span>
         <span class="class-copy">

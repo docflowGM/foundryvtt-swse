@@ -2463,3 +2463,82 @@
 .swse-customization-stage .ls-component-intel .rail-detail-card {
   flex: 1 1 auto !important;
 }
+
+/* Lightsaber workbench blade-color picker dialog ---------------------------- */
+.swse-lightsaber-color-picker-dialog .swse-dialog-body {
+  background:
+    radial-gradient(circle at 16% 0%, color-mix(in oklch, var(--icw-cyan, #00e5ff), transparent 78%), transparent 40%),
+    linear-gradient(180deg, oklch(0.10 0.05 285 / 0.96), oklch(0.045 0.035 285 / 0.98));
+  border: 1px solid color-mix(in oklch, var(--icw-cyan, #00e5ff), transparent 55%);
+  color: var(--icw-text, #e8fbff);
+}
+
+.swse-lightsaber-color-picker-dialog .swse-dialog-content {
+  padding: 0.85rem;
+}
+
+.swse-lightsaber-color-picker-dialog .swse-ls-color-dialog-intro {
+  margin: 0 0 0.75rem;
+  color: var(--icw-dim, #9fb9c2);
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-lightsaber-color-picker-dialog .swse-ls-color-dialog-intro strong {
+  color: var(--icw-cyan, #00e5ff);
+}
+
+.swse-lightsaber-color-picker-dialog .swse-ls-color-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.swse-lightsaber-color-picker-dialog .swse-ls-color-option {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0.5rem 0.65rem;
+  background: linear-gradient(90deg, color-mix(in oklch, var(--blade-color), transparent 84%), oklch(0 0 0 / 0.32));
+  border: 1px solid color-mix(in oklch, var(--blade-color), transparent 48%);
+  cursor: pointer;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease, transform 0.16s ease;
+}
+
+.swse-lightsaber-color-picker-dialog .swse-ls-color-option:hover,
+.swse-lightsaber-color-picker-dialog .swse-ls-color-option:has(input:checked) {
+  border-color: color-mix(in oklch, var(--blade-color), white 12%);
+  box-shadow: 0 0 16px color-mix(in oklch, var(--blade-color), transparent 68%);
+  transform: translateY(-1px);
+}
+
+.swse-lightsaber-color-picker-dialog .swse-ls-color-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.swse-lightsaber-color-picker-dialog .swse-ls-color-swatch {
+  width: 32px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--blade-color);
+  box-shadow: 0 0 10px var(--blade-color), 0 0 20px color-mix(in oklch, var(--blade-color), transparent 45%);
+}
+
+.swse-lightsaber-color-picker-dialog .swse-ls-color-label {
+  color: var(--icw-text, #e8fbff);
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.swse-lightsaber-color-picker-dialog .dialog-buttons {
+  border-top: 1px solid color-mix(in oklch, var(--icw-cyan, #00e5ff), transparent 72%);
+}

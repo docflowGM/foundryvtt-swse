@@ -98,6 +98,8 @@ export class ActiveContractValidator {
         return this.validateEffect(meta);
       case ACTIVE_SUBTYPES.MODE:
         return this.validateMode(meta);
+      case ACTIVE_SUBTYPES.ACTION:
+        return this.validateAction(meta);
       default:
         throw new Error(`Unknown ACTIVE subType: ${subType}`);
     }
@@ -138,6 +140,18 @@ export class ActiveContractValidator {
 
     if (!meta.persistentEffect)
       throw new Error("ACTIVE MODE missing persistentEffect block");
+
+    return true;
+  }
+
+  /**
+   * ACTION is the manual/action-card active subtype used by talents such as
+   * Battle Meditation. These actions are rendered by the combat/action-card
+   * layer and do not apply an automatic persistent effect at registration time.
+   */
+  static validateAction(meta) {
+    if (!Array.isArray(meta.combatActions) || meta.combatActions.length === 0)
+      throw new Error("ACTIVE ACTION missing combatActions");
 
     return true;
   }

@@ -7,5 +7,6 @@
 
 export const ACTIVE_SUBTYPES = {
   EFFECT: "EFFECT",
-  MODE: "MODE"
+  MODE: "MODE",
+  ACTION: "ACTION"
 };

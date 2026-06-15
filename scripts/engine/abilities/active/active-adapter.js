@@ -47,7 +47,24 @@ export class ActiveAdapter {
       case ACTIVE_SUBTYPES.MODE:
         this.handleMode(actor, ability);
         break;
+
+      case ACTIVE_SUBTYPES.ACTION:
+        this.handleAction(actor, ability);
+        break;
     }
+  }
+
+  /**
+   * Handle ACTION subtype - manual combat/action cards.
+   * The action-card builders consume abilityMeta.combatActions later; registration
+   * only validates that the metadata is acceptable and avoids warning spam.
+   */
+  static handleAction(actor, ability) {
+    const count = Array.isArray(ability?.system?.abilityMeta?.combatActions)
+      ? ability.system.abilityMeta.combatActions.length
+      : 0;
+    SWSELogger.debug?.(`[ActiveAdapter] ACTION registered: ${ability?.name || ability?.id || 'ability'} (${count} card${count === 1 ? '' : 's'}) on ${actor?.name || 'actor'}`);
+    return { success: true, reason: 'Registered manual action', actionCount: count };
   }
 
   /**

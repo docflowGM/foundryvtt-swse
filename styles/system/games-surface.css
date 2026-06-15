@@ -2860,3 +2860,890 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* -------------------------------------------------------------------------
+   Concept restoration: active Holopad game tables
+   Restores the concept table/felt treatment after the compact v2 hardening pass.
+   ------------------------------------------------------------------------- */
+.swse-games-surface.is-table-mode {
+  --swse-games-cyan: var(--vapor-cyan, #39f7ff);
+  --swse-games-pink: var(--vapor-pink, #ff4fd8);
+  --swse-games-purple: var(--vapor-purple, #8a5cff);
+  --swse-games-gold: var(--gold, #ffd166);
+  --swse-games-positive: var(--pos, #4dff88);
+  --swse-games-negative: var(--neg, #ff4f64);
+  --swse-games-line: color-mix(in oklab, var(--swse-games-cyan) 28%, transparent);
+  --swse-games-line-soft: color-mix(in oklab, var(--swse-games-cyan) 14%, transparent);
+  background:
+    radial-gradient(ellipse at 28% 8%, color-mix(in oklab, var(--swse-games-purple) 18%, transparent), transparent 52%),
+    radial-gradient(ellipse at 82% 92%, color-mix(in oklab, var(--swse-games-cyan) 12%, transparent), transparent 54%),
+    linear-gradient(180deg, #07101e 0%, #03040a 100%);
+  border: 1px solid color-mix(in oklab, var(--swse-games-cyan) 20%, transparent);
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.72),
+    inset 0 2px 18px rgba(0, 0, 0, 0.56),
+    0 0 42px color-mix(in oklab, var(--swse-games-cyan) 8%, transparent);
+  isolation: isolate;
+  position: relative;
+}
+
+.swse-games-surface.is-table-mode::before,
+.swse-games-surface.is-table-mode::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 30;
+}
+
+.swse-games-surface.is-table-mode::before {
+  background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, 0.024) 3px 4px);
+  mix-blend-mode: screen;
+}
+
+.swse-games-surface.is-table-mode::after {
+  border: 1px solid color-mix(in oklab, var(--swse-games-cyan) 42%, transparent);
+  clip-path: polygon(0 0, 18px 0, 18px 1px, 1px 1px, 1px 18px, 0 18px, 0 0, 100% 0, calc(100% - 18px) 0, calc(100% - 18px) 1px, calc(100% - 1px) 1px, calc(100% - 1px) 18px, 100% 18px, 100% 100%, calc(100% - 18px) 100%, calc(100% - 18px) calc(100% - 1px), calc(100% - 1px) calc(100% - 1px), calc(100% - 1px) calc(100% - 18px), 100% calc(100% - 18px), 100% 100%, 0 100%, 18px 100%, 18px calc(100% - 1px), 1px calc(100% - 1px), 1px calc(100% - 18px), 0 calc(100% - 18px));
+  opacity: 0.72;
+}
+
+.swse-games-surface.is-table-mode > * {
+  position: relative;
+  z-index: 1;
+}
+
+.swse-games-surface.is-table-mode .swse-games-hud {
+  min-height: 42px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--swse-games-line);
+  background: rgba(0, 0, 0, 0.32);
+  box-shadow: none;
+}
+
+.swse-games-surface.is-table-mode .swse-games-hud__title {
+  font-family: var(--font-display, var(--font-orbit, monospace));
+  font-size: 22px;
+  letter-spacing: 0.32em;
+  color: var(--swse-games-cyan);
+  text-shadow: 0 0 12px color-mix(in oklab, var(--swse-games-cyan) 54%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-games-led.is-pink {
+  background: var(--swse-games-pink);
+  box-shadow: 0 0 8px var(--swse-games-pink);
+}
+
+.swse-games-surface.is-table-mode .swse-games-credit-chip {
+  color: var(--swse-games-gold);
+}
+
+.swse-games-surface.is-table-mode .swse-games-credit-chip b {
+  font-family: var(--font-display, monospace);
+  font-size: 15px;
+}
+
+.swse-games-table-mode.swse-games-felt {
+  background:
+    radial-gradient(ellipse at 50% 42%, color-mix(in oklab, var(--swse-games-cyan) 9%, transparent), transparent 58%),
+    radial-gradient(ellipse at 50% 100%, color-mix(in oklab, var(--swse-games-purple) 12%, transparent), transparent 60%),
+    rgba(0, 0, 0, 0.12);
+}
+
+.swse-games-tm-bar {
+  padding: 11px 18px;
+  border-bottom: 1px solid var(--swse-games-line);
+  background: rgba(0, 0, 0, 0.34);
+}
+
+.swse-games-table-glyph {
+  color: var(--swse-games-cyan);
+  font-family: var(--font-display, monospace);
+  text-shadow: 0 0 12px color-mix(in oklab, var(--swse-games-cyan) 45%, transparent);
+}
+
+.swse-games-tm-bar__title h3 {
+  font-family: var(--font-orbit, var(--font-mono, monospace));
+  font-size: 17px;
+  letter-spacing: 0.08em;
+}
+
+.swse-games-pot-strip__item {
+  border-color: color-mix(in oklab, var(--swse-games-gold) 35%, transparent);
+  background: rgba(0, 0, 0, 0.40);
+  border-radius: 0;
+}
+
+.swse-games-pot-strip__item .v {
+  color: var(--swse-games-gold);
+  font-family: var(--font-display, monospace);
+  font-size: 18px;
+}
+
+.swse-games-table-status {
+  min-height: 30px;
+  padding: 6px 18px;
+  border-bottom: 1px solid var(--swse-games-line-soft);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.swse-games-table-body {
+  padding: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Pazaak table layout */
+.swse-games-surface.is-table-mode .swse-pazaak-table,
+.swse-games-surface.is-table-mode .swse-pazaak-play,
+.swse-games-surface.is-table-mode .swse-pazaak-board-mode {
+  height: 100%;
+  min-height: 0;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-table {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-play,
+.swse-games-surface.is-table-mode .swse-pazaak-board-mode {
+  display: flex;
+  flex-direction: column;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-board-shell {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: auto;
+  display: grid;
+  grid-template-columns: 226px minmax(420px, 1fr) 226px;
+  gap: 0;
+  align-items: stretch;
+  overflow: hidden;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-rail,
+.swse-games-surface.is-table-mode .swse-pazaak-board {
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-rail {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 13px;
+  overflow: auto;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-rail--left {
+  border-right: 1px solid var(--swse-games-line-soft);
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-rail--right {
+  border-left: 1px solid var(--swse-games-line-soft);
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-board {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
+  gap: 0;
+  min-height: 0;
+  padding: 12px 18px 14px;
+  overflow: hidden;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-opponent-card,
+.swse-games-surface.is-table-mode .swse-games-chatter,
+.swse-games-surface.is-table-mode .swse-pazaak-history,
+.swse-games-surface.is-table-mode .swse-pazaak-rules-card {
+  border: 1px solid var(--swse-games-line-soft);
+  border-radius: 0;
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.46), color-mix(in oklab, var(--swse-games-purple) 8%, transparent));
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.24);
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-seat-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  min-height: 0;
+  padding: 6px 4px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-seat-head {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) 96px;
+  gap: 14px;
+  align-items: center;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-avatar {
+  width: 64px;
+  height: 64px;
+  border: 1px solid var(--swse-games-line);
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.50);
+  overflow: hidden;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  filter: saturate(1.05) contrast(1.04);
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-seat-row.is-current .swse-pazaak-avatar,
+.swse-games-surface.is-table-mode .swse-pazaak-seat-row.is-current .swse-pazaak-seat-head strong {
+  border-color: var(--swse-games-pink);
+  color: var(--swse-games-pink);
+  text-shadow: 0 0 14px color-mix(in oklab, var(--swse-games-pink) 38%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-seat-head b {
+  display: block;
+  font-family: var(--font-orbit, var(--font-mono, monospace));
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-seat-head span {
+  display: block;
+  color: var(--ink-dim, #b9d9df);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-seat-head strong {
+  min-width: 96px;
+  text-align: center;
+  color: var(--ink, #dffbff);
+  font-family: var(--font-display, monospace);
+  font-size: 56px;
+  line-height: 0.82;
+  text-shadow: 0 0 16px color-mix(in oklab, var(--swse-games-cyan) 30%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-seat-head strong small {
+  display: block;
+  margin-top: 4px;
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-faint, #7fb8c4);
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-slot-row {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(36px, 1fr));
+  gap: 8px;
+  min-height: 0;
+  padding: 10px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-slot,
+.swse-games-surface.is-table-mode .swse-pazaak-deck-slot {
+  aspect-ratio: 3 / 4.2;
+  min-height: 0;
+  position: relative;
+  border: 1px dashed var(--swse-games-line-soft);
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-slot.is-filled,
+.swse-games-surface.is-table-mode .swse-pazaak-deck-slot.is-filled {
+  border-style: solid;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-midline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+  padding: 8px 0;
+  border-top: 1px solid var(--swse-games-line-soft);
+  border-bottom: 1px solid var(--swse-games-line-soft);
+  margin: 4px 0;
+  color: var(--ink-faint, #7fb8c4);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-midline b {
+  color: color-mix(in oklab, var(--swse-games-pink) 82%, white);
+  font-family: var(--font-orbit, var(--font-mono, monospace));
+  font-size: 22px;
+  letter-spacing: 0.1em;
+  text-shadow: 0 0 14px color-mix(in oklab, var(--swse-games-pink) 40%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-hand-dock {
+  flex: 0 0 auto;
+  margin: 0;
+  padding: 12px 20px 14px;
+  border: 0;
+  border-top: 1px solid var(--swse-games-line);
+  border-radius: 0;
+  background: linear-gradient(180deg, transparent, rgba(5, 6, 12, 0.90) 32%);
+  box-shadow: none;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-hand-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  justify-content: center;
+  overflow-x: auto;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-hand-card {
+  width: 104px;
+  flex: 0 0 104px;
+  border-radius: 0;
+  background: linear-gradient(160deg, rgba(0, 0, 0, 0.50), color-mix(in oklab, var(--swse-games-purple) 12%, transparent));
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-hand-card.is-playable:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.48), 0 0 18px color-mix(in oklab, var(--swse-games-cyan) 18%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-template-card {
+  border-radius: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-played-card.swse-pazaak-template-card,
+.swse-games-surface.is-table-mode .swse-pazaak-card-face.swse-pazaak-template-card {
+  height: 100%;
+  width: 100%;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-template-card img {
+  border-radius: 0;
+  opacity: 0.98;
+  object-fit: cover;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-template-card b {
+  position: relative;
+  z-index: 2;
+  background: transparent;
+  color: #11110a;
+  font-family: var(--font-display, monospace);
+  font-size: 26px;
+  line-height: 1;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.40);
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-template-card small {
+  position: relative;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.52);
+  color: rgba(255, 255, 255, 0.88);
+  font-family: var(--font-mono, monospace);
+  font-size: 7.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-setup--concept {
+  flex: 1 1 auto;
+  height: 100%;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 0;
+  overflow: hidden;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-setup__side {
+  border-right: 1px solid var(--swse-games-line-soft);
+  padding: 16px 14px;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-setup__main {
+  padding: 14px 22px 16px;
+  overflow: hidden;
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-build-catalog {
+  grid-template-columns: repeat(auto-fill, minmax(78px, 1fr));
+}
+
+.swse-games-surface.is-table-mode .swse-pazaak-deck-tray {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(42px, 1fr));
+  gap: 8px;
+}
+
+/* Sabacc casino table concept mapping */
+.swse-games-surface.is-table-mode .swse-sabacc-casino,
+.swse-games-surface.is-table-mode .swse-sabacc-table {
+  height: 100%;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-felt {
+  position: relative;
+  height: calc(100% - 142px);
+  min-height: 420px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 44%, color-mix(in oklab, var(--swse-games-cyan) 8%, transparent), transparent 62%),
+    radial-gradient(ellipse at 50% 100%, color-mix(in oklab, var(--swse-games-purple) 12%, transparent), transparent 64%);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-table-oval {
+  position: absolute;
+  left: 50%;
+  top: 45%;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 56%;
+  min-width: 420px;
+  max-width: 760px;
+  border: 1px solid color-mix(in oklab, var(--swse-games-cyan) 22%, transparent);
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.56)),
+    color-mix(in oklab, #072316 80%, black 20%);
+  box-shadow:
+    inset 0 0 38px rgba(0, 0, 0, 0.54),
+    0 0 60px color-mix(in oklab, var(--swse-games-cyan) 8%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-table-oval::before {
+  content: '';
+  position: absolute;
+  inset: 22px;
+  border: 1px dashed color-mix(in oklab, var(--swse-games-cyan) 22%, transparent);
+  border-radius: 50%;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 290px;
+  text-align: center;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-pots {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-pots span {
+  min-width: 96px;
+  border: 1px solid color-mix(in oklab, var(--swse-games-gold) 40%, transparent);
+  background: rgba(0, 0, 0, 0.50);
+  padding: 8px 16px;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-pots .sabacc {
+  border-color: color-mix(in oklab, var(--swse-games-pink) 45%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-pots b {
+  display: block;
+  color: var(--ink-faint, #7fb8c4);
+  font: 800 8px/1 var(--font-mono, monospace);
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-pots strong {
+  display: block;
+  color: var(--swse-games-gold);
+  font: 900 30px/1 var(--font-display, monospace);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-pots .sabacc strong {
+  color: var(--swse-games-pink);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-deck-row,
+.swse-games-surface.is-table-mode .swse-sabacc-shift-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 14px;
+  color: var(--ink-dim, #b9d9df);
+  font: 800 9px/1.25 var(--font-mono, monospace);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-deck-card {
+  display: block;
+  width: 44px;
+  aspect-ratio: 3 / 4.3;
+  border: 1px solid var(--swse-games-line);
+  background:
+    linear-gradient(135deg, rgba(57, 247, 255, 0.20), transparent 38%),
+    linear-gradient(180deg, #101728, #03050a);
+  box-shadow: 0 0 14px color-mix(in oklab, var(--swse-games-cyan) 14%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-shift-row b {
+  display: inline-grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid color-mix(in oklab, var(--swse-games-cyan) 45%, transparent);
+  color: var(--swse-games-cyan);
+  background: rgba(0, 0, 0, 0.42);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-shift-row.matched b {
+  border-color: color-mix(in oklab, var(--swse-games-pink) 55%, transparent);
+  color: var(--swse-games-pink);
+  box-shadow: 0 0 14px color-mix(in oklab, var(--swse-games-pink) 28%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat {
+  position: absolute;
+  width: 192px;
+  transform: translate(-50%, -50%);
+  z-index: 4;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat-card {
+  border: 1px solid var(--swse-games-line);
+  background: linear-gradient(150deg, rgba(0, 0, 0, 0.58), color-mix(in oklab, var(--swse-games-purple) 10%, transparent));
+  padding: 9px 11px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.28);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat.is-current .swse-sabacc-seat-card {
+  border-color: var(--swse-games-pink);
+  box-shadow: 0 0 20px color-mix(in oklab, var(--swse-games-pink) 28%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat.is-viewer .swse-sabacc-seat-card {
+  border-color: color-mix(in oklab, var(--swse-games-cyan) 55%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat.folded .swse-sabacc-seat-card {
+  opacity: 0.46;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat-card header {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+  gap: 9px;
+  align-items: center;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat-card header img,
+.swse-games-surface.is-table-mode .swse-sabacc-avatar-glyph {
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--swse-games-line-soft);
+  background: rgba(0, 0, 0, 0.50);
+  object-fit: cover;
+  object-position: top center;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-avatar-glyph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--swse-games-cyan);
+  font: 900 20px/1 var(--font-display, monospace);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat-card strong {
+  color: var(--ink, #dffbff);
+  font: 800 12px/1.1 var(--font-orbit, var(--font-mono, monospace));
+  letter-spacing: 0.04em;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat-card small,
+.swse-games-surface.is-table-mode .swse-sabacc-seat-card p,
+.swse-games-surface.is-table-mode .swse-sabacc-empty-hand {
+  color: var(--ink-faint, #7fb8c4);
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-total {
+  color: var(--ink, #dffbff);
+  font: 900 26px/0.95 var(--font-display, monospace);
+  text-align: center;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-total span {
+  display: block;
+  color: var(--ink-faint, #7fb8c4);
+  font: 800 7px/1 var(--font-mono, monospace);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-total.special {
+  color: var(--swse-games-pink);
+  text-shadow: 0 0 12px color-mix(in oklab, var(--swse-games-pink) 40%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-total.bomb {
+  color: var(--swse-games-negative);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat-cards,
+.swse-games-surface.is-table-mode .swse-sabacc-private-cards {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat-cards {
+  justify-content: center;
+  min-height: 56px;
+  margin-top: 8px;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  aspect-ratio: 3 / 4.3;
+  overflow: hidden;
+  border: 1px solid var(--swse-games-line);
+  background: #0a0f1f;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 2px;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-card b {
+  color: var(--ink, #dffbff);
+  font: 900 16px/1 var(--font-display, monospace);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-card small {
+  position: absolute;
+  left: 2px;
+  right: 2px;
+  bottom: 2px;
+  color: rgba(255, 255, 255, 0.82);
+  font: 700 6.5px/1 var(--font-mono, monospace);
+  text-align: center;
+  text-shadow: 0 1px 2px black;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-card.sign-positive {
+  border-color: color-mix(in oklab, var(--swse-games-positive) 45%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-card.sign-negative {
+  border-color: color-mix(in oklab, var(--swse-games-negative) 45%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-card.sylop,
+.swse-games-surface.is-table-mode .swse-sabacc-card.special {
+  border-color: var(--swse-games-pink);
+  box-shadow: 0 0 10px color-mix(in oklab, var(--swse-games-pink) 35%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat-card footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat-status {
+  border: 1px solid var(--swse-games-line-soft);
+  color: var(--ink-dim, #b9d9df);
+  font: 800 8px/1 var(--font-mono, monospace);
+  letter-spacing: 0.16em;
+  padding: 2px 7px;
+  text-transform: uppercase;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat-status.in {
+  color: var(--swse-games-positive);
+  border-color: color-mix(in oklab, var(--swse-games-positive) 35%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat-status.called {
+  color: var(--swse-games-gold);
+  border-color: color-mix(in oklab, var(--swse-games-gold) 35%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-seat-status.fold {
+  color: var(--swse-games-negative);
+  border-color: color-mix(in oklab, var(--swse-games-negative) 35%, transparent);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-market-dock {
+  position: absolute;
+  right: 18px;
+  top: 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  width: 240px;
+  z-index: 6;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-market-dock article {
+  display: grid;
+  grid-template-columns: 38px minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--swse-games-line-soft);
+  background: rgba(0, 0, 0, 0.50);
+  padding: 6px;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-player-dock {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  min-height: 132px;
+  padding: 12px 20px 14px;
+  border-top: 1px solid var(--swse-games-line);
+  background: linear-gradient(180deg, transparent, rgba(7, 7, 14, 0.92) 30%);
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(280px, 1fr) auto;
+  gap: 18px;
+  align-items: end;
+  z-index: 8;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-private-hand {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-private-card {
+  display: grid;
+  grid-template-columns: 60px minmax(0, 1fr);
+  gap: 8px;
+  align-items: center;
+  width: 190px;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-private-card .swse-sabacc-card {
+  width: 60px;
+  transition: transform 0.15s ease;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-private-card:hover .swse-sabacc-card {
+  transform: translateY(-6px);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-action-panel,
+.swse-games-surface.is-table-mode .swse-sabacc-myinfo {
+  text-align: center;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-myinfo div {
+  color: var(--swse-games-gold);
+  font: 900 30px/1 var(--font-display, monospace);
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-myinfo span,
+.swse-games-surface.is-table-mode .swse-sabacc-myinfo small {
+  display: block;
+  color: var(--ink-faint, #7fb8c4);
+  font: 800 9px/1.35 var(--font-mono, monospace);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-banner,
+.swse-games-surface.is-table-mode .swse-sabacc-table-message {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  border: 1px solid color-mix(in oklab, var(--swse-games-cyan) 40%, transparent);
+  background: rgba(0, 0, 0, 0.62);
+  color: var(--swse-games-cyan);
+  padding: 8px 18px;
+  text-align: center;
+}
+
+.swse-games-surface.is-table-mode .swse-sabacc-banner { top: 12px; }
+.swse-games-surface.is-table-mode .swse-sabacc-table-message { bottom: 150px; }
+
+.swse-games-surface.is-table-mode .swse-sabacc-lower-panels {
+  display: none;
+}
+
+@media (max-width: 1120px) {
+  .swse-games-surface.is-table-mode .swse-pazaak-board-shell {
+    grid-template-columns: 190px minmax(360px, 1fr) 190px;
+  }
+
+  .swse-games-surface.is-table-mode .swse-sabacc-player-dock {
+    grid-template-columns: 1fr;
+    position: relative;
+  }
+
+  .swse-games-surface.is-table-mode .swse-sabacc-felt {
+    height: 560px;
+  }
+}
+
+@media (max-width: 900px) {
+  .swse-games-surface.is-table-mode .swse-pazaak-board-shell {
+    grid-template-columns: 1fr;
+    overflow: auto;
+  }
+
+  .swse-games-surface.is-table-mode .swse-pazaak-rail--left,
+  .swse-games-surface.is-table-mode .swse-pazaak-rail--right {
+    border: 0;
+    border-bottom: 1px solid var(--swse-games-line-soft);
+  }
+
+  .swse-games-surface.is-table-mode .swse-sabacc-felt {
+    overflow: auto;
+  }
+}

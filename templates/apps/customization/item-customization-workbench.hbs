@@ -132,7 +132,7 @@
               {{#if lightsaber.alreadyBuiltNotice}}
               <div class="ls-eligibility-banner built">
                 <strong>Lightsaber Already Constructed</strong>
-                <span>This actor already has a self-built lightsaber. Construction mode is hidden; tune the crystal and hilt here, and use the item edit sheet for blade color.</span>
+                <span>This actor already has a self-built lightsaber. Construction mode is hidden; tune the crystal, hilt, and blade color here.</span>
               </div>
               {{/if}}
 
@@ -257,9 +257,9 @@
                   <span class="ls-crossguard ls-crossguard-a"></span>
                   <span class="ls-crossguard ls-crossguard-b"></span>
                 </div>
-                <button type="button" class="ls-color-cta ls-color-cta--readonly ls-color-cta--editable" data-action="open-lightsaber-blade-color-editor" data-item-id="{{lightsaber.editItemId}}" style="--blade-color: {{lightsaber.bladeHex}};" {{#unless lightsaber.editItemId}}disabled{{/unless}} title="Open the item edit sheet to change this lightsaber blade color.">
+                <button type="button" class="ls-color-cta ls-color-cta--readonly ls-color-cta--editable" data-action="open-lightsaber-blade-color-editor" data-item-id="{{lightsaber.editItemId}}" style="--blade-color: {{lightsaber.bladeHex}};" {{#unless lightsaber.canPickBladeColor}}disabled{{/unless}} title="Choose a blade color allowed by the selected crystal.">
                   <span class="ls-color-current"><span class="ls-color-dot"></span><span class="ls-color-name-strip">{{#each lightsaber.review.bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</span> blade</span>
-                  <small>{{#if lightsaber.editItemId}}Click to edit blade color.{{else}}Color selection unlocks after construction.{{/if}}</small>
+                  <small>{{#if lightsaber.canPickBladeColor}}Click to choose blade color.{{else}}Select a crystal to unlock color.{{/if}}</small>
                 </button>
                 {{#unless lightsaber.showChassis}}
                 <div class="ls-locked-chassis-card ls-rail-lock-note">
@@ -281,6 +281,11 @@
                     <div><dt>{{key}}</dt><dd>{{value}}</dd></div>
                     {{/each}}
                   </dl>
+                  {{#if lightsaber.componentIntel.action}}
+                    <button type="button" class="rail-select-btn ls-intel-action" data-action="{{lightsaber.componentIntel.action}}" data-key="{{lightsaber.componentIntel.key}}" {{#if lightsaber.componentIntel.disabled}}disabled aria-disabled="true"{{/if}}>
+                      {{lightsaber.componentIntel.buttonLabel}}
+                    </button>
+                  {{/if}}
                 </article>
               </section>
 

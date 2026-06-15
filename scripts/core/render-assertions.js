@@ -82,6 +82,81 @@ export class RenderAssertions {
   }
 
   /**
+   * Best-effort path finder for values that structuredClone cannot copy.
+   * This keeps AppV2 failures actionable instead of only reporting the
+   * browser's generic "Window/function could not be cloned" message.
+   */
+  static findFirstNonSerializablePath(value, path = 'context', seen = new WeakSet()) {
+    if (value == null) return null;
+
+    const type = typeof value;
+    if (type === 'function') return { path, reason: 'function', preview: value.name || 'anonymous function' };
+    if (type === 'symbol') return { path, reason: 'symbol', preview: String(value) };
+    if (type === 'bigint' || type === 'string' || type === 'number' || type === 'boolean') return null;
+
+    if (type !== 'object') return null;
+    if (seen.has(value)) return null;
+    seen.add(value);
+
+    try {
+      structuredClone(value);
+      return null;
+    } catch (cloneError) {
+      if (typeof Window !== 'undefined' && value instanceof Window) return { path, reason: 'Window', preview: 'Window' };
+      if (typeof Document !== 'undefined' && value instanceof Document) return { path, reason: 'Document', preview: 'Document' };
+      if (typeof HTMLElement !== 'undefined' && value instanceof HTMLElement) return { path, reason: 'HTMLElement', preview: value.tagName || 'HTMLElement' };
+      if (typeof Node !== 'undefined' && value instanceof Node) return { path, reason: 'Node', preview: value.nodeName || 'Node' };
+      if (typeof AbortController !== 'undefined' && value instanceof AbortController) return { path, reason: 'AbortController', preview: 'AbortController' };
+      if (typeof AbortSignal !== 'undefined' && value instanceof AbortSignal) return { path, reason: 'AbortSignal', preview: 'AbortSignal' };
+
+      if (Array.isArray(value)) {
+        for (let i = 0; i < value.length; i += 1) {
+          const child = this.findFirstNonSerializablePath(value[i], `${path}[${i}]`, seen);
+          if (child) return child;
+        }
+        return { path, reason: cloneError?.message || 'array clone failed', preview: 'Array' };
+      }
+
+      if (value instanceof Map) {
+        let index = 0;
+        for (const [key, entry] of value.entries()) {
+          const child = this.findFirstNonSerializablePath(entry, `${path}.<Map:${String(key) || index}>`, seen);
+          if (child) return child;
+          index += 1;
+        }
+        return { path, reason: cloneError?.message || 'map clone failed', preview: 'Map' };
+      }
+
+      if (value instanceof Set) {
+        let index = 0;
+        for (const entry of value.values()) {
+          const child = this.findFirstNonSerializablePath(entry, `${path}.<Set:${index}>`, seen);
+          if (child) return child;
+          index += 1;
+        }
+        return { path, reason: cloneError?.message || 'set clone failed', preview: 'Set' };
+      }
+
+      for (const key of Object.keys(value)) {
+        let childValue;
+        try {
+          childValue = value[key];
+        } catch (accessError) {
+          return { path: `${path}.${key}`, reason: `getter failed: ${accessError?.message || accessError}`, preview: key };
+        }
+        const child = this.findFirstNonSerializablePath(childValue, `${path}.${key}`, seen);
+        if (child) return child;
+      }
+
+      return {
+        path,
+        reason: cloneError?.message || 'object clone failed',
+        preview: value?.constructor?.name || 'Object'
+      };
+    }
+  }
+
+  /**
    * Assert context is serializable (AppV2 requirement)
    */
   static assertContextSerializable(context, componentName) {
@@ -90,8 +165,12 @@ export class RenderAssertions {
       swseLogger.debug(`✓ [${componentName}] Context is serializable`);
       return true;
     } catch (error) {
-      const msg = `[${componentName}] Context failed serialization check (contains non-cloneable objects): ${error.message}`;
-      swseLogger.error(msg);
+      const firstBadPath = this.findFirstNonSerializablePath(context);
+      const pathHint = firstBadPath
+        ? ` First non-cloneable path: ${firstBadPath.path} (${firstBadPath.reason}${firstBadPath.preview ? `: ${firstBadPath.preview}` : ''}).`
+        : '';
+      const msg = `[${componentName}] Context failed serialization check (contains non-cloneable objects): ${error.message}.${pathHint}`;
+      swseLogger.error(msg, { firstBadPath });
       throw new Error(msg);
     }
   }

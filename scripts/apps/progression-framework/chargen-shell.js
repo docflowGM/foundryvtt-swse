@@ -192,6 +192,12 @@ export class ChargenShell extends ProgressionShell {
         descriptors = this._injectGalacticProfileDescriptors(descriptors);
       }
 
+      const requestedStep = this.options?.targetStep || this.options?.currentStep || this.options?.stepId || null;
+      if (this.options?.singleStep === true && requestedStep) {
+        const single = descriptors.find((descriptor) => descriptor?.stepId === requestedStep);
+        if (single) descriptors = [single];
+      }
+
       if (descriptors.length === 0) {
         console.warn('[ChargenShell] No active steps computed for chargen');
         // Fallback to legacy CHARGEN_CANONICAL_STEPS as safety net

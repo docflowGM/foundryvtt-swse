@@ -71,6 +71,42 @@ export class HealingSource {
     return notification;
   }
 
+
+  /**
+   * Create a GM recovery/healing/status notification.
+   * Used by the GM Combat Recovery console and other direct GM actions.
+   *
+   * @param {Object} data
+   * @returns {HolonetNotification}
+   */
+  static createGmRecoveryNotification(data) {
+    const notification = new HolonetNotification({
+      sourceFamily: this.sourceFamily,
+      sourceId: data.actorId,
+      intent: data.intent ?? INTENT_TYPE.HEALING_REST_RESET,
+      sender: HolonetSender.system(data.senderLabel ?? 'GM Recovery Console'),
+      audience: HolonetAudience.singlePlayer(data.playerUserId),
+      title: data.title ?? `${data.actorName || 'Your character'} Updated`,
+      body: data.body ?? `${data.actorName || 'Your character'} was updated by the GM.`,
+      level: data.level ?? 'success',
+      metadata: {
+        actorId: data.actorId,
+        actorName: data.actorName,
+        action: data.action ?? 'gm-recovery',
+        previousHp: data.previousHp,
+        newHp: data.newHp,
+        amountRecovered: data.amountRecovered,
+        amount: data.amount,
+        reason: data.reason ?? 'gm-recovery',
+        routeId: data.routeId ?? 'sheet',
+        tab: data.tab ?? 'overview',
+        sheetAnchor: data.sheetAnchor ?? 'health'
+      }
+    });
+
+    return notification;
+  }
+
   /**
    * Initialize healing source
    */

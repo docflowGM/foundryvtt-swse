@@ -5,7 +5,7 @@
 
 .swse-holonet-comm {
   --hl-accent: var(--swse-accent-text, var(--swse-accent, #7fdfe6));
-  --hl-accent-raw: var(--swse-accent, 0.82 0.17 190);
+  --hl-accent-raw: 0.82 0.17 190;
   --hl-bg: rgba(5, 5, 10, 0.72);
   --hl-panel: rgba(13, 12, 21, 0.72);
   --hl-panel-2: rgba(24, 23, 35, 0.74);
@@ -1093,7 +1093,7 @@
    ------------------------------------------------------------------------- */
 .swse-shell-surface--messenger.swse-holonet-comm {
   --hl-accent: var(--swse-accent-text, #7fdfe6);
-  --hl-accent-raw: var(--swse-accent, 0.82 0.17 190);
+  --hl-accent-raw: 0.82 0.17 190;
   --hl-screen: color-mix(in oklab, var(--swse-panel-bg, #071523) 82%, black 18%);
   --hl-panel-deep: rgba(0, 0, 0, 0.30);
   --hl-panel-soft: rgba(127, 223, 230, 0.055);
@@ -2766,3 +2766,436 @@
 .swse-holonet-comm .hl-job-consequence-row.is-rival small {
   color: var(--hl-warn, #ffd166);
 }
+
+/* -------------------------------------------------------------------------
+   Concept restoration: Holonet messenger surface
+   Restores the colorful Holocom concept pass after generic shell hardening
+   flattened the messenger into neutral panels.
+   ------------------------------------------------------------------------- */
+.swse-shell-surface--messenger.swse-holonet-comm {
+  --hl-accent-raw: 0.82 0.17 190;
+  --hl-accent: var(--swse-accent-text, #7fdfe6);
+  --hl-bg: rgba(3, 5, 12, 0.82);
+  --hl-panel: rgba(8, 12, 24, 0.78);
+  --hl-panel-2: rgba(19, 17, 35, 0.84);
+  --hl-line: rgba(127, 223, 230, 0.22);
+  --hl-line-strong: rgba(127, 223, 230, 0.44);
+  --hl-party: #69f2a7;
+  --hl-job: #f7d36c;
+  --hl-private: #c489ff;
+  --hl-side: #7db8ff;
+  --hl-muted: #8da0aa;
+  position: relative;
+  color: var(--hl-ink, #eefcff);
+  background:
+    radial-gradient(ellipse at 12% 0%, rgba(127, 223, 230, 0.20), transparent 38%),
+    radial-gradient(ellipse at 88% 18%, rgba(196, 137, 255, 0.15), transparent 42%),
+    radial-gradient(ellipse at 50% 100%, rgba(247, 211, 108, 0.07), transparent 45%),
+    linear-gradient(180deg, rgba(4, 7, 16, 0.94), rgba(1, 2, 7, 0.96)) !important;
+  border-color: rgba(127, 223, 230, 0.30) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.035),
+    inset 0 0 42px rgba(127, 223, 230, 0.08),
+    0 18px 44px rgba(0, 0, 0, 0.46) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(127, 223, 230, 0.08), transparent 18%, transparent 82%, rgba(196, 137, 255, 0.07)),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, 0.025) 3px 4px);
+  mix-blend-mode: screen;
+  opacity: 0.86;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm > * {
+  position: relative;
+  z-index: 1;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-hud,
+.swse-shell-surface--messenger.swse-holonet-comm .swse-messenger-header {
+  border-bottom-color: rgba(127, 223, 230, 0.26) !important;
+  background:
+    linear-gradient(90deg, rgba(127, 223, 230, 0.10), rgba(196, 137, 255, 0.055), transparent) !important;
+  box-shadow: inset 0 -1px 0 rgba(255, 255, 255, 0.035);
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-hud-title {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  color: var(--hl-accent) !important;
+  text-shadow: 0 0 18px rgba(127, 223, 230, 0.62), 0 0 3px rgba(255, 255, 255, 0.32) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-hud-title small {
+  color: var(--hl-job);
+  font: 900 8px/1 var(--swse-font-mono, monospace);
+  letter-spacing: 0.22em;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-hud-pill,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-presence-form,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-icon-btn,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ghost-btn,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-btn-accent,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-send-btn {
+  border-color: rgba(127, 223, 230, 0.30) !important;
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.11), rgba(0, 0, 0, 0.26)) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.025);
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-btn-accent,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-send-btn {
+  color: #071018 !important;
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.92), rgba(247, 211, 108, 0.72)) !important;
+  border-color: rgba(247, 211, 108, 0.48) !important;
+  box-shadow: 0 0 18px rgba(127, 223, 230, 0.18) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-presence-form select,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-presence-form input,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-search,
+.swse-shell-surface--messenger.swse-holonet-comm textarea,
+.swse-shell-surface--messenger.swse-holonet-comm input,
+.swse-shell-surface--messenger.swse-holonet-comm select {
+  color: var(--hl-ink, #eefcff) !important;
+  border-color: rgba(127, 223, 230, 0.24) !important;
+  background: rgba(3, 7, 16, 0.62) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-shell,
+.swse-shell-surface--messenger.swse-holonet-comm .swse-messenger-body {
+  gap: 12px !important;
+  padding: 12px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-applist {
+  align-self: stretch;
+  padding: 10px 8px !important;
+  border: 1px solid rgba(127, 223, 230, 0.20) !important;
+  border-radius: 14px !important;
+  background:
+    linear-gradient(180deg, rgba(127, 223, 230, 0.06), rgba(0, 0, 0, 0.28)),
+    rgba(3, 6, 14, 0.72) !important;
+  box-shadow: inset 0 0 22px rgba(127, 223, 230, 0.045) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-appbtn {
+  position: relative;
+  display: grid !important;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 42px;
+  margin: 0 0 8px;
+  padding: 8px 9px !important;
+  border: 1px solid rgba(127, 223, 230, 0.18) !important;
+  border-radius: 12px !important;
+  color: var(--hl-ink-dim, #a9c7d0) !important;
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.055), rgba(0, 0, 0, 0.22)) !important;
+  text-align: left;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-appbtn::before {
+  content: '';
+  position: absolute;
+  inset: 7px auto 7px 0;
+  width: 3px;
+  border-radius: 0 6px 6px 0;
+  background: transparent;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-appbtn.on,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-appbtn:hover {
+  color: var(--hl-accent) !important;
+  border-color: rgba(127, 223, 230, 0.52) !important;
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.18), rgba(196, 137, 255, 0.08), rgba(0, 0, 0, 0.20)) !important;
+  box-shadow: 0 0 18px rgba(127, 223, 230, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.035) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-appbtn.on::before,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-appbtn:hover::before {
+  background: var(--hl-accent);
+  box-shadow: 0 0 10px rgba(127, 223, 230, 0.62);
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-appbtn.gm {
+  border-color: rgba(247, 211, 108, 0.34) !important;
+  color: var(--hl-job) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-appbtn .ic {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 1px solid rgba(127, 223, 230, 0.24);
+  border-radius: 8px;
+  color: var(--hl-accent);
+  background: rgba(127, 223, 230, 0.07);
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-appbtn .pip,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-badge {
+  background: var(--hl-job) !important;
+  color: #0c0a03 !important;
+  box-shadow: 0 0 10px rgba(247, 211, 108, 0.32) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-main-area,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-tlist,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-conv,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-info-panel,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-compose-shell,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-jobboard-view {
+  border: 1px solid rgba(127, 223, 230, 0.20) !important;
+  border-radius: 14px !important;
+  background:
+    linear-gradient(180deg, rgba(13, 18, 32, 0.86), rgba(3, 5, 12, 0.76)),
+    rgba(0, 0, 0, 0.22) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.025), 0 14px 30px rgba(0, 0, 0, 0.30) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-tlist-top,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-conv-header,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composer,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-info-header,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-jobboard-head {
+  border-bottom-color: rgba(127, 223, 230, 0.18) !important;
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.10), rgba(196, 137, 255, 0.035), transparent) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-cat {
+  position: relative;
+  margin: 0 8px 12px;
+  padding: 9px 8px 8px 10px;
+  border: 1px solid rgba(127, 223, 230, 0.11);
+  border-left-color: rgba(127, 223, 230, 0.46);
+  border-radius: 12px;
+  background: linear-gradient(180deg, rgba(127, 223, 230, 0.035), rgba(0, 0, 0, 0.12));
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-cat--requests {
+  border-left-color: rgba(247, 211, 108, 0.82);
+  background: linear-gradient(180deg, rgba(247, 211, 108, 0.055), rgba(0, 0, 0, 0.12));
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-cat-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 8px !important;
+  color: var(--hl-accent) !important;
+  text-shadow: 0 0 10px rgba(127, 223, 230, 0.24);
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-cat-label::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border: 1px solid currentColor;
+  transform: rotate(45deg);
+  box-shadow: 0 0 8px currentColor;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-cat--requests .hl-cat-label {
+  color: var(--hl-job) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem {
+  grid-template-columns: 32px minmax(0, 1fr) auto !important;
+  gap: 10px !important;
+  margin-bottom: 8px !important;
+  border-color: rgba(127, 223, 230, 0.16) !important;
+  border-radius: 12px !important;
+  background:
+    linear-gradient(135deg, rgba(127, 223, 230, 0.07), rgba(0, 0, 0, 0.28)),
+    rgba(4, 8, 18, 0.56) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem:hover,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem.active,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem.on {
+  border-color: rgba(127, 223, 230, 0.56) !important;
+  background:
+    linear-gradient(135deg, rgba(127, 223, 230, 0.20), rgba(196, 137, 255, 0.09), rgba(0, 0, 0, 0.22)) !important;
+  box-shadow: inset 4px 0 0 var(--hl-accent), 0 0 20px rgba(127, 223, 230, 0.15) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem--invite {
+  border-color: rgba(247, 211, 108, 0.48) !important;
+  box-shadow: inset 4px 0 0 var(--hl-job), 0 0 14px rgba(247, 211, 108, 0.10) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem-icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(127, 223, 230, 0.24);
+  border-radius: 10px;
+  background: rgba(127, 223, 230, 0.07);
+  color: var(--hl-accent) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem-title,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-title,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-job-card h3 {
+  color: var(--hl-ink, #eefcff) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-chip,
+.swse-shell-surface--messenger.swse-holonet-comm .swse-messenger-chip {
+  border: 1px solid rgba(127, 223, 230, 0.24) !important;
+  background: rgba(127, 223, 230, 0.09) !important;
+  color: var(--hl-accent) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-chip.party,
+.swse-shell-surface--messenger.swse-holonet-comm .swse-messenger-chip--party {
+  border-color: rgba(105, 242, 167, 0.34) !important;
+  background: rgba(105, 242, 167, 0.10) !important;
+  color: var(--hl-party) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-chip.job,
+.swse-shell-surface--messenger.swse-holonet-comm .swse-messenger-chip--job {
+  border-color: rgba(247, 211, 108, 0.38) !important;
+  background: rgba(247, 211, 108, 0.11) !important;
+  color: var(--hl-job) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-chip.private,
+.swse-shell-surface--messenger.swse-holonet-comm .swse-messenger-chip--private {
+  border-color: rgba(196, 137, 255, 0.38) !important;
+  background: rgba(196, 137, 255, 0.11) !important;
+  color: var(--hl-private) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .swse-messenger-chip--side {
+  border-color: rgba(125, 184, 255, 0.34) !important;
+  background: rgba(125, 184, 255, 0.10) !important;
+  color: var(--hl-side) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-chip.warn,
+.swse-shell-surface--messenger.swse-holonet-comm .swse-messenger-chip--invite {
+  border-color: rgba(255, 154, 92, 0.42) !important;
+  background: rgba(255, 154, 92, 0.11) !important;
+  color: #ffb072 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-chip.owner,
+.swse-shell-surface--messenger.swse-holonet-comm .swse-messenger-chip--owner {
+  border-color: rgba(247, 211, 108, 0.46) !important;
+  background: linear-gradient(135deg, rgba(247, 211, 108, 0.14), rgba(127, 223, 230, 0.06)) !important;
+  color: var(--hl-job) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-chip.muted,
+.swse-shell-surface--messenger.swse-holonet-comm .swse-messenger-chip--muted {
+  border-color: rgba(141, 160, 170, 0.26) !important;
+  background: rgba(141, 160, 170, 0.07) !important;
+  color: var(--hl-muted) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg-bubble {
+  border-radius: 14px !important;
+  border-color: rgba(127, 223, 230, 0.22) !important;
+  background: linear-gradient(135deg, rgba(17, 25, 45, 0.86), rgba(5, 7, 14, 0.76)) !important;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg.own .hl-msg-bubble,
+.swse-shell-surface--messenger.swse-holonet-comm .swse-msg-bubble--own {
+  border-color: rgba(127, 223, 230, 0.42) !important;
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.24), rgba(8, 15, 29, 0.88)) !important;
+  box-shadow: 0 0 20px rgba(127, 223, 230, 0.12), 0 8px 18px rgba(0, 0, 0, 0.22) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg.other .hl-msg-bubble,
+.swse-shell-surface--messenger.swse-holonet-comm .swse-msg-bubble--other {
+  border-color: rgba(196, 137, 255, 0.26) !important;
+  background: linear-gradient(135deg, rgba(196, 137, 255, 0.11), rgba(7, 8, 17, 0.84)) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg--unread,
+.swse-shell-surface--messenger.swse-holonet-comm .swse-msg-row--unread .hl-msg-bubble {
+  border-color: rgba(247, 211, 108, 0.40) !important;
+  box-shadow: 0 0 18px rgba(247, 211, 108, 0.12) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-job-card {
+  border: 1px solid rgba(247, 211, 108, 0.24) !important;
+  border-radius: 14px !important;
+  background:
+    radial-gradient(ellipse at 0% 0%, rgba(247, 211, 108, 0.13), transparent 42%),
+    linear-gradient(135deg, rgba(15, 17, 27, 0.88), rgba(3, 5, 12, 0.78)) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.025), 0 12px 24px rgba(0, 0, 0, 0.28) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-job-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(247, 211, 108, 0.48) !important;
+  box-shadow: 0 0 22px rgba(247, 211, 108, 0.12), 0 14px 28px rgba(0, 0, 0, 0.32) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-job-status,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-jobboard-tab.on {
+  color: #0c0a03 !important;
+  border-color: rgba(247, 211, 108, 0.52) !important;
+  background: rgba(247, 211, 108, 0.84) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-job-issuer-strip,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-job-issuer-card,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-credit-card,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-secret-card,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-recipient-row {
+  border-color: rgba(127, 223, 230, 0.23) !important;
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.08), rgba(0, 0, 0, 0.22)) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-recipient-row:hover,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-recipient-row.is-selected {
+  border-color: rgba(127, 223, 230, 0.48) !important;
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.16), rgba(196, 137, 255, 0.07)) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-thread-filter-form,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-search-form {
+  margin: 0 10px 10px !important;
+  padding: 9px !important;
+  border: 1px solid rgba(127, 223, 230, 0.14) !important;
+  border-radius: 12px !important;
+  background: rgba(0, 0, 0, 0.18) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-messages,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-tlist-scroll,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-compose-scroll,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-info-panel {
+  scrollbar-color: rgba(127, 223, 230, 0.55) rgba(0, 0, 0, 0.22);
+}
+
+@media (max-width: 1120px) {
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-shell,
+  .swse-shell-surface--messenger.swse-holonet-comm .swse-messenger-body {
+    padding: 8px !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-appbtn {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+}
+

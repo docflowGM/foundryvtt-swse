@@ -254,8 +254,20 @@ export class GMApprovalOperationsService {
       await ActorEngine.updateActor(actor, { 'system.droidSystems.buildHistory': buildHistory });
 
       Hooks.call('swseApprovalResolved', {
-        approval: { id: `droid-${actor.id}`, type: 'droid', draftData: { name: actor.name } },
-        actor,
+        approval: {
+          id: `droid-${actor.id}`,
+          type: 'droid',
+          draftActorId: actor.id,
+          ownerActorId: ownerActor.id,
+          ownerActorName: ownerActor.name,
+          costCredits: cost,
+          draftData: { name: actor.name }
+        },
+        actor: ownerActor,
+        ownerActor,
+        ownerActorId: ownerActor.id,
+        targetActor: actor,
+        targetActorId: actor.id,
         decision: 'approved',
         decidedBy: game.user?.name ?? 'GM'
       });
@@ -295,8 +307,19 @@ export class GMApprovalOperationsService {
       await ActorEngine.updateActor(actor, { 'system.droidSystems.buildHistory': buildHistory });
 
       Hooks.call('swseApprovalResolved', {
-        approval: { id: `droid-${actor.id}`, type: 'droid', draftData: { name: actor.name } },
-        actor,
+        approval: {
+          id: `droid-${actor.id}`,
+          type: 'droid',
+          draftActorId: actor.id,
+          ownerActorId: ownerActor?.id ?? null,
+          ownerActorName: ownerActor?.name ?? null,
+          draftData: { name: actor.name }
+        },
+        actor: ownerActor ?? actor,
+        ownerActor,
+        ownerActorId: ownerActor?.id ?? null,
+        targetActor: actor,
+        targetActorId: actor.id,
         decision: 'denied',
         decidedBy: game.user?.name ?? 'GM',
         reason

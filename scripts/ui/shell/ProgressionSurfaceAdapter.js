@@ -57,19 +57,25 @@ export class ProgressionSurfaceAdapter {
   static async getOrCreate(shellHost, actor, mode, options = {}) {
     const key = `${actor.id}-${mode}`;
 
+    const forceFresh = options?.forceFreshAdapter === true || options?.resetAdapter === true;
     const existing = this._registry.get(key);
+    if (forceFresh && existing) {
+      existing._destroy();
+      this._registry.delete(key);
+    }
     const requestedStep = options?.targetStep || options?.currentStep || options?.stepId || null;
     const needsSingleStepRebuild = existing?._ready
       && options?.singleStep === true
       && requestedStep
       && !existing._app?.steps?.some?.((descriptor) => descriptor?.stepId === requestedStep);
 
-    if (existing?._ready && !needsSingleStepRebuild) {
+    if (!forceFresh && existing?._ready && !needsSingleStepRebuild) {
       existing._shellHost = shellHost;
       if (existing._app) {
         existing._app._singleStepMode = options?.singleStep === true;
         existing._app._singleStepDomain = options?.singleStepDomain || null;
         existing._app._singleStepJob = options?.singleStepJob || null;
+        existing._app._targetStepId = options?.targetStep || options?.targetStepId || options?.currentStep || options?.stepId || existing._app._targetStepId || null;
       }
       await existing._navigateToRequestedStep(options);
       return existing;
@@ -620,6 +626,8 @@ export class ProgressionSurfaceAdapter {
       app._singleStepMode = options?.singleStep === true;
       app._singleStepDomain = options?.singleStepDomain || null;
       app._singleStepJob = options?.singleStepJob || null;
+      app._targetStepId = options?.targetStep || options?.targetStepId || options?.currentStep || options?.stepId || app._targetStepId || null;
+      app._reconciliationContext = options?.reconciliation || null;
 
       // Inline holopad launches must never spawn a standalone recovery dialog.
       // The old RecoverySessionDialog is an ApplicationV2 window and currently
@@ -748,8 +756,15 @@ export class ProgressionSurfaceAdapter {
         return app;
       };
 
-      // Initialize steps (same as ProgressionShell.open() but without render)
-      await app._attemptSessionRecovery();
+      // Initialize steps (same as ProgressionShell.open() but without render).
+      // Sheet free-add and reconciliation launches are targeted maintenance flows;
+      // they should not auto-resume a stale level-up/chargen session and strand
+      // the player outside the requested step.
+      const skipRecovery = options?.singleStep === true
+        || options?.mode === 'freeAdd'
+        || options?.source === 'sheet-free-add'
+        || options?.source === 'sheet-reconciliation';
+      if (!skipRecovery) await app._attemptSessionRecovery();
       await app._initializeSteps();
       await app._initializeFirstStep().catch(err => {
         SWSELogger.error('[ProgressionSurfaceAdapter] First step init error:', err);
