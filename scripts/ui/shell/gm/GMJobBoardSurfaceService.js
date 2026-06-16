@@ -392,6 +392,7 @@ export class GMJobBoardSurfaceService {
       : null;
     const pendingDraft = surfaceState.pendingJobDraft || filterDraft || null;
     const knownIssuers = FactionJobBridgeService.buildKnownIssuerOptions({ jobs: allJobs });
+    const savedContacts = FactionJobBridgeService.buildSavedContactOptions({ jobs: allJobs });
 
     return {
       pageTitle: 'GM Job Board',
@@ -425,7 +426,9 @@ export class GMJobBoardSurfaceService {
           prefill: pendingDraft,
           openWizard: Boolean(surfaceState.openWizard && pendingDraft),
           knownIssuers,
-          hasKnownIssuers: knownIssuers.length > 0
+          hasKnownIssuers: knownIssuers.length > 0,
+          savedContacts,
+          hasSavedContacts: savedContacts.length > 0
         },
         payoutModes: payoutModeOptions(),
         xpPayoutModes: xpPayoutModeOptions(),

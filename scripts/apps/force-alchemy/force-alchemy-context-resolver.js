@@ -22,6 +22,8 @@ const FEATURE_ITEM_TYPES = new Set([
   'talent', 'talent_choice', 'talentchoice', 'talent_tree', 'talenttree'
 ]);
 
+const SPECIALIST_TARGET_KINDS = new Set(['dark-armor', 'sith-weapon', 'sith-abomination']);
+
 function normalizeToken(value) {
   return normalizeForceAlchemyKey(value);
 }
@@ -142,16 +144,26 @@ function classifyAlchemicalKind(item) {
   if (kind.includes('darkarmor') || kind.includes('sitharmor')) return 'dark-armor';
   if (kind.includes('sithweapon')) return 'sith-weapon';
   if (kind.includes('abomination')) return 'sith-abomination';
+  if (kind.includes('sithamulet')) return 'sith-amulet';
+  if (kind) return kind;
   const text = itemCategoryText(item);
   if (/dark armor|sith armor/.test(text)) return 'dark-armor';
   if (/sith weapon|alchemical weapon/.test(text)) return 'sith-weapon';
   if (/abomination/.test(text)) return 'sith-abomination';
-  return 'sith-weapon';
+  if (/sith amulet/.test(text)) return 'sith-amulet';
+  return null;
+}
+
+function normalizeTraitIds(traits) {
+  return Array.isArray(traits)
+    ? traits.map(trait => normalizeToken(typeof trait === 'string' ? trait : trait?.id ?? trait?.key ?? trait?.name)).filter(Boolean)
+    : [];
 }
 
 function targetView(item, targetTypes = []) {
   const system = itemSystem(item);
   const flags = item?.flags?.swse?.alchemy ?? item?.flags?.['foundryvtt-swse']?.alchemy ?? {};
+  const existingTraits = normalizeTraitIds(flags.traits);
   return {
     id: itemId(item),
     uuid: item?.uuid ?? null,
@@ -162,7 +174,8 @@ function targetView(item, targetTypes = []) {
     kind: classifyTargetKind(item),
     equipped: itemIsEquipped(item),
     alchemyKind: classifyAlchemicalKind(item),
-    existingTraits: Array.isArray(flags.traits) ? flags.traits : [],
+    existingTraits,
+    existingTraitCount: existingTraits.length,
     targetTypes,
     systemType: system?.type ?? item?.type ?? ''
   };
@@ -287,7 +300,9 @@ function collectTargets(actor, items, actorSummary) {
 }
 
 function targetsForType(targets, targetType) {
-  return targets.filter(target => target.targetTypes?.includes?.(targetType));
+  const matching = targets.filter(target => target.targetTypes?.includes?.(targetType));
+  if (targetType === 'alchemical-object') return matching.filter(target => SPECIALIST_TARGET_KINDS.has(target.alchemyKind));
+  return matching;
 }
 
 function buildDynamicPrereq(context, key) {
@@ -345,6 +360,49 @@ function buildRites(context, activeCategory, selectedRiteId) {
   });
 }
 
+function labelForTraitGroup(kind) {
+  if (kind === 'dark-armor') return 'Dark Armor';
+  if (kind === 'sith-weapon') return 'Sith Weapon';
+  if (kind === 'sith-abomination') return 'Sith Abomination';
+  return kind.replace(/-/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase());
+}
+
+function pendingSpecialistProjectForTarget(context, selectedTarget) {
+  if (!selectedTarget) return null;
+  const projects = Array.isArray(context?.state?.projects) ? context.state.projects : [];
+  return projects.find(project => project?.riteId === 'sith-alchemy-specialist' && project?.status !== 'complete' && project?.targetId === selectedTarget.id) ?? null;
+}
+
+function anyPendingSpecialistProject(context) {
+  const projects = Array.isArray(context?.state?.projects) ? context.state.projects : [];
+  return projects.find(project => project?.riteId === 'sith-alchemy-specialist' && project?.status !== 'complete') ?? null;
+}
+
+function buildTraitGroups(selectedTarget, selectedConfig) {
+  const targetKind = selectedTarget?.alchemyKind ?? null;
+  const existing = new Set(selectedTarget?.existingTraits ?? []);
+  return Object.entries(FORCE_ALCHEMY_SPECIALIST_TRAITS).map(([kind, traits]) => {
+    const targetMismatch = !targetKind || targetKind !== kind;
+    return {
+      kind,
+      label: labelForTraitGroup(kind),
+      targetMismatch,
+      traits: traits.map(trait => {
+        const duplicate = existing.has(normalizeToken(trait.id));
+        const disabled = targetMismatch || duplicate;
+        return {
+          ...trait,
+          selected: selectedConfig?.traitId === trait.id,
+          disabled,
+          duplicate,
+          targetMismatch,
+          disabledReason: duplicate ? 'Already applied to this target.' : targetMismatch ? selectedTarget ? `Requires ${labelForTraitGroup(kind)} target.` : 'Select an eligible alchemical target first.' : ''
+        };
+      })
+    };
+  });
+}
+
 function buildDetail({ rites, selectedRiteId, selectedTargetId, selectedConfig, context }) {
   const selectedRite = rites.find(rite => rite.id === selectedRiteId) ?? rites[0] ?? null;
   if (!selectedRite) return null;
@@ -358,16 +416,11 @@ function buildDetail({ rites, selectedRiteId, selectedTargetId, selectedConfig, 
   const selectedPower = context.forcePowers.find(power => power.id === selectedConfig?.powerId) ?? null;
   const selectedTemplate = FORCE_ALCHEMY_TEMPLATES.find(template => template.id === selectedConfig?.templateId) ?? null;
 
-  const traitGroups = Object.entries(FORCE_ALCHEMY_SPECIALIST_TRAITS).map(([kind, traits]) => ({
-    kind,
-    label: kind.replace(/-/g, ' ').replace(/\b\w/g, letter => letter.toUpperCase()),
-    traits: traits.map(trait => ({
-      ...trait,
-      selected: selectedConfig?.traitId === trait.id,
-      disabled: selectedTarget?.alchemyKind && selectedTarget.alchemyKind !== kind
-    }))
-  }));
+  const traitGroups = buildTraitGroups(selectedTarget, selectedConfig);
   const selectedTrait = traitGroups.flatMap(group => group.traits).find(trait => trait.selected) ?? null;
+  const selectedTraitAllowed = !!selectedTrait && selectedTrait.disabled !== true;
+  const pendingSpecialistTargetProject = selectedRite.id === 'sith-alchemy-specialist' ? pendingSpecialistProjectForTarget(context, selectedTarget) : null;
+  const pendingSpecialistProject = selectedRite.id === 'sith-alchemy-specialist' ? anyPendingSpecialistProject(context) : null;
 
   const ledgerRows = [
     { key: 'Action', value: selectedRite.action, tone: 'time' },
@@ -395,8 +448,11 @@ function buildDetail({ rites, selectedRiteId, selectedTargetId, selectedConfig, 
     showTemplateConfig: selectedRite.configType === 'template',
     showTraitConfig: selectedRite.configType === 'trait',
     showArmorTierConfig: selectedRite.configType === 'armor-tier',
-    ready: selectedRite.eligible && hasRequiredSelections(selectedRite, { selectedTarget, selectedDefense, selectedPower, selectedTemplate, selectedTrait }),
-    previewLines: buildPreviewLines(selectedRite, { selectedTarget, selectedDefense, selectedPower, selectedTemplate, selectedTrait })
+    selectedTraitAllowed,
+    pendingSpecialistProject,
+    pendingSpecialistTargetProject,
+    ready: selectedRite.eligible && hasRequiredSelections(selectedRite, { selectedTarget, selectedDefense, selectedPower, selectedTemplate, selectedTrait, selectedTraitAllowed, pendingSpecialistProject }),
+    previewLines: buildPreviewLines(selectedRite, { selectedTarget, selectedDefense, selectedPower, selectedTemplate, selectedTrait, selectedTraitAllowed, pendingSpecialistProject, pendingSpecialistTargetProject })
   };
 }
 
@@ -405,7 +461,10 @@ function hasRequiredSelections(rite, selections) {
   if (rite.configType === 'defense' && !selections.selectedDefense) return false;
   if (rite.configType === 'force-power' && !selections.selectedPower) return false;
   if (rite.configType === 'template' && !selections.selectedTemplate) return false;
-  if (rite.configType === 'trait' && !selections.selectedTrait) return false;
+  if (rite.configType === 'trait') {
+    if (!selections.selectedTrait || selections.selectedTraitAllowed !== true) return false;
+    if (selections.pendingSpecialistProject) return false;
+  }
   return true;
 }
 
@@ -415,7 +474,16 @@ function buildPreviewLines(rite, selections) {
   if (selections.selectedDefense) lines.push(`Defense: ${selections.selectedDefense.label}`);
   if (selections.selectedPower) lines.push(`Focused power: ${selections.selectedPower.name}`);
   if (selections.selectedTemplate) lines.push(`Template: ${selections.selectedTemplate.name}`);
-  if (selections.selectedTrait) lines.push(`Trait: ${selections.selectedTrait.name}`);
+  if (selections.selectedTrait) {
+    const status = selections.selectedTraitAllowed ? 'eligible' : selections.selectedTrait.duplicate ? 'already applied' : 'not valid for this target';
+    lines.push(`Trait: ${selections.selectedTrait.name} (${status})`);
+  }
+  if (rite.id === 'sith-alchemy-specialist' && selections.selectedTarget?.existingTraitCount) {
+    lines.push(`Existing specialist traits: ${selections.selectedTarget.existingTraitCount}`);
+  }
+  if (rite.id === 'sith-alchemy-specialist' && selections.pendingSpecialistProject) {
+    lines.push(`Blocked: ${selections.pendingSpecialistProject.name} is already modifying ${selections.pendingSpecialistProject.targetName}. Complete or cancel it first.`);
+  }
   lines.push(`Result: ${rite.resultLabel}`);
   lines.push(`State key: flags.${FORCE_ALCHEMY_FLAG_SCOPE}.${FORCE_ALCHEMY_FLAG_KEY}.${rite.stateKey}`);
   return lines;
@@ -501,7 +569,7 @@ export function getForceAlchemySuggestedRiteForItem(actor, item) {
   const targetTypes = getForceAlchemyTargetKinds(item);
   if (!targetTypes.length) return null;
 
-  if (targetTypes.includes('alchemical-object') && can('Sith Alchemy Specialist')) {
+  if (targetTypes.includes('alchemical-object') && can('Sith Alchemy Specialist') && SPECIALIST_TARGET_KINDS.has(classifyAlchemicalKind(item))) {
     return { riteId: 'sith-alchemy-specialist', category: 'specialist', targetTypes };
   }
   if (targetTypes.includes('sith-weapon')) {

@@ -110,12 +110,13 @@ function projectCompletionMode(riteId) {
   if (riteId === 'sith-weapon') return 'sith-weapon-item-flags';
   if (riteId === 'sith-amulet') return 'sith-amulet-item-create';
   if (riteId === 'sith-armor') return 'sith-armor-item-transform';
+  if (riteId === 'sith-alchemy-specialist') return 'sith-alchemy-specialist-trait';
   return 'manual-next-phase';
 }
 
 function projectCanComplete(project, ready) {
   if (!ready || project?.gmGated === true) return false;
-  return ['sith-weapon', 'sith-amulet', 'sith-armor'].includes(project?.riteId);
+  return ['sith-weapon', 'sith-amulet', 'sith-armor', 'sith-alchemy-specialist'].includes(project?.riteId);
 }
 
 function normalizeProject(project) {

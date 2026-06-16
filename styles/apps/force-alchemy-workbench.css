@@ -810,6 +810,14 @@
   text-transform: uppercase;
 }
 
+.swse-force-alchemy-workbench .sa-trait-group.muted .sa-trait-group-title {
+  color: var(--sa-faint);
+}
+
+.swse-force-alchemy-workbench .sa-trait-group.muted {
+  opacity: 0.78;
+}
+
 .swse-force-alchemy-workbench .sa-ledger {
   padding: 10px 12px;
   border-color: var(--sa-border-red);

@@ -53,6 +53,35 @@ function defaultsFor(record = {}, fallback = {}) {
   };
 }
 
+
+function isReusableJobContact(contact = {}) {
+  const tags = Array.isArray(contact?.tags) ? contact.tags.map(tag => text(tag).toLowerCase()) : [];
+  const description = text(contact?.description || contact?.notes).toLowerCase();
+  const defaults = defaultsFor(contact);
+  return Boolean(
+    tags.includes('job-board')
+    || tags.includes('reusable-contact')
+    || tags.includes('saved-contact')
+    || description.includes('reusable job board contact')
+    || contact?.reusableJobContact === true
+    || contact?.saveForReuse === true
+    || defaults.objective
+    || defaults.briefing
+    || defaults.instructions
+    || defaults.credits
+    || defaults.xp
+  );
+}
+
+function optionTone(group = '') {
+  const normalized = text(group).toLowerCase();
+  if (normalized.includes('saved')) return 'saved';
+  if (normalized.includes('npc') || normalized.includes('contact')) return 'contact';
+  if (normalized.includes('faction')) return 'faction';
+  if (normalized.includes('previous')) return 'previous';
+  return 'default';
+}
+
 function briefingWithContext(base = '', { tone = '', rewardStyle = '', legality = '', payStyle = '' } = {}) {
   const lines = [text(base)];
   const tags = [];
@@ -238,17 +267,45 @@ export class FactionJobBridgeService {
   static buildKnownIssuerOptions({ jobs = [] } = {}) {
     const options = [];
     const seen = new Set();
-    const add = (key, label, group, draft) => {
+    const add = (key, label, group, draft, metadata = {}) => {
       if (!key || seen.has(key) || !draft) return;
       seen.add(key);
-      options.push({ key, label, group, draft });
+      options.push({
+        key,
+        label,
+        group,
+        tone: optionTone(group),
+        draft,
+        isSavedContact: metadata.isSavedContact === true,
+        contactId: text(metadata.contactId || draft?.issuer?.contactId),
+        factionId: text(metadata.factionId || draft?.issuer?.factionId),
+        factionName: text(metadata.factionName || draft?.issuer?.factionName || draft?.client?.factionName),
+        role: text(metadata.role || draft?.issuer?.contactRole || draft?.client?.notes),
+        image: text(metadata.image || draft?.issuer?.image || draft?.client?.imageUrl),
+        summary: text(metadata.summary || draft?.briefing || draft?.primaryObjective),
+        source: text(metadata.source || draft?.source)
+      });
     };
 
     for (const faction of FactionRegistryService.getRegistry()) {
-      add(`faction:${faction.id}`, faction.name, 'Known Factions', this.buildDraftFromFaction(faction));
+      add(`faction:${faction.id}`, faction.name, 'Known Factions', this.buildDraftFromFaction(faction), {
+        factionId: faction.id,
+        factionName: faction.name,
+        image: faction.image || faction.sigil || '',
+        source: 'faction-registry'
+      });
       for (const contact of Array.isArray(faction.contacts) ? faction.contacts : []) {
         if (contact?.active === false) continue;
-        add(`contact:${faction.id}:${contact.id}`, optionLabel([faction.name, contact.name]), 'Known NPCs / Contacts', this.buildDraftFromContact(faction, contact));
+        const draft = this.buildDraftFromContact(faction, contact);
+        add(`contact:${faction.id}:${contact.id}`, optionLabel([faction.name, contact.name]), 'Known NPCs / Contacts', draft, {
+          contactId: contact.id,
+          factionId: faction.id,
+          factionName: faction.name,
+          role: contact.role || contact.title,
+          image: contact.image || faction.image || faction.sigil || '',
+          isSavedContact: isReusableJobContact(contact),
+          source: isReusableJobContact(contact) ? 'saved-job-contact' : 'faction-contact'
+        });
       }
     }
 
@@ -256,10 +313,26 @@ export class FactionJobBridgeService {
       const draft = this.buildDraftFromPreviousClient(job?.rawJob || job);
       if (!draft) continue;
       const key = `previous:${slug(`${draft.client.name}-${draft.client.factionName}`)}`;
-      add(key, optionLabel([draft.client.factionName, draft.client.name]) || draft.client.name, 'Previous Job Clients', draft);
+      add(key, optionLabel([draft.client.factionName, draft.client.name]) || draft.client.name, 'Previous Job Clients', draft, {
+        isSavedContact: Boolean(draft?.client?.saveForReuse),
+        source: 'job-history'
+      });
     }
 
     return options.sort((a, b) => a.group.localeCompare(b.group) || a.label.localeCompare(b.label));
+  }
+
+  static buildSavedContactOptions({ jobs = [] } = {}) {
+    const options = this.buildKnownIssuerOptions({ jobs })
+      .filter(option => option.isSavedContact || option.group === 'Previous Job Clients')
+      .map(option => ({
+        ...option,
+        title: option.label,
+        subtitle: option.factionName && !option.label.includes(option.factionName) ? option.factionName : option.role,
+        hasImage: Boolean(option.image),
+        summary: option.summary || option.draft?.primaryObjective || 'Reusable client profile for the contract wizard.'
+      }));
+    return options.slice(0, 24);
   }
 
 

@@ -16,6 +16,32 @@
     </div>
   </div>
 
+  {{#if jobBoard.creation.hasSavedContacts}}
+  <section class="gm-job-saved-contacts-strip swse-ui-panel" aria-label="Saved Job Board contacts">
+    <div class="gm-job-saved-contacts-strip-head">
+      <div>
+        <span class="gm-command-eyebrow">SAVED CONTACTS</span>
+        <strong>{{jobBoard.creation.savedContacts.length}} reusable issuer{{#unless (eq jobBoard.creation.savedContacts.length 1)}}s{{/unless}}</strong>
+        <p>Pick a saved client/NPC profile to start a contract without retyping issuer details.</p>
+      </div>
+      <button type="button" class="swse-ui-button" data-job-manage-saved-contacts><i class="fa-solid fa-address-book"></i> Manage in Dossier</button>
+    </div>
+    <div class="gm-job-saved-contact-row compact">
+      {{#each jobBoard.creation.savedContacts}}
+      <button type="button" class="gm-job-saved-contact-card {{this.tone}}" data-job-saved-contact-open="{{this.key}}">
+        <span class="gm-job-saved-contact-avatar">
+          {{#if this.hasImage}}<img src="{{this.image}}" alt="">{{else}}<i class="fa-solid fa-user-secret"></i>{{/if}}
+        </span>
+        <span class="gm-job-saved-contact-copy">
+          <strong>{{this.label}}</strong>
+          <em>{{#if this.role}}{{this.role}}{{else}}{{this.group}}{{/if}}</em>
+        </span>
+      </button>
+      {{/each}}
+    </div>
+  </section>
+  {{/if}}
+
   <section class="gm-job-draft-recovery swse-ui-panel" data-job-draft-recovery hidden>
     <div>
       <span class="gm-command-eyebrow">RECOVERABLE CONTRACT DRAFT</span>

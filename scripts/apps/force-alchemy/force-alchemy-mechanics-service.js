@@ -6,7 +6,9 @@ import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-
 import {
   FORCE_ALCHEMY_FLAG_SCOPE,
   FORCE_ALCHEMY_FLAG_KEY,
-  getForceAlchemyRite
+  FORCE_ALCHEMY_SPECIALIST_TRAITS,
+  getForceAlchemyRite,
+  normalizeForceAlchemyKey
 } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-data.js";
 import { ForceAlchemyStateService, readForceAlchemyState } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-state-service.js";
 
@@ -36,6 +38,23 @@ function numberFrom(...values) {
     if (Number.isFinite(number)) return number;
   }
   return 0;
+}
+
+function normalizeToken(value) {
+  return normalizeForceAlchemyKey(value);
+}
+
+function traitDefinition(traitId) {
+  const wanted = normalizeToken(traitId);
+  for (const [kind, traits] of Object.entries(FORCE_ALCHEMY_SPECIALIST_TRAITS)) {
+    const trait = asArray(traits).find(entry => normalizeToken(entry?.id) === wanted);
+    if (trait) return { ...trait, kind };
+  }
+  return null;
+}
+
+function normalizeTraitIds(traits) {
+  return asArray(traits).map(trait => normalizeToken(typeof trait === 'string' ? trait : trait?.id ?? trait?.key ?? trait?.name)).filter(Boolean);
 }
 
 function actorForcePoints(actor) {
@@ -409,6 +428,56 @@ function getItemAlchemyFlags(item) {
   return item?.flags?.[EFFECT_SCOPE]?.alchemy ?? item?.flags?.swse?.alchemy ?? {};
 }
 
+function itemAlchemyKind(item) {
+  const flags = getItemAlchemyFlags(item);
+  const flagged = normalizeToken(flags.kind || flags.alchemyKind || flags.targetKind);
+  if (flagged.includes('darkarmor') || flagged.includes('sitharmor')) return 'dark-armor';
+  if (flagged.includes('sithweapon')) return 'sith-weapon';
+  if (flagged.includes('abomination')) return 'sith-abomination';
+  if (flagged.includes('sithamulet')) return 'sith-amulet';
+  if (flagged) return flagged;
+  const text = [
+    item?.name,
+    item?.type,
+    item?.system?.type,
+    item?.system?.subtype,
+    item?.system?.category,
+    item?.system?.armorType,
+    item?.system?.weaponType,
+    item?.system?.description?.value,
+    item?.system?.description
+  ].filter(Boolean).join(' ').toLowerCase();
+  if (/dark armor|sith armor/.test(text)) return 'dark-armor';
+  if (/sith weapon|alchemical weapon/.test(text)) return 'sith-weapon';
+  if (/abomination/.test(text)) return 'sith-abomination';
+  if (/sith amulet/.test(text)) return 'sith-amulet';
+  return null;
+}
+
+function existingSpecialistTraits(item) {
+  return normalizeTraitIds(getItemAlchemyFlags(item)?.traits);
+}
+
+function validateSpecialistTraitTarget(actor, item, traitId, { ignorePendingProjectId = null } = {}) {
+  if (!item) throw new Error('Sith Alchemy Specialist requires an alchemical item or creature target.');
+  const trait = traitDefinition(traitId);
+  if (!trait) throw new Error('Choose a Sith Alchemy Specialist trait before completing the working.');
+  const targetKind = itemAlchemyKind(item);
+  if (targetKind !== trait.kind) {
+    throw new Error(`${trait.name} requires a ${trait.kind.replace(/-/g, ' ')} target; ${item.name} is ${targetKind || 'not a recognized alchemical target'}.`);
+  }
+  const existing = existingSpecialistTraits(item);
+  if (existing.includes(normalizeToken(trait.id))) {
+    throw new Error(`${item.name} already has the ${trait.name} Sith Alchemy Specialist trait.`);
+  }
+  const state = readForceAlchemyState(actor);
+  const pending = asArray(state.projects).find(project => project?.riteId === 'sith-alchemy-specialist' && project?.status !== 'complete' && project?.id !== ignorePendingProjectId);
+  if (pending) {
+    throw new Error(`Sith Alchemy Specialist already has a modification in progress for ${pending.targetName}. Complete or cancel it before starting another.`);
+  }
+  return { trait, targetKind, existing };
+}
+
 function getItemDescriptionValue(item) {
   const description = item?.system?.description;
   if (description && typeof description === 'object') return String(description.value ?? '');
@@ -636,32 +705,100 @@ async function createSithAmuletItem(actor, project, resourceChanges) {
   return { item, alchemyFlags: itemData.flags[EFFECT_SCOPE].alchemy };
 }
 
+function specialistTraitDescription(item, trait) {
+  const current = getItemDescriptionValue(item);
+  const marker = `Sith Alchemy Specialist: ${trait.name}`;
+  if (current.includes(marker)) return current;
+  const note = `<hr><p><strong>${esc(marker)}:</strong> ${esc(trait.description ?? 'This target has been altered by Sith Alchemy Specialist.')}</p>`;
+  return `${current || ''}${note}`;
+}
+
+function buildSpecialistAlchemyFlags(actor, item, project, trait, targetKind, resourceChanges) {
+  const existing = getItemAlchemyFlags(item);
+  const traits = existingSpecialistTraits(item);
+  const traitId = normalizeToken(trait.id);
+  const nextTraits = traits.includes(traitId) ? traits : [...traits, traitId];
+  const existingDetails = existing.traitDetails && typeof existing.traitDetails === 'object' ? existing.traitDetails : {};
+  return {
+    ...existing,
+    kind: targetKind,
+    alchemyKind: targetKind,
+    specialistModified: true,
+    specialistModifiedAt: nowIso(),
+    specialistSourceRiteId: 'sith-alchemy-specialist',
+    specialistProjectId: project?.id ?? null,
+    creatorActorId: existing.creatorActorId ?? actor?.id ?? null,
+    creatorActorUuid: existing.creatorActorUuid ?? actor?.uuid ?? null,
+    creatorName: existing.creatorName ?? actor?.name ?? null,
+    traits: nextTraits,
+    traitDetails: {
+      ...existingDetails,
+      [traitId]: {
+        id: trait.id,
+        name: trait.name,
+        kind: trait.kind,
+        description: trait.description ?? '',
+        appliedAt: nowIso(),
+        projectId: project?.id ?? null,
+        source: 'sith-alchemy-specialist'
+      }
+    },
+    properties: {
+      ...(existing.properties && typeof existing.properties === 'object' ? existing.properties : {}),
+      eligibleForSithAlchemySpecialist: true,
+      [`specialist.${traitId}`]: true
+    },
+    resourceChanges
+  };
+}
+
+async function applySpecialistTraitToItem(actor, item, project, resourceChanges) {
+  const traitId = project?.config?.traitId;
+  const { trait, targetKind } = validateSpecialistTraitTarget(actor, item, traitId, { ignorePendingProjectId: project?.id });
+  const alchemyFlags = buildSpecialistAlchemyFlags(actor, item, project, trait, targetKind, resourceChanges);
+  const update = {
+    _id: item.id,
+    [`flags.${EFFECT_SCOPE}.alchemy`]: alchemyFlags,
+    'flags.swse.alchemy': alchemyFlags,
+    [itemDescriptionUpdatePath(item)]: specialistTraitDescription(item, trait)
+  };
+  await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [update], { source: 'force-alchemy:sith-alchemy-specialist-complete' });
+  return { alchemyFlags, trait, targetKind };
+}
+
 function detailFromProject(actor, project) {
   const rite = getForceAlchemyRite(project?.riteId);
   const item = getOwnedItem(actor, project?.targetId);
   const target = item ? {
     id: item.id,
     uuid: item.uuid ?? null,
-    name: item.name ?? project?.targetName ?? 'Sith Weapon target',
+    name: item.name ?? project?.targetName ?? 'Alchemical project target',
     icon: item.img ?? null,
-    kind: 'melee-weapon'
+    kind: project?.targetKind ?? itemAlchemyKind(item) ?? 'alchemical-object',
+    alchemyKind: itemAlchemyKind(item),
+    existingTraits: existingSpecialistTraits(item)
   } : {
     id: project?.targetId ?? null,
     uuid: project?.targetUuid ?? null,
-    name: project?.targetName ?? 'Sith Weapon target',
+    name: project?.targetName ?? 'Alchemical project target',
     icon: null,
-    kind: project?.targetKind ?? 'melee-weapon'
+    kind: project?.targetKind ?? 'alchemical-object',
+    alchemyKind: project?.config?.targetAlchemyKind ?? null,
+    existingTraits: []
   };
+  const trait = project?.riteId === 'sith-alchemy-specialist' ? traitDefinition(project?.config?.traitId) : null;
   return {
     rite,
     ready: true,
     selectedTarget: target,
     selectedConfig: project?.config ?? {},
+    selectedTrait: trait,
     previewLines: [
       `Target: ${target.name}`,
+      trait ? `Trait: ${trait.name}` : null,
       `Result: ${rite?.resultLabel ?? project?.resultLabel ?? 'Completed alchemical project'}`,
       'Completion spends the listed completion costs.'
-    ]
+    ].filter(Boolean)
   };
 }
 
@@ -696,6 +833,10 @@ export async function applyForceAlchemySelection(actor, detail) {
   if (!actor) throw new Error('No actor selected.');
   if (!rite) throw new Error('No rite selected.');
   if (isProjectRite(rite)) {
+    if (rite.id === 'sith-alchemy-specialist') {
+      const item = getOwnedItem(actor, detail?.selectedTarget?.id);
+      validateSpecialistTraitTarget(actor, item, detail?.selectedTrait?.id ?? detail?.selectedConfig?.traitId);
+    }
     const result = await ForceAlchemyStateService.recordSelection(actor, detail);
     await postRiteChat(actor, detail, { mode: 'project recorded', effectCount: 0 });
     return { ...result, mechanical: false, mode: 'project' };
@@ -798,7 +939,30 @@ export async function completeForceAlchemyMechanicalProject(actor, projectId) {
     return { ...completion, item, alchemyFlags, profile, resourceChanges };
   }
 
-  throw new Error(`${project.name} completion is not implemented in Phase 5. Specialist traits and Cause Mutation remain deferred.`);
+  if (project.riteId === 'sith-alchemy-specialist') {
+    const item = getOwnedItem(actor, project.targetId);
+    if (!item) throw new Error(`Could not find the Specialist target "${project.targetName}" on this actor.`);
+    const resourceChanges = await applyResourceCosts(actor, detail);
+    const { alchemyFlags, trait, targetKind } = await applySpecialistTraitToItem(actor, item, project, resourceChanges);
+    const completion = await ForceAlchemyStateService.completeProject(actor, projectId, {
+      resourceChanges,
+      itemUuid: item.uuid ?? null,
+      itemId: item.id ?? null,
+      alchemyKind: targetKind,
+      traitId: trait.id,
+      traitName: trait.name,
+      completionMode: 'sith-alchemy-specialist-trait'
+    });
+    await postRiteChat(actor, {
+      ...detail,
+      selectedTarget: { ...(detail.selectedTarget ?? {}), name: item.name, id: item.id, uuid: item.uuid },
+      selectedTrait: trait,
+      previewLines: [`Target: ${item.name}`, `Trait applied: ${trait.name}`, `Flag: flags.${EFFECT_SCOPE}.alchemy.traits[]`]
+    }, { mode: 'specialist trait completed', resourceChanges, effectCount: 0 });
+    return { ...completion, item, alchemyFlags, trait, targetKind, resourceChanges };
+  }
+
+  throw new Error(`${project.name} completion is not implemented yet. Cause Mutation remains deferred to the GM-gated phase.`);
 }
 
 

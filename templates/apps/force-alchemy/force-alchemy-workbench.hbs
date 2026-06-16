@@ -200,12 +200,17 @@
             {{#if detail.showTraitConfig}}
               <section class="sa-d-block">
                 <div class="sa-d-lbl">Choose Specialist Trait</div>
+                {{#if detail.pendingSpecialistProject}}
+                  <div class="sa-warn"><span class="w-ico">!</span><span class="w-txt"><b>One modification at a time:</b> {{detail.pendingSpecialistProject.name}} is already modifying {{detail.pendingSpecialistProject.targetName}}. Complete or cancel that project before starting another Specialist trait.</span></div>
+                {{/if}}
                 {{#each detail.traitGroups}}
-                  <div class="sa-trait-group">
+                  <div class="sa-trait-group {{#if targetMismatch}}muted{{/if}}">
                     <div class="sa-trait-group-title">{{label}}</div>
                     {{#each traits}}
                       <button type="button" class="sa-opt {{#if selected}}sel{{/if}} {{#if disabled}}disabled{{/if}}" data-force-alchemy-action="trait" data-trait-id="{{id}}" {{#if disabled}}disabled{{/if}}>
-                        <span class="o-ico">&#10070;</span><span><span class="o-nm">{{name}}</span><span class="o-meta">{{description}}</span></span><span class="o-check">✓</span>
+                        <span class="o-ico">&#10070;</span>
+                        <span><span class="o-nm">{{name}}</span><span class="o-meta">{{description}}{{#if disabledReason}} · {{disabledReason}}{{/if}}</span></span>
+                        <span class="o-check">✓</span>
                       </button>
                     {{/each}}
                   </div>
@@ -237,7 +242,7 @@
 
           <footer class="sa-commit">
             <div class="sa-commit-meta">
-              <span>Phase 5: instant rites apply effects; ready Sith Weapon, Sith Amulet, and Sith Armor projects can complete</span>
+              <span>Phase 6: instant rites apply effects; ready Sith Weapon, Sith Amulet, Sith Armor, and Specialist trait projects can complete</span>
               <span class="{{#if detail.ready}}ready{{else}}blocked{{/if}}">{{#if detail.ready}}Ready to apply{{else}}Selection incomplete{{/if}}</span>
             </div>
             <div class="sa-btn-row">
