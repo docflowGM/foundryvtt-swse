@@ -106,23 +106,39 @@ function normalizeStateEntry(entry, fallbackRiteId = null) {
   };
 }
 
+function projectCompletionMode(riteId) {
+  if (riteId === 'sith-weapon') return 'sith-weapon-item-flags';
+  if (riteId === 'sith-amulet') return 'sith-amulet-item-create';
+  if (riteId === 'sith-armor') return 'sith-armor-item-transform';
+  return 'manual-next-phase';
+}
+
+function projectCanComplete(project, ready) {
+  if (!ready || project?.gmGated === true) return false;
+  return ['sith-weapon', 'sith-amulet', 'sith-armor'].includes(project?.riteId);
+}
+
 function normalizeProject(project) {
   const entry = normalizeStateEntry(project, project?.riteId);
   if (!entry) return null;
   const requiredUnits = Number(project?.requiredUnits ?? 1);
   const progress = Number(project?.progress ?? 0);
   const unit = project?.unit ?? 'work';
-  const ready = progress >= requiredUnits;
+  const safeRequiredUnits = Number.isFinite(requiredUnits) ? Math.max(1, requiredUnits) : 1;
+  const safeProgress = Number.isFinite(progress) ? Math.max(0, progress) : 0;
+  const ready = safeProgress >= safeRequiredUnits;
+  const completionMode = project?.completionMode ?? projectCompletionMode(entry.riteId);
   return {
     ...entry,
     status: project?.status ?? (ready ? 'ready' : 'pending'),
-    progress: Number.isFinite(progress) ? Math.max(0, progress) : 0,
-    requiredUnits: Number.isFinite(requiredUnits) ? Math.max(1, requiredUnits) : 1,
+    progress: safeProgress,
+    requiredUnits: safeRequiredUnits,
     unit,
-    durationLabel: project?.durationLabel ?? `${requiredUnits} ${unit}${requiredUnits === 1 ? '' : 's'}`,
+    durationLabel: project?.durationLabel ?? `${safeRequiredUnits} ${unit}${safeRequiredUnits === 1 ? '' : 's'}`,
     gmGated: project?.gmGated === true,
-    progressLabel: project?.progressLabel ?? `${Math.min(progress, requiredUnits)} / ${requiredUnits} ${unit}${requiredUnits === 1 ? '' : 's'}`,
-    completionMode: project?.completionMode ?? 'manual-next-phase'
+    progressLabel: project?.progressLabel ?? `${Math.min(safeProgress, safeRequiredUnits)} / ${safeRequiredUnits} ${unit}${safeRequiredUnits === 1 ? '' : 's'}`,
+    completionMode,
+    completable: project?.completable ?? projectCanComplete({ ...project, riteId: entry.riteId }, ready)
   };
 }
 
@@ -266,7 +282,7 @@ function buildProjectFromDetail(detail) {
     unit: duration.unit,
     durationLabel: duration.durationLabel,
     gmGated: detail?.rite?.gmGated === true,
-    completionMode: 'manual-next-phase'
+    completionMode: projectCompletionMode(detail?.rite?.id)
   });
 }
 

@@ -91,6 +91,8 @@ function locationCard(location = {}, records = [], factions = []) {
   const faction = findFaction(factions, location.controllingFactionId);
   const factionIds = Array.from(new Set([location.controllingFactionId, ...asArray(location.factionIds), ...asArray(location.factionPresence).map(entry => entry.factionId)].filter(Boolean)));
   const factionNames = factionIds.map(id => findFaction(factions, id)?.name || id).filter(Boolean);
+  const contactRows = contactRowsForFaction(factions).filter(contact => asArray(location.contactIds).includes(contact.id));
+  const contactNames = contactRows.map(contact => [contact.name, contact.role, contact.factionName].filter(Boolean).join(' ')).filter(Boolean);
   const contactCount = asArray(location.contactIds).length;
   const actorCount = asArray(location.npcActorUuids).length;
   return {
@@ -129,7 +131,8 @@ function locationCard(location = {}, records = [], factions = []) {
     publicSummary: location.publicSummary,
     tagsLabel: tagsLabel(location.tags),
     updatedLabel: dateLabel(location.updatedAt),
-    searchText: [location.name, location.category, location.type, location.region, location.sector, location.system, location.publicSummary, location.gmNotes, tagsLabel(location.tags), factionNames.join(' ')].join(' ').toLowerCase()
+    contactNames: contactNames.join(', '),
+    searchText: [location.name, location.category, location.type, location.region, location.sector, location.system, location.publicSummary, location.gmNotes, tagsLabel(location.tags), factionNames.join(' '), contactNames.join(' ')].join(' ').toLowerCase()
   };
 }
 

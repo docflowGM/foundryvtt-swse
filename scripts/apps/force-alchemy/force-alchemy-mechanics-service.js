@@ -53,6 +53,18 @@ function actorCredits(actor) {
   );
 }
 
+function creditUpdatePath(actor) {
+  const system = actor?.system ?? {};
+  if (system.credits && typeof system.credits === 'object') {
+    if (Object.hasOwn(system.credits, 'available')) return 'system.credits.available';
+    if (Object.hasOwn(system.credits, 'value')) return 'system.credits.value';
+  }
+  if (system.currency && typeof system.currency === 'object' && Object.hasOwn(system.currency, 'credits')) return 'system.currency.credits';
+  if (system.wealth && typeof system.wealth === 'object' && Object.hasOwn(system.wealth, 'credits')) return 'system.wealth.credits';
+  if (system.resources?.credits && typeof system.resources.credits === 'object' && Object.hasOwn(system.resources.credits, 'value')) return 'system.resources.credits.value';
+  return 'system.credits';
+}
+
 function isMechanicalRite(rite) {
   return rite?.timing === 'instant' || rite?.timing === 'encounter';
 }
@@ -374,14 +386,16 @@ async function applyResourceCosts(actor, detail) {
     updates['system.darkSide.value'] = before.darkSideScore + dspCost;
     updates['system.darkSideScore'] = before.darkSideScore + dspCost;
   }
-  // Credit/material spending is reserved for the downtime completion phase. There are no instant credit-cost rites in phase 3.
+  if (creditCost > 0) {
+    updates[creditUpdatePath(actor)] = Math.max(0, before.credits - creditCost);
+  }
   if (Object.keys(updates).length) {
     await ActorEngine.updateActor(actor, updates, { source: 'force-alchemy:resource-costs' });
   }
   const after = {
     forcePoints: fpCost > 0 ? Math.max(0, before.forcePoints - fpCost) : before.forcePoints,
     darkSideScore: dspCost > 0 ? before.darkSideScore + dspCost : before.darkSideScore,
-    credits: before.credits
+    credits: creditCost > 0 ? Math.max(0, before.credits - creditCost) : before.credits
   };
   return { before, after, spent: { forcePoints: fpCost, darkSideScore: dspCost, credits: creditCost } };
 }
@@ -453,6 +467,175 @@ async function markItemAsSithWeapon(actor, item, project, resourceChanges) {
   return alchemyFlags;
 }
 
+const SITH_ARMOR_PROFILES = {
+  light: {
+    resultName: 'Light Dark Armor',
+    armorType: 'light',
+    reflexBonus: 4,
+    fortitudeBonus: 3,
+    maxDex: 3,
+    armorCheckPenalty: -2,
+    speedPenalty: 0,
+    weight: 10,
+    cost: 10000
+  },
+  standard: {
+    resultName: 'Dark Armor',
+    armorType: 'medium',
+    reflexBonus: 7,
+    fortitudeBonus: 4,
+    maxDex: 2,
+    armorCheckPenalty: -5,
+    speedPenalty: 2,
+    weight: 16,
+    cost: 15000
+  },
+  heavy: {
+    resultName: 'Heavy Dark Armor',
+    armorType: 'heavy',
+    reflexBonus: 8,
+    fortitudeBonus: 5,
+    maxDex: 1,
+    armorCheckPenalty: -10,
+    speedPenalty: 2,
+    weight: 30,
+    cost: 25000
+  }
+};
+
+function classifySithArmorProfile(item, project = {}) {
+  const text = [item?.name, item?.system?.armorType, item?.system?.category, item?.system?.subtype, project?.targetName, project?.targetKind, project?.config?.armorTier]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+  if (text.includes('heavy')) return SITH_ARMOR_PROFILES.heavy;
+  if (text.includes('light')) return SITH_ARMOR_PROFILES.light;
+  return SITH_ARMOR_PROFILES.standard;
+}
+
+function buildSithArmorDescription(item, profile) {
+  const current = getItemDescriptionValue(item);
+  if (/Sith Armor \(Alchemy\)/i.test(current)) return current;
+  const note = `<hr><p><strong>Sith Armor (Alchemy):</strong> This suit has been transformed into <strong>${esc(profile.resultName)}</strong> through Sith Alchemy. It counts as Dark Armor for Sith Alchemy Specialist traits and other alchemical workflows.</p>`;
+  return `${current || ''}${note}`;
+}
+
+function buildSithArmorFlagData(actor, item, project, profile, resourceChanges) {
+  const existing = getItemAlchemyFlags(item);
+  return {
+    ...existing,
+    kind: 'dark-armor',
+    alchemyKind: 'dark-armor',
+    sourceRiteId: 'sith-armor',
+    creatorActorId: actor?.id ?? null,
+    creatorActorUuid: actor?.uuid ?? null,
+    creatorName: actor?.name ?? null,
+    targetProjectId: project?.id ?? null,
+    createdAt: existing.createdAt ?? nowIso(),
+    completedAt: nowIso(),
+    originalName: existing.originalName ?? item?.name ?? null,
+    resultName: profile.resultName,
+    traits: asArray(existing.traits),
+    properties: {
+      ...(existing.properties && typeof existing.properties === 'object' ? existing.properties : {}),
+      darkArmor: true,
+      eligibleForSithAlchemySpecialist: true
+    },
+    resourceChanges
+  };
+}
+
+async function markItemAsSithArmor(actor, item, project, resourceChanges) {
+  if (!item?.id) throw new Error('Sith Armor project target item could not be resolved.');
+  const profile = classifySithArmorProfile(item, project);
+  const alchemyFlags = buildSithArmorFlagData(actor, item, project, profile, resourceChanges);
+  const equipped = item?.system?.equipped ?? item?.system?.equippable?.equipped ?? false;
+  const traits = Array.isArray(item?.system?.traits) ? item.system.traits : [];
+  const update = {
+    _id: item.id,
+    name: profile.resultName,
+    [`flags.${EFFECT_SCOPE}.alchemy`]: alchemyFlags,
+    'flags.swse.alchemy': alchemyFlags,
+    'flags.swse.sithArmor': true,
+    'system.armorType': profile.armorType,
+    'system.defenseBonus': profile.reflexBonus,
+    'system.reflexBonus': profile.reflexBonus,
+    'system.fortBonus': profile.fortitudeBonus,
+    'system.fortitudeBonus': profile.fortitudeBonus,
+    'system.maxDexBonus': profile.maxDex,
+    'system.maxDex': profile.maxDex,
+    'system.armorCheckPenalty': profile.armorCheckPenalty,
+    'system.speedPenalty': profile.speedPenalty,
+    'system.weight': profile.weight,
+    'system.cost': profile.cost,
+    'system.costNumeric': profile.cost,
+    'system.category': 'armor',
+    'system.equipped': equipped,
+    'system.equippable.equipped': equipped,
+    'system.equippable.slot': item?.system?.equippable?.slot ?? 'body',
+    'system.defense.reflexBonus': profile.reflexBonus,
+    'system.defense.fortBonus': profile.fortitudeBonus,
+    'system.defense.willBonus': item?.system?.defense?.willBonus ?? 0,
+    'system.limits.maxDex': profile.maxDex,
+    'system.limits.checkPenalty': profile.armorCheckPenalty,
+    'system.limits.speedAdjustment': profile.speedPenalty,
+    'system.damageReduction.value': item?.system?.damageReduction?.value ?? 0,
+    'system.damageReduction.type': item?.system?.damageReduction?.type ?? null,
+    'system.traits': traits,
+    'system.economics.weight': profile.weight,
+    'system.economics.cost': profile.cost,
+    [itemDescriptionUpdatePath(item)]: buildSithArmorDescription(item, profile)
+  };
+  await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [update], { source: 'force-alchemy:sith-armor-complete' });
+  return { alchemyFlags, profile };
+}
+
+function buildSithAmuletItemData(actor, project, resourceChanges) {
+  const alchemyFlags = {
+    kind: 'sith-amulet',
+    alchemyKind: 'sith-amulet',
+    sourceRiteId: 'sith-amulet',
+    creatorActorId: actor?.id ?? null,
+    creatorActorUuid: actor?.uuid ?? null,
+    creatorName: actor?.name ?? null,
+    targetProjectId: project?.id ?? null,
+    createdAt: nowIso(),
+    completedAt: nowIso(),
+    materialCost: Number(project?.creditCost ?? 25000) || 25000,
+    traits: [],
+    properties: { sithAmulet: true, eligibleForSithAlchemySpecialist: true },
+    resourceChanges
+  };
+  return {
+    name: 'Sith Amulet',
+    type: 'equipment',
+    img: 'icons/equipment/neck/amulet-round-red.webp',
+    system: {
+      description: '<p><strong>Sith Amulet (Alchemy):</strong> A powerful amulet forged through Sith Alchemy from rare gems and raw materials. It functions as a Sith Amulet and carries the imprint of its creator.</p>',
+      source: 'Sith Alchemy Workbench',
+      equipped: false,
+      quantity: 1,
+      weight: 0,
+      cost: 25000,
+      rarity: 'legendary',
+      upgradeSlots: 0,
+      installedUpgrades: []
+    },
+    flags: {
+      [EFFECT_SCOPE]: { alchemy: alchemyFlags },
+      swse: { alchemy: alchemyFlags }
+    }
+  };
+}
+
+async function createSithAmuletItem(actor, project, resourceChanges) {
+  const itemData = buildSithAmuletItemData(actor, project, resourceChanges);
+  const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [itemData], { source: 'force-alchemy:sith-amulet-complete' });
+  const item = Array.from(created ?? [])[0] ?? null;
+  if (!item) throw new Error('Sith Amulet item creation failed.');
+  return { item, alchemyFlags: itemData.flags[EFFECT_SCOPE].alchemy };
+}
+
 function detailFromProject(actor, project) {
   const rite = getForceAlchemyRite(project?.riteId);
   const item = getOwnedItem(actor, project?.targetId);
@@ -492,6 +675,7 @@ async function postRiteChat(actor, detail, { mode = 'applied', resourceChanges =
   lines.push(`<div class="fa-chat-row"><span>Mode</span><strong>${esc(mode)}</strong></div>`);
   lines.push(`<div class="fa-chat-row"><span>Force Points</span><strong>${Number(spent.forcePoints ?? 0) ? `-${esc(spent.forcePoints)}` : 'none'}</strong></div>`);
   lines.push(`<div class="fa-chat-row"><span>Dark Side Score</span><strong class="danger">${Number(spent.darkSideScore ?? 0) ? `+${esc(spent.darkSideScore)}` : 'none'}</strong></div>`);
+  lines.push(`<div class="fa-chat-row"><span>Credits / Materials</span><strong>${Number(spent.credits ?? 0) ? `-${Number(spent.credits).toLocaleString()} cr` : 'none'}</strong></div>`);
   lines.push(`<div class="fa-chat-row"><span>Visible Effects</span><strong>${esc(effectCount)}</strong></div>`);
   const preview = asArray(detail?.previewLines).map(line => `<li>${esc(line)}</li>`).join('');
   const content = `
@@ -563,26 +747,58 @@ export async function completeForceAlchemyMechanicalProject(actor, projectId) {
   const project = asArray(state.projects).find(entry => entry.id === projectId);
   if (!project) throw new Error('No matching Force Alchemy project found.');
   if (!project.ready && project.status !== 'ready') throw new Error(`${project.name} is not ready to complete yet.`);
-  if (project.riteId !== 'sith-weapon') {
-    throw new Error(`${project.name} completion is not implemented in Phase 4. Sith Armor, Sith Amulet, Specialist, and Mutation completion remain deferred.`);
-  }
 
-  const item = getOwnedItem(actor, project.targetId);
-  if (!item) throw new Error(`Could not find the project target item "${project.targetName}" on this actor.`);
   const detail = detailFromProject(actor, project);
   validateCosts(actor, detail);
 
-  const resourceChanges = await applyResourceCosts(actor, detail);
-  const alchemyFlags = await markItemAsSithWeapon(actor, item, project, resourceChanges);
-  const completion = await ForceAlchemyStateService.completeProject(actor, projectId, {
-    resourceChanges,
-    itemUuid: item.uuid ?? null,
-    itemId: item.id ?? null,
-    alchemyKind: alchemyFlags.kind,
-    completionMode: 'sith-weapon-item-flags'
-  });
-  await postRiteChat(actor, detail, { mode: 'sith weapon completed', resourceChanges, effectCount: 0 });
-  return { ...completion, item, alchemyFlags, resourceChanges };
+  if (project.riteId === 'sith-weapon') {
+    const item = getOwnedItem(actor, project.targetId);
+    if (!item) throw new Error(`Could not find the project target item "${project.targetName}" on this actor.`);
+    const resourceChanges = await applyResourceCosts(actor, detail);
+    const alchemyFlags = await markItemAsSithWeapon(actor, item, project, resourceChanges);
+    const completion = await ForceAlchemyStateService.completeProject(actor, projectId, {
+      resourceChanges,
+      itemUuid: item.uuid ?? null,
+      itemId: item.id ?? null,
+      alchemyKind: alchemyFlags.kind,
+      completionMode: 'sith-weapon-item-flags'
+    });
+    await postRiteChat(actor, detail, { mode: 'sith weapon completed', resourceChanges, effectCount: 0 });
+    return { ...completion, item, alchemyFlags, resourceChanges };
+  }
+
+  if (project.riteId === 'sith-amulet') {
+    const resourceChanges = await applyResourceCosts(actor, detail);
+    const { item, alchemyFlags } = await createSithAmuletItem(actor, project, resourceChanges);
+    const completion = await ForceAlchemyStateService.completeProject(actor, projectId, {
+      resourceChanges,
+      itemUuid: item.uuid ?? null,
+      itemId: item.id ?? null,
+      alchemyKind: alchemyFlags.kind,
+      completionMode: 'sith-amulet-item-create'
+    });
+    await postRiteChat(actor, { ...detail, selectedTarget: { ...(detail.selectedTarget ?? {}), name: item.name, id: item.id, uuid: item.uuid } }, { mode: 'sith amulet completed', resourceChanges, effectCount: 0 });
+    return { ...completion, item, alchemyFlags, resourceChanges };
+  }
+
+  if (project.riteId === 'sith-armor') {
+    const item = getOwnedItem(actor, project.targetId);
+    if (!item) throw new Error(`Could not find the project target armor "${project.targetName}" on this actor.`);
+    const resourceChanges = await applyResourceCosts(actor, detail);
+    const { alchemyFlags, profile } = await markItemAsSithArmor(actor, item, project, resourceChanges);
+    const completion = await ForceAlchemyStateService.completeProject(actor, projectId, {
+      resourceChanges,
+      itemUuid: item.uuid ?? null,
+      itemId: item.id ?? null,
+      alchemyKind: alchemyFlags.kind,
+      resultName: profile.resultName,
+      completionMode: 'sith-armor-item-transform'
+    });
+    await postRiteChat(actor, { ...detail, selectedTarget: { ...(detail.selectedTarget ?? {}), name: profile.resultName } }, { mode: 'sith armor completed', resourceChanges, effectCount: 0 });
+    return { ...completion, item, alchemyFlags, profile, resourceChanges };
+  }
+
+  throw new Error(`${project.name} completion is not implemented in Phase 5. Specialist traits and Cause Mutation remain deferred.`);
 }
 
 
