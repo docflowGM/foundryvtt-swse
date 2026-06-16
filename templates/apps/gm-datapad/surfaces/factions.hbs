@@ -13,6 +13,7 @@
       <span><strong>{{factionManager.counts.relationships}}</strong>Relations</span>
       <span><strong>{{factionManager.counts.suggestions}}</strong>Pending</span>
       <span><strong>{{factionManager.counts.intel}}</strong>Intel</span>
+      <span><strong>{{factionManager.counts.locations}}</strong>Locations</span>
       <button type="button" class="swse-ui-button primary gm-phase2-primary" data-gm-wizard-open="faction"><i class="fa-solid fa-plus"></i> Add Faction Dossier</button>
     </div>
   </div>
@@ -44,6 +45,8 @@
                 <button type="button" class="swse-ui-button primary gm-faction-action-button" data-gm-faction-action="make-job-faction" data-faction-id="{{this.id}}" data-faction-name="{{this.name}}"><i class="fa-solid fa-clipboard-list"></i> Make Job</button>
                 <button type="button" class="swse-ui-button" data-gm-faction-action="view-jobs-faction" data-faction-id="{{this.id}}" data-faction-name="{{this.name}}"><i class="fa-solid fa-filter"></i> View Jobs</button>
                 <button type="button" class="swse-ui-button gm-dossier-intel-action" data-gm-faction-action="create-intel-faction" data-faction-id="{{this.id}}" data-faction-name="{{this.name}}"><i class="fa-solid fa-file-shield"></i> Create Intel</button>
+                <button type="button" class="swse-ui-button" data-gm-faction-action="view-locations-faction" data-faction-id="{{this.id}}" data-faction-name="{{this.name}}"><i class="fa-solid fa-map-location-dot"></i> Locations</button>
+                <button type="button" class="swse-ui-button" data-gm-faction-action="create-location-faction" data-faction-id="{{this.id}}" data-faction-name="{{this.name}}"><i class="fa-solid fa-location-plus"></i> New Site</button>
                 <button type="button" class="swse-ui-button gm-dossier-intel-action" data-gm-faction-action="reveal-faction" data-faction-id="{{this.id}}" data-faction-name="{{this.name}}"><i class="fa-solid fa-eye"></i> Reveal</button>
                 <button type="submit" class="swse-ui-button approve"><i class="fa-solid fa-floppy-disk"></i> Save</button>
                 <button type="button" class="swse-ui-button danger" data-gm-faction-action="delete-registry" data-faction-id="{{this.id}}"><i class="fa-solid fa-trash"></i> Delete</button>
@@ -59,7 +62,34 @@
             <div class="gm-faction-intel-chip is-known"><span>Known NPCs</span><strong>{{this.knownContactCount}}</strong></div>
             <div class="gm-faction-intel-chip is-hidden"><span>GM Only</span><strong>{{this.hiddenContactCount}}</strong></div>
             <div class="gm-faction-intel-chip is-known"><span>Intel</span><strong>{{this.intelCount}}</strong></div>
+            <div class="gm-faction-intel-chip is-known"><span>Locations</span><strong>{{this.locationCount}}</strong></div>
           </div>
+
+          <details class="gm-phase2-details gm-faction-location-footprint" {{#if this.locationRows.length}}open{{/if}}>
+            <summary><i class="fa-solid fa-map"></i> Operating Locations / Atlas Footprint</summary>
+            {{#if this.locationRows.length}}
+              <div class="gm-faction-location-grid">
+                {{#each this.locationRows}}
+                  <article class="gm-faction-location-card {{#if activeForParty}}is-active{{/if}} {{#if knownToPlayers}}is-known{{else}}is-hidden{{/if}}" data-swse-drag-kind="location" data-swse-drag-id="{{id}}" data-swse-drag-name="{{name}}" data-swse-drag-source="factions">
+                    <div>
+                      <strong>{{name}}</strong>
+                      <span>{{typeLabel}} · {{revealLabel}}</span>
+                      <small>{{chain}}</small>
+                    </div>
+                    <div class="gm-faction-location-card-meta">
+                      <span>{{intelCount}} Intel</span>
+                      <span>{{jobCount}} Jobs</span>
+                      <span>{{seedCount}} Seeds</span>
+                    </div>
+                    <button type="button" class="swse-ui-button" data-gm-faction-action="open-location" data-location-id="{{id}}">Open</button>
+                  </article>
+                {{/each}}
+              </div>
+            {{else}}
+              <p class="placeholder">No Locations are linked to this faction yet. Drag this faction onto a Location, or create a starter operations site.</p>
+            {{/if}}
+          </details>
+
           <details class="gm-phase2-details">
             <summary>Edit registry details</summary>
             <div class="gm-faction-form-grid compact">
@@ -145,7 +175,17 @@
                   <span>Open: <strong>{{this.jobStats.open}}</strong></span>
                   <span>Active: <strong>{{this.jobStats.active}}</strong></span>
                   <span>Done: <strong>{{this.jobStats.completed}}</strong></span>
+                  <span>Locations: <strong>{{this.locationCount}}</strong></span>
                 </div>
+                {{#if this.locationRows.length}}
+                <div class="gm-faction-contact-locations mini">
+                  {{#each this.locationRows}}
+                    <button type="button" class="gm-faction-location-pill {{#if knownToPlayers}}is-known{{else}}is-hidden{{/if}}" data-gm-faction-action="open-location" data-location-id="{{id}}">
+                      <i class="fa-solid fa-location-dot"></i> {{name}}
+                    </button>
+                  {{/each}}
+                </div>
+                {{/if}}
                 {{#if this.jobStats.hasJobs}}
                 <div class="gm-faction-recent-jobs mini">
                   {{#each this.recentJobs}}
@@ -167,6 +207,8 @@
                   <button type="button" class="swse-ui-button primary" data-gm-faction-action="make-job-contact" data-faction-id="{{../id}}" data-faction-name="{{../name}}" data-contact-id="{{this.id}}" data-contact-name="{{this.name}}"><i class="fa-solid fa-clipboard-list"></i> Make Job</button>
                   <button type="button" class="swse-ui-button" data-gm-faction-action="view-jobs-contact" data-faction-id="{{../id}}" data-faction-name="{{../name}}" data-contact-id="{{this.id}}" data-contact-name="{{this.name}}"><i class="fa-solid fa-filter"></i> View Jobs</button>
                   <button type="button" class="swse-ui-button gm-dossier-intel-action" data-gm-faction-action="create-intel-contact" data-faction-id="{{../id}}" data-faction-name="{{../name}}" data-contact-id="{{this.id}}" data-contact-name="{{this.name}}"><i class="fa-solid fa-file-shield"></i> Create Intel</button>
+                  <button type="button" class="swse-ui-button" data-gm-faction-action="view-locations-contact" data-faction-id="{{../id}}" data-faction-name="{{../name}}" data-contact-id="{{this.id}}" data-contact-name="{{this.name}}"><i class="fa-solid fa-map-location-dot"></i> Locations</button>
+                  <button type="button" class="swse-ui-button" data-gm-faction-action="create-location-contact" data-faction-id="{{../id}}" data-faction-name="{{../name}}" data-contact-id="{{this.id}}" data-contact-name="{{this.name}}"><i class="fa-solid fa-location-plus"></i> New POI</button>
                   <button type="button" class="swse-ui-button gm-dossier-skeleton-action" data-gm-faction-action="send-contact-message" data-faction-id="{{../id}}" data-faction-name="{{../name}}" data-contact-id="{{this.id}}" data-contact-name="{{this.name}}"><i class="fa-solid fa-message"></i> Send as NPC</button>
                   {{#if this.knownToPlayers}}
                   <button type="button" class="swse-ui-button" data-gm-faction-action="hide-contact" data-faction-id="{{../id}}" data-faction-name="{{../name}}" data-contact-id="{{this.id}}" data-contact-name="{{this.name}}"><i class="fa-solid fa-eye-slash"></i> GM Only</button>

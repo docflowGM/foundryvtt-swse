@@ -5,6 +5,7 @@ import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/she
 import { FactionIntelBridgeService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/FactionIntelBridgeService.js';
 import { DossierDragDropService } from '/systems/foundryvtt-swse/scripts/ui/dragdrop/dossier-drag-drop-service.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
+import { LocationRegistryService } from '/systems/foundryvtt-swse/scripts/locations/location-registry-service.js';
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 
 function text(formData, key) { return String(formData.get(key) ?? '').trim(); }
@@ -341,6 +342,65 @@ export class GMFactionRelationshipSurfaceController {
           await this._openIntelRecord(record, `NPC Intel draft created for ${target.dataset.contactName || 'this contact'}.`);
           return;
         }
+        if (action === 'view-locations-faction') {
+          await this._openLocationFilter({
+            search: target.dataset.factionName || '',
+            selectedLocationId: target.dataset.locationId || '',
+            label: target.dataset.factionName || 'Faction Locations'
+          });
+          return;
+        }
+        if (action === 'view-locations-contact') {
+          await this._openLocationFilter({
+            search: target.dataset.contactName || '',
+            selectedLocationId: target.dataset.locationId || '',
+            label: target.dataset.contactName || 'NPC Locations'
+          });
+          return;
+        }
+        if (action === 'open-location') {
+          await this._openLocationFilter({ selectedLocationId: target.dataset.locationId || '', search: '' });
+          return;
+        }
+        if (action === 'create-location-faction') {
+          const faction = FactionRegistryService.findFaction(target.dataset.factionId || target.dataset.factionName || '');
+          if (!faction) return ui.notifications?.warn?.('Faction could not be found.');
+          const location = await LocationRegistryService.upsertLocation({
+            name: `${faction.name} Operations Site`,
+            category: 'installation',
+            type: 'base',
+            scale: 'site',
+            revealState: 'hidden',
+            knownToPlayers: false,
+            controllingFactionId: faction.id,
+            factionIds: [faction.id],
+            publicSummary: `A suspected ${faction.name} operating location.`,
+            gmNotes: `Created from Galactic Dossier for ${faction.name}. Customize before revealing to Atlas.`,
+            historyNote: `Created from faction dossier ${faction.name}.`
+          });
+          await this._openLocationFilter({ selectedLocationId: location?.id || '', search: '' });
+          return;
+        }
+        if (action === 'create-location-contact') {
+          const found = FactionRegistryService.findFactionContact(target.dataset.factionId, target.dataset.contactId);
+          if (!found?.contact) return ui.notifications?.warn?.('Named NPC dossier could not be found.');
+          const location = await LocationRegistryService.upsertLocation({
+            name: `${found.contact.name} Last Known Location`,
+            category: 'custom',
+            type: 'poi',
+            scale: 'site',
+            revealState: found.contact.knownToPlayers ? 'hinted' : 'hidden',
+            knownToPlayers: false,
+            factionIds: [found.faction.id],
+            contactIds: [found.contact.id],
+            publicSummary: found.contact.publicNotes || `${found.contact.name} has been associated with this location.`,
+            gmNotes: [found.contact.lastKnownLocation ? `Original last-known text: ${found.contact.lastKnownLocation}` : '', found.contact.gmNotes].filter(Boolean).join('\n\n'),
+            historyNote: `Created from named NPC dossier ${found.contact.name}.`
+          });
+          await LocationRegistryService.linkContactToLocation(location.id, found.contact.id, { factionId: found.faction.id });
+          await this._openLocationFilter({ selectedLocationId: location?.id || '', search: '' });
+          return;
+        }
         if (action === 'reveal-faction') {
           const record = await FactionIntelBridgeService.buildFactionRevealIntel(target.dataset.factionId);
           await this._openIntelRecord(record, `Faction reveal Intel staged for ${target.dataset.factionName || 'this faction'}.`);
@@ -452,6 +512,23 @@ export class GMFactionRelationshipSurfaceController {
     }
     this.host.currentPage = 'jobs';
     await requestShellRender(this.host, { reason: 'gm-faction-view-jobs', surfaceId: 'jobs' });
+  }
+
+  async _openLocationFilter({ search = '', selectedLocationId = '', label = 'Locations' } = {}) {
+    this.host?.patchSurfaceState?.('locations', {
+      search: search || '',
+      selectedLocationId: selectedLocationId || '',
+      category: '',
+      type: '',
+      revealState: '',
+      special: ''
+    }, { render: false });
+    if (typeof this.host?._navigateTo === 'function') {
+      await this.host._navigateTo('locations');
+      return;
+    }
+    this.host.currentPage = 'locations';
+    await requestShellRender(this.host, { reason: 'gm-faction-view-locations', surfaceId: 'locations' });
   }
 
   async _openJobDraft(draft) {

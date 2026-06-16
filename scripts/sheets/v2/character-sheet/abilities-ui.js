@@ -5,6 +5,7 @@
  */
 
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
+import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
 
 /**
  * Activate abilities panel UI listeners
@@ -28,6 +29,18 @@ export function activateAbilitiesUI(sheet, html, { signal } = {}) {
   });
 
 
+
+  html.querySelectorAll('[data-action="open-force-alchemy-workbench"]').forEach(button => {
+    button.addEventListener("click", async (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      await openForceAlchemyWorkbench(sheet.actor, {
+        launchSource: 'talents-tab',
+        riteId: button.dataset.riteId || null,
+        activeCategory: button.dataset.category || null
+      });
+    }, { signal });
+  });
 
   // Add feat button
   html.querySelectorAll('[data-action="add-feat"]').forEach(button => {

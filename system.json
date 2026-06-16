@@ -140,7 +140,7 @@
     "styles/apps/gm-datapad.css",
     "styles/layout/sheet-layout.css",
     "styles/components/discovery.css",
-    "styles/system/display-effects.css"
+    "styles/apps/force-alchemy-workbench.css"
   ],
   "languages": [
     {
@@ -150,12 +150,12 @@
     },
     {
       "lang": "es",
-      "name": "Espa\u00f1ol",
+      "name": "Español",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Fran\u00e7ais",
+      "name": "Français",
       "path": "lang/fr.json"
     },
     {
@@ -165,27 +165,27 @@
     },
     {
       "lang": "ja",
-      "name": "\u65e5\u672c\u8a9e",
+      "name": "日本語",
       "path": "lang/ja.json"
     },
     {
       "lang": "ru",
-      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
+      "name": "Русский",
       "path": "lang/ru.json"
     },
     {
       "lang": "pt-BR",
-      "name": "Portugu\u00eas (Brasil)",
+      "name": "Português (Brasil)",
       "path": "lang/pt-BR.json"
     },
     {
       "lang": "zh-CN",
-      "name": "\u7b80\u4f53\u4e2d\u6587",
+      "name": "简体中文",
       "path": "lang/zh-CN.json"
     },
     {
       "lang": "ko",
-      "name": "\ud55c\uad6d\uc5b4",
+      "name": "한국어",
       "path": "lang/ko.json"
     },
     {
@@ -205,12 +205,12 @@
     },
     {
       "lang": "hi",
-      "name": "\u0939\u093f\u0928\u094d\u0926\u0940",
+      "name": "हिन्दी",
       "path": "lang/hi.json"
     },
     {
       "lang": "ar",
-      "name": "\u0627\u0644\u0639\u0631\u0628\u064a\u0629",
+      "name": "العربية",
       "path": "lang/ar.json"
     },
     {
@@ -220,7 +220,7 @@
     },
     {
       "lang": "tr",
-      "name": "T\u00fcrk\u00e7e",
+      "name": "Türkçe",
       "path": "lang/tr.json"
     },
     {
@@ -235,22 +235,22 @@
     },
     {
       "lang": "vi",
-      "name": "Ti\u1ebfng Vi\u1ec7t",
+      "name": "Tiếng Việt",
       "path": "lang/vi.json"
     },
     {
       "lang": "th",
-      "name": "\u0e44\u0e17\u0e22",
+      "name": "ไทย",
       "path": "lang/th.json"
     },
     {
       "lang": "bn",
-      "name": "\u09ac\u09be\u0982\u09b2\u09be",
+      "name": "বাংলা",
       "path": "lang/bn.json"
     },
     {
       "lang": "ur",
-      "name": "\u0627\u0631\u062f\u0648",
+      "name": "اردو",
       "path": "lang/ur.json"
     },
     {
@@ -260,12 +260,12 @@
     },
     {
       "lang": "uk",
-      "name": "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430",
+      "name": "Українська",
       "path": "lang/uk.json"
     },
     {
       "lang": "he",
-      "name": "\u05e2\u05d1\u05e8\u05d9\u05ea",
+      "name": "עברית",
       "path": "lang/he.json"
     }
   ],
@@ -838,7 +838,7 @@
       "type": "Number",
       "default": 50,
       "name": "Automatic Sale Value (%)",
-      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10\u2013100%)",
+      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10–100%)",
       "range": {
         "min": 10,
         "max": 100,

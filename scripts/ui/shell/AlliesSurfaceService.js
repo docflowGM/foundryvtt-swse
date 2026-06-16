@@ -1132,8 +1132,16 @@ export class AlliesSurfaceService {
     return HolonetIntelService.updatePlayerIntelState(ownerActor, intelId, patch);
   }
 
-  static async attemptIntelDecryption(ownerActor, intelId, skillKey = 'useComputer') {
-    return HolonetIntelService.requestIntelDecryption(intelId, { actor: ownerActor, skillKey });
+  static async attemptIntelDecryption(ownerActor, intelId, skillKey = 'useComputer', targetCipherLetter = '') {
+    return HolonetIntelService.requestIntelDecryption(intelId, { actor: ownerActor, skillKey, targetCipherLetter });
+  }
+
+  static async selectIntelCipher(ownerActor, intelId, cipherLetter = '') {
+    return HolonetIntelService.requestIntelCipherSelection(intelId, { cipherLetter });
+  }
+
+  static async guessIntelCipher(ownerActor, intelId, cipherLetter = '', plainLetter = '') {
+    return HolonetIntelService.requestIntelCipherGuess(intelId, { cipherLetter, plainLetter });
   }
 
   static async claimIntelLockbox(ownerActor, intelId) {

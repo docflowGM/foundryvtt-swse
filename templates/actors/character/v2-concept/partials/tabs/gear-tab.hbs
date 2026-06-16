@@ -76,6 +76,9 @@
                   {{#unless entry.isNaturalWeapon}}
                     <button type="button" class="swse-concept-btn" data-action="equip" data-item-id="{{entry.id}}">Unequip</button>
                   {{/unless}}
+                  {{#if entry.canOpenForceAlchemy}}
+                    <button type="button" class="swse-concept-btn swse-concept-btn--alchemy" data-action="force-alchemy" data-item-id="{{entry.id}}">Alchemy</button>
+                  {{/if}}
                   {{#if entry.canEdit}}
                     <button type="button" class="swse-concept-btn swse-edit-only" data-action="edit" data-item-id="{{entry.id}}">Edit</button>
                   {{/if}}
@@ -206,6 +209,7 @@
               {{#if entry.canEdit}}
                 <button type="button" class="swse-concept-btn swse-edit-only" data-action="edit" data-item-id="{{entry.id}}">Edit</button>
                 <button type="button" class="swse-concept-btn swse-edit-only" data-action="configure" data-item-id="{{entry.id}}">Customize</button>
+                {{#if entry.canOpenForceAlchemy}}<button type="button" class="swse-concept-btn swse-concept-btn--alchemy" data-action="force-alchemy" data-item-id="{{entry.id}}">Alchemy</button>{{/if}}
                 <button type="button" class="swse-concept-btn swse-edit-only" data-action="sell-item" data-item-id="{{entry.id}}">Sell</button>
               {{/if}}
               {{#if entry.canDelete}}

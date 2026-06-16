@@ -1,0 +1,259 @@
+<div class="sa-win" data-application-content data-force-alchemy-root>
+  <div class="sa-surge" aria-hidden="true"></div>
+  <div class="sa-corruption" aria-hidden="true">
+    <span class="sa-bolt b1"></span><span class="sa-bolt b2"></span><span class="sa-bolt b3"></span>
+    <span class="sa-bolt b4"></span><span class="sa-bolt b5"></span><span class="sa-bolt b6"></span>
+  </div>
+
+  <header class="sa-hud">
+    <span class="sa-sigil" aria-hidden="true">&#9959;</span>
+    <div class="sa-title-wrap">
+      <div class="sa-title">Force Artifact / <b>Sith Alchemy</b></div>
+      <div class="sa-subtitle">Ritual workbench · mechanical instant rites</div>
+    </div>
+    <span class="sa-hud-tag">Ritual Surface</span>
+    <span class="sa-hud-actor">{{actor.name}}</span>
+    <button type="button" class="sa-hud-close" data-force-alchemy-action="close" title="Close">&times;</button>
+  </header>
+
+  <section class="sa-body">
+    <aside class="sa-left" aria-label="Current Workings">
+      <div class="sa-rail-head">Current Workings</div>
+      <div class="sa-resources">
+        <div class="sa-res fp">
+          <div class="k">Force Points</div>
+          <div class="v">{{actor.forcePoints}}<span>/{{actor.forcePointsMax}}</span></div>
+        </div>
+        <div class="sa-res dsp">
+          <div class="k">Dark Side</div>
+          <div class="v">{{actor.darkSideScore}}<span>/{{actor.darkSideMax}}</span></div>
+        </div>
+        <div class="sa-res credits wide">
+          <div class="k">Credits / Materials</div>
+          <div class="v">{{actor.credits}} cr</div>
+        </div>
+      </div>
+
+      <div class="sa-rail-head">Active Artifacts</div>
+      <div class="sa-section">
+        {{#each slots}}
+          <div class="sa-slot {{#unless active}}empty{{/unless}} tone-{{tone}}">
+            <span class="glyph">{{{glyph}}}</span>
+            <div class="body">
+              <div class="nm">{{label}}</div>
+              <div class="meta">{{meta}}</div>
+            </div>
+            {{#if active}}<div class="sa-slot-actions">{{#if canConsumeSurge}}<button type="button" class="act surge" data-force-alchemy-action="consume-rapid-surge" title="Consume +2 attack for +5 damage">Surge</button>{{/if}}<button type="button" class="act" data-force-alchemy-action="clear-slot" data-state-key="{{stateKey}}" title="Clear state and effects">Clear</button><button type="button" class="act danger" data-force-alchemy-action="destroy-slot" data-state-key="{{stateKey}}" title="Destroy and record cooldown">Destroy</button></div>{{/if}}
+          </div>
+        {{/each}}
+      </div>
+
+      <div class="sa-rail-head">Cooldowns</div>
+      <div class="sa-section">
+        {{#if cooldowns.length}}
+          {{#each cooldowns}}
+            <div class="sa-cd"><span class="cd-ico">&#9203;</span><span class="cd-txt">{{label}} · <b>{{hours}}h</b> remaining</span></div>
+          {{/each}}
+        {{else}}
+          <div class="sa-empty-note">No talisman cooldowns recorded.</div>
+        {{/if}}
+      </div>
+
+      <div class="sa-rail-head">Pending Rituals</div>
+      <div class="sa-section">
+        {{#if projects.length}}
+          {{#each projects}}
+            <div class="sa-project">
+              <div class="pj-top"><span class="pj-nm">{{name}}</span><span class="pj-eta">{{status}}</span></div>
+              <div class="pj-meta">{{durationLabel}} · {{progressLabel}}</div>
+              <div class="pj-foot"><span class="pj-tgt">{{targetName}}</span><span class="sa-project-actions"><button type="button" class="pj-complete" data-force-alchemy-action="advance-project" data-project-id="{{id}}">+ Work</button>{{#if completable}}<button type="button" class="pj-complete complete" data-force-alchemy-action="complete-project" data-project-id="{{id}}">Complete</button>{{/if}}<button type="button" class="pj-complete danger" data-force-alchemy-action="cancel-project" data-project-id="{{id}}">Cancel</button></span></div>
+            </div>
+          {{/each}}
+        {{else}}
+          <div class="sa-empty-note">No rituals in progress.</div>
+        {{/if}}
+      </div>
+    </aside>
+
+    <main class="sa-center" aria-label="Rites and Recipes" data-force-alchemy-dropzone="items">
+      <nav class="sa-cats" aria-label="Rite categories">
+        {{#each categories}}
+          <button type="button" class="sa-cat {{#if selected}}on{{/if}}" data-force-alchemy-action="category" data-category="{{id}}">
+            <span class="cg">{{{glyph}}}</span>{{label}}
+          </button>
+        {{/each}}
+      </nav>
+
+      <div class="sa-drop-hint">Drop an owned item here to preselect its alchemical target path.</div>
+      <div class="sa-rites">
+        {{#each visibleRites}}
+          <article class="sa-rite {{#if selected}}sel{{/if}} {{#unless eligible}}locked{{/unless}}" data-force-alchemy-action="rite" data-rite-id="{{id}}">
+            {{#unless eligible}}<span class="sa-rite-lockbadge">Locked</span>{{/unless}}
+            <div class="sa-rite-head">
+              <span class="sa-rite-glyph">{{{glyph}}}</span>
+              <div>
+                <div class="sa-rite-name">{{name}}</div>
+                <div class="sa-rite-tier">{{action}}</div>
+              </div>
+            </div>
+            <div class="sa-rite-sum">{{summary}}</div>
+            <div class="sa-rite-badges">
+              <span class="bdg bdg-fp">{{fpLabel}}</span>
+              {{#if dspCost}}<span class="bdg bdg-dsp">{{dspLabel}}</span>{{/if}}
+              {{#if creditCost}}<span class="bdg bdg-cr">{{costLabel}}</span>{{/if}}
+              <span class="bdg bdg-time">{{timingLabel}}</span>
+              {{#if gmGated}}<span class="bdg bdg-gm">GM</span>{{/if}}
+            </div>
+            {{#unless eligible}}<div class="sa-blocked-reason">Missing: {{blockedReason}}</div>{{/unless}}
+          </article>
+        {{/each}}
+      </div>
+    </main>
+
+    <aside class="sa-right" aria-label="Selected Rite Intel">
+      {{#if detail}}
+        <div class="sa-detail">
+          <div class="sa-stepper">
+            <div class="sa-stp done"><span class="n">1</span>Rite</div>
+            <div class="sa-stp {{#if detail.selectedTarget}}done{{else}}on{{/if}}"><span class="n">2</span>Target</div>
+            <div class="sa-stp {{#if detail.ready}}done{{else}}on{{/if}}"><span class="n">3</span>Config</div>
+            <div class="sa-stp {{#if detail.ready}}on{{/if}}"><span class="n">4</span>Ledger</div>
+          </div>
+
+          <div class="sa-detail-scroll">
+            <h2 class="sa-d-title">{{detail.rite.name}}</h2>
+            <div class="sa-d-tier">{{detail.rite.action}} · {{detail.rite.timingLabel}}</div>
+
+            <section class="sa-d-block">
+              <div class="sa-d-lbl">Rule Intel</div>
+              <p class="sa-d-summary">{{detail.rite.summary}}</p>
+              <ul class="sa-d-rules">
+                {{#each detail.rite.rules}}<li>{{this}}</li>{{/each}}
+              </ul>
+            </section>
+
+            <section class="sa-d-block">
+              <div class="sa-d-lbl">Prerequisites</div>
+              {{#each detail.rite.prereqs}}
+                <div class="sa-prereq {{#if met}}met{{else}}unmet{{/if}}">
+                  <span class="pq-ico">{{#if met}}✓{{else}}!{{/if}}</span>
+                  <span class="pq-lbl">{{label}}</span>
+                </div>
+              {{/each}}
+            </section>
+
+            <section class="sa-d-block">
+              <div class="sa-d-lbl">Choose Target</div>
+              {{#if detail.targets.length}}
+                {{#each detail.targets}}
+                  <button type="button" class="sa-opt {{#if selected}}sel{{/if}}" data-force-alchemy-action="target" data-target-id="{{id}}">
+                    <span class="o-ico">{{{glyph}}}</span>
+                    <span><span class="o-nm">{{name}}</span><span class="o-meta">{{note}}</span></span>
+                    <span class="o-check">✓</span>
+                  </button>
+                {{/each}}
+              {{else}}
+                <div class="sa-empty-note">No eligible {{detail.rite.targetLabel}} targets found on this actor.</div>
+              {{/if}}
+            </section>
+
+            {{#if detail.showDefenseConfig}}
+              <section class="sa-d-block">
+                <div class="sa-d-lbl">Choose Defense</div>
+                <div class="sa-pills">
+                  {{#each detail.defenses}}
+                    <button type="button" class="sa-pill {{#if selected}}sel{{/if}}" data-force-alchemy-action="defense" data-defense-id="{{id}}">
+                      <span class="p-abbr">{{abbr}}</span><span class="p-sub">{{label}}</span>
+                    </button>
+                  {{/each}}
+                </div>
+              </section>
+            {{/if}}
+
+            {{#if detail.showForcePowerConfig}}
+              <section class="sa-d-block">
+                <div class="sa-d-lbl">Choose Force Power</div>
+                {{#if detail.forcePowers.length}}
+                  {{#each detail.forcePowers}}
+                    <button type="button" class="sa-opt {{#if selected}}sel{{/if}}" data-force-alchemy-action="force-power" data-power-id="{{id}}">
+                      <span class="o-ico">&#10038;</span><span><span class="o-nm">{{name}}</span><span class="o-meta">{{note}}</span></span><span class="o-check">✓</span>
+                    </button>
+                  {{/each}}
+                {{else}}
+                  <div class="sa-empty-note">No Force Powers found in this actor's item collection.</div>
+                {{/if}}
+              </section>
+            {{/if}}
+
+            {{#if detail.showTemplateConfig}}
+              <section class="sa-d-block">
+                <div class="sa-d-lbl">Choose Template</div>
+                {{#each detail.templates}}
+                  <button type="button" class="sa-opt {{#if selected}}sel{{/if}}" data-force-alchemy-action="template" data-template-id="{{id}}">
+                    <span class="o-ico">&#9763;</span><span><span class="o-nm">{{name}}</span><span class="o-meta">{{description}}</span></span><span class="o-check">✓</span>
+                  </button>
+                {{/each}}
+                <div class="sa-gmgate"><b>GM Gate:</b> Full actor/template mutation is intentionally deferred to the GM-confirmed phase.</div>
+              </section>
+            {{/if}}
+
+            {{#if detail.showTraitConfig}}
+              <section class="sa-d-block">
+                <div class="sa-d-lbl">Choose Specialist Trait</div>
+                {{#if detail.pendingSpecialistProject}}
+                  <div class="sa-warn"><span class="w-ico">!</span><span class="w-txt"><b>One modification at a time:</b> {{detail.pendingSpecialistProject.name}} is already modifying {{detail.pendingSpecialistProject.targetName}}. Complete or cancel that project before starting another Specialist trait.</span></div>
+                {{/if}}
+                {{#each detail.traitGroups}}
+                  <div class="sa-trait-group {{#if targetMismatch}}muted{{/if}}">
+                    <div class="sa-trait-group-title">{{label}}</div>
+                    {{#each traits}}
+                      <button type="button" class="sa-opt {{#if selected}}sel{{/if}} {{#if disabled}}disabled{{/if}}" data-force-alchemy-action="trait" data-trait-id="{{id}}" {{#if disabled}}disabled{{/if}}>
+                        <span class="o-ico">&#10070;</span>
+                        <span><span class="o-nm">{{name}}</span><span class="o-meta">{{description}}{{#if disabledReason}} · {{disabledReason}}{{/if}}</span></span>
+                        <span class="o-check">✓</span>
+                      </button>
+                    {{/each}}
+                  </div>
+                {{/each}}
+              </section>
+            {{/if}}
+
+            <section class="sa-d-block">
+              <div class="sa-d-lbl">Cost Ledger</div>
+              <div class="sa-ledger">
+                {{#each detail.ledgerRows}}
+                  <div class="sa-ledger-row"><span class="lg-k">{{key}}</span><span class="lg-v {{tone}}">{{value}}</span></div>
+                {{/each}}
+              </div>
+              {{#if detail.rite.dspCost}}
+                <div class="sa-warn"><span class="w-ico">!</span><span class="w-txt"><b>Dark Side consequence:</b> completing this rite increases Dark Side Score by {{detail.rite.dspCost}}.</span></div>
+              {{/if}}
+            </section>
+
+            <section class="sa-d-block">
+              <div class="sa-d-lbl">Result Preview</div>
+              <div class="sa-preview">
+                {{#each detail.previewLines}}
+                  <div class="pv-line"><span class="pv-glyph">&loz;</span><span>{{this}}</span></div>
+                {{/each}}
+              </div>
+            </section>
+          </div>
+
+          <footer class="sa-commit">
+            <div class="sa-commit-meta">
+              <span>Phase 6: instant rites apply effects; ready Sith Weapon, Sith Amulet, Sith Armor, and Specialist trait projects can complete</span>
+              <span class="{{#if detail.ready}}ready{{else}}blocked{{/if}}">{{#if detail.ready}}Ready to apply{{else}}Selection incomplete{{/if}}</span>
+            </div>
+            <div class="sa-btn-row">
+              <button type="button" class="sa-btn ghost" data-force-alchemy-action="clear">Clear</button>
+              <button type="button" class="sa-btn commit" data-force-alchemy-action="commit" {{#unless detail.ready}}disabled{{/unless}}>Apply Working</button>
+            </div>
+          </footer>
+        </div>
+      {{else}}
+        <div class="sa-detail-empty"><div class="orb">&loz;</div><div class="txt">Select a rite to inspect its alchemical geometry.</div></div>
+      {{/if}}
+    </aside>
+  </section>
+</div>

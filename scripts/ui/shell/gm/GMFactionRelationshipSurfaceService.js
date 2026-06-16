@@ -4,6 +4,7 @@ import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/
 import { HolonetStorage } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js';
 import { HolonetIntelService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
 import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/FactionJobBridgeService.js';
+import { LocationRegistryService } from '/systems/foundryvtt-swse/scripts/locations/location-registry-service.js';
 
 function asArray(value) { return Array.isArray(value) ? value : []; }
 function scoreClass(score) { return score > 0 ? 'is-positive' : score < 0 ? 'is-negative' : 'is-neutral'; }
@@ -29,6 +30,40 @@ function uniqueStrings(values = []) {
     out.push(clean);
   }
   return out;
+}
+
+function locationChain(location = {}, records = []) {
+  const byId = new Map(asArray(records).map(entry => [entry.id, entry]));
+  const rows = [];
+  let current = location;
+  const seen = new Set();
+  while (current?.id && !seen.has(current.id)) {
+    seen.add(current.id);
+    rows.unshift(current.name);
+    current = current.parentLocationId ? byId.get(current.parentLocationId) : null;
+  }
+  return rows.filter(Boolean).join(' → ');
+}
+
+function locationVm(location = {}, records = []) {
+  const typeLabel = LocationRegistryService.optionLabel(LocationRegistryService.TYPES, location.type);
+  const revealLabel = LocationRegistryService.optionLabel(LocationRegistryService.REVEAL_STATES, location.revealState);
+  return {
+    id: location.id,
+    name: location.name,
+    type: location.type,
+    typeLabel,
+    chain: locationChain(location, records) || location.name,
+    revealState: location.revealState,
+    revealLabel,
+    knownToPlayers: Boolean(location.knownToPlayers || ['known', 'active', 'compromised'].includes(location.revealState)),
+    activeForParty: Boolean(location.activeForParty || location.revealState === 'active'),
+    hasScene: Boolean(location.map?.sceneUuid || asArray(location.linkedSceneUuids).length),
+    intelCount: asArray(location.linkedIntelIds).length,
+    jobCount: asArray(location.linkedJobIds).length,
+    contactCount: asArray(location.contactIds).length,
+    seedCount: asArray(location.encounterSeeds).length
+  };
 }
 
 function safeJob(job = {}, thread = {}) {
@@ -71,6 +106,7 @@ function contactVm(contact = {}, faction = {}, jobs = [], options = {}) {
     ...contactIntelRows.map(row => row.intelId || row.recordId)
   ]);
   const hasSecretIntel = Boolean(contact.secret || contact.gmNotes || linkedIntelIds.length);
+  const contactLocationRows = asArray(options.locationRows).filter(row => asArray(row.raw?.contactIds).includes(contact.id));
   return {
     ...contact,
     tagsLabel: Array.isArray(contact.tags) ? contact.tags.join(', ') : String(contact.tags || ''),
@@ -78,6 +114,10 @@ function contactVm(contact = {}, faction = {}, jobs = [], options = {}) {
     hasLinkedIntel: linkedIntelIds.length > 0,
     linkedIntelCount: linkedIntelIds.length,
     recentIntel: contactIntelRows.slice(0, 3),
+    locationRows: contactLocationRows.map(row => row.view),
+    locationCount: contactLocationRows.length,
+    knownLocationCount: contactLocationRows.filter(row => row.view.knownToPlayers).length,
+    activeLocationName: contactLocationRows.find(row => row.view.activeForParty)?.view?.name || '',
     hasActorLink: Boolean(contact.actorId || contact.actorUuid),
     actorLinkLabel: contact.actorName || contact.actorUuid || contact.actorId || '',
     defaultRewardLabel: defaultRewardLabel(contact),
@@ -131,6 +171,8 @@ export class GMFactionRelationshipSurfaceService {
     };
     const jobs = await this._loadJobRows();
     const intelRows = await this._loadIntelRows();
+    const locations = LocationRegistryService.getRegistry();
+    const locationRows = locations.map(location => ({ raw: location, view: locationVm(location, locations) }));
     const relationships = FactionRegistryService.getAllActorRelationshipRows().map((row) => ({
       ...row,
       scoreClass: scoreClass(row.score),
@@ -164,8 +206,13 @@ export class GMFactionRelationshipSurfaceService {
             factionId: record.id,
             factionName: record.name
           });
+          const factionLocationRows = locationRows.filter(row => (
+            row.raw.controllingFactionId === record.id
+            || asArray(row.raw.factionIds).includes(record.id)
+            || asArray(row.raw.factionPresence).some(entry => entry.factionId === record.id)
+          ));
           const contacts = asArray(record.contacts).map(contact => ({
-            ...contactVm(contact, record, jobs, { ...contactOptions, intelRows }),
+            ...contactVm(contact, record, jobs, { ...contactOptions, intelRows, locationRows }),
             isFocused: Boolean(focusedContactId && contact.id === focusedContactId)
           }));
           const factionIntelCount = intelRows.filter(row => row.linkedFactionId === record.id).length;
@@ -179,6 +226,11 @@ export class GMFactionRelationshipSurfaceService {
             contactCount: contacts.length,
             contacts,
             intelCount: factionIntelCount,
+            locationRows: factionLocationRows.map(row => row.view),
+            locationCount: factionLocationRows.length,
+            knownLocationCount: factionLocationRows.filter(row => row.view.knownToPlayers).length,
+            activeLocationCount: factionLocationRows.filter(row => row.view.activeForParty).length,
+            hiddenLocationCount: factionLocationRows.filter(row => !row.view.knownToPlayers).length,
             dossierStateLabel: 'Registry',
             jobStats,
             recentJobs: jobStats.recentJobs,
@@ -187,7 +239,7 @@ export class GMFactionRelationshipSurfaceService {
             hiddenContactCount: contacts.filter(contact => !contact.knownToPlayers).length,
             secretContactCount: contacts.filter(contact => contact.secret || contact.gmNotes || contact.hasLinkedIntel).length,
             isFocused,
-            searchText: searchText(record.name, record.type, record.planetSystem, record.leader, record.status, record.sourceLabel, contacts.map(contact => contact.searchText).join(' '))
+            searchText: searchText(record.name, record.type, record.planetSystem, record.leader, record.status, record.sourceLabel, contacts.map(contact => contact.searchText).join(' '), factionLocationRows.map(row => row.view.chain).join(' '))
           };
         }),
         relationships: activeRelationships.map(row => ({

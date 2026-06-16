@@ -47,6 +47,7 @@ import { registerLightsaberTalentActions } from "./scripts/engine/talent/lightsa
 import { registerJediPrestigeTalentActions } from "./scripts/engine/talent/jedi-prestige-talent-actions.js";
 import { registerSithTalentActions } from "./scripts/engine/talent/sith-talent-actions.js";
 import { registerForceAdeptTalentActions } from "./scripts/engine/talent/force-adept-talent-actions.js";
+import { registerForceAlchemyWorkbench, openForceAlchemyWorkbench } from "./scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
 import { registerTokenNameSyncHooks } from "./scripts/core/token-name-sync.js";
 import "./scripts/talents/squad-actions-init.js";
 import "./scripts/talents/minion-actions-init.js";
@@ -81,7 +82,8 @@ Hooks.once("init", async () => {
     ActorEngine,
     RollEngine,
     EntityCreateBrowser,
-    openEntityCreateBrowser
+    openEntityCreateBrowser,
+    openForceAlchemyWorkbench
   };
 
   globalThis.SWSE ??= {};
@@ -172,6 +174,7 @@ Hooks.once("init", async () => {
   registerJediPrestigeTalentActions();
   registerSithTalentActions();
   registerForceAdeptTalentActions();
+  registerForceAlchemyWorkbench();
   // -------------------------------
   // Feat Effect Registry + lifecycle hooks
   // Mechanical effect definitions formerly embedded in feat compendium items

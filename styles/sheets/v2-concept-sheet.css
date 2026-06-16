@@ -148,8 +148,8 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: repeating-linear-gradient(180deg, transparent 0 3px, oklch(1 0 0 / var(--swse-scan-line-opacity, var(--scan-strength, 0.03))) 3px 4px);
-  opacity: var(--swse-scan-overlay-opacity, 0.35);
+  background: repeating-linear-gradient(180deg, transparent 0 3px, rgba(255,255,255,0.025) 3px 4px);
+  opacity: 0.35;
 }
 
 .scan-v {
@@ -159,7 +159,7 @@
   height: 160px;
   pointer-events: none;
   background: linear-gradient(180deg, transparent 0%, rgba(111, 215, 255, 0.08) 42%, rgba(255,255,255,0.10) 50%, transparent 100%);
-  opacity: calc(var(--swse-scan-sweep-opacity, 0.14) * 4 * var(--motion-enabled, 1));
+  opacity: calc(0.8 * var(--motion-enabled, 1));
   animation: swse-concept-scan var(--motion-scan-speed, 7s) linear infinite;
 }
 
@@ -554,6 +554,18 @@
 .swse-concept-tab:hover {
   border-color: rgba(111, 215, 255, 0.62);
   box-shadow: 0 0 18px rgba(111,215,255,0.12);
+}
+
+.swse-concept-btn--alchemy {
+  border-color: rgba(220, 65, 92, 0.55) !important;
+  color: var(--swse-v2-red, #ff5c7a) !important;
+  background: linear-gradient(135deg, rgba(220, 65, 92, 0.12), rgba(170, 92, 255, 0.08)) !important;
+  box-shadow: 0 0 10px rgba(220, 65, 92, 0.12);
+}
+
+.swse-concept-btn--alchemy:hover {
+  border-color: rgba(240, 85, 112, 0.9) !important;
+  box-shadow: 0 0 16px rgba(220, 65, 92, 0.28);
 }
 
 .swse-concept-btn--primary,
@@ -3931,8 +3943,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept::before {
   inset: 0 !important;
   pointer-events: none !important;
   z-index: 5 !important;
-  background: repeating-linear-gradient(0deg, transparent 0 3px, oklch(1 0 0 / var(--swse-scan-line-opacity, var(--scan-strength, 0.03))) 3px 4px) !important;
-  opacity: var(--swse-scan-overlay-opacity, 0.36) !important;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, oklch(1 0 0 / var(--scan-strength, 0.03)) 3px 4px) !important;
+  opacity: 1 !important;
 }
 
 form[id^="SWSEV2CharacterSheet"] .scan-v {
@@ -3944,9 +3956,8 @@ form[id^="SWSEV2CharacterSheet"] .scan-v {
   height: 140px !important;
   pointer-events: none !important;
   z-index: 7 !important;
-  background: linear-gradient(180deg, transparent 0%, oklch(var(--accent-l) var(--accent-c) var(--accent-h) / var(--swse-scan-sweep-opacity, 0.14)) 50%, oklch(1 0 0 / calc(var(--swse-scan-sweep-opacity, 0.14) * 1.4)) 62%, transparent 100%) !important;
-  opacity: calc(var(--motion-enabled, 1) * var(--swse-scan-overlay-opacity, 0.36)) !important;
-  animation: swse-concept-scan var(--motion-scan-speed, calc(7s / var(--anim-speed, 1))) linear infinite !important;
+  background: linear-gradient(180deg, transparent 0%, oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.06) 50%, oklch(1 0 0 / 0.1) 62%, transparent 100%) !important;
+  animation: scanV calc(7s / var(--anim-speed, 1)) linear infinite !important;
 }
 
 form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--top,
@@ -6601,6 +6612,25 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
   font-size: 0.7rem;
   color: var(--swse-concept-text-faint, rgba(143,215,239,0.5));
   margin-left: auto;
+}
+
+.swse-force-suite-tab .suite-action {
+  border: 1px solid rgba(255, 61, 85, 0.45);
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(255, 61, 85, 0.16), rgba(181, 108, 255, 0.12));
+  color: var(--swse-concept-text, #f2fbff);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.32rem 0.62rem;
+  box-shadow: 0 0 14px rgba(255, 61, 85, 0.16);
+}
+
+.swse-force-suite-tab .suite-action:hover {
+  border-color: rgba(255, 61, 85, 0.72);
+  color: #ffffff;
+  box-shadow: 0 0 20px rgba(255, 61, 85, 0.28), 0 0 24px rgba(181, 108, 255, 0.18);
 }
 
 /* ── Force Suite sections ──────────────────────────────────────────────── */

@@ -1,4 +1,6 @@
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
+import { getForceAlchemySuggestedRiteForItem } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-context-resolver.js";
+import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
 /**
  * Inventory UI event listener registration
  *
@@ -65,7 +67,7 @@ export function activateInventoryUI(sheet, html, { signal } = {}) {
   });
 
   // Delete/Remove/toggle item state
-  html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="edit"], [data-action="configure"], [data-action="toggle-activated"]').forEach(button => {
+  html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="edit"], [data-action="configure"], [data-action="force-alchemy"], [data-action="toggle-activated"]').forEach(button => {
     button.addEventListener("click", async (event) => {
       event.preventDefault();
       const action = button.dataset.action;
@@ -88,6 +90,16 @@ export function activateInventoryUI(sheet, html, { signal } = {}) {
         case "configure":
           openItemCustomization(sheet.actor, item);
           break;
+        case "force-alchemy": {
+          const suggestion = getForceAlchemySuggestedRiteForItem(sheet.actor, item);
+          await openForceAlchemyWorkbench(sheet.actor, {
+            launchSource: 'gear-tab',
+            targetId: item.id,
+            riteId: suggestion?.riteId,
+            activeCategory: suggestion?.category
+          });
+          break;
+        }
         case "toggle-activated":
           await InventoryEngine.toggleActivated(sheet.actor, itemId);
           break;

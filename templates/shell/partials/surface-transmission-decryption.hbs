@@ -1,0 +1,28 @@
+{{!-- Shell-hosted Transmission Decryption surface.
+     This keeps the codebreaker inside the Holopad shell instead of launching
+     a separate ApplicationV2 window. --}}
+<div class="swse-transmission-shell-surface {{#if vm.expanded}}is-expanded{{/if}}"
+     data-shell-region="surface-transmission-decryption"
+     data-intel-id="{{vm.intelId}}"
+     data-current-cipher="{{vm.decryption.selectedCipherLetter}}">
+  <header class="swse-transmission-shell-toolbar">
+    <div>
+      <span class="swse-transmission-shell-kicker">Holopad Shell · Intel Locker</span>
+      <h2>Transmission Decryption</h2>
+      <p>Decode the signal, unlock the recovered message, then claim any lockbox payload.</p>
+    </div>
+    <div class="swse-transmission-shell-actions">
+      <button type="button" data-transmission-action="back-intel"><i class="fa-solid fa-folder-open"></i> Intel Locker</button>
+      <button type="button" data-transmission-action="toggle-expanded">
+        {{#if vm.expanded}}<i class="fa-solid fa-compress"></i> Standard{{else}}<i class="fa-solid fa-expand"></i> Expand{{/if}}
+      </button>
+      <button type="button" data-transmission-action="refresh"><i class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+    </div>
+  </header>
+
+  <div class="swse-transmission-shell-body">
+    {{#with vm}}
+      {{> "systems/foundryvtt-swse/templates/shell/partials/transmission-decryption-console.hbs"}}
+    {{/with}}
+  </div>
+</div>

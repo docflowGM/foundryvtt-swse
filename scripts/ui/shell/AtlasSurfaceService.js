@@ -37,6 +37,22 @@ function findFaction(factions = [], factionId = '') {
   return factions.find(faction => text(faction.id).toLowerCase() === id || text(faction.name).toLowerCase() === id) || null;
 }
 
+function contactRowsForLocation(location = {}, factions = []) {
+  const ids = new Set(asArray(location.contactIds));
+  if (!ids.size) return [];
+  return factions.flatMap(faction => asArray(faction.contacts).map(contact => ({
+    id: contact.id,
+    name: contact.name,
+    role: contact.role || contact.title || 'Contact',
+    publicNotes: contact.publicNotes || contact.description || '',
+    knownToPlayers: Boolean(contact.knownToPlayers || ['known', 'compromised'].includes(contact.revealState)),
+    revealState: contact.revealState || 'hidden',
+    disposition: contact.disposition || 'unknown',
+    factionId: faction.id,
+    factionName: faction.name
+  }))).filter(contact => ids.has(contact.id) && contact.knownToPlayers);
+}
+
 function locationChain(location = {}, byId = new Map()) {
   const rows = [];
   let current = location;
@@ -141,6 +157,7 @@ export class AtlasSurfaceService {
       if (q && !card.searchText.includes(q)) return false;
       return true;
     });
+    const currentLocationCard = cards.find(card => card.activeForParty || actorState.activeLocationId === card.id) || null;
     const selectedLocationId = requested || visibleCards.find(card => card.activeForParty)?.id || visibleCards[0]?.id || '';
     const selectedLocation = selectedLocationId ? allVisible.find(location => location.id === selectedLocationId) || LocationRegistryService.findLocation(selectedLocationId) : null;
     const selectedCard = selectedLocation ? cardFromLocation(selectedLocation, allVisible, factions, actorState) : null;
@@ -163,6 +180,7 @@ export class AtlasSurfaceService {
       }))
     })) : [];
     const factionRows = selectedLocation ? Array.from(new Set([selectedLocation.controllingFactionId, ...selectedLocation.factionIds].filter(Boolean))).map(id => findFaction(factions, id)).filter(Boolean) : [];
+    const contactRows = selectedLocation ? contactRowsForLocation(selectedLocation, factions) : [];
     const intelRows = selectedLocation ? await linkedIntelRows(selectedLocation) : [];
 
     const counts = {
@@ -186,18 +204,22 @@ export class AtlasSurfaceService {
       hasLocations: cards.length > 0,
       hasVisibleLocations: visibleCards.length > 0,
       selectedLocationId,
+      currentLocation: currentLocationCard,
+      hasCurrentLocation: Boolean(currentLocationCard),
       selected: selectedLocation ? {
         ...selectedCard,
         raw: selectedLocation,
         knownFacts,
         lockedFacts,
         factionRows,
+        contactRows,
         intelRows,
         jobRows: asArray(selectedLocation.linkedJobIds).map(id => ({ id })),
-        contactRows: asArray(selectedLocation.contactIds).map(id => ({ id })),
         mapImage: selectedLocation.map?.imagePath || selectedLocation.image || '',
         journalUuid: selectedLocation.linkedJournalUuid || '',
-        sceneAvailable: Boolean(selectedLocation.map?.sceneUuid || selectedLocation.linkedSceneUuids?.length)
+        sceneAvailable: Boolean(selectedLocation.map?.sceneUuid || selectedLocation.linkedSceneUuids?.length),
+        factionCount: factionRows.length,
+        contactCount: contactRows.length
       } : null,
       categoryOptions: optionsFrom(LocationRegistryService.CATEGORIES, filters.category, { includeAll: true, allLabel: 'All categories' }),
       specialOptions: [

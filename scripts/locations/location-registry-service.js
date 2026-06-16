@@ -529,6 +529,58 @@ export class LocationRegistryService {
     return this.getRegistry().filter(record => record.parentLocationId === parentId);
   }
 
+  static getLocationsForFaction(factionId = '', { includeHidden = true } = {}) {
+    const id = text(factionId);
+    if (!id) return [];
+    const isVisible = (location) => includeHidden || location.knownToPlayers || ['known', 'active', 'compromised'].includes(location.revealState);
+    return this.getRegistry().filter((location) => {
+      if (!isVisible(location)) return false;
+      if (location.controllingFactionId === id) return true;
+      if (safeArray(location.factionIds).includes(id)) return true;
+      return safeArray(location.factionPresence).some(entry => text(entry.factionId) === id);
+    });
+  }
+
+  static getLocationsForContact(contactId = '', { includeHidden = true } = {}) {
+    const id = text(contactId);
+    if (!id) return [];
+    const isVisible = (location) => includeHidden || location.knownToPlayers || ['known', 'active', 'compromised'].includes(location.revealState);
+    return this.getRegistry().filter(location => isVisible(location) && safeArray(location.contactIds).includes(id));
+  }
+
+  static async linkFactionToLocation(locationId = '', factionId = '', { controlling = false, presence = {} } = {}) {
+    const location = this.findLocation(locationId);
+    const id = text(factionId);
+    if (!location || !id) return null;
+    const factionIds = Array.from(new Set([...safeArray(location.factionIds), id].filter(Boolean)));
+    const normalizedPresence = normalizeFactionPresence({ ...presence, factionId: id });
+    const factionPresence = normalizedPresence.factionId
+      ? [
+        ...safeArray(location.factionPresence).filter(entry => text(entry.factionId) !== id),
+        normalizedPresence
+      ]
+      : safeArray(location.factionPresence);
+    return this.upsertLocation({
+      ...location,
+      factionIds,
+      factionPresence,
+      controllingFactionId: controlling ? id : location.controllingFactionId,
+      historyNote: `Linked faction ${id} to ${location.name}.`
+    });
+  }
+
+  static async linkContactToLocation(locationId = '', contactId = '', { factionId = '' } = {}) {
+    const location = this.findLocation(locationId);
+    const id = text(contactId);
+    if (!location || !id) return null;
+    return this.upsertLocation({
+      ...location,
+      contactIds: Array.from(new Set([...safeArray(location.contactIds), id].filter(Boolean))),
+      factionIds: factionId ? Array.from(new Set([...safeArray(location.factionIds), text(factionId)].filter(Boolean))) : location.factionIds,
+      historyNote: `Linked contact ${id} to ${location.name}.`
+    });
+  }
+
   static async upsertLocation(data = {}) {
     const records = this.getRegistry();
     const requestedId = text(data.id || data.locationId);

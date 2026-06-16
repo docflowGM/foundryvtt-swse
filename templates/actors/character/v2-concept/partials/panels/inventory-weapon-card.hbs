@@ -34,6 +34,7 @@
     {{else}}
       <button type="button" class="swse-concept-btn swse-concept-btn--primary" data-action="roll-attack" data-weapon-id="{{entry.id}}">Roll</button>
       <button type="button" class="swse-concept-btn" data-action="open-item" data-item-id="{{entry.id}}">Inspect</button>
+      {{#if entry.canOpenForceAlchemy}}<button type="button" class="swse-concept-btn swse-concept-btn--alchemy" data-action="force-alchemy" data-item-id="{{entry.id}}">Alchemy</button>{{/if}}
     {{/if}}
   </div>
 </article>

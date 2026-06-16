@@ -13,7 +13,6 @@ import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/she
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 
-import { DossierDragDropService } from '/systems/foundryvtt-swse/scripts/ui/dragdrop/dossier-drag-drop-service.js';
 export class GMJobBoardSurfaceController {
   constructor(host) {
     this.host = host;
@@ -26,7 +25,6 @@ export class GMJobBoardSurfaceController {
     const signal = this._abort.signal;
     const pageElement = root.querySelector('.gm-datapad-jobs');
     if (!pageElement) return;
-    DossierDragDropService.bindDragSources(pageElement, { signal });
     if (!this._assertGM('open the GM Job Board')) return;
 
     this._wireJobBoardTabs(pageElement, signal);
@@ -348,6 +346,83 @@ export class GMJobBoardSurfaceController {
       controls.forEach((control) => setSingleField(control, value));
     };
 
+
+    const mapDatasetToContract = (dataset = {}) => ({
+      clientType: dataset.clientType,
+      clientName: dataset.clientName,
+      clientFaction: dataset.clientFaction,
+      clientImage: dataset.clientImage,
+      issuerType: dataset.issuerType,
+      issuerSource: dataset.issuerSource,
+      issuerFactionId: dataset.issuerFactionId,
+      issuerFactionName: dataset.issuerFactionName,
+      issuerContactId: dataset.issuerContactId,
+      issuerContactName: dataset.issuerContactName,
+      issuerContactRole: dataset.issuerContactRole,
+      issuerContactActorId: dataset.issuerContactActorId,
+      issuerContactActorUuid: dataset.issuerContactActorUuid,
+      issuerContactActorName: dataset.issuerContactActorName,
+      issuerName: dataset.issuerName,
+      issuerImage: dataset.issuerImage,
+      title: dataset.title,
+      primaryObjective: dataset.primaryObjective,
+      primaryCredits: dataset.primaryCredits,
+      primaryXp: dataset.primaryXp,
+      briefing: dataset.briefing,
+      instructions: dataset.instructions,
+      status: dataset.status,
+      factionSuccessDelta: dataset.factionSuccessDelta,
+      factionFailureDelta: dataset.factionFailureDelta,
+      factionNotes: dataset.factionNotes,
+      rivalFactionName: dataset.rivalFactionName,
+      rivalSuccessDelta: dataset.rivalSuccessDelta,
+      rivalFailureDelta: dataset.rivalFailureDelta,
+      rivalNotes: dataset.rivalNotes
+    });
+
+    const applyKnownIssuerDataset = (dataset = {}, key = '') => {
+      const map = mapDatasetToContract(dataset);
+      Object.entries(map).forEach(([fieldName, value]) => setField(fieldName, value));
+      if (key) {
+        form.querySelectorAll('[data-known-issuer-select]').forEach((select) => { select.value = key; });
+        pageElement.querySelectorAll('[data-saved-job-contact], [data-job-saved-contact-open]').forEach((button) => {
+          button.classList.toggle('is-active', button.dataset.savedJobContact === key || button.dataset.jobSavedContactOpen === key);
+        });
+      }
+      this._refreshContractWizardSummary(form);
+      this._writeSavedContractDraft(form, { immediate: true });
+    };
+
+    const findKnownIssuerOption = (key = '') => Array.from(form.querySelectorAll('[data-known-issuer-select] option'))
+      .find(option => option.value === key) || null;
+
+    const showContractWizardPageOne = () => {
+      const wizard = form.closest('[data-gm-wizard]');
+      if (!wizard) return;
+      wizard.hidden = false;
+      wizard.classList.add('is-open');
+      wizard.dataset.currentPage = '1';
+      wizard.querySelectorAll('[data-gm-wizard-page]').forEach((panel) => {
+        panel.classList.toggle('is-active', Number(panel.dataset.gmWizardPage) === 1);
+      });
+      wizard.querySelectorAll('[data-gm-wizard-step-button]').forEach((step) => {
+        const stepNumber = Number(step.dataset.gmWizardStepButton) || 0;
+        step.classList.toggle('is-active', stepNumber === 1);
+        step.classList.toggle('is-complete', false);
+      });
+      const back = wizard.querySelector('[data-gm-wizard-back]');
+      const next = wizard.querySelector('[data-gm-wizard-next]');
+      const submit = wizard.querySelector('[data-gm-wizard-submit]');
+      const current = wizard.querySelector('[data-gm-wizard-current]');
+      if (current) current.textContent = '1';
+      if (back) back.hidden = true;
+      if (next) {
+        next.hidden = false;
+        next.textContent = 'Next: Objectives';
+      }
+      if (submit) submit.hidden = true;
+    };
+
     form.querySelectorAll('[data-contract-template]').forEach((button) => {
       button.addEventListener('click', (event) => {
         event.preventDefault();
@@ -362,40 +437,33 @@ export class GMJobBoardSurfaceController {
       select.addEventListener('change', (event) => {
         const option = event.currentTarget.selectedOptions?.[0];
         if (!option || !option.value) return;
-        const map = {
-          clientType: option.dataset.clientType,
-          clientName: option.dataset.clientName,
-          clientFaction: option.dataset.clientFaction,
-          clientImage: option.dataset.clientImage,
-          issuerType: option.dataset.issuerType,
-          issuerSource: option.dataset.issuerSource,
-          issuerFactionId: option.dataset.issuerFactionId,
-          issuerFactionName: option.dataset.issuerFactionName,
-          issuerContactId: option.dataset.issuerContactId,
-          issuerContactName: option.dataset.issuerContactName,
-          issuerContactRole: option.dataset.issuerContactRole,
-          issuerContactActorId: option.dataset.issuerContactActorId,
-          issuerContactActorUuid: option.dataset.issuerContactActorUuid,
-          issuerContactActorName: option.dataset.issuerContactActorName,
-          issuerName: option.dataset.issuerName,
-          issuerImage: option.dataset.issuerImage,
-          title: option.dataset.title,
-          primaryObjective: option.dataset.primaryObjective,
-          primaryCredits: option.dataset.primaryCredits,
-          primaryXp: option.dataset.primaryXp,
-          briefing: option.dataset.briefing,
-          instructions: option.dataset.instructions,
-          status: option.dataset.status,
-          factionSuccessDelta: option.dataset.factionSuccessDelta,
-          factionFailureDelta: option.dataset.factionFailureDelta,
-          factionNotes: option.dataset.factionNotes,
-          rivalFactionName: option.dataset.rivalFactionName,
-          rivalSuccessDelta: option.dataset.rivalSuccessDelta,
-          rivalFailureDelta: option.dataset.rivalFailureDelta,
-          rivalNotes: option.dataset.rivalNotes
-        };
-        Object.entries(map).forEach(([key, value]) => setField(key, value));
-        this._refreshContractWizardSummary(form);
+        applyKnownIssuerDataset(option.dataset, option.value);
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('[data-saved-job-contact], [data-job-saved-contact-open]').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const key = event.currentTarget.dataset.savedJobContact || event.currentTarget.dataset.jobSavedContactOpen || '';
+        const option = findKnownIssuerOption(key);
+        if (!option) {
+          ui.notifications?.warn?.('That saved Job Board contact could not be found. It may have been deleted from the Faction Dossier.');
+          return;
+        }
+        showContractWizardPageOne();
+        applyKnownIssuerDataset(option.dataset, key);
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('[data-job-manage-saved-contacts]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        this.host?.patchSurfaceState?.('factions', { focusContactLibrary: true }, { render: false });
+        if (typeof this.host?._navigateTo === 'function') await this.host._navigateTo('factions');
+        else {
+          this.host.currentPage = 'factions';
+          await requestShellRender(this.host, { reason: 'gm-job-manage-saved-contacts', surfaceId: 'factions' });
+        }
       }, { signal });
     });
 
@@ -407,22 +475,25 @@ export class GMJobBoardSurfaceController {
   }
 
   async _saveClientAsContact({ factionName = '', clientName = '', clientType = '', clientImage = '', role = 'Job Contact', objective = '', briefing = '', instructions = '', credits = 0, xp = 0, successDelta = 1, failureDelta = -1, rivalFactionName = '', rivalSuccessDelta = -1, rivalFailureDelta = 1, rivalNotes = '', status = 'posted' } = {}) {
-    const factionLabel = String(factionName || '').trim();
     const contactName = String(clientName || '').trim();
-    if (!factionLabel || !contactName) return null;
-    if (String(clientType || '').toLowerCase() === 'faction' && factionLabel.toLowerCase() === contactName.toLowerCase()) return null;
+    if (!contactName) return null;
+    const type = String(clientType || '').toLowerCase();
+    const factionLabel = String(factionName || (type === 'faction' ? contactName : 'Independent Job Contacts')).trim();
+    if (!factionLabel) return null;
     return mutateShellOnly(this.host, async () => {
       const faction = FactionRegistryService.findFaction(factionLabel) || await FactionRegistryService.upsertFaction({
         name: factionLabel,
-        type: 'Faction',
+        type: type === 'faction' ? 'Faction' : 'Organization',
         source: 'job',
         status: 'active',
         historyNote: 'Created from Job Board reusable contact.'
       });
+      if (type === 'faction' && factionLabel.toLowerCase() === contactName.toLowerCase()) return { faction, contact: null, savedAsFaction: true };
       return FactionRegistryService.upsertFactionContact(faction.id, {
         name: contactName,
         role,
         image: clientImage,
+        tags: ['job-board', 'reusable-contact'],
         description: `Reusable Job Board contact for ${factionLabel}.`,
         defaultObjective: objective,
         defaultBriefing: briefing,

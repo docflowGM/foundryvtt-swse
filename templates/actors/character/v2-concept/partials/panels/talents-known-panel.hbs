@@ -27,6 +27,7 @@
                 </div>
                 <div class="swse-concept-action-row__actions">
                   {{#if talent.source}}<span class="swse-concept-chip swse-concept-chip--neutral">{{talent.source}}</span>{{/if}}
+                  {{#if talent.alchemyLaunch}}<button type="button" class="swse-concept-btn swse-concept-btn--alchemy" data-action="open-force-alchemy-workbench" data-rite-id="{{talent.alchemyLaunch.riteId}}" data-category="{{talent.alchemyLaunch.category}}">Workbench</button>{{/if}}
                   <button type="button" class="swse-concept-btn" data-action="open-ability" data-item-id="{{talent.id}}">Inspect</button>
                   {{#unless talent.virtual}}
                     <button type="button" class="swse-concept-btn swse-concept-btn--danger" data-action="delete-talent" data-item-id="{{talent.id}}" title="Remove talent">✕</button>

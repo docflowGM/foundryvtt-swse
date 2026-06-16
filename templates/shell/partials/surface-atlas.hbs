@@ -14,6 +14,23 @@
     </div>
   </header>
 
+  {{#if vm.hasCurrentLocation}}
+  <section class="swse-atlas-current-strip">
+    <div>
+      <p class="swse-kicker">CURRENT LOCATION</p>
+      <h3>{{vm.currentLocation.name}}</h3>
+      <span>{{vm.currentLocation.chain}}</span>
+    </div>
+    <div class="swse-atlas-current-meta">
+      <span>{{vm.currentLocation.factionCount}} factions</span>
+      <span>{{vm.currentLocation.contactCount}} NPCs</span>
+      <span>{{vm.currentLocation.intelCount}} Intel</span>
+      <span>{{vm.currentLocation.jobCount}} Jobs</span>
+    </div>
+    <button type="button" data-atlas-action="select" data-location-id="{{vm.currentLocation.id}}">Open Current Site</button>
+  </section>
+  {{/if}}
+
   <section class="swse-atlas-layout">
     <aside class="swse-atlas-nav">
       <div class="swse-atlas-panel">
@@ -77,6 +94,32 @@
               <span>Known NPCs: {{vm.selected.contactCount}}</span>
               <span>Intel: {{vm.selected.intelCount}}</span>
               <span>Jobs: {{vm.selected.jobCount}}</span>
+            </div>
+          </section>
+
+          <section class="swse-atlas-section swse-atlas-grid-two">
+            <div>
+              <h3>Known Factions Here</h3>
+              {{#each vm.selected.factionRows}}
+                <article class="swse-atlas-link-card">
+                  <strong>{{name}}</strong>
+                  <span>{{type}} · Standing {{scoreLabel}}</span>
+                </article>
+              {{else}}
+                <p class="swse-empty-note">No faction presence has been revealed here.</p>
+              {{/each}}
+            </div>
+            <div>
+              <h3>Known NPCs Here</h3>
+              {{#each vm.selected.contactRows}}
+                <article class="swse-atlas-link-card">
+                  <strong>{{name}}</strong>
+                  <span>{{role}} · {{factionName}}</span>
+                  {{#if publicNotes}}<p>{{publicNotes}}</p>{{/if}}
+                </article>
+              {{else}}
+                <p class="swse-empty-note">No named NPC dossiers have been revealed here.</p>
+              {{/each}}
             </div>
           </section>
 

@@ -19,6 +19,7 @@ import { mutateAndRepaint } from "/systems/foundryvtt-swse/scripts/ui/shell/muta
 import { promptForcePowerRollOptions, promptForceRegimenRollOptions } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/force-roll-dialog.js";
 import { ForceRegimenExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-regimen-executor.js";
 import { LightsaberFormEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/lightsaber-form-engine.js";
+import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
 
 /**
  * Handle force card discard animation
@@ -254,6 +255,18 @@ export function activateForceUI(sheet, html, { signal } = {}) {
     button.addEventListener('click', async (event) => {
       event.preventDefault();
       openItemCustomization(sheet.actor, null, { initialCategory: 'lightsaber', mode: 'construct' });
+    }, { signal });
+  });
+
+  html.querySelectorAll('[data-action="open-force-alchemy-workbench"]').forEach(button => {
+    button.addEventListener('click', async (event) => {
+      event.preventDefault();
+      await openForceAlchemyWorkbench(sheet.actor, {
+        launchSource: 'force-suite',
+        riteId: button.dataset.riteId || null,
+        activeCategory: button.dataset.category || null,
+        targetId: button.dataset.itemId || null
+      });
     }, { signal });
   });
 

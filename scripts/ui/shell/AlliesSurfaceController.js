@@ -5,6 +5,7 @@
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { AlliesSurfaceService } from '/systems/foundryvtt-swse/scripts/ui/shell/AlliesSurfaceService.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
+import { ShellRouter } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellRouter.js';
 
 export class AlliesSurfaceController {
   constructor(host, actor) {
@@ -162,8 +163,18 @@ export class AlliesSurfaceController {
           return this._updateIntelState(target.dataset.intelId, { reviewed: true });
         case 'save-intel-notes':
           return this._saveIntelNotes(target);
+        case 'open-intel-codebreaker':
+          return this._openIntelCodebreaker(target.dataset.intelId);
         case 'attempt-intel-decrypt':
-          return this._attemptIntelDecrypt(target.dataset.intelId, target.dataset.skillKey);
+          return this._attemptIntelDecrypt(target.dataset.intelId, target.dataset.skillKey, target.dataset.cipherLetter);
+        case 'select-intel-cipher':
+          return this._selectIntelCipher(target.dataset.intelId, target.dataset.cipherLetter);
+        case 'guess-intel-cipher':
+          return this._guessIntelCipher(target);
+        case 'guess-intel-letter':
+          return this._guessIntelCipherDirect(target.dataset.intelId, target.dataset.cipherLetter, target.dataset.plainLetter);
+        case 'clear-intel-guess':
+          return this._guessIntelCipherDirect(target.dataset.intelId, target.dataset.cipherLetter, '');
         case 'claim-intel-lockbox':
           return this._claimIntelLockbox(target.dataset.intelId);
         case 'add-base':
@@ -305,15 +316,59 @@ export class AlliesSurfaceController {
     this._requestRender('allies-intel-notes');
   }
 
-  async _attemptIntelDecrypt(intelId, skillKey = 'useComputer') {
+  async _openIntelCodebreaker(intelId) {
     if (!intelId) return this._notify('Intel record could not be found.');
-    const result = await AlliesSurfaceService.attemptIntelDecryption(this._actor, intelId, skillKey || 'useComputer');
+    const actor = this._actor ?? this._host?.actor ?? this._host?.document ?? game.user?.character ?? null;
+    if (!actor) return this._notify('Open a character Holopad before launching the codebreaker.');
+    await ShellRouter.openSurface(actor, 'transmission-decryption', {
+      intelId,
+      source: 'intel-locker',
+      returnSurface: 'allies',
+      returnTab: 'intel'
+    });
+  }
+
+  async _attemptIntelDecrypt(intelId, skillKey = 'useComputer', targetCipherLetter = '') {
+    if (!intelId) return this._notify('Intel record could not be found.');
+    const result = await AlliesSurfaceService.attemptIntelDecryption(this._actor, intelId, skillKey || 'useComputer', targetCipherLetter || '');
     if (result?.pending) ui?.notifications?.info?.('Decryption request sent to the GM host.');
     else if (result?.ok && result?.solved) ui?.notifications?.info?.('Intel decrypted. Lockbox contents may now be claimable.');
     else if (result?.ok) ui?.notifications?.info?.('Decryption attempt resolved.');
     else ui?.notifications?.warn?.('Decryption attempt could not be resolved.');
     this._patchAlliesState({ activeTab: 'intel' });
     this._requestRender('allies-intel-decrypt');
+  }
+
+
+
+  async _selectIntelCipher(intelId, cipherLetter = '') {
+    if (!intelId || !cipherLetter) return this._notify('Cipher glyph could not be selected.');
+    const result = await AlliesSurfaceService.selectIntelCipher(this._actor, intelId, cipherLetter);
+    if (result?.pending) ui?.notifications?.info?.('Glyph selection sent to the GM host.');
+    this._patchAlliesState({ activeTab: 'intel' });
+    this._requestRender('allies-intel-cipher-select');
+  }
+
+  async _guessIntelCipher(target) {
+    const intelId = target.dataset.intelId;
+    const form = target.closest('form');
+    const cipherLetter = target.dataset.cipherLetter || form?.querySelector('[name="cipherLetter"]')?.value || '';
+    const plainLetter = form?.querySelector('[name="plainLetter"]')?.value || '';
+    if (!intelId) return this._notify('Intel record could not be found.');
+    if (!plainLetter) return this._notify('Enter a letter hypothesis first.');
+    return this._guessIntelCipherDirect(intelId, cipherLetter, plainLetter);
+  }
+
+  async _guessIntelCipherDirect(intelId, cipherLetter = '', plainLetter = '') {
+    if (!intelId) return this._notify('Intel record could not be found.');
+    const result = await AlliesSurfaceService.guessIntelCipher(this._actor, intelId, cipherLetter, plainLetter);
+    if (result?.pending) ui?.notifications?.info?.('Manual analysis update sent to the GM host.');
+    else if (result?.ok && result?.cleared) ui?.notifications?.info?.('Manual hypothesis cleared.');
+    else if (result?.ok && result?.solved) ui?.notifications?.info?.('Transmission decrypted. Lockbox contents may now be claimable.');
+    else if (result?.ok) ui?.notifications?.info?.('Manual analysis recorded.');
+    else ui?.notifications?.warn?.('Manual analysis could not be recorded.');
+    this._patchAlliesState({ activeTab: 'intel' });
+    this._requestRender('allies-intel-cipher-guess');
   }
 
   async _claimIntelLockbox(intelId) {

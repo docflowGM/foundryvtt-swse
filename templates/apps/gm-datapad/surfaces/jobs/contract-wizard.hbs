@@ -16,6 +16,32 @@
 
     <div class="gm-wizard-body">
       <section class="gm-wizard-page is-active" data-gm-wizard-page="1">
+        {{#if jobBoard.creation.hasSavedContacts}}
+        <div class="gm-wizard-card gm-job-saved-contacts-picker">
+          <div class="gm-job-saved-contacts-strip-head">
+            <div>
+              <span class="gm-command-eyebrow">SAVED CONTACTS</span>
+              <strong>Reusable clients and job-givers</strong>
+              <p>These are saved from the Job Board's reusable-contact checkbox and stored as Faction/Dossier contacts.</p>
+            </div>
+            <button type="button" class="swse-ui-button" data-job-manage-saved-contacts>Manage Saved Contacts ›</button>
+          </div>
+          <div class="gm-job-saved-contact-grid">
+            {{#each jobBoard.creation.savedContacts}}
+            <button type="button" class="gm-job-saved-contact-card {{this.tone}}" data-saved-job-contact="{{this.key}}">
+              <span class="gm-job-saved-contact-avatar">
+                {{#if this.hasImage}}<img src="{{this.image}}" alt="">{{else}}<i class="fa-solid fa-user-secret"></i>{{/if}}
+              </span>
+              <span class="gm-job-saved-contact-copy">
+                <strong>{{this.label}}</strong>
+                <em>{{#if this.role}}{{this.role}}{{else}}{{this.group}}{{/if}}</em>
+                {{#if this.summary}}<small>{{this.summary}}</small>{{/if}}
+              </span>
+            </button>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
         <div class="gm-wizard-card">
           <span class="gm-command-eyebrow">QUICK START TEMPLATES</span>
           <div class="gm-wizard-template-row">
@@ -89,16 +115,16 @@
           <input type="hidden" name="issuerName" value="{{jobBoard.creation.prefill.issuer.name}}">
           <input type="hidden" name="issuerImage" value="{{jobBoard.creation.prefill.issuer.image}}">
           <div class="gm-wizard-grid two">
-            <label>Client Type
-              <select name="clientType">
+            <label for="cwiz-clientType">Client Type
+              <select id="cwiz-clientType" name="clientType">
                 {{#each jobBoard.creation.clientTypes}}<option value="{{this.value}}" {{#if (eq this.value ../jobBoard.creation.prefill.client.type)}}selected{{/if}}>{{this.label}}</option>{{/each}}
               </select>
             </label>
-            <label>Client / NPC Name<input type="text" name="clientName" placeholder="Rebel Alliance · Black Sun Vigo · Master Tholos" value="{{jobBoard.creation.prefill.client.name}}"></label>
-            <label>Faction Anchor<input type="text" name="clientFaction" placeholder="Optional faction relationship anchor" value="{{jobBoard.creation.prefill.client.factionName}}"></label>
-            <label>Client Image / Sigil<input type="text" name="clientImage" placeholder="icons/svg/mystery-man.svg" value="{{jobBoard.creation.prefill.client.imageUrl}}"></label>
+            <label for="cwiz-clientName">Client / NPC Name<input id="cwiz-clientName" type="text" name="clientName" placeholder="Rebel Alliance · Black Sun Vigo · Master Tholos" value="{{jobBoard.creation.prefill.client.name}}"></label>
+            <label for="cwiz-clientFaction">Faction Anchor<input id="cwiz-clientFaction" type="text" name="clientFaction" placeholder="Optional faction relationship anchor" value="{{jobBoard.creation.prefill.client.factionName}}"></label>
+            <label for="cwiz-clientImage">Client Image / Sigil<input id="cwiz-clientImage" type="text" name="clientImage" placeholder="icons/svg/mystery-man.svg" value="{{jobBoard.creation.prefill.client.imageUrl}}"></label>
           </div>
-          <label class="gm-inline-check"><input type="checkbox" name="clientSave" {{#if jobBoard.creation.prefill.client.saveForReuse}}checked{{/if}}> Save as reusable contact</label>
+          <label class="gm-inline-check"><input type="checkbox" name="clientSave" {{#if jobBoard.creation.prefill.client.saveForReuse}}checked{{/if}}> Save as reusable contact — appears at top of this wizard next time</label>
         </div>
       </section>
 
