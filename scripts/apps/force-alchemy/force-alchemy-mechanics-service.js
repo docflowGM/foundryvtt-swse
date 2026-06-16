@@ -5,7 +5,8 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import {
   FORCE_ALCHEMY_FLAG_SCOPE,
-  FORCE_ALCHEMY_FLAG_KEY
+  FORCE_ALCHEMY_FLAG_KEY,
+  getForceAlchemyRite
 } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-data.js";
 import { ForceAlchemyStateService, readForceAlchemyState } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-state-service.js";
 
@@ -181,7 +182,7 @@ function baseEffect({ detail, stateKey, entryId = null, suffix = '', summary, de
   };
 }
 
-function effectsForDetail(detail, { stateKey, entryId = null } = {}) {
+function effectsForDetail(detail, { stateKey, entryId = null, resourceChanges = null } = {}) {
   const rite = detail?.rite;
   if (!rite) return [];
   const targetName = detail?.selectedTarget?.name ?? 'selected target';
@@ -284,6 +285,21 @@ function effectsForDetail(detail, { stateKey, entryId = null } = {}) {
     }));
   }
 
+  if (rite.id === 'sith-weapon-surge') {
+    const damageBonus = numberFrom(resourceChanges?.before?.darkSideScore, detail?.selectedConfig?.damageBonus);
+    effects.push(baseEffect({
+      detail,
+      stateKey,
+      entryId,
+      suffix: 'Damage Surge Ready',
+      summary: `${rite.name}: +${damageBonus} damage with ${targetName} on the next damage roll.`,
+      details: [`Sith Weapon: ${targetName}`, `Damage bonus: +${damageBonus} from current Dark Side Score`, 'Apply to one damage roll before encounter end, then clear this effect manually.', 'Roll-path auto-consumption is intentionally deferred.'],
+      severity: 'danger',
+      durationLabel: 'One damage roll',
+      tags: ['sith-weapon', 'damage-surge']
+    }));
+  }
+
   return effects;
 }
 
@@ -370,6 +386,103 @@ async function applyResourceCosts(actor, detail) {
   return { before, after, spent: { forcePoints: fpCost, darkSideScore: dspCost, credits: creditCost } };
 }
 
+function getOwnedItem(actor, itemId) {
+  if (!itemId || itemId === '__materials__') return null;
+  return actor?.items?.get?.(itemId) ?? Array.from(actor?.items ?? []).find(item => (item?.id ?? item?._id) === itemId) ?? null;
+}
+
+function getItemAlchemyFlags(item) {
+  return item?.flags?.[EFFECT_SCOPE]?.alchemy ?? item?.flags?.swse?.alchemy ?? {};
+}
+
+function getItemDescriptionValue(item) {
+  const description = item?.system?.description;
+  if (description && typeof description === 'object') return String(description.value ?? '');
+  if (typeof description === 'string') return description;
+  return '';
+}
+
+function buildSithWeaponDescription(item, project) {
+  const current = getItemDescriptionValue(item);
+  if (/Sith Weapon \(Alchemy\)/i.test(current)) return current;
+  const note = `<hr><p><strong>Sith Weapon (Alchemy):</strong> This weapon has been treated through Sith Alchemy. Lightsabers do not ignore its DR. A proficient wielder may treat it as a lightsaber for Block, Deflect, Redirect Shot, and related talents. As a swift action, the wielder may spend 1 Force Point to add their current Dark Side Score to the next damage roll with this weapon before the end of the encounter, then increase Dark Side Score by 1.</p>`;
+  return `${current || ''}${note}`;
+}
+
+function itemDescriptionUpdatePath(item) {
+  const description = item?.system?.description;
+  if (description && typeof description === 'object') return 'system.description.value';
+  if (typeof description === 'string') return 'system.description';
+  return 'system.description.value';
+}
+
+function buildSithWeaponFlagData(actor, item, project, resourceChanges) {
+  const existing = getItemAlchemyFlags(item);
+  return {
+    ...existing,
+    kind: 'sith-weapon',
+    alchemyKind: 'sith-weapon',
+    sourceRiteId: 'sith-weapon',
+    creatorActorId: actor?.id ?? null,
+    creatorActorUuid: actor?.uuid ?? null,
+    creatorName: actor?.name ?? null,
+    targetProjectId: project?.id ?? null,
+    createdAt: nowIso(),
+    completedAt: nowIso(),
+    traits: asArray(existing.traits),
+    properties: {
+      ...(existing.properties && typeof existing.properties === 'object' ? existing.properties : {}),
+      lightsabersDoNotIgnoreDR: true,
+      treatsAsLightsaberForTalents: true,
+      swiftDamageSurge: true
+    },
+    resourceChanges
+  };
+}
+
+async function markItemAsSithWeapon(actor, item, project, resourceChanges) {
+  if (!item?.id) throw new Error('Sith Weapon project target item could not be resolved.');
+  const alchemyFlags = buildSithWeaponFlagData(actor, item, project, resourceChanges);
+  const update = {
+    _id: item.id,
+    [`flags.${EFFECT_SCOPE}.alchemy`]: alchemyFlags,
+    'flags.swse.alchemy': alchemyFlags,
+    [itemDescriptionUpdatePath(item)]: buildSithWeaponDescription(item, project)
+  };
+  await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [update], { source: 'force-alchemy:sith-weapon-complete' });
+  return alchemyFlags;
+}
+
+function detailFromProject(actor, project) {
+  const rite = getForceAlchemyRite(project?.riteId);
+  const item = getOwnedItem(actor, project?.targetId);
+  const target = item ? {
+    id: item.id,
+    uuid: item.uuid ?? null,
+    name: item.name ?? project?.targetName ?? 'Sith Weapon target',
+    icon: item.img ?? null,
+    kind: 'melee-weapon'
+  } : {
+    id: project?.targetId ?? null,
+    uuid: project?.targetUuid ?? null,
+    name: project?.targetName ?? 'Sith Weapon target',
+    icon: null,
+    kind: project?.targetKind ?? 'melee-weapon'
+  };
+  return {
+    rite,
+    ready: true,
+    selectedTarget: target,
+    selectedConfig: project?.config ?? {},
+    previewLines: [
+      `Target: ${target.name}`,
+      `Result: ${rite?.resultLabel ?? project?.resultLabel ?? 'Completed alchemical project'}`,
+      'Completion spends the listed completion costs.'
+    ]
+  };
+}
+
+
 async function postRiteChat(actor, detail, { mode = 'applied', resourceChanges = null, effectCount = 0 } = {}) {
   const rite = detail?.rite ?? {};
   const target = detail?.selectedTarget?.name ?? 'Unselected target';
@@ -419,14 +532,18 @@ export async function applyForceAlchemySelection(actor, detail) {
 
   try {
     const resourceChanges = await applyResourceCosts(actor, detail);
-    const effects = effectsForDetail(detail, { stateKey, entryId: initial.entry?.id ?? null });
+    const effects = effectsForDetail(detail, { stateKey, entryId: initial.entry?.id ?? null, resourceChanges });
     const effectIds = await createEffects(actor, effects);
     const status = rite.timing === 'encounter' ? 'encounter-active' : 'active';
+    const nextConfig = rite.id === 'sith-weapon-surge'
+      ? { ...(initial.entry?.config ?? {}), damageSurgeReady: true, damageBonus: numberFrom(resourceChanges?.before?.darkSideScore) }
+      : initial.entry?.config;
     const state = await ForceAlchemyStateService.updateSlot(actor, stateKey, {
       status,
       appliedAt: nowIso(),
       effectIds,
       resourceChanges,
+      config: nextConfig,
       pendingEffects: false,
       pendingCosts: false
     });
@@ -438,6 +555,36 @@ export async function applyForceAlchemySelection(actor, detail) {
     throw error;
   }
 }
+
+
+export async function completeForceAlchemyMechanicalProject(actor, projectId) {
+  if (!actor) throw new Error('No actor selected.');
+  const state = readForceAlchemyState(actor);
+  const project = asArray(state.projects).find(entry => entry.id === projectId);
+  if (!project) throw new Error('No matching Force Alchemy project found.');
+  if (!project.ready && project.status !== 'ready') throw new Error(`${project.name} is not ready to complete yet.`);
+  if (project.riteId !== 'sith-weapon') {
+    throw new Error(`${project.name} completion is not implemented in Phase 4. Sith Armor, Sith Amulet, Specialist, and Mutation completion remain deferred.`);
+  }
+
+  const item = getOwnedItem(actor, project.targetId);
+  if (!item) throw new Error(`Could not find the project target item "${project.targetName}" on this actor.`);
+  const detail = detailFromProject(actor, project);
+  validateCosts(actor, detail);
+
+  const resourceChanges = await applyResourceCosts(actor, detail);
+  const alchemyFlags = await markItemAsSithWeapon(actor, item, project, resourceChanges);
+  const completion = await ForceAlchemyStateService.completeProject(actor, projectId, {
+    resourceChanges,
+    itemUuid: item.uuid ?? null,
+    itemId: item.id ?? null,
+    alchemyKind: alchemyFlags.kind,
+    completionMode: 'sith-weapon-item-flags'
+  });
+  await postRiteChat(actor, detail, { mode: 'sith weapon completed', resourceChanges, effectCount: 0 });
+  return { ...completion, item, alchemyFlags, resourceChanges };
+}
+
 
 export async function clearForceAlchemyMechanicalSlot(actor, stateKey) {
   await deleteEntryEffects(actor, stateKey);
@@ -477,7 +624,8 @@ export const ForceAlchemyMechanicsService = {
   applySelection: applyForceAlchemySelection,
   clearSlot: clearForceAlchemyMechanicalSlot,
   destroySlot: destroyForceAlchemyMechanicalSlot,
-  consumeRapidAlchemySurge
+  consumeRapidAlchemySurge,
+  completeProject: completeForceAlchemyMechanicalProject
 };
 
 export default ForceAlchemyMechanicsService;

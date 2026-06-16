@@ -66,7 +66,7 @@
             <div class="sa-project">
               <div class="pj-top"><span class="pj-nm">{{name}}</span><span class="pj-eta">{{status}}</span></div>
               <div class="pj-meta">{{durationLabel}} · {{progressLabel}}</div>
-              <div class="pj-foot"><span class="pj-tgt">{{targetName}}</span><span class="sa-project-actions"><button type="button" class="pj-complete" data-force-alchemy-action="advance-project" data-project-id="{{id}}">+ Work</button><button type="button" class="pj-complete danger" data-force-alchemy-action="cancel-project" data-project-id="{{id}}">Cancel</button></span></div>
+              <div class="pj-foot"><span class="pj-tgt">{{targetName}}</span><span class="sa-project-actions"><button type="button" class="pj-complete" data-force-alchemy-action="advance-project" data-project-id="{{id}}">+ Work</button>{{#if completable}}<button type="button" class="pj-complete complete" data-force-alchemy-action="complete-project" data-project-id="{{id}}">Complete</button>{{/if}}<button type="button" class="pj-complete danger" data-force-alchemy-action="cancel-project" data-project-id="{{id}}">Cancel</button></span></div>
             </div>
           {{/each}}
         {{else}}
@@ -237,7 +237,7 @@
 
           <footer class="sa-commit">
             <div class="sa-commit-meta">
-              <span>Phase 3: instant rites spend resources and create visible Active Effects</span>
+              <span>Phase 4: instant rites apply effects; ready Sith Weapon projects can complete into item flags</span>
               <span class="{{#if detail.ready}}ready{{else}}blocked{{/if}}">{{#if detail.ready}}Ready to apply{{else}}Selection incomplete{{/if}}</span>
             </div>
             <div class="sa-btn-row">

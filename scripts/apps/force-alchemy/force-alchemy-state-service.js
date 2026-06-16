@@ -17,6 +17,7 @@ const DEFAULT_STATE = Object.freeze({
   activeSithTalisman: null,
   focusedForceTalisman: null,
   rapidAlchemy: null,
+  sithWeaponSurge: null,
   cooldowns: [],
   projects: []
 });
@@ -26,7 +27,8 @@ const STATE_KEYS = new Set([
   'activeDarkSideTalisman',
   'activeSithTalisman',
   'focusedForceTalisman',
-  'rapidAlchemy'
+  'rapidAlchemy',
+  'sithWeaponSurge'
 ]);
 
 const PROJECT_STATE_KEY = 'projects';
@@ -160,6 +162,7 @@ function normalizeForceAlchemyState(raw = {}) {
     activeSithTalisman: normalizeStateEntry(merged.activeSithTalisman, 'sith-talisman'),
     focusedForceTalisman: normalizeStateEntry(merged.focusedForceTalisman, 'focused-force-talisman'),
     rapidAlchemy: normalizeStateEntry(merged.rapidAlchemy, 'rapid-alchemy'),
+    sithWeaponSurge: normalizeStateEntry(merged.sithWeaponSurge, 'sith-weapon-surge'),
     cooldowns: asArray(merged.cooldowns).map(normalizeCooldown).filter(cooldown => cooldown && !cooldown.expired),
     projects: asArray(merged.projects).map(normalizeProject).filter(Boolean)
   };
@@ -376,6 +379,26 @@ export async function advanceForceAlchemyProject(actor, projectId, amount = 1) {
   return readForceAlchemyState(actor);
 }
 
+
+export async function completeForceAlchemyProject(actor, projectId, patch = {}) {
+  const current = readForceAlchemyState(actor);
+  const next = clone(current);
+  const project = asArray(next.projects).find(entry => entry.id === projectId);
+  if (!project) throw new Error('No matching Force Alchemy project found.');
+  next.projects = asArray(next.projects).filter(entry => entry.id !== projectId);
+  const completed = normalizeProject({
+    ...project,
+    ...(patch && typeof patch === 'object' ? clone(patch) : {}),
+    status: 'complete',
+    progress: project.requiredUnits,
+    completedAt: nowIso(),
+    updatedAt: nowIso()
+  });
+  // Keep the state lean for now: completed item history is represented on the transformed item flags and chat card.
+  await writeForceAlchemyState(actor, next);
+  return { project: completed, state: readForceAlchemyState(actor) };
+}
+
 export const ForceAlchemyStateService = {
   read: readForceAlchemyState,
   recordSelection: recordForceAlchemySelection,
@@ -383,7 +406,8 @@ export const ForceAlchemyStateService = {
   destroySlot: destroyForceAlchemySlot,
   updateSlot: updateForceAlchemySlot,
   cancelProject: cancelForceAlchemyProject,
-  advanceProject: advanceForceAlchemyProject
+  advanceProject: advanceForceAlchemyProject,
+  completeProject: completeForceAlchemyProject
 };
 
 export default ForceAlchemyStateService;

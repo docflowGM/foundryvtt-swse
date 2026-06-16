@@ -128,6 +128,14 @@ function isAlchemicalObject(item) {
   return !!flags.kind || /sith weapon|sith armor|dark armor|sith talisman|sith amulet|abomination/.test(text);
 }
 
+function isCompletedSithWeapon(item) {
+  if (!item || isFeatureItem(item)) return false;
+  const flags = item?.flags?.swse?.alchemy ?? item?.flags?.['foundryvtt-swse']?.alchemy ?? {};
+  const kind = normalizeToken(flags.kind || flags.targetKind || flags.alchemyKind);
+  const text = itemCategoryText(item);
+  return kind.includes('sithweapon') || /sith weapon|alchemical weapon/.test(text);
+}
+
 function classifyAlchemicalKind(item) {
   const flags = item?.flags?.swse?.alchemy ?? item?.flags?.['foundryvtt-swse']?.alchemy ?? {};
   const kind = normalizeToken(flags.kind || flags.targetKind || flags.alchemyKind);
@@ -149,7 +157,7 @@ function targetView(item, targetTypes = []) {
     uuid: item?.uuid ?? null,
     name: item?.name ?? 'Unnamed Item',
     icon: item?.img ?? null,
-    glyph: targetTypes.includes('battle-armor') ? '&#9959;' : targetTypes.includes('melee-weapon') ? '&#9876;' : '&loz;',
+    glyph: targetTypes.includes('battle-armor') ? '&#9959;' : targetTypes.includes('melee-weapon') || targetTypes.includes('sith-weapon') ? '&#9876;' : '&loz;',
     note: buildTargetNote(item),
     kind: classifyTargetKind(item),
     equipped: itemIsEquipped(item),
@@ -256,6 +264,7 @@ function collectTargets(actor, items, actorSummary) {
     if (isMeleeWeapon(item)) targetTypes.push('melee-weapon');
     if (isBattleArmor(item)) targetTypes.push('battle-armor');
     if (isAlchemicalObject(item)) targetTypes.push('alchemical-object');
+    if (isCompletedSithWeapon(item)) targetTypes.push('sith-weapon');
     if (!targetTypes.length) continue;
     map.set(itemId(item), targetView(item, targetTypes));
   }
@@ -460,6 +469,15 @@ function buildSlots(context) {
       active: !!state.rapidAlchemy,
       canConsumeSurge: !!state.rapidAlchemy && state.rapidAlchemy.config?.surgeConsumed !== true,
       tone: 'gold'
+    },
+    {
+      key: 'sith-weapon-surge',
+      stateKey: 'sithWeaponSurge',
+      glyph: '&#9876;',
+      label: state.sithWeaponSurge?.name || 'Sith Weapon Surge idle',
+      meta: state.sithWeaponSurge ? [state.sithWeaponSurge.targetName, state.sithWeaponSurge.config?.damageBonus ? `+${state.sithWeaponSurge.config.damageBonus} next damage` : 'one-roll damage surge'].filter(Boolean).join(' · ') : 'no damage surge prepared',
+      active: !!state.sithWeaponSurge,
+      tone: 'crimson'
     }
   ];
 }
@@ -471,6 +489,7 @@ export function getForceAlchemyTargetKinds(item) {
   if (isMeleeWeapon(item)) targetTypes.push('melee-weapon');
   if (isBattleArmor(item)) targetTypes.push('battle-armor');
   if (isAlchemicalObject(item)) targetTypes.push('alchemical-object');
+  if (isCompletedSithWeapon(item)) targetTypes.push('sith-weapon');
   return targetTypes;
 }
 
@@ -484,6 +503,9 @@ export function getForceAlchemySuggestedRiteForItem(actor, item) {
 
   if (targetTypes.includes('alchemical-object') && can('Sith Alchemy Specialist')) {
     return { riteId: 'sith-alchemy-specialist', category: 'specialist', targetTypes };
+  }
+  if (targetTypes.includes('sith-weapon')) {
+    return { riteId: 'sith-weapon-surge', category: 'combat', targetTypes };
   }
   if (targetTypes.includes('battle-armor') && can('Sith Alchemy')) {
     return { riteId: 'sith-armor', category: 'sith', targetTypes };

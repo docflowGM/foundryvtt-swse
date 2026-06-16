@@ -366,6 +366,31 @@ export const FORCE_ALCHEMY_RITES = [
     ],
     resultLabel: '+2 attack encounter state and consumable +5 damage surge',
     stateKey: 'rapidAlchemy'
+  },
+  {
+    id: 'sith-weapon-surge',
+    category: 'combat',
+    name: 'Sith Weapon Surge',
+    glyph: '&#9876;',
+    timing: 'encounter',
+    action: 'Swift action',
+    targetType: 'sith-weapon',
+    targetLabel: 'Completed Sith Weapon',
+    configType: 'none',
+    requiredTalents: [],
+    fpCost: 1,
+    dspCost: 1,
+    creditCost: 0,
+    summary: 'Channel the weapon's alchemical hatred into one strike, adding your current Dark Side Score to the next damage roll with that Sith Weapon.',
+    rules: [
+      'Requires a completed Sith Weapon target.',
+      'Spend 1 Force Point as a swift action.',
+      'Add your current Dark Side Score to the next damage roll with that weapon before the end of the encounter.',
+      'After preparing the surge, increase Dark Side Score by 1.',
+      'The first pass creates a visible one-roll reminder effect; roll-path auto-consumption is intentionally deferred.'
+    ],
+    resultLabel: 'One-roll Sith Weapon damage surge reminder',
+    stateKey: 'sithWeaponSurge'
   }
 ];
 

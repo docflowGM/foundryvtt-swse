@@ -185,6 +185,11 @@ export class ForceAlchemyWorkbenchApp extends BaseSWSEAppV2 {
       return;
     }
 
+    if (action === 'complete-project') {
+      await this.#completeProject(element.dataset.projectId);
+      return;
+    }
+
     if (action === 'consume-rapid-surge') {
       await this.#consumeRapidAlchemySurge();
       return;
@@ -267,6 +272,20 @@ export class ForceAlchemyWorkbenchApp extends BaseSWSEAppV2 {
     } catch (error) {
       console.error('[ForceAlchemyWorkbench] Failed to advance project', error);
       ui.notifications?.error?.(`Could not advance alchemical project: ${error.message}`);
+    }
+  }
+
+
+  async #completeProject(projectId) {
+    if (!projectId) return;
+    try {
+      const result = await ForceAlchemyMechanicsService.completeProject(this.actor, projectId);
+      const label = result?.project?.name ?? 'alchemical project';
+      ui.notifications?.info?.(`${label} completed.`);
+      this.render(false);
+    } catch (error) {
+      console.error('[ForceAlchemyWorkbench] Failed to complete project', error);
+      ui.notifications?.error?.(`Could not complete alchemical project: ${error.message}`);
     }
   }
 

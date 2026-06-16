@@ -1135,3 +1135,16 @@
 .swse-force-alchemy-chat-card ul {
   margin: 8px 0 0 18px;
 }
+
+/* Phase 4: Sith Weapon project completion / surge affordances */
+.swse-force-alchemy-workbench .pj-complete.complete {
+  border-color: rgba(107, 243, 176, 0.42);
+  background: rgba(107, 243, 176, 0.12);
+  color: var(--sa-ok);
+  box-shadow: 0 0 12px rgba(107, 243, 176, 0.16);
+}
+
+.swse-force-alchemy-workbench .pj-complete.complete:hover {
+  background: rgba(107, 243, 176, 0.18);
+  border-color: rgba(107, 243, 176, 0.62);
+}
