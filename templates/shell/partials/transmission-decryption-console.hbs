@@ -4,7 +4,7 @@
     <div>{{#if isGm}}GM authoring preview{{else}}Player decode{{/if}} · datapad surface</div>
   </div>
 
-  <div class="swse-intel-decryption-console swse-transmission-window dx-win {{#if decryption.solved}}is-solved{{/if}} {{#if decryption.failed}}is-failed{{/if}}">
+  <div class="swse-intel-decryption-console swse-transmission-window dx-win {{decryption.modeClass}} tone-{{decryption.modeTone}} band-{{decryption.progressBand}} risk-{{decryption.failBand}} {{#if decryption.solved}}is-solved{{/if}} {{#if decryption.failed}}is-failed{{/if}}">
     <div class="swse-intel-decryption-hud dx-hud">
       <span class="dx-logo">{{decryption.analysisIcon}}</span>
       <div class="swse-transmission-titleblock">
@@ -40,7 +40,15 @@
     </div>
 
     {{#if decryption.locked}}
-    <div class="pl-manual swse-transmission-mode-note"><b>{{decryption.analysisIcon}} {{decryption.analysisLabel}}</b> — {{decryption.analysisDescription}}</div>
+    <div class="swse-transmission-mode-note">
+      <div class="swse-transmission-mode-badge"><b>{{decryption.analysisIcon}}</b><span>{{decryption.stageLabel}}</span></div>
+      <div class="swse-transmission-mode-copy">
+        <strong>{{decryption.analysisLabel}}</strong>
+        <p>{{decryption.analysisDescription}}</p>
+        <small>{{decryption.objectiveLine}}</small>
+      </div>
+      <div class="swse-transmission-mode-risk"><span>{{decryption.failLabel}}</span><b>{{decryption.failBand}}</b></div>
+    </div>
     {{#unless decryption.structuralDone}}<div class="pl-manual is-warning"><b>⊞ DATASTREAM MISALIGNED</b> — pass a decryption roll to realign the transmission before the lockbox can open.</div>{{/unless}}
     <div class="swse-intel-decryption-layout pl-grid swse-transmission-grid">
       <div class="swse-intel-decryption-readout pl-main">
@@ -56,8 +64,21 @@
       </div>
 
       <aside class="swse-intel-decryption-tools pl-tools">
-        <div class="dx-rail-head">◈ Slicer Console</div>
+        <div class="dx-rail-head">◈ Analysis Console</div>
         <div class="pl-manual"><b>{{decryption.analysisLabel}}</b> — {{decryption.actionHint}} Roll vs <b>DC {{decryption.dc}}</b>. {{#if decryption.hasSelection}}Selected glyph/fragment is targeted first.{{else}}Success targets the most common unresolved fragment.{{/if}} Beat by 10+ to resolve two.</div>
+        {{#if decryption.modeActions.length}}
+        <div class="dx-rail-head compact">▧ Tactic Deck</div>
+        <div class="swse-transmission-tactic-deck">
+          {{#each decryption.modeActions}}
+          <button type="button" class="swse-transmission-tactic" data-decrypt-action="attempt" data-skill-key="{{this.skill}}" data-cipher-letter="{{../decryption.selectedCipherLetter}}" {{#if this.disabled}}disabled{{/if}}>
+            <span>{{this.icon}}</span>
+            <b>{{this.label}}</b>
+            <small>{{this.skillLabel}} · {{this.effect}}</small>
+          </button>
+          {{/each}}
+        </div>
+        {{/if}}
+        <div class="dx-rail-head compact">◈ Skill Buttons</div>
         <div class="swse-intel-decryption-actions">
           {{#each decryption.skills}}
           <button type="button" class="pl-skill" data-decrypt-action="attempt" data-skill-key="{{this.key}}" data-cipher-letter="{{../decryption.selectedCipherLetter}}" {{#if this.disabled}}disabled{{/if}}><span class="sk-ico">{{this.icon}}</span><span><span class="sk-nm">{{this.label}}</span><span class="sk-sub">d20 + {{this.mod}} · DC {{../decryption.dc}}</span></span><span class="sk-mod">+{{this.mod}}</span></button>
@@ -72,8 +93,9 @@
         <form class="swse-transmission-manual pl-manual">
           <input type="hidden" name="cipherLetter" value="{{decryption.selectedCipherLetter}}">
           <label><b>Manual analysis:</b> click a glyph/fragment, type a hypothesis letter, then lock it in.</label>
-          <div><input maxlength="1" name="plainLetter" placeholder="A-Z" {{#unless decryption.hasSelection}}disabled{{/unless}} autofocus><button type="button" data-decrypt-action="guess" {{#unless decryption.canGuess}}disabled{{/unless}}>Guess</button></div>
-          <small>Keyboard: select a glyph, type A-Z to guess, Esc to clear selection.</small>
+          <div class="swse-transmission-manual-row"><input maxlength="1" name="plainLetter" placeholder="A-Z" {{#unless decryption.hasSelection}}disabled{{/unless}} autofocus><button type="button" data-decrypt-action="guess" {{#unless decryption.canGuess}}disabled{{/unless}}>Guess</button><button type="button" data-decrypt-action="clear-guess" {{#unless decryption.hasSelection}}disabled{{/unless}}>Clear</button></div>
+          <div class="swse-transmission-letter-grid">{{#each decryption.manualAlphabet}}<button type="button" data-decrypt-action="guess-letter" data-plain-letter="{{this}}" {{#unless ../decryption.hasSelection}}disabled{{/unless}}>{{this}}</button>{{/each}}</div>
+          <small>{{decryption.failureLine}} Keyboard: select a glyph, type A-Z to guess, Esc to clear selection.</small>
         </form>
         {{#if decryption.log.length}}<div class="swse-intel-decryption-log pl-log">{{#each decryption.log}}<span class="log-entry {{this.cls}}">{{this.text}}</span>{{/each}}</div>{{/if}}
       </aside>
@@ -106,6 +128,7 @@
 
     <div class="swse-transmission-footer">
       {{#if canForceOpen}}<button type="button" class="dx-btn pink" data-decrypt-action="force">GM Decrypt</button>{{/if}}
+      <button type="button" class="dx-btn ghost" data-decrypt-action="clear-selection" {{#unless decryption.hasSelection}}disabled{{/unless}}>Clear Selection</button>
       <button type="button" class="dx-btn ghost" data-decrypt-action="refresh">Refresh Signal</button>
       {{#if lastRequestId}}<span>Request {{lastRequestId}}</span>{{/if}}
     </div>

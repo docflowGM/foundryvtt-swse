@@ -4,6 +4,7 @@ import { BaseSWSEAppV2 } from "/systems/foundryvtt-swse/scripts/apps/base/base-s
 import { ForceAlchemyContextResolver, getForceAlchemySuggestedRiteForItem, resolveForceAlchemyActor } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-context-resolver.js";
 import { FORCE_ALCHEMY_CATEGORIES, FORCE_ALCHEMY_RITES } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-data.js";
 import { ForceAlchemyStateService } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-state-service.js";
+import { ForceAlchemyMechanicsService } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-mechanics-service.js";
 
 const TEMPLATE_PATH = 'systems/foundryvtt-swse/templates/apps/force-alchemy/force-alchemy-workbench.hbs';
 
@@ -183,6 +184,11 @@ export class ForceAlchemyWorkbenchApp extends BaseSWSEAppV2 {
       await this.#advanceProject(element.dataset.projectId);
       return;
     }
+
+    if (action === 'consume-rapid-surge') {
+      await this.#consumeRapidAlchemySurge();
+      return;
+    }
   }
 
   #resolveCurrentContext() {
@@ -206,21 +212,21 @@ export class ForceAlchemyWorkbenchApp extends BaseSWSEAppV2 {
       return;
     }
     try {
-      const result = await ForceAlchemyStateService.recordSelection(this.actor, detail);
-      const modeLabel = result.mode === 'project' ? 'pending ritual project' : 'staged active working';
-      ui.notifications?.info?.(`Recorded ${detail.rite.name} as a ${modeLabel}. Costs and effects are not applied until the mechanical phase.`);
+      const result = await ForceAlchemyMechanicsService.applySelection(this.actor, detail);
+      const modeLabel = result.mode === 'project' ? 'pending ritual project' : result.mechanical ? 'active mechanical working' : 'staged working';
+      ui.notifications?.info?.(`${detail.rite.name} recorded as a ${modeLabel}.`);
       this.render(false);
     } catch (error) {
-      console.error('[ForceAlchemyWorkbench] Failed to record selection', error);
-      ui.notifications?.error?.(`Could not record Force Alchemy state: ${error.message}`);
+      console.error('[ForceAlchemyWorkbench] Failed to apply selection', error);
+      ui.notifications?.error?.(`Could not apply Force Alchemy rite: ${error.message}`);
     }
   }
 
   async #clearSlot(stateKey) {
     if (!stateKey) return;
     try {
-      await ForceAlchemyStateService.clearSlot(this.actor, stateKey);
-      ui.notifications?.info?.('Cleared the staged alchemical working.');
+      await ForceAlchemyMechanicsService.clearSlot(this.actor, stateKey);
+      ui.notifications?.info?.('Cleared the alchemical working and removed its active effects.');
       this.render(false);
     } catch (error) {
       console.error('[ForceAlchemyWorkbench] Failed to clear slot', error);
@@ -231,8 +237,8 @@ export class ForceAlchemyWorkbenchApp extends BaseSWSEAppV2 {
   async #destroySlot(stateKey) {
     if (!stateKey) return;
     try {
-      await ForceAlchemyStateService.destroySlot(this.actor, stateKey);
-      ui.notifications?.info?.('Destroyed the staged talisman and recorded its cooldown when applicable.');
+      await ForceAlchemyMechanicsService.destroySlot(this.actor, stateKey);
+      ui.notifications?.info?.('Destroyed the talisman, removed its active effects, and recorded its cooldown when applicable.');
       this.render(false);
     } catch (error) {
       console.error('[ForceAlchemyWorkbench] Failed to destroy slot', error);
@@ -261,6 +267,18 @@ export class ForceAlchemyWorkbenchApp extends BaseSWSEAppV2 {
     } catch (error) {
       console.error('[ForceAlchemyWorkbench] Failed to advance project', error);
       ui.notifications?.error?.(`Could not advance alchemical project: ${error.message}`);
+    }
+  }
+
+
+  async #consumeRapidAlchemySurge() {
+    try {
+      await ForceAlchemyMechanicsService.consumeRapidAlchemySurge(this.actor);
+      ui.notifications?.info?.('Rapid Alchemy attack bonus consumed; +5 damage surge is ready for one damage roll.');
+      this.render(false);
+    } catch (error) {
+      console.error('[ForceAlchemyWorkbench] Failed to consume Rapid Alchemy surge', error);
+      ui.notifications?.error?.(`Could not consume Rapid Alchemy surge: ${error.message}`);
     }
   }
 

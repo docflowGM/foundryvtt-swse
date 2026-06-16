@@ -117,6 +117,13 @@
             </div>
             <div class="gm-intel-form-grid gm-intel-cipher-grid">
               <label class="is-wide gm-intel-analysis-mode">Analysis Mode<select name="decryptionMode">{{#each intelManager.decryptionModeOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.icon}} {{this.label}}</option>{{/each}}</select><span>Choose the lock type: cipher, firewall, trace, packet rebuild, coordinates, ancient script, droid memory, sensor analysis, security sequence, rumor web, or Force resonance.</span></label>
+              {{#if intelManager.selectedModeCard}}
+              <div class="gm-intel-mode-summary is-wide">
+                <div class="gm-intel-mode-summary-icon">{{intelManager.selectedModeCard.icon}}</div>
+                <div><strong>{{intelManager.selectedModeCard.label}}</strong><p>{{intelManager.selectedModeCard.description}}</p><small>Recommended skills: {{intelManager.selectedModeCard.skillList}}</small></div>
+              </div>
+              {{/if}}
+              <div class="gm-intel-mode-card-grid is-wide">{{#each intelManager.decryptionModeCards}}<button type="button" class="gm-intel-mode-card {{this.className}}" data-intel-mode-select="{{this.value}}"><b>{{this.icon}} {{this.label}}</b><span>{{this.description}}</span><small>{{this.skillList}}</small></button>{{/each}}</div>
               <label>Primary Skill<input type="text" name="skillGateSkill" value="{{intelManager.editor.skillGateSkill}}" placeholder="useComputer"></label>
               <label class="is-wide">Allowed Skill Buttons<input type="text" name="skillGateSkills" value="{{intelManager.editor.skillGateSkills}}" placeholder="useComputer, mechanics, knowledgeTechnology"></label>
               <label>Reveal DC<input type="number" name="skillGateDc" min="0" step="1" value="{{intelManager.editor.skillGateDc}}"></label>

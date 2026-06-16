@@ -420,7 +420,7 @@ function buildSlots(context) {
       stateKey: 'activeForceTalisman',
       glyph: '&loz;',
       label: state.activeForceTalisman?.name || 'No Force Talisman',
-      meta: state.activeForceTalisman ? [state.activeForceTalisman.targetName, state.activeForceTalisman.configLabel].filter(Boolean).join(' · ') : 'inactive',
+      meta: state.activeForceTalisman ? [state.activeForceTalisman.targetName, state.activeForceTalisman.configLabel, state.activeForceTalisman.pendingCosts ? 'costs pending' : 'active'].filter(Boolean).join(' · ') : 'inactive',
       active: !!state.activeForceTalisman,
       tone: 'holo'
     },
@@ -429,7 +429,7 @@ function buildSlots(context) {
       stateKey: 'focusedForceTalisman',
       glyph: '&#10038;',
       label: state.focusedForceTalisman?.name || 'No Focused Talisman',
-      meta: state.focusedForceTalisman?.configLabel || (state.focusedForceTalisman ? 'focused power recorded' : 'inactive'),
+      meta: state.focusedForceTalisman ? [state.focusedForceTalisman.configLabel || 'focused power recorded', state.focusedForceTalisman.pendingCosts ? 'costs pending' : 'active'].filter(Boolean).join(' · ') : 'inactive',
       active: !!state.focusedForceTalisman,
       tone: 'violet'
     },
@@ -438,7 +438,7 @@ function buildSlots(context) {
       stateKey: 'activeDarkSideTalisman',
       glyph: '&#9790;',
       label: state.activeDarkSideTalisman?.name || 'No Dark Side Talisman',
-      meta: state.activeDarkSideTalisman ? [state.activeDarkSideTalisman.targetName, state.activeDarkSideTalisman.configLabel || 'anti-light ward'].filter(Boolean).join(' · ') : 'inactive',
+      meta: state.activeDarkSideTalisman ? [state.activeDarkSideTalisman.targetName, state.activeDarkSideTalisman.configLabel || 'anti-light ward', state.activeDarkSideTalisman.pendingCosts ? 'costs pending' : 'active'].filter(Boolean).join(' · ') : 'inactive',
       active: !!state.activeDarkSideTalisman,
       tone: 'violet'
     },
@@ -447,7 +447,7 @@ function buildSlots(context) {
       stateKey: 'activeSithTalisman',
       glyph: '&#9650;',
       label: state.activeSithTalisman?.name || 'No Sith Talisman',
-      meta: state.activeSithTalisman ? [state.activeSithTalisman.targetName, '+1d6 Force Power damage'].filter(Boolean).join(' · ') : 'inactive',
+      meta: state.activeSithTalisman ? [state.activeSithTalisman.targetName, '+1d6 Force Power damage', state.activeSithTalisman.pendingCosts ? 'costs pending' : 'active'].filter(Boolean).join(' · ') : 'inactive',
       active: !!state.activeSithTalisman,
       tone: 'crimson'
     },
@@ -456,8 +456,9 @@ function buildSlots(context) {
       stateKey: 'rapidAlchemy',
       glyph: '&#9889;',
       label: state.rapidAlchemy?.name || 'Rapid Alchemy idle',
-      meta: state.rapidAlchemy ? [state.rapidAlchemy.targetName, 'encounter state staged'].filter(Boolean).join(' · ') : 'no encounter buff',
+      meta: state.rapidAlchemy ? [state.rapidAlchemy.targetName, state.rapidAlchemy.config?.damageSurgeReady ? '+5 damage surge ready' : '+2 attack encounter bonus'].filter(Boolean).join(' · ') : 'no encounter buff',
       active: !!state.rapidAlchemy,
+      canConsumeSurge: !!state.rapidAlchemy && state.rapidAlchemy.config?.surgeConsumed !== true,
       tone: 'gold'
     }
   ];

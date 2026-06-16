@@ -9,7 +9,7 @@
     <span class="sa-sigil" aria-hidden="true">&#9959;</span>
     <div class="sa-title-wrap">
       <div class="sa-title">Force Artifact / <b>Sith Alchemy</b></div>
-      <div class="sa-subtitle">Ritual workbench · state recording phase</div>
+      <div class="sa-subtitle">Ritual workbench · mechanical instant rites</div>
     </div>
     <span class="sa-hud-tag">Ritual Surface</span>
     <span class="sa-hud-actor">{{actor.name}}</span>
@@ -43,7 +43,7 @@
               <div class="nm">{{label}}</div>
               <div class="meta">{{meta}}</div>
             </div>
-            {{#if active}}<div class="sa-slot-actions"><button type="button" class="act" data-force-alchemy-action="clear-slot" data-state-key="{{stateKey}}" title="Clear staged state">Clear</button><button type="button" class="act danger" data-force-alchemy-action="destroy-slot" data-state-key="{{stateKey}}" title="Destroy and record cooldown">Destroy</button></div>{{/if}}
+            {{#if active}}<div class="sa-slot-actions">{{#if canConsumeSurge}}<button type="button" class="act surge" data-force-alchemy-action="consume-rapid-surge" title="Consume +2 attack for +5 damage">Surge</button>{{/if}}<button type="button" class="act" data-force-alchemy-action="clear-slot" data-state-key="{{stateKey}}" title="Clear state and effects">Clear</button><button type="button" class="act danger" data-force-alchemy-action="destroy-slot" data-state-key="{{stateKey}}" title="Destroy and record cooldown">Destroy</button></div>{{/if}}
           </div>
         {{/each}}
       </div>
@@ -237,12 +237,12 @@
 
           <footer class="sa-commit">
             <div class="sa-commit-meta">
-              <span>Phase 2: record staged state only</span>
-              <span class="{{#if detail.ready}}ready{{else}}blocked{{/if}}">{{#if detail.ready}}Ready to record{{else}}Selection incomplete{{/if}}</span>
+              <span>Phase 3: instant rites spend resources and create visible Active Effects</span>
+              <span class="{{#if detail.ready}}ready{{else}}blocked{{/if}}">{{#if detail.ready}}Ready to apply{{else}}Selection incomplete{{/if}}</span>
             </div>
             <div class="sa-btn-row">
               <button type="button" class="sa-btn ghost" data-force-alchemy-action="clear">Clear</button>
-              <button type="button" class="sa-btn commit" data-force-alchemy-action="commit" {{#unless detail.ready}}disabled{{/unless}}>Record Working</button>
+              <button type="button" class="sa-btn commit" data-force-alchemy-action="commit" {{#unless detail.ready}}disabled{{/unless}}>Apply Working</button>
             </div>
           </footer>
         </div>

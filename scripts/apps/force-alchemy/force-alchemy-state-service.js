@@ -95,6 +95,9 @@ function normalizeStateEntry(entry, fallbackRiteId = null) {
     status: entry.status ?? 'staged',
     createdAt: entry.createdAt ?? nowIso(),
     updatedAt: entry.updatedAt ?? entry.createdAt ?? nowIso(),
+    appliedAt: entry.appliedAt ?? null,
+    effectIds: asArray(entry.effectIds),
+    resourceChanges: entry.resourceChanges && typeof entry.resourceChanges === 'object' ? clone(entry.resourceChanges) : null,
     pendingEffects: entry.pendingEffects !== false,
     pendingCosts: entry.pendingCosts !== false,
     source: entry.source ?? 'force-alchemy-workbench'
@@ -203,13 +206,13 @@ function extractConfig(detail) {
   return config;
 }
 
-function buildEntryFromDetail(detail) {
+function buildEntryFromDetail(detail, options = {}) {
   const rite = detail?.rite;
   const target = detail?.selectedTarget;
   if (!rite) throw new Error('No rite selected.');
   if (!target) throw new Error('No target selected.');
 
-  const config = extractConfig(detail);
+  const config = { ...extractConfig(detail), ...(options.configPatch && typeof options.configPatch === 'object' ? clone(options.configPatch) : {}) };
   return normalizeStateEntry({
     id: randomId('working'),
     riteId: rite.id,
@@ -221,11 +224,14 @@ function buildEntryFromDetail(detail) {
     targetKind: target.kind ?? null,
     config,
     resultLabel: rite.resultLabel,
-    status: rite.timing === 'encounter' ? 'encounter-staged' : 'staged',
+    status: options.status ?? (rite.timing === 'encounter' ? 'encounter-staged' : 'staged'),
     createdAt: nowIso(),
     updatedAt: nowIso(),
-    pendingEffects: true,
-    pendingCosts: true
+    appliedAt: options.appliedAt ?? null,
+    effectIds: asArray(options.effectIds),
+    resourceChanges: options.resourceChanges && typeof options.resourceChanges === 'object' ? clone(options.resourceChanges) : null,
+    pendingEffects: options.pendingEffects ?? true,
+    pendingCosts: options.pendingCosts ?? true
   }, rite.id);
 }
 
@@ -276,7 +282,7 @@ function shouldCooldown(slotKey) {
   return ['activeForceTalisman', 'activeDarkSideTalisman', 'activeSithTalisman'].includes(slotKey);
 }
 
-export async function recordForceAlchemySelection(actor, detail) {
+export async function recordForceAlchemySelection(actor, detail, options = {}) {
   if (!detail?.ready) throw new Error('The selected rite is not ready to record.');
   const rite = detail.rite;
   const current = readForceAlchemyState(actor);
@@ -289,7 +295,7 @@ export async function recordForceAlchemySelection(actor, detail) {
     return { mode: 'project', entry: project, state: readForceAlchemyState(actor) };
   }
 
-  const entry = buildEntryFromDetail(detail);
+  const entry = buildEntryFromDetail(detail, options);
   const stateKey = rite.stateKey;
   if (!STATE_KEYS.has(stateKey)) throw new Error(`Unsupported Force Alchemy state key: ${stateKey}`);
   next[stateKey] = entry;
@@ -329,6 +335,22 @@ export async function destroyForceAlchemySlot(actor, stateKey) {
   return readForceAlchemyState(actor);
 }
 
+
+export async function updateForceAlchemySlot(actor, stateKey, patch = {}) {
+  if (!STATE_KEYS.has(stateKey)) throw new Error(`Unsupported Force Alchemy state key: ${stateKey}`);
+  const current = readForceAlchemyState(actor);
+  const next = clone(current);
+  const entry = next[stateKey];
+  if (!entry) throw new Error(`No Force Alchemy entry exists for ${stateKey}.`);
+  next[stateKey] = normalizeStateEntry({
+    ...entry,
+    ...(patch && typeof patch === 'object' ? clone(patch) : {}),
+    updatedAt: nowIso()
+  }, entry.riteId);
+  await writeForceAlchemyState(actor, next);
+  return readForceAlchemyState(actor);
+}
+
 export async function cancelForceAlchemyProject(actor, projectId) {
   const current = readForceAlchemyState(actor);
   const next = clone(current);
@@ -359,6 +381,7 @@ export const ForceAlchemyStateService = {
   recordSelection: recordForceAlchemySelection,
   clearSlot: clearForceAlchemySlot,
   destroySlot: destroyForceAlchemySlot,
+  updateSlot: updateForceAlchemySlot,
   cancelProject: cancelForceAlchemyProject,
   advanceProject: advanceForceAlchemyProject
 };

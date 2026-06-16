@@ -237,7 +237,7 @@
                     <form class="swse-intel-manual-guess pl-manual">
                       <input type="hidden" name="cipherLetter" value="{{this.decryption.selectedCipherLetter}}">
                       <label><b>Deduce by hand:</b> click a glyph, type a letter, then lock in a hypothesis.</label>
-                      <div><input maxlength="1" name="plainLetter" placeholder="A-Z" {{#unless this.decryption.hasSelection}}disabled{{/unless}}><button type="button" data-allies-action="guess-intel-cipher" data-intel-id="{{this.intelId}}" data-cipher-letter="{{this.decryption.selectedCipherLetter}}" {{#unless this.decryption.canGuess}}disabled{{/unless}}>Guess</button></div>
+                      <div class="swse-transmission-manual-row"><input maxlength="1" name="plainLetter" placeholder="A-Z" {{#unless this.decryption.hasSelection}}disabled{{/unless}}><button type="button" data-allies-action="guess-intel-cipher" data-intel-id="{{this.intelId}}" data-cipher-letter="{{this.decryption.selectedCipherLetter}}" {{#unless this.decryption.canGuess}}disabled{{/unless}}>Guess</button><button type="button" data-allies-action="clear-intel-guess" data-intel-id="{{this.intelId}}" data-cipher-letter="{{this.decryption.selectedCipherLetter}}" {{#unless this.decryption.hasSelection}}disabled{{/unless}}>Clear</button></div>
                     </form>
                     {{#if this.decryption.log.length}}<div class="swse-intel-decryption-log pl-log">{{#each this.decryption.log}}<span class="log-entry {{this.cls}}">{{this.text}}</span>{{/each}}</div>{{/if}}
                   </aside>
@@ -333,7 +333,7 @@
                     <form class="swse-intel-manual-guess pl-manual">
                       <input type="hidden" name="cipherLetter" value="{{this.decryption.selectedCipherLetter}}">
                       <label><b>Deduce by hand:</b> click a glyph, type a letter, then lock in a hypothesis.</label>
-                      <div><input maxlength="1" name="plainLetter" placeholder="A-Z" {{#unless this.decryption.hasSelection}}disabled{{/unless}}><button type="button" data-allies-action="guess-intel-cipher" data-intel-id="{{this.intelId}}" data-cipher-letter="{{this.decryption.selectedCipherLetter}}" {{#unless this.decryption.canGuess}}disabled{{/unless}}>Guess</button></div>
+                      <div class="swse-transmission-manual-row"><input maxlength="1" name="plainLetter" placeholder="A-Z" {{#unless this.decryption.hasSelection}}disabled{{/unless}}><button type="button" data-allies-action="guess-intel-cipher" data-intel-id="{{this.intelId}}" data-cipher-letter="{{this.decryption.selectedCipherLetter}}" {{#unless this.decryption.canGuess}}disabled{{/unless}}>Guess</button><button type="button" data-allies-action="clear-intel-guess" data-intel-id="{{this.intelId}}" data-cipher-letter="{{this.decryption.selectedCipherLetter}}" {{#unless this.decryption.hasSelection}}disabled{{/unless}}>Clear</button></div>
                     </form>
                     {{#if this.decryption.log.length}}<div class="swse-intel-decryption-log pl-log">{{#each this.decryption.log}}<span class="log-entry {{this.cls}}">{{this.text}}</span>{{/each}}</div>{{/if}}
                   </aside>

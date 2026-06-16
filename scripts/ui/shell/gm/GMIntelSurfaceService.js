@@ -270,6 +270,15 @@ export class GMIntelSurfaceService {
     }))];
 
     const stats = this._buildStats(cards);
+    const decryptionModeCards = HolonetDecryptionService.analysisModeOptions().map(entry => ({
+      ...entry,
+      value: entry.id,
+      selected: entry.id === editor.decryptionMode,
+      className: entry.id === editor.decryptionMode ? 'is-selected' : '',
+      skillList: tagsLabel(entry.defaultSkills || []),
+      playbookText: (entry.playbook || []).map(action => `${action.label}: ${action.effect}`).join(' • ')
+    }));
+    const selectedModeCard = decryptionModeCards.find(entry => entry.selected) || decryptionModeCards[0] || null;
     return {
       pageTitle: 'GM Intel',
       pageDescription: 'Draft, classify, and stage Holonet-backed clues, rumors, dossiers, and controlled reveals.',
@@ -293,7 +302,9 @@ export class GMIntelSurfaceService {
         editorPersistenceOptions: optionsFrom(Object.values(INTEL_PERSISTENCE), editor.persistence),
         editorRevealStateOptions: optionsFrom(Object.values(INTEL_REVEAL_STATE), editor.revealState),
         visibilityOptions: optionsFrom(['gm-only', 'party', 'selected-players', 'public'], editor.visibilityMode),
-        decryptionModeOptions: HolonetDecryptionService.analysisModeOptions().map(entry => ({ ...entry, value: entry.id, selected: entry.id === editor.decryptionMode })),
+        decryptionModeOptions: decryptionModeCards,
+        decryptionModeCards,
+        selectedModeCard,
         cipherModeOptions: optionsFrom(['caesar', 'sub'], editor.cipherMode),
         cipherFailTypeOptions: optionsFrom(['attempts', 'trace'], editor.cipherFailType),
         factionOptions,

@@ -249,8 +249,87 @@ function analysisModeOptions() {
     label: entry.label,
     icon: entry.icon,
     description: entry.description,
-    defaultSkills: entry.defaultSkills
+    defaultSkills: entry.defaultSkills,
+    playbook: modePlaybook(entry.id),
+    tone: modeTone(entry.id)
   }));
+}
+
+function modeTone(modeId = 'glyphCipher') {
+  return ({
+    glyphCipher: 'cipher',
+    firewallBreak: 'breach',
+    signalTrace: 'trace',
+    packetRebuild: 'repair',
+    coordinateDecode: 'nav',
+    ancientScript: 'lore',
+    droidMemory: 'repair',
+    sensorAnalysis: 'trace',
+    securitySequence: 'breach',
+    rumorWeb: 'social',
+    forceResonance: 'force'
+  })[modeId] || 'cipher';
+}
+
+function modePlaybook(modeId = 'glyphCipher') {
+  const common = {
+    glyphCipher: [
+      { label: 'Frequency Sweep', skill: 'useComputer', effect: 'Targets the most common unresolved glyph.' },
+      { label: 'Pattern Match', skill: 'knowledgeTechnology', effect: 'Confirms one cipher substitution or structural layer.' },
+      { label: 'Manual Hypothesis', skill: 'intelligence', effect: 'Use letter guesses to solve without burning a roll.' }
+    ],
+    firewallBreak: [
+      { label: 'Probe ICE', skill: 'useComputer', effect: 'Maps the next firewall node.' },
+      { label: 'Hardware Bypass', skill: 'mechanics', effect: 'Routes around a locked circuit or port.' },
+      { label: 'Spoof Credential', skill: 'knowledgeTechnology', effect: 'Reduces trace pressure through a technical exploit.' }
+    ],
+    signalTrace: [
+      { label: 'Ping Relay', skill: 'useComputer', effect: 'Narrows the origin chain.' },
+      { label: 'Sensor Correlate', skill: 'perception', effect: 'Filters noise and false relays.' },
+      { label: 'Tech Sweep', skill: 'knowledgeTechnology', effect: 'Identifies transmitter class or spoofing.' }
+    ],
+    packetRebuild: [
+      { label: 'Checksum Pass', skill: 'useComputer', effect: 'Restores a corrupted packet.' },
+      { label: 'Bus Stabilize', skill: 'mechanics', effect: 'Prevents additional data scarring.' },
+      { label: 'Archive Reorder', skill: 'knowledgeTechnology', effect: 'Places fragments back into sequence.' }
+    ],
+    coordinateDecode: [
+      { label: 'Nav Grid Align', skill: 'knowledgeGalacticLore', effect: 'Locks a sector/system coordinate.' },
+      { label: 'Astrometric Solve', skill: 'knowledgePhysicalSciences', effect: 'Corrects drift or false jumps.' },
+      { label: 'Route Decode', skill: 'useComputer', effect: 'Extracts a hidden route or POI marker.' }
+    ],
+    ancientScript: [
+      { label: 'Rune Context', skill: 'knowledgeGalacticLore', effect: 'Frames the inscription historically.' },
+      { label: 'Cultural Grammar', skill: 'knowledgeSocialSciences', effect: 'Decodes idioms and ritual phrasing.' },
+      { label: 'Force Reading', skill: 'useTheForce', effect: 'Attunes to a deeper symbolic meaning.' }
+    ],
+    droidMemory: [
+      { label: 'Memory Bus', skill: 'mechanics', effect: 'Stabilizes a damaged core.' },
+      { label: 'Sector Pull', skill: 'useComputer', effect: 'Recovers an indexed memory block.' },
+      { label: 'Tech Diagnosis', skill: 'knowledgeTechnology', effect: 'Identifies corrupted or spoofed memory.' }
+    ],
+    sensorAnalysis: [
+      { label: 'Enhance Feed', skill: 'useComputer', effect: 'Sharpens the signal layer.' },
+      { label: 'Spot Anomaly', skill: 'perception', effect: 'Isolates hidden movement or residue.' },
+      { label: 'Band Match', skill: 'knowledgeTechnology', effect: 'Identifies device, ship, or sensor class.' }
+    ],
+    securitySequence: [
+      { label: 'Tumbler Bypass', skill: 'mechanics', effect: 'Solves a physical lock segment.' },
+      { label: 'Code Probe', skill: 'useComputer', effect: 'Tests a digital sequence safely.' },
+      { label: 'Trap Scan', skill: 'perception', effect: 'Finds tamper tells before they trigger.' }
+    ],
+    rumorWeb: [
+      { label: 'Source Check', skill: 'gatherInformation', effect: 'Verifies one rumor chain.' },
+      { label: 'Social Pressure', skill: 'persuasion', effect: 'Coaxes a lead into the open.' },
+      { label: 'False Flag', skill: 'deception', effect: 'Filters planted misinformation.' }
+    ],
+    forceResonance: [
+      { label: 'Attune', skill: 'useTheForce', effect: 'Stabilizes the vision or echo.' },
+      { label: 'Lore Anchor', skill: 'knowledgeGalacticLore', effect: 'Grounds the resonance in history.' },
+      { label: 'Sense Pattern', skill: 'perception', effect: 'Finds recurring sensory fragments.' }
+    ]
+  };
+  return common[modeId] || common.glyphCipher;
 }
 
 function nowIso() {
@@ -499,6 +578,8 @@ export class HolonetDecryptionService {
   static get skillLabels() { return SKILL_LABELS; }
   static get analysisModes() { return ANALYSIS_MODES; }
   static analysisModeOptions() { return analysisModeOptions(); }
+  static modePlaybook(modeId = 'glyphCipher') { return modePlaybook(analysisConfig(modeId).id); }
+  static modeTone(modeId = 'glyphCipher') { return modeTone(analysisConfig(modeId).id); }
 
   static levelParams(level) { return levelParams(level); }
 
@@ -639,6 +720,15 @@ export class HolonetDecryptionService {
     const failCurrent = payload.failType === 'trace' ? cleanNumber(payload.trace, 0, 0, 100) : cleanNumber(payload.attemptsUsed, 0, 0, 100);
     const failMax = payload.failType === 'trace' ? cleanNumber(payload.traceMax, 10, 1, 100) : cleanNumber(payload.attempts, 6, 1, 100);
     const failPercent = failMax ? Math.min(100, Math.round((failCurrent / failMax) * 100)) : 0;
+    const progressBand = solved ? 'complete' : failed ? 'failed' : percent >= 75 ? 'hot' : percent >= 40 ? 'warm' : 'cold';
+    const failBand = failed ? 'critical' : failPercent >= 75 ? 'critical' : failPercent >= 45 ? 'warning' : 'stable';
+    const modeActions = modePlaybook(analysis.id).map(action => ({
+      ...action,
+      icon: SKILL_ICONS[action.skill] || '◈',
+      skillLabel: SKILL_LABELS[action.skill] || action.skill,
+      mod: actorSkillMod(actor, action.skill),
+      disabled: !locked
+    }));
     return {
       enabled: true,
       id: payload.id,
@@ -647,6 +737,16 @@ export class HolonetDecryptionService {
       analysisLabel: cleanString(payload.analysisLabel, analysis.label),
       analysisIcon: cleanString(payload.analysisIcon, analysis.icon),
       analysisDescription: cleanString(payload.analysisDescription, analysis.description),
+      modeClass: `analysis-${analysis.id}`,
+      modeTone: modeTone(analysis.id),
+      modeActions,
+      objectiveLine: cleanString(payload.objectiveLine, `${analysis.actionHint} Use the tactic deck or manual hypotheses to advance the lock.`),
+      failureLine: payload.failType === 'trace'
+        ? `${analysis.failLabel} rises on failed rolls; reaching the limit triggers ${analysis.lockoutLabel}.`
+        : `Failed rolls spend attempts; running out triggers ${analysis.lockoutLabel}.`,
+      stageLabel: solved ? 'Resolved' : failed ? 'Locked Out' : percent > 0 ? 'In Progress' : 'Sealed',
+      progressBand,
+      failBand,
       progressLabel: cleanString(payload.progressLabel, analysis.progressLabel),
       failLabel: cleanString(payload.failLabel, analysis.failLabel),
       actionHint: cleanString(payload.actionHint, analysis.actionHint),
@@ -763,7 +863,12 @@ export class HolonetDecryptionService {
     const next = this.clonePayload(payload);
     if (!next?.enabled) return { ok: false, payload: next, reason: 'missing-puzzle' };
     const cipher = normalizeCipherLetter(cipherLetter);
-    if (!cipher || !distinctCipherLetters(next).includes(cipher)) return { ok: false, payload: next, reason: 'unknown-cipher' };
+    if (!cipher) {
+      next.selectedCipherLetter = '';
+      next.lastAttemptAt = nowIso();
+      return { ok: true, payload: next, selectedCipherLetter: '' };
+    }
+    if (!distinctCipherLetters(next).includes(cipher)) return { ok: false, payload: next, reason: 'unknown-cipher' };
     next.selectedCipherLetter = normalizeCipherLetter(next.selectedCipherLetter) === cipher ? '' : cipher;
     next.lastAttemptAt = nowIso();
     return { ok: true, payload: next, selectedCipherLetter: next.selectedCipherLetter };
@@ -783,9 +888,16 @@ export class HolonetDecryptionService {
     const cipher = normalizeCipherLetter(cipherLetter || next.selectedCipherLetter);
     const guess = normalizePlainGuess(plainLetter);
     if (!cipher || !distinctCipherLetters(next).includes(cipher)) return { ok: false, payload: next, reason: 'unknown-cipher' };
-    if (!guess) return { ok: false, payload: next, reason: 'missing-guess' };
     if ((next.knownCipherLetters ?? []).includes(cipher)) return { ok: false, payload: next, reason: 'already-cracked' };
     next.guesses = next.guesses && typeof next.guesses === 'object' ? next.guesses : {};
+    if (!guess) {
+      delete next.guesses[cipher];
+      next.selectedCipherLetter = '';
+      next.log = [{ cls: 'info', text: `${cleanString(next.manualVerb, analysisConfig(next.analysisMode).manualVerb)} cleared for ${cipher}.`, createdAt: nowIso() }, ...(next.log ?? [])].slice(0, 30);
+      next.lastAttemptAt = nowIso();
+      next.lastAttemptByUserId = cleanString(requesterId ?? globalThis.game?.user?.id);
+      return { ok: true, payload: next, cipherLetter: cipher, guess: '', correct: false, cleared: true, solved: false };
+    }
     next.guesses[cipher] = guess;
     next.selectedCipherLetter = cipher;
     const correct = guess === solutionPlainFor(next, cipher);

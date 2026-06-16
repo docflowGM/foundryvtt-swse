@@ -93,6 +93,10 @@ export class TransmissionDecryptionSurfaceController {
         return this._attempt(cleanString(target.dataset.skillKey, 'useComputer'), cleanString(target.dataset.cipherLetter), surface);
       case 'guess':
         return this._guessFromForm(target.closest('.swse-transmission-manual'), surface);
+      case 'guess-letter':
+        return this._guess(this._selectedCipher(surface), cleanString(target.dataset.plainLetter), surface);
+      case 'clear-guess':
+        return this._guess(this._selectedCipher(surface), '', surface);
       case 'clear-selection':
         return this._selectCipher('', surface);
       case 'claim':

@@ -171,6 +171,10 @@ export class AlliesSurfaceController {
           return this._selectIntelCipher(target.dataset.intelId, target.dataset.cipherLetter);
         case 'guess-intel-cipher':
           return this._guessIntelCipher(target);
+        case 'guess-intel-letter':
+          return this._guessIntelCipherDirect(target.dataset.intelId, target.dataset.cipherLetter, target.dataset.plainLetter);
+        case 'clear-intel-guess':
+          return this._guessIntelCipherDirect(target.dataset.intelId, target.dataset.cipherLetter, '');
         case 'claim-intel-lockbox':
           return this._claimIntelLockbox(target.dataset.intelId);
         case 'add-base':
@@ -352,11 +356,17 @@ export class AlliesSurfaceController {
     const plainLetter = form?.querySelector('[name="plainLetter"]')?.value || '';
     if (!intelId) return this._notify('Intel record could not be found.');
     if (!plainLetter) return this._notify('Enter a letter hypothesis first.');
+    return this._guessIntelCipherDirect(intelId, cipherLetter, plainLetter);
+  }
+
+  async _guessIntelCipherDirect(intelId, cipherLetter = '', plainLetter = '') {
+    if (!intelId) return this._notify('Intel record could not be found.');
     const result = await AlliesSurfaceService.guessIntelCipher(this._actor, intelId, cipherLetter, plainLetter);
-    if (result?.pending) ui?.notifications?.info?.('Manual glyph hypothesis sent to the GM host.');
+    if (result?.pending) ui?.notifications?.info?.('Manual analysis update sent to the GM host.');
+    else if (result?.ok && result?.cleared) ui?.notifications?.info?.('Manual hypothesis cleared.');
     else if (result?.ok && result?.solved) ui?.notifications?.info?.('Transmission decrypted. Lockbox contents may now be claimable.');
-    else if (result?.ok) ui?.notifications?.info?.('Glyph hypothesis recorded.');
-    else ui?.notifications?.warn?.('Glyph hypothesis could not be recorded.');
+    else if (result?.ok) ui?.notifications?.info?.('Manual analysis recorded.');
+    else ui?.notifications?.warn?.('Manual analysis could not be recorded.');
     this._patchAlliesState({ activeTab: 'intel' });
     this._requestRender('allies-intel-cipher-guess');
   }

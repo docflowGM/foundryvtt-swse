@@ -71,6 +71,7 @@ export const BONUS_TYPES = Object.freeze([
   { value: ModifierType.CIRCUMSTANCE, label: 'Circumstance' },
   { value: ModifierType.COMPETENCE, label: 'Competence' },
   { value: ModifierType.ENHANCEMENT, label: 'Enhancement' },
+  { value: ModifierType.EQUIPMENT, label: 'Equipment' },
   { value: ModifierType.INSIGHT, label: 'Insight' },
   { value: ModifierType.MORALE, label: 'Morale' },
   { value: ModifierType.DODGE, label: 'Dodge' },

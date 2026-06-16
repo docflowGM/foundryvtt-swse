@@ -1071,3 +1071,67 @@
   letter-spacing: 0.09em;
   text-transform: uppercase;
 }
+
+/* Phase 3 mechanical states */
+.sa-slot .act.surge {
+  border-color: rgba(255, 200, 60, 0.45);
+  color: var(--sa-gold, #ffd36d);
+  background: rgba(255, 200, 60, 0.08);
+}
+.sa-slot .act.surge:hover {
+  background: rgba(255, 200, 60, 0.16);
+  box-shadow: 0 0 12px rgba(255, 200, 60, 0.18);
+}
+.swse-force-alchemy-chat-card {
+  border: 1px solid rgba(255, 65, 92, 0.45);
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(145deg, rgba(31, 10, 34, 0.92), rgba(8, 18, 28, 0.94));
+  color: #e9fbff;
+}
+.swse-force-alchemy-chat-card header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: center;
+  padding: 9px 12px;
+  background: linear-gradient(135deg, rgba(189, 32, 61, 0.7), rgba(93, 48, 155, 0.72));
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.swse-force-alchemy-chat-card header span {
+  opacity: 0.78;
+  font-size: 10px;
+}
+.swse-force-alchemy-chat-card .fa-chat-body {
+  padding: 10px 12px;
+}
+.swse-force-alchemy-chat-card .fa-chat-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 5px 0;
+  border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+}
+.swse-force-alchemy-chat-card .fa-chat-row span {
+  opacity: 0.68;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+.swse-force-alchemy-chat-card .fa-chat-row strong.danger {
+  color: #ff6d83;
+}
+.swse-force-alchemy-chat-card details {
+  padding: 0 12px 12px;
+}
+.swse-force-alchemy-chat-card summary {
+  cursor: pointer;
+  color: #d8a7ff;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 10px;
+}
+.swse-force-alchemy-chat-card ul {
+  margin: 8px 0 0 18px;
+}

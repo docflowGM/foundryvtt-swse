@@ -152,6 +152,19 @@ export class GMIntelSurfaceController {
   }
 
   _wireIntelActions(pageElement, signal) {
+    pageElement.querySelectorAll('[data-intel-mode-select]').forEach((button) => {
+      button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const mode = event.currentTarget?.dataset?.intelModeSelect || '';
+        const select = pageElement.querySelector('select[name="decryptionMode"]');
+        if (select && mode) {
+          select.value = mode;
+          select.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+        pageElement.querySelectorAll('[data-intel-mode-select]').forEach(entry => entry.classList.toggle('is-selected', entry === event.currentTarget));
+      }, { signal });
+    });
+
     pageElement.querySelectorAll('[data-intel-action]').forEach((button) => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
