@@ -42,6 +42,11 @@ const SKILL_LABELS = Object.freeze({
   useComputer: 'Use Computer',
   mechanics: 'Mechanics',
   knowledgeTechnology: 'Knowledge (Technology)',
+  knowledgeGalacticLore: 'Knowledge (Galactic Lore)',
+  knowledgePhysicalSciences: 'Knowledge (Physical Sciences)',
+  knowledgeSocialSciences: 'Knowledge (Social Sciences)',
+  persuasion: 'Persuasion',
+  deception: 'Deception',
   gatherInformation: 'Gather Information',
   perception: 'Perception',
   useTheForce: 'Use the Force',
@@ -49,6 +54,204 @@ const SKILL_LABELS = Object.freeze({
 });
 
 const DEFAULT_SKILLS = ['useComputer', 'mechanics', 'knowledgeTechnology'];
+
+const SKILL_ICONS = Object.freeze({
+  useComputer: '⌨',
+  mechanics: '⚙',
+  knowledgeTechnology: '◈',
+  knowledgeGalacticLore: '◆',
+  knowledgePhysicalSciences: '◎',
+  knowledgeSocialSciences: '◇',
+  persuasion: '◌',
+  deception: '◍',
+  gatherInformation: '◌',
+  perception: '◎',
+  useTheForce: '✦',
+  intelligence: '◉'
+});
+
+const ANALYSIS_MODES = Object.freeze({
+  glyphCipher: {
+    id: 'glyphCipher',
+    label: 'Transmission Cipher',
+    icon: '⌖',
+    description: 'Decode a glyph or substitution cipher by combining manual hypotheses with slicer skill checks.',
+    defaultSkills: ['useComputer', 'knowledgeTechnology', 'intelligence'],
+    progressLabel: 'Decryption',
+    failLabel: 'Trace',
+    successVerb: 'Cracked',
+    structuralVerb: 'Datastream realigned',
+    manualVerb: 'Manual hypothesis',
+    actionHint: 'Select glyphs, use frequency analysis, or roll a skill to crack the cipher.',
+    recoveredLabel: 'Recovered message',
+    lockoutLabel: 'TRACE LOCKOUT'
+  },
+  firewallBreak: {
+    id: 'firewallBreak',
+    label: 'Firewall Breach',
+    icon: '▣',
+    description: 'Break through ICE, spoof credentials, and keep the trace meter from locking the terminal.',
+    defaultSkills: ['useComputer', 'mechanics', 'knowledgeTechnology'],
+    progressLabel: 'Breach Progress',
+    failLabel: 'Trace',
+    successVerb: 'Bypassed ICE node',
+    structuralVerb: 'Firewall topology mapped',
+    manualVerb: 'Exploit hypothesis',
+    actionHint: 'Use slicer actions to bypass ICE. Failed rolls increase trace or burn attempts.',
+    recoveredLabel: 'Unlocked data vault',
+    lockoutLabel: 'ICE LOCKOUT'
+  },
+  signalTrace: {
+    id: 'signalTrace',
+    label: 'Signal Trace',
+    icon: '⌁',
+    description: 'Trace a Holonet burst, comm ping, bounty signal, or hidden transmitter back to its origin.',
+    defaultSkills: ['useComputer', 'perception', 'knowledgeTechnology'],
+    progressLabel: 'Trace Fix',
+    failLabel: 'Signal Noise',
+    successVerb: 'Resolved relay',
+    structuralVerb: 'Signal route stabilized',
+    manualVerb: 'Relay hypothesis',
+    actionHint: 'Resolve relays and isolate the origin before noise/trace failure overwhelms the lock.',
+    recoveredLabel: 'Signal origin recovered',
+    lockoutLabel: 'SIGNAL LOST'
+  },
+  packetRebuild: {
+    id: 'packetRebuild',
+    label: 'Packet Reconstruction',
+    icon: '▦',
+    description: 'Reassemble corrupted packets, black-box fragments, damaged recordings, or shredded archives.',
+    defaultSkills: ['useComputer', 'mechanics', 'knowledgeTechnology'],
+    progressLabel: 'Packets Rebuilt',
+    failLabel: 'Corruption',
+    successVerb: 'Recovered packet',
+    structuralVerb: 'Packet order restored',
+    manualVerb: 'Packet hypothesis',
+    actionHint: 'Recover fragments through skill checks or manual reconstruction before corruption locks the stream.',
+    recoveredLabel: 'Rebuilt transmission',
+    lockoutLabel: 'DATA CORRUPTED'
+  },
+  coordinateDecode: {
+    id: 'coordinateDecode',
+    label: 'Coordinate Decode',
+    icon: '◎',
+    description: 'Decode astrogation coordinates, smuggler routes, rendezvous vectors, or hidden POI markers.',
+    defaultSkills: ['useComputer', 'knowledgeGalacticLore', 'knowledgePhysicalSciences'],
+    progressLabel: 'Coordinate Lock',
+    failLabel: 'Drift',
+    successVerb: 'Resolved coordinate',
+    structuralVerb: 'Astrogation grid aligned',
+    manualVerb: 'Coordinate hypothesis',
+    actionHint: 'Resolve coordinate fragments to reveal hidden systems, routes, stations, or POIs.',
+    recoveredLabel: 'Decoded coordinates',
+    lockoutLabel: 'NAV SOLUTION LOST'
+  },
+  ancientScript: {
+    id: 'ancientScript',
+    label: 'Ancient Translation',
+    icon: '◇',
+    description: 'Translate Sith runes, Jedi inscriptions, Rakatan glyphs, old temple markings, or prophecy fragments.',
+    defaultSkills: ['knowledgeGalacticLore', 'knowledgeSocialSciences', 'useTheForce'],
+    progressLabel: 'Translation',
+    failLabel: 'Misreadings',
+    successVerb: 'Translated phrase',
+    structuralVerb: 'Inscription grammar aligned',
+    manualVerb: 'Translation hypothesis',
+    actionHint: 'Interpret symbols through scholarship, Force insight, or manual phrase matching.',
+    recoveredLabel: 'Translated inscription',
+    lockoutLabel: 'MEANING LOST'
+  },
+  droidMemory: {
+    id: 'droidMemory',
+    label: 'Droid Memory Recovery',
+    icon: '⚙',
+    description: 'Recover damaged droid memory sectors, astromech logs, assassin droid records, or protocol cache fragments.',
+    defaultSkills: ['mechanics', 'useComputer', 'knowledgeTechnology'],
+    progressLabel: 'Memory Blocks',
+    failLabel: 'Data Scarring',
+    successVerb: 'Recovered memory block',
+    structuralVerb: 'Memory bus stabilized',
+    manualVerb: 'Memory address hypothesis',
+    actionHint: 'Stabilize the memory core and recover blocks before more data scars over.',
+    recoveredLabel: 'Recovered memory',
+    lockoutLabel: 'MEMORY CORE LOCKED'
+  },
+  sensorAnalysis: {
+    id: 'sensorAnalysis',
+    label: 'Sensor Analysis',
+    icon: '◉',
+    description: 'Enhance surveillance, battlefield sensor logs, starship sweeps, audio ghosts, or cloaked residue.',
+    defaultSkills: ['perception', 'useComputer', 'knowledgeTechnology'],
+    progressLabel: 'Signal Clarity',
+    failLabel: 'Interference',
+    successVerb: 'Isolated signal',
+    structuralVerb: 'Sensor bands synchronized',
+    manualVerb: 'Signal hypothesis',
+    actionHint: 'Isolate channels and identify the hidden image, ship, NPC, faction, or encounter clue.',
+    recoveredLabel: 'Analyzed sensor return',
+    lockoutLabel: 'SENSOR WASHOUT'
+  },
+  securitySequence: {
+    id: 'securitySequence',
+    label: 'Security Sequence',
+    icon: '▧',
+    description: 'Bypass a physical lockbox, vault sequence, cargo seal, Sith puzzle box, or secured datapad.',
+    defaultSkills: ['mechanics', 'useComputer', 'perception'],
+    progressLabel: 'Lock Sequence',
+    failLabel: 'Tamper Risk',
+    successVerb: 'Solved tumbler',
+    structuralVerb: 'Security sequence aligned',
+    manualVerb: 'Code hypothesis',
+    actionHint: 'Solve or bypass the sequence. Failed rolls raise tamper risk or burn safe attempts.',
+    recoveredLabel: 'Opened security lock',
+    lockoutLabel: 'TAMPER LOCKOUT'
+  },
+  rumorWeb: {
+    id: 'rumorWeb',
+    label: 'Rumor Web',
+    icon: '◌',
+    description: 'Decode informant chatter, underworld phrases, social ciphers, faction passwords, or planted misinformation.',
+    defaultSkills: ['gatherInformation', 'persuasion', 'deception', 'perception'],
+    progressLabel: 'Truth Extracted',
+    failLabel: 'Misinformation',
+    successVerb: 'Verified rumor',
+    structuralVerb: 'Source chain verified',
+    manualVerb: 'Rumor hypothesis',
+    actionHint: 'Separate reliable leads from false rumors. Success can produce job leads, NPC reveals, or faction clues.',
+    recoveredLabel: 'Verified lead',
+    lockoutLabel: 'LEAD WENT COLD'
+  },
+  forceResonance: {
+    id: 'forceResonance',
+    label: 'Force Resonance',
+    icon: '✦',
+    description: 'Attune to a holocron, Sith artifact, Force vision, dark side echo, or ancient vergence.',
+    defaultSkills: ['useTheForce', 'knowledgeGalacticLore', 'perception'],
+    progressLabel: 'Resonance',
+    failLabel: 'Distortion',
+    successVerb: 'Interpreted echo',
+    structuralVerb: 'Vision fragments aligned',
+    manualVerb: 'Vision hypothesis',
+    actionHint: 'Attune to the echo. Success reveals vision fragments, artifact lore, hidden locations, or Force secrets.',
+    recoveredLabel: 'Resolved vision',
+    lockoutLabel: 'VISION DISTORTED'
+  }
+});
+
+function analysisConfig(value = '') {
+  const id = cleanString(value, 'glyphCipher');
+  return ANALYSIS_MODES[id] ?? ANALYSIS_MODES.glyphCipher;
+}
+
+function analysisModeOptions() {
+  return Object.values(ANALYSIS_MODES).map(entry => ({
+    id: entry.id,
+    label: entry.label,
+    icon: entry.icon,
+    description: entry.description,
+    defaultSkills: entry.defaultSkills
+  }));
+}
 
 function nowIso() {
   return new Date().toISOString();
@@ -244,8 +447,9 @@ function frequencyOfUnknown(payload, knownSet) {
 function isSolved(payload) {
   if (!payload?.enabled) return false;
   const known = new Set(payload.knownCipherLetters ?? []);
+  const guesses = payload.guesses && typeof payload.guesses === 'object' ? payload.guesses : {};
   const distinct = distinctCipherLetters(payload);
-  return Boolean(payload.structuralDone !== false && distinct.length && distinct.every(letter => known.has(letter)));
+  return Boolean(payload.structuralDone !== false && distinct.length && distinct.every(letter => known.has(letter) || guesses[letter] === payload.solution?.[letter]));
 }
 
 function isFailed(payload) {
@@ -274,6 +478,18 @@ function normalizeSkills(value) {
   return clean.length ? Array.from(new Set(clean)) : [...DEFAULT_SKILLS];
 }
 
+function normalizeCipherLetter(value = '') {
+  return cleanString(value).toUpperCase().replace(/[^A-Z]/g, '').slice(0, 1);
+}
+
+function normalizePlainGuess(value = '') {
+  return cleanString(value).toUpperCase().replace(/[^A-Z]/g, '').slice(0, 1);
+}
+
+function solutionPlainFor(payload = {}, cipherLetter = '') {
+  return payload.solution?.[cipherLetter] || cipherLetter;
+}
+
 function decryptedText(payload) {
   return cleanString(payload?.plaintext || payload?.fullBody || payload?.body);
 }
@@ -281,13 +497,16 @@ function decryptedText(payload) {
 export class HolonetDecryptionService {
   static get glyphs() { return GLYPHS; }
   static get skillLabels() { return SKILL_LABELS; }
+  static get analysisModes() { return ANALYSIS_MODES; }
+  static analysisModeOptions() { return analysisModeOptions(); }
 
   static levelParams(level) { return levelParams(level); }
 
-  static buildPayload({ title = '', body = '', fullBody = '', redactedBody = '', publicBody = '', level = 12, mode = '', shift = 3, glyphs = null, transpose = null, dc = null, preRevealFrac = null, failEnabled = true, failType = 'attempts', attempts = 6, traceMax = 10, skills = null, sourceIntelId = '', linkedFactionId = '', linkedContactId = '', lockbox = null } = {}) {
+  static buildPayload({ title = '', body = '', fullBody = '', redactedBody = '', publicBody = '', level = 12, mode = '', analysisMode = 'glyphCipher', shift = 3, glyphs = null, transpose = null, dc = null, preRevealFrac = null, failEnabled = true, failType = 'attempts', attempts = 6, traceMax = 10, skills = null, sourceIntelId = '', linkedFactionId = '', linkedContactId = '', lockbox = null } = {}) {
     const plaintext = cleanString(fullBody || body || publicBody || redactedBody);
     if (!plaintext) return null;
     const params = levelParams(level);
+    const analysis = analysisConfig(analysisMode);
     const config = {
       level: params.level,
       mode: cleanString(mode, params.mode),
@@ -310,11 +529,23 @@ export class HolonetDecryptionService {
       enabled: true,
       version: 1,
       id: randomId(),
-      title: cleanString(title, 'Encrypted Transmission'),
+      analysisMode: analysis.id,
+      analysisLabel: analysis.label,
+      analysisIcon: analysis.icon,
+      analysisDescription: analysis.description,
+      title: cleanString(title, analysis.label),
       plaintext: puzzle.plaintext,
       encryptedPreview,
       level: params.level,
       levelLabel: params.label,
+      progressLabel: analysis.progressLabel,
+      failLabel: analysis.failLabel,
+      successVerb: analysis.successVerb,
+      structuralVerb: analysis.structuralVerb,
+      manualVerb: analysis.manualVerb,
+      actionHint: analysis.actionHint,
+      recoveredLabel: analysis.recoveredLabel,
+      lockoutLabel: analysis.lockoutLabel,
       dc: cleanNumber(dc ?? params.dc, params.dc, 0, 100),
       mode: puzzle.mode,
       useGlyphs: Boolean(puzzle.useGlyphs),
@@ -326,6 +557,7 @@ export class HolonetDecryptionService {
       glyphMap: puzzle.glyphMap,
       knownCipherLetters,
       guesses: {},
+      selectedCipherLetter: '',
       attemptsUsed: 0,
       trace: 0,
       structuralDone: !puzzle.doTranspose,
@@ -335,7 +567,7 @@ export class HolonetDecryptionService {
       failType: cleanString(failType) === 'trace' ? 'trace' : 'attempts',
       attempts: cleanNumber(attempts, 6, 1, 30),
       traceMax: cleanNumber(traceMax, 10, 1, 30),
-      skills: normalizeSkills(skills),
+      skills: normalizeSkills(skills ?? analysis.defaultSkills),
       sourceIntelId: cleanString(sourceIntelId),
       linkedFactionId: cleanString(linkedFactionId),
       linkedContactId: cleanString(linkedContactId),
@@ -356,16 +588,20 @@ export class HolonetDecryptionService {
   static toViewModel(payload = null, { actor = null, isGm = false } = {}) {
     if (!payload?.enabled) return null;
     const known = new Set(payload.knownCipherLetters ?? []);
+    const guesses = payload.guesses && typeof payload.guesses === 'object' ? payload.guesses : {};
+    const selectedCipherLetter = normalizeCipherLetter(payload.selectedCipherLetter);
     const distinct = distinctCipherLetters(payload);
-    const cracked = distinct.filter(letter => known.has(letter)).length;
+    const cracked = distinct.filter(letter => known.has(letter) || guesses[letter] === payload.solution?.[letter]).length;
     const percent = distinct.length ? Math.round((cracked / distinct.length) * 100) : 0;
     const solved = Boolean(payload.solved || isSolved(payload));
     const failed = Boolean(payload.failed || isFailed(payload));
+    const analysis = analysisConfig(payload.analysisMode);
     const locked = !solved && !failed;
-    const frequency = frequencyOfUnknown(payload, known).slice(0, 10).map(([letter, count]) => ({
+    const frequency = frequencyOfUnknown(payload, known).slice(0, 12).map(([letter, count]) => ({
       cipher: letter,
       glyphHtml: payload.useGlyphs ? glyphHtml(payload.glyphMap?.[letter] ?? 0) : escapeHtml(letter),
-      count
+      count,
+      selected: letter === selectedCipherLetter
     }));
     const tokens = (payload.tokens ?? []).map((token, tokenIndex) => {
       if (token?.type === 'sep') return { type: 'sep', text: token.text === ' ' ? '' : token.text, isBreak: /\n/.test(token.text || '') };
@@ -374,12 +610,18 @@ export class HolonetDecryptionService {
         tokenIndex,
         cells: (token.cells ?? []).map((cell, cellIndex) => {
           const revealed = known.has(cell.cipher) || solved || isGm;
+          const guessed = !revealed && guesses[cell.cipher];
+          const correctGuess = guessed && guessed === cell.plain;
           return {
             key: `${tokenIndex}-${cellIndex}`,
             cipher: cell.cipher,
             glyphHtml: payload.useGlyphs ? glyphHtml(cell.glyph ?? payload.glyphMap?.[cell.cipher] ?? 0) : escapeHtml(cell.cipher),
-            plain: revealed ? escapeHtml(cell.plain) : '',
-            isKnown: revealed
+            plain: revealed ? escapeHtml(cell.plain) : (guessed ? escapeHtml(guessed) : ''),
+            isKnown: revealed,
+            isGuess: Boolean(guessed),
+            isCorrectGuess: Boolean(correctGuess),
+            isWrongGuess: Boolean(guessed && !correctGuess),
+            isSelected: cell.cipher === selectedCipherLetter
           };
         })
       };
@@ -388,21 +630,39 @@ export class HolonetDecryptionService {
       key,
       label: SKILL_LABELS[key] || key.replace(/([A-Z])/g, ' $1').replace(/^./, c => c.toUpperCase()),
       mod: actorSkillMod(actor, key),
+      icon: SKILL_ICONS[key] || '◈',
       disabled: !locked
     }));
     const remaining = payload.failType === 'trace'
       ? Math.max(0, cleanNumber(payload.traceMax, 10, 1, 100) - cleanNumber(payload.trace, 0, 0, 100))
       : Math.max(0, cleanNumber(payload.attempts, 6, 1, 100) - cleanNumber(payload.attemptsUsed, 0, 0, 100));
+    const failCurrent = payload.failType === 'trace' ? cleanNumber(payload.trace, 0, 0, 100) : cleanNumber(payload.attemptsUsed, 0, 0, 100);
+    const failMax = payload.failType === 'trace' ? cleanNumber(payload.traceMax, 10, 1, 100) : cleanNumber(payload.attempts, 6, 1, 100);
+    const failPercent = failMax ? Math.min(100, Math.round((failCurrent / failMax) * 100)) : 0;
     return {
       enabled: true,
       id: payload.id,
-      title: cleanString(payload.title, 'Encrypted Transmission'),
+      title: cleanString(payload.title, analysis.label),
+      analysisMode: analysis.id,
+      analysisLabel: cleanString(payload.analysisLabel, analysis.label),
+      analysisIcon: cleanString(payload.analysisIcon, analysis.icon),
+      analysisDescription: cleanString(payload.analysisDescription, analysis.description),
+      progressLabel: cleanString(payload.progressLabel, analysis.progressLabel),
+      failLabel: cleanString(payload.failLabel, analysis.failLabel),
+      actionHint: cleanString(payload.actionHint, analysis.actionHint),
+      recoveredLabel: cleanString(payload.recoveredLabel, analysis.recoveredLabel),
+      lockoutLabel: cleanString(payload.lockoutLabel, analysis.lockoutLabel),
+      structuralVerb: cleanString(payload.structuralVerb, analysis.structuralVerb),
+      manualVerb: cleanString(payload.manualVerb, analysis.manualVerb),
       level: cleanNumber(payload.level, 12, 1, 35),
       levelLabel: cleanString(payload.levelLabel, levelParams(payload.level).label),
       dc: cleanNumber(payload.dc, 15, 0, 100),
       percent,
       cracked,
       total: distinct.length,
+      selectedCipherLetter,
+      hasSelection: Boolean(selectedCipherLetter),
+      selectedPlain: selectedCipherLetter ? escapeHtml(solutionPlainFor(payload, selectedCipherLetter)) : '',
       solved,
       failed,
       locked,
@@ -420,6 +680,7 @@ export class HolonetDecryptionService {
       trace: cleanNumber(payload.trace, 0, 0, 100),
       traceMax: cleanNumber(payload.traceMax, 10, 1, 100),
       remaining,
+      failPercent,
       log: (payload.log ?? []).slice(0, 8).map(entry => ({
         text: cleanString(entry.text),
         cls: cleanString(entry.cls, 'info'),
@@ -427,11 +688,13 @@ export class HolonetDecryptionService {
       })),
       decryptedText: solved || isGm ? decryptedText(payload) : '',
       canAttempt: locked,
-      canForceOpen: isGm
+      canForceOpen: isGm,
+      canGuess: locked && Boolean(selectedCipherLetter),
+      manualAlphabet: ALPHA
     };
   }
 
-  static attempt(payload = null, { actor = null, skillKey = 'useComputer', requesterId = null } = {}) {
+  static attempt(payload = null, { actor = null, skillKey = 'useComputer', requesterId = null, targetCipherLetter = '' } = {}) {
     const next = this.clonePayload(payload);
     if (!next?.enabled) return { ok: false, payload: next, reason: 'missing-puzzle' };
     if (next.solved || isSolved(next)) {
@@ -456,17 +719,21 @@ export class HolonetDecryptionService {
       if (next.transpose && next.structuralDone === false) {
         next.structuralDone = true;
         logEntry.cls = 'ok';
-        logEntry.text = `${SKILL_LABELS[skill] || skill}: ${die}+${mod}=${total} vs DC ${dc}. Datastream realigned.`;
+        logEntry.text = `${SKILL_LABELS[skill] || skill}: ${die}+${mod}=${total} vs DC ${dc}. ${cleanString(next.structuralVerb, analysisConfig(next.analysisMode).structuralVerb)}.`;
       } else {
         const revealCount = margin >= 10 ? 2 : 1;
-        const queue = frequencyOfUnknown(next, known).map(([letter]) => letter);
+        const targeted = normalizeCipherLetter(targetCipherLetter || next.selectedCipherLetter);
+        let queue = frequencyOfUnknown(next, known).map(([letter]) => letter);
+        if (targeted && !known.has(targeted)) queue = [targeted, ...queue.filter(letter => letter !== targeted)];
         for (let i = 0; i < revealCount && i < queue.length; i += 1) {
           known.add(queue[i]);
+          if (next.guesses) delete next.guesses[queue[i]];
           revealed.push(next.solution?.[queue[i]] || queue[i]);
         }
         next.knownCipherLetters = [...known];
+        if (revealed.length && normalizeCipherLetter(next.selectedCipherLetter) && known.has(normalizeCipherLetter(next.selectedCipherLetter))) next.selectedCipherLetter = '';
         logEntry.cls = 'ok';
-        logEntry.text = `${SKILL_LABELS[skill] || skill}: ${die}+${mod}=${total} vs DC ${dc}. Cracked ${revealed.join(', ') || 'signal noise'}.`;
+        logEntry.text = `${SKILL_LABELS[skill] || skill}: ${die}+${mod}=${total} vs DC ${dc}. ${cleanString(next.successVerb, analysisConfig(next.analysisMode).successVerb)} ${revealed.join(', ') || 'signal noise'}.`;
       }
     } else {
       if (next.failEnabled) {
@@ -474,7 +741,7 @@ export class HolonetDecryptionService {
         else next.attemptsUsed = cleanNumber(next.attemptsUsed, 0, 0, 100) + 1;
       }
       logEntry.cls = 'fail';
-      logEntry.text = `${SKILL_LABELS[skill] || skill}: ${die}+${mod}=${total} vs DC ${dc}. Decryption failed.`;
+      logEntry.text = `${SKILL_LABELS[skill] || skill}: ${die}+${mod}=${total} vs DC ${dc}. ${cleanString(next.failLabel, analysisConfig(next.analysisMode).failLabel)} increased.`;
     }
 
     next.log = [logEntry, ...(next.log ?? [])].slice(0, 30);
@@ -483,12 +750,75 @@ export class HolonetDecryptionService {
     if (isSolved(next)) {
       next.solved = true;
       next.solvedAt = nowIso();
-      next.log.unshift({ cls: 'ok', text: 'Transmission fully decrypted.', createdAt: nowIso() });
+      next.log.unshift({ cls: 'ok', text: `${cleanString(next.recoveredLabel, analysisConfig(next.analysisMode).recoveredLabel)} fully resolved.`, createdAt: nowIso() });
     } else if (isFailed(next)) {
       next.failed = true;
       next.failedAt = nowIso();
-      next.log.unshift({ cls: 'fail', text: 'Encryption lockout triggered.', createdAt: nowIso() });
+      next.log.unshift({ cls: 'fail', text: `${cleanString(next.lockoutLabel, analysisConfig(next.analysisMode).lockoutLabel)} triggered.`, createdAt: nowIso() });
     }
     return { ok: true, payload: next, die, total, margin, revealed, solved: next.solved, failed: next.failed };
   }
+
+  static selectCipher(payload = null, { cipherLetter = '' } = {}) {
+    const next = this.clonePayload(payload);
+    if (!next?.enabled) return { ok: false, payload: next, reason: 'missing-puzzle' };
+    const cipher = normalizeCipherLetter(cipherLetter);
+    if (!cipher || !distinctCipherLetters(next).includes(cipher)) return { ok: false, payload: next, reason: 'unknown-cipher' };
+    next.selectedCipherLetter = normalizeCipherLetter(next.selectedCipherLetter) === cipher ? '' : cipher;
+    next.lastAttemptAt = nowIso();
+    return { ok: true, payload: next, selectedCipherLetter: next.selectedCipherLetter };
+  }
+
+  static guess(payload = null, { cipherLetter = '', plainLetter = '', requesterId = null } = {}) {
+    const next = this.clonePayload(payload);
+    if (!next?.enabled) return { ok: false, payload: next, reason: 'missing-puzzle' };
+    if (next.solved || isSolved(next)) {
+      next.solved = true;
+      return { ok: true, payload: next, alreadySolved: true };
+    }
+    if (next.failed || isFailed(next)) {
+      next.failed = true;
+      return { ok: false, payload: next, failed: true, reason: 'failed' };
+    }
+    const cipher = normalizeCipherLetter(cipherLetter || next.selectedCipherLetter);
+    const guess = normalizePlainGuess(plainLetter);
+    if (!cipher || !distinctCipherLetters(next).includes(cipher)) return { ok: false, payload: next, reason: 'unknown-cipher' };
+    if (!guess) return { ok: false, payload: next, reason: 'missing-guess' };
+    if ((next.knownCipherLetters ?? []).includes(cipher)) return { ok: false, payload: next, reason: 'already-cracked' };
+    next.guesses = next.guesses && typeof next.guesses === 'object' ? next.guesses : {};
+    next.guesses[cipher] = guess;
+    next.selectedCipherLetter = cipher;
+    const correct = guess === solutionPlainFor(next, cipher);
+    next.log = [{
+      cls: correct ? 'ok' : 'info',
+      text: `${cleanString(next.manualVerb, analysisConfig(next.analysisMode).manualVerb)}: ${cipher} ⇒ ${guess}${correct ? ' appears stable.' : ' recorded.'}`,
+      createdAt: nowIso()
+    }, ...(next.log ?? [])].slice(0, 30);
+    next.lastAttemptAt = nowIso();
+    next.lastAttemptByUserId = cleanString(requesterId ?? globalThis.game?.user?.id);
+    if (isSolved(next)) {
+      next.solved = true;
+      next.solvedAt = nowIso();
+      next.knownCipherLetters = distinctCipherLetters(next);
+      next.selectedCipherLetter = '';
+      next.log.unshift({ cls: 'ok', text: `${cleanString(next.recoveredLabel, analysisConfig(next.analysisMode).recoveredLabel)} resolved by manual analysis.`, createdAt: nowIso() });
+    }
+    return { ok: true, payload: next, cipherLetter: cipher, guess, correct, solved: Boolean(next.solved) };
+  }
+
+  static forceSolve(payload = null, { reason = 'GM override resolved this analysis.' } = {}) {
+    const next = this.clonePayload(payload);
+    if (!next?.enabled) return { ok: false, payload: next, reason: 'missing-puzzle' };
+    next.knownCipherLetters = distinctCipherLetters(next);
+    next.guesses = {};
+    next.selectedCipherLetter = '';
+    next.structuralDone = true;
+    next.solved = true;
+    next.failed = false;
+    next.solvedAt = nowIso();
+    next.lastAttemptByUserId = globalThis.game?.user?.id ?? null;
+    next.log = [{ cls: 'ok', text: cleanString(reason, 'Analysis resolved.'), createdAt: nowIso() }, ...(next.log ?? [])].slice(0, 30);
+    return { ok: true, payload: next, solved: true };
+  }
+
 }

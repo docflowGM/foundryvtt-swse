@@ -14,6 +14,7 @@ import {
   INTEL_STATUS
 } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
+import { HolonetDecryptionService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-decryption-service.js';
 
 function cleanString(value, fallback = '') {
   const text = String(value ?? '').trim();
@@ -206,8 +207,19 @@ function editorFromRecord(record = null, defaults = {}) {
     visibilityActorIds: tagsLabel(intel?.visibility?.actorIds || defaults.visibility?.actorIds || []),
     dossierCommit: Boolean(intel?.dossierCommit || defaults.dossierCommit || false),
     skillGateEnabled: Boolean(intel?.skillGate?.enabled || defaults.skillGate?.enabled || false),
-    skillGateSkill: intel?.skillGate?.skill || defaults.skillGate?.skill || '',
-    skillGateDc: intel?.skillGate?.dc ?? defaults.skillGate?.dc ?? 0,
+    skillGateSkill: intel?.skillGate?.skill || defaults.skillGate?.skill || 'useComputer',
+    skillGateSkills: tagsLabel(intel?.skillGate?.skills || defaults.skillGate?.skills || [intel?.skillGate?.skill || defaults.skillGate?.skill || 'useComputer']),
+    skillGateDc: intel?.skillGate?.dc ?? defaults.skillGate?.dc ?? 15,
+    cipherLevel: intel?.skillGate?.level ?? defaults.skillGate?.level ?? 12,
+    decryptionMode: intel?.skillGate?.decryptionMode || defaults.skillGate?.decryptionMode || 'glyphCipher',
+    cipherMode: intel?.skillGate?.cipherMode || defaults.skillGate?.cipherMode || 'sub',
+    cipherGlyphs: intel?.skillGate?.glyphs ?? defaults.skillGate?.glyphs ?? true,
+    cipherTranspose: intel?.skillGate?.transpose ?? defaults.skillGate?.transpose ?? false,
+    cipherPreReveal: Math.round(Number(intel?.skillGate?.preRevealFrac ?? defaults.skillGate?.preRevealFrac ?? 0.5) * 100),
+    cipherFailEnabled: intel?.skillGate?.failEnabled ?? defaults.skillGate?.failEnabled ?? true,
+    cipherFailType: intel?.skillGate?.failType || defaults.skillGate?.failType || 'attempts',
+    cipherFailedRollLimit: intel?.skillGate?.failedRollLimit ?? defaults.skillGate?.failedRollLimit ?? 6,
+    cipherTraceMax: intel?.skillGate?.traceMax ?? defaults.skillGate?.traceMax ?? 10,
     lockboxEnabled: Boolean(intel?.lockbox?.enabled || defaults.lockbox?.enabled || false),
     lockboxLabel: intel?.lockbox?.label || defaults.lockbox?.label || 'Encrypted Lockbox',
     lockboxCredits: intel?.lockbox?.credits ?? defaults.lockbox?.credits ?? 0,
@@ -281,6 +293,9 @@ export class GMIntelSurfaceService {
         editorPersistenceOptions: optionsFrom(Object.values(INTEL_PERSISTENCE), editor.persistence),
         editorRevealStateOptions: optionsFrom(Object.values(INTEL_REVEAL_STATE), editor.revealState),
         visibilityOptions: optionsFrom(['gm-only', 'party', 'selected-players', 'public'], editor.visibilityMode),
+        decryptionModeOptions: HolonetDecryptionService.analysisModeOptions().map(entry => ({ ...entry, value: entry.id, selected: entry.id === editor.decryptionMode })),
+        cipherModeOptions: optionsFrom(['caesar', 'sub'], editor.cipherMode),
+        cipherFailTypeOptions: optionsFrom(['attempts', 'trace'], editor.cipherFailType),
         factionOptions,
         contactOptions: contactOptions(factions, editor.linkedFactionId, editor.linkedContactId),
         factionCount: factions.length,

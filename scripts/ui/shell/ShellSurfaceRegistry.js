@@ -48,6 +48,8 @@ export class ShellSurfaceRegistry {
         return this._buildAlliesSurfaceVm(actor, surfaceOptions);
       case 'atlas':
         return this._buildAtlasSurfaceVm(actor, surfaceOptions);
+      case 'transmission-decryption':
+        return this._buildTransmissionDecryptionSurfaceVm(actor, surfaceOptions);
       case 'store':
         return this._buildStoreSurfaceVm(actor, surfaceOptions);
       case 'workbench':
@@ -203,6 +205,18 @@ export class ShellSurfaceRegistry {
     } catch (err) {
       SWSELogger.error('[ShellSurfaceRegistry] Atlas surface VM failed:', err);
       return { id: 'atlas', title: 'Atlas', error: err.message };
+    }
+  }
+
+  static async _buildTransmissionDecryptionSurfaceVm(actor, options) {
+    try {
+      const { TransmissionDecryptionSurfaceService } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/TransmissionDecryptionSurfaceService.js'
+      );
+      return await TransmissionDecryptionSurfaceService.buildViewModel(actor, options);
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Transmission Decryption surface VM failed:', err);
+      return { id: 'transmission-decryption', title: 'Transmission Decryption', error: err.message };
     }
   }
 

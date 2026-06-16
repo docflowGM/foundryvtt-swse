@@ -25,6 +25,7 @@ import { ShellMutationGuard } from '/systems/foundryvtt-swse/scripts/ui/shell/Sh
 import { ShellUiStatePreserver } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellUiStatePreserver.js';
 import { MessengerSurfaceController } from '/systems/foundryvtt-swse/scripts/ui/shell/MessengerSurfaceController.js';
 import { AtlasSurfaceController } from '/systems/foundryvtt-swse/scripts/ui/shell/AtlasSurfaceController.js';
+import { TransmissionDecryptionSurfaceController } from '/systems/foundryvtt-swse/scripts/ui/shell/TransmissionDecryptionSurfaceController.js';
 
 /**
  * @param {class} BaseClass - The ApplicationV2 base class to mix into
@@ -425,6 +426,13 @@ export function ShellHostMixin(BaseClass) {
         this._atlasSurfaceController.attach(root);
       } else {
         this._atlasSurfaceController?.destroy?.();
+      }
+
+      if (this._shellSurface === 'transmission-decryption') {
+        this._transmissionDecryptionSurfaceController ??= new TransmissionDecryptionSurfaceController(this, this.actor || this.document);
+        this._transmissionDecryptionSurfaceController.attach(root);
+      } else {
+        this._transmissionDecryptionSurfaceController?.destroy?.();
       }
 
       if (this._shellSurface === 'store') {

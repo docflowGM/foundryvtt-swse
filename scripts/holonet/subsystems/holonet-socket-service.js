@@ -173,6 +173,16 @@ export class HolonetSocketService {
         await HolonetIntelService._gmAttemptIntelDecryption(data);
         break;
       }
+      case 'select-intel-cipher': {
+        const { HolonetIntelService } = await import('./holonet-intel-service.js');
+        await HolonetIntelService._gmSelectIntelCipher(data);
+        break;
+      }
+      case 'guess-intel-cipher': {
+        const { HolonetIntelService } = await import('./holonet-intel-service.js');
+        await HolonetIntelService._gmGuessIntelCipher(data);
+        break;
+      }
       case 'claim-intel-lockbox': {
         const { HolonetIntelService } = await import('./holonet-intel-service.js');
         await HolonetIntelService._gmClaimIntelLockbox(data);

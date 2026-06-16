@@ -79,7 +79,18 @@ function intelPayloadFromForm(formData) {
     skillGate: {
       enabled: skillGateEnabled,
       skill: text(formData, 'skillGateSkill'),
+      skills: splitCsv(text(formData, 'skillGateSkills') || text(formData, 'skillGateSkill')),
       dc: Number(text(formData, 'skillGateDc')) || 0,
+      level: Number(text(formData, 'cipherLevel')) || 12,
+      decryptionMode: text(formData, 'decryptionMode') || 'glyphCipher',
+      cipherMode: text(formData, 'cipherMode'),
+      glyphs: checked(formData, 'cipherGlyphs'),
+      transpose: checked(formData, 'cipherTranspose'),
+      preRevealFrac: (Number(text(formData, 'cipherPreReveal')) || 0) / 100,
+      failEnabled: checked(formData, 'cipherFailEnabled'),
+      failType: text(formData, 'cipherFailType') || 'attempts',
+      failedRollLimit: Number(text(formData, 'cipherFailedRollLimit')) || 6,
+      traceMax: Number(text(formData, 'cipherTraceMax')) || 10,
       successMode: 'reveal-full',
       failureMode: 'keep-redacted',
       attempts: 'gm-managed'
@@ -212,6 +223,14 @@ export class GMIntelSurfaceController {
           if (result?.ok) ui.notifications?.info?.('Intel released to the player Intel Locker.');
           else ui.notifications?.warn?.('Intel could not be released to the player Intel Locker.');
           await this._refresh('gm-intel-release-dossier');
+          return;
+        }
+
+        if (action === 'force-decrypt' && recordId) {
+          const result = await HolonetIntelService.forceDecryptIntel(recordId);
+          if (result?.ok) ui.notifications?.info?.('Intel lockbox decrypted by GM override.');
+          else ui.notifications?.warn?.('Intel lockbox could not be decrypted.');
+          await this._refresh('gm-intel-force-decrypt');
           return;
         }
 

@@ -155,10 +155,27 @@ function normalizeVisibility(value = {}) {
 function normalizeSkillGate(value = {}) {
   const raw = value && typeof value === 'object' ? value : {};
   const dc = Math.max(0, Math.min(100, Math.floor(Number(raw.dc ?? 0) || 0)));
+  const level = Math.max(1, Math.min(35, Math.floor(Number(raw.level ?? 12) || 12)));
+  const preRevealRaw = raw.preRevealFrac ?? raw.preRevealPercent;
+  const preRevealNumber = Number(preRevealRaw);
+  const preRevealFrac = Number.isFinite(preRevealNumber)
+    ? (preRevealNumber > 1 ? Math.max(0, Math.min(100, preRevealNumber)) / 100 : Math.max(0, Math.min(1, preRevealNumber)))
+    : null;
   return {
     enabled: Boolean(raw.enabled),
     skill: cleanString(raw.skill),
+    skills: uniqueStrings(raw.skills ?? (raw.skill ? [raw.skill] : []), 8),
     dc,
+    level,
+    decryptionMode: cleanString(raw.decryptionMode ?? raw.analysisMode ?? raw.lockType, 'glyphCipher'),
+    cipherMode: cleanString(raw.cipherMode ?? raw.mode, ''),
+    glyphs: raw.glyphs === undefined ? null : Boolean(raw.glyphs),
+    transpose: raw.transpose === undefined ? null : Boolean(raw.transpose),
+    preRevealFrac,
+    failEnabled: raw.failEnabled === undefined ? true : Boolean(raw.failEnabled),
+    failType: cleanString(raw.failType, 'attempts') === 'trace' ? 'trace' : 'attempts',
+    failedRollLimit: cleanPositiveInt(raw.failedRollLimit ?? raw.attemptLimit ?? raw.failedAttempts ?? 6, 6, 30),
+    traceMax: cleanPositiveInt(raw.traceMax ?? 10, 10, 30),
     successMode: cleanString(raw.successMode, 'reveal-full'),
     failureMode: cleanString(raw.failureMode, 'keep-redacted'),
     attempts: cleanString(raw.attempts, 'gm-managed'),
@@ -384,7 +401,7 @@ function bodyForIntel(intel = {}, mode = 'public') {
 }
 
 function shouldBuildDecryption(intel = {}, options = {}) {
-  return Boolean(options.encrypted ?? intel.skillGate?.enabled ?? [INTEL_PERSISTENCE.ENCRYPTED, INTEL_PERSISTENCE.SELF_DESTRUCT, INTEL_PERSISTENCE.SECRET_NOTE].includes(intel.persistence));
+  return Boolean(options.encrypted ?? intel.skillGate?.enabled ?? intel.lockbox?.enabled ?? [INTEL_PERSISTENCE.ENCRYPTED, INTEL_PERSISTENCE.SELF_DESTRUCT, INTEL_PERSISTENCE.SECRET_NOTE].includes(intel.persistence));
 }
 
 function buildDecryptionPayload(intel = {}, options = {}) {
@@ -393,17 +410,24 @@ function buildDecryptionPayload(intel = {}, options = {}) {
   if (!fullBody) return null;
   const skill = cleanString(options.skill ?? intel.skillGate?.skill, 'useComputer');
   const dc = Number(options.dc ?? intel.skillGate?.dc ?? 0) || null;
+  const skills = uniqueStrings(options.skills ?? intel.skillGate?.skills ?? [skill], 8);
   return HolonetDecryptionService.buildPayload({
     title: intel.title,
     publicBody: bodyForIntel(intel, 'redacted'),
     redactedBody: bodyForIntel(intel, 'redacted'),
     fullBody,
     level: Number(options.level ?? intel.skillGate?.level ?? 12) || 12,
+    analysisMode: options.analysisMode ?? options.decryptionMode ?? intel.skillGate?.decryptionMode ?? 'glyphCipher',
+    mode: options.mode ?? intel.skillGate?.cipherMode ?? '',
+    glyphs: options.glyphs ?? intel.skillGate?.glyphs ?? null,
+    transpose: options.transpose ?? intel.skillGate?.transpose ?? null,
     dc,
-    skills: [skill].filter(Boolean),
-    failType: options.failType ?? 'attempts',
-    attempts: options.attempts ?? 6,
-    traceMax: options.traceMax ?? 10,
+    preRevealFrac: options.preRevealFrac ?? intel.skillGate?.preRevealFrac ?? null,
+    skills: skills.length ? skills : [skill].filter(Boolean),
+    failEnabled: options.failEnabled ?? intel.skillGate?.failEnabled ?? true,
+    failType: options.failType ?? intel.skillGate?.failType ?? 'attempts',
+    attempts: options.attempts ?? intel.skillGate?.failedRollLimit ?? 6,
+    traceMax: options.traceMax ?? intel.skillGate?.traceMax ?? 10,
     sourceIntelId: intel.id,
     linkedFactionId: intel.linkedFactionId,
     linkedContactId: intel.linkedContactId,
@@ -817,7 +841,8 @@ export class HolonetIntelService {
     const record = await this.getIntelById(intelOrRecordId);
     const intel = this.getIntelMetadata(record);
     if (!record || !intel) return null;
-    const nextRevealState = options.revealState ?? (intel.skillGate?.enabled ? INTEL_REVEAL_STATE.REDACTED : INTEL_REVEAL_STATE.FULLY_REVEALED);
+    const needsDecryption = Boolean(intel.skillGate?.enabled || intel.lockbox?.enabled);
+    const nextRevealState = options.revealState ?? (needsDecryption ? INTEL_REVEAL_STATE.SEALED : INTEL_REVEAL_STATE.FULLY_REVEALED);
     const decoded = [INTEL_REVEAL_STATE.DECODED, INTEL_REVEAL_STATE.FULLY_REVEALED].includes(nextRevealState);
     const nextLockbox = intel.lockbox?.enabled
       ? normalizeLockbox({ ...intel.lockbox, status: decoded ? INTEL_LOCKBOX_STATUS.CLAIMABLE : INTEL_LOCKBOX_STATUS.SEALED })
@@ -829,7 +854,7 @@ export class HolonetIntelService {
       lockbox: nextLockbox,
       delivery: deliverySummary(intel, { mode: 'dossier', recipientIds: recipientIdsFromVisibility(intel, options) })
     });
-    if (updated && intel.skillGate?.enabled) await this.ensureDecryptionPayload(updated.id, options);
+    if (updated && needsDecryption) await this.ensureDecryptionPayload(updated.id, { ...options, encrypted: true });
     HolonetSocketService.emitSync({ type: 'intel-dossier-released', recordId: record.id, intelId: intel.id });
     return { ok: true, mode: 'dossier', record: updated };
   }
@@ -882,13 +907,13 @@ export class HolonetIntelService {
     return true;
   }
 
-  static async attemptIntelDecryption(intelOrRecordId, { actor = null, skillKey = 'useComputer', requesterId = null } = {}) {
+  static async attemptIntelDecryption(intelOrRecordId, { actor = null, skillKey = 'useComputer', requesterId = null, targetCipherLetter = '' } = {}) {
     const record = await this.getIntelById(intelOrRecordId);
     const intel = this.getIntelMetadata(record);
     if (!record || !intel) return null;
     const payload = record.metadata?.decryptionPayload ?? buildDecryptionPayload(intel, { skill: skillKey });
     if (!payload) return null;
-    const result = HolonetDecryptionService.attempt(payload, { actor, skillKey, requesterId: requesterId ?? globalThis.game?.user?.id });
+    const result = HolonetDecryptionService.attempt(payload, { actor, skillKey, requesterId: requesterId ?? globalThis.game?.user?.id, targetCipherLetter });
     record.metadata = {
       ...(record.metadata ?? {}),
       decryptionPayload: result.payload
@@ -942,11 +967,12 @@ export class HolonetIntelService {
     return payload;
   }
 
-  static async requestIntelDecryption(intelOrRecordId, { actor = null, skillKey = 'useComputer' } = {}) {
+  static async requestIntelDecryption(intelOrRecordId, { actor = null, skillKey = 'useComputer', targetCipherLetter = '' } = {}) {
     const payload = {
       actorId: actor?.id ?? null,
       intelId: cleanString(intelOrRecordId),
       skillKey: cleanString(skillKey, 'useComputer'),
+      targetCipherLetter: cleanString(targetCipherLetter),
       requesterId: globalThis.game?.user?.id ?? null
     };
     if (!payload.intelId) return false;
@@ -957,14 +983,126 @@ export class HolonetIntelService {
     return this._gmAttemptIntelDecryption(payload);
   }
 
-  static async _gmAttemptIntelDecryption({ actorId = null, intelId = '', skillKey = 'useComputer', requesterId = null } = {}) {
+  static async _gmAttemptIntelDecryption({ actorId = null, intelId = '', skillKey = 'useComputer', requesterId = null, targetCipherLetter = '' } = {}) {
     if (!globalThis.game?.user?.isGM) return false;
     const actor = actorId ? globalThis.game?.actors?.get?.(actorId) : (requesterId ? globalThis.game?.users?.get?.(requesterId)?.character : null);
     if (!requesterCanUseActor(actor, requesterId)) return false;
-    const result = await this.attemptIntelDecryption(intelId, { actor, skillKey, requesterId });
+    const result = await this.attemptIntelDecryption(intelId, { actor, skillKey, requesterId, targetCipherLetter });
     if (!result) return false;
     HolonetSocketService.emitSync({ type: 'intel-decryption-attempted', intelId, actorId: actor?.id ?? null, solved: Boolean(result.payload?.solved), failed: Boolean(result.payload?.failed), requesterId });
     return { ok: true, pending: false, solved: Boolean(result.payload?.solved), failed: Boolean(result.payload?.failed), total: result.total ?? null };
+  }
+
+  static async selectIntelCipher(intelOrRecordId, { cipherLetter = '' } = {}) {
+    const record = await this.getIntelById(intelOrRecordId);
+    const intel = this.getIntelMetadata(record);
+    const payload = record?.metadata?.decryptionPayload ?? (intel ? buildDecryptionPayload(intel, {}) : null);
+    if (!record || !intel || !payload?.enabled) return null;
+    const result = HolonetDecryptionService.selectCipher(payload, { cipherLetter });
+    if (!result?.payload) return result;
+    record.metadata = { ...(record.metadata ?? {}), decryptionPayload: result.payload };
+    await HolonetStorage.saveRecord(record);
+    this.#emitIntelHook('decryption-selected', record);
+    return result;
+  }
+
+  static async requestIntelCipherSelection(intelOrRecordId, { cipherLetter = '' } = {}) {
+    const payload = {
+      intelId: cleanString(intelOrRecordId),
+      cipherLetter: cleanString(cipherLetter),
+      requesterId: globalThis.game?.user?.id ?? null
+    };
+    if (!payload.intelId) return false;
+    if (!globalThis.game?.user?.isGM) {
+      const requestId = HolonetSocketService.emitRequest('select-intel-cipher', payload);
+      return { pending: true, requestId, intelId: payload.intelId };
+    }
+    return this._gmSelectIntelCipher(payload);
+  }
+
+  static async _gmSelectIntelCipher({ intelId = '', cipherLetter = '', requesterId = null } = {}) {
+    if (!globalThis.game?.user?.isGM) return false;
+    const result = await this.selectIntelCipher(intelId, { cipherLetter, requesterId });
+    if (!result) return false;
+    HolonetSocketService.emitSync({ type: 'intel-decryption-selected', intelId, cipherLetter, requesterId });
+    return { ok: Boolean(result.ok), selectedCipherLetter: result.selectedCipherLetter ?? '' };
+  }
+
+  static async guessIntelCipher(intelOrRecordId, { cipherLetter = '', plainLetter = '', requesterId = null } = {}) {
+    const record = await this.getIntelById(intelOrRecordId);
+    const intel = this.getIntelMetadata(record);
+    const payload = record?.metadata?.decryptionPayload ?? (intel ? buildDecryptionPayload(intel, {}) : null);
+    if (!record || !intel || !payload?.enabled) return null;
+    const result = HolonetDecryptionService.guess(payload, { cipherLetter, plainLetter, requesterId: requesterId ?? globalThis.game?.user?.id });
+    if (!result?.payload) return result;
+    record.metadata = { ...(record.metadata ?? {}), decryptionPayload: result.payload };
+    const nextIntel = normalizeIntelMetadata({
+      ...intel,
+      revealState: result.payload?.solved ? INTEL_REVEAL_STATE.DECODED : intel.revealState,
+      lockbox: result.payload?.solved && intel.lockbox?.enabled ? normalizeLockbox({ ...intel.lockbox, status: INTEL_LOCKBOX_STATUS.CLAIMABLE }) : intel.lockbox,
+      skillGate: {
+        ...(intel.skillGate ?? {}),
+        result: result.payload?.solved ? 'success' : (intel.skillGate?.result ?? 'pending'),
+        resolvedAt: result.payload?.solved ? nowIso() : intel.skillGate?.resolvedAt,
+        resolvedByUserId: result.payload?.solved ? (requesterId ?? globalThis.game?.user?.id) : intel.skillGate?.resolvedByUserId
+      }
+    }, intel, { touchUpdatedAt: true });
+    applyIntelToRecord(record, nextIntel);
+    record.metadata.decryptionPayload = result.payload;
+    await HolonetStorage.saveRecord(record);
+    this.#emitIntelHook('decryption-guessed', record);
+    return result;
+  }
+
+  static async requestIntelCipherGuess(intelOrRecordId, { cipherLetter = '', plainLetter = '' } = {}) {
+    const payload = {
+      intelId: cleanString(intelOrRecordId),
+      cipherLetter: cleanString(cipherLetter),
+      plainLetter: cleanString(plainLetter),
+      requesterId: globalThis.game?.user?.id ?? null
+    };
+    if (!payload.intelId) return false;
+    if (!globalThis.game?.user?.isGM) {
+      const requestId = HolonetSocketService.emitRequest('guess-intel-cipher', payload);
+      return { pending: true, requestId, intelId: payload.intelId };
+    }
+    return this._gmGuessIntelCipher(payload);
+  }
+
+  static async _gmGuessIntelCipher({ intelId = '', cipherLetter = '', plainLetter = '', requesterId = null } = {}) {
+    if (!globalThis.game?.user?.isGM) return false;
+    const result = await this.guessIntelCipher(intelId, { cipherLetter, plainLetter, requesterId });
+    if (!result) return false;
+    HolonetSocketService.emitSync({ type: 'intel-decryption-guessed', intelId, cipherLetter, plainLetter, solved: Boolean(result.payload?.solved), requesterId });
+    return { ok: Boolean(result.ok), solved: Boolean(result.payload?.solved), correct: Boolean(result.correct) };
+  }
+
+  static async forceDecryptIntel(intelOrRecordId, { reason = 'GM override decrypted this Intel lockbox.' } = {}) {
+    if (!globalThis.game?.user?.isGM) return false;
+    const record = await this.getIntelById(intelOrRecordId);
+    const intel = this.getIntelMetadata(record);
+    if (!record || !intel) return false;
+    const payload = record.metadata?.decryptionPayload ?? buildDecryptionPayload(intel, { encrypted: true });
+    if (!payload?.enabled) return false;
+    const result = HolonetDecryptionService.forceSolve(payload, { reason });
+    record.metadata = { ...(record.metadata ?? {}), decryptionPayload: result.payload };
+    const nextIntel = normalizeIntelMetadata({
+      ...intel,
+      revealState: INTEL_REVEAL_STATE.DECODED,
+      lockbox: intel.lockbox?.enabled ? normalizeLockbox({ ...intel.lockbox, status: INTEL_LOCKBOX_STATUS.CLAIMABLE }) : intel.lockbox,
+      skillGate: {
+        ...(intel.skillGate ?? {}),
+        result: 'success',
+        resolvedAt: nowIso(),
+        resolvedByUserId: globalThis.game?.user?.id ?? null
+      }
+    }, intel, { touchUpdatedAt: true });
+    applyIntelToRecord(record, nextIntel);
+    record.metadata.decryptionPayload = result.payload;
+    await HolonetStorage.saveRecord(record);
+    HolonetSocketService.emitSync({ type: 'intel-force-decrypted', intelId: intel.id, recordId: record.id });
+    this.#emitIntelHook('force-decrypted', record);
+    return { ok: true, record };
   }
 
   static async claimIntelLockbox(intelOrRecordId, { actor = null } = {}) {

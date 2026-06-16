@@ -76,6 +76,7 @@
           <button type="button" class="swse-ui-button" data-intel-action="mark-ready" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-circle-check"></i> Ready</button>
           <button type="button" class="swse-ui-button approve" data-intel-action="release" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-unlock-keyhole"></i> Mark Released</button>
           <button type="button" class="swse-ui-button approve" data-intel-action="release-dossier" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-folder-open"></i> Intel Locker</button>
+          <button type="button" class="swse-ui-button" data-intel-action="force-decrypt" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-key"></i> GM Decrypt</button>
           <button type="button" class="swse-ui-button" data-intel-action="deliver-secret-note" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-user-secret"></i> Secret Note</button>
           <button type="button" class="swse-ui-button" data-intel-action="deliver-messenger" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-comments"></i> Messenger</button>
           <button type="button" class="swse-ui-button" data-intel-action="deliver-bulletin" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-tower-broadcast"></i> Bulletin</button>
@@ -109,9 +110,28 @@
           <label class="is-wide">GM Notes<textarea name="gmNotes" rows="4" placeholder="Private notes, future hooks, consequences.">{{intelManager.editor.gmNotes}}</textarea></label>
           <label>User IDs<input type="text" name="visibilityUserIds" value="{{intelManager.editor.visibilityUserIds}}" placeholder="optional, comma-separated"></label>
           <label>Actor IDs<input type="text" name="visibilityActorIds" value="{{intelManager.editor.visibilityActorIds}}" placeholder="optional, comma-separated"></label>
-          <label>Skill Gate<input type="text" name="skillGateSkill" value="{{intelManager.editor.skillGateSkill}}" placeholder="useComputer, gatherInformation..."></label>
-          <label>Skill DC<input type="number" name="skillGateDc" min="0" step="1" value="{{intelManager.editor.skillGateDc}}"></label>
-          <label class="gm-faction-checkbox-label"><input type="checkbox" name="skillGateEnabled" {{#if intelManager.editor.skillGateEnabled}}checked{{/if}}> Encrypted / gated</label>
+          <div class="gm-intel-cipher-editor is-wide">
+            <div class="gm-intel-cipher-head">
+              <label class="gm-faction-checkbox-label"><input type="checkbox" name="skillGateEnabled" {{#if intelManager.editor.skillGateEnabled}}checked{{/if}}> Encrypted transmission / codebreaker lock</label>
+              <span>Player decode console uses these rules before a lockbox can open. The same shell UI adapts its flavor and skill buttons by mode.</span>
+            </div>
+            <div class="gm-intel-form-grid gm-intel-cipher-grid">
+              <label class="is-wide gm-intel-analysis-mode">Analysis Mode<select name="decryptionMode">{{#each intelManager.decryptionModeOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.icon}} {{this.label}}</option>{{/each}}</select><span>Choose the lock type: cipher, firewall, trace, packet rebuild, coordinates, ancient script, droid memory, sensor analysis, security sequence, rumor web, or Force resonance.</span></label>
+              <label>Primary Skill<input type="text" name="skillGateSkill" value="{{intelManager.editor.skillGateSkill}}" placeholder="useComputer"></label>
+              <label class="is-wide">Allowed Skill Buttons<input type="text" name="skillGateSkills" value="{{intelManager.editor.skillGateSkills}}" placeholder="useComputer, mechanics, knowledgeTechnology"></label>
+              <label>Reveal DC<input type="number" name="skillGateDc" min="0" step="1" value="{{intelManager.editor.skillGateDc}}"></label>
+              <label>Encryption Level<input type="number" name="cipherLevel" min="1" max="35" step="1" value="{{intelManager.editor.cipherLevel}}"></label>
+              <label>Cipher Alphabet<select name="cipherMode">{{#each intelManager.cipherModeOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+              <label>Pre-Cracked %<input type="number" name="cipherPreReveal" min="0" max="100" step="1" value="{{intelManager.editor.cipherPreReveal}}"></label>
+              <label class="gm-faction-checkbox-label"><input type="checkbox" name="cipherGlyphs" {{#if intelManager.editor.cipherGlyphs}}checked{{/if}}> Glyph cipher</label>
+              <label class="gm-faction-checkbox-label"><input type="checkbox" name="cipherTranspose" {{#if intelManager.editor.cipherTranspose}}checked{{/if}}> Transposition layer</label>
+              <label class="gm-faction-checkbox-label"><input type="checkbox" name="cipherFailEnabled" {{#if intelManager.editor.cipherFailEnabled}}checked{{/if}}> Fail state</label>
+              <label>Fail Mode<select name="cipherFailType">{{#each intelManager.cipherFailTypeOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+              <label>Failed Roll Limit<input type="number" name="cipherFailedRollLimit" min="1" max="30" step="1" value="{{intelManager.editor.cipherFailedRollLimit}}"></label>
+              <label>Trace Max<input type="number" name="cipherTraceMax" min="1" max="30" step="1" value="{{intelManager.editor.cipherTraceMax}}"></label>
+            </div>
+            <p class="gm-intel-lockbox-help">Modes reuse the same shell-hosted codebreaker UI: the labels, default skills, trace flavor, and recovered-output text change while the lockbox/Intel/Transaction authorities stay the same.</p>
+          </div>
           <div class="gm-intel-lockbox-editor is-wide">
             <div class="gm-intel-lockbox-head">
               <label class="gm-faction-checkbox-label"><input type="checkbox" name="lockboxEnabled" {{#if intelManager.editor.lockboxEnabled}}checked{{/if}}> Encrypted lockbox reward</label>

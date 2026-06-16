@@ -1,0 +1,115 @@
+<div class="swse-transmission-shell" data-current-cipher="{{decryption.selectedCipherLetter}}">
+  <div class="ref-bar swse-transmission-ref">
+    <div><span class="lt">Transmission Decryption</span> · slicer codebreaker · {{actorName}}</div>
+    <div>{{#if isGm}}GM authoring preview{{else}}Player decode{{/if}} · datapad surface</div>
+  </div>
+
+  <div class="swse-intel-decryption-console swse-transmission-window dx-win {{#if decryption.solved}}is-solved{{/if}} {{#if decryption.failed}}is-failed{{/if}}">
+    <div class="swse-intel-decryption-hud dx-hud">
+      <span class="dx-logo">{{decryption.analysisIcon}}</span>
+      <div class="swse-transmission-titleblock">
+        <span class="dx-title">{{decryption.analysisLabel}} <b>LOCK</b></span>
+        <small>{{title}} · {{decryption.levelLabel}} · DC {{decryption.dc}}</small>
+      </div>
+      <div class="dx-mode-switch swse-transmission-mode-switch">
+        <button type="button" class="{{#if isGm}}on gm{{/if}}" disabled>◐ GM · Encode</button>
+        <button type="button" class="{{#unless isGm}}on{{/unless}}" disabled>◑ Player · Decode</button>
+      </div>
+    </div>
+
+    {{#unless hasRecord}}
+    <div class="pl-empty"><div class="eo">⌁</div><div class="et">No encrypted Intel record could be resolved.</div></div>
+    {{else}}
+    {{#unless hasPayload}}
+    <div class="pl-empty"><div class="eo">◇</div><div class="et">This Intel record does not have an encrypted payload yet.</div>{{#if isGm}}<button type="button" class="dx-btn primary" data-decrypt-action="refresh">Refresh Payload</button>{{/if}}</div>
+    {{else}}
+
+    <div class="swse-intel-decryption-status pl-status">
+      <div class="swse-intel-decryption-meter pl-meter">
+        <div class="mlbl"><span>{{decryption.progressLabel}}</span><span><b>{{decryption.percent}}%</b></span></div>
+        <div class="pl-bar"><div class="fill" style="width:{{decryption.percent}}%"></div></div>
+      </div>
+      {{#if decryption.failEnabled}}
+      <div class="swse-intel-decryption-meter pl-meter pl-trace">
+        <div class="mlbl"><span>{{decryption.failLabel}}</span><span><b>{{decryption.remaining}}</b> remaining</span></div>
+        <div class="pl-bar"><div class="fill" style="width:{{decryption.failPercent}}%"></div></div>
+      </div>
+      {{else}}<span class="pl-chip">No fail state</span>{{/if}}
+      <span class="pl-chip cracked">Cracked <b>{{decryption.cracked}}</b>/{{decryption.total}}</span>
+      {{#if decryption.hasSelection}}<span class="pl-chip">Selected <b>{{decryption.selectedCipherLetter}}</b></span>{{/if}}
+    </div>
+
+    {{#if decryption.locked}}
+    <div class="pl-manual swse-transmission-mode-note"><b>{{decryption.analysisIcon}} {{decryption.analysisLabel}}</b> — {{decryption.analysisDescription}}</div>
+    {{#unless decryption.structuralDone}}<div class="pl-manual is-warning"><b>⊞ DATASTREAM MISALIGNED</b> — pass a decryption roll to realign the transmission before the lockbox can open.</div>{{/unless}}
+    <div class="swse-intel-decryption-layout pl-grid swse-transmission-grid">
+      <div class="swse-intel-decryption-readout pl-main">
+        <div class="swse-intel-decryption-grid pl-readout">
+          {{#each decryption.tokens}}
+            {{#if (eq this.type "sep")}}{{#if this.isBreak}}<span class="swse-intel-decryption-break"></span>{{else}}<span class="swse-intel-decryption-sep pl-sep">{{this.text}}</span>{{/if}}{{else}}
+            <span class="swse-intel-decryption-word pl-word">
+              {{#each this.cells}}<button type="button" data-decrypt-action="select" data-cipher-letter="{{this.cipher}}" class="swse-intel-decryption-cell cell {{#if this.isKnown}}is-known known{{/if}} {{#if this.isGuess}}is-guess guess{{/if}} {{#if this.isWrongGuess}}wrong{{/if}} {{#if this.isSelected}}highlight{{/if}}"><span class="glyph">{{{this.glyphHtml}}}</span><b class="plain">{{this.plain}}</b></button>{{/each}}
+            </span>
+            {{/if}}
+          {{/each}}
+        </div>
+      </div>
+
+      <aside class="swse-intel-decryption-tools pl-tools">
+        <div class="dx-rail-head">◈ Slicer Console</div>
+        <div class="pl-manual"><b>{{decryption.analysisLabel}}</b> — {{decryption.actionHint}} Roll vs <b>DC {{decryption.dc}}</b>. {{#if decryption.hasSelection}}Selected glyph/fragment is targeted first.{{else}}Success targets the most common unresolved fragment.{{/if}} Beat by 10+ to resolve two.</div>
+        <div class="swse-intel-decryption-actions">
+          {{#each decryption.skills}}
+          <button type="button" class="pl-skill" data-decrypt-action="attempt" data-skill-key="{{this.key}}" data-cipher-letter="{{../decryption.selectedCipherLetter}}" {{#if this.disabled}}disabled{{/if}}><span class="sk-ico">{{this.icon}}</span><span><span class="sk-nm">{{this.label}}</span><span class="sk-sub">d20 + {{this.mod}} · DC {{../decryption.dc}}</span></span><span class="sk-mod">+{{this.mod}}</span></button>
+          {{/each}}
+        </div>
+        {{#if decryption.frequency.length}}
+        <div class="dx-rail-head">▦ Frequency Analysis</div>
+        <div class="pl-freq">
+          {{#each decryption.frequency}}<button type="button" data-decrypt-action="select" data-cipher-letter="{{this.cipher}}" class="pl-freq-chip {{#if this.selected}}sel{{/if}}"><span class="fg">{{{this.glyphHtml}}}</span><span class="fn">×{{this.count}}</span></button>{{/each}}
+        </div>
+        {{/if}}
+        <form class="swse-transmission-manual pl-manual">
+          <input type="hidden" name="cipherLetter" value="{{decryption.selectedCipherLetter}}">
+          <label><b>Manual analysis:</b> click a glyph/fragment, type a hypothesis letter, then lock it in.</label>
+          <div><input maxlength="1" name="plainLetter" placeholder="A-Z" {{#unless decryption.hasSelection}}disabled{{/unless}} autofocus><button type="button" data-decrypt-action="guess" {{#unless decryption.canGuess}}disabled{{/unless}}>Guess</button></div>
+          <small>Keyboard: select a glyph, type A-Z to guess, Esc to clear selection.</small>
+        </form>
+        {{#if decryption.log.length}}<div class="swse-intel-decryption-log pl-log">{{#each decryption.log}}<span class="log-entry {{this.cls}}">{{this.text}}</span>{{/each}}</div>{{/if}}
+      </aside>
+    </div>
+    {{else}}
+    <div class="swse-transmission-recovered">
+      <div class="swse-intel-decryption-result dx-result-msg"><span class="lbl">{{decryption.recoveredLabel}}</span>{{decryption.decryptedText}}</div>
+      {{#if lockbox.enabled}}
+      <div class="swse-transmission-lockbox {{#if lockbox.claimed}}is-claimed{{/if}}">
+        <header><span>LOCKBOX {{#if lockbox.claimed}}CLAIMED{{else}}OPENED{{/if}}</span><b>{{lockbox.label}}</b></header>
+        <p>{{lockbox.rewardCount}} reward payload{{#unless (eq lockbox.rewardCount 1)}}s{{/unless}} recovered from the encrypted transmission.</p>
+        <div class="swse-transmission-rewards">
+          {{#if lockbox.credits}}<span>{{lockbox.creditsLabel}} credits</span>{{/if}}
+          {{#each lockbox.items}}<span>{{this.quantity}}x {{#if this.name}}{{this.name}}{{else}}{{this.uuid}}{{/if}}</span>{{/each}}
+        </div>
+        {{#if lockbox.claimed}}<small>Claimed by {{lockbox.claimedByActorName}}</small>{{/if}}
+        {{#if canClaimLockbox}}<button type="button" class="dx-btn primary" data-decrypt-action="claim">Claim Contents</button>{{/if}}
+      </div>
+      {{/if}}
+      {{#if decryption.log.length}}<div class="swse-intel-decryption-log pl-log">{{#each decryption.log}}<span class="log-entry {{this.cls}}">{{this.text}}</span>{{/each}}</div>{{/if}}
+    </div>
+    {{/if}}
+
+    {{#if decryption.solved}}
+    <div class="dx-overlay swse-transmission-overlay"><div class="dx-result win"><div class="dx-result-head"><span class="ri">✓</span><div><div class="rt">{{decryption.analysisLabel}} COMPLETE</div><div class="rs">lockbox channel opened</div></div></div><div class="dx-result-body"><div class="dx-result-msg"><span class="lbl">{{decryption.recoveredLabel}}</span>{{decryption.decryptedText}}</div></div><button type="button" class="dx-result-btn" data-decrypt-action="refresh">Continue</button></div></div>
+    {{/if}}
+    {{#if decryption.failed}}
+    <div class="dx-overlay swse-transmission-overlay"><div class="dx-result fail"><div class="dx-result-head"><span class="ri">!</span><div><div class="rt">{{decryption.lockoutLabel}}</div><div class="rs">signal integrity compromised</div></div></div><div class="dx-result-body"><div class="dx-result-msg"><span class="lbl">System notice</span>The analysis layer has rejected further automated attempts. GM intervention may be required.</div></div><button type="button" class="dx-result-btn" data-decrypt-action="refresh">Acknowledge</button></div></div>
+    {{/if}}
+
+    <div class="swse-transmission-footer">
+      {{#if canForceOpen}}<button type="button" class="dx-btn pink" data-decrypt-action="force">GM Decrypt</button>{{/if}}
+      <button type="button" class="dx-btn ghost" data-decrypt-action="refresh">Refresh Signal</button>
+      {{#if lastRequestId}}<span>Request {{lastRequestId}}</span>{{/if}}
+    </div>
+    {{/unless}}
+    {{/unless}}
+  </div>
+</div>
