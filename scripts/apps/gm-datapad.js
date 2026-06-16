@@ -31,6 +31,8 @@ import { ShellUiStatePreserver } from "/systems/foundryvtt-swse/scripts/ui/shell
 import { HolonetEngine } from "/systems/foundryvtt-swse/scripts/holonet/holonet-engine.js";
 import { HolonetStorage } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js";
 import { HolonetMessengerService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js";
+import { HolonetIntelService } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js";
+import { LocationRegistryService } from "/systems/foundryvtt-swse/scripts/locations/location-registry-service.js";
 import { BulletinSource } from "/systems/foundryvtt-swse/scripts/holonet/sources/bulletin-source.js";
 import { HolonewsGenerator } from "/systems/foundryvtt-swse/scripts/holonet/data/holonews-seed-events.js";
 import { HolonewsAutoPublisher } from "/systems/foundryvtt-swse/scripts/holonet/subsystems/holonews-auto-publisher.js";
@@ -238,7 +240,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
   _getGmShellSurfaceId(pageId) {
     const id = String(pageId || 'home');
-    const known = new Set(['home', 'jobs', 'trade', 'bulletin', 'house-rules', 'store', 'approvals', 'settings', 'healing', 'workspace', 'factions']);
+    const known = new Set(['home', 'jobs', 'trade', 'bulletin', 'house-rules', 'store', 'approvals', 'settings', 'healing', 'workspace', 'factions', 'intel', 'locations']);
     return `gm-${known.has(id) ? id : 'error'}`;
   }
 
@@ -279,7 +281,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const byId = new Map(apps.map((app) => [app.id, app]));
     const pick = (ids) => ids.map((id) => byId.get(id)).filter(Boolean);
     return [
-      { label: 'Operations', tone: (counts.jobs || counts.trade) ? 'crit' : 'stable', countLabel: `${Number(counts.jobs ?? 0) + Number(counts.trade ?? 0)} active`, apps: pick(['jobs', 'trade', 'healing', 'workspace', 'factions']) },
+      { label: 'Operations', tone: (counts.jobs || counts.trade) ? 'crit' : 'stable', countLabel: `${Number(counts.jobs ?? 0) + Number(counts.trade ?? 0)} active`, apps: pick(['jobs', 'trade', 'healing', 'workspace', 'factions', 'intel', 'locations']) },
       { label: 'Economy', tone: (counts.store || counts.approvals) ? 'warn' : 'stable', countLabel: `${Number(counts.store ?? 0) + Number(counts.approvals ?? 0)} queued`, apps: pick(['store', 'approvals']) },
       { label: 'Holonet', tone: counts.bulletin ? 'info' : 'stable', countLabel: `${Number(counts.bulletin ?? 0)} signals`, apps: pick(['bulletin']) },
       { label: 'Configuration', tone: 'stable', countLabel: 'ready', apps: pick(['house-rules', 'settings']) }
@@ -306,6 +308,12 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const bulletinCount = bulletinRecords.filter((record) => record.sourceFamily === SOURCE_FAMILY.BULLETIN && record.state !== DELIVERY_STATE.ARCHIVED).length;
     const jobCounts = await this._getJobBadgeCounts();
     const tradeCounts = await this._getTradeBadgeCounts();
+    let intelCount = 0;
+    try {
+      intelCount = await HolonetIntelService.countIntel({ includeArchived: false });
+    } catch (err) {
+      SWSELogger.warn('[GMDatapad] Unable to load Intel badge count:', err);
+    }
 
     await this._loadStorePendingSales();
     await this._loadStorePendingApprovals();
@@ -342,6 +350,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       tradeActive: tradeCounts.active,
       healing: healingEligible,
       workspace: game.actors.filter((actor) => actor.isOwner).length,
+      intel: intelCount,
+      locations: LocationRegistryService.summarizeForWorkspace().count,
       factions: globalThis.SWSEFactionRegistryService?.summarizeForWorkspace?.().count ?? 0
     };
   }
@@ -1141,7 +1151,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
       { id: 'healing', code: 'MED', label: 'Healing', icon: 'fa-solid fa-heart-pulse', description: 'Party recovery management', badgeCount: counts.healing ?? 0, status: 'Recovery', statusTone: '', badgeType: 'info' },
       { id: 'settings', code: 'CFG', label: 'Settings', icon: 'fa-solid fa-sliders', description: 'Holopad theme and interface tuning', badgeCount: 0, status: 'Theme', statusTone: '', badgeType: 'info' },
       { id: 'workspace', code: 'WRK', label: 'Workspace', icon: 'fa-solid fa-users', description: 'GM actor access', badgeCount: counts.workspace ?? 0, status: 'Actors', statusTone: '', badgeType: 'info' },
-      { id: 'factions', code: 'FAC', label: 'Factions', icon: 'fa-solid fa-people-arrows', description: 'Faction registry and party standings', badgeCount: counts.factions ?? 0, status: 'Ledger', statusTone: (counts.factions ?? 0) ? 'info' : '', badgeType: 'info', featured: true }
+      { id: 'factions', code: 'DOS', label: 'Dossier', icon: 'fa-solid fa-user-secret', description: 'Factions, named contacts, standings, and future Intel hooks', badgeCount: counts.factions ?? 0, status: 'Influence', statusTone: (counts.factions ?? 0) ? 'info' : '', badgeType: 'info', featured: true },
+      { id: 'intel', code: 'INT', label: 'Intel', icon: 'fa-solid fa-file-shield', description: 'Clues, rumors, dossiers, and staged player reveals', badgeCount: counts.intel ?? 0, status: 'Classified', statusTone: (counts.intel ?? 0) ? 'info' : '', badgeType: 'info', featured: true },
+      { id: 'locations', code: 'LOC', label: 'Locations', icon: 'fa-solid fa-map-location-dot', description: 'Planets, cities, POIs, Atlas facts, encounter seeds, and scene launchers', badgeCount: counts.locations ?? 0, status: 'Atlas', statusTone: (counts.locations ?? 0) ? 'info' : '', badgeType: 'info', featured: true }
     ];
   }
 

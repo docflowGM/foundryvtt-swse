@@ -673,6 +673,38 @@
                       </div>
                       {{else}}
                       <div class="hl-secret-note-body holonet-rendered-text">{{{this.secretNote.bodyHtml}}}</div>
+                      {{#if this.secretNote.hasDecryption}}
+                      <div class="hl-decryption-console {{#if this.secretNote.decryption.solved}}is-solved{{/if}} {{#if this.secretNote.decryption.failed}}is-failed{{/if}}">
+                        <div class="hl-decryption-head">
+                          <div><span class="hl-label hl-label--accent">DECRYPTION MATRIX</span><strong>{{this.secretNote.decryption.levelLabel}}</strong></div>
+                          <span class="hl-chip">{{this.secretNote.decryption.percent}}%</span>
+                        </div>
+                        {{#if this.secretNote.decryption.locked}}
+                        <div class="hl-decryption-grid" aria-label="Encrypted glyph stream">
+                          {{#each this.secretNote.decryption.tokens}}
+                            {{#if (eq this.type "sep")}}<span class="hl-decryption-sep">{{this.text}}</span>{{else}}
+                            <span class="hl-decryption-word">
+                              {{#each this.cells}}<span class="hl-decryption-cell {{#if this.isKnown}}is-known{{/if}}"><span class="hl-decryption-cipher">{{{this.glyphHtml}}}</span><b>{{this.plain}}</b></span>{{/each}}
+                            </span>
+                            {{/if}}
+                          {{/each}}
+                        </div>
+                        <div class="hl-decryption-actions">
+                          {{#each this.secretNote.decryption.skills}}
+                          <button type="button" class="hl-btn-accent" data-holonet-action="attempt-secret-note-decryption" data-record-id="{{../id}}" data-skill-key="{{this.key}}" {{#if this.disabled}}disabled{{/if}}>{{this.label}} +{{this.mod}} vs DC {{../secretNote.decryption.dc}}</button>
+                          {{/each}}
+                          {{#if this.secretNote.decryption.canForceOpen}}<button type="button" class="hl-icon-btn" data-holonet-action="force-decrypt-secret-note" data-record-id="{{this.id}}">GM Decrypt</button>{{/if}}
+                        </div>
+                        {{else}}
+                        <div class="hl-decryption-result holonet-rendered-text">{{{this.secretNote.decryption.decryptedText}}}</div>
+                        {{/if}}
+                        {{#if this.secretNote.decryption.log.length}}
+                        <div class="hl-decryption-log">
+                          {{#each this.secretNote.decryption.log}}<span class="{{this.cls}}">{{this.text}}</span>{{/each}}
+                        </div>
+                        {{/if}}
+                      </div>
+                      {{/if}}
                       {{#if this.secretNote.imageUrl}}<img class="swse-msg__image hl-msg-image" src="{{this.secretNote.imageUrl}}" alt="{{localize 'SWSE.ShellUI.SecretNoteImage'}}">{{/if}}
                       {{#if this.secretNote.hasAttachments}}
                       <div class="hl-attachments">

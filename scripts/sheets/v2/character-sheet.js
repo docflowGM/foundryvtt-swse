@@ -44,6 +44,7 @@ import { SettingsSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/s
 import { GamesSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/GamesSurfaceController.js";
 import { HomeSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/HomeSurfaceController.js";
 import { AlliesSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/AlliesSurfaceController.js";
+import { AtlasSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/AtlasSurfaceController.js";
 import { MessengerSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/MessengerSurfaceController.js";
 import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
@@ -1440,6 +1441,12 @@ export class SWSEV2CharacterSheet extends
       this._alliesSurfaceController.attach(root);
     } else {
       this._alliesSurfaceController?.destroy?.();
+    }
+    if (this._shellSurface === 'atlas') {
+      this._atlasSurfaceController ??= new AtlasSurfaceController(this, this.actor);
+      this._atlasSurfaceController.attach(root);
+    } else {
+      this._atlasSurfaceController?.destroy?.();
     }
     if (this._shellOverlay?.overlayId === 'upgrade-single-item') {
       this._wireUpgradeOverlayEvents(root, signal);

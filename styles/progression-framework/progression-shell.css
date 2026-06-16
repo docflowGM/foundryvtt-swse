@@ -110,6 +110,10 @@
   --motion-glow-alpha-strong: 0.42;
   --motion-glow-alpha-subtle: 0.15;
 
+
+  /* ===== DISPLAY EFFECT TOKENS (settings-backed via ThemeResolutionService) ===== */
+  --scan-strength: var(--swse-scan-strength, 0.03);
+
   /* ===== TRANSITION TOKENS ===== */
   --prog-transition-base: 200ms ease;
   --prog-transition-mentor: 300ms cubic-bezier(0.4, 0, 0.2, 1);

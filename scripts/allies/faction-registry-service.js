@@ -34,6 +34,26 @@ const SOURCE_TYPES = Object.freeze([
 
 const APPROVAL_STATUSES = new Set(['suggested', 'pending', 'pending_approval']);
 
+const CONTACT_DISPOSITIONS = Object.freeze([
+  { value: 'unknown', label: 'Unknown' },
+  { value: 'ally', label: 'Ally' },
+  { value: 'friendly', label: 'Friendly' },
+  { value: 'neutral', label: 'Neutral' },
+  { value: 'suspicious', label: 'Suspicious' },
+  { value: 'rival', label: 'Rival' },
+  { value: 'hostile', label: 'Hostile' }
+]);
+
+const CONTACT_REVEAL_STATES = Object.freeze([
+  { value: 'hidden', label: 'GM Only' },
+  { value: 'hinted', label: 'Hinted' },
+  { value: 'known', label: 'Known to Players' },
+  { value: 'compromised', label: 'Compromised' }
+]);
+
+const CONTACT_DISPOSITION_VALUES = new Set(CONTACT_DISPOSITIONS.map(entry => entry.value));
+const CONTACT_REVEAL_VALUES = new Set(CONTACT_REVEAL_STATES.map(entry => entry.value));
+
 function nowIso() {
   try { return new Date().toISOString(); } catch (_err) { return ''; }
 }
@@ -70,6 +90,25 @@ function normalizeTags(value) {
   return cleanText(value).split(',').map(entry => cleanText(entry)).filter(Boolean);
 }
 
+function normalizeIdList(value) {
+  if (Array.isArray(value)) return value.map(entry => cleanText(entry)).filter(Boolean);
+  return cleanText(value).split(',').map(entry => cleanText(entry)).filter(Boolean);
+}
+
+function normalizeBoolean(value, fallback = false) {
+  if (typeof value === 'boolean') return value;
+  if (value === undefined || value === null || value === '') return Boolean(fallback);
+  const normalized = String(value).trim().toLowerCase();
+  if (['true', '1', 'yes', 'on', 'known'].includes(normalized)) return true;
+  if (['false', '0', 'no', 'off', 'hidden'].includes(normalized)) return false;
+  return Boolean(fallback);
+}
+
+function normalizeChoice(value, allowedValues, fallback) {
+  const normalized = cleanText(value || fallback).toLowerCase();
+  return allowedValues.has(normalized) ? normalized : fallback;
+}
+
 function normalizeJobDefaults(record = {}, fallback = {}) {
   const source = record.jobDefaults && typeof record.jobDefaults === 'object'
     ? { ...record.jobDefaults, ...record }
@@ -99,6 +138,8 @@ function normalizeJobDefaults(record = {}, fallback = {}) {
 function normalizeContact(record = {}) {
   const name = cleanText(record.name || record.contactName || 'Unnamed Contact');
   const role = cleanText(record.role || record.contactRole || record.title || 'Faction Contact');
+  const revealState = normalizeChoice(record.revealState || (record.knownToPlayers ? 'known' : 'hidden'), CONTACT_REVEAL_VALUES, 'hidden');
+  const knownToPlayers = normalizeBoolean(record.knownToPlayers, revealState === 'known' || revealState === 'compromised');
   return {
     id: cleanText(record.id || record.contactId) || slugify(`${name}-${role}`),
     name,
@@ -111,6 +152,21 @@ function normalizeContact(record = {}) {
     actorName: cleanText(record.actorName || record.promotedActorName || ''),
     promotedAt: cleanText(record.promotedAt || ''),
     tags: normalizeTags(record.tags),
+
+    // Phase 2 dossier fields. These remain lightweight registry metadata and do
+    // not duplicate actor stats; promoted NPC actors stay linked by UUID/id.
+    disposition: normalizeChoice(record.disposition || record.relationshipDisposition, CONTACT_DISPOSITION_VALUES, 'unknown'),
+    revealState,
+    knownToPlayers,
+    publicNotes: cleanText(record.publicNotes || record.playerNotes || ''),
+    gmNotes: cleanText(record.gmNotes || record.privateNotes || ''),
+    lastKnownLocation: cleanText(record.lastKnownLocation || record.location || record.locationName || ''),
+    agenda: cleanText(record.agenda || record.motivation || ''),
+    secret: cleanText(record.secret || record.secretNotes || ''),
+    factionRank: cleanText(record.factionRank || record.rank || ''),
+    messengerPersonaId: cleanText(record.messengerPersonaId || record.personaId || ''),
+    linkedIntelIds: normalizeIdList(record.linkedIntelIds || record.intelIds),
+
     defaultJobTone: cleanText(record.defaultJobTone || record.jobDefaults?.tone || ''),
     defaultRewardStyle: cleanText(record.defaultRewardStyle || record.jobDefaults?.rewardStyle || ''),
     defaultObjective: cleanText(record.defaultObjective || record.jobDefaults?.objective || ''),
@@ -207,6 +263,8 @@ export function registerFactionRegistrySettings() {
 export class FactionRegistryService {
   static RELATIONSHIP_TYPES = RELATIONSHIP_TYPES;
   static SOURCE_TYPES = SOURCE_TYPES;
+  static CONTACT_DISPOSITIONS = CONTACT_DISPOSITIONS;
+  static CONTACT_REVEAL_STATES = CONTACT_REVEAL_STATES;
   static REGISTRY_SETTING = REGISTRY_SETTING;
   static ACTOR_RELATIONSHIPS_FLAG = ACTOR_RELATIONSHIPS_FLAG;
   static LEGACY_FACTIONS_FLAG = LEGACY_FACTIONS_FLAG;
@@ -217,6 +275,14 @@ export class FactionRegistryService {
 
   static getSourceTypeOptions() {
     return SOURCE_TYPES.map(entry => ({ ...entry }));
+  }
+
+  static getContactDispositionOptions() {
+    return CONTACT_DISPOSITIONS.map(entry => ({ ...entry }));
+  }
+
+  static getContactRevealStateOptions() {
+    return CONTACT_REVEAL_STATES.map(entry => ({ ...entry }));
   }
 
   static getRegistry() {
@@ -384,6 +450,12 @@ export class FactionRegistryService {
             contactId: contact.id,
             contactName: contact.name,
             contactRole: contact.role,
+            contactTitle: contact.title,
+            contactDisposition: contact.disposition,
+            contactRevealState: contact.revealState,
+            contactKnownToPlayers: contact.knownToPlayers,
+            contactFactionRank: contact.factionRank,
+            contactLastKnownLocation: contact.lastKnownLocation,
             source: 'faction-registry',
             promotedAt: nowIso()
           }

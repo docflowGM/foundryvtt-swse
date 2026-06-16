@@ -73,6 +73,11 @@
         vm=shellSurfaceVm}}
   {{/if}}
 
+  {{#if (eq shellSurface "atlas")}}
+    {{> "systems/foundryvtt-swse/templates/shell/partials/surface-atlas.hbs"
+        vm=shellSurfaceVm}}
+  {{/if}}
+
   {{#if (eq shellSurface "workbench")}}
     {{> "systems/foundryvtt-swse/templates/shell/partials/surface-workbench.hbs"
         vm=shellSurfaceVm}}
@@ -128,6 +133,14 @@
 
   {{#if (eq shellSurface "gm-factions")}}
     {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/factions.hbs"}}
+  {{/if}}
+
+  {{#if (eq shellSurface "gm-intel")}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/intel.hbs"}}
+  {{/if}}
+
+  {{#if (eq shellSurface "gm-locations")}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/locations.hbs"}}
   {{/if}}
 
   {{#if (eq shellSurface "gm-settings")}}

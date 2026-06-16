@@ -11,9 +11,9 @@
   --screen-c-base: 0.055;
   --screen-c-alt: 0.070;
   --ink-h: 190;
-  --scan-strength: 0.03;
-  --anim-speed: 1;
-  --glow-mult: 1;
+  --scan-strength: var(--swse-scan-strength, 0.03);
+  --anim-speed: var(--swse-anim-speed, 1);
+  --glow-mult: var(--swse-glow, 1);
 
   --accent-h: var(--ink-h);
   --accent-c: 0.17;
@@ -108,7 +108,7 @@
   background: repeating-linear-gradient(
     0deg,
     transparent 0 3px,
-    oklch(1 0 0 / var(--scan-strength)) 3px 4px
+    oklch(1 0 0 / var(--swse-scan-line-opacity, var(--scan-strength, 0.03))) 3px 4px
   );
   border-radius: 10px;
 }

@@ -1227,6 +1227,30 @@ export class MessengerSurfaceController {
       });
     });
 
+    messengerRoot.querySelectorAll('[data-holonet-action="attempt-secret-note-decryption"][data-record-id]').forEach(button => {
+      button.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const recordId = button.dataset.recordId;
+        const skillKey = button.dataset.skillKey || 'useComputer';
+        const result = await HolonetMessengerService.attemptSecretNoteDecryption({ actor, recordId, skillKey });
+        this._noteMessengerPendingResult(result);
+        await this._refreshMessengerSurface({ threadId: this._shellSurfaceOptions?.threadId ?? null, compose: false });
+      });
+    });
+
+    messengerRoot.querySelectorAll('[data-holonet-action="force-decrypt-secret-note"][data-record-id]').forEach(button => {
+      button.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        if (!game.user?.isGM) return;
+        const recordId = button.dataset.recordId;
+        const result = await HolonetMessengerService.forceDecryptSecretNote({ actor, recordId });
+        this._noteMessengerPendingResult(result);
+        await this._refreshMessengerSurface({ threadId: this._shellSurfaceOptions?.threadId ?? null, compose: false });
+      });
+    });
+
     messengerRoot.querySelectorAll('.hl-mode-card input[name="threadType"]').forEach(input => {
       input.addEventListener('change', () => this._syncMessengerThreadTypeCards(messengerRoot));
     });

@@ -24,6 +24,7 @@ import { ShellSurfaceState } from '/systems/foundryvtt-swse/scripts/ui/shell/She
 import { ShellMutationGuard } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellMutationGuard.js';
 import { ShellUiStatePreserver } from '/systems/foundryvtt-swse/scripts/ui/shell/ShellUiStatePreserver.js';
 import { MessengerSurfaceController } from '/systems/foundryvtt-swse/scripts/ui/shell/MessengerSurfaceController.js';
+import { AtlasSurfaceController } from '/systems/foundryvtt-swse/scripts/ui/shell/AtlasSurfaceController.js';
 
 /**
  * @param {class} BaseClass - The ApplicationV2 base class to mix into
@@ -417,6 +418,13 @@ export function ShellHostMixin(BaseClass) {
         });
       } else {
         this._messengerSurfaceController?.destroy?.();
+      }
+
+      if (this._shellSurface === 'atlas') {
+        this._atlasSurfaceController ??= new AtlasSurfaceController(this, this.actor || this.document);
+        this._atlasSurfaceController.attach(root);
+      } else {
+        this._atlasSurfaceController?.destroy?.();
       }
 
       if (this._shellSurface === 'store') {

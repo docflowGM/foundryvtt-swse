@@ -1064,3 +1064,471 @@
 }
 
 .swse-allies-surface { position: relative; }
+
+/* Phase 6: Intel Locker */
+.swse-intel-locker-lane,
+.swse-intel-locker-archive {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.swse-intel-locker-lane h4,
+.swse-intel-locker-archive summary {
+  color: var(--swse-allies-accent);
+  font-family: var(--font-primary, sans-serif);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-intel-locker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 0.8rem;
+}
+
+.swse-intel-locker-card {
+  border: 1px solid color-mix(in oklab, var(--swse-allies-accent) 34%, transparent);
+  border-radius: 14px;
+  padding: 0.85rem;
+  background:
+    linear-gradient(135deg, color-mix(in oklab, var(--swse-allies-accent) 10%, transparent), transparent 45%),
+    color-mix(in oklab, var(--swse-allies-panel-strong) 92%, black);
+  box-shadow: inset 0 0 24px rgba(57, 247, 255, 0.06), 0 10px 28px rgba(0, 0, 0, 0.28);
+}
+
+.swse-intel-locker-card.is-encrypted {
+  border-color: rgba(255, 205, 84, 0.44);
+}
+
+.swse-intel-locker-card.is-decoded {
+  border-color: rgba(125, 255, 173, 0.42);
+}
+
+.swse-intel-locker-card.is-archived {
+  opacity: 0.72;
+}
+
+.swse-intel-locker-card header {
+  display: grid;
+  gap: 0.25rem;
+  margin-bottom: 0.6rem;
+}
+
+.swse-intel-locker-card header span,
+.swse-intel-locker-card header b,
+.swse-intel-locker-card small,
+.swse-intel-locker-card em {
+  color: var(--swse-allies-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.swse-intel-locker-card h5 {
+  margin: 0;
+  color: var(--swse-allies-text);
+}
+
+.swse-intel-locker-card p {
+  white-space: pre-wrap;
+}
+
+.swse-intel-notes-form textarea {
+  width: 100%;
+  min-height: 4.5rem;
+  resize: vertical;
+}
+
+/* Phase 7: player Intel Dossier, decryption, and lockbox rewards */
+.swse-intel-decryption-console {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  border: 1px solid rgba(125, 220, 255, 0.26);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(25, 229, 255, 0.08), rgba(8, 14, 28, 0.88));
+  box-shadow: inset 0 0 24px rgba(125, 220, 255, 0.06);
+}
+
+.swse-intel-decryption-console.is-solved {
+  border-color: rgba(125, 255, 173, 0.42);
+}
+
+.swse-intel-decryption-console.is-failed {
+  border-color: rgba(255, 92, 122, 0.42);
+}
+
+.swse-intel-decryption-head,
+.swse-intel-decryption-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.swse-intel-decryption-head span,
+.swse-intel-decryption-head b {
+  color: var(--swse-allies-accent);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-intel-decryption-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.6rem;
+  padding: 0.65rem;
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.swse-intel-decryption-word {
+  display: inline-flex;
+  gap: 0.16rem;
+}
+
+.swse-intel-decryption-cell {
+  display: inline-grid;
+  place-items: center;
+  min-width: 1.35rem;
+  min-height: 2rem;
+  border: 1px solid rgba(125, 220, 255, 0.14);
+  border-radius: 7px;
+  color: rgba(215, 248, 255, 0.68);
+  background: rgba(5, 12, 26, 0.72);
+}
+
+.swse-intel-decryption-cell.is-known {
+  color: rgba(125, 255, 173, 0.98);
+  border-color: rgba(125, 255, 173, 0.34);
+}
+
+.swse-intel-decryption-cell b {
+  min-height: 0.82rem;
+  font-size: 0.72rem;
+}
+
+.swse-intel-decryption-log {
+  display: grid;
+  gap: 0.22rem;
+  font-size: 0.76rem;
+}
+
+.swse-intel-decryption-log .ok { color: rgba(125, 255, 173, 0.96); }
+.swse-intel-decryption-log .fail { color: rgba(255, 92, 122, 0.96); }
+.swse-intel-decryption-log .info { color: rgba(215, 248, 255, 0.74); }
+
+.swse-intel-decryption-result {
+  padding: 0.65rem;
+  border-radius: 10px;
+  background: rgba(125, 255, 173, 0.08);
+  white-space: pre-wrap;
+}
+
+.swse-intel-lockbox {
+  display: grid;
+  gap: 0.45rem;
+  margin: 0.75rem 0;
+  padding: 0.7rem;
+  border: 1px solid rgba(255, 205, 84, 0.34);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255, 205, 84, 0.1), rgba(8, 14, 28, 0.88));
+}
+
+.swse-intel-lockbox.is-sealed {
+  border-style: dashed;
+  opacity: 0.88;
+}
+
+.swse-intel-lockbox.is-claimed {
+  border-color: rgba(125, 255, 173, 0.38);
+}
+
+.swse-intel-lockbox header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.swse-intel-lockbox header span,
+.swse-intel-lockbox header b,
+.swse-intel-lockbox small {
+  color: rgba(255, 232, 160, 0.9);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-intel-lockbox-reward {
+  display: inline-flex;
+  width: fit-content;
+  padding: 0.18rem 0.45rem;
+  border: 1px solid rgba(255, 205, 84, 0.22);
+  border-radius: 999px;
+  color: rgba(255, 238, 186, 0.95);
+  background: rgba(255, 205, 84, 0.08);
+  font-size: 0.78rem;
+}
+
+/* Phase 7: faction dossier cross-links */
+.swse-faction-dossier-links {
+  display: grid;
+  gap: 0.45rem;
+  margin-top: 0.75rem;
+  padding: 0.65rem;
+  border: 1px solid color-mix(in oklab, var(--swse-allies-accent) 24%, transparent);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.16);
+}
+
+.swse-faction-dossier-links-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  color: var(--swse-allies-muted);
+  font-size: 0.76rem;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.swse-faction-contact-strip,
+.swse-faction-intel-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.swse-faction-contact-chip {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: min(100%, 220px);
+  padding: 0.35rem 0.45rem;
+  border: 1px solid rgba(125, 220, 255, 0.16);
+  border-radius: 12px;
+  background: rgba(5, 12, 26, 0.55);
+}
+
+.swse-faction-contact-chip img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.swse-faction-contact-chip b,
+.swse-faction-contact-chip small,
+.swse-faction-contact-chip em,
+.swse-faction-intel-strip span {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-faction-contact-chip b {
+  color: var(--swse-allies-text);
+  font-size: 0.82rem;
+}
+
+.swse-faction-contact-chip small,
+.swse-faction-contact-chip em {
+  color: var(--swse-allies-muted);
+  font-size: 0.7rem;
+}
+
+.swse-faction-intel-strip span {
+  max-width: 220px;
+  padding: 0.22rem 0.5rem;
+  border: 1px solid rgba(125, 220, 255, 0.16);
+  border-radius: 999px;
+  color: rgba(215, 248, 255, 0.85);
+  background: rgba(125, 220, 255, 0.08);
+  font-size: 0.76rem;
+}
+
+/* Phase 8: Player Atlas surface */
+.swse-atlas-surface {
+  color: #e8f8ff;
+}
+
+.swse-atlas-hero,
+.swse-atlas-panel,
+.swse-atlas-dossier,
+.swse-atlas-section {
+  border: 1px solid rgba(92, 214, 255, 0.18);
+  border-radius: 14px;
+  background: rgba(5, 13, 24, 0.78);
+  box-shadow: inset 0 0 24px rgba(68, 190, 255, 0.07);
+}
+
+.swse-atlas-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 0.9rem;
+  background: linear-gradient(135deg, rgba(6, 22, 36, 0.94), rgba(15, 11, 38, 0.9));
+}
+
+.swse-atlas-hero h2,
+.swse-atlas-dossier h2,
+.swse-atlas-section h3 {
+  margin: 0;
+  color: #eaffff;
+}
+
+.swse-kicker {
+  margin: 0 0 0.2rem;
+  color: #89e8ff;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.swse-atlas-stats,
+.swse-atlas-link-row,
+.swse-atlas-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.swse-atlas-stats span,
+.swse-atlas-link-row span {
+  border: 1px solid rgba(128, 224, 255, 0.18);
+  border-radius: 999px;
+  background: rgba(36, 102, 132, 0.22);
+  padding: 0.25rem 0.55rem;
+  color: #c9f4ff;
+  font-size: 0.78rem;
+}
+
+.swse-atlas-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.78fr) minmax(430px, 1.42fr);
+  gap: 0.85rem;
+  min-height: 0;
+}
+
+.swse-atlas-panel,
+.swse-atlas-dossier,
+.swse-atlas-section {
+  padding: 0.85rem;
+}
+
+.swse-atlas-panel label {
+  display: grid;
+  gap: 0.25rem;
+  color: rgba(225, 246, 255, 0.82);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.swse-atlas-panel input,
+.swse-atlas-panel select,
+.swse-atlas-section textarea {
+  width: 100%;
+  border: 1px solid rgba(95, 218, 255, 0.24);
+  border-radius: 8px;
+  background: rgba(2, 8, 16, 0.82);
+  color: #edfaff;
+  padding: 0.45rem 0.55rem;
+}
+
+.swse-atlas-card-list,
+.swse-atlas-dossier,
+.swse-atlas-section {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.swse-atlas-card {
+  width: 100%;
+  display: grid;
+  gap: 0.15rem;
+  text-align: left;
+  border: 1px solid rgba(100, 220, 255, 0.16);
+  border-left: 3px solid rgba(100, 220, 255, 0.5);
+  border-radius: 11px;
+  background: rgba(6, 16, 29, 0.82);
+  color: #e7f9ff;
+  padding: 0.55rem;
+}
+
+.swse-atlas-card.is-current { border-left-color: rgba(255, 215, 100, 0.95); }
+.swse-atlas-card.is-pinned { box-shadow: 0 0 16px rgba(99, 225, 255, 0.13); }
+.swse-atlas-card.depth-1 { margin-left: 0.65rem; width: calc(100% - 0.65rem); }
+.swse-atlas-card.depth-2 { margin-left: 1.3rem; width: calc(100% - 1.3rem); }
+.swse-atlas-card.depth-3,
+.swse-atlas-card.depth-4,
+.swse-atlas-card.depth-5 { margin-left: 1.95rem; width: calc(100% - 1.95rem); }
+
+.swse-atlas-card-name { font-weight: 700; }
+.swse-atlas-card-type,
+.swse-atlas-card-chain,
+.swse-atlas-card-meta,
+.swse-empty-note { color: rgba(213, 238, 250, 0.68); font-size: 0.78rem; }
+
+.swse-atlas-dossier-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+.swse-atlas-dossier-actions,
+.swse-atlas-checks {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.swse-atlas-dossier-actions button,
+.swse-atlas-checks button,
+.swse-atlas-section button {
+  border: 1px solid rgba(110, 225, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(34, 92, 122, 0.28);
+  color: #dff8ff;
+  padding: 0.35rem 0.65rem;
+}
+
+.swse-atlas-map-preview img {
+  width: 100%;
+  max-height: 260px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid rgba(125, 226, 255, 0.22);
+}
+
+.swse-atlas-fact {
+  border: 1px solid rgba(120, 226, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.025);
+  padding: 0.65rem;
+}
+
+.swse-atlas-fact.is-locked {
+  border-color: rgba(255, 206, 103, 0.22);
+}
+
+.swse-atlas-grid-two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* Atlas skill-gate controls */
+.swse-atlas-checks button {
+  white-space: normal;
+  text-align: left;
+}

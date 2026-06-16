@@ -404,6 +404,8 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/healing/selected-actor-rail.hbs',
   'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/workspace.hbs',
   'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/factions.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/intel.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/locations.hbs',
   'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/settings.hbs',
   'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/error.hbs',
 
@@ -480,6 +482,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/shell/partials/games/surface-games-dejarik-table.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/games/surface-games-hintaro-table.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-allies.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/surface-atlas.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-allies-lane.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-allies-faction-card.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-allies-base-card.hbs',

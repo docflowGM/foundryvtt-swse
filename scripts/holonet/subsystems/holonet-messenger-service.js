@@ -30,6 +30,7 @@ import { GameSessionMaterializer } from '/systems/foundryvtt-swse/scripts/games/
 import { GameNotificationService } from '/systems/foundryvtt-swse/scripts/games/game-notification-service.js';
 import { MessengerNotificationBridge } from './messenger-notification-bridge.js';
 import { MessengerMaintenanceService } from './messenger-maintenance-service.js';
+import { HolonetDecryptionService } from './holonet-decryption-service.js';
 
 const THREAD_TYPE = Object.freeze({
   PRIVATE: 'private',
@@ -159,7 +160,7 @@ function normalizeAttachmentList(attachments = []) {
     .slice(0, 8);
 }
 
-function normalizeSecretNotePayload({ title = '', body = '', imageUrl = '', attachments = [], expiresAfterSeconds = 0, source = 'gm-note' } = {}) {
+function normalizeSecretNotePayload({ title = '', body = '', imageUrl = '', attachments = [], expiresAfterSeconds = 0, source = 'gm-note', decryptionPayload = null, sourceIntelId = '' } = {}) {
   const cleanTitle = String(title || '').trim() || 'Secret Note';
   const cleanBody = String(body || '').trim();
   const cleanImageUrl = String(imageUrl || '').trim();
@@ -171,6 +172,8 @@ function normalizeSecretNotePayload({ title = '', body = '', imageUrl = '', atta
     imageUrl: cleanImageUrl,
     attachments: normalizeAttachmentList(attachments),
     source: String(source || 'gm-note').trim() || 'gm-note',
+    sourceIntelId: String(sourceIntelId || '').trim(),
+    decryptionPayload: decryptionPayload?.enabled ? HolonetDecryptionService.clonePayload(decryptionPayload) : null,
     status: 'sealed',
     selfDestruct: seconds > 0,
     expiresAfterSeconds: seconds,
@@ -187,7 +190,8 @@ function secretNoteSourceLabel(source = '') {
     messenger: 'Messenger',
     job: 'Job Reward',
     game: 'Game Reward',
-    puzzle: 'Puzzle Drop'
+    puzzle: 'Puzzle Drop',
+    intel: 'Intel Drop'
   };
   const key = String(source || '').trim();
   return map[key] || (key ? key.replace(/[-_]+/g, ' ').replace(/\w/g, c => c.toUpperCase()) : 'GM Note');
@@ -1212,15 +1216,19 @@ export class HolonetMessengerService {
     const isOpen = Boolean(isGm || openedAt);
     const isSealed = !isOpen && !destroyedAt;
     const body = String(note.body || '').trim();
+    const decryption = HolonetDecryptionService.toViewModel(note.decryptionPayload, { actor, isGm });
+    const hasDecryption = Boolean(decryption?.enabled);
+    const displayBody = hasDecryption && !decryption.solved && !isGm ? body : (decryption?.decryptedText || body);
     return {
       id: note.id || message.id,
       recordId: message.id,
       title: String(note.title || message.title || 'Secret Note'),
       source: String(note.source || 'gm-note'),
       sourceLabel: secretNoteSourceLabel(note.source),
-      status: destroyedAt ? 'destroyed' : (isExpired ? 'expiring' : (openedAt ? 'open' : 'sealed')),
-      body,
-      bodyHtml: renderMarkup(body || 'Encrypted note payload is empty.'),
+      sourceIntelId: String(note.sourceIntelId || ''),
+      status: destroyedAt ? 'destroyed' : (isExpired ? 'expiring' : (openedAt ? (hasDecryption && !decryption?.solved ? 'decrypting' : 'open') : 'sealed')),
+      body: displayBody,
+      bodyHtml: renderMarkup(displayBody || 'Encrypted note payload is empty.'),
       imageUrl: note.imageUrl && isImagePath(note.imageUrl) ? String(note.imageUrl).trim() : null,
       attachments: normalizeAttachmentList(note.attachments ?? []),
       hasAttachments: normalizeAttachmentList(note.attachments ?? []).length > 0,
@@ -1233,9 +1241,12 @@ export class HolonetMessengerService {
       isOpen,
       isSealed,
       isExpired,
+      hasDecryption,
+      decryption,
       canReveal: Boolean(!isGm && isSealed),
       canDestroy: Boolean(isGm),
-      canAutoDestroy: Boolean(note.selfDestruct && openedAt && !destroyedAt)
+      canAutoDestroy: Boolean(note.selfDestruct && openedAt && !destroyedAt),
+      canAttemptDecryption: Boolean(hasDecryption && isOpen && !decryption?.solved && !decryption?.failed)
     };
   }
 
@@ -2096,7 +2107,7 @@ export class HolonetMessengerService {
   }
 
 
-  static async issueSecretNote({ actor, threadId = null, recipientIds = [], title = '', body = '', imageUrl = '', attachments = [], expiresAfterSeconds = 0, source = 'gm-note', senderRecipientId = null } = {}) {
+  static async issueSecretNote({ actor, threadId = null, recipientIds = [], title = '', body = '', imageUrl = '', attachments = [], expiresAfterSeconds = 0, source = 'gm-note', senderRecipientId = null, decryptionPayload = null, sourceIntelId = '' } = {}) {
     const payload = {
       actorId: actor?.id ?? null,
       threadId: String(threadId || '').trim() || null,
@@ -2107,10 +2118,12 @@ export class HolonetMessengerService {
       attachments: normalizeAttachmentList(attachments),
       expiresAfterSeconds: Number(expiresAfterSeconds || 0) || 0,
       source: String(source || 'gm-note').trim() || 'gm-note',
+      decryptionPayload: decryptionPayload?.enabled ? HolonetDecryptionService.clonePayload(decryptionPayload) : null,
+      sourceIntelId: String(sourceIntelId || '').trim(),
       senderUserId: game.user?.id ?? null,
       senderRecipientId: game.user?.isGM && senderRecipientId ? senderRecipientId : currentRecipientId()
     };
-    if (!payload.body && !payload.imageUrl && !payload.attachments.length) return false;
+    if (!payload.body && !payload.imageUrl && !payload.attachments.length && !payload.decryptionPayload?.enabled) return false;
     if (!game.user?.isGM) {
       const requestId = HolonetSocketService.emitRequest('issue-secret-note', payload);
       return { pending: true, requestId, threadId: payload.threadId ?? null };
@@ -2118,7 +2131,7 @@ export class HolonetMessengerService {
     return this._gmIssueSecretNote(payload);
   }
 
-  static async _gmIssueSecretNote({ actorId = null, threadId = null, recipientIds = [], title = '', body = '', imageUrl = '', attachments = [], expiresAfterSeconds = 0, source = 'gm-note', senderUserId = null, senderRecipientId = null, requestId = null, requesterId = null } = {}) {
+  static async _gmIssueSecretNote({ actorId = null, threadId = null, recipientIds = [], title = '', body = '', imageUrl = '', attachments = [], expiresAfterSeconds = 0, source = 'gm-note', senderUserId = null, senderRecipientId = null, requestId = null, requesterId = null, decryptionPayload = null, sourceIntelId = '' } = {}) {
     if (!game.user?.isGM) return false;
     const actor = actorId ? game.actors?.get(actorId) : null;
     const senderRecipient = this._recipientForActorContext(actor, { senderUserId: senderUserId || requesterId || game.user?.id, senderRecipientId });
@@ -2150,7 +2163,7 @@ export class HolonetMessengerService {
     }
     meta.gmObserverIds = Array.from(new Set([...safeArray(meta.gmObserverIds), ...this._gmObserverRecipients().map(r => r.id)]));
     const recipients = this._messageRecipientsForThread(thread);
-    const note = normalizeSecretNotePayload({ title, body, imageUrl, attachments, expiresAfterSeconds, source });
+    const note = normalizeSecretNotePayload({ title, body, imageUrl, attachments, expiresAfterSeconds, source, decryptionPayload, sourceIntelId });
     note.createdByUserId = senderUserId || requesterId || game.user?.id || null;
     const sender = HolonetSender.system('GM Encrypted Note');
     const message = MessengerSource.createMessage({
@@ -2206,6 +2219,68 @@ export class HolonetMessengerService {
     record.updatedAt = nowIso();
     await HolonetStorage.saveRecord(record);
     this._emitMessengerSync(this._threadSyncPayload(record.threadId, { messageId: record.id, secretNote: true, opened: true }));
+    return { ok: true, recordId: record.id, threadId: record.threadId };
+  }
+
+  static async attemptSecretNoteDecryption({ actor, recordId, skillKey = 'useComputer' } = {}) {
+    const payload = {
+      actorId: actor?.id ?? null,
+      recordId: String(recordId || '').trim(),
+      skillKey: String(skillKey || 'useComputer').trim() || 'useComputer',
+      requesterId: game.user?.id ?? null,
+      senderRecipientId: currentRecipientId()
+    };
+    if (!payload.recordId) return false;
+    if (!game.user?.isGM) {
+      const requestId = HolonetSocketService.emitRequest('attempt-secret-note-decryption', payload);
+      return { pending: true, requestId, recordId: payload.recordId };
+    }
+    return this._gmAttemptSecretNoteDecryption(payload);
+  }
+
+  static async _gmAttemptSecretNoteDecryption({ actorId = null, recordId = '', skillKey = 'useComputer', requesterId = null, senderRecipientId = null } = {}) {
+    if (!game.user?.isGM || !recordId) return false;
+    const record = await HolonetStorage.getRecord(recordId);
+    const note = record?.metadata?.secretNote;
+    if (!record || !note?.decryptionPayload?.enabled || note.destroyedAt) return false;
+    if (!game.users?.get(requesterId)?.isGM) {
+      const requesterRecipient = String(senderRecipientId || (requesterId ? `player:${requesterId}` : '')).trim();
+      if (requesterRecipient && !hasRecipient(record.recipients, requesterRecipient)) return false;
+    }
+    const actor = actorId ? game.actors?.get(actorId) : (requesterId ? game.users?.get(requesterId)?.character : null);
+    const result = HolonetDecryptionService.attempt(note.decryptionPayload, { actor, skillKey, requesterId });
+    note.decryptionPayload = result.payload;
+    if (result.payload?.solved) note.status = 'decrypted';
+    if (!note.openedAt) note.openedAt = nowIso();
+    record.updatedAt = nowIso();
+    await HolonetStorage.saveRecord(record);
+    this._emitMessengerSync(this._threadSyncPayload(record.threadId, { messageId: record.id, secretNote: true, decryptionAttempted: true, solved: Boolean(result.payload?.solved), failed: Boolean(result.payload?.failed) }));
+    return { ok: true, recordId: record.id, threadId: record.threadId, solved: Boolean(result.payload?.solved), failed: Boolean(result.payload?.failed), total: result.total ?? null };
+  }
+
+  static async forceDecryptSecretNote({ actor, recordId } = {}) {
+    if (!game.user?.isGM) return false;
+    const record = await HolonetStorage.getRecord(String(recordId || '').trim());
+    const note = record?.metadata?.secretNote;
+    if (!record || !note?.decryptionPayload?.enabled) return false;
+    const payload = HolonetDecryptionService.clonePayload(note.decryptionPayload);
+    const letters = new Set();
+    for (const token of payload.tokens ?? []) {
+      if (token?.type !== 'word') continue;
+      for (const cell of token.cells ?? []) if (cell?.cipher) letters.add(cell.cipher);
+    }
+    payload.knownCipherLetters = [...letters];
+    payload.structuralDone = true;
+    payload.solved = true;
+    payload.solvedAt = nowIso();
+    payload.lastAttemptByUserId = game.user?.id ?? null;
+    payload.log = [{ cls: 'ok', text: 'GM override decrypted this transmission.', createdAt: nowIso() }, ...(payload.log ?? [])].slice(0, 30);
+    note.decryptionPayload = payload;
+    note.status = 'decrypted';
+    if (!note.openedAt) note.openedAt = nowIso();
+    record.updatedAt = nowIso();
+    await HolonetStorage.saveRecord(record);
+    this._emitMessengerSync(this._threadSyncPayload(record.threadId, { messageId: record.id, secretNote: true, forcedDecrypt: true }));
     return { ok: true, recordId: record.id, threadId: record.threadId };
   }
 

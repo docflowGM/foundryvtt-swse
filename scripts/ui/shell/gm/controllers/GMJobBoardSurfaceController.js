@@ -13,6 +13,7 @@ import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/she
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 
+import { DossierDragDropService } from '/systems/foundryvtt-swse/scripts/ui/dragdrop/dossier-drag-drop-service.js';
 export class GMJobBoardSurfaceController {
   constructor(host) {
     this.host = host;
@@ -25,6 +26,7 @@ export class GMJobBoardSurfaceController {
     const signal = this._abort.signal;
     const pageElement = root.querySelector('.gm-datapad-jobs');
     if (!pageElement) return;
+    DossierDragDropService.bindDragSources(pageElement, { signal });
     if (!this._assertGM('open the GM Job Board')) return;
 
     this._wireJobBoardTabs(pageElement, signal);

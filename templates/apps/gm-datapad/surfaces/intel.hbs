@@ -1,0 +1,138 @@
+{{!-- GM Datapad Intel surface — Phase 5 faction/contact bridge workspace. --}}
+<div class="gm-datapad-page gm-datapad-intel gm-phase4-intel gm-phase5-intel flexcol" data-gm-intel-scope>
+  <div class="page-header gm-app-header gm-intel-header gm-phase2-header">
+    <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
+    <div class="gm-app-header-copy">
+      <span class="gm-command-eyebrow">CLASSIFIED INTEL WORKSPACE</span>
+      <h2>{{pageTitle}}</h2>
+      <p class="page-subtitle">{{pageDescription}}</p>
+    </div>
+    <div class="gm-approval-count-strip" aria-label="Intel counts">
+      <span><strong>{{intelManager.stats.total}}</strong>Total</span>
+      <span><strong>{{intelManager.stats.draft}}</strong>Drafts</span>
+      <span><strong>{{intelManager.stats.ready}}</strong>Ready</span>
+      <span><strong>{{intelManager.stats.released}}</strong>Released</span>
+      <span><strong>{{intelManager.stats.faction}}</strong>Faction-linked</span>
+      <button type="button" class="swse-ui-button primary gm-phase2-primary" data-intel-action="new"><i class="fa-solid fa-plus"></i> New Intel</button>
+    </div>
+  </div>
+
+  <section class="swse-ui-panel gm-intel-ops-strip gm-phase2-panel" aria-label="GM Intel phase boundary">
+    <div>
+      <span class="gm-command-eyebrow">PHASE 5 ACTIVE</span>
+      <strong>Faction/NPC bridge draft workspace</strong>
+      <p>Faction and named NPC dossier actions create real Holonet-backed Intel drafts. Phase 6 delivery can now push Intel into Secret Notes, Messenger, Bulletin, or the player Intel Locker.</p>
+    </div>
+    <div class="gm-intel-op-metrics">
+      <span><strong>{{intelManager.factionCount}}</strong>Factions available</span>
+      <span><strong>{{intelManager.contactCount}}</strong>Named contacts</span>
+      <span><strong>{{intelManager.stats.secret}}</strong>Secret-mode drafts</span>
+    </div>
+  </section>
+
+  <section class="swse-ui-panel gm-intel-filter-panel">
+    <label>Search Intel<input type="search" data-intel-filter="search" value="{{intelManager.filters.search}}" placeholder="title, tag, NPC, faction, body..."></label>
+    <label>Status<select data-intel-filter="status">{{#each intelManager.statusOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+    <label>Kind<select data-intel-filter="kind">{{#each intelManager.kindOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+    <label>Classification<select data-intel-filter="classification">{{#each intelManager.classificationOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+    <label>Persistence<select data-intel-filter="persistence">{{#each intelManager.persistenceOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+  </section>
+
+  <div class="gm-intel-workspace-grid">
+    <aside class="swse-ui-panel gm-intel-card-rail" aria-label="Intel records">
+      <header class="job-board-section-header compact">
+        <div><span class="gm-command-eyebrow">INTEL INDEX</span><h3>Drafts & Records</h3></div>
+        <span class="job-board-chip">{{intelManager.cards.length}}</span>
+      </header>
+      {{#if intelManager.hasVisibleIntel}}
+      <div class="gm-intel-card-list">
+        {{#each intelManager.cards}}
+        <button type="button" class="gm-intel-card {{this.statusClass}} {{this.classificationClass}} {{#if (eq this.recordId ../intelManager.selectedRecordId)}}is-selected{{/if}}" data-intel-action="select" data-record-id="{{this.recordId}}" data-swse-drag-kind="intel" data-swse-drag-id="{{this.recordId}}" data-swse-drag-record-id="{{this.recordId}}" data-swse-drag-name="{{this.title}}" data-swse-drag-type="{{this.kind}}" data-swse-drag-source="intel">
+          <span class="gm-command-eyebrow">{{this.classificationLabel}}</span>
+          <strong>{{this.title}}</strong>
+          <em>{{this.kindLabel}} · {{this.statusLabel}}</em>
+          <span class="gm-intel-linkline">{{this.linkLabel}}</span>
+          <span class="gm-intel-summary">{{this.summary}}</span>
+          {{#if this.hasLockbox}}<span class="gm-intel-lockbox-pill"><i class="fa-solid fa-box-archive"></i> {{this.lockboxSummary}}</span>{{/if}}
+          <span class="gm-intel-card-footer"><span>{{this.persistenceLabel}}</span><span>{{this.updatedLabel}}</span></span>
+        </button>
+        {{/each}}
+      </div>
+      {{else}}
+      <p class="placeholder">No Intel records match the current filters. Create a draft or clear filters.</p>
+      {{/if}}
+    </aside>
+
+    <section class="swse-ui-panel gm-intel-editor-panel" aria-label="Intel editor">
+      <header class="job-board-section-header compact">
+        <div>
+          <span class="gm-command-eyebrow">{{#if intelManager.editor.isExisting}}EDIT INTEL{{else}}NEW INTEL DRAFT{{/if}}</span>
+          <h3>{{#if intelManager.editor.title}}{{intelManager.editor.title}}{{else}}Untitled Intel{{/if}}</h3>
+          <p>{{#if intelManager.editor.isExisting}}Created {{intelManager.editor.createdLabel}} · Updated {{intelManager.editor.updatedLabel}}{{else}}Create a Holonet-backed Intel draft without notifying players.{{/if}}</p>
+        </div>
+        <div class="gm-faction-row-actions">
+          {{#if intelManager.editor.isExisting}}
+          <button type="button" class="swse-ui-button" data-intel-action="duplicate" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-copy"></i> Duplicate</button>
+          <button type="button" class="swse-ui-button" data-intel-action="mark-ready" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-circle-check"></i> Ready</button>
+          <button type="button" class="swse-ui-button approve" data-intel-action="release" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-unlock-keyhole"></i> Mark Released</button>
+          <button type="button" class="swse-ui-button approve" data-intel-action="release-dossier" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-folder-open"></i> Intel Locker</button>
+          <button type="button" class="swse-ui-button" data-intel-action="deliver-secret-note" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-user-secret"></i> Secret Note</button>
+          <button type="button" class="swse-ui-button" data-intel-action="deliver-messenger" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-comments"></i> Messenger</button>
+          <button type="button" class="swse-ui-button" data-intel-action="deliver-bulletin" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-tower-broadcast"></i> Bulletin</button>
+          <button type="button" class="swse-ui-button" data-intel-action="archive" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-box-archive"></i> Archive</button>
+          <button type="button" class="swse-ui-button danger" data-intel-action="destroy" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-skull"></i> Destroy</button>
+          {{/if}}
+        </div>
+      </header>
+
+      <form class="gm-intel-form" data-intel-form>
+        <input type="hidden" name="recordId" value="{{intelManager.editor.recordId}}">
+        <div class="gm-intel-form-grid">
+          <label class="is-wide">Title<input type="text" name="title" value="{{intelManager.editor.title}}" placeholder="Intercepted Black Sun transmission" required></label>
+          <label>Kind<select name="kind">{{#each intelManager.editorKindOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+          <label>Classification<select name="classification">{{#each intelManager.editorClassificationOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+          <label>Status<select name="status">{{#each intelManager.editorStatusOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+          <label>Persistence<select name="persistence">{{#each intelManager.editorPersistenceOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+          <label>Reveal State<select name="revealState">{{#each intelManager.editorRevealStateOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+          <label>Visibility<select name="visibilityMode">{{#each intelManager.visibilityOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+          <label>Linked Faction<select name="linkedFactionId">{{#each intelManager.factionOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+          <label>Linked NPC / Contact<select name="linkedContactId">{{#each intelManager.contactOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+          <label>Actor UUID<input type="text" name="linkedActorUuid" value="{{intelManager.editor.linkedActorUuid}}" placeholder="Actor.xxxxx"></label>
+          <label>Job Thread ID<input type="text" name="linkedJobThreadId" value="{{intelManager.editor.linkedJobThreadId}}"></label>
+          <label>Scene UUID<input type="text" name="linkedSceneUuid" value="{{intelManager.editor.linkedSceneUuid}}"></label>
+          <label>Item UUID<input type="text" name="linkedItemUuid" value="{{intelManager.editor.linkedItemUuid}}"></label>
+          <label class="is-wide">Tags<input type="text" name="tags" value="{{intelManager.editor.tags}}" placeholder="underworld, shipment, betrayal"></label>
+          <label class="is-wide">Summary<textarea name="summary" rows="2" placeholder="Short GM index summary.">{{intelManager.editor.summary}}</textarea></label>
+          <label class="is-wide">Player-Facing Body<textarea name="publicBody" rows="5" placeholder="What players can eventually see.">{{intelManager.editor.publicBody}}</textarea></label>
+          <label class="is-wide">Redacted Body<textarea name="redactedBody" rows="4" placeholder="Optional partial/blurred version.">{{intelManager.editor.redactedBody}}</textarea></label>
+          <label class="is-wide">Full Body<textarea name="fullBody" rows="5" placeholder="Complete truth / decoded version.">{{intelManager.editor.fullBody}}</textarea></label>
+          <label class="is-wide">GM Notes<textarea name="gmNotes" rows="4" placeholder="Private notes, future hooks, consequences.">{{intelManager.editor.gmNotes}}</textarea></label>
+          <label>User IDs<input type="text" name="visibilityUserIds" value="{{intelManager.editor.visibilityUserIds}}" placeholder="optional, comma-separated"></label>
+          <label>Actor IDs<input type="text" name="visibilityActorIds" value="{{intelManager.editor.visibilityActorIds}}" placeholder="optional, comma-separated"></label>
+          <label>Skill Gate<input type="text" name="skillGateSkill" value="{{intelManager.editor.skillGateSkill}}" placeholder="useComputer, gatherInformation..."></label>
+          <label>Skill DC<input type="number" name="skillGateDc" min="0" step="1" value="{{intelManager.editor.skillGateDc}}"></label>
+          <label class="gm-faction-checkbox-label"><input type="checkbox" name="skillGateEnabled" {{#if intelManager.editor.skillGateEnabled}}checked{{/if}}> Encrypted / gated</label>
+          <div class="gm-intel-lockbox-editor is-wide">
+            <div class="gm-intel-lockbox-head">
+              <label class="gm-faction-checkbox-label"><input type="checkbox" name="lockboxEnabled" {{#if intelManager.editor.lockboxEnabled}}checked{{/if}}> Encrypted lockbox reward</label>
+              <span>{{intelManager.editor.lockboxSummary}}</span>
+            </div>
+            <div class="gm-intel-form-grid gm-intel-lockbox-grid">
+              <label>Lockbox Label<input type="text" name="lockboxLabel" value="{{intelManager.editor.lockboxLabel}}" placeholder="Encrypted Lockbox"></label>
+              <label>Credits Inside<input type="number" name="lockboxCredits" min="0" step="1" value="{{intelManager.editor.lockboxCredits}}"></label>
+              <label class="is-wide">Item UUIDs<textarea name="lockboxItems" rows="3" placeholder="Compendium.swse.items.ItemId | 1 | Optional Display Name">{{intelManager.editor.lockboxItems}}</textarea></label>
+              <label class="is-wide">Lockbox Notes<textarea name="lockboxNotes" rows="2" placeholder="Private reward notes or claim instructions.">{{intelManager.editor.lockboxNotes}}</textarea></label>
+            </div>
+            <p class="gm-intel-lockbox-help">Players can claim the contents only after the Intel decrypts. Credits use the Transaction Engine; item UUIDs resolve from world/compendium documents at claim time.</p>
+          </div>
+          <label class="gm-faction-checkbox-label"><input type="checkbox" name="dossierCommit" {{#if intelManager.editor.dossierCommit}}checked{{/if}}> Commit to player dossier later</label>
+        </div>
+        <div class="gm-intel-form-actions gm-faction-row-actions">
+          <button type="submit" class="swse-ui-button primary"><i class="fa-solid fa-floppy-disk"></i> Save Intel</button>
+          <button type="button" class="swse-ui-button approve" data-intel-save-ready><i class="fa-solid fa-circle-check"></i> Save & Mark Ready</button>
+          <button type="button" class="swse-ui-button" data-intel-action="release-dossier" data-record-id="{{intelManager.editor.recordId}}"><i class="fa-solid fa-folder-open"></i> Release to Intel Locker</button>
+        </div>
+      </form>
+    </section>
+  </div>
+</div>

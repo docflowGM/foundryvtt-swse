@@ -17,6 +17,8 @@ export { HolonetNotificationService } from './subsystems/holonet-notification-se
 export { HolonetFeedService } from './subsystems/holonet-feed-service.js';
 export { HolonetSocketService } from './subsystems/holonet-socket-service.js';
 export { HolonetMessengerService } from './subsystems/holonet-messenger-service.js';
+export { HolonetIntelService, INTEL_KIND, INTEL_CLASSIFICATION, INTEL_STATUS, INTEL_PERSISTENCE, INTEL_REVEAL_STATE } from './subsystems/holonet-intel-service.js';
+export { HolonetDecryptionService } from './subsystems/holonet-decryption-service.js';
 export { HomeFeedTaskEmitter } from './emitters/home-feed-task-emitter.js';
 export { MessengerNotificationBridge } from './subsystems/messenger-notification-bridge.js';
 export { MessengerMaintenanceService } from './subsystems/messenger-maintenance-service.js';

@@ -16,6 +16,8 @@ import { GMSettingsSurfaceController } from './GMSettingsSurfaceController.js';
 import { GMTradeConsoleSurfaceController } from './GMTradeConsoleSurfaceController.js';
 import { GMWorkspaceSurfaceController } from './GMWorkspaceSurfaceController.js';
 import { GMFactionRelationshipSurfaceController } from './GMFactionRelationshipSurfaceController.js';
+import { GMIntelSurfaceController } from './GMIntelSurfaceController.js';
+import { GMLocationsSurfaceController } from './GMLocationsSurfaceController.js';
 
 const CONTROLLERS = Object.freeze({
   approvals: GMApprovalsSurfaceController,
@@ -27,7 +29,9 @@ const CONTROLLERS = Object.freeze({
   store: GMStoreControlSurfaceController,
   trade: GMTradeConsoleSurfaceController,
   workspace: GMWorkspaceSurfaceController,
-  factions: GMFactionRelationshipSurfaceController
+  factions: GMFactionRelationshipSurfaceController,
+  intel: GMIntelSurfaceController,
+  locations: GMLocationsSurfaceController
 });
 
 const ACTIVE = new WeakMap();
