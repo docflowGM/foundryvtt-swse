@@ -162,6 +162,27 @@ function availabilityMatches(itemOrView = {}, filterValue = '') {
   return availability.split(/\s+/).includes(filter) || availability.includes(filter);
 }
 
+
+function positiveCreditOrNull(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const numeric = Number(value);
+  return Number.isFinite(numeric) && numeric > 0 ? numeric : null;
+}
+
+function resolveVehicleStoreCosts(item = {}) {
+  const newCost = positiveCreditOrNull(item.finalCostNew)
+    ?? positiveCreditOrNull(item.finalCost)
+    ?? positiveCreditOrNull(item.costNew)
+    ?? positiveCreditOrNull(item.cost);
+  const usedCost = positiveCreditOrNull(item.finalCostUsed)
+    ?? positiveCreditOrNull(item.costUsed);
+  return { newCost, usedCost };
+}
+
+function hasStorePrice(value) {
+  return positiveCreditOrNull(value) !== null;
+}
+
 export class SWSEStore extends BaseSWSEAppV2 {
 
   static DEFAULT_OPTIONS = {
@@ -513,15 +534,16 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const sys = safeSystem(item) ?? {};
     const useAurebesh = SettingsHelper.getSafe('useAurebesh', false);
     const glyphData = resolveStoreGlyph(item.category || item.type || '', item.type, useAurebesh);
+    const vehicleCosts = item.type === 'vehicle' ? resolveVehicleStoreCosts(item) : { newCost: null, usedCost: null };
     const vehiclePricing = item.type === 'vehicle'
       ? {
           requiresCondition: true,
-          newCost: Number(item.finalCostNew ?? item.finalCost ?? 0) || 0,
-          usedCost: Number(item.finalCostUsed ?? item.finalCost ?? 0) || 0
+          newCost: vehicleCosts.newCost,
+          usedCost: vehicleCosts.usedCost
         }
       : {
           requiresCondition: false,
-          newCost: Number(view.finalCost ?? 0) || 0,
+          newCost: positiveCreditOrNull(view.finalCost),
           usedCost: null
         };
 
@@ -1004,8 +1026,11 @@ export class SWSEStore extends BaseSWSEAppV2 {
     } : sys;
     const rarityClass = item.rarityClass || getRarityClass(sys.availability);
     const storePolicy = summarizeStorePolicy(item);
-    const finalCost = item.finalCost ?? getCostValue(item);
-    const displayCost = item.finalCostNew ?? finalCost;
+    const vehicleCosts = item.type === 'vehicle' ? resolveVehicleStoreCosts(item) : { newCost: null, usedCost: null };
+    const finalCost = item.type === 'vehicle'
+      ? vehicleCosts.newCost
+      : (positiveCreditOrNull(item.finalCost) ?? positiveCreditOrNull(getCostValue(item)));
+    const displayCost = item.type === 'vehicle' ? vehicleCosts.newCost : finalCost;
 
     return {
       // Engine normalizes IDs to .id (not ._id); prefer .id if available
@@ -1017,11 +1042,11 @@ export class SWSEStore extends BaseSWSEAppV2 {
       // Scalar items: use finalCost as cost
       // Conditional vehicles: use finalCostNew as cost, finalCostUsed as costUsed
       cost: displayCost,
-      costUsed: item.finalCostUsed ?? undefined,
+      costUsed: item.type === 'vehicle' ? (vehicleCosts.usedCost ?? undefined) : undefined,
 
       // Legacy field for some views
       finalCost: finalCost,
-      priceLabel: Number.isFinite(Number(displayCost)) ? Number(displayCost).toLocaleString() : '—',
+      priceLabel: hasStorePrice(displayCost) ? Number(displayCost).toLocaleString() : '—',
       priceOverrideApplied: item.priceOverrideApplied === true,
 
       rarityClass,
@@ -1263,7 +1288,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
             id: item.id,
             name: item.name,
             type: item.type,
-            cost: Number(item.finalCost ?? item.finalCostNew ?? 0) || 0,
+            cost: item.type === 'vehicle' ? (resolveVehicleStoreCosts(item).newCost ?? 0) : (Number(item.finalCost ?? 0) || 0),
             savedAt: Date.now()
           });
           await this.actor.setFlag('foundryvtt-swse', 'storeSavedForLater', current);

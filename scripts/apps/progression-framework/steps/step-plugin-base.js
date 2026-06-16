@@ -502,7 +502,8 @@ export class ProgressionStepPlugin {
       // are purely draft-list edits inside one step; recomputing the whole active
       // spine on every language click can remove the current Languages step when
       // the final slot is spent, dumping the player into Summary mid-click.
-      const shouldRunReconciliation = selectionKey !== 'languages';
+      const isTimelineRecovery = shell?.progressionSession?.reconciliation?.mode === 'reconcile';
+      const shouldRunReconciliation = selectionKey !== 'languages' && !isTimelineRecovery;
       if (shouldRunReconciliation) {
         try {
           const reconciler = new ProgressionReconciler();

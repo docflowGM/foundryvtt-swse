@@ -38,7 +38,7 @@ function loadCache() {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
-    if (!parsed.metadata.loadedAt || !parsed.metadata.version || parsed.metadata.version < 4 || (parsed.items.length + parsed.actors.length) === 0) {
+    if (!parsed.metadata.loadedAt || !parsed.metadata.version || parsed.metadata.version < 5 || (parsed.items.length + parsed.actors.length) === 0) {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
@@ -90,7 +90,53 @@ function mergeSourceCounts(...sources) {
 }
 
 
-function annotatePackSource(doc, packName) {
+function getPath(obj, path) {
+  if (!obj || !path) return undefined;
+  return String(path).split('.').reduce((acc, key) => acc?.[key], obj);
+}
+
+function hasUsableRawPricing(value) {
+  if (value === undefined || value === null) return false;
+  if (typeof value === 'string') return value.trim() !== '';
+  if (typeof value === 'number') return Number.isFinite(value);
+  if (typeof value !== 'object') return false;
+  return ['new', 'used', 'value'].some(key => value[key] !== undefined && value[key] !== null && String(value[key]).trim?.() !== '');
+}
+
+function getPackIndexId(entry) {
+  return entry?._id || entry?.id || entry?.documentId || null;
+}
+
+function extractRawStorePricing(indexEntry = {}) {
+  const systemCost = getPath(indexEntry, 'system.cost');
+  const systemCostNumeric = getPath(indexEntry, 'system.costNumeric');
+  const systemPrice = getPath(indexEntry, 'system.price');
+
+  const pricing = {};
+  if (hasUsableRawPricing(systemCost)) pricing.cost = systemCost;
+  if (hasUsableRawPricing(systemCostNumeric)) pricing.costNumeric = systemCostNumeric;
+  if (hasUsableRawPricing(systemPrice)) pricing.price = systemPrice;
+  return Object.keys(pricing).length ? pricing : null;
+}
+
+async function safeGetPackIndexPricing(pack) {
+  try {
+    const index = await pack.getIndex({ fields: ['system.cost', 'system.costNumeric', 'system.price'] });
+    const map = new Map();
+    const entries = Array.from(index?.values?.() ?? index ?? []);
+    for (const entry of entries) {
+      const id = getPackIndexId(entry);
+      const pricing = extractRawStorePricing(entry);
+      if (id && pricing) map.set(String(id), pricing);
+    }
+    return map;
+  } catch (err) {
+    console.warn(`SWSE Store | Cannot load pack pricing index for ${pack?.collection || pack?.metadata?.id || 'unknown pack'}:`, err);
+    return new Map();
+  }
+}
+
+function annotatePackSource(doc, packName, rawPricing = null) {
   if (!doc || !packName) return doc;
   try {
     Object.defineProperty(doc, '__storeSourcePack', {
@@ -102,7 +148,34 @@ function annotatePackSource(doc, packName) {
   } catch (err) {
     try { doc.__storeSourcePack = packName; } catch (_ignored) { /* no-op */ }
   }
+  if (rawPricing) {
+    try {
+      Object.defineProperty(doc, '__storeSourceRawPricing', {
+        value: rawPricing,
+        configurable: true,
+        enumerable: false,
+        writable: true
+      });
+    } catch (err) {
+      try { doc.__storeSourceRawPricing = rawPricing; } catch (_ignored) { /* no-op */ }
+    }
+  }
   return doc;
+}
+
+function mergeRawStorePricing(obj, rawPricing = null) {
+  if (!obj || !rawPricing) return obj;
+  obj.__storeRawPricing = { ...rawPricing };
+  obj.system ||= {};
+
+  // Foundry's vehicle data model uses NumberFields for cost.new/cost.used, so
+  // non-numeric compendium source values such as "not publicly available" can
+  // arrive here as 0 after document cleaning. Preserve the pack index's raw
+  // source price for the store resolver before that coercion becomes visible.
+  if (hasUsableRawPricing(rawPricing.cost)) obj.system.cost = rawPricing.cost;
+  if (hasUsableRawPricing(rawPricing.costNumeric)) obj.system.costNumeric = rawPricing.costNumeric;
+  if (hasUsableRawPricing(rawPricing.price)) obj.system.price = rawPricing.price;
+  return obj;
 }
 
 function serializeStoreDocument(doc, fallbackSource = {}) {
@@ -114,6 +187,9 @@ function serializeStoreDocument(doc, fallbackSource = {}) {
     || null;
   const documentId = obj?._id || doc?.id || obj?.id || null;
   const uuid = doc?.uuid || obj?.uuid || (pack && documentId ? `Compendium.${pack}.${documentId}` : null);
+  const rawPricing = doc?.__storeSourceRawPricing || fallbackSource.rawPricing || null;
+
+  mergeRawStorePricing(obj, rawPricing);
 
   obj.__storeSource = {
     source: pack ? 'compendium' : 'world',
@@ -139,7 +215,12 @@ async function safeGetPackDocuments(packName) {
   }
 
   try {
-    const docs = (await pack.getDocuments()).map(doc => annotatePackSource(doc, packName));
+    const rawPricingById = await safeGetPackIndexPricing(pack);
+    const docs = (await pack.getDocuments()).map(doc => {
+      const docId = doc?.id || doc?._id || doc?.toObject?.()?._id || null;
+      const rawPricing = docId ? rawPricingById.get(String(docId)) : null;
+      return annotatePackSource(doc, packName, rawPricing);
+    });
     return { docs, found: true, packName };
   } catch (err) {
     console.error(`SWSE Store | Cannot load pack: ${packName}`, err);
@@ -253,7 +334,7 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   /* ------------------------------------------- */
 
   const metadata = {
-    version: 4,
+    version: 5,
     loadedAt: Date.now(),
     packsUsed: flattenPackNames([
       STORE_PACKS.WEAPON_PACKS,

@@ -44,7 +44,6 @@ import { SettingsSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/s
 import { GamesSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/GamesSurfaceController.js";
 import { HomeSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/HomeSurfaceController.js";
 import { AlliesSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/AlliesSurfaceController.js";
-import { AtlasSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/AtlasSurfaceController.js";
 import { MessengerSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/MessengerSurfaceController.js";
 import { HelpModeManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/HelpModeManager.js";
 import { SWSERoll } from "/systems/foundryvtt-swse/scripts/combat/rolls/enhanced-rolls.js";
@@ -1441,12 +1440,6 @@ export class SWSEV2CharacterSheet extends
       this._alliesSurfaceController.attach(root);
     } else {
       this._alliesSurfaceController?.destroy?.();
-    }
-    if (this._shellSurface === 'atlas') {
-      this._atlasSurfaceController ??= new AtlasSurfaceController(this, this.actor);
-      this._atlasSurfaceController.attach(root);
-    } else {
-      this._atlasSurfaceController?.destroy?.();
     }
     if (this._shellOverlay?.overlayId === 'upgrade-single-item') {
       this._wireUpgradeOverlayEvents(root, signal);
@@ -6903,19 +6896,18 @@ const forcePoints = [];
     await this.setSurface('progression', {
       source: 'sheet-reconciliation',
       mode: 'reconcile',
-      stepId,
-      currentStep: stepId,
-      targetStep: stepId,
-      targetStepId: stepId,
-      singleStep: true,
-      singleStepDomain: slotType.includes('talent') ? 'talents' : (slotType.includes('feat') ? 'feats' : null),
-      singleStepJob: `reconcile-${slotType || stepId}`,
+      stepId: 'reconciliation-overview',
+      currentStep: 'reconciliation-overview',
+      targetStep: 'reconciliation-overview',
+      targetStepId: 'reconciliation-overview',
+      routeIntent: 'progression-reconciliation',
+      singleStep: false,
       skipIntro: true,
       forceFreshAdapter: true,
       reconciliation,
     });
     await this.requestSurfaceRender({ reason: `progression-reconciliation-${slotType || stepId}`, surfaceId: 'progression' });
-    ui?.notifications?.info?.(`Opening ${this._labelForProgressionStep(stepId)} to resolve ${dataset.slotId || slotType || 'progression debt'}.`);
+    ui?.notifications?.info?.('Opening progression recovery briefing. Missing choices will resolve in level order.');
   }
 
   async _classifyProgressionSlot(dataset = {}) {

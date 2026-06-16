@@ -21,7 +21,9 @@ import { PrestigeSurveyStep } from './steps/prestige-survey-step.js';
 import { RolloutSettings } from './rollout/rollout-settings.js';
 import { AttributeStep } from './steps/attribute-step.js';
 import { GeneralFeatStep, ClassFeatStep } from './steps/feat-step.js';
-import { ClassTalentStep } from './steps/talent-step.js';
+import { GeneralTalentStep, ClassTalentStep } from './steps/talent-step.js';
+import { ReconciliationOverviewStep } from './steps/reconciliation-overview-step.js';
+import { ProgressionReconciler } from './shell/progression-reconciler.js';
 import { NullStepPlugin } from './steps/null-step-plugin.js';
 import { getNpcProfileState } from '/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js';
 
@@ -107,6 +109,9 @@ export class LevelupShell extends ProgressionShell {
    */
   async _getCanonicalDescriptors() {
     try {
+      if (this._isReconciliationMode()) {
+        return this._getReconciliationCanonicalDescriptors();
+      }
       // Detect subtype based on actor properties
       const subtype = this.progressionSession?.subtype || this._getProgressionSubtype('levelup', this.options || {});
 
@@ -175,6 +180,98 @@ export class LevelupShell extends ProgressionShell {
     } catch (err) {
       console.error('[LevelupShell] Error computing canonical descriptors:', err);
       return this._getLegacyCanonicalDescriptors();
+    }
+  }
+
+  _isReconciliationMode() {
+    return this.options?.mode === 'reconcile'
+      || this.options?.reconciliation === true
+      || this.options?.source === 'sheet-reconciliation'
+      || this.options?.routeIntent === 'progression-reconciliation';
+  }
+
+  _getReconciliationCanonicalDescriptors() {
+    const report = ProgressionReconciler.reconcileActor(this.actor, {
+      output: 'report',
+      mode: 'reconcile',
+      source: this.options?.source || 'levelup-reconciliation-shell',
+    });
+    const timeline = report?.timeline || { resolutionSteps: [], levels: [], tasks: [] };
+    this._reconciliationReport = report;
+    this._reconciliationTimeline = timeline;
+    this.progressionSession.reconciliation = {
+      mode: 'reconcile',
+      reportVersion: report?.version || null,
+      timelineVersion: timeline?.version || null,
+      startedAt: new Date().toISOString(),
+      actorId: this.actor?.id || null,
+    };
+
+    const descriptors = [createStepDescriptor({
+      stepId: 'reconciliation-overview',
+      label: 'Recovery Briefing',
+      icon: 'fa-list-check',
+      type: StepType.CONFIRM,
+      category: StepCategory.CANONICAL,
+      pluginClass: ReconciliationOverviewStep,
+    })];
+
+    for (const step of (Array.isArray(timeline?.resolutionSteps) ? timeline.resolutionSteps : [])) {
+      const descriptor = this._descriptorForReconciliationStep(step);
+      if (descriptor) descriptors.push(descriptor);
+    }
+
+    if (descriptors.length === 1 && Number(timeline?.reviewTaskCount || 0) > 0) {
+      // Review-only debt is still useful as a briefing, but there is no picker
+      // step to run yet. The overview explains the sheet anchors to use.
+      return descriptors;
+    }
+
+    console.log('[LevelupShell] Computed reconciliation steps:', {
+      count: descriptors.length,
+      steps: descriptors.map(d => d.stepId),
+      choiceTaskCount: timeline?.choiceTaskCount || 0,
+      reviewTaskCount: timeline?.reviewTaskCount || 0,
+    });
+
+    return descriptors;
+  }
+
+  _descriptorForReconciliationStep(step = {}) {
+    const baseStepId = step.baseStepId || step.canonicalStepId || step.resolutionStepId || null;
+    const common = {
+      stepId: step.stepId || step.id,
+      label: step.label || 'Recovery Step',
+      icon: step.icon || 'fa-circle',
+      type: StepType.SELECTION,
+      category: StepCategory.CATEGORY_SPECIFIC,
+      isConditional: true,
+      unlockReason: 'Progression recovery',
+      baseStepId,
+      canonicalStepId: baseStepId,
+      reconciliationContext: step.reconciliationContext || null,
+      slotType: step.slotType || '',
+      classId: step.classId || '',
+      className: step.className || '',
+      classLevel: step.classLevel || 0,
+      characterLevel: step.characterLevel || 0,
+      source: 'reconciliation-timeline',
+    };
+
+    switch (baseStepId) {
+      case 'attribute':
+        return createStepDescriptor({ ...common, pluginClass: AttributeStep, type: StepType.BUILD });
+      case 'general-feat':
+        return createStepDescriptor({ ...common, pluginClass: GeneralFeatStep });
+      case 'class-feat':
+        return createStepDescriptor({ ...common, pluginClass: ClassFeatStep });
+      case 'general-talent':
+        return createStepDescriptor({ ...common, pluginClass: GeneralTalentStep });
+      case 'class-talent':
+        return createStepDescriptor({ ...common, pluginClass: ClassTalentStep });
+      default:
+        console.warn('[LevelupShell] Unsupported reconciliation step; skipped', step);
+        return null;
     }
   }
 

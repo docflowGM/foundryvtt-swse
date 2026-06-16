@@ -84,5 +84,14 @@ export function createStepDescriptor(config) {
     isHidden: config.isHidden ?? false,
     pluginClass: config.pluginClass,
     engineKey: config.engineKey ?? null,
+    baseStepId: config.baseStepId ?? null,
+    canonicalStepId: config.canonicalStepId ?? config.baseStepId ?? null,
+    reconciliationContext: config.reconciliationContext ?? null,
+    slotType: config.slotType ?? null,
+    classId: config.classId ?? null,
+    className: config.className ?? null,
+    classLevel: config.classLevel ?? null,
+    characterLevel: config.characterLevel ?? null,
+    source: config.source ?? null,
   };
 }

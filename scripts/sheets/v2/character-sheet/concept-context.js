@@ -7,7 +7,6 @@ import { resolveForceCardSummary } from "/systems/foundryvtt-swse/scripts/engine
 import { CANONICAL_SKILL_DEFS, canonicalizeSkillKey, normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { isClassFeatureItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 import { ProgressionReconciler } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js";
-import { getForceAlchemyLaunchForTalentName } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-data.js";
 function toSignedClass(value) {
   const n = Number(value) || 0;
   return n > 0 ? 'mod--positive' : n < 0 ? 'mod--negative' : 'mod--zero';
@@ -285,8 +284,7 @@ function buildInventoryGroups(inventoryPanel) {
             ? (entry?.isEnergyShield ? 'Shield Active' : 'Blade Active')
             : (entry?.isEnergyShield ? 'Shield Inactive' : 'Blade Inactive'),
           bladeColor: visualProfile?.bladeColor || null,
-          bladeHex: visualProfile?.bladeHex || null,
-          canOpenForceAlchemy: entry?.virtual !== true && entry?.isNaturalWeapon !== true
+          bladeHex: visualProfile?.bladeHex || null
         };
       });
 
@@ -399,7 +397,7 @@ function buildActionGroups(combatActions, actionEconomy = {}) {
 
 function buildSheetProgressionAudit(actor) {
   try {
-    return ProgressionReconciler.reconcileActor(actor, { output: 'sheet' });
+    return ProgressionReconciler.safeReconcileActor(actor, { output: 'sheet' });
   } catch (err) {
     console.warn('[SWSE] Progression audit unavailable for character sheet', err);
     return {
@@ -849,8 +847,7 @@ function buildTalentsTab(context, options = {}) {
         name: talent?.name || 'Unnamed Talent',
         source: talent?.source || '',
         description: excerpt(talent?.description, 160),
-        virtual: talent?.virtual === true,
-        alchemyLaunch: getForceAlchemyLaunchForTalentName(talent?.name)
+        virtual: talent?.virtual === true
       }))
     }))
     .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label));
@@ -1571,10 +1568,7 @@ export function buildConceptSheetViewModel(context = {}) {
   } : null;
   const equippedEntries = [
     ...(virtualUnarmedLoadoutEntry ? [virtualUnarmedLoadoutEntry] : []),
-    ...inventoryEntries.filter((entry) => entry?.equipped).map((entry) => ({
-      ...entry,
-      canOpenForceAlchemy: entry?.virtual !== true && entry?.isNaturalWeapon !== true
-    }))
+    ...inventoryEntries.filter((entry) => entry?.equipped)
   ];
   const totalWeight = Number(context.inventoryPanel?.totalWeight) || 0;
   const credits = Number(actor?.system?.credits) || 0;

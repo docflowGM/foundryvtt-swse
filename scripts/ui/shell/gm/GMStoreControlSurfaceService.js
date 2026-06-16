@@ -23,7 +23,7 @@ function safeNumber(value, fallback = 0) {
 
 function formatCredits(value) {
   const n = Number(value);
-  if (!Number.isFinite(n)) return '—';
+  if (!Number.isFinite(n) || n <= 0) return '—';
   return `${n.toLocaleString()} cr`;
 }
 

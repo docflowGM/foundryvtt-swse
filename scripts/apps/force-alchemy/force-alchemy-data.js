@@ -23,12 +23,12 @@ export const FORCE_ALCHEMY_TEMPLATES = [
   {
     id: 'sith-abomination',
     name: 'Sith Abomination Template',
-    description: 'A living creature is remade into a brutal alchemical horror. Full template mutation is GM-confirmed in a later phase.'
+    description: 'A living creature is remade into a brutal alchemical horror. Template mutation is recorded after GM approval for final adjudication.'
   },
   {
     id: 'chrysalis-beast',
     name: 'Chrysalis Beast Template',
-    description: 'A creature is cocooned, altered, and bound through Sith alchemy. Full template mutation is GM-confirmed in a later phase.'
+    description: 'A creature is cocooned, altered, and bound through Sith alchemy. Template mutation is recorded after GM approval for final adjudication.'
   }
 ];
 
@@ -308,14 +308,16 @@ export const FORCE_ALCHEMY_RITES = [
     dspCost: 1,
     creditCost: 0,
     gmGated: true,
-    summary: 'Apply the Sith Abomination or Chrysalis Beast template to a willing or unconscious creature in a medical lab.',
+    requiresGmApproval: true,
+    summary: 'Apply the Sith Abomination or Chrysalis Beast template to a creature. This workflow requires GM approval and records mutation flags/notes rather than silently rewriting creature statistics.',
     rules: [
-      'Requires a willing or unconscious creature and a proper medical lab.',
       'Choose the Sith Abomination Template or Chrysalis Beast Template.',
       'The process requires days equal to the creature\'s modified CL.',
-      'Completion spends 1 Force Point and the creature becomes domesticated to the creator only unless already domesticated.'
+      'GM approval is the only UI gate; lab access, target state, and other scene requirements remain GM adjudication notes.',
+      'Completion spends 1 Force Point, records alchemical mutation flags on the target actor, and the creature becomes domesticated to the creator only unless already domesticated.',
+      'Template stat changes remain GM-adjudicated after completion.'
     ],
-    resultLabel: 'GM-gated mutation project',
+    resultLabel: 'GM-gated mutation actor flags and chat card',
     stateKey: 'projects'
   },
   {
@@ -381,13 +383,13 @@ export const FORCE_ALCHEMY_RITES = [
     fpCost: 1,
     dspCost: 1,
     creditCost: 0,
-    summary: 'Channel the weapon's alchemical hatred into one strike, adding your current Dark Side Score to the next damage roll with that Sith Weapon.',
+    summary: "Channel the weapon's alchemical hatred into one strike, adding your current Dark Side Score to the next damage roll with that Sith Weapon.",
     rules: [
       'Requires a completed Sith Weapon target.',
       'Spend 1 Force Point as a swift action.',
       'Add your current Dark Side Score to the next damage roll with that weapon before the end of the encounter.',
       'After preparing the surge, increase Dark Side Score by 1.',
-      'The first pass creates a visible one-roll reminder effect; roll-path auto-consumption is intentionally deferred.'
+      'Creates a visible one-roll reminder effect for the next damage roll.'
     ],
     resultLabel: 'One-roll Sith Weapon damage surge reminder',
     stateKey: 'sithWeaponSurge'

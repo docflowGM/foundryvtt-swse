@@ -41,6 +41,104 @@ function getItems(actor) {
   return [];
 }
 
+function getActors() {
+  const collection = game?.actors;
+  if (!collection) return [];
+  if (Array.isArray(collection)) return collection.filter(Boolean);
+  if (Array.isArray(collection.contents)) return collection.contents.filter(Boolean);
+  if (typeof collection.values === 'function') return Array.from(collection.values()).filter(Boolean);
+  if (typeof collection.filter === 'function') {
+    try { return collection.filter(() => true).filter(Boolean); }
+    catch (_error) { return []; }
+  }
+  return [];
+}
+
+function actorTypeToken(actor) {
+  return normalizeToken(actor?.type || actor?.system?.type || actor?.system?.details?.type || actor?.system?.creatureType);
+}
+
+function actorCategoryText(actor) {
+  const system = actor?.system ?? {};
+  return [
+    actor?.name,
+    actor?.type,
+    system?.type,
+    system?.creatureType,
+    system?.species,
+    system?.species?.name,
+    system?.details?.type,
+    system?.details?.creatureType,
+    system?.details?.species,
+    system?.details?.role,
+    system?.role,
+    system?.classification
+  ].filter(value => value !== undefined && value !== null).join(' ').toLowerCase();
+}
+
+function actorChallengeLevel(actor) {
+  const system = actor?.system ?? {};
+  return Math.max(1, numberFrom(
+    system?.details?.cl,
+    system?.details?.challengeLevel,
+    system?.challengeLevel?.value,
+    system?.challengeLevel,
+    system?.cl?.value,
+    system?.cl,
+    system?.level?.value,
+    system?.level,
+    system?.levels?.total,
+    system?.classes?.totalLevel,
+    1
+  ));
+}
+
+function canViewMutationActor(sourceActor, targetActor) {
+  if (!targetActor) return false;
+  if (game?.user?.isGM) return true;
+  if (targetActor.isOwner === true || targetActor.testUserPermission?.(game.user, 'OWNER')) return true;
+  if (sourceActor?.id && targetActor.id === sourceActor.id) return true;
+  return false;
+}
+
+function isCreatureMutationActor(sourceActor, targetActor) {
+  if (!targetActor || !canViewMutationActor(sourceActor, targetActor)) return false;
+  const type = actorTypeToken(targetActor);
+  const text = actorCategoryText(targetActor);
+  if (/vehicle|starship|ship/.test(type) || /vehicle|starship|ship/.test(text)) return false;
+  if (/droid|construct|object/.test(type) || /droid|construct|object/.test(text)) return false;
+  return true;
+}
+
+function mutationActorTargetView(targetActor) {
+  const cl = actorChallengeLevel(targetActor);
+  const typeText = targetActor?.type ? String(targetActor.type) : 'actor';
+  return {
+    id: `actor:${targetActor.id}`,
+    actorId: targetActor.id,
+    uuid: targetActor.uuid ?? null,
+    name: targetActor.name ?? 'Unnamed Creature',
+    icon: targetActor.img ?? null,
+    glyph: '&#9763;',
+    note: `${typeText} | modified CL ${cl} | GM-gated`,
+    kind: 'creature',
+    alchemyKind: targetActor?.flags?.swse?.alchemy?.kind ?? targetActor?.flags?.['foundryvtt-swse']?.alchemy?.kind ?? null,
+    challengeLevel: cl,
+    existingTraits: [],
+    existingTraitCount: 0,
+    targetTypes: ['creature'],
+    targetActor: true,
+    systemType: targetActor?.type ?? ''
+  };
+}
+
+function collectCreatureTargets(sourceActor) {
+  return getActors()
+    .filter(targetActor => isCreatureMutationActor(sourceActor, targetActor))
+    .sort((a, b) => String(a?.name ?? '').localeCompare(String(b?.name ?? '')))
+    .map(mutationActorTargetView);
+}
+
 function numberFrom(...values) {
   for (const value of values) {
     const number = Number(value);
@@ -296,6 +394,10 @@ function collectTargets(actor, items, actorSummary) {
     virtual: true
   });
 
+  for (const creatureTarget of collectCreatureTargets(actor)) {
+    map.set(creatureTarget.id, creatureTarget);
+  }
+
   return [...map.values()];
 }
 
@@ -312,7 +414,7 @@ function buildDynamicPrereq(context, key) {
       key,
       label: 'Active or prepared Force Talisman',
       met: !!context.state.activeForceTalisman || hasForceTalismanTarget,
-      note: 'A prepared Force Talisman target is enough for read-only planning; later phases will enforce activation state.'
+      note: 'Requires an active or prepared Force Talisman state.'
     };
   }
   return { key, label: key, met: false, note: 'Unknown dynamic prerequisite.' };
@@ -419,6 +521,9 @@ function buildDetail({ rites, selectedRiteId, selectedTargetId, selectedConfig, 
   const traitGroups = buildTraitGroups(selectedTarget, selectedConfig);
   const selectedTrait = traitGroups.flatMap(group => group.traits).find(trait => trait.selected) ?? null;
   const selectedTraitAllowed = !!selectedTrait && selectedTrait.disabled !== true;
+  const mutationGate = selectedRite.id === 'cause-mutation' ? {
+    gmConfirmed: selectedConfig?.gmConfirmed === true || selectedConfig?.gmConfirmed === 'true'
+  } : null;
   const pendingSpecialistTargetProject = selectedRite.id === 'sith-alchemy-specialist' ? pendingSpecialistProjectForTarget(context, selectedTarget) : null;
   const pendingSpecialistProject = selectedRite.id === 'sith-alchemy-specialist' ? anyPendingSpecialistProject(context) : null;
 
@@ -428,6 +533,9 @@ function buildDetail({ rites, selectedRiteId, selectedTargetId, selectedConfig, 
     { key: 'Dark Side Impact', value: selectedRite.dspLabel, tone: selectedRite.dspCost ? 'dsp' : 'free' },
     { key: 'Credit / Material Cost', value: selectedRite.creditCost > 0 ? `${selectedRite.creditCost.toLocaleString()} cr` : 'none', tone: selectedRite.creditCost ? 'credits' : 'free' }
   ];
+  if (selectedRite.id === 'cause-mutation') {
+    ledgerRows.push({ key: 'GM Approval', value: mutationGate?.gmConfirmed ? 'confirmed' : 'required', tone: mutationGate?.gmConfirmed ? 'free' : 'dsp' });
+  }
 
   return {
     rite: selectedRite,
@@ -449,10 +557,11 @@ function buildDetail({ rites, selectedRiteId, selectedTargetId, selectedConfig, 
     showTraitConfig: selectedRite.configType === 'trait',
     showArmorTierConfig: selectedRite.configType === 'armor-tier',
     selectedTraitAllowed,
+    mutationGate,
     pendingSpecialistProject,
     pendingSpecialistTargetProject,
-    ready: selectedRite.eligible && hasRequiredSelections(selectedRite, { selectedTarget, selectedDefense, selectedPower, selectedTemplate, selectedTrait, selectedTraitAllowed, pendingSpecialistProject }),
-    previewLines: buildPreviewLines(selectedRite, { selectedTarget, selectedDefense, selectedPower, selectedTemplate, selectedTrait, selectedTraitAllowed, pendingSpecialistProject, pendingSpecialistTargetProject })
+    ready: selectedRite.eligible && hasRequiredSelections(selectedRite, { selectedTarget, selectedDefense, selectedPower, selectedTemplate, selectedTrait, selectedTraitAllowed, pendingSpecialistProject, mutationGate }),
+    previewLines: buildPreviewLines(selectedRite, { selectedTarget, selectedDefense, selectedPower, selectedTemplate, selectedTrait, selectedTraitAllowed, pendingSpecialistProject, pendingSpecialistTargetProject, mutationGate })
   };
 }
 
@@ -460,7 +569,10 @@ function hasRequiredSelections(rite, selections) {
   if (!selections.selectedTarget) return false;
   if (rite.configType === 'defense' && !selections.selectedDefense) return false;
   if (rite.configType === 'force-power' && !selections.selectedPower) return false;
-  if (rite.configType === 'template' && !selections.selectedTemplate) return false;
+  if (rite.configType === 'template') {
+    if (!selections.selectedTemplate) return false;
+    if (rite.gmGated && selections.mutationGate?.gmConfirmed !== true) return false;
+  }
   if (rite.configType === 'trait') {
     if (!selections.selectedTrait || selections.selectedTraitAllowed !== true) return false;
     if (selections.pendingSpecialistProject) return false;
@@ -474,6 +586,12 @@ function buildPreviewLines(rite, selections) {
   if (selections.selectedDefense) lines.push(`Defense: ${selections.selectedDefense.label}`);
   if (selections.selectedPower) lines.push(`Focused power: ${selections.selectedPower.name}`);
   if (selections.selectedTemplate) lines.push(`Template: ${selections.selectedTemplate.name}`);
+  if (rite.id === 'cause-mutation' && selections.selectedTarget?.challengeLevel) lines.push(`Duration: ${selections.selectedTarget.challengeLevel} CL day${selections.selectedTarget.challengeLevel === 1 ? '' : 's'}`);
+  if (rite.id === 'cause-mutation' && selections.mutationGate) {
+    lines.push(`GM approval: ${selections.mutationGate.gmConfirmed ? 'confirmed' : 'required'}`);
+    lines.push('Medical lab, target state, and scene requirements are GM adjudication notes, not separate UI blockers.');
+    lines.push('Template statistics are not auto-rewritten; completion records GM-facing mutation flags/notes on the target actor.');
+  }
   if (selections.selectedTrait) {
     const status = selections.selectedTraitAllowed ? 'eligible' : selections.selectedTrait.duplicate ? 'already applied' : 'not valid for this target';
     lines.push(`Trait: ${selections.selectedTrait.name} (${status})`);
@@ -499,6 +617,7 @@ function buildSlots(context) {
       label: state.activeForceTalisman?.name || 'No Force Talisman',
       meta: state.activeForceTalisman ? [state.activeForceTalisman.targetName, state.activeForceTalisman.configLabel, state.activeForceTalisman.pendingCosts ? 'costs pending' : 'active'].filter(Boolean).join(' · ') : 'inactive',
       active: !!state.activeForceTalisman,
+      destructible: true,
       tone: 'holo'
     },
     {
@@ -508,6 +627,7 @@ function buildSlots(context) {
       label: state.focusedForceTalisman?.name || 'No Focused Talisman',
       meta: state.focusedForceTalisman ? [state.focusedForceTalisman.configLabel || 'focused power recorded', state.focusedForceTalisman.pendingCosts ? 'costs pending' : 'active'].filter(Boolean).join(' · ') : 'inactive',
       active: !!state.focusedForceTalisman,
+      destructible: false,
       tone: 'violet'
     },
     {
@@ -517,6 +637,7 @@ function buildSlots(context) {
       label: state.activeDarkSideTalisman?.name || 'No Dark Side Talisman',
       meta: state.activeDarkSideTalisman ? [state.activeDarkSideTalisman.targetName, state.activeDarkSideTalisman.configLabel || 'anti-light ward', state.activeDarkSideTalisman.pendingCosts ? 'costs pending' : 'active'].filter(Boolean).join(' · ') : 'inactive',
       active: !!state.activeDarkSideTalisman,
+      destructible: true,
       tone: 'violet'
     },
     {
@@ -526,6 +647,7 @@ function buildSlots(context) {
       label: state.activeSithTalisman?.name || 'No Sith Talisman',
       meta: state.activeSithTalisman ? [state.activeSithTalisman.targetName, '+1d6 Force Power damage', state.activeSithTalisman.pendingCosts ? 'costs pending' : 'active'].filter(Boolean).join(' · ') : 'inactive',
       active: !!state.activeSithTalisman,
+      destructible: true,
       tone: 'crimson'
     },
     {
@@ -536,6 +658,7 @@ function buildSlots(context) {
       meta: state.rapidAlchemy ? [state.rapidAlchemy.targetName, state.rapidAlchemy.config?.damageSurgeReady ? '+5 damage surge ready' : '+2 attack encounter bonus'].filter(Boolean).join(' · ') : 'no encounter buff',
       active: !!state.rapidAlchemy,
       canConsumeSurge: !!state.rapidAlchemy && state.rapidAlchemy.config?.surgeConsumed !== true,
+      destructible: false,
       tone: 'gold'
     },
     {
@@ -545,6 +668,7 @@ function buildSlots(context) {
       label: state.sithWeaponSurge?.name || 'Sith Weapon Surge idle',
       meta: state.sithWeaponSurge ? [state.sithWeaponSurge.targetName, state.sithWeaponSurge.config?.damageBonus ? `+${state.sithWeaponSurge.config.damageBonus} next damage` : 'one-roll damage surge'].filter(Boolean).join(' · ') : 'no damage surge prepared',
       active: !!state.sithWeaponSurge,
+      destructible: false,
       tone: 'crimson'
     }
   ];

@@ -70,6 +70,155 @@ const CHOICE_FEATURE_TYPES = Object.freeze({
   starship_maneuver_choice: 'starship-maneuver',
 });
 
+
+const RECONCILIATION_CACHE = new Map();
+const RECONCILIATION_CACHE_LIMIT = 100;
+const REPORT_SCHEMA_VERSION = 9;
+
+const DANGEROUS_REPORT_KEYS = new Set([
+  'actor', 'actorDocument', 'document', 'documents', 'item', 'itemsDocument', 'model',
+  'app', 'apps', 'application', 'window', 'sheet', 'shell', 'host', 'element', 'html',
+  'form', 'jquery', 'callback', 'handler', 'listener', 'listeners', '_debouncedSubmit'
+]);
+
+function isBrowserWindow(value) {
+  return typeof Window !== 'undefined' && value instanceof Window;
+}
+
+function isDomNode(value) {
+  return typeof Node !== 'undefined' && value instanceof Node;
+}
+
+function isFoundryDocument(value) {
+  if (!value || typeof value !== 'object') return false;
+  return !!(value.documentName || value.collectionName || value.uuid) && typeof value.toObject === 'function';
+}
+
+function summarizeDocument(value) {
+  return {
+    id: value?.id || value?._id || null,
+    uuid: value?.uuid || null,
+    name: value?.name || value?.label || value?.constructor?.name || 'Document',
+    type: value?.type || value?.documentName || value?.constructor?.name || 'document',
+    documentName: value?.documentName || value?.constructor?.name || 'Document',
+  };
+}
+
+function cacheKeyForActor(actor, options = {}) {
+  const itemStats = (() => {
+    try {
+      return Array.from(actor?.items ?? [])
+        .map(item => `${item?.id || item?._id || '?'}:${item?._stats?.modifiedTime || item?.system?.level || ''}`)
+        .join('|');
+    } catch (_err) {
+      return '';
+    }
+  })();
+  const effectStats = (() => {
+    try {
+      return Array.from(actor?.effects ?? [])
+        .map(effect => `${effect?.id || effect?._id || '?'}:${effect?._stats?.modifiedTime || effect?.disabled || ''}`)
+        .join('|');
+    } catch (_err) {
+      return '';
+    }
+  })();
+  return [
+    actor?.id || actor?.uuid || 'unknown-actor',
+    actor?._stats?.modifiedTime || actor?.system?._stats?.modifiedTime || '',
+    actor?.system?.level || actor?.system?.progression?.level || '',
+    itemStats,
+    effectStats,
+    options.mode || '',
+  ].join('::');
+}
+
+function setReconciliationCache(key, report) {
+  if (!key || !report) return;
+  RECONCILIATION_CACHE.set(key, report);
+  if (RECONCILIATION_CACHE.size <= RECONCILIATION_CACHE_LIMIT) return;
+  const first = RECONCILIATION_CACHE.keys().next().value;
+  if (first) RECONCILIATION_CACHE.delete(first);
+}
+
+function findLastKnownGoodReport(actor) {
+  const actorId = actor?.id || actor?.uuid;
+  if (!actorId) return null;
+  let newest = null;
+  for (const [key, report] of RECONCILIATION_CACHE.entries()) {
+    if (!key.startsWith(actorId)) continue;
+    newest = report;
+  }
+  return newest;
+}
+
+function sanitizePlainData(value, path = 'report', seen = new WeakSet(), depth = 0) {
+  if (value == null) return value;
+  const type = typeof value;
+  if (type === 'string' || type === 'number' || type === 'boolean') return value;
+  if (type === 'bigint') return Number(value);
+  if (type === 'function' || type === 'symbol') return undefined;
+  if (depth > 60) return '[MaxDepth]';
+  if (isBrowserWindow(value) || isDomNode(value)) return undefined;
+  if (isFoundryDocument(value)) return summarizeDocument(value);
+  if (value instanceof Date) return value.toISOString();
+  if (value instanceof Map) {
+    return Array.from(value.entries()).map(([key, entry]) => ({
+      key: sanitizePlainData(key, `${path}.<mapKey>`, seen, depth + 1),
+      value: sanitizePlainData(entry, `${path}.<mapValue>`, seen, depth + 1),
+    })).filter(entry => entry.key !== undefined && entry.value !== undefined);
+  }
+  if (value instanceof Set) {
+    return Array.from(value.values())
+      .map((entry, index) => sanitizePlainData(entry, `${path}[set:${index}]`, seen, depth + 1))
+      .filter(entry => entry !== undefined);
+  }
+  if (type !== 'object') return undefined;
+  if (seen.has(value)) return '[Circular]';
+  seen.add(value);
+  if (Array.isArray(value)) {
+    const arr = value
+      .map((entry, index) => sanitizePlainData(entry, `${path}[${index}]`, seen, depth + 1))
+      .filter(entry => entry !== undefined);
+    seen.delete(value);
+    return arr;
+  }
+  const out = {};
+  for (const [key, entry] of Object.entries(value)) {
+    if (DANGEROUS_REPORT_KEYS.has(key)) continue;
+    if (key.startsWith('_') && typeof entry === 'function') continue;
+    const cleaned = sanitizePlainData(entry, `${path}.${key}`, seen, depth + 1);
+    if (cleaned !== undefined) out[key] = cleaned;
+  }
+  seen.delete(value);
+  return out;
+}
+
+function emptyLedger(type, label, route = {}) {
+  return {
+    type,
+    label,
+    expected: 0,
+    filled: 0,
+    ambiguous: 0,
+    current: 0,
+    open: 0,
+    missing: 0,
+    overfilled: 0,
+    hasOpenSlots: false,
+    hasAmbiguousSlots: false,
+    hasOverfilledSlots: false,
+    statusLabel: 'Unavailable',
+    statusTone: 'neutral',
+    slots: [],
+    openSlots: [],
+    ambiguousSlots: [],
+    overfilledSlots: [],
+    classificationRequired: false,
+    ...route,
+  };
+}
+
 function normalizeText(value) {
   return String(value || '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 }
@@ -366,9 +515,36 @@ export class ProgressionReconciler {
    * @returns {Object}
    */
   static reconcileActor(actor, options = {}) {
+    return ProgressionReconciler.safeReconcileActor(actor, options);
+  }
+
+  static safeReconcileActor(actor, options = {}) {
     const reconciler = new ProgressionReconciler();
-    const report = reconciler.reconcileActor(actor, options);
-    return options.output === 'sheet' ? reconciler.toSheetAudit(report, options) : report;
+    return reconciler.safeReconcileActor(actor, options);
+  }
+
+  safeReconcileActor(actor, options = {}) {
+    const output = options.output || 'report';
+    const cacheKey = cacheKeyForActor(actor, options);
+    try {
+      const report = this.reconcileActor(actor, { ...options, output: 'report' });
+      const safeReport = this.sanitizeReconciliationReport(report, { actor, options });
+      setReconciliationCache(cacheKey, safeReport);
+      return output === 'sheet' ? this._safeToSheetAudit(safeReport, options) : safeReport;
+    } catch (err) {
+      swseLogger.error('[ProgressionReconciler] Safe reconciliation failed; returning fallback report', {
+        actorId: actor?.id || null,
+        actorName: actor?.name || 'Actor',
+        message: err?.message || String(err),
+        stack: err?.stack || null,
+      });
+      const cached = findLastKnownGoodReport(actor);
+      const fallback = cached
+        ? this._markReportStale(cached, err)
+        : this._buildFallbackReport(actor, {}, err, { stage: 'safe-reconcile' });
+      const safeFallback = this.sanitizeReconciliationReport(fallback, { actor, options, fallback: true });
+      return output === 'sheet' ? this._safeToSheetAudit(safeFallback, options) : safeFallback;
+    }
   }
 
   reconcileActor(actor, options = {}) {
@@ -376,10 +552,386 @@ export class ProgressionReconciler {
     const entitlementCalculator = new ProgressionEntitlementCalculator({ helpers });
     const ownershipClassifier = new ProgressionOwnershipClassifier({ helpers });
     const reportBuilder = new ProgressionReconciliationReportBuilder();
+    const layerErrors = [];
 
-    const entitlementPlan = entitlementCalculator.calculate(actor, options);
-    const ownership = ownershipClassifier.classify(actor, entitlementPlan, options);
-    return reportBuilder.build(actor, entitlementPlan, ownership, options);
+    let entitlementPlan;
+    try {
+      entitlementPlan = entitlementCalculator.calculate(actor, options);
+    } catch (err) {
+      layerErrors.push(this._layerError('entitlement-calculator', err));
+      swseLogger.error('[ProgressionReconciler] Entitlement calculation failed', { actorId: actor?.id || null, message: err?.message || String(err), stack: err?.stack || null });
+      entitlementPlan = this._buildEmptyEntitlementPlan(actor, options, err);
+    }
+
+    let ownership;
+    try {
+      ownership = ownershipClassifier.classify(actor, entitlementPlan, options);
+    } catch (err) {
+      layerErrors.push(this._layerError('ownership-classifier', err));
+      swseLogger.error('[ProgressionReconciler] Ownership classification failed', { actorId: actor?.id || null, message: err?.message || String(err), stack: err?.stack || null });
+      ownership = this._buildEmptyOwnership(actor, err);
+    }
+
+    let report;
+    try {
+      report = reportBuilder.build(actor, entitlementPlan, ownership, options);
+    } catch (err) {
+      layerErrors.push(this._layerError('report-builder', err));
+      swseLogger.error('[ProgressionReconciler] Report building failed', { actorId: actor?.id || null, message: err?.message || String(err), stack: err?.stack || null });
+      report = this._buildFallbackReport(actor, { entitlementPlan, ownership }, err, { stage: 'report-builder' });
+    }
+
+    report = report && typeof report === 'object' ? report : this._buildFallbackReport(actor, { entitlementPlan, ownership }, null, { stage: 'invalid-report' });
+    report.diagnostics = this._mergeDiagnostics(report.diagnostics, {
+      safeMode: true,
+      layerErrors,
+      hasLayerErrors: layerErrors.length > 0,
+      schema: this._validateReconciliationReport(report),
+    });
+    report.repairSuggestions = this._buildActorRepairSuggestions(actor, report);
+    report.debugExport = this._buildDebugExport(actor, report);
+    return report;
+  }
+
+  sanitizeReconciliationReport(report = {}, { actor = null, options = {}, fallback = false } = {}) {
+    const base = report && typeof report === 'object' ? report : this._buildFallbackReport(actor, {}, null, { stage: 'sanitize-empty' });
+    const sanitized = sanitizePlainData(base) || {};
+    sanitized.kind = sanitized.kind || 'swse-actor-progression-reconciliation';
+    sanitized.version = Math.max(Number(sanitized.version || 0) || 0, REPORT_SCHEMA_VERSION);
+    sanitized.actorId = sanitized.actorId || actor?.id || null;
+    sanitized.actorName = sanitized.actorName || actor?.name || 'Actor';
+    sanitized.status = sanitized.status || (fallback ? 'degraded' : 'ok');
+    sanitized.warnings = Array.isArray(sanitized.warnings) ? sanitized.warnings : [];
+    sanitized.slots = sanitized.slots && typeof sanitized.slots === 'object' ? sanitized.slots : {};
+    sanitized.slots.abilityIncreases = Array.isArray(sanitized.slots.abilityIncreases) ? sanitized.slots.abilityIncreases : [];
+    sanitized.slots.generalFeats = Array.isArray(sanitized.slots.generalFeats) ? sanitized.slots.generalFeats : [];
+    sanitized.slots.heroicTalents = Array.isArray(sanitized.slots.heroicTalents) ? sanitized.slots.heroicTalents : [];
+    sanitized.slots.classChoices = Array.isArray(sanitized.slots.classChoices) ? sanitized.slots.classChoices : [];
+    sanitized.slots.classFeats = Array.isArray(sanitized.slots.classFeats) ? sanitized.slots.classFeats : sanitized.slots.classChoices.filter(slot => slot?.type === 'class-feat');
+    sanitized.slots.classTalents = Array.isArray(sanitized.slots.classTalents) ? sanitized.slots.classTalents : sanitized.slots.classChoices.filter(slot => slot?.type === 'class-talent');
+    sanitized.derivedStats = sanitized.derivedStats && typeof sanitized.derivedStats === 'object'
+      ? sanitized.derivedStats
+      : { status: 'unavailable', rows: [], hasIssues: false, issueCount: 0 };
+    sanitized.derivedStats.rows = Array.isArray(sanitized.derivedStats.rows) ? sanitized.derivedStats.rows : [];
+    sanitized.classSummaries = Array.isArray(sanitized.classSummaries) ? sanitized.classSummaries : [];
+    sanitized.tasks = Array.isArray(sanitized.tasks) ? sanitized.tasks : [];
+    sanitized.timeline = sanitized.timeline && typeof sanitized.timeline === 'object'
+      ? sanitized.timeline
+      : { entries: [], flatSteps: [], hasRecoveryDebt: false, diagnostics: { status: 'unavailable' } };
+    sanitized.timeline.entries = Array.isArray(sanitized.timeline.entries) ? sanitized.timeline.entries : [];
+    sanitized.timeline.flatSteps = Array.isArray(sanitized.timeline.flatSteps) ? sanitized.timeline.flatSteps : [];
+    sanitized.repairSuggestions = Array.isArray(sanitized.repairSuggestions) ? sanitized.repairSuggestions : [];
+    sanitized.diagnostics = this._mergeDiagnostics(sanitized.diagnostics, {
+      sanitized: true,
+      fallback: fallback === true,
+      output: options.output || 'report',
+      schema: this._validateReconciliationReport(sanitized),
+    });
+    try {
+      structuredClone(sanitized);
+    } catch (err) {
+      swseLogger.error('[ProgressionReconciler] Sanitized report still failed structuredClone; returning minimal fallback', {
+        actorId: actor?.id || sanitized.actorId || null,
+        message: err?.message || String(err),
+      });
+      return this._buildFallbackReport(actor, {}, err, { stage: 'post-sanitize-structured-clone' });
+    }
+    return sanitized;
+  }
+
+  _safeToSheetAudit(report = {}, options = {}) {
+    try {
+      const audit = this.toSheetAudit(report, options);
+      return sanitizePlainData(audit) || this._emptySheetAudit(report, { reason: 'sanitized-empty-sheet-audit' });
+    } catch (err) {
+      swseLogger.error('[ProgressionReconciler] Sheet audit projection failed', {
+        actorId: report?.actorId || null,
+        message: err?.message || String(err),
+        stack: err?.stack || null,
+      });
+      return this._emptySheetAudit(report, { error: err, reason: 'sheet-projection-failed' });
+    }
+  }
+
+  _buildEmptyEntitlementPlan(actor, options = {}, err = null) {
+    return {
+      kind: 'swse-progression-entitlement-plan',
+      version: REPORT_SCHEMA_VERSION,
+      actorId: actor?.id || null,
+      actorName: actor?.name || 'Actor',
+      totalLevel: normalizeLevel(actor?.system?.level),
+      totalHeroicLevel: normalizeLevel(actor?.system?.level),
+      mode: options.mode || 'actor-audit',
+      internalClassSummaries: [],
+      classSummaries: [],
+      slots: {
+        abilityIncreases: [],
+        generalFeats: [],
+        heroicTalents: [],
+        classChoices: [],
+        classFeats: [],
+        classTalents: [],
+        derivedStats: { status: 'unavailable', rows: [], hasIssues: false, issueCount: 0 },
+      },
+      derivedStats: { status: 'unavailable', rows: [], hasIssues: false, issueCount: 0 },
+      diagnostics: {
+        layer: 'entitlement-calculator',
+        status: 'failed-soft',
+        error: !!err,
+        message: err?.message || '',
+      },
+    };
+  }
+
+  _buildEmptyOwnership(_actor, err = null) {
+    return {
+      rawPools: {
+        featPools: { general: [], class: [], unknown: [] },
+        talentPools: { heroic: [], class: [], unknown: [] },
+      },
+      featPools: { general: [], class: [], unknown: [] },
+      talentPools: { heroic: [], class: [], unknown: [] },
+      diagnostics: {
+        layer: 'ownership-classifier',
+        status: err ? 'failed-soft' : 'unavailable',
+        error: !!err,
+        message: err?.message || '',
+      },
+    };
+  }
+
+  _buildFallbackReport(actor, context = {}, err = null, { stage = 'unknown' } = {}) {
+    const actorId = actor?.id || context?.entitlementPlan?.actorId || null;
+    const actorName = actor?.name || context?.entitlementPlan?.actorName || 'Actor';
+    const message = err?.message || 'Progression audit unavailable';
+    return {
+      kind: 'swse-actor-progression-reconciliation',
+      version: REPORT_SCHEMA_VERSION,
+      actorId,
+      actorName,
+      totalLevel: normalizeLevel(actor?.system?.level),
+      totalHeroicLevel: normalizeLevel(actor?.system?.level),
+      classSummaries: [],
+      slots: {
+        abilityIncreases: [],
+        generalFeats: [],
+        heroicTalents: [],
+        classChoices: [],
+        classFeats: [],
+        classTalents: [],
+        derivedStats: { status: 'unavailable', rows: [], hasIssues: false, issueCount: 0, warnings: [message] },
+      },
+      derivedStats: { status: 'unavailable', rows: [], hasIssues: false, issueCount: 0, warnings: [message] },
+      ownership: { status: 'unavailable' },
+      classification: { status: 'unavailable' },
+      layers: {
+        entitlements: context?.entitlementPlan?.diagnostics || { layer: 'entitlement-calculator', status: 'unavailable' },
+        ownership: context?.ownership?.diagnostics || { layer: 'ownership-classifier', status: 'unavailable' },
+        report: { layer: 'reconciliation-report-builder', status: 'fallback', stage },
+      },
+      warnings: ['Progression audit unavailable. Character sheet opened with safe fallback data.'],
+      status: 'degraded',
+      timeline: { entries: [], flatSteps: [], hasRecoveryDebt: false, diagnostics: { layer: 'progression-timeline-builder', status: 'unavailable' } },
+      repairSuggestions: [],
+      diagnostics: {
+        safeMode: true,
+        error: !!err,
+        stage,
+        message,
+        stack: err?.stack || null,
+      },
+      debugExport: {
+        actorId,
+        actorName,
+        status: 'fallback',
+        stage,
+        message,
+      },
+    };
+  }
+
+  _emptySheetAudit(report = {}, { error = null, reason = 'unavailable' } = {}) {
+    const ledgers = [
+      emptyLedger('ability-increase', 'Ability score increases', { tab: 'abilities', sheetAnchor: 'ability-increases', stepId: 'attribute', job: 'ability-increase' }),
+      emptyLedger('general-feat', 'General feats', { tab: 'talents', sheetAnchor: 'feat-ledger', stepId: 'general-feat', job: 'choose-feat' }),
+      emptyLedger('class-feat', 'Class feats', { tab: 'talents', sheetAnchor: 'feat-ledger', stepId: 'class-feat', job: 'choose-feat' }),
+      emptyLedger('heroic-talent', 'Heroic talents', { tab: 'talents', sheetAnchor: 'talent-ledger', stepId: 'general-talent', job: 'choose-talent' }),
+      emptyLedger('class-talent', 'Class talents', { tab: 'talents', sheetAnchor: 'talent-ledger', stepId: 'class-talent', job: 'choose-talent' }),
+    ];
+    return {
+      kind: 'swse-actor-progression-reconciliation-sheet',
+      status: 'degraded',
+      totalLevel: Number(report?.totalLevel || 0) || 0,
+      totalHeroicLevel: Number(report?.totalHeroicLevel || report?.totalLevel || 0) || 0,
+      warnings: ['Progression audit unavailable. Character sheet opened safely.'],
+      classSummaries: [],
+      hasOpenProgression: false,
+      hasTrainingProgression: false,
+      trainingLedgers: ledgers,
+      derivedStats: { status: 'unavailable', hasIssues: false, issueCount: 0, rows: [], warnings: [] },
+      abilityIncreases: { ...ledgers[0], hasOpenSlots: false },
+      generalFeats: ledgers[1],
+      classFeats: ledgers[2],
+      heroicTalents: ledgers[3],
+      classTalents: ledgers[4],
+      classChoices: { expected: 0, filled: 0, open: 0, overfilled: 0, ambiguous: 0, hasOpenSlots: false, hasAmbiguousSlots: false, openSlots: [], ambiguousSlots: [], featOpen: 0, talentOpen: 0 },
+      byClass: [],
+      tasks: [],
+      repairSuggestions: [],
+      diagnostics: {
+        error: !!error,
+        reason,
+        message: error?.message || '',
+        safeFallback: true,
+      },
+    };
+  }
+
+  _layerError(layer, err = null) {
+    return {
+      layer,
+      message: err?.message || String(err || 'Unknown error'),
+      stack: err?.stack || null,
+      at: new Date().toISOString(),
+    };
+  }
+
+  _mergeDiagnostics(existing = {}, patch = {}) {
+    const base = existing && typeof existing === 'object' ? existing : {};
+    return {
+      ...base,
+      ...patch,
+      layerErrors: [
+        ...(Array.isArray(base.layerErrors) ? base.layerErrors : []),
+        ...(Array.isArray(patch.layerErrors) ? patch.layerErrors : []),
+      ],
+    };
+  }
+
+  _markReportStale(report = {}, err = null) {
+    const stale = sanitizePlainData(report) || {};
+    stale.status = stale.status === 'ok' ? 'stale' : (stale.status || 'stale');
+    stale.warnings = Array.isArray(stale.warnings) ? [...stale.warnings] : [];
+    stale.warnings.unshift('Using last-known-good progression audit because the latest reconciliation failed.');
+    stale.diagnostics = this._mergeDiagnostics(stale.diagnostics, {
+      staleCache: true,
+      error: !!err,
+      message: err?.message || '',
+    });
+    return stale;
+  }
+
+  _validateReconciliationReport(report = {}) {
+    const issues = [];
+    if (!report || typeof report !== 'object') issues.push('report is not an object');
+    if (!report.kind) issues.push('missing kind');
+    if (!report.slots || typeof report.slots !== 'object') issues.push('missing slots object');
+    for (const key of ['abilityIncreases', 'generalFeats', 'heroicTalents', 'classChoices', 'classFeats', 'classTalents']) {
+      if (report?.slots && !Array.isArray(report.slots[key])) issues.push(`slots.${key} is not an array`);
+    }
+    if (!Array.isArray(report.classSummaries || [])) issues.push('classSummaries is not an array');
+    if (report.timeline && typeof report.timeline === 'object' && !Array.isArray(report.timeline.entries || [])) issues.push('timeline.entries is not an array');
+    return {
+      valid: issues.length === 0,
+      issues,
+      checkedAt: new Date().toISOString(),
+    };
+  }
+
+  _buildActorRepairSuggestions(actor, report = {}) {
+    const suggestions = [];
+    const hasOwned = (type, predicate) => readActorItems(actor).some(item => item?.type === type && (!predicate || predicate(item)));
+    const ownsForceSensitivity = hasOwned('feat', item => normalizeNameKey(item?.name) === 'forcesensitivity' || normalizeNameKey(item?.system?.slug) === 'forcesensitivity');
+    if (ownsForceSensitivity && actor?.system?.forceSensitive !== true) {
+      suggestions.push({
+        id: 'repair-force-sensitive-state',
+        type: 'actor-state-repair',
+        severity: 'warning',
+        label: 'Repair Force Sensitivity state',
+        detail: 'Actor owns Force Sensitivity but system.forceSensitive is not true.',
+        action: 'repair-progression-metadata',
+        repairKey: 'forceSensitive',
+      });
+    }
+    const classSummaries = Array.isArray(report?.classSummaries) ? report.classSummaries : [];
+    const classTotal = classSummaries.reduce((sum, row) => sum + (Number(row?.level || 0) || 0), 0);
+    const systemLevel = normalizeLevel(actor?.system?.level);
+    if (classTotal > 0 && systemLevel > 0 && classTotal !== systemLevel) {
+      suggestions.push({
+        id: 'repair-level-class-ledger-mismatch',
+        type: 'actor-state-repair',
+        severity: 'warning',
+        label: 'Review class level ledger',
+        detail: `System level is ${systemLevel}, but class ledger totals ${classTotal}.`,
+        action: 'repair-progression-metadata',
+        repairKey: 'classLevelLedger',
+      });
+    }
+    const skills = actor?.system?.skills || {};
+    if (skills?.null || Object.keys(skills).some(key => /^[a-f0-9]{12,}$/i.test(key))) {
+      suggestions.push({
+        id: 'repair-invalid-skill-keys',
+        type: 'actor-state-repair',
+        severity: 'warning',
+        label: 'Repair invalid skill keys',
+        detail: 'Actor has null/random skill keys, often from unresolved Skill Focus or skill-choice metadata.',
+        action: 'repair-progression-metadata',
+        repairKey: 'skillKeys',
+      });
+    }
+    const session = actor?.flags?.['foundryvtt-swse']?.progression?.chargen?.session;
+    const completed = actor?.system?.progression?.chargenComplete === true || actor?.flags?.['foundryvtt-swse']?.chargen?.completed === true;
+    if (session && completed) {
+      suggestions.push({
+        id: 'repair-stale-chargen-session',
+        type: 'actor-state-repair',
+        severity: 'warning',
+        label: 'Clear stale chargen session',
+        detail: 'Actor is marked complete but still has a saved chargen session.',
+        action: 'repair-progression-metadata',
+        repairKey: 'staleChargenSession',
+      });
+    }
+    const pendingForcePicks = (Array.isArray(actor?.flags?.['foundryvtt-swse']?.progression?.chargen?.session?.draftSelections?.pendingEntitlements)
+      ? actor.flags['foundryvtt-swse'].progression.chargen.session.draftSelections.pendingEntitlements
+      : [])
+      .filter(entry => entry?.type === 'force_power_pick' && Number(entry?.spent || 0) < Number(entry?.quantity || 0));
+    const forcePowerCount = readActorItems(actor).filter(item => item?.type === 'force-power').length;
+    if (pendingForcePicks.length && forcePowerCount > 0) {
+      suggestions.push({
+        id: 'repair-force-training-entitlements',
+        type: 'actor-state-repair',
+        severity: 'info',
+        label: 'Review Force Training entitlements',
+        detail: 'Actor has Force Powers but still has unspent Force Training entitlement records.',
+        action: 'repair-progression-metadata',
+        repairKey: 'forceTrainingEntitlements',
+      });
+    }
+    return suggestions;
+  }
+
+  _buildDebugExport(actor, report = {}) {
+    return sanitizePlainData({
+      actorId: actor?.id || report?.actorId || null,
+      actorName: actor?.name || report?.actorName || 'Actor',
+      status: report?.status || 'unknown',
+      totalLevel: report?.totalLevel || 0,
+      totalHeroicLevel: report?.totalHeroicLevel || 0,
+      classSummaries: report?.classSummaries || [],
+      warnings: report?.warnings || [],
+      slotCounts: {
+        abilityIncreases: report?.slots?.abilityIncreases?.length || 0,
+        generalFeats: report?.slots?.generalFeats?.length || 0,
+        heroicTalents: report?.slots?.heroicTalents?.length || 0,
+        classFeats: report?.slots?.classFeats?.length || 0,
+        classTalents: report?.slots?.classTalents?.length || 0,
+      },
+      derivedStats: report?.derivedStats || {},
+      timelineDiagnostics: report?.timeline?.diagnostics || {},
+      diagnostics: report?.diagnostics || {},
+      repairSuggestions: report?.repairSuggestions || [],
+    });
   }
 
   _buildActorAuditLayerHelpers() {
@@ -454,6 +1006,10 @@ export class ProgressionReconciler {
       totalLevel: Number(report?.totalLevel || 0) || 0,
       totalHeroicLevel: Number(report?.totalHeroicLevel || report?.totalLevel || 0) || 0,
       warnings: Array.isArray(report?.warnings) ? report.warnings : [],
+      diagnostics: report?.diagnostics && typeof report.diagnostics === 'object' ? report.diagnostics : {},
+      debugExport: report?.debugExport && typeof report.debugExport === 'object' ? report.debugExport : {},
+      repairSuggestions: Array.isArray(report?.repairSuggestions) ? report.repairSuggestions : [],
+      hasRepairSuggestions: Array.isArray(report?.repairSuggestions) && report.repairSuggestions.length > 0,
       classSummaries: Array.isArray(report?.classSummaries) ? report.classSummaries : [],
       hasOpenProgression: hasOpenProgression || derivedStats.hasIssues === true,
       hasTrainingProgression: hasOpenProgression,
@@ -889,10 +1445,27 @@ export class ProgressionReconciler {
       className: summary.className || titleCase(summary.classId),
       level: Number(summary.level || 0) || 0,
       sources: Array.from(new Set(Array.isArray(summary.sources) ? summary.sources : [])),
+      levelSource: this._classSummaryLevelSource(summary),
+      sourceConfidence: this._classSummarySourceConfidence(summary),
       isHeroic: summary.isHeroic !== false,
       isNonheroic: summary.isNonheroic === true,
       isPrestige: summary.isPrestige === true,
     };
+  }
+
+  _classSummaryLevelSource(summary = {}) {
+    const sources = Array.isArray(summary.sources) ? summary.sources : [];
+    if (sources.includes('progression-ledger')) return 'system.progression.classLevels';
+    if (sources.includes('class-item')) return 'owned class item';
+    return 'unknown';
+  }
+
+  _classSummarySourceConfidence(summary = {}) {
+    const sources = Array.isArray(summary.sources) ? summary.sources : [];
+    if (sources.includes('progression-ledger') && sources.includes('class-item')) return 'high';
+    if (sources.includes('progression-ledger')) return 'medium-high';
+    if (sources.includes('class-item')) return 'medium';
+    return 'low';
   }
 
   _buildAbilityIncreaseSlots(actor, totalLevel) {

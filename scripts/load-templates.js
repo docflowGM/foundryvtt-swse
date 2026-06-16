@@ -360,6 +360,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/vehicle-import-wizard.hbs',
 
   'systems/foundryvtt-swse/templates/apps/gm-grant-dialog.hbs',
+  'systems/foundryvtt-swse/templates/apps/force-alchemy/force-alchemy-workbench.hbs',
 
   // ==============================
   // Shell Surfaces (Phase 12)

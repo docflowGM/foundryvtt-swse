@@ -1179,7 +1179,7 @@ export class AlliesSurfaceService {
       ...asArray(actor?.flags?.swse?.organizations),
       ...asArray(actor?.system?.relationships).filter(entry => relationshipKind(entry) === 'organization')
     ]);
-    const context = {
+    const orgContext = {
       canEditGoverned: isGM,
       hasNaturalLeader: naturalLeader,
       factions: factions.records

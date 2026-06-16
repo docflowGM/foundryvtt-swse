@@ -178,7 +178,7 @@ export class ProgressionFinalizer {
         return result;
       }
 
-      if (sessionState.mode === 'levelup') {
+      if (sessionState.mode === 'levelup' && !this._isReconciliationSession(sessionState)) {
         const postAudit = this._auditLevelUpFinalization(actor, finalMutationPlan, sessionState);
         if (!postAudit.ok) {
           swseLogger.error('[ProgressionFinalizer] Level-up finalization audit failed', {
@@ -545,6 +545,12 @@ export class ProgressionFinalizer {
     };
   }
 
+  static _isReconciliationSession(sessionState = {}) {
+    return sessionState?.progressionSession?.reconciliation?.mode === 'reconcile'
+      || sessionState?.progressionSession?.mode === 'reconcile'
+      || sessionState?.mode === 'reconcile';
+  }
+
   /**
    * Validate that progression is ready to finalize.
    * Throws if not ready.
@@ -620,7 +626,7 @@ export class ProgressionFinalizer {
       }
     }
 
-    if (sessionState.mode === 'levelup') {
+    if (sessionState.mode === 'levelup' && !this._isReconciliationSession(sessionState)) {
       const hpNeedsResolution = summarySelection.hpGainResolved === false || (summarySelection.hpGainRequired === true && !summarySelection.hpGainResolved);
       if (hpNeedsResolution) {
         throw new Error('Level-up incomplete: HP gain must be resolved before finalization');
@@ -742,7 +748,7 @@ export class ProgressionFinalizer {
 
     const selections = sessionState.progressionSession.draftSelections || {};
     await ProgressionContentAuthority.initialize?.();
-    const levelUpManifest = sessionState.mode === 'levelup'
+    const levelUpManifest = sessionState.mode === 'levelup' && !this._isReconciliationSession(sessionState)
       ? buildLevelUpEntitlementManifest(actor, sessionState.progressionSession, { selectedClass: selections.class })
       : null;
 

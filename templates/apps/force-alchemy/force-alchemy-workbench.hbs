@@ -9,7 +9,7 @@
     <span class="sa-sigil" aria-hidden="true">&#9959;</span>
     <div class="sa-title-wrap">
       <div class="sa-title">Force Artifact / <b>Sith Alchemy</b></div>
-      <div class="sa-subtitle">Ritual workbench · mechanical instant rites</div>
+      <div class="sa-subtitle">Ritual workbench · artifacts, projects, mutation, and sheet-visible status</div>
     </div>
     <span class="sa-hud-tag">Ritual Surface</span>
     <span class="sa-hud-actor">{{actor.name}}</span>
@@ -43,7 +43,7 @@
               <div class="nm">{{label}}</div>
               <div class="meta">{{meta}}</div>
             </div>
-            {{#if active}}<div class="sa-slot-actions">{{#if canConsumeSurge}}<button type="button" class="act surge" data-force-alchemy-action="consume-rapid-surge" title="Consume +2 attack for +5 damage">Surge</button>{{/if}}<button type="button" class="act" data-force-alchemy-action="clear-slot" data-state-key="{{stateKey}}" title="Clear state and effects">Clear</button><button type="button" class="act danger" data-force-alchemy-action="destroy-slot" data-state-key="{{stateKey}}" title="Destroy and record cooldown">Destroy</button></div>{{/if}}
+            {{#if active}}<div class="sa-slot-actions">{{#if canConsumeSurge}}<button type="button" class="act surge" data-force-alchemy-action="consume-rapid-surge" title="Consume +2 attack for +5 damage">Surge</button>{{/if}}<button type="button" class="act" data-force-alchemy-action="clear-slot" data-state-key="{{stateKey}}" title="Clear state and effects">End</button>{{#if destructible}}<button type="button" class="act danger" data-force-alchemy-action="destroy-slot" data-state-key="{{stateKey}}" title="Destroy and record cooldown">Destroy</button>{{/if}}</div>{{/if}}
           </div>
         {{/each}}
       </div>
@@ -84,7 +84,7 @@
         {{/each}}
       </nav>
 
-      <div class="sa-drop-hint">Drop an owned item here to preselect its alchemical target path.</div>
+      <div class="sa-drop-hint">Drop an owned item, Force Power, actor, or token here to preselect the matching ritual path.</div>
       <div class="sa-rites">
         {{#each visibleRites}}
           <article class="sa-rite {{#if selected}}sel{{/if}} {{#unless eligible}}locked{{/unless}}" data-force-alchemy-action="rite" data-rite-id="{{id}}">
@@ -110,7 +110,7 @@
       </div>
     </main>
 
-    <aside class="sa-right" aria-label="Selected Rite Intel">
+    <aside class="sa-right" aria-label="Selected Rite Intel" data-force-alchemy-dropzone="detail">
       {{#if detail}}
         <div class="sa-detail">
           <div class="sa-stepper">
@@ -193,7 +193,15 @@
                     <span class="o-ico">&#9763;</span><span><span class="o-nm">{{name}}</span><span class="o-meta">{{description}}</span></span><span class="o-check">✓</span>
                   </button>
                 {{/each}}
-                <div class="sa-gmgate"><b>GM Gate:</b> Full actor/template mutation is intentionally deferred to the GM-confirmed phase.</div>
+                {{#if detail.mutationGate}}
+                  <div class="sa-gmgate">
+                    <div class="g-top">&#9888; GM Approval Required</div>
+                    <label>
+                      <input type="checkbox" data-force-alchemy-config="gmConfirmed" {{#if detail.mutationGate.gmConfirmed}}checked{{/if}}>
+                      <span>GM approves this mutation project. Lab access, target state, and scene requirements are handled by GM adjudication rather than extra UI blockers.</span>
+                    </label>
+                  </div>
+                {{/if}}
               </section>
             {{/if}}
 
@@ -242,7 +250,7 @@
 
           <footer class="sa-commit">
             <div class="sa-commit-meta">
-              <span>Phase 6: instant rites apply effects; ready Sith Weapon, Sith Amulet, Sith Armor, and Specialist trait projects can complete</span>
+              <span>Integrated alchemical state, item markings, effects, projects, and GM-gated mutation tracking</span>
               <span class="{{#if detail.ready}}ready{{else}}blocked{{/if}}">{{#if detail.ready}}Ready to apply{{else}}Selection incomplete{{/if}}</span>
             </div>
             <div class="sa-btn-row">

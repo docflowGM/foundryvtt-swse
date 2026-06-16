@@ -252,8 +252,7 @@ function normalizeSkillKey(value = '') {
 }
 
 function parseAtlasCheckLines(value = '') {
-  const lines = String(value ?? '').split(/
-+/g).map(line => text(line)).filter(Boolean);
+  const lines = String(value ?? '').split(/\n+/g).map(line => text(line)).filter(Boolean);
   const parsed = [];
   for (const line of lines) {
     const pipeParts = line.split('|').map(part => text(part));
@@ -452,8 +451,7 @@ export class LocationRegistryService {
       const normalized = normalizeCheck(check);
       const label = normalized.label ? ` | ${normalized.label}` : '';
       return `${normalized.skill} | ${normalized.dc}${label}`;
-    }).join('
-');
+    }).join('\n');
   }
 
   static getRegistry() {

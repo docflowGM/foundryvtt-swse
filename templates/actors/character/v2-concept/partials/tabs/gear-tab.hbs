@@ -64,6 +64,11 @@
               <div class="swse-concept-simple-row__copy">
                 <strong>{{entry.name}}</strong>
                 <small>{{entry.typeLabel}} · Qty {{entry.quantity}}</small>
+                {{#if entry.alchemy.hasAlchemy}}
+                  <div class="swse-alchemy-badge-row swse-alchemy-badge-row--compact">
+                    {{#each entry.alchemy.badges as |badge|}}<span class="swse-concept-chip swse-concept-chip--alchemy {{badge.tone}}">&#9959; {{badge.label}}</span>{{/each}}
+                  </div>
+                {{/if}}
               </div>
               <div class="swse-concept-ledger-row__actions">
                 {{#if entry.virtual}}
@@ -180,6 +185,7 @@
                 {{#if entry.activated}}<span>{{entry.activationStateLabel}}</span>{{/if}}
                 {{#if entry.isNaturalWeapon}}<span>Natural</span>{{/if}}
                 {{#each entry.tags as |tag|}}<span>{{tag}}</span>{{/each}}
+                {{#if entry.alchemy.hasAlchemy}}{{#each entry.alchemy.badges as |badge|}}<span class="swse-alchemy-row-tag">&#9959; {{badge.label}}</span>{{/each}}{{/if}}
               </div>
             </div>
 

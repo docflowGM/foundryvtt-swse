@@ -879,6 +879,31 @@
   background: rgba(255, 155, 82, 0.08);
 }
 
+.swse-force-alchemy-workbench .sa-gmgate .g-top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 6px;
+  color: var(--sa-ember);
+  font-family: var(--sa-font-mono);
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.swse-force-alchemy-workbench .sa-gmgate label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.swse-force-alchemy-workbench .sa-gmgate input {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}
+
 .swse-force-alchemy-workbench .sa-preview {
   padding: 10px 11px;
   background: rgba(181, 108, 255, 0.06);
@@ -1035,7 +1060,7 @@
   }
 }
 
-/* Phase 2 state controls */
+/* Persistent state controls */
 .swse-force-alchemy-workbench .sa-slot-actions,
 .swse-force-alchemy-workbench .sa-project-actions {
   display: flex;
@@ -1080,7 +1105,7 @@
   text-transform: uppercase;
 }
 
-/* Phase 3 mechanical states */
+/* Mechanical state affordances */
 .sa-slot .act.surge {
   border-color: rgba(255, 200, 60, 0.45);
   color: var(--sa-gold, #ffd36d);
@@ -1144,7 +1169,7 @@
   margin: 8px 0 0 18px;
 }
 
-/* Phase 4: Sith Weapon project completion / surge affordances */
+/* Sith Weapon project completion / surge affordances */
 .swse-force-alchemy-workbench .pj-complete.complete {
   border-color: rgba(107, 243, 176, 0.42);
   background: rgba(107, 243, 176, 0.12);
@@ -1155,4 +1180,18 @@
 .swse-force-alchemy-workbench .pj-complete.complete:hover {
   background: rgba(107, 243, 176, 0.18);
   border-color: rgba(107, 243, 176, 0.62);
+}
+
+/* Drop affordances: visible without adding new chrome. */
+.swse-force-alchemy-workbench [data-force-alchemy-dropzone] {
+  transition: border-color 120ms ease, box-shadow 120ms ease, background-color 120ms ease;
+}
+
+.swse-force-alchemy-workbench .sa-right[data-force-alchemy-dropzone] {
+  box-shadow: inset 1px 0 0 rgba(255, 51, 71, 0.10);
+}
+
+.swse-force-alchemy-workbench .sa-drop-hint {
+  border-color: rgba(255, 51, 71, 0.28);
+  color: rgba(231, 190, 255, 0.78);
 }

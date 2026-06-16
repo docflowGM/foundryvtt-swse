@@ -1,43 +1,96 @@
-{{!-- GM Datapad home surface: command dashboard launcher. Navigation lives in the shared shell/dock. --}}
-<div class="gm-datapad-page gm-datapad-home gm-command-home" data-shell-region="surface-home">
-  {{#if hasUrgentApps}}
-  <section class="gm-command-urgent" aria-label="Critical GM actions">
-    <div class="gm-command-urgent__eyebrow">
-      <i class="fa-solid fa-circle-exclamation"></i>
-      <span>Critical — Requires Immediate GM Action</span>
+{{!-- GM Datapad v2 home surface: model-style command dashboard. Navigation lives in the vertical shell sidebar. --}}
+<div class="gm-datapad-page gm-datapad-home gm-command-home-v2" data-shell-region="surface-home">
+  <section class="gm-command-session" aria-label="Current GM session status">
+    <div class="gm-command-session__badge">{{gmHome.sessionLabel}}</div>
+    <div class="gm-command-session__divider" aria-hidden="true"></div>
+    <div class="gm-command-session__block">
+      <strong>{{gmHome.currentLocation}}</strong>
+      <span>{{gmHome.currentLocationSub}}</span>
     </div>
-    <div class="gm-command-urgent__items">
-      {{#each urgentApps}}
-      <button type="button" class="gm-command-urgent__item {{this.statusTone}}" data-app-card="{{this.id}}" data-route-id="{{this.id}}" title="{{this.description}}">
+    <div class="gm-command-session__divider" aria-hidden="true"></div>
+    <div class="gm-command-session__online">
+      <span class="gm-command-session__dot"></span>
+      <strong>{{gmHome.onlinePlayers}} / {{gmHome.totalPlayers}}</strong>
+      <span>players online</span>
+    </div>
+    <div class="gm-command-session__divider" aria-hidden="true"></div>
+    <div class="gm-command-session__inline">Party HP <b>{{gmHome.partyHealth.current}} / {{gmHome.partyHealth.max}}</b></div>
+    <div class="gm-command-session__divider" aria-hidden="true"></div>
+    <div class="gm-command-session__inline">Active Jobs <b>{{gmHome.activeJobs}}</b></div>
+  </section>
+
+  <div class="gm-command-home-main">
+    <section class="gm-command-action-queue" aria-label="GM action queue">
+      <header class="gm-command-section-label">⚡ Action Queue</header>
+      {{#if gmHome.actionItems.length}}
+        {{#each gmHome.actionItems}}
+        <button type="button" class="gm-command-queue-item {{this.tone}}" data-route-id="{{this.id}}" data-app-card="{{this.id}}" title="{{this.sub}}">
+          <span class="gm-command-queue-item__dot {{this.tone}}"></span>
+          <span class="gm-command-queue-item__copy">
+            <strong>{{this.label}}</strong>
+            <em>{{this.sub}}</em>
+          </span>
+          {{#if this.count}}<span class="gm-command-queue-item__count {{this.tone}}">{{this.count}}</span>{{/if}}
+          <span class="gm-command-queue-item__go">Go ›</span>
+        </button>
+        {{/each}}
+      {{else}}
+        <div class="gm-command-empty-state">No critical actions are queued. Monitoring session telemetry.</div>
+      {{/if}}
+    </section>
+
+    <section class="gm-command-pulse" aria-label="GM pulse summary">
+      <div class="gm-command-pulse-grid">
+        <div class="gm-command-pulse-card {{#if gmHome.partyHealth.down}}crit{{else}}{{#if gmHome.partyHealth.wounded}}warn{{else}}ok{{/if}}{{/if}}">
+          <b>{{gmHome.partyHealth.current}}<small> / {{gmHome.partyHealth.max}}</small></b>
+          <span>Party HP</span>
+          <em>{{gmHome.partyHealth.down}} down · {{gmHome.partyHealth.wounded}} wounded · {{gmHome.partyHealth.healthy}} healthy</em>
+        </div>
+        <div class="gm-command-pulse-card {{#if gmHome.actionCount}}crit{{else}}ok{{/if}}">
+          <b>{{gmHome.actionCount}}</b>
+          <span>Actions Needed</span>
+          <em>Critical reviews, monitoring items, and pending GM decisions</em>
+        </div>
+        <div class="gm-command-pulse-card">
+          <b>{{gmHome.activeJobs}}</b>
+          <span>Active Jobs</span>
+          <em>{{homeSummary.jobReview}} review · {{homeSummary.jobPayout}} payout ready</em>
+        </div>
+        <div class="gm-command-pulse-card ok">
+          <b>{{gmHome.locationCount}}</b>
+          <span>Locations</span>
+          <em>{{gmHome.locationLeadCount}} unresolved Atlas leads</em>
+        </div>
+      </div>
+
+      <header class="gm-command-section-label">Party Status</header>
+      <div class="gm-command-party-list">
+        {{#each gmHome.partyHealth.members}}
+        <article class="gm-command-party-row {{this.tone}} {{#if this.isDroid}}droid{{/if}}">
+          <span class="gm-command-party-row__avatar {{this.tone}}">{{this.initials}}</span>
+          <span class="gm-command-party-row__body">
+            <strong>{{this.name}}</strong>
+            <span class="gm-command-party-row__bar"><i class="{{this.tone}}" style="width: {{this.pct}}%"></i></span>
+          </span>
+          <span class="gm-command-party-row__hp">{{this.hp}} / {{this.maxHp}}</span>
+        </article>
+        {{else}}
+        <div class="gm-command-empty-state">No player characters are currently assigned.</div>
+        {{/each}}
+      </div>
+    </section>
+  </div>
+
+  <section class="gm-command-quick-launch" aria-label="Quick launch">
+    <header class="gm-command-section-label">Quick Launch</header>
+    <div class="gm-command-launch-grid">
+      {{#each gmHome.quickLaunch}}
+      <button type="button" class="gm-command-launch-button {{this.statusTone}} {{#if (eq this.id 'locations')}}new-surf{{/if}}" data-route-id="{{this.id}}" data-app-card="{{this.id}}" title="{{this.description}}">
         <i class="{{this.icon}}"></i>
-        <span>{{this.urgentLabel}}</span>
+        <span>{{this.label}}</span>
+        {{#if this.badgeCount}}<b class="{{this.badgeType}}">{{this.badgeCount}}</b>{{/if}}
       </button>
       {{/each}}
     </div>
-  </section>
-  {{/if}}
-
-  <section class="gm-command-clusters" aria-label="GM Datapad applications">
-    {{#each appClusters}}
-    <div class="gm-command-cluster {{this.tone}}">
-      <header class="gm-command-cluster__header">
-        <h3>{{this.label}}</h3>
-        <span>{{this.countLabel}}</span>
-      </header>
-      <div class="gm-command-cluster__apps">
-        {{#each this.apps}}
-        <button class="gm-command-app-row {{this.statusTone}}" data-app-card="{{this.id}}" data-route-id="{{this.id}}" title="{{this.description}}" type="button">
-          <span class="gm-command-app-row__code">{{this.code}}</span>
-          <span class="gm-command-app-row__icon"><i class="{{this.icon}}"></i></span>
-          <span class="gm-command-app-row__body">
-            <strong>{{this.label}}</strong>
-            <small>{{this.description}}</small>
-          </span>
-          {{#if this.badgeCount}}<span class="gm-command-app-row__badge {{this.badgeType}}">{{this.badgeCount}}</span>{{/if}}
-        </button>
-        {{/each}}
-      </div>
-    </div>
-    {{/each}}
   </section>
 </div>

@@ -111,11 +111,17 @@ function projectCompletionMode(riteId) {
   if (riteId === 'sith-amulet') return 'sith-amulet-item-create';
   if (riteId === 'sith-armor') return 'sith-armor-item-transform';
   if (riteId === 'sith-alchemy-specialist') return 'sith-alchemy-specialist-trait';
-  return 'manual-next-phase';
+  if (riteId === 'cause-mutation') return 'mutation-gm-gated-actor-flags';
+  return 'manual-adjudication';
 }
 
 function projectCanComplete(project, ready) {
-  if (!ready || project?.gmGated === true) return false;
+  if (!ready) return false;
+  if (project?.riteId === 'cause-mutation') {
+    const config = project?.config ?? {};
+    return config.gmConfirmed === true;
+  }
+  if (project?.gmGated === true) return false;
   return ['sith-weapon', 'sith-amulet', 'sith-armor', 'sith-alchemy-specialist'].includes(project?.riteId);
 }
 
@@ -267,7 +273,11 @@ function getProjectDuration(detail) {
     if (note.includes('light')) return { requiredUnits: 1, unit: 'day', durationLabel: '1 day' };
     return { requiredUnits: 2, unit: 'day', durationLabel: '2 days' };
   }
-  if (riteId === 'cause-mutation') return { requiredUnits: 1, unit: 'CL day', durationLabel: 'modified CL days' };
+  if (riteId === 'cause-mutation') {
+    const cl = Number(target?.challengeLevel ?? target?.cl ?? detail?.selectedConfig?.challengeLevel ?? 1);
+    const days = Number.isFinite(cl) ? Math.max(1, Math.round(cl)) : 1;
+    return { requiredUnits: days, unit: 'CL day', durationLabel: `${days} modified CL day${days === 1 ? '' : 's'}` };
+  }
   return { requiredUnits: 1, unit: 'work unit', durationLabel: '1 work unit' };
 }
 

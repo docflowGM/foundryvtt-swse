@@ -223,6 +223,234 @@ export class PrereqAdapter {
     }
   }
 
+
+  /**
+   * Build an actor-shaped context for reconciliation recovery steps.
+   *
+   * Recovery steps resolve historical progression debt. A level 3 feat slot
+   * must not evaluate prerequisites using a level 6 actor snapshot. This helper
+   * caps the actor to the recovery level and exposes only prior/equal acquired
+   * choices plus earlier draft selections. It intentionally remains plain-data
+   * shaped so prerequisite evaluators cannot receive live App/Document graphs.
+   */
+  static buildHistoricalEvaluationContext(actorSnapshot, recoveryContext = {}, options = {}) {
+    const targetLevel = this._coercePositiveInt(
+      recoveryContext?.characterLevel
+      ?? recoveryContext?.sourceCharacterLevel
+      ?? recoveryContext?.level
+      ?? actorSnapshot?.system?.level
+      ?? actorSnapshot?.system?.details?.level
+      ?? 1,
+      1
+    );
+    const targetClassId = this._normalizeKey(recoveryContext?.classId || recoveryContext?.sourceClassId || '');
+    const targetClassLevel = this._coercePositiveInt(
+      recoveryContext?.classLevel
+      ?? recoveryContext?.sourceClassLevel
+      ?? 0,
+      0
+    );
+
+    const mockActor = this._cloneActorForEvaluation(actorSnapshot);
+    mockActor.flags = this._plainClone(actorSnapshot?.flags || {});
+    mockActor.system = this._plainClone(mockActor.system || {});
+    mockActor.system.level = targetLevel;
+    mockActor.system.details = {
+      ...(mockActor.system.details || {}),
+      level: targetLevel,
+    };
+    mockActor.system.progression = {
+      ...(mockActor.system.progression || {}),
+      historicalEvaluation: true,
+      recoveryContext: this._plainClone(recoveryContext || {}),
+    };
+
+    mockActor.items = this._filterItemsForHistoricalLevel(mockActor.items || [], targetLevel);
+    mockActor.items = this._appendHistoricalDraftItems(mockActor.items, options?.draftSelections, targetLevel);
+
+    mockActor.system.progression.feats = mockActor.items
+      .filter(item => item?.type === 'feat')
+      .map(item => item?.name || item?.id || item?._id)
+      .filter(Boolean);
+    mockActor.system.progression.talents = mockActor.items
+      .filter(item => item?.type === 'talent')
+      .map(item => item?.name || item?.id || item?._id)
+      .filter(Boolean);
+
+    mockActor.system.progression.classLevels = this._capClassLevels(
+      mockActor.system.progression.classLevels || mockActor.system.classLevels || mockActor.system.classes,
+      { targetClassId, targetClassLevel, targetLevel }
+    );
+    mockActor.system.classes = this._capClassLevels(
+      mockActor.system.classes,
+      { targetClassId, targetClassLevel, targetLevel }
+    );
+
+    const expectedBab = this._estimateHistoricalBab(actorSnapshot, recoveryContext, targetLevel);
+    if (expectedBab !== null) {
+      mockActor.system.bab = expectedBab;
+      mockActor.system.baseAttackBonus = expectedBab;
+      mockActor.system.attack = {
+        ...(mockActor.system.attack || {}),
+        bab: expectedBab,
+        baseAttackBonus: expectedBab,
+      };
+    }
+
+    swseLogger.debug('[PrereqAdapter] Historical evaluation context built', {
+      actorId: actorSnapshot?.id || null,
+      targetLevel,
+      classId: recoveryContext?.classId || null,
+      classLevel: recoveryContext?.classLevel || null,
+      feats: mockActor.system.progression.feats.length,
+      talents: mockActor.system.progression.talents.length,
+      bab: mockActor.system.bab,
+    });
+
+    return mockActor;
+  }
+
+  static _filterItemsForHistoricalLevel(items = [], targetLevel = 1) {
+    return (Array.isArray(items) ? items : Array.from(items || []))
+      .filter(item => this._itemIsKnownByHistoricalLevel(item, targetLevel))
+      .map(item => this._plainItemForEvaluation(item));
+  }
+
+  static _itemIsKnownByHistoricalLevel(item, targetLevel = 1) {
+    if (!item) return false;
+    const progression = item.flags?.swse?.progression || item.system?.progression || {};
+    const acquisition = item.system?.acquisition || item.flags?.swse?.acquisition || {};
+    const level = this._coercePositiveInt(
+      progression.characterLevel
+      ?? progression.sourceCharacterLevel
+      ?? acquisition.characterLevel
+      ?? acquisition.sourceCharacterLevel
+      ?? item.system?.characterLevel
+      ?? item.system?.sourceCharacterLevel
+      ?? 0,
+      0
+    );
+    // Legacy/manual actor items often predate the reconciliation ledger and do
+    // not have provenance. Keep them visible as baseline knowledge rather than
+    // hiding valid prerequisite chains from old actors.
+    if (level <= 0) return true;
+    return level <= targetLevel;
+  }
+
+  static _plainItemForEvaluation(item) {
+    if (!item) return null;
+    const plain = item.toObject?.() || item.toJSON?.() || item;
+    return {
+      id: plain.id || plain._id || item.id || item._id || null,
+      _id: plain._id || plain.id || item._id || item.id || null,
+      name: plain.name || item.name || 'Unnamed',
+      type: plain.type || item.type || 'unknown',
+      img: plain.img || item.img || null,
+      system: this._plainClone(plain.system || item.system || {}),
+      flags: this._plainClone(plain.flags || item.flags || {}),
+    };
+  }
+
+  static _appendHistoricalDraftItems(items = [], draftSelections = {}, targetLevel = 1) {
+    const out = [...(items || [])];
+    const add = (type, entry) => {
+      if (!entry) return;
+      const level = this._coercePositiveInt(entry.characterLevel ?? entry.sourceCharacterLevel ?? entry.level ?? 0, 0);
+      if (level > 0 && level > targetLevel) return;
+      const id = entry.id || entry._id || entry.name;
+      const name = entry.name || entry.label || id;
+      if (!name) return;
+      const exists = out.some(item => item?.type === type && (
+        String(item?.id || item?._id || '') === String(id || '')
+        || String(item?.name || '').toLowerCase() === String(name || '').toLowerCase()
+      ));
+      if (exists) return;
+      out.push(this._normalizeAbilityToItem(type, entry));
+    };
+    for (const feat of Array.isArray(draftSelections?.feats) ? draftSelections.feats : []) add('feat', feat);
+    for (const talent of Array.isArray(draftSelections?.talents) ? draftSelections.talents : []) add('talent', talent);
+    for (const power of Array.isArray(draftSelections?.forcePowers) ? draftSelections.forcePowers : []) add('force-power', power);
+    return out;
+  }
+
+  static _capClassLevels(value, { targetClassId = '', targetClassLevel = 0, targetLevel = 1 } = {}) {
+    if (!value) return value;
+    const capLevel = (entry, key = '') => {
+      if (!entry || typeof entry !== 'object') return entry;
+      const classKey = this._normalizeKey(entry.classId || entry.id || entry.key || entry.name || key);
+      const level = this._coercePositiveInt(entry.level ?? entry.classLevel ?? entry.value ?? 0, 0);
+      let capped = Math.min(level || targetLevel, targetLevel);
+      if (targetClassId && classKey === targetClassId && targetClassLevel > 0) capped = Math.min(capped, targetClassLevel);
+      return {
+        ...entry,
+        level: capped,
+        classLevel: capped,
+      };
+    };
+    if (Array.isArray(value)) return value.map((entry, index) => capLevel(entry, String(index)));
+    if (typeof value === 'object') {
+      const out = {};
+      for (const [key, entry] of Object.entries(value)) {
+        if (typeof entry === 'number') {
+          const keyNorm = this._normalizeKey(key);
+          let capped = Math.min(entry, targetLevel);
+          if (targetClassId && keyNorm === targetClassId && targetClassLevel > 0) capped = Math.min(capped, targetClassLevel);
+          out[key] = capped;
+        } else {
+          out[key] = capLevel(entry, key);
+        }
+      }
+      return out;
+    }
+    return value;
+  }
+
+  static _estimateHistoricalBab(actorSnapshot, recoveryContext = {}, targetLevel = 1) {
+    const explicit = this._coerceNumber(
+      recoveryContext?.bab
+      ?? recoveryContext?.baseAttackBonus
+      ?? recoveryContext?.expectedBab
+      ?? null
+    );
+    if (explicit !== null) return explicit;
+
+    const current = this._coerceNumber(
+      actorSnapshot?.system?.bab?.total
+      ?? actorSnapshot?.system?.bab
+      ?? actorSnapshot?.system?.baseAttackBonus
+      ?? actorSnapshot?.system?.attack?.bab
+      ?? actorSnapshot?.system?.attack?.baseAttackBonus
+      ?? null
+    );
+    const currentLevel = this._coercePositiveInt(actorSnapshot?.system?.level ?? actorSnapshot?.system?.details?.level ?? 0, 0);
+    if (current !== null && currentLevel > 0 && targetLevel > 0) {
+      return Math.max(0, Math.floor((current / Math.max(1, currentLevel)) * targetLevel));
+    }
+    return null;
+  }
+
+  static _coercePositiveInt(value, fallback = 0) {
+    const num = Number(value);
+    return Number.isFinite(num) && num > 0 ? Math.floor(num) : fallback;
+  }
+
+  static _plainClone(value) {
+    if (value === null || value === undefined) return value;
+    try {
+      return globalThis.foundry?.utils?.deepClone?.(value) ?? JSON.parse(JSON.stringify(value));
+    } catch (_err) {
+      try { return JSON.parse(JSON.stringify(value)); } catch (_err2) { return {}; }
+    }
+  }
+
+  static _normalizeKey(value) {
+    return String(value || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '_')
+      .replace(/^_+|_+$/g, '');
+  }
+
   /**
    * Convert a projected ability (from projection) to an item-like object.
    * @private

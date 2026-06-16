@@ -8,7 +8,7 @@
   shellMotionStyle=motionStyle
   shellStyleInline=themeStyleInline
   shellStyleInlineExtra=motionStyleInline
-  shellExtraClass="swse-sheet-v2-shell--gm-datapad"
+  shellExtraClass="swse-sheet-v2-shell--gm-datapad gm-command-holopad-v2"
   tabletExtraClass="gm-datapad-tablet"
   screenExtraClass="gm-datapad-screen-shell"
   serialLabel=gmShell.serialLabel
@@ -20,9 +20,16 @@
   dragLabel="GM datapad drag rail"
   showResize=true
 }}
-  <div class="swse-datapad swse-screen gm-datapad-screen flexcol">
-    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/partials/dock.hbs"}}
-    {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
+  <div class="swse-datapad swse-screen gm-datapad-screen gm-command-screen-v2">
+    <div class="gm-command-shell-v2 {{#if gmShell.sidebarCollapsed}}is-sidebar-collapsed{{/if}} {{#if gmShell.surfaceFocused}}is-surface-focused{{/if}}" data-gm-command-shell>
+      {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/partials/sidebar.hbs"}}
+      <main class="gm-command-surface-stage" aria-label="GM datapad surface">
+        {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/partials/surface-toolbar.hbs"}}
+        <div class="gm-command-surface-scrollframe" data-gm-surface-scrollframe>
+          {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
+        </div>
+      </main>
+    </div>
   </div>
 {{> "systems/foundryvtt-swse/templates/shell/partials/holopad-frame-close.hbs"
   bottomHomeAction="tablet-home"

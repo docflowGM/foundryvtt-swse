@@ -47,8 +47,9 @@ function isUnavailableText(value) {
  * @returns {Object} Cost record with status, pricing fields, metadata
  */
 export function buildStoreCostRecord(rawDoc) {
-  const cost = rawDoc?.system?.cost;
-  const costNumeric = rawDoc?.system?.costNumeric;
+  const rawPricing = rawDoc?.__storeRawPricing || rawDoc?.__storeSource?.rawPricing || null;
+  const cost = rawPricing?.cost ?? rawDoc?.system?.cost;
+  const costNumeric = rawPricing?.costNumeric ?? rawDoc?.system?.costNumeric;
 
   // Detect unavailable state: string values like "not publicly available"
   if (isUnavailableCost(cost)) {

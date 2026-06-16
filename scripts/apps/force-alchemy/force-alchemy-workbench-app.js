@@ -5,11 +5,78 @@ import { ForceAlchemyContextResolver, getForceAlchemySuggestedRiteForItem, resol
 import { FORCE_ALCHEMY_CATEGORIES, FORCE_ALCHEMY_RITES } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-data.js";
 import { ForceAlchemyStateService } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-state-service.js";
 import { ForceAlchemyMechanicsService } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-mechanics-service.js";
+import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 
 const TEMPLATE_PATH = 'systems/foundryvtt-swse/templates/apps/force-alchemy/force-alchemy-workbench.hbs';
 
+function esc(value) {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function asArray(value) {
+  return Array.isArray(value) ? value.filter(Boolean) : [];
+}
+
+function projectById(actor, projectId) {
+  const state = ForceAlchemyStateService.read(actor);
+  return asArray(state?.projects).find(project => project.id === projectId) ?? null;
+}
+
+function shouldConfirmDetail(detail) {
+  const rite = detail?.rite;
+  if (!rite) return false;
+  if (Number(rite.dspCost ?? 0) > 0 || Number(rite.creditCost ?? 0) > 0) return true;
+  if (rite.timing === 'downtime' || rite.stateKey === 'projects') return true;
+  return ['sith-weapon-surge', 'cause-mutation', 'sith-alchemy-specialist'].includes(rite.id);
+}
+
+function detailConfirmationContent(detail) {
+  const rite = detail?.rite ?? {};
+  const target = detail?.selectedTarget?.name ?? 'No target';
+  const rows = asArray(detail?.ledgerRows).map(row => `<li><strong>${esc(row.key)}:</strong> ${esc(row.value)}</li>`).join('');
+  const preview = asArray(detail?.previewLines).slice(0, 6).map(line => `<li>${esc(line)}</li>`).join('');
+  const darkSide = Number(rite.dspCost ?? 0) > 0
+    ? `<p class="hint danger"><strong>Dark Side consequence:</strong> this will increase Dark Side Score by ${esc(rite.dspCost)} when applied or completed.</p>`
+    : '';
+  return `
+    <div class="swse-force-alchemy-confirm">
+      <p>Confirm the alchemical working before it touches actor/item state.</p>
+      <ul>
+        <li><strong>Rite:</strong> ${esc(rite.name)}</li>
+        <li><strong>Target:</strong> ${esc(target)}</li>
+        ${rows}
+      </ul>
+      ${darkSide}
+      ${preview ? `<details open><summary>Result preview</summary><ul>${preview}</ul></details>` : ''}
+    </div>`;
+}
+
+async function confirmDetailApplication(detail) {
+  if (!shouldConfirmDetail(detail)) return true;
+  return SWSEDialogV2.confirm({
+    title: `Confirm ${detail?.rite?.name ?? 'Force Alchemy Rite'}`,
+    content: detailConfirmationContent(detail),
+    defaultYes: false
+  });
+}
+
+async function confirmPlain({ title, content }) {
+  return SWSEDialogV2.confirm({ title, content, defaultYes: false });
+}
+
 function firstRiteForCategory(category) {
   return FORCE_ALCHEMY_RITES.find(rite => rite.category === category)?.id ?? FORCE_ALCHEMY_RITES[0]?.id ?? null;
+}
+
+function isForceAlchemyForcePowerItem(item) {
+  const type = String(item?.type || item?.system?.type || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+  const text = `${item?.name || ''} ${item?.system?.category || ''} ${item?.system?.descriptor || ''}`.toLowerCase();
+  return type === 'forcepower' || type === 'force_power' || /force power/.test(text);
 }
 
 async function resolveActorReference(actorRef) {
@@ -217,6 +284,8 @@ export class ForceAlchemyWorkbenchApp extends BaseSWSEAppV2 {
       return;
     }
     try {
+      const confirmed = await confirmDetailApplication(detail);
+      if (!confirmed) return;
       const result = await ForceAlchemyMechanicsService.applySelection(this.actor, detail);
       const modeLabel = result.mode === 'project' ? 'pending ritual project' : result.mechanical ? 'active mechanical working' : 'staged working';
       ui.notifications?.info?.(`${detail.rite.name} recorded as a ${modeLabel}.`);
@@ -230,6 +299,12 @@ export class ForceAlchemyWorkbenchApp extends BaseSWSEAppV2 {
   async #clearSlot(stateKey) {
     if (!stateKey) return;
     try {
+      const entry = ForceAlchemyStateService.read(this.actor)?.[stateKey] ?? null;
+      const confirmed = await confirmPlain({
+        title: 'End Alchemical Working?',
+        content: `<p>End <strong>${esc(entry?.name ?? 'this working')}</strong> and remove its linked active effects?</p><p>This does not create a talisman destruction cooldown.</p>`
+      });
+      if (!confirmed) return;
       await ForceAlchemyMechanicsService.clearSlot(this.actor, stateKey);
       ui.notifications?.info?.('Cleared the alchemical working and removed its active effects.');
       this.render(false);
@@ -242,6 +317,12 @@ export class ForceAlchemyWorkbenchApp extends BaseSWSEAppV2 {
   async #destroySlot(stateKey) {
     if (!stateKey) return;
     try {
+      const entry = ForceAlchemyStateService.read(this.actor)?.[stateKey] ?? null;
+      const confirmed = await confirmPlain({
+        title: 'Destroy Talisman?',
+        content: `<p>Destroy <strong>${esc(entry?.targetName ?? entry?.name ?? 'this talisman')}</strong>?</p><p class="hint danger"><strong>Cooldown:</strong> this records the appropriate 24-hour talisman cooldown and removes linked active effects.</p>`
+      });
+      if (!confirmed) return;
       await ForceAlchemyMechanicsService.destroySlot(this.actor, stateKey);
       ui.notifications?.info?.('Destroyed the talisman, removed its active effects, and recorded its cooldown when applicable.');
       this.render(false);
@@ -254,6 +335,12 @@ export class ForceAlchemyWorkbenchApp extends BaseSWSEAppV2 {
   async #cancelProject(projectId) {
     if (!projectId) return;
     try {
+      const project = projectById(this.actor, projectId);
+      const confirmed = await confirmPlain({
+        title: 'Cancel Alchemical Project?',
+        content: `<p>Cancel <strong>${esc(project?.name ?? 'this pending project')}</strong>${project?.targetName ? ` for <strong>${esc(project.targetName)}</strong>` : ''}?</p><p>Progress tracking for this ritual will be removed.</p>`
+      });
+      if (!confirmed) return;
       await ForceAlchemyStateService.cancelProject(this.actor, projectId);
       ui.notifications?.info?.('Cancelled the pending alchemical project.');
       this.render(false);
@@ -266,6 +353,11 @@ export class ForceAlchemyWorkbenchApp extends BaseSWSEAppV2 {
   async #advanceProject(projectId) {
     if (!projectId) return;
     try {
+      const project = projectById(this.actor, projectId);
+      if (project?.completable) {
+        ui.notifications?.warn?.(`${project.name} is ready to complete; use Complete instead of adding more work.`);
+        return;
+      }
       await ForceAlchemyStateService.advanceProject(this.actor, projectId, 1);
       ui.notifications?.info?.('Advanced the pending alchemical project by one work unit.');
       this.render(false);
@@ -279,6 +371,13 @@ export class ForceAlchemyWorkbenchApp extends BaseSWSEAppV2 {
   async #completeProject(projectId) {
     if (!projectId) return;
     try {
+      const project = projectById(this.actor, projectId);
+      const rite = FORCE_ALCHEMY_RITES.find(entry => entry.id === project?.riteId);
+      const confirmed = await confirmPlain({
+        title: `Complete ${project?.name ?? 'Alchemical Project'}?`,
+        content: `<p>Complete <strong>${esc(project?.name ?? 'this project')}</strong>${project?.targetName ? ` for <strong>${esc(project.targetName)}</strong>` : ''}?</p><ul><li><strong>Force Points:</strong> ${esc(rite?.fpLabel ?? `${rite?.fpCost ?? 0} FP`)}</li><li><strong>Dark Side:</strong> ${Number(rite?.dspCost ?? 0) ? `+${esc(rite.dspCost)} DSP` : 'none'}</li><li><strong>Credits/materials:</strong> ${Number(rite?.creditCost ?? 0) ? `${Number(rite.creditCost).toLocaleString()} cr` : 'none'}</li></ul><p class="hint danger">Completion may create or transform items, record mutation flags, and post a ritual chat card.</p>`
+      });
+      if (!confirmed) return;
       const result = await ForceAlchemyMechanicsService.completeProject(this.actor, projectId);
       const label = result?.project?.name ?? 'alchemical project';
       ui.notifications?.info?.(`${label} completed.`);
@@ -319,16 +418,40 @@ export class ForceAlchemyWorkbenchApp extends BaseSWSEAppV2 {
     const uuid = data?.uuid || data?.documentUuid || data?.itemUuid || null;
     const id = data?.id || data?.itemId || data?._id || null;
     let item = id ? this.actor?.items?.get?.(id) : null;
+    let actorTarget = null;
     if (!item && uuid) {
       try {
         const document = await fromUuid(uuid);
-        if (document?.parent?.id === this.actor?.id || document?.actor?.id === this.actor?.id) item = document;
+        if (document?.documentName === 'Actor' || document?.items) actorTarget = document;
+        else if (document?.documentName === 'Token' || document?.actor) actorTarget = document.actor;
+        else if (document?.documentName === 'Item') item = document;
+        else if (document?.parent?.id === this.actor?.id || document?.actor?.id === this.actor?.id) item = document;
       } catch (error) {
         console.warn('[ForceAlchemyWorkbench] Failed to resolve dropped document', data, error);
       }
     }
+    if (!actorTarget && !item && data?.type === 'Actor' && id) actorTarget = game.actors?.get?.(id) ?? null;
+    if (!actorTarget && !item && data?.actorId) actorTarget = game.actors?.get?.(data.actorId) ?? null;
+    if (actorTarget) {
+      this.#setSelectionPatch({
+        selectedTargetId: `actor:${actorTarget.id}`,
+        selectedRiteId: 'cause-mutation',
+        activeCategory: 'mutation',
+        selectedConfig: { ...this.selectedConfig }
+      });
+      return;
+    }
     if (!item) {
-      ui.notifications?.warn?.('Drop an owned item from this actor into the alchemy workbench. Actor/creature drops arrive with the GM-gated mutation phase.');
+      ui.notifications?.warn?.('Drop an owned item, Force Power, or actor/token for the GM-gated Cause Mutation workflow.');
+      return;
+    }
+    if (isForceAlchemyForcePowerItem(item)) {
+      const preferredRite = this.selectedRiteId?.includes?.('focused-force-talisman') ? this.selectedRiteId : 'focused-force-talisman';
+      this.#setSelectionPatch({
+        selectedRiteId: preferredRite,
+        activeCategory: 'force',
+        selectedConfig: { ...this.selectedConfig, powerId: item.id || item._id || null }
+      });
       return;
     }
     const suggestion = getForceAlchemySuggestedRiteForItem(this.actor, item);

@@ -1,0 +1,43 @@
+{{!-- GM Command Holopad v2 vertical sidebar. Uses existing route handlers via data-nav-to. --}}
+<aside class="gm-command-sidebar" aria-label="GM Command Holopad navigation">
+  <div class="gm-command-sidebar__scan" aria-hidden="true"></div>
+  <header class="gm-command-sidebar__head">
+    <button type="button"
+            class="gm-command-sidebar__collapse"
+            data-gm-v2-action="toggle-sidebar"
+            title="{{#if gmShell.sidebarCollapsed}}Expand GM command sidebar{{else}}Collapse GM command sidebar{{/if}}"
+            aria-label="{{#if gmShell.sidebarCollapsed}}Expand GM command sidebar{{else}}Collapse GM command sidebar{{/if}}">
+      <i class="fa-solid {{#if gmShell.sidebarCollapsed}}fa-angles-right{{else}}fa-angles-left{{/if}}"></i>
+    </button>
+    <div class="gm-command-sidebar__eyebrow">GM Command Holopad</div>
+    <div class="gm-command-sidebar__title">HOLOCOM</div>
+    <div class="gm-command-sidebar__status {{gmShell.readinessTone}}">
+      <span class="gm-command-sidebar__status-dot"></span>
+      <span>{{gmShell.readinessLabel}}</span>
+    </div>
+  </header>
+
+  <nav class="gm-command-sidebar__list" aria-label="GM surfaces">
+    <button type="button" class="gm-command-sidebar__btn {{#if (eq currentPage 'home')}}is-active{{/if}}" data-nav-to="home">
+      <i class="fa-solid fa-house gm-command-sidebar__icon"></i>
+      <span class="gm-command-sidebar__label">Home</span>
+    </button>
+
+    {{#each appClusters}}
+      <div class="gm-command-sidebar__group">{{this.label}}</div>
+      {{#each this.apps}}
+      <button type="button" class="gm-command-sidebar__btn {{this.statusTone}} {{#if this.featured}}new-surf{{/if}} {{#if (eq ../../currentPage this.id)}}is-active{{/if}}" data-nav-to="{{this.id}}" title="{{this.description}}">
+        <i class="{{this.icon}} gm-command-sidebar__icon"></i>
+        <span class="gm-command-sidebar__label">{{this.label}}</span>
+        {{#if this.badgeCount}}<span class="gm-command-sidebar__badge {{this.badgeType}}">{{this.badgeCount}}</span>{{/if}}
+      </button>
+      {{/each}}
+      {{#unless @last}}<div class="gm-command-sidebar__divider" aria-hidden="true"></div>{{/unless}}
+    {{/each}}
+  </nav>
+
+  <footer class="gm-command-sidebar__foot">
+    <div class="gm-command-sidebar__serial">{{gmShell.serialLabel}}</div>
+    <div class="gm-command-sidebar__session">Shared shell · Session active</div>
+  </footer>
+</aside>

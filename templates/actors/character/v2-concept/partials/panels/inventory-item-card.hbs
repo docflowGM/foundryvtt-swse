@@ -20,6 +20,14 @@
       {{/each}}
     </div>
   {{/if}}
+
+  {{#if entry.alchemy.hasAlchemy}}
+    <div class="swse-alchemy-badge-row" title="Alchemical modifications tracked on this item">
+      {{#each entry.alchemy.badges as |badge|}}
+        <span class="swse-concept-chip swse-concept-chip--alchemy {{badge.tone}}">&#9959; {{badge.label}}</span>
+      {{/each}}
+    </div>
+  {{/if}}
   <div class="swse-concept-ledger-row__actions">
     <button type="button" class="swse-concept-btn" data-action="open-item" data-item-id="{{entry.id}}">Inspect</button>
     {{#if entry.canOpenForceAlchemy}}<button type="button" class="swse-concept-btn swse-concept-btn--alchemy" data-action="force-alchemy" data-item-id="{{entry.id}}">Alchemy</button>{{/if}}

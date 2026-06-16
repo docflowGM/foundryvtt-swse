@@ -161,6 +161,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this._gmTabletPreExpandRect = null;
     this._shouldCenterOnRender = true;
     this._gmTabletHasManualPlacement = false;
+    this._gmSidebarCollapsed = false;
+    this._gmSurfaceFocused = false;
   }
 
 
@@ -231,6 +233,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       urgentApps,
       hasUrgentApps: urgentApps.length > 0,
       appClusters: this._buildAppClusters(apps, appCounts),
+      gmHome: this._buildGmHomeContext(apps, appCounts),
       homeSummary: appCounts,
       user: game.user,
       ...surfaceContext,
@@ -255,11 +258,96 @@ export class GMDatapad extends BaseSWSEAppV2 {
       activeId: active.id,
       activeCode: active.code || 'OPS',
       activeLabel: active.label || 'GM Operations',
+      activeDescription: active.description || active.status || 'Shared GM command surface',
+      activeStatus: active.status || 'Surface',
+      activeBadgeCount: Number(active.badgeCount ?? 0),
+      activeBadgeType: active.badgeType || active.statusTone || 'info',
       readinessTone,
       readinessLabel,
       summaryLine: `${Number(counts.approvals ?? 0)} approvals · ${Number(counts.trade ?? 0)} trade · ${Number(counts.jobs ?? 0)} jobs`,
       serialLabel: `GM-CMD-${String(this.currentPage || 'home').toUpperCase()}`,
-      dockApps: apps.filter((app) => app.id !== 'home')
+      dockApps: apps.filter((app) => app.id !== 'home'),
+      sidebarCollapsed: this._gmSidebarCollapsed === true,
+      surfaceFocused: this._gmSurfaceFocused === true
+    };
+  }
+
+
+  _buildGmHomeContext(apps = [], counts = {}) {
+    const number = (value) => Number(value ?? 0) || 0;
+    const locationsSummary = (() => {
+      try { return LocationRegistryService.summarizeForWorkspace(); }
+      catch (err) {
+        SWSELogger.warn('[GMDatapad] Unable to summarize locations for home:', err);
+        return { count: 0, active: 0, leadDiscoveryCount: 0 };
+      }
+    })();
+    const activeLocation = (() => {
+      try {
+        const locations = LocationRegistryService.getRegistry?.() ?? [];
+        return locations.find((loc) => loc?.activeForParty || loc?.revealState === 'active')
+          ?? locations.find((loc) => loc?.knownToPlayers || loc?.revealState === 'known')
+          ?? null;
+      } catch (_err) { return null; }
+    })();
+    const partyUsers = Array.from(game.users ?? []).filter((user) => !user.isGM);
+    const onlinePlayers = partyUsers.filter((user) => user.active).length;
+    const partyActors = partyUsers.map((user) => user.character).filter(Boolean);
+    const readHp = (actor) => {
+      const hp = actor?.system?.attributes?.hp ?? actor?.system?.health ?? {};
+      const value = number(hp.value ?? hp.current ?? actor?.system?.hp?.value);
+      const max = number(hp.max ?? hp.maximum ?? actor?.system?.hp?.max);
+      return { value, max };
+    };
+    const partyHealth = partyActors.reduce((summary, actor) => {
+      const { value, max } = readHp(actor);
+      summary.current += value;
+      summary.max += max;
+      if (max > 0 && value <= 0) summary.down += 1;
+      else if (max > 0 && value < Math.ceil(max * 0.5)) summary.wounded += 1;
+      else if (max > 0) summary.healthy += 1;
+      const pct = max > 0 ? Math.max(0, Math.min(100, Math.round((value / max) * 100))) : 0;
+      summary.members.push({
+        id: actor.id,
+        name: actor.name,
+        initials: String(actor.name || '?').split(/\s+/).map((part) => part[0]).join('').slice(0, 2).toUpperCase() || '?',
+        hp: value,
+        maxHp: max,
+        pct,
+        tone: value <= 0 && max > 0 ? 'crit' : pct < 50 ? 'warn' : 'ok',
+        isDroid: String(actor.type || '').toLowerCase() === 'droid' || actor.system?.details?.species?.toLowerCase?.()?.includes?.('droid')
+      });
+      return summary;
+    }, { current: 0, max: 0, down: 0, wounded: 0, healthy: 0, members: [] });
+
+    const actionItems = [
+      { id: 'approvals', tone: 'crit', icon: 'fa-solid fa-check-circle', label: 'Pending Approvals', sub: `${number(counts.approvals)} approval request${number(counts.approvals) === 1 ? '' : 's'} awaiting GM review`, count: number(counts.approvals) },
+      { id: 'jobs', tone: 'crit', icon: 'fa-solid fa-clipboard-list', label: 'Jobs Need Review', sub: `${number(counts.jobReview)} objective review / ${number(counts.jobPayout)} payout ready`, count: number(counts.jobs) },
+      { id: 'trade', tone: 'crit', icon: 'fa-solid fa-right-left', label: 'Failed Settlements', sub: `${number(counts.tradeFailed)} failed trade settlement${number(counts.tradeFailed) === 1 ? '' : 's'} requiring attention`, count: number(counts.tradeFailed) },
+      { id: 'store', tone: 'warn', icon: 'fa-solid fa-store', label: 'Store Pending', sub: `${number(counts.pendingSales)} sales / ${number(counts.storeApprovals)} purchase approvals`, count: number(counts.store) },
+      { id: 'bulletin', tone: 'warn', icon: 'fa-solid fa-newspaper', label: 'Bulletin Signals', sub: `${number(counts.bulletin)} live or draft Holonet records`, count: number(counts.bulletin) },
+      { id: 'healing', tone: 'info', icon: 'fa-solid fa-heart-pulse', label: 'Healing Eligible', sub: `${number(counts.healing)} party member${number(counts.healing) === 1 ? '' : 's'} eligible for recovery`, count: number(counts.healing) },
+      { id: 'locations', tone: locationsSummary.leadDiscoveryCount ? 'ok' : 'info', icon: 'fa-solid fa-map-location-dot', label: 'Location Leads', sub: `${number(locationsSummary.leadDiscoveryCount)} unresolved Atlas lead${number(locationsSummary.leadDiscoveryCount) === 1 ? '' : 's'} / ${number(locationsSummary.count)} registered locations`, count: number(locationsSummary.leadDiscoveryCount) }
+    ].filter((item) => item.count > 0 || ['healing', 'locations'].includes(item.id));
+
+    const quickLaunch = apps
+      .filter((app) => app.featured || ['house-rules', 'settings'].includes(app.id))
+      .map((app) => ({ ...app, tone: app.statusTone || (app.id === 'locations' ? 'ok' : '') }));
+
+    return {
+      sessionLabel: 'Session Console',
+      currentLocation: activeLocation?.name || 'Unassigned Location',
+      currentLocationSub: activeLocation ? [activeLocation.typeLabel || activeLocation.type, activeLocation.categoryLabel || activeLocation.category].filter(Boolean).join(' · ') : 'No active location has been set.',
+      onlinePlayers,
+      totalPlayers: partyUsers.length,
+      partyHealth,
+      actionItems,
+      quickLaunch,
+      actionCount: actionItems.reduce((sum, item) => sum + (item.tone === 'crit' ? item.count : 0), 0) + number(counts.store) + number(counts.bulletin),
+      activeJobs: number(counts.jobActive),
+      creditsLabel: '—',
+      locationLeadCount: number(locationsSummary.leadDiscoveryCount),
+      locationCount: number(locationsSummary.count)
     };
   }
 
@@ -1191,6 +1279,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       });
     });
 
+    this._wireGmDatapadV2Chrome(root);
+
     // Let extracted surface controllers own page-local DOM wiring when available.
     const handledBySurfaceController = await GMSurfaceControllerRegistry.bind({
       surfaceId: this.currentPage,
@@ -1199,6 +1289,46 @@ export class GMDatapad extends BaseSWSEAppV2 {
     });
     if (handledBySurfaceController) return;
 
+  }
+
+
+  _wireGmDatapadV2Chrome(root) {
+    if (!(root instanceof HTMLElement)) return;
+    const shell = root.querySelector?.('[data-gm-command-shell]');
+    const scrollFrame = root.querySelector?.('[data-gm-surface-scrollframe]');
+
+    root.querySelectorAll('[data-gm-v2-action]').forEach((btn) => {
+      btn.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const action = String(ev.currentTarget?.dataset?.gmV2Action || '');
+        switch (action) {
+          case 'toggle-sidebar':
+            this._gmSidebarCollapsed = !this._gmSidebarCollapsed;
+            shell?.classList?.toggle?.('is-sidebar-collapsed', this._gmSidebarCollapsed);
+            ev.currentTarget?.setAttribute?.('aria-label', this._gmSidebarCollapsed ? 'Expand GM command sidebar' : 'Collapse GM command sidebar');
+            ev.currentTarget?.setAttribute?.('title', this._gmSidebarCollapsed ? 'Expand GM command sidebar' : 'Collapse GM command sidebar');
+            const icon = ev.currentTarget?.querySelector?.('i');
+            icon?.classList?.toggle?.('fa-angles-right', this._gmSidebarCollapsed);
+            icon?.classList?.toggle?.('fa-angles-left', !this._gmSidebarCollapsed);
+            return;
+          case 'toggle-focus':
+            this._gmSurfaceFocused = !this._gmSurfaceFocused;
+            shell?.classList?.toggle?.('is-surface-focused', this._gmSurfaceFocused);
+            void this.requestSurfaceRender({ reason: 'gm-v2-toggle-focus', surfaceId: this.currentPage, preserveUi: true });
+            return;
+          case 'refresh-surface':
+            void this.requestSurfaceRender({ reason: 'gm-v2-toolbar-refresh', surfaceId: this.currentPage, preserveUi: true });
+            return;
+          case 'scroll-top':
+            (scrollFrame || root.querySelector?.('.gm-command-surface-stage'))?.scrollTo?.({ top: 0, left: 0, behavior: 'smooth' });
+            root.querySelector?.('.swse-shell-surface-host')?.scrollTo?.({ top: 0, left: 0, behavior: 'smooth' });
+            return;
+          default:
+            return;
+        }
+      });
+    });
   }
 
   async _handleEconomyRepairAction({ action = '', kind = '', sessionId = '', threadId = '', recordId = '', selectRecordId = '', note = '' } = {}) {

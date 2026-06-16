@@ -41,6 +41,7 @@ import { buildLevelUpEntitlementManifest, getManifestStartingFeatNameSet, normal
 import { isDroidProgressionActor } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js';
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 import { ForceRules } from '/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js';
+import { PrereqAdapter } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/prereq-adapter.js';
 
 function resolveClassLookupKeysForFeatStep(shell) {
   try {
@@ -600,6 +601,7 @@ export class FeatStep extends ProgressionStepPlugin {
     const legal = [];
     this._availabilityByFeatId = new Map();
     const pendingAbilityData = this._buildPendingAbilityData(shell);
+    const evaluationActor = this._buildEvaluationActorForPrereqs(actor, shell);
     const classLookupKeys = resolveClassLookupKeysForFeatStep(shell);
     const isMulticlassStartingFeatSlot = this._isLevelupMulticlassStartingFeatSlot(shell);
     const multiclassStartingFeatNames = isMulticlassStartingFeatSlot
@@ -622,7 +624,7 @@ export class FeatStep extends ProgressionStepPlugin {
       );
 
       if (selectedClass) {
-        const ledger = buildClassGrantLedger(actor, selectedClass, pendingAbilityData);
+        const ledger = buildClassGrantLedger(evaluationActor || actor, selectedClass, pendingAbilityData);
         const merged = mergeLedgerIntoPending(pendingAbilityData, ledger);
 
         for (const grant of [
@@ -646,7 +648,7 @@ export class FeatStep extends ProgressionStepPlugin {
       });
     }
 
-    const textualFeatPrereqOwnership = buildFeatPrerequisiteOwnershipNames(actor, pendingAbilityData, classGrantedFeats);
+    const textualFeatPrereqOwnership = buildFeatPrerequisiteOwnershipNames(evaluationActor || actor, pendingAbilityData, classGrantedFeats);
 
     for (const feat of this._allFeats) {
       if (isMulticlassStartingFeatSlot && !multiclassStartingFeatNames.has(normalizeManifestName(feat?.name || feat?.id || feat?._id))) {
@@ -665,7 +667,7 @@ export class FeatStep extends ProgressionStepPlugin {
       };
 
       try {
-        const assessment = AbilityEngine.evaluateAcquisition(actor, feat, pendingAbilityData) || {};
+        const assessment = AbilityEngine.evaluateAcquisition(evaluationActor || actor, feat, pendingAbilityData) || {};
         status.missingPrerequisites = this._dedupeReasonList(Array.isArray(assessment.missingPrereqs) ? assessment.missingPrereqs : []);
         status.blockingReasons = this._dedupeReasonList(Array.isArray(assessment.blockingReasons) ? assessment.blockingReasons : []);
         const unmetChoiceFeatPrereqs = getUnmetChoiceFeatPrerequisites(feat, textualFeatPrereqOwnership);
@@ -679,7 +681,7 @@ export class FeatStep extends ProgressionStepPlugin {
         const slotValidation = await FeatSlotValidator.validateFeatForSlot(
           feat,
           { slotType: this._slotType, classId: this._classId, classLookupKeys },
-          actor
+          evaluationActor || actor
         );
         status.slotCompatible = isMulticlassStartingFeatSlot
           ? multiclassStartingFeatNames.has(normalizeManifestName(feat.name))
@@ -879,6 +881,12 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   _isFeatSelectionForThisSlot(feat) {
+    const expectedSlotKey = this.descriptor?.reconciliationContext?.slotId || this.descriptor?.stepId || null;
+    if (this.descriptor?.reconciliationContext && expectedSlotKey) {
+      const featSlotKey = feat?.slotKey || feat?.reconciliationSlotId || feat?.slotId || feat?.stepId || null;
+      if (featSlotKey) return String(featSlotKey) === String(expectedSlotKey) || String(featSlotKey) === String(this.descriptor?.stepId || '');
+      return false;
+    }
     const slotType = String(feat?.slotType || '').toLowerCase();
     if (this._slotType === 'class') {
       return slotType === 'class' || String(feat?.source || '').toLowerCase().includes('class');
@@ -891,6 +899,7 @@ export class FeatStep extends ProgressionStepPlugin {
   }
 
   _getRequiredFeatCount(shell) {
+    if (this.descriptor?.reconciliationContext) return 1;
     if (this._slotType === 'class') return 1;
 
     const mode = shell?.mode || shell?.progressionSession?.mode || 'chargen';
@@ -968,12 +977,67 @@ export class FeatStep extends ProgressionStepPlugin {
       iconPath: resolveFeatIconPath(feat) || feat.iconPath || feat.img || undefined,
       slotType: this._slotType,
       source: isMulticlassStartingFeat ? 'multiclass-starting-feat' : this._slotType,
+      slotKey: this.descriptor?.reconciliationContext?.slotId || this.descriptor?.stepId || this._slotType,
+      stepId: this.descriptor?.stepId || null,
       levelupGrantKind: isMulticlassStartingFeat ? 'multiclassStartingFeat' : undefined,
+      ...(this.descriptor?.reconciliationContext || {}),
+      characterLevel: this.descriptor?.reconciliationContext?.characterLevel || this.descriptor?.characterLevel || undefined,
+      classLevel: this.descriptor?.reconciliationContext?.classLevel || this.descriptor?.classLevel || undefined,
+      classId: this.descriptor?.reconciliationContext?.classId || this.descriptor?.classId || undefined,
+      className: this.descriptor?.reconciliationContext?.className || this.descriptor?.className || undefined,
+      sourceClassId: this.descriptor?.reconciliationContext?.classId || this.descriptor?.classId || undefined,
+      sourceClass: this.descriptor?.reconciliationContext?.className || this.descriptor?.className || undefined,
+      sourceCharacterLevel: this.descriptor?.reconciliationContext?.characterLevel || this.descriptor?.characterLevel || undefined,
     };
   }
 
   _getCurrentClassLookupKeys(shell) {
     return resolveClassLookupKeysForFeatStep(shell);
+  }
+
+  _buildEvaluationActorForPrereqs(actor, shell) {
+    const recoveryContext = this.descriptor?.reconciliationContext || null;
+    if (!recoveryContext) return actor;
+    return PrereqAdapter.buildHistoricalEvaluationContext(actor, recoveryContext, {
+      draftSelections: shell?.progressionSession?.draftSelections || {},
+      stepId: this.descriptor?.stepId || null,
+    });
+  }
+
+  _scopePendingAbilityDataForRecovery(pending = {}, shell = null) {
+    const recoveryContext = this.descriptor?.reconciliationContext || null;
+    if (!recoveryContext) return pending;
+    const targetLevel = Number(recoveryContext.characterLevel || recoveryContext.sourceCharacterLevel || recoveryContext.level || 0) || 0;
+    const keepForLevel = (entry) => {
+      const entryLevel = Number(entry?.characterLevel ?? entry?.sourceCharacterLevel ?? entry?.level ?? 0) || 0;
+      return entryLevel <= 0 || targetLevel <= 0 || entryLevel <= targetLevel;
+    };
+    const out = {
+      ...(pending || {}),
+      reconciliationContext: { ...recoveryContext },
+      historicalEvaluation: true,
+    };
+    for (const key of ['selectedFeats', 'selectedTalents', 'selectedForcePowers', 'grantedFeats', 'grantedProficiencies']) {
+      if (Array.isArray(out[key])) out[key] = out[key].filter(keepForLevel);
+    }
+    if (recoveryContext.classId || recoveryContext.className) {
+      out.selectedClass = {
+        ...(typeof out.selectedClass === 'object' && out.selectedClass ? out.selectedClass : {}),
+        id: recoveryContext.classId || out.selectedClass?.id || out.selectedClass,
+        classId: recoveryContext.classId || out.selectedClass?.classId || out.selectedClass?.id || '',
+        sourceId: recoveryContext.classId || out.selectedClass?.sourceId || '',
+        name: recoveryContext.className || out.selectedClass?.name || recoveryContext.classId || '',
+        level: recoveryContext.classLevel || out.selectedClass?.level || undefined,
+      };
+    }
+    swseLogger.debug('[FeatStep] Scoped pending data for reconciliation recovery', {
+      stepId: this.descriptor?.stepId || null,
+      slotId: recoveryContext.slotId || null,
+      targetLevel,
+      selectedFeats: out.selectedFeats?.length || 0,
+      selectedTalents: out.selectedTalents?.length || 0,
+    });
+    return out;
   }
 
   _buildPendingAbilityData(shell) {
@@ -1000,10 +1064,10 @@ export class FeatStep extends ProgressionStepPlugin {
     // Derive class-granted features (feats, proficiencies, force sensitivity)
     if (selectedClass && shell?.actor) {
       const ledger = buildClassGrantLedger(shell.actor, selectedClass, basePending);
-      return mergeLedgerIntoPending(basePending, ledger);
+      return this._scopePendingAbilityDataForRecovery(mergeLedgerIntoPending(basePending, ledger), shell);
     }
 
-    return basePending;
+    return this._scopePendingAbilityDataForRecovery(basePending, shell);
   }
 
   /**
@@ -1714,7 +1778,8 @@ export class FeatStep extends ProgressionStepPlugin {
       if (choiceMeta?.required && choiceSource !== 'grantPool') {
         const pendingForChoice = this._buildPendingAbilityData(shell);
         pendingForChoice.selectedFeats = currentSlotSelections;
-        const selectedChoice = await FeatChoiceDialog.prompt(shell.actor, feat, {
+        const evaluationActor = this._buildEvaluationActorForPrereqs(shell.actor, shell);
+        const selectedChoice = await FeatChoiceDialog.prompt(evaluationActor || shell.actor, feat, {
           title: localizeProgressionText('SWSE.Progression.Feat.Messages.ChooseTitle', { feat: feat.name }),
           context: { pending: pendingForChoice }
         });
@@ -1727,7 +1792,7 @@ export class FeatStep extends ProgressionStepPlugin {
           return;
         }
 
-        const choiceValidation = await FeatChoiceResolver.validateSelectedChoice(shell.actor, feat, selectedChoice, { pending: pendingForChoice });
+        const choiceValidation = await FeatChoiceResolver.validateSelectedChoice(evaluationActor || shell.actor, feat, selectedChoice, { pending: pendingForChoice });
         if (!choiceValidation.valid) {
           ui.notifications?.warn?.(choiceValidation.errors?.join(' ') || localizeProgressionText('SWSE.Progression.Feat.Messages.ChoiceNotLegal'));
           emitFeatStepTrace('ITEM_COMMIT_REJECTED_FOR_CHOICE_LEGALITY', {
@@ -1751,7 +1816,7 @@ export class FeatStep extends ProgressionStepPlugin {
           selectedChoice,
           candidateChoice: selectedChoice
         };
-        const choiceAwareAssessment = AbilityEngine.evaluateAcquisition(shell.actor, candidateWithChoice, selectedChoicePending);
+        const choiceAwareAssessment = AbilityEngine.evaluateAcquisition(evaluationActor || shell.actor, candidateWithChoice, selectedChoicePending);
         if (!choiceAwareAssessment?.legal) {
           const reasons = choiceAwareAssessment?.blockingReasons || choiceAwareAssessment?.missingPrereqs || [localizeProgressionText('SWSE.Progression.Feat.Messages.PrereqsNotMetForChoice')];
           ui.notifications?.warn?.(reasons.join(' '));

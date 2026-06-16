@@ -617,6 +617,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
 
 
   _selectionKeyForStep(stepId) {
+    const descriptor = this.steps?.find?.(entry => entry?.stepId === stepId) || null;
+    const canonicalStepId = descriptor?.canonicalStepId || descriptor?.baseStepId || stepId;
     const aliases = {
       species: 'species',
       attributes: 'attributes',
@@ -655,7 +657,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
       'starship-maneuver': 'starshipManeuvers',
       'starship-maneuvers': 'starshipManeuvers',
     };
-    return aliases[stepId] || stepId || null;
+    return aliases[canonicalStepId] || aliases[stepId] || canonicalStepId || stepId || null;
   }
 
   _isEmptySelectionValue(value) {
@@ -1942,7 +1944,10 @@ export class ProgressionShell extends SWSEApplicationV2 {
         totalSteps: this.steps.length,
         isFirstStep: this.currentStepIndex === 0,
         isLastStep: this.currentStepIndex === this.steps.length - 1,
-        displayText: `Step ${this.currentStepIndex + 1} of ${this.steps.length}`,
+        displayText: currentDescriptor?.reconciliationContext?.characterLevel
+          ? `Recovery Level  — Step  of `
+          : `Step  of `,
+        recovery: currentDescriptor?.reconciliationContext || null,
       },
 
       // Region states
@@ -2948,62 +2953,6 @@ export class ProgressionShell extends SWSEApplicationV2 {
     await this._onFinalizeProgression();
   }
 
-  async _clearCompletedProgressionPersistence(result = {}) {
-    if (!this.actor) return;
-
-    const fallbackSessionData = {
-      sessionId: this.progressionSession?.sessionId || this.element?.dataset?.sessionId || null,
-      currentStepId: this.progressionSession?.currentStepId || null,
-      completedStepIds: Array.from(this.progressionSession?.completedStepIds || []),
-      visitedStepIds: Array.from(this.progressionSession?.visitedStepIds || []),
-    };
-
-    let sessionData = fallbackSessionData;
-    if (SessionStorage._compileSessionData && this.progressionSession) {
-      try {
-        sessionData = SessionStorage._compileSessionData(this.progressionSession, this.mode) || fallbackSessionData;
-      } catch (err) {
-        swseLogger.warn('[ProgressionShell] Failed to compile completion session data; using fallback marker', {
-          actorId: this.actor?.id || null,
-          mode: this.mode,
-          error: err?.message || String(err),
-        });
-      }
-    }
-
-    try {
-      await SessionStorage.markSessionCompleted?.(this.actor, {
-        ...sessionData,
-        sessionId: sessionData?.sessionId || result?.result?.sessionId || result?.sessionId || this.element?.dataset?.sessionId || null,
-      }, this.mode);
-    } catch (err) {
-      swseLogger.warn('[ProgressionShell] Failed to mark completed session', err);
-    }
-
-    const modesToClear = new Set([this.mode]);
-    if (this.mode === 'chargen') modesToClear.add('character-generation');
-    if (this.mode === 'character-generation') modesToClear.add('chargen');
-    if (this.mode === 'levelup') modesToClear.add('level-up');
-
-    for (const mode of modesToClear) {
-      try {
-        await SessionStorage.clearSession(this.actor, mode);
-      } catch (err) {
-        swseLogger.warn('[ProgressionShell] Failed to clear saved progression session', {
-          actorId: this.actor?.id || null,
-          mode,
-          error: err?.message || String(err),
-        });
-      }
-    }
-
-    try {
-      await this.clearCheckpoints();
-    } catch (err) {
-      swseLogger.warn('[ProgressionShell] Failed to clear progression checkpoints', err);
-    }
-  }
-
   /**
    * Finalization gateway — single seam to ActorEngine.
    *
@@ -3072,9 +3021,8 @@ export class ProgressionShell extends SWSEApplicationV2 {
         swseLogger.log('[ProgressionShell] Finalization successful');
         ui.notifications.info(result.message || (this._singleStepMode === true ? 'Progression choice resolved.' : 'Character progression complete!'));
 
-        // Clear both persistence lanes after successful finalization. A completed
-        // chargen/levelup session must never be auto-resumed from the Holopad.
-        await this._clearCompletedProgressionPersistence(result);
+        // Phase 3: Clear checkpoints after successful finalization
+        await this.clearCheckpoints();
 
         // Inline holopad mode: return the hosting character sheet to the real
         // character sheet surface. This makes Confirm feel like a completed

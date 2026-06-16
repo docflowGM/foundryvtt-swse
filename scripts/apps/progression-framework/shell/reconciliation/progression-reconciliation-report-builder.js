@@ -5,6 +5,8 @@
  * serializable remediation-action skeleton. Reports now say not only what is
  * missing/ambiguous/overfilled, but also what UI action can resolve it.
  */
+import { ProgressionTimelineBuilder } from './progression-timeline-builder.js';
+
 export class ProgressionReconciliationReportBuilder {
   build(actor, entitlementPlan = {}, ownership = {}, _options = {}) {
     const rawSlots = entitlementPlan?.slots || {};
@@ -23,7 +25,7 @@ export class ProgressionReconciliationReportBuilder {
 
     const report = {
       kind: 'swse-actor-progression-reconciliation',
-      version: 7,
+      version: 8,
       actorId: actor?.id || entitlementPlan?.actorId || null,
       actorName: actor?.name || entitlementPlan?.actorName || 'Actor',
       totalLevel: Number(entitlementPlan?.totalLevel || 0) || 0,
@@ -38,12 +40,13 @@ export class ProgressionReconciliationReportBuilder {
         ownership: ownership?.diagnostics || { layer: 'ownership-classifier' },
         report: {
           layer: 'reconciliation-report-builder',
-          phase: 6,
+          phase: 7,
           ambiguousCrediting: true,
           remediationActions: true,
           classProgressionSource: 'class-compendium-ssot',
           cadenceFallback: false,
           derivedStatsAudit: true,
+          timelineBuilder: true,
         },
       },
       warnings: [],
@@ -94,6 +97,9 @@ export class ProgressionReconciliationReportBuilder {
     if (derivedIssueCount > 0) {
       report.warnings.push(`${derivedIssueCount} derived class stat${derivedIssueCount === 1 ? '' : 's'} need review`);
     }
+
+    report.timeline = new ProgressionTimelineBuilder().build(report, { source: 'report-builder' });
+    report.layers.timeline = report.timeline?.diagnostics || { layer: 'progression-timeline-builder' };
 
     return report;
   }

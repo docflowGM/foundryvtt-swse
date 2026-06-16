@@ -1,11 +1,12 @@
 // scripts/apps/force-alchemy/force-alchemy-mechanics-service.js
-// Phase 3 mechanical application for instant Force Artifact / Sith Alchemy rites.
+// Mechanical application for Force Artifact / Sith Alchemy rites.
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import {
   FORCE_ALCHEMY_FLAG_SCOPE,
   FORCE_ALCHEMY_FLAG_KEY,
+  FORCE_ALCHEMY_TEMPLATES,
   FORCE_ALCHEMY_SPECIALIST_TRAITS,
   getForceAlchemyRite,
   normalizeForceAlchemyKey
@@ -324,7 +325,7 @@ function effectsForDetail(detail, { stateKey, entryId = null, resourceChanges = 
       entryId,
       suffix: 'Damage Surge Ready',
       summary: `${rite.name}: +${damageBonus} damage with ${targetName} on the next damage roll.`,
-      details: [`Sith Weapon: ${targetName}`, `Damage bonus: +${damageBonus} from current Dark Side Score`, 'Apply to one damage roll before encounter end, then clear this effect manually.', 'Roll-path auto-consumption is intentionally deferred.'],
+      details: [`Sith Weapon: ${targetName}`, `Damage bonus: +${damageBonus} from current Dark Side Score`, 'Apply to one damage roll before encounter end, then clear this effect manually.'],
       severity: 'danger',
       durationLabel: 'One damage roll',
       tags: ['sith-weapon', 'damage-surge']
@@ -419,9 +420,201 @@ async function applyResourceCosts(actor, detail) {
   return { before, after, spent: { forcePoints: fpCost, darkSideScore: dspCost, credits: creditCost } };
 }
 
+async function revertResourceCosts(actor, resourceChanges) {
+  if (!actor || !resourceChanges?.before) return;
+  const before = resourceChanges.before;
+  const updates = {};
+  if (Object.hasOwn(before, 'forcePoints')) updates['system.forcePoints.value'] = before.forcePoints;
+  if (Object.hasOwn(before, 'darkSideScore')) {
+    updates['system.darkSide.value'] = before.darkSideScore;
+    updates['system.darkSideScore'] = before.darkSideScore;
+  }
+  if (Object.hasOwn(before, 'credits')) updates[creditUpdatePath(actor)] = before.credits;
+  if (Object.keys(updates).length) {
+    await ActorEngine.updateActor(actor, updates, { source: 'force-alchemy:resource-cost-rollback' });
+  }
+}
+
+async function withResourceCostRollback(actor, detail, operation) {
+  const resourceChanges = await applyResourceCosts(actor, detail);
+  try {
+    return await operation(resourceChanges);
+  } catch (error) {
+    await revertResourceCosts(actor, resourceChanges).catch((rollbackError) => {
+      console.error('[ForceAlchemy] Resource rollback failed after ritual error', rollbackError);
+    });
+    throw error;
+  }
+}
+
 function getOwnedItem(actor, itemId) {
   if (!itemId || itemId === '__materials__') return null;
   return actor?.items?.get?.(itemId) ?? Array.from(actor?.items ?? []).find(item => (item?.id ?? item?._id) === itemId) ?? null;
+}
+
+
+function actorIdFromMutationTargetId(targetId) {
+  const value = String(targetId ?? '');
+  return value.startsWith('actor:') ? value.slice(6) : value;
+}
+
+async function resolveActorByUuidOrId(uuid, id) {
+  if (uuid) {
+    try {
+      const doc = await fromUuid(uuid);
+      if (doc?.documentName === 'Actor' || doc?.items) return doc;
+      if (doc?.documentName === 'Token' || doc?.actor) return doc.actor;
+    } catch (error) {
+      console.warn('[ForceAlchemy] Failed to resolve mutation target actor UUID', uuid, error);
+    }
+  }
+  const actorId = actorIdFromMutationTargetId(id);
+  return game?.actors?.get?.(actorId) ?? null;
+}
+
+function resolveActorByUuidOrIdSync(uuid, id) {
+  if (uuid && globalThis.fromUuidSync) {
+    try {
+      const doc = fromUuidSync(uuid);
+      if (doc?.documentName === 'Actor' || doc?.items) return doc;
+      if (doc?.documentName === 'Token' || doc?.actor) return doc.actor;
+    } catch (_error) {
+      // Fall through to id lookup.
+    }
+  }
+  const actorId = actorIdFromMutationTargetId(id);
+  return game?.actors?.get?.(actorId) ?? null;
+}
+
+function mutationTemplateDefinition(templateId) {
+  const wanted = normalizeToken(templateId);
+  return FORCE_ALCHEMY_TEMPLATES.find(template => normalizeToken(template.id) === wanted) ?? null;
+}
+
+function mutationKindForTemplate(templateId) {
+  const key = normalizeToken(templateId);
+  if (key.includes('chrysalis')) return 'chrysalis-beast';
+  return 'sith-abomination';
+}
+
+function getActorAlchemyFlags(actor) {
+  return actor?.flags?.[EFFECT_SCOPE]?.alchemy ?? actor?.flags?.swse?.alchemy ?? {};
+}
+
+function validateMutationProject(project) {
+  const config = project?.config ?? {};
+  const template = mutationTemplateDefinition(config.templateId);
+  if (!template) throw new Error('Choose a Sith Abomination or Chrysalis Beast template before completing Cause Mutation.');
+  if (config.gmConfirmed !== true) throw new Error('Cause Mutation requires explicit GM approval before completion.');
+  return template;
+}
+
+function buildMutationFlagData(creatorActor, targetActor, project, template, resourceChanges) {
+  const existing = getActorAlchemyFlags(targetActor);
+  const kind = mutationKindForTemplate(template.id);
+  return {
+    ...existing,
+    kind,
+    alchemyKind: kind,
+    sourceRiteId: 'cause-mutation',
+    mutationStatus: 'gm-adjudication-recorded',
+    targetProjectId: project?.id ?? null,
+    templateId: template.id,
+    templateName: template.name,
+    creatorActorId: creatorActor?.id ?? null,
+    creatorActorUuid: creatorActor?.uuid ?? null,
+    creatorName: creatorActor?.name ?? null,
+    domesticatedToCreator: true,
+    domesticatedToActorId: creatorActor?.id ?? null,
+    domesticatedToActorUuid: creatorActor?.uuid ?? null,
+    createdAt: existing.createdAt ?? nowIso(),
+    completedAt: nowIso(),
+    traits: asArray(existing.traits),
+    properties: {
+      ...(existing.properties && typeof existing.properties === 'object' ? existing.properties : {}),
+      alchemicalCreature: true,
+      sithAbomination: kind === 'sith-abomination',
+      chrysalisBeast: kind === 'chrysalis-beast',
+      eligibleForSithAlchemySpecialist: kind === 'sith-abomination',
+      requiresManualTemplateApplication: true
+    },
+    notes: {
+      ...(existing.notes && typeof existing.notes === 'object' ? existing.notes : {}),
+      causeMutation: 'Template stat changes are GM-adjudicated. This flag records that the mutation ritual completed.'
+    },
+    resourceChanges
+  };
+}
+
+function mutationReminderEffect(project, template, targetActor, creatorActor) {
+  const kind = mutationKindForTemplate(template.id);
+  return {
+    name: `Cause Mutation: ${template.name}`,
+    label: `Cause Mutation: ${template.name}`,
+    icon: targetActor?.img || 'icons/magic/unholy/orb-swirling-pink.webp',
+    disabled: false,
+    origin: targetActor?.uuid ?? null,
+    changes: [],
+    duration: {},
+    flags: {
+      [EFFECT_SCOPE]: {
+        forceAlchemyEffect: {
+          stateKey: 'projects',
+          entryId: project?.id ?? null,
+          riteId: 'cause-mutation',
+          riteName: 'Cause Mutation',
+          targetId: targetActor?.id ?? null,
+          targetUuid: targetActor?.uuid ?? null,
+          targetName: targetActor?.name ?? null,
+          createdAt: nowIso()
+        },
+        effectState: effectState({
+          summary: `${template.name} mutation recorded; template statistics require GM adjudication.`,
+          sourceName: 'Cause Mutation',
+          details: [
+            `Creator: ${creatorActor?.name ?? 'Unknown creator'}`,
+            `Mutation kind: ${kind.replace(/-/g, ' ')}`,
+            'The target is domesticated to the creator unless already domesticated.',
+            'No stat block rewrite was applied automatically.'
+          ],
+          severity: 'warning',
+          tags: ['force-alchemy', 'cause-mutation', kind],
+          durationLabel: 'Permanent / GM adjudicated',
+          removable: true
+        })
+      }
+    }
+  };
+}
+
+async function applyMutationFlagsToActor(creatorActor, targetActor, project, resourceChanges) {
+  const template = validateMutationProject(project);
+  const alchemyFlags = buildMutationFlagData(creatorActor, targetActor, project, template, resourceChanges);
+  const updates = {
+    [`flags.${EFFECT_SCOPE}.alchemy`]: alchemyFlags,
+    'flags.swse.alchemy': alchemyFlags,
+    [`flags.${EFFECT_SCOPE}.forceAlchemyMutation`]: {
+      projectId: project?.id ?? null,
+      templateId: template.id,
+      templateName: template.name,
+      creatorActorId: creatorActor?.id ?? null,
+      creatorName: creatorActor?.name ?? null,
+      completedAt: nowIso(),
+      requiresManualTemplateApplication: true
+    },
+    'flags.swse.forceAlchemyMutation': {
+      projectId: project?.id ?? null,
+      templateId: template.id,
+      templateName: template.name,
+      creatorActorId: creatorActor?.id ?? null,
+      creatorName: creatorActor?.name ?? null,
+      completedAt: nowIso(),
+      requiresManualTemplateApplication: true
+    }
+  };
+  await ActorEngine.updateActor(targetActor, updates, { source: 'force-alchemy:cause-mutation-complete' });
+  const effectIds = await createEffects(targetActor, [mutationReminderEffect(project, template, targetActor, creatorActor)]);
+  return { alchemyFlags, template, effectIds };
 }
 
 function getItemAlchemyFlags(item) {
@@ -534,6 +727,108 @@ async function markItemAsSithWeapon(actor, item, project, resourceChanges) {
   };
   await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [update], { source: 'force-alchemy:sith-weapon-complete' });
   return alchemyFlags;
+}
+
+const INSTANT_ITEM_RITE_IDS = new Set([
+  'force-talisman',
+  'greater-force-talisman',
+  'focused-force-talisman',
+  'greater-focused-force-talisman',
+  'dark-side-talisman',
+  'greater-dark-side-talisman',
+  'sith-talisman'
+]);
+
+function isInstantItemAlchemyRite(riteId) {
+  return INSTANT_ITEM_RITE_IDS.has(String(riteId || ''));
+}
+
+function instantAlchemyKindForRite(riteId, existingKind = null) {
+  if (riteId === 'dark-side-talisman' || riteId === 'greater-dark-side-talisman') return 'dark-side-talisman';
+  if (riteId === 'sith-talisman') return 'sith-talisman';
+  if (riteId === 'focused-force-talisman' || riteId === 'greater-focused-force-talisman') return normalizeToken(existingKind) || 'force-talisman';
+  return 'force-talisman';
+}
+
+function buildInstantAlchemyDescription(item, detail) {
+  const current = getItemDescriptionValue(item);
+  const rite = detail?.rite ?? {};
+  const marker = `Force Alchemy Workbench: ${rite.name}`;
+  if (current.includes(marker)) return current;
+  const targetBits = [];
+  const defense = detail?.selectedDefense?.label ?? detail?.selectedConfig?.defenseLabel ?? null;
+  const power = detail?.selectedPower?.name ?? detail?.selectedConfig?.powerName ?? null;
+  if (defense) targetBits.push(`Selected defense: ${esc(defense)}.`);
+  if (power) targetBits.push(`Focused Force Power: ${esc(power)}.`);
+  if (rite.id === 'sith-talisman') targetBits.push('While carried, this talisman adds +1d6 damage with Force Powers.');
+  if (rite.id === 'dark-side-talisman' || rite.id === 'greater-dark-side-talisman') targetBits.push('Its protection applies against Force Powers with the Light Side descriptor.');
+  if (rite.id === 'greater-force-talisman' || rite.id === 'greater-dark-side-talisman') targetBits.push('This greater working applies to all defenses listed by the rite.');
+  const note = `<hr><p><strong>${esc(marker)}:</strong> ${esc(rite.resultLabel ?? 'This item is carrying an alchemical working.')} ${targetBits.join(' ')}</p>`;
+  return `${current || ''}${note}`;
+}
+
+function buildInstantAlchemyFlagData(actor, item, detail, resourceChanges) {
+  const rite = detail?.rite ?? {};
+  const existing = getItemAlchemyFlags(item);
+  const existingKind = existing.kind || existing.alchemyKind || existing.targetKind;
+  const kind = instantAlchemyKindForRite(rite.id, existingKind);
+  const config = detail?.selectedConfig && typeof detail.selectedConfig === 'object' ? foundry.utils.deepClone(detail.selectedConfig) : {};
+  if (detail?.selectedDefense) {
+    config.defense = detail.selectedDefense.id;
+    config.defenseLabel = detail.selectedDefense.label;
+  }
+  if (detail?.selectedPower) {
+    config.powerId = detail.selectedPower.id;
+    config.powerUuid = detail.selectedPower.uuid ?? null;
+    config.powerName = detail.selectedPower.name;
+  }
+  return {
+    ...existing,
+    kind,
+    alchemyKind: kind,
+    sourceRiteId: rite.id,
+    sourceRiteName: rite.name,
+    creatorActorId: actor?.id ?? existing.creatorActorId ?? null,
+    creatorActorUuid: actor?.uuid ?? existing.creatorActorUuid ?? null,
+    creatorName: actor?.name ?? existing.creatorName ?? null,
+    createdAt: existing.createdAt ?? nowIso(),
+    updatedAt: nowIso(),
+    activeStateKey: rite.stateKey ?? existing.activeStateKey ?? null,
+    selectedDefense: config.defense ?? existing.selectedDefense ?? null,
+    selectedDefenseLabel: config.defenseLabel ?? existing.selectedDefenseLabel ?? null,
+    selectedForcePowerId: config.powerId ?? existing.selectedForcePowerId ?? null,
+    selectedForcePowerUuid: config.powerUuid ?? existing.selectedForcePowerUuid ?? null,
+    selectedForcePowerName: config.powerName ?? existing.selectedForcePowerName ?? null,
+    traits: asArray(existing.traits),
+    config: {
+      ...(existing.config && typeof existing.config === 'object' ? existing.config : {}),
+      ...config
+    },
+    properties: {
+      ...(existing.properties && typeof existing.properties === 'object' ? existing.properties : {}),
+      forceAlchemyTalisman: kind.includes('talisman'),
+      greaterWorking: rite.id?.startsWith?.('greater-') === true,
+      focusedWorking: rite.id === 'focused-force-talisman' || rite.id === 'greater-focused-force-talisman',
+      darkSideWorking: rite.id === 'dark-side-talisman' || rite.id === 'greater-dark-side-talisman' || rite.id === 'sith-talisman'
+    },
+    resourceChanges
+  };
+}
+
+async function markItemForInstantAlchemyRite(actor, detail, resourceChanges) {
+  const riteId = detail?.rite?.id;
+  if (!isInstantItemAlchemyRite(riteId)) return null;
+  const item = getOwnedItem(actor, detail?.selectedTarget?.id);
+  if (!item?.id) throw new Error(`${detail?.rite?.name ?? 'This rite'} requires an owned item target to mark as alchemical.`);
+  const alchemyFlags = buildInstantAlchemyFlagData(actor, item, detail, resourceChanges);
+  const update = {
+    _id: item.id,
+    [`flags.${EFFECT_SCOPE}.alchemy`]: alchemyFlags,
+    'flags.swse.alchemy': alchemyFlags,
+    [itemDescriptionUpdatePath(item)]: buildInstantAlchemyDescription(item, detail)
+  };
+  await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [update], { source: 'force-alchemy:instant-item-flags' });
+  return { item, alchemyFlags };
 }
 
 const SITH_ARMOR_PROFILES = {
@@ -769,7 +1064,18 @@ async function applySpecialistTraitToItem(actor, item, project, resourceChanges)
 function detailFromProject(actor, project) {
   const rite = getForceAlchemyRite(project?.riteId);
   const item = getOwnedItem(actor, project?.targetId);
-  const target = item ? {
+  const mutationActor = project?.riteId === 'cause-mutation' ? resolveActorByUuidOrIdSync(project?.targetUuid, project?.targetId) : null;
+  const target = mutationActor ? {
+    id: `actor:${mutationActor.id}`,
+    actorId: mutationActor.id,
+    uuid: mutationActor.uuid ?? null,
+    name: mutationActor.name ?? project?.targetName ?? 'Mutation target',
+    icon: mutationActor.img ?? null,
+    kind: 'creature',
+    alchemyKind: getActorAlchemyFlags(mutationActor)?.kind ?? null,
+    challengeLevel: project?.config?.challengeLevel ?? project?.requiredUnits ?? 1,
+    existingTraits: []
+  } : item ? {
     id: item.id,
     uuid: item.uuid ?? null,
     name: item.name ?? project?.targetName ?? 'Alchemical project target',
@@ -787,15 +1093,20 @@ function detailFromProject(actor, project) {
     existingTraits: []
   };
   const trait = project?.riteId === 'sith-alchemy-specialist' ? traitDefinition(project?.config?.traitId) : null;
+  const template = project?.riteId === 'cause-mutation' ? mutationTemplateDefinition(project?.config?.templateId) : null;
   return {
     rite,
     ready: true,
     selectedTarget: target,
     selectedConfig: project?.config ?? {},
     selectedTrait: trait,
+    selectedTemplate: template,
     previewLines: [
       `Target: ${target.name}`,
       trait ? `Trait: ${trait.name}` : null,
+      template ? `Template: ${template.name}` : null,
+      project?.riteId === 'cause-mutation' ? 'GM approval was confirmed before project recording.' : null,
+      project?.riteId === 'cause-mutation' ? 'Template statistics are not auto-rewritten; completion records target actor flags and a visible reminder effect.' : null,
       `Result: ${rite?.resultLabel ?? project?.resultLabel ?? 'Completed alchemical project'}`,
       'Completion spends the listed completion costs.'
     ].filter(Boolean)
@@ -838,10 +1149,10 @@ export async function applyForceAlchemySelection(actor, detail) {
       validateSpecialistTraitTarget(actor, item, detail?.selectedTrait?.id ?? detail?.selectedConfig?.traitId);
     }
     const result = await ForceAlchemyStateService.recordSelection(actor, detail);
-    await postRiteChat(actor, detail, { mode: 'project recorded', effectCount: 0 });
+    await postRiteChat(actor, detail, { mode: 'project recorded', effectCount: 0 }).catch((error) => console.warn('[ForceAlchemy] Chat card failed', error));
     return { ...result, mechanical: false, mode: 'project' };
   }
-  if (!isMechanicalRite(rite)) throw new Error(`${rite.name} is not supported by the Phase 3 mechanical pass.`);
+  if (!isMechanicalRite(rite)) throw new Error(`${rite.name} is not supported by the Force Alchemy mechanical workflow.`);
 
   validateCosts(actor, detail);
   const stateKey = stateKeyForDetail(detail);
@@ -855,14 +1166,19 @@ export async function applyForceAlchemySelection(actor, detail) {
     configPatch: rite.id === 'rapid-alchemy' ? { surgeReady: true, surgeConsumed: false } : {}
   });
 
+  let resourceChanges = null;
   try {
-    const resourceChanges = await applyResourceCosts(actor, detail);
+    resourceChanges = await applyResourceCosts(actor, detail);
     const effects = effectsForDetail(detail, { stateKey, entryId: initial.entry?.id ?? null, resourceChanges });
     const effectIds = await createEffects(actor, effects);
+    const instantItemResult = await markItemForInstantAlchemyRite(actor, detail, resourceChanges);
     const status = rite.timing === 'encounter' ? 'encounter-active' : 'active';
     const nextConfig = rite.id === 'sith-weapon-surge'
       ? { ...(initial.entry?.config ?? {}), damageSurgeReady: true, damageBonus: numberFrom(resourceChanges?.before?.darkSideScore) }
-      : initial.entry?.config;
+      : {
+          ...(initial.entry?.config ?? {}),
+          itemAlchemyKind: instantItemResult?.alchemyFlags?.kind ?? initial.entry?.config?.itemAlchemyKind ?? null
+        };
     const state = await ForceAlchemyStateService.updateSlot(actor, stateKey, {
       status,
       appliedAt: nowIso(),
@@ -872,11 +1188,12 @@ export async function applyForceAlchemySelection(actor, detail) {
       pendingEffects: false,
       pendingCosts: false
     });
-    await postRiteChat(actor, detail, { mode: status, resourceChanges, effectCount: effectIds.length });
-    return { mode: 'applied', entry: state?.[stateKey] ?? initial.entry, state, effectIds, resourceChanges, mechanical: true };
+    await postRiteChat(actor, detail, { mode: status, resourceChanges, effectCount: effectIds.length }).catch((error) => console.warn('[ForceAlchemy] Chat card failed', error));
+    return { mode: 'applied', entry: state?.[stateKey] ?? initial.entry, state, effectIds, resourceChanges, item: instantItemResult?.item ?? null, alchemyFlags: instantItemResult?.alchemyFlags ?? null, mechanical: true };
   } catch (error) {
     await deleteEntryEffects(actor, stateKey).catch(() => null);
     await ForceAlchemyStateService.clearSlot(actor, stateKey).catch(() => null);
+    if (resourceChanges) await revertResourceCosts(actor, resourceChanges).catch((rollbackError) => console.error('[ForceAlchemy] Could not roll back instant rite costs', rollbackError));
     throw error;
   }
 }
@@ -895,74 +1212,110 @@ export async function completeForceAlchemyMechanicalProject(actor, projectId) {
   if (project.riteId === 'sith-weapon') {
     const item = getOwnedItem(actor, project.targetId);
     if (!item) throw new Error(`Could not find the project target item "${project.targetName}" on this actor.`);
-    const resourceChanges = await applyResourceCosts(actor, detail);
-    const alchemyFlags = await markItemAsSithWeapon(actor, item, project, resourceChanges);
-    const completion = await ForceAlchemyStateService.completeProject(actor, projectId, {
-      resourceChanges,
-      itemUuid: item.uuid ?? null,
-      itemId: item.id ?? null,
-      alchemyKind: alchemyFlags.kind,
-      completionMode: 'sith-weapon-item-flags'
+    return withResourceCostRollback(actor, detail, async (resourceChanges) => {
+      const alchemyFlags = await markItemAsSithWeapon(actor, item, project, resourceChanges);
+      const completion = await ForceAlchemyStateService.completeProject(actor, projectId, {
+        resourceChanges,
+        itemUuid: item.uuid ?? null,
+        itemId: item.id ?? null,
+        alchemyKind: alchemyFlags.kind,
+        completionMode: 'sith-weapon-item-flags'
+      });
+      await postRiteChat(actor, detail, { mode: 'sith weapon completed', resourceChanges, effectCount: 0 }).catch((error) => console.warn('[ForceAlchemy] Chat card failed', error));
+      return { ...completion, item, alchemyFlags, resourceChanges };
     });
-    await postRiteChat(actor, detail, { mode: 'sith weapon completed', resourceChanges, effectCount: 0 });
-    return { ...completion, item, alchemyFlags, resourceChanges };
   }
 
   if (project.riteId === 'sith-amulet') {
-    const resourceChanges = await applyResourceCosts(actor, detail);
-    const { item, alchemyFlags } = await createSithAmuletItem(actor, project, resourceChanges);
-    const completion = await ForceAlchemyStateService.completeProject(actor, projectId, {
-      resourceChanges,
-      itemUuid: item.uuid ?? null,
-      itemId: item.id ?? null,
-      alchemyKind: alchemyFlags.kind,
-      completionMode: 'sith-amulet-item-create'
+    return withResourceCostRollback(actor, detail, async (resourceChanges) => {
+      const { item, alchemyFlags } = await createSithAmuletItem(actor, project, resourceChanges);
+      const completion = await ForceAlchemyStateService.completeProject(actor, projectId, {
+        resourceChanges,
+        itemUuid: item.uuid ?? null,
+        itemId: item.id ?? null,
+        alchemyKind: alchemyFlags.kind,
+        completionMode: 'sith-amulet-item-create'
+      });
+      await postRiteChat(actor, { ...detail, selectedTarget: { ...(detail.selectedTarget ?? {}), name: item.name, id: item.id, uuid: item.uuid } }, { mode: 'sith amulet completed', resourceChanges, effectCount: 0 }).catch((error) => console.warn('[ForceAlchemy] Chat card failed', error));
+      return { ...completion, item, alchemyFlags, resourceChanges };
     });
-    await postRiteChat(actor, { ...detail, selectedTarget: { ...(detail.selectedTarget ?? {}), name: item.name, id: item.id, uuid: item.uuid } }, { mode: 'sith amulet completed', resourceChanges, effectCount: 0 });
-    return { ...completion, item, alchemyFlags, resourceChanges };
   }
 
   if (project.riteId === 'sith-armor') {
     const item = getOwnedItem(actor, project.targetId);
     if (!item) throw new Error(`Could not find the project target armor "${project.targetName}" on this actor.`);
-    const resourceChanges = await applyResourceCosts(actor, detail);
-    const { alchemyFlags, profile } = await markItemAsSithArmor(actor, item, project, resourceChanges);
-    const completion = await ForceAlchemyStateService.completeProject(actor, projectId, {
-      resourceChanges,
-      itemUuid: item.uuid ?? null,
-      itemId: item.id ?? null,
-      alchemyKind: alchemyFlags.kind,
-      resultName: profile.resultName,
-      completionMode: 'sith-armor-item-transform'
+    return withResourceCostRollback(actor, detail, async (resourceChanges) => {
+      const { alchemyFlags, profile } = await markItemAsSithArmor(actor, item, project, resourceChanges);
+      const completion = await ForceAlchemyStateService.completeProject(actor, projectId, {
+        resourceChanges,
+        itemUuid: item.uuid ?? null,
+        itemId: item.id ?? null,
+        alchemyKind: alchemyFlags.kind,
+        resultName: profile.resultName,
+        completionMode: 'sith-armor-item-transform'
+      });
+      await postRiteChat(actor, { ...detail, selectedTarget: { ...(detail.selectedTarget ?? {}), name: profile.resultName } }, { mode: 'sith armor completed', resourceChanges, effectCount: 0 }).catch((error) => console.warn('[ForceAlchemy] Chat card failed', error));
+      return { ...completion, item, alchemyFlags, profile, resourceChanges };
     });
-    await postRiteChat(actor, { ...detail, selectedTarget: { ...(detail.selectedTarget ?? {}), name: profile.resultName } }, { mode: 'sith armor completed', resourceChanges, effectCount: 0 });
-    return { ...completion, item, alchemyFlags, profile, resourceChanges };
   }
 
   if (project.riteId === 'sith-alchemy-specialist') {
     const item = getOwnedItem(actor, project.targetId);
     if (!item) throw new Error(`Could not find the Specialist target "${project.targetName}" on this actor.`);
-    const resourceChanges = await applyResourceCosts(actor, detail);
-    const { alchemyFlags, trait, targetKind } = await applySpecialistTraitToItem(actor, item, project, resourceChanges);
-    const completion = await ForceAlchemyStateService.completeProject(actor, projectId, {
-      resourceChanges,
-      itemUuid: item.uuid ?? null,
-      itemId: item.id ?? null,
-      alchemyKind: targetKind,
-      traitId: trait.id,
-      traitName: trait.name,
-      completionMode: 'sith-alchemy-specialist-trait'
+    return withResourceCostRollback(actor, detail, async (resourceChanges) => {
+      const { alchemyFlags, trait, targetKind } = await applySpecialistTraitToItem(actor, item, project, resourceChanges);
+      const completion = await ForceAlchemyStateService.completeProject(actor, projectId, {
+        resourceChanges,
+        itemUuid: item.uuid ?? null,
+        itemId: item.id ?? null,
+        alchemyKind: targetKind,
+        traitId: trait.id,
+        traitName: trait.name,
+        completionMode: 'sith-alchemy-specialist-trait'
+      });
+      await postRiteChat(actor, {
+        ...detail,
+        selectedTarget: { ...(detail.selectedTarget ?? {}), name: item.name, id: item.id, uuid: item.uuid },
+        selectedTrait: trait,
+        previewLines: [`Target: ${item.name}`, `Trait applied: ${trait.name}`, `Flag: flags.${EFFECT_SCOPE}.alchemy.traits[]`]
+      }, { mode: 'specialist trait completed', resourceChanges, effectCount: 0 }).catch((error) => console.warn('[ForceAlchemy] Chat card failed', error));
+      return { ...completion, item, alchemyFlags, trait, targetKind, resourceChanges };
     });
-    await postRiteChat(actor, {
-      ...detail,
-      selectedTarget: { ...(detail.selectedTarget ?? {}), name: item.name, id: item.id, uuid: item.uuid },
-      selectedTrait: trait,
-      previewLines: [`Target: ${item.name}`, `Trait applied: ${trait.name}`, `Flag: flags.${EFFECT_SCOPE}.alchemy.traits[]`]
-    }, { mode: 'specialist trait completed', resourceChanges, effectCount: 0 });
-    return { ...completion, item, alchemyFlags, trait, targetKind, resourceChanges };
   }
 
-  throw new Error(`${project.name} completion is not implemented yet. Cause Mutation remains deferred to the GM-gated phase.`);
+  if (project.riteId === 'cause-mutation') {
+    const targetActor = await resolveActorByUuidOrId(project.targetUuid, project.targetId);
+    if (!targetActor) throw new Error(`Could not find the mutation target actor "${project.targetName}".`);
+    const template = validateMutationProject(project);
+    return withResourceCostRollback(actor, detail, async (resourceChanges) => {
+      const { alchemyFlags, effectIds } = await applyMutationFlagsToActor(actor, targetActor, project, resourceChanges);
+      const completion = await ForceAlchemyStateService.completeProject(actor, projectId, {
+        resourceChanges,
+        targetActorUuid: targetActor.uuid ?? null,
+        targetActorId: targetActor.id ?? null,
+        alchemyKind: alchemyFlags.kind,
+        templateId: template.id,
+        templateName: template.name,
+        effectIds,
+        completionMode: 'mutation-gm-gated-actor-flags'
+      });
+      await postRiteChat(actor, {
+        ...detail,
+        selectedTarget: { ...(detail.selectedTarget ?? {}), name: targetActor.name, id: `actor:${targetActor.id}`, uuid: targetActor.uuid },
+        selectedTemplate: template,
+        previewLines: [
+          `Target actor: ${targetActor.name}`,
+          `Template recorded: ${template.name}`,
+          `Flag: flags.${EFFECT_SCOPE}.alchemy.kind = ${alchemyFlags.kind}`,
+          'No automatic template stat rewrite was performed.',
+          'A visible GM-adjudication reminder effect was placed on the target actor.'
+        ]
+      }, { mode: 'cause mutation completed', resourceChanges, effectCount: effectIds.length }).catch((error) => console.warn('[ForceAlchemy] Chat card failed', error));
+      return { ...completion, targetActor, alchemyFlags, template, effectIds, resourceChanges };
+    });
+  }
+
+  throw new Error(`${project.name} completion is not implemented yet.`);
 }
 
 
@@ -984,7 +1337,7 @@ export async function consumeRapidAlchemySurge(actor) {
 
   await deleteForceAlchemyEffects(actor, data => data.stateKey === 'rapidAlchemy' && data.riteId === 'rapid-alchemy');
   const effectIds = await createEffects(actor, [damageSurgeEffect(entry)]);
-  const nextEffectIds = [...asArray(entry.effectIds).filter(id => !effectIds.includes(id)), ...effectIds];
+  const nextEffectIds = effectIds;
   const stateAfter = await ForceAlchemyStateService.updateSlot(actor, 'rapidAlchemy', {
     status: 'encounter-surge-ready',
     effectIds: nextEffectIds,

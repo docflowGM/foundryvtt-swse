@@ -1,0 +1,72 @@
+<section class="prog-reconciliation-overview swse-card-schema swse-card-schema--choice">
+  <header class="prog-reconciliation-overview__header">
+    <div>
+      <p class="prog-kicker">Progression Recovery</p>
+      <h2>Recovery Briefing: {{actorName}}</h2>
+      <p>
+        This character has unresolved progression history. The recovery engine will walk through missing choices as normal steps,
+        oldest level first, so prerequisites can be evaluated at the right point in the character timeline.
+      </p>
+    </div>
+    <div class="prog-reconciliation-overview__status">
+      <span class="prog-chip prog-chip--warning">{{choiceTaskCount}} choice step{{#unless (eq choiceTaskCount 1)}}s{{/unless}}</span>
+      {{#if reviewTaskCount}}<span class="prog-chip prog-chip--neutral">{{reviewTaskCount}} review item{{#unless (eq reviewTaskCount 1)}}s{{/unless}}</span>{{/if}}
+    </div>
+  </header>
+
+  {{#if classSummaries.length}}
+  <div class="prog-reconciliation-overview__classes">
+    {{#each classSummaries}}
+      <span class="prog-chip">{{className}} {{level}}</span>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  {{#if warnings.length}}
+  <div class="prog-reconciliation-overview__warnings">
+    {{#each warnings}}
+      <div class="prog-reconciliation-overview__warning"><i class="fas fa-triangle-exclamation"></i> {{this}}</div>
+    {{/each}}
+  </div>
+  {{/if}}
+
+  <div class="prog-reconciliation-overview__timeline">
+    {{#if levels.length}}
+      {{#each levels}}
+        <article class="prog-reconciliation-level">
+          <header class="prog-reconciliation-level__header">
+            <h3>{{label}}</h3>
+            <span>{{tasks.length}} item{{#unless (eq tasks.length 1)}}s{{/unless}}</span>
+          </header>
+          <div class="prog-reconciliation-level__tasks">
+            {{#each tasks}}
+              <div class="prog-reconciliation-task prog-reconciliation-task--{{status}}" data-reconciliation-task-id="{{id}}">
+                <span class="prog-reconciliation-task__icon">
+                  {{#if resolutionStepId}}<i class="fas fa-arrow-right"></i>{{else}}<i class="fas fa-magnifying-glass-chart"></i>{{/if}}
+                </span>
+                <span class="prog-reconciliation-task__body">
+                  <strong>{{label}}</strong>
+                  {{#if className}}<em>{{className}}{{#if classLevel}} {{classLevel}}{{/if}}</em>{{/if}}
+                  {{#if detail}}<small>{{detail}}</small>{{/if}}
+                </span>
+                <span class="prog-reconciliation-task__status">
+                  {{#if resolutionStepId}}Step{{else}}Review{{/if}}
+                </span>
+              </div>
+            {{/each}}
+          </div>
+        </article>
+      {{/each}}
+    {{else}}
+      <div class="prog-reconciliation-empty">
+        <i class="fas fa-check-circle"></i>
+        <strong>No progression recovery is required.</strong>
+        <span>The actor appears reconciled.</span>
+      </div>
+    {{/if}}
+  </div>
+
+  <footer class="prog-reconciliation-overview__footer">
+    <p>Click <strong>Next</strong> to begin recovery. Each following step is scoped to the listed historical level.</p>
+  </footer>
+</section>

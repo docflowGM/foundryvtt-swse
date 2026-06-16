@@ -37,6 +37,7 @@ import { getDroidTalentTreeName } from '/systems/foundryvtt-swse/scripts/engine/
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { HouseRuleTalentCombination } from '/systems/foundryvtt-swse/scripts/houserules/houserule-talent-combination.js';
+import { PrereqAdapter } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/prereq-adapter.js';
 
 function emitTalentStepTrace(label, payload = {}) {
   // Only emit traces if debug mode is explicitly enabled
@@ -1035,6 +1036,7 @@ export class TalentStep extends ProgressionStepPlugin {
     const talents = await this._getTalentsForTreeCached(tree, shell?.actor);
     const otherSelectedKeys = this._getSelectedTalentKeys(shell, { excludeSlotType: this._slotType });
     const ownedTalentKeys = this._getOwnedTalentKeys(shell?.actor);
+    const evaluationActor = this._buildEvaluationActorForPrereqs(shell?.actor, shell);
     const legal = [];
 
     for (const talent of talents || []) {
@@ -1045,7 +1047,7 @@ export class TalentStep extends ProgressionStepPlugin {
       let prereqDetails = { legal: true };
       try {
         prereqDetails = shell?.actor
-          ? await this._getPrerequisiteDetails(shell.actor, talent, pendingData)
+          ? await this._getPrerequisiteDetails(evaluationActor || shell.actor, talent, pendingData)
           : { legal: true };
       } catch (_err) {
         prereqDetails = { legal: false };
@@ -1210,6 +1212,51 @@ export class TalentStep extends ProgressionStepPlugin {
     };
   }
 
+  _buildEvaluationActorForPrereqs(actor, shell) {
+    const recoveryContext = this.descriptor?.reconciliationContext || null;
+    if (!recoveryContext) return actor;
+    return PrereqAdapter.buildHistoricalEvaluationContext(actor, recoveryContext, {
+      draftSelections: shell?.progressionSession?.draftSelections || {},
+      stepId: this.descriptor?.stepId || null,
+    });
+  }
+
+  _scopePendingAbilityDataForRecovery(pending = {}, shell = null) {
+    const recoveryContext = this.descriptor?.reconciliationContext || null;
+    if (!recoveryContext) return pending;
+    const targetLevel = Number(recoveryContext.characterLevel || recoveryContext.sourceCharacterLevel || recoveryContext.level || 0) || 0;
+    const keepForLevel = (entry) => {
+      const entryLevel = Number(entry?.characterLevel ?? entry?.sourceCharacterLevel ?? entry?.level ?? 0) || 0;
+      return entryLevel <= 0 || targetLevel <= 0 || entryLevel <= targetLevel;
+    };
+    const out = {
+      ...(pending || {}),
+      reconciliationContext: { ...recoveryContext },
+      historicalEvaluation: true,
+    };
+    for (const key of ['selectedFeats', 'selectedTalents', 'selectedForcePowers', 'grantedFeats', 'grantedProficiencies']) {
+      if (Array.isArray(out[key])) out[key] = out[key].filter(keepForLevel);
+    }
+    if (recoveryContext.classId || recoveryContext.className) {
+      out.selectedClass = {
+        ...(typeof out.selectedClass === 'object' && out.selectedClass ? out.selectedClass : {}),
+        id: recoveryContext.classId || out.selectedClass?.id || out.selectedClass,
+        classId: recoveryContext.classId || out.selectedClass?.classId || out.selectedClass?.id || '',
+        sourceId: recoveryContext.classId || out.selectedClass?.sourceId || '',
+        name: recoveryContext.className || out.selectedClass?.name || recoveryContext.classId || '',
+        level: recoveryContext.classLevel || out.selectedClass?.level || undefined,
+      };
+    }
+    SWSELogger.debug('[TalentStep] Scoped pending data for reconciliation recovery', {
+      stepId: this.descriptor?.stepId || null,
+      slotId: recoveryContext.slotId || null,
+      targetLevel,
+      selectedFeats: out.selectedFeats?.length || 0,
+      selectedTalents: out.selectedTalents?.length || 0,
+    });
+    return out;
+  }
+
   _buildPendingAbilityData(shell) {
     const characterData = this._buildCharacterDataFromShell(shell);
     const selectedSkills = Array.isArray(characterData.skills?.trained)
@@ -1234,11 +1281,11 @@ export class TalentStep extends ProgressionStepPlugin {
 
     // Derive class-granted features (feats, proficiencies, force sensitivity)
     if (selectedClass && shell?.actor) {
-      const ledger = buildClassGrantLedger(shell.actor, selectedClass, basePending);
-      return mergeLedgerIntoPending(basePending, ledger);
+      const ledger = buildClassGrantLedger(this._buildEvaluationActorForPrereqs(shell.actor, shell) || shell.actor, selectedClass, basePending);
+      return this._scopePendingAbilityDataForRecovery(mergeLedgerIntoPending(basePending, ledger), shell);
     }
 
-    return basePending;
+    return this._scopePendingAbilityDataForRecovery(basePending, shell);
   }
 
   _buildNodeStates() {
@@ -1345,6 +1392,14 @@ export class TalentStep extends ProgressionStepPlugin {
       stepId: this.descriptor?.stepId || this.descriptor?.id || null,
       source: this._slotType,
       treeId: this._selectedTreeId || talent.talent_tree || talent.system?.talent_tree || null,
+      ...(this.descriptor?.reconciliationContext || {}),
+      characterLevel: this.descriptor?.reconciliationContext?.characterLevel || this.descriptor?.characterLevel || undefined,
+      classLevel: this.descriptor?.reconciliationContext?.classLevel || this.descriptor?.classLevel || undefined,
+      classId: this.descriptor?.reconciliationContext?.classId || this.descriptor?.classId || undefined,
+      className: this.descriptor?.reconciliationContext?.className || this.descriptor?.className || undefined,
+      sourceClassId: this.descriptor?.reconciliationContext?.classId || this.descriptor?.classId || undefined,
+      sourceClass: this.descriptor?.reconciliationContext?.className || this.descriptor?.className || undefined,
+      sourceCharacterLevel: this.descriptor?.reconciliationContext?.characterLevel || this.descriptor?.characterLevel || undefined,
     };
   }
 
@@ -1986,6 +2041,7 @@ export class TalentStep extends ProgressionStepPlugin {
     const nodeStates = {};
     const shell = context?.shell || null;
     const pendingAbilityData = this._buildPendingAbilityData(shell);
+    const evaluationActor = this._buildEvaluationActorForPrereqs(shell?.actor, shell);
     const otherSelectedKeys = this._getSelectedTalentKeys(shell, { excludeSlotType: this._slotType });
     const ownedTalentKeys = this._getOwnedTalentKeys(shell?.actor);
     if (this._graphData?.nodes) {
@@ -1993,7 +2049,7 @@ export class TalentStep extends ProgressionStepPlugin {
         const talent = node.talent;
         let prereqDetails = { legal: true, missing: [], blocking: [] };
         try {
-          prereqDetails = await this._getPrerequisiteDetails(shell?.actor, talent, pendingAbilityData);
+          prereqDetails = await this._getPrerequisiteDetails(evaluationActor || shell?.actor, talent, pendingAbilityData);
         } catch (_err) {
           prereqDetails = { legal: true, missing: [], blocking: [] };
         }
@@ -2235,7 +2291,8 @@ export class TalentStep extends ProgressionStepPlugin {
     // Evaluate talent legality using the same pending state as the planner list.
     const actor = shell?.actor || null;
     const pendingAbilityData = this._buildPendingAbilityData(shell);
-    const prereqDetails = actor ? await this._getPrerequisiteDetails(actor, talent, pendingAbilityData) : { legal: true, missing: [], blocking: [] };
+    const evaluationActor = this._buildEvaluationActorForPrereqs(actor, shell);
+    const prereqDetails = actor ? await this._getPrerequisiteDetails(evaluationActor || actor, talent, pendingAbilityData) : { legal: true, missing: [], blocking: [] };
     const meetsPrereqs = prereqDetails.legal !== false;
     const missingPrereqs = (prereqDetails.missing || prereqDetails.blocking || [])
       .map(toDisplayText)
@@ -2414,7 +2471,8 @@ export class TalentStep extends ProgressionStepPlugin {
         if (choiceMeta?.required && choiceSource !== 'grantPool') {
           const pendingForChoice = this._buildPendingAbilityData(shell);
           pendingForChoice.selectedTalents = currentSelections;
-          const selectedChoice = await FeatChoiceDialog.prompt(shell.actor, talent, {
+          const evaluationActor = this._buildEvaluationActorForPrereqs(shell.actor, shell);
+          const selectedChoice = await FeatChoiceDialog.prompt(evaluationActor || shell.actor, talent, {
             title: `Choose: ${talent.name}`,
             context: { pending: pendingForChoice }
           });
@@ -2427,7 +2485,7 @@ export class TalentStep extends ProgressionStepPlugin {
             return;
           }
 
-          const choiceValidation = await FeatChoiceResolver.validateSelectedChoice(shell.actor, talent, selectedChoice, { pending: pendingForChoice });
+          const choiceValidation = await FeatChoiceResolver.validateSelectedChoice(evaluationActor || shell.actor, talent, selectedChoice, { pending: pendingForChoice });
           if (!choiceValidation.valid) {
             ui.notifications?.warn?.(choiceValidation.errors?.join(' ') || 'That talent choice is not currently legal.');
             emitTalentStepTrace('ITEM_COMMIT_REJECTED_FOR_CHOICE_LEGALITY', {
@@ -2446,7 +2504,7 @@ export class TalentStep extends ProgressionStepPlugin {
               selectedChoice
             }
           };
-          const choiceAwareAssessment = AbilityEngine.evaluateAcquisition(shell.actor, candidateWithChoice, {
+          const choiceAwareAssessment = AbilityEngine.evaluateAcquisition(evaluationActor || shell.actor, candidateWithChoice, {
             ...pendingForChoice,
             selectedChoice,
             candidateChoice: selectedChoice

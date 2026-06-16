@@ -47,6 +47,48 @@
 
 
 
+
+
+  {{#if conceptLayout.force.forceSuite.forceAlchemy.hasAny}}
+  <section class="force-alchemy-status-panel">
+    <header>
+      <div>
+        <span class="force-alchemy-status-panel__eyebrow">Ritual State</span>
+        <strong>Force Artifacts &amp; Sith Alchemy</strong>
+      </div>
+      <button type="button" class="suite-action suite-action--alchemy" data-action="open-force-alchemy-workbench" title="Open the Force Artifact / Sith Alchemy Workbench">Open Workbench</button>
+    </header>
+
+    {{#if conceptLayout.force.forceSuite.forceAlchemy.hasActive}}
+      <div class="force-alchemy-status-grid">
+        {{#each conceptLayout.force.forceSuite.forceAlchemy.active as |entry|}}
+          <article class="force-alchemy-status-card tone-{{entry.tone}}">
+            <span class="force-alchemy-status-card__label">{{entry.label}}</span>
+            <strong>{{entry.targetName}}</strong>
+            <small>{{entry.configLabel}}{{#unless entry.configLabel}}{{entry.status}}{{/unless}}</small>
+          </article>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    {{#if conceptLayout.force.forceSuite.forceAlchemy.hasProjects}}
+      <div class="force-alchemy-status-strip">
+        {{#each conceptLayout.force.forceSuite.forceAlchemy.projects as |project|}}
+          <span class="force-alchemy-status-pill {{#if project.completable}}ready{{/if}}">{{project.name}} · {{project.progressLabel}}</span>
+        {{/each}}
+      </div>
+    {{/if}}
+
+    {{#if conceptLayout.force.forceSuite.forceAlchemy.hasCooldowns}}
+      <div class="force-alchemy-status-strip force-alchemy-status-strip--cooldowns">
+        {{#each conceptLayout.force.forceSuite.forceAlchemy.cooldowns as |cooldown|}}
+          <span class="force-alchemy-status-pill cooldown">{{cooldown.label}} · {{cooldown.hours}}h</span>
+        {{/each}}
+      </div>
+    {{/if}}
+  </section>
+  {{/if}}
+
   {{#if conceptLayout.force.forceSuite.lightsaberFormState.hasKnown}}
   <section class="lf-active-panel" data-lightsaber-form-panel>
     <div class="lf-active-panel__main">

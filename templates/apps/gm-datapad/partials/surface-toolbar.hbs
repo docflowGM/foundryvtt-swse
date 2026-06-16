@@ -1,0 +1,44 @@
+{{!-- GM Datapad v2 universal surface toolbar. Keeps shared shell actions available across every GM surface. --}}
+<header class="gm-command-surface-toolbar" data-gm-command-toolbar>
+  <div class="gm-command-surface-toolbar__identity">
+    <span class="gm-command-surface-toolbar__code">{{gmShell.activeCode}}</span>
+    <span class="gm-command-surface-toolbar__copy">
+      <strong>{{gmShell.activeLabel}}</strong>
+      <em>{{gmShell.activeDescription}}</em>
+    </span>
+  </div>
+
+  <div class="gm-command-surface-toolbar__status {{gmShell.readinessTone}}">
+    <span class="gm-command-surface-toolbar__pulse"></span>
+    <span>{{gmShell.readinessLabel}}</span>
+  </div>
+
+  <div class="gm-command-surface-toolbar__metrics" aria-label="Surface metrics">
+    {{#if gmShell.activeBadgeCount}}
+      <span class="gm-command-surface-toolbar__metric {{gmShell.activeBadgeType}}">
+        <b>{{gmShell.activeBadgeCount}}</b>
+        <small>{{gmShell.activeStatus}}</small>
+      </span>
+    {{/if}}
+    <span class="gm-command-surface-toolbar__metric crit">
+      <b>{{gmHome.actionCount}}</b>
+      <small>Queued</small>
+    </span>
+    <span class="gm-command-surface-toolbar__metric info">
+      <b>{{gmHome.locationLeadCount}}</b>
+      <small>Leads</small>
+    </span>
+  </div>
+
+  <div class="gm-command-surface-toolbar__actions" aria-label="GM surface controls">
+    <button type="button" class="gm-command-surface-toolbar__btn" data-gm-v2-action="scroll-top" title="Scroll current surface to top">
+      <i class="fa-solid fa-arrow-up"></i><span>Top</span>
+    </button>
+    <button type="button" class="gm-command-surface-toolbar__btn" data-gm-v2-action="refresh-surface" title="Refresh current surface">
+      <i class="fa-solid fa-rotate-right"></i><span>Refresh</span>
+    </button>
+    <button type="button" class="gm-command-surface-toolbar__btn {{#if gmShell.surfaceFocused}}is-active{{/if}}" data-gm-v2-action="toggle-focus" title="{{#if gmShell.surfaceFocused}}Exit focus mode{{else}}Focus current surface{{/if}}">
+      <i class="fa-solid {{#if gmShell.surfaceFocused}}fa-compress{{else}}fa-expand{{/if}}"></i><span>{{#if gmShell.surfaceFocused}}Standard{{else}}Focus{{/if}}</span>
+    </button>
+  </div>
+</header>

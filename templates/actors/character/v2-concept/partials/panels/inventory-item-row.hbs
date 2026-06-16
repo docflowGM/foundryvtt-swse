@@ -6,6 +6,7 @@
       {{#if entry.equipped}}<span>Equipped</span>{{/if}}
       {{#if entry.isNaturalWeapon}}<span>Natural</span>{{/if}}
       {{#each entry.tags as |tag|}}<span>{{tag}}</span>{{/each}}
+      {{#if entry.alchemy.hasAlchemy}}{{#each entry.alchemy.badges as |badge|}}<span class="swse-alchemy-row-tag">&#9959; {{badge.label}}</span>{{/each}}{{/if}}
     </div>
   </div>
 

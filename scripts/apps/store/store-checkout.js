@@ -30,6 +30,25 @@ import { isStoreItemPurchasable } from "/systems/foundryvtt-swse/scripts/engine/
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
 
 
+
+function positiveCreditsOrNull(value) {
+    if (value === null || value === undefined || value === '') return null;
+    const numeric = Number(value);
+    return Number.isFinite(numeric) && numeric > 0 ? Math.round(numeric) : null;
+}
+
+function getVehicleConditionCost(vehicleTemplate, condition = 'new') {
+    const isUsed = condition === 'used';
+    const primary = isUsed
+        ? (positiveCreditsOrNull(vehicleTemplate?.finalCostUsed) ?? positiveCreditsOrNull(vehicleTemplate?.costUsed))
+        : (positiveCreditsOrNull(vehicleTemplate?.finalCostNew) ?? positiveCreditsOrNull(vehicleTemplate?.finalCost) ?? positiveCreditsOrNull(vehicleTemplate?.costNew) ?? positiveCreditsOrNull(vehicleTemplate?.cost));
+    return primary;
+}
+
+function isValidVehicleConditionCost(value) {
+    return positiveCreditsOrNull(value) !== null;
+}
+
 function storeI18n(key, data = {}) {
   try {
     return game.i18n?.format?.(key, data) ?? game.i18n?.localize?.(key) ?? key;
@@ -193,9 +212,11 @@ export async function addVehicleToCart(store, templateId, condition, updateDialo
     }
 
     // Engine provides both prices, after GM policy overrides.
-    const finalCost = condition === 'used'
-      ? normalizeCredits(vehicleTemplate.finalCostUsed)
-      : normalizeCredits(vehicleTemplate.finalCost);
+    const finalCost = getVehicleConditionCost(vehicleTemplate, condition);
+    if (!isValidVehicleConditionCost(finalCost)) {
+        ui.notifications.warn(storeI18n('SWSE.Store.Notifications.VehicleCannotPurchase'));
+        return;
+    }
 
     store.cart.vehicles.push({
         id: templateId,
@@ -306,9 +327,13 @@ async function revalidateCart(store, actor, originalTotal) {
             }
 
             // Check price for condition (P1-4)
-            const currentPrice = vehicle.condition === 'used'
-                ? vehicleTemplate.finalCostUsed
-                : vehicleTemplate.finalCost;
+            const currentPrice = getVehicleConditionCost(vehicleTemplate, vehicle.condition);
+            if (!isValidVehicleConditionCost(currentPrice)) {
+                return {
+                    valid: false,
+                    error: `Vehicle "${vehicle.name}" has no valid ${vehicle.condition || 'new'} store price.`
+                };
+            }
 
             const priceDiff = Math.abs(currentPrice - vehicle.cost);
             const threshold = vehicle.cost * 0.05;
@@ -516,10 +541,12 @@ export async function buyVehicle(store, actorId, condition) {
         return;
     }
 
-    // ENGINE: Vehicles have both finalCost (new) and finalCostUsed (used) pre-calculated
-    const finalCost = condition === 'used'
-      ? Number(vehicleTemplate.finalCostUsed) || 0
-      : Number(vehicleTemplate.finalCost) || 0;
+    // ENGINE: Vehicles have both finalCostNew (new) and finalCostUsed (used) pre-calculated
+    const finalCost = getVehicleConditionCost(vehicleTemplate, condition);
+    if (!isValidVehicleConditionCost(finalCost)) {
+        ui.notifications.warn(storeI18n('SWSE.Store.Notifications.VehicleCannotPurchase'));
+        return;
+    }
 
     // DELEGATED TO ENGINE: Check eligibility
     const eligible = StoreEngine.canPurchase({
@@ -799,7 +826,12 @@ function revalidateCartItems(store) {
         continue;
       }
       const isUsed = cartVehicle.condition === 'used';
-      const recalculated = normalizeCredits(isUsed ? storeItem.finalCostUsed : storeItem.finalCost);
+      const recalculated = getVehicleConditionCost(storeItem, isUsed ? 'used' : 'new');
+      if (!isValidVehicleConditionCost(recalculated)) {
+        report.removed.push({ type: 'vehicle', name: `${cartVehicle.name} (invalid ${cartVehicle.condition || 'new'} price)` });
+        store.cart.vehicles.splice(i, 1);
+        continue;
+      }
       if (recalculated !== cartVehicle.cost) {
         report.recalculated.push({
           type: 'vehicle',

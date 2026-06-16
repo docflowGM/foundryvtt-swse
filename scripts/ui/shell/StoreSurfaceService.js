@@ -175,8 +175,16 @@ function _decorateStoreCardItem(item = {}) {
   const categoryKey = _categoryKey(item);
   const navigationFamily = item.navigationFamily || _navFamily(item);
   const vehicleChallengeBand = categoryKey === 'vehicles' ? (item.vehicleChallengeBand || getVehicleChallengeBand(item)) : '';
+  const vehicleCosts = categoryKey === 'vehicles' ? _resolveVehicleStoreCosts(item) : { newCost: null, usedCost: null };
   return {
     ...item,
+    ...(categoryKey === 'vehicles' ? {
+      cost: vehicleCosts.newCost,
+      costUsed: vehicleCosts.usedCost ?? undefined,
+      finalCost: vehicleCosts.newCost,
+      newCost: vehicleCosts.newCost,
+      usedCost: vehicleCosts.usedCost
+    } : {}),
     subcategory: item.subcategory || _navSubcategory(item),
     subcategoryKey: item.subcategoryKey || _normalizeStoreFilterValue(_navSubcategory(item)),
     cardLetter: item.cardLetter || _storeCardLetter(item),
@@ -192,9 +200,28 @@ function _decorateStoreCardItem(item = {}) {
 }
 
 
+
+function _positiveCreditOrNull(value) {
+  if (value === null || value === undefined || value === '') return null;
+  const numeric = Number(value);
+  return Number.isFinite(numeric) && numeric > 0 ? numeric : null;
+}
+
+function _resolveVehicleStoreCosts(item = {}) {
+  const newCost = _positiveCreditOrNull(item.newCost)
+    ?? _positiveCreditOrNull(item.finalCostNew)
+    ?? _positiveCreditOrNull(item.finalCost)
+    ?? _positiveCreditOrNull(item.costNew)
+    ?? _positiveCreditOrNull(item.cost);
+  const usedCost = _positiveCreditOrNull(item.usedCost)
+    ?? _positiveCreditOrNull(item.costUsed)
+    ?? _positiveCreditOrNull(item.finalCostUsed);
+  return { newCost, usedCost };
+}
+
 function _storePriceLabel(value) {
-  const numeric = Number(value ?? 0);
-  if (!Number.isFinite(numeric)) return '—';
+  const numeric = _positiveCreditOrNull(value);
+  if (numeric === null) return '—';
   return numeric.toLocaleString();
 }
 
@@ -276,12 +303,13 @@ function _buildSelectedProductDetail(product = null) {
     { label: 'Policy', value: product.blockedReason ? product.blockedReason : (product.canPurchase === false ? 'Blocked' : 'Purchasable') }
   ].filter(row => row.value !== undefined && row.value !== null && String(row.value).trim() !== '');
 
+  const vehicleCosts = product.requiresCondition ? _resolveVehicleStoreCosts(product) : { newCost: null, usedCost: null };
   const priceOptions = product.requiresCondition
     ? [
-        { label: 'New', value: product.newCost, valueLabel: _storePriceLabel(product.newCost), condition: 'new' },
-        { label: 'Used', value: product.usedCost, valueLabel: _storePriceLabel(product.usedCost), condition: 'used' }
-      ].filter(option => Number.isFinite(Number(option.value)))
-    : [{ label: 'Price', value: product.price ?? product.finalCost ?? product.cost, valueLabel: _storePriceLabel(product.price ?? product.finalCost ?? product.cost), condition: '' }];
+        { label: 'New', value: vehicleCosts.newCost, valueLabel: _storePriceLabel(vehicleCosts.newCost), condition: 'new' },
+        { label: 'Used', value: vehicleCosts.usedCost, valueLabel: _storePriceLabel(vehicleCosts.usedCost), condition: 'used' }
+      ].filter(option => _positiveCreditOrNull(option.value) !== null)
+    : [{ label: 'Price', value: product.price ?? product.finalCost ?? product.cost, valueLabel: _storePriceLabel(product.price ?? product.finalCost ?? product.cost), condition: '' }].filter(option => _positiveCreditOrNull(option.value) !== null);
 
   const summaryText = _stripHtml(product.descriptionBasic || product.description || product.descriptionAurebesh || '')
     || product.suggestionBullets?.[0]
@@ -408,7 +436,8 @@ function _buildHotDealsFromItems(allItems = []) {
         items: []
       });
     }
-    const price = item.price ?? item.finalCost ?? item.cost ?? item.costNew ?? 0;
+    const vehicleCosts = _categoryKey(item) === 'vehicles' ? _resolveVehicleStoreCosts(item) : { newCost: null, usedCost: null };
+    const price = vehicleCosts.newCost ?? item.price ?? item.finalCost ?? item.cost ?? item.costNew ?? null;
     groups.get(categoryKey).items.push({
       id: item.id,
       name: item.name,
@@ -416,8 +445,8 @@ function _buildHotDealsFromItems(allItems = []) {
       categoryKey,
       storeCategory: item.category || categoryKey,
       displayCategory: _categoryLabel(categoryKey),
-      price: Number(price) || 0,
-      priceLabel: _formatCredits(price),
+      price: _positiveCreditOrNull(price) ?? Number.MAX_SAFE_INTEGER,
+      priceLabel: _positiveCreditOrNull(price) !== null ? _formatCredits(price) : '—',
       rarity: item.rarityLabel || item.availability || '',
       tag: _itemTag(item)
     });
