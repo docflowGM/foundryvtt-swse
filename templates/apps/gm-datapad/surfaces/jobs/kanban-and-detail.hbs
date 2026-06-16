@@ -21,7 +21,7 @@
           </header>
           <div class="job-card-stack">
             {{#each this.jobs}}
-            <button type="button" class="job-board-card {{this.statusTone}}" data-job-select="{{this.threadId}}">
+            <button type="button" class="job-board-card {{this.statusTone}}" data-job-select="{{this.threadId}}" data-swse-drag-kind="job" data-swse-drag-id="{{this.threadId}}" data-swse-drag-thread-id="{{this.threadId}}" data-swse-drag-name="{{this.title}}" data-swse-drag-faction-id="{{this.factionId}}" data-swse-drag-source="job-board">
               <div class="job-card-topline">
                 <span class="job-board-chip {{this.statusTone}}">{{this.statusLabel}}</span>
                 {{#if this.needsAttention}}<span class="job-board-chip attention">Needs GM</span>{{/if}}

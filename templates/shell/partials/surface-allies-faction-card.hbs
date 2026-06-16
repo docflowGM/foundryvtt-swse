@@ -77,6 +77,38 @@
       {{/if}}
     </div>
 
+    {{#if faction.hasKnownContacts}}
+    <div class="swse-faction-dossier-links">
+      <div class="swse-faction-dossier-links-head">
+        <strong>Known Contacts</strong>
+        <span>{{faction.knownContactCount}}</span>
+      </div>
+      <div class="swse-faction-contact-strip">
+        {{#each faction.knownContacts}}
+        <div class="swse-faction-contact-chip">
+          <img src="{{this.image}}" alt="{{this.name}}">
+          <span><b>{{this.name}}</b><small>{{this.role}}{{#if this.factionRank}} · {{this.factionRank}}{{/if}}</small></span>
+          <em>{{this.dispositionLabel}}</em>
+        </div>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
+    {{#if faction.hasLinkedIntel}}
+    <div class="swse-faction-dossier-links">
+      <div class="swse-faction-dossier-links-head">
+        <strong>Released Intel</strong>
+        <span>{{faction.linkedIntelCount}}</span>
+      </div>
+      <div class="swse-faction-intel-strip">
+        {{#each faction.linkedIntelPreview}}
+        <span>{{this.title}}</span>
+        {{/each}}
+      </div>
+    </div>
+    {{/if}}
+
     {{#if faction.hasHistory}}
     <details class="swse-allies-faction-history">
       <summary>{{localize "SWSE.ShellUI.ScoreHistory"}}</summary>

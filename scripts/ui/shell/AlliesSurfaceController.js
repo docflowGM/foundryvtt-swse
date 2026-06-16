@@ -94,7 +94,9 @@ export class AlliesSurfaceController {
       if (!payload?.actorId || payload.actorId === this._actor?.id) refresh();
     };
     const holonetRefresh = (payload = {}) => {
-      if (payload?.type !== 'faction-score-changed') return;
+      const type = String(payload?.type || '');
+      if (type.startsWith('intel-')) return refresh();
+      if (type !== 'faction-score-changed') return;
       const actorIds = Array.isArray(payload.actorIds) ? payload.actorIds : [];
       if (!actorIds.length || actorIds.includes(this._actor?.id)) refresh();
     };
@@ -126,6 +128,7 @@ export class AlliesSurfaceController {
           return this._notify('Beast companion creation is not implemented yet. A GM can drag a beast/nonheroic NPC into Allies as a linked actor.');
         case 'manage-ally':
         case 'open-actor':
+        case 'open-contact-actor':
           return this._openActor(target.dataset.actorId);
         case 'level-up-follower':
         case 'recalculate-follower':
@@ -147,6 +150,22 @@ export class AlliesSurfaceController {
           return this._saveFaction(target);
         case 'remove-faction':
           return this._removeFaction(target.dataset.factionId);
+        case 'pin-intel':
+          return this._updateIntelState(target.dataset.intelId, { pinned: true, archived: false });
+        case 'unpin-intel':
+          return this._updateIntelState(target.dataset.intelId, { pinned: false });
+        case 'archive-intel':
+          return this._updateIntelState(target.dataset.intelId, { archived: true, pinned: false });
+        case 'restore-intel':
+          return this._updateIntelState(target.dataset.intelId, { archived: false });
+        case 'review-intel':
+          return this._updateIntelState(target.dataset.intelId, { reviewed: true });
+        case 'save-intel-notes':
+          return this._saveIntelNotes(target);
+        case 'attempt-intel-decrypt':
+          return this._attemptIntelDecrypt(target.dataset.intelId, target.dataset.skillKey);
+        case 'claim-intel-lockbox':
+          return this._claimIntelLockbox(target.dataset.intelId);
         case 'add-base':
           return this._addBase();
         case 'save-base':
@@ -264,6 +283,47 @@ export class AlliesSurfaceController {
       targetActorId: actorId || null
     });
     this._requestRender('allies-open-garage');
+  }
+
+  async _updateIntelState(intelId, patch = {}) {
+    if (!intelId) return this._notify('Intel record could not be found.');
+    const ok = await AlliesSurfaceService.updateIntelLockerState(this._actor, intelId, patch);
+    if (ok) ui?.notifications?.info?.('Intel Locker updated.');
+    this._patchAlliesState({ activeTab: 'intel' });
+    this._requestRender('allies-intel-state');
+  }
+
+  async _saveIntelNotes(target) {
+    const intelId = target.dataset.intelId;
+    const form = target.closest('form');
+    if (!intelId || !form) return this._notify('Intel notes form could not be found.');
+    const data = new FormData(form);
+    const notes = String(data.get('notes') || '').trim();
+    const ok = await AlliesSurfaceService.updateIntelLockerState(this._actor, intelId, { notes, reviewed: true });
+    if (ok) ui?.notifications?.info?.('Intel notes saved.');
+    this._patchAlliesState({ activeTab: 'intel' });
+    this._requestRender('allies-intel-notes');
+  }
+
+  async _attemptIntelDecrypt(intelId, skillKey = 'useComputer') {
+    if (!intelId) return this._notify('Intel record could not be found.');
+    const result = await AlliesSurfaceService.attemptIntelDecryption(this._actor, intelId, skillKey || 'useComputer');
+    if (result?.pending) ui?.notifications?.info?.('Decryption request sent to the GM host.');
+    else if (result?.ok && result?.solved) ui?.notifications?.info?.('Intel decrypted. Lockbox contents may now be claimable.');
+    else if (result?.ok) ui?.notifications?.info?.('Decryption attempt resolved.');
+    else ui?.notifications?.warn?.('Decryption attempt could not be resolved.');
+    this._patchAlliesState({ activeTab: 'intel' });
+    this._requestRender('allies-intel-decrypt');
+  }
+
+  async _claimIntelLockbox(intelId) {
+    if (!intelId) return this._notify('Intel record could not be found.');
+    const result = await AlliesSurfaceService.claimIntelLockbox(this._actor, intelId);
+    if (result?.pending) ui?.notifications?.info?.('Lockbox claim request sent to the GM host.');
+    else if (result?.ok) ui?.notifications?.info?.('Intel lockbox claimed.');
+    else ui?.notifications?.warn?.('Intel lockbox could not be claimed yet.');
+    this._patchAlliesState({ activeTab: 'intel' });
+    this._requestRender('allies-intel-lockbox-claim');
   }
 
   async _addFaction() {

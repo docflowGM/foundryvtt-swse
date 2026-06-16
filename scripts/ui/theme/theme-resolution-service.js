@@ -113,6 +113,51 @@ function coerceNumber(value, fallback) {
   return Number.isFinite(numeric) ? numeric : fallback;
 }
 
+function clampNumber(value, min, max, fallback) {
+  const numeric = coerceNumber(value, fallback);
+  return Math.min(max, Math.max(min, numeric));
+}
+
+function buildDisplayControls(settings = {}) {
+  const scanStrength = clampNumber(settings.scanStrength, 0, 0.18, 0.03);
+  const glow = clampNumber(settings.glow, 0, 3, 1);
+  const animSpeed = settings.reducedMotion ? 0.01 : clampNumber(settings.animSpeed, 0.01, 4, 1);
+  const sweepOpacity = Math.min(0.42, scanStrength * 4.5);
+  const overlayOpacity = Math.min(0.9, scanStrength * 12);
+  const lineOpacity = Math.min(0.22, Math.max(0, scanStrength));
+  const shimmerOpacity = Math.min(0.18, scanStrength * 2.2);
+
+  return {
+    scanStrength,
+    glow,
+    animSpeed,
+    sweepOpacity,
+    overlayOpacity,
+    lineOpacity,
+    shimmerOpacity
+  };
+}
+
+function buildDisplayControlStyle(settings = {}) {
+  const display = buildDisplayControls(settings);
+  return [
+    ['--swse-scan-strength', display.scanStrength],
+    ['--swse-scan-line-opacity', display.lineOpacity],
+    ['--swse-scan-overlay-opacity', display.overlayOpacity],
+    ['--swse-scan-sweep-opacity', display.sweepOpacity],
+    ['--swse-scan-shimmer-opacity', display.shimmerOpacity],
+    ['--swse-glow', display.glow],
+    ['--scan-strength', display.scanStrength],
+    ['--swse-anim-speed', display.animSpeed],
+    ['--anim-speed', display.animSpeed],
+    ['--glow-mult', display.glow]
+  ].map(([k, v]) => `${k}: ${v}`).join('; ');
+}
+
+function resolveDisplaySettings() {
+  return { ...ThemeResolutionService.legacyDefaults, ...(getLegacyThemeObject() ?? {}) };
+}
+
 export class ThemeResolutionService {
   static namespace = NS;
   static defaultTheme = DEFAULT_THEME;
@@ -178,17 +223,23 @@ export class ThemeResolutionService {
     return buildActorSheetMotionStyle(this.resolveMotionStyle(motionStyle));
   }
 
+  static buildDisplayControlsStyle(settings = null) {
+    return buildDisplayControlStyle(settings ?? resolveDisplaySettings());
+  }
+
   static buildSurfaceContext({ actor = null, themeKey = null, motionStyle = null, preferActor = true } = {}) {
     const resolvedTheme = this.resolveThemeKey(themeKey, { actor, preferActor });
     const resolvedMotion = this.resolveMotionStyle(motionStyle, { actor, preferActor });
     const themeStyleInline = this.buildThemeStyle(resolvedTheme);
     const motionStyleInline = this.buildMotionStyle(resolvedMotion);
-    const surfaceStyleInline = [themeStyleInline, motionStyleInline].filter(Boolean).join('; ');
+    const displayStyleInline = this.buildDisplayControlsStyle();
+    const surfaceStyleInline = [themeStyleInline, motionStyleInline, displayStyleInline].filter(Boolean).join('; ');
     return {
       themeKey: resolvedTheme,
       motionStyle: resolvedMotion,
       themeStyleInline,
       motionStyleInline,
+      displayStyleInline,
       surfaceStyleInline
     };
   }
@@ -208,7 +259,12 @@ export class ThemeResolutionService {
           motionStyle: this.resolveMotionStyle(options.motionStyle),
           themeStyleInline: options.themeStyleInline ?? this.buildThemeStyle(options.themeKey),
           motionStyleInline: options.motionStyleInline ?? this.buildMotionStyle(options.motionStyle),
-          surfaceStyleInline: options.surfaceStyleInline ?? [options.themeStyleInline, options.motionStyleInline].filter(Boolean).join('; ')
+          displayStyleInline: options.displayStyleInline ?? this.buildDisplayControlsStyle(options.settings),
+          surfaceStyleInline: options.surfaceStyleInline ?? [
+            options.themeStyleInline,
+            options.motionStyleInline,
+            options.displayStyleInline ?? this.buildDisplayControlsStyle(options.settings)
+          ].filter(Boolean).join('; ')
         }
       : this.buildSurfaceContext(options);
 
@@ -229,21 +285,25 @@ export class ThemeResolutionService {
 
   static applyLegacyDisplayControls(root, settings = {}) {
     if (!root?.style) return;
-    const scanStrength = coerceNumber(settings.scanStrength, 0.03);
-    const glow = coerceNumber(settings.glow, 1);
-    const animSpeed = settings.reducedMotion ? 0.01 : coerceNumber(settings.animSpeed, 1);
+    const display = buildDisplayControls(settings);
     const breathing = settings.breathing !== false;
     const language = settings.language ?? 'basic';
     const shellColor = settings.shellColor ?? 'cyan';
 
-    root.style.setProperty('--swse-scan-strength', String(scanStrength));
-    root.style.setProperty('--swse-glow', String(glow));
-    root.style.setProperty('--scan-strength', String(scanStrength));
-    root.style.setProperty('--anim-speed', String(animSpeed));
-    root.style.setProperty('--glow-mult', String(glow));
+    root.style.setProperty('--swse-scan-strength', String(display.scanStrength));
+    root.style.setProperty('--swse-scan-line-opacity', String(display.lineOpacity));
+    root.style.setProperty('--swse-scan-overlay-opacity', String(display.overlayOpacity));
+    root.style.setProperty('--swse-scan-sweep-opacity', String(display.sweepOpacity));
+    root.style.setProperty('--swse-scan-shimmer-opacity', String(display.shimmerOpacity));
+    root.style.setProperty('--swse-glow', String(display.glow));
+    root.style.setProperty('--scan-strength', String(display.scanStrength));
+    root.style.setProperty('--swse-anim-speed', String(display.animSpeed));
+    root.style.setProperty('--anim-speed', String(display.animSpeed));
+    root.style.setProperty('--glow-mult', String(display.glow));
     root.style.setProperty('--swse-shell-color', this.shellColorMap[shellColor] ?? this.shellColorMap.cyan);
 
     root.classList.toggle('swse-reduced-motion', !!settings.reducedMotion);
+    root.classList.toggle('swse-scanlines-disabled', display.scanStrength <= 0);
     root.classList.toggle('swse-no-breathing', !breathing);
     root.classList.toggle('swse-language-aurabesh', language === 'aurabesh');
     root.dataset.swseShellColor = shellColor;

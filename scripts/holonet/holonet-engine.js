@@ -8,6 +8,8 @@ import { HolonetProjectionRouter } from './subsystems/holonet-projection-router.
 import { HolonetNotificationService } from './subsystems/holonet-notification-service.js';
 import { MessengerNotificationBridge } from './subsystems/messenger-notification-bridge.js';
 import { MessengerMaintenanceService } from './subsystems/messenger-maintenance-service.js';
+import { HolonetIntelService } from './subsystems/holonet-intel-service.js';
+import { HolonetDecryptionService } from './subsystems/holonet-decryption-service.js';
 import { HolonetFeedService } from './subsystems/holonet-feed-service.js';
 import { HolonetSocketService } from './subsystems/holonet-socket-service.js';
 import { DELIVERY_STATE } from './contracts/enums.js';
@@ -191,6 +193,8 @@ export class HolonetEngine {
   static get notifications() { return HolonetNotificationService; }
   static get feed() { return HolonetFeedService; }
   static get messengerMaintenance() { return MessengerMaintenanceService; }
+  static get intel() { return HolonetIntelService; }
+  static get decryption() { return HolonetDecryptionService; }
 
   static async auditMessengerStorage(options = {}) {
     return MessengerMaintenanceService.audit(options);

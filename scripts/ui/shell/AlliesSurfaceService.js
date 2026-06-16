@@ -11,9 +11,10 @@
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
+import { HolonetIntelService, INTEL_REVEAL_STATE } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
-const TAB_IDS = new Set(['companions', 'factions', 'bases', 'organizations']);
+const TAB_IDS = new Set(['companions', 'factions', 'contacts', 'intel', 'bases', 'organizations']);
 const COMPANION_KINDS = new Set(['follower', 'minion', 'privateer', 'beast', 'assigned-nonheroic']);
 const BASE_ACCOMMODATIONS = [
   ['airlock', 'Airlock'],
@@ -613,6 +614,170 @@ async function updateActor(actor, data, options = {}) {
   }
 }
 
+function intelKindLabel(value = '') {
+  return titleCase(value || 'intel');
+}
+
+function intelRevealLabel(value = '') {
+  return titleCase(value || INTEL_REVEAL_STATE.REDACTED);
+}
+
+function intelLockerBody(intel = {}) {
+  if (intel.revealState === INTEL_REVEAL_STATE.DECODED || intel.revealState === INTEL_REVEAL_STATE.FULLY_REVEALED) {
+    return cleanString(intel.fullBody || intel.publicBody || intel.redactedBody || intel.summary);
+  }
+  return cleanString(intel.redactedBody || intel.publicBody || intel.summary || 'Encrypted or redacted Intel.');
+}
+
+function visibleContactToPlayers(contact = {}, isGM = false) {
+  if (isGM) return true;
+  const revealState = cleanString(contact.revealState || '').toLowerCase();
+  return contact.knownToPlayers === true || ['hinted', 'known', 'compromised'].includes(revealState);
+}
+
+function contactDispositionLabel(value = '') {
+  return titleCase(value || 'unknown');
+}
+
+function contactRevealLabel(value = '') {
+  const normalized = cleanString(value || 'hidden').toLowerCase();
+  if (normalized === 'hidden') return 'GM Only';
+  if (normalized === 'hinted') return 'Hinted';
+  if (normalized === 'known') return 'Known';
+  if (normalized === 'compromised') return 'Compromised';
+  return titleCase(normalized);
+}
+
+function intelLinkLabels(intel = {}) {
+  const factionId = cleanString(intel.linkedFactionId);
+  const contactId = cleanString(intel.linkedContactId);
+  const faction = factionId ? FactionRegistryService.findFaction?.(factionId) : null;
+  const contactFound = factionId && contactId ? FactionRegistryService.findFactionContact?.(factionId, contactId) : null;
+  const contact = contactFound?.contact ?? null;
+  return {
+    linkedFactionName: faction?.name || '',
+    linkedContactName: contact?.name || '',
+    linkedContactRole: contact?.role || '',
+    hasLinks: Boolean(faction?.name || contact?.name)
+  };
+}
+
+function mapIntelLockerCard(entry = {}) {
+  const { record, intel, state, decryption = null, lockbox = null } = entry;
+  const releasedAt = intel.releasedAt || intel.updatedAt || record?.publishedAt || record?.createdAt || '';
+  const releasedLabel = releasedAt ? new Date(releasedAt).toLocaleString() : 'No timestamp';
+  const encrypted = intel.skillGate?.enabled || [INTEL_REVEAL_STATE.SEALED, INTEL_REVEAL_STATE.REDACTED, INTEL_REVEAL_STATE.PARTIAL].includes(intel.revealState);
+  const decodedByDecryption = Boolean(decryption?.solved);
+  const links = intelLinkLabels(intel);
+  return {
+    recordId: record?.id || '',
+    intelId: intel.id,
+    title: intel.title || 'Untitled Intel',
+    kind: intel.kind,
+    kindLabel: intelKindLabel(intel.kind),
+    classification: intel.classification,
+    classificationLabel: titleCase(intel.classification),
+    revealState: intel.revealState,
+    revealLabel: intelRevealLabel(intel.revealState),
+    persistence: intel.persistence,
+    summary: intel.summary || intel.publicBody || intel.redactedBody || '',
+    body: decodedByDecryption ? cleanString(intel.fullBody || intel.publicBody || intel.redactedBody || intel.summary) : intelLockerBody(intel),
+    linkedFactionId: intel.linkedFactionId || '',
+    linkedContactId: intel.linkedContactId || '',
+    linkedActorUuid: intel.linkedActorUuid || '',
+    ...links,
+    tags: asArray(intel.tags),
+    tagsLabel: asArray(intel.tags).join(', '),
+    releasedAt,
+    releasedLabel,
+    pinned: Boolean(state.pinned),
+    archived: Boolean(state.archived),
+    reviewed: Boolean(state.reviewed),
+    notes: state.notes || '',
+    encrypted,
+    decryption,
+    hasDecryption: Boolean(decryption?.enabled),
+    canAttemptDecryption: Boolean(decryption?.canAttempt),
+    isDecoded: decodedByDecryption || [INTEL_REVEAL_STATE.DECODED, INTEL_REVEAL_STATE.FULLY_REVEALED].includes(intel.revealState),
+    lockbox: lockbox || { enabled: false },
+    hasLockbox: Boolean(lockbox?.enabled),
+    canClaimLockbox: Boolean(lockbox?.claimable),
+    searchText: [intel.title, intel.kind, intel.classification, links.linkedFactionName, links.linkedContactName, intel.summary, intel.publicBody, intel.redactedBody, intel.fullBody, state.notes, ...(intel.tags ?? [])].join(' ').toLowerCase()
+  };
+}
+
+function intelIndex(records = [], key = 'linkedFactionId') {
+  const map = new Map();
+  for (const record of records || []) {
+    const id = cleanString(record?.[key]);
+    if (!id) continue;
+    if (!map.has(id)) map.set(id, []);
+    map.get(id).push(record);
+  }
+  return map;
+}
+
+function contactKey(factionId = '', contactId = '') {
+  return `${cleanString(factionId)}::${cleanString(contactId)}`;
+}
+
+function mapFactionContactSummary(contact = {}) {
+  return {
+    id: contact.id,
+    name: contact.name || 'Unknown Contact',
+    role: contact.role || 'Faction Contact',
+    image: contact.image || contact.factionImage || 'icons/svg/mystery-man.svg',
+    disposition: contact.disposition || 'unknown',
+    dispositionLabel: contactDispositionLabel(contact.disposition),
+    revealState: contact.revealState || 'hidden',
+    revealLabel: contactRevealLabel(contact.revealState),
+    factionRank: contact.factionRank || '',
+    lastKnownLocation: contact.lastKnownLocation || '',
+    actorId: contact.actorId || '',
+    actorUuid: contact.actorUuid || ''
+  };
+}
+
+function mapContactDossierCard(contact = {}, context = {}) {
+  const intelByContact = context.intelByContact ?? new Map();
+  const intelByFaction = context.intelByFaction ?? new Map();
+  const directIntel = intelByContact.get(contactKey(contact.factionId, contact.id)) || [];
+  const factionIntel = intelByFaction.get(contact.factionId) || [];
+  const recentIntel = [...directIntel, ...factionIntel.filter(entry => !entry.linkedContactId)].slice(0, 4);
+  const body = cleanString(contact.publicNotes || contact.description || contact.role || 'No public dossier notes have been released yet.');
+  return {
+    id: contact.id,
+    factionId: contact.factionId || '',
+    name: contact.name || 'Unknown Contact',
+    role: contact.role || 'Faction Contact',
+    title: contact.title || '',
+    image: contact.image || contact.factionImage || 'icons/svg/mystery-man.svg',
+    factionName: contact.factionName || 'Unknown Faction',
+    factionType: contact.factionType || '',
+    factionRank: contact.factionRank || '',
+    disposition: contact.disposition || 'unknown',
+    dispositionLabel: contactDispositionLabel(contact.disposition),
+    revealState: contact.revealState || 'hidden',
+    revealLabel: contactRevealLabel(contact.revealState),
+    lastKnownLocation: contact.lastKnownLocation || '',
+    agenda: context.isGM ? contact.agenda || '' : '',
+    secret: context.isGM ? contact.secret || '' : '',
+    body,
+    publicNotes: contact.publicNotes || '',
+    tagsLabel: asArray(contact.tags).join(', '),
+    actorId: contact.actorId || '',
+    actorUuid: contact.actorUuid || '',
+    hasActor: Boolean(contact.actorId || contact.actorUuid),
+    knownToPlayers: contact.knownToPlayers === true,
+    intelCount: directIntel.length,
+    factionIntelCount: factionIntel.length,
+    recentIntel,
+    hasRecentIntel: recentIntel.length > 0,
+    isHidden: contact.revealState === 'hidden',
+    searchText: [contact.name, contact.role, contact.factionName, contact.factionRank, contact.disposition, contact.publicNotes, contact.description, ...(contact.tags ?? [])].join(' ').toLowerCase()
+  };
+}
+
 export class AlliesSurfaceService {
   static async buildViewModel(actor, options = {}) {
     const requestedTab = TAB_IDS.has(String(options.activeTab || options.tab || '').toLowerCase())
@@ -620,16 +785,20 @@ export class AlliesSurfaceService {
       : 'companions';
     const showHistory = options.showHistory === true || options.showHistory === 'true';
 
-    const [companions, factions, bases, organizations] = await Promise.all([
+    const [companions, intel, bases] = await Promise.all([
       this._buildCompanions(actor, { showHistory }),
-      this._buildFactions(actor),
-      this._buildBases(actor),
-      this._buildOrganizations(actor)
+      this._buildIntel(actor, options),
+      this._buildBases(actor)
     ]);
+    const factions = await this._buildFactions(actor, { intelRecords: intel.records });
+    const contacts = await this._buildContacts(actor, { factions: factions.records, intelRecords: intel.records, search: options.contactSearch ?? options.search });
+    const organizations = await this._buildOrganizations(actor, { factions: factions.records });
 
     const counts = {
       companions: companions.totalCount,
       factions: factions.records.length,
+      contacts: contacts.records.length,
+      intel: intel.records.length,
       bases: bases.records.length,
       organizations: organizations.records.length
     };
@@ -637,6 +806,8 @@ export class AlliesSurfaceService {
     const tabDefinitions = [
       { id: 'companions', label: 'Companions', count: counts.companions, visible: companions.hasAny },
       { id: 'factions', label: 'Factions', count: counts.factions, visible: true },
+      { id: 'contacts', label: 'Contacts', count: counts.contacts, visible: true },
+      { id: 'intel', label: 'Intel Locker', count: counts.intel, visible: true },
       { id: 'bases', label: 'Bases', count: counts.bases, visible: true },
       { id: 'organizations', label: 'Organizations', count: counts.organizations, visible: organizations.unlocked === true }
     ];
@@ -646,7 +817,7 @@ export class AlliesSurfaceService {
     return {
       id: 'allies',
       title: 'Allies',
-      subtitle: 'Companions // Factions // Bases // Organizations',
+      subtitle: 'Companions // Factions // Contacts // Intel // Bases // Organizations',
       actorName: actor?.name || 'Unknown Actor',
       actorImg: actorPortrait(actor),
       activeTab,
@@ -655,6 +826,8 @@ export class AlliesSurfaceService {
       counts,
       companions,
       factions,
+      contacts,
+      intel,
       bases,
       organizations
     };
@@ -663,9 +836,11 @@ export class AlliesSurfaceService {
   static async buildSummary(actor) {
     const vm = await this.buildViewModel(actor, { activeTab: 'companions' });
     return {
-      total: vm.counts.companions + vm.counts.factions + vm.counts.bases + vm.counts.organizations,
+      total: vm.counts.companions + vm.counts.factions + vm.counts.contacts + vm.counts.intel + vm.counts.bases + vm.counts.organizations,
       companions: vm.counts.companions,
       factions: vm.counts.factions,
+      contacts: vm.counts.contacts,
+      intel: vm.counts.intel,
       bases: vm.counts.bases,
       organizations: vm.counts.organizations,
       pending: vm.companions.openSlotCount ?? vm.companions.pending.length,
@@ -827,7 +1002,7 @@ export class AlliesSurfaceService {
     return changed;
   }
 
-  static async _buildFactions(actor) {
+  static async _buildFactions(actor, context = {}) {
     const isGM = game.user?.isGM === true;
     const registry = FactionRegistryService.getRegistry();
     const registryById = new Map(registry.map(record => [record.id, record]));
@@ -852,16 +1027,117 @@ export class AlliesSurfaceService {
     for (const entry of flagFactions) pushRecord(entry);
     for (const entry of actorRelationships) pushRecord({ ...entry, id: entry.id, factionId: entry.factionId, factionName: entry.factionName });
 
+    const intelRecords = asArray(context.intelRecords);
+    const intelByFaction = intelIndex(intelRecords, 'linkedFactionId');
+    const allContacts = FactionRegistryService.getAllFactionContacts?.() ?? [];
+    const contactsByFaction = new Map();
+    for (const contact of allContacts.filter(contact => visibleContactToPlayers(contact, isGM))) {
+      const key = cleanString(contact.factionId);
+      if (!key) continue;
+      if (!contactsByFaction.has(key)) contactsByFaction.set(key, []);
+      contactsByFaction.get(key).push(mapFactionContactSummary(contact));
+    }
+
     const records = Array.from(merged.values())
       .map(entry => mapFactionRecord(entry, { isGM, registry: registryById.get(entry.factionId) || registryByName.get(normalizeText(entry.factionName || entry.name || '')) || null }))
+      .map(record => {
+        const factionKey = record.factionId || record.id;
+        const knownContacts = contactsByFaction.get(factionKey) || [];
+        const linkedIntel = intelByFaction.get(factionKey) || [];
+        return {
+          ...record,
+          knownContacts: knownContacts.slice(0, 6),
+          knownContactCount: knownContacts.length,
+          hasKnownContacts: knownContacts.length > 0,
+          linkedIntelCount: linkedIntel.length,
+          hasLinkedIntel: linkedIntel.length > 0,
+          linkedIntelPreview: linkedIntel.slice(0, 4)
+        };
+      })
       .sort((a, b) => Number(b.isPending) - Number(a.isPending) || a.name.localeCompare(b.name));
     return {
       records,
       hasAny: records.length > 0,
+      totalKnownContacts: records.reduce((sum, record) => sum + (record.knownContactCount || 0), 0),
+      totalLinkedIntel: records.reduce((sum, record) => sum + (record.linkedIntelCount || 0), 0),
       canSuggest: !isGM,
       canManageDirectly: isGM,
       addLabel: isGM ? 'Add Faction Relationship' : 'Suggest Faction'
     };
+  }
+
+  static async _buildContacts(actor, context = {}) {
+    const isGM = game.user?.isGM === true;
+    const rawSearch = cleanString(context.search ?? '').toLowerCase();
+    const factionIds = new Set(asArray(context.factions).flatMap(faction => [faction.factionId, faction.id].filter(Boolean)));
+    const intelRecords = asArray(context.intelRecords);
+    const intelByFaction = intelIndex(intelRecords, 'linkedFactionId');
+    const intelByContact = new Map();
+    for (const entry of intelRecords) {
+      const key = contactKey(entry.linkedFactionId, entry.linkedContactId);
+      if (key === '::') continue;
+      if (!entry.linkedContactId) continue;
+      if (!intelByContact.has(key)) intelByContact.set(key, []);
+      intelByContact.get(key).push(entry);
+    }
+
+    const records = (FactionRegistryService.getAllFactionContacts?.() ?? [])
+      .filter(contact => visibleContactToPlayers(contact, isGM))
+      .filter(contact => isGM || factionIds.size === 0 || factionIds.has(contact.factionId) || contact.knownToPlayers === true || contact.revealState !== 'hidden')
+      .map(contact => mapContactDossierCard(contact, { isGM, intelByFaction, intelByContact }))
+      .filter(card => !rawSearch || card.searchText.includes(rawSearch))
+      .sort((a, b) => a.factionName.localeCompare(b.factionName) || a.name.localeCompare(b.name));
+
+    return {
+      records,
+      hasAny: records.length > 0,
+      totalCount: records.length,
+      actorLinkedCount: records.filter(record => record.hasActor).length,
+      hiddenCount: records.filter(record => record.isHidden).length,
+      intelLinkedCount: records.reduce((sum, record) => sum + (record.intelCount || 0), 0),
+      search: rawSearch
+    };
+  }
+
+  static async _buildIntel(actor, options = {}) {
+    const rawSearch = cleanString(options.intelSearch ?? options.search ?? '');
+    const includeArchived = options.includeArchivedIntel === true || options.includeArchivedIntel === 'true';
+    const entries = await HolonetIntelService.getPlayerIntel(actor, { includeArchived, search: rawSearch });
+    const records = entries.map(mapIntelLockerCard).filter(card => {
+      if (!rawSearch) return true;
+      return card.searchText.includes(rawSearch.toLowerCase());
+    });
+    const pinned = records.filter(card => card.pinned && !card.archived);
+    const active = records.filter(card => !card.pinned && !card.archived);
+    const archived = records.filter(card => card.archived);
+    return {
+      records,
+      pinned,
+      active,
+      archived,
+      hasAny: records.length > 0,
+      hasPinned: pinned.length > 0,
+      hasArchived: archived.length > 0,
+      includeArchived,
+      search: rawSearch,
+      totalCount: records.length,
+      pinnedCount: pinned.length,
+      archivedCount: archived.length,
+      decodedCount: records.filter(card => card.isDecoded).length,
+      encryptedCount: records.filter(card => card.encrypted && !card.isDecoded).length
+    };
+  }
+
+  static async updateIntelLockerState(ownerActor, intelId, patch = {}) {
+    return HolonetIntelService.updatePlayerIntelState(ownerActor, intelId, patch);
+  }
+
+  static async attemptIntelDecryption(ownerActor, intelId, skillKey = 'useComputer') {
+    return HolonetIntelService.requestIntelDecryption(intelId, { actor: ownerActor, skillKey });
+  }
+
+  static async claimIntelLockbox(ownerActor, intelId) {
+    return HolonetIntelService.claimIntelLockbox(intelId, { actor: ownerActor });
   }
 
   static async _buildBases(actor) {
@@ -884,10 +1160,10 @@ export class AlliesSurfaceService {
     };
   }
 
-  static async _buildOrganizations(actor) {
+  static async _buildOrganizations(actor, context = {}) {
     const isGM = game.user?.isGM === true;
     const naturalLeader = hasNaturalLeader(actor);
-    const factions = await this._buildFactions(actor);
+    const factions = context.factions ? { records: context.factions } : await this._buildFactions(actor);
     const rawRecords = uniqueEntries([
       ...asArray(actor?.getFlag?.(SYSTEM_ID, 'organizations')),
       ...asArray(actor?.system?.organizations),

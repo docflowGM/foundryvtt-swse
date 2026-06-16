@@ -1,0 +1,177 @@
+/* ============================================================================
+   SWSE DISPLAY EFFECTS — SHARED SCANLINE / HOLO FEEDBACK LAYER
+   ---------------------------------------------------------------------------
+   Restores the concept scanline language across all SWSE-owned applications.
+   The actual intensity is controlled by ThemeResolutionService via:
+   --swse-scan-strength, --swse-scan-line-opacity, --swse-scan-overlay-opacity,
+   --swse-scan-sweep-opacity, and --swse-scan-shimmer-opacity.
+   ============================================================================ */
+
+:root {
+  --swse-scan-strength: 0.03;
+  --swse-scan-line-opacity: 0.03;
+  --swse-scan-overlay-opacity: 0.36;
+  --swse-scan-sweep-opacity: 0.14;
+  --swse-scan-shimmer-opacity: 0.06;
+  --swse-display-effect-z: 42;
+  --swse-display-scanline-bg: repeating-linear-gradient(
+    0deg,
+    transparent 0 3px,
+    oklch(1 0 0 / var(--swse-scan-line-opacity, var(--swse-scan-strength, 0.03))) 3px 4px
+  );
+  --swse-display-pixel-bg: repeating-linear-gradient(
+    90deg,
+    transparent 0 6px,
+    oklch(0.78 0.04 var(--ink-h, 200) / calc(var(--swse-scan-line-opacity, 0.03) * 0.45)) 6px 7px,
+    transparent 7px 12px
+  );
+  --swse-display-sheen-bg: radial-gradient(
+    ellipse at 20% 10%,
+    oklch(0.78 0.15 var(--ink-h, 200) / var(--swse-scan-shimmer-opacity, 0.06)),
+    transparent 34%
+  );
+  --swse-display-sweep-bg: linear-gradient(
+    180deg,
+    transparent 0%,
+    oklch(0.84 0.18 var(--ink-h, 200) / 0) 30%,
+    oklch(0.84 0.18 var(--ink-h, 200) / var(--swse-scan-sweep-opacity, 0.14)) 48%,
+    oklch(1 0 0 / calc(var(--swse-scan-sweep-opacity, 0.14) * 0.78)) 52%,
+    oklch(0.84 0.18 var(--ink-h, 200) / 0) 70%,
+    transparent 100%
+  );
+}
+
+/* Keep legacy/local shells wired to the same setting tokens instead of hardcoded defaults. */
+.swse-sheet-v2-shell,
+.progression-shell,
+.swse-datapad,
+.swse-ui-shell,
+.swse-sheet-ui,
+.swse-app,
+.swse-window {
+  --scan-strength: var(--swse-scan-strength, 0.03);
+  --glow-mult: var(--swse-glow, 1);
+}
+
+/* Rich-screen surfaces: static scanlines + subtle pixel feedback. */
+.swse-sheet-v2-shell .swse-v2-screen,
+.swse-sheet-v2-shell .swse-v2-screen--concept,
+.progression-shell > .swse-screen,
+.gm-datapad-screen,
+.swse-shell-screen-surface,
+.swse-store-surface,
+.swse-customization-screen,
+.swse-custom-roll-dialog,
+.droid-customization-container,
+.vehicle-customization-container,
+.swse-lightsaber-construction,
+.swse-blaster-customization {
+  position: relative;
+  isolation: isolate;
+}
+
+.swse-sheet-v2-shell .swse-v2-screen::after,
+.progression-shell > .swse-screen::after,
+.gm-datapad-screen::after,
+.swse-shell-screen-surface::after,
+.swse-store-surface::after,
+.swse-customization-screen::after,
+.swse-custom-roll-dialog::after,
+.droid-customization-container::after,
+.vehicle-customization-container::after,
+.swse-lightsaber-construction::after,
+.swse-blaster-customization::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: var(--swse-display-effect-z, 42);
+  pointer-events: none;
+  border-radius: inherit;
+  background-image:
+    var(--swse-display-scanline-bg),
+    var(--swse-display-pixel-bg),
+    var(--swse-display-sheen-bg);
+  background-size: auto, auto, 100% 100%;
+  mix-blend-mode: screen;
+  opacity: var(--swse-scan-overlay-opacity, 0.36);
+}
+
+/* Generic fallback for smaller SWSE windows that do not render one of the rich screens above. */
+.application.swse:not(.swse-character-sheet):not(.progression-shell):not(.gm-datapad):not(.swse-item-customization-workbench):not(.swse-customization-bay-app):not(.store-splash) > section.window-content,
+.application.swse:not(.swse-character-sheet):not(.progression-shell):not(.gm-datapad):not(.swse-item-customization-workbench):not(.swse-customization-bay-app):not(.store-splash) > .window-content {
+  position: relative;
+  isolation: isolate;
+}
+
+.application.swse:not(.swse-character-sheet):not(.progression-shell):not(.gm-datapad):not(.swse-item-customization-workbench):not(.swse-customization-bay-app):not(.store-splash) > section.window-content::after,
+.application.swse:not(.swse-character-sheet):not(.progression-shell):not(.gm-datapad):not(.swse-item-customization-workbench):not(.swse-customization-bay-app):not(.store-splash) > .window-content::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: var(--swse-display-effect-z, 42);
+  pointer-events: none;
+  border-radius: inherit;
+  background-image: var(--swse-display-scanline-bg), var(--swse-display-sheen-bg);
+  mix-blend-mode: screen;
+  opacity: var(--swse-scan-overlay-opacity, 0.36);
+}
+
+/* Motion sweep: uses existing scan-v nodes where the shared shell has them. */
+.scan-v,
+.ren-scan-v,
+.ls-scanline-overlay {
+  pointer-events: none;
+  background-image: var(--swse-display-sweep-bg), var(--swse-display-scanline-bg) !important;
+  mix-blend-mode: screen;
+  opacity: calc(var(--motion-enabled, 1) * var(--swse-scan-overlay-opacity, 0.36)) !important;
+}
+
+.scan-v,
+.ren-scan-v {
+  animation-name: swse-display-scan-sweep;
+  animation-duration: var(--motion-scan-speed, calc(7s / var(--anim-speed, 1)));
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes swse-display-scan-sweep {
+  0% { transform: translateY(-120%); opacity: calc(var(--motion-enabled, 1) * var(--swse-scan-sweep-opacity, 0.14)); }
+  12% { opacity: calc(var(--motion-enabled, 1) * var(--swse-scan-overlay-opacity, 0.36)); }
+  88% { opacity: calc(var(--motion-enabled, 1) * var(--swse-scan-overlay-opacity, 0.36)); }
+  100% { transform: translateY(120vh); opacity: 0; }
+}
+
+/* Do not animate when the player disables motion, but leave static scanlines visible. */
+[data-motion-style="off"] .scan-v,
+[data-motion-style="none"] .scan-v,
+[data-motion-style="off"] .ls-scanline-overlay,
+[data-motion-style="none"] .ls-scanline-overlay,
+[data-motion-style="off"] .ren-scan-v,
+[data-motion-style="none"] .ren-scan-v,
+.swse-reduced-motion .scan-v,
+.swse-reduced-motion .ls-scanline-overlay,
+.swse-reduced-motion .ren-scan-v {
+  animation: none !important;
+  opacity: 0 !important;
+}
+
+/* If scanline strength is set to zero, suppress all shared scanline layers. */
+.swse-scanlines-disabled .scan-v,
+.swse-scanlines-disabled .ls-scanline-overlay,
+.swse-scanlines-disabled .ren-scan-v,
+.swse-scanlines-disabled .swse-sheet-v2-shell .swse-v2-screen::after,
+.swse-scanlines-disabled .progression-shell > .swse-screen::after,
+.swse-scanlines-disabled .gm-datapad-screen::after,
+.swse-scanlines-disabled .swse-shell-screen-surface::after,
+.swse-scanlines-disabled .swse-store-surface::after,
+.swse-scanlines-disabled .swse-customization-screen::after,
+.swse-scanlines-disabled .swse-custom-roll-dialog::after,
+.swse-scanlines-disabled .droid-customization-container::after,
+.swse-scanlines-disabled .vehicle-customization-container::after,
+.swse-scanlines-disabled .swse-lightsaber-construction::after,
+.swse-scanlines-disabled .swse-blaster-customization::after,
+.swse-scanlines-disabled .application.swse > section.window-content::after,
+.swse-scanlines-disabled .application.swse > .window-content::after {
+  opacity: 0 !important;
+  animation: none !important;
+}

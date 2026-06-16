@@ -139,7 +139,8 @@
     "styles/apps/item-customization-workbench.css",
     "styles/apps/gm-datapad.css",
     "styles/layout/sheet-layout.css",
-    "styles/components/discovery.css"
+    "styles/components/discovery.css",
+    "styles/system/display-effects.css"
   ],
   "languages": [
     {

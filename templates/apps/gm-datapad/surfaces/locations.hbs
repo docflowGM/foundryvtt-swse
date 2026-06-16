@@ -1,0 +1,423 @@
+<div class="gm-datapad-page gm-datapad-locations swse-gm-locations" data-gm-surface="locations">
+  <header class="gm-datapad-page-header swse-locations-hero">
+    <div>
+      <p class="gm-datapad-kicker">GALACTIC LOCATION INDEX</p>
+      <h2>{{surface.pageTitle}}</h2>
+      <p>{{surface.pageDescription}}</p>
+    </div>
+    <div class="swse-location-stat-grid">
+      <div><strong>{{surface.locationManager.stats.count}}</strong><span>Total</span></div>
+      <div><strong>{{surface.locationManager.stats.known}}</strong><span>Known</span></div>
+      <div><strong>{{surface.locationManager.stats.active}}</strong><span>Active</span></div>
+      <div><strong>{{surface.locationManager.stats.encounterSeedCount}}</strong><span>Seeds</span></div>
+      <div><strong>{{surface.locationManager.stats.factCount}}</strong><span>Atlas Facts</span></div>
+      <div><strong>{{surface.locationManager.stats.leadDiscoveryCount}}</strong><span>Leads</span></div>
+      <div><strong>{{surface.locationManager.stats.withScenes}}</strong><span>Scenes</span></div>
+    </div>
+  </header>
+
+  <section class="swse-gm-three-rail swse-location-shell">
+    <aside class="swse-location-rail swse-location-rail--left">
+      <div class="swse-location-panel">
+        <div class="swse-location-panel-head">
+          <h3>Navigator</h3>
+          <button type="button" class="swse-mini-button" data-location-action="new">New Location</button>
+        </div>
+        <label class="swse-field-label">Search</label>
+        <input type="search" value="{{surface.locationManager.filters.search}}" data-location-filter="search" placeholder="planet, city, POI, faction, tag..." />
+        <label class="swse-field-label">Category</label>
+        <select data-location-filter="category">
+          {{#each surface.locationManager.categoryOptions}}
+            <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+        <label class="swse-field-label">Type</label>
+        <select data-location-filter="type">
+          {{#each surface.locationManager.typeOptions}}
+            <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+        <label class="swse-field-label">Reveal</label>
+        <select data-location-filter="revealState">
+          {{#each surface.locationManager.revealOptions}}
+            <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+        <label class="swse-field-label">Quick filter</label>
+        <select data-location-filter="special">
+          {{#each surface.locationManager.specialOptions}}
+            <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="swse-location-panel swse-location-category-grid">
+        <h3>Locales</h3>
+        <span>Planetary <strong>{{surface.locationManager.stats.planetary}}</strong></span>
+        <span>Space <strong>{{surface.locationManager.stats.space}}</strong></span>
+        <span>Installations <strong>{{surface.locationManager.stats.installation}}</strong></span>
+        <span>Mobile <strong>{{surface.locationManager.stats.mobile}}</strong></span>
+        <span>Other <strong>{{surface.locationManager.stats.other}}</strong></span>
+      </div>
+
+      <details class="swse-location-panel swse-location-leads" open>
+        <summary>
+          <span>Actionable Leads</span>
+          <strong>{{surface.locationManager.leadQueue.length}}</strong>
+        </summary>
+        <p class="swse-location-help">When players uncover Atlas facts, job/intel/reveal follow-ups appear here for GM review.</p>
+        <div class="swse-location-lead-list">
+          {{#each surface.locationManager.leadQueue}}
+            <article class="swse-location-lead-card">
+              <div>
+                <strong>{{factTitle}}</strong>
+                <span>{{actorName}} · {{skillLabel}} {{total}} vs DC {{dc}}</span>
+                <p>{{locationChain}}</p>
+                <small>{{outputLabel}} · {{updatedLabel}}</small>
+              </div>
+              <div class="swse-location-lead-actions">
+                <button type="button" data-location-action="lead-select-location" data-location-id="{{locationId}}">View</button>
+                {{#if wantsJob}}<button type="button" data-location-action="lead-create-job" data-actor-id="{{actorId}}" data-discovery-id="{{id}}">Job</button>{{/if}}
+                {{#if wantsIntel}}<button type="button" data-location-action="lead-create-intel" data-actor-id="{{actorId}}" data-discovery-id="{{id}}">Intel</button>{{/if}}
+                {{#if hasRevealLinks}}<button type="button" data-location-action="lead-reveal-links" data-actor-id="{{actorId}}" data-discovery-id="{{id}}">Reveal</button>{{/if}}
+                <button type="button" data-location-action="lead-resolve" data-actor-id="{{actorId}}" data-discovery-id="{{id}}">Resolve</button>
+              </div>
+            </article>
+          {{else}}
+            <p>No unresolved Atlas leads yet.</p>
+          {{/each}}
+        </div>
+      </details>
+
+      <details class="swse-location-panel swse-location-library" open>
+        <summary>
+          <span>Location Library</span>
+          <strong>{{surface.locationManager.library.summary.total}}</strong>
+        </summary>
+        <p class="swse-location-help">Pull starter planets/worlds as GM-only records. Imported seeds include starter child POIs and one Atlas lead, but stay hidden until revealed.</p>
+        <label class="swse-field-label">Library Search</label>
+        <input type="search" value="{{surface.locationManager.filters.librarySearch}}" data-location-filter="librarySearch" placeholder="Tatooine, water, Sith, city..." />
+        <label class="swse-field-label">Biome / Theme</label>
+        <select data-location-filter="libraryBiome">
+          {{#each surface.locationManager.libraryBiomeOptions}}
+            <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+        <label class="swse-field-label">Library Category</label>
+        <select data-location-filter="libraryCategory">
+          {{#each surface.locationManager.libraryCategoryOptions}}
+            <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+          {{/each}}
+        </select>
+        <div class="swse-location-library-meta">
+          <span>{{surface.locationManager.library.summary.visible}} shown</span>
+          <span>{{surface.locationManager.library.summary.imported}} imported</span>
+        </div>
+        <button type="button" class="swse-mini-button" data-location-action="import-library-visible">Import Shown</button>
+        <div class="swse-location-library-list">
+          {{#each surface.locationManager.library.cards}}
+            <article class="swse-location-library-card {{#if imported}}is-imported{{/if}}">
+              <div>
+                <strong>{{name}}</strong>
+                <span>{{typeLabel}} · {{biomeLabels}}</span>
+                <p>{{summary}}</p>
+                <small>{{childCount}} starter sites · {{factCount}} Atlas lead</small>
+              </div>
+              <button type="button" data-location-action="import-library-seed" data-seed-id="{{id}}">{{importLabel}}</button>
+            </article>
+          {{else}}
+            <p>No seed worlds match those filters.</p>
+          {{/each}}
+        </div>
+      </details>
+    </aside>
+
+    <main class="swse-location-body">
+      {{#if surface.locationManager.hasVisibleLocations}}
+        <div class="swse-location-card-list">
+          {{#each surface.locationManager.cards}}
+            <article class="swse-location-card {{revealClass}} {{#if activeForParty}}is-party-active{{/if}} {{depthClass}}" data-location-id="{{id}}" data-swse-drag-kind="location" data-swse-drag-id="{{id}}" data-swse-drag-name="{{name}}" data-swse-drag-type="{{type}}" data-swse-drag-source="locations">
+              <button type="button" class="swse-location-card-main" data-location-action="select" data-location-id="{{id}}">
+                <div class="swse-location-card-title-row">
+                  <h3>{{name}}</h3>
+                  <span class="swse-location-chip">{{typeLabel}}</span>
+                </div>
+                <p>{{#if chain}}{{chain}}{{else}}{{categoryLabel}}{{/if}}</p>
+                <div class="swse-location-card-meta">
+                  <span>{{revealLabel}}</span>
+                  <span>{{#if controllingFactionName}}{{controllingFactionName}}{{else}}No controller{{/if}}</span>
+                  <span>{{childCount}} children</span>
+                  <span>{{atlasFactCount}} facts</span>
+                  <span>{{encounterSeedCount}} seeds</span>
+                </div>
+              </button>
+              <div class="swse-location-card-actions">
+                <button type="button" data-location-action="create-job" data-location-id="{{id}}">Job</button>
+                <button type="button" data-location-action="create-intel" data-location-id="{{id}}">Intel</button>
+                <button type="button" data-location-action="set-party-location" data-location-id="{{id}}">Activate</button>
+              </div>
+            </article>
+          {{/each}}
+        </div>
+      {{else}}
+        <div class="swse-empty-state">
+          <h3>No locations found</h3>
+          <p>Create the first planet, city, POI, ship, station, or strange site to seed the Atlas.</p>
+          <button type="button" class="swse-mini-button" data-location-action="new">Create Location</button>
+        </div>
+      {{/if}}
+    </main>
+
+    <aside class="swse-location-rail swse-location-rail--right">
+      <form class="swse-location-panel swse-location-editor" data-location-form>
+        <div class="swse-location-panel-head">
+          <h3>{{#if surface.locationManager.selected}}Location Dossier{{else}}New Location{{/if}}</h3>
+          {{#if surface.locationManager.selected}}
+            <span class="swse-location-chip {{surface.locationManager.selected.revealClass}}">{{surface.locationManager.selected.revealLabel}}</span>
+          {{/if}}
+        </div>
+        <input type="hidden" name="id" value="{{surface.locationManager.selected.id}}" />
+
+        <label class="swse-field-label">Name</label>
+        <input name="name" value="{{surface.locationManager.selected.name}}" placeholder="Tatooine, Mos Eisley, Docking Bay 94..." />
+
+        <div class="swse-two-col">
+          <label>Category
+            <select name="category">
+              {{#each surface.locationManager.editorCategoryOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+            </select>
+          </label>
+          <label>Type
+            <select name="type">
+              {{#each surface.locationManager.editorTypeOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+            </select>
+          </label>
+        </div>
+
+        <div class="swse-two-col">
+          <label>Scale
+            <select name="scale">
+              {{#each surface.locationManager.editorScaleOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+            </select>
+          </label>
+          <label>Parent
+            <select name="parentLocationId">
+              {{#each surface.locationManager.locationOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}} {{#if disabled}}disabled{{/if}}>{{label}}</option>{{/each}}
+            </select>
+          </label>
+        </div>
+
+        <div class="swse-two-col">
+          <label>Reveal State
+            <select name="revealState">
+              {{#each surface.locationManager.editorRevealOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+            </select>
+          </label>
+          <label>Controller
+            <select name="controllingFactionId">
+              {{#each surface.locationManager.factionOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
+            </select>
+          </label>
+        </div>
+
+        <label class="swse-inline-check"><input type="checkbox" name="knownToPlayers" {{#if surface.locationManager.selected.knownToPlayers}}checked{{/if}} /> Known to players / Atlas-visible</label>
+        <label class="swse-inline-check"><input type="checkbox" name="activeForParty" {{#if surface.locationManager.selected.activeForParty}}checked{{/if}} /> Active party location</label>
+
+        <div class="swse-two-col">
+          <label>Region <input name="region" value="{{surface.locationManager.selected.raw.region}}" /></label>
+          <label>Sector <input name="sector" value="{{surface.locationManager.selected.raw.sector}}" /></label>
+        </div>
+        <div class="swse-two-col">
+          <label>System <input name="system" value="{{surface.locationManager.selected.raw.system}}" /></label>
+          <label>Coordinates <input name="coordinates" value="{{surface.locationManager.selected.raw.coordinates}}" /></label>
+        </div>
+        <label>Image <input name="image" value="{{surface.locationManager.selected.raw.image}}" placeholder="icons/svg/planet.svg or asset path" /></label>
+        <label>Tags <input name="tags" value="{{surface.locationManager.selected.tags}}" placeholder="outer rim, underworld, desert" /></label>
+
+        <label>Public Atlas Summary
+          <textarea name="publicSummary" rows="3">{{surface.locationManager.selected.raw.publicSummary}}</textarea>
+        </label>
+        <label>GM Notes
+          <textarea name="gmNotes" rows="3">{{surface.locationManager.selected.raw.gmNotes}}</textarea>
+        </label>
+
+        <details class="swse-location-subpanel" open>
+          <summary>System Links</summary>
+          <div class="swse-location-linked-rows">
+            {{#each surface.locationManager.selected.factionRows}}
+              <span class="swse-location-link-chip" data-swse-drag-kind="faction" data-swse-drag-id="{{id}}" data-swse-drag-name="{{name}}" data-swse-drag-source="locations">Faction: {{name}} <button type="button" data-location-action="remove-link" data-location-id="{{../surface.locationManager.selected.id}}" data-link-kind="faction" data-link-value="{{id}}">×</button></span>
+            {{/each}}
+            {{#each surface.locationManager.selected.contactRows}}
+              <span class="swse-location-link-chip" data-swse-drag-kind="contact" data-swse-drag-id="{{id}}" data-swse-drag-contact-id="{{id}}" data-swse-drag-faction-id="{{factionId}}" data-swse-drag-name="{{name}}" data-swse-drag-source="locations">NPC: {{name}} <button type="button" data-location-action="remove-link" data-location-id="{{../surface.locationManager.selected.id}}" data-link-kind="contact" data-link-value="{{id}}">×</button></span>
+            {{/each}}
+            {{#each surface.locationManager.selected.jobRows}}
+              <span class="swse-location-link-chip" data-swse-drag-kind="job" data-swse-drag-id="{{id}}" data-swse-drag-name="{{id}}" data-swse-drag-source="locations">Job: {{id}} <button type="button" data-location-action="remove-link" data-location-id="{{../surface.locationManager.selected.id}}" data-link-kind="job" data-link-value="{{id}}">×</button></span>
+            {{/each}}
+            {{#each surface.locationManager.selected.intelRows}}
+              <span class="swse-location-link-chip" data-swse-drag-kind="intel" data-swse-drag-id="{{id}}" data-swse-drag-name="{{id}}" data-swse-drag-source="locations">Intel: {{id}} <button type="button" data-location-action="remove-link" data-location-id="{{../surface.locationManager.selected.id}}" data-link-kind="intel" data-link-value="{{id}}">×</button></span>
+            {{/each}}
+            {{#each surface.locationManager.selected.actorRows}}
+              <span class="swse-location-link-chip" data-swse-drag-kind="actor" data-swse-drag-uuid="{{uuid}}" data-swse-drag-name="{{uuid}}" data-swse-drag-source="locations">Actor: {{uuid}} <button type="button" data-location-action="remove-link" data-location-id="{{../surface.locationManager.selected.id}}" data-link-kind="actor" data-link-value="{{uuid}}">×</button></span>
+            {{/each}}
+            {{#each surface.locationManager.selected.sceneRows}}
+              <span class="swse-location-link-chip" data-swse-drag-kind="scene" data-swse-drag-uuid="{{uuid}}" data-swse-drag-name="{{uuid}}" data-swse-drag-source="locations">Scene{{#if isPrimary}} ★{{/if}}: {{uuid}} <button type="button" data-location-action="remove-link" data-location-id="{{../surface.locationManager.selected.id}}" data-link-kind="scene" data-link-value="{{uuid}}">×</button></span>
+            {{/each}}
+            {{#if surface.locationManager.selected.raw.linkedJournalUuid}}
+              <span class="swse-location-link-chip" data-swse-drag-kind="journal" data-swse-drag-uuid="{{surface.locationManager.selected.raw.linkedJournalUuid}}" data-swse-drag-name="{{surface.locationManager.selected.raw.linkedJournalUuid}}" data-swse-drag-source="locations">Journal: {{surface.locationManager.selected.raw.linkedJournalUuid}} <button type="button" data-location-action="remove-link" data-location-id="{{surface.locationManager.selected.id}}" data-link-kind="journal" data-link-value="{{surface.locationManager.selected.raw.linkedJournalUuid}}">×</button></span>
+            {{/if}}
+          </div>
+          <label>Faction IDs <input name="factionIds" value="{{surface.locationManager.selected.factionIdsText}}" /></label>
+          <label>Named NPC/contact IDs <input name="contactIds" value="{{surface.locationManager.selected.contactIdsText}}" /></label>
+          <label>Actor UUIDs <textarea name="npcActorUuids" rows="2">{{surface.locationManager.selected.npcActorUuidsText}}</textarea></label>
+          <label>Intel IDs <textarea name="linkedIntelIds" rows="2">{{surface.locationManager.selected.linkedIntelIdsText}}</textarea></label>
+          <label>Job IDs <textarea name="linkedJobIds" rows="2">{{surface.locationManager.selected.linkedJobIdsText}}</textarea></label>
+          <label>Journal UUID <input name="linkedJournalUuid" value="{{surface.locationManager.selected.raw.linkedJournalUuid}}" /></label>
+        </details>
+
+        <details class="swse-location-subpanel" open>
+          <summary>Map / Scene Launcher</summary>
+          <label>Linked Scene UUID <input name="mapSceneUuid" value="{{surface.locationManager.selected.mapSceneUuid}}" /></label>
+          <label>Map Image Path <input name="mapImagePath" value="{{surface.locationManager.selected.mapImagePath}}" /></label>
+          <div class="swse-two-col">
+            <label>Grid <input type="number" name="mapDefaultGrid" value="{{surface.locationManager.selected.mapDefaultGrid}}" /></label>
+            <label>Padding <input type="number" step="0.05" name="mapDefaultPadding" value="{{surface.locationManager.selected.mapDefaultPadding}}" /></label>
+          </div>
+          <div class="swse-two-col">
+            <label>Width <input type="number" name="mapDefaultWidth" value="{{surface.locationManager.selected.mapDefaultWidth}}" /></label>
+            <label>Height <input type="number" name="mapDefaultHeight" value="{{surface.locationManager.selected.mapDefaultHeight}}" /></label>
+          </div>
+          <label>Map Notes <textarea name="mapNotes" rows="2">{{surface.locationManager.selected.mapNotes}}</textarea></label>
+          <input type="hidden" name="linkedSceneUuids" value="{{surface.locationManager.selected.linkedSceneUuidsText}}" />
+        </details>
+
+        <details class="swse-location-subpanel">
+          <summary>Local Color</summary>
+          <label>Hazards <textarea name="hazards" rows="2">{{surface.locationManager.selected.raw.hazards}}</textarea></label>
+          <label>Rumors <textarea name="rumors" rows="2">{{surface.locationManager.selected.raw.rumors}}</textarea></label>
+          <label>Commerce Notes <textarea name="commerceNotes" rows="2">{{surface.locationManager.selected.raw.commerceNotes}}</textarea></label>
+          <label>Travel Notes <textarea name="travelNotes" rows="2">{{surface.locationManager.selected.raw.travelNotes}}</textarea></label>
+        </details>
+
+        <div class="swse-location-editor-actions">
+          <button type="submit" class="swse-mini-button primary">Save Location</button>
+          {{#if surface.locationManager.selected}}
+            <button type="button" data-location-action="reveal" data-location-id="{{surface.locationManager.selected.id}}">Reveal</button>
+            <button type="button" data-location-action="hide" data-location-id="{{surface.locationManager.selected.id}}">GM Only</button>
+            <button type="button" data-location-action="set-party-location" data-location-id="{{surface.locationManager.selected.id}}">Set Active</button>
+            <button type="button" data-location-action="create-intel" data-location-id="{{surface.locationManager.selected.id}}">Create Intel</button>
+            <button type="button" data-location-action="create-job" data-location-id="{{surface.locationManager.selected.id}}">Create Job</button>
+            <button type="button" data-location-action="open-scene" data-location-id="{{surface.locationManager.selected.id}}">Open Scene</button>
+            <button type="button" data-location-action="activate-scene" data-location-id="{{surface.locationManager.selected.id}}">Activate Scene</button>
+            <button type="button" data-location-action="create-scene" data-location-id="{{surface.locationManager.selected.id}}">Create Scene</button>
+            <button type="button" data-location-action="create-encounter-scene" data-location-id="{{surface.locationManager.selected.id}}">Create Encounter Scene</button>
+            <button type="button" data-location-action="stage-encounter-seeds" data-location-id="{{surface.locationManager.selected.id}}">Stage Seeds</button>
+            <button type="button" class="danger" data-location-action="delete" data-location-id="{{surface.locationManager.selected.id}}">Delete</button>
+          {{/if}}
+        </div>
+      </form>
+
+      {{#if surface.locationManager.selected}}
+        <section class="swse-location-panel swse-drop-zone" data-location-drop-zone data-location-id="{{surface.locationManager.selected.id}}">
+          <h3>Encounter Seeds</h3>
+          <p>Drop Locations, Factions, NPC dossiers, Actors, Scenes, Journals, Intel records, or Job Board posts here. Actors become encounter seeds; other records are linked without taking ownership from their source system.</p>
+          <form data-encounter-seed-form>
+            <input type="hidden" name="locationId" value="{{surface.locationManager.selected.id}}" />
+            <label>UUID <input name="seedUuid" placeholder="Actor.x or Compendium.pack.id" /></label>
+            <div class="swse-two-col">
+              <label>Name <input name="seedName" /></label>
+              <label>Category
+                <select name="seedCategory">{{#each surface.locationManager.seedCategoryOptions}}<option value="{{value}}">{{label}}</option>{{/each}}</select>
+              </label>
+            </div>
+            <div class="swse-two-col">
+              <label>Role <input name="seedRole" /></label>
+              <label>Quantity <input name="seedQuantity" value="1" /></label>
+            </div>
+            <label>Notes <textarea name="seedNotes" rows="2"></textarea></label>
+            <button type="submit">Add Seed</button>
+          </form>
+          <div class="swse-location-mini-list">
+            {{#each surface.locationManager.selected.encounterSeeds}}
+              <div class="swse-location-seed-row" data-swse-drag-kind="actor" data-swse-drag-uuid="{{uuid}}" data-swse-drag-name="{{name}}" data-swse-drag-category="{{category}}" data-swse-drag-role="{{role}}" data-swse-drag-quantity="{{quantity}}" data-swse-drag-source="location-seed">
+                <strong>{{name}}</strong>
+                <span>{{categoryLabel}} · {{quantity}} · {{sourceLabel}}{{#if role}} · {{role}}{{/if}}</span>
+                {{#if uuid}}<small>{{uuid}}</small>{{/if}}
+                <button type="button" data-location-action="remove-seed" data-location-id="{{../surface.locationManager.selected.id}}" data-seed-id="{{id}}">Remove</button>
+              </div>
+            {{else}}
+              <p>No encounter seeds yet.</p>
+            {{/each}}
+          </div>
+        </section>
+
+        <section class="swse-location-panel">
+          <h3>Atlas Fact Bank</h3>
+          <form data-atlas-fact-form>
+            <input type="hidden" name="locationId" value="{{surface.locationManager.selected.id}}" />
+            <label>Fact ID <input name="factId" placeholder="leave blank for new" /></label>
+            <label>Title <input name="factTitle" placeholder="Hutt smuggling routes" /></label>
+            <label>Teaser <input name="factTeaser" placeholder="There may be underworld traffic here..." /></label>
+            <label>Full Reveal <textarea name="factBody" rows="3"></textarea></label>
+            <div class="swse-two-col">
+              <label>Category
+                <select name="factCategory">{{#each surface.locationManager.factCategoryOptions}}<option value="{{value}}">{{label}}</option>{{/each}}</select>
+              </label>
+              <label>Reveal Mode
+                <select name="factRevealMode">{{#each surface.locationManager.factRevealModeOptions}}<option value="{{value}}">{{label}}</option>{{/each}}</select>
+              </label>
+            </div>
+            <div class="swse-two-col">
+              <label>Quick Skill
+                <select name="factSkill">{{#each surface.locationManager.skillOptions}}<option value="{{value}}">{{label}}</option>{{/each}}</select>
+              </label>
+              <label>Quick DC <input type="number" name="factDc" value="15" /></label>
+            </div>
+            <label>Quick Check Label <input name="factCheckLabel" placeholder="Archive search, street rumors, sensor sweep..." /></label>
+            <label>Skill Gates / DC Ladder
+              <textarea name="factChecksText" rows="4" placeholder="knowledgeGalacticLore | 15 | Basic public context&#10;gatherInformation | 18 | Local rumor network&#10;useComputer | 22 | Restricted Holonet records"></textarea>
+            </label>
+            <p class="swse-location-help">Use one gate per line. Leave this blank to use the Quick Skill/DC above. Players will see each gate as a separate Atlas research option.</p>
+            <div class="swse-two-col">
+              <label>On Reveal
+                <select name="leadOutput">{{#each surface.locationManager.leadOutputOptions}}<option value="{{value}}">{{label}}</option>{{/each}}</select>
+              </label>
+              <label>Fact State
+                <select name="factRevealState">{{#each surface.locationManager.editorRevealOptions}}<option value="{{value}}">{{label}}</option>{{/each}}</select>
+              </label>
+            </div>
+            <label class="swse-inline-check"><input type="checkbox" name="factKnownToPlayers" /> Start revealed in player Atlas</label>
+            <label class="swse-inline-check"><input type="checkbox" name="leadCreateJob" /> Create job draft from this lead</label>
+            <label class="swse-inline-check"><input type="checkbox" name="leadCreateIntel" /> Create Intel draft from this lead</label>
+            <label>Job Title <input name="leadJobTitle" /></label>
+            <label>Job Objective <input name="leadJobObjective" /></label>
+            <label>Reward Credits <input type="number" name="leadRewardCredits" value="0" /></label>
+            <label>Intel Title <input name="leadIntelTitle" /></label>
+            <label>Reveal Location IDs <input name="leadRevealLocationIds" /></label>
+            <label>Reveal Faction IDs <input name="leadRevealFactionIds" /></label>
+            <label>Reveal Contact IDs <input name="leadRevealContactIds" /></label>
+            <button type="submit">Add Atlas Fact</button>
+          </form>
+          <div class="swse-location-mini-list">
+            {{#each surface.locationManager.selected.atlasFacts}}
+              <div>
+                <strong>{{title}}</strong>
+                <span>{{categoryLabel}} · {{revealModeLabel}} · {{outputLabel}}</span>
+                <small>ID: {{id}}</small>
+                <div class="swse-location-fact-gates">
+                  {{#each checkRows}}
+                    <span>{{summary}}</span>
+                  {{/each}}
+                </div>
+                <button type="button" data-location-action="fact-intel" data-location-id="{{../surface.locationManager.selected.id}}" data-fact-id="{{id}}">Intel</button>
+                <button type="button" data-location-action="fact-job" data-location-id="{{../surface.locationManager.selected.id}}" data-fact-id="{{id}}">Job</button>
+                <button type="button" data-location-action="remove-fact" data-location-id="{{../surface.locationManager.selected.id}}" data-fact-id="{{id}}">Remove</button>
+              </div>
+            {{else}}
+              <p>No Atlas facts seeded yet.</p>
+            {{/each}}
+          </div>
+        </section>
+      {{/if}}
+    </aside>
+  </section>
+</div>

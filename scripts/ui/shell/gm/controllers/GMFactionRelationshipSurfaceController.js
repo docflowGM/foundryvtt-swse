@@ -2,11 +2,61 @@
 
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
 import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/FactionJobBridgeService.js';
+import { FactionIntelBridgeService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/FactionIntelBridgeService.js';
+import { DossierDragDropService } from '/systems/foundryvtt-swse/scripts/ui/dragdrop/dossier-drag-drop-service.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 
 function text(formData, key) { return String(formData.get(key) ?? '').trim(); }
 function number(formData, key) { return Number(formData.get(key) || 0) || 0; }
+function checked(formData, key) { return formData.get(key) === 'on' || formData.get(key) === 'true'; }
+
+function contactPayloadFromForm(formData) {
+  const selectedRevealState = text(formData, 'revealState') || 'hidden';
+  const knownToPlayers = checked(formData, 'knownToPlayers') || ['known', 'compromised'].includes(selectedRevealState);
+  const revealState = knownToPlayers && selectedRevealState === 'hidden' ? 'known' : selectedRevealState;
+  return {
+    id: text(formData, 'contactId'),
+    name: text(formData, 'name'),
+    role: text(formData, 'role') || 'Faction Contact',
+    title: text(formData, 'title'),
+    image: text(formData, 'image'),
+    actorId: text(formData, 'actorId'),
+    actorUuid: text(formData, 'actorUuid'),
+    actorName: text(formData, 'actorName'),
+    promotedAt: text(formData, 'promotedAt'),
+    description: text(formData, 'description'),
+    tags: text(formData, 'tags'),
+    disposition: text(formData, 'disposition') || 'unknown',
+    revealState,
+    knownToPlayers,
+    publicNotes: text(formData, 'publicNotes'),
+    gmNotes: text(formData, 'gmNotes'),
+    lastKnownLocation: text(formData, 'lastKnownLocation'),
+    agenda: text(formData, 'agenda'),
+    secret: text(formData, 'secret'),
+    factionRank: text(formData, 'factionRank'),
+    messengerPersonaId: text(formData, 'messengerPersonaId'),
+    linkedIntelIds: text(formData, 'linkedIntelIds'),
+    defaultJobTone: text(formData, 'defaultJobTone'),
+    defaultRewardStyle: text(formData, 'defaultRewardStyle'),
+    defaultObjective: text(formData, 'defaultObjective'),
+    defaultBriefing: text(formData, 'defaultBriefing'),
+    defaultInstructions: text(formData, 'defaultInstructions'),
+    defaultCredits: number(formData, 'defaultCredits'),
+    defaultXp: number(formData, 'defaultXp'),
+    defaultSuccessDelta: text(formData, 'defaultSuccessDelta') === '' ? 1 : number(formData, 'defaultSuccessDelta'),
+    defaultFailureDelta: text(formData, 'defaultFailureDelta') === '' ? -1 : number(formData, 'defaultFailureDelta'),
+    defaultVisibility: text(formData, 'defaultVisibility') || 'posted',
+    defaultLegality: text(formData, 'defaultLegality'),
+    defaultPayStyle: text(formData, 'defaultPayStyle'),
+    defaultRivalFactionName: text(formData, 'defaultRivalFactionName'),
+    defaultRivalSuccessDelta: text(formData, 'defaultRivalSuccessDelta') === '' ? -1 : number(formData, 'defaultRivalSuccessDelta'),
+    defaultRivalFailureDelta: text(formData, 'defaultRivalFailureDelta') === '' ? 1 : number(formData, 'defaultRivalFailureDelta'),
+    defaultConsequenceNotes: text(formData, 'defaultConsequenceNotes'),
+    active: formData.get('active') !== 'off'
+  };
+}
 
 async function resolveActorForContact({ uuid = '', actorId = '' } = {}) {
   const id = String(actorId || '').trim();
@@ -39,6 +89,7 @@ export class GMFactionRelationshipSurfaceController {
     if (!pageElement) return;
     if (!this._assertGM('open the GM faction ledger')) return;
 
+    DossierDragDropService.bindDragSources(pageElement, { signal });
     this._wireFilters(pageElement, signal);
     this._wireWizardControls(pageElement, signal);
 
@@ -239,36 +290,7 @@ export class GMFactionRelationshipSurfaceController {
         const data = new FormData(form);
         const factionId = text(data, 'factionId');
         if (!factionId) return;
-        const result = await this._mutate(() => FactionRegistryService.upsertFactionContact(factionId, {
-          id: text(data, 'contactId'),
-          name: text(data, 'name'),
-          role: text(data, 'role') || 'Faction Contact',
-          title: text(data, 'title'),
-          image: text(data, 'image'),
-          actorId: text(data, 'actorId'),
-          actorUuid: text(data, 'actorUuid'),
-          actorName: text(data, 'actorName'),
-          promotedAt: text(data, 'promotedAt'),
-          description: text(data, 'description'),
-          tags: text(data, 'tags'),
-          defaultJobTone: text(data, 'defaultJobTone'),
-          defaultRewardStyle: text(data, 'defaultRewardStyle'),
-          defaultObjective: text(data, 'defaultObjective'),
-          defaultBriefing: text(data, 'defaultBriefing'),
-          defaultInstructions: text(data, 'defaultInstructions'),
-          defaultCredits: number(data, 'defaultCredits'),
-          defaultXp: number(data, 'defaultXp'),
-          defaultSuccessDelta: text(data, 'defaultSuccessDelta') === '' ? 1 : number(data, 'defaultSuccessDelta'),
-          defaultFailureDelta: text(data, 'defaultFailureDelta') === '' ? -1 : number(data, 'defaultFailureDelta'),
-          defaultVisibility: text(data, 'defaultVisibility') || 'posted',
-          defaultLegality: text(data, 'defaultLegality'),
-          defaultPayStyle: text(data, 'defaultPayStyle'),
-          defaultRivalFactionName: text(data, 'defaultRivalFactionName'),
-          defaultRivalSuccessDelta: text(data, 'defaultRivalSuccessDelta') === '' ? -1 : number(data, 'defaultRivalSuccessDelta'),
-          defaultRivalFailureDelta: text(data, 'defaultRivalFailureDelta') === '' ? 1 : number(data, 'defaultRivalFailureDelta'),
-          defaultConsequenceNotes: text(data, 'defaultConsequenceNotes'),
-          active: data.get('active') !== 'off'
-        }), 'gm-faction-contact-save');
+        const result = await this._mutate(() => FactionRegistryService.upsertFactionContact(factionId, contactPayloadFromForm(data)), 'gm-faction-contact-save');
         ui.notifications?.info?.(`Notable NPC ${result?.contact?.name || 'contact'} saved.`);
         if (!text(data, 'contactId')) form.reset();
         await this._refresh();
@@ -307,6 +329,49 @@ export class GMFactionRelationshipSurfaceController {
             contactName: target.dataset.contactName || '',
             label: [target.dataset.factionName, target.dataset.contactName].filter(Boolean).join(' - ') || 'Contact Jobs'
           });
+          return;
+        }
+        if (action === 'create-intel-faction') {
+          const record = await FactionIntelBridgeService.createDraftFromFaction(target.dataset.factionId);
+          await this._openIntelRecord(record, `Intel draft created for ${target.dataset.factionName || 'this faction'}.`);
+          return;
+        }
+        if (action === 'create-intel-contact') {
+          const record = await FactionIntelBridgeService.createDraftFromContact(target.dataset.factionId, target.dataset.contactId);
+          await this._openIntelRecord(record, `NPC Intel draft created for ${target.dataset.contactName || 'this contact'}.`);
+          return;
+        }
+        if (action === 'reveal-faction') {
+          const record = await FactionIntelBridgeService.buildFactionRevealIntel(target.dataset.factionId);
+          await this._openIntelRecord(record, `Faction reveal Intel staged for ${target.dataset.factionName || 'this faction'}.`);
+          return;
+        }
+        if (action === 'reveal-contact') {
+          const found = FactionRegistryService.findFactionContact(target.dataset.factionId, target.dataset.contactId);
+          if (!found?.contact) return ui.notifications?.warn?.('Named NPC dossier could not be found.');
+          await this._mutate(() => FactionRegistryService.upsertFactionContact(found.faction.id, {
+            ...found.contact,
+            knownToPlayers: true,
+            revealState: found.contact.revealState === 'compromised' ? 'compromised' : 'known'
+          }), 'gm-faction-contact-reveal');
+          const record = await FactionIntelBridgeService.buildContactRevealIntel(found.faction.id, found.contact.id);
+          await this._openIntelRecord(record, `${found.contact.name} marked player-visible and reveal Intel staged.`);
+          return;
+        }
+        if (action === 'hide-contact') {
+          const found = FactionRegistryService.findFactionContact(target.dataset.factionId, target.dataset.contactId);
+          if (!found?.contact) return ui.notifications?.warn?.('Named NPC dossier could not be found.');
+          await this._mutate(() => FactionRegistryService.upsertFactionContact(found.faction.id, {
+            ...found.contact,
+            knownToPlayers: false,
+            revealState: 'hidden'
+          }), 'gm-faction-contact-hide');
+          ui.notifications?.info?.(`${found.contact.name} returned to GM-only dossier visibility.`);
+          await this._refresh();
+          return;
+        }
+        if (action === 'send-contact-message') {
+          this._notifyIntelSkeleton(`NPC messenger hook staged for ${target.dataset.contactName || 'this contact'}.`);
           return;
         }
         if (action === 'promote-contact') {
@@ -403,6 +468,34 @@ export class GMFactionRelationshipSurfaceController {
     await requestShellRender(this.host, { reason: 'gm-faction-make-job', surfaceId: 'jobs' });
   }
 
+  async _openIntelRecord(record, successMessage = 'Intel draft created.') {
+    if (!record?.id) {
+      ui.notifications?.warn?.('Could not create an Intel draft from that dossier record.');
+      return;
+    }
+    this.host?.patchSurfaceState?.('intel', {
+      selectedRecordId: record.id,
+      selectedMode: 'edit',
+      search: '',
+      status: '',
+      kind: '',
+      classification: '',
+      persistence: '',
+      includeArchived: true
+    }, { render: false });
+    ui.notifications?.info?.(`${successMessage} Delivery modes remain reserved for Phase 6.`);
+    if (typeof this.host?._navigateTo === 'function') {
+      await this.host._navigateTo('intel');
+      return;
+    }
+    this.host.currentPage = 'intel';
+    await requestShellRender(this.host, { reason: 'gm-faction-create-intel', surfaceId: 'intel' });
+  }
+
+  _notifyIntelSkeleton(message = 'Intel hook staged.') {
+    ui.notifications?.info?.(`${message} Delivery wiring is reserved for Phase 6: Secret Note, Messenger, Bulletin, and player Dossier release modes.`);
+  }
+
   _assertGM(action = 'use GM faction controls') {
     if (game.user?.isGM) return true;
     ui?.notifications?.warn?.(`Only a GM can ${action}.`);
@@ -421,7 +514,7 @@ export class GMFactionRelationshipSurfaceController {
   _wireWizardControls(pageElement, signal) {
     const labels = {
       contract: ['Next: Objectives', 'Next: Briefing', 'Next: Publish', 'Create Contract'],
-      faction: ['Next: Attach Actors', 'Next: Notes', 'Create Faction']
+      faction: ['Next: Attach Actors', 'Next: Notes', 'Create Faction Dossier']
     };
     const setPage = (wizard, page) => {
       const max = wizard.querySelectorAll('[data-gm-wizard-page]').length || 1;

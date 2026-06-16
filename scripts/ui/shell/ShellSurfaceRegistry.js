@@ -46,6 +46,8 @@ export class ShellSurfaceRegistry {
         return this._buildGamesSurfaceVm(actor, surfaceOptions);
       case 'allies':
         return this._buildAlliesSurfaceVm(actor, surfaceOptions);
+      case 'atlas':
+        return this._buildAtlasSurfaceVm(actor, surfaceOptions);
       case 'store':
         return this._buildStoreSurfaceVm(actor, surfaceOptions);
       case 'workbench':
@@ -188,6 +190,19 @@ export class ShellSurfaceRegistry {
     } catch (err) {
       SWSELogger.error('[ShellSurfaceRegistry] Allies surface VM failed:', err);
       return { id: 'allies', title: 'Allies', error: err.message };
+    }
+  }
+
+
+  static async _buildAtlasSurfaceVm(actor, options) {
+    try {
+      const { AtlasSurfaceService } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/AtlasSurfaceService.js'
+      );
+      return await AtlasSurfaceService.buildViewModel(actor, options);
+    } catch (err) {
+      SWSELogger.error('[ShellSurfaceRegistry] Atlas surface VM failed:', err);
+      return { id: 'atlas', title: 'Atlas', error: err.message };
     }
   }
 

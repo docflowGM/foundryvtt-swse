@@ -164,6 +164,20 @@ export class HolonetSocketService {
         await HolonetMessengerService._gmDestroySecretNote(data);
         break;
       }
+      case 'attempt-secret-note-decryption': {
+        await HolonetMessengerService._gmAttemptSecretNoteDecryption(data);
+        break;
+      }
+      case 'attempt-intel-decryption': {
+        const { HolonetIntelService } = await import('./holonet-intel-service.js');
+        await HolonetIntelService._gmAttemptIntelDecryption(data);
+        break;
+      }
+      case 'claim-intel-lockbox': {
+        const { HolonetIntelService } = await import('./holonet-intel-service.js');
+        await HolonetIntelService._gmClaimIntelLockbox(data);
+        break;
+      }
       case 'offer-credit-transfer': {
         await HolonetMessengerService._gmOfferCreditTransfer(data);
         break;

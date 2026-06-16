@@ -148,8 +148,8 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: repeating-linear-gradient(180deg, transparent 0 3px, rgba(255,255,255,0.025) 3px 4px);
-  opacity: 0.35;
+  background: repeating-linear-gradient(180deg, transparent 0 3px, oklch(1 0 0 / var(--swse-scan-line-opacity, var(--scan-strength, 0.03))) 3px 4px);
+  opacity: var(--swse-scan-overlay-opacity, 0.35);
 }
 
 .scan-v {
@@ -159,7 +159,7 @@
   height: 160px;
   pointer-events: none;
   background: linear-gradient(180deg, transparent 0%, rgba(111, 215, 255, 0.08) 42%, rgba(255,255,255,0.10) 50%, transparent 100%);
-  opacity: calc(0.8 * var(--motion-enabled, 1));
+  opacity: calc(var(--swse-scan-sweep-opacity, 0.14) * 4 * var(--motion-enabled, 1));
   animation: swse-concept-scan var(--motion-scan-speed, 7s) linear infinite;
 }
 
@@ -3931,8 +3931,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-v2-screen--concept::before {
   inset: 0 !important;
   pointer-events: none !important;
   z-index: 5 !important;
-  background: repeating-linear-gradient(0deg, transparent 0 3px, oklch(1 0 0 / var(--scan-strength, 0.03)) 3px 4px) !important;
-  opacity: 1 !important;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, oklch(1 0 0 / var(--swse-scan-line-opacity, var(--scan-strength, 0.03))) 3px 4px) !important;
+  opacity: var(--swse-scan-overlay-opacity, 0.36) !important;
 }
 
 form[id^="SWSEV2CharacterSheet"] .scan-v {
@@ -3944,8 +3944,9 @@ form[id^="SWSEV2CharacterSheet"] .scan-v {
   height: 140px !important;
   pointer-events: none !important;
   z-index: 7 !important;
-  background: linear-gradient(180deg, transparent 0%, oklch(var(--accent-l) var(--accent-c) var(--accent-h) / 0.06) 50%, oklch(1 0 0 / 0.1) 62%, transparent 100%) !important;
-  animation: scanV calc(7s / var(--anim-speed, 1)) linear infinite !important;
+  background: linear-gradient(180deg, transparent 0%, oklch(var(--accent-l) var(--accent-c) var(--accent-h) / var(--swse-scan-sweep-opacity, 0.14)) 50%, oklch(1 0 0 / calc(var(--swse-scan-sweep-opacity, 0.14) * 1.4)) 62%, transparent 100%) !important;
+  opacity: calc(var(--motion-enabled, 1) * var(--swse-scan-overlay-opacity, 0.36)) !important;
+  animation: swse-concept-scan var(--motion-scan-speed, calc(7s / var(--anim-speed, 1))) linear infinite !important;
 }
 
 form[id^="SWSEV2CharacterSheet"] .swse-tablet-vent--top,

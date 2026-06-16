@@ -2,6 +2,7 @@
 
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
 import { HolonetStorage } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-storage.js';
+import { HolonetIntelService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
 import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/FactionJobBridgeService.js';
 
 function asArray(value) { return Array.isArray(value) ? value : []; }
@@ -14,6 +15,21 @@ function splitPlanetSystem(value = '') {
   return { planet: planet || raw, system: system || '' };
 }
 function searchText(...parts) { return parts.map(part => String(part || '').toLowerCase()).join(' '); }
+function optionLabel(options = [], value = '') { return options.find(entry => entry.value === value)?.label || value || ''; }
+function selectOptions(options = [], selected = '') { return options.map(entry => ({ ...entry, selected: entry.value === selected })); }
+function uniqueStrings(values = []) {
+  const seen = new Set();
+  const out = [];
+  for (const value of Array.isArray(values) ? values : []) {
+    const clean = String(value || '').trim();
+    if (!clean) continue;
+    const key = clean.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(clean);
+  }
+  return out;
+}
 
 function safeJob(job = {}, thread = {}) {
   const issuer = FactionJobBridgeService.normalizeJobIssuer(job);
@@ -40,21 +56,56 @@ function defaultRewardLabel(record = {}) {
   return bits.join(' · ');
 }
 
-function contactVm(contact = {}, faction = {}, jobs = []) {
+function contactVm(contact = {}, faction = {}, jobs = [], options = {}) {
   const jobStats = FactionJobBridgeService.summarizeJobsByIssuer(jobs, {
     factionId: faction.id,
     factionName: faction.name,
     contactId: contact.id,
     contactName: contact.name
   });
+  const dispositionOptions = options.dispositions || [];
+  const revealStateOptions = options.revealStates || [];
+  const contactIntelRows = asArray(options.intelRows).filter(row => row.linkedFactionId === faction.id && row.linkedContactId === contact.id);
+  const linkedIntelIds = uniqueStrings([
+    ...(Array.isArray(contact.linkedIntelIds) ? contact.linkedIntelIds : []),
+    ...contactIntelRows.map(row => row.intelId || row.recordId)
+  ]);
+  const hasSecretIntel = Boolean(contact.secret || contact.gmNotes || linkedIntelIds.length);
   return {
     ...contact,
     tagsLabel: Array.isArray(contact.tags) ? contact.tags.join(', ') : String(contact.tags || ''),
+    linkedIntelIdsLabel: linkedIntelIds.join(', '),
+    hasLinkedIntel: linkedIntelIds.length > 0,
+    linkedIntelCount: linkedIntelIds.length,
+    recentIntel: contactIntelRows.slice(0, 3),
     hasActorLink: Boolean(contact.actorId || contact.actorUuid),
     actorLinkLabel: contact.actorName || contact.actorUuid || contact.actorId || '',
     defaultRewardLabel: defaultRewardLabel(contact),
+    dispositionLabel: optionLabel(dispositionOptions, contact.disposition),
+    dispositionOptions: selectOptions(dispositionOptions, contact.disposition),
+    revealStateLabel: optionLabel(revealStateOptions, contact.revealState),
+    revealStateOptions: selectOptions(revealStateOptions, contact.revealState),
+    visibilityLabel: contact.knownToPlayers ? 'Player Visible' : 'GM Only',
     jobStats,
-    recentJobs: jobStats.recentJobs
+    recentJobs: jobStats.recentJobs,
+    intelCount: linkedIntelIds.length,
+    dossierSecretStateLabel: hasSecretIntel ? 'Has GM Intel' : 'No Secrets Logged',
+    dossierTypeLabel: contact.actorId || contact.actorUuid ? 'Actor-linked NPC' : 'Lightweight NPC',
+    searchText: searchText(
+      contact.name,
+      contact.role,
+      contact.title,
+      contact.description,
+      contact.publicNotes,
+      contact.gmNotes,
+      contact.lastKnownLocation,
+      contact.agenda,
+      contact.secret,
+      contact.factionRank,
+      contact.disposition,
+      contact.revealState,
+      contact.tags
+    )
   };
 }
 
@@ -74,7 +125,12 @@ export class GMFactionRelationshipSurfaceService {
     const focusedFactionName = String(surfaceState.focusedFactionName || '').trim().toLowerCase();
     const focusedContactId = String(surfaceState.focusedContactId || '').trim();
     const registrySummary = FactionRegistryService.summarizeForWorkspace();
+    const contactOptions = {
+      dispositions: FactionRegistryService.getContactDispositionOptions(),
+      revealStates: FactionRegistryService.getContactRevealStateOptions()
+    };
     const jobs = await this._loadJobRows();
+    const intelRows = await this._loadIntelRows();
     const relationships = FactionRegistryService.getAllActorRelationshipRows().map((row) => ({
       ...row,
       scoreClass: scoreClass(row.score),
@@ -99,8 +155,8 @@ export class GMFactionRelationshipSurfaceService {
     const activeRelationships = relationships.filter(row => !row.isSuggestion);
 
     return {
-      pageTitle: 'Faction Manager',
-      pageDescription: 'GM-owned campaign faction registry, party-wide actor relationships, score adjustments, and player suggestions.',
+      pageTitle: 'Galactic Dossier',
+      pageDescription: 'GM-owned influence ledger for factions, named contacts, party standings, and future Intel releases.',
       factionManager: {
         registry: registrySummary.factions.map((record) => {
           const location = splitPlanetSystem(record.planetSystem);
@@ -109,9 +165,10 @@ export class GMFactionRelationshipSurfaceService {
             factionName: record.name
           });
           const contacts = asArray(record.contacts).map(contact => ({
-            ...contactVm(contact, record, jobs),
+            ...contactVm(contact, record, jobs, { ...contactOptions, intelRows }),
             isFocused: Boolean(focusedContactId && contact.id === focusedContactId)
           }));
+          const factionIntelCount = intelRows.filter(row => row.linkedFactionId === record.id).length;
           const isFocused = Boolean((focusedFactionId && record.id === focusedFactionId) || (focusedFactionName && String(record.name || '').trim().toLowerCase() === focusedFactionName));
           return {
             ...record,
@@ -121,11 +178,16 @@ export class GMFactionRelationshipSurfaceService {
             scoreLabel: scoreLabel(record.score),
             contactCount: contacts.length,
             contacts,
+            intelCount: factionIntelCount,
+            dossierStateLabel: 'Registry',
             jobStats,
             recentJobs: jobStats.recentJobs,
             defaultRewardLabel: defaultRewardLabel(record),
+            knownContactCount: contacts.filter(contact => contact.knownToPlayers).length,
+            hiddenContactCount: contacts.filter(contact => !contact.knownToPlayers).length,
+            secretContactCount: contacts.filter(contact => contact.secret || contact.gmNotes || contact.hasLinkedIntel).length,
             isFocused,
-            searchText: searchText(record.name, record.type, record.planetSystem, record.leader, record.status, record.sourceLabel)
+            searchText: searchText(record.name, record.type, record.planetSystem, record.leader, record.status, record.sourceLabel, contacts.map(contact => contact.searchText).join(' '))
           };
         }),
         relationships: activeRelationships.map(row => ({
@@ -137,13 +199,18 @@ export class GMFactionRelationshipSurfaceService {
         actors,
         relationshipTypes: FactionRegistryService.getRelationshipTypeOptions(),
         sourceTypes: FactionRegistryService.getSourceTypeOptions(),
+        contactDispositions: contactOptions.dispositions,
+        contactRevealStates: contactOptions.revealStates,
         counts: {
           registry: registrySummary.count,
           relationships: activeRelationships.length,
           suggestions: suggestions.length,
           actorsWithRelationships: new Set(activeRelationships.map(row => row.actorId)).size,
           jobs: jobs.length,
-          contacts: registrySummary.factions.reduce((sum, faction) => sum + asArray(faction.contacts).length, 0)
+          contacts: registrySummary.factions.reduce((sum, faction) => sum + asArray(faction.contacts).length, 0),
+          intel: intelRows.length,
+          factionIntel: intelRows.filter(row => row.linkedFactionId && !row.linkedContactId).length,
+          contactIntel: intelRows.filter(row => row.linkedContactId).length
         },
         hasRegistry: registrySummary.factions.length > 0,
         hasRelationships: activeRelationships.length > 0,
@@ -159,6 +226,29 @@ export class GMFactionRelationshipSurfaceService {
       return asArray(threads)
         .filter(thread => thread?.metadata?.threadType === 'job')
         .map(thread => safeJob(thread?.metadata?.job || {}, thread));
+    } catch (_err) {
+      return [];
+    }
+  }
+
+  static async _loadIntelRows() {
+    try {
+      const records = await HolonetIntelService.getAllIntel({ includeArchived: true });
+      return asArray(records).map((record) => {
+        const intel = HolonetIntelService.getIntelMetadata(record);
+        if (!intel) return null;
+        return {
+          recordId: record.id,
+          intelId: intel.id,
+          title: intel.title,
+          status: intel.status,
+          kind: intel.kind,
+          classification: intel.classification,
+          linkedFactionId: intel.linkedFactionId,
+          linkedContactId: intel.linkedContactId,
+          updatedAt: intel.updatedAt || record.updatedAt || record.createdAt || ''
+        };
+      }).filter(Boolean);
     } catch (_err) {
       return [];
     }

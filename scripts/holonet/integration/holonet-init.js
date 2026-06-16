@@ -7,6 +7,8 @@ import { HolonetManager } from '../holonet-manager.js';
 import { HolonetPreferences } from '../holonet-preferences.js';
 import { HolonetSourceRegistry } from '../holonet-source-registry.js';
 import { HolonetStateService } from '../subsystems/holonet-state-service.js';
+import { HolonetIntelService } from '../subsystems/holonet-intel-service.js';
+import { HolonetDecryptionService } from '../subsystems/holonet-decryption-service.js';
 import { MentorSource } from '../sources/mentor-source.js';
 import { StoreSource } from '../sources/store-source.js';
 import { ApprovalsSource } from '../sources/approvals-source.js';
@@ -282,7 +284,9 @@ export async function initializeHolonet() {
     manager: HolonetManager,
     preferences: HolonetPreferences,
     sources: HolonetSourceRegistry,
-    state: HolonetStateService
+    state: HolonetStateService,
+    intel: HolonetIntelService,
+    decryption: HolonetDecryptionService
   };
 
   registerHolonetSources();

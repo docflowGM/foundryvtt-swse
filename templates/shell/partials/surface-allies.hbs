@@ -1,6 +1,6 @@
 {{!--
   surface-allies.hbs — Holopad Allies app.
-  Companions, Factions, Bases, and Organizations live here. Ships/vehicles are
+  Companions, Factions, Contacts, Intel, Bases, and Organizations live here. Ships/vehicles are
   deliberately excluded from Bases and remain in Shipyard. Droid companions are
   visible here, while physical droid work routes to Garage.
 --}}
@@ -98,6 +98,243 @@
       </div>
       {{else}}
       <div class="swse-allies-empty">{{localize "SWSE.ShellUI.NoFactionRecordsHaveBeenAttachedToThis"}}</div>
+      {{/if}}
+    </section>
+    {{/if}}
+
+    {{#if (eq vm.activeTab "contacts")}}
+    <section class="swse-allies-directory swse-allies-contacts-dossier">
+      <div class="swse-allies-section-head">
+        <div>
+          <span class="swse-allies-kicker">CONTACT DOSSIERS</span>
+          <h3>Contacts</h3>
+          <p>Named NPC dossiers revealed through faction work, meetings, jobs, messages, and GM Intel releases.</p>
+        </div>
+        <div class="swse-allies-section-actions">
+          <div class="swse-allies-stat-pill"><b>{{vm.contacts.totalCount}}</b><span>Known</span></div>
+          <div class="swse-allies-stat-pill"><b>{{vm.contacts.actorLinkedCount}}</b><span>Actors</span></div>
+          <div class="swse-allies-stat-pill"><b>{{vm.contacts.intelLinkedCount}}</b><span>Intel</span></div>
+        </div>
+      </div>
+      <div class="swse-allies-base-note">
+        Contacts are lightweight named NPC dossiers from the GM Galactic Dossier. When the GM promotes a contact into a real actor, the actor can be opened from here.
+      </div>
+      {{#if vm.contacts.hasAny}}
+      <div class="swse-contact-dossier-grid">
+        {{#each vm.contacts.records}}
+        <article class="swse-contact-dossier-card {{#if this.isHidden}}is-hidden{{/if}}" data-faction-id="{{this.factionId}}" data-contact-id="{{this.id}}">
+          <header>
+            <img src="{{this.image}}" alt="{{this.name}}">
+            <div>
+              <span>{{this.factionName}}</span>
+              <h4>{{this.name}}</h4>
+              <small>{{this.role}}{{#if this.factionRank}} · {{this.factionRank}}{{/if}}</small>
+            </div>
+            <b>{{this.revealLabel}}</b>
+          </header>
+          <div class="swse-contact-dossier-meta">
+            <span>{{this.dispositionLabel}}</span>
+            {{#if this.lastKnownLocation}}<span>{{this.lastKnownLocation}}</span>{{/if}}
+            {{#if this.factionType}}<span>{{this.factionType}}</span>{{/if}}
+          </div>
+          <p>{{this.body}}</p>
+          {{#if this.tagsLabel}}<small class="swse-contact-tags">{{this.tagsLabel}}</small>{{/if}}
+          {{#if this.hasRecentIntel}}
+          <div class="swse-contact-intel-links">
+            <strong>Related Intel</strong>
+            {{#each this.recentIntel}}
+            <span>{{this.title}}</span>
+            {{/each}}
+          </div>
+          {{/if}}
+          {{#if this.agenda}}<p class="swse-contact-gm-note"><b>Agenda:</b> {{this.agenda}}</p>{{/if}}
+          {{#if this.secret}}<p class="swse-contact-gm-note"><b>Secret:</b> {{this.secret}}</p>{{/if}}
+          <footer>
+            <span>{{this.intelCount}} contact Intel · {{this.factionIntelCount}} faction Intel</span>
+            {{#if this.hasActor}}<button type="button" data-allies-action="open-contact-actor" data-actor-id="{{this.actorId}}">Open Actor</button>{{/if}}
+          </footer>
+        </article>
+        {{/each}}
+      </div>
+      {{else}}
+      <div class="swse-allies-empty">No named NPC contacts have been revealed to this profile yet. Contacts become visible when the GM marks them hinted, known, or compromised.</div>
+      {{/if}}
+    </section>
+    {{/if}}
+
+    {{#if (eq vm.activeTab "intel")}}
+    <section class="swse-allies-directory swse-allies-intel-locker">
+      <div class="swse-allies-section-head">
+        <div>
+          <span class="swse-allies-kicker">HOLONET INTEL LOCKER</span>
+          <h3>Intel Locker</h3>
+          <p>Player-held clues, dossiers, decrypted transmissions, rumors, and classified handouts released by the GM.</p>
+        </div>
+        <div class="swse-allies-section-actions">
+          <div class="swse-allies-stat-pill"><b>{{vm.intel.totalCount}}</b><span>Total</span></div>
+          <div class="swse-allies-stat-pill"><b>{{vm.intel.pinnedCount}}</b><span>Pinned</span></div>
+          <div class="swse-allies-stat-pill"><b>{{vm.intel.encryptedCount}}</b><span>Locked</span></div>
+        </div>
+      </div>
+      <div class="swse-allies-base-note">
+        Messenger and Secret Notes deliver Intel. This locker is the persistent workspace where players keep, pin, review, and annotate released Intel.
+      </div>
+      {{#if vm.intel.hasAny}}
+        {{#if vm.intel.hasPinned}}
+        <div class="swse-intel-locker-lane">
+          <h4>Pinned Intel</h4>
+          <div class="swse-intel-locker-grid">
+            {{#each vm.intel.pinned}}
+            <article class="swse-intel-locker-card {{#if this.encrypted}}is-encrypted{{/if}} {{#if this.isDecoded}}is-decoded{{/if}}">
+              <header><span>{{this.classificationLabel}}</span><h5>{{this.title}}</h5><b>{{this.revealLabel}}</b></header>
+              <p>{{this.body}}</p>
+              {{#if this.hasDecryption}}
+              <div class="swse-intel-decryption-console {{#if this.decryption.solved}}is-solved{{/if}} {{#if this.decryption.failed}}is-failed{{/if}}">
+                <div class="swse-intel-decryption-head">
+                  <span>DECRYPTION MATRIX · {{this.decryption.levelLabel}}</span>
+                  <b>{{this.decryption.percent}}%</b>
+                </div>
+                {{#if this.decryption.locked}}
+                <div class="swse-intel-decryption-grid">
+                  {{#each this.decryption.tokens}}
+                    {{#if (eq this.type "sep")}}<span class="swse-intel-decryption-sep">{{this.text}}</span>{{else}}
+                    <span class="swse-intel-decryption-word">
+                      {{#each this.cells}}<span class="swse-intel-decryption-cell {{#if this.isKnown}}is-known{{/if}}"><span>{{{this.glyphHtml}}}</span><b>{{this.plain}}</b></span>{{/each}}
+                    </span>
+                    {{/if}}
+                  {{/each}}
+                </div>
+                <div class="swse-allies-faction-actions swse-intel-decryption-actions">
+                  {{#each this.decryption.skills}}
+                  <button type="button" data-allies-action="attempt-intel-decrypt" data-intel-id="{{../intelId}}" data-skill-key="{{this.key}}" {{#if this.disabled}}disabled{{/if}}>{{this.label}} +{{this.mod}} vs DC {{../decryption.dc}}</button>
+                  {{/each}}
+                </div>
+                {{else}}
+                <div class="swse-intel-decryption-result">{{this.decryption.decryptedText}}</div>
+                {{/if}}
+                {{#if this.decryption.log.length}}
+                <div class="swse-intel-decryption-log">
+                  {{#each this.decryption.log}}<span class="{{this.cls}}">{{this.text}}</span>{{/each}}
+                </div>
+                {{/if}}
+              </div>
+              {{/if}}
+              {{#if this.hasLockbox}}
+              <div class="swse-intel-lockbox {{#if this.lockbox.sealed}}is-sealed{{/if}} {{#if this.lockbox.claimed}}is-claimed{{/if}}">
+                <header><span>ENCRYPTED LOCKBOX</span><b>{{this.lockbox.status}}</b></header>
+                {{#if this.lockbox.sealed}}
+                <p>Reward payload is still sealed inside the encrypted transmission.</p>
+                {{else}}
+                <p>{{this.lockbox.label}} · {{this.lockbox.rewardCount}} reward payload{{#unless (eq this.lockbox.rewardCount 1)}}s{{/unless}}</p>
+                {{#if this.lockbox.credits}}<span class="swse-intel-lockbox-reward">{{this.lockbox.creditsLabel}} credits</span>{{/if}}
+                {{#each this.lockbox.items}}<span class="swse-intel-lockbox-reward">{{this.quantity}}x {{#if this.name}}{{this.name}}{{else}}{{this.uuid}}{{/if}}</span>{{/each}}
+                {{#if this.lockbox.claimed}}<small>Claimed by {{this.lockbox.claimedByActorName}}</small>{{/if}}
+                {{#if this.canClaimLockbox}}<button type="button" data-allies-action="claim-intel-lockbox" data-intel-id="{{this.intelId}}">Claim Lockbox</button>{{/if}}
+                {{/if}}
+              </div>
+              {{/if}}
+              {{#if this.hasLinks}}<div class="swse-intel-linked-chips">{{#if this.linkedFactionName}}<span>{{this.linkedFactionName}}</span>{{/if}}{{#if this.linkedContactName}}<span>{{this.linkedContactName}}</span>{{/if}}</div>{{/if}}
+              {{#if this.tagsLabel}}<small>{{this.tagsLabel}}</small>{{/if}}
+              <form class="swse-intel-notes-form">
+                <textarea name="notes" rows="2" placeholder="Player notes, theories, leads...">{{this.notes}}</textarea>
+                <div class="swse-allies-faction-actions">
+                  <button type="button" data-allies-action="save-intel-notes" data-intel-id="{{this.intelId}}">Save Notes</button>
+                  <button type="button" data-allies-action="unpin-intel" data-intel-id="{{this.intelId}}">Unpin</button>
+                  <button type="button" data-allies-action="archive-intel" data-intel-id="{{this.intelId}}">Archive</button>
+                </div>
+              </form>
+            </article>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+        <div class="swse-intel-locker-lane">
+          <h4>Active Intel</h4>
+          <div class="swse-intel-locker-grid">
+            {{#each vm.intel.active}}
+            <article class="swse-intel-locker-card {{#if this.encrypted}}is-encrypted{{/if}} {{#if this.isDecoded}}is-decoded{{/if}}">
+              <header><span>{{this.kindLabel}} · {{this.classificationLabel}}</span><h5>{{this.title}}</h5><b>{{this.revealLabel}}</b></header>
+              <p>{{this.body}}</p>
+              {{#if this.hasDecryption}}
+              <div class="swse-intel-decryption-console {{#if this.decryption.solved}}is-solved{{/if}} {{#if this.decryption.failed}}is-failed{{/if}}">
+                <div class="swse-intel-decryption-head">
+                  <span>DECRYPTION MATRIX · {{this.decryption.levelLabel}}</span>
+                  <b>{{this.decryption.percent}}%</b>
+                </div>
+                {{#if this.decryption.locked}}
+                <div class="swse-intel-decryption-grid">
+                  {{#each this.decryption.tokens}}
+                    {{#if (eq this.type "sep")}}<span class="swse-intel-decryption-sep">{{this.text}}</span>{{else}}
+                    <span class="swse-intel-decryption-word">
+                      {{#each this.cells}}<span class="swse-intel-decryption-cell {{#if this.isKnown}}is-known{{/if}}"><span>{{{this.glyphHtml}}}</span><b>{{this.plain}}</b></span>{{/each}}
+                    </span>
+                    {{/if}}
+                  {{/each}}
+                </div>
+                <div class="swse-allies-faction-actions swse-intel-decryption-actions">
+                  {{#each this.decryption.skills}}
+                  <button type="button" data-allies-action="attempt-intel-decrypt" data-intel-id="{{../intelId}}" data-skill-key="{{this.key}}" {{#if this.disabled}}disabled{{/if}}>{{this.label}} +{{this.mod}} vs DC {{../decryption.dc}}</button>
+                  {{/each}}
+                </div>
+                {{else}}
+                <div class="swse-intel-decryption-result">{{this.decryption.decryptedText}}</div>
+                {{/if}}
+                {{#if this.decryption.log.length}}
+                <div class="swse-intel-decryption-log">
+                  {{#each this.decryption.log}}<span class="{{this.cls}}">{{this.text}}</span>{{/each}}
+                </div>
+                {{/if}}
+              </div>
+              {{/if}}
+              {{#if this.hasLockbox}}
+              <div class="swse-intel-lockbox {{#if this.lockbox.sealed}}is-sealed{{/if}} {{#if this.lockbox.claimed}}is-claimed{{/if}}">
+                <header><span>ENCRYPTED LOCKBOX</span><b>{{this.lockbox.status}}</b></header>
+                {{#if this.lockbox.sealed}}
+                <p>Reward payload is still sealed inside the encrypted transmission.</p>
+                {{else}}
+                <p>{{this.lockbox.label}} · {{this.lockbox.rewardCount}} reward payload{{#unless (eq this.lockbox.rewardCount 1)}}s{{/unless}}</p>
+                {{#if this.lockbox.credits}}<span class="swse-intel-lockbox-reward">{{this.lockbox.creditsLabel}} credits</span>{{/if}}
+                {{#each this.lockbox.items}}<span class="swse-intel-lockbox-reward">{{this.quantity}}x {{#if this.name}}{{this.name}}{{else}}{{this.uuid}}{{/if}}</span>{{/each}}
+                {{#if this.lockbox.claimed}}<small>Claimed by {{this.lockbox.claimedByActorName}}</small>{{/if}}
+                {{#if this.canClaimLockbox}}<button type="button" data-allies-action="claim-intel-lockbox" data-intel-id="{{this.intelId}}">Claim Lockbox</button>{{/if}}
+                {{/if}}
+              </div>
+              {{/if}}
+              {{#if this.hasLinks}}<div class="swse-intel-linked-chips">{{#if this.linkedFactionName}}<span>{{this.linkedFactionName}}</span>{{/if}}{{#if this.linkedContactName}}<span>{{this.linkedContactName}}</span>{{/if}}</div>{{/if}}
+              {{#if this.tagsLabel}}<small>{{this.tagsLabel}}</small>{{/if}}
+              <em>Released {{this.releasedLabel}}</em>
+              <form class="swse-intel-notes-form">
+                <textarea name="notes" rows="2" placeholder="Player notes, theories, leads...">{{this.notes}}</textarea>
+                <div class="swse-allies-faction-actions">
+                  <button type="button" data-allies-action="save-intel-notes" data-intel-id="{{this.intelId}}">Save Notes</button>
+                  <button type="button" data-allies-action="pin-intel" data-intel-id="{{this.intelId}}">Pin</button>
+                  <button type="button" data-allies-action="review-intel" data-intel-id="{{this.intelId}}">Mark Reviewed</button>
+                  <button type="button" data-allies-action="archive-intel" data-intel-id="{{this.intelId}}">Archive</button>
+                </div>
+              </form>
+            </article>
+            {{/each}}
+          </div>
+        </div>
+        {{#if vm.intel.hasArchived}}
+        <details class="swse-intel-locker-archive">
+          <summary>Archived Intel ({{vm.intel.archivedCount}})</summary>
+          <div class="swse-intel-locker-grid">
+            {{#each vm.intel.archived}}
+            <article class="swse-intel-locker-card is-archived">
+              <header><span>{{this.kindLabel}}</span><h5>{{this.title}}</h5><b>Archived</b></header>
+              <p>{{this.summary}}</p>
+              {{#if this.hasLinks}}<div class="swse-intel-linked-chips">{{#if this.linkedFactionName}}<span>{{this.linkedFactionName}}</span>{{/if}}{{#if this.linkedContactName}}<span>{{this.linkedContactName}}</span>{{/if}}</div>{{/if}}
+              <div class="swse-allies-faction-actions">
+                <button type="button" data-allies-action="restore-intel" data-intel-id="{{this.intelId}}">Restore</button>
+              </div>
+            </article>
+            {{/each}}
+          </div>
+        </details>
+        {{/if}}
+      {{else}}
+      <div class="swse-allies-empty">No Intel has been released to this profile yet. Intel delivered by the GM can appear here after it is committed to the dossier.</div>
       {{/if}}
     </section>
     {{/if}}

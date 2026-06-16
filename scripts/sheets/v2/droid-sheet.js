@@ -29,6 +29,7 @@ import { StoreSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shel
 import { SettingsSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/SettingsSurfaceController.js";
 import { GamesSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/GamesSurfaceController.js";
 import { AlliesSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/AlliesSurfaceController.js";
+import { AtlasSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/AtlasSurfaceController.js";
 import { MessengerSurfaceController } from "/systems/foundryvtt-swse/scripts/ui/shell/MessengerSurfaceController.js";
 
 export class SWSEV2DroidSheet extends
@@ -364,6 +365,12 @@ export class SWSEV2DroidSheet extends
       this._alliesSurfaceController.attach(root);
     } else {
       this._alliesSurfaceController?.destroy?.();
+    }
+    if (this._shellSurface === 'atlas') {
+      this._atlasSurfaceController ??= new AtlasSurfaceController(this, this.actor);
+      this._atlasSurfaceController.attach(root);
+    } else {
+      this._atlasSurfaceController?.destroy?.();
     }
   }
 

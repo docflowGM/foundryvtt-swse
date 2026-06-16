@@ -230,17 +230,18 @@ function categoryLabel(record) {
 
 export class HomeSurfaceService {
   static async buildViewModel(actor) {
-    const [progressionSummary, upgradeSummary, alliesSummary] = await Promise.all([
+    const [progressionSummary, upgradeSummary, alliesSummary, atlasSummary] = await Promise.all([
       this._getProgressionSummary(actor),
       this._getUpgradeSummary(actor),
-      this._getAlliesSummary(actor)
+      this._getAlliesSummary(actor),
+      this._getAtlasSummary(actor)
     ]);
     const progressionAudit = this._getProgressionAudit(actor);
 
     await this._publishHomeTasks(actor, progressionSummary, upgradeSummary, alliesSummary, progressionAudit);
     const holonetSummary = await this._getHolonetSummary(actor);
 
-    const apps = this._buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary);
+    const apps = this._buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary, atlasSummary);
     const actorData = this._buildActorData(actor);
     const lockScreenState = this._buildLockScreenState(actor);
 
@@ -365,6 +366,19 @@ export class HomeSurfaceService {
     } catch (err) {
       SWSELogger.warn('[HomeSurfaceService] Allies summary failed:', err);
       return { total: 0, companions: 0, factions: 0, bases: 0, organizations: 0, pending: 0 };
+    }
+  }
+
+
+  static async _getAtlasSummary(actor) {
+    try {
+      const { AtlasSurfaceService } = await import(
+        '/systems/foundryvtt-swse/scripts/ui/shell/AtlasSurfaceService.js'
+      );
+      return await AtlasSurfaceService.buildSummary(actor);
+    } catch (err) {
+      SWSELogger.warn('[HomeSurfaceService] Atlas summary failed:', err);
+      return { total: 0, current: 0, leads: 0, pinned: 0, badge: null };
     }
   }
 
@@ -811,7 +825,7 @@ export class HomeSurfaceService {
   /**
    * Build app tiles with radial positioning, badge types, and state flags
    */
-  static _buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary = {}) {
+  static _buildAppTiles(actor, progressionSummary, upgradeSummary, holonetSummary, alliesSummary = {}, atlasSummary = {}) {
     if (isVehicleActor(actor)) return this._buildVehicleAppTiles(actor, holonetSummary);
     const assetSummary = this._getOwnedAssetSummary(actor);
     const gamesEnabled = (() => {
@@ -962,6 +976,21 @@ export class HomeSurfaceService {
         status: alliesSummary.pending > 0 ? 'PENDING' : 'READY',
         statusTone: alliesSummary.pending > 0 ? 'warn' : '',
         description: 'Followers, minions, factions, bases, and organizations'
+      },
+      {
+        id: 'atlas',
+        label: 'Atlas',
+        icon: '◎',
+        routeId: 'atlas',
+        visible: Number(atlasSummary.total || 0) > 0,
+        enabled: Number(atlasSummary.total || 0) > 0,
+        badge: atlasSummary.badge,
+        badgeType: atlasSummary.leads > 0 ? 'warn' : (atlasSummary.total > 0 ? 'info' : null),
+        featured: atlasSummary.leads > 0,
+        locked: false,
+        status: atlasSummary.leads > 0 ? 'LEADS' : 'READY',
+        statusTone: atlasSummary.leads > 0 ? 'warn' : '',
+        description: 'Known locations, maps, local facts, and unresolved leads'
       },
       {
         id: 'messages',
