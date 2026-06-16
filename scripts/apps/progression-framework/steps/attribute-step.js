@@ -131,6 +131,39 @@ const ATTRIBUTE_V2_METHOD_COPY = Object.freeze({
   'levelup-increase': { label: 'Level Increase', icon: 'fa-arrow-up', sub: '+1 to two abilities' }
 });
 
+const ATTRIBUTE_V2_AFFECTS = Object.freeze({
+  str: [
+    'Melee attack and damage pressure',
+    'Athletics, jump, climb, and carry logic',
+    'Grapple checks and raw-force moments'
+  ],
+  dex: [
+    'Reflex Defense and flat-footed pressure',
+    'Initiative, ranged accuracy, and pilot feel',
+    'Stealth, Acrobatics, and evasive movement'
+  ],
+  con: [
+    'Fortitude Defense and endurance',
+    'Hit point durability and staying power',
+    'Toxin, disease, fatigue, and harsh-environment resistance'
+  ],
+  int: [
+    'Starting trained skill pressure',
+    'Knowledge, Mechanics, and Use Computer breadth',
+    'Technical planning and puzzle-solving builds'
+  ],
+  wis: [
+    'Will Defense and awareness',
+    'Perception, Survival, and Treat Injury pressure',
+    'Force-facing intuition for many traditions'
+  ],
+  cha: [
+    'Persuasion, Deception, and command presence',
+    'Force presence for many traditions',
+    'Social pressure under stress'
+  ]
+});
+
 
 export class AttributeStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -144,6 +177,31 @@ export class AttributeStep extends ProgressionStepPlugin {
     this._selectedPoolId = null;
     this._dragPoolId = null;
     this._speciesFixedOverrideRequested = false;
+  }
+
+  _getAbilityMeta(key) {
+    const abilityKey = String(key || '').toLowerCase();
+    return ATTRIBUTE_V2_META[abilityKey] || {
+      fullName: abilityKey.toUpperCase(),
+      series: 'physical',
+      colorClass: abilityKey,
+      detail: ''
+    };
+  }
+
+  _setFocusedAbility(key, shell = null) {
+    const abilityKey = String(key || '').toLowerCase();
+    if (!abilityKey) return;
+    this._focusedAbility = abilityKey;
+    const meta = this._getAbilityMeta(abilityKey);
+    if (shell) {
+      shell.focusedItem = {
+        id: abilityKey,
+        key: abilityKey,
+        name: meta.fullName || abilityKey.toUpperCase(),
+        type: 'attribute'
+      };
+    }
   }
 
   _isDroidContext(shell) {
@@ -320,7 +378,7 @@ export class AttributeStep extends ProgressionStepPlugin {
       ...this._attributes,
       [ability]: Number(this._attributes[ability] ?? this._getSpeciesFixedScores(shell)?.[ability] ?? 0) + Number(delta || 0),
     };
-    this._focusedAbility = ability;
+    this._setFocusedAbility(ability, shell);
     shell.render();
   }
 
@@ -750,7 +808,7 @@ export class AttributeStep extends ProgressionStepPlugin {
       this._recomputeAttributesFromPool(shell);
     }
 
-    this._focusedAbility = abilityKey;
+    this._setFocusedAbility(abilityKey, shell);
     this._committed = false;
   }
 
@@ -938,7 +996,7 @@ export class AttributeStep extends ProgressionStepPlugin {
     workSurfaceEl.querySelectorAll('[data-ability-row]').forEach(row => {
       row.addEventListener('click', () => {
         const abilityKey = String(row.dataset.abilityRow || '').toLowerCase();
-        this._focusedAbility = abilityKey;
+        this._setFocusedAbility(abilityKey, shell);
         if (this._method !== 'point-buy' && this._selectedPoolId) {
           this._assignSelectedPoolToAbility(abilityKey, shell);
         }
@@ -1059,7 +1117,7 @@ export class AttributeStep extends ProgressionStepPlugin {
         .reduce((sum, [, value]) => sum + (Number(value) || 0), 0);
       if (nextValue > oldValue && spentWithout + nextValue > needed) return;
       this._attributes = { ...current, [ability]: nextValue };
-      this._focusedAbility = ability;
+      this._setFocusedAbility(ability, shell);
       shell.render();
       return;
     }
@@ -1073,7 +1131,7 @@ export class AttributeStep extends ProgressionStepPlugin {
     if (!this._canAdjustPointBuy(this._attributes, key, delta, pool)) return;
 
     this._attributes = { ...this._attributes, [key]: Number(this._attributes[key] ?? POINT_BUY_BASE) + delta };
-    this._focusedAbility = key;
+    this._setFocusedAbility(key, shell);
     shell.render();
   }
 
@@ -1562,6 +1620,58 @@ export class AttributeStep extends ProgressionStepPlugin {
       lockButtonLabel: this._committed ? 'Unlock Attributes' : 'Lock Attributes',
       rerollButtonLabel: 'Reroll'
     }, shell);
+  }
+
+  async renderDetailsPanel(focusedItem = null, shell = null) {
+    const stepData = await this.getStepData({ shell });
+    const requestedKey = String(focusedItem?.id || focusedItem?.key || this._focusedAbility || '').toLowerCase();
+    const ability = stepData.abilities.find(candidate => candidate.id === requestedKey)
+      || stepData.focusedAbility
+      || stepData.abilities.find(candidate => !candidate.isExcluded)
+      || null;
+
+    if (!ability) {
+      return {
+        template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/empty-state.hbs',
+        data: {
+          message: 'Select an attribute to see live derivations and calibration guidance.',
+          icon: this._descriptor.icon,
+        },
+      };
+    }
+
+    this._setFocusedAbility(ability.id, shell);
+
+    const speciesMod = Number(ability.speciesMod ?? 0) || 0;
+    const baseScore = Number.isFinite(Number(ability.baseDisplay)) ? Number(ability.baseDisplay) : ability.baseDisplay ?? '—';
+    const finalScore = Number.isFinite(Number(ability.finalDisplay)) ? Number(ability.finalDisplay) : ability.finalDisplay ?? '—';
+    const modifier = Number.isFinite(Number(ability.finalDisplay)) ? this._modifier(Number(ability.finalDisplay)) : null;
+    const methodDescription = stepData.currentMethodDescription || '';
+
+    return {
+      template: 'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/attribute-details.hbs',
+      data: {
+        id: ability.id,
+        label: ability.fullName || ability.label || ability.id.toUpperCase(),
+        shortLabel: ability.label || ability.id.toUpperCase(),
+        methodLabel: stepData.methodCopy?.label || 'Attribute Method',
+        methodDescription,
+        canonicalDescription: ability.detail || this._getAbilityMeta(ability.id).detail || '',
+        baseScore,
+        speciesMod,
+        secondColumnLabel: stepData.secondColumnLabel || 'Species Modifier',
+        speciesModClass: ability.speciesModClass || (speciesMod > 0 ? 'prog-num--pos' : speciesMod < 0 ? 'prog-num--neg' : 'prog-num--zero'),
+        finalScore,
+        modifierFormatted: ability.modifierFormatted || this._formatModifierDisplay(modifier),
+        modClass: ability.modClass || (modifier > 0 ? 'prog-num--pos' : modifier < 0 ? 'prog-num--neg' : 'prog-num--zero'),
+        affects: ATTRIBUTE_V2_AFFECTS[ability.id] || [],
+        assignedText: ability.assignedText || ability.assignmentHint || '',
+        costLabel: ability.costLabel || '',
+        mentorProse: methodDescription,
+        derivedStats: stepData.derivedStats || [],
+        hasDerivedStats: (stepData.derivedStats || []).length > 0,
+      }
+    };
   }
 
   renderWorkSurface(stepData) {

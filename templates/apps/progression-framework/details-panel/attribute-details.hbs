@@ -1,7 +1,11 @@
 <div class="prog-attribute-details swse-ability-surface swse-ability-surface--{{id}}" data-ability="{{id}}">
 
   <div class="prog-attribute-details__header">
-    <h2 class="prog-attribute-details__name swse-ability-label swse-ability-label--{{id}}" data-ability="{{id}}">{{label}}</h2>
+    <div>
+      <div class="prog-attribute-details__kicker">{{methodLabel}}</div>
+      <h2 class="prog-attribute-details__name swse-ability-label swse-ability-label--{{id}}" data-ability="{{id}}">{{label}}</h2>
+    </div>
+    <span class="prog-attribute-details__sigil swse-ability-label--{{id}}">{{shortLabel}}</span>
   </div>
 
   {{#if canonicalDescription}}
@@ -17,11 +21,23 @@
       <span class="prog-attribute-details__breakdown-value">{{baseScore}}</span>
     </div>
     <div class="prog-attribute-details__breakdown-row">
-      <span class="prog-attribute-details__breakdown-label">Species Modifier:</span>
+      <span class="prog-attribute-details__breakdown-label">{{#if secondColumnLabel}}{{secondColumnLabel}}{{else}}Species Modifier{{/if}}:</span>
       <span class="prog-attribute-details__breakdown-value {{speciesModClass}}">
         {{#if (gt speciesMod 0)}}+{{/if}}{{speciesMod}}
       </span>
     </div>
+    {{#if assignedText}}
+      <div class="prog-attribute-details__breakdown-row">
+        <span class="prog-attribute-details__breakdown-label">Assignment:</span>
+        <span class="prog-attribute-details__breakdown-value">{{assignedText}}</span>
+      </div>
+    {{/if}}
+    {{#if costLabel}}
+      <div class="prog-attribute-details__breakdown-row">
+        <span class="prog-attribute-details__breakdown-label">Point Cost:</span>
+        <span class="prog-attribute-details__breakdown-value">{{costLabel}}</span>
+      </div>
+    {{/if}}
     <div class="prog-attribute-details__breakdown-row prog-attribute-details__breakdown-row--final">
       <span class="prog-attribute-details__breakdown-label">Final Score:</span>
       <span class="prog-attribute-details__breakdown-value prog-attribute-details__breakdown-value--final">{{finalScore}}</span>
@@ -31,6 +47,21 @@
       <span class="prog-attribute-details__breakdown-value {{modClass}}">{{modifierFormatted}}</span>
     </div>
   </div>
+
+  {{#if hasDerivedStats}}
+    <div class="prog-attribute-details__section prog-attribute-details__section--derived">
+      <h4 class="prog-attribute-details__section-title">Live Derivations</h4>
+      <div class="prog-attribute-details__derived-grid">
+        {{#each derivedStats}}
+          <div class="prog-attribute-details__derived-card tone-{{tone}}">
+            <span>{{label}}</span>
+            <b>{{value}}</b>
+            <em>{{source}}</em>
+          </div>
+        {{/each}}
+      </div>
+    </div>
+  {{/if}}
 
   {{!-- What This Affects --}}
   {{#if affects.length}}
@@ -44,10 +75,10 @@
     </div>
   {{/if}}
 
-  {{!-- Why This Matters (Mentor Guidance) --}}
+  {{!-- Calibration Guidance --}}
   {{#if mentorProse}}
     <div class="prog-attribute-details__guidance">
-      <h4 class="prog-attribute-details__guidance-title">Why This Matters</h4>
+      <h4 class="prog-attribute-details__guidance-title">Calibration Read</h4>
       <p class="prog-attribute-details__guidance-text">{{mentorProse}}</p>
     </div>
   {{/if}}

@@ -165,7 +165,7 @@
                 <div class="panel-head compact"><span>Kyber Crystal</span><span class="hint">{{lightsaber.crystals.length}} crystals</span></div>
                 <div class="ls-tab-card-grid">
                   {{#each lightsaber.crystals}}
-                  <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="select-lightsaber-crystal" data-key="{{id}}" data-lightsaber-inspect-type="crystal" data-lightsaber-inspect-key="{{id}}" data-component-type="crystal" {{#if incompatible}}disabled{{/if}} title="{{description}}">
+                  <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="inspect-lightsaber-component" data-key="{{optionKey}}" data-lightsaber-inspect-type="crystal" data-lightsaber-inspect-key="{{optionKey}}" data-component-type="crystal" title="{{description}}">
                     <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
                     <span class="card-desc">{{description}}</span>
                     <span class="card-tags"><span class="tag">{{rarity}}</span><span class="tag ls-color-text-tag">{{#each bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
@@ -181,7 +181,7 @@
                 {{#if lightsaber.slotState.techSpecialistBonus}}<p class="panel-note">Tech Specialist grants one additional hilt modification slot during construction.</p>{{/if}}
                 <div class="ls-tab-card-grid">
                   {{#each lightsaber.accessories}}
-                  <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="toggle-lightsaber-accessory" data-key="{{id}}" data-lightsaber-inspect-type="accessory" data-lightsaber-inspect-key="{{id}}" data-component-type="accessory" {{#if incompatible}}disabled{{/if}} title="{{description}}">
+                  <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="inspect-lightsaber-component" data-key="{{optionKey}}" data-lightsaber-inspect-type="accessory" data-lightsaber-inspect-key="{{optionKey}}" data-component-type="accessory" title="{{description}}">
                     <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
                     <span class="card-desc">{{description}}</span>
                     <span class="card-tags"><span class="tag">{{slotCost}} slot</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>

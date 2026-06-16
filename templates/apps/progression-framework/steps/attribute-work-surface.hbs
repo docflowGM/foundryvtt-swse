@@ -40,153 +40,121 @@
     </section>
   {{/if}}
 
-  <div class="prog-attr-v2-layout">
-    <main class="prog-attr-v2-board">
-      {{#if hasGeneratedPool}}
-        <section class="prog-attr-v2-pool">
-          <div class="prog-attr-v2-pool-head">
-            <div>
-              <span>{{#if (eq method "organic")}}Organic Dice Pool{{else}}Generated Results{{/if}}</span>
-              <p>{{poolInstruction}}</p>
-            </div>
-            <div class="prog-attr-v2-pool-meter">
-              <b>{{poolAssigned}}</b><small>/ {{poolTotal}} placed</small>
-            </div>
+  <main class="prog-attr-v2-board" aria-label="Attribute calibration board">
+    {{#if hasGeneratedPool}}
+      <section class="prog-attr-v2-pool">
+        <div class="prog-attr-v2-pool-head">
+          <div>
+            <span>{{#if (eq method "organic")}}Organic Dice Pool{{else}}Generated Results{{/if}}</span>
+            <p>{{poolInstruction}}</p>
           </div>
-          <div class="prog-attr-v2-pool-grid {{#if (eq method "organic")}}is-organic{{/if}}">
-            {{#each scorePool}}
-              <button class="prog-attr-v2-pool-chip {{#if isSelected}}is-focused{{/if}} {{#if isUsed}}is-assigned{{/if}}" data-score-pool-id="{{id}}" draggable="{{#if isDraggable}}true{{else}}false{{/if}}" type="button">
-                <span>{{value}}</span>
-                <em>{{assignedLabel}}</em>
-              </button>
-            {{/each}}
+          <div class="prog-attr-v2-pool-meter">
+            <b>{{poolAssigned}}</b><small>/ {{poolTotal}} placed</small>
           </div>
-        </section>
-      {{/if}}
-
-      <section class="prog-attr-v2-cluster">
-        <div class="prog-attr-v2-cluster-head">
-          <span class="ico">◈</span>
-          <span>Physical Series</span>
-          <em>STR · DEX · CON</em>
         </div>
-        <div class="prog-attr-v2-cells">
-          {{#each physicalAbilities}}
-            <article class="prog-attr-v2-cell attr-v2--{{colorClass}} {{#if isFocused}}is-focused{{/if}} {{#if isUnassigned}}is-pending{{/if}} {{#if isExcluded}}is-excluded{{/if}}" data-ability-row="{{id}}" data-ability="{{id}}" role="button" tabindex="0">
-              <div class="prog-attr-v2-cell-code">{{label}}<span>{{fullName}}</span></div>
-              <div class="prog-attr-v2-mod {{modTone}}">{{modifierFormatted}}</div>
-              <div class="prog-attr-v2-value-row">
-                {{#if canAdjust}}
-                  <button class="prog-attr-v2-stepper minus" data-ability="{{id}}" data-delta="-1" type="button" {{#unless canDecrease}}disabled aria-disabled="true"{{/unless}}>−</button>
-                {{else}}
-                  <span class="prog-attr-v2-stepper ghost"></span>
-                {{/if}}
-                <div class="prog-attr-v2-score {{valueTone}}">{{finalDisplay}}</div>
-                {{#if canAdjust}}
-                  <button class="prog-attr-v2-stepper plus" data-ability="{{id}}" data-delta="1" type="button" {{#unless canIncrease}}disabled aria-disabled="true"{{/unless}}>+</button>
-                {{else}}
-                  <span class="prog-attr-v2-stepper ghost"></span>
-                {{/if}}
-              </div>
-              <div class="prog-attr-v2-math">
-                <span><b>{{baseDisplay}}</b> base</span>
-                <span class="species {{speciesModClass}}">{{#if (gt speciesMod 0)}}+{{/if}}{{speciesMod}} {{#if ../secondColumnLabel}}{{../secondColumnLabel}}{{else}}species{{/if}}</span>
-                {{#if costLabel}}<span class="cost">{{costLabel}}</span>{{/if}}
-              </div>
-              {{#if assignedPoolItems.length}}
-                <div class="prog-attr-v2-assigned">
-                  {{#each assignedPoolItems}}
-                    <button class="prog-attr-v2-assigned-chip {{#if isSelected}}is-focused{{/if}}" data-score-pool-id="{{id}}" type="button">{{value}}</button>
-                  {{/each}}
-                  {{#if showClear}}
-                    <button class="prog-attr-v2-clear" data-clear-ability="{{id}}" type="button" aria-label="Clear {{label}} assignment"><i class="fas fa-rotate-left"></i></button>
-                  {{/if}}
-                </div>
-              {{else}}
-                {{#if assignmentHint}}<div class="prog-attr-v2-hint">{{assignmentHint}}</div>{{/if}}
-              {{/if}}
-            </article>
+        <div class="prog-attr-v2-pool-grid {{#if (eq method "organic")}}is-organic{{/if}}">
+          {{#each scorePool}}
+            <button class="prog-attr-v2-pool-chip {{#if isSelected}}is-focused{{/if}} {{#if isUsed}}is-assigned{{/if}}" data-score-pool-id="{{id}}" draggable="{{#if isDraggable}}true{{else}}false{{/if}}" type="button">
+              <span>{{value}}</span>
+              <em>{{assignedLabel}}</em>
+            </button>
           {{/each}}
         </div>
       </section>
+    {{/if}}
 
-      <section class="prog-attr-v2-cluster">
-        <div class="prog-attr-v2-cluster-head">
-          <span class="ico">◇</span>
-          <span>Mental Series</span>
-          <em>INT · WIS · CHA</em>
-        </div>
-        <div class="prog-attr-v2-cells">
-          {{#each mentalAbilities}}
-            <article class="prog-attr-v2-cell attr-v2--{{colorClass}} {{#if isFocused}}is-focused{{/if}} {{#if isUnassigned}}is-pending{{/if}} {{#if isExcluded}}is-excluded{{/if}}" data-ability-row="{{id}}" data-ability="{{id}}" role="button" tabindex="0">
-              <div class="prog-attr-v2-cell-code">{{label}}<span>{{fullName}}</span></div>
-              <div class="prog-attr-v2-mod {{modTone}}">{{modifierFormatted}}</div>
-              <div class="prog-attr-v2-value-row">
-                {{#if canAdjust}}
-                  <button class="prog-attr-v2-stepper minus" data-ability="{{id}}" data-delta="-1" type="button" {{#unless canDecrease}}disabled aria-disabled="true"{{/unless}}>−</button>
-                {{else}}
-                  <span class="prog-attr-v2-stepper ghost"></span>
-                {{/if}}
-                <div class="prog-attr-v2-score {{valueTone}}">{{finalDisplay}}</div>
-                {{#if canAdjust}}
-                  <button class="prog-attr-v2-stepper plus" data-ability="{{id}}" data-delta="1" type="button" {{#unless canIncrease}}disabled aria-disabled="true"{{/unless}}>+</button>
-                {{else}}
-                  <span class="prog-attr-v2-stepper ghost"></span>
-                {{/if}}
-              </div>
-              <div class="prog-attr-v2-math">
-                <span><b>{{baseDisplay}}</b> base</span>
-                <span class="species {{speciesModClass}}">{{#if (gt speciesMod 0)}}+{{/if}}{{speciesMod}} {{#if ../secondColumnLabel}}{{../secondColumnLabel}}{{else}}species{{/if}}</span>
-                {{#if costLabel}}<span class="cost">{{costLabel}}</span>{{/if}}
-              </div>
-              {{#if assignedPoolItems.length}}
-                <div class="prog-attr-v2-assigned">
-                  {{#each assignedPoolItems}}
-                    <button class="prog-attr-v2-assigned-chip {{#if isSelected}}is-focused{{/if}}" data-score-pool-id="{{id}}" type="button">{{value}}</button>
-                  {{/each}}
-                  {{#if showClear}}
-                    <button class="prog-attr-v2-clear" data-clear-ability="{{id}}" type="button" aria-label="Clear {{label}} assignment"><i class="fas fa-rotate-left"></i></button>
-                  {{/if}}
-                </div>
+    <section class="prog-attr-v2-cluster">
+      <div class="prog-attr-v2-cluster-head">
+        <span class="ico">◈</span>
+        <span>Physical Series</span>
+        <em>STR · DEX · CON</em>
+      </div>
+      <div class="prog-attr-v2-cells">
+        {{#each physicalAbilities}}
+          <article class="prog-attr-v2-cell attr-v2--{{colorClass}} {{#if isFocused}}is-focused{{/if}} {{#if isUnassigned}}is-pending{{/if}} {{#if isExcluded}}is-excluded{{/if}}" data-ability-row="{{id}}" data-ability="{{id}}" role="button" tabindex="0">
+            <div class="prog-attr-v2-cell-code">{{label}}<span>{{fullName}}</span></div>
+            <div class="prog-attr-v2-mod {{modTone}}">{{modifierFormatted}}</div>
+            <div class="prog-attr-v2-value-row">
+              {{#if canAdjust}}
+                <button class="prog-attr-v2-stepper minus" data-ability="{{id}}" data-delta="-1" type="button" {{#unless canDecrease}}disabled aria-disabled="true"{{/unless}}>−</button>
               {{else}}
-                {{#if assignmentHint}}<div class="prog-attr-v2-hint">{{assignmentHint}}</div>{{/if}}
+                <span class="prog-attr-v2-stepper ghost"></span>
               {{/if}}
-            </article>
-          {{/each}}
-        </div>
-      </section>
-    </main>
-
-    <aside class="prog-attr-v2-rail">
-      <div class="prog-attr-v2-rail-head">◆ Live Derivations</div>
-      <div class="prog-attr-v2-derived-grid">
-        {{#each derivedStats}}
-          <div class="prog-attr-v2-derived">
-            <span>{{label}}</span>
-            <b class="{{tone}}">{{value}}</b>
-            <em>{{source}}</em>
-          </div>
+              <div class="prog-attr-v2-score {{valueTone}}">{{finalDisplay}}</div>
+              {{#if canAdjust}}
+                <button class="prog-attr-v2-stepper plus" data-ability="{{id}}" data-delta="1" type="button" {{#unless canIncrease}}disabled aria-disabled="true"{{/unless}}>+</button>
+              {{else}}
+                <span class="prog-attr-v2-stepper ghost"></span>
+              {{/if}}
+            </div>
+            <div class="prog-attr-v2-math">
+              <span><b>{{baseDisplay}}</b> base</span>
+              <span class="species {{speciesModClass}}">{{#if (gt speciesMod 0)}}+{{/if}}{{speciesMod}} {{#if ../secondColumnLabel}}{{../secondColumnLabel}}{{else}}species{{/if}}</span>
+              {{#if costLabel}}<span class="cost">{{costLabel}}</span>{{/if}}
+            </div>
+            {{#if assignedPoolItems.length}}
+              <div class="prog-attr-v2-assigned">
+                {{#each assignedPoolItems}}
+                  <button class="prog-attr-v2-assigned-chip {{#if isSelected}}is-focused{{/if}}" data-score-pool-id="{{id}}" type="button">{{value}}</button>
+                {{/each}}
+                {{#if showClear}}
+                  <button class="prog-attr-v2-clear" data-clear-ability="{{id}}" type="button" aria-label="Clear {{label}} assignment"><i class="fas fa-rotate-left"></i></button>
+                {{/if}}
+              </div>
+            {{else}}
+              {{#if assignmentHint}}<div class="prog-attr-v2-hint">{{assignmentHint}}</div>{{/if}}
+            {{/if}}
+          </article>
         {{/each}}
       </div>
+    </section>
 
-      {{#if focusedAbility}}
-        <section class="prog-attr-v2-detail attr-v2--{{focusedAbility.colorClass}}">
-          <div class="prog-attr-v2-detail-kicker">Selected Attribute</div>
-          <h4>{{focusedAbility.fullName}} <span>{{focusedAbility.label}}</span></h4>
-          <p>{{focusedAbility.detail}}</p>
-          <div class="prog-attr-v2-detail-row"><span>Base</span><b>{{focusedAbility.baseDisplay}}</b></div>
-          <div class="prog-attr-v2-detail-row"><span>Final</span><b>{{focusedAbility.finalDisplay}}</b></div>
-          <div class="prog-attr-v2-detail-row"><span>Modifier</span><b>{{focusedAbility.modifierFormatted}}</b></div>
-          {{#if focusedAbility.assignmentHint}}<div class="prog-attr-v2-detail-note">{{focusedAbility.assignmentHint}}</div>{{/if}}
-        </section>
-      {{/if}}
-
-      <section class="prog-attr-v2-advice">
-        <span>◉ Vocation Read</span>
-        <p>{{currentMethodDescription}}</p>
-      </section>
-    </aside>
-  </div>
+    <section class="prog-attr-v2-cluster">
+      <div class="prog-attr-v2-cluster-head">
+        <span class="ico">◇</span>
+        <span>Mental Series</span>
+        <em>INT · WIS · CHA</em>
+      </div>
+      <div class="prog-attr-v2-cells">
+        {{#each mentalAbilities}}
+          <article class="prog-attr-v2-cell attr-v2--{{colorClass}} {{#if isFocused}}is-focused{{/if}} {{#if isUnassigned}}is-pending{{/if}} {{#if isExcluded}}is-excluded{{/if}}" data-ability-row="{{id}}" data-ability="{{id}}" role="button" tabindex="0">
+            <div class="prog-attr-v2-cell-code">{{label}}<span>{{fullName}}</span></div>
+            <div class="prog-attr-v2-mod {{modTone}}">{{modifierFormatted}}</div>
+            <div class="prog-attr-v2-value-row">
+              {{#if canAdjust}}
+                <button class="prog-attr-v2-stepper minus" data-ability="{{id}}" data-delta="-1" type="button" {{#unless canDecrease}}disabled aria-disabled="true"{{/unless}}>−</button>
+              {{else}}
+                <span class="prog-attr-v2-stepper ghost"></span>
+              {{/if}}
+              <div class="prog-attr-v2-score {{valueTone}}">{{finalDisplay}}</div>
+              {{#if canAdjust}}
+                <button class="prog-attr-v2-stepper plus" data-ability="{{id}}" data-delta="1" type="button" {{#unless canIncrease}}disabled aria-disabled="true"{{/unless}}>+</button>
+              {{else}}
+                <span class="prog-attr-v2-stepper ghost"></span>
+              {{/if}}
+            </div>
+            <div class="prog-attr-v2-math">
+              <span><b>{{baseDisplay}}</b> base</span>
+              <span class="species {{speciesModClass}}">{{#if (gt speciesMod 0)}}+{{/if}}{{speciesMod}} {{#if ../secondColumnLabel}}{{../secondColumnLabel}}{{else}}species{{/if}}</span>
+              {{#if costLabel}}<span class="cost">{{costLabel}}</span>{{/if}}
+            </div>
+            {{#if assignedPoolItems.length}}
+              <div class="prog-attr-v2-assigned">
+                {{#each assignedPoolItems}}
+                  <button class="prog-attr-v2-assigned-chip {{#if isSelected}}is-focused{{/if}}" data-score-pool-id="{{id}}" type="button">{{value}}</button>
+                {{/each}}
+                {{#if showClear}}
+                  <button class="prog-attr-v2-clear" data-clear-ability="{{id}}" type="button" aria-label="Clear {{label}} assignment"><i class="fas fa-rotate-left"></i></button>
+                {{/if}}
+              </div>
+            {{else}}
+              {{#if assignmentHint}}<div class="prog-attr-v2-hint">{{assignmentHint}}</div>{{/if}}
+            {{/if}}
+          </article>
+        {{/each}}
+      </div>
+    </section>
+  </main>
 
   <footer class="prog-attr-v2-dock">
     <div class="prog-attr-v2-meter">

@@ -1482,8 +1482,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       case 'inspect-lightsaber-component': {
         const type = target?.dataset?.componentType || target?.dataset?.lightsaberInspectType;
         const key = target?.dataset?.key || target?.dataset?.lightsaberInspectKey;
-        if (!type || !key) return;
-        this._lightsaber.inspectedComponent = { type, key };
+        if (!this._inspectLightsaberComponent(type, key, { syncTab: true, forceRender: true })) return;
         await this._renderPreservingUi();
         return;
       }
@@ -1513,11 +1512,12 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           ui.notifications.warn('That crystal is not compatible with the selected chassis.');
           return;
         }
-        this._lightsaber.selectedCrystalId = key;
+        const crystalOption = this._findLightsaberCatalogOption('crystals', key);
+        const crystalKey = this._getLightsaberComponentKey(crystalOption) || key;
+        this._lightsaber.selectedCrystalId = crystalKey;
         this._lightsaber.constructionResult = null;
-        this._lightsaber.activeTab = 'crystal';
-        this._lightsaber.inspectedComponent = { type: 'crystal', key };
-        const crystal = this._catalogs.crystals.find(option => option.id === key || option._id === key);
+        this._inspectLightsaberComponent('crystal', crystalKey, { syncTab: true });
+        const crystal = crystalOption || this._catalogs.crystals.find(option => option.id === key || option._id === key);
         const preferred = this._resolveBladeColorOptions(crystal)[0];
         if (preferred) this._lightsaber.selectedBladeColor = preferred;
         await this._renderPreservingUi();
@@ -1537,21 +1537,22 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           ui.notifications.warn('That accessory is not compatible with the selected chassis.');
           return;
         }
-        this._lightsaber.activeTab = 'hilt';
+        const accessoryOption = this._findLightsaberCatalogOption('accessories', id);
+        const accessoryKey = this._getLightsaberComponentKey(accessoryOption) || id;
         this._lightsaber.constructionResult = null;
-        this._lightsaber.inspectedComponent = { type: 'accessory', key: id };
+        this._inspectLightsaberComponent('accessory', accessoryKey, { syncTab: true });
         const ids = this._lightsaber.selectedAccessoryIds;
-        const idx = ids.indexOf(id);
+        const idx = ids.indexOf(accessoryKey);
         if (idx >= 0) ids.splice(idx, 1);
         else {
-          const accessory = this._findLightsaberCatalogOption('accessories', id);
+          const accessory = accessoryOption || this._findLightsaberCatalogOption('accessories', accessoryKey);
           const slotCost = Number(accessory?.system?.lightsaber?.upgradeSlots ?? accessory?.system?.upgradeSlots ?? 1) || 1;
           const current = this._getLightsaberAccessorySlotState();
           if ((current.usedSlots + slotCost) > current.totalAvailable) {
             ui.notifications.warn('That accessory exceeds this hilt slot budget.');
             return;
           }
-          ids.push(id);
+          ids.push(accessoryKey);
         }
         await this._renderPreservingUi();
         return;
@@ -1812,10 +1813,9 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
     this.onRoot('click', '[data-action="inspect-lightsaber-component"]', async (event, target) => {
       event.preventDefault();
-      const type = target.dataset.componentType;
-      const key = target.dataset.key;
-      if (!type || !key) return;
-      this._lightsaber.inspectedComponent = { type, key };
+      const type = target.dataset.componentType || target.dataset.lightsaberInspectType;
+      const key = target.dataset.key || target.dataset.lightsaberInspectKey;
+      if (!this._inspectLightsaberComponent(type, key, { syncTab: true, forceRender: true })) return;
       await this._renderPreservingUi();
     });
 
@@ -1844,11 +1844,12 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         ui.notifications.warn('That crystal is not compatible with the selected chassis.');
         return;
       }
-      this._lightsaber.selectedCrystalId = target.dataset.key;
+      const crystalOption = this._findLightsaberCatalogOption('crystals', target.dataset.key);
+      const crystalKey = this._getLightsaberComponentKey(crystalOption) || target.dataset.key;
+      this._lightsaber.selectedCrystalId = crystalKey;
       this._lightsaber.constructionResult = null;
-      this._lightsaber.activeTab = 'crystal';
-      this._lightsaber.inspectedComponent = { type: 'crystal', key: target.dataset.key };
-      const crystal = this._catalogs.crystals.find(option => option.id === target.dataset.key || option._id === target.dataset.key);
+      this._inspectLightsaberComponent('crystal', crystalKey, { syncTab: true });
+      const crystal = crystalOption || this._catalogs.crystals.find(option => option.id === target.dataset.key || option._id === target.dataset.key);
       const preferred = this._resolveBladeColorOptions(crystal)[0];
       if (preferred) this._lightsaber.selectedBladeColor = preferred;
       await this._renderPreservingUi();
@@ -1868,21 +1869,22 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         ui.notifications.warn('That accessory is not compatible with the selected chassis.');
         return;
       }
-      this._lightsaber.activeTab = 'hilt';
+      const accessoryOption = this._findLightsaberCatalogOption('accessories', id);
+      const accessoryKey = this._getLightsaberComponentKey(accessoryOption) || id;
       this._lightsaber.constructionResult = null;
-      this._lightsaber.inspectedComponent = { type: 'accessory', key: id };
+      this._inspectLightsaberComponent('accessory', accessoryKey, { syncTab: true });
       const ids = this._lightsaber.selectedAccessoryIds;
-      const idx = ids.indexOf(id);
+      const idx = ids.indexOf(accessoryKey);
       if (idx >= 0) ids.splice(idx, 1);
       else {
-        const accessory = this._findLightsaberCatalogOption('accessories', id);
+        const accessory = accessoryOption || this._findLightsaberCatalogOption('accessories', accessoryKey);
         const slotCost = Number(accessory?.system?.lightsaber?.upgradeSlots ?? accessory?.system?.upgradeSlots ?? 1) || 1;
         const current = this._getLightsaberAccessorySlotState();
         if ((current.usedSlots + slotCost) > current.totalAvailable) {
           ui.notifications.warn('That accessory exceeds this hilt slot budget.');
           return;
         }
-        ids.push(id);
+        ids.push(accessoryKey);
       }
       await this._renderPreservingUi();
     });
@@ -1928,8 +1930,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     this.onRoot('pointerover', '[data-lightsaber-inspect-type][data-lightsaber-inspect-key]', async (_event, target) => {
       const type = target.dataset.lightsaberInspectType;
       const key = target.dataset.lightsaberInspectKey;
-      if (!type || !key) return;
-      this._lightsaber.inspectedComponent = { type, key };
+      if (!this._inspectLightsaberComponent(type, key, { syncTab: false })) return;
       await this._renderPreservingUi();
     });
 
@@ -2054,9 +2055,65 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     ls.selectedBladeColor ||= DEFAULT_BLADE_COLOR;
   }
 
+  _getLightsaberComponentKey(component) {
+    if (!component) return null;
+    return component.id
+      || component._id
+      || component.key
+      || component.uuid
+      || component.system?.chassisId
+      || component.system?.lightsaber?.componentId
+      || component.system?.lightsaber?.crystalType
+      || component.system?.lightsaber?.family
+      || component.name
+      || null;
+  }
+
   _findLightsaberCatalogOption(type, id) {
     const list = this._catalogs[type] || [];
-    return list.find(option => option.id === id || option._id === id || option.system?.chassisId === id) || null;
+    const needle = String(id ?? '').trim();
+    if (!needle) return null;
+    const normalizedNeedle = normalizeWorkbenchToken(needle);
+    const compactNeedle = compactWorkbenchToken(needle);
+    return list.find(option => {
+      const candidates = [
+        option.id,
+        option._id,
+        option.key,
+        option.uuid,
+        option.system?.chassisId,
+        option.system?.lightsaber?.componentId,
+        option.system?.lightsaber?.crystalType,
+        option.system?.lightsaber?.family,
+        option.name
+      ].filter(value => value !== undefined && value !== null)
+        .map(value => String(value).trim())
+        .filter(Boolean);
+      return candidates.some(candidate => candidate === needle
+        || normalizeWorkbenchToken(candidate) === normalizedNeedle
+        || compactWorkbenchToken(candidate) === compactNeedle);
+    }) || null;
+  }
+
+  _inspectLightsaberComponent(type, key, { syncTab = false, forceRender = false } = {}) {
+    const normalizedType = String(type || '').toLowerCase();
+    const bucket = normalizedType === 'crystal'
+      ? 'crystals'
+      : (normalizedType === 'accessory' || normalizedType === 'hilt' || normalizedType === 'mod' ? 'accessories' : (normalizedType === 'chassis' ? 'chassis' : null));
+    if (!bucket || !key) return false;
+    const component = this._findLightsaberCatalogOption(bucket, key);
+    if (!component) return false;
+    const componentKey = this._getLightsaberComponentKey(component) || key;
+    const typeKey = bucket === 'accessories' ? 'accessory' : (bucket === 'crystals' ? 'crystal' : 'chassis');
+    const current = this._lightsaber.inspectedComponent;
+    const unchanged = current?.type === typeKey && current?.key === componentKey;
+    this._lightsaber.inspectedComponent = { type: typeKey, key: componentKey };
+    if (syncTab) {
+      if (typeKey === 'accessory') this._lightsaber.activeTab = 'hilt';
+      else if (typeKey === 'crystal') this._lightsaber.activeTab = 'crystal';
+      else if (typeKey === 'chassis') this._lightsaber.activeTab = 'chassis';
+    }
+    return forceRender || !unchanged;
   }
 
   _resolveBladeColorOptions(crystal) {
@@ -2395,16 +2452,16 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     }
 
     const system = component.system || {};
-    const componentKey = component.id || component._id || system.chassisId || component.key || null;
+    const componentKey = this._getLightsaberComponentKey(component);
     const description = this._stripHtml(system.description || component.description || 'No rules text is recorded for this component yet.');
     const cost = Number(system.cost ?? system.baseCost ?? component.cost ?? 0) || 0;
     const dc = Number(system.lightsaber?.buildDcModifier ?? system.baseBuildDc ?? component.buildDcModifier ?? 0) || 0;
     const slotCost = Number(system.lightsaber?.upgradeSlots ?? system.upgradeSlots ?? component.slotCost ?? 0) || 0;
     const bladeColor = system.lightsaber?.bladeColor || component.bladeColor || null;
     const bladeColorParts = this._buildBladeColorTextParts(bladeColor || 'Varies');
-    const selected = (kind === 'Kyber Crystal' && (component.id === this._lightsaber.selectedCrystalId || component._id === this._lightsaber.selectedCrystalId))
+    const selected = (kind === 'Kyber Crystal' && (componentKey === this._lightsaber.selectedCrystalId || component.id === this._lightsaber.selectedCrystalId || component._id === this._lightsaber.selectedCrystalId))
       || (kind === 'Hilt Accessory' && this._lightsaber.selectedAccessoryIds.includes(componentKey))
-      || (kind === 'Chassis' && (component.id === this._lightsaber.selectedChassisId || component._id === this._lightsaber.selectedChassisId || component.system?.chassisId === this._lightsaber.selectedChassisId));
+      || (kind === 'Chassis' && (componentKey === this._lightsaber.selectedChassisId || component.id === this._lightsaber.selectedChassisId || component._id === this._lightsaber.selectedChassisId || component.system?.chassisId === this._lightsaber.selectedChassisId));
     const fields = [
       { key: 'Cost', value: `${cost} cr` }
     ];
@@ -2570,27 +2627,33 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           selected: option.id === this._lightsaber.selectedChassisId || option.system?.chassisId === this._lightsaber.selectedChassisId
         })),
         crystals: this._catalogs.crystals.map(option => {
+          const optionKey = this._getLightsaberComponentKey(option) || option.id || option._id;
           const bladeColor = option.system?.lightsaber?.bladeColor || option.bladeColor || 'Varies';
           return {
             ...option,
+            optionKey,
             description: this._stripHtml(option.system?.description || option.description),
             cost: Number(option.system?.cost ?? option.cost ?? 0) || 0,
             rarity: option.system?.rarity || option.rarity || 'common',
             bladeColor,
             bladeColorParts: this._buildBladeColorTextParts(bladeColor),
-            selected: option.id === this._lightsaber.selectedCrystalId,
-            incompatible: !this._isLightsaberTuningMode() && !this._isLightsaberCrystalCompatible(option.id)
+            selected: optionKey === this._lightsaber.selectedCrystalId || option.id === this._lightsaber.selectedCrystalId || option._id === this._lightsaber.selectedCrystalId,
+            incompatible: !this._isLightsaberTuningMode() && !this._isLightsaberCrystalCompatible(optionKey)
           };
         }),
-        accessories: this._catalogs.accessories.map(option => ({
-          ...option,
-          description: this._stripHtml(option.system?.description || option.description),
-          cost: Number(option.system?.cost ?? option.cost ?? 0) || 0,
-          buildDcModifier: Number(option.system?.lightsaber?.buildDcModifier ?? option.buildDcModifier ?? 0) || 0,
-          selected: this._lightsaber.selectedAccessoryIds.includes(option.id),
-          incompatible: !this._isLightsaberTuningMode() && !this._isLightsaberAccessoryCompatible(option.id),
-          slotCost: Number(option.system?.lightsaber?.upgradeSlots ?? option.system?.upgradeSlots ?? 1) || 1
-        })),
+        accessories: this._catalogs.accessories.map(option => {
+          const optionKey = this._getLightsaberComponentKey(option) || option.id || option._id;
+          return {
+            ...option,
+            optionKey,
+            description: this._stripHtml(option.system?.description || option.description),
+            cost: Number(option.system?.cost ?? option.cost ?? 0) || 0,
+            buildDcModifier: Number(option.system?.lightsaber?.buildDcModifier ?? option.buildDcModifier ?? 0) || 0,
+            selected: this._lightsaber.selectedAccessoryIds.includes(optionKey) || this._lightsaber.selectedAccessoryIds.includes(option.id) || this._lightsaber.selectedAccessoryIds.includes(option._id),
+            incompatible: !this._isLightsaberTuningMode() && !this._isLightsaberAccessoryCompatible(optionKey),
+            slotCost: Number(option.system?.lightsaber?.upgradeSlots ?? option.system?.upgradeSlots ?? 1) || 1
+          };
+        }),
         colorOptions,
         canPickBladeColor: !!crystal && colorOptions.length > 0,
         checkMode: this._lightsaber.selectedCheckMode,
