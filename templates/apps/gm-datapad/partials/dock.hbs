@@ -1,25 +1,24 @@
-{{!-- GM Datapad command dock. Hidden on home; surfaces use this as shared command navigation. --}}
-{{#unless (eq currentPage "home")}}
-<nav class="gm-holopad-command-dock" aria-label="GM Holopad app dock">
-  <button type="button" class="gm-holopad-dock-home" data-nav-to="home">
+{{!-- GM Datapad Phase 2 concept command dock. Persistent top navigation matching the concept holopad command strip. --}}
+<nav class="gm-holopad-command-dock gm-holopad-command-dock--phase2 {{#if (eq currentPage "home")}}is-home{{/if}}" aria-label="GM Holopad app dock">
+  <button type="button" class="gm-holopad-dock-home {{#if (eq currentPage "home")}}is-active{{/if}}" data-nav-to="home" title="Return to GM Holopad home">
     <i class="fa-solid fa-house"></i>
     <span>Home</span>
   </button>
-  <div class="gm-holopad-dock-sep" aria-hidden="true"></div>
-  <div class="gm-holopad-dock-status {{gmShell.readinessTone}}">
+
+  <div class="gm-holopad-dock-status {{gmShell.readinessTone}}" aria-label="Active GM surface">
     <span class="gm-command-eyebrow">{{gmShell.activeCode}}</span>
     <strong>{{gmShell.activeLabel}}</strong>
     <em>{{gmShell.readinessLabel}}</em>
   </div>
-  <div class="gm-holopad-dock-sep" aria-hidden="true"></div>
-  <div class="gm-holopad-dock-apps">
+
+  <div class="gm-holopad-dock-apps" aria-label="GM command surfaces">
     {{#each gmShell.dockApps}}
-    <button type="button" class="gm-holopad-dock-app {{this.statusTone}} {{#if (eq ../currentPage this.id)}}is-active{{/if}}" data-nav-to="{{this.id}}" title="{{this.description}}">
+    <button type="button" class="gm-holopad-dock-app {{this.statusTone}} {{#if this.featured}}new-surf{{/if}} {{#if (eq ../currentPage this.id)}}is-active{{/if}}" data-nav-to="{{this.id}}" title="{{this.description}}">
       <i class="{{this.icon}}"></i>
       <span>{{this.code}}</span>
-      {{#if this.badgeCount}}<b>{{this.badgeCount}}</b>{{/if}}
+      <small>{{this.label}}</small>
+      {{#if this.badgeCount}}<b class="{{this.badgeType}}">{{this.badgeCount}}</b>{{/if}}
     </button>
     {{/each}}
   </div>
 </nav>
-{{/unless}}

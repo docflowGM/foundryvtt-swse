@@ -1,0 +1,444 @@
+/* ========================================================================== 
+   SWSE Holopad Games - Phase 4 active-table unification
+   Shared table chrome for Pazaak, Sabacc, Dejarik, and Hintaro.
+   Rules engines and per-game controls remain untouched; this layer makes the
+   active table views inherit the same Game Center console language.
+   ========================================================================== */
+
+.swse-games-surface.is-table-mode {
+  --swse-games-cyan: var(--vapor-cyan, #39f7ff);
+  --swse-games-pink: var(--vapor-pink, #ff4fd8);
+  --swse-games-purple: var(--vapor-purple, #8a5cff);
+  --swse-games-gold: var(--gold, #ffd166);
+  --swse-games-green: var(--pos, #4dff88);
+  --swse-games-red: var(--neg, #ff4f64);
+  --swse-games-text: var(--ink, #dffbff);
+  --swse-games-muted: var(--ink-faint, #7fb8c4);
+  --swse-games-dim: var(--ink-dim, #b9d9df);
+  --swse-games-panel: color-mix(in oklab, var(--screen, #08131f) 78%, black 22%);
+  --swse-games-panel-strong: color-mix(in oklab, var(--screen, #08131f) 66%, black 34%);
+  --swse-games-line: color-mix(in oklab, var(--swse-games-cyan) 28%, transparent);
+  --swse-games-line-soft: color-mix(in oklab, var(--swse-games-cyan) 14%, transparent);
+  padding: 10px;
+}
+
+.swse-games-table-frame--unified {
+  height: calc(100% - 54px);
+  min-height: 0;
+  margin-top: 10px;
+  border: 1px solid var(--swse-games-line);
+  background:
+    radial-gradient(ellipse at 16% 4%, color-mix(in oklab, var(--swse-games-pink) 13%, transparent), transparent 42%),
+    radial-gradient(ellipse at 84% 96%, color-mix(in oklab, var(--swse-games-cyan) 11%, transparent), transparent 44%),
+    linear-gradient(180deg, color-mix(in oklab, var(--screen, #08131f) 78%, black 22%), color-mix(in oklab, var(--screen, #08131f) 54%, black 46%));
+  box-shadow:
+    0 0 34px color-mix(in oklab, var(--swse-games-cyan) 10%, transparent),
+    inset 0 0 0 1px oklch(0 0 0 / 0.58),
+    inset 0 0 44px oklch(0 0 0 / 0.42);
+  overflow: hidden;
+  position: relative;
+}
+
+.swse-games-table-frame--unified::before,
+.swse-games-table-frame--unified::after {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+}
+
+.swse-games-table-frame--unified::before {
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--swse-games-cyan) 9%, transparent) 1px, transparent 1px),
+    linear-gradient(0deg, color-mix(in oklab, var(--swse-games-cyan) 7%, transparent) 1px, transparent 1px),
+    repeating-linear-gradient(0deg, transparent 0 4px, oklch(1 0 0 / 0.025) 4px 5px);
+  background-size: 46px 46px, 46px 46px, auto;
+  mix-blend-mode: screen;
+  opacity: 0.34;
+}
+
+.swse-games-table-frame--unified::after {
+  border: 1px solid color-mix(in oklab, var(--swse-games-cyan) 52%, transparent);
+  clip-path: polygon(0 0, 22px 0, 22px 1px, 1px 1px, 1px 22px, 0 22px, 0 0, 100% 0, calc(100% - 22px) 0, calc(100% - 22px) 1px, calc(100% - 1px) 1px, calc(100% - 1px) 22px, 100% 22px, 100% 100%, calc(100% - 22px) 100%, calc(100% - 22px) calc(100% - 1px), calc(100% - 1px) calc(100% - 1px), calc(100% - 1px) calc(100% - 22px), 100% calc(100% - 22px), 100% 100%, 0 100%, 22px 100%, 22px calc(100% - 1px), 1px calc(100% - 1px), 1px calc(100% - 22px), 0 calc(100% - 22px));
+  opacity: 0.78;
+}
+
+.swse-games-table-console {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  background: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+.swse-games-table-frame--unified .swse-games-tm-bar {
+  min-height: 78px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--swse-games-line);
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--swse-games-cyan) 12%, transparent), transparent 48%),
+    color-mix(in oklab, black 42%, transparent);
+}
+
+.swse-games-table-frame--unified .swse-games-tm-bar__title {
+  align-items: center;
+  min-width: 0;
+}
+
+.swse-games-table-frame--unified .swse-games-table-glyph {
+  width: 52px;
+  height: 52px;
+  flex: 0 0 52px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in oklab, var(--swse-games-pink) 46%, transparent);
+  background: color-mix(in oklab, black 42%, transparent);
+  color: var(--swse-games-pink);
+  font-family: var(--font-display, var(--font-mono, monospace));
+  font-size: 30px;
+  line-height: 1;
+  text-shadow: 0 0 14px color-mix(in oklab, var(--swse-games-pink) 56%, transparent);
+  clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
+}
+
+.swse-games-table-frame--unified .swse-games-kicker {
+  color: var(--swse-games-cyan);
+  letter-spacing: 0.26em;
+}
+
+.swse-games-table-frame--unified .swse-games-tm-bar__title h3 {
+  margin: 2px 0 3px;
+  color: var(--swse-games-text);
+  font-family: var(--font-orbit, var(--font-mono, monospace));
+  font-size: clamp(15px, 1.6vw, 20px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-shadow: 0 0 16px color-mix(in oklab, var(--swse-games-cyan) 32%, transparent);
+}
+
+.swse-games-table-frame--unified .swse-games-tm-bar__rules,
+.swse-games-table-frame--unified .swse-games-tm-bar__line {
+  color: var(--swse-games-dim);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  line-height: 1.35;
+  text-transform: uppercase;
+}
+
+.swse-games-table-frame--unified .swse-games-tm-bar__status {
+  align-self: center;
+  border: 1px solid var(--swse-games-line);
+  background: color-mix(in oklab, black 42%, transparent);
+  color: var(--swse-games-cyan);
+  padding: 6px 9px;
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.swse-games-table-frame--unified .swse-games-tm-bar__status.tone-success { color: var(--swse-games-green); border-color: color-mix(in oklab, var(--swse-games-green) 40%, transparent); }
+.swse-games-table-frame--unified .swse-games-tm-bar__status.tone-warn { color: var(--swse-games-gold); border-color: color-mix(in oklab, var(--swse-games-gold) 42%, transparent); }
+.swse-games-table-frame--unified .swse-games-tm-bar__status.tone-danger { color: var(--swse-games-red); border-color: color-mix(in oklab, var(--swse-games-red) 42%, transparent); }
+
+.swse-games-table-frame--unified .swse-games-tm-bar__right {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.swse-games-table-frame--unified .swse-games-primary,
+.swse-games-table-frame--unified .swse-games-ghost,
+.swse-games-table-frame--unified .swse-games-table-row__cta,
+.swse-games-table-frame--unified button[type='submit'] {
+  border-radius: 0;
+  min-height: 30px;
+  clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+}
+
+.swse-games-table-frame--unified .swse-games-ghost--danger {
+  border-color: color-mix(in oklab, var(--swse-games-red) 48%, transparent);
+  color: var(--swse-games-red);
+}
+
+.swse-games-table-telemetry {
+  min-height: 38px;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--swse-games-line-soft);
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--swse-games-purple) 10%, transparent), transparent 56%),
+    color-mix(in oklab, black 30%, transparent);
+}
+
+.swse-games-table-chip {
+  min-width: 112px;
+  max-width: 230px;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  padding: 7px 12px;
+  border-right: 1px solid var(--swse-games-line-soft);
+  background: color-mix(in oklab, black 22%, transparent);
+  color: var(--swse-games-dim);
+  text-transform: uppercase;
+}
+
+.swse-games-table-chip i,
+.swse-games-table-chip b {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-games-table-chip i {
+  color: var(--swse-games-muted);
+  font-size: 8px;
+  font-style: normal;
+  letter-spacing: 0.22em;
+}
+
+.swse-games-table-chip b {
+  color: var(--swse-games-text);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.swse-games-table-chip.tone-cyan b,
+.swse-games-table-chip.tone-active b { color: var(--swse-games-cyan); }
+.swse-games-table-chip.tone-gold b,
+.swse-games-table-chip.tone-warn b { color: var(--swse-games-gold); }
+.swse-games-table-chip.tone-success b { color: var(--swse-games-green); }
+.swse-games-table-chip.tone-danger b { color: var(--swse-games-red); }
+
+.swse-games-table-chip--id {
+  max-width: 160px;
+}
+
+.swse-games-table-status--unified {
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 16px;
+  border-bottom: 1px solid var(--swse-games-line-soft);
+  background: color-mix(in oklab, black 24%, transparent);
+  color: var(--swse-games-dim);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  overflow-x: auto;
+}
+
+.swse-games-table-status--unified b {
+  color: var(--swse-games-cyan);
+  font-family: var(--font-orbit, var(--font-mono, monospace));
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.swse-games-table-status--unified span {
+  min-width: fit-content;
+  border-left: 1px solid var(--swse-games-line-soft);
+  padding-left: 10px;
+  white-space: nowrap;
+}
+
+.swse-games-table-frame--unified .swse-games-table-body {
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+}
+
+.swse-games-table-playmat {
+  height: 100%;
+  min-height: 0;
+  color: var(--swse-games-text);
+  position: relative;
+}
+
+.swse-games-table-playmat::before {
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background:
+    radial-gradient(ellipse at 50% 28%, color-mix(in oklab, var(--swse-games-cyan) 9%, transparent), transparent 48%),
+    linear-gradient(90deg, transparent, color-mix(in oklab, var(--swse-games-cyan) 5%, transparent), transparent);
+  opacity: 0.52;
+}
+
+.swse-games-table-playmat > * {
+  position: relative;
+  z-index: 3;
+}
+
+.swse-games-table-frame--unified .swse-pazaak-opponent-card,
+.swse-games-table-frame--unified .swse-pazaak-rules-card,
+.swse-games-table-frame--unified .swse-pazaak-history,
+.swse-games-table-frame--unified .swse-pazaak-hand-panel,
+.swse-games-table-frame--unified .swse-games-chatter,
+.swse-games-table-frame--unified .swse-games-help-panel,
+.swse-games-table-frame--unified .swse-games-recap-strip,
+.swse-games-table-frame--unified .swse-dejarik-panel,
+.swse-games-table-frame--unified .swse-dejarik-draft__side,
+.swse-games-table-frame--unified .swse-dejarik-draft-card button,
+.swse-games-table-frame--unified .swse-sabacc-seat-card,
+.swse-games-table-frame--unified .swse-sabacc-market-dock,
+.swse-games-table-frame--unified .swse-sabacc-player-dock,
+.swse-games-table-frame--unified .swse-sabacc-lower-panels details,
+.swse-games-table-frame--unified .swse-hintaro-seat-card,
+.swse-games-table-frame--unified .swse-hintaro-ranks-panel,
+.swse-games-table-frame--unified .swse-hintaro-callout,
+.swse-games-table-frame--unified .swse-hintaro-rules-panel,
+.swse-games-table-frame--unified .swse-hintaro-player-dock,
+.swse-games-table-frame--unified .swse-hintaro-lower-panels details {
+  border-radius: 0;
+  border-color: var(--swse-games-line-soft);
+  background:
+    linear-gradient(145deg, color-mix(in oklab, var(--swse-games-cyan) 6%, transparent), transparent 58%),
+    color-mix(in oklab, black 38%, transparent);
+  box-shadow:
+    inset 0 0 22px color-mix(in oklab, var(--swse-games-cyan) 5%, transparent),
+    0 0 18px color-mix(in oklab, var(--swse-games-cyan) 5%, transparent);
+}
+
+.swse-games-table-frame--unified .swse-pazaak-avatar,
+.swse-games-table-frame--unified .swse-sabacc-seat-avatar,
+.swse-games-table-frame--unified .swse-hintaro-seat-avatar,
+.swse-games-table-frame--unified .swse-dejarik-token,
+.swse-games-table-frame--unified .swse-dejarik-piece-card__glyph {
+  border-radius: 0;
+  border: 1px solid var(--swse-games-line);
+  background: color-mix(in oklab, black 44%, transparent);
+  box-shadow: inset 0 0 14px color-mix(in oklab, var(--swse-games-cyan) 7%, transparent);
+}
+
+.swse-games-table-frame--unified .swse-pazaak-seat-head strong,
+.swse-games-table-frame--unified .swse-sabacc-total,
+.swse-games-table-frame--unified .swse-hintaro-rank,
+.swse-games-table-frame--unified .swse-sabacc-pots b,
+.swse-games-table-frame--unified .swse-hintaro-pots b,
+.swse-games-table-frame--unified .swse-sabacc-myinfo div,
+.swse-games-table-frame--unified .swse-hintaro-myinfo div {
+  color: var(--swse-games-gold);
+  text-shadow: 0 0 14px color-mix(in oklab, var(--swse-games-gold) 30%, transparent);
+}
+
+.swse-games-table-frame--unified .swse-pazaak-card-face,
+.swse-games-table-frame--unified .swse-pazaak-played-card,
+.swse-games-table-frame--unified .swse-sabacc-card,
+.swse-games-table-frame--unified .swse-sabacc-private-card,
+.swse-games-table-frame--unified .swse-hintaro-cube,
+.swse-games-table-frame--unified .swse-hintaro-private-cube {
+  border-radius: 0;
+  border-color: color-mix(in oklab, var(--swse-games-cyan) 22%, transparent);
+  box-shadow: 0 0 14px color-mix(in oklab, var(--swse-games-cyan) 8%, transparent);
+}
+
+.swse-games-table-frame--unified .swse-sabacc-felt,
+.swse-games-table-frame--unified .swse-hintaro-felt {
+  height: min(100%, calc(100% - 130px));
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-games-table-frame--unified .swse-sabacc-player-dock,
+.swse-games-table-frame--unified .swse-hintaro-player-dock {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+
+.swse-games-table-frame--unified .swse-dejarik-layout {
+  height: 100%;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(210px, 0.34fr) minmax(360px, 1fr) minmax(230px, 0.38fr);
+  gap: 0;
+  overflow: hidden;
+}
+
+.swse-games-table-frame--unified .swse-dejarik-rail {
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;
+}
+
+.swse-games-table-frame--unified .swse-dejarik-rail--left { border-right: 1px solid var(--swse-games-line-soft); }
+.swse-games-table-frame--unified .swse-dejarik-rail--right { border-left: 1px solid var(--swse-games-line-soft); }
+
+.swse-games-table-frame--unified .swse-dejarik-board-shell {
+  min-height: 0;
+  padding: 12px;
+}
+
+.swse-games-table-frame--unified .swse-dejarik-board-stage {
+  border-color: var(--swse-games-line);
+  box-shadow:
+    0 0 28px color-mix(in oklab, var(--swse-games-cyan) 14%, transparent),
+    inset 0 0 36px oklch(0 0 0 / 0.44);
+}
+
+.swse-games-table-frame--unified .swse-pazaak-board-shell {
+  border-top: 0;
+}
+
+.swse-games-table-frame--unified input,
+.swse-games-table-frame--unified select {
+  border-radius: 0;
+  border-color: var(--swse-games-line-soft);
+  background: color-mix(in oklab, black 44%, transparent);
+  color: var(--swse-games-text);
+}
+
+@media (max-width: 1120px) {
+  .swse-games-table-frame--unified {
+    height: auto;
+    min-height: 720px;
+    overflow: auto;
+  }
+
+  .swse-games-table-console {
+    min-height: 720px;
+  }
+
+  .swse-games-table-frame--unified .swse-games-tm-bar,
+  .swse-games-table-status--unified {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .swse-games-table-frame--unified .swse-games-tm-bar__right {
+    justify-content: flex-start;
+  }
+
+  .swse-games-table-frame--unified .swse-dejarik-layout,
+  .swse-games-surface.is-table-mode .swse-pazaak-board-shell {
+    grid-template-columns: 1fr;
+    overflow: visible;
+  }
+
+  .swse-games-table-frame--unified .swse-dejarik-rail--left,
+  .swse-games-table-frame--unified .swse-dejarik-rail--right,
+  .swse-games-surface.is-table-mode .swse-pazaak-rail--left,
+  .swse-games-surface.is-table-mode .swse-pazaak-rail--right {
+    border-left: 0;
+    border-right: 0;
+    border-top: 1px solid var(--swse-games-line-soft);
+  }
+}

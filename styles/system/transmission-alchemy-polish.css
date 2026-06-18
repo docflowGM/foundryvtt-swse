@@ -1,0 +1,347 @@
+/* Phase 5 concept polish: Transmission Decryption + Force/Sith Alchemy
+   This layer restores the concept mood without changing either surface's rules/data flow. */
+
+/* ================================
+   Transmission Decryption polish
+   ================================ */
+.swse-concept-codebreaker-surface {
+  --dx-cyan: oklch(0.85 0.18 200);
+  --dx-pink: oklch(0.72 0.26 350);
+  --dx-amber: oklch(0.86 0.16 80);
+  --dx-ink: oklch(0.94 0.04 190);
+  --dx-dim: oklch(0.72 0.06 190);
+  --dx-faint: oklch(0.50 0.05 190);
+  --dx-panel: oklch(0.13 0.055 278 / 0.92);
+  isolation: isolate;
+}
+
+.swse-concept-codebreaker-surface::before,
+.swse-concept-codebreaker-surface::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.swse-concept-codebreaker-surface::before {
+  opacity: 0.22;
+  background:
+    linear-gradient(90deg, transparent 0 49px, oklch(0.85 0.18 200 / 0.055) 50px, transparent 51px),
+    linear-gradient(0deg, transparent 0 49px, oklch(0.72 0.26 350 / 0.04) 50px, transparent 51px);
+  background-size: 50px 50px;
+  mask-image: radial-gradient(circle at 50% 45%, black 0 58%, transparent 82%);
+}
+
+.swse-concept-codebreaker-surface::after {
+  opacity: 0.18;
+  mix-blend-mode: screen;
+  background: repeating-linear-gradient(0deg, transparent 0 3px, oklch(1 0 0 / 0.045) 3px 4px);
+}
+
+.swse-concept-codebreaker-surface > * {
+  position: relative;
+  z-index: 1;
+}
+
+.swse-concept-codebreaker-surface .swse-transmission-shell-toolbar {
+  position: relative;
+  overflow: hidden;
+  border-radius: 16px;
+  border-color: oklch(0.85 0.18 200 / 0.42);
+  background:
+    radial-gradient(ellipse at 12% 0%, oklch(0.85 0.18 200 / 0.16), transparent 48%),
+    linear-gradient(135deg, oklch(0.85 0.18 200 / 0.085), oklch(0 0 0 / 0.46));
+  box-shadow:
+    inset 0 0 0 1px oklch(1 0 0 / 0.035),
+    inset 0 0 32px oklch(0.85 0.18 200 / 0.055),
+    0 0 28px oklch(0.85 0.18 200 / 0.12);
+}
+
+.swse-concept-codebreaker-surface .swse-transmission-shell-toolbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, oklch(0.85 0.18 200 / 0.2), transparent 28%, transparent 72%, oklch(0.72 0.26 350 / 0.18));
+  opacity: 0.18;
+}
+
+.swse-transmission-shell-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.55rem;
+}
+
+.swse-transmission-shell-status span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.35rem;
+  padding: 0.22rem 0.5rem;
+  border: 1px solid oklch(0.85 0.18 200 / 0.26);
+  border-radius: 999px;
+  background: oklch(0 0 0 / 0.34);
+  color: var(--dx-dim);
+  font-family: var(--f-mono, "JetBrains Mono", monospace);
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-transmission-shell--phase5 .swse-transmission-ref {
+  padding-inline: 0.2rem;
+  color: var(--dx-faint, oklch(0.50 0.05 190));
+  text-shadow: 0 0 10px oklch(0.85 0.18 200 / 0.16);
+}
+
+.swse-transmission-shell--phase5 .swse-transmission-window {
+  position: relative;
+  border-color: oklch(0.85 0.18 200 / 0.58);
+  box-shadow:
+    inset 0 0 0 1px oklch(1 0 0 / 0.035),
+    inset 0 0 84px oklch(0.85 0.18 200 / 0.07),
+    inset 0 -42px 92px oklch(0.72 0.26 350 / 0.045),
+    0 24px 72px oklch(0 0 0 / 0.46),
+    0 0 44px oklch(0.85 0.18 200 / 0.16);
+}
+
+.swse-transmission-reticle {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.16;
+  background:
+    radial-gradient(circle at 50% 48%, transparent 0 148px, oklch(0.85 0.18 200 / 0.78) 149px, transparent 151px),
+    radial-gradient(circle at 50% 48%, transparent 0 226px, oklch(0.72 0.26 350 / 0.52) 227px, transparent 229px),
+    linear-gradient(90deg, transparent calc(50% - 1px), oklch(0.85 0.18 200 / 0.35) 50%, transparent calc(50% + 1px)),
+    linear-gradient(0deg, transparent calc(48% - 1px), oklch(0.85 0.18 200 / 0.24) 48%, transparent calc(48% + 1px));
+  mix-blend-mode: screen;
+}
+
+.swse-transmission-shell--phase5 .swse-intel-decryption-hud,
+.swse-transmission-shell--phase5 .swse-intel-decryption-status,
+.swse-transmission-shell--phase5 .swse-transmission-mode-note,
+.swse-transmission-shell--phase5 .swse-intel-decryption-layout,
+.swse-transmission-shell--phase5 .swse-transmission-recovered,
+.swse-transmission-shell--phase5 .swse-transmission-footer,
+.swse-transmission-shell--phase5 .pl-empty {
+  position: relative;
+  z-index: 3;
+}
+
+.swse-transmission-shell--phase5 .swse-intel-decryption-hud {
+  min-height: 4rem;
+  border-bottom-color: oklch(0.85 0.18 200 / 0.34);
+  background:
+    linear-gradient(180deg, oklch(0.85 0.18 200 / 0.105), transparent),
+    linear-gradient(90deg, oklch(0.72 0.26 350 / 0.075), transparent 38%);
+}
+
+.swse-transmission-shell--phase5 .dx-mode-switch {
+  box-shadow: inset 0 0 18px oklch(0.85 0.18 200 / 0.06);
+}
+
+.swse-transmission-shell--phase5 .swse-intel-decryption-status {
+  backdrop-filter: blur(6px);
+  background:
+    linear-gradient(90deg, oklch(0.85 0.18 200 / 0.07), oklch(0 0 0 / 0.36), oklch(0.72 0.26 350 / 0.055));
+}
+
+.swse-transmission-shell--phase5 .swse-intel-decryption-grid.pl-readout {
+  padding: 1.15rem 1.25rem;
+  background:
+    radial-gradient(ellipse at 50% 40%, oklch(0.85 0.18 200 / 0.07), transparent 54%),
+    linear-gradient(180deg, oklch(0 0 0 / 0.10), oklch(0 0 0 / 0.18));
+}
+
+.swse-transmission-shell--phase5 .swse-intel-decryption-cell .glyph {
+  box-shadow: inset 0 0 12px oklch(0.85 0.18 200 / 0.035);
+}
+
+.swse-transmission-shell--phase5 .swse-intel-decryption-cell.highlight .glyph {
+  animation: swse-phase5-glyph-lock 1.8s ease-in-out infinite;
+}
+
+.swse-transmission-shell--phase5 .pl-tools {
+  backdrop-filter: blur(8px);
+  background:
+    radial-gradient(ellipse at 50% 0%, oklch(0.85 0.18 200 / 0.10), transparent 46%),
+    linear-gradient(180deg, oklch(0.85 0.18 200 / 0.055), oklch(0 0 0 / 0.34));
+}
+
+.swse-transmission-shell--phase5 .swse-transmission-tactic,
+.swse-transmission-shell--phase5 .pl-skill,
+.swse-transmission-shell--phase5 .swse-transmission-lockbox,
+.swse-transmission-shell--phase5 .dx-result-msg {
+  box-shadow: inset 0 0 18px oklch(0.85 0.18 200 / 0.035);
+}
+
+.swse-transmission-shell--phase5 .swse-transmission-footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.7rem 1rem;
+  border-top: 1px solid var(--dx-border, oklch(0.85 0.18 200 / 0.26));
+  background: oklch(0 0 0 / 0.28);
+}
+
+.swse-transmission-shell--phase5 .swse-transmission-footer span {
+  margin-left: auto;
+  color: var(--dx-faint, oklch(0.50 0.05 190));
+  font-family: var(--f-mono, monospace);
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@keyframes swse-phase5-glyph-lock {
+  0%, 100% { box-shadow: 0 0 10px oklch(0.85 0.18 200 / 0.34), inset 0 0 8px oklch(0.85 0.18 200 / 0.08); }
+  50% { box-shadow: 0 0 18px oklch(0.85 0.18 200 / 0.58), inset 0 0 16px oklch(0.85 0.18 200 / 0.18); }
+}
+
+/* ================================
+   Force Artifact / Sith Alchemy polish
+   ================================ */
+.swse-force-alchemy-workbench .sa-win--phase5 {
+  isolation: isolate;
+}
+
+.swse-force-alchemy-workbench .sa-win--phase5::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.15;
+  background:
+    linear-gradient(90deg, transparent 0 47px, rgba(103, 231, 255, 0.08) 48px, transparent 49px),
+    linear-gradient(0deg, transparent 0 47px, rgba(255, 61, 85, 0.055) 48px, transparent 49px),
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(255, 255, 255, 0.032) 3px 4px);
+  background-size: 48px 48px, 48px 48px, auto;
+  mix-blend-mode: screen;
+  mask-image: radial-gradient(circle at 50% 42%, black 0 64%, transparent 88%);
+}
+
+.swse-force-alchemy-workbench .sa-ritual-telemetry {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.swse-force-alchemy-workbench .sa-ritual-telemetry span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.35rem;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid rgba(103, 231, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--sa-dim);
+  font-family: var(--sa-font-mono);
+  font-size: 0.5rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-hud {
+  min-height: 4rem;
+  background:
+    radial-gradient(ellipse at 8% 0%, rgba(255, 61, 85, 0.13), transparent 44%),
+    linear-gradient(180deg, rgba(103, 231, 255, 0.12), rgba(5, 12, 24, 0.48));
+}
+
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-left,
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-right {
+  backdrop-filter: blur(7px);
+}
+
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-left {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(103, 231, 255, 0.12), transparent 45%),
+    linear-gradient(180deg, rgba(103, 231, 255, 0.05), rgba(2, 6, 14, 0.48));
+}
+
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-right {
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 61, 85, 0.13), transparent 46%),
+    linear-gradient(180deg, rgba(255, 61, 85, 0.045), rgba(4, 2, 6, 0.62));
+}
+
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-center {
+  position: relative;
+}
+
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-center::before {
+  content: "";
+  position: absolute;
+  inset: 4.25rem 1rem 1rem;
+  pointer-events: none;
+  opacity: 0.12;
+  background:
+    radial-gradient(circle at 50% 42%, transparent 0 124px, rgba(255, 61, 85, 0.85) 126px, transparent 129px),
+    radial-gradient(circle at 50% 42%, transparent 0 184px, rgba(181, 108, 255, 0.60) 186px, transparent 189px),
+    linear-gradient(90deg, transparent calc(50% - 1px), rgba(103, 231, 255, 0.45) 50%, transparent calc(50% + 1px));
+  mix-blend-mode: screen;
+}
+
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-rites,
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-detail-scroll {
+  position: relative;
+  z-index: 2;
+}
+
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-rite,
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-slot,
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-project,
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-d-block,
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-opt,
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-gmgate,
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-preview,
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-ledger {
+  box-shadow: inset 0 0 18px rgba(103, 231, 255, 0.035);
+}
+
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-rite.sel {
+  box-shadow:
+    inset 0 0 22px rgba(103, 231, 255, 0.08),
+    0 0 22px rgba(103, 231, 255, 0.13);
+}
+
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-rite.locked {
+  background:
+    linear-gradient(135deg, rgba(255, 61, 85, 0.08), rgba(5, 11, 22, 0.70));
+}
+
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-gmgate {
+  border-color: rgba(255, 61, 85, 0.66);
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(255, 61, 85, 0.18), transparent 52%),
+    linear-gradient(135deg, rgba(255, 61, 85, 0.10), rgba(5, 6, 13, 0.78));
+  box-shadow:
+    inset 0 0 24px rgba(255, 61, 85, 0.08),
+    0 0 20px rgba(255, 61, 85, 0.12);
+}
+
+.swse-force-alchemy-workbench .sa-win--phase5 .sa-warn {
+  border-color: rgba(255, 61, 85, 0.5);
+  background: linear-gradient(135deg, rgba(255, 61, 85, 0.10), rgba(0, 0, 0, 0.28));
+}
+
+@media (max-width: 980px) {
+  .swse-transmission-shell-status,
+  .swse-force-alchemy-workbench .sa-ritual-telemetry {
+    display: none;
+  }
+
+  .swse-transmission-shell--phase5 .swse-transmission-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .swse-transmission-shell--phase5 .swse-transmission-footer span {
+    margin-left: 0;
+  }
+}

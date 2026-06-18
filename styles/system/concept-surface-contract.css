@@ -1,0 +1,791 @@
+/* ============================================================================
+   SWSE CONCEPT SURFACE CONTRACT — PHASE 1
+   ---------------------------------------------------------------------------
+   Shared visual contract for the concept north-star interfaces:
+   - GM Holopad / Datapad surfaces
+   - Holopad Games
+   - Transmission Decryption / Hacking
+   - Sith Alchemy / Force Talisman
+   - Atlas / Locations
+
+   This file intentionally avoids behavior changes. It provides reusable tokens,
+   shared chrome primitives, and safe selector bridges so later app-specific
+   phases can refactor templates without each app inventing a new visual dialect.
+   ============================================================================ */
+
+:root {
+  --swse-concept-accent: var(--vapor-cyan, var(--swse-theme-accent, #70e2ff));
+  --swse-concept-accent-2: var(--vapor-pink, var(--swse-theme-accent-secondary, #ff4fd8));
+  --swse-concept-gold: var(--swse-gold, #ffc857);
+  --swse-concept-ok: var(--swse-state-positive, #7dffb2);
+  --swse-concept-warn: var(--swse-state-neutral, #ffc857);
+  --swse-concept-danger: var(--swse-state-negative, #ff6b6b);
+
+  --swse-concept-ink: var(--ink, var(--swse-theme-text-primary, #dff8ff));
+  --swse-concept-ink-dim: var(--ink-dim, var(--swse-theme-text-secondary, #9bc9d5));
+  --swse-concept-ink-faint: var(--ink-faint, var(--swse-theme-text-muted, #6f95a5));
+
+  --swse-concept-screen: color-mix(in oklab, var(--screen, var(--swse-screen, #08131f)) 92%, black 8%);
+  --swse-concept-screen-deep: color-mix(in oklab, var(--screen, var(--swse-screen, #08131f)) 72%, black 28%);
+  --swse-concept-panel: color-mix(in oklab, var(--screen-2, var(--swse-screen-2, #0d1d2d)) 68%, transparent);
+  --swse-concept-panel-strong: color-mix(in oklab, var(--screen-2, var(--swse-screen-2, #0d1d2d)) 88%, black 12%);
+  --swse-concept-panel-soft: color-mix(in oklab, var(--swse-concept-accent) 8%, transparent);
+
+  --swse-concept-border: color-mix(in oklab, var(--swse-concept-accent) 28%, transparent);
+  --swse-concept-border-strong: color-mix(in oklab, var(--swse-concept-accent) 52%, transparent);
+  --swse-concept-border-hot: color-mix(in oklab, var(--swse-concept-accent-2) 42%, transparent);
+  --swse-concept-shadow: 0 18px 46px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.035);
+  --swse-concept-glow: 0 0 18px color-mix(in oklab, var(--swse-concept-accent) 24%, transparent);
+  --swse-concept-glow-hot: 0 0 18px color-mix(in oklab, var(--swse-concept-accent-2) 22%, transparent);
+
+  --swse-concept-radius: 12px;
+  --swse-concept-radius-sm: 7px;
+  --swse-concept-radius-lg: 18px;
+  --swse-concept-gap: 12px;
+  --swse-concept-pad: 12px;
+  --swse-concept-pad-lg: 16px;
+
+  --swse-concept-font-body: var(--swse-font-body, "Rajdhani", "Space Grotesk", system-ui, sans-serif);
+  --swse-concept-font-mono: var(--swse-font-mono, "JetBrains Mono", monospace);
+  --swse-concept-font-display: var(--swse-font-orbit, "Orbitron", sans-serif);
+
+  --swse-concept-grid-bg:
+    linear-gradient(color-mix(in oklab, var(--swse-concept-accent) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in oklab, var(--swse-concept-accent) 5%, transparent) 1px, transparent 1px);
+  --swse-concept-scan-bg: repeating-linear-gradient(
+    0deg,
+    transparent 0 4px,
+    color-mix(in oklab, var(--swse-concept-accent) 9%, transparent) 4px 5px
+  );
+}
+
+/* ─── Shared scope bridges ───────────────────────────────────────────────── */
+
+:is(
+  .gm-command-screen-v2,
+  .gm-datapad-screen,
+  .swse-shell-surface--games,
+  .swse-games-surface,
+  .swse-shell-surface--transmission-decryption,
+  .swse-intel-decryption-console.dx-win,
+  .sa-win,
+  .swse-shell-surface--atlas,
+  .swse-atlas-surface
+) {
+  color: var(--swse-concept-ink);
+  font-family: var(--swse-concept-font-body);
+  --swse-ui-panel-bg: var(--swse-concept-panel);
+  --swse-ui-panel-strong-bg: var(--swse-concept-panel-strong);
+  --swse-ui-border: var(--swse-concept-border);
+  --swse-ui-border-strong: var(--swse-concept-border-strong);
+  --swse-ui-text: var(--swse-concept-ink);
+  --swse-ui-text-muted: var(--swse-concept-ink-dim);
+  --swse-ui-text-faint: var(--swse-concept-ink-faint);
+  --swse-ui-radius: var(--swse-concept-radius);
+  --swse-ui-glow: var(--swse-concept-glow);
+}
+
+:is(
+  .gm-command-screen-v2,
+  .swse-shell-surface--games,
+  .swse-shell-surface--transmission-decryption,
+  .sa-win,
+  .swse-shell-surface--atlas
+) {
+  background:
+    radial-gradient(circle at 18% 0%, color-mix(in oklab, var(--swse-concept-accent) 13%, transparent), transparent 36%),
+    radial-gradient(circle at 84% 12%, color-mix(in oklab, var(--swse-concept-accent-2) 10%, transparent), transparent 32%),
+    linear-gradient(180deg, var(--swse-concept-screen), var(--swse-concept-screen-deep));
+}
+
+/* A reusable surface container for future phases. Existing templates can opt in
+   by adding .swse-concept-surface without any additional app-specific CSS. */
+.swse-concept-surface {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  color: var(--swse-concept-ink);
+  background:
+    radial-gradient(circle at 20% 0%, color-mix(in oklab, var(--swse-concept-accent) 11%, transparent), transparent 36%),
+    linear-gradient(180deg, var(--swse-concept-screen), var(--swse-concept-screen-deep));
+  border: 1px solid var(--swse-concept-border);
+  border-radius: var(--swse-concept-radius-lg);
+  box-shadow: var(--swse-concept-shadow);
+  isolation: isolate;
+}
+
+.swse-concept-surface::before,
+:is(.gm-command-screen-v2, .swse-shell-surface--games, .swse-shell-surface--atlas, .swse-shell-surface--transmission-decryption)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: var(--swse-concept-grid-bg);
+  background-size: 48px 48px, 48px 48px;
+  opacity: 0.13;
+  mask-image: linear-gradient(180deg, black, transparent 82%);
+}
+
+.swse-concept-surface > *,
+:is(.gm-command-screen-v2, .swse-shell-surface--games, .swse-shell-surface--atlas, .swse-shell-surface--transmission-decryption) > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Concept corner brackets / screen language ──────────────────────────── */
+
+.swse-concept-corners,
+.swse-concept-panel,
+.swse-concept-rail,
+.swse-concept-header,
+.swse-concept-card,
+.swse-concept-dossier {
+  position: relative;
+}
+
+:is(
+  .gm-datapad-page .page-header,
+  .swse-games-hero,
+  .swse-games-hud,
+  .swse-atlas-hero,
+  .swse-atlas-current-strip,
+  .sa-hud,
+  .swse-intel-decryption-hud.dx-hud,
+  .gm-datapad-page .app-card,
+  .gm-datapad-page .panel,
+  .swse-games-panel,
+  .swse-games-card,
+  .swse-atlas-panel,
+  .swse-atlas-card,
+  .swse-atlas-dossier,
+  .swse-atlas-section,
+  .swse-atlas-link-card,
+  .swse-atlas-fact,
+  .sa-slot,
+  .sa-project,
+  .sa-rite,
+  .sa-d-block,
+  .sa-opt,
+  .sa-pill
+) {
+  position: relative;
+  overflow: hidden;
+}
+
+.swse-concept-corners::before,
+.swse-concept-corners::after,
+:is(.gm-datapad-page .page-header, .swse-games-hero, .swse-games-hud, .swse-atlas-hero, .swse-atlas-current-strip, .sa-hud, .swse-intel-decryption-hud.dx-hud)::before,
+:is(.gm-datapad-page .page-header, .swse-games-hero, .swse-games-hud, .swse-atlas-hero, .swse-atlas-current-strip, .sa-hud, .swse-intel-decryption-hud.dx-hud)::after {
+  content: "";
+  position: absolute;
+  pointer-events: none;
+  width: 18px;
+  height: 18px;
+  opacity: 0.68;
+}
+
+.swse-concept-corners::before,
+:is(.gm-datapad-page .page-header, .swse-games-hero, .swse-games-hud, .swse-atlas-hero, .swse-atlas-current-strip, .sa-hud, .swse-intel-decryption-hud.dx-hud)::before {
+  top: 8px;
+  left: 8px;
+  border-top: 1px solid var(--swse-concept-border-strong);
+  border-left: 1px solid var(--swse-concept-border-strong);
+}
+
+.swse-concept-corners::after,
+:is(.gm-datapad-page .page-header, .swse-games-hero, .swse-games-hud, .swse-atlas-hero, .swse-atlas-current-strip, .sa-hud, .swse-intel-decryption-hud.dx-hud)::after {
+  right: 8px;
+  bottom: 8px;
+  border-right: 1px solid var(--swse-concept-border-strong);
+  border-bottom: 1px solid var(--swse-concept-border-strong);
+}
+
+/* ─── Shared panels / rails / cards ──────────────────────────────────────── */
+
+.swse-concept-panel,
+.swse-concept-rail,
+.swse-concept-card,
+:is(
+  .gm-datapad-page .page-header,
+  .gm-command-surface-toolbar,
+  .gm-command-sidebar,
+  .gm-command-surface-scrollframe,
+  .gm-datapad-page .app-card,
+  .gm-datapad-page .panel,
+  .gm-datapad-page section.panel,
+  .swse-games-hud,
+  .swse-games-hero,
+  .swse-games-panel,
+  .swse-games-card,
+  .swse-games-session,
+  .swse-atlas-hero,
+  .swse-atlas-current-strip,
+  .swse-atlas-panel,
+  .swse-atlas-card,
+  .swse-atlas-dossier,
+  .swse-atlas-section,
+  .swse-atlas-link-card,
+  .swse-atlas-fact,
+  .sa-hud,
+  .sa-left,
+  .sa-center,
+  .sa-right,
+  .sa-slot,
+  .sa-project,
+  .sa-rite,
+  .sa-d-block,
+  .sa-opt,
+  .sa-pill,
+  .swse-intel-decryption-console .pl-head,
+  .swse-intel-decryption-console .pl-payload,
+  .swse-intel-decryption-console .pl-tools,
+  .swse-intel-decryption-console .pl-log,
+  .swse-intel-decryption-console .dx-result-msg,
+  .swse-transmission-footer
+) {
+  border: 1px solid var(--swse-concept-border);
+  background:
+    linear-gradient(180deg, color-mix(in oklab, var(--swse-concept-panel-strong) 72%, transparent), color-mix(in oklab, var(--swse-concept-panel) 70%, transparent));
+  box-shadow: var(--swse-concept-shadow);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.swse-concept-panel,
+.swse-concept-card,
+:is(
+  .gm-datapad-page .app-card,
+  .gm-datapad-page .panel,
+  .gm-datapad-page section.panel,
+  .swse-games-panel,
+  .swse-games-card,
+  .swse-atlas-panel,
+  .swse-atlas-card,
+  .swse-atlas-section,
+  .swse-atlas-link-card,
+  .swse-atlas-fact,
+  .sa-slot,
+  .sa-project,
+  .sa-rite,
+  .sa-d-block,
+  .sa-opt,
+  .sa-pill,
+  .swse-intel-decryption-console .pl-payload,
+  .swse-intel-decryption-console .pl-tools,
+  .swse-intel-decryption-console .pl-log,
+  .swse-intel-decryption-console .dx-result-msg
+) {
+  border-radius: var(--swse-concept-radius);
+}
+
+.swse-concept-rail,
+:is(.gm-command-sidebar, .swse-atlas-nav, .sa-left, .sa-right, .swse-intel-decryption-console .pl-tools) {
+  border-color: color-mix(in oklab, var(--swse-concept-accent) 34%, transparent);
+  box-shadow: inset 0 0 24px color-mix(in oklab, var(--swse-concept-accent) 10%, transparent), var(--swse-concept-shadow);
+}
+
+.swse-concept-panel::before,
+.swse-concept-rail::before,
+.swse-concept-card::before,
+:is(.swse-games-panel, .swse-atlas-panel, .swse-atlas-section, .sa-d-block, .sa-rite, .gm-datapad-page .app-card)::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: var(--swse-concept-scan-bg);
+  opacity: 0.32;
+  mix-blend-mode: screen;
+}
+
+.swse-concept-panel > *,
+.swse-concept-rail > *,
+.swse-concept-card > *,
+:is(.swse-games-panel, .swse-atlas-panel, .swse-atlas-section, .sa-d-block, .sa-rite, .gm-datapad-page .app-card) > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── Headers / type hierarchy ───────────────────────────────────────────── */
+
+.swse-concept-kicker,
+:is(
+  .swse-kicker,
+  .swse-games-kicker,
+  .gm-command-sidebar__eyebrow,
+  .gm-command-eyebrow,
+  .sa-rail-head,
+  .sa-d-lbl,
+  .dx-rail-head,
+  .swse-atlas-card-type,
+  .swse-atlas-card-meta
+) {
+  font-family: var(--swse-concept-font-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--swse-concept-ink-faint);
+}
+
+.swse-concept-title,
+:is(
+  .gm-datapad-page .page-header h2,
+  .gm-command-sidebar__title,
+  .swse-games-hero h2,
+  .swse-games-panel h3,
+  .swse-atlas-hero h2,
+  .swse-atlas-dossier h2,
+  .sa-title,
+  .sa-d-title,
+  .swse-intel-decryption-hud .dx-title
+) {
+  font-family: var(--swse-concept-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--swse-concept-accent);
+  text-shadow: var(--swse-concept-glow);
+}
+
+:is(
+  .gm-datapad-page .page-subtitle,
+  .gm-datapad-page p,
+  .swse-games-hero p,
+  .swse-games-detail-head p,
+  .swse-atlas-hero p,
+  .swse-atlas-section p,
+  .sa-d-summary,
+  .sa-empty-note,
+  .swse-intel-decryption-console small,
+  .swse-empty-note
+) {
+  color: var(--swse-concept-ink-dim);
+}
+
+/* ─── Chips / badges / status pills ──────────────────────────────────────── */
+
+.swse-concept-chip,
+:is(
+  .gm-datapad-page .chip,
+  .swse-atlas-surface .chip,
+  .swse-games-count,
+  .swse-games-led,
+  .swse-games-actor-chip,
+  .swse-atlas-stats span,
+  .swse-atlas-current-meta span,
+  .sa-hud-tag,
+  .sa-hud-actor,
+  .sa-rite-badges .bdg,
+  .sa-prereq,
+  .pl-chip,
+  .swse-transmission-mode-risk,
+  .gm-command-sidebar__badge,
+  .gm-command-sidebar__status
+) {
+  border: 1px solid var(--swse-concept-border);
+  background: color-mix(in oklab, var(--swse-concept-accent) 8%, transparent);
+  color: var(--swse-concept-ink);
+  border-radius: 999px;
+  box-shadow: inset 0 0 16px color-mix(in oklab, var(--swse-concept-accent) 6%, transparent);
+}
+
+:is(.gm-datapad-page .chip.ok, .swse-atlas-surface .chip.ok, .bdg-fp, .sa-prereq.met, .pl-chip.cracked, .gm-command-sidebar__status.ready) {
+  border-color: color-mix(in oklab, var(--swse-concept-ok) 36%, transparent);
+  background: color-mix(in oklab, var(--swse-concept-ok) 10%, transparent);
+  color: var(--swse-concept-ok);
+}
+
+:is(.gm-datapad-page .chip.warn, .swse-atlas-surface .chip.warn, .bdg-time, .sa-prereq.unmet, .gm-command-sidebar__badge.warning) {
+  border-color: color-mix(in oklab, var(--swse-concept-warn) 36%, transparent);
+  background: color-mix(in oklab, var(--swse-concept-warn) 10%, transparent);
+  color: var(--swse-concept-warn);
+}
+
+:is(.gm-datapad-page .chip.crit, .swse-atlas-surface .chip.crit, .bdg-dsp, .bdg-gm, .gm-command-sidebar__badge.danger) {
+  border-color: color-mix(in oklab, var(--swse-concept-danger) 36%, transparent);
+  background: color-mix(in oklab, var(--swse-concept-danger) 10%, transparent);
+  color: color-mix(in oklab, var(--swse-concept-danger) 78%, white 22%);
+}
+
+/* ─── Buttons / action controls ──────────────────────────────────────────── */
+
+.swse-concept-button,
+:is(
+  .gm-datapad-page button,
+  .gm-command-surface-toolbar button,
+  .gm-command-sidebar__btn,
+  .gm-datapad-page .back-button,
+  .swse-games-ghost,
+  .swse-games-primary,
+  .swse-games-mode,
+  .swse-atlas-surface button,
+  .sa-win button,
+  .dx-btn,
+  .dx-result-btn,
+  .swse-transmission-tactic
+) {
+  border: 1px solid var(--swse-concept-border);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--swse-concept-accent) 12%, transparent), color-mix(in oklab, var(--swse-concept-screen-deep) 72%, transparent));
+  color: var(--swse-concept-ink);
+  border-radius: var(--swse-concept-radius-sm);
+  font-family: var(--swse-concept-font-body);
+  letter-spacing: 0.08em;
+  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+:is(
+  .gm-datapad-page button:hover,
+  .gm-command-surface-toolbar button:hover,
+  .gm-command-sidebar__btn:hover,
+  .gm-datapad-page .back-button:hover,
+  .swse-games-ghost:hover,
+  .swse-games-primary:hover,
+  .swse-games-mode:hover,
+  .swse-atlas-surface button:hover,
+  .sa-win button:hover,
+  .dx-btn:hover,
+  .dx-result-btn:hover,
+  .swse-transmission-tactic:hover
+):not(:disabled) {
+  border-color: var(--swse-concept-border-strong);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--swse-concept-accent) 20%, transparent), color-mix(in oklab, var(--swse-concept-screen-deep) 66%, transparent));
+  box-shadow: var(--swse-concept-glow);
+  transform: translateY(-1px);
+}
+
+:is(
+  .gm-command-sidebar__btn.is-active,
+  .swse-games-mode.is-active,
+  .swse-games-card.is-selected,
+  .swse-atlas-card.is-current,
+  .swse-atlas-card.is-pinned,
+  .sa-cat.on,
+  .sa-rite.sel,
+  .sa-opt.sel,
+  .sa-pill.sel,
+  .swse-transmission-mode.is-active,
+  .swse-transmission-tactic.is-active
+) {
+  border-color: var(--swse-concept-border-strong);
+  color: var(--swse-concept-accent);
+  box-shadow: var(--swse-concept-glow), inset 0 0 18px color-mix(in oklab, var(--swse-concept-accent) 10%, transparent);
+}
+
+:is(
+  .gm-datapad-page button:disabled,
+  .gm-command-surface-toolbar button:disabled,
+  .swse-games-ghost:disabled,
+  .swse-games-primary:disabled,
+  .swse-atlas-surface button:disabled,
+  .sa-win button:disabled,
+  .dx-btn:disabled
+) {
+  opacity: 0.48;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ─── Inputs / filters ───────────────────────────────────────────────────── */
+
+:is(
+  .gm-datapad-page input,
+  .gm-datapad-page select,
+  .gm-datapad-page textarea,
+  .gm-command-surface-toolbar input,
+  .gm-command-surface-toolbar select,
+  .swse-games-surface input,
+  .swse-games-surface select,
+  .swse-atlas-surface input,
+  .swse-atlas-surface select,
+  .swse-atlas-surface textarea,
+  .sa-win input,
+  .sa-win select,
+  .sa-win textarea,
+  .swse-intel-decryption-console input,
+  .swse-intel-decryption-console select,
+  .swse-intel-decryption-console textarea
+) {
+  border: 1px solid var(--swse-concept-border);
+  background: color-mix(in oklab, var(--swse-concept-screen-deep) 78%, transparent);
+  color: var(--swse-concept-ink);
+  border-radius: var(--swse-concept-radius-sm);
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.22);
+}
+
+:is(
+  .gm-datapad-page input,
+  .gm-datapad-page select,
+  .gm-datapad-page textarea,
+  .gm-command-surface-toolbar input,
+  .gm-command-surface-toolbar select,
+  .swse-games-surface input,
+  .swse-games-surface select,
+  .swse-atlas-surface input,
+  .swse-atlas-surface select,
+  .swse-atlas-surface textarea,
+  .sa-win input,
+  .sa-win select,
+  .sa-win textarea,
+  .swse-intel-decryption-console input,
+  .swse-intel-decryption-console select,
+  .swse-intel-decryption-console textarea
+):focus {
+  outline: none;
+  border-color: var(--swse-concept-border-strong);
+  box-shadow: var(--swse-concept-glow), inset 0 0 18px rgba(0, 0, 0, 0.25);
+}
+
+/* ─── Scrollbars within concept surfaces ─────────────────────────────────── */
+
+:is(
+  .gm-datapad-screen,
+  .gm-command-surface-scrollframe,
+  .swse-games-surface,
+  .swse-atlas-surface,
+  .sa-win,
+  .sa-detail-scroll,
+  .swse-intel-decryption-console,
+  .swse-shell-surface--transmission-decryption
+) {
+  scrollbar-width: thin;
+  scrollbar-color: var(--swse-concept-border-strong) color-mix(in oklab, var(--swse-concept-screen-deep) 80%, black 20%);
+}
+
+:is(
+  .gm-datapad-screen,
+  .gm-command-surface-scrollframe,
+  .swse-games-surface,
+  .swse-atlas-surface,
+  .sa-win,
+  .sa-detail-scroll,
+  .swse-intel-decryption-console,
+  .swse-shell-surface--transmission-decryption
+)::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+:is(
+  .gm-datapad-screen,
+  .gm-command-surface-scrollframe,
+  .swse-games-surface,
+  .swse-atlas-surface,
+  .sa-win,
+  .sa-detail-scroll,
+  .swse-intel-decryption-console,
+  .swse-shell-surface--transmission-decryption
+)::-webkit-scrollbar-track {
+  background: color-mix(in oklab, var(--swse-concept-screen-deep) 86%, black 14%);
+}
+
+:is(
+  .gm-datapad-screen,
+  .gm-command-surface-scrollframe,
+  .swse-games-surface,
+  .swse-atlas-surface,
+  .sa-win,
+  .sa-detail-scroll,
+  .swse-intel-decryption-console,
+  .swse-shell-surface--transmission-decryption
+)::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--swse-concept-accent) 34%, transparent);
+  border: 2px solid color-mix(in oklab, var(--swse-concept-screen-deep) 86%, black 14%);
+  border-radius: 999px;
+}
+
+/* ─── Layout contracts for future template refactors ─────────────────────── */
+
+.swse-concept-layout-3rail,
+.swse-concept-three-rail {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.82fr) minmax(340px, 1.45fr) minmax(260px, 0.95fr);
+  gap: var(--swse-concept-gap);
+  min-height: 0;
+}
+
+.swse-concept-layout-2rail,
+.swse-concept-two-rail {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.92fr) minmax(420px, 1.55fr);
+  gap: var(--swse-concept-gap);
+  min-height: 0;
+}
+
+.swse-concept-stack {
+  display: grid;
+  gap: var(--swse-concept-gap);
+}
+
+.swse-concept-action-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* ─── Responsive fallback ────────────────────────────────────────────────── */
+
+@media (max-width: 1100px) {
+  .swse-concept-layout-3rail,
+  .swse-concept-three-rail,
+  .swse-games-layout,
+  .swse-atlas-layout,
+  .sa-body {
+    grid-template-columns: 1fr !important;
+  }
+
+  .gm-command-shell-v2 {
+    grid-template-columns: minmax(64px, 0.18fr) minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :is(
+    .gm-datapad-page button,
+    .gm-command-surface-toolbar button,
+    .gm-command-sidebar__btn,
+    .swse-games-ghost,
+    .swse-games-primary,
+    .swse-atlas-surface button,
+    .sa-win button,
+    .dx-btn,
+    .dx-result-btn
+  ) {
+    transition: none;
+  }
+}
+
+/* ─── Shared partial primitives ──────────────────────────────────────────── */
+
+.swse-concept-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--swse-concept-gap);
+  padding: var(--swse-concept-pad-lg);
+  border: 1px solid var(--swse-concept-border);
+  border-radius: var(--swse-concept-radius);
+  background: linear-gradient(180deg, color-mix(in oklab, var(--swse-concept-panel-strong) 78%, transparent), color-mix(in oklab, var(--swse-concept-panel) 64%, transparent));
+  box-shadow: var(--swse-concept-shadow);
+  overflow: hidden;
+}
+
+.swse-concept-header__copy {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.swse-concept-header__copy > * {
+  margin: 0;
+}
+
+.swse-concept-subtitle {
+  color: var(--swse-concept-ink-dim);
+  line-height: 1.35;
+}
+
+.swse-concept-metric-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 8px;
+}
+
+.swse-concept-metric {
+  position: relative;
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid var(--swse-concept-border);
+  border-radius: var(--swse-concept-radius-sm);
+  background: color-mix(in oklab, var(--swse-concept-accent) 7%, transparent);
+  overflow: hidden;
+}
+
+.swse-concept-metric::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--swse-concept-scan-bg);
+  opacity: 0.24;
+}
+
+.swse-concept-metric > * {
+  position: relative;
+  z-index: 1;
+}
+
+.swse-concept-metric__label,
+.swse-concept-metric__detail {
+  font-family: var(--swse-concept-font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--swse-concept-ink-faint);
+}
+
+.swse-concept-metric__value {
+  font-family: var(--swse-concept-font-display);
+  font-size: 1.35rem;
+  color: var(--swse-concept-ink);
+  line-height: 1;
+}
+
+.swse-concept-metric.tone-ok,
+.swse-concept-button.tone-ok {
+  border-color: color-mix(in oklab, var(--swse-concept-ok) 38%, transparent);
+  background: color-mix(in oklab, var(--swse-concept-ok) 10%, transparent);
+}
+
+.swse-concept-metric.tone-warn,
+.swse-concept-button.tone-warn {
+  border-color: color-mix(in oklab, var(--swse-concept-warn) 38%, transparent);
+  background: color-mix(in oklab, var(--swse-concept-warn) 10%, transparent);
+}
+
+.swse-concept-metric.tone-danger,
+.swse-concept-button.tone-danger {
+  border-color: color-mix(in oklab, var(--swse-concept-danger) 38%, transparent);
+  background: color-mix(in oklab, var(--swse-concept-danger) 10%, transparent);
+}
+
+.swse-concept-empty-state {
+  display: grid;
+  place-items: center;
+  gap: 10px;
+  min-height: 180px;
+  padding: 24px;
+  text-align: center;
+  color: var(--swse-concept-ink-dim);
+}
+
+.swse-concept-empty-state__icon {
+  width: 46px;
+  height: 46px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--swse-concept-border);
+  border-radius: 999px;
+  color: var(--swse-concept-accent);
+  box-shadow: var(--swse-concept-glow);
+}
+
+.swse-concept-empty-state h3 {
+  margin: 0;
+  font-family: var(--swse-concept-font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--swse-concept-accent);
+}
+
+.swse-concept-empty-state p {
+  margin: 0;
+  max-width: 48ch;
+  color: var(--swse-concept-ink-dim);
+}

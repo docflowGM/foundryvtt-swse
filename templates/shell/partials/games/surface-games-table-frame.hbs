@@ -1,7 +1,7 @@
 {{!-- Games active-table mode. Phase 3 owns the shared table chrome here so game bodies only render the play surface. --}}
 
-<main class="swse-games-table-frame {{vm.activeTable.tableFrame.gameClass}}" data-games-table-frame data-session-id="{{vm.activeTable.sessionId}}">
-  <section class="swse-games-table-mode swse-games-felt">
+<main class="swse-games-table-frame swse-games-table-frame--unified {{vm.activeTable.tableFrame.gameClass}}" data-games-table-frame data-game-id="{{vm.activeTable.gameId}}" data-session-id="{{vm.activeTable.sessionId}}">
+  <section class="swse-games-table-mode swse-games-felt swse-games-table-console">
     <header class="swse-games-tm-bar">
       <div class="swse-games-tm-bar__title">
         <span class="swse-games-table-glyph" aria-hidden="true">{{vm.activeTable.tableFrame.gameIcon}}</span>
@@ -100,14 +100,26 @@
       </div>
     </header>
 
-    <div class="swse-games-table-status">
-      <b>{{vm.activeTable.tableFrame.message}}</b>
+    <div class="swse-games-table-telemetry" aria-label="Table telemetry">
+      <span class="swse-games-table-chip swse-games-table-chip--id"><i>Session</i><b>{{vm.activeTable.sessionId}}</b></span>
+      <span class="swse-games-table-chip"><i>Game</i><b>{{vm.activeTable.tableFrame.gameTitle}}</b></span>
+      <span class="swse-games-table-chip"><i>Theme</i><b>{{vm.activeTable.tableFrame.tableTheme}}</b></span>
+      <span class="swse-games-table-chip tone-{{vm.activeTable.tableFrame.statusTone}}"><i>State</i><b>{{vm.activeTable.tableFrame.statusLabel}}</b></span>
+      {{#if vm.activeTable.tableFrame.metrics}}
+        {{#each vm.activeTable.tableFrame.metrics}}
+        <span class="swse-games-table-chip tone-{{this.tone}}"><i>{{this.key}}</i><b>{{this.value}}</b></span>
+        {{/each}}
+      {{/if}}
+    </div>
+
+    <div class="swse-games-table-status swse-games-table-status--unified">
+      <b>{{#if vm.activeTable.tableFrame.message}}{{vm.activeTable.tableFrame.message}}{{else}}{{vm.activeTable.tableFrame.tableLine}}{{/if}}</b>
       {{#each vm.activeTable.tableFrame.secondaryLines}}
       <span>{{this}}</span>
       {{/each}}
     </div>
 
-    <div class="swse-games-table-body">
+    <div class="swse-games-table-body swse-games-table-body--{{vm.activeTable.gameId}}">
       {{#if vm.activeTable.isPazaak}}
         {{> "systems/foundryvtt-swse/templates/shell/partials/games/surface-games-pazaak-table.hbs"}}
       {{/if}}

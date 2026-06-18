@@ -1,0 +1,172 @@
+/* ============================================================================
+   SWSE CONCEPT PARITY HARDENING — PHASE 6
+   ---------------------------------------------------------------------------
+   Final integration layer for the current concept-parity stack. This file is
+   intentionally small and loaded last so later app phases inherit the same
+   north-star shell behavior without being overridden by the base contract.
+   ============================================================================ */
+
+/* Named surface markers used by SWSE.debug.conceptParity(). */
+[data-concept-surface] {
+  --swse-concept-contract-active: 1;
+}
+
+/* Ensure standalone concept surfaces get the same static display feedback as
+   shell-hosted surfaces. Earlier display-effects.css covered many shells, but
+   several named parity apps can also render without .swse-shell-screen-surface. */
+:is(
+  [data-concept-surface="gm-holopad"],
+  [data-concept-surface="holopad-games"],
+  [data-concept-surface="atlas"],
+  [data-concept-surface="transmission-decryption"],
+  [data-concept-surface="transmission-console"],
+  [data-concept-surface="force-alchemy"],
+  .swse-games-surface,
+  .swse-atlas-surface,
+  .swse-transmission-shell,
+  .swse-intel-decryption-console,
+  .sa-win
+) {
+  position: relative;
+  isolation: isolate;
+}
+
+:is(
+  [data-concept-surface="gm-holopad"],
+  [data-concept-surface="holopad-games"],
+  [data-concept-surface="atlas"],
+  [data-concept-surface="transmission-decryption"],
+  [data-concept-surface="transmission-console"],
+  [data-concept-surface="force-alchemy"],
+  .swse-games-surface,
+  .swse-atlas-surface,
+  .swse-transmission-shell,
+  .swse-intel-decryption-console,
+  .sa-win
+)::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: var(--swse-display-effect-z, 42);
+  pointer-events: none;
+  border-radius: inherit;
+  background-image:
+    var(--swse-display-scanline-bg),
+    var(--swse-display-pixel-bg),
+    var(--swse-display-sheen-bg);
+  background-size: auto, auto, 100% 100%;
+  mix-blend-mode: screen;
+  opacity: var(--swse-scan-overlay-opacity, 0.36);
+}
+
+.swse-scanlines-disabled :is(
+  [data-concept-surface="gm-holopad"],
+  [data-concept-surface="holopad-games"],
+  [data-concept-surface="atlas"],
+  [data-concept-surface="transmission-decryption"],
+  [data-concept-surface="transmission-console"],
+  [data-concept-surface="force-alchemy"],
+  .swse-games-surface,
+  .swse-atlas-surface,
+  .swse-transmission-shell,
+  .swse-intel-decryption-console,
+  .sa-win
+)::after {
+  opacity: 0 !important;
+  animation: none !important;
+}
+
+/* A common last-mile vertical sizing contract. The concept surfaces should fill
+   the holopad screen but let their inner rails scroll instead of collapsing. */
+:is(
+  .gm-command-shell-v2,
+  .swse-games-surface,
+  .swse-games-table-frame,
+  .swse-atlas-surface,
+  .swse-transmission-shell-surface,
+  .swse-transmission-shell,
+  .sa-win
+) {
+  min-height: 0;
+}
+
+:is(
+  .gm-command-surface-stage,
+  .gm-command-surface-scrollframe,
+  .swse-games-surface,
+  .swse-games-table-stage,
+  .swse-atlas-wireframe,
+  .swse-atlas-registry-rail,
+  .swse-atlas-dossier-stage,
+  .swse-transmission-shell-body,
+  .sa-body,
+  .sa-left,
+  .sa-center,
+  .sa-right
+) {
+  min-height: 0;
+}
+
+/* Keep the concept HUD chrome above the hardening scan layer. */
+:is(
+  [data-concept-surface] > *,
+  .swse-games-surface > *,
+  .swse-atlas-surface > *,
+  .swse-transmission-shell > *,
+  .swse-intel-decryption-console > *,
+  .sa-win > *
+) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Harmonize focus visibility across the parity apps without relying on browser
+   defaults that clash with the holo palette. */
+:is(
+  [data-concept-surface] button,
+  [data-concept-surface] input,
+  [data-concept-surface] select,
+  [data-concept-surface] textarea,
+  .swse-intel-decryption-console button,
+  .swse-intel-decryption-console input
+):focus-visible {
+  outline: 2px solid color-mix(in oklab, var(--swse-concept-accent, #70e2ff) 72%, transparent);
+  outline-offset: 2px;
+  box-shadow: var(--swse-concept-glow, 0 0 18px rgba(112, 226, 255, 0.24));
+}
+
+/* Reduce motion keeps the static holo texture but suppresses any late-added
+   sweep animations in these parity scopes. */
+@media (prefers-reduced-motion: reduce) {
+  :is(
+    [data-concept-surface="gm-holopad"],
+    [data-concept-surface="holopad-games"],
+    [data-concept-surface="atlas"],
+    [data-concept-surface="transmission-decryption"],
+    [data-concept-surface="transmission-console"],
+    [data-concept-surface="force-alchemy"],
+    .swse-intel-decryption-console
+  ) *,
+  :is(
+    [data-concept-surface="gm-holopad"],
+    [data-concept-surface="holopad-games"],
+    [data-concept-surface="atlas"],
+    [data-concept-surface="transmission-decryption"],
+    [data-concept-surface="transmission-console"],
+    [data-concept-surface="force-alchemy"],
+    .swse-intel-decryption-console
+  )::before,
+  :is(
+    [data-concept-surface="gm-holopad"],
+    [data-concept-surface="holopad-games"],
+    [data-concept-surface="atlas"],
+    [data-concept-surface="transmission-decryption"],
+    [data-concept-surface="transmission-console"],
+    [data-concept-surface="force-alchemy"],
+    .swse-intel-decryption-console
+  )::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

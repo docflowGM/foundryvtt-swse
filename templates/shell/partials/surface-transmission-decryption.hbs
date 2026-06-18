@@ -1,7 +1,9 @@
 {{!-- Shell-hosted Transmission Decryption surface.
      This keeps the codebreaker inside the Holopad shell instead of launching
      a separate ApplicationV2 window. --}}
-<div class="swse-transmission-shell-surface {{#if vm.expanded}}is-expanded{{/if}}"
+<div class="swse-transmission-shell-surface swse-concept-codebreaker-surface {{#if vm.expanded}}is-expanded{{/if}}"
+     data-concept-surface="transmission-decryption"
+     data-concept-phase="5"
      data-shell-region="surface-transmission-decryption"
      data-intel-id="{{vm.intelId}}"
      data-current-cipher="{{vm.decryption.selectedCipherLetter}}">
@@ -10,6 +12,12 @@
       <span class="swse-transmission-shell-kicker">Holopad Shell · Intel Locker</span>
       <h2>Transmission Decryption</h2>
       <p>Decode the signal, unlock the recovered message, then claim any lockbox payload.</p>
+      <div class="swse-transmission-shell-status" aria-label="Transmission status">
+        <span>Operator · {{vm.actorName}}</span>
+        <span>{{#if vm.isGm}}GM Encode{{else}}Player Decode{{/if}}</span>
+        <span>{{#if vm.hasPayload}}Payload Linked{{else}}Payload Missing{{/if}}</span>
+        <span>{{#if vm.expanded}}Expanded Surface{{else}}Standard Surface{{/if}}</span>
+      </div>
     </div>
     <div class="swse-transmission-shell-actions">
       <button type="button" data-transmission-action="back-intel"><i class="fa-solid fa-folder-open"></i> Intel Locker</button>

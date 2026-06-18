@@ -1,0 +1,21 @@
+{{!--
+  Concept empty-state primitive.
+  Expected context:
+  - class, icon, title, message
+  - action: { action, label, icon, tone, disabled, title }
+--}}
+<div class="swse-concept-empty-state swse-concept-panel swse-concept-corners {{class}}">
+  {{#if icon}}<div class="swse-concept-empty-state__icon"><i class="{{icon}}" aria-hidden="true"></i></div>{{/if}}
+  {{#if title}}<h3>{{title}}</h3>{{/if}}
+  {{#if message}}<p>{{message}}</p>{{/if}}
+  {{#if action}}
+    <button type="button"
+            class="swse-concept-button {{#if action.tone}}tone-{{action.tone}}{{/if}}"
+            data-action="{{action.action}}"
+            {{#if action.title}}title="{{action.title}}"{{/if}}
+            {{#if action.disabled}}disabled{{/if}}>
+      {{#if action.icon}}<i class="{{action.icon}}" aria-hidden="true"></i>{{/if}}
+      <span>{{action.label}}</span>
+    </button>
+  {{/if}}
+</div>

@@ -1,0 +1,27 @@
+{{!--
+  Concept surface header primitive.
+  Expected context:
+  - class, id, kicker, title, subtitle
+  - actions: [{ action, label, icon, tone, disabled, title }]
+--}}
+<header class="swse-concept-header swse-concept-corners {{class}}"{{#if id}} data-concept-header="{{id}}"{{/if}}>
+  <div class="swse-concept-header__copy">
+    {{#if kicker}}<p class="swse-concept-kicker">{{kicker}}</p>{{/if}}
+    {{#if title}}<h2 class="swse-concept-title">{{title}}</h2>{{/if}}
+    {{#if subtitle}}<p class="swse-concept-subtitle">{{subtitle}}</p>{{/if}}
+  </div>
+  {{#if actions.length}}
+    <div class="swse-concept-header__actions swse-concept-action-row">
+      {{#each actions}}
+        <button type="button"
+                class="swse-concept-button {{#if tone}}tone-{{tone}}{{/if}}"
+                data-action="{{action}}"
+                {{#if title}}title="{{title}}"{{/if}}
+                {{#if disabled}}disabled{{/if}}>
+          {{#if icon}}<i class="{{icon}}" aria-hidden="true"></i>{{/if}}
+          <span>{{label}}</span>
+        </button>
+      {{/each}}
+    </div>
+  {{/if}}
+</header>

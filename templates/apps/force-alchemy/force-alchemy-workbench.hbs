@@ -1,4 +1,4 @@
-<div class="sa-win" data-application-content data-force-alchemy-root>
+<div class="sa-win sa-win--phase5" data-concept-surface="force-alchemy" data-concept-phase="5" data-application-content data-force-alchemy-root>
   <div class="sa-surge" aria-hidden="true"></div>
   <div class="sa-corruption" aria-hidden="true">
     <span class="sa-bolt b1"></span><span class="sa-bolt b2"></span><span class="sa-bolt b3"></span>
@@ -12,6 +12,11 @@
       <div class="sa-subtitle">Ritual workbench · artifacts, projects, mutation, and sheet-visible status</div>
     </div>
     <span class="sa-hud-tag">Ritual Surface</span>
+    <div class="sa-ritual-telemetry" aria-label="Ritual telemetry">
+      <span>FP {{actor.forcePoints}}/{{actor.forcePointsMax}}</span>
+      <span>DSP {{actor.darkSideScore}}/{{actor.darkSideMax}}</span>
+      <span>{{actor.credits}} cr</span>
+    </div>
     <span class="sa-hud-actor">{{actor.name}}</span>
     <button type="button" class="sa-hud-close" data-force-alchemy-action="close" title="Close">&times;</button>
   </header>

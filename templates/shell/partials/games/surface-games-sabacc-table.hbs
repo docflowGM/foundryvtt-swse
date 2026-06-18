@@ -1,5 +1,5 @@
 {{!-- Sabacc active-table partial. Production actions remain data-games-action driven. --}}
-<div class="swse-sabacc-casino swse-sabacc-table {{vm.activeTable.sabacc.phaseClass}}" data-sabacc-session-id="{{vm.activeTable.sessionId}}">
+<div class="swse-games-table-playmat swse-games-table-playmat--sabacc swse-sabacc-casino swse-sabacc-table {{vm.activeTable.sabacc.phaseClass}}" data-sabacc-session-id="{{vm.activeTable.sessionId}}">
   {{#if vm.activeTable.sabacc.hasShowdown}}
   <div class="swse-sabacc-banner {{#if vm.activeTable.sabacc.showdown.winnerLabel}}win{{/if}}">
     {{#if vm.activeTable.sabacc.showdown.winnerLabel}}{{vm.activeTable.sabacc.showdown.winnerLabel}}{{else}}{{vm.activeTable.sabacc.showdown.tiedLabels}}{{/if}}

@@ -401,6 +401,7 @@ export const SWSE_TEMPLATES = [
   // ==============================
   'systems/foundryvtt-swse/templates/apps/gm-datapad.hbs',
   'systems/foundryvtt-swse/templates/apps/gm-datapad/partials/dock.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/partials/surface-toolbar.hbs',
   'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/home.hbs',
   'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs.hbs',
   'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/contract-wizard.hbs',
@@ -498,6 +499,9 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/shell/partials/surface-workbench.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-customization.hbs',
   'systems/foundryvtt-swse/templates/shell/partials/surface-asset-bay.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/concept/surface-header.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/concept/metric-strip.hbs',
+  'systems/foundryvtt-swse/templates/shell/partials/concept/empty-state.hbs',
 
 
 ];

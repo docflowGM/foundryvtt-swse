@@ -1,0 +1,646 @@
+/* ============================================================================
+   SWSE Concept Surface Parity Layer
+   ---------------------------------------------------------------------------
+   Last-mile visual realignment for the concept-backed holopad surfaces:
+   GM Command Holopad, Holopad Games, Transmission Decryption, Player Atlas,
+   and Sith Alchemy / Force Talisman workbench.
+
+   This file intentionally avoids game logic. It restores the shared concept
+   language: cyan holo glass, dark tablet screen, scanlines/corners, compact
+   command typography, status chips, and distinct spooky alchemy corruption.
+   ============================================================================ */
+
+:root {
+  --swse-concept-cyan: #70e2ff;
+  --swse-concept-cyan-soft: rgba(112, 226, 255, 0.18);
+  --swse-concept-cyan-strong: rgba(112, 226, 255, 0.48);
+  --swse-concept-ink: #dff8ff;
+  --swse-concept-ink-dim: rgba(223, 248, 255, 0.64);
+  --swse-concept-ink-faint: rgba(223, 248, 255, 0.38);
+  --swse-concept-panel: rgba(4, 12, 24, 0.82);
+  --swse-concept-panel-strong: rgba(3, 10, 20, 0.88);
+  --swse-concept-screen: #02060d;
+  --swse-concept-pos: #7dffb2;
+  --swse-concept-warn: #ffc857;
+  --swse-concept-gold: #ffd166;
+  --swse-concept-neg: #ff8b8b;
+  --swse-concept-crit: #ff6b6b;
+  --swse-concept-violet: #b86cff;
+  --swse-concept-radius: 12px;
+  --swse-concept-font-body: var(--swse-font-body, "Space Grotesk", system-ui, sans-serif);
+  --swse-concept-font-display: var(--swse-font-orbit, "Orbitron", sans-serif);
+  --swse-concept-font-mono: var(--swse-font-mono, "JetBrains Mono", monospace);
+}
+
+/* Shared concept-backed surface shell ------------------------------------------------ */
+.swse-sheet-v2-shell--gm-datapad,
+.swse-games-surface,
+.swse-transmission-shell-surface,
+.swse-atlas-surface,
+.swse-force-alchemy-workbench .sa-win {
+  --swse-accent: var(--swse-concept-cyan);
+  --swse-accent-text: var(--swse-concept-ink);
+  color: var(--swse-concept-ink);
+  font-family: var(--swse-concept-font-body);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2,
+.swse-games-surface,
+.swse-transmission-shell-surface,
+.swse-atlas-surface,
+.swse-force-alchemy-workbench .sa-win {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at 18% 10%, rgba(112, 226, 255, 0.14), transparent 34%),
+    radial-gradient(circle at 86% 88%, rgba(184, 108, 255, 0.12), transparent 40%),
+    linear-gradient(180deg, rgba(5, 16, 28, 0.97), rgba(2, 6, 12, 0.99));
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2::after,
+.swse-games-surface::after,
+.swse-transmission-shell-surface::after,
+.swse-atlas-surface::after,
+.swse-force-alchemy-workbench .sa-win::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 16;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.026) 0 1px, transparent 1px 4px),
+    linear-gradient(90deg, transparent, rgba(112, 226, 255, 0.035), transparent);
+  mix-blend-mode: screen;
+  opacity: var(--swse-scan-overlay-opacity, 0.32);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2 > *,
+.swse-games-surface > *,
+.swse-transmission-shell-surface > *,
+.swse-atlas-surface > *,
+.swse-force-alchemy-workbench .sa-win > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Shared panels, chips, buttons ------------------------------------------------------ */
+.swse-sheet-v2-shell--gm-datapad .gm-command-panel,
+.swse-sheet-v2-shell--gm-datapad .gm-command-cluster,
+.swse-sheet-v2-shell--gm-datapad .gm-command-status-card,
+.swse-sheet-v2-shell--gm-datapad .gm-phase2-panel,
+.swse-sheet-v2-shell--gm-datapad .gm-phase2-card,
+.swse-sheet-v2-shell--gm-datapad .gm-wizard-card,
+.swse-sheet-v2-shell--gm-datapad .gm-wizard-objective,
+.swse-sheet-v2-shell--gm-datapad .bulletin-surface,
+.swse-sheet-v2-shell--gm-datapad .bulletin-record-card,
+.swse-games-panel,
+.swse-games-rail-card,
+.swse-games-table-mode,
+.swse-atlas-panel,
+.swse-atlas-dossier,
+.swse-atlas-section,
+.swse-transmission-shell-toolbar,
+.swse-transmission-mode-note,
+.swse-intel-decryption-console.dx-win,
+.swse-force-alchemy-workbench .sa-panel,
+.swse-force-alchemy-workbench .sa-card,
+.swse-force-alchemy-workbench .sa-projector,
+.swse-force-alchemy-workbench .sa-detail-card {
+  border: 1px solid var(--swse-concept-cyan-soft);
+  border-radius: var(--swse-concept-radius);
+  background:
+    linear-gradient(180deg, rgba(4, 16, 30, 0.88), rgba(3, 9, 18, 0.82));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.025),
+    inset 0 0 26px rgba(112, 226, 255, 0.055),
+    0 14px 34px rgba(0, 0, 0, 0.28);
+}
+
+.swse-sheet-v2-shell--gm-datapad button,
+.swse-games-surface button,
+.swse-atlas-surface button,
+.swse-transmission-shell-surface button,
+.swse-force-alchemy-workbench button {
+  font-family: var(--swse-concept-font-mono);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-surface-toolbar__btn,
+.swse-sheet-v2-shell--gm-datapad .gm-holopad-dock-home,
+.swse-sheet-v2-shell--gm-datapad .gm-wizard-template-row button,
+.swse-sheet-v2-shell--gm-datapad .gm-workspace-qa-row button,
+.swse-games-ghost,
+.swse-games-primary,
+.swse-atlas-dossier-actions button,
+.swse-atlas-checks button,
+.swse-atlas-section button,
+.swse-atlas-current-strip button,
+.swse-transmission-shell-actions button,
+.swse-transmission-tactic,
+.swse-transmission-manual-row button,
+.swse-transmission-letter-grid button,
+.swse-force-alchemy-workbench .sa-btn,
+.swse-force-alchemy-workbench .sa-hud-close {
+  border: 1px solid rgba(112, 226, 255, 0.24);
+  background: rgba(112, 226, 255, 0.07);
+  color: var(--swse-concept-ink);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: background 120ms ease, border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-surface-toolbar__btn:hover,
+.swse-sheet-v2-shell--gm-datapad .gm-holopad-dock-home:hover,
+.swse-sheet-v2-shell--gm-datapad .gm-wizard-template-row button:hover,
+.swse-sheet-v2-shell--gm-datapad .gm-workspace-qa-row button:hover,
+.swse-games-ghost:hover:not(:disabled),
+.swse-games-primary:hover:not(:disabled),
+.swse-atlas-dossier-actions button:hover,
+.swse-atlas-checks button:hover,
+.swse-atlas-section button:hover,
+.swse-atlas-current-strip button:hover,
+.swse-transmission-shell-actions button:hover,
+.swse-transmission-tactic:hover:not(:disabled),
+.swse-transmission-manual-row button:hover:not(:disabled),
+.swse-transmission-letter-grid button:hover:not(:disabled),
+.swse-force-alchemy-workbench .sa-btn:hover,
+.swse-force-alchemy-workbench .sa-hud-close:hover {
+  border-color: var(--swse-concept-cyan-strong);
+  background: rgba(112, 226, 255, 0.14);
+  box-shadow: 0 0 16px rgba(112, 226, 255, 0.16);
+}
+
+/* GM Command Holopad --------------------------------------------------------------- */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2 {
+  padding: 0 !important;
+  background:
+    linear-gradient(180deg, rgba(5, 16, 28, 0.96), rgba(2, 6, 12, 0.98)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2 {
+  display: grid;
+  grid-template-columns: minmax(178px, 210px) minmax(0, 1fr);
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2.is-sidebar-collapsed {
+  grid-template-columns: 56px minmax(0, 1fr);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar {
+  border-right: 1px solid rgba(112, 226, 255, 0.14);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(112, 226, 255, 0.10), transparent 36%),
+    rgba(2, 5, 12, 0.96);
+  box-shadow: inset -18px 0 42px rgba(0, 0, 0, 0.24);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__head,
+.swse-sheet-v2-shell--gm-datapad .gm-command-surface-toolbar,
+.swse-sheet-v2-shell--gm-datapad .gm-holopad-command-dock {
+  border-bottom: 1px solid rgba(112, 226, 255, 0.12);
+  background: rgba(2, 6, 14, 0.9);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__eyebrow,
+.swse-sheet-v2-shell--gm-datapad .gm-command-eyebrow,
+.swse-sheet-v2-shell--gm-datapad .gm-command-surface-toolbar__code,
+.swse-sheet-v2-shell--gm-datapad .gm-command-cluster__header h3,
+.swse-games-kicker,
+.swse-atlas-surface .swse-kicker,
+.swse-transmission-shell-kicker,
+.swse-force-alchemy-workbench .sa-kicker,
+.swse-force-alchemy-workbench .sa-rail-kicker {
+  color: rgba(112, 226, 255, 0.72);
+  font-family: var(--swse-concept-font-mono);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.20em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__title,
+.swse-sheet-v2-shell--gm-datapad .gm-command-surface-toolbar__copy strong,
+.swse-sheet-v2-shell--gm-datapad .gm-command-app-row__body strong,
+.swse-games-hud__title,
+.swse-games-hero h2,
+.swse-games-panel h3,
+.swse-atlas-hero h2,
+.swse-atlas-dossier h2,
+.swse-transmission-shell-toolbar h2,
+.swse-force-alchemy-workbench .sa-title {
+  font-family: var(--swse-concept-font-display);
+  color: var(--swse-concept-ink);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__btn,
+.swse-sheet-v2-shell--gm-datapad .gm-command-app-row,
+.swse-sheet-v2-shell--gm-datapad .gm-holopad-dock-app {
+  border: 1px solid rgba(112, 226, 255, 0.14);
+  background: rgba(3, 10, 20, 0.68);
+  color: rgba(223, 248, 255, 0.66);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__btn:hover,
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__btn.is-active,
+.swse-sheet-v2-shell--gm-datapad .gm-command-app-row:hover,
+.swse-sheet-v2-shell--gm-datapad .gm-holopad-dock-app:hover,
+.swse-sheet-v2-shell--gm-datapad .gm-holopad-dock-app.is-active {
+  border-color: rgba(112, 226, 255, 0.42);
+  background: rgba(112, 226, 255, 0.10);
+  color: var(--swse-concept-cyan);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__badge,
+.swse-sheet-v2-shell--gm-datapad .gm-command-app-row__badge,
+.swse-sheet-v2-shell--gm-datapad .gm-command-surface-toolbar__metric,
+.swse-sheet-v2-shell--gm-datapad .gm-command-metric,
+.swse-sheet-v2-shell--gm-datapad .type-chip,
+.swse-games-chip,
+.swse-games-tag,
+.swse-games-credit-chip,
+.swse-atlas-stats span,
+.swse-atlas-link-row span,
+.swse-atlas-current-meta span,
+.swse-transmission-mode-risk,
+.swse-intel-decryption-console .pl-chip,
+.swse-force-alchemy-workbench .sa-pill,
+.swse-force-alchemy-workbench .sa-hud-tag {
+  border: 1px solid rgba(112, 226, 255, 0.18);
+  background: rgba(112, 226, 255, 0.08);
+  color: var(--swse-concept-ink);
+  border-radius: 999px;
+  font-family: var(--swse-concept-font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .crit,
+.swse-games-ghost--danger,
+.swse-atlas-fact.is-locked,
+.swse-intel-decryption-console.risk-critical,
+.swse-force-alchemy-workbench .sa-danger,
+.swse-force-alchemy-workbench .sa-hud-tag {
+  --swse-concept-cyan-soft: rgba(255, 107, 107, 0.24);
+}
+
+/* Holopad Games -------------------------------------------------------------------- */
+.swse-games-surface {
+  min-height: 100%;
+  padding: 10px;
+  overflow: hidden;
+}
+
+.swse-games-surface.is-library-mode {
+  display: flex;
+  flex-direction: column;
+}
+
+.swse-games-hud {
+  flex: 0 0 auto;
+  border-radius: 10px;
+  background: rgba(2, 6, 14, 0.90);
+}
+
+.swse-games-led.is-pink,
+.swse-games-led.is-warn {
+  background: var(--swse-concept-violet);
+  box-shadow: 0 0 8px var(--swse-concept-violet);
+}
+
+.swse-games-layout,
+.swse-games-library-layout {
+  min-height: 0;
+}
+
+.swse-games-card,
+.swse-games-session,
+.swse-games-table-row,
+.swse-games-feed-row,
+.swse-games-mode,
+.swse-pazaak-deck-slot,
+.swse-pazaak-catalog-card,
+.swse-sabacc-seat-card,
+.swse-hintaro-seat-card,
+.swse-dejarik-piece-card,
+.swse-dejarik-draft-card {
+  border: 1px solid rgba(112, 226, 255, 0.16);
+  background: rgba(3, 10, 20, 0.72);
+  border-radius: 8px;
+}
+
+.swse-games-card:hover,
+.swse-games-card.is-selected,
+.swse-games-table-row:hover,
+.swse-games-feed-row:hover,
+.swse-games-mode:hover,
+.swse-games-mode.is-selected {
+  border-color: rgba(112, 226, 255, 0.42);
+  background: rgba(112, 226, 255, 0.09);
+}
+
+.swse-games-table-frame {
+  min-height: 0;
+  height: calc(100% - 46px);
+  padding-top: 10px;
+}
+
+.swse-games-table-mode {
+  min-height: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 45%, rgba(112, 226, 255, 0.11), transparent 48%),
+    radial-gradient(ellipse at 50% 105%, rgba(125, 255, 178, 0.12), transparent 42%),
+    rgba(3, 9, 16, 0.92);
+}
+
+.swse-games-tm-bar,
+.swse-games-table-status,
+.swse-pazaak-scoreboard,
+.swse-sabacc-banner,
+.swse-hintaro-banner,
+.swse-dejarik-panel {
+  border-color: rgba(112, 226, 255, 0.16) !important;
+  background: rgba(2, 8, 16, 0.72) !important;
+}
+
+.swse-games-table-body,
+.swse-pazaak-board-shell,
+.swse-sabacc-felt,
+.swse-hintaro-felt,
+.swse-dejarik-board-shell {
+  position: relative;
+  min-height: 0;
+  overflow: auto;
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(112, 226, 255, 0.08), transparent 45%),
+    linear-gradient(180deg, rgba(5, 16, 28, 0.78), rgba(0, 3, 7, 0.66));
+}
+
+.swse-pazaak-card-face,
+.swse-pazaak-hand-card,
+.swse-pazaak-played-card,
+.swse-sabacc-card,
+.swse-sabacc-private-card,
+.swse-hintaro-cube,
+.swse-hintaro-private-cube {
+  box-shadow:
+    0 0 0 1px rgba(112, 226, 255, 0.18),
+    0 8px 18px rgba(0, 0, 0, 0.45),
+    inset 0 0 16px rgba(112, 226, 255, 0.07);
+}
+
+.swse-dejarik-svg,
+.swse-dejarik-board-stage {
+  filter: drop-shadow(0 0 18px rgba(112, 226, 255, 0.20));
+}
+
+/* Transmission Decryption ---------------------------------------------------------- */
+.swse-transmission-shell-surface {
+  padding: 10px;
+  background:
+    radial-gradient(ellipse at 14% 6%, rgba(112, 226, 255, 0.14), transparent 42%),
+    radial-gradient(ellipse at 90% 94%, rgba(184, 108, 255, 0.14), transparent 48%),
+    linear-gradient(180deg, rgba(6, 18, 30, 0.98), rgba(2, 6, 12, 0.99));
+}
+
+.swse-transmission-shell-toolbar {
+  border-radius: 10px;
+  padding: 8px 12px;
+}
+
+.swse-transmission-shell-body {
+  padding: 10px 0 0;
+}
+
+.swse-transmission-shell-surface .swse-transmission-window {
+  border-radius: 14px;
+  background:
+    radial-gradient(ellipse at 30% 0%, rgba(112, 226, 255, 0.13), transparent 50%),
+    radial-gradient(ellipse at 82% 92%, rgba(255, 209, 102, 0.08), transparent 42%),
+    linear-gradient(180deg, rgba(9, 22, 38, 0.94), rgba(5, 9, 20, 0.98));
+}
+
+.swse-intel-decryption-cell .glyph,
+.swse-intel-decryption-console .pl-freq-chip,
+.swse-transmission-mode-badge,
+.swse-transmission-mode-risk {
+  background: rgba(0, 0, 0, 0.36);
+}
+
+/* Player Atlas --------------------------------------------------------------------- */
+.swse-atlas-surface {
+  --atlas-col-gap: 10px;
+  height: 100%;
+  min-height: 0;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.swse-atlas-hero {
+  flex: 0 0 auto;
+  margin-bottom: 10px;
+  padding: 12px 14px;
+}
+
+.swse-atlas-layout {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.48fr) minmax(240px, 0.72fr) minmax(440px, 1.55fr);
+  gap: var(--atlas-col-gap);
+  min-height: 0;
+  height: calc(100% - 104px);
+}
+
+.swse-atlas-category-rail,
+.swse-atlas-nav,
+.swse-atlas-detail {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-atlas-category-rail,
+.swse-atlas-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse-atlas-category-rail .swse-atlas-panel,
+.swse-atlas-nav .swse-atlas-panel {
+  flex: 0 0 auto;
+}
+
+.swse-atlas-card-list {
+  min-height: 0;
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.swse-atlas-detail {
+  overflow: auto;
+  padding-right: 2px;
+}
+
+.swse-atlas-card {
+  border-left-width: 3px;
+  transition: border-color 120ms ease, background 120ms ease, box-shadow 120ms ease, transform 120ms ease;
+}
+
+.swse-atlas-card:hover,
+.swse-atlas-card.is-current,
+.swse-atlas-card.is-pinned {
+  border-color: rgba(112, 226, 255, 0.42);
+  background: rgba(112, 226, 255, 0.08);
+}
+
+.swse-atlas-filter-pill,
+.swse-atlas-mode-pill {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 7px;
+  border: 1px solid rgba(112, 226, 255, 0.15);
+  background: rgba(3, 10, 20, 0.68);
+  color: var(--swse-concept-ink-dim);
+  font-family: var(--swse-concept-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.swse-atlas-filter-pill strong,
+.swse-atlas-mode-pill strong {
+  color: var(--swse-concept-cyan);
+  font-size: 11px;
+}
+
+.swse-atlas-section h3 {
+  color: rgba(112, 226, 255, 0.82);
+  font-family: var(--swse-concept-font-mono);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.swse-atlas-fact.is-revealed {
+  border-color: rgba(125, 255, 178, 0.20);
+}
+
+.swse-atlas-fact.is-locked {
+  border-color: rgba(255, 200, 87, 0.26);
+  background: rgba(255, 200, 87, 0.04);
+}
+
+/* Sith Alchemy / Force Talisman ----------------------------------------------------- */
+.swse-force-alchemy-workbench .sa-win {
+  background:
+    radial-gradient(ellipse at 18% 8%, rgba(255, 59, 82, 0.20), transparent 44%),
+    radial-gradient(ellipse at 84% 92%, rgba(192, 116, 255, 0.20), transparent 48%),
+    radial-gradient(ellipse at 50% 50%, rgba(95, 232, 255, 0.07), transparent 64%),
+    linear-gradient(180deg, #0a1f2c, #06121b);
+  border-color: rgba(103, 231, 255, 0.52);
+  box-shadow:
+    inset 0 0 0 1px rgba(95, 232, 255, 0.10),
+    inset 0 0 70px rgba(95, 232, 255, 0.06),
+    inset 40px 0 90px -50px rgba(255, 59, 82, 0.5),
+    inset -40px 0 90px -50px rgba(192, 116, 255, 0.5),
+    0 30px 80px rgba(0, 0, 0, 0.55),
+    0 0 60px rgba(95, 232, 255, 0.12);
+}
+
+.swse-force-alchemy-workbench .sa-win::before {
+  opacity: 0.22;
+  background:
+    repeating-linear-gradient(0deg, transparent 0 3px, rgba(95, 232, 255, 0.045) 3px 4px),
+    radial-gradient(circle at 50% 42%, transparent 0 156px, rgba(95, 232, 255, 0.45) 158px, transparent 161px),
+    radial-gradient(circle at 50% 42%, transparent 0 205px, rgba(255, 61, 85, 0.36) 207px, transparent 210px);
+}
+
+.swse-force-alchemy-workbench .sa-title b,
+.swse-force-alchemy-workbench .sa-sigil,
+.swse-force-alchemy-workbench .sa-hud-tag {
+  color: #ff3d55;
+  text-shadow: 0 0 14px rgba(255, 61, 85, 0.44), 0 0 28px rgba(181, 108, 255, 0.32);
+}
+
+.swse-force-alchemy-workbench .sa-bolt {
+  opacity: 0.88;
+}
+
+.swse-force-alchemy-workbench .sa-left,
+.swse-force-alchemy-workbench .sa-right {
+  background: linear-gradient(180deg, rgba(103, 231, 255, 0.045), rgba(2, 6, 14, 0.44));
+}
+
+/* Scrollbars keep the holo console look --------------------------------------------- */
+.swse-sheet-v2-shell--gm-datapad *::-webkit-scrollbar,
+.swse-games-surface *::-webkit-scrollbar,
+.swse-atlas-surface *::-webkit-scrollbar,
+.swse-transmission-shell-surface *::-webkit-scrollbar,
+.swse-force-alchemy-workbench *::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad *::-webkit-scrollbar-thumb,
+.swse-games-surface *::-webkit-scrollbar-thumb,
+.swse-atlas-surface *::-webkit-scrollbar-thumb,
+.swse-transmission-shell-surface *::-webkit-scrollbar-thumb,
+.swse-force-alchemy-workbench *::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(112, 226, 255, 0.26);
+}
+
+.swse-sheet-v2-shell--gm-datapad *,
+.swse-games-surface *,
+.swse-atlas-surface *,
+.swse-transmission-shell-surface *,
+.swse-force-alchemy-workbench * {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(112, 226, 255, 0.26) transparent;
+}
+
+@media (max-width: 1040px) {
+  .swse-atlas-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+    overflow: auto;
+  }
+
+  .swse-atlas-surface {
+    overflow: auto;
+  }
+}
+
+/* Respect the existing scanline setting classes for the new parity overlays. */
+.swse-scanlines-disabled .swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2::after,
+.swse-scanlines-disabled .swse-games-surface::after,
+.swse-scanlines-disabled .swse-transmission-shell-surface::after,
+.swse-scanlines-disabled .swse-atlas-surface::after,
+.swse-scanlines-disabled .swse-force-alchemy-workbench .sa-win::after {
+  opacity: 0 !important;
+  animation: none !important;
+}
+
+/* Atlas is a true console layout: fixed hero/current strip, scrollable rails/detail. */
+.swse-atlas-surface {
+  display: flex;
+  flex-direction: column;
+}
+.swse-atlas-current-strip {
+  flex: 0 0 auto;
+  margin: 0 0 10px;
+}
+.swse-atlas-layout {
+  flex: 1 1 auto;
+  height: auto;
+}

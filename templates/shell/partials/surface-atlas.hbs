@@ -1,74 +1,106 @@
-<div class="swse-shell-surface swse-shell-surface--atlas swse-atlas-surface" data-shell-region="surface-atlas" data-surface-id="{{vm.id}}">
-  <header class="swse-atlas-hero">
-    <div>
-      <p class="swse-kicker">PLAYER ATLAS</p>
+<div class="swse-shell-surface swse-shell-surface--atlas swse-atlas-surface swse-atlas-v3" data-concept-surface="atlas" data-concept-phase="3" data-shell-region="surface-atlas" data-surface-id="{{vm.id}}">
+  <header class="swse-atlas-command-header">
+    <div class="swse-atlas-command-copy">
+      <p class="swse-atlas-eyebrow">PLAYER HOLOPAD // ASTROGATION REGISTRY</p>
       <h2>{{vm.title}}</h2>
       <p>{{vm.subtitle}}</p>
     </div>
-    <div class="swse-atlas-stats">
-      <span><strong>{{vm.counts.total}}</strong> Known</span>
-      <span><strong>{{vm.counts.current}}</strong> Current</span>
-      <span><strong>{{vm.counts.leads}}</strong> Leads</span>
-      <span><strong>{{vm.counts.intel}}</strong> Intel</span>
-      <span><strong>{{vm.counts.jobs}}</strong> Jobs</span>
+    <div class="swse-atlas-command-metrics" aria-label="Atlas summary">
+      <span><strong>{{vm.counts.total}}</strong><em>Known</em></span>
+      <span><strong>{{vm.counts.current}}</strong><em>Current</em></span>
+      <span><strong>{{vm.counts.pinned}}</strong><em>Pinned</em></span>
+      <span><strong>{{vm.counts.leads}}</strong><em>Leads</em></span>
+      <span><strong>{{vm.counts.facts}}</strong><em>Facts</em></span>
+      <span><strong>{{vm.counts.jobs}}</strong><em>Jobs</em></span>
     </div>
   </header>
 
   {{#if vm.hasCurrentLocation}}
-  <section class="swse-atlas-current-strip">
-    <div>
-      <p class="swse-kicker">CURRENT LOCATION</p>
-      <h3>{{vm.currentLocation.name}}</h3>
-      <span>{{vm.currentLocation.chain}}</span>
-    </div>
-    <div class="swse-atlas-current-meta">
-      <span>{{vm.currentLocation.factionCount}} factions</span>
-      <span>{{vm.currentLocation.contactCount}} NPCs</span>
-      <span>{{vm.currentLocation.intelCount}} Intel</span>
-      <span>{{vm.currentLocation.jobCount}} Jobs</span>
-    </div>
-    <button type="button" data-atlas-action="select" data-location-id="{{vm.currentLocation.id}}">Open Current Site</button>
-  </section>
+    <section class="swse-atlas-current-strip">
+      <span class="swse-atlas-current-tag">Current Location</span>
+      <strong>{{vm.currentLocation.name}}</strong>
+      <span class="swse-atlas-chip is-active">Active</span>
+      <span class="swse-atlas-current-chain">{{vm.currentLocation.chain}}</span>
+      <span class="swse-atlas-current-counts">{{vm.currentLocation.factCount}} facts // {{vm.currentLocation.leadCount}} leads</span>
+      <button type="button" data-atlas-action="select" data-location-id="{{vm.currentLocation.id}}">Open Site</button>
+    </section>
   {{/if}}
 
-  <section class="swse-atlas-layout">
-    <aside class="swse-atlas-nav">
-      <div class="swse-atlas-panel">
-        <h3>Known Locations</h3>
-        <input type="search" data-atlas-filter="search" value="{{vm.filters.search}}" placeholder="Search Atlas..." />
-        <label>Category
+  <section class="swse-atlas-wireframe" aria-label="Player Atlas">
+    <aside class="swse-atlas-registry-rail">
+      <div class="swse-atlas-rail-header">
+        <span class="swse-atlas-dot is-active"></span>
+        <div>
+          <p class="swse-atlas-eyebrow">Known Locations</p>
+          <h3>Registry</h3>
+        </div>
+      </div>
+
+      <div class="swse-atlas-filter-panel">
+        <label>
+          <span>Search</span>
+          <input type="search" data-atlas-filter="search" value="{{vm.filters.search}}" placeholder="world, city, faction, tag..." />
+        </label>
+        <label>
+          <span>Category</span>
           <select data-atlas-filter="category">
             {{#each vm.categoryOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
           </select>
         </label>
-        <label>View
+        <label>
+          <span>View</span>
           <select data-atlas-filter="special">
             {{#each vm.specialOptions}}<option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>{{/each}}
           </select>
         </label>
       </div>
-      <div class="swse-atlas-card-list">
-        {{#each vm.cards}}
-          <button type="button" class="swse-atlas-card {{depthClass}} {{#if activeForParty}}is-current{{/if}} {{#if pinned}}is-pinned{{/if}}" data-atlas-action="select" data-location-id="{{id}}">
-            <span class="swse-atlas-card-name">{{name}}</span>
-            <span class="swse-atlas-card-type">{{typeLabel}}</span>
-            <span class="swse-atlas-card-chain">{{chain}}</span>
-            <span class="swse-atlas-card-meta">{{factCount}} facts · {{leadCount}} leads · {{jobCount}} jobs</span>
-          </button>
+
+      <div class="swse-atlas-location-groups">
+        {{#each vm.cardGroups}}
+          <section class="swse-atlas-location-group swse-atlas-location-group--{{id}}">
+            <header>
+              <span>{{eyebrow}}</span>
+              <strong>{{label}}</strong>
+              <em>{{count}}</em>
+            </header>
+            {{#each cards}}
+              <button type="button" class="swse-atlas-location-row {{stateClass}} {{depthClass}} {{#if activeForParty}}is-current{{/if}} {{#if pinned}}is-pinned{{/if}} {{#if leadCount}}has-leads{{/if}}" data-atlas-action="select" data-location-id="{{id}}">
+                <span class="swse-atlas-dot {{dotClass}}"></span>
+                <span class="swse-atlas-location-copy">
+                  <strong>{{name}}</strong>
+                  <em>{{typeLabel}} // {{#if chain}}{{chain}}{{else}}{{categoryLabel}}{{/if}}</em>
+                </span>
+                <span class="swse-atlas-location-badges">
+                  {{#if pinned}}<b class="swse-atlas-badge is-pinned">PIN</b>{{/if}}
+                  {{#if factCount}}<b class="swse-atlas-badge is-fact">{{factCount}}</b>{{/if}}
+                  {{#if leadCount}}<b class="swse-atlas-badge is-lead">{{leadCount}}</b>{{/if}}
+                </span>
+              </button>
+            {{else}}
+              <p class="swse-atlas-empty-line">{{emptyLabel}}</p>
+            {{/each}}
+          </section>
         {{else}}
-          <p class="swse-empty-note">No known locations have been revealed yet.</p>
+          <p class="swse-atlas-empty-line">No known locations have been revealed yet.</p>
         {{/each}}
       </div>
     </aside>
 
-    <main class="swse-atlas-detail">
+    <main class="swse-atlas-dossier-stage">
       {{#if vm.selected}}
-        <article class="swse-atlas-dossier">
-          <div class="swse-atlas-dossier-head">
+        <article class="swse-atlas-dossier-card">
+          <header class="swse-atlas-dossier-header">
             <div>
-              <p class="swse-kicker">{{vm.selected.categoryLabel}} // {{vm.selected.typeLabel}}</p>
+              <p class="swse-atlas-eyebrow">{{vm.selected.categoryLabel}} // {{vm.selected.typeLabel}}</p>
               <h2>{{vm.selected.name}}</h2>
-              <p>{{vm.selected.chain}}</p>
+              <p>{{#if vm.selected.chain}}{{vm.selected.chain}}{{else}}No parent chain recorded{{/if}}</p>
+              <div class="swse-atlas-chip-row">
+                <span class="swse-atlas-chip {{vm.selected.stateClass}}">{{vm.selected.revealStateLabel}}</span>
+                <span class="swse-atlas-chip is-info">{{vm.selected.factCount}} Known Facts</span>
+                <span class="swse-atlas-chip is-lead">{{vm.selected.leadCount}} Leads</span>
+                <span class="swse-atlas-chip is-info">{{vm.selected.factionCount}} Factions</span>
+                <span class="swse-atlas-chip is-info">{{vm.selected.contactCount}} Contacts</span>
+              </div>
             </div>
             <div class="swse-atlas-dossier-actions">
               {{#if vm.selected.pinned}}
@@ -78,111 +110,132 @@
               {{/if}}
               <button type="button" data-atlas-action="reviewed" data-location-id="{{vm.selected.id}}">Mark Reviewed</button>
             </div>
+          </header>
+
+          <nav class="swse-atlas-detail-tabs" aria-label="Atlas dossier sections">
+            {{#each vm.selected.detailTabs}}
+              <span class="{{#if count}}has-count{{/if}}">{{label}} <b>{{count}}</b></span>
+            {{/each}}
+          </nav>
+
+          <div class="swse-atlas-dossier-scroll">
+            <section class="swse-atlas-dossier-section swse-atlas-overview-panel">
+              <p class="swse-atlas-section-label">Overview</p>
+              <p>{{vm.selected.publicSummary}}</p>
+              <div class="swse-atlas-link-row">
+                <span>Known Factions: {{#if vm.selected.factionRows.length}}{{#each vm.selected.factionRows}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}{{else}}None revealed{{/if}}</span>
+                <span>Known NPCs: {{vm.selected.contactCount}}</span>
+                <span>Intel: {{vm.selected.intelCount}}</span>
+                <span>Jobs: {{vm.selected.jobCount}}</span>
+              </div>
+            </section>
+
+            {{#if vm.selected.mapImage}}
+              <section class="swse-atlas-dossier-section swse-atlas-map-panel">
+                <p class="swse-atlas-section-label">Map</p>
+                <img src="{{vm.selected.mapImage}}" alt="{{vm.selected.name}} map" />
+              </section>
+            {{/if}}
+
+            <section class="swse-atlas-dossier-section">
+              <p class="swse-atlas-section-label is-fact">Known Facts</p>
+              {{#each vm.selected.knownFacts}}
+                <article class="swse-atlas-fact-card is-revealed">
+                  <header>
+                    <span class="swse-atlas-chip is-fact">Revealed</span>
+                    <em>{{categoryLabel}} // {{revealModeLabel}} {{#if checkLabel}}// {{checkLabel}}{{/if}}</em>
+                  </header>
+                  <strong>{{title}}</strong>
+                  <p>{{body}}</p>
+                </article>
+              {{else}}
+                <p class="swse-atlas-empty-line">No facts have been revealed for this location yet.</p>
+              {{/each}}
+            </section>
+
+            <section class="swse-atlas-dossier-section">
+              <p class="swse-atlas-section-label is-lead">Research Available</p>
+              {{#each vm.selected.lockedFacts}}
+                <article class="swse-atlas-fact-card is-locked">
+                  <header>
+                    <span class="swse-atlas-chip is-lead">Lead</span>
+                    <em>{{categoryLabel}} // {{revealModeLabel}}</em>
+                  </header>
+                  <strong>{{title}}</strong>
+                  <p>{{teaser}}</p>
+                  <div class="swse-atlas-checks">
+                    {{#each checks}}
+                      <button type="button" data-atlas-action="attempt-fact" data-location-id="{{../../vm.selected.id}}" data-fact-id="{{../id}}" data-check-id="{{id}}" data-skill="{{skill}}" data-dc="{{dc}}">{{buttonLabel}}</button>
+                    {{/each}}
+                  </div>
+                </article>
+              {{else}}
+                <p class="swse-atlas-empty-line">No unresolved Atlas leads are currently available here.</p>
+              {{/each}}
+            </section>
+
+            <section class="swse-atlas-dossier-section swse-atlas-dossier-grid">
+              <div>
+                <p class="swse-atlas-section-label">Factions</p>
+                {{#each vm.selected.factionRows}}
+                  <article class="swse-atlas-link-card">
+                    <strong>{{name}}</strong>
+                    <span>{{type}} // Standing {{scoreLabel}}</span>
+                  </article>
+                {{else}}
+                  <p class="swse-atlas-empty-line">No faction presence has been revealed here.</p>
+                {{/each}}
+              </div>
+              <div>
+                <p class="swse-atlas-section-label">Contacts</p>
+                {{#each vm.selected.contactRows}}
+                  <article class="swse-atlas-link-card">
+                    <strong>{{name}}</strong>
+                    <span>{{role}} // {{factionName}}</span>
+                    {{#if publicNotes}}<p>{{publicNotes}}</p>{{/if}}
+                  </article>
+                {{else}}
+                  <p class="swse-atlas-empty-line">No named NPC dossiers have been revealed here.</p>
+                {{/each}}
+              </div>
+            </section>
+
+            <section class="swse-atlas-dossier-section swse-atlas-dossier-grid">
+              <div>
+                <p class="swse-atlas-section-label">Jobs</p>
+                {{#each vm.selected.jobRows}}
+                  <article class="swse-atlas-link-card"><strong>{{id}}</strong></article>
+                {{else}}
+                  <p class="swse-atlas-empty-line">No known jobs are anchored here.</p>
+                {{/each}}
+              </div>
+              <div>
+                <p class="swse-atlas-section-label">Intel</p>
+                {{#each vm.selected.intelRows}}
+                  <article class="swse-atlas-link-card">
+                    <strong>{{title}}</strong>
+                    {{#if summary}}<span>{{summary}}</span>{{/if}}
+                  </article>
+                {{else}}
+                  <p class="swse-atlas-empty-line">No linked Intel has been revealed here.</p>
+                {{/each}}
+              </div>
+            </section>
+
+            <section class="swse-atlas-dossier-section swse-atlas-notes-panel">
+              <p class="swse-atlas-section-label">My Notes</p>
+              <form data-atlas-notes-form>
+                <input type="hidden" name="locationId" value="{{vm.selected.id}}" />
+                <textarea name="playerNotes" rows="4" placeholder="Add theories, suspicious NPCs, clues, or reminders...">{{vm.selected.playerNotes}}</textarea>
+                <button type="submit">Save Notes</button>
+              </form>
+            </section>
           </div>
-
-          {{#if vm.selected.mapImage}}
-            <div class="swse-atlas-map-preview">
-              <img src="{{vm.selected.mapImage}}" alt="{{vm.selected.name}} map" />
-            </div>
-          {{/if}}
-
-          <section class="swse-atlas-section">
-            <h3>Overview</h3>
-            <p>{{vm.selected.publicSummary}}</p>
-            <div class="swse-atlas-link-row">
-              <span>Known Factions: {{#if vm.selected.factionRows.length}}{{#each vm.selected.factionRows}}{{name}}{{#unless @last}}, {{/unless}}{{/each}}{{else}}None revealed{{/if}}</span>
-              <span>Known NPCs: {{vm.selected.contactCount}}</span>
-              <span>Intel: {{vm.selected.intelCount}}</span>
-              <span>Jobs: {{vm.selected.jobCount}}</span>
-            </div>
-          </section>
-
-          <section class="swse-atlas-section swse-atlas-grid-two">
-            <div>
-              <h3>Known Factions Here</h3>
-              {{#each vm.selected.factionRows}}
-                <article class="swse-atlas-link-card">
-                  <strong>{{name}}</strong>
-                  <span>{{type}} · Standing {{scoreLabel}}</span>
-                </article>
-              {{else}}
-                <p class="swse-empty-note">No faction presence has been revealed here.</p>
-              {{/each}}
-            </div>
-            <div>
-              <h3>Known NPCs Here</h3>
-              {{#each vm.selected.contactRows}}
-                <article class="swse-atlas-link-card">
-                  <strong>{{name}}</strong>
-                  <span>{{role}} · {{factionName}}</span>
-                  {{#if publicNotes}}<p>{{publicNotes}}</p>{{/if}}
-                </article>
-              {{else}}
-                <p class="swse-empty-note">No named NPC dossiers have been revealed here.</p>
-              {{/each}}
-            </div>
-          </section>
-
-          <section class="swse-atlas-section">
-            <h3>Known Facts</h3>
-            {{#each vm.selected.knownFacts}}
-              <article class="swse-atlas-fact is-revealed">
-                <div><strong>{{title}}</strong><span>{{categoryLabel}} · {{revealModeLabel}} · {{checkLabel}}</span></div>
-                <p>{{body}}</p>
-              </article>
-            {{else}}
-              <p class="swse-empty-note">No facts have been revealed for this location yet.</p>
-            {{/each}}
-          </section>
-
-          <section class="swse-atlas-section">
-            <h3>Unresolved Leads</h3>
-            {{#each vm.selected.lockedFacts}}
-              <article class="swse-atlas-fact is-locked">
-                <div><strong>{{title}}</strong><span>{{categoryLabel}} · {{revealModeLabel}}</span></div>
-                <p>{{teaser}}</p>
-                <div class="swse-atlas-checks">
-                  {{#each checks}}
-                    <button type="button" data-atlas-action="attempt-fact" data-location-id="{{../../vm.selected.id}}" data-fact-id="{{../id}}" data-check-id="{{id}}" data-skill="{{skill}}" data-dc="{{dc}}">{{buttonLabel}}</button>
-                  {{/each}}
-                </div>
-              </article>
-            {{else}}
-              <p class="swse-empty-note">No unresolved Atlas leads are currently available here.</p>
-            {{/each}}
-          </section>
-
-          <section class="swse-atlas-section swse-atlas-grid-two">
-            <div>
-              <h3>Local Intel</h3>
-              {{#each vm.selected.intelRows}}
-                <p><strong>{{title}}</strong><br /><span>{{summary}}</span></p>
-              {{else}}
-                <p class="swse-empty-note">No linked Intel has been revealed here.</p>
-              {{/each}}
-            </div>
-            <div>
-              <h3>Jobs / Leads</h3>
-              {{#each vm.selected.jobRows}}
-                <p><strong>{{id}}</strong></p>
-              {{else}}
-                <p class="swse-empty-note">No known jobs are anchored here.</p>
-              {{/each}}
-            </div>
-          </section>
-
-          <section class="swse-atlas-section">
-            <h3>Personal Notes</h3>
-            <form data-atlas-notes-form>
-              <input type="hidden" name="locationId" value="{{vm.selected.id}}" />
-              <textarea name="playerNotes" rows="4" placeholder="Add theories, suspicious NPCs, clues, or reminders...">{{vm.selected.playerNotes}}</textarea>
-              <button type="submit">Save Notes</button>
-            </form>
-          </section>
         </article>
       {{else}}
-        <div class="swse-empty-state">
-          <h3>Atlas Empty</h3>
+        <div class="swse-atlas-empty-state">
+          <p class="swse-atlas-eyebrow">Atlas Empty</p>
+          <h3>No revealed locations</h3>
           <p>The GM has not revealed any known locations yet.</p>
         </div>
       {{/if}}

@@ -20,12 +20,12 @@
   dragLabel="GM datapad drag rail"
   showResize=true
 }}
-  <div class="swse-datapad swse-screen gm-datapad-screen gm-command-screen-v2">
-    <div class="gm-command-shell-v2 {{#if gmShell.sidebarCollapsed}}is-sidebar-collapsed{{/if}} {{#if gmShell.surfaceFocused}}is-surface-focused{{/if}}" data-gm-command-shell>
+  <div class="swse-datapad swse-screen gm-datapad-screen gm-command-screen-v2 gm-command-screen-v2--phase2" data-concept-surface="gm-holopad" data-concept-phase="2b">
+    <div class="gm-command-shell-v2 gm-command-shell-v2--concept {{#if gmShell.sidebarCollapsed}}is-sidebar-collapsed{{/if}} {{#if gmShell.surfaceFocused}}is-surface-focused{{/if}}" data-gm-command-shell>
       {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/partials/sidebar.hbs"}}
-      <main class="gm-command-surface-stage" aria-label="GM datapad surface">
+      <main class="gm-command-surface-stage gm-command-surface-stage--concept" aria-label="GM datapad surface">
         {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/partials/surface-toolbar.hbs"}}
-        <div class="gm-command-surface-scrollframe" data-gm-surface-scrollframe>
+        <div class="gm-command-surface-scrollframe gm-command-surface-scrollframe--concept" data-gm-surface-scrollframe>
           {{> "systems/foundryvtt-swse/templates/shell/shell-surface.hbs"}}
         </div>
       </main>

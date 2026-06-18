@@ -1,16 +1,12 @@
-{{!-- GM Datapad v2 universal surface toolbar. Keeps shared shell actions available across every GM surface. --}}
-<header class="gm-command-surface-toolbar" data-gm-command-toolbar>
+{{!-- GM Datapad Phase 2 surface command header. Shared mission/status strip for every GM surface. --}}
+<header class="gm-command-surface-toolbar gm-command-surface-toolbar--phase2 swse-concept-header" data-gm-command-toolbar>
   <div class="gm-command-surface-toolbar__identity">
     <span class="gm-command-surface-toolbar__code">{{gmShell.activeCode}}</span>
     <span class="gm-command-surface-toolbar__copy">
+      <span class="gm-command-eyebrow">GM COMMAND SURFACE</span>
       <strong>{{gmShell.activeLabel}}</strong>
       <em>{{gmShell.activeDescription}}</em>
     </span>
-  </div>
-
-  <div class="gm-command-surface-toolbar__status {{gmShell.readinessTone}}">
-    <span class="gm-command-surface-toolbar__pulse"></span>
-    <span>{{gmShell.readinessLabel}}</span>
   </div>
 
   <div class="gm-command-surface-toolbar__metrics" aria-label="Surface metrics">
@@ -26,7 +22,11 @@
     </span>
     <span class="gm-command-surface-toolbar__metric info">
       <b>{{gmHome.locationLeadCount}}</b>
-      <small>Leads</small>
+      <small>Atlas Leads</small>
+    </span>
+    <span class="gm-command-surface-toolbar__metric {{gmShell.readinessTone}}">
+      <b>{{gmShell.readinessLabel}}</b>
+      <small>Status</small>
     </span>
   </div>
 

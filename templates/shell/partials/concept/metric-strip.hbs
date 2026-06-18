@@ -1,0 +1,16 @@
+{{!--
+  Concept metric strip primitive.
+  Expected context:
+  - class
+  - metrics: [{ label, value, detail, tone, icon }]
+--}}
+<div class="swse-concept-metric-strip {{class}}">
+  {{#each metrics}}
+    <article class="swse-concept-metric {{#if tone}}tone-{{tone}}{{/if}}">
+      {{#if icon}}<i class="{{icon}}" aria-hidden="true"></i>{{/if}}
+      <span class="swse-concept-metric__label">{{label}}</span>
+      <strong class="swse-concept-metric__value">{{value}}</strong>
+      {{#if detail}}<small class="swse-concept-metric__detail">{{detail}}</small>{{/if}}
+    </article>
+  {{/each}}
+</div>

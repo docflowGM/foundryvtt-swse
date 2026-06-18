@@ -1,10 +1,11 @@
-<div class="swse-transmission-shell" data-current-cipher="{{decryption.selectedCipherLetter}}">
+<div class="swse-transmission-shell swse-transmission-shell--phase5" data-concept-surface="transmission-console" data-concept-phase="5" data-current-cipher="{{decryption.selectedCipherLetter}}">
   <div class="ref-bar swse-transmission-ref">
     <div><span class="lt">Transmission Decryption</span> · slicer codebreaker · {{actorName}}</div>
     <div>{{#if isGm}}GM authoring preview{{else}}Player decode{{/if}} · datapad surface</div>
   </div>
 
   <div class="swse-intel-decryption-console swse-transmission-window dx-win {{decryption.modeClass}} tone-{{decryption.modeTone}} band-{{decryption.progressBand}} risk-{{decryption.failBand}} {{#if decryption.solved}}is-solved{{/if}} {{#if decryption.failed}}is-failed{{/if}}">
+    <div class="swse-transmission-reticle" aria-hidden="true"></div>
     <div class="swse-intel-decryption-hud dx-hud">
       <span class="dx-logo">{{decryption.analysisIcon}}</span>
       <div class="swse-transmission-titleblock">

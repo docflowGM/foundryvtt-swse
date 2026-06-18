@@ -140,7 +140,14 @@
     "styles/apps/gm-datapad.css",
     "styles/layout/sheet-layout.css",
     "styles/components/discovery.css",
-    "styles/apps/force-alchemy-workbench.css"
+    "styles/apps/force-alchemy-workbench.css",
+    "styles/system/display-effects.css",
+    "styles/system/concept-surface-contract.css",
+    "styles/apps/gm-holopad-concept-phase2.css",
+    "styles/system/atlas-surface.css",
+    "styles/system/games-table-unification.css",
+    "styles/system/transmission-alchemy-polish.css",
+    "styles/system/concept-parity-hardening.css"
   ],
   "languages": [
     {

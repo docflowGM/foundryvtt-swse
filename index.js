@@ -48,6 +48,7 @@ import { registerJediPrestigeTalentActions } from "./scripts/engine/talent/jedi-
 import { registerSithTalentActions } from "./scripts/engine/talent/sith-talent-actions.js";
 import { registerForceAdeptTalentActions } from "./scripts/engine/talent/force-adept-talent-actions.js";
 import { registerForceAlchemyWorkbench, openForceAlchemyWorkbench } from "./scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
+import { initializeConceptParityDiagnostics } from "./scripts/ui/concept-parity/concept-parity-diagnostics.js";
 import { registerTokenNameSyncHooks } from "./scripts/core/token-name-sync.js";
 import "./scripts/talents/squad-actions-init.js";
 import "./scripts/talents/minion-actions-init.js";
@@ -221,6 +222,7 @@ Hooks.once("ready", async () => {
   SWSEGrappling.init();
   await initializeHolonet();
   await initializeGames();
+  initializeConceptParityDiagnostics();
 
   // Wire debug helpers (logging disabled — uncomment below to re-enable diagnostics)
   initSidebarIconDiagnostics();

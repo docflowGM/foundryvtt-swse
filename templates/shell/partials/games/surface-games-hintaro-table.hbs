@@ -1,5 +1,5 @@
 {{!-- Hintaro active-table partial. Production actions remain data-games-action driven. --}}
-<div class="swse-hintaro-pit swse-hintaro-table {{vm.activeTable.hintaro.phaseClass}}" data-hintaro-session-id="{{vm.activeTable.sessionId}}">
+<div class="swse-games-table-playmat swse-games-table-playmat--hintaro swse-hintaro-pit swse-hintaro-table {{vm.activeTable.hintaro.phaseClass}}" data-hintaro-session-id="{{vm.activeTable.sessionId}}">
   {{#if vm.activeTable.hintaro.hasShowdown}}
   <div class="swse-hintaro-banner {{#if vm.activeTable.hintaro.showdown.winnerLabel}}win{{/if}}">
     {{vm.activeTable.hintaro.showdown.winnerLabel}}

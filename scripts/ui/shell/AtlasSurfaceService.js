@@ -87,6 +87,20 @@ function lockedFactsFor(location = {}, actorState = {}) {
   return asArray(location.atlasFacts).filter(fact => !fact.knownToPlayers && !['known', 'active', 'compromised'].includes(fact.revealState) && !actorRevealed.has(fact.id));
 }
 
+function atlasStateFor(location = {}, actorState = {}) {
+  if (location.activeForParty || actorState.activeLocationId === location.id) {
+    return { key: 'active', label: 'Active', dotClass: 'is-active', toneClass: 'is-active' };
+  }
+  const revealState = text(location.revealState || (location.knownToPlayers ? 'known' : 'hinted')).toLowerCase();
+  if (revealState === 'compromised') {
+    return { key: 'compromised', label: 'Compromised', dotClass: 'is-compromised', toneClass: 'is-compromised' };
+  }
+  if (revealState === 'hinted') {
+    return { key: 'hinted', label: 'Hinted', dotClass: 'is-hinted', toneClass: 'is-hinted' };
+  }
+  return { key: 'known', label: 'Known', dotClass: 'is-known', toneClass: 'is-known' };
+}
+
 function cardFromLocation(location = {}, records = [], factions = [], actorState = {}) {
   const byId = new Map(records.map(entry => [entry.id, entry]));
   const factionIds = Array.from(new Set([location.controllingFactionId, ...asArray(location.factionIds)].filter(Boolean)));
@@ -95,6 +109,7 @@ function cardFromLocation(location = {}, records = [], factions = [], actorState
   const lockedFacts = lockedFactsFor(location, actorState);
   const pins = new Set(actorState.pins || []);
   const reviewed = new Set(actorState.reviewed || []);
+  const state = atlasStateFor(location, actorState);
   return {
     id: location.id,
     name: location.name,
@@ -103,6 +118,9 @@ function cardFromLocation(location = {}, records = [], factions = [], actorState
     type: location.type,
     typeLabel: LocationRegistryService.optionLabel(LocationRegistryService.TYPES, location.type),
     revealState: location.revealState,
+    revealStateLabel: state.label,
+    stateClass: state.toneClass,
+    dotClass: state.dotClass,
     activeForParty: location.activeForParty,
     chain: locationChain(location, byId),
     depth: depthFor(location, byId),
@@ -121,6 +139,23 @@ function cardFromLocation(location = {}, records = [], factions = [], actorState
     publicSummary: location.publicSummary || 'No public Atlas summary has been revealed yet.',
     searchText: [location.name, location.category, location.type, location.publicSummary, factionNames.join(' '), asArray(location.tags).join(' ')].join(' ').toLowerCase()
   };
+}
+
+function groupCards(cards = [], actorState = {}) {
+  const current = cards.filter(card => card.activeForParty || actorState.activeLocationId === card.id);
+  const currentIds = new Set(current.map(card => card.id));
+  const pinned = cards.filter(card => card.pinned && !currentIds.has(card.id));
+  const pinnedIds = new Set(pinned.map(card => card.id));
+  const recent = cards.filter(card => !card.reviewed && !currentIds.has(card.id) && !pinnedIds.has(card.id));
+  const recentIds = new Set(recent.map(card => card.id));
+  const leadCards = cards.filter(card => card.leadCount > 0 && !currentIds.has(card.id) && !pinnedIds.has(card.id) && !recentIds.has(card.id));
+  return [
+    { id: 'current', label: 'Current', eyebrow: 'Active Site', emptyLabel: 'No active party location', cards: current },
+    { id: 'pinned', label: 'Pinned', eyebrow: 'Saved Sites', emptyLabel: 'No pinned locations', cards: pinned },
+    { id: 'recent', label: 'Recent', eyebrow: 'Unreviewed', emptyLabel: 'No recent updates', cards: recent },
+    { id: 'leads', label: 'Research', eyebrow: 'Open Leads', emptyLabel: 'No open research leads', cards: leadCards },
+    { id: 'all', label: 'All Known', eyebrow: 'Registry', emptyLabel: 'No revealed locations', cards }
+  ].map(group => ({ ...group, count: group.cards.length })).filter(group => group.id === 'all' || group.cards.length > 0);
 }
 
 async function linkedIntelRows(location = {}) {
@@ -158,6 +193,7 @@ export class AtlasSurfaceService {
       return true;
     });
     const currentLocationCard = cards.find(card => card.activeForParty || actorState.activeLocationId === card.id) || null;
+    const cardGroups = groupCards(visibleCards, actorState);
     const selectedLocationId = requested || visibleCards.find(card => card.activeForParty)?.id || visibleCards[0]?.id || '';
     const selectedLocation = selectedLocationId ? allVisible.find(location => location.id === selectedLocationId) || LocationRegistryService.findLocation(selectedLocationId) : null;
     const selectedCard = selectedLocation ? cardFromLocation(selectedLocation, allVisible, factions, actorState) : null;
@@ -201,6 +237,7 @@ export class AtlasSurfaceService {
       filters,
       counts,
       cards: visibleCards,
+      cardGroups,
       hasLocations: cards.length > 0,
       hasVisibleLocations: visibleCards.length > 0,
       selectedLocationId,
@@ -219,7 +256,16 @@ export class AtlasSurfaceService {
         journalUuid: selectedLocation.linkedJournalUuid || '',
         sceneAvailable: Boolean(selectedLocation.map?.sceneUuid || selectedLocation.linkedSceneUuids?.length),
         factionCount: factionRows.length,
-        contactCount: contactRows.length
+        contactCount: contactRows.length,
+        detailTabs: [
+          { id: 'overview', label: 'Overview', count: 1 },
+          { id: 'facts', label: 'Facts', count: knownFacts.length },
+          { id: 'factions', label: 'Factions', count: factionRows.length },
+          { id: 'contacts', label: 'Contacts', count: contactRows.length },
+          { id: 'jobs', label: 'Jobs', count: asArray(selectedLocation.linkedJobIds).length },
+          { id: 'map', label: 'Map', count: selectedLocation.map?.imagePath || selectedLocation.image ? 1 : 0 },
+          { id: 'notes', label: 'My Notes', count: selectedCard?.playerNotes ? 1 : 0 }
+        ]
       } : null,
       categoryOptions: optionsFrom(LocationRegistryService.CATEGORIES, filters.category, { includeAll: true, allLabel: 'All categories' }),
       specialOptions: [
