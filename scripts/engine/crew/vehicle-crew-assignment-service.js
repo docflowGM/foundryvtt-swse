@@ -40,7 +40,10 @@ function firstEmptyStation(vehicle) {
 function toCrewRef(actor) {
   return {
     name: actor?.name || 'Unnamed Crew',
-    uuid: actor?.uuid || (actor?.id ? `Actor.${actor.id}` : null)
+    uuid: actor?.uuid || (actor?.id ? `Actor.${actor.id}` : null),
+    id: actor?.id || null,
+    actorId: actor?.id || null,
+    type: actor?.type || ''
   };
 }
 
@@ -58,7 +61,17 @@ function legacyCrewRef(actor, station) {
 
 function crewRefMatches(entry, crewActor) {
   if (!entry || !crewActor) return false;
-  return entry.uuid === crewActor.uuid || entry.id === crewActor.id || entry.actorId === crewActor.id;
+  const entryUuid = typeof entry === 'string' ? entry : entry.uuid;
+  const entryId = typeof entry === 'string' && entry.startsWith('Actor.') ? entry.slice(6) : (entry.id ?? entry.actorId);
+  return entryUuid === crewActor.uuid || entryId === crewActor.id || entry.name === crewActor.name;
+}
+
+function unwrapCrewActor(document) {
+  if (!document) return null;
+  if (document.documentName === 'Actor') return document;
+  if (document.actor?.documentName === 'Actor') return document.actor;
+  if (document.object?.actor?.documentName === 'Actor') return document.object.actor;
+  return null;
 }
 
 export class VehicleCrewAssignmentService {
@@ -71,7 +84,57 @@ export class VehicleCrewAssignmentService {
   }
 
   static canBeCrew(actor) {
-    return !!actor && actor.documentName === 'Actor' && CREW_ACTOR_TYPES.has(actor.type);
+    const crewActor = unwrapCrewActor(actor);
+    return !!crewActor && crewActor.documentName === 'Actor' && CREW_ACTOR_TYPES.has(crewActor.type);
+  }
+
+
+  static getDropDataFromEvent(event) {
+    try {
+      const data = globalThis.TextEditor?.getDragEventData?.(event);
+      if (data) return data;
+    } catch (_err) { /* fall through to raw dataTransfer parsing */ }
+
+    const transfer = event?.dataTransfer;
+    if (!transfer) return null;
+    for (const type of ['application/json', 'text/plain', 'text/x-foundry-uuid']) {
+      const raw = transfer.getData?.(type);
+      if (!raw) continue;
+      if (type === 'text/x-foundry-uuid') return { uuid: raw };
+      try { return JSON.parse(raw); } catch (_err) { /* ignored */ }
+    }
+    return null;
+  }
+
+  static async resolveCrewActorFromDropData(dropData) {
+    if (!dropData || typeof dropData !== 'object') return null;
+
+    const candidates = [];
+    const push = (value) => { if (value && !candidates.includes(value)) candidates.push(value); };
+
+    if (dropData.uuid) {
+      try { push(await fromUuid(dropData.uuid)); } catch (_err) { /* ignored */ }
+    }
+
+    if (dropData.pack && dropData.id) {
+      try {
+        const pack = game.packs?.get?.(dropData.pack);
+        push(await pack?.getDocument?.(dropData.id));
+      } catch (_err) { /* ignored */ }
+    }
+
+    if (dropData.type === 'Actor' && dropData.id) push(game.actors?.get?.(dropData.id));
+    if (dropData.actorId) push(game.actors?.get?.(dropData.actorId));
+
+    if (typeof globalThis.Actor?.implementation?.fromDropData === 'function') {
+      try { push(await globalThis.Actor.implementation.fromDropData(dropData)); } catch (_err) { /* ignored */ }
+    }
+
+    for (const candidate of candidates) {
+      const crewActor = unwrapCrewActor(candidate);
+      if (this.canBeCrew(crewActor)) return crewActor;
+    }
+    return null;
   }
 
   static listEligibleCrewActors(vehicle = null) {
@@ -91,14 +154,22 @@ export class VehicleCrewAssignmentService {
 
   static buildAssignmentUpdate(vehicle, station, crewActor) {
     if (!vehicle || vehicle.type !== 'vehicle') return null;
+    crewActor = unwrapCrewActor(crewActor);
     if (!this.canBeCrew(crewActor)) return null;
 
     const targetStation = normalizeKey(station, firstEmptyStation(vehicle));
     const ownedActors = Array.isArray(vehicle.system?.ownedActors) ? vehicle.system.ownedActors : [];
     const relationships = Array.isArray(vehicle.system?.relationships) ? vehicle.system.relationships : [];
     const legacyRef = legacyCrewRef(crewActor, targetStation);
+    const update = {};
+
+    for (const key of CREW_STATIONS) {
+      const current = vehicle.system?.crewPositions?.[key];
+      if (key !== targetStation && crewRefMatches(current, crewActor)) update[`system.crewPositions.${key}`] = null;
+    }
 
     return {
+      ...update,
       [`system.crewPositions.${targetStation}`]: toCrewRef(crewActor),
       'system.ownedActors': [
         ...ownedActors.filter((entry) => !crewRefMatches(entry, crewActor)),
@@ -145,6 +216,7 @@ export class VehicleCrewAssignmentService {
   }
 
   static async assignCrew(vehicle, station, crewActor, options = {}) {
+    crewActor = unwrapCrewActor(crewActor);
     const update = this.buildAssignmentUpdate(vehicle, station, crewActor);
     if (!update) {
       ui?.notifications?.warn?.('Only character, NPC, or droid actors can be assigned as vehicle crew.');
@@ -214,7 +286,7 @@ export class VehicleCrewAssignmentService {
       title: `Assign ${this.labelForStation(targetStation)}`,
       content,
       label: 'Assign Crew',
-      callback: (html) => html.querySelector?.('[name="crewUuid"]')?.value || null,
+      callback: (html) => html?.find?.('[name="crewUuid"]')?.val?.() || html?.[0]?.querySelector?.('[name="crewUuid"]')?.value || null,
       options: { width: options.width || 420 }
     });
 

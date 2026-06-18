@@ -992,26 +992,16 @@ export class SWSEV2VehicleSheet extends
 
   async _handleCrewStationDrop(event, station) {
     if (!this.actor) return;
-    const data = TextEditor.getDragEventData(event);
+    const data = VehicleCrewAssignmentService.getDropDataFromEvent(event);
     if (!data) return;
 
-    let droppedDocument = null;
-    try {
-      if (data.uuid) droppedDocument = await fromUuid(data.uuid);
-      else if (data.pack && data.id) {
-        const pack = game.packs?.get?.(data.pack);
-        droppedDocument = await pack?.getDocument?.(data.id);
-      }
-    } catch (_err) {
-      droppedDocument = null;
-    }
-
-    if (!VehicleCrewAssignmentService.canBeCrew(droppedDocument)) {
+    const crewActor = await VehicleCrewAssignmentService.resolveCrewActorFromDropData(data);
+    if (!crewActor) {
       ui?.notifications?.warn?.('Drop a character, NPC, or droid actor onto a crew station.');
       return;
     }
 
-    await VehicleCrewAssignmentService.assignCrew(this.actor, station, droppedDocument, {
+    await VehicleCrewAssignmentService.assignCrew(this.actor, station, crewActor, {
       source: 'vehicle-sheet-crew-drop'
     });
     await this.render();
@@ -1021,7 +1011,7 @@ export class SWSEV2VehicleSheet extends
     event.preventDefault();
 
     // Extract drag data
-    const data = TextEditor.getDragEventData(event);
+    const data = VehicleCrewAssignmentService.getDropDataFromEvent(event);
     if (!data) return;
 
     // Check if this is an actor drop

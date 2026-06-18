@@ -12,9 +12,9 @@ import {
   normalizeForceAlchemyKey
 } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-data.js";
 import { ForceAlchemyStateService, readForceAlchemyState } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-state-service.js";
+import { activeEffectChangeType } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
 
 const EFFECT_SCOPE = 'foundryvtt-swse';
-const ADD = globalThis.CONST?.ACTIVE_EFFECT_MODES?.ADD ?? 2;
 
 function esc(value) {
   return String(value ?? '')
@@ -229,14 +229,14 @@ function effectsForDetail(detail, { stateKey, entryId = null, resourceChanges = 
       suffix: defenseLabel(defense),
       summary: `${rite.name}: +1 Force bonus to ${defenseLabel(defense)}.`,
       details: [`Target: ${targetName}`, `Selected defense: ${defenseLabel(defense)}`],
-      changes: [{ key: `system.defenses.${defense}.misc`, mode: ADD, value: '1', priority: 20 }],
+      changes: [{ key: `system.defenses.${defense}.misc`, ...activeEffectChangeType('add'), value: '1', priority: 20 }],
       intent: effectIntent({ category: 'defense', target: defense, amount: 1, bonusType: 'untyped', note: 'Force bonus from Force Talisman.' }),
       tags: ['force-talisman', 'defense']
     }));
   }
 
   if (rite.id === 'greater-force-talisman') {
-    const changes = ['reflex', 'fortitude', 'will'].map(key => ({ key: `system.defenses.${key}.misc`, mode: ADD, value: '1', priority: 20 }));
+    const changes = ['reflex', 'fortitude', 'will'].map(key => ({ key: `system.defenses.${key}.misc`, ...activeEffectChangeType('add'), value: '1', priority: 20 }));
     effects.push(baseEffect({
       detail,
       stateKey,

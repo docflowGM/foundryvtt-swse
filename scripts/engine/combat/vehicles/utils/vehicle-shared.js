@@ -6,6 +6,8 @@
  *  - Distance & angle utilities for dogfighting, collisions, etc.
  */
 
+import { activeEffectChangeType } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
+
 export const VEHICLE_CT_STATES = [
   { step: 0, label: 'Normal', penalty: 0 },
   { step: 1, label: '-2', penalty: -2 },
@@ -39,8 +41,8 @@ export function createVehicleCTEffect(step, originUUID = null) {
       origin: originUUID,
       disabled: false,
       changes: [
-        { key: 'system.vehicle.speed', mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: 0 },
-        { key: 'system.vehicle.operational', mode: CONST.ACTIVE_EFFECT_MODES.OVERRIDE, value: false }
+        { key: 'system.vehicle.speed', ...activeEffectChangeType('override'), value: 0 },
+        { key: 'system.vehicle.operational', ...activeEffectChangeType('override'), value: false }
       ],
       flags: { swse: { vehicleCT: step } }
     };
@@ -52,7 +54,7 @@ export function createVehicleCTEffect(step, originUUID = null) {
     origin: originUUID,
     disabled: false,
     changes: [
-      { key: 'system.vehicle.handling', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: s.penalty }
+      { key: 'system.vehicle.handling', ...activeEffectChangeType('add'), value: s.penalty }
     ],
     flags: { swse: { vehicleCT: step } }
   };

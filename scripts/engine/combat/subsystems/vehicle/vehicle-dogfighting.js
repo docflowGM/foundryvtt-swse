@@ -21,6 +21,7 @@ import { computeDogfightingModifier } from "/systems/foundryvtt-swse/scripts/eng
 import { measureSquares } from "/systems/foundryvtt-swse/scripts/engine/combat/vehicles/utils/vehicle-shared.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
+import { activeEffectChangeType } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
 
 export class VehicleDogfighting {
 
@@ -153,7 +154,7 @@ export class VehicleDogfighting {
       icon: 'icons/svg/arrow-right.svg',
       origin: tailed.uuid,
       changes: [
-        { key: 'system.attackBonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 2 }
+        { key: 'system.attackBonus', ...activeEffectChangeType('add'), value: 2 }
       ],
       flags: { swse: { vehicleDogfight: 'tailing', target: tailed.id } }
     };

@@ -21,6 +21,7 @@ import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/com
 import { SecondWindRules } from "/systems/foundryvtt-swse/scripts/engine/combat/SecondWindRules.js";
 import { MutationNormalizationService } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-normalization-service.js";
 import { MutationBoundaryService } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-boundary-service.js";
+import { normalizeActiveEffectDataForRuntime } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
 
 /**
  * ActorEngine
@@ -838,6 +839,10 @@ export const ActorEngine = {
         });
       }
 
+      if (embeddedName === 'ActiveEffect') {
+        safeUpdates = normalizeActiveEffectDataForRuntime(safeUpdates);
+      }
+
       SWSELogger.debug(`ActorEngine.updateEmbeddedDocuments → ${actor.name}`, {
         embeddedName,
         updates: safeUpdates,
@@ -893,9 +898,11 @@ export const ActorEngine = {
         count: data.length
       });
 
+      const safeData = embeddedName === 'ActiveEffect' ? normalizeActiveEffectDataForRuntime(data) : data;
+
       MutationInterceptor.setContext(`ActorEngine.createEmbeddedDocuments[${embeddedName}]`);
       try {
-        const result = await actor.createEmbeddedDocuments(embeddedName, data, options);
+        const result = await actor.createEmbeddedDocuments(embeddedName, safeData, options);
         await this.recalcAll(actor);
         return result;
       } finally {
@@ -3822,7 +3829,8 @@ export const ActorEngine = {
         suppressRecalc: options.suppressRecalc ?? false
       });
       try {
-        const result = await actor.updateEmbeddedDocuments('ActiveEffect', updates, options);
+        const normalizedUpdates = normalizeActiveEffectDataForRuntime(updates);
+        const result = await actor.updateEmbeddedDocuments('ActiveEffect', normalizedUpdates, options);
         await this.recalcAll(actor);
         return result;
       } finally {
@@ -3989,7 +3997,8 @@ export const ActorEngine = {
         suppressRecalc: options.suppressRecalc ?? false
       });
       try {
-        const result = await actor.createEmbeddedDocuments('ActiveEffect', effectData, options);
+        const normalizedEffectData = normalizeActiveEffectDataForRuntime(effectData);
+        const result = await actor.createEmbeddedDocuments('ActiveEffect', normalizedEffectData, options);
         await this.recalcAll(actor);
         return result;
       } finally {

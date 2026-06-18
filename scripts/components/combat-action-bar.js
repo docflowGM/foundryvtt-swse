@@ -4,6 +4,7 @@ import { SWSECombat } from "/systems/foundryvtt-swse/scripts/combat/systems/enha
 import { escapeHTML } from "/systems/foundryvtt-swse/scripts/utils/security-utils.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { activeEffectChangeType } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
 
 /**
  * Modernized Combat Action Bar
@@ -295,7 +296,7 @@ export class CombatActionBar {
       name: 'Charging',
       duration: { turns: 1 },
       changes: [
-        { key: 'system.attackBonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: 2 }
+        { key: 'system.attackBonus', ...activeEffectChangeType('add'), value: 2 }
       ]
     });
     this._useAction(actor, 'fullRound');

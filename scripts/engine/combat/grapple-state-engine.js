@@ -1,5 +1,6 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { GrappleLegalityEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/grapple-legality-engine.js";
+import { activeEffectChangeType } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
 
 const GRAPPLE_FLAG_SCOPE = 'swse';
 const GRAPPLE_FLAG_KEY = 'grappleState';
@@ -39,7 +40,7 @@ function stateConfig(state) {
         icon: 'icons/svg/net.svg',
         summary: 'Grabbed by an opponent. Resolve the next opposed grapple check or escape normally.',
         changes: [
-          { key: 'system.defenses.reflex.bonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -5 }
+          { key: 'system.defenses.reflex.bonus', ...activeEffectChangeType('add'), value: -5 }
         ]
       };
     case 'grappled':
@@ -49,7 +50,7 @@ function stateConfig(state) {
         icon: 'icons/svg/anchor.svg',
         summary: 'Grappled with an opponent. Movement is denied and attacks are constrained by the grapple rules.',
         changes: [
-          { key: 'system.defenses.reflex.bonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -5 }
+          { key: 'system.defenses.reflex.bonus', ...activeEffectChangeType('add'), value: -5 }
         ]
       };
     case 'pinned':
@@ -59,7 +60,7 @@ function stateConfig(state) {
         icon: 'icons/svg/trap.svg',
         summary: 'Pinned by an opponent. Treat Dexterity bonus to Reflex and available actions according to the Pin rules.',
         changes: [
-          { key: 'system.defenses.reflex.bonus', mode: CONST.ACTIVE_EFFECT_MODES.ADD, value: -5 }
+          { key: 'system.defenses.reflex.bonus', ...activeEffectChangeType('add'), value: -5 }
         ]
       };
     default:

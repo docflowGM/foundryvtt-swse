@@ -128,6 +128,16 @@ export class VehicleDropEngine {
         };
       }
 
+      if (dropData.type === 'Actor') {
+        const crewActor = await VehicleCrewAssignmentService.resolveCrewActorFromDropData(dropData);
+        if (crewActor) {
+          return {
+            type: 'Actor',
+            document: crewActor
+          };
+        }
+      }
+
       return null;
 
     } catch (err) {

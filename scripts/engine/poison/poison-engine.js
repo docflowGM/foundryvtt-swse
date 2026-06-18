@@ -4,6 +4,7 @@ import { RecurringDamageEngine } from "/systems/foundryvtt-swse/scripts/engine/c
 import { ConditionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionEngine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { PoisonRegistry, normalizePoisonKey } from './poison-registry.js';
+import { activeEffectChangeType } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
 
 const TURN_TICK_HOOKS = ['combatTurn', 'combatTurnChange'];
 
@@ -526,7 +527,7 @@ export class PoisonEngine {
         name: `${poison.name} Skill Impairment`,
         icon: 'icons/svg/acid.svg',
         durationRounds: 1,
-        changes: [{ key: 'flags.swse.skillPenalty.poison', mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5, value: poison.damage.skillPenalty, priority: 25 }],
+        changes: [{ key: 'flags.swse.skillPenalty.poison', ...activeEffectChangeType('override'), value: poison.damage.skillPenalty, priority: 25 }],
         flags: { swse: { poisonKey: poison.key, skillPenalty: poison.damage.skillPenalty } }
       });
       effects.push('skillPenalty');
@@ -535,7 +536,7 @@ export class PoisonEngine {
       await this._createEffect(targetActor, {
         name: 'Numbing Poison',
         icon: 'icons/svg/paralysis.svg',
-        changes: [{ key: 'flags.swse.defenses.denyDexToReflex', mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5, value: true, priority: 25 }],
+        changes: [{ key: 'flags.swse.defenses.denyDexToReflex', ...activeEffectChangeType('override'), value: true, priority: 25 }],
         flags: { swse: { poisonKey: poison.key, malkiteTalent: 'Numbing Poison' } }
       });
       effects.push('denyDexToReflex');

@@ -3,6 +3,7 @@ import { ConditionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 import { PoisonEngine } from "/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js";
+import { activeEffectChangeType } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
 
 const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
 const SIZE_ORDER = ['Fine', 'Diminutive', 'Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan', 'Colossal'];
@@ -124,8 +125,8 @@ export class SpeciesActivatedAbilityEngine {
           durationRounds: 1,
           description: 'Does not threaten squares until the end of the Yarkora\'s next turn. Mind-Affecting effect.',
           changes: [
-            { key: 'flags.swse.conditions.confused', mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5, value: true, priority: 20 },
-            { key: 'flags.swse.threatenedSquares.suppressed', mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5, value: true, priority: 20 }
+            { key: 'flags.swse.conditions.confused', ...activeEffectChangeType('override'), value: true, priority: 20 },
+            { key: 'flags.swse.threatenedSquares.suppressed', ...activeEffectChangeType('override'), value: true, priority: 20 }
           ],
           flags: { swse: { speciesAbility: 'confusion', mindAffecting: true, doesNotThreaten: true } }
         });
@@ -163,7 +164,7 @@ export class SpeciesActivatedAbilityEngine {
         durationRounds: 1,
         description: 'Moved -1 step on the Condition Track by Caamasi Pacifism. Mind-Affecting, language-dependent effect.',
         changes: [
-          { key: 'flags.swse.conditions.pacified', mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5, value: true, priority: 20 }
+          { key: 'flags.swse.conditions.pacified', ...activeEffectChangeType('override'), value: true, priority: 20 }
         ],
         flags: { swse: { speciesAbility: 'pacifism', mindAffecting: true, languageDependent: true, nonPhysicalCondition: true } }
       });
@@ -194,7 +195,7 @@ export class SpeciesActivatedAbilityEngine {
         durationRounds: 1,
         description: 'Moved -1 step on the Condition Track by Falleen Pheromones. This is an inhaled poison effect.',
         changes: [
-          { key: 'flags.swse.conditions.pheromoneInfluence', mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5, value: true, priority: 20 }
+          { key: 'flags.swse.conditions.pheromoneInfluence', ...activeEffectChangeType('override'), value: true, priority: 20 }
         ],
         flags: { swse: { speciesAbility: 'pheromones', inhaledPoison: true, nonPhysicalCondition: true } }
       });
@@ -232,8 +233,8 @@ export class SpeciesActivatedAbilityEngine {
         durationRounds: 1,
         description: '-5 penalty on the triggering attack roll from Clawdite Startle.',
         changes: [
-          { key: 'flags.swse.attackPenalty.nextAttack', mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5, value: -5, priority: 30 },
-          { key: 'flags.swse.conditions.startled', mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5, value: true, priority: 20 }
+          { key: 'flags.swse.attackPenalty.nextAttack', ...activeEffectChangeType('override'), value: -5, priority: 30 },
+          { key: 'flags.swse.conditions.startled', ...activeEffectChangeType('override'), value: true, priority: 20 }
         ],
         flags: { swse: { speciesAbility: 'startle', reactionTrigger: 'attacked', attackPenalty: -5, expiresAfterAttack: true } }
       });
@@ -311,8 +312,8 @@ export class SpeciesActivatedAbilityEngine {
       durationRounds: rounds,
       description: '+10 Species bonus to Deception checks made to disguise appearance.',
       changes: [
-        { key: 'system.skills.deception.species', mode: CONST?.ACTIVE_EFFECT_MODES?.ADD ?? 2, value: 10, priority: 20 },
-        { key: 'flags.swse.shapeshift.active', mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5, value: true, priority: 20 }
+        { key: 'system.skills.deception.species', ...activeEffectChangeType('add'), value: 10, priority: 20 },
+        { key: 'flags.swse.shapeshift.active', ...activeEffectChangeType('override'), value: true, priority: 20 }
       ],
       flags: { swse: { speciesAbility: 'shapeshift', hasMetamorph, sizeMode } }
     }];
@@ -343,15 +344,15 @@ export class SpeciesActivatedAbilityEngine {
     const baseSpeed = Number(actor.system?.derived?.speed?.base ?? actor.system?.speed ?? actor.system?.movement?.walk ?? 6) || 6;
     const speedBonus = Math.max(0, 8 - baseSpeed);
     const changes = [
-      { key: 'flags.swse.dexterityBasedChecks.speciesBonus', mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5, value: 2, priority: 20 },
-      { key: 'flags.swse.dexterityBasedAttacks.speciesBonus', mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5, value: 2, priority: 20 }
+      { key: 'flags.swse.dexterityBasedChecks.speciesBonus', ...activeEffectChangeType('override'), value: 2, priority: 20 },
+      { key: 'flags.swse.dexterityBasedAttacks.speciesBonus', ...activeEffectChangeType('override'), value: 2, priority: 20 }
     ];
     for (const skill of ['acrobatics', 'initiative', 'pilot', 'ride', 'stealth']) {
-      changes.push({ key: `system.skills.${skill}.species`, mode: CONST?.ACTIVE_EFFECT_MODES?.ADD ?? 2, value: 2, priority: 20 });
+      changes.push({ key: `system.skills.${skill}.species`, ...activeEffectChangeType('add'), value: 2, priority: 20 });
     }
     if (speedBonus > 0) {
-      changes.push({ key: 'system.movement.walk', mode: CONST?.ACTIVE_EFFECT_MODES?.ADD ?? 2, value: speedBonus, priority: 20 });
-      changes.push({ key: 'system.speed', mode: CONST?.ACTIVE_EFFECT_MODES?.ADD ?? 2, value: speedBonus, priority: 20 });
+      changes.push({ key: 'system.movement.walk', ...activeEffectChangeType('add'), value: speedBonus, priority: 20 });
+      changes.push({ key: 'system.speed', ...activeEffectChangeType('add'), value: speedBonus, priority: 20 });
     }
 
     await createStatusEffect(actor, {
@@ -411,9 +412,9 @@ export class SpeciesActivatedAbilityEngine {
       icon: 'icons/svg/wingfoot.svg',
       description: '+4 base speed while curled into a ball. Actions are limited to Move, Withdraw, Catch a Second Wind, Drop an Item, Recover, and Run.',
       changes: [
-        { key: 'system.movement.walk', mode: CONST?.ACTIVE_EFFECT_MODES?.ADD ?? 2, value: 4, priority: 20 },
-        { key: 'system.speed', mode: CONST?.ACTIVE_EFFECT_MODES?.ADD ?? 2, value: 4, priority: 20 },
-        { key: 'flags.swse.roller.actionRestrictions', mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5, value: 'movement-only', priority: 20 }
+        { key: 'system.movement.walk', ...activeEffectChangeType('add'), value: 4, priority: 20 },
+        { key: 'system.speed', ...activeEffectChangeType('add'), value: 4, priority: 20 },
+        { key: 'flags.swse.roller.actionRestrictions', ...activeEffectChangeType('override'), value: 'movement-only', priority: 20 }
       ],
       flags: { swse: { speciesAbility: 'roller', toggle: true } }
     });
@@ -516,14 +517,14 @@ function buildMetamorphEffect(currentSize, mode, rounds) {
       ? `Size becomes ${newSize}; +1 Reflex, +5 Stealth, carrying capacity becomes three-quarters.`
       : `Size becomes ${newSize}; -1 Reflex, -5 Stealth, +5 Damage Threshold, reach +1 square, carrying capacity doubles.`,
     changes: [
-      { key: 'system.traits.size', mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5, value: newSize, priority: 30 },
-      { key: 'system.defenses.reflex.species', mode: CONST?.ACTIVE_EFFECT_MODES?.ADD ?? 2, value: small ? 1 : -1, priority: 20 },
-      { key: 'system.skills.stealth.species', mode: CONST?.ACTIVE_EFFECT_MODES?.ADD ?? 2, value: small ? 5 : -5, priority: 20 },
+      { key: 'system.traits.size', ...activeEffectChangeType('override'), value: newSize, priority: 30 },
+      { key: 'system.defenses.reflex.species', ...activeEffectChangeType('add'), value: small ? 1 : -1, priority: 20 },
+      { key: 'system.skills.stealth.species', ...activeEffectChangeType('add'), value: small ? 5 : -5, priority: 20 },
       ...(large ? [
-        { key: 'system.damageThreshold.species', mode: CONST?.ACTIVE_EFFECT_MODES?.ADD ?? 2, value: 5, priority: 20 },
-        { key: 'system.reach.species', mode: CONST?.ACTIVE_EFFECT_MODES?.ADD ?? 2, value: 1, priority: 20 }
+        { key: 'system.damageThreshold.species', ...activeEffectChangeType('add'), value: 5, priority: 20 },
+        { key: 'system.reach.species', ...activeEffectChangeType('add'), value: 1, priority: 20 }
       ] : []),
-      { key: 'flags.swse.metamorph.carryingCapacityMultiplier', mode: CONST?.ACTIVE_EFFECT_MODES?.OVERRIDE ?? 5, value: small ? 0.75 : 2, priority: 20 }
+      { key: 'flags.swse.metamorph.carryingCapacityMultiplier', ...activeEffectChangeType('override'), value: small ? 0.75 : 2, priority: 20 }
     ],
     flags: { swse: { speciesAbility: 'shapeshift', feat: 'Metamorph', size: newSize, reflex: small ? 1 : -1, stealth: small ? 5 : -5, damageThreshold: large ? 5 : 0, reach: large ? 1 : 0 } }
   };

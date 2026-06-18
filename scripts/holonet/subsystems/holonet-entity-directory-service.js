@@ -20,6 +20,46 @@ function uniqBy(items = [], keyFn) {
   return output;
 }
 
+
+function collectionValues(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  if (typeof value.contents !== 'undefined') return Array.from(value.contents ?? []);
+  if (typeof value.values === 'function') return Array.from(value.values());
+  if (typeof value === 'object') return Object.values(value);
+  return [];
+}
+
+function imageFromTextureRecord(record) {
+  if (!record) return null;
+  if (typeof record === 'string') return record || null;
+  return record.src || record.path || record.texture || record.img || null;
+}
+
+function scenePreviewImage(scene) {
+  if (!scene) return null;
+  if (scene.thumb) return scene.thumb;
+
+  const levels = [
+    scene.activeLevel,
+    scene.level,
+    ...collectionValues(scene.levels),
+    ...collectionValues(scene._source?.levels),
+    ...collectionValues(scene.toObject?.()?.levels)
+  ].filter(Boolean);
+
+  for (const level of levels) {
+    const direct = imageFromTextureRecord(level.background);
+    if (direct) return direct;
+    const textures = level.textures ?? level._source?.textures ?? {};
+    const texture = imageFromTextureRecord(textures.background) || imageFromTextureRecord(textures.base) || imageFromTextureRecord(textures.scene);
+    if (texture) return texture;
+  }
+
+  // Legacy v13 fallback: read raw source data, not the deprecated Scene#background getter.
+  return scene._source?.background?.src || scene.toObject?.()?.background?.src || null;
+}
+
 function actorMention(actor, group) {
   if (!actor?.name) return null;
   return {
@@ -40,7 +80,7 @@ function sceneMention(scene) {
     label: scene.name,
     group: 'locations',
     subtitle: 'scene',
-    img: scene.thumb || scene.background?.src || null
+    img: scenePreviewImage(scene)
   };
 }
 
