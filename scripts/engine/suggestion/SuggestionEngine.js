@@ -26,6 +26,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { logSuggestionTrace } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-trace-controls.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
 import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
 import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
@@ -213,7 +214,7 @@ export class SuggestionEngine {
         if (!identityBias) {
             try {
                 identityBias = IdentityEngine.computeTotalBias(actor);
-                SWSELogger.log('[SuggestionEngine.suggestFeats] Computed identity bias directly from IdentityEngine');
+                logSuggestionTrace(options, '[SuggestionEngine.suggestFeats] Computed identity bias directly from IdentityEngine');
             } catch (err) {
                 SWSELogger.warn('[SuggestionEngine.suggestFeats] Failed to compute identity bias:', err);
                 identityBias = null;
@@ -252,7 +253,7 @@ export class SuggestionEngine {
             primaryArchetype = await getPrimaryArchetypeForActor(actor);
             if (primaryArchetype) {
                 archetypeRecommendedFeatIds = await getArchetypeFeats(actor);
-                SWSELogger.log(
+                logSuggestionTrace(options,
                     `[SuggestionEngine] ${actor.name} matches archetype: ${primaryArchetype.name}`
                 );
             }
@@ -317,7 +318,7 @@ export class SuggestionEngine {
         if (!identityBias) {
             try {
                 identityBias = IdentityEngine.computeTotalBias(actor);
-                SWSELogger.log('[SuggestionEngine.suggestTalents] Computed identity bias directly from IdentityEngine');
+                logSuggestionTrace(options, '[SuggestionEngine.suggestTalents] Computed identity bias directly from IdentityEngine');
             } catch (err) {
                 SWSELogger.warn('[SuggestionEngine.suggestTalents] Failed to compute identity bias:', err);
                 identityBias = null;
@@ -356,7 +357,7 @@ export class SuggestionEngine {
             primaryArchetype = await getPrimaryArchetypeForActor(actor);
             if (primaryArchetype) {
                 archetypeRecommendedTalentIds = await getArchetypeTalents(actor);
-                SWSELogger.log(
+                logSuggestionTrace(options,
                     `[SuggestionEngine] ${actor.name} matches archetype: ${primaryArchetype.name}`
                 );
             }
@@ -400,7 +401,7 @@ export class SuggestionEngine {
             const isAccessible = allowedTreeKeys.has(normalizeTreeAccessKey(treeId));
 
             if (!isAccessible) {
-                SWSELogger.log(
+                logSuggestionTrace(options,
                     `[SuggestionEngine.suggestTalents] Filtering out inaccessible talent: ` +
                     `"${talent.name}" (tree: "${treeId}", allowed: ${allowedTrees.join(', ')})`
                 );
@@ -409,10 +410,13 @@ export class SuggestionEngine {
             return isAccessible;
         });
 
-        SWSELogger.log(
-            `[SuggestionEngine.suggestTalents] Authority filtering: ${talents.length} total → ` +
-            `${accessibleTalents.length} accessible (allowed trees: ${allowedTrees.join(', ')})`
-        );
+        if (talents.length !== accessibleTalents.length) {
+            SWSELogger.log(`[SuggestionEngine.suggestTalents] Authority filtering: ${accessibleTalents.length}/${talents.length} accessible talents`);
+            logSuggestionTrace(options,
+                `[SuggestionEngine.suggestTalents] Authority filtering detail: ${talents.length} total, ` +
+                `${accessibleTalents.length} accessible (allowed trees: ${allowedTrees.join(', ')})`
+            );
+        }
         // =========================================================
 
         return Promise.all(accessibleTalents.map(talent => {
@@ -1461,7 +1465,7 @@ export class SuggestionEngine {
      */
     static async initialize() {
         if (this.#initialized) {
-            SWSELogger.log('[SuggestionEngine] Already initialized, skipping');
+            logSuggestionTrace({}, '[SuggestionEngine] Already initialized, skipping');
             return;
         }
 
@@ -1484,13 +1488,13 @@ export class SuggestionEngine {
         this.#talentExclusions.clear();
 
         if (!game?.items) {
-            SWSELogger.log('[SuggestionEngine] No game.items available, skipping talent exclusion load');
+            logSuggestionTrace({}, '[SuggestionEngine] No game.items available, skipping talent exclusion load');
             return;
         }
 
         try {
             const talentTrees = game.items.filter(item => item.type === 'talentTree');
-            SWSELogger.log(`[SuggestionEngine] Loading mutual exclusions for ${talentTrees.length} talent trees`);
+            logSuggestionTrace({}, `[SuggestionEngine] Loading mutual exclusions for ${talentTrees.length} talent trees`);
 
             for (const tree of talentTrees) {
                 const treeId = tree.id;
@@ -1498,7 +1502,7 @@ export class SuggestionEngine {
 
                 if (Array.isArray(exclusions) && exclusions.length > 0) {
                     this.#talentExclusions.set(treeId, exclusions);
-                    SWSELogger.log(
+                    logSuggestionTrace({},
                         `[SuggestionEngine] Tree "${tree.name}" (${treeId}) excludes: ${exclusions.join(', ')}`
                     );
                 }
@@ -2192,10 +2196,10 @@ export class SuggestionEngine {
                 // Build SuggestionV2-compatible scoring object
                 scoring = this._buildScoringObject(scorerResult);
 
-                // Keep the validation payload available only when SWSE debug logging is enabled.
-                // Suggestion scoring can run over hundreds of candidates during a single level-up render,
-                // so unconditional console output makes normal play noisy and slow.
-                SWSELogger.debug(`[SuggestionEngine.Phase1Validation] ${options.candidate.name}:`, {
+                // Keep the validation payload behind enableSuggestionTrace. This scorer can run
+                // over hundreds of candidates during a single level-up render, so normal debug
+                // mode should not emit one payload per candidate.
+                logSuggestionTrace(options, `[SuggestionEngine.Phase1Validation] ${options.candidate.name}:`, {
                     metadata: {
                         name: options.candidate.name,
                         tier: tier,

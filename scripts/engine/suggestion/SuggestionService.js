@@ -711,6 +711,10 @@ export class SuggestionService {
         suggestion.primaryReasons = packet.primary;
         suggestion.cautionReasons = packet.caution;
         suggestion.forecastReasons = packet.forecast;
+        if (packet.classDomainContext) {
+          suggestion.classDomainContext = packet.classDomainContext;
+          suggestion.classDomain = suggestion.classDomain || packet.classDomainContext;
+        }
         if (!Array.isArray(suggestion.reasons) || suggestion.reasons.length === 0) {
           suggestion.reasons = packet.allReasons;
         } else {
@@ -725,6 +729,10 @@ export class SuggestionService {
         }
         suggestion.suggestion.reasonText = packet.fullReason;
         suggestion.suggestion.reasonSummary = packet.shortReason;
+        if (packet.classDomainContext) {
+          suggestion.suggestion.classDomainContext = packet.classDomainContext;
+          suggestion.suggestion.classDomain = suggestion.suggestion.classDomain || packet.classDomainContext;
+        }
         suggestion.explanation = {
           ...(suggestion.explanation || {}),
           short: packet.shortReason,

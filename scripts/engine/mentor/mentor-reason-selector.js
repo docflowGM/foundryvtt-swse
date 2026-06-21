@@ -23,6 +23,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { logSuggestionTrace } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-trace-controls.js";
 import { REASON_ATOMS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-reason-atoms.js";
 import { INTENSITY_ATOMS } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-intensity-atoms.js";
 import {
@@ -44,7 +45,7 @@ export class MentorReasonSelector {
 
     // Validate inputs
     if (!Array.isArray(signals) || signals.length === 0) {
-      SWSELogger.debug('[MentorReasonSelector] No signals; returning fallback');
+      logSuggestionTrace(options, '[MentorReasonSelector] No signals; returning fallback');
       return this._emptySelection();
     }
 
@@ -62,7 +63,7 @@ export class MentorReasonSelector {
         if (mapped && mapped.length > 0) {
           mapped.forEach(atom => atoms.add(atom));
         } else {
-          SWSELogger.warn(`[MentorReasonSelector] Unmapped ReasonType: ${signal.type}`);
+          logSuggestionTrace(options, `[MentorReasonSelector] Unmapped ReasonType: ${signal.type}`);
         }
       }
 
@@ -73,9 +74,9 @@ export class MentorReasonSelector {
       const confidence = scoring.confidence || 0.5;
       const intensity = this._computeIntensity(topWeight, confidence);
 
-      // Keep validation diagnostics behind the system debug flag. This selector can run
-      // once per candidate in large feat/talent lists, so normal play should stay quiet.
-      SWSELogger.debug(`[MentorReasonSelector.Phase2Validation] Atom selection:`, {
+      // Keep validation diagnostics behind enableSuggestionTrace. This selector can run
+      // once per candidate in large feat/talent lists, so normal debug should stay quiet.
+      logSuggestionTrace(options, `[MentorReasonSelector.Phase2Validation] Atom selection:`, {
         signals: topSignals.map(s => ({
           type: s.type,
           weight: s.weight.toFixed(3),
@@ -88,7 +89,7 @@ export class MentorReasonSelector {
         topSignalType: topSignals[0]?.type || 'none'
       });
 
-      SWSELogger.debug('[MentorReasonSelector] Atoms selected:', {
+      logSuggestionTrace(options, '[MentorReasonSelector] Atoms selected:', {
         topSignals: topSignals.length,
         atoms: uniqueAtoms.length,
         intensity,
@@ -114,7 +115,7 @@ export class MentorReasonSelector {
    * @returns {Object} { atoms: REASON_ATOMS[], intensity: 'high', selectedReasons: [...] }
    */
   static select(reasonSignals, mentorProfile = {}) {
-    SWSELogger.debug('[MentorReasonSelector] Using deprecated select(); migrate to selectFromSuggestionV2()');
+    logSuggestionTrace({}, '[MentorReasonSelector] Using deprecated select(); migrate to selectFromSuggestionV2()');
 
     if (!reasonSignals || typeof reasonSignals !== 'object') {
       SWSELogger.warn('[MentorReasonSelector] Invalid reasonSignals');

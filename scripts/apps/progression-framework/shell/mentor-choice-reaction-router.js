@@ -4,12 +4,12 @@
  * Thin shell-level adapter that lets the hardened mentor rail react to normal
  * player choices without inventing a parallel dialogue system.
  *
- * It reuses the existing suggestion/advisory/reason-atom stack:
+ * It reuses the existing suggestion/reason stack:
  * - current mentor identity from mentor-step-integration / session mentorContext
  * - SuggestionService output when a step has no local suggestion object
  * - local step suggestion arrays/maps when the step already hydrated them
- * - MentorInteractionOrchestrator selection mode
- * - MentorJudgmentEngine + mentor reason atoms as deterministic fallback
+ * - MentorChoiceLineComposer for metadata-first mechanical explanations
+ * - MentorChoiceVoiceOverlay for mentor personality/style only
  *
  * Language choices are intentionally skipped; language selection is cosmetic
  * and should not make the rail chatter.
@@ -17,10 +17,9 @@
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
-import { MentorInteractionOrchestrator } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-interaction-orchestrator.js';
-import { MentorAdvisoryCoordinator } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-advisory-coordinator.js';
-import { MentorJudgmentEngine } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-judgment-engine.js';
 import { REASON_ATOMS } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-reason-atoms.js';
+import { MentorChoiceLineComposer } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-choice-line-composer.js';
+import { MentorChoiceVoiceOverlay } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-choice-voice-overlay.js';
 import { resolveStepMentorContext, STEP_TO_CHOICE_TYPE } from '../steps/mentor-step-integration.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
@@ -451,11 +450,7 @@ export class MentorChoiceReactionRouter {
       const mentorId = mentorContext?.mentorKey || mentorContext?.mentorId || this.shell?.mentor?.mentorId || 'ol_salty';
       const mentorName = mentorContext?.mentor?.name || this.shell?.mentor?.name || mentorId;
 
-      const localSuggestions = this._collectLocalSuggestions(plugin);
-      let suggestion = this._matchSuggestion(localSuggestions, item, resolvedItemId);
-      if (!suggestion) {
-        suggestion = await this._suggestionFromService(stepId, item, resolvedItemId, action);
-      }
+      const suggestion = await this._resolveStepSuggestion(plugin, item, resolvedItemId, action, stepId);
 
       const isSuggested = !!suggestion || this._targetLooksSuggested(target);
       const atoms = this._collectAtoms({ suggestion, item, action, stepId, isSuggested });
@@ -478,22 +473,33 @@ export class MentorChoiceReactionRouter {
       }
       const normalizedSuggestion = this._normalizeSuggestion(suggestion, item, atoms, intensity, action, isSuggested);
 
-      let textSource = 'orchestrator';
-      let text = await this._buildOrchestratedText({
+      let textSource = 'choice-composer';
+      let text = MentorChoiceLineComposer.compose({
+        actor: this.shell?.actor ?? null,
         mentorId,
         mentorName,
         stepId,
         action,
         item,
         suggestion: normalizedSuggestion,
+        reasonPacket: normalizedSuggestion?.reasonPacket || normalizedSuggestion?.suggestion?.reasonPacket || null,
+        classRouteContext: this._classRouteContext(item, normalizedSuggestion),
+        mentor: mentorContext?.mentor || null,
         atoms,
         intensity,
       });
 
       if (!text || this._isEmptyMentorText(text)) {
-        textSource = 'metadata-fallback';
-        this._recordFallbackPath({ stepId, action, item, mentorId, reason: 'orchestrator-and-advisory-empty', atoms, intensity });
-        text = this._buildFallbackText({ mentorId, mentorName, stepId, action, item, atoms, intensity, suggestion: normalizedSuggestion });
+        textSource = 'neutral-fallback';
+        this._recordFallbackPath({ stepId, action, item, mentorId, reason: 'no-concrete-choice-metadata', atoms, intensity });
+        text = this._buildFallbackText({ stepId, action, item, suggestion: normalizedSuggestion });
+        text = MentorChoiceVoiceOverlay.apply(text, {
+          mentorId,
+          mentorName,
+          mentor: mentorContext?.mentor || null,
+          action,
+          tone: this._moodFor(atoms, action, intensity),
+        });
       }
 
       text = this._shapeFinalLine({ text, action, item, suggestion: normalizedSuggestion });
@@ -510,174 +516,18 @@ export class MentorChoiceReactionRouter {
     }
   }
 
-  _readSuggestionText(value) {
-    if (!value) return '';
-    if (typeof value === 'string') return value.trim();
-    if (typeof value === 'object') {
-      return String(value.fullReason || value.reasonText || value.reasonSummary || value.shortReason || value.text || value.label || '').trim();
-    }
-    return String(value).trim();
-  }
+  _buildFallbackText({ stepId, action, item, suggestion }) {
+    const name = itemName(item, suggestion?.name || 'This choice');
+    const domain = STEP_TO_CHOICE_TYPE[stepId] || STEP_TO_DOMAIN[stepId] || 'choice';
+    const domainLabel = String(domain || 'choice').replace(/[-_]+/g, ' ');
 
-  _isGenericSuggestionText(value) {
-    const text = String(value || '').trim().toLowerCase();
-    if (!text) return true;
-    return [
-      'you meet the requirements',
-      'you meet this requirement',
-      'this adds to your selections',
-      'adds to your selections',
-      'this relates to your pattern',
-      'this relates to your patterns',
-      'this relates to your progression',
-      'this reflects the path taking shape',
-      'it reflects the path taking shape',
-      'available',
-      'legal option',
-    ].some(fragment => text === fragment || text.includes(fragment));
-  }
-
-  _concreteSuggestionReason(suggestion) {
-    if (!suggestion) return '';
-    const block = suggestion?.suggestion || {};
-    const packet = suggestion?.reasonPacket || block?.reasonPacket || {};
-    const explanation = suggestion?.explanation || block?.explanation || {};
-    const candidates = [
-      explanation.full,
-      packet.fullReason,
-      suggestion.reasonText,
-      block.reasonText,
-      suggestion.reasonSummary,
-      block.reasonSummary,
-      explanation.short,
-      packet.shortReason,
-      this._readSuggestionText(suggestion.reason),
-      this._readSuggestionText(block.reason),
-    ];
-    const direct = candidates
-      .map(value => this._readSuggestionText(value))
-      .find(value => value && !this._isGenericSuggestionText(value));
-    if (direct) return direct;
-
-    const bulletSources = [explanation.bullets, packet.bullets, suggestion.reasonBullets, block.reasonBullets, suggestion.reasons, block.reasons, packet.allReasons];
-    for (const source of bulletSources) {
-      for (const entry of Array.isArray(source) ? source : []) {
-        const text = this._readSuggestionText(entry).replace(/^because\s+/i, '');
-        if (text && !this._isGenericSuggestionText(text)) return text;
-      }
-    }
-    return '';
-  }
-
-  async _buildOrchestratedText({ mentorId, stepId, action, item, suggestion, atoms, intensity }) {
-    const concreteReason = this._concreteSuggestionReason(suggestion);
-    if (concreteReason) {
-      const name = itemName(item, suggestion?.name || 'This choice');
-      if (action === 'commit') return compactText(`${name} locked in.`, concreteReason);
-      if (action === 'uncommit') return compactText(`${name} set aside.`, concreteReason);
-      return compactText(`${name}.`, concreteReason);
-    }
-
-    try {
-      const result = await MentorInteractionOrchestrator.handle({
-        mode: 'selection',
-        actor: this.shell?.actor ?? null,
-        mentorId,
-        suggestion,
-        item,
-        pendingData: this.shell?.progressionSession?.draftSelections ?? null,
-      });
-      const primary = result?.primaryAdvice || result?.guidance || null;
-      if (primary && !this._isEmptyMentorText(primary)) return primary;
-    } catch (err) {
-      swseLogger.debug('[MentorChoiceReactionRouter] Orchestrator selection reaction unavailable', err);
-    }
-
-    try {
-      const advisory = await MentorAdvisoryCoordinator.generateSuggestionAdvisory(
-        this.shell?.actor ?? null,
-        mentorId,
-        [suggestion],
-        {
-          domain: STEP_TO_DOMAIN[stepId] || STEP_TO_CHOICE_TYPE[stepId] || stepId,
-          stepId,
-          action,
-          relatedGrowth: this._relatedGrowthFor(stepId),
-          archetype: this.shell?.progressionSession?.getSelection?.('class')?.className || 'your path',
-          atoms,
-          intensity,
-        }
-      );
-      const line = compactText(advisory?.observation, advisory?.guidance || advisory?.impact);
-      if (line && !this._isEmptyMentorText(line)) return line;
-    } catch (err) {
-      swseLogger.debug('[MentorChoiceReactionRouter] Advisory reaction unavailable', err);
-    }
-
-    return null;
-  }
-
-  _buildFallbackText({ mentorId, mentorName, stepId, action, item, atoms, intensity, suggestion }) {
-    const classLine = this._buildClassFallbackText({ stepId, action, item, suggestion });
-    if (classLine) return classLine;
-
-    const explanation = MentorJudgmentEngine.buildExplanation(
-      atoms,
-      this._judgmentMentorName(mentorId, mentorName),
-      `${stepId}_${action}`,
-      intensity
-    );
-    const reason = suggestion?.reasonSummary || suggestion?.reasonText || suggestion?.suggestion?.reason || null;
-    const name = itemName(item);
-
-    if (action === 'uncommit') {
-      return compactText(`${name} set aside.`, explanation);
-    }
     if (action === 'commit') {
-      return compactText(`${name} becomes part of your path.`, explanation, reason && reason !== explanation ? reason : '');
+      return `${name} locked in. The detail rail should carry the real prerequisites, payoff, and ${domainLabel} fit.`;
     }
-    return compactText(`${name}.`, explanation);
-  }
-
-  _buildClassFallbackText({ stepId, action, item, suggestion }) {
-    if (stepId !== 'class' || !item) return '';
-    const name = itemName(item, suggestion?.name || 'This class');
-    if (!name || normalizeKey(name) === 'this-choice') return '';
-
-    const baseClass = primaryBaseClassName(this.shell?.actor);
-    const isPrestige = isPrestigeClassItem(item) || isPrestigeClassItem(suggestion);
-    const routeMatch = isClassRouteMatch(baseClass, name);
-    const theme = classThemeText(item, suggestion);
-    const missing = suggestionMissingText(suggestion);
-    const actorClasses = actorClassItems(this.shell?.actor);
-    const alreadyHasClass = actorClasses.some(entry => normalizeKey(entry.name) === normalizeKey(name));
-
-    const clauses = [];
-    if (isPrestige && routeMatch) {
-      clauses.push(`this is the advanced ${baseClass} route your existing chassis points toward`);
-    } else if (isPrestige && baseClass) {
-      clauses.push(`this is an advanced route, but it shifts emphasis from your ${baseClass} foundation toward ${theme}`);
-    } else if (!isPrestige && alreadyHasClass) {
-      clauses.push(`staying here deepens the class chassis you already rely on`);
-    } else if (!isPrestige && baseClass && normalizeKey(baseClass) !== normalizeKey(name)) {
-      clauses.push(`this is cross-training from your ${baseClass} base toward ${theme}`);
-    } else {
-      clauses.push(`this defines the character around ${theme}`);
+    if (action === 'uncommit') {
+      return `${name} set aside. Recheck the detail rail before choosing a replacement.`;
     }
-
-    if (isPrestige && missing) {
-      clauses.push(`the remaining gates are ${missing}`);
-    } else if (isPrestige) {
-      clauses.push('the prerequisite question is answered, so the real question is identity and payoff');
-    }
-
-    if (/jedi-knight/i.test(normalizeKey(name)) && /jedi/i.test(baseClass || '')) {
-      clauses.unshift('your Jedi levels, Force training, and lightsaber foundation already point at Knighthood');
-    }
-
-    const prefix = action === 'commit' ? `${name} locked in.` : action === 'uncommit' ? `${name} set aside.` : `${name}.`;
-    const body = stripSentencePunctuation(clauses.filter(Boolean).slice(0, 2).join('; '));
-    return compactText(prefix, body ? `${body}.` : 'This is a viable class choice.');
+    return `${name}. Inspect its prerequisites, payoff, and build fit in the detail rail.`;
   }
 
   _shapeFinalLine({ text, action, item }) {
@@ -685,7 +535,7 @@ export class MentorChoiceReactionRouter {
     let line = compactText(text);
     if (!line) return '';
 
-    // Keep the rail lively, not long-winded. Advisory stubs can be verbose.
+    // Keep the rail lively, not long-winded. Choice reactions should be quick.
     const maxLength = action === 'focus' ? 170 : 240;
     if (line.length > maxLength) {
       const sentenceBreak = line.slice(0, maxLength).lastIndexOf('. ');
@@ -765,6 +615,64 @@ export class MentorChoiceReactionRouter {
         ...(base.reason || {}),
         atoms,
       },
+    };
+  }
+
+  async _resolveStepSuggestion(plugin, item, itemIdValue, action, stepId) {
+    const directId = itemIdValue || itemId(item) || itemName(item, null);
+
+    if (plugin && typeof plugin.getSuggestionForItem === 'function') {
+      try {
+        const direct = plugin.getSuggestionForItem(directId, item, this.shell);
+        if (direct) return direct;
+      } catch (_) {
+        // Step-level suggestion indexes are optional; fall through safely.
+      }
+    }
+
+    const localSuggestions = this._collectLocalSuggestions(plugin);
+    const local = this._matchSuggestion(localSuggestions, item, itemIdValue);
+    if (local) return local;
+
+    // Focus reactions must be instant. If the step did not cache an enriched
+    // suggestion, let the composer use item/class context instead of recomputing
+    // the full suggestion service on every hover/click. Commits may still do a
+    // one-shot service lookup as a last resort because they happen far less often.
+    if (action === 'focus') return null;
+
+    return this._suggestionFromService(stepId, item, itemIdValue, action);
+  }
+
+  _classRouteContext(item, suggestion = null) {
+    const domainContext = suggestion?.classDomainContext
+      || suggestion?.classDomain
+      || suggestion?.reasonPacket?.classDomainContext
+      || suggestion?.suggestion?.classDomainContext
+      || suggestion?.suggestion?.classDomain
+      || null;
+    const name = domainContext?.className || itemName(item, suggestion?.name || 'This class');
+    const baseClass = domainContext?.baseClass || primaryBaseClassName(this.shell?.actor);
+    const actorClasses = domainContext?.actorClasses || domainContext?.currentClasses || actorClassItems(this.shell?.actor);
+    const isPrestige = domainContext?.isPrestige ?? (isPrestigeClassItem(item) || isPrestigeClassItem(suggestion));
+    const routeMatch = domainContext?.routeMatchesBase ?? domainContext?.routeMatch ?? isClassRouteMatch(baseClass, name);
+    const theme = domainContext?.routeFamilyLabel || domainContext?.theme || classThemeText(item, suggestion);
+    const missingPrereqs = Array.isArray(domainContext?.missingPrereqs)
+      ? domainContext.missingPrereqs.map(entry => typeof entry === 'string' ? entry : (entry.shortDisplay || entry.display || entry.name || entry.label)).filter(Boolean)
+      : suggestionMissingText(suggestion)
+        ? suggestionMissingText(suggestion).split(/,| and /).map(value => value.trim()).filter(Boolean)
+        : [];
+    return {
+      className: name,
+      baseClass,
+      actorClasses,
+      isPrestige,
+      routeMatch,
+      theme,
+      missingPrereqs,
+      alreadyHasClass: domainContext?.alreadyHasClass ?? actorClasses.some(entry => normalizeKey(entry.name) === normalizeKey(name)),
+      prestigeClassTarget: domainContext?.prestigeClassTarget || null,
+      routeFamily: domainContext?.routeFamily || null,
+      classDomainContext: domainContext,
     };
   }
 
@@ -1085,33 +993,6 @@ export class MentorChoiceReactionRouter {
     if (action === 'commit' && ['high', 'very_high'].includes(intensity)) return 'celebratory';
     if (action === 'commit' || atoms.includes(REASON_ATOMS.SynergyPresent)) return 'encouraging';
     return VALID_MOODS.has('neutral') ? 'neutral' : null;
-  }
-
-  _judgmentMentorName(mentorId, mentorName) {
-    const token = normalizeKey(mentorId || mentorName).replace(/-/g, '_');
-    if (token.includes('miraj')) return 'Miraj';
-    if (token.includes('lead') || token.includes('captain') || token.includes('soldier')) return 'Lead';
-    return mentorName || 'default';
-  }
-
-  _relatedGrowthFor(stepId) {
-    const choiceType = STEP_TO_CHOICE_TYPE[stepId] || STEP_TO_DOMAIN[stepId] || stepId;
-    return {
-      species: 'your origin',
-      class: 'your calling',
-      ability: 'your foundations',
-      attributes: 'your foundations',
-      background: 'the life behind you',
-      skill: 'your trained instincts',
-      skills_l1: 'your trained instincts',
-      feat: 'your tactical identity',
-      feats: 'your tactical identity',
-      talent: 'your specialization',
-      talents: 'your specialization',
-      force_power: 'your connection to the Force',
-      forcepowers: 'your connection to the Force',
-      starship_maneuver: 'your instincts in the cockpit',
-    }[choiceType] || 'your path';
   }
 
   async _speak(text, mood) {

@@ -21,6 +21,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { logSuggestionTrace, summarizeSuggestionResults } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-trace-controls.js";
 import { SuggestionService } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js";
 import { SuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngine.js";
 import { ClassSuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
@@ -59,7 +60,7 @@ export class SuggestionEngineCoordinator {
    */
   static async initialize() {
     try {
-      SWSELogger.log('=== Initializing Suggestion Engine Coordinator ===');
+      logSuggestionTrace({}, '=== Initializing Suggestion Engine Coordinator ===');
 
       // Verify engines are available
       if (!SuggestionEngine) {
@@ -73,7 +74,7 @@ export class SuggestionEngineCoordinator {
       }
 
       // Phase 1B: Initialize enhancement classes
-      SWSELogger.log('[Coordinator] Initializing Phase 1B suggestion engine classes');
+      logSuggestionTrace({}, '[Coordinator] Initializing Phase 1B suggestion engine classes');
       // Note: These are stubs in Phase 1B. Phase 1C will implement actual logic.
       // For now, they just validate imports and initialize storage structures.
 
@@ -130,10 +131,10 @@ export class SuggestionEngineCoordinator {
       };
 
       // Phase 1B: Wire event hooks (callbacks implemented in Phase 1C)
-      SWSELogger.log('[Coordinator] Wiring suggestion engine event hooks');
+      logSuggestionTrace({}, '[Coordinator] Wiring suggestion engine event hooks');
       SuggestionEngineHooks.initialize();
 
-      SWSELogger.log('=== Suggestion Engine Coordinator initialized ===');
+      SWSELogger.log('[SuggestionEngineCoordinator] Initialized');
       Hooks.callAll('swse:suggestions:initialized');
       return true;
     } catch (err) {
@@ -184,22 +185,22 @@ export class SuggestionEngineCoordinator {
    */
   static async analyzeBuildIntent(actor, pendingData = {}) {
     try {
-      SWSELogger.log(`[SUGGESTION-COORDINATOR] analyzeBuildIntent() START - Actor: ${actor.id} (${actor.name})`);
+      logSuggestionTrace({}, `[SUGGESTION-COORDINATOR] analyzeBuildIntent() START - Actor: ${actor.id} (${actor.name})`);
       // Use compact hash of pendingData for efficient, deterministic cache key
       const pendingHash = this._hashPendingData(pendingData);
       const cacheKey = `${actor.id}_${pendingHash}`;
 
       // Return cached result if available
       if (this._buildIntentCache.has(cacheKey)) {
-        SWSELogger.log(`[SUGGESTION-COORDINATOR] analyzeBuildIntent() - Returning CACHED build intent for actor ${actor.id}`);
+        logSuggestionTrace({}, `[SUGGESTION-COORDINATOR] analyzeBuildIntent() - Returning CACHED build intent for actor ${actor.id}`);
         return this._buildIntentCache.get(cacheKey);
       }
 
       // Compute and cache
-      SWSELogger.log(`[SUGGESTION-COORDINATOR] analyzeBuildIntent() - Computing NEW build intent for actor ${actor.id}`);
+      logSuggestionTrace({}, `[SUGGESTION-COORDINATOR] analyzeBuildIntent() - Computing NEW build intent for actor ${actor.id}`);
       const buildIntent = await BuildIntent.analyze(actor, pendingData);
       this._buildIntentCache.set(cacheKey, buildIntent);
-      SWSELogger.log(`[SUGGESTION-COORDINATOR] analyzeBuildIntent() COMPLETE - BuildIntent analysis finished`);
+      logSuggestionTrace({}, `[SUGGESTION-COORDINATOR] analyzeBuildIntent() COMPLETE - BuildIntent analysis finished`);
 
       return buildIntent;
     } catch (err) {
@@ -221,7 +222,7 @@ export class SuggestionEngineCoordinator {
       }
     }
     keysToDelete.forEach(key => this._buildIntentCache.delete(key));
-    SWSELogger.log(`Cleared BuildIntent cache for actor ${actorId}`);
+    logSuggestionTrace({}, `Cleared BuildIntent cache for actor ${actorId}`);
   }
 
   /**
@@ -236,14 +237,14 @@ export class SuggestionEngineCoordinator {
    */
   static async suggestFeats(feats, actor, pendingData = {}, options = {}) {
     try {
-      SWSELogger.log(`[SUGGESTION-COORDINATOR] suggestFeats() START - Actor: ${actor.id}, Available feats: ${feats.length}`);
+      logSuggestionTrace(options, `[SUGGESTION-COORDINATOR] suggestFeats() START - Actor: ${actor.id}, Available feats: ${feats.length}`);
       // Get or compute BuildIntent for context
       const buildIntent = options.buildIntent || await this.analyzeBuildIntent(actor, pendingData);
-      SWSELogger.log(`[SUGGESTION-COORDINATOR] suggestFeats() - BuildIntent obtained, primary themes:`, buildIntent.primaryThemes);
+      logSuggestionTrace(options, `[SUGGESTION-COORDINATOR] suggestFeats() - BuildIntent obtained, primary themes:`, buildIntent.primaryThemes);
 
       // PHASE 2: Compute identity bias directly from IdentityEngine
       const identityBias = options.identityBias || IdentityEngine.computeTotalBias(actor);
-      SWSELogger.log(`[SUGGESTION-COORDINATOR] suggestFeats() - Identity bias computed from IdentityEngine`);
+      logSuggestionTrace(options, `[SUGGESTION-COORDINATOR] suggestFeats() - Identity bias computed from IdentityEngine`);
 
       // Call SuggestionEngine with BuildIntent and identity bias context
       const featsSuggested = await SuggestionEngine.suggestFeats(
@@ -257,7 +258,9 @@ export class SuggestionEngineCoordinator {
         }
       );
 
-      SWSELogger.log(`[SUGGESTION-COORDINATOR] suggestFeats() COMPLETE - Returned ${featsSuggested.length} feat suggestions`);
+      const summary = summarizeSuggestionResults(featsSuggested);
+      SWSELogger.log(`[SuggestionEngineCoordinator] Feat suggestions resolved: ${summary.total} legal, ${summary.suggested} ranked`);
+      logSuggestionTrace(options, `[SUGGESTION-COORDINATOR] suggestFeats() COMPLETE`, summary);
       return featsSuggested;
     } catch (err) {
       SWSELogger.error('[SUGGESTION-COORDINATOR] Feat suggestion failed:', err);
@@ -303,6 +306,9 @@ export class SuggestionEngineCoordinator {
         }
       );
 
+      const summary = summarizeSuggestionResults(talentsSuggested);
+      SWSELogger.log(`[SuggestionEngineCoordinator] Talent suggestions resolved: ${summary.total} legal, ${summary.suggested} ranked`);
+      logSuggestionTrace(options, '[SUGGESTION-COORDINATOR] suggestTalents() COMPLETE', summary);
       return talentsSuggested;
     } catch (err) {
       SWSELogger.error('Talent suggestion failed:', err);
@@ -342,6 +348,9 @@ export class SuggestionEngineCoordinator {
         }
       );
 
+      const summary = summarizeSuggestionResults(classesSuggested);
+      SWSELogger.log(`[SuggestionEngineCoordinator] Class suggestions resolved: ${summary.total} legal, ${summary.suggested} ranked`);
+      logSuggestionTrace(options, '[SUGGESTION-COORDINATOR] suggestClasses() COMPLETE', summary);
       return classesSuggested;
     } catch (err) {
       SWSELogger.error('Class suggestion failed:', err);
@@ -758,7 +767,7 @@ export class SuggestionEngineCoordinator {
    */
   static reset() {
     this._buildIntentCache.clear();
-    SWSELogger.log('Suggestion Engine Coordinator reset');
+    logSuggestionTrace({}, 'Suggestion Engine Coordinator reset');
   }
 }
 

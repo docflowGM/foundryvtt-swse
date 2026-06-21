@@ -19,6 +19,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { logSuggestionTrace, summarizeSuggestionResults } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-trace-controls.js";
 import { BASE_CLASSES, calculateTotalBAB } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-suggestion-utilities.js";
 import { isEpicActor, getPlannedHeroicLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { CLASS_SYNERGY_DATA } from "/systems/foundryvtt-swse/scripts/engine/suggestion/shared-suggestion-utilities.js";
@@ -74,6 +75,49 @@ const SPECIES_CLASS_AFFINITY = {
 };
 const SPECIES_TAPER_END_LEVEL = 8;
 const STARTING_CLASS_DECAY_END_LEVEL = 5;
+
+const CLASS_DOMAIN_ROUTE_FAMILIES = {
+    Jedi: 'jedi_order',
+    'Jedi Knight': 'jedi_order',
+    'Jedi Master': 'jedi_order',
+    'Imperial Knight': 'jedi_order',
+    'Force Disciple': 'force_tradition',
+    'Force Adept': 'force_tradition',
+    'Sith Apprentice': 'force_tradition',
+    'Sith Lord': 'force_tradition',
+    Noble: 'leadership',
+    Officer: 'leadership',
+    'Crime Lord': 'leadership',
+    'Corporate Agent': 'leadership',
+    Charlatan: 'leadership',
+    Medic: 'support',
+    'Droid Commander': 'leadership',
+    Scoundrel: 'rogue',
+    Gunslinger: 'ranged',
+    Outlaw: 'rogue',
+    Infiltrator: 'rogue',
+    'Master Privateer': 'rogue',
+    Assassin: 'rogue',
+    Scout: 'fieldcraft',
+    'Bounty Hunter': 'fieldcraft',
+    'Ace Pilot': 'vehicle',
+    Pathfinder: 'fieldcraft',
+    Vanguard: 'martial',
+    Saboteur: 'technical',
+    Soldier: 'martial',
+    'Elite Trooper': 'martial',
+    Gladiator: 'martial',
+    'Melee Duelist': 'martial',
+    'Military Engineer': 'technical',
+};
+
+const CLASS_DOMAIN_ROUTE_AFFINITY = {
+    Jedi: ['Jedi Knight', 'Jedi Master', 'Imperial Knight'],
+    Noble: ['Officer', 'Crime Lord', 'Corporate Agent', 'Charlatan', 'Medic', 'Droid Commander'],
+    Scoundrel: ['Gunslinger', 'Outlaw', 'Crime Lord', 'Infiltrator', 'Master Privateer', 'Assassin', 'Charlatan'],
+    Scout: ['Bounty Hunter', 'Ace Pilot', 'Pathfinder', 'Infiltrator', 'Vanguard', 'Saboteur'],
+    Soldier: ['Elite Trooper', 'Officer', 'Vanguard', 'Gladiator', 'Melee Duelist', 'Military Engineer', 'Bounty Hunter'],
+};
 
 function normalizeSuggestionNameKey(value) {
     return String(value ?? '')
@@ -203,12 +247,12 @@ export class ClassSuggestionEngine {
             }));
         }
 
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: START - Actor: ${actor.id} (${actor.name}), classes: ${classes.length}`);
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Class names:`, classes.map(c => c.name));
+        logSuggestionTrace(options, `[CLASS-SUGGESTION-ENGINE] suggestClasses: START - Actor: ${actor.id} (${actor.name}), classes: ${classes.length}`);
+        logSuggestionTrace(options, `[CLASS-SUGGESTION-ENGINE] suggestClasses: Class names:`, classes.map(c => c.name));
 
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Building actor state...`);
+        logSuggestionTrace(options, `[CLASS-SUGGESTION-ENGINE] suggestClasses: Building actor state...`);
         const actorState = await this._buildActorState(actor, pendingData);
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Actor state built:`, {
+        logSuggestionTrace(options, `[CLASS-SUGGESTION-ENGINE] suggestClasses: Actor state built:`, {
             level: actorState.characterLevel,
             bab: actorState.bab,
             feats: actorState.ownedFeats.size,
@@ -222,17 +266,17 @@ export class ClassSuggestionEngine {
         // Check for prestige class target from L1 survey
         const prestigeClassTarget = pendingData?.prestigeClassTarget || actor.system?.swse?.mentorBuildIntentBiases?.prestigeClassTarget || null;
         if (prestigeClassTarget) {
-            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige class target detected: "${prestigeClassTarget}"`);
+            logSuggestionTrace(options, `[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige class target detected: "${prestigeClassTarget}"`);
         }
 
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Loading prestige prerequisites...`);
+        logSuggestionTrace(options, `[CLASS-SUGGESTION-ENGINE] suggestClasses: Loading prestige prerequisites...`);
         const prestigePrereqs = await this._loadPrestigePrerequisites();
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige prerequisites loaded:`, Object.keys(prestigePrereqs).length, 'classes');
+        logSuggestionTrace(options, `[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige prerequisites loaded:`, Object.keys(prestigePrereqs).length, 'classes');
 
         const suggestions = [];
 
         for (const cls of classes) {
-            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Evaluating class "${cls.name}"...`);
+            logSuggestionTrace(options, `[CLASS-SUGGESTION-ENGINE] suggestClasses: Evaluating class "${cls.name}"...`);
             const suggestion = await this._evaluateClass(cls, actorState, prestigePrereqs, { ...options, prestigeClassTarget, actor });
 
             // Calculate bias for sorting
@@ -247,13 +291,20 @@ export class ClassSuggestionEngine {
             // Boost prestige classes that match the player's target
             if (cls.isPrestige && cls.name === prestigeClassTarget) {
                 bias += 5; // Significant boost for target class
-                SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige class target match - boosting "${cls.name}" bias`);
+                logSuggestionTrace(options, `[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige class target match - boosting "${cls.name}" bias`);
             }
 
-            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: Class "${cls.name}" - tier: ${suggestion.tier}, bias: ${bias}, isSuggested: ${suggestion.tier >= UNIFIED_TIERS.ABILITY_SYNERGY}`);
+            logSuggestionTrace(options, `[CLASS-SUGGESTION-ENGINE] suggestClasses: Class "${cls.name}" - tier: ${suggestion.tier}, bias: ${bias}, isSuggested: ${suggestion.tier >= UNIFIED_TIERS.ABILITY_SYNERGY}`);
+
+            const classDomain = this._buildClassDomainMetadata(cls, actorState, suggestion, prereqData, prestigeClassTarget);
+            suggestion.classDomain = classDomain;
+            suggestion.metPrereqs = classDomain.metPrereqs;
+            suggestion.reasonCode = suggestion.reasonCode || classDomain.reasonCode;
+            suggestion.routeFamily = classDomain.routeFamily;
 
             suggestions.push({
                 ...cls,
+                classDomain,
                 suggestion,
                 isSuggested: suggestion.tier >= UNIFIED_TIERS.ABILITY_SYNERGY,  // TIER 2+
                 tierWithBias: suggestion.tier + bias
@@ -262,7 +313,12 @@ export class ClassSuggestionEngine {
 
         const suggestedCount = suggestions.filter(s => s.isSuggested).length;
         const ranked = this.sortBySuggestion(suggestions);
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] suggestClasses: COMPLETE - ${suggestedCount}/${ranked.length} classes suggested`, {
+        const summary = summarizeSuggestionResults(ranked, {
+            suggestedPredicate: item => item?.isSuggested === true
+        });
+        SWSELogger.log(`[ClassSuggestionEngine] Class suggestions resolved: ${suggestedCount}/${ranked.length} suggested`);
+        logSuggestionTrace(options, '[CLASS-SUGGESTION-ENGINE] suggestClasses: COMPLETE', {
+            ...summary,
             top: ranked.slice(0, 5).map(s => ({
                 name: s.name,
                 tier: s.suggestion?.tier ?? 0,
@@ -320,7 +376,7 @@ export class ClassSuggestionEngine {
      * @returns {Promise<Object>} Normalized actor state
      */
     static async _buildActorState(actor, pendingData = {}) {
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Building state for actor ${actor.id} (${actor.name})`);
+        logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _buildActorState: Building state for actor ${actor.id} (${actor.name})`);
 
         // Get owned feats. Use the same normalized identity style as the
         // prerequisite engine, including selected-choice variants such as
@@ -329,13 +385,13 @@ export class ClassSuggestionEngine {
         actor.items
             .filter(i => i.type === 'feat')
             .forEach(f => addSuggestionFeatName(ownedFeats, f));
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Owned feats (${ownedFeats.size}):`, Array.from(ownedFeats));
+        logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _buildActorState: Owned feats (${ownedFeats.size}):`, Array.from(ownedFeats));
 
         // Add pending feats
         (pendingData.selectedFeats || []).forEach(f => {
             addSuggestionFeatName(ownedFeats, f);
         });
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: After pending feats (${ownedFeats.size}):`, Array.from(ownedFeats));
+        logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _buildActorState: After pending feats (${ownedFeats.size}):`, Array.from(ownedFeats));
 
         // Get owned talents (normalized for comparison)
         const ownedTalents = new Set(
@@ -343,13 +399,13 @@ export class ClassSuggestionEngine {
                 .filter(i => i.type === 'talent')
                 .map(t => normalizeSuggestionNameKey(t.name))
         );
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Owned talents (${ownedTalents.size}):`, Array.from(ownedTalents));
+        logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _buildActorState: Owned talents (${ownedTalents.size}):`, Array.from(ownedTalents));
 
         // Add pending talents
         (pendingData.selectedTalents || []).forEach(t => {
             ownedTalents.add(normalizeSuggestionNameKey(t.name || t));
         });
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: After pending talents (${ownedTalents.size}):`, Array.from(ownedTalents));
+        logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _buildActorState: After pending talents (${ownedTalents.size}):`, Array.from(ownedTalents));
 
         // Get talent trees the character has talents from. Actor talent items
         // usually store the compendium tree sourceId, while prestige requirements
@@ -365,7 +421,7 @@ export class ClassSuggestionEngine {
             .filter(i => i.type === 'talent')
             .forEach(recordTalentTreeKeys);
         (pendingData.selectedTalents || []).forEach(recordTalentTreeKeys);
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Talent trees (${talentTrees.size}):`, Array.from(talentTrees));
+        logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _buildActorState: Talent trees (${talentTrees.size}):`, Array.from(talentTrees));
 
         // Get trained skills (skill keys)
         const trainedSkills = new Set();
@@ -375,7 +431,7 @@ export class ClassSuggestionEngine {
                 trainedSkills.add(skillKey.toLowerCase());
             }
         }
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Trained skills (${trainedSkills.size}):`, Array.from(trainedSkills));
+        logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _buildActorState: Trained skills (${trainedSkills.size}):`, Array.from(trainedSkills));
 
         // Add pending skill training
         const pendingSkillsRaw = pendingData.selectedSkills;
@@ -390,7 +446,7 @@ export class ClassSuggestionEngine {
                 trainedSkills.add(key.toLowerCase());
             }
         });
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: After pending skills (${trainedSkills.size}):`, Array.from(trainedSkills));
+        logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _buildActorState: After pending skills (${trainedSkills.size}):`, Array.from(trainedSkills));
 
         // Get ability scores and find highest. Chargen uses pending attribute state
         // before the actor is finalized, so do not rely only on actor.system here.
@@ -406,7 +462,7 @@ export class ClassSuggestionEngine {
                 highestAbility = abilityKey;
             }
         }
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Ability scores:`, abilityScores, `- highest: ${highestAbility} (${highestScore})`);
+        logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _buildActorState: Ability scores:`, abilityScores, `- highest: ${highestAbility} (${highestScore})`);
 
         // Get character classes (names -> levels)
         const classes = {};
@@ -415,16 +471,16 @@ export class ClassSuggestionEngine {
             .forEach(c => {
                 classes[c.name] = c.system?.level || 1;
             });
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Character classes:`, classes);
+        logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _buildActorState: Character classes:`, classes);
 
         // Calculate current BAB
         const bab = calculateTotalBAB(actor);
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Current BAB: ${bab}`);
+        logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _buildActorState: Current BAB: ${bab}`);
 
         // Get character level
         const characterLevel = actor.system?.level ||
             Object.values(classes).reduce((sum, level) => sum + level, 0);
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Character level: ${characterLevel}`);
+        logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _buildActorState: Character level: ${characterLevel}`);
 
         const speciesNames = getActorSpeciesNames(actor, pendingData);
         const isDroid = actorIsDroidLike(actor, pendingData);
@@ -453,7 +509,7 @@ export class ClassSuggestionEngine {
             ownedPrereqs: new Set([...ownedFeats, ...ownedTalents])
         };
 
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _buildActorState: Actor state complete`);
+        logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _buildActorState: Actor state complete`);
         return actorState;
     }
 
@@ -466,18 +522,18 @@ export class ClassSuggestionEngine {
      * @returns {Promise<Object>} Prerequisites object in suggestion-engine format
      */
     static async _loadPrestigePrerequisites() {
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Loading from canonical authority...`);
+        logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Loading from canonical authority...`);
         if (this._prestigePrereqCache) {
-            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Using cached prerequisites (${Object.keys(this._prestigePrereqCache).length} classes)`);
+            logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Using cached prerequisites (${Object.keys(this._prestigePrereqCache).length} classes)`);
             return this._prestigePrereqCache;
         }
 
-        SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Loading from PRESTIGE_PREREQUISITES...`);
+        logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Loading from PRESTIGE_PREREQUISITES...`);
         try {
             // Convert canonical PRESTIGE_PREREQUISITES to suggestion-engine format
             this._prestigePrereqCache = this._convertPrestigePrerequisites(PRESTIGE_PREREQUISITES);
-            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Successfully loaded ${Object.keys(this._prestigePrereqCache).length} prestige class prerequisites`);
-            SWSELogger.log(`[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Classes with prerequisites:`, Object.keys(this._prestigePrereqCache));
+            logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Successfully loaded ${Object.keys(this._prestigePrereqCache).length} prestige class prerequisites`);
+            logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _loadPrestigePrerequisites: Classes with prerequisites:`, Object.keys(this._prestigePrereqCache));
             return this._prestigePrereqCache;
         } catch (err) {
             SWSELogger.error(`[CLASS-SUGGESTION-ENGINE] ERROR: Failed to load prestige prerequisites:`, err);
@@ -1147,6 +1203,141 @@ export class ClassSuggestionEngine {
             missingPrereqs,
             hasMissingPrereqs: missingPrereqs.length > 0,
             isSuggested: tier >= UNIFIED_TIERS.ABILITY_SYNERGY  // TIER 2+
+        };
+    }
+
+
+    static _routeFamilyForClass(className) {
+        const exact = Object.entries(CLASS_DOMAIN_ROUTE_FAMILIES)
+            .find(([name]) => normalizeSuggestionNameKey(name) === normalizeSuggestionNameKey(className));
+        if (exact) return exact[1];
+
+        const synergy = CLASS_SYNERGY_DATA[className] || {};
+        const haystack = `${synergy.theme || ''} ${(synergy.tags || []).join(' ')}`.toLowerCase();
+        if (/jedi|lightsaber/.test(haystack)) return 'jedi_order';
+        if (/force|use the force/.test(haystack)) return 'force_tradition';
+        if (/leader|noble|officer|social|support/.test(haystack)) return 'leadership';
+        if (/soldier|martial|combat|melee|armor/.test(haystack)) return 'martial';
+        if (/scout|survival|mobility|exploration|tracking/.test(haystack)) return 'fieldcraft';
+        if (/pilot|vehicle|starship/.test(haystack)) return 'vehicle';
+        if (/tech|mechanic|computer|slicer/.test(haystack)) return 'technical';
+        if (/stealth|scoundrel|infiltrat|crime|rogue/.test(haystack)) return 'rogue';
+        return 'general';
+    }
+
+    static _primaryBaseClass(actorState) {
+        return Object.entries(actorState?.classes || {})
+            .filter(([name]) => BASE_CLASSES.includes(name))
+            .sort((a, b) => Number(b[1] || 0) - Number(a[1] || 0))[0]?.[0] || actorState?.startingClass || null;
+    }
+
+    static _classRouteMatches(baseClass, className) {
+        if (!baseClass || !className) return false;
+        return (CLASS_DOMAIN_ROUTE_AFFINITY[baseClass] || [])
+            .some(route => normalizeSuggestionNameKey(route) === normalizeSuggestionNameKey(className));
+    }
+
+    static _prereqDisplay(entry) {
+        if (!entry) return '';
+        if (typeof entry === 'string') return entry;
+        return entry.shortDisplay || entry.display || entry.name || entry.label || entry.description || entry.type || '';
+    }
+
+    static _prereqKey(entry) {
+        const type = typeof entry === 'object' ? String(entry.type || '') : '';
+        return `${type}:${normalizeSuggestionNameKey(this._prereqDisplay(entry))}`;
+    }
+
+    static _summarizePrestigePrereqs(prereqData, missing = []) {
+        if (!prereqData) return { all: [], met: [], missing: [] };
+
+        const all = [];
+        const add = (entry) => {
+            const display = this._prereqDisplay(entry);
+            if (display) all.push(typeof entry === 'string' ? { display, shortDisplay: display } : entry);
+        };
+
+        if (prereqData.level) add({ type: 'level', display: `Character Level ${prereqData.level}`, shortDisplay: `Lvl ${prereqData.level}` });
+        if (prereqData.bab) add({ type: 'bab', display: `BAB +${prereqData.bab}`, shortDisplay: `BAB +${prereqData.bab}` });
+        for (const skill of prereqData.skills || []) add({ type: 'skill', name: skill, display: `Trained in ${skill}`, shortDisplay: skill });
+        for (const feat of prereqData.feats || []) add({ type: 'feat', name: feat, display: `Feat: ${feat}`, shortDisplay: feat });
+        if ((prereqData.featsOr || []).length) add({ type: 'feat_or', options: prereqData.featsOr, display: `One of: ${prereqData.featsOr.join(' or ')}`, shortDisplay: prereqData.featsOr.join('/') });
+        for (const talent of Array.isArray(prereqData.talents) ? prereqData.talents : []) add({ type: 'talent', name: talent, display: `Talent: ${talent}`, shortDisplay: talent });
+        if (typeof prereqData.talents === 'number' && (prereqData.talentTrees || []).length) {
+            add({
+                type: 'talent_count',
+                required: prereqData.talents,
+                trees: prereqData.talentTrees,
+                display: `${prereqData.talents} ${prereqData.talentTrees.join('/')} Talent(s)`,
+                shortDisplay: `${prereqData.talents} Talent(s)`
+            });
+        }
+        if (prereqData.techniques) add({ type: 'technique', display: `${prereqData.techniques} Force Technique(s)`, shortDisplay: `${prereqData.techniques} Technique(s)` });
+        for (const power of prereqData.powers || []) add({ type: 'power', name: power, display: `Force Power: ${power}`, shortDisplay: power });
+        if ((prereqData.species || []).length) add({ type: 'species', display: `Species: ${prereqData.species.join(' or ')}`, shortDisplay: prereqData.species.join('/') });
+        if ((prereqData.droidSystems || []).length) add({ type: 'droid_systems', display: `Droid Systems: ${prereqData.droidSystems.join(', ')}`, shortDisplay: 'Droid Systems' });
+        for (const other of prereqData.other || []) add({ type: 'other', display: other, shortDisplay: other, unverifiable: true });
+
+        const missingKeys = new Set((missing || []).map(entry => this._prereqKey(entry)));
+        const missingDisplays = new Set((missing || []).map(entry => normalizeSuggestionNameKey(this._prereqDisplay(entry))));
+        const met = all.filter(entry => !missingKeys.has(this._prereqKey(entry)) && !missingDisplays.has(normalizeSuggestionNameKey(this._prereqDisplay(entry))));
+
+        return {
+            all,
+            met,
+            missing: missing || []
+        };
+    }
+
+    static _inferClassReasonCode(cls, suggestion, prereqSummary, prestigeClassTarget, actorState) {
+        const isPrestige = cls.isPrestige === true || cls.prestigeClass === true || cls.baseClass === false;
+        const baseClass = this._primaryBaseClass(actorState);
+        if (isPrestige && prereqSummary.missing.length === 0) return 'PRESTIGE_NOW';
+        if (isPrestige && (cls.name === prestigeClassTarget || this._classRouteMatches(baseClass, cls.name))) return 'PRESTIGE_ROUTE_CONTINUATION';
+        if (!isPrestige && actorState?.classes?.[cls.name]) return 'CLASS_CONTINUATION';
+        if (!isPrestige && baseClass && normalizeSuggestionNameKey(baseClass) !== normalizeSuggestionNameKey(cls.name)) return 'BASE_CLASS_LATERAL_SHIFT';
+        if (suggestion?.tier >= UNIFIED_TIERS.ABILITY_SYNERGY) return 'CLASS_SYNERGY';
+        return 'CLASS_AVAILABLE';
+    }
+
+    static _buildClassDomainMetadata(cls, actorState, suggestion, prereqData, prestigeClassTarget = null) {
+        const isPrestige = cls.isPrestige === true || cls.prestigeClass === true || cls.baseClass === false;
+        const baseClass = this._primaryBaseClass(actorState);
+        const routeFamily = this._routeFamilyForClass(cls.name);
+        const baseRouteFamily = this._routeFamilyForClass(baseClass || actorState?.startingClass || '');
+        const targetRouteFamily = prestigeClassTarget ? this._routeFamilyForClass(prestigeClassTarget) : null;
+        const prereqSummary = this._summarizePrestigePrereqs(prereqData, suggestion?.missingPrereqs || []);
+        const synergy = CLASS_SYNERGY_DATA[cls.name] || {};
+        const supportsTarget = !!prestigeClassTarget && (
+            normalizeSuggestionNameKey(prestigeClassTarget) === normalizeSuggestionNameKey(cls.name)
+            || targetRouteFamily === routeFamily
+            || String(suggestion?.reason || '').toLowerCase().includes(String(prestigeClassTarget).toLowerCase())
+        );
+
+        return {
+            className: cls.name,
+            isPrestige,
+            currentClasses: Object.entries(actorState?.classes || {}).map(([name, level]) => ({ name, level })),
+            startingClass: actorState?.startingClass || null,
+            baseClass,
+            prestigeClassTarget,
+            missingPrereqs: prereqSummary.missing,
+            metPrereqs: prereqSummary.met,
+            allPrereqs: prereqSummary.all,
+            hasMissingPrereqs: prereqSummary.missing.length > 0,
+            metPrereqCount: prereqSummary.met.length,
+            missingPrereqCount: prereqSummary.missing.length,
+            classSuggestionTier: suggestion?.tier ?? 0,
+            classSuggestionReason: suggestion?.reason || '',
+            reasonCode: this._inferClassReasonCode(cls, suggestion, prereqSummary, prestigeClassTarget, actorState),
+            routeFamily,
+            baseRouteFamily,
+            targetRouteFamily,
+            routeMatchesBase: this._classRouteMatches(baseClass, cls.name),
+            supportsTarget,
+            classSkills: synergy.skills || [],
+            tags: synergy.tags || [],
+            theme: synergy.theme || 'general',
         };
     }
 

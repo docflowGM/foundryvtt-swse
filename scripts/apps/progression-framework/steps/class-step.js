@@ -44,6 +44,8 @@ export class ClassStep extends ProgressionStepPlugin {
 
     // Suggestions
     this._suggestedClasses = [];
+    this._allClassSuggestions = [];
+    this._suggestionIndexById = new Map();
     this._skillDocs = [];
 
     // Phase 2.5: Track if this is a nonheroic progression
@@ -980,8 +982,9 @@ export class ClassStep extends ProgressionStepPlugin {
       // Store top legal *ranked* suggestions. The class engine now returns ranked
       // results, but keep a defensive sort/filter here so fallback/legal options
       // can never masquerade as recommendations because of registry order.
-      const rankedSuggested = (suggested || [])
-        .filter(s => (s?.suggestion?.tier ?? s?.tier ?? 0) >= 2 || s?.isSuggested === true)
+      const allEnriched = (suggested || [])
+        .map(entry => this._normalizeSuggestedClassReference(entry))
+        .filter(Boolean)
         .sort((a, b) => {
           const tierA = Number(a?.suggestion?.tier ?? a?.tier ?? 0);
           const tierB = Number(b?.suggestion?.tier ?? b?.tier ?? 0);
@@ -991,15 +994,49 @@ export class ClassStep extends ProgressionStepPlugin {
           if (scoreB !== scoreA) return scoreB - scoreA;
           return String(a?.name || '').localeCompare(String(b?.name || ''));
         });
-      this._suggestedClasses = rankedSuggested
-        .map(entry => this._normalizeSuggestedClassReference(entry))
-        .filter(Boolean)
+
+      this._allClassSuggestions = allEnriched;
+      this._rebuildSuggestionIndex();
+
+      // Store top legal *ranked* suggestions for display badges / Ask Mentor.
+      this._suggestedClasses = allEnriched
+        .filter(s => (s?.suggestion?.tier ?? s?.tier ?? 0) >= 2 || s?.isSuggested === true)
         .slice(0, mode === 'chargen' ? 3 : 4);
     } catch (err) {
       swseLogger.warn('[ClassStep] Suggestion service error:', err);
       this._suggestedClasses = [];
+      this._allClassSuggestions = [];
+      this._suggestionIndexById = new Map();
       this._skillDocs = [];
     }
+  }
+
+  _rebuildSuggestionIndex() {
+    this._suggestionIndexById = new Map();
+    const addKey = (key, suggestion) => {
+      const normalized = String(key || '').trim().toLowerCase();
+      if (normalized && suggestion && !this._suggestionIndexById.has(normalized)) {
+        this._suggestionIndexById.set(normalized, suggestion);
+      }
+    };
+
+    for (const suggestion of this._allClassSuggestions || []) {
+      addKey(suggestion.id, suggestion);
+      addKey(suggestion._id, suggestion);
+      addKey(suggestion.classId, suggestion);
+      addKey(suggestion.sourceId, suggestion);
+      addKey(suggestion.name, suggestion);
+      addKey(suggestion.suggestion?.id, suggestion);
+      addKey(suggestion.suggestion?.itemId, suggestion);
+      addKey(suggestion.suggestion?.sourceId, suggestion);
+      addKey(suggestion.suggestion?.key, suggestion);
+    }
+  }
+
+  getSuggestionForItem(itemIdOrName) {
+    const key = String(itemIdOrName || '').trim().toLowerCase();
+    if (!key) return null;
+    return this._suggestionIndexById?.get?.(key) || null;
   }
 
   _normalizeSuggestedClassReference(entry) {

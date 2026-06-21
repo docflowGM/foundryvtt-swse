@@ -1,4 +1,5 @@
 import { ReasonFactory } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ReasonFactory.js";
+import { ClassDomainReasonEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassDomainReasonEngine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 async function loadJson(url) {
@@ -374,8 +375,6 @@ function metadataDrivenReasons(suggestion, actor) {
 
   signalReasons(suggestion, packet);
   prerequisiteReasons(suggestion, actor, packet);
-  classRouteReasons(suggestion, actor, packet);
-
   if (reasonCode.includes('PRESTIGE') && sourceTarget) {
     addConcreteReason(packet, 'forecast', 'prestige', 'PRESTIGE_SOURCE', `${name} is being highlighted because it supports ${sourceTarget}.`, 0.88);
   }
@@ -520,7 +519,7 @@ function composeOpening(name, domain, packet) {
     talent: hasOpportunity ? `${name} is a strong talent pick right now` : hasForecast ? `${name} pushes your playstyle forward` : `${name} reinforces your current style`,
     background: hasOpportunity ? `${name} is an unusually timely background pick` : `${name} patches a useful gap in your build`,
     species: `${name} lines up cleanly with the direction you are building toward`,
-    class: `${name} fits the direction your character is already taking`,
+    class: hasCaution ? `${name} is viable, but it changes the route` : hasForecast ? `${name} keeps a class route in view` : `${name} fits the direction your character is already taking`,
     forcepower: hasForecast ? `${name} broadens your force toolkit in a useful way` : `${name} supports how you are using the Force`,
     forcetechnique: `${name} sharpens powers you are already leaning on`,
     forcesecret: `${name} deepens the force path you are building toward`,
@@ -580,6 +579,8 @@ export class SuggestionReasonEngine {
   static buildPacket(suggestion, actor, options = {}) {
     try {
       let packet = mergeBuckets(buildScoreDrivenReasons(suggestion), buildTagDrivenReasons(suggestion, actor));
+      const classDomainPacket = ClassDomainReasonEngine.buildPacket(suggestion, actor, options);
+      packet = mergeBuckets(packet, classDomainPacket);
       packet = mergeBuckets(packet, metadataDrivenReasons(suggestion, actor));
       const rawExistingReasons = [
         ...(Array.isArray(suggestion?.reasons) ? suggestion.reasons : []),
@@ -606,7 +607,15 @@ export class SuggestionReasonEngine {
       if (!/[.!?]$/.test(shortReason)) shortReason += '.';
       const fullReason = composeSentence(candidateName(suggestion), detectDomain(suggestion), packet);
       const bullets = uniq([...packet.primary.map(r => r.text), ...packet.forecast.map(r => r.text), ...packet.opportunity.map(r => r.text), ...packet.caution.map(r => r.text)]).slice(0, 4);
-      return { ...packet, shortReason, fullReason, bullets, reasonText: fullReason, reasonSummary: shortReason };
+      return {
+        ...packet,
+        classDomainContext: classDomainPacket.classDomainContext || null,
+        shortReason,
+        fullReason,
+        bullets,
+        reasonText: fullReason,
+        reasonSummary: shortReason
+      };
     } catch (err) {
       SWSELogger.warn('[SuggestionReasonEngine] Failed to build packet', err);
       const fallback = `${candidateName(suggestion)} is a reasonable option for your current build.`;
