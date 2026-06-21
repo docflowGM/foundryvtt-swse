@@ -59,6 +59,24 @@ import { enrichBuildIntentWithPrestigeDelays } from "/systems/foundryvtt-swse/sc
 import { ReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionV2Contract.js";
 import { mapReasonCodeToReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ReasonCodeToReasonTypeMapping.js";
 
+
+function normalizeTextTokens(value) {
+    if (value == null) return [];
+    if (Array.isArray(value)) return value.flatMap(entry => normalizeTextTokens(entry));
+    if (value instanceof Set) return Array.from(value).flatMap(entry => normalizeTextTokens(entry));
+    if (typeof value === 'object') {
+        const preferred = value.name ?? value.label ?? value.title ?? value.id ?? value.key ?? value.slug ?? value.value;
+        if (preferred != null) return normalizeTextTokens(preferred);
+        return Object.values(value).flatMap(entry => normalizeTextTokens(entry));
+    }
+    const text = String(value).trim();
+    return text ? [text] : [];
+}
+
+function normalizeLowerTextTokens(value) {
+    return normalizeTextTokens(value).map(token => token.toLowerCase().trim()).filter(Boolean);
+}
+
 // ──────────────────────────────────────────────────────────────
 // TIER DEFINITIONS (PHASE 5D: UNIFIED_TIERS Refactor)
 // ──────────────────────────────────────────────────────────────
@@ -1317,8 +1335,9 @@ export class SuggestionEngine {
         if (!prestigeClassTarget) return false;
 
         // Check if talent's tree is a prestige prerequisite tree
-        const talentTree = talent.system?.tree || '';
-        const treeName = talent.system?.treeName || '';
+        const talentTrees = normalizeLowerTextTokens(talent.system?.tree ?? talent.system?.talent_tree ?? talent.system?.treeId);
+        const treeNames = normalizeLowerTextTokens(talent.system?.treeName);
+        const allTalentTreeTerms = new Set([...talentTrees, ...treeNames]);
 
         // Check build intent alignment
         if (buildIntent?.prestigeAffinities && buildIntent.prestigeAffinities.length > 0) {
@@ -1326,8 +1345,7 @@ export class SuggestionEngine {
             if (topPrestige.className === prestigeClassTarget) {
                 // Check if talent tree is in prestige's required trees
                 if (topPrestige.talentTrees?.some(t =>
-                    t.toLowerCase() === talentTree.toLowerCase() ||
-                    t.toLowerCase() === treeName.toLowerCase()
+                    normalizeLowerTextTokens(t).some(tree => allTalentTreeTerms.has(tree))
                 )) {
                     return true;
                 }
@@ -1335,10 +1353,10 @@ export class SuggestionEngine {
         }
 
         // Heuristic: check if talent name/tree mentions prestige
-        const prestigeLower = prestigeClassTarget.toLowerCase();
-        return talentTree.toLowerCase().includes(prestigeLower) ||
-               treeName.toLowerCase().includes(prestigeLower) ||
-               talent.name.toLowerCase().includes(prestigeLower);
+        const prestigeLower = String(prestigeClassTarget || '').toLowerCase();
+        const talentName = String(talent.name || '').toLowerCase();
+        return [...allTalentTreeTerms].some(tree => tree.includes(prestigeLower)) ||
+               talentName.includes(prestigeLower);
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -1505,10 +1523,11 @@ export class SuggestionEngine {
         }
 
         // If not found by ID, try finding by tree name (lowercase lookup)
-        const treeNameLower = treeId.toLowerCase();
+        const treeNameLowers = normalizeLowerTextTokens(treeId);
         for (const [id, exclusions] of this.#talentExclusions.entries()) {
             const item = game?.items?.get(id);
-            if (item?.name?.toLowerCase() === treeNameLower) {
+            const itemNameLower = String(item?.name || '').toLowerCase();
+            if (treeNameLowers.some(treeNameLower => itemNameLower === treeNameLower)) {
                 return exclusions;
             }
         }
@@ -1921,55 +1940,107 @@ export class SuggestionEngine {
             identity: ReasonType.IDENTITY_ALIGNMENT       // Archetype alignment
         };
 
-        // Build base metadata from candidate
-        const baseMetadata = {};
+        // Build base metadata from candidate and scorer details. Keep this data flat
+        // and serializable so mentor/advisory layers can explain the actual signal,
+        // not just the generic horizon that happened to win.
+        const baseMetadata = {
+            candidateName: candidate?.name || null,
+            candidateType: candidate?.type || candidate?.system?.type || null,
+            talentTree: candidate?.system?.tree || candidate?.system?.talent_tree || candidate?.system?.talentTree || candidate?.talentTree || candidate?.sourceTreeName || null,
+            tags: Array.isArray(candidate?.context?.allTags)
+                ? candidate.context.allTags.slice(0, 8)
+                : (Array.isArray(candidate?.tags) ? candidate.tags.slice(0, 8) : (Array.isArray(candidate?.system?.tags) ? candidate.system.tags.slice(0, 8) : [])),
+        };
         if (candidate?.system?.prestigious) {
             baseMetadata.prestigeClass = candidate.name;
         }
-        if (candidate?.talentTree) {
-            baseMetadata.talentTree = candidate.talentTree;
-        }
 
-        // Emit immediate signal if above threshold
+        const immediateBreakdown = scorerResult?.horizons?.immediate?.breakdown || {};
+        const shortTermBreakdown = scorerResult?.horizons?.shortTerm?.breakdown || {};
+        const identityBreakdown = scorerResult?.horizons?.identity?.breakdown || {};
+
+        const pushSignal = (type, weight, horizon, metadata = {}) => {
+            if (!type || !(weight > SIGNAL_THRESHOLD)) return;
+            signals.push({
+                type,
+                weight,
+                horizon,
+                metadata: {
+                    ...baseMetadata,
+                    reasonCode,
+                    ...metadata
+                }
+            });
+        };
+
         if (immediate > SIGNAL_THRESHOLD) {
-            signals.push({
-                type: horizonTypeMap.immediate,
-                weight: immediate,
-                horizon: 'immediate',
-                metadata: {
-                    ...baseMetadata,
-                    reasonCode,
-                    source: 'immediate_synergy'
-                }
-            });
+            if (Number(immediateBreakdown.abilityAlignment || 0) > 0) {
+                pushSignal(ReasonType.ATTRIBUTE_SYNERGY, immediate, 'immediate', {
+                    source: 'ability_alignment',
+                    attributes: Array.isArray(immediateBreakdown.abilityAxes) ? immediateBreakdown.abilityAxes.join(', ') : ''
+                });
+            }
+            if (Number(immediateBreakdown.equipmentMatch || 0) > 0) {
+                pushSignal(ReasonType.EQUIPMENT_SYNERGY, immediate, 'immediate', { source: 'equipment_affinity' });
+            }
+            if (Number(immediateBreakdown.skillMatch || 0) > 0) {
+                pushSignal(ReasonType.SKILL_INVESTMENT_ALIGNMENT, immediate, 'immediate', { source: 'skill_prerequisite' });
+            }
+            if (Number(immediateBreakdown.defenseNeed || 0) > 0) {
+                pushSignal(ReasonType.DEFENSIVE_GAP_COVERAGE, immediate, 'immediate', { source: 'defense_need' });
+            }
+            if (Number(immediateBreakdown.chainContinuation || 0) > 0) {
+                pushSignal(candidate?.type === 'talent' ? ReasonType.TALENT_TREE_CONTINUATION : ReasonType.FEAT_CHAIN_SETUP, immediate, 'immediate', { source: 'chain_continuation' });
+            }
+            if (Number(immediateBreakdown.damageAlignment || 0) > 0 || Number(immediateBreakdown.tagAlignment || 0) > 0 || Number(immediateBreakdown.forceSynergy || 0) > 0 || Number(immediateBreakdown.themeAlignment || 0) > 0) {
+                pushSignal(ReasonType.COMBAT_STYLE_MATCH, immediate, 'immediate', {
+                    source: 'tag_and_theme_alignment',
+                    tagMatches: Array.isArray(immediateBreakdown.tagMatches) ? immediateBreakdown.tagMatches.join(', ') : ''
+                });
+            }
         }
 
-        // Emit shortTerm signal if above threshold
         if (shortTerm > SIGNAL_THRESHOLD) {
-            signals.push({
-                type: horizonTypeMap.shortTerm,
-                weight: shortTerm,
-                horizon: 'shortTerm',
-                metadata: {
-                    ...baseMetadata,
-                    reasonCode,
-                    source: 'prestige_proximity'
-                }
-            });
+            if (Number(shortTermBreakdown.prestigeProximity || 0) > 0) {
+                pushSignal(ReasonType.PRESTIGE_PROXIMITY, shortTerm, 'shortTerm', { source: 'prestige_proximity' });
+            }
+            if (Number(shortTermBreakdown.babBreakpoint || 0) > 0) {
+                pushSignal(ReasonType.LEVEL_BREAKPOINT, shortTerm, 'shortTerm', { source: 'bab_breakpoint' });
+            }
+            if (Number(shortTermBreakdown.chainCompletion || 0) > 0) {
+                pushSignal(ReasonType.FEAT_CHAIN_SETUP, shortTerm, 'shortTerm', { source: 'chain_completion' });
+            }
+            if (Number(shortTermBreakdown.talentTreeUnlock || 0) > 0) {
+                pushSignal(ReasonType.TALENT_MILESTONE, shortTerm, 'shortTerm', { source: 'talent_tree_unlock' });
+            }
+            if (Number(shortTermBreakdown.equipmentAffinity || 0) > 0) {
+                pushSignal(ReasonType.EQUIPMENT_SYNERGY, shortTerm, 'shortTerm', { source: 'equipment_affinity_continuation' });
+            }
         }
 
-        // Emit identity signal if above threshold
         if (identity > SIGNAL_THRESHOLD) {
-            signals.push({
-                type: horizonTypeMap.identity,
-                weight: identity,
-                horizon: 'identity',
-                metadata: {
-                    ...baseMetadata,
-                    reasonCode,
-                    source: 'identity_alignment'
-                }
-            });
+            if (Number(identityBreakdown.prestigeTrajectory || 0) > 0) {
+                pushSignal(ReasonType.PRESTIGE_PROXIMITY, identity, 'identity', { source: 'prestige_trajectory' });
+            }
+            if (Number(identityBreakdown.archetypeAffinity || 0) > 0) {
+                pushSignal(ReasonType.ARCHETYPE_REINFORCEMENT, identity, 'identity', { source: 'archetype_affinity' });
+            }
+            if (Number(identityBreakdown.identityTagAlignment || 0) > 0) {
+                pushSignal(ReasonType.IDENTITY_ALIGNMENT, identity, 'identity', {
+                    source: 'identity_tag_alignment',
+                    tagMatches: Array.isArray(identityBreakdown.identityTagMatches) ? identityBreakdown.identityTagMatches.join(', ') : ''
+                });
+            }
+        }
+
+        if (signals.length === 0 && immediate > SIGNAL_THRESHOLD) {
+            pushSignal(horizonTypeMap.immediate, immediate, 'immediate', { source: 'immediate_synergy' });
+        }
+        if (signals.length === 0 && shortTerm > SIGNAL_THRESHOLD) {
+            pushSignal(horizonTypeMap.shortTerm, shortTerm, 'shortTerm', { source: 'prestige_proximity' });
+        }
+        if (signals.length === 0 && identity > SIGNAL_THRESHOLD) {
+            pushSignal(horizonTypeMap.identity, identity, 'identity', { source: 'identity_alignment' });
         }
 
         // Fallback: if no signals emitted (all horizons weak), use primary reason code mapping
@@ -2010,7 +2081,15 @@ export class SuggestionEngine {
             identity,
             final: scorerResult.finalScore,
             confidence,
-            dominantHorizon
+            dominantHorizon,
+            breakdown: scorerResult.breakdown || {},
+            horizonBreakdown: {
+                immediate: scorerResult.horizons?.immediate?.breakdown || {},
+                shortTerm: scorerResult.horizons?.shortTerm?.breakdown || {},
+                identity: scorerResult.horizons?.identity?.breakdown || {}
+            },
+            advisories: scorerResult.advisories || [],
+            scorerReasons: scorerResult.reasons || []
         };
     }
 
@@ -2113,9 +2192,10 @@ export class SuggestionEngine {
                 // Build SuggestionV2-compatible scoring object
                 scoring = this._buildScoringObject(scorerResult);
 
-                // PHASE 1 VALIDATION: Log all emission details
-                // CRITICAL: Type verification for Phase 2 weight-sorting
-                console.log(`[SuggestionEngine.Phase1Validation] ${options.candidate.name}:`, {
+                // Keep the validation payload available only when SWSE debug logging is enabled.
+                // Suggestion scoring can run over hundreds of candidates during a single level-up render,
+                // so unconditional console output makes normal play noisy and slow.
+                SWSELogger.debug(`[SuggestionEngine.Phase1Validation] ${options.candidate.name}:`, {
                     metadata: {
                         name: options.candidate.name,
                         tier: tier,
@@ -2124,7 +2204,7 @@ export class SuggestionEngine {
                     signals: signals.map(s => ({
                         type: s.type,
                         weight: s.weight,
-                        weight_type: typeof s.weight,  // CRITICAL: Should be "number"
+                        weight_type: typeof s.weight,
                         horizon: s.horizon
                     })),
                     scoring: {
@@ -2134,16 +2214,14 @@ export class SuggestionEngine {
                         final: scoring.final,
                         confidence: scoring.confidence,
                         dominantHorizon: scoring.dominantHorizon,
-                        // Type verification
                         types: {
-                            immediate: typeof scoring.immediate,  // Should be "number"
+                            immediate: typeof scoring.immediate,
                             shortTerm: typeof scoring.shortTerm,
                             identity: typeof scoring.identity,
                             final: typeof scoring.final,
                             confidence: typeof scoring.confidence
                         }
                     },
-                    // Weight sorting test
                     signals_by_weight: signals
                         .map((s, idx) => ({ idx, weight: s.weight, type: s.type }))
                         .sort((a, b) => b.weight - a.weight)

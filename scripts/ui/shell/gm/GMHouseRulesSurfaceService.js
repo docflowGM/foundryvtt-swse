@@ -90,7 +90,7 @@ const HOUSE_RULES_CATEGORIES = {
   skills: [
     'skillFocusVariant', 'skillFocusActivationLevel', 'talentTreeRestriction', 'talentEveryLevel',
     'talentEveryLevelExtraL1', 'talentDoubleLevels', 'crossClassSkillTraining', 'retrainingEnabled',
-    'skillTrainingEnabled', 'trainingPointsPerLevel', 'multiclassBonusChoice', 'abilityIncreaseMethod',
+    'skillTrainingEnabled', 'trainingPointsPerLevel', 'multiclassBonusChoice', 'abilityIncreaseAllocationMode',
     'grappleEnabled', 'grappleVariant', 'grappleDCBonus', 'flankingEnabled', 'flankingBonus',
     'flankingRequiresConsciousness', 'flankingLargeCreatures', 'flankingDiagonalCounts'
   ],
@@ -156,7 +156,8 @@ const RULE_NAMES = {
       skillTrainingEnabled: 'Skill Training Advancement',
       trainingPointsPerLevel: 'Training Points Per Level',
       multiclassBonusChoice: 'Multiclass Bonus Selection',
-      abilityIncreaseMethod: 'Ability Increase Method',
+      abilityIncreaseMethod: 'Ability Increase Method (Legacy)',
+      abilityIncreaseAllocationMode: 'Ability Increase Allocation Mode',
       grappleEnabled: 'Enable Grapple',
       grappleVariant: 'Grapple Variant',
       grappleDCBonus: 'Grapple DC Bonus',

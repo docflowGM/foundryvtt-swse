@@ -13,6 +13,24 @@ import { PRESTIGE_SIGNALS } from "/systems/foundryvtt-swse/scripts/engine/sugges
 import { BuildIdentityAnchor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIdentityAnchor.js";
 import { SuggestionEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngine.js";
 
+function normalizeTextTokens(value) {
+  if (value == null) return [];
+  if (Array.isArray(value)) return value.flatMap(entry => normalizeTextTokens(entry));
+  if (value instanceof Set) return Array.from(value).flatMap(entry => normalizeTextTokens(entry));
+  if (typeof value === 'object') {
+    const preferred = value.name ?? value.label ?? value.title ?? value.id ?? value.key ?? value.slug ?? value.value;
+    if (preferred != null) return normalizeTextTokens(preferred);
+    return Object.values(value).flatMap(entry => normalizeTextTokens(entry));
+  }
+  const text = String(value).trim();
+  return text ? [text] : [];
+}
+
+function normalizeLowerTextTokens(value) {
+  return normalizeTextTokens(value).map(token => token.toLowerCase().trim()).filter(Boolean);
+}
+
+
 export class OpportunityCostAnalyzer {
 
   /**
@@ -106,7 +124,10 @@ export class OpportunityCostAnalyzer {
       const ownedTalents = new Set(
         actor.items
           .filter(i => i.type === 'talent')
-          .map(t => t.system?.tree?.toLowerCase() || t.name.toLowerCase())
+          .flatMap(t => {
+            const tokens = normalizeLowerTextTokens(t.system?.tree ?? t.system?.talent_tree ?? t.system?.treeId);
+            return tokens.length ? tokens : normalizeLowerTextTokens(t.name);
+          })
       );
       const abilities = actor.system?.attributes || {};
 
@@ -180,9 +201,10 @@ export class OpportunityCostAnalyzer {
       const contributes =
         prestigeData.feats?.includes(itemName) ||
         prestigeData.talents?.includes(itemName) ||
-        (item.type === 'talent' && prestigeData.talentTrees?.some(t =>
-          t.toLowerCase() === item.system?.tree?.toLowerCase()
-        ));
+        (item.type === 'talent' && (() => {
+          const itemTrees = new Set(normalizeLowerTextTokens(item.system?.tree ?? item.system?.talent_tree ?? item.system?.treeId));
+          return prestigeData.talentTrees?.some(t => normalizeLowerTextTokens(t).some(tree => itemTrees.has(tree)));
+        })());
 
       if (contributes) {
         // Item advances prestige - no delay cost
@@ -344,7 +366,7 @@ export class OpportunityCostAnalyzer {
         const ownedTalentTrees = new Set(
           actor.items
             .filter(i => i.type === 'talent')
-            .map(t => t.system?.tree?.toLowerCase())
+            .flatMap(t => normalizeLowerTextTokens(t.system?.tree ?? t.system?.talent_tree ?? t.system?.treeId))
         );
 
         for (const exclusion of exclusions) {

@@ -1111,6 +1111,57 @@ export class ProgressionReconciler {
     return Array.from(byClass.values()).sort((a, b) => a.className.localeCompare(b.className));
   }
 
+
+  _toSheetDerivedStatsAudit(derivedStats = {}) {
+    const rows = Array.isArray(derivedStats?.rows) ? derivedStats.rows : [];
+    const normalizedRows = rows.map((row, index) => {
+      const id = row?.id || row?.key || `derived-stat-${index}`;
+      const label = row?.label || row?.name || 'Derived Stat';
+      const needsAttention = row?.needsAttention === true || row?.status === 'issue' || row?.status === 'warning' || row?.status === 'unavailable' || !!row?.issue;
+      const targetTab = row?.targetTab || row?.tab || 'abilities';
+      const sheetAnchor = row?.sheetAnchor || 'derived-class-stats';
+      const primaryAction = row?.primaryAction || {
+        action: 'open-audit-target',
+        actionType: 'open-sheet-anchor',
+        label: 'Open Abilities',
+        tab: targetTab,
+        sheetAnchor,
+        rowId: id,
+      };
+      return {
+        id,
+        type: row?.type || 'derived-stat',
+        label,
+        expected: row?.expected ?? row?.expectedValue ?? null,
+        expectedLabel: row?.expectedLabel || (row?.expected !== undefined ? String(row.expected) : 'Unknown'),
+        current: row?.current ?? row?.currentValue ?? null,
+        currentLabel: row?.currentLabel || (row?.current !== undefined ? String(row.current) : 'Unknown'),
+        status: row?.status || (needsAttention ? 'review' : 'ok'),
+        statusLabel: row?.statusLabel || row?.issue || (needsAttention ? 'Review needed' : 'OK'),
+        tone: row?.tone || (needsAttention ? 'warn' : 'ok'),
+        needsAttention,
+        issue: row?.issue || '',
+        detail: row?.detail || '',
+        targetTab,
+        sheetAnchor,
+        primaryAction,
+        actions: Array.isArray(row?.actions) && row.actions.length ? row.actions : [primaryAction],
+      };
+    });
+    const issueCount = Number(derivedStats?.issueCount ?? normalizedRows.filter(row => row.needsAttention).length) || 0;
+    return {
+      kind: derivedStats?.kind || 'swse-derived-class-stat-audit-sheet',
+      status: derivedStats?.status || (issueCount > 0 ? 'review' : 'ok'),
+      hasIssues: derivedStats?.hasIssues === true || issueCount > 0,
+      issueCount,
+      rows: normalizedRows,
+      warnings: Array.isArray(derivedStats?.warnings) ? derivedStats.warnings : [],
+      expected: derivedStats?.expected || {},
+      current: derivedStats?.current || {},
+      classBreakdown: Array.isArray(derivedStats?.classBreakdown) ? derivedStats.classBreakdown : [],
+    };
+  }
+
   _buildSheetTasks({ abilityLedger, generalFeatLedger, classFeatLedger, heroicTalentLedger, classTalentLedger, derivedStats } = {}) {
     const ledgers = [abilityLedger, generalFeatLedger, classFeatLedger, heroicTalentLedger, classTalentLedger].filter(Boolean);
     const tasks = [];

@@ -3101,7 +3101,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
     }
 
     const fallback = plugin?.getMentorContext?.(this) || this.mentor?.currentDialogue || 'Ask what this choice means for your training.';
-    await this.mentorRail?.speak?.(fallback, 'encouraging');
+    this.mentorRail?.queueSpeak?.(fallback, 'encouraging', { source: 'ask-mentor-fallback' }) ?? void this.mentorRail?.speak?.(fallback, 'encouraging');
   }
 
   _onExitTree(event, target) {

@@ -110,6 +110,20 @@ const NON_CHOICE_STEPS = new Set([
   'intro', 'name', 'summary', 'confirm', 'levelup-review', 'languages', 'language',
 ]);
 
+const CORE_CLASS_NAMES = ['Jedi', 'Noble', 'Scoundrel', 'Scout', 'Soldier'];
+const CLASS_ROUTE_AFFINITY = {
+  Jedi: ['Jedi Knight', 'Jedi Master', 'Force Disciple', 'Force Adept', 'Imperial Knight', 'Sith Apprentice'],
+  Noble: ['Officer', 'Crime Lord', 'Corporate Agent', 'Charlatan', 'Medic', 'Droid Commander'],
+  Scoundrel: ['Gunslinger', 'Outlaw', 'Crime Lord', 'Infiltrator', 'Master Privateer', 'Assassin', 'Charlatan'],
+  Scout: ['Bounty Hunter', 'Ace Pilot', 'Pathfinder', 'Infiltrator', 'Vanguard', 'Saboteur'],
+  Soldier: ['Elite Trooper', 'Officer', 'Vanguard', 'Gladiator', 'Melee Duelist', 'Military Engineer', 'Bounty Hunter'],
+};
+const CLASS_THEME_LABELS = {
+  force: 'Force tradition', social: 'social leverage', ranged: 'ranged pressure', exploration: 'mobility and fieldcraft',
+  combat: 'front-line combat', vehicle: 'vehicle mastery', stealth: 'infiltration', tracking: 'tracking',
+  leader: 'command', support: 'support', tech: 'technical problem-solving', melee: 'melee pressure', general: 'general capability',
+};
+
 const HIGH_VALUE_STEPS = new Set([
   'species', 'class', 'background', 'general-feat', 'class-feat', 'nonheroic-starting-feats',
   'general-talent', 'class-talent', 'force-powers', 'force-secrets', 'force-techniques',
@@ -225,6 +239,65 @@ function sentenceCase(text) {
   const value = String(text || '').trim();
   if (!value) return '';
   return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+function stripSentencePunctuation(value) {
+  return String(value || '').trim().replace(/[.!?]+$/g, '');
+}
+
+function actorClassItems(actor) {
+  return Array.from(actor?.items?.contents || actor?.items || [])
+    .filter(item => item?.type === 'class')
+    .map(item => ({ name: item?.name, level: Number(item?.system?.level ?? item?.system?.levels ?? 1) || 1 }))
+    .filter(entry => entry.name);
+}
+
+function primaryBaseClassName(actor) {
+  return actorClassItems(actor)
+    .filter(entry => CORE_CLASS_NAMES.some(name => normalizeKey(name) === normalizeKey(entry.name)))
+    .sort((a, b) => b.level - a.level)[0]?.name || null;
+}
+
+function isClassRouteMatch(baseClass, className) {
+  if (!baseClass || !className) return false;
+  return (CLASS_ROUTE_AFFINITY[baseClass] || []).some(route => normalizeKey(route) === normalizeKey(className));
+}
+
+function isPrestigeClassItem(item) {
+  return item?.prestigeClass === true || item?.isPrestige === true || item?.baseClass === false
+    || item?.system?.prestigeClass === true || item?.system?.isPrestige === true || item?.dataset?.type === 'prestige';
+}
+
+function classThemeText(item, suggestion = null) {
+  const raw = String(item?.theme || item?.role || item?.system?.theme || item?.system?.role || suggestion?.theme || suggestion?.suggestion?.theme || '').trim();
+  if (raw) return CLASS_THEME_LABELS[normalizeKey(raw)] || raw;
+  const text = compactText(item?.tags, item?.system?.tags, suggestion?.tags, suggestion?.reasonText, suggestion?.suggestion?.reason).toLowerCase();
+  if (includesAny(text, ['force', 'jedi', 'lightsaber', 'use the force'])) return 'Force tradition';
+  if (includesAny(text, ['pilot', 'vehicle', 'starship'])) return 'vehicle mastery';
+  if (includesAny(text, ['stealth', 'infiltration', 'slicer'])) return 'infiltration';
+  if (includesAny(text, ['leader', 'support', 'noble', 'officer'])) return 'command/support';
+  if (includesAny(text, ['tech', 'mechanics', 'computer'])) return 'technical problem-solving';
+  if (includesAny(text, ['ranged', 'pistol', 'rifle', 'gunslinger'])) return 'ranged pressure';
+  if (includesAny(text, ['melee', 'soldier', 'duelist', 'martial'])) return 'melee pressure';
+  return 'a different play pattern';
+}
+
+function suggestionMissingText(suggestion) {
+  const raw = suggestion?.suggestion?.missingPrereqs || suggestion?.missingPrereqs || suggestion?.missing || [];
+  const list = (Array.isArray(raw) ? raw : [raw]).map(entry => {
+    if (!entry) return null;
+    if (typeof entry === 'string') return entry;
+    return entry.shortDisplay || entry.display || entry.name || entry.label || entry.reason || null;
+  }).filter(Boolean);
+  return displayInlineList(list, 3);
+}
+
+function displayInlineList(values, limit = 3) {
+  const cleaned = Array.from(new Set((values || []).filter(Boolean))).slice(0, limit);
+  if (!cleaned.length) return '';
+  if (cleaned.length === 1) return cleaned[0];
+  if (cleaned.length === 2) return `${cleaned[0]} and ${cleaned[1]}`;
+  return `${cleaned.slice(0, -1).join(', ')}, and ${cleaned[cleaned.length - 1]}`;
 }
 
 export class MentorChoiceReactionRouter {
@@ -437,7 +510,74 @@ export class MentorChoiceReactionRouter {
     }
   }
 
+  _readSuggestionText(value) {
+    if (!value) return '';
+    if (typeof value === 'string') return value.trim();
+    if (typeof value === 'object') {
+      return String(value.fullReason || value.reasonText || value.reasonSummary || value.shortReason || value.text || value.label || '').trim();
+    }
+    return String(value).trim();
+  }
+
+  _isGenericSuggestionText(value) {
+    const text = String(value || '').trim().toLowerCase();
+    if (!text) return true;
+    return [
+      'you meet the requirements',
+      'you meet this requirement',
+      'this adds to your selections',
+      'adds to your selections',
+      'this relates to your pattern',
+      'this relates to your patterns',
+      'this relates to your progression',
+      'this reflects the path taking shape',
+      'it reflects the path taking shape',
+      'available',
+      'legal option',
+    ].some(fragment => text === fragment || text.includes(fragment));
+  }
+
+  _concreteSuggestionReason(suggestion) {
+    if (!suggestion) return '';
+    const block = suggestion?.suggestion || {};
+    const packet = suggestion?.reasonPacket || block?.reasonPacket || {};
+    const explanation = suggestion?.explanation || block?.explanation || {};
+    const candidates = [
+      explanation.full,
+      packet.fullReason,
+      suggestion.reasonText,
+      block.reasonText,
+      suggestion.reasonSummary,
+      block.reasonSummary,
+      explanation.short,
+      packet.shortReason,
+      this._readSuggestionText(suggestion.reason),
+      this._readSuggestionText(block.reason),
+    ];
+    const direct = candidates
+      .map(value => this._readSuggestionText(value))
+      .find(value => value && !this._isGenericSuggestionText(value));
+    if (direct) return direct;
+
+    const bulletSources = [explanation.bullets, packet.bullets, suggestion.reasonBullets, block.reasonBullets, suggestion.reasons, block.reasons, packet.allReasons];
+    for (const source of bulletSources) {
+      for (const entry of Array.isArray(source) ? source : []) {
+        const text = this._readSuggestionText(entry).replace(/^because\s+/i, '');
+        if (text && !this._isGenericSuggestionText(text)) return text;
+      }
+    }
+    return '';
+  }
+
   async _buildOrchestratedText({ mentorId, stepId, action, item, suggestion, atoms, intensity }) {
+    const concreteReason = this._concreteSuggestionReason(suggestion);
+    if (concreteReason) {
+      const name = itemName(item, suggestion?.name || 'This choice');
+      if (action === 'commit') return compactText(`${name} locked in.`, concreteReason);
+      if (action === 'uncommit') return compactText(`${name} set aside.`, concreteReason);
+      return compactText(`${name}.`, concreteReason);
+    }
+
     try {
       const result = await MentorInteractionOrchestrator.handle({
         mode: 'selection',
@@ -478,6 +618,9 @@ export class MentorChoiceReactionRouter {
   }
 
   _buildFallbackText({ mentorId, mentorName, stepId, action, item, atoms, intensity, suggestion }) {
+    const classLine = this._buildClassFallbackText({ stepId, action, item, suggestion });
+    if (classLine) return classLine;
+
     const explanation = MentorJudgmentEngine.buildExplanation(
       atoms,
       this._judgmentMentorName(mentorId, mentorName),
@@ -494,6 +637,47 @@ export class MentorChoiceReactionRouter {
       return compactText(`${name} becomes part of your path.`, explanation, reason && reason !== explanation ? reason : '');
     }
     return compactText(`${name}.`, explanation);
+  }
+
+  _buildClassFallbackText({ stepId, action, item, suggestion }) {
+    if (stepId !== 'class' || !item) return '';
+    const name = itemName(item, suggestion?.name || 'This class');
+    if (!name || normalizeKey(name) === 'this-choice') return '';
+
+    const baseClass = primaryBaseClassName(this.shell?.actor);
+    const isPrestige = isPrestigeClassItem(item) || isPrestigeClassItem(suggestion);
+    const routeMatch = isClassRouteMatch(baseClass, name);
+    const theme = classThemeText(item, suggestion);
+    const missing = suggestionMissingText(suggestion);
+    const actorClasses = actorClassItems(this.shell?.actor);
+    const alreadyHasClass = actorClasses.some(entry => normalizeKey(entry.name) === normalizeKey(name));
+
+    const clauses = [];
+    if (isPrestige && routeMatch) {
+      clauses.push(`this is the advanced ${baseClass} route your existing chassis points toward`);
+    } else if (isPrestige && baseClass) {
+      clauses.push(`this is an advanced route, but it shifts emphasis from your ${baseClass} foundation toward ${theme}`);
+    } else if (!isPrestige && alreadyHasClass) {
+      clauses.push(`staying here deepens the class chassis you already rely on`);
+    } else if (!isPrestige && baseClass && normalizeKey(baseClass) !== normalizeKey(name)) {
+      clauses.push(`this is cross-training from your ${baseClass} base toward ${theme}`);
+    } else {
+      clauses.push(`this defines the character around ${theme}`);
+    }
+
+    if (isPrestige && missing) {
+      clauses.push(`the remaining gates are ${missing}`);
+    } else if (isPrestige) {
+      clauses.push('the prerequisite question is answered, so the real question is identity and payoff');
+    }
+
+    if (/jedi-knight/i.test(normalizeKey(name)) && /jedi/i.test(baseClass || '')) {
+      clauses.unshift('your Jedi levels, Force training, and lightsaber foundation already point at Knighthood');
+    }
+
+    const prefix = action === 'commit' ? `${name} locked in.` : action === 'uncommit' ? `${name} set aside.` : `${name}.`;
+    const body = stripSentencePunctuation(clauses.filter(Boolean).slice(0, 2).join('; '));
+    return compactText(prefix, body ? `${body}.` : 'This is a viable class choice.');
   }
 
   _shapeFinalLine({ text, action, item }) {
@@ -933,7 +1117,8 @@ export class MentorChoiceReactionRouter {
   async _speak(text, mood) {
     const rail = this.shell?.mentorRail;
     if (!rail || !text) return;
-    await rail.speak(text, mood, { bypassSuppression: true, source: 'choice-reaction' });
+    rail.queueSpeak?.(text, mood, { bypassSuppression: true, source: 'choice-reaction' })
+      ?? void rail.speak?.(text, mood, { bypassSuppression: true, source: 'choice-reaction' });
     this._flashRail(mood);
   }
 

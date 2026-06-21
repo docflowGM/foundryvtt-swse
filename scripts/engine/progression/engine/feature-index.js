@@ -16,6 +16,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { loadFeatCatalogDocuments } from "/systems/foundryvtt-swse/scripts/registries/feat-pack-seeder.js";
 import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
+import { filterFeatDomainDocuments } from "/systems/foundryvtt-swse/scripts/data/feat-domain-guard.js";
 
 export const FeatureIndex = {
     // Lookup maps - keyed by lowercase name for case-insensitive lookup
@@ -132,13 +133,15 @@ export const FeatureIndex = {
         if (!pack) {
             if (packName === 'feats') {
                 const docs = await this._loadFeatCatalogFallback();
-                for (const doc of docs) {
+                const featDocs = filterFeatDomainDocuments(docs);
+                for (const doc of featDocs) {
                     if (doc.name) {
                         map.set(doc.name.toLowerCase(), doc);
                     }
                 }
-                if (docs.length) {
-                    SWSELogger.log(`FeatureIndex: Missing feats pack; loaded ${docs.length} feats from data/feat-catalog.json fallback.`);
+                if (featDocs.length) {
+                    const skipped = docs.length - featDocs.length;
+                    SWSELogger.log(`FeatureIndex: Missing feats pack; loaded ${featDocs.length} feats from data/feat-catalog.json fallback${skipped > 0 ? `, skipped ${skipped} talent contaminants` : ``}.`);
                     return;
                 }
             }
@@ -157,12 +160,14 @@ export const FeatureIndex = {
                     SWSELogger.log(`FeatureIndex: Pack "${pack.collection}" is empty; loaded ${docs.length} feats from data/feat-catalog.json fallback.`);
                 }
             }
-            for (const doc of docs) {
+            const indexDocs = packName === 'feats' ? filterFeatDomainDocuments(docs) : docs;
+            for (const doc of indexDocs) {
                 if (doc.name) {
                     map.set(doc.name.toLowerCase(), doc);
                 }
             }
-            SWSELogger.log(`FeatureIndex: Loaded ${docs.length} items from ${pack.collection}${packName === 'feats' && docs.length ? ' / fallback-safe' : ''}`);
+            const skipped = packName === 'feats' ? docs.length - indexDocs.length : 0;
+            SWSELogger.log(`FeatureIndex: Loaded ${indexDocs.length} items from ${pack.collection}${packName === 'feats' && indexDocs.length ? ' / fallback-safe' : ''}${skipped > 0 ? ` (skipped ${skipped} talent contaminants)` : ``}`);
         } catch (err) {
             SWSELogger.error(`FeatureIndex: Failed to load pack "${pack.collection}":`, err);
         }

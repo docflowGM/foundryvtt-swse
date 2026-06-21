@@ -250,6 +250,26 @@ export class MentorRail {
   }
 
   /**
+   * Queue mentor speech without making the caller wait for the typewriter or
+   * Aurebesh animation. Navigation, selection, survey answers, and filters must
+   * remain player-driven even when a mentor line is still animating.
+   * @param {string} text
+   * @param {string|null} mood
+   * @param {Object} options
+   * @returns {void}
+   */
+  queueSpeak(text, mood = null, options = {}) {
+    try {
+      const promise = this.speak(text, mood, options);
+      if (promise && typeof promise.catch === 'function') {
+        promise.catch(err => console.warn('[MentorRail] queued speak error', err));
+      }
+    } catch (err) {
+      console.warn('[MentorRail] queued speak failed', err);
+    }
+  }
+
+  /**
    * Speak step-appropriate guidance for the given descriptor.
    * @param {StepDescriptor} descriptor
    * @returns {Promise<void>}
@@ -301,9 +321,9 @@ export class MentorRail {
     });
 
     if (text) {
-      mentorTrace('[SWSE Translation Debug] speakForStep() calling speak() with text');
-      await this.speak(text);
-      mentorTrace('[SWSE Translation Debug] speakForStep() speak() completed');
+      mentorTrace('[SWSE Translation Debug] speakForStep() queueing speak() with text');
+      this.queueSpeak(text, null, { source: 'step-enter' });
+      mentorTrace('[SWSE Translation Debug] speakForStep() speech queued');
     } else {
       mentorTrace('[SWSE Translation Debug] speakForStep() skipping speak() — no text');
     }

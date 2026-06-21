@@ -301,7 +301,7 @@ export class ProgressionStepPlugin {
   async onAskMentor(shell) {
     const guidance = this.getMentorContext(shell);
     if (guidance && shell?.mentorRail) {
-      await shell.mentorRail.speak(guidance, 'encouraging');
+      shell.mentorRail.queueSpeak?.(guidance, 'encouraging', { source: 'step-plugin-base' }) ?? void shell.mentorRail.speak?.(guidance, 'encouraging');
     }
   }
 

@@ -67,6 +67,8 @@ import { resolveClassModel } from "/systems/foundryvtt-swse/scripts/engine/progr
 import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
 import { getCanonicalBenefitText, getCanonicalContentAuthority, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/prerequisite-authority.js";
 import { FeatChoiceResolver, normalizeFeatChoiceKey } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
+import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
+import { getClassAutoGrants } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/autogrants/class-autogrants.js";
 import { CANONICAL_SKILL_DEFS } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { actorMeetsDroidSystemRequirement, resolveDroidSystemIdentity } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-part-schema.js";
 
@@ -217,14 +219,23 @@ export class PrerequisiteChecker {
     static _actorHasNamedItem(actor, pending, itemType, requiredName) {
         const baseName = this._getChoiceBaseName(requiredName);
         const predicate = (item) => {
+            if (itemType === 'feat') {
+                return featLikeMatchesRequirement(item, requiredName);
+            }
             const itemName = item?.name || '';
             return namesMatchLoosely(itemName, requiredName) ||
-                (baseName && namesMatchLoosely(itemName, baseName)) ||
-                (baseName && itemName.toLowerCase().startsWith(`${baseName.toLowerCase()} (`));
+                (baseName && !featRequirementHasScope(requiredName) && namesMatchLoosely(itemName, baseName)) ||
+                (baseName && !featRequirementHasScope(requiredName) && itemName.toLowerCase().startsWith(`${baseName.toLowerCase()} (`));
         };
 
         const actorHit = actor.items?.some((i) => i.type === itemType && predicate(i));
         if (actorHit) return true;
+
+        if (itemType === 'feat') {
+            const classGrantHit = collectCoreClassStartingFeatNames(actor, pending)
+                .some((name) => predicate({ name, system: { sourceType: 'class-derived' } }));
+            if (classGrantHit) return true;
+        }
 
         const pendingArray = itemType === 'feat' ? (pending.selectedFeats || []) : (pending.selectedTalents || []);
         const pendingHit = pendingArray.some((i) => predicate(i));
@@ -1029,9 +1040,10 @@ export class PrerequisiteChecker {
                 };
             }
             case 'feat': {
-                const requiredFeatName = resolveCanonicalFeatName(prereq.name || prereq.featName || '');
+                const requiredFeatName = formatStructuredFeatRequirement(prereq)
+                    || resolveCanonicalFeatName(prereq.name || prereq.featName || '');
                 const hasFeat = this._actorHasNamedItem(actor, pending, 'feat', requiredFeatName) ||
-                    this.getHouseruleGrantedFeats().some(name => namesMatchLoosely(name, requiredFeatName));
+                    this.getHouseruleGrantedFeats().some(name => featLikeMatchesRequirement({ name }, requiredFeatName));
                 return {
                     met: !!hasFeat,
                     message: !hasFeat ? `Requires the feat ${requiredFeatName}` : ''
@@ -1050,6 +1062,7 @@ export class PrerequisiteChecker {
                     return { met: false, message: 'Droids cannot acquire or satisfy Force Sensitivity prerequisites' };
                 }
                 const hasFS = actor.items?.some(i => i.type === 'feat' && matchesForceSensitivity(i.name)) ||
+                    collectCoreClassStartingFeatNames(actor, pending).some(name => matchesForceSensitivity(name)) ||
                     (pending.selectedFeats || []).some(f => matchesForceSensitivity(typeof f === 'string' ? f : f?.name)) ||
                     (pending.grantedFeats || []).some(f => matchesForceSensitivity(typeof f === 'string' ? f : f?.name)) ||
                     pending.forceSensitive === true ||
@@ -1189,6 +1202,17 @@ export class PrerequisiteChecker {
     // ============================================================
 
     static _checkFeatCondition(prereq, actor, pending) {
+        const requiredFeatName = resolveCanonicalFeatName(prereq.name || prereq.featName || prereq.slug || prereq.uuid || '');
+        if (isWeaponProficiencyRequirement(requiredFeatName, prereq)) {
+            return this._checkWeaponProficiencyCondition(prereq, actor, pending);
+        }
+        if (isArmorProficiencyRequirement(requiredFeatName, prereq)) {
+            return this._checkArmorProficiencyCondition({
+                ...prereq,
+                armor: prereq?.choice?.key || prereq?.choice?.name || prereq?.value || requiredFeatName
+            }, actor, pending);
+        }
+
         // UUID-FIRST RESOLUTION: Try UUID → slug → name fallback
         const resolution = this._resolvePrerequisiteByUuid(prereq, 'feat', actor, pending);
 
@@ -1201,7 +1225,6 @@ export class PrerequisiteChecker {
         }
 
         // Not found by UUID/slug/name - check houserule grants (name-based, expected)
-        const requiredFeatName = resolveCanonicalFeatName(prereq.name || prereq.slug || prereq.uuid || '');
         const hasHouseruleFeat = this.getHouseruleGrantedFeats().some(f =>
             namesMatchLoosely(f, requiredFeatName)
         );
@@ -1440,7 +1463,13 @@ export class PrerequisiteChecker {
         const explicitChoice = pending?.selectedChoice || pending?.candidateChoice;
         if (explicitChoice) return explicitChoice;
 
-        const target = prereq?.weapon || prereq?.weaponGroup || prereq?.group || prereq?.value || prereq?.name || null;
+        const choice = prereq?.choice || prereq?.selectedChoice || prereq?.target || null;
+        const choiceTarget = choice
+            ? (choice.key || choice.value || choice.id || choice.group || choice.weaponGroup || choice.name || choice.label || choice)
+            : null;
+        let target = choiceTarget || prereq?.weapon || prereq?.weaponGroup || prereq?.group || prereq?.value || prereq?.name || null;
+        const scopedWeaponProficiency = String(target || '').match(/weapon\s+proficiency\s*\(([^)]+)\)/i)?.[1];
+        if (scopedWeaponProficiency) target = scopedWeaponProficiency;
         // Printed prerequisites such as "Proficient with Chosen Weapon" are not
         // a literal weapon group. During list legality they mean "any weapon
         // proficiency exists"; during choice validation the selected choice above
@@ -1569,6 +1598,7 @@ export class PrerequisiteChecker {
         for (const item of actor?.items || []) {
             if (item?.type === 'feat' || item?.type === 'class') add(item.name);
         }
+        add(collectCoreClassStartingFeatNames(actor, pending));
         add(pending?.selectedFeats);
         add(pending?.grantedFeats);
         add(pending?.grantedProficiencies);
@@ -2091,7 +2121,7 @@ export class PrerequisiteChecker {
         // Legacy SWSE data contains many table-state, equipment, force-power, and
         // species-trait phrases that are not modeled as owned feat items. Treat
         // them as advisory until a specific semantic parser exists.
-        SWSELogger.warn(`[CHARGEN PREREQ] Unrecognized prerequisite pattern: "${part}". ` +
+        SWSELogger.debug(`[CHARGEN PREREQ] Unrecognized prerequisite pattern: "${part}". ` +
             `Treating as advisory instead of a hard feat requirement.`);
 
         if (owningType === 'talent') {
@@ -2195,10 +2225,13 @@ export class PrerequisiteChecker {
         const pendingGrantedForceSensitivity = (pending.grantedFeats || []).some(grant =>
             matchesForceSensitivity(typeof grant === 'string' ? grant : grant?.name)
         );
+        const classDerivedForceSensitivity = collectCoreClassStartingFeatNames(actor, pending).some(name =>
+            matchesForceSensitivity(name)
+        );
         const hasHouseruleGrant = this.getHouseruleGrantedFeats().some(name =>
             matchesForceSensitivity(name)
         );
-        const met = hasForceSensitivityFeat || hasForceSensitiveClass || pendingForceSensitive || pendingForceSensitivityFeat || pendingGrantedForceSensitivity || hasHouseruleGrant;
+        const met = hasForceSensitivityFeat || hasForceSensitiveClass || pendingForceSensitive || pendingForceSensitivityFeat || pendingGrantedForceSensitivity || classDerivedForceSensitivity || hasHouseruleGrant;
         return {
             met,
             message: !met ? `Requires Force Sensitivity` : ''
@@ -2837,10 +2870,11 @@ function checkFeats(actor, requiredFeats, pending = {}) {
     // Add granted feats AND granted proficiencies from pending state (e.g., from class selection).
     // grantedProficiencies holds weapon/armor proficiency class grants which must satisfy feat prereqs.
     const grantedFeats = [
+        ...collectCoreClassStartingFeatNames(actor, pending),
         ...(pending.grantedFeats || []),
         ...(pending.grantedProficiencies || []),
     ];
-    const allFeats = [...actorFeats, ...grantedFeats.map(f => ({ name: typeof f === 'string' ? f : f.name }))];
+    const allFeats = [...actorFeats, ...grantedFeats.map(f => ({ name: typeof f === 'string' ? f : f?.name || f?.label || f?.value }))];
 
     const missing = [];
 
@@ -2891,10 +2925,11 @@ function checkFeatsAny(actor, requiredFeats, pending = {}) {
     // Add granted feats AND granted proficiencies from pending state (e.g., from class selection).
     // grantedProficiencies holds weapon/armor proficiency class grants which must satisfy feat prereqs.
     const grantedFeats = [
+        ...collectCoreClassStartingFeatNames(actor, pending),
         ...(pending.grantedFeats || []),
         ...(pending.grantedProficiencies || []),
     ];
-    const allFeats = [...actorFeats, ...grantedFeats.map(f => ({ name: typeof f === 'string' ? f : f.name }))];
+    const allFeats = [...actorFeats, ...grantedFeats.map(f => ({ name: typeof f === 'string' ? f : f?.name || f?.label || f?.value }))];
 
     for (const feat of requiredFeats) {
         // Handle flag-based checks
@@ -2957,19 +2992,168 @@ function getActorFeats(actor) {
     return feats;
 }
 
+function normalizeFeatMatchKey(value) {
+    return String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function featRequirementHasScope(value) {
+    return /\([^)]*\)/.test(String(value || ''));
+}
+
+function isWeaponProficiencyRequirement(name, prereq = {}) {
+    const text = String(name || prereq?.name || prereq?.featName || '').toLowerCase();
+    return text.includes('weapon proficiency') || String(prereq?.key || '').toLowerCase() === 'weapon-proficiency';
+}
+
+function isArmorProficiencyRequirement(name, prereq = {}) {
+    const text = String(name || prereq?.name || prereq?.featName || '').toLowerCase();
+    return text.includes('armor proficiency') || String(prereq?.key || '').toLowerCase() === 'armor-proficiency';
+}
+
+function canonicalizeStartingFeatName(value) {
+    const text = String(value?.name || value?.label || value?.value || value || '').trim();
+    if (!text) return '';
+    const key = normalizeFeatMatchKey(text);
+    const aliases = {
+        weaponproficiencysimple: 'Weapon Proficiency (Simple Weapons)',
+        weaponproficiencysimpleweapon: 'Weapon Proficiency (Simple Weapons)',
+        weaponproficiencysimpleweapons: 'Weapon Proficiency (Simple Weapons)',
+        weaponproficiencylightsaber: 'Weapon Proficiency (Lightsabers)',
+        weaponproficiencylightsabers: 'Weapon Proficiency (Lightsabers)',
+        weaponproficiencypistol: 'Weapon Proficiency (Pistols)',
+        weaponproficiencypistols: 'Weapon Proficiency (Pistols)',
+        weaponproficiencyrifle: 'Weapon Proficiency (Rifles)',
+        weaponproficiencyrifles: 'Weapon Proficiency (Rifles)',
+        weaponproficiencyheavyweapon: 'Weapon Proficiency (Heavy Weapons)',
+        weaponproficiencyheavyweapons: 'Weapon Proficiency (Heavy Weapons)',
+        weaponproficiencyadvancedmeleeweapon: 'Weapon Proficiency (Advanced Melee Weapons)',
+        weaponproficiencyadvancedmeleeweapons: 'Weapon Proficiency (Advanced Melee Weapons)',
+        armorproficiencylight: 'Armor Proficiency (Light)',
+        armorproficiencymedium: 'Armor Proficiency (Medium)',
+        armorproficiencyheavy: 'Armor Proficiency (Heavy)',
+        pointblankshot: 'Point-Blank Shot'
+    };
+    return aliases[key] || text;
+}
+
+function collectCoreClassStartingFeatNames(actor, pending = {}) {
+    const names = new Set();
+    const isDroid = actorIsDroidLike(actor, pending);
+    const add = (value) => {
+        const name = canonicalizeStartingFeatName(value);
+        if (!name) return;
+        if (isDroid && matchesForceSensitivity(name)) return;
+        names.add(name);
+    };
+
+    const addClassEntry = (entry) => {
+        if (!entry || Number(entry.level ?? 1) <= 0) return;
+        const model = resolveClassModel(entry);
+        const className = String(
+            model?.name || entry.name || entry.className || entry.classId || entry.id || ''
+        ).trim();
+        const classId = normalizeClassKey(model?.id || entry.classId || entry.id || className);
+        const classData = PROGRESSION_RULES?.classes?.[className]
+            || PROGRESSION_RULES?.classes?.[Object.keys(PROGRESSION_RULES?.classes || {}).find(key => normalizeClassKey(key) === classId)]
+            || null;
+
+        // Use every available SSOT for level-1 class route grants. Prestige
+        // prerequisites need to recognize grants whether the actor owns a feat
+        // item, stores it in progression data, or only carries a class item.
+        for (const feat of getClassAutoGrants(className)) add(feat);
+        for (const feat of classData?.startingFeats || []) add(feat);
+        for (const feat of model?.startingFeatures || []) add(feat);
+        for (const feat of model?.startingFeats || []) add(feat);
+        for (const feat of entry.system?.startingFeats || []) add(feat);
+        for (const feat of entry.system?.startingFeatures || []) add(feat);
+        for (const feat of entry.system?.grantedFeats || []) add(feat);
+        for (const feat of entry.system?.grantedProficiencies || []) add(feat);
+        for (const feat of entry.system?.grants?.startingFeats || []) add(feat);
+        for (const feat of entry.system?.grants?.grantedFeats || []) add(feat);
+        for (const feat of entry.system?.grants?.grantedProficiencies || []) add(feat);
+    };
+
+    for (const entry of collectBaseClassEntries(actor)) addClassEntry(entry);
+    const pendingClass = getPendingClassEntry(pending);
+    if (pendingClass) addClassEntry(pendingClass);
+
+    return Array.from(names);
+}
+
+function getFeatCandidateNames(entry) {
+    if (!entry) return [];
+    if (typeof entry === 'string') return [canonicalizeStartingFeatName(entry)];
+
+    const names = new Set();
+    const add = (value) => {
+        const text = canonicalizeStartingFeatName(value);
+        if (text) names.add(text);
+    };
+    add(entry.name || entry.label || entry.value || entry.id);
+
+    const baseName = extractBaseFeatName(entry.name || entry.label || '');
+    const selected = entry.system?.selectedChoice
+        ?? entry.system?.selectedChoices
+        ?? entry.selectedChoice
+        ?? entry.choice
+        ?? entry.choiceValue;
+    for (const choice of Array.isArray(selected) ? selected : [selected]) {
+        const choiceLabel = choice?.label || choice?.name || choice?.value || choice?.id || choice?.group || choice?.weapon || choice;
+        if (baseName && choiceLabel && !featRequirementHasScope(baseName)) {
+            add(`${baseName} (${choiceLabel})`);
+        }
+    }
+
+    return Array.from(names);
+}
+
+function featLikeMatchesRequirement(entry, requiredFeat) {
+    return hasFeatMatch([entry], requiredFeat);
+}
+
+function formatStructuredFeatRequirement(prereq = {}) {
+    const base = resolveCanonicalFeatName(prereq.name || prereq.featName || prereq.feat || '') || String(prereq.name || prereq.featName || '').trim();
+    const choice = prereq.choice || prereq.selectedChoice || prereq.selection || null;
+    const choiceName = choice?.name || choice?.label || choice?.value || choice?.key || choice?.id || prereq.choiceName || prereq.choiceKey || null;
+    if (!base || !choiceName) return base;
+
+    if (/^weapon\s+proficiency$/i.test(base)) return `Weapon Proficiency (${choiceName})`;
+    if (/^armor\s+proficiency$/i.test(base)) return `Armor Proficiency (${choiceName})`;
+    if (/^weapon\s+focus$/i.test(base)) return `Weapon Focus (${choiceName})`;
+    if (/^skill\s+focus$/i.test(base)) return `Skill Focus (${choiceName})`;
+    return `${base} (${choiceName})`;
+}
+
 /**
  * Check if a feat name matches, with support for scoped feats.
  * For example, "Weapon Focus (Melee Weapon)" will match any "Weapon Focus" feat.
  * @private
  */
 function hasFeatMatch(actorFeats, requiredFeat) {
-    // Extract base feat name if scoped (e.g., "Weapon Focus (Melee Weapon)" -> "Weapon Focus")
-    const baseFeat = extractBaseFeatName(requiredFeat);
-    const normalized = baseFeat.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const requirement = String(requiredFeat || '').trim();
+    if (!requirement) return true;
+
+    const requiredFull = normalizeFeatMatchKey(requirement);
+    const requiredBase = extractBaseFeatName(requirement);
+    const requiredBaseKey = normalizeFeatMatchKey(requiredBase);
+    const requiredIsScoped = featRequirementHasScope(requirement);
 
     return actorFeats.some(f => {
-        const fname = f.name ? f.name : f.toString();
-        return fname.toLowerCase().replace(/[^a-z0-9]/g, '') === normalized;
+        const candidateNames = getFeatCandidateNames(f);
+        if (candidateNames.some(name => normalizeFeatMatchKey(name) === requiredFull)) return true;
+
+        // Generic requirements like "Weapon Proficiency" or "Armor Proficiency"
+        // may be satisfied by any scoped instance. Scoped requirements must remain
+        // exact so "Weapon Proficiency (Pistols)" does not satisfy
+        // "Weapon Proficiency (Lightsabers)".
+        if (!requiredIsScoped) {
+            return candidateNames.some(name => {
+                const candidateBase = extractBaseFeatName(name);
+                return normalizeFeatMatchKey(candidateBase) === requiredBaseKey;
+            });
+        }
+
+        return false;
     });
 }
 
@@ -3097,14 +3281,16 @@ function checkTalents(actor, talentReq) {
         const matchingTalents = [];
 
         for (const talent of allTalents) {
-            // Normalize tree identity from various possible fields
-            const treeId = getCanonicalTalentTreeId(talent);
-            if (!treeId) {continue;}
+            // Normalize tree identity from every known field. Some imported or
+            // normalized talents carry system.tree as an array/object instead
+            // of a single string; every candidate token must be considered.
+            const treeIds = getCanonicalTalentTreeIds(talent);
+            if (!treeIds.length) {continue;}
 
             // Normalize required trees and compare
             for (const requiredTree of talentReq.trees) {
-                const requiredTreeId = normalizeTalentTreeId(requiredTree);
-                if (treeId === requiredTreeId) {
+                const requiredTreeIds = getCanonicalTalentTreeIds({ treeId: requiredTree });
+                if (requiredTreeIds.some(requiredTreeId => treeIds.includes(requiredTreeId))) {
                     matchingTalents.push(talent);
                     break;
                 }
@@ -3268,23 +3454,55 @@ function checkDroidSystems(actor, requiredSystems, pending = {}) {
  * Resolves tree identity from multiple possible field names.
  * @private
  */
+function normalizeTextTokens(value) {
+    if (value == null) return [];
+    if (Array.isArray(value)) return value.flatMap(entry => normalizeTextTokens(entry));
+    if (value instanceof Set) return Array.from(value).flatMap(entry => normalizeTextTokens(entry));
+    if (typeof value === 'object') {
+        const preferred = value.name ?? value.label ?? value.title ?? value.id ?? value.key ?? value.slug ?? value.value ?? value.treeId ?? value.sourceId;
+        if (preferred != null) return normalizeTextTokens(preferred);
+        return Object.values(value).flatMap(entry => normalizeTextTokens(entry));
+    }
+    const text = String(value).trim();
+    return text ? [text] : [];
+}
+
+/**
+ * Get canonical talent tree IDs from a talent.
+ * Resolves tree identity from multiple possible field names and shapes.
+ * @private
+ */
+function getCanonicalTalentTreeIds(talent) {
+    if (!talent) return [];
+
+    const candidates = [
+        talent.treeId,
+        talent.tree,
+        talent.treeName,
+        talent.category,
+        talent.sourceId,
+        talent.system?.treeId,
+        talent.system?.tree,
+        talent.system?.treeName,
+        talent.system?.talentTree,
+        talent.system?.talent_tree,
+        talent.system?.talentTreeId,
+        talent.system?.talent_tree_id,
+        talent.system?.category,
+        talent.system?.sourceId,
+        talent.system?.tags,
+    ];
+
+    const ids = new Set();
+    for (const token of normalizeTextTokens(candidates)) {
+        const normalized = normalizeTalentTreeId(token);
+        if (normalized) ids.add(normalized);
+    }
+    return Array.from(ids);
+}
+
 function getCanonicalTalentTreeId(talent) {
-    if (!talent) return null;
-
-    // Try various field names that might contain tree identity
-    const treeId =
-        talent.treeId ||
-        talent.system?.treeId ||
-        talent.system?.talentTree ||
-        talent.system?.talent_tree ||
-        talent.system?.category ||
-        talent.category ||
-        null;
-
-    if (!treeId) return null;
-
-    // Normalize the tree ID before returning
-    return normalizeTalentTreeId(treeId);
+    return getCanonicalTalentTreeIds(talent)[0] || null;
 }
 
 /**

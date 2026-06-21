@@ -11,7 +11,7 @@
  * - Chat output via SWSEChat
  */
 
-import { ACTIVE_SUBTYPES } from "./active-types.js";
+import { ACTIVE_SUBTYPES, normalizeActiveSubtype } from "./active-types.js";
 import { ActiveContractValidator } from "./active-contract.js";
 import { DurationEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/active/duration-engine.js";
 import { EffectResolver } from "/systems/foundryvtt-swse/scripts/engine/abilities/active/effect-resolver.js";
@@ -38,7 +38,9 @@ export class ActiveAdapter {
 
     ActiveContractValidator.validate(ability);
 
-    switch (ability.system.subType) {
+    const subType = normalizeActiveSubtype(ability.system.subType, ability.system.abilityMeta);
+
+    switch (subType) {
 
       case ACTIVE_SUBTYPES.EFFECT:
         this.handleEffect(actor, ability);

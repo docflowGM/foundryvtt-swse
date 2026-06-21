@@ -410,13 +410,9 @@ export class ClassStep extends ProgressionStepPlugin {
     shell.focusedItem = entry;
     shell.render();
 
-    // Speak class flavor text on focus, but do not block right-rail hydration.
-    const flavorText = entry.fantasy || entry.description || `${entry.name} is a powerful choice.`;
-    if (flavorText) {
-      void shell.mentorRail?.speak?.(flavorText, 'encouraging').catch(err => {
-        console.warn('[ClassStep] Non-blocking mentor speak failed:', err);
-      });
-    }
+    // MentorChoiceReactionRouter now owns focus reactions for class cards so the
+    // rail can use suggestion/prerequisite metadata instead of generic flavor.
+    // Keep this silent to avoid double-speaking and focus lag.
   }
 
   async onItemCommitted(id, shell) {

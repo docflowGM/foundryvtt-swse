@@ -38,7 +38,8 @@
       {{#each conceptLayout.progressionAudit.trainingLedgers as |ledger|}}
         <article class="swse-concept-info-card swse-concept-info-card--stat">
           <span>{{ledger.label}}</span>
-          <strong>{{ledger.filled}}/{{ledger.expected}}</strong>
+          <strong>{{ledger.valueLabel}}</strong>
+          {{#if ledger.detailLabel}}<small>{{ledger.detailLabel}}</small>{{/if}}
           <small>{{ledger.statusLabel}}</small>
           {{#if ledger.ambiguous}}<small>{{ledger.ambiguous}} unclassified</small>{{/if}}
         </article>

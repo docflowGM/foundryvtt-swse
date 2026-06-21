@@ -27,7 +27,7 @@
     ]
   },
   "summary": {
-    "totalFeats": 420,
+    "totalFeats": 405,
     "featTypeCounts": {
       "team": 13,
       "general": 325,
@@ -267,7 +267,6 @@
         "Dual Weapon Mastery II",
         "Dual Weapon Mastery III",
         "Duck and Cover",
-        "Educated",
         "Elder's Knowledge",
         "Elusive Target",
         "Erratic Target",
@@ -306,12 +305,9 @@
         "Grazing Shot",
         "Great Cleave",
         "Great Fortitude",
-        "Greater Weapon Focus",
-        "Greater Weapon Specialization",
         "Gunnery Specialist",
         "Halt",
         "Hard Target",
-        "Harm’s Way",
         "Hasty Modification",
         "Headstrong",
         "Heavy Hitter",
@@ -341,7 +337,6 @@
         "Impulsive Flight",
         "Increased Agility",
         "Indomitable Personality",
-        "Indomitable Will",
         "Informer",
         "Instinctive Attack",
         "Instinctive Defense",
@@ -362,7 +357,6 @@
         "Logic Upgrade: Tactician",
         "Long Haft Strike",
         "Low Profile",
-        "Lucky Shot",
         "Mandalorian Training",
         "Maniacal Charge",
         "Martial Arts I",
@@ -387,7 +381,6 @@
         "Natural Leader",
         "Never Surrender",
         "Nikto Survival",
-        "Noble Fencing Style",
         "Officer Candidacy Training",
         "Opportunistic Retreat",
         "Opportunistic Shooter",
@@ -419,7 +412,6 @@
         "Reactive Awareness",
         "Reactive Stealth",
         "Rebel Military Training",
-        "Recall",
         "Reckless Charge",
         "Recovering Surge",
         "Recurring Success",
@@ -466,7 +458,6 @@
         "Steadying Position",
         "Stealthy",
         "Strafe",
-        "Stunning Strike",
         "Superior Tech",
         "Suppression Fire",
         "Surgical Expertise",
@@ -505,7 +496,6 @@
         "Weapon Proficiency (Pistols)",
         "Weapon Proficiency (Rifles)",
         "Weapon Proficiency (Simple Weapons)",
-        "Weapon Specialization",
         "Whirlwind Attack",
         "Wicked Strike",
         "Wilderness First Aid",
@@ -532,7 +522,6 @@
           "Improved Damage Threshold",
           "Improved Defenses",
           "Indomitable Personality",
-          "Indomitable Will",
           "Ion Shielding",
           "Lightning Reflexes",
           "Never Surrender",
@@ -606,8 +595,6 @@
           "Grappling Strike",
           "Grazing Shot",
           "Great Cleave",
-          "Greater Weapon Focus",
-          "Greater Weapon Specialization",
           "Gunnery Specialist",
           "Halt",
           "Heavy Hitter",
@@ -626,7 +613,6 @@
           "Knock Prone",
           "Lightning Draw",
           "Long Haft Strike",
-          "Lucky Shot",
           "Mandalorian Training",
           "Maniacal Charge",
           "Martial Arts I",
@@ -673,7 +659,6 @@
           "Staggering Attack",
           "Steadying Position",
           "Strafe",
-          "Stunning Strike",
           "Suppression Fire",
           "Swarm",
           "Tactical Advantage",
@@ -687,7 +672,6 @@
           "Triple Crit Specialist",
           "Two-Weapon Fighting",
           "Weapon Focus",
-          "Weapon Specialization",
           "Wicked Strike",
           "Wounding Strike",
           "Zero Range"
@@ -765,7 +749,6 @@
           "Dreadful Countenance",
           "Droid Focus",
           "Droidcraft",
-          "Educated",
           "Elder's Knowledge",
           "Experienced Medic",
           "Expert Briber",
@@ -799,7 +782,6 @@
           "Officer Candidacy Training",
           "Quick Skill",
           "Rapport",
-          "Recall",
           "Recurring Success",
           "Resilient Talent",
           "Scavenger",
@@ -821,7 +803,6 @@
           "Feat of Strength",
           "Low Profile",
           "Mounted Combat",
-          "Noble Fencing Style",
           "Quick Draw",
           "Rapid Reaction",
           "Reactive Awareness",
@@ -845,7 +826,6 @@
           "Armor Proficiency (heavy)",
           "Armor Proficiency (light)",
           "Armor Proficiency (medium)",
-          "Harm’s Way",
           "Heroic Surge"
         ],
         "force": [
@@ -900,7 +880,6 @@
           "Improved Defenses",
           "Improved Opportunistic Trickery",
           "Indomitable Personality",
-          "Indomitable Will",
           "Ion Shielding",
           "Lightning Reflexes",
           "Martial Arts I",
@@ -935,7 +914,6 @@
           "Stand Tall",
           "Stay Up",
           "Steadying Position",
-          "Stunning Strike",
           "Surgical Expertise",
           "Surgical Precision",
           "Tool Frenzy",
@@ -1021,7 +999,6 @@
           "Dual Weapon Mastery II",
           "Dual Weapon Mastery III",
           "Duck and Cover",
-          "Educated",
           "Elusive Target",
           "Erratic Target",
           "Exotic Weapon Proficiency",
@@ -1050,12 +1027,9 @@
           "Grazing Shot",
           "Great Cleave",
           "Great Fortitude",
-          "Greater Weapon Focus",
-          "Greater Weapon Specialization",
           "Gunnery Specialist",
           "Halt",
           "Hard Target",
-          "Harm’s Way",
           "Headstrong",
           "Heavy Hitter",
           "Heavy Weapon Proficiency",
@@ -1080,7 +1054,6 @@
           "Impulsive Flight",
           "Increased Agility",
           "Indomitable Personality",
-          "Indomitable Will",
           "Instinctive Attack",
           "Instinctive Defense",
           "Intimidating Presence",
@@ -1097,7 +1070,6 @@
           "Logic Upgrade: Tactician",
           "Long Haft Strike",
           "Low Profile",
-          "Lucky Shot",
           "Mandalorian Training",
           "Maniacal Charge",
           "Martial Arts I",
@@ -1117,7 +1089,6 @@
           "Multi-Grab",
           "Multi-Targeting",
           "Natural Leader",
-          "Noble Fencing Style",
           "Opportunistic Retreat",
           "Opportunistic Shooter",
           "Opportunistic Trickery",
@@ -1177,7 +1148,6 @@
           "Steadying Position",
           "Stealthy",
           "Strafe",
-          "Stunning Strike",
           "Suppression Fire",
           "Surgical Precision",
           "Swarm",
@@ -1211,7 +1181,6 @@
           "Weapon Proficiency (Pistols)",
           "Weapon Proficiency (Rifles)",
           "Weapon Proficiency (Simple Weapons)",
-          "Weapon Specialization",
           "Whirlwind Attack",
           "Wicked Strike",
           "Withdrawal Strike",
@@ -1323,7 +1292,6 @@
           "Droidcraft",
           "Dual Weapon Mastery I",
           "Duck and Cover",
-          "Educated",
           "Elder's Knowledge",
           "Elusive Target",
           "Erratic Target",
@@ -1341,7 +1309,6 @@
           "Gearhead",
           "Great Fortitude",
           "Hard Target",
-          "Harm’s Way",
           "Hasty Modification",
           "Headstrong",
           "Heroic Surge",
@@ -1367,7 +1334,6 @@
           "Logic Upgrade: Skill Swap",
           "Logic Upgrade: Tactician",
           "Low Profile",
-          "Lucky Shot",
           "Master of Disguise",
           "Mechanical Martial Arts",
           "Metamorph",
@@ -1391,7 +1357,6 @@
           "Rapport",
           "Reactive Awareness",
           "Reactive Stealth",
-          "Recall",
           "Recurring Success",
           "Resilient Reflexes",
           "Resilient Talent",
@@ -1521,7 +1486,6 @@
           "Maniacal Charge",
           "Master of Disguise",
           "Natural Leader",
-          "Noble Fencing Style",
           "Officer Candidacy Training",
           "Rapport",
           "Silver Tongue",
@@ -1940,7 +1904,6 @@
         "Crush",
         "Fast Surge",
         "Force Boon",
-        "Force Focus",
         "Force Regimen Mastery",
         "Force Sensitivity",
         "Force Training",
@@ -1954,7 +1917,6 @@
         "Forceful Telekinesis",
         "Forceful Throw",
         "Forceful Vitality",
-        "Forceful Warrior",
         "Forceful Weapon",
         "Forceful Will",
         "Intuitive Initiative",
@@ -1968,7 +1930,6 @@
           "Crush",
           "Fast Surge",
           "Force Boon",
-          "Force Focus",
           "Force Regimen Mastery",
           "Force Sensitivity",
           "Force Training",
@@ -1981,7 +1942,6 @@
           "Forceful Telekinesis",
           "Forceful Throw",
           "Forceful Vitality",
-          "Forceful Warrior",
           "Forceful Weapon",
           "Forceful Will",
           "Intuitive Initiative",
@@ -1998,7 +1958,6 @@
         "Combat": [
           "Crush",
           "Fast Surge",
-          "Force Focus",
           "Force Training",
           "Forceful Blast",
           "Forceful Grip",
@@ -2010,7 +1969,6 @@
           "Forceful Telekinesis",
           "Forceful Throw",
           "Forceful Vitality",
-          "Forceful Warrior",
           "Forceful Weapon",
           "Forceful Will",
           "Keen Force Mind",
@@ -2031,7 +1989,6 @@
         "Skill": [
           "Crush",
           "Fast Surge",
-          "Force Focus",
           "Force Regimen Mastery",
           "Force Sensitivity",
           "Force Training",
@@ -2045,7 +2002,6 @@
           "Forceful Telekinesis",
           "Forceful Throw",
           "Forceful Vitality",
-          "Forceful Warrior",
           "Forceful Weapon",
           "Forceful Will",
           "Intuitive Initiative",
@@ -2070,7 +2026,6 @@
         "Use the Force": [
           "Crush",
           "Fast Surge",
-          "Force Focus",
           "Force Regimen Mastery",
           "Force Sensitivity",
           "Force Training",
@@ -2084,7 +2039,6 @@
           "Forceful Telekinesis",
           "Forceful Throw",
           "Forceful Vitality",
-          "Forceful Warrior",
           "Forceful Weapon",
           "Forceful Will",
           "Intuitive Initiative",
@@ -2181,7 +2135,6 @@
     "Force Slam",
     "Force Stun",
     "Grapple",
-    "Harm's Way",
     "Iron Will",
     "Move Object",
     "Sharp-Eyed",
@@ -2558,32 +2511,6 @@
       "sourcebook": "Jedi Academy Training Manual",
       "page": 30,
       "prerequisite": "Trained in Use the Force"
-    },
-    "Indomitable Will": {
-      "id": "0794112a41461b05",
-      "featType": "general",
-      "metadataCategory": "recovery",
-      "metadataTags": [
-        "mental",
-        "resilience",
-        "will"
-      ],
-      "packTags": [
-        "defender",
-        "feat-chain",
-        "noble",
-        "non-force",
-        "soldier",
-        "striker"
-      ],
-      "uiBroadTags": [
-        "Combat",
-        "Recovery"
-      ],
-      "uiSkillTags": [],
-      "sourcebook": "Galaxy at War",
-      "page": 26,
-      "prerequisite": "Wis 13"
     },
     "Wounding Strike": {
       "id": "07d3c95e72608e00",
@@ -3237,32 +3164,6 @@
       "page": 0,
       "prerequisite": "Trained in Mechanics"
     },
-    "Lucky Shot": {
-      "id": "18f535b84cff63c3",
-      "featType": "general",
-      "metadataCategory": "combat-offense",
-      "metadataTags": [
-        "combat",
-        "ranged",
-        "reroll"
-      ],
-      "packTags": [
-        "feat-chain",
-        "non-force",
-        "positioning",
-        "ranged",
-        "scout",
-        "soldier"
-      ],
-      "uiBroadTags": [
-        "Combat",
-        "Utility"
-      ],
-      "uiSkillTags": [],
-      "sourcebook": "Galaxy at War",
-      "page": 26,
-      "prerequisite": "Point Blank Shot"
-    },
     "Logic Upgrade: Self-Defense": {
       "id": "191aacaecaa92ce1",
       "featType": "general",
@@ -3293,34 +3194,6 @@
         "condition",
         "melee",
         "stagger"
-      ],
-      "packTags": [
-        "condition-removal",
-        "controller",
-        "feat-chain",
-        "melee",
-        "mobility",
-        "non-force",
-        "soldier",
-        "striker"
-      ],
-      "uiBroadTags": [
-        "Combat",
-        "Recovery"
-      ],
-      "uiSkillTags": [],
-      "sourcebook": "Galaxy at War",
-      "page": 27,
-      "prerequisite": "Base attack bonus +6"
-    },
-    "Stunning Strike": {
-      "id": "19ca8f89351e8fee",
-      "featType": "general",
-      "metadataCategory": "combat-offense",
-      "metadataTags": [
-        "combat",
-        "condition",
-        "melee"
       ],
       "packTags": [
         "condition-removal",
@@ -4554,29 +4427,6 @@
       "page": 87,
       "prerequisite": null
     },
-    "Noble Fencing Style": {
-      "id": "3b1c70b0f6844126",
-      "featType": "general",
-      "metadataCategory": "misc",
-      "metadataTags": [
-        "charisma",
-        "combat",
-        "style"
-      ],
-      "packTags": [
-        "feat-chain",
-        "noble",
-        "non-force"
-      ],
-      "uiBroadTags": [
-        "Combat",
-        "Social"
-      ],
-      "uiSkillTags": [],
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 88,
-      "prerequisite": "Weapon Finesse, Noble level 1"
-    },
     "Gearhead": {
       "id": "3b9b60551a3379ce",
       "featType": "general",
@@ -4600,30 +4450,6 @@
       "sourcebook": "Knights of the Old Republic Campaign Guide",
       "page": 26,
       "prerequisite": null
-    },
-    "Greater Weapon Specialization": {
-      "id": "3ca2ebe34da486a5",
-      "featType": "general",
-      "metadataCategory": "combat-offense",
-      "metadataTags": [
-        "advanced",
-        "damage",
-        "weapon-mastery"
-      ],
-      "packTags": [
-        "feat-chain",
-        "non-force",
-        "scaling",
-        "soldier",
-        "striker"
-      ],
-      "uiBroadTags": [
-        "Combat"
-      ],
-      "uiSkillTags": [],
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 87,
-      "prerequisite": "Weapon Specialization with selected weapon group, base attack bonus +12"
     },
     "Reactive Stealth": {
       "id": "3cd647b126f1d171",
@@ -5054,32 +4880,6 @@
       "sourcebook": "Scum and Villainy",
       "page": 22,
       "prerequisite": null
-    },
-    "Force Focus": {
-      "id": "44ddf3506444cbbd",
-      "featType": "force",
-      "metadataCategory": "force",
-      "metadataTags": [
-        "force",
-        "power-boost",
-        "specialization"
-      ],
-      "packTags": [
-        "feat-chain",
-        "force",
-        "jedi",
-        "striker"
-      ],
-      "uiBroadTags": [
-        "Combat",
-        "Skill"
-      ],
-      "uiSkillTags": [
-        "Use the Force"
-      ],
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 94,
-      "prerequisite": "Trained in Use the Force"
     },
     "Dodge": {
       "id": "45366d4f3a5e443d",
@@ -5853,50 +5653,6 @@
       "sourcebook": "Saga Edition Core Rulebook",
       "page": 86,
       "prerequisite": "Martial Arts I, Base Attack Bonus +3"
-    },
-    "Wicked Strike": {
-      "id": "5bef5e65e532ba7c",
-      "featType": "general",
-      "metadataCategory": "combat-offense",
-      "metadataTags": [
-        "melee",
-        "multiattack",
-        "tactical"
-      ],
-      "packTags": [
-        "non-force"
-      ],
-      "uiBroadTags": [
-        "Combat",
-        "Leadership"
-      ],
-      "uiSkillTags": [],
-      "sourcebook": "Scum and Villainy",
-      "page": 30,
-      "prerequisite": null
-    },
-    "Educated": {
-      "id": "5cc1216874c79087",
-      "featType": "general",
-      "metadataCategory": "utility",
-      "metadataTags": [
-        "bonus",
-        "knowledge",
-        "skill"
-      ],
-      "packTags": [
-        "noble",
-        "non-force",
-        "striker"
-      ],
-      "uiBroadTags": [
-        "Combat",
-        "Utility"
-      ],
-      "uiSkillTags": [],
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 86,
-      "prerequisite": null
     },
     "Droid Hunter": {
       "id": "5d17898fc9652370",
@@ -6854,30 +6610,6 @@
       "page": 0,
       "prerequisite": "Trained in Stealth"
     },
-    "Greater Weapon Focus": {
-      "id": "75ff82e2dd80091d",
-      "featType": "general",
-      "metadataCategory": "combat-offense",
-      "metadataTags": [
-        "accuracy",
-        "advanced",
-        "weapon-mastery"
-      ],
-      "packTags": [
-        "feat-chain",
-        "non-force",
-        "scaling",
-        "soldier",
-        "striker"
-      ],
-      "uiBroadTags": [
-        "Combat"
-      ],
-      "uiSkillTags": [],
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 87,
-      "prerequisite": "Weapon Focus with selected weapon group, base attack bonus +8"
-    },
     "Weapon Proficiency (Rifles)": {
       "id": "765ff8a34e58acac",
       "featType": "general",
@@ -7031,29 +6763,6 @@
       "sourcebook": "The Force Unleashed Campaign Guide",
       "page": 34,
       "prerequisite": "Trained in Use the Force, Force Grip"
-    },
-    "Weapon Specialization": {
-      "id": "7cd5ebe725910cb2",
-      "featType": "general",
-      "metadataCategory": "combat-offense",
-      "metadataTags": [
-        "combat",
-        "damage",
-        "weapon-mastery"
-      ],
-      "packTags": [
-        "feat-chain",
-        "non-force",
-        "soldier",
-        "striker"
-      ],
-      "uiBroadTags": [
-        "Combat"
-      ],
-      "uiSkillTags": [],
-      "sourcebook": "Saga Edition Core Rulebook",
-      "page": 88,
-      "prerequisite": "Soldier level 4, Weapon Focus with selected weapon group"
     },
     "Trench Warrior": {
       "id": "7d8366d0481d76e2",
@@ -9760,26 +9469,6 @@
       "page": 21,
       "prerequisite": null
     },
-    "Recall": {
-      "id": "c58e69ff5adb5e71",
-      "featType": "general",
-      "metadataCategory": "utility",
-      "metadataTags": [
-        "knowledge",
-        "reroll",
-        "skill"
-      ],
-      "packTags": [
-        "non-force"
-      ],
-      "uiBroadTags": [
-        "Utility"
-      ],
-      "uiSkillTags": [],
-      "sourcebook": "The Force Unleashed Campaign Guide",
-      "page": 36,
-      "prerequisite": null
-    },
     "Dual Weapon Mastery II": {
       "id": "c7c99a77ebee1c0c",
       "featType": "general",
@@ -10056,29 +9745,6 @@
       "sourcebook": "Saga Edition Core Rulebook",
       "page": 87,
       "prerequisite": "Int 13, Disarm"
-    },
-    "Harm’s Way": {
-      "id": "ce946668c5b57410",
-      "featType": "general",
-      "metadataCategory": null,
-      "metadataTags": [],
-      "packTags": [
-        "action-economy",
-        "feat-chain",
-        "non-force",
-        "positioning",
-        "soldier",
-        "striker",
-        "support"
-      ],
-      "uiBroadTags": [
-        "Combat",
-        "Utility"
-      ],
-      "uiSkillTags": [],
-      "sourcebook": "Galaxy at War",
-      "page": 25,
-      "prerequisite": "Base attack bonus +6"
     },
     "Multi-Targeting": {
       "id": "cefb9edb540745d6",
@@ -10591,34 +10257,6 @@
       "sourcebook": "Star Wars Saga Edition",
       "page": 0,
       "prerequisite": "Wookiee"
-    },
-    "Forceful Warrior": {
-      "id": "dbdacb522c14d7e1",
-      "featType": "force",
-      "metadataCategory": "force",
-      "metadataTags": [
-        "combat",
-        "force",
-        "melee"
-      ],
-      "packTags": [
-        "feat-chain",
-        "force",
-        "force-offense",
-        "jedi",
-        "melee",
-        "striker"
-      ],
-      "uiBroadTags": [
-        "Combat",
-        "Skill"
-      ],
-      "uiSkillTags": [
-        "Use the Force"
-      ],
-      "sourcebook": "The Force Unleashed Campaign Guide",
-      "page": 34,
-      "prerequisite": "Trained in Use the Force"
     },
     "Mighty Swing": {
       "id": "dd2c0e394cdf08ba",
@@ -11960,6 +11598,27 @@
       "sourcebook": "The Force Unleashed Campaign Guide",
       "page": 34,
       "prerequisite": "Trained in Use the Force"
+    },
+    "Wicked Strike": {
+      "id": "5bef5e65e532ba7c",
+      "featType": "general",
+      "metadataCategory": "combat-offense",
+      "metadataTags": [
+        "melee",
+        "multiattack",
+        "tactical"
+      ],
+      "packTags": [
+        "non-force"
+      ],
+      "uiBroadTags": [
+        "Combat",
+        "Leadership"
+      ],
+      "uiSkillTags": [],
+      "sourcebook": "Scum and Villainy",
+      "page": 30,
+      "prerequisite": null
     }
   }
 }

@@ -38,6 +38,17 @@
     <h3 class="talent-details__section-title">{{localize "SWSE.Progression.Common.Prerequisites"}}</h3>
     {{#if prerequisites}}
       <p class="talent-prerequisites__text">{{prerequisites}}</p>
+      {{#if prerequisiteLinks.length}}
+      <div class="prerequisite-link-list prerequisite-link-list--talent" aria-label="Clickable prerequisite talents">
+        {{#each prerequisiteLinks}}
+        <button type="button" class="prerequisite-jump prerequisite-jump--talent {{#unless isAvailable}}is-unavailable{{/unless}}" data-action="jump-talent-prerequisite" data-talent-id="{{id}}">
+          <i class="fa-solid {{#if isAvailable}}fa-route{{else}}fa-triangle-exclamation{{/if}}"></i>
+          <span>{{name}}</span>
+          {{#if treeName}}<small>{{treeName}}</small>{{/if}}
+        </button>
+        {{/each}}
+      </div>
+      {{/if}}
     {{else}}
       <p class="talent-prerequisites__text talent-prerequisites__text--none"><i class="fa-regular fa-circle"></i> {{localize "SWSE.Progression.Talent.Details.RootNode"}}</p>
     {{/if}}
@@ -55,7 +66,11 @@
     <h3 class="talent-details__section-title">{{localize "SWSE.Progression.Common.Path"}}</h3>
     <ol class="talent-path-list">
       {{#each prerequisitePath}}
-      <li class="{{#if isMissing}}is-missing{{/if}}"><span>{{name}}</span></li>
+      <li class="{{#if isMissing}}is-missing{{/if}}">
+        <button type="button" class="talent-path-jump" data-action="jump-talent-prerequisite" data-talent-id="{{id}}">
+          <span>{{name}}</span>
+        </button>
+      </li>
       {{/each}}
     </ol>
   </div>

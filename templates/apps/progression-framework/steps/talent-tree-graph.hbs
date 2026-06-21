@@ -1,5 +1,15 @@
 {{!-- Talent Planner (Stage 2) --}}
 <div class="talent-work-surface talent-stage-graph talent-planner-stage talent-planner-stage--{{viewMode}} talent-holomap-stage {{visualThemeClass}}">
+  {{#if navigationBanner}}
+  <div class="prerequisite-navigation-banner prerequisite-navigation-banner--{{navigationBanner.tone}} talent-prerequisite-navigation-banner">
+    <i class="fa-solid {{navigationBanner.icon}}"></i>
+    <div>
+      <strong>{{navigationBanner.title}}</strong>
+      <span>{{navigationBanner.message}}</span>
+    </div>
+  </div>
+  {{/if}}
+
   <div class="talent-graph-header talent-planner-header talent-planner-header--holomap">
     <div class="talent-graph-header__title-wrap">
       <div class="talent-browser-header__eyebrow">{{localize "SWSE.Progression.Talent.Stage.ActiveTree"}}</div>

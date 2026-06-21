@@ -1,6 +1,6 @@
 {
   "summary": {
-    "totalFeats": 423,
+    "totalFeats": 409,
     "categories": [
       "Uncategorized",
       "combat-defense",
@@ -82,7 +82,6 @@
         "Forest Stalker",
         "Fringe Benefits",
         "Gungan Weapon Master",
-        "Harm’s Way",
         "Heroic Surge",
         "Hijkata Training",
         "Hunter's Instincts",
@@ -153,7 +152,6 @@
         "Improved Damage Threshold",
         "Improved Defenses",
         "Indomitable Personality",
-        "Indomitable Will",
         "Ion Shielding",
         "Lightning Reflexes",
         "Never Surrender",
@@ -228,8 +226,6 @@
         "Grappling Strike",
         "Grazing Shot",
         "Great Cleave",
-        "Greater Weapon Focus",
-        "Greater Weapon Specialization",
         "Gunnery Specialist",
         "Halt",
         "Heavy Hitter",
@@ -248,7 +244,6 @@
         "Knock Prone",
         "Lightning Draw",
         "Long Haft Strike",
-        "Lucky Shot",
         "Mandalorian Training",
         "Maniacal Charge",
         "Martial Arts I",
@@ -295,7 +290,6 @@
         "Staggering Attack",
         "Steadying Position",
         "Strafe",
-        "Stunning Strike",
         "Suppression Fire",
         "Swarm",
         "Tactical Advantage",
@@ -309,7 +303,6 @@
         "Triple Crit Specialist",
         "Two-Weapon Fighting",
         "Weapon Focus",
-        "Weapon Specialization",
         "Wicked Strike",
         "Wounding Strike",
         "Zero Range"
@@ -390,7 +383,6 @@
         "Dreadful Countenance",
         "Droid Focus",
         "Droidcraft",
-        "Educated",
         "Elder's Knowledge",
         "Experienced Medic",
         "Expert Briber",
@@ -425,7 +417,6 @@
         "Officer Candidacy Training",
         "Quick Skill",
         "Rapport",
-        "Recall",
         "Recurring Success",
         "Resilient Talent",
         "Scavenger",
@@ -448,7 +439,6 @@
         "Deflect",
         "Fast Surge",
         "Force Boon",
-        "Force Focus",
         "Force Readiness",
         "Force Regimen Mastery",
         "Force Sensitivity",
@@ -462,7 +452,6 @@
         "Forceful Telekinesis",
         "Forceful Throw",
         "Forceful Vitality",
-        "Forceful Warrior",
         "Forceful Weapon",
         "Forceful Will",
         "Intuitive Initiative",
@@ -479,7 +468,6 @@
         "Feat of Strength",
         "Low Profile",
         "Mounted Combat",
-        "Noble Fencing Style",
         "Quick Draw",
         "Rapid Reaction",
         "Reactive Awareness",
@@ -598,7 +586,6 @@
         "Dual Weapon Mastery III",
         "Duck and Cover",
         "Echani Training",
-        "Educated",
         "Elder's Knowledge",
         "Elusive Target",
         "Erratic Target",
@@ -624,7 +611,6 @@
         "Focused Rage",
         "Follow Through",
         "Force Boon",
-        "Force Focus",
         "Force Readiness",
         "Force Regimen Mastery",
         "Force Sensitivity",
@@ -640,7 +626,6 @@
         "Forceful Telekinesis",
         "Forceful Throw",
         "Forceful Vitality",
-        "Forceful Warrior",
         "Forceful Weapon",
         "Forceful Will",
         "Forest Stalker",
@@ -661,13 +646,10 @@
         "Grazing Shot",
         "Great Cleave",
         "Great Fortitude",
-        "Greater Weapon Focus",
-        "Greater Weapon Specialization",
         "Gungan Weapon Master",
         "Gunnery Specialist",
         "Halt",
         "Hard Target",
-        "Harm’s Way",
         "Hasty Modification",
         "Headstrong",
         "Heavy Hitter",
@@ -702,7 +684,6 @@
         "Increased Agility",
         "Increased Resistance",
         "Indomitable Personality",
-        "Indomitable Will",
         "Informer",
         "Instinctive Attack",
         "Instinctive Defense",
@@ -732,7 +713,6 @@
         "Logic Upgrade: Tactician",
         "Long Haft Strike",
         "Low Profile",
-        "Lucky Shot",
         "Mandalorian Training",
         "Maniacal Charge",
         "Martial Arts I",
@@ -764,7 +744,6 @@
         "Never Surrender",
         "Nikto Survival",
         "Nimble Team",
-        "Noble Fencing Style",
         "Officer Candidacy Training",
         "Opportunistic Retreat",
         "Opportunistic Shooter",
@@ -802,7 +781,6 @@
         "Reactive Stealth",
         "Read the Winds",
         "Rebel Military Training",
-        "Recall",
         "Reckless Charge",
         "Recovering Surge",
         "Recurring Success",
@@ -860,7 +838,6 @@
         "Strafe",
         "Strong Bellow",
         "Strong in the Force",
-        "Stunning Strike",
         "Superior Tech",
         "Suppression Fire",
         "Sure Climber",
@@ -913,7 +890,6 @@
         "Weapon Proficiency (Pistols)",
         "Weapon Proficiency (Rifles)",
         "Weapon Proficiency (Simple Weapons)",
-        "Weapon Specialization",
         "Whirlwind Attack",
         "Wicked Strike",
         "Wilderness First Aid",
@@ -1024,7 +1000,6 @@
         "Dual Weapon Mastery III",
         "Duck and Cover",
         "Echani Training",
-        "Educated",
         "Elder's Knowledge",
         "Elusive Target",
         "Erratic Target",
@@ -1050,7 +1025,6 @@
         "Focused Rage",
         "Follow Through",
         "Force Boon",
-        "Force Focus",
         "Force Readiness",
         "Force Regimen Mastery",
         "Force Sensitivity",
@@ -1066,7 +1040,6 @@
         "Forceful Telekinesis",
         "Forceful Throw",
         "Forceful Vitality",
-        "Forceful Warrior",
         "Forceful Weapon",
         "Forceful Will",
         "Forest Stalker",
@@ -1087,13 +1060,10 @@
         "Grazing Shot",
         "Great Cleave",
         "Great Fortitude",
-        "Greater Weapon Focus",
-        "Greater Weapon Specialization",
         "Gungan Weapon Master",
         "Gunnery Specialist",
         "Halt",
         "Hard Target",
-        "Harm’s Way",
         "Hasty Modification",
         "Headstrong",
         "Heavy Hitter",
@@ -1128,7 +1098,6 @@
         "Increased Agility",
         "Increased Resistance",
         "Indomitable Personality",
-        "Indomitable Will",
         "Informer",
         "Instinctive Attack",
         "Instinctive Defense",
@@ -1158,7 +1127,6 @@
         "Logic Upgrade: Tactician",
         "Long Haft Strike",
         "Low Profile",
-        "Lucky Shot",
         "Mandalorian Training",
         "Maniacal Charge",
         "Martial Arts I",
@@ -1190,7 +1158,6 @@
         "Never Surrender",
         "Nikto Survival",
         "Nimble Team",
-        "Noble Fencing Style",
         "Officer Candidacy Training",
         "Opportunistic Retreat",
         "Opportunistic Shooter",
@@ -1228,7 +1195,6 @@
         "Reactive Stealth",
         "Read the Winds",
         "Rebel Military Training",
-        "Recall",
         "Reckless Charge",
         "Recovering Surge",
         "Recurring Success",
@@ -1286,7 +1252,6 @@
         "Strafe",
         "Strong Bellow",
         "Strong in the Force",
-        "Stunning Strike",
         "Superior Tech",
         "Suppression Fire",
         "Sure Climber",
@@ -1339,7 +1304,6 @@
         "Weapon Proficiency (Pistols)",
         "Weapon Proficiency (Rifles)",
         "Weapon Proficiency (Simple Weapons)",
-        "Weapon Specialization",
         "Whirlwind Attack",
         "Wicked Strike",
         "Wilderness First Aid",
@@ -1577,21 +1541,6 @@
       "prerequisites": [],
       "description": "{'value': 'Catch a <a class=\"mw-redirect\" href=\"/wiki/Second_Wind\" title=\"Second Wind\">Second Wind</a> as a <a class=\"mw-redirect\" href=\"/wiki/Free_Action\" title=\"Free Action\">Free Action</a> on your ",
       "shortSummary": "Catch a Second Wind as a Free Action on your turn."
-    },
-    {
-      "id": "0794112a41461b05",
-      "name": "Indomitable Will",
-      "category": "recovery",
-      "source": "Unknown",
-      "role": "general",
-      "tags": [
-        "resilience",
-        "will",
-        "mental"
-      ],
-      "prerequisites": [],
-      "description": "{}",
-      "shortSummary": "You gain a +2 bonus on Will Defense against mind-affecting effects and may reroll a failed Will Defense check once per encounter."
     },
     {
       "id": "07d3c95e72608e00",
@@ -1960,21 +1909,6 @@
       "shortSummary": "Gain bonuses on Mechanics checks when near allies."
     },
     {
-      "id": "18f535b84cff63c3",
-      "name": "Lucky Shot",
-      "category": "combat-offense",
-      "source": "Unknown",
-      "role": "general",
-      "tags": [
-        "ranged",
-        "reroll",
-        "combat"
-      ],
-      "prerequisites": [],
-      "description": "{}",
-      "shortSummary": "Once per encounter, you may reroll a ranged attack roll and take the better result."
-    },
-    {
       "id": "191aacaecaa92ce1",
       "name": "Logic Upgrade: Self-Defense",
       "category": "combat-defense",
@@ -2002,21 +1936,6 @@
       ],
       "prerequisites": [],
       "description": "{'value': 'Impose penalties to enemy <a href=\"/wiki/Skill_Checks\" title=\"Skill Checks\">Skill Checks</a> with a successful attack.'}",
-      "shortSummary": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack."
-    },
-    {
-      "id": "19ca8f89351e8fee",
-      "name": "Stunning Strike",
-      "category": "combat-offense",
-      "source": "Unknown",
-      "role": "general",
-      "tags": [
-        "melee",
-        "condition",
-        "combat"
-      ],
-      "prerequisites": [],
-      "description": "{}",
       "shortSummary": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack."
     },
     {
@@ -2760,21 +2679,6 @@
       "shortSummary": "Trade attack bonus on melee attacks for a dodge bonus to Reflex Defense."
     },
     {
-      "id": "3b1c70b0f6844126",
-      "name": "Noble Fencing Style",
-      "category": "misc",
-      "source": "Unknown",
-      "role": "general",
-      "tags": [
-        "combat",
-        "charisma",
-        "style"
-      ],
-      "prerequisites": [],
-      "description": "{}",
-      "shortSummary": "When wielding a weapon with Weapon Finesse, you may use your Charisma modifier instead of Strength for attack rolls."
-    },
-    {
       "id": "3b9b60551a3379ce",
       "name": "Gearhead",
       "category": "utility",
@@ -2788,21 +2692,6 @@
       "prerequisites": [],
       "description": "{'value': 'Make <a href=\"/wiki/Mechanics\" title=\"Mechanics\">Mechanics</a> and <a href=\"/wiki/Use_Computer\" title=\"Use Computer\">Use Computer</a> checks quickly.'}",
       "shortSummary": "Make Mechanics and Use Computer checks quickly."
-    },
-    {
-      "id": "3ca2ebe34da486a5",
-      "name": "Greater Weapon Specialization",
-      "category": "combat-offense",
-      "source": "Unknown",
-      "role": "general",
-      "tags": [
-        "weapon-mastery",
-        "damage",
-        "advanced"
-      ],
-      "prerequisites": [],
-      "description": "{}",
-      "shortSummary": "You gain a +2 bonus on damage rolls with the selected weapon group."
     },
     {
       "id": "3cd647b126f1d171",
@@ -3054,21 +2943,6 @@
       "prerequisites": [],
       "description": "{'value': 'You dive for <a href=\"/wiki/Cover\" title=\"Cover\">Cover</a> when you avoid <a href=\"/wiki/Area_Attacks\" title=\"Area Attacks\">Area Attacks</a>.'}",
       "shortSummary": "You dive for Cover when you avoid Area Attacks."
-    },
-    {
-      "id": "44ddf3506444cbbd",
-      "name": "Force Focus",
-      "category": "force",
-      "source": "Unknown",
-      "role": "general",
-      "tags": [
-        "force",
-        "power-boost",
-        "specialization"
-      ],
-      "prerequisites": [],
-      "description": "{}",
-      "shortSummary": "You gain a +2 bonus on Use the Force checks made to activate a specific Force power you select when taking this feat."
     },
     {
       "id": "45366d4f3a5e443d",
@@ -3563,21 +3437,6 @@
       "prerequisites": [],
       "description": "{'value': 'Gain extra attack on a second target upon damaging the first target.'}",
       "shortSummary": "Gain extra attack on a second target upon damaging the first target."
-    },
-    {
-      "id": "5cc1216874c79087",
-      "name": "Educated",
-      "category": "utility",
-      "source": "Unknown",
-      "role": "general",
-      "tags": [
-        "skill",
-        "knowledge",
-        "bonus"
-      ],
-      "prerequisites": [],
-      "description": "{}",
-      "shortSummary": "Choose two Knowledge skills."
     },
     {
       "id": "5d17898fc9652370",
@@ -4171,21 +4030,6 @@
       "shortSummary": "Gain bonuses on Stealth checks when near allies."
     },
     {
-      "id": "75ff82e2dd80091d",
-      "name": "Greater Weapon Focus",
-      "category": "combat-offense",
-      "source": "Unknown",
-      "role": "general",
-      "tags": [
-        "weapon-mastery",
-        "accuracy",
-        "advanced"
-      ],
-      "prerequisites": [],
-      "description": "{}",
-      "shortSummary": "You gain a +1 bonus on attack rolls with the selected weapon group."
-    },
-    {
       "id": "765ff8a34e58acac",
       "name": "Weapon Proficiency (Rifles)",
       "category": "combat-defense",
@@ -4270,21 +4114,6 @@
       "prerequisites": [],
       "description": "{'value': 'Deal <a class=\"mw-redirect\" href=\"/wiki/Unarmed\" title=\"Unarmed\">Unarmed</a> or Claw damage to a <a class=\"mw-redirect\" href=\"/wiki/Pinned\" title=\"Pinned\">Pinned</a> opponent.'}",
       "shortSummary": "Deal Unarmed or Claw damage to a Pinned opponent."
-    },
-    {
-      "id": "7cd5ebe725910cb2",
-      "name": "Weapon Specialization",
-      "category": "combat-offense",
-      "source": "Unknown",
-      "role": "general",
-      "tags": [
-        "weapon-mastery",
-        "damage",
-        "combat"
-      ],
-      "prerequisites": [],
-      "description": "{}",
-      "shortSummary": "You gain a +2 bonus on damage rolls with the selected weapon group."
     },
     {
       "id": "7d8366d0481d76e2",
@@ -6000,21 +5829,6 @@
       "shortSummary": "Allow an ally to deal more damage when you aid their attack."
     },
     {
-      "id": "c58e69ff5adb5e71",
-      "name": "Recall",
-      "category": "utility",
-      "source": "Unknown",
-      "role": "general",
-      "tags": [
-        "skill",
-        "knowledge",
-        "reroll"
-      ],
-      "prerequisites": [],
-      "description": "{'value': 'Reroll <a href=\"/wiki/Knowledge\" title=\"Knowledge\">Knowledge</a> skill check, keeping the better result.'}",
-      "shortSummary": "Reroll Knowledge skill check, keeping the better result."
-    },
-    {
       "id": "c7c99a77ebee1c0c",
       "name": "Dual Weapon Mastery II",
       "category": "combat-offense",
@@ -6193,17 +6007,6 @@
       "prerequisites": [],
       "description": "{'value': 'Gain +5 bonus on melee attacks to <a href=\"/wiki/Disarm\" title=\"Disarm\">Disarm</a> an opponent.'}",
       "shortSummary": "Gain +5 bonus on melee attacks to Disarm an opponent."
-    },
-    {
-      "id": "ce946668c5b57410",
-      "name": "Harm’s Way",
-      "category": "Uncategorized",
-      "source": "Unknown",
-      "role": "general",
-      "tags": [],
-      "prerequisites": [],
-      "description": "{}",
-      "shortSummary": "As a reaction, you may take damage dealt to an adjacent ally instead of them."
     },
     {
       "id": "cefb9edb540745d6",
@@ -6551,21 +6354,6 @@
       "prerequisites": [],
       "description": "{'value': 'Gain a bonus to damage rolls when you spend a <a class=\"mw-redirect\" href=\"/wiki/Force_Point\" title=\"Force Point\">Force Point</a> on a <a href=\"/wiki/Bowcaster\" title=\"Bowcaster\">Bowcaster<",
       "shortSummary": "Gain a bonus to damage rolls when you spend a Force Point on a Bowcaster attack."
-    },
-    {
-      "id": "dbdacb522c14d7e1",
-      "name": "Forceful Warrior",
-      "category": "force",
-      "source": "Unknown",
-      "role": "general",
-      "tags": [
-        "force",
-        "melee",
-        "combat"
-      ],
-      "prerequisites": [],
-      "description": "{}",
-      "shortSummary": "You gain a +2 bonus on melee attack rolls made while using a Force power."
     },
     {
       "id": "dd2c0e394cdf08ba",

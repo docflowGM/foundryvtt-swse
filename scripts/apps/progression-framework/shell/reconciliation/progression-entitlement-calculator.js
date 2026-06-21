@@ -29,7 +29,7 @@ export class ProgressionEntitlementCalculator {
       ? buildClassSummaries(actor)
       : [];
     const totalLevel = typeof getActorTotalLevel === 'function'
-      ? getActorTotalLevel(actor)
+      ? getActorTotalLevel(actor, internalClassSummaries)
       : 0;
     const totalHeroicLevel = typeof getActorHeroicLevel === 'function'
       ? getActorHeroicLevel(actor, internalClassSummaries)
@@ -41,15 +41,15 @@ export class ProgressionEntitlementCalculator {
     const generalFeats = typeof buildGeneralFeatSlots === 'function'
       ? buildGeneralFeatSlots(actor, totalHeroicLevel)
       : [];
-    const heroicTalents = typeof buildHeroicTalentSlots === 'function'
-      ? buildHeroicTalentSlots(actor, totalHeroicLevel)
-      : [];
     const classChoices = typeof buildClassChoiceSlots === 'function'
       ? buildClassChoiceSlots(actor, internalClassSummaries)
       : [];
 
     const classFeats = classChoices.filter(slot => slot?.type === 'class-feat');
     const classTalents = classChoices.filter(slot => slot?.type === 'class-talent');
+    const heroicTalents = classTalents.length > 0
+      ? []
+      : (typeof buildHeroicTalentSlots === 'function' ? buildHeroicTalentSlots(actor, totalHeroicLevel) : []);
     const derivedStats = typeof buildDerivedStatsAudit === 'function'
       ? buildDerivedStatsAudit(actor, internalClassSummaries, { totalLevel, totalHeroicLevel })
       : { status: 'unavailable', rows: [], hasIssues: false, issueCount: 0 };

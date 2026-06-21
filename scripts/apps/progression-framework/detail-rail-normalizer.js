@@ -250,9 +250,12 @@ function normalizeDescriptionCandidate(candidate) {
 
 function cleanDescriptionString(value) {
   const cleaned = String(value)
+    .replace(/<p[^>]*>\s*<em>\s*Source URL:\s*https?:\/\/[^<]+<\/em>\s*<\/p>/gi, '')
+    .replace(/<em>\s*Source URL:\s*https?:\/\/[^<]+<\/em>/gi, '')
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<\/p>\s*<p[^>]*>/gi, '\n\n')
     .replace(/<[^>]+>/g, '')
+    .replace(/(?:^|\n)\s*Source URL:\s*https?:\/\/\S+\s*/gi, '\n')
     .replace(/&nbsp;/g, ' ')
     .replace(/&amp;/g, '&')
     .replace(/&lt;/g, '<')

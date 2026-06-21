@@ -14,6 +14,24 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
 import { PrestigeLayerRegistry } from "/systems/foundryvtt-swse/scripts/engine/prestige/prestige-layer-registry.js";
 
+function normalizeTextTokens(value) {
+    if (value == null) return [];
+    if (Array.isArray(value)) return value.flatMap(entry => normalizeTextTokens(entry));
+    if (value instanceof Set) return Array.from(value).flatMap(entry => normalizeTextTokens(entry));
+    if (typeof value === 'object') {
+        const preferred = value.name ?? value.label ?? value.title ?? value.id ?? value.key ?? value.slug ?? value.value;
+        if (preferred != null) return normalizeTextTokens(preferred);
+        return Object.values(value).flatMap(entry => normalizeTextTokens(entry));
+    }
+    const text = String(value).trim();
+    return text ? [text] : [];
+}
+
+function normalizeLowerTextTokens(value) {
+    return normalizeTextTokens(value).map(token => token.toLowerCase().trim()).filter(Boolean);
+}
+
+
 // Will be populated at runtime from BuildIntent
 let PRESTIGE_SIGNALS = {};
 
@@ -137,9 +155,10 @@ export class PrestigeAffinityEngine {
 
             // Check talent trees
             for (const tree of normalizedSignals.talentTrees) {
-                if (state.talentTrees.has(tree.toLowerCase())) {
+                const signalTrees = normalizeLowerTextTokens(tree);
+                if (signalTrees.some(signalTree => state.talentTrees.has(signalTree))) {
                     score += normalizedSignals.weight.talents || 2;
-                    matches.talentTrees.push(tree);
+                    matches.talentTrees.push(...(signalTrees.length ? signalTrees : normalizeTextTokens(tree)));
                 }
             }
 

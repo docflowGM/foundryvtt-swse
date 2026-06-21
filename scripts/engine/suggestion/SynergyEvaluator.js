@@ -1,3 +1,4 @@
+
 /**
  * SynergyEvaluator
  *
@@ -10,6 +11,24 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { CLASS_SYNERGY_DATA } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassSuggestionEngine.js";
+
+function normalizeTextTokens(value) {
+  if (value == null) return [];
+  if (Array.isArray(value)) return value.flatMap(entry => normalizeTextTokens(entry));
+  if (value instanceof Set) return Array.from(value).flatMap(entry => normalizeTextTokens(entry));
+  if (typeof value === 'object') {
+    const preferred = value.name ?? value.label ?? value.title ?? value.id ?? value.key ?? value.slug ?? value.value;
+    if (preferred != null) return normalizeTextTokens(preferred);
+    return Object.values(value).flatMap(entry => normalizeTextTokens(entry));
+  }
+  const text = String(value).trim();
+  return text ? [text] : [];
+}
+
+function normalizeLowerTextTokens(value) {
+  return normalizeTextTokens(value).map(token => token.toLowerCase().trim()).filter(Boolean);
+}
+
 
 // Weights for the 5 signals
 const SYNERGY_WEIGHTS = {
@@ -226,8 +245,8 @@ export class SynergyEvaluator {
       }
 
       // If item has matching talent tree, high score
-      const itemTalentTree = item.system?.tree?.toLowerCase();
-      if (itemTalentTree && ownedTalents.has(itemTalentTree)) {
+      const itemTalentTrees = normalizeLowerTextTokens(item.system?.tree ?? item.system?.talent_tree ?? item.system?.treeId);
+      if (itemTalentTrees.some(tree => ownedTalents.has(tree))) {
         return 0.9;
       }
 

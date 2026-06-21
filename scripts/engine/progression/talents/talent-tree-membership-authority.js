@@ -236,6 +236,25 @@ function tryTalentSideMembership(tree) {
   return resolved;
 }
 
+function isStrictRegistryTree(tree, registryEntry = null) {
+  const keys = [
+    tree?.id,
+    tree?.sourceId,
+    tree?.key,
+    tree?.name,
+    tree?.displayName,
+    registryEntry?.id,
+    registryEntry?.key,
+    registryEntry?.name,
+    registryEntry?.displayName,
+  ].map(normalizeTalentTreeKey).filter(Boolean);
+
+  // Lightsaber Forms is polluted in older talent-side metadata by prerequisite
+  // links from Lightsaber Combat. Its generated registry is the SSOT for owned
+  // membership; external prerequisite talents are navigable links, not members.
+  return keys.some(key => key === 'lightsaber-forms');
+}
+
 function tryRegistryLookup(registry, tree) {
   if (!tree || !registry) return null;
 
@@ -380,6 +399,22 @@ export async function getTalentMembership(tree) {
       const talent = resolveTalentReference(talentRef);
       if (talent) registryResolved.push(talent);
     }
+
+    if (isStrictRegistryTree(tree, registryEntry) && registryResolved.length > 0) {
+      const strictSeen = new Set();
+      const strictList = [];
+      const strictStats = {};
+      mergeTalentList(strictList, registryResolved, 'registry-lookup-strict', strictSeen, strictStats);
+      emitMembershipAudit(tree, {
+        sourceStats: strictStats,
+        claimedRefs,
+        missingClaimRefs: claimedRefs.filter(ref => !resolveTalentReference(ref)),
+        resolvedCount: strictList.length,
+        resolvedTalents: strictList,
+      });
+      return strictList;
+    }
+
     mergeTalentList(merged, registryResolved, 'registry-lookup', seen, sourceStats);
   }
 

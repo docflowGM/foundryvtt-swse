@@ -41,7 +41,17 @@
       </div>
     </div>
 
-    <button type="button" class="suite-action suite-action--alchemy" data-action="open-force-alchemy-workbench" title="Open the Force Artifact / Sith Alchemy Workbench">&#9959; Sith Alchemy</button>
+    {{#if conceptLayout.force.forceSuite.forceTalentActions.forceAlchemy.available}}
+      {{#each conceptLayout.force.forceSuite.forceTalentActions.forceAlchemy.launches as |launch|}}
+        <button type="button"
+                class="suite-action suite-action--alchemy"
+                data-action="open-force-alchemy-workbench"
+                data-rite-id="{{launch.riteId}}"
+                data-category="{{launch.category}}"
+                data-launch-source="force-suite-talent-button"
+                title="{{launch.summary}}">&#9959; {{launch.actionLabel}}</button>
+      {{/each}}
+    {{/if}}
     <div class="suite-badge">◈ Force Suite</div>
   </section>
 
@@ -56,7 +66,17 @@
         <span class="force-alchemy-status-panel__eyebrow">Ritual State</span>
         <strong>Force Artifacts &amp; Sith Alchemy</strong>
       </div>
-      <button type="button" class="suite-action suite-action--alchemy" data-action="open-force-alchemy-workbench" title="Open the Force Artifact / Sith Alchemy Workbench">Open Workbench</button>
+      {{#with conceptLayout.force.forceSuite.forceTalentActions.forceAlchemy.primary as |primaryLaunch|}}
+        <button type="button"
+                class="suite-action suite-action--alchemy"
+                data-action="open-force-alchemy-workbench"
+                data-rite-id="{{primaryLaunch.riteId}}"
+                data-category="{{primaryLaunch.category}}"
+                data-launch-source="force-suite-status-panel"
+                title="{{primaryLaunch.summary}}">Open Workbench</button>
+      {{else}}
+        <button type="button" class="suite-action suite-action--alchemy" data-action="open-force-alchemy-workbench" title="Open the Force Artifact / Sith Alchemy Workbench">Open Workbench</button>
+      {{/with}}
     </header>
 
     {{#if conceptLayout.force.forceSuite.forceAlchemy.hasActive}}

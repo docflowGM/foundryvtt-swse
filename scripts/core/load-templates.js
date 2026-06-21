@@ -372,6 +372,7 @@ export const SWSE_TEMPLATES = [
   // GM Datapad shared-shell surfaces
   // ==============================
   'systems/foundryvtt-swse/templates/apps/gm-datapad.hbs',
+  'systems/foundryvtt-swse/templates/apps/gm-datapad/partials/sidebar.hbs',
   'systems/foundryvtt-swse/templates/apps/gm-datapad/partials/dock.hbs',
   'systems/foundryvtt-swse/templates/apps/gm-datapad/partials/surface-toolbar.hbs',
   'systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/home.hbs',

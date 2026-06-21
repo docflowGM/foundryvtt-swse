@@ -402,9 +402,10 @@ export class ProgressionFinalizer {
     }
 
     const increases = attr?.increases || {};
+    const maxPerAbility = ProgressionRules.getAbilityIncreaseAllocationMode?.() === 'allow_stacked_two' ? 2 : 1;
     const normalized = {};
     for (const key of abilityKeys) {
-      const delta = Math.max(0, Math.min(1, Number(increases?.[key] || 0) || 0));
+      const delta = Math.max(0, Math.min(maxPerAbility, Number(increases?.[key] || 0) || 0));
       if (delta <= 0) continue;
       const currentBase = Number(actor?.system?.attributes?.[key]?.base ?? actor?.system?.abilities?.[key]?.base ?? actor?.system?.abilities?.[key]?.value ?? 10) || 10;
       set[`system.attributes.${key}.base`] = currentBase + delta;
@@ -635,12 +636,14 @@ export class ProgressionFinalizer {
       const manifest = buildLevelUpEntitlementManifest(sessionState.actor, sessionState.progressionSession);
       if (manifest.abilityIncreases.required) {
         const increases = sessionState.progressionSession?.draftSelections?.attributes?.increases || {};
-        const selectedAbilityKeys = Object.entries(increases)
-          .filter(([, value]) => Number(value || 0) > 0)
-          .map(([key]) => key);
-        const hasInvalidStack = Object.values(increases).some((value) => Number(value || 0) > 1);
-        if (selectedAbilityKeys.length !== manifest.abilityIncreases.count || hasInvalidStack) {
-          throw new Error(`Level-up incomplete: choose exactly ${manifest.abilityIncreases.count} different ability increases`);
+        const totalAllocated = Object.values(increases).reduce((sum, value) => sum + Math.max(0, Number(value || 0) || 0), 0);
+        const allowStacked = ProgressionRules.getAbilityIncreaseAllocationMode?.() === 'allow_stacked_two';
+        const hasInvalidStack = !allowStacked && Object.values(increases).some((value) => Number(value || 0) > 1);
+        const hasTooMuchStack = allowStacked && Object.values(increases).some((value) => Number(value || 0) > manifest.abilityIncreases.count);
+        if (totalAllocated !== manifest.abilityIncreases.count || hasInvalidStack || hasTooMuchStack) {
+          throw new Error(allowStacked
+            ? `Level-up incomplete: allocate exactly ${manifest.abilityIncreases.count} ability increase points`
+            : `Level-up incomplete: choose exactly ${manifest.abilityIncreases.count} different ability increases`);
         }
       }
       if (manifest.multiclassStartingFeat.required) {
@@ -1009,13 +1012,14 @@ export class ProgressionFinalizer {
     }
 
     // Canonical stored ability path is system.abilities.<key>.base.
-    // Chargen writes final assigned scores. Level-up applies RAW +1 deltas to
-    // exactly two different abilities and never overwrites the entire ability map.
+    // Chargen writes final assigned scores. Level-up applies +1 deltas under
+    // the configured allocation rule and never overwrites the entire ability map.
     const attrMap = { strength: 'str', dexterity: 'dex', constitution: 'con', intelligence: 'int', wisdom: 'wis', charisma: 'cha', str: 'str', dex:'dex', con:'con', int:'int', wis:'wis', cha:'cha' };
     if (sessionState.mode === 'levelup' && attr?.mode === 'levelup-ability-increase') {
       const increases = attr.increases || {};
       for (const key of ['str', 'dex', 'con', 'int', 'wis', 'cha']) {
-        const delta = Math.max(0, Math.min(1, Number(increases?.[key] || 0) || 0));
+        const maxPerAbility = ProgressionRules.getAbilityIncreaseAllocationMode?.() === 'allow_stacked_two' ? 2 : 1;
+        const delta = Math.max(0, Math.min(maxPerAbility, Number(increases?.[key] || 0) || 0));
         if (delta <= 0) continue;
         const currentBase = Number(actor?.system?.attributes?.[key]?.base ?? actor?.system?.abilities?.[key]?.base ?? actor?.system?.abilities?.[key]?.value ?? 10) || 10;
         const currentRacial = Number(actor?.system?.attributes?.[key]?.racial ?? actor?.system?.abilities?.[key]?.racial ?? actor?.system?.abilities?.[key]?.species ?? 0) || 0;

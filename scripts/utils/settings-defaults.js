@@ -164,7 +164,8 @@ export const SETTINGS_DEFAULTS = {
     prestigeClassLevelThreshold: 'enter_on_threshold_level',
 
     // Ability Scores
-    abilityIncreaseMethod: 'flexible',
+    abilityIncreaseMethod: 'standard',
+    abilityIncreaseAllocationMode: 'raw_two_different',
 
     // Space Combat
     spaceInitiativeSystem: 'individual',

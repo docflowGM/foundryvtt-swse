@@ -26,8 +26,17 @@ function candidateTags(suggestion) {
 }
 function candidateName(suggestion) { return suggestion?.name || suggestion?.label || suggestion?.item?.name || 'This option'; }
 function getAbilityScore(actor, key) {
-  const raw = actor?.system?.abilities?.[key]?.value;
-  return Number.isFinite(raw) ? raw : 10;
+  const candidates = [
+    actor?.system?.attributes?.[key]?.total,
+    actor?.system?.attributes?.[key]?.value,
+    actor?.system?.abilities?.[key]?.value,
+    actor?.system?.abilities?.[key]?.base,
+  ];
+  for (const candidate of candidates) {
+    const score = Number(candidate);
+    if (Number.isFinite(score) && score > 0) return score;
+  }
+  return 10;
 }
 function getAbilityMod(actor, key) { return Math.floor((getAbilityScore(actor, key) - 10) / 2); }
 function templateText(key) { return SENTENCE_TEMPLATES?.[key] || REASON_TEXT_MAP?.[key] || null; }
@@ -37,8 +46,383 @@ function addReason(bucket, key, strength = 0.8, domain = 'build', meta = {}) {
   bucket.push(ReasonFactory.create({ domain, code: meta.code || String(key).toUpperCase(), text, strength, safe: true, atoms: meta.atoms || [] }));
 }
 function pickTop(reasons, limit = 3) { return ReasonFactory.limitByStrength(ReasonFactory.deduplicate(reasons), limit); }
-function detectDomain(suggestion) { return suggestion?.type || suggestion?.domain || suggestion?.item?.type || 'option'; }
+function detectDomain(suggestion) { return suggestion?.type || suggestion?.domain || suggestion?.item?.type || suggestion?.suggestion?.domain || 'option'; }
 function actionTags(tags) { return tags.filter(t => ['free_action','swift_action','move_action','standard_action','full_round_action','reaction','new_action','action_economy'].includes(t)); }
+
+
+const GENERIC_REASON_FRAGMENTS = [
+  'you meet the requirements',
+  'you meet this requirement',
+  'this adds to your selections',
+  'adds to your selections',
+  'this relates to your pattern',
+  'this relates to your patterns',
+  'this relates to your progression',
+  'this reflects the path taking shape',
+  'it reflects the path taking shape',
+  'legal option',
+  'available',
+  'high-fit option for your build',
+  'good-fit option for your build'
+];
+
+function isGenericReasonText(value) {
+  const text = String(value || '').trim().toLowerCase();
+  if (!text) return true;
+  return GENERIC_REASON_FRAGMENTS.some(fragment => text === fragment || text.includes(fragment));
+}
+
+function normalizeNameKey(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[’'`]/g, '')
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function titleCaseTag(value) {
+  return String(value || '')
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(/\b\w/g, ch => ch.toUpperCase());
+}
+
+function uniqueByName(items = []) {
+  const seen = new Set();
+  const out = [];
+  for (const item of items || []) {
+    const name = typeof item === 'string' ? item : item?.name;
+    const key = normalizeNameKey(name);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push(name);
+  }
+  return out;
+}
+
+function actorItemsByType(actor, type) {
+  return Array.from(actor?.items?.contents || actor?.items || []).filter(item => item?.type === type);
+}
+
+function actorItemNames(actor, type = null) {
+  const items = type ? actorItemsByType(actor, type) : Array.from(actor?.items?.contents || actor?.items || []);
+  return uniqueByName(items.map(item => item?.name).filter(Boolean));
+}
+
+function candidatePrereqText(suggestion) {
+  const item = suggestion?.item || suggestion;
+  const system = item?.system || {};
+  return String(
+    item?.prerequisiteText || item?.prerequisiteLine || item?.prerequisites || item?.prerequisite ||
+    system.prerequisiteText || system.prerequisiteLine || system.prerequisites || system.prerequisite || system.requirements || ''
+  ).trim();
+}
+
+function suggestionReasonCode(suggestion) {
+  return String(suggestion?.suggestion?.reasonCode || suggestion?.suggestion?.reason?.tierAssignedBy || '').toUpperCase();
+}
+
+function suggestionSourceId(suggestion) {
+  return String(suggestion?.suggestion?.sourceId || suggestion?.sourceId || '').trim();
+}
+
+function candidateTreeName(suggestion) {
+  const item = suggestion?.item || suggestion;
+  const system = item?.system || {};
+  return String(item?.sourceTreeName || item?.talentTree || item?.treeName || system.tree || system.talent_tree || system.talentTree || system.treeName || '').trim();
+}
+
+function displayList(values, limit = 3) {
+  const cleaned = uniqueByName(values).slice(0, limit);
+  if (!cleaned.length) return '';
+  if (cleaned.length === 1) return cleaned[0];
+  if (cleaned.length === 2) return `${cleaned[0]} and ${cleaned[1]}`;
+  return `${cleaned.slice(0, -1).join(', ')}, and ${cleaned[cleaned.length - 1]}`;
+}
+
+const CORE_CLASS_NAMES = ['Jedi', 'Noble', 'Scoundrel', 'Scout', 'Soldier'];
+const CLASS_ROUTE_AFFINITY = {
+  Jedi: ['Jedi Knight', 'Jedi Master', 'Force Disciple', 'Force Adept', 'Imperial Knight', 'Sith Apprentice'],
+  Noble: ['Officer', 'Crime Lord', 'Corporate Agent', 'Charlatan', 'Medic', 'Droid Commander'],
+  Scoundrel: ['Gunslinger', 'Outlaw', 'Crime Lord', 'Infiltrator', 'Master Privateer', 'Assassin', 'Charlatan'],
+  Scout: ['Bounty Hunter', 'Ace Pilot', 'Pathfinder', 'Infiltrator', 'Vanguard', 'Saboteur'],
+  Soldier: ['Elite Trooper', 'Officer', 'Vanguard', 'Gladiator', 'Melee Duelist', 'Military Engineer', 'Bounty Hunter']
+};
+const CLASS_THEME_LABELS = {
+  force: 'Force tradition', social: 'social command', ranged: 'ranged pressure', exploration: 'mobility and fieldcraft',
+  combat: 'front-line combat', vehicle: 'vehicle mastery', stealth: 'infiltration', tracking: 'pursuit and tracking',
+  leader: 'command', support: 'support', tech: 'technical problem-solving', melee: 'melee pressure', general: 'general capability'
+};
+
+function actorClassEntries(actor) {
+  return actorItemsByType(actor, 'class')
+    .map(item => ({ name: item?.name, level: Number(item?.system?.level ?? item?.system?.levels ?? 1) || 1 }))
+    .filter(entry => entry.name);
+}
+
+function primaryBaseClass(actor) {
+  const entries = actorClassEntries(actor)
+    .filter(entry => CORE_CLASS_NAMES.some(name => normalizeNameKey(name) === normalizeNameKey(entry.name)))
+    .sort((a, b) => b.level - a.level);
+  return entries[0]?.name || null;
+}
+
+function classTheme(candidate) {
+  const item = candidate?.item || candidate || {};
+  const rawTheme = String(item?.theme || item?.system?.theme || item?.suggestion?.theme || item?.role || item?.system?.role || '').trim();
+  const tags = candidateTags(candidate);
+  if (rawTheme) return CLASS_THEME_LABELS[normalizeTag(rawTheme)] || rawTheme;
+  if (tags.includes('force') || tags.includes('lightsaber')) return 'Force tradition';
+  if (tags.includes('leader') || tags.includes('support')) return 'command/support';
+  if (tags.includes('tech')) return 'technical problem-solving';
+  if (tags.includes('ranged') || tags.includes('pistol') || tags.includes('rifle')) return 'ranged pressure';
+  if (tags.includes('stealth')) return 'infiltration';
+  if (tags.includes('vehicle')) return 'vehicle mastery';
+  if (tags.includes('melee')) return 'melee pressure';
+  return 'a different play pattern';
+}
+
+function isPrestigeClassCandidate(candidate) {
+  const item = candidate?.item || candidate || {};
+  return item?.prestigeClass === true || item?.isPrestige === true || item?.baseClass === false || item?.system?.prestigeClass === true || item?.system?.isPrestige === true;
+}
+
+function classSkillLabels(candidate) {
+  const item = candidate?.item || candidate || {};
+  const raw = item?.classSkills || item?.system?.classSkills || item?.skills || item?.suggestion?.classSkills || [];
+  return (Array.isArray(raw) ? raw : Object.keys(raw || {})).map(titleCaseTag).filter(Boolean);
+}
+
+function classMissingPrereqs(candidate) {
+  const block = candidate?.suggestion || {};
+  const raw = block.missingPrereqs || candidate?.missingPrereqs || candidate?.missing || [];
+  return (Array.isArray(raw) ? raw : [raw]).map(entry => {
+    if (!entry) return null;
+    if (typeof entry === 'string') return entry;
+    return entry.display || entry.shortDisplay || entry.name || entry.label || entry.description || null;
+  }).filter(Boolean);
+}
+
+function classRouteReasons(suggestion, actor, packet) {
+  const name = candidateName(suggestion);
+  if (!name || detectDomain(suggestion) !== 'class') return;
+
+  const baseClass = primaryBaseClass(actor);
+  const isPrestige = isPrestigeClassCandidate(suggestion);
+  const missing = classMissingPrereqs(suggestion);
+  const actorClasses = actorClassEntries(actor);
+  const alreadyHasClass = actorClasses.some(entry => normalizeNameKey(entry.name) === normalizeNameKey(name));
+  const routeMatchesBase = !!baseClass && (CLASS_ROUTE_AFFINITY[baseClass] || []).some(route => normalizeNameKey(route) === normalizeNameKey(name));
+  const theme = classTheme(suggestion);
+  const classSkills = classSkillLabels(suggestion);
+
+  if (isPrestige && routeMatchesBase) {
+    addConcreteReason(packet, 'primary', 'class', 'BASE_TO_PRESTIGE_ROUTE', `For a ${baseClass} foundation, ${name} is a natural advanced route rather than a random detour.`, 0.94);
+  } else if (isPrestige && baseClass) {
+    addConcreteReason(packet, 'secondary', 'class', 'PRESTIGE_CROSS_ROUTE', `${name} is an advanced route, but it changes the emphasis from your ${baseClass} foundation toward ${theme}.`, 0.78);
+  }
+
+  if (isPrestige && missing.length === 0) {
+    addConcreteReason(packet, 'primary', 'class', 'PRESTIGE_READY_NOW', `You qualify now, so the choice is about identity and payoff rather than chasing missing gates.`, 0.9);
+  } else if (isPrestige && missing.length > 0) {
+    addConcreteReason(packet, 'caution', 'class', 'PRESTIGE_STILL_LOCKED', `It is close enough to inspect, but the remaining gates are ${displayList(missing, 3)}.`, 0.82);
+  }
+
+  if (!isPrestige && alreadyHasClass) {
+    addConcreteReason(packet, 'primary', 'class', 'CLASS_CONTINUATION', `Continuing ${name} deepens the class chassis you already rely on instead of opening a side lane.`, 0.86);
+  } else if (!isPrestige && baseClass && normalizeNameKey(baseClass) !== normalizeNameKey(name)) {
+    addConcreteReason(packet, 'secondary', 'class', 'BASE_CLASS_CROSS_TRAINING', `${name} is cross-training from your ${baseClass} base; take it for ${theme}, not because it is the straightest prestige route.`, 0.76);
+  } else if (!isPrestige && !baseClass) {
+    addConcreteReason(packet, 'primary', 'class', 'FIRST_CLASS_IDENTITY', `${name} establishes your first mechanical identity around ${theme}.`, 0.82);
+  }
+
+  if (classSkills.length) {
+    addConcreteReason(packet, 'secondary', 'skills', 'CLASS_SKILL_SURFACE', `Its useful class-skill surface includes ${displayList(classSkills, 3)}.`, 0.7);
+  }
+
+  if (/jedi knight/i.test(name) && /jedi/i.test(baseClass || '')) {
+    addConcreteReason(packet, 'primary', 'class', 'JEDI_KNIGHT_ROUTE', `Your Jedi levels, Force training, and lightsaber foundation already point at Knighthood.`, 0.96);
+  }
+}
+
+function addConcreteReason(packet, bucket, domain, code, text, strength = 0.84) {
+  const clean = String(text || '').trim();
+  if (!clean || isGenericReasonText(clean)) return;
+  packet[bucket].push(ReasonFactory.create({ domain, code, text: clean, strength, safe: true }));
+}
+
+function ownedMatchesForTags(actor, tags = []) {
+  const ownedNames = actorItemNames(actor);
+  const ownedKeys = new Map(ownedNames.map(name => [normalizeNameKey(name), name]));
+  const matches = [];
+
+  const addIfOwned = (...names) => {
+    for (const name of names) {
+      const found = ownedKeys.get(normalizeNameKey(name));
+      if (found) matches.push(found);
+    }
+  };
+
+  if (tags.includes('lightsaber') || tags.includes('lightsaber_training') || tags.includes('duelist')) {
+    addIfOwned('Weapon Proficiency (Lightsabers)', 'Block', 'Deflect', 'Lightsaber Defense', 'Lightsaber Construction', 'Double Attack (Lightsabers)');
+  }
+  if (tags.includes('force') || tags.includes('use_the_force') || tags.includes('force_power') || tags.includes('force_capacity') || tags.includes('force_execution')) {
+    addIfOwned('Force Sensitivity', 'Force Training', 'Strong in the Force', 'Unstoppable Force', 'Force Regimen Mastery');
+  }
+  if (tags.includes('pistol') || tags.includes('ranged') || tags.includes('offense_ranged')) {
+    addIfOwned('Weapon Proficiency (Pistols)', 'Point-Blank Shot', 'Precise Shot', 'Rapid Shot', 'Deadeye');
+  }
+  if (tags.includes('rifle') || tags.includes('sniping')) {
+    addIfOwned('Weapon Proficiency (Rifles)', 'Point-Blank Shot', 'Precise Shot', 'Sniper');
+  }
+  if (tags.includes('armor') || tags.includes('defense')) {
+    addIfOwned('Armor Proficiency (light)', 'Armor Proficiency (medium)', 'Armor Proficiency (heavy)', 'Improved Defenses', 'Toughness');
+  }
+
+  return uniqueByName(matches);
+}
+
+function prerequisiteReasons(suggestion, actor, packet) {
+  const prereq = candidatePrereqText(suggestion);
+  if (!prereq) return;
+  const ownedNames = actorItemNames(actor);
+  const ownedKeys = new Map(ownedNames.map(name => [normalizeNameKey(name), name]));
+  const actorBab = Number(actor?.system?.bab || actor?.system?.attributes?.bab?.value || actor?.system?.details?.bab || 0);
+
+  const babMatch = prereq.match(/(?:base attack bonus|bab)\s*\+?\s*(\d+)/i);
+  if (babMatch && Number.isFinite(actorBab)) {
+    const required = Number(babMatch[1]);
+    if (actorBab >= required) {
+      addConcreteReason(packet, 'primary', 'prerequisite', 'BAB_PREREQ_MET', `Your Base Attack Bonus is already high enough for its +${required} gate.`, 0.88);
+    } else {
+      addConcreteReason(packet, 'caution', 'prerequisite', 'BAB_PREREQ_SOON', `It still needs Base Attack Bonus +${required}; your current BAB is +${actorBab}.`, 0.74);
+    }
+  }
+
+  const proficiencyMatches = Array.from(prereq.matchAll(/(Weapon Proficiency \([^)]+\)|Armor Proficiency \([^)]+\)|Force Sensitivity|Force Training)/gi))
+    .map(match => match[1]);
+  const metProficiencies = proficiencyMatches
+    .map(name => ownedKeys.get(normalizeNameKey(name)) || (ownedKeys.has(normalizeNameKey(name.replace(/\s+/g, ' '))) ? name : null))
+    .filter(Boolean);
+  if (metProficiencies.length) {
+    addConcreteReason(packet, 'primary', 'prerequisite', 'OWNED_PREREQ_MATCH', `You already have ${displayList(metProficiencies)}, so that gate is open.`, 0.9);
+  }
+
+  const trainedMatches = Array.from(prereq.matchAll(/trained\s+(?:in\s+)?([A-Za-z ]+)/gi))
+    .map(match => match[1].replace(/(?:skill|check).*$/i, '').trim())
+    .filter(Boolean);
+  if (trainedMatches.length) {
+    addConcreteReason(packet, 'secondary', 'skills', 'TRAINED_SKILL_GATE', `It uses trained skill work in ${displayList(trainedMatches)}, so the prerequisite is more than a raw feat tax.`, 0.76);
+  }
+}
+
+function signalReasons(suggestion, packet) {
+  const signals = Array.isArray(suggestion?.suggestion?.signals) ? suggestion.suggestion.signals : [];
+  const sourceId = suggestionSourceId(suggestion);
+  const sourcePayload = sourceId.includes(':') ? sourceId.split(':').slice(1).join(':').trim() : '';
+  const treeName = candidateTreeName(suggestion);
+
+  for (const signal of signals.slice(0, 6)) {
+    const type = String(signal?.type || '');
+    const meta = signal?.metadata || {};
+    const tagMatches = String(meta.tagMatches || '').split(',').map(s => titleCaseTag(s)).filter(Boolean);
+    const attributes = String(meta.attributes || '').split(',').map(s => titleCaseTag(s)).filter(Boolean);
+
+    if (type === 'PRESTIGE_PROXIMITY') {
+      const target = sourcePayload || meta.prestigeClass || '';
+      addConcreteReason(packet, 'forecast', 'prestige', 'PRESTIGE_ROUTE_EXPLAINED', target
+        ? `It keeps the ${target} route in view instead of spending the slot off-path.`
+        : 'It supports an advanced-class route within the next few levels.', 0.9);
+    } else if (type === 'FEAT_CHAIN_SETUP') {
+      addConcreteReason(packet, 'forecast', 'chain', 'FEAT_CHAIN_EXPLAINED', sourcePayload
+        ? `It continues the chain started by ${sourcePayload.replace(/^chain:/i, '')}.`
+        : 'It continues a feat chain you have already started.', 0.86);
+    } else if (type === 'TALENT_TREE_CONTINUATION') {
+      addConcreteReason(packet, 'primary', 'talent', 'TALENT_TREE_CONTINUATION_EXPLAINED', treeName
+        ? `It deepens your investment in the ${treeName} talent tree.`
+        : 'It continues a talent path you have already opened.', 0.86);
+    } else if (type === 'EQUIPMENT_SYNERGY') {
+      addConcreteReason(packet, 'primary', 'equipment', 'EQUIPMENT_SYNERGY_EXPLAINED', 'It reinforces equipment choices your build is already leaning on.', 0.78);
+    } else if (type === 'SKILL_INVESTMENT_ALIGNMENT') {
+      addConcreteReason(packet, 'primary', 'skills', 'SKILL_INVESTMENT_EXPLAINED', 'It turns existing skill investment into a stronger mechanical payoff.', 0.78);
+    } else if (type === 'DEFENSIVE_GAP_COVERAGE') {
+      addConcreteReason(packet, 'primary', 'defense', 'DEFENSIVE_GAP_EXPLAINED', 'It shores up your defensive profile instead of only adding more offense.', 0.78);
+    } else if (type === 'LEVEL_BREAKPOINT') {
+      addConcreteReason(packet, 'forecast', 'level', 'LEVEL_BREAKPOINT_EXPLAINED', 'It lines up with an approaching level or BAB breakpoint.', 0.78);
+    } else if (type === 'COMBAT_STYLE_MATCH' && tagMatches.length) {
+      addConcreteReason(packet, 'primary', 'combat', 'TAG_MATCH_EXPLAINED', `It matches your current ${displayList(tagMatches)} direction.`, 0.82);
+    } else if (type === 'ATTRIBUTE_SYNERGY' && attributes.length) {
+      addConcreteReason(packet, 'primary', 'attributes', 'ATTRIBUTE_MATCH_EXPLAINED', `It uses your ${displayList(attributes)} axis rather than asking you to build around a dump stat.`, 0.8);
+    } else if ((type === 'IDENTITY_ALIGNMENT' || type === 'ARCHETYPE_REINFORCEMENT') && tagMatches.length) {
+      addConcreteReason(packet, 'primary', 'identity', 'IDENTITY_TAG_EXPLAINED', `It aligns with your visible ${displayList(tagMatches)} identity signals.`, 0.78);
+    }
+  }
+}
+
+function metadataDrivenReasons(suggestion, actor) {
+  const packet = { primary: [], secondary: [], forecast: [], opportunity: [], caution: [] };
+  const name = candidateName(suggestion);
+  const domain = detectDomain(suggestion);
+  const tags = candidateTags(suggestion);
+  const reasonCode = suggestionReasonCode(suggestion);
+  const sourceId = suggestionSourceId(suggestion);
+  const sourceTarget = sourceId.includes(':') ? sourceId.split(':').slice(1).join(':').trim() : '';
+  const treeName = candidateTreeName(suggestion);
+
+  signalReasons(suggestion, packet);
+  prerequisiteReasons(suggestion, actor, packet);
+  classRouteReasons(suggestion, actor, packet);
+
+  if (reasonCode.includes('PRESTIGE') && sourceTarget) {
+    addConcreteReason(packet, 'forecast', 'prestige', 'PRESTIGE_SOURCE', `${name} is being highlighted because it supports ${sourceTarget}.`, 0.88);
+  }
+  if (reasonCode.includes('WISHLIST') && sourceTarget) {
+    addConcreteReason(packet, 'forecast', 'wishlist', 'WISHLIST_SOURCE', `${name} moves you toward ${sourceTarget}, which is already marked as desirable for this build.`, 0.86);
+  }
+  if (reasonCode.includes('CHAIN') && sourceTarget) {
+    addConcreteReason(packet, 'forecast', 'chain', 'CHAIN_SOURCE', `${name} follows from ${sourceTarget}, so it is a continuation rather than a detour.`, 0.86);
+  }
+  if (reasonCode.includes('CLASS')) {
+    addConcreteReason(packet, 'secondary', 'class', 'CLASS_FIT_EXPLAINED', `${name} fits the class path you are currently advancing.`, 0.72);
+  }
+  if (reasonCode.includes('ABILITY')) {
+    addConcreteReason(packet, 'secondary', 'attributes', 'ABILITY_REASON_CODE_EXPLAINED', `${name} leans into one of your stronger ability axes.`, 0.72);
+  }
+  if (reasonCode.includes('SKILL')) {
+    addConcreteReason(packet, 'secondary', 'skills', 'SKILL_REASON_CODE_EXPLAINED', `${name} rewards skill investments you have already made.`, 0.72);
+  }
+
+  if (domain === 'talent' && treeName) {
+    addConcreteReason(packet, 'primary', 'talent', 'CURRENT_TREE_CONTEXT', `It is inside the ${treeName} tree you are currently inspecting.`, 0.84);
+    const ownedInTree = actorItemsByType(actor, 'talent')
+      .filter(item => normalizeNameKey(item?.system?.tree || item?.system?.talent_tree || item?.system?.talentTree) === normalizeNameKey(treeName))
+      .map(item => item?.name)
+      .filter(Boolean);
+    if (ownedInTree.length) {
+      addConcreteReason(packet, 'primary', 'talent', 'OWNED_TREE_MOMENTUM', `You already have ${displayList(ownedInTree)} in this tree, so this keeps that branch coherent.`, 0.88);
+    }
+  }
+
+  const ownedMatches = ownedMatchesForTags(actor, tags);
+  if (ownedMatches.length) {
+    addConcreteReason(packet, 'primary', 'build', 'OWNED_PACKAGE_MATCH', `It reinforces pieces you already have: ${displayList(ownedMatches)}.`, 0.88);
+  }
+
+  const scoringBreakdown = suggestion?.suggestion?.scoring?.horizonBreakdown || {};
+  const immediateTags = scoringBreakdown?.immediate?.tagMatches || [];
+  if (immediateTags.length) {
+    addConcreteReason(packet, 'secondary', 'tags', 'SCORING_TAG_MATCHES', `The strongest matching lanes are ${displayList(immediateTags.map(titleCaseTag))}.`, 0.7);
+  }
+  const identityTags = scoringBreakdown?.identity?.identityTagMatches || [];
+  if (identityTags.length) {
+    addConcreteReason(packet, 'secondary', 'identity', 'SCORING_IDENTITY_MATCHES', `It echoes your ${displayList(identityTags.map(titleCaseTag))} identity signals.`, 0.7);
+  }
+
+  return packet;
+}
 
 function buildScoreDrivenReasons(suggestion) {
   const packet = { primary: [], secondary: [], forecast: [], opportunity: [], caution: [] };
@@ -146,28 +530,48 @@ function composeOpening(name, domain, packet) {
   return openingsByDomain[domain] || openingsByDomain.option;
 }
 
+function isClauseReason(value) {
+  const text = String(value || '').trim();
+  if (!text) return false;
+  return /^because\b/i.test(text) || /^[a-z][^.!?]*$/.test(text);
+}
+
+function cleanClauseReason(value) {
+  const trimmed = String(value || '').trim().replace(/^because\s+/i, '').replace(/^it\s+/i, '');
+  if (!trimmed) return '';
+  return trimmed.charAt(0).toLowerCase() + trimmed.slice(1).replace(/[.!?]+$/g, '');
+}
+
+function ensureSentence(value) {
+  const trimmed = String(value || '').trim().replace(/^because\s+/i, 'It ');
+  if (!trimmed) return '';
+  const sentence = /^[a-z]/.test(trimmed) ? trimmed.charAt(0).toUpperCase() + trimmed.slice(1) : trimmed;
+  return /[.!?]$/.test(sentence) ? sentence : `${sentence}.`;
+}
+
 function sentenceJoin(fragments) {
-  return fragments.filter(Boolean).map(fragment => {
-    const trimmed = String(fragment).trim().replace(/^because\s+/i, '');
-    if (!trimmed) return null;
-    return trimmed.charAt(0).toLowerCase() + trimmed.slice(1);
-  }).filter(Boolean).join(' and ');
+  return fragments.filter(Boolean).map(cleanClauseReason).filter(Boolean).join(' and ');
 }
 
 function composeSentence(name, domain, packet) {
-  const primary = pickTop(packet.primary, 2).map(r => r.text);
+  const primaryReasons = pickTop(packet.primary, 2).map(r => r.text);
+  const primaryClauses = primaryReasons.filter(isClauseReason);
+  const primarySentences = primaryReasons.filter(reason => !isClauseReason(reason));
   const forecast = pickTop(packet.forecast, 1).map(r => r.text);
   const opportunity = pickTop(packet.opportunity, 1).map(r => r.text);
   const caution = pickTop(packet.caution, 1).map(r => r.text);
   const parts = [];
   const opening = composeOpening(name, domain, packet);
-  const joinedPrimary = sentenceJoin(primary);
+  const joinedPrimary = sentenceJoin(primaryClauses);
+
   if (joinedPrimary) parts.push(`${opening} because it ${joinedPrimary}`);
   else parts.push(opening);
-  if (forecast.length) parts.push(`It ${forecast[0].replace(/^because\s+/i, '')}`);
-  if (opportunity.length) parts.push(`It ${opportunity[0].replace(/^because\s+/i, '')}`);
-  if (caution.length) parts.push(`Its immediate payoff is lower if ${caution[0].replace(/^because\s+/i, '')}`);
-  let s = parts.join('. ').replace(/\s+/g, ' ').replace(/\. It it /g, '. It ');
+
+  for (const sentence of primarySentences) parts.push(ensureSentence(sentence));
+  if (forecast.length) parts.push(isClauseReason(forecast[0]) ? `It ${cleanClauseReason(forecast[0])}.` : ensureSentence(forecast[0]));
+  if (opportunity.length) parts.push(isClauseReason(opportunity[0]) ? `It ${cleanClauseReason(opportunity[0])}.` : ensureSentence(opportunity[0]));
+  if (caution.length) parts.push(isClauseReason(caution[0]) ? `Its immediate payoff is lower if ${cleanClauseReason(caution[0])}.` : ensureSentence(caution[0]));
+  let s = parts.map(ensureSentence).filter(Boolean).join(' ').replace(/\s+/g, ' ').replace(/\. It it /g, '. It ');
   if (!/[.!?]$/.test(s)) s += '.';
   return s;
 }
@@ -175,7 +579,8 @@ function composeSentence(name, domain, packet) {
 export class SuggestionReasonEngine {
   static buildPacket(suggestion, actor, options = {}) {
     try {
-      const packet = mergeBuckets(buildScoreDrivenReasons(suggestion), buildTagDrivenReasons(suggestion, actor));
+      let packet = mergeBuckets(buildScoreDrivenReasons(suggestion), buildTagDrivenReasons(suggestion, actor));
+      packet = mergeBuckets(packet, metadataDrivenReasons(suggestion, actor));
       const rawExistingReasons = [
         ...(Array.isArray(suggestion?.reasons) ? suggestion.reasons : []),
         ...(Array.isArray(suggestion?.suggestion?.reasons) ? suggestion.suggestion.reasons : []),
@@ -187,7 +592,7 @@ export class SuggestionReasonEngine {
       const existingReasons = rawExistingReasons.map((reason) => {
         if (typeof reason === 'string') return { text: reason, domain: detectDomain(suggestion) || 'build' };
         return reason?.text ? reason : null;
-      }).filter(r => r?.text);
+      }).filter(r => r?.text && !isGenericReasonText(r.text));
       packet.secondary.push(...existingReasons.map(r => ReasonFactory.create({ domain: r.domain || detectDomain(suggestion) || 'build', code: r.code || 'EXISTING_REASON', text: r.text, safe: r.safe !== false, strength: r.strength ?? 0.72, atoms: r.atoms || [] })));
       packet.primary = pickTop(packet.primary, 3);
       packet.secondary = pickTop(packet.secondary, 3);

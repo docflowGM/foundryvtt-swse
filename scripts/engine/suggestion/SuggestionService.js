@@ -12,6 +12,7 @@
  * - Optionally persist minimal SuggestionState in actor flags
  */
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ShellMutationGuard } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellMutationGuard.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
 import { CompendiumResolver } from "/systems/foundryvtt-swse/scripts/engine/suggestion/CompendiumResolver.js";
@@ -113,6 +114,19 @@ function _domainToResolverDomain(domain) {
   if (domain === 'forcepowers') {return 'forcepowers';}
   if (domain === 'classes') {return 'class';}
   return domain;
+}
+
+function _domainToSuggestionType(domain) {
+  if (domain === 'feats') return 'feat';
+  if (domain === 'talents') return 'talent';
+  if (domain === 'classes') return 'class';
+  if (domain === 'backgrounds') return 'background';
+  if (domain === 'species') return 'species';
+  if (domain === 'forcepowers') return 'forcepower';
+  if (domain === 'force-techniques') return 'forcetechnique';
+  if (domain === 'force-secrets') return 'forcesecret';
+  if (domain === 'starship-maneuvers') return 'maneuver';
+  return null;
 }
 
 
@@ -254,7 +268,7 @@ export class SuggestionService {
     }
 
     // Normalize + enrich
-    const enriched = await this._enrichSuggestions(actor, suggestions, { trace });
+    const enriched = await this._enrichSuggestions(actor, suggestions, { ...options, trace });
 
     // Filter reasons by focus (visibility gating only, not scoring change)
     // If focus is provided, only show reason domains relevant to that focus
@@ -310,6 +324,34 @@ export class SuggestionService {
     return { added, removed };
   }
 
+
+  static async _setSuggestionState(actor, state, reason = 'suggestion-state') {
+    if (!actor?.setFlag) return;
+
+    let snapshot = state;
+    try {
+      snapshot = foundry?.utils?.deepClone ? foundry.utils.deepClone(state) : JSON.parse(JSON.stringify(state));
+    } catch (_err) {
+      snapshot = state;
+    }
+
+    const write = () => ShellMutationGuard.withDocumentMutation(null, () => actor.setFlag('foundryvtt-swse', 'suggestionState', snapshot), {
+      reason,
+      surfaceId: 'progression'
+    });
+
+    if (typeof globalThis.setTimeout === 'function') {
+      globalThis.setTimeout(() => {
+        Promise.resolve(write()).catch(err => {
+          SWSELogger.log('[SuggestionService] deferred suggestion state write skipped (non-fatal):', err?.message ?? err);
+        });
+      }, 0);
+      return;
+    }
+
+    return write();
+  }
+
   static async _persistSuggestionState(actor, context, suggestions) {
     // Non-fatal: suggestion state persistence is optional (used for diff display only).
     // Direct actor.setFlag() is not routed through ActorEngine — skip silently.
@@ -322,9 +364,8 @@ export class SuggestionService {
         ids,
         at: Date.now()
       };
-      // @mutation-exception: metadata
-      // Store suggestion presentation state for UI consistency
-      await actor.setFlag('foundryvtt-swse', 'suggestionState', state);
+      // Store suggestion presentation state for UI consistency.
+      await this._setSuggestionState(actor, state, 'suggestion-state-last-shown');
     } catch (err) {
       // Swallow mutation violations and other non-critical errors silently
       SWSELogger.log('[SuggestionService] _persistSuggestionState skipped (non-fatal):', err?.message ?? err);
@@ -357,9 +398,8 @@ export class SuggestionService {
       inputsHash,
       at: Date.now()
     };
-    // @mutation-exception: metadata
-    // Store last mentor advice for consistency (prevents duplicate advice on re-open)
-    await actor.setFlag('foundryvtt-swse', 'suggestionState', state);
+    // Store last mentor advice for consistency (prevents duplicate advice on re-open).
+    await this._setSuggestionState(actor, state, 'suggestion-state-mentor-advice');
   }
 
   /**
@@ -399,15 +439,13 @@ export class SuggestionService {
     if (step) {
       if (state.lastMentorAdvice?.[step]) {
         delete state.lastMentorAdvice[step];
-        // @mutation-exception: metadata
-        // Clear mentor advice for specific step (UI consistency)
-        await actor.setFlag('foundryvtt-swse', 'suggestionState', state);
+        // Clear mentor advice for specific step (UI consistency).
+        await this._setSuggestionState(actor, state, 'suggestion-state-clear-mentor-step');
       }
     } else {
       state.lastMentorAdvice = {};
-      // @mutation-exception: metadata
-      // Clear all mentor advice (UI state reset)
-      await actor.setFlag('foundryvtt-swse', 'suggestionState', state);
+      // Clear all mentor advice (UI state reset).
+      await this._setSuggestionState(actor, state, 'suggestion-state-clear-mentor-all');
     }
   }
 
@@ -568,6 +606,10 @@ export class SuggestionService {
 
       // Preserve existing structure
       const suggestion = { ...s };
+      const requestedType = _domainToSuggestionType(options.domain);
+      if (requestedType && !suggestion.type) suggestion.type = requestedType;
+      if (options.domain && !suggestion.domain) suggestion.domain = requestedType || options.domain;
+      if (suggestion.suggestion && requestedType && !suggestion.suggestion.domain) suggestion.suggestion.domain = requestedType;
 
       // Drift-safe targetRef
       if (!suggestion.targetRef) {

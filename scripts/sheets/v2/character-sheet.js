@@ -14,6 +14,7 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { LightsaberConstructionApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-construction-app.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
+import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
 import { launchFollowerProgression, launchMinionCreation } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { SWSEStore } from "/systems/foundryvtt-swse/scripts/apps/store/store-main.js";
 import { initiateItemSale } from "/systems/foundryvtt-swse/scripts/apps/item-selling-system.js";
@@ -6599,6 +6600,23 @@ const forcePoints = [];
         } catch (err) {
           // console.error("Force activation failed:", err);
           ui?.notifications?.error?.(`Force activation failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    html.querySelectorAll('[data-action="open-force-alchemy-workbench"]').forEach(button => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        try {
+          await openForceAlchemyWorkbench(this.actor, {
+            launchSource: button.dataset.launchSource || 'force-suite',
+            riteId: button.dataset.riteId || null,
+            activeCategory: button.dataset.category || null,
+            targetId: button.dataset.itemId || null
+          });
+        } catch (err) {
+          ui?.notifications?.error?.(`Force artifact workbench failed: ${err.message}`);
         }
       }, { signal });
     });

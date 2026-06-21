@@ -7,6 +7,7 @@ import { resolveForceCardSummary } from "/systems/foundryvtt-swse/scripts/engine
 import { CANONICAL_SKILL_DEFS, canonicalizeSkillKey, normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
 import { isClassFeatureItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 import { ProgressionReconciler } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-reconciler.js";
+import { getForceAlchemyLaunchForTalentName, getForceAlchemyRite } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-data.js";
 function toSignedClass(value) {
   const n = Number(value) || 0;
   return n > 0 ? 'mod--positive' : n < 0 ? 'mod--negative' : 'mod--zero';
@@ -1076,6 +1077,36 @@ function getForceTalentActionState(actor) {
   const forceFlowFlag = actor?.getFlag?.('foundryvtt-swse', 'forceFlowTemporaryForcePoints') ?? actor?.flags?.['foundryvtt-swse']?.forceFlowTemporaryForcePoints ?? {};
   const encounterId = game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
   const forceFlowTemporary = forceFlowFlag?.encounterId === encounterId ? Math.max(0, Number(forceFlowFlag.total ?? 0) || 0) : 0;
+  const alchemyLaunches = Array.from(actor?.items ?? [])
+    .filter(item => item?.type === 'talent')
+    .map(item => {
+      const launch = getForceAlchemyLaunchForTalentName(item?.name);
+      if (!launch) return null;
+      const rite = getForceAlchemyRite(launch.riteId);
+      return {
+        talentId: item.id || item._id || '',
+        talentName: item.name || launch.talent,
+        label: item.name || launch.talent,
+        riteId: launch.riteId,
+        category: launch.category,
+        summary: rite?.summary || 'Open the Force Artifact / Sith Alchemy workbench for this talent.',
+        actionLabel: launch.category === 'sith' ? 'Sith Alchemy' : launch.category === 'darkside' ? 'Dark Talisman' : launch.category === 'force' ? 'Force Talisman' : 'Workbench',
+      };
+    })
+    .filter(Boolean)
+    .sort((a, b) => {
+      const order = { force: 10, darkside: 20, sith: 30, mutation: 40, specialist: 50, combat: 60 };
+      const delta = (order[a.category] || 99) - (order[b.category] || 99);
+      return delta || a.label.localeCompare(b.label);
+    });
+  const seenAlchemy = new Set();
+  const uniqueAlchemyLaunches = alchemyLaunches.filter(entry => {
+    const key = `${entry.riteId}:${entry.category}`;
+    if (seenAlchemy.has(key)) return false;
+    seenAlchemy.add(key);
+    return true;
+  });
+
   return {
     aversion: { available: actorHasTalentByName(actor, 'Aversion') },
     illusion: {
@@ -1087,7 +1118,14 @@ function getForceTalentActionState(actor) {
     suppressForce: { available: actorHasTalentByName(actor, 'Suppress Force') },
     telepathicLink: { available: actorHasTalentByName(actor, 'Telepathic Link') },
     telepathicInfluence: { available: actorHasTalentByName(actor, 'Telepathic Influence') },
-    forceFlow: { available: actorHasTalentByName(actor, 'Force Flow'), temporary: forceFlowTemporary }
+    forceFlow: { available: actorHasTalentByName(actor, 'Force Flow'), temporary: forceFlowTemporary },
+    forceAlchemy: {
+      available: uniqueAlchemyLaunches.length > 0,
+      launches: uniqueAlchemyLaunches,
+      primary: uniqueAlchemyLaunches[0] || null,
+      hasForceTalisman: uniqueAlchemyLaunches.some(entry => entry.category === 'force'),
+      hasSithAlchemy: uniqueAlchemyLaunches.some(entry => entry.category === 'sith'),
+    }
   };
 }
 

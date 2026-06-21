@@ -53,42 +53,6 @@
       ],
       "summary": "+1 bonus on attack rolls with chosen weapon."
     },
-    "Greater Weapon Focus": {
-      "category": "combat-offense",
-      "tags": [
-        "weapon-mastery",
-        "accuracy",
-        "advanced"
-      ],
-      "chain": "Weapon Focus Chain",
-      "chainOrder": 2,
-      "prerequisiteFeat": "Weapon Focus",
-      "summary": "You gain a +1 bonus on attack rolls with the selected weapon group."
-    },
-    "Weapon Specialization": {
-      "category": "combat-offense",
-      "tags": [
-        "weapon-mastery",
-        "damage",
-        "combat"
-      ],
-      "chain": "Weapon Focus Chain",
-      "chainOrder": 3,
-      "prerequisiteFeat": "Weapon Focus",
-      "summary": "You gain a +2 bonus on damage rolls with the selected weapon group."
-    },
-    "Greater Weapon Specialization": {
-      "category": "combat-offense",
-      "tags": [
-        "weapon-mastery",
-        "damage",
-        "advanced"
-      ],
-      "chain": "Weapon Focus Chain",
-      "chainOrder": 4,
-      "prerequisiteFeat": "Weapon Specialization",
-      "summary": "You gain a +2 bonus on damage rolls with the selected weapon group."
-    },
     "Triple Crit": {
       "category": "combat-offense",
       "tags": [
@@ -416,15 +380,6 @@
       ],
       "summary": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack."
     },
-    "Stunning Strike": {
-      "category": "combat-offense",
-      "tags": [
-        "melee",
-        "condition",
-        "combat"
-      ],
-      "summary": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack."
-    },
     "Wounding Strike": {
       "category": "combat-offense",
       "tags": [
@@ -451,15 +406,6 @@
         "combat"
       ],
       "summary": "Spend two Swift Actions to deal extra damage in melee."
-    },
-    "Lucky Shot": {
-      "category": "combat-offense",
-      "tags": [
-        "ranged",
-        "reroll",
-        "combat"
-      ],
-      "summary": "Once per encounter, you may reroll a ranged attack roll and take the better result."
     },
     "Savage Attack": {
       "category": "combat-offense",
@@ -583,14 +529,6 @@
         "opportunity"
       ],
       "summary": "Gain additional Attacks of Opportunity."
-    },
-    "Harm's Way": {
-      "category": "combat-defense",
-      "tags": [
-        "defense",
-        "protection",
-        "tactical"
-      ]
     },
     "Weapon Proficiency (Simple Weapons)": {
       "category": "combat-defense",
@@ -717,15 +655,6 @@
         "core"
       ],
       "summary": "Gain three additional Force Points at each level."
-    },
-    "Force Focus": {
-      "category": "force",
-      "tags": [
-        "force",
-        "power-boost",
-        "specialization"
-      ],
-      "summary": "You gain a +2 bonus on Use the Force checks made to activate a specific Force power you select when taking this feat."
     },
     "Block": {
       "category": "force",
@@ -935,15 +864,6 @@
       ],
       "summary": "Regain one Force Power when you catch a Second Wind."
     },
-    "Forceful Warrior": {
-      "category": "force",
-      "tags": [
-        "force",
-        "melee",
-        "combat"
-      ],
-      "summary": "You gain a +2 bonus on melee attack rolls made while using a Force power."
-    },
     "Forceful Weapon": {
       "category": "force",
       "tags": [
@@ -1028,15 +948,6 @@
         "versatility"
       ],
       "summary": "You become Trained in one Class Skill."
-    },
-    "Educated": {
-      "category": "utility",
-      "tags": [
-        "skill",
-        "knowledge",
-        "bonus"
-      ],
-      "summary": "Choose two Knowledge skills."
     },
     "Linguist": {
       "category": "utility",
@@ -1248,15 +1159,6 @@
       ],
       "summary": "Once per encounter, you may delay the effects of damage taken until the end of your next turn."
     },
-    "Indomitable Will": {
-      "category": "recovery",
-      "tags": [
-        "resilience",
-        "will",
-        "mental"
-      ],
-      "summary": "You gain a +2 bonus on Will Defense against mind-affecting effects and may reroll a failed Will Defense check once per encounter."
-    },
     "Resilient Strength": {
       "category": "recovery",
       "tags": [
@@ -1301,18 +1203,6 @@
         "finesse"
       ],
       "summary": "Use Dexterity modifier instead of Strength modifier on attack rolls with Light Melee Weapons and Lightsabers."
-    },
-    "Noble Fencing Style": {
-      "category": "misc",
-      "tags": [
-        "combat",
-        "charisma",
-        "style"
-      ],
-      "chain": "Finesse Chain",
-      "chainOrder": 2,
-      "prerequisiteFeat": "Weapon Finesse",
-      "summary": "When wielding a weapon with Weapon Finesse, you may use your Charisma modifier instead of Strength for attack rolls."
     },
     "Reactive Stealth": {
       "category": "misc",
@@ -1952,15 +1842,6 @@
       ],
       "summary": "Grant an additional +2 bonus when using the Aid Another action."
     },
-    "Recall": {
-      "category": "utility",
-      "tags": [
-        "skill",
-        "knowledge",
-        "reroll"
-      ],
-      "summary": "Reroll Knowledge skill check, keeping the better result."
-    },
     "Strafe": {
       "category": "combat-offense",
       "tags": [
@@ -2194,15 +2075,6 @@
         "movement"
       ],
       "summary": "Make Attack of Opportunity and move 1 square."
-    },
-    "Wicked Strike": {
-      "category": "combat-offense",
-      "tags": [
-        "melee",
-        "multiattack",
-        "tactical"
-      ],
-      "summary": "Gain extra attack on a second target upon damaging the first target."
     },
     "Anointed Hunter": {
       "category": "combat-offense",
@@ -3400,6 +3272,15 @@
         "advanced"
       ],
       "summary": "Through focus and raw determination, you can make multiple attacks even after moving."
+    },
+    "Wicked Strike": {
+      "category": "combat-offense",
+      "tags": [
+        "melee",
+        "multiattack",
+        "tactical"
+      ],
+      "summary": "Gain extra attack on a second target upon damaging the first target."
     }
   }
 }

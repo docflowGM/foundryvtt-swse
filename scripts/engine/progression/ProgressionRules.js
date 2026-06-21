@@ -20,7 +20,15 @@ export class ProgressionRules {
   }
 
   static getAbilityIncreaseMethod() {
-    return HouseRuleService.getString('abilityIncreaseMethod', 'flexible');
+    const mode = this.getAbilityIncreaseAllocationMode();
+    return mode === 'allow_stacked_two' ? 'flexible' : 'standard';
+  }
+
+  static getAbilityIncreaseAllocationMode() {
+    const modern = HouseRuleService.getString('abilityIncreaseAllocationMode', 'raw_two_different');
+    if (modern === 'raw_two_different' || modern === 'allow_stacked_two') return modern;
+    const legacy = HouseRuleService.getString('abilityIncreaseMethod', 'standard');
+    return legacy === 'flexible' ? 'allow_stacked_two' : 'raw_two_different';
   }
 
   /**

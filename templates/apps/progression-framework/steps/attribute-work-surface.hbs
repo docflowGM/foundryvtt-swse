@@ -71,7 +71,7 @@
       </div>
       <div class="prog-attr-v2-cells">
         {{#each physicalAbilities}}
-          <article class="prog-attr-v2-cell attr-v2--{{colorClass}} {{#if isFocused}}is-focused{{/if}} {{#if isUnassigned}}is-pending{{/if}} {{#if isExcluded}}is-excluded{{/if}}" data-ability-row="{{id}}" data-ability="{{id}}" role="button" tabindex="0">
+          <article class="prog-attr-v2-cell attr-v2--{{colorClass}} {{#if isFocused}}is-focused{{/if}} {{#if isUnassigned}}is-pending{{/if}} {{#if isExcluded}}is-excluded{{/if}}" data-item-id="{{id}}" data-ability-row="{{id}}" data-ability="{{id}}" role="button" tabindex="0">
             <div class="prog-attr-v2-cell-code">{{label}}<span>{{fullName}}</span></div>
             <div class="prog-attr-v2-mod {{modTone}}">{{modifierFormatted}}</div>
             <div class="prog-attr-v2-value-row">
@@ -117,7 +117,7 @@
       </div>
       <div class="prog-attr-v2-cells">
         {{#each mentalAbilities}}
-          <article class="prog-attr-v2-cell attr-v2--{{colorClass}} {{#if isFocused}}is-focused{{/if}} {{#if isUnassigned}}is-pending{{/if}} {{#if isExcluded}}is-excluded{{/if}}" data-ability-row="{{id}}" data-ability="{{id}}" role="button" tabindex="0">
+          <article class="prog-attr-v2-cell attr-v2--{{colorClass}} {{#if isFocused}}is-focused{{/if}} {{#if isUnassigned}}is-pending{{/if}} {{#if isExcluded}}is-excluded{{/if}}" data-item-id="{{id}}" data-ability-row="{{id}}" data-ability="{{id}}" role="button" tabindex="0">
             <div class="prog-attr-v2-cell-code">{{label}}<span>{{fullName}}</span></div>
             <div class="prog-attr-v2-mod {{modTone}}">{{modifierFormatted}}</div>
             <div class="prog-attr-v2-value-row">

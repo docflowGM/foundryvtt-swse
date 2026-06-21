@@ -25,6 +25,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getCanonicalBenefitText, getCanonicalDescriptionText, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/prerequisite-authority.js";
 import { FeatPackSeeder, loadFeatCatalogDocuments } from "/systems/foundryvtt-swse/scripts/registries/feat-pack-seeder.js";
+import { isTalentOnlyFeatContaminant } from "/systems/foundryvtt-swse/scripts/data/feat-domain-guard.js";
 
 /**
  * Internal normalized feat entry
@@ -187,8 +188,13 @@ export class FeatRegistry {
     }
 
     static _indexDocuments(docs, { fallback = false } = {}) {
+        let skippedTalentContaminants = 0;
         for (const doc of docs || []) {
             if (!doc || !doc.name) continue;
+            if (isTalentOnlyFeatContaminant(doc)) {
+                skippedTalentContaminants += 1;
+                continue;
+            }
 
             const entry = this._normalizeEntry(doc);
             this._entries.push(entry);
@@ -217,6 +223,10 @@ export class FeatRegistry {
                 }
                 this._byTag.get(tag).push(entry);
             }
+        }
+
+        if (skippedTalentContaminants > 0) {
+            SWSELogger.warn(`[FeatRegistry] Skipped ${skippedTalentContaminants} talent-only contaminant rows while indexing feats.`);
         }
     }
 

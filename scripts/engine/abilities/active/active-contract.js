@@ -69,7 +69,7 @@
  * }
  */
 
-import { ACTIVE_SUBTYPES } from "./active-types.js";
+import { ACTIVE_SUBTYPES, normalizeActiveSubtype } from "./active-types.js";
 
 export class ActiveContractValidator {
 
@@ -84,8 +84,9 @@ export class ActiveContractValidator {
   static validate(ability) {
     if (ability.system?.executionModel !== "ACTIVE") return false;
 
-    const subType = ability.system?.subType;
+    const rawSubType = ability.system?.subType;
     const meta = ability.system?.abilityMeta;
+    const subType = normalizeActiveSubtype(rawSubType, meta);
 
     if (!subType)
       throw new Error(`ACTIVE ability ${ability.name} missing subType`);
@@ -101,7 +102,7 @@ export class ActiveContractValidator {
       case ACTIVE_SUBTYPES.ACTION:
         return this.validateAction(meta);
       default:
-        throw new Error(`Unknown ACTIVE subType: ${subType}`);
+        throw new Error(`Unknown ACTIVE subType: ${rawSubType}`);
     }
   }
 

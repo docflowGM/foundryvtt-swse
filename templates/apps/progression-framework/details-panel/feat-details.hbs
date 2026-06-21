@@ -79,6 +79,16 @@
     <h3>{{localize "SWSE.Progression.Common.Prerequisites"}}</h3>
     {{#if prerequisiteLine}}
       <p class="feat-prerequisites">{{prerequisiteLine}}</p>
+      {{#if prerequisiteLinks.length}}
+      <div class="prerequisite-link-list prerequisite-link-list--feat" aria-label="Clickable prerequisite feats">
+        {{#each prerequisiteLinks}}
+        <button type="button" class="prerequisite-jump prerequisite-jump--feat {{#unless isAvailable}}is-unavailable{{/unless}}" data-action="jump-feat-prerequisite" data-feat-id="{{id}}">
+          <i class="fa-solid {{#if isOwned}}fa-check{{else}}{{#if isAvailable}}fa-arrow-turn-down{{else}}fa-triangle-exclamation{{/if}}{{/if}}"></i>
+          <span>{{name}}</span>
+        </button>
+        {{/each}}
+      </div>
+      {{/if}}
     {{else}}
       <p class="feat-prerequisites feat-prerequisites--none">{{localize "SWSE.Progression.Common.NoPrerequisites"}}</p>
     {{/if}}
@@ -135,7 +145,16 @@
   {{!-- Additional Notes --}}
   {{#if isSuggested}}
   <div class="feat-note suggested-note">
-    <p><strong>{{localize "SWSE.Progression.Feat.Details.WhySuggested"}}</strong> {{localize "SWSE.Progression.Feat.Details.WhySuggestedBody"}}</p>
+    <p><strong>{{localize "SWSE.Progression.Feat.Details.WhySuggested"}}</strong>
+      {{#if suggestionReasonSummary}}{{suggestionReasonSummary}}{{else}}{{localize "SWSE.Progression.Feat.Details.WhySuggestedBody"}}{{/if}}
+    </p>
+    {{#if suggestionReasonBullets.length}}
+    <ul class="feat-suggestion-reasons">
+      {{#each suggestionReasonBullets}}
+      <li>{{this}}</li>
+      {{/each}}
+    </ul>
+    {{/if}}
   </div>
   {{/if}}
 

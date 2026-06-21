@@ -4,6 +4,7 @@ import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { rollAttack, rollDamage } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { getClassLevel, getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
 
 const NS = 'swse';
 
@@ -331,10 +332,10 @@ export class ForceAdeptTalentActions {
       mysticalLink: () => this.promptMysticalLink(actor),
       attuneWeapon: () => this.promptAttuneWeapon(actor),
       empowerWeapon: () => this.promptEmpowerWeapon(actor),
-      forceTalisman: () => this.announceForceTalismanDeferred(actor, false),
-      greaterForceTalisman: () => this.announceForceTalismanDeferred(actor, true),
-      focusedForceTalisman: () => this.promptFocusedForceTalisman(actor, false),
-      greaterFocusedForceTalisman: () => this.promptFocusedForceTalisman(actor, true),
+      forceTalisman: () => this.openForceTalismanWorkbench(actor, 'force-talisman'),
+      greaterForceTalisman: () => this.openForceTalismanWorkbench(actor, 'greater-force-talisman'),
+      focusedForceTalisman: () => this.openForceTalismanWorkbench(actor, 'focused-force-talisman'),
+      greaterFocusedForceTalisman: () => this.openForceTalismanWorkbench(actor, 'greater-focused-force-talisman'),
       forceThrow: () => this.promptForceThrow(actor, options),
       primitiveBlock: () => this.announcePrimitiveBlock(actor),
       cowerEnemies: () => this.promptCowerEnemies(actor),
@@ -355,6 +356,24 @@ export class ForceAdeptTalentActions {
     const handler = handlers[kind];
     if (handler) return handler();
     return postCard(actor, actionData?.name ?? kind, `<p>${esc(actionData?.description ?? 'No Force Adept/Force Item talent handler is registered for this action yet.')}</p>`, { forceAdeptTalentAction: kind });
+  }
+
+  static async openForceTalismanWorkbench(actor, riteId = 'force-talisman') {
+    const talentByRite = {
+      'force-talisman': 'Force Talisman',
+      'greater-force-talisman': 'Greater Force Talisman',
+      'focused-force-talisman': 'Focused Force Talisman',
+      'greater-focused-force-talisman': 'Greater Focused Force Talisman',
+    };
+    const talentName = talentByRite[riteId] || 'Force Talisman';
+    if (!hasTalent(actor, talentName)) {
+      return postCard(actor, talentName, `<p>This actor does not have ${esc(talentName)}.</p>`);
+    }
+    return openForceAlchemyWorkbench(actor, {
+      launchSource: 'force-adept-talent-action',
+      riteId,
+      activeCategory: 'force',
+    });
   }
 
   static async promptForcePowerAdept(actor) {

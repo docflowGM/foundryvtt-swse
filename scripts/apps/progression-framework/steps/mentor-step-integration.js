@@ -752,7 +752,7 @@ export async function handleAskMentor(actor, stepId, shell) {
   const guidance = getStepGuidance(actor, stepId, shell);
 
   if (guidance && shell?.mentorRail) {
-    await shell.mentorRail.speak(guidance, 'encouraging');
+    shell.mentorRail.queueSpeak?.(guidance, 'encouraging', { source: 'mentor-step-integration' }) ?? void shell.mentorRail.speak?.(guidance, 'encouraging');
   }
 }
 
@@ -816,7 +816,7 @@ export async function handleAskMentorWithSuggestions(actor, stepId, suggestions,
       // Speak the advisory through mentor rail with mood based on confidence
       const advisoryText = `${advisory.observation} ${advisory.impact} ${advisory.guidance}`;
       const mood = advisory.mood || 'encouraging'; // Use confidence-based mood from advisor
-      await shell.mentorRail.speak(advisoryText, mood);
+      shell.mentorRail.queueSpeak?.(advisoryText, mood, { source: 'mentor-advisory' }) ?? void shell.mentorRail.speak?.(advisoryText, mood);
 
       swseLogger.log(
         `[MentorStepIntegration] Spoke suggestion advisory for ${stepId} (${suggestions.length} suggestions, mood: ${mood})`
@@ -825,7 +825,7 @@ export async function handleAskMentorWithSuggestions(actor, stepId, suggestions,
       // Fallback to standard guidance if no advisory generated
       const guidance = getStepGuidance(actor, stepId, shell);
       if (guidance) {
-        await shell.mentorRail.speak(guidance, 'encouraging');
+        shell.mentorRail.queueSpeak?.(guidance, 'encouraging', { source: 'mentor-step-integration' }) ?? void shell.mentorRail.speak?.(guidance, 'encouraging');
       }
     }
   } catch (err) {
@@ -833,7 +833,7 @@ export async function handleAskMentorWithSuggestions(actor, stepId, suggestions,
     // Fallback to standard guidance on error
     const guidance = getStepGuidance(actor, stepId, shell);
     if (guidance && shell?.mentorRail) {
-      await shell.mentorRail.speak(guidance, 'encouraging');
+      shell.mentorRail.queueSpeak?.(guidance, 'encouraging', { source: 'mentor-step-integration' }) ?? void shell.mentorRail.speak?.(guidance, 'encouraging');
     }
   }
 }

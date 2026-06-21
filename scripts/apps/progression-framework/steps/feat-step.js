@@ -394,6 +394,7 @@ export class FeatStep extends ProgressionStepPlugin {
 
     // Get suggested feats (pass shell so suggestion engine sees chargen choices)
     this._suggestedFeats = await this._getSuggestedFeats(shell.actor, legalFeats, shell);
+    this._ensureDefaultFocusedFeat();
 
     // Group feats by category. Legal-only is the default; Show All uses hydrated feats with status flags.
     this._refreshGroupedFeats();
@@ -553,8 +554,20 @@ export class FeatStep extends ProgressionStepPlugin {
       this._selectedTags.clear();
       this._openFilterPanel = null;
       this._categorySidebarCollapsed = false;
+      this._prereqNavigationBanner = null;
       this._ensureActiveCategory();
       shell?.render?.();
+      return true;
+    }
+
+    if (action === 'jump-feat-prerequisite' || action === 'jump-prerequisite-feat') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      const featId = target?.dataset?.featId
+        || target?.dataset?.itemId
+        || target?.closest?.('[data-feat-id]')?.dataset?.featId
+        || target?.closest?.('[data-item-id]')?.dataset?.itemId;
+      this._jumpToPrerequisiteFeat(featId, shell);
       return true;
     }
 
@@ -822,7 +835,7 @@ export class FeatStep extends ProgressionStepPlugin {
       const rankedSuggestions = SuggestionService.sortBySuggestion(normalizedSuggestions)
         .filter(feat => (feat?.suggestion?.tier ?? feat?.tier ?? 0) > 0);
 
-      console.info('[FeatStep] Suggested feats resolved', {
+      swseLogger.debug('[FeatStep] Suggested feats resolved', {
         returned: normalizedSuggestions.length,
         ranked: rankedSuggestions.length,
         top: rankedSuggestions.slice(0, TOP_SUGGESTIONS).map(feat => ({
@@ -834,9 +847,111 @@ export class FeatStep extends ProgressionStepPlugin {
 
       return rankedSuggestions.slice(0, TOP_SUGGESTIONS);
     } catch (err) {
-      console.warn('[FeatStep] Suggestion service error:', err);
+      swseLogger.warn('[FeatStep] Suggestion service error:', err);
       return [];
     }
+  }
+
+  _findSuggestedFeatFor(feat) {
+    const ids = new Set([
+      feat?._id,
+      feat?.id,
+      feat?.name,
+      normalizeFeatNameKey(feat?.name),
+    ].filter(Boolean).map(value => String(value)));
+
+    return (this._suggestedFeats || []).find(candidate => {
+      const candidateIds = [
+        candidate?._id,
+        candidate?.id,
+        candidate?.name,
+        candidate?.itemId,
+        candidate?.featId,
+        candidate?.suggestion?.itemId,
+        candidate?.suggestion?.id,
+        normalizeFeatNameKey(candidate?.name),
+      ].filter(Boolean).map(value => String(value));
+      return candidateIds.some(value => ids.has(value));
+    }) || null;
+  }
+
+  _displayReasonText(value) {
+    if (!value) return '';
+    if (typeof value === 'string') return value.trim();
+    if (typeof value === 'object') {
+      return String(value.fullReason || value.reasonText || value.reasonSummary || value.shortReason || value.text || value.label || '').trim();
+    }
+    return String(value).trim();
+  }
+
+  _isGenericSuggestionReason(value) {
+    const text = String(value || '').trim().toLowerCase();
+    if (!text) return true;
+    return [
+      'you meet the requirements',
+      'you meet this requirement',
+      'this adds to your selections',
+      'adds to your selections',
+      'this relates to your pattern',
+      'this relates to your patterns',
+      'this relates to your progression',
+      'this feat synergizes well with your build and class',
+      'available',
+      'legal option',
+    ].some(fragment => text === fragment || text.includes(fragment));
+  }
+
+  _extractSuggestionExplanation(featOrSuggestion) {
+    const suggestion = featOrSuggestion?.suggestion || {};
+    const packet = featOrSuggestion?.reasonPacket || suggestion?.reasonPacket || {};
+    const explanation = featOrSuggestion?.explanation || suggestion?.explanation || {};
+    const candidates = [
+      explanation.full,
+      packet.fullReason,
+      featOrSuggestion?.reasonText,
+      suggestion.reasonText,
+      explanation.short,
+      packet.shortReason,
+      featOrSuggestion?.reasonSummary,
+      suggestion.reasonSummary,
+      this._displayReasonText(featOrSuggestion?.reason),
+      this._displayReasonText(suggestion.reason),
+    ];
+
+    const summary = candidates
+      .map(value => this._displayReasonText(value))
+      .find(value => value && !this._isGenericSuggestionReason(value)) || '';
+
+    const bulletSources = [
+      explanation.bullets,
+      packet.bullets,
+      featOrSuggestion?.reasonBullets,
+      suggestion.reasonBullets,
+      featOrSuggestion?.reasons,
+      suggestion.reasons,
+      packet.allReasons,
+    ];
+    const bullets = [];
+    const seen = new Set();
+    for (const source of bulletSources) {
+      for (const entry of Array.isArray(source) ? source : []) {
+        const text = this._displayReasonText(entry)
+          .replace(/^because\s+/i, '')
+          .replace(/^it\s+/i, 'It ');
+        if (!text || this._isGenericSuggestionReason(text)) continue;
+        const key = text.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        bullets.push(/[.!?]$/.test(text) ? text : `${text}.`);
+        if (bullets.length >= 4) break;
+      }
+      if (bullets.length >= 4) break;
+    }
+
+    return {
+      summary: summary && /[.!?]$/.test(summary) ? summary : (summary ? `${summary}.` : ''),
+      bullets,
+    };
   }
 
   /**
@@ -1289,6 +1404,86 @@ export class FeatStep extends ProgressionStepPlugin {
     return this._allFeats.find(f => (f._id === featId || f.id === featId || f.name === featId));
   }
 
+  _escapePrereqRegex(value) {
+    return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  _buildFeatPrerequisiteLinks(feat) {
+    const currentId = feat?._id || feat?.id || feat?.name || '';
+    const currentKey = normalizeFeatNameKey(feat?.name || currentId);
+    const text = [
+      feat?.prerequisiteText,
+      feat?.prerequisiteLine,
+      feat?.system?.prerequisite,
+      feat?.system?.prerequisites,
+    ].flatMap(value => Array.isArray(value) ? value : [value])
+      .map(value => typeof value === 'object' ? (value?.name || value?.label || value?.text || '') : value)
+      .filter(Boolean)
+      .join(' • ');
+
+    if (!text.trim()) return [];
+
+    const matches = [];
+    const seen = new Set();
+    const feats = [...(this._allFeats || [])]
+      .filter(candidate => candidate && normalizeFeatNameKey(candidate?.name || '') !== currentKey)
+      .sort((left, right) => String(right?.name || '').length - String(left?.name || '').length);
+
+    for (const candidate of feats) {
+      const name = String(candidate?.name || '').trim();
+      if (!name || name.length < 3) continue;
+      const key = normalizeFeatNameKey(name);
+      if (!key || seen.has(key)) continue;
+      const pattern = new RegExp(`(^|[^A-Za-z0-9])${this._escapePrereqRegex(name)}([^A-Za-z0-9]|$)`, 'i');
+      if (!pattern.test(text)) continue;
+      const id = candidate?._id || candidate?.id || candidate?.name;
+      if (!id) continue;
+      seen.add(key);
+      matches.push({
+        id,
+        name,
+        kind: 'feat',
+        isAvailable: candidate?.isAvailable !== false,
+        isOwned: !!candidate?.isOwned || !!candidate?.isGranted,
+        unavailabilityReason: candidate?.unavailabilityReason || '',
+      });
+      if (matches.length >= 8) break;
+    }
+
+    return matches;
+  }
+
+  _jumpToPrerequisiteFeat(featId, shell) {
+    const target = this._getFeat(featId);
+    if (!target) {
+      ui?.notifications?.warn?.('That prerequisite feat is not present in the feat catalog.');
+      return;
+    }
+
+    const targetId = target?._id || target?.id || target?.name;
+    this._focusedFeatId = targetId;
+    this._showAll = true;
+    this._searchQuery = '';
+    this._selectedTypes.clear?.();
+    this._selectedTags.clear?.();
+    this._refreshGroupedFeats();
+    const categoryKey = this._getFeatCategory(target);
+    if (categoryKey) {
+      this._activeCategory = categoryKey;
+      this._expandedCategories.add(categoryKey);
+    }
+    this._prereqNavigationBanner = {
+      tone: target?.isAvailable === false ? 'warning' : 'info',
+      icon: target?.isAvailable === false ? 'fa-triangle-exclamation' : 'fa-route',
+      title: 'Prerequisite jump',
+      message: target?.isAvailable === false
+        ? `${target.name} is shown because it is a prerequisite, but it is not currently available: ${target.unavailabilityReason || 'requirements are not met yet.'}`
+        : `Showing prerequisite feat: ${target.name}.`,
+    };
+    shell?.setFocusedItem?.({ id: targetId, _id: targetId, name: target.name, type: 'feat' });
+    shell?.requestRender?.({ preserveScroll: true, reason: 'feat-prerequisite-jump' }) ?? shell?.render?.();
+  }
+
   // ---------------------------------------------------------------------------
   // Mapping Helpers
   // ---------------------------------------------------------------------------
@@ -1620,6 +1815,7 @@ export class FeatStep extends ProgressionStepPlugin {
       orderedSelections,
       // PHASE 2 UX: Slot progress
       slotProgress,
+      navigationBanner: this._prereqNavigationBanner || null,
       // Category-browser body state
       categoryOptions,
       activeCategoryKey,
@@ -1664,6 +1860,27 @@ export class FeatStep extends ProgressionStepPlugin {
     };
   }
 
+  _ensureDefaultFocusedFeat() {
+    if (this._focusedFeatId) return;
+
+    const selectedId = this._selectedFeatItem?._id || this._selectedFeatItem?.id || this._selectedFeatId;
+    if (selectedId && this._getFeat(selectedId)) {
+      this._focusedFeatId = selectedId;
+      return;
+    }
+
+    const suggested = (this._suggestedFeats || []).find(feat => feat?._id || feat?.id);
+    if (suggested) {
+      this._focusedFeatId = suggested._id || suggested.id;
+      return;
+    }
+
+    const legal = (this._legalFeats || []).find(feat => feat?._id || feat?.id);
+    if (legal) {
+      this._focusedFeatId = legal._id || legal.id;
+    }
+  }
+
   renderDetailsPanel(focusedItem) {
     if (!this._focusedFeatId) {
       emitFeatStepTrace('DETAILS_EMPTY', {
@@ -1686,7 +1903,9 @@ export class FeatStep extends ProgressionStepPlugin {
 
     attachFeatIconPath(feat);
     const featId = feat._id || feat.id;
-    const isSuggested = this._suggestedFeats.some(s => (s._id || s.id) === featId);
+    const suggestedFeat = this._findSuggestedFeatFor(feat);
+    const isSuggested = !!suggestedFeat;
+    const suggestionExplanation = this._extractSuggestionExplanation(suggestedFeat || feat);
     const isSelected = this._isFeatSelected(feat);
 
     // Normalize detail panel data for canonical display (no fabrication)
@@ -1713,6 +1932,7 @@ export class FeatStep extends ProgressionStepPlugin {
         description: normalizedDetails.description || this._getFeatDescription(feat) || '',
         prerequisites: this._getFeatPrerequisites(feat),
         prerequisiteLine: feat.prerequisiteText || feat.prerequisiteLine || this._getPrerequisiteLine(feat),
+        prerequisiteLinks: this._buildFeatPrerequisiteLinks(feat),
         shortSummary: feat.shortSummary || '',
         isRepeatable: this._isRepeatable(feat.name),
         isAvailable: feat.isAvailable !== false,
@@ -1722,6 +1942,8 @@ export class FeatStep extends ProgressionStepPlugin {
         blockingReasons: this._dedupeReasonList(feat.blockingReasons || []),
         unavailabilityReason: feat.unavailabilityReason || '',
         uiBroadTags: feat.uiBroadTags || [],
+        suggestionReasonSummary: suggestionExplanation.summary,
+        suggestionReasonBullets: suggestionExplanation.bullets,
       },
     };
   }

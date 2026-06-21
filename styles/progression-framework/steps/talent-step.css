@@ -3264,3 +3264,102 @@
 .talent-planner-stage--both .talent-choice-card__main h6 {
   margin-bottom: 0;
 }
+
+/* Prerequisite navigation / cross-tree inspection */
+.talent-prerequisite-navigation-banner,
+.prerequisite-navigation-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin: 0 0 0.85rem 0;
+  padding: 0.7rem 0.85rem;
+  border: 1px solid rgba(0, 210, 255, 0.28);
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(0, 210, 255, 0.12), rgba(6, 15, 34, 0.76));
+  color: var(--talent-text-soft, #c7ecff);
+  box-shadow: inset 0 0 18px rgba(0, 210, 255, 0.06), 0 0 18px rgba(0, 210, 255, 0.08);
+}
+
+.prerequisite-navigation-banner--warning {
+  border-color: rgba(255, 177, 88, 0.45);
+  background: linear-gradient(135deg, rgba(255, 177, 88, 0.14), rgba(35, 17, 8, 0.72));
+}
+
+.prerequisite-navigation-banner i {
+  color: var(--talent-cyan, #7fdfe6);
+  margin-top: 0.15rem;
+}
+
+.prerequisite-navigation-banner--warning i {
+  color: #ffbf73;
+}
+
+.prerequisite-navigation-banner strong,
+.prerequisite-navigation-banner span {
+  display: block;
+}
+
+.prerequisite-navigation-banner strong {
+  color: #f4fdff;
+  font-family: var(--swse-font-mono, "JetBrains Mono", monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 0.2rem;
+}
+
+.prerequisite-link-list--talent {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.65rem;
+}
+
+.prerequisite-jump--talent,
+.talent-path-jump {
+  border: 1px solid rgba(127, 223, 230, 0.26);
+  border-radius: 999px;
+  background: rgba(8, 24, 48, 0.72);
+  color: var(--talent-cyan, #7fdfe6);
+  cursor: pointer;
+  font-family: var(--swse-font-mono, "JetBrains Mono", monospace);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.prerequisite-jump--talent {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.38rem;
+  padding: 0.38rem 0.6rem;
+}
+
+.prerequisite-jump--talent small {
+  color: rgba(198, 235, 255, 0.62);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+}
+
+.prerequisite-jump--talent:hover,
+.talent-path-jump:hover {
+  border-color: rgba(127, 223, 230, 0.72);
+  background: rgba(20, 58, 98, 0.86);
+  color: #f3feff;
+}
+
+.prerequisite-jump--talent.is-unavailable {
+  border-color: rgba(255, 177, 88, 0.42);
+  color: #ffcf8d;
+}
+
+.talent-path-jump {
+  padding: 0.16rem 0.45rem;
+  text-align: left;
+}
+
+.talent-path-list li.is-missing .talent-path-jump {
+  border-color: rgba(255, 146, 128, 0.46);
+  color: #ffb3aa;
+}

@@ -1,6 +1,6 @@
 {
   "summary": {
-    "totalFeats": 423,
+    "totalFeats": 409,
     "categories": [
       "Uncategorized"
     ],
@@ -30,7 +30,6 @@
         "Point-Blank Shot",
         "Low Profile",
         "Fast Surge",
-        "Indomitable Will",
         "Wounding Strike",
         "Pitiless Warrior",
         "Scion of Dorin",
@@ -57,10 +56,8 @@
         "Forceful Will",
         "Reactive Awareness",
         "Technical Experts",
-        "Lucky Shot",
         "Logic Upgrade: Self-Defense",
         "Staggering Attack",
-        "Stunning Strike",
         "Strong Bellow",
         "Wrruushi Training",
         "Medical Team",
@@ -113,9 +110,7 @@
         "Bad Feeling",
         "Forceful Saber Throw",
         "Melee Defense",
-        "Noble Fencing Style",
         "Gearhead",
-        "Greater Weapon Specialization",
         "Reactive Stealth",
         "Triple Crit",
         "Throw",
@@ -133,7 +128,6 @@
         "Ion Shielding",
         "Quick Draw",
         "Duck and Cover",
-        "Force Focus",
         "Dodge",
         "Opportunistic Shooter",
         "Forceful Grip",
@@ -168,7 +162,6 @@
         "Recovering Surge",
         "Martial Arts II",
         "Wicked Strike",
-        "Educated",
         "Droid Hunter",
         "Experienced Medic",
         "Vehicular Surge",
@@ -210,14 +203,12 @@
         "Nimble Team",
         "Deceptive Drop",
         "Covert Operatives",
-        "Greater Weapon Focus",
         "Weapon Proficiency (Rifles)",
         "Armor Proficiency (Light)",
         "Frightening Presence",
         "Slicer Team",
         "Biotech Surgery",
         "Crush",
-        "Weapon Specialization",
         "Trench Warrior",
         "Imperial Military Training",
         "Overwhelming Attack",
@@ -337,7 +328,6 @@
         "Point Blank Shot",
         "Weapon Focus",
         "Coordinated Barrage",
-        "Recall",
         "Dual Weapon Mastery II",
         "Knock Prone",
         "Autofire Assault",
@@ -350,7 +340,6 @@
         "Acrobatic Dodge",
         "Implant Training",
         "Improved Disarm",
-        "Harm’s Way",
         "Multi-Targeting",
         "Momentum Strike",
         "Advanced Melee Weapon Proficiency",
@@ -376,7 +365,6 @@
         "Skill Challenge: Last Resort",
         "Forceful Weapon",
         "Bowcaster Marksman",
-        "Forceful Warrior",
         "Mighty Swing",
         "Spacer's Surge",
         "Force Sensitivity",
@@ -456,7 +444,6 @@
         "Point-Blank Shot",
         "Low Profile",
         "Fast Surge",
-        "Indomitable Will",
         "Wounding Strike",
         "Pitiless Warrior",
         "Scion of Dorin",
@@ -483,10 +470,8 @@
         "Forceful Will",
         "Reactive Awareness",
         "Technical Experts",
-        "Lucky Shot",
         "Logic Upgrade: Self-Defense",
         "Staggering Attack",
-        "Stunning Strike",
         "Strong Bellow",
         "Wrruushi Training",
         "Medical Team",
@@ -539,9 +524,7 @@
         "Bad Feeling",
         "Forceful Saber Throw",
         "Melee Defense",
-        "Noble Fencing Style",
         "Gearhead",
-        "Greater Weapon Specialization",
         "Reactive Stealth",
         "Triple Crit",
         "Throw",
@@ -559,7 +542,6 @@
         "Ion Shielding",
         "Quick Draw",
         "Duck and Cover",
-        "Force Focus",
         "Dodge",
         "Opportunistic Shooter",
         "Forceful Grip",
@@ -594,7 +576,6 @@
         "Recovering Surge",
         "Martial Arts II",
         "Wicked Strike",
-        "Educated",
         "Droid Hunter",
         "Experienced Medic",
         "Vehicular Surge",
@@ -636,14 +617,12 @@
         "Nimble Team",
         "Deceptive Drop",
         "Covert Operatives",
-        "Greater Weapon Focus",
         "Weapon Proficiency (Rifles)",
         "Armor Proficiency (Light)",
         "Frightening Presence",
         "Slicer Team",
         "Biotech Surgery",
         "Crush",
-        "Weapon Specialization",
         "Trench Warrior",
         "Imperial Military Training",
         "Overwhelming Attack",
@@ -763,7 +742,6 @@
         "Point Blank Shot",
         "Weapon Focus",
         "Coordinated Barrage",
-        "Recall",
         "Dual Weapon Mastery II",
         "Knock Prone",
         "Autofire Assault",
@@ -776,7 +754,6 @@
         "Acrobatic Dodge",
         "Implant Training",
         "Improved Disarm",
-        "Harm’s Way",
         "Multi-Targeting",
         "Momentum Strike",
         "Advanced Melee Weapon Proficiency",
@@ -802,7 +779,6 @@
         "Skill Challenge: Last Resort",
         "Forceful Weapon",
         "Bowcaster Marksman",
-        "Forceful Warrior",
         "Mighty Swing",
         "Spacer's Surge",
         "Force Sensitivity",
@@ -882,7 +858,6 @@
         "Point-Blank Shot",
         "Low Profile",
         "Fast Surge",
-        "Indomitable Will",
         "Wounding Strike",
         "Pitiless Warrior",
         "Scion of Dorin",
@@ -909,10 +884,8 @@
         "Forceful Will",
         "Reactive Awareness",
         "Technical Experts",
-        "Lucky Shot",
         "Logic Upgrade: Self-Defense",
         "Staggering Attack",
-        "Stunning Strike",
         "Strong Bellow",
         "Wrruushi Training",
         "Medical Team",
@@ -965,9 +938,7 @@
         "Bad Feeling",
         "Forceful Saber Throw",
         "Melee Defense",
-        "Noble Fencing Style",
         "Gearhead",
-        "Greater Weapon Specialization",
         "Reactive Stealth",
         "Triple Crit",
         "Throw",
@@ -985,7 +956,6 @@
         "Ion Shielding",
         "Quick Draw",
         "Duck and Cover",
-        "Force Focus",
         "Dodge",
         "Opportunistic Shooter",
         "Forceful Grip",
@@ -1020,7 +990,6 @@
         "Recovering Surge",
         "Martial Arts II",
         "Wicked Strike",
-        "Educated",
         "Droid Hunter",
         "Experienced Medic",
         "Vehicular Surge",
@@ -1062,14 +1031,12 @@
         "Nimble Team",
         "Deceptive Drop",
         "Covert Operatives",
-        "Greater Weapon Focus",
         "Weapon Proficiency (Rifles)",
         "Armor Proficiency (Light)",
         "Frightening Presence",
         "Slicer Team",
         "Biotech Surgery",
         "Crush",
-        "Weapon Specialization",
         "Trench Warrior",
         "Imperial Military Training",
         "Overwhelming Attack",
@@ -1189,7 +1156,6 @@
         "Point Blank Shot",
         "Weapon Focus",
         "Coordinated Barrage",
-        "Recall",
         "Dual Weapon Mastery II",
         "Knock Prone",
         "Autofire Assault",
@@ -1202,7 +1168,6 @@
         "Acrobatic Dodge",
         "Implant Training",
         "Improved Disarm",
-        "Harm’s Way",
         "Multi-Targeting",
         "Momentum Strike",
         "Advanced Melee Weapon Proficiency",
@@ -1228,7 +1193,6 @@
         "Skill Challenge: Last Resort",
         "Forceful Weapon",
         "Bowcaster Marksman",
-        "Forceful Warrior",
         "Mighty Swing",
         "Spacer's Surge",
         "Force Sensitivity",
@@ -1479,16 +1443,6 @@
         "value": "Catch a <a class=\"mw-redirect\" href=\"/wiki/Second_Wind\" title=\"Second Wind\">Second Wind</a> as a <a class=\"mw-redirect\" href=\"/wiki/Free_Action\" title=\"Free Action\">Free Action</a> on your turn."
       },
       "shortSummary": "Catch a Second Wind as a Free Action on your turn."
-    },
-    {
-      "id": "0794112a41461b05",
-      "name": "Indomitable Will",
-      "category": "Uncategorized",
-      "source": "Unknown",
-      "role": "general",
-      "prerequisites": [],
-      "description": {},
-      "shortSummary": "You gain a +2 bonus on Will Defense against mind-affecting effects and may reroll a failed Will Defense check once per encounter."
     },
     {
       "id": "07d3c95e72608e00",
@@ -1789,16 +1743,6 @@
       "shortSummary": "Gain bonuses on Mechanics checks when near allies."
     },
     {
-      "id": "18f535b84cff63c3",
-      "name": "Lucky Shot",
-      "category": "Uncategorized",
-      "source": "Unknown",
-      "role": "general",
-      "prerequisites": [],
-      "description": {},
-      "shortSummary": "Once per encounter, you may reroll a ranged attack roll and take the better result."
-    },
-    {
       "id": "191aacaecaa92ce1",
       "name": "Logic Upgrade: Self-Defense",
       "category": "Uncategorized",
@@ -1820,16 +1764,6 @@
       "description": {
         "value": "Impose penalties to enemy <a href=\"/wiki/Skill_Checks\" title=\"Skill Checks\">Skill Checks</a> with a successful attack."
       },
-      "shortSummary": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack."
-    },
-    {
-      "id": "19ca8f89351e8fee",
-      "name": "Stunning Strike",
-      "category": "Uncategorized",
-      "source": "Unknown",
-      "role": "general",
-      "prerequisites": [],
-      "description": {},
       "shortSummary": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack."
     },
     {
@@ -2447,16 +2381,6 @@
       "shortSummary": "Trade attack bonus on melee attacks for a dodge bonus to Reflex Defense."
     },
     {
-      "id": "3b1c70b0f6844126",
-      "name": "Noble Fencing Style",
-      "category": "Uncategorized",
-      "source": "Unknown",
-      "role": "general",
-      "prerequisites": [],
-      "description": {},
-      "shortSummary": "When wielding a weapon with Weapon Finesse, you may use your Charisma modifier instead of Strength for attack rolls."
-    },
-    {
       "id": "3b9b60551a3379ce",
       "name": "Gearhead",
       "category": "Uncategorized",
@@ -2467,16 +2391,6 @@
         "value": "Make <a href=\"/wiki/Mechanics\" title=\"Mechanics\">Mechanics</a> and <a href=\"/wiki/Use_Computer\" title=\"Use Computer\">Use Computer</a> checks quickly."
       },
       "shortSummary": "Make Mechanics and Use Computer checks quickly."
-    },
-    {
-      "id": "3ca2ebe34da486a5",
-      "name": "Greater Weapon Specialization",
-      "category": "Uncategorized",
-      "source": "Unknown",
-      "role": "general",
-      "prerequisites": [],
-      "description": {},
-      "shortSummary": "You gain a +2 bonus on damage rolls with the selected weapon group."
     },
     {
       "id": "3cd647b126f1d171",
@@ -2671,16 +2585,6 @@
         "value": "You dive for <a href=\"/wiki/Cover\" title=\"Cover\">Cover</a> when you avoid <a href=\"/wiki/Area_Attacks\" title=\"Area Attacks\">Area Attacks</a>."
       },
       "shortSummary": "You dive for Cover when you avoid Area Attacks."
-    },
-    {
-      "id": "44ddf3506444cbbd",
-      "name": "Force Focus",
-      "category": "Uncategorized",
-      "source": "Unknown",
-      "role": "general",
-      "prerequisites": [],
-      "description": {},
-      "shortSummary": "You gain a +2 bonus on Use the Force checks made to activate a specific Force power you select when taking this feat."
     },
     {
       "id": "45366d4f3a5e443d",
@@ -3079,16 +2983,6 @@
         "value": "Gain extra attack on a second target upon damaging the first target."
       },
       "shortSummary": "Gain extra attack on a second target upon damaging the first target."
-    },
-    {
-      "id": "5cc1216874c79087",
-      "name": "Educated",
-      "category": "Uncategorized",
-      "source": "Unknown",
-      "role": "general",
-      "prerequisites": [],
-      "description": {},
-      "shortSummary": "Choose two Knowledge skills."
     },
     {
       "id": "5d17898fc9652370",
@@ -3577,16 +3471,6 @@
       "shortSummary": "Gain bonuses on Stealth checks when near allies."
     },
     {
-      "id": "75ff82e2dd80091d",
-      "name": "Greater Weapon Focus",
-      "category": "Uncategorized",
-      "source": "Unknown",
-      "role": "general",
-      "prerequisites": [],
-      "description": {},
-      "shortSummary": "You gain a +1 bonus on attack rolls with the selected weapon group."
-    },
-    {
       "id": "765ff8a34e58acac",
       "name": "Weapon Proficiency (Rifles)",
       "category": "Uncategorized",
@@ -3653,16 +3537,6 @@
         "value": "Deal <a class=\"mw-redirect\" href=\"/wiki/Unarmed\" title=\"Unarmed\">Unarmed</a> or Claw damage to a <a class=\"mw-redirect\" href=\"/wiki/Pinned\" title=\"Pinned\">Pinned</a> opponent."
       },
       "shortSummary": "Deal Unarmed or Claw damage to a Pinned opponent."
-    },
-    {
-      "id": "7cd5ebe725910cb2",
-      "name": "Weapon Specialization",
-      "category": "Uncategorized",
-      "source": "Unknown",
-      "role": "general",
-      "prerequisites": [],
-      "description": {},
-      "shortSummary": "You gain a +2 bonus on damage rolls with the selected weapon group."
     },
     {
       "id": "7d8366d0481d76e2",
@@ -5061,18 +4935,6 @@
       "shortSummary": "Allow an ally to deal more damage when you aid their attack."
     },
     {
-      "id": "c58e69ff5adb5e71",
-      "name": "Recall",
-      "category": "Uncategorized",
-      "source": "Unknown",
-      "role": "general",
-      "prerequisites": [],
-      "description": {
-        "value": "Reroll <a href=\"/wiki/Knowledge\" title=\"Knowledge\">Knowledge</a> skill check, keeping the better result."
-      },
-      "shortSummary": "Reroll Knowledge skill check, keeping the better result."
-    },
-    {
       "id": "c7c99a77ebee1c0c",
       "name": "Dual Weapon Mastery II",
       "category": "Uncategorized",
@@ -5213,16 +5075,6 @@
         "value": "Gain +5 bonus on melee attacks to <a href=\"/wiki/Disarm\" title=\"Disarm\">Disarm</a> an opponent."
       },
       "shortSummary": "Gain +5 bonus on melee attacks to Disarm an opponent."
-    },
-    {
-      "id": "ce946668c5b57410",
-      "name": "Harm’s Way",
-      "category": "Uncategorized",
-      "source": "Unknown",
-      "role": "general",
-      "prerequisites": [],
-      "description": {},
-      "shortSummary": "As a reaction, you may take damage dealt to an adjacent ally instead of them."
     },
     {
       "id": "cefb9edb540745d6",
@@ -5515,16 +5367,6 @@
         "value": "Gain a bonus to damage rolls when you spend a <a class=\"mw-redirect\" href=\"/wiki/Force_Point\" title=\"Force Point\">Force Point</a> on a <a href=\"/wiki/Bowcaster\" title=\"Bowcaster\">Bowcaster</a> attack."
       },
       "shortSummary": "Gain a bonus to damage rolls when you spend a Force Point on a Bowcaster attack."
-    },
-    {
-      "id": "dbdacb522c14d7e1",
-      "name": "Forceful Warrior",
-      "category": "Uncategorized",
-      "source": "Unknown",
-      "role": "general",
-      "prerequisites": [],
-      "description": {},
-      "shortSummary": "You gain a +2 bonus on melee attack rolls made while using a Force power."
     },
     {
       "id": "dd2c0e394cdf08ba",

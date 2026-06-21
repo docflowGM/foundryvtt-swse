@@ -75,6 +75,30 @@ export const BUILD_THEMES = {
     TRACKING: 'tracking'
 };
 
+
+function normalizeTextTokens(value) {
+    if (value == null) return [];
+    if (Array.isArray(value)) return value.flatMap(entry => normalizeTextTokens(entry));
+    if (value instanceof Set) return Array.from(value).flatMap(entry => normalizeTextTokens(entry));
+    if (typeof value === 'object') {
+        const preferred = value.name ?? value.label ?? value.title ?? value.id ?? value.key ?? value.slug ?? value.value;
+        if (preferred != null) return normalizeTextTokens(preferred);
+        return Object.values(value).flatMap(entry => normalizeTextTokens(entry));
+    }
+    const text = String(value).trim();
+    return text ? [text] : [];
+}
+
+function normalizeLowerTextTokens(value) {
+    return normalizeTextTokens(value)
+        .map(token => token.toLowerCase().trim())
+        .filter(Boolean);
+}
+
+function firstLowerTextToken(value) {
+    return normalizeLowerTextTokens(value)[0] || '';
+}
+
 // Note: PRESTIGE_SIGNALS is now loaded from /data/prestige-signals.json
 // See initializePrestigeSignals() above
 
@@ -325,8 +349,11 @@ export class BuildIntent {
 
         const talentTrees = new Set(
             actor.items
-                .filter(i => i.type === 'talent' && i.system?.tree)
-                .map(t => t.system.tree.toLowerCase())
+                .filter(i => i.type === 'talent')
+                .flatMap(t => {
+                    const tokens = normalizeLowerTextTokens(t.system?.tree ?? t.system?.talent_tree ?? t.system?.treeId);
+                    return tokens.length ? tokens : normalizeLowerTextTokens(t.name);
+                })
         );
 
         const trainedSkills = new Set();
@@ -471,8 +498,9 @@ export class BuildIntent {
                 signals = PRESTIGE_SIGNALS[target.className];
             }
 
+            const treeNames = new Set(normalizeLowerTextTokens(treeName));
             if (signals?.talentTrees?.some(t =>
-                t.toLowerCase() === treeName.toLowerCase()
+                normalizeLowerTextTokens(t).some(signalTree => treeNames.has(signalTree))
             )) {
                 return {
                     aligned: true,
@@ -483,8 +511,8 @@ export class BuildIntent {
 
         // Check Force alignment
         if (intent.forceFocus) {
-            const forceTrees = ['lightsaber combat', 'jedi mind tricks', 'alter', 'control', 'sense'];
-            if (forceTrees.includes(treeName.toLowerCase())) {
+            const forceTrees = new Set(['lightsaber combat', 'jedi mind tricks', 'alter', 'control', 'sense']);
+            if (normalizeLowerTextTokens(treeName).some(tree => forceTrees.has(tree))) {
                 return {
                     aligned: true,
                     reason: 'Supports your Force-focused build'

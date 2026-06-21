@@ -1,5 +1,15 @@
 {{!-- Talent Tree Browser (Stage 1) --}}
 <div class="talent-work-surface talent-stage-browser talent-holomap-browser">
+  {{#if navigationBanner}}
+  <div class="prerequisite-navigation-banner prerequisite-navigation-banner--{{navigationBanner.tone}} talent-prerequisite-navigation-banner">
+    <i class="fa-solid {{navigationBanner.icon}}"></i>
+    <div>
+      <strong>{{navigationBanner.title}}</strong>
+      <span>{{navigationBanner.message}}</span>
+    </div>
+  </div>
+  {{/if}}
+
   <div class="talent-browser-header talent-browser-header--holomap">
     <div class="talent-browser-header__eyebrow">{{localize "SWSE.Progression.Talent.Stage.TalentMatrix"}}</div>
     <h3 class="talent-browser-title">

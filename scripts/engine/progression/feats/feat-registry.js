@@ -7,6 +7,7 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { toStableKey } from "/systems/foundryvtt-swse/scripts/utils/stable-key.js";
 import { loadFeatBucketsMapping, normalizeFeatRuntime, normalizeFeatTypeKey, resolveFeatBonusFeatFor } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-shape.js";
 import { FeatRegistry as CanonicalFeatRegistry } from "/systems/foundryvtt-swse/scripts/registries/feat-registry.js";
+import { isTalentOnlyFeatContaminant } from "/systems/foundryvtt-swse/scripts/data/feat-domain-guard.js";
 
 const CANONICAL_FEAT_DISPLAY_NAMES = new Map([
   ['point blank shot', 'Point-Blank Shot'],
@@ -56,7 +57,12 @@ export const FeatRegistry = {
       this.feats.clear();
       this._byKey.clear();
 
+      let skippedTalentContaminants = 0;
       for (const entry of CanonicalFeatRegistry.getAll?.() || []) {
+        if (isTalentOnlyFeatContaminant(entry)) {
+          skippedTalentContaminants += 1;
+          continue;
+        }
         const docLike = {
           ...entry,
           _id: entry.id,
@@ -79,6 +85,9 @@ export const FeatRegistry = {
       }
 
       this.isBuilt = true;
+      if (skippedTalentContaminants > 0) {
+        SWSELogger.warn(`[FeatRegistry] Skipped ${skippedTalentContaminants} talent-only contaminant rows while building progression feat registry.`);
+      }
       SWSELogger.log(`FeatRegistry built: ${this.feats.size} feats loaded from canonical registry`);
       return true;
     } catch (err) {

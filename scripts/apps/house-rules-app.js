@@ -85,6 +85,7 @@ export class HouseRulesApp extends BaseSWSEAppV2 {
       backgroundSelectionCount: 'Background Selection Count',
       droidPointBuyPool: 'Droid Point Buy Pool',
       livingPointBuyPool: 'Living Point Buy Pool',
+      abilityIncreaseAllocationMode: 'Ability Increase Allocation Mode',
       droidConstructionCredits: 'Droid Construction Credits',
       allowDroidDestiny: 'Allow Droids Destiny Points',
 
@@ -126,7 +127,8 @@ export class HouseRulesApp extends BaseSWSEAppV2 {
       skillTrainingEnabled: 'Skill Training Advancement',
       trainingPointsPerLevel: 'Training Points Per Level',
       multiclassBonusChoice: 'Multiclass Bonus Selection',
-      abilityIncreaseMethod: 'Ability Increase Method',
+      abilityIncreaseMethod: 'Ability Increase Method (Legacy)',
+      abilityIncreaseAllocationMode: 'Ability Increase Allocation Mode',
 
       // Grapple & Flanking
       grappleEnabled: 'Enable Grapple',
@@ -199,6 +201,7 @@ export class HouseRulesApp extends BaseSWSEAppV2 {
       diagonalMovement: 'Grid diagonal movement cost',
       secondWindImproved: 'Second Wind also moves up Condition Track',
       secondWindRecovery: 'When Second Wind recovers',
+      abilityIncreaseAllocationMode: 'RAW gives +1 to two different abilities; optional house rule allows both points into one ability.',
       forceTrainingAttribute: 'Force Training ability (WIS or CHA)',
       blockDeflectTalents: 'Block and Deflect as separate or combined',
       blockMechanicalAlternative: 'Non-Jedi melee weapons can block attacks',
@@ -373,7 +376,7 @@ const HOUSE_RULES_CATEGORIES = {
     'trainingCostScale',
     'trainingRequiresTrainer',
     'multiclassBonusChoice',
-    'abilityIncreaseMethod',
+    'abilityIncreaseAllocationMode',
     'statusEffectsEnabled',
     'statusEffectsList',
     'autoApplyFromConditionTrack',

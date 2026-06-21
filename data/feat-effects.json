@@ -3,9 +3,9 @@
     "version": 1,
     "generatedFrom": "packs/feats.db",
     "description": "Mechanical ActiveEffect definitions extracted from feat compendium items. FeatRegistry owns feat identity; FeatEffectRegistry owns these mechanical definitions. The applier reproduces Foundry's prior behavior: only effects with transfer:true were applied to actors before migration.",
-    "featCount": 414,
-    "featsWithEffects": 83,
-    "effectCount": 86,
+    "featCount": 400,
+    "featsWithEffects": 77,
+    "effectCount": 79,
     "generatedEffectIds": 15,
     "transferTrueEffects": 15
   },
@@ -451,35 +451,6 @@
         }
       ]
     },
-    "greater-weapon-specialization": {
-      "featId": "3ca2ebe34da486a5",
-      "featName": "Greater Weapon Specialization",
-      "featKey": "greater-weapon-specialization",
-      "effects": [
-        {
-          "_id": "2609e320-82ca-4f97-bbc1-4e5e2b1dbcb9",
-          "name": "Greater Weapon Specialization",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": true,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Greater Weapon Specialization",
-              "effectType": "combat_bonus",
-              "flagType": "Greater Weapon Specialization",
-              "migratedToPassive": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "2609e320-82ca-4f97-bbc1-4e5e2b1dbcb9",
-            "generatedId": false
-          }
-        }
-      ]
-    },
     "reckless-charge": {
       "featId": "4025202b97ec451d",
       "featName": "Reckless Charge",
@@ -559,34 +530,6 @@
           },
           "_provenance": {
             "originalEffectId": "5e810754-78db-4b51-a879-83d55b7439cb",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "force-focus": {
-      "featId": "44ddf3506444cbbd",
-      "featName": "Force Focus",
-      "featKey": "force-focus",
-      "effects": [
-        {
-          "_id": "c848bbad-3457-473f-93d4-5bf788e39d60",
-          "name": "Force Focus",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Force Focus",
-              "effectType": "skill_bonus",
-              "flagType": "Force Focus"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "c848bbad-3457-473f-93d4-5bf788e39d60",
             "generatedId": false
           }
         }
@@ -767,69 +710,6 @@
         }
       ]
     },
-    "educated": {
-      "featId": "5cc1216874c79087",
-      "featName": "Educated",
-      "featKey": "educated",
-      "effects": [
-        {
-          "_id": "f11IWEnIuZiKRM2T",
-          "name": "Educated",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [
-            {
-              "key": "system.skills.knowledge_galactichistory.miscMod",
-              "mode": 2,
-              "value": "5",
-              "priority": 20
-            }
-          ],
-          "duration": {},
-          "disabled": true,
-          "transfer": true,
-          "flags": {
-            "swse": {
-              "type": "skill-bonus",
-              "skill": "knowledgegalactichistory",
-              "source": "Educated",
-              "migratedToPassive": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": null,
-            "generatedId": true
-          }
-        },
-        {
-          "_id": "6ubBP2bDtogt50J7",
-          "name": "Educated",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [
-            {
-              "key": "system.skills.knowledge_socialsciences.miscMod",
-              "mode": 2,
-              "value": "5",
-              "priority": 20
-            }
-          ],
-          "duration": {},
-          "disabled": true,
-          "transfer": true,
-          "flags": {
-            "swse": {
-              "type": "skill-bonus",
-              "skill": "knowledgesocialsciences",
-              "source": "Educated",
-              "migratedToPassive": true
-            }
-          },
-          "_provenance": {
-            "originalEffectId": null,
-            "generatedId": true
-          }
-        }
-      ]
-    },
     "keen-force-mind": {
       "featId": "647d77a8f5ab9af3",
       "featName": "Keen Force Mind",
@@ -942,39 +822,6 @@
         }
       ]
     },
-    "greater-weapon-focus": {
-      "featId": "75ff82e2dd80091d",
-      "featName": "Greater Weapon Focus",
-      "featKey": "greater-weapon-focus",
-      "effects": [
-        {
-          "_id": "2ddiKgeQ8Uv4X1Sf",
-          "name": "Greater Weapon Focus",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [
-            {
-              "key": "system.attackBonus.rifles",
-              "mode": 2,
-              "value": "1",
-              "priority": 20
-            }
-          ],
-          "duration": {},
-          "disabled": false,
-          "transfer": true,
-          "flags": {
-            "swse": {
-              "type": "attack-bonus",
-              "weaponGroup": "rifles"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": null,
-            "generatedId": true
-          }
-        }
-      ]
-    },
     "weapon-proficiency-rifles": {
       "featId": "765ff8a34e58acac",
       "featName": "Weapon Proficiency (Rifles)",
@@ -1059,41 +906,6 @@
           },
           "_provenance": {
             "originalEffectId": "42e2b97a-7c7f-419c-ae1d-42e6080cb792",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "weapon-specialization": {
-      "featId": "7cd5ebe725910cb2",
-      "featName": "Weapon Specialization",
-      "featKey": "weapon-specialization",
-      "effects": [
-        {
-          "_id": "58919a68-86ab-4cc5-b2e8-4f7b712e1ff2",
-          "name": "Weapon Specialization",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [
-            {
-              "key": "system.damageBonus.rifles",
-              "mode": 2,
-              "value": "2",
-              "priority": 20
-            }
-          ],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Weapon Specialization",
-              "effectType": "combat_bonus",
-              "flagType": "Weapon Specialization"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "58919a68-86ab-4cc5-b2e8-4f7b712e1ff2",
             "generatedId": false
           }
         }
@@ -2056,34 +1868,6 @@
           },
           "_provenance": {
             "originalEffectId": "f376ea67-161a-4b7e-bcea-f967926d5867",
-            "generatedId": false
-          }
-        }
-      ]
-    },
-    "forceful-warrior": {
-      "featId": "dbdacb522c14d7e1",
-      "featName": "Forceful Warrior",
-      "featKey": "forceful-warrior",
-      "effects": [
-        {
-          "_id": "844b18f9-e983-4e64-b644-782b98aebf28",
-          "name": "Forceful Warrior",
-          "icon": "icons/svg/upgrade.svg",
-          "changes": [],
-          "duration": {},
-          "disabled": false,
-          "transfer": false,
-          "flags": {
-            "swse": {
-              "source": "feat",
-              "featName": "Forceful Warrior",
-              "effectType": "combat_bonus",
-              "flagType": "Forceful Warrior"
-            }
-          },
-          "_provenance": {
-            "originalEffectId": "844b18f9-e983-4e64-b644-782b98aebf28",
             "generatedId": false
           }
         }

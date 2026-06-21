@@ -936,15 +936,31 @@ export const HOUSERULE_MANIFEST = [
 
   {
     key: 'abilityIncreaseMethod',
-    name: 'Ability Increase Method',
+    name: 'Ability Increase Method (Legacy)',
     category: 'advancement',
-    description: 'How ability score increases are applied at levels 4/8/12/16/20.',
+    description: 'Legacy compatibility setting for older level-up UI. Prefer Ability Increase Allocation Mode.',
     type: 'string',
     choices: {
-      standard: 'Standard (1 to 2 attributes)',
-      flexible: 'Flexible (2 to 1 or 1 to 2)'
+      standard: 'RAW: +1 to two different abilities',
+      flexible: 'House Rule: two points may stack on one ability'
     },
-    default: 'flexible',
+    default: 'standard',
+    status: 'legacy',
+    tags: ['compatibility'],
+    presetVisible: false,
+    config: false
+  },
+  {
+    key: 'abilityIncreaseAllocationMode',
+    name: 'Ability Increase Allocation Mode',
+    category: 'advancement',
+    description: 'Controls whether level-based ability increases must go to two different abilities or may stack both points into one ability.',
+    type: 'string',
+    choices: {
+      raw_two_different: 'RAW: +1 to two different abilities',
+      allow_stacked_two: 'House Rule: two points may stack on one ability'
+    },
+    default: 'raw_two_different',
     status: 'wired',
     tags: ['RAW', 'house-rule', 'automation'],
     presetVisible: true,

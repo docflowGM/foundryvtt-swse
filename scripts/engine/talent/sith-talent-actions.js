@@ -3,6 +3,7 @@ import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { getClassLevel, getTotalLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
 
 const NS = 'swse';
 
@@ -321,8 +322,8 @@ export class SithTalentActions {
       causeMutation: () => this.announceCauseMutationDeferred(actor),
       rapidAlchemy: () => this.promptRapidAlchemy(actor),
       rapidAlchemySacrifice: () => this.promptRapidAlchemySacrifice(actor),
-      sithAlchemy: () => this.announceSithAlchemyDeferred(actor),
-      sithAlchemySpecialist: () => this.announceSithAlchemySpecialistDeferred(actor),
+      sithAlchemy: () => this.openSithAlchemyWorkbench(actor, 'sith-talisman', 'sith'),
+      sithAlchemySpecialist: () => this.openSithAlchemyWorkbench(actor, 'sith-alchemy-specialist', 'specialist'),
       desperateMeasures: () => this.promptDesperateMeasures(actor),
       focusTerror: () => this.promptFocusTerror(actor),
       inciteRage: () => this.promptInciteRage(actor),
@@ -343,6 +344,20 @@ export class SithTalentActions {
     const handler = handlers[kind];
     if (handler) return handler();
     return postCard(actor, actionData?.name ?? kind, `<p>${esc(actionData?.description ?? 'No Sith talent handler is registered for this action yet.')}</p>`, { sithTalentAction: kind });
+  }
+
+  static async openSithAlchemyWorkbench(actor, riteId = 'sith-talisman', category = 'sith') {
+    if (!hasTalent(actor, 'Sith Alchemy') && category !== 'specialist') {
+      return postCard(actor, 'Sith Alchemy', '<p>This actor does not have Sith Alchemy.</p>');
+    }
+    if (category === 'specialist' && !hasTalent(actor, 'Sith Alchemy Specialist')) {
+      return postCard(actor, 'Sith Alchemy Specialist', '<p>This actor does not have Sith Alchemy Specialist.</p>');
+    }
+    return openForceAlchemyWorkbench(actor, {
+      launchSource: 'sith-talent-action',
+      riteId,
+      activeCategory: category,
+    });
   }
 
   static async promptDarkHealing(actor) {

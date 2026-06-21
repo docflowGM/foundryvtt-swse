@@ -520,35 +520,36 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     switch (action) {
       case 'survey-start':
         event?.preventDefault?.();
-        await this.startSurvey(shell);
+        await this._startSurvey(shell);
         return true;
       case 'survey-choose': {
         event?.preventDefault?.();
-        const choiceId = target?.dataset?.choiceId || event?.target?.closest?.('[data-choice-id]')?.dataset?.choiceId;
-        if (choiceId) await this.chooseAnswer(shell, choiceId);
+        const choiceTarget = target?.closest?.('[data-action="survey-choose"], [data-question-id][data-option-id]')
+          || event?.target?.closest?.('[data-action="survey-choose"], [data-question-id][data-option-id]')
+          || target;
+        await this._chooseSurveyAnswer(shell, choiceTarget);
         return true;
       }
       case 'survey-continue':
         event?.preventDefault?.();
-        await this.continueSurvey(shell);
+        await this._continueSurvey(shell);
         return true;
       case 'survey-finish':
         event?.preventDefault?.();
-        await this.finishSurvey(shell);
+        await this._finishSurvey(shell);
         return true;
       case 'survey-change-answer':
         event?.preventDefault?.();
-        this.state.selectedChoiceId = null;
-        this._commitSurveyState(shell);
-        shell?.requestRender?.({ preserveScroll: true, reason: 'prestige-survey-change-answer' }) ?? shell?.render?.();
+        await this._changeCurrentAnswer(shell);
         return true;
       case 'survey-previous':
+      case 'survey-previous-question':
         event?.preventDefault?.();
-        await this.previousQuestion(shell);
+        await this._goToPreviousQuestion(shell);
         return true;
       case 'survey-retake':
         event?.preventDefault?.();
-        await this.retakeSurvey(shell);
+        await this._retakeSurvey(shell);
         return true;
       case 'survey-back':
         event?.preventDefault?.();
@@ -566,32 +567,26 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     this._renderAbort = new AbortController();
     const { signal } = this._renderAbort;
 
-    shell.element.querySelectorAll('[data-action="survey-start"]').forEach((button) => {
-      button.addEventListener('click', () => this._startSurvey(shell), { signal });
-    });
+    const wireSurveyButton = (selector, callback) => {
+      shell.element.querySelectorAll(selector).forEach((button) => {
+        button.addEventListener('click', async (event) => {
+          event?.preventDefault?.();
+          event?.stopPropagation?.();
+          await callback(event);
+        }, { signal });
+      });
+    };
 
-    shell.element.querySelectorAll('[data-action="survey-choose"]').forEach((button) => {
-      button.addEventListener('click', (event) => this._chooseSurveyAnswer(shell, event.currentTarget), { signal });
-    });
-
-    shell.element.querySelectorAll('[data-action="survey-continue"]').forEach((button) => {
-      button.addEventListener('click', () => this._continueSurvey(shell), { signal });
-    });
-
-    shell.element.querySelectorAll('[data-action="survey-finish"]').forEach((button) => {
-      button.addEventListener('click', () => this._finishSurvey(shell), { signal });
-    });
-
-    shell.element.querySelectorAll('[data-action="survey-change-answer"]').forEach((button) => {
-      button.addEventListener('click', () => this._changeCurrentAnswer(shell), { signal });
-    });
-
-    shell.element.querySelectorAll('[data-action="survey-previous-question"]').forEach((button) => {
-      button.addEventListener('click', () => this._goToPreviousQuestion(shell), { signal });
-    });
-
-    shell.element.querySelectorAll('[data-action="survey-retake"]').forEach((button) => {
-      button.addEventListener('click', () => this._retakeSurvey(shell), { signal });
+    wireSurveyButton('[data-action="survey-start"]', () => this._startSurvey(shell));
+    wireSurveyButton('[data-action="survey-choose"]', (event) => this._chooseSurveyAnswer(shell, event.currentTarget));
+    wireSurveyButton('[data-action="survey-continue"]', () => this._continueSurvey(shell));
+    wireSurveyButton('[data-action="survey-finish"]', () => this._finishSurvey(shell));
+    wireSurveyButton('[data-action="survey-change-answer"]', () => this._changeCurrentAnswer(shell));
+    wireSurveyButton('[data-action="survey-previous-question"], [data-action="survey-previous"]', () => this._goToPreviousQuestion(shell));
+    wireSurveyButton('[data-action="survey-retake"]', () => this._retakeSurvey(shell));
+    wireSurveyButton('[data-action="survey-back"]', async () => {
+      if (typeof shell?._onPreviousStep === 'function') await shell._onPreviousStep();
+      else shell?.render?.();
     });
   }
 
@@ -715,7 +710,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
       surveyEyebrow: 'Prestige Survey',
       surveyTitle: this._selectedClass?.name ? `${this._selectedClass.name} Career Reading` : 'Prestige Career Reading',
       beginLabel: 'Begin Career Reading',
-      finishLabel: 'Continue Level-Up',
+      finishLabel: 'Continue',
       surveyAnswers: { ...this._surveyAnswers },
       mentorName: surveyData.mentor?.name || mentor?.name || null,
       mentorTitle: surveyData.mentor?.title || mentor?.title || mentor?.class || null,
@@ -841,7 +836,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     } else if (question?.id === 'profileReading') {
       clarification = 'I am checking whether the pattern I see in your past choices still feels true. Your answer tells me how much old metadata to preserve or prune.';
     }
-    await shell?.mentorRail?.speak?.(clarification, 'focused');
+    shell?.mentorRail?.queueSpeak?.(clarification, 'focused', { source: 'prestige-survey-clarification' }) ?? void shell?.mentorRail?.speak?.(clarification, 'focused');
   }
 
   getMentorContext() {
@@ -1068,7 +1063,7 @@ export class PrestigeSurveyStep extends ProgressionStepPlugin {
     if (!mentorDialogue) return;
     if (!force && mentorDialogue === this._lastPromptSpoken) return;
     this._lastPromptSpoken = mentorDialogue;
-    await shell?.mentorRail?.speak?.(mentorDialogue, 'focused');
+    shell?.mentorRail?.queueSpeak?.(mentorDialogue, 'focused', { source: 'prestige-survey' }) ?? void shell?.mentorRail?.speak?.(mentorDialogue, 'focused');
   }
 
   _getCurrentMentorDialogue() {

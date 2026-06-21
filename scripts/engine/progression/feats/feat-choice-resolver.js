@@ -13,6 +13,8 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { FeatDiagnostics } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-diagnostics.js";
 import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
+import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
+import { getClassAutoGrants } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/autogrants/class-autogrants.js";
 
 const REGISTRY_PATH = 'systems/foundryvtt-swse/data/feat-choice-options.json';
 const DEFAULT_CHOICE_ROOT = 'system.selectedChoice';
@@ -282,6 +284,50 @@ function isPlaceholderWeaponChoice(value) {
     'particular_weapon',
     'one_weapon'
   ].includes(key);
+}
+
+function normalizeClassKey(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function getActorClassEntries(actor) {
+  const items = asArray(actor?.items).filter(item => item?.type === 'class');
+  const systemClasses = actor?.system?.classes && typeof actor.system.classes === 'object' && !Array.isArray(actor.system.classes)
+    ? Object.entries(actor.system.classes).map(([name, data]) => ({
+        name: data?.name || data?.className || name,
+        classId: data?.classId || data?.id || name,
+        level: Number(data?.level ?? data?.levels ?? 1) || 1,
+        system: data || {}
+      }))
+    : [];
+  return [...items, ...systemClasses];
+}
+
+function getClassStartingFeats(actor) {
+  const names = [];
+  for (const entry of getActorClassEntries(actor)) {
+    const level = Number(entry?.system?.level ?? entry?.level ?? 1) || 1;
+    if (level <= 0) continue;
+    const className = String(entry?.name || entry?.system?.name || entry?.system?.className || entry?.system?.classId || entry?.classId || '').trim();
+    const classId = normalizeClassKey(entry?.system?.classId || entry?.classId || className);
+    const classes = PROGRESSION_RULES?.classes || {};
+    const matchedKey = classes[className] ? className : Object.keys(classes).find(key => normalizeClassKey(key) === classId);
+    const classData = matchedKey ? classes[matchedKey] : null;
+    for (const feat of getClassAutoGrants(className)) names.push(feat);
+    for (const feat of classData?.startingFeats || []) names.push(feat);
+    for (const feat of entry?.system?.startingFeats || []) names.push(feat);
+    for (const feat of entry?.system?.startingFeatures || []) names.push(feat);
+    for (const feat of entry?.system?.grantedFeats || []) names.push(feat);
+    for (const feat of entry?.system?.grantedProficiencies || []) names.push(feat);
+    for (const feat of entry?.system?.grants?.startingFeats || []) names.push(feat);
+    for (const feat of entry?.system?.grants?.grantedFeats || []) names.push(feat);
+    for (const feat of entry?.system?.grants?.grantedProficiencies || []) names.push(feat);
+  }
+  return names;
 }
 
 export class FeatChoiceResolver {
@@ -822,10 +868,19 @@ export class FeatChoiceResolver {
       if (isPlaceholderWeaponChoice(withoutPrefix)) return '';
       const aliasKey = stableKey(withoutPrefix);
       const aliases = {
+        simple: 'simple',
         simple_weapons: 'simple',
         simple_weapon: 'simple',
+        pistols: 'pistols',
+        pistol: 'pistols',
+        rifles: 'rifles',
+        rifle: 'rifles',
+        lightsabers: 'lightsabers',
+        lightsaber: 'lightsabers',
+        advanced_melee: 'advanced-melee',
         advanced_melee_weapons: 'advanced-melee',
         advanced_melee_weapon: 'advanced-melee',
+        heavy: 'heavy-weapons',
         heavy_weapons: 'heavy-weapons',
         heavy_weapon: 'heavy-weapons',
         light_melee_weapons: 'simple',
@@ -838,6 +893,11 @@ export class FeatChoiceResolver {
     for (const value of asArray(actor?.system?.weaponProficiencies)) addGroup(value, 'system.weaponProficiencies', true);
     for (const value of asArray(actor?._unlockGrants?.proficiencies?.weapon)) addGroup(value, '_unlockGrants.weapon', true);
     for (const value of asArray(actor?._unlockGrants?.proficiencies?.exotic)) addExotic(value, '_unlockGrants.exotic', true);
+    for (const value of getClassStartingFeats(actor)) {
+      if (/weapon\s+proficiency/i.test(String(value || ''))) {
+        addGroup(coerceWeaponGroupGrant(value), `class-starting-feat:${value}`, true);
+      }
+    }
 
     for (const entry of asArray(pending?.grantedProficiencies)) {
       const type = String(entry?.type || entry?.kind || entry?.proficiencyType || '').toLowerCase();
@@ -865,10 +925,19 @@ export class FeatChoiceResolver {
     }
 
     const byName = new Map([
+      ['weapon proficiency (simple)', 'simple'],
+      ['weapon proficiency (simple weapon)', 'simple'],
       ['weapon proficiency (simple weapons)', 'simple'],
+      ['weapon proficiency (pistol)', 'pistols'],
       ['weapon proficiency (pistols)', 'pistols'],
+      ['weapon proficiency (rifle)', 'rifles'],
       ['weapon proficiency (rifles)', 'rifles'],
+      ['weapon proficiency (lightsaber)', 'lightsabers'],
+      ['weapon proficiency (lightsabers)', 'lightsabers'],
+      ['weapon proficiency (heavy weapon)', 'heavy-weapons'],
       ['weapon proficiency (heavy weapons)', 'heavy-weapons'],
+      ['weapon proficiency (advanced melee weapon)', 'advanced-melee'],
+      ['weapon proficiency (advanced melee weapons)', 'advanced-melee'],
       ['heavy weapon proficiency', 'heavy-weapons'],
       ['advanced melee weapon proficiency', 'advanced-melee']
     ]);

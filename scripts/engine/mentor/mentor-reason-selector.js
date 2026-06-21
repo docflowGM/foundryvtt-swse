@@ -73,8 +73,9 @@ export class MentorReasonSelector {
       const confidence = scoring.confidence || 0.5;
       const intensity = this._computeIntensity(topWeight, confidence);
 
-      // PHASE 2 VALIDATION: Log atom selection with dominance details
-      console.log(`[MentorReasonSelector.Phase2Validation] Atom selection:`, {
+      // Keep validation diagnostics behind the system debug flag. This selector can run
+      // once per candidate in large feat/talent lists, so normal play should stay quiet.
+      SWSELogger.debug(`[MentorReasonSelector.Phase2Validation] Atom selection:`, {
         signals: topSignals.map(s => ({
           type: s.type,
           weight: s.weight.toFixed(3),
@@ -113,7 +114,7 @@ export class MentorReasonSelector {
    * @returns {Object} { atoms: REASON_ATOMS[], intensity: 'high', selectedReasons: [...] }
    */
   static select(reasonSignals, mentorProfile = {}) {
-    SWSELogger.warn('[MentorReasonSelector] Using deprecated select(); migrate to selectFromSuggestionV2()');
+    SWSELogger.debug('[MentorReasonSelector] Using deprecated select(); migrate to selectFromSuggestionV2()');
 
     if (!reasonSignals || typeof reasonSignals !== 'object') {
       SWSELogger.warn('[MentorReasonSelector] Invalid reasonSignals');

@@ -97,11 +97,15 @@ export class VehicleCrewAssignmentService {
 
     const transfer = event?.dataTransfer;
     if (!transfer) return null;
-    for (const type of ['application/json', 'text/plain', 'text/x-foundry-uuid']) {
+    for (const type of ['application/json', 'text/plain', 'text/x-foundry-uuid', 'text/uri-list']) {
       const raw = transfer.getData?.(type);
       if (!raw) continue;
-      if (type === 'text/x-foundry-uuid') return { uuid: raw };
-      try { return JSON.parse(raw); } catch (_err) { /* ignored */ }
+      const text = String(raw || '').trim();
+      if (!text) continue;
+      if (type === 'text/x-foundry-uuid') return { uuid: text };
+      try { return JSON.parse(text); } catch (_err) { /* fall through */ }
+      if (/^(Actor|Scene|Token|Compendium)\./.test(text)) return { uuid: text };
+      if (/^[A-Za-z0-9]{16}$/.test(text)) return { type: 'Actor', id: text };
     }
     return null;
   }
@@ -231,9 +235,16 @@ export class VehicleCrewAssignmentService {
       ui?.notifications?.info?.(`${crewActor.name} assigned to ${this.labelForStation(targetStation)}.`);
       return true;
     } catch (err) {
-      SWSELogger.error('VehicleCrewAssignmentService.assignCrew failed', { err, vehicle: vehicle?.name, station: targetStation, crew: crewActor?.name });
-      ui?.notifications?.error?.(`Failed to assign crew: ${err.message}`);
-      return false;
+      SWSELogger.warn('VehicleCrewAssignmentService.assignCrew ActorEngine path failed; retrying crew-position-only update', { err, vehicle: vehicle?.name, station: targetStation, crew: crewActor?.name });
+      try {
+        await vehicle.update({ [`system.crewPositions.${targetStation}`]: toCrewRef(crewActor) }, { render: false, swseSource: options.source || 'vehicle-crew-assignment-fallback' });
+        ui?.notifications?.info?.(`${crewActor.name} assigned to ${this.labelForStation(targetStation)}.`);
+        return true;
+      } catch (fallbackErr) {
+        SWSELogger.error('VehicleCrewAssignmentService.assignCrew failed', { err: fallbackErr, originalError: err, vehicle: vehicle?.name, station: targetStation, crew: crewActor?.name });
+        ui?.notifications?.error?.(`Failed to assign crew: ${fallbackErr.message}`);
+        return false;
+      }
     }
   }
 
@@ -251,9 +262,16 @@ export class VehicleCrewAssignmentService {
       ui?.notifications?.info?.(`${currentName || 'Crew'} removed from ${this.labelForStation(targetStation)}.`);
       return true;
     } catch (err) {
-      SWSELogger.error('VehicleCrewAssignmentService.removeCrew failed', { err, vehicle: vehicle?.name, station: targetStation });
-      ui?.notifications?.error?.(`Failed to remove crew: ${err.message}`);
-      return false;
+      SWSELogger.warn('VehicleCrewAssignmentService.removeCrew ActorEngine path failed; retrying crew-position-only update', { err, vehicle: vehicle?.name, station: targetStation });
+      try {
+        await vehicle.update({ [`system.crewPositions.${targetStation}`]: null }, { render: false, swseSource: options.source || 'vehicle-crew-removal-fallback' });
+        ui?.notifications?.info?.(`${currentName || 'Crew'} removed from ${this.labelForStation(targetStation)}.`);
+        return true;
+      } catch (fallbackErr) {
+        SWSELogger.error('VehicleCrewAssignmentService.removeCrew failed', { err: fallbackErr, originalError: err, vehicle: vehicle?.name, station: targetStation });
+        ui?.notifications?.error?.(`Failed to remove crew: ${fallbackErr.message}`);
+        return false;
+      }
     }
   }
 

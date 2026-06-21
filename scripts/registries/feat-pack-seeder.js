@@ -8,6 +8,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { filterFeatDomainDocuments } from "/systems/foundryvtt-swse/scripts/data/feat-domain-guard.js";
 
 // ---------------------------------------------------------------------------
 // Debug gate
@@ -59,7 +60,12 @@ export class FeatPackSeeder {
 
         const data = await response.json();
         const docs = Array.isArray(data) ? data : Array.isArray(data?.documents) ? data.documents : [];
-        this._catalogCache = docs.filter((doc) => doc?.name && (doc.type || "feat") === "feat");
+        const featDocs = docs.filter((doc) => doc?.name && (doc.type || "feat") === "feat");
+        this._catalogCache = filterFeatDomainDocuments(featDocs);
+        const skipped = featDocs.length - this._catalogCache.length;
+        if (skipped > 0) {
+            SWSELogger.warn(`[FeatPackSeeder] Skipped ${skipped} talent-only contaminant rows from ${FEAT_CATALOG_PATH}.`);
+        }
         return this._catalogCache;
     }
 

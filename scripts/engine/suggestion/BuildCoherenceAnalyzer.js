@@ -11,6 +11,24 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
+function normalizeTextTokens(value) {
+  if (value == null) return [];
+  if (Array.isArray(value)) return value.flatMap(entry => normalizeTextTokens(entry));
+  if (value instanceof Set) return Array.from(value).flatMap(entry => normalizeTextTokens(entry));
+  if (typeof value === 'object') {
+    const preferred = value.name ?? value.label ?? value.title ?? value.id ?? value.key ?? value.slug ?? value.value;
+    if (preferred != null) return normalizeTextTokens(preferred);
+    return Object.values(value).flatMap(entry => normalizeTextTokens(entry));
+  }
+  const text = String(value).trim();
+  return text ? [text] : [];
+}
+
+function normalizeLowerTextTokens(value) {
+  return normalizeTextTokens(value).map(token => token.toLowerCase().trim()).filter(Boolean);
+}
+
+
 // Weights for the 4 consistency signals
 const COHERENCE_WEIGHTS = {
   attributeCoherence: 0.30,
@@ -154,7 +172,10 @@ export class BuildCoherenceAnalyzer {
       // Get actor's talent trees
       const ownedTalents = actor.items
         .filter(i => i.type === 'talent')
-        .map(t => t.system?.tree?.toLowerCase() || t.name.toLowerCase());
+        .flatMap(t => {
+          const tokens = normalizeLowerTextTokens(t.system?.tree ?? t.system?.talent_tree ?? t.system?.treeId);
+          return tokens.length ? tokens : normalizeLowerTextTokens(t.name);
+        });
 
       const uniqueTalentTrees = new Set(ownedTalents);
 
@@ -165,9 +186,11 @@ export class BuildCoherenceAnalyzer {
 
       // Check if item is a talent and belongs to an existing tree
       if (item.type === 'talent') {
-        const itemTalentTree = item.system?.tree?.toLowerCase();
+        const itemTalentTrees = normalizeLowerTextTokens(item.system?.tree ?? item.system?.talent_tree ?? item.system?.treeId);
+        const itemTalentTree = itemTalentTrees[0] || '';
+        const hasExistingTree = itemTalentTrees.some(tree => uniqueTalentTrees.has(tree));
 
-        if (itemTalentTree && uniqueTalentTrees.has(itemTalentTree)) {
+        if (hasExistingTree) {
           // Reinforces existing tree = high score
           return 0.85;
         } else if (itemTalentTree && uniqueTalentTrees.size < 3) {

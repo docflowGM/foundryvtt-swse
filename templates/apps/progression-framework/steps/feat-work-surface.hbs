@@ -3,6 +3,16 @@
 
 <div class="feat-work-surface prog-quickref-stage">
 
+  {{#if navigationBanner}}
+  <div class="prerequisite-navigation-banner prerequisite-navigation-banner--{{navigationBanner.tone}}">
+    <i class="fa-solid {{navigationBanner.icon}}"></i>
+    <div>
+      <strong>{{navigationBanner.title}}</strong>
+      <span>{{navigationBanner.message}}</span>
+    </div>
+  </div>
+  {{/if}}
+
   {{#if slotProgress}}
   <div class="prog-micro-progress prog-micro-progress--feats">
     {{#if slotProgress.isComplete}}

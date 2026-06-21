@@ -942,16 +942,29 @@ export function registerHouseruleSettings() {
   /* -------------------------------------------------------------------------- */
 
   register('abilityIncreaseMethod', {
-    name: 'Ability Increase Method',
-    hint: 'How ability score increases are applied at 4/8/12/16/20.',
+    name: 'Ability Increase Method (Legacy)',
+    hint: 'Legacy compatibility setting. New progression surfaces use Ability Increase Allocation Mode.',
+    scope: 'world',
+    config: false,
+    type: String,
+    choices: {
+      standard: 'RAW: two different abilities gain +1',
+      flexible: 'House Rule: two points may stack on one ability'
+    },
+    default: 'standard'
+  });
+
+  register('abilityIncreaseAllocationMode', {
+    name: 'Ability Increase Allocation Mode',
+    hint: 'At levels 4/8/12/16/20, RAW gives +1 to two different abilities. This house rule can allow stacking both points into one ability.',
     scope: 'world',
     config: true,
     type: String,
     choices: {
-      standard: 'Standard (1 to 2 attributes)',
-      flexible: 'Flexible (2 to 1 or 1 to 2)'
+      raw_two_different: 'RAW: +1 to two different abilities',
+      allow_stacked_two: 'House Rule: two points may stack on one ability'
     },
-    default: 'flexible'
+    default: 'raw_two_different'
   });
 
   /* -------------------------------------------------------------------------- */

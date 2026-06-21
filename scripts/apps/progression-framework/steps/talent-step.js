@@ -162,6 +162,7 @@ export class TalentStep extends ProgressionStepPlugin {
     this._focusedTalentId = null;    // Focused node in graph
     this._focusedTalentItem = null;  // Resolved focused talent payload for details rail
     this._selectedTalentId = null;   // Committed talent for this slot
+    this._prereqNavigationBanner = null;
     this._viewMode = 'both';         // 'both', 'list', or 'map'
     this._lastGraphNodeStates = {};  // Async legality cache for the SVG renderer
     this._centerGraphAfterRender = false;
@@ -314,6 +315,8 @@ export class TalentStep extends ProgressionStepPlugin {
     const isHandled = action && (
       action.startsWith('focus-') ||
       action.startsWith('enter-') ||
+      action === 'jump-talent-prerequisite' ||
+      action === 'jump-prerequisite-talent' ||
       action === 'exit-tree' ||
       action === 'set-talent-view' ||
       action === 'fit-talent-tree' ||
@@ -387,6 +390,16 @@ export class TalentStep extends ProgressionStepPlugin {
           if (talentId && this._stage === 'graph') {
             this.onItemCommitted(talentId, shell);
           }
+          return true;
+        }
+
+        case 'jump-talent-prerequisite':
+        case 'jump-prerequisite-talent': {
+          const talentId = target?.dataset?.talentId
+            || target?.dataset?.itemId
+            || target?.closest?.('[data-talent-id]')?.dataset?.talentId
+            || target?.closest?.('[data-item-id]')?.dataset?.itemId;
+          if (talentId) void this._jumpToPrerequisiteTalent(talentId, shell);
           return true;
         }
 
@@ -600,6 +613,7 @@ export class TalentStep extends ProgressionStepPlugin {
       slotType: this._slotType,
       actorName: shell?.actor?.name || null,
     });
+    this._prereqNavigationBanner = null;
     this._selectedTreeId = treeId;
 
     // Load talents for this tree
@@ -651,6 +665,7 @@ export class TalentStep extends ProgressionStepPlugin {
     this._focusedTalentItem = null;
     this._lastGraphNodeStates = {};
     this._centerGraphAfterRender = false;
+    this._prereqNavigationBanner = null;
 
     this._renderPreservingScroll(shell);
   }
@@ -1110,20 +1125,78 @@ export class TalentStep extends ProgressionStepPlugin {
     return 'Legal Option';
   }
 
+  _readSuggestionDisplayText(value) {
+    if (!value) return '';
+    if (typeof value === 'string') return value.trim();
+    if (typeof value === 'object') {
+      return String(value.fullReason || value.reasonText || value.reasonSummary || value.shortReason || value.text || value.label || value.name || '').trim();
+    }
+    return String(value).trim();
+  }
+
+  _isGenericSuggestionReason(value) {
+    const text = String(value || '').trim().toLowerCase();
+    if (!text) return true;
+    return [
+      'you meet the requirements',
+      'you meet this requirement',
+      'this adds to your selections',
+      'adds to your selections',
+      'this relates to your pattern',
+      'this relates to your patterns',
+      'this relates to your progression',
+      'this reflects the path taking shape',
+      'it reflects the path taking shape',
+      'available',
+      'legal option',
+    ].some(fragment => text === fragment || text.includes(fragment));
+  }
+
   _extractSuggestionReasons(item, fallback = []) {
     const suggestion = item?.suggestion || {};
+    const packet = item?.reasonPacket || suggestion.reasonPacket || {};
+    const explanation = item?.explanation || suggestion.explanation || {};
     const reasonCode = suggestion.reasonCode || suggestion.reason?.tierAssignedBy || null;
-    const reasons = [
-      ...(Array.isArray(suggestion.reasons) ? suggestion.reasons : []),
-      ...(Array.isArray(suggestion.reasonBullets) ? suggestion.reasonBullets : []),
-      ...(Array.isArray(item?.reasonBullets) ? item.reasonBullets : []),
+    const sources = [
+      explanation.full,
+      packet.fullReason,
+      item?.reasonText,
       suggestion.reasonText,
+      explanation.short,
+      packet.shortReason,
+      item?.reasonSummary,
+      suggestion.reasonSummary,
+      explanation.bullets,
+      packet.bullets,
+      item?.reasonBullets,
+      suggestion.reasonBullets,
+      item?.reasons,
+      suggestion.reasons,
+      packet.allReasons,
       suggestion.reason,
       reasonCode ? this._humanizeSuggestionReasonCode(reasonCode, item) : null,
       ...fallback,
-    ].map(toDisplayText).filter(Boolean);
+    ];
 
-    return [...new Set(reasons)].slice(0, 4);
+    const reasons = [];
+    const seen = new Set();
+    for (const source of sources) {
+      const values = Array.isArray(source) ? source : [source];
+      for (const entry of values) {
+        const text = this._readSuggestionDisplayText(entry)
+          .replace(/^because\s+/i, '')
+          .replace(/^it\s+/i, 'It ');
+        if (!text || this._isGenericSuggestionReason(text)) continue;
+        const key = text.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        reasons.push(/[.!?]$/.test(text) ? text : `${text}.`);
+        if (reasons.length >= 4) break;
+      }
+      if (reasons.length >= 4) break;
+    }
+
+    return reasons.length ? reasons : fallback.map(toDisplayText).filter(Boolean).slice(0, 4);
   }
 
   _humanizeSuggestionReasonCode(reasonCode, item = {}) {
@@ -1485,6 +1558,178 @@ export class TalentStep extends ProgressionStepPlugin {
         || null;
   }
 
+
+  _escapePrereqRegex(value) {
+    return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  _getAllTalentCatalog() {
+    return TalentRegistry.getAll?.() || [];
+  }
+
+  _getTalentPrerequisiteLinkText(talent) {
+    return [
+      talent?.system?.prerequisites,
+      talent?.system?.prerequisite,
+      talent?.prerequisites,
+      talent?.prerequisite,
+      talent?.prerequisiteText,
+      talent?.prerequisiteLine,
+    ].flatMap(value => Array.isArray(value) ? value : [value])
+      .map(value => typeof value === 'object' ? (value?.name || value?.label || value?.text || value?.raw || value?.value || '') : value)
+      .filter(Boolean)
+      .join(' • ');
+  }
+
+  _buildTalentPrerequisiteLinks(talent) {
+    const currentId = this._getTalentId(talent);
+    const currentKey = this._normalizeTalentLookupKey(talent?.name || currentId);
+    const text = this._getTalentPrerequisiteLinkText(talent);
+    if (!text.trim()) return [];
+
+    const matches = [];
+    const seen = new Set();
+    const talents = this._getAllTalentCatalog()
+      .filter(candidate => candidate && this._normalizeTalentLookupKey(candidate?.name || '') !== currentKey)
+      .sort((left, right) => String(right?.name || '').length - String(left?.name || '').length);
+
+    for (const candidate of talents) {
+      const name = String(candidate?.name || '').trim();
+      if (!name || name.length < 3) continue;
+      const key = this._normalizeTalentLookupKey(name);
+      if (!key || seen.has(key)) continue;
+      const pattern = new RegExp(`(^|[^A-Za-z0-9])${this._escapePrereqRegex(name)}([^A-Za-z0-9]|$)`, 'i');
+      if (!pattern.test(text)) continue;
+      const id = candidate?._id || candidate?.id || candidate?.name;
+      if (!id) continue;
+      const tree = this._resolveTalentTreeFromFields(candidate);
+      seen.add(key);
+      matches.push({
+        id,
+        name,
+        kind: 'talent',
+        treeId: tree?.id || candidate?.treeId || candidate?.system?.treeId || '',
+        treeName: tree?.name || candidate?.treeName || candidate?.talentTree || candidate?.system?.talent_tree || candidate?.system?.talentTree || candidate?.system?.tree || '',
+        isAvailable: tree ? this._isTalentTreeAvailable(tree) : true,
+      });
+      if (matches.length >= 8) break;
+    }
+
+    return matches;
+  }
+
+  _resolveTalentTreeFromFields(talent) {
+    if (!talent) return null;
+    const candidates = [
+      talent.sourceTreeId,
+      talent.sourceTreeName,
+      talent.treeId,
+      talent.treeName,
+      talent.talentTree,
+      talent.talent_tree,
+      talent.system?.treeId,
+      talent.system?.talentTreeId,
+      talent.system?.talent_tree_id,
+      talent.system?.talent_tree,
+      talent.system?.talentTree,
+      talent.system?.tree,
+    ].filter(Boolean);
+
+    for (const candidate of candidates) {
+      const tree = this._getTree(candidate);
+      if (tree) return tree;
+    }
+    return null;
+  }
+
+  async _resolveTalentTreeForJump(talent) {
+    const direct = this._resolveTalentTreeFromFields(talent);
+    if (direct) return direct;
+
+    const targetKeys = new Set(this._getTalentIdentityKeys(talent));
+    for (const tree of TalentTreeDB.trees?.values?.() || []) {
+      const members = await this._getTalentsForTreeCached(tree, null);
+      if (members.some(member => this._getTalentIdentityKeys(member).some(key => targetKeys.has(key)))) {
+        return tree;
+      }
+    }
+    return null;
+  }
+
+  _isTalentTreeAvailable(tree) {
+    if (!tree) return false;
+    const targetKeys = new Set([tree.id, tree.sourceId, tree.name, tree.key, tree.displayName]
+      .map(normalizeTalentTreeAccessKey)
+      .filter(Boolean));
+    return (this._allTrees || []).some(candidate => [candidate.id, candidate.sourceId, candidate.name, candidate.key, candidate.displayName]
+      .map(normalizeTalentTreeAccessKey)
+      .some(key => key && targetKeys.has(key)));
+  }
+
+  _treeUnavailableMessage(tree) {
+    if (!tree) return 'The prerequisite talent could not be mapped to a known talent tree.';
+    if (this._slotType === 'class') {
+      return `${tree.name || 'This tree'} is not available to the current class talent slot. You can inspect it here, but you cannot select from it in this step.`;
+    }
+    return `${tree.name || 'This tree'} is not available in the current talent slot. You can inspect the prerequisite path, but the talent cannot be selected from this step.`;
+  }
+
+  async _jumpToPrerequisiteTalent(talentId, shell) {
+    const target = this._getTalent(talentId) || TalentRegistry.getById?.(talentId) || TalentRegistry.getByName?.(talentId);
+    if (!target) {
+      ui?.notifications?.warn?.('That prerequisite talent is not present in the talent catalog.');
+      return;
+    }
+
+    const targetTree = await this._resolveTalentTreeForJump(target);
+    const treeAvailable = this._isTalentTreeAvailable(targetTree);
+    const targetId = this._getTalentId(target) || target?.name || talentId;
+
+    if (targetTree) {
+      this._selectedTreeId = targetTree.id || targetTree.sourceId || targetTree.name;
+      this._selectedTreeTalents = await this._getTalentsForTreeCached(targetTree, shell?.actor);
+      const targetKeys = new Set(this._getTalentIdentityKeys(target));
+      const hasTarget = this._selectedTreeTalents.some(member => this._getTalentIdentityKeys(member).some(key => targetKeys.has(key)));
+      if (!hasTarget) this._selectedTreeTalents = [...this._selectedTreeTalents, target];
+      this._graphData = buildDependencyGraph(this._selectedTreeTalents);
+      this._stage = 'graph';
+      this._viewMode = 'both';
+      this._focusedTalentId = targetId;
+      this._focusedTalentItem = target;
+      this._centerGraphAfterRender = true;
+      this._lastGraphNodeStates = {};
+    } else {
+      this._focusedTalentId = targetId;
+      this._focusedTalentItem = target;
+    }
+
+    const pendingAbilityData = this._buildPendingAbilityData(shell);
+    let prereqDetails = { legal: true, missing: [], blocking: [] };
+    try {
+      prereqDetails = shell?.actor ? await this._getPrerequisiteDetails(shell.actor, target, pendingAbilityData) : prereqDetails;
+    } catch (_err) {
+      prereqDetails = { legal: false, missing: ['Prerequisite evaluation failed.'], blocking: ['Prerequisite evaluation failed.'] };
+    }
+    const missing = [...(prereqDetails.missing || []), ...(prereqDetails.blocking || [])]
+      .map(toDisplayText)
+      .filter(Boolean);
+    const unavailableText = treeAvailable ? '' : this._treeUnavailableMessage(targetTree);
+    this._prereqNavigationBanner = {
+      tone: treeAvailable && prereqDetails.legal !== false ? 'info' : 'warning',
+      icon: treeAvailable && prereqDetails.legal !== false ? 'fa-route' : 'fa-triangle-exclamation',
+      title: 'Prerequisite jump',
+      message: [
+        `Showing prerequisite talent: ${target.name || targetId}.`,
+        targetTree?.name ? `Tree: ${targetTree.name}.` : '',
+        unavailableText,
+        missing.length ? `Current block: ${missing[0]}` : '',
+      ].filter(Boolean).join(' '),
+    };
+
+    shell?.setFocusedItem?.({ id: targetId, _id: targetId, name: target.name, type: 'talent' });
+    shell?.requestRender?.({ preserveScroll: true, reason: 'talent-prerequisite-jump' }) ?? shell?.render?.();
+  }
+
   /**
    * Get a talent by ID
    */
@@ -1645,6 +1890,7 @@ export class TalentStep extends ProgressionStepPlugin {
     return {
       stage: 'browser',
       slotType: this._slotType,
+      navigationBanner: this._prereqNavigationBanner || null,
       allTrees: filteredTrees.map(tree => {
         const visual = this._getTreeVisualIdentity(tree);
         const nodeCount = tree.talentCount || (tree.talentNames || []).length || (tree.talentIds || []).length;
@@ -2044,6 +2290,8 @@ export class TalentStep extends ProgressionStepPlugin {
     const evaluationActor = this._buildEvaluationActorForPrereqs(shell?.actor, shell);
     const otherSelectedKeys = this._getSelectedTalentKeys(shell, { excludeSlotType: this._slotType });
     const ownedTalentKeys = this._getOwnedTalentKeys(shell?.actor);
+    const selectedTreeAvailable = this._isTalentTreeAvailable(selectedTree);
+    const treeAccessBlock = selectedTreeAvailable ? '' : this._treeUnavailableMessage(selectedTree);
     if (this._graphData?.nodes) {
       for (const [nodeId, node] of this._graphData.nodes) {
         const talent = node.talent;
@@ -2059,16 +2307,28 @@ export class TalentStep extends ProgressionStepPlugin {
         const chosenElsewhere = !repeatable && identityKeys.some(key => otherSelectedKeys.has(key));
         const isActorOwned = !repeatable && identityKeys.some(key => ownedTalentKeys.has(key));
         const isOwned = isSelected || chosenElsewhere || isActorOwned;
+        const missingReasons = chosenElsewhere
+          ? ['Already selected in another talent slot.']
+          : (isActorOwned ? ['Already known.'] : [
+            ...(treeAccessBlock ? [treeAccessBlock] : []),
+            ...(prereqDetails.missing || []),
+          ]);
+        const blockingReasons = chosenElsewhere
+          ? ['Already selected in another talent slot.']
+          : (isActorOwned ? ['Already known.'] : [
+            ...(treeAccessBlock ? [treeAccessBlock] : []),
+            ...(prereqDetails.blocking || []),
+          ]);
         nodeStates[nodeId] = {
-          legal: prereqDetails.legal !== false && !chosenElsewhere && !isActorOwned,
+          legal: selectedTreeAvailable && prereqDetails.legal !== false && !chosenElsewhere && !isActorOwned,
           owned: isOwned,
           selected: isSelected,
           repeatable,
           chosenElsewhere,
           actorOwned: isActorOwned,
           suggested: false,
-          missing: chosenElsewhere ? ['Already selected in another talent slot.'] : (isActorOwned ? ['Already known.'] : (prereqDetails.missing || [])),
-          blocking: chosenElsewhere ? ['Already selected in another talent slot.'] : (isActorOwned ? ['Already known.'] : (prereqDetails.blocking || [])),
+          missing: missingReasons,
+          blocking: blockingReasons,
         };
       }
     }
@@ -2147,6 +2407,7 @@ export class TalentStep extends ProgressionStepPlugin {
       stage: 'graph',
       selectedTreeId: this._selectedTreeId,
       selectedTreeName: selectedTree.name,
+      navigationBanner: this._prereqNavigationBanner || null,
       visualKey: visual.key,
       visualIcon: visual.icon,
       visualKicker: visual.kicker,
@@ -2293,8 +2554,13 @@ export class TalentStep extends ProgressionStepPlugin {
     const pendingAbilityData = this._buildPendingAbilityData(shell);
     const evaluationActor = this._buildEvaluationActorForPrereqs(actor, shell);
     const prereqDetails = actor ? await this._getPrerequisiteDetails(evaluationActor || actor, talent, pendingAbilityData) : { legal: true, missing: [], blocking: [] };
-    const meetsPrereqs = prereqDetails.legal !== false;
-    const missingPrereqs = (prereqDetails.missing || prereqDetails.blocking || [])
+    const selectedTreeAvailable = this._isTalentTreeAvailable(selectedTree);
+    const treeAccessBlock = selectedTreeAvailable ? '' : this._treeUnavailableMessage(selectedTree);
+    const meetsPrereqs = selectedTreeAvailable && prereqDetails.legal !== false;
+    const missingPrereqs = [
+      ...(treeAccessBlock ? [treeAccessBlock] : []),
+      ...((prereqDetails.missing || prereqDetails.blocking || [])),
+    ]
       .map(toDisplayText)
       .filter(Boolean);
     const hasMissingPrereqs = missingPrereqs.length > 0;
@@ -2316,6 +2582,7 @@ export class TalentStep extends ProgressionStepPlugin {
       this._getTalentPrerequisiteText(talent)
     );
     const prerequisitePath = this._buildPrerequisitePathForTalent(talent, this._lastGraphNodeStates);
+    const prerequisiteLinks = this._buildTalentPrerequisiteLinks(talent);
     const talentRecommendation = this._talentRecommendationById.get(talentId)
       || this._talentRecommendationById.get(focusId)
       || this._talentRecommendationById.get(talent?.name)
@@ -2369,6 +2636,7 @@ export class TalentStep extends ProgressionStepPlugin {
         canonicalDescription,
         mechanicalBenefit,
         prerequisitePath,
+        prerequisiteLinks,
         recommendationText,
         recommendation: talentRecommendation,
         isSuggestedTalent: !!talentRecommendation,

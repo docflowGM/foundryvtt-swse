@@ -1360,25 +1360,20 @@
   {
     "id": "lightsaber-forms",
     "displayName": "Lightsaber Forms",
-    "talentCount": 17,
+    "talentCount": 12,
     "talents": [
-      "Acrobatic Recovery",
       "Ataru",
-      "Deflect",
       "Djem So",
       "Jar'Kai",
       "Juyo",
-      "Lightsaber Defense",
       "Makashi",
       "Niman",
-      "Redirect Shot",
       "Shien",
       "Shii-Cho",
       "Sokan",
       "Soresu",
       "Trakata",
-      "Vaapad",
-      "Weapon Specialization (Lightsabers)"
+      "Vaapad"
     ]
   },
   {
