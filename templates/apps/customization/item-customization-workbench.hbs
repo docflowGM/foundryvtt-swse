@@ -361,10 +361,12 @@
                       <span class="card-name">{{name}}</span>
                       <span class="card-cost">{{costCredits}} cr</span>
                     </span>
+                    {{#if suggestion}}<span class="workbench-suggestion-badge workbench-suggestion-badge--{{suggestion.tier}}">{{suggestion.tierLabel}}</span>{{/if}}
                     <span class="card-desc">{{description}}</span>
                     <span class="card-tags">
                       {{#if effect}}<span class="tag">{{effect}}</span>{{/if}}
                       <span class="tag">{{slotCost}} slot</span>
+                      {{#if suggestion}}<span class="tag suggestion-tag">Assumes use</span>{{/if}}
                       {{#if installed}}<span class="tag state">Installed</span>{{/if}}
                       {{#if selected}}{{#unless installed}}<span class="tag state">Staged</span>{{/unless}}{{/if}}
                     </span>
@@ -390,10 +392,12 @@
                       <span class="card-name">{{name}}</span>
                       <span class="card-cost">{{costPreview}} cr</span>
                     </span>
+                    {{#if suggestion}}<span class="workbench-suggestion-badge workbench-suggestion-badge--{{suggestion.tier}}">{{suggestion.tierLabel}}</span>{{/if}}
                     <span class="card-desc">{{description}}</span>
                     {{#if rulesText}}<span class="card-rules">{{rulesText}}</span>{{/if}}
                     <span class="card-tags">
                       <span class="tag">{{restriction}}</span>
+                      {{#if suggestion}}<span class="tag suggestion-tag">Assumes use</span>{{/if}}
                       {{#if rarity}}<span class="tag rare">Rare</span>{{/if}}
                       {{#if installed}}<span class="tag state">Applied</span>{{/if}}
                       {{#if selected}}{{#unless installed}}<span class="tag state">Staged</span>{{/unless}}{{/if}}
@@ -441,11 +445,13 @@
                   {{#each detailRail.stagedRows}}
                   <article class="rail-detail-card selected">
                     <div class="rail-detail-top"><span>{{name}}</span><span>{{kind}}</span></div>
+                    {{#if suggestion}}<div class="workbench-suggestion-line workbench-suggestion-line--{{suggestionTier}}">{{suggestionLabel}}</div>{{/if}}
                     <dl class="rail-detail-fields">
                       <div><dt>Detail</dt><dd>{{description}}</dd></div>
                       {{#if effect}}<div><dt>Benefit</dt><dd class="rail-benefit">{{effect}}</dd></div>{{/if}}
                       <div><dt>Slots</dt><dd>{{#if slotCost}}{{slotCost}}{{else}}0{{/if}}</dd></div>
                       <div><dt>Cost</dt><dd>{{#if cost}}{{cost}} cr{{else}}+0 cr{{/if}}</dd></div>
+                      {{#if suggestionReasons.length}}<div><dt>Analysis</dt><dd><ul class="workbench-suggestion-reasons">{{#each suggestionReasons}}<li>{{this}}</li>{{/each}}</ul></dd></div>{{/if}}
                     </dl>
                     {{#if selectable}}<button type="button" class="rail-select-btn" data-action="{{action}}" {{#if key}}data-key="{{key}}"{{/if}}>{{buttonLabel}}</button>{{/if}}
                   </article>
@@ -459,11 +465,13 @@
                     {{#each detailRail.upgradeRows}}
                     <article class="rail-detail-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}">
                       <div class="rail-detail-top"><span>{{name}}</span><span>{{kind}}</span></div>
+                      {{#if suggestion}}<div class="workbench-suggestion-line workbench-suggestion-line--{{suggestionTier}}">{{suggestionLabel}}</div>{{/if}}
                       <dl class="rail-detail-fields">
                         <div><dt>Detail</dt><dd>{{description}}</dd></div>
                         {{#if effect}}<div><dt>Benefit</dt><dd class="rail-benefit">{{effect}}</dd></div>{{/if}}
                         <div><dt>Slots</dt><dd>{{slotCost}}</dd></div>
                         <div><dt>Cost</dt><dd>{{cost}} cr</dd></div>
+                        {{#if suggestionReasons.length}}<div><dt>Analysis</dt><dd><ul class="workbench-suggestion-reasons">{{#each suggestionReasons}}<li>{{this}}</li>{{/each}}</ul></dd></div>{{/if}}
                       </dl>
                       <div class="rail-tags">{{#if installed}}<span>Installed</span>{{/if}}{{#if selected}}{{#unless installed}}<span>Staged</span>{{/unless}}{{/if}}</div>
                       {{#if selectable}}<button type="button" class="rail-select-btn" data-action="{{action}}" data-key="{{key}}">{{buttonLabel}}</button>{{/if}}
@@ -480,11 +488,13 @@
                   {{#each detailRail.templateRows}}
                   <article class="rail-detail-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}">
                     <div class="rail-detail-top"><span>{{name}}</span><span>{{kind}}</span></div>
+                    {{#if suggestion}}<div class="workbench-suggestion-line workbench-suggestion-line--{{suggestionTier}}">{{suggestionLabel}}</div>{{/if}}
                     <dl class="rail-detail-fields">
                       <div><dt>Detail</dt><dd>{{description}}</dd></div>
                       {{#if effect}}<div><dt>Benefit</dt><dd class="rail-benefit">{{effect}}</dd></div>{{/if}}
                       <div><dt>Slots</dt><dd>0</dd></div>
                       <div><dt>Cost</dt><dd>{{cost}} cr</dd></div>
+                      {{#if suggestionReasons.length}}<div><dt>Analysis</dt><dd><ul class="workbench-suggestion-reasons">{{#each suggestionReasons}}<li>{{this}}</li>{{/each}}</ul></dd></div>{{/if}}
                     </dl>
                     <div class="rail-tags">{{#if installed}}<span>Applied</span>{{/if}}{{#if selected}}{{#unless installed}}<span>Staged</span>{{/unless}}{{/if}}</div>
                     {{#if selectable}}<button type="button" class="rail-select-btn rail-select-btn--template" data-action="{{action}}" data-key="{{key}}">{{buttonLabel}}</button>{{/if}}
