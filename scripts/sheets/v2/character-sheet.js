@@ -2991,7 +2991,7 @@ export class SWSEV2CharacterSheet extends
           const actionType = this._classifyActionType(use);
           const actionTypeLabel = this._getActionTypeLabel(use);
           const equipmentState = resolveEquipmentForSkillUse(actor, use, { skill: skill.key });
-          const trainingBlocked = use.trainedOnly && !skill.trained && equipmentState.availableHooks?.some((hook) => hook.bonus?.requiresEquipped === true && hook.bonus?.label?.includes('Treat Injury')) !== true;
+          const trainingBlocked = use.trainedOnly && !skill.trained && equipmentState.trainingOverride !== true;
           const isBlocked = trainingBlocked || equipmentState.blocked === true;
           const blockedReason = [
             trainingBlocked ? "Requires training" : "",
@@ -3030,6 +3030,8 @@ export class SWSEV2CharacterSheet extends
             blockedReason,
             equipmentState,
             equipmentSummary: equipmentState.summary,
+            equipmentTrainingOverride: equipmentState.trainingOverride,
+            equipmentTrainingOverrideLabel: equipmentState.trainingOverrideLabel,
             equipmentBonus: equipmentState.equipmentBonus,
             hasEquipmentHooks: (equipmentState.hooks?.length ?? 0) > 0,
             consumesEquipment: equipmentState.consumeOnAttempt === true,
@@ -8208,8 +8210,8 @@ const forcePoints = [];
     const trainedOnly = selectedUse.trainedOnly === true;
     const trained = this.actor?.system?.skills?.[skillKey]?.trained === true;
     const equipmentState = resolveEquipmentForSkillUse(this.actor, selectedUse, { skill: skillKey });
-    const medicalTrainingOverride = equipmentState.availableHooks?.some((hook) => hook.bonus?.requiresEquipped === true && hook.bonus?.label?.includes('Treat Injury')) === true;
-    if (trainedOnly && !trained && !medicalTrainingOverride) {
+    const equipmentTrainingOverride = equipmentState.trainingOverride === true;
+    if (trainedOnly && !trained && !equipmentTrainingOverride) {
       ui?.notifications?.warn?.(`${selectedUse.label ?? selectedUse.name ?? "This use"} requires training.`);
       return null;
     }

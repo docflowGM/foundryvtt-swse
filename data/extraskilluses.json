@@ -360,10 +360,11 @@
     "effect": "Prepare 20×20 area: allies get +2 Ref; opponents -5 Stealth within area; no Perception penalty while sleeping"
   },
   {
-    "application": "Endure extreme temperatures (field kit)",
+    "application": "Endure Extreme Temperatures (Requires Field Kit)",
     "DC": 20,
     "time": "once per day",
-    "effect": "Ignore extreme temperature attacks for next 24h on success"
+    "effect": "Ignore the effects of Extreme Cold or Extreme Heat for the next 24 hours on success; requires a Field Kit.",
+    "skill": "Survival"
   },
   {
     "application": "Track (trained)",
@@ -443,13 +444,16 @@
     "application": "Copy/reprogram code cylinder or access card",
     "DC": "20/30/35 (admin/encrypted military/encrypted Imperial)",
     "time": "10 minutes",
-    "effect": "Reprogram or copy security access"
+    "effect": "Copy or reprogram a Code Cylinder or access card; DC depends on security level.",
+    "skill": "useComputer"
   },
   {
     "application": "Improve Access (trained)",
     "DC": "vs computer's Will (attitude modifiers apply)",
-    "time": "varies",
-    "effect": "Shift computer attitude by 1 step on success; failure may worsen attitude"
+    "time": "full-round action",
+    "effect": "Shift a computer's attitude one step in your favor; failure can worsen attitude or trigger alerts.",
+    "skill": "useComputer",
+    "trainedOnly": true
   },
   {
     "application": "Disable or erase program (requires helpful attitude)",
@@ -780,5 +784,85 @@
     "time": "8 hours",
     "trainedOnly": true,
     "effect": "Treat radiation; requires Medical Kit; success cures radiation effects and radiation-caused persistent conditions."
+  },
+  {
+    "application": "Handle Explosives / Set Detonator",
+    "skill": "mechanics",
+    "trainedOnly": true,
+    "DC": "DC 10 or chosen disarm DC - 5",
+    "time": "full-round",
+    "effect": "Connect and set a detonator, place an explosive device, or disarm an explosive device. Connecting a detonator is DC 10; to make an explosive difficult to disarm, choose a disarm DC higher than 10 and set the detonator at disarm DC - 5."
+  },
+  {
+    "application": "Build Object (Requires Tool Kit)",
+    "skill": "mechanics",
+    "trainedOnly": true,
+    "DC": "GM-determined",
+    "time": "variable",
+    "effect": "Construct an object from scratch and/or with manufactured parts. Requires a proper Tool Kit, raw materials, and possibly access to an electronics or machine shop."
+  },
+  {
+    "application": "Issue Routine Command",
+    "skill": "useComputer",
+    "DC": "opposed when commands conflict",
+    "time": "standard action",
+    "effect": "Issue a routine command to a Friendly or Helpful computer."
+  },
+  {
+    "application": "Access/Reprogram Electronic Device",
+    "skill": "useComputer",
+    "DC": "by device/security level",
+    "time": "full-round action or more",
+    "effect": "Connect to and access or reprogram an electronic device."
+  },
+  {
+    "application": "Cover Tracks (trained)",
+    "skill": "useComputer",
+    "trainedOnly": true,
+    "DC": "+5 to related access DCs",
+    "time": "part of access attempt",
+    "effect": "Conceal your presence and impose a penalty on Backtrail attempts."
+  },
+  {
+    "application": "Detect Hyperspace Travel",
+    "skill": "useComputer",
+    "DC": 25,
+    "time": "reaction",
+    "effect": "Detect the cronau radiation burst of a starship entering/exiting hyperspace."
+  },
+  {
+    "application": "Find Remote Activation Code",
+    "skill": "useComputer",
+    "DC": 30,
+    "time": "varies",
+    "effect": "Find frequency and activation code for known remote-activated gear."
+  },
+  {
+    "application": "Intercept Communications",
+    "skill": "useComputer",
+    "DC": 20,
+    "time": "standard action",
+    "effect": "Intercept communications between two other vehicles/devices; special precautions or encryption can raise the DC."
+  },
+  {
+    "application": "Decrypt Scrambled Transmission",
+    "skill": "useComputer",
+    "DC": 30,
+    "time": "GM-adjudicated action",
+    "effect": "Decrypt a Pocket Scrambler-encoded message unless you have a linked Pocket Scrambler."
+  },
+  {
+    "application": "Overcome Communication Jamming",
+    "skill": "useComputer",
+    "DC": "opposed by jammer / Com Scrambler +10",
+    "time": "each minute while transmitting",
+    "effect": "Get a signal into or out of an area disrupted by a communications jammer such as a Com Scrambler."
+  },
+  {
+    "application": "Hide Communication Device",
+    "skill": "deception",
+    "DC": "observer/GM adjudicated",
+    "time": "as part of concealing/using device",
+    "effect": "Hide the presence of a concealed communications device such as an Earbud Comlink."
   }
 ]

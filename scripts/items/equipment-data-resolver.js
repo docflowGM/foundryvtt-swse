@@ -17,6 +17,50 @@ export const SIZE_OPTIONS = Object.freeze([
   'Fine', 'Diminutive', 'Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan', 'Colossal'
 ].map((value) => ({ value, label: value })));
 
+export const EQUIPMENT_SKILL_OPTIONS = Object.freeze([
+  { value: '', label: 'None / Passive' },
+  { value: 'acrobatics', label: 'Acrobatics' },
+  { value: 'climb', label: 'Climb' },
+  { value: 'deception', label: 'Deception' },
+  { value: 'endurance', label: 'Endurance' },
+  { value: 'gatherInformation', label: 'Gather Information' },
+  { value: 'initiative', label: 'Initiative' },
+  { value: 'jump', label: 'Jump' },
+  { value: 'knowledgeLifeSciences', label: 'Knowledge (Life Sciences)' },
+  { value: 'knowledgeTechnology', label: 'Knowledge (Technology)' },
+  { value: 'mechanics', label: 'Mechanics' },
+  { value: 'perception', label: 'Perception' },
+  { value: 'persuasion', label: 'Persuasion' },
+  { value: 'pilot', label: 'Pilot' },
+  { value: 'ride', label: 'Ride' },
+  { value: 'stealth', label: 'Stealth' },
+  { value: 'survival', label: 'Survival' },
+  { value: 'swim', label: 'Swim' },
+  { value: 'treatInjury', label: 'Treat Injury' },
+  { value: 'useComputer', label: 'Use Computer' },
+  { value: 'useTheForce', label: 'Use the Force' }
+]);
+
+export const EQUIPMENT_SKILL_HOOK_MODE_OPTIONS = Object.freeze([
+  { value: 'modifies', label: 'Modifies' },
+  { value: 'enables', label: 'Enables' },
+  { value: 'requires', label: 'Requires' }
+]);
+
+export const EQUIPMENT_BONUS_TYPE_OPTIONS = Object.freeze([
+  { value: '', label: 'None' },
+  { value: 'equipment', label: 'Equipment' },
+  { value: 'circumstance', label: 'Circumstance' },
+  { value: 'untyped', label: 'Untyped / Note Only' }
+]);
+
+export const EQUIPMENT_CONSUME_TIMING_OPTIONS = Object.freeze([
+  { value: '', label: 'None' },
+  { value: 'onAttempt', label: 'On Attempt' },
+  { value: 'onSuccess', label: 'On Success' },
+  { value: 'manual', label: 'Manual' }
+]);
+
 function withCustomOption(options, value) {
   const stringValue = String(value ?? '').trim();
   if (!stringValue || options.some((option) => option.value === stringValue)) return options;
@@ -33,6 +77,27 @@ function normalizeList(value) {
   if (Array.isArray(value)) return value.map((entry) => String(entry ?? '').trim()).filter(Boolean);
   if (typeof value === 'string') return value.split(',').map((entry) => entry.trim()).filter(Boolean);
   return [];
+}
+
+function firstSkillHook(skillHooks = []) {
+  const hook = Array.isArray(skillHooks) && skillHooks.length ? skillHooks[0] : {};
+  const bonus = hook?.bonus && typeof hook.bonus === 'object' ? hook.bonus : {};
+  const consumes = hook?.consumes && typeof hook.consumes === 'object' ? hook.consumes : {};
+  const bonusAmount = bonus.amount ?? bonus.value ?? bonus.modifier ?? '';
+  return {
+    skill: hook?.skill ?? '',
+    useKey: hook?.useKey ?? '',
+    mode: hook?.mode ?? 'modifies',
+    required: hook?.required === true || hook?.mode === 'requires',
+    requiresEquipped: hook?.requiresEquipped === true || bonus?.requiresEquipped === true,
+    bonusType: bonus.type ?? '',
+    bonusAmount: bonusAmount === null || bonusAmount === undefined ? '' : bonusAmount,
+    bonusAppliesTo: bonus.appliesTo ?? bonus.label ?? '',
+    consumeType: consumes.type ?? '',
+    consumeAmount: consumes.amount ?? '',
+    consumeTiming: consumes.timing ?? consumes.consumeOn ?? '',
+    note: hook?.note ?? ''
+  };
 }
 
 export function resolveEquipmentData(itemOrSystem = {}) {
@@ -53,6 +118,7 @@ export function resolveEquipmentData(itemOrSystem = {}) {
   const cost = Math.max(0, Math.round(toNumber(system.cost ?? system.costNumeric, 0)));
   const value = Math.max(0, Math.round(toNumber(system.value, cost)));
   const totalWeight = Number((weight * quantity).toFixed(2));
+  const primarySkillHook = firstSkillHook(skillHooks);
 
   return {
     category,
@@ -105,6 +171,11 @@ export function resolveEquipmentData(itemOrSystem = {}) {
     isConsumable: system.usage?.consumable === true || system.itemRole === 'consumable' || tags.includes('consumable'),
     isContainer: system.itemRole === 'container' || category === 'container' || !!system.capabilities?.container,
     skillHooks,
+    skillOptions: withCustomOption(EQUIPMENT_SKILL_OPTIONS, primarySkillHook.skill),
+    skillHookModeOptions: withCustomOption(EQUIPMENT_SKILL_HOOK_MODE_OPTIONS, primarySkillHook.mode),
+    bonusTypeOptions: withCustomOption(EQUIPMENT_BONUS_TYPE_OPTIONS, primarySkillHook.bonusType),
+    consumeTimingOptions: withCustomOption(EQUIPMENT_CONSUME_TIMING_OPTIONS, primarySkillHook.consumeTiming),
+    primarySkillHook,
     hasSkillHooks: skillHooks.length > 0,
     skillHookCount: skillHooks.length,
     normalizationStatus: system.normalizationStatus ?? ''

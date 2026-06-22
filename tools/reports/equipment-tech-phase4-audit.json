@@ -1,0 +1,211 @@
+{
+  "techRecords": [
+    {
+      "id": "computer-bracer-computer",
+      "name": "Bracer Computer",
+      "hooks": 1,
+      "type": "computer",
+      "role": "gear"
+    },
+    {
+      "id": "computer-code-cylinder",
+      "name": "Code Cylinder",
+      "hooks": 1,
+      "type": "computer",
+      "role": "gear"
+    },
+    {
+      "id": "computer-credit-chip",
+      "name": "Credit Chip",
+      "hooks": 0,
+      "type": "computer",
+      "role": "gear"
+    },
+    {
+      "id": "computer-datacards-blank-10",
+      "name": "Blank Datacards (10)",
+      "hooks": 0,
+      "type": "computer",
+      "role": "gear"
+    },
+    {
+      "id": "computer-datapad-basic",
+      "name": "Datapad, Basic",
+      "hooks": 0,
+      "type": "computer",
+      "role": "gear"
+    },
+    {
+      "id": "computer-datapad-standard",
+      "name": "Datapad, Standard",
+      "hooks": 1,
+      "type": "computer",
+      "role": "gear"
+    },
+    {
+      "id": "computer-hibaka-2000-mem-stik",
+      "name": "HiBaka 2000 Mem-Stik",
+      "hooks": 0,
+      "type": "computer",
+      "role": "gear"
+    },
+    {
+      "id": "computer-interface-visor",
+      "name": "Computer Interface Visor",
+      "hooks": 1,
+      "type": "computer",
+      "role": "gear"
+    },
+    {
+      "id": "computer-lectroticker",
+      "name": "Lectroticker",
+      "hooks": 2,
+      "type": "computer",
+      "role": "gear"
+    },
+    {
+      "id": "computer-personal-holoprojector",
+      "name": "Personal Holoprojector",
+      "hooks": 0,
+      "type": "computer",
+      "role": "gear"
+    },
+    {
+      "id": "computer-portable-computer",
+      "name": "Portable Computer",
+      "hooks": 1,
+      "type": "computer",
+      "role": "gear"
+    },
+    {
+      "id": "computer-spike",
+      "name": "Computer Spike",
+      "hooks": 1,
+      "type": "computer",
+      "role": "consumable"
+    },
+    {
+      "id": "computer-triangulation-visor",
+      "name": "Triangulation Visor",
+      "hooks": 0,
+      "type": "computer",
+      "role": "gear"
+    },
+    {
+      "id": "computer-xcalq-3ga-slicer-special",
+      "name": "Xcalq-3GA \"Slicer Special\" Portable Computer",
+      "hooks": 1,
+      "type": "computer",
+      "role": "gear"
+    },
+    {
+      "id": "computer-xcalq-stealth-pack",
+      "name": "Xcalq Stealth Pack",
+      "hooks": 1,
+      "type": "computer",
+      "role": "gear"
+    },
+    {
+      "id": "cyber-energy-binding-prosthesis",
+      "name": "Energy-Binding Prosthesis",
+      "hooks": 0,
+      "type": "cybernetic",
+      "role": "gear"
+    },
+    {
+      "id": "cyber-prosthesis",
+      "name": "Cybernetic Prosthesis",
+      "hooks": 0,
+      "type": "cybernetic",
+      "role": "gear"
+    },
+    {
+      "id": "cyber-rhen-orm-biocomputer",
+      "name": "Rhen-Orm Biocomputer",
+      "hooks": 1,
+      "type": "cybernetic",
+      "role": "gear"
+    },
+    {
+      "id": "cyber-subelectronic-converter",
+      "name": "Subelectronic Converter",
+      "hooks": 1,
+      "type": "cybernetic",
+      "role": "gear"
+    },
+    {
+      "id": "upgrade-universal-cheater",
+      "name": "Cheater (Universal Upgrade)",
+      "hooks": 0,
+      "type": "upgrade",
+      "role": "upgrade"
+    },
+    {
+      "id": "upgrade-universal-cloaked",
+      "name": "Cloaked (Universal Upgrade)",
+      "hooks": 0,
+      "type": "upgrade",
+      "role": "upgrade"
+    },
+    {
+      "id": "upgrade-universal-miniaturized",
+      "name": "Miniaturized (Universal Upgrade)",
+      "hooks": 0,
+      "type": "upgrade",
+      "role": "upgrade"
+    },
+    {
+      "id": "upgrade-universal-remote-activation",
+      "name": "Remote Activation (Universal Upgrade)",
+      "hooks": 1,
+      "type": "upgrade",
+      "role": "upgrade"
+    },
+    {
+      "id": "upgrade-universal-secret-compartment",
+      "name": "Secret Compartment (Universal Upgrade)",
+      "hooks": 0,
+      "type": "upgrade",
+      "role": "upgrade"
+    }
+  ],
+  "skillHooksAdded": 13,
+  "extraSkillUsesChanged": [
+    {
+      "id": "302b949d5ca44df2",
+      "name": "Copy/reprogram code cylinder or access card",
+      "change": "skill-corrected-to-useComputer"
+    },
+    {
+      "id": "beb43b30aa2c4510",
+      "name": "Improve Access (trained)",
+      "change": "skill-corrected-to-useComputer"
+    },
+    {
+      "id": "7da7b490c8b7182f",
+      "name": "Issue Routine Command",
+      "change": "added"
+    },
+    {
+      "id": "9ae7fb004f876364",
+      "name": "Access/Reprogram Electronic Device",
+      "change": "added"
+    },
+    {
+      "id": "bd9ced6815f46ce0",
+      "name": "Cover Tracks (trained)",
+      "change": "added"
+    },
+    {
+      "id": "4bb485dd34390008",
+      "name": "Detect Hyperspace Travel",
+      "change": "added"
+    },
+    {
+      "id": "75f9eb01abab193e",
+      "name": "Find Remote Activation Code",
+      "change": "added"
+    }
+  ],
+  "validationErrors": []
+}

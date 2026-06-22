@@ -1,0 +1,37 @@
+{
+  "phase": "equipment-comlinks-phase5",
+  "generatedAt": "2026-06-22T18:13:17.362947+00:00",
+  "repo": "/mnt/data/swse_equipment_phase1_repo/foundryvtt-swse-main",
+  "bucket": "comlinks",
+  "bucketRecords": 13,
+  "changedComlinkItems": [
+    "Com Scrambler",
+    "Comlink, Long-Range",
+    "Comlink, Short-Range",
+    "Earbud Comlink",
+    "Hands-Free Comlink",
+    "Holo Converter",
+    "Panic Ring",
+    "Pocket Scrambler",
+    "Signal Wand",
+    "Targeting Beacon",
+    "Tightbeam Comlink",
+    "Visual Wrist Comm",
+    "Vox-Box"
+  ],
+  "aggregateMirroredRows": 13,
+  "skillHooksAddedOrUpdated": 13,
+  "recordsWithSkillHooks": 8,
+  "extraSkillUsesAddedOrUpdated": 4,
+  "dataExtraSkillUsesAddedOrUpdated": 4,
+  "resolverAliasesUpdated": true,
+  "validationErrors": [],
+  "sourceBasis": [
+    "SWSE Fandom Communications Devices table and descriptions",
+    "Comlink hardwired encryption and optional video/holo cost multipliers",
+    "Pocket Scrambler DC 30 Use Computer decrypt rule",
+    "Com Scrambler 20 km radius / default Use Computer +10 rule",
+    "Earbud Comlink +5 Deception to hide presence",
+    "Tightbeam Comlink line-of-sight / passive interception limits"
+  ]
+}

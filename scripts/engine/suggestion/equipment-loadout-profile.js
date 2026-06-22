@@ -187,13 +187,53 @@ function addArmorTags(profile, category, equipped) {
 function addGearTags(profile, item, equipped) {
   const name = item?.name || '';
   const sys = item?.system || {};
-  const text = [name, sys.category, sys.group, sys.type, sys.subtype, sys.description].join(' ');
   const base = equipped ? 0.85 : 0.3;
+  const addGearTag = (tag, weight = base) => {
+    const key = normalize(tag);
+    if (!key) return;
+    addTag(profile, key, weight, equipped);
+    addCount(profile.gearTags, key, quantity(item), { name, equipped, weight });
+  };
+
+  const text = [
+    name, sys.category, sys.group, sys.type, sys.subtype,
+    sys.equipmentBucket, sys.equipmentType, sys.itemRole, sys.usage?.mode, sys.description,
+    ...(Array.isArray(sys.tags) ? sys.tags : []),
+    ...(Array.isArray(sys.traits) ? sys.traits : [])
+  ].join(' ');
+
   for (const entry of GEAR_TAG_PATTERNS) {
-    if (entry.pattern.test(text)) {
-      addTag(profile, entry.tag, base, equipped);
-      addCount(profile.gearTags, entry.tag, quantity(item), { name, equipped, weight: base });
+    if (entry.pattern.test(text)) addGearTag(entry.tag);
+  }
+
+  for (const value of [sys.equipmentBucket, sys.equipmentType, sys.itemRole, sys.category, sys.usage?.mode]) {
+    if (value) addGearTag(value);
+  }
+  if (sys.equipmentBucket) addGearTag(`bucket_${sys.equipmentBucket}`, base * 0.9);
+  if (sys.equipmentType) addGearTag(`type_${sys.equipmentType}`, base * 0.9);
+  if (sys.itemRole) addGearTag(`role_${sys.itemRole}`, base * 0.9);
+
+  if (Array.isArray(sys.skillHooks)) {
+    for (const hook of sys.skillHooks) {
+      if (hook?.skill) addGearTag(hook.skill, base * 1.05);
+      if (hook?.useKey) addGearTag(hook.useKey, base);
+      if (hook?.bonus?.type === 'equipment') addGearTag('equipment_bonus', base);
+      if (hook?.required === true || hook?.mode === 'requires') addGearTag('required_gear', base);
+      if (hook?.consumes) addGearTag('consumable', base);
     }
+  }
+
+  if (sys.capabilities && typeof sys.capabilities === 'object') {
+    for (const [key, value] of Object.entries(sys.capabilities)) {
+      if (value === true) addGearTag(key, base * 0.85);
+    }
+    if (sys.capabilities.perceptionEquipmentBonus) addGearTag('perception', base);
+    if (sys.capabilities.accuracySupport) addGearTag('accuracy', base);
+    if (sys.capabilities.rangeCategoryReduction) addGearTag('range_support', base);
+    if (sys.capabilities.lowLightVision || sys.capabilities.lowLightTargeting) addGearTag('low_light', base);
+    if (sys.capabilities.integratedHandsFreeComlink) addGearTag('communication', base);
+    if (sys.capabilities.containerSlots || sys.capabilities.container) addGearTag('quick_access', base);
+    if (sys.capabilities.concealedCarry) addGearTag('concealment', base);
   }
 }
 

@@ -75,6 +75,13 @@ function itemText(item) {
     sys.type,
     sys.subtype,
     sys.role,
+    sys.equipmentBucket,
+    sys.equipmentBucketLabel,
+    sys.equipmentType,
+    sys.equipmentTypeLabel,
+    sys.itemRole,
+    sys.itemRoleLabel,
+    sys.usage?.mode,
     sys.description,
   ].filter(Boolean).join(' ').toLowerCase();
 }
@@ -89,6 +96,8 @@ export function getStoreItemCost(item) {
     sys.finalPrice,
     sys.final_price,
     sys.price,
+    sys.costNumeric,
+    sys.value,
     sys.cost,
     sys.credits,
     sys.purchasePrice,
@@ -116,6 +125,13 @@ export function extractStoreItemTags(item) {
   add(sys.type);
   add(sys.subtype);
   add(sys.role);
+  add(sys.equipmentBucket);
+  add(sys.equipmentBucketLabel);
+  add(sys.equipmentType);
+  add(sys.equipmentTypeLabel);
+  add(sys.itemRole);
+  add(sys.itemRoleLabel);
+  add(sys.usage?.mode);
   add(sys.droidRole);
   add(sys.droidRoleLabel);
   add(sys.droidDegreeKey);
@@ -125,6 +141,30 @@ export function extractStoreItemTags(item) {
   if (Array.isArray(sys.tags)) tags.push(...sys.tags);
   if (Array.isArray(sys.keywords)) tags.push(...sys.keywords);
   if (Array.isArray(sys.traits)) tags.push(...sys.traits);
+  if (Array.isArray(sys.skillHooks)) {
+    for (const hook of sys.skillHooks) {
+      add(hook?.skill);
+      add(hook?.useKey);
+      add(hook?.mode);
+      if (hook?.skill) tags.push(`skill_${hook.skill}`);
+      if (hook?.useKey) tags.push(`use_${hook.useKey}`);
+      if (hook?.bonus?.type === 'equipment') tags.push('equipment_bonus');
+      if (hook?.required === true || hook?.mode === 'requires') tags.push('required_gear');
+      if (hook?.consumes) tags.push('consumable');
+    }
+  }
+  if (sys.capabilities && typeof sys.capabilities === 'object') {
+    for (const [key, value] of Object.entries(sys.capabilities)) {
+      if (value === true) add(key);
+    }
+    if (sys.capabilities.perceptionEquipmentBonus) tags.push('perception', 'equipment_bonus');
+    if (sys.capabilities.accuracySupport) tags.push('accuracy', 'ranged', 'weapon_support');
+    if (sys.capabilities.rangeCategoryReduction) tags.push('range_support', 'weapon_support');
+    if (sys.capabilities.lowLightVision || sys.capabilities.lowLightTargeting) tags.push('low_light', 'perception');
+    if (sys.capabilities.integratedHandsFreeComlink) tags.push('comlink', 'communication');
+    if (sys.capabilities.containerSlots || sys.capabilities.container) tags.push('container', 'quick_access');
+    if (sys.capabilities.concealedCarry) tags.push('concealment', 'stealth');
+  }
 
   const text = itemText(item);
   if (/lightsaber|light saber|saber/.test(text)) tags.push('lightsaber', 'melee', 'jedi_gear', 'force');
@@ -141,6 +181,9 @@ export function extractStoreItemTags(item) {
   if (/toolkit|tool kit|mechanic|repair/.test(text)) tags.push('toolkit', 'tech');
   if (/security kit|slicer|computer|interface|spike/.test(text)) tags.push('security', 'tech');
   if (/survival|field kit|breath mask|sensor|climbing/.test(text)) tags.push('survival', 'fieldcraft');
+  if (/bandolier|holster|pouch|belt|container/.test(text)) tags.push('container', 'quick_access');
+  if (/helmet package|low-light|low light/.test(text)) tags.push('perception', 'low_light', 'comlink');
+  if (/targeting scope|scope|sight/.test(text)) tags.push('accuracy', 'range_support', 'weapon_support', 'ranged');
   if (/dual|two weapon|offhand|off-hand|jar'?kai/.test(text)) tags.push('dual_wield');
   if (/droid|astromech|protocol|probe|battle droid|assassin droid/.test(text) || item?.type === 'droid') tags.push('droid', 'asset');
   if (/astromech|utility droid|repair droid|mechanic/.test(text)) tags.push('astromech', 'tech', 'repair');

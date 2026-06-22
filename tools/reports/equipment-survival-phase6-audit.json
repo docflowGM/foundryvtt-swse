@@ -1,0 +1,21 @@
+{
+  "phase": "equipment-survival-life-support-phase6",
+  "generatedAt": "2026-06-22T18:23:07.623318+00:00",
+  "survivalRecordsNormalized": 23,
+  "recordsWithSkillHooks": 14,
+  "skillHooks": 15,
+  "lifeSupportRecords": 14,
+  "survivalGearRecords": 9,
+  "extraSkillUsesUpdated": [
+    "e91500124cef42d2"
+  ],
+  "missingImportFixed": "scripts/engine/suggestion/equipment/weapon-investment-profile.js",
+  "validationErrors": [],
+  "sourceBasis": [
+    "SWSE Fandom Field Kit page: Field Kit required for Survival checks to endure extreme temperatures",
+    "SWSE Fandom Survival page: Endure Extreme Temperatures is a Survival check, not Endurance",
+    "SWSE Fandom Breath Mask page: 1 hour breathable atmosphere, inhaled poison immunity, no hard vacuum/extreme temperature protection",
+    "SWSE Fandom All-Temperature Cloak page: +5 Equipment bonus to Fortitude Defense vs extreme heat/cold",
+    "SWSE Fandom Life Support page: life-support devices let creatures function in hostile environments"
+  ]
+}

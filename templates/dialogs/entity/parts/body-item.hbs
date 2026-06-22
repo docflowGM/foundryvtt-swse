@@ -107,6 +107,86 @@
   </section>
 
   <section class="item-editor__section">
+    <h3 class="item-editor__section-title">Skill Use Hooks</h3>
+    <p class="swse-entity-dialog__hint">Optional primary hook used by the equipment skill-use resolver and suggestion engine. Leave Uses Skill and Skill Use Key blank for passive equipment.</p>
+
+    <div class="item-editor__grid item-editor__grid--two-col">
+      <div class="form-field">
+        <label>Uses Skill</label>
+        <select name="system.skillHooks.0.skill">
+          {{#each entityDialog.equipment.skillOptions}}
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.equipment.primarySkillHook.skill this.value)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label>Skill Use Key</label>
+        <input type="text" name="system.skillHooks.0.useKey" value="{{entityDialog.equipment.primarySkillHook.useKey}}" placeholder="first-aid, disable-device, endure-extreme-temperatures" />
+      </div>
+
+      <div class="form-field">
+        <label>Hook Mode</label>
+        <select name="system.skillHooks.0.mode">
+          {{#each entityDialog.equipment.skillHookModeOptions}}
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.equipment.primarySkillHook.mode this.value)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label>Bonus Type</label>
+        <select name="system.skillHooks.0.bonus.type">
+          {{#each entityDialog.equipment.bonusTypeOptions}}
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.equipment.primarySkillHook.bonusType this.value)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label>Bonus</label>
+        <input type="number" name="system.skillHooks.0.bonus.amount" value="{{entityDialog.equipment.primarySkillHook.bonusAmount}}" step="1" data-dtype="Number" placeholder="2" />
+      </div>
+
+      <div class="form-field">
+        <label>Bonus Applies To</label>
+        <input type="text" name="system.skillHooks.0.bonus.appliesTo" value="{{entityDialog.equipment.primarySkillHook.bonusAppliesTo}}" placeholder="all, first-aid, perception, installed/equipped only" />
+      </div>
+
+      <div class="form-field">
+        <label>Consumes Type</label>
+        <input type="text" name="system.skillHooks.0.consumes.type" value="{{entityDialog.equipment.primarySkillHook.consumeType}}" placeholder="quantity, charge, dose" />
+      </div>
+
+      <div class="form-field">
+        <label>Consume Amount</label>
+        <input type="number" name="system.skillHooks.0.consumes.amount" value="{{entityDialog.equipment.primarySkillHook.consumeAmount}}" step="1" data-dtype="Number" placeholder="1" />
+      </div>
+
+      <div class="form-field">
+        <label>Consume Timing</label>
+        <select name="system.skillHooks.0.consumes.timing">
+          {{#each entityDialog.equipment.consumeTimingOptions}}
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.equipment.primarySkillHook.consumeTiming this.value)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-field">
+        <label>Hook Note</label>
+        <input type="text" name="system.skillHooks.0.note" value="{{entityDialog.equipment.primarySkillHook.note}}" placeholder="Required, bonus limits, once-per-day notes, etc." />
+      </div>
+    </div>
+
+    <div class="swse-entity-dialog__toggle-grid">
+      <input type="hidden" name="system.skillHooks.0.required" value="false" />
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.skillHooks.0.required" value="true" {{#if entityDialog.equipment.primarySkillHook.required}}checked{{/if}} /> Required Gear</label>
+      <input type="hidden" name="system.skillHooks.0.requiresEquipped" value="false" />
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.skillHooks.0.requiresEquipped" value="true" {{#if entityDialog.equipment.primarySkillHook.requiresEquipped}}checked{{/if}} /> Equipped Only</label>
+    </div>
+  </section>
+
+  <section class="item-editor__section">
     <h3 class="item-editor__section-title">Workbench / Store Hooks</h3>
 
     <div class="item-editor__grid item-editor__grid--two-col">

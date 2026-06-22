@@ -1,0 +1,387 @@
+{
+  "tools": [
+    {
+      "id": "tool-binder-cuffs",
+      "name": "Binder Cuffs",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "tool-energy-cell",
+      "name": "Energy Cell",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "tool-kit",
+      "name": "Tool Kit",
+      "hooks": 9,
+      "linked": true,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "tool-power-pack",
+      "name": "Power Pack",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "tool-power-recharger",
+      "name": "Power Recharger",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "tool-security-kit",
+      "name": "Security Kit",
+      "hooks": 5,
+      "linked": true,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "tool-utility-belt-empty",
+      "name": "Utility Belt (Empty)",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "tool-utility-belt-standard",
+      "name": "Utility Belt (Standard)",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "upgrade-armor-aquatic-adaptation",
+      "name": "Aquatic Adaptation (Armor Upgrade)",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "upgrade-armor-armorplast",
+      "name": "Armorplast (Armor Upgrade)",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "upgrade-armor-environmental-systems",
+      "name": "Environmental Systems (Armor Upgrade)",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "upgrade-armor-helmet-package",
+      "name": "Helmet Package (Armor Upgrade)",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "upgrade-armor-jump-servos",
+      "name": "Jump Servos (Armor Upgrade)",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "upgrade-armor-shadowskin",
+      "name": "Shadowskin (Armor Upgrade)",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "upgrade-armor-shield-generator-sr5",
+      "name": "Shield Generator SR 5 (Armor Upgrade)",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "upgrade-weapon-bayonet-ring",
+      "name": "Bayonet Ring (Weapon Upgrade)",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "upgrade-weapon-ion-charger",
+      "name": "Ion Charger (Weapon Upgrade)",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "upgrade-weapon-rangefinder",
+      "name": "Rangefinder (Weapon Upgrade)",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    },
+    {
+      "id": "upgrade-weapon-rapid-recycler",
+      "name": "Rapid Recycler (Weapon Upgrade)",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-tools-phase3-normalized"
+    }
+  ],
+  "security": [
+    {
+      "id": "detect-ambient-aural-amplifier",
+      "name": "Ambient Aural Amplifier",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-audiorecorder",
+      "name": "Audiorecorder",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-aural-amplifier",
+      "name": "Aural Amplifier",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-communication-scanner",
+      "name": "Communication Scanner",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-decoy-glow-rod",
+      "name": "Decoy Glow Rod",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-demolitions-sensor",
+      "name": "Demolitions Sensor",
+      "hooks": 2,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-electrobinoculars",
+      "name": "Electrobinoculars",
+      "hooks": 2,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-fusion-lantern",
+      "name": "Fusion Lantern",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-glow-rod",
+      "name": "Glow Rod",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-halo-lamp",
+      "name": "Halo Lamp",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-heat-sensor",
+      "name": "Heat Sensor",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-holorecorder",
+      "name": "Holorecorder",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-holoshroud",
+      "name": "Holoshroud",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-motion-sensing-visor",
+      "name": "Motion Sensing Visor",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-neural-band",
+      "name": "Neural Band",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-proximity-flare",
+      "name": "Proximity Flare",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-radiation-detector",
+      "name": "Radiation Detector",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-sensor-pack",
+      "name": "Sensor Pack",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-sonar-mapper",
+      "name": "Sonar Mapper",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-sound-sponge",
+      "name": "Sound Sponge",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-spy-bug",
+      "name": "Spy Bug",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-stealth-field-generator",
+      "name": "Stealth Field Generator",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-surveillance-detector",
+      "name": "Surveillance Detector",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-surveillance-tagger",
+      "name": "Surveillance Tagger",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-veridicator",
+      "name": "Veridicator",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-vid-vox-scrambler",
+      "name": "Vid-Vox Scrambler",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "detect-videorecorder",
+      "name": "Videorecorder",
+      "hooks": 0,
+      "linked": false,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "explosive-charge",
+      "name": "Explosive Charge",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "explosive-detonite",
+      "name": "Detonite",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "explosive-detonite-cord",
+      "name": "Detonite Cord",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "explosive-manual-trigger",
+      "name": "Manual Trigger",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "explosive-power-pack-bomb",
+      "name": "Power Pack Bomb",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    },
+    {
+      "id": "explosive-timer",
+      "name": "Timer",
+      "hooks": 1,
+      "linked": true,
+      "status": "equipment-security-phase3-normalized"
+    }
+  ],
+  "aggregateUpdated": 52,
+  "skillHooksAdded": 35,
+  "extraSkillUsesAdded": [
+    "Handle Explosives / Set Detonator",
+    "Build Object (Requires Tool Kit)"
+  ],
+  "validation": {
+    "violations": [],
+    "violationCount": 0
+  },
+  "counts": {
+    "toolsRecords": 19,
+    "securityRecords": 33,
+    "toolsLinked": 2,
+    "securityLinked": 19,
+    "totalHooks": 35
+  }
+}

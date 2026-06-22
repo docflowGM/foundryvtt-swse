@@ -1,0 +1,116 @@
+{
+  "phase": "equipment-other-final-and-suggestion-engine-alignment",
+  "records": 6,
+  "recordsWithSkillHooks": 2,
+  "recordsWithCapabilities": 6,
+  "items": [
+    {
+      "id": "accessory-bandolier",
+      "name": "Bandolier",
+      "role": "container",
+      "hooks": 0,
+      "tags": [
+        "weapon-armor-accessory",
+        "other",
+        "accessory",
+        "container",
+        "ammunition",
+        "grenade-support",
+        "quick-access"
+      ]
+    },
+    {
+      "id": "accessory-helmet-package",
+      "name": "Helmet Package",
+      "role": "upgrade",
+      "hooks": 1,
+      "tags": [
+        "weapon-armor-accessory",
+        "other",
+        "accessory",
+        "armor-upgrade",
+        "helmet",
+        "perception",
+        "low-light",
+        "comlink",
+        "integrated-equipment"
+      ]
+    },
+    {
+      "id": "accessory-holster-concealed",
+      "name": "Holster, Concealed",
+      "role": "container",
+      "hooks": 1,
+      "tags": [
+        "weapon-armor-accessory",
+        "other",
+        "accessory",
+        "container",
+        "holster",
+        "concealment",
+        "stealth",
+        "quick-access"
+      ]
+    },
+    {
+      "id": "accessory-holster-hip",
+      "name": "Holster, Hip",
+      "role": "container",
+      "hooks": 0,
+      "tags": [
+        "weapon-armor-accessory",
+        "other",
+        "accessory",
+        "container",
+        "holster",
+        "quick-access"
+      ]
+    },
+    {
+      "id": "accessory-targeting-scope-enhanced-low-light",
+      "name": "Targeting Scope, Enhanced Low-Light",
+      "role": "weapon-upgrade",
+      "hooks": 0,
+      "tags": [
+        "weapon-armor-accessory",
+        "other",
+        "accessory",
+        "weapon-upgrade",
+        "targeting-scope",
+        "accuracy",
+        "range-support",
+        "ranged",
+        "aim",
+        "low-light",
+        "darkness"
+      ]
+    },
+    {
+      "id": "accessory-targeting-scope-standard",
+      "name": "Targeting Scope, Standard",
+      "role": "weapon-upgrade",
+      "hooks": 0,
+      "tags": [
+        "weapon-armor-accessory",
+        "other",
+        "accessory",
+        "weapon-upgrade",
+        "targeting-scope",
+        "accuracy",
+        "range-support",
+        "ranged",
+        "aim"
+      ]
+    }
+  ],
+  "suggestionEngineChanges": [
+    "store item tags now include normalized equipment bucket/type/role/capabilities/skillHooks",
+    "loadout profile now adds gear tags from normalized equipment metadata",
+    "gear suggestions now score normalized skill hooks, capabilities, containers, weapon accessories, and equipment costs"
+  ],
+  "modalEditorChanges": [
+    "equipment entity editor now exposes the primary skill hook fields",
+    "Uses Skill, Skill Use Key, Hook Mode, Bonus Type, Bonus, Bonus Applies To, Consume Type/Amount/Timing, Required Gear, and Equipped Only are editable",
+    "equipment normalizer now drops empty modal-created hooks instead of preserving mode-only placeholders"
+  ]
+}

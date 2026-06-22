@@ -65,8 +65,13 @@ function routeScore(storeContext = {}, routes = []) {
 }
 
 function scoreGearUseCaseFit(gear, character, storeContext = {}) {
+  const sys = gear?.system || {};
   const tags = new Set(extractStoreItemTags(gear).map(normalize));
-  const text = [gear?.name, gear?.system?.category, gear?.system?.subcategory, gear?.system?.description]
+  const hooks = Array.isArray(sys.skillHooks) ? sys.skillHooks : [];
+  const hookSkills = new Set(hooks.map(hook => normalize(hook?.skill)).filter(Boolean));
+  const hookUses = new Set(hooks.map(hook => normalize(hook?.useKey)).filter(Boolean));
+  const caps = sys.capabilities && typeof sys.capabilities === 'object' ? sys.capabilities : {};
+  const text = [gear?.name, sys.category, sys.subcategory, sys.equipmentBucket, sys.equipmentType, sys.itemRole, sys.description]
     .filter(Boolean).join(' ').toLowerCase();
   const explanations = [];
   let score = 0;
@@ -81,38 +86,52 @@ function scoreGearUseCaseFit(gear, character, storeContext = {}) {
   const intMod = readAttributeMod(character?.system || {}, 'int');
   const wisMod = readAttributeMod(character?.system || {}, 'wis');
 
-  if (tags.has('medical') || /medpac|medkit|medical|surgery|diagnostic/.test(text)) {
+  if (tags.has('medical') || hookSkills.has('treatinjury') || /medpac|medkit|medical|surgery|diagnostic/.test(text)) {
     const aligned = treatInjury >= 5 || routeScore(storeContext, ['support', 'medical']) >= 0.34;
     score += aligned ? 8 : 3;
     explanations.push(aligned ? 'Medical gear reinforces your Treat Injury/support role.' : 'Medical gear covers an important party safety gap.');
   }
-  if (tags.has('toolkit') || tags.has('tech') || /toolkit|tool kit|repair|mechanic/.test(text)) {
+  if (tags.has('toolkit') || tags.has('tool') || tags.has('tech') || hookSkills.has('mechanics') || caps.installSkill === 'mechanics' || /toolkit|tool kit|repair|mechanic/.test(text)) {
     const aligned = mechanics >= 5 || intMod >= 3 || routeScore(storeContext, ['tech', 'repair']) >= 0.34;
     score += aligned ? 8 : 2;
     explanations.push(aligned ? 'Technical gear matches your Mechanics/Intelligence investment.' : 'Technical gear is useful, but your build has limited tech commitment.');
   }
-  if (tags.has('security') || /security kit|slicer|computer spike|datapad|interface/.test(text)) {
+  if (tags.has('security') || tags.has('computer') || hookSkills.has('usecomputer') || /security kit|slicer|computer spike|datapad|interface/.test(text)) {
     const aligned = useComputer >= 5 || intMod >= 3 || routeScore(storeContext, ['tech', 'slicer']) >= 0.34;
     score += aligned ? 7 : 2;
     explanations.push(aligned ? 'Slicing/security gear matches your Use Computer lane.' : 'Security gear opens a tech side lane.');
   }
-  if (tags.has('survival') || tags.has('fieldcraft') || /survival|field kit|climbing|breath mask|sensor|macrobinocular/.test(text)) {
+  if (tags.has('survival') || tags.has('fieldcraft') || hookSkills.has('survival') || /survival|field kit|climbing|breath mask|sensor|macrobinocular/.test(text)) {
     const aligned = survival >= 5 || perception >= 5 || wisMod >= 3 || routeScore(storeContext, ['scout', 'fieldcraft', 'survival']) >= 0.34;
     score += aligned ? 7 : 3;
     explanations.push(aligned ? 'Field gear supports your scout/perception route.' : 'Field gear is broadly useful outside combat.');
   }
-  if (tags.has('stealth') || /stealth|camouflage|conceal|shadow/.test(text)) {
+  if (tags.has('perception') || hookSkills.has('perception') || caps.perceptionEquipmentBonus || caps.lowLightVision || caps.lowLightTargeting) {
+    const aligned = perception >= 5 || wisMod >= 3 || routeScore(storeContext, ['scout', 'perception', 'fieldcraft']) >= 0.34;
+    score += aligned ? 6 : 2;
+    explanations.push(aligned ? 'Perception gear reinforces your scout/awareness lane.' : 'Awareness gear is broadly useful for the party.');
+  }
+  if (tags.has('stealth') || hookSkills.has('stealth') || caps.concealedCarry || /stealth|camouflage|conceal|shadow/.test(text)) {
     const aligned = stealth >= 5 || routeScore(storeContext, ['stealth', 'scoundrel', 'scout']) >= 0.34;
     score += aligned ? 6 : 1;
     explanations.push(aligned ? 'Stealth gear matches your infiltration lane.' : 'Stealth gear is a side option unless you invest in Stealth.');
   }
-  if (tags.has('social') || /comlink|disguise|translator|forgery|credit chip|identity/.test(text)) {
+  if (tags.has('social') || tags.has('communication') || hookSkills.has('deception') || /comlink|disguise|translator|forgery|credit chip|identity/.test(text)) {
     const aligned = persuasion >= 5 || routeScore(storeContext, ['social', 'leadership']) >= 0.34;
     score += aligned ? 5 : 2;
     explanations.push(aligned ? 'Social/identity gear supports your influence lane.' : 'Social gear offers situational utility.');
   }
+  if (tags.has('weapon_support') || tags.has('accuracy') || caps.weaponUpgrade || caps.accuracySupport || hookUses.has('aim')) {
+    const aligned = routeScore(storeContext, ['ranged', 'soldier', 'scoundrel']) >= 0.34 || storeContext?.equipmentProfile?.tagWeights?.ranged >= 0.55;
+    score += aligned ? 7 : 2;
+    explanations.push(aligned ? 'Weapon accessory supports your current ranged investment.' : 'Weapon accessory is best if you invest in ranged weapons.');
+  }
+  if (tags.has('container') || caps.containerSlots || caps.quickAccess) {
+    score += 2;
+    explanations.push('Container/quick-access gear improves inventory readiness.');
+  }
 
-  return { adjustment: Math.max(-6, Math.min(14, score)), explanations: explanations.slice(0, 3) };
+  return { adjustment: Math.max(-6, Math.min(16, score)), explanations: explanations.slice(0, 3) };
 }
 
 export class GearSuggestions {
@@ -194,17 +213,20 @@ export class GearSuggestions {
     options = {}
   ) {
     try {
-      const categoryLower = category.toLowerCase();
+      const categoryLower = normalize(category);
       const filtered = gearOptions.filter(gear => {
-        const gearCategory = (gear.system?.category || '').toLowerCase();
-        const gearName = (gear.name || '').toLowerCase();
-        const tags = (gear.system?.tags || []).map(t => t.toLowerCase());
+        const sys = gear.system || {};
+        const fields = [
+          gear.name,
+          sys.category,
+          sys.subcategory,
+          sys.equipmentBucket,
+          sys.equipmentType,
+          sys.itemRole,
+          ...(Array.isArray(sys.tags) ? sys.tags : [])
+        ].map(normalize).filter(Boolean);
 
-        return (
-          gearCategory === categoryLower ||
-          gearName.includes(categoryLower) ||
-          tags.includes(categoryLower)
-        );
+        return fields.some(value => value === categoryLower || value.includes(categoryLower) || categoryLower.includes(value));
       });
 
       if (filtered.length === 0) {
@@ -313,21 +335,20 @@ export class GearSuggestions {
    * @private
    */
   static _computeUtilityAxis(gear, charContext) {
-    const utility = gear.system?.utility || 0;
-    const rarity = gear.system?.rarity || 'common';
+    const sys = gear.system || {};
+    const tags = new Set(extractStoreItemTags(gear).map(normalize));
+    const hooks = Array.isArray(sys.skillHooks) ? sys.skillHooks : [];
+    const caps = sys.capabilities && typeof sys.capabilities === 'object' ? sys.capabilities : {};
 
-    // Base utility score
-    let score = Math.min(20, utility * 2);
-
-    // Rarity bonus
-    if (rarity === 'rare') score *= 1.1;
-    if (rarity === 'unique') score *= 1.2;
-
-    // Role-specific utility (bonus if matches character's expertise)
-    const tags = (gear.system?.tags || []).map(t => t.toLowerCase());
-    if (charContext.primaryRole === 'support' && tags.includes('medical')) {
-      score += 5;
-    }
+    let score = 4;
+    if (hooks.length) score += Math.min(8, hooks.length * 2);
+    if (hooks.some(hook => hook?.required === true || hook?.mode === 'requires' || hook?.mode === 'enables')) score += 3;
+    if (hooks.some(hook => hook?.bonus?.type === 'equipment' && Number(hook?.bonus?.value || 0) > 0)) score += 4;
+    if (Object.values(caps).some(value => value === true)) score += 2;
+    if (caps.containerSlots) score += 2;
+    if (caps.perceptionEquipmentBonus || caps.accuracySupport || caps.rangeCategoryReduction) score += 4;
+    if (tags.has('medical') || tags.has('tool') || tags.has('security') || tags.has('tech') || tags.has('survival')) score += 2;
+    if (tags.has('weapon_support') || tags.has('accuracy') || tags.has('range_support')) score += 3;
 
     return Math.min(20, score);
   }
@@ -337,21 +358,21 @@ export class GearSuggestions {
    * @private
    */
   static _computeActionCostAxis(gear, charContext) {
-    const actionCost = gear.system?.actionCost || 'passive';
-    const setupCost = gear.system?.setupCost || 0;
+    const sys = gear.system || {};
+    const usageMode = normalize(sys.usage?.mode || sys.actionCost || 'passive');
+    const setupCost = numberValue(sys.setupCost ?? sys.usage?.setupCost, 0);
 
-    let score = 20; // Start at max (passive)
+    let score = 20;
+    if (usageMode === 'reaction') score = 15;
+    if (usageMode === 'action' || usageMode === 'standard') score = 10;
+    if (usageMode === 'full_action' || usageMode === 'full_round') score = 5;
+    if (usageMode === 'container') score = 14;
+    if (usageMode === 'consumable') score = 12;
+    if (usageMode === 'install' || usageMode === 'upgrade') score = 8;
+    if (sys.capabilities?.installDC) score -= 2;
 
-    if (actionCost === 'reaction') score = 15;
-    if (actionCost === 'action') score = 10;
-    if (actionCost === 'full-action') score = 5;
-
-    // Setup cost reduces score
-    if (setupCost > 0) {
-      score -= setupCost * 2;
-    }
-
-    return Math.max(0, score);
+    if (setupCost > 0) score -= setupCost * 2;
+    return Math.max(0, Math.min(20, score));
   }
 
   /**
@@ -359,31 +380,16 @@ export class GearSuggestions {
    * @private
    */
   static _computeRoleAlignment(gear, charContext) {
-    const tags = (gear.system?.tags || []).map(t => t.toLowerCase());
+    const tags = new Set(extractStoreItemTags(gear).map(normalize));
     const primaryRole = charContext.primaryRole || 'generalist';
 
     let score = 0;
-
-    // Medical gear for support roles
-    if (tags.includes('medical') && (primaryRole === 'support' || primaryRole === 'leader')) {
-      score += 8;
-    }
-
-    // Tech gear for technical roles
-    if (tags.includes('tech') && (primaryRole === 'tech' || primaryRole === 'hacker')) {
-      score += 8;
-    }
-
-    // Survival gear for scouts
-    if (tags.includes('survival') && primaryRole === 'scout') {
-      score += 5;
-    }
-
-    // Universal tools are acceptable for all
-    if (tags.includes('utility') || tags.includes('tool')) {
-      score += 2;
-    }
-
+    if (tags.has('medical') && (primaryRole === 'support' || primaryRole === 'leader')) score += 8;
+    if ((tags.has('tech') || tags.has('security') || tags.has('usecomputer') || tags.has('mechanics')) && (primaryRole === 'tech' || primaryRole === 'hacker' || primaryRole === 'scoundrel')) score += 8;
+    if ((tags.has('survival') || tags.has('fieldcraft') || tags.has('perception')) && (primaryRole === 'scout' || primaryRole === 'generalist')) score += 5;
+    if ((tags.has('weapon_support') || tags.has('accuracy') || tags.has('range_support')) && (primaryRole === 'soldier' || primaryRole === 'scoundrel')) score += 6;
+    if (tags.has('communication') && (primaryRole === 'leader' || primaryRole === 'scoundrel' || primaryRole === 'generalist')) score += 3;
+    if (tags.has('container') || tags.has('tool') || tags.has('utility') || tags.has('quick_access')) score += 2;
     return Math.max(-10, Math.min(10, score));
   }
 
@@ -392,8 +398,9 @@ export class GearSuggestions {
    * @private
    */
   static _scorePriceBias(gear) {
-    const price = gear.system?.price || 0;
-
+    const sys = gear.system || {};
+    const price = numberValue(sys.costNumeric ?? sys.value ?? sys.price ?? sys.cost, 0);
+    if (!price) return 0;
     if (price < 100) return 2;
     if (price < 500) return 0;
     if (price < 1000) return -2;

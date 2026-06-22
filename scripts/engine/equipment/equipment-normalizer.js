@@ -228,16 +228,20 @@ function normalizeSkillHooks(value) {
     const key = slugifyEquipment(raw, '');
     return skillKeyMap[key] || skillKeyMap[key.replace(/-/g, '')] || raw;
   };
-  return hooks.map((hook) => ({
-    skill: normalizeSkillKey(hook?.skill ?? hook?.skillKey ?? ''),
-    useKey: slugifyEquipment(hook?.useKey ?? hook?.use ?? '', ''),
-    mode: slugifyEquipment(hook?.mode ?? 'modifies', 'modifies'),
-    required: hook?.required === true,
-    consumes: hook?.consumes && typeof hook.consumes === 'object' ? clone(hook.consumes) : null,
-    bonus: hook?.bonus && typeof hook.bonus === 'object' ? clone(hook.bonus) : null,
-    source: String(hook?.source ?? '').trim(),
-    note: String(hook?.note ?? '').trim()
-  })).filter((hook) => hook.skill || hook.useKey || hook.mode);
+  return hooks.map((hook) => {
+    const bonus = hook?.bonus && typeof hook.bonus === 'object' ? clone(hook.bonus) : null;
+    const consumes = hook?.consumes && typeof hook.consumes === 'object' ? clone(hook.consumes) : null;
+    return {
+      skill: normalizeSkillKey(hook?.skill ?? hook?.skillKey ?? ''),
+      useKey: slugifyEquipment(hook?.useKey ?? hook?.use ?? '', ''),
+      mode: slugifyEquipment(hook?.mode ?? 'modifies', 'modifies'),
+      required: hook?.required === true || slugifyEquipment(hook?.mode ?? '', '') === 'requires',
+      consumes,
+      bonus,
+      source: String(hook?.source ?? '').trim(),
+      note: String(hook?.note ?? '').trim()
+    };
+  }).filter((hook) => hook.skill || hook.useKey || hook.required || hook.source || hook.note || hook.bonus || hook.consumes);
 }
 
 function normalizeCharges(charges = {}) {
@@ -348,7 +352,7 @@ export function normalizeEquipmentSystem(system = {}, context = {}) {
       upgrade: itemRole === 'upgrade'
     },
     skillHooks: normalizeSkillHooks(normalized.skillHooks),
-    normalizationStatus: 'equipment-phase1-normalized'
+    normalizationStatus: normalized.normalizationStatus || 'equipment-phase1-normalized'
   };
 }
 
