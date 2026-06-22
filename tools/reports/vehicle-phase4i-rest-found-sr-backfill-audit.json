@@ -1,0 +1,292 @@
+{
+  "phase": "4i-rest-found-sr-backfill",
+  "description": "Applies the remaining source-explicit SR values found in the pending likely-shielded bucket; leaves no-confidence/no-SR-found pages untouched. Also marks explicit no-shield pages where source text says no shields.",
+  "updatedAggregateCount": 43,
+  "explicitNoShieldCorrections": 2,
+  "updatedAggregate": [
+    {
+      "name": "A-7 Hunter Interceptor",
+      "sr": 0,
+      "status": "source-verified-none",
+      "sourceUrl": "https://swse.fandom.com/wiki/A-7_Hunter_Interceptor"
+    },
+    {
+      "name": "The Banshee",
+      "sr": 15,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/The_Banshee"
+    },
+    {
+      "name": "Nova-Class Battlecruiser Refit",
+      "sr": 100,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Nova-Class_Battlecruiser"
+    },
+    {
+      "name": "Scarab-Class Droid Starfighter",
+      "sr": 20,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Scarab-Class_Droid_Starfighter"
+    },
+    {
+      "name": "SCT Scout Craft",
+      "sr": 60,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/SCT_Scout_Craft"
+    },
+    {
+      "name": "StarForge Station",
+      "sr": 200,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/StarForge_Station"
+    },
+    {
+      "name": "Subjugator-Class Heavy Cruiser",
+      "sr": 130,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Subjugator-Class_Heavy_Cruiser"
+    },
+    {
+      "name": "The Blood Brother",
+      "sr": 100,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/The_Blood_Brother"
+    },
+    {
+      "name": "Cardan I-Class Space Station",
+      "sr": 150,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Cardan_I-Class_Space_Station"
+    },
+    {
+      "name": "Cardan II-Class Space Station",
+      "sr": 175,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Cardan_II-Class_Space_Station"
+    },
+    {
+      "name": "V-Wing Starfighter",
+      "sr": 15,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/V-Wing_Starfighter"
+    },
+    {
+      "name": "T-65BR X-Wing Starfighter",
+      "sr": 15,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/T-65BR_X-Wing_Starfighter"
+    },
+    {
+      "name": "Tibanna Gas Hauler",
+      "sr": 20,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Tibanna_Gas_Hauler"
+    },
+    {
+      "name": "P-38 Starfighter",
+      "sr": 25,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/P-38_Starfighter"
+    },
+    {
+      "name": "Phoebos-Class Starfighter",
+      "sr": 30,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Phoebos-Class_Starfighter"
+    },
+    {
+      "name": "Sheathipede-Class Shuttle",
+      "sr": 35,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Sheathipede-Class_Shuttle"
+    },
+    {
+      "name": "Zebra Starfighter",
+      "sr": 15,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Zebra_Starfighter"
+    },
+    {
+      "name": "Dynamic-Class Freighter",
+      "sr": 0,
+      "status": "source-verified-none",
+      "sourceUrl": "https://swse.fandom.com/wiki/Dynamic-Class_Freighter"
+    },
+    {
+      "name": "Nebula-Class Star Destroyer",
+      "sr": 250,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Nebula-Class_Star_Destroyer"
+    },
+    {
+      "name": "Predator-Class Starfighter",
+      "sr": 15,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Predator-Class_Starfighter"
+    },
+    {
+      "name": "Spinward-Class Tender",
+      "sr": 60,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Spinward-Class_Tender"
+    },
+    {
+      "name": "Tibanna Refinery Platform",
+      "sr": 10,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Tibanna_Refinery_Platform"
+    },
+    {
+      "name": "Mankvim-814 Light Interceptor",
+      "sr": 15,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Mankvim-814_Light_Interceptor"
+    },
+    {
+      "name": "Sabaoth Destroyer",
+      "sr": 130,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Sabaoth_Destroyer"
+    },
+    {
+      "name": "Slave I",
+      "sr": 45,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Slave_I"
+    },
+    {
+      "name": "The Wheel",
+      "sr": 250,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/The_Wheel"
+    },
+    {
+      "name": "Corellian MT Dropship",
+      "sr": 50,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Corellian_MT_Dropship"
+    },
+    {
+      "name": "Fury-Class Starfighter",
+      "sr": 30,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Fury-Class_Starfighter"
+    },
+    {
+      "name": "Lucrehulk-Class Core Ship",
+      "sr": 130,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Lucrehulk-Class_Core_Ship"
+    },
+    {
+      "name": "Shaadlar-Type Troopship",
+      "sr": 150,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Shaadlar-Type_Troopship"
+    },
+    {
+      "name": "Foray-Class Blockade Runner",
+      "sr": 80,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Foray-Class_Blockade_Runner"
+    },
+    {
+      "name": "CIS-Advanced Starfighter",
+      "sr": 25,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/CIS-Advanced_Starfighter"
+    },
+    {
+      "name": "K-Wing Assault Starfighter",
+      "sr": 30,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/K-Wing_Assault_Starfighter"
+    },
+    {
+      "name": "The Mynock",
+      "sr": 50,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/The_Mynock"
+    },
+    {
+      "name": "B-Wing/E2 Starfighter",
+      "sr": 50,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/B-Wing/E2_Starfighter"
+    },
+    {
+      "name": "MRX-BR Pacifier",
+      "sr": 30,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/MRX-BR_Pacifier"
+    },
+    {
+      "name": "A519 Invader Close Support Starfighter",
+      "sr": 20,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/A519_Invader_Close_Support_Starfighter"
+    },
+    {
+      "name": "Teroch-Type Gunship",
+      "sr": 25,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Teroch-Type_Gunship"
+    },
+    {
+      "name": "Theta-Class Shuttle",
+      "sr": 20,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Theta-Class_Shuttle"
+    },
+    {
+      "name": "Baronial-Class Yacht",
+      "sr": 10,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Baronial-Class_Yacht"
+    },
+    {
+      "name": "TIE Prototype",
+      "sr": 10,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/TIE_Prototype"
+    },
+    {
+      "name": "Endurance-Class Fleet Carrier",
+      "sr": 250,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Endurance-Class_Fleet_Carrier"
+    },
+    {
+      "name": "Baudo-Class Star Yacht",
+      "sr": 15,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/Baudo-Class_Star_Yacht"
+    },
+    {
+      "name": "KT-400 Military Droid Carrier",
+      "sr": 30,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/KT-400_Military_Droid_Carrier"
+    },
+    {
+      "name": "J-Type Star Skiff",
+      "sr": 50,
+      "status": "source-verified",
+      "sourceUrl": "https://swse.fandom.com/wiki/J-Type_Star_Skiff"
+    }
+  ],
+  "shieldStatusCounts": {
+    "likely-shielded-needs-source-rating": 41,
+    "source-verified-none": 11,
+    "source-verified": 219,
+    "missing-source-data": 86
+  },
+  "changedFiles": [
+    "packs/vehicles-capital-ships.db",
+    "packs/vehicles-space-transports.db",
+    "packs/vehicles-starfighters.db",
+    "packs/vehicles-stations.db",
+    "packs/vehicles.db"
+  ],
+  "notFoundNames": []
+}
