@@ -375,19 +375,25 @@
     "application": "First Aid (requires medpac)",
     "DC": 15,
     "time": "full-round",
-    "effect": "Heal HP = character level + (check result - 15); 24-hour cooldown per target"
+    "effect": "Heal HP = character level + (check result - 15); requires Medpac; Medpac is expended on attempt; successful benefit limited to once per target per 24 hours.",
+    "skill": "treatInjury",
+    "trainedOnly": false
   },
   {
     "application": "Revivify (trained, medkit, within 1 round of death)",
     "DC": 25,
     "time": "full-round",
-    "effect": "Revive dead target and restore to consciousness with 1 HP; trained use only"
+    "effect": "Revive dead target and restore to unconscious with 1 HP; requires Medical Kit.",
+    "skill": "treatInjury",
+    "trainedOnly": true
   },
   {
     "application": "Perform Surgery (trained, surgery kit, 1 hour)",
     "DC": 20,
     "time": "1 hour",
-    "effect": "Remove damage condition; heal HP = CON bonus × character level; failure deals damage threshold to target"
+    "effect": "Heal damage, remove persistent condition, or install cybernetic prosthesis; requires Surgery Kit.",
+    "skill": "treatInjury",
+    "trainedOnly": true
   },
   {
     "application": "Long-Term Care (8 hours per day max)",
@@ -398,8 +404,10 @@
   {
     "application": "Critical Care (multiple medpacs in 24 hours)",
     "DC": 20,
-    "time": "full-round per application",
-    "effect": "Apply medpac effects with penalties: -5 per previous application in 24h; failure with prior care = overdose (damage threshold);"
+    "time": "1 minute",
+    "effect": "Attempt extra Medpac use in same 24 hours; requires Medpac and Surgery Kit; expends Medpac and applies cumulative -5 per previous attempt.",
+    "skill": "treatInjury",
+    "trainedOnly": true
   },
   {
     "application": "Access information — General",
@@ -748,5 +756,29 @@
     "DC": "—",
     "time": "passive",
     "effect": "Gain +5 dodge bonus to Reflex Defense when trained in Acrobatics and Fighting Defensively"
+  },
+  {
+    "application": "Treat Disease (trained, medical kit, 8 hours)",
+    "skill": "treatInjury",
+    "DC": "Disease DC",
+    "time": "8 hours",
+    "trainedOnly": true,
+    "effect": "Treat disease; requires Medical Kit; success cures disease and disease-caused persistent conditions."
+  },
+  {
+    "application": "Treat Poison (trained, medical kit)",
+    "skill": "treatInjury",
+    "DC": "Poison DC",
+    "time": "full-round",
+    "trainedOnly": true,
+    "effect": "Treat poison; requires Medical Kit; success detoxifies poison and poison-caused persistent conditions."
+  },
+  {
+    "application": "Treat Radiation (trained, medical kit, 8 hours)",
+    "skill": "treatInjury",
+    "DC": "Radiation DC",
+    "time": "8 hours",
+    "trainedOnly": true,
+    "effect": "Treat radiation; requires Medical Kit; success cures radiation effects and radiation-caused persistent conditions."
   }
 ]

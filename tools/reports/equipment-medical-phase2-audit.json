@@ -1,0 +1,85 @@
+{
+  "phase": "equipment-medical-phase2",
+  "scope": "Medical equipment bucket data normalization plus Treat Injury skill-use integration",
+  "medicalItems": 16,
+  "skillLinkedItems": 10,
+  "medicalSkillHooks": 22,
+  "extraTreatInjuryUses": 8,
+  "treatInjuryUses": [
+    {
+      "id": "14863d7758554504",
+      "name": "Revivify (trained, medkit, within 1 round of death)",
+      "trainedOnly": true,
+      "dc": 25,
+      "action": "full-round"
+    },
+    {
+      "id": "21b8ed99bf4046f1",
+      "name": "First Aid (requires medpac)",
+      "trainedOnly": false,
+      "dc": 15,
+      "action": "full-round"
+    },
+    {
+      "id": "44445c41c2d24eeb",
+      "name": "Perform Surgery (trained, surgery kit, 1 hour)",
+      "trainedOnly": true,
+      "dc": 20,
+      "action": "1 hour"
+    },
+    {
+      "id": "aec5258d91f84cc5",
+      "name": "Long-Term Care (8 hours per day max)",
+      "trainedOnly": false,
+      "dc": null,
+      "action": "8 hours continuous"
+    },
+    {
+      "id": "b38c868b613b490a",
+      "name": "Critical Care (multiple medpacs in 24 hours)",
+      "trainedOnly": true,
+      "dc": 20,
+      "action": "1 minute"
+    },
+    {
+      "id": "medical-treat-disease",
+      "name": "Treat Disease (trained, medical kit, 8 hours)",
+      "trainedOnly": true,
+      "dc": "Disease DC",
+      "action": "8 hours"
+    },
+    {
+      "id": "medical-treat-poison",
+      "name": "Treat Poison (trained, medical kit)",
+      "trainedOnly": true,
+      "dc": "Poison DC",
+      "action": "full-round"
+    },
+    {
+      "id": "medical-treat-radiation",
+      "name": "Treat Radiation (trained, medical kit, 8 hours)",
+      "trainedOnly": true,
+      "dc": "Radiation DC",
+      "action": "8 hours"
+    }
+  ],
+  "fieldsValidated": {
+    "missingSkillHooksArray": [],
+    "nonIntegerCost": [],
+    "invalidWeight": [],
+    "missingUsage": [],
+    "missingCapabilities": []
+  },
+  "implementation": {
+    "resolver": "scripts/engine/equipment/equipment-skill-hook-resolver.js now resolves required gear, equipment bonuses, and on-attempt consumables for skill uses.",
+    "sheet": "scripts/sheets/v2/character-sheet.js now annotates extra skill uses with equipment state and blocks missing required gear.",
+    "consumption": "Medpac/FastFlesh/critical-care consumables decrement quantity after the roll dialog is accepted and before the roll executes.",
+    "templates": "skills panel partials display equipment bonus/consumption tags."
+  },
+  "sourceBasis": [
+    "SWSE Fandom Medical Gear table: costs/weights and medical gear category",
+    "SWSE Fandom Treat Injury applications and required items",
+    "SWSE Fandom Medpac/FastFlesh rules for consumption and bonuses",
+    "SWSE Fandom Medical Kit/Surgery Kit/Bacta Tank/Bioscanner/Medisensor item pages"
+  ]
+}

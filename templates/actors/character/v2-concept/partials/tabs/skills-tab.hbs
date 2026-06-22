@@ -194,6 +194,8 @@
                     <div class="extra-use-meta">
                       <span class="extra-use-dc">{{#if use.dc}}DC {{use.dc}}{{else}}DC —{{/if}}</span>
                       <span class="extra-use-time {{use.timeClass}}">{{#if use.timeLabel}}{{use.timeLabel}}{{else}}—{{/if}}</span>
+                      {{#if use.equipmentBonus}}<span class="extra-use-equipment-bonus">{{use.equipmentBonus.label}}</span>{{/if}}
+                      {{#if use.consumesEquipment}}<span class="extra-use-consumes">Consumes gear</span>{{/if}}
                     </div>
 
                     <div class="extra-use-action-right">

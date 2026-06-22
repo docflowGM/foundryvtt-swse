@@ -87,6 +87,7 @@ import { PortraitUploadController } from "/systems/foundryvtt-swse/scripts/sheet
 import { PanelVisibilityManager } from "/systems/foundryvtt-swse/scripts/sheets/v2/PanelVisibilityManager.js";
 import { applyResourceNumberAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-number-animations.js";
 import { ExtraSkillUseRegistry } from "/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js";
+import { resolveEquipmentForSkillUse, consumeEquipmentForSkillUse } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-skill-hook-resolver.js";
 import { traceLog, actorSummary, payloadSummary } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
 import { captureHydrationSnapshot, emitHydrationError, emitHydrationWarning, getRecentHydrationMutation, recordHydrationMutation, summarizeBiographyPanel, summarizeDefensePanel } from "/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js";
 // Phase 8: Character sheet decomposition - import focused modules
@@ -2989,8 +2990,13 @@ export class SWSEV2CharacterSheet extends
           const timeLabel = this._getTimeLabel(use.time);
           const actionType = this._classifyActionType(use);
           const actionTypeLabel = this._getActionTypeLabel(use);
-          const isBlocked = use.trainedOnly && !skill.trained;
-          const blockedReason = isBlocked ? "Requires training" : "";
+          const equipmentState = resolveEquipmentForSkillUse(actor, use, { skill: skill.key });
+          const trainingBlocked = use.trainedOnly && !skill.trained && equipmentState.availableHooks?.some((hook) => hook.bonus?.requiresEquipped === true && hook.bonus?.label?.includes('Treat Injury')) !== true;
+          const isBlocked = trainingBlocked || equipmentState.blocked === true;
+          const blockedReason = [
+            trainingBlocked ? "Requires training" : "",
+            equipmentState.blockedReason || ""
+          ].filter(Boolean).join("; ");
           const sourceType =
             use.sourceType ??
             use.source ??
@@ -3007,7 +3013,7 @@ export class SWSEV2CharacterSheet extends
             name: use.name,
             dc: use.dc,
             time: use.time,
-            description: use.description || use.effect || '',
+            description: [use.description || use.effect || '', equipmentState.summary ? `Equipment: ${equipmentState.summary}.` : ''].filter(Boolean).join(' '),
             effect: use.effect,
             trainedOnly: use.trainedOnly,
             // Action economy styling
@@ -3022,9 +3028,14 @@ export class SWSEV2CharacterSheet extends
             isBlocked,
             canUseNow: !isBlocked,
             blockedReason,
+            equipmentState,
+            equipmentSummary: equipmentState.summary,
+            equipmentBonus: equipmentState.equipmentBonus,
+            hasEquipmentHooks: (equipmentState.hooks?.length ?? 0) > 0,
+            consumesEquipment: equipmentState.consumeOnAttempt === true,
             // Provenance / runtime stability
-            sourceType,
-            sourceLabel,
+            sourceType: equipmentState.hooks?.length ? 'equipment' : sourceType,
+            sourceLabel: [sourceLabel, equipmentState.equipmentBonus?.source, equipmentState.chosenConsumable?.itemName].filter(Boolean).join(', '),
             // Grouping category
             category: this._categorizeSkillUse(use, skill.key)
           };
@@ -8196,8 +8207,14 @@ const forcePoints = [];
 
     const trainedOnly = selectedUse.trainedOnly === true;
     const trained = this.actor?.system?.skills?.[skillKey]?.trained === true;
-    if (trainedOnly && !trained) {
+    const equipmentState = resolveEquipmentForSkillUse(this.actor, selectedUse, { skill: skillKey });
+    const medicalTrainingOverride = equipmentState.availableHooks?.some((hook) => hook.bonus?.requiresEquipped === true && hook.bonus?.label?.includes('Treat Injury')) === true;
+    if (trainedOnly && !trained && !medicalTrainingOverride) {
       ui?.notifications?.warn?.(`${selectedUse.label ?? selectedUse.name ?? "This use"} requires training.`);
+      return null;
+    }
+    if (equipmentState.blocked) {
+      ui?.notifications?.warn?.(equipmentState.blockedReason || `${selectedUse.label ?? selectedUse.name ?? "This use"} is missing required equipment.`);
       return null;
     }
 
@@ -8207,7 +8224,10 @@ const forcePoints = [];
       useKey: selectedUse.key ?? useKey,
       actionType: options?.actionType ?? selectedUse.actionType ?? null,
       sourceType: options?.sourceType ?? selectedUse.sourceType ?? null,
-      sourceLabel: options?.sourceLabel ?? selectedUse.sourceLabel ?? null
+      sourceLabel: [options?.sourceLabel ?? selectedUse.sourceLabel ?? null, equipmentState.equipmentBonus?.source, equipmentState.chosenConsumable?.itemName].filter(Boolean).join(', ') || null,
+      customModifier: Number(options?.customModifier || 0) + Number(equipmentState.equipmentBonusValue || 0),
+      equipmentBonus: equipmentState.equipmentBonus ?? null,
+      equipmentState
     };
 
     if (options?.skipModifierDialog !== true && options?.showDialog !== false) {
@@ -8239,13 +8259,24 @@ const forcePoints = [];
 
       Object.assign(payload, {
         ...modResult,
-        customModifier: Number(modResult.customModifier || 0),
+        customModifier: Number(modResult.customModifier || 0) + Number(equipmentState.equipmentBonusValue || 0),
+        equipmentBonus: equipmentState.equipmentBonus ?? null,
         useForcePoint: modResult.useForcePoint === true,
         sourceElement: options?.sourceElement ?? modResult.sourceElement ?? null,
         companionSource: options?.companionSource ?? options?.sourceElement ?? modResult.sourceElement ?? null,
         sheet: options?.sheet ?? this,
         showRollCompanion: options?.showRollCompanion !== false
       });
+    }
+
+    if (equipmentState.consumeOnAttempt) {
+      const consumed = await consumeEquipmentForSkillUse(this.actor, equipmentState, { timing: 'onAttempt' });
+      if (consumed?.consumed) {
+        ui?.notifications?.info?.(`${consumed.itemName} expended (${consumed.remaining} remaining).`);
+      } else if (consumed?.reason && consumed.reason !== 'no-consumable') {
+        ui?.notifications?.warn?.(`Could not expend required equipment: ${consumed.reason}`);
+        return null;
+      }
     }
 
     if (typeof SkillUseFilter?.rollSkillUseApplication === "function") {

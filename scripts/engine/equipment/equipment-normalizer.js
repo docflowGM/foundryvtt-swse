@@ -209,8 +209,27 @@ function inferItemRole(system = {}, { id = '', equipmentType = '' } = {}) {
 
 function normalizeSkillHooks(value) {
   const hooks = Array.isArray(value) ? value : [];
+  const skillKeyMap = {
+    'gather-information': 'gatherInformation',
+    gatherinformation: 'gatherInformation',
+    'knowledge-life-sciences': 'knowledgeLifeSciences',
+    knowledgelifesciences: 'knowledgeLifeSciences',
+    'knowledge-technology': 'knowledgeTechnology',
+    knowledgetechnology: 'knowledgeTechnology',
+    'treat-injury': 'treatInjury',
+    treatinjury: 'treatInjury',
+    'use-computer': 'useComputer',
+    usecomputer: 'useComputer',
+    'use-the-force': 'useTheForce',
+    usetheforce: 'useTheForce'
+  };
+  const normalizeSkillKey = (skill) => {
+    const raw = String(skill ?? '').trim();
+    const key = slugifyEquipment(raw, '');
+    return skillKeyMap[key] || skillKeyMap[key.replace(/-/g, '')] || raw;
+  };
   return hooks.map((hook) => ({
-    skill: slugifyEquipment(hook?.skill ?? hook?.skillKey ?? '', ''),
+    skill: normalizeSkillKey(hook?.skill ?? hook?.skillKey ?? ''),
     useKey: slugifyEquipment(hook?.useKey ?? hook?.use ?? '', ''),
     mode: slugifyEquipment(hook?.mode ?? 'modifies', 'modifies'),
     required: hook?.required === true,
