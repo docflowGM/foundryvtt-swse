@@ -375,6 +375,111 @@ const VEHICLE_SUBCATEGORY_DEFINITIONS = [
   { key: 'space-stations', label: 'Space Stations', family: 'starship', familyLabel: 'Starships' }
 ];
 
+const VEHICLE_ROLE_DEFINITIONS = {
+  speeders: [
+    { key: 'bikes-and-swoops', label: 'Bikes & Swoops' },
+    { key: 'landspeeder', label: 'Landspeeder' },
+    { key: 'cargo', label: 'Cargo' },
+    { key: 'luxury', label: 'Luxury' },
+    { key: 'patrol', label: 'Patrol' },
+    { key: 'military', label: 'Military' },
+    { key: 'tanks', label: 'Tanks' },
+    { key: 'industrial', label: 'Industrial' },
+    { key: 'other', label: 'Other' }
+  ],
+  'tracked-vehicles': [
+    { key: 'tanks', label: 'Tanks' },
+    { key: 'base', label: 'Base' },
+    { key: 'artillery', label: 'Artillery' },
+    { key: 'scout', label: 'Scout' },
+    { key: 'crawler', label: 'Crawler' },
+    { key: 'industrial', label: 'Industrial' },
+    { key: 'other', label: 'Other' }
+  ],
+  walkers: [
+    { key: 'scout', label: 'Scout' },
+    { key: 'assault', label: 'Assault' },
+    { key: 'heavy', label: 'Heavy' },
+    { key: 'artillery', label: 'Artillery' },
+    { key: 'droid', label: 'Droid' },
+    { key: 'other', label: 'Other' }
+  ],
+  'wheeled-vehicles': [
+    { key: 'bikes', label: 'Bikes' },
+    { key: 'cars', label: 'Cars' },
+    { key: 'tanks', label: 'Tanks' },
+    { key: 'transports', label: 'Transports' },
+    { key: 'utility', label: 'Utility' },
+    { key: 'other', label: 'Other' }
+  ],
+  'weapon-emplacements': [
+    { key: 'anti-personnel', label: 'Anti-Personnel' },
+    { key: 'anti-vehicle', label: 'Anti-Vehicle' },
+    { key: 'anti-air', label: 'Anti-Air' },
+    { key: 'anti-starship', label: 'Anti-Starship' },
+    { key: 'planetary-defense', label: 'Planetary Defense' },
+    { key: 'turrets-batteries', label: 'Turrets & Batteries' },
+    { key: 'other', label: 'Other' }
+  ],
+  airspeeders: [
+    { key: 'civilian', label: 'Civilian' },
+    { key: 'cloud', label: 'Cloud' },
+    { key: 'gunships', label: 'Gunships' },
+    { key: 'dropship', label: 'Dropship' },
+    { key: 'patrol', label: 'Patrol' },
+    { key: 'medical', label: 'Medical' },
+    { key: 'artillery', label: 'Artillery' },
+    { key: 'industrial', label: 'Industrial' },
+    { key: 'platform', label: 'Platform' },
+    { key: 'racing', label: 'Racing' }
+  ],
+  starfighters: [
+    { key: 'interceptors', label: 'Interceptors' },
+    { key: 'superiority', label: 'Superiority' },
+    { key: 'bombers', label: 'Bombers' },
+    { key: 'assault', label: 'Assault' },
+    { key: 'droid', label: 'Droid' },
+    { key: 'scout', label: 'Scout' },
+    { key: 'salvage', label: 'Salvage' },
+    { key: 'other', label: 'Other' }
+  ],
+  'space-transports': [
+    { key: 'light', label: 'Light' },
+    { key: 'heavy', label: 'Heavy' },
+    { key: 'civilian-transports', label: 'Civilian Transports' },
+    { key: 'military-transport', label: 'Military Transport' },
+    { key: 'patrol', label: 'Patrol' },
+    { key: 'gunship', label: 'Gunship' },
+    { key: 'yacht', label: 'Yacht' },
+    { key: 'scout', label: 'Scout' },
+    { key: 'salvage', label: 'Salvage' },
+    { key: 'other', label: 'Other' }
+  ],
+  'capital-ships': [
+    { key: 'corvette', label: 'Corvette' },
+    { key: 'frigate', label: 'Frigate' },
+    { key: 'cruiser', label: 'Cruiser' },
+    { key: 'destroyer', label: 'Destroyer' },
+    { key: 'carrier', label: 'Carrier' },
+    { key: 'battleship', label: 'Battleship' },
+    { key: 'dreadnaught', label: 'Dreadnaught' },
+    { key: 'command', label: 'Command' },
+    { key: 'assault', label: 'Assault' },
+    { key: 'civilian', label: 'Civilian' },
+    { key: 'other', label: 'Other' }
+  ],
+  'space-stations': [
+    { key: 'relay', label: 'Relay' },
+    { key: 'defense-platform', label: 'Defense Platform' },
+    { key: 'shipyard', label: 'Shipyard' },
+    { key: 'trade', label: 'Trade' },
+    { key: 'superstructure', label: 'Superstructure' },
+    { key: 'platform', label: 'Platform' },
+    { key: 'other', label: 'Other' }
+  ]
+};
+
+
 function slugifyStoreLabel(value, fallback = '') {
   const slug = String(value ?? '')
     .trim()
@@ -459,6 +564,48 @@ export function getVehicleFamily(itemOrSubcategory = {}) {
 
 export function getVehicleFamilyLabel(familyKey = '') {
   return VEHICLE_SUBCATEGORY_DEFINITIONS.find(def => def.family === familyKey)?.familyLabel || 'Other Vehicles';
+}
+
+
+export function getVehicleSubcategoryKey(itemOrSubcategory = {}) {
+  const sys = itemOrSubcategory?.system ?? itemOrSubcategory?.data ?? {};
+  const direct = vehicleDefinitionFromValue(sys.vehicleBucket ?? itemOrSubcategory.vehicleBucket ?? itemOrSubcategory.subcategory ?? sys.vehicleSubtype ?? sys.subcategory ?? sys.category ?? sys.type ?? itemOrSubcategory);
+  if (direct) return direct.key;
+  const label = normalizeVehicleSubcategory(typeof itemOrSubcategory === 'string' ? { subcategory: itemOrSubcategory } : itemOrSubcategory);
+  return vehicleDefinitionFromValue(label)?.key || slugifyStoreLabel(label);
+}
+
+function vehicleRoleDefinitionFromValue(bucketKey = '', value = '') {
+  const roleKey = slugifyStoreLabel(value);
+  if (!roleKey) return null;
+  const roles = VEHICLE_ROLE_DEFINITIONS[bucketKey] || [];
+  return roles.find(def => def.key === roleKey)
+    || roles.find(def => slugifyStoreLabel(def.label) === roleKey)
+    || null;
+}
+
+export function getVehicleRoleDefinitionsForSubcategory(itemOrSubcategory = {}) {
+  const bucketKey = getVehicleSubcategoryKey(itemOrSubcategory);
+  return (VEHICLE_ROLE_DEFINITIONS[bucketKey] || []).map(def => ({ ...def }));
+}
+
+export function getVehicleRoleKey(item = {}) {
+  const sys = item.system ?? item.data ?? {};
+  const bucketKey = getVehicleSubcategoryKey(item);
+  const direct = vehicleRoleDefinitionFromValue(bucketKey, sys.vehicleRole ?? item.vehicleRole ?? sys.vehicleRoleKey ?? item.vehicleRoleKey ?? '');
+  if (direct) return direct.key;
+  const raw = slugifyStoreLabel(sys.vehicleRole ?? item.vehicleRole ?? sys.vehicleRoleKey ?? item.vehicleRoleKey ?? '');
+  return raw && (VEHICLE_ROLE_DEFINITIONS[bucketKey] || []).some(def => def.key === raw) ? raw : '';
+}
+
+export function getVehicleRoleLabel(itemOrRole = {}, itemOrBucket = {}) {
+  const isStringRole = typeof itemOrRole === 'string';
+  const bucketKey = isStringRole ? getVehicleSubcategoryKey(itemOrBucket) : getVehicleSubcategoryKey(itemOrRole);
+  const rawRole = isStringRole ? itemOrRole : getVehicleRoleKey(itemOrRole);
+  const def = vehicleRoleDefinitionFromValue(bucketKey, rawRole);
+  if (def) return def.label;
+  if (!rawRole) return '';
+  return String(rawRole).replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 }
 
 export function normalizeVehicleSubcategory(item = {}) {
@@ -600,6 +747,66 @@ export function getVehicleCrewGroupLabel(group = '') {
     massive: 'Massive Crew (1,001+)',
     unknown: 'Crew Unknown'
   })[key] || 'Crew Unknown';
+}
+
+function parseVehiclePassengerCount(value) {
+  if (value === undefined || value === null || value === '') return null;
+  if (typeof value === 'number') return Number.isFinite(value) ? value : null;
+  if (typeof value === 'object') {
+    if ('value' in value) return parseVehiclePassengerCount(value.value);
+    return null;
+  }
+  const text = String(value).trim();
+  if (!text) return null;
+  const beforeCargo = text.split(/cargo\s*:/i)[0].trim();
+  if (!beforeCargo) return null;
+  if (/^(none|no|n\/a|na|null|undefined|—|-)$/i.test(beforeCargo)) return 0;
+  if (/none/i.test(beforeCargo) && !/\d/.test(beforeCargo)) return 0;
+  const numbers = [...beforeCargo.replace(/,/g, '').matchAll(/\d+(?:\.\d+)?/g)].map(match => Number(match[0])).filter(Number.isFinite);
+  if (!numbers.length) return null;
+  if (/plus|\+/i.test(beforeCargo) && numbers.length > 1) {
+    return numbers.reduce((sum, n) => sum + n, 0);
+  }
+  return numbers[0];
+}
+
+export function getVehiclePassengerCount(item = {}) {
+  const sys = item.system ?? item.data ?? {};
+  const direct = Number(sys.vehiclePassengerCount ?? item.vehiclePassengerCount ?? NaN);
+  if (Number.isFinite(direct)) return direct;
+  const parsed = parseVehiclePassengerCount(sys.passengers ?? item.passengers ?? null);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+export function getVehiclePassengerGroup(item = {}) {
+  const sys = item.system ?? item.data ?? {};
+  const direct = slugifyStoreLabel(sys.vehiclePassengerGroup ?? item.vehiclePassengerGroup ?? '');
+  if (direct) return direct;
+  const count = getVehiclePassengerCount(item);
+  if (!Number.isFinite(count)) return 'unknown';
+  if (count <= 0) return 'none';
+  if (count === 1) return 'one';
+  if (count <= 5) return 'small-party';
+  if (count <= 20) return 'squad';
+  if (count <= 50) return 'platoon';
+  if (count <= 200) return 'company';
+  if (count <= 1000) return 'battalion';
+  return 'mass-transport';
+}
+
+export function getVehiclePassengerGroupLabel(group = '') {
+  const key = slugifyStoreLabel(group);
+  return ({
+    none: 'No Passengers',
+    one: '1 Passenger',
+    'small-party': 'Small Party (2-5)',
+    squad: 'Squad (6-20)',
+    platoon: 'Platoon (21-50)',
+    company: 'Company (51-200)',
+    battalion: 'Battalion (201-1,000)',
+    'mass-transport': 'Mass Transport (1,001+)',
+    unknown: 'Passenger Unknown'
+  })[key] || 'Passenger Unknown';
 }
 
 export function getVehicleCargoGroup(item = {}) {
