@@ -793,8 +793,17 @@ function buildResourceCards(model, showForcePoint) {
   </section>`;
 }
 
+function getCoreMessageMode(fallback = 'publicroll') {
+  try {
+    return game.settings?.get?.('core', 'messageMode') ?? fallback;
+  } catch (_err) {
+    try { return game.settings?.get?.('core', 'rollMode') ?? fallback; } catch (_legacyErr) { return fallback; }
+  }
+}
+
 function buildRollModeRow(model) {
-  const publicSelected = (game.settings?.get?.('core', 'rollMode') ?? 'publicroll') === 'publicroll' ? 'active' : '';
+  const selectedRollMode = getCoreMessageMode('publicroll');
+  const publicSelected = selectedRollMode === 'publicroll' ? 'active' : '';
   return `<section class="swse-roll-config-panel swse-roll-config-panel--roll-mode">
     <h4>Roll Mode</h4>
     <div class="rcd-roll-mode">
@@ -803,7 +812,7 @@ function buildRollModeRow(model) {
       <button type="button" class="rcd-mode-btn" data-roll-mode="blindroll">Blind GM</button>
       <button type="button" class="rcd-mode-btn" data-roll-mode="selfroll">Self</button>
     </div>
-    <input type="hidden" name="rollMode" value="${escapeHTML(game.settings?.get?.('core', 'rollMode') ?? 'publicroll')}" data-rcd-roll-mode />
+    <input type="hidden" name="rollMode" value="${escapeHTML(selectedRollMode)}" data-rcd-roll-mode />
   </section>`;
 }
 

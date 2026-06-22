@@ -147,7 +147,7 @@
         <span class="fs-head-rule">Standard Action · Use the Force check</span>
       </div>
 
-      {{#if conceptLayout.force.forceSuite.forcePowers.length}}
+      {{#if conceptLayout.force.forceSuite.hasForcePowers}}
         <div class="fs-hand force-card-grid" data-force-hand="force">
           {{#each conceptLayout.force.forceSuite.forcePowers as |power|}}
             {{> "systems/foundryvtt-swse/templates/actors/character/v2-concept/partials/panels/force-suite-card.hbs" power=power}}
@@ -158,7 +158,7 @@
       {{/if}}
     </div>
 
-    {{#if conceptLayout.force.forceSuite.formPowers.length}}
+    {{#if conceptLayout.force.forceSuite.hasFormPowers}}
     <div class="fs-section fs-section--forms">
       <div class="fs-head">
         <span class="fs-head-lbl pk">◇ Lightsaber Form Powers</span>
@@ -176,7 +176,7 @@
     {{/if}}
 
 
-    {{#if conceptLayout.force.forceSuite.regimens.length}}
+    {{#if conceptLayout.force.forceSuite.hasRegimens}}
     <div class="fs-section fs-section--regimens">
       <div class="fs-head">
         <span class="fs-head-lbl cy">⬢ Force Regimens</span>
@@ -192,11 +192,11 @@
     </div>
     {{/if}}
 
-    {{#if conceptLayout.force.forceSuite.lightsaberRegimens.length}}
+    {{#if conceptLayout.force.forceSuite.hasLightsaberRegimens}}
     <div class="fs-section fs-section--regimens fs-section--lightsaber-regimens">
       <div class="fs-head">
         <span class="fs-head-lbl pk">⬢ Lightsaber Regimens</span>
-        <span class="fs-head-cnt pk">{{conceptLayout.force.forceSuite.lightsaberRegimens.length}}</span>
+        <span class="fs-head-cnt pk">{{conceptLayout.force.forceSuite.counts.lightsaberRegimen}}</span>
         <div class="fs-line pk"></div>
         <span class="fs-head-rule">Lightsaber training · Use the Force check · Clears on long rest</span>
       </div>
@@ -294,7 +294,7 @@
         </div>
 
         <div class="disc-pile" data-force-discard-pile>
-          {{#if conceptLayout.force.forceSuite.discarded.length}}
+          {{#if conceptLayout.force.forceSuite.hasDiscarded}}
             {{#each conceptLayout.force.forceSuite.discarded as |power|}}
               <button type="button"
                       class="disc-chip"
@@ -311,7 +311,7 @@
             <span class="disc-empty">No spent powers</span>
           {{/if}}
 
-        {{#if conceptLayout.force.forceSuite.regimenDiscard.length}}
+        {{#if conceptLayout.force.forceSuite.hasRegimenDiscard}}
           <div class="disc-pile disc-pile--regimens" data-force-regimen-discard-pile>
             {{#each conceptLayout.force.forceSuite.regimenDiscard as |regimen|}}
               <button type="button"

@@ -10087,35 +10087,14 @@ form[id^="SWSEV2CharacterSheet"] .skill-extra-uses-toggle,
   background: rgba(120, 35, 55, 0.16);
 }
 
-
-/* Skill ability selectors must stay directly usable inside the dense skill math row. */
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__math .swse-concept-toolfield--ability,
-.swse.sheet.actor.character.v2 .swse-concept-skill-row__math .swse-concept-toolfield--ability,
-.swse-character-sheet .swse-concept-skill-row__math .swse-concept-toolfield--ability {
-  min-width: 132px !important;
+/* Skill row controls must stay interactive above the accent glow overlays. */
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__math .ability-select,
+.swse.sheet.actor.character.v2 .swse-concept-skill-row__math .ability-select,
+.swse-character-sheet .swse-concept-skill-row__math .ability-select,
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__math input,
+.swse.sheet.actor.character.v2 .swse-concept-skill-row__math input,
+.swse-character-sheet .swse-concept-skill-row__math input {
   position: relative;
-  z-index: 4;
+  z-index: 2;
   pointer-events: auto;
-}
-
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__math .swse-concept-toolfield--ability .ability-select,
-.swse.sheet.actor.character.v2 .swse-concept-skill-row__math .swse-concept-toolfield--ability .ability-select,
-.swse-character-sheet .swse-concept-skill-row__math .swse-concept-toolfield--ability .ability-select {
-  width: 100% !important;
-  min-width: 110px !important;
-  height: 30px !important;
-  min-height: 30px !important;
-  padding: 4px 8px !important;
-  position: relative;
-  z-index: 5;
-  pointer-events: auto !important;
-  cursor: pointer;
-  appearance: auto;
-}
-
-form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__math .swse-concept-toolfield--ability .ability-select option,
-.swse.sheet.actor.character.v2 .swse-concept-skill-row__math .swse-concept-toolfield--ability .ability-select option,
-.swse-character-sheet .swse-concept-skill-row__math .swse-concept-toolfield--ability .ability-select option {
-  background: rgba(6, 12, 20, 0.98);
-  color: var(--swse-concept-text, #d7f7ff);
 }

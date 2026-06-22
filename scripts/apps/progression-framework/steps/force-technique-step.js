@@ -487,9 +487,29 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
    * Build pending state with class-granted features for prerequisite evaluation.
    * @private
    */
+  _getSelectedClassForPendingState(shell = null) {
+    const session = shell?.progressionSession && shell.progressionSession !== shell ? shell.progressionSession : null;
+    const read = (container) => container?.get?.('class') ?? container?.class ?? null;
+    const candidates = [
+      shell?.getSelection?.('class'),
+      shell?.buildIntent?.getSelection?.('class'),
+      read(shell?.draftSelections),
+      read(shell?.committedSelections),
+      session?.getSelection?.('class'),
+      session?.buildIntent?.getSelection?.('class'),
+      read(session?.draftSelections),
+      read(session?.committedSelections),
+    ];
+    for (const candidate of candidates) {
+      if (!candidate) continue;
+      return Array.isArray(candidate) ? candidate.find(Boolean) || null : candidate;
+    }
+    return null;
+  }
+
   _buildPendingStateWithClassGrants(actor, shell = null) {
     const basePending = {
-      selectedClass: shell?.committedSelections?.get?.('class') || null,
+      selectedClass: this._getSelectedClassForPendingState(shell),
       selectedFeats: [],
       selectedTalents: [],
       selectedSkills: [],

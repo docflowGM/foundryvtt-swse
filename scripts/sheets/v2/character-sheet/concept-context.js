@@ -1332,10 +1332,17 @@ export function buildForceTab(context) {
     regimens: forceSuiteRegimens,
     lightsaberRegimens: forceSuiteLightsaberRegimens,
     regimenDiscard,
+    hasForcePowers: forceSuiteHand.length > 0,
+    hasFormPowers: forceSuiteForms.length > 0,
+    hasDiscarded: discard.length > 0,
+    hasRegimens: forceSuiteRegimens.length > 0,
+    hasLightsaberRegimens: forceSuiteLightsaberRegimens.length > 0,
+    hasRegimenDiscard: regimenDiscard.length > 0,
     counts: {
       force: forceSuiteHand.length,
       form: forceSuiteForms.length,
-      regimen: regimens.length,
+      regimen: forceSuiteRegimens.length,
+      lightsaberRegimen: forceSuiteLightsaberRegimens.length,
       regimenDiscard: regimenDiscard.length,
       discard: discard.length
     },

@@ -32,21 +32,27 @@ function forceSelectionEntries(value) {
 }
 
 function collectShellSelectionEntries(shell, key) {
+  const session = shell?.progressionSession && shell.progressionSession !== shell ? shell.progressionSession : null;
   const containers = [
     shell?.getSelection?.(key),
     shell?.buildIntent?.getSelection?.(key),
     shell?.draftSelections?.[key],
     shell?.draftSelections?.get?.(key),
     shell?.committedSelections?.get?.(key),
-    shell?.progressionSession?.draftSelections?.[key],
-    shell?.progressionSession?.getSelection?.(key),
+    shell?.committedSelections?.[key],
+    session?.getSelection?.(key),
+    session?.buildIntent?.getSelection?.(key),
+    session?.draftSelections?.[key],
+    session?.draftSelections?.get?.(key),
+    session?.committedSelections?.get?.(key),
+    session?.committedSelections?.[key],
   ];
   const entries = [];
   const seen = new Set();
   for (const value of containers) {
     for (const entry of forceSelectionEntries(value)) {
       if (!entry) continue;
-      const identity = entry.id || entry._id || entry.name || entry.label || entry;
+      const identity = entry.id || entry._id || entry.uuid || entry.name || entry.label || entry;
       const identityKey = `${typeof entry}:${identity}`;
       if (seen.has(identityKey)) continue;
       seen.add(identityKey);
@@ -75,6 +81,40 @@ function actorHasNamedItem(actor, type, wantedName) {
     const name = normalizeForceChoiceName(item?.name);
     return name === wanted || name.replace(/\s*\d+$/, '') === wanted;
   });
+}
+
+function getProgressionSessionLike(shell) {
+  return shell?.progressionSession || shell || null;
+}
+
+function readFirstClassSelectionFromContainer(container) {
+  if (!container) return null;
+  const value = container?.get?.('class') ?? container?.class ?? null;
+  if (Array.isArray(value)) return value.find(Boolean) || null;
+  return value || null;
+}
+
+function resolveClassSelectionForEntitlements(shell, actor) {
+  const session = shell?.progressionSession && shell.progressionSession !== shell ? shell.progressionSession : null;
+  const candidates = [
+    shell?.getSelection?.('class'),
+    shell?.buildIntent?.getSelection?.('class'),
+    readFirstClassSelectionFromContainer(shell?.draftSelections),
+    readFirstClassSelectionFromContainer(shell?.committedSelections),
+    session?.getSelection?.('class'),
+    session?.buildIntent?.getSelection?.('class'),
+    readFirstClassSelectionFromContainer(session?.draftSelections),
+    readFirstClassSelectionFromContainer(session?.committedSelections),
+  ];
+  for (const candidate of candidates) {
+    if (candidate) return Array.isArray(candidate) ? candidate.find(Boolean) || null : candidate;
+  }
+
+  const classItems = Array.from(actor?.items || []).filter((item) => item?.type === 'class');
+  if (classItems.length === 1) return classItems[0];
+  const progressionClasses = actor?.system?.progression?.classLevels;
+  if (Array.isArray(progressionClasses) && progressionClasses.length === 1) return progressionClasses[0];
+  return null;
 }
 
 /**
@@ -298,10 +338,7 @@ export async function resolveForcePowerEntitlements(shell, actor) {
 
   try {
     // Primary: Check pending shell/buildIntent for force power selections
-    const committedClass = shell?.getSelection?.('class') ||
-                          shell?.draftSelections?.class ||
-                          shell?.committedSelections?.get?.('class') ||
-                          shell?.buildIntent?.getSelection?.('class');
+    const committedClass = resolveClassSelectionForEntitlements(shell, actor);
 
     diagnostics.classSelection = {
       exists: !!committedClass,
@@ -321,7 +358,7 @@ export async function resolveForcePowerEntitlements(shell, actor) {
 
         if (classModel) {
           if (isLevelUpLike) {
-            const levelContext = buildLevelUpEventContext(actor, shell);
+            const levelContext = buildLevelUpEventContext(actor, getProgressionSessionLike(shell), { selectedClass: committedClass });
             const classLevel = levelContext?.selectedClassNextLevel || 1;
             const levelEntry = getClassLevelProgressionEntry(classModel, classLevel);
             const classGrants = Number(levelEntry?.force_power_grants || levelEntry?.forcePowerGrants || 0) || 0;
@@ -608,10 +645,7 @@ export function resolveForceSecretEntitlements(shell, engine, actor) {
 
   try {
     // Primary: Check class progression features for force_secret_choice
-    const committedClass = shell?.getSelection?.('class') ||
-                          shell?.draftSelections?.class ||
-                          shell?.committedSelections?.get?.('class') ||
-                          shell?.buildIntent?.getSelection?.('class');
+    const committedClass = resolveClassSelectionForEntitlements(shell, actor);
 
     diagnostics.classSelection = {
       exists: !!committedClass,
@@ -628,7 +662,7 @@ export function resolveForceSecretEntitlements(shell, engine, actor) {
         };
 
         if (classModel && Array.isArray(classModel.levelProgression)) {
-          const levelContext = buildLevelUpEventContext(actor, shell);
+          const levelContext = buildLevelUpEventContext(actor, getProgressionSessionLike(shell), { selectedClass: committedClass });
           const classLevel = levelContext?.selectedClassNextLevel || 1;
           totalEntitlements += countClassFeatureChoicesAtLevel(classModel, classLevel, 'force_secret_choice');
           if (totalEntitlements > 0) {
@@ -680,10 +714,8 @@ export function resolveForceSecretEntitlements(shell, engine, actor) {
 
     // Already selected (pending > actor fallback)
     try {
-      const pendingForceSecrets = shell?.getSelection?.('forceSecrets') || shell?.draftSelections?.forceSecrets || shell?.buildIntent?.getSelection?.('forceSecrets') || [];
-      const pendingCount = Array.isArray(pendingForceSecrets)
-        ? pendingForceSecrets.reduce((sum, s) => sum + (s.count || 1), 0)
-        : 0;
+      const pendingForceSecrets = collectShellSelectionEntries(shell, 'forceSecrets');
+      const pendingCount = pendingForceSecrets.reduce((sum, s) => sum + (Number(s?.count || 1) || 1), 0);
 
       const actorCount = actor?.system?.progression?.forceSecrets?.length ?? 0;
       // For level-up class-level grants, actor historical choices should block duplicates
@@ -791,7 +823,7 @@ export function resolveForceTechniqueEntitlements(shell, engine, actor) {
         };
 
         if (classModel && Array.isArray(classModel.levelProgression)) {
-          const levelContext = buildLevelUpEventContext(actor, shell);
+          const levelContext = buildLevelUpEventContext(actor, getProgressionSessionLike(shell), { selectedClass: committedClass });
           const classLevel = levelContext?.selectedClassNextLevel || 1;
           totalEntitlements += countClassFeatureChoicesAtLevel(classModel, classLevel, 'force_technique_choice');
           if (totalEntitlements > 0) {
@@ -843,10 +875,8 @@ export function resolveForceTechniqueEntitlements(shell, engine, actor) {
 
     // Already selected (pending > actor fallback)
     try {
-      const pendingForceTechniques = shell?.getSelection?.('forceTechniques') || shell?.draftSelections?.forceTechniques || shell?.buildIntent?.getSelection?.('forceTechniques') || [];
-      const pendingCount = Array.isArray(pendingForceTechniques)
-        ? pendingForceTechniques.reduce((sum, t) => sum + (t.count || 1), 0)
-        : 0;
+      const pendingForceTechniques = collectShellSelectionEntries(shell, 'forceTechniques');
+      const pendingCount = pendingForceTechniques.reduce((sum, t) => sum + (Number(t?.count || 1) || 1), 0);
 
       const actorCount = actor?.system?.progression?.forceTechniques?.length ?? 0;
       // For level-up class-level grants, actor historical choices should block duplicates

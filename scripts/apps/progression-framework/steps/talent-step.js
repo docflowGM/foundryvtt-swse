@@ -167,13 +167,13 @@ export class TalentStep extends ProgressionStepPlugin {
     this._viewMode = 'both';         // 'both', 'list', or 'map'
     this._lastGraphNodeStates = {};  // Async legality cache for the SVG renderer
     this._centerGraphAfterRender = false;
+    this._isHydrating = false;
 
     // Event listener cleanup
     this._renderAbort = null;
     this._isDroidProgression = false;
     this._lastMentorTreeSpeechId = null;
     this._treeDescriptionFallbacks = null;
-    this._isHydratingTrees = false;
   }
 
   _captureStepScroll(shell) {
@@ -218,13 +218,20 @@ export class TalentStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onStepEnter(shell) {
-    this._isHydratingTrees = true;
-    this._allTrees = [];
-    this._suggestedTrees = [];
-    this._treeTalentCache = new Map();
-    this._talentRecommendationById = new Map();
-    this._treeRecommendationById = new Map();
     try {
+      this._isHydrating = true;
+      this._allTrees = [];
+      this._suggestedTrees = [];
+      this._treeTalentCache = new Map();
+      this._talentRecommendationById = new Map();
+      this._treeRecommendationById = new Map();
+      this._stage = 'browser';
+      this._focusedTreeId = null;
+      this._selectedTreeId = null;
+      this._selectedTreeTalents = [];
+      this._graphData = null;
+      this._focusedTalentId = null;
+      this._focusedTalentItem = null;
       emitTalentStepTrace('STEP_ENTER_START', {
         stepId: this.descriptor?.stepId || null,
         slotType: this._slotType,
@@ -238,19 +245,17 @@ export class TalentStep extends ProgressionStepPlugin {
         }
       }
 
-      // Load all talent trees into a private local list first. Do not expose
-      // the unfiltered list to the browser while async legality work is running.
-      const loadedTrees = Array.from(TalentTreeDB.trees.values());
-      this._treeTalentCache = new Map();
-      this._talentRecommendationById = new Map();
-      this._treeRecommendationById = new Map();
+      // Load all talent trees into a local variable only. Do not publish the
+      // unfiltered list to the template or the heroic step briefly flashes every
+      // talent tree before class/slot filtering finishes.
+      const allTrees = Array.from(TalentTreeDB.trees.values());
       this._isDroidProgression = shell?.progressionSession?.subtype === 'droid';
       const existingTalent = this._getCommittedTalentForSlot(shell);
       this._selectedTalentId = this._getTalentId(existingTalent) || null;
-      SWSELogger.debug(`[TalentStep] Loaded ${loadedTrees.length} talent trees from database`);
+      SWSELogger.debug(`[TalentStep] Loaded ${allTrees.length} talent trees from database`);
       emitTalentStepTrace('TREE_DB_LOADED', {
-        dbCount: loadedTrees.length,
-        sampleTreeIds: loadedTrees.slice(0, 10).map(t => t?.id || t?.name || '(unknown)'),
+        dbCount: allTrees.length,
+        sampleTreeIds: allTrees.slice(0, 10).map(t => t?.id || t?.name || '(unknown)'),
       });
 
       // Initialize TalentRegistry (fail-closed if error)
@@ -263,7 +268,7 @@ export class TalentStep extends ProgressionStepPlugin {
       }
 
       // Filter for trees available in this context (heroic or class-specific)
-      const availableTrees = await this._getAvailableTrees(shell, loadedTrees);
+      const availableTrees = await this._getAvailableTrees(shell);
       SWSELogger.debug(`[TalentStep] ${availableTrees.length} trees available for ${this._slotType} slot context`);
       emitTalentStepTrace('AVAILABLE_TREES_RESULT', {
         slotType: this._slotType,
@@ -281,19 +286,17 @@ export class TalentStep extends ProgressionStepPlugin {
         suggestedTreeIds: this._suggestedTrees.map(t => t?.id || t?.name || '(unknown)'),
       });
 
-      // Store available trees for display
+      // Store available trees for display only after filtering is complete.
       this._allTrees = availableTrees;
+      this._isHydrating = false;
 
       // Start in tree browser stage
       this._stage = 'browser';
       this._focusedTreeId = null;
       this._selectedTreeId = null;
 
-      this._isHydratingTrees = false;
-
       // Enable mentor
       shell.mentor.askMentorEnabled = true;
-      if (shell?.element) this._renderPreservingScroll(shell);
     } catch (err) {
       emitTalentStepTrace('STEP_ENTER_FAILED', {
         error: err?.message || String(err),
@@ -301,12 +304,12 @@ export class TalentStep extends ProgressionStepPlugin {
       });
       console.error('[TalentStep] onStepEnter failed:', err);
       // Ensure defaults are set even on failure (fail-closed, empty trees)
+      this._isHydrating = false;
       this._allTrees = [];
       this._suggestedTrees = [];
       this._stage = 'browser';
       this._focusedTreeId = null;
       this._selectedTreeId = null;
-      this._isHydratingTrees = false;
       shell.mentor.askMentorEnabled = true;
     }
   }
@@ -821,9 +824,9 @@ export class TalentStep extends ProgressionStepPlugin {
    * Get talent trees available in current context
    * HARDENED: Use class-resolution helper to resolve class model first
    */
-  async _getAvailableTrees(shell, sourceTrees = null) {
+  async _getAvailableTrees(shell) {
     const actor = shell?.actor || null;
-    const allTrees = sourceTrees || this._allTrees || [];
+    const allTrees = this._allTrees || [];
     const selectedClass = this._getSelectedClassForTreeAuthority(shell);
 
     // Resolve class model using canonical helper (primary source)
@@ -1461,39 +1464,10 @@ export class TalentStep extends ProgressionStepPlugin {
   }
 
   _getTalentIdentityKeys(talent) {
-    const rawKeys = [talent?.id, talent?._id, talent?.uuid, talent?.name, talent?.label];
-    const grants = [
-      ...(Array.isArray(talent?._data?.actualTalentsToGrant) ? talent._data.actualTalentsToGrant : []),
-      ...(Array.isArray(talent?._data?.grants) ? talent._data.grants : []),
-      ...(Array.isArray(talent?.system?.actualTalentsToGrant) ? talent.system.actualTalentsToGrant : []),
-      ...(Array.isArray(talent?.system?.grantsTalents) ? talent.system.grantsTalents : []),
-      ...(Array.isArray(talent?.system?.equivalentTalents) ? talent.system.equivalentTalents : []),
-      ...(Array.isArray(talent?.flags?.swse?.actualTalentsToGrant) ? talent.flags.swse.actualTalentsToGrant : []),
-      ...(Array.isArray(talent?.flags?.swse?.grantsTalents) ? talent.flags.swse.grantsTalents : []),
-    ];
-    rawKeys.push(...grants);
-    const normalized = rawKeys
+    return [talent?.id, talent?._id, talent?.uuid, talent?.name, talent?.label]
       .filter(Boolean)
       .map(value => this._normalizeTalentKey(value))
       .filter(Boolean);
-    const keySet = new Set(normalized);
-    const isBlockDeflectCombined = keySet.has('block-deflect')
-      || keySet.has('block-and-deflect')
-      || talent?.system?.isBlockDeflectCombined === true
-      || talent?.system?.flags?.isBlockDeflectCombined === true
-      || talent?._data?.isBlockDeflectCombined === true
-      || talent?.flags?.swse?.isBlockDeflectCombined === true
-      || (keySet.has('block') && keySet.has('deflect'));
-    if (isBlockDeflectCombined) {
-      keySet.add('block');
-      keySet.add('deflect');
-      keySet.add('9379daa94a228c04');
-      keySet.add('72c644f7a09b1186');
-      keySet.add('block-deflect');
-      keySet.add('block-and-deflect');
-      keySet.add('block-deflect-combined');
-    }
-    return Array.from(keySet);
   }
 
   _getOwnedTalentKeys(actor) {
@@ -1923,6 +1897,25 @@ export class TalentStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
+    if (this._isHydrating) {
+      return {
+        stage: 'browser',
+        slotType: this._slotType,
+        allTrees: [],
+        suggestedTrees: [],
+        searchQuery: this._searchQuery,
+        isHydrating: true,
+        isLoading: true,
+        slotProgress: {
+          selectedCount: 0,
+          requiredCount: 1,
+          remainingCount: 1,
+          isComplete: false,
+          progressLabel: '0 of 1 talent',
+          remainingLabel: 'Loading talent trees...',
+        },
+      };
+    }
     if (this._stage === 'browser') {
       return this._getTreeBrowserData(context);
     } else if (this._stage === 'graph') {
@@ -1937,6 +1930,11 @@ export class TalentStep extends ProgressionStepPlugin {
    * HARDENED: Use canonical tree fields, consistent ID handling
    */
   _getTreeBrowserData(context) {
+    let filteredTrees = this._filterTreesBySearch(this._allTrees);
+
+    // Droid degree trees are already handled by _getAvailableTrees as additive
+    // authority. Do not re-filter here, or class trees disappear for droid heroes.
+
     // Get committed talents from session and order them canonically
     const committedTalents = context?.shell?.progressionSession?.draftSelections?.talents || [];
     const orderedSelections = canonicallyOrderSelections(committedTalents);
@@ -1958,22 +1956,6 @@ export class TalentStep extends ProgressionStepPlugin {
         ? `${remainingCount} talent${remainingCount === 1 ? '' : 's'} remaining`
         : 'Complete',
     };
-
-    if (this._isHydratingTrees) {
-      return {
-        stage: 'browser',
-        slotType: this._slotType,
-        navigationBanner: this._prereqNavigationBanner || null,
-        allTrees: [],
-        suggestedTrees: [],
-        searchQuery: this._searchQuery,
-        orderedSelections,
-        slotProgress,
-        isLoading: true,
-      };
-    }
-
-    let filteredTrees = this._filterTreesBySearch(this._allTrees);
 
     return {
       stage: 'browser',

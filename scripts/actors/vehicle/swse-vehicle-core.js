@@ -263,7 +263,12 @@ export class SWSEVehicleCore {
     }
 
     try {
-      const rollMode = game.settings?.get('core', 'rollMode') ?? 'public';
+      let rollMode = 'publicroll';
+      try {
+        rollMode = game.settings?.get('core', 'messageMode') ?? 'publicroll';
+      } catch (_err) {
+        try { rollMode = game.settings?.get('core', 'rollMode') ?? 'publicroll'; } catch (_legacyErr) { rollMode = 'publicroll'; }
+      }
       const rollData = vehicle.getRollData();
 
       // PHASE 2: Read from v2 structured schema

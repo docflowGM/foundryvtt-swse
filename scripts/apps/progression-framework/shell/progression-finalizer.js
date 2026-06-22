@@ -2318,27 +2318,23 @@ export class ProgressionFinalizer {
     // General talents
     if (selections.has('general-talent')) {
       const talent = selections.get('general-talent');
-      for (const talentGrant of this._expandCombinedTalentGrantEntries(talent)) {
-        grants.push({
-          type: 'talent',
-          name: talentGrant.name || talentGrant,
-          source: 'heroic-talent',
-          grantedAt: 'chargen',
-        });
-      }
+      grants.push({
+        type: 'talent',
+        name: talent.name || talent,
+        source: 'heroic-talent',
+        grantedAt: 'chargen',
+      });
     }
 
     // Class talents
     if (selections.has('class-talent')) {
       const talent = selections.get('class-talent');
-      for (const talentGrant of this._expandCombinedTalentGrantEntries(talent)) {
-        grants.push({
-          type: 'talent',
-          name: talentGrant.name || talentGrant,
-          source: 'class-talent',
-          grantedAt: 'chargen',
-        });
-      }
+      grants.push({
+        type: 'talent',
+        name: talent.name || talent,
+        source: 'class-talent',
+        grantedAt: 'chargen',
+      });
     }
 
     // Force powers (conditional)
@@ -2775,6 +2771,37 @@ export class ProgressionFinalizer {
     return out;
   }
 
+  static _normalizeCompactName(value) {
+    return String(value || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '').trim();
+  }
+
+  static _isBlockDeflectCombinedEntry(entry = {}) {
+    const key = this._normalizeCompactName(entry?.name || entry?.id || entry?._id || entry);
+    return entry?.system?.flags?.isBlockDeflectCombined === true
+      || entry?._id === 'block-deflect-combined'
+      || entry?.id === 'block-deflect-combined'
+      || key === 'blockdeflect'
+      || key === 'blockanddeflect';
+  }
+
+  static _expandCombinedTalentEntries(entries = []) {
+    return entries.flatMap((entry) => {
+      if (!this._isBlockDeflectCombinedEntry(entry)) return [entry];
+      return ['Block', 'Deflect'].map((name, index) => ({
+        ...entry,
+        id: name,
+        _id: name,
+        name,
+        count: 1,
+        slotKey: `${entry?.slotKey || entry?.stepId || 'block-deflect'}:${index}`,
+        system: foundry.utils.mergeObject(entry?.system || {}, {
+          sourceCombinedTalent: entry?.name || 'Block/Deflect',
+          flags: { isExpandedFromBlockDeflectCombined: true },
+        }, { inplace: false, recursive: true, overwrite: true }),
+      }));
+    });
+  }
+
   static _isRepeatableTalentEntry(entry = {}, resolvedData = null) {
     const system = entry?.system || resolvedData?.system || {};
     if (entry?.repeatable === true || resolvedData?.repeatable === true || system.repeatable === true || system.canRepeat === true || system.allowDuplicates === true) return true;
@@ -2792,70 +2819,6 @@ export class ProgressionFinalizer {
       || /can\s+be\s+taken\s+multiple\s+times/.test(text)
       || /may\s+be\s+selected\s+multiple\s+times/.test(text)
       || /taken\s+multiple\s+times/.test(text);
-  }
-
-  static _getBlockDeflectGrantNames(entry = {}) {
-    const names = [];
-    const add = (value) => {
-      const text = String(value ?? '').trim();
-      if (text && !names.some(name => this._normalizeNameKey(name) === this._normalizeNameKey(text))) names.push(text);
-    };
-    const sources = [
-      entry?._data?.actualTalentsToGrant,
-      entry?._data?.grants,
-      entry?.system?.actualTalentsToGrant,
-      entry?.system?.grantsTalents,
-      entry?.system?.equivalentTalents,
-      entry?.flags?.swse?.actualTalentsToGrant,
-      entry?.flags?.swse?.grantsTalents,
-    ];
-    for (const source of sources) {
-      for (const value of Array.isArray(source) ? source : []) add(value);
-    }
-    const normalizedName = this._normalizeNameKey(entry?.name || entry?.label || entry);
-    const normalizedGrants = names.map(name => this._normalizeNameKey(name));
-    const isCombined = normalizedName === this._normalizeNameKey('Block & Deflect')
-      || entry?.system?.isBlockDeflectCombined === true
-      || entry?.system?.flags?.isBlockDeflectCombined === true
-      || entry?._data?.isBlockDeflectCombined === true
-      || entry?.flags?.swse?.isBlockDeflectCombined === true
-      || (normalizedGrants.includes(this._normalizeNameKey('Block')) && normalizedGrants.includes(this._normalizeNameKey('Deflect')));
-    return isCombined ? ['Block', 'Deflect'] : [];
-  }
-
-  static _clonePlainObject(value) {
-    if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
-    return JSON.parse(JSON.stringify(value ?? {}));
-  }
-
-  static _expandCombinedTalentGrantEntries(entry) {
-    const grantNames = this._getBlockDeflectGrantNames(entry);
-    if (!grantNames.length) return [entry];
-    return grantNames.map((name) => {
-      const cloneSource = entry && typeof entry === 'object' ? entry : { name: String(entry || 'Block & Deflect'), type: 'talent' };
-      const clone = this._clonePlainObject(cloneSource);
-      clone.id = name;
-      clone._id = null;
-      clone.name = name;
-      clone.label = name;
-      clone.type = clone.type || 'talent';
-      clone.system = {
-        ...(clone.system || {}),
-        isBlockDeflectCombined: false,
-        combinedHouseRuleSource: 'Block & Deflect',
-      };
-      delete clone.system.actualTalentsToGrant;
-      delete clone.system.grantsTalents;
-      delete clone.system.equivalentTalents;
-      if (clone.system.flags) clone.system.flags.isBlockDeflectCombined = false;
-      clone.flags = foundry.utils.mergeObject(clone.flags || {}, {
-        swse: {
-          combinedHouseRuleSource: 'Block & Deflect',
-          combinedHouseRuleComponent: name,
-        },
-      }, { inplace: false, recursive: true });
-      return clone;
-    });
   }
 
   static async _compileProgressionAbilityItems(actor, selections, sessionState) {
@@ -2885,11 +2848,9 @@ export class ProgressionFinalizer {
     );
 
     for (const domain of domainConfig) {
-      const rawValues = Array.isArray(selections[domain.key]) ? selections[domain.key] : [];
-      const valuesToProcess = domain.key === 'talents'
-        ? rawValues.flatMap((entry) => this._expandCombinedTalentGrantEntries(entry))
-        : rawValues;
-      for (const rawEntry of valuesToProcess) {
+      const baseRawValues = Array.isArray(selections[domain.key]) ? selections[domain.key] : [];
+      const rawValues = domain.key === 'talents' ? this._expandCombinedTalentEntries(baseRawValues) : baseRawValues;
+      for (const rawEntry of rawValues) {
         const removeCount = Math.max(0, Number(rawEntry?.removeCount || 0) || 0);
         if (domain.key === 'forcePowers' && removeCount > 0) {
           deleteItems.push(...this._collectOwnedForcePowerItemIds(actor, rawEntry, removeCount));

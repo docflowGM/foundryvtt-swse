@@ -47,7 +47,12 @@ function appendModifier(baseFormula, modifier) {
 }
 
 function getDefaultRollMode() {
-  const current = game?.settings?.get?.('core', 'rollMode');
+  let current = null;
+  try {
+    current = game?.settings?.get?.('core', 'messageMode');
+  } catch (_err) {
+    try { current = game?.settings?.get?.('core', 'rollMode'); } catch (_legacyErr) { current = null; }
+  }
   return CUSTOM_ROLL_MODES.some(mode => mode.value === current) ? current : DEFAULT_ROLL_MODE;
 }
 

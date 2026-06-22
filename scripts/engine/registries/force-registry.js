@@ -172,6 +172,18 @@ export class ForceRegistry {
   static _byType = new Map();              // type -> entry[]
   static _byCategory = new Map();          // category -> entry[]
   static _byTag = new Map();               // tag -> entry[]
+  static _entryKeys = new Set();           // type/id/name keys already indexed
+  static _initializing = null;             // concurrent initialize guard
+
+  static _resetIndexes() {
+    this._entries = [];
+    this._byId = new Map();
+    this._byName = new Map();
+    this._byType = new Map();
+    this._byCategory = new Map();
+    this._byTag = new Map();
+    this._entryKeys = new Set();
+  }
 
   /**
    * Initialize ForceRegistry from compendiums
@@ -182,29 +194,39 @@ export class ForceRegistry {
       SWSELogger.log('[ForceRegistry] Already initialized, skipping');
       return;
     }
+    if (this._initializing) return this._initializing;
 
-    try {
-      const startTime = performance.now();
-      await this._loadFromCompendiums();
-      const duration = (performance.now() - startTime).toFixed(2);
+    this._initializing = (async () => {
+      try {
+        const startTime = performance.now();
+        this._resetIndexes();
+        await this._loadFromCompendiums();
+        const duration = (performance.now() - startTime).toFixed(2);
 
-      this._initialized = true;
-      const countByType = {};
-      for (const entry of this._entries) {
-        countByType[entry.type] = (countByType[entry.type] || 0) + 1;
+        this._initialized = true;
+        const countByType = {};
+        for (const entry of this._entries) {
+          countByType[entry.type] = (countByType[entry.type] || 0) + 1;
+        }
+
+        SWSELogger.log(
+          `[ForceRegistry] Initialized: ${this._entries.length} items ` +
+          `(${countByType.power || 0} powers, ${countByType.technique || 0} techniques, ` +
+          `${countByType.secret || 0} secrets) (${duration}ms)`
+        );
+      } catch (err) {
+        SWSELogger.error('[ForceRegistry] Initialization failed:', err);
+        this._initialized = false;
+        this._resetIndexes();
+        throw err;
+      } finally {
+        this._initializing = null;
       }
+    })();
 
-      SWSELogger.log(
-        `[ForceRegistry] Initialized: ${this._entries.length} items ` +
-        `(${countByType.power || 0} powers, ${countByType.technique || 0} techniques, ` +
-        `${countByType.secret || 0} secrets) (${duration}ms)`
-      );
-    } catch (err) {
-      SWSELogger.error('[ForceRegistry] Initialization failed:', err);
-      this._initialized = false;
-      throw err;
-    }
+    return this._initializing;
   }
+
 
   /**
    * Load all force domains from compendiums and normalize
@@ -275,15 +297,22 @@ export class ForceRegistry {
    */
   static _indexEntry(entry, type) {
     if (!entry?.id || !entry?.name) return;
+    const normalizedType = String(entry.type || type || '').toLowerCase().trim() || String(type || '').toLowerCase().trim();
+    const idKey = `${normalizedType}:id:${entry.id}`;
+    const nameKey = `${normalizedType}:name:${String(entry.name || '').toLowerCase().trim()}`;
+    if (this._entryKeys.has(idKey) || this._entryKeys.has(nameKey)) return;
+    this._entryKeys.add(idKey);
+    this._entryKeys.add(nameKey);
+    entry.type = normalizedType;
 
     this._entries.push(entry);
     this._byId.set(entry.id, entry);
     this._byName.set(entry.name.toLowerCase(), entry);
 
-    if (!this._byType.has(type)) {
-      this._byType.set(type, []);
+    if (!this._byType.has(normalizedType)) {
+      this._byType.set(normalizedType, []);
     }
-    this._byType.get(type).push(entry);
+    this._byType.get(normalizedType).push(entry);
 
     if (entry.category) {
       if (!this._byCategory.has(entry.category)) {

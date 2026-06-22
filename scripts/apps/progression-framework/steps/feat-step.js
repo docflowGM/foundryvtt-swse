@@ -695,7 +695,8 @@ export class FeatStep extends ProgressionStepPlugin {
         const slotValidation = await FeatSlotValidator.validateFeatForSlot(
           feat,
           { slotType: this._slotType, classId: this._classId, classLookupKeys },
-          evaluationActor || actor
+          evaluationActor || actor,
+          { quiet: true }
         );
         status.slotCompatible = isMulticlassStartingFeatSlot
           ? multiclassStartingFeatNames.has(normalizeManifestName(feat.name))

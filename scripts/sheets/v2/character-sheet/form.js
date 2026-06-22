@@ -232,6 +232,29 @@ export function isDirectFieldMutationPath(fieldName) {
   return true;
 }
 
+export function shouldRecomputeAfterDirectField(fieldName) {
+  if (!fieldName || typeof fieldName !== 'string') return false;
+  if (fieldName === 'name') return true;
+  if (/^system\.skills\.[^.]+\.(selectedAbility|trained|focused|favorite|miscMod)$/.test(fieldName)) return true;
+  if (/^system\.customSkills\.\d+\.(ability|trained|focused|miscMod)$/.test(fieldName)) return true;
+  if (/^system\.attributes\.[^.]+\.(base|racial|species|enhancement|misc|temp)$/.test(fieldName)) return true;
+  if (/^system\.defenses\.[^.]+\.(classBonus|ability|armor|misc\..+)$/.test(fieldName)) return true;
+  return new Set([
+    'system.level',
+    'system.baseAttackBonus',
+    'system.speed',
+    'system.hp.value',
+    'system.hp.temp',
+    'system.conditionTrack.current',
+    'system.conditionTrack.persistent',
+    'system.damageReduction',
+    'system.destinyPoints.value',
+    'system.destinyPoints.max',
+    'system.forcePoints.value',
+    'system.forcePoints.max',
+  ]).has(fieldName);
+}
+
 export function coerceSingleFieldValue(fieldName, value, field = null) {
   const expectedType = getFieldType(fieldName);
 
@@ -364,6 +387,7 @@ export async function handleFormSubmission(sheet, event) {
     }
 
     const isSensitiveField = isHydrationSensitivePath(explicitField.name);
+    const recomputeAfterDirectField = shouldRecomputeAfterDirectField(explicitField.name);
     const beforeSnapshot = isSensitiveField ? captureHydrationSnapshot(currentActor) : null;
     const mutationRecord = recordHydrationMutation(sheet, {
       source: 'character-sheet-direct-field',
@@ -386,19 +410,19 @@ export async function handleFormSubmission(sheet, event) {
         });
       }
 
-      // Quiet field edit: persist the scoped dot-path update without repainting the
-      // whole sheet/shell. The edited input already has the new value; players can
-      // use the header Refresh button when they want a full recalc/reload pass.
+      // Most direct field edits stay quiet, but derived-stat inputs (skills,
+      // attributes, defenses, resource totals) need an immediate recompute and
+      // repaint so the row does not appear unusable after a selection changes.
       await mutateAndRepaint(sheet, () => ActorEngine.updateActor(currentActor, scopedUpdate, {
         source: 'character-sheet-direct-field',
         meta: { guardKey: `direct-field:${explicitField.name}` },
-        render: false,
-        suppressAppRefresh: true
+        render: recomputeAfterDirectField,
+        suppressAppRefresh: !recomputeAfterDirectField
       }), {
         reason: `character-sheet-direct-field:${explicitField.name}`,
         surfaceId: sheet?._shellSurface ?? sheet?.shellSurface ?? 'sheet',
         preserveUi: true,
-        render: false
+        render: recomputeAfterDirectField
       });
 
       const refreshedActor = game.actors.get(currentActorId) ?? currentActor;
