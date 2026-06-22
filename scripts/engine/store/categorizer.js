@@ -15,6 +15,8 @@
  * They are filtered out by normalizer.js before reaching this module.
  */
 
+import { categorizeEquipmentForStore } from '../equipment/equipment-normalizer.js';
+
 /* ----------------------------------------------- */
 /* UTILITY                                          */
 /* ----------------------------------------------- */
@@ -144,29 +146,19 @@ function categorizeWeapon(item) {
 /* ---------------------------------------------------------- */
 
 function categorizeEquipment(item) {
-  const name = item.name.toLowerCase();
-  const desc = safeString(item.system?.description || '').toLowerCase();
-
-  const text = name + ' ' + desc;
-
-  if (text.includes('medpac') || text.includes('bacta') || text.includes('stim')) {
-    return { cat: Category.MEDICAL, sub: 'Supplies' };
-  }
-  if (text.includes('comlink') || text.includes('datapad') || text.includes('scanner') || text.includes('computer')) {
-    return { cat: Category.TECH, sub: 'Electronics' };
-  }
-  if (text.includes('tool') || text.includes('kit') || text.includes('fusion cutter')) {
-    return { cat: Category.TOOLS, sub: 'Tools & Kits' };
-  }
-  if (text.includes('survival') || text.includes('rations') || text.includes('breath mask') || text.includes('rope')) {
-    return { cat: Category.SURVIVAL, sub: 'Survival Gear' };
-  }
-  if (text.includes('lock') || text.includes('binder') || text.includes('security')) {
-    return { cat: Category.SECURITY, sub: 'Security Gear' };
-  }
-
-  // Fallback
-  return { cat: Category.EQUIPMENT, sub: 'General Gear' };
+  const { cat, sub } = categorizeEquipmentForStore(item);
+  const allowed = new Set([
+    Category.MEDICAL,
+    Category.TECH,
+    Category.TOOLS,
+    Category.SURVIVAL,
+    Category.SECURITY,
+    Category.EQUIPMENT
+  ]);
+  return {
+    cat: allowed.has(cat) ? cat : Category.EQUIPMENT,
+    sub: sub || 'General Gear'
+  };
 }
 
 

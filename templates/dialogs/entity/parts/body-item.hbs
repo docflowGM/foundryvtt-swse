@@ -5,7 +5,7 @@
     <p>General equipment uses the existing <code>equipment</code> item schema. Categories here are presentation/store/inventory helpers, not new item types.</p>
   </div>
   <div class="swse-entity-dialog__stat-strip">
-    <div class="swse-entity-dialog__stat"><span>Category</span><strong>{{entityDialog.equipment.categoryLabel}}</strong></div>
+    <div class="swse-entity-dialog__stat"><span>Bucket</span><strong>{{entityDialog.equipment.equipmentBucketLabel}}</strong></div>
     <div class="swse-entity-dialog__stat"><span>Qty</span><strong>{{entityDialog.equipment.quantity}}</strong></div>
     <div class="swse-entity-dialog__stat"><span>Weight</span><strong>{{entityDialog.equipment.totalWeight}}</strong></div>
     <div class="swse-entity-dialog__stat"><span>Cost</span><strong>{{entityDialog.equipment.cost}}</strong></div>
@@ -14,7 +14,7 @@
 
 <section class="item-editor__section swse-entity-dialog__callout swse-entity-dialog__callout--resolver">
   <h3 class="item-editor__section-title">Equipment Data Source</h3>
-  <p class="swse-entity-dialog__hint">This body reads quantity, encumbrance, store value, and workbench metadata from the existing equipment fields. It adds no parallel gear model; it simply makes those current fields easier to edit.</p>
+  <p class="swse-entity-dialog__hint">This body reads normalized bucket, quantity, encumbrance, store value, usage metadata, and workbench fields from the equipment schema. Skill hooks are declarative metadata for later extra-skill-use integration; currently loaded hooks: {{entityDialog.equipment.skillHookCount}}.</p>
 </section>
 
 <div class="item-editor__grid item-editor__grid--two-col swse-entity-dialog__gear-grid">
@@ -23,12 +23,31 @@
 
     <div class="item-editor__grid item-editor__grid--two-col">
       <div class="form-field">
+        <label>Bucket</label>
+        <select name="system.equipmentBucket">
+          {{#each entityDialog.equipment.equipmentBucketOptions}}
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.equipment.equipmentBucket this.value)}}selected{{/if}}>{{this.label}}</option>
+          {{/each}}
+        </select>
+      </div>
+
+      <div class="form-field">
         <label>Category</label>
         <select name="system.category">
           {{#each entityDialog.equipment.categoryOptions}}
           <option value="{{this.value}}" {{#if (eq ../entityDialog.equipment.category this.value)}}selected{{/if}}>{{this.label}}</option>
           {{/each}}
         </select>
+      </div>
+
+      <div class="form-field">
+        <label>Equipment Type</label>
+        <input type="text" name="system.equipmentType" value="{{entityDialog.equipment.equipmentType}}" placeholder="medical, tool, comlink, life-support" />
+      </div>
+
+      <div class="form-field">
+        <label>Item Role</label>
+        <input type="text" name="system.itemRole" value="{{entityDialog.equipment.itemRole}}" placeholder="gear, consumable, container, upgrade" />
       </div>
 
       <div class="form-field">
@@ -62,9 +81,9 @@
 
       <div class="form-field">
         <label>Availability</label>
-        <select name="system.restriction">
+        <select name="system.availability">
           {{#each entityDialog.equipment.availabilityOptions}}
-          <option value="{{this.value}}" {{#if (eq ../entityDialog.equipment.restriction this.value)}}selected{{/if}}>{{this.label}}</option>
+          <option value="{{this.value}}" {{#if (eq ../entityDialog.equipment.availabilityKey this.value)}}selected{{/if}}>{{this.label}}</option>
           {{/each}}
         </select>
       </div>
@@ -73,6 +92,16 @@
         <label>Total Weight</label>
         <input type="number" value="{{entityDialog.equipment.totalWeight}}" disabled />
         <p class="swse-entity-dialog__field-note">Readout only: quantity × weight. Encumbrance continues to use <code>system.quantity</code> and <code>system.weight</code>.</p>
+      </div>
+
+      <div class="form-field">
+        <label>Usage Mode</label>
+        <input type="text" name="system.usage.mode" value="{{entityDialog.equipment.usageMode}}" placeholder="passive, consumable, charges, container" />
+      </div>
+
+      <div class="form-field">
+        <label>Consume On</label>
+        <input type="text" name="system.usage.consumeOn" value="{{entityDialog.equipment.consumeOn}}" placeholder="manual, onAttempt, onSuccess" />
       </div>
     </div>
   </section>

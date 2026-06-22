@@ -6,6 +6,7 @@
 import { normalizePrerequisiteString } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/prerequisite-normalizer.js";
 import { normalizeSpeciesData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/species-normalizer.js";
 import { normalizeBackgroundData } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/background-normalizer.js";
+import { normalizeEquipmentSystem } from "/systems/foundryvtt-swse/scripts/engine/equipment/equipment-normalizer.js";
 
 // ============================================================
 // FEAT NORMALIZATION
@@ -92,6 +93,20 @@ export function normalizeForcePowerData(rawPower) {
 }
 
 
+
+// ============================================================
+// EQUIPMENT NORMALIZATION
+// ============================================================
+
+export function normalizeEquipmentData(rawEquipment) {
+    const equipment = foundry.utils.deepClone(rawEquipment);
+    equipment.system = normalizeEquipmentSystem(equipment.system ?? {}, {
+        id: equipment._id ?? equipment.id ?? '',
+        sourcePack: equipment.pack ?? ''
+    });
+    return equipment;
+}
+
 // ============================================================
 // UNIVERSAL NORMALIZER — CALL THIS EVERYWHERE
 // ============================================================
@@ -107,6 +122,8 @@ export function normalizeItemByType(item) {
         case 'force-power':
         case 'force-power':
             return normalizeForcePowerData(item);
+        case 'equipment':
+            return normalizeEquipmentData(item);
         case 'species':
             return normalizeSpeciesData(item);
         case 'background':

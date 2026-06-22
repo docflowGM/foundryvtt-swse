@@ -19,7 +19,7 @@
 
 function parseCreditNumber(value) {
   if (typeof value === 'number') {
-    return Number.isFinite(value) && value > 0 ? value : null;
+    return Number.isFinite(value) && value >= 0 ? value : null;
   }
   if (typeof value !== 'string') return null;
   if (isReviewText(value)) return null;
@@ -29,7 +29,7 @@ function parseCreditNumber(value) {
     .trim();
   if (!cleaned || /^[-—]+$/.test(cleaned)) return null;
   const number = Number(cleaned);
-  return Number.isFinite(number) && number > 0 ? number : null;
+  return Number.isFinite(number) && number >= 0 ? number : null;
 }
 
 function isUnavailableText(value) {

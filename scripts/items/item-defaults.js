@@ -7,6 +7,7 @@
  */
 
 import { normalizeArmorSystemAliases } from './armor-data-resolver.js';
+import { normalizeEquipmentSystem } from '../engine/equipment/equipment-normalizer.js';
 import { normalizePrereqClauses } from '../dialogs/entity-dialog/prereq-engine.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
@@ -248,15 +249,40 @@ export const BLANK_ITEM_DEFAULTS = Object.freeze({
   },
 
   equipment: {
+    schemaVersion: 3,
     category: 'gear',
+    equipmentBucket: 'other',
+    equipmentBucketLabel: 'Other',
+    equipmentType: 'gear',
+    equipmentTypeLabel: 'Gear',
+    itemRole: 'gear',
+    itemRoleLabel: 'Gear',
     quantity: 1,
     weight: 1,
+    weightLabel: '1 kg',
     cost: 0,
     value: 0,
+    costNumeric: 0,
+    availability: 'Standard',
     equipped: false,
     integrated: false,
     description: '',
-    size: 'Medium',
+    notes: '',
+    sourcebook: 'Manual',
+    source: 'Manual',
+    page: null,
+    tags: [],
+    traits: [],
+    properties: [],
+    equippable: { equipped: false, slot: null },
+    usage: { mode: 'passive', consumable: false, consumeOn: '', charges: { current: null, max: null } },
+    modifiers: {},
+    container: { capacity: null, contents: [] },
+    economics: { cost: 0, weight: 1 },
+    capabilities: { skillHooksReady: true, skillLinked: false, consumable: false, container: false, upgrade: false },
+    skillHooks: [],
+    normalizationStatus: 'blank-default',
+    size: 'Small',
     upgradeSlots: 1,
     installedUpgrades: [],
     sizeIncreaseApplied: false,
@@ -413,10 +439,18 @@ const NUMERIC_PATHS = {
     ['templateCost', 0]
   ],
   equipment: [
+    ['schemaVersion', 3],
     ['quantity', 1],
     ['weight', 1],
     ['cost', 0],
     ['value', 0],
+    ['costNumeric', 0],
+    ['page', null, { nullable: true }],
+    ['usage.charges.current', null, { nullable: true }],
+    ['usage.charges.max', null, { nullable: true }],
+    ['container.capacity', null, { nullable: true }],
+    ['economics.cost', 0],
+    ['economics.weight', 1],
     ['upgradeSlots', 1],
     ['templateCost', 0]
   ],
@@ -557,8 +591,12 @@ export function normalizeItemSystem(type, currentSystem = {}, submittedSystem = 
     }
   }
 
+  if (safeType === 'equipment') {
+    Object.assign(merged, normalizeEquipmentSystem(merged));
+  }
+
   if (['weapon', 'armor', 'equipment'].includes(safeType)) {
-    if (!['common', 'licensed', 'restricted', 'military', 'illegal'].includes(merged.restriction)) {
+    if (!['common', 'licensed', 'restricted', 'military', 'illegal', 'rare'].includes(merged.restriction)) {
       merged.restriction = 'common';
     }
     if (!['Fine', 'Diminutive', 'Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan', 'Colossal', 'fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'].includes(merged.size)) {
@@ -589,7 +627,6 @@ export function sanitizeItemSheetUpdate(item, submittedData = {}, form = null) {
     'system.activated',
     'system.sizeIncreaseApplied',
     'system.isPoweredArmor',
-    'system.container',
     'system.choiceMeta.required',
     'system.choiceMeta.repeatable',
     'system.uses.perDay',

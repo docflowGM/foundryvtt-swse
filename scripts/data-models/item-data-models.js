@@ -137,7 +137,7 @@ export class WeaponDataModel extends foundry.abstract.DataModel {
       // Restriction level (Licensed, Restricted, Military, Illegal, Common)
       restriction: new fields.StringField({
         initial: 'common',
-        choices: ['common', 'licensed', 'restricted', 'military', 'illegal'],
+        choices: ['common', 'licensed', 'restricted', 'military', 'illegal', 'rare'],
         label: 'Restriction Level'
       }),
 
@@ -306,11 +306,73 @@ export class EquipmentDataModel extends foundry.abstract.DataModel {
   static defineSchema() {
     const fields = foundry.data.fields;
     return {
+      schemaVersion: new fields.NumberField({ initial: 3, min: 0, integer: true, label: 'Equipment Schema Version' }),
+      category: new fields.StringField({ initial: 'gear', label: 'Equipment Category' }),
+      equipmentBucket: new fields.StringField({
+        initial: 'other',
+        choices: ['comlinks', 'medical', 'other', 'security', 'survival', 'tech', 'tools'],
+        label: 'Equipment Bucket'
+      }),
+      equipmentBucketLabel: new fields.StringField({ initial: 'Other', label: 'Equipment Bucket Label' }),
+      equipmentType: new fields.StringField({ initial: 'gear', label: 'Equipment Type' }),
+      equipmentTypeLabel: new fields.StringField({ initial: 'Gear', label: 'Equipment Type Label' }),
+      itemRole: new fields.StringField({ initial: 'gear', label: 'Equipment Role' }),
+      itemRoleLabel: new fields.StringField({ initial: 'Gear', label: 'Equipment Role Label' }),
+      quantity: new fields.NumberField({ required: true, initial: 1, min: 1, integer: true, label: 'Quantity' }),
       weight: new fields.NumberField({ required: false, initial: 1, min: 0, nullable: true }),
-      cost: new fields.NumberField({ required: true, initial: 0, min: 0 }),
+      weightLabel: new fields.StringField({ initial: '1 kg', label: 'Weight Label' }),
+      cost: new fields.NumberField({ required: true, initial: 0, min: 0, integer: true }),
+      value: new fields.NumberField({ required: false, initial: 0, min: 0, integer: true, label: 'Value' }),
+      costNumeric: new fields.NumberField({ required: false, initial: 0, min: 0, integer: true, label: 'Numeric Cost' }),
+      availability: new fields.StringField({
+        initial: 'Standard',
+        choices: ['Standard', 'Licensed', 'Restricted', 'Military', 'Illegal', 'Rare'],
+        label: 'Availability'
+      }),
       equipped: new fields.BooleanField({ required: true, initial: false }),
       integrated: new fields.BooleanField({ initial: false, label: 'Integrated Droid Equipment' }),
       description: new fields.HTMLField({ label: 'Description' }),
+      notes: new fields.HTMLField({ label: 'Notes' }),
+      sourcebook: new fields.StringField({ initial: '', label: 'Sourcebook' }),
+      source: new fields.StringField({ initial: '', label: 'Source' }),
+      page: new fields.NumberField({ required: false, nullable: true, integer: true, label: 'Page Number' }),
+      tags: new fields.ArrayField(new fields.StringField(), { initial: [], label: 'Tags' }),
+      traits: new fields.ArrayField(new fields.StringField(), { initial: [], label: 'Traits' }),
+      properties: new fields.ArrayField(new fields.StringField(), { initial: [], label: 'Properties' }),
+      equippable: new fields.SchemaField({
+        equipped: new fields.BooleanField({ initial: false }),
+        slot: new fields.StringField({ initial: '', nullable: true })
+      }, { initial: {}, label: 'Equippable Metadata' }),
+      usage: new fields.SchemaField({
+        mode: new fields.StringField({ initial: 'passive' }),
+        consumable: new fields.BooleanField({ initial: false }),
+        consumeOn: new fields.StringField({ initial: '' }),
+        charges: new fields.SchemaField({
+          current: new fields.NumberField({ initial: null, nullable: true, min: 0, integer: true }),
+          max: new fields.NumberField({ initial: null, nullable: true, min: 0, integer: true })
+        }, { initial: {} })
+      }, { initial: {}, label: 'Usage Metadata' }),
+      modifiers: new fields.ObjectField({ initial: {}, label: 'Equipment Modifiers' }),
+      container: new fields.SchemaField({
+        capacity: new fields.NumberField({ initial: null, nullable: true, min: 0 }),
+        contents: new fields.ArrayField(new fields.StringField(), { initial: [] })
+      }, { initial: {}, label: 'Container Metadata' }),
+      economics: new fields.SchemaField({
+        cost: new fields.NumberField({ initial: 0, min: 0, integer: true }),
+        weight: new fields.NumberField({ initial: 0, min: 0, nullable: true })
+      }, { initial: {}, label: 'Economics' }),
+      capabilities: new fields.ObjectField({ initial: {}, label: 'Equipment Capabilities' }),
+      skillHooks: new fields.ArrayField(new fields.SchemaField({
+        skill: new fields.StringField({ initial: '' }),
+        useKey: new fields.StringField({ initial: '' }),
+        mode: new fields.StringField({ initial: 'modifies' }),
+        required: new fields.BooleanField({ initial: false }),
+        consumes: new fields.ObjectField({ initial: null, nullable: true }),
+        bonus: new fields.ObjectField({ initial: null, nullable: true }),
+        source: new fields.StringField({ initial: '' }),
+        note: new fields.StringField({ initial: '' })
+      }), { initial: [], label: 'Skill Hooks' }),
+      normalizationStatus: new fields.StringField({ initial: '', label: 'Normalization Status' }),
       droidPart: createDroidPartSchema(fields),
 
       // Equipment size (for size-based calculations)
@@ -350,15 +412,20 @@ export class EquipmentDataModel extends foundry.abstract.DataModel {
    * Cleans invalid weight values before validation
    */
   static migrateData(source) {
-    // Clean weight before validation - must be a finite number >= 0
-    if (source.weight !== undefined) {
-      const weight = Number(source.weight);
-      if (!Number.isFinite(weight) || weight < 0) {
-        source.weight = 1; // Default to 1 kg
-      } else {
-        source.weight = weight; // Ensure it's a number, not a string
-      }
-    }
+    // Clean numeric equipment fields before validation.
+    const parseNumber = (value, fallback = 0) => {
+      if (value === undefined || value === null || value === '') return fallback;
+      const match = String(value).replace(/,/g, '').match(/-?\d+(?:\.\d+)?/);
+      const number = Number(match?.[0] ?? value);
+      return Number.isFinite(number) && number >= 0 ? number : fallback;
+    };
+
+    source.weight = parseNumber(source.weight, 1);
+    source.cost = Math.round(parseNumber(source.cost, 0));
+    source.value = Math.round(parseNumber(source.value ?? source.cost, source.cost ?? 0));
+    source.costNumeric = Math.round(parseNumber(source.costNumeric ?? source.cost, source.cost ?? 0));
+    source.quantity = Math.max(1, Math.round(parseNumber(source.quantity, 1)));
+
     return super.migrateData(source);
   }
 }

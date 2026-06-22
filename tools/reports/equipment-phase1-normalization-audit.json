@@ -1,0 +1,121 @@
+{
+  "phase": "equipment-phase1-normalization",
+  "files": {
+    "equipment-comlinks.db": {
+      "before": 13,
+      "after": 13,
+      "buckets": {
+        "comlinks": 13
+      }
+    },
+    "equipment-medical.db": {
+      "before": 16,
+      "after": 16,
+      "buckets": {
+        "medical": 16
+      }
+    },
+    "equipment-other.db": {
+      "before": 6,
+      "after": 6,
+      "buckets": {
+        "other": 6
+      }
+    },
+    "equipment-security.db": {
+      "before": 33,
+      "after": 33,
+      "buckets": {
+        "security": 33
+      }
+    },
+    "equipment-survival.db": {
+      "before": 23,
+      "after": 23,
+      "buckets": {
+        "survival": 23
+      }
+    },
+    "equipment-tech.db": {
+      "before": 24,
+      "after": 24,
+      "buckets": {
+        "tech": 24
+      }
+    },
+    "equipment-tools.db": {
+      "before": 19,
+      "after": 19,
+      "buckets": {
+        "tools": 19
+      }
+    }
+  },
+  "aggregate": {
+    "before": 132,
+    "after": 134,
+    "uniqueIds": 134
+  },
+  "validation": {
+    "nonIntegerCost": [],
+    "invalidWeight": [],
+    "missingBucket": [],
+    "missingSkillHooksArray": [],
+    "stringCosts": [],
+    "stringWeights": []
+  },
+  "removedFromAggregate": [
+    {
+      "id": "lightsaber-accessory-blade-lock",
+      "name": "Blade Lock",
+      "reason": "not present in equipment bucket packs"
+    },
+    {
+      "id": "lightsaber-crystal-barab-ingot",
+      "name": "Barab Ingot",
+      "reason": "not present in equipment bucket packs"
+    },
+    {
+      "id": "lightsaber-crystal-ilum",
+      "name": "Ilum Crystal",
+      "reason": "not present in equipment bucket packs"
+    },
+    {
+      "id": "lightsaber-crystal-synthetic",
+      "name": "Synthetic Crystal",
+      "reason": "not present in equipment bucket packs"
+    }
+  ],
+  "addedToAggregate": [
+    {
+      "id": "life-antiox-breath-mask",
+      "name": "Antiox Breath Mask",
+      "reason": "present in equipment bucket pack but missing from aggregate"
+    },
+    {
+      "id": "life-breathing-apparatus",
+      "name": "Breathing Apparatus",
+      "reason": "present in equipment bucket pack but missing from aggregate"
+    },
+    {
+      "id": "life-celegian-support-chamber",
+      "name": "Celegian Life-Support Chamber",
+      "reason": "present in equipment bucket pack but missing from aggregate"
+    },
+    {
+      "id": "life-transliterator",
+      "name": "Transliterator",
+      "reason": "present in equipment bucket pack but missing from aggregate"
+    },
+    {
+      "id": "life-ubese-environmental-suit",
+      "name": "Ubese Environmental Suit",
+      "reason": "present in equipment bucket pack but missing from aggregate"
+    },
+    {
+      "id": "life-ultraviolet-visor",
+      "name": "Ultraviolet Visor",
+      "reason": "present in equipment bucket pack but missing from aggregate"
+    }
+  ]
+}
