@@ -1,0 +1,4964 @@
+{
+  "phase": "phase2-fandom-attribute-hydration",
+  "scope": "Hydrate vehicle Strength, Dexterity, and Intelligence only from source-backed SWSE Fandom stat blocks. Crew, passengers, cargo, availability, and price intentionally deferred to later phases.",
+  "uniqueVehiclesUpdated": 62,
+  "sourceVerifiedAttributeCount": 62,
+  "remainingDefaultAttributeCount": 1,
+  "remainingIntBase10Count": 295,
+  "updatedVehicles": [
+    {
+      "name": "AEG-77 Vigo Gunship",
+      "sourceTitle": "AEG-77 Vigo Gunship",
+      "sourceUrl": "https://swse.fandom.com/wiki/AEG-77_%22Vigo%22_Gunship",
+      "attributes": {
+        "str": 42,
+        "dex": 14,
+        "int": 14
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "AEG-77 Vigo Transport",
+      "sourceTitle": "AEG-77 Vigo Gunship",
+      "sourceUrl": "https://swse.fandom.com/wiki/AEG-77_%22Vigo%22_Gunship",
+      "attributes": {
+        "str": 42,
+        "dex": 14,
+        "int": 14
+      },
+      "notes": "Uses AEG-77 Vigo Gunship stat block; transport/ship record shares the Vigo platform family in current compendium naming.",
+      "changed": false
+    },
+    {
+      "name": "ARC-170 Starfighter",
+      "sourceTitle": "ARC-170 Starfighter",
+      "sourceUrl": "https://swse.fandom.com/wiki/ARC-170_Starfighter",
+      "attributes": {
+        "str": 46,
+        "dex": 18,
+        "int": 14
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Acclamator I-Class Assault Ship",
+      "sourceTitle": "Acclamator I-Class Assault Ship",
+      "sourceUrl": "https://swse.fandom.com/wiki/Acclamator_I-Class_Assault_Ship",
+      "attributes": {
+        "str": 86,
+        "dex": 14,
+        "int": 16
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Aerosled Mark III",
+      "sourceTitle": "Aerosled Mk III",
+      "sourceUrl": "https://swse.fandom.com/wiki/Aerosled_Mk_III",
+      "attributes": {
+        "str": 18,
+        "dex": 22,
+        "int": 16
+      },
+      "notes": "Uses SWSE Fandom Aerosled Mk III stat block for repo Mark III label.",
+      "changed": true
+    },
+    {
+      "name": "Archaic Dreadnaught-Class Heavy Cruiser",
+      "sourceTitle": "Archaic Heavy Cruiser",
+      "sourceUrl": "https://swse.fandom.com/wiki/Archaic_Heavy_Cruiser",
+      "attributes": {
+        "str": 96,
+        "dex": 10,
+        "int": 16
+      },
+      "notes": "Uses Fandom Archaic Heavy Cruiser stat block for repo's archaic Dreadnaught entry.",
+      "changed": false
+    },
+    {
+      "name": "BB-2 Starfire Fighter/Bomber",
+      "sourceTitle": "BB-2 Starfire Bomber",
+      "sourceUrl": "https://swse.fandom.com/wiki/BB-2_Starfire_Bomber",
+      "attributes": {
+        "str": 48,
+        "dex": 20,
+        "int": 18
+      },
+      "notes": "Uses SWSE Fandom BB-2 Starfire Bomber stat block for repo fighter/bomber label.",
+      "changed": true
+    },
+    {
+      "name": "Besh-Type Personal Starfighter",
+      "sourceTitle": "Besh-Type Starfighter",
+      "sourceUrl": "https://swse.fandom.com/wiki/Besh-Type_Starfighter",
+      "attributes": {
+        "str": 50,
+        "dex": 16,
+        "int": 18
+      },
+      "notes": "Uses SWSE Fandom Besh-Type Starfighter stat block for repo personal starfighter label.",
+      "changed": true
+    },
+    {
+      "name": "Charger c70 Corellian Consular-Class Cruiser",
+      "sourceTitle": "Charger c70 Consular-Class Cruiser",
+      "sourceUrl": "https://swse.fandom.com/wiki/Charger_C70_Consular-Class_Cruiser",
+      "attributes": {
+        "str": 62,
+        "dex": 18,
+        "int": 14
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Corellian Action VI Bulk Transport",
+      "sourceTitle": "Corellian Action VI Bulk Transport",
+      "sourceUrl": "https://swse.fandom.com/wiki/Corellian_Action_VI_Bulk_Transport",
+      "attributes": {
+        "str": 62,
+        "dex": 10,
+        "int": 12
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Corellian Consular-Class Cruiser",
+      "sourceTitle": "Consular-Class Space Cruiser",
+      "sourceUrl": "https://swse.fandom.com/wiki/Consular-Class_Space_Cruiser",
+      "attributes": {
+        "str": 69,
+        "dex": 18,
+        "int": 14
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Corellian G9 Rigger-Class Light Freighter",
+      "sourceTitle": "Corellian G9 Rigger-Class Light Freighter",
+      "sourceUrl": "https://swse.fandom.com/wiki/Corellian_G9_Rigger-Class_Light_Freighter",
+      "attributes": {
+        "str": 39,
+        "dex": 10,
+        "int": 12
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Corellian JumpMaster 5000 Scout Ship",
+      "sourceTitle": "JumpMaster 5000 Scout Ship",
+      "sourceUrl": "https://swse.fandom.com/wiki/JumpMaster_5000_Scout_Ship",
+      "attributes": {
+        "str": 42,
+        "dex": 16,
+        "int": 14
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Corellian KR-TB \"Doomtreader\"",
+      "sourceTitle": "Corellian KR-TB Doomtreader",
+      "sourceUrl": "https://swse.fandom.com/wiki/Corellian_KR-TB_%22Doomtreader%22",
+      "attributes": {
+        "str": 50,
+        "dex": 12,
+        "int": 14
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Corellian S-100 Stinger-Class Starfighter",
+      "sourceTitle": "Corellian S-100 Stinger-Class Starfighter",
+      "sourceUrl": "https://swse.fandom.com/wiki/Corellian_S-100_Stinger-Class_Starfighter",
+      "attributes": {
+        "str": 38,
+        "dex": 24,
+        "int": 14
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Corellian YZ-2500 Heavy Transport",
+      "sourceTitle": "Corellian YZ-2500 Heavy Transport",
+      "sourceUrl": "https://swse.fandom.com/wiki/Corellian_YZ-2500_Heavy_Transport",
+      "attributes": {
+        "str": 59,
+        "dex": 14,
+        "int": 18
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Delta-7 Aethersprite High-Maneuver Interceptor",
+      "sourceTitle": "Delta-7 High-Maneuver Aethersprite",
+      "sourceUrl": "https://swse.fandom.com/wiki/Delta-7_High-Maneuver_Aethersprite",
+      "attributes": {
+        "str": 34,
+        "dex": 30,
+        "int": 14
+      },
+      "notes": "Uses Fandom Delta-7 High-Maneuver Aethersprite stat block for repo high-maneuver interceptor label.",
+      "changed": false
+    },
+    {
+      "name": "Delta-7 Aethersprite High-Speed Interceptor",
+      "sourceTitle": "Delta-7 High-Speed Aethersprite",
+      "sourceUrl": "https://swse.fandom.com/wiki/Delta-7_High-Speed_Aethersprite",
+      "attributes": {
+        "str": 34,
+        "dex": 24,
+        "int": 14
+      },
+      "notes": "Uses Fandom Delta-7 High-Speed Aethersprite stat block for repo high-speed interceptor label.",
+      "changed": false
+    },
+    {
+      "name": "E-Wing Escort Starfighter",
+      "sourceTitle": "E-Wing Escort Starfighter",
+      "sourceUrl": "https://swse.fandom.com/wiki/E-Wing_Escort_Starfighter",
+      "attributes": {
+        "str": 46,
+        "dex": 23,
+        "int": 17
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Eta-2 Actis Heavy-Defense Interceptor",
+      "sourceTitle": "Eta-2 Heavy-Defense Actis",
+      "sourceUrl": "https://swse.fandom.com/wiki/Eta-2_Heavy-Defense_Actis",
+      "attributes": {
+        "str": 34,
+        "dex": 26,
+        "int": 14
+      },
+      "notes": "Uses Fandom Eta-2 Heavy-Defense Actis stat block for repo Eta-2 Actis heavy-defense label.",
+      "changed": false
+    },
+    {
+      "name": "G-Type Escape Shuttle",
+      "sourceTitle": "G-Type Light Shuttle / Escape Shuttle",
+      "sourceUrl": "https://swse.fandom.com/wiki/G-Type_Light_Shuttle",
+      "attributes": {
+        "str": 39,
+        "dex": 18,
+        "int": 16
+      },
+      "notes": "Uses SWSE Fandom G-Type Escape Shuttle stat block on G-Type Light Shuttle page.",
+      "changed": true
+    },
+    {
+      "name": "GAT-12h Skipray Blastboat",
+      "sourceTitle": "GAT-12h Skipray Blastboat",
+      "sourceUrl": "https://swse.fandom.com/wiki/GAT-12h_Skipray_Blastboat",
+      "attributes": {
+        "str": 56,
+        "dex": 16,
+        "int": 16
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Hardcell-Class Interstellar Transport",
+      "sourceTitle": "Hardcell-Class Interstellar Transport",
+      "sourceUrl": "https://swse.fandom.com/wiki/Hardcell-Class_Interstellar_Transport",
+      "attributes": {
+        "str": 66,
+        "dex": 10,
+        "int": 18
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Helot-Class Medium Space Transport",
+      "sourceTitle": "Helot-Class Medium Space Transport",
+      "sourceUrl": "https://swse.fandom.com/wiki/Helot-Class_Medium_Space_Transport",
+      "attributes": {
+        "str": 50,
+        "dex": 12,
+        "int": 14
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "ILH-KK Citadel-Class Civilian Cruiser",
+      "sourceTitle": "ILH-KK Citadel-Class Civilian Cruiser",
+      "sourceUrl": "https://swse.fandom.com/wiki/ILH-KK_Citadel-Class_Civilian_Cruiser",
+      "attributes": {
+        "str": 42,
+        "dex": 12,
+        "int": 12
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "IPV-1 System Patrol Craft",
+      "sourceTitle": "IPV-1 Patrol Craft",
+      "sourceUrl": "https://swse.fandom.com/wiki/IPV-1_Patrol_Craft",
+      "attributes": {
+        "str": 63,
+        "dex": 20,
+        "int": 14
+      },
+      "notes": "Uses SWSE Fandom IPV-1 Patrol Craft stat block for repo system patrol craft label.",
+      "changed": true
+    },
+    {
+      "name": "Immobilizer 418 Interdictor-Class Heavy Cruiser",
+      "sourceTitle": "Interdictor-Class Star Destroyer",
+      "sourceUrl": "https://swse.fandom.com/wiki/Interdictor-Class_Star_Destroyer",
+      "attributes": {
+        "str": 94,
+        "dex": 14,
+        "int": 18
+      },
+      "notes": "Uses SWSE Fandom Interdictor-Class Star Destroyer stat block for repo Immobilizer 418 Interdictor-class label.",
+      "changed": true
+    },
+    {
+      "name": "Imperial RaDAir",
+      "sourceTitle": "Rapid Deployment Airspeeder",
+      "sourceUrl": "https://swse.fandom.com/wiki/Rapid_Deployment_Airspeeder",
+      "attributes": {
+        "str": 34,
+        "dex": 14,
+        "int": 14
+      },
+      "notes": "Uses SWSE Fandom Rapid Deployment Airspeeder stat block for repo Imperial RaDAir label.",
+      "changed": true
+    },
+    {
+      "name": "Junker Class 720 Freighter",
+      "sourceTitle": "Ghtroc 720 Freighter + Junker Vehicle Template",
+      "sourceUrl": "https://swse.fandom.com/wiki/Ghtroc_720_Freighter",
+      "attributes": {
+        "str": 36,
+        "dex": 12,
+        "int": 11
+      },
+      "notes": "Ghtroc 720 base abilities with SWSE Fandom Junker Vehicle Template applied (-4 Str, -2 Dex, -2 Int, minimum 10).",
+      "changed": true
+    },
+    {
+      "name": "LAVr QH-7 Chariot",
+      "sourceTitle": "QH-7 Chariot Command Speeder",
+      "sourceUrl": "https://swse.fandom.com/wiki/QH-7_Chariot_Command_Speeder",
+      "attributes": {
+        "str": 34,
+        "dex": 18,
+        "int": 12
+      },
+      "notes": "Uses SWSE Fandom QH-7 Chariot Command Speeder stat block for repo LAVr QH-7 Chariot label.",
+      "changed": true
+    },
+    {
+      "name": "MC140 Scythe-Class Battlecruiser",
+      "sourceTitle": "MC140 Scythe-Class Main Battle Cruiser",
+      "sourceUrl": "https://swse.fandom.com/wiki/MC140_Scythe-Class_Main_Battle_Cruiser",
+      "attributes": {
+        "str": 99,
+        "dex": 16,
+        "int": 20
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Marauder-Class Corvette",
+      "sourceTitle": "Marauder Corvette",
+      "sourceUrl": "https://swse.fandom.com/wiki/Marauder_Corvette",
+      "attributes": {
+        "str": 64,
+        "dex": 15,
+        "int": 18
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": true
+    },
+    {
+      "name": "Marauder-Class Rebel Cruiser",
+      "sourceTitle": "Marauder Corvette",
+      "sourceUrl": "https://swse.fandom.com/wiki/Marauder_Corvette",
+      "attributes": {
+        "str": 64,
+        "dex": 15,
+        "int": 18
+      },
+      "notes": "Uses SWSE Fandom Marauder Corvette stat block for repo Rebel Cruiser label.",
+      "changed": true
+    },
+    {
+      "name": "Miy'til Command Starfighter",
+      "sourceTitle": "Miy'til Fighter",
+      "sourceUrl": "https://swse.fandom.com/wiki/Miy%27til_Fighter",
+      "attributes": {
+        "str": 38,
+        "dex": 22,
+        "int": 16
+      },
+      "notes": "Uses base Miy'til Fighter abilities; Fandom command-fighter section describes equipment/weapon changes rather than a separate ability line.",
+      "changed": true
+    },
+    {
+      "name": "Miy'til Starfighter",
+      "sourceTitle": "Miy'til Fighter",
+      "sourceUrl": "https://swse.fandom.com/wiki/Miy%27til_Fighter",
+      "attributes": {
+        "str": 38,
+        "dex": 22,
+        "int": 16
+      },
+      "notes": "Uses Fandom Miy'til Fighter stat block for repo Miy'til Starfighter label.",
+      "changed": false
+    },
+    {
+      "name": "Model 67 Shrieker Speeder Bike",
+      "sourceTitle": "Model 67 Shrieker",
+      "sourceUrl": "https://swse.fandom.com/wiki/Model_67_Shrieker",
+      "attributes": {
+        "str": 18,
+        "dex": 24,
+        "int": 16
+      },
+      "notes": "Uses SWSE Fandom Model 67 Shrieker stat block for repo speeder bike label.",
+      "changed": true
+    },
+    {
+      "name": "Modified ILH-KK Citadel-Class Civilian Cruiser",
+      "sourceTitle": "ILH-KK Citadel-Class Civilian Cruiser",
+      "sourceUrl": "https://swse.fandom.com/wiki/ILH-KK_Citadel-Class_Civilian_Cruiser",
+      "attributes": {
+        "str": 42,
+        "dex": 12,
+        "int": 12
+      },
+      "notes": "Uses base Citadel-class stat block; modified entry did not expose separate source attributes in this pass.",
+      "changed": false
+    },
+    {
+      "name": "Modified Lambda-Class Shuttle",
+      "sourceTitle": "Lambda-Class Shuttle",
+      "sourceUrl": "https://swse.fandom.com/wiki/Lambda-Class_Shuttle",
+      "attributes": {
+        "str": 42,
+        "dex": 14,
+        "int": 14
+      },
+      "notes": "Uses Lambda-Class Shuttle stat block as source-backed base for modified Lambda entry.",
+      "changed": false
+    },
+    {
+      "name": "Modified Tsmeu-6 Personal Wheel Bike",
+      "sourceTitle": "Grievous' Personal Wheel Bike / Tsmeu-6 Personal Wheel Bike",
+      "sourceUrl": "https://swse.fandom.com/wiki/Grievous%27_Personal_Wheel_Bike",
+      "attributes": {
+        "str": 20,
+        "dex": 16,
+        "int": 14
+      },
+      "notes": "Fandom modified Grievous wheel bike and base Tsmeu-6 share this ability line; repo modified entry hydrated to the shared statline.",
+      "changed": true
+    },
+    {
+      "name": "Mu-2 Long Range Shuttle",
+      "sourceTitle": "Mu-Class Shuttle",
+      "sourceUrl": "https://swse.fandom.com/wiki/Mu-Class_Shuttle",
+      "attributes": {
+        "str": 42,
+        "dex": 14,
+        "int": 14
+      },
+      "notes": "Uses Mu-Class Shuttle stat block; repo name uses Mu-2 variant label.",
+      "changed": false
+    },
+    {
+      "name": "Nebulon-B Escort Frigate",
+      "sourceTitle": "Nebulon-B Escort Frigate",
+      "sourceUrl": "https://swse.fandom.com/wiki/Nebulon-B_Escort_Frigate",
+      "attributes": {
+        "str": 64,
+        "dex": 14,
+        "int": 14
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Nova-Class Battlecruiser Refit",
+      "sourceTitle": "Nova-Class Battlecruiser Refit",
+      "sourceUrl": "https://swse.fandom.com/wiki/Nova-Class_Battlecruiser_Refit",
+      "attributes": {
+        "str": 94,
+        "dex": 20,
+        "int": 16
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "NovaSword Space Superiority Fighter",
+      "sourceTitle": "NovaSword Space Superiority Fighter",
+      "sourceUrl": "https://swse.fandom.com/wiki/NovaSword_Space_Superiority_Fighter",
+      "attributes": {
+        "str": 42,
+        "dex": 22,
+        "int": 16
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Pelagia Duplex Command Assault Gunship",
+      "sourceTitle": "Orphanmaker Assault Gunship",
+      "sourceUrl": "https://swse.fandom.com/wiki/%22Orphanmaker%22_Assault_Gunship",
+      "attributes": {
+        "str": 43,
+        "dex": 14,
+        "int": 16
+      },
+      "notes": "Uses SWSE Fandom Orphanmaker Assault Gunship stat block for repo Pelagia Duplex command assault gunship label.",
+      "changed": true
+    },
+    {
+      "name": "Pelta-Class Frigate",
+      "sourceTitle": "Pelta-Class Frigate",
+      "sourceUrl": "https://swse.fandom.com/wiki/Pelta-Class_Frigate",
+      "attributes": {
+        "str": 60,
+        "dex": 14,
+        "int": 20
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Prototype Dreadnaught-Class Heavy Cruiser",
+      "sourceTitle": "Prototype Rebel Assault Frigate",
+      "sourceUrl": "https://swse.fandom.com/wiki/Prototype_Rebel_Assault_Frigate",
+      "attributes": {
+        "str": 98,
+        "dex": 12,
+        "int": 18
+      },
+      "notes": "Uses Fandom Prototype Rebel Assault Frigate stat block for current repo prototype Dreadnaught/Rebel refit entry.",
+      "changed": false
+    },
+    {
+      "name": "Raddaugh Gnasp Fluttercraft",
+      "sourceTitle": "Raddaugh Gnasp Fluttercraft",
+      "sourceUrl": "https://swse.fandom.com/wiki/Raddaugh_%22Gnasp%22_Fluttercraft",
+      "attributes": {
+        "str": 18,
+        "dex": 18,
+        "int": 16
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": true
+    },
+    {
+      "name": "Rebel Assault Frigate Mark I",
+      "sourceTitle": "Rebel Assault Frigate Mark I",
+      "sourceUrl": "https://swse.fandom.com/wiki/Rebel_Assault_Frigate_Mk_I",
+      "attributes": {
+        "str": 94,
+        "dex": 16,
+        "int": 16
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Rebel Assault Frigate Mark II",
+      "sourceTitle": "Rebel Assault Frigate Mark II",
+      "sourceUrl": "https://swse.fandom.com/wiki/Rebel_Assault_Frigate_Mk_II",
+      "attributes": {
+        "str": 94,
+        "dex": 16,
+        "int": 16
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "S-130 Shelter Medical Speeder",
+      "sourceTitle": "S-130 Shelter Speeder",
+      "sourceUrl": "https://swse.fandom.com/wiki/S-130_%22Shelter%22_Speeder",
+      "attributes": {
+        "str": 34,
+        "dex": 12,
+        "int": 14
+      },
+      "notes": "Uses SWSE Fandom S-130 Shelter Speeder stat block for repo medical speeder label.",
+      "changed": true
+    },
+    {
+      "name": "SPHA-C",
+      "sourceTitle": "SPHA",
+      "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+      "attributes": {
+        "str": 54,
+        "dex": 10,
+        "int": 14
+      },
+      "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+      "changed": false
+    },
+    {
+      "name": "SPHA-I",
+      "sourceTitle": "SPHA",
+      "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+      "attributes": {
+        "str": 54,
+        "dex": 10,
+        "int": 14
+      },
+      "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+      "changed": false
+    },
+    {
+      "name": "SPHA-M",
+      "sourceTitle": "SPHA",
+      "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+      "attributes": {
+        "str": 54,
+        "dex": 10,
+        "int": 14
+      },
+      "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+      "changed": false
+    },
+    {
+      "name": "SPHA-V",
+      "sourceTitle": "SPHA",
+      "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+      "attributes": {
+        "str": 54,
+        "dex": 10,
+        "int": 14
+      },
+      "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+      "changed": false
+    },
+    {
+      "name": "StarViper-Class Attack Platform",
+      "sourceTitle": "StarViper-Class Attack Platform",
+      "sourceUrl": "https://swse.fandom.com/wiki/StarViper-Class_Attack_Platform",
+      "attributes": {
+        "str": 44,
+        "dex": 20,
+        "int": 14
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "Storm IV Twin-Pod Cloud Car",
+      "sourceTitle": "Storm IV Cloud Car",
+      "sourceUrl": "https://swse.fandom.com/wiki/Storm_IV_Cloud_Car",
+      "attributes": {
+        "str": 26,
+        "dex": 20,
+        "int": 12
+      },
+      "notes": "Uses SWSE Fandom Storm IV Cloud Car stat block for repo twin-pod cloud car label.",
+      "changed": true
+    },
+    {
+      "name": "Talon I Combat Cloud Car",
+      "sourceTitle": "Talon I Cloud Car",
+      "sourceUrl": "https://swse.fandom.com/wiki/Talon_I_Cloud_Car",
+      "attributes": {
+        "str": 32,
+        "dex": 22,
+        "int": 12
+      },
+      "notes": "Uses SWSE Fandom Talon I Cloud Car stat block for repo combat cloud car label.",
+      "changed": true
+    },
+    {
+      "name": "The Crimson Axe",
+      "sourceTitle": "The Crimson Axe",
+      "sourceUrl": "https://swse.fandom.com/wiki/The_Crimson_Axe",
+      "attributes": {
+        "str": 60,
+        "dex": 16,
+        "int": 14
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    },
+    {
+      "name": "The Glorious Chariot",
+      "sourceTitle": "Luxury 3000 Space Yacht",
+      "sourceUrl": "https://swse.fandom.com/wiki/Luxury_3000_Space_Yacht",
+      "attributes": {
+        "str": 42,
+        "dex": 14,
+        "int": 14
+      },
+      "notes": "Uses Luxury 3000 base stat block for named yacht entry.",
+      "changed": false
+    },
+    {
+      "name": "The Visionary",
+      "sourceTitle": "The Starscape",
+      "sourceUrl": "https://swse.fandom.com/wiki/The_Starscape",
+      "attributes": {
+        "str": 42,
+        "dex": 12,
+        "int": 12
+      },
+      "notes": "Uses The Starscape stat block; Fandom notes The Starscape is a modified YT-1930 and is listed in repo as The Visionary.",
+      "changed": false
+    },
+    {
+      "name": "Y-Wing \"Courier\" Variant",
+      "sourceTitle": "Y-Wing Courier",
+      "sourceUrl": "https://swse.fandom.com/wiki/Y-Wing_Courier",
+      "attributes": {
+        "str": 42,
+        "dex": 16,
+        "int": 16
+      },
+      "notes": "Uses SWSE Fandom Y-Wing Courier stat block for repo courier variant label.",
+      "changed": true
+    },
+    {
+      "name": "Y-Wing \"LongProbe\"",
+      "sourceTitle": "Y-Wing Longprobe",
+      "sourceUrl": "https://swse.fandom.com/wiki/Y-Wing_Longprobe",
+      "attributes": {
+        "str": 42,
+        "dex": 18,
+        "int": 20
+      },
+      "notes": "Direct SWSE Fandom vehicle stat block.",
+      "changed": false
+    }
+  ],
+  "remainingDefaultAttributeRows": [
+    {
+      "name": "Sabertooth-Class Assault/Rescue Vessel",
+      "bucket": "capital-ships",
+      "speed": "12 squares",
+      "crew": "1 (normal crew)"
+    }
+  ],
+  "remainingIntBase10Rows": [
+    {
+      "name": "\"Oevvaor\" Jet Catamaran",
+      "bucket": "airspeeders",
+      "str": 22,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "\"Vulture\" Droid Starfighter",
+      "bucket": "starfighters",
+      "str": 34,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "\"Vulture\" Droid Starfighter",
+      "bucket": "starfighters",
+      "str": 34,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "74-M Speeder Bike",
+      "bucket": "speeders",
+      "str": 18,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "74-Z Speeder Bike",
+      "bucket": "speeders",
+      "str": 18,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "A-7 Hunter Interceptor",
+      "bucket": "starfighters",
+      "str": 34,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "A-A5 Speeder Truck",
+      "bucket": "speeders",
+      "str": 28,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "A-Wing Starfighter",
+      "bucket": "starfighters",
+      "str": 36,
+      "dex": 26,
+      "int": 10
+    },
+    {
+      "name": "A519 Invader Close Support Starfighter",
+      "bucket": "starfighters",
+      "str": 36,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "AAT-1",
+      "bucket": "speeders",
+      "str": 36,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "AT-AA",
+      "bucket": "walkers",
+      "str": 44,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "AT-AHT",
+      "bucket": "walkers",
+      "str": 52,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "AT-AP",
+      "bucket": "walkers",
+      "str": 36,
+      "dex": 12,
+      "int": 10
+    },
+    {
+      "name": "AT-AT",
+      "bucket": "walkers",
+      "str": 48,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "AT-CT",
+      "bucket": "walkers",
+      "str": 36,
+      "dex": 20,
+      "int": 10
+    },
+    {
+      "name": "AT-KT",
+      "bucket": "walkers",
+      "str": 30,
+      "dex": 20,
+      "int": 10
+    },
+    {
+      "name": "AT-PT",
+      "bucket": "walkers",
+      "str": 24,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "AT-RCT",
+      "bucket": "walkers",
+      "str": 30,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "AT-RT",
+      "bucket": "walkers",
+      "str": 22,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "AT-ST",
+      "bucket": "walkers",
+      "str": 30,
+      "dex": 20,
+      "int": 10
+    },
+    {
+      "name": "AT-TE",
+      "bucket": "walkers",
+      "str": 42,
+      "dex": 20,
+      "int": 10
+    },
+    {
+      "name": "AT-XT",
+      "bucket": "walkers",
+      "str": 26,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Acclamator II-Class Assault Ship",
+      "bucket": "capital-ships",
+      "str": 86,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Advanced V-19 Torrent Starfighter",
+      "bucket": "starfighters",
+      "str": 44,
+      "dex": 30,
+      "int": 10
+    },
+    {
+      "name": "AeroChaser Speeder Bike",
+      "bucket": "speeders",
+      "str": 16,
+      "dex": 20,
+      "int": 10
+    },
+    {
+      "name": "Air-2 Racing Swoop",
+      "bucket": "airspeeders",
+      "str": 22,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "Ardent-Class Fast Frigate",
+      "bucket": "capital-ships",
+      "str": 66,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Arrow-23 Landspeeder",
+      "bucket": "speeders",
+      "str": 32,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "Aurek Tactical Strikefighter",
+      "bucket": "starfighters",
+      "str": 40,
+      "dex": 28,
+      "int": 10
+    },
+    {
+      "name": "B-Wing Shuttle",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "B-Wing Starfighter",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "B-Wing/E2 Starfighter",
+      "bucket": "starfighters",
+      "str": 46,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "BARC Speeder",
+      "bucket": "speeders",
+      "str": 18,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "BC-714 Luxury Transport",
+      "bucket": "space-transports",
+      "str": 44,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Baas-Class Space Station",
+      "bucket": "space-stations",
+      "str": 86,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Bantha-II Cargo Skiff",
+      "bucket": "speeders",
+      "str": 34,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Baronial-Class Yacht",
+      "bucket": "space-transports",
+      "str": 40,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Basilisk War Droid",
+      "bucket": "airspeeders",
+      "str": 28,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Baudo-Class Star Yacht",
+      "bucket": "space-transports",
+      "str": 34,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Belbullab Heavy Starfighter",
+      "bucket": "starfighters",
+      "str": 46,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Belbullab Heavy Starfighter",
+      "bucket": "starfighters",
+      "str": 46,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Belbullab Heavy Starfighter",
+      "bucket": "starfighters",
+      "str": 46,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Broadside-Class Cruiser",
+      "bucket": "capital-ships",
+      "str": 92,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "C-9979 Landing Craft",
+      "bucket": "space-transports",
+      "str": 58,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "CF9 Crossfire Starfighter",
+      "bucket": "starfighters",
+      "str": 46,
+      "dex": 26,
+      "int": 10
+    },
+    {
+      "name": "CIS-Advanced Starfighter",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "CK-6 Freeco Speeder Bike",
+      "bucket": "speeders",
+      "str": 32,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "CR70 Corellian Corvette",
+      "bucket": "capital-ships",
+      "str": 66,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "CS-1 Cargo Sled",
+      "bucket": "speeders",
+      "str": 20,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "CX-133 Chaos Fighter",
+      "bucket": "starfighters",
+      "str": 36,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "Canderous-Class Assault Tank",
+      "bucket": "speeders",
+      "str": 58,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "Cardan I-Class Space Station",
+      "bucket": "space-stations",
+      "str": 106,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Cardan II-Class Space Station",
+      "bucket": "space-stations",
+      "str": 114,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Cardan III-Class Space Station",
+      "bucket": "space-stations",
+      "str": 122,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Carrack-Class Light Cruiser",
+      "bucket": "capital-ships",
+      "str": 70,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Centurion-Class Battlecruiser",
+      "bucket": "capital-ships",
+      "str": 100,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "CloakShape Fighter",
+      "bucket": "starfighters",
+      "str": 44,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Conductor-Class Short-Haul Landing Craft",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Conqueror-Class Assault Ship",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "Coralskipper",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "Corellian Barloz-Class Medium Freighter",
+      "bucket": "space-transports",
+      "str": 50,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Corellian CR-20 Troop Transport",
+      "bucket": "space-transports",
+      "str": 66,
+      "dex": 12,
+      "int": 10
+    },
+    {
+      "name": "Corellian Crix-Class Assault Shuttle",
+      "bucket": "space-transports",
+      "str": 52,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "Corellian Crix-Class Courier Shuttle",
+      "bucket": "space-transports",
+      "str": 52,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "Corellian HWK-290 Light Freighter",
+      "bucket": "space-transports",
+      "str": 46,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "Corellian MT Dropship",
+      "bucket": "space-transports",
+      "str": 66,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Corellian Nemesis-Class Patrol Ship",
+      "bucket": "space-transports",
+      "str": 46,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Corellian S-250 Chela-Class Starfighter",
+      "bucket": "starfighters",
+      "str": 42,
+      "dex": 20,
+      "int": 10
+    },
+    {
+      "name": "Corellian VCX-350 Light Freighter",
+      "bucket": "space-transports",
+      "str": 46,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Corellian YT-1250 Freighter",
+      "bucket": "space-transports",
+      "str": 44,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Corellian YT-1300 Transport",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Corellian YT-1930 Transport",
+      "bucket": "space-transports",
+      "str": 46,
+      "dex": 2,
+      "int": 10
+    },
+    {
+      "name": "Corellian YT-2000 Transport",
+      "bucket": "space-transports",
+      "str": 44,
+      "dex": 6,
+      "int": 10
+    },
+    {
+      "name": "Corellian YT-2400 Transport",
+      "bucket": "space-transports",
+      "str": 44,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "Corellian YU-410 Light Freighter",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Corellian YV-545 Light Freighter",
+      "bucket": "space-transports",
+      "str": 44,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Corellian YX-1980 Transport",
+      "bucket": "space-transports",
+      "str": 46,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "Corellian YZ-775 Medium Transport",
+      "bucket": "space-transports",
+      "str": 58,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "Corona Luxury Groundspeeder",
+      "bucket": "speeders",
+      "str": 38,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "Cutlass-9 Patrol Fighter",
+      "bucket": "starfighters",
+      "str": 42,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "DC0052 \"Intergalactic\" Speeder",
+      "bucket": "airspeeders",
+      "str": 16,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "DP20 Corellian Frigate",
+      "bucket": "capital-ships",
+      "str": 68,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "Dagger-Class Starfighter",
+      "bucket": "starfighters",
+      "str": 34,
+      "dex": 12,
+      "int": 10
+    },
+    {
+      "name": "Davaab-Type Starfighter",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 26,
+      "int": 10
+    },
+    {
+      "name": "Delta-7 Aethersprite Interceptor",
+      "bucket": "starfighters",
+      "str": 34,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "Derriphan-Class Battleship",
+      "bucket": "capital-ships",
+      "str": 60,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "Diamond-Class Cruiser",
+      "bucket": "space-transports",
+      "str": 60,
+      "dex": 12,
+      "int": 10
+    },
+    {
+      "name": "Dianoga-Class Assault Starfighter",
+      "bucket": "starfighters",
+      "str": 36,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "Dreadnaught-Class Heavy Cruiser",
+      "bucket": "capital-ships",
+      "str": 96,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Droch-Class Boarding Ship",
+      "bucket": "starfighters",
+      "str": 34,
+      "dex": 12,
+      "int": 10
+    },
+    {
+      "name": "Droid Tri-Fighter",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "Drop Pod",
+      "bucket": "airspeeders",
+      "str": 34,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Dynamic-Class Freighter",
+      "bucket": "space-transports",
+      "str": 40,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Eclipse-Class Star Dreadnought",
+      "bucket": "capital-ships",
+      "str": 358,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Endurance-Class Fleet Carrier",
+      "bucket": "capital-ships",
+      "str": 102,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Escape Pod",
+      "bucket": "starfighters",
+      "str": 40,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "Eta-2 Actis Interceptor",
+      "bucket": "starfighters",
+      "str": 34,
+      "dex": 26,
+      "int": 10
+    },
+    {
+      "name": "Executor-Class Star Dreadnought",
+      "bucket": "capital-ships",
+      "str": 138,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "F9-TZ Transport",
+      "bucket": "space-transports",
+      "str": 38,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "FC-20 Speeder Bike",
+      "bucket": "speeders",
+      "str": 16,
+      "dex": 30,
+      "int": 10
+    },
+    {
+      "name": "Flare-S Swoop",
+      "bucket": "airspeeders",
+      "str": 20,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "Foray-Class Blockade Runner",
+      "bucket": "capital-ships",
+      "str": 60,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "Fury-Class Starfighter",
+      "bucket": "starfighters",
+      "str": 50,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "G-Type Light Shuttle",
+      "bucket": "space-transports",
+      "str": 38,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "GPE-3300 Airspeeder",
+      "bucket": "airspeeders",
+      "str": 20,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "GPE-7300 Space Transport",
+      "bucket": "space-transports",
+      "str": 46,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "GR-75 Medium Transport",
+      "bucket": "capital-ships",
+      "str": 58,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "GS-100 Salvage Ship",
+      "bucket": "space-transports",
+      "str": 50,
+      "dex": 2,
+      "int": 10
+    },
+    {
+      "name": "Gamma-Class Assault Shuttle",
+      "bucket": "space-transports",
+      "str": 46,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "Ghtroc 720 Freighter",
+      "bucket": "space-transports",
+      "str": 40,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Ginivex-Class Starfighter",
+      "bucket": "starfighters",
+      "str": 36,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "Gladiator-Class Star Destroyer",
+      "bucket": "capital-ships",
+      "str": 92,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Gladius-Class Light Freighter",
+      "bucket": "space-transports",
+      "str": 44,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "Golan VIII Space Defense Platform",
+      "bucket": "space-stations",
+      "str": 130,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Gozanti Cruiser",
+      "bucket": "space-transports",
+      "str": 48,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Guardian-Class Light Cruiser",
+      "bucket": "space-transports",
+      "str": 66,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "Gymsnor-3 Light Freighter",
+      "bucket": "space-transports",
+      "str": 46,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "H-60 Tempest Bomber",
+      "bucket": "starfighters",
+      "str": 46,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "HSP-10 Pursuit Airspeeder",
+      "bucket": "airspeeders",
+      "str": 22,
+      "dex": 20,
+      "int": 10
+    },
+    {
+      "name": "Hapan Battle Dragon",
+      "bucket": "capital-ships",
+      "str": 104,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Herald-Class Shuttle",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 6,
+      "int": 10
+    },
+    {
+      "name": "Hound's Tooth",
+      "bucket": "space-transports",
+      "str": 50,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Hyena-Class Bomber",
+      "bucket": "starfighters",
+      "str": 34,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Hyperspace Beacon",
+      "bucket": "space-stations",
+      "str": 32,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "I4 Ionizer Starfighter",
+      "bucket": "starfighters",
+      "str": 42,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "IF-120 Landing Craft",
+      "bucket": "space-transports",
+      "str": 44,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Imperial Customs Corvette",
+      "bucket": "space-transports",
+      "str": 56,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "Imperial II-Class Star Destroyer",
+      "bucket": "capital-ships",
+      "str": 102,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Imperious-Class Star Destroyer",
+      "bucket": "capital-ships",
+      "str": 106,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "J-1 Shuttle",
+      "bucket": "space-transports",
+      "str": 40,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "J-Type Star Skiff",
+      "bucket": "space-transports",
+      "str": 48,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "Jumpstar HPF Starfighter",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "Junker TYE-Wing",
+      "bucket": "starfighters",
+      "str": 30,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "K-Wing Assault Starfighter",
+      "bucket": "starfighters",
+      "str": 46,
+      "dex": 20,
+      "int": 10
+    },
+    {
+      "name": "KAAC Freerunner",
+      "bucket": "speeders",
+      "str": 42,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "KT-400 Military Droid Carrier",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Kappa-Class Shuttle",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Kazellis-Class Light Freighter",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "Krayt's Honor",
+      "bucket": "space-transports",
+      "str": 54,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Kybuck Speeder Bike",
+      "bucket": "speeders",
+      "str": 20,
+      "dex": 26,
+      "int": 10
+    },
+    {
+      "name": "LAAT/c Gunship",
+      "bucket": "airspeeders",
+      "str": 40,
+      "dex": 2,
+      "int": 10
+    },
+    {
+      "name": "LAAT/i Gunship",
+      "bucket": "airspeeders",
+      "str": 42,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Lambda-Class Shuttle",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Lancer-Class Frigate",
+      "bucket": "capital-ships",
+      "str": 66,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Lancet Aerial Artillery",
+      "bucket": "airspeeders",
+      "str": 38,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Laser Borer",
+      "bucket": "speeders",
+      "str": 32,
+      "dex": 20,
+      "int": 10
+    },
+    {
+      "name": "Lethisk-Class Armed Freighter",
+      "bucket": "space-transports",
+      "str": 46,
+      "dex": 2,
+      "int": 10
+    },
+    {
+      "name": "Lucrehulk-Class Battleship",
+      "bucket": "capital-ships",
+      "str": 98,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Lucrehulk-Class Core Ship",
+      "bucket": "capital-ships",
+      "str": 94,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Lucrehulk-Class Droid Control Ship",
+      "bucket": "capital-ships",
+      "str": 98,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Luke's Snowspeeder",
+      "bucket": "speeders",
+      "str": 22,
+      "dex": 30,
+      "int": 10
+    },
+    {
+      "name": "M3-A Scyk Fighter",
+      "bucket": "starfighters",
+      "str": 44,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "MC-24a Light Shuttle",
+      "bucket": "space-transports",
+      "str": 38,
+      "dex": 6,
+      "int": 10
+    },
+    {
+      "name": "MC80 Star Cruiser",
+      "bucket": "capital-ships",
+      "str": 98,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "MC80a Star Cruiser",
+      "bucket": "capital-ships",
+      "str": 98,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "MR/RV",
+      "bucket": "speeders",
+      "str": 38,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "MRX-BR Pacifier",
+      "bucket": "space-transports",
+      "str": 34,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "MTT",
+      "bucket": "speeders",
+      "str": 42,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "Maka-Eekai L4000 Transport",
+      "bucket": "space-transports",
+      "str": 52,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "Mankvim-814 Light Interceptor",
+      "bucket": "starfighters",
+      "str": 32,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "Manta Droid Subfighter",
+      "bucket": "speeders",
+      "str": 24,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "MedStar-Class Frigate",
+      "bucket": "capital-ships",
+      "str": 58,
+      "dex": 12,
+      "int": 10
+    },
+    {
+      "name": "Medlifter Troop Transport",
+      "bucket": "airspeeders",
+      "str": 20,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Mekuun Heavy Tracker",
+      "bucket": "speeders",
+      "str": 52,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Ministry-Class Orbital Shuttle",
+      "bucket": "space-transports",
+      "str": 40,
+      "dex": 6,
+      "int": 10
+    },
+    {
+      "name": "Miy'til Assault Bomber",
+      "bucket": "starfighters",
+      "str": 44,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "Mobile Spacedock 220",
+      "bucket": "space-stations",
+      "str": 126,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Modified T-47 Airspeeder",
+      "bucket": "airspeeders",
+      "str": 22,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "Munificent-Class Frigate",
+      "bucket": "capital-ships",
+      "str": 88,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "N-1 Royal Starfighter",
+      "bucket": "starfighters",
+      "str": 34,
+      "dex": 12,
+      "int": 10
+    },
+    {
+      "name": "Nantex-Class Territorial Starfighter",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 28,
+      "int": 10
+    },
+    {
+      "name": "Nebula-Class Star Destroyer",
+      "bucket": "capital-ships",
+      "str": 102,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Neutralizer-Class Bomber",
+      "bucket": "starfighters",
+      "str": 42,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "Neutron Star-Class Bulk Cruiser",
+      "bucket": "capital-ships",
+      "str": 92,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Nova-Class Battlecruiser",
+      "bucket": "capital-ships",
+      "str": 94,
+      "dex": 2,
+      "int": 10
+    },
+    {
+      "name": "Nssis-Class Clawcraft",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 26,
+      "int": 10
+    },
+    {
+      "name": "Nu-Class Attack Shuttle",
+      "bucket": "space-transports",
+      "str": 40,
+      "dex": 6,
+      "int": 10
+    },
+    {
+      "name": "Nune-Class Imperial Shuttle",
+      "bucket": "space-transports",
+      "str": 46,
+      "dex": 6,
+      "int": 10
+    },
+    {
+      "name": "OG-9 Homing Spider Droid",
+      "bucket": "walkers",
+      "str": 24,
+      "dex": 12,
+      "int": 10
+    },
+    {
+      "name": "Octuptarra Magna Tri-Droid",
+      "bucket": "walkers",
+      "str": 34,
+      "dex": 12,
+      "int": 10
+    },
+    {
+      "name": "Outbound Flight",
+      "bucket": "capital-ships",
+      "str": 218,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "P-38 Starfighter",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "PAC",
+      "bucket": "speeders",
+      "str": 30,
+      "dex": 2,
+      "int": 10
+    },
+    {
+      "name": "PL-90 Luxury Speeder",
+      "bucket": "speeders",
+      "str": 24,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "PTV-2100 Incarcerator",
+      "bucket": "space-transports",
+      "str": 70,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Pellaeon-Class Star Destroyer",
+      "bucket": "capital-ships",
+      "str": 104,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Penumbra-Class Attack Shuttle",
+      "bucket": "space-transports",
+      "str": 40,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "Phoebos-Class Starfighter",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "Predator-Class Starfighter",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 28,
+      "int": 10
+    },
+    {
+      "name": "Protector VI Patrol Speeder",
+      "bucket": "speeders",
+      "str": 36,
+      "dex": 20,
+      "int": 10
+    },
+    {
+      "name": "Providence-Class Destroyer",
+      "bucket": "capital-ships",
+      "str": 98,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Punworcca 116-Class Interstellar Sloop",
+      "bucket": "space-transports",
+      "str": 34,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "Pursuer-Class Enforcement Ship",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "R-28 Starfighter",
+      "bucket": "starfighters",
+      "str": 46,
+      "dex": 20,
+      "int": 10
+    },
+    {
+      "name": "R-41 Starchaser",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 20,
+      "int": 10
+    },
+    {
+      "name": "R-42 Starchaser",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 20,
+      "int": 10
+    },
+    {
+      "name": "RC-2 Twilight Scoutship",
+      "bucket": "starfighters",
+      "str": 42,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "RTT",
+      "bucket": "airspeeders",
+      "str": 34,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Recusant-Class Light Destroyer",
+      "bucket": "capital-ships",
+      "str": 90,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "SCT Scout Craft",
+      "bucket": "space-transports",
+      "str": 58,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "SPHA",
+      "bucket": "walkers",
+      "str": 54,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "STAP",
+      "bucket": "airspeeders",
+      "str": 12,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "Sabaoth Destroyer",
+      "bucket": "capital-ships",
+      "str": 62,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Sabertooth-Class Assault/Rescue Vessel",
+      "bucket": "capital-ships",
+      "str": 10,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "Scarab-Class Droid Starfighter",
+      "bucket": "starfighters",
+      "str": 36,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Scimitar Assault Bomber",
+      "bucket": "starfighters",
+      "str": 46,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "Seltiss-2 Caravel",
+      "bucket": "space-transports",
+      "str": 52,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "Seltiss-2 Caravel Cabin",
+      "bucket": "space-transports",
+      "str": 32,
+      "dex": 12,
+      "int": 10
+    },
+    {
+      "name": "Sentinel-Class Landing Craft",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "ShaShore-Class Frigate",
+      "bucket": "capital-ships",
+      "str": 62,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "Shaadlar-Type Troopship",
+      "bucket": "space-transports",
+      "str": 60,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Shackles of Nizon",
+      "bucket": "space-transports",
+      "str": 52,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Sheathipede-Class Shuttle",
+      "bucket": "space-transports",
+      "str": 44,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Sigma-Class Long-Range Shuttle",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "Sith Infiltrator",
+      "bucket": "space-transports",
+      "str": 38,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "Sith Interceptor",
+      "bucket": "starfighters",
+      "str": 32,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "SkyBlind Landing Sphere",
+      "bucket": "airspeeders",
+      "str": 30,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "SkyBlind Recon Ship",
+      "bucket": "space-transports",
+      "str": 50,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Slave I",
+      "bucket": "space-transports",
+      "str": 46,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "Spinward-Class Tender",
+      "bucket": "capital-ships",
+      "str": 54,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "Star Galleon-Class Frigate",
+      "bucket": "capital-ships",
+      "str": 72,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Star Saber XC-01 Starfighter",
+      "bucket": "starfighters",
+      "str": 42,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "StarForge Station",
+      "bucket": "space-stations",
+      "str": 138,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Strike-Class Medium Cruiser",
+      "bucket": "capital-ships",
+      "str": 98,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Subjugator-Class Heavy Cruiser",
+      "bucket": "capital-ships",
+      "str": 96,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Swift Assault 5 Hovercraft",
+      "bucket": "speeders",
+      "str": 46,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "T-65B X-Wing Starfighter",
+      "bucket": "starfighters",
+      "str": 42,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "T-65BR X-Wing Starfighter",
+      "bucket": "starfighters",
+      "str": 42,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "T-65XJ3 X-Wing Starfighter",
+      "bucket": "starfighters",
+      "str": 46,
+      "dex": 26,
+      "int": 10
+    },
+    {
+      "name": "T2-B Repulsor Tank",
+      "bucket": "speeders",
+      "str": 38,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "TIE Advanced",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "TIE Bomber",
+      "bucket": "starfighters",
+      "str": 42,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "TIE Defender",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 30,
+      "int": 10
+    },
+    {
+      "name": "TIE Fighter",
+      "bucket": "starfighters",
+      "str": 34,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "TIE Interceptor",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "TIE Prototype",
+      "bucket": "starfighters",
+      "str": 34,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "TIE Shuttle",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "TL-1800 Light Freighter",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 6,
+      "int": 10
+    },
+    {
+      "name": "TT-6 Landspeeder",
+      "bucket": "speeders",
+      "str": 18,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "TX-130 Saber-Class Fighter Tank",
+      "bucket": "speeders",
+      "str": 32,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "TX-130T Fighter Tank",
+      "bucket": "speeders",
+      "str": 32,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "Tartan-Class Patrol Cruiser",
+      "bucket": "capital-ships",
+      "str": 60,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "Teroch-Type Gunship",
+      "bucket": "space-transports",
+      "str": 40,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "The Azure Angel",
+      "bucket": "starfighters",
+      "str": 34,
+      "dex": 28,
+      "int": 10
+    },
+    {
+      "name": "The Banshee",
+      "bucket": "space-transports",
+      "str": 34,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "The Blood Brother",
+      "bucket": "space-transports",
+      "str": 68,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "The Bloody Credit",
+      "bucket": "space-transports",
+      "str": 52,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "The Ebon Hawk",
+      "bucket": "space-transports",
+      "str": 44,
+      "dex": 6,
+      "int": 10
+    },
+    {
+      "name": "The Grinning Liar",
+      "bucket": "space-transports",
+      "str": 46,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "The Indomitable",
+      "bucket": "capital-ships",
+      "str": 98,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "The Invisible Hand",
+      "bucket": "capital-ships",
+      "str": 98,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "The Last Resort",
+      "bucket": "space-transports",
+      "str": 38,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "The Millennium Falcon",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "The Moomo Williwaw",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 4,
+      "int": 10
+    },
+    {
+      "name": "The Mynock",
+      "bucket": "space-transports",
+      "str": 50,
+      "dex": 12,
+      "int": 10
+    },
+    {
+      "name": "The Scarlet Star",
+      "bucket": "space-transports",
+      "str": 44,
+      "dex": 8,
+      "int": 10
+    },
+    {
+      "name": "The Virago",
+      "bucket": "starfighters",
+      "str": 44,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "The Wheel",
+      "bucket": "space-stations",
+      "str": 136,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Theta-Class Shuttle",
+      "bucket": "space-transports",
+      "str": 42,
+      "dex": 6,
+      "int": 10
+    },
+    {
+      "name": "Tibanna Gas Hauler",
+      "bucket": "space-transports",
+      "str": 46,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Tibanna Refinery Platform",
+      "bucket": "space-stations",
+      "str": 18,
+      "dex": 2,
+      "int": 10
+    },
+    {
+      "name": "Ton-Falk-Class Escort Carrier",
+      "bucket": "capital-ships",
+      "str": 58,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Toscan 8-Q Starfighter",
+      "bucket": "starfighters",
+      "str": 44,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "Tri-Scythe-Class Frigate",
+      "bucket": "capital-ships",
+      "str": 62,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Tsmeu-6 Personal Wheel Bike",
+      "bucket": "wheeled-vehicles",
+      "str": 20,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "Twin-228 Airspeeder",
+      "bucket": "airspeeders",
+      "str": 22,
+      "dex": 20,
+      "int": 10
+    },
+    {
+      "name": "U-LAV",
+      "bucket": "speeders",
+      "str": 34,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "UR-40M Patrol Speeder",
+      "bucket": "speeders",
+      "str": 36,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "UT-AT",
+      "bucket": "walkers",
+      "str": 28,
+      "dex": 10,
+      "int": 10
+    },
+    {
+      "name": "Urban Bombardier Speeder Bike",
+      "bucket": "speeders",
+      "str": 16,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "Urban Navigator Speeder Bike",
+      "bucket": "airspeeders",
+      "str": 16,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "V-19 Torrent Starfighter",
+      "bucket": "starfighters",
+      "str": 38,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "V-35 Courier",
+      "bucket": "speeders",
+      "str": 18,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "V-Wing Starfighter",
+      "bucket": "starfighters",
+      "str": 36,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "VT-49 Decimator",
+      "bucket": "space-transports",
+      "str": 44,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "Vaya-Class Scout Ship",
+      "bucket": "space-transports",
+      "str": 38,
+      "dex": 6,
+      "int": 10
+    },
+    {
+      "name": "Veltiss-2 Airspeeder",
+      "bucket": "airspeeders",
+      "str": 20,
+      "dex": 22,
+      "int": 10
+    },
+    {
+      "name": "Venator-Class Star Destroyer",
+      "bucket": "capital-ships",
+      "str": 94,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Victory I-Class Star Destroyer",
+      "bucket": "capital-ships",
+      "str": 80,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Victory II-Class Star Destroyer",
+      "bucket": "capital-ships",
+      "str": 92,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Vindicator-Class Heavy Cruiser",
+      "bucket": "capital-ships",
+      "str": 98,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Viper Swoop Bike",
+      "bucket": "speeders",
+      "str": 16,
+      "dex": 26,
+      "int": 10
+    },
+    {
+      "name": "WLO-5 Speeder Tank",
+      "bucket": "speeders",
+      "str": 46,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "WLO-5 Speeder Tank",
+      "bucket": "speeders",
+      "str": 46,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Wind Skiff",
+      "bucket": "wheeled-vehicles",
+      "str": 30,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "X-34 Landspeeder",
+      "bucket": "speeders",
+      "str": 18,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "X-34 Speeder Escort",
+      "bucket": "speeders",
+      "str": 18,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "X-83 TwinTail Starfighter",
+      "bucket": "starfighters",
+      "str": 48,
+      "dex": 24,
+      "int": 10
+    },
+    {
+      "name": "XQ2 Space Platform",
+      "bucket": "space-stations",
+      "str": 130,
+      "dex": 1,
+      "int": 10
+    },
+    {
+      "name": "Y-Wing Starfighter",
+      "bucket": "starfighters",
+      "str": 42,
+      "dex": 18,
+      "int": 10
+    },
+    {
+      "name": "Y164 Slave Transport",
+      "bucket": "space-transports",
+      "str": 58,
+      "dex": 12,
+      "int": 10
+    },
+    {
+      "name": "YE-4 Gunship",
+      "bucket": "space-transports",
+      "str": 48,
+      "dex": 16,
+      "int": 10
+    },
+    {
+      "name": "YKL-37R Nova Courier",
+      "bucket": "space-transports",
+      "str": 44,
+      "dex": 6,
+      "int": 10
+    },
+    {
+      "name": "Z-95 Headhunter",
+      "bucket": "starfighters",
+      "str": 42,
+      "dex": 14,
+      "int": 10
+    },
+    {
+      "name": "Zebra Starfighter",
+      "bucket": "starfighters",
+      "str": 44,
+      "dex": 12,
+      "int": 10
+    }
+  ],
+  "updatedByFile": {
+    "packs/vehicles-airspeeders.db": [
+      {
+        "name": "AEG-77 Vigo Gunship",
+        "sourceTitle": "AEG-77 Vigo Gunship",
+        "sourceUrl": "https://swse.fandom.com/wiki/AEG-77_%22Vigo%22_Gunship",
+        "attributes": {
+          "str": 42,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Aerosled Mark III",
+        "sourceTitle": "Aerosled Mk III",
+        "sourceUrl": "https://swse.fandom.com/wiki/Aerosled_Mk_III",
+        "attributes": {
+          "str": 18,
+          "dex": 22,
+          "int": 16
+        },
+        "notes": "Uses SWSE Fandom Aerosled Mk III stat block for repo Mark III label.",
+        "changed": true
+      },
+      {
+        "name": "Imperial RaDAir",
+        "sourceTitle": "Rapid Deployment Airspeeder",
+        "sourceUrl": "https://swse.fandom.com/wiki/Rapid_Deployment_Airspeeder",
+        "attributes": {
+          "str": 34,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Uses SWSE Fandom Rapid Deployment Airspeeder stat block for repo Imperial RaDAir label.",
+        "changed": true
+      },
+      {
+        "name": "Pelagia Duplex Command Assault Gunship",
+        "sourceTitle": "Orphanmaker Assault Gunship",
+        "sourceUrl": "https://swse.fandom.com/wiki/%22Orphanmaker%22_Assault_Gunship",
+        "attributes": {
+          "str": 43,
+          "dex": 14,
+          "int": 16
+        },
+        "notes": "Uses SWSE Fandom Orphanmaker Assault Gunship stat block for repo Pelagia Duplex command assault gunship label.",
+        "changed": true
+      },
+      {
+        "name": "Raddaugh Gnasp Fluttercraft",
+        "sourceTitle": "Raddaugh Gnasp Fluttercraft",
+        "sourceUrl": "https://swse.fandom.com/wiki/Raddaugh_%22Gnasp%22_Fluttercraft",
+        "attributes": {
+          "str": 18,
+          "dex": 18,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": true
+      },
+      {
+        "name": "Storm IV Twin-Pod Cloud Car",
+        "sourceTitle": "Storm IV Cloud Car",
+        "sourceUrl": "https://swse.fandom.com/wiki/Storm_IV_Cloud_Car",
+        "attributes": {
+          "str": 26,
+          "dex": 20,
+          "int": 12
+        },
+        "notes": "Uses SWSE Fandom Storm IV Cloud Car stat block for repo twin-pod cloud car label.",
+        "changed": true
+      },
+      {
+        "name": "Talon I Combat Cloud Car",
+        "sourceTitle": "Talon I Cloud Car",
+        "sourceUrl": "https://swse.fandom.com/wiki/Talon_I_Cloud_Car",
+        "attributes": {
+          "str": 32,
+          "dex": 22,
+          "int": 12
+        },
+        "notes": "Uses SWSE Fandom Talon I Cloud Car stat block for repo combat cloud car label.",
+        "changed": true
+      }
+    ],
+    "packs/vehicles-capital-ships.db": [
+      {
+        "name": "Acclamator I-Class Assault Ship",
+        "sourceTitle": "Acclamator I-Class Assault Ship",
+        "sourceUrl": "https://swse.fandom.com/wiki/Acclamator_I-Class_Assault_Ship",
+        "attributes": {
+          "str": 86,
+          "dex": 14,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Archaic Dreadnaught-Class Heavy Cruiser",
+        "sourceTitle": "Archaic Heavy Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/Archaic_Heavy_Cruiser",
+        "attributes": {
+          "str": 96,
+          "dex": 10,
+          "int": 16
+        },
+        "notes": "Uses Fandom Archaic Heavy Cruiser stat block for repo's archaic Dreadnaught entry.",
+        "changed": false
+      },
+      {
+        "name": "Immobilizer 418 Interdictor-Class Heavy Cruiser",
+        "sourceTitle": "Interdictor-Class Star Destroyer",
+        "sourceUrl": "https://swse.fandom.com/wiki/Interdictor-Class_Star_Destroyer",
+        "attributes": {
+          "str": 94,
+          "dex": 14,
+          "int": 18
+        },
+        "notes": "Uses SWSE Fandom Interdictor-Class Star Destroyer stat block for repo Immobilizer 418 Interdictor-class label.",
+        "changed": true
+      },
+      {
+        "name": "IPV-1 System Patrol Craft",
+        "sourceTitle": "IPV-1 Patrol Craft",
+        "sourceUrl": "https://swse.fandom.com/wiki/IPV-1_Patrol_Craft",
+        "attributes": {
+          "str": 63,
+          "dex": 20,
+          "int": 14
+        },
+        "notes": "Uses SWSE Fandom IPV-1 Patrol Craft stat block for repo system patrol craft label.",
+        "changed": true
+      },
+      {
+        "name": "Marauder-Class Corvette",
+        "sourceTitle": "Marauder Corvette",
+        "sourceUrl": "https://swse.fandom.com/wiki/Marauder_Corvette",
+        "attributes": {
+          "str": 64,
+          "dex": 15,
+          "int": 18
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": true
+      },
+      {
+        "name": "Marauder-Class Rebel Cruiser",
+        "sourceTitle": "Marauder Corvette",
+        "sourceUrl": "https://swse.fandom.com/wiki/Marauder_Corvette",
+        "attributes": {
+          "str": 64,
+          "dex": 15,
+          "int": 18
+        },
+        "notes": "Uses SWSE Fandom Marauder Corvette stat block for repo Rebel Cruiser label.",
+        "changed": true
+      },
+      {
+        "name": "MC140 Scythe-Class Battlecruiser",
+        "sourceTitle": "MC140 Scythe-Class Main Battle Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/MC140_Scythe-Class_Main_Battle_Cruiser",
+        "attributes": {
+          "str": 99,
+          "dex": 16,
+          "int": 20
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Nebulon-B Escort Frigate",
+        "sourceTitle": "Nebulon-B Escort Frigate",
+        "sourceUrl": "https://swse.fandom.com/wiki/Nebulon-B_Escort_Frigate",
+        "attributes": {
+          "str": 64,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Nova-Class Battlecruiser Refit",
+        "sourceTitle": "Nova-Class Battlecruiser Refit",
+        "sourceUrl": "https://swse.fandom.com/wiki/Nova-Class_Battlecruiser_Refit",
+        "attributes": {
+          "str": 94,
+          "dex": 20,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Pelta-Class Frigate",
+        "sourceTitle": "Pelta-Class Frigate",
+        "sourceUrl": "https://swse.fandom.com/wiki/Pelta-Class_Frigate",
+        "attributes": {
+          "str": 60,
+          "dex": 14,
+          "int": 20
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Prototype Dreadnaught-Class Heavy Cruiser",
+        "sourceTitle": "Prototype Rebel Assault Frigate",
+        "sourceUrl": "https://swse.fandom.com/wiki/Prototype_Rebel_Assault_Frigate",
+        "attributes": {
+          "str": 98,
+          "dex": 12,
+          "int": 18
+        },
+        "notes": "Uses Fandom Prototype Rebel Assault Frigate stat block for current repo prototype Dreadnaught/Rebel refit entry.",
+        "changed": false
+      },
+      {
+        "name": "Rebel Assault Frigate Mark I",
+        "sourceTitle": "Rebel Assault Frigate Mark I",
+        "sourceUrl": "https://swse.fandom.com/wiki/Rebel_Assault_Frigate_Mk_I",
+        "attributes": {
+          "str": 94,
+          "dex": 16,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Rebel Assault Frigate Mark II",
+        "sourceTitle": "Rebel Assault Frigate Mark II",
+        "sourceUrl": "https://swse.fandom.com/wiki/Rebel_Assault_Frigate_Mk_II",
+        "attributes": {
+          "str": 94,
+          "dex": 16,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "The Crimson Axe",
+        "sourceTitle": "The Crimson Axe",
+        "sourceUrl": "https://swse.fandom.com/wiki/The_Crimson_Axe",
+        "attributes": {
+          "str": 60,
+          "dex": 16,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      }
+    ],
+    "packs/vehicles-space-transports.db": [
+      {
+        "name": "AEG-77 Vigo Transport",
+        "sourceTitle": "AEG-77 Vigo Gunship",
+        "sourceUrl": "https://swse.fandom.com/wiki/AEG-77_%22Vigo%22_Gunship",
+        "attributes": {
+          "str": 42,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Uses AEG-77 Vigo Gunship stat block; transport/ship record shares the Vigo platform family in current compendium naming.",
+        "changed": false
+      },
+      {
+        "name": "Charger c70 Corellian Consular-Class Cruiser",
+        "sourceTitle": "Charger c70 Consular-Class Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/Charger_C70_Consular-Class_Cruiser",
+        "attributes": {
+          "str": 62,
+          "dex": 18,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Corellian Action VI Bulk Transport",
+        "sourceTitle": "Corellian Action VI Bulk Transport",
+        "sourceUrl": "https://swse.fandom.com/wiki/Corellian_Action_VI_Bulk_Transport",
+        "attributes": {
+          "str": 62,
+          "dex": 10,
+          "int": 12
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Corellian Consular-Class Cruiser",
+        "sourceTitle": "Consular-Class Space Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/Consular-Class_Space_Cruiser",
+        "attributes": {
+          "str": 69,
+          "dex": 18,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Corellian G9 Rigger-Class Light Freighter",
+        "sourceTitle": "Corellian G9 Rigger-Class Light Freighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/Corellian_G9_Rigger-Class_Light_Freighter",
+        "attributes": {
+          "str": 39,
+          "dex": 10,
+          "int": 12
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Corellian JumpMaster 5000 Scout Ship",
+        "sourceTitle": "JumpMaster 5000 Scout Ship",
+        "sourceUrl": "https://swse.fandom.com/wiki/JumpMaster_5000_Scout_Ship",
+        "attributes": {
+          "str": 42,
+          "dex": 16,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Corellian KR-TB \"Doomtreader\"",
+        "sourceTitle": "Corellian KR-TB Doomtreader",
+        "sourceUrl": "https://swse.fandom.com/wiki/Corellian_KR-TB_%22Doomtreader%22",
+        "attributes": {
+          "str": 50,
+          "dex": 12,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Corellian YZ-2500 Heavy Transport",
+        "sourceTitle": "Corellian YZ-2500 Heavy Transport",
+        "sourceUrl": "https://swse.fandom.com/wiki/Corellian_YZ-2500_Heavy_Transport",
+        "attributes": {
+          "str": 59,
+          "dex": 14,
+          "int": 18
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "G-Type Escape Shuttle",
+        "sourceTitle": "G-Type Light Shuttle / Escape Shuttle",
+        "sourceUrl": "https://swse.fandom.com/wiki/G-Type_Light_Shuttle",
+        "attributes": {
+          "str": 39,
+          "dex": 18,
+          "int": 16
+        },
+        "notes": "Uses SWSE Fandom G-Type Escape Shuttle stat block on G-Type Light Shuttle page.",
+        "changed": true
+      },
+      {
+        "name": "GAT-12h Skipray Blastboat",
+        "sourceTitle": "GAT-12h Skipray Blastboat",
+        "sourceUrl": "https://swse.fandom.com/wiki/GAT-12h_Skipray_Blastboat",
+        "attributes": {
+          "str": 56,
+          "dex": 16,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Hardcell-Class Interstellar Transport",
+        "sourceTitle": "Hardcell-Class Interstellar Transport",
+        "sourceUrl": "https://swse.fandom.com/wiki/Hardcell-Class_Interstellar_Transport",
+        "attributes": {
+          "str": 66,
+          "dex": 10,
+          "int": 18
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Helot-Class Medium Space Transport",
+        "sourceTitle": "Helot-Class Medium Space Transport",
+        "sourceUrl": "https://swse.fandom.com/wiki/Helot-Class_Medium_Space_Transport",
+        "attributes": {
+          "str": 50,
+          "dex": 12,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "ILH-KK Citadel-Class Civilian Cruiser",
+        "sourceTitle": "ILH-KK Citadel-Class Civilian Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/ILH-KK_Citadel-Class_Civilian_Cruiser",
+        "attributes": {
+          "str": 42,
+          "dex": 12,
+          "int": 12
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Junker Class 720 Freighter",
+        "sourceTitle": "Ghtroc 720 Freighter + Junker Vehicle Template",
+        "sourceUrl": "https://swse.fandom.com/wiki/Ghtroc_720_Freighter",
+        "attributes": {
+          "str": 36,
+          "dex": 12,
+          "int": 11
+        },
+        "notes": "Ghtroc 720 base abilities with SWSE Fandom Junker Vehicle Template applied (-4 Str, -2 Dex, -2 Int, minimum 10).",
+        "changed": true
+      },
+      {
+        "name": "Modified ILH-KK Citadel-Class Civilian Cruiser",
+        "sourceTitle": "ILH-KK Citadel-Class Civilian Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/ILH-KK_Citadel-Class_Civilian_Cruiser",
+        "attributes": {
+          "str": 42,
+          "dex": 12,
+          "int": 12
+        },
+        "notes": "Uses base Citadel-class stat block; modified entry did not expose separate source attributes in this pass.",
+        "changed": false
+      },
+      {
+        "name": "Modified Lambda-Class Shuttle",
+        "sourceTitle": "Lambda-Class Shuttle",
+        "sourceUrl": "https://swse.fandom.com/wiki/Lambda-Class_Shuttle",
+        "attributes": {
+          "str": 42,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Uses Lambda-Class Shuttle stat block as source-backed base for modified Lambda entry.",
+        "changed": false
+      },
+      {
+        "name": "Mu-2 Long Range Shuttle",
+        "sourceTitle": "Mu-Class Shuttle",
+        "sourceUrl": "https://swse.fandom.com/wiki/Mu-Class_Shuttle",
+        "attributes": {
+          "str": 42,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Uses Mu-Class Shuttle stat block; repo name uses Mu-2 variant label.",
+        "changed": false
+      },
+      {
+        "name": "The Glorious Chariot",
+        "sourceTitle": "Luxury 3000 Space Yacht",
+        "sourceUrl": "https://swse.fandom.com/wiki/Luxury_3000_Space_Yacht",
+        "attributes": {
+          "str": 42,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Uses Luxury 3000 base stat block for named yacht entry.",
+        "changed": false
+      },
+      {
+        "name": "The Visionary",
+        "sourceTitle": "The Starscape",
+        "sourceUrl": "https://swse.fandom.com/wiki/The_Starscape",
+        "attributes": {
+          "str": 42,
+          "dex": 12,
+          "int": 12
+        },
+        "notes": "Uses The Starscape stat block; Fandom notes The Starscape is a modified YT-1930 and is listed in repo as The Visionary.",
+        "changed": false
+      },
+      {
+        "name": "Y-Wing \"Courier\" Variant",
+        "sourceTitle": "Y-Wing Courier",
+        "sourceUrl": "https://swse.fandom.com/wiki/Y-Wing_Courier",
+        "attributes": {
+          "str": 42,
+          "dex": 16,
+          "int": 16
+        },
+        "notes": "Uses SWSE Fandom Y-Wing Courier stat block for repo courier variant label.",
+        "changed": true
+      }
+    ],
+    "packs/vehicles-speeders.db": [
+      {
+        "name": "LAVr QH-7 Chariot",
+        "sourceTitle": "QH-7 Chariot Command Speeder",
+        "sourceUrl": "https://swse.fandom.com/wiki/QH-7_Chariot_Command_Speeder",
+        "attributes": {
+          "str": 34,
+          "dex": 18,
+          "int": 12
+        },
+        "notes": "Uses SWSE Fandom QH-7 Chariot Command Speeder stat block for repo LAVr QH-7 Chariot label.",
+        "changed": true
+      },
+      {
+        "name": "Model 67 Shrieker Speeder Bike",
+        "sourceTitle": "Model 67 Shrieker",
+        "sourceUrl": "https://swse.fandom.com/wiki/Model_67_Shrieker",
+        "attributes": {
+          "str": 18,
+          "dex": 24,
+          "int": 16
+        },
+        "notes": "Uses SWSE Fandom Model 67 Shrieker stat block for repo speeder bike label.",
+        "changed": true
+      },
+      {
+        "name": "S-130 Shelter Medical Speeder",
+        "sourceTitle": "S-130 Shelter Speeder",
+        "sourceUrl": "https://swse.fandom.com/wiki/S-130_%22Shelter%22_Speeder",
+        "attributes": {
+          "str": 34,
+          "dex": 12,
+          "int": 14
+        },
+        "notes": "Uses SWSE Fandom S-130 Shelter Speeder stat block for repo medical speeder label.",
+        "changed": true
+      }
+    ],
+    "packs/vehicles-starfighters.db": [
+      {
+        "name": "ARC-170 Starfighter",
+        "sourceTitle": "ARC-170 Starfighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/ARC-170_Starfighter",
+        "attributes": {
+          "str": 46,
+          "dex": 18,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "BB-2 Starfire Fighter/Bomber",
+        "sourceTitle": "BB-2 Starfire Bomber",
+        "sourceUrl": "https://swse.fandom.com/wiki/BB-2_Starfire_Bomber",
+        "attributes": {
+          "str": 48,
+          "dex": 20,
+          "int": 18
+        },
+        "notes": "Uses SWSE Fandom BB-2 Starfire Bomber stat block for repo fighter/bomber label.",
+        "changed": true
+      },
+      {
+        "name": "Besh-Type Personal Starfighter",
+        "sourceTitle": "Besh-Type Starfighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/Besh-Type_Starfighter",
+        "attributes": {
+          "str": 50,
+          "dex": 16,
+          "int": 18
+        },
+        "notes": "Uses SWSE Fandom Besh-Type Starfighter stat block for repo personal starfighter label.",
+        "changed": true
+      },
+      {
+        "name": "Corellian S-100 Stinger-Class Starfighter",
+        "sourceTitle": "Corellian S-100 Stinger-Class Starfighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/Corellian_S-100_Stinger-Class_Starfighter",
+        "attributes": {
+          "str": 38,
+          "dex": 24,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Delta-7 Aethersprite High-Maneuver Interceptor",
+        "sourceTitle": "Delta-7 High-Maneuver Aethersprite",
+        "sourceUrl": "https://swse.fandom.com/wiki/Delta-7_High-Maneuver_Aethersprite",
+        "attributes": {
+          "str": 34,
+          "dex": 30,
+          "int": 14
+        },
+        "notes": "Uses Fandom Delta-7 High-Maneuver Aethersprite stat block for repo high-maneuver interceptor label.",
+        "changed": false
+      },
+      {
+        "name": "Delta-7 Aethersprite High-Speed Interceptor",
+        "sourceTitle": "Delta-7 High-Speed Aethersprite",
+        "sourceUrl": "https://swse.fandom.com/wiki/Delta-7_High-Speed_Aethersprite",
+        "attributes": {
+          "str": 34,
+          "dex": 24,
+          "int": 14
+        },
+        "notes": "Uses Fandom Delta-7 High-Speed Aethersprite stat block for repo high-speed interceptor label.",
+        "changed": false
+      },
+      {
+        "name": "E-Wing Escort Starfighter",
+        "sourceTitle": "E-Wing Escort Starfighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/E-Wing_Escort_Starfighter",
+        "attributes": {
+          "str": 46,
+          "dex": 23,
+          "int": 17
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Eta-2 Actis Heavy-Defense Interceptor",
+        "sourceTitle": "Eta-2 Heavy-Defense Actis",
+        "sourceUrl": "https://swse.fandom.com/wiki/Eta-2_Heavy-Defense_Actis",
+        "attributes": {
+          "str": 34,
+          "dex": 26,
+          "int": 14
+        },
+        "notes": "Uses Fandom Eta-2 Heavy-Defense Actis stat block for repo Eta-2 Actis heavy-defense label.",
+        "changed": false
+      },
+      {
+        "name": "Miy'til Command Starfighter",
+        "sourceTitle": "Miy'til Fighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/Miy%27til_Fighter",
+        "attributes": {
+          "str": 38,
+          "dex": 22,
+          "int": 16
+        },
+        "notes": "Uses base Miy'til Fighter abilities; Fandom command-fighter section describes equipment/weapon changes rather than a separate ability line.",
+        "changed": true
+      },
+      {
+        "name": "Miy'til Starfighter",
+        "sourceTitle": "Miy'til Fighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/Miy%27til_Fighter",
+        "attributes": {
+          "str": 38,
+          "dex": 22,
+          "int": 16
+        },
+        "notes": "Uses Fandom Miy'til Fighter stat block for repo Miy'til Starfighter label.",
+        "changed": false
+      },
+      {
+        "name": "NovaSword Space Superiority Fighter",
+        "sourceTitle": "NovaSword Space Superiority Fighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/NovaSword_Space_Superiority_Fighter",
+        "attributes": {
+          "str": 42,
+          "dex": 22,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "StarViper-Class Attack Platform",
+        "sourceTitle": "StarViper-Class Attack Platform",
+        "sourceUrl": "https://swse.fandom.com/wiki/StarViper-Class_Attack_Platform",
+        "attributes": {
+          "str": 44,
+          "dex": 20,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Y-Wing \"LongProbe\"",
+        "sourceTitle": "Y-Wing Longprobe",
+        "sourceUrl": "https://swse.fandom.com/wiki/Y-Wing_Longprobe",
+        "attributes": {
+          "str": 42,
+          "dex": 18,
+          "int": 20
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      }
+    ],
+    "packs/vehicles-starships.db": [
+      {
+        "name": "Acclamator I-Class Assault Ship",
+        "sourceTitle": "Acclamator I-Class Assault Ship",
+        "sourceUrl": "https://swse.fandom.com/wiki/Acclamator_I-Class_Assault_Ship",
+        "attributes": {
+          "str": 86,
+          "dex": 14,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "AEG-77 Vigo Transport",
+        "sourceTitle": "AEG-77 Vigo Gunship",
+        "sourceUrl": "https://swse.fandom.com/wiki/AEG-77_%22Vigo%22_Gunship",
+        "attributes": {
+          "str": 42,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Uses AEG-77 Vigo Gunship stat block; transport/ship record shares the Vigo platform family in current compendium naming.",
+        "changed": false
+      },
+      {
+        "name": "ARC-170 Starfighter",
+        "sourceTitle": "ARC-170 Starfighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/ARC-170_Starfighter",
+        "attributes": {
+          "str": 46,
+          "dex": 18,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Archaic Dreadnaught-Class Heavy Cruiser",
+        "sourceTitle": "Archaic Heavy Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/Archaic_Heavy_Cruiser",
+        "attributes": {
+          "str": 96,
+          "dex": 10,
+          "int": 16
+        },
+        "notes": "Uses Fandom Archaic Heavy Cruiser stat block for repo's archaic Dreadnaught entry.",
+        "changed": false
+      },
+      {
+        "name": "BB-2 Starfire Fighter/Bomber",
+        "sourceTitle": "BB-2 Starfire Bomber",
+        "sourceUrl": "https://swse.fandom.com/wiki/BB-2_Starfire_Bomber",
+        "attributes": {
+          "str": 48,
+          "dex": 20,
+          "int": 18
+        },
+        "notes": "Uses SWSE Fandom BB-2 Starfire Bomber stat block for repo fighter/bomber label.",
+        "changed": true
+      },
+      {
+        "name": "Besh-Type Personal Starfighter",
+        "sourceTitle": "Besh-Type Starfighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/Besh-Type_Starfighter",
+        "attributes": {
+          "str": 50,
+          "dex": 16,
+          "int": 18
+        },
+        "notes": "Uses SWSE Fandom Besh-Type Starfighter stat block for repo personal starfighter label.",
+        "changed": true
+      },
+      {
+        "name": "Charger c70 Corellian Consular-Class Cruiser",
+        "sourceTitle": "Charger c70 Consular-Class Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/Charger_C70_Consular-Class_Cruiser",
+        "attributes": {
+          "str": 62,
+          "dex": 18,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Corellian Action VI Bulk Transport",
+        "sourceTitle": "Corellian Action VI Bulk Transport",
+        "sourceUrl": "https://swse.fandom.com/wiki/Corellian_Action_VI_Bulk_Transport",
+        "attributes": {
+          "str": 62,
+          "dex": 10,
+          "int": 12
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Corellian Consular-Class Cruiser",
+        "sourceTitle": "Consular-Class Space Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/Consular-Class_Space_Cruiser",
+        "attributes": {
+          "str": 69,
+          "dex": 18,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Corellian G9 Rigger-Class Light Freighter",
+        "sourceTitle": "Corellian G9 Rigger-Class Light Freighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/Corellian_G9_Rigger-Class_Light_Freighter",
+        "attributes": {
+          "str": 39,
+          "dex": 10,
+          "int": 12
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Corellian JumpMaster 5000 Scout Ship",
+        "sourceTitle": "JumpMaster 5000 Scout Ship",
+        "sourceUrl": "https://swse.fandom.com/wiki/JumpMaster_5000_Scout_Ship",
+        "attributes": {
+          "str": 42,
+          "dex": 16,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Corellian KR-TB \"Doomtreader\"",
+        "sourceTitle": "Corellian KR-TB Doomtreader",
+        "sourceUrl": "https://swse.fandom.com/wiki/Corellian_KR-TB_%22Doomtreader%22",
+        "attributes": {
+          "str": 50,
+          "dex": 12,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Corellian S-100 Stinger-Class Starfighter",
+        "sourceTitle": "Corellian S-100 Stinger-Class Starfighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/Corellian_S-100_Stinger-Class_Starfighter",
+        "attributes": {
+          "str": 38,
+          "dex": 24,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Corellian YZ-2500 Heavy Transport",
+        "sourceTitle": "Corellian YZ-2500 Heavy Transport",
+        "sourceUrl": "https://swse.fandom.com/wiki/Corellian_YZ-2500_Heavy_Transport",
+        "attributes": {
+          "str": 59,
+          "dex": 14,
+          "int": 18
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Delta-7 Aethersprite High-Maneuver Interceptor",
+        "sourceTitle": "Delta-7 High-Maneuver Aethersprite",
+        "sourceUrl": "https://swse.fandom.com/wiki/Delta-7_High-Maneuver_Aethersprite",
+        "attributes": {
+          "str": 34,
+          "dex": 30,
+          "int": 14
+        },
+        "notes": "Uses Fandom Delta-7 High-Maneuver Aethersprite stat block for repo high-maneuver interceptor label.",
+        "changed": false
+      },
+      {
+        "name": "Delta-7 Aethersprite High-Speed Interceptor",
+        "sourceTitle": "Delta-7 High-Speed Aethersprite",
+        "sourceUrl": "https://swse.fandom.com/wiki/Delta-7_High-Speed_Aethersprite",
+        "attributes": {
+          "str": 34,
+          "dex": 24,
+          "int": 14
+        },
+        "notes": "Uses Fandom Delta-7 High-Speed Aethersprite stat block for repo high-speed interceptor label.",
+        "changed": false
+      },
+      {
+        "name": "E-Wing Escort Starfighter",
+        "sourceTitle": "E-Wing Escort Starfighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/E-Wing_Escort_Starfighter",
+        "attributes": {
+          "str": 46,
+          "dex": 23,
+          "int": 17
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Eta-2 Actis Heavy-Defense Interceptor",
+        "sourceTitle": "Eta-2 Heavy-Defense Actis",
+        "sourceUrl": "https://swse.fandom.com/wiki/Eta-2_Heavy-Defense_Actis",
+        "attributes": {
+          "str": 34,
+          "dex": 26,
+          "int": 14
+        },
+        "notes": "Uses Fandom Eta-2 Heavy-Defense Actis stat block for repo Eta-2 Actis heavy-defense label.",
+        "changed": false
+      },
+      {
+        "name": "G-Type Escape Shuttle",
+        "sourceTitle": "G-Type Light Shuttle / Escape Shuttle",
+        "sourceUrl": "https://swse.fandom.com/wiki/G-Type_Light_Shuttle",
+        "attributes": {
+          "str": 39,
+          "dex": 18,
+          "int": 16
+        },
+        "notes": "Uses SWSE Fandom G-Type Escape Shuttle stat block on G-Type Light Shuttle page.",
+        "changed": true
+      },
+      {
+        "name": "GAT-12h Skipray Blastboat",
+        "sourceTitle": "GAT-12h Skipray Blastboat",
+        "sourceUrl": "https://swse.fandom.com/wiki/GAT-12h_Skipray_Blastboat",
+        "attributes": {
+          "str": 56,
+          "dex": 16,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Hardcell-Class Interstellar Transport",
+        "sourceTitle": "Hardcell-Class Interstellar Transport",
+        "sourceUrl": "https://swse.fandom.com/wiki/Hardcell-Class_Interstellar_Transport",
+        "attributes": {
+          "str": 66,
+          "dex": 10,
+          "int": 18
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Helot-Class Medium Space Transport",
+        "sourceTitle": "Helot-Class Medium Space Transport",
+        "sourceUrl": "https://swse.fandom.com/wiki/Helot-Class_Medium_Space_Transport",
+        "attributes": {
+          "str": 50,
+          "dex": 12,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "ILH-KK Citadel-Class Civilian Cruiser",
+        "sourceTitle": "ILH-KK Citadel-Class Civilian Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/ILH-KK_Citadel-Class_Civilian_Cruiser",
+        "attributes": {
+          "str": 42,
+          "dex": 12,
+          "int": 12
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Immobilizer 418 Interdictor-Class Heavy Cruiser",
+        "sourceTitle": "Interdictor-Class Star Destroyer",
+        "sourceUrl": "https://swse.fandom.com/wiki/Interdictor-Class_Star_Destroyer",
+        "attributes": {
+          "str": 94,
+          "dex": 14,
+          "int": 18
+        },
+        "notes": "Uses SWSE Fandom Interdictor-Class Star Destroyer stat block for repo Immobilizer 418 Interdictor-class label.",
+        "changed": true
+      },
+      {
+        "name": "IPV-1 System Patrol Craft",
+        "sourceTitle": "IPV-1 Patrol Craft",
+        "sourceUrl": "https://swse.fandom.com/wiki/IPV-1_Patrol_Craft",
+        "attributes": {
+          "str": 63,
+          "dex": 20,
+          "int": 14
+        },
+        "notes": "Uses SWSE Fandom IPV-1 Patrol Craft stat block for repo system patrol craft label.",
+        "changed": true
+      },
+      {
+        "name": "Junker Class 720 Freighter",
+        "sourceTitle": "Ghtroc 720 Freighter + Junker Vehicle Template",
+        "sourceUrl": "https://swse.fandom.com/wiki/Ghtroc_720_Freighter",
+        "attributes": {
+          "str": 36,
+          "dex": 12,
+          "int": 11
+        },
+        "notes": "Ghtroc 720 base abilities with SWSE Fandom Junker Vehicle Template applied (-4 Str, -2 Dex, -2 Int, minimum 10).",
+        "changed": true
+      },
+      {
+        "name": "Marauder-Class Corvette",
+        "sourceTitle": "Marauder Corvette",
+        "sourceUrl": "https://swse.fandom.com/wiki/Marauder_Corvette",
+        "attributes": {
+          "str": 64,
+          "dex": 15,
+          "int": 18
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": true
+      },
+      {
+        "name": "Marauder-Class Rebel Cruiser",
+        "sourceTitle": "Marauder Corvette",
+        "sourceUrl": "https://swse.fandom.com/wiki/Marauder_Corvette",
+        "attributes": {
+          "str": 64,
+          "dex": 15,
+          "int": 18
+        },
+        "notes": "Uses SWSE Fandom Marauder Corvette stat block for repo Rebel Cruiser label.",
+        "changed": true
+      },
+      {
+        "name": "MC140 Scythe-Class Battlecruiser",
+        "sourceTitle": "MC140 Scythe-Class Main Battle Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/MC140_Scythe-Class_Main_Battle_Cruiser",
+        "attributes": {
+          "str": 99,
+          "dex": 16,
+          "int": 20
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Miy'til Command Starfighter",
+        "sourceTitle": "Miy'til Fighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/Miy%27til_Fighter",
+        "attributes": {
+          "str": 38,
+          "dex": 22,
+          "int": 16
+        },
+        "notes": "Uses base Miy'til Fighter abilities; Fandom command-fighter section describes equipment/weapon changes rather than a separate ability line.",
+        "changed": true
+      },
+      {
+        "name": "Miy'til Starfighter",
+        "sourceTitle": "Miy'til Fighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/Miy%27til_Fighter",
+        "attributes": {
+          "str": 38,
+          "dex": 22,
+          "int": 16
+        },
+        "notes": "Uses Fandom Miy'til Fighter stat block for repo Miy'til Starfighter label.",
+        "changed": false
+      },
+      {
+        "name": "Modified ILH-KK Citadel-Class Civilian Cruiser",
+        "sourceTitle": "ILH-KK Citadel-Class Civilian Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/ILH-KK_Citadel-Class_Civilian_Cruiser",
+        "attributes": {
+          "str": 42,
+          "dex": 12,
+          "int": 12
+        },
+        "notes": "Uses base Citadel-class stat block; modified entry did not expose separate source attributes in this pass.",
+        "changed": false
+      },
+      {
+        "name": "Modified Lambda-Class Shuttle",
+        "sourceTitle": "Lambda-Class Shuttle",
+        "sourceUrl": "https://swse.fandom.com/wiki/Lambda-Class_Shuttle",
+        "attributes": {
+          "str": 42,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Uses Lambda-Class Shuttle stat block as source-backed base for modified Lambda entry.",
+        "changed": false
+      },
+      {
+        "name": "Mu-2 Long Range Shuttle",
+        "sourceTitle": "Mu-Class Shuttle",
+        "sourceUrl": "https://swse.fandom.com/wiki/Mu-Class_Shuttle",
+        "attributes": {
+          "str": 42,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Uses Mu-Class Shuttle stat block; repo name uses Mu-2 variant label.",
+        "changed": false
+      },
+      {
+        "name": "Nebulon-B Escort Frigate",
+        "sourceTitle": "Nebulon-B Escort Frigate",
+        "sourceUrl": "https://swse.fandom.com/wiki/Nebulon-B_Escort_Frigate",
+        "attributes": {
+          "str": 64,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Nova-Class Battlecruiser Refit",
+        "sourceTitle": "Nova-Class Battlecruiser Refit",
+        "sourceUrl": "https://swse.fandom.com/wiki/Nova-Class_Battlecruiser_Refit",
+        "attributes": {
+          "str": 94,
+          "dex": 20,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "NovaSword Space Superiority Fighter",
+        "sourceTitle": "NovaSword Space Superiority Fighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/NovaSword_Space_Superiority_Fighter",
+        "attributes": {
+          "str": 42,
+          "dex": 22,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Pelta-Class Frigate",
+        "sourceTitle": "Pelta-Class Frigate",
+        "sourceUrl": "https://swse.fandom.com/wiki/Pelta-Class_Frigate",
+        "attributes": {
+          "str": 60,
+          "dex": 14,
+          "int": 20
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Prototype Dreadnaught-Class Heavy Cruiser",
+        "sourceTitle": "Prototype Rebel Assault Frigate",
+        "sourceUrl": "https://swse.fandom.com/wiki/Prototype_Rebel_Assault_Frigate",
+        "attributes": {
+          "str": 98,
+          "dex": 12,
+          "int": 18
+        },
+        "notes": "Uses Fandom Prototype Rebel Assault Frigate stat block for current repo prototype Dreadnaught/Rebel refit entry.",
+        "changed": false
+      },
+      {
+        "name": "Rebel Assault Frigate Mark I",
+        "sourceTitle": "Rebel Assault Frigate Mark I",
+        "sourceUrl": "https://swse.fandom.com/wiki/Rebel_Assault_Frigate_Mk_I",
+        "attributes": {
+          "str": 94,
+          "dex": 16,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Rebel Assault Frigate Mark II",
+        "sourceTitle": "Rebel Assault Frigate Mark II",
+        "sourceUrl": "https://swse.fandom.com/wiki/Rebel_Assault_Frigate_Mk_II",
+        "attributes": {
+          "str": 94,
+          "dex": 16,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "StarViper-Class Attack Platform",
+        "sourceTitle": "StarViper-Class Attack Platform",
+        "sourceUrl": "https://swse.fandom.com/wiki/StarViper-Class_Attack_Platform",
+        "attributes": {
+          "str": 44,
+          "dex": 20,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "The Crimson Axe",
+        "sourceTitle": "The Crimson Axe",
+        "sourceUrl": "https://swse.fandom.com/wiki/The_Crimson_Axe",
+        "attributes": {
+          "str": 60,
+          "dex": 16,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "The Glorious Chariot",
+        "sourceTitle": "Luxury 3000 Space Yacht",
+        "sourceUrl": "https://swse.fandom.com/wiki/Luxury_3000_Space_Yacht",
+        "attributes": {
+          "str": 42,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Uses Luxury 3000 base stat block for named yacht entry.",
+        "changed": false
+      },
+      {
+        "name": "The Visionary",
+        "sourceTitle": "The Starscape",
+        "sourceUrl": "https://swse.fandom.com/wiki/The_Starscape",
+        "attributes": {
+          "str": 42,
+          "dex": 12,
+          "int": 12
+        },
+        "notes": "Uses The Starscape stat block; Fandom notes The Starscape is a modified YT-1930 and is listed in repo as The Visionary.",
+        "changed": false
+      },
+      {
+        "name": "Y-Wing \"Courier\" Variant",
+        "sourceTitle": "Y-Wing Courier",
+        "sourceUrl": "https://swse.fandom.com/wiki/Y-Wing_Courier",
+        "attributes": {
+          "str": 42,
+          "dex": 16,
+          "int": 16
+        },
+        "notes": "Uses SWSE Fandom Y-Wing Courier stat block for repo courier variant label.",
+        "changed": true
+      },
+      {
+        "name": "Y-Wing \"LongProbe\"",
+        "sourceTitle": "Y-Wing Longprobe",
+        "sourceUrl": "https://swse.fandom.com/wiki/Y-Wing_Longprobe",
+        "attributes": {
+          "str": 42,
+          "dex": 18,
+          "int": 20
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      }
+    ],
+    "packs/vehicles-tracked.db": [
+      {
+        "name": "SPHA-C",
+        "sourceTitle": "SPHA",
+        "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+        "attributes": {
+          "str": 54,
+          "dex": 10,
+          "int": 14
+        },
+        "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+        "changed": false
+      },
+      {
+        "name": "SPHA-I",
+        "sourceTitle": "SPHA",
+        "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+        "attributes": {
+          "str": 54,
+          "dex": 10,
+          "int": 14
+        },
+        "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+        "changed": false
+      },
+      {
+        "name": "SPHA-M",
+        "sourceTitle": "SPHA",
+        "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+        "attributes": {
+          "str": 54,
+          "dex": 10,
+          "int": 14
+        },
+        "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+        "changed": false
+      },
+      {
+        "name": "SPHA-V",
+        "sourceTitle": "SPHA",
+        "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+        "attributes": {
+          "str": 54,
+          "dex": 10,
+          "int": 14
+        },
+        "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+        "changed": false
+      }
+    ],
+    "packs/vehicles-walkers.db": [
+      {
+        "name": "SPHA-C",
+        "sourceTitle": "SPHA",
+        "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+        "attributes": {
+          "str": 54,
+          "dex": 10,
+          "int": 14
+        },
+        "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+        "changed": false
+      },
+      {
+        "name": "SPHA-I",
+        "sourceTitle": "SPHA",
+        "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+        "attributes": {
+          "str": 54,
+          "dex": 10,
+          "int": 14
+        },
+        "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+        "changed": false
+      },
+      {
+        "name": "SPHA-M",
+        "sourceTitle": "SPHA",
+        "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+        "attributes": {
+          "str": 54,
+          "dex": 10,
+          "int": 14
+        },
+        "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+        "changed": false
+      },
+      {
+        "name": "SPHA-V",
+        "sourceTitle": "SPHA",
+        "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+        "attributes": {
+          "str": 54,
+          "dex": 10,
+          "int": 14
+        },
+        "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+        "changed": false
+      }
+    ],
+    "packs/vehicles-wheeled.db": [
+      {
+        "name": "Modified Tsmeu-6 Personal Wheel Bike",
+        "sourceTitle": "Grievous' Personal Wheel Bike / Tsmeu-6 Personal Wheel Bike",
+        "sourceUrl": "https://swse.fandom.com/wiki/Grievous%27_Personal_Wheel_Bike",
+        "attributes": {
+          "str": 20,
+          "dex": 16,
+          "int": 14
+        },
+        "notes": "Fandom modified Grievous wheel bike and base Tsmeu-6 share this ability line; repo modified entry hydrated to the shared statline.",
+        "changed": true
+      }
+    ],
+    "packs/vehicles.db": [
+      {
+        "name": "AEG-77 Vigo Transport",
+        "sourceTitle": "AEG-77 Vigo Gunship",
+        "sourceUrl": "https://swse.fandom.com/wiki/AEG-77_%22Vigo%22_Gunship",
+        "attributes": {
+          "str": 42,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Uses AEG-77 Vigo Gunship stat block; transport/ship record shares the Vigo platform family in current compendium naming.",
+        "changed": false
+      },
+      {
+        "name": "Hardcell-Class Interstellar Transport",
+        "sourceTitle": "Hardcell-Class Interstellar Transport",
+        "sourceUrl": "https://swse.fandom.com/wiki/Hardcell-Class_Interstellar_Transport",
+        "attributes": {
+          "str": 66,
+          "dex": 10,
+          "int": 18
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "The Visionary",
+        "sourceTitle": "The Starscape",
+        "sourceUrl": "https://swse.fandom.com/wiki/The_Starscape",
+        "attributes": {
+          "str": 42,
+          "dex": 12,
+          "int": 12
+        },
+        "notes": "Uses The Starscape stat block; Fandom notes The Starscape is a modified YT-1930 and is listed in repo as The Visionary.",
+        "changed": false
+      },
+      {
+        "name": "LAVr QH-7 Chariot",
+        "sourceTitle": "QH-7 Chariot Command Speeder",
+        "sourceUrl": "https://swse.fandom.com/wiki/QH-7_Chariot_Command_Speeder",
+        "attributes": {
+          "str": 34,
+          "dex": 18,
+          "int": 12
+        },
+        "notes": "Uses SWSE Fandom QH-7 Chariot Command Speeder stat block for repo LAVr QH-7 Chariot label.",
+        "changed": true
+      },
+      {
+        "name": "Aerosled Mark III",
+        "sourceTitle": "Aerosled Mk III",
+        "sourceUrl": "https://swse.fandom.com/wiki/Aerosled_Mk_III",
+        "attributes": {
+          "str": 18,
+          "dex": 22,
+          "int": 16
+        },
+        "notes": "Uses SWSE Fandom Aerosled Mk III stat block for repo Mark III label.",
+        "changed": true
+      },
+      {
+        "name": "Imperial RaDAir",
+        "sourceTitle": "Rapid Deployment Airspeeder",
+        "sourceUrl": "https://swse.fandom.com/wiki/Rapid_Deployment_Airspeeder",
+        "attributes": {
+          "str": 34,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Uses SWSE Fandom Rapid Deployment Airspeeder stat block for repo Imperial RaDAir label.",
+        "changed": true
+      },
+      {
+        "name": "Y-Wing \"LongProbe\"",
+        "sourceTitle": "Y-Wing Longprobe",
+        "sourceUrl": "https://swse.fandom.com/wiki/Y-Wing_Longprobe",
+        "attributes": {
+          "str": 42,
+          "dex": 18,
+          "int": 20
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Corellian YZ-2500 Heavy Transport",
+        "sourceTitle": "Corellian YZ-2500 Heavy Transport",
+        "sourceUrl": "https://swse.fandom.com/wiki/Corellian_YZ-2500_Heavy_Transport",
+        "attributes": {
+          "str": 59,
+          "dex": 14,
+          "int": 18
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "The Crimson Axe",
+        "sourceTitle": "The Crimson Axe",
+        "sourceUrl": "https://swse.fandom.com/wiki/The_Crimson_Axe",
+        "attributes": {
+          "str": 60,
+          "dex": 16,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "S-130 Shelter Medical Speeder",
+        "sourceTitle": "S-130 Shelter Speeder",
+        "sourceUrl": "https://swse.fandom.com/wiki/S-130_%22Shelter%22_Speeder",
+        "attributes": {
+          "str": 34,
+          "dex": 12,
+          "int": 14
+        },
+        "notes": "Uses SWSE Fandom S-130 Shelter Speeder stat block for repo medical speeder label.",
+        "changed": true
+      },
+      {
+        "name": "Mu-2 Long Range Shuttle",
+        "sourceTitle": "Mu-Class Shuttle",
+        "sourceUrl": "https://swse.fandom.com/wiki/Mu-Class_Shuttle",
+        "attributes": {
+          "str": 42,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Uses Mu-Class Shuttle stat block; repo name uses Mu-2 variant label.",
+        "changed": false
+      },
+      {
+        "name": "Archaic Dreadnaught-Class Heavy Cruiser",
+        "sourceTitle": "Archaic Heavy Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/Archaic_Heavy_Cruiser",
+        "attributes": {
+          "str": 96,
+          "dex": 10,
+          "int": 16
+        },
+        "notes": "Uses Fandom Archaic Heavy Cruiser stat block for repo's archaic Dreadnaught entry.",
+        "changed": false
+      },
+      {
+        "name": "Corellian Consular-Class Cruiser",
+        "sourceTitle": "Consular-Class Space Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/Consular-Class_Space_Cruiser",
+        "attributes": {
+          "str": 69,
+          "dex": 18,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Pelagia Duplex Command Assault Gunship",
+        "sourceTitle": "Orphanmaker Assault Gunship",
+        "sourceUrl": "https://swse.fandom.com/wiki/%22Orphanmaker%22_Assault_Gunship",
+        "attributes": {
+          "str": 43,
+          "dex": 14,
+          "int": 16
+        },
+        "notes": "Uses SWSE Fandom Orphanmaker Assault Gunship stat block for repo Pelagia Duplex command assault gunship label.",
+        "changed": true
+      },
+      {
+        "name": "SPHA-M",
+        "sourceTitle": "SPHA",
+        "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+        "attributes": {
+          "str": 54,
+          "dex": 10,
+          "int": 14
+        },
+        "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+        "changed": false
+      },
+      {
+        "name": "Charger c70 Corellian Consular-Class Cruiser",
+        "sourceTitle": "Charger c70 Consular-Class Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/Charger_C70_Consular-Class_Cruiser",
+        "attributes": {
+          "str": 62,
+          "dex": 18,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Prototype Dreadnaught-Class Heavy Cruiser",
+        "sourceTitle": "Prototype Rebel Assault Frigate",
+        "sourceUrl": "https://swse.fandom.com/wiki/Prototype_Rebel_Assault_Frigate",
+        "attributes": {
+          "str": 98,
+          "dex": 12,
+          "int": 18
+        },
+        "notes": "Uses Fandom Prototype Rebel Assault Frigate stat block for current repo prototype Dreadnaught/Rebel refit entry.",
+        "changed": false
+      },
+      {
+        "name": "AEG-77 Vigo Gunship",
+        "sourceTitle": "AEG-77 Vigo Gunship",
+        "sourceUrl": "https://swse.fandom.com/wiki/AEG-77_%22Vigo%22_Gunship",
+        "attributes": {
+          "str": 42,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Nova-Class Battlecruiser Refit",
+        "sourceTitle": "Nova-Class Battlecruiser Refit",
+        "sourceUrl": "https://swse.fandom.com/wiki/Nova-Class_Battlecruiser_Refit",
+        "attributes": {
+          "str": 94,
+          "dex": 20,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Miy'til Command Starfighter",
+        "sourceTitle": "Miy'til Fighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/Miy%27til_Fighter",
+        "attributes": {
+          "str": 38,
+          "dex": 22,
+          "int": 16
+        },
+        "notes": "Uses base Miy'til Fighter abilities; Fandom command-fighter section describes equipment/weapon changes rather than a separate ability line.",
+        "changed": true
+      },
+      {
+        "name": "Helot-Class Medium Space Transport",
+        "sourceTitle": "Helot-Class Medium Space Transport",
+        "sourceUrl": "https://swse.fandom.com/wiki/Helot-Class_Medium_Space_Transport",
+        "attributes": {
+          "str": 50,
+          "dex": 12,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "StarViper-Class Attack Platform",
+        "sourceTitle": "StarViper-Class Attack Platform",
+        "sourceUrl": "https://swse.fandom.com/wiki/StarViper-Class_Attack_Platform",
+        "attributes": {
+          "str": 44,
+          "dex": 20,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Eta-2 Actis Heavy-Defense Interceptor",
+        "sourceTitle": "Eta-2 Heavy-Defense Actis",
+        "sourceUrl": "https://swse.fandom.com/wiki/Eta-2_Heavy-Defense_Actis",
+        "attributes": {
+          "str": 34,
+          "dex": 26,
+          "int": 14
+        },
+        "notes": "Uses Fandom Eta-2 Heavy-Defense Actis stat block for repo Eta-2 Actis heavy-defense label.",
+        "changed": false
+      },
+      {
+        "name": "GAT-12h Skipray Blastboat",
+        "sourceTitle": "GAT-12h Skipray Blastboat",
+        "sourceUrl": "https://swse.fandom.com/wiki/GAT-12h_Skipray_Blastboat",
+        "attributes": {
+          "str": 56,
+          "dex": 16,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Talon I Combat Cloud Car",
+        "sourceTitle": "Talon I Cloud Car",
+        "sourceUrl": "https://swse.fandom.com/wiki/Talon_I_Cloud_Car",
+        "attributes": {
+          "str": 32,
+          "dex": 22,
+          "int": 12
+        },
+        "notes": "Uses SWSE Fandom Talon I Cloud Car stat block for repo combat cloud car label.",
+        "changed": true
+      },
+      {
+        "name": "The Glorious Chariot",
+        "sourceTitle": "Luxury 3000 Space Yacht",
+        "sourceUrl": "https://swse.fandom.com/wiki/Luxury_3000_Space_Yacht",
+        "attributes": {
+          "str": 42,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Uses Luxury 3000 base stat block for named yacht entry.",
+        "changed": false
+      },
+      {
+        "name": "NovaSword Space Superiority Fighter",
+        "sourceTitle": "NovaSword Space Superiority Fighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/NovaSword_Space_Superiority_Fighter",
+        "attributes": {
+          "str": 42,
+          "dex": 22,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "ILH-KK Citadel-Class Civilian Cruiser",
+        "sourceTitle": "ILH-KK Citadel-Class Civilian Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/ILH-KK_Citadel-Class_Civilian_Cruiser",
+        "attributes": {
+          "str": 42,
+          "dex": 12,
+          "int": 12
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Miy'til Starfighter",
+        "sourceTitle": "Miy'til Fighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/Miy%27til_Fighter",
+        "attributes": {
+          "str": 38,
+          "dex": 22,
+          "int": 16
+        },
+        "notes": "Uses Fandom Miy'til Fighter stat block for repo Miy'til Starfighter label.",
+        "changed": false
+      },
+      {
+        "name": "Delta-7 Aethersprite High-Speed Interceptor",
+        "sourceTitle": "Delta-7 High-Speed Aethersprite",
+        "sourceUrl": "https://swse.fandom.com/wiki/Delta-7_High-Speed_Aethersprite",
+        "attributes": {
+          "str": 34,
+          "dex": 24,
+          "int": 14
+        },
+        "notes": "Uses Fandom Delta-7 High-Speed Aethersprite stat block for repo high-speed interceptor label.",
+        "changed": false
+      },
+      {
+        "name": "E-Wing Escort Starfighter",
+        "sourceTitle": "E-Wing Escort Starfighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/E-Wing_Escort_Starfighter",
+        "attributes": {
+          "str": 46,
+          "dex": 23,
+          "int": 17
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Modified ILH-KK Citadel-Class Civilian Cruiser",
+        "sourceTitle": "ILH-KK Citadel-Class Civilian Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/ILH-KK_Citadel-Class_Civilian_Cruiser",
+        "attributes": {
+          "str": 42,
+          "dex": 12,
+          "int": 12
+        },
+        "notes": "Uses base Citadel-class stat block; modified entry did not expose separate source attributes in this pass.",
+        "changed": false
+      },
+      {
+        "name": "SPHA-I",
+        "sourceTitle": "SPHA",
+        "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+        "attributes": {
+          "str": 54,
+          "dex": 10,
+          "int": 14
+        },
+        "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+        "changed": false
+      },
+      {
+        "name": "Corellian G9 Rigger-Class Light Freighter",
+        "sourceTitle": "Corellian G9 Rigger-Class Light Freighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/Corellian_G9_Rigger-Class_Light_Freighter",
+        "attributes": {
+          "str": 39,
+          "dex": 10,
+          "int": 12
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Rebel Assault Frigate Mark I",
+        "sourceTitle": "Rebel Assault Frigate Mark I",
+        "sourceUrl": "https://swse.fandom.com/wiki/Rebel_Assault_Frigate_Mk_I",
+        "attributes": {
+          "str": 94,
+          "dex": 16,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Nebulon-B Escort Frigate",
+        "sourceTitle": "Nebulon-B Escort Frigate",
+        "sourceUrl": "https://swse.fandom.com/wiki/Nebulon-B_Escort_Frigate",
+        "attributes": {
+          "str": 64,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Model 67 Shrieker Speeder Bike",
+        "sourceTitle": "Model 67 Shrieker",
+        "sourceUrl": "https://swse.fandom.com/wiki/Model_67_Shrieker",
+        "attributes": {
+          "str": 18,
+          "dex": 24,
+          "int": 16
+        },
+        "notes": "Uses SWSE Fandom Model 67 Shrieker stat block for repo speeder bike label.",
+        "changed": true
+      },
+      {
+        "name": "Storm IV Twin-Pod Cloud Car",
+        "sourceTitle": "Storm IV Cloud Car",
+        "sourceUrl": "https://swse.fandom.com/wiki/Storm_IV_Cloud_Car",
+        "attributes": {
+          "str": 26,
+          "dex": 20,
+          "int": 12
+        },
+        "notes": "Uses SWSE Fandom Storm IV Cloud Car stat block for repo twin-pod cloud car label.",
+        "changed": true
+      },
+      {
+        "name": "Corellian KR-TB \"Doomtreader\"",
+        "sourceTitle": "Corellian KR-TB Doomtreader",
+        "sourceUrl": "https://swse.fandom.com/wiki/Corellian_KR-TB_%22Doomtreader%22",
+        "attributes": {
+          "str": 50,
+          "dex": 12,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Corellian Action VI Bulk Transport",
+        "sourceTitle": "Corellian Action VI Bulk Transport",
+        "sourceUrl": "https://swse.fandom.com/wiki/Corellian_Action_VI_Bulk_Transport",
+        "attributes": {
+          "str": 62,
+          "dex": 10,
+          "int": 12
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Modified Lambda-Class Shuttle",
+        "sourceTitle": "Lambda-Class Shuttle",
+        "sourceUrl": "https://swse.fandom.com/wiki/Lambda-Class_Shuttle",
+        "attributes": {
+          "str": 42,
+          "dex": 14,
+          "int": 14
+        },
+        "notes": "Uses Lambda-Class Shuttle stat block as source-backed base for modified Lambda entry.",
+        "changed": false
+      },
+      {
+        "name": "MC140 Scythe-Class Battlecruiser",
+        "sourceTitle": "MC140 Scythe-Class Main Battle Cruiser",
+        "sourceUrl": "https://swse.fandom.com/wiki/MC140_Scythe-Class_Main_Battle_Cruiser",
+        "attributes": {
+          "str": 99,
+          "dex": 16,
+          "int": 20
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Pelta-Class Frigate",
+        "sourceTitle": "Pelta-Class Frigate",
+        "sourceUrl": "https://swse.fandom.com/wiki/Pelta-Class_Frigate",
+        "attributes": {
+          "str": 60,
+          "dex": 14,
+          "int": 20
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Delta-7 Aethersprite High-Maneuver Interceptor",
+        "sourceTitle": "Delta-7 High-Maneuver Aethersprite",
+        "sourceUrl": "https://swse.fandom.com/wiki/Delta-7_High-Maneuver_Aethersprite",
+        "attributes": {
+          "str": 34,
+          "dex": 30,
+          "int": 14
+        },
+        "notes": "Uses Fandom Delta-7 High-Maneuver Aethersprite stat block for repo high-maneuver interceptor label.",
+        "changed": false
+      },
+      {
+        "name": "Acclamator I-Class Assault Ship",
+        "sourceTitle": "Acclamator I-Class Assault Ship",
+        "sourceUrl": "https://swse.fandom.com/wiki/Acclamator_I-Class_Assault_Ship",
+        "attributes": {
+          "str": 86,
+          "dex": 14,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "ARC-170 Starfighter",
+        "sourceTitle": "ARC-170 Starfighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/ARC-170_Starfighter",
+        "attributes": {
+          "str": 46,
+          "dex": 18,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "SPHA-V",
+        "sourceTitle": "SPHA",
+        "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+        "attributes": {
+          "str": 54,
+          "dex": 10,
+          "int": 14
+        },
+        "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+        "changed": false
+      },
+      {
+        "name": "Corellian JumpMaster 5000 Scout Ship",
+        "sourceTitle": "JumpMaster 5000 Scout Ship",
+        "sourceUrl": "https://swse.fandom.com/wiki/JumpMaster_5000_Scout_Ship",
+        "attributes": {
+          "str": 42,
+          "dex": 16,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Besh-Type Personal Starfighter",
+        "sourceTitle": "Besh-Type Starfighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/Besh-Type_Starfighter",
+        "attributes": {
+          "str": 50,
+          "dex": 16,
+          "int": 18
+        },
+        "notes": "Uses SWSE Fandom Besh-Type Starfighter stat block for repo personal starfighter label.",
+        "changed": true
+      },
+      {
+        "name": "Immobilizer 418 Interdictor-Class Heavy Cruiser",
+        "sourceTitle": "Interdictor-Class Star Destroyer",
+        "sourceUrl": "https://swse.fandom.com/wiki/Interdictor-Class_Star_Destroyer",
+        "attributes": {
+          "str": 94,
+          "dex": 14,
+          "int": 18
+        },
+        "notes": "Uses SWSE Fandom Interdictor-Class Star Destroyer stat block for repo Immobilizer 418 Interdictor-class label.",
+        "changed": true
+      },
+      {
+        "name": "BB-2 Starfire Fighter/Bomber",
+        "sourceTitle": "BB-2 Starfire Bomber",
+        "sourceUrl": "https://swse.fandom.com/wiki/BB-2_Starfire_Bomber",
+        "attributes": {
+          "str": 48,
+          "dex": 20,
+          "int": 18
+        },
+        "notes": "Uses SWSE Fandom BB-2 Starfire Bomber stat block for repo fighter/bomber label.",
+        "changed": true
+      },
+      {
+        "name": "Marauder-Class Rebel Cruiser",
+        "sourceTitle": "Marauder Corvette",
+        "sourceUrl": "https://swse.fandom.com/wiki/Marauder_Corvette",
+        "attributes": {
+          "str": 64,
+          "dex": 15,
+          "int": 18
+        },
+        "notes": "Uses SWSE Fandom Marauder Corvette stat block for repo Rebel Cruiser label.",
+        "changed": true
+      },
+      {
+        "name": "Marauder-Class Corvette",
+        "sourceTitle": "Marauder Corvette",
+        "sourceUrl": "https://swse.fandom.com/wiki/Marauder_Corvette",
+        "attributes": {
+          "str": 64,
+          "dex": 15,
+          "int": 18
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": true
+      },
+      {
+        "name": "Junker Class 720 Freighter",
+        "sourceTitle": "Ghtroc 720 Freighter + Junker Vehicle Template",
+        "sourceUrl": "https://swse.fandom.com/wiki/Ghtroc_720_Freighter",
+        "attributes": {
+          "str": 36,
+          "dex": 12,
+          "int": 11
+        },
+        "notes": "Ghtroc 720 base abilities with SWSE Fandom Junker Vehicle Template applied (-4 Str, -2 Dex, -2 Int, minimum 10).",
+        "changed": true
+      },
+      {
+        "name": "Y-Wing \"Courier\" Variant",
+        "sourceTitle": "Y-Wing Courier",
+        "sourceUrl": "https://swse.fandom.com/wiki/Y-Wing_Courier",
+        "attributes": {
+          "str": 42,
+          "dex": 16,
+          "int": 16
+        },
+        "notes": "Uses SWSE Fandom Y-Wing Courier stat block for repo courier variant label.",
+        "changed": true
+      },
+      {
+        "name": "IPV-1 System Patrol Craft",
+        "sourceTitle": "IPV-1 Patrol Craft",
+        "sourceUrl": "https://swse.fandom.com/wiki/IPV-1_Patrol_Craft",
+        "attributes": {
+          "str": 63,
+          "dex": 20,
+          "int": 14
+        },
+        "notes": "Uses SWSE Fandom IPV-1 Patrol Craft stat block for repo system patrol craft label.",
+        "changed": true
+      },
+      {
+        "name": "SPHA-C",
+        "sourceTitle": "SPHA",
+        "sourceUrl": "https://swse.fandom.com/wiki/SPHA",
+        "attributes": {
+          "str": 54,
+          "dex": 10,
+          "int": 14
+        },
+        "notes": "Uses shared SPHA stat block; Fandom lists SPHA-T/I/V/C/M variants on same vehicle family page.",
+        "changed": false
+      },
+      {
+        "name": "G-Type Escape Shuttle",
+        "sourceTitle": "G-Type Light Shuttle / Escape Shuttle",
+        "sourceUrl": "https://swse.fandom.com/wiki/G-Type_Light_Shuttle",
+        "attributes": {
+          "str": 39,
+          "dex": 18,
+          "int": 16
+        },
+        "notes": "Uses SWSE Fandom G-Type Escape Shuttle stat block on G-Type Light Shuttle page.",
+        "changed": true
+      },
+      {
+        "name": "Raddaugh Gnasp Fluttercraft",
+        "sourceTitle": "Raddaugh Gnasp Fluttercraft",
+        "sourceUrl": "https://swse.fandom.com/wiki/Raddaugh_%22Gnasp%22_Fluttercraft",
+        "attributes": {
+          "str": 18,
+          "dex": 18,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": true
+      },
+      {
+        "name": "Corellian S-100 Stinger-Class Starfighter",
+        "sourceTitle": "Corellian S-100 Stinger-Class Starfighter",
+        "sourceUrl": "https://swse.fandom.com/wiki/Corellian_S-100_Stinger-Class_Starfighter",
+        "attributes": {
+          "str": 38,
+          "dex": 24,
+          "int": 14
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Rebel Assault Frigate Mark II",
+        "sourceTitle": "Rebel Assault Frigate Mark II",
+        "sourceUrl": "https://swse.fandom.com/wiki/Rebel_Assault_Frigate_Mk_II",
+        "attributes": {
+          "str": 94,
+          "dex": 16,
+          "int": 16
+        },
+        "notes": "Direct SWSE Fandom vehicle stat block.",
+        "changed": false
+      },
+      {
+        "name": "Modified Tsmeu-6 Personal Wheel Bike",
+        "sourceTitle": "Grievous' Personal Wheel Bike / Tsmeu-6 Personal Wheel Bike",
+        "sourceUrl": "https://swse.fandom.com/wiki/Grievous%27_Personal_Wheel_Bike",
+        "attributes": {
+          "str": 20,
+          "dex": 16,
+          "int": 14
+        },
+        "notes": "Fandom modified Grievous wheel bike and base Tsmeu-6 share this ability line; repo modified entry hydrated to the shared statline.",
+        "changed": true
+      }
+    ]
+  },
+  "changedFiles": [
+    "packs/vehicles-airspeeders.db",
+    "packs/vehicles-capital-ships.db",
+    "packs/vehicles-space-transports.db",
+    "packs/vehicles-speeders.db",
+    "packs/vehicles-starfighters.db",
+    "packs/vehicles-starships.db",
+    "packs/vehicles-tracked.db",
+    "packs/vehicles-walkers.db",
+    "packs/vehicles-wheeled.db",
+    "packs/vehicles.db",
+    "tools/reports/vehicle-phase2-fandom-attribute-hydration-audit.json"
+  ]
+}
