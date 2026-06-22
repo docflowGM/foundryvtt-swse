@@ -135,6 +135,15 @@
           <div class="swse-store-surface__filter-count">
             <span data-results-count>{{vm.storeContext.renderedItemCount}}</span>/<span>{{vm.storeContext.visibleItemCount}}</span> {{localize "SWSE.ShellUI.Listings"}}
           </div>
+          {{#if vm.storeContext.suggestionStatus.running}}
+          <div class="swse-store-surface__suggestion-status is-running">SCORING {{vm.storeContext.suggestionStatus.scored}}/{{vm.storeContext.suggestionStatus.total}}</div>
+          {{/if}}
+          {{#if vm.storeContext.suggestionStatus.complete}}
+          <div class="swse-store-surface__suggestion-status is-complete">FIT DATA READY</div>
+          {{/if}}
+          {{#if vm.storeContext.suggestionStatus.failed}}
+          <div class="swse-store-surface__suggestion-status is-failed">FIT DATA OFFLINE</div>
+          {{/if}}
           <button type="button" class="swse-store-surface__filter-clear" data-action="clear-filters">{{localize "SWSE.ShellUI.CLEAR"}}</button>
         </section>
 

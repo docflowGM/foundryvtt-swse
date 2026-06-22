@@ -37,6 +37,32 @@ function unique(values = []) {
   return Array.from(new Set(values.map(normalize).filter(Boolean)));
 }
 
+function summarizeActorStoreState(actor, credits = 0) {
+  const items = Array.from(actor?.items || [])
+    .map(item => {
+      const sys = item.system || {};
+      return [
+        item.id || item._id || '',
+        item.type || '',
+        item.name || '',
+        sys.equipped === true ? 'eq' : '',
+        sys.quantity ?? sys.qty ?? '',
+        sys.group || sys.weaponGroup || sys.category || '',
+        sys.armorType || sys.armor_type || '',
+        sys.modifiedTime || item.modifiedTime || item.updatedTime || ''
+      ].join(':');
+    })
+    .sort()
+    .join('|');
+  const sys = actor?.system || {};
+  const version = actor?._stats?.modifiedTime || actor?.modifiedTime || actor?.updatedTime || '';
+  return [actor?.id || '', version, numberValue(credits, 0), numberValue(sys.credits, 0), items].join('::');
+}
+
+export function buildStoreSuggestionContextCacheKey(actor, options = {}) {
+  return summarizeActorStoreState(actor, options.credits ?? 0);
+}
+
 function itemText(item) {
   const sys = item?.system || {};
   return [
@@ -113,6 +139,17 @@ export function extractStoreItemTags(item) {
   if (/security kit|slicer|computer|interface|spike/.test(text)) tags.push('security', 'tech');
   if (/survival|field kit|breath mask|sensor|climbing/.test(text)) tags.push('survival', 'fieldcraft');
   if (/dual|two weapon|offhand|off-hand|jar'?kai/.test(text)) tags.push('dual_wield');
+  if (/droid|astromech|protocol|probe|battle droid|assassin droid/.test(text) || item?.type === 'droid') tags.push('droid', 'asset');
+  if (/astromech|utility droid|repair droid|mechanic/.test(text)) tags.push('astromech', 'tech', 'repair');
+  if (/protocol|translator|diplomat|etiquette/.test(text)) tags.push('protocol', 'social', 'leadership');
+  if (/medical droid|surgical droid|medic/.test(text)) tags.push('medical', 'support');
+  if (/probe|recon|scout|sensor|surveillance/.test(text)) tags.push('scout', 'fieldcraft', 'perception');
+  if (/battle droid|combat droid|assassin droid|war droid|destroyer droid/.test(text)) tags.push('combat_droid', 'martial');
+  if (/vehicle|starship|ship|speeder|swoop|walker|transport|freighter|shuttle|fighter/.test(text) || item?.type === 'vehicle') tags.push('vehicle', 'asset', 'mobility');
+  if (/starfighter|fighter|interceptor|bomber/.test(text)) tags.push('starfighter', 'pilot', 'combat');
+  if (/transport|freighter|shuttle|courier/.test(text)) tags.push('transport', 'pilot', 'party_asset');
+  if (/speeder|swoop|bike|landspeeder/.test(text)) tags.push('speeder', 'pilot', 'fieldcraft');
+  if (/walker|tank|gunship/.test(text)) tags.push('military_vehicle', 'heavy_weapon', 'martial');
 
   return unique(tags);
 }
@@ -199,7 +236,8 @@ const STORE_OFF_ROUTE_LANE_TAGS = new Set([
 
 const STORE_ROUTE_PROTECTION_TAGS = new Set([
   'lightsaber', 'jedi', 'force', 'melee', 'pistol', 'rifle', 'armor', 'defense',
-  'tech', 'medical', 'fieldcraft', 'stealth', 'social', 'leadership'
+  'tech', 'medical', 'fieldcraft', 'stealth', 'social', 'leadership',
+  'droid', 'vehicle', 'pilot', 'transport', 'party_asset', 'repair'
 ]);
 
 function routeEntry(profile, route) {

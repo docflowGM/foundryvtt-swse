@@ -4096,3 +4096,35 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--surface-store .swse-store
   opacity: 0.48;
   cursor: not-allowed;
 }
+
+
+.swse-store-surface__suggestion-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  border: 1px solid rgba(99, 230, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(4, 18, 30, 0.62);
+  color: rgba(192, 244, 255, 0.86);
+  font-size: 10px;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  box-shadow: inset 0 0 14px rgba(99, 230, 255, 0.08);
+}
+
+.swse-store-surface__suggestion-status.is-running {
+  color: rgba(255, 221, 135, 0.92);
+  border-color: rgba(255, 221, 135, 0.32);
+}
+
+.swse-store-surface__suggestion-status.is-complete {
+  color: rgba(142, 255, 190, 0.88);
+  border-color: rgba(142, 255, 190, 0.28);
+}
+
+.swse-store-surface__suggestion-status.is-failed {
+  color: rgba(255, 132, 132, 0.9);
+  border-color: rgba(255, 132, 132, 0.35);
+}

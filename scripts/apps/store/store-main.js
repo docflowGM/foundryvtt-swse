@@ -18,7 +18,8 @@ import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/led
 import { ArmorSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/armor-suggestions.js";
 import { WeaponSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/weapon-suggestions.js";
 import { GearSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/gear-suggestions.js";
-import { buildStoreSuggestionContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/store-suggestion-context.js";
+import { AssetSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/asset-suggestions.js";
+import { buildStoreSuggestionContext, buildStoreSuggestionContextCacheKey } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/store-suggestion-context.js";
 import { MentorProseGenerator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/mentor-prose-generator.js";
 import { ReviewThreadAssembler } from "/systems/foundryvtt-swse/scripts/apps/store/review-thread-assembler.js";
 import { StoreLoadingOverlay } from "/systems/foundryvtt-swse/scripts/apps/store/store-loading-overlay.js";
@@ -793,13 +794,14 @@ export class SWSEStore extends BaseSWSEAppV2 {
   async _getStoreSuggestionContext() {
     if (!this.actor) return null;
     const actorId = this.actor.id || null;
-    if (this._storeSuggestionContext && this._storeSuggestionContextActorId === actorId) {
+    const credits = LedgerService.getCurrentCredits(this.actor);
+    const cacheKey = buildStoreSuggestionContextCacheKey(this.actor, { credits });
+    if (this._storeSuggestionContext && this._storeSuggestionContextActorId === actorId && this._storeSuggestionContextKey === cacheKey) {
       return this._storeSuggestionContext;
     }
-    this._storeSuggestionContext = await buildStoreSuggestionContext(this.actor, {
-      credits: LedgerService.getCurrentCredits(this.actor)
-    });
+    this._storeSuggestionContext = await buildStoreSuggestionContext(this.actor, { credits });
     this._storeSuggestionContextActorId = actorId;
+    this._storeSuggestionContextKey = cacheKey;
     return this._storeSuggestionContext;
   }
 
@@ -889,6 +891,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
   clearStoreSuggestionContext() {
     this._storeSuggestionContext = null;
     this._storeSuggestionContextActorId = null;
+    this._storeSuggestionContextKey = null;
   }
 
   async _generateSuggestionsForAllItemsDeferred({ token, chunkSize = 40, yieldMs = 0 } = {}) {
@@ -899,7 +902,9 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const buckets = [
       { label: 'armor', items: this.storeInventory.allItems.filter(i => i.type === 'armor'), engine: ArmorSuggestions },
       { label: 'weapons', items: this.storeInventory.allItems.filter(i => i.type === 'weapon'), engine: WeaponSuggestions },
-      { label: 'gear', items: this.storeInventory.allItems.filter(i => i.type === 'equipment'), engine: GearSuggestions }
+      { label: 'gear', items: this.storeInventory.allItems.filter(i => i.type === 'equipment'), engine: GearSuggestions },
+      { label: 'droids', items: this.storeInventory.allItems.filter(i => i.type === 'droid'), engine: AssetSuggestions },
+      { label: 'vehicles', items: this.storeInventory.allItems.filter(i => i.type === 'vehicle'), engine: AssetSuggestions }
     ];
 
     this._suggestionGenerationProgress.total = buckets.reduce((sum, bucket) => sum + bucket.items.length, 0);
@@ -940,63 +945,30 @@ export class SWSEStore extends BaseSWSEAppV2 {
     try {
       const storeContext = await this._getStoreSuggestionContext();
 
-      // Separate items by type
-      const armor = this.storeInventory.allItems.filter(i => i.type === 'armor');
-      const weapons = this.storeInventory.allItems.filter(i => i.type === 'weapon');
-      const gear = this.storeInventory.allItems.filter(i => i.type === 'equipment');
+      const buckets = [
+        { label: 'armor', items: this.storeInventory.allItems.filter(i => i.type === 'armor'), engine: ArmorSuggestions },
+        { label: 'weapons', items: this.storeInventory.allItems.filter(i => i.type === 'weapon'), engine: WeaponSuggestions },
+        { label: 'gear', items: this.storeInventory.allItems.filter(i => i.type === 'equipment'), engine: GearSuggestions },
+        { label: 'droids', items: this.storeInventory.allItems.filter(i => i.type === 'droid'), engine: AssetSuggestions },
+        { label: 'vehicles', items: this.storeInventory.allItems.filter(i => i.type === 'vehicle'), engine: AssetSuggestions }
+      ];
 
-      // Generate suggestions for each type
-      if (armor.length > 0) {
+      for (const bucket of buckets) {
+        if (!bucket.items.length) continue;
         try {
-          const armorSugg = ArmorSuggestions.generateSuggestions(this.actor, armor, {
-            topCount: 80,
+          const result = bucket.engine.generateSuggestions(this.actor, bucket.items, {
+            topCount: Math.max(80, bucket.items.length),
             silent: true,
             suppressLogs: true,
             storeContext,
-            allArmorOptions: armor
+            allArmorOptions: bucket.label === 'armor' ? bucket.items : undefined
           });
-          if (armorSugg.allScored) {
-            for (const scored of armorSugg.allScored) {
-              const itemId = scored.armorId || scored.itemId;
-              if (itemId) {
-                this.suggestions.set(itemId, scored);
-              }
-            }
+          for (const scored of result?.allScored || []) {
+            const itemId = getStoreSuggestionItemId(scored);
+            if (itemId) this.suggestions.set(itemId, scored);
           }
         } catch (err) {
-          console.warn('[SWSE Store] Armor suggestion failed:', err);
-        }
-      }
-
-      if (weapons.length > 0) {
-        try {
-          const weaponSugg = WeaponSuggestions.generateSuggestions(this.actor, weapons, { topCount: 80, silent: true, suppressLogs: true, storeContext });
-          if (weaponSugg.allScored) {
-            for (const scored of weaponSugg.allScored) {
-              const itemId = scored.weaponId || scored.itemId;
-              if (itemId) {
-                this.suggestions.set(itemId, scored);
-              }
-            }
-          }
-        } catch (err) {
-          console.warn('[SWSE Store] Weapon suggestion failed:', err);
-        }
-      }
-
-      if (gear.length > 0) {
-        try {
-          const gearSugg = GearSuggestions.generateSuggestions(this.actor, gear, { topCount: 80, silent: true, suppressLogs: true, storeContext });
-          if (gearSugg.allScored) {
-            for (const scored of gearSugg.allScored) {
-              const itemId = scored.equipmentId || scored.itemId;
-              if (itemId) {
-                this.suggestions.set(itemId, scored);
-              }
-            }
-          }
-        } catch (err) {
-          console.warn('[SWSE Store] Gear suggestion failed:', err);
+          console.warn(`[SWSE Store] ${bucket.label} suggestion failed:`, err);
         }
       }
     } catch (err) {
