@@ -1,0 +1,207 @@
+{
+  "phase": "phase4j-final-source-sr-scrape",
+  "summary": {
+    "source-verified-none": 30,
+    "source-verified": 234,
+    "missing-source-data": 86,
+    "likely-shielded-needs-source-rating": 7
+  },
+  "sourceVerifiedSrApplied": [
+    {
+      "name": "BB-2 Starfire Fighter/Bomber",
+      "source": "https://swse.fandom.com/wiki/BB-2_Starfire_Bomber",
+      "notes": "Mapped to BB-2 Starfire Bomber page; Defenses block lists Shield Rating 30 with regenerating shields.",
+      "sr": 30
+    },
+    {
+      "name": "Besh-Type Personal Starfighter",
+      "source": "https://swse.fandom.com/wiki/Besh-Type_Starfighter",
+      "notes": "Mapped to Besh-Type Starfighter page; Defenses block lists Shield Rating 20.",
+      "sr": 20
+    },
+    {
+      "name": "Corellian JumpMaster 5000 Scout Ship",
+      "source": "https://swse.fandom.com/wiki/JumpMaster_5000_Scout_Ship",
+      "notes": "Fandom Defenses block lists Shield Rating 15.",
+      "sr": 15
+    },
+    {
+      "name": "Corellian KR-TB \"Doomtreader\"",
+      "source": "https://swse.fandom.com/wiki/Corellian_KR-TB_Doomtreader",
+      "notes": "Fandom Defenses block lists Shield Rating 30.",
+      "sr": 30
+    },
+    {
+      "name": "Eta-2 Actis Heavy-Defense Interceptor",
+      "source": "https://swse.miraheze.org/wiki/Eta-2_Actis_Heavy-Defense_Interceptor",
+      "notes": "Mirror/source scrape Defenses block lists Shield Rating 15.",
+      "sr": 15
+    },
+    {
+      "name": "Marauder-Class Corvette",
+      "source": "https://swse.fandom.com/wiki/Marauder_Corvette",
+      "notes": "Mapped to Marauder Corvette page; Defenses block lists Shield Rating 115.",
+      "sr": 115
+    },
+    {
+      "name": "Modified ILH-KK Citadel-Class Civilian Cruiser",
+      "source": "https://swse.miraheze.org/wiki/Modified_ILH-KK_Citadel-Class_Civilian_Cruiser",
+      "notes": "Mirror/source scrape Defenses block lists Shield Rating 40.",
+      "sr": 40
+    },
+    {
+      "name": "Modified Lambda-Class Shuttle",
+      "source": "https://swse.fandom.com/wiki/Lambda-Class_Shuttle",
+      "notes": "Mapped to Lambda-Class Shuttle base statblock; Defenses block lists Shield Rating 25.",
+      "sr": 25
+    },
+    {
+      "name": "NovaSword Space Superiority Fighter",
+      "source": "https://swse.fandom.com/wiki/NovaSword_Superiority_Fighter",
+      "notes": "Fandom Defenses block lists Shield Rating 15.",
+      "sr": 15
+    },
+    {
+      "name": "Outbound Flight",
+      "source": "https://swse.fandom.com/wiki/Outbound_Flight",
+      "notes": "Fandom Defenses block lists Shield Rating 165.",
+      "sr": 165
+    },
+    {
+      "name": "Sabertooth-Class Assault/Rescue Vessel",
+      "source": "https://swse.fandom.com/wiki/Sabertooth-Class_Assault_%26_Rescue_Vessel",
+      "notes": "Fandom Defenses block lists Shield Rating 100.",
+      "sr": 100
+    },
+    {
+      "name": "The Glorious Chariot",
+      "source": "https://swse.fandom.com/wiki/Luxury_3000_Space_Yacht",
+      "notes": "Mapped to Luxury 3000 Space Yacht statblock; Defenses block lists Shield Rating 15.",
+      "sr": 15
+    },
+    {
+      "name": "The Indomitable",
+      "source": "https://swse.fandom.com/wiki/The_Indomitable",
+      "notes": "Fandom Defenses block lists Shield Rating 130.",
+      "sr": 130
+    },
+    {
+      "name": "The Last Resort",
+      "source": "https://swse.fandom.com/wiki/The_Last_Resort",
+      "notes": "Fandom Defenses block lists Shield Rating 10.",
+      "sr": 10
+    },
+    {
+      "name": "Y-Wing \"Courier\" Variant",
+      "source": "https://swse.fandom.com/wiki/Y-Wing_%22Courier%22",
+      "notes": "Fandom Defenses block lists Shield Rating 25.",
+      "sr": 25
+    }
+  ],
+  "sourceVerifiedNoneApplied": [
+    {
+      "name": "\"Vulture\" Droid Starfighter",
+      "source": "https://swse.fandom.com/wiki/%22Vulture%22_Droid_Starfighter",
+      "notes": "Fandom page/statblock check found no Shield Rating line."
+    },
+    {
+      "name": "\"Vulture\" Droid Starfighter",
+      "source": "https://swse.fandom.com/wiki/%22Vulture%22_Droid_Starfighter",
+      "notes": "Fandom page/statblock check found no Shield Rating line."
+    },
+    {
+      "name": "CX-133 Chaos Fighter",
+      "source": "https://swse.fandom.com/wiki/CX-133_Chaos_Fighter",
+      "notes": "Fandom Defenses block has HP/DR/DT but no Shield Rating."
+    },
+    {
+      "name": "Conductor-Class Short-Haul Landing Craft",
+      "source": "https://swse.fandom.com/wiki/Conductor-Class_Short-Haul_Landing_Craft",
+      "notes": "Fandom Defenses block has HP/DR/DT but no Shield Rating."
+    },
+    {
+      "name": "Corellian G9 Rigger-Class Light Freighter",
+      "source": "https://swse.fandom.com/wiki/Corellian_G9_Rigger-Class_Light_Freighter",
+      "notes": "Fandom Defenses block has HP/DR/DT but no Shield Rating."
+    },
+    {
+      "name": "Corellian HWK-290 Light Freighter",
+      "source": "https://swse.fandom.com/wiki/Corellian_HWK-290_Light_Freighter",
+      "notes": "Fandom page/statblock check found no Shield Rating line; text emphasizes maneuverability over strong shields/armor."
+    },
+    {
+      "name": "Dagger-Class Starfighter",
+      "source": "https://swse.fandom.com/wiki/Dagger-Class_Starfighter",
+      "notes": "Fandom source explicitly says the Dagger-Class lacks shields."
+    },
+    {
+      "name": "Derriphan-Class Battleship",
+      "source": "https://swse.fandom.com/wiki/Derriphan-Class_Battleship",
+      "notes": "Fandom source explicitly describes the Derriphan-Class Battleship as unshielded and its Defenses block has no Shield Rating."
+    },
+    {
+      "name": "Droch-Class Boarding Ship",
+      "source": "https://swse.fandom.com/wiki/Droch-Class_Boarding_Ship",
+      "notes": "Fandom Defenses block has HP/DR/DT but no Shield Rating."
+    },
+    {
+      "name": "Droid Tri-Fighter",
+      "source": "https://swse.fandom.com/wiki/Droid_Tri-Fighter",
+      "notes": "Fandom page/statblock check found no Shield Rating line."
+    },
+    {
+      "name": "GS-100 Salvage Ship",
+      "source": "https://swse.fandom.com/wiki/GS-100_Salvage_Ship",
+      "notes": "Fandom page/statblock check found no Shield Rating line."
+    },
+    {
+      "name": "Helot-Class Medium Space Transport",
+      "source": "https://swse.fandom.com/wiki/Helot-Class_Medium_Transport",
+      "notes": "Fandom source states the stock model does not have shields; Defenses block has no Shield Rating."
+    },
+    {
+      "name": "Hyena-Class Bomber",
+      "source": "https://swse.fandom.com/wiki/Hyena-Class_Bomber",
+      "notes": "Fandom Defenses block has HP/DR/DT but no Shield Rating."
+    },
+    {
+      "name": "Hyperspace Beacon",
+      "source": "https://swse.fandom.com/wiki/Hyperspace_Beacon",
+      "notes": "Fandom Defenses block has HP/DR/DT but no Shield Rating."
+    },
+    {
+      "name": "Junker TYE-Wing",
+      "source": "https://swse.fandom.com/wiki/Junker_TYE-Wing",
+      "notes": "Fandom page/statblock check found no Shield Rating line."
+    },
+    {
+      "name": "Nantex-Class Territorial Starfighter",
+      "source": "https://swse.fandom.com/wiki/Nantex-Class_Territorial_Starfighter",
+      "notes": "Fandom page/statblock check found no Shield Rating line."
+    },
+    {
+      "name": "PTV-2100 Incarcerator",
+      "source": "https://swse.fandom.com/wiki/PTV-2100_Incarcerator",
+      "notes": "Fandom page/statblock check found no Shield Rating line."
+    },
+    {
+      "name": "Sith Interceptor",
+      "source": "https://swse.fandom.com/wiki/Sith_Interceptor",
+      "notes": "Fandom Defenses block has HP/DR/DT but no Shield Rating."
+    },
+    {
+      "name": "TIE Shuttle",
+      "source": "https://swse.fandom.com/wiki/TIE_Shuttle",
+      "notes": "Fandom Defenses block has HP/DR/DT but no Shield Rating."
+    }
+  ],
+  "remainingLikelyShieldedPending": [
+    "Miy'til Command Starfighter",
+    "Delta-7 Aethersprite High-Speed Interceptor",
+    "Delta-7 Aethersprite High-Maneuver Interceptor",
+    "Marauder-Class Rebel Cruiser",
+    "Junker Class 720 Freighter",
+    "Escape Pod",
+    "Sith Infiltrator"
+  ]
+}

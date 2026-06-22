@@ -183,12 +183,46 @@ function normalizeCrew(system) {
   return crew;
 }
 
+
+function parseShieldRating(system = {}) {
+  const candidates = [
+    system.shieldRating,
+    system.currentSR,
+    system.sr,
+    system.shield_rating,
+    system.shieldRatingMax,
+    system.shields?.max,
+    system.shields?.value,
+    system.shields?.current,
+    system.shields?.rating,
+    system.shields,
+    system.description,
+    system.statBlock,
+    system.notes
+  ];
+  for (const candidate of candidates) {
+    if (candidate === undefined || candidate === null || candidate === '') continue;
+    if (typeof candidate === 'number') return Number.isFinite(candidate) && candidate > 0 ? candidate : 0;
+    const text = String(candidate);
+    const match = text.match(/\b(?:SR|Shield Rating|Shields?)\s*[:\-]?\s*(\d+)\b/i);
+    if (match) return Number(match[1]) || 0;
+    if (/^\d+$/.test(text.trim())) return Number(text.trim()) || 0;
+  }
+  return 0;
+}
+
 /**
  * Normalize shields: handle both modern {value, max} and legacy formats
  * Default to {value: 0, max: 0} for ground vehicles
  */
 function normalizeShields(system) {
-  // Modern format
+  const rating = parseShieldRating(system);
+  if (rating > 0) {
+    const current = safeNumber(system.shields?.value ?? system.currentSR ?? system.shieldRating ?? rating, rating);
+    return { value: Math.min(current, rating), max: rating };
+  }
+
+  // Modern explicit zero/no shield format
   if (system.shields && typeof system.shields === 'object') {
     return {
       value: safeNumber(system.shields.value, 0),

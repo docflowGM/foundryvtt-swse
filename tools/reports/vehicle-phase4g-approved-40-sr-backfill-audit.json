@@ -1,0 +1,180 @@
+{
+  "phase": "4g-approved-40-sr-backfill",
+  "description": "Applies user-approved numeric SR candidates from the third likely-shielded review batch. HOLD/no-confidence rows remain untouched.",
+  "updatedAggregateCount": 40,
+  "updatedAggregate": [
+    {
+      "name": "Tri-Scythe-Class Frigate",
+      "sr": 100
+    },
+    {
+      "name": "Nune-Class Imperial Shuttle",
+      "sr": 30
+    },
+    {
+      "name": "Toscan 8-Q Starfighter",
+      "sr": 10
+    },
+    {
+      "name": "Corellian Crix-Class Courier Shuttle",
+      "sr": 25
+    },
+    {
+      "name": "H-60 Tempest Bomber",
+      "sr": 25
+    },
+    {
+      "name": "StarViper-Class Attack Platform",
+      "sr": 20
+    },
+    {
+      "name": "Dreadnaught-Class Heavy Cruiser",
+      "sr": 115
+    },
+    {
+      "name": "Lucrehulk-Class Battleship",
+      "sr": 150
+    },
+    {
+      "name": "Star Galleon-Class Frigate",
+      "sr": 100
+    },
+    {
+      "name": "Conqueror-Class Assault Ship",
+      "sr": 30
+    },
+    {
+      "name": "ILH-KK Citadel-Class Civilian Cruiser",
+      "sr": 30
+    },
+    {
+      "name": "Gladius-Class Light Freighter",
+      "sr": 30
+    },
+    {
+      "name": "Ministry-Class Orbital Shuttle",
+      "sr": 30
+    },
+    {
+      "name": "Miy'til Starfighter",
+      "sr": 20
+    },
+    {
+      "name": "Nova-Class Battlecruiser",
+      "sr": 100
+    },
+    {
+      "name": "R-41 Starchaser",
+      "sr": 20
+    },
+    {
+      "name": "X-83 TwinTail Starfighter",
+      "sr": 30
+    },
+    {
+      "name": "Ton-Falk-Class Escort Carrier",
+      "sr": 30
+    },
+    {
+      "name": "Lucrehulk-Class Droid Control Ship",
+      "sr": 150
+    },
+    {
+      "name": "Imperial Customs Corvette",
+      "sr": 45
+    },
+    {
+      "name": "Tartan-Class Patrol Cruiser",
+      "sr": 90
+    },
+    {
+      "name": "Nebulon-B Escort Frigate",
+      "sr": 100
+    },
+    {
+      "name": "Gladiator-Class Star Destroyer",
+      "sr": 120
+    },
+    {
+      "name": "Ardent-Class Fast Frigate",
+      "sr": 160
+    },
+    {
+      "name": "Vindicator-Class Heavy Cruiser",
+      "sr": 150
+    },
+    {
+      "name": "YE-4 Gunship",
+      "sr": 25
+    },
+    {
+      "name": "Dianoga-Class Assault Starfighter",
+      "sr": 15
+    },
+    {
+      "name": "Hapan Battle Dragon",
+      "sr": 150
+    },
+    {
+      "name": "Nssis-Class Clawcraft",
+      "sr": 25
+    },
+    {
+      "name": "Corellian S-250 Chela-Class Starfighter",
+      "sr": 20
+    },
+    {
+      "name": "MC-24a Light Shuttle",
+      "sr": 20
+    },
+    {
+      "name": "G-Type Light Shuttle",
+      "sr": 30
+    },
+    {
+      "name": "R-28 Starfighter",
+      "sr": 30
+    },
+    {
+      "name": "Miy'til Assault Bomber",
+      "sr": 30
+    },
+    {
+      "name": "Executor-Class Star Dreadnought",
+      "sr": 400
+    },
+    {
+      "name": "Immobilizer 418 Interdictor-Class Heavy Cruiser",
+      "sr": 150
+    },
+    {
+      "name": "Broadside-Class Cruiser",
+      "sr": 120
+    },
+    {
+      "name": "G-Type Escape Shuttle",
+      "sr": 50
+    },
+    {
+      "name": "R-42 Starchaser",
+      "sr": 20
+    },
+    {
+      "name": "Rebel Assault Frigate Mark II",
+      "sr": 150
+    }
+  ],
+  "modifiedPackRecordCounts": {
+    "vehicles-capital-ships.db": 17,
+    "vehicles-space-transports.db": 11,
+    "vehicles-starfighters.db": 12,
+    "vehicles.db": 40
+  },
+  "shieldStatusCounts": {
+    "likely-shielded-needs-source-rating": 126,
+    "source-verified-none": 9,
+    "source-verified": 136,
+    "missing-source-data": 86
+  },
+  "sources": "SWSE Fandom Defenses/Shield Rating lines reviewed in approval table; these records store per-vehicle source URLs."
+}

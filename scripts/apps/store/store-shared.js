@@ -851,12 +851,35 @@ export function getVehicleWeaponsKey(item = {}) {
   return has ? 'yes' : 'no';
 }
 
+
+export function getVehicleShieldRating(item = {}) {
+  const sys = item.system ?? item.data ?? {};
+  const candidates = [
+    sys.shieldRating,
+    sys.currentSR,
+    sys.sr,
+    sys.shield_rating,
+    sys.shieldRatingMax,
+    sys.shields?.max,
+    sys.shields?.value,
+    sys.shields?.current,
+    sys.shields?.rating,
+    sys.shields
+  ];
+  for (const candidate of candidates) {
+    if (candidate === undefined || candidate === null || candidate === '') continue;
+    if (typeof candidate === 'number') return Number.isFinite(candidate) && candidate > 0 ? candidate : 0;
+    const text = String(candidate);
+    const srMatch = text.match(/\b(?:SR|Shield Rating|Shields?)\s*[:\-]?\s*(\d+)\b/i);
+    if (srMatch) return Number(srMatch[1]) || 0;
+    if (/^\d+$/.test(text.trim())) return Number(text.trim()) || 0;
+  }
+  return 0;
+}
+
 export function getVehicleShieldsKey(item = {}) {
   const sys = item.system ?? item.data ?? {};
-  const shield = sys.shields;
-  const inferred = typeof shield === 'object' && shield !== null
-    ? Number(shield.max ?? shield.value ?? shield.current ?? 0) > 0
-    : Number(firstVehicleNumber(shield) ?? 0) > 0;
+  const inferred = getVehicleShieldRating(item) > 0;
   const has = truthyVehicleFeature(sys.vehicleHasShields ?? item.vehicleHasShields, inferred);
   return has ? 'yes' : 'no';
 }

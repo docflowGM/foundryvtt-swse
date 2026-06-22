@@ -1,0 +1,221 @@
+{
+  "phase": "4h-approved-next40-sr-backfill",
+  "description": "Applies user-approved numeric SR candidates from the next likely-shielded review batch. Non-listed/uncertain rows remain untouched.",
+  "updatedAggregateCount": 40,
+  "updatedAggregate": [
+    {
+      "name": "Corellian Crix-Class Assault Shuttle",
+      "sr": 50,
+      "sourceUrl": "https://swse.fandom.com/wiki/Corellian_Crix-Class_Assault_Shuttle"
+    },
+    {
+      "name": "Star Saber XC-01 Starfighter",
+      "sr": 35,
+      "sourceUrl": "https://swse.fandom.com/wiki/Star_Saber_XC-01_Starfighter"
+    },
+    {
+      "name": "Recusant-Class Light Destroyer",
+      "sr": 150,
+      "sourceUrl": "https://swse.fandom.com/wiki/Recusant-Class_Light_Destroyer"
+    },
+    {
+      "name": "Corellian YU-410 Light Freighter",
+      "sr": 20,
+      "sourceUrl": "https://swse.fandom.com/wiki/Corellian_YU-410_Light_Freighter"
+    },
+    {
+      "name": "Seltiss-2 Caravel Cabin",
+      "sr": 10,
+      "sourceUrl": "https://swse.fandom.com/wiki/Seltiss-2_Caravel_Cabin"
+    },
+    {
+      "name": "TL-1800 Light Freighter",
+      "sr": 30,
+      "sourceUrl": "https://swse.fandom.com/wiki/TL-1800_Light_Freighter"
+    },
+    {
+      "name": "Jumpstar HPF Starfighter",
+      "sr": 15,
+      "sourceUrl": "https://swse.fandom.com/wiki/Jumpstar_HPF_Starfighter"
+    },
+    {
+      "name": "Davaab-Type Starfighter",
+      "sr": 25,
+      "sourceUrl": "https://swse.fandom.com/wiki/Davaab-Type_Starfighter"
+    },
+    {
+      "name": "GPE-7300 Space Transport",
+      "sr": 20,
+      "sourceUrl": "https://swse.fandom.com/wiki/GPE-7300_Space_Transport"
+    },
+    {
+      "name": "Pursuer-Class Enforcement Ship",
+      "sr": 15,
+      "sourceUrl": "https://swse.fandom.com/wiki/Pursuer-Class_Enforcement_Ship"
+    },
+    {
+      "name": "MedStar-Class Frigate",
+      "sr": 100,
+      "sourceUrl": "https://swse.fandom.com/wiki/MedStar-Class_Frigate"
+    },
+    {
+      "name": "Krayt's Honor",
+      "sr": 50,
+      "sourceUrl": "https://swse.fandom.com/wiki/Krayt%27s_Honor"
+    },
+    {
+      "name": "Lethisk-Class Armed Freighter",
+      "sr": 30,
+      "sourceUrl": "https://swse.fandom.com/wiki/Lethisk-Class_Armed_Freighter"
+    },
+    {
+      "name": "The Moomo Williwaw",
+      "sr": 20,
+      "sourceUrl": "https://swse.fandom.com/wiki/The_Moomo_Williwaw"
+    },
+    {
+      "name": "Rebel Assault Frigate Mark I",
+      "sr": 150,
+      "sourceUrl": "https://swse.fandom.com/wiki/Rebel_Assault_Frigate_Mk_I"
+    },
+    {
+      "name": "XQ2 Space Platform",
+      "sr": 200,
+      "sourceUrl": "https://swse.fandom.com/wiki/XQ2_Space_Platform"
+    },
+    {
+      "name": "GR-75 Medium Transport",
+      "sr": 45,
+      "sourceUrl": "https://swse.fandom.com/wiki/GR-75_Medium_Transport"
+    },
+    {
+      "name": "The Azure Angel",
+      "sr": 15,
+      "sourceUrl": "https://swse.fandom.com/wiki/The_Azure_Angel"
+    },
+    {
+      "name": "Carrack-Class Light Cruiser",
+      "sr": 130,
+      "sourceUrl": "https://swse.fandom.com/wiki/Carrack-Class_Light_Cruiser"
+    },
+    {
+      "name": "Kazellis-Class Light Freighter",
+      "sr": 30,
+      "sourceUrl": "https://swse.fandom.com/wiki/Kazellis-Class_Light_Freighter"
+    },
+    {
+      "name": "Seltiss-2 Caravel",
+      "sr": 30,
+      "sourceUrl": "https://swse.fandom.com/wiki/Seltiss-2_Caravel"
+    },
+    {
+      "name": "Neutralizer-Class Bomber",
+      "sr": 20,
+      "sourceUrl": "https://swse.fandom.com/wiki/Neutralizer-Class_Bomber"
+    },
+    {
+      "name": "ShaShore-Class Frigate",
+      "sr": 100,
+      "sourceUrl": "https://swse.fandom.com/wiki/ShaShore-Class_Frigate"
+    },
+    {
+      "name": "TIE Advanced",
+      "sr": 20,
+      "sourceUrl": "https://swse.fandom.com/wiki/TIE_Advanced"
+    },
+    {
+      "name": "IF-120 Landing Craft",
+      "sr": 40,
+      "sourceUrl": "https://swse.fandom.com/wiki/IF-120_Landing_Craft"
+    },
+    {
+      "name": "The Scarlet Star",
+      "sr": 30,
+      "sourceUrl": "https://swse.fandom.com/wiki/The_Scarlet_Star"
+    },
+    {
+      "name": "Lancer-Class Frigate",
+      "sr": 125,
+      "sourceUrl": "https://swse.fandom.com/wiki/Lancer-Class_Frigate"
+    },
+    {
+      "name": "Gozanti Cruiser",
+      "sr": 15,
+      "sourceUrl": "https://swse.fandom.com/wiki/Gozanti_Cruiser"
+    },
+    {
+      "name": "Neutron Star-Class Bulk Cruiser",
+      "sr": 100,
+      "sourceUrl": "https://swse.fandom.com/wiki/Neutron_Star-Class_Bulk_Cruiser"
+    },
+    {
+      "name": "Gamma-Class Assault Shuttle",
+      "sr": 230,
+      "sourceUrl": "https://swse.fandom.com/wiki/Gamma-Class_Assault_Shuttle"
+    },
+    {
+      "name": "MC140 Scythe-Class Battlecruiser",
+      "sr": 130,
+      "sourceUrl": "https://swse.fandom.com/wiki/Scythe-Class_Battlecruiser"
+    },
+    {
+      "name": "Pelta-Class Frigate",
+      "sr": 100,
+      "sourceUrl": "https://swse.fandom.com/wiki/Pelta-Class_Medical_Frigate"
+    },
+    {
+      "name": "Acclamator I-Class Assault Ship",
+      "sr": 120,
+      "sourceUrl": "https://swse.fandom.com/wiki/Acclamator-Class_Assault_Ship"
+    },
+    {
+      "name": "Vaya-Class Scout Ship",
+      "sr": 35,
+      "sourceUrl": "https://swse.fandom.com/wiki/Vaya-Class_Scout_Ship"
+    },
+    {
+      "name": "Guardian-Class Light Cruiser",
+      "sr": 120,
+      "sourceUrl": "https://swse.fandom.com/wiki/Guardian-Class_Light_Cruiser"
+    },
+    {
+      "name": "Kappa-Class Shuttle",
+      "sr": 25,
+      "sourceUrl": "https://swse.fandom.com/wiki/Kappa-Class_Shuttle"
+    },
+    {
+      "name": "Victory I-Class Star Destroyer",
+      "sr": 150,
+      "sourceUrl": "https://swse.fandom.com/wiki/Victory_I-Class_Star_Destroyer"
+    },
+    {
+      "name": "Acclamator II-Class Assault Ship",
+      "sr": 120,
+      "sourceUrl": "https://swse.fandom.com/wiki/Acclamator_II-Class_Assault_Ship"
+    },
+    {
+      "name": "IPV-1 System Patrol Craft",
+      "sr": 165,
+      "sourceUrl": "https://swse.fandom.com/wiki/IPV-1_Patrol_Craft"
+    },
+    {
+      "name": "Aurek Tactical Strikefighter",
+      "sr": 15,
+      "sourceUrl": "https://swse.fandom.com/wiki/Aurek_Tactical_Strikefighter"
+    }
+  ],
+  "modifiedPackRecordCounts": {
+    "vehicles-capital-ships.db": 14,
+    "vehicles-space-transports.db": 18,
+    "vehicles-starfighters.db": 7,
+    "vehicles-stations.db": 1,
+    "vehicles.db": 40
+  },
+  "shieldStatusCounts": {
+    "likely-shielded-needs-source-rating": 86,
+    "source-verified-none": 9,
+    "source-verified": 176,
+    "missing-source-data": 86
+  },
+  "sources": "SWSE Fandom Defenses/Shield Rating lines reviewed in approval table; these records store per-vehicle source URLs."
+}

@@ -313,13 +313,13 @@
                 {{#if this.costUsed}}
                 <span class="swse-store-surface__card-price">NEW {{this.cost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span> · USED {{this.costUsed}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></span>
                 {{else}}
-                <span class="swse-store-surface__card-price">{{this.finalCost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></span>
+                <span class="swse-store-surface__card-price {{#if this.vehiclePriceReviewNeeded}}is-review{{/if}}">{{#if this.finalCost}}{{this.finalCost}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span>{{else}}{{#if this.vehiclePriceStatusLabel}}{{this.vehiclePriceStatusLabel}}{{else}}—{{/if}}{{/if}}</span>
                 {{/if}}
                 <div class="swse-store-surface__card-actions">
                   <button type="button" class="swse-store-surface__card-btn" data-action="expand-product" data-item-id="{{this.id}}">{{#if (eq ../vm.storeContext.selectedProductId this.id)}}COLLAPSE{{else}}DETAILS{{/if}}</button>
                   {{#if (eq this.type 'vehicle')}}
-                  <button type="button" class="swse-store-surface__card-btn" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="used">{{localize "SWSE.ShellUI.USED"}}</button>
-                  <button type="button" class="swse-store-surface__card-btn swse-store-surface__card-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="new">{{localize "SWSE.ShellUI.NEW"}}</button>
+                  <button type="button" class="swse-store-surface__card-btn" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="used" {{#unless this.costUsed}}disabled{{/unless}}>{{localize "SWSE.ShellUI.USED"}}</button>
+                  <button type="button" class="swse-store-surface__card-btn swse-store-surface__card-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="vehicle" data-condition="new" {{#unless this.cost}}disabled{{/unless}}>{{localize "SWSE.ShellUI.NEW"}}</button>
                   {{else}}
                   <button type="button" class="swse-store-surface__card-btn swse-store-surface__card-btn--primary" data-action="add-to-cart" data-item-id="{{this.id}}" data-item-type="{{this.type}}">{{localize "SWSE.ShellUI.ADD"}}</button>
                   {{/if}}
@@ -374,6 +374,12 @@
                     <strong>{{valueLabel}}<span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.ShellUI.Credits3'}}"></span></strong>
                   </div>
                   {{/each}}
+                  {{#unless vm.storeContext.selectedProductDetail.priceOptions.length}}
+                  <div class="swse-store-surface__detail-price-option is-review">
+                    <span>Price</span>
+                    <strong>{{#if vm.storeContext.selectedProductDetail.priceStatusLabel}}{{vm.storeContext.selectedProductDetail.priceStatusLabel}}{{else}}—{{/if}}</strong>
+                  </div>
+                  {{/unless}}
                 </div>
 
                 <div class="swse-store-surface__detail-summary">{{vm.storeContext.selectedProductDetail.summary}}</div>

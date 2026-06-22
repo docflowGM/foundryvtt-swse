@@ -128,8 +128,9 @@ export class PanelContextBuilder {
     }
 
     const bonusHpValue = Number(this.system.hpBonus) || 0;
-    const shieldCurrent = Number(this.derived.shield?.current ?? this.system.currentSR ?? 0) || 0;
-    const shieldMax = Number(this.derived.shield?.max ?? this.system.shieldRating ?? shieldCurrent) || 0;
+    const shieldCurrent = Number(this.derived.shield?.current ?? this.system.shields?.value ?? this.system.currentSR ?? this.system.shieldRating ?? 0) || 0;
+    const shieldMax = Number(this.derived.shield?.max ?? this.system.shields?.max ?? this.system.shieldRating ?? shieldCurrent) || 0;
+    const shieldLikely = this.system.vehicleHasShields === true || this.system.vehicleShieldDataStatus === 'likely-shielded-needs-source-rating';
     const shieldPercent = shieldMax > 0 ? Math.max(0, Math.min(100, Math.round((shieldCurrent / shieldMax) * 100))) : 0;
     const damageReductionValue = Number(this.system.damageReduction ?? 0) || 0;
 
@@ -195,8 +196,10 @@ export class PanelContextBuilder {
       shield: {
         max: shieldMax,
         current: shieldCurrent,
-        rating: String(shieldCurrent),
-        hasShield: shieldMax > 0,
+        rating: shieldMax > 0 ? String(shieldCurrent) : shieldLikely ? 'Source Needed' : '0',
+        hasShield: shieldMax > 0 || shieldLikely,
+        ratingKnown: shieldMax > 0,
+        status: this.system.vehicleShieldDataStatus || (shieldMax > 0 ? 'source/field-rating' : 'missing-source-data'),
         percent: shieldPercent
       },
       damageReduction: damageReductionValue > 0 ? String(damageReductionValue) : null,

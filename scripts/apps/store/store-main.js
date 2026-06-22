@@ -217,6 +217,14 @@ function resolveVehicleStoreCosts(item = {}) {
   return { newCost, usedCost };
 }
 
+function vehiclePriceStatusLabel(item = {}) {
+  const status = item.system?.vehiclePriceStatus || item.vehiclePriceStatus || item.costStatus || '';
+  if (status === 'review') return 'Price needs source review';
+  if (status === 'unavailable') return 'Not publicly available';
+  if (status === 'missing') return 'Price unknown';
+  return '';
+}
+
 function hasStorePrice(value) {
   return positiveCreditOrNull(value) !== null;
 }
@@ -623,7 +631,11 @@ export class SWSEStore extends BaseSWSEAppV2 {
       vehicleChallengeLevel: view.vehicleChallengeLevel,
       vehicleChallengeBand: view.vehicleChallengeBand,
       vehicleChallengeLabel: view.vehicleChallengeLabel,
-      availability: item.system?.availability || 'Standard',
+      vehiclePriceStatus: item.system?.vehiclePriceStatus || item.costStatus || '',
+      vehiclePriceLabel: item.system?.vehiclePriceLabel || '',
+      vehiclePriceReviewNeeded: item.system?.vehiclePriceReviewNeeded === true,
+      vehiclePriceStatusLabel: vehiclePriceStatusLabel(item),
+      availability: getStoreAvailabilityText(item) || (item.type === 'vehicle' ? 'Unknown' : 'Standard'),
       typeLabel: this._getItemTypeLabel(item.type || ''),
       suggestion: suggestion?.combined
         ? {
@@ -1209,7 +1221,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
       // Legacy field for some views
       finalCost: finalCost,
-      priceLabel: hasStorePrice(displayCost) ? Number(displayCost).toLocaleString() : '—',
+      priceLabel: hasStorePrice(displayCost) ? Number(displayCost).toLocaleString() : (item.type === 'vehicle' ? (sys.vehiclePriceLabel || vehiclePriceStatusLabel(item) || '—') : '—'),
       priceOverrideApplied: item.priceOverrideApplied === true,
 
       rarityClass,
@@ -1226,6 +1238,10 @@ export class SWSEStore extends BaseSWSEAppV2 {
       vehicleChallengeLevel: storeItemCategoryKey(item) === 'vehicles' ? getVehicleChallengeLevel(item) : null,
       vehicleChallengeBand: storeItemCategoryKey(item) === 'vehicles' ? getVehicleChallengeBand(item) : '',
       vehicleChallengeLabel: storeItemCategoryKey(item) === 'vehicles' ? getVehicleChallengeBandLabel(getVehicleChallengeBand(item)) : '',
+      vehiclePriceStatus: storeItemCategoryKey(item) === 'vehicles' ? (sys.vehiclePriceStatus || item.costStatus || '') : '',
+      vehiclePriceLabel: storeItemCategoryKey(item) === 'vehicles' ? (sys.vehiclePriceLabel || '') : '',
+      vehiclePriceReviewNeeded: storeItemCategoryKey(item) === 'vehicles' ? sys.vehiclePriceReviewNeeded === true : false,
+      vehiclePriceStatusLabel: storeItemCategoryKey(item) === 'vehicles' ? vehiclePriceStatusLabel(item) : '',
       vehicleRoleKey: storeItemCategoryKey(item) === 'vehicles' ? getVehicleRoleKey(item) : '',
       vehicleRoleLabel: storeItemCategoryKey(item) === 'vehicles' ? getVehicleRoleLabel(item) : '',
       vehicleUniqueNamed: storeItemCategoryKey(item) === 'vehicles' ? item.system?.vehicleUniqueNamed === true : false,
@@ -1535,7 +1551,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
             id: item.id,
             name: item.name,
             type: item.type,
-            cost: item.type === 'vehicle' ? (resolveVehicleStoreCosts(item).newCost ?? 0) : (Number(item.finalCost ?? 0) || 0),
+            cost: item.type === 'vehicle' ? (resolveVehicleStoreCosts(item).newCost ?? Number.MAX_SAFE_INTEGER) : (Number(item.finalCost ?? Number.MAX_SAFE_INTEGER) || Number.MAX_SAFE_INTEGER),
             savedAt: Date.now()
           });
           await this.actor.setFlag('foundryvtt-swse', 'storeSavedForLater', current);
@@ -1923,6 +1939,8 @@ export class SWSEStore extends BaseSWSEAppV2 {
     }
 
     add(storeI18n('SWSE.Store.Technical.Availability'), sys.availability);
+      add('Price Status', sys.vehiclePriceStatus === 'review' ? 'Needs source review' : sys.vehiclePriceStatus);
+      add('Availability Status', sys.vehicleAvailabilityStatus === 'missing-source-data' ? 'Missing source data' : sys.vehicleAvailabilityStatus);
 
     return details.length > 0 ? details.join('') : '';
   }

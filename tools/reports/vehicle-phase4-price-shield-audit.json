@@ -1,0 +1,3258 @@
+{
+  "packCounts": {
+    "vehicles-airspeeders.db": 26,
+    "vehicles-capital-ships.db": 63,
+    "vehicles-space-transports.db": 108,
+    "vehicles-speeders.db": 41,
+    "vehicles-starfighters.db": 85,
+    "vehicles-stations.db": 11,
+    "vehicles-walkers.db": 20,
+    "vehicles-wheeled.db": 3,
+    "vehicles.db": 357
+  },
+  "priceStatus": {
+    "priced": 312,
+    "unavailable": 128,
+    "review": 274
+  },
+  "shieldStatus": {
+    "missing-source-data": 714
+  },
+  "priceReviewItems": [
+    {
+      "name": "Basilisk War Droid",
+      "pack": "vehicles-airspeeders.db",
+      "cost": {
+        "new": 70000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Lancet Aerial Artillery",
+      "pack": "vehicles-airspeeders.db",
+      "cost": {
+        "new": 6,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Modified T-47 Airspeeder",
+      "pack": "vehicles-airspeeders.db",
+      "cost": {
+        "new": 50000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "STAP",
+      "pack": "vehicles-airspeeders.db",
+      "cost": {
+        "new": 2500,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Acclamator II-Class Assault Ship",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 4,
+        "used": 11
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 11"
+      ]
+    },
+    {
+      "name": "Ardent-Class Fast Frigate",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Broadside-Class Cruiser",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 13
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 13"
+      ]
+    },
+    {
+      "name": "Carrack-Class Light Cruiser",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 13
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 13"
+      ]
+    },
+    {
+      "name": "Centurion-Class Battlecruiser",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 6,
+        "used": 17
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 17"
+      ]
+    },
+    {
+      "name": "CR70 Corellian Corvette",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 2,
+        "used": 9
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 9"
+      ]
+    },
+    {
+      "name": "Derriphan-Class Battleship",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 3,
+        "used": 7
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "DP20 Corellian Frigate",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 4,
+        "used": 8
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 8"
+      ]
+    },
+    {
+      "name": "Dreadnaught-Class Heavy Cruiser",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 35555000,
+        "used": 5
+      },
+      "notes": [
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Eclipse-Class Star Dreadnought",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 15,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 15",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Endurance-Class Fleet Carrier",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 18
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 18"
+      ]
+    },
+    {
+      "name": "Executor-Class Star Dreadnought",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Foray-Class Blockade Runner",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 3,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Gladiator-Class Star Destroyer",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 34,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 34",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Hapan Battle Dragon",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 12
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 12"
+      ]
+    },
+    {
+      "name": "Imperial II-Class Star Destroyer",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Imperious-Class Star Destroyer",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 17
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 17"
+      ]
+    },
+    {
+      "name": "Lancer-Class Frigate",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 12
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 12"
+      ]
+    },
+    {
+      "name": "Lucrehulk-Class Battleship",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 6,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "Lucrehulk-Class Core Ship",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 6,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "Lucrehulk-Class Droid Control Ship",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 6,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "MC80 Star Cruiser",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 6,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "MC80a Star Cruiser",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 6,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Munificent-Class Frigate",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 57,
+        "used": 40
+      },
+      "notes": [
+        "new price needs source review: 57",
+        "used price needs source review: 40"
+      ]
+    },
+    {
+      "name": "Nebula-Class Star Destroyer",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 18
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 18"
+      ]
+    },
+    {
+      "name": "Neutron Star-Class Bulk Cruiser",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "Nova-Class Battlecruiser",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 20,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 20",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Outbound Flight",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 6,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Pellaeon-Class Star Destroyer",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "Providence-Class Destroyer",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 6,
+        "used": 18
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 18"
+      ]
+    },
+    {
+      "name": "Recusant-Class Light Destroyer",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 14
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 14"
+      ]
+    },
+    {
+      "name": "Sabaoth Destroyer",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 3,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "ShaShore-Class Frigate",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 6,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "Spinward-Class Tender",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 4,
+        "used": 9
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 9"
+      ]
+    },
+    {
+      "name": "Star Galleon-Class Frigate",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 12
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 12"
+      ]
+    },
+    {
+      "name": "Strike-Class Medium Cruiser",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 17,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 17",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Subjugator-Class Heavy Cruiser",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Tartan-Class Patrol Cruiser",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 4,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "The Indomitable",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 4,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "The Invisible Hand",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 6,
+        "used": 21
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 21"
+      ]
+    },
+    {
+      "name": "Ton-Falk-Class Escort Carrier",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 3,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Tri-Scythe-Class Frigate",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 6,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Venator-Class Star Destroyer",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 50,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 50",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Victory I-Class Star Destroyer",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 50,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 50",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Victory II-Class Star Destroyer",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 5,
+        "used": 14
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 14"
+      ]
+    },
+    {
+      "name": "Vindicator-Class Heavy Cruiser",
+      "pack": "vehicles-capital-ships.db",
+      "cost": {
+        "new": 43,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 43",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "BC-714 Luxury Transport",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 1,
+        "used": 7
+      },
+      "notes": [
+        "new price needs source review: 1",
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "F9-TZ Transport",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 9,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 9",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Guardian-Class Light Cruiser",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 800000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Hound's Tooth",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 12,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 12",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "IF-120 Landing Craft",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 290000,
+        "used": 10
+      },
+      "notes": [
+        "used price needs source review: 10"
+      ]
+    },
+    {
+      "name": "Imperial Customs Corvette",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 6,
+        "used": 14
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 14"
+      ]
+    },
+    {
+      "name": "J-Type Star Skiff",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 5,
+        "used": 14
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 14"
+      ]
+    },
+    {
+      "name": "Kappa-Class Shuttle",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 7,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Krayt's Honor",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 3,
+        "used": 13
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 13"
+      ]
+    },
+    {
+      "name": "Lambda-Class Shuttle",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 240000,
+        "used": 2
+      },
+      "notes": [
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "Nune-Class Imperial Shuttle",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 7,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "PTV-2100 Incarcerator",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 4,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Punworcca 116-Class Interstellar Sloop",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 35700,
+        "used": 2
+      },
+      "notes": [
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "SCT Scout Craft",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 1,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 1",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "Sentinel-Class Landing Craft",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 240000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Shaadlar-Type Troopship",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 3,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Sigma-Class Long-Range Shuttle",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 30,
+        "used": 3
+      },
+      "notes": [
+        "new price needs source review: 30",
+        "used price needs source review: 3"
+      ]
+    },
+    {
+      "name": "Sith Infiltrator",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 15,
+        "used": 10
+      },
+      "notes": [
+        "new price needs source review: 15",
+        "used price needs source review: 10"
+      ]
+    },
+    {
+      "name": "Slave I",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 18,
+        "used": 13
+      },
+      "notes": [
+        "new price needs source review: 18",
+        "used price needs source review: 13"
+      ]
+    },
+    {
+      "name": "The Banshee",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 9,
+        "used": 3
+      },
+      "notes": [
+        "new price needs source review: 9",
+        "used price needs source review: 3"
+      ]
+    },
+    {
+      "name": "The Blood Brother",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 1,
+        "used": 25
+      },
+      "notes": [
+        "new price needs source review: 1",
+        "used price needs source review: 25"
+      ]
+    },
+    {
+      "name": "The Ebon Hawk",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 154000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "The Grinning Liar",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 5,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "The Last Resort",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 2,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "The Millennium Falcon",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 13,
+        "used": 8
+      },
+      "notes": [
+        "new price needs source review: 13",
+        "used price needs source review: 8"
+      ]
+    },
+    {
+      "name": "The Moomo Williwaw",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 1,
+        "used": 8
+      },
+      "notes": [
+        "new price needs source review: 1",
+        "used price needs source review: 8"
+      ]
+    },
+    {
+      "name": "The Mynock",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 9,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 9",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "The Scarlet Star",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 4,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Theta-Class Shuttle",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 1,
+        "used": 210000
+      },
+      "notes": [
+        "new price needs source review: 1"
+      ]
+    },
+    {
+      "name": "VT-49 Decimator",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 8,
+        "used": 3
+      },
+      "notes": [
+        "new price needs source review: 8",
+        "used price needs source review: 3"
+      ]
+    },
+    {
+      "name": "YE-4 Gunship",
+      "pack": "vehicles-space-transports.db",
+      "cost": {
+        "new": 2,
+        "used": 11
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 11"
+      ]
+    },
+    {
+      "name": "74-M Speeder Bike",
+      "pack": "vehicles-speeders.db",
+      "cost": {
+        "new": 4000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "AAT-1",
+      "pack": "vehicles-speeders.db",
+      "cost": {
+        "new": 4,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Canderous-Class Assault Tank",
+      "pack": "vehicles-speeders.db",
+      "cost": {
+        "new": 4,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Luke's Snowspeeder",
+      "pack": "vehicles-speeders.db",
+      "cost": {
+        "new": 11,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 11",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Manta Droid Subfighter",
+      "pack": "vehicles-speeders.db",
+      "cost": {
+        "new": 22000,
+        "used": 3
+      },
+      "notes": [
+        "used price needs source review: 3"
+      ]
+    },
+    {
+      "name": "T2-B Repulsor Tank",
+      "pack": "vehicles-speeders.db",
+      "cost": {
+        "new": 5,
+        "used": "not publicly available"
+      },
+      "notes": [
+        "new price needs source review: 5"
+      ]
+    },
+    {
+      "name": "TX-130 Saber-Class Fighter Tank",
+      "pack": "vehicles-speeders.db",
+      "cost": {
+        "new": 3,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "\"Vulture\" Droid Starfighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 19000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "\"Vulture\" Droid Starfighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 19000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "Advanced V-19 Torrent Starfighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 9,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 9",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Aurek Tactical Strikefighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 360000,
+        "used": 6
+      },
+      "notes": [
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "CF9 Crossfire Starfighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 7,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "CIS-Advanced Starfighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 7,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "Coralskipper",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 11,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 11",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Corellian S-250 Chela-Class Starfighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 420000,
+        "used": 6
+      },
+      "notes": [
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "CX-133 Chaos Fighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 65000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Droch-Class Boarding Ship",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 43000,
+        "used": 6
+      },
+      "notes": [
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Droid Tri-Fighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 40000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "Fury-Class Starfighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 16,
+        "used": 11
+      },
+      "notes": [
+        "new price needs source review: 16",
+        "used price needs source review: 11"
+      ]
+    },
+    {
+      "name": "Ginivex-Class Starfighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 11,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 11",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Hyena-Class Bomber",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 23000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "I4 Ionizer Starfighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 7,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "Miy'til Assault Bomber",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 150000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "N-1 Royal Starfighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 6,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Nantex-Class Territorial Starfighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 6,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Neutralizer-Class Bomber",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 7,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "Nssis-Class Clawcraft",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 11,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 11",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Predator-Class Starfighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 6,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Scarab-Class Droid Starfighter",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 17000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Sith Interceptor",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 4,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "The Azure Angel",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 14,
+        "used": 9
+      },
+      "notes": [
+        "new price needs source review: 14",
+        "used price needs source review: 9"
+      ]
+    },
+    {
+      "name": "The Virago",
+      "pack": "vehicles-starfighters.db",
+      "cost": {
+        "new": 6,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Cardan I-Class Space Station",
+      "pack": "vehicles-stations.db",
+      "cost": {
+        "new": 2,
+        "used": 10
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 10"
+      ]
+    },
+    {
+      "name": "Cardan II-Class Space Station",
+      "pack": "vehicles-stations.db",
+      "cost": {
+        "new": 2,
+        "used": 10
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 10"
+      ]
+    },
+    {
+      "name": "Cardan III-Class Space Station",
+      "pack": "vehicles-stations.db",
+      "cost": {
+        "new": 2,
+        "used": 11
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 11"
+      ]
+    },
+    {
+      "name": "Golan VIII Space Defense Platform",
+      "pack": "vehicles-stations.db",
+      "cost": {
+        "new": 45,
+        "used": 20
+      },
+      "notes": [
+        "new price needs source review: 45",
+        "used price needs source review: 20"
+      ]
+    },
+    {
+      "name": "Hyperspace Beacon",
+      "pack": "vehicles-stations.db",
+      "cost": {
+        "new": 20000,
+        "used": 11000
+      },
+      "notes": [
+        "new price needs source review: 20000",
+        "used price needs source review: 11000"
+      ]
+    },
+    {
+      "name": "Mobile Spacedock 220",
+      "pack": "vehicles-stations.db",
+      "cost": {
+        "new": 100,
+        "used": 45
+      },
+      "notes": [
+        "new price needs source review: 100",
+        "used price needs source review: 45"
+      ]
+    },
+    {
+      "name": "StarForge Station",
+      "pack": "vehicles-stations.db",
+      "cost": {
+        "new": 1000000,
+        "used": 5
+      },
+      "notes": [
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "The Wheel",
+      "pack": "vehicles-stations.db",
+      "cost": {
+        "new": 6,
+        "used": 17
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 17"
+      ]
+    },
+    {
+      "name": "Tibanna Refinery Platform",
+      "pack": "vehicles-stations.db",
+      "cost": {
+        "new": 42000,
+        "used": 30000
+      },
+      "notes": [
+        "new price needs source review: 42000",
+        "used price needs source review: 30000"
+      ]
+    },
+    {
+      "name": "XQ2 Space Platform",
+      "pack": "vehicles-stations.db",
+      "cost": {
+        "new": 30,
+        "used": 18
+      },
+      "notes": [
+        "new price needs source review: 30",
+        "used price needs source review: 18"
+      ]
+    },
+    {
+      "name": "AT-AA",
+      "pack": "vehicles-walkers.db",
+      "cost": {
+        "new": 2,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "AT-AHT",
+      "pack": "vehicles-walkers.db",
+      "cost": {
+        "new": 8,
+        "used": 8
+      },
+      "notes": [
+        "new price needs source review: 8",
+        "used price needs source review: 8"
+      ]
+    },
+    {
+      "name": "AT-AP",
+      "pack": "vehicles-walkers.db",
+      "cost": {
+        "new": 7,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "AT-AT",
+      "pack": "vehicles-walkers.db",
+      "cost": {
+        "new": 7,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "AT-CT",
+      "pack": "vehicles-walkers.db",
+      "cost": {
+        "new": 8,
+        "used": 28
+      },
+      "notes": [
+        "new price needs source review: 8",
+        "used price needs source review: 28"
+      ]
+    },
+    {
+      "name": "AT-KT",
+      "pack": "vehicles-walkers.db",
+      "cost": {
+        "new": 6,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "AT-PT",
+      "pack": "vehicles-walkers.db",
+      "cost": {
+        "new": 1,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 1",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "AT-RCT",
+      "pack": "vehicles-walkers.db",
+      "cost": {
+        "new": 9,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 9",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "AT-ST",
+      "pack": "vehicles-walkers.db",
+      "cost": {
+        "new": 6,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "AT-TE",
+      "pack": "vehicles-walkers.db",
+      "cost": {
+        "new": 7,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Octuptarra Magna Tri-Droid",
+      "pack": "vehicles-walkers.db",
+      "cost": {
+        "new": 100000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "OG-9 Homing Spider Droid",
+      "pack": "vehicles-walkers.db",
+      "cost": {
+        "new": 70000,
+        "used": 6
+      },
+      "notes": [
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "SPHA",
+      "pack": "vehicles-walkers.db",
+      "cost": {
+        "new": 7,
+        "used": 7
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "UT-AT",
+      "pack": "vehicles-walkers.db",
+      "cost": {
+        "new": 8,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 8",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Hyperspace Beacon",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 20000,
+        "used": 11000
+      },
+      "notes": [
+        "new price needs source review: 20000",
+        "used price needs source review: 11000"
+      ]
+    },
+    {
+      "name": "Advanced V-19 Torrent Starfighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 9,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 9",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "OG-9 Homing Spider Droid",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 70000,
+        "used": 6
+      },
+      "notes": [
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Venator-Class Star Destroyer",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 50,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 50",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "N-1 Royal Starfighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Strike-Class Medium Cruiser",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 17,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 17",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "MC80 Star Cruiser",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "The Virago",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "I4 Ionizer Starfighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 7,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "F9-TZ Transport",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 9,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 9",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Punworcca 116-Class Interstellar Sloop",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 35700,
+        "used": 2
+      },
+      "notes": [
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "CR70 Corellian Corvette",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 2,
+        "used": 9
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 9"
+      ]
+    },
+    {
+      "name": "AT-KT",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "Mobile Spacedock 220",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 100,
+        "used": 45
+      },
+      "notes": [
+        "new price needs source review: 100",
+        "used price needs source review: 45"
+      ]
+    },
+    {
+      "name": "Cardan III-Class Space Station",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 2,
+        "used": 11
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 11"
+      ]
+    },
+    {
+      "name": "74-M Speeder Bike",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 4000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Imperious-Class Star Destroyer",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 17
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 17"
+      ]
+    },
+    {
+      "name": "VT-49 Decimator",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 8,
+        "used": 3
+      },
+      "notes": [
+        "new price needs source review: 8",
+        "used price needs source review: 3"
+      ]
+    },
+    {
+      "name": "Sentinel-Class Landing Craft",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 240000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "AT-AP",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 7,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Hound's Tooth",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 12,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 12",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "The Last Resort",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 2,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Manta Droid Subfighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 22000,
+        "used": 3
+      },
+      "notes": [
+        "used price needs source review: 3"
+      ]
+    },
+    {
+      "name": "The Grinning Liar",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Munificent-Class Frigate",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 57,
+        "used": 40
+      },
+      "notes": [
+        "new price needs source review: 57",
+        "used price needs source review: 40"
+      ]
+    },
+    {
+      "name": "Tri-Scythe-Class Frigate",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Nune-Class Imperial Shuttle",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 7,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "The Ebon Hawk",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 154000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "The Banshee",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 9,
+        "used": 3
+      },
+      "notes": [
+        "new price needs source review: 9",
+        "used price needs source review: 3"
+      ]
+    },
+    {
+      "name": "Droch-Class Boarding Ship",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 43000,
+        "used": 6
+      },
+      "notes": [
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "CX-133 Chaos Fighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 65000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "AT-AA",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 2,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Canderous-Class Assault Tank",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 4,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "DP20 Corellian Frigate",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 4,
+        "used": 8
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 8"
+      ]
+    },
+    {
+      "name": "The Millennium Falcon",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 13,
+        "used": 8
+      },
+      "notes": [
+        "new price needs source review: 13",
+        "used price needs source review: 8"
+      ]
+    },
+    {
+      "name": "Recusant-Class Light Destroyer",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 14
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 14"
+      ]
+    },
+    {
+      "name": "Dreadnaught-Class Heavy Cruiser",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 35555000,
+        "used": 5
+      },
+      "notes": [
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Lucrehulk-Class Battleship",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "Victory II-Class Star Destroyer",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 14
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 14"
+      ]
+    },
+    {
+      "name": "Scarab-Class Droid Starfighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 17000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "T2-B Repulsor Tank",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": "not publicly available"
+      },
+      "notes": [
+        "new price needs source review: 5"
+      ]
+    },
+    {
+      "name": "SCT Scout Craft",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 1,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 1",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "\"Vulture\" Droid Starfighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 19000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "Star Galleon-Class Frigate",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 12
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 12"
+      ]
+    },
+    {
+      "name": "AT-TE",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 7,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "StarForge Station",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 1000000,
+        "used": 5
+      },
+      "notes": [
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "STAP",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 2500,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Luke's Snowspeeder",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 11,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 11",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Nova-Class Battlecruiser",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 20,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 20",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Subjugator-Class Heavy Cruiser",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Ton-Falk-Class Escort Carrier",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 3,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Golan VIII Space Defense Platform",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 45,
+        "used": 20
+      },
+      "notes": [
+        "new price needs source review: 45",
+        "used price needs source review: 20"
+      ]
+    },
+    {
+      "name": "The Blood Brother",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 1,
+        "used": 25
+      },
+      "notes": [
+        "new price needs source review: 1",
+        "used price needs source review: 25"
+      ]
+    },
+    {
+      "name": "Lucrehulk-Class Droid Control Ship",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "Providence-Class Destroyer",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 18
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 18"
+      ]
+    },
+    {
+      "name": "PTV-2100 Incarcerator",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 4,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Sigma-Class Long-Range Shuttle",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 30,
+        "used": 3
+      },
+      "notes": [
+        "new price needs source review: 30",
+        "used price needs source review: 3"
+      ]
+    },
+    {
+      "name": "Krayt's Honor",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 3,
+        "used": 13
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 13"
+      ]
+    },
+    {
+      "name": "Imperial Customs Corvette",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 14
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 14"
+      ]
+    },
+    {
+      "name": "Tartan-Class Patrol Cruiser",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 4,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "Sith Interceptor",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 4,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "The Moomo Williwaw",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 1,
+        "used": 8
+      },
+      "notes": [
+        "new price needs source review: 1",
+        "used price needs source review: 8"
+      ]
+    },
+    {
+      "name": "TX-130 Saber-Class Fighter Tank",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 3,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "XQ2 Space Platform",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 30,
+        "used": 18
+      },
+      "notes": [
+        "new price needs source review: 30",
+        "used price needs source review: 18"
+      ]
+    },
+    {
+      "name": "AT-PT",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 1,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 1",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Gladiator-Class Star Destroyer",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 34,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 34",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Ardent-Class Fast Frigate",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Vindicator-Class Heavy Cruiser",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 43,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 43",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "YE-4 Gunship",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 2,
+        "used": 11
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 11"
+      ]
+    },
+    {
+      "name": "Lancet Aerial Artillery",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Imperial II-Class Star Destroyer",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Hapan Battle Dragon",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 12
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 12"
+      ]
+    },
+    {
+      "name": "Nssis-Class Clawcraft",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 11,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 11",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "The Azure Angel",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 14,
+        "used": 9
+      },
+      "notes": [
+        "new price needs source review: 14",
+        "used price needs source review: 9"
+      ]
+    },
+    {
+      "name": "Corellian S-250 Chela-Class Starfighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 420000,
+        "used": 6
+      },
+      "notes": [
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "BC-714 Luxury Transport",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 1,
+        "used": 7
+      },
+      "notes": [
+        "new price needs source review: 1",
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "Carrack-Class Light Cruiser",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 13
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 13"
+      ]
+    },
+    {
+      "name": "Nantex-Class Territorial Starfighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Neutralizer-Class Bomber",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 7,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "ShaShore-Class Frigate",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "IF-120 Landing Craft",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 290000,
+        "used": 10
+      },
+      "notes": [
+        "used price needs source review: 10"
+      ]
+    },
+    {
+      "name": "Ginivex-Class Starfighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 11,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 11",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "\"Vulture\" Droid Starfighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 19000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "AT-RCT",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 9,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 9",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "The Scarlet Star",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 4,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Lancer-Class Frigate",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 12
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 12"
+      ]
+    },
+    {
+      "name": "Neutron Star-Class Bulk Cruiser",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "AT-AT",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 7,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Cardan I-Class Space Station",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 2,
+        "used": 10
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 10"
+      ]
+    },
+    {
+      "name": "MC80a Star Cruiser",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Pellaeon-Class Star Destroyer",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "Cardan II-Class Space Station",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 2,
+        "used": 10
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 10"
+      ]
+    },
+    {
+      "name": "Modified T-47 Airspeeder",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 50000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Miy'til Assault Bomber",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 150000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "Guardian-Class Light Cruiser",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 800000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Kappa-Class Shuttle",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 7,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Executor-Class Star Dreadnought",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Victory I-Class Star Destroyer",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 50,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 50",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Derriphan-Class Battleship",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 3,
+        "used": 7
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "Hyena-Class Bomber",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 23000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "The Indomitable",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 4,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "Nebula-Class Star Destroyer",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 18
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 18"
+      ]
+    },
+    {
+      "name": "AT-ST",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Eclipse-Class Star Dreadnought",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 15,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 15",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "CF9 Crossfire Starfighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 7,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "Predator-Class Starfighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Spinward-Class Tender",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 4,
+        "used": 9
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 9"
+      ]
+    },
+    {
+      "name": "AAT-1",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 4,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Broadside-Class Cruiser",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 13
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 13"
+      ]
+    },
+    {
+      "name": "Tibanna Refinery Platform",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 42000,
+        "used": 30000
+      },
+      "notes": [
+        "new price needs source review: 42000",
+        "used price needs source review: 30000"
+      ]
+    },
+    {
+      "name": "SPHA",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 7,
+        "used": 7
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "Acclamator II-Class Assault Ship",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 4,
+        "used": 11
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 11"
+      ]
+    },
+    {
+      "name": "Coralskipper",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 11,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 11",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Sabaoth Destroyer",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 3,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Slave I",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 18,
+        "used": 13
+      },
+      "notes": [
+        "new price needs source review: 18",
+        "used price needs source review: 13"
+      ]
+    },
+    {
+      "name": "The Wheel",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 17
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 17"
+      ]
+    },
+    {
+      "name": "The Invisible Hand",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 21
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 21"
+      ]
+    },
+    {
+      "name": "Fury-Class Starfighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 16,
+        "used": 11
+      },
+      "notes": [
+        "new price needs source review: 16",
+        "used price needs source review: 11"
+      ]
+    },
+    {
+      "name": "Lucrehulk-Class Core Ship",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "Shaadlar-Type Troopship",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 3,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Outbound Flight",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Foray-Class Blockade Runner",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 3,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "CIS-Advanced Starfighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 7,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "The Mynock",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 9,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 9",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Basilisk War Droid",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 70000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "AT-AHT",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 8,
+        "used": 8
+      },
+      "notes": [
+        "new price needs source review: 8",
+        "used price needs source review: 8"
+      ]
+    },
+    {
+      "name": "Octuptarra Magna Tri-Droid",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 100000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "AT-CT",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 8,
+        "used": 28
+      },
+      "notes": [
+        "new price needs source review: 8",
+        "used price needs source review: 28"
+      ]
+    },
+    {
+      "name": "Droid Tri-Fighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 40000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "Theta-Class Shuttle",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 1,
+        "used": 210000
+      },
+      "notes": [
+        "new price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Centurion-Class Battlecruiser",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 6,
+        "used": 17
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 17"
+      ]
+    },
+    {
+      "name": "Endurance-Class Fleet Carrier",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 18
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 18"
+      ]
+    },
+    {
+      "name": "Sith Infiltrator",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 15,
+        "used": 10
+      },
+      "notes": [
+        "new price needs source review: 15",
+        "used price needs source review: 10"
+      ]
+    },
+    {
+      "name": "Lambda-Class Shuttle",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 240000,
+        "used": 2
+      },
+      "notes": [
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "Aurek Tactical Strikefighter",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 360000,
+        "used": 6
+      },
+      "notes": [
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "J-Type Star Skiff",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 5,
+        "used": 14
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 14"
+      ]
+    },
+    {
+      "name": "UT-AT",
+      "pack": "vehicles.db",
+      "cost": {
+        "new": 8,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 8",
+        "used price needs source review: 6"
+      ]
+    }
+  ],
+  "priceReviewCount": 274
+}

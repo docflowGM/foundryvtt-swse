@@ -1,0 +1,215 @@
+{
+  "phase": "4f-approved-next-50-numeric-sr-backfill",
+  "approved_numeric_updates": 27,
+  "aggregate_updates_applied": 27,
+  "missing_update_names": [],
+  "applied_by_pack": {
+    "vehicles.db": [
+      "AEG-77 Vigo Transport",
+      "The Visionary",
+      "RC-2 Twilight Scoutship",
+      "Y164 Slave Transport",
+      "I4 Ionizer Starfighter",
+      "SkyBlind Recon Ship",
+      "The Bloody Credit",
+      "Maka-Eekai L4000 Transport",
+      "Y-Wing \"LongProbe\"",
+      "Punworcca 116-Class Interstellar Sloop",
+      "Baas-Class Space Station",
+      "Gymsnor-3 Light Freighter",
+      "The Crimson Axe",
+      "Mobile Spacedock 220",
+      "Mu-2 Long Range Shuttle",
+      "Archaic Dreadnaught-Class Heavy Cruiser",
+      "Cardan III-Class Space Station",
+      "J-1 Shuttle",
+      "Imperious-Class Star Destroyer",
+      "Corellian Consular-Class Cruiser",
+      "Charger c70 Corellian Consular-Class Cruiser",
+      "Scimitar Assault Bomber",
+      "Prototype Dreadnaught-Class Heavy Cruiser",
+      "The Grinning Liar",
+      "Munificent-Class Frigate",
+      "Herald-Class Shuttle",
+      "Corellian YV-545 Light Freighter"
+    ],
+    "vehicles-starfighters.db": [
+      "I4 Ionizer Starfighter",
+      "RC-2 Twilight Scoutship",
+      "Scimitar Assault Bomber",
+      "Y-Wing \"LongProbe\""
+    ],
+    "vehicles-space-transports.db": [
+      "AEG-77 Vigo Transport",
+      "Charger c70 Corellian Consular-Class Cruiser",
+      "Corellian Consular-Class Cruiser",
+      "Corellian YV-545 Light Freighter",
+      "Gymsnor-3 Light Freighter",
+      "Herald-Class Shuttle",
+      "J-1 Shuttle",
+      "Maka-Eekai L4000 Transport",
+      "Mu-2 Long Range Shuttle",
+      "Punworcca 116-Class Interstellar Sloop",
+      "SkyBlind Recon Ship",
+      "The Bloody Credit",
+      "The Grinning Liar",
+      "The Visionary",
+      "Y164 Slave Transport"
+    ],
+    "vehicles-capital-ships.db": [
+      "Archaic Dreadnaught-Class Heavy Cruiser",
+      "Imperious-Class Star Destroyer",
+      "Munificent-Class Frigate",
+      "Prototype Dreadnaught-Class Heavy Cruiser",
+      "The Crimson Axe"
+    ],
+    "vehicles-stations.db": [
+      "Baas-Class Space Station",
+      "Cardan III-Class Space Station",
+      "Mobile Spacedock 220"
+    ]
+  },
+  "shield_status_counts": {
+    "likely-shielded-needs-source-rating": 166,
+    "source-verified-none": 9,
+    "source-verified": 96,
+    "missing-source-data": 86
+  },
+  "updates": {
+    "AEG-77 Vigo Transport": {
+      "sr": 10,
+      "sourceUrl": "https://swse.fandom.com/wiki/AEG-77_%22Vigo%22_Gunship",
+      "note": "Fandom Defenses: AEG-77 Vigo Transport SR 10."
+    },
+    "The Visionary": {
+      "sr": 30,
+      "sourceUrl": "https://swse.fandom.com/wiki/Starscape-Class_Yacht",
+      "note": "Fandom Defenses: SR 30."
+    },
+    "RC-2 Twilight Scoutship": {
+      "sr": 10,
+      "sourceUrl": "https://swse.fandom.com/wiki/RC-2_Twilight_Scoutship",
+      "note": "Fandom Defenses: SR 10."
+    },
+    "Y164 Slave Transport": {
+      "sr": 100,
+      "sourceUrl": "https://swse.fandom.com/wiki/Y164_Slave_Transport",
+      "note": "Fandom Defenses: SR 100."
+    },
+    "I4 Ionizer Starfighter": {
+      "sr": 15,
+      "sourceUrl": "https://swse.fandom.com/wiki/I4_Ionizer_Starfighter",
+      "note": "Fandom Defenses: SR 15."
+    },
+    "SkyBlind Recon Ship": {
+      "sr": 45,
+      "sourceUrl": "https://swse.fandom.com/wiki/SkyBlind_Recon_Ship",
+      "note": "Fandom Defenses: SR 45."
+    },
+    "The Bloody Credit": {
+      "sr": 45,
+      "sourceUrl": "https://swse.fandom.com/wiki/The_Bloody_Credit",
+      "note": "Fandom Defenses: SR 45."
+    },
+    "Maka-Eekai L4000 Transport": {
+      "sr": 20,
+      "sourceUrl": "https://swse.fandom.com/wiki/Maka-Eekai_L4000_Transport",
+      "note": "Fandom Defenses: SR 20."
+    },
+    "Y-Wing \"LongProbe\"": {
+      "sr": 25,
+      "sourceUrl": "https://swse.fandom.com/wiki/Y-Wing_%22Longprobe%22",
+      "note": "Fandom Defenses: SR 25."
+    },
+    "Punworcca 116-Class Interstellar Sloop": {
+      "sr": 20,
+      "sourceUrl": "https://swse.fandom.com/wiki/Punworcca_116-Class_Interstellar_Sloop",
+      "note": "Fandom Defenses: SR 20."
+    },
+    "Baas-Class Space Station": {
+      "sr": 200,
+      "sourceUrl": "https://swse.fandom.com/wiki/Baas-Class_Space_Station",
+      "note": "Fandom Defenses: SR 200."
+    },
+    "Gymsnor-3 Light Freighter": {
+      "sr": 15,
+      "sourceUrl": "https://swse.fandom.com/wiki/Gymsnor-3_Light_Freighter",
+      "note": "Fandom Defenses: SR 15."
+    },
+    "The Crimson Axe": {
+      "sr": 100,
+      "sourceUrl": "https://swse.fandom.com/wiki/The_Crimson_Axe_%28Starship%29",
+      "note": "Fandom Defenses: SR 100."
+    },
+    "Mobile Spacedock 220": {
+      "sr": 100,
+      "sourceUrl": "https://swse.fandom.com/wiki/Mobile_Spacedock_220",
+      "note": "Fandom Defenses: SR 100."
+    },
+    "Mu-2 Long Range Shuttle": {
+      "sr": 25,
+      "sourceUrl": "https://swse.fandom.com/wiki/Mu-Class_Long_Range_Shuttle",
+      "note": "Fandom Defenses: SR 25; local compendium name is Mu-2 Long Range Shuttle."
+    },
+    "Archaic Dreadnaught-Class Heavy Cruiser": {
+      "sr": 115,
+      "sourceUrl": "https://swse.fandom.com/wiki/Archaic_Heavy_Cruiser",
+      "note": "Fandom Defenses: SR 115; source caveat notes shield failure chance if SR is exceeded."
+    },
+    "Cardan III-Class Space Station": {
+      "sr": 200,
+      "sourceUrl": "https://swse.fandom.com/wiki/Cardan_III-Class_Space_Station",
+      "note": "Fandom Defenses: SR 200."
+    },
+    "J-1 Shuttle": {
+      "sr": 15,
+      "sourceUrl": "https://swse.fandom.com/wiki/J-1_Shuttle",
+      "note": "Fandom Defenses: SR 15."
+    },
+    "Imperious-Class Star Destroyer": {
+      "sr": 140,
+      "sourceUrl": "https://swse.fandom.com/wiki/Imperious-Class_Star_Destroyer",
+      "note": "Fandom Defenses: SR 140; note regenerating shields."
+    },
+    "Corellian Consular-Class Cruiser": {
+      "sr": 100,
+      "sourceUrl": "https://swse.fandom.com/wiki/Consular-Class_Cruiser",
+      "note": "Fandom Defenses: SR 100."
+    },
+    "Charger c70 Corellian Consular-Class Cruiser": {
+      "sr": 120,
+      "sourceUrl": "https://swse.fandom.com/wiki/Consular-Class_Charger_c70",
+      "note": "Fandom Defenses: SR 120."
+    },
+    "Scimitar Assault Bomber": {
+      "sr": 25,
+      "sourceUrl": "https://swse.fandom.com/wiki/Scimitar_Assault_Bomber",
+      "note": "Fandom Defenses: SR 25."
+    },
+    "Prototype Dreadnaught-Class Heavy Cruiser": {
+      "sr": 115,
+      "sourceUrl": "https://swse.fandom.com/wiki/Prototype_Rebel_Assault_Frigate",
+      "note": "Fandom Defenses: SR 115; maps to Dreadnaught-derived prototype page approved from review list."
+    },
+    "The Grinning Liar": {
+      "sr": 40,
+      "sourceUrl": "https://swse.fandom.com/wiki/The_Grinning_Liar",
+      "note": "Fandom Defenses: SR 40."
+    },
+    "Munificent-Class Frigate": {
+      "sr": 165,
+      "sourceUrl": "https://swse.fandom.com/wiki/Munificent-Class_Frigate",
+      "note": "Fandom Defenses: SR 165."
+    },
+    "Herald-Class Shuttle": {
+      "sr": 20,
+      "sourceUrl": "https://swse.fandom.com/wiki/Herald-Class_Shuttle",
+      "note": "Fandom Defenses: SR 20."
+    },
+    "Corellian YV-545 Light Freighter": {
+      "sr": 30,
+      "sourceUrl": "https://swse.fandom.com/wiki/Corellian_YV-545_Light_Freighter",
+      "note": "Fandom Defenses: SR 30."
+    }
+  }
+}

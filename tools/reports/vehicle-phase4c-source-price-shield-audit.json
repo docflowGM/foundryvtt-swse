@@ -1,0 +1,61 @@
+{
+  "aggregateVehicles": 357,
+  "sourceValuesApplied": [
+    "Advanced V-19 Torrent Starfighter",
+    "B-Wing Starfighter",
+    "Delta-7 Aethersprite Interceptor",
+    "Eta-2 Actis Interceptor",
+    "MC80 Star Cruiser",
+    "N-1 Royal Starfighter",
+    "T-65B X-Wing Starfighter",
+    "TIE Bomber",
+    "TIE Fighter",
+    "TIE Interceptor",
+    "V-19 Torrent Starfighter",
+    "Venator-Class Star Destroyer",
+    "Victory II-Class Star Destroyer",
+    "Y-Wing Starfighter",
+    "Z-95 Headhunter"
+  ],
+  "sourceVerifiedNoneApplied": [
+    "Eta-2 Actis Interceptor",
+    "TIE Bomber",
+    "TIE Fighter",
+    "TIE Interceptor",
+    "V-19 Torrent Starfighter"
+  ],
+  "priceUpdatesApplied": [
+    "Advanced V-19 Torrent Starfighter",
+    "B-Wing Starfighter",
+    "Delta-7 Aethersprite Interceptor",
+    "Eta-2 Actis Interceptor",
+    "MC80 Star Cruiser",
+    "N-1 Royal Starfighter",
+    "T-65B X-Wing Starfighter",
+    "TIE Bomber",
+    "TIE Fighter",
+    "TIE Interceptor",
+    "V-19 Torrent Starfighter",
+    "Venator-Class Star Destroyer",
+    "Victory II-Class Star Destroyer",
+    "Y-Wing Starfighter",
+    "Z-95 Headhunter"
+  ],
+  "shieldStatusCounts": {
+    "likely-shielded-needs-source-rating": 218,
+    "source-verified": 47,
+    "source-verified-none": 6,
+    "missing-source-data": 86
+  },
+  "priceStatusCounts": {
+    "review": 132,
+    "unavailable": 68,
+    "priced": 157
+  },
+  "likelyShieldedCount": 218,
+  "notes": [
+    "Explicit SWSE Fandom Shield Rating and Cost/Availability values are applied where verified in this pass.",
+    "Remaining starships without a verified SR line are marked likely-shielded-needs-source-rating instead of unshielded; SR remains 0 so combat math does not invent a rating.",
+    "Ground/air non-starship vehicles are not automatically marked shielded; some are source-verified from prior pass or remain missing-source-data."
+  ]
+}

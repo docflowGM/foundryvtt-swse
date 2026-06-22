@@ -227,7 +227,11 @@ function _decorateStoreCardItem(item = {}) {
       costUsed: vehicleCosts.usedCost ?? undefined,
       finalCost: vehicleCosts.newCost,
       newCost: vehicleCosts.newCost,
-      usedCost: vehicleCosts.usedCost
+      usedCost: vehicleCosts.usedCost,
+      vehiclePriceStatus: categoryKey === 'vehicles' ? (item.vehiclePriceStatus || item.system?.vehiclePriceStatus || item.costStatus || '') : '',
+      vehiclePriceLabel: categoryKey === 'vehicles' ? (item.vehiclePriceLabel || item.system?.vehiclePriceLabel || '') : '',
+      vehiclePriceReviewNeeded: categoryKey === 'vehicles' ? (item.vehiclePriceReviewNeeded === true || item.system?.vehiclePriceReviewNeeded === true) : false,
+      vehiclePriceStatusLabel: categoryKey === 'vehicles' ? _vehiclePriceStatusLabel(item) : ''
     } : {}),
     subcategory: item.subcategory || _navSubcategory(item),
     subcategoryKey: item.subcategoryKey || _normalizeStoreFilterValue(_navSubcategory(item)),
@@ -271,6 +275,14 @@ function _resolveVehicleStoreCosts(item = {}) {
     ?? _positiveCreditOrNull(item.costUsed)
     ?? _positiveCreditOrNull(item.finalCostUsed);
   return { newCost, usedCost };
+}
+
+function _vehiclePriceStatusLabel(item = {}) {
+  const status = item.system?.vehiclePriceStatus || item.vehiclePriceStatus || item.costStatus || '';
+  if (status === 'review') return 'Price needs source review';
+  if (status === 'unavailable') return 'Not publicly available';
+  if (status === 'missing') return 'Price unknown';
+  return '';
 }
 
 function _storePriceLabel(value) {
@@ -354,6 +366,7 @@ function _buildSelectedProductDetail(product = null) {
     { label: 'Category', value: product.category || product.categoryKey || 'General' },
     { label: 'Subcategory', value: product.subcategory || '—' },
     { label: 'Availability', value: product.availability || product.rarityLabel || 'Standard' },
+    { label: 'Price Status', value: product.vehiclePriceStatusLabel || product.vehiclePriceStatus || '' },
     { label: 'Policy', value: product.blockedReason ? product.blockedReason : (product.canPurchase === false ? 'Blocked' : 'Purchasable') }
   ].filter(row => row.value !== undefined && row.value !== null && String(row.value).trim() !== '');
 
@@ -375,6 +388,7 @@ function _buildSelectedProductDetail(product = null) {
     id: product.id,
     rows,
     priceOptions,
+    priceStatusLabel: product.vehiclePriceStatusLabel || '',
     summary: summaryText.length > 220 ? `${summaryText.slice(0, 217)}...` : summaryText,
     isVehicle: product.type === 'vehicle',
     isDroid: product.type === 'droid',

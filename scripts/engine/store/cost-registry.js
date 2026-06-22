@@ -22,6 +22,7 @@ function parseCreditNumber(value) {
     return Number.isFinite(value) && value > 0 ? value : null;
   }
   if (typeof value !== 'string') return null;
+  if (isReviewText(value)) return null;
   const cleaned = value
     .replace(/[,\s]/g, '')
     .replace(/credits?|cr|credit/gi, '')
@@ -39,6 +40,16 @@ function isUnavailableText(value) {
     || normalized.includes('unavailable')
     || normalized === 'n/a'
     || normalized === 'na';
+}
+
+
+function isReviewText(value) {
+  if (typeof value !== 'string') return false;
+  const normalized = value.toLowerCase().trim();
+  return normalized.includes('source review')
+    || normalized.includes('needs review')
+    || normalized.includes('review required')
+    || normalized.includes('verify source');
 }
 
 /**
@@ -66,7 +77,9 @@ export function buildStoreCostRecord(rawDoc) {
     };
   }
 
-  // Detect structured new/used pricing
+  // Detect structured new/used pricing. Structured vehicle pricing is
+  // authoritative; never fall back to costNumeric because old vehicle packs
+  // used costNumeric as a packed helper that can concatenate new+used values.
   if (isStructuredCost(cost)) {
     const { validNew, validUsed } = extractStructuredCost(cost);
     if (validNew !== null || validUsed !== null) {
@@ -82,6 +95,20 @@ export function buildStoreCostRecord(rawDoc) {
         rawCostSource: 'system.cost.new-used'
       };
     }
+    const values = [cost.new, cost.used];
+    const review = values.some(isReviewText);
+    const unavailable = values.length && values.every(value => isUnavailableText(value));
+    return {
+      costStatus: unavailable ? 'unavailable' : review ? 'missing' : 'missing',
+      pricingMode: 'none',
+      baseCost: null,
+      baseCostNew: null,
+      baseCostUsed: null,
+      requiresCondition: false,
+      defaultCondition: null,
+      unavailabilityReason: unavailable ? 'notPubliclyAvailable' : review ? 'sourceReviewRequired' : null,
+      rawCostSource: review ? 'system.cost.new-used.review' : 'system.cost.new-used.empty'
+    };
   }
 
   // Detect scalar numeric pricing. Prefer the explicit numeric helper, but
