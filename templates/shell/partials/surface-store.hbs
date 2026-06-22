@@ -159,7 +159,7 @@
         {{#if vm.storeContext.navigationModel.topCategories}}
         {{#each vm.storeContext.navigationModel.topCategories}}
         {{#if (eq key ../vm.storeContext.currentCategory)}}
-        {{#if children}}
+        {{#if (or children familyTabs)}}
         <nav class="swse-store-surface__subnav" aria-label="{{localize 'SWSE.ShellUI.StoreDepartmentSubcategories'}}">
           {{#if familyTabs}}
           {{#unless (eq key 'vehicles')}}
@@ -178,16 +178,14 @@
           {{/unless}}
           {{/if}}
 
-          {{#unless (eq key 'droids')}}
           <div class="swse-store-surface__subcategory-strip" aria-label="{{label}} subfolders">
             {{#each children}}
             <button type="button" class="swse-store-surface__subcat-chip swse-store-surface__subcat-chip--{{family}} {{#if active}}active{{/if}}"
-                    data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
+                    data-action="subcategory-nav" data-subcategory="{{#if filterValue}}{{filterValue}}{{else}}{{label}}{{/if}}" data-family="{{family}}">
               {{label}}<span class="swse-store-surface__chip-count">{{count}}</span>
             </button>
             {{/each}}
           </div>
-          {{/unless}}
           {{#if (eq key 'vehicles')}}
           <button type="button" class="swse-store-surface__subcat-chip swse-store-surface__subcat-chip--builder"
                   data-action="store-build-from-scratch" data-builder-kind="vehicle">
@@ -219,6 +217,7 @@
                  data-subcategory="{{this.subcategory}}"
                  data-subcategory-key="{{this.subcategoryKey}}"
                  data-family="{{#if this.navigationFamily}}{{this.navigationFamily}}{{else}}{{this.weaponFamily}}{{/if}}"
+                 data-droid-role="{{this.droidRoleKey}}"
                  data-vehicle-size="{{this.vehicleSizeKey}}"
                  data-vehicle-cl="{{this.vehicleChallengeBand}}"
                  data-availability="{{this.availability}}"
@@ -235,6 +234,7 @@
                 <div class="swse-store-surface__card-name">{{this.name}}</div>
                 <div class="swse-store-surface__card-cat">{{this.typeLabel}} · {{this.category}}{{#if this.subcategory}} · {{this.subcategory}}{{/if}}</div>
                 <div class="swse-store-surface__card-meta-row">
+                  {{#if this.droidRoleLabel}}<span class="swse-store-surface__card-meta-pill">{{this.droidRoleLabel}}</span>{{/if}}
                   {{#if this.vehicleSizeLabel}}<span class="swse-store-surface__card-meta-pill">{{this.vehicleSizeLabel}}</span>{{/if}}
                   {{#if this.vehicleChallengeLabel}}<span class="swse-store-surface__card-meta-pill">{{this.vehicleChallengeLabel}}</span>{{/if}}
                   <span class="swse-store-surface__card-meta-pill">{{this.availability}}</span>

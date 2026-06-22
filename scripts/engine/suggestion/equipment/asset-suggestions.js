@@ -37,7 +37,7 @@ function numberValue(value, fallback = 0) {
 
 function textOf(item = {}) {
   const sys = item.system || {};
-  return [item.name, item.type, sys.category, sys.subcategory, sys.model, sys.description, sys.role, sys.size]
+  return [item.name, item.type, sys.category, sys.subcategory, sys.model, sys.description, sys.role, sys.droidRole, sys.droidRoleLabel, sys.droidDegreeKey, sys.size]
     .filter(Boolean)
     .join(' ')
     .toLowerCase();

@@ -660,6 +660,7 @@ export class StoreSurfaceController {
       const subtype = (card.dataset.subcategory ?? '').toLowerCase();
       const subtypeKey = normalizeStoreFilterValue(card.dataset.subcategory || '');
       const familyKey = normalizeStoreFilterValue(card.dataset.family || '');
+      const droidRoleKey = normalizeStoreFilterValue(card.dataset.droidRole || '');
       const vehicleSizeKey = normalizeStoreFilterValue(card.dataset.vehicleSize || '');
       const vehicleClKey = normalizeStoreFilterValue(card.dataset.vehicleCl || '');
       const avail = normalizeAvailabilityText(card.dataset.availability ?? '');
@@ -668,7 +669,7 @@ export class StoreSurfaceController {
       const matchSearch = !searchVal || name.includes(searchVal) || cat.includes(searchVal) || subtype.includes(searchVal);
       const matchAvail = !requestedAvail || requestedAvail === 'all' || avail.split(/\s+/).includes(requestedAvail) || avail.includes(requestedAvail);
       const matchCategory = !categoryVal || cat === categoryVal;
-      const matchSubcategory = !subcategoryVal || subtypeKey === subcategoryVal;
+      const matchSubcategory = !subcategoryVal || (categoryVal === 'droids' ? droidRoleKey === subcategoryVal : subtypeKey === subcategoryVal);
       const matchFamily = !(['weapons', 'droids', 'vehicles'].includes(categoryVal) && familyVal) || familyKey === familyVal;
       const matchVehicleSize = !(categoryVal === 'vehicles' && vehicleSizeVal) || vehicleSizeKey === vehicleSizeVal;
       const matchVehicleCl = !(categoryVal === 'vehicles' && vehicleClVal) || vehicleClKey === vehicleClVal;

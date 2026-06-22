@@ -55,11 +55,11 @@
     {{#if navigationModel.topCategories}}
     {{#each navigationModel.topCategories}}
     {{#if (eq key ../currentCategory)}}
-    {{#if children}}
+    {{#if (or children familyTabs)}}
     <div class="store-subcat-nav">
       {{!-- "All [Category]" reset chip --}}
-      <button type="button" class="store-chip store-subcat-chip {{#unless ../../../currentSubcategory}}active{{/unless}}" data-action="subcategory-nav" data-subcategory="" data-family="">
-        {{localize 'SWSE.Store.Navigation.AllCategory' category=label}}<span class="store-chip-count">{{count}}</span>
+      <button type="button" class="store-chip store-subcat-chip {{#unless ../../../currentSubcategory}}active{{/unless}}" data-action="subcategory-nav" data-subcategory="" data-family="{{roleResetFamily}}">
+        {{#if roleResetLabel}}{{roleResetLabel}}{{else}}{{localize 'SWSE.Store.Navigation.AllCategory' category=label}}{{/if}}<span class="store-chip-count">{{count}}</span>
       </button>
 
       {{#if familyTabs}}
@@ -76,7 +76,7 @@
       {{/if}}
       {{#each children}}
       <button type="button" class="store-chip store-subcat-chip store-subcat-chip--{{family}} {{#if active}}active{{/if}}"
-              data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
+              data-action="subcategory-nav" data-subcategory="{{#if filterValue}}{{filterValue}}{{else}}{{label}}{{/if}}" data-family="{{family}}">
         {{label}}<span class="store-chip-count">{{count}}</span>
       </button>
       {{/each}}
@@ -350,7 +350,7 @@
       <div class="card-grid-container">
         <div class="products-grid" id="products-grid">
           {{#each allItems}}
-            <div class="holo-card product-card {{#unless this.canPurchase}}is-policy-blocked{{/unless}}" data-item-id="{{this.id}}" data-category="{{this.category}}" data-category-key="{{this.categoryKey}}" data-subcategory="{{this.subcategory}}" data-subcategory-key="{{this.subcategoryKey}}" data-family="{{#if this.navigationFamily}}{{this.navigationFamily}}{{else}}{{this.weaponFamily}}{{/if}}" data-vehicle-size="{{this.vehicleSizeKey}}" data-vehicle-cl="{{this.vehicleChallengeBand}}" data-availability="{{this.availability}}" data-availability-key="{{this.availabilityKey}}" data-rarity="{{this.rarityClass}}" data-can-purchase="{{this.canPurchase}}">
+            <div class="holo-card product-card {{#unless this.canPurchase}}is-policy-blocked{{/unless}}" data-item-id="{{this.id}}" data-category="{{this.category}}" data-category-key="{{this.categoryKey}}" data-subcategory="{{this.subcategory}}" data-subcategory-key="{{this.subcategoryKey}}" data-family="{{#if this.navigationFamily}}{{this.navigationFamily}}{{else}}{{this.weaponFamily}}{{/if}}" data-droid-role="{{this.droidRoleKey}}" data-vehicle-size="{{this.vehicleSizeKey}}" data-vehicle-cl="{{this.vehicleChallengeBand}}" data-availability="{{this.availability}}" data-availability-key="{{this.availabilityKey}}" data-rarity="{{this.rarityClass}}" data-can-purchase="{{this.canPurchase}}">
               <div class="card-header">
                 {{#if this.suggestion}}
                   <span class="suggestion-badge tier-{{this.suggestion.tier}}">{{this.suggestion.tierLabel}}</span>
@@ -367,6 +367,7 @@
                 <div class="card-meta-row">
                   <span class="detail-chip">{{this.category}}</span>
                   {{#if this.subcategory}}<span class="detail-chip">{{this.subcategory}}</span>{{/if}}
+                  {{#if this.droidRoleLabel}}<span class="detail-chip">{{this.droidRoleLabel}}</span>{{/if}}
                   {{#if this.vehicleSizeLabel}}<span class="detail-chip">{{this.vehicleSizeLabel}}</span>{{/if}}
                   {{#if this.vehicleChallengeLabel}}<span class="detail-chip">{{this.vehicleChallengeLabel}}</span>{{/if}}
                   <span class="detail-chip">{{this.availability}}</span>

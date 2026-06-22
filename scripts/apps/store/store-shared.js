@@ -305,6 +305,15 @@ export function getWeaponFamily(subcategory = '') {
  * @param {Object} item - Store item with system.armorType or name
  * @returns {string} 'Light Armor' | 'Medium Armor' | 'Heavy Armor' | 'Energy Shields'
  */
+function slugifyStoreLabel(value = '') {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 export function normalizeArmorSubcategory(item = {}) {
   const sys = safeSystem(item) || {};
   const name = String(item.name || '').toLowerCase();
@@ -355,64 +364,154 @@ export function normalizeArmorSubcategory(item = {}) {
 
 
 const DROID_DEGREE_DEFINITIONS = [
-  { key: '1st-degree', label: '1st-Degree', subcategory: '1st-Degree: Medical & Analytical', description: 'Medical and analytical Droids' },
-  { key: '2nd-degree', label: '2nd-Degree', subcategory: '2nd-Degree: Mechanical & Technical', description: 'Mechanical and technical Droids' },
-  { key: '3rd-degree', label: '3rd-Degree', subcategory: '3rd-Degree: Protocol & Domestic', description: 'Protocol and domestic Droids' },
-  { key: '4th-degree', label: '4th-Degree', subcategory: '4th-Degree: Security & Battle', description: 'Security and battle Droids' },
-  { key: '5th-degree', label: '5th-Degree', subcategory: '5th-Degree: Labor & Utility', description: 'Labor and utility Droids' }
+  { key: '1st-degree', label: '1st-Degree', subcategory: '1st-Degree Droid Models', description: 'Mathematical, medical, and physical science droids' },
+  { key: '2nd-degree', label: '2nd-Degree', subcategory: '2nd-Degree Droid Models', description: 'Engineering, technical, repair, and astromech droids' },
+  { key: '3rd-degree', label: '3rd-Degree', subcategory: '3rd-Degree Droid Models', description: 'Protocol, service, diplomatic, and social-interface droids' },
+  { key: '4th-degree', label: '4th-Degree', subcategory: '4th-Degree Droid Models', description: 'Military, security, combat, and reconnaissance droids' },
+  { key: '5th-degree', label: '5th-Degree', subcategory: '5th-Degree Droid Models', description: 'Labor, mining, construction, survey, exploration, and utility droids' }
 ];
 
-const VEHICLE_SUBCATEGORY_DEFINITIONS = [
-  { key: 'speeders', label: 'Speeders', family: 'ground', familyLabel: 'Ground Vehicles' },
-  { key: 'tracked-vehicles', label: 'Tracked Vehicles', family: 'ground', familyLabel: 'Ground Vehicles' },
-  { key: 'walkers', label: 'Walkers', family: 'ground', familyLabel: 'Ground Vehicles' },
-  { key: 'wheeled-vehicles', label: 'Wheeled Vehicles', family: 'ground', familyLabel: 'Ground Vehicles' },
-  { key: 'weapon-emplacements', label: 'Weapon Emplacements', family: 'ground', familyLabel: 'Ground Vehicles' },
-  { key: 'airspeeders', label: 'Airspeeders', family: 'air', familyLabel: 'Air Vehicles' },
-  { key: 'starfighters', label: 'Starfighters', family: 'starship', familyLabel: 'Starships' },
-  { key: 'space-transports', label: 'Space Transports', family: 'starship', familyLabel: 'Starships' },
-  { key: 'capital-ships', label: 'Capital Ships', family: 'starship', familyLabel: 'Starships' },
-  { key: 'space-stations', label: 'Space Stations', family: 'starship', familyLabel: 'Starships' }
-];
+const DROID_ROLE_DEFINITIONS = {
+  '1st-degree': [
+    { key: 'medical', label: 'Medical', description: 'Medical, surgical, midwife, evacuation, and treatment droids' },
+    { key: 'analysis', label: 'Analysis', description: 'Analysis, archive, science, mathematics, and threat-assessment droids' },
+    { key: 'interrogation', label: 'Interrogation', description: 'Interrogator and hostile-questioning droids' }
+  ],
+  '2nd-degree': [
+    { key: 'astromech', label: 'Astromech', description: 'Astromech and shipboard utility droids' },
+    { key: 'repair', label: 'Repair', description: 'Repair, mechanic, maintenance, and technical-service droids' },
+    { key: 'pilot', label: 'Pilot', description: 'Pilot and vehicle-operation droids' },
+    { key: 'gunnery', label: 'Gunnery', description: 'Gunnery and weapon-operation droids' },
+    { key: 'demolitions', label: 'Demolitions', description: 'Demolitions and explosive-disposal droids' },
+    { key: 'hazard', label: 'Hazard', description: 'Hazard, minesweeping, observation, and hostile-environment technical droids' }
+  ],
+  '3rd-degree': [
+    { key: 'protocol', label: 'Protocol', description: 'Protocol, translation, diplomatic, and etiquette droids' },
+    { key: 'administrative', label: 'Administrative', description: 'Administrative, secretarial, supervisory, and control-interface droids' },
+    { key: 'service', label: 'Service', description: 'Service, hospitality, luxury, valet, and domestic droids' },
+    { key: 'information', label: 'Information', description: 'Information analysis, messenger, gatekeeper, and social-intelligence droids' }
+  ],
+  '4th-degree': [
+    { key: 'battle', label: 'Battle', description: 'Battle, assault, infantry, destroyer, commando, and frontline combat droids' },
+    { key: 'security', label: 'Security', description: 'Security, guard, patrol, sentry, warden, police, and perimeter defense droids' },
+    { key: 'assassin', label: 'Assassin', description: 'Assassin, hunter-killer, and targeted-elimination droids' },
+    { key: 'infiltration', label: 'Infiltration', description: 'Infiltration, espionage, sabotage, and stealth combat droids' },
+    { key: 'recon', label: 'Recon', description: 'Probe, recon, surveillance, scout, seeker, and observation droids' },
+    { key: 'artillery', label: 'Artillery', description: 'Artillery, turret, and area-fire support droids' },
+    { key: 'heavy', label: 'Heavy', description: 'Heavy combat, hulk, annihilator, warbot, and large war droids' },
+    { key: 'training', label: 'Training', description: 'Training, practice, lightsaber, tactical, remote, and specialty combat droids' }
+  ],
+  '5th-degree': [
+    { key: 'labor', label: 'Labor', description: 'Labor, loader, lifter, valet, worker, and hauling droids' },
+    { key: 'mining', label: 'Mining', description: 'Mining, smelting, sifting, excavation, and industrial extraction droids' },
+    { key: 'construction', label: 'Construction', description: 'Construction, power, ordnance-lifting, and heavy worksite droids' },
+    { key: 'survey', label: 'Survey', description: 'Survey, scout-survey, mapping, and remote survey droids' },
+    { key: 'exploration', label: 'Exploration', description: 'Exploration, remote travel, and field-discovery droids' },
+    { key: 'utility', label: 'Utility', description: 'General utility, maintenance, sanitation, repair-task, and miscellaneous labor droids' }
+  ]
+};
 
-function slugifyStoreLabel(value, fallback = '') {
-  const slug = String(value ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/[’']/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
-  return slug || fallback;
-}
-
-function droidDegreeFromValue(value = '') {
-  const raw = String(value ?? '').toLowerCase();
-  const compact = raw.replace(/[^a-z0-9]+/g, '');
-  if (compact.includes('1st') || compact.includes('first') || compact === '1') return DROID_DEGREE_DEFINITIONS[0];
-  if (compact.includes('2nd') || compact.includes('second') || compact === '2') return DROID_DEGREE_DEFINITIONS[1];
-  if (compact.includes('3rd') || compact.includes('third') || compact === '3') return DROID_DEGREE_DEFINITIONS[2];
-  if (compact.includes('4th') || compact.includes('fourth') || compact === '4') return DROID_DEGREE_DEFINITIONS[3];
-  if (compact.includes('5th') || compact.includes('fifth') || compact === '5') return DROID_DEGREE_DEFINITIONS[4];
-  return null;
-}
-
-function droidDegreeFromText(itemOrDegree = {}) {
-  const sys = itemOrDegree?.system ?? itemOrDegree?.data ?? {};
-  const text = [
-    itemOrDegree?.name,
+function droidText(itemOrRole = {}) {
+  const sys = itemOrRole?.system ?? itemOrRole?.data ?? {};
+  return [
+    itemOrRole?.name,
     sys.name,
+    sys.degree,
+    sys.droidRole,
+    sys.droidRoleLabel,
     sys.class,
     sys.role,
     sys.category,
     sys.type,
-    itemOrDegree?.subcategory,
-    itemOrDegree
-  ].filter(Boolean).join(' ').toLowerCase();
-  if (/medical|medic|surgical|midwife|analytical|analysis|archive|interrogat/.test(text)) return DROID_DEGREE_DEFINITIONS[0];
-  if (/astromech|maintenance|mechanic|repair|tech|slicer|weapons maintenance|demolition|pilot|comm|communications|infrastructure|spaceport|control|minesweeper/.test(text)) return DROID_DEGREE_DEFINITIONS[1];
-  if (/protocol|secretary|administrative|administration|valet|hospitality|service|footman|messenger|dealer|luxury|domestic|supervisor/.test(text)) return DROID_DEGREE_DEFINITIONS[2];
-  if (/assassin|assault|battle|combat|commando|destroyer|spider|guardian|guard|patrol|sentinel|sentry|seeker|probe|surveillance|espionage|infiltrat|scout|recon|observation|tactical|artillery|infantry|legionnaire|hunter.?killer|warden|war|turret|lightsaber|sabotage|annihilator|picket|training|security|crab|buzz|lancer|hk-|hk_|gunnery|shadow|viper/.test(text)) return DROID_DEGREE_DEFINITIONS[3];
-  if (/utility|labor|loader|loading|mining|smelter|power|construction|worker|excavation|sifter|mule|gatekeeper|pit|agromech|exploration|explorer|surveyor|survey|spelunker|junk|holocam|ro-d/.test(text)) return DROID_DEGREE_DEFINITIONS[4];
+    itemOrRole?.subcategory,
+    itemOrRole?.droidRoleKey,
+    itemOrRole?.droidRoleLabel,
+    itemOrRole
+  ].filter(Boolean).join(' ').toLowerCase().replace(/[_-]+/g, ' ');
+}
+
+function roleDefinitionFromKey(degreeKey = '', roleKey = '') {
+  const key = slugifyStoreLabel(roleKey);
+  if (!key) return null;
+  return (DROID_ROLE_DEFINITIONS[degreeKey] || []).find(def => def.key === key || slugifyStoreLabel(def.label) === key) || null;
+}
+
+function droidRoleFromText(itemOrRole = {}, degreeKey = '') {
+  const text = droidText(itemOrRole);
+  const degree = degreeKey || getDroidFamily(itemOrRole);
+  if (!degree) return null;
+
+  if (degree === '1st-degree') {
+    if (/interrogat|questioning|t0 d|t0-d|bl 39|bl-39/.test(text)) return roleDefinitionFromKey(degree, 'interrogation');
+    if (/medical|medic|surgical|midwife|evacuation|bacta|fx\s*[- ]?6|fx\s*[- ]?7|2\s*[- ]?1b|gh\s*[- ]?7|im\s*[- ]?6|mev|pi\s*[- ]?series|dd\s*[- ]?13|ew\s*[- ]?3|3z3|a\s*[- ]?series medical/.test(text)) return roleDefinitionFromKey(degree, 'medical');
+    if (/analysis|analytical|archive|threat|science|math|mathematics|administration|communications|weapons maintenance|maintenance|treadwell|sabacc|dealer|sp\s*[- ]?4|a9g|5\s*[- ]?bt|et\s*[- ]?74|88\s*[- ]?series|ad\s*[- ]?series/.test(text)) return roleDefinitionFromKey(degree, 'analysis');
+    return roleDefinitionFromKey(degree, 'analysis');
+  }
+
+  if (degree === '2nd-degree') {
+    if (/demolition|demolitions|explosive|infrastructure|planning/.test(text)) return roleDefinitionFromKey(degree, 'demolitions');
+    if (/mine|minesweeper|hazard|holocam|observation|roving eye|explorer|bd explorer|m38/.test(text)) return roleDefinitionFromKey(degree, 'hazard');
+    if (/gunnery|gunner|pg\s*[- ]?5/.test(text)) return roleDefinitionFromKey(degree, 'gunnery');
+    if (/pilot|fa\s*[- ]?4|feg|rx\s*[- ]?series|v6\s*[- ]?series/.test(text)) return roleDefinitionFromKey(degree, 'pilot');
+    if (/astromech|agromech|r2|r3|r4|r5|r7|r8|q7|p2|s19|t3/.test(text)) return roleDefinitionFromKey(degree, 'astromech');
+    if (/slicer|network|communications|comms|security|repair|mechanic|maintenance|treadwell|pit|utility|tech|g2|h\s*[- ]?1me|mk\s*[- ]?series|le\s*[- ]?series|kdy\s*[- ]?4|nr\s*[- ]?1100|ei\s*[- ]?9|0\s*[- ]?lt/.test(text)) return roleDefinitionFromKey(degree, 'repair');
+    return roleDefinitionFromKey(degree, 'repair');
+  }
+
+  if (degree === '3rd-degree') {
+    if (/information|messenger|gatekeeper|espionage|aerial survey|gy\s*[- ]?i|m4\s*[- ]?series|tt\s*[- ]?8l|imperial espionage|as23/.test(text)) return roleDefinitionFromKey(degree, 'information');
+    if (/admin|administrative|secretary|supervisor|spaceport control|control|cz\s*[- ]?series|ev\s*[- ]?series|3d\s*[- ]?4|k\s*[- ]?series/.test(text)) return roleDefinitionFromKey(degree, 'administrative');
+    if (/service|domestic|hospitality|luxury|valet|worker drone|lep|gg\s*[- ]?series|bd\s*[- ]?3000|bt7|fa\s*[- ]?5|j9/.test(text)) return roleDefinitionFromKey(degree, 'service');
+    if (/protocol|translation|interpreter|diplomacy|3po|m\s*[- ]?3po|tc\s*[- ]?series|ge3|lom|ra\s*[- ]?7|5yq|chiba|rww/.test(text)) return roleDefinitionFromKey(degree, 'protocol');
+    return roleDefinitionFromKey(degree, 'protocol');
+  }
+
+  if (degree === '4th-degree') {
+    if (/artillery|turret|area fire|vx\s*[- ]?series|t4/.test(text)) return roleDefinitionFromKey(degree, 'artillery');
+    if (/heavy|hulk|annihilator|warbot|behemoth|juggernaut|ultra|dark trooper|scorpenek|ix\s*[- ]?6|sd\s*[- ]?6|sd\s*[- ]?9|b3/.test(text)) return roleDefinitionFromKey(degree, 'heavy');
+    if (/assassin|hunter.?killer|hk\s*[-_]|asn|e522|mrd|hkb/.test(text)) return roleDefinitionFromKey(degree, 'assassin');
+    if (/infiltrat|espionage|sabotage|stealth|shadow|wsb|3px|tc\s*[- ]?sc/.test(text)) return roleDefinitionFromKey(degree, 'infiltration');
+    if (/probe|recon|surveillance|scout|seeker|observation|spotter|viper|drk|dsh|k\s*[- ]?x12|r\s*[- ]?1|r\s*[- ]?4|lv\s*[- ]?38|fsd|spelunker|picket/.test(text)) return roleDefinitionFromKey(degree, 'recon');
+    if (/security|guard|patrol|sentry|sentinel|warden|police|perimeter|footman|wing guard|mionne|jk\s*[- ]?13|lv8|z65|bt\s*[- ]?16|b4j4|mark i patrol|mark i sentinel|mark iv sentry|kx\s*[- ]?series/.test(text)) return roleDefinitionFromKey(degree, 'security');
+    if (/training|practice|lightsaber|tactical|remote|bca|marksman|hunter trainer|de training|ig\s*[- ]?110|t\s*[- ]?series|x training/.test(text)) return roleDefinitionFromKey(degree, 'training');
+    if (/battle|assault|combat|commando|destroyer|droideka|spider|infantry|legionnaire|lancer|war|guardian|crab|buzz|purge|b1|b2|bx|oom|ig\s*[- ]?86|lr\s*[- ]?57|v2|yvh|aggressor|eradicator|devastator|krath|rakatan|x\s*[- ]?1|junk|brute/.test(text)) return roleDefinitionFromKey(degree, 'battle');
+    return roleDefinitionFromKey(degree, 'battle');
+  }
+
+  if (degree === '5th-degree') {
+    if (/survey|surveyor|scout surveyor|wanderer/.test(text)) return roleDefinitionFromKey(degree, 'survey');
+    if (/exploration|explorer|f1/.test(text)) return roleDefinitionFromKey(degree, 'exploration');
+    if (/mining|smelt|excavat|sifter|industrial|km1|pk\s*[- ]?2m|xk\s*[- ]?v8|11\s*[- ]?17|8d8|8d|rt sifter/.test(text)) return roleDefinitionFromKey(degree, 'mining');
+    if (/construction|power|gnk|eg\s*[- ]?6|plnk|evs|ordnance|cll\s*[- ]?m2/.test(text)) return roleDefinitionFromKey(degree, 'construction');
+    if (/labor|loader|loading|lifter|worker|valet|asp|blx|pk worker|cll\s*[- ]?6|iw\s*[- ]?37|hv\s*[- ]?7|t1 bulk|xlt/.test(text)) return roleDefinitionFromKey(degree, 'labor');
+    if (/utility|maintenance|repair|demolition|demolitions|mine|minesweeper|mse\s*[- ]?6|ic\s*[- ]?m|r\s*[- ]?8009|ro\s*[- ]?d|mule|gd16|grz|mr\s*[- ]?200/.test(text)) return roleDefinitionFromKey(degree, 'utility');
+    return roleDefinitionFromKey(degree, 'utility');
+  }
+
+  return null;
+}
+
+function droidDegreeFromValue(value = '') {
+  const normalized = slugifyStoreLabel(value);
+  if (!normalized) return null;
+  return DROID_DEGREE_DEFINITIONS.find(def => def.key === normalized)
+    || DROID_DEGREE_DEFINITIONS.find(def => slugifyStoreLabel(def.label) === normalized)
+    || DROID_DEGREE_DEFINITIONS.find(def => slugifyStoreLabel(def.subcategory) === normalized)
+    || null;
+}
+
+function droidDegreeFromText(itemOrDegree = {}) {
+  const text = droidText(itemOrDegree);
+  if (/\b(1st|first|class one|class 1|1st degree)\b/.test(text)) return DROID_DEGREE_DEFINITIONS[0];
+  if (/\b(2nd|second|class two|class 2|2nd degree)\b/.test(text)) return DROID_DEGREE_DEFINITIONS[1];
+  if (/\b(3rd|third|class three|class 3|3rd degree)\b/.test(text)) return DROID_DEGREE_DEFINITIONS[2];
+  if (/\b(4th|fourth|class four|class 4|4th degree)\b/.test(text)) return DROID_DEGREE_DEFINITIONS[3];
+  if (/\b(5th|fifth|class five|class 5|5th degree)\b/.test(text)) return DROID_DEGREE_DEFINITIONS[4];
+  if (/medical|medic|surgical|midwife|analytical|analysis|archive|interrogat|science|threat analysis/.test(text)) return DROID_DEGREE_DEFINITIONS[0];
+  if (/astromech|maintenance|mechanic|repair|tech|slicer|weapons maintenance|demolition|pilot|gunnery|comm|communications|infrastructure|spaceport|control|minesweeper/.test(text)) return DROID_DEGREE_DEFINITIONS[1];
+  if (/protocol|secretary|administrative|administration|valet|hospitality|service|footman|messenger|dealer|luxury|domestic|supervisor|information/.test(text)) return DROID_DEGREE_DEFINITIONS[2];
+  if (/assassin|assault|battle|combat|commando|destroyer|spider|guardian|guard|patrol|sentinel|sentry|seeker|probe|surveillance|espionage|infiltrat|scout|recon|observation|tactical|artillery|infantry|legionnaire|hunter.?killer|warden|war|turret|lightsaber|sabotage|annihilator|picket|training|security|crab|buzz|lancer|hk\s*[-_]|shadow|viper/.test(text)) return DROID_DEGREE_DEFINITIONS[3];
+  if (/utility|labor|loader|loading|mining|smelter|power|construction|worker|excavation|sifter|mule|gatekeeper|pit|agromech|exploration|explorer|surveyor|survey|spelunker|junk|holocam|ro\s*[- ]?d/.test(text)) return DROID_DEGREE_DEFINITIONS[4];
   return null;
 }
 
@@ -436,6 +535,29 @@ export function getDroidFamily(itemOrSubcategory = {}) {
 
 export function getDroidFamilyLabel(familyKey = '') {
   return DROID_DEGREE_DEFINITIONS.find(def => def.key === familyKey)?.label || 'Other Droids';
+}
+
+export function getDroidRoleDefinitionsForDegree(degreeOrKey = '') {
+  const degreeKey = droidDegreeFromValue(degreeOrKey)?.key || slugifyStoreLabel(degreeOrKey);
+  return (DROID_ROLE_DEFINITIONS[degreeKey] || []).map(def => ({ ...def }));
+}
+
+export function getDroidRole(itemOrRole = {}, degreeOrKey = '') {
+  const sys = itemOrRole?.system ?? itemOrRole?.data ?? {};
+  const degreeKey = droidDegreeFromValue(degreeOrKey)?.key || slugifyStoreLabel(degreeOrKey) || getDroidFamily(itemOrRole);
+  const direct = roleDefinitionFromKey(degreeKey, sys.droidRole ?? sys.roleKey ?? itemOrRole.droidRoleKey ?? itemOrRole.roleKey);
+  return direct || droidRoleFromText(itemOrRole, degreeKey);
+}
+
+export function getDroidRoleLabel(roleOrKey = '', degreeOrKey = '') {
+  const degreeKey = droidDegreeFromValue(degreeOrKey)?.key || slugifyStoreLabel(degreeOrKey);
+  const direct = roleDefinitionFromKey(degreeKey, roleOrKey);
+  return direct?.label || String(roleOrKey || '').trim() || 'Other';
+}
+
+export function normalizeDroidRole(itemOrRole = {}, degreeOrKey = '') {
+  const role = getDroidRole(itemOrRole, degreeOrKey);
+  return role?.key || '';
 }
 
 function vehicleDefinitionFromValue(value = '') {
@@ -706,37 +828,69 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
       });
     } else if (categoryKey === 'droids') {
       const byDegree = new Map();
+      const byRole = new Map();
 
       for (const [subcategory, items] of subMap.entries()) {
         for (const item of items) {
-          const normalized = normalizeDroidSubcategory(item);
-          if (!byDegree.has(normalized)) byDegree.set(normalized, []);
-          byDegree.get(normalized).push(item);
+          const degree = getDroidFamily({ ...item, subcategory: item.subcategory || subcategory }) || 'other';
+          if (!byDegree.has(degree)) byDegree.set(degree, []);
+          byDegree.get(degree).push(item);
+
+          const role = getDroidRole(item, degree);
+          if (role?.key) {
+            const key = `${degree}:${role.key}`;
+            if (!byRole.has(key)) byRole.set(key, { degree, role, items: [] });
+            byRole.get(key).items.push(item);
+          }
         }
       }
 
-      const droidOrder = getDroidDegreeDefinitions().map(def => def.subcategory);
-      for (const [normalized, items] of byDegree.entries()) {
-        const family = getDroidFamily(normalized);
-        children.push({
-          key: slugifyStoreLabel(normalized),
-          label: normalized,
-          count: items.length,
-          category: categoryKey,
-          subcategory: normalized,
-          family,
-          active: activeSubcategory === normalized
-        });
+      const activeDegree = activeFamily || '';
+      if (activeDegree) {
+        const roleDefinitions = getDroidRoleDefinitionsForDegree(activeDegree);
+        for (const role of roleDefinitions) {
+          const bucket = byRole.get(`${activeDegree}:${role.key}`);
+          const count = bucket?.items?.length || 0;
+          if (count <= 0) continue;
+          children.push({
+            key: role.key,
+            label: role.label,
+            count,
+            category: categoryKey,
+            subcategory: role.key,
+            filterValue: role.key,
+            family: activeDegree,
+            active: slugifyStoreLabel(activeSubcategory) === role.key,
+            description: role.description
+          });
+        }
       }
 
       children.sort((a, b) => {
-        const aIdx = droidOrder.indexOf(a.label);
-        const bIdx = droidOrder.indexOf(b.label);
+        const defs = getDroidRoleDefinitionsForDegree(activeDegree);
+        const aIdx = defs.findIndex(def => def.key === a.key);
+        const bIdx = defs.findIndex(def => def.key === b.key);
         if (aIdx === -1 && bIdx === -1) return a.label.localeCompare(b.label);
         if (aIdx === -1) return 1;
         if (bIdx === -1) return -1;
         return aIdx - bIdx;
       });
+
+      const degreeOrder = getDroidDegreeDefinitions().map(def => def.key);
+      const familyTabs = [];
+      for (const degree of getDroidDegreeDefinitions()) {
+        const count = byDegree.get(degree.key)?.length || 0;
+        if (count <= 0) continue;
+        familyTabs.push({
+          family: degree.key,
+          label: degree.label,
+          count,
+          active: activeFamily === degree.key,
+          description: degree.description
+        });
+      }
+      familyTabs.sort((a, b) => degreeOrder.indexOf(a.family) - degreeOrder.indexOf(b.family));
+      children.familyTabsOverride = familyTabs;
     } else if (categoryKey === 'vehicles') {
       const normalizedByVehicleType = new Map();
 
@@ -788,6 +942,8 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
       children.sort((a, b) => a.label.localeCompare(b.label));
     }
 
+    const droidFamilyTabsOverride = Array.isArray(children.familyTabsOverride) ? children.familyTabsOverride : null;
+
     const allLabels = {
       weapons: storeI18n('SWSE.Store.Navigation.AllWeapons'),
       armor: storeI18n('SWSE.Store.Navigation.AllCategory', { category }),
@@ -804,7 +960,12 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
       children: children.length > 0 ? children : undefined
     };
 
-    if (['weapons', 'droids', 'vehicles'].includes(categoryKey) && children.length > 0) {
+    if (categoryKey === 'droids' && droidFamilyTabsOverride) {
+      topCategory.familyTabs = droidFamilyTabsOverride;
+      topCategory.familyGroups = {};
+      topCategory.roleResetLabel = activeFamily ? `All ${getDroidFamilyLabel(activeFamily)}` : topCategory.allLabel;
+      topCategory.roleResetFamily = activeFamily || '';
+    } else if (['weapons', 'droids', 'vehicles'].includes(categoryKey) && children.length > 0) {
       const byFamily = new Map();
       for (const child of children) {
         const family = child.family
@@ -813,7 +974,7 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
           || (categoryKey === 'vehicles' ? getVehicleFamily(child.label) : '')
           || 'other';
         if (!byFamily.has(family)) byFamily.set(family, []);
-        byFamily.get(family).push({ ...child, family, active: activeSubcategory === child.label });
+        byFamily.get(family).push({ ...child, family, active: slugifyStoreLabel(activeSubcategory) === slugifyStoreLabel(child.filterValue || child.subcategory || child.label) });
       }
       topCategory.familyGroups = Object.fromEntries(byFamily);
       const familyOrderByCategory = {

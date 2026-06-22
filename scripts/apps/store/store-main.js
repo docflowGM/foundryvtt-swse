@@ -36,6 +36,8 @@ import {
   buildStoreNavigationModel,
   normalizeArmorSubcategory,
   normalizeDroidSubcategory,
+  normalizeDroidRole,
+  getDroidRole,
   normalizeVehicleSubcategory,
   getDroidFamily,
   getVehicleFamily,
@@ -143,6 +145,11 @@ function getStoreNavigationFamily(itemOrView = {}) {
   if (categoryKey === 'vehicles') return getVehicleFamily(getStoreNavigationSubcategory(itemOrView));
   return '';
 }
+
+function getStoreDroidRoleKey(itemOrView = {}) {
+  return normalizeDroidRole(itemOrView, getDroidFamily(itemOrView));
+}
+
 
 function vehicleSizeMatches(itemOrView = {}, filterValue = '') {
   const filter = normalizeStoreFilterValue(filterValue);
@@ -994,6 +1001,12 @@ export class SWSEStore extends BaseSWSEAppV2 {
       view.subcategoryKey = normalizeStoreFilterValue(view.subcategory);
       view.weaponFamily = view.categoryKey === 'weapons' ? getWeaponFamily(view.subcategory) : '';
       view.navigationFamily = getStoreNavigationFamily(item);
+      if (view.categoryKey === 'droids') {
+        const role = getDroidRole(item, view.navigationFamily);
+        view.droidDegreeKey = view.navigationFamily;
+        view.droidRoleKey = role?.key || '';
+        view.droidRoleLabel = role?.label || '';
+      }
       view.vehicleSizeKey = view.categoryKey === 'vehicles' ? getVehicleSizeKey(item) : '';
       view.vehicleSizeLabel = view.categoryKey === 'vehicles' ? getVehicleSizeLabel(item) : '';
       view.vehicleChallengeLevel = view.categoryKey === 'vehicles' ? getVehicleChallengeLevel(item) : null;
@@ -1014,17 +1027,19 @@ export class SWSEStore extends BaseSWSEAppV2 {
         }
       }
 
-      if (this.currentSubcategory) {
-        const itemSubcategory = normalizeStoreFilterValue(getStoreNavigationSubcategory(item));
-        const filterSubcategory = normalizeStoreFilterValue(this.currentSubcategory);
-        if (itemSubcategory !== filterSubcategory) {
+      if (this.currentFamily && ['weapons', 'droids', 'vehicles'].includes(this.currentCategory)) {
+        const itemFamily = getStoreNavigationFamily(item);
+        if (itemFamily !== this.currentFamily) {
           continue;
         }
       }
 
-      if (this.currentFamily && ['weapons', 'droids', 'vehicles'].includes(this.currentCategory)) {
-        const itemFamily = getStoreNavigationFamily(item);
-        if (itemFamily !== this.currentFamily) {
+      if (this.currentSubcategory) {
+        const filterSubcategory = normalizeStoreFilterValue(this.currentSubcategory);
+        const itemSubcategory = this.currentCategory === 'droids'
+          ? getStoreDroidRoleKey(item)
+          : normalizeStoreFilterValue(getStoreNavigationSubcategory(item));
+        if (itemSubcategory !== filterSubcategory) {
           continue;
         }
       }
@@ -1208,6 +1223,9 @@ export class SWSEStore extends BaseSWSEAppV2 {
       subcategoryKey: normalizeStoreFilterValue(getStoreNavigationSubcategory(item)),
       weaponFamily: storeItemCategoryKey(item) === 'weapons' ? getWeaponFamily(getStoreNavigationSubcategory(item)) : '',
       navigationFamily: getStoreNavigationFamily(item),
+      droidDegreeKey: storeItemCategoryKey(item) === 'droids' ? getStoreNavigationFamily(item) : '',
+      droidRoleKey: storeItemCategoryKey(item) === 'droids' ? (getDroidRole(item, getStoreNavigationFamily(item))?.key || '') : '',
+      droidRoleLabel: storeItemCategoryKey(item) === 'droids' ? (getDroidRole(item, getStoreNavigationFamily(item))?.label || '') : '',
       vehicleSizeKey: storeItemCategoryKey(item) === 'vehicles' ? getVehicleSizeKey(item) : '',
       vehicleSizeLabel: storeItemCategoryKey(item) === 'vehicles' ? getVehicleSizeLabel(item) : '',
       vehicleChallengeLevel: storeItemCategoryKey(item) === 'vehicles' ? getVehicleChallengeLevel(item) : null,
@@ -1579,12 +1597,15 @@ export class SWSEStore extends BaseSWSEAppV2 {
       const cardCategory = (card.dataset.categoryKey || card.dataset.category || '').toLowerCase();
       const cardSubcategory = normalizeStoreFilterValue(card.dataset.subcategory || '');
       const cardFamily = card.dataset.family || '';
+      const cardDroidRole = normalizeStoreFilterValue(card.dataset.droidRole || '');
       const cardSize = normalizeStoreFilterValue(card.dataset.vehicleSize || '');
       const cardCl = normalizeStoreFilterValue(card.dataset.vehicleCl || '');
 
       const matchesSearch = !searchTerm || name.includes(searchTerm) || desc.includes(searchTerm);
       const matchesCategory = !categoryFilter || cardCategory === String(categoryFilter).toLowerCase();
-      const matchesSubcategory = !this.currentSubcategory || cardSubcategory === normalizeStoreFilterValue(this.currentSubcategory);
+      const matchesSubcategory = !this.currentSubcategory || (this.currentCategory === 'droids'
+        ? cardDroidRole === normalizeStoreFilterValue(this.currentSubcategory)
+        : cardSubcategory === normalizeStoreFilterValue(this.currentSubcategory));
       const matchesFamily = !(['weapons', 'droids', 'vehicles'].includes(this.currentCategory) && this.currentFamily) || cardFamily === this.currentFamily;
       const matchesAvailability = availabilityMatches(item, availabilityFilter);
       const matchesVehicleSize = !(this.currentCategory === 'vehicles' && vehicleSizeFilter) || cardSize === normalizeStoreFilterValue(vehicleSizeFilter);
@@ -1760,8 +1781,10 @@ export class SWSEStore extends BaseSWSEAppV2 {
     }
 
     if (itemType === 'droid') {
+      const droidRole = getDroidRole(item, getDroidFamily(item));
       add(storeI18n('SWSE.Store.Technical.Class'), item.subcategory || normalizeDroidSubcategory(item));
       add(storeI18n('SWSE.Store.Technical.Degree'), sys.degree);
+      add('Role', droidRole?.label);
       add(storeI18n('SWSE.Store.Technical.Size'), sys.size);
       add(storeI18n('SWSE.Store.Technical.HitPoints'), sys.HP);
       add(storeI18n('SWSE.Store.Technical.DamageThreshold'), sys.damageThreshold);

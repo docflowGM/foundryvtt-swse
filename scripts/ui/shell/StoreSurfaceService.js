@@ -13,6 +13,7 @@ import {
   buildStoreNavigationModel,
   normalizeArmorSubcategory,
   normalizeDroidSubcategory,
+  normalizeDroidRole,
   normalizeVehicleSubcategory,
   getDroidFamily,
   getVehicleFamily,
@@ -63,6 +64,11 @@ function _navFamily(item = {}) {
   if (categoryKey === 'vehicles') return getVehicleFamily(_navSubcategory(item));
   return '';
 }
+
+function _navDroidRole(item = {}) {
+  return normalizeDroidRole(item, getDroidFamily(item));
+}
+
 
 function _vehicleSizeMatches(item = {}, filter = '') {
   const key = _normalizeStoreFilterValue(filter);
@@ -715,7 +721,9 @@ export class StoreSurfaceService {
         const itemCategory = _categoryKey(item);
         const matchesCategory = !currentCategory || itemCategory === currentCategory;
         const matchesSubcategory = !currentSubcategory
-          || _normalizeStoreFilterValue(_navSubcategory(item)) === _normalizeStoreFilterValue(currentSubcategory);
+          || (currentCategory === 'droids'
+            ? _navDroidRole(item) === _normalizeStoreFilterValue(currentSubcategory)
+            : _normalizeStoreFilterValue(_navSubcategory(item)) === _normalizeStoreFilterValue(currentSubcategory));
         const matchesFamily = !(['weapons', 'droids', 'vehicles'].includes(currentCategory) && currentFamily)
           || _navFamily(item) === currentFamily;
         const matchesVehicleSize = !(currentCategory === 'vehicles' && currentVehicleSize)

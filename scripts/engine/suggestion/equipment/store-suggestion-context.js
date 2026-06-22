@@ -116,6 +116,9 @@ export function extractStoreItemTags(item) {
   add(sys.type);
   add(sys.subtype);
   add(sys.role);
+  add(sys.droidRole);
+  add(sys.droidRoleLabel);
+  add(sys.droidDegreeKey);
   add(sys.armorCategory);
   add(sys.armor_category);
 
