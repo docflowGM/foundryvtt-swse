@@ -30,6 +30,9 @@ import { TalentTreeDB } from "/systems/foundryvtt-swse/scripts/data/talent-tree-
 import { normalizeTalentTreeId } from "/systems/foundryvtt-swse/scripts/data/talent-tree-normalizer.js";
 import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
 import { calculatePrestigeDelay } from "/systems/foundryvtt-swse/scripts/engine/suggestion/prestige-delay-calculator.js";
+import { ClassRouteProfileEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/class-route-profile-engine.js";
+import { buildRouteConfidenceProfile, scoreCandidateRouteFit, summarizeRouteConfidenceProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/build-route-confidence-profile.js";
+import { buildEquipmentLoadoutProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment-loadout-profile.js";
 
 // ──────────────────────────────────────────────────────────────
 // DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
@@ -263,6 +266,13 @@ export class ClassSuggestionEngine {
             startingClass: actorState.startingClass
         });
 
+        const routeConfidenceProfile = options.routeConfidenceProfile || buildRouteConfidenceProfile(actor, options.buildIntent || {}, {
+            ...options,
+            pendingData
+        });
+        actorState.routeConfidenceProfile = routeConfidenceProfile;
+        actorState.routeConfidenceSummary = summarizeRouteConfidenceProfile(routeConfidenceProfile);
+
         // Check for prestige class target from L1 survey
         const prestigeClassTarget = pendingData?.prestigeClassTarget || actor.system?.swse?.mentorBuildIntentBiases?.prestigeClassTarget || null;
         if (prestigeClassTarget) {
@@ -277,21 +287,25 @@ export class ClassSuggestionEngine {
 
         for (const cls of classes) {
             logSuggestionTrace(options, `[CLASS-SUGGESTION-ENGINE] suggestClasses: Evaluating class "${cls.name}"...`);
-            const suggestion = await this._evaluateClass(cls, actorState, prestigePrereqs, { ...options, prestigeClassTarget, actor });
+            const suggestion = await this._evaluateClass(cls, actorState, prestigePrereqs, { ...options, prestigeClassTarget, actor, routeConfidenceProfile });
 
-            // Calculate bias for sorting
-            const classType = (cls.isPrestige === true || cls.prestigeClass === true || cls.baseClass === false) ? 'prestige' : 'base';
-            let bias = PRESTIGE_BIAS[classType] || 0;
-            const prereqData = cls.isPrestige ? prestigePrereqs[cls.name] : null;
+            // Calculate bias for sorting. Prestige receives pressure only when
+            // route-fit supports it; a legal-but-off-route prestige class should
+            // not outrank coherent build continuation just because it is legal.
+            const isPrestige = cls.isPrestige === true || cls.prestigeClass === true || cls.baseClass === false;
+            const routeProfile = suggestion.routeProfile || {};
+            let bias = Number(routeProfile.sortBias || 0);
+            const prereqData = isPrestige ? prestigePrereqs[cls.name] : null;
 
-            if (cls.isPrestige && this._matchesRequiredSpecies(prereqData?.species, actorState)) {
-                bias += 2;
+            if (isPrestige && this._matchesRequiredSpecies(prereqData?.species, actorState)) {
+                bias += routeProfile.routeFit === 'strong' ? 2 : 0.75;
             }
 
-            // Boost prestige classes that match the player's target
-            if (cls.isPrestige && cls.name === prestigeClassTarget) {
-                bias += 5; // Significant boost for target class
-                logSuggestionTrace(options, `[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige class target match - boosting "${cls.name}" bias`);
+            // Boost the player's declared target, but let route profile still
+            // express whether that target is currently supported or aspirational.
+            if (isPrestige && cls.name === prestigeClassTarget) {
+                bias += routeProfile.routeFit === 'offRoute' ? 1.25 : 3.5;
+                logSuggestionTrace(options, `[CLASS-SUGGESTION-ENGINE] suggestClasses: Prestige class target match - route-aware boost for "${cls.name}"`);
             }
 
             logSuggestionTrace(options, `[CLASS-SUGGESTION-ENGINE] suggestClasses: Class "${cls.name}" - tier: ${suggestion.tier}, bias: ${bias}, isSuggested: ${suggestion.tier >= UNIFIED_TIERS.ABILITY_SYNERGY}`);
@@ -484,12 +498,17 @@ export class ClassSuggestionEngine {
 
         const speciesNames = getActorSpeciesNames(actor, pendingData);
         const isDroid = actorIsDroidLike(actor, pendingData);
-        const startingClass = pendingData?.startingClass || actor.getFlag?.('foundryvtt-swse', 'startingClass') || actor.getFlag?.('swse', 'startingClass') || null;
-        const baseClassLevel = Object.entries(actor.system?.classes || {})
+        const startingClass = pendingData?.startingClass
+            || actor.getFlag?.('foundryvtt-swse', 'startingClass')
+            || actor.getFlag?.('swse', 'startingClass')
+            || this._inferStartingClassFromHistory(actor, classes);
+        const baseClassLevel = Object.entries(classes || {})
             .filter(([className]) => BASE_CLASSES.includes(className))
-            .reduce((sum, [, classData]) => sum + (classData?.level || 0), 0);
+            .reduce((sum, [, level]) => sum + (Number(level || 0) || 0), 0);
+        const equipmentProfile = buildEquipmentLoadoutProfile(actor);
 
         const actorState = {
+            actor,
             ownedFeats,
             ownedTalents,
             talentTrees,
@@ -503,6 +522,7 @@ export class ClassSuggestionEngine {
             characterLevel,
             baseClassLevel,
             startingClass,
+            equipmentProfile,
             speciesNames,
             isDroid,
             // Combined set for prereq checking
@@ -511,6 +531,29 @@ export class ClassSuggestionEngine {
 
         logSuggestionTrace({}, `[CLASS-SUGGESTION-ENGINE] _buildActorState: Actor state complete`);
         return actorState;
+    }
+
+
+    static _inferStartingClassFromHistory(actor, classes = {}) {
+        const candidates = [
+            actor?.system?.progression?.startingClass,
+            actor?.system?.startingClass,
+            actor?.system?.details?.startingClass,
+            actor?.system?.swse?.startingClass,
+            actor?.flags?.['foundryvtt-swse']?.startingClass,
+            actor?.flags?.swse?.startingClass,
+        ].filter(Boolean);
+        if (candidates.length) return candidates[0];
+
+        // Last-resort fallback for actors created before the flag existed. This
+        // is only advisory; class legality still comes from the normal class
+        // items/prerequisite path.
+        const baseEntries = Object.entries(classes || {})
+            .filter(([name]) => BASE_CLASSES.includes(name));
+        if (baseEntries.length === 1) return baseEntries[0][0];
+        const levelOneBases = baseEntries.filter(([, level]) => Number(level || 0) === 1);
+        if (levelOneBases.length === 1) return levelOneBases[0][0];
+        return baseEntries.sort((a, b) => Number(b[1] || 0) - Number(a[1] || 0))[0]?.[0] || null;
     }
 
     // ──────────────────────────────────────────────────────────────
@@ -826,44 +869,125 @@ export class ClassSuggestionEngine {
         const prereqData = isPrestige ? prestigePrereqs[cls.name] : null;
         const prestigeClassTarget = options.prestigeClassTarget || null;
 
-        // Check prerequisites
+        // Check prerequisites first, then let the route profile decide how much
+        // that readiness should matter. Legal prestige should be loud only when
+        // it also matches demonstrated build intent.
         const prereqCheck = this._checkPrerequisites(cls.name, prereqData, actorState);
         const verifiableMissing = this._countVerifiableMissing(prereqCheck.missing);
-
-        // TIER 5: Prestige class that character qualifies for NOW
-        if (isPrestige && prereqCheck.met) {
-            return this._buildSuggestion(
-                UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW,
-                cls.name,
-                prereqCheck.missing,
-                'You meet all prerequisites for this prestige class!'
-            );
+        const routeProfile = ClassRouteProfileEngine.buildProfile(cls, actorState, {
+            prereqCheck,
+            prereqData,
+            prestigeClassTarget,
+            isPrestige,
+        });
+        const edgeRouteFit = scoreCandidateRouteFit(cls, options.routeConfidenceProfile || actorState.routeConfidenceProfile, {
+            actor: options.actor,
+            pendingData: options.pendingData || {},
+        });
+        routeProfile.edgeRouteConfidence = edgeRouteFit;
+        if (edgeRouteFit?.score > 0) {
+            routeProfile.supportingSignals = Array.from(new Set([
+                ...(routeProfile.supportingSignals || []),
+                `${cls.name} matches ${edgeRouteFit.topLabel || edgeRouteFit.label} route evidence`
+            ]));
+            if (edgeRouteFit.accessOnly && isPrestige) {
+                routeProfile.cautionSignals = Array.from(new Set([
+                    ...(routeProfile.cautionSignals || []),
+                    'Only access-level evidence supports this prestige route so far'
+                ]));
+            }
         }
 
-        // TIER 5 (PLAYER INTENT): Prestige class that matches player's L1 survey target
-        // This gives high priority to classes the player explicitly expressed interest in
+        const build = (tier, reason, extras = {}) => this._buildSuggestion(
+            tier,
+            cls.name,
+            prereqCheck.missing,
+            reason,
+            {
+                ...extras,
+                routeProfile,
+                reasons: Array.from(new Set([
+                    ...(extras.reasons || []),
+                    ...(routeProfile.supportingSignals || []),
+                ])).slice(0, 6),
+                cautions: Array.from(new Set([
+                    ...(extras.cautions || extras.cautionReasons || []),
+                    ...(routeProfile.cautionSignals || []),
+                ])).slice(0, 5),
+                score: Number(extras.score ?? 0)
+                    + Number(routeProfile.routeFitScore || 0) * 4
+                    + Number(routeProfile.sortBias || 0)
+                    + (edgeRouteFit?.accessOnly ? Number(edgeRouteFit.score || 0) * 0.8 : Number(edgeRouteFit?.score || 0) * 1.6),
+            }
+        );
+
+        const routeLabel = routeProfile.routeFamilyLabel || ClassRouteProfileEngine.familyLabel(routeProfile.routeFamily);
+        const startAnchor = routeProfile.startingClassAnchor?.className;
+        const baseClass = routeProfile.baseClass;
+        const routeSource = routeProfile.routeMatchesBase && baseClass
+            ? `${baseClass} investment`
+            : routeProfile.routeMatchesStartingClass && startAnchor
+                ? `Level 1 ${startAnchor} chassis`
+                : 'current build identity';
+
+        // PLAYER INTENT: respect a declared prestige target, but still describe
+        // weak current support as a forecast/bridge instead of pretending the
+        // build is already coherent.
         if (isPrestige && cls.name === prestigeClassTarget) {
-            const tier = prereqCheck.met
-                ? UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW
-                : UNIFIED_TIERS.PATH_CONTINUATION;  // PRESTIGE_SOON mapped to PATH_CONTINUATION (4)
-            const reason = prereqCheck.met
-                ? 'This matches your character goal and you qualify now!'
-                : `This matches your character goal - you're almost there! Missing: ${prereqCheck.missing.filter(m => !m.unverifiable).map(m => m.shortDisplay).join(', ')}`;
-            return this._buildSuggestion(
-                tier,
-                cls.name,
-                prereqCheck.missing,
-                reason
+            if (prereqCheck.met && routeProfile.routeFit !== 'offRoute') {
+                return build(
+                    routeProfile.routeFit === 'strong' ? UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW : UNIFIED_TIERS.PATH_CONTINUATION,
+                    `${cls.name} matches your stated goal and ${routeProfile.routeFit === 'strong' ? 'your build is ready for it now' : 'your build can enter it, though the route support is still developing'}.`,
+                    { score: 6, confidence: routeProfile.routeFit === 'strong' ? 0.95 : 0.72 }
+                );
+            }
+            const missingText = prereqCheck.missing.filter(m => !m.unverifiable).map(m => m.shortDisplay).join(', ');
+            return build(
+                UNIFIED_TIERS.PATH_CONTINUATION,
+                missingText
+                    ? `${cls.name} remains your stated target; the next gates are ${missingText}.`
+                    : `${cls.name} remains your stated target, but the current build support is thin.`,
+                { score: 4.5, confidence: 0.68 }
             );
         }
 
-        // TIER 4: Continuation of current class path
+        // PRESTIGE READY NOW: gate early prestige encouragement by route fit.
+        // Core classes are limiting, so strong-fit prestige should float hard;
+        // legal-but-off-route prestige should be muted rather than top-ranked.
+        if (isPrestige && prereqCheck.met) {
+            if (routeProfile.urgency === 'enterNow') {
+                return build(
+                    UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW,
+                    `${cls.name} is prestige-ready now and follows your ${routeSource} into ${routeLabel}.`,
+                    { score: 7, confidence: 0.95 }
+                );
+            }
+            if (routeProfile.urgency === 'optionalPrestige') {
+                return build(
+                    UNIFIED_TIERS.CATEGORY_SYNERGY,
+                    `${cls.name} is legal now, but it reads as an optional side route toward ${routeLabel}, not the strongest continuation.`,
+                    { score: 3.2, confidence: 0.62 }
+                );
+            }
+            return build(
+                UNIFIED_TIERS.THEMATIC_FIT,
+                `${cls.name} is legal, but current build intent does not strongly point toward ${routeLabel}.`,
+                { score: 1.4, confidence: 0.42 }
+            );
+        }
+
+        // TIER 4: Continuation of current class path. This is still useful for
+        // consolidation, especially diffuse builds, but aligned prestige-ready
+        // classes above should beat it.
         if (actorState.classes[cls.name]) {
-            return this._buildSuggestion(
+            const level = Number(actorState.classes[cls.name] || 0);
+            const shape = routeProfile.investmentShape || (level >= 4 ? 'swim' : level >= 2 ? 'dive' : 'dip');
+            return build(
                 UNIFIED_TIERS.PATH_CONTINUATION,
-                cls.name,
-                prereqCheck.missing,
-                `Continue your ${cls.name} progression`
+                routeProfile.diffuseBuild
+                    ? `${cls.name} consolidates a diffuse build by deepening an existing ${shape} investment.`
+                    : `Continue your ${cls.name} progression and deepen the ${routeLabel} lane you already opened.`,
+                { score: 4 + Math.min(2, level * 0.25), confidence: 0.82 }
             );
         }
 
@@ -878,7 +1002,6 @@ export class ClassSuggestionEngine {
             const neededSkills = targetPrereqs.skills || [];
             const neededFeats = targetPrereqs.feats || [];
 
-            // Check which prerequisites this class helps unlock
             const providesNeededTrees = neededTrees.some(neededTree =>
                 unlockedTrees.some(provided => provided.toLowerCase() === neededTree.toLowerCase())
             );
@@ -931,60 +1054,73 @@ export class ClassSuggestionEngine {
                     reason += ` by ${benefits.join(', ')}`;
                 }
 
-                return this._buildSuggestion(
-                    UNIFIED_TIERS.PATH_CONTINUATION,
-                    cls.name,
-                    [],
-                    reason
+                return build(
+                    routeProfile.routeFit === 'offRoute' ? UNIFIED_TIERS.ABILITY_SYNERGY : UNIFIED_TIERS.PATH_CONTINUATION,
+                    reason,
+                    { score: 4.2, confidence: 0.76 }
                 );
             }
         }
 
-        // TIER 4/3: Prestige class almost legal (missing <= 2 verifiable prerequisites)
+        // PRESTIGE FORECAST: almost-legal prestige only gets high pressure when
+        // it fits demonstrated route intent. Otherwise it stays visible but muted.
         if (isPrestige && verifiableMissing > 0 && verifiableMissing <= 2) {
             const missingText = prereqCheck.missing
                 .filter(m => !m.unverifiable)
                 .map(m => m.shortDisplay)
                 .join(', ');
-            return this._buildSuggestion(
-                UNIFIED_TIERS.CATEGORY_SYNERGY,  // PRESTIGE_SOON mapped to CATEGORY_SYNERGY (3)
-                cls.name,
-                prereqCheck.missing,
-                `Missing only: ${missingText}`
+            if (routeProfile.routeFit === 'strong' || routeProfile.routeFit === 'moderate') {
+                return build(
+                    routeProfile.routeFit === 'strong' ? UNIFIED_TIERS.PATH_CONTINUATION : UNIFIED_TIERS.CATEGORY_SYNERGY,
+                    `${cls.name} is an up-next prestige route for ${routeSource}; missing only ${missingText}.`,
+                    { score: routeProfile.routeFit === 'strong' ? 4.8 : 3.4, confidence: routeProfile.routeFit === 'strong' ? 0.82 : 0.68 }
+                );
+            }
+            return build(
+                UNIFIED_TIERS.THEMATIC_FIT,
+                `${cls.name} is close mechanically, but the build has not strongly committed to ${routeLabel}; missing ${missingText}.`,
+                { score: 1.6, confidence: 0.45 }
             );
         }
 
-        // TIER 2: Ability/mechanical synergy check
+        // TIER 2/3: Ability/mechanical synergy check, now informed by route
+        // profile, starting class anchor, and loadout metadata.
         const fit = this._getClassFitReasons(cls, actorState);
-        const synergyScore = this._calculateSynergyScore(cls, actorState) + fit.bonus;
-        if (synergyScore >= 3) {
-            const synergyReason = fit.reasons[0] || this._getSynergyReason(cls, actorState);
-            return this._buildSuggestion(
-                UNIFIED_TIERS.ABILITY_SYNERGY,
-                cls.name,
-                prereqCheck.missing,
+        const routeScore = Number(routeProfile.routeFitScore || 0) * 4;
+        const synergyScore = this._calculateSynergyScore(cls, actorState) + fit.bonus + routeScore;
+        if (synergyScore >= 4.5) {
+            const synergyReason = fit.reasons[0] || routeProfile.supportingSignals[0] || this._getSynergyReason(cls, actorState);
+            return build(
+                UNIFIED_TIERS.CATEGORY_SYNERGY,
                 synergyReason,
-                { reasons: fit.reasons, cautions: fit.cautions, score: synergyScore }
+                { reasons: fit.reasons, cautions: fit.cautions, score: synergyScore, confidence: Math.min(0.86, synergyScore / 8) }
+            );
+        }
+
+        if (synergyScore >= 2.5) {
+            const synergyReason = fit.reasons[0] || routeProfile.supportingSignals[0] || this._getSynergyReason(cls, actorState);
+            return build(
+                UNIFIED_TIERS.ABILITY_SYNERGY,
+                synergyReason,
+                { reasons: fit.reasons, cautions: fit.cautions, score: synergyScore, confidence: Math.min(0.72, synergyScore / 8) }
             );
         }
 
         // TIER 1: Thematic fit (lower synergy but still relevant)
-        if (synergyScore >= 1) {
-            const reason = fit.reasons[0] || `${cls.name} gives this build a workable starting lane.`;
-            return this._buildSuggestion(
+        if (synergyScore >= 1 || routeProfile.routeFit !== 'offRoute') {
+            const reason = fit.reasons[0] || routeProfile.supportingSignals[0] || `${cls.name} gives this build a workable ${routeLabel} lane.`;
+            return build(
                 UNIFIED_TIERS.THEMATIC_FIT,
-                cls.name,
-                prereqCheck.missing,
                 reason,
-                { reasons: fit.reasons.length ? fit.reasons : [reason], cautions: fit.cautions, score: synergyScore }
+                { reasons: fit.reasons.length ? fit.reasons : [reason], cautions: fit.cautions, score: synergyScore, confidence: 0.45 }
             );
         }
 
         // TIER 0: Fallback
-        return this._buildSuggestion(
+        return build(
             UNIFIED_TIERS.AVAILABLE,
-            cls.name,
-            prereqCheck.missing
+            `${cls.name} is available, but current build intent does not point strongly toward it.`,
+            { score: 0.2, confidence: 0.2 }
         );
     }
 
@@ -1202,6 +1338,10 @@ export class ClassSuggestionEngine {
             cautionReasons: extras.cautions || extras.cautionReasons || [],
             missingPrereqs,
             hasMissingPrereqs: missingPrereqs.length > 0,
+            routeProfile: extras.routeProfile || null,
+            readiness: extras.routeProfile?.readiness || null,
+            routeFit: extras.routeProfile?.routeFit || null,
+            urgency: extras.routeProfile?.urgency || null,
             isSuggested: tier >= UNIFIED_TIERS.ABILITY_SYNERGY  // TIER 2+
         };
     }
@@ -1292,9 +1432,13 @@ export class ClassSuggestionEngine {
     static _inferClassReasonCode(cls, suggestion, prereqSummary, prestigeClassTarget, actorState) {
         const isPrestige = cls.isPrestige === true || cls.prestigeClass === true || cls.baseClass === false;
         const baseClass = this._primaryBaseClass(actorState);
-        if (isPrestige && prereqSummary.missing.length === 0) return 'PRESTIGE_NOW';
-        if (isPrestige && (cls.name === prestigeClassTarget || this._classRouteMatches(baseClass, cls.name))) return 'PRESTIGE_ROUTE_CONTINUATION';
-        if (!isPrestige && actorState?.classes?.[cls.name]) return 'CLASS_CONTINUATION';
+        const profile = suggestion?.routeProfile || {};
+        if (isPrestige && profile.urgency === 'enterNow') return 'PRESTIGE_NOW';
+        if (isPrestige && profile.urgency === 'forecast') return 'PRESTIGE_ROUTE_FORECAST';
+        if (isPrestige && (profile.urgency === 'mutedPrestige' || profile.urgency === 'mutedForecast')) return 'PRESTIGE_ROUTE_MUTED';
+        if (isPrestige && (cls.name === prestigeClassTarget || this._classRouteMatches(baseClass, cls.name) || profile.routeFit === 'strong')) return 'PRESTIGE_ROUTE_CONTINUATION';
+        if (!isPrestige && actorState?.classes?.[cls.name]) return profile.diffuseBuild ? 'CLASS_CONSOLIDATION' : 'CLASS_CONTINUATION';
+        if (profile.diffuseBuild) return 'CLASS_ROUTE_DIFFUSE';
         if (!isPrestige && baseClass && normalizeSuggestionNameKey(baseClass) !== normalizeSuggestionNameKey(cls.name)) return 'BASE_CLASS_LATERAL_SHIFT';
         if (suggestion?.tier >= UNIFIED_TIERS.ABILITY_SYNERGY) return 'CLASS_SYNERGY';
         return 'CLASS_AVAILABLE';
@@ -1333,11 +1477,24 @@ export class ClassSuggestionEngine {
             routeFamily,
             baseRouteFamily,
             targetRouteFamily,
-            routeMatchesBase: this._classRouteMatches(baseClass, cls.name),
+            routeMatchesBase: suggestion?.routeProfile?.routeMatchesBase ?? this._classRouteMatches(baseClass, cls.name),
+            routeMatchesStartingClass: suggestion?.routeProfile?.routeMatchesStartingClass ?? false,
             supportsTarget,
+            readiness: suggestion?.routeProfile?.readiness || null,
+            routeFit: suggestion?.routeProfile?.routeFit || null,
+            routeFitScore: suggestion?.routeProfile?.routeFitScore ?? null,
+            urgency: suggestion?.routeProfile?.urgency || null,
+            investmentShape: suggestion?.routeProfile?.investmentShape || null,
+            diffuseBuild: suggestion?.routeProfile?.diffuseBuild || false,
+            startingClassAnchor: suggestion?.routeProfile?.startingClassAnchor || null,
+            dominantIdentity: suggestion?.routeProfile?.dominantIdentity || [],
+            investmentProfiles: suggestion?.routeProfile?.investmentProfiles || [],
+            supportingSignals: suggestion?.routeProfile?.supportingSignals || [],
+            cautionSignals: suggestion?.routeProfile?.cautionSignals || [],
             classSkills: synergy.skills || [],
-            tags: synergy.tags || [],
+            tags: Array.from(new Set([...(synergy.tags || []), ...(suggestion?.routeProfile?.matchedTags || []).map(entry => entry.tag).filter(Boolean)])),
             theme: synergy.theme || 'general',
+            routeProfile: suggestion?.routeProfile || null,
         };
     }
 

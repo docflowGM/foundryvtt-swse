@@ -207,6 +207,8 @@ export class ProgressionFinalizer {
         actorName: actor.name,
       });
 
+      this._emitLevelUpComplete(actor, sessionState, options);
+
       return { success: true, result: { actorId: actor.id } };
     } catch (error) {
       swseLogger.error('[ProgressionFinalizer] Finalization aborted (no mutations applied)', error);
@@ -214,6 +216,20 @@ export class ProgressionFinalizer {
         success: false,
         error: error.message || 'Finalization failed',
       };
+    }
+  }
+
+  static _emitLevelUpComplete(actor, sessionState, options = {}) {
+    try {
+      const mode = String(sessionState?.mode || options?.mode || '').toLowerCase();
+      if (!mode.includes('level')) return;
+      if (typeof Hooks === 'undefined') return;
+      Hooks.callAll('swse:level-up-complete', actor, actor?.system?.level || null, {
+        mode: sessionState?.mode || options?.mode || null,
+        sessionState,
+      });
+    } catch (err) {
+      swseLogger.debug('[ProgressionFinalizer] level-up-complete hook skipped', err);
     }
   }
 
@@ -250,6 +266,8 @@ export class ProgressionFinalizer {
 
       const result = await this._applyMutationPlan(actor, mutationPlan);
       if (!result.success) return result;
+
+      this._emitLevelUpComplete(actor, sessionState, options);
 
       return {
         success: true,

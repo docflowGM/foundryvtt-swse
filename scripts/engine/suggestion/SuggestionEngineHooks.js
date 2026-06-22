@@ -11,7 +11,7 @@
  * All state persistence goes through SuggestionStateService.
  */
 
-import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { PlayerHistoryTracker } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PlayerHistoryTracker.js";
 import { BuildIdentityAnchor } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIdentityAnchor.js";
 import { PivotDetector } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PivotDetector.js";
@@ -73,7 +73,7 @@ export class SuggestionEngineHooks {
       if (pivotResult.transitioned && pivotResult.newState) {
         // Route through SuggestionStateService instead of direct mutation
         await SuggestionStateService.updatePivotState(actor, pivotResult.newState);
-        swseLogger.log(`[Hooks] Pivot state changed: ${pivotResult.newState} (divergence: ${pivotResult.divergence.toFixed(2)})`);
+        SWSELogger.log(`[Hooks] Pivot state changed: ${pivotResult.newState} (divergence: ${pivotResult.divergence.toFixed(2)})`);
       }
     } catch (err) {
       SWSELogger.error('[Hooks] Error in selection handler:', err);
@@ -125,7 +125,7 @@ export class SuggestionEngineHooks {
       if (pivotResult.transitioned && pivotResult.newState) {
         // Route through SuggestionStateService instead of direct mutation
         await SuggestionStateService.updatePivotState(actor, pivotResult.newState);
-        swseLogger.log(`[Hooks] Pivot state: ${pivotResult.newState} (divergence: ${pivotResult.divergence.toFixed(2)})`);
+        SWSELogger.log(`[Hooks] Pivot state: ${pivotResult.newState} (divergence: ${pivotResult.divergence.toFixed(2)})`);
       }
 
       // Store level-up metadata through SuggestionStateService

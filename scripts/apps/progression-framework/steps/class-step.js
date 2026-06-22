@@ -15,6 +15,7 @@ import { getMentorGuidance, getMentorForClass, getMentorKey, getMentorIntroText,
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
+import { buildSuggestionDetailExplanation } from '/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-detail-explanation.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import SkillRegistry from '/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js';
 import { evaluateClassEligibility } from '/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/class-prerequisites-cache.js';
@@ -228,6 +229,16 @@ export class ClassStep extends ProgressionStepPlugin {
     if (!classData) return this.renderDetailsPanelEmptyState();
 
     const normalized = normalizeDetailPanelData(classData, 'class');
+    const classSuggestion = this.getSuggestionForItem(classData.id)
+      || this.getSuggestionForItem(classData.name)
+      || null;
+    const suggestionExplanation = buildSuggestionDetailExplanation({
+      item: classData,
+      suggestion: classSuggestion || classData,
+      reasonPacket: classSuggestion?.reasonPacket || classSuggestion?.suggestion?.reasonPacket || null,
+      domain: 'class',
+      fallbackSummary: classSuggestion?.reasonSummary || classSuggestion?.reasonText || classSuggestion?.suggestion?.reason || '',
+    });
     const eligibility = this._classEligibility.get(classData.id)
       || this._classEligibility.get(classData.name)
       || this._evaluateClassEligibilityForDisplay(classData, null, {});
@@ -274,6 +285,16 @@ export class ClassStep extends ProgressionStepPlugin {
         canonicalDescription: description,
         metadataTags: normalized.metadataTags,
         buildMetadata,
+        isSuggested: !!classSuggestion,
+        hasSuggestionAnalysis: !!classSuggestion && suggestionExplanation.hasReasons,
+        suggestionReasonSummary: suggestionExplanation.summary,
+        suggestionPrimaryReasons: suggestionExplanation.primaryReasons || [],
+        suggestionSecondaryReasons: suggestionExplanation.secondaryReasons || [],
+        suggestionForecastReasons: suggestionExplanation.forecastReasons || [],
+        suggestionOpportunityReasons: suggestionExplanation.opportunityReasons || [],
+        suggestionCautionReasons: suggestionExplanation.cautionReasons || [],
+        suggestionEvidenceRows: suggestionExplanation.evidenceRows || [],
+        classDomainContext: suggestionExplanation.classDomainContext || null,
         hasMentorProse: normalized.fallbacks.hasMentorProse,
         isLocked,
         missingPrereqs,

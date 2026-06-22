@@ -3363,3 +3363,22 @@
   border-color: rgba(255, 146, 128, 0.46);
   color: #ffb3aa;
 }
+
+.talent-details-panel .suggestion-evidence-note {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.talent-details-panel .suggestion-evidence-group h4,
+.talent-details-panel .suggestion-evidence-group h5 {
+  margin: 0 0 0.35rem;
+  color: color-mix(in srgb, var(--tree-accent, var(--talent-cyan)) 54%, #ffffff 46%);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.talent-details-panel .suggestion-evidence-group--caution h4,
+.talent-details-panel .suggestion-evidence-group--caution h5 {
+  color: var(--talent-gold, #f2c95a);
+}

@@ -34,6 +34,7 @@ import { TradeoffResolver } from "/systems/foundryvtt-swse/scripts/engine/sugges
 import { WeightedScoreEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/weighted-score-engine.js";
 import { CategoryNormalizationEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/category-normalization-engine.js";
 import { ExplainabilityGenerator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/explainability-generator.js";
+import { scoreStoreItemContextFit } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/store-suggestion-context.js";
 import { assignTier, clampScore, scaleNormalizedTo100, buildPeerGroupIndex, getPeerGroup } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/shared-scoring-utils.js";
 
 export class WeaponScoringEngine {
@@ -72,6 +73,9 @@ export class WeaponScoringEngine {
       const axisBScore100 = scaleNormalizedTo100(axisB.normalizedScore);
       let finalScore = scaleNormalizedTo100(combined.finalScore);
 
+      const storeContextFit = options.storeContext ? scoreStoreItemContextFit(weapon, options.storeContext, options) : null;
+      if (storeContextFit) finalScore += storeContextFit.cappedAdjustment;
+
       // NaN protection
       if (!Number.isFinite(finalScore)) finalScore = 0;
       finalScore = clampScore(finalScore, 0, 100);
@@ -88,6 +92,9 @@ export class WeaponScoringEngine {
         combined,
         options
       );
+      if (storeContextFit?.explanations?.length) {
+        explanations.push(...storeContextFit.explanations);
+      }
 
       const result = {
         weaponId: weapon.id,
@@ -122,11 +129,15 @@ export class WeaponScoringEngine {
         explanations,
 
         // Metadata for debugging/auditing
+        storeContextFit,
+
         meta: {
           computedAt: Date.now(),
           engineVersion: '1.0.0',
           characterLevel: charContext.level,
-          characterRole: charContext.primaryRole
+          characterRole: charContext.primaryRole,
+          routeFit: storeContextFit?.routeFit?.label || null,
+          budgetFit: storeContextFit?.budget?.label || null
         }
       };
 

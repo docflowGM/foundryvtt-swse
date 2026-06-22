@@ -1,4 +1,5 @@
 import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
+import { getEquipmentLoadoutProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment-loadout-profile.js";
 
 const TAG_ALIAS_GROUPS = {
   melee: ['offense_melee','melee','lightsaber','duelist','finesse','counterattack','weapon_light_melee','weapon_heavy_melee','martial_arts'],
@@ -201,6 +202,39 @@ export function buildTagBiasMap(buildIntent = {}, identityBias = {}, options = {
       merged[tag] = Math.max(merged[tag] || 0, 1.0);
     }
   }
+
+  // Loadout density is a behavior signal too. Equipped items carry much more
+  // weight than merely possessed items, and two equipped weapons reinforce
+  // two-weapon/lightsaber lanes.
+  try {
+    const profile = options.equipmentProfile || (options.actor ? getEquipmentLoadoutProfile(options.actor, options) : null);
+    for (const [tag, value] of Object.entries(profile?.tagWeights || {})) {
+      merged[tag] = Math.max(merged[tag] || 0, Number(value) || 0);
+    }
+  } catch (_err) {
+    // Equipment profile is optional; tag scoring should remain fail-open.
+  }
+
+  // Route confidence interprets evidence quality. A lone access signal such as
+  // Force Sensitivity or Weapon Proficiency opens a lane, but it should not
+  // score like class investment, repeated choices, talents, or equipped loadout.
+  try {
+    const routeProfile = options.routeConfidenceProfile || options.buildIntent?.routeConfidenceProfile || null;
+    for (const route of Object.values(routeProfile?.routes || {})) {
+      const base = Number(route.score || 0);
+      if (!base) continue;
+      const factor = route.accessOnly ? 0.24 : route.confidence === 'primary' ? 0.95 : route.confidence === 'secondary' ? 0.65 : 0.36;
+      const value = Math.max(0, Math.min(1, base * factor));
+      const routeKey = normalize(route.route);
+      merged[routeKey] = Math.max(merged[routeKey] || 0, value);
+      for (const alias of TAG_ALIAS_GROUPS[routeKey] || []) {
+        merged[alias] = Math.max(merged[alias] || 0, value * 0.9);
+      }
+    }
+  } catch (_err) {
+    // Route profile is optional.
+  }
+
   return merged;
 }
 

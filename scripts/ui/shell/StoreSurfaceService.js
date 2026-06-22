@@ -550,6 +550,12 @@ export class StoreSurfaceService {
    * Invalidate cached instance for an actor (e.g. after actor change).
    */
   static invalidate(actorId) {
+    const inst = _instanceCache.get(actorId);
+    try {
+      inst?.cancelDeferredSuggestionGeneration?.();
+    } catch (_err) {
+      // Cache invalidation should never fail actor refresh.
+    }
     _instanceCache.delete(actorId);
   }
 
@@ -658,6 +664,15 @@ export class StoreSurfaceService {
       if (!storeInstance) {
         return { id: 'store', title: 'Rendarr\'s Outfitters', error: 'Store unavailable' };
       }
+
+      // Shell-native browse opens immediately, then scores catalog fit in the
+      // background. The controller listens for the completion hook and requests
+      // one shell repaint so badges/fit notes appear without blocking open.
+      storeInstance.scheduleDeferredSuggestions?.({
+        reason: 'shell-store-surface',
+        chunkSize: Number(options.suggestionChunkSize ?? 40) || 40,
+        yieldMs: Number(options.suggestionYieldMs ?? 0) || 0
+      });
 
       // Sync navigation state from shell options.
       // The splash is a full-catalog entry point; never let stale browse filters
@@ -817,7 +832,8 @@ export class StoreSurfaceService {
           search: options.search ?? '',
           availability: options.availability ?? 'all',
           sort: options.sort ?? 'default'
-        }
+        },
+        suggestionStatus: storeContext.suggestionStatus ?? storeInstance.getSuggestionStatus?.() ?? { state: 'idle' }
       };
 
       return {

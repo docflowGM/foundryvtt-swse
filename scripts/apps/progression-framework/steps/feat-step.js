@@ -25,6 +25,7 @@ import { FeatEngine } from '/systems/foundryvtt-swse/scripts/engine/progression/
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
+import { buildSuggestionDetailExplanation } from '/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-detail-explanation.js';
 import { getStepGuidance, handleAskMentor, handleAskMentorWithPicker } from './mentor-step-integration.js';
 import { canonicallyOrderSelections } from '../utils/selection-ordering.js';
 import { extractDescriptionText, normalizeDetailPanelData } from '../detail-rail-normalizer.js';
@@ -873,6 +874,17 @@ export class FeatStep extends ProgressionStepPlugin {
       ].filter(Boolean).map(value => String(value));
       return candidateIds.some(value => ids.has(value));
     }) || null;
+  }
+
+
+  getSuggestionForItem(itemIdOrName, item = null) {
+    const target = item || itemIdOrName;
+    const direct = this._findSuggestedFeatFor(target);
+    if (direct) return direct;
+    if (item && typeof itemIdOrName === 'string') {
+      return this._findSuggestedFeatFor({ id: itemIdOrName, _id: itemIdOrName, name: item?.name }) || null;
+    }
+    return null;
   }
 
   _displayReasonText(value) {
@@ -1905,7 +1917,14 @@ export class FeatStep extends ProgressionStepPlugin {
     const featId = feat._id || feat.id;
     const suggestedFeat = this._findSuggestedFeatFor(feat);
     const isSuggested = !!suggestedFeat;
-    const suggestionExplanation = this._extractSuggestionExplanation(suggestedFeat || feat);
+    const legacySuggestionExplanation = this._extractSuggestionExplanation(suggestedFeat || feat);
+    const suggestionExplanation = buildSuggestionDetailExplanation({
+      item: feat,
+      suggestion: suggestedFeat || feat,
+      reasonPacket: suggestedFeat?.reasonPacket || suggestedFeat?.suggestion?.reasonPacket || null,
+      domain: 'feat',
+      fallbackSummary: legacySuggestionExplanation.summary,
+    });
     const isSelected = this._isFeatSelected(feat);
 
     // Normalize detail panel data for canonical display (no fabrication)
@@ -1942,8 +1961,15 @@ export class FeatStep extends ProgressionStepPlugin {
         blockingReasons: this._dedupeReasonList(feat.blockingReasons || []),
         unavailabilityReason: feat.unavailabilityReason || '',
         uiBroadTags: feat.uiBroadTags || [],
-        suggestionReasonSummary: suggestionExplanation.summary,
-        suggestionReasonBullets: suggestionExplanation.bullets,
+        hasSuggestionAnalysis: isSuggested && suggestionExplanation.hasReasons,
+        suggestionReasonSummary: suggestionExplanation.summary || legacySuggestionExplanation.summary,
+        suggestionReasonBullets: suggestionExplanation.bulletTexts?.length ? suggestionExplanation.bulletTexts : legacySuggestionExplanation.bullets,
+        suggestionPrimaryReasons: suggestionExplanation.primaryReasons || [],
+        suggestionSecondaryReasons: suggestionExplanation.secondaryReasons || [],
+        suggestionForecastReasons: suggestionExplanation.forecastReasons || [],
+        suggestionOpportunityReasons: suggestionExplanation.opportunityReasons || [],
+        suggestionCautionReasons: suggestionExplanation.cautionReasons || [],
+        suggestionEvidenceRows: suggestionExplanation.evidenceRows || [],
       },
     };
   }
@@ -2097,6 +2123,23 @@ export class FeatStep extends ProgressionStepPlugin {
 
     if (shell?.committedSelections && this.descriptor?.stepId) {
       shell.committedSelections.set(this.descriptor.stepId, nextSlotSelections.length === 1 ? nextSlotSelections[0] : nextSlotSelections);
+    }
+
+    if (typeof Hooks !== 'undefined' && nextSelection && !isTogglingOff) {
+      const choiceTheme = nextSelection.context?.allTags?.[0]
+        || nextSelection.system?.tags?.[0]
+        || nextSelection.tags?.[0]
+        || nextSelection.suggestion?.primaryTheme
+        || nextSelection.suggestion?.scoring?.dominantHorizon
+        || nextSelection.suggestion?.reasonCode
+        || null;
+      Hooks.callAll(
+        'swse:feat-selected',
+        shell?.actor,
+        nextSelection.id || nextSelection._id || nextSelection.name,
+        nextSelection.name,
+        choiceTheme
+      );
     }
 
     if (this._shouldPromptForForceSensitivitySkillReturn(feat, { shell, nextSelection, isTogglingOff })) {

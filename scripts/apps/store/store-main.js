@@ -18,6 +18,7 @@ import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/led
 import { ArmorSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/armor-suggestions.js";
 import { WeaponSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/weapon-suggestions.js";
 import { GearSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/gear-suggestions.js";
+import { buildStoreSuggestionContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/store-suggestion-context.js";
 import { MentorProseGenerator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/mentor-prose-generator.js";
 import { ReviewThreadAssembler } from "/systems/foundryvtt-swse/scripts/apps/store/review-thread-assembler.js";
 import { StoreLoadingOverlay } from "/systems/foundryvtt-swse/scripts/apps/store/store-loading-overlay.js";
@@ -183,6 +184,23 @@ function hasStorePrice(value) {
   return positiveCreditOrNull(value) !== null;
 }
 
+function storeSuggestionYield(ms = 0) {
+  return new Promise(resolve => setTimeout(resolve, Math.max(0, Number(ms) || 0)));
+}
+
+function getStoreSuggestionItemId(scored = {}) {
+  return scored.weaponId || scored.armorId || scored.equipmentId || scored.itemId || scored.id || null;
+}
+
+function chunkStoreSuggestionItems(items = [], size = 40) {
+  const chunkSize = Math.max(1, Number(size) || 40);
+  const chunks = [];
+  for (let i = 0; i < items.length; i += chunkSize) {
+    chunks.push(items.slice(i, i + chunkSize));
+  }
+  return chunks;
+}
+
 export class SWSEStore extends BaseSWSEAppV2 {
 
   static DEFAULT_OPTIONS = {
@@ -231,6 +249,13 @@ export class SWSEStore extends BaseSWSEAppV2 {
     this.itemsById = new Map();      // Engine provides this
     this.storeInventory = null;      // Engine inventory cache
     this.suggestions = new Map();    // Item ID → suggestion score
+    this._suggestionGenerationState = 'idle';
+    this._suggestionGenerationPromise = null;
+    this._suggestionGenerationToken = 0;
+    this._suggestionGenerationProgress = { total: 0, scored: 0, phase: 'idle' };
+    this._suggestionsGeneratedAt = 0;
+    this._storeSuggestionContext = null;
+    this._storeSuggestionContextActorId = null;
     this.reviewsData = null;         // Loaded reviews pack
 
     this.cart = emptyCart();
@@ -374,7 +399,8 @@ export class SWSEStore extends BaseSWSEAppV2 {
       rendarrWelcome: getRendarrLine('welcome'),
       rendarrImage: getRendarrPortraitPath(),
       entryOrigin: this.entryOrigin,
-      currencySymbol: this.storeCurrencySymbol
+      currencySymbol: this.storeCurrencySymbol,
+      suggestionStatus: this.getSuggestionStatus()
     };
   }
 
@@ -764,10 +790,150 @@ export class SWSEStore extends BaseSWSEAppV2 {
     }
   }
 
+  async _getStoreSuggestionContext() {
+    if (!this.actor) return null;
+    const actorId = this.actor.id || null;
+    if (this._storeSuggestionContext && this._storeSuggestionContextActorId === actorId) {
+      return this._storeSuggestionContext;
+    }
+    this._storeSuggestionContext = await buildStoreSuggestionContext(this.actor, {
+      credits: LedgerService.getCurrentCredits(this.actor)
+    });
+    this._storeSuggestionContextActorId = actorId;
+    return this._storeSuggestionContext;
+  }
+
+  getSuggestionStatus() {
+    return {
+      state: this._suggestionGenerationState || 'idle',
+      running: this._suggestionGenerationState === 'running',
+      complete: this._suggestionGenerationState === 'complete',
+      failed: this._suggestionGenerationState === 'failed',
+      total: Number(this._suggestionGenerationProgress?.total ?? 0) || 0,
+      scored: Number(this._suggestionGenerationProgress?.scored ?? 0) || 0,
+      phase: this._suggestionGenerationProgress?.phase || this._suggestionGenerationState || 'idle',
+      generatedAt: this._suggestionsGeneratedAt || 0
+    };
+  }
+
+  scheduleDeferredSuggestions(options = {}) {
+    if (!this.actor || !this.storeInventory) return null;
+    if (options.refreshContext) {
+      this.clearStoreSuggestionContext();
+      this._suggestionGenerationState = 'idle';
+      this._suggestionsGeneratedAt = 0;
+      this.suggestions?.clear?.();
+    }
+    if (this._suggestionGenerationState === 'complete') return this._suggestionGenerationPromise;
+    if (this._suggestionGenerationState === 'running' && this._suggestionGenerationPromise) return this._suggestionGenerationPromise;
+
+    const token = ++this._suggestionGenerationToken;
+    const chunkSize = Math.max(1, Number(options.chunkSize ?? 40) || 40);
+    const yieldMs = Math.max(0, Number(options.yieldMs ?? 0) || 0);
+    const notify = options.notify !== false;
+
+    this._suggestionGenerationState = 'running';
+    this._suggestionGenerationProgress = { total: 0, scored: 0, phase: 'queued' };
+
+    this._suggestionGenerationPromise = (async () => {
+      await storeSuggestionYield(yieldMs);
+      if (token !== this._suggestionGenerationToken) return null;
+      await this._generateSuggestionsForAllItemsDeferred({ token, chunkSize, yieldMs });
+      if (token !== this._suggestionGenerationToken) return null;
+
+      this._suggestionGenerationState = 'complete';
+      this._suggestionGenerationProgress.phase = 'complete';
+      this._suggestionsGeneratedAt = Date.now();
+
+      if (notify && typeof globalThis.Hooks?.callAll === 'function') {
+        globalThis.Hooks.callAll('swse:store-suggestions-updated', {
+          actorId: this.actor?.id ?? null,
+          app: this,
+          status: this.getSuggestionStatus(),
+          reason: options.reason || 'deferred-store-suggestions'
+        });
+      }
+      return this.getSuggestionStatus();
+    })().catch(err => {
+      if (token !== this._suggestionGenerationToken) return null;
+      this._suggestionGenerationState = 'failed';
+      this._suggestionGenerationProgress.phase = 'failed';
+      console.warn('[SWSE Store] Deferred suggestion generation failed:', err);
+      if (notify && typeof globalThis.Hooks?.callAll === 'function') {
+        globalThis.Hooks.callAll('swse:store-suggestions-updated', {
+          actorId: this.actor?.id ?? null,
+          app: this,
+          status: this.getSuggestionStatus(),
+          error: err,
+          reason: options.reason || 'deferred-store-suggestions-failed'
+        });
+      }
+      return null;
+    }).finally(() => {
+      if (token === this._suggestionGenerationToken) this._suggestionGenerationPromise = null;
+    });
+
+    return this._suggestionGenerationPromise;
+  }
+
+  cancelDeferredSuggestionGeneration() {
+    this._suggestionGenerationToken += 1;
+    if (this._suggestionGenerationState === 'running') {
+      this._suggestionGenerationState = 'cancelled';
+      this._suggestionGenerationProgress.phase = 'cancelled';
+    }
+    this._suggestionGenerationPromise = null;
+    this.clearStoreSuggestionContext();
+  }
+
+  clearStoreSuggestionContext() {
+    this._storeSuggestionContext = null;
+    this._storeSuggestionContextActorId = null;
+  }
+
+  async _generateSuggestionsForAllItemsDeferred({ token, chunkSize = 40, yieldMs = 0 } = {}) {
+    if (!this.actor || !this.storeInventory) return;
+
+    const storeContext = await this._getStoreSuggestionContext();
+
+    const buckets = [
+      { label: 'armor', items: this.storeInventory.allItems.filter(i => i.type === 'armor'), engine: ArmorSuggestions },
+      { label: 'weapons', items: this.storeInventory.allItems.filter(i => i.type === 'weapon'), engine: WeaponSuggestions },
+      { label: 'gear', items: this.storeInventory.allItems.filter(i => i.type === 'equipment'), engine: GearSuggestions }
+    ];
+
+    this._suggestionGenerationProgress.total = buckets.reduce((sum, bucket) => sum + bucket.items.length, 0);
+    this._suggestionGenerationProgress.scored = 0;
+
+    for (const bucket of buckets) {
+      if (token !== this._suggestionGenerationToken) return;
+      if (!bucket.items.length) continue;
+      this._suggestionGenerationProgress.phase = bucket.label;
+
+      for (const chunk of chunkStoreSuggestionItems(bucket.items, chunkSize)) {
+        if (token !== this._suggestionGenerationToken) return;
+        try {
+          const result = bucket.engine.generateSuggestions(this.actor, chunk, { topCount: Math.max(10, chunk.length), silent: true, suppressLogs: true, storeContext });
+          for (const scored of result?.allScored || []) {
+            const itemId = getStoreSuggestionItemId(scored);
+            if (itemId) this.suggestions.set(itemId, scored);
+          }
+        } catch (err) {
+          console.warn(`[SWSE Store] ${bucket.label} suggestion chunk failed:`, err);
+        } finally {
+          this._suggestionGenerationProgress.scored += chunk.length;
+        }
+        await storeSuggestionYield(yieldMs);
+      }
+    }
+  }
+
   async _generateSuggestionsForAllItems() {
     if (!this.actor || !this.storeInventory) {return;}
 
     try {
+      const storeContext = await this._getStoreSuggestionContext();
+
       // Separate items by type
       const armor = this.storeInventory.allItems.filter(i => i.type === 'armor');
       const weapons = this.storeInventory.allItems.filter(i => i.type === 'weapon');
@@ -776,7 +942,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       // Generate suggestions for each type
       if (armor.length > 0) {
         try {
-          const armorSugg = ArmorSuggestions.generateSuggestions(this.actor, armor, { topCount: 80, silent: true, suppressLogs: true });
+          const armorSugg = ArmorSuggestions.generateSuggestions(this.actor, armor, { topCount: 80, silent: true, suppressLogs: true, storeContext });
           if (armorSugg.allScored) {
             for (const scored of armorSugg.allScored) {
               const itemId = scored.armorId || scored.itemId;
@@ -792,7 +958,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
       if (weapons.length > 0) {
         try {
-          const weaponSugg = WeaponSuggestions.generateSuggestions(this.actor, weapons, { topCount: 80, silent: true, suppressLogs: true });
+          const weaponSugg = WeaponSuggestions.generateSuggestions(this.actor, weapons, { topCount: 80, silent: true, suppressLogs: true, storeContext });
           if (weaponSugg.allScored) {
             for (const scored of weaponSugg.allScored) {
               const itemId = scored.weaponId || scored.itemId;
@@ -808,7 +974,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
       if (gear.length > 0) {
         try {
-          const gearSugg = GearSuggestions.generateSuggestions(this.actor, gear, { topCount: 80, silent: true, suppressLogs: true });
+          const gearSugg = GearSuggestions.generateSuggestions(this.actor, gear, { topCount: 80, silent: true, suppressLogs: true, storeContext });
           if (gearSugg.allScored) {
             for (const scored of gearSugg.allScored) {
               const itemId = scored.equipmentId || scored.itemId;

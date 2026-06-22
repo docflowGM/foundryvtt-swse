@@ -1111,3 +1111,30 @@
 .follower-template-card .prog-class-card__nameplate {
   z-index: 6;
 }
+
+.progression-shell .prog-class-details__suggestion-analysis {
+  display: grid;
+  gap: 0.65rem;
+  border-color: rgba(242, 201, 90, 0.28);
+  background: rgba(242, 201, 90, 0.07);
+}
+
+.progression-shell .prog-class-details__suggestion-analysis h5 {
+  margin: 0 0 0.35rem;
+  color: rgba(242, 201, 90, 0.92);
+  font-size: var(--prog-font-size-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.progression-shell .prog-class-details__suggestion-list {
+  margin: 0;
+}
+
+.progression-shell .prog-class-details__suggestion-list li + li {
+  margin-top: 0.25rem;
+}
+
+.progression-shell .prog-class-details__suggestion-analysis .suggestion-evidence-group--caution h5 {
+  color: rgba(255, 170, 86, 0.95);
+}

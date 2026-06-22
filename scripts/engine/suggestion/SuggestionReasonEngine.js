@@ -320,6 +320,36 @@ function prerequisiteReasons(suggestion, actor, packet) {
   }
 }
 
+
+function routeConfidenceReasons(suggestion, packet) {
+  const scoring = suggestion?.suggestion?.scoring || {};
+  const block = suggestion?.suggestion || {};
+  const label = scoring.routeConfidenceLabel || block.routeConfidenceLabel || null;
+  const matches = scoring.routeConfidenceMatches || block.routeConfidenceMatches || [];
+  const repeatable = scoring.repeatableContinuation === true || block.repeatableContinuation === true;
+  const accessOnly = scoring.routeAccessOnly === true || block.routeAccessOnly === true;
+  const name = candidateName(suggestion);
+
+  if (repeatable) {
+    addConcreteReason(packet, 'forecast', 'route', 'REPEATABLE_INVESTMENT_CONTINUATION', `${name} can be taken again, and you have already shown investment in that lane.`, 0.9);
+  }
+
+  if (Array.isArray(matches) && matches.length) {
+    const display = displayList(matches.map(titleCaseTag), 3);
+    if (label === 'primary') {
+      addConcreteReason(packet, 'primary', 'route', 'PRIMARY_ROUTE_CONFIDENCE', `It is supported by your strongest route evidence: ${display}.`, 0.88);
+    } else if (label === 'secondary') {
+      addConcreteReason(packet, 'secondary', 'route', 'SECONDARY_ROUTE_CONFIDENCE', `It belongs to a secondary lane you have started to support: ${display}.`, 0.78);
+    } else if (label === 'latent') {
+      addConcreteReason(packet, 'opportunity', 'route', 'LATENT_ROUTE_ACCESS', `It opens or develops a latent lane rather than replacing your main route: ${display}.`, 0.74);
+    }
+  }
+
+  if (accessOnly) {
+    addConcreteReason(packet, 'caution', 'route', 'SINGLE_SIGNAL_DAMPENED', `The engine sees access, but not enough stacked evidence to treat this as your main route yet.`, 0.72);
+  }
+}
+
 function signalReasons(suggestion, packet) {
   const signals = Array.isArray(suggestion?.suggestion?.signals) ? suggestion.suggestion.signals : [];
   const sourceId = suggestionSourceId(suggestion);
@@ -375,6 +405,7 @@ function metadataDrivenReasons(suggestion, actor) {
 
   signalReasons(suggestion, packet);
   prerequisiteReasons(suggestion, actor, packet);
+  routeConfidenceReasons(suggestion, packet);
   if (reasonCode.includes('PRESTIGE') && sourceTarget) {
     addConcreteReason(packet, 'forecast', 'prestige', 'PRESTIGE_SOURCE', `${name} is being highlighted because it supports ${sourceTarget}.`, 0.88);
   }

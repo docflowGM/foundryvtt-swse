@@ -24,6 +24,7 @@ import {
   ITEM_TYPES
 } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/suggestion-constants.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
+import { ForceChoiceContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/force-choice-context.js";
 
 export const FORCE_SECRET_TIERS = {
   PERFECT_FIT: 6,          // All conditions met + high archetype match
@@ -75,22 +76,37 @@ export class ForceSecretSuggestionEngine {
       return [];
     }
 
-    const knownPowers = this._getKnownForcePowers(actor);
-    const knownTechniques = this._getKnownForceTechniques(actor);
+    const forceChoiceContext = options.forceChoiceContext || ForceChoiceContext.build(actor, options.pendingData || {});
+    const knownPowers = this._getKnownForcePowers(actor, forceChoiceContext);
+    const knownTechniques = this._getKnownForceTechniques(actor, forceChoiceContext);
     const archetype = this._getCharacterArchetype(actor);
     const institution = this._getInstitution(actor);
 
     const suggestions = [];
 
     for (const secret of availableSecrets) {
+      if (ForceChoiceContext.hasSecret(forceChoiceContext, secret)) {
+        continue;
+      }
+
       const suggestion = this._scoreSecret(
         secret,
         knownPowers,
         knownTechniques,
         archetype,
         institution,
-        options
+        {
+          ...options,
+          forceChoiceContext
+        }
       );
+
+      const matchedAssociatedPowers = ForceChoiceContext.matchedAssociatedPowers(forceChoiceContext, secret);
+      if (matchedAssociatedPowers.length) {
+        suggestion.reasons = suggestion.reasons || [];
+        suggestion.reasons.push(`Builds on known Force power: ${matchedAssociatedPowers.join(', ')}`);
+        suggestion.score = Number((Number(suggestion.score || 0) * 1.08).toFixed(2));
+      }
 
       // Only suggest secrets that meet minimum viable investment (tier 3+)
       if (suggestion && suggestion.tier >= FORCE_SECRET_TIERS.AVAILABLE_FIT) {
@@ -240,7 +256,7 @@ export class ForceSecretSuggestionEngine {
    * Get list of Force Powers known by character
    * @private
    */
-  static _getKnownForcePowers(actor = null) {
+  static _getKnownForcePowers(actor = null, forceChoiceContext = null) {
     const powers = [];
 
     if (actor) {
@@ -260,6 +276,14 @@ export class ForceSecretSuggestionEngine {
         });
     }
 
+    const existingNames = new Set(powers.map((power) => this._normalizePowerName(power.name)));
+    for (const powerName of forceChoiceContext?.allPowerNames || []) {
+      const normalized = this._normalizePowerName(powerName);
+      if (!normalized || existingNames.has(normalized)) continue;
+      powers.push({ name: powerName, isForm: false, tags: [], categories: [] });
+      existingNames.add(normalized);
+    }
+
     return powers;
   }
 
@@ -267,7 +291,7 @@ export class ForceSecretSuggestionEngine {
    * Get list of Force Techniques known by character
    * @private
    */
-  static _getKnownForceTechniques(actor = null) {
+  static _getKnownForceTechniques(actor = null, forceChoiceContext = null) {
     const techniques = [];
 
     if (actor) {
@@ -275,6 +299,14 @@ export class ForceSecretSuggestionEngine {
       actor.items
         .filter(item => item.type === ITEM_TYPES.FEAT && item.system?.featType === ITEM_TYPES.FEAT_TYPE_FORCE)
         .forEach(tech => techniques.push(tech.name));
+    }
+
+    const existingNames = new Set(techniques.map((technique) => this._normalizePowerName(technique)));
+    for (const techniqueName of forceChoiceContext?.allTechniqueNames || []) {
+      const normalized = this._normalizePowerName(techniqueName);
+      if (!normalized || existingNames.has(normalized)) continue;
+      techniques.push(techniqueName);
+      existingNames.add(normalized);
     }
 
     return techniques;

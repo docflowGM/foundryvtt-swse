@@ -12,6 +12,7 @@ import { getAllowedTalentTrees } from "/systems/foundryvtt-swse/scripts/engine/p
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { TalentCandidateEnricher } from "/systems/foundryvtt-swse/scripts/engine/suggestion/TalentCandidateEnricher.js";
+import { logSuggestionTrace } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-trace-controls.js";
 
 /**
  * Filters candidate pools based on slot context
@@ -25,7 +26,7 @@ export class CandidatePoolBuilder {
    * @param {Array} allCandidates - All candidate items before filtering
    * @returns {Promise<{slotContext, filteredCandidates}>} Filtered pool
    */
-  static async build(actor, slotContext, allCandidates) {
+  static async build(actor, slotContext, allCandidates, options = {}) {
     if (!actor || !slotContext || !allCandidates) {
       SWSELogger.warn(
         "[CandidatePoolBuilder] Missing required parameters",
@@ -72,9 +73,10 @@ export class CandidatePoolBuilder {
         filteredCandidates = [];
     }
 
-    SWSELogger.log(
+    logSuggestionTrace(
+      options,
       `[CandidatePoolBuilder] Slot ${slotContext.slotKind}/${slotContext.slotType}: ` +
-        `${allCandidates.length} → ${filteredCandidates.length} candidates`
+        `${allCandidates.length} -> ${filteredCandidates.length} candidates`
     );
 
     return { slotContext, filteredCandidates };
@@ -103,18 +105,27 @@ export class CandidatePoolBuilder {
    * @private
    */
   static async _filterClassBonusFeats(actor, slotContext, allCandidates) {
-    const classId = slotContext.classId;
-    if (!classId) {
+    const classLookupKeys = Array.from(new Set([
+      ...(Array.isArray(slotContext.classLookupKeys) ? slotContext.classLookupKeys : []),
+      slotContext.classId,
+      slotContext.className,
+      slotContext.selectedClass?.id,
+      slotContext.selectedClass?._id,
+      slotContext.selectedClass?.name,
+    ].map((value) => String(value || '').trim()).filter(Boolean)));
+
+    if (!classLookupKeys.length) {
       SWSELogger.warn("[CandidatePoolBuilder] Class bonus feat slot missing classId");
       return [];
     }
 
     // Get allowed feats for this class
-    const allowedFeatIds = await ClassFeatRegistry.getClassBonusFeats(classId);
+    const allowedFeatIds = await ClassFeatRegistry.getClassBonusFeats(classLookupKeys);
+    const allowedFeatIdSet = new Set((allowedFeatIds || []).map((value) => String(value || '').trim()).filter(Boolean));
 
     // Filter to only allowed feats
     return allCandidates.filter(
-      (candidate) => allowedFeatIds.includes(candidate._id || candidate.id)
+      (candidate) => allowedFeatIdSet.has(String(candidate._id || candidate.id || candidate.uuid || '').trim())
     );
   }
 
@@ -168,13 +179,19 @@ export class CandidatePoolBuilder {
     const allowedTreeKeys = new Set((allowedTrees || []).map(tree => this._normalizeTreeAccessKey(tree)).filter(Boolean));
     const filtered = allCandidates.filter((candidate) => {
       const treeId = candidate.system?.talent_tree || candidate.system?.talentTree || candidate.system?.tree || candidate.system?.tree_id || candidate.treeId || candidate.treeName;
+      if (!treeId) return true;
       return allowedTreeKeys.has(this._normalizeTreeAccessKey(treeId));
     });
 
     // Enrich each candidate with tree context (Phase 2F: Tag Inheritance)
     // This adds context.allTags = union(candidate.tags + tree.tags)
     for (const candidate of filtered) {
-      const treeId = candidate.system?.talent_tree || candidate.system?.tree_id;
+      const treeId = candidate.system?.talent_tree
+        || candidate.system?.talentTree
+        || candidate.system?.tree
+        || candidate.system?.tree_id
+        || candidate.treeId
+        || candidate.treeName;
       TalentCandidateEnricher.enrich(candidate, treeId);
     }
 

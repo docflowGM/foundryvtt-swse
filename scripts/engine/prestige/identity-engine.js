@@ -20,6 +20,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ArchetypeRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry.js";
 import { PrestigeLayerRegistry } from "/systems/foundryvtt-swse/scripts/engine/prestige/prestige-layer-registry.js";
+import { buildEquipmentLoadoutProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment-loadout-profile.js";
 
 export class IdentityEngine {
     // === Registry Caches (Loaded at system init) ===
@@ -73,7 +74,7 @@ export class IdentityEngine {
      * @param {Object} actor - Foundry actor (read-only)
      * @returns {Object} TotalBias: { mechanicalBias, roleBias, attributeBias }
      */
-    static computeTotalBias(actor) {
+    static computeTotalBias(actor, options = {}) {
         const totalBias = {
             mechanicalBias: {},
             roleBias: {},
@@ -93,7 +94,7 @@ export class IdentityEngine {
         this.#addBias(totalBias, behaviorBias);
 
         // Layer 4: EquipmentAffinityBias (equipment structural categories - optional refinement)
-        const equipmentAffinityBias = this.computeEquipmentAffinityBias(actor);
+        const equipmentAffinityBias = this.computeEquipmentAffinityBias(actor, options);
         this.#addBias(totalBias, equipmentAffinityBias);
 
         // Layer 5: ArchetypeBias (base archetype)
@@ -681,6 +682,27 @@ export class IdentityEngine {
      * @param {Object} actor - Foundry actor
      * @returns {Object} Attribute bias
      */
+    static #getAbilityScore(actor, ability) {
+        const sys = actor?.system || {};
+        const attr = sys.attributes?.[ability];
+        const ab = sys.abilities?.[ability];
+        const candidates = [
+            attr?.total,
+            attr?.value,
+            attr?.score,
+            attr,
+            ab?.total,
+            ab?.value,
+            ab?.score,
+            ab,
+        ];
+        for (const candidate of candidates) {
+            const n = Number(candidate);
+            if (Number.isFinite(n) && n > 0) return n;
+        }
+        return 10;
+    }
+
     static #computeAttributeBias(actor) {
         const attributeBias = {
             mechanicalBias: {},
@@ -692,10 +714,15 @@ export class IdentityEngine {
             return attributeBias;
         }
 
-        const abilities = actor.system?.abilities || {};
+        const abilityKeys = new Set([
+            ...Object.keys(actor?.system?.attributes || {}),
+            ...Object.keys(actor?.system?.abilities || {}),
+            'str', 'dex', 'con', 'int', 'wis', 'cha'
+        ]);
 
-        for (const [ability, score] of Object.entries(abilities)) {
-            if (typeof score !== 'number' || score <= 10) {
+        for (const ability of abilityKeys) {
+            const score = this.#getAbilityScore(actor, ability);
+            if (!Number.isFinite(score) || score <= 10) {
                 continue; // Only apply bias if score > 10
             }
 
@@ -804,7 +831,7 @@ export class IdentityEngine {
      * @param {Object} actor - Foundry actor
      * @returns {Object} EquipmentAffinityBias { mechanicalBias, roleBias, attributeBias }
      */
-    static computeEquipmentAffinityBias(actor) {
+    static computeEquipmentAffinityBias(actor, options = {}) {
         const equipmentBias = {
             mechanicalBias: {},
             roleBias: {},
@@ -818,55 +845,57 @@ export class IdentityEngine {
         const rules = this.#equipmentAffinityMapping.rules || {};
         const minimumCategoryCount = rules.minimumCategoryCount || 2;
         const maxTotalContribution = rules.maxTotalAffinityContribution || 0.5;
+        const equippedQualifiesAt = rules.equippedQualifiesAt || 1;
+        const inventoryWeight = rules.inventoryWeight || 0.35;
 
-        // Collect equipped items only
-        const weaponsByGroup = {};
-        const armorsByCategory = {};
-        let totalEquippedSlots = 0;
+        const profile = options?.equipmentProfile || buildEquipmentLoadoutProfile(actor);
 
-        if (actor.items && actor.items.length > 0) {
-            for (const item of actor.items) {
-                if (!item.system?.equipped) {
-                    continue;
-                }
+        const applyWeightedAffinity = (affinity, weight) => {
+            if (!affinity || weight <= 0) return;
+            this.#addBias(equipmentBias, this.#scaleAllBias(affinity, weight));
+        };
 
-                if (item.type === 'weapon') {
-                    const weaponGroup = item.system?.group;
-                    if (weaponGroup) {
-                        weaponsByGroup[weaponGroup] = (weaponsByGroup[weaponGroup] || 0) + 1;
-                        totalEquippedSlots++;
-                    }
-                } else if (item.type === 'armor') {
-                    const armorCategory = item.system?.category;
-                    if (armorCategory) {
-                        armorsByCategory[armorCategory] = (armorsByCategory[armorCategory] || 0) + 1;
-                        totalEquippedSlots++;
-                    }
-                } else if (item.type === 'equipment' || item.type === 'gear') {
-                    totalEquippedSlots++;
-                }
-            }
-        }
-
-        // Apply weapon group affinity with threshold
+        // Apply weapon group affinity. Equipped items qualify faster than inventory,
+        // and additional equipped copies push the same lane harder without allowing
+        // gear to dominate the entire identity stack.
         const weaponAffinities = this.#equipmentAffinityMapping.weapon_group_affinity || {};
-        for (const [weaponGroup, count] of Object.entries(weaponsByGroup)) {
-            if (count >= minimumCategoryCount) {
-                const affinity = weaponAffinities[weaponGroup];
-                if (affinity) {
-                    this.#addBias(equipmentBias, affinity);
-                }
+        for (const [weaponGroup, data] of Object.entries(profile.weaponGroups || {})) {
+            const equippedCount = Number(data.equippedCount || 0);
+            const inventoryCount = Number(data.inventoryCount || 0);
+            const weightedCount = equippedCount + (inventoryCount * inventoryWeight);
+            const qualifies = equippedCount >= equippedQualifiesAt || weightedCount >= minimumCategoryCount;
+            if (!qualifies) continue;
+            const affinity = weaponAffinities[weaponGroup];
+            if (affinity) {
+                const weight = Math.min(1.5, Math.max(0.35, weightedCount / Math.max(1, minimumCategoryCount)));
+                applyWeightedAffinity(affinity, weight);
             }
         }
 
-        // Apply armor category affinity with threshold
+        // Apply armor category affinity with the same equipped > possessed weighting.
         const armorAffinities = this.#equipmentAffinityMapping.armor_category_affinity || {};
-        for (const [armorCategory, count] of Object.entries(armorsByCategory)) {
-            if (count >= minimumCategoryCount) {
-                const affinity = armorAffinities[armorCategory];
-                if (affinity) {
-                    this.#addBias(equipmentBias, affinity);
-                }
+        for (const [armorCategory, data] of Object.entries(profile.armorCategories || {})) {
+            const equippedCount = Number(data.equippedCount || 0);
+            const inventoryCount = Number(data.inventoryCount || 0);
+            const weightedCount = equippedCount + (inventoryCount * inventoryWeight);
+            const qualifies = equippedCount >= equippedQualifiesAt || weightedCount >= minimumCategoryCount;
+            if (!qualifies) continue;
+            const affinity = armorAffinities[armorCategory];
+            if (affinity) {
+                const weight = Math.min(1.35, Math.max(0.3, weightedCount / Math.max(1, minimumCategoryCount)));
+                applyWeightedAffinity(affinity, weight);
+            }
+        }
+
+        // Lightweight gear/tool identity. These are intentionally smaller than
+        // weapons/armor, but they let a toolkit-heavy or medkit-heavy character
+        // softly affect suggestions.
+        const gearAffinities = this.#equipmentAffinityMapping.gear_tag_affinity || {};
+        for (const [gearTag, data] of Object.entries(profile.gearTags || {})) {
+            const weightedCount = Number(data.equippedCount || 0) + (Number(data.inventoryCount || 0) * inventoryWeight);
+            const affinity = gearAffinities[gearTag];
+            if (affinity && weightedCount > 0) {
+                applyWeightedAffinity(affinity, Math.min(0.75, 0.25 + (weightedCount * 0.15)));
             }
         }
 
@@ -1338,7 +1367,7 @@ export class IdentityEngine {
         SWSELogger.info(`  Attribute: ${JSON.stringify(behaviorBias.attributeBias)}`);
 
         // Equipment Affinity Bias
-        const equipmentAffinityBias = this.computeEquipmentAffinityBias(actor);
+        const equipmentAffinityBias = this.computeEquipmentAffinityBias(actor, options);
         SWSELogger.info("--- Equipment Affinity Bias ---");
 
         // Analyze equipped items by category

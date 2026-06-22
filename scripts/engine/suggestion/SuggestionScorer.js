@@ -26,6 +26,8 @@ import { ChainRegistry } from "/systems/foundryvtt-swse/scripts/engine/archetype
 import { calculateMentorBias, applyMentorBias } from "/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-bias.js";
 import { getMentorForClass } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor-dialogues.js";
 import { scoreTagAlignment, scoreAttributeRealization } from "/systems/foundryvtt-swse/scripts/engine/suggestion/tag-signal-engine.js";
+import { getEquipmentLoadoutProfile, scoreCandidateLoadoutFit } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment-loadout-profile.js";
+import { buildRouteConfidenceProfile, scoreCandidateRouteFit, getOwnedRepeatableCount } from "/systems/foundryvtt-swse/scripts/engine/suggestion/build-route-confidence-profile.js";
 
 // ─────────────────────────────────────────────────────────────────
 // DEBUG MODE CONFIGURATION
@@ -110,6 +112,11 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
   // Get identity bias (authoritative from IdentityEngine)
   let identityBias = options.identityBias || { mechanicalBias: {}, roleBias: {}, attributeBias: {} };
 
+  // Shared loadout profile: equipped items count more than possessed items.
+  const equipmentProfile = options.equipmentProfile || getEquipmentLoadoutProfile(actor, options);
+  const routeConfidenceProfile = options.routeConfidenceProfile || buildRouteConfidenceProfile(actor, buildIntent, { ...options, equipmentProfile });
+  const scoringOptions = { ...options, actor, equipmentProfile, routeConfidenceProfile };
+
   // Get slot context (Phase 2A: used for domain-aware scoring)
   let slotContext = options.slotContext || null;
 
@@ -137,7 +144,7 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
     actor,
     identityBias,
     buildIntent,
-    options,
+    scoringOptions,
     slotContext
   );
 
@@ -149,7 +156,7 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
     candidate,
     actor,
     buildIntent,
-    options
+    scoringOptions
   );
 
   // ─────────────────────────────────────────────────────────────────
@@ -161,14 +168,20 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
     actor,
     buildIntent,
     identityBias,
-    options
+    scoringOptions
   );
 
   // ─────────────────────────────────────────────────────────────────
   // SPECIES CONDITIONAL OPPORTUNITY BOOST (Chargen Only)
   // ─────────────────────────────────────────────────────────────────
 
-  const conditionalBonus = _computeSpeciesConditionalBonus(candidate, actor, options);
+  const conditionalBonus = _computeSpeciesConditionalBonus(candidate, actor, scoringOptions);
+
+  const chainLoadoutBonus = _computeChainAndLoadoutBonus(candidate, actor, buildIntent, scoringOptions);
+  const routeFit = scoreCandidateRouteFit(candidate, routeConfidenceProfile, {
+    ...scoringOptions,
+    ownedCount: getOwnedRepeatableCount(actor, options.pendingData || {}, candidate)
+  });
 
   // ─────────────────────────────────────────────────────────────────
   // FINAL SCORE COMPOSITION
@@ -179,7 +192,9 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
     (immediateResult.score * 0.60) +
     (shortTermResult.score * 0.25) +
     (identityResult.score * 0.15) +
-    conditionalBonus
+    conditionalBonus +
+    chainLoadoutBonus.score +
+    routeFit.bonus
   );
 
   // ─────────────────────────────────────────────────────────────────
@@ -266,7 +281,13 @@ export function scoreSuggestion(candidate, actor, buildIntent = {}, options = {}
       immediate: immediateResult.score,
       shortTerm: shortTermResult.score,
       identity: identityResult.score,
-      conditionalBonus
+      conditionalBonus,
+      chainLoadoutBonus: chainLoadoutBonus.score,
+      chainLoadoutBreakdown: chainLoadoutBonus.breakdown,
+      routeConfidenceBonus: routeFit.bonus,
+      routeConfidence: routeFit.score,
+      routeConfidenceLabel: routeFit.label,
+      routeConfidenceMatches: routeFit.matches
     },
     horizons: {
       immediate: immediateResult,
@@ -307,6 +328,19 @@ function _computeImmediateScore(candidate, actor, identityBias, buildIntent, opt
     weightedSum += tagAlignment.score * 0.20;
   }
 
+  // METRIC 2: Route Confidence / Evidence Stacking
+  const ownedRepeatCount = getOwnedRepeatableCount(actor, options?.pendingData || {}, candidate);
+  const routeFit = scoreCandidateRouteFit(candidate, options.routeConfidenceProfile, { ...options, ownedCount: ownedRepeatCount });
+  if (routeFit.score > 0) {
+    metrics.routeConfidence = routeFit.score;
+    metrics.routeConfidenceLabel = routeFit.label;
+    metrics.routeConfidenceMatches = routeFit.matches.map(m => m.label || m.route).slice(0, 4);
+    if (routeFit.accessOnly) metrics.singleSignalDampened = true;
+    if (routeFit.repeatableContinuation) metrics.repeatableContinuation = ownedRepeatCount;
+    totalWeight += 0.16;
+    weightedSum += routeFit.score * 0.16;
+  }
+
   // METRIC 2: Force Synergy
   if (candidateHasTag(candidate, 'force') || candidateHasTag(candidate, 'force_power') || candidateHasTag(candidate, 'force_capacity') || candidateHasTag(candidate, 'force_execution')) {
     const forceBias = Math.max(
@@ -339,7 +373,8 @@ function _computeImmediateScore(candidate, actor, identityBias, buildIntent, opt
     weightedSum += attributeRealization.score * 0.16;
   } else if (candidate.system?.abilityScaling) {
     const scaling = candidate.system.abilityScaling;
-    const abilityScore = actor.system?.abilities?.[scaling]?.value || 10;
+    const abilityData = actor.system?.attributes?.[scaling] || actor.system?.abilities?.[scaling] || null;
+    const abilityScore = Number(abilityData?.total ?? abilityData?.value ?? abilityData?.score ?? abilityData ?? 10);
     const abilityBias = identityBias.attributeBias[scaling] || 0;
     const abilityModifier = (abilityScore - 10) / 10;
     const combined = (abilityBias + abilityModifier) / 2;
@@ -371,14 +406,18 @@ function _computeImmediateScore(candidate, actor, identityBias, buildIntent, opt
     weightedSum += 0.5 * 0.10;
   }
 
-  // METRIC 7: Equipment Affinity (from IdentityEngine)
-  if (candidateHasTag(candidate, 'weapon') || candidateHasTag(candidate, 'armor')) {
+  // METRIC 7: Equipment Affinity (from IdentityEngine + explicit loadout tags)
+  const loadoutFit = scoreCandidateLoadoutFit(candidate, options.equipmentProfile);
+  if (candidateHasTag(candidate, 'weapon') || candidateHasTag(candidate, 'armor') || loadoutFit.score > 0) {
     const equipBias = identityBias.mechanicalBias.armorMastery ||
-                      identityBias.mechanicalBias.weaponMastery || 0;
-    const metricScore = normalizeMetricScore(equipBias);
+                      identityBias.mechanicalBias.weaponMastery ||
+                      identityBias.mechanicalBias.formMastery ||
+                      identityBias.mechanicalBias.meleeDamage || 0;
+    const metricScore = Math.max(normalizeMetricScore(equipBias), loadoutFit.score);
     metrics.equipmentMatch = metricScore;
-    totalWeight += 0.10;
-    weightedSum += metricScore * 0.10;
+    if (loadoutFit.matches?.length) metrics.loadoutMatches = loadoutFit.matches.map(m => m.tag).slice(0, 4);
+    totalWeight += 0.14;
+    weightedSum += metricScore * 0.14;
   }
 
   // METRIC 8: Skill Synergy
@@ -589,6 +628,19 @@ function _computeIdentityProjectionScore(candidate, actor, buildIntent, identity
     }
   }
 
+  const routeFit = scoreCandidateRouteFit(candidate, options.routeConfidenceProfile, {
+    ...options,
+    ownedCount: getOwnedRepeatableCount(actor, options?.pendingData || {}, candidate)
+  });
+  if (routeFit.score > 0) {
+    const routeBoost = Math.min(0.07, routeFit.score * (routeFit.label === 'primary' ? 0.07 : routeFit.label === 'secondary' ? 0.055 : 0.025));
+    breakdown.routeConfidence = routeBoost;
+    breakdown.routeConfidenceLabel = routeFit.label;
+    breakdown.routeConfidenceMatches = routeFit.matches.map(m => m.label || m.route).slice(0, 3);
+    if (routeFit.repeatableContinuation) breakdown.repeatableContinuation = Math.min(0.04, 0.02 + (routeFit.repeatableOwnedCount || 0) * 0.01);
+    score += routeBoost;
+  }
+
   // ─────────────────────────────────────────────────────────────
   // SIGNAL 4: Identity Flexibility (existing, simplified)
   // ─────────────────────────────────────────────────────────────
@@ -686,6 +738,118 @@ function _evaluatePrestigeProximity(candidate, actor, buildIntent, currentLevel)
 
   // Hard cap prestige contribution at 0.25 (per contract)
   return Math.min(totalPrestigeScore, 0.25);
+}
+
+// ─────────────────────────────────────────────────────────────────
+// CHAIN + LOADOUT PREDICTOR
+// ─────────────────────────────────────────────────────────────────
+
+function _normalizeName(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[\u2018\u2019\u201B\u2032'`]/g, '')
+    .replace(/\s+/g, ' ');
+}
+
+function _actorOwnedChoiceNames(actor, options = {}) {
+  const names = new Set();
+  const items = Array.from(actor?.items?.contents || actor?.items || []);
+  for (const item of items) {
+    if (['feat', 'talent'].includes(item?.type)) names.add(_normalizeName(item.name));
+  }
+  for (const feat of options?.pendingData?.selectedFeats || []) names.add(_normalizeName(feat?.name || feat));
+  for (const talent of options?.pendingData?.selectedTalents || []) names.add(_normalizeName(talent?.name || talent));
+  return names;
+}
+
+function _candidatePrereqNames(candidate) {
+  const values = [
+    candidate?.system?.prerequisite,
+    candidate?.system?.prerequisites,
+    candidate?.system?.requirements,
+    candidate?.system?.requiredFeats,
+    candidate?.system?.requiredTalents,
+  ];
+  const out = [];
+  const visit = (value) => {
+    if (!value) return;
+    if (Array.isArray(value)) return value.forEach(visit);
+    if (typeof value === 'object') return Object.values(value).forEach(visit);
+    const text = String(value);
+    for (const part of text.split(/[,;]|\band\b/i)) {
+      const clean = part
+        .replace(/\b(BAB|base attack bonus)\s*\+?\d+\b/ig, '')
+        .replace(/\b(Str|Dex|Con|Int|Wis|Cha|Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma)\s+\d+\b/ig, '')
+        .replace(/\btrained\s+in\s+[^,;]+/ig, '')
+        .trim();
+      if (clean) out.push(_normalizeName(clean));
+    }
+  };
+  values.forEach(visit);
+  return Array.from(new Set(out));
+}
+
+function _countMatchedPrereqs(candidate, actor, options = {}) {
+  const owned = _actorOwnedChoiceNames(actor, options);
+  let matched = 0;
+  const matchedNames = [];
+  for (const prereq of _candidatePrereqNames(candidate)) {
+    if (!prereq) continue;
+    if (owned.has(prereq) || Array.from(owned).some(name => prereq.includes(name) || name.includes(prereq))) {
+      matched += 1;
+      matchedNames.push(prereq);
+    }
+  }
+  return { matched, matchedNames };
+}
+
+function _computeChainAndLoadoutBonus(candidate, actor, buildIntent = {}, options = {}) {
+  const result = { score: 0, breakdown: {} };
+  if (!candidate || !actor) return result;
+
+  const name = _normalizeName(candidate.name);
+  const tags = getCandidateTags(candidate).map(t => String(t).toLowerCase().replace(/[^a-z0-9]+/g, '_'));
+  const loadoutFit = scoreCandidateLoadoutFit(candidate, options.equipmentProfile);
+  const prereqMatch = _countMatchedPrereqs(candidate, actor, options);
+
+  if (prereqMatch.matched > 0) {
+    const prereqScore = Math.min(0.16, prereqMatch.matched * 0.08);
+    result.score += prereqScore;
+    result.breakdown.ownedPrerequisite = prereqScore;
+    result.breakdown.ownedPrerequisiteNames = prereqMatch.matchedNames.slice(0, 4);
+  }
+
+  if (loadoutFit.score > 0.25) {
+    const loadoutScore = Math.min(0.12, loadoutFit.score * 0.12);
+    result.score += loadoutScore;
+    result.breakdown.loadoutContinuation = loadoutScore;
+    result.breakdown.loadoutMatches = loadoutFit.matches?.map(m => m.tag).slice(0, 4) || [];
+  }
+
+  const meleeRoute = tags.some(t => ['offense_melee', 'melee', 'lightsaber', 'duelist', 'martial_arts'].includes(t))
+    || /cleave|power attack|rapid strike|melee|lightsaber/.test(name);
+  const forceMeleeRoute = Boolean(options.equipmentProfile?.hasEquippedLightsaber || options.equipmentProfile?.hasLightsaber || buildIntent?.forceFocus);
+  const ownedNames = _actorOwnedChoiceNames(actor, options);
+
+  // Signature SWSE case: Power Attack + Strength/lightsaber/melee identity should
+  // put Cleave on deck, even if BAB keeps it from being legal right now.
+  if (name === 'cleave' && ownedNames.has('power attack') && meleeRoute && forceMeleeRoute) {
+    result.score += 0.22;
+    result.breakdown.chainLoadoutPrediction = 0.22;
+    result.breakdown.predictedChain = 'Power Attack -> Cleave';
+  }
+
+  if (options.equipmentProfile?.dualLightsabers && (tags.includes('dual_wield') || tags.includes('two_weapon_fighting') || /dual|two-weapon|jar/.test(name))) {
+    result.score += 0.18;
+    result.breakdown.dualLightsaberLoadout = 0.18;
+  } else if (options.equipmentProfile?.dualWield && (tags.includes('dual_wield') || tags.includes('two_weapon_fighting') || /dual|two-weapon/.test(name))) {
+    result.score += 0.12;
+    result.breakdown.dualWieldLoadout = 0.12;
+  }
+
+  result.score = Math.max(0, Math.min(0.30, result.score));
+  return result;
 }
 
 // ─────────────────────────────────────────────────────────────────
@@ -816,6 +980,15 @@ function _generateReasons(candidate, immediate, shortTerm, identity) {
   }
   if (immediate.breakdown.chainContinuation > 0) {
     reasons.push('Continues an existing feat/talent chain');
+  }
+  if (immediate.breakdown.loadoutMatches?.length) {
+    reasons.push(`Matches your current loadout (${immediate.breakdown.loadoutMatches.slice(0, 2).join(', ')})`);
+  }
+  if (immediate.breakdown.routeConfidenceMatches?.length) {
+    reasons.push(`Matches your route evidence (${immediate.breakdown.routeConfidenceMatches.slice(0, 2).join(', ')})`);
+  }
+  if (immediate.breakdown.repeatableContinuation) {
+    reasons.push('Continues a repeatable investment you have already started');
   }
   if (shortTerm.breakdown.babBreakpoint > 0.3) {
     reasons.push('Unlocks a BAB breakpoint within +3 levels');

@@ -11,6 +11,7 @@
  */
 
 import { MentorChoiceVoiceOverlay } from '/systems/foundryvtt-swse/scripts/engine/mentor/mentor-choice-voice-overlay.js';
+import { buildSuggestionDetailExplanation } from '/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-detail-explanation.js';
 
 const CORE_CLASS_NAMES = ['Jedi', 'Noble', 'Scoundrel', 'Scout', 'Soldier'];
 const CLASS_ROUTE_AFFINITY = {
@@ -300,15 +301,37 @@ function classRouteMatches(baseClass, className) {
 
 function inferClassRouteContext({ actor, item, suggestion, classRouteContext }) {
   const supplied = classRouteContext && typeof classRouteContext === 'object' ? classRouteContext : {};
-  const name = itemName(item, suggestion?.name || supplied.className || 'this class');
-  const baseClass = supplied.baseClass || primaryBaseClass(actor);
-  const classes = supplied.actorClasses || actorClassEntries(actor);
+  const domain = supplied.classDomainContext || suggestion?.classDomainContext || suggestion?.classDomain || suggestion?.suggestion?.classDomainContext || suggestion?.suggestion?.classDomain || {};
+  const profile = domain.routeProfile || suggestion?.suggestion?.routeProfile || suggestion?.routeProfile || {};
+  const name = itemName(item, suggestion?.name || supplied.className || domain.className || profile.className || 'this class');
+  const baseClass = supplied.baseClass || domain.baseClass || profile.baseClass || primaryBaseClass(actor);
+  const startingClass = supplied.startingClass || domain.startingClass || profile.startingClass || null;
+  const classes = supplied.actorClasses || domain.currentClasses || domain.actorClasses || actorClassEntries(actor);
   const alreadyHasClass = supplied.alreadyHasClass ?? classes.some(entry => normalizeKey(entry.name) === normalizeKey(name));
-  const isPrestige = supplied.isPrestige ?? isPrestigeClass(item, suggestion);
-  const routeMatch = supplied.routeMatch ?? classRouteMatches(baseClass, name);
-  const theme = supplied.theme || classTheme(item, suggestion);
+  const isPrestige = supplied.isPrestige ?? domain.isPrestige ?? profile.isPrestige ?? isPrestigeClass(item, suggestion);
+  const routeMatch = supplied.routeMatch ?? domain.routeMatchesBase ?? profile.routeMatchesBase ?? classRouteMatches(baseClass, name);
+  const routeMatchesStartingClass = supplied.routeMatchesStartingClass ?? domain.routeMatchesStartingClass ?? profile.routeMatchesStartingClass ?? false;
+  const theme = supplied.theme || domain.routeFamilyLabel || profile.routeFamilyLabel || classTheme(item, suggestion);
   const missing = supplied.missingPrereqs || missingPrereqs(suggestion);
-  return { name, baseClass, actorClasses: classes, alreadyHasClass, isPrestige, routeMatch, theme, missingPrereqs: missing };
+  return {
+    name,
+    baseClass,
+    startingClass,
+    actorClasses: classes,
+    alreadyHasClass,
+    isPrestige,
+    routeMatch,
+    routeMatchesStartingClass,
+    theme,
+    missingPrereqs: missing,
+    readiness: supplied.readiness || domain.readiness || profile.readiness || null,
+    routeFit: supplied.routeFit || domain.routeFit || profile.routeFit || null,
+    routeFitScore: supplied.routeFitScore ?? domain.routeFitScore ?? profile.routeFitScore ?? null,
+    urgency: supplied.urgency || domain.urgency || profile.urgency || null,
+    diffuseBuild: supplied.diffuseBuild || domain.diffuseBuild || profile.diffuseBuild || false,
+    supportingSignals: supplied.supportingSignals || domain.supportingSignals || profile.supportingSignals || [],
+    cautionSignals: supplied.cautionSignals || domain.cautionSignals || profile.cautionSignals || [],
+  };
 }
 
 function directReasonText(reason) {
@@ -330,14 +353,37 @@ function withAction(action, name, sentence) {
 
 function composeSpecificClassLine({ action, actor, item, suggestion, reasons, classRouteContext }) {
   const ctx = inferClassRouteContext({ actor, item, suggestion, classRouteContext });
-  const { name, baseClass, isPrestige, routeMatch, alreadyHasClass, theme, missingPrereqs: missing } = ctx;
+  const { name, baseClass, startingClass, isPrestige, routeMatch, routeMatchesStartingClass, alreadyHasClass, theme, missingPrereqs: missing } = ctx;
   const nameKey = normalizeKey(name);
   const baseKey = normalizeKey(baseClass);
-  const routeReason = pickReason(reasons, ['jedi_knight_route', 'base_to_prestige_route', 'prestige_route', 'route continuation', 'natural advanced route', 'knighthood']);
+  const startKey = normalizeKey(startingClass);
+  const routeReason = pickReason(reasons, ['prestige_enter_now', 'jedi_knight_route', 'base_to_prestige_route', 'prestige_route', 'route continuation', 'natural advanced route', 'knighthood']);
+  const mutedRouteReason = pickReason(reasons, ['prestige_route_muted', 'class_route_diffuse', 'muted', 'diffuse', 'does not strongly support']);
   const crossRouteReason = pickReason(reasons, ['prestige_cross_route', 'base_class_cross_training', 'cross-training', 'changes the emphasis', 'detour', 'lateral']);
   const prereqReason = pickReason(reasons, ['prestige_now', 'prestige_ready_now', 'class_prereqs', 'prestige_still_locked', 'prerequisite', 'missing', 'gate', 'qualify']);
 
-  if (nameKey === 'jedi-knight' && baseKey === 'jedi') {
+  if (isPrestige && ctx.urgency === 'enterNow') {
+    const source = routeMatch && baseClass
+      ? `${baseClass} investment`
+      : routeMatchesStartingClass && startingClass
+        ? `Level 1 ${startingClass} chassis`
+        : 'current build identity';
+    const mechanical = routeReason?.text && !isGenericText(routeReason.text)
+      ? stripSentencePunctuation(routeReason.text)
+      : `${name} is the prestige route your ${source} has made ready`;
+    return withAction(action, name, `${mechanical}. This is the moment to enter if you want that path to define the next stage.`);
+  }
+
+  if (isPrestige && (ctx.urgency === 'mutedPrestige' || ctx.urgency === 'mutedForecast')) {
+    const caution = mutedRouteReason?.text || ctx.cautionSignals?.[0] || `${name} is mechanically possible, but your current choices do not strongly support ${theme}`;
+    return withAction(action, name, `${name} is not forbidden, but it should be treated cautiously. ${stripSentencePunctuation(caution)}.`);
+  }
+
+  if (isPrestige && ctx.diffuseBuild && ctx.urgency !== 'enterNow') {
+    return withAction(action, name, `${name} may be possible, but your class history is broad. Pick it only if you want ${theme} to become the route you consolidate around.`);
+  }
+
+  if (nameKey === 'jedi-knight' && (baseKey === 'jedi' || startKey === 'jedi' || routeMatchesStartingClass)) {
     return withAction(action, name, `${name} is not a detour; it is the formal threshold your Jedi training has been pointing toward. You already carry the Force and lightsaber foundation this path asks for.`);
   }
 
@@ -353,10 +399,11 @@ function composeSpecificClassLine({ action, actor, item, suggestion, reasons, cl
     return withAction(action, name, `${name} can give you leadership and influence, but it does not advance your Jedi Knight route as directly as continuing the Order's path.`);
   }
 
-  if (isPrestige && routeMatch) {
+  if (isPrestige && (routeMatch || routeMatchesStartingClass)) {
+    const sourceClass = routeMatch ? baseClass : startingClass;
     const mechanical = routeReason?.text && !isGenericText(routeReason.text)
       ? stripSentencePunctuation(routeReason.text)
-      : `this is the advanced ${baseClass} route your existing foundation points toward`;
+      : `this is the advanced ${sourceClass || 'build'} route your existing foundation points toward`;
     const prereq = prereqReason?.text ? ` ${stripSentencePunctuation(prereqReason.text)}.` : '';
     return withAction(action, name, `${name} is route continuation, not a random detour; ${mechanical}.${prereq}`);
   }
@@ -381,8 +428,14 @@ function composeSpecificClassLine({ action, actor, item, suggestion, reasons, cl
   return '';
 }
 
-function composeMetadataLine({ action, item, suggestion, reasons }) {
+function composeMetadataLine({ action, item, suggestion, reasons, detailExplanation = null }) {
   const name = itemName(item, suggestion?.name || 'This choice');
+  const repeatable = pickReason(reasons, ['repeatable_investment_continuation', 'can be taken again', 'repeatable']);
+  if (repeatable) return withAction(action, name, `${name} continues an investment you have already started: ${stripSentencePunctuation(repeatable.text)}.`);
+
+  const latent = pickReason(reasons, ['latent_route_access', 'single_signal_dampened', 'latent lane', 'access, but not enough']);
+  if (latent) return withAction(action, name, `${name} is a side lane, not a route takeover: ${stripSentencePunctuation(latent.text)}.`);
+
   const prereq = pickReason(reasons, ['prerequisite', 'prereq', 'requires', 'gate', 'bab', 'qualify', 'trained']);
   if (prereq) return withAction(action, name, `${name} has a real gate here: ${stripSentencePunctuation(prereq.text)}.`);
 
@@ -399,6 +452,13 @@ function composeMetadataLine({ action, item, suggestion, reasons }) {
   const concrete = reasons.find(reason => ['primary', 'forecast', 'opportunity', 'secondary', 'direct', 'bullet'].includes(reason.bucket));
   if (concrete) return withAction(action, name, directReasonText(concrete));
 
+  const detailSeed = detailExplanation?.primaryReasons?.[0]?.text
+    || detailExplanation?.forecastReasons?.[0]?.text
+    || detailExplanation?.opportunityReasons?.[0]?.text
+    || detailExplanation?.mentorLineSeed
+    || '';
+  if (detailSeed && !isGenericText(detailSeed)) return withAction(action, name, directReasonText({ text: detailSeed }));
+
   return '';
 }
 
@@ -408,6 +468,7 @@ export class MentorChoiceLineComposer {
     try {
       const { actor, mentorId, mentorName, mentor, stepId, action, item, suggestion, reasonPacket, classRouteContext } = context;
       const reasons = collectReasons({ suggestion, reasonPacket });
+      const detailExplanation = buildSuggestionDetailExplanation({ item, suggestion, reasonPacket, domain: stepId });
       let line = '';
       let bucketHint = '';
 
@@ -417,7 +478,7 @@ export class MentorChoiceLineComposer {
       }
 
       if (!line) {
-        line = composeMetadataLine({ action, item, suggestion, reasons });
+        line = composeMetadataLine({ action, item, suggestion, reasons, detailExplanation });
         bucketHint = reasons[0]?.bucket || '';
       }
 

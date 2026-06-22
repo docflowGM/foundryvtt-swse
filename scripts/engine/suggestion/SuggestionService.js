@@ -35,6 +35,7 @@ import {
 
 import { FeatEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-engine.js";
 import { ForcePowerEngine } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/force-power-engine.js";
+import { PlayerHistoryTracker } from "/systems/foundryvtt-swse/scripts/engine/suggestion/PlayerHistoryTracker.js";
 function _hashString(s) {
   let h = 0;
   for (let i = 0; i < s.length; i++) {h = ((h << 5) - h + s.charCodeAt(i)) | 0;}
@@ -273,12 +274,14 @@ export class SuggestionService {
     // Filter reasons by focus (visibility gating only, not scoring change)
     // If focus is provided, only show reason domains relevant to that focus
     // (focus was already extracted at the beginning of this method for snapshot hashing)
-    const focusFiltered = this._filterReasonsByFocus(enriched, focus, { trace });
+    const focusFiltered = this.sortBySuggestion(this._filterReasonsByFocus(enriched, focus, { trace }));
 
     // Optional persist
     if (options.persist === true) {
       await this._persistSuggestionState(actor, context, focusFiltered);
     }
+
+    await this._recordSuggestionsShown(actor, context, focusFiltered, options);
 
     this.validateSuggestionDTO(focusFiltered, { context, domain: options.domain });
 
@@ -350,6 +353,48 @@ export class SuggestionService {
     }
 
     return write();
+  }
+
+  static async _recordSuggestionsShown(actor, context, suggestions, options = {}) {
+    if (!actor || !Array.isArray(suggestions) || !suggestions.length) return;
+    // Only record decision-step/showcase contexts, not every passive sheet refresh.
+    const shouldRecord = options.recordShown === true || ['decision-step', 'levelup', 'chargen', 'mentor'].includes(String(context || ''));
+    if (!shouldRecord) return;
+    try {
+      await PlayerHistoryTracker.initializeStorage(actor);
+      const top = suggestions
+        .filter(s => (s?.suggestion?.tier ?? s?.tier ?? 0) > 0)
+        .slice(0, Number(options.recordShownLimit || 8));
+      for (const suggestion of top) {
+        await PlayerHistoryTracker.recordSuggestionShown(
+          actor,
+          {
+            itemId: suggestion?.targetRef?.id || suggestion?.id || suggestion?._id || suggestion?.name,
+            itemName: suggestion?.name || suggestion?.label || suggestion?.targetRef?.name,
+            category: suggestion?.type || suggestion?.domain || options.domain || 'suggestion',
+            theme: suggestion?.suggestion?.primaryTheme
+              || suggestion?.context?.allTags?.[0]
+              || suggestion?.system?.tags?.[0]
+              || suggestion?.tags?.[0]
+              || suggestion?.suggestion?.scoring?.dominantHorizon
+              || suggestion?.suggestion?.reasonCode
+              || null,
+          },
+          {
+            confidence: suggestion?.confidence ?? suggestion?.suggestion?.confidence ?? 0.5,
+            level: suggestion?.suggestion?.confidence >= 0.8 ? 'high' : suggestion?.suggestion?.confidence >= 0.5 ? 'medium' : 'low',
+          },
+          {
+            context,
+            reasonCode: suggestion?.suggestion?.reasonCode || suggestion?.reasonCode || null,
+            tier: suggestion?.suggestion?.tier ?? suggestion?.tier ?? 0,
+            domain: options.domain || null,
+          }
+        );
+      }
+    } catch (err) {
+      SWSELogger.log('[SuggestionService] recordSuggestionShown skipped (non-fatal):', err?.message ?? err);
+    }
   }
 
   static async _persistSuggestionState(actor, context, suggestions) {
@@ -460,6 +505,12 @@ export class SuggestionService {
         return tierB - tierA;
       }
 
+      const scoreA = this._extractSuggestionScalar(a);
+      const scoreB = this._extractSuggestionScalar(b);
+      if (Math.abs(scoreB - scoreA) > 0.0001) {
+        return scoreB - scoreA;
+      }
+
       const confidenceA = a?.suggestion?.confidence ?? a?.confidence ?? 0;
       const confidenceB = b?.suggestion?.confidence ?? b?.confidence ?? 0;
       if (confidenceB !== confidenceA) {
@@ -470,6 +521,26 @@ export class SuggestionService {
       const nameB = String(b?.name ?? '');
       return nameA.localeCompare(nameB);
     });
+  }
+
+  static _extractSuggestionScalar(item) {
+    const candidates = [
+      item?.suggestion?.scoring?.final,
+      item?.suggestion?.finalScore,
+      item?.suggestion?.scoring?.finalScore,
+      item?.scoring?.final,
+      item?.scoring?.finalScore,
+      item?.suggestion?.score,
+      item?.score,
+      0,
+    ];
+
+    for (const value of candidates) {
+      if (Number.isFinite(value)) {
+        return Number(value);
+      }
+    }
+    return 0;
   }
 
   /**
@@ -642,7 +713,7 @@ export class SuggestionService {
       // Compute confidence score alongside tier
       if (suggestion?.suggestion?.tier !== undefined) {
         try {
-          suggestion.confidence = ConfidenceScoring.computeConfidence(suggestion, actor);
+          suggestion.confidence = await ConfidenceScoring.computeConfidence(suggestion, actor);
           if (!suggestion.suggestion.confidence) {
             suggestion.suggestion.confidence = suggestion.confidence;
           }
@@ -709,8 +780,10 @@ export class SuggestionService {
         suggestion.reasonSummary = packet.shortReason;
         suggestion.reasonBullets = packet.bullets;
         suggestion.primaryReasons = packet.primary;
+        suggestion.secondaryReasons = packet.secondary;
         suggestion.cautionReasons = packet.caution;
         suggestion.forecastReasons = packet.forecast;
+        suggestion.opportunityReasons = packet.opportunity;
         if (packet.classDomainContext) {
           suggestion.classDomainContext = packet.classDomainContext;
           suggestion.classDomain = suggestion.classDomain || packet.classDomainContext;

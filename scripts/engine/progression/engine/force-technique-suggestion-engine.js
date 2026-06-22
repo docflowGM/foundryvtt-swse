@@ -12,6 +12,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { ForceChoiceContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/force-choice-context.js";
 import {
   PRESTIGE_ARCHETYPE_MAP,
   BASE_ARCHETYPE_MAP,
@@ -69,18 +70,35 @@ export class ForceTechniqueSuggestionEngine {
       return [];
     }
 
-    const knownPowers = this._getKnownForcePowers(actor);
+    const forceChoiceContext = options.forceChoiceContext || ForceChoiceContext.build(actor, options.pendingData || {});
+    const knownPowers = this._getKnownForcePowers(actor, forceChoiceContext);
     const archetype = this._getCharacterArchetype(actor);
 
     const suggestions = [];
 
     for (const technique of availableTechniques) {
+      if (ForceChoiceContext.hasTechnique(forceChoiceContext, technique)) {
+        continue;
+      }
+
       const suggestion = this._scoreTechnique(
         technique,
         knownPowers,
         archetype,
-        options
+        {
+          ...options,
+          forceChoiceContext
+        }
       );
+
+      const matchedAssociatedPowers = ForceChoiceContext.matchedAssociatedPowers(forceChoiceContext, technique);
+      if (suggestion && matchedAssociatedPowers.length > 0) {
+        suggestion.reasons = suggestion.reasons || [];
+        if (!suggestion.reasons.some((reason) => String(reason || '').includes(matchedAssociatedPowers[0]))) {
+          suggestion.reasons.push(`Builds on known Force power: ${matchedAssociatedPowers.join(', ')}`);
+        }
+        suggestion.score = Number((Number(suggestion.score || 0) * 1.08).toFixed(2));
+      }
 
       if (suggestion) {
         suggestions.push({
@@ -221,7 +239,7 @@ export class ForceTechniqueSuggestionEngine {
    * Get list of Force Powers known by character
    * @private
    */
-  static _getKnownForcePowers(actor = null) {
+  static _getKnownForcePowers(actor = null, forceChoiceContext = null) {
     const powers = [];
 
     if (actor) {
@@ -236,6 +254,14 @@ export class ForceTechniqueSuggestionEngine {
             tags
           });
         });
+    }
+
+    const existingNames = new Set(powers.map((power) => this._normalizePowerName(power.name)));
+    for (const powerName of forceChoiceContext?.allPowerNames || []) {
+      const normalized = this._normalizePowerName(powerName);
+      if (!normalized || existingNames.has(normalized)) continue;
+      powers.push({ name: powerName, isForm: false, tags: [] });
+      existingNames.add(normalized);
     }
 
     return powers;

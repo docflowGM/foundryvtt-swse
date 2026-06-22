@@ -23,6 +23,7 @@ import { ArmorAxisAEngine } from "/systems/foundryvtt-swse/scripts/engine/sugges
 import { ArmorAxisBEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/armor-axis-b-engine.js";
 import { ArmorRoleAlignmentEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/armor-role-alignment-engine.js";
 import { ArmorExplainabilityGenerator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/armor-explainability-generator.js";
+import { scoreStoreItemContextFit } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/store-suggestion-context.js";
 import { assignTier, clampScore } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/shared-scoring-utils.js";
 
 export class ArmorScoringEngine {
@@ -73,6 +74,9 @@ export class ArmorScoringEngine {
         categoryNorm +
         priceBias;
 
+      const storeContextFit = options.storeContext ? scoreStoreItemContextFit(armor, options.storeContext, options) : null;
+      if (storeContextFit) finalScore += storeContextFit.cappedAdjustment;
+
       // NaN protection
       if (!Number.isFinite(finalScore)) finalScore = 0;
 
@@ -92,6 +96,9 @@ export class ArmorScoringEngine {
         finalScore,
         options
       );
+      if (storeContextFit?.explanations?.length) {
+        explanations.push(...storeContextFit.explanations);
+      }
 
       const result = {
         armorId: armor.id,
@@ -105,7 +112,8 @@ export class ArmorScoringEngine {
           axisA: axisA.score,
           axisB: axisB.score,
           categoryNorm,
-          priceBias
+          priceBias,
+          storeContextFit: storeContextFit?.cappedAdjustment || 0
         },
 
         // Axis details
@@ -136,6 +144,8 @@ export class ArmorScoringEngine {
         explanations,
 
         // Metadata
+        storeContextFit,
+
         meta: {
           computedAt: Date.now(),
           engineVersion: '1.0.0',

@@ -23,21 +23,31 @@ export function registerSuggestionHooks() {
 
   HooksRegistry.register('updateActor', (actor) => {
     SuggestionService.invalidate(actor.id);
+    SuggestionEngineCoordinator.clearBuildIntentCache(actor.id);
   }, { id: 'swse-sugs-invalidate' });
 
   HooksRegistry.register('createItem', (item) => {
     const actorId = safeGetActorId(item);
-    if (actorId) SuggestionService.invalidate(actorId);
+    if (actorId) {
+      SuggestionService.invalidate(actorId);
+      SuggestionEngineCoordinator.clearBuildIntentCache(actorId);
+    }
   }, { id: 'swse-sugs-invalidate-create' });
 
   HooksRegistry.register('updateItem', (item) => {
     const actorId = safeGetActorId(item);
-    if (actorId) SuggestionService.invalidate(actorId);
+    if (actorId) {
+      SuggestionService.invalidate(actorId);
+      SuggestionEngineCoordinator.clearBuildIntentCache(actorId);
+    }
   }, { id: 'swse-sugs-invalidate-update' });
 
   HooksRegistry.register('deleteItem', (item) => {
     const actorId = safeGetActorId(item);
-    if (actorId) SuggestionService.invalidate(actorId);
+    if (actorId) {
+      SuggestionService.invalidate(actorId);
+      SuggestionEngineCoordinator.clearBuildIntentCache(actorId);
+    }
   }, { id: 'swse-sugs-invalidate-delete' });
 
   HooksRegistry.register('getHeaderControlsApplicationV2', (app, controls) => {

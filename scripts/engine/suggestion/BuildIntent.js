@@ -25,6 +25,7 @@ import { PrestigeAffinityEngine, initializePrestigeSignals } from "/systems/foun
 export { initializePrestigeSignals };
 import { MilestoneComputer } from "/systems/foundryvtt-swse/scripts/engine/suggestion/MilestoneComputer.js";
 import { getPrimaryArchetypeForActor } from "/systems/foundryvtt-swse/scripts/engine/archetype/archetype-registry-integration.js";
+import { buildEquipmentLoadoutProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment-loadout-profile.js";
 
 // ──────────────────────────────────────────────────────────────
 // PRESTIGE SIGNALS LOADER
@@ -230,6 +231,7 @@ export class BuildIntent {
         intent.primaryThemes = themeData.primaryThemes;
         intent.combatStyle = themeData.combatStyle;
         intent.signals = themeData.signals;
+        this._applyEquipmentLoadoutThemes(intent, state.equipmentProfile);
 
         // Calculate prestige affinities using PrestigeAffinityEngine
         SWSELogger.log(`[BUILD-INTENT] analyze() - Delegating prestige analysis to PrestigeAffinityEngine`);
@@ -285,7 +287,7 @@ export class BuildIntent {
         SWSELogger.log(`[BUILD-INTENT] analyze() - Combat style:`, intent.combatStyle);
 
         // Check for Force focus
-        intent.forceFocus = (intent.themes[BUILD_THEMES.FORCE] || 0) >= 0.3;
+        intent.forceFocus = (intent.themes[BUILD_THEMES.FORCE] || 0) >= 0.3 || state.equipmentProfile?.hasLightsaber === true;
         SWSELogger.log(`[BUILD-INTENT] analyze() - Force focus:`, intent.forceFocus);
 
         // Priority prerequisites already identified by PrestigeAffinityEngine
@@ -369,16 +371,24 @@ export class BuildIntent {
             trainedSkills.add((s.key || s).toLowerCase());
         });
 
-        const abilities = actor.system?.attributes || {};
+        const abilityKeys = new Set([
+            ...Object.keys(actor.system?.attributes || {}),
+            ...Object.keys(actor.system?.abilities || {}),
+            'str', 'dex', 'con', 'int', 'wis', 'cha'
+        ]);
         let highestAbility = null;
         let highestScore = 0;
-        for (const [key, data] of Object.entries(abilities)) {
-            const score = data?.total || data?.value || 10;
+        for (const key of abilityKeys) {
+            const attr = actor.system?.attributes?.[key];
+            const ab = actor.system?.abilities?.[key];
+            const score = Number(attr?.total ?? attr?.value ?? attr?.score ?? attr ?? ab?.total ?? ab?.value ?? ab?.score ?? ab ?? 10);
             if (score > highestScore) {
                 highestScore = score;
                 highestAbility = key.toLowerCase();
             }
         }
+
+        const equipmentProfile = buildEquipmentLoadoutProfile(actor);
 
         const classes = {};
         actor.items
@@ -394,11 +404,42 @@ export class BuildIntent {
             trainedSkills,
             highestAbility,
             highestScore,
-            classes
+            classes,
+            equipmentProfile
         };
     }
 
 
+
+    static _applyEquipmentLoadoutThemes(intent, profile) {
+        if (!profile) return;
+        const addTheme = (theme, value) => {
+            intent.themes[theme] = Math.max(Number(intent.themes[theme] || 0), value);
+            if (!intent.primaryThemes.includes(theme) && value >= 0.35) intent.primaryThemes.push(theme);
+        };
+
+        intent.signals.equipment = [];
+        if (profile.hasLightsaber) {
+            addTheme(BUILD_THEMES.FORCE, profile.hasEquippedLightsaber ? 0.55 : 0.35);
+            addTheme(BUILD_THEMES.MELEE, profile.hasEquippedLightsaber ? 0.50 : 0.30);
+            intent.signals.equipment.push(profile.hasEquippedLightsaber ? 'equipped_lightsaber' : 'owned_lightsaber');
+        }
+        if (profile.dualLightsabers || profile.dualWield) {
+            addTheme(BUILD_THEMES.MELEE, profile.dualLightsabers ? 0.65 : 0.45);
+            intent.signals.equipment.push(profile.dualLightsabers ? 'dual_lightsabers' : 'dual_wield_loadout');
+        }
+        if (profile.primaryWeaponGroup === 'pistol' || profile.primaryWeaponGroup === 'rifle' || profile.primaryWeaponGroup === 'heavy_weapon') {
+            addTheme(BUILD_THEMES.RANGED, 0.45);
+            intent.signals.equipment.push(`equipped_${profile.primaryWeaponGroup}`);
+        }
+        if (profile.hasEquippedGrenade || (profile.weaponGroups?.grenade?.inventoryCount || 0) >= 3) {
+            addTheme(BUILD_THEMES.COMBAT, 0.35);
+            intent.signals.equipment.push(profile.hasEquippedGrenade ? 'equipped_grenade' : 'grenade_stock');
+        }
+        if (profile.gearTags?.toolkit) addTheme(BUILD_THEMES.TECH, 0.35);
+        if (profile.gearTags?.medical) addTheme(BUILD_THEMES.SUPPORT, 0.35);
+        if (profile.gearTags?.survival) addTheme(BUILD_THEMES.EXPLORATION, 0.35);
+    }
 
     /**
      * [DEPRECATED] Compute actor identity via IdentityEngine

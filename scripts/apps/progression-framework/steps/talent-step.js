@@ -25,6 +25,7 @@ import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/prog
 import { FeatChoiceDialog } from '/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js';
 import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js';
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
+import { buildSuggestionDetailExplanation } from '/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-detail-explanation.js';
 import { buildDependencyGraph } from '/systems/foundryvtt-swse/scripts/apps/chargen/chargen-talent-tree-graph.js';
 import { renderProgressionTalentTree } from './talent-tree-progression-renderer.js';
 import { buildTalentTreeMentorRead } from './talent-tree-mentor-commentary.js';
@@ -1113,6 +1114,41 @@ export class TalentStep extends ProgressionStepPlugin {
       if (Math.abs(scoreDelta) > 0.0001) return scoreDelta;
       return String(left?.name || '').localeCompare(String(right?.name || ''));
     });
+  }
+
+
+  getSuggestionForItem(itemIdOrName, item = null) {
+    const keys = this._getTalentIdentityKeys(item || { id: itemIdOrName, _id: itemIdOrName, name: itemIdOrName });
+    const candidates = [];
+    for (const key of [itemIdOrName, item?.id, item?._id, item?.name].filter(Boolean)) {
+      candidates.push(this._talentRecommendationById?.get?.(key));
+      candidates.push(this._treeRecommendationById?.get?.(key));
+    }
+    for (const recommendation of this._talentRecommendationById?.values?.() || []) {
+      const source = recommendation?.source || recommendation;
+      if (this._getTalentIdentityKeys(source).some(key => keys.includes(key))) candidates.push(recommendation);
+    }
+    const found = candidates.find(Boolean);
+    if (!found) return null;
+    if (found.source) {
+      return {
+        ...(found.source || {}),
+        id: found.source?.id || found.source?._id || itemIdOrName,
+        name: found.source?.name || item?.name || String(itemIdOrName || 'Talent'),
+        suggestion: {
+          ...(found.source?.suggestion || {}),
+          mode: found.mode || 'talent',
+          tier: found.tier,
+          score: found.score,
+          reason: found.reason,
+          reasons: found.reasons,
+          reasonBullets: found.reasons,
+        },
+        reasonPacket: found.source?.reasonPacket || found.source?.suggestion?.reasonPacket || null,
+        reasonBullets: found.reasons || found.source?.reasonBullets || [],
+      };
+    }
+    return found;
   }
 
   _getRecommendationLabel(item, { rank = null } = {}) {
@@ -2589,6 +2625,13 @@ export class TalentStep extends ProgressionStepPlugin {
       || null;
     const treeRecommendation = this._treeRecommendationById.get(this._selectedTreeId) || this._treeRecommendationById.get(selectedTree?.name) || null;
     const recommendationText = talentRecommendation?.reason || '';
+    const suggestionExplanation = buildSuggestionDetailExplanation({
+      item: talent,
+      suggestion: talentRecommendation?.source || talentRecommendation || talent,
+      reasonPacket: talentRecommendation?.source?.reasonPacket || talentRecommendation?.source?.suggestion?.reasonPacket || null,
+      domain: 'talent',
+      fallbackSummary: recommendationText,
+    });
     const statusText = isSelected
       ? 'This talent is selected for the current slot.'
       : meetsPrereqs
@@ -2637,12 +2680,19 @@ export class TalentStep extends ProgressionStepPlugin {
         mechanicalBenefit,
         prerequisitePath,
         prerequisiteLinks,
-        recommendationText,
+        recommendationText: suggestionExplanation.summary || recommendationText,
         recommendation: talentRecommendation,
         isSuggestedTalent: !!talentRecommendation,
+        hasSuggestionAnalysis: !!talentRecommendation && suggestionExplanation.hasReasons,
         recommendationLabel: talentRecommendation?.label || '',
         recommendationRank: talentRecommendation?.rank || null,
-        recommendationReasons: talentRecommendation?.reasons || [],
+        recommendationReasons: suggestionExplanation.bulletTexts?.length ? suggestionExplanation.bulletTexts : (talentRecommendation?.reasons || []),
+        recommendationPrimaryReasons: suggestionExplanation.primaryReasons || [],
+        recommendationSecondaryReasons: suggestionExplanation.secondaryReasons || [],
+        recommendationForecastReasons: suggestionExplanation.forecastReasons || [],
+        recommendationOpportunityReasons: suggestionExplanation.opportunityReasons || [],
+        recommendationCautionReasons: suggestionExplanation.cautionReasons || [],
+        recommendationEvidenceRows: suggestionExplanation.evidenceRows || [],
         statusText,
         downstreamUnlocks,
         metadataTags: normalized.metadataTags || [],
@@ -2824,6 +2874,23 @@ export class TalentStep extends ProgressionStepPlugin {
 
       if (shell?.committedSelections && this.descriptor?.stepId) {
         shell.committedSelections.set(this.descriptor.stepId, nextSelection);
+      }
+
+      if (typeof Hooks !== 'undefined' && nextSelection) {
+        const choiceTheme = nextSelection.context?.allTags?.[0]
+          || nextSelection.system?.tags?.[0]
+          || nextSelection.tags?.[0]
+          || nextSelection.suggestion?.primaryTheme
+          || nextSelection.suggestion?.scoring?.dominantHorizon
+          || nextSelection.suggestion?.reasonCode
+          || null;
+        Hooks.callAll(
+          'swse:talent-selected',
+          shell?.actor,
+          nextSelection.id || nextSelection._id || nextSelection.name,
+          nextSelection.name,
+          choiceTheme
+        );
       }
     }
   }

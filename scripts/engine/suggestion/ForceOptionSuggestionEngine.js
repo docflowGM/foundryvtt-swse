@@ -18,6 +18,12 @@ import {
 } from "/systems/foundryvtt-swse/scripts/engine/force/force-power-categories.js";
 import { UNIFIED_TIERS, getTierMetadata } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js";
 import { getForceAxisSnapshot } from "/systems/foundryvtt-swse/scripts/engine/suggestion/force-rule-adapter.js";
+import { ForceChoiceContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/force-choice-context.js";
+import { buildRouteConfidenceProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/build-route-confidence-profile.js";
+import {
+  getForcePowerRoleMetadata,
+  getForcePowerRoleTagSet
+} from "/systems/foundryvtt-swse/scripts/engine/suggestion/force-power-role-metadata.js";
 
 // DEPRECATED: Legacy tier definitions (kept for backwards compatibility)
 // Use UNIFIED_TIERS from suggestion-unified-tiers.js instead
@@ -59,6 +65,26 @@ function getOptionTagSet(option) {
 
 function normalizeDescriptorTag(tag) {
   return String(tag || '').toLowerCase().replace(/[\s-]+/g, '_');
+}
+
+function slugifyForceContextKey(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+}
+
+function countForceSuiteRoles(forceChoiceContext) {
+  const counts = new Map();
+  for (const powerName of forceChoiceContext?.allPowerNames || []) {
+    const metadata = getForcePowerRoleMetadata({ name: powerName });
+    for (const role of [metadata?.primaryRole, metadata?.secondaryRole]) {
+      if (!role) continue;
+      counts.set(role, (counts.get(role) || 0) + 1);
+    }
+  }
+  return counts;
 }
 
 function getDescriptorState(option, forceCategoryData = null) {
@@ -292,8 +318,17 @@ export class ForceOptionSuggestionEngine {
   static async suggestForceOptions(options, actor, pendingData = {}, contextOptions = {}) {
     try {
       const buildIntent = contextOptions.buildIntent || {};
+      const routeConfidenceProfile = contextOptions.routeConfidenceProfile || buildIntent.routeConfidenceProfile || buildRouteConfidenceProfile(actor, buildIntent, {
+        ...contextOptions,
+        pendingData
+      });
+      const forceLaneConfidence = Number(routeConfidenceProfile?.forceLaneConfidence || 0);
+      const hasForceAccess = buildIntent.forceAccess === true || routeConfidenceProfile?.forceAccess === true || forceLaneConfidence > 0;
+      const hasCommittedForceRoute = buildIntent.forceFocus === true || ['primary', 'secondary'].includes(routeConfidenceProfile?.forceCommitmentLevel);
       const ruleset = HouseRuleService.get('houseRules') || {};
       const forceAxes = getForceAxisSnapshot(actor);
+      const forceChoiceContext = contextOptions.forceChoiceContext || ForceChoiceContext.build(actor, pendingData);
+      const forceSuiteRoleCounts = countForceSuiteRoles(forceChoiceContext);
       const { DSPEngine } = await import("/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js").catch(() => ({ DSPEngine: null }));
       const dspValue = DSPEngine?.getValue(actor) ?? actor?.system?.darkSide?.value ?? 0;
 
@@ -304,18 +339,46 @@ export class ForceOptionSuggestionEngine {
         let tier = FORCE_OPTION_TIERS.AVAILABLE;
         const reasons = [];
         const tags = getOptionTagSet(option);
+        const roleMetadata = getForcePowerRoleMetadata(option);
+        const roleTags = getForcePowerRoleTagSet(option);
+        const candidateKeys = [option.id, option.name, option.label].map(slugifyForceContextKey).filter(Boolean);
+        const alreadyKnown = candidateKeys.some((key) => {
+          if (option.type === 'secret') return forceChoiceContext?.knownSecretSet?.has(key);
+          if (option.type === 'technique') return forceChoiceContext?.knownTechniqueSet?.has(key);
+          return forceChoiceContext?.knownPowerSet?.has(key);
+        });
 
-        // Skip if no Force focus
-        if (!buildIntent.forceFocus) {
+        if (alreadyKnown) {
           return {
             ...option,
             suggestion: {
               tier: FORCE_OPTION_TIERS.AVAILABLE,
-              reason: 'Not Force-focused',
+              reason: 'Already part of your current or pending Force suite',
+              icon: ''
+            },
+            isSuggested: false,
+            forceChoiceContext
+          };
+        }
+
+        // Force access without commitment should not vanish; it should be
+        // shown as a latent/secondary lane. A non-Jedi who selected Force
+        // Sensitivity can see Force options without being treated as a full Jedi.
+        if (!hasForceAccess && !hasCommittedForceRoute) {
+          return {
+            ...option,
+            suggestion: {
+              tier: FORCE_OPTION_TIERS.AVAILABLE,
+              reason: 'No Force access detected',
               icon: ''
             },
             isSuggested: false
           };
+        }
+
+        if (!hasCommittedForceRoute && hasForceAccess) {
+          tier = Math.max(tier, FORCE_OPTION_TIERS.COMPATIBLE);
+          reasons.push('Latent Force lane opened by your choices');
         }
 
         // Universal strong options
@@ -349,6 +412,27 @@ export class ForceOptionSuggestionEngine {
         if (tags.has('action_economy') || tags.has('swift_action')) {
           tier = Math.max(tier, FORCE_OPTION_TIERS.COMPATIBLE);
           reasons.push('Improves action economy');
+        }
+
+        const matchedAssociatedPowers = ForceChoiceContext.matchedAssociatedPowers(forceChoiceContext, option);
+        if (matchedAssociatedPowers.length > 0) {
+          tier = Math.max(tier, FORCE_OPTION_TIERS.COMBAT_SYNERGY);
+          reasons.push(`Builds on known Force power: ${matchedAssociatedPowers.join(', ')}`);
+        }
+
+        const primarySuiteRoleCount = forceSuiteRoleCounts.get(roleMetadata.primaryRole) || 0;
+        const secondarySuiteRoleCount = forceSuiteRoleCounts.get(roleMetadata.secondaryRole) || 0;
+        if (primarySuiteRoleCount >= 2) {
+          tier = Math.max(tier, FORCE_OPTION_TIERS.COMBAT_SYNERGY);
+          reasons.push(`Reinforces your ${roleMetadata.primaryRole} Force suite`);
+        } else if (primarySuiteRoleCount + secondarySuiteRoleCount >= 2) {
+          tier = Math.max(tier, FORCE_OPTION_TIERS.COMPATIBLE);
+          reasons.push(`Fits your existing ${roleMetadata.primaryRole || roleMetadata.secondaryRole} Force tools`);
+        }
+
+        if (roleTags.has('lightsaberform') && buildIntent.combatStyle === 'lightsaber') {
+          tier = Math.max(tier, FORCE_OPTION_TIERS.COMBAT_SYNERGY);
+          reasons.push('Extends your lightsaber-form Force suite');
         }
 
         // Prestige class alignment from L1 survey (highest priority)
@@ -432,8 +516,11 @@ export class ForceOptionSuggestionEngine {
             reason,
             icon: tierMetadata.icon,
             color: tierMetadata.color,
-            label: tierMetadata.label
+            label: tierMetadata.label,
+            forceRole: roleMetadata.primaryRole || null,
+            forceRoleTags: Array.from(roleTags)
           },
+          forceChoiceContext,
           isSuggested: tier >= UNIFIED_TIERS.PATH_CONTINUATION  // TIER 4+
         };
       });

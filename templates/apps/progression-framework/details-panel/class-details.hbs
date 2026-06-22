@@ -19,6 +19,59 @@
     <p class="prog-class-details__description">{{fantasy}}</p>
   {{/if}}
 
+  {{#if hasSuggestionAnalysis}}
+  <section class="prog-class-details__section prog-class-details__suggestion-analysis suggestion-evidence-note">
+    <h4 class="prog-class-details__section-title"><i class="fas fa-route"></i> Mentor read</h4>
+    {{#if suggestionReasonSummary}}
+      <p class="prog-class-details__description">{{suggestionReasonSummary}}</p>
+    {{/if}}
+
+    {{#if suggestionPrimaryReasons.length}}
+    <div class="suggestion-evidence-group suggestion-evidence-group--primary">
+      <h5>Build fit</h5>
+      <ul class="prog-class-details__list prog-class-details__suggestion-list">
+        {{#each suggestionPrimaryReasons}}
+          <li>{{text}}</li>
+        {{/each}}
+      </ul>
+    </div>
+    {{/if}}
+
+    {{#if suggestionForecastReasons.length}}
+    <div class="suggestion-evidence-group suggestion-evidence-group--forecast">
+      <h5>Forecast</h5>
+      <ul class="prog-class-details__list prog-class-details__suggestion-list">
+        {{#each suggestionForecastReasons}}
+          <li>{{text}}</li>
+        {{/each}}
+      </ul>
+    </div>
+    {{/if}}
+
+    {{#if suggestionOpportunityReasons.length}}
+    <div class="suggestion-evidence-group suggestion-evidence-group--opportunity">
+      <h5>Opportunity</h5>
+      <ul class="prog-class-details__list prog-class-details__suggestion-list">
+        {{#each suggestionOpportunityReasons}}
+          <li>{{text}}</li>
+        {{/each}}
+      </ul>
+    </div>
+    {{/if}}
+
+    {{#if suggestionCautionReasons.length}}
+    <div class="suggestion-evidence-group suggestion-evidence-group--caution">
+      <h5>Watch for</h5>
+      <ul class="prog-class-details__list prog-class-details__suggestion-list">
+        {{#each suggestionCautionReasons}}
+          <li>{{text}}</li>
+        {{/each}}
+      </ul>
+    </div>
+    {{/if}}
+  </section>
+  {{/if}}
+
   {{#if classSkills.length}}
   <section class="prog-class-details__section prog-class-details__class-skills">
     <h4 class="prog-class-details__section-title">{{localize "SWSE.Progression.Core.Class.ClassSkills"}}</h4>

@@ -27,6 +27,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { logSuggestionTrace } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-trace-controls.js";
+import { applySuggestionRouteCoherenceGuard } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-route-coherence-guard.js";
 import { BuildIntent } from "/systems/foundryvtt-swse/scripts/engine/suggestion/BuildIntent.js";
 import { SuggestionEngineCoordinator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineCoordinator.js";
 import { IdentityEngine } from "/systems/foundryvtt-swse/scripts/engine/prestige/identity-engine.js";
@@ -59,6 +60,13 @@ import { getActiveSlotContext } from "/systems/foundryvtt-swse/scripts/engine/su
 import { enrichBuildIntentWithPrestigeDelays } from "/systems/foundryvtt-swse/scripts/engine/suggestion/prestige-delay-calculator.js";
 import { ReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionV2Contract.js";
 import { mapReasonCodeToReasonType } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ReasonCodeToReasonTypeMapping.js";
+import { getEquipmentLoadoutProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment-loadout-profile.js";
+import { buildRouteConfidenceProfile, scoreCandidateRouteFit, getOwnedRepeatableCount, summarizeRouteConfidenceProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/build-route-confidence-profile.js";
+import {
+    getPackagePriorityBonus,
+    getSlotEfficiencyDelta,
+    isAlreadyEntitled
+} from "/systems/foundryvtt-swse/scripts/engine/suggestion/progression-choice-context.js";
 
 
 function normalizeTextTokens(value) {
@@ -192,6 +200,126 @@ const BIAS_TAG_ALIASES = {
 };
 
 export class SuggestionEngine {
+    static _featMetadataEntriesPromise = null;
+
+    static async _resolveFeatMetadataEntries(options = {}) {
+        const provided = options?.featMetadata || null;
+        if (provided?.feats && typeof provided.feats === 'object') {
+            return provided.feats;
+        }
+        if (provided && typeof provided === 'object' && Object.keys(provided).length > 0) {
+            return provided;
+        }
+
+        if (!this._featMetadataEntriesPromise) {
+            this._featMetadataEntriesPromise = (async () => {
+                try {
+                    if (typeof fetch !== 'function') return {};
+                    const response = await fetch('systems/foundryvtt-swse/data/feat-metadata.json');
+                    if (!response?.ok) return {};
+                    const data = await response.json();
+                    return data?.feats && typeof data.feats === 'object' ? data.feats : {};
+                } catch (err) {
+                    logSuggestionTrace(options, '[SuggestionEngine] feat-metadata.json unavailable for suggestion scoring', err);
+                    return {};
+                }
+            })();
+        }
+
+        return this._featMetadataEntriesPromise;
+    }
+
+    static _metadataLookupKeysForItem(item) {
+        const keys = [
+            item?.name,
+            item?.system?.name,
+            item?.system?.slug,
+            item?.slug,
+            item?._id,
+            item?.id,
+        ].map(value => String(value || '').trim()).filter(Boolean);
+
+        const expanded = [];
+        for (const key of keys) {
+            expanded.push(key);
+            expanded.push(key.toLowerCase());
+            expanded.push(normalizeBiasTag(key));
+            expanded.push(normalizeBiasTag(key).replace(/_/g, ' '));
+        }
+        return Array.from(new Set(expanded.filter(Boolean)));
+    }
+
+    static _buildNormalizedMetadataIndex(metadata = {}) {
+        const index = new Map();
+        for (const [key, value] of Object.entries(metadata || {})) {
+            if (!value || typeof value !== 'object') continue;
+            const aliases = [
+                key,
+                key.toLowerCase(),
+                normalizeBiasTag(key),
+                normalizeBiasTag(key).replace(/_/g, ' '),
+            ];
+            for (const alias of aliases) {
+                if (alias && !index.has(alias)) index.set(alias, value);
+            }
+        }
+        return index;
+    }
+
+    static _metadataEntryForItem(item, metadata = {}, metadataIndex = null) {
+        if (!item || !metadata) return null;
+        const directKeys = this._metadataLookupKeysForItem(item);
+        for (const key of directKeys) {
+            if (metadata[key]) return metadata[key];
+        }
+        const index = metadataIndex || this._buildNormalizedMetadataIndex(metadata);
+        for (const key of directKeys) {
+            if (index.has(key)) return index.get(key);
+        }
+        return null;
+    }
+
+    static _mergeUniqueTags(...groups) {
+        const seen = new Set();
+        const out = [];
+        for (const group of groups) {
+            const values = Array.isArray(group) ? group : (group ? [group] : []);
+            for (const value of values) {
+                const text = String(value || '').trim();
+                const key = normalizeBiasTag(text);
+                if (!key || seen.has(key)) continue;
+                seen.add(key);
+                out.push(text);
+            }
+        }
+        return out;
+    }
+
+    static _enrichFeatCandidateWithMetadata(feat, featMetadata = {}, metadataIndex = null) {
+        const meta = this._metadataEntryForItem(feat, featMetadata, metadataIndex);
+        if (!meta) return feat;
+
+        const mergedSystemTags = this._mergeUniqueTags(feat?.system?.tags, meta.tags);
+        const mergedCandidateTags = this._mergeUniqueTags(feat?.tags, meta.tags);
+        const mergedAllTags = this._mergeUniqueTags(feat?.context?.allTags, feat?.tags, feat?.system?.tags, meta.tags);
+
+        return {
+            ...feat,
+            tags: mergedCandidateTags,
+            system: {
+                ...(feat?.system || {}),
+                tags: mergedSystemTags,
+                category: feat?.system?.category || meta.category || feat?.system?.featType || null,
+                shortSummary: feat?.system?.shortSummary || meta.summary || '',
+            },
+            context: {
+                ...(feat?.context || {}),
+                allTags: mergedAllTags,
+                featMetadata: meta,
+                featMetadataSource: 'data/feat-metadata.json',
+            },
+        };
+    }
 
     /**
      * Generate suggestions for a list of feats
@@ -207,13 +335,14 @@ export class SuggestionEngine {
      */
     static async suggestFeats(feats, actor, pendingData = {}, options = {}) {
         const actorState = this._buildActorState(actor, pendingData);
-        const featMetadata = options.featMetadata || {};
+        const featMetadata = await this._resolveFeatMetadataEntries(options);
+        const featMetadataIndex = this._buildNormalizedMetadataIndex(featMetadata);
 
         // PHASE 2: Get or compute identity bias directly from IdentityEngine
         let identityBias = options.identityBias;
         if (!identityBias) {
             try {
-                identityBias = IdentityEngine.computeTotalBias(actor);
+                identityBias = IdentityEngine.computeTotalBias(actor, { pendingData, equipmentProfile: getEquipmentLoadoutProfile(actor) });
                 logSuggestionTrace(options, '[SuggestionEngine.suggestFeats] Computed identity bias directly from IdentityEngine');
             } catch (err) {
                 SWSELogger.warn('[SuggestionEngine.suggestFeats] Failed to compute identity bias:', err);
@@ -262,16 +391,35 @@ export class SuggestionEngine {
             // Graceful fallback - continue without archetype
         }
 
+        const equipmentProfile = options.equipmentProfile || getEquipmentLoadoutProfile(actor);
+        const routeConfidenceProfile = options.routeConfidenceProfile || buildRouteConfidenceProfile(actor, buildIntent || {}, {
+            ...options,
+            pendingData,
+            equipmentProfile
+        });
+        if (buildIntent) {
+            buildIntent.routeConfidenceProfile = routeConfidenceProfile;
+            buildIntent.routeConfidenceSummary = summarizeRouteConfidenceProfile(routeConfidenceProfile);
+            buildIntent.forceAccess = routeConfidenceProfile.forceAccess;
+            buildIntent.forceLaneConfidence = routeConfidenceProfile.forceLaneConfidence;
+            buildIntent.forceCommitmentLevel = routeConfidenceProfile.forceCommitmentLevel;
+            // Force focus now means more than a single access feat. Access remains visible,
+            // but committed Force routing requires stacked support/commitment.
+            buildIntent.forceFocus = buildIntent.forceFocus || routeConfidenceProfile.forceCommitmentLevel === 'primary' || routeConfidenceProfile.forceCommitmentLevel === 'secondary';
+        }
+
         return Promise.all(feats.map(feat => {
+            const enrichedFeat = this._enrichFeatCandidateWithMetadata(feat, featMetadata, featMetadataIndex);
+
             // Only suggest for qualified feats
-            if (feat.isQualified === false) {
+            if (enrichedFeat.isQualified === false) {
                 // NEW: If includeFutureAvailability option enabled, score future availability
                 if (options.includeFutureAvailability) {
                     const futureScore = this._scoreFutureAvailability(
-                        feat, actor, actorState, buildIntent, pendingData
+                        enrichedFeat, actor, actorState, buildIntent, pendingData
                     );
                     return {
-                        ...feat,
+                        ...enrichedFeat,
                         suggestion: futureScore,
                         isSuggested: futureScore && futureScore.tier > 0,
                         currentlyUnavailable: true,
@@ -280,18 +428,26 @@ export class SuggestionEngine {
                 }
                 // Fall back to existing behavior (null suggestion)
                 return {
-                    ...feat,
+                    ...enrichedFeat,
                     suggestion: null,
                     isSuggested: false
                 };
             }
 
             const suggestion = this._evaluateFeat(
-                feat, actorState, featMetadata, buildIntent, actor, pendingData,
-                primaryArchetype, archetypeRecommendedFeatIds
+                enrichedFeat, actorState, featMetadata, buildIntent, actor, pendingData,
+                primaryArchetype, archetypeRecommendedFeatIds,
+                {
+                    choiceContext: options.choiceContext || null,
+                    featSuggestionContext: options.featSuggestionContext || null,
+                    identityBias,
+                    equipmentProfile,
+                    routeConfidenceProfile,
+                    slotContext: options.slotContext || options.choiceContext?.activeSlotContext || null,
+                }
             );
             return {
-                ...feat,
+                ...enrichedFeat,
                 suggestion,
                 isSuggested: suggestion.tier > 0
             };
@@ -317,7 +473,7 @@ export class SuggestionEngine {
         let identityBias = options.identityBias;
         if (!identityBias) {
             try {
-                identityBias = IdentityEngine.computeTotalBias(actor);
+                identityBias = IdentityEngine.computeTotalBias(actor, { pendingData, equipmentProfile: getEquipmentLoadoutProfile(actor) });
                 logSuggestionTrace(options, '[SuggestionEngine.suggestTalents] Computed identity bias directly from IdentityEngine');
             } catch (err) {
                 SWSELogger.warn('[SuggestionEngine.suggestTalents] Failed to compute identity bias:', err);
@@ -419,6 +575,21 @@ export class SuggestionEngine {
         }
         // =========================================================
 
+        const equipmentProfile = options.equipmentProfile || getEquipmentLoadoutProfile(actor);
+        const routeConfidenceProfile = options.routeConfidenceProfile || buildRouteConfidenceProfile(actor, buildIntent || {}, {
+            ...options,
+            pendingData,
+            equipmentProfile
+        });
+        if (buildIntent) {
+            buildIntent.routeConfidenceProfile = routeConfidenceProfile;
+            buildIntent.routeConfidenceSummary = summarizeRouteConfidenceProfile(routeConfidenceProfile);
+            buildIntent.forceAccess = routeConfidenceProfile.forceAccess;
+            buildIntent.forceLaneConfidence = routeConfidenceProfile.forceLaneConfidence;
+            buildIntent.forceCommitmentLevel = routeConfidenceProfile.forceCommitmentLevel;
+            buildIntent.forceFocus = buildIntent.forceFocus || routeConfidenceProfile.forceCommitmentLevel === 'primary' || routeConfidenceProfile.forceCommitmentLevel === 'secondary';
+        }
+
         return Promise.all(accessibleTalents.map(talent => {
             // Only suggest for qualified talents
             if (talent.isQualified === false) {
@@ -445,7 +616,14 @@ export class SuggestionEngine {
 
             const suggestion = this._evaluateTalent(
                 talent, actorState, buildIntent, actor, pendingData,
-                primaryArchetype, archetypeRecommendedTalentIds
+                primaryArchetype, archetypeRecommendedTalentIds,
+                {
+                    choiceContext: options.choiceContext || null,
+                    identityBias,
+                    equipmentProfile,
+                    routeConfidenceProfile,
+                    slotContext: options.slotContext || options.choiceContext?.activeSlotContext || null,
+                }
             );
             return {
                 ...talent,
@@ -535,7 +713,7 @@ export class SuggestionEngine {
         let identityBias = options.identityBias;
         if (!identityBias) {
             try {
-                identityBias = IdentityEngine.computeTotalBias(actor);
+                identityBias = IdentityEngine.computeTotalBias(actor, { pendingData, equipmentProfile: getEquipmentLoadoutProfile(actor) });
             } catch (err) {
                 SWSELogger.warn('[SuggestionEngine.suggestForceTechniques] Failed to compute identity bias:', err);
                 identityBias = null;
@@ -652,13 +830,20 @@ export class SuggestionEngine {
             trainedSkills.add((s.key || s).toLowerCase());
         });
 
-        // Get ability scores and find highest
-        const abilities = actor.system?.attributes || {};
+        // Get ability scores and find highest. V2 actors use system.attributes;
+        // some legacy/generated actors still expose system.abilities.
+        const abilityKeys = new Set([
+            ...Object.keys(actor.system?.attributes || {}),
+            ...Object.keys(actor.system?.abilities || {}),
+            'str', 'dex', 'con', 'int', 'wis', 'cha'
+        ]);
         let highestAbility = null;
         let highestScore = 0;
 
-        for (const [abilityKey, abilityData] of Object.entries(abilities)) {
-            const score = abilityData?.total ?? 10;
+        for (const abilityKey of abilityKeys) {
+            const attr = actor.system?.attributes?.[abilityKey];
+            const ab = actor.system?.abilities?.[abilityKey];
+            const score = Number(attr?.total ?? attr?.value ?? attr?.score ?? attr ?? ab?.total ?? ab?.value ?? ab?.score ?? ab ?? 10);
             if (score > highestScore) {
                 highestScore = score;
                 highestAbility = abilityKey.toLowerCase();
@@ -1144,6 +1329,7 @@ export class SuggestionEngine {
             feat,
             actor ? ArchetypeRegistry.get(actor.system?.buildIntent?.archetypeId) : null,
             {
+                ...buildSuggestionOptions,
                 tier3Matches: matches,
                 tier3TotalBonus: cappedBonus,
                 tier3PrimaryMatch: primaryMatch
@@ -1253,6 +1439,7 @@ export class SuggestionEngine {
             talent,
             actor ? ArchetypeRegistry.get(actor.system?.buildIntent?.archetypeId) : null,
             {
+                ...buildSuggestionOptions,
                 tier3Matches: matches,
                 tier3TotalBonus: cappedBonus,
                 tier3PrimaryMatch: primaryMatch
@@ -1552,6 +1739,50 @@ export class SuggestionEngine {
         return this.#initialized;
     }
 
+    static _getChoiceContextSuggestionAdjustments(item, choiceContext, kind = 'feat') {
+        if (!item || !choiceContext) {
+            return {};
+        }
+
+        const alreadyEntitled = isAlreadyEntitled(item, choiceContext, kind);
+        const packageBonus = Number(getPackagePriorityBonus(item, choiceContext, kind) || 0);
+        const slotEfficiencyDelta = Number(getSlotEfficiencyDelta(item, choiceContext, kind) || 0);
+        const choiceContextScoreDelta = packageBonus + slotEfficiencyDelta;
+        const positiveBonus = Math.max(0, choiceContextScoreDelta);
+        const reasons = [];
+
+        if (packageBonus > 0) {
+            reasons.push('Class package priority');
+        }
+        if (slotEfficiencyDelta > 0) {
+            reasons.push('Efficient use of this progression slot');
+        } else if (slotEfficiencyDelta < 0) {
+            reasons.push('Could be saved for a nearby class slot');
+        }
+        if (alreadyEntitled) {
+            reasons.push('Already covered by owned or pending choices');
+        }
+
+        return {
+            metadataBonus: positiveBonus,
+            metadataBoost: positiveBonus > 0 || reasons.length
+                ? {
+                    boost: positiveBonus,
+                    reasons,
+                    source: 'progression_choice_context'
+                }
+                : null,
+            choiceContextScoreDelta,
+            choiceContextSummary: {
+                kind,
+                slotType: choiceContext.activeSlotContext?.slotType || null,
+                packageBonus,
+                slotEfficiencyDelta,
+                alreadyEntitled
+            }
+        };
+    }
+
     // ──────────────────────────────────────────────────────────────
     // PRIVATE: EVALUATE FEAT/TALENT
     // ──────────────────────────────────────────────────────────────
@@ -1566,7 +1797,7 @@ export class SuggestionEngine {
      * @param {Object} pendingData - Pending selections
      * @returns {Object} Suggestion metadata with archetype alignment applied
      */
-    static _evaluateFeat(feat, actorState, metadata = {}, buildIntent = null, actor = null, pendingData = {}, primaryArchetype = null, archetypeRecommendedFeatIds = []) {
+    static _evaluateFeat(feat, actorState, metadata = {}, buildIntent = null, actor = null, pendingData = {}, primaryArchetype = null, archetypeRecommendedFeatIds = [], contextOptions = {}) {
         // Use provided archetype or try to retrieve from registry (backwards compatibility)
         let archetype = primaryArchetype;
         if (!archetype) {
@@ -1576,11 +1807,23 @@ export class SuggestionEngine {
 
         // PHASE 1: Build options object with context for SuggestionV2 retrofit
         // This is threaded through all _buildSuggestionWithArchetype calls
+        const choiceAdjustments = this._getChoiceContextSuggestionAdjustments(
+            feat,
+            contextOptions.choiceContext || null,
+            'feat'
+        );
         const buildSuggestionOptions = {
             actor,
             candidate: feat,
             buildIntent,
-            identityBias: null  // Could compute if needed, but SuggestionScorer will compute if not provided
+            pendingData,
+            choiceContext: contextOptions.choiceContext || null,
+            featSuggestionContext: contextOptions.featSuggestionContext || null,
+            identityBias: contextOptions.identityBias || null,
+            equipmentProfile: contextOptions.equipmentProfile || getEquipmentLoadoutProfile(actor),
+            routeConfidenceProfile: contextOptions.routeConfidenceProfile || buildRouteConfidenceProfile(actor, buildIntent || {}, { pendingData, equipmentProfile: contextOptions.equipmentProfile || getEquipmentLoadoutProfile(actor) }),
+            slotContext: contextOptions.slotContext || contextOptions.choiceContext?.activeSlotContext || null,
+            ...choiceAdjustments
         };
 
         // Check tiers in order of priority (highest first)
@@ -1736,7 +1979,7 @@ export class SuggestionEngine {
      * @param {Array} archetypeRecommendedTalentIds - Recommended talent IDs (Phase 4)
      * @returns {Object} Suggestion metadata with archetype alignment applied
      */
-    static _evaluateTalent(talent, actorState, buildIntent = null, actor = null, pendingData = {}, primaryArchetype = null, archetypeRecommendedTalentIds = []) {
+    static _evaluateTalent(talent, actorState, buildIntent = null, actor = null, pendingData = {}, primaryArchetype = null, archetypeRecommendedTalentIds = [], contextOptions = {}) {
         // Use provided archetype or try to retrieve from registry (backwards compatibility)
         let archetype = primaryArchetype;
         if (!archetype) {
@@ -1745,11 +1988,22 @@ export class SuggestionEngine {
         }
 
         // PHASE 1: Build options object with context for SuggestionV2 retrofit
+        const choiceAdjustments = this._getChoiceContextSuggestionAdjustments(
+            talent,
+            contextOptions.choiceContext || null,
+            'talent'
+        );
         const buildSuggestionOptions = {
             actor,
             candidate: talent,
             buildIntent,
-            identityBias: null
+            pendingData,
+            choiceContext: contextOptions.choiceContext || null,
+            identityBias: contextOptions.identityBias || null,
+            equipmentProfile: contextOptions.equipmentProfile || getEquipmentLoadoutProfile(actor),
+            routeConfidenceProfile: contextOptions.routeConfidenceProfile || buildRouteConfidenceProfile(actor, buildIntent || {}, { pendingData, equipmentProfile: contextOptions.equipmentProfile || getEquipmentLoadoutProfile(actor) }),
+            slotContext: contextOptions.slotContext || contextOptions.choiceContext?.activeSlotContext || null,
+            ...choiceAdjustments
         };
 
         // Check tiers in order of priority (highest first)
@@ -2004,6 +2258,26 @@ export class SuggestionEngine {
             }
         }
 
+        const routeConfidenceScore = Number(immediateBreakdown.routeConfidence || identityBreakdown.routeConfidence || 0);
+        if (routeConfidenceScore > 0) {
+            const routeWeight = Math.max(0.06, Math.min(0.28, routeConfidenceScore * 0.45));
+            const isAccessOnly = immediateBreakdown.singleSignalDampened === true;
+            pushSignal(isAccessOnly ? ReasonType.STRATEGIC_DIVERSIFICATION : ReasonType.IDENTITY_ALIGNMENT, routeWeight, isAccessOnly ? 'shortTerm' : 'identity', {
+                source: isAccessOnly ? 'latent_route_access' : 'route_confidence',
+                routeLabel: immediateBreakdown.routeConfidenceLabel || identityBreakdown.routeConfidenceLabel || '',
+                tagMatches: Array.isArray(immediateBreakdown.routeConfidenceMatches)
+                    ? immediateBreakdown.routeConfidenceMatches.join(', ')
+                    : (Array.isArray(identityBreakdown.routeConfidenceMatches) ? identityBreakdown.routeConfidenceMatches.join(', ') : '')
+            });
+        }
+
+        if (immediateBreakdown.repeatableContinuation) {
+            pushSignal(candidate?.type === 'talent' ? ReasonType.TALENT_TREE_CONTINUATION : ReasonType.FEAT_CHAIN_SETUP, Math.max(0.08, Math.min(0.24, immediate * 0.35)), 'shortTerm', {
+                source: 'repeatable_continuation',
+                ownedCount: Number(immediateBreakdown.repeatableContinuation || 1)
+            });
+        }
+
         if (shortTerm > SIGNAL_THRESHOLD) {
             if (Number(shortTermBreakdown.prestigeProximity || 0) > 0) {
                 pushSignal(ReasonType.PRESTIGE_PROXIMITY, shortTerm, 'shortTerm', { source: 'prestige_proximity' });
@@ -2187,7 +2461,14 @@ export class SuggestionEngine {
                     options.candidate,
                     options.actor,
                     options.buildIntent,
-                    { identityBias: options.identityBias }
+                    {
+                        identityBias: options.identityBias,
+                        pendingData: options.pendingData || {},
+                        equipmentProfile: options.equipmentProfile || null,
+                        routeConfidenceProfile: options.routeConfidenceProfile || null,
+                        slotContext: options.slotContext || null,
+                        actor: options.actor,
+                    }
                 );
 
                 // Build SuggestionV2-compatible signals array
@@ -2195,6 +2476,25 @@ export class SuggestionEngine {
 
                 // Build SuggestionV2-compatible scoring object
                 scoring = this._buildScoringObject(scorerResult);
+                const choiceContextScoreDelta = Number(options.choiceContextScoreDelta || 0);
+                if (choiceContextScoreDelta !== 0 && Number.isFinite(scoring.final)) {
+                    scoring.baseFinal = scoring.final;
+                    scoring.choiceContextDelta = choiceContextScoreDelta;
+                    scoring.final = Math.max(0, Math.min(1, scoring.final + choiceContextScoreDelta));
+                }
+
+                const routeFit = scoreCandidateRouteFit(options.candidate, options.routeConfidenceProfile, {
+                    ...options,
+                    ownedCount: getOwnedRepeatableCount(options.actor, options.pendingData || {}, options.candidate)
+                });
+                if (routeFit?.score > 0) {
+                    scoring.routeConfidence = routeFit.score;
+                    scoring.routeConfidenceLabel = routeFit.label;
+                    scoring.routeConfidenceMatches = routeFit.matches?.map(m => m.label || m.route).slice(0, 4) || [];
+                    scoring.routeAccessOnly = routeFit.accessOnly === true;
+                    scoring.repeatableContinuation = routeFit.repeatableContinuation === true;
+                    scoring.repeatableOwnedCount = routeFit.repeatableOwnedCount || 0;
+                }
 
                 // Keep the validation payload behind enableSuggestionTrace. This scorer can run
                 // over hundreds of candidates during a single level-up render, so normal debug
@@ -2238,7 +2538,7 @@ export class SuggestionEngine {
             }
         }
 
-        return {
+        const suggestion = {
             tier,
             reasonCode: finalReasonCode,
             sourceId,
@@ -2247,8 +2547,23 @@ export class SuggestionEngine {
             reason,
             // PHASE 1: New fields for SuggestionV2
             signals,    // Array of { type, weight, horizon, metadata }
-            scoring     // Object with { immediate, shortTerm, identity, final, confidence, dominantHorizon }
+            scoring,    // Object with { immediate, shortTerm, identity, final, confidence, dominantHorizon }
+            choiceContextScoreDelta: Number(options.choiceContextScoreDelta || 0),
+            choiceContextSummary: options.choiceContextSummary || null,
+            routeConfidence: scoring?.routeConfidence || 0,
+            routeConfidenceLabel: scoring?.routeConfidenceLabel || null,
+            routeConfidenceMatches: scoring?.routeConfidenceMatches || [],
+            routeAccessOnly: scoring?.routeAccessOnly === true,
+            repeatableContinuation: scoring?.repeatableContinuation === true,
+            repeatableOwnedCount: scoring?.repeatableOwnedCount || 0
         };
+
+        return applySuggestionRouteCoherenceGuard(suggestion, {
+            candidate: options.candidate,
+            actor: options.actor,
+            buildIntent: options.buildIntent,
+            options
+        });
     }
 
     /**
@@ -2324,8 +2639,8 @@ export class SuggestionEngine {
         }
 
         // Calculate metadata boost if item and actor exist (Tier 1: archetype, playstyle, tier)
-        let metadataBoost = null;
-        let metadataBoostAmount = 0;
+        let metadataBoost = options.metadataBoost || null;
+        let metadataBoostAmount = Number(options.metadataBonus || 0);
 
         if (item && options.actor) {
             const characterData = {
@@ -2336,8 +2651,17 @@ export class SuggestionEngine {
 
             const boost = ArchetypeMetadataEngine.calculateMetadataBoost(item, characterData);
             if (boost.boost > 0) {
-                metadataBoost = boost;
-                metadataBoostAmount = boost.boost;
+                metadataBoost = metadataBoost
+                    ? {
+                        ...boost,
+                        boost: Number(boost.boost || 0) + Number(metadataBoost.boost || 0),
+                        reasons: [
+                            ...(Array.isArray(metadataBoost.reasons) ? metadataBoost.reasons : []),
+                            ...(Array.isArray(boost.reasons) ? boost.reasons : [])
+                        ]
+                    }
+                    : boost;
+                metadataBoostAmount += boost.boost;
             }
         }
 

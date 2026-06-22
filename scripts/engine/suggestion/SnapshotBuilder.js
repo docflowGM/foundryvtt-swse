@@ -37,6 +37,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { buildEquipmentLoadoutProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment-loadout-profile.js";
 
 export class SnapshotBuilder {
   /**
@@ -59,13 +60,18 @@ export class SnapshotBuilder {
 
       // ─ Attributes (final values, alphabetically ordered)
       attributes: {
-        cha: actor.system?.abilities?.cha?.value ?? 0,
-        con: actor.system?.abilities?.con?.value ?? 0,
-        dex: actor.system?.abilities?.dex?.value ?? 0,
-        int: actor.system?.abilities?.int?.value ?? 0,
-        str: actor.system?.abilities?.str?.value ?? 0,
-        wis: actor.system?.abilities?.wis?.value ?? 0
+        cha: this._extractAbilityScore(actor, 'cha'),
+        con: this._extractAbilityScore(actor, 'con'),
+        dex: this._extractAbilityScore(actor, 'dex'),
+        int: this._extractAbilityScore(actor, 'int'),
+        str: this._extractAbilityScore(actor, 'str'),
+        wis: this._extractAbilityScore(actor, 'wis')
       },
+
+      // ─ Loadout / inventory identity. Equipped items are weighted higher
+      // inside the profile; the snapshot only needs stable identity-relevant
+      // counts/tags for cache invalidation.
+      equipment: this._extractEquipmentSnapshot(actor),
 
       // ─ Trained / Selected Choices (always sorted)
       trainedSkills: this._extractTrainedSkills(actor).sort(),
@@ -141,6 +147,38 @@ export class SnapshotBuilder {
   // ─────────────────────────────────────────────────────────────
   // PRIVATE: EXTRACTION HELPERS
   // ─────────────────────────────────────────────────────────────
+
+  static _extractAbilityScore(actor, ability) {
+    const attr = actor?.system?.attributes?.[ability];
+    const ab = actor?.system?.abilities?.[ability];
+    for (const value of [attr?.total, attr?.value, attr?.score, attr, ab?.total, ab?.value, ab?.score, ab]) {
+      const n = Number(value);
+      if (Number.isFinite(n) && n > 0) return n;
+    }
+    return 0;
+  }
+
+  static _extractEquipmentSnapshot(actor) {
+    const profile = buildEquipmentLoadoutProfile(actor);
+    const compactGroups = (groups) => Object.fromEntries(
+      Object.entries(groups || {})
+        .map(([key, data]) => [key, {
+          e: Number(data.equippedCount || 0),
+          i: Number(data.inventoryCount || 0),
+        }])
+        .sort(([a], [b]) => a.localeCompare(b))
+    );
+    return {
+      weaponGroups: compactGroups(profile.weaponGroups),
+      armorCategories: compactGroups(profile.armorCategories),
+      equippedTags: profile.equippedTags,
+      inventoryTags: profile.inventoryTags,
+      dualWield: profile.dualWield,
+      dualLightsabers: profile.dualLightsabers,
+      primaryWeaponGroup: profile.primaryWeaponGroup,
+      signatureWeaponGroup: profile.signatureWeaponGroup,
+    };
+  }
 
   /**
    * Extract species ID from actor
@@ -222,7 +260,11 @@ export class SnapshotBuilder {
         selectedFeats: [],
         selectedTalents: [],
         selectedSkills: [],
-        selectedPowers: []
+        selectedPowers: [],
+        selectedForceSecrets: [],
+        selectedForceTechniques: [],
+        selectedAttributes: {},
+        activeSlotContext: {}
       };
     }
 
@@ -231,8 +273,21 @@ export class SnapshotBuilder {
       selectedFeats: this._pendingIds(pendingData.selectedFeats).sort(),
       selectedTalents: this._pendingIds(pendingData.selectedTalents).sort(),
       selectedSkills: this._pendingIds(pendingData.selectedSkills).sort(),
-      selectedPowers: this._pendingIds(pendingData.selectedPowers).sort()
+      selectedPowers: this._pendingIds(pendingData.selectedPowers || pendingData.selectedForcePowers).sort(),
+      selectedForceSecrets: this._pendingIds(pendingData.selectedForceSecrets).sort(),
+      selectedForceTechniques: this._pendingIds(pendingData.selectedForceTechniques).sort(),
+      selectedAttributes: this._stablePlainObject(pendingData.attributeIncreases || pendingData.selectedAttributes || pendingData.attributeChoices || {}),
+      activeSlotContext: this._stablePlainObject(pendingData.activeSlotContext || pendingData.slotContext || {})
     };
+  }
+
+  static _stablePlainObject(value) {
+    if (!value || typeof value !== 'object') return {};
+    try {
+      return JSON.parse(JSON.stringify(value, this._stableKeyOrder));
+    } catch (_err) {
+      return {};
+    }
   }
 
   /**
@@ -267,13 +322,27 @@ export class SnapshotBuilder {
       selectedTalents: [],
       selectedPowers: [],
       proficiencies: [],
+      equipment: {
+        weaponGroups: {},
+        armorCategories: {},
+        equippedTags: [],
+        inventoryTags: [],
+        dualWield: false,
+        dualLightsabers: false,
+        primaryWeaponGroup: null,
+        signatureWeaponGroup: null,
+      },
       focus: focus ?? null,
       pending: {
         selectedClass: null,
         selectedFeats: [],
         selectedTalents: [],
         selectedSkills: [],
-        selectedPowers: []
+        selectedPowers: [],
+        selectedForceSecrets: [],
+        selectedForceTechniques: [],
+        selectedAttributes: {},
+        activeSlotContext: {}
       }
     };
   }

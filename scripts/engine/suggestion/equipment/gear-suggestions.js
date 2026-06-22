@@ -7,6 +7,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { assignTier, clampScore } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/shared-scoring-utils.js";
+import { scoreStoreItemContextFit } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/store-suggestion-context.js";
 
 export class GearSuggestions {
   /**
@@ -140,13 +141,15 @@ export class GearSuggestions {
 
       // Price bias
       const priceBias = this._scorePriceBias(gear);
+      const storeContextFit = options.storeContext ? scoreStoreItemContextFit(gear, options.storeContext, options) : null;
 
       // Final score (additive, bounded 0-100)
       let finalScore = baseRelevance +
         roleAlignment +
         axisA +
         axisB +
-        priceBias;
+        priceBias +
+        (storeContextFit?.cappedAdjustment || 0);
 
       // NaN protection
       if (!Number.isFinite(finalScore)) finalScore = 0;
@@ -167,7 +170,8 @@ export class GearSuggestions {
           roleAlignment,
           utility: axisA,
           actionCost: axisB,
-          priceBias
+          priceBias,
+          storeContextFit: storeContextFit?.cappedAdjustment || 0
         },
 
         combined: {
@@ -175,7 +179,12 @@ export class GearSuggestions {
           tier
         },
 
-        explanations: this._generateExplanations(gear, charContext, axisA, axisB, roleAlignment),
+        explanations: [
+          ...this._generateExplanations(gear, charContext, axisA, axisB, roleAlignment),
+          ...(storeContextFit?.explanations || [])
+        ].slice(0, 5),
+
+        storeContextFit,
 
         meta: {
           computedAt: Date.now(),

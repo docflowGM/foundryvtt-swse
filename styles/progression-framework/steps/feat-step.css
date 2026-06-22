@@ -2008,3 +2008,30 @@
     white-space: normal;
   }
 }
+
+.suggestion-evidence-note {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.suggestion-evidence-note p {
+  margin: 0;
+}
+
+.suggestion-evidence-group h4,
+.suggestion-evidence-group h5 {
+  margin: 0 0 0.35rem;
+  color: currentColor;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.86;
+}
+
+.suggestion-evidence-group ul {
+  margin: 0;
+}
+
+.suggestion-evidence-group--caution {
+  color: oklch(0.78 0.18 75 / 0.86);
+}

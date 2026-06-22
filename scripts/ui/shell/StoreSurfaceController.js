@@ -53,6 +53,7 @@ export class StoreSurfaceController {
     this._host = host;
     this._actor = actor;
     this._abort = null;
+    this._storeSuggestionHook = null;
   }
 
   /** Wire all store surface events. Called after each render. */
@@ -61,6 +62,8 @@ export class StoreSurfaceController {
     this._abort?.abort();
     this._abort = new AbortController();
     const { signal } = this._abort;
+
+    this._ensureSuggestionUpdateHook();
 
     if (this._attachSplash(root, signal)) return;
 
@@ -522,6 +525,24 @@ export class StoreSurfaceController {
   destroy() {
     this._abort?.abort();
     this._abort = null;
+    if (this._storeSuggestionHook && typeof globalThis.Hooks?.off === 'function') {
+      globalThis.Hooks.off('swse:store-suggestions-updated', this._storeSuggestionHook);
+    }
+    this._storeSuggestionHook = null;
+  }
+
+  _ensureSuggestionUpdateHook() {
+    if (this._storeSuggestionHook || typeof globalThis.Hooks?.on !== 'function') return;
+
+    this._storeSuggestionHook = payload => {
+      const actorId = payload?.actorId ?? null;
+      if (!actorId || actorId !== this._actor?.id) return;
+      const surface = this._host?.shellSurface ?? this._host?._shellSurface ?? null;
+      if (surface !== 'store') return;
+      void this._requestRender('store-suggestions-updated');
+    };
+
+    globalThis.Hooks.on('swse:store-suggestions-updated', this._storeSuggestionHook);
   }
 
   _attachScrollBridge(root, signal) {

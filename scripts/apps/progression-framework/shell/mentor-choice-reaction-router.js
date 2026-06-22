@@ -672,6 +672,15 @@ export class MentorChoiceReactionRouter {
       alreadyHasClass: domainContext?.alreadyHasClass ?? actorClasses.some(entry => normalizeKey(entry.name) === normalizeKey(name)),
       prestigeClassTarget: domainContext?.prestigeClassTarget || null,
       routeFamily: domainContext?.routeFamily || null,
+      startingClass: domainContext?.startingClass || domainContext?.routeProfile?.startingClass || null,
+      routeMatchesStartingClass: domainContext?.routeMatchesStartingClass || domainContext?.routeProfile?.routeMatchesStartingClass || false,
+      readiness: domainContext?.readiness || domainContext?.routeProfile?.readiness || null,
+      routeFit: domainContext?.routeFit || domainContext?.routeProfile?.routeFit || null,
+      routeFitScore: domainContext?.routeFitScore ?? domainContext?.routeProfile?.routeFitScore ?? null,
+      urgency: domainContext?.urgency || domainContext?.routeProfile?.urgency || null,
+      diffuseBuild: domainContext?.diffuseBuild || domainContext?.routeProfile?.diffuseBuild || false,
+      supportingSignals: domainContext?.supportingSignals || domainContext?.routeProfile?.supportingSignals || [],
+      cautionSignals: domainContext?.cautionSignals || domainContext?.routeProfile?.cautionSignals || [],
       classDomainContext: domainContext,
     };
   }

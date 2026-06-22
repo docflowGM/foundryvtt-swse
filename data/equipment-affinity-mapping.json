@@ -9,7 +9,7 @@
       "roleBias": { "striker": 0.15 }
     },
     "advanced_melee": {
-      "mechanicalBias": { "meleeDamage": 0.25 },
+      "mechanicalBias": { "meleeDamage": 0.25, "weaponMastery": 0.12 },
       "roleBias": { "striker": 0.2 }
     },
     "advanced_ranged": {
@@ -21,8 +21,38 @@
       "roleBias": { "controller": 0.2 }
     },
     "lightsaber": {
-      "mechanicalBias": { "forceConnection": 0.2 },
-      "roleBias": { "striker": 0.15 }
+      "mechanicalBias": { "forceConnection": 0.2, "meleeDamage": 0.22, "weaponMastery": 0.16, "formMastery": 0.12 },
+      "roleBias": { "striker": 0.18, "bruiser": 0.1 }
+    }
+  },
+  "gear_tag_affinity": {
+    "toolkit": {
+      "mechanicalBias": { "engineeringMastery": 0.12, "skillUtility": 0.08 },
+      "roleBias": { "utility": 0.08 }
+    },
+    "medical": {
+      "mechanicalBias": { "surgicalMastery": 0.1, "healingMastery": 0.1 },
+      "roleBias": { "support": 0.1 }
+    },
+    "security": {
+      "mechanicalBias": { "hackingSkills": 0.12, "sabotageExpertise": 0.08 },
+      "roleBias": { "utility": 0.08 }
+    },
+    "survival": {
+      "mechanicalBias": { "explorationMastery": 0.1, "trackingMastery": 0.08 },
+      "roleBias": { "scout": 0.08 }
+    },
+    "jedi_gear": {
+      "mechanicalBias": { "forceConnection": 0.1, "formMastery": 0.08 },
+      "roleBias": { "striker": 0.05 }
+    },
+    "droid_tech": {
+      "mechanicalBias": { "droidControl": 0.1, "engineeringMastery": 0.08 },
+      "roleBias": { "utility": 0.08 }
+    },
+    "explosives": {
+      "mechanicalBias": { "explosiveMastery": 0.1, "areaDamage": 0.08 },
+      "roleBias": { "controller": 0.08 }
     }
   },
   "armor_category_affinity": {
@@ -40,6 +70,8 @@
   },
   "rules": {
     "minimumCategoryCount": 2,
-    "maxTotalAffinityContribution": 0.5
+    "maxTotalAffinityContribution": 0.65,
+    "equippedQualifiesAt": 1,
+    "inventoryWeight": 0.35
   }
 }

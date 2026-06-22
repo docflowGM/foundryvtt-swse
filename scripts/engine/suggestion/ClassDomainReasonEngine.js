@@ -227,7 +227,8 @@ function supportsPrestigeTarget(name, prestigeClassTarget, suggestion) {
 
 function buildContext(suggestion, actor, options = {}) {
   const block = classBlock(suggestion);
-  const name = block.className || candidateName(suggestion);
+  const routeProfile = block.routeProfile || suggestionBlock(suggestion)?.routeProfile || {};
+  const name = block.className || routeProfile.className || candidateName(suggestion);
   const actorClasses = asArray(block.currentClasses).length ? asArray(block.currentClasses) : actorClassEntries(actor);
   const normalizedEntries = actorClasses.map(entry => typeof entry === 'string' ? { name: entry, level: 1 } : entry).filter(entry => entry?.name);
   const baseClass = block.baseClass || block.startingClass || options?.classRouteContext?.baseClass || primaryBaseClassFromEntries(normalizedEntries);
@@ -236,14 +237,15 @@ function buildContext(suggestion, actor, options = {}) {
   const missingPrereqs = prereqLabels(block.missingPrereqs || suggestionBlock(suggestion).missingPrereqs || suggestion?.missingPrereqs || []);
   const metPrereqs = prereqLabels(block.metPrereqs || suggestionBlock(suggestion).metPrereqs || suggestion?.metPrereqs || []);
   const prestigeClassTarget = block.prestigeClassTarget || options?.pendingData?.prestigeClassTarget || actor?.system?.swse?.mentorBuildIntentBiases?.prestigeClassTarget || null;
-  const routeFamily = block.routeFamily || routeFamilyForName(name, suggestion);
+  const routeFamily = block.routeFamily || routeProfile.routeFamily || routeFamilyForName(name, suggestion);
   const baseRouteFamily = block.baseRouteFamily || routeFamilyForName(baseClass || startingClass || '', suggestion);
-  const targetRouteFamily = prestigeClassTarget ? routeFamilyForName(prestigeClassTarget, suggestion) : null;
+  const targetRouteFamily = block.targetRouteFamily || routeProfile.targetRouteFamily || (prestigeClassTarget ? routeFamilyForName(prestigeClassTarget, suggestion) : null);
   const tier = suggestionTier(suggestion);
   const suggestionReason = reasonText(suggestion);
   const alreadyHasClass = normalizedEntries.some(entry => normalizeKey(entry.name) === normalizeKey(name));
-  const routeMatchesBase = block.routeMatchesBase ?? classRouteMatches(baseClass, name);
-  const targetMatches = prestigeClassTarget && normalizeKey(prestigeClassTarget) === normalizeKey(name);
+  const routeMatchesBase = block.routeMatchesBase ?? routeProfile.routeMatchesBase ?? classRouteMatches(baseClass, name);
+  const routeMatchesStartingClass = block.routeMatchesStartingClass ?? routeProfile.routeMatchesStartingClass ?? false;
+  const targetMatches = block.targetMatches ?? routeProfile.targetMatches ?? (prestigeClassTarget && normalizeKey(prestigeClassTarget) === normalizeKey(name));
   const hasMissingPrereqs = missingPrereqs.length > 0 || suggestionBlock(suggestion).hasMissingPrereqs === true;
   const metPrereqGate = block.metPrereqs === true || (!hasMissingPrereqs && isPrestige) || tier >= UNIFIED_TIERS.PRESTIGE_QUALIFIED_NOW;
   const classSkills = classSkillsFor(suggestion);
@@ -268,10 +270,22 @@ function buildContext(suggestion, actor, options = {}) {
     baseRouteFamilyLabel: FAMILY_LABELS[baseRouteFamily] || FAMILY_LABELS.general,
     targetRouteFamilyLabel: FAMILY_LABELS[targetRouteFamily] || null,
     routeMatchesBase,
+    routeMatchesStartingClass,
     targetMatches,
     supportsTarget,
     alreadyHasClass,
     classSkills,
+    readiness: block.readiness || routeProfile.readiness || null,
+    routeFit: block.routeFit || routeProfile.routeFit || null,
+    routeFitScore: block.routeFitScore ?? routeProfile.routeFitScore ?? null,
+    urgency: block.urgency || routeProfile.urgency || null,
+    investmentShape: block.investmentShape || routeProfile.investmentShape || null,
+    diffuseBuild: block.diffuseBuild || routeProfile.diffuseBuild || false,
+    startingClassAnchor: block.startingClassAnchor || routeProfile.startingClassAnchor || null,
+    dominantIdentity: block.dominantIdentity || routeProfile.dominantIdentity || [],
+    investmentProfiles: block.investmentProfiles || routeProfile.investmentProfiles || [],
+    supportingSignals: block.supportingSignals || routeProfile.supportingSignals || [],
+    cautionSignals: block.cautionSignals || routeProfile.cautionSignals || [],
   };
 }
 
@@ -302,7 +316,11 @@ function addPrerequisiteReasons(packet, ctx) {
   if (!isPrestige) return;
 
   if (metPrereqGate) {
-    addReason(packet, 'primary', 'PRESTIGE_NOW', `${name} is legally ready now; the remaining decision is whether that prestige identity is the route you want.`, 0.96, 'class', ['prestige_now']);
+    const prestigeBucket = ctx.urgency === 'enterNow' ? 'primary' : 'secondary';
+    const prestigeText = ctx.urgency === 'enterNow'
+      ? `${name} is legally ready now and its prestige identity matches the route you have been building.`
+      : `${name} is legally ready now, but legality is separate from whether this prestige identity fits the current route.`;
+    addReason(packet, prestigeBucket, 'PRESTIGE_NOW', prestigeText, ctx.urgency === 'enterNow' ? 0.96 : 0.74, 'class', ['prestige_now']);
   }
 
   if (metPrereqs.length) {
@@ -355,6 +373,43 @@ function addRouteReasons(packet, ctx) {
   }
 }
 
+
+function addRouteProfileReasons(packet, ctx) {
+  const name = ctx.className;
+
+  if (ctx.startingClassAnchor?.className) {
+    addReason(
+      packet,
+      ctx.startingClassAnchor.hasClearPivot ? 'secondary' : 'primary',
+      'STARTING_CLASS_ANCHOR',
+      ctx.startingClassAnchor.signal || `Level 1 ${ctx.startingClassAnchor.className} sets the original chassis for skills, HP, and early feats.`,
+      ctx.startingClassAnchor.hasClearPivot ? 0.72 : 0.88,
+      'class',
+      ['starting_class_anchor']
+    );
+  }
+
+  if (ctx.urgency === 'enterNow') {
+    addReason(packet, 'primary', 'PRESTIGE_ENTER_NOW', `${name} is not just legal; it is an early prestige entry that fits the demonstrated route.`, 0.96, 'class', ['prestige_now', 'route_fit']);
+  } else if (ctx.urgency === 'forecast') {
+    addReason(packet, 'forecast', 'PRESTIGE_ROUTE_FORECAST', `${name} should stay on deck; it fits the route, but a remaining gate still matters.`, 0.86, 'class', ['prestige_forecast']);
+  } else if (ctx.urgency === 'mutedPrestige' || ctx.urgency === 'mutedForecast') {
+    addReason(packet, 'caution', 'PRESTIGE_ROUTE_MUTED', `${name} may be mechanically reachable, but the current build intent does not strongly support that prestige lane.`, 0.86, 'class', ['prestige_muted']);
+  }
+
+  if (ctx.diffuseBuild) {
+    addReason(packet, 'caution', 'CLASS_ROUTE_DIFFUSE', `Your class history is broad; ${name} should be weighed against the route you want to consolidate next.`, 0.82, 'class', ['diffuse_build']);
+  }
+
+  for (const signal of ctx.supportingSignals.slice(0, 3)) {
+    addReason(packet, 'secondary', 'CLASS_ROUTE_SIGNAL', signal, 0.74, 'class', ['route_signal']);
+  }
+
+  for (const caution of ctx.cautionSignals.slice(0, 3)) {
+    addReason(packet, 'caution', 'CLASS_ROUTE_CAUTION', caution, 0.78, 'class', ['route_caution']);
+  }
+}
+
 function addSkillReason(packet, ctx) {
   if (!ctx.classSkills.length) return;
   addReason(packet, 'secondary', 'CLASS_SKILL_VALUE', `${ctx.className} gives access to useful class-skill lanes such as ${displayList(ctx.classSkills, 3)}.`, 0.78, 'skills', ['class_skill_value']);
@@ -368,6 +423,7 @@ export class ClassDomainReasonEngine {
 
     addPrerequisiteReasons(packet, ctx);
     addRouteReasons(packet, ctx);
+    addRouteProfileReasons(packet, ctx);
     addAlignmentReasons(packet, ctx);
     addSkillReason(packet, ctx);
 

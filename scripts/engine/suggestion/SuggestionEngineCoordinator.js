@@ -52,6 +52,13 @@ import { BuildCoherenceAnalyzer } from "/systems/foundryvtt-swse/scripts/engine/
 import { OpportunityCostAnalyzer } from "/systems/foundryvtt-swse/scripts/engine/suggestion/OpportunityCostAnalyzer.js";
 import { SuggestionEngineHooks } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionEngineHooks.js";
 import { getArchetypeConfig } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ArchetypeDefinitions.js";
+import { CandidatePoolBuilder } from "/systems/foundryvtt-swse/scripts/engine/suggestion/CandidatePoolBuilder.js";
+import { buildFeatSuggestionContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/feat-suggestion-context.js";
+import { buildProgressionChoiceContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/progression-choice-context.js";
+import { getActiveSlotContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/slot-context-detector.js";
+import { ForceChoiceContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/force-choice-context.js";
+import { SnapshotBuilder } from "/systems/foundryvtt-swse/scripts/engine/suggestion/SnapshotBuilder.js";
+import { getEquipmentLoadoutProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment-loadout-profile.js";
 
 export class SuggestionEngineCoordinator {
   /**
@@ -171,10 +178,117 @@ export class SuggestionEngineCoordinator {
     if (Array.isArray(pendingData.selectedSkills) && pendingData.selectedSkills.length) {
       parts.push(`s:${pendingData.selectedSkills.map(s => s.key || s.name || s).sort().join(',')}`);
     }
+    if (Array.isArray(pendingData.selectedPowers) && pendingData.selectedPowers.length) {
+      parts.push(`p:${pendingData.selectedPowers.map(p => p.name || p.id || p).sort().join(',')}`);
+    }
+    if (Array.isArray(pendingData.selectedForcePowers) && pendingData.selectedForcePowers.length) {
+      parts.push(`fp:${pendingData.selectedForcePowers.map(p => p.name || p.id || p).sort().join(',')}`);
+    }
+    if (Array.isArray(pendingData.selectedForceSecrets) && pendingData.selectedForceSecrets.length) {
+      parts.push(`fs:${pendingData.selectedForceSecrets.map(p => p.name || p.id || p).sort().join(',')}`);
+    }
+    if (Array.isArray(pendingData.selectedForceTechniques) && pendingData.selectedForceTechniques.length) {
+      parts.push(`ft:${pendingData.selectedForceTechniques.map(p => p.name || p.id || p).sort().join(',')}`);
+    }
+    if (pendingData.attributeIncreases || pendingData.selectedAttributes || pendingData.attributeChoices) {
+      parts.push(`a:${JSON.stringify(pendingData.attributeIncreases || pendingData.selectedAttributes || pendingData.attributeChoices)}`);
+    }
+    if (pendingData.activeSlotContext || pendingData.slotContext) {
+      const slot = pendingData.activeSlotContext || pendingData.slotContext;
+      parts.push(`slot:${slot.slotKind || ''}:${slot.slotType || ''}:${slot.classId || slot.className || ''}:${slot.activeSlotIndex ?? ''}`);
+    }
     if (pendingData.mentorBiases && Object.keys(pendingData.mentorBiases).length) {
       parts.push(`mb:${Object.keys(pendingData.mentorBiases).sort().join(',')}`);
     }
     return parts.join('|');
+  }
+
+  static _normalizeSlotContextForKind(kind, actor, pendingData = {}, options = {}) {
+    const explicitSlot = options.slotContext
+      || pendingData?.slotContext
+      || pendingData?.activeSlotContext
+      || null;
+
+    if (explicitSlot?.slotKind === kind) {
+      return { ...explicitSlot, isExplicit: true };
+    }
+
+    let detected = null;
+    try {
+      detected = getActiveSlotContext(actor, pendingData);
+    } catch (_err) {
+      detected = null;
+    }
+
+    if (detected?.slotKind === kind) {
+      return { ...detected, isDetected: true };
+    }
+
+    const selectedClass = pendingData?.selectedClass || pendingData?.classModel || pendingData?.class || null;
+    const slotType = options.slotType || pendingData?.slotType || (kind === 'feat' ? 'heroic' : 'heroic');
+    const classLookupKeys = [
+      options.classId,
+      options.className,
+      pendingData?.classId,
+      pendingData?.className,
+      selectedClass?.id,
+      selectedClass?._id,
+      selectedClass?.name,
+      ...(Array.isArray(pendingData?.classFeatLookupKeys) ? pendingData.classFeatLookupKeys : []),
+      ...(Array.isArray(pendingData?.classLookupKeys) ? pendingData.classLookupKeys : []),
+    ].map((value) => String(value || '').trim()).filter(Boolean);
+
+    return {
+      slotKind: kind,
+      slotType,
+      classId: classLookupKeys[0] || null,
+      classLookupKeys,
+      selectedClass,
+      domains: null,
+      pointsAvailable: null,
+      activeSlotIndex: pendingData?.activeSlotIndex ?? 0,
+      isFallback: true,
+    };
+  }
+
+  static async _prepareChoiceSuggestionContext(kind, candidates, actor, pendingData = {}, options = {}) {
+    const slotContext = this._normalizeSlotContextForKind(kind, actor, pendingData, options);
+    const choiceContext = buildProgressionChoiceContext(actor, {
+      ...pendingData,
+      activeSlotContext: slotContext,
+    }, { kind });
+
+    const candidatePool = await CandidatePoolBuilder.build(
+      actor,
+      slotContext,
+      Array.isArray(candidates) ? candidates : [],
+      options
+    );
+
+    const filteredCandidates = candidatePool.filteredCandidates?.length || slotContext.isExplicit || slotContext.isDetected
+      ? candidatePool.filteredCandidates
+      : candidates;
+
+    let featSuggestionContext = null;
+    if (kind === 'feat') {
+      featSuggestionContext = await buildFeatSuggestionContext(actor, {
+        ...pendingData,
+        activeSlotContext: slotContext,
+        slotContext,
+      }, options);
+    }
+
+    return {
+      slotContext,
+      choiceContext: {
+        ...choiceContext,
+        activeSlotContext: slotContext,
+      },
+      featSuggestionContext,
+      candidates: filteredCandidates || [],
+      originalCount: Array.isArray(candidates) ? candidates.length : 0,
+      filteredCount: Array.isArray(filteredCandidates) ? filteredCandidates.length : 0,
+    };
   }
 
   /**
@@ -188,7 +302,8 @@ export class SuggestionEngineCoordinator {
       logSuggestionTrace({}, `[SUGGESTION-COORDINATOR] analyzeBuildIntent() START - Actor: ${actor.id} (${actor.name})`);
       // Use compact hash of pendingData for efficient, deterministic cache key
       const pendingHash = this._hashPendingData(pendingData);
-      const cacheKey = `${actor.id}_${pendingHash}`;
+      const actorRevision = actor?.id ? SnapshotBuilder.hashFromActor(actor, 'build-intent', pendingData) : 'temp';
+      const cacheKey = `${actor.id}_${actorRevision}_${pendingHash}`;
 
       // Return cached result if available
       if (this._buildIntentCache.has(cacheKey)) {
@@ -243,18 +358,28 @@ export class SuggestionEngineCoordinator {
       logSuggestionTrace(options, `[SUGGESTION-COORDINATOR] suggestFeats() - BuildIntent obtained, primary themes:`, buildIntent.primaryThemes);
 
       // PHASE 2: Compute identity bias directly from IdentityEngine
-      const identityBias = options.identityBias || IdentityEngine.computeTotalBias(actor);
+      const identityBias = options.identityBias || IdentityEngine.computeTotalBias(actor, { pendingData, equipmentProfile: getEquipmentLoadoutProfile(actor) });
       logSuggestionTrace(options, `[SUGGESTION-COORDINATOR] suggestFeats() - Identity bias computed from IdentityEngine`);
+
+      const choicePrep = await this._prepareChoiceSuggestionContext('feat', feats, actor, pendingData, options);
+      logSuggestionTrace(options, '[SUGGESTION-COORDINATOR] suggestFeats() candidate pool prepared', {
+        slot: choicePrep.slotContext,
+        original: choicePrep.originalCount,
+        filtered: choicePrep.filteredCount,
+      });
 
       // Call SuggestionEngine with BuildIntent and identity bias context
       const featsSuggested = await SuggestionEngine.suggestFeats(
-        feats,
+        choicePrep.candidates,
         actor,
         pendingData,
         {
           ...options,
           buildIntent,
-          identityBias
+          identityBias,
+          slotContext: choicePrep.slotContext,
+          choiceContext: choicePrep.choiceContext,
+          featSuggestionContext: choicePrep.featSuggestionContext,
         }
       );
 
@@ -292,17 +417,26 @@ export class SuggestionEngineCoordinator {
       const buildIntent = options.buildIntent || await this.analyzeBuildIntent(actor, pendingData);
 
       // PHASE 2: Compute identity bias directly from IdentityEngine
-      const identityBias = options.identityBias || IdentityEngine.computeTotalBias(actor);
+      const identityBias = options.identityBias || IdentityEngine.computeTotalBias(actor, { pendingData, equipmentProfile: getEquipmentLoadoutProfile(actor) });
+
+      const choicePrep = await this._prepareChoiceSuggestionContext('talent', talents, actor, pendingData, options);
+      logSuggestionTrace(options, '[SUGGESTION-COORDINATOR] suggestTalents() candidate pool prepared', {
+        slot: choicePrep.slotContext,
+        original: choicePrep.originalCount,
+        filtered: choicePrep.filteredCount,
+      });
 
       // Call SuggestionEngine with BuildIntent and identity bias context
       const talentsSuggested = await SuggestionEngine.suggestTalents(
-        talents,
+        choicePrep.candidates,
         actor,
         pendingData,
         {
           ...options,
           buildIntent,
-          identityBias
+          identityBias,
+          slotContext: choicePrep.slotContext,
+          choiceContext: choicePrep.choiceContext,
         }
       );
 
@@ -484,7 +618,8 @@ export class SuggestionEngineCoordinator {
         actor,
         {
           ...options,
-          pendingData
+          pendingData,
+          forceChoiceContext: options.forceChoiceContext || ForceChoiceContext.build(actor, pendingData)
         }
       );
 
@@ -518,7 +653,8 @@ export class SuggestionEngineCoordinator {
         actor,
         {
           ...options,
-          pendingData
+          pendingData,
+          forceChoiceContext: options.forceChoiceContext || ForceChoiceContext.build(actor, pendingData)
         }
       );
 
@@ -622,7 +758,7 @@ export class SuggestionEngineCoordinator {
       const buildIntent = contextOptions.buildIntent || await this.analyzeBuildIntent(actor, pendingData);
 
       // PHASE 2: Compute identity bias directly from IdentityEngine
-      const identityBias = contextOptions.identityBias || IdentityEngine.computeTotalBias(actor);
+      const identityBias = contextOptions.identityBias || IdentityEngine.computeTotalBias(actor, { pendingData, equipmentProfile: getEquipmentLoadoutProfile(actor) });
 
       // Call ForceOptionSuggestionEngine with BuildIntent and identity bias context
       const optionsSuggested = await ForceOptionSuggestionEngine.suggestForceOptions(
@@ -632,7 +768,8 @@ export class SuggestionEngineCoordinator {
         {
           ...contextOptions,
           buildIntent,
-          identityBias
+          identityBias,
+          forceChoiceContext: contextOptions.forceChoiceContext || ForceChoiceContext.build(actor, pendingData)
         }
       );
 
@@ -701,7 +838,7 @@ export class SuggestionEngineCoordinator {
       const buildIntent = contextOptions.buildIntent || await this.analyzeBuildIntent(actor, pendingData);
 
       // PHASE 2: Compute identity bias directly from IdentityEngine
-      const identityBias = contextOptions.identityBias || IdentityEngine.computeTotalBias(actor);
+      const identityBias = contextOptions.identityBias || IdentityEngine.computeTotalBias(actor, { pendingData, equipmentProfile: getEquipmentLoadoutProfile(actor) });
 
       // Call AttributeIncreaseSuggestionEngine with BuildIntent and identity bias context
       const attributesSuggested = await AttributeIncreaseSuggestionEngine.suggestAttributeIncreases(
