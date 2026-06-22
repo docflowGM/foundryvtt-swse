@@ -28,8 +28,12 @@ export class ArmorSuggestions {
       const noArmorVirtual = this._generateNoArmorVirtual(character);
 
       // Score all armor options
+      const scoringOptions = {
+        ...options,
+        peerArmorOptions: options.peerArmorOptions || options.allArmorOptions || allOptions
+      };
       const scored = allOptions
-        .map(armor => ArmorScoringEngine.scoreArmor(armor, character, options))
+        .map(armor => ArmorScoringEngine.scoreArmor(armor, character, scoringOptions))
         .filter(result => result.combined); // Filter out invalid scores
 
       // Always include "No Armor" scoring
@@ -130,8 +134,9 @@ export class ArmorSuggestions {
         return this._invalidComparison('Armor data missing');
       }
 
-      const scoreA = ArmorScoringEngine.scoreArmor(armorA, character);
-      const scoreB = ArmorScoringEngine.scoreArmor(armorB, character);
+      const peerArmorOptions = [armorA, armorB];
+      const scoreA = ArmorScoringEngine.scoreArmor(armorA, character, { peerArmorOptions });
+      const scoreB = ArmorScoringEngine.scoreArmor(armorB, character, { peerArmorOptions });
 
       const delta = scoreA.combined.finalScore - scoreB.combined.finalScore;
       const winner = delta > 0 ? 'A' : delta < 0 ? 'B' : 'tie';

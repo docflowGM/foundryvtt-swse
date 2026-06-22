@@ -27,14 +27,21 @@ export class ArmorExplainabilityGenerator {
     options = {}
   ) {
     const explanations = [];
+    const benefit = options?.armorBenefit;
 
-    // Primary explanation: Survivability (Axis A)
-    explanations.push(this._explainSurvivability(armor, axisA, charContext));
+    // The store detail rail should lead with the practical wear result, not a
+    // generic armor-bonus label.  These lines say whether the actor actually
+    // benefits, breaks even, or suffers by wearing the candidate.
+    if (benefit?.explanations?.length) {
+      explanations.push(...benefit.explanations);
+    } else {
+      // Fallback for non-store callers that do not provide a simulation.
+      explanations.push(this._explainSurvivability(armor, axisA, charContext));
+      explanations.push(this._explainMobility(armor, axisB, charContext));
+    }
 
-    // Secondary explanation: Mobility cost (Axis B)
-    explanations.push(this._explainMobility(armor, axisB, charContext));
-
-    // Tertiary explanation: Role alignment
+    // Role alignment is useful, but it should never obscure a negative defense
+    // simulation.  Keep it behind the practical result.
     if (roleAlignment > 8) {
       explanations.push(`Strong fit for your ${charContext.primaryRole} role`);
     } else if (roleAlignment > 0) {
@@ -43,13 +50,13 @@ export class ArmorExplainabilityGenerator {
       explanations.push(`Works against your ${charContext.primaryRole} tactics`);
     }
 
-    // Quaternary explanation: Special context
-    const contextExplanation = this._explainContext(armor, charContext);
-    if (contextExplanation) {
-      explanations.push(contextExplanation);
+    // Special context only if the benefit simulator did not already explain it.
+    if (!benefit?.explanations?.length) {
+      const contextExplanation = this._explainContext(armor, charContext);
+      if (contextExplanation) explanations.push(contextExplanation);
     }
 
-    return explanations.slice(0, 4); // Limit to 4 explanations
+    return Array.from(new Set(explanations.filter(Boolean))).slice(0, 5);
   }
 
   /**

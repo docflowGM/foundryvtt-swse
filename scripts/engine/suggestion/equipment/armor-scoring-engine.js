@@ -23,6 +23,8 @@ import { ArmorAxisAEngine } from "/systems/foundryvtt-swse/scripts/engine/sugges
 import { ArmorAxisBEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/armor-axis-b-engine.js";
 import { ArmorRoleAlignmentEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/armor-role-alignment-engine.js";
 import { ArmorExplainabilityGenerator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/armor-explainability-generator.js";
+import { evaluateArmorBenefit } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/scoring/armor-benefit-simulator.js";
+import { actorHasArmorProficiencyForType, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 import { scoreStoreItemContextFit } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/store-suggestion-context.js";
 import { assignTier, clampScore } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/shared-scoring-utils.js";
 
@@ -66,13 +68,18 @@ export class ArmorScoringEngine {
       // Price Bias (minor)
       const priceBias = this._scorePriceBias(armor);
 
+      // Practical armor benefit simulation: net Reflex/Fortitude change,
+      // max-Dex cost, proficiency-gated armor check penalty, and value vs peers.
+      const armorBenefit = evaluateArmorBenefit(armor, character, options);
+
       // Sum components (additive, not multiplicative)
       let finalScore = baseRelevance +
         roleAlignment +
         axisA.score +
         axisB.score +
         categoryNorm +
-        priceBias;
+        priceBias +
+        (armorBenefit?.scoreAdjustment || 0);
 
       const storeContextFit = options.storeContext ? scoreStoreItemContextFit(armor, options.storeContext, options) : null;
       if (storeContextFit) finalScore += storeContextFit.cappedAdjustment;
@@ -94,7 +101,7 @@ export class ArmorScoringEngine {
         axisB,
         roleAlignment,
         finalScore,
-        options
+        { ...options, armorBenefit }
       );
       if (storeContextFit?.explanations?.length) {
         explanations.push(...storeContextFit.explanations);
@@ -113,6 +120,7 @@ export class ArmorScoringEngine {
           axisB: axisB.score,
           categoryNorm,
           priceBias,
+          armorBenefit: armorBenefit?.scoreAdjustment || 0,
           storeContextFit: storeContextFit?.cappedAdjustment || 0
         },
 
@@ -140,6 +148,9 @@ export class ArmorScoringEngine {
           categoryNorm
         },
 
+        // Practical wear simulation
+        armorBenefit,
+
         // Explainability
         explanations,
 
@@ -161,6 +172,7 @@ export class ArmorScoringEngine {
           axisBScore: axisB.score.toFixed(2),
           roleAlignment: roleAlignment.toFixed(2),
           finalScore: finalScore.toFixed(2),
+          armorBenefit: armorBenefit?.scoreAdjustment?.toFixed?.(2) ?? 0,
           tier
         });
       }
@@ -198,10 +210,13 @@ export class ArmorScoringEngine {
     let score = 8; // Minimum base
 
     // Proficiency check
-    const category = armor.system?.category || 'light';
+    const armorStats = resolveArmorData(armor);
+    const category = armorStats.isEnergyShield ? 'shield' : (armorStats.armorType || 'light');
     const { proficiencies } = charContext;
 
-    if (category === 'light' && proficiencies.light) {
+    if (category === 'shield') {
+      score += 2;
+    } else if (category === 'light' && proficiencies.light) {
       score += 4;
     } else if (category === 'medium' && proficiencies.medium) {
       score += 4;
@@ -239,7 +254,8 @@ export class ArmorScoringEngine {
    * @private
    */
   static _scorePriceBias(armor) {
-    const price = armor.system?.price || 0;
+    const armorStats = resolveArmorData(armor);
+    const price = armor.finalCost || armorStats.cost || armor.system?.cost || armor.system?.price || armor.system?.value || 0;
 
     if (price < 100) {
       return 2; // Cheap
@@ -260,6 +276,16 @@ export class ArmorScoringEngine {
   static _extractCharacterContext(character) {
     const system = character.system || {};
     const abilities = system.abilities || {};
+    const attributes = system.attributes || {};
+    const abilityMod = (key) => {
+      const attr = attributes?.[key];
+      const ability = abilities?.[key];
+      const direct = attr?.mod ?? attr?.modifier ?? attr?.totalMod ?? ability?.mod ?? ability?.modifier;
+      if (Number.isFinite(Number(direct))) return Number(direct);
+      const score = attr?.total ?? attr?.value ?? ability?.value;
+      if (Number.isFinite(Number(score))) return Math.floor((Number(score) - 10) / 2);
+      return 0;
+    };
 
     return {
       characterId: character.id,
@@ -267,16 +293,16 @@ export class ArmorScoringEngine {
 
       // Attributes
       attributes: {
-        str: abilities.str?.mod ?? 0,
-        dex: abilities.dex?.mod ?? 0,
-        con: abilities.con?.mod ?? 0
+        str: abilityMod('str'),
+        dex: abilityMod('dex'),
+        con: abilityMod('con')
       },
 
       // Proficiencies
       proficiencies: {
-        light: system.proficiencies?.light ?? false,
-        medium: system.proficiencies?.medium ?? false,
-        heavy: system.proficiencies?.heavy ?? false
+        light: actorHasArmorProficiencyForType(character, 'light'),
+        medium: actorHasArmorProficiencyForType(character, 'medium'),
+        heavy: actorHasArmorProficiencyForType(character, 'heavy')
       },
 
       // Armor talents (critical for evaluation)
@@ -306,8 +332,10 @@ export class ArmorScoringEngine {
    * @private
    */
   static _hasTalent(character, talentName) {
+    const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    const wanted = normalize(talentName);
     const talents = character.items?.filter(i => i.type === 'talent') || [];
-    return talents.some(t => (t.name || '').toLowerCase().includes(talentName.toLowerCase()));
+    return talents.some(t => normalize(t.name).includes(wanted));
   }
 
   /**
@@ -356,8 +384,18 @@ export class ArmorScoringEngine {
    */
   static _inferPlaystyle(character) {
     const hints = new Set();
-    const dex = character.system?.abilities?.dex?.mod ?? 0;
-    const str = character.system?.abilities?.str?.mod ?? 0;
+    const readMod = (key) => {
+      const system = character.system || {};
+      const attr = system.attributes?.[key];
+      const ability = system.abilities?.[key];
+      const direct = attr?.mod ?? attr?.modifier ?? attr?.totalMod ?? ability?.mod ?? ability?.modifier;
+      if (Number.isFinite(Number(direct))) return Number(direct);
+      const score = attr?.total ?? attr?.value ?? ability?.value;
+      if (Number.isFinite(Number(score))) return Math.floor((Number(score) - 10) / 2);
+      return 0;
+    };
+    const dex = readMod('dex');
+    const str = readMod('str');
 
     if (dex > str + 1) {
       hints.add('mobile');

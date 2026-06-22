@@ -20,6 +20,8 @@
  * 4. Normalize to 0-16 (same scale as weapon Axis A)
  */
 
+import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+
 export class ArmorAxisAEngine {
   /**
    * Compute survivability axis for armor
@@ -28,7 +30,8 @@ export class ArmorAxisAEngine {
    * @returns {Object} Axis A result with score, band, withTalents, details
    */
   static computeSurvivabilityAxis(armor, charContext) {
-    const armorBonus = armor.system?.soak || 0;
+    const armorStats = resolveArmorData(armor);
+    const armorBonus = armorStats.reflexBonus || 0;
     const charLevel = charContext.level || 1;
     const heroicLevel = charLevel; // Heroic Level bonus is implicit at character level
 

@@ -15,6 +15,8 @@
  * Scoring: -10 to +25 (matching weapon-scoring ROLE_ALIGNMENT range)
  */
 
+import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+
 export class ArmorRoleAlignmentEngine {
   /**
    * Compute role alignment bonus for armor
@@ -23,7 +25,8 @@ export class ArmorRoleAlignmentEngine {
    * @returns {Number} Role alignment score (-10 to +25)
    */
   static computeRoleAlignment(armor, charContext) {
-    const category = armor.system?.category || 'light';
+    const armorStats = resolveArmorData(armor);
+    const category = armorStats.isEnergyShield ? 'light' : (armorStats.armorType || 'light');
     const primaryRole = charContext.primaryRole || 'generalist';
     const playstyleHints = charContext.playstyleHints || [];
     const charDex = charContext.attributes?.dex || 0;

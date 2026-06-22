@@ -913,7 +913,13 @@ export class SWSEStore extends BaseSWSEAppV2 {
       for (const chunk of chunkStoreSuggestionItems(bucket.items, chunkSize)) {
         if (token !== this._suggestionGenerationToken) return;
         try {
-          const result = bucket.engine.generateSuggestions(this.actor, chunk, { topCount: Math.max(10, chunk.length), silent: true, suppressLogs: true, storeContext });
+          const result = bucket.engine.generateSuggestions(this.actor, chunk, {
+            topCount: Math.max(10, chunk.length),
+            silent: true,
+            suppressLogs: true,
+            storeContext,
+            allArmorOptions: bucket.label === 'armor' ? bucket.items : undefined
+          });
           for (const scored of result?.allScored || []) {
             const itemId = getStoreSuggestionItemId(scored);
             if (itemId) this.suggestions.set(itemId, scored);
@@ -942,7 +948,13 @@ export class SWSEStore extends BaseSWSEAppV2 {
       // Generate suggestions for each type
       if (armor.length > 0) {
         try {
-          const armorSugg = ArmorSuggestions.generateSuggestions(this.actor, armor, { topCount: 80, silent: true, suppressLogs: true, storeContext });
+          const armorSugg = ArmorSuggestions.generateSuggestions(this.actor, armor, {
+            topCount: 80,
+            silent: true,
+            suppressLogs: true,
+            storeContext,
+            allArmorOptions: armor
+          });
           if (armorSugg.allScored) {
             for (const scored of armorSugg.allScored) {
               const itemId = scored.armorId || scored.itemId;

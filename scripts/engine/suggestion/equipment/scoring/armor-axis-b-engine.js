@@ -14,12 +14,16 @@
  * - High-STR characters suffer less
  * - Armor Mastery talent softens the penalty by one band
  *
- * Scoring (inverted for Axis B):
- * 0 = no cost (light armor)
- * 1 = maximum cost (heavy armor on high-DEX character)
+ * Scoring:
+ * cost 0 = low restriction, positive mobility-fit score
+ * cost 1 = severe restriction, no mobility-fit score
  *
- * Then normalized to 0-20 scale (matching weapon Axis B cap)
+ * The store-level armor benefit simulator applies the actual penalty for bad
+ * max-Dex/ACP outcomes; this axis is only a small fit bonus for armor that
+ * does not restrict the actor.
  */
+
+import { getArmorProficiencyPenalty, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 export class ArmorAxisBEngine {
   /**
@@ -29,41 +33,51 @@ export class ArmorAxisBEngine {
    * @returns {Object} Axis B result with score, category, withArmorMastery, details
    */
   static computeMobilityCostAxis(armor, charContext) {
-    const category = armor.system?.category || 'light';
+    const armorStats = resolveArmorData(armor);
+    const category = armorStats.isEnergyShield ? 'light' : (armorStats.armorType || 'light');
     const charDex = charContext.attributes?.dex || 0;
     const charStr = charContext.attributes?.str || 0;
+    const proficient = armorStats.isEnergyShield
+      ? true
+      : !!charContext.proficiencies?.[category];
 
-    // Base penalty by category
-    const basePenalty = this._getBasePenalty(category);
+    const maxDex = Number.isFinite(Number(armorStats.maxDexBonus)) ? Number(armorStats.maxDexBonus) : null;
+    const masteryBonus = proficient && charContext.talents?.armorMastery ? 1 : 0;
+    const effectiveMaxDex = maxDex === null ? null : maxDex + masteryBonus;
+    const dexCapLoss = effectiveMaxDex === null ? 0 : Math.max(0, charDex - effectiveMaxDex);
 
-    // Character-specific modifier: high DEX amplifies penalty, high STR dampens it
-    const dexModifier = Math.max(0, charDex - 1); // Each +1 DEX adds 0.05 cost
-    const strModifier = Math.max(0, charStr - 1); // Each +1 STR subtracts 0.03 cost
+    // Per current project rule, armor check penalty applies only when the actor
+    // lacks proficiency in the armor type.  Category alone is not an ACP.
+    const listedAcp = Number(armorStats.armorCheckPenalty || 0) || 0;
+    const fallbackAcp = getArmorProficiencyPenalty(category);
+    const armorCheckPenalty = proficient ? 0 : Math.abs(listedAcp || fallbackAcp || 0);
+    const speedPenalty = Math.abs(Number(armorStats.speedPenalty || 0) || 0);
 
-    // Compute cost (0-1, where 1 = maximum cost)
-    let cost = basePenalty + dexModifier * 0.05 - strModifier * 0.03;
-    cost = Math.max(0, Math.min(1, cost)); // Clamp to 0-1
+    // Character-specific modifier: high DEX amplifies max-Dex pain; high STR
+    // lightly dampens bulk/speed concerns but never erases an actual Dex cap.
+    let cost = dexCapLoss * 0.14 + armorCheckPenalty * 0.05 + speedPenalty * 0.05;
+    cost -= Math.max(0, charStr - 1) * 0.015;
+    cost = Math.max(0, Math.min(1, cost));
 
-    // Apply Armor Mastery talent: soft-caps the cost
-    if (charContext.talents?.armorMastery) {
-      // Armor Mastery reduces effective cost by up to 0.2 (one band)
-      cost = Math.max(0, cost - 0.2);
-    }
-
-    // Assign category band
+    // Armor Mastery is already reflected by increasing the effective max Dex.
     const categoryBand = this._getCategoryBand(category);
 
-    // Normalize to 0-20 scale (matching weapon Axis B cap)
-    const score = cost * 20;
+    // Normalize to a small positive fit score. Low-cost armor receives a bonus;
+    // restrictive armor receives little or none.
+    const score = (1 - cost) * 10;
 
     return {
-      score: Math.max(0, Math.min(20, score)),
+      score: Math.max(0, Math.min(10, score)),
       category: categoryBand,
-      penalty: basePenalty,
+      penalty: armorCheckPenalty,
       cost,
       withArmorMastery: charContext.talents?.armorMastery ?? false,
       charDex,
       charStr,
+      dexCapLoss,
+      armorCheckPenalty,
+      speedPenalty,
+      proficient,
       details: {
         explanation: this._generateExplanation(categoryBand, cost, charContext.talents)
       }
