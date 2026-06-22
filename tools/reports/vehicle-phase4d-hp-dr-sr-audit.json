@@ -1,0 +1,63 @@
+{
+  "aggregateSummary": {
+    "total": 357,
+    "hp_populated": 357,
+    "dr_populated": 357,
+    "shield_likely-shielded-needs-source-rating": 207,
+    "shield_source-verified-none": 8,
+    "shield_source-verified": 56,
+    "shield_missing-source-data": 86
+  },
+  "allPackWriteSummary": {
+    "hp_populated": 714,
+    "dr_populated": 714,
+    "sr_likely_pending": 414,
+    "sr_source_verified_none": 14,
+    "sr_missing_or_none": 174,
+    "sr_source_verified": 40,
+    "sr_existing": 72
+  },
+  "sourceDefenseValuesApplied": [
+    "ARC-170 Starfighter",
+    "Advanced V-19 Torrent Starfighter",
+    "B-Wing Shuttle",
+    "B-Wing Starfighter",
+    "Belbullab Heavy Starfighter",
+    "CloakShape Fighter",
+    "Corellian Barloz-Class Medium Freighter",
+    "Corellian YT-1930 Transport",
+    "Cutlass-9 Patrol Fighter",
+    "Delta-7 Aethersprite Interceptor",
+    "Eta-2 Actis Interceptor",
+    "MC80 Star Cruiser",
+    "N-1 Royal Starfighter",
+    "Strike-Class Medium Cruiser",
+    "T-65B X-Wing Starfighter",
+    "TIE Bomber",
+    "TIE Fighter",
+    "TIE Interceptor",
+    "The Virago",
+    "V-19 Torrent Starfighter",
+    "VT-49 Decimator",
+    "Venator-Class Star Destroyer",
+    "Victory II-Class Star Destroyer",
+    "Y-Wing Starfighter",
+    "Z-95 Headhunter"
+  ],
+  "changedFiles": [
+    "packs/vehicles.db",
+    "packs/vehicles-speeders.db",
+    "packs/vehicles-airspeeders.db",
+    "packs/vehicles-walkers.db",
+    "packs/vehicles-wheeled.db",
+    "packs/vehicles-starfighters.db",
+    "packs/vehicles-space-transports.db",
+    "packs/vehicles-capital-ships.db",
+    "packs/vehicles-stations.db"
+  ],
+  "notes": [
+    "HP is mirrored from Fandom Defenses values when verified; otherwise from existing system.hull.",
+    "DR is copied from Fandom Defenses when verified; otherwise from existing compendium damageReduction; blanks use Saga size default and are marked rules-derived.",
+    "SR is only numerically filled when a source Defenses block gives Shield Rating; likely shielded starships remain flagged without invented SR."
+  ]
+}
