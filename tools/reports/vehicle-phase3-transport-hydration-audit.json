@@ -1,0 +1,1503 @@
+{
+  "phase": "phase3-vehicle-transport-hydration",
+  "scope": "Normalize crew, passenger, and cargo fields; split combined passenger/cargo strings; repair verified comma-truncated starship transport stat lines; add transport role/filter fields.",
+  "authority": "Existing compendium statblock text plus targeted SWSE Fandom statblock verification for high-risk comma truncation records.",
+  "uniqueVehiclesUpdated": 357,
+  "changedFiles": [
+    "packs/vehicles.db",
+    "packs/vehicles-airspeeders.db",
+    "packs/vehicles-capital-ships.db",
+    "packs/vehicles-space-transports.db",
+    "packs/vehicles-speeders.db",
+    "packs/vehicles-starfighters.db",
+    "packs/vehicles-starships.db",
+    "packs/vehicles-stations.db",
+    "packs/vehicles-tracked.db",
+    "packs/vehicles-walkers.db",
+    "packs/vehicles-weapon-emplacements.db",
+    "packs/vehicles-wheeled.db",
+    "tools/reports/vehicle-phase3-transport-hydration-audit.json"
+  ],
+  "statusCounts": {
+    "source-line-normalized+split-passenger-cargo-line": 232,
+    "source-line-normalized": 64,
+    "fandom-statblock-verified": 16,
+    "split-passenger-cargo-line+starship-cargo-comma-repaired": 25,
+    "starship-cargo-comma-repaired": 20
+  },
+  "transportRoleCounts": {
+    "cargo": 144,
+    "mixed": 196,
+    "none": 16,
+    "passenger": 1
+  },
+  "crewGroupCounts": {
+    "automated": 14,
+    "solo": 185,
+    "small": 90,
+    "shipyard": 8,
+    "team": 31,
+    "capital": 14,
+    "large": 11,
+    "massive": 4
+  },
+  "passengerGroupCounts": {
+    "none": 160,
+    "squad": 67,
+    "one": 24,
+    "small-party": 35,
+    "regiment": 10,
+    "platoon": 25,
+    "company": 14,
+    "battalion": 16,
+    "massive": 3,
+    "army": 3
+  },
+  "cargoGroupCounts": {
+    "personal": 138,
+    "heavy": 51,
+    "bulk": 31,
+    "none": 17,
+    "capital": 26,
+    "industrial": 23,
+    "medium": 20,
+    "light": 44,
+    "mega": 7
+  },
+  "remainingMissingCargoKg": [],
+  "remainingCombinedPassengerCargoFields": [],
+  "remainingMissingTransportRole": [],
+  "verifiedFandomOverrides": [
+    "Cardan III-Class Space Station",
+    "Dreadnaught-Class Heavy Cruiser",
+    "Eclipse-Class Star Dreadnought",
+    "Executor-Class Star Dreadnought",
+    "Imperial II-Class Star Destroyer",
+    "Imperious-Class Star Destroyer",
+    "Lucrehulk-Class Battleship",
+    "MC80 Star Cruiser",
+    "MC80a Star Cruiser",
+    "Mobile Spacedock 220",
+    "Munificent-Class Frigate",
+    "Recusant-Class Light Destroyer",
+    "Strike-Class Medium Cruiser",
+    "Venator-Class Star Destroyer",
+    "Victory I-Class Star Destroyer",
+    "Victory II-Class Star Destroyer"
+  ],
+  "packUpdateCounts": {
+    "vehicles-airspeeders.db": 26,
+    "vehicles-capital-ships.db": 63,
+    "vehicles-space-transports.db": 108,
+    "vehicles-speeders.db": 41,
+    "vehicles-starfighters.db": 85,
+    "vehicles-starships.db": 267,
+    "vehicles-stations.db": 11,
+    "vehicles-tracked.db": 14,
+    "vehicles-walkers.db": 20,
+    "vehicles-weapon-emplacements.db": 10,
+    "vehicles-wheeled.db": 3
+  },
+  "sampleChanges": [
+    {
+      "name": "\"Oevvaor\" Jet Catamaran",
+      "before": {
+        "crew": "2 (Normal Crew Quality )",
+        "passengers": "2 Cargo: 50 Kilograms",
+        "cargo": "50 Kilograms",
+        "vehicleCrewCount": 2,
+        "vehiclePassengerCount": 2,
+        "vehicleCargoKg": 50,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "small-party",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "2 (Normal Crew Quality )",
+        "passengers": "2",
+        "cargo": "50 Kilograms",
+        "vehicleCrewCount": 2,
+        "vehiclePassengerCount": 2,
+        "vehicleCargoKg": 50,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "small-party",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "\"Vulture\" Droid Starfighter",
+      "before": {
+        "crew": "0 (Expert Crew Quality )",
+        "passengers": "None Cargo: None",
+        "cargo": "None",
+        "vehicleCrewCount": 0,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 0,
+        "vehicleCrewGroup": "automated",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "none",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "0 (Expert Crew Quality )",
+        "passengers": "None",
+        "cargo": "None",
+        "vehicleCrewCount": 0,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 0,
+        "vehicleCrewGroup": "automated",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "none",
+        "vehicleTransportRole": "none"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "74-M Speeder Bike",
+      "before": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "1 Cargo: 10 Kilograms",
+        "cargo": "10 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": 10,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "1",
+        "cargo": "10 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": 10,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "74-Z Speeder Bike",
+      "before": {
+        "crew": "1 (Expert Crew Quality )",
+        "passengers": "1 Cargo: 3 Kilograms",
+        "cargo": "3 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": 3,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Expert Crew Quality )",
+        "passengers": "1",
+        "cargo": "3 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": 3,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "A-7 Hunter Interceptor",
+      "before": {
+        "crew": "1 (Skilled Crew Quality ) Passengers: None Cargo: 55 Kilograms",
+        "passengers": "None Cargo: 55 Kilograms",
+        "cargo": "55 Kilograms",
+        "vehicleCrewCount": null,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 55,
+        "vehicleCrewGroup": "unknown",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Skilled Crew Quality ) Passengers: None Cargo: 55 Kilograms",
+        "passengers": "None",
+        "cargo": "55 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 55,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "A-A5 Speeder Truck",
+      "before": {
+        "crew": "3 (Normal Crew Quality )",
+        "passengers": "25 Cargo: 25 Tons",
+        "cargo": "25 Tons",
+        "vehicleCrewCount": 3,
+        "vehiclePassengerCount": 25,
+        "vehicleCargoKg": 25000,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "platoon",
+        "vehicleCargoGroup": "heavy",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "3 (Normal Crew Quality )",
+        "passengers": "25",
+        "cargo": "25 Tons",
+        "vehicleCrewCount": 3,
+        "vehiclePassengerCount": 25,
+        "vehicleCargoKg": 25000,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "platoon",
+        "vehicleCargoGroup": "heavy",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "A-Wing Starfighter",
+      "before": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "None Cargo: 40 Kilograms",
+        "cargo": "40 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 40,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "None",
+        "cargo": "40 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 40,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "A519 Invader Close Support Starfighter",
+      "before": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "None Cargo: 75 Kilograms",
+        "cargo": "75 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 75,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "None",
+        "cargo": "75 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 75,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "AAT-1",
+      "before": {
+        "crew": "4 (Skilled Crew Quality )",
+        "passengers": "6 (External) Cargo: 500 Kilograms",
+        "cargo": "500 Kilograms",
+        "vehicleCrewCount": 4,
+        "vehiclePassengerCount": 6,
+        "vehicleCargoKg": 500,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "squad",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "4 (Skilled Crew Quality )",
+        "passengers": "6 (External)",
+        "cargo": "500 Kilograms",
+        "vehicleCrewCount": 4,
+        "vehiclePassengerCount": 6,
+        "vehicleCargoKg": 500,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "squad",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "AEG-77 Vigo Gunship",
+      "before": {
+        "crew": "1 (normal crew)",
+        "passengers": "0",
+        "cargo": "100 kg",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (normal crew)",
+        "passengers": "0",
+        "cargo": "100 kg",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized"
+    },
+    {
+      "name": "AEG-77 Vigo Transport",
+      "before": {
+        "crew": "1 (normal crew)",
+        "passengers": "0",
+        "cargo": "100 kg",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (normal crew)",
+        "passengers": "0",
+        "cargo": "100 kg",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized"
+    },
+    {
+      "name": "ARC-170 Starfighter",
+      "before": {
+        "crew": "3 plus Astromech Droid (Skilled Crew Quality )",
+        "passengers": "None Cargo: 110 Kilograms",
+        "cargo": "110 Kilograms",
+        "vehicleCrewCount": 3,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 110,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "3 plus Astromech Droid (Skilled Crew Quality )",
+        "passengers": "None",
+        "cargo": "110 Kilograms",
+        "vehicleCrewCount": 3,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 110,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "AT-AA",
+      "before": {
+        "crew": "3 (Normal Crew Quality )",
+        "passengers": "None Cargo: 250 Kilograms",
+        "cargo": "250 Kilograms",
+        "vehicleCrewCount": 3,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 250,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "3 (Normal Crew Quality )",
+        "passengers": "None",
+        "cargo": "250 Kilograms",
+        "vehicleCrewCount": 3,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 250,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "AT-AHT",
+      "before": {
+        "crew": "5 (Expert Crew Quality )",
+        "passengers": "60 (Troops) Cargo: 2 Tons",
+        "cargo": "2 Tons",
+        "vehicleCrewCount": 5,
+        "vehiclePassengerCount": 60,
+        "vehicleCargoKg": 2000,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "company",
+        "vehicleCargoGroup": "medium",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "5 (Expert Crew Quality )",
+        "passengers": "60 (Troops)",
+        "cargo": "2 Tons",
+        "vehicleCrewCount": 5,
+        "vehiclePassengerCount": 60,
+        "vehicleCargoKg": 2000,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "company",
+        "vehicleCargoGroup": "medium",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "AT-AP",
+      "before": {
+        "crew": "3 (Expert Crew Quality )",
+        "passengers": "None Cargo: 200 kg",
+        "cargo": "200 kg",
+        "vehicleCrewCount": 3,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 200,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "3 (Expert Crew Quality )",
+        "passengers": "None",
+        "cargo": "200 kg",
+        "vehicleCrewCount": 3,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 200,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "AT-AT",
+      "before": {
+        "crew": "5 (Expert Crew Quality )",
+        "passengers": "40 Cargo: 1 Ton",
+        "cargo": "1 Ton",
+        "vehicleCrewCount": 5,
+        "vehiclePassengerCount": 40,
+        "vehicleCargoKg": 1000,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "platoon",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "5 (Expert Crew Quality )",
+        "passengers": "40",
+        "cargo": "1 Ton",
+        "vehicleCrewCount": 5,
+        "vehiclePassengerCount": 40,
+        "vehicleCargoKg": 1000,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "platoon",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "AT-CT",
+      "before": {
+        "crew": "2 (Expert Crew Quality )",
+        "passengers": "None Cargo: None",
+        "cargo": "None",
+        "vehicleCrewCount": 2,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 0,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "none",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "2 (Expert Crew Quality )",
+        "passengers": "None",
+        "cargo": "None",
+        "vehicleCrewCount": 2,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 0,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "none",
+        "vehicleTransportRole": "none"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "AT-KT",
+      "before": {
+        "crew": "2 (Expert Crew Quality )",
+        "passengers": "None Cargo: None",
+        "cargo": "None",
+        "vehicleCrewCount": 2,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 0,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "none",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "2 (Expert Crew Quality )",
+        "passengers": "None",
+        "cargo": "None",
+        "vehicleCrewCount": 2,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 0,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "none",
+        "vehicleTransportRole": "none"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "AT-PT",
+      "before": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "1* Cargo: 150 Kilograms*",
+        "cargo": "150 Kilograms*",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": 150,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "1*",
+        "cargo": "150 Kilograms*",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": 150,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "AT-RCT",
+      "before": {
+        "crew": "2 (Expert Crew Quality )",
+        "passengers": "None Cargo: None",
+        "cargo": "None",
+        "vehicleCrewCount": 2,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 0,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "none",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "2 (Expert Crew Quality )",
+        "passengers": "None",
+        "cargo": "None",
+        "vehicleCrewCount": 2,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 0,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "none",
+        "vehicleTransportRole": "none"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "AT-RT",
+      "before": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "None Cargo: 20 Kilograms",
+        "cargo": "20 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 20,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "None",
+        "cargo": "20 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 20,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "AT-ST",
+      "before": {
+        "crew": "2 (Expert Crew Quality )",
+        "passengers": "None Cargo: None",
+        "cargo": "None",
+        "vehicleCrewCount": 2,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 0,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "none",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "2 (Expert Crew Quality )",
+        "passengers": "None",
+        "cargo": "None",
+        "vehicleCrewCount": 2,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 0,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "none",
+        "vehicleTransportRole": "none"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "AT-TE",
+      "before": {
+        "crew": "7 (Expert Crew Quality )",
+        "passengers": "38 Cargo: 10 Tons",
+        "cargo": "10 Tons",
+        "vehicleCrewCount": 7,
+        "vehiclePassengerCount": 38,
+        "vehicleCargoKg": 10000,
+        "vehicleCrewGroup": "team",
+        "vehiclePassengerGroup": "platoon",
+        "vehicleCargoGroup": "medium",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "7 (Expert Crew Quality )",
+        "passengers": "38",
+        "cargo": "10 Tons",
+        "vehicleCrewCount": 7,
+        "vehiclePassengerCount": 38,
+        "vehicleCargoKg": 10000,
+        "vehicleCrewGroup": "team",
+        "vehiclePassengerGroup": "platoon",
+        "vehicleCargoGroup": "medium",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "AT-XT",
+      "before": {
+        "crew": "1 (Expert Crew Quality )",
+        "passengers": "None Cargo: 12 Kilograms",
+        "cargo": "12 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 12,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Expert Crew Quality )",
+        "passengers": "None",
+        "cargo": "12 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 12,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "Acclamator I-Class Assault Ship",
+      "before": {
+        "crew": "1 (normal crew)",
+        "passengers": "0",
+        "cargo": "100 kg",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (normal crew)",
+        "passengers": "0",
+        "cargo": "100 kg",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized"
+    },
+    {
+      "name": "Acclamator II-Class Assault Ship",
+      "before": {
+        "crew": "20",
+        "passengers": 3,
+        "cargo": "10",
+        "vehicleCrewCount": 20,
+        "vehiclePassengerCount": 3,
+        "vehicleCargoKg": null,
+        "vehicleCrewGroup": "team",
+        "vehiclePassengerGroup": "small-party",
+        "vehicleCargoGroup": "unknown",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "20",
+        "passengers": "3",
+        "cargo": "10,000 Tons",
+        "vehicleCrewCount": 20,
+        "vehiclePassengerCount": 3,
+        "vehicleCargoKg": 10000000,
+        "vehicleCrewGroup": "team",
+        "vehiclePassengerGroup": "small-party",
+        "vehicleCargoGroup": "industrial",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "starship-cargo-comma-repaired"
+    },
+    {
+      "name": "Advanced V-19 Torrent Starfighter",
+      "before": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "None Cargo: 70 Kilograms",
+        "cargo": "70 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 70,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "None",
+        "cargo": "70 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 70,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "AeroChaser Speeder Bike",
+      "before": {
+        "crew": "1 (Normal Crew Quality )",
+        "passengers": "None Cargo: 4 Kilograms",
+        "cargo": "4 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 4,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Normal Crew Quality )",
+        "passengers": "None",
+        "cargo": "4 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 4,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "Aerosled Mark III",
+      "before": {
+        "crew": "1 (normal crew)",
+        "passengers": "0",
+        "cargo": "100 kg",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (normal crew)",
+        "passengers": "0",
+        "cargo": "100 kg",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized"
+    },
+    {
+      "name": "Air-2 Racing Swoop",
+      "before": {
+        "crew": "1 (Normal Crew Quality )",
+        "passengers": "1 Cargo: 30 Kilograms",
+        "cargo": "30 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": 30,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Normal Crew Quality )",
+        "passengers": "1",
+        "cargo": "30 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": 30,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "Archaic Dreadnaught-Class Heavy Cruiser",
+      "before": {
+        "crew": "1 (normal crew)",
+        "passengers": "0",
+        "cargo": "100 kg",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (normal crew)",
+        "passengers": "0",
+        "cargo": "100 kg",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized"
+    },
+    {
+      "name": "Ardent-Class Fast Frigate",
+      "before": {
+        "crew": "1",
+        "passengers": "200 (Troops) Cargo: 5",
+        "cargo": "5",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 200,
+        "vehicleCargoKg": null,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "company",
+        "vehicleCargoGroup": "unknown",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1",
+        "passengers": "200 (Troops)",
+        "cargo": "5,000 Tons",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 200,
+        "vehicleCargoKg": 5000000,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "company",
+        "vehicleCargoGroup": "industrial",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "split-passenger-cargo-line+starship-cargo-comma-repaired"
+    },
+    {
+      "name": "Arrow-23 Landspeeder",
+      "before": {
+        "crew": "2 (Normal Crew Quality )",
+        "passengers": "5 Cargo: 800 Kilograms",
+        "cargo": "800 Kilograms",
+        "vehicleCrewCount": 2,
+        "vehiclePassengerCount": 5,
+        "vehicleCargoKg": 800,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "small-party",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "2 (Normal Crew Quality )",
+        "passengers": "5",
+        "cargo": "800 Kilograms",
+        "vehicleCrewCount": 2,
+        "vehiclePassengerCount": 5,
+        "vehicleCargoKg": 800,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "small-party",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "Aurek Tactical Strikefighter",
+      "before": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "None Cargo: 20 Kilograms",
+        "cargo": "20 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 20,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "None",
+        "cargo": "20 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 20,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "B-Wing Shuttle",
+      "before": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "2 Cargo: 45 Kilograms",
+        "cargo": "45 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 2,
+        "vehicleCargoKg": 45,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "small-party",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "2",
+        "cargo": "45 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 2,
+        "vehicleCargoKg": 45,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "small-party",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "B-Wing Starfighter",
+      "before": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "None Cargo: 45 Kilograms",
+        "cargo": "45 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 45,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "None",
+        "cargo": "45 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 45,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "B-Wing/E2 Starfighter",
+      "before": {
+        "crew": "2 (Skilled Crew Quality )",
+        "passengers": "None Cargo: 50 Kilograms",
+        "cargo": "50 Kilograms",
+        "vehicleCrewCount": 2,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 50,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "2 (Skilled Crew Quality )",
+        "passengers": "None",
+        "cargo": "50 Kilograms",
+        "vehicleCrewCount": 2,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 50,
+        "vehicleCrewGroup": "small",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "BARC Speeder",
+      "before": {
+        "crew": "1 (Expert Crew Quality )",
+        "passengers": "1 Cargo: 5 Kilograms",
+        "cargo": "5 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": 5,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Expert Crew Quality )",
+        "passengers": "1",
+        "cargo": "5 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": 5,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "BB-2 Starfire Fighter/Bomber",
+      "before": {
+        "crew": "1 (normal crew)",
+        "passengers": "0",
+        "cargo": "100 kg",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (normal crew)",
+        "passengers": "0",
+        "cargo": "100 kg",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized"
+    },
+    {
+      "name": "BC-714 Luxury Transport",
+      "before": {
+        "crew": "17 (Normal Crew Quality )",
+        "passengers": "30 Cargo: 80 Tons",
+        "cargo": "80 Tons",
+        "vehicleCrewCount": 17,
+        "vehiclePassengerCount": 30,
+        "vehicleCargoKg": 80000,
+        "vehicleCrewGroup": "team",
+        "vehiclePassengerGroup": "platoon",
+        "vehicleCargoGroup": "heavy",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "17 (Normal Crew Quality )",
+        "passengers": "30",
+        "cargo": "80 Tons",
+        "vehicleCrewCount": 17,
+        "vehiclePassengerCount": 30,
+        "vehicleCargoKg": 80000,
+        "vehicleCrewGroup": "team",
+        "vehiclePassengerGroup": "platoon",
+        "vehicleCargoGroup": "heavy",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "Baas-Class Space Station",
+      "before": {
+        "crew": "250 (Normal Crew Quality )",
+        "passengers": "100 plus 50 (Imperial Troops) Cargo: 1",
+        "cargo": "1",
+        "vehicleCrewCount": 250,
+        "vehiclePassengerCount": 150,
+        "vehicleCargoKg": null,
+        "vehicleCrewGroup": "capital",
+        "vehiclePassengerGroup": "company",
+        "vehicleCargoGroup": "unknown",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "250 (Normal Crew Quality )",
+        "passengers": "100 plus 50 (Imperial Troops)",
+        "cargo": "1,000 Tons",
+        "vehicleCrewCount": 250,
+        "vehiclePassengerCount": 100,
+        "vehicleCargoKg": 1000000,
+        "vehicleCrewGroup": "capital",
+        "vehiclePassengerGroup": "company",
+        "vehicleCargoGroup": "bulk",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "split-passenger-cargo-line+starship-cargo-comma-repaired"
+    },
+    {
+      "name": "Bantha-II Cargo Skiff",
+      "before": {
+        "crew": "1 (Normal Crew Quality )",
+        "passengers": "16 Cargo: 135 Tons",
+        "cargo": "135 Tons",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 16,
+        "vehicleCargoKg": 135000,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "squad",
+        "vehicleCargoGroup": "bulk",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Normal Crew Quality )",
+        "passengers": "16",
+        "cargo": "135 Tons",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 16,
+        "vehicleCargoKg": 135000,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "squad",
+        "vehicleCargoGroup": "bulk",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "Baronial-Class Yacht",
+      "before": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "4 Cargo: 30 Tons",
+        "cargo": "30 Tons",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 4,
+        "vehicleCargoKg": 30000,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "small-party",
+        "vehicleCargoGroup": "heavy",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "4",
+        "cargo": "30 Tons",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 4,
+        "vehicleCargoKg": 30000,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "small-party",
+        "vehicleCargoGroup": "heavy",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "Basilisk War Droid",
+      "before": {
+        "crew": "0 (Skilled Crew Quality )",
+        "passengers": "1 Cargo: 100 Kilograms",
+        "cargo": "100 Kilograms",
+        "vehicleCrewCount": 0,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "automated",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "0 (Skilled Crew Quality )",
+        "passengers": "1",
+        "cargo": "100 Kilograms",
+        "vehicleCrewCount": 0,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "automated",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "Baudo-Class Star Yacht",
+      "before": {
+        "crew": "1 (Normal Crew Quality )",
+        "passengers": "8 Cargo: 35 Tons",
+        "cargo": "35 Tons",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 8,
+        "vehicleCargoKg": 35000,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "squad",
+        "vehicleCargoGroup": "heavy",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Normal Crew Quality )",
+        "passengers": "8",
+        "cargo": "35 Tons",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 8,
+        "vehicleCargoKg": 35000,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "squad",
+        "vehicleCargoGroup": "heavy",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "Belbullab Heavy Starfighter",
+      "before": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "None Cargo: 140 Kilograms",
+        "cargo": "140 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 140,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "None",
+        "cargo": "140 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 140,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "light",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    },
+    {
+      "name": "Besh-Type Personal Starfighter",
+      "before": {
+        "crew": "1 (normal crew)",
+        "passengers": "0",
+        "cargo": "100 kg",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (normal crew)",
+        "passengers": "0",
+        "cargo": "100 kg",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 0,
+        "vehicleCargoKg": 100,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "none",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "cargo"
+      },
+      "status": "source-line-normalized"
+    },
+    {
+      "name": "Broadside-Class Cruiser",
+      "before": {
+        "crew": "1",
+        "passengers": 1,
+        "cargo": "6",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": null,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "unknown",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1",
+        "passengers": "1",
+        "cargo": "6,000 Tons",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": 6000000,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "industrial",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "starship-cargo-comma-repaired"
+    },
+    {
+      "name": "C-9979 Landing Craft",
+      "before": {
+        "crew": "88 (Normal Crew Quality )",
+        "passengers": "90 Battle Droids",
+        "cargo": "1",
+        "vehicleCrewCount": 88,
+        "vehiclePassengerCount": 90,
+        "vehicleCargoKg": null,
+        "vehicleCrewGroup": "large",
+        "vehiclePassengerGroup": "company",
+        "vehicleCargoGroup": "unknown",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "88 (Normal Crew Quality )",
+        "passengers": "90 Battle Droids",
+        "cargo": "1,000 Tons",
+        "vehicleCrewCount": 88,
+        "vehiclePassengerCount": 90,
+        "vehicleCargoKg": 1000000,
+        "vehicleCrewGroup": "large",
+        "vehiclePassengerGroup": "company",
+        "vehicleCargoGroup": "bulk",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "starship-cargo-comma-repaired"
+    },
+    {
+      "name": "CF9 Crossfire Starfighter",
+      "before": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "1 ( Gunner ) Cargo: 70 Kilograms",
+        "cargo": "70 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": 70,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": null
+      },
+      "after": {
+        "crew": "1 (Skilled Crew Quality )",
+        "passengers": "1 ( Gunner )",
+        "cargo": "70 Kilograms",
+        "vehicleCrewCount": 1,
+        "vehiclePassengerCount": 1,
+        "vehicleCargoKg": 70,
+        "vehicleCrewGroup": "solo",
+        "vehiclePassengerGroup": "one",
+        "vehicleCargoGroup": "personal",
+        "vehicleTransportRole": "mixed"
+      },
+      "status": "source-line-normalized+split-passenger-cargo-line"
+    }
+  ]
+}
