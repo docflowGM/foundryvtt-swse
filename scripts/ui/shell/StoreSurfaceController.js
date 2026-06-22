@@ -53,7 +53,6 @@ export class StoreSurfaceController {
     this._host = host;
     this._actor = actor;
     this._abort = null;
-    this._storeSuggestionHook = null;
   }
 
   /** Wire all store surface events. Called after each render. */
@@ -62,8 +61,6 @@ export class StoreSurfaceController {
     this._abort?.abort();
     this._abort = new AbortController();
     const { signal } = this._abort;
-
-    this._ensureSuggestionUpdateHook();
 
     if (this._attachSplash(root, signal)) return;
 
@@ -101,6 +98,11 @@ export class StoreSurfaceController {
           currentFamily: null,
           currentVehicleSize: null,
           currentVehicleCl: null,
+          currentVehicleCrew: null,
+          currentVehicleCargo: null,
+          currentVehicleHyperdrive: null,
+          currentVehicleWeapons: null,
+          currentVehicleShields: null,
           currentView: 'browse',
           selectedProductId: null
         });
@@ -148,6 +150,11 @@ export class StoreSurfaceController {
           currentFamily: null,        // Phase 2: Clear family filter
           currentVehicleSize: null,
           currentVehicleCl: null,
+          currentVehicleCrew: null,
+          currentVehicleCargo: null,
+          currentVehicleHyperdrive: null,
+          currentVehicleWeapons: null,
+          currentVehicleShields: null,
           currentView: 'browse',
           selectedProductId: null,
           storeRenderLimit: 36,
@@ -207,6 +214,25 @@ export class StoreSurfaceController {
       vehicleClSel.addEventListener('change', () => {
         this._setOptions({
           currentVehicleCl: vehicleClSel.value || null,
+          storeRenderLimit: 36,
+          selectedProductId: null
+        });
+      }, { signal });
+    }
+
+    const vehicleFilterBindings = [
+      ['#ss-vehicle-crew', 'currentVehicleCrew'],
+      ['#ss-vehicle-cargo', 'currentVehicleCargo'],
+      ['#ss-vehicle-hyperdrive', 'currentVehicleHyperdrive'],
+      ['#ss-vehicle-weapons', 'currentVehicleWeapons'],
+      ['#ss-vehicle-shields', 'currentVehicleShields']
+    ];
+    for (const [selector, optionKey] of vehicleFilterBindings) {
+      const select = root.querySelector(selector);
+      if (!select) continue;
+      select.addEventListener('change', () => {
+        this._setOptions({
+          [optionKey]: select.value || null,
           storeRenderLimit: 36,
           selectedProductId: null
         });
@@ -525,24 +551,6 @@ export class StoreSurfaceController {
   destroy() {
     this._abort?.abort();
     this._abort = null;
-    if (this._storeSuggestionHook && typeof globalThis.Hooks?.off === 'function') {
-      globalThis.Hooks.off('swse:store-suggestions-updated', this._storeSuggestionHook);
-    }
-    this._storeSuggestionHook = null;
-  }
-
-  _ensureSuggestionUpdateHook() {
-    if (this._storeSuggestionHook || typeof globalThis.Hooks?.on !== 'function') return;
-
-    this._storeSuggestionHook = payload => {
-      const actorId = payload?.actorId ?? null;
-      if (!actorId || actorId !== this._actor?.id) return;
-      const surface = this._host?.shellSurface ?? this._host?._shellSurface ?? null;
-      if (surface !== 'store') return;
-      void this._requestRender('store-suggestions-updated');
-    };
-
-    globalThis.Hooks.on('swse:store-suggestions-updated', this._storeSuggestionHook);
   }
 
   _attachScrollBridge(root, signal) {
@@ -587,6 +595,16 @@ export class StoreSurfaceController {
     if (vehicleSize) vehicleSize.value = state.currentVehicleSize ?? '';
     const vehicleCl = root.querySelector('#ss-vehicle-cl');
     if (vehicleCl) vehicleCl.value = state.currentVehicleCl ?? '';
+    const vehicleCrew = root.querySelector('#ss-vehicle-crew');
+    if (vehicleCrew) vehicleCrew.value = state.currentVehicleCrew ?? '';
+    const vehicleCargo = root.querySelector('#ss-vehicle-cargo');
+    if (vehicleCargo) vehicleCargo.value = state.currentVehicleCargo ?? '';
+    const vehicleHyperdrive = root.querySelector('#ss-vehicle-hyperdrive');
+    if (vehicleHyperdrive) vehicleHyperdrive.value = state.currentVehicleHyperdrive ?? '';
+    const vehicleWeapons = root.querySelector('#ss-vehicle-weapons');
+    if (vehicleWeapons) vehicleWeapons.value = state.currentVehicleWeapons ?? '';
+    const vehicleShields = root.querySelector('#ss-vehicle-shields');
+    if (vehicleShields) vehicleShields.value = state.currentVehicleShields ?? '';
   }
 
   async _addToCart({ id, itemType = 'item', condition = '', rerenderPatch = null }) {
@@ -652,6 +670,11 @@ export class StoreSurfaceController {
     const familyVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentFamily ?? '');
     const vehicleSizeVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleSize ?? '');
     const vehicleClVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleCl ?? '');
+    const vehicleCrewVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleCrew ?? '');
+    const vehicleCargoVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleCargo ?? '');
+    const vehicleHyperdriveVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleHyperdrive ?? '');
+    const vehicleWeaponsVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleWeapons ?? '');
+    const vehicleShieldsVal = normalizeStoreFilterValue(this._host._shellSurfaceOptions?.currentVehicleShields ?? '');
 
     let visible = 0;
     root.querySelectorAll('.store-card[data-item-id], .swse-store-surface__card[data-item-id]').forEach(card => {
@@ -660,21 +683,30 @@ export class StoreSurfaceController {
       const subtype = (card.dataset.subcategory ?? '').toLowerCase();
       const subtypeKey = normalizeStoreFilterValue(card.dataset.subcategory || '');
       const familyKey = normalizeStoreFilterValue(card.dataset.family || '');
-      const droidRoleKey = normalizeStoreFilterValue(card.dataset.droidRole || '');
       const vehicleSizeKey = normalizeStoreFilterValue(card.dataset.vehicleSize || '');
       const vehicleClKey = normalizeStoreFilterValue(card.dataset.vehicleCl || '');
+      const vehicleCrewKey = normalizeStoreFilterValue(card.dataset.vehicleCrew || '');
+      const vehicleCargoKey = normalizeStoreFilterValue(card.dataset.vehicleCargo || '');
+      const vehicleHyperdriveKey = normalizeStoreFilterValue(card.dataset.vehicleHyperdrive || '');
+      const vehicleWeaponsKey = normalizeStoreFilterValue(card.dataset.vehicleWeapons || '');
+      const vehicleShieldsKey = normalizeStoreFilterValue(card.dataset.vehicleShields || '');
       const avail = normalizeAvailabilityText(card.dataset.availability ?? '');
       const requestedAvail = normalizeAvailabilityText(availVal);
 
       const matchSearch = !searchVal || name.includes(searchVal) || cat.includes(searchVal) || subtype.includes(searchVal);
       const matchAvail = !requestedAvail || requestedAvail === 'all' || avail.split(/\s+/).includes(requestedAvail) || avail.includes(requestedAvail);
       const matchCategory = !categoryVal || cat === categoryVal;
-      const matchSubcategory = !subcategoryVal || (categoryVal === 'droids' ? droidRoleKey === subcategoryVal : subtypeKey === subcategoryVal);
+      const matchSubcategory = !subcategoryVal || subtypeKey === subcategoryVal;
       const matchFamily = !(['weapons', 'droids', 'vehicles'].includes(categoryVal) && familyVal) || familyKey === familyVal;
       const matchVehicleSize = !(categoryVal === 'vehicles' && vehicleSizeVal) || vehicleSizeKey === vehicleSizeVal;
       const matchVehicleCl = !(categoryVal === 'vehicles' && vehicleClVal) || vehicleClKey === vehicleClVal;
+      const matchVehicleCrew = !(categoryVal === 'vehicles' && vehicleCrewVal) || vehicleCrewKey === vehicleCrewVal;
+      const matchVehicleCargo = !(categoryVal === 'vehicles' && vehicleCargoVal) || vehicleCargoKey === vehicleCargoVal;
+      const matchVehicleHyperdrive = !(categoryVal === 'vehicles' && vehicleHyperdriveVal) || vehicleHyperdriveKey === vehicleHyperdriveVal;
+      const matchVehicleWeapons = !(categoryVal === 'vehicles' && vehicleWeaponsVal) || vehicleWeaponsKey === vehicleWeaponsVal;
+      const matchVehicleShields = !(categoryVal === 'vehicles' && vehicleShieldsVal) || vehicleShieldsKey === vehicleShieldsVal;
 
-      const show = matchSearch && matchAvail && matchCategory && matchSubcategory && matchFamily && matchVehicleSize && matchVehicleCl;
+      const show = matchSearch && matchAvail && matchCategory && matchSubcategory && matchFamily && matchVehicleSize && matchVehicleCl && matchVehicleCrew && matchVehicleCargo && matchVehicleHyperdrive && matchVehicleWeapons && matchVehicleShields;
       card.style.display = show ? '' : 'none';
       if (show) visible += 1;
     });

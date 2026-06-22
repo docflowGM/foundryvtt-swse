@@ -55,11 +55,11 @@
     {{#if navigationModel.topCategories}}
     {{#each navigationModel.topCategories}}
     {{#if (eq key ../currentCategory)}}
-    {{#if (or children familyTabs)}}
+    {{#if children}}
     <div class="store-subcat-nav">
       {{!-- "All [Category]" reset chip --}}
-      <button type="button" class="store-chip store-subcat-chip {{#unless ../../../currentSubcategory}}active{{/unless}}" data-action="subcategory-nav" data-subcategory="" data-family="{{roleResetFamily}}">
-        {{#if roleResetLabel}}{{roleResetLabel}}{{else}}{{localize 'SWSE.Store.Navigation.AllCategory' category=label}}{{/if}}<span class="store-chip-count">{{count}}</span>
+      <button type="button" class="store-chip store-subcat-chip {{#unless ../../../currentSubcategory}}active{{/unless}}" data-action="subcategory-nav" data-subcategory="" data-family="">
+        {{localize 'SWSE.Store.Navigation.AllCategory' category=label}}<span class="store-chip-count">{{count}}</span>
       </button>
 
       {{#if familyTabs}}
@@ -76,7 +76,7 @@
       {{/if}}
       {{#each children}}
       <button type="button" class="store-chip store-subcat-chip store-subcat-chip--{{family}} {{#if active}}active{{/if}}"
-              data-action="subcategory-nav" data-subcategory="{{#if filterValue}}{{filterValue}}{{else}}{{label}}{{/if}}" data-family="{{family}}">
+              data-action="subcategory-nav" data-subcategory="{{label}}" data-family="{{family}}">
         {{label}}<span class="store-chip-count">{{count}}</span>
       </button>
       {{/each}}
@@ -111,6 +111,36 @@
       <select id="store-vehicle-cl-filter" class="store-filter-select" aria-label="Filter vehicles by challenge level" {{#unless vehicleClOptions.length}}disabled{{/unless}}>
         <option value="">{{#if vehicleClOptions.length}}All CL{{else}}CL unavailable{{/if}}</option>
         {{#each vehicleClOptions}}
+        <option value="{{key}}" {{#if active}}selected{{/if}}>{{label}} ({{count}})</option>
+        {{/each}}
+      </select>
+      <select id="store-vehicle-crew-filter" class="store-filter-select" aria-label="Filter vehicles by crew size" {{#unless vehicleCrewOptions.length}}disabled{{/unless}}>
+        <option value="">All Crew</option>
+        {{#each vehicleCrewOptions}}
+        <option value="{{key}}" {{#if active}}selected{{/if}}>{{label}} ({{count}})</option>
+        {{/each}}
+      </select>
+      <select id="store-vehicle-cargo-filter" class="store-filter-select" aria-label="Filter vehicles by cargo capacity" {{#unless vehicleCargoOptions.length}}disabled{{/unless}}>
+        <option value="">All Cargo</option>
+        {{#each vehicleCargoOptions}}
+        <option value="{{key}}" {{#if active}}selected{{/if}}>{{label}} ({{count}})</option>
+        {{/each}}
+      </select>
+      <select id="store-vehicle-hyperdrive-filter" class="store-filter-select" aria-label="Filter vehicles by hyperdrive" {{#unless vehicleHyperdriveOptions.length}}disabled{{/unless}}>
+        <option value="">Hyperdrive: Any</option>
+        {{#each vehicleHyperdriveOptions}}
+        <option value="{{key}}" {{#if active}}selected{{/if}}>{{label}} ({{count}})</option>
+        {{/each}}
+      </select>
+      <select id="store-vehicle-weapons-filter" class="store-filter-select" aria-label="Filter vehicles by weapons" {{#unless vehicleWeaponsOptions.length}}disabled{{/unless}}>
+        <option value="">Weapons: Any</option>
+        {{#each vehicleWeaponsOptions}}
+        <option value="{{key}}" {{#if active}}selected{{/if}}>{{label}} ({{count}})</option>
+        {{/each}}
+      </select>
+      <select id="store-vehicle-shields-filter" class="store-filter-select" aria-label="Filter vehicles by shields" {{#unless vehicleShieldsOptions.length}}disabled{{/unless}}>
+        <option value="">Shields: Any</option>
+        {{#each vehicleShieldsOptions}}
         <option value="{{key}}" {{#if active}}selected{{/if}}>{{label}} ({{count}})</option>
         {{/each}}
       </select>
@@ -350,7 +380,7 @@
       <div class="card-grid-container">
         <div class="products-grid" id="products-grid">
           {{#each allItems}}
-            <div class="holo-card product-card {{#unless this.canPurchase}}is-policy-blocked{{/unless}}" data-item-id="{{this.id}}" data-category="{{this.category}}" data-category-key="{{this.categoryKey}}" data-subcategory="{{this.subcategory}}" data-subcategory-key="{{this.subcategoryKey}}" data-family="{{#if this.navigationFamily}}{{this.navigationFamily}}{{else}}{{this.weaponFamily}}{{/if}}" data-droid-role="{{this.droidRoleKey}}" data-vehicle-size="{{this.vehicleSizeKey}}" data-vehicle-cl="{{this.vehicleChallengeBand}}" data-availability="{{this.availability}}" data-availability-key="{{this.availabilityKey}}" data-rarity="{{this.rarityClass}}" data-can-purchase="{{this.canPurchase}}">
+            <div class="holo-card product-card {{#unless this.canPurchase}}is-policy-blocked{{/unless}}" data-item-id="{{this.id}}" data-category="{{this.category}}" data-category-key="{{this.categoryKey}}" data-subcategory="{{this.subcategory}}" data-subcategory-key="{{this.subcategoryKey}}" data-family="{{#if this.navigationFamily}}{{this.navigationFamily}}{{else}}{{this.weaponFamily}}{{/if}}" data-vehicle-size="{{this.vehicleSizeKey}}" data-vehicle-cl="{{this.vehicleChallengeBand}}" data-vehicle-crew="{{this.vehicleCrewGroup}}" data-vehicle-cargo="{{this.vehicleCargoGroup}}" data-vehicle-hyperdrive="{{this.vehicleHyperdriveKey}}" data-vehicle-weapons="{{this.vehicleWeaponsKey}}" data-vehicle-shields="{{this.vehicleShieldsKey}}" data-availability="{{this.availability}}" data-availability-key="{{this.availabilityKey}}" data-rarity="{{this.rarityClass}}" data-can-purchase="{{this.canPurchase}}">
               <div class="card-header">
                 {{#if this.suggestion}}
                   <span class="suggestion-badge tier-{{this.suggestion.tier}}">{{this.suggestion.tierLabel}}</span>
@@ -367,9 +397,12 @@
                 <div class="card-meta-row">
                   <span class="detail-chip">{{this.category}}</span>
                   {{#if this.subcategory}}<span class="detail-chip">{{this.subcategory}}</span>{{/if}}
-                  {{#if this.droidRoleLabel}}<span class="detail-chip">{{this.droidRoleLabel}}</span>{{/if}}
                   {{#if this.vehicleSizeLabel}}<span class="detail-chip">{{this.vehicleSizeLabel}}</span>{{/if}}
                   {{#if this.vehicleChallengeLabel}}<span class="detail-chip">{{this.vehicleChallengeLabel}}</span>{{/if}}
+                  {{#if this.vehicleCrewLabel}}<span class="detail-chip">{{this.vehicleCrewLabel}}</span>{{/if}}
+                  {{#if this.vehicleHyperdriveKey}}<span class="detail-chip">{{#if (eq this.vehicleHyperdriveKey 'yes')}}Hyperdrive{{else}}No Hyperdrive{{/if}}</span>{{/if}}
+                  {{#if this.vehicleWeaponsKey}}<span class="detail-chip">{{#if (eq this.vehicleWeaponsKey 'yes')}}Armed{{else}}Unarmed{{/if}}</span>{{/if}}
+                  {{#if this.vehicleShieldsKey}}<span class="detail-chip">{{#if (eq this.vehicleShieldsKey 'yes')}}Shielded{{else}}No Shields{{/if}}</span>{{/if}}
                   <span class="detail-chip">{{this.availability}}</span>
                 </div>
                 <div class="card-price"><span class="price-amount">{{this.priceLabel}}</span><span class="swse-credit-symbol swse-credit-symbol--suffix" aria-label="{{localize 'SWSE.Store.Header.Credits'}}"></span>{{#if this.priceOverrideApplied}}<span class="policy-price-chip">{{localize 'SWSE.Store.Detail.GmPrice'}}</span>{{/if}}</div>

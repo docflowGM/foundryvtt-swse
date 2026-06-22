@@ -13,7 +13,6 @@ import {
   buildStoreNavigationModel,
   normalizeArmorSubcategory,
   normalizeDroidSubcategory,
-  normalizeDroidRole,
   normalizeVehicleSubcategory,
   getDroidFamily,
   getVehicleFamily,
@@ -22,6 +21,14 @@ import {
   getVehicleChallengeLevel,
   getVehicleSizeKey,
   getVehicleSizeLabel,
+  getVehicleCrewGroup,
+  getVehicleCrewGroupLabel,
+  getVehicleCargoGroup,
+  getVehicleCargoGroupLabel,
+  getVehicleHyperdriveKey,
+  getVehicleWeaponsKey,
+  getVehicleShieldsKey,
+  getVehicleBooleanFeatureLabel,
   getWeaponFamily
 } from '/systems/foundryvtt-swse/scripts/apps/store/store-shared.js';
 import { getStoreCurrencySymbol } from '/systems/foundryvtt-swse/scripts/apps/store/store-description-resolver.js';
@@ -65,11 +72,6 @@ function _navFamily(item = {}) {
   return '';
 }
 
-function _navDroidRole(item = {}) {
-  return normalizeDroidRole(item, getDroidFamily(item));
-}
-
-
 function _vehicleSizeMatches(item = {}, filter = '') {
   const key = _normalizeStoreFilterValue(filter);
   if (!key || key === 'all') return true;
@@ -82,6 +84,25 @@ function _vehicleChallengeMatches(item = {}, filter = '') {
   return getVehicleChallengeBand(item) === key;
 }
 
+
+
+function _vehicleCrewMatches(item = {}, filter = '') {
+  const key = _normalizeStoreFilterValue(filter);
+  if (!key || key === 'all') return true;
+  return getVehicleCrewGroup(item) === key;
+}
+
+function _vehicleCargoMatches(item = {}, filter = '') {
+  const key = _normalizeStoreFilterValue(filter);
+  if (!key || key === 'all') return true;
+  return getVehicleCargoGroup(item) === key;
+}
+
+function _vehicleFeatureMatches(item = {}, filter = '', getter = null) {
+  const key = _normalizeStoreFilterValue(filter);
+  if (!key || key === 'all' || typeof getter !== 'function') return true;
+  return getter(item) === key;
+}
 const STORE_SPLASH_COMPANIES = [
   ['Adarian government', 'ADG'], ['AestheTech Incorporated', 'ATI'], ['Arlen-Dempler Luxury Speeders', 'ADLS'],
   ['Aurodiseal', 'AUR'], ['Bakiska\'s', 'BAK'], ['Begamor Heavy Industry Group', 'BHIG'],
@@ -201,7 +222,14 @@ function _decorateStoreCardItem(item = {}) {
     vehicleSizeLabel: categoryKey === 'vehicles' ? (item.vehicleSizeLabel || getVehicleSizeLabel(item)) : '',
     vehicleChallengeLevel: categoryKey === 'vehicles' ? (item.vehicleChallengeLevel ?? getVehicleChallengeLevel(item)) : null,
     vehicleChallengeBand,
-    vehicleChallengeLabel: categoryKey === 'vehicles' ? (item.vehicleChallengeLabel || getVehicleChallengeBandLabel(vehicleChallengeBand)) : ''
+    vehicleChallengeLabel: categoryKey === 'vehicles' ? (item.vehicleChallengeLabel || getVehicleChallengeBandLabel(vehicleChallengeBand)) : '',
+    vehicleCrewGroup: categoryKey === 'vehicles' ? (item.vehicleCrewGroup || getVehicleCrewGroup(item)) : '',
+    vehicleCrewLabel: categoryKey === 'vehicles' ? (item.vehicleCrewLabel || getVehicleCrewGroupLabel(getVehicleCrewGroup(item))) : '',
+    vehicleCargoGroup: categoryKey === 'vehicles' ? (item.vehicleCargoGroup || getVehicleCargoGroup(item)) : '',
+    vehicleCargoLabel: categoryKey === 'vehicles' ? (item.vehicleCargoLabel || getVehicleCargoGroupLabel(getVehicleCargoGroup(item))) : '',
+    vehicleHyperdriveKey: categoryKey === 'vehicles' ? (item.vehicleHyperdriveKey || getVehicleHyperdriveKey(item)) : '',
+    vehicleWeaponsKey: categoryKey === 'vehicles' ? (item.vehicleWeaponsKey || getVehicleWeaponsKey(item)) : '',
+    vehicleShieldsKey: categoryKey === 'vehicles' ? (item.vehicleShieldsKey || getVehicleShieldsKey(item)) : ''
   };
 }
 
@@ -521,6 +549,54 @@ function _buildVehicleClOptions(items = [], currentVehicleCl = null) {
     .sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
 }
 
+
+function _buildVehicleCrewOptions(items = [], currentVehicleCrew = null) {
+  const counts = new Map();
+  for (const item of items) {
+    if (_categoryKey(item) !== 'vehicles') continue;
+    const key = getVehicleCrewGroup(item);
+    if (!key) continue;
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+  const order = ['automated', 'solo', 'small', 'team', 'large', 'capital', 'massive', 'unknown'];
+  return [...counts.entries()]
+    .map(([key, count]) => ({ key, count, label: getVehicleCrewGroupLabel(key), active: currentVehicleCrew === key }))
+    .sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
+}
+
+function _buildVehicleCargoOptions(items = [], currentVehicleCargo = null) {
+  const counts = new Map();
+  for (const item of items) {
+    if (_categoryKey(item) !== 'vehicles') continue;
+    const key = getVehicleCargoGroup(item);
+    if (!key) continue;
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+  const order = ['none', 'personal', 'light', 'medium', 'heavy', 'bulk', 'massive', 'unknown'];
+  return [...counts.entries()]
+    .map(([key, count]) => ({ key, count, label: getVehicleCargoGroupLabel(key), active: currentVehicleCargo === key }))
+    .sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
+}
+
+function _buildVehicleBooleanOptions(items = [], feature = '', current = null) {
+  const getter = feature === 'hyperdrive'
+    ? getVehicleHyperdriveKey
+    : feature === 'weapons'
+      ? getVehicleWeaponsKey
+      : getVehicleShieldsKey;
+  const counts = new Map();
+  for (const item of items) {
+    if (_categoryKey(item) !== 'vehicles') continue;
+    const key = getter(item);
+    if (!key) continue;
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+  const order = ['yes', 'no'];
+  return [...counts.entries()]
+    .map(([key, count]) => ({ key, count, label: getVehicleBooleanFeatureLabel(feature, key), active: current === key }))
+    .sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
+}
+
 export class StoreSurfaceService {
 
   /**
@@ -556,12 +632,6 @@ export class StoreSurfaceService {
    * Invalidate cached instance for an actor (e.g. after actor change).
    */
   static invalidate(actorId) {
-    const inst = _instanceCache.get(actorId);
-    try {
-      inst?.cancelDeferredSuggestionGeneration?.();
-    } catch (_err) {
-      // Cache invalidation should never fail actor refresh.
-    }
     _instanceCache.delete(actorId);
   }
 
@@ -671,15 +741,6 @@ export class StoreSurfaceService {
         return { id: 'store', title: 'Rendarr\'s Outfitters', error: 'Store unavailable' };
       }
 
-      // Shell-native browse opens immediately, then scores catalog fit in the
-      // background. The controller listens for the completion hook and requests
-      // one shell repaint so badges/fit notes appear without blocking open.
-      storeInstance.scheduleDeferredSuggestions?.({
-        reason: 'shell-store-surface',
-        chunkSize: Number(options.suggestionChunkSize ?? 40) || 40,
-        yieldMs: Number(options.suggestionYieldMs ?? 0) || 0
-      });
-
       // Sync navigation state from shell options.
       // The splash is a full-catalog entry point; never let stale browse filters
       // from an earlier store session starve hot-item hydration before the user
@@ -692,12 +753,22 @@ export class StoreSurfaceService {
         if (options.currentFamily !== undefined) storeInstance.currentFamily = options.currentFamily ?? null;
         if (options.currentVehicleSize !== undefined) storeInstance.currentVehicleSize = options.currentVehicleSize || null;
         if (options.currentVehicleCl !== undefined) storeInstance.currentVehicleCl = options.currentVehicleCl || null;
+        if (options.currentVehicleCrew !== undefined) storeInstance.currentVehicleCrew = options.currentVehicleCrew || null;
+        if (options.currentVehicleCargo !== undefined) storeInstance.currentVehicleCargo = options.currentVehicleCargo || null;
+        if (options.currentVehicleHyperdrive !== undefined) storeInstance.currentVehicleHyperdrive = options.currentVehicleHyperdrive || null;
+        if (options.currentVehicleWeapons !== undefined) storeInstance.currentVehicleWeapons = options.currentVehicleWeapons || null;
+        if (options.currentVehicleShields !== undefined) storeInstance.currentVehicleShields = options.currentVehicleShields || null;
         // When category changes, clear stale subcategory/family state
         if (options.currentCategory !== undefined && options.currentCategory !== previousCategory) {
           storeInstance.currentSubcategory = null;
           storeInstance.currentFamily = null;
           storeInstance.currentVehicleSize = null;
           storeInstance.currentVehicleCl = null;
+          storeInstance.currentVehicleCrew = null;
+          storeInstance.currentVehicleCargo = null;
+          storeInstance.currentVehicleHyperdrive = null;
+          storeInstance.currentVehicleWeapons = null;
+          storeInstance.currentVehicleShields = null;
         }
         if (options.currentView) storeInstance.currentView = options.currentView;
         if (options.selectedProductId !== undefined) storeInstance.selectedProductId = options.selectedProductId ?? null;
@@ -716,21 +787,34 @@ export class StoreSurfaceService {
       const currentFamily = storeContext.currentFamily ?? null;
       const currentVehicleSize = storeContext.currentVehicleSize ?? options.currentVehicleSize ?? null;
       const currentVehicleCl = storeContext.currentVehicleCl ?? options.currentVehicleCl ?? null;
+      const currentVehicleCrew = storeContext.currentVehicleCrew ?? options.currentVehicleCrew ?? null;
+      const currentVehicleCargo = storeContext.currentVehicleCargo ?? options.currentVehicleCargo ?? null;
+      const currentVehicleHyperdrive = storeContext.currentVehicleHyperdrive ?? options.currentVehicleHyperdrive ?? null;
+      const currentVehicleWeapons = storeContext.currentVehicleWeapons ?? options.currentVehicleWeapons ?? null;
+      const currentVehicleShields = storeContext.currentVehicleShields ?? options.currentVehicleShields ?? null;
       const allItems = Array.isArray(storeContext.allItems) ? storeContext.allItems : [];
       const visibleItems = allItems.filter(item => {
         const itemCategory = _categoryKey(item);
         const matchesCategory = !currentCategory || itemCategory === currentCategory;
         const matchesSubcategory = !currentSubcategory
-          || (currentCategory === 'droids'
-            ? _navDroidRole(item) === _normalizeStoreFilterValue(currentSubcategory)
-            : _normalizeStoreFilterValue(_navSubcategory(item)) === _normalizeStoreFilterValue(currentSubcategory));
+          || _normalizeStoreFilterValue(_navSubcategory(item)) === _normalizeStoreFilterValue(currentSubcategory);
         const matchesFamily = !(['weapons', 'droids', 'vehicles'].includes(currentCategory) && currentFamily)
           || _navFamily(item) === currentFamily;
         const matchesVehicleSize = !(currentCategory === 'vehicles' && currentVehicleSize)
           || _vehicleSizeMatches(item, currentVehicleSize);
         const matchesVehicleCl = !(currentCategory === 'vehicles' && currentVehicleCl)
           || _vehicleChallengeMatches(item, currentVehicleCl);
-        return matchesCategory && matchesSubcategory && matchesFamily && matchesVehicleSize && matchesVehicleCl;
+        const matchesVehicleCrew = !(currentCategory === 'vehicles' && currentVehicleCrew)
+          || _vehicleCrewMatches(item, currentVehicleCrew);
+        const matchesVehicleCargo = !(currentCategory === 'vehicles' && currentVehicleCargo)
+          || _vehicleCargoMatches(item, currentVehicleCargo);
+        const matchesVehicleHyperdrive = !(currentCategory === 'vehicles' && currentVehicleHyperdrive)
+          || _vehicleFeatureMatches(item, currentVehicleHyperdrive, getVehicleHyperdriveKey);
+        const matchesVehicleWeapons = !(currentCategory === 'vehicles' && currentVehicleWeapons)
+          || _vehicleFeatureMatches(item, currentVehicleWeapons, getVehicleWeaponsKey);
+        const matchesVehicleShields = !(currentCategory === 'vehicles' && currentVehicleShields)
+          || _vehicleFeatureMatches(item, currentVehicleShields, getVehicleShieldsKey);
+        return matchesCategory && matchesSubcategory && matchesFamily && matchesVehicleSize && matchesVehicleCl && matchesVehicleCrew && matchesVehicleCargo && matchesVehicleHyperdrive && matchesVehicleWeapons && matchesVehicleShields;
       });
 
       const baseRenderLimit = Number(options.storeRenderLimit ?? 36) || 36;
@@ -808,8 +892,18 @@ export class StoreSurfaceService {
         currentFamily: storeContext.currentFamily ?? null,
         currentVehicleSize: currentVehicleSize ?? null,
         currentVehicleCl: currentVehicleCl ?? null,
+        currentVehicleCrew: currentVehicleCrew ?? null,
+        currentVehicleCargo: currentVehicleCargo ?? null,
+        currentVehicleHyperdrive: currentVehicleHyperdrive ?? null,
+        currentVehicleWeapons: currentVehicleWeapons ?? null,
+        currentVehicleShields: currentVehicleShields ?? null,
         vehicleSizeOptions: Array.isArray(storeContext.vehicleSizeOptions) ? storeContext.vehicleSizeOptions : _buildVehicleSizeOptions(storeInstance.storeInventory?.allItems || [], currentVehicleSize),
         vehicleClOptions: Array.isArray(storeContext.vehicleClOptions) ? storeContext.vehicleClOptions : _buildVehicleClOptions(storeInstance.storeInventory?.allItems || [], currentVehicleCl),
+        vehicleCrewOptions: Array.isArray(storeContext.vehicleCrewOptions) ? storeContext.vehicleCrewOptions : _buildVehicleCrewOptions(storeInstance.storeInventory?.allItems || [], currentVehicleCrew),
+        vehicleCargoOptions: Array.isArray(storeContext.vehicleCargoOptions) ? storeContext.vehicleCargoOptions : _buildVehicleCargoOptions(storeInstance.storeInventory?.allItems || [], currentVehicleCargo),
+        vehicleHyperdriveOptions: Array.isArray(storeContext.vehicleHyperdriveOptions) ? storeContext.vehicleHyperdriveOptions : _buildVehicleBooleanOptions(storeInstance.storeInventory?.allItems || [], 'hyperdrive', currentVehicleHyperdrive),
+        vehicleWeaponsOptions: Array.isArray(storeContext.vehicleWeaponsOptions) ? storeContext.vehicleWeaponsOptions : _buildVehicleBooleanOptions(storeInstance.storeInventory?.allItems || [], 'weapons', currentVehicleWeapons),
+        vehicleShieldsOptions: Array.isArray(storeContext.vehicleShieldsOptions) ? storeContext.vehicleShieldsOptions : _buildVehicleBooleanOptions(storeInstance.storeInventory?.allItems || [], 'shields', currentVehicleShields),
         currencySymbol: storeContext.currencySymbol ?? getStoreCurrencySymbol(),
         currentCategoryLabel: storeContext.currentCategoryLabel ?? 'Weapons',
         categorySummary,
@@ -840,8 +934,7 @@ export class StoreSurfaceService {
           search: options.search ?? '',
           availability: options.availability ?? 'all',
           sort: options.sort ?? 'default'
-        },
-        suggestionStatus: storeContext.suggestionStatus ?? storeInstance.getSuggestionStatus?.() ?? { state: 'idle' }
+        }
       };
 
       return {
