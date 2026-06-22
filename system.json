@@ -2,7 +2,7 @@
   "id": "foundryvtt-swse",
   "title": "Star Wars Saga Edition",
   "description": "Complete Star Wars Saga Edition implementation for FoundryVTT with automated character sheets, combat mechanics, Force powers, vehicles, and comprehensive game rules.",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "compatibility": {
     "minimum": "12",
     "verified": "14"
@@ -22,7 +22,7 @@
   "discord": "https://discord.gg/Sdwd7CgmaJ",
   "url": "https://github.com/docflowGM/foundryvtt-swse",
   "manifest": "https://raw.githubusercontent.com/docflowGM/foundryvtt-swse/main/system.json",
-  "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v3.2.0/swse.zip",
+  "download": "https://github.com/docflowGM/foundryvtt-swse/releases/download/v3.3.0/swse.zip",
   "esmodules": [
     "index.js"
   ],
@@ -157,12 +157,12 @@
     },
     {
       "lang": "es",
-      "name": "Español",
+      "name": "Espa\u00f1ol",
       "path": "lang/es.json"
     },
     {
       "lang": "fr",
-      "name": "Français",
+      "name": "Fran\u00e7ais",
       "path": "lang/fr.json"
     },
     {
@@ -172,27 +172,27 @@
     },
     {
       "lang": "ja",
-      "name": "日本語",
+      "name": "\u65e5\u672c\u8a9e",
       "path": "lang/ja.json"
     },
     {
       "lang": "ru",
-      "name": "Русский",
+      "name": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439",
       "path": "lang/ru.json"
     },
     {
       "lang": "pt-BR",
-      "name": "Português (Brasil)",
+      "name": "Portugu\u00eas (Brasil)",
       "path": "lang/pt-BR.json"
     },
     {
       "lang": "zh-CN",
-      "name": "简体中文",
+      "name": "\u7b80\u4f53\u4e2d\u6587",
       "path": "lang/zh-CN.json"
     },
     {
       "lang": "ko",
-      "name": "한국어",
+      "name": "\ud55c\uad6d\uc5b4",
       "path": "lang/ko.json"
     },
     {
@@ -212,12 +212,12 @@
     },
     {
       "lang": "hi",
-      "name": "हिन्दी",
+      "name": "\u0939\u093f\u0928\u094d\u0926\u0940",
       "path": "lang/hi.json"
     },
     {
       "lang": "ar",
-      "name": "العربية",
+      "name": "\u0627\u0644\u0639\u0631\u0628\u064a\u0629",
       "path": "lang/ar.json"
     },
     {
@@ -227,7 +227,7 @@
     },
     {
       "lang": "tr",
-      "name": "Türkçe",
+      "name": "T\u00fcrk\u00e7e",
       "path": "lang/tr.json"
     },
     {
@@ -242,22 +242,22 @@
     },
     {
       "lang": "vi",
-      "name": "Tiếng Việt",
+      "name": "Ti\u1ebfng Vi\u1ec7t",
       "path": "lang/vi.json"
     },
     {
       "lang": "th",
-      "name": "ไทย",
+      "name": "\u0e44\u0e17\u0e22",
       "path": "lang/th.json"
     },
     {
       "lang": "bn",
-      "name": "বাংলা",
+      "name": "\u09ac\u09be\u0982\u09b2\u09be",
       "path": "lang/bn.json"
     },
     {
       "lang": "ur",
-      "name": "اردو",
+      "name": "\u0627\u0631\u062f\u0648",
       "path": "lang/ur.json"
     },
     {
@@ -267,12 +267,12 @@
     },
     {
       "lang": "uk",
-      "name": "Українська",
+      "name": "\u0423\u043a\u0440\u0430\u0457\u043d\u0441\u044c\u043a\u0430",
       "path": "lang/uk.json"
     },
     {
       "lang": "he",
-      "name": "עברית",
+      "name": "\u05e2\u05d1\u05e8\u05d9\u05ea",
       "path": "lang/he.json"
     }
   ],
@@ -923,7 +923,7 @@
       "type": "Number",
       "default": 50,
       "name": "Automatic Sale Value (%)",
-      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10–100%)",
+      "hint": "Sets the percentage of an item's base price paid when automatic selling is enabled. (Saga RAW default is 50%. Range: 10\u2013100%)",
       "range": {
         "min": 10,
         "max": 100,
