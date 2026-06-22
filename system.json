@@ -517,11 +517,11 @@
       "path": "packs/armor.db"
     },
     {
-      "name": "vehicles-starships",
-      "label": "Vehicles - Starships",
+      "name": "vehicles-speeders",
+      "label": "Vehicles - Speeders",
       "type": "Actor",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-starships.db",
+      "path": "packs/vehicles-speeders.db",
       "ownership": {
         "PLAYER": "OBSERVER",
         "ASSISTANT": "OBSERVER",
@@ -530,11 +530,24 @@
       }
     },
     {
-      "name": "vehicles-stations",
-      "label": "Vehicles - Stations",
+      "name": "vehicles-airspeeders",
+      "label": "Vehicles - Airspeeders",
       "type": "Actor",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-stations.db",
+      "path": "packs/vehicles-airspeeders.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
+    },
+    {
+      "name": "vehicles-tracked",
+      "label": "Vehicles - Tracked Vehicles",
+      "type": "Actor",
+      "system": "foundryvtt-swse",
+      "path": "packs/vehicles-tracked.db",
       "ownership": {
         "PLAYER": "OBSERVER",
         "ASSISTANT": "OBSERVER",
@@ -556,11 +569,76 @@
       }
     },
     {
-      "name": "vehicles-speeders",
-      "label": "Vehicles - Speeders",
+      "name": "vehicles-wheeled",
+      "label": "Vehicles - Wheeled Vehicles",
       "type": "Actor",
       "system": "foundryvtt-swse",
-      "path": "packs/vehicles-speeders.db",
+      "path": "packs/vehicles-wheeled.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
+    },
+    {
+      "name": "vehicles-weapon-emplacements",
+      "label": "Vehicles - Weapon Emplacements",
+      "type": "Actor",
+      "system": "foundryvtt-swse",
+      "path": "packs/vehicles-weapon-emplacements.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
+    },
+    {
+      "name": "vehicles-starfighters",
+      "label": "Vehicles - Starfighters",
+      "type": "Actor",
+      "system": "foundryvtt-swse",
+      "path": "packs/vehicles-starfighters.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
+    },
+    {
+      "name": "vehicles-space-transports",
+      "label": "Vehicles - Space Transports",
+      "type": "Actor",
+      "system": "foundryvtt-swse",
+      "path": "packs/vehicles-space-transports.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
+    },
+    {
+      "name": "vehicles-capital-ships",
+      "label": "Vehicles - Capital Ships",
+      "type": "Actor",
+      "system": "foundryvtt-swse",
+      "path": "packs/vehicles-capital-ships.db",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "GAMEMASTER": "OWNER"
+      }
+    },
+    {
+      "name": "vehicles-stations",
+      "label": "Vehicles - Space Stations",
+      "type": "Actor",
+      "system": "foundryvtt-swse",
+      "path": "packs/vehicles-stations.db",
       "ownership": {
         "PLAYER": "OBSERVER",
         "ASSISTANT": "OBSERVER",

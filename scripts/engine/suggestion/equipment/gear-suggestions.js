@@ -7,7 +7,113 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { assignTier, clampScore } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/shared-scoring-utils.js";
-import { scoreStoreItemContextFit } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/store-suggestion-context.js";
+import { extractStoreItemTags, scoreStoreItemContextFit } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/store-suggestion-context.js";
+
+
+function normalize(value) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+}
+
+function numberValue(value, fallback = 0) {
+  if (value && typeof value === 'object' && !Array.isArray(value)) {
+    for (const key of ['total', 'value', 'mod', 'current', 'base']) {
+      if (value[key] !== undefined && value[key] !== null && value[key] !== '') return numberValue(value[key], fallback);
+    }
+  }
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function readAttributeMod(system = {}, key = '') {
+  const attr = system.attributes?.[key] || {};
+  const ability = system.abilities?.[key] || {};
+  const direct = attr.mod ?? attr.modifier ?? attr.totalMod ?? ability.mod ?? ability.modifier;
+  if (Number.isFinite(Number(direct))) return Number(direct);
+  const score = attr.total ?? attr.value ?? ability.total ?? ability.value ?? ability.score;
+  if (Number.isFinite(Number(score))) return Math.floor((Number(score) - 10) / 2);
+  return 0;
+}
+
+function skillValue(character, keys = []) {
+  const skills = character?.system?.skills || {};
+  let best = 0;
+  for (const key of keys) {
+    const normalized = normalize(key);
+    const compact = normalized.replace(/_/g, '');
+    const skill = skills[key] || skills[normalized] || skills[compact];
+    if (!skill) continue;
+    const trained = skill.trained === true || skill.isTrained === true || skill.rank > 0 || skill.ranks > 0;
+    best = Math.max(best, numberValue(skill.total ?? skill.mod ?? skill.value, trained ? 5 : 0), trained ? 5 : 0);
+  }
+  return best;
+}
+
+function routeScore(storeContext = {}, routes = []) {
+  const profile = storeContext.routeProfile || {};
+  let best = 0;
+  for (const route of routes) {
+    const key = normalize(route);
+    const entry = profile.routes?.[key] || profile.routes?.[route];
+    best = Math.max(best, numberValue(entry?.score, 0));
+  }
+  return best;
+}
+
+function scoreGearUseCaseFit(gear, character, storeContext = {}) {
+  const tags = new Set(extractStoreItemTags(gear).map(normalize));
+  const text = [gear?.name, gear?.system?.category, gear?.system?.subcategory, gear?.system?.description]
+    .filter(Boolean).join(' ').toLowerCase();
+  const explanations = [];
+  let score = 0;
+
+  const mechanics = skillValue(character, ['mechanics']);
+  const useComputer = skillValue(character, ['use computer', 'use_computer']);
+  const treatInjury = skillValue(character, ['treat injury', 'treat_injury']);
+  const survival = skillValue(character, ['survival']);
+  const perception = skillValue(character, ['perception']);
+  const stealth = skillValue(character, ['stealth']);
+  const persuasion = skillValue(character, ['persuasion', 'deception', 'gather information', 'gather_information']);
+  const intMod = readAttributeMod(character?.system || {}, 'int');
+  const wisMod = readAttributeMod(character?.system || {}, 'wis');
+
+  if (tags.has('medical') || /medpac|medkit|medical|surgery|diagnostic/.test(text)) {
+    const aligned = treatInjury >= 5 || routeScore(storeContext, ['support', 'medical']) >= 0.34;
+    score += aligned ? 8 : 3;
+    explanations.push(aligned ? 'Medical gear reinforces your Treat Injury/support role.' : 'Medical gear covers an important party safety gap.');
+  }
+  if (tags.has('toolkit') || tags.has('tech') || /toolkit|tool kit|repair|mechanic/.test(text)) {
+    const aligned = mechanics >= 5 || intMod >= 3 || routeScore(storeContext, ['tech', 'repair']) >= 0.34;
+    score += aligned ? 8 : 2;
+    explanations.push(aligned ? 'Technical gear matches your Mechanics/Intelligence investment.' : 'Technical gear is useful, but your build has limited tech commitment.');
+  }
+  if (tags.has('security') || /security kit|slicer|computer spike|datapad|interface/.test(text)) {
+    const aligned = useComputer >= 5 || intMod >= 3 || routeScore(storeContext, ['tech', 'slicer']) >= 0.34;
+    score += aligned ? 7 : 2;
+    explanations.push(aligned ? 'Slicing/security gear matches your Use Computer lane.' : 'Security gear opens a tech side lane.');
+  }
+  if (tags.has('survival') || tags.has('fieldcraft') || /survival|field kit|climbing|breath mask|sensor|macrobinocular/.test(text)) {
+    const aligned = survival >= 5 || perception >= 5 || wisMod >= 3 || routeScore(storeContext, ['scout', 'fieldcraft', 'survival']) >= 0.34;
+    score += aligned ? 7 : 3;
+    explanations.push(aligned ? 'Field gear supports your scout/perception route.' : 'Field gear is broadly useful outside combat.');
+  }
+  if (tags.has('stealth') || /stealth|camouflage|conceal|shadow/.test(text)) {
+    const aligned = stealth >= 5 || routeScore(storeContext, ['stealth', 'scoundrel', 'scout']) >= 0.34;
+    score += aligned ? 6 : 1;
+    explanations.push(aligned ? 'Stealth gear matches your infiltration lane.' : 'Stealth gear is a side option unless you invest in Stealth.');
+  }
+  if (tags.has('social') || /comlink|disguise|translator|forgery|credit chip|identity/.test(text)) {
+    const aligned = persuasion >= 5 || routeScore(storeContext, ['social', 'leadership']) >= 0.34;
+    score += aligned ? 5 : 2;
+    explanations.push(aligned ? 'Social/identity gear supports your influence lane.' : 'Social gear offers situational utility.');
+  }
+
+  return { adjustment: Math.max(-6, Math.min(14, score)), explanations: explanations.slice(0, 3) };
+}
 
 export class GearSuggestions {
   /**
@@ -142,6 +248,7 @@ export class GearSuggestions {
       // Price bias
       const priceBias = this._scorePriceBias(gear);
       const storeContextFit = options.storeContext ? scoreStoreItemContextFit(gear, options.storeContext, options) : null;
+      const useCaseFit = scoreGearUseCaseFit(gear, character, options.storeContext || {});
 
       // Final score (additive, bounded 0-100)
       let finalScore = baseRelevance +
@@ -149,7 +256,8 @@ export class GearSuggestions {
         axisA +
         axisB +
         priceBias +
-        (storeContextFit?.cappedAdjustment || 0);
+        (storeContextFit?.cappedAdjustment || 0) +
+        useCaseFit.adjustment;
 
       // NaN protection
       if (!Number.isFinite(finalScore)) finalScore = 0;
@@ -171,7 +279,8 @@ export class GearSuggestions {
           utility: axisA,
           actionCost: axisB,
           priceBias,
-          storeContextFit: storeContextFit?.cappedAdjustment || 0
+          storeContextFit: storeContextFit?.cappedAdjustment || 0,
+          useCaseFit: useCaseFit.adjustment
         },
 
         combined: {
@@ -181,10 +290,12 @@ export class GearSuggestions {
 
         explanations: [
           ...this._generateExplanations(gear, charContext, axisA, axisB, roleAlignment),
+          ...useCaseFit.explanations,
           ...(storeContextFit?.explanations || [])
         ].slice(0, 5),
 
         storeContextFit,
+        useCaseFit,
 
         meta: {
           computedAt: Date.now(),
@@ -339,10 +450,10 @@ export class GearSuggestions {
       level: system.level?.value ?? 1,
       primaryRole: this._inferRole(className),
       attributes: {
-        str: system.abilities?.str?.mod ?? 0,
-        dex: system.abilities?.dex?.mod ?? 0,
-        int: system.abilities?.int?.mod ?? 0,
-        wis: system.abilities?.wis?.mod ?? 0
+        str: readAttributeMod(system, 'str'),
+        dex: readAttributeMod(system, 'dex'),
+        int: readAttributeMod(system, 'int'),
+        wis: readAttributeMod(system, 'wis')
       }
     };
   }

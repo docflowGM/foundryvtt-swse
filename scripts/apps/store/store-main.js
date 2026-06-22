@@ -18,7 +18,6 @@ import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/led
 import { ArmorSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/armor-suggestions.js";
 import { WeaponSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/weapon-suggestions.js";
 import { GearSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/gear-suggestions.js";
-import { buildStoreSuggestionContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/store-suggestion-context.js";
 import { MentorProseGenerator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/mentor-prose-generator.js";
 import { ReviewThreadAssembler } from "/systems/foundryvtt-swse/scripts/apps/store/review-thread-assembler.js";
 import { StoreLoadingOverlay } from "/systems/foundryvtt-swse/scripts/apps/store/store-loading-overlay.js";
@@ -43,6 +42,19 @@ import {
   getVehicleChallengeLevel,
   getVehicleSizeKey,
   getVehicleSizeLabel,
+  getVehicleCrewGroup,
+  getVehicleCrewGroupLabel,
+  getVehiclePassengerGroup,
+  getVehiclePassengerGroupLabel,
+  getVehicleRoleDefinitionsForSubcategory,
+  getVehicleRoleKey,
+  getVehicleRoleLabel,
+  getVehicleCargoGroup,
+  getVehicleCargoGroupLabel,
+  getVehicleHyperdriveKey,
+  getVehicleWeaponsKey,
+  getVehicleShieldsKey,
+  getVehicleBooleanFeatureLabel,
   getWeaponFamily
 } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -155,6 +167,31 @@ function vehicleChallengeMatches(itemOrView = {}, filterValue = '') {
   return getVehicleChallengeBand(itemOrView) === filter;
 }
 
+
+
+function vehicleCrewMatches(itemOrView = {}, filterValue = '') {
+  const filter = normalizeStoreFilterValue(filterValue);
+  if (!filter || filter === 'all') return true;
+  return getVehicleCrewGroup(itemOrView) === filter;
+}
+
+function vehiclePassengerMatches(itemOrView = {}, filterValue = '') {
+  const filter = normalizeStoreFilterValue(filterValue);
+  if (!filter || filter === 'all') return true;
+  return getVehiclePassengerGroup(itemOrView) === filter;
+}
+
+function vehicleCargoMatches(itemOrView = {}, filterValue = '') {
+  const filter = normalizeStoreFilterValue(filterValue);
+  if (!filter || filter === 'all') return true;
+  return getVehicleCargoGroup(itemOrView) === filter;
+}
+
+function vehicleFeatureMatches(itemOrView = {}, filterValue = '', getter = null) {
+  const filter = normalizeStoreFilterValue(filterValue);
+  if (!filter || filter === 'all' || typeof getter !== 'function') return true;
+  return getter(itemOrView) === filter;
+}
 function availabilityMatches(itemOrView = {}, filterValue = '') {
   const filter = normalizeAvailabilityText(filterValue);
   if (!filter || filter === 'all') return true;
@@ -182,23 +219,6 @@ function resolveVehicleStoreCosts(item = {}) {
 
 function hasStorePrice(value) {
   return positiveCreditOrNull(value) !== null;
-}
-
-function storeSuggestionYield(ms = 0) {
-  return new Promise(resolve => setTimeout(resolve, Math.max(0, Number(ms) || 0)));
-}
-
-function getStoreSuggestionItemId(scored = {}) {
-  return scored.weaponId || scored.armorId || scored.equipmentId || scored.itemId || scored.id || null;
-}
-
-function chunkStoreSuggestionItems(items = [], size = 40) {
-  const chunkSize = Math.max(1, Number(size) || 40);
-  const chunks = [];
-  for (let i = 0; i < items.length; i += chunkSize) {
-    chunks.push(items.slice(i, i + chunkSize));
-  }
-  return chunks;
 }
 
 export class SWSEStore extends BaseSWSEAppV2 {
@@ -249,13 +269,6 @@ export class SWSEStore extends BaseSWSEAppV2 {
     this.itemsById = new Map();      // Engine provides this
     this.storeInventory = null;      // Engine inventory cache
     this.suggestions = new Map();    // Item ID → suggestion score
-    this._suggestionGenerationState = 'idle';
-    this._suggestionGenerationPromise = null;
-    this._suggestionGenerationToken = 0;
-    this._suggestionGenerationProgress = { total: 0, scored: 0, phase: 'idle' };
-    this._suggestionsGeneratedAt = 0;
-    this._storeSuggestionContext = null;
-    this._storeSuggestionContextActorId = null;
     this.reviewsData = null;         // Loaded reviews pack
 
     this.cart = emptyCart();
@@ -291,6 +304,13 @@ export class SWSEStore extends BaseSWSEAppV2 {
     this.currentFamily = null;        // Phase 2: weapon/vehicle/droid family grouping
     this.currentVehicleSize = null;
     this.currentVehicleCl = null;
+    this.currentVehicleRole = null;
+    this.currentVehicleCrew = null;
+    this.currentVehiclePassenger = null;
+    this.currentVehicleCargo = null;
+    this.currentVehicleHyperdrive = null;
+    this.currentVehicleWeapons = null;
+    this.currentVehicleShields = null;
     this.selectedProductId = null;
     this.entryOrigin = options.entryOrigin || options.origin || 'unknown';
     this.storeCurrencySymbol = getStoreCurrencySymbol();
@@ -386,8 +406,22 @@ export class SWSEStore extends BaseSWSEAppV2 {
       currentFamily: this.currentFamily,
       currentVehicleSize: this.currentVehicleSize,
       currentVehicleCl: this.currentVehicleCl,
+      currentVehicleRole: this.currentVehicleRole,
+      currentVehicleCrew: this.currentVehicleCrew,
+      currentVehiclePassenger: this.currentVehiclePassenger,
+      currentVehicleCargo: this.currentVehicleCargo,
+      currentVehicleHyperdrive: this.currentVehicleHyperdrive,
+      currentVehicleWeapons: this.currentVehicleWeapons,
+      currentVehicleShields: this.currentVehicleShields,
       vehicleSizeOptions: this._buildVehicleSizeOptions(),
       vehicleClOptions: this._buildVehicleClOptions(),
+      vehicleRoleOptions: this._buildVehicleRoleOptions(),
+      vehicleCrewOptions: this._buildVehicleCrewOptions(),
+      vehiclePassengerOptions: this._buildVehiclePassengerOptions(),
+      vehicleCargoOptions: this._buildVehicleCargoOptions(),
+      vehicleHyperdriveOptions: this._buildVehicleBooleanOptions('hyperdrive'),
+      vehicleWeaponsOptions: this._buildVehicleBooleanOptions('weapons'),
+      vehicleShieldsOptions: this._buildVehicleBooleanOptions('shields'),
       currentCategoryLabel,
       categorySummary,
       selectedProduct,
@@ -399,8 +433,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       rendarrWelcome: getRendarrLine('welcome'),
       rendarrImage: getRendarrPortraitPath(),
       entryOrigin: this.entryOrigin,
-      currencySymbol: this.storeCurrencySymbol,
-      suggestionStatus: this.getSuggestionStatus()
+      currencySymbol: this.storeCurrencySymbol
     };
   }
 
@@ -790,156 +823,10 @@ export class SWSEStore extends BaseSWSEAppV2 {
     }
   }
 
-  async _getStoreSuggestionContext() {
-    if (!this.actor) return null;
-    const actorId = this.actor.id || null;
-    if (this._storeSuggestionContext && this._storeSuggestionContextActorId === actorId) {
-      return this._storeSuggestionContext;
-    }
-    this._storeSuggestionContext = await buildStoreSuggestionContext(this.actor, {
-      credits: LedgerService.getCurrentCredits(this.actor)
-    });
-    this._storeSuggestionContextActorId = actorId;
-    return this._storeSuggestionContext;
-  }
-
-  getSuggestionStatus() {
-    return {
-      state: this._suggestionGenerationState || 'idle',
-      running: this._suggestionGenerationState === 'running',
-      complete: this._suggestionGenerationState === 'complete',
-      failed: this._suggestionGenerationState === 'failed',
-      total: Number(this._suggestionGenerationProgress?.total ?? 0) || 0,
-      scored: Number(this._suggestionGenerationProgress?.scored ?? 0) || 0,
-      phase: this._suggestionGenerationProgress?.phase || this._suggestionGenerationState || 'idle',
-      generatedAt: this._suggestionsGeneratedAt || 0
-    };
-  }
-
-  scheduleDeferredSuggestions(options = {}) {
-    if (!this.actor || !this.storeInventory) return null;
-    if (options.refreshContext) {
-      this.clearStoreSuggestionContext();
-      this._suggestionGenerationState = 'idle';
-      this._suggestionsGeneratedAt = 0;
-      this.suggestions?.clear?.();
-    }
-    if (this._suggestionGenerationState === 'complete') return this._suggestionGenerationPromise;
-    if (this._suggestionGenerationState === 'running' && this._suggestionGenerationPromise) return this._suggestionGenerationPromise;
-
-    const token = ++this._suggestionGenerationToken;
-    const chunkSize = Math.max(1, Number(options.chunkSize ?? 40) || 40);
-    const yieldMs = Math.max(0, Number(options.yieldMs ?? 0) || 0);
-    const notify = options.notify !== false;
-
-    this._suggestionGenerationState = 'running';
-    this._suggestionGenerationProgress = { total: 0, scored: 0, phase: 'queued' };
-
-    this._suggestionGenerationPromise = (async () => {
-      await storeSuggestionYield(yieldMs);
-      if (token !== this._suggestionGenerationToken) return null;
-      await this._generateSuggestionsForAllItemsDeferred({ token, chunkSize, yieldMs });
-      if (token !== this._suggestionGenerationToken) return null;
-
-      this._suggestionGenerationState = 'complete';
-      this._suggestionGenerationProgress.phase = 'complete';
-      this._suggestionsGeneratedAt = Date.now();
-
-      if (notify && typeof globalThis.Hooks?.callAll === 'function') {
-        globalThis.Hooks.callAll('swse:store-suggestions-updated', {
-          actorId: this.actor?.id ?? null,
-          app: this,
-          status: this.getSuggestionStatus(),
-          reason: options.reason || 'deferred-store-suggestions'
-        });
-      }
-      return this.getSuggestionStatus();
-    })().catch(err => {
-      if (token !== this._suggestionGenerationToken) return null;
-      this._suggestionGenerationState = 'failed';
-      this._suggestionGenerationProgress.phase = 'failed';
-      console.warn('[SWSE Store] Deferred suggestion generation failed:', err);
-      if (notify && typeof globalThis.Hooks?.callAll === 'function') {
-        globalThis.Hooks.callAll('swse:store-suggestions-updated', {
-          actorId: this.actor?.id ?? null,
-          app: this,
-          status: this.getSuggestionStatus(),
-          error: err,
-          reason: options.reason || 'deferred-store-suggestions-failed'
-        });
-      }
-      return null;
-    }).finally(() => {
-      if (token === this._suggestionGenerationToken) this._suggestionGenerationPromise = null;
-    });
-
-    return this._suggestionGenerationPromise;
-  }
-
-  cancelDeferredSuggestionGeneration() {
-    this._suggestionGenerationToken += 1;
-    if (this._suggestionGenerationState === 'running') {
-      this._suggestionGenerationState = 'cancelled';
-      this._suggestionGenerationProgress.phase = 'cancelled';
-    }
-    this._suggestionGenerationPromise = null;
-    this.clearStoreSuggestionContext();
-  }
-
-  clearStoreSuggestionContext() {
-    this._storeSuggestionContext = null;
-    this._storeSuggestionContextActorId = null;
-  }
-
-  async _generateSuggestionsForAllItemsDeferred({ token, chunkSize = 40, yieldMs = 0 } = {}) {
-    if (!this.actor || !this.storeInventory) return;
-
-    const storeContext = await this._getStoreSuggestionContext();
-
-    const buckets = [
-      { label: 'armor', items: this.storeInventory.allItems.filter(i => i.type === 'armor'), engine: ArmorSuggestions },
-      { label: 'weapons', items: this.storeInventory.allItems.filter(i => i.type === 'weapon'), engine: WeaponSuggestions },
-      { label: 'gear', items: this.storeInventory.allItems.filter(i => i.type === 'equipment'), engine: GearSuggestions }
-    ];
-
-    this._suggestionGenerationProgress.total = buckets.reduce((sum, bucket) => sum + bucket.items.length, 0);
-    this._suggestionGenerationProgress.scored = 0;
-
-    for (const bucket of buckets) {
-      if (token !== this._suggestionGenerationToken) return;
-      if (!bucket.items.length) continue;
-      this._suggestionGenerationProgress.phase = bucket.label;
-
-      for (const chunk of chunkStoreSuggestionItems(bucket.items, chunkSize)) {
-        if (token !== this._suggestionGenerationToken) return;
-        try {
-          const result = bucket.engine.generateSuggestions(this.actor, chunk, {
-            topCount: Math.max(10, chunk.length),
-            silent: true,
-            suppressLogs: true,
-            storeContext,
-            allArmorOptions: bucket.label === 'armor' ? bucket.items : undefined
-          });
-          for (const scored of result?.allScored || []) {
-            const itemId = getStoreSuggestionItemId(scored);
-            if (itemId) this.suggestions.set(itemId, scored);
-          }
-        } catch (err) {
-          console.warn(`[SWSE Store] ${bucket.label} suggestion chunk failed:`, err);
-        } finally {
-          this._suggestionGenerationProgress.scored += chunk.length;
-        }
-        await storeSuggestionYield(yieldMs);
-      }
-    }
-  }
-
   async _generateSuggestionsForAllItems() {
     if (!this.actor || !this.storeInventory) {return;}
 
     try {
-      const storeContext = await this._getStoreSuggestionContext();
-
       // Separate items by type
       const armor = this.storeInventory.allItems.filter(i => i.type === 'armor');
       const weapons = this.storeInventory.allItems.filter(i => i.type === 'weapon');
@@ -948,13 +835,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       // Generate suggestions for each type
       if (armor.length > 0) {
         try {
-          const armorSugg = ArmorSuggestions.generateSuggestions(this.actor, armor, {
-            topCount: 80,
-            silent: true,
-            suppressLogs: true,
-            storeContext,
-            allArmorOptions: armor
-          });
+          const armorSugg = ArmorSuggestions.generateSuggestions(this.actor, armor, { topCount: 80, silent: true, suppressLogs: true });
           if (armorSugg.allScored) {
             for (const scored of armorSugg.allScored) {
               const itemId = scored.armorId || scored.itemId;
@@ -970,7 +851,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
       if (weapons.length > 0) {
         try {
-          const weaponSugg = WeaponSuggestions.generateSuggestions(this.actor, weapons, { topCount: 80, silent: true, suppressLogs: true, storeContext });
+          const weaponSugg = WeaponSuggestions.generateSuggestions(this.actor, weapons, { topCount: 80, silent: true, suppressLogs: true });
           if (weaponSugg.allScored) {
             for (const scored of weaponSugg.allScored) {
               const itemId = scored.weaponId || scored.itemId;
@@ -986,7 +867,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
       if (gear.length > 0) {
         try {
-          const gearSugg = GearSuggestions.generateSuggestions(this.actor, gear, { topCount: 80, silent: true, suppressLogs: true, storeContext });
+          const gearSugg = GearSuggestions.generateSuggestions(this.actor, gear, { topCount: 80, silent: true, suppressLogs: true });
           if (gearSugg.allScored) {
             for (const scored of gearSugg.allScored) {
               const itemId = scored.equipmentId || scored.itemId;
@@ -1027,6 +908,18 @@ export class SWSEStore extends BaseSWSEAppV2 {
       view.vehicleChallengeLevel = view.categoryKey === 'vehicles' ? getVehicleChallengeLevel(item) : null;
       view.vehicleChallengeBand = view.categoryKey === 'vehicles' ? getVehicleChallengeBand(item) : '';
       view.vehicleChallengeLabel = view.vehicleChallengeBand ? getVehicleChallengeBandLabel(view.vehicleChallengeBand) : '';
+      view.vehicleRoleKey = view.categoryKey === 'vehicles' ? getVehicleRoleKey(item) : '';
+      view.vehicleRoleLabel = view.vehicleRoleKey ? getVehicleRoleLabel(item) : '';
+      view.vehicleUniqueNamed = view.categoryKey === 'vehicles' ? item.system?.vehicleUniqueNamed === true : false;
+      view.vehicleCrewGroup = view.categoryKey === 'vehicles' ? getVehicleCrewGroup(item) : '';
+      view.vehicleCrewLabel = view.vehicleCrewGroup ? getVehicleCrewGroupLabel(view.vehicleCrewGroup) : '';
+      view.vehiclePassengerGroup = view.categoryKey === 'vehicles' ? getVehiclePassengerGroup(item) : '';
+      view.vehiclePassengerLabel = view.vehiclePassengerGroup ? getVehiclePassengerGroupLabel(view.vehiclePassengerGroup) : '';
+      view.vehicleCargoGroup = view.categoryKey === 'vehicles' ? getVehicleCargoGroup(item) : '';
+      view.vehicleCargoLabel = view.vehicleCargoGroup ? getVehicleCargoGroupLabel(view.vehicleCargoGroup) : '';
+      view.vehicleHyperdriveKey = view.categoryKey === 'vehicles' ? getVehicleHyperdriveKey(item) : '';
+      view.vehicleWeaponsKey = view.categoryKey === 'vehicles' ? getVehicleWeaponsKey(item) : '';
+      view.vehicleShieldsKey = view.categoryKey === 'vehicles' ? getVehicleShieldsKey(item) : '';
       view.availability = getStoreAvailabilityText(item) || 'Standard';
       view.availabilityKey = normalizeAvailabilityText(view.availability);
       view.price = view.finalCost;
@@ -1062,6 +955,27 @@ export class SWSEStore extends BaseSWSEAppV2 {
           continue;
         }
         if (!vehicleChallengeMatches(item, this.currentVehicleCl)) {
+          continue;
+        }
+        if (this.currentVehicleRole && getVehicleRoleKey(item) !== normalizeStoreFilterValue(this.currentVehicleRole)) {
+          continue;
+        }
+        if (!vehicleCrewMatches(item, this.currentVehicleCrew)) {
+          continue;
+        }
+        if (!vehiclePassengerMatches(item, this.currentVehiclePassenger)) {
+          continue;
+        }
+        if (!vehicleCargoMatches(item, this.currentVehicleCargo)) {
+          continue;
+        }
+        if (!vehicleFeatureMatches(item, this.currentVehicleHyperdrive, getVehicleHyperdriveKey)) {
+          continue;
+        }
+        if (!vehicleFeatureMatches(item, this.currentVehicleWeapons, getVehicleWeaponsKey)) {
+          continue;
+        }
+        if (!vehicleFeatureMatches(item, this.currentVehicleShields, getVehicleShieldsKey)) {
           continue;
         }
       }
@@ -1127,6 +1041,77 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const order = ['0-3', '4-7', '8-11', '12-15', '16-plus'];
     return [...counts.entries()]
       .map(([key, count]) => ({ key, count, label: getVehicleChallengeBandLabel(key), active: this.currentVehicleCl === key }))
+      .sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
+  }
+
+
+  _buildVehicleRoleOptions() {
+    const bucketKey = normalizeStoreFilterValue(this.currentSubcategory || '');
+    if (!bucketKey) return [];
+    const definitions = getVehicleRoleDefinitionsForSubcategory(bucketKey);
+    if (!definitions.length) return [];
+    const counts = new Map(definitions.map(def => [def.key, 0]));
+    for (const item of this.storeInventory?.allItems || []) {
+      if (storeItemCategoryKey(item) !== 'vehicles') continue;
+      if (normalizeStoreFilterValue(getStoreNavigationSubcategory(item)) !== bucketKey) continue;
+      const key = getVehicleRoleKey(item);
+      if (!key || !counts.has(key)) continue;
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+    return definitions
+      .map(def => ({ ...def, count: counts.get(def.key) || 0, active: this.currentVehicleRole === def.key }))
+      .filter(def => def.count > 0);
+  }
+
+  _buildVehicleCrewOptions() {
+    const counts = new Map();
+    for (const item of this.storeInventory?.allItems || []) {
+      if (storeItemCategoryKey(item) !== 'vehicles') continue;
+      const key = getVehicleCrewGroup(item);
+      if (!key) continue;
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+    const order = ['automated', 'solo', 'small', 'team', 'large', 'capital', 'massive', 'unknown'];
+    return [...counts.entries()]
+      .map(([key, count]) => ({ key, count, label: getVehicleCrewGroupLabel(key), active: this.currentVehicleCrew === key }))
+      .sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
+  }
+
+  _buildVehicleCargoOptions() {
+    const counts = new Map();
+    for (const item of this.storeInventory?.allItems || []) {
+      if (storeItemCategoryKey(item) !== 'vehicles') continue;
+      const key = getVehicleCargoGroup(item);
+      if (!key) continue;
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+    const order = ['none', 'personal', 'light', 'medium', 'heavy', 'bulk', 'massive', 'unknown'];
+    return [...counts.entries()]
+      .map(([key, count]) => ({ key, count, label: getVehicleCargoGroupLabel(key), active: this.currentVehicleCargo === key }))
+      .sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
+  }
+
+  _buildVehicleBooleanOptions(feature) {
+    const counts = new Map();
+    const getter = feature === 'hyperdrive'
+      ? getVehicleHyperdriveKey
+      : feature === 'weapons'
+        ? getVehicleWeaponsKey
+        : getVehicleShieldsKey;
+    for (const item of this.storeInventory?.allItems || []) {
+      if (storeItemCategoryKey(item) !== 'vehicles') continue;
+      const key = getter(item);
+      if (!key) continue;
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+    const current = feature === 'hyperdrive'
+      ? this.currentVehicleHyperdrive
+      : feature === 'weapons'
+        ? this.currentVehicleWeapons
+        : this.currentVehicleShields;
+    const order = ['yes', 'no'];
+    return [...counts.entries()]
+      .map(([key, count]) => ({ key, count, label: getVehicleBooleanFeatureLabel(feature, key), active: current === key }))
       .sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
   }
 
@@ -1241,6 +1226,18 @@ export class SWSEStore extends BaseSWSEAppV2 {
       vehicleChallengeLevel: storeItemCategoryKey(item) === 'vehicles' ? getVehicleChallengeLevel(item) : null,
       vehicleChallengeBand: storeItemCategoryKey(item) === 'vehicles' ? getVehicleChallengeBand(item) : '',
       vehicleChallengeLabel: storeItemCategoryKey(item) === 'vehicles' ? getVehicleChallengeBandLabel(getVehicleChallengeBand(item)) : '',
+      vehicleRoleKey: storeItemCategoryKey(item) === 'vehicles' ? getVehicleRoleKey(item) : '',
+      vehicleRoleLabel: storeItemCategoryKey(item) === 'vehicles' ? getVehicleRoleLabel(item) : '',
+      vehicleUniqueNamed: storeItemCategoryKey(item) === 'vehicles' ? item.system?.vehicleUniqueNamed === true : false,
+      vehicleCrewGroup: storeItemCategoryKey(item) === 'vehicles' ? getVehicleCrewGroup(item) : '',
+      vehicleCrewLabel: storeItemCategoryKey(item) === 'vehicles' ? getVehicleCrewGroupLabel(getVehicleCrewGroup(item)) : '',
+      vehiclePassengerGroup: storeItemCategoryKey(item) === 'vehicles' ? getVehiclePassengerGroup(item) : '',
+      vehiclePassengerLabel: storeItemCategoryKey(item) === 'vehicles' ? getVehiclePassengerGroupLabel(getVehiclePassengerGroup(item)) : '',
+      vehicleCargoGroup: storeItemCategoryKey(item) === 'vehicles' ? getVehicleCargoGroup(item) : '',
+      vehicleCargoLabel: storeItemCategoryKey(item) === 'vehicles' ? getVehicleCargoGroupLabel(getVehicleCargoGroup(item)) : '',
+      vehicleHyperdriveKey: storeItemCategoryKey(item) === 'vehicles' ? getVehicleHyperdriveKey(item) : '',
+      vehicleWeaponsKey: storeItemCategoryKey(item) === 'vehicles' ? getVehicleWeaponsKey(item) : '',
+      vehicleShieldsKey: storeItemCategoryKey(item) === 'vehicles' ? getVehicleShieldsKey(item) : '',
       availability: getStoreAvailabilityText(item) || 'Standard',
       availabilityKey: normalizeAvailabilityText(getStoreAvailabilityText(item) || 'Standard'),
       typeLabel: this._getItemTypeLabel(item.type),
@@ -1285,6 +1282,13 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const sortSelect = root.querySelector('#store-sort');
     const vehicleSizeFilter = root.querySelector('#store-vehicle-size-filter');
     const vehicleClFilter = root.querySelector('#store-vehicle-cl-filter');
+    const vehicleRoleFilter = root.querySelector('#store-vehicle-role-filter');
+    const vehicleCrewFilter = root.querySelector('#store-vehicle-crew-filter');
+    const vehiclePassengerFilter = root.querySelector('#store-vehicle-passenger-filter');
+    const vehicleCargoFilter = root.querySelector('#store-vehicle-cargo-filter');
+    const vehicleHyperdriveFilter = root.querySelector('#store-vehicle-hyperdrive-filter');
+    const vehicleWeaponsFilter = root.querySelector('#store-vehicle-weapons-filter');
+    const vehicleShieldsFilter = root.querySelector('#store-vehicle-shields-filter');
 
     const updateGrid = () => this._filterAndSortGrid(root);
 
@@ -1307,6 +1311,55 @@ export class SWSEStore extends BaseSWSEAppV2 {
     if (vehicleClFilter) {
       vehicleClFilter.addEventListener('change', () => {
         this.currentVehicleCl = vehicleClFilter.value || null;
+        this.currentPage = 1;
+        updateGrid();
+      }, { signal });
+    }
+    if (vehicleRoleFilter) {
+      vehicleRoleFilter.addEventListener('change', () => {
+        this.currentVehicleRole = vehicleRoleFilter.value || null;
+        this.currentPage = 1;
+        updateGrid();
+      }, { signal });
+    }
+    if (vehicleCrewFilter) {
+      vehicleCrewFilter.addEventListener('change', () => {
+        this.currentVehicleCrew = vehicleCrewFilter.value || null;
+        this.currentPage = 1;
+        updateGrid();
+      }, { signal });
+    }
+    if (vehiclePassengerFilter) {
+      vehiclePassengerFilter.addEventListener('change', () => {
+        this.currentVehiclePassenger = vehiclePassengerFilter.value || null;
+        this.currentPage = 1;
+        updateGrid();
+      }, { signal });
+    }
+    if (vehicleCargoFilter) {
+      vehicleCargoFilter.addEventListener('change', () => {
+        this.currentVehicleCargo = vehicleCargoFilter.value || null;
+        this.currentPage = 1;
+        updateGrid();
+      }, { signal });
+    }
+    if (vehicleHyperdriveFilter) {
+      vehicleHyperdriveFilter.addEventListener('change', () => {
+        this.currentVehicleHyperdrive = vehicleHyperdriveFilter.value || null;
+        this.currentPage = 1;
+        updateGrid();
+      }, { signal });
+    }
+    if (vehicleWeaponsFilter) {
+      vehicleWeaponsFilter.addEventListener('change', () => {
+        this.currentVehicleWeapons = vehicleWeaponsFilter.value || null;
+        this.currentPage = 1;
+        updateGrid();
+      }, { signal });
+    }
+    if (vehicleShieldsFilter) {
+      vehicleShieldsFilter.addEventListener('change', () => {
+        this.currentVehicleShields = vehicleShieldsFilter.value || null;
         this.currentPage = 1;
         updateGrid();
       }, { signal });
@@ -1337,6 +1390,13 @@ export class SWSEStore extends BaseSWSEAppV2 {
         this.currentFamily = null;
         this.currentVehicleSize = null;
         this.currentVehicleCl = null;
+        this.currentVehicleRole = null;
+        this.currentVehicleCrew = null;
+        this.currentVehiclePassenger = null;
+        this.currentVehicleCargo = null;
+        this.currentVehicleHyperdrive = null;
+        this.currentVehicleWeapons = null;
+        this.currentVehicleShields = null;
         this.currentPage = 1;
         this.currentView = 'browse';
         this.render();
@@ -1347,6 +1407,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       btn.addEventListener('click', ev => {
         this.currentFamily = ev.currentTarget?.dataset?.family || null;
         this.currentSubcategory = null;
+        this.currentVehicleRole = null;
         this.currentPage = 1;
         this.currentView = 'browse';
         this.render();
@@ -1357,6 +1418,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
       btn.addEventListener('click', ev => {
         this.currentSubcategory = ev.currentTarget?.dataset?.subcategory || null;
         this.currentFamily = ev.currentTarget?.dataset?.family || null;
+        this.currentVehicleRole = null;
         this.currentPage = 1;
         this.currentView = 'browse';
         this.render();
@@ -1369,6 +1431,13 @@ export class SWSEStore extends BaseSWSEAppV2 {
         this.currentFamily = null;
         this.currentVehicleSize = null;
         this.currentVehicleCl = null;
+        this.currentVehicleRole = null;
+        this.currentVehicleCrew = null;
+        this.currentVehiclePassenger = null;
+        this.currentVehicleCargo = null;
+        this.currentVehicleHyperdrive = null;
+        this.currentVehicleWeapons = null;
+        this.currentVehicleShields = null;
         this.currentPage = 1;
         const searchInput = root.querySelector('#store-search');
         const availability = root.querySelector('#store-availability-filter');
@@ -1592,6 +1661,13 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const sortValue = root.querySelector('#store-sort')?.value || 'suggested';
     const vehicleSizeFilter = root.querySelector('#store-vehicle-size-filter')?.value || this.currentVehicleSize || '';
     const vehicleClFilter = root.querySelector('#store-vehicle-cl-filter')?.value || this.currentVehicleCl || '';
+    const vehicleRoleFilter = root.querySelector('#store-vehicle-role-filter')?.value || this.currentVehicleRole || '';
+    const vehicleCrewFilter = root.querySelector('#store-vehicle-crew-filter')?.value || this.currentVehicleCrew || '';
+    const vehiclePassengerFilter = root.querySelector('#store-vehicle-passenger-filter')?.value || this.currentVehiclePassenger || '';
+    const vehicleCargoFilter = root.querySelector('#store-vehicle-cargo-filter')?.value || this.currentVehicleCargo || '';
+    const vehicleHyperdriveFilter = root.querySelector('#store-vehicle-hyperdrive-filter')?.value || this.currentVehicleHyperdrive || '';
+    const vehicleWeaponsFilter = root.querySelector('#store-vehicle-weapons-filter')?.value || this.currentVehicleWeapons || '';
+    const vehicleShieldsFilter = root.querySelector('#store-vehicle-shields-filter')?.value || this.currentVehicleShields || '';
 
     const cards = grid.querySelectorAll('.product-card');
     let visibleCards = [];
@@ -1609,6 +1685,13 @@ export class SWSEStore extends BaseSWSEAppV2 {
       const cardFamily = card.dataset.family || '';
       const cardSize = normalizeStoreFilterValue(card.dataset.vehicleSize || '');
       const cardCl = normalizeStoreFilterValue(card.dataset.vehicleCl || '');
+      const cardRole = normalizeStoreFilterValue(card.dataset.vehicleRole || '');
+      const cardCrew = normalizeStoreFilterValue(card.dataset.vehicleCrew || '');
+      const cardPassenger = normalizeStoreFilterValue(card.dataset.vehiclePassenger || '');
+      const cardCargo = normalizeStoreFilterValue(card.dataset.vehicleCargo || '');
+      const cardHyperdrive = normalizeStoreFilterValue(card.dataset.vehicleHyperdrive || '');
+      const cardWeapons = normalizeStoreFilterValue(card.dataset.vehicleWeapons || '');
+      const cardShields = normalizeStoreFilterValue(card.dataset.vehicleShields || '');
 
       const matchesSearch = !searchTerm || name.includes(searchTerm) || desc.includes(searchTerm);
       const matchesCategory = !categoryFilter || cardCategory === String(categoryFilter).toLowerCase();
@@ -1617,8 +1700,15 @@ export class SWSEStore extends BaseSWSEAppV2 {
       const matchesAvailability = availabilityMatches(item, availabilityFilter);
       const matchesVehicleSize = !(this.currentCategory === 'vehicles' && vehicleSizeFilter) || cardSize === normalizeStoreFilterValue(vehicleSizeFilter);
       const matchesVehicleCl = !(this.currentCategory === 'vehicles' && vehicleClFilter) || cardCl === normalizeStoreFilterValue(vehicleClFilter);
+      const matchesVehicleRole = !(this.currentCategory === 'vehicles' && vehicleRoleFilter) || cardRole === normalizeStoreFilterValue(vehicleRoleFilter);
+      const matchesVehicleCrew = !(this.currentCategory === 'vehicles' && vehicleCrewFilter) || cardCrew === normalizeStoreFilterValue(vehicleCrewFilter);
+      const matchesVehiclePassenger = !(this.currentCategory === 'vehicles' && vehiclePassengerFilter) || cardPassenger === normalizeStoreFilterValue(vehiclePassengerFilter);
+      const matchesVehicleCargo = !(this.currentCategory === 'vehicles' && vehicleCargoFilter) || cardCargo === normalizeStoreFilterValue(vehicleCargoFilter);
+      const matchesVehicleHyperdrive = !(this.currentCategory === 'vehicles' && vehicleHyperdriveFilter) || cardHyperdrive === normalizeStoreFilterValue(vehicleHyperdriveFilter);
+      const matchesVehicleWeapons = !(this.currentCategory === 'vehicles' && vehicleWeaponsFilter) || cardWeapons === normalizeStoreFilterValue(vehicleWeaponsFilter);
+      const matchesVehicleShields = !(this.currentCategory === 'vehicles' && vehicleShieldsFilter) || cardShields === normalizeStoreFilterValue(vehicleShieldsFilter);
 
-      if (matchesSearch && matchesCategory && matchesSubcategory && matchesFamily && matchesAvailability && matchesVehicleSize && matchesVehicleCl) {
+      if (matchesSearch && matchesCategory && matchesSubcategory && matchesFamily && matchesAvailability && matchesVehicleSize && matchesVehicleCl && matchesVehicleRole && matchesVehicleCrew && matchesVehiclePassenger && matchesVehicleCargo && matchesVehicleHyperdrive && matchesVehicleWeapons && matchesVehicleShields) {
         visibleCards.push({ card, item });
       }
     });
@@ -1808,6 +1898,11 @@ export class SWSEStore extends BaseSWSEAppV2 {
       add(storeI18n('SWSE.Store.Technical.Class'), item.subcategory || normalizeVehicleSubcategory(item));
       add(storeI18n('SWSE.Store.Technical.Type'), sys.type || sys.category);
       add('Challenge Level', getVehicleChallengeLevel(item) !== null ? `CL ${getVehicleChallengeLevel(item)}` : '');
+      add('Crew Class', getVehicleCrewGroupLabel(getVehicleCrewGroup(item)));
+      add('Cargo Class', getVehicleCargoGroupLabel(getVehicleCargoGroup(item)));
+      add('Hyperdrive', getVehicleBooleanFeatureLabel('hyperdrive', getVehicleHyperdriveKey(item)));
+      add('Armament', getVehicleBooleanFeatureLabel('weapons', getVehicleWeaponsKey(item)));
+      add('Shielding', getVehicleBooleanFeatureLabel('shields', getVehicleShieldsKey(item)));
       add(storeI18n('SWSE.Store.Technical.Size'), sys.size);
       add(storeI18n('SWSE.Store.Technical.Hull'), sys.hull?.max ?? sys.hull?.value ?? sys.hull);
       add(storeI18n('SWSE.Store.Technical.Shields'), sys.shields?.max ?? sys.shields?.value ?? sys.shields);

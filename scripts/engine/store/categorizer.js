@@ -172,11 +172,11 @@ function categorizeEquipment(item) {
 
 
 const DROID_DEGREE_LABELS = {
-  '1': '1st-Degree: Medical & Analytical',
-  '2': '2nd-Degree: Mechanical & Technical',
-  '3': '3rd-Degree: Protocol & Domestic',
-  '4': '4th-Degree: Security & Battle',
-  '5': '5th-Degree: Labor & Utility'
+  '1': '1st-Degree Droid Models',
+  '2': '2nd-Degree Droid Models',
+  '3': '3rd-Degree Droid Models',
+  '4': '4th-Degree Droid Models',
+  '5': '5th-Degree Droid Models'
 };
 
 const VEHICLE_CANONICAL_SUBCATEGORIES = [

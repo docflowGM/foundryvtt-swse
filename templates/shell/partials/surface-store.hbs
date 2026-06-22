@@ -131,6 +131,69 @@
               {{/each}}
             </select>
           </div>
+          <div class="swse-store-surface__filter-group swse-store-surface__filter-group--vehicle">
+            <span class="swse-store-surface__filter-lbl">ROLE</span>
+            <select id="ss-vehicle-role" class="swse-store-surface__select" {{#unless vm.storeContext.vehicleRoleOptions.length}}disabled{{/unless}}>
+              <option value="">{{#if vm.storeContext.vehicleRoleOptions.length}}All Roles{{else}}Select Bucket{{/if}}</option>
+              {{#each vm.storeContext.vehicleRoleOptions}}
+              <option value="{{key}}" {{#if active}}selected{{/if}}>{{label}} ({{count}})</option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="swse-store-surface__filter-group swse-store-surface__filter-group--vehicle">
+            <span class="swse-store-surface__filter-lbl">CREW</span>
+            <select id="ss-vehicle-crew" class="swse-store-surface__select" {{#unless vm.storeContext.vehicleCrewOptions.length}}disabled{{/unless}}>
+              <option value="">All Crew</option>
+              {{#each vm.storeContext.vehicleCrewOptions}}
+              <option value="{{key}}" {{#if active}}selected{{/if}}>{{label}} ({{count}})</option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="swse-store-surface__filter-group swse-store-surface__filter-group--vehicle">
+            <span class="swse-store-surface__filter-lbl">PASS</span>
+            <select id="ss-vehicle-passenger" class="swse-store-surface__select" {{#unless vm.storeContext.vehiclePassengerOptions.length}}disabled{{/unless}}>
+              <option value="">All Passengers</option>
+              {{#each vm.storeContext.vehiclePassengerOptions}}
+              <option value="{{key}}" {{#if active}}selected{{/if}}>{{label}} ({{count}})</option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="swse-store-surface__filter-group swse-store-surface__filter-group--vehicle">
+            <span class="swse-store-surface__filter-lbl">CARGO</span>
+            <select id="ss-vehicle-cargo" class="swse-store-surface__select" {{#unless vm.storeContext.vehicleCargoOptions.length}}disabled{{/unless}}>
+              <option value="">All Cargo</option>
+              {{#each vm.storeContext.vehicleCargoOptions}}
+              <option value="{{key}}" {{#if active}}selected{{/if}}>{{label}} ({{count}})</option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="swse-store-surface__filter-group swse-store-surface__filter-group--vehicle">
+            <span class="swse-store-surface__filter-lbl">HYPER</span>
+            <select id="ss-vehicle-hyperdrive" class="swse-store-surface__select" {{#unless vm.storeContext.vehicleHyperdriveOptions.length}}disabled{{/unless}}>
+              <option value="">Any Hyperdrive</option>
+              {{#each vm.storeContext.vehicleHyperdriveOptions}}
+              <option value="{{key}}" {{#if active}}selected{{/if}}>{{label}} ({{count}})</option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="swse-store-surface__filter-group swse-store-surface__filter-group--vehicle">
+            <span class="swse-store-surface__filter-lbl">ARMS</span>
+            <select id="ss-vehicle-weapons" class="swse-store-surface__select" {{#unless vm.storeContext.vehicleWeaponsOptions.length}}disabled{{/unless}}>
+              <option value="">Any Weapons</option>
+              {{#each vm.storeContext.vehicleWeaponsOptions}}
+              <option value="{{key}}" {{#if active}}selected{{/if}}>{{label}} ({{count}})</option>
+              {{/each}}
+            </select>
+          </div>
+          <div class="swse-store-surface__filter-group swse-store-surface__filter-group--vehicle">
+            <span class="swse-store-surface__filter-lbl">SHIELDS</span>
+            <select id="ss-vehicle-shields" class="swse-store-surface__select" {{#unless vm.storeContext.vehicleShieldsOptions.length}}disabled{{/unless}}>
+              <option value="">Any Shields</option>
+              {{#each vm.storeContext.vehicleShieldsOptions}}
+              <option value="{{key}}" {{#if active}}selected{{/if}}>{{label}} ({{count}})</option>
+              {{/each}}
+            </select>
+          </div>
           {{/if}}
           <div class="swse-store-surface__filter-count">
             <span data-results-count>{{vm.storeContext.renderedItemCount}}</span>/<span>{{vm.storeContext.visibleItemCount}}</span> {{localize "SWSE.ShellUI.Listings"}}
@@ -212,6 +275,13 @@
                  data-family="{{#if this.navigationFamily}}{{this.navigationFamily}}{{else}}{{this.weaponFamily}}{{/if}}"
                  data-vehicle-size="{{this.vehicleSizeKey}}"
                  data-vehicle-cl="{{this.vehicleChallengeBand}}"
+                 data-vehicle-role="{{this.vehicleRoleKey}}"
+                 data-vehicle-crew="{{this.vehicleCrewGroup}}"
+                 data-vehicle-passenger="{{this.vehiclePassengerGroup}}"
+                 data-vehicle-cargo="{{this.vehicleCargoGroup}}"
+                 data-vehicle-hyperdrive="{{this.vehicleHyperdriveKey}}"
+                 data-vehicle-weapons="{{this.vehicleWeaponsKey}}"
+                 data-vehicle-shields="{{this.vehicleShieldsKey}}"
                  data-availability="{{this.availability}}"
                  data-price="{{#if this.cost}}{{this.cost}}{{else}}{{this.finalCost}}{{/if}}"
                  data-score="{{#if this.suggestion}}{{this.suggestion.score}}{{else}}0{{/if}}">
@@ -228,6 +298,13 @@
                 <div class="swse-store-surface__card-meta-row">
                   {{#if this.vehicleSizeLabel}}<span class="swse-store-surface__card-meta-pill">{{this.vehicleSizeLabel}}</span>{{/if}}
                   {{#if this.vehicleChallengeLabel}}<span class="swse-store-surface__card-meta-pill">{{this.vehicleChallengeLabel}}</span>{{/if}}
+                  {{#if this.vehicleRoleLabel}}<span class="swse-store-surface__card-meta-pill">{{this.vehicleRoleLabel}}</span>{{/if}}
+                  {{#if this.vehicleUniqueNamed}}<span class="swse-store-surface__card-meta-pill swse-store-surface__card-meta-pill--unique">Unique / Named</span>{{/if}}
+                  {{#if this.vehicleCrewLabel}}<span class="swse-store-surface__card-meta-pill">{{this.vehicleCrewLabel}}</span>{{/if}}
+                  {{#if this.vehiclePassengerLabel}}<span class="swse-store-surface__card-meta-pill">{{this.vehiclePassengerLabel}}</span>{{/if}}
+                  {{#if this.vehicleHyperdriveKey}}<span class="swse-store-surface__card-meta-pill">{{#if (eq this.vehicleHyperdriveKey 'yes')}}Hyperdrive{{else}}No Hyperdrive{{/if}}</span>{{/if}}
+                  {{#if this.vehicleWeaponsKey}}<span class="swse-store-surface__card-meta-pill">{{#if (eq this.vehicleWeaponsKey 'yes')}}Armed{{else}}Unarmed{{/if}}</span>{{/if}}
+                  {{#if this.vehicleShieldsKey}}<span class="swse-store-surface__card-meta-pill">{{#if (eq this.vehicleShieldsKey 'yes')}}Shielded{{else}}No Shields{{/if}}</span>{{/if}}
                   <span class="swse-store-surface__card-meta-pill">{{this.availability}}</span>
                   {{#if this.suggestion.tierLabel}}<span class="swse-store-surface__card-tier swse-store-surface__card-tier--{{this.suggestion.tier}}">{{this.suggestion.tierLabel}}</span>{{/if}}
                 </div>

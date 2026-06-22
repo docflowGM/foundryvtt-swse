@@ -50,9 +50,15 @@ export const STORE_PACKS = {
 
   // Vehicles: use subtype packs for store inventory
   VEHICLE_PACKS: [
-    'foundryvtt-swse.vehicles-walkers',
     'foundryvtt-swse.vehicles-speeders',
-    'foundryvtt-swse.vehicles-starships',
+    'foundryvtt-swse.vehicles-airspeeders',
+    'foundryvtt-swse.vehicles-tracked',
+    'foundryvtt-swse.vehicles-walkers',
+    'foundryvtt-swse.vehicles-wheeled',
+    'foundryvtt-swse.vehicles-weapon-emplacements',
+    'foundryvtt-swse.vehicles-starfighters',
+    'foundryvtt-swse.vehicles-space-transports',
+    'foundryvtt-swse.vehicles-capital-ships',
     'foundryvtt-swse.vehicles-stations'
   ],
   VEHICLES_CANONICAL: 'foundryvtt-swse.vehicles'

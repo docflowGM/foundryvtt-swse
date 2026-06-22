@@ -22,6 +22,8 @@ import { getMentor } from "/systems/foundryvtt-swse/scripts/engine/mentor/mentor
 import { TechSpecialistModificationService } from "/systems/foundryvtt-swse/scripts/engine/customization/tech-specialist-modification-service.js";
 import { MentorTranslationIntegration } from "/systems/foundryvtt-swse/scripts/mentor/mentor-translation-integration.js";
 import { isEnergyShieldItem as isCanonicalEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import { buildStoreSuggestionContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/store-suggestion-context.js";
+import { applyWorkbenchModificationSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/workbench-modification-suggestions.js";
 
 const APP_ID = 'swse-item-customization-workbench';
 const CATEGORY_ORDER = [
@@ -309,6 +311,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     this._drafts = new Map();
     this._catalogs = { chassis: [], crystals: [], accessories: [] };
     this._workbenchDialogueCache = new Map();
+    this._workbenchSuggestionContext = null;
+    this._workbenchSuggestionActorId = null;
     this._lightsaber = {
       selectedChassisId: null,
       selectedCrystalId: null,
@@ -1062,6 +1066,53 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     await this._renderMentorTranslation();
   }
 
+  async _getWorkbenchSuggestionContext() {
+    const actorId = this.actor?.id || this.actor?.uuid || null;
+    if (this._workbenchSuggestionContext && this._workbenchSuggestionActorId === actorId) return this._workbenchSuggestionContext;
+    try {
+      this._workbenchSuggestionContext = await buildStoreSuggestionContext(this.actor, { pendingData: {} });
+      this._workbenchSuggestionActorId = actorId;
+    } catch (error) {
+      console.warn('[ItemCustomizationWorkbench] Modification suggestion context failed', { actor: this.actor?.name, error });
+      this._workbenchSuggestionContext = { actorId, credits: Number(this.actor?.system?.credits ?? 0) || 0 };
+      this._workbenchSuggestionActorId = actorId;
+    }
+    return this._workbenchSuggestionContext;
+  }
+
+  _attachModificationSuggestions({ item, upgrades = [], templates = [], storeContext = null } = {}) {
+    if (!item || !storeContext) return { upgrades, templates };
+    const baseOptions = {
+      workbenchMode: this.mode,
+      applyMode: this.applyMode,
+      assumeTargetUsed: true,
+      isStoreStageMode: this._isStoreStageMode()
+    };
+    const suggestedUpgrades = applyWorkbenchModificationSuggestions({
+      actor: this.actor,
+      targetItem: item,
+      cards: upgrades,
+      storeContext,
+      options: baseOptions
+    });
+    const suggestedTemplates = applyWorkbenchModificationSuggestions({
+      actor: this.actor,
+      targetItem: item,
+      cards: templates.map(card => ({
+        ...card,
+        costCredits: card.costPreview,
+        slotCost: 0,
+        effect: card.rulesText || card.restriction || card.description
+      })),
+      storeContext,
+      options: { ...baseOptions, template: true }
+    }).map((card, index) => ({
+      ...templates[index],
+      suggestion: card.suggestion
+    }));
+    return { upgrades: suggestedUpgrades, templates: suggestedTemplates };
+  }
+
   _buildModificationDetailRail({ item, upgrades = [], templates = [], structuralActions = null, preview = null } = {}) {
     const upgradeRows = upgrades.map(card => ({
       kind: 'Modification',
@@ -1076,7 +1127,11 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       slotCost: Number(card.slotCost ?? 0),
       selected: !!card.selected,
       installed: !!card.installed,
-      disabled: !!card.disabled
+      disabled: !!card.disabled,
+      suggestion: card.suggestion || null,
+      suggestionTier: card.suggestion?.tier || '',
+      suggestionLabel: card.suggestion?.tierLabel || '',
+      suggestionReasons: card.suggestion?.explanations || []
     }));
 
     const templateRows = templates.map(card => ({
@@ -1092,7 +1147,11 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       slotCost: null,
       selected: !!card.selected,
       installed: !!card.installed,
-      disabled: !!card.disabled
+      disabled: !!card.disabled,
+      suggestion: card.suggestion || null,
+      suggestionTier: card.suggestion?.tier || '',
+      suggestionLabel: card.suggestion?.tierLabel || '',
+      suggestionReasons: card.suggestion?.explanations || []
     }));
 
     const structuralRows = [];
@@ -1255,8 +1314,10 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         };
       });
 
-    const upgrades = energyShieldItem ? [] : this._getUpgradeCatalog(item, draft);
-    const templates = this._getTemplateCards(item, draft);
+    let upgrades = energyShieldItem ? [] : this._getUpgradeCatalog(item, draft);
+    let templates = this._getTemplateCards(item, draft);
+    const workbenchSuggestionContext = await this._getWorkbenchSuggestionContext();
+    ({ upgrades, templates } = this._attachModificationSuggestions({ item, upgrades, templates, storeContext: workbenchSuggestionContext }));
     const structuralActions = {
       sizeIncrease: {
         selected: !!draft.structural?.sizeIncreaseApplied,
@@ -1292,6 +1353,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       templates,
       structuralActions,
       detailRail,
+      workbenchSuggestionContext,
       isStoreStageMode: this._isStoreStageMode(),
       footer: {
         credits: Number(this.actor.system?.credits ?? 0) || 0,
