@@ -1934,8 +1934,12 @@ export class SWSEStore extends BaseSWSEAppV2 {
       add(storeI18n('SWSE.Store.Technical.Crew'), sys.crew);
       add(storeI18n('SWSE.Store.Technical.Passengers'), sys.passengers);
       add(storeI18n('SWSE.Store.Technical.Cargo'), sys.cargo);
-      add(storeI18n('SWSE.Store.Technical.Consumables'), sys.consumables);
-      add(storeI18n('SWSE.Store.Technical.Hyperdrive'), sys.hyperdrive_class);
+      add(storeI18n('SWSE.Store.Technical.Consumables'), sys.vehicleConsumablesLabel || sys.consumables);
+      add(storeI18n('SWSE.Store.Technical.Hyperdrive'), sys.vehicleHyperdriveLabel || sys.hyperdrive_class);
+      add('Astrogation', sys.vehicleAstrogationSupportLabel || sys.vehicleAstrogationSupportStatus);
+      add('Carried Craft', sys.vehicleCarriedCraftLabel || sys.carried_craft);
+      add('Payload', sys.vehiclePayloadLabel || sys.payload);
+      add('Emplacement Points', sys.vehicleEmplacementPointLabel || sys.emplacement_points);
       if (Array.isArray(sys.weapons) && sys.weapons.length) {
         add(storeI18n('SWSE.Store.Technical.Weapons'), sys.weapons.map(w => `${w.name}${w.damage ? ` (${w.damage})` : ''}`).join(', '));
       }

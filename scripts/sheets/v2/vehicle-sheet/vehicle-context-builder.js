@@ -268,8 +268,8 @@ function resolveVehicleShieldState(system = {}) {
 function buildVehicleTypeFlags(system = {}) {
   const cat = `${system.category || ''} ${system.type || ''} ${safeArray(system.tags).join(' ')}`.toLowerCase();
   const size = lower(system.size || 'colossal');
-  const hasHyperdrive = hasMeaningfulHyperdrive(system.hyperdrive_class ?? system.hyperdrive);
-  const hasBackupHyperdrive = hasMeaningfulHyperdrive(system.backup_class ?? system.backupHyperdrive);
+  const hasHyperdrive = system.vehicleHasHyperdrive === true || hasMeaningfulHyperdrive(system.hyperdrive_class ?? system.hyperdrive);
+  const hasBackupHyperdrive = system.vehicleHasBackupHyperdrive === true || hasMeaningfulHyperdrive(system.backup_class ?? system.backupHyperdrive);
   const shieldState = resolveVehicleShieldState(system);
   const hasShields = shieldState.hasShield;
 

@@ -1,0 +1,158 @@
+{
+  "phase": "phase7-vehicle-runtime-metadata",
+  "scope": "Normalize hyperdrive/backup hyperdrive classes, consumables duration, carried craft, payload, and emplacement point metadata without guessing navicomputer/astromech dependency from missing source text.",
+  "authority": "Existing compendium fields plus SWSE/Fandom vehicle-stat conventions: Hyperdrive line may include primary class, backup class, Navicomputer/Advanced Navicomputer, consumables, carried craft, payload, and emplacement points.",
+  "packCounts": {
+    "vehicles.db": 357,
+    "vehicles-starships.db": 267,
+    "vehicles-tracked.db": 14,
+    "vehicles-weapon-emplacements.db": 10,
+    "vehicles-airspeeders.db": 26,
+    "vehicles-capital-ships.db": 63,
+    "vehicles-space-transports.db": 108,
+    "vehicles-speeders.db": 41,
+    "vehicles-starfighters.db": 85,
+    "vehicles-stations.db": 11,
+    "vehicles-walkers.db": 20,
+    "vehicles-wheeled.db": 3
+  },
+  "uniqueStats": {
+    "uniqueVehicles": 357,
+    "hasHyperdrive": 176,
+    "hasBackupHyperdrive": 99,
+    "needsAstrogationSourceLineReview": 176,
+    "consumablesByGroup": {
+      "none": 17,
+      "short": 192,
+      "long": 56,
+      "medium": 39,
+      "deep-space": 30,
+      "extended": 20,
+      "unknown": 3
+    },
+    "carriedCraftListed": [],
+    "payloadListed": [],
+    "emplacementPointVehicles": [
+      "Corellian YT-1300 Transport",
+      "Corellian YT-1930 Transport",
+      "CloakShape Fighter",
+      "Corellian YT-2000 Transport",
+      "Cutlass-9 Patrol Fighter",
+      "Corellian Consular-Class Cruiser",
+      "DP20 Corellian Frigate",
+      "Ghtroc 720 Freighter",
+      "Corellian YT-1250 Freighter",
+      "Dreadnaught-Class Heavy Cruiser",
+      "Star Galleon-Class Frigate",
+      "ILH-KK Citadel-Class Civilian Cruiser",
+      "Corellian Action VI Bulk Transport",
+      "Dynamic-Class Freighter",
+      "Corellian YT-2400 Transport",
+      "Foray-Class Blockade Runner",
+      "Baudo-Class Star Yacht",
+      "J-Type Star Skiff"
+    ]
+  },
+  "physicalRowsProcessed": 1005,
+  "physicalRowCounters": {
+    "hyperdrive": {
+      "no": 474,
+      "yes": 531
+    },
+    "backup": {
+      "no": 706,
+      "yes": 299
+    },
+    "navStatus": {
+      "not-applicable": 474,
+      "needs-source-line-review": 531
+    },
+    "consumablesGroup": {
+      "none": 39,
+      "short": 515,
+      "long": 168,
+      "medium": 116,
+      "deep-space": 96,
+      "extended": 61,
+      "unknown": 10
+    },
+    "carriedCraft": {
+      "none-listed-or-missing": 1005
+    },
+    "payload": {
+      "none-listed-or-missing": 1005
+    },
+    "emplacementPoints": {
+      "none-listed-or-missing": 951,
+      "available": 54
+    }
+  },
+  "examples": [
+    {
+      "name": "Corellian YT-1300 Transport",
+      "hyperdriveLabel": "Class 2 (Backup Class 12)",
+      "hasBackupHyperdrive": true,
+      "astrogationSupportStatus": "needs-source-line-review",
+      "consumables": "2 Months",
+      "consumablesDays": 60,
+      "consumablesGroup": "long",
+      "emplacementPoints": 10
+    },
+    {
+      "name": "R-42 Starchaser",
+      "hyperdriveLabel": "Class 2",
+      "hasBackupHyperdrive": false,
+      "astrogationSupportStatus": "needs-source-line-review",
+      "consumables": "2 Weeks",
+      "consumablesDays": 14,
+      "consumablesGroup": "medium",
+      "emplacementPoints": null
+    },
+    {
+      "name": "GPE-7300 Space Transport",
+      "hyperdriveLabel": "Class 2",
+      "hasBackupHyperdrive": false,
+      "astrogationSupportStatus": "needs-source-line-review",
+      "consumables": "1 Month",
+      "consumablesDays": 30,
+      "consumablesGroup": "medium",
+      "emplacementPoints": null
+    },
+    {
+      "name": "Venator-Class Star Destroyer",
+      "hyperdriveLabel": "Class 1 (Backup Class 12)",
+      "hasBackupHyperdrive": true,
+      "astrogationSupportStatus": "needs-source-line-review",
+      "consumables": "2 Years",
+      "consumablesDays": 730,
+      "consumablesGroup": "deep-space",
+      "emplacementPoints": null
+    },
+    {
+      "name": "Hyperspace Beacon",
+      "hyperdriveLabel": "No Hyperdrive",
+      "hasBackupHyperdrive": false,
+      "astrogationSupportStatus": "not-applicable",
+      "consumables": "None",
+      "consumablesDays": 0,
+      "consumablesGroup": "none",
+      "emplacementPoints": null
+    },
+    {
+      "name": "AT-AT",
+      "hyperdriveLabel": "No Hyperdrive",
+      "hasBackupHyperdrive": false,
+      "astrogationSupportStatus": "not-applicable",
+      "consumables": "1 Week",
+      "consumablesDays": 7,
+      "consumablesGroup": "short",
+      "emplacementPoints": null
+    }
+  ],
+  "notes": [
+    "vehicleHyperdriveClass and vehicleBackupHyperdriveClass are numeric because hyperdrive classes can include fractional classes such as 0.5 or 0.75.",
+    "vehicleAstrogationSupportStatus intentionally remains needs-source-line-review for hyperdrive vehicles because the current pack data preserved class fields but not the exact Hyperdrive line text needed to distinguish Navicomputer, Advanced Navicomputer, or Astromech dependency.",
+    "carried craft and payload are not inferred from vehicle category; they are only marked listed when the compendium row has a value."
+  ],
+  "packSyncMismatches": 0
+}

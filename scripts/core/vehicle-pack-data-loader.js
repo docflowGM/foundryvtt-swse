@@ -54,7 +54,9 @@ function normalizeIndexEntry(doc, packName) {
     size: system.size || '',
     crew: system.crew || '',
     cargo: system.cargo || '',
-    hyperdrive: system.hyperdrive_class || system.hyperdrive || '',
+    hyperdrive: system.vehicleHyperdriveLabel || system.hyperdrive_class || system.hyperdrive || '',
+    consumables: system.vehicleConsumablesLabel || system.consumables || '',
+    astrogation: system.vehicleAstrogationSupportLabel || system.vehicleAstrogationSupportStatus || '',
     sr: system.shields?.max ?? system.shieldRating ?? 0,
     cl: system.challengeLevel ?? system.cl ?? '',
     cost: system.cost || '',
@@ -80,7 +82,7 @@ export class VehiclePackDataLoader {
       const pack = game.packs.get(packId(name));
       if (!pack) continue;
 
-      const index = await pack.getIndex({ fields: ['name', 'img', 'system.model', 'system.category', 'system.type', 'system.vehicleBucket', 'system.vehicleBucketLabel', 'system.vehicleFamily', 'system.vehicleFamilyLabel', 'system.size', 'system.crew', 'system.cargo', 'system.hyperdrive_class', 'system.hyperdrive', 'system.shields', 'system.shieldRating', 'system.challengeLevel', 'system.cost'] });
+      const index = await pack.getIndex({ fields: ['name', 'img', 'system.model', 'system.category', 'system.type', 'system.vehicleBucket', 'system.vehicleBucketLabel', 'system.vehicleFamily', 'system.vehicleFamilyLabel', 'system.size', 'system.crew', 'system.cargo', 'system.vehicleHyperdriveLabel', 'system.vehicleConsumablesLabel', 'system.vehicleAstrogationSupportLabel', 'system.hyperdrive_class', 'system.hyperdrive', 'system.shields', 'system.shieldRating', 'system.challengeLevel', 'system.cost'] });
       for (const entry of index) {
         results.push(normalizeIndexEntry(entry, name));
       }

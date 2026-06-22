@@ -381,8 +381,13 @@ export function buildVehicleV2Context(actor, baseContext = {}) {
   const details = {
     challengeLevel: label(vehicle.challengeLevel),
     cover: label(vehicle.cover),
-    hyperdrive: label(firstPresent(vehicle.hyperdrive_class, vehicle.hyperdrive)),
-    backupHyperdrive: label(firstPresent(vehicle.backup_class, vehicle.backupHyperdrive)),
+    hyperdrive: label(firstPresent(vehicle.vehicleHyperdriveLabel, vehicle.hyperdrive_class, vehicle.hyperdrive)),
+    backupHyperdrive: label(firstPresent(vehicle.vehicleBackupHyperdriveClassLabel, vehicle.backup_class, vehicle.backupHyperdrive)),
+    astrogationSupport: label(firstPresent(vehicle.vehicleAstrogationSupportLabel, vehicle.vehicleAstrogationSupportStatus)),
+    consumables: label(firstPresent(vehicle.vehicleConsumablesLabel, vehicle.consumables)),
+    carriedCraft: label(firstPresent(vehicle.vehicleCarriedCraftLabel, vehicle.carried_craft)),
+    payload: label(firstPresent(vehicle.vehiclePayloadLabel, vehicle.payload)),
+    emplacementPoints: label(firstPresent(vehicle.vehicleEmplacementPointLabel, vehicle.emplacement_points)),
     availability: label(vehicle.availability),
     sourcebook: label(vehicle.sourcebook),
     page: label(vehicle.page)
