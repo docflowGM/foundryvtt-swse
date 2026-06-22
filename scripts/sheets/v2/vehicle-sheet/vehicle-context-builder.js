@@ -200,12 +200,49 @@ function hasMeaningfulHyperdrive(value) {
  * @param {Object} system
  * @returns {Object}
  */
-export function buildVehicleTypeFlags(system = {}) {
+export 
+function resolveVehicleShieldState(system = {}) {
+  const candidates = [
+    system.shieldRating,
+    system.currentSR,
+    system.sr,
+    system.shield_rating,
+    system.shields?.max,
+    system.shields?.value,
+    system.shields?.current,
+    system.shields?.rating,
+    system.shields
+  ];
+  let rating = 0;
+  for (const candidate of candidates) {
+    if (candidate === undefined || candidate === null || candidate === '') continue;
+    if (typeof candidate === 'number') {
+      if (Number.isFinite(candidate) && candidate > 0) { rating = candidate; break; }
+      continue;
+    }
+    const text = String(candidate);
+    const match = text.match(/\b(?:SR|Shield Rating|Shields?)\s*[:\-]?\s*(\d+)\b/i);
+    if (match) { rating = Number(match[1]) || 0; break; }
+    if (/^\d+$/.test(text.trim())) { rating = Number(text.trim()) || 0; break; }
+  }
+  const current = safeNumber(system.shields?.value ?? system.currentSR ?? rating, rating);
+  const markedShielded = system.vehicleHasShields === true || system.vehicleShieldDataStatus === 'likely-shielded-needs-source-rating';
+  return {
+    value: rating > 0 ? Math.min(current, rating) : 0,
+    max: rating > 0 ? rating : 0,
+    hasShield: rating > 0 || markedShielded,
+    ratingKnown: rating > 0,
+    status: system.vehicleShieldDataStatus || (rating > 0 ? 'source/field-rating' : 'missing-source-data')
+  };
+}
+
+function buildVehicleTypeFlags(system = {}) {
   const cat = `${system.category || ''} ${system.type || ''} ${safeArray(system.tags).join(' ')}`.toLowerCase();
   const size = lower(system.size || 'colossal');
   const hasHyperdrive = hasMeaningfulHyperdrive(system.hyperdrive_class ?? system.hyperdrive);
   const hasBackupHyperdrive = hasMeaningfulHyperdrive(system.backup_class ?? system.backupHyperdrive);
-  const hasShields = safeNumber(system.shields?.max ?? system.shieldRating, 0) > 0 || !!system.shieldRating;
+  const shieldState = resolveVehicleShieldState(system);
+  const hasShields = shieldState.hasShield;
 
   const isWalker = /walker|at-at|at-st|at-ap|at-te/.test(cat);
   const isSpeeder = /speeder|airspeeder|swoop|landspeeder|bike|hoverbike/.test(cat);
@@ -259,8 +296,9 @@ export function buildVehicleTypeFlags(system = {}) {
 function buildVehicleResourceStrip(actor, panels, typeFlags, parsedCargo) {
   const hp = panels.hpConditionPanel?.hp ?? {};
   const hpPercent = Math.max(0, Math.min(100, safeNumber(hp.percent, 0)));
-  const srValue = safeNumber(actor?.system?.shields?.value ?? actor?.system?.shieldRating, 0);
-  const srMax = safeNumber(actor?.system?.shields?.max ?? srValue, srValue);
+  const shieldState = resolveVehicleShieldState(actor?.system ?? {});
+  const srValue = shieldState.value;
+  const srMax = shieldState.max;
   const ep = panels.powerSummaryPanel ?? null;
   const crew = panels.crewSummaryPanel ?? {};
   const cargo = panels.cargoSummaryPanel ?? {};
@@ -269,7 +307,7 @@ function buildVehicleResourceStrip(actor, panels, typeFlags, parsedCargo) {
   return {
     entries: [
       { key: 'hull', label: 'Hull', value: `${hp.value ?? 0} / ${hp.max ?? 0}`, bar: hpPercent, tone: hpPercent <= 25 ? 'critical' : hpPercent <= 50 ? 'warning' : 'normal' },
-      { key: 'sr', label: 'SR', value: srMax ? `${srValue} / ${srMax}` : '0', bar: srMax ? Math.round((srValue / srMax) * 100) : 0, tone: srValue <= 0 ? 'neutral' : 'normal' },
+      { key: 'sr', label: 'SR', value: srMax ? `${srValue} / ${srMax}` : shieldState.hasShield ? 'Source Needed' : '0', bar: srMax ? Math.round((srValue / srMax) * 100) : 0, tone: srMax ? (srValue <= 0 ? 'neutral' : 'normal') : shieldState.hasShield ? 'warning' : 'neutral' },
       { key: 'ep', label: 'EP', value: ep ? `${ep.available} / ${ep.budget}` : 'Phase 2', bar: ep ? Math.min(100, Math.max(0, 100 - safeNumber(ep.percentAllocated, 0))) : 0, tone: ep?.overAllocated ? 'critical' : ep ? 'normal' : 'neutral', badge: ep?.enabled === false ? 'RULE OFF' : ep ? null : 'WIRE GAP' },
       { key: 'crew', label: 'Crew', value: `${crew.filledSlots ?? 0} / ${crew.totalSlots ?? 0}`, bar: crew.totalSlots ? Math.round(((crew.filledSlots ?? 0) / crew.totalSlots) * 100) : 0, tone: crew.filledSlots ? 'normal' : 'warning' },
       { key: 'cargo', label: typeFlags.labels.cargo, value: parsedCargo?.display || `${cargo.totalWeight ?? 0} / ${cargo.capacity ?? 0}`, bar: Math.max(0, Math.min(100, safeNumber(cargo.percentUsed, 0))), tone: cargo.state === 'over' ? 'critical' : cargo.state === 'near' ? 'warning' : 'normal' },
@@ -297,7 +335,7 @@ function buildVehicleEditContext(actor, options = {}) {
   const derived = system.derived ?? {};
   const identity = derived.identity ?? {};
   const hp = system.hull ?? system.hp ?? {};
-  const shields = system.shields ?? {};
+  const shields = resolveVehicleShieldState(system);
   return {
     identity: {
       model: vehicleModelName(system, actor, options.sourceModelName),
@@ -312,7 +350,7 @@ function buildVehicleEditContext(actor, options = {}) {
       cover: system.cover ?? ''
     },
     hull: { value: safeNumber(hp.value, 0), max: safeNumber(hp.max, 0) },
-    shields: { value: safeNumber(shields.value, 0), max: safeNumber(shields.max, 0), sr: system.shieldRating ?? shields.max ?? '' },
+    shields: { value: safeNumber(shields.value, 0), max: safeNumber(shields.max, 0), sr: shields.max || system.shieldRating || '' },
     defenses: {
       reflex: system.reflexDefense ?? derived.defenses?.ref?.total ?? '',
       fortitude: system.fortitudeDefense ?? derived.defenses?.fort?.total ?? '',
