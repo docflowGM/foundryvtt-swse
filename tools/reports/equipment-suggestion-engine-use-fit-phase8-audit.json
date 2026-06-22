@@ -1,0 +1,23 @@
+{
+  "phase": "equipment-suggestion-engine-use-fit-phase8",
+  "scope": "Store suggestion engine equipment use evaluation",
+  "changes": [
+    "Added equipment-use-evaluator.js to score equipment by usability, training fit, expected DC success, benefit, and credit efficiency.",
+    "Gear suggestions now include equipmentUseFit as a scoring component and as structured metadata.",
+    "Gear suggestion explanations now distinguish can-use from full-use.",
+    "Store now builds a shared StoreSuggestionContext and passes it to armor, weapon, and gear suggestion engines.",
+    "Store gear suggestions now map by gearId, fixing equipment suggestions that were scored but not attached to item cards.",
+    "Store item views expose useEvaluation metadata for future UI rendering."
+  ],
+  "rulesPrinciples": [
+    "Untrained does not automatically mean unusable.",
+    "Trained-only extra skill uses reduce full-use fit until the actor is trained or the equipment grants an override.",
+    "Expected benefit is based on actor skill total plus equipment bonus against known or benchmark DCs.",
+    "Credit efficiency is scored separately from raw utility so expensive items must justify their cost."
+  ],
+  "validatedFiles": [
+    "scripts/engine/suggestion/equipment/equipment-use-evaluator.js",
+    "scripts/engine/suggestion/equipment/gear-suggestions.js",
+    "scripts/apps/store/store-main.js"
+  ]
+}

@@ -8,6 +8,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { assignTier, clampScore } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/shared-scoring-utils.js";
 import { extractStoreItemTags, scoreStoreItemContextFit } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/store-suggestion-context.js";
+import { buildEquipmentUseProfile } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/equipment-use-evaluator.js";
 
 
 function normalize(value) {
@@ -271,6 +272,7 @@ export class GearSuggestions {
       const priceBias = this._scorePriceBias(gear);
       const storeContextFit = options.storeContext ? scoreStoreItemContextFit(gear, options.storeContext, options) : null;
       const useCaseFit = scoreGearUseCaseFit(gear, character, options.storeContext || {});
+      const equipmentUseFit = buildEquipmentUseProfile(gear, character, options.storeContext || {});
 
       // Final score (additive, bounded 0-100)
       let finalScore = baseRelevance +
@@ -279,7 +281,8 @@ export class GearSuggestions {
         axisB +
         priceBias +
         (storeContextFit?.cappedAdjustment || 0) +
-        useCaseFit.adjustment;
+        useCaseFit.adjustment +
+        equipmentUseFit.adjustment;
 
       // NaN protection
       if (!Number.isFinite(finalScore)) finalScore = 0;
@@ -302,7 +305,8 @@ export class GearSuggestions {
           actionCost: axisB,
           priceBias,
           storeContextFit: storeContextFit?.cappedAdjustment || 0,
-          useCaseFit: useCaseFit.adjustment
+          useCaseFit: useCaseFit.adjustment,
+          equipmentUseFit: equipmentUseFit.adjustment
         },
 
         combined: {
@@ -313,11 +317,13 @@ export class GearSuggestions {
         explanations: [
           ...this._generateExplanations(gear, charContext, axisA, axisB, roleAlignment),
           ...useCaseFit.explanations,
+          ...equipmentUseFit.explanations,
           ...(storeContextFit?.explanations || [])
         ].slice(0, 5),
 
         storeContextFit,
         useCaseFit,
+        equipmentUseFit,
 
         meta: {
           computedAt: Date.now(),

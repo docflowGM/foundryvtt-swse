@@ -94,6 +94,26 @@ export function activateSkillsUI(sheet, html, { signal } = {}) {
     select.addEventListener('change', applyFiltersAndSort, { signal });
   });
 
+  const syncSkillAbilitySelectorState = (select) => {
+    const nextAbility = String(select?.value || '').trim();
+    if (!nextAbility) return;
+    const row = select.closest('.skill-row-container');
+    if (row) {
+      const previous = row.dataset.ability || select.dataset.abilitySelect || '';
+      row.dataset.ability = nextAbility;
+      if (previous) row.classList.remove(`swse-concept-skill-row--${previous}`);
+      row.classList.add(`swse-concept-skill-row--${nextAbility}`);
+    }
+    select.dataset.abilitySelect = nextAbility;
+    applyFiltersAndSort();
+  };
+
+  html.querySelectorAll('.swse-concept-skill-row__math .ability-select').forEach(select => {
+    select.addEventListener('click', (event) => event.stopPropagation(), { signal });
+    select.addEventListener('pointerdown', (event) => event.stopPropagation(), { signal });
+    select.addEventListener('change', () => syncSkillAbilitySelectorState(select), { signal });
+  });
+
   html.querySelectorAll('[data-action="set-skills-filter"]').forEach(button => {
     button.addEventListener('click', (event) => {
       event.preventDefault();

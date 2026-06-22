@@ -18,6 +18,7 @@ import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/led
 import { ArmorSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/armor-suggestions.js";
 import { WeaponSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/weapon-suggestions.js";
 import { GearSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/gear-suggestions.js";
+import { buildStoreSuggestionContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/store-suggestion-context.js";
 import { MentorProseGenerator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/mentor-prose-generator.js";
 import { ReviewThreadAssembler } from "/systems/foundryvtt-swse/scripts/apps/store/review-thread-assembler.js";
 import { StoreLoadingOverlay } from "/systems/foundryvtt-swse/scripts/apps/store/store-loading-overlay.js";
@@ -640,7 +641,17 @@ export class SWSEStore extends BaseSWSEAppV2 {
       suggestion: suggestion?.combined
         ? {
             score: suggestion.combined.finalScore,
-            tier: this._tierToLabel(suggestion.combined.tier)
+            tier: this._tierToLabel(suggestion.combined.tier),
+            useEvaluation: suggestion.equipmentUseFit
+              ? {
+                  canUse: suggestion.equipmentUseFit.canUse !== false,
+                  fullUse: suggestion.equipmentUseFit.fullUse !== false,
+                  trainedFit: suggestion.equipmentUseFit.trainedFit ?? null,
+                  successFit: suggestion.equipmentUseFit.successFit ?? null,
+                  label: suggestion.equipmentUseFit.labels?.fullUse || '',
+                  bestUse: suggestion.equipmentUseFit.bestUse?.useLabel || ''
+                }
+              : null
           }
         : null,
       suggestionBullets: suggestion?.explanations || [],
@@ -844,10 +855,19 @@ export class SWSEStore extends BaseSWSEAppV2 {
       const weapons = this.storeInventory.allItems.filter(i => i.type === 'weapon');
       const gear = this.storeInventory.allItems.filter(i => i.type === 'equipment');
 
+      let storeContext = null;
+      try {
+        storeContext = await buildStoreSuggestionContext(this.actor, {
+          credits: LedgerService.getCurrentCredits(this.actor)
+        });
+      } catch (contextErr) {
+        console.warn('[SWSE Store] Store suggestion context failed; using legacy scoring fallback:', contextErr);
+      }
+
       // Generate suggestions for each type
       if (armor.length > 0) {
         try {
-          const armorSugg = ArmorSuggestions.generateSuggestions(this.actor, armor, { topCount: 80, silent: true, suppressLogs: true });
+          const armorSugg = ArmorSuggestions.generateSuggestions(this.actor, armor, { topCount: 80, silent: true, suppressLogs: true, storeContext });
           if (armorSugg.allScored) {
             for (const scored of armorSugg.allScored) {
               const itemId = scored.armorId || scored.itemId;
@@ -863,7 +883,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
       if (weapons.length > 0) {
         try {
-          const weaponSugg = WeaponSuggestions.generateSuggestions(this.actor, weapons, { topCount: 80, silent: true, suppressLogs: true });
+          const weaponSugg = WeaponSuggestions.generateSuggestions(this.actor, weapons, { topCount: 80, silent: true, suppressLogs: true, storeContext });
           if (weaponSugg.allScored) {
             for (const scored of weaponSugg.allScored) {
               const itemId = scored.weaponId || scored.itemId;
@@ -879,10 +899,10 @@ export class SWSEStore extends BaseSWSEAppV2 {
 
       if (gear.length > 0) {
         try {
-          const gearSugg = GearSuggestions.generateSuggestions(this.actor, gear, { topCount: 80, silent: true, suppressLogs: true });
+          const gearSugg = GearSuggestions.generateSuggestions(this.actor, gear, { topCount: 80, silent: true, suppressLogs: true, storeContext });
           if (gearSugg.allScored) {
             for (const scored of gearSugg.allScored) {
-              const itemId = scored.equipmentId || scored.itemId;
+              const itemId = scored.gearId || scored.equipmentId || scored.itemId;
               if (itemId) {
                 this.suggestions.set(itemId, scored);
               }
@@ -1003,7 +1023,17 @@ export class SWSEStore extends BaseSWSEAppV2 {
           score: suggestion.combined.finalScore,
           tier: this._tierToLabel(suggestion.combined.tier),
           tierLabel: this._tierToDisplayLabel(suggestion.combined.tier),
-          bullets: (suggestion.explanations || []).slice(0, 4) // Max 4 bullets per card
+          bullets: (suggestion.explanations || []).slice(0, 4), // Max 4 bullets per card
+          useEvaluation: suggestion.equipmentUseFit
+            ? {
+                canUse: suggestion.equipmentUseFit.canUse !== false,
+                fullUse: suggestion.equipmentUseFit.fullUse !== false,
+                trainedFit: suggestion.equipmentUseFit.trainedFit ?? null,
+                successFit: suggestion.equipmentUseFit.successFit ?? null,
+                label: suggestion.equipmentUseFit.labels?.fullUse || '',
+                bestUse: suggestion.equipmentUseFit.bestUse?.useLabel || ''
+              }
+            : null
         };
       }
 
@@ -1926,20 +1956,13 @@ export class SWSEStore extends BaseSWSEAppV2 {
       add(storeI18n('SWSE.Store.Technical.DamageThreshold'), sys.damageThreshold);
       add(storeI18n('SWSE.Store.Technical.Reflex'), sys.reflexDefense);
       add(storeI18n('SWSE.Store.Technical.Fortitude'), sys.fortitudeDefense);
-      add('Character Speed', sys.characterScaleSpeedLabel || sys.speed);
-      add('Starship Speed', sys.starshipScaleSpeedLabel || sys.starshipSpeed);
-      add('Max Velocity', sys.maxVelocity);
-      add('Fighting Space', [sys.characterScaleFightingSpace && `Character ${sys.characterScaleFightingSpace}`, sys.starshipScaleFightingSpace && `Starship ${sys.starshipScaleFightingSpace}`].filter(Boolean).join(' · '));
+      add('Speed', sys.speed || sys.maxVelocity);
       add(storeI18n('SWSE.Store.Technical.Maneuver'), sys.maneuver);
       add(storeI18n('SWSE.Store.Technical.Crew'), sys.crew);
       add(storeI18n('SWSE.Store.Technical.Passengers'), sys.passengers);
       add(storeI18n('SWSE.Store.Technical.Cargo'), sys.cargo);
-      add(storeI18n('SWSE.Store.Technical.Consumables'), sys.vehicleConsumablesLabel || sys.consumables);
-      add(storeI18n('SWSE.Store.Technical.Hyperdrive'), sys.vehicleHyperdriveLabel || sys.hyperdrive_class);
-      add('Astrogation', sys.vehicleAstrogationSupportLabel || sys.vehicleAstrogationSupportStatus);
-      add('Carried Craft', sys.vehicleCarriedCraftLabel || sys.carried_craft);
-      add('Payload', sys.vehiclePayloadLabel || sys.payload);
-      add('Emplacement Points', sys.vehicleEmplacementPointLabel || sys.emplacement_points);
+      add(storeI18n('SWSE.Store.Technical.Consumables'), sys.consumables);
+      add(storeI18n('SWSE.Store.Technical.Hyperdrive'), sys.hyperdrive_class);
       if (Array.isArray(sys.weapons) && sys.weapons.length) {
         add(storeI18n('SWSE.Store.Technical.Weapons'), sys.weapons.map(w => `${w.name}${w.damage ? ` (${w.damage})` : ''}`).join(', '));
       }

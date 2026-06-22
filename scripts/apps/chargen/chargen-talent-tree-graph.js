@@ -28,6 +28,44 @@ function getTalentNodeId(talent) {
   return talent?.id || talent?._id || talent?.uuid || talent?.name;
 }
 
+function getEquivalentTalentLookupNames(talent) {
+  const names = [];
+  const add = (value) => {
+    const text = String(value ?? '').trim();
+    if (text && !names.some(name => normalizeTalentLookupName(name) === normalizeTalentLookupName(text))) names.push(text);
+  };
+
+  add(talent?.name);
+  add(talent?.label);
+  const grantSources = [
+    talent?._data?.actualTalentsToGrant,
+    talent?._data?.grants,
+    talent?.system?.actualTalentsToGrant,
+    talent?.system?.grantsTalents,
+    talent?.system?.equivalentTalents,
+    talent?.flags?.swse?.actualTalentsToGrant,
+    talent?.flags?.swse?.grantsTalents,
+  ];
+  for (const source of grantSources) {
+    for (const value of Array.isArray(source) ? source : []) add(value);
+  }
+
+  const normalized = names.map(name => normalizeTalentLookupName(String(name).replace(/&/g, ' and ')));
+  const isBlockDeflectCombined = normalized.includes('block and deflect')
+    || talent?.system?.isBlockDeflectCombined === true
+    || talent?.system?.flags?.isBlockDeflectCombined === true
+    || talent?._data?.isBlockDeflectCombined === true
+    || talent?.flags?.swse?.isBlockDeflectCombined === true
+    || (normalized.includes('block') && normalized.includes('deflect'));
+  if (isBlockDeflectCombined) {
+    add('Block & Deflect');
+    add('Block');
+    add('Deflect');
+  }
+
+  return names;
+}
+
 function getTalentPrerequisiteString(talent) {
   const canonical = getCanonicalPrerequisiteText('talent', talent?.name);
   if (typeof canonical === 'string' && canonical.trim()) {
@@ -112,7 +150,9 @@ export function buildDependencyGraph(talents) {
   for (const talent of talents) {
     const id = getTalentNodeId(talent);
     if (!id || !talent?.name) {continue;}
-    talentsByName.set(normalizeTalentLookupName(talent.name), talent);
+    for (const equivalentName of getEquivalentTalentLookupNames(talent)) {
+      talentsByName.set(normalizeTalentLookupName(equivalentName), talent);
+    }
     nodes.set(id, {
       id,
       name: talent.name,

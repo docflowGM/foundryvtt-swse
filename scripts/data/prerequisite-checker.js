@@ -76,6 +76,103 @@ function matchesForceSensitivity(value) {
     return isForceSensitivityName(value) || namesMatchLoosely(value, 'Force Sensitivity');
 }
 
+
+function getTalentEquivalentNames(entry = {}) {
+    const names = [];
+    const add = (value) => {
+        const text = String(value ?? '').trim();
+        if (text && !names.some(name => normalizeLooseLookupKey(name) === normalizeLooseLookupKey(text))) names.push(text);
+    };
+    add(typeof entry === 'string' ? entry : null);
+    add(entry?.name);
+    add(entry?.label);
+    add(entry?.system?.name);
+    add(entry?.system?.canonicalName);
+
+    const grantSources = [
+        entry?._data?.actualTalentsToGrant,
+        entry?._data?.grants,
+        entry?.system?.actualTalentsToGrant,
+        entry?.system?.grantsTalents,
+        entry?.system?.equivalentTalents,
+        entry?.flags?.swse?.actualTalentsToGrant,
+        entry?.flags?.swse?.grantsTalents,
+    ];
+    for (const source of grantSources) {
+        for (const value of Array.isArray(source) ? source : []) add(value);
+    }
+
+    const normalized = names.map(name => normalizeLooseLookupKey(String(name).replace(/&/g, ' and ')));
+    const isBlockDeflectCombined = normalized.includes('block and deflect')
+        || entry?.system?.isBlockDeflectCombined === true
+        || entry?.system?.flags?.isBlockDeflectCombined === true
+        || entry?._data?.isBlockDeflectCombined === true
+        || entry?.flags?.swse?.isBlockDeflectCombined === true
+        || (normalized.includes('block') && normalized.includes('deflect'));
+    if (isBlockDeflectCombined) {
+        add('Block & Deflect');
+        add('Block');
+        add('Deflect');
+    }
+
+    return names;
+}
+
+function getFeatChoiceKeyAliases(value) {
+    const primary = normalizeFeatChoiceKey(value);
+    const aliases = new Set();
+    const add = (raw) => {
+        const key = normalizeFeatChoiceKey(raw);
+        if (!key) return;
+        aliases.add(key);
+        aliases.add(key.replace(/_/g, '-'));
+        aliases.add(key.replace(/-/g, '_'));
+    };
+    add(primary);
+
+    const hyphen = primary.replace(/_/g, '-');
+    const addPair = (a, b) => {
+        if (aliases.has(a) || aliases.has(a.replace(/-/g, '_'))) add(b);
+        if (aliases.has(b) || aliases.has(b.replace(/-/g, '_'))) add(a);
+    };
+
+    addPair('lightsaber', 'lightsabers');
+    addPair('pistol', 'pistols');
+    addPair('rifle', 'rifles');
+    addPair('simple-weapon', 'simple-weapons');
+    addPair('advanced-melee-weapon', 'advanced-melee-weapons');
+    addPair('heavy-weapon', 'heavy-weapons');
+    addPair('melee-weapon', 'melee-weapons');
+    addPair('exotic-weapon', 'exotic-weapons');
+
+    if (hyphen.endsWith('s') && hyphen.length > 1) add(hyphen.slice(0, -1));
+    if (hyphen && !hyphen.endsWith('s')) add(`${hyphen}s`);
+
+    if (hyphen.includes(':')) {
+        const parts = hyphen.split(':');
+        const tail = parts.pop();
+        const tailAliases = Array.from(getFeatChoiceKeyAliases(tail));
+        for (const alias of tailAliases) add([...parts, alias].join(':'));
+    }
+
+    return aliases;
+}
+
+function extractScopedFeatChoiceText(value) {
+    const match = String(value || '').match(/\(([^)]*)\)/);
+    return match ? match[1].trim() : '';
+}
+
+function scopedFeatMatchesWithChoiceAliases(candidateName, requiredName) {
+    if (!featRequirementHasScope(candidateName) || !featRequirementHasScope(requiredName)) return false;
+    const candidateBase = extractBaseFeatName(String(candidateName || ''));
+    const requiredBase = extractBaseFeatName(String(requiredName || ''));
+    if (normalizeFeatMatchKey(candidateBase) !== normalizeFeatMatchKey(requiredBase)) return false;
+    const candidateChoices = getFeatChoiceKeyAliases(extractScopedFeatChoiceText(candidateName));
+    const requiredChoices = getFeatChoiceKeyAliases(extractScopedFeatChoiceText(requiredName));
+    return Array.from(candidateChoices).some(choice => requiredChoices.has(choice));
+}
+
 /**
  * MAIN CLASS: PrerequisiteChecker
  * The unified, canonical prerequisite validator for ALL types of prerequisites.
@@ -222,10 +319,10 @@ export class PrerequisiteChecker {
             if (itemType === 'feat') {
                 return featLikeMatchesRequirement(item, requiredName);
             }
-            const itemName = item?.name || '';
-            return namesMatchLoosely(itemName, requiredName) ||
+            const itemNames = itemType === 'talent' ? getTalentEquivalentNames(item) : [item?.name || ''];
+            return itemNames.some((itemName) => namesMatchLoosely(itemName, requiredName) ||
                 (baseName && !featRequirementHasScope(requiredName) && namesMatchLoosely(itemName, baseName)) ||
-                (baseName && !featRequirementHasScope(requiredName) && itemName.toLowerCase().startsWith(`${baseName.toLowerCase()} (`));
+                (baseName && !featRequirementHasScope(requiredName) && itemName.toLowerCase().startsWith(`${baseName.toLowerCase()} (`)));
         };
 
         const actorHit = actor.items?.some((i) => i.type === itemType && predicate(i));
@@ -1468,8 +1565,8 @@ export class PrerequisiteChecker {
             ? (choice.key || choice.value || choice.id || choice.group || choice.weaponGroup || choice.name || choice.label || choice)
             : null;
         let target = choiceTarget || prereq?.weapon || prereq?.weaponGroup || prereq?.group || prereq?.value || prereq?.name || null;
-        const scopedWeaponProficiency = String(target || '').match(/weapon\s+proficiency\s*\(([^)]+)\)/i)?.[1];
-        if (scopedWeaponProficiency) target = scopedWeaponProficiency;
+        const scopedWeaponFeat = String(target || '').match(/weapon\s+(?:proficiency|focus|specialization)\s*\(([^)]+)\)/i)?.[1];
+        if (scopedWeaponFeat) target = scopedWeaponFeat;
         // Printed prerequisites such as "Proficient with Chosen Weapon" are not
         // a literal weapon group. During list legality they mean "any weapon
         // proficiency exists"; during choice validation the selected choice above
@@ -1487,7 +1584,24 @@ export class PrerequisiteChecker {
     static _choiceProviderHasTarget(providers, target) {
         const key = this._choiceKeyFromPrereqTarget(target);
         if (!key) return false;
-        return (providers || []).some((entry) => FeatChoiceResolver.getSelectedChoiceKey(entry) === key);
+        const targetAliases = getFeatChoiceKeyAliases(key);
+        return (providers || []).some((entry) => {
+            const providerAliases = new Set();
+            for (const candidate of [
+                FeatChoiceResolver.getSelectedChoiceKey(entry),
+                entry?.key,
+                entry?.id,
+                entry?.value,
+                entry?.group,
+                entry?.weaponGroup,
+                entry?.name,
+                entry?.label,
+                typeof entry === 'string' ? entry : null,
+            ]) {
+                for (const alias of getFeatChoiceKeyAliases(candidate)) providerAliases.add(alias);
+            }
+            return Array.from(providerAliases).some(alias => targetAliases.has(alias));
+        });
     }
 
     static _formatPrereqTarget(target) {
@@ -3141,6 +3255,7 @@ function hasFeatMatch(actorFeats, requiredFeat) {
     return actorFeats.some(f => {
         const candidateNames = getFeatCandidateNames(f);
         if (candidateNames.some(name => normalizeFeatMatchKey(name) === requiredFull)) return true;
+        if (requiredIsScoped && candidateNames.some(name => scopedFeatMatchesWithChoiceAliases(name, requirement))) return true;
 
         // Generic requirements like "Weapon Proficiency" or "Armor Proficiency"
         // may be satisfied by any scoped instance. Scoped requirements must remain

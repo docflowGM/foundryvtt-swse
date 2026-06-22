@@ -29,6 +29,12 @@
   </div>
 
   <section class="talent-browser-all-trees talent-browser-all-trees--holomap">
+    {{#if isLoading}}
+    <div class="talent-empty-state talent-empty-state--holomap talent-empty-state--loading">
+      <i class="fa-solid fa-spinner fa-spin"></i>
+      <p>Loading legal talent trees...</p>
+    </div>
+    {{else}}
     {{#if allTrees}}
     <div class="talent-tree-cards talent-tree-cards--holomap all-trees">
       {{#each allTrees}}
@@ -85,6 +91,7 @@
       <i class="fa-solid fa-hexagon-exclamation"></i>
       <p>{{localize "SWSE.Progression.Talent.Empty.NoTreesAvailable"}}</p>
     </div>
+    {{/if}}
     {{/if}}
   </section>
 </div>

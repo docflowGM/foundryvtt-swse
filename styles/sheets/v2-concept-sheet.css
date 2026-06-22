@@ -10086,3 +10086,36 @@ form[id^="SWSEV2CharacterSheet"] .skill-extra-uses-toggle,
   color: rgba(255, 145, 160, 0.95);
   background: rgba(120, 35, 55, 0.16);
 }
+
+
+/* Skill ability selectors must stay directly usable inside the dense skill math row. */
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__math .swse-concept-toolfield--ability,
+.swse.sheet.actor.character.v2 .swse-concept-skill-row__math .swse-concept-toolfield--ability,
+.swse-character-sheet .swse-concept-skill-row__math .swse-concept-toolfield--ability {
+  min-width: 132px !important;
+  position: relative;
+  z-index: 4;
+  pointer-events: auto;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__math .swse-concept-toolfield--ability .ability-select,
+.swse.sheet.actor.character.v2 .swse-concept-skill-row__math .swse-concept-toolfield--ability .ability-select,
+.swse-character-sheet .swse-concept-skill-row__math .swse-concept-toolfield--ability .ability-select {
+  width: 100% !important;
+  min-width: 110px !important;
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 4px 8px !important;
+  position: relative;
+  z-index: 5;
+  pointer-events: auto !important;
+  cursor: pointer;
+  appearance: auto;
+}
+
+form[id^="SWSEV2CharacterSheet"] .swse-concept-skill-row__math .swse-concept-toolfield--ability .ability-select option,
+.swse.sheet.actor.character.v2 .swse-concept-skill-row__math .swse-concept-toolfield--ability .ability-select option,
+.swse-character-sheet .swse-concept-skill-row__math .swse-concept-toolfield--ability .ability-select option {
+  background: rgba(6, 12, 20, 0.98);
+  color: var(--swse-concept-text, #d7f7ff);
+}
