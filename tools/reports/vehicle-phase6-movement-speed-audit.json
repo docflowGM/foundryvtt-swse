@@ -1,0 +1,157 @@
+{
+  "processed": 357,
+  "byStatus": {
+    "immobile": 8,
+    "dual-scale": 172,
+    "character-scale-only": 126,
+    "starship-scale-only": 51
+  },
+  "hasCharacter": 306,
+  "hasStarship": 223,
+  "hasBoth": 172,
+  "immobile": 8,
+  "unparsed": [],
+  "examples": [
+    {
+      "name": "Hyperspace Beacon",
+      "raw": "Immobile Fighting Space : 3x3 squares (Character Scale), 1 Square (Starship Scale)",
+      "speed": "Immobile",
+      "starshipSpeed": "Immobile",
+      "status": "immobile"
+    },
+    {
+      "name": "Advanced V-19 Torrent Starfighter",
+      "raw": "Fly 16 squares (Character Scale), Fly 4 Squares (Starship Scale)",
+      "speed": "Fly 16 squares",
+      "starshipSpeed": "Fly 4 squares",
+      "status": "dual-scale"
+    },
+    {
+      "name": "Corellian YT-1300 Transport",
+      "raw": "Fly 12 squares (Character Scale), Fly 2 Squares (Starship Scale)",
+      "speed": "Fly 12 squares",
+      "starshipSpeed": "Fly 2 squares",
+      "status": "dual-scale"
+    },
+    {
+      "name": "AEG-77 Vigo Transport",
+      "raw": "12 squares",
+      "speed": "12 squares",
+      "starshipSpeed": "",
+      "status": "character-scale-only"
+    },
+    {
+      "name": "Corellian YT-1930 Transport",
+      "raw": "Fly 12 squares (Character Scale), Fly 3 Squares (Starship Scale)",
+      "speed": "Fly 12 squares",
+      "starshipSpeed": "Fly 3 squares",
+      "status": "dual-scale"
+    },
+    {
+      "name": "TT-6 Landspeeder",
+      "raw": "12 squares (Character Scale)",
+      "speed": "12 squares",
+      "starshipSpeed": "",
+      "status": "character-scale-only"
+    },
+    {
+      "name": "Hardcell-Class Interstellar Transport",
+      "raw": "12 squares",
+      "speed": "12 squares",
+      "starshipSpeed": "",
+      "status": "character-scale-only"
+    },
+    {
+      "name": "CloakShape Fighter",
+      "raw": "Fly 15 squares (Character Scale), Fly 4 Squares (Starship Scale)",
+      "speed": "Fly 15 squares",
+      "starshipSpeed": "Fly 4 squares",
+      "status": "dual-scale"
+    },
+    {
+      "name": "The Visionary",
+      "raw": "12 squares",
+      "speed": "12 squares",
+      "starshipSpeed": "",
+      "status": "character-scale-only"
+    },
+    {
+      "name": "LAVr QH-7 Chariot",
+      "raw": "12 squares",
+      "speed": "12 squares",
+      "starshipSpeed": "",
+      "status": "character-scale-only"
+    },
+    {
+      "name": "OG-9 Homing Spider Droid",
+      "raw": "8 squares",
+      "speed": "8 squares",
+      "starshipSpeed": "",
+      "status": "character-scale-only"
+    },
+    {
+      "name": "RC-2 Twilight Scoutship",
+      "raw": "Fly 16 squares (Character Scale), Fly 5 Squares (Starship Scale)",
+      "speed": "Fly 16 squares",
+      "starshipSpeed": "Fly 5 squares",
+      "status": "dual-scale"
+    },
+    {
+      "name": "Corellian YT-2000 Transport",
+      "raw": "Fly 12 squares (Character Scale), Fly 3 Squares (Starship Scale)",
+      "speed": "Fly 12 squares",
+      "starshipSpeed": "Fly 3 squares",
+      "status": "dual-scale"
+    },
+    {
+      "name": "Venator-Class Star Destroyer",
+      "raw": "Fly 2 squares (Starship Scale) Fighting Space : 2x2 Squares (Starship Scale)",
+      "speed": "",
+      "starshipSpeed": "Fly 2 squares",
+      "status": "starship-scale-only"
+    },
+    {
+      "name": "N-1 Royal Starfighter",
+      "raw": "Fly 16 squares (Character Scale), Fly 4 Squares (Starship Scale)",
+      "speed": "Fly 16 squares",
+      "starshipSpeed": "Fly 4 squares",
+      "status": "dual-scale"
+    },
+    {
+      "name": "BARC Speeder",
+      "raw": "12 squares (Character Scale)",
+      "speed": "12 squares",
+      "starshipSpeed": "",
+      "status": "character-scale-only"
+    },
+    {
+      "name": "Strike-Class Medium Cruiser",
+      "raw": "Fly 3 squares (Starship Scale) Fighting Space : 2x2 Squares (Starship Scale)",
+      "speed": "",
+      "starshipSpeed": "Fly 3 squares",
+      "status": "starship-scale-only"
+    },
+    {
+      "name": "MC80 Star Cruiser",
+      "raw": "Fly 3 squares (Starship Scale) Fighting Space : 2x2 Squares (Starship Scale)",
+      "speed": "",
+      "starshipSpeed": "Fly 3 squares",
+      "status": "starship-scale-only"
+    },
+    {
+      "name": "Delta-7 Aethersprite Interceptor",
+      "raw": "Fly 16 squares (Character Scale), Fly 5 Squares (Starship Scale)",
+      "speed": "Fly 16 squares",
+      "starshipSpeed": "Fly 5 squares",
+      "status": "dual-scale"
+    },
+    {
+      "name": "Corellian Barloz-Class Medium Freighter",
+      "raw": "Fly 12 squares (Character Scale), Fly 3 Squares (Starship Scale)",
+      "speed": "Fly 12 squares",
+      "starshipSpeed": "Fly 3 squares",
+      "status": "dual-scale"
+    }
+  ],
+  "syncMismatches": []
+}

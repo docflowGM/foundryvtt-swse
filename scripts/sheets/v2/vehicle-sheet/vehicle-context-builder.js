@@ -98,7 +98,9 @@ function normalizeVehicleWeaponEntry(weapon = {}, index = 0, source = 'system') 
   const rawBonus = firstPresent(weapon.bonus, weapon.attackBonus, weapon.attack, weapon.toHit, weapon.total, '+0');
   const attackSummary = signedNumberString(rawBonus, '+0');
   const damageSummary = safeString(firstPresent(weapon.damage, weapon.damageFormula, weapon.formula, weapon.damageRoll, '1d10'), '1d10');
-  const rangeSummary = safeString(firstPresent(weapon.range, weapon.rangeSummary, weapon.rangeProfile, 'Close'), 'Close');
+  const rangeProfileSlug = firstPresent(weapon.rangeProfileSlug, weapon.rangeSlug, weapon.rangeProfile, null);
+  const rangeProfileName = firstPresent(weapon.rangeProfileName, weapon.rangeProfileLabel, weapon.rangeProfileDisplay, weapon.range, null);
+  const rangeSummary = safeString(firstPresent(weapon.rangeSummary, weapon.range, rangeProfileName, rangeProfileSlug, 'Range Profile Pending'), 'Range Profile Pending');
   return {
     key: weapon.key || weapon.id || weapon._id || `${source}-weapon-${index}`,
     name,
@@ -115,6 +117,17 @@ function normalizeVehicleWeaponEntry(weapon = {}, index = 0, source = 'system') 
     damageSummary,
     damageFormula: damageSummary,
     rangeSummary,
+    rangeProfileSlug,
+    rangeProfileName: safeString(rangeProfileName || rangeProfileSlug || '', ''),
+    baseRangeProfileSlug: firstPresent(weapon.baseRangeProfileSlug, null),
+    baseRangeProfileName: firstPresent(weapon.baseRangeProfileName, null),
+    rangeSource: firstPresent(weapon.rangeSource, null),
+    weaponSystemSlug: firstPresent(weapon.weaponSystemSlug, null),
+    weaponSystemName: firstPresent(weapon.weaponSystemName, null),
+    count: safeNumber(firstPresent(weapon.count, 1), 1),
+    battery: !!weapon.battery,
+    pointDefense: !!weapon.pointDefense,
+    modifiers: safeArray(weapon.modifiers),
     notes: safeArray(weapon.notes ? [weapon.notes] : weapon.special ? [weapon.special] : []),
     actions: getStationSkillActions('gunner').map((action) => ({ ...action, stationKey: 'gunner' })),
     rawSource: weapon.rawSource || null,
@@ -167,6 +180,22 @@ export function parseCargoString(value) {
  * @returns {{raw:string, mode:string, character:string, starship:string, summary:string}}
  */
 export function parseVehicleSpeed(value) {
+  if (value && typeof value === 'object') {
+    const system = value;
+    const character = firstPresent(system.characterScaleSpeedLabel, system.speed, system.vehicleIsImmobile ? 'Immobile' : null, '—');
+    const starship = firstPresent(system.starshipScaleSpeedLabel, system.starshipSpeed, '—');
+    const mode = firstPresent(system.characterScaleMovementMode, system.starshipScaleMovementMode, system.vehicleMovementStatus, '');
+    return {
+      raw: safeString(system.vehicleMovementRaw || system.speed || '').trim(),
+      mode: safeString(mode),
+      character: safeString(character),
+      starship: safeString(starship),
+      characterFightingSpace: safeString(system.characterScaleFightingSpace || '—'),
+      starshipFightingSpace: safeString(system.starshipScaleFightingSpace || '—'),
+      summary: safeString(system.vehicleMovementSummary || [character && `Character ${character}`, starship && starship !== '—' && `Starship ${starship}`].filter(Boolean).join(' / ') || '—')
+    };
+  }
+
   const raw = safeString(value).trim();
   if (!raw) return { raw: '', mode: '', character: '—', starship: '—', summary: '—' };
 
@@ -364,7 +393,19 @@ function buildVehicleEditContext(actor, options = {}) {
     },
     movement: {
       speed: system.speed ?? '',
+      starshipSpeed: system.starshipSpeed ?? '',
+      characterScaleSpeed: system.characterScaleSpeed ?? '',
+      starshipScaleSpeed: system.starshipScaleSpeed ?? '',
+      characterScaleSpeedLabel: system.characterScaleSpeedLabel ?? system.speed ?? '',
+      starshipScaleSpeedLabel: system.starshipScaleSpeedLabel ?? system.starshipSpeed ?? '',
+      characterScaleMovementMode: system.characterScaleMovementMode ?? '',
+      starshipScaleMovementMode: system.starshipScaleMovementMode ?? '',
+      characterScaleFightingSpace: system.characterScaleFightingSpace ?? '',
+      starshipScaleFightingSpace: system.starshipScaleFightingSpace ?? '',
       maxVelocity: system.maxVelocity ?? '',
+      maxVelocityKmh: system.maxVelocityKmh ?? '',
+      raw: system.vehicleMovementRaw ?? '',
+      status: system.vehicleMovementStatus ?? '',
       maneuver: system.maneuver ?? ''
     },
     crew: {
@@ -1017,7 +1058,7 @@ export function buildVehicleSheetContext(actor, rawContext, options = {}) {
 
   const vehicleTypeFlags = buildVehicleTypeFlags(actor?.system ?? {});
   const parsedCargo = parseCargoString(actor?.system?.cargo);
-  const parsedSpeed = parseVehicleSpeed(actor?.system?.speed);
+  const parsedSpeed = parseVehicleSpeed(actor?.system ?? {});
 
   const headerSummaryPanel = buildVehicleHeaderSummaryPanel(actor, { sourceModelName: options.sourceModelName });
   const defensesPanel = buildVehicleDefensesPanel(actor);

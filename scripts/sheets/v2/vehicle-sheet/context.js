@@ -183,10 +183,14 @@ function buildDefenses(system) {
 }
 
 function buildMovement(system) {
+  const characterSpeed = firstPresent(system.characterScaleSpeedLabel, system.speed);
+  const starshipSpeed = firstPresent(system.starshipScaleSpeedLabel, system.starshipSpeed);
   const entries = [
-    { key: "speed", label: "Speed", value: system.speed },
-    { key: "starshipSpeed", label: "Starship Speed", value: system.starshipSpeed },
+    { key: "characterScaleSpeed", label: "Character Scale", value: characterSpeed },
+    { key: "starshipScaleSpeed", label: "Starship Scale", value: starshipSpeed },
     { key: "maxVelocity", label: "Max Velocity", value: system.maxVelocity },
+    { key: "characterScaleFightingSpace", label: "Character Space", value: system.characterScaleFightingSpace },
+    { key: "starshipScaleFightingSpace", label: "Starship Space", value: system.starshipScaleFightingSpace },
     { key: "maneuver", label: "Maneuver", value: signed(system.maneuver) },
     { key: "initiative", label: "Initiative", value: signed(system.initiative) }
   ].filter((entry) => label(entry.value, null));
@@ -194,6 +198,23 @@ function buildMovement(system) {
   return {
     display: entries.length ? entries.map((entry) => `${entry.label}: ${entry.value}`).join(" · ") : EMPTY,
     entries,
+    status: system.vehicleMovementStatus || '',
+    raw: system.vehicleMovementRaw || '',
+    modes: Array.isArray(system.vehicleMovementModes) ? system.vehicleMovementModes : [],
+    characterScale: {
+      label: label(characterSpeed, EMPTY),
+      squares: system.characterScaleSpeed ?? null,
+      mode: system.characterScaleMovementMode || '',
+      fightingSpace: label(system.characterScaleFightingSpace, EMPTY),
+      hasSpeed: Boolean(system.vehicleHasCharacterScaleSpeed || characterSpeed)
+    },
+    starshipScale: {
+      label: label(starshipSpeed, EMPTY),
+      squares: system.starshipScaleSpeed ?? null,
+      mode: system.starshipScaleMovementMode || '',
+      fightingSpace: label(system.starshipScaleFightingSpace, EMPTY),
+      hasSpeed: Boolean(system.vehicleHasStarshipScaleSpeed || starshipSpeed)
+    },
     hasEntries: entries.length > 0
   };
 }

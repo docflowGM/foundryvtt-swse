@@ -45,16 +45,14 @@ export class SWSEVehicleHandler {
     });
 
     // Normalize SWSE speed strings into flags + schema-safe strings
-    const speedInfo = parseVehicleSpeedText(template.speed ?? template.speedText ?? '');
+    const rawSpeedText = template.vehicleMovementRaw ?? template.speed ?? template.speedText ?? '';
+    const speedInfo = parseVehicleSpeedText(rawSpeedText);
 
-    const speedString = formatSquares(
-      speedInfo.character?.squares ?? template.speed,
-      typeof template.speed === 'string' ? template.speed : '12 squares'
-    );
+    const speedString = template.characterScaleSpeedLabel || speedInfo.character?.label || (typeof template.speed === 'string' ? template.speed : formatSquares(template.speed, '12 squares'));
 
-    const starshipSpeedString = template.starshipSpeed
+    const starshipSpeedString = template.starshipScaleSpeedLabel || (template.starshipSpeed
       ? (typeof template.starshipSpeed === 'string' ? template.starshipSpeed : formatSquares(template.starshipSpeed, ''))
-      : (speedInfo.starship?.squares != null ? formatSquares(speedInfo.starship.squares, '') : null);
+      : (speedInfo.starship?.label ?? null));
 
     // Build update object - the template now uses the migrated schema
     const updates = {
@@ -111,6 +109,23 @@ export class SWSEVehicleHandler {
       'system.speed': speedString,
       ...(starshipSpeedString ? { 'system.starshipSpeed': starshipSpeedString } : {}),
       'system.maxVelocity': speedInfo.maxVelocity || template.maxVelocity || '800 km/h',
+      'system.vehicleMovementRaw': rawSpeedText,
+      'system.vehicleMovementSummary': template.vehicleMovementSummary || [speedString && `Character: ${speedString}`, starshipSpeedString && `Starship: ${starshipSpeedString}`, template.maxVelocity && `Max: ${template.maxVelocity}`].filter(Boolean).join(' · '),
+      'system.vehicleMovementStatus': template.vehicleMovementStatus || speedInfo.status || '',
+      'system.vehicleMovementDataStatus': template.vehicleMovementDataStatus || (speedInfo.status === 'needs-source-review' ? 'needs-source-review' : 'parsed'),
+      'system.vehicleIsImmobile': Boolean(template.vehicleIsImmobile || speedInfo.status === 'immobile'),
+      'system.vehicleHasCharacterScaleSpeed': Boolean(template.vehicleHasCharacterScaleSpeed || speedInfo.character),
+      'system.vehicleHasStarshipScaleSpeed': Boolean(template.vehicleHasStarshipScaleSpeed || speedInfo.starship),
+      'system.characterScaleSpeed': template.characterScaleSpeed ?? speedInfo.character?.squares ?? null,
+      'system.characterScaleMovementMode': template.characterScaleMovementMode || speedInfo.character?.mode || '',
+      'system.characterScaleSpeedLabel': template.characterScaleSpeedLabel || speedInfo.character?.label || speedString,
+      'system.starshipScaleSpeed': template.starshipScaleSpeed ?? speedInfo.starship?.squares ?? null,
+      'system.starshipScaleMovementMode': template.starshipScaleMovementMode || speedInfo.starship?.mode || '',
+      'system.starshipScaleSpeedLabel': template.starshipScaleSpeedLabel || speedInfo.starship?.label || starshipSpeedString || '',
+      'system.characterScaleFightingSpace': template.characterScaleFightingSpace || speedInfo.fightingSpace?.character || '',
+      'system.starshipScaleFightingSpace': template.starshipScaleFightingSpace || speedInfo.fightingSpace?.starship || '',
+      'system.vehicleFightingSpaceRaw': template.vehicleFightingSpaceRaw || speedInfo.fightingSpace?.raw || '',
+      'system.vehicleMovementModes': Array.isArray(template.vehicleMovementModes) ? template.vehicleMovementModes : speedInfo.modes,
       'system.maneuver': template.maneuver || '+0',
       'system.initiative': template.initiative || '+0',
 

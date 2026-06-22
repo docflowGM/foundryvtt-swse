@@ -83,6 +83,8 @@
                 <div><span>{{localize "SWSE.ActorUI.Mode2"}}</span><strong>{{parsedSpeed.mode}}</strong></div>
                 <div><span>{{localize "SWSE.ActorUI.CharacterScale"}}</span><strong>{{parsedSpeed.character}}</strong></div>
                 <div><span>{{localize "SWSE.ActorUI.StarshipScale"}}</span><strong>{{parsedSpeed.starship}}</strong></div>
+                <div><span>Character Space</span><strong>{{parsedSpeed.characterFightingSpace}}</strong></div>
+                <div><span>Starship Space</span><strong>{{parsedSpeed.starshipFightingSpace}}</strong></div>
               </div>
             </div>
           </div>
@@ -261,8 +263,14 @@
                 <label>{{localize "SWSE.ActorUI.FortitudeDefense"}}<input name="system.fortitudeDefense" type="number" value="{{editContext.defenses.fortitude}}" data-dtype="Number"/></label>
                 <label>{{localize "SWSE.ActorUI.DamageThreshold"}}<input name="system.damageThreshold" type="number" value="{{editContext.defenses.damageThreshold}}" data-dtype="Number"/></label>
                 <label>{{localize "SWSE.ActorUI.ArmorBonus"}}<input name="system.armorBonus" type="number" value="{{editContext.defenses.armorBonus}}" data-dtype="Number"/></label>
-                <label>{{localize "SWSE.ActorUI.Speed"}}<input name="system.speed" type="text" value="{{editContext.movement.speed}}"/></label>
+                <label>Character Scale Speed<input name="system.speed" type="text" value="{{editContext.movement.speed}}"/></label>
+                <label>Starship Scale Speed<input name="system.starshipSpeed" type="text" value="{{editContext.movement.starshipSpeed}}"/></label>
+                <label>Character Speed Squares<input name="system.characterScaleSpeed" type="number" value="{{editContext.movement.characterScaleSpeed}}" data-dtype="Number"/></label>
+                <label>Starship Speed Squares<input name="system.starshipScaleSpeed" type="number" value="{{editContext.movement.starshipScaleSpeed}}" data-dtype="Number"/></label>
+                <label>Character Fighting Space<input name="system.characterScaleFightingSpace" type="text" value="{{editContext.movement.characterScaleFightingSpace}}"/></label>
+                <label>Starship Fighting Space<input name="system.starshipScaleFightingSpace" type="text" value="{{editContext.movement.starshipScaleFightingSpace}}"/></label>
                 <label>{{localize "SWSE.ActorUI.MaxVelocity"}}<input name="system.maxVelocity" type="text" value="{{editContext.movement.maxVelocity}}"/></label>
+                <label>Max Velocity km/h<input name="system.maxVelocityKmh" type="number" value="{{editContext.movement.maxVelocityKmh}}" data-dtype="Number"/></label>
                 <label>{{localize "SWSE.ActorUI.Maneuver"}}<input name="system.maneuver" type="text" value="{{editContext.movement.maneuver}}"/></label>
                 <label>{{localize "SWSE.ActorUI.Hyperdrive"}}<input name="system.hyperdrive_class" type="text" value="{{system.hyperdrive_class}}"/></label>
                 <label>{{localize "SWSE.ActorUI.BackupHyperdrive"}}<input name="system.backup_class" type="text" value="{{system.backup_class}}"/></label>

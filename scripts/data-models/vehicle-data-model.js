@@ -10,13 +10,17 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
     // Call parent shimData first to handle common fields
     const shimmed = super.shimData(data, options);
 
-    // For vehicles, ensure initiative and speed are STRINGS, not integers
+    // For vehicles, ensure initiative and speed fields are STRINGS, not integers
     if (shimmed.initiative !== undefined && shimmed.initiative !== null) {
       shimmed.initiative = String(shimmed.initiative);
     }
 
     if (shimmed.speed !== undefined && shimmed.speed !== null) {
       shimmed.speed = String(shimmed.speed);
+    }
+
+    if (shimmed.starshipSpeed !== undefined && shimmed.starshipSpeed !== null) {
+      shimmed.starshipSpeed = String(shimmed.starshipSpeed);
     }
 
     // Ensure attributes have integer values (vehicles still use attributes)
@@ -396,6 +400,60 @@ export class SWSEVehicleDataModel extends SWSEActorDataModel {
       speed: new fields.StringField({ required: false, initial: '12 squares' }),
       starshipSpeed: new fields.StringField({ required: false, initial: '4 squares' }),
       maxVelocity: new fields.StringField({ required: false, initial: '800 km/h' }),
+      vehicleMovementRaw: new fields.StringField({ required: false, initial: '' }),
+      vehicleMovementSummary: new fields.StringField({ required: false, initial: '' }),
+      vehicleMovementStatus: new fields.StringField({ required: false, initial: '' }),
+      vehicleMovementDataStatus: new fields.StringField({ required: false, initial: '' }),
+      vehicleIsImmobile: new fields.BooleanField({ required: false, initial: false }),
+      vehicleHasCharacterScaleSpeed: new fields.BooleanField({ required: false, initial: false }),
+      vehicleHasStarshipScaleSpeed: new fields.BooleanField({ required: false, initial: false }),
+      characterScaleSpeed: new fields.NumberField({
+        required: false,
+        nullable: true,
+        initial: null,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === '') {return null;}
+          const num = Number(value);
+          return Number.isNaN(num) ? null : Math.floor(num);
+        }
+      }),
+      characterScaleMovementMode: new fields.StringField({ required: false, initial: '' }),
+      characterScaleSpeedLabel: new fields.StringField({ required: false, initial: '' }),
+      starshipScaleSpeed: new fields.NumberField({
+        required: false,
+        nullable: true,
+        initial: null,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === '') {return null;}
+          const num = Number(value);
+          return Number.isNaN(num) ? null : Math.floor(num);
+        }
+      }),
+      starshipScaleMovementMode: new fields.StringField({ required: false, initial: '' }),
+      starshipScaleSpeedLabel: new fields.StringField({ required: false, initial: '' }),
+      maxVelocityKmh: new fields.NumberField({
+        required: false,
+        nullable: true,
+        initial: null,
+        integer: true,
+        clean: value => {
+          if (value === null || value === undefined || value === '') {return null;}
+          const num = Number(value);
+          return Number.isNaN(num) ? null : Math.floor(num);
+        }
+      }),
+      characterScaleFightingSpace: new fields.StringField({ required: false, initial: '' }),
+      starshipScaleFightingSpace: new fields.StringField({ required: false, initial: '' }),
+      vehicleFightingSpaceRaw: new fields.StringField({ required: false, initial: '' }),
+      vehicleMovementModes: new fields.ArrayField(new fields.SchemaField({
+        scale: new fields.StringField({ required: false, initial: '' }),
+        mode: new fields.StringField({ required: false, initial: '' }),
+        squares: new fields.NumberField({ required: false, nullable: true, initial: null, integer: true }),
+        label: new fields.StringField({ required: false, initial: '' }),
+        source: new fields.StringField({ required: false, initial: '' })
+      }), { initial: [] }),
       maneuver: new fields.StringField({ required: false, initial: '+0' }),
       initiative: new fields.StringField({ required: false, initial: '+0' }),
       baseAttackBonus: new fields.StringField({ required: false, initial: '+0' }),

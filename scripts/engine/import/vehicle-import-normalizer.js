@@ -15,6 +15,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { parseVehicleSpeedText } from "/systems/foundryvtt-swse/scripts/utils/movement-normalizer.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
 
@@ -24,6 +25,17 @@ const SYSTEM_ID = 'foundryvtt-swse';
 function safeNumber(value, fallback = 0) {
   const n = Number(value);
   return Number.isFinite(n) ? n : fallback;
+}
+
+function safeNullableInteger(value) {
+  if (value === null || value === undefined || value === '') {return null;}
+  const n = Number(value);
+  return Number.isFinite(n) ? Math.floor(n) : null;
+}
+
+function parseKmh(value) {
+  const match = String(value ?? '').replace(/,/g, '').match(/([0-9]+(?:\.[0-9]+)?)\s*km\/?h/i);
+  return match ? Math.round(Number(match[1])) : null;
 }
 
 /**
@@ -518,10 +530,32 @@ export function normalizeVehicleImportData(system, options = {}) {
     normalized.page = system.page ?? null;
     normalized.description = safeString(system.description, '');
 
-    // Speed fields
-    normalized.speed = safeString(system.speed || system.maxVelocity, '12 squares');
-    normalized.maxVelocity = safeString(system.maxVelocity, '12 squares');
-    normalized.starshipSpeed = safeString(system.starshipSpeed, '');
+    // Speed fields. SWSE vehicles can have separate Character Scale and Starship
+    // Scale movement, so keep the legacy display strings scale-specific and store
+    // machine-readable scale values beside them.
+    const movementRaw = safeString(system.vehicleMovementRaw || system.speed, '');
+    const parsedMovement = parseVehicleSpeedText(movementRaw);
+    normalized.vehicleMovementRaw = movementRaw;
+    normalized.vehicleMovementSummary = safeString(system.vehicleMovementSummary, '');
+    normalized.vehicleMovementStatus = safeString(system.vehicleMovementStatus || parsedMovement.status, parsedMovement.status);
+    normalized.vehicleMovementDataStatus = safeString(system.vehicleMovementDataStatus, parsedMovement.status === 'needs-source-review' ? 'needs-source-review' : 'parsed');
+    normalized.vehicleIsImmobile = Boolean(system.vehicleIsImmobile ?? parsedMovement.status === 'immobile');
+    normalized.vehicleHasCharacterScaleSpeed = Boolean(system.vehicleHasCharacterScaleSpeed ?? parsedMovement.character);
+    normalized.vehicleHasStarshipScaleSpeed = Boolean(system.vehicleHasStarshipScaleSpeed ?? parsedMovement.starship);
+    normalized.characterScaleSpeed = safeNullableInteger(system.characterScaleSpeed ?? parsedMovement.character?.squares);
+    normalized.characterScaleMovementMode = safeString(system.characterScaleMovementMode ?? parsedMovement.character?.mode, '');
+    normalized.characterScaleSpeedLabel = safeString(system.characterScaleSpeedLabel ?? parsedMovement.character?.label, '');
+    normalized.starshipScaleSpeed = safeNullableInteger(system.starshipScaleSpeed ?? parsedMovement.starship?.squares);
+    normalized.starshipScaleMovementMode = safeString(system.starshipScaleMovementMode ?? parsedMovement.starship?.mode, '');
+    normalized.starshipScaleSpeedLabel = safeString(system.starshipScaleSpeedLabel ?? parsedMovement.starship?.label, '');
+    normalized.characterScaleFightingSpace = safeString(system.characterScaleFightingSpace ?? parsedMovement.fightingSpace?.character, '');
+    normalized.starshipScaleFightingSpace = safeString(system.starshipScaleFightingSpace ?? parsedMovement.fightingSpace?.starship, '');
+    normalized.vehicleFightingSpaceRaw = safeString(system.vehicleFightingSpaceRaw ?? parsedMovement.fightingSpace?.raw, '');
+    normalized.vehicleMovementModes = Array.isArray(system.vehicleMovementModes) ? system.vehicleMovementModes : parsedMovement.modes;
+    normalized.speed = normalized.characterScaleSpeedLabel || safeString(system.speed, '');
+    normalized.starshipSpeed = normalized.starshipScaleSpeedLabel || safeString(system.starshipSpeed, '');
+    normalized.maxVelocity = safeString(system.maxVelocity, '');
+    normalized.maxVelocityKmh = safeNullableInteger(system.maxVelocityKmh ?? parseKmh(system.maxVelocity));
 
     // Additional fields
     normalized.hyperdrive_class = safeString(system.hyperdrive_class, '');

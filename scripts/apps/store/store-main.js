@@ -1926,7 +1926,10 @@ export class SWSEStore extends BaseSWSEAppV2 {
       add(storeI18n('SWSE.Store.Technical.DamageThreshold'), sys.damageThreshold);
       add(storeI18n('SWSE.Store.Technical.Reflex'), sys.reflexDefense);
       add(storeI18n('SWSE.Store.Technical.Fortitude'), sys.fortitudeDefense);
-      add('Speed', sys.speed || sys.maxVelocity);
+      add('Character Speed', sys.characterScaleSpeedLabel || sys.speed);
+      add('Starship Speed', sys.starshipScaleSpeedLabel || sys.starshipSpeed);
+      add('Max Velocity', sys.maxVelocity);
+      add('Fighting Space', [sys.characterScaleFightingSpace && `Character ${sys.characterScaleFightingSpace}`, sys.starshipScaleFightingSpace && `Starship ${sys.starshipScaleFightingSpace}`].filter(Boolean).join(' · '));
       add(storeI18n('SWSE.Store.Technical.Maneuver'), sys.maneuver);
       add(storeI18n('SWSE.Store.Technical.Crew'), sys.crew);
       add(storeI18n('SWSE.Store.Technical.Passengers'), sys.passengers);
