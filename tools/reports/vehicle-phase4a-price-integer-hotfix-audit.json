@@ -1,0 +1,115 @@
+{
+  "phase": "4a-price-integer-hotfix",
+  "generatedAt": "2026-06-22T00:00:00-04:00",
+  "purpose": "Ensure every machine-readable price field is integer-or-null only. Human-readable unavailable/black-market text remains in labels, statuses, notes, and raw/source fields.",
+  "fieldsValidated": [
+    "system.cost.new",
+    "system.cost.used",
+    "system.vehiclePriceNew",
+    "system.vehiclePriceUsed",
+    "system.vehicleEstimatedValue"
+  ],
+  "recordsAdjustedAcrossPacks": 533,
+  "priceSlotsAdjustedAcrossPacks": 1046,
+  "packAdjustments": [
+    {
+      "pack": "packs/vehicles-airspeeders.db",
+      "recordsAdjusted": 11
+    },
+    {
+      "pack": "packs/vehicles-capital-ships.db",
+      "recordsAdjusted": 55
+    },
+    {
+      "pack": "packs/vehicles-space-transports.db",
+      "recordsAdjusted": 49
+    },
+    {
+      "pack": "packs/vehicles-speeders.db",
+      "recordsAdjusted": 11
+    },
+    {
+      "pack": "packs/vehicles-starfighters.db",
+      "recordsAdjusted": 36
+    },
+    {
+      "pack": "packs/vehicles-starships.db",
+      "recordsAdjusted": 145
+    },
+    {
+      "pack": "packs/vehicles-stations.db",
+      "recordsAdjusted": 5
+    },
+    {
+      "pack": "packs/vehicles-tracked.db",
+      "recordsAdjusted": 11
+    },
+    {
+      "pack": "packs/vehicles-walkers.db",
+      "recordsAdjusted": 17
+    },
+    {
+      "pack": "packs/vehicles-weapon-emplacements.db",
+      "recordsAdjusted": 5
+    },
+    {
+      "pack": "packs/vehicles-wheeled.db",
+      "recordsAdjusted": 2
+    },
+    {
+      "pack": "packs/vehicles.db",
+      "recordsAdjusted": 186
+    }
+  ],
+  "validationSummary": {
+    "packs/vehicles-airspeeders.db": {
+      "records": 26,
+      "violations": 0
+    },
+    "packs/vehicles-capital-ships.db": {
+      "records": 63,
+      "violations": 0
+    },
+    "packs/vehicles-space-transports.db": {
+      "records": 108,
+      "violations": 0
+    },
+    "packs/vehicles-speeders.db": {
+      "records": 41,
+      "violations": 0
+    },
+    "packs/vehicles-starfighters.db": {
+      "records": 85,
+      "violations": 0
+    },
+    "packs/vehicles-starships.db": {
+      "records": 267,
+      "violations": 0
+    },
+    "packs/vehicles-stations.db": {
+      "records": 11,
+      "violations": 0
+    },
+    "packs/vehicles-tracked.db": {
+      "records": 14,
+      "violations": 0
+    },
+    "packs/vehicles-walkers.db": {
+      "records": 20,
+      "violations": 0
+    },
+    "packs/vehicles-weapon-emplacements.db": {
+      "records": 10,
+      "violations": 0
+    },
+    "packs/vehicles-wheeled.db": {
+      "records": 3,
+      "violations": 0
+    },
+    "packs/vehicles.db": {
+      "records": 357,
+      "violations": 0
+    }
+  },
+  "violations": []
+}

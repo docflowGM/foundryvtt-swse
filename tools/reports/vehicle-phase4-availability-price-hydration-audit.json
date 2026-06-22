@@ -1,0 +1,4795 @@
+{
+  "phase": "phase4-vehicle-availability-price-hydration",
+  "scope": "Normalize vehicle availability, new/used/black-market/estimated pricing, and store-facing sale flags without touching transport or combat stats.",
+  "authority": "Existing compendium source-extracted cost lines plus targeted SWSE Fandom statblock verification for high-risk ambiguous records.",
+  "uniqueVehiclesProcessed": 357,
+  "changedUniqueVehicles": [
+    "\"Oevvaor\" Jet Catamaran",
+    "\"Vulture\" Droid Starfighter",
+    "74-M Speeder Bike",
+    "74-Z Speeder Bike",
+    "A-7 Hunter Interceptor",
+    "A-A5 Speeder Truck",
+    "A-Wing Starfighter",
+    "A519 Invader Close Support Starfighter",
+    "AAT-1",
+    "AEG-77 Vigo Gunship",
+    "AEG-77 Vigo Transport",
+    "ARC-170 Starfighter",
+    "AT-AA",
+    "AT-AHT",
+    "AT-AP",
+    "AT-AT",
+    "AT-CT",
+    "AT-KT",
+    "AT-PT",
+    "AT-RCT",
+    "AT-RT",
+    "AT-ST",
+    "AT-TE",
+    "AT-XT",
+    "Acclamator I-Class Assault Ship",
+    "Acclamator II-Class Assault Ship",
+    "Advanced V-19 Torrent Starfighter",
+    "AeroChaser Speeder Bike",
+    "Aerosled Mark III",
+    "Air-2 Racing Swoop",
+    "Archaic Dreadnaught-Class Heavy Cruiser",
+    "Ardent-Class Fast Frigate",
+    "Arrow-23 Landspeeder",
+    "Aurek Tactical Strikefighter",
+    "B-Wing Shuttle",
+    "B-Wing Starfighter",
+    "B-Wing/E2 Starfighter",
+    "BARC Speeder",
+    "BB-2 Starfire Fighter/Bomber",
+    "BC-714 Luxury Transport",
+    "Baas-Class Space Station",
+    "Bantha-II Cargo Skiff",
+    "Baronial-Class Yacht",
+    "Basilisk War Droid",
+    "Baudo-Class Star Yacht",
+    "Belbullab Heavy Starfighter",
+    "Besh-Type Personal Starfighter",
+    "Broadside-Class Cruiser",
+    "C-9979 Landing Craft",
+    "CF9 Crossfire Starfighter",
+    "CIS-Advanced Starfighter",
+    "CK-6 Freeco Speeder Bike",
+    "CR70 Corellian Corvette",
+    "CS-1 Cargo Sled",
+    "CX-133 Chaos Fighter",
+    "Canderous-Class Assault Tank",
+    "Cardan I-Class Space Station",
+    "Cardan II-Class Space Station",
+    "Cardan III-Class Space Station",
+    "Carrack-Class Light Cruiser",
+    "Centurion-Class Battlecruiser",
+    "Charger c70 Corellian Consular-Class Cruiser",
+    "CloakShape Fighter",
+    "Conductor-Class Short-Haul Landing Craft",
+    "Conqueror-Class Assault Ship",
+    "Coralskipper",
+    "Corellian Action VI Bulk Transport",
+    "Corellian Barloz-Class Medium Freighter",
+    "Corellian CR-20 Troop Transport",
+    "Corellian Consular-Class Cruiser",
+    "Corellian Crix-Class Assault Shuttle",
+    "Corellian Crix-Class Courier Shuttle",
+    "Corellian G9 Rigger-Class Light Freighter",
+    "Corellian HWK-290 Light Freighter",
+    "Corellian JumpMaster 5000 Scout Ship",
+    "Corellian KR-TB \"Doomtreader\"",
+    "Corellian MT Dropship",
+    "Corellian Nemesis-Class Patrol Ship",
+    "Corellian S-100 Stinger-Class Starfighter",
+    "Corellian S-250 Chela-Class Starfighter",
+    "Corellian VCX-350 Light Freighter",
+    "Corellian YT-1250 Freighter",
+    "Corellian YT-1300 Transport",
+    "Corellian YT-1930 Transport",
+    "Corellian YT-2000 Transport",
+    "Corellian YT-2400 Transport",
+    "Corellian YU-410 Light Freighter",
+    "Corellian YV-545 Light Freighter",
+    "Corellian YX-1980 Transport",
+    "Corellian YZ-2500 Heavy Transport",
+    "Corellian YZ-775 Medium Transport",
+    "Corona Luxury Groundspeeder",
+    "Cutlass-9 Patrol Fighter",
+    "DC0052 \"Intergalactic\" Speeder",
+    "DP20 Corellian Frigate",
+    "Dagger-Class Starfighter",
+    "Davaab-Type Starfighter",
+    "Delta-7 Aethersprite High-Maneuver Interceptor",
+    "Delta-7 Aethersprite High-Speed Interceptor",
+    "Delta-7 Aethersprite Interceptor",
+    "Derriphan-Class Battleship",
+    "Diamond-Class Cruiser",
+    "Dianoga-Class Assault Starfighter",
+    "Dreadnaught-Class Heavy Cruiser",
+    "Droch-Class Boarding Ship",
+    "Droid Tri-Fighter",
+    "Drop Pod",
+    "Dynamic-Class Freighter",
+    "E-Wing Escort Starfighter",
+    "Eclipse-Class Star Dreadnought",
+    "Endurance-Class Fleet Carrier",
+    "Escape Pod",
+    "Eta-2 Actis Heavy-Defense Interceptor",
+    "Eta-2 Actis Interceptor",
+    "Executor-Class Star Dreadnought",
+    "F9-TZ Transport",
+    "FC-20 Speeder Bike",
+    "Flare-S Swoop",
+    "Foray-Class Blockade Runner",
+    "Fury-Class Starfighter",
+    "G-Type Escape Shuttle",
+    "G-Type Light Shuttle",
+    "GAT-12h Skipray Blastboat",
+    "GPE-3300 Airspeeder",
+    "GPE-7300 Space Transport",
+    "GR-75 Medium Transport",
+    "GS-100 Salvage Ship",
+    "Gamma-Class Assault Shuttle",
+    "Ghtroc 720 Freighter",
+    "Ginivex-Class Starfighter",
+    "Gladiator-Class Star Destroyer",
+    "Gladius-Class Light Freighter",
+    "Golan VIII Space Defense Platform",
+    "Gozanti Cruiser",
+    "Guardian-Class Light Cruiser",
+    "Gymsnor-3 Light Freighter",
+    "H-60 Tempest Bomber",
+    "HSP-10 Pursuit Airspeeder",
+    "Hapan Battle Dragon",
+    "Hardcell-Class Interstellar Transport",
+    "Helot-Class Medium Space Transport",
+    "Herald-Class Shuttle",
+    "Hound's Tooth",
+    "Hyena-Class Bomber",
+    "Hyperspace Beacon",
+    "I4 Ionizer Starfighter",
+    "IF-120 Landing Craft",
+    "ILH-KK Citadel-Class Civilian Cruiser",
+    "IPV-1 System Patrol Craft",
+    "Immobilizer 418 Interdictor-Class Heavy Cruiser",
+    "Imperial Customs Corvette",
+    "Imperial II-Class Star Destroyer",
+    "Imperial RaDAir",
+    "Imperious-Class Star Destroyer",
+    "J-1 Shuttle",
+    "J-Type Star Skiff",
+    "Jumpstar HPF Starfighter",
+    "Junker Class 720 Freighter",
+    "Junker TYE-Wing",
+    "K-Wing Assault Starfighter",
+    "KAAC Freerunner",
+    "KT-400 Military Droid Carrier",
+    "Kappa-Class Shuttle",
+    "Kazellis-Class Light Freighter",
+    "Krayt's Honor",
+    "Kybuck Speeder Bike",
+    "LAAT/c Gunship",
+    "LAAT/i Gunship",
+    "LAVr QH-7 Chariot",
+    "Lambda-Class Shuttle",
+    "Lancer-Class Frigate",
+    "Lancet Aerial Artillery",
+    "Laser Borer",
+    "Lethisk-Class Armed Freighter",
+    "Lucrehulk-Class Battleship",
+    "Lucrehulk-Class Core Ship",
+    "Lucrehulk-Class Droid Control Ship",
+    "Luke's Snowspeeder",
+    "M3-A Scyk Fighter",
+    "MC-24a Light Shuttle",
+    "MC140 Scythe-Class Battlecruiser",
+    "MC80 Star Cruiser",
+    "MC80a Star Cruiser",
+    "MR/RV",
+    "MRX-BR Pacifier",
+    "MTT",
+    "Maka-Eekai L4000 Transport",
+    "Mankvim-814 Light Interceptor",
+    "Manta Droid Subfighter",
+    "Marauder-Class Corvette",
+    "Marauder-Class Rebel Cruiser",
+    "MedStar-Class Frigate",
+    "Medlifter Troop Transport",
+    "Mekuun Heavy Tracker",
+    "Ministry-Class Orbital Shuttle",
+    "Miy'til Assault Bomber",
+    "Miy'til Command Starfighter",
+    "Miy'til Starfighter",
+    "Mobile Spacedock 220",
+    "Model 67 Shrieker Speeder Bike",
+    "Modified ILH-KK Citadel-Class Civilian Cruiser",
+    "Modified Lambda-Class Shuttle",
+    "Modified T-47 Airspeeder",
+    "Modified Tsmeu-6 Personal Wheel Bike",
+    "Mu-2 Long Range Shuttle",
+    "Munificent-Class Frigate",
+    "N-1 Royal Starfighter",
+    "Nantex-Class Territorial Starfighter",
+    "Nebula-Class Star Destroyer",
+    "Nebulon-B Escort Frigate",
+    "Neutralizer-Class Bomber",
+    "Neutron Star-Class Bulk Cruiser",
+    "Nova-Class Battlecruiser",
+    "Nova-Class Battlecruiser Refit",
+    "NovaSword Space Superiority Fighter",
+    "Nssis-Class Clawcraft",
+    "Nu-Class Attack Shuttle",
+    "Nune-Class Imperial Shuttle",
+    "OG-9 Homing Spider Droid",
+    "Octuptarra Magna Tri-Droid",
+    "Outbound Flight",
+    "P-38 Starfighter",
+    "PAC",
+    "PL-90 Luxury Speeder",
+    "PTV-2100 Incarcerator",
+    "Pelagia Duplex Command Assault Gunship",
+    "Pellaeon-Class Star Destroyer",
+    "Pelta-Class Frigate",
+    "Penumbra-Class Attack Shuttle",
+    "Phoebos-Class Starfighter",
+    "Predator-Class Starfighter",
+    "Protector VI Patrol Speeder",
+    "Prototype Dreadnaught-Class Heavy Cruiser",
+    "Providence-Class Destroyer",
+    "Punworcca 116-Class Interstellar Sloop",
+    "Pursuer-Class Enforcement Ship",
+    "R-28 Starfighter",
+    "R-41 Starchaser",
+    "R-42 Starchaser",
+    "RC-2 Twilight Scoutship",
+    "RTT",
+    "Raddaugh Gnasp Fluttercraft",
+    "Rebel Assault Frigate Mark I",
+    "Rebel Assault Frigate Mark II",
+    "Recusant-Class Light Destroyer",
+    "S-130 Shelter Medical Speeder",
+    "SCT Scout Craft",
+    "SPHA",
+    "SPHA-C",
+    "SPHA-I",
+    "SPHA-M",
+    "SPHA-V",
+    "STAP",
+    "Sabaoth Destroyer",
+    "Sabertooth-Class Assault/Rescue Vessel",
+    "Scarab-Class Droid Starfighter",
+    "Scimitar Assault Bomber",
+    "Seltiss-2 Caravel",
+    "Seltiss-2 Caravel Cabin",
+    "Sentinel-Class Landing Craft",
+    "ShaShore-Class Frigate",
+    "Shaadlar-Type Troopship",
+    "Shackles of Nizon",
+    "Sheathipede-Class Shuttle",
+    "Sigma-Class Long-Range Shuttle",
+    "Sith Infiltrator",
+    "Sith Interceptor",
+    "SkyBlind Landing Sphere",
+    "SkyBlind Recon Ship",
+    "Slave I",
+    "Spinward-Class Tender",
+    "Star Galleon-Class Frigate",
+    "Star Saber XC-01 Starfighter",
+    "StarForge Station",
+    "StarViper-Class Attack Platform",
+    "Storm IV Twin-Pod Cloud Car",
+    "Strike-Class Medium Cruiser",
+    "Subjugator-Class Heavy Cruiser",
+    "Swift Assault 5 Hovercraft",
+    "T-65B X-Wing Starfighter",
+    "T-65BR X-Wing Starfighter",
+    "T-65XJ3 X-Wing Starfighter",
+    "T2-B Repulsor Tank",
+    "TIE Advanced",
+    "TIE Bomber",
+    "TIE Defender",
+    "TIE Fighter",
+    "TIE Interceptor",
+    "TIE Prototype",
+    "TIE Shuttle",
+    "TL-1800 Light Freighter",
+    "TT-6 Landspeeder",
+    "TX-130 Saber-Class Fighter Tank",
+    "TX-130T Fighter Tank",
+    "Talon I Combat Cloud Car",
+    "Tartan-Class Patrol Cruiser",
+    "Teroch-Type Gunship",
+    "The Azure Angel",
+    "The Banshee",
+    "The Blood Brother",
+    "The Bloody Credit",
+    "The Crimson Axe",
+    "The Ebon Hawk",
+    "The Glorious Chariot",
+    "The Grinning Liar",
+    "The Indomitable",
+    "The Invisible Hand",
+    "The Last Resort",
+    "The Millennium Falcon",
+    "The Moomo Williwaw",
+    "The Mynock",
+    "The Scarlet Star",
+    "The Virago",
+    "The Visionary",
+    "The Wheel",
+    "Theta-Class Shuttle",
+    "Tibanna Gas Hauler",
+    "Tibanna Refinery Platform",
+    "Ton-Falk-Class Escort Carrier",
+    "Toscan 8-Q Starfighter",
+    "Tri-Scythe-Class Frigate",
+    "Tsmeu-6 Personal Wheel Bike",
+    "Twin-228 Airspeeder",
+    "U-LAV",
+    "UR-40M Patrol Speeder",
+    "UT-AT",
+    "Urban Bombardier Speeder Bike",
+    "Urban Navigator Speeder Bike",
+    "V-19 Torrent Starfighter",
+    "V-35 Courier",
+    "V-Wing Starfighter",
+    "VT-49 Decimator",
+    "Vaya-Class Scout Ship",
+    "Veltiss-2 Airspeeder",
+    "Venator-Class Star Destroyer",
+    "Victory I-Class Star Destroyer",
+    "Victory II-Class Star Destroyer",
+    "Vindicator-Class Heavy Cruiser",
+    "Viper Swoop Bike",
+    "WLO-5 Speeder Tank",
+    "Wind Skiff",
+    "X-34 Landspeeder",
+    "X-34 Speeder Escort",
+    "X-83 TwinTail Starfighter",
+    "XQ2 Space Platform",
+    "Y-Wing \"Courier\" Variant",
+    "Y-Wing \"LongProbe\"",
+    "Y-Wing Starfighter",
+    "Y164 Slave Transport",
+    "YE-4 Gunship",
+    "YKL-37R Nova Courier",
+    "Z-95 Headhunter",
+    "Zebra Starfighter"
+  ],
+  "changedUniqueVehicleCount": 353,
+  "changedFiles": [
+    "packs/vehicles.db",
+    "packs/vehicles-airspeeders.db",
+    "packs/vehicles-capital-ships.db",
+    "packs/vehicles-space-transports.db",
+    "packs/vehicles-speeders.db",
+    "packs/vehicles-starfighters.db",
+    "packs/vehicles-starships.db",
+    "packs/vehicles-stations.db",
+    "packs/vehicles-tracked.db",
+    "packs/vehicles-walkers.db",
+    "packs/vehicles-weapon-emplacements.db",
+    "packs/vehicles-wheeled.db",
+    "tools/reports/vehicle-phase4-availability-price-hydration-audit.json"
+  ],
+  "packCounts": {
+    "vehicles.db": 357,
+    "vehicles-airspeeders.db": 26,
+    "vehicles-capital-ships.db": 63,
+    "vehicles-space-transports.db": 108,
+    "vehicles-speeders.db": 41,
+    "vehicles-starfighters.db": 85,
+    "vehicles-starships.db": 267,
+    "vehicles-stations.db": 11,
+    "vehicles-tracked.db": 14,
+    "vehicles-walkers.db": 20,
+    "vehicles-weapon-emplacements.db": 10,
+    "vehicles-wheeled.db": 3
+  },
+  "reasonCounts": {
+    "source-line-normalized": 2,
+    "fandom-statblock-verified-prior-pass": 14,
+    "existing-compendium-priced": 146,
+    "existing-compendium-unavailable": 63,
+    "source-line-comma-recovered": 7,
+    "fandom-statblock-verified": 10,
+    "needs-source-review": 106,
+    "source-line-million-token-normalized": 9
+  },
+  "priceStatusCounts": {
+    "priced": 179,
+    "unavailable": 72,
+    "review": 106
+  },
+  "saleStatusCounts": {
+    "priced": 171,
+    "not-for-sale": 8,
+    "unavailable": 63,
+    "black-market-used-only": 2,
+    "review": 106,
+    "used-only": 1,
+    "new-only": 5,
+    "not-for-sale-estimated-value": 1
+  },
+  "priceSourceStatusCounts": {
+    "source-line-normalized": 2,
+    "fandom-statblock-verified-prior-pass": 14,
+    "existing-compendium-priced": 146,
+    "existing-compendium-unavailable": 63,
+    "source-line-comma-recovered": 7,
+    "fandom-statblock-verified": 10,
+    "needs-source-review": 106,
+    "source-line-million-token-normalized": 9
+  },
+  "availabilityCounts": {
+    "Unknown": 333,
+    "Military": 16,
+    "Restricted": 5,
+    "Licensed": 1,
+    "Unique": 2
+  },
+  "availabilityStatusCounts": {
+    "missing-source-data": 333,
+    "source-normalized": 14,
+    "source-verified": 10
+  },
+  "remainingPriceReviewCount": 106,
+  "remainingAvailabilityMissingCount": 333,
+  "remainingReviewItems": [
+    {
+      "name": "Hyperspace Beacon",
+      "bucket": "space-stations",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 20000,
+        "used": 11000
+      },
+      "notes": [
+        "Normalized exact new/used price pair from existing source-extracted statblock cost line."
+      ]
+    },
+    {
+      "name": "Corellian YT-1300 Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 100000,
+        "used": 25000
+      },
+      "notes": []
+    },
+    {
+      "name": "AEG-77 Vigo Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Corellian YT-1930 Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 135000,
+        "used": 62000
+      },
+      "notes": []
+    },
+    {
+      "name": "TT-6 Landspeeder",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 12000,
+        "used": 3800
+      },
+      "notes": []
+    },
+    {
+      "name": "Hardcell-Class Interstellar Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "CloakShape Fighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 60000,
+        "used": 15000
+      },
+      "notes": []
+    },
+    {
+      "name": "The Visionary",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "LAVr QH-7 Chariot",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "OG-9 Homing Spider Droid",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 70000,
+        "used": 6
+      },
+      "notes": [
+        "Recovered comma-truncated used price token 6 against new price 70,000 -> 60,000."
+      ]
+    },
+    {
+      "name": "RC-2 Twilight Scoutship",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 275000,
+        "used": 125000
+      },
+      "notes": []
+    },
+    {
+      "name": "Corellian YT-2000 Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 150000,
+        "used": 45000
+      },
+      "notes": []
+    },
+    {
+      "name": "BARC Speeder",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 8300,
+        "used": 1550
+      },
+      "notes": []
+    },
+    {
+      "name": "Corellian Barloz-Class Medium Freighter",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 120000,
+        "used": 17500
+      },
+      "notes": []
+    },
+    {
+      "name": "Y164 Slave Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 245000,
+        "used": 122000
+      },
+      "notes": []
+    },
+    {
+      "name": "The Virago",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "SkyBlind Recon Ship",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 650000,
+        "used": 400000
+      },
+      "notes": []
+    },
+    {
+      "name": "The Bloody Credit",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 350000,
+        "used": 125000
+      },
+      "notes": []
+    },
+    {
+      "name": "Maka-Eekai L4000 Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 180000,
+        "used": 85000
+      },
+      "notes": []
+    },
+    {
+      "name": "F9-TZ Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 9,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 9",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Aerosled Mark III",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "PL-90 Luxury Speeder",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 48000,
+        "used": 29000
+      },
+      "notes": []
+    },
+    {
+      "name": "Imperial RaDAir",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Y-Wing \"LongProbe\"",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Punworcca 116-Class Interstellar Sloop",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 35700,
+        "used": 2
+      },
+      "notes": [
+        "Recovered comma-truncated used price token 2 against new price 35,700 -> 20,000."
+      ]
+    },
+    {
+      "name": "Baas-Class Space Station",
+      "bucket": "space-stations",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "CR70 Corellian Corvette",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 2,
+        "used": 9
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 9"
+      ]
+    },
+    {
+      "name": "Gymsnor-3 Light Freighter",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 38000,
+        "used": 19000
+      },
+      "notes": []
+    },
+    {
+      "name": "TIE Defender",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 200000,
+        "used": 80000
+      },
+      "notes": []
+    },
+    {
+      "name": "LAAT/i Gunship",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 65000,
+        "used": 40000
+      },
+      "notes": []
+    },
+    {
+      "name": "AT-KT",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "Corellian VCX-350 Light Freighter",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 300000,
+        "used": 175000
+      },
+      "notes": []
+    },
+    {
+      "name": "The Crimson Axe",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "S-130 Shelter Medical Speeder",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Mobile Spacedock 220",
+      "bucket": "space-stations",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 100,
+        "used": 45
+      },
+      "notes": [
+        "Recovered million-value source tokens from extracted cost pair 100/45; left one-digit pairs for manual review."
+      ]
+    },
+    {
+      "name": "Cutlass-9 Patrol Fighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 140000,
+        "used": 65000
+      },
+      "notes": []
+    },
+    {
+      "name": "Mu-2 Long Range Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Archaic Dreadnaught-Class Heavy Cruiser",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Cardan III-Class Space Station",
+      "bucket": "space-stations",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 2,
+        "used": 11
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 11"
+      ]
+    },
+    {
+      "name": "J-1 Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 220000,
+        "used": 100000
+      },
+      "notes": []
+    },
+    {
+      "name": "A-A5 Speeder Truck",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 30500,
+        "used": 8000
+      },
+      "notes": []
+    },
+    {
+      "name": "Flare-S Swoop",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 5750,
+        "used": 1500
+      },
+      "notes": []
+    },
+    {
+      "name": "Imperious-Class Star Destroyer",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 17
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 17"
+      ]
+    },
+    {
+      "name": "VT-49 Decimator",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 8,
+        "used": 3
+      },
+      "notes": [
+        "new price needs source review: 8",
+        "used price needs source review: 3"
+      ]
+    },
+    {
+      "name": "Sentinel-Class Landing Craft",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 240000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Corellian Consular-Class Cruiser",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "A-7 Hunter Interceptor",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 80000,
+        "used": 45000
+      },
+      "notes": []
+    },
+    {
+      "name": "AT-AP",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 7,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Pelagia Duplex Command Assault Gunship",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Hound's Tooth",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 12,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 12",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "SPHA-M",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Air-2 Racing Swoop",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 8000,
+        "used": 2500
+      },
+      "notes": []
+    },
+    {
+      "name": "The Last Resort",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 2,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Corellian CR-20 Troop Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 680000,
+        "used": 265000
+      },
+      "notes": []
+    },
+    {
+      "name": "Charger c70 Corellian Consular-Class Cruiser",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Scimitar Assault Bomber",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 120000,
+        "used": 45000
+      },
+      "notes": []
+    },
+    {
+      "name": "Manta Droid Subfighter",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 22000,
+        "used": 3
+      },
+      "notes": [
+        "used price needs source review: 3"
+      ]
+    },
+    {
+      "name": "Prototype Dreadnaught-Class Heavy Cruiser",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "AEG-77 Vigo Gunship",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "M3-A Scyk Fighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 75000,
+        "used": 35000
+      },
+      "notes": []
+    },
+    {
+      "name": "The Grinning Liar",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "U-LAV",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 50000,
+        "used": 22000
+      },
+      "notes": []
+    },
+    {
+      "name": "V-35 Courier",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 8000,
+        "used": 2500
+      },
+      "notes": []
+    },
+    {
+      "name": "Munificent-Class Frigate",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 57,
+        "used": 40
+      },
+      "notes": [
+        "Recovered million-value source tokens from extracted cost pair 57/40; left one-digit pairs for manual review."
+      ]
+    },
+    {
+      "name": "Herald-Class Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 120000,
+        "used": 222500
+      },
+      "notes": []
+    },
+    {
+      "name": "TIE Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 120000,
+        "used": 45000
+      },
+      "notes": []
+    },
+    {
+      "name": "Tri-Scythe-Class Frigate",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Nune-Class Imperial Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 7,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "The Ebon Hawk",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 154000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "MR/RV",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 220000,
+        "used": 90000
+      },
+      "notes": []
+    },
+    {
+      "name": "Toscan 8-Q Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 180000,
+        "used": 40000
+      },
+      "notes": []
+    },
+    {
+      "name": "Corellian YV-545 Light Freighter",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 120000,
+        "used": 35000
+      },
+      "notes": []
+    },
+    {
+      "name": "CK-6 Freeco Speeder Bike",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 14700,
+        "used": 7400
+      },
+      "notes": []
+    },
+    {
+      "name": "The Banshee",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 9,
+        "used": 3
+      },
+      "notes": [
+        "new price needs source review: 9",
+        "used price needs source review: 3"
+      ]
+    },
+    {
+      "name": "Nova-Class Battlecruiser Refit",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Droch-Class Boarding Ship",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 43000,
+        "used": 6
+      },
+      "notes": [
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Corellian Crix-Class Courier Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 500000,
+        "used": 200000
+      },
+      "notes": []
+    },
+    {
+      "name": "CX-133 Chaos Fighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 65000,
+        "used": 4
+      },
+      "notes": [
+        "Recovered comma-truncated used price token 4 against new price 65,000 -> 40,000."
+      ]
+    },
+    {
+      "name": "AT-AA",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 2,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Miy'til Command Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Canderous-Class Assault Tank",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 4,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "H-60 Tempest Bomber",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 175000,
+        "used": 125000
+      },
+      "notes": []
+    },
+    {
+      "name": "Protector VI Patrol Speeder",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 50000,
+        "used": 40000
+      },
+      "notes": []
+    },
+    {
+      "name": "Tsmeu-6 Personal Wheel Bike",
+      "bucket": "wheeled-vehicles",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 15000,
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Helot-Class Medium Space Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Corellian Crix-Class Assault Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 600000,
+        "used": 260000
+      },
+      "notes": []
+    },
+    {
+      "name": "StarViper-Class Attack Platform",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Star Saber XC-01 Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 145000,
+        "used": 75000
+      },
+      "notes": []
+    },
+    {
+      "name": "AeroChaser Speeder Bike",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 5800,
+        "used": 1000
+      },
+      "notes": []
+    },
+    {
+      "name": "Recusant-Class Light Destroyer",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 14
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 14"
+      ]
+    },
+    {
+      "name": "Ghtroc 720 Freighter",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 98500,
+        "used": 23000
+      },
+      "notes": []
+    },
+    {
+      "name": "WLO-5 Speeder Tank",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 115000,
+        "used": 65000
+      },
+      "notes": []
+    },
+    {
+      "name": "Corellian YU-410 Light Freighter",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 110000,
+        "used": 30000
+      },
+      "notes": []
+    },
+    {
+      "name": "Seltiss-2 Caravel Cabin",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 400000,
+        "used": 80000
+      },
+      "notes": []
+    },
+    {
+      "name": "Corellian YT-1250 Freighter",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 120000,
+        "used": 30000
+      },
+      "notes": []
+    },
+    {
+      "name": "TL-1800 Light Freighter",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 41500,
+        "used": 15000
+      },
+      "notes": []
+    },
+    {
+      "name": "Jumpstar HPF Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 275000,
+        "used": 125000
+      },
+      "notes": []
+    },
+    {
+      "name": "Eta-2 Actis Heavy-Defense Interceptor",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Davaab-Type Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 150000,
+        "used": 80000
+      },
+      "notes": []
+    },
+    {
+      "name": "Dreadnaught-Class Heavy Cruiser",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 35555000,
+        "used": 5
+      },
+      "notes": [
+        "Recovered million-value source tokens from extracted cost pair 35555000/5; left one-digit pairs for manual review."
+      ]
+    },
+    {
+      "name": "Lucrehulk-Class Battleship",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "Scarab-Class Droid Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 17000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Medlifter Troop Transport",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 24000,
+        "used": 6100
+      },
+      "notes": []
+    },
+    {
+      "name": "GAT-12h Skipray Blastboat",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "TX-130T Fighter Tank",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 42000,
+        "used": 34000
+      },
+      "notes": []
+    },
+    {
+      "name": "Talon I Combat Cloud Car",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "GPE-7300 Space Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 165000,
+        "used": 90000
+      },
+      "notes": []
+    },
+    {
+      "name": "The Glorious Chariot",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "T2-B Repulsor Tank",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": "not publicly available"
+      },
+      "notes": [
+        "new price needs source review: 5"
+      ]
+    },
+    {
+      "name": "SCT Scout Craft",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 1,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 1",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "\"Vulture\" Droid Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 19000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "Star Galleon-Class Frigate",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 12
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 12"
+      ]
+    },
+    {
+      "name": "Conqueror-Class Assault Ship",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 100500,
+        "used": 46000
+      },
+      "notes": []
+    },
+    {
+      "name": "NovaSword Space Superiority Fighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "AT-TE",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 7,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "StarForge Station",
+      "bucket": "space-stations",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 1000000,
+        "used": 5
+      },
+      "notes": [
+        "Recovered million-value source tokens from extracted cost pair 1000000/5; left one-digit pairs for manual review."
+      ]
+    },
+    {
+      "name": "STAP",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 2500,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "ILH-KK Citadel-Class Civilian Cruiser",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "T-65XJ3 X-Wing Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 315000,
+        "used": 220000
+      },
+      "notes": []
+    },
+    {
+      "name": "Gladius-Class Light Freighter",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 190000,
+        "used": 105000
+      },
+      "notes": []
+    },
+    {
+      "name": "Luke's Snowspeeder",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 11,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 11",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Ministry-Class Orbital Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 160000,
+        "used": 80000
+      },
+      "notes": []
+    },
+    {
+      "name": "Swift Assault 5 Hovercraft",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 75000,
+        "used": 45000
+      },
+      "notes": []
+    },
+    {
+      "name": "Miy'til Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Nova-Class Battlecruiser",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 20,
+        "used": 5
+      },
+      "notes": [
+        "Recovered million-value source tokens from extracted cost pair 20/5; left one-digit pairs for manual review."
+      ]
+    },
+    {
+      "name": "Delta-7 Aethersprite High-Speed Interceptor",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "R-41 Starchaser",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 115000,
+        "used": 55000
+      },
+      "notes": []
+    },
+    {
+      "name": "E-Wing Escort Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Subjugator-Class Heavy Cruiser",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "B-Wing Shuttle",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 220000,
+        "used": 120000
+      },
+      "notes": []
+    },
+    {
+      "name": "X-83 TwinTail Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 160000,
+        "used": 75000
+      },
+      "notes": []
+    },
+    {
+      "name": "Ton-Falk-Class Escort Carrier",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 3,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Modified ILH-KK Citadel-Class Civilian Cruiser",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Junker TYE-Wing",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 60000,
+        "used": 25000
+      },
+      "notes": []
+    },
+    {
+      "name": "Golan VIII Space Defense Platform",
+      "bucket": "space-stations",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 45,
+        "used": 20
+      },
+      "notes": [
+        "Recovered million-value source tokens from extracted cost pair 45/20; left one-digit pairs for manual review."
+      ]
+    },
+    {
+      "name": "SPHA-I",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "The Blood Brother",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 1,
+        "used": 25
+      },
+      "notes": [
+        "new price needs source review: 1",
+        "used price needs source review: 25"
+      ]
+    },
+    {
+      "name": "Pursuer-Class Enforcement Ship",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 200000,
+        "used": 40000
+      },
+      "notes": []
+    },
+    {
+      "name": "Lucrehulk-Class Droid Control Ship",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "Providence-Class Destroyer",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 18
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 18"
+      ]
+    },
+    {
+      "name": "Laser Borer",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 10000,
+        "used": 3000
+      },
+      "notes": []
+    },
+    {
+      "name": "PTV-2100 Incarcerator",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 4,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "MedStar-Class Frigate",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 4875000,
+        "used": 2550000
+      },
+      "notes": []
+    },
+    {
+      "name": "Sigma-Class Long-Range Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 30,
+        "used": 3
+      },
+      "notes": [
+        "new price needs source review: 30",
+        "used price needs source review: 3"
+      ]
+    },
+    {
+      "name": "\"Oevvaor\" Jet Catamaran",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 12125,
+        "used": 2700
+      },
+      "notes": []
+    },
+    {
+      "name": "Krayt's Honor",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 3,
+        "used": 13
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 13"
+      ]
+    },
+    {
+      "name": "Imperial Customs Corvette",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 14
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 14"
+      ]
+    },
+    {
+      "name": "Tartan-Class Patrol Cruiser",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 4,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "Corellian G9 Rigger-Class Light Freighter",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "WLO-5 Speeder Tank",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 115000,
+        "used": 65000
+      },
+      "notes": []
+    },
+    {
+      "name": "Sith Interceptor",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 4,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Lethisk-Class Armed Freighter",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 470000,
+        "used": 225000
+      },
+      "notes": []
+    },
+    {
+      "name": "X-34 Landspeeder",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 10550,
+        "used": 2500
+      },
+      "notes": []
+    },
+    {
+      "name": "Conductor-Class Short-Haul Landing Craft",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 250000,
+        "used": 100000
+      },
+      "notes": []
+    },
+    {
+      "name": "MTT",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 138000,
+        "used": 80000
+      },
+      "notes": []
+    },
+    {
+      "name": "The Moomo Williwaw",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 1,
+        "used": 8
+      },
+      "notes": [
+        "new price needs source review: 1",
+        "used price needs source review: 8"
+      ]
+    },
+    {
+      "name": "TX-130 Saber-Class Fighter Tank",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 3,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Rebel Assault Frigate Mark I",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Nebulon-B Escort Frigate",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "XQ2 Space Platform",
+      "bucket": "space-stations",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 30,
+        "used": 18
+      },
+      "notes": [
+        "Recovered million-value source tokens from extracted cost pair 30/18; left one-digit pairs for manual review."
+      ]
+    },
+    {
+      "name": "AT-PT",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 1,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 1",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Gladiator-Class Star Destroyer",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 34,
+        "used": 5
+      },
+      "notes": [
+        "Recovered million-value source tokens from extracted cost pair 34/5; left one-digit pairs for manual review."
+      ]
+    },
+    {
+      "name": "Mekuun Heavy Tracker",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 125000,
+        "used": 75000
+      },
+      "notes": []
+    },
+    {
+      "name": "Model 67 Shrieker Speeder Bike",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Ardent-Class Fast Frigate",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Vindicator-Class Heavy Cruiser",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 43,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 43",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Storm IV Twin-Pod Cloud Car",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Belbullab Heavy Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 168000,
+        "used": 125000
+      },
+      "notes": []
+    },
+    {
+      "name": "YE-4 Gunship",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 2,
+        "used": 11
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 11"
+      ]
+    },
+    {
+      "name": "Viper Swoop Bike",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 5500,
+        "used": 1050
+      },
+      "notes": []
+    },
+    {
+      "name": "Lancet Aerial Artillery",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Dianoga-Class Assault Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 45000,
+        "used": 12000
+      },
+      "notes": []
+    },
+    {
+      "name": "Urban Bombardier Speeder Bike",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 18000,
+        "used": 8500
+      },
+      "notes": []
+    },
+    {
+      "name": "Imperial II-Class Star Destroyer",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Hapan Battle Dragon",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 12
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 12"
+      ]
+    },
+    {
+      "name": "GR-75 Medium Transport",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 350000,
+        "used": 125000
+      },
+      "notes": []
+    },
+    {
+      "name": "Nssis-Class Clawcraft",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 11,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 11",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "The Azure Angel",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 14,
+        "used": 9
+      },
+      "notes": [
+        "new price needs source review: 14",
+        "used price needs source review: 9"
+      ]
+    },
+    {
+      "name": "Corellian S-250 Chela-Class Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 420000,
+        "used": 6
+      },
+      "notes": [
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Dagger-Class Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 35000,
+        "used": 8000
+      },
+      "notes": []
+    },
+    {
+      "name": "Belbullab Heavy Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 168000,
+        "used": 125000
+      },
+      "notes": []
+    },
+    {
+      "name": "BC-714 Luxury Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 1,
+        "used": 7
+      },
+      "notes": [
+        "new price needs source review: 1",
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "Carrack-Class Light Cruiser",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 13
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 13"
+      ]
+    },
+    {
+      "name": "Kazellis-Class Light Freighter",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 50000,
+        "used": 23000
+      },
+      "notes": []
+    },
+    {
+      "name": "Wind Skiff",
+      "bucket": "wheeled-vehicles",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 13000,
+        "used": 3500
+      },
+      "notes": []
+    },
+    {
+      "name": "MC-24a Light Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 90000,
+        "used": 50000
+      },
+      "notes": []
+    },
+    {
+      "name": "Kybuck Speeder Bike",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 8000,
+        "used": 3500
+      },
+      "notes": []
+    },
+    {
+      "name": "Nantex-Class Territorial Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Seltiss-2 Caravel",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 800000,
+        "used": 160000
+      },
+      "notes": []
+    },
+    {
+      "name": "GS-100 Salvage Ship",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 190000,
+        "used": 95000
+      },
+      "notes": []
+    },
+    {
+      "name": "Neutralizer-Class Bomber",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 7,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "ShaShore-Class Frigate",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "TIE Advanced",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 160000,
+        "used": 65000
+      },
+      "notes": []
+    },
+    {
+      "name": "IF-120 Landing Craft",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 290000,
+        "used": 10
+      },
+      "notes": [
+        "Recovered comma-truncated used price token 10 against new price 290,000 -> 100,000."
+      ]
+    },
+    {
+      "name": "Corellian KR-TB \"Doomtreader\"",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Ginivex-Class Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 11,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 11",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "\"Vulture\" Droid Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 19000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "AT-RCT",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 9,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 9",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "The Scarlet Star",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 4,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Lancer-Class Frigate",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 12
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 12"
+      ]
+    },
+    {
+      "name": "Belbullab Heavy Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 168000,
+        "used": 125000
+      },
+      "notes": []
+    },
+    {
+      "name": "Gozanti Cruiser",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 150000,
+        "used": 50000
+      },
+      "notes": []
+    },
+    {
+      "name": "Neutron Star-Class Bulk Cruiser",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "AT-AT",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 7,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Corellian Action VI Bulk Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Arrow-23 Landspeeder",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 10800,
+        "used": 3400
+      },
+      "notes": []
+    },
+    {
+      "name": "G-Type Light Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 200000,
+        "used": 95000
+      },
+      "notes": []
+    },
+    {
+      "name": "Cardan I-Class Space Station",
+      "bucket": "space-stations",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 2,
+        "used": 10
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 10"
+      ]
+    },
+    {
+      "name": "Modified Lambda-Class Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "MC80a Star Cruiser",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "A-Wing Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 175000,
+        "used": 70000
+      },
+      "notes": []
+    },
+    {
+      "name": "Pellaeon-Class Star Destroyer",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "Gamma-Class Assault Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 850000,
+        "used": 340000
+      },
+      "notes": []
+    },
+    {
+      "name": "R-28 Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 120000,
+        "used": 55000
+      },
+      "notes": []
+    },
+    {
+      "name": "Cardan II-Class Space Station",
+      "bucket": "space-stations",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 2,
+        "used": 10
+      },
+      "notes": [
+        "new price needs source review: 2",
+        "used price needs source review: 10"
+      ]
+    },
+    {
+      "name": "MC140 Scythe-Class Battlecruiser",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Pelta-Class Frigate",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Modified T-47 Airspeeder",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 50000,
+        "used": 4
+      },
+      "notes": [
+        "Recovered comma-truncated used price token 4 against new price 50,000 -> 40,000."
+      ]
+    },
+    {
+      "name": "Delta-7 Aethersprite High-Maneuver Interceptor",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Miy'til Assault Bomber",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 150000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "Acclamator I-Class Assault Ship",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Vaya-Class Scout Ship",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 45000,
+        "used": 15000
+      },
+      "notes": []
+    },
+    {
+      "name": "AT-XT",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 14700,
+        "used": 2200
+      },
+      "notes": []
+    },
+    {
+      "name": "DC0052 \"Intergalactic\" Speeder",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 10000,
+        "used": 2000
+      },
+      "notes": []
+    },
+    {
+      "name": "74-Z Speeder Bike",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 6750,
+        "used": 1200
+      },
+      "notes": []
+    },
+    {
+      "name": "Guardian-Class Light Cruiser",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 800000,
+        "used": 4
+      },
+      "notes": [
+        "Recovered comma-truncated used price token 4 against new price 800,000 -> 400,000."
+      ]
+    },
+    {
+      "name": "Corellian YZ-775 Medium Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 500000,
+        "used": 350000
+      },
+      "notes": []
+    },
+    {
+      "name": "ARC-170 Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 155000,
+        "used": 70000
+      },
+      "notes": []
+    },
+    {
+      "name": "Kappa-Class Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 7,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "V-Wing Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 102500,
+        "used": 45000
+      },
+      "notes": []
+    },
+    {
+      "name": "Executor-Class Star Dreadnought",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "T-65BR X-Wing Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 150000,
+        "used": 95000
+      },
+      "notes": []
+    },
+    {
+      "name": "Tibanna Gas Hauler",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 90000,
+        "used": 50000
+      },
+      "notes": []
+    },
+    {
+      "name": "Victory I-Class Star Destroyer",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 50,
+        "used": 5
+      },
+      "notes": [
+        "Recovered million-value source tokens from extracted cost pair 50/5; left one-digit pairs for manual review."
+      ]
+    },
+    {
+      "name": "P-38 Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 120000,
+        "used": 50000
+      },
+      "notes": []
+    },
+    {
+      "name": "SPHA-V",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Phoebos-Class Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 190000,
+        "used": 100000
+      },
+      "notes": []
+    },
+    {
+      "name": "Corellian JumpMaster 5000 Scout Ship",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Corona Luxury Groundspeeder",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 70000,
+        "used": 20000
+      },
+      "notes": []
+    },
+    {
+      "name": "Sheathipede-Class Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Zebra Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 80000,
+        "used": 30000
+      },
+      "notes": []
+    },
+    {
+      "name": "Derriphan-Class Battleship",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 3,
+        "used": 7
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "Hyena-Class Bomber",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 23000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "FC-20 Speeder Bike",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 4000,
+        "used": 1000
+      },
+      "notes": []
+    },
+    {
+      "name": "The Indomitable",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 4,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "Dynamic-Class Freighter",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 80000,
+        "used": 30000
+      },
+      "notes": []
+    },
+    {
+      "name": "Besh-Type Personal Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Corellian HWK-290 Light Freighter",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 135000,
+        "used": 55000
+      },
+      "notes": []
+    },
+    {
+      "name": "UR-40M Patrol Speeder",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 55000,
+        "used": 30000
+      },
+      "notes": []
+    },
+    {
+      "name": "Nebula-Class Star Destroyer",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 18
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 18"
+      ]
+    },
+    {
+      "name": "Penumbra-Class Attack Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 250000,
+        "used": 135000
+      },
+      "notes": []
+    },
+    {
+      "name": "AT-ST",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Eclipse-Class Star Dreadnought",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 15,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 15",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Corellian YX-1980 Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 150000,
+        "used": 80000
+      },
+      "notes": []
+    },
+    {
+      "name": "Twin-228 Airspeeder",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 22000,
+        "used": 13500
+      },
+      "notes": []
+    },
+    {
+      "name": "Immobilizer 418 Interdictor-Class Heavy Cruiser",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "BB-2 Starfire Fighter/Bomber",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Predator-Class Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Corellian Nemesis-Class Patrol Ship",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 180000,
+        "used": 95000
+      },
+      "notes": []
+    },
+    {
+      "name": "Marauder-Class Rebel Cruiser",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Spinward-Class Tender",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 4,
+        "used": 9
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 9"
+      ]
+    },
+    {
+      "name": "AAT-1",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 4,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Marauder-Class Corvette",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Junker Class 720 Freighter",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Y-Wing \"Courier\" Variant",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Broadside-Class Cruiser",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 13
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 13"
+      ]
+    },
+    {
+      "name": "GPE-3300 Airspeeder",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 60000,
+        "used": 35000
+      },
+      "notes": []
+    },
+    {
+      "name": "Tibanna Refinery Platform",
+      "bucket": "space-stations",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 42000,
+        "used": 30000
+      },
+      "notes": [
+        "Normalized exact new/used price pair from existing source-extracted statblock cost line."
+      ]
+    },
+    {
+      "name": "C-9979 Landing Craft",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 200000,
+        "used": 75000
+      },
+      "notes": []
+    },
+    {
+      "name": "Bantha-II Cargo Skiff",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 8000,
+        "used": 3000
+      },
+      "notes": []
+    },
+    {
+      "name": "SPHA",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 7,
+        "used": 7
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "Acclamator II-Class Assault Ship",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 4,
+        "used": 11
+      },
+      "notes": [
+        "new price needs source review: 4",
+        "used price needs source review: 11"
+      ]
+    },
+    {
+      "name": "Mankvim-814 Light Interceptor",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 15000,
+        "used": 6000
+      },
+      "notes": []
+    },
+    {
+      "name": "IPV-1 System Patrol Craft",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Coralskipper",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 11,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 11",
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "Sabaoth Destroyer",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 3,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "Nu-Class Attack Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 85000,
+        "used": 50000
+      },
+      "notes": []
+    },
+    {
+      "name": "SPHA-C",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Slave I",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 18,
+        "used": 13
+      },
+      "notes": [
+        "new price needs source review: 18",
+        "used price needs source review: 13"
+      ]
+    },
+    {
+      "name": "Diamond-Class Cruiser",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 5000000,
+        "used": 2125000
+      },
+      "notes": []
+    },
+    {
+      "name": "KAAC Freerunner",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 140000,
+        "used": 110000
+      },
+      "notes": []
+    },
+    {
+      "name": "SkyBlind Landing Sphere",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Drop Pod",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 17000,
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "The Wheel",
+      "bucket": "space-stations",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 17
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 17"
+      ]
+    },
+    {
+      "name": "G-Type Escape Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Raddaugh Gnasp Fluttercraft",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Corellian MT Dropship",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 600000,
+        "used": 300000
+      },
+      "notes": []
+    },
+    {
+      "name": "The Invisible Hand",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 21
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 21"
+      ]
+    },
+    {
+      "name": "Fury-Class Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 16,
+        "used": 11
+      },
+      "notes": [
+        "new price needs source review: 16",
+        "used price needs source review: 11"
+      ]
+    },
+    {
+      "name": "X-34 Speeder Escort",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 13550,
+        "used": 3500
+      },
+      "notes": []
+    },
+    {
+      "name": "Lucrehulk-Class Core Ship",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 16
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 16"
+      ]
+    },
+    {
+      "name": "Corellian S-100 Stinger-Class Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 150000,
+        "used": 90000
+      },
+      "notes": []
+    },
+    {
+      "name": "Shaadlar-Type Troopship",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 3,
+        "used": 1
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 1"
+      ]
+    },
+    {
+      "name": "PAC",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 37000,
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Corellian YT-2400 Transport",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 130000,
+        "used": 32000
+      },
+      "notes": []
+    },
+    {
+      "name": "R-42 Starchaser",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 115000,
+        "used": 55000
+      },
+      "notes": []
+    },
+    {
+      "name": "Escape Pod",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 1200,
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Outbound Flight",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 15
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 15"
+      ]
+    },
+    {
+      "name": "Rebel Assault Frigate Mark II",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Foray-Class Blockade Runner",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 3,
+        "used": 5
+      },
+      "notes": [
+        "new price needs source review: 3",
+        "used price needs source review: 5"
+      ]
+    },
+    {
+      "name": "RTT",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 42000,
+        "used": 10200
+      },
+      "notes": []
+    },
+    {
+      "name": "LAAT/c Gunship",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 58000,
+        "used": 42000
+      },
+      "notes": []
+    },
+    {
+      "name": "Shackles of Nizon",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 125000,
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "CIS-Advanced Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 7,
+        "used": 2
+      },
+      "notes": [
+        "new price needs source review: 7",
+        "used price needs source review: 2"
+      ]
+    },
+    {
+      "name": "K-Wing Assault Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 250000,
+        "used": 120000
+      },
+      "notes": []
+    },
+    {
+      "name": "The Mynock",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 9,
+        "used": 4
+      },
+      "notes": [
+        "new price needs source review: 9",
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "Basilisk War Droid",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 70000,
+        "used": 4
+      },
+      "notes": [
+        "Recovered comma-truncated used price token 4 against new price 70,000 -> 40,000."
+      ]
+    },
+    {
+      "name": "B-Wing/E2 Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 250000,
+        "used": 135000
+      },
+      "notes": []
+    },
+    {
+      "name": "Urban Navigator Speeder Bike",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 9600,
+        "used": 3500
+      },
+      "notes": []
+    },
+    {
+      "name": "MRX-BR Pacifier",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 170000,
+        "used": 100000
+      },
+      "notes": []
+    },
+    {
+      "name": "AT-AHT",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 8,
+        "used": 8
+      },
+      "notes": [
+        "new price needs source review: 8",
+        "used price needs source review: 8"
+      ]
+    },
+    {
+      "name": "Octuptarra Magna Tri-Droid",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 100000,
+        "used": 4
+      },
+      "notes": [
+        "used price needs source review: 4"
+      ]
+    },
+    {
+      "name": "HSP-10 Pursuit Airspeeder",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 40000,
+        "used": 20000
+      },
+      "notes": []
+    },
+    {
+      "name": "AT-CT",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 8,
+        "used": 28
+      },
+      "notes": [
+        "new price needs source review: 8",
+        "used price needs source review: 28"
+      ]
+    },
+    {
+      "name": "Modified Tsmeu-6 Personal Wheel Bike",
+      "bucket": "wheeled-vehicles",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "A519 Invader Close Support Starfighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 125000,
+        "used": 70000
+      },
+      "notes": []
+    },
+    {
+      "name": "Teroch-Type Gunship",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 400000,
+        "used": 200000
+      },
+      "notes": []
+    },
+    {
+      "name": "CS-1 Cargo Sled",
+      "bucket": "speeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 12000,
+        "used": 6500
+      },
+      "notes": []
+    },
+    {
+      "name": "Veltiss-2 Airspeeder",
+      "bucket": "airspeeders",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 19000,
+        "used": 9200
+      },
+      "notes": []
+    },
+    {
+      "name": "Droid Tri-Fighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 40000,
+        "used": 7
+      },
+      "notes": [
+        "used price needs source review: 7"
+      ]
+    },
+    {
+      "name": "Theta-Class Shuttle",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 1,
+        "used": 210000
+      },
+      "notes": [
+        "new price needs source review: 1"
+      ]
+    },
+    {
+      "name": "Centurion-Class Battlecruiser",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 6,
+        "used": 17
+      },
+      "notes": [
+        "new price needs source review: 6",
+        "used price needs source review: 17"
+      ]
+    },
+    {
+      "name": "Baronial-Class Yacht",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 200000,
+        "used": 120000
+      },
+      "notes": []
+    },
+    {
+      "name": "TIE Prototype",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 130000,
+        "used": 75000
+      },
+      "notes": []
+    },
+    {
+      "name": "Sabertooth-Class Assault/Rescue Vessel",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "unavailable",
+      "rawCost": {
+        "new": "not publicly available",
+        "used": "not publicly available"
+      },
+      "notes": []
+    },
+    {
+      "name": "Endurance-Class Fleet Carrier",
+      "bucket": "capital-ships",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 18
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 18"
+      ]
+    },
+    {
+      "name": "Baudo-Class Star Yacht",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 400000,
+        "used": 250000
+      },
+      "notes": []
+    },
+    {
+      "name": "KT-400 Military Droid Carrier",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 280000,
+        "used": 150000
+      },
+      "notes": []
+    },
+    {
+      "name": "Aurek Tactical Strikefighter",
+      "bucket": "starfighters",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 360000,
+        "used": 6
+      },
+      "notes": [
+        "used price needs source review: 6"
+      ]
+    },
+    {
+      "name": "YKL-37R Nova Courier",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 150000,
+        "used": 45000
+      },
+      "notes": []
+    },
+    {
+      "name": "AT-RT",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "priced",
+      "rawCost": {
+        "new": 40000,
+        "used": 24000
+      },
+      "notes": []
+    },
+    {
+      "name": "J-Type Star Skiff",
+      "bucket": "space-transports",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 5,
+        "used": 14
+      },
+      "notes": [
+        "new price needs source review: 5",
+        "used price needs source review: 14"
+      ]
+    },
+    {
+      "name": "UT-AT",
+      "bucket": "walkers",
+      "availability": "Unknown",
+      "availabilityStatus": "missing-source-data",
+      "priceStatus": "review",
+      "rawCost": {
+        "new": 8,
+        "used": 6
+      },
+      "notes": [
+        "new price needs source review: 8",
+        "used price needs source review: 6"
+      ]
+    }
+  ],
+  "packSyncMismatches": [],
+  "fandomVerifiedOverrides": [
+    "74-M Speeder Bike",
+    "CF9 Crossfire Starfighter",
+    "Corellian YZ-2500 Heavy Transport",
+    "Corellian YZ-2500 Transport",
+    "DP20 Corellian Frigate",
+    "I4 Ionizer Starfighter",
+    "Lambda-Class Shuttle",
+    "Sith Infiltrator",
+    "Strike-Class Medium Cruiser",
+    "The Millennium Falcon",
+    "Venator-Class Star Destroyer"
+  ],
+  "notes": [
+    "Ambiguous one-digit/two-digit extracted costs were not broadly guessed; only verified examples or clear recovered comma truncations were changed.",
+    "system.cost remains the authoritative store price field. costNumeric is cleared for vehicles so packed helper values cannot be misread as scalar costs.",
+    "vehicleStoreCanBuyNew/vehicleStoreCanBuyUsed flags let store UI distinguish public pricing, used-only, black-market-used-only, and unavailable vehicles."
+  ]
+}
