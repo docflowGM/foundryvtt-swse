@@ -250,14 +250,53 @@ function normalizeChoiceEntry(entry) {
   if (typeof entry === 'string') {
     return { id: stableKey(entry), label: entry, value: stableKey(entry) };
   }
-  const label = entry.label || entry.name || entry.weapon || entry.group || entry.id || entry.value;
-  const id = entry.id || entry.value || stableKey(label);
+  const label = entry.label || entry.name || entry.weapon || entry.group || entry.id || entry.value || entry.key || entry.slug;
+  const id = entry.id || entry.value || entry.key || entry.slug || stableKey(label);
   return {
     ...entry,
     id: String(id),
     label: String(label || id),
     value: entry.value || String(id)
   };
+}
+
+function normalizeChoiceKind(value) {
+  return stableKey(value).replace(/-/g, '_');
+}
+
+function asChoiceKindArray(value) {
+  if (!value) return [];
+  if (Array.isArray(value)) return value;
+  return [value];
+}
+
+function getChoiceKindAliases(kind) {
+  const key = normalizeChoiceKind(kind);
+  const aliases = new Set([key]);
+  const add = (value) => {
+    const normalized = normalizeChoiceKind(value);
+    if (normalized) aliases.add(normalized);
+  };
+
+  if (key === 'weapon_proficiency' || key === 'exotic_weapon_proficiency') {
+    add('weapon_proficiency');
+    add('exotic_weapon_proficiency');
+  }
+  if (key === 'skill' || key === 'skill_training' || key === 'trained_skill') {
+    add('skill');
+    add('skill_training');
+    add('trained_skill');
+  }
+  if (key === 'weapon_group_or_exotic' || key === 'melee_weapon_or_group') {
+    add('weapon_group_or_exotic');
+    add('melee_weapon_or_group');
+  }
+  if (key === 'double_attack_weapon' || key === 'double_attack_followup_weapon') {
+    add('double_attack_weapon');
+    add('double_attack_followup_weapon');
+  }
+
+  return aliases;
 }
 
 function findWeaponGroup(registry, value) {
@@ -434,7 +473,10 @@ export class FeatChoiceResolver {
     };
 
     for (const entry of asArray(pending?.selectedFeats)) pushPending(entry, 'pending');
+    for (const entry of asArray(pending?.feats)) pushPending(entry, 'pending');
+    for (const entry of asArray(pending?.pendingFeats)) pushPending(entry, 'pending');
     for (const entry of asArray(pending?.grantedFeats)) pushPending(entry, entry?.sourceType || entry?.system?.sourceType || 'class');
+    for (const entry of asArray(pending?.resolvedGrantedFeats)) pushPending(entry, entry?.sourceType || entry?.system?.sourceType || 'class');
     for (const entry of asArray(pending?.grantedProficiencies)) pushPending(entry, entry?.sourceType || entry?.system?.sourceType || 'class-proficiency');
     return results.filter((item) => item?.type === 'feat');
   }
@@ -771,6 +813,8 @@ export class FeatChoiceResolver {
       weaponProficiencies: this.getWeaponProficiencyChoices(actor, registry),
       weaponFocus: this.getWeaponFocusChoices(actor),
       weaponSpecialization: this._getChoiceEntriesByKind(actor, 'weapon_specialization'),
+      skillTraining: this.getSkillTrainingChoices(actor),
+      skillFocus: this.getSkillFocusChoices(actor),
       lockedWeaponProficiencies: this.getWeaponProficiencyChoices(actor, registry).filter(entry => entry.locked),
       editableWeaponProficiencies: this.getWeaponProficiencyChoices(actor, registry).filter(entry => !entry.locked)
     };
@@ -1100,6 +1144,104 @@ export class FeatChoiceResolver {
     }));
   }
 
+  static _choiceKindAliases(kind) {
+    return getChoiceKindAliases(kind);
+  }
+
+  static _choiceKindMatches(meta, wantedKind) {
+    if (!meta || !wantedKind) return false;
+    const wanted = this._choiceKindAliases(wantedKind);
+    const provided = [
+      meta.choiceKind,
+      meta.choiceKey,
+      meta.provides,
+      ...(asChoiceKindArray(meta.provides)),
+    ].flat().filter(Boolean);
+    return provided.some(kind => wanted.has(normalizeChoiceKind(kind)));
+  }
+
+  static _getSkillFocusStateChoices(actor, pending = {}) {
+    const focused = [];
+    const add = (keyLike, record = {}, source = 'actor') => {
+      const identity = canonicalSkillChoiceIdentity(keyLike, record);
+      if (!identity?.id) return;
+      focused.push({
+        id: identity.id,
+        value: identity.id,
+        key: identity.id,
+        slug: identity.id,
+        label: identity.label,
+        kind: 'skill',
+        source,
+        locked: false,
+        editable: true
+      });
+    };
+
+    const actorSkills = actor?.system?.skills || {};
+    if (Array.isArray(actorSkills)) {
+      for (const skill of actorSkills) {
+        if (skill?.focus || skill?.skillFocus) add(skill, skill, 'actor.system.skills.focus');
+      }
+    } else {
+      for (const [key, skill] of Object.entries(actorSkills)) {
+        if (skill?.focus || skill?.skillFocus) add(key, skill, 'actor.system.skills.focus');
+      }
+    }
+
+    for (const entry of asArray(pending?.focusedSkills || pending?.skillFocus || pending?.skills?.focused)) {
+      add(entry, entry, 'pending.focusedSkills');
+    }
+
+    return uniqueById(focused);
+  }
+
+  static getSkillTrainingChoices(actor, pending = {}) {
+    return uniqueById(this._resolveSkillChoiceOptions(actor, { pending }, { trainedOnly: true })
+      .map(option => ({ ...option, providerKind: 'skill_training' }))
+      .filter(Boolean));
+  }
+
+  static getSkillFocusChoices(actor, pending = {}) {
+    return uniqueById([
+      ...this._getChoiceEntriesByKind(actor, 'skill_focus', pending),
+      ...this._getSkillFocusStateChoices(actor, pending),
+    ]);
+  }
+
+  static getChoiceProviderEntries(actor, providerKind, pending = {}) {
+    const key = normalizeChoiceKind(providerKind);
+    switch (key) {
+      case 'weapon_proficiency':
+      case 'exotic_weapon_proficiency':
+        return this.getWeaponProficiencyChoices(actor, this._registry || {}, pending);
+      case 'weapon_focus':
+        return this.getWeaponFocusChoices(actor, pending);
+      case 'skill_training':
+      case 'trained_skill':
+      case 'skill':
+        return this.getSkillTrainingChoices(actor, pending);
+      case 'skill_focus':
+        return this.getSkillFocusChoices(actor, pending);
+      case 'weapon_specialization':
+      case 'greater_weapon_focus':
+      case 'greater_weapon_specialization':
+      case 'double_attack_weapon':
+      case 'double_attack_followup_weapon':
+      case 'triple_attack_weapon':
+      case 'return_fire_weapon':
+      case 'triple_crit_specialist_weapon':
+      case 'weapon_focus_choice':
+      case 'weapon_group_or_exotic':
+      case 'melee_weapon_or_group':
+      case 'owned_force_power':
+      case 'force_power_focus':
+        return this._getChoiceEntriesByKind(actor, key, pending);
+      default:
+        return this._getChoiceEntriesByKind(actor, key, pending);
+    }
+  }
+
   static getOwnedForcePowerChoices(actor, { descriptors = [] } = {}) {
     const owned = [];
     const wantedDescriptors = new Set(asArray(descriptors).map(stableKey).filter(Boolean));
@@ -1150,7 +1292,7 @@ export class FeatChoiceResolver {
     const inspectItem = (item, sourceType = item?.type || 'item') => {
       if (!item) return;
       const meta = this.getChoiceMeta(item);
-      if (meta?.choiceKind !== kind) return;
+      if (!this._choiceKindMatches(meta, kind)) return;
       const stored = this.getStoredChoice(actor, item);
       for (const entry of asArray(stored)) {
         const normalized = normalizeChoiceEntry(entry);
@@ -1170,7 +1312,13 @@ export class FeatChoiceResolver {
     // scanned feats, so talent-backed choices were invisible to prerequisite
     // checks.
     for (const item of this.getActorTalentItems(actor)) inspectItem(item, 'talent');
-    for (const item of asArray(pending?.selectedTalents || pending?.talents)) {
+    for (const item of [
+      ...asArray(pending?.selectedTalents),
+      ...asArray(pending?.talents),
+      ...asArray(pending?.pendingTalents),
+      ...asArray(pending?.grantedTalents),
+      ...asArray(pending?.resolvedGrantedTalents),
+    ]) {
       inspectItem({
         ...item,
         type: item?.type || 'talent',

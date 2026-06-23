@@ -1,5 +1,6 @@
 import { ReasonFactory } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ReasonFactory.js";
 import { ClassDomainReasonEngine } from "/systems/foundryvtt-swse/scripts/engine/suggestion/ClassDomainReasonEngine.js";
+import { resolveActorBAB } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-suggestion-utilities.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 async function loadJson(url) {
@@ -40,6 +41,7 @@ function getAbilityScore(actor, key) {
   return 10;
 }
 function getAbilityMod(actor, key) { return Math.floor((getAbilityScore(actor, key) - 10) / 2); }
+
 function templateText(key) { return SENTENCE_TEMPLATES?.[key] || REASON_TEXT_MAP?.[key] || null; }
 function addReason(bucket, key, strength = 0.8, domain = 'build', meta = {}) {
   const text = meta.text || templateText(key);
@@ -291,7 +293,7 @@ function prerequisiteReasons(suggestion, actor, packet) {
   if (!prereq) return;
   const ownedNames = actorItemNames(actor);
   const ownedKeys = new Map(ownedNames.map(name => [normalizeNameKey(name), name]));
-  const actorBab = Number(actor?.system?.bab || actor?.system?.attributes?.bab?.value || actor?.system?.details?.bab || 0);
+  const actorBab = resolveActorBAB(actor);
 
   const babMatch = prereq.match(/(?:base attack bonus|bab)\s*\+?\s*(\d+)/i);
   if (babMatch && Number.isFinite(actorBab)) {

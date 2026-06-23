@@ -17,6 +17,7 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+import { resolveActorBAB } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-suggestion-utilities.js";
 
 // Will be dynamically loaded when needed to avoid circular dependency
 let PrerequisiteChecker = null;
@@ -125,15 +126,17 @@ export function projectBAB(actor, classToAdvance, projectedLevel) {
   const currentLevel = actor.system?.level || 1;
   const levelsToAdvance = projectedLevel - currentLevel;
 
-  if (levelsToAdvance <= 0) return actor.system?.bab || 0;
+  if (levelsToAdvance <= 0) return resolveActorBAB(actor);
 
-  // For each existing class on actor, compute BAB correctly
+  // For each existing class on actor, compute BAB correctly.
+  // ActorAbilityBridge returns normalized class definitions with level at the
+  // top level, while legacy callers may still carry system.level.
   for (const classItem of ActorAbilityBridge.getClasses(actor)) {
-    const classId = classItem.system?.classId || classItem.name;
+    const classId = classItem.system?.classId || classItem.classId || classItem.id || classItem.name;
     const classDef = ClassesDB.get(classId);
     if (!classDef) continue;
 
-    const classLevel = classItem.system?.level || 0;
+    const classLevel = Number(classItem.system?.level ?? classItem.level ?? classItem.system?.levels ?? 0) || 0;
 
     // If this is the class we're advancing
     if (classId === classToAdvance) {
@@ -149,10 +152,11 @@ export function projectBAB(actor, classToAdvance, projectedLevel) {
   }
 
   // If advancing into a NEW class (no prior levels)
-  const alreadyHasClass = actor.items.some(
+  const actorItems = Array.from(actor?.items?.contents || actor?.items || []);
+  const alreadyHasClass = actorItems.some(
     i =>
       i.type === "class" &&
-      (i.system?.classId || i.name) === classToAdvance
+      (i.system?.classId || i.system?.sourceId || i.id || i.name) === classToAdvance
   );
 
   if (!alreadyHasClass) {
@@ -189,8 +193,13 @@ function _getClassBABAtLevel(classDef, level) {
 
   const progression = classDef.levelProgression || [];
   const entry = progression[Math.min(level - 1, progression.length - 1)];
+  const exactBab = Number(entry?.bab ?? entry?.baseAttackBonus);
+  if (Number.isFinite(exactBab)) return exactBab;
 
-  return entry?.bab || 0;
+  const rate = String(classDef.babProgression || classDef.baseAttackBonus || '').toLowerCase();
+  if (rate === 'fast' || rate === 'full' || rate === 'high') return level;
+  if (rate === 'slow' || rate === 'poor' || rate === 'low') return Math.floor(level * 0.5);
+  return Math.floor(level * 0.75);
 }
 
 /**

@@ -36,13 +36,19 @@ function convertBabProgression(progression) {
     return progression;
   }
 
+  const normalized = String(progression || '').toLowerCase();
   const progressionMap = {
-    'slow': 0.5,
-    'medium': 0.75,
-    'fast': 1.0
+    slow: 0.5,
+    poor: 0.5,
+    low: 0.5,
+    medium: 0.75,
+    average: 0.75,
+    fast: 1.0,
+    full: 1.0,
+    high: 1.0,
   };
 
-  return progressionMap[progression] || 0.75; // default to medium
+  return progressionMap[normalized] || 0.75; // default to medium
 }
 
 /**
@@ -71,6 +77,81 @@ function getNestedProperty(obj, path, defaultValue = null) {
   return current;
 }
 
+function coerceFiniteNumber(value) {
+  if (value === null || value === undefined) {
+    return null;
+  }
+
+  if (typeof value === 'number') {
+    return Number.isFinite(value) ? value : null;
+  }
+
+  if (typeof value === 'string') {
+    const cleaned = value.replace(/[^0-9+\-.]/g, '');
+    if (!cleaned || cleaned === '+' || cleaned === '-' || cleaned === '.') {
+      return null;
+    }
+
+    const parsed = Number(cleaned);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  return null;
+}
+
+function maxFiniteNumber(values = []) {
+  let max = 0;
+  for (const value of values) {
+    const parsed = coerceFiniteNumber(value);
+    if (parsed !== null && parsed > max) {
+      max = parsed;
+    }
+  }
+  return max;
+}
+
+/**
+ * Resolve actor BAB from every current v2/legacy location, then fall back to
+ * class-state derivation. Suggestion and mentor code must not read only
+ * system.bab because level-up actors often carry BAB in derived data, class
+ * items, or system.progression.classLevels.
+ *
+ * @param {Actor|Object} actor
+ * @returns {number}
+ */
+export function resolveActorBAB(actor) {
+  if (!actor) {
+    return 0;
+  }
+
+  const directBab = maxFiniteNumber([
+    actor.system?.derived?.bab?.total,
+    actor.system?.derived?.bab?.value,
+    actor.system?.derived?.bab,
+    actor.system?.derived?.baseAttackBonus,
+    actor.system?.bab?.total,
+    actor.system?.bab?.value,
+    actor.system?.bab,
+    actor.system?.baseAttackBonus,
+    actor.system?.attributes?.bab?.total,
+    actor.system?.attributes?.bab?.value,
+    actor.system?.details?.bab,
+    actor.system?.combat?.bab?.total,
+    actor.system?.combat?.bab?.value,
+    actor.system?.combat?.bab,
+    actor.system?.combat?.baseAttackBonus,
+  ]);
+
+  let classBab = 0;
+  try {
+    classBab = Number(calculateTotalBAB(actor)) || 0;
+  } catch {
+    classBab = 0;
+  }
+
+  return Math.max(directBab, classBab);
+}
+
 /**
  * Calculate total BAB from all class items
  * Engine-layer version: accesses class item properties directly without chargen utilities
@@ -90,7 +171,7 @@ export function calculateTotalBAB(actor) {
     // Check if class has level_progression data with BAB. Some class
     // records are sparse (or pack-index only) and contain holes; use the
     // highest available row <= classLevel before falling back to progression.
-    const levelProgression = system.levelProgression || system.level_progression || getNestedProperty(classItem, 'system.levelProgression', []);
+    const levelProgression = system.levelProgression || system.level_progression || classItem?.levelProgression || classItem?.level_progression || getNestedProperty(classItem, 'system.levelProgression', []);
     if (Array.isArray(levelProgression) && levelProgression.length > 0) {
       const rows = levelProgression
         .map(lp => ({ level: Number(lp?.level ?? 0), bab: Number(lp?.bab ?? lp?.baseAttackBonus) }))
@@ -104,8 +185,9 @@ export function calculateTotalBAB(actor) {
     }
 
     // Fallback: Use babProgression if available
-    if (system.babProgression || system.bab_progression) {
-      const babMultiplier = convertBabProgression(system.babProgression || system.bab_progression);
+    const babProgression = system.babProgression || system.bab_progression || classItem?.babProgression || classItem?.bab_progression || classItem?.baseAttackBonus;
+    if (babProgression) {
+      const babMultiplier = convertBabProgression(babProgression);
       totalBAB += Math.floor(classLevel * babMultiplier);
       continue;
     }

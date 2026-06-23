@@ -66,14 +66,72 @@ function normalizeTalentAuditName(value) {
 }
 
 
+function expandTalentTreeReferenceValues(value) {
+  const results = [];
+  const seen = new Set();
+  const addResult = (candidate) => {
+    const text = String(candidate ?? '').trim();
+    if (!text || seen.has(text)) return;
+    seen.add(text);
+    results.push(text);
+  };
+
+  const visit = (candidate) => {
+    if (candidate == null) return;
+    if (Array.isArray(candidate)) {
+      candidate.forEach(visit);
+      return;
+    }
+    if (typeof candidate === 'object') {
+      [
+        candidate.id,
+        candidate._id,
+        candidate.sourceId,
+        candidate.documentId,
+        candidate.uuid,
+        candidate.key,
+        candidate.slug,
+        candidate.treeId,
+        candidate.talentTreeId,
+        candidate.talent_tree_id,
+        candidate.name,
+        candidate.label,
+        candidate.value,
+        candidate.flags?.core?.sourceId,
+      ].forEach(visit);
+      return;
+    }
+
+    const raw = String(candidate).trim();
+    if (!raw) return;
+    addResult(raw);
+
+    const compendiumMatch = raw.match(/(?:Compendium\.)?[^.]+\.talent_trees\.([A-Za-z0-9_-]+)/i);
+    if (compendiumMatch?.[1]) addResult(compendiumMatch[1]);
+
+    const sourceIdMatch = raw.match(/(?:^|[./])([A-Za-z0-9]{12,})(?:$|[?#])/);
+    if (sourceIdMatch?.[1]) addResult(sourceIdMatch[1]);
+  };
+
+  visit(value);
+  return results;
+}
+
 function normalizeTalentTreeAccessKey(value) {
-  return String(value ?? '')
+  const raw = expandTalentTreeReferenceValues(value)[0] ?? value;
+  return String(raw ?? '')
     .toLowerCase()
     .trim()
     .replace(/&/g, ' and ')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/-+/g, '-')
     .replace(/^-|-$/g, '');
+}
+
+function normalizeTalentTreeAccessKeys(value) {
+  return expandTalentTreeReferenceValues(value)
+    .map(normalizeTalentTreeAccessKey)
+    .filter(Boolean);
 }
 
 function cssEscapeSelector(value) {
@@ -167,13 +225,13 @@ export class TalentStep extends ProgressionStepPlugin {
     this._viewMode = 'both';         // 'both', 'list', or 'map'
     this._lastGraphNodeStates = {};  // Async legality cache for the SVG renderer
     this._centerGraphAfterRender = false;
-    this._isHydrating = false;
 
     // Event listener cleanup
     this._renderAbort = null;
     this._isDroidProgression = false;
     this._lastMentorTreeSpeechId = null;
     this._treeDescriptionFallbacks = null;
+    this._isHydratingTrees = false;
   }
 
   _captureStepScroll(shell) {
@@ -218,20 +276,13 @@ export class TalentStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onStepEnter(shell) {
+    this._isHydratingTrees = true;
+    this._allTrees = [];
+    this._suggestedTrees = [];
+    this._treeTalentCache = new Map();
+    this._talentRecommendationById = new Map();
+    this._treeRecommendationById = new Map();
     try {
-      this._isHydrating = true;
-      this._allTrees = [];
-      this._suggestedTrees = [];
-      this._treeTalentCache = new Map();
-      this._talentRecommendationById = new Map();
-      this._treeRecommendationById = new Map();
-      this._stage = 'browser';
-      this._focusedTreeId = null;
-      this._selectedTreeId = null;
-      this._selectedTreeTalents = [];
-      this._graphData = null;
-      this._focusedTalentId = null;
-      this._focusedTalentItem = null;
       emitTalentStepTrace('STEP_ENTER_START', {
         stepId: this.descriptor?.stepId || null,
         slotType: this._slotType,
@@ -245,17 +296,19 @@ export class TalentStep extends ProgressionStepPlugin {
         }
       }
 
-      // Load all talent trees into a local variable only. Do not publish the
-      // unfiltered list to the template or the heroic step briefly flashes every
-      // talent tree before class/slot filtering finishes.
-      const allTrees = Array.from(TalentTreeDB.trees.values());
+      // Load all talent trees into a private local list first. Do not expose
+      // the unfiltered list to the browser while async legality work is running.
+      const loadedTrees = Array.from(TalentTreeDB.trees.values());
+      this._treeTalentCache = new Map();
+      this._talentRecommendationById = new Map();
+      this._treeRecommendationById = new Map();
       this._isDroidProgression = shell?.progressionSession?.subtype === 'droid';
       const existingTalent = this._getCommittedTalentForSlot(shell);
       this._selectedTalentId = this._getTalentId(existingTalent) || null;
-      SWSELogger.debug(`[TalentStep] Loaded ${allTrees.length} talent trees from database`);
+      SWSELogger.debug(`[TalentStep] Loaded ${loadedTrees.length} talent trees from database`);
       emitTalentStepTrace('TREE_DB_LOADED', {
-        dbCount: allTrees.length,
-        sampleTreeIds: allTrees.slice(0, 10).map(t => t?.id || t?.name || '(unknown)'),
+        dbCount: loadedTrees.length,
+        sampleTreeIds: loadedTrees.slice(0, 10).map(t => t?.id || t?.name || '(unknown)'),
       });
 
       // Initialize TalentRegistry (fail-closed if error)
@@ -268,7 +321,7 @@ export class TalentStep extends ProgressionStepPlugin {
       }
 
       // Filter for trees available in this context (heroic or class-specific)
-      const availableTrees = await this._getAvailableTrees(shell);
+      const availableTrees = await this._getAvailableTrees(shell, loadedTrees);
       SWSELogger.debug(`[TalentStep] ${availableTrees.length} trees available for ${this._slotType} slot context`);
       emitTalentStepTrace('AVAILABLE_TREES_RESULT', {
         slotType: this._slotType,
@@ -278,25 +331,32 @@ export class TalentStep extends ProgressionStepPlugin {
 
       await this._loadTreeDescriptionFallbacks();
 
-      // Get suggested trees (pass shell so suggestion engine sees chargen choices)
-      this._suggestedTrees = await this._getSuggestedTrees(shell.actor, availableTrees, shell);
-      SWSELogger.debug(`[TalentStep] ${this._suggestedTrees.length} suggested trees for this build`);
+      // Keep tree-browser hydration fast. Do not run the full talent suggestion
+      // engine against every accessible tree during step entry; that can trigger
+      // dozens of prerequisite scans, suggestion evaluations, and telemetry writes
+      // before the player even opens a tree. Full scoring is performed lazily for
+      // the selected tree in talent mode.
+      this._suggestedTrees = this._getFastSuggestedTrees(availableTrees, shell);
+      SWSELogger.debug(`[TalentStep] ${this._suggestedTrees.length} lightweight suggested trees for this build`);
       emitTalentStepTrace('SUGGESTED_TREES_RESULT', {
         suggestedCount: this._suggestedTrees.length,
         suggestedTreeIds: this._suggestedTrees.map(t => t?.id || t?.name || '(unknown)'),
+        lightweight: true,
       });
 
-      // Store available trees for display only after filtering is complete.
+      // Store available trees for display
       this._allTrees = availableTrees;
-      this._isHydrating = false;
 
       // Start in tree browser stage
       this._stage = 'browser';
       this._focusedTreeId = null;
       this._selectedTreeId = null;
 
+      this._isHydratingTrees = false;
+
       // Enable mentor
       shell.mentor.askMentorEnabled = true;
+      if (shell?.element) this._renderPreservingScroll(shell);
     } catch (err) {
       emitTalentStepTrace('STEP_ENTER_FAILED', {
         error: err?.message || String(err),
@@ -304,12 +364,12 @@ export class TalentStep extends ProgressionStepPlugin {
       });
       console.error('[TalentStep] onStepEnter failed:', err);
       // Ensure defaults are set even on failure (fail-closed, empty trees)
-      this._isHydrating = false;
       this._allTrees = [];
       this._suggestedTrees = [];
       this._stage = 'browser';
       this._focusedTreeId = null;
       this._selectedTreeId = null;
+      this._isHydratingTrees = false;
       shell.mentor.askMentorEnabled = true;
     }
   }
@@ -428,6 +488,13 @@ export class TalentStep extends ProgressionStepPlugin {
     }
   }
 
+  onUtilityChange(change = {}) {
+    if (change?.type !== 'search') return false;
+    this._searchQuery = change.detail?.query || '';
+    this._renderPreservingScroll(change.shell);
+    return true;
+  }
+
   async onDataReady(shell) {
     if (!shell.element) return;
 
@@ -437,6 +504,7 @@ export class TalentStep extends ProgressionStepPlugin {
     const { signal } = this._renderAbort;
 
     const onSearch = e => {
+      if (e.detail?.handledByStepHook) return;
       this._searchQuery = e.detail?.query || '';
       this._renderPreservingScroll(shell);
     };
@@ -694,18 +762,35 @@ export class TalentStep extends ProgressionStepPlugin {
   _getClassTalentTreeAccessKeys(classModel) {
     if (!classModel) return [];
     const lookup = getClassTalentTreeLookupKeys(classModel) || {};
-    return [
-      ...(lookup.treeIds || []),
-      ...(lookup.treeNames || []),
-      ...(classModel.talentTreeIds || []),
-      ...(classModel.talentTreeSourceIds || []),
-      ...(classModel.talentTreeNames || []),
-      ...(classModel.talentTrees || []),
-      ...(classModel.system?.talentTreeIds || []),
-      ...(classModel.system?.talent_tree_ids || []),
-      ...(classModel.system?.talent_trees || []),
-      ...(classModel.system?.talentTreeNames || []),
-    ].filter(Boolean);
+    const canonical = classModel._canonical || classModel.system?._canonical || null;
+    const rawCandidates = [
+      lookup.treeIds,
+      lookup.treeNames,
+      classModel.talentTreeIds,
+      classModel.talentTreeSourceIds,
+      classModel.talentTreeUuids,
+      classModel.talentTreeNames,
+      classModel.talentTrees,
+      classModel.system?.talentTreeIds,
+      classModel.system?.talent_tree_ids,
+      classModel.system?.talentTreeSourceIds,
+      classModel.system?.talent_tree_source_ids,
+      classModel.system?.talentTreeUuids,
+      classModel.system?.talent_tree_uuids,
+      classModel.system?.talent_trees,
+      classModel.system?.talentTrees,
+      classModel.system?.talentTreeNames,
+      canonical?.talentTreeIds,
+      canonical?.talentTreeSourceIds,
+      canonical?.talentTreeUuids,
+      canonical?.talentTreeNames,
+      canonical?.talentTrees,
+    ];
+
+    return Array.from(new Set(rawCandidates
+      .flatMap(expandTalentTreeReferenceValues)
+      .map(value => String(value || '').trim())
+      .filter(Boolean)));
   }
 
   _collectActorUnlockedTalentTreeKeys(actor) {
@@ -824,9 +909,9 @@ export class TalentStep extends ProgressionStepPlugin {
    * Get talent trees available in current context
    * HARDENED: Use class-resolution helper to resolve class model first
    */
-  async _getAvailableTrees(shell) {
+  async _getAvailableTrees(shell, sourceTrees = null) {
     const actor = shell?.actor || null;
-    const allTrees = this._allTrees || [];
+    const allTrees = sourceTrees || this._allTrees || [];
     const selectedClass = this._getSelectedClassForTreeAuthority(shell);
 
     // Resolve class model using canonical helper (primary source)
@@ -896,11 +981,11 @@ export class TalentStep extends ProgressionStepPlugin {
       const hasForceSensitivity = actorHasForceSensitivity || pendingHasForceSensitivity || classGrantsForceSensitivity;
 
       allowedIds = Array.from(new Set([
-        ...this._collectActorUnlockedTalentTreeKeys(actor),
-        ...allowedIds,
-        ...this._getDroidTalentTreeAccessKeys(shell),
-        ...(hasForceSensitivity ? FORCE_TALENT_TREES : []),
-      ].map(value => String(value || '').trim()).filter(Boolean)));
+        this._collectActorUnlockedTalentTreeKeys(actor),
+        allowedIds,
+        this._getDroidTalentTreeAccessKeys(shell),
+        hasForceSensitivity ? FORCE_TALENT_TREES : [],
+      ].flatMap(expandTalentTreeReferenceValues).map(value => String(value || '').trim()).filter(Boolean)));
     }
 
     // Fallback: Use actor authority only for levelup context when class is unresolved.
@@ -936,20 +1021,108 @@ export class TalentStep extends ProgressionStepPlugin {
 
     // For heroic slots, use all available trees if no restriction. Droid degree trees
     // are additive to class access; they must never replace Noble/Soldier/etc. trees.
-    const normalizedAllowed = new Set((allowedIds || []).map(normalizeTalentTreeAccessKey).filter(Boolean));
-    const available = allTrees.filter(tree => {
-      if (!normalizedAllowed.size) return this._slotType === 'heroic';
-      const treeIds = [tree.id, tree.sourceId, tree.name, tree.key, tree.displayName].filter(Boolean).map(normalizeTalentTreeAccessKey);
-      return treeIds.some(id => normalizedAllowed.has(id));
-    });
+    const allowedRefs = (allowedIds || []).flatMap(expandTalentTreeReferenceValues).filter(Boolean);
+    const normalizedAllowed = new Set(allowedRefs.flatMap(normalizeTalentTreeAccessKeys).filter(Boolean));
+    const availableByKey = new Map();
+    const addAvailable = (tree) => {
+      if (!tree) return;
+      const key = tree.id || tree.sourceId || tree.name;
+      if (key) availableByKey.set(key, tree);
+    };
+
+    if (!normalizedAllowed.size) {
+      if (this._slotType === 'heroic') allTrees.forEach(addAvailable);
+    } else {
+      for (const tree of allTrees) {
+        const treeIds = [tree.id, tree.sourceId, tree.name, tree.key, tree.displayName]
+          .flatMap(expandTalentTreeReferenceValues)
+          .flatMap(normalizeTalentTreeAccessKeys)
+          .filter(Boolean);
+        if (treeIds.some(id => normalizedAllowed.has(id))) addAvailable(tree);
+      }
+
+      // Some class payloads carry tree UUIDs or legacy document IDs that can be
+      // resolved directly even when their display keys drift. Add those matches
+      // explicitly so one malformed key cannot empty the whole step.
+      for (const ref of allowedRefs) {
+        const tree = this._getTree(ref);
+        if (tree) addAvailable(tree);
+      }
+    }
+
+    let available = Array.from(availableByKey.values());
+
+    // Heroic talent steps should not become an empty dead-end because a class
+    // payload used source IDs, UUIDs, or stale aliases we failed to match. The
+    // per-talent prerequisite checks still gate selection after a tree opens.
+    if (this._slotType === 'heroic' && normalizedAllowed.size && !available.length && allTrees.length) {
+      SWSELogger.warn('[TalentStep] Heroic talent tree authority produced zero matches; falling back to all trees for inspection/selectability checks', {
+        allowedIds,
+        allowedRefs,
+        selectedClass: selectedClass?.name || selectedClass?.id || null,
+        resolvedClassModel: classModel?.name || null,
+      });
+      available = [...allTrees];
+    }
 
     emitTalentStepTrace('AVAILABLE_TREES_FILTERED', {
       slotType: this._slotType,
       allowedIds,
+      allowedRefs,
       resolvedClassModel: classModel?.name || null,
       availableTreeIds: available.map(t => t?.id || t?.name || '(unknown)'),
     });
     return available;
+  }
+
+  _getFastSuggestedTrees(availableTrees = [], shell = null) {
+    this._treeRecommendationById = new Map();
+    const trees = Array.isArray(availableTrees) ? availableTrees : [];
+    if (!trees.length) return [];
+
+    const committedTalents = shell?.progressionSession?.draftSelections?.talents || [];
+    const actor = shell?.actor || null;
+    const ranked = trees.map(tree => {
+      const investmentCount = this._getTreeInvestmentCount(tree, committedTalents, actor);
+      const nodeCount = tree?.talentCount || (tree?.talentNames || []).length || (tree?.talentIds || []).length || 0;
+      const treeKeys = [tree?.id, tree?.name, tree?.sourceId, ...(tree?.tags || [])]
+        .map(value => this._normalizeTalentKey(value))
+        .filter(Boolean);
+      const forceAffinity = treeKeys.some(key => key.includes('force') || key === 'alter' || key === 'control' || key === 'sense') ? 2 : 0;
+      const classAffinity = this._slotType === 'class' ? 3 : 0;
+      const score = (investmentCount * 20) + classAffinity + forceAffinity + Math.min(nodeCount, 20) / 20;
+      return { tree, score, investmentCount, nodeCount };
+    }).sort((left, right) => {
+      if (right.score !== left.score) return right.score - left.score;
+      return String(left.tree?.name || '').localeCompare(String(right.tree?.name || ''));
+    });
+
+    const top = ranked.slice(0, 4);
+    top.forEach((entry, index) => {
+      const tree = entry.tree;
+      const key = tree?.id || tree?.name;
+      if (!key) return;
+      const label = entry.investmentCount > 0 ? 'Invested Path' : 'Quick Access';
+      this._treeRecommendationById.set(key, {
+        treeId: key,
+        treeName: tree?.name || key,
+        tree,
+        legalChoiceCount: null,
+        label,
+        reason: entry.investmentCount > 0
+          ? 'You already have talent investment in this tree.'
+          : 'Shown as a fast browser hint. Open the tree to evaluate legal talents and mentor scoring.',
+        reasons: entry.investmentCount > 0
+          ? ['Existing investment detected.']
+          : ['Open the tree for full talent recommendations.'],
+        score: entry.score,
+        rank: index + 1,
+        isTopSuggestion: index < 4,
+        topTalentName: '',
+      });
+    });
+
+    return top.map(entry => entry.tree);
   }
 
   /**
@@ -991,7 +1164,8 @@ export class TalentStep extends ProgressionStepPlugin {
           pendingData: treePendingData,
           focus: `talent-tree:${tree?.id || tree?.name}:tree-mode`,
           engineOptions: { includeFutureAvailability: false },
-          persist: false
+          persist: false,
+          recordShown: false
         });
 
         const legalKeys = new Set(candidateTalents.flatMap(talent => this._getTalentIdentityKeys(talent)));
@@ -1464,10 +1638,39 @@ export class TalentStep extends ProgressionStepPlugin {
   }
 
   _getTalentIdentityKeys(talent) {
-    return [talent?.id, talent?._id, talent?.uuid, talent?.name, talent?.label]
+    const rawKeys = [talent?.id, talent?._id, talent?.uuid, talent?.name, talent?.label];
+    const grants = [
+      ...(Array.isArray(talent?._data?.actualTalentsToGrant) ? talent._data.actualTalentsToGrant : []),
+      ...(Array.isArray(talent?._data?.grants) ? talent._data.grants : []),
+      ...(Array.isArray(talent?.system?.actualTalentsToGrant) ? talent.system.actualTalentsToGrant : []),
+      ...(Array.isArray(talent?.system?.grantsTalents) ? talent.system.grantsTalents : []),
+      ...(Array.isArray(talent?.system?.equivalentTalents) ? talent.system.equivalentTalents : []),
+      ...(Array.isArray(talent?.flags?.swse?.actualTalentsToGrant) ? talent.flags.swse.actualTalentsToGrant : []),
+      ...(Array.isArray(talent?.flags?.swse?.grantsTalents) ? talent.flags.swse.grantsTalents : []),
+    ];
+    rawKeys.push(...grants);
+    const normalized = rawKeys
       .filter(Boolean)
       .map(value => this._normalizeTalentKey(value))
       .filter(Boolean);
+    const keySet = new Set(normalized);
+    const isBlockDeflectCombined = keySet.has('block-deflect')
+      || keySet.has('block-and-deflect')
+      || talent?.system?.isBlockDeflectCombined === true
+      || talent?.system?.flags?.isBlockDeflectCombined === true
+      || talent?._data?.isBlockDeflectCombined === true
+      || talent?.flags?.swse?.isBlockDeflectCombined === true
+      || (keySet.has('block') && keySet.has('deflect'));
+    if (isBlockDeflectCombined) {
+      keySet.add('block');
+      keySet.add('deflect');
+      keySet.add('9379daa94a228c04');
+      keySet.add('72c644f7a09b1186');
+      keySet.add('block-deflect');
+      keySet.add('block-and-deflect');
+      keySet.add('block-deflect-combined');
+    }
+    return Array.from(keySet);
   }
 
   _getOwnedTalentKeys(actor) {
@@ -1710,10 +1913,12 @@ export class TalentStep extends ProgressionStepPlugin {
   _isTalentTreeAvailable(tree) {
     if (!tree) return false;
     const targetKeys = new Set([tree.id, tree.sourceId, tree.name, tree.key, tree.displayName]
-      .map(normalizeTalentTreeAccessKey)
+      .flatMap(expandTalentTreeReferenceValues)
+      .flatMap(normalizeTalentTreeAccessKeys)
       .filter(Boolean));
     return (this._allTrees || []).some(candidate => [candidate.id, candidate.sourceId, candidate.name, candidate.key, candidate.displayName]
-      .map(normalizeTalentTreeAccessKey)
+      .flatMap(expandTalentTreeReferenceValues)
+      .flatMap(normalizeTalentTreeAccessKeys)
       .some(key => key && targetKeys.has(key)));
   }
 
@@ -1897,25 +2102,6 @@ export class TalentStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async getStepData(context) {
-    if (this._isHydrating) {
-      return {
-        stage: 'browser',
-        slotType: this._slotType,
-        allTrees: [],
-        suggestedTrees: [],
-        searchQuery: this._searchQuery,
-        isHydrating: true,
-        isLoading: true,
-        slotProgress: {
-          selectedCount: 0,
-          requiredCount: 1,
-          remainingCount: 1,
-          isComplete: false,
-          progressLabel: '0 of 1 talent',
-          remainingLabel: 'Loading talent trees...',
-        },
-      };
-    }
     if (this._stage === 'browser') {
       return this._getTreeBrowserData(context);
     } else if (this._stage === 'graph') {
@@ -1930,11 +2116,6 @@ export class TalentStep extends ProgressionStepPlugin {
    * HARDENED: Use canonical tree fields, consistent ID handling
    */
   _getTreeBrowserData(context) {
-    let filteredTrees = this._filterTreesBySearch(this._allTrees);
-
-    // Droid degree trees are already handled by _getAvailableTrees as additive
-    // authority. Do not re-filter here, or class trees disappear for droid heroes.
-
     // Get committed talents from session and order them canonically
     const committedTalents = context?.shell?.progressionSession?.draftSelections?.talents || [];
     const orderedSelections = canonicallyOrderSelections(committedTalents);
@@ -1956,6 +2137,22 @@ export class TalentStep extends ProgressionStepPlugin {
         ? `${remainingCount} talent${remainingCount === 1 ? '' : 's'} remaining`
         : 'Complete',
     };
+
+    if (this._isHydratingTrees) {
+      return {
+        stage: 'browser',
+        slotType: this._slotType,
+        navigationBanner: this._prereqNavigationBanner || null,
+        allTrees: [],
+        suggestedTrees: [],
+        searchQuery: this._searchQuery,
+        orderedSelections,
+        slotProgress,
+        isLoading: true,
+      };
+    }
+
+    let filteredTrees = this._filterTreesBySearch(this._allTrees);
 
     return {
       stage: 'browser',
@@ -2279,6 +2476,7 @@ export class TalentStep extends ProgressionStepPlugin {
         focus: `talent-tree:${selectedTree?.id || selectedTree?.name}:talent-mode`,
         engineOptions: { includeFutureAvailability: false },
         persist: false,
+        recordShown: false,
       });
 
       const ranked = this._sortSuggestionResults((suggested || [])
@@ -2504,12 +2702,17 @@ export class TalentStep extends ProgressionStepPlugin {
    * Filter trees by search
    */
   _filterTreesBySearch(trees) {
-    if (!this._searchQuery) return trees;
+    const rawQuery = String(this._searchQuery || '').trim();
+    if (!rawQuery) return trees;
 
-    const q = this._searchQuery.toLowerCase();
+    const q = rawQuery.toLowerCase();
+    if (/^search\s+(?:heroic|class)?\s*talents?/.test(q)) return trees;
+
     return trees.filter(tree =>
-      tree.name.toLowerCase().includes(q) ||
-      (tree.system?.description || '').toLowerCase().includes(q)
+      String(tree.name || '').toLowerCase().includes(q) ||
+      String(tree.id || '').toLowerCase().includes(q) ||
+      String(tree.sourceId || '').toLowerCase().includes(q) ||
+      String(tree.system?.description || tree.description || '').toLowerCase().includes(q)
     );
   }
 

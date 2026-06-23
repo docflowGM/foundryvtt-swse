@@ -76,6 +76,7 @@ const ABILITY_MAP = {
  * Key: normalizeLooseLookupKey(baseName) → { key, name, choiceKind }
  */
 const SCOPED_FEAT_FAMILIES = new Map([
+  ['skill training',             { key: 'skill-training',             name: 'Skill Training',             choiceKind: 'skill' }],
   ['skill focus',                { key: 'skill-focus',                name: 'Skill Focus',                choiceKind: 'skill' }],
   ['weapon focus',               { key: 'weapon-focus',               name: 'Weapon Focus',               choiceKind: 'weapon-group' }],
   ['greater weapon focus',       { key: 'greater-weapon-focus',       name: 'Greater Weapon Focus',       choiceKind: 'weapon-group' }],
@@ -150,6 +151,62 @@ function parseScopedFeat(value) {
   return null;
 }
 
+const SCOPED_CHOICE_REQUIREMENT_TYPES = Object.freeze({
+  'weapon proficiency': 'weapon_proficiency',
+  'exotic weapon proficiency': 'weapon_proficiency',
+  'weapon focus': 'weapon_focus',
+  'greater weapon focus': 'greater_weapon_focus',
+  'weapon specialization': 'weapon_specialization',
+  'greater weapon specialization': 'greater_weapon_specialization',
+  'skill training': 'skill_training',
+  'skill focus': 'skill_focus',
+  'double attack': 'double_attack_weapon',
+  'triple attack': 'triple_attack_weapon',
+});
+
+function isPlaceholderChoice(value) {
+  const key = stableKey(value);
+  return [
+    'chosen-weapon',
+    'selected-weapon',
+    'selected-weapon-group',
+    'chosen-weapon-group',
+    'chosen-skill',
+    'selected-skill',
+    'chosen-option',
+    'selected-option',
+    'particular-weapon',
+    'one-weapon',
+    'one-skill',
+  ].includes(key);
+}
+
+function buildScopedChoiceRequirement(scoped, source) {
+  if (!scoped) return null;
+  const baseKey = normalizeLooseLookupKey(scoped.baseName);
+  const reqType = SCOPED_CHOICE_REQUIREMENT_TYPES[baseKey];
+  if (!reqType) return null;
+  const family = getScopedFeatFamily(scoped.baseName);
+  const canonBase = family?.name || resolveCanonicalFeatName(scoped.baseName) || scoped.baseName;
+  const placeholder = isPlaceholderChoice(scoped.choice);
+  const choiceKey = placeholder ? null : stableKey(scoped.choice);
+  const choiceName = placeholder ? null : scoped.choice;
+  return {
+    type: reqType,
+    key: choiceKey,
+    name: choiceName,
+    baseName: canonBase,
+    baseKey: family?.key || stableKey(canonBase),
+    choice: {
+      kind: family?.choiceKind || classifyChoiceKind(scoped.baseName),
+      key: choiceKey,
+      name: choiceName,
+    },
+    source,
+    optional: false,
+  };
+}
+
 /**
  * Normalize a single feat requirement.
  * @param {string|Object} value - Feat name string or structured prereq
@@ -167,9 +224,12 @@ export function normalizeFeatRequirement(value, source = 'unknown') {
     return { type: 'force_sensitive', required: true, source };
   }
 
-  // Check for scoped feat
+  // Check for scoped feat/choice requirement
   const scoped = parseScopedFeat(rawName);
   if (scoped) {
+    const semantic = buildScopedChoiceRequirement(scoped, source);
+    if (semantic) return semantic;
+
     const canonBase = resolveCanonicalFeatName(scoped.baseName) || scoped.baseName;
     // Phase 5: prefer stable key from SCOPED_FEAT_FAMILIES over re-deriving from string
     const family = getScopedFeatFamily(scoped.baseName);
@@ -878,12 +938,24 @@ function normalizeSinglePart(part, source) {
     }
   }
 
-  // Weapon Focus/Specialization with placeholder
+  // Scoped choice placeholders
   if (/^weapon\s+focus\s+(?:with\s+)?(?:selected|chosen)\s+weapon/i.test(part)) {
     return { type: 'weapon_focus', key: null, name: null, source };
   }
+  if (/^greater\s+weapon\s+focus\s+(?:with\s+)?(?:selected|chosen)\s+weapon/i.test(part)) {
+    return { type: 'greater_weapon_focus', key: null, name: null, source };
+  }
   if (/^weapon\s+specialization\s+(?:with\s+)?(?:selected|chosen)\s+weapon/i.test(part)) {
     return { type: 'weapon_specialization', key: null, name: null, source };
+  }
+  if (/^greater\s+weapon\s+specialization\s+(?:with\s+)?(?:selected|chosen)\s+weapon/i.test(part)) {
+    return { type: 'greater_weapon_specialization', key: null, name: null, source };
+  }
+  if (/^skill\s+training\s+(?:with\s+)?(?:selected|chosen)\s+skill/i.test(part)) {
+    return { type: 'skill_training', key: null, name: null, source };
+  }
+  if (/^skill\s+focus\s+(?:with\s+)?(?:selected|chosen)\s+skill/i.test(part)) {
+    return { type: 'skill_focus', key: null, name: null, source };
   }
 
   // Lightsaber construction — explicit table_state with canonical key
@@ -1012,9 +1084,18 @@ function normalizeStructuredItem(item, source) {
     case 'weapon_proficiency':
       return normalizeFeatRequirement(`Weapon Proficiency (${item.weaponGroup || item.group || ''})`, source);
     case 'weapon_focus':
-      return normalizeFeatRequirement(`Weapon Focus (${item.weaponGroup || item.group || item.weapon || ''})`, source);
+      return normalizeFeatRequirement(`Weapon Focus (${item.weaponGroup || item.group || item.weapon || item.name || ''})`, source);
+    case 'greater_weapon_focus':
+      return normalizeFeatRequirement(`Greater Weapon Focus (${item.weaponGroup || item.group || item.weapon || item.name || ''})`, source);
     case 'weapon_specialization':
-      return normalizeFeatRequirement(`Weapon Specialization (${item.weaponGroup || item.group || item.weapon || ''})`, source);
+      return normalizeFeatRequirement(`Weapon Specialization (${item.weaponGroup || item.group || item.weapon || item.name || ''})`, source);
+    case 'greater_weapon_specialization':
+      return normalizeFeatRequirement(`Greater Weapon Specialization (${item.weaponGroup || item.group || item.weapon || item.name || ''})`, source);
+    case 'skill_training':
+    case 'trained_skill':
+      return normalizeFeatRequirement(`Skill Training (${item.skill || item.skillKey || item.skillName || item.name || ''})`, source);
+    case 'skill_focus':
+      return normalizeFeatRequirement(`Skill Focus (${item.skill || item.skillKey || item.skillName || item.name || ''})`, source);
     case 'armor_proficiency':
       return { type: 'armor_proficiency', tier: item.armor || item.armorType || '', source };
     case 'class_level':

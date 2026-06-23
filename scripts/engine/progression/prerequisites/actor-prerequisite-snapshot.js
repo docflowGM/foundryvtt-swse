@@ -134,6 +134,9 @@ function getChoiceLabels(entry) {
     if (label) labels.push(label);
   };
 
+  push(entry?.system?.choiceMeta?.selectedChoice);
+  push(entry?.system?.choiceMeta?.selectedChoices);
+  push(entry?.system?.choiceMeta?.choice);
   push(entry?.system?.selectedChoice);
   push(entry?.system?.selectedChoices);
   push(entry?.selectedChoice);
@@ -397,6 +400,8 @@ function buildTalentsSection(actor, pending) {
   const slugs = new Set();
   const sourceIds = new Set();
   const uuids = new Set();
+  const baseNames = new Set();
+  const choices = new Map(); // baseName(looseKey) -> Set of choice labels (looseKey)
   const treeKeys = new Set();
   const byTree = new Map(); // treeKey → [talent, ...]
 
@@ -412,6 +417,16 @@ function buildTalentsSection(actor, pending) {
     const uuid = entry.uuid || entry.id || entry._id || '';
     if (uuid) uuids.add(uuid);
 
+    const bName = baseFeatName(name);
+    if (bName) baseNames.add(looseKey(bName));
+
+    const choiceLabels = getChoiceLabels(entry);
+    if (bName && choiceLabels.length) {
+      const bKey = looseKey(bName);
+      if (!choices.has(bKey)) choices.set(bKey, new Set());
+      for (const label of choiceLabels) choices.get(bKey).add(looseKey(label));
+    }
+
     const trees = getTalentTreeKeys(entry);
     for (const tk of trees) {
       treeKeys.add(tk);
@@ -424,7 +439,9 @@ function buildTalentsSection(actor, pending) {
     if (item?.type === 'talent') ingest(item);
   }
   for (const entry of coercePendingArray(pending?.selectedTalents)) ingest(entry);
+  for (const entry of coercePendingArray(pending?.talents)) ingest(entry);
   for (const entry of coercePendingArray(pending?.grantedTalents)) ingest(entry);
+  for (const entry of coercePendingArray(pending?.resolvedGrantedTalents)) ingest(entry);
   for (const entry of coercePendingArray(actor?.system?.progression?.talents)) ingest(entry);
 
   return {
@@ -433,14 +450,31 @@ function buildTalentsSection(actor, pending) {
     slugs,
     sourceIds,
     uuids,
+    baseNames,
+    choices,
     treeKeys,
     byTree,
 
     has(nameOrKey) {
       if (!nameOrKey) return false;
       const key = looseKey(nameOrKey);
-      return names.has(key) || slugs.has(key)
+      return names.has(key) || slugs.has(key) || baseNames.has(key)
         || sourceIds.has(nameOrKey) || uuids.has(nameOrKey);
+    },
+
+    hasChoice(baseTalent, choice) {
+      if (!baseTalent || !choice) return false;
+      const bKey = looseKey(baseTalent);
+      const cKey = looseKey(choice);
+      const set = choices.get(bKey);
+      return set ? set.has(cKey) : false;
+    },
+
+    hasAnyChoice(baseTalent) {
+      if (!baseTalent) return false;
+      const bKey = looseKey(baseTalent);
+      const set = choices.get(bKey);
+      return set ? set.size > 0 : false;
     },
 
     /**
@@ -848,7 +882,7 @@ function _emptySnapshot(actor, pending) {
     actor: actor || null,
     pending: pending || {},
     feats: { items: [], names: emptySet, slugs: emptySet, sourceIds: emptySet, uuids: emptySet, baseNames: emptySet, choices: emptyMap, has: noop, hasChoice: noop, hasAnyChoice: noop },
-    talents: { items: [], names: emptySet, slugs: emptySet, sourceIds: emptySet, uuids: emptySet, treeKeys: emptySet, byTree: emptyMap, has: noop, countInTrees: noopNum, getFromTree: () => [] },
+    talents: { items: [], names: emptySet, slugs: emptySet, sourceIds: emptySet, uuids: emptySet, baseNames: emptySet, choices: emptyMap, treeKeys: emptySet, byTree: emptyMap, has: noop, hasChoice: noop, hasAnyChoice: noop, countInTrees: noopNum, getFromTree: () => [] },
     classes: { items: [], names: emptySet, slugs: emptySet, sourceIds: emptySet, uuids: emptySet, levelsByClass: emptyMap, totalLevel: 0, bab: 0, has: noop, getLevel: noopNum },
     species: { names: emptySet, keys: emptySet, isDroid: false, droidDegree: null, droidChassis: null, has: noop },
     force: { forceSensitive: false, forceTrainingCount: 0, powers: emptySet, powerCount: 0, techniques: emptySet, secrets: emptySet, traditions: emptySet, disciplines: emptySet },

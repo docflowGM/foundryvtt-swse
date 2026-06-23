@@ -76,6 +76,154 @@ function matchesForceSensitivity(value) {
     return isForceSensitivityName(value) || namesMatchLoosely(value, 'Force Sensitivity');
 }
 
+
+function getTalentEquivalentNames(entry = {}) {
+    const names = [];
+    const add = (value) => {
+        const text = String(value ?? '').trim();
+        if (text && !names.some(name => normalizeLooseLookupKey(name) === normalizeLooseLookupKey(text))) names.push(text);
+    };
+    add(typeof entry === 'string' ? entry : null);
+    add(entry?.name);
+    add(entry?.label);
+    add(entry?.system?.name);
+    add(entry?.system?.canonicalName);
+
+    const grantSources = [
+        entry?._data?.actualTalentsToGrant,
+        entry?._data?.grants,
+        entry?.system?.actualTalentsToGrant,
+        entry?.system?.grantsTalents,
+        entry?.system?.equivalentTalents,
+        entry?.flags?.swse?.actualTalentsToGrant,
+        entry?.flags?.swse?.grantsTalents,
+    ];
+    for (const source of grantSources) {
+        for (const value of Array.isArray(source) ? source : []) add(value);
+    }
+
+    const normalized = names.map(name => normalizeLooseLookupKey(String(name).replace(/&/g, ' and ')));
+    const isBlockDeflectCombined = normalized.includes('block and deflect')
+        || entry?.system?.isBlockDeflectCombined === true
+        || entry?.system?.flags?.isBlockDeflectCombined === true
+        || entry?._data?.isBlockDeflectCombined === true
+        || entry?.flags?.swse?.isBlockDeflectCombined === true
+        || (normalized.includes('block') && normalized.includes('deflect'));
+    if (isBlockDeflectCombined) {
+        add('Block & Deflect');
+        add('Block');
+        add('Deflect');
+    }
+
+    return names;
+}
+
+function getFeatChoiceKeyAliases(value) {
+    const primary = normalizeFeatChoiceKey(value);
+    const aliases = new Set();
+    const add = (raw) => {
+        const key = normalizeFeatChoiceKey(raw);
+        if (!key) return;
+        aliases.add(key);
+        aliases.add(key.replace(/_/g, '-'));
+        aliases.add(key.replace(/-/g, '_'));
+    };
+    add(primary);
+    const resolvedSkill = resolveCanonicalSkillKey(value);
+    if (resolvedSkill) add(resolvedSkill);
+
+    const hyphen = primary.replace(/_/g, '-');
+    const addPair = (a, b) => {
+        if (aliases.has(a) || aliases.has(a.replace(/-/g, '_'))) add(b);
+        if (aliases.has(b) || aliases.has(b.replace(/-/g, '_'))) add(a);
+    };
+
+    addPair('lightsaber', 'lightsabers');
+    addPair('pistol', 'pistols');
+    addPair('rifle', 'rifles');
+    addPair('simple-weapon', 'simple-weapons');
+    addPair('advanced-melee-weapon', 'advanced-melee-weapons');
+    addPair('heavy-weapon', 'heavy-weapons');
+    addPair('melee-weapon', 'melee-weapons');
+    addPair('exotic-weapon', 'exotic-weapons');
+
+    if (hyphen.endsWith('s') && hyphen.length > 1) add(hyphen.slice(0, -1));
+    if (hyphen && !hyphen.endsWith('s')) add(`${hyphen}s`);
+
+    if (hyphen.includes(':')) {
+        const parts = hyphen.split(':');
+        const tail = parts.pop();
+        const tailAliases = Array.from(getFeatChoiceKeyAliases(tail));
+        for (const alias of tailAliases) add([...parts, alias].join(':'));
+    }
+
+    return aliases;
+}
+
+function extractScopedFeatChoiceText(value) {
+    const match = String(value || '').match(/\(([^)]*)\)/);
+    return match ? match[1].trim() : '';
+}
+
+function scopedFeatMatchesWithChoiceAliases(candidateName, requiredName) {
+    if (!featRequirementHasScope(candidateName) || !featRequirementHasScope(requiredName)) return false;
+    const candidateBase = extractBaseFeatName(String(candidateName || ''));
+    const requiredBase = extractBaseFeatName(String(requiredName || ''));
+    if (normalizeFeatMatchKey(candidateBase) !== normalizeFeatMatchKey(requiredBase)) return false;
+    const candidateChoices = getFeatChoiceKeyAliases(extractScopedFeatChoiceText(candidateName));
+    const requiredChoices = getFeatChoiceKeyAliases(extractScopedFeatChoiceText(requiredName));
+    return Array.from(candidateChoices).some(choice => requiredChoices.has(choice));
+}
+
+const CHOICE_REQUIREMENT_TYPES_BY_BASE = Object.freeze({
+    'weapon proficiency': 'weapon_proficiency',
+    'exotic weapon proficiency': 'weapon_proficiency',
+    'weapon focus': 'weapon_focus',
+    'greater weapon focus': 'greater_weapon_focus',
+    'weapon specialization': 'weapon_specialization',
+    'greater weapon specialization': 'greater_weapon_specialization',
+    'skill training': 'skill_training',
+    'skill focus': 'skill_focus',
+    'double attack': 'double_attack_weapon',
+    'triple attack': 'triple_attack_weapon',
+});
+
+function choiceRequirementTypeForBase(baseName) {
+    const key = normalizeLooseLookupKey(String(baseName || '').replace(/\s+feat$/i, ''));
+    return CHOICE_REQUIREMENT_TYPES_BY_BASE[key] || null;
+}
+
+function isPlaceholderChoiceTarget(value) {
+    const key = normalizeFeatChoiceKey(value);
+    return [
+        'chosen_weapon',
+        'selected_weapon',
+        'selected_weapon_group',
+        'chosen_weapon_group',
+        'chosen_skill',
+        'selected_skill',
+        'chosen_option',
+        'selected_option',
+        'particular_weapon',
+        'one_weapon',
+        'one_skill'
+    ].includes(key);
+}
+
+function parseScopedChoiceRequirement(value) {
+    const text = String(value || '').trim();
+    if (!text) return null;
+    const paren = text.match(/^(.+?)\s*\(([^)]*)\)\s*$/);
+    const colon = text.match(/^(.+?)\s*[:\-]\s*(.+)$/);
+    const match = paren || colon;
+    if (!match) return null;
+    const baseName = match[1].trim();
+    const target = match[2].trim();
+    const type = choiceRequirementTypeForBase(baseName);
+    if (!type) return null;
+    return { type, baseName, target };
+}
+
 /**
  * MAIN CLASS: PrerequisiteChecker
  * The unified, canonical prerequisite validator for ALL types of prerequisites.
@@ -222,11 +370,10 @@ export class PrerequisiteChecker {
             if (itemType === 'feat') {
                 return featLikeMatchesRequirement(item, requiredName);
             }
-            const itemName = item?.name || '';
-            if (itemType === 'talent' && talentLikeMatchesRequirement(item, requiredName)) return true;
-            return namesMatchLoosely(itemName, requiredName) ||
+            const itemNames = itemType === 'talent' ? getTalentEquivalentNames(item) : [item?.name || ''];
+            return itemNames.some((itemName) => namesMatchLoosely(itemName, requiredName) ||
                 (baseName && !featRequirementHasScope(requiredName) && namesMatchLoosely(itemName, baseName)) ||
-                (baseName && !featRequirementHasScope(requiredName) && itemName.toLowerCase().startsWith(`${baseName.toLowerCase()} (`));
+                (baseName && !featRequirementHasScope(requiredName) && itemName.toLowerCase().startsWith(`${baseName.toLowerCase()} (`)));
         };
 
         const actorHit = actor.items?.some((i) => i.type === itemType && predicate(i));
@@ -990,6 +1137,20 @@ export class PrerequisiteChecker {
                 return this._checkWeaponFocusCondition(prereq, actor, pending);
             case 'weapon_specialization':
                 return this._checkWeaponSpecializationCondition(prereq, actor, pending);
+            case 'greater_weapon_focus':
+            case 'greater_weapon_specialization':
+            case 'skill_training':
+            case 'trained_skill':
+            case 'skill_focus':
+            case 'double_attack_weapon':
+            case 'double_attack_followup_weapon':
+            case 'triple_attack_weapon':
+            case 'return_fire_weapon':
+            case 'triple_crit_specialist_weapon':
+            case 'weapon_focus_choice':
+            case 'weapon_group_or_exotic':
+            case 'melee_weapon_or_group':
+                return this._checkChoiceProviderCondition(type, prereq, actor, pending);
             case 'armor_proficiency':
                 return this._checkArmorProficiencyCondition(prereq, actor, pending);
             case 'class_level':
@@ -1040,9 +1201,37 @@ export class PrerequisiteChecker {
                     message: !met ? `Requires ${prereq.ranks} ranks in ${prereq.skillName || prereq.name || skillKey} (you have ${ranks})` : ''
                 };
             }
+            case 'skill':
+                return this._checkChoiceProviderCondition('skill_training', prereq, actor, pending);
+            case 'weapon_proficiency':
+            case 'weapon_focus':
+            case 'greater_weapon_focus':
+            case 'weapon_specialization':
+            case 'greater_weapon_specialization':
+            case 'skill_training':
+            case 'trained_skill':
+            case 'skill_focus':
+            case 'double_attack_weapon':
+            case 'double_attack_followup_weapon':
+            case 'triple_attack_weapon':
+            case 'return_fire_weapon':
+            case 'triple_crit_specialist_weapon':
+            case 'weapon_focus_choice':
+            case 'weapon_group_or_exotic':
+            case 'melee_weapon_or_group':
+                return this._checkChoiceProviderCondition(type, prereq, actor, pending);
             case 'feat': {
                 const requiredFeatName = formatStructuredFeatRequirement(prereq)
                     || resolveCanonicalFeatName(prereq.name || prereq.featName || '');
+                const scopedChoice = parseScopedChoiceRequirement(requiredFeatName);
+                if (scopedChoice) {
+                    return this._checkChoiceProviderCondition(scopedChoice.type, {
+                        ...prereq,
+                        baseName: scopedChoice.baseName,
+                        value: scopedChoice.target,
+                        choice: { name: scopedChoice.target, key: scopedChoice.target }
+                    }, actor, pending);
+                }
                 const hasFeat = this._actorHasNamedItem(actor, pending, 'feat', requiredFeatName) ||
                     this.getHouseruleGrantedFeats().some(name => featLikeMatchesRequirement({ name }, requiredFeatName));
                 return {
@@ -1190,6 +1379,20 @@ export class PrerequisiteChecker {
                 return this._checkWeaponFocusCondition(prereq, actor, pending);
             case 'weapon_specialization':
                 return this._checkWeaponSpecializationCondition(prereq, actor, pending);
+            case 'greater_weapon_focus':
+            case 'greater_weapon_specialization':
+            case 'skill_training':
+            case 'trained_skill':
+            case 'skill_focus':
+            case 'double_attack_weapon':
+            case 'double_attack_followup_weapon':
+            case 'triple_attack_weapon':
+            case 'return_fire_weapon':
+            case 'triple_crit_specialist_weapon':
+            case 'weapon_focus_choice':
+            case 'weapon_group_or_exotic':
+            case 'melee_weapon_or_group':
+                return this._checkChoiceProviderCondition(prereq.type, prereq, actor, pending);
             case 'armor_proficiency':
             case 'armorProficiency':
                 return this._checkArmorProficiencyCondition(prereq, actor, pending);
@@ -1203,6 +1406,16 @@ export class PrerequisiteChecker {
     // ============================================================
 
     static _checkFeatCondition(prereq, actor, pending) {
+        const formattedScopedRequirement = formatStructuredFeatRequirement(prereq);
+        const scopedChoice = parseScopedChoiceRequirement(formattedScopedRequirement);
+        if (scopedChoice) {
+            return this._checkChoiceProviderCondition(scopedChoice.type, {
+                ...prereq,
+                baseName: scopedChoice.baseName,
+                value: scopedChoice.target,
+                choice: { name: scopedChoice.target, key: scopedChoice.target }
+            }, actor, pending);
+        }
         const requiredFeatName = resolveCanonicalFeatName(prereq.name || prereq.featName || prereq.slug || prereq.uuid || '');
         if (isWeaponProficiencyRequirement(requiredFeatName, prereq)) {
             return this._checkWeaponProficiencyCondition(prereq, actor, pending);
@@ -1469,8 +1682,8 @@ export class PrerequisiteChecker {
             ? (choice.key || choice.value || choice.id || choice.group || choice.weaponGroup || choice.name || choice.label || choice)
             : null;
         let target = choiceTarget || prereq?.weapon || prereq?.weaponGroup || prereq?.group || prereq?.value || prereq?.name || null;
-        const scopedWeaponChoice = String(target || '').match(/(?:weapon\s+proficiency|weapon\s+focus|weapon\s+specialization)\s*\(([^)]+)\)/i)?.[1];
-        if (scopedWeaponChoice) target = scopedWeaponChoice;
+        const scopedWeaponFeat = String(target || '').match(/weapon\s+(?:proficiency|focus|specialization)\s*\(([^)]+)\)/i)?.[1];
+        if (scopedWeaponFeat) target = scopedWeaponFeat;
         // Printed prerequisites such as "Proficient with Chosen Weapon" are not
         // a literal weapon group. During list legality they mean "any weapon
         // proficiency exists"; during choice validation the selected choice above
@@ -1488,13 +1701,140 @@ export class PrerequisiteChecker {
     static _choiceProviderHasTarget(providers, target) {
         const key = this._choiceKeyFromPrereqTarget(target);
         if (!key) return false;
-        return (providers || []).some((entry) => FeatChoiceResolver.getSelectedChoiceKey(entry) === key);
+        const targetAliases = getFeatChoiceKeyAliases(key);
+        return (providers || []).some((entry) => {
+            const providerAliases = new Set();
+            for (const candidate of [
+                FeatChoiceResolver.getSelectedChoiceKey(entry),
+                entry?.key,
+                entry?.id,
+                entry?.value,
+                entry?.group,
+                entry?.weaponGroup,
+                entry?.name,
+                entry?.label,
+                typeof entry === 'string' ? entry : null,
+            ]) {
+                for (const alias of getFeatChoiceKeyAliases(candidate)) providerAliases.add(alias);
+            }
+            return Array.from(providerAliases).some(alias => targetAliases.has(alias));
+        });
     }
 
     static _formatPrereqTarget(target) {
         if (!target) return 'selected choice';
         if (typeof target === 'object') return FeatChoiceResolver.getChoiceLabel(target) || FeatChoiceResolver.getSelectedChoiceKey(target);
         return String(target);
+    }
+
+    static _getPrereqChoiceTarget(prereq, pending = {}) {
+        const explicitChoice = pending?.selectedChoice || pending?.candidateChoice;
+        if (explicitChoice) return explicitChoice;
+
+        const choice = prereq?.choice || prereq?.selectedChoice || prereq?.target || prereq?.selection || null;
+        const choiceTarget = choice
+            ? (choice.key || choice.value || choice.id || choice.group || choice.weaponGroup || choice.skill || choice.skillKey || choice.name || choice.label || choice)
+            : null;
+        let target = choiceTarget
+            || prereq?.weapon
+            || prereq?.weaponGroup
+            || prereq?.group
+            || prereq?.skill
+            || prereq?.skillKey
+            || prereq?.skillName
+            || prereq?.value
+            || prereq?.name
+            || null;
+        const scoped = parseScopedChoiceRequirement(target);
+        if (scoped) target = scoped.target;
+        if (choiceRequirementTypeForBase(target)) return null;
+        if (isPlaceholderChoiceTarget(target)) return null;
+        return target;
+    }
+
+    static _labelForChoiceProvider(kind) {
+        const labels = {
+            weapon_proficiency: 'Weapon Proficiency',
+            weapon_focus: 'Weapon Focus',
+            greater_weapon_focus: 'Greater Weapon Focus',
+            weapon_specialization: 'Weapon Specialization',
+            greater_weapon_specialization: 'Greater Weapon Specialization',
+            skill_training: 'Skill Training',
+            trained_skill: 'Skill Training',
+            skill_focus: 'Skill Focus',
+            double_attack_weapon: 'Double Attack',
+            double_attack_followup_weapon: 'Double Attack',
+            triple_attack_weapon: 'Triple Attack',
+            return_fire_weapon: 'Return Fire',
+            triple_crit_specialist_weapon: 'Weapon Specialization',
+            weapon_focus_choice: 'Weapon Focus',
+            weapon_group_or_exotic: 'Weapon Proficiency',
+            melee_weapon_or_group: 'Weapon Proficiency',
+        };
+        return labels[kind] || String(kind || 'choice').replace(/_/g, ' ');
+    }
+
+    static _actorOrPendingHasScopedNamedChoice(actor, pending, baseName, target = null) {
+        if (!baseName) return false;
+        const required = target ? `${baseName} (${this._formatPrereqTarget(target)})` : null;
+        const baseKey = normalizeFeatMatchKey(baseName);
+        const entries = [
+            ...(actor?.items || []).filter(item => ['feat', 'talent'].includes(item?.type)),
+            ...(pending?.selectedFeats || []),
+            ...(pending?.feats || []),
+            ...(pending?.pendingFeats || []),
+            ...(pending?.grantedFeats || []),
+            ...(pending?.resolvedGrantedFeats || []),
+            ...(pending?.grantedProficiencies || []),
+            ...(pending?.selectedTalents || []),
+            ...(pending?.talents || []),
+            ...(pending?.pendingTalents || []),
+            ...(pending?.grantedTalents || []),
+            ...(pending?.resolvedGrantedTalents || []),
+        ];
+
+        for (const rawEntry of entries) {
+            const entry = typeof rawEntry === 'string' ? { name: rawEntry } : rawEntry;
+            if (!entry) continue;
+            const candidateNames = [
+                ...getFeatCandidateNames(entry),
+                ...getTalentEquivalentNames(entry),
+            ];
+            if (required && candidateNames.some(name => scopedFeatMatchesWithChoiceAliases(name, required) || normalizeFeatMatchKey(name) === normalizeFeatMatchKey(required))) {
+                return true;
+            }
+            if (!required && candidateNames.some(name => normalizeFeatMatchKey(extractBaseFeatName(name)) === baseKey)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    static _checkChoiceProviderCondition(providerKind, prereq, actor, pending) {
+        const kind = providerKind === 'trained_skill' || providerKind === 'skill' ? 'skill_training' : providerKind;
+        const target = this._getPrereqChoiceTarget(prereq, pending);
+
+        if (kind === 'skill_training' && target) {
+            const skillKey = this._resolveSkillKeyOrId(target);
+            const pendingSkillKeys = normalizePendingSkillKeys(pending.selectedSkills);
+            if (skillKey && this._actorSkillTrained(actor, skillKey, pendingSkillKeys)) {
+                return { met: true, message: '' };
+            }
+        }
+
+        const providers = FeatChoiceResolver.getChoiceProviderEntries?.(actor, kind, pending)
+            || FeatChoiceResolver._getChoiceEntriesByKind?.(actor, kind, pending)
+            || [];
+        const label = this._formatPrereqTarget(target);
+        const base = this._labelForChoiceProvider(kind);
+        const hasProvider = (target
+            ? this._choiceProviderHasTarget(providers, target)
+            : providers.length > 0)
+            || this._actorOrPendingHasScopedNamedChoice(actor, pending, base, target);
+        return {
+            met: !!hasProvider,
+            message: !hasProvider ? `Requires ${base}${target ? ` (${label})` : ''}` : ''
+        };
     }
 
     static _checkWeaponProficiencyCondition(prereq, actor, pending) {
@@ -1548,30 +1888,11 @@ export class PrerequisiteChecker {
     }
 
     static _checkWeaponFocusCondition(prereq, actor, pending) {
-        const target = this._getPrereqWeaponTarget(prereq, pending);
-        const providers = FeatChoiceResolver.getWeaponFocusChoices(actor, pending);
-        const hasFocus = target
-            ? this._choiceProviderHasTarget(providers, target)
-            : providers.length > 0;
-        const label = this._formatPrereqTarget(target);
-        return {
-            met: hasFocus,
-            message: !hasFocus ? `Requires Weapon Focus (${label})` : ''
-        };
+        return this._checkChoiceProviderCondition('weapon_focus', prereq, actor, pending);
     }
 
     static _checkWeaponSpecializationCondition(prereq, actor, pending) {
-        const target = this._getPrereqWeaponTarget(prereq, pending);
-        const providers = FeatChoiceResolver._getChoiceEntriesByKind(actor, 'weapon_specialization', pending);
-        const hasNamedSpecialization = this._actorHasNamedItem(actor, pending, 'talent', 'Weapon Specialization');
-        const hasSpec = target
-            ? this._choiceProviderHasTarget(providers, target)
-            : (providers.length > 0 || hasNamedSpecialization);
-        const label = this._formatPrereqTarget(target);
-        return {
-            met: hasSpec,
-            message: !hasSpec ? `Requires Weapon Specialization (${label})` : ''
-        };
+        return this._checkChoiceProviderCondition('weapon_specialization', prereq, actor, pending);
     }
 
     static _checkArmorProficiencyCondition(prereq, actor, pending) {
@@ -1914,6 +2235,16 @@ export class PrerequisiteChecker {
             return this._isPlaceholderWeaponTarget(weaponGroup)
                 ? { type: 'weapon_proficiency' }
                 : { type: 'weapon_proficiency', weaponGroup };
+        }
+
+        const scopedChoice = parseScopedChoiceRequirement(part);
+        if (scopedChoice) {
+            const prereq = { type: scopedChoice.type, baseName: scopedChoice.baseName };
+            if (!isPlaceholderChoiceTarget(scopedChoice.target)) {
+                prereq.value = scopedChoice.target;
+                prereq.choice = { name: scopedChoice.target, key: scopedChoice.target };
+            }
+            return prereq;
         }
 
         const registryParsed = parseRegistryBackedLegacyPrerequisite(part);
@@ -3112,24 +3443,6 @@ function featLikeMatchesRequirement(entry, requiredFeat) {
     return hasFeatMatch([entry], requiredFeat);
 }
 
-function compactTalentRequirementKey(value) {
-    return String(value || '')
-        .toLowerCase()
-        .replace(/&/g, ' and ')
-        .replace(/[^a-z0-9]+/g, '')
-        .trim();
-}
-
-function talentLikeMatchesRequirement(entry, requiredTalent) {
-    const candidateKey = compactTalentRequirementKey(entry?.name || entry?.id || entry?._id || entry);
-    const requiredKey = compactTalentRequirementKey(requiredTalent);
-    if (!candidateKey || !requiredKey) return false;
-    if (candidateKey === requiredKey) return true;
-    const combinedKeys = new Set(['blockdeflect', 'blockanddeflect']);
-    if (combinedKeys.has(candidateKey) && ['block', 'deflect', 'blockdeflect', 'blockanddeflect'].includes(requiredKey)) return true;
-    return entry?.system?.flags?.isBlockDeflectCombined === true && ['block', 'deflect', 'blockdeflect', 'blockanddeflect'].includes(requiredKey);
-}
-
 function formatStructuredFeatRequirement(prereq = {}) {
     const base = resolveCanonicalFeatName(prereq.name || prereq.featName || prereq.feat || '') || String(prereq.name || prereq.featName || '').trim();
     const choice = prereq.choice || prereq.selectedChoice || prereq.selection || null;
@@ -3139,6 +3452,10 @@ function formatStructuredFeatRequirement(prereq = {}) {
     if (/^weapon\s+proficiency$/i.test(base)) return `Weapon Proficiency (${choiceName})`;
     if (/^armor\s+proficiency$/i.test(base)) return `Armor Proficiency (${choiceName})`;
     if (/^weapon\s+focus$/i.test(base)) return `Weapon Focus (${choiceName})`;
+    if (/^greater\s+weapon\s+focus$/i.test(base)) return `Greater Weapon Focus (${choiceName})`;
+    if (/^weapon\s+specialization$/i.test(base)) return `Weapon Specialization (${choiceName})`;
+    if (/^greater\s+weapon\s+specialization$/i.test(base)) return `Greater Weapon Specialization (${choiceName})`;
+    if (/^skill\s+training$/i.test(base)) return `Skill Training (${choiceName})`;
     if (/^skill\s+focus$/i.test(base)) return `Skill Focus (${choiceName})`;
     return `${base} (${choiceName})`;
 }
@@ -3160,6 +3477,7 @@ function hasFeatMatch(actorFeats, requiredFeat) {
     return actorFeats.some(f => {
         const candidateNames = getFeatCandidateNames(f);
         if (candidateNames.some(name => normalizeFeatMatchKey(name) === requiredFull)) return true;
+        if (requiredIsScoped && candidateNames.some(name => scopedFeatMatchesWithChoiceAliases(name, requirement))) return true;
 
         // Generic requirements like "Weapon Proficiency" or "Armor Proficiency"
         // may be satisfied by any scoped instance. Scoped requirements must remain

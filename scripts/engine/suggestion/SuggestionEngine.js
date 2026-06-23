@@ -1234,7 +1234,7 @@ export class SuggestionEngine {
      * @param {Array} archetypeRecommendedFeatIds - Recommended feat IDs
      * @returns {Object|null} Best Tier 3 suggestion or null
      */
-    static _evaluateTier3Feat(feat, actorState, metadata, buildIntent, actor, primaryArchetype, archetypeRecommendedFeatIds) {
+    static _evaluateTier3Feat(feat, actorState, metadata, buildIntent, actor, primaryArchetype, archetypeRecommendedFeatIds, buildSuggestionOptions = {}) {
         const matches = [];
         let totalBonus = 0;
 
@@ -1347,7 +1347,7 @@ export class SuggestionEngine {
      * @param {Array} archetypeRecommendedTalentIds - Recommended talent IDs
      * @returns {Object|null} Best Tier 3 suggestion or null
      */
-    static _evaluateTier3Talent(talent, actorState, buildIntent, actor, primaryArchetype, archetypeRecommendedTalentIds) {
+    static _evaluateTier3Talent(talent, actorState, buildIntent, actor, primaryArchetype, archetypeRecommendedTalentIds, buildSuggestionOptions = {}) {
         const matches = [];
         let totalBonus = 0;
 
@@ -1918,7 +1918,8 @@ export class SuggestionEngine {
         // Evaluate ALL Tier 3 conditions, return best match with subpriority weighting
         const tier3Match = this._evaluateTier3Feat(
             feat, actorState, metadata, buildIntent, actor, primaryArchetype,
-            archetypeRecommendedFeatIds
+            archetypeRecommendedFeatIds,
+            buildSuggestionOptions
         );
         if (tier3Match) {
             return tier3Match;
@@ -2086,7 +2087,8 @@ export class SuggestionEngine {
         // Evaluate ALL Tier 3 conditions, return best match with subpriority weighting
         const tier3Match = this._evaluateTier3Talent(
             talent, actorState, buildIntent, actor, primaryArchetype,
-            archetypeRecommendedTalentIds
+            archetypeRecommendedTalentIds,
+            buildSuggestionOptions
         );
         if (tier3Match) {
             return tier3Match;

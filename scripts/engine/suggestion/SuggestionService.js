@@ -358,6 +358,10 @@ export class SuggestionService {
   static async _recordSuggestionsShown(actor, context, suggestions, options = {}) {
     if (!actor || !Array.isArray(suggestions) || !suggestions.length) return;
     // Only record decision-step/showcase contexts, not every passive sheet refresh.
+    // Explicit recordShown:false must win even for levelup/chargen contexts;
+    // passive recommendation builders can run many times during render and should
+    // not mutate actor flags or trigger sheet re-renders.
+    if (options.recordShown === false) return;
     const shouldRecord = options.recordShown === true || ['decision-step', 'levelup', 'chargen', 'mentor'].includes(String(context || ''));
     if (!shouldRecord) return;
     try {

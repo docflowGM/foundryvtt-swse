@@ -28,6 +28,7 @@ import { getMentorForClass } from "/systems/foundryvtt-swse/scripts/engine/mento
 import { scoreTagAlignment, scoreAttributeRealization } from "/systems/foundryvtt-swse/scripts/engine/suggestion/tag-signal-engine.js";
 import { getEquipmentLoadoutProfile, scoreCandidateLoadoutFit } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment-loadout-profile.js";
 import { buildRouteConfidenceProfile, scoreCandidateRouteFit, getOwnedRepeatableCount } from "/systems/foundryvtt-swse/scripts/engine/suggestion/build-route-confidence-profile.js";
+import { resolveActorBAB } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-suggestion-utilities.js";
 
 // ─────────────────────────────────────────────────────────────────
 // DEBUG MODE CONFIGURATION
@@ -465,7 +466,7 @@ function _computeShortTermScore(candidate, actor, buildIntent, options) {
   let shortTermScore = 0;
 
   const currentLevel = actor.system?.level || 1;
-  const currentBAB = actor.system?.bab || 0;
+  const currentBAB = resolveActorBAB(actor);
 
   // FACTOR A: BAB Breakpoint Evaluation
   const babScore = _evaluateBABBreakpoint(candidate, currentBAB, currentLevel);

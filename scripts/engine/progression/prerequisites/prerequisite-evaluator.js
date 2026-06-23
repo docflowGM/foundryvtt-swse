@@ -38,6 +38,7 @@ import {
   namesMatchLoosely,
   normalizeLooseLookupKey,
   resolveCanonicalFeatName,
+  resolveCanonicalSkillKey,
 } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
 import { FeatChoiceResolver, normalizeFeatChoiceKey } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
@@ -75,6 +76,128 @@ function snapshotHasScopedFeat(snapshot, baseFeatName, choice) {
   );
 }
 
+function choiceAliases(value) {
+  const key = normalizeFeatChoiceKey(value);
+  const aliases = new Set();
+  const add = (raw) => {
+    const normalized = normalizeFeatChoiceKey(raw);
+    if (!normalized) return;
+    aliases.add(normalized);
+    aliases.add(normalized.replace(/_/g, '-'));
+    aliases.add(normalized.replace(/-/g, '_'));
+  };
+  add(key);
+  const skillKey = resolveCanonicalSkillKey(value);
+  if (skillKey) add(skillKey);
+
+  const hyphen = key.replace(/_/g, '-');
+  const addPair = (a, b) => {
+    if (aliases.has(a) || aliases.has(a.replace(/-/g, '_'))) add(b);
+    if (aliases.has(b) || aliases.has(b.replace(/-/g, '_'))) add(a);
+  };
+  addPair('lightsaber', 'lightsabers');
+  addPair('pistol', 'pistols');
+  addPair('rifle', 'rifles');
+  addPair('simple-weapon', 'simple-weapons');
+  addPair('advanced-melee-weapon', 'advanced-melee-weapons');
+  addPair('heavy-weapon', 'heavy-weapons');
+  addPair('melee-weapon', 'melee-weapons');
+  addPair('exotic-weapon', 'exotic-weapons');
+  if (hyphen.endsWith('s') && hyphen.length > 1) add(hyphen.slice(0, -1));
+  if (hyphen && !hyphen.endsWith('s')) add(`${hyphen}s`);
+  return aliases;
+}
+
+function choiceProviderHasTarget(providers, target) {
+  const targetAliases = choiceAliases(target);
+  if (!targetAliases.size) return false;
+  return (providers || []).some((entry) => {
+    const providerAliases = new Set();
+    for (const candidate of [
+      FeatChoiceResolver.getSelectedChoiceKey?.(entry),
+      entry?.key,
+      entry?.id,
+      entry?.value,
+      entry?.group,
+      entry?.weaponGroup,
+      entry?.skill,
+      entry?.skillKey,
+      entry?.name,
+      entry?.label,
+      typeof entry === 'string' ? entry : null,
+    ]) {
+      for (const alias of choiceAliases(candidate)) providerAliases.add(alias);
+    }
+    return Array.from(providerAliases).some(alias => targetAliases.has(alias));
+  });
+}
+
+function choiceTargetFromRequirement(req, opts = {}) {
+  const explicitChoice = opts.selectedChoice || opts.candidateChoice || req?.selectedChoice || req?.candidateChoice;
+  if (explicitChoice) return explicitChoice;
+  const choice = req?.choice || req?.selection || null;
+  return (choice?.key || choice?.value || choice?.id || choice?.group || choice?.weaponGroup || choice?.skill || choice?.skillKey || choice?.name || choice?.label)
+    || req?.key
+    || req?.name
+    || req?.weaponGroup
+    || req?.group
+    || req?.weapon
+    || req?.skill
+    || req?.skillKey
+    || req?.skillName
+    || null;
+}
+
+function providerBaseLabel(kind) {
+  return {
+    weapon_proficiency: 'Weapon Proficiency',
+    weapon_focus: 'Weapon Focus',
+    greater_weapon_focus: 'Greater Weapon Focus',
+    weapon_specialization: 'Weapon Specialization',
+    greater_weapon_specialization: 'Greater Weapon Specialization',
+    skill_training: 'Skill Training',
+    trained_skill: 'Skill Training',
+    skill_focus: 'Skill Focus',
+    double_attack_weapon: 'Double Attack',
+    double_attack_followup_weapon: 'Double Attack',
+    triple_attack_weapon: 'Triple Attack',
+    return_fire_weapon: 'Return Fire',
+    triple_crit_specialist_weapon: 'Weapon Specialization',
+    weapon_focus_choice: 'Weapon Focus',
+    weapon_group_or_exotic: 'Weapon Proficiency',
+    melee_weapon_or_group: 'Weapon Proficiency',
+  }[kind] || String(kind || 'choice').replace(/_/g, ' ');
+}
+
+function providerBaseName(kind) {
+  return {
+    weapon_proficiency: 'weapon proficiency',
+    weapon_focus: 'weapon focus',
+    greater_weapon_focus: 'greater weapon focus',
+    weapon_specialization: 'weapon specialization',
+    greater_weapon_specialization: 'greater weapon specialization',
+    skill_training: 'skill training',
+    trained_skill: 'skill training',
+    skill_focus: 'skill focus',
+    double_attack_weapon: 'double attack',
+    double_attack_followup_weapon: 'double attack',
+    triple_attack_weapon: 'triple attack',
+    weapon_focus_choice: 'weapon focus',
+    weapon_group_or_exotic: 'weapon proficiency',
+    melee_weapon_or_group: 'weapon proficiency',
+  }[kind] || kind;
+}
+
+function choiceProviderFallback(snapshot, kind, target) {
+  const base = providerBaseName(kind);
+  if (!target) {
+    return snapshot?.feats?.hasAnyChoice?.(base) || snapshot?.talents?.hasAnyChoice?.(base) || false;
+  }
+  return snapshot?.feats?.hasChoice?.(base, target)
+    || snapshot?.talents?.hasChoice?.(base, target)
+    || false;
+}
+
 // ── Individual requirement evaluators ────────────────────────────
 
 /** Evaluate a feat requirement (plain or scoped). */
@@ -83,6 +206,20 @@ function evalFeat(snapshot, req, opts) {
   const choice = req.choice;
 
   if (choice && (choice.name || choice.key)) {
+    const scopedKind = {
+      'weapon focus': 'weapon_focus',
+      'greater weapon focus': 'greater_weapon_focus',
+      'weapon specialization': 'weapon_specialization',
+      'greater weapon specialization': 'greater_weapon_specialization',
+      'weapon proficiency': 'weapon_proficiency',
+      'exotic weapon proficiency': 'weapon_proficiency',
+      'skill training': 'skill_training',
+      'skill focus': 'skill_focus',
+      'double attack': 'double_attack_weapon',
+      'triple attack': 'triple_attack_weapon',
+    }[looseKey(req.baseName || featName)];
+    if (scopedKind) return evalChoiceProvider(snapshot, { ...req, type: scopedKind }, opts);
+
     // Scoped feat: must match BOTH base feat AND choice
     const passed = snapshotHasScopedFeat(snapshot, featName, choice)
       || houseruleHasFeat(opts.houseruleFeats, featName);
@@ -634,52 +771,41 @@ function evalArmorProficiency(snapshot, req, opts) {
  * Evaluate weapon proficiency/focus/specialization requirements.
  * Falls back to snapshot feat index when FeatChoiceResolver is unavailable.
  */
-function evalWeaponChoice(snapshot, req, opts) {
+function evalChoiceProvider(snapshot, req, opts) {
   const actor = snapshot.actor;
   const pending = snapshot.pending;
-  const reqType = req.type; // 'weapon_proficiency', 'weapon_focus', 'weapon_specialization'
+  const reqType = req.type === 'trained_skill' || req.type === 'skill' ? 'skill_training' : req.type;
+  let target = choiceTargetFromRequirement(req, opts);
+  if (target && looseKey(target) === looseKey(providerBaseName(reqType))) target = null;
+  const baseLabel = providerBaseLabel(reqType);
 
-  // No specific target (placeholder "chosen weapon") — check if any exists
-  const target = req.key || req.name || null;
-  if (!target) {
-    // Check if any proficiency/focus/spec exists
-    const baseName = reqType === 'weapon_proficiency'
-      ? 'weapon proficiency'
-      : reqType === 'weapon_focus' ? 'weapon focus' : 'weapon specialization';
-    const hasAny = snapshot.feats.hasAnyChoice(baseName);
-    return {
-      passed: hasAny,
-      advisory: !hasAny, // Advisory if we can't confirm
-      unresolved: !hasAny,
-      requirement: req,
-      message: hasAny ? '' : `Requires a ${baseName} feat`,
-    };
+  if (reqType === 'skill_training' && target) {
+    const skillKey = resolveCanonicalSkillKey(target) || target;
+    if (snapshot.skills?.hasTrained?.(skillKey)) {
+      return { passed: true, advisory: false, unresolved: false, requirement: req, message: '' };
+    }
   }
 
-  // Try FeatChoiceResolver if available (most accurate)
+  if (reqType === 'skill_focus' && target) {
+    const skillKey = resolveCanonicalSkillKey(target) || target;
+    if (snapshot.skills?.hasFocus?.(skillKey)) {
+      return { passed: true, advisory: false, unresolved: false, requirement: req, message: '' };
+    }
+  }
+
   try {
     if (actor) {
-      let providers = [];
-      if (reqType === 'weapon_proficiency' && FeatChoiceResolver.getWeaponProficiencyChoices) {
-        providers = FeatChoiceResolver.getWeaponProficiencyChoices(actor, FeatChoiceResolver._registry || {}, pending);
-      } else if (reqType === 'weapon_focus' && FeatChoiceResolver.getWeaponFocusChoices) {
-        providers = FeatChoiceResolver.getWeaponFocusChoices(actor, pending);
-      } else if (FeatChoiceResolver._getChoiceEntriesByKind) {
-        providers = FeatChoiceResolver._getChoiceEntriesByKind(actor, reqType, pending);
-      }
-
+      const providers = FeatChoiceResolver.getChoiceProviderEntries?.(actor, reqType, pending)
+        || FeatChoiceResolver._getChoiceEntriesByKind?.(actor, reqType, pending)
+        || [];
       if (providers.length > 0) {
-        const targetKey = normalizeFeatChoiceKey(target);
-        const has = providers.some((entry) => {
-          const k = FeatChoiceResolver.getSelectedChoiceKey?.(entry);
-          return k && k === targetKey;
-        });
+        const passed = target ? choiceProviderHasTarget(providers, target) : true;
         return {
-          passed: has,
+          passed,
           advisory: false,
           unresolved: false,
           requirement: req,
-          message: has ? '' : `Requires ${req.type} (${target})`,
+          message: passed ? '' : `Requires ${baseLabel}${target ? ` (${target})` : ''}`,
         };
       }
     }
@@ -687,21 +813,18 @@ function evalWeaponChoice(snapshot, req, opts) {
     SWSELogger.debug(`[PrereqEvaluator] FeatChoiceResolver error for ${reqType}: ${e?.message}`);
   }
 
-  // Fallback: snapshot feat choice index
-  const baseNames = {
-    weapon_proficiency: 'weapon proficiency',
-    weapon_focus: 'weapon focus',
-    weapon_specialization: 'weapon specialization',
-  };
-  const baseName = baseNames[reqType] || reqType;
-  const has = snapshot.feats.hasChoice(baseName, target);
+  const passed = choiceProviderFallback(snapshot, reqType, target);
   return {
-    passed: has,
+    passed,
     advisory: false,
     unresolved: false,
     requirement: req,
-    message: has ? '' : `Requires ${baseName} (${target})`,
+    message: passed ? '' : `Requires ${baseLabel}${target ? ` (${target})` : ''}`,
   };
+}
+
+function evalWeaponChoice(snapshot, req, opts) {
+  return evalChoiceProvider(snapshot, req, opts);
 }
 
 /**
@@ -792,7 +915,20 @@ const EVALUATORS = {
   armor_proficiency: evalArmorProficiency,
   weapon_proficiency: evalWeaponChoice,
   weapon_focus: evalWeaponChoice,
+  greater_weapon_focus: evalChoiceProvider,
   weapon_specialization: evalWeaponChoice,
+  greater_weapon_specialization: evalChoiceProvider,
+  skill_training: evalChoiceProvider,
+  trained_skill: evalChoiceProvider,
+  skill_focus: evalChoiceProvider,
+  double_attack_weapon: evalChoiceProvider,
+  double_attack_followup_weapon: evalChoiceProvider,
+  triple_attack_weapon: evalChoiceProvider,
+  return_fire_weapon: evalChoiceProvider,
+  triple_crit_specialist_weapon: evalChoiceProvider,
+  weapon_focus_choice: evalChoiceProvider,
+  weapon_group_or_exotic: evalChoiceProvider,
+  melee_weapon_or_group: evalChoiceProvider,
   // ── Logic ──
   or: evalOr,
   // ── Unknown / advisory ──
