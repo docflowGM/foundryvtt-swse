@@ -556,6 +556,20 @@ export class GMLocationsSurfaceController {
   }
 
   _wireDrops(pageElement, signal) {
+    pageElement.querySelectorAll('[data-location-library-drop-zone]').forEach((zone) => {
+      zone.addEventListener('dragover', (event) => {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'copy';
+        zone.classList.add('is-drag-over');
+      }, { signal });
+      zone.addEventListener('dragleave', () => zone.classList.remove('is-drag-over'), { signal });
+      zone.addEventListener('drop', async (event) => {
+        event.preventDefault();
+        zone.classList.remove('is-drag-over');
+        await this._importLibraryDrop(event);
+      }, { signal });
+    });
+
     pageElement.querySelectorAll('[data-location-drop-zone]').forEach((zone) => {
       zone.addEventListener('dragover', event => event.preventDefault(), { signal });
       zone.addEventListener('drop', async (event) => {
@@ -589,6 +603,49 @@ export class GMLocationsSurfaceController {
         await this._refresh('gm-location-drop-link');
       }, { signal });
     });
+  }
+
+
+  async _importLibraryDrop(event) {
+    const payload = DossierDragDropService.readPayload(event);
+    const seedId = await this._seedIdFromDropPayload(payload);
+    if (!seedId) {
+      ui.notifications?.warn?.('Drop a JournalEntry from the Locations - Quick Library compendium here, or use the Import Location wizard.');
+      return;
+    }
+    await this._importLibrarySeedIds([seedId], 'gm-location-compendium-drop-import', {
+      includeChildren: true,
+      includeAtlasFacts: true,
+      revealState: 'hidden',
+      knownToPlayers: false
+    });
+  }
+
+  async _seedIdFromDropPayload(payload = {}) {
+    if (!payload) return '';
+    const direct = String(payload.locationSeedId || payload.seedId || payload.id || '').trim();
+    if (direct && LocationRegistryService.getLibrarySeed(direct)) return direct;
+
+    let document = null;
+    const uuid = String(payload.uuid || '').trim();
+    if (uuid) {
+      try { document = await fromUuid(uuid); } catch (_err) { document = null; }
+    }
+
+    const pack = String(payload.pack || '').trim();
+    const id = String(payload.id || '').trim();
+    const type = String(payload.type || '').toLowerCase();
+    if (!document && pack && id && (type === 'journalentry' || type === 'journal')) {
+      try { document = await fromUuid(`Compendium.${pack}.${id}`); } catch (_err) { document = null; }
+    }
+
+    const flagSeedId = String(document?.getFlag?.('swse', 'locationSeedId') || document?.flags?.swse?.locationSeedId || document?.flags?.swse?.locationSeed?.id || '').trim();
+    if (flagSeedId && LocationRegistryService.getLibrarySeed(flagSeedId)) return flagSeedId;
+
+    const name = String(document?.name || payload.name || '').trim().toLowerCase();
+    if (!name) return '';
+    const match = LocationRegistryService.getLibrarySeeds().find(seed => String(seed.name || '').trim().toLowerCase() === name || String(seed.id || '').trim().toLowerCase() === name);
+    return match?.id || '';
   }
 
   _assertGM(action = 'use Locations controls') {
@@ -681,7 +738,7 @@ export class GMLocationsSurfaceController {
     const result = await LocationRegistryService.importLibrarySeeds(ids, {
       includeChildren: options.includeChildren !== false,
       includeAtlasFacts: options.includeAtlasFacts !== false,
-      revealState: text(options.revealState, 'hidden'),
+      revealState: String(options.revealState || 'hidden').trim() || 'hidden',
       knownToPlayers: options.knownToPlayers === true
     });
     const firstSeedId = result.seeds?.[0]?.id || ids[0] || '';

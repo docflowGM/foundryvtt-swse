@@ -259,7 +259,12 @@ export class GMIntelSurfaceService {
       return true;
     });
 
-    const selectedRecordId = cleanString(surfaceState.selectedRecordId || surfaceState.focusedRecordId || visibleCards[0]?.recordId || '');
+    const modal = surfaceState.modal && typeof surfaceState.modal === 'object' ? surfaceState.modal : null;
+    const modalRecordId = cleanString(modal?.recordId || '');
+    const editingNewRecord = modal?.type === 'editor' && !modalRecordId;
+    const selectedRecordId = editingNewRecord
+      ? ''
+      : cleanString(modalRecordId || surfaceState.selectedRecordId || surfaceState.focusedRecordId || visibleCards[0]?.recordId || '');
     const selectedRecord = selectedRecordId ? await HolonetIntelService.getIntelById(selectedRecordId) : null;
     const selectedCard = selectedRecord ? cardFromRecord(selectedRecord, factions) : null;
     const editor = editorFromRecord(selectedRecord);
@@ -290,6 +295,10 @@ export class GMIntelSurfaceService {
         hasIntel: cards.length > 0,
         hasVisibleIntel: visibleCards.length > 0,
         selectedRecordId,
+        modal: {
+          isEditor: modal?.type === 'editor',
+          recordId: modalRecordId
+        },
         editor,
         stats,
         statusOptions: optionsFrom(Object.values(INTEL_STATUS), filters.status, { includeAll: true, allLabel: 'All statuses' }),

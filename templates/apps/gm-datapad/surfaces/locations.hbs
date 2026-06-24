@@ -140,10 +140,14 @@
             {{/each}}
           </div>
         {{else}}
-          <div class="swse-empty-state gm-phase5-location-empty">
+          <div class="swse-empty-state gm-phase5-location-empty gm-location-compendium-drop" data-location-library-drop-zone>
             <h3>No locations found</h3>
-            <p>Import a quick location or create one with the guided wizard.</p>
-            <p class="gm-location-empty-hint">Use the Import Location or New Location command cards above.</p>
+            <p>Import a quick location, create one with the guided wizard, or drag a record from the <strong>Locations - Quick Library</strong> compendium onto this panel.</p>
+            <p class="gm-location-empty-hint">Drop a quick-location Journal here to import it immediately, or use Import Location for multi-select.</p>
+            <div class="gm-location-empty-actions">
+              <button type="button" class="swse-mini-button primary" data-location-action="open-import-modal">Import Location</button>
+              <button type="button" class="swse-mini-button" data-location-action="new">New Location</button>
+            </div>
           </div>
         {{/if}}
       </section>
@@ -216,10 +220,10 @@
           </div>
         </section>
       {{else}}
-        <section class="swse-location-panel gm-phase5-location-panel gm-location-empty-detail">
+        <section class="swse-location-panel gm-phase5-location-panel gm-location-empty-detail gm-location-compendium-drop" data-location-library-drop-zone>
           <span class="gm-phase5-location-eyebrow">No Selection</span>
           <h3>Import or create the first location</h3>
-          <p>Locations are easier as modal workflows: import from the Quick Library, or create a new record step by step.</p>
+          <p>Locations are easier as modal workflows: import from the Quick Library, create a new record step by step, or drag a quick-location Journal from the compendium onto this panel.</p>
           <div class="swse-location-editor-actions">
             <button type="button" class="swse-mini-button primary" data-location-action="open-import-modal">Import Location</button>
             <button type="button" class="swse-mini-button" data-location-action="new">New Location</button>

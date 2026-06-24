@@ -118,6 +118,7 @@ export class GMIntelSurfaceController {
     this._wireFilters(pageElement, signal);
     this._wireIntelActions(pageElement, signal);
     this._wireForms(pageElement, signal);
+    this._wireWizardControls(pageElement, signal);
   }
 
   destroy() {
@@ -181,8 +182,29 @@ export class GMIntelSurfaceController {
         }
 
         if (action === 'new') {
-          this.host?.patchSurfaceState?.('intel', { selectedRecordId: '', selectedMode: 'create' }, { render: false });
-          await this._refresh('gm-intel-new');
+          this.host?.patchSurfaceState?.('intel', { selectedRecordId: '', selectedMode: 'create', modal: { type: 'editor', recordId: '' } }, { render: false });
+          await this._refresh('gm-intel-new-wizard');
+          return;
+        }
+
+        if (action === 'edit') {
+          if (!recordId) {
+            ui.notifications?.warn?.('Select an Intel record before editing.');
+            return;
+          }
+          this.host?.patchSurfaceState?.('intel', { selectedRecordId: recordId, selectedMode: 'edit', modal: { type: 'editor', recordId } }, { render: false });
+          await this._refresh('gm-intel-edit-wizard');
+          return;
+        }
+
+        if (action === 'close-modal') {
+          this.host?.patchSurfaceState?.('intel', { modal: null }, { render: false });
+          await this._refresh('gm-intel-close-modal');
+          return;
+        }
+
+        if (action === 'wizard-next' || action === 'wizard-back') {
+          this._shiftWizardPage(target.closest('[data-intel-wizard]'), action === 'wizard-next' ? 1 : -1);
           return;
         }
 
@@ -293,7 +315,7 @@ export class GMIntelSurfaceController {
           ui.notifications?.warn?.('Intel could not be saved.');
           return;
         }
-        this.host?.patchSurfaceState?.('intel', { selectedRecordId: record.id, selectedMode: 'edit' }, { render: false });
+        this.host?.patchSurfaceState?.('intel', { selectedRecordId: record.id, selectedMode: 'edit', modal: null }, { render: false });
         ui.notifications?.info?.(`Intel ${recordId ? 'updated' : 'draft created'}.`);
         await this._refresh('gm-intel-save');
       }, { signal });
@@ -311,10 +333,50 @@ export class GMIntelSurfaceController {
         const record = recordId
           ? await HolonetIntelService.updateIntel(recordId, payload)
           : await HolonetIntelService.createIntelDraft(payload);
-        if (record?.id) this.host?.patchSurfaceState?.('intel', { selectedRecordId: record.id }, { render: false });
+        if (record?.id) this.host?.patchSurfaceState?.('intel', { selectedRecordId: record.id, modal: null }, { render: false });
         ui.notifications?.info?.('Intel saved and marked ready.');
         await this._refresh('gm-intel-save-ready');
       }, { signal });
+    });
+  }
+
+
+  _wireWizardControls(pageElement, signal) {
+    pageElement.querySelectorAll('[data-intel-wizard]').forEach((wizard) => {
+      this._setWizardPage(wizard, 1);
+      wizard.addEventListener('change', (event) => {
+        const input = event.target;
+        if (!(input instanceof HTMLInputElement)) return;
+        const card = input.closest('.gm-intel-mode-card, .gm-intel-toggle-card');
+        if (card) card.classList.toggle('is-selected', input.checked);
+      }, { signal });
+    });
+  }
+
+  _shiftWizardPage(wizard, delta = 1) {
+    if (!wizard) return;
+    const maxPage = Math.max(1, ...Array.from(wizard.querySelectorAll('[data-intel-page]')).map(page => Number(page.dataset.intelPage || 1)).filter(Number.isFinite));
+    const current = Number(wizard.dataset.currentPage || 1);
+    this._setWizardPage(wizard, Math.max(1, Math.min(maxPage, current + delta)));
+  }
+
+  _setWizardPage(wizard, pageNumber = 1) {
+    if (!wizard) return;
+    const page = Math.max(1, Number(pageNumber) || 1);
+    wizard.dataset.currentPage = String(page);
+    wizard.querySelectorAll('[data-intel-page]').forEach(panel => panel.classList.toggle('is-active', Number(panel.dataset.intelPage || 1) === page));
+    wizard.querySelectorAll('[data-intel-step-indicator]').forEach(indicator => {
+      const index = Number(indicator.dataset.intelStepIndicator || 1);
+      indicator.classList.toggle('is-active', index === page);
+      indicator.classList.toggle('is-complete', index < page);
+    });
+    const maxPage = Math.max(1, ...Array.from(wizard.querySelectorAll('[data-intel-page]')).map(panel => Number(panel.dataset.intelPage || 1)).filter(Number.isFinite));
+    wizard.querySelectorAll('[data-intel-action="wizard-back"]').forEach(button => {
+      button.disabled = page <= 1;
+    });
+    wizard.querySelectorAll('[data-intel-action="wizard-next"]').forEach(button => {
+      button.disabled = page >= maxPage;
+      button.textContent = page >= maxPage ? 'Review Complete' : 'Next';
     });
   }
 
