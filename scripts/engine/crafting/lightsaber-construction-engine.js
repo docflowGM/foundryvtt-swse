@@ -185,6 +185,161 @@ export class LightsaberConstructionEngine {
     return this.#validateEligibility(actor);
   }
 
+  static #getActorItems(actor) {
+    const collection = actor?.items ?? [];
+    if (Array.isArray(collection)) return collection;
+    if (typeof collection.values === 'function') return Array.from(collection.values());
+    if (typeof collection.filter === 'function') return collection.filter(() => true);
+    return [];
+  }
+
+  static #normalizeFeatureKey(value) {
+    return String(value ?? '')
+      .toLowerCase()
+      .replace(/&amp;/g, 'and')
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim()
+      .replace(/\s+/g, ' ');
+  }
+
+  static #featureNameCandidates(value) {
+    if (!value) return [];
+    if (typeof value === 'string') return [value];
+    if (typeof value !== 'object') return [String(value)];
+    return [
+      value.name,
+      value.label,
+      value.title,
+      value.id,
+      value._id,
+      value.slug,
+      value.key,
+      value.system?.name,
+      value.system?.label,
+      value.system?.id,
+      value.system?.slug,
+      ...Object.keys(value || {})
+    ].filter(Boolean);
+  }
+
+  static #matchesAnyName(value, names = []) {
+    const accepted = new Set(names.map(name => this.#normalizeFeatureKey(name)).filter(Boolean));
+    if (!accepted.size) return false;
+    return this.#featureNameCandidates(value).some(candidate => accepted.has(this.#normalizeFeatureKey(candidate)));
+  }
+
+  static #scanSystemListsForName(system = {}, names = []) {
+    const listKeys = [
+      'features',
+      'featureList',
+      'classFeatures',
+      'startingFeatures',
+      'starting_features',
+      'grantedFeats',
+      'granted_feats',
+      'grantedProficiencies',
+      'granted_proficiencies',
+      'proficiencies',
+      'weaponProficiencies',
+      'weapon_proficiencies'
+    ];
+
+    for (const key of listKeys) {
+      const value = system?.[key];
+      if (!value) continue;
+      const entries = Array.isArray(value)
+        ? value
+        : (typeof value === 'object' ? Object.entries(value).flatMap(([entryKey, entryValue]) => [entryKey, entryValue]) : [value]);
+      if (entries.some(entry => this.#matchesAnyName(entry, names))) return true;
+    }
+
+    const weaponProfValue = system?.traits?.weaponProf?.value || system?.traits?.weaponProficiencies?.value;
+    if (Array.isArray(weaponProfValue) && weaponProfValue.some(entry => this.#matchesAnyName(entry, names))) return true;
+
+    return false;
+  }
+
+  static #classItemHasFeature(classItem, names = []) {
+    const system = classItem?.system || {};
+    const classLevel = Number(system.level ?? system.classLevel ?? system.value ?? 0) || 0;
+
+    if (this.#scanSystemListsForName(system, names)) return true;
+
+    const progressions = [
+      ...(Array.isArray(system.level_progression) ? system.level_progression : []),
+      ...(Array.isArray(system.levelProgression) ? system.levelProgression : []),
+      ...(Array.isArray(system.progression) ? system.progression : [])
+    ];
+
+    for (const row of progressions) {
+      const rowLevel = Number(row?.level ?? row?.lvl ?? 0) || 0;
+      if (rowLevel > 0 && classLevel > 0 && rowLevel > classLevel) continue;
+      const features = [
+        ...(Array.isArray(row?.features) ? row.features : []),
+        ...(Array.isArray(row?.grants) ? row.grants : []),
+        ...(Array.isArray(row?.grantedFeats) ? row.grantedFeats : []),
+        ...(Array.isArray(row?.grantedProficiencies) ? row.grantedProficiencies : [])
+      ];
+      if (features.some(feature => this.#matchesAnyName(feature, names))) return true;
+    }
+
+    return false;
+  }
+
+  static #actorHasNamedFeature(actor, names = [], { itemTypes = null } = {}) {
+    const allowedTypes = itemTypes ? new Set(itemTypes.map(type => String(type).toLowerCase())) : null;
+    for (const item of this.#getActorItems(actor)) {
+      const type = String(item?.type || '').toLowerCase();
+      if (allowedTypes && !allowedTypes.has(type)) continue;
+      if (this.#matchesAnyName(item, names)) return true;
+      if (this.#matchesAnyName(item?.system, names)) return true;
+      if (type === 'class' && this.#classItemHasFeature(item, names)) return true;
+      if (this.#scanSystemListsForName(item?.system || {}, names)) return true;
+    }
+    return false;
+  }
+
+  static #getNamedClassLevel(actor, names = []) {
+    let total = 0;
+    for (const item of this.#getActorItems(actor)) {
+      if (String(item?.type || '').toLowerCase() !== 'class') continue;
+      const classMatches = this.#matchesAnyName(item, names)
+        || this.#matchesAnyName(item?.system, names)
+        || this.#matchesAnyName(item?.system?.class_name, names)
+        || this.#matchesAnyName(item?.system?.classId, names);
+      if (!classMatches) continue;
+      total += Number(item?.system?.level ?? item?.system?.classLevel ?? item?.system?.value ?? 0) || 0;
+    }
+    return total;
+  }
+
+  static #actorHasForceSensitivity(actor) {
+    if (actor?.system?.forceSensitive === true) return true;
+    if (actor?.system?.force?.sensitive === true) return true;
+    if (actor?.system?.traits?.forceSensitive === true) return true;
+    return this.#actorHasNamedFeature(actor, ['Force Sensitivity', 'Force Sensitive', 'swse feat force sensitivity'], {
+      itemTypes: ['feat', 'class', 'classfeature', 'class_feature', 'feature']
+    });
+  }
+
+  static #actorHasLightsaberProficiency(actor) {
+    if (this.#scanSystemListsForName(actor?.system || {}, [
+      'Weapon Proficiency (Lightsabers)',
+      'Weapon Proficiency Lightsabers',
+      'Lightsabers'
+    ])) return true;
+
+    return this.#actorHasNamedFeature(actor, [
+      'Weapon Proficiency (Lightsabers)',
+      'Weapon Proficiency Lightsabers',
+      'Lightsaber Proficiency',
+      'Lightsabers',
+      'swse feat weapon proficiency lightsabers'
+    ], {
+      itemTypes: ['feat', 'proficiency', 'class', 'classfeature', 'class_feature', 'feature']
+    });
+  }
+
   static getEditState(item) {
     const canonical = item?.flags?.["foundryvtt-swse"] ?? {};
     const legacy = item?.flags?.swse ?? {};
@@ -647,7 +802,10 @@ export class LightsaberConstructionEngine {
 
       // Get level authorities (NOT raw field access)
       const heroicLevel = getHeroicLevel(actor);
-      const jediLevel = getClassLevel(actor, "jedi");
+      const jediLevel = Math.max(
+        Number(getClassLevel(actor, "jedi")) || 0,
+        this.#getNamedClassLevel(actor, ["Jedi", "jedi"])
+      );
 
       // Level gating based on mode
       switch (mode) {
@@ -693,35 +851,20 @@ export class LightsaberConstructionEngine {
           break;
       }
 
-      // Check Force Sensitivity feat/flag
-      // (Use the authoritative system.forceSensitive flag as primary)
-      if (actor.system?.forceSensitive !== true) {
-        // Check for feat by structured ID from uuid-map
-        // Force Sensitivity → 'swse-feat-force-sensitivity'
-        const hasForceSensitivity = actor.items?.some(
-          item =>
-            item.type === "feat" &&
-            (item.system?.id === "swse-feat-force-sensitivity" ||
-              item.system?.id === "force-sensitivity")
-        );
-
-        if (!hasForceSensitivity) {
-          return {
-            eligible: false,
-            reason: "missing_force_sensitivity"
-          };
-        }
+      // Check Force Sensitivity across canonical flags, owned feats, and class-granted
+      // features. Jedi and several imported/progression actors grant this as a
+      // starting class feature rather than as a normalized feat item.
+      if (!this.#actorHasForceSensitivity(actor)) {
+        return {
+          eligible: false,
+          reason: "missing_force_sensitivity"
+        };
       }
 
-      // Check Weapon Proficiency (Lightsabers)
-      // Weapon Proficiency (Lightsabers) → 'swse-feat-weapon-proficiency-lightsabers'
-      const hasLightsaberProficiency = actor.items?.some(
-        item =>
-          item.type === "feat" &&
-          (item.system?.id === "swse-feat-weapon-proficiency-lightsabers")
-      );
-
-      if (!hasLightsaberProficiency) {
+      // Check Weapon Proficiency (Lightsabers) across normalized feat IDs,
+      // actor proficiency arrays, and class-granted starting features. Jedi
+      // actors frequently receive this from class data instead of an owned feat.
+      if (!this.#actorHasLightsaberProficiency(actor)) {
         return {
           eligible: false,
           reason: "missing_lightsaber_proficiency"

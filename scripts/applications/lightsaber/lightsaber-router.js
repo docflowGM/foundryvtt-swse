@@ -1,6 +1,39 @@
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 
+
+let lightsaberConstructionHooksRegistered = false;
+const pendingPromptKeys = new Set();
+
+export function registerLightsaberConstructionHooks() {
+  if (lightsaberConstructionHooksRegistered) return;
+  lightsaberConstructionHooksRegistered = true;
+  if (typeof Hooks === 'undefined') return;
+
+  Hooks.on('swse:level-up-complete', (actor, newLevel = null, context = {}) => {
+    if (!actor) return;
+    const actorId = actor.id || actor._id || actor.uuid || actor.name || 'actor';
+    const levelKey = newLevel ?? actor.system?.level ?? 'unknown';
+    const promptKey = `${actorId}:${levelKey}:lightsaber-construction`;
+    if (pendingPromptKeys.has(promptKey)) return;
+    pendingPromptKeys.add(promptKey);
+
+    setTimeout(async () => {
+      try {
+        await promptLightsaberConstructionIfEligible(actor, {
+          newLevel: Number(newLevel ?? actor.system?.level ?? 0) || null,
+          source: 'levelup',
+          context
+        });
+      } catch (err) {
+        console.warn('SWSE [LightsaberConstruction] Level-up prompt failed', err);
+      } finally {
+        pendingPromptKeys.delete(promptKey);
+      }
+    }, 300);
+  });
+}
+
 export function isLightsaberDocument(item) {
   return LightsaberConstructionEngine.isLightsaberItem(item);
 }

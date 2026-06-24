@@ -2978,6 +2978,15 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const canBuild = editItem
       ? canRoll
       : !!(canRoll && (this._lightsaber.selectedCheckMode !== 'take10' || canTake10Build));
+    const lightsaberBlockedReason = canBuild
+      ? null
+      : (slotState.isOverflowing
+        ? 'Accessory slot budget exceeded.'
+        : (editItem
+          ? 'Select a compatible crystal and hilt configuration.'
+          : (this._lightsaber.selectedCheckMode === 'take10' && preview && !preview.canTake10
+            ? 'Take 10 does not meet the build DC.'
+            : this._formatLightsaberEligibilityReason(constructionSummary.reason))));
     const bladeHex = lightsaberVisualProfile.bladeHex;
     const hiltKind = this._normalizeLightsaberHiltKind(chassis);
     const steps = this._getLightsaberStepState({ canChangeChassis, activeTab });
@@ -3048,7 +3057,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         selectedChassisName: chassis?.name || 'Fixed Chassis',
         chassisLockReason: editItem
           ? 'This is an existing/free lightsaber. Chassis construction is locked; tune the crystal, hilt accessories, and blade color here.'
-          : (constructionSummary.reason || 'Full chassis construction unlocks at level 7 for eligible Force-sensitive lightsaber users.'),
+          : this._formatLightsaberEligibilityReason(constructionSummary.reason),
         bladeHex,
         visualProfile: lightsaberVisualProfile,
         hiltKind,
@@ -3125,7 +3134,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         slotPercent: slotState.totalAvailable > 0 ? Math.min(100, Math.max(0, Math.round((slotState.usedSlots / slotState.totalAvailable) * 100))) : 0,
         maxTemplatesPerItem: 0,
         canApply: canBuild,
-        blockedReason: canBuild ? null : (slotState.isOverflowing ? 'Accessory slot budget exceeded.' : (editItem ? 'Select a compatible crystal and hilt configuration.' : (this._lightsaber.selectedCheckMode === 'take10' && preview && !preview.canTake10 ? 'Take 10 does not meet the build DC.' : 'Full lightsaber construction requires level 7 and Force sensitivity.'))),
+        blockedReason: lightsaberBlockedReason,
         applyLabel: editItem ? 'Tune Lightsaber' : (canBuild ? `Forge Lightsaber (${totalCost} cr)` : (slotState.isOverflowing ? 'Accessory Slot Overflow' : 'Forge Blocked'))
       }
     };
