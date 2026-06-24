@@ -1,6 +1,37 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { SkillFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/skills/skill-feat-resolver.js";
+
+const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
+
+function athleticsConsolidationActive() {
+  try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; }
+  catch (_err) { return false; }
+}
+
+function isAthleticsComponentKey(skillKey) {
+  return ATHLETICS_COMPONENT_KEYS.includes(String(skillKey ?? '').toLowerCase());
+}
+
+function getAthleticsSkillForActor(actor) {
+  if (!actor || !athleticsConsolidationActive()) return null;
+  const skills = actor.system?.skills ?? {};
+  const existing = skills.athletics ?? {};
+  const trained = existing.trained === true || ATHLETICS_COMPONENT_KEYS.some((key) => skills[key]?.trained === true);
+  const focused = existing.focused === true || ATHLETICS_COMPONENT_KEYS.some((key) => skills[key]?.focused === true);
+  const miscMod = Number.isFinite(Number(existing.miscMod))
+    ? Number(existing.miscMod)
+    : ATHLETICS_COMPONENT_KEYS.reduce((sum, key) => sum + (Number(skills[key]?.miscMod) || 0), 0);
+  return {
+    ...existing,
+    label: existing.label ?? 'Athletics',
+    selectedAbility: existing.selectedAbility || 'dex',
+    trained,
+    focused,
+    miscMod
+  };
+}
+
 /**
  * Skill Use Application Filtering and Rolling Utility
  * Handles filtering skill use applications based on character capabilities
@@ -232,13 +263,19 @@ export class SkillUseFilter {
       return null;
     }
 
+    if (athleticsConsolidationActive() && isAthleticsComponentKey(skillKey)) {
+      skillKey = 'athletics';
+    }
+
     const substitution = SkillFeatResolver.resolveSkillUseSubstitution(actor, skillUse, skillKey, options);
     if (substitution?.skillKey) {
-      skillKey = substitution.skillKey;
+      skillKey = athleticsConsolidationActive() && isAthleticsComponentKey(substitution.skillKey) ? 'athletics' : substitution.skillKey;
       ui?.notifications?.info?.(`${substitution.sourceName}: using ${SkillFeatResolver.getSkillLabel(skillKey)} for this skill use.`);
     }
 
-    const skill = actor.system.skills?.[skillKey] ?? actor.system.derived?.skills?.[skillKey];
+    const skill = actor.system.skills?.[skillKey]
+      ?? actor.system.derived?.skills?.[skillKey]
+      ?? (skillKey === 'athletics' ? getAthleticsSkillForActor(actor) : null);
     if (!skill) {
       ui.notifications.warn(`Skill ${skillKey} not found on ${actor.name}`);
       return null;

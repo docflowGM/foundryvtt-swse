@@ -44,20 +44,18 @@
             {{/each}}
           </div>
 
+          {{#if row.chips.length}}
           <div class="swse-concept-effective-defense-row__mods">
-            {{#if row.chips.length}}
-              {{#each row.chips as |chip|}}
-                <span class="swse-concept-defense-mod-chip swse-concept-defense-mod-chip--{{chip.tone}}">
-                  {{chip.label}} {{chip.valueLabel}}
-                </span>
-              {{/each}}
-            {{else}}
-              <span class="swse-concept-defense-mod-chip swse-concept-defense-mod-chip--neutral">No combat status mods</span>
-            {{/if}}
+            {{#each row.chips as |chip|}}
+              <span class="swse-concept-defense-mod-chip swse-concept-defense-mod-chip--{{chip.tone}}">
+                {{chip.label}} {{chip.valueLabel}}
+              </span>
+            {{/each}}
           </div>
+          {{/if}}
 
           <div class="swse-concept-effective-defense-row__total">
-            <span>Effective</span>
+            <span>Total</span>
             {{#if row.blocked}}
               <strong>BLOCK</strong>
             {{else}}

@@ -955,8 +955,8 @@ renderDetailsPanel(focusedItem) {
   }
 
   _getAbilityRecord(character = {}, abilityKey = 'int') {
-    return character?.abilities?.[abilityKey]
-      || character?.attributes?.[abilityKey]
+    return character?.attributes?.[abilityKey]
+      || character?.abilities?.[abilityKey]
       || character?.stats?.abilities?.[abilityKey]
       || {};
   }

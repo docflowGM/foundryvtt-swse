@@ -1400,11 +1400,12 @@ export class PanelContextBuilder {
     const bab = Number(system.baseAttackBonus ?? derived.bab) || 0;
 
     const grappleStrMod = Number(derived?.attributes?.str?.mod ?? system?.attributes?.str?.mod ?? system?.abilities?.str?.mod ?? 0) || 0;
-    const grappleHalfLevel = Number(derived?.identity?.halfLevel ?? Math.floor((Number(system?.level ?? derived?.identity?.level ?? 1) || 1) / 2)) || 0;
-    const grappleSizeTable = { fine: -16, diminutive: -12, tiny: -8, small: -4, medium: 0, large: 4, huge: 8, gargantuan: 12, colossal: 16 };
+    const grappleDexMod = Number(derived?.attributes?.dex?.mod ?? system?.attributes?.dex?.mod ?? system?.abilities?.dex?.mod ?? 0) || 0;
+    const grappleAbilityMod = Math.max(grappleStrMod, grappleDexMod);
+    const grappleSizeTable = { fine: -8, diminutive: -4, tiny: -2, small: -1, medium: 0, large: 4, huge: 8, gargantuan: 12, colossal: 16 };
     const grappleSizeMod = grappleSizeTable[String(system?.size ?? system?.traits?.size ?? system?.droidSize ?? 'medium').toLowerCase()] ?? 0;
     const grappleSpeciesMod = Number(system?.speciesCombatBonuses?.grapple ?? system?.speciesTraitBonuses?.combat?.grapple ?? 0) || 0;
-    const grappleFallback = bab + grappleStrMod + grappleHalfLevel + grappleSizeMod + grappleSpeciesMod;
+    const grappleFallback = bab + grappleAbilityMod + grappleSizeMod + grappleSpeciesMod;
     const grappleCandidate = Number(derived.grappleBonus);
     const grappleBonus = Number.isFinite(grappleCandidate) && (grappleCandidate !== 0 || grappleFallback === 0)
       ? grappleCandidate

@@ -112,7 +112,62 @@ function isTruthyEquipState(value) {
   return false;
 }
 
-function isItemEquipped(item) {
+function isDroidActorLike(actor) {
+  return String(actor?.type ?? '').toLowerCase() === 'droid'
+    || actor?.system?.isDroid === true
+    || String(actor?.system?.actorMode ?? '').toLowerCase() === 'droid';
+}
+
+function listTextValues(...values) {
+  const out = [];
+  for (const value of values) {
+    if (Array.isArray(value)) {
+      out.push(...value.map((entry) => String(entry ?? '').trim()).filter(Boolean));
+    } else if (value && typeof value === 'object') {
+      out.push(...Object.values(value).map((entry) => String(entry ?? '').trim()).filter(Boolean));
+    } else {
+      const text = String(value ?? '').trim();
+      if (text) out.push(text);
+    }
+  }
+  return out;
+}
+
+function isNaturalWeaponItem(item) {
+  const system = item?.system ?? {};
+  const swseFlags = item?.flags?.swse ?? {};
+  if (swseFlags.isNaturalWeapon === true || swseFlags.alwaysArmed === true) return true;
+
+  const naturalFields = listTextValues(
+    system.category,
+    system.subcategory,
+    system.proficiency,
+    system.weaponCategory,
+    system.weaponType,
+    system.source
+  );
+  if (naturalFields.some((value) => value.toLowerCase() === 'natural')) return true;
+
+  const descriptors = listTextValues(system.properties, system.traits, system.tags);
+  return descriptors.some((value) => /natural\s+weapon/i.test(value));
+}
+
+function isAutoEquippedNaturalWeapon(item) {
+  const swseFlags = item?.flags?.swse ?? {};
+  return isNaturalWeaponItem(item)
+    && (isTruthyEquipState(swseFlags.autoEquipped) || swseFlags.alwaysArmed === true);
+}
+
+function isIntegratedDroidWeapon(item, actor) {
+  if (!isDroidActorLike(actor) || !item) return false;
+  const system = item.system ?? {};
+  return isAttackItem(item)
+    && (isTruthyEquipState(system.integrated)
+      || isTruthyEquipState(system.droidIntegrated)
+      || isTruthyEquipState(item?.flags?.swse?.integrated));
+}
+
+function isItemEquipped(item, actor = null) {
   const system = item?.system ?? {};
   return isTruthyEquipState(system.equipped)
     || isTruthyEquipState(system.isEquipped)
@@ -122,7 +177,8 @@ function isItemEquipped(item) {
     || isTruthyEquipState(system.equippable?.active)
     || isTruthyEquipState(system.activation?.active)
     || isTruthyEquipState(item?.flags?.swse?.equipped)
-    || isTruthyEquipState(item?.flags?.swse?.autoEquipped);
+    || isAutoEquippedNaturalWeapon(item)
+    || isIntegratedDroidWeapon(item, actor);
 }
 
 function firstDefined(...values) {
@@ -417,8 +473,8 @@ function mirrorAttacks(actor, system) {
   const list = [];
 
   for (const w of weapons) {
-    // Include equipped/readied/activated weapons, lightsabers, and natural weapons with autoEquipped flag.
-    if (!isItemEquipped(w)) continue;
+    // Include equipped/readied/activated weapons, lightsabers, true natural weapons, and integrated droid weapons.
+    if (!isItemEquipped(w, actor)) continue;
 
     const data = w.system ?? {};
     const resources = buildResourcesFromItem(w, RESOURCE_TICK_CAP);

@@ -67,7 +67,7 @@ import { SkillUseFilter } from "/systems/foundryvtt-swse/scripts/utils/skill-use
 import { CustomLanguageDialog } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/custom-language-dialog.js";
 import { DroidSheetContextBuilder } from "/systems/foundryvtt-swse/scripts/sheets/v2/droid-sheet/context-builder.js";
 import { NpcProfileBuilder } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-profile-builder.js";
-import { buildNpcConceptAbilities, buildNpcConceptSheetContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/npc-sheet.js";
+import { buildNpcConceptAbilities, buildNpcConceptSheetContext, isNpcSheetWritablePath, isNpcStatblockAuthorityPath, isQuietNpcSheetPath } from "/systems/foundryvtt-swse/scripts/sheets/v2/npc-sheet.js";
 import { applyActorSheetModeClasses, buildActorSheetModeContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/actor-sheet-mode.js";
 import { buildVehicleSheetContext } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-context-builder.js";
 import { VehicleRulesAdapter } from "/systems/foundryvtt-swse/scripts/sheets/v2/vehicle-sheet/vehicle-rules-adapter.js";
@@ -91,7 +91,7 @@ import { traceLog, actorSummary, payloadSummary } from "/systems/foundryvtt-swse
 import { captureHydrationSnapshot, emitHydrationError, emitHydrationWarning, getRecentHydrationMutation, recordHydrationMutation, summarizeBiographyPanel, summarizeDefensePanel } from "/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js";
 // Phase 8: Character sheet decomposition - import focused modules
 import { registerListeners } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/listeners.js";
-import { handleFormSubmission, isDirectFieldMutationPath } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
+import { coerceSingleFieldValue, handleFormSubmission, isDirectFieldMutationPath } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/form.js";
 // Diagnostics: runtime inspection of resize/scroll behavior
 import { characterSheetDiagnostics } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet-diagnostics.js";
 // Phase 11: Shell system for surface routing (progression, chargen, upgrade)
@@ -152,6 +152,13 @@ function setStoredSheetMode(actor, mode) {
   } catch (_err) {
     // localStorage may be unavailable in some embedded contexts; mode still works for this render.
   }
+}
+
+function canUseActorSheetEditControls(sheet, actor) {
+  return game?.user?.isGM === true
+    || actor?.isOwner === true
+    || actor?.testUserPermission?.(game?.user, 'OWNER') === true
+    || sheet?.isEditable !== false;
 }
 
 
@@ -394,6 +401,73 @@ async function createDroidSelfDestructTemplate(actor, part) {
     swseLogger.warn('[Droid Systems] Failed to create self-destruct template', err);
     return null;
   }
+}
+
+function isDroidActorLikeForCombat(actor) {
+  return String(actor?.type ?? '').toLowerCase() === 'droid'
+    || actor?.system?.isDroid === true
+    || String(actor?.system?.actorMode ?? '').toLowerCase() === 'droid';
+}
+
+function listTextValuesForCombat(...values) {
+  const out = [];
+  for (const value of values) {
+    if (Array.isArray(value)) {
+      out.push(...value.map((entry) => String(entry ?? '').trim()).filter(Boolean));
+    } else if (value && typeof value === 'object') {
+      out.push(...Object.values(value).map((entry) => String(entry ?? '').trim()).filter(Boolean));
+    } else {
+      const text = String(value ?? '').trim();
+      if (text) out.push(text);
+    }
+  }
+  return out;
+}
+
+function isNaturalWeaponItemForCombat(item) {
+  const system = item?.system ?? {};
+  const swseFlags = item?.flags?.swse ?? {};
+  if (swseFlags.isNaturalWeapon === true || swseFlags.alwaysArmed === true) return true;
+
+  const naturalFields = listTextValuesForCombat(
+    system.category,
+    system.subcategory,
+    system.proficiency,
+    system.weaponCategory,
+    system.weaponType,
+    system.source
+  );
+  if (naturalFields.some((value) => value.toLowerCase() === 'natural')) return true;
+
+  const descriptors = listTextValuesForCombat(system.properties, system.traits, system.tags);
+  return descriptors.some((value) => /natural\s+weapon/i.test(value));
+}
+
+function isAutoEquippedNaturalWeaponForCombat(item, truthy = null) {
+  const readTruthy = typeof truthy === 'function'
+    ? truthy
+    : (value) => value === true || Number(value) === 1 || ['true', '1', 'yes', 'equipped', 'natural'].includes(String(value ?? '').toLowerCase());
+  const swseFlags = item?.flags?.swse ?? {};
+  return isNaturalWeaponItemForCombat(item)
+    && (readTruthy(swseFlags.autoEquipped) || swseFlags.alwaysArmed === true);
+}
+
+function isIntegratedDroidAttackItem(item, actor, truthy = null) {
+  if (!isDroidActorLikeForCombat(actor) || !item) return false;
+  const readTruthy = typeof truthy === 'function'
+    ? truthy
+    : (value) => value === true || Number(value) === 1 || ['true', '1', 'yes', 'integrated'].includes(String(value ?? '').toLowerCase());
+  const system = item.system ?? {};
+  const typeText = [item.type, item.name, system.type, system.weaponType, system.weaponCategory, system.category]
+    .filter(Boolean)
+    .join(' ')
+    .toLowerCase();
+  const looksWeapon = ['weapon', 'lightsaber'].includes(item.type)
+    || /weapon|lightsaber|blaster|rifle|pistol|melee|ranged|thrown|grenade|vibroblade/.test(typeText);
+  return looksWeapon
+    && (readTruthy(system.integrated)
+      || readTruthy(system.droidIntegrated)
+      || readTruthy(item?.flags?.swse?.integrated));
 }
 
 function buildDroidPartVirtualWeapon(actor, part) {
@@ -2395,7 +2469,8 @@ export class SWSEV2CharacterSheet extends
       });
     }
 
-    applySheetInteractionMode(root, getStoredSheetMode(this.document));
+    const forceNpcEditableInteraction = root.dataset.actorSheetMode === 'npc' || root.classList.contains('swse-sheet-actor-mode--npc');
+    applySheetInteractionMode(root, forceNpcEditableInteraction ? 'edit' : getStoredSheetMode(this.document));
 
     if (this.document?.type === 'vehicle') {
       this._wireVehicleActorModeEvents(root, signal);
@@ -2638,7 +2713,8 @@ export class SWSEV2CharacterSheet extends
   async _prepareContext(options) {
     const actor = this.document;
     const system = actor.system;
-    const actorModeContext = buildActorSheetModeContext({ actor, editable: this.isEditable });
+    const sheetEditable = canUseActorSheetEditControls(this, actor);
+    const actorModeContext = buildActorSheetModeContext({ actor, editable: sheetEditable });
     const isDroidActor = actorModeContext.isDroidActor;
     const isNpcActor = actorModeContext.isNpcActor;
     const isVehicleActor = actorModeContext.isVehicleActor;
@@ -3139,7 +3215,8 @@ export class SWSEV2CharacterSheet extends
         || truthy(system.equippable?.active)
         || truthy(system.activation?.active)
         || truthy(item?.flags?.swse?.equipped)
-        || truthy(item?.flags?.swse?.autoEquipped);
+        || isAutoEquippedNaturalWeaponForCombat(item, truthy)
+        || isIntegratedDroidAttackItem(item, actor, truthy);
     };
     const hasWeaponDamageProfile = (item) => {
       const system = item?.system ?? {};
@@ -4059,7 +4136,8 @@ const forcePoints = [];
         context.npcConcept = {
           kind: 'npc',
           kindLabel: 'NPC',
-          modeLabel: 'Play Mode',
+          modeLabel: '',
+          showModeBadge: false,
           summaryLine: [],
           defenseChips: [],
           showGmTab: game.user?.isGM === true
@@ -4109,6 +4187,7 @@ const forcePoints = [];
       sheetThemeStyleInline: sheetThemeContext.themeStyleInline,
       sheetMotionStyleInline: sheetThemeContext.motionStyleInline,
       sheetSurfaceStyleInline: sheetThemeContext.surfaceStyleInline,
+      editable: sheetEditable,
       system: foundry.utils.duplicate(system ?? {}),
       ...actorModeContext,
       isDroidActor,
@@ -4186,7 +4265,7 @@ const forcePoints = [];
       // ═════════════════════════════════════════════════════════════════
       ...panelContexts,
       // ─── Phase 11: Shell Host Context ──────────────────────────────────
-      customSkillsEditable: this.isEditable,
+      customSkillsEditable: sheetEditable,
       shellSurface: this._shellSurface,
       shellSurfaceOptions: safeShellSurfaceOptions,
       shellOverlay: safeShellOverlay,
@@ -4465,6 +4544,8 @@ const forcePoints = [];
   _wireNpcConceptSheetEvents(root, signal) {
     if (!(root instanceof HTMLElement) || this.actor?.type !== 'npc') return;
 
+    this._wireNpcConceptFieldPersistence(root, signal);
+
     root.querySelectorAll('.swse-v2-condition-step').forEach((el) => {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
@@ -4566,6 +4647,66 @@ const forcePoints = [];
       }, { signal });
     });
 
+    root.querySelectorAll('[data-action="roll-skill"][data-statblock-total]').forEach((button) => {
+      button.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const skillKey = ev.currentTarget?.dataset?.skill;
+        if (!skillKey) return;
+        try {
+          const total = this._parseNpcSheetSignedNumber(ev.currentTarget?.dataset?.statblockTotal);
+          if (total === null) {
+            await this._runCanonicalSkillCheck(skillKey, {
+              sourceElement: ev.currentTarget,
+              companionSource: ev.currentTarget,
+              sheet: this,
+              showRollCompanion: true
+            });
+            return;
+          }
+
+          const label = ev.currentTarget?.dataset?.skillLabel || this._labelSkillKey?.(skillKey) || skillKey;
+          const dialogResult = await showRollModifiersDialog({
+            title: `${label} Check`,
+            rollType: 'skill',
+            actor: this.actor,
+            skillKey,
+            sourceElement: ev.currentTarget,
+            sheet: this
+          });
+          if (dialogResult === null) return;
+
+          const extra = Number(dialogResult?.customModifier || 0) || 0;
+          const finalBonus = total + extra;
+          const formula = finalBonus >= 0 ? `1d20 + ${finalBonus}` : `1d20 - ${Math.abs(finalBonus)}`;
+          await this._rollNpcSheetFlatFormula(formula, {
+            title: `${label} Check`,
+            kind: 'npc-statblock-skill',
+            sourceElement: ev.currentTarget
+          });
+        } catch (err) {
+          swseLogger.error('[NPC Sheet] Skill roll failed', { actor: this.actor?.name, error: err?.message });
+          ui?.notifications?.error?.(`NPC skill roll failed: ${err.message}`);
+        }
+      }, { signal });
+    });
+
+    root.querySelector('[data-action="add-npc-weapon"]')?.addEventListener('click', async (ev) => {
+      ev.preventDefault();
+      ev.stopPropagation();
+      try {
+        const created = await this.actor.createEmbeddedDocuments('Item', [{
+          name: 'New Attack',
+          type: 'weapon',
+          system: {}
+        }]);
+        if (created?.[0]) created[0].sheet?.render(true);
+      } catch (err) {
+        swseLogger.error('[NPC Sheet] Add attack failed', { actor: this.actor?.name, error: err?.message });
+        ui?.notifications?.error?.(`Could not add attack: ${err.message}`);
+      }
+    }, { signal });
+
     root.querySelectorAll('[data-action="open-npc-levelup"]').forEach((button) => {
       button.addEventListener('click', async (ev) => {
         ev.preventDefault();
@@ -4617,6 +4758,72 @@ const forcePoints = [];
           ui?.notifications?.error?.(`NPC GM approval failed: ${err.message}`);
         }
       }, { signal });
+    });
+  }
+
+  _wireNpcConceptFieldPersistence(root, signal) {
+    if (!(root instanceof HTMLElement) || this.actor?.type !== 'npc') return;
+
+    root.addEventListener('change', async (ev) => {
+      const field = ev.target instanceof HTMLElement
+        ? ev.target.closest('input[name], textarea[name], select[name]')
+        : null;
+      if (!(field instanceof HTMLElement)) return;
+      if (!canUseActorSheetEditControls(this, this.actor)) return;
+      if (!field.name || field.hasAttribute('data-action') || field.disabled || field.hasAttribute('readonly')) return;
+
+      const statblockAuthority = field.dataset?.npcStatblockAuthority === 'true' || isNpcStatblockAuthorityPath(field.name);
+      if (!statblockAuthority && !isNpcSheetWritablePath(field.name)) return;
+
+      const rawValue = field.matches('input[type="checkbox"]') ? field.checked : field.value;
+      const update = {
+        [field.name]: coerceSingleFieldValue(field.name, rawValue, field)
+      };
+
+      try {
+        if (statblockAuthority) {
+          await this._updateNpcConceptStatblockAuthority(update, { fieldName: field.name });
+          return;
+        }
+
+        const quiet = isQuietNpcSheetPath(field.name);
+        await ActorEngine.updateActor(this.actor, update, {
+          source: quiet ? 'npc-concept-direct-field-quiet' : 'npc-concept-direct-field',
+          render: quiet ? false : undefined,
+          suppressAppRefresh: quiet,
+          meta: { guardKey: `npc-concept-field:${field.name}` }
+        });
+      } catch (err) {
+        swseLogger.error('[NPC Sheet] Field update failed', { actor: this.actor?.name, fieldName: field.name, error: err?.message });
+        ui?.notifications?.error?.(`NPC field update failed: ${err.message}`);
+      }
+    }, { signal });
+  }
+
+  async _updateNpcConceptStatblockAuthority(update = {}, { fieldName = '' } = {}) {
+    const flat = { ...(update ?? {}) };
+    if (!Object.keys(flat).length) return;
+
+    const mirror = {};
+    for (const [path, value] of Object.entries(flat)) {
+      if (path === 'name') mirror['system.npcStatblock.core.name'] = value;
+      if (path === 'img') mirror['system.npcStatblock.core.img'] = value;
+      if (path === 'system.hp.value') mirror['system.npcStatblock.core.hpCurrent'] = value;
+      if (path === 'system.hp.max') mirror['system.npcStatblock.core.hpMax'] = value;
+      if (path === 'system.baseAttackBonus' || path === 'system.bab') mirror['system.npcStatblock.core.bab'] = value;
+      if (path === 'system.damageThreshold') mirror['system.npcStatblock.core.dt'] = value;
+      if (path === 'system.speed') mirror['system.npcStatblock.core.speed'] = value;
+      if (path === 'system.challengeLevel' || path === 'system.cl') mirror['system.npcStatblock.core.cl'] = value;
+      if (path === 'system.level') mirror['system.npcStatblock.core.level'] = value;
+      if (path === 'system.conditionTrack.current' || path === 'system.conditionTrack.value') mirror['system.npcStatblock.core.condition'] = value;
+    }
+
+    const quiet = Object.keys(flat).every(path => isQuietNpcSheetPath(path));
+    await ActorEngine.updateActor(this.actor, { ...flat, ...mirror }, {
+      source: 'npc-statblock-authority-edit',
+      render: quiet ? false : undefined,
+      suppressAppRefresh: quiet,
+      meta: { guardKey: `npc-statblock-authority:${fieldName}` }
     });
   }
 
@@ -5158,6 +5365,10 @@ const forcePoints = [];
       if (!button) return;
 
       ev.preventDefault();
+      if (html.dataset.actorSheetMode === 'npc' || html.classList.contains('swse-sheet-actor-mode--npc')) {
+        applySheetInteractionMode(html, 'edit');
+        return;
+      }
       const currentMode = button.dataset.mode === 'edit' ? 'edit' : 'play';
       const nextMode = currentMode === 'edit' ? 'play' : 'edit';
       setStoredSheetMode(this.document, nextMode);
@@ -7867,7 +8078,8 @@ const forcePoints = [];
         || truthy(system.equippable?.active)
         || truthy(system.activation?.active)
         || truthy(item?.flags?.swse?.equipped)
-        || truthy(item?.flags?.swse?.autoEquipped);
+        || isAutoEquippedNaturalWeaponForCombat(item, truthy)
+        || isIntegratedDroidAttackItem(item, actor, truthy);
     };
 
     const actorItems = Array.from(actor?.items ?? []);
@@ -8091,6 +8303,96 @@ const forcePoints = [];
 
     // Default to utility for everything else
     return 'Utility';
+  }
+
+  async _useDroidPartFromButton(button) {
+    if (!button || !this.actor || this.actor.type !== 'droid') return null;
+
+    const partId = button.dataset?.partId ?? button.dataset?.itemId ?? button.dataset?.weaponId ?? null;
+    const partName = button.dataset?.partName ?? button.dataset?.weaponName ?? null;
+    const item = partId ? this.actor.items?.get?.(partId) : null;
+    const lookupId = item?.system?.droidPartId
+      ?? item?.flags?.swse?.droidPartId
+      ?? button.dataset?.partRuleId
+      ?? partName
+      ?? partId;
+
+    const datasetWeaponProfile = {
+      name: partName ?? item?.name ?? 'Integrated Weapon',
+      damage: button.dataset?.damage ?? item?.system?.damage ?? item?.system?.damageFormula ?? '',
+      damageType: button.dataset?.damageType ?? item?.system?.damageType ?? 'normal',
+      range: button.dataset?.range ?? item?.system?.range ?? '',
+      mode: button.dataset?.mode ?? item?.system?.meleeOrRanged ?? '',
+      attackBonus: button.dataset?.attackBonus ?? item?.system?.attackBonus ?? 0,
+      weaponType: button.dataset?.weaponType ?? item?.system?.weaponType ?? 'simple'
+    };
+    const hasDatasetWeaponProfile = Boolean(datasetWeaponProfile.damage || datasetWeaponProfile.range);
+
+    const hydrated = hydrateDroidPart({
+      id: lookupId,
+      name: item?.name ?? partName,
+      description: item?.system?.description ?? button.dataset?.description,
+      weaponProfile: item?.system?.weaponProfile ?? (hasDatasetWeaponProfile ? datasetWeaponProfile : undefined),
+      img: item?.img
+    });
+    const definition = getDroidPartDefinition(hydrated.ruleId ?? hydrated.id ?? hydrated.name) ?? hydrated;
+    const part = {
+      ...definition,
+      ...hydrated,
+      id: partId ?? hydrated.id ?? definition.id,
+      name: hydrated.name ?? definition.name ?? partName ?? item?.name ?? 'Droid Part',
+      img: item?.img ?? hydrated.img ?? definition.img,
+      description: item?.system?.description ?? hydrated.description ?? definition.description ?? '',
+      weaponProfile: item?.system?.weaponProfile
+        ?? hydrated.weaponProfile
+        ?? definition.weaponProfile
+        ?? (hasDatasetWeaponProfile ? datasetWeaponProfile : null)
+    };
+
+    if (part.weaponProfile?.selfDestruct === true) {
+      const confirmed = await Dialog.confirm({
+        title: 'Confirm Droid Self-Destruct',
+        content: `<p><strong>${this.actor.name}</strong> will be marked destroyed. This cannot be repaired or salvaged.</p><p>Continue?</p>`,
+        yes: () => true,
+        no: () => false,
+        defaultYes: false
+      });
+      if (!confirmed) return null;
+
+      const damage = getSelfDestructDamage(getDroidActorSize(this.actor), { miniaturized: part.weaponProfile.miniaturized === true });
+      const burst = getSelfDestructBurstSquares(getDroidActorSize(this.actor), { miniaturized: part.weaponProfile.miniaturized === true });
+      const template = await createDroidSelfDestructTemplate(this.actor, part);
+      const roll = await new Roll(damage).evaluate({ async: true });
+      await roll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor: this.actor }),
+        flavor: `${this.actor.name} - ${part.name} Damage${burst ? ` (${burst}-square burst)` : ''}`
+      });
+      if (template) ui.notifications?.info?.(`${part.name}: placed ${burst}-square burst template.`);
+      await ActorEngine.updateActor(this.actor, {
+        'system.hp.value': 0,
+        'system.conditionTrack.current': 5,
+        'system.droidState.status': 'destroyed',
+        'system.droidState.destroyed': true,
+        'system.droidState.disabled': false,
+        'system.droidState.destroyedBy': part.name
+      }, { source: 'droid-self-destruct' });
+      await postDroidPartChat(this.actor, part, { destroyed: true });
+      return roll;
+    }
+
+    if (part.weaponProfile?.damage || part.weaponProfile?.damageBySize || datasetWeaponProfile.damage) {
+      await postDroidPartChat(this.actor, part);
+      return this._runCanonicalAttackWithPreroll(buildDroidPartVirtualWeapon(this.actor, part), {
+        source: 'droid-systems-tab',
+        sourceElement: button,
+        companionSource: button,
+        sheet: this,
+        showRollCompanion: true
+      });
+    }
+
+    await postDroidPartChat(this.actor, part);
+    return null;
   }
 
   /* ============================================================
@@ -8714,7 +9016,8 @@ const forcePoints = [];
       let weapon = weaponId ? (this.actor.items.get(weaponId) ?? null) : null;
       if (!weapon) {
         weapon = this.actor.items.find(i =>
-          ['weapon', 'lightsaber'].includes(i.type) && i.system?.equipped
+          ['weapon', 'lightsaber'].includes(i.type)
+          && (i.system?.equipped || isIntegratedDroidAttackItem(i, this.actor))
         ) ?? null;
       }
       if (!weapon) {

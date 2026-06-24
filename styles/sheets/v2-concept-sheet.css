@@ -6313,6 +6313,15 @@ form[id^="SWSEV2CharacterSheet"] .swse-concept-empty-state {
   display: initial;
 }
 
+.swse-character-sheet-form-root.swse-sheet-actor-mode--npc .swse-edit-reveal,
+.swse-character-sheet-form-root.swse-sheet-actor-mode--npc .swse-edit-only {
+  display: initial !important;
+}
+
+.swse-character-sheet-form-root.swse-sheet-actor-mode--npc .swse-sheet-mode-toggle {
+  display: none !important;
+}
+
 .swse-sheet-mode-toggle {
   margin-left: auto;
   display: inline-flex;
@@ -8872,14 +8881,37 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-cont
 
 .swse-sheet-v2-shell--concept .swse-concept-effective-defense-row {
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr) minmax(0, 0.5fr) 78px;
+  grid-template-columns: 72px minmax(0, 1fr) 78px;
+  grid-template-rows: auto auto;
   align-items: center;
-  gap: 8px;
+  gap: 6px 8px;
   padding: 10px;
   border: 1px solid rgba(0, 240, 255, 0.17);
   border-radius: 12px;
   background: rgba(0, 0, 0, 0.24);
   overflow: hidden;
+}
+
+.swse-sheet-v2-shell--concept .swse-concept-effective-defense-row__title {
+  grid-column: 1;
+  grid-row: 1 / -1;
+  align-self: center;
+}
+
+.swse-sheet-v2-shell--concept .swse-concept-defense-formula-strip {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.swse-sheet-v2-shell--concept .swse-concept-effective-defense-row__mods {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.swse-sheet-v2-shell--concept .swse-concept-effective-defense-row__total {
+  grid-column: 3;
+  grid-row: 1 / -1;
+  align-self: center;
 }
 
 .swse-sheet-v2-shell--concept .swse-concept-effective-defense-row.is-boosted {
@@ -8895,6 +8927,7 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-cont
   display: grid;
   gap: 4px;
   text-align: center;
+  align-self: center;
 }
 
 .swse-sheet-v2-shell--concept .swse-concept-effective-defense-row__title h4 {
@@ -9491,7 +9524,8 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-cont
 .swse-sheet-v2-shell--concept .swse-concept-effective-defense-row {
   min-height: 60px;
   padding: 9px 10px;
-  grid-template-columns: 56px minmax(0, 1fr) minmax(0, 0.5fr) 78px;
+  grid-template-columns: 56px minmax(0, 1fr) 78px;
+  grid-template-rows: auto auto;
 }
 
 .swse-sheet-v2-shell--concept .swse-concept-defense-formula-strip {

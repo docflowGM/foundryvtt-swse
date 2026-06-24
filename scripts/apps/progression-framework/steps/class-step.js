@@ -23,6 +23,7 @@ import { getPCDroidAllowedHeroicClasses } from '/systems/foundryvtt-swse/scripts
 import { ProgressionRules } from '/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js';
 import { getClassProfileDescription, getClassProfileQuote } from './class-profile-copy.js';
 import { TalentTreeDB } from '/systems/foundryvtt-swse/scripts/data/talent-tree-db.js';
+import { getNonheroicClassModel, isNonheroicClassRef } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/nonheroic-class-model.js';
 
 export class ClassStep extends ProgressionStepPlugin {
   constructor(descriptor) {
@@ -63,12 +64,14 @@ export class ClassStep extends ProgressionStepPlugin {
   // ---------------------------------------------------------------------------
 
   async onStepEnter(shell) {
-    // Load all classes from registry
-    this._allClasses = ClassesRegistry.getAll() || [];
-
-    // Phase 2.5: Detect nonheroic progression context
+    // Phase 2.5: Detect nonheroic progression context before class option hydration.
     this._isNonheroicProgression = shell.progressionSession?.nonheroicContext?.hasNonheroic === true;
     this._isDroidProgression = shell?.progressionSession?.subtype === 'droid';
+
+    // Load all heroic/prestige classes from registry. Nonheroic is an NPC-only
+    // synthetic advancement track, so it is added explicitly only for pure
+    // nonheroic level-up sessions.
+    this._allClasses = this._prepareClassOptions(ClassesRegistry.getAll() || [], shell);
 
     // Level-up is where prestige visibility matters most. Default the class
     // browser to showing unavailable/locked classes so prestige options can be
@@ -253,7 +256,7 @@ export class ClassStep extends ProgressionStepPlugin {
     const startingAbilities = this._formatStartingAbilities(classData, levelOne);
     const classTrees = this._formatTalentTreeNames(classData);
     const buildMetadata = [
-      classData.prestigeClass ? 'Prestige Class' : 'Base Class',
+      this._isNonheroicClass(classData) ? 'Nonheroic Track' : (classData.prestigeClass ? 'Prestige Class' : 'Base Class'),
       classData.role,
       classData.source,
       classData.forceSensitive ? 'Force-Sensitive' : null,
@@ -267,8 +270,8 @@ export class ClassStep extends ProgressionStepPlugin {
       data: {
         class: classData,
         img: this._resolveClassImg(classData.name),
-        type: classData.prestigeClass ? 'Prestige' : 'Base',
-      isPrestige: classData.prestigeClass === true || classData.baseClass === false || classData.isPrestige === true,
+        type: this._isNonheroicClass(classData) ? 'Nonheroic' : (classData.prestigeClass ? 'Prestige' : 'Base'),
+        isPrestige: !this._isNonheroicClass(classData) && (classData.prestigeClass === true || classData.baseClass === false || classData.isPrestige === true),
         bab: `+${babValue}`,
         hitDie: `d${classData.hitDie ?? 10}`,
         defenses: { fortitude: defenses.fortitude ?? 0, reflex: defenses.reflex ?? 0, will: defenses.will ?? 0 },
@@ -455,8 +458,9 @@ export class ClassStep extends ProgressionStepPlugin {
       return;
     }
 
-    // Load full class data from ClassesRegistry
-    const classData = ClassesRegistry.getById(id);
+    // Load full class data from ClassesRegistry; Nonheroic is synthetic and may
+    // only exist in this step-local option list during NPC level-up.
+    const classData = ClassesRegistry.getById(id) || this._allClasses.find(c => c.id === id);
     if (!classData) {
       console.warn(`[ClassStep] Failed to load class data for ${entry.name}`);
       return;
@@ -580,7 +584,7 @@ export class ClassStep extends ProgressionStepPlugin {
       search: { enabled: true, placeholder: this._isDroidProgression ? 'Search droid classes…' : 'Search classes…' },
       filters,
       sorts: [
-        { id: 'source', label: 'Source' },
+        { id: 'source', label: this._isNonheroicProgression ? 'Training Track' : 'Source' },
         { id: 'alpha', label: 'A–Z' },
       ],
     };
@@ -712,6 +716,52 @@ export class ClassStep extends ProgressionStepPlugin {
     this._utilityUnlisteners = [];
   }
 
+  _prepareClassOptions(classes = [], shell = null) {
+    const options = Array.isArray(classes) ? [...classes] : [];
+    if (!this._shouldExposeNonheroicOption(shell)) return options;
+
+    if (!options.some(cls => this._isNonheroicClass(cls))) {
+      const totalNonheroicLevel = Number(shell?.progressionSession?.nonheroicContext?.totalNonheroicLevel || 0) || 0;
+      options.push(getNonheroicClassModel({ system: { level: totalNonheroicLevel } }));
+    }
+
+    return options;
+  }
+
+  _shouldExposeNonheroicOption(shell = null) {
+    if (this._isDroidProgression) return false;
+    if (this._isNonheroicProgression !== true) return false;
+    if (shell?.progressionSession?.nonheroicContext?.manualLevelUpAllowed === false) return false;
+    return !this._actorHasHeroicClassLevels(shell?.actor);
+  }
+
+  _actorHasHeroicClassLevels(actor = null) {
+    const readLevel = entry => Number(entry?.system?.level ?? entry?.system?.levels ?? entry?.level ?? entry?.classLevel ?? 0) || 0;
+    const isHeroicClassEntry = entry => {
+      if (!entry) return false;
+      if (entry?.type && entry.type !== 'class') return false;
+      if (entry?.system?.isNonheroic === true || entry?.isNonheroic === true) return false;
+      if (isNonheroicClassRef(entry) || isNonheroicClassRef(entry?.system?.classId) || isNonheroicClassRef(entry?.name)) return false;
+      return readLevel(entry) > 0 || !!(entry?.name || entry?.classId || entry?.system?.classId);
+    };
+
+    for (const item of actor?.items || []) {
+      if (item?.type === 'class' && isHeroicClassEntry(item)) return true;
+    }
+
+    const progressionLevels = actor?.system?.progression?.classLevels;
+    if (Array.isArray(progressionLevels) && progressionLevels.some(isHeroicClassEntry)) return true;
+
+    const systemClasses = actor?.system?.classes;
+    if (Array.isArray(systemClasses) && systemClasses.some(isHeroicClassEntry)) return true;
+
+    return false;
+  }
+
+  _isNonheroicClass(classData = null) {
+    return isNonheroicClassRef(classData);
+  }
+
   _applyFilters(shell = null) {
     let filtered = [...this._allClasses];
 
@@ -745,7 +795,7 @@ export class ClassStep extends ProgressionStepPlugin {
     // Phase 2.5: Heroic/Nonheroic filter
     if (this._filters.heroicType) {
       filtered = filtered.filter(c => {
-        const isNonheroic = c.system?.isNonheroic === true;
+        const isNonheroic = this._isNonheroicClass(c);
         if (this._filters.heroicType === 'heroic') return !isNonheroic;
         if (this._filters.heroicType === 'nonheroic') return isNonheroic;
         return true;
@@ -778,7 +828,7 @@ export class ClassStep extends ProgressionStepPlugin {
         return a.name?.localeCompare(b.name) ?? 0;
       }
 
-      const sourceOrder = { 'Jedi': 0, 'Noble': 1, 'Scoundrel': 2, 'Scout': 3, 'Soldier': 4 };
+      const sourceOrder = { 'Nonheroic': -1, 'Jedi': 0, 'Noble': 1, 'Scoundrel': 2, 'Scout': 3, 'Soldier': 4 };
       const aOrder = sourceOrder[a.name] ?? (aPrestige ? 100 : 10);
       const bOrder = sourceOrder[b.name] ?? (bPrestige ? 100 : 10);
       if (aOrder !== bOrder) return aOrder - bOrder;
@@ -803,8 +853,8 @@ export class ClassStep extends ProgressionStepPlugin {
     return {
       id: classData.id,
       name: classData.name,
-      type: classData.prestigeClass ? 'Prestige' : 'Base',
-      isPrestige: classData.prestigeClass === true || classData.baseClass === false || classData.isPrestige === true,
+      type: this._isNonheroicClass(classData) ? 'Nonheroic' : (classData.prestigeClass ? 'Prestige' : 'Base'),
+      isPrestige: !this._isNonheroicClass(classData) && (classData.prestigeClass === true || classData.baseClass === false || classData.isPrestige === true),
       bab: `+${(Array.isArray(classData.levelProgression) ? ((classData.levelProgression.find(l => Number(l.level) === 1) || classData.levelProgression[0])?.bab ?? 0) : 0)}`,
       hitDie: classData.hitDie ?? 'd10',
       defenseBonus: `${classData.defenses?.fortitude ?? 0}/${classData.defenses?.reflex ?? 0}/${classData.defenses?.will ?? 0}`,
@@ -820,7 +870,7 @@ export class ClassStep extends ProgressionStepPlugin {
       badgeLabel: isLocked ? 'Unavailable' : recommendedLabel,
       confidenceLevel: confidenceData?.confidenceLevel || null,
       metaChips: [
-        { label: classData.prestigeClass ? 'Prestige' : 'Base' },
+        { label: this._isNonheroicClass(classData) ? 'Nonheroic' : (classData.prestigeClass ? 'Prestige' : 'Base') },
         !isLocked && isSuggested && { label: recommendedLabel, cssClass: 'prog-meta-chip--suggested' },
         isLocked && { label: 'Locked', cssClass: 'prog-meta-chip--locked' },
         classData.source && { label: classData.source },
@@ -960,6 +1010,7 @@ export class ClassStep extends ProgressionStepPlugin {
    */
   _resolveClassImg(className) {
     if (!className) return null;
+    if (isNonheroicClassRef(className)) return 'icons/svg/mystery-man.svg';
     const aliases = {
       Saboteur: 'Infiltrator'
     };
@@ -978,6 +1029,13 @@ export class ClassStep extends ProgressionStepPlugin {
    * @private
    */
   async _getSuggestedClasses(actor, shell) {
+    if (this._isNonheroicProgression) {
+      this._suggestedClasses = [];
+      this._allClassSuggestions = [];
+      this._suggestionIndexById = new Map();
+      return;
+    }
+
     try {
       // Build characterData from shell's buildIntent/committedSelections
       const characterData = this._buildCharacterDataFromShell(shell);

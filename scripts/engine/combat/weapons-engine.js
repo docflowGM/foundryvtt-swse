@@ -8,8 +8,7 @@
 
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
-import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
-import { getDamageAbilityContribution, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus, isVehicleWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { getDamageAbilityContribution, getHalfLevelDamageBonus, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus, isVehicleWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class WeaponsEngine {
@@ -445,7 +444,7 @@ export class WeaponsEngine {
       return { total: 0, components: {} };
     }
 
-    const halfLvl = getEffectiveHalfLevel(actor);
+    const halfLvl = getHalfLevelDamageBonus(actor, weapon, { weapon, isWeaponDamage: true });
     const abilityMod = getDamageAbilityContribution(actor, weapon);
     const enhancement = getWeaponFlatDamageBonus(weapon);
 

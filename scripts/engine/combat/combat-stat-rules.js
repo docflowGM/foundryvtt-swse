@@ -6,6 +6,7 @@
  */
 
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 
 export const SIZE_ORDER = Object.freeze([
   'fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'
@@ -269,6 +270,150 @@ export function getWeaponFlatDamageBonus(weapon) {
   return numeric(system.flatDamageBonus ?? system.damageFlatBonus ?? system.combat?.damage?.bonus ?? 0, 0);
 }
 
+
+const HALF_LEVEL_DAMAGE_HOUSE_RULE_KEY = 'forcePowerDamageAddsHalfLevel';
+const ELEMENTAL_HALF_LEVEL_EXCLUSION_KEYS = new Set([
+  'acid',
+  'cold',
+  'cryo',
+  'electric',
+  'electrical',
+  'electricity',
+  'elemental',
+  'fire',
+  'flame',
+  'heat',
+  'sonic'
+]);
+const POISON_HALF_LEVEL_EXCLUSION_KEYS = new Set(['poison', 'toxin', 'venom']);
+
+function settingEnabled(key, fallback = false) {
+  try {
+    return game?.settings?.get?.('foundryvtt-swse', key) === true;
+  } catch (_err) {
+    return fallback;
+  }
+}
+
+export function forcePowerDamageAddsHalfLevel() {
+  return settingEnabled(HALF_LEVEL_DAMAGE_HOUSE_RULE_KEY, false);
+}
+
+export function normalizeDamageTypeKey(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function addDamageTypeToken(tokens, value) {
+  if (value == null) return;
+  if (Array.isArray(value)) {
+    for (const entry of value) addDamageTypeToken(tokens, entry);
+    return;
+  }
+  if (typeof value === 'object') {
+    addDamageTypeToken(tokens, value.type);
+    addDamageTypeToken(tokens, value.damageType);
+    addDamageTypeToken(tokens, value.damage_type);
+    addDamageTypeToken(tokens, value.element);
+    addDamageTypeToken(tokens, value.energyType);
+    addDamageTypeToken(tokens, value.descriptor);
+    addDamageTypeToken(tokens, value.descriptors);
+    addDamageTypeToken(tokens, value.tags);
+    addDamageTypeToken(tokens, value.keywords);
+    addDamageTypeToken(tokens, value.category);
+    return;
+  }
+  const normalized = normalizeDamageTypeKey(value);
+  if (!normalized) return;
+  tokens.add(normalized);
+  for (const part of normalized.split('-')) {
+    if (part) tokens.add(part);
+  }
+}
+
+export function collectDamageTypeKeys(source = null, context = {}) {
+  const system = source?.system ?? {};
+  const tokens = new Set();
+  addDamageTypeToken(tokens, context.damageType);
+  addDamageTypeToken(tokens, context.damageTypes);
+  addDamageTypeToken(tokens, context.damageElement);
+  addDamageTypeToken(tokens, context.element);
+  addDamageTypeToken(tokens, context.tags);
+  addDamageTypeToken(tokens, context.descriptors);
+  addDamageTypeToken(tokens, context.damageComponents);
+  addDamageTypeToken(tokens, context.combatContext?.damage?.damageComponents);
+  addDamageTypeToken(tokens, context.workflowContext?.damage?.damageComponents);
+  addDamageTypeToken(tokens, system.damageType);
+  addDamageTypeToken(tokens, system.damageTypes);
+  addDamageTypeToken(tokens, system.damage?.type);
+  addDamageTypeToken(tokens, system.damage?.damageType);
+  addDamageTypeToken(tokens, system.combat?.damage?.type);
+  addDamageTypeToken(tokens, system.combat?.damage?.damageType);
+  addDamageTypeToken(tokens, system.element);
+  addDamageTypeToken(tokens, system.energyType);
+  addDamageTypeToken(tokens, system.descriptor);
+  addDamageTypeToken(tokens, system.descriptors);
+  addDamageTypeToken(tokens, system.tags);
+  addDamageTypeToken(tokens, system.keywords);
+  return tokens;
+}
+
+export function isPoisonDamageContext(source = null, context = {}) {
+  const tokens = collectDamageTypeKeys(source, context);
+  return Array.from(tokens).some(key => POISON_HALF_LEVEL_EXCLUSION_KEYS.has(key));
+}
+
+export function isElementalDamageContext(source = null, context = {}) {
+  const tokens = collectDamageTypeKeys(source, context);
+  return Array.from(tokens).some(key => ELEMENTAL_HALF_LEVEL_EXCLUSION_KEYS.has(key));
+}
+
+export function isForcePowerDamageContext(source = null, context = {}) {
+  const sourceType = normalizeDamageTypeKey(source?.type ?? source?.documentName ?? '');
+  if (sourceType === 'force-power' || sourceType === 'forcepower') return true;
+  const keys = [
+    context.type,
+    context.rollType,
+    context.rollCategory,
+    context.category,
+    context.domain,
+    context.itemType,
+    context.sourceType,
+    context.workflowContext?.type,
+    context.workflowContext?.rollType,
+    context.workflowContext?.category,
+    context.combatContext?.type,
+    context.combatContext?.rollType,
+    context.combatContext?.category
+  ].map(normalizeDamageTypeKey).filter(Boolean);
+  return context.forcePower === true
+    || context.isForcePower === true
+    || keys.some(key => key === 'force-power' || key === 'forcepower' || key.startsWith('force-power'));
+}
+
+export function shouldApplyHalfLevelDamageBonus(actor, source = null, context = {}) {
+  if (!actor || !source) return false;
+  if (context.noHalfLevelDamage === true || context.suppressHalfLevelDamage === true) return false;
+  if (isPoisonDamageContext(source, context) || isElementalDamageContext(source, context)) return false;
+
+  if (isForcePowerDamageContext(source, context)) {
+    return forcePowerDamageAddsHalfLevel();
+  }
+
+  const sourceType = normalizeDamageTypeKey(source?.type ?? '');
+  if (sourceType === 'weapon' || sourceType === 'natural-weapon' || sourceType === 'naturalweapon') return true;
+  if (context.weapon === source || context.isWeaponDamage === true || context.weaponDamage === true) return true;
+  return isMeleeWeapon(source) || isRangedWeapon(source) || isThrownMeleeWeapon(source);
+}
+
+export function getHalfLevelDamageBonus(actor, source = null, context = {}) {
+  return shouldApplyHalfLevelDamageBonus(actor, source, context) ? getEffectiveHalfLevel(actor) : 0;
+}
+
 export function getDamageAbilitySelector(weapon) {
   const system = weapon?.system ?? {};
   const explicit = normalizeSelector(system.damageBonus ?? system.combat?.damage?.ability ?? '');
@@ -345,22 +490,30 @@ export const CombatStatRules = Object.freeze({
   REFLEX_SIZE_MODIFIERS,
   SIZE_ORDER,
   getActorCombatSize,
+  collectDamageTypeKeys,
+  forcePowerDamageAddsHalfLevel,
   getCriticalMultiplier,
   getDamageAbilityContribution,
   getDamageThresholdSizeBonus,
+  getHalfLevelDamageBonus,
   getRangePenalty,
   getReflexSizeModifier,
   getWeaponAttackAbility,
   getWeaponFlatAttackBonus,
   getWeaponFlatDamageBonus,
   isAreaAttack,
+  isElementalDamageContext,
+  isForcePowerDamageContext,
+  isPoisonDamageContext,
   isLightsaberWeapon,
   isLightMeleeWeapon,
   isMeleeWeapon,
   isRangedWeapon,
   isVehicleWeapon,
   isThrownMeleeWeapon,
-  normalizeCombatSize
+  normalizeCombatSize,
+  normalizeDamageTypeKey,
+  shouldApplyHalfLevelDamageBonus
 });
 
 export default CombatStatRules;

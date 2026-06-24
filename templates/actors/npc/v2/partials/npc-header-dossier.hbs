@@ -10,7 +10,7 @@
 
     <div class="swse-npc-dossier-type">
       <span class="swse-npc-badge swse-npc-badge--kind">{{npcConcept.kindLabel}}</span>
-      {{#if npcConcept.modeLabel}}<span class="swse-npc-badge swse-npc-badge--mode">{{npcConcept.modeLabel}}</span>{{/if}}
+      {{#if npcConcept.showModeBadge}}{{#if npcConcept.modeLabel}}<span class="swse-npc-badge swse-npc-badge--mode">{{npcConcept.modeLabel}}</span>{{/if}}{{/if}}
       {{#if isFollowerNpc}}<span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.Follower"}}</span>{{/if}}
       {{#if isMinionNpc}}<span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.Minion"}}</span>{{/if}}
       {{#if isBeastNpc}}<span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.Beast"}}</span>{{/if}}

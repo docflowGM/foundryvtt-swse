@@ -1,14 +1,13 @@
 <section class="swse-npc-card swse-npc-play-statblock-card {{#if isStatblockMode}}is-statblock{{/if}}">
   <header class="swse-npc-card__header">
     <div class="swse-npc-card__header-main">
-      <h3 class="swse-section-title">{{localize "SWSE.ActorUI.PlayModeStatblock"}}</h3>
+      <h3 class="swse-section-title">NPC Statblock</h3>
       <p class="swse-npc-card__subhead">
         {{localize "SWSE.ActorUI.TableFacingValuesFromActorDataImportedSource"}}
       </p>
     </div>
 
     <div class="swse-npc-badges">
-      <span class="swse-npc-badge swse-npc-badge--mode">{{npcModeLabel}}</span>
       <span class="swse-npc-badge swse-npc-badge--subtype">{{npcSourceAuthorityLabel}}</span>
       {{#if playStatblock.rawAvailable}}
         <span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.RawSource"}}</span>
@@ -22,7 +21,7 @@
   <div class="swse-npc-card__body swse-npc-statblock-stack">
     {{#if playStatblock.hasWarnings}}
       <div class="swse-npc-callout swse-npc-callout--statblock">
-        <strong>{{localize "SWSE.ActorUI.PlayMode2"}}</strong>
+        <strong>Source Values</strong>
         {{#each playStatblock.warnings as |warning|}}
           <div>{{warning}}</div>
         {{/each}}

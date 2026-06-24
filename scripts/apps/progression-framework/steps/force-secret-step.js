@@ -224,7 +224,16 @@ export class ForceSecretStep extends ProgressionStepPlugin {
 
     const secretsList = Array.from(this._committedSecretCounts.entries())
       .filter(([_, count]) => count > 0)
-      .map(([secretId, count]) => ({ id: secretId, count }));
+      .map(([secretId, count]) => {
+        const secret = this._allSecrets.find(s => String(s?.id || s?._id) === String(secretId));
+        return {
+          id: secretId,
+          secretId,
+          name: secret?.name || String(secretId),
+          type: 'force-secret',
+          count,
+        };
+      });
 
     await this._commitNormalized(shell, 'forceSecrets', secretsList);
 

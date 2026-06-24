@@ -365,6 +365,7 @@ export class ContentContracts {
           'language',
           'force-power',
           'forcetechnique',
+          'force-technique',
           'force-secret',
           'archetype',
           'role',

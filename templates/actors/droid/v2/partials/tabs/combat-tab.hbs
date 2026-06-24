@@ -25,7 +25,9 @@
         <span class="weapon-name">{{part.name}}</span>
         {{#if part.damage}}<span class="swse-weapon-meta">{{part.damage}}</span>{{/if}}
         {{#if part.range}}<span class="swse-weapon-meta">{{part.range}}</span>{{/if}}
-        <div class="swse-inline-actions"><button type="button" data-action="use-droid-part" data-part-id="{{part.id}}" data-part-name="{{part.name}}">{{localize "SWSE.ActorUI.Use"}}</button></div>
+        <div class="swse-inline-actions">
+          <button type="button" data-action="use-droid-part" data-part-id="{{part.id}}" data-part-name="{{part.name}}" data-damage="{{part.damage}}" data-range="{{part.range}}" data-attack-bonus="{{part.attackBonus}}" data-mode="{{part.meleeOrRanged}}" data-weapon-type="{{part.type}}">{{#if part.canRoll}}{{localize "SWSE.ActorUI.Roll"}}{{else}}{{localize "SWSE.ActorUI.Use"}}{{/if}}</button>
+        </div>
       </article>
     {{/each}}
 

@@ -43,14 +43,14 @@ export function getForcePowers(items) {
  * Get all force techniques from items collection
  */
 export function getForceTechniques(items) {
-  return (items || []).filter(i => i.type === 'forcetechnique');
+  return (items || []).filter(i => i.type === 'force-technique' || i.type === 'forcetechnique' || (i.type === 'feat' && i.system?.tags?.includes('force_technique')));
 }
 
 /**
  * Get all force secrets from items collection
  */
 export function getForceSecrets(items) {
-  return (items || []).filter(i => i.type === 'forcesecret');
+  return (items || []).filter(i => i.type === 'force-secret' || i.type === 'forcesecret' || (i.type === 'feat' && i.system?.tags?.includes('force_secret')));
 }
 
 /**

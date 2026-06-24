@@ -76,26 +76,56 @@
         </aside>
 
         <section class="workbench-detail">
-          <div class="item-hero panel">
+          <div class="item-hero panel {{#if isLightsaber}}item-hero--lightsaber{{/if}}">
             <div class="panel-head">
               <span>{{currentItem.name}}</span>
               <span class="hint">{{currentItem.subtitle}}</span>
             </div>
             <div class="hero-grid">
-              <div class="hero-art">
+              <div class="hero-art {{#if isLightsaber}}hero-art--lightsaber{{/if}}">
+                {{#if isLightsaber}}
+                <div class="ls-blade-render ls-blade-render--hero-vertical {{lightsaber.hiltKind}}" style="--blade-color: {{lightsaber.bladeHex}};" aria-label="{{currentItem.name}} blade preview">
+                  <span class="ls-blade ls-left"></span>
+                  <span class="ls-hilt"></span>
+                  <span class="ls-blade ls-right"></span>
+                  <span class="ls-crossguard ls-crossguard-a"></span>
+                  <span class="ls-crossguard ls-crossguard-b"></span>
+                </div>
+                {{else}}
                 <img src="{{currentItem.img}}" alt="{{currentItem.name}}">
+                {{/if}}
               </div>
-              <div class="hero-copy">
+              <div class="hero-copy {{#if isLightsaber}}hero-copy--lightsaber{{/if}}">
                 <div class="hero-breadcrumb">{{currentItem.category}} · {{currentItem.subtitle}}</div>
                 <div class="hero-description">{{currentItem.description}}</div>
-                <div class="hero-stats">
+                <div class="hero-stats {{#if isLightsaber}}hero-stats--compact{{/if}}">
                   {{#each currentItem.stats}}
-                  <div class="hero-stat">
+                  <div class="hero-stat {{#if className}}hero-stat--{{className}}{{/if}} {{#if isColor}}hero-stat--color{{/if}}">
                     <span class="key">{{key}}</span>
+                    {{#if isColor}}
+                    <button type="button" class="ls-hero-color-button" data-action="open-lightsaber-blade-color-editor" data-item-id="{{../lightsaber.editItemId}}" style="--blade-color: {{../lightsaber.bladeHex}};" {{#unless ../lightsaber.canPickBladeColor}}disabled{{/unless}} title="Choose a blade color allowed by the selected crystal.">
+                      <span class="ls-color-dot"></span>
+                      <span class="ls-color-name-strip">{{#each bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</span>
+                    </button>
+                    {{else}}
                     <span class="value">{{value}}</span>
+                    {{/if}}
                   </div>
                   {{/each}}
                 </div>
+                {{#if currentItem.expandedStats.length}}
+                <details class="ls-stat-expander">
+                  <summary>Full Stats</summary>
+                  <div class="hero-stats hero-stats--expanded">
+                    {{#each currentItem.expandedStats}}
+                    <div class="hero-stat">
+                      <span class="key">{{key}}</span>
+                      <span class="value">{{value}}</span>
+                    </div>
+                    {{/each}}
+                  </div>
+                </details>
+                {{/if}}
               </div>
             </div>
           </div>
@@ -167,7 +197,6 @@
                   {{#each lightsaber.crystals}}
                   <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="inspect-lightsaber-component" data-key="{{optionKey}}" data-lightsaber-inspect-type="crystal" data-lightsaber-inspect-key="{{optionKey}}" data-component-type="crystal" title="{{description}}">
                     <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
-                    <span class="card-desc">{{description}}</span>
                     <span class="card-tags"><span class="tag">{{rarity}}</span><span class="tag ls-color-text-tag">{{#each bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
                   </button>
                   {{/each}}
@@ -183,7 +212,6 @@
                   {{#each lightsaber.accessories}}
                   <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="inspect-lightsaber-component" data-key="{{optionKey}}" data-lightsaber-inspect-type="accessory" data-lightsaber-inspect-key="{{optionKey}}" data-component-type="accessory" title="{{description}}">
                     <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
-                    <span class="card-desc">{{description}}</span>
                     <span class="card-tags"><span class="tag">{{slotCost}} slot</span><span class="tag">DC {{buildDcModifier}}</span>{{#if incompatible}}<span class="tag state">Incompatible</span>{{/if}}</span>
                   </button>
                   {{/each}}
@@ -244,31 +272,7 @@
               </div>
             </section>
 
-            <aside class="ls-forge-rail">
-              <section class="detail-panel panel ls-forge-stage">
-                <div class="panel-head">
-                  <span>✦ Forge Preview</span>
-                  <span class="hint">{{lightsaber.mode}}</span>
-                </div>
-                <div class="ls-blade-render {{lightsaber.hiltKind}}" style="--blade-color: {{lightsaber.bladeHex}};">
-                  <span class="ls-blade ls-left"></span>
-                  <span class="ls-hilt"></span>
-                  <span class="ls-blade ls-right"></span>
-                  <span class="ls-crossguard ls-crossguard-a"></span>
-                  <span class="ls-crossguard ls-crossguard-b"></span>
-                </div>
-                <button type="button" class="ls-color-cta ls-color-cta--readonly ls-color-cta--editable" data-action="open-lightsaber-blade-color-editor" data-item-id="{{lightsaber.editItemId}}" style="--blade-color: {{lightsaber.bladeHex}};" {{#unless lightsaber.canPickBladeColor}}disabled{{/unless}} title="Choose a blade color allowed by the selected crystal.">
-                  <span class="ls-color-current"><span class="ls-color-dot"></span><span class="ls-color-name-strip">{{#each lightsaber.review.bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</span> blade</span>
-                  <small>{{#if lightsaber.canPickBladeColor}}Click to choose blade color.{{else}}Select a crystal to unlock color.{{/if}}</small>
-                </button>
-                {{#unless lightsaber.showChassis}}
-                <div class="ls-locked-chassis-card ls-rail-lock-note">
-                  <div class="card-top"><span class="card-name">{{lightsaber.selectedChassisName}}</span><span class="card-cost">Fixed</span></div>
-                  <span class="card-desc">{{lightsaber.chassisLockReason}}</span>
-                </div>
-                {{/unless}}
-              </section>
-
+            <aside class="ls-forge-rail ls-forge-rail--intel-only">
               <section class="detail-panel panel ls-component-intel">
                 <div class="panel-head"><span>Selected Component Intel</span><span class="hint">{{lightsaber.componentIntel.kind}}</span></div>
                 <article class="rail-detail-card {{#if lightsaber.componentIntel.selected}}selected{{/if}}" {{#if lightsaber.componentIntel.colorHex}}style="--weapon-color: {{lightsaber.componentIntel.colorHex}}"{{/if}}>
@@ -321,73 +325,87 @@
             </div>
           </section>
           {{/if}}
-          <div class="detail-grid {{#if isEnergyShield}}energy-shield-detail-grid{{/if}}">
-            {{#if isEnergyShield}}
-            <section class="detail-panel panel energy-shield-maintenance-panel">
-              <div class="panel-head">
-                <span>Shield Structural / Maintenance</span>
-                <span class="hint">generator-safe only</span>
-              </div>
-              <div class="card-list structural-list">
-                <article class="config-card installed">
-                  <span class="card-top"><span class="card-name">Power Cell Housing</span><span class="card-cost">Charges</span></span>
-                  <span class="card-desc">Energy shields are tuned through generator maintenance and compatible templates, not normal armor plating mods.</span>
-                  <span class="card-tags"><span class="tag">5 charges</span><span class="tag">Swift activate</span></span>
-                </article>
-                <article class="config-card disabled">
-                  <span class="card-top"><span class="card-name">Armor Modification Surface</span><span class="card-cost">Illegal</span></span>
-                  <span class="card-desc">Normal armor modifications cannot be taken on an energy shield unless a rule/template explicitly says it works on energy shields.</span>
-                  <span class="card-tags"><span class="tag state">No armor mods</span></span>
-                </article>
-                {{#each structuralActions.strips}}
-                <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}" data-action="toggle-strip" data-key="{{key}}">
-                  <span class="card-top"><span class="card-name">{{label}}</span>{{#if effect}}<span class="card-cost">{{effect}}</span>{{/if}}</span>
-                  {{#if description}}<span class="card-desc">{{description}}</span>{{/if}}
+          <div class="detail-grid">
+            <div class="workbench-tabs-container">
+              <nav class="workbench-content-tabs">
+                {{#each availableTabs}}
+                <button type="button" class="wcb-tab {{#if active}}active{{/if}}" data-action="set-workbench-tab" data-tab="{{key}}">
+                  {{label}}{{#if hint}}<span class="wcb-tab-hint">{{hint}}</span>{{/if}}
                 </button>
                 {{/each}}
-              </div>
-            </section>
-            {{else}}
-            <section class="detail-panel panel">
-              <div class="panel-head">
-                <span>Modifications</span>
-                <span class="hint">{{upgrades.length}} available</span>
-              </div>
-              <div class="card-list">
-                {{#if upgrades.length}}
-                  {{#each upgrades}}
-                  <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}" data-action="toggle-upgrade" data-key="{{key}}" {{#if disabled}}title="No slots available"{{/if}}>
-                    <span class="card-top">
-                      <span class="card-name">{{name}}</span>
-                      <span class="card-cost">{{costCredits}} cr</span>
-                    </span>
-                    {{#if suggestion}}<span class="workbench-suggestion-badge workbench-suggestion-badge--{{suggestion.tier}}">{{suggestion.tierLabel}}</span>{{/if}}
-                    <span class="card-desc">{{description}}</span>
-                    <span class="card-tags">
-                      {{#if effect}}<span class="tag">{{effect}}</span>{{/if}}
-                      <span class="tag">{{slotCost}} slot</span>
-                      {{#if suggestion}}<span class="tag suggestion-tag">Assumes use</span>{{/if}}
-                      {{#if installed}}<span class="tag state">Installed</span>{{/if}}
-                      {{#if selected}}{{#unless installed}}<span class="tag state">Staged</span>{{/unless}}{{/if}}
-                    </span>
+              </nav>
+
+              {{#if workbenchTabModifications}}
+              <div class="wcb-pane">
+                <div class="card-list structural-list">
+                  {{#if isEnergyShield}}
+                  <article class="config-card installed">
+                    <span class="card-top"><span class="card-name">Power Cell Housing</span><span class="card-cost">Charges</span></span>
+                    <span class="card-desc">Energy shields are tuned through generator maintenance and compatible templates, not normal armor plating mods.</span>
+                    <span class="card-tags"><span class="tag">5 charges</span><span class="tag">Swift activate</span></span>
+                  </article>
+                  <article class="config-card disabled">
+                    <span class="card-top"><span class="card-name">Armor Modification Surface</span><span class="card-cost">Illegal</span></span>
+                    <span class="card-desc">Normal armor modifications cannot be taken on an energy shield unless a rule/template explicitly says it works on energy shields.</span>
+                    <span class="card-tags"><span class="tag state">No armor mods</span></span>
+                  </article>
+                  {{#each structuralActions.strips}}
+                  <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if removing}}removing{{/if}} {{#if inspected}}inspected{{/if}} {{#if disabled}}disabled{{/if}}" data-action="inspect-structural" data-key="{{key}}" data-inspect-kind="structural" data-inspect-key="{{key}}">
+                    <span class="card-top"><span class="card-name">{{label}}</span>{{#if effect}}<span class="card-cost">{{effect}}</span>{{/if}}</span>
+                    {{#if description}}<span class="card-desc">{{description}}</span>{{/if}}
                   </button>
                   {{/each}}
-                {{else}}
-                  <div class="empty-state">No structured modifications available for this item.</div>
-                {{/if}}
+                  {{else}}
+                  {{#if upgrades.length}}
+                    {{#each upgrades}}
+                    <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if removing}}removing{{/if}} {{#if inspected}}inspected{{/if}} {{#if disabled}}disabled{{/if}}" data-action="inspect-upgrade" data-key="{{key}}" data-inspect-kind="upgrade" data-inspect-key="{{key}}" {{#if disabled}}title="No slots available"{{/if}}>
+                      <span class="card-top">
+                        <span class="card-name">{{name}}</span>
+                        <span class="card-cost">{{costCredits}} cr</span>
+                      </span>
+                      {{#if suggestion}}<span class="workbench-suggestion-badge workbench-suggestion-badge--{{suggestion.tier}}">{{suggestion.tierLabel}}</span>{{/if}}
+                      <span class="card-desc">{{description}}</span>
+                      <span class="card-tags">
+                        {{#if effect}}<span class="tag">{{effect}}</span>{{/if}}
+                        <span class="tag">{{slotCost}} slot</span>
+                        {{#if suggestion}}<span class="tag suggestion-tag">Assumes use</span>{{/if}}
+                        {{#if removing}}<span class="tag state removing">Removing</span>{{else}}{{#if installed}}<span class="tag state">Installed</span>{{/if}}{{/if}}
+                        {{#if selected}}{{#unless installed}}<span class="tag state">Staged</span>{{/unless}}{{/if}}
+                      </span>
+                    </button>
+                    {{/each}}
+                  {{else}}
+                    <div class="empty-state">No structured modifications available for this item.</div>
+                  {{/if}}
+                  {{/if}}
+                </div>
               </div>
-            </section>
-            {{/if}}
+              {{/if}}
 
-            <section class="detail-panel panel">
-              <div class="panel-head">
-                <span>Templates</span>
-                <span class="hint">Max {{footer.maxTemplatesPerItem}}</span>
+              {{#if workbenchTabStructural}}
+              <div class="wcb-pane">
+                <div class="card-list structural-list">
+                  <button type="button" class="config-card {{#if structuralActions.sizeIncrease.selected}}selected{{/if}} {{#if structuralActions.sizeIncrease.installed}}installed{{/if}} {{#if structuralActions.sizeIncrease.removing}}removing{{/if}} {{#if structuralActions.sizeIncrease.inspected}}inspected{{/if}} {{#if structuralActions.sizeIncrease.disabled}}disabled{{/if}}" data-action="inspect-structural" data-key="size_increase" data-inspect-kind="structural" data-inspect-key="size_increase">
+                    <span class="card-top">
+                      <span class="card-name">{{structuralActions.sizeIncrease.label}}</span>
+                    </span>
+                    <span class="card-desc">{{structuralActions.sizeIncrease.description}}</span>
+                  </button>
+                  {{#each structuralActions.strips}}
+                  <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if removing}}removing{{/if}} {{#if inspected}}inspected{{/if}} {{#if disabled}}disabled{{/if}}" data-action="inspect-structural" data-key="{{key}}" data-inspect-kind="structural" data-inspect-key="{{key}}">
+                    <span class="card-top"><span class="card-name">{{label}}</span>{{#if effect}}<span class="card-cost">{{effect}}</span>{{/if}}</span>
+                    {{#if description}}<span class="card-desc">{{description}}</span>{{/if}}
+                  </button>
+                  {{/each}}
+                </div>
               </div>
-              <div class="card-list">
-                {{#if templates.length}}
+              {{/if}}
+
+              {{#if workbenchTabTemplates}}
+              <div class="wcb-pane">
+                <div class="card-list">
                   {{#each templates}}
-                  <button type="button" class="config-card template {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}" data-action="toggle-template" data-key="{{key}}" {{#if disabledReason}}title="{{disabledReason}}"{{/if}}>
+                  <button type="button" class="config-card template {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if removing}}removing{{/if}} {{#if inspected}}inspected{{/if}} {{#if disabled}}disabled{{/if}}" data-action="inspect-template" data-key="{{key}}" data-inspect-kind="template" data-inspect-key="{{key}}" {{#if disabledReason}}title="{{disabledReason}}"{{/if}}>
                     <span class="card-top">
                       <span class="card-name">{{name}}</span>
                       <span class="card-cost">{{costPreview}} cr</span>
@@ -399,51 +417,86 @@
                       <span class="tag">{{restriction}}</span>
                       {{#if suggestion}}<span class="tag suggestion-tag">Assumes use</span>{{/if}}
                       {{#if rarity}}<span class="tag rare">Rare</span>{{/if}}
-                      {{#if installed}}<span class="tag state">Applied</span>{{/if}}
+                      {{#if removing}}<span class="tag state removing">Removing</span>{{else}}{{#if installed}}<span class="tag state">Applied</span>{{/if}}{{/if}}
                       {{#if selected}}{{#unless installed}}<span class="tag state">Staged</span>{{/unless}}{{/if}}
                     </span>
                   </button>
                   {{/each}}
-                {{else}}
-                  <div class="empty-state">No templates are available for this item.</div>
-                {{/if}}
+                </div>
               </div>
-            </section>
+              {{/if}}
 
-            {{#unless isEnergyShield}}
-            <section class="detail-panel panel">
-              <div class="panel-head">
-                <span>Structural Changes</span>
-                <span class="hint">Slots + bulk</span>
+              {{#if workbenchTabAppearance}}
+              <div class="wcb-pane">
+                <div class="appearance-blocks">
+                  {{#each currentItem.appearance}}
+                  <div class="appearance-block">
+                    <div class="appearance-label">{{key}}</div>
+                    {{#if options}}
+                      {{#if selectedHex}}
+                      <div class="blaster-bolt-preview" style="--weapon-color: {{selectedHex}}" aria-label="Selected bolt color {{selectedLabel}}">
+                        <span class="blaster-bolt-preview__muzzle" aria-hidden="true"></span>
+                        <span class="blaster-bolt-preview__beam" aria-hidden="true"></span>
+                        <span class="blaster-bolt-preview__label">{{selectedLabel}} bolt package</span>
+                      </div>
+                      <button type="button" class="color-picker-trigger bolt-color-picker-trigger" data-action="open-color-picker" data-color-action="{{action}}">
+                        <span class="color-picker-caret">▾ Change Bolt Color</span>
+                      </button>
+                      {{else}}
+                      <button type="button" class="color-picker-trigger" data-action="open-color-picker" data-color-action="{{action}}">
+                        {{#each options}}{{#if selected}}<span class="color-picker-preview" style="--swatch: {{hex}}"></span>{{/if}}{{/each}}
+                        <span class="color-picker-caret">▾ Change</span>
+                      </button>
+                      {{/if}}
+                    {{/if}}
+                    {{#if variantOptions}}
+                    <div class="variant-list">
+                      {{#each variantOptions}}
+                      <button type="button" class="variant-row {{#if selected}}selected{{/if}}" data-action="{{../action}}" data-key="{{key}}">
+                        <span class="variant-name">{{name}}</span>
+                        <span class="variant-desc">{{description}}</span>
+                      </button>
+                      {{/each}}
+                    </div>
+                    {{/if}}
+                  </div>
+                  {{/each}}
+                </div>
               </div>
-              <div class="card-list structural-list">
-                <button type="button" class="config-card {{#if structuralActions.sizeIncrease.selected}}selected{{/if}} {{#if structuralActions.sizeIncrease.disabled}}disabled{{/if}}" data-action="toggle-size-increase">
-                  <span class="card-top">
-                    <span class="card-name">{{structuralActions.sizeIncrease.label}}</span>
-                  </span>
-                  <span class="card-desc">{{structuralActions.sizeIncrease.description}}</span>
-                </button>
-                {{#each structuralActions.strips}}
-                <button type="button" class="config-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}" data-action="toggle-strip" data-key="{{key}}">
-                  <span class="card-top"><span class="card-name">{{label}}</span>{{#if effect}}<span class="card-cost">{{effect}}</span>{{/if}}</span>
-                  {{#if description}}<span class="card-desc">{{description}}</span>{{/if}}
-                </button>
-                {{/each}}
-              </div>
-            </section>
-            {{/unless}}
+              {{/if}}
+            </div>
 
-            <aside class="detail-rail panel">
+            <aside class="detail-rail panel workbench-intel-panel">
               <div class="panel-head">
                 <span>Modification Intel</span>
                 <span class="hint">{{detailRail.slotSummary}}</span>
               </div>
               <div class="detail-rail-scroll">
+                {{#if detailRail.primaryRow}}
+                {{#with detailRail.primaryRow}}
+                <section class="rail-section rail-section-primary">
+                  <div class="rail-section-title">Selected Intel</div>
+                  <article class="rail-detail-card selected inspected {{#if installed}}installed{{/if}} {{#if removing}}removing{{/if}} {{#if disabled}}disabled{{/if}}">
+                    <div class="rail-detail-top"><span>{{name}}</span><span>{{kind}}</span></div>
+                    {{#if suggestion}}<div class="workbench-suggestion-line workbench-suggestion-line--{{suggestionTier}}">{{suggestionLabel}}</div>{{/if}}
+                    <dl class="rail-detail-fields">
+                      <div><dt>Detail</dt><dd>{{description}}</dd></div>
+                      {{#if effect}}<div><dt>Benefit</dt><dd class="rail-benefit">{{effect}}</dd></div>{{/if}}
+                      <div><dt>Slots</dt><dd>{{#if slotCost}}{{slotCost}}{{else}}0{{/if}}</dd></div>
+                      <div><dt>Cost</dt><dd>{{#if cost}}{{cost}} cr{{else}}+0 cr{{/if}}</dd></div>
+                      {{#if suggestionReasons.length}}<div><dt>Analysis</dt><dd><ul class="workbench-suggestion-reasons">{{#each suggestionReasons}}<li>{{this}}</li>{{/each}}</ul></dd></div>{{/if}}
+                    </dl>
+                    <div class="rail-tags">{{#if removing}}<span>Removing</span>{{else}}{{#if installed}}<span>Installed</span>{{/if}}{{/if}}{{#if selected}}{{#unless installed}}<span>Staged</span>{{/unless}}{{/if}}</div>
+                    {{#if selectable}}<button type="button" class="rail-select-btn {{#if (eq type 'template')}}rail-select-btn--template{{/if}}" data-action="{{action}}" {{#if key}}data-key="{{key}}"{{/if}}>{{buttonLabel}}</button>{{/if}}
+                  </article>
+                </section>
+                {{/with}}
+                {{/if}}
                 {{#if detailRail.stagedRows.length}}
                 <section class="rail-section rail-section-staged">
                   <div class="rail-section-title">Staged Work</div>
                   {{#each detailRail.stagedRows}}
-                  <article class="rail-detail-card selected">
+                  <article class="rail-detail-card selected {{#if removing}}removing{{/if}} {{#if inspected}}inspected{{/if}}">
                     <div class="rail-detail-top"><span>{{name}}</span><span>{{kind}}</span></div>
                     {{#if suggestion}}<div class="workbench-suggestion-line workbench-suggestion-line--{{suggestionTier}}">{{suggestionLabel}}</div>{{/if}}
                     <dl class="rail-detail-fields">
@@ -458,118 +511,8 @@
                   {{/each}}
                 </section>
                 {{/if}}
-
-                <section class="rail-section">
-                  <div class="rail-section-title">Available Modifications</div>
-                  {{#if detailRail.upgradeRows.length}}
-                    {{#each detailRail.upgradeRows}}
-                    <article class="rail-detail-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}">
-                      <div class="rail-detail-top"><span>{{name}}</span><span>{{kind}}</span></div>
-                      {{#if suggestion}}<div class="workbench-suggestion-line workbench-suggestion-line--{{suggestionTier}}">{{suggestionLabel}}</div>{{/if}}
-                      <dl class="rail-detail-fields">
-                        <div><dt>Detail</dt><dd>{{description}}</dd></div>
-                        {{#if effect}}<div><dt>Benefit</dt><dd class="rail-benefit">{{effect}}</dd></div>{{/if}}
-                        <div><dt>Slots</dt><dd>{{slotCost}}</dd></div>
-                        <div><dt>Cost</dt><dd>{{cost}} cr</dd></div>
-                        {{#if suggestionReasons.length}}<div><dt>Analysis</dt><dd><ul class="workbench-suggestion-reasons">{{#each suggestionReasons}}<li>{{this}}</li>{{/each}}</ul></dd></div>{{/if}}
-                      </dl>
-                      <div class="rail-tags">{{#if installed}}<span>Installed</span>{{/if}}{{#if selected}}{{#unless installed}}<span>Staged</span>{{/unless}}{{/if}}</div>
-                      {{#if selectable}}<button type="button" class="rail-select-btn" data-action="{{action}}" data-key="{{key}}">{{buttonLabel}}</button>{{/if}}
-                    </article>
-                    {{/each}}
-                  {{else}}
-                    <div class="rail-empty">No structured modifications are available for this item.</div>
-                  {{/if}}
-                </section>
-
-                {{#if detailRail.templateRows.length}}
-                <section class="rail-section">
-                  <div class="rail-section-title">Templates</div>
-                  {{#each detailRail.templateRows}}
-                  <article class="rail-detail-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}">
-                    <div class="rail-detail-top"><span>{{name}}</span><span>{{kind}}</span></div>
-                    {{#if suggestion}}<div class="workbench-suggestion-line workbench-suggestion-line--{{suggestionTier}}">{{suggestionLabel}}</div>{{/if}}
-                    <dl class="rail-detail-fields">
-                      <div><dt>Detail</dt><dd>{{description}}</dd></div>
-                      {{#if effect}}<div><dt>Benefit</dt><dd class="rail-benefit">{{effect}}</dd></div>{{/if}}
-                      <div><dt>Slots</dt><dd>0</dd></div>
-                      <div><dt>Cost</dt><dd>{{cost}} cr</dd></div>
-                      {{#if suggestionReasons.length}}<div><dt>Analysis</dt><dd><ul class="workbench-suggestion-reasons">{{#each suggestionReasons}}<li>{{this}}</li>{{/each}}</ul></dd></div>{{/if}}
-                    </dl>
-                    <div class="rail-tags">{{#if installed}}<span>Applied</span>{{/if}}{{#if selected}}{{#unless installed}}<span>Staged</span>{{/unless}}{{/if}}</div>
-                    {{#if selectable}}<button type="button" class="rail-select-btn rail-select-btn--template" data-action="{{action}}" data-key="{{key}}">{{buttonLabel}}</button>{{/if}}
-                  </article>
-                  {{/each}}
-                </section>
-                {{/if}}
-
-                {{#if detailRail.structuralRows.length}}
-                <section class="rail-section">
-                  <div class="rail-section-title">Structural Changes</div>
-                  {{#each detailRail.structuralRows}}
-                  <article class="rail-detail-card {{#if selected}}selected{{/if}} {{#if installed}}installed{{/if}} {{#if disabled}}disabled{{/if}}">
-                    <div class="rail-detail-top"><span>{{name}}</span><span>{{kind}}</span></div>
-                    <dl class="rail-detail-fields">
-                      <div><dt>Detail</dt><dd>{{description}}</dd></div>
-                      {{#if effect}}<div><dt>Benefit</dt><dd class="rail-benefit">{{effect}}</dd></div>{{/if}}
-                      <div><dt>Slots</dt><dd>+1</dd></div>
-                      <div><dt>Cost</dt><dd>{{#if cost}}{{cost}} cr{{else}}+0 cr{{/if}}</dd></div>
-                    </dl>
-                    <div class="rail-tags">{{#if installed}}<span>Installed</span>{{/if}}{{#if selected}}{{#unless installed}}<span>Staged</span>{{/unless}}{{/if}}</div>
-                    {{#if selectable}}<button type="button" class="rail-select-btn" data-action="{{action}}" {{#if key}}data-key="{{key}}"{{/if}}>{{buttonLabel}}</button>{{/if}}
-                  </article>
-                  {{/each}}
-                </section>
-                {{/if}}
               </div>
             </aside>
-
-            <section class="detail-panel panel appearance-panel">
-              <div class="panel-head">
-                <span>Appearance / Configuration</span>
-                <span class="hint">Visual pass</span>
-              </div>
-              <div class="appearance-blocks">
-                {{#each currentItem.appearance}}
-                <div class="appearance-block">
-                  <div class="appearance-label">{{key}}</div>
-                  {{#if options}}
-                    {{#if selectedHex}}
-                    <div class="blaster-bolt-preview" style="--weapon-color: {{selectedHex}}" aria-label="Selected bolt color {{selectedLabel}}">
-                      <span class="blaster-bolt-preview__muzzle" aria-hidden="true"></span>
-                      <span class="blaster-bolt-preview__beam" aria-hidden="true"></span>
-                      <span class="blaster-bolt-preview__label">{{selectedLabel}} bolt package</span>
-                    </div>
-                    <div class="weapon-color-picker bolt-color-grid" aria-label="{{key}}">
-                      {{#each options}}
-                      <button type="button" class="weapon-color-cell blaster-color-cell {{#if selected}}selected{{/if}}" style="--weapon-color: {{hex}}" data-action="{{../action}}" data-key="{{key}}" title="{{label}}" aria-label="Bolt color {{label}}">
-                        <span class="weapon-color-preview bolt-preview" aria-hidden="true"><span class="weapon-color-beam"></span></span>
-                        <span class="weapon-color-label">{{label}}</span>
-                      </button>
-                      {{/each}}
-                    </div>
-                    {{else}}
-                    <div class="swatch-grid">
-                      {{#each options}}
-                      <button type="button" class="swatch {{#if selected}}selected{{/if}}" style="--swatch: {{hex}}" data-action="{{../action}}" data-key="{{key}}" title="{{label}}"></button>
-                      {{/each}}
-                    </div>
-                    {{/if}}
-                  {{/if}}
-                  {{#if variantOptions}}
-                  <div class="variant-list">
-                    {{#each variantOptions}}
-                    <button type="button" class="variant-row {{#if selected}}selected{{/if}}" data-action="{{../action}}" data-key="{{key}}">
-                      <span class="variant-name">{{name}}</span>
-                      <span class="variant-desc">{{description}}</span>
-                    </button>
-                    {{/each}}
-                  </div>
-                  {{/if}}
-                </div>
-                {{/each}}
-              </div>
-            </section>
           </div>
           {{/if}}
         </section>

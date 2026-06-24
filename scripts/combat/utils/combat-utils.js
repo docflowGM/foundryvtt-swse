@@ -1,10 +1,9 @@
-import { getEffectiveHalfLevel } from '../../actors/derived/level-split.js';
 import { ResolutionContext } from '../../engine/resolution/resolution-context.js';
 import { RULES } from '../../engine/execution/rules/rule-enum.js';
 import { SchemaAdapters } from '../../utils/schema-adapters.js';
 import { isNpcStatblockMode } from '../../actors/npc/npc-mode-adapter.js';
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
-import { getDamageAbilityContribution, getRangePenalty, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus, isMeleeWeapon as isRawMeleeWeapon, isRangedWeapon as isRawRangedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { getDamageAbilityContribution, getHalfLevelDamageBonus, getRangePenalty, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus, isMeleeWeapon as isRawMeleeWeapon, isRangedWeapon as isRawRangedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 
 /**
  * Modern SWSE Combat Utilities (v13+)
@@ -344,7 +343,7 @@ export function hasDexToDamageTalent(actor) {
  * @returns {number}
  */
 export function computeDamageBonus(actor, weapon, options = {}) {
-  const halfLvl = getEffectiveHalfLevel(actor);
+  const halfLvl = getHalfLevelDamageBonus(actor, weapon, { ...options, weapon, isWeaponDamage: true });
   let bonus = halfLvl + getWeaponFlatDamageBonus(weapon);
 
   // Species combat bonuses (from SpeciesTraitEngine)

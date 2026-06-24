@@ -33,7 +33,12 @@ function extractName(entry) {
 function collectActorItemNames(actor, type) {
   if (!actor?.items) return [];
   return actor.items
-    .filter((item) => item.type === type)
+    .filter((item) => {
+      if (item.type === type) return true;
+      if (type === FORCE_ITEM_TYPES.TECHNIQUE && item.type === 'feat') return item.system?.tags?.includes('force_technique');
+      if (type === FORCE_ITEM_TYPES.SECRET && item.type === 'feat') return item.system?.tags?.includes('force_secret');
+      return false;
+    })
     .map((item) => normalizeName(item.name))
     .filter(Boolean);
 }

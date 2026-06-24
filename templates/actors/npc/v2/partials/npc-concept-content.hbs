@@ -88,18 +88,24 @@
             </div>
             <aside class="swse-npc-col-stack">
               <section class="swse-npc-card swse-npc-card--mode-summary">
-                <header class="swse-npc-card__header"><h3 class="swse-section-title">{{localize "SWSE.ActorUI.RulesMode"}}</h3></header>
+                <header class="swse-npc-card__header"><h3 class="swse-section-title">NPC Sheet Status</h3></header>
                 <div class="swse-npc-card__body">
                   <div class="swse-npc-mode-grid">
-                    {{#each npcConcept.modeCards as |mode|}}
-                      <div class="swse-npc-mode-grid__item {{#if mode.active}}is-active{{/if}}">
-                        <span class="swse-npc-mode-grid__label">{{mode.label}}</span>
-                        <span class="swse-npc-mode-grid__value">{{mode.value}}</span>
-                      </div>
-                    {{/each}}
+                    <div class="swse-npc-mode-grid__item is-active">
+                      <span class="swse-npc-mode-grid__label">Interactivity</span>
+                      <span class="swse-npc-mode-grid__value">Playable + Editable</span>
+                    </div>
+                    <div class="swse-npc-mode-grid__item is-active">
+                      <span class="swse-npc-mode-grid__label">Source Authority</span>
+                      <span class="swse-npc-mode-grid__value">{{npcSourceAuthorityLabel}}</span>
+                    </div>
+                    <div class="swse-npc-mode-grid__item">
+                      <span class="swse-npc-mode-grid__label">Legal State</span>
+                      <span class="swse-npc-mode-grid__value">{{npcLegalStateLabel}}</span>
+                    </div>
                   </div>
                   <div class="swse-npc-callout swse-npc-callout--statblock">
-                    {{authorityDescription}}
+                    NPC sheets no longer require switching between play and edit. Roll attacks/skills and edit values from the same surface.
                   </div>
                 </div>
               </section>
@@ -142,7 +148,10 @@
               <h3 class="swse-section-title">{{localize "SWSE.ActorUI.Attacks"}}</h3>
               <p class="swse-npc-card__subhead">{{localize "SWSE.ActorUI.WeaponNaturalAndStatblockAttacks"}}</p>
             </div>
-            <div class="swse-npc-badges"><span class="swse-npc-badge">BAB {{npcConcept.babDisplay}}</span></div>
+            <div class="swse-npc-badges">
+              <span class="swse-npc-badge">BAB {{npcConcept.babDisplay}}</span>
+              <button type="button" class="swse-npc-mini-btn swse-npc-mini-btn--primary" data-action="add-npc-weapon">+ Add Attack</button>
+            </div>
           </header>
           <div class="swse-npc-card__body swse-npc-attack-list">
             {{#if npcConcept.hasAttacks}}
@@ -157,6 +166,17 @@
                     <span>Damage {{attack.damage}}</span>
                   </div>
                   {{#if attack.notes}}<p class="swse-npc-attack-notes">{{attack.notes}}</p>{{/if}}
+                  <div class="swse-npc-attack-actions">
+                    {{#if attack.canRollAttack}}
+                      <button type="button" class="swse-npc-mini-btn swse-npc-mini-btn--primary" data-action="roll-npc-statblock-attack" data-item-id="{{attack.itemId}}" data-attack-bonus="{{attack.attack}}" data-attack-name="{{attack.name}}">Roll</button>
+                    {{/if}}
+                    {{#if attack.canRollDamage}}
+                      <button type="button" class="swse-npc-mini-btn" data-action="roll-npc-statblock-damage" data-damage-formula="{{attack.damageFormula}}" data-attack-name="{{attack.name}}">Damage</button>
+                    {{/if}}
+                    {{#if attack.itemId}}
+                      <button type="button" class="swse-npc-mini-btn swse-v2-open-item" data-item-id="{{attack.itemId}}">Edit</button>
+                    {{/if}}
+                  </div>
                 </article>
               {{/each}}
             {{else}}
@@ -198,11 +218,32 @@
 
     <section class="tab flexcol" data-tab-group="primary" data-tab="stats">
       <div class="swse-npc-col-stack">
+        {{#if editable}}
+        <section class="swse-npc-card swse-npc-card--edit-basics">
+          <header class="swse-npc-card__header">
+            <div>
+              <h3 class="swse-section-title">Editable NPC Fields</h3>
+              <p class="swse-npc-card__subhead">NPC sheet fields save directly; statblock authority controls the source values used in play.</p>
+            </div>
+          </header>
+          <div class="swse-npc-card__body swse-npc-edit-grid">
+            <label><span>{{localize "SWSE.ActorUI.Species"}}</span><input type="text" name="system.race" value="{{system.race}}" data-npc-statblock-authority="true"></label>
+            <label><span>{{localize "SWSE.ActorUI.Class"}}</span><input type="text" name="system.className" value="{{system.className}}" data-npc-statblock-authority="true"></label>
+            <label><span>{{localize "SWSE.ActorUI.Level"}}</span><input type="number" name="system.level" value="{{system.level}}" min="0" step="1" data-npc-statblock-authority="true"></label>
+            <label><span>{{localize "SWSE.ActorUI.Challenge"}}</span><input type="text" name="system.challengeLevel" value="{{system.challengeLevel}}" data-npc-statblock-authority="true"></label>
+            <label><span>{{localize "SWSE.ActorUI.Size2"}}</span><input type="text" name="system.size" value="{{system.size}}" data-npc-statblock-authority="true"></label>
+            <label><span>{{localize "SWSE.ActorUI.Speed"}}</span><input type="text" name="system.speed" value="{{system.speed}}" data-npc-statblock-authority="true"></label>
+            <label><span>{{localize "SWSE.ActorUI.HP"}}</span><input type="number" name="system.hp.value" value="{{system.hp.value}}" min="0" step="1" data-npc-statblock-authority="true"></label>
+            <label><span>{{localize "SWSE.ActorUI.Credits"}}</span><input type="number" name="system.credits" value="{{system.credits}}" min="0" step="1" data-npc-statblock-authority="true"></label>
+          </div>
+        </section>
+        {{/if}}
+
         <section class="swse-npc-card swse-npc-card--abilities">
           <header class="swse-npc-card__header">
             <div>
               <h3 class="swse-section-title">{{localize "SWSE.ActorUI.AbilityScores"}}</h3>
-              <p class="swse-npc-card__subhead">{{localize "SWSE.ActorUI.ConservativeStatDisplayEditControlsRemainLimitedTo"}}</p>
+              <p class="swse-npc-card__subhead">NPC ability fields are editable and immediately usable from this sheet.</p>
             </div>
           </header>
           <div class="swse-npc-card__body">
@@ -213,6 +254,13 @@
                     <span class="swse-npc-ability-label">{{ability.abbr}}</span>
                     <strong class="swse-npc-ability-score">{{ability.score}}</strong>
                     <span class="swse-npc-ability-mod {{ability.modifierClass}}">{{ability.mod}}</span>
+                    {{#if ../editable}}
+                      <div class="swse-npc-ability-edit-grid">
+                        <label><span>{{localize "SWSE.ActorUI.Base"}}</span><input class="swse-npc-ability-input" type="number" name="system.attributes.{{ability.key}}.base" value="{{ability.base}}" step="1" data-npc-statblock-authority="true"></label>
+                        <label><span>{{localize "SWSE.ActorUI.Bonus"}}</span><input class="swse-npc-ability-input" type="number" name="system.attributes.{{ability.key}}.racial" value="{{ability.racial}}" step="1" data-npc-statblock-authority="true"></label>
+                        <label><span>{{localize "SWSE.ActorUI.Temp"}}</span><input class="swse-npc-ability-input" type="number" name="system.attributes.{{ability.key}}.temp" value="{{ability.temp}}" step="1" data-npc-statblock-authority="true"></label>
+                      </div>
+                    {{/if}}
                   </div>
                 {{/each}}
               </div>
@@ -231,9 +279,14 @@
             {{#if npcConcept.hasSkills}}
               <div class="swse-npc-skills-grid">
                 {{#each npcConcept.skills as |skill|}}
-                  <div class="swse-npc-skill-row {{#if skill.trained}}is-trained{{/if}}">
-                    <span class="swse-npc-skill-name">{{#if skill.trained}}● {{/if}}{{skill.label}}</span>
-                    <strong class="swse-npc-skill-total">{{skill.total}}</strong>
+                  <div class="swse-npc-skill-edit-row">
+                    <button type="button" class="swse-npc-skill-row {{#if skill.trained}}is-trained{{/if}}" data-action="roll-skill" data-skill="{{skill.key}}" data-skill-label="{{skill.label}}" data-statblock-total="{{skill.rawTotal}}" data-mod-dialog="true" title="Roll {{skill.label}}">
+                      <span class="swse-npc-skill-name">{{#if skill.trained}}● {{/if}}{{skill.label}}</span>
+                      <strong class="swse-npc-skill-total">{{skill.total}}</strong>
+                    </button>
+                    {{#if ../editable}}
+                      <label class="swse-npc-skill-edit-row__total"><span>Total</span><input type="number" name="{{skill.editPath}}" value="{{skill.rawTotal}}" step="1" data-npc-statblock-authority="true"></label>
+                    {{/if}}
                   </div>
                 {{/each}}
               </div>

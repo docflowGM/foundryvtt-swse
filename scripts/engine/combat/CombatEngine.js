@@ -26,6 +26,46 @@ function isTruthyEquipState(value) {
   return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active', 'activated', 'natural'].includes(String(value || '').toLowerCase());
 }
 
+function listTextValues(...values) {
+  const out = [];
+  for (const value of values) {
+    if (Array.isArray(value)) {
+      out.push(...value.map((entry) => String(entry ?? '').trim()).filter(Boolean));
+    } else if (value && typeof value === 'object') {
+      out.push(...Object.values(value).map((entry) => String(entry ?? '').trim()).filter(Boolean));
+    } else {
+      const text = String(value ?? '').trim();
+      if (text) out.push(text);
+    }
+  }
+  return out;
+}
+
+function isNaturalWeaponItem(item) {
+  const system = item?.system ?? {};
+  const swseFlags = item?.flags?.swse ?? {};
+  if (swseFlags.isNaturalWeapon === true || swseFlags.alwaysArmed === true) return true;
+
+  const naturalFields = listTextValues(
+    system.category,
+    system.subcategory,
+    system.proficiency,
+    system.weaponCategory,
+    system.weaponType,
+    system.source
+  );
+  if (naturalFields.some((value) => value.toLowerCase() === 'natural')) return true;
+
+  const descriptors = listTextValues(system.properties, system.traits, system.tags);
+  return descriptors.some((value) => /natural\s+weapon/i.test(value));
+}
+
+function isAutoEquippedNaturalWeapon(item) {
+  const swseFlags = item?.flags?.swse ?? {};
+  return isNaturalWeaponItem(item)
+    && (isTruthyEquipState(swseFlags.autoEquipped) || swseFlags.alwaysArmed === true);
+}
+
 function hasWeaponDamageProfile(item) {
   const system = item?.system ?? {};
   return [system.damage, system.damageFormula, system.damageRoll, system.formula, system.weapon?.damage, system.attack?.damage, system.rolls?.damage]
@@ -59,7 +99,7 @@ function isEquippedWeaponItem(item) {
     || isTruthyEquipState(system.equippable?.active)
     || isTruthyEquipState(system.activation?.active)
     || isTruthyEquipState(item?.flags?.swse?.equipped)
-    || isTruthyEquipState(item?.flags?.swse?.autoEquipped)
+    || isAutoEquippedNaturalWeapon(item)
   );
 }
 

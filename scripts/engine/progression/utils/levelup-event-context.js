@@ -12,6 +12,7 @@
 
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { resolveClassModel } from './class-resolution.js';
+import { isNonheroicClassRef } from './nonheroic-class-model.js';
 
 export const BASE_CLASS_IDS = Object.freeze(['jedi', 'noble', 'scout', 'soldier', 'scoundrel']);
 
@@ -147,7 +148,17 @@ export function buildLevelUpEventContext(actor, progressionSession = null, optio
   const enteringLevel = Number(options.enteringLevel || currentLevel + 1) || 1;
 
   const existingItem = findMatchingClassItem(actor, selectedClass, classModel);
-  const currentLevelsInSelectedClass = existingItem ? readClassLevel(existingItem) : 0;
+  let currentLevelsInSelectedClass = existingItem ? readClassLevel(existingItem) : 0;
+
+  // Imported/statblock nonheroic NPCs can be progression-ready without an owned
+  // Nonheroic class item yet. In that case, the nonheroic session seed is the
+  // current class-level authority; taking Nonheroic again should advance from
+  // that total, not create a fresh Nonheroic 1 item.
+  if (!existingItem && isNonheroicClassRef(classModel || selectedClass)) {
+    const seededNonheroicLevel = Number(progressionSession?.nonheroicContext?.totalNonheroicLevel || 0) || 0;
+    currentLevelsInSelectedClass = Math.max(currentLevelsInSelectedClass, seededNonheroicLevel);
+  }
+
   const selectedClassNextLevel = currentLevelsInSelectedClass + 1;
   const previousItem = getPreviousClassFromHistory(actor, selectedClass, classModel) || getPreviousClassItem(actor, selectedClass, classModel);
 

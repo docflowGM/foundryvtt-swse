@@ -6,7 +6,6 @@
 
     <div class="swse-npc-badges">
       <span class="swse-npc-badge swse-npc-badge--kind">{{npcKindLabel}}</span>
-      <span class="swse-npc-badge swse-npc-badge--mode">{{npcModeLabel}}</span>
       {{#if npcImported}}
         <span class="swse-npc-badge swse-npc-badge--subtype">{{localize "SWSE.ActorUI.Imported"}}</span>
       {{/if}}
@@ -34,8 +33,8 @@
       </div>
 
       <div class="swse-npc-meta-list__row">
-        <dt>{{localize "SWSE.ActorUI.SheetMode"}}</dt>
-        <dd>{{npcModeLabel}}</dd>
+        <dt>Interactivity</dt>
+        <dd>Playable + Editable</dd>
       </div>
 
       <div class="swse-npc-meta-list__row">

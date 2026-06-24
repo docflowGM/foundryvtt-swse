@@ -20,7 +20,7 @@
           {{#if weapon.description}}<div class="entry-description muted">{{weapon.description}}</div>{{/if}}
           <div class="swse-inline-actions">
             {{#if weapon.canRoll}}
-              <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{weapon.id}}" data-part-name="{{weapon.name}}">{{localize "SWSE.ActorUI.Use"}}</button>
+              <button type="button" class="holo-btn tiny" data-action="use-droid-part" data-part-id="{{weapon.id}}" data-part-name="{{weapon.name}}" data-damage="{{weapon.damage}}" data-range="{{weapon.range}}" data-attack-bonus="{{weapon.attackBonus}}" data-mode="{{weapon.meleeOrRanged}}" data-weapon-type="{{weapon.type}}">{{localize "SWSE.ActorUI.Roll"}}</button>
             {{/if}}
           </div>
           {{#if weapon.canRoll}}

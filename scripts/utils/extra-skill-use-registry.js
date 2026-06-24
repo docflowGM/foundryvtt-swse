@@ -3,6 +3,18 @@ import { SkillUseFilter } from "/systems/foundryvtt-swse/scripts/utils/skill-use
 import { TreatInjuryMedicalSecretResolver } from "/systems/foundryvtt-swse/scripts/engine/progression/medical/treat-injury-medical-secret-resolver.js";
 
 
+
+const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
+
+function athleticsConsolidationActive() {
+  try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; }
+  catch (_err) { return false; }
+}
+
+function isAthleticsComponentKey(skillKey) {
+  return ATHLETICS_COMPONENT_KEYS.includes(String(skillKey ?? '').toLowerCase());
+}
+
 function normalizeText(value) {
   return String(value ?? '')
     .trim()
@@ -75,9 +87,26 @@ export class ExtraSkillUseRegistry {
   static async getForSkill(skillKey, { actor = null, includeInaccessible = false } = {}) {
     await this.initialize();
 
-    const items = this._bySkill.get(skillKey) ?? [];
+    const requestedSkillKey = String(skillKey ?? '').trim();
+    const athleticsOn = athleticsConsolidationActive();
+    const effectiveSkillKey = athleticsOn && isAthleticsComponentKey(requestedSkillKey) ? 'athletics' : requestedSkillKey;
+    const lookupKeys = athleticsOn && effectiveSkillKey === 'athletics'
+      ? ['athletics', ...ATHLETICS_COMPONENT_KEYS]
+      : [effectiveSkillKey];
+
+    const seenKeys = new Set();
+    const items = lookupKeys.flatMap((lookupKey) => this._bySkill.get(lookupKey) ?? [])
+      .map((item) => effectiveSkillKey === 'athletics' ? this._retargetAthleticsUse(item) : item)
+      .filter((item) => {
+        const uniqueKey = item?.key ?? item?._source?._id ?? `${item?.skillKey}:${item?.label}`;
+        if (seenKeys.has(uniqueKey)) return false;
+        seenKeys.add(uniqueKey);
+        return true;
+      });
+
     let hydrated = items.map((item) => {
-      const accessible = actor ? SkillUseFilter.canAccessSkillUse(actor, item._source) : true;
+      const accessSource = item?._source ?? item;
+      const accessible = actor ? SkillUseFilter.canAccessSkillUse(actor, accessSource) : true;
       const withAccess = {
         ...item,
         accessible,
@@ -86,15 +115,38 @@ export class ExtraSkillUseRegistry {
       return this._applyMedicalSecretEnhancements(withAccess, actor);
     });
 
-    if (skillKey === 'treatInjury') {
+    if (effectiveSkillKey === 'treatInjury') {
       hydrated = this._appendMedicalSecretVirtualUses(hydrated, actor);
     }
 
-    if (skillKey === 'survival') {
+    if (effectiveSkillKey === 'survival') {
       hydrated = this._applySurvivalFeatEnhancements(hydrated, actor);
     }
 
     return includeInaccessible ? hydrated : hydrated.filter((item) => item.accessible !== false);
+  }
+
+  static _retargetAthleticsUse(item) {
+    if (!item || item.skillKey === 'athletics') return item;
+    const source = item._source ?? {};
+    const sourceSystem = source.system ?? {};
+    return {
+      ...item,
+      sourceSkillKey: item.skillKey,
+      skillKey: 'athletics',
+      sourceType: item.sourceType ?? 'athletics-consolidation',
+      sourceLabel: item.sourceLabel ?? `Athletics (${sourceSystem.skillLabel || item.skillKey || 'component'})`,
+      _source: {
+        ...source,
+        system: {
+          ...sourceSystem,
+          sourceSkill: sourceSystem.skill ?? item.skillKey,
+          sourceSkillLabel: sourceSystem.skillLabel ?? item.skillKey,
+          skill: 'athletics',
+          skillLabel: 'Athletics'
+        }
+      }
+    };
   }
 
   static async getAllBySkill({ actor = null, includeInaccessible = false } = {}) {

@@ -44,11 +44,20 @@ const ITEM_PROJECTION_KEYS = ["id", "name", "type", "img", "system"];
 function projectItem(item) {
   const projection = {};
   for (const key of ITEM_PROJECTION_KEYS) projection[key] = item?.[key];
-  projection.damage = item?.system?.damage ?? item?.system?.damageFormula ?? "";
-  projection.damageType = item?.system?.damageType ?? item?.system?.damageTypes ?? "";
-  projection.range = item?.system?.range ?? item?.system?.rangeText ?? "";
-  projection.attackBonus = item?.system?.attackBonus ?? item?.system?.attack ?? null;
-  projection.integrated = item?.system?.integrated === true || Boolean(item?.flags?.swse?.integrated);
+  const system = item?.system ?? {};
+  const weaponProfile = readWeaponProfile(system);
+  projection.damage = firstDefined(system.damage, system.damageFormula, weaponProfile?.damage, "");
+  projection.damageType = firstDefined(system.damageType, system.damageTypes, weaponProfile?.damageType, "");
+  projection.range = firstDefined(system.range, system.rangeText, weaponProfile?.range, weaponProfile?.mode, "");
+  projection.attackBonus = firstDefined(system.attackBonus, system.attack, weaponProfile?.attackBonus, null);
+  projection.weaponProfile = weaponProfile;
+  projection.integrated = isTruthyState(system.integrated) || isTruthyState(item?.flags?.swse?.integrated);
+  projection.equipped = isTruthyState(system.equipped)
+    || isTruthyState(system.isEquipped)
+    || isTruthyState(system.readied)
+    || isTruthyState(system.active)
+    || isTruthyState(system.equippable?.equipped)
+    || projection.integrated;
   if (item?.type === "armor") {
     const armor = resolveArmorData(item);
     projection.armor = armor;
@@ -74,6 +83,24 @@ function asItemArray(items) {
   if (typeof items[Symbol.iterator] === "function") return Array.from(items);
   if (typeof items === "object") return Object.values(items);
   return [];
+}
+
+function isTruthyState(value) {
+  if (value === true || Number(value) === 1) return true;
+  if (value && typeof value === "object") {
+    return isTruthyState(value.value ?? value.current ?? value.active ?? value.equipped ?? value.state);
+  }
+  return ["true", "1", "yes", "equipped", "worn", "held", "readied", "ready", "on", "active", "integrated"]
+    .includes(String(value ?? "").toLowerCase());
+}
+
+function firstDefined(...values) {
+  return values.find((value) => value !== undefined && value !== null && value !== "");
+}
+
+function readWeaponProfile(system = {}) {
+  const profiles = Array.isArray(system.weaponProfiles) ? system.weaponProfiles : [];
+  return system.weaponProfile ?? profiles[0] ?? null;
 }
 
 function projectItems(items) {
@@ -244,7 +271,7 @@ export class DroidSheetContextBuilder {
   }
 
   buildWeaponEntries() {
-    return projectItems(asItemArray(this.actor?.items).filter((item) => item.type === "weapon"));
+    return projectItems(asItemArray(this.actor?.items).filter((item) => ["weapon", "lightsaber"].includes(item.type)));
   }
 
   buildCombatWeapons(weapons, droidPanels) {
@@ -255,15 +282,18 @@ export class DroidSheetContextBuilder {
       ? droidPanels.integratedWeapons.entries.filter((part) => !all.some((weapon) => weapon.id === part.id))
       : [];
     const unarmed = buildUnarmedAttackContext(this.actor);
+    const rollableIntegratedParts = integratedParts.filter((part) => part?.canRoll === true || Boolean(part?.weaponProfile) || Boolean(part?.damage));
     return {
       unarmed,
       handheld,
       integrated,
       integratedParts,
+      rollableIntegratedParts,
       all: [unarmed, ...handheld, ...integrated, ...integratedParts],
       hasHandheld: handheld.length > 0,
       hasIntegrated: integrated.length > 0,
       hasIntegratedParts: integratedParts.length > 0,
+      hasIntegratedCombat: integrated.length > 0 || rollableIntegratedParts.length > 0,
       hasAny: handheld.length > 0 || integrated.length > 0 || integratedParts.length > 0 || Boolean(unarmed)
     };
   }
@@ -510,38 +540,60 @@ export class DroidSheetContextBuilder {
   buildIntegratedWeaponsPanel() {
     const droidSystems = this.system?.droidSystems ?? {};
     const builderEntries = Array.isArray(droidSystems.weapons)
-      ? droidSystems.weapons.map((item, idx) => ({
-          id: item.id ?? `weapon-${idx}`,
-          name: item.name ?? "",
-          cost: Number(item.cost ?? 0),
-          type: item.type ?? "built-in",
-          description: item.description ?? ""
-        }))
+      ? droidSystems.weapons.map((item, idx) => {
+          const weaponProfile = item.weaponProfile ?? (Array.isArray(item.weaponProfiles) ? item.weaponProfiles[0] : null);
+          const damage = firstDefined(item.damage, item.damageFormula, weaponProfile?.damage, "");
+          const range = firstDefined(item.range, item.rangeText, weaponProfile?.range, weaponProfile?.mode, "");
+          const attackBonus = firstDefined(item.attackBonus, item.attack, weaponProfile?.attackBonus, null);
+          return {
+            id: item.id ?? `weapon-${idx}`,
+            name: item.name ?? weaponProfile?.name ?? "",
+            cost: Number(item.cost ?? 0),
+            type: item.type ?? weaponProfile?.weaponType ?? "built-in",
+            description: item.description ?? weaponProfile?.description ?? "",
+            weaponProfile,
+            damage,
+            damageBonus: item.damageBonus ?? "",
+            range,
+            meleeOrRanged: item.meleeOrRanged ?? weaponProfile?.mode ?? "melee",
+            attackBonus: Number.isFinite(Number(attackBonus)) ? Number(attackBonus) : null,
+            canRoll: Boolean(damage || weaponProfile?.damage || weaponProfile?.damageBySize)
+          };
+        })
       : [];
 
-    // Also include weapon items from actor.items that carry the integrated flag
+    // Also include weapon items from actor.items that carry the integrated flag.
+    // Integrated droid weapons are chassis-mounted, so they are combat-ready even
+    // when the item does not also carry the generic system.equipped flag.
     const builderIds = new Set(builderEntries.map(e => e.id).filter(Boolean));
     const itemEntries = (this.actor?.items ?? [])
       .filter(i =>
-        i.type === "weapon" &&
-        (i.system?.integrated === true || Boolean(i.flags?.swse?.integrated)) &&
+        ["weapon", "lightsaber"].includes(i.type) &&
+        (isTruthyState(i.system?.integrated) || isTruthyState(i.flags?.swse?.integrated)) &&
         !builderIds.has(i.id)
       )
-      .map(i => ({
-        id: i.id,
-        name: i.name ?? "",
-        cost: 0,
-        type: "built-in",
-        description: i.system?.description ?? "",
-        // Phase 6: weapon metadata for Systems tab display
-        damage: i.system?.damage ?? "",
-        damageBonus: i.system?.damageBonus ?? "",
-        range: i.system?.range ?? "",
-        meleeOrRanged: i.system?.meleeOrRanged ?? "melee",
-        attackBonus: Number.isFinite(Number(i.system?.attackBonus))
-          ? Number(i.system.attackBonus) : null,
-        canRoll: true,
-      }));
+      .map(i => {
+        const system = i.system ?? {};
+        const weaponProfile = readWeaponProfile(system);
+        return {
+          id: i.id,
+          name: i.name ?? "",
+          cost: Number(system.cost ?? system.price ?? 0),
+          type: firstDefined(system.weaponType, system.weaponCategory, system.category, "built-in"),
+          description: system.description ?? "",
+          // Phase 6: weapon metadata for Systems tab display
+          weaponProfile,
+          damage: firstDefined(system.damage, system.damageFormula, weaponProfile?.damage, ""),
+          damageBonus: system.damageBonus ?? "",
+          range: firstDefined(system.range, system.rangeText, weaponProfile?.range, weaponProfile?.mode, ""),
+          meleeOrRanged: system.meleeOrRanged ?? weaponProfile?.mode ?? "melee",
+          attackBonus: Number.isFinite(Number(firstDefined(system.attackBonus, weaponProfile?.attackBonus)))
+            ? Number(firstDefined(system.attackBonus, weaponProfile?.attackBonus)) : null,
+          canRoll: true,
+          equipped: true,
+          integrated: true
+        };
+      });
 
     const entries = [...builderEntries, ...itemEntries];
     return {

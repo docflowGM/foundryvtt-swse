@@ -679,9 +679,14 @@ function buildForceSection(actor, pending) {
       if (name) powers.add(name);
     } else if (t === 'forcetechnique' || t === 'force-technique') {
       if (name) techniques.add(name);
+    } else if (t === 'forcesecret' || t === 'force-secret') {
+      if (name) secrets.add(name);
     } else if (t === 'feat') {
       if (item?.system?.tags?.includes('force_secret')) {
         if (name) secrets.add(name);
+      }
+      if (item?.system?.tags?.includes('force_technique')) {
+        if (name) techniques.add(name);
       }
       if (isForceTraining(item?.name)) {
         forceTrainingCount++;

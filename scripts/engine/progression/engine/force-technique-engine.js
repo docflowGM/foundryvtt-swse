@@ -47,8 +47,7 @@ export class ForceTechniqueEngine {
   static async applySelected(actor, selectedItems = []) {
     const existing = new Set(
       actor.items
-        .filter(i => i.type === 'feat')
-        .filter(i => i.system?.tags?.includes('force_technique'))
+        .filter(i => i.type === 'force-technique' || (i.type === 'feat' && i.system?.tags?.includes('force_technique')))
         .map(i => i.name.toLowerCase())
     );
 
@@ -67,7 +66,7 @@ export class ForceTechniqueEngine {
         } else {
           toCreate.push({
             name: it.name || 'Force Technique',
-            type: 'feat',
+            type: 'force-technique',
             img: it.img || 'icons/svg/mystery-man.svg',
             system: it.system || {}
           });

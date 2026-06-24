@@ -14,6 +14,77 @@ import { SkillFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/skill
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 
+
+const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
+
+function athleticsConsolidationActive() {
+  try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; }
+  catch (_err) { return false; }
+}
+
+function isAthleticsComponentKey(skillKey) {
+  return ATHLETICS_COMPONENT_KEYS.includes(String(skillKey ?? '').toLowerCase());
+}
+
+function readDerivedSkill(derivedSkills, skillKey) {
+  if (Array.isArray(derivedSkills?.list)) return derivedSkills.list.find((row) => row?.key === skillKey);
+  return derivedSkills?.[skillKey];
+}
+
+function buildAthleticsRollSkill(actor, derivedSkills = {}) {
+  const systemSkills = actor?.system?.skills ?? {};
+  const derivedAthletics = readDerivedSkill(derivedSkills, 'athletics') ?? {};
+  const systemAthletics = systemSkills.athletics ?? {};
+  const componentRows = ATHLETICS_COMPONENT_KEYS.map((key) => ({
+    key,
+    system: systemSkills[key] ?? {},
+    derived: readDerivedSkill(derivedSkills, key) ?? {}
+  }));
+  const selectedAbility = systemAthletics.selectedAbility
+    || derivedAthletics.selectedAbility
+    || derivedAthletics.ability
+    || 'dex';
+  const componentTotals = componentRows
+    .map(({ system, derived }) => Number(derived?.total ?? system?.total))
+    .filter(Number.isFinite);
+  const abilityMod = Number.isFinite(Number(derivedAthletics.abilityMod))
+    ? Number(derivedAthletics.abilityMod)
+    : Number(actor?.system?.derived?.attributes?.[selectedAbility]?.mod ?? 0) || 0;
+  const halfLevel = Number(actor?.system?.derived?.identity?.halfLevel ?? Math.floor((Number(actor?.system?.level) || 1) / 2)) || 0;
+  const trained = systemAthletics.trained === true || derivedAthletics.trained === true || componentRows.some(({ system, derived }) => system?.trained === true || derived?.trained === true);
+  const focused = systemAthletics.focused === true || derivedAthletics.focused === true || componentRows.some(({ system, derived }) => system?.focused === true || derived?.focused === true);
+  const miscMod = Number.isFinite(Number(systemAthletics.miscMod))
+    ? Number(systemAthletics.miscMod)
+    : componentRows.reduce((sum, { system }) => sum + (Number(system?.miscMod) || 0), 0);
+  const fallbackTotal = abilityMod + halfLevel + (trained ? 5 : 0) + (focused ? 5 : 0) + miscMod;
+  const total = Number.isFinite(Number(derivedAthletics.total))
+    ? Number(derivedAthletics.total)
+    : (componentTotals.length ? Math.max(...componentTotals) : fallbackTotal);
+
+  const skill = {
+    ...systemAthletics,
+    label: systemAthletics.label ?? derivedAthletics.label ?? 'Athletics',
+    selectedAbility,
+    trained,
+    focused,
+    miscMod,
+    total
+  };
+  const derivedSkill = {
+    ...derivedAthletics,
+    key: 'athletics',
+    label: 'Athletics',
+    selectedAbility,
+    ability: selectedAbility,
+    abilityMod,
+    halfLevel,
+    trained,
+    focused,
+    total
+  };
+  return { skill, derivedSkill };
+}
+
 /**
  * Roll a skill check using unified RollCore pipeline
  * Routes through ModifierEngine to ensure passive bonuses apply
@@ -24,20 +95,28 @@ import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/
  */
 export async function rollSkill(actor, skillKey, options = {}) {
   const utils = game.swse.utils;
+  const athleticsOn = athleticsConsolidationActive();
+  const requestedSkillKey = String(skillKey ?? '').trim();
+  const effectiveSkillKey = athleticsOn && isAthleticsComponentKey(requestedSkillKey) ? 'athletics' : requestedSkillKey;
+
   // === READ FROM DERIVED (SSOT) ===
   const derivedSkills = actor.system.derived?.skills;
-  const derivedSkill = Array.isArray(derivedSkills?.list)
-    ? derivedSkills.list.find((row) => row?.key === skillKey)
-    : derivedSkills?.[skillKey];
+  let derivedSkill = readDerivedSkill(derivedSkills, effectiveSkillKey);
 
   // Get skill metadata from raw system.skills for training check
-  const skill = actor.system.skills?.[skillKey];
+  let skill = actor.system.skills?.[effectiveSkillKey];
+  if (!skill && athleticsOn && effectiveSkillKey === 'athletics') {
+    const athletics = buildAthleticsRollSkill(actor, derivedSkills);
+    skill = athletics.skill;
+    derivedSkill = athletics.derivedSkill;
+  }
   if (!skill) {
-    ui.notifications.warn(`Skill ${skillKey} not found in system`);
+    ui.notifications.warn(`Skill ${effectiveSkillKey} not found in system`);
     return null;
   }
 
-  const abilityKey = derivedSkill?.ability || derivedSkill?.selectedAbility || skill.selectedAbility || CONFIG?.SWSE?.skills?.[skillKey]?.ability || 'str';
+  const skillConfig = CONFIG?.SWSE?.skills?.[effectiveSkillKey] ?? (effectiveSkillKey === 'athletics' ? { label: 'Athletics', name: 'Athletics', ability: 'dex' } : {});
+  const abilityKey = derivedSkill?.ability || derivedSkill?.selectedAbility || skill.selectedAbility || skillConfig?.ability || 'str';
   const abilityMod = Number.isFinite(Number(derivedSkill?.abilityMod))
     ? Number(derivedSkill.abilityMod)
     : Number(actor.system?.derived?.attributes?.[abilityKey]?.mod ?? 0) || 0;
@@ -51,8 +130,8 @@ export async function rollSkill(actor, skillKey, options = {}) {
 
   // Check trained-only enforcement
   const isTrained = derivedSkill?.trained === true || skill.trained === true;
-  const skillDef = CONFIG?.SWSE?.skills?.[skillKey] || {};
-  const permission = SkillEnforcementEngine.evaluate({ actor, skillKey, actionType: 'check', context: { isTrained, skillDef } });
+  const skillDef = skillConfig || {};
+  const permission = SkillEnforcementEngine.evaluate({ actor, skillKey: effectiveSkillKey, actionType: 'check', context: { isTrained, skillDef } });
 
   if (!permission.allowed) {
     ui.notifications.warn(`${permission.reason}`);
@@ -61,13 +140,13 @@ export async function rollSkill(actor, skillKey, options = {}) {
 
   const skillContext = {
     ...(options || {}),
-    skillKey,
+    skillKey: effectiveSkillKey,
     skillUse: options?.skillUse ?? null,
     useKey: options?.useKey ?? options?.skillUse?.key ?? null
   };
   skillContext.contextFlags = RageEngine.getSkillContextFlags(actor, skillContext.contextFlags ?? skillContext.flags ?? []);
   skillContext.flags = skillContext.contextFlags;
-  const featSkillBonuses = SkillFeatResolver.getSkillCheckBonuses(actor, skillKey, skillContext);
+  const featSkillBonuses = SkillFeatResolver.getSkillCheckBonuses(actor, effectiveSkillKey, skillContext);
   const skillCheckMode = String(options?.checkMode || (options?.take20 === true ? 'take20' : options?.take10 === true ? 'take10' : 'roll')).toLowerCase();
   const skillTakeXValue = skillCheckMode === 'take20' ? 20 : skillCheckMode === 'take10' ? 10 : 10;
   const skillIsTakeX = skillCheckMode === 'take10' || skillCheckMode === 'take20';
@@ -75,7 +154,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
   // === UNIFIED ROLL EXECUTION via RollCore ===
   // Pass derived.skills[skillKey].total as baseBonus so formula is:
   // 1d20 + baseBonus (all permanent components) + modifierTotal (situational mods)
-  const domain = `skill.${skillKey}`;
+  const domain = `skill.${effectiveSkillKey}`;
   const rollResult = await RollCore.execute({
     actor,
     domain,
@@ -87,7 +166,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
       takeXValue: skillTakeXValue
     },
     context: {
-      skillKey,
+      skillKey: effectiveSkillKey,
       trained: isTrained,
       skillUse: skillContext.skillUse,
       useKey: skillContext.useKey,
@@ -103,7 +182,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
   }
 
   // === RENDER TO CHAT ===
-  const skillLabel = skill.label || utils?.string?.capitalize?.(skillKey) || String(skillKey || 'Skill').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[\-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  const skillLabel = skill.label || utils?.string?.capitalize?.(effectiveSkillKey) || String(effectiveSkillKey || 'Skill').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[\-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   let chatRoll = rollResult.roll;
   if (!chatRoll && rollResult.isTakeX) {
     chatRoll = await new Roll(String(rollResult.finalTotal), actor.getRollData?.() ?? {}).evaluate({ async: true });
@@ -113,7 +192,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
     const total = chatRoll?.total ?? rollResult.finalTotal ?? 'unknown';
     const flavor = `${actor.name} used ${skillLabel} and got ${total}.`;
 
-    const rerollOptions = SkillFeatResolver.buildRerollChatOptions(actor, skillKey, chatRoll, skillContext);
+    const rerollOptions = SkillFeatResolver.buildRerollChatOptions(actor, effectiveSkillKey, chatRoll, skillContext);
 
     await SWSEChat.postRoll({
       roll: chatRoll,
@@ -122,7 +201,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
       flags: {
         swse: {
           skillRoll: true,
-          skillKey,
+          skillKey: effectiveSkillKey,
           skillUseKey: skillContext.useKey ?? null,
           featSkillBonuses: featSkillBonuses.bonuses,
           rerollOptions
@@ -131,7 +210,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
       context: {
         type: 'skill',
         label: skillLabel,
-        skillKey,
+        skillKey: effectiveSkillKey,
         abilityKey,
         trained: isTrained,
         baseBonus: rollResult.baseBonus,
@@ -151,10 +230,10 @@ export async function rollSkill(actor, skillKey, options = {}) {
 
     // PHASE 5: Offer species reroll if applicable
     // Check if actor has applicable species reroll rights for this skill
-    const applicableRerolls = SpeciesRerollHandler.getApplicableRerolls(actor, skillKey);
+    const applicableRerolls = SpeciesRerollHandler.getApplicableRerolls(actor, effectiveSkillKey);
     if (applicableRerolls && applicableRerolls.length > 0) {
-      const rerollResult = await SpeciesRerollHandler.offerReroll(actor, skillKey, chatRoll, {
-        skillKey
+      const rerollResult = await SpeciesRerollHandler.offerReroll(actor, effectiveSkillKey, chatRoll, {
+        skillKey: effectiveSkillKey
       });
       // If reroll was accepted, return the rerolled result
       if (rerollResult && rerollResult.total !== chatRoll.total) {

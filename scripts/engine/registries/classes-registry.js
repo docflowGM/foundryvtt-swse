@@ -24,6 +24,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
+import { getNonheroicClassModel, isNonheroicClassRef } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/nonheroic-class-model.js";
 
 /**
  * ClassesRegistry - Enumeration authority for classes
@@ -107,6 +108,7 @@ export class ClassesRegistry {
     if (!id) {
       return null;
     }
+    if (isNonheroicClassRef(id)) return getNonheroicClassModel();
     return ClassesDB.get(id) || null;
   }
 
@@ -119,6 +121,7 @@ export class ClassesRegistry {
     if (!name) {
       return null;
     }
+    if (isNonheroicClassRef(name)) return getNonheroicClassModel();
 
     // ClassesDB stores by ID, so we need to search by name
     const all = ClassesDB.all();
@@ -138,6 +141,7 @@ export class ClassesRegistry {
     if (!sourceId) {
       return null;
     }
+    if (isNonheroicClassRef(sourceId)) return getNonheroicClassModel();
 
     const all = ClassesDB.all();
     return all.find(c => c.sourceId === sourceId) || null;
@@ -160,6 +164,7 @@ export class ClassesRegistry {
     }
 
     if (typeof ref === 'object') {
+      if (isNonheroicClassRef(ref)) return getNonheroicClassModel(ref);
       return (
         this.getById(ref.classId || ref.id) ||
         this.getBySourceId(ref.sourceId || ref.documentId) ||

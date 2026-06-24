@@ -210,6 +210,34 @@ function isPlaceholderChoiceTarget(value) {
     ].includes(key);
 }
 
+function stripLegacyPrerequisiteWrapper(value) {
+    let text = String(value || '').trim();
+    if (!text) return '';
+
+    text = text.replace(/^[\[{]+/, '').replace(/[\]}]+$/, '').trim();
+
+    if (text.startsWith('(') && text.endsWith(')')) {
+        let depth = 0;
+        let wrapsWholeString = true;
+        for (let i = 0; i < text.length; i += 1) {
+            const ch = text[i];
+            if (ch === '(') depth += 1;
+            if (ch === ')') depth -= 1;
+            if (depth === 0 && i < text.length - 1) {
+                wrapsWholeString = false;
+                break;
+            }
+            if (depth < 0) {
+                wrapsWholeString = false;
+                break;
+            }
+        }
+        if (wrapsWholeString) text = text.slice(1, -1).trim();
+    }
+
+    return text;
+}
+
 function parseScopedChoiceRequirement(value) {
     const text = String(value || '').trim();
     if (!text) return null;
@@ -2203,7 +2231,7 @@ export class PrerequisiteChecker {
     }
 
     static _parseLegacyPrerequisitePart(part, owningType = 'feat') {
-        part = part.trim().replace(/^[([{]+|[)\]}]+$/g, '').trim();
+        part = stripLegacyPrerequisiteWrapper(part);
 
         // Choice/proficiency prose must be parsed before registry-backed feat-name
         // lookup, otherwise strings like "Armor Proficiency (Light)" are treated

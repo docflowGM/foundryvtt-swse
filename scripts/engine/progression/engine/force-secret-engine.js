@@ -47,8 +47,7 @@ export class ForceSecretEngine {
   static async applySelected(actor, selectedItems = []) {
     const existing = new Set(
       actor.items
-        .filter(i => i.type === 'feat')
-        .filter(i => i.system?.tags?.includes('force_secret'))
+        .filter(i => i.type === 'force-secret' || (i.type === 'feat' && i.system?.tags?.includes('force_secret')))
         .map(i => i.name.toLowerCase())
     );
 
@@ -67,7 +66,7 @@ export class ForceSecretEngine {
         } else {
           toCreate.push({
             name: it.name || 'Force Secret',
-            type: 'feat',
+            type: 'force-secret',
             img: it.img || 'icons/svg/mystery-man.svg',
             system: it.system || {}
           });

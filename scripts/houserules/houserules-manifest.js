@@ -633,6 +633,19 @@ export const HOUSERULE_MANIFEST = [
     config: true
   },
   {
+    key: 'forcePowerDamageAddsHalfLevel',
+    name: 'Force Power Damage: Add Half Heroic Level',
+    category: 'force',
+    description: 'House rule. Allows damaging Force Powers to add one-half heroic level to damage rolls. Poison and elemental Force damage remain excluded.',
+    type: 'boolean',
+    choices: null,
+    default: false,
+    status: 'wired',
+    tags: ['house-rule', 'automation', 'damage'],
+    presetVisible: true,
+    config: true
+  },
+  {
     key: 'blockDeflectTalents',
     name: 'Block + Deflect Behavior',
     category: 'force',

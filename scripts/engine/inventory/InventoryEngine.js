@@ -73,10 +73,21 @@ export class InventoryEngine {
     // If equipping a shield, allow body armor to remain equipped.
     // Just toggle the shield itself.
 
-    updates.push({
+    const itemUpdate = {
       _id: itemId,
       "system.equipped": newValue
-    });
+    };
+
+    // Some generated items mirror equip state in legacy/nested fields. Keep
+    // those mirrors in sync so starter lightsabers and other carried weapons
+    // can actually be unequipped instead of being re-read as equipped.
+    if (item.system?.isEquipped !== undefined) itemUpdate["system.isEquipped"] = newValue;
+    if (item.system?.equippable && typeof item.system.equippable === "object") {
+      itemUpdate["system.equippable.equipped"] = newValue;
+    }
+    if (item.flags?.swse?.equipped !== undefined) itemUpdate["flags.swse.equipped"] = newValue;
+
+    updates.push(itemUpdate);
 
     await ActorEngine.updateOwnedItems(actor, updates, {
       source: "InventoryEngine.toggleEquip"

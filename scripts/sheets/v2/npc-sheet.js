@@ -999,7 +999,8 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
     displayName,
     kind: context?.npcKind || 'npc',
     kindLabel: context?.npcKindLabel || 'NPC',
-    modeLabel: context?.npcModeLabel || 'Play Mode',
+    modeLabel: '',
+    showModeBadge: false,
     sourceAuthorityLabel: context?.npcSourceAuthorityLabel || 'Statblock',
     legalStateLabel: context?.npcLegalStateLabel || 'Unchecked',
     levelLabel: levelValue || '—',
@@ -1097,8 +1098,8 @@ export function buildNpcConceptSheetContext(actor, context = {}) {
     legalChecks,
     hasLegalChecks: legalChecks.length > 0,
     modeCards: [
-      { label: 'Play Mode', value: context?.isStatblockMode ? 'Active' : 'Inactive', active: context?.isStatblockMode === true },
-      { label: 'Progression', value: context?.isProgressionMode ? 'Active' : 'Inactive', active: context?.isProgressionMode === true },
+      { label: 'Interactivity', value: 'Playable + Editable', active: true },
+      { label: 'Source Authority', value: context?.npcSourceAuthorityLabel || 'Statblock', active: true },
       { label: 'Owner Sync', value: context?.isOwnerSyncMode ? 'Active' : 'Inactive', active: context?.isOwnerSyncMode === true }
     ]
   };
@@ -1209,14 +1210,14 @@ const NPC_STATBLOCK_AUTHORITY_PATTERNS = [
   /^system\.attributes\.(str|dex|con|int|wis|cha)\.(base|racial|enhancement|temp|total)$/
 ];
 
-function isNpcStatblockAuthorityPath(path) {
+export function isNpcStatblockAuthorityPath(path) {
   if (!path || typeof path !== 'string') return false;
   if (path.startsWith('items.') || path.startsWith('effects.') || path.startsWith('system.derived.')) return false;
   if (NPC_STATBLOCK_AUTHORITY_EXACT_PATHS.has(path)) return true;
   return NPC_STATBLOCK_AUTHORITY_PATTERNS.some(pattern => pattern.test(path));
 }
 
-function isNpcSheetWritablePath(path) {
+export function isNpcSheetWritablePath(path) {
   if (!path || typeof path !== 'string') return false;
   if (NPC_SHEET_BLOCKED_EXACT_PATHS.has(path)) return false;
   if (NPC_SHEET_BLOCKED_PREFIXES.some(prefix => path === prefix || path.startsWith(prefix))) return false;
@@ -1242,7 +1243,7 @@ function splitNpcSheetUpdate(flatUpdateData = {}) {
   return { statblock, governed };
 }
 
-function isQuietNpcSheetPath(path) {
+export function isQuietNpcSheetPath(path) {
   if (!path || typeof path !== 'string') return false;
   if (NPC_QUIET_FIELD_PATHS.has(path)) return true;
   return path.startsWith('system.notes.')
@@ -1255,6 +1256,13 @@ function isQuietNpcSheetPath(path) {
 function isQuietNpcSheetUpdate(flatUpdateData) {
   const entries = Object.entries(flatUpdateData || {});
   return entries.length > 0 && entries.every(([path]) => isQuietNpcSheetPath(path));
+}
+
+function canUseNpcSheetEditControls(sheet, actor) {
+  return game?.user?.isGM === true
+    || actor?.isOwner === true
+    || actor?.testUserPermission?.(game?.user, 'OWNER') === true
+    || sheet?.isEditable !== false;
 }
 
 /**
@@ -1341,7 +1349,7 @@ export class SWSEV2NpcSheet extends
       derived: plainClone(system?.derived ?? actor.system?.derived ?? {}, {}),
       // Items: map to plain objects to avoid Collection/DataModel serialization issues
       items: Array.from(actor.items ?? []).map(item => buildSerializableItemContext(item)),
-      editable: this.isEditable !== false && (actor.isOwner === true || actor.testUserPermission?.(game.user, 'OWNER') === true),
+      editable: canUseNpcSheetEditControls(this, actor),
       // User data (serializable primitives only)
       user: {
         id: game.user?.id ?? null,

@@ -179,7 +179,7 @@ export class DroidSystemsResolver {
 
   _isIntegratedWeapon(item) {
     return (
-      item.type === 'weapon' &&
+      ['weapon', 'lightsaber'].includes(item?.type) &&
       (item.system?.integrated === true || Boolean(item.flags?.swse?.integrated))
     );
   }

@@ -2543,6 +2543,130 @@
   border-top: 1px solid color-mix(in oklch, var(--icw-cyan, #00e5ff), transparent 72%);
 }
 
+/* Color picker trigger button (accent / tint / bolt color) ------------------- */
+.swse-item-customization-workbench .color-picker-trigger,
+.swse-customization-stage .color-picker-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px 5px 8px;
+  background: linear-gradient(135deg, oklch(0.13 0.04 260 / 0.85), oklch(0.09 0.03 260 / 0.90));
+  border: 1px solid var(--icw-border, oklch(0.32 0.06 260 / 0.55));
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--icw-dim, #9fb9c2);
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: border-color 0.14s ease, background 0.14s ease;
+}
+.swse-item-customization-workbench .color-picker-trigger:hover,
+.swse-customization-stage .color-picker-trigger:hover {
+  border-color: var(--icw-cyan, #00e5ff);
+  color: var(--icw-text, #e8fbff);
+}
+.swse-item-customization-workbench .color-picker-preview,
+.swse-customization-stage .color-picker-preview {
+  display: inline-block;
+  width: 24px;
+  height: 14px;
+  border-radius: 3px;
+  background:
+    radial-gradient(circle at 50% 35%, color-mix(in oklch, var(--swatch), white 20%) 0 18%, transparent 38%),
+    linear-gradient(180deg, color-mix(in oklch, var(--swatch), white 5%), color-mix(in oklch, var(--swatch), black 20%));
+  box-shadow: inset 0 0 0 1px oklch(0 0 0 / 0.5), 0 0 6px color-mix(in oklch, var(--swatch), transparent 50%);
+  flex-shrink: 0;
+}
+.swse-item-customization-workbench .bolt-color-picker-trigger,
+.swse-customization-stage .bolt-color-picker-trigger {
+  margin-top: 6px;
+  width: 100%;
+  justify-content: center;
+}
+.color-picker-caret {
+  opacity: 0.8;
+}
+
+/* Color picker dialog (accent / tint / bolt color) -------------------------- */
+.swse-color-picker-dialog .swse-dialog-body {
+  background:
+    radial-gradient(circle at 16% 0%, color-mix(in oklch, var(--icw-cyan, #00e5ff), transparent 82%), transparent 40%),
+    linear-gradient(180deg, oklch(0.10 0.05 285 / 0.96), oklch(0.045 0.035 285 / 0.98));
+  border: 1px solid color-mix(in oklch, var(--icw-cyan, #00e5ff), transparent 55%);
+  color: var(--icw-text, #e8fbff);
+}
+.swse-color-picker-dialog .swse-dialog-content {
+  padding: 0.85rem;
+}
+.swse-color-picker-dialog .swse-color-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+.swse-color-picker-dialog .swse-color-grid--bolt {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+.swse-color-picker-dialog .swse-color-option {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding: 0.55rem 0.5rem;
+  background: linear-gradient(135deg, color-mix(in oklch, var(--swatch, var(--weapon-color, #888)), transparent 84%), oklch(0 0 0 / 0.32));
+  border: 1px solid color-mix(in oklch, var(--swatch, var(--weapon-color, #888)), transparent 50%);
+  cursor: pointer;
+  transition: border-color 0.14s ease, box-shadow 0.14s ease, transform 0.14s ease;
+}
+.swse-color-picker-dialog .swse-color-option:hover,
+.swse-color-picker-dialog .swse-color-option:has(input:checked) {
+  border-color: color-mix(in oklch, var(--swatch, var(--weapon-color, #888)), white 15%);
+  box-shadow: 0 0 14px color-mix(in oklch, var(--swatch, var(--weapon-color, #888)), transparent 62%);
+  transform: translateY(-1px);
+}
+.swse-color-picker-dialog .swse-color-option input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.swse-color-picker-dialog .swse-color-swatch {
+  width: 36px;
+  height: 16px;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 35%, color-mix(in oklch, var(--swatch), white 22%) 0 22%, transparent 42%),
+    linear-gradient(180deg, color-mix(in oklch, var(--swatch), white 6%), color-mix(in oklch, var(--swatch), black 22%));
+  box-shadow: 0 0 10px var(--swatch), 0 0 20px color-mix(in oklch, var(--swatch), transparent 50%);
+}
+.swse-color-picker-dialog .swse-bolt-preview {
+  width: 100%;
+  height: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.swse-color-picker-dialog .swse-bolt-beam {
+  position: absolute;
+  inset: 3px 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent 0%, var(--weapon-color) 30%, color-mix(in oklch, var(--weapon-color), white 40%) 50%, var(--weapon-color) 70%, transparent 100%);
+  box-shadow: 0 0 8px var(--weapon-color), 0 0 16px color-mix(in oklch, var(--weapon-color), transparent 55%);
+}
+.swse-color-picker-dialog .swse-color-label {
+  color: var(--icw-text, #e8fbff);
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-align: center;
+}
+.swse-color-picker-dialog .dialog-buttons {
+  border-top: 1px solid color-mix(in oklch, var(--icw-cyan, #00e5ff), transparent 72%);
+}
+
 /* Workbench suggestion fit badges */
 .workbench-suggestion-badge {
   align-self: flex-start;
@@ -2607,4 +2731,376 @@
 .tag.suggestion-tag {
   border-color: rgba(124, 220, 255, 0.36);
   color: rgba(213, 245, 255, 0.86);
+}
+
+/* -------------------------------------------------------------------------
+ * Item workbench repair: stable lanes + click-fed intel rail
+ * ------------------------------------------------------------------------- */
+/* ---- Workbench tab layout ---- */
+.swse-item-customization-workbench .detail-grid,
+.swse-customization-stage .detail-grid {
+  display: grid !important;
+  grid-template-columns: 1fr minmax(300px, 0.88fr) !important;
+  grid-template-areas: "tabs intel" !important;
+  gap: 14px !important;
+  align-items: start !important;
+  min-height: 0 !important;
+  overflow: visible !important;
+  padding-bottom: 14px !important;
+}
+
+.swse-item-customization-workbench .workbench-tabs-container,
+.swse-customization-stage .workbench-tabs-container {
+  grid-area: tabs !important;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-height: 0;
+  background: var(--icw-panel, oklch(0.10 0.04 260 / 0.80));
+  border: 1px solid var(--icw-border, oklch(0.32 0.06 260 / 0.55));
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.swse-item-customization-workbench .workbench-intel-panel,
+.swse-customization-stage .workbench-intel-panel {
+  grid-area: intel !important;
+  align-self: stretch !important;
+}
+
+/* Tab navigation bar */
+.swse-item-customization-workbench .workbench-content-tabs,
+.swse-customization-stage .workbench-content-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0;
+  border-bottom: 1px solid var(--icw-border, oklch(0.32 0.06 260 / 0.55));
+  background: oklch(0.08 0.04 260 / 0.6);
+  flex-shrink: 0;
+}
+
+.swse-item-customization-workbench .wcb-tab,
+.swse-customization-stage .wcb-tab {
+  flex: 1 1 0;
+  padding: 8px 6px 7px;
+  background: none;
+  border: none;
+  border-right: 1px solid var(--icw-border, oklch(0.32 0.06 260 / 0.4));
+  border-bottom: 2px solid transparent;
+  color: var(--icw-dim, #9fb9c2);
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.14s ease, border-color 0.14s ease, background 0.14s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  white-space: nowrap;
+}
+.swse-item-customization-workbench .wcb-tab:last-child,
+.swse-customization-stage .wcb-tab:last-child { border-right: none; }
+.swse-item-customization-workbench .wcb-tab:hover,
+.swse-customization-stage .wcb-tab:hover {
+  color: var(--icw-text, #e8fbff);
+  background: oklch(0.13 0.05 260 / 0.5);
+}
+.swse-item-customization-workbench .wcb-tab.active,
+.swse-customization-stage .wcb-tab.active {
+  color: var(--icw-cyan, #00e5ff);
+  border-bottom-color: var(--icw-cyan, #00e5ff);
+  background: oklch(0.12 0.06 220 / 0.4);
+}
+.swse-item-customization-workbench .wcb-tab-hint,
+.swse-customization-stage .wcb-tab-hint {
+  font-size: 0.58rem;
+  color: var(--icw-dim, #9fb9c2);
+  letter-spacing: 0.06em;
+}
+
+/* Tab pane */
+.swse-item-customization-workbench .wcb-pane,
+.swse-customization-stage .wcb-pane {
+  padding: 8px;
+}
+.swse-item-customization-workbench .wcb-pane > .card-list,
+.swse-customization-stage .wcb-pane > .card-list {
+  max-height: clamp(180px, 34vh, 420px);
+  min-height: 64px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 2px 4px 6px 0;
+}
+.swse-item-customization-workbench .wcb-pane > .appearance-blocks,
+.swse-customization-stage .wcb-pane > .appearance-blocks {
+  padding: 4px 0;
+}
+
+.swse-item-customization-workbench .config-card.inspected,
+.swse-customization-stage .config-card.inspected,
+.swse-item-customization-workbench .rail-detail-card.inspected,
+.swse-customization-stage .rail-detail-card.inspected {
+  outline: 1px solid color-mix(in oklch, var(--icw-cyan), white 20%);
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--icw-cyan), transparent 68%), 0 0 16px color-mix(in oklch, var(--icw-cyan), transparent 78%);
+}
+
+.swse-item-customization-workbench .config-card.removing,
+.swse-customization-stage .config-card.removing,
+.swse-item-customization-workbench .rail-detail-card.removing,
+.swse-customization-stage .rail-detail-card.removing {
+  border-left: 3px solid var(--icw-negative) !important;
+  background: linear-gradient(135deg, color-mix(in oklch, var(--icw-negative), transparent 84%), oklch(0 0 0 / 0.30)) !important;
+}
+
+.swse-item-customization-workbench .tag.state.removing,
+.swse-customization-stage .tag.state.removing,
+.swse-item-customization-workbench .rail-detail-card.removing .rail-tags span,
+.swse-customization-stage .rail-detail-card.removing .rail-tags span {
+  color: var(--icw-negative) !important;
+}
+
+.swse-item-customization-workbench .rail-section-primary,
+.swse-customization-stage .rail-section-primary {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding-bottom: 4px;
+  background: linear-gradient(180deg, color-mix(in oklch, var(--icw-bg), black 8%) 0%, color-mix(in oklch, var(--icw-bg), transparent 18%) 100%);
+}
+
+.swse-item-customization-workbench .rail-section-primary .rail-section-title,
+.swse-customization-stage .rail-section-primary .rail-section-title {
+  color: var(--icw-cyan);
+  border-bottom-color: color-mix(in oklch, var(--icw-cyan), transparent 62%);
+}
+
+.swse-item-customization-workbench .rail-section-primary .rail-detail-card,
+.swse-customization-stage .rail-section-primary .rail-detail-card {
+  background: linear-gradient(180deg, color-mix(in oklch, var(--icw-cyan), transparent 88%), oklch(0 0 0 / 0.40));
+}
+
+@media (max-width: 1180px) {
+  .swse-item-customization-workbench .detail-grid:not(.energy-shield-detail-grid),
+  .swse-customization-stage .detail-grid:not(.energy-shield-detail-grid) {
+    grid-template-columns: 1fr !important;
+    grid-template-areas:
+      "intel"
+      "mods"
+      "templates"
+      "structural"
+      "appearance" !important;
+  }
+
+  .swse-item-customization-workbench .detail-grid:not(.energy-shield-detail-grid) > .workbench-intel-panel,
+  .swse-customization-stage .detail-grid:not(.energy-shield-detail-grid) > .workbench-intel-panel {
+    grid-row: auto !important;
+  }
+}
+
+/* Lightsaber hero compaction -------------------------------------------------
+ * Move the live blade preview into the hero card, keep the primary stats on a
+ * tight one-row/wrapping chip rail, and give the right intel rail the space
+ * previously occupied by the preview panel. */
+.swse-item-customization-workbench .item-hero--lightsaber,
+.swse-customization-stage .item-hero--lightsaber {
+  padding: 8px 10px !important;
+}
+
+.swse-item-customization-workbench .item-hero--lightsaber .hero-grid,
+.swse-customization-stage .item-hero--lightsaber .hero-grid {
+  grid-template-columns: 104px minmax(0, 1fr) !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+}
+
+.swse-item-customization-workbench .item-hero--lightsaber .hero-art--lightsaber,
+.swse-customization-stage .item-hero--lightsaber .hero-art--lightsaber {
+  min-height: 138px !important;
+  padding: 6px !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical,
+.swse-customization-stage .ls-blade-render--hero-vertical {
+  width: 82px !important;
+  height: 126px !important;
+  min-height: 126px !important;
+  border: 0 !important;
+  background:
+    radial-gradient(ellipse at center, color-mix(in oklch, var(--blade-color), transparent 72%), transparent 58%),
+    linear-gradient(180deg, oklch(0 0 0 / 0.18), oklch(0 0 0 / 0.58)) !important;
+  flex-direction: column-reverse !important;
+  gap: 0 !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical .ls-blade,
+.swse-customization-stage .ls-blade-render--hero-vertical .ls-blade {
+  width: 9px !important;
+  height: auto !important;
+  flex: 0 0 78px !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.short .ls-blade,
+.swse-customization-stage .ls-blade-render--hero-vertical.short .ls-blade,
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.shoto .ls-blade,
+.swse-customization-stage .ls-blade-render--hero-vertical.shoto .ls-blade {
+  flex-basis: 54px !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.pike .ls-blade,
+.swse-customization-stage .ls-blade-render--hero-vertical.pike .ls-blade,
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.longhandle .ls-blade,
+.swse-customization-stage .ls-blade-render--hero-vertical.longhandle .ls-blade {
+  flex-basis: 92px !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical .ls-hilt,
+.swse-customization-stage .ls-blade-render--hero-vertical .ls-hilt {
+  width: 24px !important;
+  height: 42px !important;
+  border-radius: 5px !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical .ls-hilt::before,
+.swse-item-customization-workbench .ls-blade-render--hero-vertical .ls-hilt::after,
+.swse-customization-stage .ls-blade-render--hero-vertical .ls-hilt::before,
+.swse-customization-stage .ls-blade-render--hero-vertical .ls-hilt::after {
+  left: -4px !important;
+  right: -4px !important;
+  width: auto !important;
+  height: 6px !important;
+  top: auto !important;
+  bottom: auto !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical .ls-hilt::before,
+.swse-customization-stage .ls-blade-render--hero-vertical .ls-hilt::before { top: 8px !important; }
+.swse-item-customization-workbench .ls-blade-render--hero-vertical .ls-hilt::after,
+.swse-customization-stage .ls-blade-render--hero-vertical .ls-hilt::after { bottom: 8px !important; }
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.double .ls-left,
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.double-bladed .ls-left,
+.swse-customization-stage .ls-blade-render--hero-vertical.double .ls-left,
+.swse-customization-stage .ls-blade-render--hero-vertical.double-bladed .ls-left {
+  display: block !important;
+  flex-basis: 50px !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.crossguard .ls-crossguard,
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.cross .ls-crossguard,
+.swse-customization-stage .ls-blade-render--hero-vertical.crossguard .ls-crossguard,
+.swse-customization-stage .ls-blade-render--hero-vertical.cross .ls-crossguard {
+  left: calc(50% - 29px) !important;
+  width: 58px !important;
+  top: calc(50% + 18px) !important;
+}
+
+.swse-item-customization-workbench .item-hero--lightsaber .hero-description,
+.swse-customization-stage .item-hero--lightsaber .hero-description {
+  margin-bottom: 6px !important;
+  max-height: 32px !important;
+  overflow: hidden !important;
+}
+
+.swse-item-customization-workbench .item-hero--lightsaber .hero-stats,
+.swse-customization-stage .item-hero--lightsaber .hero-stats {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 6px !important;
+}
+
+.swse-item-customization-workbench .item-hero--lightsaber .hero-stat,
+.swse-customization-stage .item-hero--lightsaber .hero-stat {
+  flex: 0 1 auto !important;
+  min-width: 88px !important;
+  width: auto !important;
+  padding: 4px 7px !important;
+  text-align: left !important;
+}
+
+.swse-item-customization-workbench .item-hero--lightsaber .hero-stat--damage,
+.swse-customization-stage .item-hero--lightsaber .hero-stat--damage { min-width: 104px !important; }
+.swse-item-customization-workbench .item-hero--lightsaber .hero-stat--critical,
+.swse-customization-stage .item-hero--lightsaber .hero-stat--critical { min-width: 108px !important; }
+.swse-item-customization-workbench .item-hero--lightsaber .hero-stat--slots,
+.swse-customization-stage .item-hero--lightsaber .hero-stat--slots { min-width: 64px !important; }
+.swse-item-customization-workbench .item-hero--lightsaber .hero-stat--color,
+.swse-customization-stage .item-hero--lightsaber .hero-stat--color { min-width: 140px !important; padding-right: 5px !important; }
+
+.swse-item-customization-workbench .item-hero--lightsaber .hero-stat .key,
+.swse-customization-stage .item-hero--lightsaber .hero-stat .key {
+  font-size: 7px !important;
+  letter-spacing: 0.14em !important;
+}
+
+.swse-item-customization-workbench .item-hero--lightsaber .hero-stat .value,
+.swse-customization-stage .item-hero--lightsaber .hero-stat .value {
+  font-size: 17px !important;
+  line-height: 1.1 !important;
+  white-space: nowrap !important;
+}
+
+.swse-item-customization-workbench .ls-hero-color-button,
+.swse-customization-stage .ls-hero-color-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--icw-cyan);
+  font: inherit;
+  padding: 2px 0 0;
+  cursor: pointer;
+}
+
+.swse-item-customization-workbench .ls-hero-color-button:disabled,
+.swse-customization-stage .ls-hero-color-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.68;
+}
+
+.swse-item-customization-workbench .ls-stat-expander,
+.swse-customization-stage .ls-stat-expander {
+  margin-top: 6px;
+}
+
+.swse-item-customization-workbench .ls-stat-expander summary,
+.swse-customization-stage .ls-stat-expander summary {
+  width: max-content;
+  cursor: pointer;
+  color: var(--icw-dim);
+  font-family: var(--swse-font-mono, 'JetBrains Mono', monospace);
+  font-size: 8px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.swse-item-customization-workbench .hero-stats--expanded,
+.swse-customization-stage .hero-stats--expanded {
+  margin-top: 6px;
+}
+
+.swse-item-customization-workbench .hero-stats--expanded .hero-stat,
+.swse-customization-stage .hero-stats--expanded .hero-stat {
+  min-width: 82px !important;
+}
+
+.swse-item-customization-workbench .lightsaber-workspace--tabs > .ls-forge-rail--intel-only,
+.swse-customization-stage .lightsaber-workspace--tabs > .ls-forge-rail--intel-only {
+  gap: 0 !important;
+}
+
+.swse-item-customization-workbench .ls-forge-rail--intel-only .ls-component-intel,
+.swse-customization-stage .ls-forge-rail--intel-only .ls-component-intel {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+}
+
+.swse-item-customization-workbench .ls-forge-rail--intel-only .ls-component-intel .rail-detail-card,
+.swse-customization-stage .ls-forge-rail--intel-only .ls-component-intel .rail-detail-card {
+  max-height: none !important;
 }

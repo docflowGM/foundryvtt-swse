@@ -313,9 +313,10 @@ export class ActiveStepComputer {
   }
 
   _getActorAbilityRecord(actor, abilityKey = 'int') {
-    return actor?.system?.abilities?.[abilityKey]
-      || actor?.system?.attributes?.[abilityKey]
-      || actor?.system?.stats?.abilities?.[abilityKey]
+    const system = actor?.system || {};
+    return system.attributes?.[abilityKey]
+      || system.abilities?.[abilityKey]
+      || system.stats?.abilities?.[abilityKey]
       || {};
   }
 

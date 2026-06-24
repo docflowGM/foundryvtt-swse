@@ -239,6 +239,26 @@ function appendCriticalNote(critical, note) {
   return text.includes(cleanNote) ? text : `${text} (${cleanNote})`;
 }
 
+function normalizeCriticalMultiplierText(value) {
+  const text = String(value ?? 'x2').trim();
+  if (!text) return 'x2';
+  const numeric = text.match(/^(?:x|×)?\s*(\d+)$/i);
+  if (numeric) return `x${numeric[1]}`;
+  return text.replace(/×/g, 'x');
+}
+
+function formatCriticalRangeAndMultiplier(critical, multiplier = 'x2') {
+  const raw = String(critical ?? '').trim() || '20';
+  const normalized = raw.replace(/×/g, 'x').replace(/\s+/g, ' ');
+  const embedded = normalized.match(/^(.+?)\s*x\s*(\d+)(.*)$/i);
+  if (embedded) {
+    const range = embedded[1].trim() || '20';
+    const suffix = embedded[3]?.trim();
+    return `${range} x${embedded[2]}${suffix ? ` ${suffix}` : ''}`;
+  }
+  return `${normalized} ${normalizeCriticalMultiplierText(multiplier)}`;
+}
+
 function isEnergyShieldItem(item) {
   return isCanonicalEnergyShieldItem(item);
 }
@@ -394,6 +414,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     this._workbenchDialogueCache = new Map();
     this._workbenchSuggestionContext = null;
     this._workbenchSuggestionActorId = null;
+    this._customizationInspector = null;
+    this._workbenchTab = 'modifications';
     this._lightsaber = {
       selectedChassisId: null,
       selectedCrystalId: null,
@@ -488,30 +510,39 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
   _getDraftCustomizationState(item, draft, preview = null) {
     const prior = this._getCustomizationState(item);
-    const installedByKey = new Map();
+    const priorUpgradesByKey = new Map();
     for (const entry of prior.installedUpgrades || []) {
-      if (entry?.upgradeKey) installedByKey.set(entry.upgradeKey, foundry.utils.deepClone(entry));
+      if (entry?.upgradeKey) priorUpgradesByKey.set(entry.upgradeKey, foundry.utils.deepClone(entry));
     }
-    for (const card of this._getSelectedUpgradeInstances(item, draft)) {
-      installedByKey.set(card.key, {
-        instanceId: installedByKey.get(card.key)?.instanceId || foundry.utils.randomID(),
-        upgradeKey: card.key,
-        name: card.name,
-        slotCost: Number(card.slotCost ?? 1) || 1,
-        operationCost: Number(card.costCredits ?? 0) || 0,
+    const selectedUpgradeCards = this._getSelectedUpgradeInstances(item, draft);
+    const upgradeCardsByKey = new Map(selectedUpgradeCards.map(card => [card.key, card]));
+    const installedByKey = new Map();
+    for (const key of draft.selectedUpgrades || []) {
+      const card = upgradeCardsByKey.get(key);
+      const priorEntry = priorUpgradesByKey.get(key);
+      installedByKey.set(key, {
+        ...(priorEntry || {}),
+        instanceId: priorEntry?.instanceId || foundry.utils.randomID(),
+        upgradeKey: key,
+        name: card?.name || priorEntry?.name || key,
+        slotCost: Number(card?.slotCost ?? priorEntry?.slotCost ?? 1) || 1,
+        operationCost: Number(card?.costCredits ?? priorEntry?.operationCost ?? 0) || 0,
         source: 'item-customization-workbench'
       });
     }
 
-    const templatesByKey = new Map();
+    const priorTemplatesByKey = new Map();
     for (const entry of prior.appliedTemplates || []) {
-      if (entry?.templateKey) templatesByKey.set(entry.templateKey, foundry.utils.deepClone(entry));
+      if (entry?.templateKey) priorTemplatesByKey.set(entry.templateKey, foundry.utils.deepClone(entry));
     }
+    const templatesByKey = new Map();
     for (const templateKey of draft.selectedTemplates || []) {
+      const priorEntry = priorTemplatesByKey.get(templateKey);
       templatesByKey.set(templateKey, {
-        instanceId: templatesByKey.get(templateKey)?.instanceId || foundry.utils.randomID(),
+        ...(priorEntry || {}),
+        instanceId: priorEntry?.instanceId || foundry.utils.randomID(),
         templateKey,
-        operationCost: GearTemplatesEngine.getTemplateCost(templateKey, item),
+        operationCost: Number(priorEntry?.operationCost ?? GearTemplatesEngine.getTemplateCost(templateKey, item)) || 0,
         stackOrder: templatesByKey.size,
         source: 'item-customization-workbench'
       });
@@ -550,10 +581,11 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     if ((draft.selectedUpgrades || []).length !== new Set(draft.selectedUpgrades || []).size) return { ok: false, reason: 'duplicate_upgrade' };
     if ((draft.selectedTemplates || []).length !== new Set(draft.selectedTemplates || []).size) return { ok: false, reason: 'duplicate_template' };
     if ((draft.selectedTemplates || []).length > GearTemplatesEngine.getTemplateLimit()) return { ok: false, reason: 'template_limit' };
+    const currentTemplateKeys = this._getCanonicalTemplateKeys(item);
     for (const key of draft.selectedTemplates || []) {
-      const validation = GearTemplatesEngine.canApplyTemplate(item, key);
-      const installed = this._getCanonicalTemplateKeys(item).includes(key);
-      if (!installed && !validation.valid) return { ok: false, reason: validation.reason || `template_blocked:${key}` };
+      const installed = currentTemplateKeys.includes(key);
+      const validation = installed ? { valid: true } : GearTemplatesEngine.canApplyTemplate(item, key);
+      if (!validation.valid) return { ok: false, reason: validation.reason || `template_blocked:${key}` };
     }
     const safety = SafetyEngine.normalizeCustomizationState(item);
     if (!safety.success) return { ok: false, reason: 'state_normalization_failed' };
@@ -878,6 +910,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         slotCost,
         installed,
         selected,
+        removing: installed && !selected,
+        inspected: this._getCustomizationInspectorKey('upgrade', key) === this._getCustomizationInspectorKey(this._customizationInspector?.type, this._customizationInspector?.key),
         disabled,
         tags: [data.effect].filter(Boolean)
       };
@@ -901,7 +935,9 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       rarity: !!template.rarity,
       selected: draft.selectedTemplates.includes(template.key),
       installed: currentApplied.includes(template.key),
-      disabled: template.incompatible && !draft.selectedTemplates.includes(template.key),
+      removing: currentApplied.includes(template.key) && !draft.selectedTemplates.includes(template.key),
+      inspected: this._getCustomizationInspectorKey('template', template.key) === this._getCustomizationInspectorKey(this._customizationInspector?.type, this._customizationInspector?.key),
+      disabled: template.incompatible && !draft.selectedTemplates.includes(template.key) && !currentApplied.includes(template.key),
       disabledReason: template.incompatibilityReason || ''
     }));
   }
@@ -931,7 +967,9 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       effect: STRUCTURAL_DETAILS[key]?.effect || '+1 upgrade slot',
       selected: draftAreas.has(key),
       installed: current.has(key),
-      disabled: current.has(key)
+      removing: current.has(key) && !draftAreas.has(key),
+      inspected: this._getCustomizationInspectorKey('structural', key) === this._getCustomizationInspectorKey(this._customizationInspector?.type, this._customizationInspector?.key),
+      disabled: false
     }));
   }
 
@@ -1194,89 +1232,141 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     return { upgrades: suggestedUpgrades, templates: suggestedTemplates };
   }
 
+
+  _getCustomizationInspectorKey(type, key = null) {
+    const kind = String(type || '').trim().toLowerCase();
+    if (!kind) return '';
+    return `${kind}:${key === null || key === undefined || key === '' ? '__default__' : String(key)}`;
+  }
+
+  _setCustomizationInspector(type, key = null) {
+    const kind = String(type || '').trim().toLowerCase();
+    if (!kind) return null;
+    this._customizationInspector = {
+      type: kind,
+      key: key === null || key === undefined || key === '' ? null : String(key)
+    };
+    return this._customizationInspector;
+  }
+
+  _getCustomizationButtonLabel(row, baseName = 'Modification') {
+    if (!row) return `Select ${baseName}`;
+    if (row.installed && row.selected) return `Uninstall ${baseName}`;
+    if (row.installed && !row.selected) return `Restore ${baseName}`;
+    if (row.selected) return `Remove ${baseName}`;
+    return `Select ${baseName}`;
+  }
+
+  _makeCustomizationDetailRow({ type, card, action, kind, baseName, nameKey = 'name', costKey = 'costCredits', descriptionFallback = '', slotCost = undefined } = {}) {
+    const key = card?.key ?? null;
+    const selected = !!card?.selected;
+    const installed = !!card?.installed;
+    const removing = installed && !selected;
+    const disabled = !!card?.disabled;
+    const row = {
+      type,
+      inspectorKey: this._getCustomizationInspectorKey(type, key),
+      kind,
+      action,
+      key,
+      selectable: !disabled,
+      name: card?.[nameKey] || card?.label || key || kind,
+      description: card?.description || card?.rulesText || descriptionFallback,
+      effect: card?.effect || card?.rulesText || card?.restriction || '',
+      cost: Number(card?.[costKey] ?? card?.cost ?? 0),
+      slotCost: slotCost === undefined ? Number(card?.slotCost ?? 0) : slotCost,
+      selected,
+      installed,
+      removing,
+      disabled,
+      suggestion: card?.suggestion || null,
+      suggestionTier: card?.suggestion?.tier || '',
+      suggestionLabel: card?.suggestion?.tierLabel || '',
+      suggestionReasons: card?.suggestion?.explanations || []
+    };
+    row.buttonLabel = this._getCustomizationButtonLabel(row, baseName);
+    return row;
+  }
+
   _buildModificationDetailRail({ item, upgrades = [], templates = [], structuralActions = null, preview = null } = {}) {
-    const upgradeRows = upgrades.map(card => ({
-      kind: 'Modification',
+    const upgradeRows = upgrades.map(card => this._makeCustomizationDetailRow({
+      type: 'upgrade',
+      card,
       action: 'toggle-upgrade',
-      key: card.key,
-      selectable: !card.installed && !card.disabled,
-      buttonLabel: card.selected ? 'Remove Modification' : 'Select Modification',
-      name: card.name,
-      description: card.description || 'No description is recorded for this modification yet.',
-      effect: card.effect || '',
-      cost: Number(card.costCredits ?? 0),
-      slotCost: Number(card.slotCost ?? 0),
-      selected: !!card.selected,
-      installed: !!card.installed,
-      disabled: !!card.disabled,
-      suggestion: card.suggestion || null,
-      suggestionTier: card.suggestion?.tier || '',
-      suggestionLabel: card.suggestion?.tierLabel || '',
-      suggestionReasons: card.suggestion?.explanations || []
+      kind: 'Modification',
+      baseName: 'Modification',
+      descriptionFallback: 'No description is recorded for this modification yet.',
+      costKey: 'costCredits'
     }));
 
-    const templateRows = templates.map(card => ({
-      kind: 'Template',
+    const templateRows = templates.map(card => this._makeCustomizationDetailRow({
+      type: 'template',
+      card: {
+        ...card,
+        effect: card.rulesText || card.restriction || '',
+        cost: Number(card.costPreview ?? 0),
+        slotCost: null
+      },
       action: 'toggle-template',
-      key: card.key,
-      selectable: !card.installed && !card.disabled,
-      buttonLabel: card.selected ? 'Remove Template' : 'Select Template',
-      name: card.name,
-      description: card.description || card.rulesText || 'No template notes are recorded for this entry yet.',
-      effect: card.rulesText || card.restriction || '',
-      cost: Number(card.costPreview ?? 0),
-      slotCost: null,
-      selected: !!card.selected,
-      installed: !!card.installed,
-      disabled: !!card.disabled,
-      suggestion: card.suggestion || null,
-      suggestionTier: card.suggestion?.tier || '',
-      suggestionLabel: card.suggestion?.tierLabel || '',
-      suggestionReasons: card.suggestion?.explanations || []
+      kind: 'Template',
+      baseName: 'Template',
+      descriptionFallback: 'No template notes are recorded for this entry yet.',
+      costKey: 'cost',
+      slotCost: null
     }));
 
     const structuralRows = [];
     if (structuralActions?.sizeIncrease) {
-      structuralRows.push({
-        kind: 'Structural',
+      const sizeRow = this._makeCustomizationDetailRow({
+        type: 'structural',
+        card: {
+          key: 'size_increase',
+          label: structuralActions.sizeIncrease.label,
+          description: structuralActions.sizeIncrease.description || STRUCTURAL_DETAILS.size_increase.description,
+          effect: structuralActions.sizeIncrease.effect || STRUCTURAL_DETAILS.size_increase.effect,
+          cost: this._costEngine.getSizeIncreaseOperationCost?.(item) ?? 0,
+          selected: !!structuralActions.sizeIncrease.selected,
+          installed: !!structuralActions.sizeIncrease.installed,
+          disabled: !!structuralActions.sizeIncrease.disabled
+        },
         action: 'toggle-size-increase',
-        key: null,
-        selectable: !structuralActions.sizeIncrease.disabled,
-        buttonLabel: structuralActions.sizeIncrease.selected ? 'Remove Structural Change' : 'Select Structural Change',
-        name: structuralActions.sizeIncrease.label,
-        description: structuralActions.sizeIncrease.description || STRUCTURAL_DETAILS.size_increase.description,
-        effect: STRUCTURAL_DETAILS.size_increase.effect,
-        cost: this._costEngine.getSizeIncreaseOperationCost?.(item) ?? 0,
-        slotCost: null,
-        selected: !!structuralActions.sizeIncrease.selected,
-        installed: preview?.slotState?.sizeIncreaseAlreadyApplied ?? false,
-        disabled: !!structuralActions.sizeIncrease.disabled
+        kind: 'Structural',
+        baseName: 'Structural Change',
+        costKey: 'cost',
+        slotCost: null
       });
+      structuralRows.push(sizeRow);
     }
     for (const strip of structuralActions?.strips || []) {
-      structuralRows.push({
-        kind: 'Structural',
+      structuralRows.push(this._makeCustomizationDetailRow({
+        type: 'structural',
+        card: {
+          ...strip,
+          name: strip.label,
+          effect: strip.effect || STRUCTURAL_DETAILS[strip.key]?.effect || '+1 upgrade slot',
+          cost: this._costEngine.getStripOperationCost?.(item) ?? 0
+        },
         action: 'toggle-strip',
-        key: strip.key,
-        selectable: !strip.disabled && !strip.installed,
-        buttonLabel: strip.selected ? 'Remove Structural Change' : 'Select Structural Change',
-        name: strip.label,
-        description: strip.description || STRUCTURAL_DETAILS[strip.key]?.description || 'Trade a stock capability for one additional upgrade slot.',
-        effect: strip.effect || STRUCTURAL_DETAILS[strip.key]?.effect || '+1 upgrade slot',
-        cost: this._costEngine.getStripOperationCost?.(item) ?? 0,
-        slotCost: null,
-        selected: !!strip.selected,
-        installed: !!strip.installed,
-        disabled: !!strip.disabled
-      });
+        kind: 'Structural',
+        baseName: 'Structural Change',
+        descriptionFallback: STRUCTURAL_DETAILS[strip.key]?.description || 'Trade a stock capability for one additional upgrade slot.',
+        costKey: 'cost',
+        slotCost: null
+      }));
     }
 
     const allRows = [...upgradeRows, ...templateRows, ...structuralRows];
-    const stagedRows = allRows.filter(row => row.selected && !row.installed);
-    const installedRows = allRows.filter(row => row.installed);
+    const inspectedKey = this._getCustomizationInspectorKey(this._customizationInspector?.type, this._customizationInspector?.key);
+    let inspectedRow = inspectedKey ? allRows.find(row => row.inspectorKey === inspectedKey) : null;
+    if (!inspectedRow && inspectedKey) this._customizationInspector = null;
+    const stagedRows = allRows.filter(row => (row.selected && !row.installed) || row.removing);
+    const installedRows = allRows.filter(row => row.installed && row.selected);
+    const primaryRow = inspectedRow || stagedRows[0] || installedRows[0] || allRows[0] || null;
+    for (const row of allRows) row.inspected = !!primaryRow && row.inspectorKey === primaryRow.inspectorKey;
 
     return {
       hasRows: allRows.length > 0,
+      primaryRow,
       stagedRows,
       installedRows,
       upgradeRows,
@@ -1399,9 +1489,13 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     let templates = this._getTemplateCards(item, draft);
     const workbenchSuggestionContext = await this._getWorkbenchSuggestionContext();
     ({ upgrades, templates } = this._attachModificationSuggestions({ item, upgrades, templates, storeContext: workbenchSuggestionContext }));
+    const currentStructuralState = item.flags?.swse?.customizationStructural || this._getCustomizationState(item).structural || { sizeIncreaseApplied: false, strippedAreas: [] };
     const structuralActions = {
       sizeIncrease: {
         selected: !!draft.structural?.sizeIncreaseApplied,
+        installed: !!currentStructuralState.sizeIncreaseApplied,
+        removing: !!currentStructuralState.sizeIncreaseApplied && !draft.structural?.sizeIncreaseApplied,
+        inspected: this._getCustomizationInspectorKey('structural', 'size_increase') === this._getCustomizationInspectorKey(this._customizationInspector?.type, this._customizationInspector?.key),
         disabled: ['lightsaber', 'droid'].includes(item.type) || energyShieldItem,
         label: 'Increase Size / Bulk',
         description: energyShieldItem
@@ -1414,6 +1508,19 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       strips: this._getStrippableAreas(item, draft)
     };
     const detailRail = this._buildModificationDetailRail({ item, upgrades, templates, structuralActions, preview });
+
+    const availableTabs = [];
+    if (energyShieldItem) {
+      availableTabs.push({ key: 'modifications', label: 'Maintenance', hint: '' });
+    } else {
+      availableTabs.push({ key: 'modifications', label: 'Modifications', hint: `${upgrades.length} avail` });
+      availableTabs.push({ key: 'structural', label: 'Structural', hint: '' });
+    }
+    if (templates.length) availableTabs.push({ key: 'templates', label: 'Templates', hint: `${templates.length} avail` });
+    availableTabs.push({ key: 'appearance', label: 'Appearance', hint: '' });
+    if (!availableTabs.find(t => t.key === this._workbenchTab)) this._workbenchTab = availableTabs[0].key;
+    for (const t of availableTabs) t.active = t.key === this._workbenchTab;
+    const workbenchTab = this._workbenchTab;
 
     return {
       ...shellContext,
@@ -1435,6 +1542,11 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       structuralActions,
       detailRail,
       workbenchSuggestionContext,
+      availableTabs,
+      workbenchTabModifications: workbenchTab === 'modifications',
+      workbenchTabStructural: workbenchTab === 'structural',
+      workbenchTabTemplates: workbenchTab === 'templates',
+      workbenchTabAppearance: workbenchTab === 'appearance',
       isStoreStageMode: this._isStoreStageMode(),
       footer: {
         credits: Number(this.actor.system?.credits ?? 0) || 0,
@@ -1505,8 +1617,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         if (!item || !draft) return;
         const key = target?.dataset?.key || target?.dataset?.upgradeKey;
         if (!key) return;
-        const currentInstalled = this._getCurrentAppliedUpgradeKeys(item);
-        if (currentInstalled.includes(key)) return;
+        this._setCustomizationInspector('upgrade', key);
         const idx = draft.selectedUpgrades.indexOf(key);
         if (idx >= 0) draft.selectedUpgrades.splice(idx, 1);
         else draft.selectedUpgrades.push(key);
@@ -1521,14 +1632,12 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         if (!item || !draft) return;
         const key = target?.dataset?.key || target?.dataset?.templateKey;
         if (!key) return;
-        const currentlyApplied = Array.isArray(item.flags?.swse?.appliedTemplates)
-          ? item.flags.swse.appliedTemplates.map(entry => entry?.templateKey)
-          : [];
-        if (currentlyApplied.includes(key)) return;
+        this._setCustomizationInspector('template', key);
         const idx = draft.selectedTemplates.indexOf(key);
         if (idx >= 0) draft.selectedTemplates.splice(idx, 1);
         else {
-          const validation = GearTemplatesEngine.canApplyTemplate(item, key);
+          const installed = this._getCanonicalTemplateKeys(item).includes(key);
+          const validation = installed ? { valid: true } : GearTemplatesEngine.canApplyTemplate(item, key);
           if (!validation.valid) {
             ui.notifications.warn(validation.reason);
             return;
@@ -1545,8 +1654,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         const item = this._getCurrentItem();
         const draft = this._getDraft(item);
         if (!item || !draft) return;
-        const currentState = this._getCustomizationState(item);
-        if (currentState.structural?.sizeIncreaseApplied) return;
+        this._setCustomizationInspector('structural', 'size_increase');
         draft.structural.sizeIncreaseApplied = !draft.structural.sizeIncreaseApplied;
         await this._renderPreservingUi();
         return;
@@ -1558,8 +1666,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         const draft = this._getDraft(item);
         const key = target?.dataset?.key;
         if (!item || !draft || !key) return;
-        const current = new Set(item.flags?.swse?.customizationStructural?.strippedAreas || []);
-        if (current.has(key)) return;
+        this._setCustomizationInspector('structural', key);
         const idx = draft.structural.strippedAreas.indexOf(key);
         if (idx >= 0) draft.structural.strippedAreas.splice(idx, 1);
         else draft.structural.strippedAreas.push(key);
@@ -1571,6 +1678,48 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         const draft = this._getDraft(this._getCurrentItem());
         if (!draft) return;
         draft.boltColor = target?.dataset?.key;
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'open-color-picker': {
+        const colorAction = target?.dataset?.colorAction;
+        if (!colorAction) return;
+        await this._openColorPickerDialog(colorAction);
+        return;
+      }
+
+      case 'set-workbench-tab': {
+        const tab = target?.dataset?.tab;
+        if (!tab) return;
+        this._workbenchTab = tab;
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'inspect-upgrade': {
+        const item = this._getCurrentItem();
+        const key = target?.dataset?.key;
+        if (!item || !key) return;
+        this._setCustomizationInspector('upgrade', key);
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'inspect-template': {
+        const item = this._getCurrentItem();
+        const key = target?.dataset?.key;
+        if (!item || !key) return;
+        this._setCustomizationInspector('template', key);
+        await this._renderPreservingUi();
+        return;
+      }
+
+      case 'inspect-structural': {
+        const item = this._getCurrentItem();
+        const key = target?.dataset?.key;
+        if (!item || !key) return;
+        this._setCustomizationInspector('structural', key);
         await this._renderPreservingUi();
         return;
       }
@@ -1727,7 +1876,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       case 'attempt-lightsaber-construction': {
         const mode = target?.dataset?.mode;
         if (mode === 'roll' || mode === 'take10') this._lightsaber.selectedCheckMode = mode;
-        await this.#applyCurrentItem();
+        await this._applyCurrentItem();
         return;
       }
 
@@ -1767,7 +1916,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
       case 'apply-item': {
         if (this._pendingApply) return;
-        await this.#applyCurrentItem();
+        await this._applyCurrentItem();
         return;
       }
 
@@ -1843,8 +1992,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       const item = this._getCurrentItem();
       const draft = this._getDraft(item);
       const key = target.dataset.key;
-      const currentInstalled = this._getCurrentAppliedUpgradeKeys(item);
-      if (currentInstalled.includes(key)) return;
+      if (!item || !draft || !key) return;
+      this._setCustomizationInspector('upgrade', key);
       const idx = draft.selectedUpgrades.indexOf(key);
       if (idx >= 0) draft.selectedUpgrades.splice(idx, 1);
       else draft.selectedUpgrades.push(key);
@@ -1853,15 +2002,17 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
     this.onRoot('click', '[data-action="toggle-template"]', async (event, target) => {
       event.preventDefault();
+      if (target.disabled || target.classList.contains('disabled')) return;
       const item = this._getCurrentItem();
       const draft = this._getDraft(item);
       const key = target.dataset.key;
-      const currentlyApplied = Array.isArray(item.flags?.swse?.appliedTemplates) ? item.flags.swse.appliedTemplates.map(entry => entry?.templateKey) : [];
-      if (currentlyApplied.includes(key)) return;
+      if (!item || !draft || !key) return;
+      this._setCustomizationInspector('template', key);
       const idx = draft.selectedTemplates.indexOf(key);
       if (idx >= 0) draft.selectedTemplates.splice(idx, 1);
       else {
-        const validation = GearTemplatesEngine.canApplyTemplate(item, key);
+        const installed = this._getCanonicalTemplateKeys(item).includes(key);
+        const validation = installed ? { valid: true } : GearTemplatesEngine.canApplyTemplate(item, key);
         if (!validation.valid) {
           ui.notifications.warn(validation.reason);
           return;
@@ -1871,13 +2022,14 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       await this._renderPreservingUi();
     });
 
-    this.onRoot('click', '[data-action="toggle-size-increase"]', async (event) => {
+    this.onRoot('click', '[data-action="toggle-size-increase"]', async (event, target) => {
       event.preventDefault();
-      if (event.currentTarget?.disabled || event.target?.closest?.('button')?.disabled) return;
+      const button = target?.closest?.('button') || event.target?.closest?.('button');
+      if (button?.disabled || button?.classList?.contains?.('disabled')) return;
       const item = this._getCurrentItem();
       const draft = this._getDraft(item);
-      const currentState = this._getCustomizationState(item);
-      if (currentState.structural?.sizeIncreaseApplied) return;
+      if (!item || !draft) return;
+      this._setCustomizationInspector('structural', 'size_increase');
       draft.structural.sizeIncreaseApplied = !draft.structural.sizeIncreaseApplied;
       await this._renderPreservingUi();
     });
@@ -1888,8 +2040,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       const item = this._getCurrentItem();
       const draft = this._getDraft(item);
       const key = target.dataset.key;
-      const current = new Set(item.flags?.swse?.customizationStructural?.strippedAreas || []);
-      if (current.has(key)) return;
+      if (!item || !draft || !key) return;
+      this._setCustomizationInspector('structural', key);
       const idx = draft.structural.strippedAreas.indexOf(key);
       if (idx >= 0) draft.structural.strippedAreas.splice(idx, 1);
       else draft.structural.strippedAreas.push(key);
@@ -1900,6 +2052,45 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       event.preventDefault();
       const draft = this._getDraft(this._getCurrentItem());
       draft.boltColor = target.dataset.key;
+      await this._renderPreservingUi();
+    });
+
+    this.onRoot('click', '[data-action="open-color-picker"]', async (event, target) => {
+      event.preventDefault();
+      const colorAction = target.dataset.colorAction;
+      if (!colorAction) return;
+      await this._openColorPickerDialog(colorAction);
+    });
+
+    this.onRoot('click', '[data-action="set-workbench-tab"]', async (event, target) => {
+      event.preventDefault();
+      const tab = target.dataset.tab;
+      if (!tab) return;
+      this._workbenchTab = tab;
+      await this._renderPreservingUi();
+    });
+
+    this.onRoot('click', '[data-action="inspect-upgrade"]', async (event, target) => {
+      event.preventDefault();
+      const key = target.dataset.key;
+      if (!key) return;
+      this._setCustomizationInspector('upgrade', key);
+      await this._renderPreservingUi();
+    });
+
+    this.onRoot('click', '[data-action="inspect-template"]', async (event, target) => {
+      event.preventDefault();
+      const key = target.dataset.key;
+      if (!key) return;
+      this._setCustomizationInspector('template', key);
+      await this._renderPreservingUi();
+    });
+
+    this.onRoot('click', '[data-action="inspect-structural"]', async (event, target) => {
+      event.preventDefault();
+      const key = target.dataset.key;
+      if (!key) return;
+      this._setCustomizationInspector('structural', key);
       await this._renderPreservingUi();
     });
 
@@ -2057,7 +2248,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       event.preventDefault();
       const mode = target.dataset.mode;
       if (mode === 'roll' || mode === 'take10') this._lightsaber.selectedCheckMode = mode;
-      await this.#applyCurrentItem();
+      await this._applyCurrentItem();
     });
 
     this.onRoot('click', '[data-action="begin-lightsaber-attunement"]', async (event) => {
@@ -2128,7 +2319,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     this.onRoot('click', '[data-action="apply-item"]', async (event) => {
       event.preventDefault();
       if (this._pendingApply) return;
-      await this.#applyCurrentItem();
+      await this._applyCurrentItem();
     });
   }
 
@@ -2137,11 +2328,11 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   /**
    * Public bridge for shell-hosted inline workbench surfaces.
    * Keeps apply behavior in the canonical workbench class while avoiding
-   * direct access to the private #applyCurrentItem method from adapters.
+   * direct access to the private _applyCurrentItem method from adapters.
    */
   async applyCurrentItemFromSurface() {
     if (this._pendingApply) return;
-    await this.#applyCurrentItem();
+    await this._applyCurrentItem();
   }
 
   _getStandardLightsaberChassis() {
@@ -2392,6 +2583,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const result = {
       damage: system.damage || system.damageDice || combatDamage.dice || chassisSystem.damage || chassisSystem.damageDice || fallbackDamage,
       critical: system.critical || system.crit || system.threatRange || system.criticalRange || chassisSystem.critical || chassisSystem.crit || chassisSystem.threatRange || chassisSystem.criticalRange || (name.includes('lightsaber') ? '19-20' : '20'),
+      criticalMultiplier: system.critMult || system.criticalMultiplier || system.weapon?.critMult || system.weapon?.criticalMultiplier || system.combat?.critical?.multiplier || chassisSystem.critMult || chassisSystem.criticalMultiplier || chassisSystem.weapon?.critMult || chassisSystem.weapon?.criticalMultiplier || chassisSystem.combat?.critical?.multiplier || 'x2',
       damageType: system.damageType || combatDamage.type || chassisSystem.damageType || chassisSystem?.combat?.damage?.type || 'Energy',
       range: system.range || system.rangeProfile || chassisSystem.range || chassisSystem.rangeProfile || 'Melee',
       attackBonus: coerceWorkbenchNumber(system.attackBonus ?? combatAttack.bonus ?? chassisSystem.attackBonus ?? chassisSystem?.combat?.attack?.bonus, 0),
@@ -2458,20 +2650,23 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
 
   _getLightsaberHeroStats({ editItem, chassis, crystal, accessories = [], preview, slotState, totalCost } = {}) {
     const stats = this._getLightsaberEffectiveStats({ editItem, chassis, crystal, accessories });
-    const entries = [
-      { key: 'Damage', value: stats.damage },
-      { key: 'Critical', value: stats.critical },
-      { key: 'Damage Type', value: stats.damageType },
-      { key: 'Range', value: stats.range }
+    const bladeColor = this._lightsaber.selectedBladeColor || DEFAULT_BLADE_COLOR;
+    const compact = [
+      { key: 'Damage', value: stats.damage, className: 'damage' },
+      { key: 'Critical', value: formatCriticalRangeAndMultiplier(stats.critical, stats.criticalMultiplier), className: 'critical' },
+      { key: 'Slots', value: `${slotState?.usedSlots ?? 0}/${slotState?.totalAvailable ?? 0}`, className: 'slots' },
+      { key: 'Color', value: bladeColor, isColor: true, className: 'color', bladeColorParts: this._buildBladeColorTextParts(bladeColor) }
     ];
-    if (stats.attackBonus) entries.push({ key: 'Attack Bonus', value: formatSignedWorkbenchNumber(stats.attackBonus) });
-    entries.push(
+
+    const expanded = [
+      { key: 'Damage Type', value: stats.damageType },
+      { key: 'Range', value: stats.range },
       { key: 'Build DC', value: preview?.finalDc ?? 0 },
       { key: 'Cost', value: `${Number(totalCost ?? 0) || 0} cr` },
-      { key: 'UTF +10', value: preview?.take10Total ?? '—' },
-      { key: 'Slots', value: `${slotState?.usedSlots ?? 0}/${slotState?.totalAvailable ?? 0}` }
-    );
-    return entries;
+      { key: 'UTF +10', value: preview?.take10Total ?? '—' }
+    ];
+    if (stats.attackBonus) expanded.unshift({ key: 'Attack Bonus', value: formatSignedWorkbenchNumber(stats.attackBonus) });
+    return { compact, expanded };
   }
 
   _normalizeLightsaberHiltKind(chassis) {
@@ -2789,6 +2984,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const navigation = this._getLightsaberStepNavigation(steps, activeTab);
     const buildSummary = this._buildLightsaberBuildSummary({ chassis, crystal, accessories: selectedAccessories, preview, credits, totalCost });
     const effectiveStats = this._getLightsaberEffectiveStats({ editItem, chassis, crystal, accessories: selectedAccessories });
+    const heroStats = this._getLightsaberHeroStats({ editItem, chassis, crystal, accessories: selectedAccessories, preview, slotState, totalCost });
     const resultView = this._getLightsaberResultView(this._lightsaber.constructionResult);
     const alreadyBuiltNotice = constructionSummary.hasSelfBuilt && !constructionSummary.available;
     const ineligibleNotice = !editItem && !constructionSummary.available && !constructionSummary.hasSelfBuilt;
@@ -2819,7 +3015,8 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         subtitle: editItem ? 'tuning existing blade' : 'construct new blade',
         img: editItem?.img || chassis?.img,
         description: this._stripHtml(chassis?.system?.description || chassis?.description) || 'Select a chassis, kyber crystal, hilt accessories, and blade color from this workbench.',
-        stats: this._getLightsaberHeroStats({ editItem, chassis, crystal, accessories: selectedAccessories, preview, slotState, totalCost })
+        stats: heroStats.compact,
+        expandedStats: heroStats.expanded
       },
       ...(await this._getLightsaberMentorContext(editItem)),
       techSpecialist: editItem ? TechSpecialistModificationService.getUiContext(this.actor, editItem, { subjectKind: 'item', subjectType: 'weapon' }) : TechSpecialistModificationService.getUiContext(this.actor, { name: 'Lightsaber Construction', type: 'weapon', system: { cost: totalCost || 0 }, flags: {} }, { subjectKind: 'item', subjectType: 'weapon' }),
@@ -2911,7 +3108,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           affordable: credits >= totalCost,
           after: credits - totalCost,
           damage: effectiveStats.damage,
-          critical: effectiveStats.critical,
+          critical: formatCriticalRangeAndMultiplier(effectiveStats.critical, effectiveStats.criticalMultiplier),
           damageType: effectiveStats.damageType,
           range: effectiveStats.range,
           timeHours: preview?.timeHours ?? 24
@@ -2971,6 +3168,54 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     this.close();
   }
 
+
+  async _openColorPickerDialog(colorAction) {
+    const item = this._getCurrentItem();
+    if (!item) return;
+    const draft = this._getDraft(item);
+    if (!draft) return;
+    const preview = this._getPreview(item, draft);
+    const summary = this._getItemSummary(item, draft, preview);
+    const block = (summary.appearance || []).find(b => b.action === colorAction);
+    if (!block?.options?.length) return;
+
+    const isBolt = colorAction === 'set-bolt-color';
+
+    const content = `
+      <form class="swse-color-picker-dialog">
+        <div class="swse-color-grid${isBolt ? ' swse-color-grid--bolt' : ''}">
+          ${block.options.map(option => `
+            <label class="swse-color-option${option.selected ? ' selected' : ''}" style="--swatch: ${escapeWorkbenchHtml(option.hex)}; --weapon-color: ${escapeWorkbenchHtml(option.hex)};">
+              <input type="radio" name="swse-color-pick" value="${escapeWorkbenchHtml(option.key)}" ${option.selected ? 'checked' : ''}>
+              ${isBolt
+                ? `<span class="swse-bolt-preview"><span class="swse-bolt-beam"></span></span><span class="swse-color-label">${escapeWorkbenchHtml(option.label)}</span>`
+                : `<span class="swse-color-swatch"></span>`
+              }
+            </label>
+          `).join('')}
+        </div>
+      </form>
+    `;
+
+    const chosen = await SWSEDialogV2.prompt({
+      title: `Choose ${block.key}`,
+      content,
+      label: `Set ${block.key}`,
+      options: {
+        classes: ['swse', 'swse-dialog', 'swse-dialog-v2', 'swse-color-picker-dialog'],
+        position: { width: isBolt ? 520 : 380, height: 'auto' }
+      },
+      callback: (html) => html.find('input[name="swse-color-pick"]:checked').val()
+    });
+
+    if (!chosen) return;
+    const updatedDraft = this._getDraft(item);
+    if (!updatedDraft) return;
+    if (colorAction === 'set-accent') updatedDraft.accentColor = chosen;
+    else if (colorAction === 'set-tint') updatedDraft.tintColor = chosen;
+    else if (colorAction === 'set-bolt-color') updatedDraft.boltColor = chosen;
+    await this._renderPreservingUi();
+  }
 
   async _openLightsaberBladeColorEditor(_target = null) {
     const crystal = this._findLightsaberCatalogOption('crystals', this._lightsaber?.selectedCrystalId);
@@ -3142,7 +3387,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     }
   }
 
-  async #applyCurrentItem() {
+  async _applyCurrentItem() {
     if (this.selectedCategory === 'lightsaber') {
       await this._applyLightsaber();
       return;

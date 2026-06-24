@@ -182,7 +182,7 @@ function labelFromKey(value) {
     companion: 'Companion',
     imported: 'Imported NPC',
     standard: 'NPC',
-    play: 'Play Mode',
+    play: 'Table Ready',
     'legal-review': 'Legal Review',
     progression: 'Progression Mode',
     'owner-sync': 'Owner Sync',

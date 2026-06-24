@@ -38,6 +38,12 @@ export function resolveClassModel(classSelection) {
   };
 
   try {
+    if (typeof classSelection === 'string') {
+      classSelection = { id: classSelection, classId: classSelection, name: classSelection };
+      diagnostics.coercedStringSelection = true;
+      diagnostics.payloadKeys = Object.keys(classSelection);
+    }
+
     // Extract identifiers from various payload formats
     const classId = classSelection.id || classSelection.classId || classSelection._id;
     const sourceId = classSelection.sourceId;

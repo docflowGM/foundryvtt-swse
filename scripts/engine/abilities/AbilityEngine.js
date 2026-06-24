@@ -141,7 +141,10 @@ export class AbilityEngine {
           result = PrerequisiteChecker.checkClassLevelPrerequisites(actor, candidate, pending);
         }
       } else if (type === 'power' || type === 'force-power') {
-        // Force powers use feat prerequisite logic (they have prerequisite.prerequisite fields)
+        // Force powers use feat prerequisite logic (they have prerequisite/prerequisites fields)
+        result = PrerequisiteChecker.checkFeatPrerequisites(actor, candidate, pending);
+      } else if (type === 'technique' || type === 'force-technique' || type === 'forcetechnique' || type === 'secret' || type === 'force-secret' || type === 'forcesecret') {
+        // Force techniques/secrets are their own item domains, but they still use the shared prerequisite grammar.
         result = PrerequisiteChecker.checkFeatPrerequisites(actor, candidate, pending);
       } else {
         // Fallback: try feat, then talent

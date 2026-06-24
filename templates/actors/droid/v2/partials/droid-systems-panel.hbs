@@ -210,14 +210,24 @@
     <section class="swse-panel swse-droid-combat-bridge">
       <header class="section-bar"><h3 class="section-header">{{localize "SWSE.ActorUI.CombatBridge"}}</h3></header>
       <div class="swse-droid-rail-body">
-        {{#if combatWeapons.hasIntegrated}}
+        {{#if combatWeapons.hasIntegratedCombat}}
           {{#each combatWeapons.integrated as |weapon|}}
             <div class="swse-droid-bridge-row">
               <span class="swse-weapon-integrated-badge">{{localize "SWSE.ActorUI.Integrated"}}</span>
               <strong>{{weapon.name}}</strong>
               <div class="swse-droid-chip-actions">
                 <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="roll-weapon" data-item-id="{{weapon.id}}">{{localize "SWSE.ActorUI.Roll"}}</button>
-                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{weapon.id}}" data-part-name="{{weapon.name}}">{{localize "SWSE.ActorUI.Use"}}</button>
+                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{weapon.id}}" data-part-name="{{weapon.name}}" data-damage="{{weapon.damage}}" data-range="{{weapon.range}}" data-attack-bonus="{{weapon.attackBonus}}" data-mode="{{weapon.meleeOrRanged}}" data-weapon-type="{{weapon.type}}">{{localize "SWSE.ActorUI.Use"}}</button>
+              </div>
+            </div>
+          {{/each}}
+          {{#each combatWeapons.rollableIntegratedParts as |part|}}
+            <div class="swse-droid-bridge-row">
+              <span class="swse-weapon-integrated-badge">{{localize "SWSE.ActorUI.Integrated"}}</span>
+              <strong>{{part.name}}</strong>
+              <div class="swse-droid-chip-actions">
+                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{part.id}}" data-part-name="{{part.name}}" data-damage="{{part.damage}}" data-range="{{part.range}}" data-attack-bonus="{{part.attackBonus}}" data-mode="{{part.meleeOrRanged}}" data-weapon-type="{{part.type}}">{{localize "SWSE.ActorUI.Roll"}}</button>
+                <button type="button" class="holo-btn tiny swse-droid-operate-button" data-action="use-droid-part" data-part-id="{{part.id}}" data-part-name="{{part.name}}" data-damage="{{part.damage}}" data-range="{{part.range}}" data-attack-bonus="{{part.attackBonus}}" data-mode="{{part.meleeOrRanged}}" data-weapon-type="{{part.type}}">{{localize "SWSE.ActorUI.Use"}}</button>
               </div>
             </div>
           {{/each}}

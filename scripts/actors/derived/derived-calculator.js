@@ -222,13 +222,15 @@ export class DerivedCalculator {
       }
 
       // ========================================
-      // Grapple Bonus Derived (BAB + STR + Size + Species bonuses)
+      // Grapple Bonus Derived (BAB + max(STR, DEX) + Size + Species bonuses)
+      // SWSE: use whichever of STR or DEX modifier is higher
       // ========================================
       const strMod = (updates['system.derived.attributes']?.str?.mod) || 0;
+      const grappleAbilityMod = Math.max(strMod, dexMod);
       const sizeTable = { 'fine': -8, 'diminutive': -4, 'tiny': -2, 'small': -1, 'medium': 0, 'large': 4, 'huge': 8, 'gargantuan': 12, 'colossal': 16 };
       const sizeMod = sizeTable[String(actor.system?.size || 'medium').toLowerCase()] || 0;
       const speciesGrapple = actor.system?.speciesCombatBonuses?.grapple || actor.system?.speciesTraitBonuses?.combat?.grapple || 0;
-      const grappleBonus = bab.total + strMod + sizeMod + speciesGrapple;
+      const grappleBonus = bab.total + grappleAbilityMod + sizeMod + speciesGrapple;
       updates['system.derived.grappleBonus'] = grappleBonus;
 
       // Defenses

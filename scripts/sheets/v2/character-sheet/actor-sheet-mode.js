@@ -159,6 +159,8 @@ export function buildActorSheetModeContext({ actor, editable = false } = {}) {
       droidSystemsReadOnly: droid,
       droidSystemsModificationSurface: droid ? 'garage' : null,
       showNpcControls: npc,
+      showSheetInteractionToggle: !npc,
+      hideSheetInteractionToggle: npc,
       showVehicleControls: vehicle,
       vehicleReadOnlySheet: vehicle,
       vehicleModificationSurface: vehicle ? 'shipyard' : null,

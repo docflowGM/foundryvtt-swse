@@ -130,6 +130,7 @@ const TECHNIQUE_CATEGORY_DEFS = [
   { key: 'sense-surroundings', label: 'Sense Surroundings', icon: 'fa-eye', isSubcategory: true },
   { key: 'force-point-economy', label: 'Force Point Economy', icon: 'fa-coins', isMajor: true },
   { key: 'general-mastery', label: 'General Force Power Mastery', icon: 'fa-star', isMajor: true },
+  { key: 'unavailable', label: 'Unavailable / Missing Power', icon: 'fa-lock', isMajor: true },
 ];
 
 const TECHNIQUE_CATEGORY_BY_NAME = Object.freeze({
@@ -206,12 +207,15 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     this._allTechniques = [];
     this._legalTechniques = [];
     this._filteredTechniques = [];
+    this._techniqueAvailability = new Map();
+    this._showAllTechniques = false;
     this._searchQuery = '';
     this._focusedTechniqueId = null;
     this._activeCategory = 'recommended';
     this._categorySidebarCollapsed = false;
     this._committedTechniqueCounts = new Map();
     this._committedTechniqueEntries = new Map();
+    this._ownedTechniqueIds = new Set();
     this._remainingPicks = 0;
     this._suggestedTechniques = [];  // Suggested force techniques
     this._renderAbort = null;
@@ -228,6 +232,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
       this._allTechniques = ForceRegistry.byType('technique') || [];
       this._hydrateCommittedFromSession(shell);
+      this._hydrateOwnedTechniques(shell?.actor);
       // PHASE 3: Resolve from class progression features + engine choice budget
       const entitlements = await this._resolveTechniqueEntitlements(shell);
       this._remainingPicks = entitlements.remaining;
@@ -288,17 +293,21 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     const { signal } = this._renderAbort;
 
     const onSearch = e => {
-      this._searchQuery = e.detail.query;
+      if (e?.detail?.handledByStepHook) return;
+      this._searchQuery = e?.detail?.query || '';
+      this._categorySidebarCollapsed = Boolean(this._searchQuery);
       this._applyFilters();
-      shell.render();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-search' }) ?? shell?.render?.();
     };
     const onFilter = e => {
+      if (e?.detail?.handledByStepHook) return;
       this._applyFilters();
-      shell.render();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-filter' }) ?? shell?.render?.();
     };
     const onSort = e => {
+      if (e?.detail?.handledByStepHook) return;
       this._applyFilters();
-      shell.render();
+      shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-sort' }) ?? shell?.render?.();
     };
 
     shell.element.addEventListener('prog:utility:search', onSearch, { signal });
@@ -310,6 +319,25 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       () => shell.element?.removeEventListener('prog:utility:filter', onFilter),
       () => shell.element?.removeEventListener('prog:utility:sort', onSort),
     ];
+  }
+
+
+  async onUtilityChange({ type, detail = {}, shell } = {}) {
+    if (type === 'search') {
+      this._searchQuery = detail?.query || '';
+      this._categorySidebarCollapsed = Boolean(this._searchQuery);
+      this._applyFilters();
+      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-search' }) ?? shell?.render?.());
+      return true;
+    }
+
+    if (type === 'filter' || type === 'sort') {
+      this._applyFilters();
+      await (shell?.requestRender?.({ preserveScroll: true, reason: `force-technique-${type}` }) ?? shell?.render?.());
+      return true;
+    }
+
+    return false;
   }
 
   async getStepData(context) {
@@ -329,6 +357,9 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       committedCounts: Object.fromEntries(this._committedTechniqueCounts),
       committedSummary,
       remainingPicks: this._remainingPicks,
+      showAllTechniques: this._showAllTechniques,
+      legalTechniqueCount: this._legalTechniques.length,
+      totalTechniqueCount: this._allTechniques.length,
       hasSuggestions,
       suggestedTechniqueIds: Array.from(suggestedIds),
       confidenceMap: Array.from(confidenceMap.entries()).reduce((acc, [id, data]) => {
@@ -363,6 +394,15 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
   async onItemCommitted(techniqueId, shell) {
     const technique = this._allTechniques.find(t => t.id === techniqueId);
     if (!technique) return;
+
+    const availability = this._getTechniqueAvailabilityMeta(technique);
+    if (!availability.selectable) {
+      this._focusedTechniqueId = techniqueId;
+      shell.focusedItem = technique;
+      ui?.notifications?.warn?.(availability.reason || 'This Force Technique requires a Force Power that is not in your suite.');
+      shell.render();
+      return;
+    }
 
     const totalSelected = Array.from(this._committedTechniqueCounts.values()).reduce((sum, c) => sum + c, 0);
     if (totalSelected >= this._remainingPicks) {
@@ -422,12 +462,23 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       return true;
     }
 
+    if (action === 'toggle-force-technique-show-all') {
+      event?.preventDefault?.();
+      event?.stopPropagation?.();
+      this._showAllTechniques = !this._showAllTechniques;
+      this._applyFilters();
+      await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-show-all-toggle' }) ?? shell?.render?.());
+      return true;
+    }
+
     if (action === 'reset-force-technique-browser') {
       event?.preventDefault?.();
       event?.stopPropagation?.();
       this._searchQuery = '';
       this._activeCategory = 'recommended';
       this._categorySidebarCollapsed = false;
+      this._showAllTechniques = false;
+      this._applyFilters();
       await (shell?.requestRender?.({ preserveScroll: true, reason: 'force-technique-browser-reset' }) ?? shell?.render?.());
       return true;
     }
@@ -597,20 +648,29 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
   async _computeLegalTechniques(actor, shell = null) {
     this._legalTechniques = [];
+    this._techniqueAvailability.clear();
 
     // Build pending state including class-granted features
     const pending = this._buildPendingStateWithClassGrants(actor, shell);
 
     // PHASE 3.1: Pass pending state so prerequisites see class-granted features
     for (const technique of this._allTechniques) {
-      const assessment = AbilityEngine.evaluateAcquisition(actor, technique, pending);
+      const availability = this._assessTechniqueAvailability(technique, actor, shell);
+      this._techniqueAvailability.set(String(technique?.id || technique?._id || this._normalizeLookupKey(technique?.name)), availability);
+      if (!availability.selectable) continue;
+
+      const candidate = this._asForceTechniqueCandidate(technique);
+      const assessment = AbilityEngine.evaluateAcquisition(actor, candidate, pending);
 
       if (assessment.legal) {
         this._legalTechniques.push(technique);
       }
     }
 
-    swseLogger.debug(`[ForceTechniqueStep] Legal techniques: ${this._legalTechniques.length} of ${this._allTechniques.length}`);
+    swseLogger.debug(`[ForceTechniqueStep] Legal techniques: ${this._legalTechniques.length} of ${this._allTechniques.length}`, {
+      showAll: this._showAllTechniques,
+      gated: this._allTechniques.length - this._legalTechniques.length,
+    });
   }
 
   /**
@@ -638,7 +698,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
   }
 
   _applyFilters() {
-    let filtered = [...this._legalTechniques];
+    let filtered = this._showAllTechniques ? [...this._allTechniques] : [...this._legalTechniques];
     if (this._searchQuery) {
       const q = this._normalizeSearchText(this._searchQuery);
       filtered = filtered.filter(t => this._techniqueSearchText(t).includes(q));
@@ -669,7 +729,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       // Get suggestions from SuggestionService
       const suggested = await SuggestionService.getSuggestions(actor, (shell?.mode || shell?.progressionSession?.mode || 'chargen'), {
         domain: 'force-techniques',
-        available: this._legalTechniques,
+        available: this._legalTechniques.filter(t => this._getTechniqueAvailabilityMeta(t).selectable),
         pendingData: SuggestionContextBuilder.buildPendingData(actor, characterData),
         engineOptions: { includeFutureAvailability: true },
         persist: true
@@ -706,6 +766,90 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     return false;
   }
 
+  _hydrateOwnedTechniques(actor) {
+    this._ownedTechniqueIds.clear();
+
+    const addKey = (value) => {
+      const raw = String(value ?? '').trim();
+      if (!raw) return;
+      this._ownedTechniqueIds.add(raw);
+      const normalized = this._normalizeLookupKey(raw);
+      if (normalized) this._ownedTechniqueIds.add(normalized);
+    };
+
+    const addEntry = (entry) => {
+      if (!entry) return;
+      addKey(entry?.id);
+      addKey(entry?._id);
+      addKey(entry?.techniqueId);
+      addKey(entry?.baseTechniqueId);
+      addKey(entry?.selectionId);
+      addKey(entry?.name);
+      addKey(entry?.label);
+      addKey(entry?.system?.slug);
+      addKey(entry?.system?.name);
+      addKey(entry?.flags?.swse?.id);
+
+      const choice = getForcePowerMasteryChoiceFromEntry(entry);
+      if (choice?.slug) {
+        const base = String(entry?.techniqueId || entry?.baseTechniqueId || entry?.id || entry?._id || '').trim();
+        if (base) addKey(`${base}::${choice.slug}`);
+        addKey(`${entry?.name || 'Force Power Mastery'} (${choice.slug})`);
+        addKey(choice.slug);
+      }
+    };
+
+    for (const item of Array.from(actor?.items ?? [])) {
+      if (itemTypeMatches(item, 'force-technique', 'forcetechnique', 'forceTechnique', 'technique')) {
+        addEntry(item);
+      } else if (itemTypeMatches(item, 'feat') && (item?.system?.tags || []).includes('force_technique')) {
+        addEntry(item);
+      }
+    }
+
+    const system = actor?.system || {};
+    const pools = [
+      system.forceTechniques,
+      system.forceTechniques?.known,
+      system.force?.techniques,
+      system.progression?.forceTechniques,
+    ];
+
+    for (const pool of pools) {
+      if (Array.isArray(pool)) pool.forEach(addEntry);
+      else if (pool && typeof pool === 'object') Object.values(pool).forEach(addEntry);
+    }
+  }
+
+  _isTechniqueOwned(techniqueId, technique = null) {
+    const candidates = [
+      techniqueId,
+      technique?.id,
+      technique?._id,
+      technique?.techniqueId,
+      technique?.baseTechniqueId,
+      technique?.selectionId,
+      technique?.name,
+      technique?.label,
+      technique?.system?.slug,
+      technique?.system?.name,
+      technique?.flags?.swse?.id,
+    ];
+
+    const choice = getForcePowerMasteryChoiceFromEntry(technique);
+    if (choice?.slug) {
+      const base = String(technique?.techniqueId || technique?.baseTechniqueId || technique?.id || technique?._id || techniqueId || '').trim();
+      if (base) candidates.push(`${base}::${choice.slug}`);
+      candidates.push(choice.slug, `${technique?.name || 'Force Power Mastery'} (${choice.slug})`);
+    }
+
+    return candidates.some((candidate) => {
+      const raw = String(candidate ?? '').trim();
+      if (!raw) return false;
+      return this._ownedTechniqueIds.has(raw) || this._ownedTechniqueIds.has(this._normalizeLookupKey(raw));
+    });
+  }
+
   _getCommittedForcePowerMasteryChoices(techniqueId = null) {
     const targetTechniqueId = String(techniqueId || '');
     return Array.from(this._committedTechniqueEntries.entries())
@@ -724,7 +868,14 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       .map(([techniqueId, count]) => {
         const entry = this._committedTechniqueEntries.get(String(techniqueId));
         if (entry) return { ...entry, count };
-        return { id: techniqueId, count };
+        const technique = this._allTechniques.find(t => String(t?.id || t?._id) === String(techniqueId));
+        return {
+          id: techniqueId,
+          techniqueId,
+          name: technique?.name || String(techniqueId),
+          type: 'force-technique',
+          count,
+        };
       });
   }
 
@@ -862,7 +1013,8 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     const id = String(technique?.id || technique?._id || this._normalizeLookupKey(technique?.name));
     const isSuggested = this.isSuggestedItem(id, suggestedIds) || this.isSuggestedItem(technique?.id, suggestedIds);
     const confidenceData = confidenceMap.get ? (confidenceMap.get(id) || confidenceMap.get(technique?.id)) : (confidenceMap[id] || confidenceMap[technique?.id]);
-    const relatedPower = this._getTechniqueRelatedPower(technique);
+    const availability = this._getTechniqueAvailabilityMeta(technique);
+    const relatedPower = availability.relatedPower || this._getTechniqueRelatedPower(technique);
     const categoryKeys = this._getTechniqueCategoryKeys(technique);
     const primaryCategory = TECHNIQUE_CATEGORY_DEFS.find(category => categoryKeys.includes(category.key) && !category.isMajor)
       || TECHNIQUE_CATEGORY_DEFS.find(category => categoryKeys.includes(category.key))
@@ -877,6 +1029,11 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       isSuggested,
       isFocused: this._focusedTechniqueId && String(id) === String(this._focusedTechniqueId),
       isSelected: this._isTechniqueSelected(id),
+      isOwned: this._isTechniqueOwned(id, technique),
+      isUnavailable: !availability.selectable,
+      availabilityLabel: availability.label || null,
+      missingRelatedPower: availability.missingRelatedPower || null,
+      unavailableReason: availability.reason || null,
       shortSummary: this._stripHtml(technique?.description || technique?.system?.description || technique?.system?.benefit || ''),
       badgeLabel: isSuggested ? 'Recommended' : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,
@@ -910,12 +1067,165 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     const system = technique?.system || {};
     const explicit = system.relatedPower || system.related_power || system.power || technique?.relatedPower;
     if (explicit) return String(explicit).trim();
+
+    const prereqId = String(system.prerequisite_id || system.prerequisiteId || '').trim();
+    if (prereqId) {
+      const powerEntry = ForceRegistry.resolveEntry?.(prereqId, 'power') || ForceRegistry.getById?.(prereqId);
+      if (powerEntry?.type === 'power' && powerEntry?.name) return String(powerEntry.name).trim();
+    }
+
     const prereq = String(system.prerequisite || system.prerequisites || technique?.prerequisites?.raw || '').trim();
-    if (prereq && !/^at least|force training|use the force/i.test(prereq)) return prereq;
+    const bracketMatch = prereq.match(/^\[([^\]]+)\]$/);
+    if (bracketMatch?.[1]) {
+      const powerEntry = ForceRegistry.resolveEntry?.(bracketMatch[1], 'power') || ForceRegistry.getById?.(bracketMatch[1]);
+      if (powerEntry?.type === 'power' && powerEntry?.name) return String(powerEntry.name).trim();
+    }
+    if (prereq && !/^at least|force training|use the force|utf|force point/i.test(prereq) && !/^\[[^\]]+\]$/.test(prereq)) return prereq;
     const name = String(technique?.name || '').trim();
     const match = name.match(/^(?:Improved|Extended|Advanced)\s+(.+)$/i);
     if (match) return match[1].trim();
     return '';
+  }
+
+  _asForceTechniqueCandidate(technique) {
+    return {
+      ...technique,
+      type: 'force-technique',
+      system: {
+        ...(technique?.system || {}),
+        tags: Array.from(new Set([...(technique?.system?.tags || []), 'force_technique'])),
+      },
+    };
+  }
+
+  _getTechniqueAvailabilityMeta(technique) {
+    const id = String(technique?.id || technique?._id || this._normalizeLookupKey(technique?.name));
+    return this._techniqueAvailability.get(id) || {
+      selectable: true,
+      bucket: 'general',
+      label: 'General Technique',
+      reason: '',
+      relatedPower: this._getTechniqueRelatedPower(technique),
+    };
+  }
+
+  _assessTechniqueAvailability(technique, actor = null, shell = null) {
+    const relatedPower = this._getTechniqueRelatedPower(technique);
+    const name = String(technique?.name || '').trim();
+
+    if (isForcePowerMasteryTechniqueDoc(technique)) {
+      const choices = this._buildForcePowerMasteryChoices(shell);
+      return choices.length
+        ? { selectable: true, bucket: 'general-mastery', label: 'General Mastery', relatedPower: '', reason: '' }
+        : { selectable: false, bucket: 'unavailable', label: 'Needs a Force Power', relatedPower: '', reason: 'Force Power Mastery requires at least one unmastered Force Power in your suite.' };
+    }
+
+    const isUseTheForceApplication = this._isUseTheForceTechnique(technique)
+      && (!relatedPower || this._isUseTheForceApplicationName(relatedPower));
+    if (!relatedPower || isUseTheForceApplication || this._isGeneralForceTechnique(technique)) {
+      return { selectable: true, bucket: isUseTheForceApplication ? 'use-the-force' : 'general', label: isUseTheForceApplication ? 'Use the Force Technique' : 'General Technique', relatedPower, reason: '' };
+    }
+
+    const knownPowerKeys = this._getKnownForcePowerKeys(actor, shell);
+    const relatedKey = this._normalizeLookupKey(relatedPower);
+    const prereqId = String(technique?.system?.prerequisite_id || technique?.system?.prerequisiteId || '').trim();
+    const matched = knownPowerKeys.has(relatedKey) || (prereqId && knownPowerKeys.has(prereqId));
+    if (matched) {
+      return { selectable: true, bucket: 'owned-power', label: 'Owned Power Technique', relatedPower, reason: '' };
+    }
+
+    return {
+      selectable: false,
+      bucket: 'unavailable',
+      label: 'Unavailable',
+      relatedPower,
+      reason: `${name || 'This Force Technique'} requires ${relatedPower} in your Force Power suite.`,
+      missingRelatedPower: relatedPower,
+    };
+  }
+
+  _getKnownForcePowerKeys(actor = null, shell = null) {
+    const keys = new Set();
+    const add = (entry) => {
+      if (!entry) return;
+      const id = String(entry?.id || entry?._id || entry?.powerId || entry?.uuid || '').trim();
+      const name = String(entry?.name || entry?.label || entry?.powerName || '').trim();
+      if (id) keys.add(id);
+      if (name) keys.add(this._normalizeLookupKey(name));
+    };
+
+    for (const item of Array.from(actor?.items ?? [])) {
+      if (itemTypeMatches(item, 'force-power')) add(item);
+    }
+
+    const refs = [];
+    const draftPowers = shell?.progressionSession?.draftSelections?.forcePowers;
+    if (Array.isArray(draftPowers)) refs.push(...draftPowers);
+    const committedPowers = shell?.committedSelections?.get?.('forcePowers');
+    if (Array.isArray(committedPowers)) refs.push(...committedPowers);
+    const selectedPowers = shell?.getSelection?.('forcePowers')?.selected;
+    if (Array.isArray(selectedPowers)) refs.push(...selectedPowers);
+
+    const registryPowers = ForceRegistry.byType?.('power') || [];
+    for (const ref of refs) {
+      if (typeof ref === 'string') {
+        const resolved = registryPowers.find(power => String(power?.id || power?._id || '') === ref)
+          || registryPowers.find(power => this._normalizeLookupKey(power?.name) === this._normalizeLookupKey(ref));
+        add(resolved || { id: ref, name: ref });
+      } else {
+        const refId = String(ref?.id || ref?._id || ref?.powerId || '').trim();
+        const refName = String(ref?.name || ref?.label || ref?.powerName || '').trim();
+        const resolved = registryPowers.find(power => String(power?.id || power?._id || '') === refId)
+          || registryPowers.find(power => this._normalizeLookupKey(power?.name) === this._normalizeLookupKey(refName));
+        add(resolved || ref);
+      }
+    }
+
+    return keys;
+  }
+
+  _isGeneralForceTechnique(technique = {}) {
+    const name = String(technique?.name || '').toLowerCase();
+    const tags = [
+      ...(Array.isArray(technique?.tags) ? technique.tags : []),
+      ...(Array.isArray(technique?.system?.tags) ? technique.system.tags : []),
+    ].map(tag => String(tag || '').toLowerCase());
+    return name === 'force point recovery'
+      || name === 'force power mastery'
+      || tags.includes('force_point_recovery')
+      || tags.includes('force_power_reuse')
+      || tags.includes('signature_power');
+  }
+
+  _isUseTheForceApplicationName(value = '') {
+    const key = this._normalizeLookupKey(value);
+    return new Set([
+      'force-trance',
+      'move-light-object',
+      'sense-force',
+      'sense-surroundings',
+      'telepathy',
+      'use-the-force',
+      'utf',
+    ]).has(key);
+  }
+
+  _isUseTheForceTechnique(technique = {}) {
+    const benefit = String(technique.system?.benefit || technique.system?.description || technique.description || '').toLowerCase();
+    const name = String(technique.name || '').toLowerCase();
+    const prerequisite = String(technique.system?.prerequisite || '').toLowerCase();
+    return benefit.includes('use the force')
+      || benefit.includes('telepathy ability')
+      || benefit.includes('sense surroundings')
+      || benefit.includes('sense force')
+      || benefit.includes('move light object')
+      || benefit.includes('force trance')
+      || name.includes('sense surroundings')
+      || name.includes('sense force')
+      || name.includes('telepathy')
+      || name.includes('move light object')
+      || name.includes('force trance')
+      || this._isUseTheForceApplicationName(prerequisite);
   }
 
   _techniqueSearchText(technique) {
@@ -943,7 +1253,13 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     const mapped = TECHNIQUE_CATEGORY_BY_NAME[normalizedName] || [];
     for (const key of mapped) keys.add(key);
 
-    const relatedPower = this._getTechniqueRelatedPower(technique);
+    const availability = this._getTechniqueAvailabilityMeta(technique);
+    if (availability.bucket === 'owned-power') keys.add('related-powers');
+    if (availability.bucket === 'use-the-force') keys.add('utf-applications');
+    if (availability.bucket === 'general' || availability.bucket === 'general-mastery') keys.add('general-mastery');
+    if (availability.bucket === 'unavailable') keys.add('unavailable');
+
+    const relatedPower = availability.relatedPower || this._getTechniqueRelatedPower(technique);
     if (relatedPower && !['Force Point Recovery', 'Force Power Mastery'].includes(name)) keys.add('related-powers');
 
     if (keys.size === 0) keys.add('other-power-upgrades');
@@ -969,7 +1285,8 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
   _buildBrowserModel(formattedTechniques, suggestedIds = new Set(), confidenceMap = new Map()) {
     const allTechniques = Array.isArray(formattedTechniques) ? formattedTechniques : [];
-    const allLegalFormatted = (this._legalTechniques || []).map((technique) => this._formatTechniqueCard(technique, suggestedIds, confidenceMap));
+    const categorySource = this._showAllTechniques ? (this._allTechniques || []) : (this._legalTechniques || []);
+    const allLegalFormatted = categorySource.map((technique) => this._formatTechniqueCard(technique, suggestedIds, confidenceMap));
     const categoryOptions = TECHNIQUE_CATEGORY_DEFS.map(def => this._makeCategoryOption(def, allLegalFormatted));
     const hasSearchQuery = Boolean(this._searchQuery);
     const activeCategory = categoryOptions.find(category => category.key === this._activeCategory)

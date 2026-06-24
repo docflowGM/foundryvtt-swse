@@ -88,24 +88,62 @@ function selectionNames(entries) {
   return asArray(entries).map(entryName).filter(Boolean);
 }
 
-function itemNames(actor) {
-  return (actor?.items || []).map(item => ({
-    item,
-    name: entryName(item),
-    key: compactKey(entryName(item)),
-    type: normalizeText(item?.type).replace(/\s+/g, ''),
-    systemType: normalizeText(item?.system?.sourceType || item?.system?.progressionType || item?.system?.executionModel),
-  }));
+function identityCandidates(entry) {
+  if (!entry) return [];
+  const values = [
+    entry?.id,
+    entry?._id,
+    entry?.uuid,
+    entry?.slug,
+    entry?.internalId,
+    entry?.selectionId,
+    entry?.techniqueId,
+    entry?.secretId,
+    entry?.powerId,
+    entry?.baseTechniqueId,
+    entry?.baseSecretId,
+    entry?.sourceId,
+    entry?.system?.id,
+    entry?.system?._id,
+    entry?.system?.slug,
+    entry?.system?.selectionId,
+    entry?.system?.sourceId,
+    entry?.system?.acquisition?.selectionId,
+    entry?.flags?.swse?.progression?.selectionId,
+    entry?.flags?.swse?.acquisition?.selectionId,
+    entry?.flags?.core?.sourceId,
+  ];
+  const name = entryName(entry);
+  if (name) values.push(name);
+  return Array.from(new Set(values.map(compactKey).filter(Boolean)));
 }
 
-function hasActorItemNamed(actor, expectedName, expectedKinds = []) {
-  const key = compactKey(expectedName);
-  if (!key) return true;
+function itemNames(actor) {
+  return (actor?.items || []).map(item => {
+    const identities = identityCandidates(item);
+    const nameKey = compactKey(entryName(item));
+    if (nameKey && !identities.includes(nameKey)) identities.push(nameKey);
+    return {
+      item,
+      name: entryName(item),
+      key: nameKey,
+      identities,
+      type: normalizeText(item?.type).replace(/\s+/g, ''),
+      systemType: normalizeText(item?.system?.sourceType || item?.system?.progressionType || item?.system?.executionModel),
+    };
+  });
+}
+
+function hasActorItemNamed(actor, expectedName, expectedKinds = [], expectedRefs = []) {
+  const expectedKeys = Array.from(new Set([
+    compactKey(expectedName),
+    ...asArray(expectedRefs).map(compactKey),
+  ].filter(Boolean)));
+  if (!expectedKeys.length) return true;
   const kinds = expectedKinds.map(kind => normalizeText(kind).replace(/\s+/g, '')).filter(Boolean);
   return itemNames(actor).some(entry => {
-    if (entry.key !== key) return false;
-    if (!kinds.length) return true;
-    return kinds.includes(entry.type) || kinds.some(kind => entry.systemType.includes(kind));
+    if (kinds.length && !(kinds.includes(entry.type) || kinds.some(kind => entry.systemType.includes(kind)))) return false;
+    return expectedKeys.some(key => entry.identities.includes(key));
   });
 }
 
@@ -151,11 +189,13 @@ function expectedItemChecks(manifest, progressionSession) {
   }
   for (const technique of selectionArray(progressionSession, 'forceTechniques')) {
     const name = entryName(technique);
-    if (name) checks.push({ kind: 'force technique', name, itemKinds: ['forcetechnique', 'force-technique'] });
+    const refs = identityCandidates(technique);
+    if (name || refs.length) checks.push({ kind: 'force technique', name, itemKinds: ['forcetechnique', 'force-technique'], refs });
   }
   for (const secret of selectionArray(progressionSession, 'forceSecrets')) {
     const name = entryName(secret);
-    if (name) checks.push({ kind: 'force secret', name, itemKinds: ['forcesecret', 'force-secret'] });
+    const refs = identityCandidates(secret);
+    if (name || refs.length) checks.push({ kind: 'force secret', name, itemKinds: ['forcesecret', 'force-secret'], refs });
   }
   for (const secret of selectionArray(progressionSession, 'medicalSecrets')) {
     const name = entryName(secret);
@@ -280,8 +320,9 @@ export function auditLevelUpActorAfterFinalization(actor, manifest, progressionS
   if (fpValue !== fpMax) errors.push(`Force Points did not refill to max (${fpValue}/${fpMax})`);
 
   for (const check of expectedItemChecks(manifest, progressionSession)) {
-    if (!hasActorItemNamed(actor, check.name, check.itemKinds)) {
-      errors.push(`Missing ${check.kind}: ${check.name}`);
+    if (!hasActorItemNamed(actor, check.name, check.itemKinds, check.refs)) {
+      const label = check.name || asArray(check.refs).find(Boolean) || 'unknown selection';
+      errors.push(`Missing ${check.kind}: ${label}`);
     }
   }
 

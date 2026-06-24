@@ -52,6 +52,7 @@ const SKILL_ALIASES = Object.freeze({
   stealth: 'stealth',
   survival: 'survival',
   swim: 'swim',
+  athletics: 'athletics',
   treatinjury: 'treatInjury',
   treat_injury: 'treatInjury',
   treatInjury: 'treatInjury',
@@ -98,6 +99,7 @@ const SKILL_LABELS = Object.freeze({
   stealth: 'Stealth',
   survival: 'Survival',
   swim: 'Swim',
+  athletics: 'Athletics',
   treatInjury: 'Treat Injury',
   useComputer: 'Use Computer',
   useTheForce: 'Use the Force'

@@ -490,6 +490,8 @@
       "feat",
       "force-power",
       "force-regimen",
+      "force-technique",
+      "force-secret",
       "language",
       "maneuver",
       "skill",
@@ -827,6 +829,41 @@
         "migratedAt": null,
         "legacyIssues": []
       }
+    },
+    "force-technique": {
+      "templates": [
+        "base"
+      ],
+      "featType": "force",
+      "benefit": "",
+      "prerequisite": "",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "",
+      "page": 0,
+      "tags": [
+        "force_technique"
+      ],
+      "relatedPower": "",
+      "repeatable": false,
+      "choice": {},
+      "forcePowerMastery": {},
+      "selectionSlug": ""
+    },
+    "force-secret": {
+      "templates": [
+        "base"
+      ],
+      "featType": "force",
+      "benefit": "",
+      "prerequisite": "",
+      "special": "",
+      "normalText": "",
+      "sourcebook": "",
+      "page": 0,
+      "tags": [
+        "force_secret"
+      ]
     },
     "maneuver": {
       "templates": [

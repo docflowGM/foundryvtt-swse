@@ -31,6 +31,70 @@ export const FORCE_TECHNIQUE_TIERS = {
   FALLBACK: 0               // Last resort
 };
 
+
+function normalizeForceTechniqueKey(value = '') {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function isGeneralForceTechnique(technique = {}) {
+  const name = String(technique?.name || '').toLowerCase();
+  const tags = [
+    ...(Array.isArray(technique?.tags) ? technique.tags : []),
+    ...(Array.isArray(technique?.system?.tags) ? technique.system.tags : []),
+  ].map(tag => String(tag || '').toLowerCase());
+  return name === 'force point recovery'
+    || name === 'force power mastery'
+    || tags.includes('force_point_recovery')
+    || tags.includes('force_power_reuse')
+    || tags.includes('signature_power')
+    || tags.includes('sustain');
+}
+
+
+function isUseTheForceApplicationName(value = '') {
+  const key = normalizeForceTechniqueKey(value);
+  return ['telepathy', 'sense-force', 'sense-surroundings'].includes(key);
+}
+
+function isUseTheForceTechnique(technique = {}) {
+  const benefit = String(technique.system?.benefit || technique.system?.description || technique.description || '').toLowerCase();
+  const name = String(technique.name || '').toLowerCase();
+  const prerequisite = String(technique.system?.prerequisite || '').toLowerCase();
+  return benefit.includes('use the force')
+    || benefit.includes('telepathy ability')
+    || benefit.includes('sense surroundings')
+    || benefit.includes('sense force')
+    || name.includes('sense surroundings')
+    || name.includes('sense force')
+    || name.includes('telepathy')
+    || prerequisite.includes('sense surroundings')
+    || prerequisite.includes('sense force')
+    || prerequisite.includes('telepathy');
+}
+
+function inferAssociatedPowers(technique = {}) {
+  const system = technique?.system || {};
+  const enrichedData = technique.flags?.swse?.suggestion || system.suggestion || {};
+  const associated = [
+    ...(Array.isArray(enrichedData.associatedPowers) ? enrichedData.associatedPowers : []),
+    ...(Array.isArray(enrichedData.requiredPowers) ? enrichedData.requiredPowers : []),
+    ...(Array.isArray(enrichedData.preferredPowers) ? enrichedData.preferredPowers : []),
+  ];
+  const explicit = system.relatedPower || system.related_power || system.power || technique?.relatedPower;
+  if (explicit) associated.push(explicit);
+  const prereq = String(system.prerequisite || system.prerequisites || technique?.prerequisites?.raw || '').trim();
+  if (prereq && !/^at least|force training|use the force|utf|force point/i.test(prereq) && !/^\[[^\]]+\]$/.test(prereq)) associated.push(prereq);
+  const name = String(technique?.name || '').trim();
+  const match = name.match(/^(?:Improved|Extended|Advanced)\s+(.+)$/i);
+  if (match?.[1]) associated.push(match[1].trim());
+  return Array.from(new Set(associated.map(value => String(value || '').trim()).filter(Boolean)));
+}
+
 export class ForceTechniqueSuggestionEngine {
   /**
    * Suggest a Force Technique based on character state
@@ -142,7 +206,7 @@ export class ForceTechniqueSuggestionEngine {
                        technique.system?.suggestion ||
                        {};
 
-    const associatedPowers = enrichedData.associatedPowers || [];
+    const associatedPowers = inferAssociatedPowers(technique);
     const powerSynergyWeight = enrichedData.powerSynergyWeight || 1.5;
     const archBias = enrichedData.archetypeBias || {};
     const normalizedKnownPowers = knownPowers.map((power) => ({
@@ -188,9 +252,17 @@ export class ForceTechniqueSuggestionEngine {
         tier = FORCE_TECHNIQUE_TIERS.POWER_SYNERGY_LOW;
       }
     } else {
-      // No known power: apply heavy penalty but check archetype
-      score *= FORCE_TECHNIQUE_NO_POWER_PENALTY;
-      reasons.push(`Requires known Force Power`);
+      const associatedPowerApplicationsOnly = associatedPowers.length > 0
+        && associatedPowers.every(powerName => isUseTheForceApplicationName(powerName));
+      const isGeneralOrUtf = isGeneralForceTechnique(technique)
+        || (isUtfTechnique && (associatedPowers.length === 0 || associatedPowerApplicationsOnly));
+      if (associatedPowers.length > 0 && !isGeneralOrUtf) {
+        return null;
+      }
+
+      // No known power-linked prerequisite: rank general and Use the Force techniques.
+      score *= isGeneralOrUtf ? 1.0 : FORCE_TECHNIQUE_NO_POWER_PENALTY;
+      reasons.push(isGeneralOrUtf ? `Improves general Force technique execution` : `Requires known Force Power`);
 
       const archetypeBonus = archBias[archetype] || 1.0;
       if (isFormFocusedSuite && isUtfTechnique) {
@@ -216,23 +288,11 @@ export class ForceTechniqueSuggestionEngine {
 
 
   static _normalizePowerName(value = '') {
-    return String(value || '').trim().toLowerCase();
+    return normalizeForceTechniqueKey(value);
   }
 
   static _isUseTheForceTechnique(technique = {}) {
-    const benefit = String(technique.system?.benefit || technique.system?.description || technique.description || '').toLowerCase();
-    const name = String(technique.name || '').toLowerCase();
-    const prerequisite = String(technique.system?.prerequisite || '').toLowerCase();
-    return benefit.includes('use the force')
-      || benefit.includes('telepathy ability')
-      || benefit.includes('sense surroundings')
-      || benefit.includes('sense force')
-      || name.includes('sense surroundings')
-      || name.includes('sense force')
-      || name.includes('telepathy')
-      || prerequisite.includes('sense surroundings')
-      || prerequisite.includes('sense force')
-      || prerequisite.includes('telepathy');
+    return isUseTheForceTechnique(technique);
   }
 
   /**

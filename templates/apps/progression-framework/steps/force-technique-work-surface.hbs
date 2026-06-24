@@ -14,10 +14,15 @@
           <i class="fa-solid {{activeCategoryIcon}}"></i>
           {{activeCategoryLabel}}
         </span>
+        <span class="feat-browser-mode-pill feat-browser-mode-pill--muted">{{legalTechniqueCount}} eligible / {{totalTechniqueCount}} total</span>
       {{/if}}
     </div>
 
     <div class="feat-browser-toolbar__right">
+      <button class="feat-filter-btn {{#if showAllTechniques}}active{{/if}}" data-action="toggle-force-technique-show-all" type="button" title="Toggle unavailable Force Techniques that require powers outside your suite">
+        <i class="fa-solid {{#if showAllTechniques}}fa-eye-slash{{else}}fa-eye{{/if}}"></i>
+        <span>{{#if showAllTechniques}}Owned/General Only{{else}}Show All Techniques{{/if}}</span>
+      </button>
       <button class="feat-filter-btn" data-action="reset-force-technique-browser" type="button" title="Clear search and filters">
         <i class="fa-solid fa-rotate-left"></i>
         <span>Reset</span>
@@ -72,10 +77,11 @@
         {{#if searchResults.length}}
           <div class="feat-compact-list feat-search-results-list force-technique-compact-list" role="list">
             {{#each searchResults as |technique|}}
-              <div class="feat-compact-row force-technique-compact-row {{#if technique.isFocused}}focused{{/if}} {{#if technique.isSelected}}selected{{/if}} {{#if technique.isSuggested}}suggested{{/if}}"
+              <div class="feat-compact-row force-technique-compact-row {{#if technique.isFocused}}focused{{/if}} {{#if technique.isSelected}}selected{{/if}} {{#if technique.isOwned}}owned{{/if}} {{#if technique.isSuggested}}suggested{{/if}} {{#if technique.isUnavailable}}unavailable disabled{{/if}}"
                    data-technique-id="{{technique.id}}"
                    data-item-id="{{technique.id}}"
                    data-action="focus-item"
+                   title="{{#if technique.isUnavailable}}{{technique.unavailableReason}}{{/if}}"
                    data-recommended="{{#if technique.isSuggested}}true{{/if}}"
                    tabindex="0"
                    role="option">
@@ -83,10 +89,13 @@
                   <div class="feat-compact-row__line feat-compact-row__line--primary">
                     <span class="feat-name">{{technique.name}}</span>
                     {{#if technique.relatedPower}}<span class="feat-subcategory-pill">{{technique.relatedPower}}</span>{{/if}}
+                    {{#if technique.isUnavailable}}<span class="feat-subcategory-pill feat-subcategory-pill--locked"><i class="fa-solid fa-lock"></i> Missing {{technique.missingRelatedPower}}</span>{{/if}}
                   </div>
                   <div class="feat-compact-row__line feat-compact-row__line--meta">
                     <span class="feat-subcategory-pill">{{technique.searchCategoryLabel}}</span>
+                    {{#if technique.availabilityLabel}}<span class="feat-subcategory-pill">{{technique.availabilityLabel}}</span>{{/if}}
                     {{#if technique.isSuggested}}<span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Recommended</span>{{/if}}
+                    {{#if technique.isOwned}}<span class="feat-owned-pill"><i class="fa-solid fa-check"></i> Owned</span>{{/if}}
                     {{#if (lookup ../committedCounts technique.id)}}<span class="feat-owned-pill">Selected ×{{lookup ../committedCounts technique.id}}</span>{{/if}}
                   </div>
                 </div>
@@ -113,10 +122,11 @@
         {{#if activeCategoryTechniques.length}}
           <div class="feat-compact-list force-technique-compact-list" role="list">
             {{#each activeCategoryTechniques as |technique|}}
-              <div class="feat-compact-row force-technique-compact-row {{#if technique.isFocused}}focused{{/if}} {{#if technique.isSelected}}selected{{/if}} {{#if technique.isSuggested}}suggested{{/if}}"
+              <div class="feat-compact-row force-technique-compact-row {{#if technique.isFocused}}focused{{/if}} {{#if technique.isSelected}}selected{{/if}} {{#if technique.isOwned}}owned{{/if}} {{#if technique.isSuggested}}suggested{{/if}} {{#if technique.isUnavailable}}unavailable disabled{{/if}}"
                    data-technique-id="{{technique.id}}"
                    data-item-id="{{technique.id}}"
                    data-action="focus-item"
+                   title="{{#if technique.isUnavailable}}{{technique.unavailableReason}}{{/if}}"
                    data-recommended="{{#if technique.isSuggested}}true{{/if}}"
                    tabindex="0"
                    role="option">
@@ -124,10 +134,13 @@
                   <div class="feat-compact-row__line feat-compact-row__line--primary">
                     <span class="feat-name">{{technique.name}}</span>
                     {{#if technique.relatedPower}}<span class="feat-subcategory-pill">{{technique.relatedPower}}</span>{{/if}}
+                    {{#if technique.isUnavailable}}<span class="feat-subcategory-pill feat-subcategory-pill--locked"><i class="fa-solid fa-lock"></i> Missing {{technique.missingRelatedPower}}</span>{{/if}}
                   </div>
                   <div class="feat-compact-row__line feat-compact-row__line--meta">
                     <span class="feat-subcategory-pill">{{technique.searchCategoryLabel}}</span>
+                    {{#if technique.availabilityLabel}}<span class="feat-subcategory-pill">{{technique.availabilityLabel}}</span>{{/if}}
                     {{#if technique.isSuggested}}<span class="feat-suggestion-badge"><i class="fa-solid fa-lightbulb"></i> Recommended</span>{{/if}}
+                    {{#if technique.isOwned}}<span class="feat-owned-pill"><i class="fa-solid fa-check"></i> Owned</span>{{/if}}
                     {{#if (lookup ../committedCounts technique.id)}}<span class="feat-owned-pill">Selected ×{{lookup ../committedCounts technique.id}}</span>{{/if}}
                   </div>
                 </div>

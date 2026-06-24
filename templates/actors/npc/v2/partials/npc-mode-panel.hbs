@@ -1,46 +1,34 @@
 <section class="swse-npc-card swse-npc-mode-card">
   <header class="swse-npc-card__header">
-    <h3 class="swse-section-title">{{localize "SWSE.ActorUI.RulesAuthority"}}</h3>
+    <h3 class="swse-section-title">NPC Sheet Status</h3>
     <div class="swse-npc-badges">
-      <span class="swse-npc-badge swse-npc-badge--mode">{{npcModeLabel}}</span>
-      <span class="swse-npc-badge swse-npc-badge--kind">{{npcSourceAuthorityLabel}}</span>
+      <span class="swse-npc-badge swse-npc-badge--kind">{{npcKindLabel}}</span>
+      <span class="swse-npc-badge swse-npc-badge--subtype">{{npcSourceAuthorityLabel}}</span>
     </div>
   </header>
 
   <div class="swse-npc-card__body">
     <p class="swse-npc-card__lead">
-      {{authorityDescription}}
+      NPC sheets are always table-usable and editable. Source authority only describes where default values came from; it does not lock the sheet.
     </p>
 
     <div class="swse-npc-mode-grid">
-      <div class="swse-npc-mode-grid__item {{#if isPlayMode}}is-active{{/if}}">
-        <label class="swse-npc-mode-grid__label">{{localize "SWSE.ActorUI.PlayMode"}}</label>
-        <div class="swse-npc-mode-grid__value">
-          {{#if isPlayMode}}Active{{else}}Inactive{{/if}}
-        </div>
-        <p class="swse-npc-mode-grid__text">
-          {{localize "SWSE.ActorUI.TrustSourceStatblockValuesForTableUseMissing"}}
-        </p>
+      <div class="swse-npc-mode-grid__item is-active">
+        <label class="swse-npc-mode-grid__label">Interactivity</label>
+        <div class="swse-npc-mode-grid__value">Playable + Editable</div>
+        <p class="swse-npc-mode-grid__text">Roll attacks and skills while editing NPC values directly from the same sheet.</p>
       </div>
 
-      <div class="swse-npc-mode-grid__item {{#if isProgressionMode}}is-active{{/if}}">
-        <label class="swse-npc-mode-grid__label">{{localize "SWSE.ActorUI.ProgressionMode"}}</label>
-        <div class="swse-npc-mode-grid__value">
-          {{#if isProgressionMode}}Active{{else}}Inactive{{/if}}
-        </div>
-        <p class="swse-npc-mode-grid__text">
-          {{localize "SWSE.ActorUI.UsesLevelClassSpeciesProgressionAsTheMain"}}
-        </p>
+      <div class="swse-npc-mode-grid__item is-active">
+        <label class="swse-npc-mode-grid__label">Source Authority</label>
+        <div class="swse-npc-mode-grid__value">{{npcSourceAuthorityLabel}}</div>
+        <p class="swse-npc-mode-grid__text">Imported/statblock/source values remain visible as defaults and references.</p>
       </div>
 
       <div class="swse-npc-mode-grid__item {{#if isOwnerSyncMode}}is-active{{/if}}">
-        <label class="swse-npc-mode-grid__label">{{localize "SWSE.ActorUI.OwnerSync"}}</label>
-        <div class="swse-npc-mode-grid__value">
-          {{#if isOwnerSyncMode}}Active{{else}}Inactive{{/if}}
-        </div>
-        <p class="swse-npc-mode-grid__text">
-          {{localize "SWSE.ActorUI.FollowerMinionContextIsResolvedFromAnOwner"}}
-        </p>
+        <label class="swse-npc-mode-grid__label">Owner Sync</label>
+        <div class="swse-npc-mode-grid__value">{{#if isOwnerSyncMode}}Active{{else}}Inactive{{/if}}</div>
+        <p class="swse-npc-mode-grid__text">Follower or minion relationships can still resolve from an owner without changing sheet interactivity.</p>
       </div>
     </div>
   </div>

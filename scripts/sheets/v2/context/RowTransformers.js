@@ -45,6 +45,41 @@ function cssSlug(value, fallback = 'general') {
   return text.replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || fallback;
 }
 
+function asTextList(...values) {
+  const out = [];
+  for (const value of values) {
+    if (Array.isArray(value)) {
+      out.push(...value.map((entry) => safeText(entry)).filter(Boolean));
+    } else if (value && typeof value === 'object') {
+      out.push(...Object.values(value).map((entry) => safeText(entry)).filter(Boolean));
+    } else {
+      const text = safeText(value);
+      if (text) out.push(text);
+    }
+  }
+  return out;
+}
+
+function isNaturalWeaponItem(item) {
+  const system = item?.system ?? {};
+  const swseFlags = item?.flags?.swse ?? {};
+
+  if (swseFlags.isNaturalWeapon === true || swseFlags.alwaysArmed === true) return true;
+
+  const naturalFields = asTextList(
+    system.category,
+    system.subcategory,
+    system.proficiency,
+    system.weaponCategory,
+    system.weaponType,
+    system.source
+  );
+  if (naturalFields.some((value) => value.toLowerCase() === 'natural')) return true;
+
+  const descriptors = asTextList(system.properties, system.traits, system.tags);
+  return descriptors.some((value) => /natural\s+weapon/i.test(value));
+}
+
 /**
  * RowTransformers
  *
@@ -67,7 +102,8 @@ export class RowTransformers {
    * PHASE 5: Include natural weapons as auto-equipped
    */
   static toInventoryRow(item, isEditable) {
-    // PHASE 5: Natural weapons with autoEquipped flag are always equipped.
+    // Natural weapons are always armed, but class starter equipment that carries
+    // flags.swse.autoEquipped remains a normal item that can be unequipped.
     // Keep this in sync with combat attack hydration: the Gear tab and Combat tab
     // must agree about what is equipped/readied/active.
     const truthy = (value) => {
@@ -77,7 +113,7 @@ export class RowTransformers {
       }
       return ['true', '1', 'yes', 'equipped', 'worn', 'held', 'readied', 'ready', 'on', 'active', 'natural'].includes(String(value || '').toLowerCase());
     };
-    const isNaturalWeapon = item.flags?.swse?.autoEquipped === true;
+    const isNaturalWeapon = isNaturalWeaponItem(item);
     const visualProfile = WeaponVisualProfileResolver.resolve(item, { actor: item.actor });
     const isLightsaber = visualProfile.isLightsaber;
     const armorStats = item.type === 'armor' ? resolveArmorData(item) : null;
@@ -89,6 +125,7 @@ export class RowTransformers {
       || truthy(item.system?.readied)
       || truthy(item.system?.equippable?.equipped)
       || truthy(item.flags?.swse?.equipped)
+      || (isNaturalWeapon && truthy(item.flags?.swse?.autoEquipped))
       || isNaturalWeapon;
 
     return {
@@ -123,6 +160,7 @@ export class RowTransformers {
       visualColorKey: visualProfile.primaryColor,
       visualColorHex: visualProfile.primaryHex,
       isNaturalWeapon,
+      canToggleEquip: !isNaturalWeapon,
       tags: this._extractTags(item),
       cssClass: [
         `item-${item.type}`,

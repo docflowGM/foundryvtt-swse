@@ -105,9 +105,8 @@ import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/tale
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 
-import { getEffectiveHalfLevel } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
-import { getDamageAbilityContribution, getCriticalMultiplier as getRawCriticalMultiplier, getWeaponFlatDamageBonus, isAreaAttack } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { getDamageAbilityContribution, getCriticalMultiplier as getRawCriticalMultiplier, getHalfLevelDamageBonus, getWeaponFlatDamageBonus, isAreaAttack } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 /**
  * Determine if a weapon is a melee weapon
  * @param {Item} weapon - The weapon item
@@ -237,8 +236,7 @@ function hasDexToDamageTalent(actor) {
  * @returns {number}
  */
 function computeDamageBonus(actor, weapon, options = {}) {
-  const lvl = actor.system.level ?? 1;
-  const halfLvl = getEffectiveHalfLevel(actor);
+  const halfLvl = getHalfLevelDamageBonus(actor, weapon, { ...options, weapon, isWeaponDamage: true });
 
   let bonus = halfLvl + getWeaponFlatDamageBonus(weapon);
 

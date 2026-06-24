@@ -928,7 +928,7 @@ export class ProgressionFinalizer {
             type: 'class',
             system: {
               ...classSystemForActor,
-              level: 1,
+              level: levelContext.selectedClassNextLevel || 1,
               classId: clazz.id || clazz.classId || clazz.sourceId || levelContext.selectedClassId,
             },
             flags: {

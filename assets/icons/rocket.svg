@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Exhaust flame -->
+  <ellipse cx="50" cy="88" rx="10" ry="14" fill="#ff6a00" opacity="0.85"/>
+  <ellipse cx="50" cy="84" rx="6" ry="9" fill="#ffcc00"/>
+  <!-- Body -->
+  <path d="M50 8 C36 8 28 30 28 55 L72 55 C72 30 64 8 50 8 Z" fill="#c8d8e8"/>
+  <path d="M50 8 C43 8 39 30 39 55 L61 55 C61 30 57 8 50 8 Z" fill="#e8f0f8"/>
+  <!-- Nose cone highlight -->
+  <path d="M50 10 C47 18 44 28 43 38 L50 36 Z" fill="white" opacity="0.4"/>
+  <!-- Window -->
+  <circle cx="50" cy="38" r="9" fill="#1a2a4a"/>
+  <circle cx="50" cy="38" r="7" fill="#2255aa"/>
+  <circle cx="47" cy="35" r="2.5" fill="white" opacity="0.5"/>
+  <!-- Fins -->
+  <path d="M28 55 L14 76 L28 70 Z" fill="#a0b4c8"/>
+  <path d="M72 55 L86 76 L72 70 Z" fill="#a0b4c8"/>
+  <path d="M28 55 L20 76 L28 70 Z" fill="#8098b0"/>
+  <path d="M72 55 L80 76 L72 70 Z" fill="#8098b0"/>
+  <!-- Base -->
+  <rect x="28" y="68" width="44" height="8" rx="2" fill="#8098b0"/>
+  <!-- Engine nozzle -->
+  <path d="M40 76 L38 84 L62 84 L60 76 Z" fill="#606878"/>
+  <rect x="38" y="82" width="24" height="4" rx="2" fill="#484f5a"/>
+</svg>

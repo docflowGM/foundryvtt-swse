@@ -65,6 +65,14 @@
           Default off. When enabled, the Force Power Mastery picker includes Lightsaber Form powers already in the character's Force suite.
         </p>
       </div>
+
+      <div class="form-group">
+        <input type="checkbox" name="forcePowerDamageAddsHalfLevel" {{#if forcePowerDamageAddsHalfLevel}}checked{{/if}}/>
+        <label>Force Power damage adds half heroic level</label>
+        <p class="notes">
+          Default off. Weapon damage already adds one-half heroic level. Enable this only if Force Power damage should also scale the same way. Poison and elemental Force damage stay excluded.
+        </p>
+      </div>
     </div>
     
     <div class="tab" data-group="primary-tabs" data-swse-tab="access">

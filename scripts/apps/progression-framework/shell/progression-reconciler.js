@@ -1643,8 +1643,8 @@ export class ProgressionReconciler {
     const poolsByType = {
       'class-feat': featPools.class,
       'class-talent': talentPools.class,
-      'force-secret': readActorItems(actor).filter(item => item?.type === 'forcesecret' || item?.type === 'force-secret'),
-      'force-technique': readActorItems(actor).filter(item => item?.type === 'forcetechnique' || item?.type === 'force-technique'),
+      'force-secret': readActorItems(actor).filter(item => item?.type === 'forcesecret' || item?.type === 'force-secret' || (item?.type === 'feat' && item?.system?.tags?.includes('force_secret'))),
+      'force-technique': readActorItems(actor).filter(item => item?.type === 'forcetechnique' || item?.type === 'force-technique' || (item?.type === 'feat' && item?.system?.tags?.includes('force_technique'))),
       'medical-secret': readActorItems(actor).filter(item => item?.type === 'feat' && item?.system?.medicalSecret),
       'starship-maneuver': readActorItems(actor).filter(item => item?.type === 'maneuver' || item?.type === 'starshipManeuver'),
       'force-power': readActorItems(actor).filter(item => item?.type === 'force-power'),

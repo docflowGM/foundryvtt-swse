@@ -693,6 +693,15 @@ export function registerHouseruleSettings() {
     default: false
   });
 
+  register('forcePowerDamageAddsHalfLevel', {
+    name: 'Force Power Damage: Add Half Heroic Level',
+    hint: 'House rule. When enabled, damaging Force Powers add one-half heroic level to their damage rolls. Poison and elemental Force damage remain excluded.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   register('blockDeflectTalents', {
     name: 'Block + Deflect Behavior',
     hint: 'Determines whether Block and Deflect are separate or combined talents.',

@@ -156,6 +156,59 @@ function getDerivedSkillMap(context) {
   return merged;
 }
 
+
+const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
+
+function athleticsConsolidationActive() {
+  try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; }
+  catch (_err) { return false; }
+}
+
+function buildConsolidatedAthleticsSkill({ derivedSkills = {}, systemSkills = {}, context = {}, abilityMap = new Map() } = {}) {
+  const componentRows = ATHLETICS_COMPONENT_KEYS.map((key) => ({
+    key,
+    system: systemSkills?.[key] ?? {},
+    derived: derivedSkills?.[key] ?? {}
+  }));
+  const existingSystem = systemSkills?.athletics ?? {};
+  const existingDerived = derivedSkills?.athletics ?? {};
+  const selectedAbility = abilityMap.has(existingSystem.selectedAbility)
+    ? existingSystem.selectedAbility
+    : (abilityMap.has(existingDerived.selectedAbility)
+      ? existingDerived.selectedAbility
+      : (abilityMap.has(existingDerived.ability) ? existingDerived.ability : 'dex'));
+  const derivedAbilityMod = Number(context.derived?.attributes?.[selectedAbility]?.mod);
+  const abilityMod = Number.isFinite(Number(existingDerived?.abilityMod))
+    ? Number(existingDerived.abilityMod)
+    : (Number.isFinite(derivedAbilityMod) ? derivedAbilityMod : 0);
+  const componentTotals = componentRows
+    .map(({ system, derived }) => Number(derived?.total ?? system?.total))
+    .filter(Number.isFinite);
+  const total = Number.isFinite(Number(existingDerived?.total))
+    ? Number(existingDerived.total)
+    : (componentTotals.length ? Math.max(...componentTotals) : Number(existingSystem?.total) || 0);
+
+  return {
+    ...existingSystem,
+    ...existingDerived,
+    key: 'athletics',
+    label: 'Athletics',
+    selectedAbility,
+    ability: selectedAbility,
+    abilityMod,
+    total,
+    trained: existingSystem.trained === true || existingDerived.trained === true || componentRows.some(({ system, derived }) => system?.trained === true || derived?.trained === true),
+    focused: existingSystem.focused === true || existingDerived.focused === true || componentRows.some(({ system, derived }) => system?.focused === true || derived?.focused === true),
+    favorite: existingSystem.favorite === true || existingDerived.favorite === true || componentRows.some(({ system, derived }) => system?.favorite === true || derived?.favorite === true),
+    miscMod: Number.isFinite(Number(existingSystem.miscMod))
+      ? Number(existingSystem.miscMod)
+      : componentRows.reduce((sum, { system }) => sum + (Number(system?.miscMod) || 0), 0),
+    extraUsesGrouped: existingDerived.extraUsesGrouped ?? existingSystem.extraUsesGrouped,
+    extraUses: existingDerived.extraUses ?? existingSystem.extraUses,
+    extraUsesCount: existingDerived.extraUsesCount ?? existingSystem.extraUsesCount
+  };
+}
+
 function buildStatusChips({ healthPanel, secondWindPanel, forceSensitive, inventoryPanel, armorSummaryPanel }) {
   const chips = [];
   const condition = healthPanel?.currentConditionPenalty;
@@ -522,11 +575,22 @@ function buildSkillsTab(context, abilities, identity) {
   const derivedSkills = getDerivedSkillMap(context);
   const systemSkills = normalizeSkillMap(context.system?.skills ?? context.actor?.system?.skills, { includeDefaults: true });
 
-  const entries = Object.keys(CANONICAL_SKILL_DEFS)
-    .filter((key) => key !== 'useTheForce' || hasForceAccess)
+  const athleticsOn = athleticsConsolidationActive();
+  const visibleSkillKeys = Object.keys(CANONICAL_SKILL_DEFS)
+    .filter((key) => {
+      if (key === 'useTheForce' && !hasForceAccess) return false;
+      if (athleticsOn) return !ATHLETICS_COMPONENT_KEYS.includes(key);
+      return key !== 'athletics';
+    });
+
+  const entries = visibleSkillKeys
     .map((key) => {
-      const skill = derivedSkills[key] ?? {};
-      const systemSkill = systemSkills[key] ?? {};
+      const isConsolidatedAthletics = athleticsOn && key === 'athletics';
+      const consolidatedAthletics = isConsolidatedAthletics
+        ? buildConsolidatedAthleticsSkill({ derivedSkills, systemSkills, context, abilityMap })
+        : null;
+      const skill = consolidatedAthletics ?? (derivedSkills[key] ?? {});
+      const systemSkill = consolidatedAthletics ?? (systemSkills[key] ?? {});
       const defaultAbility = CANONICAL_SKILL_DEFS[key]?.defaultAbility || skill?.defaultAbility || systemSkill?.selectedAbility || '';
       const candidateAbility = skill?.selectedAbility || skill?.ability || skill?.abilityKey || systemSkill?.selectedAbility || defaultAbility;
       const selectedAbility = abilityMap.has(candidateAbility) ? candidateAbility : defaultAbility;
@@ -574,7 +638,7 @@ function buildSkillsTab(context, abilities, identity) {
         extraUsesGrouped,
         extraUsesCount,
         hasExtraUses: extraUsesCount > 0,
-        abilityChoices
+        abilityChoices: abilityChoices.map(ab => ({ ...ab }))
       };
     })
     .sort((a, b) => a.label.localeCompare(b.label));
@@ -610,7 +674,7 @@ function buildSkillsTab(context, abilities, identity) {
       total,
       totalClass: toSignedClass(total),
       notes: normalizeText(skill?.notes),
-      abilityChoices
+      abilityChoices: abilityChoices.map(ab => ({ ...ab }))
     };
   });
 
@@ -1326,23 +1390,21 @@ export function buildForceTab(context) {
     destinyPointsMax: Number(context.destinyPointsMax) || 0,
     darkSideValue: Number(context.darkSidePanel?.value) || 0,
     darkSideMax: Number(context.darkSidePanel?.max) || 0,
-    forcePowers: forceSuiteHand,
-    formPowers: forceSuiteForms,
-    discarded: discard,
-    regimens: forceSuiteRegimens,
-    lightsaberRegimens: forceSuiteLightsaberRegimens,
-    regimenDiscard,
+    forcePowers: forceSuiteHand.map(p => ({ ...p })),
+    formPowers: forceSuiteForms.map(p => ({ ...p })),
+    discarded: discard.map(p => ({ ...p })),
+    regimens: forceSuiteRegimens.map(r => ({ ...r })),
+    lightsaberRegimens: forceSuiteLightsaberRegimens.map(r => ({ ...r })),
+    regimenDiscard: regimenDiscard.map(r => ({ ...r })),
     hasForcePowers: forceSuiteHand.length > 0,
     hasFormPowers: forceSuiteForms.length > 0,
-    hasDiscarded: discard.length > 0,
     hasRegimens: forceSuiteRegimens.length > 0,
     hasLightsaberRegimens: forceSuiteLightsaberRegimens.length > 0,
-    hasRegimenDiscard: regimenDiscard.length > 0,
+    hasDiscarded: discard.length > 0,
     counts: {
       force: forceSuiteHand.length,
       form: forceSuiteForms.length,
-      regimen: forceSuiteRegimens.length,
-      lightsaberRegimen: forceSuiteLightsaberRegimens.length,
+      regimen: regimens.length,
       regimenDiscard: regimenDiscard.length,
       discard: discard.length
     },

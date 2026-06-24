@@ -748,7 +748,7 @@ export class NpcProfileBuilder {
       statblockWarnings.push('NPC profile metadata is inferred for display; it has not been written to the actor.');
     }
     if (profileState?.sourceAuthority === 'statblock') {
-      statblockWarnings.push('Source/statblock values are authoritative in Play Mode; Legal Review can audit them later.');
+      statblockWarnings.push('Source/statblock values are authoritative for table use; Legal Review can audit them later.');
     }
     if (!attacks.length) {
       statblockWarnings.push('No parsed attacks were found. Check raw source text or item data before combat use.');
@@ -1178,7 +1178,7 @@ export class NpcProfileBuilder {
    * @private
    */
   static _getProfileDescription(npcKind, npcMode) {
-    const modeText = npcMode === 'progression' ? 'progression-based' : npcMode === 'owner-sync' ? 'owner-synced' : 'play-mode statblock';
+    const modeText = npcMode === 'progression' ? 'progression-based' : npcMode === 'owner-sync' ? 'owner-synced' : 'statblock-backed';
 
     switch (npcKind) {
       case 'heroic':
@@ -1194,7 +1194,7 @@ export class NpcProfileBuilder {
       case 'privateer':
         return `This is a privateer in ${modeText} mode, bound to an owner.`;
       case 'imported':
-        return `This is an imported ${modeText} NPC. Use Play Mode unless Legal Review promotes it.`;
+        return `This is an imported ${modeText} NPC. Use source/statblock values unless Legal Review promotes it.`;
       case 'mount':
         return `This is a mount or steed in ${modeText} mode, available for riding.`;
       default:
@@ -1239,7 +1239,7 @@ export class NpcProfileBuilder {
       npcMode: 'statblock',
       npcProfileState: null,
       npcKindLabel: 'Heroic NPC',
-      npcModeLabel: 'Play Mode',
+      npcModeLabel: 'Table Ready',
       npcSourceAuthority: 'statblock',
       npcSourceAuthorityLabel: 'Statblock',
       npcLegalProfile: 'heroic',

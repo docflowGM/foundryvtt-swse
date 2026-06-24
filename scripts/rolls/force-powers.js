@@ -6,6 +6,22 @@
 import RollCore from "/systems/foundryvtt-swse/scripts/engine/roll/roll-core.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
+import { getHalfLevelDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+
+
+function forcePowerDamageFormulaWithHouseRules(actor, powerItem) {
+  const formula = String(powerItem?.system?.itemFormula || '').trim();
+  if (!formula) return '';
+  const halfLevel = getHalfLevelDamageBonus(actor, powerItem, {
+    forcePower: true,
+    type: 'force-power',
+    rollType: 'force-power.damage',
+    damageType: powerItem?.system?.damageType,
+    damageTypes: powerItem?.system?.damageTypes,
+    tags: powerItem?.system?.tags ?? powerItem?.system?.descriptors ?? []
+  });
+  return halfLevel ? `${formula} + ${halfLevel}` : formula;
+}
 
 /**
  * Roll a force power use via RollCore
@@ -143,22 +159,25 @@ export async function narrateForcePowerResult(actor, powerItem, roll) {
       return;
     }
 
-    // SAFETY: No formula extraction from item descriptions
-    // Use explicit itemFormula field if damage needs to be rolled
+    // SAFETY: No formula extraction from item descriptions.
+    // Use explicit itemFormula field if damage needs to be rolled. Force Powers
+    // do not add half heroic level by default; the GM can opt in with the Force
+    // Power damage house rule.
     let extra = `It does ${effectText}`;
-    if (powerItem.system?.itemFormula) {
+    const itemFormula = forcePowerDamageFormulaWithHouseRules(actor, powerItem);
+    if (itemFormula) {
       try {
         const formulaResult = await RollCore.executeFormula({
-          formula: powerItem.system.itemFormula,
+          formula: itemFormula,
           actor,
           rollData: actor.getRollData?.() ?? {},
           domain: 'force-power.item-formula',
-          context: { powerId: powerItem.id, powerName: powerItem.name }
+          context: { powerId: powerItem.id, powerName: powerItem.name, forcePower: true, type: 'force-power' }
         });
         if (!formulaResult.success || !formulaResult.roll) {
           throw new Error(formulaResult.error || 'Item formula roll failed');
         }
-        extra = `It does ${effectText} (rolled ${powerItem.system.itemFormula} = ${formulaResult.roll.total}).`;
+        extra = `It does ${effectText} (rolled ${itemFormula} = ${formulaResult.roll.total}).`;
       } catch (err) {
         swseLogger.warn('[ForcePowers] Item formula evaluation failed:', err);
       }
