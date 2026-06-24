@@ -1,13 +1,13 @@
 {{!-- GM Datapad jobs surface — command tabs + contract wizard overlay. --}}
-<div class="gm-datapad-page gm-datapad-jobs gm-phase2-page gm-phase9-jobs gm-v2-surface gm-v2-surface--jobs" data-shell-surface="jobs" data-gm-wizard-scope="jobs" data-job-board-tabs>
+<div class="gm-datapad-page gm-datapad-jobs gm-phase2-page gm-phase9-jobs gm-phase3-jobs gm-v2-surface gm-v2-surface--jobs" data-shell-surface="jobs" data-gm-wizard-scope="jobs" data-job-board-tabs>
   <div class="page-header job-board-header gm-phase2-header">
     <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
     <div class="gm-app-header-copy">
-      <span class="gm-command-eyebrow">CONTRACT MANAGEMENT TERMINAL</span>
+      <span class="gm-command-eyebrow">HOLONET CONTRACT EXCHANGE</span>
       <h2>Job Board</h2>
-      <p>Mission pipeline, objective review, and reward payout.</p>
+      <p>Mission pipeline, objective review, and settlement control.</p>
     </div>
-    <div class="job-board-header-actions gm-phase2-header-actions">
+    <div class="job-board-header-actions gm-phase2-header-actions gm-phase3-job-header-actions">
       <span class="job-board-chip attention">{{jobBoard.stats.review}} Review</span>
       <span class="job-board-chip payout">{{jobBoard.stats.payout}} Payout</span>
       <button type="button" class="swse-ui-button primary gm-phase2-primary" data-gm-wizard-open="contract" data-clear-job-prefill="true">
@@ -54,7 +54,7 @@
     </div>
   </section>
 
-  <div class="job-board-metrics gm-phase2-metrics gm-phase9-metrics" aria-label="Job board status">
+  <div class="job-board-metrics gm-phase2-metrics gm-phase9-metrics gm-phase3-job-metrics" aria-label="Job board status">
     <span class="gm-phase9-metric"><strong>{{jobBoard.stats.total}}</strong>Total</span>
     <span class="gm-phase9-metric"><strong>{{jobBoard.stats.open}}</strong>Open</span>
     <span class="gm-phase9-metric"><strong>{{jobBoard.stats.active}}</strong>Active</span>
@@ -77,7 +77,7 @@
   </section>
   {{/if}}
 
-  <section class="gm-phase9-job-ops-strip swse-ui-panel" aria-label="Job board operations summary">
+  <section class="gm-phase9-job-ops-strip gm-phase3-job-ops-strip swse-ui-panel" aria-label="Job board operations summary">
     <div>
       <span class="gm-command-eyebrow">PIPELINE</span>
       <strong>{{jobBoard.stats.open}} open / {{jobBoard.stats.active}} active</strong>
@@ -95,7 +95,7 @@
     </div>
   </section>
 
-  <nav class="gm-job-tabbar swse-ui-panel" aria-label="Job board sections">
+  <nav class="gm-job-tabbar gm-phase3-job-tabbar swse-ui-panel" aria-label="Job board sections">
     <button type="button" class="gm-job-tab is-active" data-job-tab-switch="board">
       <span>Pipeline</span><em>{{jobBoard.stats.total}}</em>
     </button>

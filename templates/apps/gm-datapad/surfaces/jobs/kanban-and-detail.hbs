@@ -1,17 +1,17 @@
 {{!-- GM Jobs board columns and selected job sections. --}}
-<section class="gm-job-tab-panel is-active" data-job-tab-panel="board" aria-label="Mission pipeline">
-  <div class="job-board-shell gm-phase9-job-shell gm-job-board-only-shell">
-    <section class="job-board-command swse-ui-panel gm-phase9-job-command">
+<section class="gm-job-tab-panel gm-job-tab-panel--board is-active" data-job-tab-panel="board" aria-label="Mission pipeline">
+  <div class="job-board-shell gm-phase9-job-shell gm-phase3-job-shell gm-job-board-only-shell">
+    <section class="job-board-command swse-ui-panel gm-phase9-job-command gm-phase3-job-kanban">
       <div class="job-board-section-header">
         <div>
           <span class="gm-command-eyebrow">CONTRACT BOARD</span>
           <h3>Mission Pipeline</h3>
         </div>
-        <span class="job-board-help">Drag-free status board. Select a card, then use Dossier or Settlement for detailed work.</span>
+        <span class="job-board-help">Select a contract to hydrate the dossier, review, and settlement rails.</span>
       </div>
       <div class="job-board-columns">
         {{#each jobBoard.columns}}
-        <section class="job-board-column" data-job-column="{{this.id}}">
+        <section class="job-board-column gm-phase3-job-column" data-job-column="{{this.id}}">
           <header>
             <div>
               <h4>{{this.label}}</h4>
@@ -21,7 +21,7 @@
           </header>
           <div class="job-card-stack">
             {{#each this.jobs}}
-            <button type="button" class="job-board-card {{this.statusTone}}" data-job-select="{{this.threadId}}" data-swse-drag-kind="job" data-swse-drag-id="{{this.threadId}}" data-swse-drag-thread-id="{{this.threadId}}" data-swse-drag-name="{{this.title}}" data-swse-drag-faction-id="{{this.factionId}}" data-swse-drag-source="job-board">
+            <button type="button" class="job-board-card {{this.statusTone}} {{#if (eq this.threadId ../../jobBoard.selectedJob.threadId)}}is-selected{{/if}}" data-job-select="{{this.threadId}}" data-swse-drag-kind="job" data-swse-drag-id="{{this.threadId}}" data-swse-drag-thread-id="{{this.threadId}}" data-swse-drag-name="{{this.title}}" data-swse-drag-faction-id="{{this.factionId}}" data-swse-drag-source="job-board">
               <div class="job-card-topline">
                 <span class="job-board-chip {{this.statusTone}}">{{this.statusLabel}}</span>
                 {{#if this.needsAttention}}<span class="job-board-chip attention">Needs GM</span>{{/if}}
@@ -35,7 +35,8 @@
               <div class="job-card-reward">{{this.rewards.approvedCreditsLabel}} - {{this.rewards.approvedXpLabel}}</div>
               <div class="job-card-footer">
                 <span>{{this.participantCount}} participant(s)</span>
-                <span>{{this.messageCount}} thread events</span>
+                <span>{{this.messageCount}} events</span>
+                {{#if this.updatedAtLabel}}<span>{{this.updatedAtLabel}}</span>{{/if}}
               </div>
             </button>
             {{else}}
@@ -47,7 +48,7 @@
       </div>
     </section>
 
-    <aside class="job-board-rail swse-ui-panel gm-phase9-job-rail gm-job-quick-rail">
+    <aside class="job-board-rail swse-ui-panel gm-phase9-job-rail gm-phase3-job-rail gm-job-quick-rail">
       {{#if jobBoard.selectedJob}}
       <div class="job-board-section-header compact gm-phase9-dossier-header">
         <div>
@@ -94,9 +95,9 @@
   </div>
 </section>
 
-<section class="gm-job-tab-panel" data-job-tab-panel="dossier" aria-label="Selected job dossier">
-  <div class="gm-job-dossier-layout">
-    <section class="swse-ui-panel gm-job-dossier-main">
+<section class="gm-job-tab-panel gm-job-tab-panel--dossier" data-job-tab-panel="dossier" aria-label="Selected job dossier">
+  <div class="gm-job-dossier-layout gm-phase3-dossier-layout">
+    <section class="swse-ui-panel gm-job-dossier-main gm-phase3-dossier-main">
       {{#if jobBoard.selectedJob}}
       <div class="job-board-section-header compact gm-phase9-dossier-header">
         <div>
@@ -189,7 +190,7 @@
       {{/if}}
     </section>
 
-    <aside class="swse-ui-panel gm-job-dossier-side">
+    <aside class="swse-ui-panel gm-job-dossier-side gm-phase3-dossier-side">
       {{#if jobBoard.selectedJob}}
       <div class="job-detail-block gm-job-lifecycle-block">
         <h4>Lifecycle</h4>
@@ -239,14 +240,14 @@
   </div>
 </section>
 
-<section class="gm-job-tab-panel" data-job-tab-panel="settlement" aria-label="Job reward settlement">
-  <div class="gm-job-settlement-layout">
+<section class="gm-job-tab-panel gm-job-tab-panel--settlement" data-job-tab-panel="settlement" aria-label="Job reward settlement">
+  <div class="gm-job-settlement-layout gm-phase3-settlement-layout">
     <section class="swse-ui-panel job-detail-block job-payout-panel gm-phase9-payout-panel">
       {{#if jobBoard.selectedJob}}
       <div class="job-board-section-header compact">
         <div>
           <span class="gm-command-eyebrow">SELECTED CONTRACT</span>
-          <h3>Reward Distribution</h3>
+          <h3>Distribution Console</h3>
         </div>
         <span class="job-board-chip {{jobBoard.selectedJob.statusTone}}">{{jobBoard.selectedJob.statusLabel}}</span>
       </div>
@@ -407,5 +408,27 @@
       <p class="placeholder">Select a job before distributing rewards.</p>
       {{/if}}
     </section>
+
+    <aside class="swse-ui-panel job-queue-panel gm-job-settlement-queue gm-phase3-settlement-queue">
+      <div class="job-board-section-header compact">
+        <div>
+          <span class="gm-command-eyebrow">PAYOUT QUEUE</span>
+          <h3>Completed Contracts</h3>
+        </div>
+        <span class="job-board-chip payout">{{jobBoard.payoutItems.length}}</span>
+      </div>
+      <div class="gm-job-payout-queue-grid">
+        {{#each jobBoard.payoutItems}}
+        <article class="job-queue-card gm-phase9-queue-card">
+          <span class="job-board-chip payout">Ready</span>
+          <strong>{{this.title}}</strong>
+          <p>{{this.rewards.approvedCreditsLabel}} - {{this.rewards.approvedXpLabel}}</p>
+          <button type="button" class="swse-ui-button" data-job-select="{{this.threadId}}" data-job-tab-switch="settlement">Distribute Rewards</button>
+        </article>
+        {{else}}
+        <p class="placeholder">No completed contracts are waiting on payout.</p>
+        {{/each}}
+      </div>
+    </aside>
   </div>
 </section>

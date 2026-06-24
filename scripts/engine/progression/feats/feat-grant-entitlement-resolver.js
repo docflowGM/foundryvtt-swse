@@ -316,10 +316,21 @@ export class FeatGrantEntitlementResolver {
     if (!includePending || !shell) return entries;
 
     const seen = new Set(entries.map((entry) => makeSourceId(entry, 0, 'owned')));
+    // Track owned feat names to avoid counting a pending feat that's already
+    // committed to the actor as a separate grant (e.g. Force Training selected
+    // in chargen and already written to actor.items shows up in both owned and
+    // pending, inflating entitlement counts). Class grants (pendingClassGrant)
+    // are legitimately additive and are not deduplicated by name.
+    const ownedNames = new Set(entries.map((entry) => normalizeName(entry?.name)));
     for (const pending of getPendingFeatEntries(shell)) {
       const id = makeSourceId(pending, entries.length, 'pending');
       if (seen.has(id)) continue;
       seen.add(id);
+      // Skip if this pending feat is already owned (same normalized name) and
+      // was not explicitly granted by the class at this level.
+      const pendingName = normalizeName(pending?.name);
+      const isClassGrant = pending?.sourceType === 'pendingClassGrant';
+      if (!isClassGrant && ownedNames.has(pendingName)) continue;
       entries.push(pending);
     }
     return entries;

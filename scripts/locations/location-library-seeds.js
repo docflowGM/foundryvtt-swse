@@ -5045,14 +5045,15 @@ export function getLocationLibrarySeed(seedId = '') {
 
 export function filterLocationLibrarySeeds({ search = '', biome = '', category = '' } = {}) {
   const q = text(search).toLowerCase();
+  const terms = q.split(/[,;|\s]+/g).map(term => term.trim()).filter(Boolean);
   const b = text(biome).toLowerCase();
   const c = text(category).toLowerCase();
   return LOCATION_LIBRARY_SEEDS.filter((seed) => {
     if (b && !asArray(seed.biomes).includes(b)) return false;
     if (c && seed.category !== c) return false;
-    if (!q) return true;
+    if (!terms.length) return true;
     const haystack = [seed.name, seed.region, seed.sector, seed.system, seed.summary, ...asArray(seed.tags), ...asArray(seed.biomes)].join(' ').toLowerCase();
-    return haystack.includes(q);
+    return terms.some(term => haystack.includes(term));
   });
 }
 

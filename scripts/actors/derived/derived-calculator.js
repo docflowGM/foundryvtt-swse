@@ -481,16 +481,19 @@ export class DerivedCalculator {
         }
 
         // Add feat/equipment/other modifiers from ModifierEngine (SSOT integration).
-        // Skill Focus can be represented both by system.skills.<key>.focused and by
-        // a passive modifier item. If both are present, suppress the Skill Focus
-        // modifier contribution entirely and keep the checkbox's single +5.
+        // Skill Focus is a non-stacking feat: at most one +5 applies regardless of
+        // how many Skill Focus feat copies target the same skill. Also, if the
+        // focused checkbox is ticked that IS the Skill Focus; suppress any passive
+        // Skill Focus modifier to avoid a second +5.
         const rawFeatBonus = Number(modifierMap[`skill.${skillKey}`] || 0) || 0;
-        const skillFocusModifierBonus = skill.focused
-          ? this._getSkillFocusModifierBonusForSkill(allModifiers, skillKey)
-          : 0;
-        const featBonus = skillFocusModifierBonus > 0
-          ? rawFeatBonus - skillFocusModifierBonus
-          : rawFeatBonus;
+        // Always compute the total SF modifier contribution (not gated on checkbox).
+        const skillFocusModifierBonus = this._getSkillFocusModifierBonusForSkill(allModifiers, skillKey);
+        // If checkbox is ticked: remove ALL SF modifiers (checkbox already added +5 above).
+        // If checkbox is not ticked: cap SF contribution at 5 (non-stackable).
+        const effectiveSFBonus = skill.focused
+          ? 0
+          : (skillFocusModifierBonus > 0 ? Math.min(skillFocusModifierBonus, 5) : 0);
+        const featBonus = rawFeatBonus - skillFocusModifierBonus + effectiveSFBonus;
         total += Math.max(0, featBonus);
 
         // PHASE 4: Get state-dependent modifiers for this skill

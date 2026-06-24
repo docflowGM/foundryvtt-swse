@@ -188,6 +188,12 @@ export class GMLocationsSurfaceController {
           return;
         }
 
+        if (action === 'clear-library-filters') {
+          this.host?.patchSurfaceState?.('locations', { librarySearch: '', libraryBiome: '', libraryCategory: '' }, { render: false });
+          await this._refresh('gm-location-library-clear-filters');
+          return;
+        }
+
         if (action === 'import-library-seed') {
           const seedId = target.dataset.seedId || '';
           const result = await LocationRegistryService.importLibrarySeed(seedId, { includeChildren: true, includeAtlasFacts: true, revealState: 'hidden', knownToPlayers: false });

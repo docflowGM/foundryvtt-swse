@@ -1,5 +1,5 @@
 {{!-- GM Jobs objective review and payout queues, split into command tabs. --}}
-<section class="gm-job-tab-panel" data-job-tab-panel="review" aria-label="Objective review queue">
+<section class="gm-job-tab-panel gm-job-tab-panel--review" data-job-tab-panel="review" aria-label="Objective review queue">
   <section class="swse-ui-panel job-queue-panel gm-job-review-tab-panel">
     <div class="job-board-section-header compact">
       <div>
@@ -23,30 +23,6 @@
       </article>
       {{else}}
       <p class="placeholder">No objective claims need review.</p>
-      {{/each}}
-    </div>
-  </section>
-</section>
-
-<section class="gm-job-tab-panel" data-job-tab-panel="settlement" aria-label="Payout queue">
-  <section class="swse-ui-panel job-queue-panel gm-job-payout-queue-panel">
-    <div class="job-board-section-header compact">
-      <div>
-        <span class="gm-command-eyebrow">PAYOUT QUEUE</span>
-        <h3>Completed Contracts</h3>
-      </div>
-      <span class="job-board-chip payout">{{jobBoard.payoutItems.length}}</span>
-    </div>
-    <div class="gm-job-payout-queue-grid">
-      {{#each jobBoard.payoutItems}}
-      <article class="job-queue-card gm-phase9-queue-card">
-        <span class="job-board-chip payout">Ready</span>
-        <strong>{{this.title}}</strong>
-        <p>{{this.rewards.approvedCreditsLabel}} - {{this.rewards.approvedXpLabel}}</p>
-        <button type="button" class="swse-ui-button" data-job-select="{{this.threadId}}" data-job-tab-switch="settlement">Distribute Rewards</button>
-      </article>
-      {{else}}
-      <p class="placeholder">No completed contracts are waiting on payout.</p>
       {{/each}}
     </div>
   </section>

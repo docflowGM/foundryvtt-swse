@@ -1,37 +1,36 @@
-{{!-- GM Datapad store surface. Extracted from gm-datapad.hbs in Phase 1; behavior unchanged. --}}
-    <div class="gm-datapad-page gm-datapad-store gm-store-control-console swse-store-ui swse-ui-shell swse-store-shell flexcol gm-v2-surface gm-v2-surface--store" data-shell-surface="store">
-      <div class="page-header gm-app-header gm-store-header">
-        <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
-        <div class="gm-app-header-copy">
-          <span class="gm-command-eyebrow">COMMERCE COMMAND</span>
-          <h2>{{pageTitle}}</h2>
-          <p class="page-subtitle">{{pageDescription}}</p>
-        </div>
-        <div class="gm-store-status-strip" aria-label="Store command status">
-          <span class="{{#if storeOpen}}online{{else}}offline{{/if}}"><strong>{{#if storeOpen}}OPEN{{else}}CLOSED{{/if}}</strong>Store</span>
-          <span><strong>{{transactions.length}}</strong>Transactions</span>
-          <span><strong>{{storeApprovalCounts.total}}</strong>Approvals</span>
-          <span><strong>{{inventoryStats.total}}</strong>Inventory</span>
-        </div>
-      </div>
-
-      <nav class="gm-store-tabs swse-ui-tabs swse-ui-frame" aria-label="Store control tabs">
-        <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'options')}}active{{/if}}" data-store-tab="options" aria-selected="{{#if (eq currentTab 'options')}}true{{else}}false{{/if}}">Store Options</button>
-        <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'transactions')}}active{{/if}}" data-store-tab="transactions" aria-selected="{{#if (eq currentTab 'transactions')}}true{{else}}false{{/if}}">Transactions <span>{{transactionStats.total}}</span></button>
-        <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'approvals')}}active{{/if}}" data-store-tab="approvals" aria-selected="{{#if (eq currentTab 'approvals')}}true{{else}}false{{/if}}">Approvals <span>{{approvalQueueMetrics.total}}</span></button>
-        <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'inventory')}}active{{/if}}" data-store-tab="inventory" aria-selected="{{#if (eq currentTab 'inventory')}}true{{else}}false{{/if}}">Inventory <span>{{inventoryStats.total}}</span></button>
-      </nav>
-
-      <div class="gm-store-tab-content swse-ui-panel">
-
-        {{!-- TAB 1: STORE OPTIONS --}}
-        {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/options-tab.hbs" }}
-
-        {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/transactions-tab.hbs" }}
-
-        {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/approvals-tab.hbs" }}
-
-        {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/inventory-tab.hbs" }}
-
-      </div>
+{{!-- GM Datapad store surface — Phase 4 concept commerce console. --}}
+<div class="gm-datapad-page gm-datapad-store gm-store-control-console swse-store-ui swse-ui-shell swse-store-shell flexcol gm-v2-surface gm-v2-surface--store gm-phase4-commerce" data-shell-surface="store">
+  <div class="page-header gm-app-header gm-store-header gm-phase4-commerce-header">
+    <button class="back-button swse-ui-button" data-nav-to="home"><i class="fa-solid fa-arrow-left"></i> Home</button>
+    <div class="gm-app-header-copy">
+      <span class="gm-command-eyebrow">COMMERCE COMMAND</span>
+      <h2>{{pageTitle}}</h2>
+      <p class="page-subtitle">{{pageDescription}}</p>
     </div>
+    <div class="gm-store-status-strip gm-phase4-commerce-metrics" aria-label="Store command status">
+      <span class="{{#if storeOpen}}online{{else}}offline{{/if}}"><small>Store</small><strong>{{#if storeOpen}}OPEN{{else}}CLOSED{{/if}}</strong></span>
+      <span><small>Transactions</small><strong>{{transactions.length}}</strong></span>
+      <span class="{{#if storeApprovalCounts.total}}warn{{/if}}"><small>Approvals</small><strong>{{storeApprovalCounts.total}}</strong></span>
+      <span><small>Inventory</small><strong>{{inventoryStats.total}}</strong></span>
+    </div>
+  </div>
+
+  <div class="gm-phase4-commerce-strip {{#if storeOpen}}is-open{{else}}is-closed{{/if}}">
+    <span><i class="fa-solid fa-vault"></i> Transaction Engine authority</span>
+    <p>Purchases, sales, approvals, rollbacks, and audit history remain routed through the existing store services and Transaction Engine. This console only presents the controls in the concept datapad layout.</p>
+  </div>
+
+  <nav class="gm-store-tabs swse-ui-tabs swse-ui-frame gm-phase4-store-tabs" aria-label="Store control tabs">
+    <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'options')}}active{{/if}}" data-store-tab="options" aria-selected="{{#if (eq currentTab 'options')}}true{{else}}false{{/if}}"><i class="fa-solid fa-sliders"></i> Store Options</button>
+    <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'transactions')}}active{{/if}}" data-store-tab="transactions" aria-selected="{{#if (eq currentTab 'transactions')}}true{{else}}false{{/if}}"><i class="fa-solid fa-receipt"></i> Transactions <span>{{transactionStats.total}}</span></button>
+    <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'approvals')}}active{{/if}}" data-store-tab="approvals" aria-selected="{{#if (eq currentTab 'approvals')}}true{{else}}false{{/if}}"><i class="fa-solid fa-scale-balanced"></i> Approvals <span>{{approvalQueueMetrics.total}}</span></button>
+    <button type="button" class="tab-button swse-ui-tab {{#if (eq currentTab 'inventory')}}active{{/if}}" data-store-tab="inventory" aria-selected="{{#if (eq currentTab 'inventory')}}true{{else}}false{{/if}}"><i class="fa-solid fa-boxes-stacked"></i> Inventory <span>{{inventoryStats.total}}</span></button>
+  </nav>
+
+  <div class="gm-store-tab-content swse-ui-panel gm-phase4-commerce-workspace">
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/options-tab.hbs" }}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/transactions-tab.hbs" }}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/approvals-tab.hbs" }}
+    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/store/inventory-tab.hbs" }}
+  </div>
+</div>

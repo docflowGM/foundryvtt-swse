@@ -220,7 +220,12 @@ export async function resolveForcePowerEntitlements(shell, actor) {
     for (const alias of aliases) {
       const pendingScore = pendingState?.attributes?.[alias]?.value ?? pendingState?.abilities?.[alias]?.value;
       const pendingMod = pendingState?.attributes?.[alias]?.mod ?? pendingState?.attributes?.[alias]?.modifier ?? pendingState?.abilities?.[alias]?.mod ?? pendingState?.abilities?.[alias]?.modifier;
-      for (const value of [pendingMod, system.abilities?.[alias]?.mod, system.abilities?.[alias]?.modifier, system.attributes?.[alias]?.mod, system.attributes?.[alias]?.modifier, system.stats?.[alias]?.mod, system.stats?.[alias]?.modifier]) {
+      // Also read from draftSelections attributes (set by the attribute step) and derived
+      const draftAttrs = shell?.progressionSession?.draftSelections?.attributes ?? shell?.draftSelections?.attributes ?? null;
+      const draftMod = draftAttrs?.modifiers?.[alias] ?? draftAttrs?.finalValues?.[alias] !== undefined
+        ? Math.floor(((Number(draftAttrs?.finalValues?.[alias]) || 10) - 10) / 2)
+        : null;
+      for (const value of [draftMod, pendingMod, system.derived?.attributes?.[alias]?.mod, system.abilities?.[alias]?.mod, system.abilities?.[alias]?.modifier, system.attributes?.[alias]?.mod, system.attributes?.[alias]?.modifier, system.stats?.[alias]?.mod, system.stats?.[alias]?.modifier]) {
         const number = asFiniteNumber(value);
         if (number !== null) return number;
       }

@@ -1211,12 +1211,17 @@ export class AttributeStep extends ProgressionStepPlugin {
   async afterRender(shell, workSurfaceEl) {
     if (!workSurfaceEl) return;
 
+    // Abort previous render's listeners to prevent accumulation across re-renders.
+    this._afterRenderAbortController?.abort();
+    this._afterRenderAbortController = new AbortController();
+    const signal = this._afterRenderAbortController.signal;
+
     workSurfaceEl.querySelectorAll('.attr-method-btn').forEach(btn => {
-      btn.addEventListener('click', () => this._handleMethodChange(btn.dataset.method, shell));
+      btn.addEventListener('click', () => this._handleMethodChange(btn.dataset.method, shell), { signal });
     });
 
     workSurfaceEl.querySelectorAll('.attr-array-type-btn').forEach(btn => {
-      btn.addEventListener('click', () => this._handleArrayTypeChange(btn.dataset.arrayType, shell));
+      btn.addEventListener('click', () => this._handleArrayTypeChange(btn.dataset.arrayType, shell), { signal });
     });
 
     workSurfaceEl.querySelectorAll('[data-ability-row]').forEach(row => {
@@ -1228,14 +1233,14 @@ export class AttributeStep extends ProgressionStepPlugin {
         }
         shell?.setFocusedItem?.(this._buildFocusedAbilityDetail(abilityKey, shell));
         shell.render();
-      });
+      }, { signal });
     });
 
     workSurfaceEl.querySelectorAll('[data-ability][data-delta]').forEach(btn => {
       btn.addEventListener('click', ev => {
         ev.stopPropagation();
         this._handlePointBuyDelta(btn.dataset.ability, Number(btn.dataset.delta), shell);
-      });
+      }, { signal });
     });
 
     workSurfaceEl.querySelectorAll('[data-score-pool-id]').forEach(btn => {
@@ -1244,14 +1249,14 @@ export class AttributeStep extends ProgressionStepPlugin {
         if (this._committed) return;
         this._setSelectedPoolItem(btn.dataset.scorePoolId);
         shell.render();
-      });
+      }, { signal });
 
       btn.addEventListener('dragstart', ev => {
         if (this._committed) return;
         const poolId = btn.dataset.scorePoolId;
         this._setSelectedPoolItem(poolId);
         ev.dataTransfer?.setData('text/plain', poolId);
-      });
+      }, { signal });
     });
 
     workSurfaceEl.querySelectorAll('[data-ability-row]').forEach(row => {
@@ -1259,11 +1264,11 @@ export class AttributeStep extends ProgressionStepPlugin {
         if (this._committed || this._method === 'point-buy') return;
         ev.preventDefault();
         row.classList.add('prog-attribute-row--drop-ready');
-      });
+      }, { signal });
 
       row.addEventListener('dragleave', () => {
         row.classList.remove('prog-attribute-row--drop-ready');
-      });
+      }, { signal });
 
       row.addEventListener('drop', ev => {
         if (this._committed || this._method === 'point-buy') return;
@@ -1274,7 +1279,7 @@ export class AttributeStep extends ProgressionStepPlugin {
         this._setSelectedPoolItem(poolId);
         this._assignSelectedPoolToAbility(row.dataset.abilityRow, shell);
         shell.render();
-      });
+      }, { signal });
     });
 
     workSurfaceEl.querySelectorAll('[data-clear-ability]').forEach(btn => {
@@ -1282,17 +1287,17 @@ export class AttributeStep extends ProgressionStepPlugin {
         ev.stopPropagation();
         this._clearAbilityAssignment(btn.dataset.clearAbility, shell);
         shell.render();
-      });
+      }, { signal });
     });
 
     workSurfaceEl.querySelector('[data-attr-reroll]')?.addEventListener('click', () => {
       this._rerollCurrent(shell);
-    });
+    }, { signal });
 
     workSurfaceEl.querySelector('[data-attr-auto-assign]')?.addEventListener('click', () => {
       this._autoAssignCurrent(shell);
       shell.render();
-    });
+    }, { signal });
 
   }
 

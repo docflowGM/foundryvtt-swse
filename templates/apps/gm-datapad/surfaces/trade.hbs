@@ -1,13 +1,13 @@
-{{!-- GM Datapad trade surface — Phase 6 command layout polish. --}}
-<div class="gm-datapad-page gm-datapad-trade-console gm-phase6-command-surface gm-phase6-trade gm-v2-surface gm-v2-surface--trade" data-shell-surface="trade">
-  <div class="gm-phase6-command-header trade-console-header">
+{{!-- GM Datapad trade surface — Phase 4 concept transaction operations board. --}}
+<div class="gm-datapad-page gm-datapad-trade-console gm-phase6-command-surface gm-phase6-trade gm-v2-surface gm-v2-surface--trade gm-phase4-trade" data-shell-surface="trade">
+  <div class="gm-phase6-command-header trade-console-header gm-phase4-trade-header">
     <button class="back-button swse-ui-button" data-nav-to="home"><i class="fa-solid fa-arrow-left"></i> Home</button>
     <div class="gm-phase6-command-copy">
       <span class="gm-command-eyebrow">TRANSACTION OPERATIONS BOARD</span>
       <h2>{{pageTitle}}</h2>
       <p>{{pageDescription}}</p>
     </div>
-    <div class="gm-phase6-command-metrics" aria-label="Trade console status">
+    <div class="gm-phase6-command-metrics gm-phase4-trade-metrics" aria-label="Trade console status">
       <span class="gm-command-metric warn"><small>Approval</small><b>{{tradeConsole.stats.approvals}}</b></span>
       <span class="gm-command-metric crit"><small>Failed</small><b>{{tradeConsole.stats.failed}}</b></span>
       <span class="gm-command-metric"><small>Active</small><b>{{tradeConsole.stats.active}}</b></span>
@@ -15,20 +15,18 @@
     </div>
   </div>
 
-  <div class="gm-phase6-command-strip {{#if tradeConsole.stats.failed}}is-critical{{else}}{{#if tradeConsole.stats.approvals}}is-warning{{/if}}{{/if}}">
+  <div class="gm-phase6-command-strip gm-phase4-trade-strip {{#if tradeConsole.stats.failed}}is-critical{{else}}{{#if tradeConsole.stats.approvals}}is-warning{{/if}}{{/if}}">
     <span><i class="fa-solid fa-shield-halved"></i> Atomic settlement watch</span>
-    <p>Trades remain routed through Messenger, TransactionEngine, and ActorEngine. This surface only reviews, approves, cancels, reconciles, or repairs existing records.</p>
+    <p>Trades remain all-or-nothing and continue routing through Messenger, TransactionEngine, and ActorEngine. If a settlement fails, no partial credits, items, or assets should be committed.</p>
   </div>
 
-  <div class="trade-console-shell gm-phase6-major-shell">
+  <div class="trade-console-shell gm-phase6-major-shell gm-phase4-trade-workspace">
     {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/trade-board.hbs" }}
+  </div>
 
-  <div class="trade-console-lower-grid gm-phase6-lower-grid">
+  <div class="trade-console-lower-grid gm-phase6-lower-grid gm-phase4-trade-lower-grid">
     {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/economy-repair.hbs" }}
-
     {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/policy-panel.hbs" }}
-
     {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/trade/audit-panel.hbs" }}
   </div>
-</div>
 </div>

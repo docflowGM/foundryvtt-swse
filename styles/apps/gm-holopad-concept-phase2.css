@@ -17,6 +17,9 @@
   --gm-phase2-border: color-mix(in oklab, var(--gm-phase2-accent) 30%, transparent);
   --gm-phase2-border-hot: color-mix(in oklab, var(--gm-phase2-accent-2) 38%, transparent);
   --gm-phase2-glow: 0 0 18px color-mix(in oklab, var(--gm-phase2-accent) 23%, transparent);
+  --gm-phase2-ok: var(--swse-concept-success, #7dffb2);
+  --gm-phase2-warn: var(--swse-concept-warning, #ffc857);
+  --gm-phase2-crit: var(--swse-concept-danger, #ff6b6b);
 }
 
 .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 {
@@ -26,8 +29,9 @@
 }
 
 .swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept {
-  display: flex !important;
-  flex-direction: column !important;
+  display: grid !important;
+  grid-template-columns: minmax(210px, 236px) minmax(0, 1fr) !important;
+  grid-template-rows: minmax(0, 1fr) !important;
   gap: 10px !important;
   min-width: 0;
   min-height: 0;
@@ -37,7 +41,7 @@
 
 .swse-sheet-v2-shell--gm-datapad .gm-command-surface-stage--concept {
   display: grid !important;
-  grid-template-rows: auto auto minmax(0, 1fr) !important;
+  grid-template-rows: auto minmax(0, 1fr) !important;
   gap: 10px !important;
   min-width: 0;
   min-height: 0;
@@ -71,8 +75,8 @@
   box-shadow: 0 0 22px color-mix(in oklab, var(--gm-phase2-accent) 18%, transparent);
 }
 
-/* Persistent top dock: replaces the phase-drift vertical sidebar as the active
-   concept navigation surface. */
+/* Legacy top dock styles are retained for rollback/experiments. The active
+   Phase 2 interior uses the vertical command rail rendered by sidebar.hbs. */
 .swse-sheet-v2-shell--gm-datapad .gm-holopad-command-dock--phase2 {
   position: relative;
   display: grid !important;
@@ -601,7 +605,7 @@
   background: color-mix(in oklab, var(--gm-phase2-accent) 7%, rgba(2, 8, 18, 0.78)) !important;
 }
 
-/* Focus mode keeps the dock usable but gives the active surface more visual room. */
+/* Focus mode keeps navigation usable but gives the active surface more visual room. */
 .swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept.is-surface-focused .gm-command-surface-toolbar--phase2 {
   display: none !important;
 }
@@ -610,11 +614,9 @@
   grid-template-rows: auto minmax(0, 1fr) !important;
 }
 
-/* The old sidebar partial remains in the repo for a rollback path, but Phase 2
-   actively removes it from gm-datapad.hbs. Hide it defensively if a stale render
-   ever includes both navigation systems. */
+/* Phase 2 keeps the concept navigation ribbon as a persistent left command rail. */
 .swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept .gm-command-sidebar {
-  display: none !important;
+  display: flex !important;
 }
 
 @media (max-width: 1180px) {
@@ -656,5 +658,3066 @@
     .combat-recovery-header
   ) {
     grid-template-columns: 1fr !important;
+  }
+}
+
+/* ============================================================================
+   GM DATAPAD CONCEPT PARITY - PHASE 2 INTERIOR LAYOUT
+   ---------------------------------------------------------------------------
+   This pass keeps the existing holopad frame and restores the concept interior:
+   a persistent vertical command ribbon, a dedicated surface command header, and
+   dense but readable three-rail work surfaces.
+   ============================================================================ */
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept {
+  display: grid !important;
+  grid-template-columns: minmax(210px, 236px) minmax(0, 1fr) !important;
+  grid-template-rows: minmax(0, 1fr) !important;
+  align-items: stretch !important;
+  gap: 10px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept.is-sidebar-collapsed {
+  grid-template-columns: 64px minmax(0, 1fr) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept .gm-command-sidebar {
+  position: relative;
+  display: flex !important;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  padding: 10px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 32%, transparent) !important;
+  border-radius: 16px !important;
+  background:
+    radial-gradient(circle at 20% 0%, color-mix(in oklab, var(--gm-phase2-accent) 14%, transparent), transparent 34%),
+    linear-gradient(180deg, rgba(3, 11, 22, 0.96), rgba(1, 5, 12, 0.92)) !important;
+  box-shadow:
+    inset -16px 0 34px rgba(0, 0, 0, 0.28),
+    var(--swse-concept-shadow, none) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__scan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: var(--swse-concept-scan-bg, repeating-linear-gradient(0deg, transparent 0 4px, rgba(112, 226, 255, 0.08) 4px 5px));
+  opacity: 0.16;
+  mix-blend-mode: screen;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__head,
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__foot {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 6px;
+  flex: 0 0 auto;
+  padding: 10px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 20%, transparent) !important;
+  border-radius: 12px !important;
+  background: color-mix(in oklab, var(--gm-phase2-panel) 76%, transparent) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__collapse {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: inline-grid !important;
+  place-items: center;
+  width: 26px;
+  height: 24px;
+  padding: 0 !important;
+  border-radius: 8px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__title {
+  padding-right: 30px;
+  color: var(--gm-phase2-ink) !important;
+  font: 900 15px/1.1 var(--swse-concept-font-display, sans-serif) !important;
+  letter-spacing: 0.12em !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  padding: 4px 8px;
+  font: 800 9px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--gm-phase2-accent);
+  box-shadow: 0 0 8px color-mix(in oklab, var(--gm-phase2-accent) 64%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__list {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 0;
+  overflow: auto;
+  padding: 8px 2px;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--gm-phase2-accent) 32%, transparent) transparent;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__group {
+  margin: 8px 4px 2px;
+  color: var(--gm-phase2-faint);
+  font: 900 8px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__divider {
+  height: 1px;
+  margin: 4px 6px;
+  background: color-mix(in oklab, var(--gm-phase2-accent) 16%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__btn {
+  position: relative;
+  display: grid !important;
+  grid-template-columns: 22px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 36px;
+  padding: 8px 9px !important;
+  overflow: hidden;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__btn::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 2px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__btn.is-active::before {
+  background: var(--gm-phase2-accent);
+  box-shadow: 0 0 12px color-mix(in oklab, var(--gm-phase2-accent) 70%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__icon {
+  color: color-mix(in oklab, var(--gm-phase2-accent) 82%, white 18%);
+  text-align: center;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__label {
+  overflow: hidden;
+  color: var(--gm-phase2-ink);
+  font: 900 10px/1.1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.1em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__badge {
+  display: inline-grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  font: 900 9px/1 var(--swse-concept-font-mono, monospace);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__serial,
+.swse-sheet-v2-shell--gm-datapad .gm-command-sidebar__session {
+  overflow: hidden;
+  color: var(--gm-phase2-faint);
+  font: 800 8px/1.25 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.1em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept.is-sidebar-collapsed .gm-command-sidebar {
+  padding: 8px 6px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept.is-sidebar-collapsed .gm-command-sidebar__head,
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept.is-sidebar-collapsed .gm-command-sidebar__foot,
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept.is-sidebar-collapsed .gm-command-sidebar__group,
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept.is-sidebar-collapsed .gm-command-sidebar__divider,
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept.is-sidebar-collapsed .gm-command-sidebar__label {
+  display: none !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept.is-sidebar-collapsed .gm-command-sidebar__btn {
+  grid-template-columns: 1fr;
+  justify-items: center;
+  min-height: 40px;
+  padding: 8px 4px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept.is-sidebar-collapsed .gm-command-sidebar__badge {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  min-width: 14px;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  overflow: hidden;
+  color: transparent;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-surface-stage--concept {
+  grid-template-rows: auto minmax(0, 1fr) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept.is-surface-focused .gm-command-surface-stage--concept {
+  grid-template-rows: minmax(0, 1fr) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-surface-scrollframe--concept .swse-shell-surface-host {
+  position: relative !important;
+  display: block !important;
+  min-width: 0;
+  min-height: 100%;
+  overflow: visible !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-surface-scrollframe--concept .swse-shell-home-nav {
+  display: none !important;
+}
+
+/* GM Locations: concept-style authoring workstation. */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations {
+  --loc-field-bg: rgba(1, 7, 15, 0.86);
+  --loc-field-border: color-mix(in oklab, var(--gm-phase2-accent) 24%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-locations-hero {
+  grid-template-columns: minmax(260px, 1fr) minmax(420px, auto) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-stat-grid {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(58px, 1fr));
+  gap: 6px;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-stat-grid div {
+  display: grid;
+  align-content: center;
+  min-height: 46px;
+  padding: 7px 8px !important;
+  text-align: center;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-stat-grid strong {
+  color: var(--gm-phase2-accent);
+  font: 900 17px/1 var(--swse-concept-font-mono, monospace);
+  text-shadow: var(--gm-phase2-glow);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-stat-grid span {
+  color: var(--gm-phase2-faint);
+  font: 800 8px/1.1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-shell {
+  display: grid !important;
+  grid-template-columns: minmax(230px, 0.68fr) minmax(330px, 1fr) minmax(340px, 0.92fr) !important;
+  gap: 12px !important;
+  align-items: stretch;
+  min-height: 0;
+  overflow: visible !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-rail,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  min-height: 0;
+  overflow: visible !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px !important;
+  overflow: hidden;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-panel h3,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-panel summary {
+  margin: 0;
+  color: var(--gm-phase2-accent) !important;
+  font: 900 11px/1.15 var(--swse-concept-font-mono, monospace) !important;
+  letter-spacing: 0.16em !important;
+  text-transform: uppercase !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-field-label,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations label:not(.swse-inline-check) {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  color: var(--gm-phase2-dim);
+  font: 800 9px/1.15 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations input,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations select,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations textarea {
+  width: 100% !important;
+  min-width: 0;
+  min-height: 30px;
+  padding: 7px 9px !important;
+  border: 1px solid var(--loc-field-border) !important;
+  border-radius: 8px !important;
+  background: var(--loc-field-bg) !important;
+  color: var(--gm-phase2-ink) !important;
+  font: 600 11px/1.35 var(--swse-concept-font-body, sans-serif) !important;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.26) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations textarea {
+  resize: vertical;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations input:focus,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations select:focus,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations textarea:focus {
+  outline: none;
+  border-color: color-mix(in oklab, var(--gm-phase2-accent) 58%, transparent) !important;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.26), var(--gm-phase2-glow) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-two-col {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-inline-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  color: var(--gm-phase2-dim);
+  font: 700 10px/1.2 var(--swse-concept-font-body, sans-serif);
+  text-transform: none;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-inline-check input {
+  width: 16px !important;
+  min-height: 16px;
+  padding: 0 !important;
+  accent-color: var(--gm-phase2-accent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-category-grid h3 {
+  grid-column: 1 / -1;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-category-grid span,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-card-meta span,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-library-meta span,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-chip,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-link-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 4px 7px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 20%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--gm-phase2-accent) 7%, transparent);
+  color: var(--gm-phase2-dim);
+  font: 800 8px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-help {
+  margin: 0;
+  color: var(--gm-phase2-faint) !important;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-card-list,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-lead-list,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-library-list,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-mini-list,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-linked-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-card,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-lead-card,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-library-card,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-mini-list > div {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 20%, transparent) !important;
+  border-radius: 12px !important;
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--gm-phase2-accent) 7%, transparent), transparent 52%),
+    rgba(2, 9, 18, 0.72) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-card {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-card-main {
+  display: grid !important;
+  gap: 6px;
+  min-width: 0;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  text-align: left;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-card-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-card-title-row h3 {
+  overflow: hidden;
+  margin: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-card-main p {
+  margin: 0;
+  color: var(--gm-phase2-dim) !important;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-card-meta,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-card-actions,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-lead-actions,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-editor-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 6px;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-card-actions {
+  justify-content: flex-end;
+  align-content: start;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-card-actions button,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-lead-actions button,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-editor-actions button,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-mini-button {
+  min-height: 28px;
+  padding: 5px 9px !important;
+  font: 900 9px/1 var(--swse-concept-font-mono, monospace) !important;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-editor {
+  overflow: visible;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-subpanel {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 18%, transparent);
+  border-radius: 10px;
+  background: rgba(1, 7, 15, 0.42);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-empty-state {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 10px;
+  min-height: 360px;
+  padding: 24px;
+  border: 1px dashed color-mix(in oklab, var(--gm-phase2-accent) 30%, transparent);
+  border-radius: 16px;
+  background: radial-gradient(circle at 50% 10%, color-mix(in oklab, var(--gm-phase2-accent) 8%, transparent), transparent 42%);
+  text-align: center;
+}
+
+@media (max-width: 1220px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept {
+    grid-template-columns: 64px minmax(0, 1fr) !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept .gm-command-sidebar__head,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept .gm-command-sidebar__foot,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept .gm-command-sidebar__group,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept .gm-command-sidebar__divider,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept .gm-command-sidebar__label {
+    display: none !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-shell {
+    grid-template-columns: minmax(230px, 0.75fr) minmax(330px, 1fr) !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-rail--right {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 860px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto minmax(0, 1fr) !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept .gm-command-sidebar {
+    max-height: 82px;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept .gm-command-sidebar__list {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-shell-v2--concept .gm-command-sidebar__btn {
+    grid-template-columns: auto auto;
+    flex: 0 0 auto;
+    min-width: 48px;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-locations-hero,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-shell,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-two-col {
+    grid-template-columns: 1fr !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--locations .swse-location-stat-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ============================================================================
+   GM DATAPAD CONCEPT PARITY - PHASE 3 JOB BOARD INTERIOR
+   ---------------------------------------------------------------------------
+   Keeps the existing shell host and turns the Job Board surface into the
+   concept-style contract exchange: horizontal kanban, selected-contract rail,
+   separated review queue, and settlement console with payout queue.
+   ============================================================================ */
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs {
+  --job-field-bg: rgba(1, 7, 15, 0.86);
+  --job-field-border: color-mix(in oklab, var(--gm-phase2-accent) 24%, transparent);
+  gap: 10px;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-header {
+  grid-template-columns: auto minmax(260px, 1fr) minmax(240px, auto) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-metrics {
+  display: grid !important;
+  grid-template-columns: repeat(6, minmax(70px, 1fr));
+  gap: 6px;
+  padding: 8px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-metrics .gm-phase9-metric {
+  display: grid;
+  align-content: center;
+  min-height: 46px;
+  padding: 7px 8px !important;
+  text-align: center;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-metrics .gm-phase9-metric strong {
+  color: var(--gm-phase2-accent);
+  font: 900 17px/1 var(--swse-concept-font-mono, monospace);
+  text-shadow: var(--gm-phase2-glow);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-metrics .gm-phase9-metric {
+  color: var(--gm-phase2-faint);
+  font: 800 8px/1.15 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-ops-strip {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 9px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-ops-strip > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 9px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 18%, transparent);
+  border-radius: 10px;
+  background: rgba(1, 7, 15, 0.38);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-ops-strip strong {
+  overflow: hidden;
+  color: var(--gm-phase2-ink);
+  font: 900 12px/1.15 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.04em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-ops-strip p {
+  margin: 0;
+  color: var(--gm-phase2-faint) !important;
+  font-size: 10px;
+  line-height: 1.3;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-tabbar {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  padding: 7px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-tab {
+  min-height: 34px;
+  padding: 7px 9px !important;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 18%, transparent) !important;
+  border-radius: 9px !important;
+  background: rgba(1, 7, 15, 0.48) !important;
+  color: var(--gm-phase2-dim) !important;
+  font: 900 9px/1 var(--swse-concept-font-mono, monospace) !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-tab:hover,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-tab.is-active {
+  border-color: color-mix(in oklab, var(--gm-phase2-accent) 52%, transparent) !important;
+  background: color-mix(in oklab, var(--gm-phase2-accent) 10%, rgba(1, 7, 15, 0.7)) !important;
+  box-shadow: var(--gm-phase2-glow) !important;
+  color: var(--gm-phase2-ink) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-tab em {
+  min-width: 20px;
+  padding: 3px 5px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 22%, transparent);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--gm-phase2-accent);
+  font-style: normal;
+  text-align: center;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-tab-panel {
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-shell {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(285px, 320px) !important;
+  gap: 10px !important;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-kanban,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-rail,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-dossier-main,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-dossier-side,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-review-tab-panel,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase9-payout-panel,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-settlement-queue {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-width: 0;
+  min-height: 0;
+  padding: 12px !important;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 24%, transparent) !important;
+  border-radius: 14px !important;
+  background:
+    radial-gradient(circle at 12% 0%, color-mix(in oklab, var(--gm-phase2-accent) 8%, transparent), transparent 40%),
+    linear-gradient(180deg, rgba(4, 14, 28, 0.82), rgba(1, 7, 15, 0.72)) !important;
+  box-shadow: var(--swse-concept-shadow, none) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-section-header {
+  display: flex !important;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0 !important;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-section-header h3,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-detail-block h4,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-column h4 {
+  margin: 0;
+  color: var(--gm-phase2-accent) !important;
+  font: 900 11px/1.15 var(--swse-concept-font-mono, monospace) !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-help,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-column p,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .placeholder {
+  margin: 0;
+  color: var(--gm-phase2-faint) !important;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-columns {
+  display: flex !important;
+  flex: 1 1 auto;
+  gap: 7px !important;
+  min-height: 0;
+  overflow-x: auto !important;
+  overflow-y: hidden;
+  padding: 2px 2px 6px !important;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--gm-phase2-accent) 32%, transparent) transparent;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-column {
+  display: flex;
+  flex: 0 0 clamp(150px, 16vw, 180px);
+  flex-direction: column;
+  gap: 6px;
+  min-width: 150px;
+  max-width: 190px;
+  min-height: 0;
+  padding: 7px !important;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 16%, transparent) !important;
+  border-radius: 11px !important;
+  background: rgba(1, 7, 15, 0.48) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-column > header {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 5px;
+  min-height: 44px;
+  margin: 0 !important;
+  padding: 7px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 14%, transparent);
+  border-radius: 9px;
+  background: color-mix(in oklab, var(--gm-phase2-accent) 6%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-column > header > span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 28%, transparent);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.26);
+  color: var(--gm-phase2-ink);
+  font: 900 11px/1 var(--swse-concept-font-mono, monospace);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-card-stack {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 1px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-card {
+  display: grid !important;
+  gap: 5px;
+  width: 100%;
+  padding: 9px !important;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 16%, transparent) !important;
+  border-radius: 10px !important;
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--gm-phase2-accent) 5%, transparent), transparent 56%),
+    rgba(2, 9, 18, 0.72) !important;
+  color: inherit !important;
+  text-align: left;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease, background 120ms ease, box-shadow 120ms ease;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-card:hover,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-card.is-selected {
+  transform: translateY(-1px);
+  border-color: color-mix(in oklab, var(--gm-phase2-accent) 50%, transparent) !important;
+  background: color-mix(in oklab, var(--gm-phase2-accent) 9%, rgba(2, 9, 18, 0.82)) !important;
+  box-shadow: var(--gm-phase2-glow) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-card.attention,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-card.review {
+  border-color: rgba(255, 200, 87, 0.34) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-card.danger,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-card.failed {
+  border-color: rgba(255, 107, 107, 0.34) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-card.success,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-card.approved {
+  border-color: rgba(125, 255, 178, 0.28) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-card-topline,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-card-progress,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-card-footer,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-objective-head,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-objective-rewards,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-objective-actions,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-detail-actions,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-reward-summary {
+  display: flex !important;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-card-title {
+  color: var(--gm-phase2-ink);
+  font-size: 12px;
+  font-weight: 900;
+  line-height: 1.25;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-card-client,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-card-footer {
+  color: var(--gm-phase2-faint) !important;
+  font-size: 9px;
+  line-height: 1.25;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-card-reward {
+  color: color-mix(in oklab, var(--gm-phase2-accent-2) 72%, white 28%) !important;
+  font: 900 10px/1.2 var(--swse-concept-font-mono, monospace);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-column-empty,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-empty-state {
+  min-height: 58px;
+  padding: 12px;
+  border: 1px dashed color-mix(in oklab, var(--gm-phase2-accent) 22%, transparent) !important;
+  border-radius: 10px !important;
+  background: rgba(1, 7, 15, 0.42) !important;
+  color: var(--gm-phase2-faint) !important;
+  font-size: 10px;
+  text-align: center;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-chip {
+  min-height: 18px;
+  padding: 3px 6px !important;
+  font: 900 8px/1 var(--swse-concept-font-mono, monospace) !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase9-dossier-metrics {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase9-dossier-metrics span,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-reward-summary span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  padding: 7px 8px !important;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 18%, transparent) !important;
+  border-radius: 9px !important;
+  background: rgba(1, 7, 15, 0.5) !important;
+  color: var(--gm-phase2-faint) !important;
+  font: 800 8px/1.15 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase9-dossier-metrics strong,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-reward-summary strong {
+  color: var(--gm-phase2-ink);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase9-client-card,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-objective-card,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-queue-card,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-participant-row,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-timeline-row,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-consequence-row,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-recipient-picker {
+  padding: 9px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 18%, transparent) !important;
+  border-radius: 11px !important;
+  background: rgba(1, 7, 15, 0.46) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-detail-client,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-participant-row,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-timeline-row {
+  display: flex !important;
+  align-items: center;
+  gap: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-detail-client img,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-participant-row img {
+  width: 38px;
+  height: 38px;
+  object-fit: cover;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 28%, transparent);
+  border-radius: 10px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-detail-block {
+  display: grid;
+  gap: 8px;
+  margin-top: 0 !important;
+  padding-top: 10px !important;
+  border-top: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 16%, transparent) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-objective-list,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-participant-list,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-timeline,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-consequence-list,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-review-grid,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-payout-queue-grid {
+  display: grid !important;
+  gap: 8px;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-review-grid {
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-payout-queue-grid {
+  grid-template-columns: 1fr;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-queue-card strong,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-objective-card strong,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-consequence-row strong {
+  color: var(--gm-phase2-ink);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-objective-card p,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-queue-card p,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-consequence-row span,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-consequence-row em {
+  margin: 0;
+  color: var(--gm-phase2-dim) !important;
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-dossier-layout {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.72fr) !important;
+  gap: 10px !important;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-dossier-topline {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.72fr) !important;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-settlement-layout {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 320px) !important;
+  gap: 10px !important;
+  align-items: stretch;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-payout-form,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-xp-form {
+  display: grid !important;
+  gap: 8px;
+  padding: 9px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 14%, transparent);
+  border-radius: 11px;
+  background: rgba(1, 7, 15, 0.36);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs label:not(.job-inline-check) {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  color: var(--gm-phase2-dim);
+  font: 800 9px/1.15 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs input,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs select,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs textarea {
+  width: 100% !important;
+  min-height: 30px;
+  border: 1px solid var(--job-field-border) !important;
+  border-radius: 8px !important;
+  background: var(--job-field-bg) !important;
+  color: var(--gm-phase2-ink) !important;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.28) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs textarea {
+  min-height: 58px;
+  resize: vertical;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs input:focus,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs select:focus,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs textarea:focus {
+  outline: none;
+  border-color: color-mix(in oklab, var(--gm-phase2-accent) 58%, transparent) !important;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.26), var(--gm-phase2-glow) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-inline-check {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  color: var(--gm-phase2-dim);
+  font-size: 10px;
+  text-transform: none;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-inline-check input[type="checkbox"] {
+  width: 15px !important;
+  min-height: 15px !important;
+  accent-color: var(--gm-phase2-accent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .swse-ui-button {
+  min-height: 28px;
+  padding: 5px 9px !important;
+  font: 900 9px/1 var(--swse-concept-font-mono, monospace) !important;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-quick-actions {
+  display: grid !important;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  margin-top: 0 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-quick-actions .swse-ui-button,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-settlement-queue .swse-ui-button {
+  justify-content: center;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-legacy-settlement {
+  margin-top: 2px !important;
+  padding: 8px;
+  border: 1px dashed color-mix(in oklab, var(--gm-phase2-accent) 18%, transparent) !important;
+  border-radius: 10px;
+  color: var(--gm-phase2-faint);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-legacy-settlement summary {
+  cursor: pointer;
+  color: var(--gm-phase2-dim);
+  font: 900 9px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1220px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-metrics,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-ops-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-shell,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-dossier-layout,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-settlement-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 860px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .job-board-header,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-metrics,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-ops-strip,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-tabbar,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-job-dossier-topline {
+    grid-template-columns: 1fr !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-v2-surface--jobs .gm-phase3-job-column {
+    flex-basis: 170px;
+  }
+}
+
+/* ============================================================================
+   GM DATAPAD CONCEPT PARITY - PHASE 4 STORE + TRADE INTERIORS
+   ---------------------------------------------------------------------------
+   Keeps the stable shell host and aligns the Store / Trade surfaces with the
+   concept's commerce terminal and transaction operations board.
+   ============================================================================ */
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce,
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce-header,
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-header {
+  flex: 0 0 auto;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce-metrics,
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-metrics {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce-metrics span,
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-metrics span {
+  display: grid !important;
+  align-content: center;
+  min-width: 78px;
+  padding: 6px 9px !important;
+  text-align: center;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce-metrics small,
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-metrics small {
+  color: var(--gm-phase2-faint);
+  font: 800 8px/1.1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce-metrics strong,
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-metrics b {
+  color: var(--gm-phase2-ink);
+  font: 900 13px/1.1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.08em;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce-metrics .online strong {
+  color: var(--gm-phase2-ok);
+  text-shadow: 0 0 12px color-mix(in oklab, var(--gm-phase2-ok) 36%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce-metrics .offline strong {
+  color: var(--gm-phase2-crit);
+  text-shadow: 0 0 12px color-mix(in oklab, var(--gm-phase2-crit) 32%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce-metrics .warn strong,
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-metrics .warn b {
+  color: var(--gm-phase2-warn);
+  text-shadow: 0 0 12px color-mix(in oklab, var(--gm-phase2-warn) 32%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-metrics .crit b {
+  color: var(--gm-phase2-crit);
+  text-shadow: 0 0 12px color-mix(in oklab, var(--gm-phase2-crit) 32%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce-strip,
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-strip {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 24%, transparent);
+  border-radius: 12px;
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--gm-phase2-accent) 9%, transparent), transparent 38%),
+    rgba(2, 8, 18, 0.78);
+  box-shadow: inset 0 0 22px rgba(0, 0, 0, 0.22);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce-strip span,
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-strip span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--gm-phase2-accent);
+  font: 900 10px/1.1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce-strip p,
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-strip p {
+  margin: 0;
+  color: var(--gm-phase2-dim);
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce-strip.is-closed {
+  border-color: color-mix(in oklab, var(--gm-phase2-crit) 28%, transparent);
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--gm-phase2-crit) 9%, transparent), transparent 38%),
+    rgba(2, 8, 18, 0.78);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-strip.is-critical {
+  border-color: color-mix(in oklab, var(--gm-phase2-crit) 34%, transparent);
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--gm-phase2-crit) 12%, transparent), transparent 42%),
+    rgba(2, 8, 18, 0.82);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-strip.is-warning {
+  border-color: color-mix(in oklab, var(--gm-phase2-warn) 34%, transparent);
+  background:
+    linear-gradient(90deg, color-mix(in oklab, var(--gm-phase2-warn) 10%, transparent), transparent 42%),
+    rgba(2, 8, 18, 0.82);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-store-tabs {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  padding: 5px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 20%, transparent) !important;
+  border-radius: 12px !important;
+  background: rgba(2, 8, 18, 0.72) !important;
+  overflow-x: auto;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-store-tabs .swse-ui-tab {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0 11px !important;
+  border-radius: 8px !important;
+  white-space: nowrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-store-tabs .swse-ui-tab span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--gm-phase2-accent) 12%, transparent);
+  color: var(--gm-phase2-ink);
+  font: 900 10px/1 var(--swse-concept-font-mono, monospace);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce-workspace {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+  padding: 10px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce-workspace .gm-store-tab-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-phase3-status-row {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px !important;
+  margin-bottom: 10px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-status-button,
+.swse-sheet-v2-shell--gm-datapad .gm-store-category-card,
+.swse-sheet-v2-shell--gm-datapad .gm-store-policy-card,
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-card,
+.swse-sheet-v2-shell--gm-datapad .gm-store-approval-card,
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-inventory-strip article,
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-strip article {
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 18%, transparent) !important;
+  border-radius: 11px !important;
+  background:
+    linear-gradient(180deg, rgba(3, 12, 22, 0.82), rgba(1, 5, 12, 0.72)) !important;
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.22) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-status-button {
+  display: grid !important;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 8px;
+  min-height: 54px;
+  padding: 10px 12px !important;
+  color: var(--gm-phase2-dim) !important;
+  text-align: left;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-status-button > span:first-child {
+  grid-row: span 2;
+  width: 11px;
+  height: 11px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--gm-phase2-faint) 28%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-status-button strong {
+  color: var(--gm-phase2-ink);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-status-button em {
+  color: var(--gm-phase2-faint);
+  font-style: normal;
+  font-size: 10px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-status-button.is-open {
+  border-color: color-mix(in oklab, var(--gm-phase2-ok) 34%, transparent) !important;
+  background: color-mix(in oklab, var(--gm-phase2-ok) 8%, rgba(2, 8, 18, 0.78)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-status-button.is-open > span:first-child {
+  background: var(--gm-phase2-ok);
+  box-shadow: 0 0 9px color-mix(in oklab, var(--gm-phase2-ok) 62%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-status-button.is-closed {
+  border-color: color-mix(in oklab, var(--gm-phase2-crit) 34%, transparent) !important;
+  background: color-mix(in oklab, var(--gm-phase2-crit) 8%, rgba(2, 8, 18, 0.78)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-status-button.is-closed > span:first-child {
+  background: var(--gm-phase2-crit);
+  box-shadow: 0 0 9px color-mix(in oklab, var(--gm-phase2-crit) 56%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-phase3-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(240px, 1fr));
+  gap: 9px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-policy-card--wide {
+  grid-column: 1 / -1;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-policy-card {
+  padding: 12px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-policy-card h4,
+.swse-sheet-v2-shell--gm-datapad .trade-detail-block h4 {
+  color: color-mix(in oklab, var(--gm-phase2-accent) 80%, white 20%) !important;
+  font: 900 10px/1.2 var(--swse-concept-font-mono, monospace) !important;
+  letter-spacing: 0.12em !important;
+  margin: 0 0 6px !important;
+  text-transform: uppercase !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-policy-row,
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-policy-row {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0 !important;
+  border-bottom: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 10%, transparent) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-policy-row:last-child,
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-policy-row:last-of-type {
+  border-bottom: 0 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-policy-row strong,
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-policy-row strong {
+  display: block;
+  color: var(--gm-phase2-ink);
+  font-size: 11px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-policy-row em,
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-policy-row em {
+  display: block;
+  color: var(--gm-phase2-faint);
+  font-style: normal;
+  font-size: 9px;
+  line-height: 1.25;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-policy-row input[type="number"],
+.swse-sheet-v2-shell--gm-datapad .gm-store-category-markup input,
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-policy-row input[type="number"],
+.swse-sheet-v2-shell--gm-datapad .gm-store-toolbar input,
+.swse-sheet-v2-shell--gm-datapad .gm-store-toolbar select,
+.swse-sheet-v2-shell--gm-datapad .gm-store-table input,
+.swse-sheet-v2-shell--gm-datapad .gm-store-table select,
+.swse-sheet-v2-shell--gm-datapad .trade-actions-block textarea,
+.swse-sheet-v2-shell--gm-datapad .trade-repair-panel textarea {
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 18%, transparent) !important;
+  border-radius: 7px !important;
+  background: rgba(0, 0, 0, 0.32) !important;
+  color: var(--gm-phase2-ink) !important;
+  font-family: var(--swse-concept-font-mono, monospace) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-policy-row input[type="checkbox"],
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-policy-row input[type="checkbox"],
+.swse-sheet-v2-shell--gm-datapad .gm-store-category-card input[type="checkbox"] {
+  accent-color: var(--gm-phase2-accent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-category-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  gap: 7px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-category-card {
+  display: grid !important;
+  gap: 5px;
+  padding: 9px !important;
+  cursor: pointer;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-category-card.is-on {
+  border-color: color-mix(in oklab, var(--gm-phase2-ok) 24%, transparent) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-category-card.is-off {
+  opacity: 0.72;
+  border-color: color-mix(in oklab, var(--gm-phase2-crit) 18%, transparent) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-category-head,
+.swse-sheet-v2-shell--gm-datapad .trade-card-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-category-note {
+  color: var(--gm-phase2-faint);
+  font-size: 9px;
+  line-height: 1.25;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-category-markup {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--gm-phase2-dim);
+  font: 800 9px/1 var(--swse-concept-font-mono, monospace);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-strip,
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-inventory-strip {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 7px !important;
+  margin-bottom: 9px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-strip article,
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-inventory-strip article {
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px !important;
+  text-align: center;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-strip article span,
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-inventory-strip article span {
+  color: var(--gm-phase2-faint);
+  font: 800 8px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-strip article strong,
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-inventory-strip article strong {
+  color: var(--gm-phase2-ink);
+  font: 900 14px/1.1 var(--swse-concept-font-mono, monospace);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-toolbar,
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-inventory-toolbar,
+.swse-sheet-v2-shell--gm-datapad .gm-store-inventory-toolbar {
+  display: grid !important;
+  grid-template-columns: minmax(160px, 1.5fr) repeat(3, minmax(120px, 1fr));
+  gap: 7px !important;
+  margin-bottom: 9px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-feed,
+.swse-sheet-v2-shell--gm-datapad .gm-store-approval-list,
+.swse-sheet-v2-shell--gm-datapad .trade-card-stack,
+.swse-sheet-v2-shell--gm-datapad .trade-audit-list,
+.swse-sheet-v2-shell--gm-datapad .trade-repair-ticket-list,
+.swse-sheet-v2-shell--gm-datapad .trade-timeline,
+.swse-sheet-v2-shell--gm-datapad .trade-atomic-event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-card {
+  display: grid;
+  gap: 8px;
+  padding: 10px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-card header,
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-card footer,
+.swse-sheet-v2-shell--gm-datapad .gm-store-sale-request-main,
+.swse-sheet-v2-shell--gm-datapad .gm-store-card-header,
+.swse-sheet-v2-shell--gm-datapad .trade-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 9px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-card h4,
+.swse-sheet-v2-shell--gm-datapad .gm-store-approval-card strong,
+.swse-sheet-v2-shell--gm-datapad .trade-card strong,
+.swse-sheet-v2-shell--gm-datapad .trade-audit-row strong,
+.swse-sheet-v2-shell--gm-datapad .trade-timeline-row strong,
+.swse-sheet-v2-shell--gm-datapad .trade-atomic-event strong {
+  color: var(--gm-phase2-ink) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-amount.positive,
+.swse-sheet-v2-shell--gm-datapad .positive {
+  color: var(--gm-phase2-ok) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-amount.negative,
+.swse-sheet-v2-shell--gm-datapad .negative {
+  color: var(--gm-phase2-crit) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-grid,
+.swse-sheet-v2-shell--gm-datapad .gm-store-sale-request-grid,
+.swse-sheet-v2-shell--gm-datapad .trade-term-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr));
+  gap: 6px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-grid span,
+.swse-sheet-v2-shell--gm-datapad .gm-store-sale-request-grid div,
+.swse-sheet-v2-shell--gm-datapad .trade-term-grid span,
+.swse-sheet-v2-shell--gm-datapad .trade-dossier-row {
+  padding: 6px 8px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 10%, transparent);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-grid b,
+.swse-sheet-v2-shell--gm-datapad .gm-store-sale-request-grid span,
+.swse-sheet-v2-shell--gm-datapad .trade-dossier-row span,
+.swse-sheet-v2-shell--gm-datapad .trade-term-grid span {
+  color: var(--gm-phase2-faint);
+  font: 800 8px/1.1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-grid em,
+.swse-sheet-v2-shell--gm-datapad .gm-store-sale-request-grid strong,
+.swse-sheet-v2-shell--gm-datapad .trade-dossier-row strong,
+.swse-sheet-v2-shell--gm-datapad .trade-term-grid strong {
+  color: var(--gm-phase2-ink);
+  font-style: normal;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-table-wrap,
+.swse-sheet-v2-shell--gm-datapad .gm-store-inventory-table-wrap {
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 16%, transparent);
+  border-radius: 12px;
+  background: rgba(2, 8, 18, 0.72);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: var(--gm-phase2-dim);
+  font-size: 11px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 8px;
+  border-bottom: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 18%, transparent);
+  background: rgba(3, 10, 20, 0.94);
+  color: color-mix(in oklab, var(--gm-phase2-accent) 78%, white 22%);
+  font: 900 8px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-table td {
+  padding: 7px 8px;
+  border-bottom: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 7%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-store-table tr:hover td {
+  background: color-mix(in oklab, var(--gm-phase2-accent) 5%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-workspace {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 280px;
+  overflow: hidden;
+  padding: 10px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-main-grid {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+  gap: 10px !important;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-console-board,
+.swse-sheet-v2-shell--gm-datapad .trade-console-rail,
+.swse-sheet-v2-shell--gm-datapad .trade-repair-panel,
+.swse-sheet-v2-shell--gm-datapad .trade-policy-panel,
+.swse-sheet-v2-shell--gm-datapad .trade-audit-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  min-height: 0;
+  padding: 11px !important;
+  overflow: hidden;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-console-rail {
+  overflow-y: auto;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-queue-grid {
+  display: flex !important;
+  gap: 8px !important;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: auto;
+  padding-bottom: 3px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-queue-column {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 174px;
+  max-width: 230px;
+  flex: 1 0 174px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-queue-column > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+  padding: 7px 8px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 15%, transparent);
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-queue-column > header h4 {
+  margin: 0;
+  color: color-mix(in oklab, var(--gm-phase2-accent) 78%, white 22%);
+  font: 900 9px/1.1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-queue-column > header p {
+  margin: 2px 0 0;
+  color: var(--gm-phase2-faint);
+  font-size: 9px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-queue-column > header > span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--gm-phase2-accent) 10%, transparent);
+  color: var(--gm-phase2-ink);
+  font: 900 11px/1 var(--swse-concept-font-mono, monospace);
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-card {
+  display: flex !important;
+  flex-direction: column;
+  gap: 5px;
+  width: 100%;
+  padding: 9px !important;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 16%, transparent) !important;
+  border-radius: 9px !important;
+  background:
+    linear-gradient(180deg, rgba(3, 12, 22, 0.86), rgba(1, 5, 12, 0.7)) !important;
+  color: inherit !important;
+  cursor: pointer;
+  text-align: left;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-card:hover {
+  border-color: color-mix(in oklab, var(--gm-phase2-accent) 40%, transparent) !important;
+  transform: translateY(-1px);
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-card.warn {
+  border-color: color-mix(in oklab, var(--gm-phase2-warn) 28%, transparent) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-card.crit {
+  border-color: color-mix(in oklab, var(--gm-phase2-crit) 30%, transparent) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-card span,
+.swse-sheet-v2-shell--gm-datapad .trade-card em,
+.swse-sheet-v2-shell--gm-datapad .trade-console-help {
+  color: var(--gm-phase2-faint);
+  font-style: normal;
+  font-size: 9px;
+  line-height: 1.25;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-chip,
+.swse-sheet-v2-shell--gm-datapad .gm-store-status-chip,
+.swse-sheet-v2-shell--gm-datapad .gm-command-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 20%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--gm-phase2-accent) 8%, transparent);
+  color: var(--gm-phase2-accent);
+  font: 900 8px/1.1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-chip.warn,
+.swse-sheet-v2-shell--gm-datapad .gm-store-status-chip.warn,
+.swse-sheet-v2-shell--gm-datapad .gm-command-chip.warn {
+  border-color: color-mix(in oklab, var(--gm-phase2-warn) 28%, transparent);
+  background: color-mix(in oklab, var(--gm-phase2-warn) 10%, transparent);
+  color: var(--gm-phase2-warn);
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-chip.crit,
+.swse-sheet-v2-shell--gm-datapad .gm-store-status-chip.crit,
+.swse-sheet-v2-shell--gm-datapad .gm-command-chip.crit {
+  border-color: color-mix(in oklab, var(--gm-phase2-crit) 30%, transparent);
+  background: color-mix(in oklab, var(--gm-phase2-crit) 10%, transparent);
+  color: var(--gm-phase2-crit);
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-chip.stable,
+.swse-sheet-v2-shell--gm-datapad .trade-chip.ok,
+.swse-sheet-v2-shell--gm-datapad .gm-store-status-chip.ok,
+.swse-sheet-v2-shell--gm-datapad .gm-store-status-chip.stable {
+  border-color: color-mix(in oklab, var(--gm-phase2-ok) 28%, transparent);
+  background: color-mix(in oklab, var(--gm-phase2-ok) 10%, transparent);
+  color: var(--gm-phase2-ok);
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-card-failure,
+.swse-sheet-v2-shell--gm-datapad .trade-failure-text,
+.swse-sheet-v2-shell--gm-datapad .gm-store-warning {
+  color: color-mix(in oklab, var(--gm-phase2-crit) 82%, white 18%) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-dossier-summary {
+  display: grid;
+  gap: 6px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-dossier-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-detail-block,
+.swse-sheet-v2-shell--gm-datapad .trade-audit-row,
+.swse-sheet-v2-shell--gm-datapad .trade-timeline-row,
+.swse-sheet-v2-shell--gm-datapad .trade-atomic-event {
+  padding: 9px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 14%, transparent);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-detail-block.crit,
+.swse-sheet-v2-shell--gm-datapad .trade-audit-row.crit,
+.swse-sheet-v2-shell--gm-datapad .trade-timeline-row.crit,
+.swse-sheet-v2-shell--gm-datapad .trade-atomic-event.crit {
+  border-color: color-mix(in oklab, var(--gm-phase2-crit) 28%, transparent);
+  background: color-mix(in oklab, var(--gm-phase2-crit) 7%, rgba(0, 0, 0, 0.24));
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-detail-block.warn,
+.swse-sheet-v2-shell--gm-datapad .trade-audit-row.warn,
+.swse-sheet-v2-shell--gm-datapad .trade-timeline-row.warn,
+.swse-sheet-v2-shell--gm-datapad .trade-atomic-event.warn {
+  border-color: color-mix(in oklab, var(--gm-phase2-warn) 26%, transparent);
+  background: color-mix(in oklab, var(--gm-phase2-warn) 7%, rgba(0, 0, 0, 0.24));
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-actions-block textarea,
+.swse-sheet-v2-shell--gm-datapad .trade-repair-panel textarea {
+  width: 100%;
+  min-height: 62px;
+  padding: 8px;
+  resize: vertical;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-action-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 6px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .trade-action-grid.compact {
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-lower-grid {
+  display: grid !important;
+  grid-template-columns: minmax(220px, 1.1fr) minmax(220px, 0.95fr) minmax(220px, 1fr);
+  gap: 10px !important;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-policy-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-policy-row--number input {
+  max-width: 84px;
+  text-align: right;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-phase4-policy-form button[type="submit"] {
+  align-self: flex-end;
+  margin-top: 8px;
+}
+
+@media (max-width: 1180px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-phase4-commerce-strip,
+  .swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-phase4-store-tabs {
+    justify-content: flex-start;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-main-grid,
+  .swse-sheet-v2-shell--gm-datapad .gm-phase4-trade-lower-grid,
+  .swse-sheet-v2-shell--gm-datapad .gm-store-phase3-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 860px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-phase10-ledger-toolbar,
+  .swse-sheet-v2-shell--gm-datapad .gm-phase10-inventory-toolbar,
+  .swse-sheet-v2-shell--gm-datapad .gm-store-inventory-toolbar,
+  .swse-sheet-v2-shell--gm-datapad .gm-store-phase3-status-row {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ============================================================================
+   GM DATAPAD CONCEPT PARITY - PHASE 5 LOCATIONS / ATLAS CORRECTION
+   ---------------------------------------------------------------------------
+   Keeps the shell host intact, but rebuilds the Locations interior into a
+   readable Atlas workstation. It also restores native select behavior and puts
+   the quick-location import library directly in the creation wizard area.
+   ============================================================================ */
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations {
+  gap: 10px !important;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-hero {
+  grid-template-columns: minmax(260px, 0.9fr) minmax(420px, 1.35fr) !important;
+  align-items: stretch !important;
+  overflow: visible !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-hero__copy {
+  align-content: center;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-metrics {
+  display: grid !important;
+  grid-template-columns: repeat(7, minmax(54px, 1fr)) !important;
+  gap: 6px !important;
+  align-self: stretch;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-metrics div {
+  display: grid !important;
+  gap: 3px;
+  place-items: center;
+  min-height: 48px;
+  padding: 7px 6px !important;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 20%, transparent) !important;
+  border-radius: 10px !important;
+  background: rgba(2, 9, 18, 0.72) !important;
+  text-align: center !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-metrics strong,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-metrics span {
+  display: block !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-shell {
+  display: grid !important;
+  grid-template-columns: minmax(228px, 0.66fr) minmax(420px, 1.28fr) minmax(330px, 0.9fr) !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+  min-height: 0;
+  overflow: hidden !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-left,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-main,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-right {
+  min-height: 0;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  padding-right: 3px;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--gm-phase2-accent) 38%, transparent) transparent;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-main {
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 10px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-panel {
+  overflow: visible !important;
+  padding: 10px !important;
+  border-radius: 12px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-panel-head {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  margin-bottom: 2px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-eyebrow {
+  display: block;
+  color: var(--gm-phase2-accent);
+  font: 900 7px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .swse-location-field-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px !important;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .swse-location-field {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 4px !important;
+  min-width: 0;
+  margin: 0 !important;
+  color: var(--gm-phase2-dim) !important;
+  font: 800 9px/1.15 var(--swse-concept-font-mono, monospace) !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .swse-location-field > span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .swse-location-field--wide {
+  grid-column: 1 / -1;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations input,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations textarea,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations select {
+  position: relative;
+  z-index: 2;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 30px !important;
+  height: auto !important;
+  padding: 6px 8px !important;
+  border: 1px solid var(--loc-field-border) !important;
+  border-radius: 7px !important;
+  background-color: rgba(1, 7, 15, 0.92) !important;
+  background-image: none !important;
+  color: var(--gm-phase2-ink) !important;
+  font: 600 11px/1.25 var(--swse-concept-font-body, sans-serif) !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.28) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations select,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations .swse-location-select {
+  appearance: auto !important;
+  -webkit-appearance: menulist !important;
+  cursor: pointer !important;
+  padding-right: 28px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations select option {
+  background: #06101f !important;
+  color: #dff8ff !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-toggle-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 14%, transparent);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-library-command {
+  max-height: 300px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-library-actions,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-library-actions span {
+  color: var(--gm-phase2-faint);
+  font: 800 8px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-library-filters {
+  display: grid;
+  grid-template-columns: minmax(160px, 1fr) minmax(130px, 0.7fr) minmax(130px, 0.7fr);
+  gap: 8px;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-library-list {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-wizard-seed-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 6px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-wizard-seed {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  min-height: 42px;
+  padding: 7px 9px !important;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 20%, transparent) !important;
+  border-radius: 9px !important;
+  background: rgba(2, 9, 18, 0.68) !important;
+  color: var(--gm-phase2-ink) !important;
+  text-align: left;
+  cursor: pointer;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-wizard-seed strong {
+  color: var(--gm-phase2-ink);
+  font: 900 11px/1 var(--swse-concept-font-display, sans-serif);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-wizard-seed span {
+  color: var(--gm-phase2-dim);
+  font-size: 10px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-wizard-seed.is-imported,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .swse-location-library-card.is-imported {
+  opacity: 0.62;
+  border-color: color-mix(in oklab, var(--gm-phase2-success, #7dffb2) 22%, transparent) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-registry {
+  min-height: 0;
+  overflow: hidden !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-registry .swse-location-card-list {
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .swse-location-card.is-selected {
+  border-color: color-mix(in oklab, var(--gm-phase2-accent) 58%, transparent) !important;
+  box-shadow: var(--gm-phase2-glow) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .swse-location-card-actions button,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .swse-location-lead-actions button,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .swse-location-mini-list button,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .swse-location-library-card button,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .swse-location-editor-actions button,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations .swse-mini-button {
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 36%, transparent) !important;
+  border-radius: 8px !important;
+  background: color-mix(in oklab, var(--gm-phase2-accent) 10%, transparent) !important;
+  color: var(--gm-phase2-ink) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-editor {
+  gap: 9px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-subpanel {
+  overflow: visible !important;
+  display: grid !important;
+  gap: 8px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-subpanel summary {
+  cursor: pointer;
+}
+
+@media (max-width: 1320px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-shell {
+    grid-template-columns: minmax(220px, 0.7fr) minmax(420px, 1.3fr) !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-right {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: minmax(280px, 0.6fr) minmax(420px, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (max-width: 980px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-hero,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-shell,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-right,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-library-filters,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .swse-location-field-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+/* ============================================================================
+   GM DATAPAD PHASE 5 CORRECTION - HOME DASHBOARD + LOCATION SELECTS
+   ---------------------------------------------------------------------------
+   Later concept-interior passes overwrote the Phase 1 home layout contract,
+   which made the Home surface collapse back into raw stacked text. This block
+   intentionally restores the interior dashboard structure without touching the
+   shared holopad shell host.
+   ============================================================================ */
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-session {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+  min-height: 56px;
+  padding: 10px 12px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-session__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  padding: 0 10px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 34%, transparent);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--gm-phase2-accent) 12%, transparent);
+  color: var(--gm-phase2-accent);
+  font: 900 10px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-session__divider {
+  align-self: stretch;
+  width: 1px;
+  min-height: 24px;
+  background: linear-gradient(180deg, transparent, color-mix(in oklab, var(--gm-phase2-accent) 28%, transparent), transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-session__block {
+  display: grid;
+  gap: 2px;
+  min-width: 180px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-session__block strong,
+.swse-sheet-v2-shell--gm-datapad .gm-command-session__online strong,
+.swse-sheet-v2-shell--gm-datapad .gm-command-session__inline b {
+  color: var(--gm-phase2-ink);
+  font-family: var(--swse-concept-font-mono, monospace);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-session__block span,
+.swse-sheet-v2-shell--gm-datapad .gm-command-session__online,
+.swse-sheet-v2-shell--gm-datapad .gm-command-session__inline {
+  color: var(--gm-phase2-dim);
+  font: 800 10px/1.2 var(--swse-concept-font-body, sans-serif);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-session__online {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-session__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--swse-concept-ok, #7dffb2);
+  box-shadow: 0 0 10px var(--swse-concept-ok, #7dffb2);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-home-main {
+  display: grid !important;
+  grid-template-columns: minmax(280px, 0.95fr) minmax(340px, 1.35fr) !important;
+  gap: 12px !important;
+  align-items: start;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-action-queue,
+.swse-sheet-v2-shell--gm-datapad .gm-command-pulse,
+.swse-sheet-v2-shell--gm-datapad .gm-command-quick-launch {
+  padding: 12px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-action-queue {
+  display: grid !important;
+  align-content: start;
+  gap: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-section-label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--gm-phase2-accent) !important;
+  font: 900 10px/1 var(--swse-concept-font-mono, monospace) !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-queue-item {
+  display: grid !important;
+  grid-template-columns: 10px minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 46px;
+  padding: 8px 10px !important;
+  text-align: left !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-queue-item__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--gm-phase2-accent);
+  box-shadow: 0 0 10px var(--gm-phase2-accent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-queue-item__dot.crit {
+  background: var(--swse-concept-danger, #ff6b6b);
+  box-shadow: 0 0 10px var(--swse-concept-danger, #ff6b6b);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-queue-item__dot.warn {
+  background: var(--swse-concept-warn, #ffc857);
+  box-shadow: 0 0 10px var(--swse-concept-warn, #ffc857);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-queue-item__dot.ok {
+  background: var(--swse-concept-ok, #7dffb2);
+  box-shadow: 0 0 10px var(--swse-concept-ok, #7dffb2);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-queue-item__copy {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-queue-item__copy strong {
+  overflow: hidden;
+  color: var(--gm-phase2-ink);
+  font: 900 11px/1.1 var(--swse-concept-font-display, sans-serif);
+  letter-spacing: 0.06em;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-queue-item__copy em {
+  overflow: hidden;
+  color: var(--gm-phase2-dim);
+  font: 700 9px/1.2 var(--swse-concept-font-body, sans-serif);
+  font-style: normal;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-queue-item__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--gm-phase2-accent) 14%, transparent);
+  color: var(--gm-phase2-ink);
+  font: 900 10px/1 var(--swse-concept-font-mono, monospace);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-queue-item__count.crit {
+  background: color-mix(in oklab, var(--swse-concept-danger, #ff6b6b) 18%, transparent);
+  color: color-mix(in oklab, var(--swse-concept-danger, #ff6b6b) 78%, white 22%);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-queue-item__count.warn {
+  background: color-mix(in oklab, var(--swse-concept-warn, #ffc857) 16%, transparent);
+  color: var(--swse-concept-warn, #ffc857);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-queue-item__go {
+  color: var(--gm-phase2-faint);
+  font: 900 9px/1 var(--swse-concept-font-mono, monospace);
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-pulse {
+  display: grid !important;
+  gap: 12px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-pulse-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-pulse-card {
+  display: grid !important;
+  gap: 4px;
+  min-height: 88px;
+  padding: 10px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-pulse-card b {
+  color: var(--gm-phase2-accent);
+  font: 900 22px/1 var(--swse-concept-font-display, sans-serif);
+  letter-spacing: 0.05em;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-pulse-card.crit b { color: var(--swse-concept-danger, #ff6b6b); }
+.swse-sheet-v2-shell--gm-datapad .gm-command-pulse-card.warn b { color: var(--swse-concept-warn, #ffc857); }
+.swse-sheet-v2-shell--gm-datapad .gm-command-pulse-card.ok b { color: var(--swse-concept-ok, #7dffb2); }
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-pulse-card span {
+  color: var(--gm-phase2-ink);
+  font: 900 9px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-pulse-card em {
+  color: var(--gm-phase2-dim);
+  font: 700 9px/1.25 var(--swse-concept-font-body, sans-serif);
+  font-style: normal;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-party-list {
+  display: grid !important;
+  gap: 7px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-party-row {
+  display: grid !important;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  min-height: 42px;
+  padding: 7px 9px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-party-row__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--gm-phase2-accent) 13%, transparent);
+  color: var(--gm-phase2-accent);
+  font: 900 10px/1 var(--swse-concept-font-mono, monospace);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-party-row__avatar.crit { color: var(--swse-concept-danger, #ff6b6b); background: color-mix(in oklab, var(--swse-concept-danger, #ff6b6b) 16%, transparent); }
+.swse-sheet-v2-shell--gm-datapad .gm-command-party-row__avatar.warn { color: var(--swse-concept-warn, #ffc857); background: color-mix(in oklab, var(--swse-concept-warn, #ffc857) 14%, transparent); }
+.swse-sheet-v2-shell--gm-datapad .gm-command-party-row__avatar.ok { color: var(--swse-concept-ok, #7dffb2); background: color-mix(in oklab, var(--swse-concept-ok, #7dffb2) 12%, transparent); }
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-party-row__body {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-party-row__body strong {
+  overflow: hidden;
+  color: var(--gm-phase2-ink);
+  font: 900 10px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.06em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-party-row__bar {
+  display: block;
+  height: 5px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(112, 226, 255, 0.10);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-party-row__bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--gm-phase2-accent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-party-row__bar i.crit { background: var(--swse-concept-danger, #ff6b6b); }
+.swse-sheet-v2-shell--gm-datapad .gm-command-party-row__bar i.warn { background: var(--swse-concept-warn, #ffc857); }
+.swse-sheet-v2-shell--gm-datapad .gm-command-party-row__bar i.ok { background: var(--swse-concept-ok, #7dffb2); }
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-party-row__hp {
+  color: var(--gm-phase2-dim);
+  font: 900 9px/1 var(--swse-concept-font-mono, monospace);
+  white-space: nowrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-quick-launch {
+  display: grid !important;
+  gap: 10px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-launch-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(108px, 1fr));
+  gap: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-launch-button {
+  position: relative;
+  display: grid !important;
+  justify-items: center;
+  align-content: center;
+  gap: 6px;
+  min-height: 66px;
+  padding: 10px 8px !important;
+  text-align: center;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-launch-button i {
+  color: color-mix(in oklab, var(--gm-phase2-accent) 72%, white 10%);
+  font-size: 16px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-launch-button span {
+  color: color-mix(in oklab, var(--gm-phase2-ink) 78%, transparent);
+  font: 900 9px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-launch-button b {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--gm-phase2-accent) 16%, transparent);
+  color: var(--gm-phase2-ink);
+  font: 900 8px/1 var(--swse-concept-font-mono, monospace);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-empty-state {
+  padding: 14px;
+  border: 1px dashed color-mix(in oklab, var(--gm-phase2-accent) 24%, transparent);
+  border-radius: 12px;
+  color: var(--gm-phase2-dim);
+  font: 800 10px/1.35 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations select,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations .swse-location-select {
+  display: block !important;
+  opacity: 1 !important;
+  color: #dff8ff !important;
+  -webkit-text-fill-color: #dff8ff !important;
+  color-scheme: dark !important;
+  line-height: 1.3 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations select option {
+  color: #00131c !important;
+  -webkit-text-fill-color: #00131c !important;
+  background: #dff8ff !important;
+}
+
+@media (max-width: 1180px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-home-main {
+    grid-template-columns: 1fr !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-pulse-grid {
+    grid-template-columns: repeat(2, minmax(140px, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-pulse-grid,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-launch-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ============================================================================
+   GM DATAPAD PHASE 5 REGRESSION REPAIR - HOME, INTEL, DOSSIER COLOR PASS
+   ---------------------------------------------------------------------------
+   Earlier concept passes restored the rail/surface layout, but later global
+   panel rules made several surfaces inherit the same teal-only treatment. This
+   section reasserts the concept dashboard layout and gives Intel/Dossier their
+   own status colors without changing the outer holopad shell.
+   ============================================================================ */
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home {
+  display: grid !important;
+  grid-template-rows: auto minmax(0, 1fr) auto !important;
+  gap: 12px !important;
+  width: 100% !important;
+  min-height: 100% !important;
+  padding: 14px !important;
+  overflow: hidden !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-session {
+  display: grid !important;
+  grid-template-columns: auto 1px minmax(180px, 1fr) 1px auto 1px auto 1px auto !important;
+  align-items: center !important;
+  gap: 12px !important;
+  min-height: 58px !important;
+  padding: 10px 14px !important;
+  border-color: rgba(112, 226, 255, 0.24) !important;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(112, 226, 255, 0.16), transparent 35%),
+    linear-gradient(90deg, rgba(3, 17, 31, 0.94), rgba(18, 4, 36, 0.78)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-session__badge {
+  min-width: 112px !important;
+  text-align: center !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-session__block,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-session__inline,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-session__online {
+  text-align: left !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-home-main {
+  display: grid !important;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(430px, 1.25fr) !important;
+  align-items: stretch !important;
+  gap: 12px !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-action-queue,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-pulse,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-quick-launch {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  border-color: rgba(112, 226, 255, 0.24) !important;
+  background:
+    radial-gradient(circle at 12% 4%, rgba(112, 226, 255, 0.10), transparent 35%),
+    radial-gradient(circle at 88% 0%, rgba(255, 113, 217, 0.08), transparent 34%),
+    rgba(2, 9, 18, 0.82) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-action-queue {
+  overflow-y: auto !important;
+  scrollbar-width: thin !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-queue-item {
+  grid-template-columns: 8px minmax(0, 1fr) auto auto !important;
+  border-left: 3px solid rgba(112, 226, 255, 0.55) !important;
+  background:
+    linear-gradient(90deg, rgba(112, 226, 255, 0.09), rgba(2, 9, 18, 0.72)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-queue-item.crit {
+  border-left-color: #ff6b6b !important;
+  border-color: rgba(255, 107, 107, 0.30) !important;
+  background: linear-gradient(90deg, rgba(255, 107, 107, 0.13), rgba(2, 9, 18, 0.78)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-queue-item.warn {
+  border-left-color: #ffd166 !important;
+  border-color: rgba(255, 209, 102, 0.28) !important;
+  background: linear-gradient(90deg, rgba(255, 209, 102, 0.11), rgba(2, 9, 18, 0.78)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-queue-item.ok {
+  border-left-color: #7dffb2 !important;
+  border-color: rgba(125, 255, 178, 0.24) !important;
+  background: linear-gradient(90deg, rgba(125, 255, 178, 0.09), rgba(2, 9, 18, 0.78)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-pulse-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-pulse-card {
+  border-left: 3px solid rgba(112, 226, 255, 0.48) !important;
+  background:
+    linear-gradient(135deg, rgba(112, 226, 255, 0.10), rgba(3, 10, 20, 0.75)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-pulse-card.crit {
+  border-left-color: #ff6b6b !important;
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.12), rgba(3, 10, 20, 0.78)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-pulse-card.warn {
+  border-left-color: #ffd166 !important;
+  background: linear-gradient(135deg, rgba(255, 209, 102, 0.11), rgba(3, 10, 20, 0.78)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-pulse-card.ok {
+  border-left-color: #7dffb2 !important;
+  background: linear-gradient(135deg, rgba(125, 255, 178, 0.10), rgba(3, 10, 20, 0.78)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-quick-launch {
+  width: 100% !important;
+  align-self: stretch !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-launch-grid {
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)) !important;
+  width: 100% !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-launch-button.crit i,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-launch-button.crit span { color: #ff8b8b !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-launch-button.warn i,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-launch-button.warn span { color: #ffd166 !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-launch-button.new-surf i,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-launch-button.new-surf span { color: #7dffb2 !important; }
+
+/* Intel gets a purple/cyan classified-readout identity. */
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel {
+  --gm-intel-primary: #9cb6ff;
+  --gm-intel-cyan: #70e2ff;
+  --gm-intel-magenta: #ff71d9;
+  --gm-intel-warn: #ffd166;
+  --gm-intel-ok: #7dffb2;
+  --gm-intel-danger: #ff6b6b;
+  display: grid !important;
+  gap: 12px !important;
+  padding: 12px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-header,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-header {
+  border-color: rgba(156, 182, 255, 0.32) !important;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(112, 226, 255, 0.14), transparent 34%),
+    radial-gradient(circle at 82% 0%, rgba(255, 113, 217, 0.13), transparent 36%),
+    rgba(3, 10, 20, 0.84) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-ops-strip {
+  border-color: rgba(255, 113, 217, 0.30) !important;
+  background:
+    linear-gradient(90deg, rgba(255, 113, 217, 0.10), rgba(112, 226, 255, 0.06), transparent),
+    rgba(3, 10, 20, 0.76) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-filter-panel {
+  display: grid !important;
+  grid-template-columns: minmax(220px, 1.6fr) repeat(4, minmax(132px, 1fr)) !important;
+  gap: 8px !important;
+  padding: 12px !important;
+  border-color: rgba(112, 226, 255, 0.22) !important;
+  background:
+    linear-gradient(90deg, rgba(112, 226, 255, 0.08), rgba(156, 182, 255, 0.055), transparent),
+    rgba(2, 8, 16, 0.78) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-filter-panel label,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-form label,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions :is(.gm-faction-form-grid, .gm-faction-registry-form, .gm-faction-adjust-form, .gm-faction-contact-create-form) label {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  color: rgba(112, 226, 255, 0.72) !important;
+  font: 900 8px/1 var(--swse-concept-font-mono, monospace) !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel :is(input, select, textarea),
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions :is(input, select, textarea) {
+  min-height: 30px !important;
+  border: 1px solid rgba(112, 226, 255, 0.24) !important;
+  border-radius: 8px !important;
+  background: rgba(0, 8, 16, 0.80) !important;
+  color: #dff8ff !important;
+  -webkit-text-fill-color: #dff8ff !important;
+  box-shadow: inset 0 0 14px rgba(0, 0, 0, 0.28) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel :is(select option),
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions :is(select option) {
+  color: #00131c !important;
+  -webkit-text-fill-color: #00131c !important;
+  background: #dff8ff !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-workspace-grid {
+  display: grid !important;
+  grid-template-columns: minmax(300px, 0.9fr) minmax(420px, 1.45fr) !important;
+  gap: 12px !important;
+  min-height: 0 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-card-list {
+  display: grid !important;
+  gap: 8px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-card {
+  position: relative !important;
+  display: grid !important;
+  gap: 4px !important;
+  width: 100% !important;
+  padding: 10px 11px !important;
+  border: 1px solid rgba(112, 226, 255, 0.20) !important;
+  border-left: 3px solid var(--gm-intel-primary) !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, rgba(156, 182, 255, 0.08), rgba(2, 8, 16, 0.78)) !important;
+  color: #dff8ff !important;
+  text-align: left !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-card.is-ready { border-left-color: var(--gm-intel-warn) !important; background: linear-gradient(135deg, rgba(255, 209, 102, 0.10), rgba(2, 8, 16, 0.78)) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-card.is-released { border-left-color: var(--gm-intel-ok) !important; background: linear-gradient(135deg, rgba(125, 255, 178, 0.09), rgba(2, 8, 16, 0.78)) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-card.is-destroyed { border-left-color: var(--gm-intel-danger) !important; background: linear-gradient(135deg, rgba(255, 107, 107, 0.10), rgba(2, 8, 16, 0.80)) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-card.is-black-file { border-color: rgba(255, 113, 217, 0.34) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-card.is-selected { box-shadow: 0 0 0 1px rgba(255, 113, 217, 0.28), 0 0 26px rgba(255, 113, 217, 0.16) !important; }
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-editor-panel {
+  border-color: rgba(255, 113, 217, 0.24) !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(255, 113, 217, 0.10), transparent 34%),
+    rgba(3, 10, 20, 0.78) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-form-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 8px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-form-grid .is-wide {
+  grid-column: 1 / -1 !important;
+}
+
+/* Dossier gets a green/gold influence-ledger identity. */
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions {
+  --gm-dossier-primary: #7dffb2;
+  --gm-dossier-cyan: #70e2ff;
+  --gm-dossier-warn: #ffd166;
+  --gm-dossier-danger: #ff8b8b;
+  --gm-dossier-violet: #9cb6ff;
+  display: grid !important;
+  gap: 12px !important;
+  padding: 12px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-registry-panel {
+  border-color: rgba(125, 255, 178, 0.24) !important;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(125, 255, 178, 0.10), transparent 34%),
+    radial-gradient(circle at 88% 0%, rgba(255, 209, 102, 0.08), transparent 34%),
+    rgba(3, 10, 20, 0.78) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-registry-card {
+  border-color: rgba(125, 255, 178, 0.24) !important;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(125, 255, 178, 0.12), transparent 34%),
+    radial-gradient(circle at 100% 0%, rgba(112, 226, 255, 0.08), transparent 38%),
+    rgba(2, 9, 18, 0.84) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-registry-card.is-focused {
+  border-color: rgba(255, 209, 102, 0.58) !important;
+  box-shadow: 0 0 0 1px rgba(255, 209, 102, 0.22), 0 0 26px rgba(255, 209, 102, 0.18) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-card-glow {
+  background: radial-gradient(circle, rgba(125, 255, 178, 0.18), rgba(112, 226, 255, 0.08), transparent 70%) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-card-shell {
+  border-color: rgba(125, 255, 178, 0.20) !important;
+  background: linear-gradient(135deg, rgba(125, 255, 178, 0.07), rgba(0, 0, 0, 0.24)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-score-chip.is-positive strong,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-score.is-positive input,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-score .is-positive { color: var(--gm-dossier-primary) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-score-chip.is-negative strong,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-score.is-negative input { color: var(--gm-dossier-danger) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-score-chip.is-neutral strong,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-score.is-neutral input { color: var(--gm-dossier-warn) !important; }
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-intel-chip:nth-child(5n+1) { border-color: rgba(125, 255, 178, 0.22) !important; background: rgba(125, 255, 178, 0.075) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-intel-chip:nth-child(5n+2) { border-color: rgba(112, 226, 255, 0.22) !important; background: rgba(112, 226, 255, 0.070) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-intel-chip:nth-child(5n+3) { border-color: rgba(255, 209, 102, 0.22) !important; background: rgba(255, 209, 102, 0.065) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-intel-chip:nth-child(5n+4) { border-color: rgba(156, 182, 255, 0.22) !important; background: rgba(156, 182, 255, 0.070) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-intel-chip:nth-child(5n+5) { border-color: rgba(255, 113, 217, 0.20) !important; background: rgba(255, 113, 217, 0.060) !important; }
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-intel-chip:nth-child(5n+1) strong { color: var(--gm-dossier-primary) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-intel-chip:nth-child(5n+2) strong { color: var(--gm-dossier-cyan) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-intel-chip:nth-child(5n+3) strong { color: var(--gm-dossier-warn) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-intel-chip:nth-child(5n+4) strong { color: var(--gm-dossier-violet) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-intel-chip:nth-child(5n+5) strong { color: #ff71d9 !important; }
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-contacts-panel {
+  border-color: rgba(255, 113, 217, 0.20) !important;
+  background:
+    radial-gradient(circle at 100% 0%, rgba(255, 113, 217, 0.10), transparent 36%),
+    rgba(255, 113, 217, 0.035) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--factions .gm-faction-contact-card {
+  border-left: 3px solid rgba(255, 113, 217, 0.50) !important;
+  background: linear-gradient(135deg, rgba(255, 113, 217, 0.06), rgba(0, 0, 0, 0.24)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-approval-count-strip span:nth-child(5n+1) strong { color: #70e2ff !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-approval-count-strip span:nth-child(5n+2) strong { color: #9cb6ff !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-approval-count-strip span:nth-child(5n+3) strong { color: #7dffb2 !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-approval-count-strip span:nth-child(5n+4) strong { color: #ffd166 !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-approval-count-strip span:nth-child(5n+5) strong { color: #ff71d9 !important; }
+
+@media (max-width: 1180px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-session,
+  .swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-home-main,
+  .swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-workspace-grid,
+  .swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-filter-panel {
+    grid-template-columns: 1fr !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-v2-surface--home .gm-command-session__divider {
+    display: none !important;
   }
 }

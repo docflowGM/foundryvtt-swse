@@ -12,6 +12,58 @@ function asArray(value) {
   return Array.isArray(value) ? value : [];
 }
 
+
+const FALLBACK_LOCATION_OPTIONS = Object.freeze({
+  CATEGORIES: [
+    { value: 'planetary', label: 'Planetary' },
+    { value: 'space', label: 'Space' },
+    { value: 'installation', label: 'Installations' },
+    { value: 'mobile', label: 'Mobile' },
+    { value: 'other', label: 'Other / Strange' },
+    { value: 'custom', label: 'Custom' }
+  ],
+  TYPES: [
+    { value: 'planet', label: 'Planet' },
+    { value: 'moon', label: 'Moon' },
+    { value: 'star-system', label: 'Star System' },
+    { value: 'orbit', label: 'Orbit' },
+    { value: 'space-station', label: 'Space Station' },
+    { value: 'ship', label: 'Ship' },
+    { value: 'city', label: 'City / Settlement' },
+    { value: 'region', label: 'Region / District' },
+    { value: 'poi', label: 'Point of Interest' },
+    { value: 'base', label: 'Base / Safehouse' },
+    { value: 'temple', label: 'Temple / Ruin' },
+    { value: 'facility', label: 'Facility' },
+    { value: 'unknown', label: 'Unknown Coordinates' },
+    { value: 'custom', label: 'Custom' }
+  ],
+  SCALES: [
+    { value: 'galactic', label: 'Galactic' },
+    { value: 'sector', label: 'Sector' },
+    { value: 'system', label: 'System' },
+    { value: 'planetary', label: 'Planetary' },
+    { value: 'regional', label: 'Regional' },
+    { value: 'local', label: 'Local' },
+    { value: 'site', label: 'Site' },
+    { value: 'room', label: 'Room / Interior' },
+    { value: 'mobile', label: 'Mobile' },
+    { value: 'abstract', label: 'Abstract' }
+  ],
+  REVEAL_STATES: [
+    { value: 'hidden', label: 'GM Only' },
+    { value: 'hinted', label: 'Hinted' },
+    { value: 'known', label: 'Known' },
+    { value: 'active', label: 'Active' },
+    { value: 'compromised', label: 'Compromised' }
+  ]
+});
+
+function optionSource(key) {
+  const source = LocationRegistryService?.[key];
+  return Array.isArray(source) && source.length ? source : (FALLBACK_LOCATION_OPTIONS[key] || []);
+}
+
 function titleCase(value = '') {
   return text(value).split(/[-_\s]+/g).filter(Boolean).map(part => part.charAt(0).toUpperCase() + part.slice(1)).join(' ');
 }
@@ -99,18 +151,18 @@ function locationCard(location = {}, records = [], factions = []) {
     id: location.id,
     name: location.name,
     category: location.category,
-    categoryLabel: LocationRegistryService.optionLabel(LocationRegistryService.CATEGORIES, location.category),
+    categoryLabel: LocationRegistryService.optionLabel(optionSource('CATEGORIES'), location.category),
     type: location.type,
-    typeLabel: LocationRegistryService.optionLabel(LocationRegistryService.TYPES, location.type),
+    typeLabel: LocationRegistryService.optionLabel(optionSource('TYPES'), location.type),
     scale: location.scale,
-    scaleLabel: LocationRegistryService.optionLabel(LocationRegistryService.SCALES, location.scale),
+    scaleLabel: LocationRegistryService.optionLabel(optionSource('SCALES'), location.scale),
     parentLocationId: location.parentLocationId,
     parentName: parent?.name || '',
     chain: locationChain(location, byId),
     depth: depthFor(location, byId),
     depthClass: `depth-${Math.min(5, depthFor(location, byId))}`,
     revealState: location.revealState,
-    revealLabel: LocationRegistryService.optionLabel(LocationRegistryService.REVEAL_STATES, location.revealState),
+    revealLabel: LocationRegistryService.optionLabel(optionSource('REVEAL_STATES'), location.revealState),
     revealClass: revealClass(location.revealState),
     knownToPlayers: location.knownToPlayers,
     activeForParty: location.activeForParty,
@@ -146,9 +198,9 @@ function librarySeedCard(seed = {}, records = []) {
     id: seed.id,
     name: seed.name,
     type: seed.type || 'planet',
-    typeLabel: LocationRegistryService.optionLabel(LocationRegistryService.TYPES, seed.type || 'planet'),
+    typeLabel: LocationRegistryService.optionLabel(optionSource('TYPES'), seed.type || 'planet'),
     category: seed.category || 'planetary',
-    categoryLabel: LocationRegistryService.optionLabel(LocationRegistryService.CATEGORIES, seed.category || 'planetary'),
+    categoryLabel: LocationRegistryService.optionLabel(optionSource('CATEGORIES'), seed.category || 'planetary'),
     region: seed.region || '',
     sector: seed.sector || '',
     system: seed.system || '',
@@ -189,7 +241,7 @@ function selectedVm(location = null, records = [], factions = []) {
     atlasFacts: location.atlasFacts.map(fact => ({
       ...fact,
       categoryLabel: LocationRegistryService.optionLabel(LocationRegistryService.FACT_CATEGORIES, fact.category),
-      revealLabel: LocationRegistryService.optionLabel(LocationRegistryService.REVEAL_STATES, fact.revealState),
+      revealLabel: LocationRegistryService.optionLabel(optionSource('REVEAL_STATES'), fact.revealState),
       revealModeLabel: LocationRegistryService.optionLabel(LocationRegistryService.FACT_REVEAL_MODES, fact.revealMode || 'any'),
       checkCount: asArray(fact.checks).length,
       checksText: LocationRegistryService.formatAtlasCheckLines(fact.checks),
@@ -279,6 +331,7 @@ export class GMLocationsSurfaceService {
     const selectedLocationId = text(state.selectedLocationId || visibleCards[0]?.id || '');
     const selectedLocation = selectedLocationId ? LocationRegistryService.findLocation(selectedLocationId) : null;
     const selected = selectedVm(selectedLocation, records, factions);
+    const selectedVisibleCards = visibleCards.map(card => ({ ...card, selected: card.id === selectedLocationId }));
     const leadQueue = leadDiscoveryRows(records);
     const stats = LocationRegistryService.summarizeForWorkspace();
     const librarySeeds = LocationRegistryService.getLibrarySeeds({ search: filters.librarySearch, biome: filters.libraryBiome, category: filters.libraryCategory });
@@ -298,7 +351,7 @@ export class GMLocationsSurfaceService {
       pageDescription: 'A GM hub for planets, cities, space sites, POIs, Atlas facts, encounter seeds, maps, and linked campaign systems.',
       locationManager: {
         filters,
-        cards: visibleCards,
+        cards: selectedVisibleCards,
         allCards: cards,
         hasLocations: cards.length > 0,
         hasVisibleLocations: visibleCards.length > 0,
@@ -315,10 +368,10 @@ export class GMLocationsSurfaceService {
           selectedCategory: filters.libraryCategory
         },
         libraryBiomeOptions: [{ value: '', label: 'All library biomes', selected: !filters.libraryBiome }, ...LocationRegistryService.getLibraryBiomes().map(entry => ({ ...entry, selected: entry.value === filters.libraryBiome }))],
-        libraryCategoryOptions: optionsFrom(LocationRegistryService.CATEGORIES, filters.libraryCategory, { includeAll: true, allLabel: 'All library categories' }),
-        categoryOptions: optionsFrom(LocationRegistryService.CATEGORIES, filters.category, { includeAll: true, allLabel: 'All categories' }),
-        typeOptions: optionsFrom(LocationRegistryService.TYPES, filters.type, { includeAll: true, allLabel: 'All types' }),
-        revealOptions: optionsFrom(LocationRegistryService.REVEAL_STATES, filters.revealState, { includeAll: true, allLabel: 'All reveal states' }),
+        libraryCategoryOptions: optionsFrom(optionSource('CATEGORIES'), filters.libraryCategory, { includeAll: true, allLabel: 'All library categories' }),
+        categoryOptions: optionsFrom(optionSource('CATEGORIES'), filters.category, { includeAll: true, allLabel: 'All categories' }),
+        typeOptions: optionsFrom(optionSource('TYPES'), filters.type, { includeAll: true, allLabel: 'All types' }),
+        revealOptions: optionsFrom(optionSource('REVEAL_STATES'), filters.revealState, { includeAll: true, allLabel: 'All reveal states' }),
         specialOptions: [
           { value: '', label: 'All records', selected: !filters.special },
           { value: 'known', label: 'Known to players', selected: filters.special === 'known' },
@@ -327,10 +380,10 @@ export class GMLocationsSurfaceService {
           { value: 'has-scene', label: 'Has map/scene', selected: filters.special === 'has-scene' },
           { value: 'has-seeds', label: 'Has encounter seeds', selected: filters.special === 'has-seeds' }
         ],
-        editorCategoryOptions: optionsFrom(LocationRegistryService.CATEGORIES, selected?.raw?.category || 'planetary'),
-        editorTypeOptions: optionsFrom(LocationRegistryService.TYPES, selected?.raw?.type || 'poi'),
-        editorScaleOptions: optionsFrom(LocationRegistryService.SCALES, selected?.raw?.scale || 'site'),
-        editorRevealOptions: optionsFrom(LocationRegistryService.REVEAL_STATES, selected?.raw?.revealState || 'hidden'),
+        editorCategoryOptions: optionsFrom(optionSource('CATEGORIES'), selected?.raw?.category || 'planetary'),
+        editorTypeOptions: optionsFrom(optionSource('TYPES'), selected?.raw?.type || 'poi'),
+        editorScaleOptions: optionsFrom(optionSource('SCALES'), selected?.raw?.scale || 'site'),
+        editorRevealOptions: optionsFrom(optionSource('REVEAL_STATES'), selected?.raw?.revealState || 'hidden'),
         locationOptions,
         factionOptions,
         seedCategoryOptions: optionsFrom(LocationRegistryService.ENCOUNTER_SEED_CATEGORIES, 'random'),
