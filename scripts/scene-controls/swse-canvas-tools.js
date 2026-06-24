@@ -9,8 +9,6 @@
 
 import { sceneControlRegistry } from "/systems/foundryvtt-swse/scripts/scene-controls/api.js";
 import { GMDatapad } from "/systems/foundryvtt-swse/scripts/apps/gm-datapad.js";
-import { toggleActionPalette, ensureActionPaletteApp } from "/systems/foundryvtt-swse/scripts/ui/action-palette/init.js";
-
 let gmDatapadApp = null;
 let clickFallbackInstalled = false;
 
@@ -36,29 +34,6 @@ function openGMDatapad() {
   }
 }
 
-function openDroidApprovals() {
-  if (!isGM()) {
-    ui?.notifications?.warn?.('Only GMs can access droid approvals.');
-    return;
-  }
-
-  try {
-    GMDatapad.open('approvals');
-  } catch (error) {
-    console.error('[SWSE Scene Controls] Failed to open droid approvals', error);
-    ui?.notifications?.error?.(`Failed to open droid approvals: ${error.message}`);
-  }
-}
-
-function openActionPalette() {
-  try {
-    ensureActionPaletteApp();
-    toggleActionPalette();
-  } catch (error) {
-    console.error('[SWSE Scene Controls] Failed to open Action Palette', error);
-    ui?.notifications?.error?.(`Failed to open Action Palette: ${error.message}`);
-  }
-}
 
 function targetText(el) {
   if (!el) return '';
@@ -81,8 +56,6 @@ function resolveSceneControlFallback(target) {
   if (!haystack) return null;
 
   if (haystack.includes('swse-gm-datapad') || haystack.includes('gm datapad') || haystack.includes('swse datapad')) return openGMDatapad;
-  if (haystack.includes('swse-gm-droid-approvals') || haystack.includes('droid approvals')) return openDroidApprovals;
-  if (haystack.includes('swse-action-palette') || haystack.includes('action palette')) return openActionPalette;
   return null;
 }
 
@@ -119,27 +92,6 @@ export function registerSWSECanvasTools() {
     order: -100
   });
 
-  sceneControlRegistry.registerHostTool('tokens', 'swse-action-palette', {
-    title: 'Action Palette',
-    icon: 'swse-scene-control swse-scene-control-action-palette',
-    button: true,
-    visible: true,
-    enabled: () => selectedTokenExists(),
-    onChange: openActionPalette,
-    onClick: openActionPalette,
-    order: 90
-  });
-
-  sceneControlRegistry.registerHostTool('tokens', 'swse-gm-droid-approvals', {
-    title: 'Droid Approvals',
-    icon: 'swse-scene-control swse-scene-control-approval',
-    button: true,
-    visible: () => isGM(),
-    enabled: () => isGM(),
-    onChange: openDroidApprovals,
-    onClick: openDroidApprovals,
-    order: 100
-  });
 }
 
 export default registerSWSECanvasTools;

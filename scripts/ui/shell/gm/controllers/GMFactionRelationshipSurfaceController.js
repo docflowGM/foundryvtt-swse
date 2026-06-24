@@ -7,6 +7,7 @@ import { DossierDragDropService } from '/systems/foundryvtt-swse/scripts/ui/drag
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { LocationRegistryService } from '/systems/foundryvtt-swse/scripts/locations/location-registry-service.js';
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
+import { confirmGmDatapadModal } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-datapad-modal.js';
 
 function text(formData, key) { return String(formData.get(key) ?? '').trim(); }
 function number(formData, key) { return Number(formData.get(key) || 0) || 0; }
@@ -458,10 +459,13 @@ export class GMFactionRelationshipSurfaceController {
           const factionId = target.dataset.factionId;
           const contactId = target.dataset.contactId;
           if (!factionId || !contactId) return;
-          const confirmed = await Dialog.confirm({
+          const confirmed = await confirmGmDatapadModal(pageElement, {
             title: 'Delete Notable NPC?',
-            content: '<p>This removes the lightweight faction contact. It does not delete any linked NPC actor.</p>',
-            defaultYes: false
+            message: 'This removes the lightweight faction contact from the GM Dossier.',
+            detail: 'Linked NPC actors are not deleted. Job, location, and Intel history remains available through their existing records.',
+            confirmLabel: 'Delete Contact',
+            cancelLabel: 'Keep Contact',
+            tone: 'danger'
           });
           if (!confirmed) return;
           await this._mutate(() => FactionRegistryService.deleteFactionContact(factionId, contactId), 'gm-faction-contact-delete');
@@ -471,10 +475,13 @@ export class GMFactionRelationshipSurfaceController {
         if (action === 'delete-registry') {
           const factionId = target.dataset.factionId;
           if (!factionId) return;
-          const confirmed = await Dialog.confirm({
+          const confirmed = await confirmGmDatapadModal(pageElement, {
             title: 'Delete Registry Faction?',
-            content: '<p>This removes the GM registry entry. Actor relationship history is preserved.</p>',
-            defaultYes: false
+            message: 'This removes the GM-owned faction registry entry from the Dossier surface.',
+            detail: 'Actor relationship history is preserved; this does not erase character history or other source records.',
+            confirmLabel: 'Delete Faction',
+            cancelLabel: 'Keep Faction',
+            tone: 'danger'
           });
           if (!confirmed) return;
           await this._mutate(() => FactionRegistryService.deleteFaction(factionId), 'gm-faction-delete');

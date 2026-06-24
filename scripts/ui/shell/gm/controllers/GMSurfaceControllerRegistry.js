@@ -48,8 +48,12 @@ export class GMSurfaceControllerRegistry {
     if (!Controller) return false;
 
     const controller = new Controller(host);
+    const attached = await controller.attach(root);
+    if (attached === false) {
+      controller.destroy?.();
+      return false;
+    }
     ACTIVE.set(host, { surfaceId, controller });
-    await controller.attach(root);
     return true;
   }
 

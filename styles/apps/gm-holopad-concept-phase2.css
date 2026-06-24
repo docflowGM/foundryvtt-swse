@@ -3721,3 +3721,1330 @@
     display: none !important;
   }
 }
+
+/* ============================================================================
+   GM DATAPAD PHASE 6 LOCATIONS IMPORTER / IN-APP MODALS
+   ---------------------------------------------------------------------------
+   Makes the Quick Locations library browseable/selectable from an in-app modal
+   so Foundry dialogs are not hidden behind the holopad shell.
+   ============================================================================ */
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations {
+  position: relative !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase6-import-command {
+  min-height: 0 !important;
+  max-height: none !important;
+  border-color: color-mix(in oklab, #7dffb2 20%, var(--gm-phase2-border)) !important;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(125, 255, 178, 0.1), transparent 42%),
+    rgba(3, 12, 24, 0.86) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase6-import-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+  margin: 9px 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase6-import-summary-grid div,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-stats div,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase6-wizard-import-readout span {
+  display: grid;
+  gap: 2px;
+  min-height: 44px;
+  padding: 8px 9px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 20%, transparent);
+  border-radius: 10px;
+  background: rgba(1, 8, 18, 0.72);
+  color: var(--gm-phase2-dim);
+  font: 800 8px/1.15 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase6-import-summary-grid strong,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-stats strong,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase6-wizard-import-readout strong {
+  color: #7dffb2;
+  font: 900 18px/1 var(--swse-concept-font-display, sans-serif);
+  text-shadow: 0 0 12px rgba(125, 255, 178, 0.22);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase6-import-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 6px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase6-import-preview-card {
+  display: grid;
+  gap: 3px;
+  min-height: 46px;
+  padding: 8px 9px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 18%, transparent);
+  border-radius: 10px;
+  background: rgba(2, 9, 18, 0.68);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase6-import-preview-card strong {
+  color: var(--gm-phase2-ink);
+  font: 900 11px/1.1 var(--swse-concept-font-display, sans-serif);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase6-import-preview-card span {
+  color: var(--gm-phase2-dim);
+  font: 700 9px/1.2 var(--swse-concept-font-mono, monospace);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase6-wizard-import-readout {
+  display: grid;
+  gap: 6px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(112, 226, 255, 0.13), transparent 38%),
+    rgba(0, 2, 8, 0.78);
+  backdrop-filter: blur(7px);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal {
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
+  gap: 10px;
+  width: min(980px, 96%);
+  max-height: min(720px, 94%);
+  padding: 14px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 34%, transparent);
+  border-radius: 18px;
+  background:
+    linear-gradient(135deg, rgba(4, 14, 30, 0.98), rgba(3, 5, 14, 0.97)),
+    radial-gradient(circle at 16% 10%, rgba(125, 255, 178, 0.1), transparent 36%);
+  box-shadow:
+    0 20px 70px rgba(0, 0, 0, 0.65),
+    inset 0 0 38px rgba(0, 0, 0, 0.48),
+    0 0 28px rgba(112, 226, 255, 0.12);
+  overflow: hidden;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal--delete {
+  grid-template-rows: auto minmax(0, auto) auto;
+  width: min(560px, 94%);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 18%, transparent);
+  border-radius: 14px;
+  background: rgba(3, 12, 26, 0.76);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-head h3 {
+  margin: 2px 0 3px;
+  color: var(--gm-phase2-ink);
+  font: 900 22px/1.05 var(--swse-concept-font-display, sans-serif);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-head p {
+  margin: 0;
+  color: var(--gm-phase2-dim);
+  font: 700 11px/1.35 var(--swse-concept-font-body, sans-serif);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-close {
+  width: 34px;
+  height: 34px;
+  border: 1px solid color-mix(in oklab, #ff8b8b 34%, transparent) !important;
+  border-radius: 10px !important;
+  background: rgba(255, 107, 107, 0.08) !important;
+  color: #ffd0d0 !important;
+  font: 900 22px/1 var(--swse-concept-font-display, sans-serif) !important;
+  cursor: pointer;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-filters {
+  display: grid;
+  grid-template-columns: minmax(240px, 1fr) minmax(150px, 0.55fr) minmax(150px, 0.55fr) auto;
+  gap: 8px;
+  align-items: end;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-import-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 8px;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--gm-phase2-accent) 40%, transparent) transparent;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-import-card {
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  gap: 9px !important;
+  align-items: start;
+  min-height: 116px;
+  padding: 10px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 18%, transparent);
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(5, 18, 34, 0.82), rgba(2, 8, 18, 0.74));
+  cursor: pointer;
+  transition: border-color 120ms ease, background 120ms ease, transform 120ms ease;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-import-card:hover {
+  border-color: color-mix(in oklab, var(--gm-phase2-accent) 44%, transparent);
+  background: rgba(112, 226, 255, 0.07);
+  transform: translateY(-1px);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-import-card input[type="checkbox"] {
+  width: 18px !important;
+  min-width: 18px !important;
+  height: 18px !important;
+  margin: 2px 0 0 !important;
+  accent-color: #7dffb2;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-import-card strong {
+  display: block;
+  color: var(--gm-phase2-ink);
+  font: 900 13px/1.1 var(--swse-concept-font-display, sans-serif);
+  letter-spacing: 0.05em;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-import-card span,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-import-card small {
+  display: block;
+  margin-top: 3px;
+  color: var(--gm-phase2-dim);
+  font: 800 9px/1.25 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-import-card p {
+  margin: 6px 0 0;
+  color: rgba(223, 248, 255, 0.68);
+  font: 600 11px/1.32 var(--swse-concept-font-body, sans-serif);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-import-card em {
+  align-self: start;
+  padding: 3px 7px;
+  border: 1px solid color-mix(in oklab, #7dffb2 24%, transparent);
+  border-radius: 999px;
+  color: #7dffb2;
+  background: rgba(125, 255, 178, 0.07);
+  font: 900 8px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-style: normal;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-import-card.is-imported {
+  opacity: 0.52;
+  border-color: color-mix(in oklab, #7dffb2 24%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-empty,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-delete-card {
+  padding: 18px;
+  border: 1px dashed color-mix(in oklab, var(--gm-phase2-accent) 28%, transparent);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--gm-phase2-dim);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-delete-card strong {
+  display: block;
+  color: #ffb7b7;
+  font: 900 18px/1.1 var(--swse-concept-font-display, sans-serif);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 14%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-foot button {
+  min-height: 32px;
+  padding: 0 13px !important;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 32%, transparent) !important;
+  border-radius: 9px !important;
+  background: rgba(112, 226, 255, 0.08) !important;
+  color: var(--gm-phase2-ink) !important;
+  font: 900 10px/1 var(--swse-concept-font-mono, monospace) !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  cursor: pointer;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-foot button.primary {
+  border-color: color-mix(in oklab, #7dffb2 42%, transparent) !important;
+  background: rgba(125, 255, 178, 0.12) !important;
+  color: #caffda !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-foot button.danger {
+  border-color: color-mix(in oklab, #ff8b8b 42%, transparent) !important;
+  background: rgba(255, 107, 107, 0.12) !important;
+  color: #ffd0d0 !important;
+}
+
+@media (max-width: 980px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase6-import-summary-grid,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-stats,
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-filters {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════════════════
+   GM Datapad Phase 6 — remaining surface polish + in-app modal layer
+   Keeps the outer holopad shell intact and brings the later GM surfaces closer
+   to the command-console concept language.
+   ═════════════════════════════════════════════════════════════════════════════ */
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 {
+  position: relative;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(112, 226, 255, 0.14), transparent 38%),
+    linear-gradient(180deg, rgba(1, 5, 12, 0.72), rgba(0, 0, 0, 0.84));
+  backdrop-filter: blur(6px);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal-layer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(180deg, rgba(255,255,255,0.025) 0 1px, transparent 1px 4px);
+  mix-blend-mode: screen;
+  opacity: 0.34;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal {
+  position: relative;
+  width: min(540px, 92%);
+  overflow: hidden;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent, #70e2ff) 38%, transparent);
+  border-radius: 16px;
+  background:
+    linear-gradient(135deg, rgba(7, 20, 38, 0.96), rgba(5, 8, 20, 0.96)),
+    radial-gradient(circle at 12% 0%, rgba(112, 226, 255, 0.18), transparent 42%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.035),
+    0 24px 64px rgba(0,0,0,0.64),
+    0 0 34px rgba(112, 226, 255, 0.14);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal--danger {
+  border-color: rgba(255, 107, 107, 0.48);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.035), 0 24px 64px rgba(0,0,0,0.64), 0 0 38px rgba(255, 107, 107, 0.16);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal--warning {
+  border-color: rgba(255, 209, 102, 0.48);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal__head,
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal__body,
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal__foot {
+  position: relative;
+  z-index: 1;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal__head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 12px;
+  align-items: start;
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid color-mix(in oklab, var(--gm-phase2-accent, #70e2ff) 16%, transparent);
+  background: rgba(112, 226, 255, 0.055);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal__head .gm-command-eyebrow,
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal__head h3 {
+  grid-column: 1;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal__head h3 {
+  margin: 0;
+  color: var(--gm-phase2-ink, #dff8ff);
+  font: 900 22px/1.05 var(--swse-concept-font-display, sans-serif);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal__close {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(112, 226, 255, 0.22);
+  border-radius: 9px;
+  background: rgba(0,0,0,0.28);
+  color: var(--gm-phase2-ink, #dff8ff);
+  font: 900 18px/1 var(--swse-concept-font-mono, monospace);
+  cursor: pointer;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal__body {
+  padding: 16px 18px;
+  color: rgba(223, 248, 255, 0.78);
+  font: 700 13px/1.45 var(--swse-concept-font-body, sans-serif);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal__body p {
+  margin: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal__detail {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border: 1px dashed color-mix(in oklab, var(--gm-phase2-accent, #70e2ff) 22%, transparent);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.24);
+  color: rgba(223, 248, 255, 0.62);
+  font: 700 11px/1.4 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.03em;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 18px 16px;
+  border-top: 1px solid color-mix(in oklab, var(--gm-phase2-accent, #70e2ff) 13%, transparent);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal__button {
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid rgba(112, 226, 255, 0.26);
+  border-radius: 9px;
+  background: rgba(112, 226, 255, 0.07);
+  color: var(--gm-phase2-ink, #dff8ff);
+  font: 900 10px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal__button--confirm {
+  border-color: rgba(255, 107, 107, 0.46);
+  background: rgba(255, 107, 107, 0.12);
+  color: #ffd0d0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-datapad-modal-layer--success .gm-datapad-modal__button--confirm {
+  border-color: rgba(125, 255, 178, 0.42);
+  background: rgba(125, 255, 178, 0.12);
+  color: #caffda;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals {
+  --gm-approval-primary: #ff8b8b;
+  --gm-approval-warn: #ffd166;
+  --gm-approval-ok: #7dffb2;
+  --gm-approval-info: #70e2ff;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals .gm-phase6-command-header,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals .gm-approval-summary-packet,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals .gm-approval-detail-rail,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals .gm-approval-queue {
+  border-color: rgba(255, 139, 139, 0.22) !important;
+  background:
+    linear-gradient(135deg, rgba(30, 7, 13, 0.72), rgba(3, 10, 22, 0.84)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals .gm-approval-console {
+  display: grid;
+  grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+  gap: 12px;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals .gm-approval-review-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 320px);
+  gap: 12px;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals .gm-approval-queue-card {
+  border-color: rgba(112, 226, 255, 0.15) !important;
+  background: rgba(3, 10, 20, 0.72) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals .gm-approval-queue-card.warning,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals .gm-approval-queue-card.warn {
+  border-color: rgba(255, 209, 102, 0.30) !important;
+  background: rgba(255, 209, 102, 0.07) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals .gm-approval-queue-card.critical,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals .gm-approval-queue-card.crit {
+  border-color: rgba(255, 107, 107, 0.34) !important;
+  background: rgba(255, 107, 107, 0.08) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals .gm-approval-queue-card.is-active {
+  box-shadow: 0 0 0 1px rgba(255, 139, 139, 0.24), 0 0 18px rgba(255, 107, 107, 0.14) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--healing {
+  --gm-heal-green: #7dffb2;
+  --gm-heal-red: #ff6b6b;
+  --gm-heal-warn: #ffc857;
+  --gm-heal-droid: #70e2ff;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--healing .combat-recovery-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(245px, 315px);
+  gap: 12px;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--healing .combat-recovery-board,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--healing .combat-recovery-selected-actor-rail {
+  border-color: rgba(125, 255, 178, 0.18) !important;
+  background: linear-gradient(135deg, rgba(2, 18, 10, 0.72), rgba(2, 8, 18, 0.88)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--healing .combat-recovery-card {
+  border-color: rgba(125, 255, 178, 0.14) !important;
+  background: rgba(2, 14, 10, 0.70) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--healing .combat-recovery-card.warning,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--healing .combat-recovery-card.wounded {
+  border-color: rgba(255, 200, 87, 0.28) !important;
+  background: rgba(255, 200, 87, 0.07) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--healing .combat-recovery-card.critical,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--healing .combat-recovery-card.downed {
+  border-color: rgba(255, 107, 107, 0.35) !important;
+  background: rgba(255, 107, 107, 0.08) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--healing .combat-recovery-card.droid {
+  border-color: rgba(112, 226, 255, 0.24) !important;
+  background: rgba(112, 226, 255, 0.055) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--bulletin {
+  --gm-bulletin-cyan: #70e2ff;
+  --gm-bulletin-magenta: #ff71d9;
+  --gm-bulletin-warn: #ffd166;
+  --gm-bulletin-ok: #7dffb2;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--bulletin .gm-phase8-bulletin-shell {
+  display: grid;
+  grid-template-columns: minmax(170px, 220px) minmax(0, 1fr) minmax(220px, 300px);
+  gap: 12px;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--bulletin .gm-phase8-bulletin-nav,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--bulletin .gm-phase8-bulletin-main,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--bulletin .gm-phase8-bulletin-preview,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--bulletin .gm-phase8-bulletin-composer {
+  border-color: rgba(255, 113, 217, 0.18) !important;
+  background: linear-gradient(135deg, rgba(26, 5, 28, 0.70), rgba(2, 8, 18, 0.86)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--bulletin .bulletin-nav-card.is-active,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--bulletin .bulletin-primary-action {
+  border-color: rgba(255, 113, 217, 0.42) !important;
+  box-shadow: 0 0 18px rgba(255, 113, 217, 0.12) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--house-rules .gm-phase7-rule-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 12px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--house-rules .gm-phase7-rule-category:nth-child(4n+1) { border-color: rgba(112, 226, 255, 0.22) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--house-rules .gm-phase7-rule-category:nth-child(4n+2) { border-color: rgba(125, 255, 178, 0.22) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--house-rules .gm-phase7-rule-category:nth-child(4n+3) { border-color: rgba(255, 209, 102, 0.22) !important; }
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--house-rules .gm-phase7-rule-category:nth-child(4n+4) { border-color: rgba(255, 113, 217, 0.20) !important; }
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--settings .gm-phase7-settings-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.8fr) minmax(360px, 1.2fr);
+  gap: 12px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--settings .gm-phase7-shell-settings-card,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--settings .gm-phase7-policy-panel {
+  border-color: rgba(156, 182, 255, 0.22) !important;
+  background: linear-gradient(135deg, rgba(10, 12, 34, 0.78), rgba(2, 8, 18, 0.86)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--settings .gm-phase7-policy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 10px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals :is(input, select, textarea),
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--healing :is(input, select, textarea),
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--bulletin :is(input, select, textarea),
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--house-rules :is(input, select, textarea),
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--settings :is(input, select, textarea) {
+  border-color: rgba(112, 226, 255, 0.22) !important;
+  background-color: rgba(1, 8, 18, 0.88) !important;
+  color: var(--gm-phase2-ink, #dff8ff) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals :is(select option),
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--healing :is(select option),
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--bulletin :is(select option),
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--house-rules :is(select option),
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--settings :is(select option) {
+  background: #06111f !important;
+  color: #dff8ff !important;
+}
+
+@media (max-width: 1220px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals .gm-approval-console,
+  .swse-sheet-v2-shell--gm-datapad .gm-v2-surface--approvals .gm-approval-review-form,
+  .swse-sheet-v2-shell--gm-datapad .gm-v2-surface--healing .combat-recovery-shell,
+  .swse-sheet-v2-shell--gm-datapad .gm-v2-surface--bulletin .gm-phase8-bulletin-shell,
+  .swse-sheet-v2-shell--gm-datapad .gm-v2-surface--settings .gm-phase7-settings-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ============================================================================
+   GM DATAPAD LOCATIONS UX REPAIR
+   ---------------------------------------------------------------------------
+   Makes Locations behave like a browse/import/create workflow instead of a raw
+   three-rail form. Keeps the shell host intact.
+   ============================================================================ */
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-hero {
+  grid-template-columns: minmax(300px, 1fr) minmax(360px, 0.95fr) !important;
+  min-height: 86px !important;
+  padding: 12px 14px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-primary-actions,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-import-cta-row {
+  display: flex !important;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-primary-actions .primary,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-import-cta-row .primary,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations .swse-mini-button.primary {
+  border-color: color-mix(in oklab, #7dffb2 46%, transparent) !important;
+  background: linear-gradient(180deg, rgba(125, 255, 178, 0.18), rgba(0, 160, 110, 0.08)) !important;
+  color: #caffda !important;
+  text-shadow: 0 0 8px rgba(125, 255, 178, 0.28) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-metrics {
+  grid-template-columns: repeat(7, minmax(42px, 1fr)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-metrics div {
+  min-height: 42px !important;
+  padding: 6px 4px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-shell {
+  grid-template-columns: minmax(240px, 0.72fr) minmax(440px, 1.2fr) minmax(310px, 0.86fr) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase6-import-command {
+  min-height: 0 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase6-import-summary-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-filter-section {
+  display: grid;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-filter-section > span,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-advanced-filters summary {
+  color: var(--gm-phase2-faint);
+  font: 900 8px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-filter-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-filter-pill {
+  min-height: 24px;
+  padding: 0 9px !important;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 20%, transparent) !important;
+  border-radius: 999px !important;
+  background: rgba(112, 226, 255, 0.055) !important;
+  color: rgba(223, 248, 255, 0.72) !important;
+  font: 900 8px/1 var(--swse-concept-font-mono, monospace) !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  cursor: pointer;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-filter-pill:hover {
+  border-color: color-mix(in oklab, var(--gm-phase2-accent) 42%, transparent) !important;
+  background: rgba(112, 226, 255, 0.12) !important;
+  color: var(--gm-phase2-ink) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-filter-pill.is-active {
+  border-color: color-mix(in oklab, #7dffb2 45%, transparent) !important;
+  background: rgba(125, 255, 178, 0.14) !important;
+  color: #caffda !important;
+  box-shadow: 0 0 12px rgba(125, 255, 178, 0.12);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-advanced-filters {
+  margin-top: 8px;
+  padding: 8px;
+  border: 1px solid color-mix(in oklab, var(--gm-phase2-accent) 12%, transparent);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-advanced-filters .swse-location-field-grid {
+  margin-top: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations select,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations .swse-location-select {
+  display: block !important;
+  min-height: 32px !important;
+  height: 32px !important;
+  line-height: 30px !important;
+  color: #dff8ff !important;
+  -webkit-text-fill-color: #dff8ff !important;
+  background-color: #06101f !important;
+  border-color: rgba(112, 226, 255, 0.34) !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations select:focus,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations .swse-location-select:focus {
+  outline: none !important;
+  border-color: rgba(125, 255, 178, 0.58) !important;
+  box-shadow: 0 0 0 1px rgba(125, 255, 178, 0.18), inset 0 0 16px rgba(0, 0, 0, 0.3) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-locations select option {
+  color: #dff8ff !important;
+  -webkit-text-fill-color: #dff8ff !important;
+  background-color: #06101f !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-editor {
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-editor .swse-location-field-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-editor details:not([open]) {
+  max-height: 38px;
+  overflow: hidden !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-editor details[open] {
+  overflow: visible !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-card-import-now {
+  align-self: start;
+  padding: 5px 8px !important;
+  border: 1px solid color-mix(in oklab, #7dffb2 34%, transparent) !important;
+  border-radius: 999px !important;
+  background: rgba(125, 255, 178, 0.1) !important;
+  color: #caffda !important;
+  font: 900 8px/1 var(--swse-concept-font-mono, monospace) !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  cursor: pointer;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-card-import-now:hover {
+  background: rgba(125, 255, 178, 0.18) !important;
+  border-color: color-mix(in oklab, #7dffb2 55%, transparent) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-layer {
+  z-index: 200 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal--import {
+  width: min(1120px, 98%) !important;
+}
+
+@media (max-width: 1180px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-shell {
+    grid-template-columns: minmax(230px, 0.72fr) minmax(420px, 1.28fr) !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-phase5-location-right {
+    grid-column: 1 / -1;
+    max-height: 420px;
+  }
+}
+
+/* ============================================================================
+   GM DATAPAD LOCATIONS SEAMLESS WIZARD UX PASS
+   ---------------------------------------------------------------------------
+   Replaces the awkward inline right-rail editor with obvious command cards,
+   readable choice pills, and in-app modal wizards for create/import flows.
+   ============================================================================ */
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-ux {
+  --loc-import: #7dffb2;
+  --loc-create: #70e2ff;
+  --loc-edit: #ffd166;
+  --loc-purple: #c59cff;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-ux-hero {
+  flex-shrink: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-command-deck {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-command-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-height: 118px;
+  padding: 13px 15px;
+  border: 1px solid rgba(112, 226, 255, 0.18);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 18% 15%, rgba(112, 226, 255, 0.12), transparent 48%),
+    linear-gradient(145deg, rgba(4, 15, 28, 0.88), rgba(2, 8, 18, 0.92));
+  color: var(--gm-phase2-ink, #dff8ff);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.025), 0 8px 20px rgba(0, 0, 0, 0.24);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-command-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(112, 226, 255, 0.44);
+  background:
+    radial-gradient(circle at 18% 15%, rgba(112, 226, 255, 0.2), transparent 52%),
+    linear-gradient(145deg, rgba(5, 19, 34, 0.94), rgba(2, 8, 18, 0.94));
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-command-card strong {
+  font: 900 17px/1.05 var(--swse-concept-font-display, sans-serif);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-command-card p {
+  margin: 0;
+  color: rgba(223, 248, 255, 0.66);
+  font: 700 11px/1.35 var(--swse-concept-font-body, sans-serif);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-command-card em {
+  margin-top: auto;
+  color: rgba(112, 226, 255, 0.68);
+  font: 900 8px/1.25 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-command-card--import {
+  border-color: rgba(125, 255, 178, 0.26);
+  background:
+    radial-gradient(circle at 20% 15%, rgba(125, 255, 178, 0.16), transparent 50%),
+    linear-gradient(145deg, rgba(4, 23, 18, 0.9), rgba(2, 8, 18, 0.92));
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-command-card--create {
+  border-color: rgba(112, 226, 255, 0.26);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-command-card--edit {
+  border-color: rgba(255, 209, 102, 0.28);
+  background:
+    radial-gradient(circle at 20% 15%, rgba(255, 209, 102, 0.14), transparent 50%),
+    linear-gradient(145deg, rgba(25, 18, 5, 0.78), rgba(2, 8, 18, 0.92));
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-workbench {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.85fr) minmax(520px, 1.15fr);
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-browser,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-browser-list,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-card {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  overflow: auto;
+  min-height: 0;
+  padding-right: 3px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-registry-card {
+  border-color: rgba(112, 226, 255, 0.16) !important;
+  background: linear-gradient(135deg, rgba(3, 14, 27, 0.86), rgba(1, 7, 15, 0.9)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-registry-card.is-selected {
+  border-color: rgba(125, 255, 178, 0.52) !important;
+  box-shadow: 0 0 16px rgba(125, 255, 178, 0.14), inset 3px 0 0 rgba(125, 255, 178, 0.65) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-summary {
+  color: rgba(223, 248, 255, 0.72);
+  font: 700 12px/1.5 var(--swse-concept-font-body, sans-serif);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-stats,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-stats div,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-grid div,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-review-card {
+  padding: 10px;
+  border: 1px solid rgba(112, 226, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-stats strong,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-grid strong {
+  display: block;
+  color: #dff8ff;
+  font: 900 12px/1.2 var(--swse-concept-font-body, sans-serif);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-stats span,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-grid span {
+  color: rgba(112, 226, 255, 0.58);
+  font: 900 8px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 7px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-support {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  max-height: 250px;
+  overflow: auto;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-linked-row,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-fact-row {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 8px;
+  border: 1px solid rgba(112, 226, 255, 0.12);
+  border-radius: 9px;
+  background: rgba(1, 9, 18, 0.72);
+  color: #dff8ff;
+  text-align: left;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-empty-detail {
+  min-height: 280px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-wizard {
+  max-height: min(780px, calc(100vh - 110px));
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-wizard-steps {
+  display: flex;
+  gap: 6px;
+  padding: 8px 14px 0;
+  flex-wrap: wrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-wizard-steps span {
+  padding: 5px 10px;
+  border: 1px solid rgba(112, 226, 255, 0.16);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.22);
+  color: rgba(223, 248, 255, 0.46);
+  font: 900 8px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-wizard-steps span.is-active {
+  border-color: rgba(112, 226, 255, 0.46);
+  background: rgba(112, 226, 255, 0.14);
+  color: #70e2ff;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-wizard-steps span.is-complete {
+  border-color: rgba(125, 255, 178, 0.36);
+  color: #7dffb2;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-wizard-page {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px;
+  overflow: auto;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-wizard-page.is-active {
+  display: flex;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-choice-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid rgba(112, 226, 255, 0.14);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-choice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 7px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-choice-grid--compact {
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-choice,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-toggle-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid rgba(112, 226, 255, 0.14);
+  border-radius: 9px;
+  background: rgba(1, 10, 20, 0.72);
+  color: rgba(223, 248, 255, 0.78);
+  font: 800 10px/1.25 var(--swse-concept-font-body, sans-serif);
+  cursor: pointer;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-choice:hover,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-toggle-card:hover {
+  border-color: rgba(112, 226, 255, 0.36);
+  background: rgba(112, 226, 255, 0.08);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-choice.is-selected,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-toggle-card.is-selected {
+  border-color: rgba(125, 255, 178, 0.46);
+  background: rgba(125, 255, 178, 0.12);
+  color: #caffda;
+  box-shadow: inset 3px 0 0 rgba(125, 255, 178, 0.58);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-choice input,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-toggle-card input,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-import-card input[type="checkbox"] {
+  flex: 0 0 auto;
+  width: 16px !important;
+  height: 16px !important;
+  min-height: 16px !important;
+  accent-color: #7dffb2;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal--create {
+  width: min(980px, calc(100vw - 90px));
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal--import {
+  width: min(1120px, calc(100vw - 90px)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-filters--friendly {
+  grid-template-columns: minmax(220px, 0.8fr) minmax(240px, 1.2fr) minmax(220px, 0.9fr) auto !important;
+  align-items: start;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-filter-pills--scroll {
+  max-height: 92px;
+  overflow: auto;
+  padding-right: 3px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-optional-fields {
+  padding: 10px;
+  border: 1px solid rgba(112, 226, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-optional-fields summary {
+  cursor: pointer;
+  color: rgba(112, 226, 255, 0.82);
+  font: 900 9px/1 var(--swse-concept-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-review-card h4 {
+  margin: 0 0 6px;
+  color: #7dffb2;
+  font: 900 18px/1 var(--swse-concept-font-display, sans-serif);
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-review-card p,
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-review-card li {
+  color: rgba(223, 248, 255, 0.72);
+  font: 700 12px/1.4 var(--swse-concept-font-body, sans-serif);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-foot button:disabled {
+  opacity: 0.38;
+  pointer-events: none;
+}
+
+@media (max-width: 1180px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-workbench {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-modal-filters--friendly {
+    grid-template-columns: 1fr !important;
+  }
+
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-selected-support {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Locations usability repair: one obvious library, one obvious create/import flow. */
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-command-deck--primary {
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-library-strip {
+  display: grid !important;
+  grid-template-columns: minmax(260px, 0.9fr) minmax(320px, 1.4fr) !important;
+  gap: 12px !important;
+  padding: 12px !important;
+  border: 1px solid rgba(125, 255, 178, 0.24) !important;
+  border-radius: 14px !important;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(125, 255, 178, 0.12), transparent 42%),
+    linear-gradient(135deg, rgba(3, 22, 18, 0.82), rgba(8, 7, 25, 0.86)) !important;
+  box-shadow: inset 0 0 26px rgba(0, 0, 0, 0.32), 0 0 18px rgba(125, 255, 178, 0.08) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-library-strip h3 {
+  margin: 3px 0 5px !important;
+  color: #dff8ff !important;
+  font: 900 17px/1.05 var(--swse-concept-font-display, sans-serif) !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-library-strip p {
+  margin: 0 !important;
+  color: rgba(223, 248, 255, 0.66) !important;
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-library-strip__cards {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+  gap: 8px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-library-preview {
+  display: grid !important;
+  gap: 4px !important;
+  min-height: 62px !important;
+  padding: 9px 10px !important;
+  border: 1px solid rgba(125, 255, 178, 0.2) !important;
+  border-radius: 10px !important;
+  background: rgba(0, 0, 0, 0.24) !important;
+  color: #dff8ff !important;
+  text-align: left !important;
+  cursor: pointer !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-library-preview:hover {
+  border-color: rgba(125, 255, 178, 0.44) !important;
+  background: rgba(125, 255, 178, 0.1) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-library-preview strong {
+  color: #caffda !important;
+  font-size: 12px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-library-preview span {
+  color: rgba(223, 248, 255, 0.56) !important;
+  font: 800 9px/1.25 var(--swse-concept-font-mono, monospace) !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-library-preview.is-imported {
+  opacity: 0.64 !important;
+  border-color: rgba(112, 226, 255, 0.16) !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-filter-warning {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 4px 10px !important;
+  align-items: center !important;
+  margin-bottom: 10px !important;
+  padding: 10px !important;
+  border: 1px solid rgba(255, 200, 87, 0.32) !important;
+  border-radius: 10px !important;
+  background: rgba(255, 200, 87, 0.08) !important;
+  color: #fff3c0 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-filter-warning strong {
+  grid-column: 1 !important;
+  color: #ffd166 !important;
+  font: 900 10px/1 var(--swse-concept-font-mono, monospace) !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-filter-warning span {
+  grid-column: 1 !important;
+  color: rgba(255, 243, 192, 0.78) !important;
+  font-size: 11px !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-filter-warning button {
+  grid-column: 2 !important;
+  grid-row: 1 / span 2 !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-empty-hint {
+  color: rgba(223, 248, 255, 0.54) !important;
+  font-style: italic !important;
+}
+
+@media (max-width: 1120px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-command-screen-v2--phase2 .gm-location-library-strip {
+    grid-template-columns: 1fr !important;
+  }
+}

@@ -11,6 +11,7 @@ import {
 } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
 import { DossierDragDropService } from '/systems/foundryvtt-swse/scripts/ui/dragdrop/dossier-drag-drop-service.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
+import { confirmGmDatapadModal } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-datapad-modal.js';
 
 function text(formData, key) {
   return String(formData.get(key) ?? '').trim();
@@ -255,10 +256,13 @@ export class GMIntelSurfaceController {
         }
 
         if (action === 'destroy' && recordId) {
-          const confirmed = await Dialog.confirm({
+          const confirmed = await confirmGmDatapadModal(pageElement, {
             title: 'Destroy Intel?',
-            content: '<p>This marks the Intel destroyed and archives the backing Holonet record. It does not permanently delete the world setting entry.</p>',
-            defaultYes: false
+            message: 'This marks the Intel destroyed and archives the backing Holonet record.',
+            detail: 'The world setting entry is preserved for audit/history; this is a GM-visible destructive state change.',
+            confirmLabel: 'Destroy Intel',
+            cancelLabel: 'Keep Intel',
+            tone: 'danger'
           });
           if (!confirmed) return;
           await HolonetIntelService.destroyIntel(recordId, { reason: 'gm-intel-surface' });

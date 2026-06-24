@@ -116,6 +116,19 @@ function seedPayload(formData) {
   };
 }
 
+function seedIdsFromForm(formData) {
+  return Array.from(new Set(formData.getAll('seedIds').map(value => String(value || '').trim()).filter(Boolean)));
+}
+
+function importOptionsFromForm(formData) {
+  return {
+    includeChildren: formData.has('includeChildren'),
+    includeAtlasFacts: formData.has('includeAtlasFacts'),
+    revealState: text(formData, 'revealState', 'hidden'),
+    knownToPlayers: checked(formData, 'knownToPlayers')
+  };
+}
+
 export class GMLocationsSurfaceController {
   constructor(host) {
     this.host = host;
@@ -128,13 +141,15 @@ export class GMLocationsSurfaceController {
     this._abort = new AbortController();
     const signal = this._abort.signal;
     const pageElement = root.querySelector('.gm-datapad-locations');
-    if (!pageElement) return;
-    if (!this._assertGM('manage Locations')) return;
+    if (!pageElement) return false;
+    if (!this._assertGM('manage Locations')) return false;
     this._wireFilters(pageElement, signal);
     this._wireActions(pageElement, signal);
     this._wireForms(pageElement, signal);
+    this._wireWizardControls(pageElement, signal);
     DossierDragDropService.bindDragSources(pageElement, { signal });
     this._wireDrops(pageElement, signal);
+    return true;
   }
 
   destroy() {
@@ -165,13 +180,26 @@ export class GMLocationsSurfaceController {
         await this._refresh('gm-locations-filter');
       }, { signal });
     });
+
+    pageElement.addEventListener('click', async (event) => {
+      const button = event.target?.closest?.('[data-location-filter-button]');
+      if (!button || !pageElement.contains(button)) return;
+      event.preventDefault();
+      const key = button.dataset.filterKey || '';
+      if (!key) return;
+      const value = button.dataset.filterValue || '';
+      this.host?.patchSurfaceState?.('locations', { [key]: value }, { render: false });
+      await this._refresh('gm-locations-filter-chip');
+    }, { signal });
+
   }
 
   _wireActions(pageElement, signal) {
-    pageElement.querySelectorAll('[data-location-action]').forEach((button) => {
-      button.addEventListener('click', async (event) => {
+    pageElement.addEventListener('click', async (event) => {
+        const target = event.target?.closest?.('[data-location-action]');
+        if (!target || !pageElement.contains(target)) return;
         event.preventDefault();
-        const target = event.currentTarget;
+        event.stopPropagation();
         const action = target.dataset.locationAction;
         const locationId = target.dataset.locationId || this.host?.getSurfaceState?.('locations')?.selectedLocationId || '';
         if (!action) return;
@@ -183,14 +211,47 @@ export class GMLocationsSurfaceController {
         }
 
         if (action === 'new') {
-          this.host?.patchSurfaceState?.('locations', { selectedLocationId: '' }, { render: false });
-          await this._refresh('gm-location-new');
+          this.host?.patchSurfaceState?.('locations', { selectedLocationId: '', modal: { type: 'create' } }, { render: false });
+          await this._refresh('gm-location-new-wizard');
+          return;
+        }
+
+        if (action === 'edit') {
+          if (!locationId) {
+            ui.notifications?.warn?.('Select a location before editing.');
+            return;
+          }
+          this.host?.patchSurfaceState?.('locations', { selectedLocationId: locationId, modal: { type: 'create' } }, { render: false });
+          await this._refresh('gm-location-edit-wizard');
+          return;
+        }
+
+        if (action === 'wizard-next' || action === 'wizard-back') {
+          this._shiftWizardPage(target.closest('[data-location-wizard]'), action === 'wizard-next' ? 1 : -1);
           return;
         }
 
         if (action === 'clear-library-filters') {
           this.host?.patchSurfaceState?.('locations', { librarySearch: '', libraryBiome: '', libraryCategory: '' }, { render: false });
           await this._refresh('gm-location-library-clear-filters');
+          return;
+        }
+
+        if (action === 'clear-location-filters') {
+          this.host?.patchSurfaceState?.('locations', { search: '', category: '', type: '', revealState: '', special: '' }, { render: false });
+          await this._refresh('gm-location-clear-filters');
+          return;
+        }
+
+        if (action === 'open-import-modal' || action === 'import-library-visible') {
+          this.host?.patchSurfaceState?.('locations', { modal: { type: 'import' } }, { render: false });
+          await this._refresh('gm-location-open-import-modal');
+          return;
+        }
+
+        if (action === 'close-modal') {
+          this.host?.patchSurfaceState?.('locations', { modal: null }, { render: false });
+          await this._refresh('gm-location-close-modal');
           return;
         }
 
@@ -201,7 +262,7 @@ export class GMLocationsSurfaceController {
             ui.notifications?.warn?.('Could not find that Location Library seed.');
             return;
           }
-          this.host?.patchSurfaceState?.('locations', { selectedLocationId: result.seed.id }, { render: false });
+          this.host?.patchSurfaceState?.('locations', { selectedLocationId: result.seed.id, modal: null }, { render: false });
           const importedCount = result.imported?.length || 0;
           const skippedCount = result.skipped?.length || 0;
           ui.notifications?.info?.(`Imported ${result.seed.name}: ${importedCount} records added${skippedCount ? `, ${skippedCount} already existed` : ''}.`);
@@ -209,26 +270,29 @@ export class GMLocationsSurfaceController {
           return;
         }
 
-        if (action === 'import-library-visible') {
+        if (action === 'import-library-visible-now') {
           const state = this.host?.getSurfaceState?.('locations') || {};
           const seeds = LocationRegistryService.getLibrarySeeds({ search: state.librarySearch || '', biome: state.libraryBiome || '', category: state.libraryCategory || '' });
           if (!seeds.length) {
             ui.notifications?.warn?.('No library seeds match the current filters.');
             return;
           }
-          const ok = await Dialog.confirm({ title: 'Import Filtered Location Seeds?', content: `<p>This will import ${seeds.length} library seeds and their starter child POIs as GM-only locations. Existing imported records are skipped.</p>`, defaultYes: false });
-          if (!ok) return;
-          const result = await LocationRegistryService.importLibrarySeeds(seeds.map(seed => seed.id), { includeChildren: true, includeAtlasFacts: true, revealState: 'hidden', knownToPlayers: false });
-          ui.notifications?.info?.(`Imported ${result.imported.length} location records from ${result.seeds.length} seeds${result.skipped.length ? `; ${result.skipped.length} records already existed` : ''}.`);
-          await this._refresh('gm-location-library-import-visible');
+          const form = target.closest('form');
+          const options = form ? importOptionsFromForm(new FormData(form)) : {};
+          await this._importLibrarySeedIds(seeds.map(seed => seed.id), 'gm-location-library-import-visible', options);
           return;
         }
 
         if (action === 'delete' && locationId) {
-          const ok = await Dialog.confirm({ title: 'Delete Location?', content: '<p>This removes only the location registry record and reparents child locations to standalone.</p>', defaultYes: false });
-          if (!ok) return;
+          const location = LocationRegistryService.findLocation(locationId);
+          this.host?.patchSurfaceState?.('locations', { modal: { type: 'delete', locationId, locationName: location?.name || locationId } }, { render: false });
+          await this._refresh('gm-location-open-delete-modal');
+          return;
+        }
+
+        if (action === 'confirm-delete' && locationId) {
           await LocationRegistryService.deleteLocation(locationId);
-          this.host?.patchSurfaceState?.('locations', { selectedLocationId: '' }, { render: false });
+          this.host?.patchSurfaceState?.('locations', { selectedLocationId: '', modal: null }, { render: false });
           ui.notifications?.info?.('Location deleted.');
           await this._refresh('gm-location-delete');
           return;
@@ -387,8 +451,8 @@ export class GMLocationsSurfaceController {
           await this._refresh('gm-location-lead-resolve');
           return;
         }
-      }, { signal });
-    });
+
+    }, { signal });
   }
 
   _wireForms(pageElement, signal) {
@@ -397,9 +461,17 @@ export class GMLocationsSurfaceController {
         event.preventDefault();
         const payload = locationPayload(new FormData(form));
         const location = await LocationRegistryService.upsertLocation(payload);
-        if (location?.id) this.host?.patchSurfaceState?.('locations', { selectedLocationId: location.id }, { render: false });
+        if (location?.id) this.host?.patchSurfaceState?.('locations', { selectedLocationId: location.id, modal: null }, { render: false });
         ui.notifications?.info?.('Location saved.');
         await this._refresh('gm-location-save');
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('form[data-location-import-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        await this._importLibrarySeedIds(seedIdsFromForm(formData), 'gm-location-library-import-selected', importOptionsFromForm(formData));
       }, { signal });
     });
 
@@ -425,6 +497,61 @@ export class GMLocationsSurfaceController {
         ui.notifications?.info?.('Encounter seed added.');
         await this._refresh('gm-location-seed-save');
       }, { signal });
+    });
+  }
+
+  _wireWizardControls(pageElement, signal) {
+    pageElement.querySelectorAll('[data-location-wizard]').forEach((wizard) => {
+      wizard.addEventListener('change', (event) => {
+        const input = event.target;
+        if (!(input instanceof HTMLInputElement)) return;
+        const choice = input.closest('.gm-location-choice, .gm-location-import-card, .gm-location-toggle-card');
+        if (!choice) return;
+        const groupName = input.name;
+        if (input.type === 'radio' && groupName) {
+          wizard.querySelectorAll('input[type=\"radio\"]').forEach((peer) => {
+            if (peer.name !== groupName) return;
+            peer.closest('.gm-location-choice')?.classList?.toggle?.('is-selected', peer.checked);
+          });
+        } else {
+          choice.classList.toggle('is-selected', input.checked);
+        }
+      }, { signal });
+
+      wizard.querySelectorAll('input[type=\"radio\"]:checked').forEach((input) => {
+        input.closest('.gm-location-choice')?.classList?.add?.('is-selected');
+      });
+      wizard.querySelectorAll('input[type=\"checkbox\"]:checked').forEach((input) => {
+        input.closest('.gm-location-choice, .gm-location-import-card, .gm-location-toggle-card')?.classList?.add?.('is-selected');
+      });
+      this._setWizardPage(wizard, 1);
+    });
+  }
+
+  _shiftWizardPage(wizard, delta = 1) {
+    if (!wizard) return;
+    const maxPage = Math.max(1, ...Array.from(wizard.querySelectorAll('[data-wizard-page]')).map(page => Number(page.dataset.wizardPage || 1)).filter(Number.isFinite));
+    const current = Number(wizard.dataset.currentPage || 1);
+    this._setWizardPage(wizard, Math.max(1, Math.min(maxPage, current + delta)));
+  }
+
+  _setWizardPage(wizard, pageNumber = 1) {
+    if (!wizard) return;
+    const page = Math.max(1, Number(pageNumber) || 1);
+    wizard.dataset.currentPage = String(page);
+    wizard.querySelectorAll('[data-wizard-page]').forEach(panel => panel.classList.toggle('is-active', Number(panel.dataset.wizardPage || 1) === page));
+    wizard.querySelectorAll('[data-wizard-step-indicator]').forEach(indicator => {
+      const index = Number(indicator.dataset.wizardStepIndicator || 1);
+      indicator.classList.toggle('is-active', index === page);
+      indicator.classList.toggle('is-complete', index < page);
+    });
+    const maxPage = Math.max(1, ...Array.from(wizard.querySelectorAll('[data-wizard-page]')).map(panel => Number(panel.dataset.wizardPage || 1)).filter(Number.isFinite));
+    wizard.querySelectorAll('[data-location-action=\"wizard-back\"]').forEach(button => {
+      button.disabled = page <= 1;
+    });
+    wizard.querySelectorAll('[data-location-action=\"wizard-next\"]').forEach(button => {
+      button.disabled = page >= maxPage;
+      button.textContent = page >= maxPage ? 'Review Complete' : 'Next';
     });
   }
 
@@ -543,6 +670,24 @@ export class GMLocationsSurfaceController {
     });
     ui.notifications?.info?.(`Atlas lead reveal links applied (${locationCount} locations, ${factionCount} factions, ${contactCount} contacts).`);
     await this._refresh('gm-location-lead-reveal-links');
+  }
+
+  async _importLibrarySeedIds(seedIds = [], reason = 'gm-location-library-import', options = {}) {
+    const ids = Array.from(new Set((seedIds || []).map(value => String(value || '').trim()).filter(Boolean)));
+    if (!ids.length) {
+      ui.notifications?.warn?.('Select at least one quick location to import.');
+      return;
+    }
+    const result = await LocationRegistryService.importLibrarySeeds(ids, {
+      includeChildren: options.includeChildren !== false,
+      includeAtlasFacts: options.includeAtlasFacts !== false,
+      revealState: text(options.revealState, 'hidden'),
+      knownToPlayers: options.knownToPlayers === true
+    });
+    const firstSeedId = result.seeds?.[0]?.id || ids[0] || '';
+    this.host?.patchSurfaceState?.('locations', { selectedLocationId: firstSeedId, modal: null }, { render: false });
+    ui.notifications?.info?.(`Imported ${result.imported.length} location record(s) from ${result.seeds.length} quick location(s)${result.skipped.length ? `; ${result.skipped.length} record(s) already existed` : ''}.`);
+    await this._refresh(reason);
   }
 
   async _openJobDraft(draft) {
