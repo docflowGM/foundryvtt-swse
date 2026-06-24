@@ -14,7 +14,97 @@ import { SuggestionService } from '/systems/foundryvtt-swse/scripts/engine/sugge
 import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engine/progression/suggestion/suggestion-context-builder.js';
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
+import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 
+
+
+const FORCE_POWER_MASTERY_SLUG = 'force-power-mastery';
+const FORCE_POWER_MASTERY_SETTING = 'forcePowerMasteryIncludesLightsaberForms';
+
+function normalizeForceChoiceSlug(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/\s*\([^)]*\)\s*$/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function escapeHtml(value = '') {
+  return foundry?.utils?.escapeHTML?.(String(value ?? ''))
+    ?? String(value ?? '').replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
+}
+
+function readSwseSetting(key, fallback = false) {
+  try {
+    return game?.settings?.get?.('foundryvtt-swse', key) ?? fallback;
+  } catch (_err) {
+    try {
+      return game?.settings?.get?.('swse', key) ?? fallback;
+    } catch (_ignored) {
+      return fallback;
+    }
+  }
+}
+
+function itemTypeMatches(item, ...types) {
+  const type = String(item?.type ?? '').trim().toLowerCase();
+  return types.some(t => type === String(t).trim().toLowerCase());
+}
+
+function isForcePowerMasteryTechniqueDoc(technique) {
+  return normalizeForceChoiceSlug(technique?.name || technique?.system?.name || technique?.label) === FORCE_POWER_MASTERY_SLUG;
+}
+
+function isLightsaberFormPowerDoc(power) {
+  const system = power?.system || {};
+  const values = [
+    power?.type,
+    power?.pack,
+    power?.category,
+    system.category,
+    system.subcategory,
+    system.discipline,
+    system.sourcePack,
+    system.pack,
+    system.powerType,
+    ...(Array.isArray(power?.tags) ? power.tags : []),
+    ...(Array.isArray(system.tags) ? system.tags : []),
+    ...(Array.isArray(system.descriptors) ? system.descriptors : []),
+  ].map(v => String(v ?? '').toLowerCase()).join(' ');
+  return /lightsaber[-_\s]?form|form[-_\s]?power|lightsaberformpowers/.test(values);
+}
+
+function getForcePowerMasteryChoiceFromEntry(entry) {
+  const candidates = [
+    entry?.forcePowerMasteryChoice,
+    entry?.system?.forcePowerMastery,
+    entry?.system?.choice,
+    entry?.system?.selectedChoice,
+    entry?.flags?.swse?.forcePowerMastery,
+    entry?.flags?.swse?.progression?.forcePowerMastery,
+    entry?.flags?.['foundryvtt-swse']?.forcePowerMastery,
+  ].filter(Boolean);
+  for (const candidate of candidates) {
+    const slug = normalizeForceChoiceSlug(candidate?.slug || candidate?.powerSlug || candidate?.targetSlug || candidate?.id || candidate?.name || candidate?.label || candidate?.value);
+    if (!slug) continue;
+    return {
+      slug,
+      label: String(candidate?.label || candidate?.name || candidate?.powerName || candidate?.targetName || slug).trim() || slug,
+      powerId: candidate?.powerId || candidate?.id || candidate?.targetId || null,
+      powerName: candidate?.powerName || candidate?.name || candidate?.targetName || candidate?.label || slug,
+      isLightsaberFormPower: candidate?.isLightsaberFormPower === true,
+    };
+  }
+  const name = String(entry?.name || '').trim();
+  const match = name.match(/Force\s+Power\s+Mastery\s*\(([^)]+)\)/i);
+  if (match?.[1]) {
+    const slug = normalizeForceChoiceSlug(match[1]);
+    if (slug) return { slug, label: match[1].trim(), powerId: null, powerName: match[1].trim(), isLightsaberFormPower: false };
+  }
+  return null;
+}
 
 const TECHNIQUE_RECOMMENDED_NAMES = new Set([
   'Force Point Recovery',
@@ -121,6 +211,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     this._activeCategory = 'recommended';
     this._categorySidebarCollapsed = false;
     this._committedTechniqueCounts = new Map();
+    this._committedTechniqueEntries = new Map();
     this._remainingPicks = 0;
     this._suggestedTechniques = [];  // Suggested force techniques
     this._renderAbort = null;
@@ -159,12 +250,27 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
 
   _hydrateCommittedFromSession(shell) {
     this._committedTechniqueCounts.clear();
+    this._committedTechniqueEntries.clear();
     const values = shell?.progressionSession?.draftSelections?.forceTechniques || [];
     if (!Array.isArray(values)) return;
     for (const entry of values) {
-      const id = entry?.id || entry?._id || entry?.techniqueId || entry?.name || entry;
+      const rawId = entry?.id || entry?._id || entry?.techniqueId || entry?.baseTechniqueId || entry?.name || entry;
+      const choice = getForcePowerMasteryChoiceFromEntry(entry);
+      const id = choice?.slug
+        ? (entry?.selectionId || `${entry?.techniqueId || entry?.baseTechniqueId || rawId}::${choice.slug}`)
+        : rawId;
       const count = Math.max(0, Number(entry?.count ?? 1) || 0);
-      if (id && count > 0) this._committedTechniqueCounts.set(id, count);
+      if (!id || count <= 0) continue;
+      this._committedTechniqueCounts.set(id, count);
+      if (choice) {
+        this._committedTechniqueEntries.set(String(id), {
+          ...entry,
+          id: entry?.id || entry?.techniqueId || entry?.baseTechniqueId || rawId,
+          selectionId: String(id),
+          forcePowerMasteryChoice: choice,
+          count,
+        });
+      }
     }
   }
 
@@ -207,9 +313,10 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
   }
 
   async getStepData(context) {
-    const committedSummary = Array.from(this._committedTechniqueCounts.entries()).map(([id, count]) => {
-      const technique = this._allTechniques.find(t => t.id === id);
-      return { id, name: technique?.name || id, count };
+    const committedSummary = this._buildCommittedTechniqueList().map((entry) => {
+      const id = entry?.id || entry?.techniqueId || entry?.selectionId || entry;
+      const technique = this._allTechniques.find(t => t.id === id) || this._allTechniques.find(t => t.id === entry?.techniqueId || t.id === entry?.baseTechniqueId);
+      return { id: entry?.selectionId || id, name: entry?.name || technique?.name || id, count: Math.max(0, Number(entry?.count ?? 1) || 0) };
     });
 
     const { suggestedIds, hasSuggestions, confidenceMap } = this.formatSuggestionsForDisplay(this._suggestedTechniques);
@@ -257,16 +364,30 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     const technique = this._allTechniques.find(t => t.id === techniqueId);
     if (!technique) return;
 
-    const currentCount = this._committedTechniqueCounts.get(techniqueId) ?? 0;
     const totalSelected = Array.from(this._committedTechniqueCounts.values()).reduce((sum, c) => sum + c, 0);
+    if (totalSelected >= this._remainingPicks) {
+      this._focusedTechniqueId = techniqueId;
+      shell.focusedItem = technique;
+      shell.render();
+      return;
+    }
 
-    if (totalSelected < this._remainingPicks) {
+    if (isForcePowerMasteryTechniqueDoc(technique)) {
+      const choice = await this._promptForcePowerMasteryChoice(technique, shell);
+      if (!choice) return;
+      const selectionId = `${techniqueId}::${choice.slug}`;
+      if (this._committedTechniqueCounts.has(selectionId)) {
+        ui?.notifications?.warn?.(`Force Power Mastery is already assigned to ${choice.slug}. Choose a different Force Power.`);
+        return;
+      }
+      this._committedTechniqueCounts.set(selectionId, 1);
+      this._committedTechniqueEntries.set(selectionId, this._buildForcePowerMasteryEntry(technique, choice, selectionId));
+    } else {
+      const currentCount = this._committedTechniqueCounts.get(techniqueId) ?? 0;
       this._committedTechniqueCounts.set(techniqueId, currentCount + 1);
     }
 
-    const techniquesList = Array.from(this._committedTechniqueCounts.entries())
-      .filter(([_, count]) => count > 0)
-      .map(([techniqueId, count]) => ({ id: techniqueId, count }));
+    const techniquesList = this._buildCommittedTechniqueList();
 
     await this._commitNormalized(shell, 'forceTechniques', techniquesList);
 
@@ -326,7 +447,11 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       return this.renderDetailsPanelEmptyState();
     }
 
-    const currentCount = this._committedTechniqueCounts.get(focusedItem.id) ?? 0;
+    const isForcePowerMastery = isForcePowerMasteryTechniqueDoc(focusedItem);
+    const masterySelections = isForcePowerMastery ? this._getCommittedForcePowerMasteryChoices(focusedItem.id) : [];
+    const currentCount = isForcePowerMastery
+      ? masterySelections.reduce((sum, entry) => sum + Math.max(0, Number(entry?.count ?? 1) || 0), 0)
+      : (this._committedTechniqueCounts.get(focusedItem.id) ?? 0);
     const totalSelected = Array.from(this._committedTechniqueCounts.values()).reduce((sum, c) => sum + c, 0);
     const canAddMore = totalSelected < this._remainingPicks;
 
@@ -339,8 +464,11 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
         technique: focusedItem,
         description: focusedItem.description || focusedItem.system?.description || '',
         selectedCount: currentCount,
+        selectedCountLabel: `${currentCount} time${currentCount === 1 ? '' : 's'}`,
         canAddMore,
         buttonLabel: currentCount > 0 ? 'Choose This Technique Again' : 'Choose This Technique',
+        isForcePowerMastery,
+        forcePowerMasteryChoices: masterySelections.map(entry => entry?.forcePowerMasteryChoice || entry).filter(Boolean),
         // Add normalized fields for enhanced detail rail
         canonicalDescription: normalized.description,
         metadataTags: normalized.metadataTags,
@@ -380,9 +508,11 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     const remaining = this._remainingPicks - totalSelected;
 
     if (remaining <= 0) {
-      const summaryParts = Array.from(this._committedTechniqueCounts.entries()).map(([id, count]) => {
-        const technique = this._allTechniques.find(t => t.id === id);
-        const name = technique?.name || id;
+      const summaryParts = this._buildCommittedTechniqueList().map((entry) => {
+        const id = entry?.id || entry?.techniqueId || entry?.selectionId || entry;
+        const technique = this._allTechniques.find(t => t.id === id) || this._allTechniques.find(t => t.id === entry?.techniqueId || t.id === entry?.baseTechniqueId);
+        const name = entry?.name || technique?.name || id;
+        const count = Math.max(0, Number(entry?.count ?? 1) || 0);
         return count > 1 ? `${name} ×${count}` : name;
       });
       const label = summaryParts.length > 0
@@ -487,29 +617,9 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
    * Build pending state with class-granted features for prerequisite evaluation.
    * @private
    */
-  _getSelectedClassForPendingState(shell = null) {
-    const session = shell?.progressionSession && shell.progressionSession !== shell ? shell.progressionSession : null;
-    const read = (container) => container?.get?.('class') ?? container?.class ?? null;
-    const candidates = [
-      shell?.getSelection?.('class'),
-      shell?.buildIntent?.getSelection?.('class'),
-      read(shell?.draftSelections),
-      read(shell?.committedSelections),
-      session?.getSelection?.('class'),
-      session?.buildIntent?.getSelection?.('class'),
-      read(session?.draftSelections),
-      read(session?.committedSelections),
-    ];
-    for (const candidate of candidates) {
-      if (!candidate) continue;
-      return Array.isArray(candidate) ? candidate.find(Boolean) || null : candidate;
-    }
-    return null;
-  }
-
   _buildPendingStateWithClassGrants(actor, shell = null) {
     const basePending = {
-      selectedClass: this._getSelectedClassForPendingState(shell),
+      selectedClass: shell?.committedSelections?.get?.('class') || null,
       selectedFeats: [],
       selectedTalents: [],
       selectedSkills: [],
@@ -586,6 +696,168 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
     return shell.buildIntent.toCharacterData();
   }
 
+  _isTechniqueSelected(techniqueId) {
+    const id = String(techniqueId || '');
+    if (!id) return false;
+    if (this._committedTechniqueCounts.has(id)) return true;
+    for (const entry of this._committedTechniqueEntries.values()) {
+      if (String(entry?.id || entry?.techniqueId || entry?.baseTechniqueId || '') === id) return true;
+    }
+    return false;
+  }
+
+  _getCommittedForcePowerMasteryChoices(techniqueId = null) {
+    const targetTechniqueId = String(techniqueId || '');
+    return Array.from(this._committedTechniqueEntries.entries())
+      .filter(([selectionId, entry]) => {
+        const choice = entry?.forcePowerMasteryChoice || getForcePowerMasteryChoiceFromEntry(entry);
+        if (!choice) return false;
+        const baseId = String(entry?.id || entry?.techniqueId || entry?.baseTechniqueId || selectionId.split('::')[0] || '');
+        return !targetTechniqueId || baseId === targetTechniqueId;
+      })
+      .map(([selectionId, entry]) => ({ selectionId, count: this._committedTechniqueCounts.get(selectionId) ?? entry?.count ?? 1, ...entry }));
+  }
+
+  _buildCommittedTechniqueList() {
+    return Array.from(this._committedTechniqueCounts.entries())
+      .filter(([_, count]) => count > 0)
+      .map(([techniqueId, count]) => {
+        const entry = this._committedTechniqueEntries.get(String(techniqueId));
+        if (entry) return { ...entry, count };
+        return { id: techniqueId, count };
+      });
+  }
+
+  _buildForcePowerMasteryEntry(technique, choice, selectionId) {
+    return {
+      id: technique?.id,
+      techniqueId: technique?.id,
+      baseTechniqueId: technique?.id,
+      selectionId,
+      name: `${technique?.name || 'Force Power Mastery'} (${choice.slug})`,
+      count: 1,
+      forcePowerMasteryChoice: choice,
+      system: {
+        repeatable: true,
+        choice: choice,
+        forcePowerMastery: choice,
+      },
+      flags: {
+        swse: {
+          forcePowerMastery: choice,
+          progression: {
+            forcePowerMastery: choice,
+          },
+        },
+      },
+    };
+  }
+
+  _getKnownForcePowerMasterySlugs(shell = null) {
+    const slugs = new Set();
+    const add = (entry) => {
+      const choice = getForcePowerMasteryChoiceFromEntry(entry);
+      if (choice?.slug) slugs.add(choice.slug);
+    };
+    for (const entry of this._committedTechniqueEntries.values()) add(entry);
+    const draftEntries = shell?.progressionSession?.draftSelections?.forceTechniques || [];
+    if (Array.isArray(draftEntries)) draftEntries.forEach(add);
+    for (const item of Array.from(shell?.actor?.items ?? [])) {
+      if (itemTypeMatches(item, 'forcetechnique', 'force-technique', 'feat') && isForcePowerMasteryTechniqueDoc(item)) add(item);
+    }
+    return slugs;
+  }
+
+  _buildForcePowerMasteryChoices(shell = null) {
+    const includeLightsaberForms = readSwseSetting(FORCE_POWER_MASTERY_SETTING, false) === true;
+    const actor = shell?.actor;
+    const choicesBySlug = new Map();
+    const addPower = (power, source = 'suite') => {
+      if (!power) return;
+      const slug = normalizeForceChoiceSlug(power?.system?.slug || power?.slug || power?.name || power?.id || power?._id);
+      if (!slug) return;
+      const isLightsaberFormPower = isLightsaberFormPowerDoc(power);
+      if (isLightsaberFormPower && !includeLightsaberForms) return;
+      if (!choicesBySlug.has(slug)) {
+        choicesBySlug.set(slug, {
+          slug,
+          label: slug,
+          powerId: power?.id || power?._id || power?.powerId || null,
+          powerName: power?.name || power?.label || slug,
+          source,
+          isLightsaberFormPower,
+        });
+      }
+    };
+
+    for (const item of Array.from(actor?.items ?? [])) {
+      if (itemTypeMatches(item, 'force-power')) addPower(item, 'owned');
+    }
+
+    const pendingPowerRefs = [];
+    const draftPowers = shell?.progressionSession?.draftSelections?.forcePowers;
+    if (Array.isArray(draftPowers)) pendingPowerRefs.push(...draftPowers);
+    const committedPowers = shell?.committedSelections?.get?.('forcePowers');
+    if (Array.isArray(committedPowers)) pendingPowerRefs.push(...committedPowers);
+    const selectedPowers = shell?.getSelection?.('forcePowers')?.selected;
+    if (Array.isArray(selectedPowers)) pendingPowerRefs.push(...selectedPowers);
+
+    const registryPowers = ForceRegistry.byType?.('power') || [];
+    const findRegistryPower = (ref) => {
+      const id = typeof ref === 'string' ? ref : (ref?.id || ref?._id || ref?.powerId || ref?.name || ref?.label);
+      const name = typeof ref === 'string' ? ref : (ref?.name || ref?.label || ref?.powerName);
+      const idString = String(id || '').trim();
+      const nameString = String(name || '').trim();
+      return registryPowers.find(power => String(power?.id || power?._id || '') === idString)
+        || registryPowers.find(power => String(power?.name || '').toLowerCase() === nameString.toLowerCase())
+        || (typeof ref === 'object' ? ref : null);
+    };
+    for (const ref of pendingPowerRefs) addPower(findRegistryPower(ref), 'pending');
+
+    const alreadyMastered = this._getKnownForcePowerMasterySlugs(shell);
+    return Array.from(choicesBySlug.values())
+      .filter(choice => !alreadyMastered.has(choice.slug))
+      .sort((a, b) => a.slug.localeCompare(b.slug));
+  }
+
+  async _promptForcePowerMasteryChoice(technique, shell) {
+    const choices = this._buildForcePowerMasteryChoices(shell);
+    if (!choices.length) {
+      ui?.notifications?.warn?.('Force Power Mastery requires at least one unmastered Force Power in your Force suite.');
+      return null;
+    }
+
+    const optionHtml = choices.map((choice, index) => `
+      <label class="swse-fpm-choice ${choice.isLightsaberFormPower ? 'swse-fpm-choice--form-power' : ''}">
+        <input type="radio" name="forcePowerMasteryTarget" value="${escapeHtml(choice.slug)}" ${index === 0 ? 'checked' : ''}>
+        <span class="swse-fpm-choice__slug">${escapeHtml(choice.slug)}</span>
+        <span class="swse-fpm-choice__name">${escapeHtml(choice.powerName || choice.slug)}${choice.isLightsaberFormPower ? ' · Lightsaber Form Power' : ''}</span>
+      </label>`).join('');
+
+    const content = `<form class="swse-force-power-mastery-picker">
+      <p>Choose the Force Power this Force Technique masters. The stored target uses the power slug so future rolls can match reliably.</p>
+      <div class="swse-fpm-choice-list">${optionHtml}</div>
+    </form>`;
+
+    return SWSEDialogV2.prompt({
+      title: technique?.name || 'Force Power Mastery',
+      content,
+      label: 'Master Selected Power',
+      callback: (html) => {
+        const root = html?.[0] ?? html;
+        const slug = String(root?.querySelector?.('[name="forcePowerMasteryTarget"]:checked')?.value || '').trim();
+        return choices.find(choice => choice.slug === slug) || null;
+      },
+      options: {
+        id: 'swse-force-power-mastery-picker',
+        classes: ['swse-force-power-mastery-dialog'],
+        width: 560,
+        height: 'auto',
+        resizable: true,
+      },
+    });
+  }
+
   _formatTechniqueCard(technique, suggestedIds = new Set(), confidenceMap = new Map()) {
     const id = String(technique?.id || technique?._id || this._normalizeLookupKey(technique?.name));
     const isSuggested = this.isSuggestedItem(id, suggestedIds) || this.isSuggestedItem(technique?.id, suggestedIds);
@@ -604,7 +876,7 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       searchCategoryLabel: relatedPower || primaryCategory?.label || 'Force Technique',
       isSuggested,
       isFocused: this._focusedTechniqueId && String(id) === String(this._focusedTechniqueId),
-      isSelected: this._committedTechniqueCounts.has(id),
+      isSelected: this._isTechniqueSelected(id),
       shortSummary: this._stripHtml(technique?.description || technique?.system?.description || technique?.system?.benefit || ''),
       badgeLabel: isSuggested ? 'Recommended' : null,
       badgeCssClass: isSuggested ? 'prog-badge--suggested' : null,

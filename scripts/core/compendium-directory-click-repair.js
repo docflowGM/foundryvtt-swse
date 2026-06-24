@@ -47,7 +47,9 @@ const PACK_DATA_SELECTOR = [
   '[data-pack-id]',
   '[data-collection]',
   '[data-collection-id]',
-  '[data-uuid^="Compendium."]'
+  '[data-uuid^="Compendium."]',
+  '[data-entry-id]',
+  '[data-document-id]'
 ].join(',');
 
 const PACK_ROW_SELECTOR = [
@@ -64,7 +66,9 @@ const PACK_ROW_SELECTOR = [
   '[data-pack-id]',
   '[data-collection]',
   '[data-collection-id]',
-  '[data-uuid^="Compendium."]'
+  '[data-uuid^="Compendium."]',
+  '[data-entry-id]',
+  '[data-document-id]'
 ].join(',');
 
 const TITLE_SELECTOR = [
@@ -166,11 +170,31 @@ function _normalizePackId(value) {
     const parts = raw.split('.').filter(Boolean);
     if (parts.length >= 3) {
       const collection = `${parts[1]}.${parts[2]}`;
-      return game.packs?.has?.(collection) ? collection : null;
+      if (game.packs?.has?.(collection)) return collection;
     }
   }
 
-  return raw.includes('.') && game.packs?.has?.(raw) ? raw : null;
+  if (game.packs?.has?.(raw)) return raw;
+
+  const systemId = game?.system?.id || 'foundryvtt-swse';
+  const localPackId = raw.includes('.') ? null : `${systemId}.${raw}`;
+  if (localPackId && game.packs?.has?.(localPackId)) return localPackId;
+
+  const packs = _allPacks();
+  const exact = packs.find(pack => {
+    const meta = pack?.metadata ?? {};
+    return pack?.collection === raw
+      || meta.id === raw
+      || meta.name === raw
+      || `${meta.packageName ?? systemId}.${meta.name ?? meta.id}` === raw;
+  });
+  if (exact?.collection) return exact.collection;
+
+  const suffix = raw.includes('.') ? null : `.${raw}`;
+  const suffixMatches = suffix ? packs.filter(pack => pack?.collection?.endsWith?.(suffix)) : [];
+  if (suffixMatches.length === 1) return suffixMatches[0].collection;
+
+  return null;
 }
 
 function _resolvePackIdFromText(text) {
@@ -201,6 +225,8 @@ function _candidateValuesFromElement(element) {
     dataset.collectionId,
     dataset.uuid,
     dataset.entryId,
+    dataset.documentId,
+    dataset.documentName,
     dataset.id,
     element.getAttribute('data-pack'),
     element.getAttribute('data-pack-id'),
@@ -208,7 +234,10 @@ function _candidateValuesFromElement(element) {
     element.getAttribute('data-collection-id'),
     element.getAttribute('data-uuid'),
     element.getAttribute('data-entry-id'),
-    element.getAttribute('data-id')
+    element.getAttribute('data-document-id'),
+    element.getAttribute('data-document-name'),
+    element.getAttribute('data-id'),
+    element.id
   ];
 
   return values.filter(v => v != null && String(v).trim() !== '');
@@ -363,6 +392,37 @@ function _findPackElementFromPoint(event) {
   return best ? { element: best.el, packId: best.packId } : null;
 }
 
+function _findPackElementFromElementsAtPoint(event) {
+  const x = Number(event?.clientX);
+  const y = Number(event?.clientY);
+  if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+  if (typeof document.elementsFromPoint !== 'function') return null;
+
+  const elements = document.elementsFromPoint(x, y)
+    .filter(el => el instanceof HTMLElement);
+
+  for (const el of elements) {
+    if (!_isInsideCompendiumDirectory(el)) continue;
+
+    const candidates = [
+      el,
+      el.closest?.(PACK_ROW_SELECTOR),
+      el.closest?.('[data-entry-id]'),
+      el.closest?.('[data-document-id]'),
+      el.closest?.('[data-pack]'),
+      el.closest?.('[data-collection]')
+    ];
+
+    for (const candidate of candidates) {
+      if (!(candidate instanceof HTMLElement)) continue;
+      const packId = _resolvePackIdFromRow(candidate);
+      if (packId) return { element: candidate, packId };
+    }
+  }
+
+  return null;
+}
+
 function _findPackElementFromPath(event) {
   const target = event?.target;
   if (!(target instanceof Element)) return null;
@@ -393,7 +453,9 @@ function _findPackElementFromPath(event) {
 }
 
 function _findPackElementFromEvent(event) {
-  return _findPackElementFromPoint(event) || _findPackElementFromPath(event);
+  return _findPackElementFromElementsAtPoint(event)
+    || _findPackElementFromPoint(event)
+    || _findPackElementFromPath(event);
 }
 
 function _isControlClick(target, packElement) {
@@ -409,6 +471,8 @@ function _isControlClick(target, packElement) {
 async function _openPackFromEvent(event, source = 'document') {
   try {
     if (event.defaultPrevented) return false;
+    if (event.__swseCompendiumClickRepairVisited) return false;
+    event.__swseCompendiumClickRepairVisited = true;
     if (!(event.target instanceof Element)) return false;
 
     // The document-level capture fallback must be silent outside the native
@@ -558,7 +622,9 @@ export function registerCompendiumDirectoryClickRepair() {
           "foundryvtt-swse.feats",
           "foundryvtt-swse.lightsaberformpowers",
           "foundryvtt-swse.heroic",
-          "foundryvtt-swse.nonheroic"
+          "foundryvtt-swse.nonheroic",
+          "foundryvtt-swse.beasts",
+          "foundryvtt-swse.npc"
         ];
         console.group("[SWSE-COMPENDIUM-CLICK] renderCompendiumDirectory fired");
         _dlog(`  DOM pack elements (${domPackIds.length}):`, domPackIds);

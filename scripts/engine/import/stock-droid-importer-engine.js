@@ -1,22 +1,125 @@
 /**
  * Stock Droid Importer Engine
- * Handles import of stock droid statblocks from packs/droids.db
+ * Handles import of stock droid statblocks from packs/droids.db.
  *
- * Phase 1 strategy:
- * - Treat stock droids as published statblocks (not builder-native)
- * - Import published totals as play/runtime-facing values
- * - Flag the actor as stock-statblock-backed
- * - Do NOT attempt to reconstruct droidSystems
- * - Produce fully usable droid actors (not reference-only husks)
+ * Strategy:
+ * - Treat stock droids as published statblocks, not exact Garage builds.
+ * - Import published totals into live actor fields so the sheet is immediately usable.
+ * - Preserve normalized source totals in flags for later comparison/conversion.
+ * - Populate droidSystems with parsed/source-backed installed systems when available,
+ *   and safe baseline systems otherwise, so the Systems tab is not an empty husk.
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { StockDroidNormalizer } from "/systems/foundryvtt-swse/scripts/domain/droids/stock-droid-normalizer.js";
 import { DroidTemplateDataLoader } from "/systems/foundryvtt-swse/scripts/core/droid-template-data-loader.js";
 
+const ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+
+function deepClone(value) {
+  try {
+    if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
+  } catch (_err) { /* no-op */ }
+  return value === undefined ? value : JSON.parse(JSON.stringify(value));
+}
+
+function abilityActorBlock(total, key) {
+  const score = Number(total);
+  const safeScore = Number.isFinite(score) ? score : (key === 'con' ? 0 : 10);
+  return {
+    base: safeScore,
+    racial: 0,
+    enhancement: 0,
+    temp: 0,
+    total: safeScore,
+    mod: Math.floor((safeScore - 10) / 2)
+  };
+}
+
+function buildAbilityMaps(totals = {}) {
+  const attributes = {};
+  const abilities = {};
+  for (const key of ABILITY_KEYS) {
+    const total = totals.abilities?.[key]?.total;
+    const block = abilityActorBlock(total, key);
+    attributes[key] = {
+      base: block.base,
+      racial: 0,
+      enhancement: 0,
+      temp: 0
+    };
+    abilities[key] = block;
+  }
+  return { attributes, abilities };
+}
+
+function slug(value) {
+  return String(value || '')
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function cleanAttackName(value) {
+  return String(value || '')
+    .replace(/^and\s+/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function buildWeaponItemsFromAttacks(totals = {}) {
+  const attacks = totals.attacks || {};
+  const byKey = new Map();
+  const add = (attack, mode) => {
+    const name = cleanAttackName(attack?.name);
+    if (!name || /^unarmed$/i.test(name) || /^by weapon$/i.test(name)) return;
+    const key = `${mode}:${slug(name)}`;
+    const profile = {
+      name,
+      mode,
+      damage: attack?.damage || '',
+      attackBonus: Number(attack?.bonus ?? 0) || 0
+    };
+    const existing = byKey.get(key);
+    if (existing) {
+      const profiles = existing.system.weaponProfiles || [];
+      const profileKey = `${profile.attackBonus}:${profile.damage}`;
+      if (!profiles.some(item => `${item.attackBonus}:${item.damage}` === profileKey)) profiles.push(profile);
+      existing.system.weaponProfiles = profiles;
+      return;
+    }
+    byKey.set(key, {
+      name,
+      type: 'weapon',
+      img: 'icons/svg/sword.svg',
+      system: {
+        integrated: true,
+        droidPartId: slug(name),
+        attackBonus: profile.attackBonus,
+        damage: profile.damage,
+        range: mode,
+        weaponProfile: profile,
+        weaponProfiles: [profile],
+        description: `Published stock droid ${mode} attack.`
+      },
+      flags: {
+        swse: {
+          integrated: true,
+          stockDroidAttack: true,
+          droidPartId: slug(name)
+        }
+      }
+    });
+  };
+  for (const attack of attacks.melee || []) add(attack, 'melee');
+  for (const attack of attacks.ranged || []) add(attack, 'ranged');
+  return Array.from(byKey.values());
+}
+
 export class StockDroidImporterEngine {
   /**
-   * Import a stock droid template from packs/droids.db as a playable statblock actor
+   * Import a stock droid template from packs/droids.db as a playable statblock actor.
    * @param {string} droidId - Droid ID in the droids pack
    * @param {Object|null} customData - Optional custom data (name, portrait, notes, biography)
    * @returns {Promise<Object|null>} Created actor document or null on failure
@@ -25,24 +128,17 @@ export class StockDroidImporterEngine {
     try {
       SWSELogger.log(`[StockDroidImporterEngine] Importing stock droid: ${droidId}`);
 
-      // Get the raw droid actor document from the droids pack
       const rawRecord = await DroidTemplateDataLoader.getDroidActorDocument(droidId);
       if (!rawRecord) {
         SWSELogger.error(`[StockDroidImporterEngine] Droid actor not found: ${droidId}`);
         return null;
       }
 
-      // Normalize the legacy record into a stable shim format
       const normalized = StockDroidNormalizer.normalizeStockDroidRecord(rawRecord);
-
-      // Create the live actor document (not a raw clone)
-      const newActorData = this._buildActorFromStatblock(normalized, customData);
-
-      // Create the actor in the world
+      const newActorData = this.buildActorDataFromNormalized(normalized, customData);
       const actor = await Actor.create(newActorData);
 
       SWSELogger.log(`[StockDroidImporterEngine] Stock droid imported successfully: ${actor.name} (${actor.id})`);
-
       return actor;
     } catch (err) {
       SWSELogger.error(`[StockDroidImporterEngine] Error importing stock droid:`, err);
@@ -51,154 +147,102 @@ export class StockDroidImporterEngine {
   }
 
   /**
-   * Build a live actor document from normalized stock droid statblock
-   * This creates a playable actor with published totals as runtime authority,
-   * while flagging it as stock-statblock-backed (not builder-native)
-   *
-   * @private
+   * Public builder used by store/DroidFactory as well as this importer.
    * @param {Object} normalized - Normalized shim from StockDroidNormalizer
-   * @param {Object|null} customData - Custom overrides (name, portrait, etc.)
-   * @returns {Object} Actor document data for Actor.create()
+   * @param {Object|null} customData - Custom overrides
+   * @returns {Object} Actor create data
    */
-  static _buildActorFromStatblock(normalized, customData = null) {
-    const source = normalized.source;
-    const identity = normalized.identity;
-    const totals = normalized.publishedTotals;
-    const timestamp = Date.now();
+  static buildActorDataFromNormalized(normalized, customData = null) {
+    return this._buildActorFromStatblock(normalized, customData);
+  }
 
-    // Construct the base actor document with live schema fields
+  static _buildActorFromStatblock(normalized, customData = null) {
+    const source = normalized.source || {};
+    const identity = normalized.identity || {};
+    const totals = normalized.publishedTotals || {};
+    const timestamp = Date.now();
+    const { attributes, abilities } = buildAbilityMaps(totals);
+    const droidSystems = deepClone(totals.droidSystems || {}) || {};
+    const weaponItems = buildWeaponItemsFromAttacks(totals);
+
     const actorData = {
       type: 'droid',
-      name: customData?.name || source.name,
-      img: customData?.portrait || source.img,
-
+      name: customData?.name || source.name || 'Stock Droid',
+      img: customData?.portrait || source.img || 'icons/svg/upgrade.svg',
       system: {
-        // Core droid identity (from normalized identity, not builder state)
-        // NOTE: We do NOT populate droidSystems because we cannot reconstruct it reliably
-        droidDegree: identity.degree,
-        size: identity.size || 'Medium',
+        droidDegree: identity.degree || '',
+        degree: identity.degree || '',
+        droidDegreeKey: identity.degreeKey || '',
+        droidRole: identity.role || '',
+        droidRoleLabel: identity.roleLabel || '',
+        race: 'Droid',
+        species: 'Droid',
+        size: String(identity.size || 'medium').toLowerCase(),
+        category: 'Droid',
+        cost: identity.cost || 0,
+        costNumeric: identity.cost || 0,
+        cl: identity.challengeLevel ?? null,
+        challengeLevel: identity.challengeLevel ?? null,
 
-        // Live actor fields: HP can be populated from statblock
-        // (This is play authority, not builder authority)
         hp: {
-          value: Math.min(totals.hp.max, totals.hp.max),  // Start at full
-          max: totals.hp.max,
+          value: totals.hp?.value ?? totals.hp?.max ?? 1,
+          max: totals.hp?.max ?? totals.hp?.value ?? 1,
           temp: 0,
           bonus: 0
         },
-
-        // Speed from published totals
+        attributes,
+        abilities,
         speed: totals.speed || 6,
-
-        // Defenses as reference (computed by DerivedCalculator at play time)
-        // These published totals will be visible in the sheet as statblock reference
-        // but actual defense calculations will be derived from abilities + armor
+        initiative: totals.initiative || 0,
+        bab: totals.bab || 0,
+        baseAttackBonus: totals.bab || 0,
+        damageThreshold: totals.threshold || totals.defenses?.fortitude || 10,
+        damageReduction: totals.damageReduction || 0,
         defenses: {
-          fortitude: {
-            base: 10,
-            misc: 0,
-            total: totals.defenses.fortitude,
-            ability: 0,
-            class: 0,
-            armorMastery: 0,
-            modifier: 0
-          },
-          reflex: {
-            base: 10,
-            misc: 0,
-            total: totals.defenses.reflex,
-            ability: 0,
-            class: 0,
-            armorMastery: 0,
-            modifier: 0
-          },
-          will: {
-            base: 10,
-            misc: 0,
-            total: totals.defenses.will,
-            ability: 0,
-            class: 0,
-            armorMastery: 0,
-            modifier: 0
-          },
-          flatFooted: {
-            total: totals.defenses.flatFooted
-          }
+          fortitude: { base: 10, misc: 0, total: totals.defenses?.fortitude || 10, ability: 0, class: 0, armorMastery: 0, modifier: 0 },
+          reflex: { base: 10, misc: 0, total: totals.defenses?.reflex || 10, ability: 0, class: 0, armorMastery: 0, armor: 0, modifier: 0 },
+          will: { base: 10, misc: 0, total: totals.defenses?.will || 10, ability: 0, class: 0, armorMastery: 0, modifier: 0 },
+          flatFooted: { total: totals.defenses?.flatFooted || totals.defenses?.reflex || 10 }
         },
-
-        // Abilities: Use conservative defaults
-        // Published totals are stored in flags for reference, but we cannot reliably
-        // decompose them into base/racial/enhancement (bonuses are baked in).
-        // DerivedCalculator will recompute from structure.
-        attributes: {
-          str: {
-            base: 10,
-            racial: 0,
-            enhancement: 0,
-            temp: 0
-          },
-          dex: {
-            base: 10,
-            racial: 0,
-            enhancement: 0,
-            temp: 0
-          },
-          con: {
-            // Droids always CON 0
-            base: 0,
-            racial: 0,
-            enhancement: 0,
-            temp: 0
-          },
-          int: {
-            base: 10,
-            racial: 0,
-            enhancement: 0,
-            temp: 0
-          },
-          wis: {
-            base: 10,
-            racial: 0,
-            enhancement: 0,
-            temp: 0
-          },
-          cha: {
-            base: 10,
-            racial: 0,
-            enhancement: 0,
-            temp: 0
-          }
-        },
-
-        // Optional: Biography from customData
-        biography: this._buildBiography(customData),
-
-        // droidSystems: intentionally left empty/absent (cannot reconstruct)
-        // The sheet will show these as empty, and builder prompts will appear
-        // if user tries to edit
+        skills: deepClone(totals.skills || {}),
+        droidSystems,
+        stockAttacks: deepClone(totals.attacks || { melee: [], ranged: [] }),
+        languages: deepClone(totals.languages || []),
+        forcePoints: { value: totals.forcePoints || 0, max: totals.forcePoints || 0, die: '1d6', diceType: 'd6' },
+        destinyPoints: { value: 0, max: 0 },
+        darkSideScore: totals.darkSideScore || 0,
+        credits: 0,
+        biography: this._buildBiography(customData, normalized)
       },
-
+      items: weaponItems,
       prototypeToken: {
-        img: customData?.portrait || source.img
+        name: customData?.name || source.name || 'Stock Droid',
+        texture: { src: customData?.portrait || source.img || 'icons/svg/upgrade.svg' },
+        bar1: { attribute: 'hp' },
+        bar2: { attribute: 'defenses.reflex' }
       },
-
-      // Flags: Provenance and normalized data for future use
       flags: {
         swse: {
           stockDroidImport: {
             sourceId: source.compendiumId,
             sourceName: source.name,
+            sourcePack: source.sourcePack || '',
             importMode: 'statblock',
             confidence: normalized.confidence,
             importedAt: timestamp,
-            warnings: normalized.warnings,
-            // Store compact version of published totals for reference
+            warnings: normalized.warnings || [],
             publishedTotals: {
-              hp: totals.hp,
-              abilities: totals.abilities,
-              defenses: totals.defenses,
+              hp: deepClone(totals.hp),
+              abilities: deepClone(totals.abilities),
+              defenses: deepClone(totals.defenses),
               speed: totals.speed,
-              attacks: totals.attacks
+              initiative: totals.initiative,
+              bab: totals.bab,
+              threshold: totals.threshold,
+              damageReduction: totals.damageReduction,
+              attacks: deepClone(totals.attacks),
+              skills: deepClone(totals.skills),
+              droidSystems: deepClone(droidSystems)
             }
           }
         }
@@ -208,18 +252,13 @@ export class StockDroidImporterEngine {
     return actorData;
   }
 
-  /**
-   * Build biography text from customData
-   * @private
-   */
-  static _buildBiography(customData) {
-    if (!customData) return '';
-
+  static _buildBiography(customData, normalized = null) {
     const parts = [];
-    if (customData.notes) parts.push(customData.notes);
-    if (customData.biography) parts.push(customData.biography);
-
-    return parts.filter(t => t && t.trim()).join('\n\n');
+    if (customData?.notes) parts.push(customData.notes);
+    if (customData?.biography) parts.push(customData.biography);
+    const sourceText = normalized?.publishedTotals?.droidSystems?.sourceText;
+    if (sourceText) parts.push(`<p><strong>Droid Systems:</strong> ${sourceText}</p>`);
+    return parts.filter(t => t && String(t).trim()).join('\n\n');
   }
 }
 

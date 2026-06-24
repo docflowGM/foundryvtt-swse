@@ -80,20 +80,66 @@ function getStoreSourcePriority(item = {}) {
     'foundryvtt-swse.weapons',
     'foundryvtt-swse.armor',
     'foundryvtt-swse.equipment',
-    'foundryvtt-swse.vehicles'
+    'foundryvtt-swse.vehicles',
+    'foundryvtt-swse.droids'
   ].includes(pack)) return 20;
   return 10;
 }
 
+function getDroidStatblockQuality(item = {}) {
+  if ((item.type || item.doc?.type) !== 'droid') return 0;
+  const system = item.system || item.doc?.system || {};
+  const id = String(item.rawId || item.id || item.doc?._id || item.doc?.id || '');
+  let score = 0;
+
+  const hpMax = Number(system.hp?.max ?? system.hp?.value ?? 0) || 0;
+  const reflexTotal = Number(system.defenses?.reflex?.total ?? system.reflexDefense ?? 0) || 0;
+  const fortitudeTotal = Number(system.defenses?.fortitude?.total ?? system.fortitudeDefense ?? 0) || 0;
+  const willTotal = Number(system.defenses?.will?.total ?? system.willDefense ?? 0) || 0;
+
+  if (Number(system.HP) > 0 || hpMax > 10) score += 24;
+  if (system.baseStats?.abilities) score += 24;
+  if (system.reflexDefense !== undefined || reflexTotal > 10) score += 18;
+  if (system.fortitudeDefense !== undefined || fortitudeTotal > 10) score += 10;
+  if (system.willDefense !== undefined || willTotal > 10) score += 10;
+  if (Array.isArray(system.attacks) || system.attacks?.melee?.length || system.attacks?.ranged?.length) score += 12;
+  if (system.skills && Object.keys(system.skills).length) score += 8;
+  if (system.droidSystems || system.droidSystemText || item.doc?.flags?.swse?.droidSystemText) score += 8;
+  if (Number(system.costNumeric ?? system.cost ?? item.cost ?? 0) > 0) score += 2;
+
+  const abilities = system.abilities || system.attributes || {};
+  const stockDefaultAbilityKeys = ['str', 'dex', 'int', 'wis', 'cha'];
+  const hasDefaultScores = stockDefaultAbilityKeys.every(key => {
+    const block = abilities?.[key] || {};
+    const value = Number(block.total ?? block.base ?? block.value ?? 10);
+    return value === 10;
+  });
+  const hasDefaultDefenses = (!reflexTotal || reflexTotal === 10) && (!fortitudeTotal || fortitudeTotal === 10) && (!willTotal || willTotal === 10);
+  if (hasDefaultScores && (hpMax === 10 || Number(system.HP ?? 0) === 10) && hasDefaultDefenses) score -= 30;
+  if (id.startsWith('npc-')) score -= 40;
+  return score;
+}
+
 function choosePreferredStoreListing(current, candidate) {
   if (!current) return candidate;
+
+  if ((current.type === 'droid' || candidate.type === 'droid')
+    && normalizeListingToken(current.name) === normalizeListingToken(candidate.name)) {
+    const currentQuality = getDroidStatblockQuality(current);
+    const candidateQuality = getDroidStatblockQuality(candidate);
+    if (candidateQuality > currentQuality) return candidate;
+    if (candidateQuality < currentQuality) return current;
+  }
+
   const currentPriority = getStoreSourcePriority(current);
   const candidatePriority = getStoreSourcePriority(candidate);
   if (candidatePriority < currentPriority) return candidate;
   if (candidatePriority > currentPriority) return current;
 
   // If both are from the same kind of source, keep the one with richer system
-  // data so the detail rail has the best available readout.
+  // data so the detail rail has the best available readout. Droid duplicate
+  // races are handled above because schema-default actor husks can have many
+  // fields while carrying no useful published statblock values.
   const currentFields = Object.keys(current.system || {}).length;
   const candidateFields = Object.keys(candidate.system || {}).length;
   if (candidateFields > currentFields) return candidate;

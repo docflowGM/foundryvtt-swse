@@ -6,7 +6,7 @@
     {{#if selectedCount}}
       <span class="prog-force-technique-details__selected-badge">
         <i class="fas fa-star" aria-hidden="true"></i>
-        Selected {{selectedCount}} {{plural selectedCount "time" "times"}}
+        Selected {{selectedCountLabel}}
       </span>
     {{/if}}
   </div>
@@ -19,6 +19,24 @@
       <p class="prog-force-technique-details__description prog-force-technique-details__description--unavailable">No description available.</p>
     {{/if}}
   </div>
+
+  {{#if isForcePowerMastery}}
+    <div class="prog-force-technique-details__section">
+      <h3 class="prog-force-technique-details__section-title">Mastered Powers</h3>
+      {{#if forcePowerMasteryChoices.length}}
+        <div class="prog-force-technique-details__choice-list">
+          {{#each forcePowerMasteryChoices}}
+            <span class="prog-force-technique-details__choice-chip">
+              <i class="fas fa-hand-sparkles" aria-hidden="true"></i>
+              {{slug}}
+            </span>
+          {{/each}}
+        </div>
+      {{else}}
+        <p class="prog-force-technique-details__hint">Choose this technique to bind it to a specific Force Power slug from your Force suite.</p>
+      {{/if}}
+    </div>
+  {{/if}}
 
   <div class="prog-force-technique-details__actions">
     {{#if canAddMore}}

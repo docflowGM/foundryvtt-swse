@@ -158,6 +158,87 @@ function titleCaseWorkbenchToken(value) {
     .replace(/\b\w/g, ch => ch.toUpperCase());
 }
 
+function coerceWorkbenchNumber(value, fallback = 0) {
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  const match = String(value ?? '').match(/[-+]?\d+/);
+  return match ? Number(match[0]) : fallback;
+}
+
+function formatSignedWorkbenchNumber(value) {
+  const number = Number(value) || 0;
+  if (!number) return '0';
+  return number > 0 ? `+${number}` : String(number);
+}
+
+function titleCaseDamageType(value) {
+  const text = String(value ?? '').trim();
+  if (!text) return 'Energy';
+  return text
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .replace(/\b\w/g, ch => ch.toUpperCase());
+}
+
+function addDamageFormulaBonus(formula, bonus) {
+  const amount = Number(bonus) || 0;
+  const text = String(formula ?? '').trim() || '2d8';
+  if (!amount) return text;
+
+  const normalized = text.replace(/\s+/g, '');
+  const match = normalized.match(/^(\d+d\d+)([+-]\d+)?$/i);
+  if (match) {
+    const base = match[1];
+    const current = Number(match[2] || 0) || 0;
+    const total = current + amount;
+    return total ? `${base}${formatSignedWorkbenchNumber(total)}` : base;
+  }
+
+  return `${text}${amount > 0 ? '+' : ''}${amount}`;
+}
+
+function adjustDamageFormulaDieStep(formula, stepDelta) {
+  const delta = Number(stepDelta) || 0;
+  const text = String(formula ?? '').trim() || '2d8';
+  if (!delta) return text;
+
+  const normalized = text.replace(/\s+/g, '');
+  const match = normalized.match(/^(\d+)d(\d+)([+-]\d+)?$/i);
+  if (!match) return text;
+
+  const dieSteps = [2, 3, 4, 6, 8, 10, 12];
+  const count = match[1];
+  const sides = Number(match[2]);
+  const suffix = match[3] || '';
+  const index = dieSteps.indexOf(sides);
+  if (index < 0) return text;
+  const nextIndex = Math.min(dieSteps.length - 1, Math.max(0, index + delta));
+  return `${count}d${dieSteps[nextIndex]}${suffix}`;
+}
+
+function extendCriticalRangeText(critical, amount = 0) {
+  const by = Number(amount) || 0;
+  const text = String(critical ?? '').trim() || '20';
+  if (!by) return text;
+
+  const range = text.match(/^(\d+)\s*-\s*20$/);
+  if (range) {
+    const start = Math.max(2, Number(range[1]) - by);
+    return start >= 20 ? '20' : `${start}-20`;
+  }
+  if (/^20$/.test(text)) {
+    const start = Math.max(2, 20 - by);
+    return start >= 20 ? '20' : `${start}-20`;
+  }
+  return `${text} (${by > 0 ? '+' : ''}${by} range)`;
+}
+
+function appendCriticalNote(critical, note) {
+  const text = String(critical ?? '').trim() || '20';
+  const cleanNote = String(note ?? '').trim();
+  if (!cleanNote) return text;
+  return text.includes(cleanNote) ? text : `${text} (${cleanNote})`;
+}
+
 function isEnergyShieldItem(item) {
   return isCanonicalEnergyShieldItem(item);
 }
@@ -2282,24 +2363,115 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
   }
 
 
-  _getLightsaberHeroStats({ editItem, chassis, preview, slotState, totalCost } = {}) {
+  _getLightsaberComponentModifiers({ editItem = null, crystal = null, accessories = [] } = {}) {
+    const modifiers = [];
+    const pushModifiers = source => {
+      const list = Array.isArray(source?.system?.modifiers) ? source.system.modifiers : (Array.isArray(source?.modifiers) ? source.modifiers : []);
+      for (const modifier of list) {
+        if (modifier && typeof modifier === 'object') modifiers.push(modifier);
+      }
+    };
+
+    if (crystal) pushModifiers(crystal);
+    for (const accessory of accessories || []) pushModifiers(accessory);
+
+    // Existing tuned blades can already carry the merged modifier payload. Use it
+    // only when the workbench does not currently have explicit selected parts.
+    if (!modifiers.length && editItem) pushModifiers(editItem);
+    return modifiers;
+  }
+
+  _getLightsaberEffectiveStats({ editItem = null, chassis = null, crystal = null, accessories = [] } = {}) {
     const system = editItem?.system || {};
     const chassisSystem = chassis?.system || {};
+    const combatDamage = system?.combat?.damage || chassisSystem?.combat?.damage || {};
+    const combatAttack = system?.combat?.attack || chassisSystem?.combat?.attack || {};
     const name = String(editItem?.name || chassis?.name || '').toLowerCase();
-    const damage = system.damage || system.damageDice || chassisSystem.damage || chassisSystem.damageDice || (name.includes('shoto') || name.includes('short') ? '2d6' : '2d8');
-    const critical = system.critical || system.crit || system.threatRange || chassisSystem.critical || chassisSystem.crit || (name.includes('lightsaber') ? '19-20' : '20');
-    const damageType = system.damageType || chassisSystem.damageType || 'Energy';
-    const range = system.range || chassisSystem.range || 'Melee';
-    return [
-      { key: 'Damage', value: damage },
-      { key: 'Critical', value: critical },
-      { key: 'Damage Type', value: damageType },
-      { key: 'Range', value: range },
+    const fallbackDamage = name.includes('shoto') || name.includes('short') ? '2d6' : '2d8';
+    const modifiers = this._getLightsaberComponentModifiers({ editItem, crystal, accessories });
+    const result = {
+      damage: system.damage || system.damageDice || combatDamage.dice || chassisSystem.damage || chassisSystem.damageDice || fallbackDamage,
+      critical: system.critical || system.crit || system.threatRange || system.criticalRange || chassisSystem.critical || chassisSystem.crit || chassisSystem.threatRange || chassisSystem.criticalRange || (name.includes('lightsaber') ? '19-20' : '20'),
+      damageType: system.damageType || combatDamage.type || chassisSystem.damageType || chassisSystem?.combat?.damage?.type || 'Energy',
+      range: system.range || system.rangeProfile || chassisSystem.range || chassisSystem.rangeProfile || 'Melee',
+      attackBonus: coerceWorkbenchNumber(system.attackBonus ?? combatAttack.bonus ?? chassisSystem.attackBonus ?? chassisSystem?.combat?.attack?.bonus, 0),
+      notes: []
+    };
+
+    for (const modifier of modifiers) {
+      const type = normalizeWorkbenchToken(modifier.type);
+      const target = normalizeWorkbenchToken(modifier.target ?? modifier.domain ?? '');
+      const value = modifier.value;
+
+      if (type === 'damage_bonus' || (target.includes('damage') && Number.isFinite(Number(value)))) {
+        result.damage = addDamageFormulaBonus(result.damage, Number(value) || 0);
+        continue;
+      }
+
+      if (type === 'damage_reduction') {
+        const text = String(value ?? modifier.description ?? '').toLowerCase();
+        const steps = text.match(/-\s*(\d+)d/) ? -Number(text.match(/-\s*(\d+)d/)[1] || 1) : -1;
+        result.damage = adjustDamageFormulaDieStep(result.damage, steps);
+        continue;
+      }
+
+      if (type === 'damage_die_bonus' || type === 'damage_dice_bonus') {
+        const steps = Math.max(1, coerceWorkbenchNumber(value, 1));
+        result.damage = adjustDamageFormulaDieStep(result.damage, steps);
+        continue;
+      }
+
+      if (type === 'damage_type_change' || type === 'damage_type_override') {
+        result.damageType = titleCaseDamageType(value || modifier.damageType || modifier.typeValue);
+        continue;
+      }
+
+      if (type === 'attack_bonus' || (target.includes('attack') && Number.isFinite(Number(value)))) {
+        result.attackBonus += Number(value) || 0;
+        continue;
+      }
+
+      if (type === 'critical_range' || type === 'crit_range' || type === 'threat_range' || type === 'threat_range_bonus') {
+        result.critical = extendCriticalRangeText(result.critical, coerceWorkbenchNumber(value, 1));
+        continue;
+      }
+
+      if (type === 'critical_bonus' || type === 'critical_damage_bonus' || type === 'crit_bonus') {
+        const note = String(value ?? modifier.description ?? '').replace(/-/g, ' ').trim();
+        result.critical = appendCriticalNote(result.critical, note ? `${note} crit` : 'crit bonus');
+        continue;
+      }
+
+      if (type === 'conditional_damage') {
+        const note = [String(value ?? '').replace(/-/g, ' '), String(modifier.condition ?? '').replace(/-/g, ' ')]
+          .filter(Boolean)
+          .join(' ');
+        if (note) result.notes.push(`Damage ${note}`);
+        continue;
+      }
+    }
+
+    result.damageType = titleCaseDamageType(result.damageType);
+    result.range = titleCaseDamageType(result.range);
+    return result;
+  }
+
+  _getLightsaberHeroStats({ editItem, chassis, crystal, accessories = [], preview, slotState, totalCost } = {}) {
+    const stats = this._getLightsaberEffectiveStats({ editItem, chassis, crystal, accessories });
+    const entries = [
+      { key: 'Damage', value: stats.damage },
+      { key: 'Critical', value: stats.critical },
+      { key: 'Damage Type', value: stats.damageType },
+      { key: 'Range', value: stats.range }
+    ];
+    if (stats.attackBonus) entries.push({ key: 'Attack Bonus', value: formatSignedWorkbenchNumber(stats.attackBonus) });
+    entries.push(
       { key: 'Build DC', value: preview?.finalDc ?? 0 },
       { key: 'Cost', value: `${Number(totalCost ?? 0) || 0} cr` },
       { key: 'UTF +10', value: preview?.take10Total ?? '—' },
       { key: 'Slots', value: `${slotState?.usedSlots ?? 0}/${slotState?.totalAvailable ?? 0}` }
-    ];
+    );
+    return entries;
   }
 
   _normalizeLightsaberHiltKind(chassis) {
@@ -2616,6 +2788,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const steps = this._getLightsaberStepState({ canChangeChassis, activeTab });
     const navigation = this._getLightsaberStepNavigation(steps, activeTab);
     const buildSummary = this._buildLightsaberBuildSummary({ chassis, crystal, accessories: selectedAccessories, preview, credits, totalCost });
+    const effectiveStats = this._getLightsaberEffectiveStats({ editItem, chassis, crystal, accessories: selectedAccessories });
     const resultView = this._getLightsaberResultView(this._lightsaber.constructionResult);
     const alreadyBuiltNotice = constructionSummary.hasSelfBuilt && !constructionSummary.available;
     const ineligibleNotice = !editItem && !constructionSummary.available && !constructionSummary.hasSelfBuilt;
@@ -2646,7 +2819,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         subtitle: editItem ? 'tuning existing blade' : 'construct new blade',
         img: editItem?.img || chassis?.img,
         description: this._stripHtml(chassis?.system?.description || chassis?.description) || 'Select a chassis, kyber crystal, hilt accessories, and blade color from this workbench.',
-        stats: this._getLightsaberHeroStats({ editItem, chassis, preview, slotState, totalCost })
+        stats: this._getLightsaberHeroStats({ editItem, chassis, crystal, accessories: selectedAccessories, preview, slotState, totalCost })
       },
       ...(await this._getLightsaberMentorContext(editItem)),
       techSpecialist: editItem ? TechSpecialistModificationService.getUiContext(this.actor, editItem, { subjectKind: 'item', subjectType: 'weapon' }) : TechSpecialistModificationService.getUiContext(this.actor, { name: 'Lightsaber Construction', type: 'weapon', system: { cost: totalCost || 0 }, flags: {} }, { subjectKind: 'item', subjectType: 'weapon' }),
@@ -2737,10 +2910,10 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           totalCost,
           affordable: credits >= totalCost,
           after: credits - totalCost,
-          damage: preview?.chassis?.system?.damage || chassis?.system?.damage || chassis?.system?.damageDice || '—',
-          critical: preview?.chassis?.system?.critical || preview?.chassis?.system?.crit || chassis?.system?.critical || chassis?.system?.crit || '19-20',
-          damageType: preview?.chassis?.system?.damageType || chassis?.system?.damageType || 'Energy and Slashing',
-          range: preview?.chassis?.system?.range || chassis?.system?.range || 'Melee',
+          damage: effectiveStats.damage,
+          critical: effectiveStats.critical,
+          damageType: effectiveStats.damageType,
+          range: effectiveStats.range,
           timeHours: preview?.timeHours ?? 24
         }
       },

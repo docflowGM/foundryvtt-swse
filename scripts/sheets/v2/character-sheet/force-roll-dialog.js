@@ -56,12 +56,82 @@ function isMoveObjectPower(power) {
   return /move\s*object/i.test(String(power?.name || power?.system?.slug || ''));
 }
 
+
+function normalizeForcePowerSlug(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/\s*\([^)]*\)\s*$/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function baseItemName(value) {
+  return String(value ?? '').replace(/\s*\([^)]*\)\s*$/g, '').trim();
+}
+
+function isForcePowerMasteryItem(item) {
+  return /^(force\s+power\s+mastery)$/i.test(baseItemName(item?.name || item?.system?.name || item?.label));
+}
+
+function getForcePowerMasteryChoice(item) {
+  const candidates = [
+    item?.system?.forcePowerMastery,
+    item?.system?.choice,
+    item?.system?.selectedChoice,
+    item?.flags?.swse?.forcePowerMastery,
+    item?.flags?.swse?.progression?.forcePowerMastery,
+    item?.flags?.['foundryvtt-swse']?.forcePowerMastery,
+  ].filter(Boolean);
+  for (const candidate of candidates) {
+    const slug = normalizeForcePowerSlug(candidate?.slug || candidate?.powerSlug || candidate?.targetSlug || candidate?.id || candidate?.name || candidate?.label || candidate?.value);
+    if (!slug) continue;
+    return {
+      slug,
+      label: String(candidate?.label || candidate?.name || candidate?.powerName || candidate?.targetName || slug).trim() || slug,
+      powerId: candidate?.powerId || candidate?.id || candidate?.targetId || null,
+      powerName: candidate?.powerName || candidate?.name || candidate?.targetName || candidate?.label || slug,
+    };
+  }
+  const match = String(item?.name || '').match(/Force\s+Power\s+Mastery\s*\(([^)]+)\)/i);
+  if (match?.[1]) {
+    const slug = normalizeForcePowerSlug(match[1]);
+    if (slug) return { slug, label: match[1].trim(), powerId: null, powerName: match[1].trim() };
+  }
+  return null;
+}
+
+function getForcePowerMasteryMatch(actor, power) {
+  const powerId = String(power?.id || power?._id || '').trim();
+  const powerName = String(power?.name || power?.label || '').trim();
+  const powerSlug = normalizeForcePowerSlug(power?.system?.slug || power?.slug || powerName || powerId);
+  const candidates = new Set([powerSlug, normalizeForcePowerSlug(powerName), normalizeForcePowerSlug(powerId)].filter(Boolean));
+
+  for (const item of Array.from(actor?.items ?? [])) {
+    const type = String(item?.type || '').toLowerCase();
+    if (!['forcetechnique', 'force-technique', 'feat'].includes(type)) continue;
+    if (!isForcePowerMasteryItem(item)) continue;
+    const choice = getForcePowerMasteryChoice(item);
+    if (!choice?.slug) continue;
+    const choiceKeys = [choice.slug, choice.powerName, choice.powerId, choice.label].map(normalizeForcePowerSlug).filter(Boolean);
+    if (choiceKeys.some(key => candidates.has(key))) return choice;
+  }
+  return null;
+}
+
 function fieldValue(html, name) {
   const root = html?.[0] ?? html;
+  const radio = root?.querySelector?.(`[name="${name}"][type="radio"]:checked`);
+  if (radio) return radio.value;
   const found = root?.querySelector?.(`[name="${name}"]`);
   if (found) return found.type === 'checkbox' ? found.checked : found.value;
   const jq = html?.find?.(`[name="${name}"]`);
-  if (jq?.length) return jq.attr('type') === 'checkbox' ? jq.prop('checked') : jq.val();
+  if (jq?.length) {
+    const type = jq.attr('type');
+    if (type === 'radio') return jq.filter?.(':checked')?.val?.() ?? null;
+    return type === 'checkbox' ? jq.prop('checked') : jq.val();
+  }
   return null;
 }
 
@@ -78,6 +148,9 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
     <div class="rcd-tiers">
       ${dcRows.map(row => `<div class="rcd-tier"><span class="rcd-tier-dc">DC ${escapeHtml(row.dc ?? '')}</span><span class="rcd-tier-fx">${escapeHtml(cleanText(row.effect || row.description || ''))}</span></div>`).join('')}
     </div>` : '';
+  const masteryChoice = getForcePowerMasteryMatch(actor, power);
+  const canTake10 = Boolean(masteryChoice?.slug);
+  const masteryLabel = masteryChoice?.slug || normalizeForcePowerSlug(power?.name || power?.id);
 
   const content = `
     <div class="swse-force-roll-config rcd" style="--accent-rgb:180,140,255">
@@ -110,6 +183,17 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
               <label>Target DC<input type="number" name="baseDC" value="${baseDC}" step="1"></label>
             </div>
           </section>
+          <section class="swse-roll-config-panel swse-roll-config-panel--mode">
+            <h4>Check Mode</h4>
+            <label class="rcd-resource rcd-res-active">
+              <span class="rcd-res-header"><input type="radio" name="checkMode" value="roll" checked> <span class="rcd-res-icon">⚂</span><span class="rcd-res-name">Roll normally</span></span>
+              <span class="rcd-res-detail">Roll 1d20 and apply Use the Force modifiers.</span>
+            </label>
+            <label class="rcd-resource ${canTake10 ? '' : 'rcd-resource-disabled'}">
+              <span class="rcd-res-header"><input type="radio" name="checkMode" value="take10" ${canTake10 ? '' : 'disabled'}> <span class="rcd-res-icon">10</span><span class="rcd-res-name">Take 10</span></span>
+              <span class="rcd-res-detail">${canTake10 ? `Force Power Mastery active for <strong>${escapeHtml(masteryLabel)}</strong>. Force Points are not spent on Take 10.` : 'Requires Force Power Mastery for this specific Force Power.'}</span>
+            </label>
+          </section>
           <section class="swse-roll-config-panel swse-roll-config-panel--resources">
             <h4>Resources</h4>
             ${actorHasTalent(actor, 'Move Massive Object') && isMoveObjectPower(power) ? `<label class="rcd-resource ${fpValue <= 0 ? 'rcd-resource-disabled' : ''}">
@@ -132,7 +216,7 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
           </section>
           <section class="rcd-rail-sec">
             <div class="rcd-rail-lbl">Execution</div>
-            <p class="swse-roll-config-note">The final roll is still handled by the Force executor. This dialog only collects bonuses, DC, and Force Point intent.</p>
+            <p class="swse-roll-config-note">The final roll is still handled by the Force executor. This dialog collects bonuses, DC, Force Point intent, and Force Power Mastery Take 10 mode.</p>
           </section>
         </aside>
       </div>
@@ -153,13 +237,20 @@ export async function promptForcePowerRollOptions({ actor, power, sourceElement 
         roll: {
           icon: '<i class="fas fa-dice-d20"></i>',
           label: 'Roll / Use',
-          callback: html => finish({
-            baseBonus: toNumber(fieldValue(html, 'baseBonus'), baseBonus),
-            customModifier: toNumber(fieldValue(html, 'customModifier'), 0),
-            baseDC: toNumber(fieldValue(html, 'baseDC'), baseDC),
-            useForce: fieldValue(html, 'useForce') === true,
-            moveMassiveObject: fieldValue(html, 'moveMassiveObject') === true
-          })
+          callback: html => {
+            const checkMode = String(fieldValue(html, 'checkMode') || 'roll').toLowerCase();
+            const take10 = checkMode === 'take10' && canTake10;
+            finish({
+              baseBonus: toNumber(fieldValue(html, 'baseBonus'), baseBonus),
+              customModifier: toNumber(fieldValue(html, 'customModifier'), 0),
+              baseDC: toNumber(fieldValue(html, 'baseDC'), baseDC),
+              checkMode: take10 ? 'take10' : 'roll',
+              take10,
+              forcePowerMastery: masteryChoice || null,
+              useForce: !take10 && fieldValue(html, 'useForce') === true,
+              moveMassiveObject: !take10 && fieldValue(html, 'moveMassiveObject') === true
+            });
+          }
         },
         cancel: {
           icon: '<i class="fas fa-times"></i>',
@@ -274,7 +365,7 @@ export async function promptForceRegimenRollOptions({ actor, regimen, sourceElem
             customModifier: toNumber(fieldValue(html, 'customModifier'), 0),
             baseDC: toNumber(fieldValue(html, 'baseDC'), baseDC),
             useForce: fieldValue(html, 'useForce') === true,
-            moveMassiveObject: fieldValue(html, 'moveMassiveObject') === true
+            moveMassiveObject: !take10 && fieldValue(html, 'moveMassiveObject') === true
           })
         },
         cancel: {

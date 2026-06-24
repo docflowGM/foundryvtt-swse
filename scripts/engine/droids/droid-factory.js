@@ -12,6 +12,15 @@
  */
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { StockDroidNormalizer } from "/systems/foundryvtt-swse/scripts/domain/droids/stock-droid-normalizer.js";
+import { StockDroidImporterEngine } from "/systems/foundryvtt-swse/scripts/engine/import/stock-droid-importer-engine.js";
+
+function deepClone(value) {
+  try {
+    if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
+  } catch (_err) { /* no-op */ }
+  return value === undefined ? value : JSON.parse(JSON.stringify(value));
+}
 
 export class DroidFactory {
   /**
@@ -52,13 +61,28 @@ export class DroidFactory {
   static _buildDroidActorData(buildSpec) {
     const actor = buildSpec.droidActor;
     const source = actor?.doc || actor?.actor || actor;
-    const actorObj = source?.toObject ? source.toObject(false) : foundry.utils.deepClone(source || {});
+    const actorObj = source?.toObject ? source.toObject(false) : deepClone(source || {});
     const actorSystem = actorObj.system || actor?.system || {};
 
-    // Preserve full stock droid fidelity from the compendium/world actor: items,
-    // effects, prototype token, flags, and all system fields. Earlier store paths
-    // rebuilt only a tiny system shell from the normalized listing, which made a
-    // purchased stock droid open as a low-fidelity actor.
+    if (this._looksLikeStockDroidSource(actorObj, actor)) {
+      try {
+        const normalized = StockDroidNormalizer.normalizeStockDroidRecord(actorObj);
+        const droidData = StockDroidImporterEngine.buildActorDataFromNormalized(normalized, {
+          name: buildSpec.name || actorObj.name || actor?.name
+        });
+        return this._stripDocumentIds(droidData);
+      } catch (err) {
+        swseLogger.warn('DroidFactory: Stock droid normalization failed; falling back to source clone', {
+          name: actorObj.name || actor?.name,
+          error: err?.message || err
+        });
+      }
+    }
+
+    // Preserve full custom droid fidelity from the compendium/world actor: items,
+    // effects, prototype token, flags, and all system fields. Stock droids flow
+    // through StockDroidImporterEngine above so legacy published statblocks become
+    // live actor fields instead of schema-default husks.
     const droidData = {
       ...actorObj,
       type: 'droid',
@@ -74,9 +98,42 @@ export class DroidFactory {
       }
     };
 
-    delete droidData._id;
-    delete droidData.id;
-    return droidData;
+    return this._stripDocumentIds(droidData);
+  }
+
+  /**
+   * Detect stock droid records from the SWSE droids pack or its store listings.
+   * Published stock droids use several legacy statblock fields that must be
+   * normalized before actor creation.
+   * @private
+   */
+  static _looksLikeStockDroidSource(actorObj = {}, actor = {}) {
+    const system = actorObj.system || actor?.system || {};
+    const id = String(actorObj._id || actorObj.id || actor?.rawId || actor?.id || '');
+    const pack = String(actorObj.__storeSource?.pack || actor?.sourcePack || actor?.pack || '');
+    if ((actorObj.type || actor?.type) !== 'droid') return false;
+    return Boolean(
+      pack === 'foundryvtt-swse.droids'
+      || id.startsWith('npc-')
+      || system.HP !== undefined
+      || system.baseStats?.abilities
+      || system.reflexDefense !== undefined
+      || system.fortitudeDefense !== undefined
+      || system.willDefense !== undefined
+      || system.droidSystemText
+      || actorObj.flags?.swse?.droidSystemText
+    );
+  }
+
+  /**
+   * Strip actor/document ids before CREATE mutations.
+   * @private
+   */
+  static _stripDocumentIds(droidData = {}) {
+    const clone = deepClone(droidData) || {};
+    delete clone._id;
+    delete clone.id;
+    return clone;
   }
 
   /**

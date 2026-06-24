@@ -208,9 +208,12 @@ export class ForceExecutor {
           : defaultBonus;
       const customModifier = Number(options.customModifier ?? options.situationalModifier ?? 0) || 0;
       let rollBonus = baseBonus + customModifier;
-      const useForce = options.useForce === true;
+      const requestedCheckMode = String(options.checkMode || (options.take10 === true ? 'take10' : 'roll')).trim().toLowerCase();
+      const checkMode = requestedCheckMode === 'take10' ? 'take10' : 'roll';
+      const isTake10 = checkMode === 'take10';
+      const useForce = options.useForce === true && !isTake10;
 
-      // Validate Force Point expenditure before rolling.
+      // Validate Force Point expenditure before rolling. Take 10 cannot spend a Force Point.
       if (useForce) {
         if (this._getAvailableForcePoints(actor) <= 0) {
           throw new Error("No Force Points available");
@@ -236,7 +239,9 @@ export class ForceExecutor {
         rollOptions: {
           baseDice: '1d20',
           useForce,
-          forcePointCount: useForce ? 1 : 0
+          forcePointCount: useForce ? 1 : 0,
+          isTakeX: isTake10,
+          takeXValue: 10
         },
         rollData: actor.getRollData?.() ?? {},
         context: {
@@ -262,16 +267,24 @@ export class ForceExecutor {
           discipline: system.discipline ?? null,
           dcChart,
           forceTalentNotes: talentContext.notes,
+          forcePowerMastery: options.forcePowerMastery || null,
+          checkMode,
+          isTake10,
           freeActionRepeat: options.freeRepeat === true,
           forceActionLabel: options.freeRepeat === true ? 'Free Action repeat' : null
         }
       });
-      if (!rollResult.success || !rollResult.roll) {
+      if (!rollResult.success) {
         throw new Error(rollResult.error || 'Force power roll failed');
       }
 
-      const roll = rollResult.roll;
-      const total = Number(rollResult.finalTotal ?? roll.total ?? 0) || 0;
+      let roll = rollResult.roll || null;
+      const total = Number(rollResult.finalTotal ?? roll?.total ?? 0) || 0;
+      if (!roll && rollResult.isTakeX) {
+        roll = await new Roll(String(total), actor.getRollData?.() ?? {}).evaluate({ async: true });
+        roll.options = { ...(roll.options || {}), isTakeX: true, takeXValue: 10, checkMode: 'take10' };
+      }
+      if (!roll) throw new Error(rollResult.error || 'Force power roll failed');
       const d20 = roll.dice?.find?.(die => Number(die.faces) === 20);
       const d20Result = d20?.results?.find?.(r => r.active !== false) ?? d20?.results?.[0] ?? null;
       const isCritical = Number(d20Result?.result) === 20;
@@ -340,6 +353,9 @@ export class ForceExecutor {
           baseBonus,
           customModifier,
           forcePointBonus,
+          checkMode,
+          isTake10,
+          forcePowerMastery: options.forcePowerMastery || null,
           forceDescriptor: primaryDescriptor,
           forceDescriptors: descriptors,
           dcChart,
@@ -361,6 +377,8 @@ export class ForceExecutor {
         isFumble,
         powerName: power.name,
         forcePowerSpent: forcePointBonus > 0,
+        checkMode,
+        take10: isTake10,
         discarded: true,
         resolvedTier,
         resolvedEffect,
@@ -1456,6 +1474,9 @@ export class ForceExecutor {
           baseBonus: extra.baseBonus,
           customModifier: extra.customModifier,
           forcePointBonus: extra.forcePointBonus,
+          checkMode: extra.checkMode || 'roll',
+          isTake10: extra.isTake10 === true,
+          forcePowerMastery: extra.forcePowerMastery || null,
           appliedEffectCount: Array.isArray(extra.appliedEffects) ? extra.appliedEffects.length : 0,
           forceTalentNotes: extra.forceTalentNotes ?? [],
           telekineticPowerRepeatAction: extra.telekineticPowerRepeatAction ?? null,
@@ -1473,6 +1494,9 @@ export class ForceExecutor {
             resolvedEffect,
             resolvedTierDc: resolvedTier?.dc ?? null,
             isCritical,
+            checkMode: extra.checkMode || 'roll',
+            isTake10: extra.isTake10 === true,
+            forcePowerMastery: extra.forcePowerMastery || null,
             telekineticPowerRepeatAvailable: Boolean(extra.telekineticPowerRepeatAction),
             disciplinedStrike: Array.isArray(extra.forceTalentNotes) && extra.forceTalentNotes.some(note => note?.key === 'disciplined-strike')
           }

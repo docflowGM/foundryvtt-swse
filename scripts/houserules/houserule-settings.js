@@ -684,6 +684,15 @@ export function registerHouseruleSettings() {
     default: 'charisma'
   });
 
+  register('forcePowerMasteryIncludesLightsaberForms', {
+    name: 'Force Power Mastery: Include Lightsaber Forms',
+    hint: 'When enabled, Force Power Mastery can target known Lightsaber Form powers as well as standard Force Powers.',
+    scope: 'world',
+    config: true,
+    type: Boolean,
+    default: false
+  });
+
   register('blockDeflectTalents', {
     name: 'Block + Deflect Behavior',
     hint: 'Determines whether Block and Deflect are separate or combined talents.',

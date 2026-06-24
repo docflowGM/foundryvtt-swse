@@ -283,6 +283,7 @@ export class ForceMenu extends SWSEFormApplicationV2 {
     return {
       forceTrainingAttribute: safeGet('forceTrainingAttribute'),
       useTheForceAttribute: safeGet('useTheForceAttribute'),
+      forcePowerMasteryIncludesLightsaberForms: safeGet('forcePowerMasteryIncludesLightsaberForms'),
       forcePointRecovery: safeGet('forcePointRecovery'),
       darkSideTemptation: safeGet('darkSideTemptation'),
       darkSidePowerIncreaseScore: safeGet('darkSidePowerIncreaseScore'),
@@ -295,6 +296,7 @@ export class ForceMenu extends SWSEFormApplicationV2 {
   async _updateObject(event, formData) {
     await safeSet('forceTrainingAttribute', formData.forceTrainingAttribute);
     await safeSet('useTheForceAttribute', formData.useTheForceAttribute);
+    await safeSet('forcePowerMasteryIncludesLightsaberForms', _bool(formData.forcePowerMasteryIncludesLightsaberForms));
     await safeSet('blockDeflectTalents', formData.blockDeflectTalents);
     await safeSet('forceSensitiveJediOnly', _bool(formData.forceSensitiveJediOnly));
     await safeSet('forcePointRecovery', formData.forcePointRecovery);

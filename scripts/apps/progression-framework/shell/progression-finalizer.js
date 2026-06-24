@@ -2318,23 +2318,27 @@ export class ProgressionFinalizer {
     // General talents
     if (selections.has('general-talent')) {
       const talent = selections.get('general-talent');
-      grants.push({
-        type: 'talent',
-        name: talent.name || talent,
-        source: 'heroic-talent',
-        grantedAt: 'chargen',
-      });
+      for (const talentGrant of this._expandCombinedTalentGrantEntries(talent)) {
+        grants.push({
+          type: 'talent',
+          name: talentGrant.name || talentGrant,
+          source: 'heroic-talent',
+          grantedAt: 'chargen',
+        });
+      }
     }
 
     // Class talents
     if (selections.has('class-talent')) {
       const talent = selections.get('class-talent');
-      grants.push({
-        type: 'talent',
-        name: talent.name || talent,
-        source: 'class-talent',
-        grantedAt: 'chargen',
-      });
+      for (const talentGrant of this._expandCombinedTalentGrantEntries(talent)) {
+        grants.push({
+          type: 'talent',
+          name: talentGrant.name || talentGrant,
+          source: 'class-talent',
+          grantedAt: 'chargen',
+        });
+      }
     }
 
     // Force powers (conditional)
@@ -2771,37 +2775,6 @@ export class ProgressionFinalizer {
     return out;
   }
 
-  static _normalizeCompactName(value) {
-    return String(value || '').toLowerCase().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '').trim();
-  }
-
-  static _isBlockDeflectCombinedEntry(entry = {}) {
-    const key = this._normalizeCompactName(entry?.name || entry?.id || entry?._id || entry);
-    return entry?.system?.flags?.isBlockDeflectCombined === true
-      || entry?._id === 'block-deflect-combined'
-      || entry?.id === 'block-deflect-combined'
-      || key === 'blockdeflect'
-      || key === 'blockanddeflect';
-  }
-
-  static _expandCombinedTalentEntries(entries = []) {
-    return entries.flatMap((entry) => {
-      if (!this._isBlockDeflectCombinedEntry(entry)) return [entry];
-      return ['Block', 'Deflect'].map((name, index) => ({
-        ...entry,
-        id: name,
-        _id: name,
-        name,
-        count: 1,
-        slotKey: `${entry?.slotKey || entry?.stepId || 'block-deflect'}:${index}`,
-        system: foundry.utils.mergeObject(entry?.system || {}, {
-          sourceCombinedTalent: entry?.name || 'Block/Deflect',
-          flags: { isExpandedFromBlockDeflectCombined: true },
-        }, { inplace: false, recursive: true, overwrite: true }),
-      }));
-    });
-  }
-
   static _isRepeatableTalentEntry(entry = {}, resolvedData = null) {
     const system = entry?.system || resolvedData?.system || {};
     if (entry?.repeatable === true || resolvedData?.repeatable === true || system.repeatable === true || system.canRepeat === true || system.allowDuplicates === true) return true;
@@ -2819,6 +2792,121 @@ export class ProgressionFinalizer {
       || /can\s+be\s+taken\s+multiple\s+times/.test(text)
       || /may\s+be\s+selected\s+multiple\s+times/.test(text)
       || /taken\s+multiple\s+times/.test(text);
+  }
+
+
+
+  static _normalizeForcePowerMasterySlug(value) {
+    return String(value ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/[’']/g, '')
+      .replace(/\s*\([^)]*\)\s*$/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+  }
+
+  static _isForcePowerMasteryName(name) {
+    return this._normalizeForcePowerMasterySlug(name) === 'force-power-mastery';
+  }
+
+  static _getForcePowerMasteryChoice(entry = {}) {
+    const candidates = [
+      entry?.forcePowerMasteryChoice,
+      entry?.system?.forcePowerMastery,
+      entry?.system?.choice,
+      entry?.system?.selectedChoice,
+      entry?.flags?.swse?.forcePowerMastery,
+      entry?.flags?.swse?.progression?.forcePowerMastery,
+      entry?.flags?.['foundryvtt-swse']?.forcePowerMastery,
+    ].filter(Boolean);
+    for (const candidate of candidates) {
+      const slug = this._normalizeForcePowerMasterySlug(candidate?.slug || candidate?.powerSlug || candidate?.targetSlug || candidate?.id || candidate?.name || candidate?.label || candidate?.value);
+      if (!slug) continue;
+      return {
+        slug,
+        label: String(candidate?.label || candidate?.name || candidate?.powerName || candidate?.targetName || slug).trim() || slug,
+        powerId: candidate?.powerId || candidate?.id || candidate?.targetId || null,
+        powerName: candidate?.powerName || candidate?.name || candidate?.targetName || candidate?.label || slug,
+        isLightsaberFormPower: candidate?.isLightsaberFormPower === true,
+      };
+    }
+    const name = String(entry?.name || '').trim();
+    const match = name.match(/Force\s+Power\s+Mastery\s*\(([^)]+)\)/i);
+    if (match?.[1]) {
+      const slug = this._normalizeForcePowerMasterySlug(match[1]);
+      if (slug) return { slug, label: match[1].trim(), powerId: null, powerName: match[1].trim(), isLightsaberFormPower: false };
+    }
+    return null;
+  }
+
+  static _getForcePowerMasteryDisplayName(baseName, choice) {
+    const rootName = String(baseName || 'Force Power Mastery').replace(/\s*\([^)]*\)\s*$/g, '').trim() || 'Force Power Mastery';
+    return choice?.slug ? `${rootName} (${choice.slug})` : rootName;
+  }
+
+  static _getBlockDeflectGrantNames(entry = {}) {
+    const names = [];
+    const add = (value) => {
+      const text = String(value ?? '').trim();
+      if (text && !names.some(name => this._normalizeNameKey(name) === this._normalizeNameKey(text))) names.push(text);
+    };
+    const sources = [
+      entry?._data?.actualTalentsToGrant,
+      entry?._data?.grants,
+      entry?.system?.actualTalentsToGrant,
+      entry?.system?.grantsTalents,
+      entry?.system?.equivalentTalents,
+      entry?.flags?.swse?.actualTalentsToGrant,
+      entry?.flags?.swse?.grantsTalents,
+    ];
+    for (const source of sources) {
+      for (const value of Array.isArray(source) ? source : []) add(value);
+    }
+    const normalizedName = this._normalizeNameKey(entry?.name || entry?.label || entry);
+    const normalizedGrants = names.map(name => this._normalizeNameKey(name));
+    const isCombined = normalizedName === this._normalizeNameKey('Block & Deflect')
+      || entry?.system?.isBlockDeflectCombined === true
+      || entry?.system?.flags?.isBlockDeflectCombined === true
+      || entry?._data?.isBlockDeflectCombined === true
+      || entry?.flags?.swse?.isBlockDeflectCombined === true
+      || (normalizedGrants.includes(this._normalizeNameKey('Block')) && normalizedGrants.includes(this._normalizeNameKey('Deflect')));
+    return isCombined ? ['Block', 'Deflect'] : [];
+  }
+
+  static _clonePlainObject(value) {
+    if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
+    return JSON.parse(JSON.stringify(value ?? {}));
+  }
+
+  static _expandCombinedTalentGrantEntries(entry) {
+    const grantNames = this._getBlockDeflectGrantNames(entry);
+    if (!grantNames.length) return [entry];
+    return grantNames.map((name) => {
+      const cloneSource = entry && typeof entry === 'object' ? entry : { name: String(entry || 'Block & Deflect'), type: 'talent' };
+      const clone = this._clonePlainObject(cloneSource);
+      clone.id = name;
+      clone._id = null;
+      clone.name = name;
+      clone.label = name;
+      clone.type = clone.type || 'talent';
+      clone.system = {
+        ...(clone.system || {}),
+        isBlockDeflectCombined: false,
+        combinedHouseRuleSource: 'Block & Deflect',
+      };
+      delete clone.system.actualTalentsToGrant;
+      delete clone.system.grantsTalents;
+      delete clone.system.equivalentTalents;
+      if (clone.system.flags) clone.system.flags.isBlockDeflectCombined = false;
+      clone.flags = foundry.utils.mergeObject(clone.flags || {}, {
+        swse: {
+          combinedHouseRuleSource: 'Block & Deflect',
+          combinedHouseRuleComponent: name,
+        },
+      }, { inplace: false, recursive: true });
+      return clone;
+    });
   }
 
   static async _compileProgressionAbilityItems(actor, selections, sessionState) {
@@ -2848,9 +2936,11 @@ export class ProgressionFinalizer {
     );
 
     for (const domain of domainConfig) {
-      const baseRawValues = Array.isArray(selections[domain.key]) ? selections[domain.key] : [];
-      const rawValues = domain.key === 'talents' ? this._expandCombinedTalentEntries(baseRawValues) : baseRawValues;
-      for (const rawEntry of rawValues) {
+      const rawValues = Array.isArray(selections[domain.key]) ? selections[domain.key] : [];
+      const valuesToProcess = domain.key === 'talents'
+        ? rawValues.flatMap((entry) => this._expandCombinedTalentGrantEntries(entry))
+        : rawValues;
+      for (const rawEntry of valuesToProcess) {
         const removeCount = Math.max(0, Number(rawEntry?.removeCount || 0) || 0);
         if (domain.key === 'forcePowers' && removeCount > 0) {
           deleteItems.push(...this._collectOwnedForcePowerItemIds(actor, rawEntry, removeCount));
@@ -2861,23 +2951,34 @@ export class ProgressionFinalizer {
         const resolvedDoc = await domain.docGetter(rawEntry);
         const resolvedData = resolvedDoc?.toObject ? resolvedDoc.toObject() : null;
         const resolvedName = resolvedData?.name || rawEntry?.name || rawEntry?.id || String(rawEntry);
+        const forcePowerMasteryChoice = domain.key === 'forceTechniques'
+          ? this._getForcePowerMasteryChoice(rawEntry)
+          : null;
+        const isForcePowerMasteryEntry = Boolean(forcePowerMasteryChoice)
+          || (domain.key === 'forceTechniques' && this._isForcePowerMasteryName(resolvedName));
+        const storedName = forcePowerMasteryChoice
+          ? this._getForcePowerMasteryDisplayName(resolvedName, forcePowerMasteryChoice)
+          : resolvedName;
+        const selectionIdentity = rawEntry?.selectionId || (forcePowerMasteryChoice?.slug ? `${rawEntry?.id || rawEntry?.techniqueId || rawEntry?.baseTechniqueId || resolvedName}::${forcePowerMasteryChoice.slug}` : (rawEntry?.id || storedName));
 
         for (let idx = 0; idx < count; idx += 1) {
-          const sessionMarker = `${sessionId}::${domain.key}::${rawEntry?.id || resolvedName}::${idx}`;
-          const dedupeKey = `${domain.type}::${String(resolvedName || '').toLowerCase()}`;
-          const allowDuplicateForEntry = domain.allowDuplicates || (domain.key === 'talents' && this._isRepeatableTalentEntry(rawEntry, resolvedData));
+          const sessionMarker = `${sessionId}::${domain.key}::${selectionIdentity}::${idx}`;
+          const dedupeKey = `${domain.type}::${String(storedName || '').toLowerCase()}`;
+          const allowDuplicateForEntry = domain.allowDuplicates
+            || (domain.key === 'talents' && this._isRepeatableTalentEntry(rawEntry, resolvedData))
+            || (domain.key === 'forceTechniques' && isForcePowerMasteryEntry && Boolean(forcePowerMasteryChoice));
           if (existingBySessionMarker.has(sessionMarker)) continue;
           if (!allowDuplicateForEntry && existingByTypeAndName.has(dedupeKey)) continue;
 
           const baseItem = resolvedData || {
-            name: resolvedName,
+            name: storedName,
             type: domain.type,
             system: rawEntry?.system || {},
             img: rawEntry?.img || undefined,
           };
 
-          baseItem.name = baseItem.name || resolvedName;
-          baseItem.type = baseItem.type || domain.type;
+          baseItem.name = storedName || baseItem.name || resolvedName;
+          baseItem.type = ['forcePowers', 'forceRegimens', 'forceTechniques', 'forceSecrets'].includes(domain.key) ? domain.type : (baseItem.type || domain.type);
           baseItem.system = foundry.utils.mergeObject(baseItem.system || {}, rawEntry?.system || {}, {
             inplace: false,
             recursive: true,
@@ -2896,7 +2997,7 @@ export class ProgressionFinalizer {
             characterLevel: rawEntry?.characterLevel || rawEntry?.sourceCharacterLevel || null,
             sourceSession: sessionId,
             selectionKey: domain.key,
-            selectionId: rawEntry?.id || resolvedName,
+            selectionId: selectionIdentity,
           };
           baseItem.system.acquisition = foundry.utils.mergeObject(baseItem.system.acquisition || {}, acquisitionMeta, {
             inplace: false,
@@ -2923,6 +3024,18 @@ export class ProgressionFinalizer {
               grantSubtype: baseItem.system.provenance?.grantSubtype || 'progression',
             };
           }
+          if (domain.key === 'forceTechniques' && forcePowerMasteryChoice) {
+            baseItem.system.repeatable = true;
+            baseItem.system.choice = foundry.utils.mergeObject(baseItem.system.choice || {}, forcePowerMasteryChoice, { inplace: false, recursive: true, overwrite: true });
+            baseItem.system.forcePowerMastery = foundry.utils.mergeObject(baseItem.system.forcePowerMastery || {}, forcePowerMasteryChoice, { inplace: false, recursive: true, overwrite: true });
+            baseItem.system.selectionSlug = forcePowerMasteryChoice.slug;
+            baseItem.flags = foundry.utils.mergeObject(baseItem.flags || {}, {
+              swse: {
+                forcePowerMastery: forcePowerMasteryChoice,
+                progression: { forcePowerMastery: forcePowerMasteryChoice },
+              },
+            }, { inplace: false, recursive: true, overwrite: true });
+          }
           if (domain.key === 'medicalSecrets') {
             baseItem.system.medicalSecret = true;
             baseItem.system.sourceType = baseItem.system.sourceType || 'class';
@@ -2942,7 +3055,7 @@ export class ProgressionFinalizer {
               progression: {
                 sourceSession: sessionId,
                 selectionKey: domain.key,
-                selectionId: rawEntry?.id || resolvedName,
+                selectionId: selectionIdentity,
                 countIndex: idx,
                 slotType: rawEntry?.slotType || rawEntry?.source || null,
                 source: rawEntry?.source || rawEntry?.slotType || null,

@@ -7,7 +7,7 @@
     {{#if selectedCount}}
       <span class="prog-starship-maneuver-details__selected-badge">
         <i class="fas fa-star" aria-hidden="true"></i>
-        Selected {{selectedCount}} {{plural selectedCount "use" "uses"}}
+        Selected {{selectedCount}} use(s)
       </span>
     {{/if}}
   </div>
@@ -24,7 +24,7 @@
   <div class="prog-starship-maneuver-details__actions">
     {{#if selectedCount}}
       <p class="prog-starship-maneuver-details__hint prog-starship-maneuver-details__selection-breakdown">
-        <span><i class="fas fa-hourglass-end" aria-hidden="true"></i> Pending: <strong>{{selectedCount}}</strong> {{plural selectedCount "use" "uses"}}</span>
+        <span><i class="fas fa-hourglass-end" aria-hidden="true"></i> Pending: <strong>{{selectedCount}}</strong> use(s)</span>
         {{#if committedCount}}<span>Known: <strong>{{committedCount}}</strong></span>{{/if}}
         {{#if removedCount}}<span>Replacement slots opened: <strong>{{removedCount}}</strong></span>{{/if}}
       </p>

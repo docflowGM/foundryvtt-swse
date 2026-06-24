@@ -19,14 +19,25 @@ export class DroidTemplateDataLoader {
         return [];
       }
 
-      // Get index of all documents without loading full data
+      // Get index of all documents without loading full data.
+      // Some older droid packs contained generated npc-* actor husks next to the
+      // richer published statblock record of the same name. Hide those husks so
+      // the import wizard cannot select a 10/10/10 default template.
       const index = await pack.getIndex();
+      const entries = Array.from(index || []);
+      const richNames = new Set(entries
+        .filter(entry => !String(entry?._id || entry?.id || '').startsWith('npc-'))
+        .map(entry => String(entry?.name || '').trim().toLowerCase())
+        .filter(Boolean));
       const templates = [];
 
-      for (const entry of index) {
+      for (const entry of entries) {
+        const entryId = entry._id || entry.id;
+        const entryNameKey = String(entry.name || '').trim().toLowerCase();
+        if (String(entryId || '').startsWith('npc-') && richNames.has(entryNameKey)) continue;
         templates.push({
           category: 'droid',
-          id: entry._id,
+          id: entryId,
           name: entry.name,
           packName: 'foundryvtt-swse.droids',
           portrait: entry.img || 'systems/foundryvtt-swse/assets/token-default.png',

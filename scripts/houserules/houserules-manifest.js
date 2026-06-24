@@ -620,6 +620,19 @@ export const HOUSERULE_MANIFEST = [
     config: true
   },
   {
+    key: 'forcePowerMasteryIncludesLightsaberForms',
+    name: 'Force Power Mastery: Include Lightsaber Forms',
+    category: 'force',
+    description: 'Allows Force Power Mastery to target known Lightsaber Form powers in addition to standard Force Powers. Default off.',
+    type: 'boolean',
+    choices: null,
+    default: false,
+    status: 'wired',
+    tags: ['house-rule', 'automation'],
+    presetVisible: true,
+    config: true
+  },
+  {
     key: 'blockDeflectTalents',
     name: 'Block + Deflect Behavior',
     category: 'force',

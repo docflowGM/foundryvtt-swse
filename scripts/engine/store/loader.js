@@ -38,7 +38,7 @@ function loadCache() {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
-    if (!parsed.metadata.loadedAt || !parsed.metadata.version || parsed.metadata.version < 5 || (parsed.items.length + parsed.actors.length) === 0) {
+    if (!parsed.metadata.loadedAt || !parsed.metadata.version || parsed.metadata.version < 6 || (parsed.items.length + parsed.actors.length) === 0) {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
@@ -334,7 +334,7 @@ export async function loadRawStoreData({ useCache = true } = {}) {
   /* ------------------------------------------- */
 
   const metadata = {
-    version: 5,
+    version: 6,
     loadedAt: Date.now(),
     packsUsed: flattenPackNames([
       STORE_PACKS.WEAPON_PACKS,
