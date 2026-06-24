@@ -5,7 +5,7 @@
  * PURE ENGINE LAYER - NO UI IMPORTS
  *
  * Responsibilities:
- * - Calculate force power grants from feats, class levels, templates (pure logic)
+ * - Calculate force power grants from Force Training and explicit house-rule sources (pure logic)
  * - Collect available powers from compendium (data layer)
  * - Apply selected powers to actor via ActorEngine (mutation)
  * - Return structured trigger results (no UI orchestration)
@@ -21,9 +21,8 @@
  *   Add field: system.forcePowerGrants: number
  *   Example: "Force Training" should have system.forcePowerGrants: 1
  *
- * For Classes (foundryvtt-swse.classes):
- *   Add field to level_progression entries: force_power_grants: number
- *   Example: Jedi level 3 should have level_progression[2].force_power_grants: 1
+ * Force Powers are intentionally not granted by class levels. Jedi level 3/7/11
+ * grant talents/general/class choices elsewhere, not free Force Powers.
  *
  * The engine will prefer compendium data but fallback to progression-data.js
  */
@@ -72,21 +71,34 @@ export class ForcePowerEngine {
       }
     }
 
-    // Check for structured field in compendium
-    if (featDoc?.system?.forcePowerGrants) {
-      return featDoc.system.forcePowerGrants;
+    const normalizedFeatName = String(featName || featDoc?.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ');
+
+    // RAW SWSE: Force Sensitivity never grants a Force Power unless the explicit
+    // house rule is enabled. It only unlocks access to the Force suite.
+    if (normalizedFeatName === 'force sensitivity' || normalizedFeatName === 'force sensitive') {
+      let houseRuleEnabled = false;
+      try { houseRuleEnabled = game.settings?.get?.('foundryvtt-swse', 'forceSensitivityGrantsForcePower') === true; }
+      catch (_err) { houseRuleEnabled = false; }
+      return houseRuleEnabled ? 1 : 0;
+    }
+
+    // Check for structured field in compendium. Only Force Training is allowed
+    // to use forcePowerGrants for player Force Power acquisition.
+    if (normalizedFeatName === 'force training' && featDoc?.system?.forcePowerGrants) {
+      return Number(featDoc.system.forcePowerGrants) || 0;
     }
 
     // Fallback to hardcoded data
-    const f = FORCE_POWER_DATA.feats[featName];
+    const f = Object.entries(FORCE_POWER_DATA.feats || {})
+      .find(([name]) => String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ') === normalizedFeatName)?.[1];
     if (!f) {return 0;}
 
     // Handle ability modifier-based grants (Force Training)
-    if (f.grants === 'ability_mod') {
+    if (normalizedFeatName === 'force training' && f.grants === 'ability_mod') {
       return this._countFromAbilityMod(actor);
     }
 
-    return f.grants || 0;
+    return normalizedFeatName === 'force training' ? (Number(f.grants) || 0) : 0;
   }
 
   /**
@@ -137,24 +149,10 @@ export class ForcePowerEngine {
  * @returns {Promise<number>} Number of powers granted
  */
 static async _countFromClassLevel(className, level) {
-  try {
-    const { getClassData } = await import("/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js");
-    const classData = await getClassData(className);
-
-    if (classData?._raw?.level_progression) {
-      const levelData = classData._raw.level_progression.find(lp => lp.level === level);
-      if (levelData?.force_power_grants) {
-        return levelData.force_power_grants;
-      }
-    }
-  } catch (e) {
-    console.warn(`ForcePowerEngine: Failed to load class "${className}" from compendium`, e);
-  }
-
-  const c = FORCE_POWER_DATA.classes[className];
-  if (!c) {return 0;}
-  const L = String(level);
-  return (c[L] && c[L].powers) ? c[L].powers : 0;
+  // RAW SWSE and system policy: player Force Powers are granted by Force Training,
+  // or by the explicit Force Sensitivity house rule. Class progression entries
+  // such as legacy force_power_grants on Jedi 3/7/11 must not create slots.
+  return 0;
 }
 
 static _countFromTemplate(templateId) {

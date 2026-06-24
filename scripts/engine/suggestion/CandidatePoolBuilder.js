@@ -105,6 +105,17 @@ export class CandidatePoolBuilder {
    * @private
    */
   static async _filterClassBonusFeats(actor, slotContext, allCandidates) {
+    const actorClassFallbacks = Array.from(actor?.items || [])
+      .filter((item) => item?.type === 'class')
+      .flatMap((item) => [
+        item?.system?.classId,
+        item?.system?.id,
+        item?.id,
+        item?._id,
+        item?.name,
+        item?.system?.class_name,
+      ]);
+
     const classLookupKeys = Array.from(new Set([
       ...(Array.isArray(slotContext.classLookupKeys) ? slotContext.classLookupKeys : []),
       slotContext.classId,
@@ -112,6 +123,7 @@ export class CandidatePoolBuilder {
       slotContext.selectedClass?.id,
       slotContext.selectedClass?._id,
       slotContext.selectedClass?.name,
+      ...actorClassFallbacks,
     ].map((value) => String(value || '').trim()).filter(Boolean)));
 
     if (!classLookupKeys.length) {

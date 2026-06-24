@@ -428,8 +428,9 @@ export class FeatGrantEntitlementResolver {
 
     // Diagnostic logging for Force-related entitlements
     const forcePowerEntitlements = entitlements.filter(e => e.grantType === 'forcePowerSlots');
-    if (forcePowerEntitlements.length > 0 || entries.some(e => /force training|force sensitivity/i.test(e.name || ''))) {
-      console.log('[FeatGrantEntitlementResolver.resolve] Force suite diagnostics', {
+    if (globalThis.CONFIG?.debug?.swseForceEntitlements
+        && (forcePowerEntitlements.length > 0 || entries.some(e => /force training|force sensitivity/i.test(e.name || '')))) {
+      console.debug('[FeatGrantEntitlementResolver.resolve] Force suite diagnostics', {
         allEntries: entries.map(e => ({ name: e.name, sourceType: e.sourceType })),
         forcePowerEntitlements: forcePowerEntitlements.map(e => ({
           sourceName: e.sourceName,

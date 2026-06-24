@@ -339,7 +339,9 @@ export async function calculateSaveBonus(classLevels, saveType) {
 /* --- Force Power Data --- */
 export const FORCE_POWER_DATA = {
   feats: {
-    'Force Sensitivity': { grants: 1 },
+    // RAW SWSE: Force Sensitivity unlocks Force use; it does not grant a Force Power.
+    // Tables may enable the forceSensitivityGrantsForcePower house rule where checked.
+    'Force Sensitivity': { grants: 0 },
     'Force Training': { grants: 'ability_mod', training: true }
   },
   templates: {

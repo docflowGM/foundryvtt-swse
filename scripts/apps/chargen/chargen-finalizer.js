@@ -234,6 +234,10 @@ export class ChargenFinalizer {
     try {
       const feats = selectedFeats || [];
       const hasForceSensitivity = feats.some(f => f.name?.toLowerCase().includes('force sensitivity'));
+      const forceSensitivityGrantsPower = (() => {
+        try { return game.settings?.get?.('foundryvtt-swse', 'forceSensitivityGrantsForcePower') === true; }
+        catch (_err) { return false; }
+      })();
       const forceTrainingFeats = feats.filter(f => f.name?.toLowerCase().includes('force training'));
 
       // Determine the ability modifier for Force Training powers
@@ -243,8 +247,9 @@ export class ChargenFinalizer {
       let powerIndex = 0;
       const enriched = [];
 
-      // First power goes to Force Sensitivity (if it exists)
-      if (hasForceSensitivity && powerIndex < powers.length) {
+      // First power goes to Force Sensitivity only when the explicit house rule is active.
+      // RAW SWSE: Force Sensitivity unlocks access, not a free Force Power.
+      if (hasForceSensitivity && forceSensitivityGrantsPower && powerIndex < powers.length) {
         const power = foundry.utils.deepClone(powers[powerIndex]);
         if (!power.system) {
           power.system = {};
@@ -271,7 +276,7 @@ export class ChargenFinalizer {
 
           // Determine subtype: first power is baseline, rest are modifier-extra
           const isContinuationFromFS = i === powerIndex && !hasForceSensitivity;
-          const subtypeIndex = i - (hasForceSensitivity ? 1 : 0);
+          const subtypeIndex = i - ((hasForceSensitivity && forceSensitivityGrantsPower) ? 1 : 0);
           const subtype = subtypeIndex === 0 ? 'baseline' : 'modifier-extra';
 
           power.system.provenance = ForceProvenanceEngine.createProvenanceMetadata(

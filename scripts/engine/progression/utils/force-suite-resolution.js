@@ -222,9 +222,11 @@ export async function resolveForcePowerEntitlements(shell, actor) {
       const pendingMod = pendingState?.attributes?.[alias]?.mod ?? pendingState?.attributes?.[alias]?.modifier ?? pendingState?.abilities?.[alias]?.mod ?? pendingState?.abilities?.[alias]?.modifier;
       // Also read from draftSelections attributes (set by the attribute step) and derived
       const draftAttrs = shell?.progressionSession?.draftSelections?.attributes ?? shell?.draftSelections?.attributes ?? null;
-      const draftMod = draftAttrs?.modifiers?.[alias] ?? draftAttrs?.finalValues?.[alias] !== undefined
-        ? Math.floor(((Number(draftAttrs?.finalValues?.[alias]) || 10) - 10) / 2)
-        : null;
+      const explicitDraftMod = draftAttrs?.modifiers?.[alias];
+      const draftFinalValue = draftAttrs?.finalValues?.[alias];
+      const draftMod = explicitDraftMod !== undefined
+        ? explicitDraftMod
+        : (draftFinalValue !== undefined ? Math.floor(((Number(draftFinalValue) || 10) - 10) / 2) : null);
       for (const value of [draftMod, pendingMod, system.derived?.attributes?.[alias]?.mod, system.abilities?.[alias]?.mod, system.abilities?.[alias]?.modifier, system.attributes?.[alias]?.mod, system.attributes?.[alias]?.modifier, system.stats?.[alias]?.mod, system.stats?.[alias]?.modifier]) {
         const number = asFiniteNumber(value);
         if (number !== null) return number;
@@ -258,6 +260,36 @@ export async function resolveForcePowerEntitlements(shell, actor) {
     .replace(/[^a-z0-9]+/g, ' ')
     .trim();
 
+  const entitlementSourceKey = (entry) => {
+    const sourceName = normalizeGrantName(entry?.source?.featName || entry?.sourceName || entry?.name || '');
+    const sourceId = String(
+      entry?.source?.featId
+      || entry?.source?.featItemId
+      || entry?.source?.sourceItemId
+      || entry?.sourceItemId
+      || entry?.sourceId
+      || entry?.featId
+      || entry?.featItemId
+      || ''
+    ).trim();
+    const type = PendingEntitlementService.normalizeType(entry?.type || entry?.kind || entry?.grantType || '');
+    // Entitlement ids are random per render; do not use them for duplicate
+    // detection. Use the stable feat/source identity when present.
+    return `${type || 'unknown'}::${sourceName || 'unknown'}::${sourceId || 'no-source-id'}`;
+  };
+
+  const dedupeEntitlementsBySource = (entries = []) => {
+    const out = [];
+    const seen = new Set();
+    for (const entry of entries || []) {
+      if (!entry) continue;
+      const key = entitlementSourceKey(entry);
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(entry);
+    }
+    return out;
+  };
 
   const collectPendingForceTrainingCount = () => {
     const containers = [
@@ -284,11 +316,11 @@ export async function resolveForcePowerEntitlements(shell, actor) {
     // active-step computer asks whether Force Powers should open. Count those
     // Force Training source records too so a stale/legacy quantity of 1 does
     // not collapse the Force Training formula to a single power.
-    const entitlementEntries = collectPendingEntitlements();
+    const entitlementEntries = dedupeEntitlementsBySource(collectPendingEntitlements());
     const entitlementCount = entitlementEntries.reduce((sum, entry) => {
       const sourceName = normalizeGrantName(entry?.source?.featName || entry?.sourceName || entry?.name || '');
-      const type = String(entry?.type || entry?.kind || entry?.grantType || '').toLowerCase();
-      if (sourceName !== 'force training' && !/force[_ -]?power/.test(type)) return sum;
+      const type = PendingEntitlementService.normalizeType(entry?.type || entry?.kind || entry?.grantType || '');
+      if (sourceName !== 'force training' && type !== 'force_power_pick') return sum;
       return sum + (Number(entry?.source?.count || 1) || 1);
     }, 0);
 
@@ -311,7 +343,7 @@ export async function resolveForcePowerEntitlements(shell, actor) {
       const list = Array.isArray(value) ? value : (value ? [value] : []);
       for (const entry of list) {
         if (!entry) continue;
-        const key = entry.id || entry._id || `${entry.type || ''}:${entry.sourceId || ''}:${entry.sourceName || ''}:${entry.count || ''}`;
+        const key = entitlementSourceKey(entry);
         if (seen.has(key)) continue;
         seen.add(key);
         entries.push(entry);
@@ -366,13 +398,13 @@ export async function resolveForcePowerEntitlements(shell, actor) {
             const levelContext = buildLevelUpEventContext(actor, getProgressionSessionLike(shell), { selectedClass: committedClass });
             const classLevel = levelContext?.selectedClassNextLevel || 1;
             const levelEntry = getClassLevelProgressionEntry(classModel, classLevel);
-            const classGrants = Number(levelEntry?.force_power_grants || levelEntry?.forcePowerGrants || 0) || 0;
-            if (classGrants > 0) {
-              totalEntitlements += classGrants;
-              reasons.push(`Class level ${classLevel}: force_power_grants (+${classGrants})`);
-            }
+            const ignoredLegacyClassGrants = Number(levelEntry?.force_power_grants || levelEntry?.forcePowerGrants || 0) || 0;
+            // Force Powers are not granted by Jedi/class levels. Legacy data may
+            // still contain force_power_grants on Jedi 3/7/11; ignore it so level
+            // 3 remains a general feat only unless Force Training is selected.
             diagnostics.classResolution.classLevel = classLevel;
-            diagnostics.classResolution.forcePowerGrants = classGrants;
+            diagnostics.classResolution.forcePowerGrants = 0;
+            diagnostics.classResolution.ignoredLegacyClassForcePowerGrants = ignoredLegacyClassGrants;
           } else {
             // Use ForcePowerEngine to calculate from class + feats for legacy/chargen flows.
             try {
@@ -381,12 +413,12 @@ export async function resolveForcePowerEntitlements(shell, actor) {
               const entitlements = await ForcePowerEngine.detectForcePowerTriggers(actor, {});
               diagnostics.engineDetection = {
                 success: !!entitlements,
-                total: entitlements?.total || 0,
+                total: entitlements?.selectable ?? entitlements?.total ?? 0,
                 message: entitlements ? 'engine detection succeeded' : 'engine detection returned no data',
               };
 
-              if (entitlements && entitlements.total) {
-                totalEntitlements = entitlements.total;
+              if (entitlements && (entitlements.selectable ?? entitlements.total)) {
+                totalEntitlements = entitlements.selectable ?? entitlements.total;
                 reasons.push(`Force Power triggers detected: ${totalEntitlements}`);
               } else {
                 swseLogger.warn(`[ForceSuiteResolution.ForcePower] Engine detection failed for ${actorName}`, {
@@ -475,12 +507,18 @@ export async function resolveForcePowerEntitlements(shell, actor) {
 
       const forceTrainingEntitlements = allForceEntitlements
         .filter((entry) => entry.grantType === 'forcePowerSlots')
+        .filter((entry) => normalizeGrantName(entry?.sourceName) === 'force training')
         .filter((entry) => !isLevelUpLike || entry.sourceType === 'pendingFeat');
-      const forceTrainingSlots = forceTrainingEntitlements.reduce((sum, entry) => sum + (Number(entry.count) || 0), 0);
+      const uniqueForceTrainingEntitlements = dedupeEntitlementsBySource(forceTrainingEntitlements.map((entry) => ({
+        ...entry,
+        type: 'force_power_pick',
+        source: { featName: entry.sourceName, featId: entry.sourceItemId }
+      })));
+      const forceTrainingSlots = uniqueForceTrainingEntitlements.reduce((sum, entry) => sum + (Number(entry.count) || 0), 0);
 
       swseLogger.debug(`[ForceSuiteResolution.ForcePower] Force Training slot calculation`, {
         sessionId,
-        forceTrainingEntitlements: forceTrainingEntitlements.map(e => ({
+        forceTrainingEntitlements: uniqueForceTrainingEntitlements.map(e => ({
           sourceName: e.sourceName,
           sourceType: e.sourceType,
           count: e.count
@@ -490,7 +528,8 @@ export async function resolveForcePowerEntitlements(shell, actor) {
 
       let finalForceTrainingSlots = forceTrainingSlots;
       const pendingForceTrainingCount = collectPendingForceTrainingCount();
-      const pendingEntitlements = collectPendingEntitlements();
+      const pendingEntitlements = dedupeEntitlementsBySource(collectPendingEntitlements())
+        .filter((entry) => normalizeGrantName(entry?.source?.featName || entry?.sourceName || entry?.name || '') === 'force training');
       const pendingEntitlementSlots = PendingEntitlementService.countUnspentByType(
         pendingEntitlements,
         'force_power_pick'
@@ -510,10 +549,10 @@ export async function resolveForcePowerEntitlements(shell, actor) {
 
       if (finalForceTrainingSlots > 0) {
         totalEntitlements += finalForceTrainingSlots;
-        if (!reasons.some(reason => String(reason).startsWith('Force Training:'))) reasons.push(getForceTrainingFormulaLabel(Math.max(1, pendingForceTrainingCount || forceTrainingEntitlements.length || 1)));
+        if (!reasons.some(reason => String(reason).startsWith('Force Training:'))) reasons.push(getForceTrainingFormulaLabel(Math.max(1, pendingForceTrainingCount || uniqueForceTrainingEntitlements.length || 1)));
         diagnostics.forceTrainingEntitlements = {
           total: finalForceTrainingSlots,
-          entries: forceTrainingEntitlements.length,
+          entries: uniqueForceTrainingEntitlements.length,
           pendingForceTrainingCount,
           pendingEntitlementCount: pendingEntitlements.length,
           pendingEntitlementSlots,

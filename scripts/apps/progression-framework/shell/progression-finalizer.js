@@ -1804,7 +1804,7 @@ export class ProgressionFinalizer {
     // paths. Unknown values are unsafe and should be ignored until the picker
     // can provide a real canonical skill key.
     if (!resolved) {
-      swseLogger.warn('[ProgressionFinalizer] Ignoring unknown skill key during finalization', { raw });
+      swseLogger.debug('[ProgressionFinalizer] Ignoring unknown skill key during finalization', { raw });
       return '';
     }
 

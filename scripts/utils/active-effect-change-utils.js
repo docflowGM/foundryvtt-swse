@@ -29,6 +29,12 @@ const TYPE_BY_LEGACY_MODE = Object.freeze({
 function normalizeType(value, fallback = 'custom') {
   const key = String(value ?? fallback).trim().toLowerCase().replace(/[_\s-]+/g, '');
   const aliases = {
+    '0': 'custom',
+    '1': 'multiply',
+    '2': 'add',
+    '3': 'downgrade',
+    '4': 'upgrade',
+    '5': 'override',
     custom: 'custom',
     multiply: 'multiply',
     mul: 'multiply',
@@ -43,7 +49,23 @@ function normalizeType(value, fallback = 'custom') {
     override: 'override',
     ov: 'override'
   };
-  return aliases[key] || fallback;
+  const normalized = aliases[key] || fallback;
+  return String(normalized || fallback).length >= 3 ? normalized : fallback;
+}
+
+function coerceRuntimeChangeType(value, fallback = 'custom') {
+  const normalized = normalizeType(value, fallback);
+  const changeTypes = globalThis.CONST?.ACTIVE_EFFECT_CHANGE_TYPES ?? {};
+  const candidates = [
+    changeTypes[normalized],
+    changeTypes[normalized.toUpperCase?.() || normalized],
+    normalized
+  ];
+  for (const candidate of candidates) {
+    const stringValue = String(candidate ?? '').trim();
+    if (stringValue.length >= 3) return stringValue;
+  }
+  return fallback;
 }
 
 export function activeEffectUsesStringTypes() {
@@ -57,12 +79,15 @@ export function activeEffectUsesStringTypes() {
 export function activeEffectChangeType(type = 'custom') {
   const normalized = normalizeType(type);
   if (activeEffectUsesStringTypes()) {
-    const changeTypes = globalThis.CONST?.ACTIVE_EFFECT_CHANGE_TYPES ?? {};
     return {
-      type: changeTypes[normalized] ?? changeTypes[normalized.toUpperCase()] ?? normalized
+      type: coerceRuntimeChangeType(normalized)
     };
   }
+  // Foundry v13+ SWSE schemas may validate the string `type` field even when
+  // older callers still expect numeric `mode`. Provide both so runtime-created
+  // effects never fail with a one-character/numeric type value.
   return {
+    type: coerceRuntimeChangeType(normalized),
     mode: LEGACY_MODE_BY_TYPE[normalized] ?? LEGACY_MODE_BY_TYPE.custom
   };
 }
@@ -75,13 +100,20 @@ export function normalizeActiveEffectChangeForRuntime(change = {}) {
     const explicitType = out.type ?? TYPE_BY_LEGACY_MODE[Number(out.mode)];
     const normalized = normalizeType(explicitType, 'custom');
     delete out.mode;
-    return { ...out, ...activeEffectChangeType(normalized) };
+    const normalizedChange = { ...out, ...activeEffectChangeType(normalized) };
+    if (!normalizedChange.type || String(normalizedChange.type).trim().length < 3) {
+      normalizedChange.type = 'custom';
+    }
+    return normalizedChange;
   }
 
   const explicitMode = Number(out.mode);
   const normalized = normalizeType(out.type ?? TYPE_BY_LEGACY_MODE[explicitMode], 'custom');
-  delete out.type;
-  return { ...out, ...activeEffectChangeType(normalized) };
+  const normalizedChange = { ...out, ...activeEffectChangeType(normalized) };
+  if (!normalizedChange.type || String(normalizedChange.type).trim().length < 3) {
+    normalizedChange.type = 'custom';
+  }
+  return normalizedChange;
 }
 
 export function normalizeActiveEffectDataForRuntime(effectData = []) {
@@ -90,6 +122,16 @@ export function normalizeActiveEffectDataForRuntime(effectData = []) {
     const changes = Array.isArray(effect.changes)
       ? effect.changes.map((change) => normalizeActiveEffectChangeForRuntime(change))
       : effect.changes;
-    return { ...effect, ...(changes !== undefined ? { changes } : {}) };
+    const systemChanges = Array.isArray(effect.system?.changes)
+      ? effect.system.changes.map((change) => normalizeActiveEffectChangeForRuntime(change))
+      : effect.system?.changes;
+    const system = effect.system && systemChanges !== undefined
+      ? { ...effect.system, changes: systemChanges }
+      : effect.system;
+    return {
+      ...effect,
+      ...(changes !== undefined ? { changes } : {}),
+      ...(system !== undefined ? { system } : {})
+    };
   });
 }
