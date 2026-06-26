@@ -13,6 +13,42 @@ function toSignedClass(value) {
   return n > 0 ? 'mod--positive' : n < 0 ? 'mod--negative' : 'mod--zero';
 }
 
+function toSignedText(value) {
+  const n = Number(value) || 0;
+  return n >= 0 ? `+${n}` : String(n);
+}
+
+function normalizeSkillBreakdownParts(skill = {}, fallback = {}) {
+  const raw = Array.isArray(skill?.math?.parts) ? skill.math.parts : (Array.isArray(skill?.breakdown) ? skill.breakdown : []);
+  if (raw.length) {
+    return raw
+      .map((part) => ({
+        key: part?.key || '',
+        label: normalizeText(part?.label || part?.key || 'Modifier'),
+        value: Number(part?.value) || 0,
+        source: normalizeText(part?.source || '')
+      }))
+      .filter(part => part.label);
+  }
+  return [
+    { key: 'ability', label: `${String(fallback.selectedAbility || '').toUpperCase()} modifier`, value: Number(fallback.abilityMod) || 0, source: 'ability' },
+    { key: 'halfLevel', label: '1/2 heroic level', value: Number(fallback.halfLevel) || 0, source: 'level' },
+    { key: 'trained', label: 'Trained', value: fallback.trained ? 5 : 0, source: 'training' },
+    { key: 'focus', label: 'Skill Focus', value: fallback.focused ? 5 : 0, source: 'focus' },
+    { key: 'misc', label: 'Misc', value: Number(fallback.miscMod) || 0, source: 'actor.system.skills' },
+    { key: 'armor', label: 'Armor check penalty', value: Number(skill?.armorPenalty) || 0, source: 'armor' },
+    { key: 'condition', label: 'Condition track', value: Number(skill?.conditionPenalty) || 0, source: 'condition-track' }
+  ];
+}
+
+function buildSkillMathTooltip({ label, total, parts = [], skill = {} } = {}) {
+  const shown = parts.filter(part => (Number(part.value) || 0) !== 0 || ['ability', 'halfLevel', 'trained', 'focus', 'misc'].includes(part.key));
+  const partText = shown.map(part => `${part.label}: ${toSignedText(part.value)}`).join(' | ');
+  const substitute = skill?.substitutionNote ? ` | ${skill.substitutionNote}` : '';
+  const verified = skill?.math?.verified === false ? ' | Warning: displayed total did not verify cleanly' : '';
+  return `${label || 'Skill'} = ${toSignedText(total)}${partText ? ` (${partText})` : ''}${substitute}${verified}`;
+}
+
 function toCountBadge(value) {
   const n = Number(value) || 0;
   return n > 0 ? String(n) : null;
@@ -603,7 +639,19 @@ function buildSkillsTab(context, abilities, identity) {
       const abilityMod = Number.isFinite(Number(skill?.abilityMod))
         ? Number(skill.abilityMod)
         : (Number.isFinite(derivedAbilityMod) ? derivedAbilityMod : 0);
-      const miscMod = Number.isFinite(Number(systemSkill?.miscMod)) ? Number(systemSkill.miscMod) : Number(skill?.miscMod) || 0;
+      const level = Number(identity?.level) || Number(context.actor?.system?.level) || 1;
+      const fallbackHalfLevel = Math.floor(level / 2);
+      const halfLevel = Number.isFinite(Number(skill?.halfLevel)) ? Number(skill.halfLevel) : fallbackHalfLevel;
+      const miscMod = Number.isFinite(Number(skill?.miscMod)) ? Number(skill.miscMod) : (Number.isFinite(Number(systemSkill?.miscMod)) ? Number(systemSkill.miscMod) : 0);
+      const trained = systemSkill?.trained === true || skill?.trained === true;
+      const focused = systemSkill?.focused === true || skill?.focused === true;
+      const breakdownParts = normalizeSkillBreakdownParts(skill, { selectedAbility, abilityMod, halfLevel, trained, focused, miscMod });
+      const mathTooltip = buildSkillMathTooltip({
+        label: CANONICAL_SKILL_DEFS[key]?.label || humanizeSkillLabel(key, skill?.label),
+        total,
+        parts: breakdownParts,
+        skill
+      });
 
       return {
         key,
@@ -616,24 +664,31 @@ function buildSkillsTab(context, abilities, identity) {
         selectedAbilityLabel: abilityMap.get(selectedAbility) || titleCase(selectedAbility),
         abilityMod,
         abilityModClass: toSignedClass(abilityMod),
-        halfLevel: Number(skill?.halfLevel) || 0,
-        halfLevelClass: toSignedClass(skill?.halfLevel),
+        halfLevel,
+        halfLevelClass: toSignedClass(halfLevel),
         miscMod,
         miscModClass: toSignedClass(miscMod),
         tooltipKey: skillTooltipKey,
+        breakdownParts,
+        mathTooltip,
         breakdown: {
           ability: abilityMap.get(selectedAbility) || titleCase(selectedAbility),
           abilityMod,
-          halfLevel: Number(skill?.halfLevel) || 0,
-          trained: systemSkill?.trained === true || skill?.trained === true ? 5 : 0,
-          focus: systemSkill?.focused === true || skill?.focused === true ? 5 : 0,
+          halfLevel,
+          trained: Number(skill?.trainedBonus) || (trained ? 5 : 0),
+          focus: Number(skill?.focusBonus) || (focused ? 5 : 0),
           misc: miscMod,
           armor: Number(skill?.armorPenalty) || 0,
+          condition: Number(skill?.conditionPenalty) || 0,
+          feat: Number(skill?.featBonus) || 0,
+          state: Number(skill?.stateBonus) || 0,
+          species: Number(skill?.speciesBonus) || 0,
+          occupation: Number(skill?.occupationBonus) || 0,
           total
         },
         armorPenalty: Number(skill?.armorPenalty) || 0,
-        trained: systemSkill?.trained === true || skill?.trained === true,
-        focused: systemSkill?.focused === true || skill?.focused === true,
+        trained,
+        focused,
         favorite: systemSkill?.favorite === true || skill?.favorite === true,
         extraUsesGrouped,
         extraUsesCount,

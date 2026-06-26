@@ -352,11 +352,43 @@ export class LightsaberConstructionEngine {
       chassisId: cfg.chassisId ?? item?.system?.chassisId ?? null,
       crystalId: cfg.crystalId ?? null,
       accessoryIds: Array.isArray(cfg.accessoryIds) ? [...cfg.accessoryIds] : [],
-      bladeColor: flags.bladeColor ?? 'blue',
+      bladeColor: flags.bladeColor ?? cfg.bladeColor ?? 'blue',
+      lightsaberStyle: flags.lightsaberStyle ?? cfg.lightsaberStyle ?? item?.system?.visual?.lightsaberStyle ?? 'auto',
       builtBy: flags.builtBy ?? null,
       attunedBy: flags.attunedBy ?? null,
       selfBuilt: !!flags.builtBy
     };
+  }
+
+  static getUseTheForceTotal(actor) {
+    const direct = [
+      actor?.system?.derived?.skills?.useTheForce?.total,
+      actor?.system?.derived?.skillsByKey?.useTheForce?.total,
+      actor?.system?.skills?.useTheForce?.total,
+      actor?.system?.skills?.useTheForce?.value,
+      actor?.system?.skills?.useTheForce?.mod
+    ];
+    for (const value of direct) {
+      const n = Number(value);
+      if (Number.isFinite(n)) return n;
+    }
+
+    const skill = actor?.system?.skills?.useTheForce ?? {};
+    const abilityKey = skill.selectedAbility || skill.ability || 'cha';
+    const ability = actor?.system?.derived?.attributes?.[abilityKey]
+      ?? actor?.system?.attributes?.[abilityKey]
+      ?? actor?.system?.abilities?.[abilityKey]
+      ?? {};
+    const abilityTotal = Number(ability.total);
+    const abilityMod = Number.isFinite(Number(ability.mod))
+      ? Number(ability.mod)
+      : (Number.isFinite(abilityTotal) ? Math.floor((abilityTotal - 10) / 2) : 0);
+    const heroicLevel = getHeroicLevel(actor);
+    const halfLevel = Math.max(0, Math.floor((Number(heroicLevel) || Number(actor?.system?.level) || 1) / 2));
+    const trained = skill.trained === true ? 5 : 0;
+    const focused = skill.focused === true ? 5 : 0;
+    const misc = Number(skill.miscMod ?? skill.misc ?? 0) || 0;
+    return abilityMod + halfLevel + trained + focused + misc;
   }
 
   static async getBuildPreview(actor, config) {
@@ -374,7 +406,7 @@ export class LightsaberConstructionEngine {
     const finalDc = baseDc + crystalDcMod + accessoryDcMod;
     const baseCost = chassis.system?.baseCost ?? chassis.system?.cost ?? 0;
     const totalCost = baseCost + (crystal.system?.cost ?? 0) + accessories.reduce((sum, a) => sum + (a.system?.cost ?? 0), 0);
-    const modifier = actor.system?.skills?.useTheForce?.total ?? 0;
+    const modifier = this.getUseTheForceTotal(actor);
     const take10Total = modifier + 10;
     return {
       success: true,
@@ -422,15 +454,22 @@ export class LightsaberConstructionEngine {
       'system.modifiers': modifiers,
       'flags.foundryvtt-swse.bladeColor': config?.bladeColor || 'blue',
       'flags.swse.bladeColor': config?.bladeColor || 'blue',
+      'flags.foundryvtt-swse.lightsaberStyle': config?.lightsaberStyle || config?.styleKey || 'auto',
+      'flags.swse.lightsaberStyle': config?.lightsaberStyle || config?.styleKey || 'auto',
+      'system.visual.lightsaberStyle': config?.lightsaberStyle || config?.styleKey || 'auto',
       'flags.foundryvtt-swse.lightsaberConfig': {
         chassisId: resolvedChassisId,
         crystalId: crystal.id,
-        accessoryIds: accessories.map(a => a.id)
+        accessoryIds: accessories.map(a => a.id),
+        bladeColor: config?.bladeColor || 'blue',
+        lightsaberStyle: config?.lightsaberStyle || config?.styleKey || 'auto'
       },
       'flags.swse.lightsaberConfig': {
         chassisId: resolvedChassisId,
         crystalId: crystal.id,
-        accessoryIds: accessories.map(a => a.id)
+        accessoryIds: accessories.map(a => a.id),
+        bladeColor: config?.bladeColor || 'blue',
+        lightsaberStyle: config?.lightsaberStyle || config?.styleKey || 'auto'
       }
     };
     if (damageTypeOverride) update['system.damageType'] = String(damageTypeOverride).toLowerCase();
@@ -528,8 +567,7 @@ export class LightsaberConstructionEngine {
       // Step 7: Execute Use the Force roll
       // Take 10 is only allowed if 10 + modifier >= DC (enforced by UI, but validated here too)
       // Take 20 is never allowed for lightsaber construction
-      const skill = actor.system.skills?.useTheForce;
-      const modifier = skill?.total ?? 0;
+      const modifier = this.getUseTheForceTotal(actor);
       let rollTotal = 0;
       let rollRaw = null;
       const checkMode = config?.checkMode === 'take10' ? 'take10' : 'roll';
@@ -577,7 +615,8 @@ export class LightsaberConstructionEngine {
           accessories,
           actor.id,
           game.time.worldTime,
-          config.bladeColor
+          config.bladeColor,
+          config.lightsaberStyle || config.styleKey || 'auto'
         );
 
         const created = await ActorEngine.createEmbeddedDocuments(actor, "Item", [newWeapon]);
@@ -732,7 +771,7 @@ export class LightsaberConstructionEngine {
    * Injects builder metadata
    * @private
    */
-  static #createBuiltLightsaber(chassis, crystal, accessories, builderId, builtAt, bladeColor = null) {
+  static #createBuiltLightsaber(chassis, crystal, accessories, builderId, builtAt, bladeColor = null, lightsaberStyle = 'auto') {
     // Clone chassis as base
     const baseData = typeof chassis.toObject === "function" ? chassis.toObject() : foundry.utils.deepClone(chassis);
 
@@ -774,10 +813,13 @@ export class LightsaberConstructionEngine {
           builtAt: builtAt,
           attunedBy: null,
           bladeColor: bladeColor || "blue",
+          lightsaberStyle: lightsaberStyle || 'auto',
           lightsaberConfig: {
             chassisId: chassis.system?.chassisId ?? null,
             crystalId: crystal.id,
-            accessoryIds: accessories.map(a => a.id)
+            accessoryIds: accessories.map(a => a.id),
+            bladeColor: bladeColor || "blue",
+            lightsaberStyle: lightsaberStyle || 'auto'
           }
         },
         swse: {
@@ -786,10 +828,13 @@ export class LightsaberConstructionEngine {
           builtAt: builtAt,
           attunedBy: null,
           bladeColor: bladeColor || "blue",
+          lightsaberStyle: lightsaberStyle || 'auto',
           lightsaberConfig: {
             chassisId: chassis.system?.chassisId ?? null,
             crystalId: crystal.id,
-            accessoryIds: accessories.map(a => a.id)
+            accessoryIds: accessories.map(a => a.id),
+            bladeColor: bladeColor || "blue",
+            lightsaberStyle: lightsaberStyle || 'auto'
           }
         }
       }

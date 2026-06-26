@@ -1,13 +1,16 @@
+import forcePowersCatalog from "/systems/foundryvtt-swse/data/force-powers.json" with { type: "json" };
+import lightsaberFormPowersCatalog from "/systems/foundryvtt-swse/data/lightsaber-form-powers.json" with { type: "json" };
+
 /**
  * Force knowledge helpers
  *
- * Canonical read-side adapter for Force Techniques and Force Secrets.
+ * Canonical read-side adapter for Force Powers, Techniques, and Secrets.
  *
  * The project has carried several historical shapes for known Force knowledge:
- * - canonical item types: force-technique / force-secret
+ * - canonical item types: force-power / force-technique / force-secret
  * - old item types: forcetechnique / forcesecret
- * - older feat/tag rows: force_technique / force_secret
- * - legacy actor ledgers: system.forceTechniques / system.forceSecrets
+ * - older feat/tag rows: force_power / force_technique / force_secret
+ * - legacy actor ledgers: system.forcePowers / system.forceTechniques / system.forceSecrets
  * - progression ledgers: system.progression.forceTechniques / forceSecrets
  *
  * Consumers should ask this helper instead of counting one shape directly.
@@ -54,6 +57,19 @@ function entryName(entry) {
   ).trim();
 }
 
+function identityFragments(value) {
+  const text = String(value ?? '').trim();
+  if (!text) return [];
+  const fragments = [text];
+  const dotted = text.split(/[.#/]/).filter(Boolean);
+  if (dotted.length > 1) fragments.push(dotted[dotted.length - 1]);
+  const itemMatch = text.match(/(?:Item|Actor)\.([A-Za-z0-9_-]{8,})$/i);
+  if (itemMatch?.[1]) fragments.push(itemMatch[1]);
+  const hexMatch = text.match(/([A-Fa-f0-9]{12,})$/);
+  if (hexMatch?.[1]) fragments.push(hexMatch[1]);
+  return fragments;
+}
+
 function entryIdentities(entry) {
   const values = [
     entry?.id,
@@ -64,6 +80,8 @@ function entryIdentities(entry) {
     entry?.selectionId,
     entry?.techniqueId,
     entry?.secretId,
+    entry?.powerId,
+    entry?.basePowerId,
     entry?.baseTechniqueId,
     entry?.baseSecretId,
     entry?.sourceId,
@@ -80,12 +98,21 @@ function entryIdentities(entry) {
   ];
   const name = entryName(entry);
   if (name) values.push(name);
-  return Array.from(new Set(values.map(forceKnowledgeKey).filter(Boolean)));
+  const expanded = values.flatMap(identityFragments);
+  return Array.from(new Set(expanded.map(forceKnowledgeKey).filter(Boolean)));
 }
 
 function normalizeEntry(entry, source, domain) {
-  const name = entryName(entry);
+  const rawName = entryName(entry);
   const identities = entryIdentities(entry);
+  let name = rawName;
+  if (domain === 'power') {
+    name = resolveCanonicalForcePowerName(rawName)
+      || identities.map(identity => resolveCanonicalForcePowerName(identity)).find(Boolean)
+      || rawName;
+    const canonicalKey = forceKnowledgeKey(name);
+    if (canonicalKey && !identities.includes(canonicalKey)) identities.push(canonicalKey);
+  }
   if (!name && !identities.length) return null;
   return {
     id: entry?.id || entry?._id || entry?.uuid || null,
@@ -109,13 +136,22 @@ function addEntry(out, seen, entry, source, domain) {
 }
 
 function objectValues(value) {
-  if (!value || typeof value !== 'object') return [];
+  if (!value) return [];
+  if (typeof value === 'string') return [value];
+  if (typeof value !== 'object') return [];
   if (Array.isArray(value)) return value;
   const candidates = [value.known, value.list, value.entries, value.values, value.items, value.selected];
   for (const candidate of candidates) {
     if (Array.isArray(candidate)) return candidate;
   }
-  return Object.values(value).filter(candidate => typeof candidate === 'string' || (candidate && typeof candidate === 'object'));
+  return Object.entries(value).flatMap(([entryKey, candidate]) => {
+    if (typeof candidate === 'string') return [candidate, entryKey].filter(Boolean);
+    if (candidate === true) return [entryKey];
+    if (candidate && typeof candidate === 'object') {
+      return [{ id: entryKey, ...candidate }];
+    }
+    return [];
+  });
 }
 
 function collectLedgerEntries(actor, pending, domain) {
@@ -123,12 +159,29 @@ function collectLedgerEntries(actor, pending, domain) {
   const progression = system.progression || {};
   const force = system.force || {};
   const derived = system.derived || {};
-  const key = domain === 'technique' ? 'forceTechniques' : 'forceSecrets';
-  const forceKey = domain === 'technique' ? 'techniques' : 'secrets';
-  const pendingKeys = domain === 'technique'
-    ? ['forceTechniques', 'selectedForceTechniques', 'grantedForceTechniques']
-    : ['forceSecrets', 'selectedForceSecrets', 'grantedForceSecrets'];
+  const domainConfig = {
+    power: {
+      key: 'forcePowers',
+      forceKey: 'powers',
+      extraKeys: ['powers'],
+      pendingKeys: ['forcePowers', 'selectedForcePowers', 'grantedForcePowers', 'powers'],
+    },
+    technique: {
+      key: 'forceTechniques',
+      forceKey: 'techniques',
+      extraKeys: [],
+      pendingKeys: ['forceTechniques', 'selectedForceTechniques', 'grantedForceTechniques'],
+    },
+    secret: {
+      key: 'forceSecrets',
+      forceKey: 'secrets',
+      extraKeys: [],
+      pendingKeys: ['forceSecrets', 'selectedForceSecrets', 'grantedForceSecrets'],
+    },
+  }[domain];
+  if (!domainConfig) return [];
 
+  const { key, forceKey, extraKeys, pendingKeys } = domainConfig;
   const receiptSelections = [
     progression.levelUpFinalizationReceipt?.selections?.[key],
     actor?.flags?.swse?.levelUpFinalizationReceipt?.selections?.[key],
@@ -145,11 +198,89 @@ function collectLedgerEntries(actor, pending, domain) {
     pending?.selections?.[key],
   ];
 
+  if (domain === 'power') {
+    pools.push(
+      system.forcePowerSuite?.powers,
+      system.forcePowerSuite?.known,
+      system.forcePowerSuite?.entries,
+      system.powerSuite?.powers
+    );
+  }
+
+  for (const extraKey of extraKeys || []) {
+    pools.push(progression?.[extraKey], pending?.draftSelections?.[extraKey], pending?.selections?.[extraKey]);
+  }
+
   for (const pendingKey of pendingKeys) {
     pools.push(pending?.[pendingKey]);
   }
 
   return pools.flatMap(objectValues);
+}
+
+function forcePowerCatalogAliasMap() {
+  const aliases = new Map();
+  const add = (canonicalName, value) => {
+    const name = String(canonicalName ?? '').trim();
+    const text = String(value ?? '').trim();
+    if (!name || !text) return;
+    for (const fragment of identityFragments(text)) {
+      const key = forceKnowledgeKey(fragment);
+      if (key && !aliases.has(key)) aliases.set(key, name);
+    }
+  };
+  for (const entry of [...asArray(forcePowersCatalog), ...asArray(lightsaberFormPowersCatalog)]) {
+    const canonicalName = String(entry?.name || entry?.label || entry?.title || '').trim();
+    if (!canonicalName) continue;
+    add(canonicalName, canonicalName);
+    add(canonicalName, entry?.label);
+    add(canonicalName, entry?.title);
+    add(canonicalName, entry?.id);
+    add(canonicalName, entry?.sourceId);
+    add(canonicalName, entry?.slug);
+    add(canonicalName, entry?.uuid);
+  }
+  return aliases;
+}
+
+let FORCE_POWER_ALIAS_CACHE = null;
+
+function getForcePowerAliasMap() {
+  if (!FORCE_POWER_ALIAS_CACHE) FORCE_POWER_ALIAS_CACHE = forcePowerCatalogAliasMap();
+  return FORCE_POWER_ALIAS_CACHE;
+}
+
+export function resolveCanonicalForcePowerName(value) {
+  const raw = String(value ?? '').trim();
+  if (!raw) return '';
+  const cleaned = raw
+    .replace(/^requires\s+/i, '')
+    .replace(/^knows?\s+/i, '')
+    .replace(/^must\s+(?:know|have)\s+/i, '')
+    .replace(/^talent\s*[:\-]?\s*/i, '')
+    .replace(/^force\s+power\s*[:\-]?\s*/i, '')
+    .replace(/\s+(?:force\s+power|in\s+(?:your\s+)?force\s+power\s+suite)$/i, '')
+    .trim();
+  const aliases = getForcePowerAliasMap();
+  const wantedKeys = [raw, cleaned].flatMap(identityFragments).map(forceKnowledgeKey).filter(Boolean);
+  for (const key of wantedKeys) {
+    const match = aliases.get(key);
+    if (match) return match;
+  }
+  return '';
+}
+
+export function isKnownForcePowerItem(item) {
+  const type = String(item?.type || '').trim().toLowerCase();
+  const tags = tagsOf(item);
+  const executionModel = String(item?.system?.executionModel || item?.system?.abilityMeta?.executionModel || '').trim().toLowerCase();
+  return type === 'force-power'
+    || type === 'forcepower'
+    || type === 'force_power'
+    || type === 'power'
+    || tags.includes('force_power')
+    || item?.system?.isForcePower === true
+    || executionModel === 'force_power';
 }
 
 export function isKnownForceTechniqueItem(item) {
@@ -172,6 +303,18 @@ export function isKnownForceSecretItem(item) {
     || type === 'secret'
     || tags.includes('force_secret')
     || String(item?.system?.forceDomain || '').trim().toLowerCase() === 'secret';
+}
+
+export function collectKnownForcePowers(actor, pending = null) {
+  const out = [];
+  const seen = new Set();
+  for (const item of Array.from(actor?.items || [])) {
+    if (isKnownForcePowerItem(item)) addEntry(out, seen, item, 'item', 'power');
+  }
+  for (const entry of collectLedgerEntries(actor, pending, 'power')) {
+    addEntry(out, seen, entry, 'ledger', 'power');
+  }
+  return out;
 }
 
 export function collectKnownForceTechniques(actor, pending = null) {

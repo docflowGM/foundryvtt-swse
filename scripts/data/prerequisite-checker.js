@@ -70,7 +70,7 @@ import { FeatChoiceResolver, normalizeFeatChoiceKey } from "/systems/foundryvtt-
 import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
 import { getClassAutoGrants } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/autogrants/class-autogrants.js";
 import { CANONICAL_SKILL_DEFS } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
-import { collectKnownForceSecrets, collectKnownForceTechniques, forceKnowledgeEntryMatchesName } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
+import { collectKnownForcePowers, collectKnownForceSecrets, collectKnownForceTechniques, forceKnowledgeEntryMatchesName, forceKnowledgeKey, resolveCanonicalForcePowerName } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
 import { actorMeetsDroidSystemRequirement, resolveDroidSystemIdentity } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-part-schema.js";
 
 function matchesForceSensitivity(value) {
@@ -1498,7 +1498,12 @@ export class PrerequisiteChecker {
             };
         }
 
-        const requiredTalentName = resolveCanonicalTalentName(prereq.name || prereq.talentName || prereq.slug || prereq.id || prereq.uuid || '');
+        const rawTalentName = prereq.name || prereq.talentName || prereq.slug || prereq.id || prereq.uuid || '';
+        const requiredTalentName = resolveCanonicalTalentName(rawTalentName);
+        const forcePowerName = resolveCanonicalForcePowerName(rawTalentName || requiredTalentName);
+        if (forcePowerName) {
+            return this._checkForcePowerCondition({ type: 'forcePower', name: forcePowerName, power: forcePowerName }, actor, pending);
+        }
         if (this._actorHasNamedItem(actor, pending, 'talent', requiredTalentName)) {
             return { met: true, message: '' };
         }
@@ -1661,7 +1666,14 @@ export class PrerequisiteChecker {
     }
 
     static _checkForcePowerCondition(prereq, actor, pending) {
-        const powerName = prereq.name || prereq.power || prereq.key || '';
+        const powerName = resolveCanonicalForcePowerName(prereq.name || prereq.power || prereq.powerName || prereq.key || '') || (prereq.name || prereq.power || prereq.powerName || prereq.key || '');
+        if (!powerName) {
+            const known = collectKnownForcePowers(actor, pending);
+            return {
+                met: known.length > 0,
+                message: known.length > 0 ? '' : 'Requires knowing a Force Power'
+            };
+        }
         const powerCheck = checkForcePowers(actor, [powerName], pending);
         return {
             met: powerCheck.met,
@@ -2280,6 +2292,20 @@ export class PrerequisiteChecker {
             return prereq;
         }
 
+        const explicitForcePower = part.match(/^(?:must\s+(?:know|have)\s+|knows?\s+|requires\s+)?(.+?)\s+(?:force\s+power|in\s+(?:your\s+)?force\s+power\s+suite)$/i);
+        if (explicitForcePower) {
+            const powerName = resolveCanonicalForcePowerName(explicitForcePower[1]) || explicitForcePower[1].trim();
+            if (!/^(?:any|one|a)$/i.test(powerName)) {
+                return { type: 'forcePower', name: powerName, power: powerName };
+            }
+            return { type: 'forcePower' };
+        }
+
+        const canonicalForcePowerName = resolveCanonicalForcePowerName(part);
+        if (canonicalForcePowerName) {
+            return { type: 'forcePower', name: canonicalForcePowerName, power: canonicalForcePowerName };
+        }
+
         const registryParsed = parseRegistryBackedLegacyPrerequisite(part);
         if (registryParsed) {
             if (registryParsed.type === 'feat' && owningType === 'talent') {
@@ -2632,7 +2658,12 @@ export class PrerequisiteChecker {
 
 
     static _checkTalentLegacy(prereq, actor, pending) {
-        const requiredTalentName = resolveCanonicalTalentName(prereq.talentName || prereq.name || '');
+        const rawTalentName = prereq.talentName || prereq.name || '';
+        const forcePowerName = resolveCanonicalForcePowerName(rawTalentName);
+        if (forcePowerName) {
+            return this._checkForcePowerCondition({ type: 'forcePower', name: forcePowerName, power: forcePowerName }, actor, pending);
+        }
+        const requiredTalentName = resolveCanonicalTalentName(rawTalentName);
         const met = this._actorHasNamedItem(actor, pending, 'talent', requiredTalentName);
         return {
             met,
@@ -3692,38 +3723,51 @@ function checkForcePowers(actor, requiredPowers, pending = {}) {
         return { met: true, missing: [] };
     }
 
-    // Get finalized force power items
-    const actorPowers = actor.items?.filter(i => {
-        const type = String(i?.type || '').toLowerCase();
-        return type === 'force-power' || type === 'forcepower' || type === 'power';
-    }) || [];
-
-    // Also include pending force powers from progression and current shell evaluation.
-    const pendingPowerNames = [
-        ...(actor.system?.progression?.powers || []),
-        ...(actor.system?.progression?.forcePowers || []),
-        ...(pending?.selectedForcePowers || []),
-        ...(pending?.grantedForcePowers || [])
-    ];
-    const allPowerNames = [
-        ...actorPowers.map(p => p.name),
-        ...pendingPowerNames
-    ];
-
+    const knownPowers = collectKnownForcePowers(actor, pending);
     const missing = [];
 
-    for (const power of requiredPowers) {
-        const normalized = power.toLowerCase().replace(/[^a-z0-9]/g, '');
-        const found = allPowerNames.some(p =>
-            (typeof p === 'string' ? p : p.name || '').toLowerCase().replace(/[^a-z0-9]/g, '') === normalized
-        );
+    const identityCandidates = (power) => {
+        if (!power || typeof power === 'string') return [power].filter(Boolean);
+        return [
+            power.name,
+            power.label,
+            power.title,
+            power.power,
+            power.powerName,
+            power.id,
+            power._id,
+            power.uuid,
+            power.key,
+            power.slug,
+            power.powerId,
+            power.sourceId,
+        ].filter(Boolean);
+    };
 
-        if (!found) {
-            missing.push(power);
-        }
+    for (const power of requiredPowers) {
+        const candidates = identityCandidates(power);
+        const label = String(candidates[0] || power || 'required Force Power');
+        const resolvedName = resolveCanonicalForcePowerName(label) || label;
+        const requirementKeys = Array.from(new Set([
+            ...candidates,
+            resolvedName,
+            String(label).replace(/\s+force\s+power$/i, ''),
+        ].map(forceKnowledgeKey).filter(Boolean)));
+
+        const found = knownPowers.some(entry => {
+            const identities = new Set([entry?.key, ...(entry?.identities || [])].filter(Boolean));
+            return requirementKeys.some(key => identities.has(key));
+        });
+
+        if (!found) missing.push(resolvedName);
     }
 
-    return { met: missing.length === 0, missing };
+    return {
+        met: missing.length === 0,
+        missing,
+        actual: knownPowers.length,
+        known: knownPowers.map(entry => entry.name).filter(Boolean)
+    };
 }
 
 /**

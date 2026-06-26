@@ -161,9 +161,9 @@
         </div>
 
         <!-- Skill Total Display -->
-        <div class="col-total">
+        <div class="col-total" title="{{skill.mathTooltip}}">
           <span class="number-display {{#if (gt skill.total 0)}}positive{{else if (lt skill.total 0)}}negative{{else}}zero{{/if}}"
-                title='{{localize "SWSE.CharacterSheet.Tooltips.TotalSkillBonus"}}'>
+                title="{{skill.mathTooltip}}">
             {{numberFormat skill.total decimals=0 sign=true}}
           </span>
         </div>

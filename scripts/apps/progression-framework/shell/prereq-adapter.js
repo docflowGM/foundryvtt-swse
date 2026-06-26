@@ -154,7 +154,7 @@ export class PrereqAdapter {
     // Get current items of each type
     const currentFeats = mockActor.items?.filter(i => i.type === 'feat') || [];
     const currentTalents = mockActor.items?.filter(i => i.type === 'talent') || [];
-    const currentPowers = mockActor.items?.filter(i => i.type === 'power') || [];
+    const currentPowers = mockActor.items?.filter(i => ['force-power', 'forcepower', 'force_power', 'power'].includes(String(i.type || '').toLowerCase())) || [];
 
     // Convert projected feats to item-like objects and append
     if (projection.abilities.feats && Array.isArray(projection.abilities.feats)) {
@@ -176,7 +176,7 @@ export class PrereqAdapter {
     if (projection.abilities.forcePowers && Array.isArray(projection.abilities.forcePowers)) {
       const projectedPowerItems = projection.abilities.forcePowers
         .filter(p => !currentPowers.some(cp => cp.name === p.name || cp.id === p.id))
-        .map(p => this._normalizeAbilityToItem('power', p));
+        .map(p => this._normalizeAbilityToItem('force-power', p));
       mockActor.items.push(...projectedPowerItems);
     }
 
@@ -191,6 +191,12 @@ export class PrereqAdapter {
       mockActor.system.progression.talents = projection.abilities.talents
         .map(t => t.name || t.id || t)
         .filter(t => typeof t === 'string');
+    }
+
+    if (projection.abilities.forcePowers) {
+      mockActor.system.progression.forcePowers = projection.abilities.forcePowers
+        .map(p => p.name || p.label || p.id || p._id || p)
+        .filter(p => typeof p === 'string');
     }
   }
 

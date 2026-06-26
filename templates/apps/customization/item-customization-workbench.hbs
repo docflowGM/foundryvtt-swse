@@ -72,6 +72,15 @@
               <span class="inventory-meta">{{modCount}} MOD{{#if templateCount}} · {{templateCount}} TMP{{/if}}</span>
             </button>
             {{/each}}
+            {{#if isLightsaber}}{{#if lightsaberConstruction.eligible}}
+            <button type="button" class="inventory-item inventory-item--construct-new" data-action="construct-additional-lightsaber" data-entry-point="workbench">
+              <span class="inventory-construct-plus">+</span>
+              <span class="inventory-copy">
+                <span class="inventory-name">Construct New Lightsaber</span>
+                <span class="inventory-subtitle">Prerequisites met</span>
+              </span>
+            </button>
+            {{/if}}{{/if}}
           </div>
         </aside>
 
@@ -84,7 +93,7 @@
             <div class="hero-grid">
               <div class="hero-art {{#if isLightsaber}}hero-art--lightsaber{{/if}}">
                 {{#if isLightsaber}}
-                <div class="ls-blade-render ls-blade-render--hero-vertical {{lightsaber.hiltKind}}" style="--blade-color: {{lightsaber.bladeHex}};" aria-label="{{currentItem.name}} blade preview">
+                <div class="ls-blade-render ls-blade-render--hero-vertical {{lightsaber.renderStyleClass}}" style="--blade-color: {{lightsaber.bladeHex}};" aria-label="{{currentItem.name}} blade preview">
                   <span class="ls-blade ls-left"></span>
                   <span class="ls-hilt"></span>
                   <span class="ls-blade ls-right"></span>
@@ -208,6 +217,26 @@
               <section class="ls-tab-panel" data-lightsaber-tab-panel="hilt">
                 <div class="panel-head compact"><span>Hilt Accessories</span><span class="hint">{{lightsaber.slotState.usedSlots}}/{{lightsaber.slotState.totalAvailable}} slots</span></div>
                 {{#if lightsaber.slotState.techSpecialistBonus}}<p class="panel-note">Tech Specialist grants one additional hilt modification slot during construction.</p>{{/if}}
+                <div class="ls-style-picker" aria-label="Lightsaber visual style">
+                  <div class="ls-style-picker-head">
+                    <span>Visual Style</span>
+                    <small>Cosmetic silhouette · selected: {{lightsaber.selectedStyleLabel}}</small>
+                  </div>
+                  <div class="ls-style-options">
+                    {{#each lightsaber.styleOptions}}
+                    <button type="button" class="ls-style-option {{#if selected}}selected{{/if}}" data-action="set-lightsaber-style" data-key="{{key}}" title="{{hint}}">
+                      <span class="ls-style-mini ls-blade-render {{previewClass}}" style="--blade-color: {{../lightsaber.bladeHex}};">
+                        <span class="ls-blade ls-left"></span>
+                        <span class="ls-hilt"></span>
+                        <span class="ls-blade ls-right"></span>
+                        <span class="ls-crossguard ls-crossguard-a"></span>
+                        <span class="ls-crossguard ls-crossguard-b"></span>
+                      </span>
+                      <span class="ls-style-label">{{label}}</span>
+                    </button>
+                    {{/each}}
+                  </div>
+                </div>
                 <div class="ls-tab-card-grid">
                   {{#each lightsaber.accessories}}
                   <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="inspect-lightsaber-component" data-key="{{optionKey}}" data-lightsaber-inspect-type="accessory" data-lightsaber-inspect-key="{{optionKey}}" data-component-type="accessory" title="{{description}}">
@@ -227,6 +256,7 @@
                   <article><span>Crystal</span><strong>{{lightsaber.review.crystalName}}</strong></article>
                   <article><span>Hilt</span><strong>{{lightsaber.review.accessoryNames}}</strong></article>
                   <article><span>Blade Color</span><strong class="ls-color-name-strip">{{#each lightsaber.review.bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</strong></article>
+                  <article><span>Style</span><strong>{{lightsaber.review.styleLabel}}</strong></article>
                   <article><span>Damage</span><strong>{{lightsaber.review.damage}}</strong></article>
                   <article><span>Critical</span><strong>{{lightsaber.review.critical}}</strong></article>
                   <article><span>Damage Type</span><strong>{{lightsaber.review.damageType}}</strong></article>
@@ -299,7 +329,7 @@
             <div class="ls-success-overlay">
               <div class="ls-success-beam" style="--blade-color: {{lightsaber.bladeHex}};"></div>
               <h3>Lightsaber Forged</h3>
-              <p>{{lightsaber.createdWeaponName}} resonates with the Force. The construction engine stored builtBy, builtAt, bladeColor, and lightsaberConfig, then cleared the construction milestone flags.</p>
+              <p>{{lightsaber.createdWeaponName}} hums to life in your hands. The kyber crystal settles into tune, the blade steadies, and Miraj marks the weapon as ready for attunement.</p>
               <div class="ls-success-actions">
                 <button type="button" class="action primary" data-action="begin-lightsaber-attunement">Attune Now — Summon Miraj</button>
                 <button type="button" class="action ghost" data-action="dismiss-lightsaber-success">Attune Later</button>

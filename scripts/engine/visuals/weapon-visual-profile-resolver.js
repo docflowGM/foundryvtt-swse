@@ -151,6 +151,21 @@ export class WeaponVisualProfileResolver {
     return objectHasOwn(BEAM_STYLES, mapped) ? mapped : "bolt";
   }
 
+  static getLightsaberStyle(item, { draft = null, lightsaberState = null } = {}) {
+    const style = firstValue(
+      draft?.lightsaberStyle,
+      draft?.styleKey,
+      lightsaberState?.selectedStyleKey,
+      lightsaberState?.lightsaberStyle,
+      readFlag(item, "lightsaberStyle"),
+      item?.flags?.[CANONICAL_SCOPE]?.lightsaberConfig?.lightsaberStyle,
+      item?.flags?.[LEGACY_SCOPE]?.lightsaberConfig?.lightsaberStyle,
+      readSystem(item, "visual.lightsaberStyle"),
+      "auto"
+    );
+    return normalizeKey(style, "auto").replace(/[_\s]+/g, '-');
+  }
+
   static isActive(item) {
     return item?.system?.activated === true || item?.system?.active === true;
   }
@@ -176,6 +191,7 @@ export class WeaponVisualProfileResolver {
 
     const bladeColor = this.getBladeColor(item, options);
     const bladeHex = getBladeColorHex(bladeColor);
+    const lightsaberStyle = isLightsaber ? this.getLightsaberStyle(item, options) : null;
     const boltColor = this.getBoltColor(item, options);
     const boltHex = BLASTER_BOLT_COLORS[boltColor] || getBoltColor(boltColor);
     const fxType = this.getFxType(item, options);
@@ -198,6 +214,7 @@ export class WeaponVisualProfileResolver {
       tokenLightOn,
       bladeColor,
       bladeHex,
+      lightsaberStyle,
       boltColor,
       boltHex,
       fxType,
@@ -221,7 +238,7 @@ export class WeaponVisualProfileResolver {
       } : null,
       chatAccent: primaryHex,
       label: isLightsaber
-        ? `${bladeColor} blade`
+        ? `${bladeColor} blade${lightsaberStyle && lightsaberStyle !== 'auto' ? ` · ${lightsaberStyle}` : ''}`
         : isBlaster
           ? `${boltColor} ${BLASTER_FX_TYPES[fxType]?.name ?? fxType} bolt`
           : "weapon"

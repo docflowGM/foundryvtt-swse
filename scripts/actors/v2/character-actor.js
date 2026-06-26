@@ -365,7 +365,16 @@ function mirrorSkills(system) {
       halfLevel: Number.isFinite(Number(derivedSkill.halfLevel)) ? Number(derivedSkill.halfLevel) : 0,
       miscMod: Number.isFinite(Number(derivedSkill.miscMod)) ? Number(derivedSkill.miscMod) : safeNumber(s.miscMod, 0),
       armorPenalty: Number.isFinite(Number(derivedSkill.armorPenalty)) ? Number(derivedSkill.armorPenalty) : 0,
-      conditionPenalty: Number.isFinite(Number(derivedSkill.conditionPenalty)) ? Number(derivedSkill.conditionPenalty) : 0
+      conditionPenalty: Number.isFinite(Number(derivedSkill.conditionPenalty)) ? Number(derivedSkill.conditionPenalty) : 0,
+      speciesBonus: Number.isFinite(Number(derivedSkill.speciesBonus)) ? Number(derivedSkill.speciesBonus) : 0,
+      featBonus: Number.isFinite(Number(derivedSkill.featBonus)) ? Number(derivedSkill.featBonus) : 0,
+      stateBonus: Number.isFinite(Number(derivedSkill.stateBonus)) ? Number(derivedSkill.stateBonus) : 0,
+      trainedBonus: Number.isFinite(Number(derivedSkill.trainedBonus)) ? Number(derivedSkill.trainedBonus) : 0,
+      focusBonus: Number.isFinite(Number(derivedSkill.focusBonus)) ? Number(derivedSkill.focusBonus) : 0,
+      occupationBonus: Number.isFinite(Number(derivedSkill.occupationBonus)) ? Number(derivedSkill.occupationBonus) : 0,
+      breakdown: Array.isArray(derivedSkill.breakdown) ? derivedSkill.breakdown : [],
+      math: derivedSkill.math ?? null,
+      substitutionNote: derivedSkill.substitutionNote ?? ''
     });
   }
 

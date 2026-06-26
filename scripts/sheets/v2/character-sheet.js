@@ -2910,6 +2910,30 @@ export class SWSEV2CharacterSheet extends
       return Number.isFinite(n) ? n : fallback;
     };
 
+    const toSignedText = (value) => {
+      const n = Number(value) || 0;
+      return n >= 0 ? `+${n}` : String(n);
+    };
+
+    const buildSkillMathTooltip = (label, total, derivedData = {}, fallbackParts = {}) => {
+      const parts = Array.isArray(derivedData?.math?.parts)
+        ? derivedData.math.parts
+        : (Array.isArray(derivedData?.breakdown) ? derivedData.breakdown : []);
+      const sourceParts = parts.length ? parts : [
+        { key: 'ability', label: `${String(fallbackParts.selectedAbility || '').toUpperCase()} modifier`, value: fallbackParts.abilityMod },
+        { key: 'halfLevel', label: '1/2 heroic level', value: fallbackParts.halfLevel },
+        { key: 'trained', label: 'Trained', value: fallbackParts.trained ? 5 : 0 },
+        { key: 'focus', label: 'Skill Focus', value: fallbackParts.focused ? 5 : 0 },
+        { key: 'misc', label: 'Misc', value: fallbackParts.miscMod }
+      ];
+      const shown = sourceParts
+        .filter(part => (Number(part?.value) || 0) !== 0 || ['ability', 'halfLevel', 'trained', 'focus', 'misc'].includes(part?.key))
+        .map(part => `${part?.label || part?.key || 'Modifier'}: ${toSignedText(part?.value)}`)
+        .join(' | ');
+      const note = derivedData?.substitutionNote ? ` | ${derivedData.substitutionNote}` : '';
+      return `${label || 'Skill'} = ${toSignedText(total)}${shown ? ` (${shown})` : ''}${note}`;
+    };
+
     const abilities = sheetAbilityKeys.map(key => {
       const ability = abilitiesMap[key] ?? {};
       const legacyAbility = legacyAbilitiesMap[key] ?? {};
@@ -2980,8 +3004,10 @@ export class SWSEV2CharacterSheet extends
           ? Number(selectedAbility.mod)
           : 0;
 
-      // Get halfLevel from system (this is just display, not a calculation)
-      const halfLevel = Math.max(0, Math.floor((system.level ?? 1) / 2));
+      // Use the derived engine's exact half-level contribution when present.
+      // This may be 0 when a house rule disables half-level skill bonuses.
+      const fallbackHalfLevel = Math.max(0, Math.floor((system.level ?? 1) / 2));
+      const halfLevel = Number.isFinite(Number(derivedData.halfLevel)) ? Number(derivedData.halfLevel) : fallbackHalfLevel;
 
       // Ensure all numeric values are safe for template rendering
       const safeMiscMod = toFiniteNumber(skillData.miscMod, 0);
@@ -2998,6 +3024,14 @@ export class SWSEV2CharacterSheet extends
         : Number.isFinite(Number(skillData.total))
           ? Number(skillData.total)
           : fallbackTotal;
+      const mathTooltip = buildSkillMathTooltip(definition.label, safeTotal, derivedData, {
+        selectedAbility: selectedAbilityKey,
+        abilityMod,
+        halfLevel,
+        trained: Boolean(skillData.trained),
+        focused: Boolean(skillData.focused),
+        miscMod: safeMiscMod
+      });
 
       return {
         key,
@@ -3015,7 +3049,9 @@ export class SWSEV2CharacterSheet extends
         // Display half-level (not calculated, just displayed)
         halfLevel,
         miscMod: safeMiscMod,
-        extraUses: Array.isArray(skillData.extraUses) ? skillData.extraUses : []
+        extraUses: Array.isArray(skillData.extraUses) ? skillData.extraUses : [],
+        mathTooltip,
+        breakdownParts: Array.isArray(derivedData?.math?.parts) ? derivedData.math.parts : (Array.isArray(derivedData?.breakdown) ? derivedData.breakdown : [])
       };
     });
 

@@ -88,7 +88,7 @@
           </div>
         </div>
 
-        <div class="swse-concept-skill-row__math">
+        <div class="swse-concept-skill-row__math" title="{{skill.mathTooltip}}">
           <label class="swse-concept-toolfield swse-concept-toolfield--compact swse-concept-toolfield--ability">
             <span>Ability</span>
             <select name="system.skills.{{skill.key}}.selectedAbility" class="ability-select ability-select--{{skill.selectedAbility}} {{skill.abilityAccentClass}}" data-action="change-skill-ability" data-skill="{{skill.key}}" data-ability-select="{{skill.selectedAbility}}">
@@ -126,7 +126,7 @@
                    value="{{skill.miscMod}}">
           </label>
 
-          <div class="swse-concept-skill-stat swse-concept-skill-stat--total">
+          <div class="swse-concept-skill-stat swse-concept-skill-stat--total" title="{{skill.mathTooltip}}">
             <span>Total</span>
             <strong class="{{skill.totalClass}}">{{numberFormat skill.total decimals=0 sign=true}}</strong>
           </div>

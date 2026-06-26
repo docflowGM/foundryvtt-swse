@@ -1,29 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 640" role="img" aria-labelledby="title desc">
-  <title id="title">Classic lightsaber outline</title>
-  <desc id="desc">A full vertical lightsaber outline with a long blade and classic straight hilt. Blade color can be themed with CSS variable --blade-color.</desc>
-  <defs>
-    <filter id="bladeGlow" x="-40%" y="-10%" width="180%" height="120%">
-      <feGaussianBlur stdDeviation="4" result="blur"/>
-      <feMerge>
-        <feMergeNode in="blur"/>
-        <feMergeNode in="SourceGraphic"/>
-      </feMerge>
-    </filter>
-  </defs>
-
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M64 24 L64 454" stroke="var(--blade-color, #6cf7ff)" stroke-width="12" filter="url(#bladeGlow)"/>
-    <path d="M64 28 L64 448" stroke="var(--blade-core, #ffffff)" stroke-width="4"/>
-    <g stroke="currentColor" stroke-width="3">
-      <rect x="46" y="454" width="36" height="112" rx="10"/>
-      <rect x="50" y="470" width="28" height="18" rx="4"/>
-      <rect x="50" y="498" width="28" height="16" rx="4"/>
-      <rect x="50" y="524" width="28" height="16" rx="4"/>
-      <path d="M54 566v22M64 566v30M74 566v22"/>
-      <path d="M46 454h36"/>
-      <circle cx="64" cy="548" r="4"/>
-      <path d="M46 448h36"/>
-      <path d="M56 438h16v10H56z"/>
-    </g>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 640" role="img" aria-labelledby="title desc">
+<title id="title">Classic lightsaber outline</title><desc id="desc">Emitter-aligned lightsaber preview. Blade color is controlled by --blade-color.</desc>
+<style>.blade{stroke:var(--blade-color,#31b7ff);stroke-width:10;stroke-linecap:round;filter:url(#glow)}.side{stroke-width:7}.hilt{fill:url(#metal);stroke:#bdefff;stroke-opacity:.45;stroke-width:2}.cap{fill:#1d2632;stroke:#bdefff;stroke-opacity:.35;stroke-width:2}.switch{fill:#42e6ff;stroke:#eaffff;stroke-width:1}</style>
+<defs><linearGradient id="metal" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#e8f7ff"/><stop offset=".45" stop-color="#596878"/><stop offset=".7" stop-color="#1c2530"/><stop offset="1" stop-color="#c0d0df"/></linearGradient><filter id="glow" x="-100%" y="-30%" width="300%" height="160%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+<line x1="80" y1="36" x2="80" y2="296" class="blade"/><rect x="62" y="304" width="36" height="76" rx="8" class="hilt"/><rect x="56" y="292" width="48" height="20" rx="6" class="cap"/><rect x="58" y="372" width="44" height="20" rx="6" class="cap"/><circle cx="80" cy="338" r="5" class="switch"/></svg>

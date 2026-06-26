@@ -3111,3 +3111,234 @@
 .swse-customization-stage .ls-forge-rail--intel-only .ls-component-intel .rail-detail-card {
   max-height: none !important;
 }
+
+/* Phase: lightsaber visual style picker + corrected emitter geometry */
+.swse-item-customization-workbench .ls-style-picker,
+.swse-customization-stage .ls-style-picker {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 12px;
+  padding: 10px;
+  border: 1px solid color-mix(in srgb, var(--ls-blade, var(--blade-color, #7fe6ff)) 28%, transparent);
+  border-radius: 10px;
+  background: linear-gradient(135deg, rgba(255,255,255,.035), rgba(0,0,0,.18));
+}
+
+.swse-item-customization-workbench .ls-style-picker-head,
+.swse-customization-stage .ls-style-picker-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: baseline;
+  font-family: var(--swse-font-mono, monospace);
+  text-transform: uppercase;
+  letter-spacing: .14em;
+  color: var(--ls-blade, var(--blade-color, #7fe6ff));
+  font-size: 10px;
+}
+
+.swse-item-customization-workbench .ls-style-picker-head small,
+.swse-customization-stage .ls-style-picker-head small {
+  color: var(--icw-dim, #9cb3c7);
+  letter-spacing: .08em;
+}
+
+.swse-item-customization-workbench .ls-style-options,
+.swse-customization-stage .ls-style-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(86px, 1fr));
+  gap: 7px;
+}
+
+.swse-item-customization-workbench .ls-style-option,
+.swse-customization-stage .ls-style-option {
+  display: grid;
+  grid-template-rows: 58px auto;
+  gap: 5px;
+  align-items: center;
+  justify-items: center;
+  padding: 7px 6px;
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 8px;
+  background: rgba(0,0,0,.24);
+  color: var(--icw-dim, #9cb3c7);
+  cursor: pointer;
+}
+
+.swse-item-customization-workbench .ls-style-option:hover,
+.swse-item-customization-workbench .ls-style-option.selected,
+.swse-customization-stage .ls-style-option:hover,
+.swse-customization-stage .ls-style-option.selected {
+  border-color: color-mix(in srgb, var(--ls-blade, var(--blade-color, #7fe6ff)) 55%, transparent);
+  color: var(--ls-blade, var(--blade-color, #7fe6ff));
+  box-shadow: inset 0 0 16px color-mix(in srgb, var(--ls-blade, var(--blade-color, #7fe6ff)) 10%, transparent);
+}
+
+.swse-item-customization-workbench .ls-style-label,
+.swse-customization-stage .ls-style-label {
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 8px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.swse-item-customization-workbench .ls-style-mini,
+.swse-customization-stage .ls-style-mini {
+  width: 70px !important;
+  min-height: 50px !important;
+  height: 50px !important;
+  border: 0 !important;
+  background: transparent !important;
+  transform: scale(.7);
+  transform-origin: center;
+}
+
+/* Compact hero preview is an emitter-accurate vertical schematic. */
+.swse-item-customization-workbench .ls-blade-render--hero-vertical,
+.swse-customization-stage .ls-blade-render--hero-vertical {
+  position: relative !important;
+  display: block !important;
+  overflow: hidden !important;
+  --hero-hilt-w: 26px;
+  --hero-hilt-h: 44px;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical .ls-hilt,
+.swse-customization-stage .ls-blade-render--hero-vertical .ls-hilt {
+  position: absolute !important;
+  left: 50% !important;
+  bottom: 8px !important;
+  width: var(--hero-hilt-w) !important;
+  height: var(--hero-hilt-h) !important;
+  transform: translateX(-50%) !important;
+  z-index: 3 !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical .ls-blade,
+.swse-customization-stage .ls-blade-render--hero-vertical .ls-blade {
+  position: absolute !important;
+  left: calc(50% - 4px) !important;
+  bottom: calc(8px + var(--hero-hilt-h) - 2px) !important;
+  width: 8px !important;
+  height: 76px !important;
+  flex: none !important;
+  border-radius: 999px 999px 4px 4px !important;
+  transform-origin: bottom center !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.short .ls-right,
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.shoto .ls-right,
+.swse-customization-stage .ls-blade-render--hero-vertical.short .ls-right,
+.swse-customization-stage .ls-blade-render--hero-vertical.shoto .ls-right {
+  height: 54px !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.pike .ls-hilt,
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.longhandle .ls-hilt,
+.swse-customization-stage .ls-blade-render--hero-vertical.pike .ls-hilt,
+.swse-customization-stage .ls-blade-render--hero-vertical.longhandle .ls-hilt {
+  --hero-hilt-h: 58px;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.double .ls-hilt,
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.double-bladed .ls-hilt,
+.swse-customization-stage .ls-blade-render--hero-vertical.double .ls-hilt,
+.swse-customization-stage .ls-blade-render--hero-vertical.double-bladed .ls-hilt {
+  bottom: 42px !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.double .ls-left,
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.double-bladed .ls-left,
+.swse-customization-stage .ls-blade-render--hero-vertical.double .ls-left,
+.swse-customization-stage .ls-blade-render--hero-vertical.double-bladed .ls-left {
+  display: block !important;
+  bottom: 8px !important;
+  height: 36px !important;
+  border-radius: 4px 4px 999px 999px !important;
+  transform: rotate(180deg) !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.crossguard .ls-crossguard,
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.cross .ls-crossguard,
+.swse-customization-stage .ls-blade-render--hero-vertical.crossguard .ls-crossguard,
+.swse-customization-stage .ls-blade-render--hero-vertical.cross .ls-crossguard {
+  display: block !important;
+  position: absolute !important;
+  top: auto !important;
+  bottom: calc(8px + var(--hero-hilt-h) - 1px) !important;
+  width: 34px !important;
+  height: 5px !important;
+  z-index: 2 !important;
+  border-radius: 999px !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.crossguard .ls-crossguard-a,
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.cross .ls-crossguard-a,
+.swse-customization-stage .ls-blade-render--hero-vertical.crossguard .ls-crossguard-a,
+.swse-customization-stage .ls-blade-render--hero-vertical.cross .ls-crossguard-a {
+  left: calc(50% - 38px) !important;
+  transform: rotate(-35deg) !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.crossguard .ls-crossguard-b,
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.cross .ls-crossguard-b,
+.swse-customization-stage .ls-blade-render--hero-vertical.crossguard .ls-crossguard-b,
+.swse-customization-stage .ls-blade-render--hero-vertical.cross .ls-crossguard-b {
+  left: calc(50% + 4px) !important;
+  transform: rotate(35deg) !important;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.curved .ls-hilt,
+.swse-customization-stage .ls-blade-render--hero-vertical.curved .ls-hilt {
+  transform: translateX(-50%) skewX(-8deg) !important;
+}
+
+.swse-item-customization-workbench .ls-success-overlay,
+.swse-customization-stage .ls-success-overlay {
+  background:
+    radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--ls-blade, var(--blade-color, #7fe6ff)) 18%, transparent), transparent 34%),
+    linear-gradient(180deg, rgba(4,6,12,.97), rgba(4,8,16,.94));
+}
+
+.swse-item-customization-workbench .ls-blade-render.dueling .ls-hilt,
+.swse-customization-stage .ls-blade-render.dueling .ls-hilt {
+  width: 72px;
+  border-radius: 9px 3px 9px 3px;
+}
+
+.swse-item-customization-workbench .ls-blade-render--hero-vertical.dueling .ls-hilt,
+.swse-customization-stage .ls-blade-render--hero-vertical.dueling .ls-hilt {
+  --hero-hilt-w: 20px;
+  transform: translateX(-50%) skewX(-5deg) !important;
+}
+
+/* ── Construct New Lightsaber button ─────────────────────────────────── */
+.swse-item-customization-workbench .inventory-item--construct-new,
+.swse-customization-stage .inventory-item--construct-new {
+  border: 1.5px dashed var(--icw-cyan, #7fe6ff);
+  background: transparent;
+  color: var(--icw-cyan, #7fe6ff);
+  opacity: 0.75;
+  transition: opacity 0.18s, background 0.18s;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+}
+.swse-item-customization-workbench .inventory-item--construct-new:hover,
+.swse-customization-stage .inventory-item--construct-new:hover {
+  opacity: 1;
+  background: color-mix(in srgb, var(--icw-cyan, #7fe6ff) 8%, transparent);
+}
+.swse-item-customization-workbench .inventory-construct-plus,
+.swse-customization-stage .inventory-construct-plus {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1.5px dashed var(--icw-cyan, #7fe6ff);
+  border-radius: 4px;
+  font-size: 22px;
+  line-height: 1;
+  flex-shrink: 0;
+}

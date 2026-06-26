@@ -32,11 +32,22 @@ function extractName(entry) {
 
 function collectActorItemNames(actor, type) {
   if (!actor?.items) return [];
+  const expected = String(type || '').toLowerCase();
+  const normalizeType = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, '');
   return actor.items
     .filter((item) => {
-      if (item.type === type) return true;
-      if (type === FORCE_ITEM_TYPES.TECHNIQUE && item.type === 'feat') return item.system?.tags?.includes('force_technique');
-      if (type === FORCE_ITEM_TYPES.SECRET && item.type === 'feat') return item.system?.tags?.includes('force_secret');
+      const itemType = String(item?.type || '').toLowerCase();
+      const compactType = normalizeType(itemType);
+      const tags = Array.isArray(item?.system?.tags) ? item.system.tags : [];
+      if (itemType === expected) return true;
+      if (expected === FORCE_ITEM_TYPES.POWER) {
+        return ['forcepower', 'force_power', 'power'].includes(compactType)
+          || tags.includes('force_power')
+          || item?.system?.isForcePower === true
+          || String(item?.system?.executionModel || '').toLowerCase() === 'force_power';
+      }
+      if (type === FORCE_ITEM_TYPES.TECHNIQUE && item.type === 'feat') return tags.includes('force_technique');
+      if (type === FORCE_ITEM_TYPES.SECRET && item.type === 'feat') return tags.includes('force_secret');
       return false;
     })
     .map((item) => normalizeName(item.name))

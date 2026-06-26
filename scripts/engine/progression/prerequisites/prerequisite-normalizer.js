@@ -41,6 +41,7 @@ import {
 } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
 import { isForceSensitivityName } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { resolveCanonicalForcePowerName } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
 // Phase 5: canonical tree metadata for sourceId enrichment
 import { getTalentTreeMetadata } from "/systems/foundryvtt-swse/scripts/data/talent-tree-metadata.js";
 // Phase 5A: feat prerequisite authority for isScopedChoice / choiceKind metadata
@@ -982,6 +983,20 @@ function normalizeSinglePart(part, source) {
     return normalizeUnknownRequirement(part, source);
   }
 
+  const explicitForcePower = part.match(/^(?:must\s+(?:know|have)\s+|knows?\s+|requires\s+)?(.+?)\s+(?:force\s+power|in\s+(?:your\s+)?force\s+power\s+suite)$/i);
+  if (explicitForcePower) {
+    const powerName = resolveCanonicalForcePowerName(explicitForcePower[1]) || explicitForcePower[1].trim();
+    if (!/^(?:any|one|a)$/i.test(powerName)) {
+      return { type: 'force_power', key: stableKey(powerName), name: powerName, source };
+    }
+    return { type: 'force_power_count', min: 1, source };
+  }
+
+  const canonicalForcePowerName = resolveCanonicalForcePowerName(part);
+  if (canonicalForcePowerName) {
+    return { type: 'force_power', key: stableKey(canonicalForcePowerName), name: canonicalForcePowerName, source };
+  }
+
   // Try as canonical feat name via registry
   const canonFeat = resolveCanonicalFeatName(part);
   if (canonFeat && normalizeLooseLookupKey(canonFeat) !== normalizeLooseLookupKey(part) && canonFeat !== part) {
@@ -1057,8 +1072,10 @@ function normalizeStructuredItem(item, source) {
     case 'non_droid':
       return { type: 'non_droid', source };
     case 'forcePower':
-    case 'force_power':
-      return { type: 'force_power', key: stableKey(item.name), name: item.name, source };
+    case 'force_power': {
+      const powerName = resolveCanonicalForcePowerName(item.name || item.power || item.powerName || item.key || '') || item.name || item.power || item.powerName || item.key || '';
+      return { type: 'force_power', key: stableKey(powerName), name: powerName, source };
+    }
     case 'force_power_count':
       return { type: 'force_power_count', min: item.min ?? item.minimum ?? item.count ?? 1, source };
     case 'forceTechnique':

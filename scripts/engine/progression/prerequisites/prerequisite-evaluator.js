@@ -42,6 +42,7 @@ import {
 } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
 import { FeatChoiceResolver, normalizeFeatChoiceKey } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+import { resolveCanonicalForcePowerName } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
 
 // ── Internal helpers ─────────────────────────────────────────────
 
@@ -248,6 +249,10 @@ function evalFeat(snapshot, req, opts) {
 /** Evaluate a talent requirement. */
 function evalTalent(snapshot, req, opts) {
   const talentName = req.name || req.key || '';
+  const forcePowerName = resolveCanonicalForcePowerName(talentName);
+  if (forcePowerName) {
+    return evalForcePower(snapshot, { ...req, type: 'force_power', name: forcePowerName, key: forcePowerName }, opts);
+  }
   const has = snapshot.talents.has(talentName);
   return {
     passed: has,

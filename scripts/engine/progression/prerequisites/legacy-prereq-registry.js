@@ -3,6 +3,7 @@ import { FeatRegistry as CanonicalFeatRegistry } from "/systems/foundryvtt-swse/
 import { TalentRegistry as CanonicalTalentRegistry } from "/systems/foundryvtt-swse/scripts/registries/talent-registry.js";
 import { SpeciesRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/species-registry.js";
 import { isDroidProgressionActor } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
+import { resolveCanonicalForcePowerName } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
 
 const SIZE_ORDER = ['Fine', 'Diminutive', 'Tiny', 'Small', 'Medium', 'Large', 'Huge', 'Gargantuan', 'Colossal'];
 
@@ -219,6 +220,18 @@ export function parseRegistryBackedLegacyPrerequisite(part) {
   const speciesName = resolveCanonicalSpeciesName(text);
   if (speciesName && getCanonicalSpeciesEntries().some((entry) => normalizeLookupKey(entry?.name) === normalizeLookupKey(speciesName))) {
     return { type: 'species', species: [speciesName], name: speciesName };
+  }
+
+  const explicitForcePower = text.match(/^(?:must\s+(?:know|have)\s+|knows?\s+|requires\s+)?(.+?)\s+(?:force\s+power|in\s+(?:your\s+)?force\s+power\s+suite)$/i);
+  if (explicitForcePower) {
+    const powerName = resolveCanonicalForcePowerName(explicitForcePower[1]) || explicitForcePower[1].trim();
+    if (/^(?:any|one|a)$/i.test(powerName)) return { type: 'forcePower' };
+    return { type: 'forcePower', name: powerName, power: powerName };
+  }
+
+  const forcePowerName = resolveCanonicalForcePowerName(text);
+  if (forcePowerName) {
+    return { type: 'forcePower', name: forcePowerName, power: forcePowerName };
   }
 
   const featName = resolveCanonicalFeatName(text);

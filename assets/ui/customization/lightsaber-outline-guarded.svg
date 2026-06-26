@@ -1,31 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 640" role="img" aria-labelledby="title desc">
-  <title id="title">Guarded lightsaber outline</title>
-  <desc id="desc">A full vertical lightsaber outline with crossguard vents and a long main blade. Blade color can be themed with CSS variable --blade-color.</desc>
-  <defs>
-    <filter id="bladeGlow" x="-40%" y="-10%" width="180%" height="120%">
-      <feGaussianBlur stdDeviation="4" result="blur"/>
-      <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-    </filter>
-  </defs>
-
-  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
-    <path d="M100 26 L100 446" stroke="var(--blade-color, #ffd36c)" stroke-width="12" filter="url(#bladeGlow)"/>
-    <path d="M100 30 L100 440" stroke="var(--blade-core, #ffffff)" stroke-width="4"/>
-    <path d="M70 442 L38 442" stroke="var(--blade-color, #ffd36c)" stroke-width="8" filter="url(#bladeGlow)"/>
-    <path d="M130 442 L162 442" stroke="var(--blade-color, #ffd36c)" stroke-width="8" filter="url(#bladeGlow)"/>
-    <path d="M72 442 L40 442" stroke="var(--blade-core, #ffffff)" stroke-width="2.6"/>
-    <path d="M128 442 L160 442" stroke="var(--blade-core, #ffffff)" stroke-width="2.6"/>
-
-    <g stroke="currentColor" stroke-width="3">
-      <rect x="82" y="446" width="36" height="118" rx="10"/>
-      <path d="M82 442h36"/>
-      <path d="M74 436h52"/>
-      <path d="M74 436v12M126 436v12"/>
-      <rect x="86" y="466" width="28" height="18" rx="4"/>
-      <rect x="86" y="496" width="28" height="18" rx="4"/>
-      <rect x="86" y="526" width="28" height="16" rx="4"/>
-      <path d="M90 564v22M100 564v28M110 564v22"/>
-      <circle cx="100" cy="548" r="4"/>
-    </g>
-  </g>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 640" role="img" aria-labelledby="title desc">
+<title id="title">Crossguard lightsaber outline</title><desc id="desc">Emitter-aligned lightsaber preview. Blade color is controlled by --blade-color.</desc>
+<style>.blade{stroke:var(--blade-color,#31b7ff);stroke-width:10;stroke-linecap:round;filter:url(#glow)}.side{stroke-width:7}.hilt{fill:url(#metal);stroke:#bdefff;stroke-opacity:.45;stroke-width:2}.cap{fill:#1d2632;stroke:#bdefff;stroke-opacity:.35;stroke-width:2}.switch{fill:#42e6ff;stroke:#eaffff;stroke-width:1}</style>
+<defs><linearGradient id="metal" x1="0" x2="1" y1="0" y2="1"><stop offset="0" stop-color="#e8f7ff"/><stop offset=".45" stop-color="#596878"/><stop offset=".7" stop-color="#1c2530"/><stop offset="1" stop-color="#c0d0df"/></linearGradient><filter id="glow" x="-100%" y="-30%" width="300%" height="160%"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+<line x1="80" y1="36" x2="80" y2="296" class="blade"/><line x1="60" y1="304" x2="20" y2="270" class="blade side"/><line x1="100" y1="304" x2="140" y2="270" class="blade side"/><rect x="62" y="304" width="36" height="76" rx="8" class="hilt"/><rect x="56" y="292" width="48" height="20" rx="6" class="cap"/><rect x="58" y="372" width="44" height="20" rx="6" class="cap"/><circle cx="80" cy="338" r="5" class="switch"/></svg>

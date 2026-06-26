@@ -38,6 +38,7 @@ import {
 } from "/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/legacy-prereq-registry.js";
 import { isForceSensitivityName } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
 import { resolveClassModel } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
+import { collectKnownForcePowers } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 // ── Internals ────────────────────────────────────────────────────
@@ -672,10 +673,12 @@ function buildForceSection(actor, pending) {
     }
   };
 
+  for (const entry of collectKnownForcePowers(actor, pending)) ingestPower(entry);
+
   for (const item of items) {
     const t = item?.type || '';
     const name = looseKey(item?.name);
-    if (t === 'force-power' || t === 'forcePower') {
+    if (['force-power', 'forcepower', 'force_power', 'power'].includes(String(t).toLowerCase()) || item?.system?.isForcePower === true || String(item?.system?.executionModel || '').toLowerCase() === 'force_power') {
       if (name) powers.add(name);
     } else if (t === 'forcetechnique' || t === 'force-technique') {
       if (name) techniques.add(name);
@@ -701,6 +704,9 @@ function buildForceSection(actor, pending) {
   // Count pending Force Training grants and pending Force Power choices
   for (const entry of coercePendingArray(pending?.selectedForcePowers)) ingestPower(entry);
   for (const entry of coercePendingArray(pending?.grantedForcePowers)) ingestPower(entry);
+  for (const entry of coercePendingArray(actor?.system?.forcePowers)) ingestPower(entry);
+  for (const entry of coercePendingArray(actor?.system?.force?.powers)) ingestPower(entry);
+  for (const entry of coercePendingArray(actor?.system?.forcePowerSuite?.powers)) ingestPower(entry);
   for (const entry of coercePendingArray(actor?.system?.progression?.forcePowers)) ingestPower(entry);
   for (const entry of coercePendingArray(actor?.system?.progression?.powers)) ingestPower(entry);
 

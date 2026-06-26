@@ -78,6 +78,17 @@ const STRUCTURAL_DETAILS = {
   }
 };
 const ACCENT_SWATCHES = ['#a0a0a0', '#d4af37', '#b87333', '#c0c0c0', '#1a1a1a', '#dc143c', '#1e90ff', '#00ff66'];
+const LIGHTSABER_STYLE_OPTIONS = [
+  { key: 'auto', label: 'Auto', className: 'auto', hint: 'Match the selected chassis.' },
+  { key: 'classic', label: 'Classic', className: 'classic', hint: 'Single emitter, traditional silhouette.' },
+  { key: 'dueling', label: 'Dueling', className: 'dueling', hint: 'Slim Makashi-style hilt.' },
+  { key: 'double-bladed', label: 'Double', className: 'double-bladed', hint: 'Emitters at both ends.' },
+  { key: 'crossguard', label: 'Crossguard', className: 'crossguard', hint: 'Primary blade plus two short vents.' },
+  { key: 'shoto', label: 'Shoto', className: 'shoto', hint: 'Compact hilt and shorter blade.' },
+  { key: 'curved', label: 'Curved', className: 'curved', hint: 'Curved grip profile.' },
+  { key: 'pike', label: 'Pike', className: 'pike', hint: 'Long-handle silhouette.' },
+  { key: 'tech', label: 'Tech', className: 'tech', hint: 'Modern illuminated grip.' }
+];
 const TINT_SWATCHES = ['#1a1a2e','#3a2a4a','#5a3a4a','#7a3a4a','#8a5a3a','#3a5a4a','#3a4a6a','#5a5a6a','#aa8a4a','#2a2a2a','#9a9a9a','#0a0a0a'];
 
 const WORKBENCH_CATEGORY_ALIASES = {
@@ -421,6 +432,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       selectedCrystalId: null,
       selectedAccessoryIds: [],
       selectedBladeColor: DEFAULT_BLADE_COLOR,
+      selectedStyleKey: 'auto',
       selectedCheckMode: 'roll',
       constructionResult: null,
       selectedOwnedSaberId: (this.selectedCategory === 'lightsaber' && mode === 'construct') ? null : (itemId || null),
@@ -696,7 +708,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const summary = this._getLightsaberConstructionSummary();
     return this.selectedCategory === 'lightsaber'
       && (this.mode === 'construct' || this.routeIntent === 'lightsaber-construction')
-      && !summary.hasSelfBuilt
+      && (!summary.hasSelfBuilt || this._lightsaber?.allowAdditionalConstruction)
       && !this._lightsaber?.selectedOwnedSaberId;
   }
 
@@ -1583,10 +1595,18 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         return;
       }
 
+      case 'construct-additional-lightsaber': {
+        this._lightsaber.allowAdditionalConstruction = true;
+        this._enterLightsaberConstructionMode(target?.dataset?.entryPoint || 'workbench');
+        await this._renderPreservingUi();
+        return;
+      }
+
       case 'select-item': {
         const itemId = target?.dataset?.itemId;
         if (!itemId) return;
         if (this.selectedCategory === 'lightsaber') {
+          this._lightsaber.allowAdditionalConstruction = false;
           this._lightsaber.selectedOwnedSaberId = itemId;
           this._lightsaber.activeTab = 'crystal';
           this._lightsaber.inspectedComponent = null;
@@ -1852,6 +1872,14 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         return;
       }
 
+      case 'set-lightsaber-style': {
+        const styleKey = this._normalizeLightsaberStyleKey(target?.dataset?.key || 'auto');
+        this._lightsaber.selectedStyleKey = styleKey;
+        this._lightsaber.constructionResult = null;
+        await this._renderPreservingUi();
+        return;
+      }
+
       case 'set-lightsaber-check-mode': {
         if (target?.disabled || target?.classList?.contains?.('disabled')) return;
         const mode = target?.dataset?.key;
@@ -1899,6 +1927,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           this._lightsaber.selectedCrystalId = null;
           this._lightsaber.selectedAccessoryIds = [];
           this._lightsaber.selectedBladeColor = DEFAULT_BLADE_COLOR;
+          this._lightsaber.selectedStyleKey = 'auto';
           this._lightsaber.selectedCheckMode = 'roll';
           this._lightsaber.constructionResult = null;
           if (editItem) this._lightsaber.selectedOwnedSaberId = getWorkbenchItemId(editItem);
@@ -2383,12 +2412,14 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       }
       if (!ls.selectedAccessoryIds.length && Array.isArray(editState.accessoryIds)) ls.selectedAccessoryIds = [...editState.accessoryIds];
       ls.selectedBladeColor ||= editState.bladeColor || DEFAULT_BLADE_COLOR;
+      ls.selectedStyleKey = this._normalizeLightsaberStyleKey(ls.selectedStyleKey || editState.lightsaberStyle || 'auto');
       return;
     }
     const standardChassis = this._getStandardLightsaberChassis();
     ls.selectedChassisId ||= standardChassis?.id || standardChassis?._id || standardChassis?.system?.chassisId || this._catalogs.chassis[0]?.id || null;
     ls.selectedCrystalId ||= this._catalogs.crystals.find(cr => /kyber|ilum/i.test(cr.name || ''))?.id || this._catalogs.crystals[0]?.id || null;
     ls.selectedBladeColor ||= DEFAULT_BLADE_COLOR;
+    ls.selectedStyleKey = this._normalizeLightsaberStyleKey(ls.selectedStyleKey || 'auto');
   }
 
   _getLightsaberComponentKey(component) {
@@ -2533,12 +2564,27 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     return compatible.includes(this._getSelectedLightsaberChassisId());
   }
 
+  _normalizeLightsaberStyleKey(value) {
+    const key = String(value || 'auto').trim().toLowerCase().replace(/[_\s]+/g, '-');
+    return LIGHTSABER_STYLE_OPTIONS.some(option => option.key === key) ? key : 'auto';
+  }
+
+  _getLightsaberStyleOptions(renderStyleClass = 'classic') {
+    const selected = this._normalizeLightsaberStyleKey(this._lightsaber?.selectedStyleKey || 'auto');
+    return LIGHTSABER_STYLE_OPTIONS.map(option => ({
+      ...option,
+      selected: option.key === selected,
+      previewClass: option.key === 'auto' ? renderStyleClass : option.className
+    }));
+  }
+
   _getLightsaberConfig() {
     return {
       chassisItemId: this._lightsaber.selectedChassisId,
       crystalItemId: this._lightsaber.selectedCrystalId,
       accessoryItemIds: [...this._lightsaber.selectedAccessoryIds],
       bladeColor: this._lightsaber.selectedBladeColor,
+      lightsaberStyle: this._normalizeLightsaberStyleKey(this._lightsaber.selectedStyleKey || 'auto'),
       checkMode: this._lightsaber.selectedCheckMode
     };
   }
@@ -2960,7 +3006,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
     const lightsaberVisualProfile = WeaponVisualProfileResolver.resolve(editItem, {
       actor: this.actor,
       lightsaberState: this._lightsaber,
-      draft: { bladeColor: this._lightsaber.selectedBladeColor }
+      draft: { bladeColor: this._lightsaber.selectedBladeColor, lightsaberStyle: this._normalizeLightsaberStyleKey(this._lightsaber.selectedStyleKey || 'auto') }
     });
     const colorOptions = this._resolveBladeColorOptions(crystal).map(key => ({
       key,
@@ -2991,13 +3037,16 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
             : this._formatLightsaberEligibilityReason(constructionSummary.reason))));
     const bladeHex = lightsaberVisualProfile.bladeHex;
     const hiltKind = this._normalizeLightsaberHiltKind(chassis);
+    const styleKey = this._normalizeLightsaberStyleKey(this._lightsaber.selectedStyleKey || lightsaberVisualProfile.lightsaberStyle || 'auto');
+    const renderStyleClass = styleKey === 'auto' ? hiltKind : styleKey;
+    const styleOptions = this._getLightsaberStyleOptions(renderStyleClass);
     const steps = this._getLightsaberStepState({ canChangeChassis, activeTab });
     const navigation = this._getLightsaberStepNavigation(steps, activeTab);
     const buildSummary = this._buildLightsaberBuildSummary({ chassis, crystal, accessories: selectedAccessories, preview, credits, totalCost });
     const effectiveStats = this._getLightsaberEffectiveStats({ editItem, chassis, crystal, accessories: selectedAccessories });
     const heroStats = this._getLightsaberHeroStats({ editItem, chassis, crystal, accessories: selectedAccessories, preview, slotState, totalCost });
     const resultView = this._getLightsaberResultView(this._lightsaber.constructionResult);
-    const alreadyBuiltNotice = constructionSummary.hasSelfBuilt && !constructionSummary.available;
+    const alreadyBuiltNotice = constructionSummary.hasSelfBuilt && !constructionSummary.available && !this._lightsaber?.allowAdditionalConstruction;
     const ineligibleNotice = !editItem && !constructionSummary.available && !constructionSummary.hasSelfBuilt;
     return {
       actor: this.actor,
@@ -3063,6 +3112,10 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         bladeHex,
         visualProfile: lightsaberVisualProfile,
         hiltKind,
+        styleKey,
+        renderStyleClass,
+        styleOptions,
+        selectedStyleLabel: styleOptions.find(option => option.selected)?.label || 'Auto',
         chassis: this._catalogs.chassis.map(option => {
           const optionKey = this._getLightsaberComponentKey(option) || option.id || option._id || option.system?.chassisId || option.name || null;
           return {
@@ -3116,6 +3169,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
           accessoryNames: selectedAccessories.map(accessory => accessory.name).join(', ') || 'None',
           bladeColor: this._lightsaber.selectedBladeColor || DEFAULT_BLADE_COLOR,
           bladeColorParts: this._buildBladeColorTextParts(this._lightsaber.selectedBladeColor || DEFAULT_BLADE_COLOR),
+          styleLabel: styleOptions.find(option => option.selected)?.label || 'Auto',
           buildDc: preview?.finalDc ?? preview?.dc ?? '—',
           useTheForce: preview?.modifier ?? '—',
           take10: preview?.take10Total ?? '—',
@@ -3391,6 +3445,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         success: true,
         checkMode: config.checkMode,
         bladeColor: config.bladeColor,
+        lightsaberStyle: config.lightsaberStyle,
         weaponName: forged?.name || 'Self-built lightsaber'
       };
       ui.notifications.info('Lightsaber forged.');

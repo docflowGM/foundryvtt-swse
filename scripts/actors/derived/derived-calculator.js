@@ -395,10 +395,12 @@ export class DerivedCalculator {
         // Legacy compendium droids may contribute static numeric totals; honor those instead
         // of re-deriving from partial schema to avoid crashes and noisy warnings.
         if (skill.legacyStaticTotal === true && Number.isFinite(Number(skill.legacyTotal))) {
+          const legacyTotal = Number(skill.legacyTotal);
           updates['system.derived.skills'][skillKey] = {
             label: skillKey,
             ability: skill.selectedAbility || skillDef.defaultAbility,
-            total: Number(skill.legacyTotal),
+            selectedAbility: skill.selectedAbility || skillDef.defaultAbility,
+            total: legacyTotal,
             trained: skill.trained || false,
             focused: skill.focused || false,
             miscMod: Number.isFinite(Number(skill.miscMod)) ? Number(skill.miscMod) : 0,
@@ -407,6 +409,12 @@ export class DerivedCalculator {
             featBonus: 0,
             speciesBonus: 0,
             stateBonus: 0,
+            halfLevel: 0,
+            trainedBonus: 0,
+            focusBonus: 0,
+            occupationBonus: 0,
+            breakdown: [{ key: 'imported', label: 'Imported/static total', value: legacyTotal, source: 'legacy-static-total' }],
+            math: { total: legacyTotal, parts: [{ key: 'imported', label: 'Imported/static total', value: legacyTotal, source: 'legacy-static-total' }], verified: true },
             untrained: skillDef.untrained !== false
           };
           continue;
@@ -428,10 +436,9 @@ export class DerivedCalculator {
         const speciesBonus = speciesSkillBonuses[skillKey] || 0;
         total += speciesBonus;
 
-        // Add training/rank bonus
+        // Add training/rank bonus.
         // Under ranked mode: use ranks directly; under standard mode: use trained +5 bonus.
-        // Logic Upgrade: Skill Swap selects one currently-untrained non-UTF droid skill
-        // during progression. Treat that chosen skill as trained for derived totals.
+        // Store the exact contribution values so the sheet math display mirrors this calculator.
         const logicUpgradeSkillSwap = this._hasLogicUpgradeSkillSwapForSkill(actor, skillKey);
         const rankedMode = isRankedModeEnabled();
         let isTrained = Boolean(
@@ -441,10 +448,13 @@ export class DerivedCalculator {
           (hasForceDeception && skillKey === 'deception') ||
           (hasForceTreatment && skillKey === 'treatInjury') ||
           (hasForcePersuasion && skillKey === 'persuasion')
-        ); // Standard mode: stored, feat-backed, or talent-backed training
+        );
+        const ranks = Number(skill.ranks || 0) || 0;
+        let trainedBonus = 0;
+        let rankBonus = 0;
         if (rankedMode) {
-          const ranks = skill.ranks || 0;
-          total += ranks;
+          rankBonus = ranks;
+          total += rankBonus;
           isTrained = Boolean(
             deriveTrainedFromRanks(ranks) ||
             logicUpgradeSkillSwap ||
@@ -452,31 +462,30 @@ export class DerivedCalculator {
             (hasForceDeception && skillKey === 'deception') ||
             (hasForceTreatment && skillKey === 'treatInjury') ||
             (hasForcePersuasion && skillKey === 'persuasion')
-          ); // Derived trained status
-        } else {
-          // Standard mode: use traditional trained +5 bonus
-          if (isTrained) {
-            total += 5;
-          }
+          );
+        } else if (isTrained) {
+          trainedBonus = 5;
+          total += trainedBonus;
         }
 
-        // Add half level (gated by disableHalfLevelSkillBonus rule)
-        if (SkillRules.isHalfLevelSkillBonusEnabled()) {
-          total += halfLevel;
-        }
+        // Add half level (gated by disableHalfLevelSkillBonus rule).
+        const halfLevelBonus = SkillRules.isHalfLevelSkillBonusEnabled() ? halfLevel : 0;
+        total += halfLevelBonus;
 
         // Add skill focus bonus. A focused checkbox is the sheet-level
         // representation of Skill Focus, while the Skill Focus feat may also
         // contribute a selected-choice passive modifier. Treat those as the
         // same source so checking Focus on a skill that already has the feat
         // never double-counts the +5 competence bonus.
-        const focusedCheckboxBonus = skill.focused ? 5 : 0;
-        total += focusedCheckboxBonus;
+        const focusBonus = skill.focused ? 5 : 0;
+        total += focusBonus;
 
         // Apply occupation bonus (only to untrained checks)
         let hasOccupationBonus = false;
+        let occupationBonusValue = 0;
         if (!isTrained && occupationBonus?.skills?.includes(skillKey)) {
-          total += occupationBonus.value || 2;
+          occupationBonusValue = Number(occupationBonus.value || 2) || 0;
+          total += occupationBonusValue;
           hasOccupationBonus = true;
         }
 
@@ -493,8 +502,14 @@ export class DerivedCalculator {
         const effectiveSFBonus = skill.focused
           ? 0
           : (skillFocusModifierBonus > 0 ? Math.min(skillFocusModifierBonus, 5) : 0);
-        const featBonus = rawFeatBonus - skillFocusModifierBonus + effectiveSFBonus;
-        total += Math.max(0, featBonus);
+        // Some older modifier aggregates expose Skill Focus in allModifiers but not in
+        // modifierMap. Only subtract the Focus piece when the aggregate actually contains it;
+        // otherwise a display/audit pass can accidentally turn an absent +5 into a -5.
+        const nonFocusModifierBonus = (skillFocusModifierBonus > 0 && rawFeatBonus >= skillFocusModifierBonus)
+          ? rawFeatBonus - skillFocusModifierBonus
+          : rawFeatBonus;
+        const featBonus = nonFocusModifierBonus + effectiveSFBonus;
+        total += featBonus;
 
         // PHASE 4: Get state-dependent modifiers for this skill
         let stateBonus = 0;
@@ -572,6 +587,31 @@ export class DerivedCalculator {
           canUseUntrained = droidUntrainedSkills.includes(skillKey);
         }
 
+        const skillBreakdown = [
+          { key: 'ability', label: `${String(abilityKey).toUpperCase()} modifier`, value: abilityMod, source: 'ability' },
+          { key: 'misc', label: 'Misc', value: skillMiscMod, source: 'actor.system.skills' },
+          { key: 'species', label: 'Species / special ability', value: speciesBonus, source: 'species' },
+          { key: 'trained', label: rankedMode ? 'Ranks' : 'Trained', value: rankedMode ? rankBonus : trainedBonus, source: rankedMode ? 'ranks' : 'training' },
+          { key: 'halfLevel', label: '1/2 heroic level', value: halfLevelBonus, source: 'level' },
+          { key: 'focus', label: 'Skill Focus', value: focusBonus, source: 'focus' },
+          { key: 'occupation', label: 'Occupation', value: occupationBonusValue, source: 'occupation' },
+          { key: 'modifiers', label: 'Feat / equipment / effects', value: featBonus, source: 'modifier-engine' },
+          { key: 'state', label: 'Passive state', value: stateBonus, source: 'passive-state' },
+          { key: 'armor', label: 'Armor check penalty', value: armorPenalty, source: 'armor' },
+          { key: 'condition', label: 'Condition track', value: conditionPenalty, source: 'condition-track' }
+        ];
+        const breakdownTotal = skillBreakdown.reduce((sum, part) => sum + (Number(part.value) || 0), 0);
+        if (Math.abs(breakdownTotal - total) > 0.001) {
+          swseLogger.warn('[DerivedCalculator] Skill math breakdown mismatch', {
+            actorId: actor?.id,
+            actorName: actor?.name,
+            skillKey,
+            total,
+            breakdownTotal,
+            breakdown: skillBreakdown
+          });
+        }
+
         updates['system.derived.skills'][skillKey] = {
           total: total,
           abilityMod: abilityMod,
@@ -580,15 +620,26 @@ export class DerivedCalculator {
           baseTrained: skill.trained || false,
           logicUpgradeSkillSwap: logicUpgradeSkillSwap || false,
           focused: skill.focused || false,
-          miscMod: Number.isFinite(Number(skill.miscMod)) ? Number(skill.miscMod) : 0,
+          miscMod: skillMiscMod,
           speciesBonus: speciesBonus,
           hasOccupationBonus: hasOccupationBonus,
+          occupationBonus: occupationBonusValue,
           featBonus: featBonus,
           canUseUntrained: canUseUntrained,
           defaultAbility: skillDef.defaultAbility,
+          halfLevel: halfLevelBonus,
+          trainedBonus,
+          rankBonus,
+          focusBonus,
           stateBonus: stateBonus,
           armorPenalty: armorPenalty,
-          conditionPenalty: conditionPenalty
+          conditionPenalty: conditionPenalty,
+          breakdown: skillBreakdown,
+          math: {
+            total,
+            parts: skillBreakdown,
+            verified: Math.abs(breakdownTotal - total) <= 0.001
+          }
         };
       }
 
@@ -600,12 +651,22 @@ export class DerivedCalculator {
         if (!targetSkill || !Number.isFinite(targetTotal) || !Number.isFinite(useTheForceTotal)) return false;
         if (useTheForceTotal <= targetTotal) return false;
 
+        const sourceBreakdown = Array.isArray(useTheForceSkill.breakdown) ? useTheForceSkill.breakdown : [];
         updates['system.derived.skills'][targetKey] = {
           ...targetSkill,
           total: useTheForceTotal,
           [markerKey]: true,
           substitutedFromSkill: 'useTheForce',
-          substitutedBaseTotal: targetTotal
+          substitutedBaseTotal: targetTotal,
+          breakdown: sourceBreakdown.length ? sourceBreakdown.map(part => ({ ...part })) : targetSkill.breakdown,
+          substitutionNote: `Uses Use the Force total (${useTheForceTotal}) instead of ${targetKey} (${targetTotal}).`,
+          math: {
+            total: useTheForceTotal,
+            parts: sourceBreakdown.length ? sourceBreakdown.map(part => ({ ...part })) : targetSkill.breakdown,
+            verified: true,
+            substitutedFromSkill: 'useTheForce',
+            substitutedBaseTotal: targetTotal
+          }
         };
         return true;
       };
@@ -631,13 +692,23 @@ export class DerivedCalculator {
           const useTheForceTotal = Number(useTheForceSkill?.total);
           const targetTotal = Number(targetSkill?.total);
           if (!Number.isFinite(useTheForceTotal) || !Number.isFinite(targetTotal)) continue;
+          const sourceBreakdown = Array.isArray(useTheForceSkill.breakdown) ? useTheForceSkill.breakdown : [];
           updates['system.derived.skills'][knowledgeKey] = {
             ...targetSkill,
             total: useTheForceTotal,
             trained: true,
             insightOfTheForceSubstitution: true,
             substitutedFromSkill: 'useTheForce',
-            substitutedBaseTotal: targetTotal
+            substitutedBaseTotal: targetTotal,
+            breakdown: sourceBreakdown.length ? sourceBreakdown.map(part => ({ ...part })) : targetSkill.breakdown,
+            substitutionNote: `Insight of the Force uses Use the Force total (${useTheForceTotal}) instead of ${knowledgeKey} (${targetTotal}).`,
+            math: {
+              total: useTheForceTotal,
+              parts: sourceBreakdown.length ? sourceBreakdown.map(part => ({ ...part })) : targetSkill.breakdown,
+              verified: true,
+              substitutedFromSkill: 'useTheForce',
+              substitutedBaseTotal: targetTotal
+            }
           };
         }
       }
