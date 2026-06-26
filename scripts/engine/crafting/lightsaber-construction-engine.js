@@ -543,7 +543,6 @@ export class LightsaberConstructionEngine {
         let roll;
         try {
           roll = await RollEngine.safeRoll(formula);
-          await roll.evaluate({ async: true });
         } catch (err) {
           SWSELogger.error("Construction roll failed:", err);
           return { success: false, reason: "roll_failed" };
@@ -635,7 +634,24 @@ export class LightsaberConstructionEngine {
 
   static async #resolveSelections(actor, config) {
     const catalogs = await this.getCatalogOptions();
-    const byId = (arr, id) => arr.find(entry => entry.id === id || entry._id === id || entry.system?.chassisId === id);
+    const byId = (arr, id) => {
+      if (!id) return undefined;
+      const needle = String(id).trim().toLowerCase();
+      return arr.find(entry => {
+        const candidates = [
+          entry.id,
+          entry._id,
+          entry.key,
+          entry.uuid,
+          entry.system?.chassisId,
+          entry.system?.lightsaber?.componentId,
+          entry.system?.lightsaber?.crystalType,
+          entry.system?.lightsaber?.family,
+          entry.name
+        ].filter(Boolean).map(v => String(v).trim().toLowerCase());
+        return candidates.some(c => c === needle);
+      });
+    };
     const ownedById = id => actor?.items?.get?.(id);
 
     const chassis = ownedById(config?.chassisItemId) || byId(catalogs.chassis, config?.chassisItemId);

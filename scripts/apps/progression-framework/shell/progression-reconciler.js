@@ -40,6 +40,7 @@ import {
   ProgressionOwnershipClassifier,
   ProgressionReconciliationReportBuilder,
 } from './reconciliation/index.js';
+import { isKnownForceSecretItem, isKnownForceTechniqueItem } from '/systems/foundryvtt-swse/scripts/utils/force-knowledge.js';
 
 
 const ABILITY_KEYS = Object.freeze(['str', 'dex', 'con', 'int', 'wis', 'cha']);
@@ -1643,8 +1644,8 @@ export class ProgressionReconciler {
     const poolsByType = {
       'class-feat': featPools.class,
       'class-talent': talentPools.class,
-      'force-secret': readActorItems(actor).filter(item => item?.type === 'forcesecret' || item?.type === 'force-secret' || (item?.type === 'feat' && item?.system?.tags?.includes('force_secret'))),
-      'force-technique': readActorItems(actor).filter(item => item?.type === 'forcetechnique' || item?.type === 'force-technique' || (item?.type === 'feat' && item?.system?.tags?.includes('force_technique'))),
+      'force-secret': readActorItems(actor).filter(isKnownForceSecretItem),
+      'force-technique': readActorItems(actor).filter(isKnownForceTechniqueItem),
       'medical-secret': readActorItems(actor).filter(item => item?.type === 'feat' && item?.system?.medicalSecret),
       'starship-maneuver': readActorItems(actor).filter(item => item?.type === 'maneuver' || item?.type === 'starshipManeuver'),
       'force-power': readActorItems(actor).filter(item => item?.type === 'force-power'),

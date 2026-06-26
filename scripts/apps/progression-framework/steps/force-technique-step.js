@@ -15,6 +15,7 @@ import { SuggestionContextBuilder } from '/systems/foundryvtt-swse/scripts/engin
 import { normalizeDetailPanelData } from '../detail-rail-normalizer.js';
 import { buildClassGrantLedger, mergeLedgerIntoPending } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/class-grant-ledger-builder.js';
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
+import { collectKnownForceTechniques } from '/systems/foundryvtt-swse/scripts/utils/force-knowledge.js';
 
 
 
@@ -799,25 +800,11 @@ export class ForceTechniqueStep extends ProgressionStepPlugin {
       }
     };
 
-    for (const item of Array.from(actor?.items ?? [])) {
-      if (itemTypeMatches(item, 'force-technique', 'forcetechnique', 'forceTechnique', 'technique')) {
-        addEntry(item);
-      } else if (itemTypeMatches(item, 'feat') && (item?.system?.tags || []).includes('force_technique')) {
-        addEntry(item);
-      }
-    }
-
-    const system = actor?.system || {};
-    const pools = [
-      system.forceTechniques,
-      system.forceTechniques?.known,
-      system.force?.techniques,
-      system.progression?.forceTechniques,
-    ];
-
-    for (const pool of pools) {
-      if (Array.isArray(pool)) pool.forEach(addEntry);
-      else if (pool && typeof pool === 'object') Object.values(pool).forEach(addEntry);
+    for (const known of collectKnownForceTechniques(actor)) {
+      addEntry(known.entry || known);
+      addKey(known.name);
+      addKey(known.id);
+      for (const identity of Array.from(known.identities || [])) addKey(identity);
     }
   }
 

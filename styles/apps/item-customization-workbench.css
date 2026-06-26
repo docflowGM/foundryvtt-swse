@@ -1500,6 +1500,13 @@
   flex-direction: column;
 }
 
+.swse-item-customization-workbench .ls-tab-panel--review,
+.swse-customization-stage .ls-tab-panel--review {
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+}
+
 .swse-item-customization-workbench .panel-head.compact,
 .swse-customization-stage .panel-head.compact {
   flex: 0 0 auto;

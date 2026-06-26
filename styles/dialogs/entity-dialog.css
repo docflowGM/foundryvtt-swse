@@ -6,6 +6,7 @@
    ========================================================================== */
 
 .swse-entity-dialog {
+  position: relative;
   --entity-accent: var(--swse-holo-cyan, #63d7ff);
   --entity-accent-soft: rgba(99, 215, 255, 0.16);
   --entity-accent-border: rgba(99, 215, 255, 0.42);
@@ -1587,4 +1588,1115 @@
   .swse-app .swse-entity-dialog__term-groups {
     max-height: 320px;
   }
+}
+
+/* =====================================================
+ * Entity Dialog Phase 7A — Effect Builder Wizard Shell
+ * ===================================================== */
+.swse-entity-dialog__effect-command-deck {
+  border: 1px solid rgba(125, 220, 255, 0.22);
+  background:
+    radial-gradient(120% 100% at 0% 0%, rgba(125, 220, 255, 0.11), transparent 62%),
+    radial-gradient(120% 100% at 100% 100%, rgba(196, 128, 255, 0.08), transparent 60%),
+    rgba(0, 0, 0, 0.22);
+  padding: 12px;
+  display: grid;
+  gap: 12px;
+}
+
+.swse-entity-dialog__effect-metric-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.swse-entity-dialog__effect-metric {
+  border: 1px solid rgba(125, 220, 255, 0.18);
+  background: rgba(0, 0, 0, 0.24);
+  padding: 9px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: center;
+  justify-content: center;
+  min-height: 54px;
+}
+
+.swse-entity-dialog__effect-metric strong {
+  color: var(--swse-accent, #7ddcff);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 1rem;
+}
+
+.swse-entity-dialog__effect-metric span {
+  color: var(--swse-text-muted, #9bb8c4);
+  font-size: 0.66rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-entity-dialog__effect-launch-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.swse-entity-dialog__effect-launch-card {
+  border: 1px solid rgba(125, 220, 255, 0.23);
+  background: linear-gradient(135deg, rgba(125, 220, 255, 0.08), rgba(0, 0, 0, 0.22));
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 146px;
+}
+
+.swse-entity-dialog__effect-launch-card--advanced {
+  border-color: rgba(196, 128, 255, 0.28);
+  background: linear-gradient(135deg, rgba(196, 128, 255, 0.08), rgba(0, 0, 0, 0.24));
+}
+
+.swse-entity-dialog__effect-launch-kicker {
+  color: var(--swse-accent, #7ddcff);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.swse-entity-dialog__effect-launch-card--advanced .swse-entity-dialog__effect-launch-kicker {
+  color: #d8a8ff;
+}
+
+.swse-entity-dialog__effect-launch-card h4 {
+  margin: 0;
+  color: var(--swse-text, #d8f7ff);
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-entity-dialog__effect-launch-card p {
+  color: var(--swse-text-muted, #9bb8c4);
+  line-height: 1.45;
+  margin: 0 0 auto;
+}
+
+.swse-effect-wizard {
+  position: absolute;
+  inset: 0;
+  z-index: 80;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.swse-effect-wizard__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(0, 0, 0, 0.56);
+  cursor: default;
+}
+
+.swse-effect-wizard__modal {
+  position: relative;
+  z-index: 1;
+  width: min(1120px, 100%);
+  height: min(720px, 100%);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  overflow: hidden;
+  border: 1px solid rgba(125, 220, 255, 0.36);
+  background:
+    radial-gradient(120% 90% at 0% 0%, rgba(125, 220, 255, 0.12), transparent 55%),
+    radial-gradient(120% 90% at 100% 100%, rgba(196, 128, 255, 0.10), transparent 58%),
+    rgba(2, 8, 16, 0.98);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.72), inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.swse-effect-wizard__titlebar,
+.swse-effect-wizard__footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(125, 220, 255, 0.14);
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.swse-effect-wizard__footer {
+  justify-content: space-between;
+  border-top: 1px solid rgba(125, 220, 255, 0.14);
+  border-bottom: 0;
+}
+
+.swse-effect-wizard__footer-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.swse-effect-wizard__emblem {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(125, 220, 255, 0.32);
+  background: rgba(125, 220, 255, 0.08);
+  color: var(--swse-accent, #7ddcff);
+}
+
+.swse-effect-wizard__titlecopy {
+  flex: 1;
+  min-width: 0;
+}
+
+.swse-effect-wizard__eyebrow,
+.swse-effect-wizard__rail-label,
+.swse-effect-wizard__pane-kicker,
+.swse-effect-wizard__preview-label {
+  color: rgba(125, 220, 255, 0.72);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.swse-effect-wizard__titlecopy h3,
+.swse-effect-wizard__pane h4,
+.swse-effect-wizard__preview h4 {
+  margin: 2px 0 0;
+  color: var(--swse-text, #d8f7ff);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-effect-wizard__mode-switch {
+  display: flex;
+  gap: 4px;
+  padding: 3px;
+  border: 1px solid rgba(125, 220, 255, 0.2);
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.swse-effect-wizard__mode-switch button,
+.swse-effect-wizard__close {
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--swse-text-muted, #9bb8c4);
+  padding: 7px 10px;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.swse-effect-wizard__mode-switch button.is-active {
+  background: rgba(125, 220, 255, 0.16);
+  border-color: rgba(125, 220, 255, 0.38);
+  color: var(--swse-text, #d8f7ff);
+}
+
+.swse-effect-wizard__close {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  font-size: 1.1rem;
+  border-color: rgba(125, 220, 255, 0.2);
+}
+
+.swse-effect-wizard__body {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr) 290px;
+}
+
+.swse-effect-wizard__steps,
+.swse-effect-wizard__preview {
+  min-height: 0;
+  overflow: auto;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.swse-effect-wizard__steps {
+  border-right: 1px solid rgba(125, 220, 255, 0.12);
+}
+
+.swse-effect-wizard__preview {
+  border-left: 1px solid rgba(125, 220, 255, 0.12);
+}
+
+.swse-effect-wizard__progress {
+  height: 4px;
+  margin: 8px 0 12px;
+  background: rgba(125, 220, 255, 0.10);
+  overflow: hidden;
+}
+
+.swse-effect-wizard__progress span {
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--swse-accent, #7ddcff), #d8a8ff);
+}
+
+.swse-effect-wizard__step {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  text-align: left;
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--swse-text-muted, #9bb8c4);
+  padding: 10px;
+  margin-bottom: 6px;
+  cursor: pointer;
+}
+
+.swse-effect-wizard__step:hover,
+.swse-effect-wizard__step.is-active {
+  border-color: rgba(125, 220, 255, 0.34);
+  background: rgba(125, 220, 255, 0.08);
+  color: var(--swse-text, #d8f7ff);
+}
+
+.swse-effect-wizard__step.is-complete .swse-effect-wizard__step-no {
+  color: #9fffc2;
+  border-color: rgba(115, 235, 165, 0.45);
+}
+
+.swse-effect-wizard__step-no {
+  width: 26px;
+  height: 26px;
+  flex: 0 0 26px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(125, 220, 255, 0.22);
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--swse-accent, #7ddcff);
+  font-family: var(--swse-font-mono, monospace);
+}
+
+.swse-effect-wizard__step-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.swse-effect-wizard__step-copy strong {
+  color: inherit;
+  font-size: 0.8rem;
+}
+
+.swse-effect-wizard__step-copy small,
+.swse-effect-wizard__step-copy em,
+.swse-effect-wizard__rail-note,
+.swse-effect-wizard__pane p,
+.swse-effect-wizard__helper,
+.swse-effect-wizard__preview p {
+  color: var(--swse-text-muted, #9bb8c4);
+  line-height: 1.45;
+}
+
+.swse-effect-wizard__step-copy small {
+  font-size: 0.68rem;
+}
+
+.swse-effect-wizard__step-copy em {
+  color: var(--swse-accent, #7ddcff);
+  font-size: 0.68rem;
+  font-style: normal;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-effect-wizard__stage {
+  min-height: 0;
+  overflow: auto;
+  padding: 24px;
+}
+
+.swse-effect-wizard__pane {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.swse-effect-wizard__placeholder-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.swse-effect-wizard__placeholder-grid--three {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.swse-effect-wizard__field-preview,
+.swse-effect-wizard__review-preview {
+  border: 1px solid rgba(125, 220, 255, 0.22);
+  background: rgba(0, 0, 0, 0.24);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.swse-effect-wizard__field-preview span,
+.swse-effect-wizard__review-preview span,
+.swse-effect-wizard__preview dt {
+  color: rgba(125, 220, 255, 0.7);
+  font-size: 0.66rem;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.swse-effect-wizard__field-preview strong,
+.swse-effect-wizard__review-preview strong,
+.swse-effect-wizard__preview dd {
+  color: var(--swse-text, #d8f7ff);
+}
+
+.swse-effect-wizard__condition-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.swse-effect-wizard__condition-preview span {
+  border: 1px solid rgba(125, 220, 255, 0.22);
+  background: rgba(125, 220, 255, 0.06);
+  color: var(--swse-text, #d8f7ff);
+  padding: 7px 10px;
+  font-size: 0.72rem;
+}
+
+.swse-effect-wizard__preview dl {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 16px 0 0;
+}
+
+.swse-effect-wizard__preview dl div {
+  border-top: 1px solid rgba(125, 220, 255, 0.10);
+  padding-top: 8px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+@media (max-width: 980px) {
+  .swse-entity-dialog__effect-launch-grid,
+  .swse-entity-dialog__effect-metric-strip,
+  .swse-effect-wizard__placeholder-grid,
+  .swse-effect-wizard__placeholder-grid--three {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-effect-wizard__body {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-effect-wizard__steps,
+  .swse-effect-wizard__preview {
+    max-height: 180px;
+    border: 0;
+    border-bottom: 1px solid rgba(125, 220, 255, 0.12);
+  }
+}
+
+/* =====================================================
+ * Entity Dialog Phase 7B — Effect Builder Wizard Functionality
+ * ===================================================== */
+.swse-effect-wizard__identity-grid {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.swse-effect-wizard__icon-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.swse-effect-wizard__icon-choice {
+  min-height: 38px;
+  border: 1px solid rgba(125, 220, 255, 0.22);
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--swse-text-muted, #9bb8c4);
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.swse-effect-wizard__icon-choice:hover,
+.swse-effect-wizard__icon-choice.is-selected,
+.swse-effect-wizard__chip:hover,
+.swse-effect-wizard__chip.is-selected,
+.swse-effect-wizard__target-card:hover,
+.swse-effect-wizard__target-card.is-selected,
+.swse-effect-wizard__operation:hover,
+.swse-effect-wizard__operation.is-selected {
+  border-color: rgba(125, 220, 255, 0.52);
+  background: linear-gradient(135deg, rgba(125, 220, 255, 0.15), rgba(196, 128, 255, 0.08));
+  color: var(--swse-text, #d8f7ff);
+  box-shadow: 0 0 16px rgba(125, 220, 255, 0.12);
+}
+
+.swse-effect-wizard__fields,
+.swse-effect-wizard__target-groups,
+.swse-effect-wizard__condition-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.swse-effect-wizard__field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.swse-effect-wizard__field--wide {
+  grid-column: 1 / -1;
+}
+
+.swse-effect-wizard__field span,
+.swse-effect-wizard__target-group h5,
+.swse-effect-wizard__condition-group h5 {
+  margin: 0;
+  color: rgba(125, 220, 255, 0.72);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.swse-effect-wizard__field input,
+.swse-effect-wizard__field select,
+.swse-effect-wizard__field textarea {
+  width: 100%;
+  border: 1px solid rgba(125, 220, 255, 0.22);
+  background: rgba(0, 0, 0, 0.32);
+  color: var(--swse-text, #d8f7ff);
+  padding: 9px 10px;
+  min-height: 36px;
+}
+
+.swse-effect-wizard__field textarea {
+  resize: vertical;
+}
+
+.swse-effect-wizard__field small {
+  color: var(--swse-text-muted, #9bb8c4);
+  line-height: 1.35;
+}
+
+.swse-effect-wizard__field small.is-ok {
+  color: #9fffc2;
+}
+
+.swse-effect-wizard__chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.swse-effect-wizard__chip {
+  border: 1px solid rgba(125, 220, 255, 0.22);
+  background: rgba(0, 0, 0, 0.24);
+  color: var(--swse-text-muted, #9bb8c4);
+  padding: 7px 10px;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+
+.swse-effect-wizard__target-group {
+  display: grid;
+  gap: 8px;
+}
+
+.swse-effect-wizard__target-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.swse-effect-wizard__target-card {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+  text-align: left;
+  border: 1px solid rgba(125, 220, 255, 0.18);
+  background: rgba(0, 0, 0, 0.24);
+  color: var(--swse-text-muted, #9bb8c4);
+  padding: 12px;
+  cursor: pointer;
+}
+
+.swse-effect-wizard__target-card strong {
+  color: var(--swse-text, #d8f7ff);
+}
+
+.swse-effect-wizard__target-card span {
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.swse-effect-wizard__target-card code,
+.swse-effect-wizard__technical-preview code {
+  color: #d8a8ff;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.68rem;
+  word-break: break-all;
+}
+
+.swse-effect-wizard__raw-field {
+  border: 1px solid rgba(196, 128, 255, 0.26);
+  background: rgba(196, 128, 255, 0.06);
+  padding: 12px;
+}
+
+.swse-effect-wizard__operation-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.swse-effect-wizard__operation {
+  min-height: 112px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border: 1px solid rgba(125, 220, 255, 0.18);
+  background: rgba(0, 0, 0, 0.24);
+  color: var(--swse-text-muted, #9bb8c4);
+  cursor: pointer;
+  padding: 10px;
+}
+
+.swse-effect-wizard__operation b {
+  color: var(--swse-accent, #7ddcff);
+  font-size: 1.3rem;
+}
+
+.swse-effect-wizard__operation strong {
+  color: var(--swse-text, #d8f7ff);
+}
+
+.swse-effect-wizard__operation span {
+  font-size: 0.68rem;
+  line-height: 1.35;
+}
+
+.swse-effect-wizard__operation:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.swse-effect-wizard__modifier-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.swse-effect-wizard__stepper {
+  display: grid;
+  grid-template-columns: 40px 1fr 40px;
+  border: 1px solid rgba(125, 220, 255, 0.22);
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.swse-effect-wizard__stepper button {
+  border: 0;
+  background: rgba(125, 220, 255, 0.08);
+  color: var(--swse-accent, #7ddcff);
+  cursor: pointer;
+}
+
+.swse-effect-wizard__stepper input {
+  border: 0;
+  text-align: center;
+  background: transparent;
+}
+
+.swse-effect-wizard__stacking-help {
+  border: 1px solid rgba(196, 128, 255, 0.28);
+  background: rgba(196, 128, 255, 0.07);
+  color: var(--swse-text-muted, #9bb8c4);
+  padding: 12px;
+  line-height: 1.45;
+}
+
+.swse-effect-wizard__stacking-help strong,
+.swse-effect-wizard__helper--warn {
+  color: #d8a8ff;
+}
+
+.swse-effect-wizard__inline-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(125, 220, 255, 0.18);
+  background: rgba(0, 0, 0, 0.22);
+  padding: 10px;
+  color: var(--swse-text, #d8f7ff);
+}
+
+.swse-effect-wizard__technical-preview {
+  border: 1px solid rgba(125, 220, 255, 0.18);
+  background: rgba(0, 0, 0, 0.22);
+  padding: 12px;
+}
+
+.swse-effect-wizard__technical-preview summary {
+  color: rgba(125, 220, 255, 0.72);
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 980px) {
+  .swse-effect-wizard__identity-grid,
+  .swse-effect-wizard__target-grid,
+  .swse-effect-wizard__operation-grid,
+  .swse-effect-wizard__modifier-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =====================================================
+ * Entity Dialog Phase 7C — Effect Builder Wizard Polish
+ * ===================================================== */
+.swse-entity-dialog__effect-draft-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  border: 1px solid rgba(196, 128, 255, 0.32);
+  background:
+    radial-gradient(100% 120% at 0% 0%, rgba(196, 128, 255, 0.14), transparent 62%),
+    rgba(0, 0, 0, 0.26);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+.swse-entity-dialog__effect-draft-card > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.swse-entity-dialog__effect-draft-card span,
+.swse-entity-dialog__effect-draft-card small,
+.swse-effect-action-confirm__kicker {
+  color: rgba(216, 168, 255, 0.78);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.swse-entity-dialog__effect-draft-card strong {
+  color: var(--swse-text, #d8f7ff);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-entity-dialog__effect-draft-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.swse-effect-action-confirm {
+  position: absolute;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+}
+
+.swse-effect-action-confirm__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(0, 0, 0, 0.62);
+}
+
+.swse-effect-action-confirm__panel {
+  position: relative;
+  z-index: 1;
+  width: min(520px, 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  border: 1px solid rgba(125, 220, 255, 0.34);
+  background:
+    radial-gradient(120% 120% at 0% 0%, rgba(125, 220, 255, 0.12), transparent 58%),
+    rgba(2, 8, 16, 0.98);
+  color: var(--swse-text, #d8f7ff);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.72), 0 0 28px rgba(125, 220, 255, 0.12);
+}
+
+.swse-effect-action-confirm--danger .swse-effect-action-confirm__panel {
+  border-color: rgba(255, 125, 125, 0.46);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.72), 0 0 28px rgba(255, 125, 125, 0.12);
+}
+
+.swse-effect-action-confirm--ok .swse-effect-action-confirm__panel {
+  border-color: rgba(115, 235, 165, 0.48);
+}
+
+.swse-effect-action-confirm__panel h4 {
+  margin: 0;
+  color: var(--swse-text, #d8f7ff);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-effect-action-confirm__panel p {
+  margin: 0;
+  color: var(--swse-text-muted, #9bb8c4);
+  line-height: 1.45;
+}
+
+.swse-effect-action-confirm__panel > strong {
+  padding: 10px;
+  border: 1px solid rgba(125, 220, 255, 0.16);
+  background: rgba(0, 0, 0, 0.26);
+  color: var(--swse-accent, #7ddcff);
+}
+
+.swse-effect-action-confirm__panel footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.swse-effect-wizard__validation,
+.swse-effect-wizard__empty-result {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 196, 87, 0.32);
+  background: rgba(255, 196, 87, 0.08);
+  color: #ffe0a3;
+  line-height: 1.35;
+}
+
+.swse-effect-wizard__validation strong {
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.swse-effect-wizard__validation span,
+.swse-effect-wizard__empty-result {
+  color: rgba(255, 224, 163, 0.92);
+}
+
+.swse-effect-wizard__target-search {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  padding: 10px;
+  border: 1px solid rgba(125, 220, 255, 0.16);
+  background: rgba(2, 8, 16, 0.94);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.24);
+}
+
+.swse-effect-wizard__raw-field.is-invalid {
+  border-color: rgba(255, 125, 125, 0.42);
+  background: rgba(255, 125, 125, 0.06);
+}
+
+.swse-effect-wizard__field small.is-warn {
+  color: #ffb4b4;
+}
+
+.swse-effect-wizard__field input[type="search"] {
+  padding-left: 12px;
+}
+
+.swse-effect-wizard__step[data-effect-wizard-step-select="4"] .swse-effect-wizard__step-copy small::after {
+  content: " · final check";
+  color: rgba(115, 235, 165, 0.72);
+}
+
+.swse-effect-wizard__footer .swse-btn:disabled,
+.swse-effect-wizard__step:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+@media (max-width: 720px) {
+  .swse-entity-dialog__effect-draft-card,
+  .swse-effect-action-confirm__panel footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .swse-entity-dialog__effect-draft-actions {
+    justify-content: flex-start;
+  }
+}
+
+/* Effect Builder Wizard Phase 4: edit/resume and quick-start preset polish */
+.swse-effect-wizard__edit-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 18px;
+  border-bottom: 1px solid rgba(125, 255, 178, 0.22);
+  background: linear-gradient(90deg, rgba(125, 255, 178, 0.12), rgba(112, 226, 255, 0.05));
+  color: rgba(223, 248, 255, 0.84);
+}
+
+.swse-effect-wizard__edit-banner strong {
+  color: #7dffb2;
+  font-family: var(--swse-font-display, Orbitron, sans-serif);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-effect-wizard__edit-banner span {
+  color: rgba(223, 248, 255, 0.58);
+  font-size: 0.74rem;
+  text-align: right;
+}
+
+.swse-effect-wizard__preset-panel {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+  padding: 14px;
+  border: 1px solid rgba(199, 125, 255, 0.18);
+  border-radius: 14px;
+  background: rgba(8, 4, 18, 0.46);
+}
+
+.swse-effect-wizard__preset-head {
+  display: grid;
+  gap: 3px;
+}
+
+.swse-effect-wizard__preset-head strong {
+  color: #f0d9ff;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.swse-effect-wizard__preset-head span {
+  color: rgba(223, 248, 255, 0.48);
+  font-size: 0.74rem;
+}
+
+.swse-effect-wizard__preset-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.swse-effect-wizard__preset-card {
+  display: grid;
+  gap: 4px;
+  min-height: 82px;
+  padding: 11px 12px;
+  border: 1px solid rgba(112, 226, 255, 0.16);
+  border-radius: 11px;
+  background: rgba(2, 9, 18, 0.62);
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 120ms ease, background 120ms ease, transform 120ms ease;
+}
+
+.swse-effect-wizard__preset-card:hover,
+.swse-effect-wizard__preset-card.is-selected {
+  border-color: rgba(199, 125, 255, 0.44);
+  background: rgba(199, 125, 255, 0.1);
+  transform: translateY(-1px);
+}
+
+.swse-effect-wizard__preset-card strong {
+  color: #eaffff;
+  font-size: 0.82rem;
+}
+
+.swse-effect-wizard__preset-card span {
+  color: rgba(223, 248, 255, 0.5);
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+@media (max-width: 980px) {
+  .swse-effect-wizard__edit-banner {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .swse-effect-wizard__edit-banner span {
+    text-align: left;
+  }
+
+  .swse-effect-wizard__preset-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* =====================================================
+ * Entity Dialog Phase 7E — Effect Wizard Context Details
+ * ===================================================== */
+.swse-effect-wizard__context-panel {
+  border: 1px solid rgba(125, 220, 255, 0.18);
+  background: linear-gradient(135deg, rgba(125, 220, 255, 0.07), rgba(196, 128, 255, 0.04));
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.swse-effect-wizard__context-head {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.swse-effect-wizard__context-head strong {
+  color: var(--swse-text, #d8f7ff);
+  font-size: 0.84rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.swse-effect-wizard__context-head span {
+  color: var(--swse-text-muted, #9bb8c4);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.swse-effect-wizard__context-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.swse-effect-wizard__field--static {
+  border: 1px dashed rgba(125, 220, 255, 0.18);
+  background: rgba(0, 0, 0, 0.18);
+  padding: 9px 10px;
+  justify-content: center;
+}
+
+.swse-entity-dialog__automation-note--lifecycle {
+  border-left: 2px solid rgba(157, 255, 194, 0.7);
+  padding-left: 9px;
+  color: rgba(210, 255, 226, 0.82);
+}
+
+@media (max-width: 980px) {
+  .swse-effect-wizard__context-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* =====================================================
+ * Entity Dialog Phase 7D — Effect Wizard Conditions + Review Hardening
+ * ===================================================== */
+.swse-effect-wizard__chip--condition {
+  min-height: 42px;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2px;
+  text-align: left;
+}
+
+.swse-effect-wizard__chip-label {
+  color: inherit;
+  font-weight: 700;
+}
+
+.swse-effect-wizard__chip--condition small {
+  color: rgba(155, 184, 196, 0.78);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.56rem;
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+
+.swse-effect-wizard__chip--condition.is-selected small {
+  color: rgba(216, 247, 255, 0.82);
+}
+
+.swse-effect-wizard__support-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 11px 12px;
+  border: 1px solid rgba(125, 220, 255, 0.24);
+  background: rgba(0, 0, 0, 0.24);
+  color: var(--swse-text, #d8f7ff);
+}
+
+.swse-effect-wizard__support-card strong,
+.swse-effect-wizard__support-line {
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.64rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-effect-wizard__support-card span,
+.swse-effect-wizard__support-line {
+  color: var(--swse-text-muted, #9bb8c4);
+  line-height: 1.38;
+}
+
+.swse-effect-wizard__support-card--automated,
+.swse-effect-wizard__support-line--automated {
+  border-color: rgba(115, 235, 165, 0.42);
+  color: #9fffc2;
+}
+
+.swse-effect-wizard__support-card--partial,
+.swse-effect-wizard__support-line--partial {
+  border-color: rgba(255, 196, 87, 0.38);
+  color: #ffe0a3;
+}
+
+.swse-effect-wizard__support-card--reminder,
+.swse-effect-wizard__support-line--reminder {
+  border-color: rgba(216, 168, 255, 0.42);
+  color: #d8a8ff;
+}
+
+.swse-effect-wizard__technical-preview code {
+  display: block;
+  white-space: pre-wrap;
+  word-break: break-word;
+  line-height: 1.45;
 }

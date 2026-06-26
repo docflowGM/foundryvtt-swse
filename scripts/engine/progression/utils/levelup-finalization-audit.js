@@ -118,8 +118,10 @@ function identityCandidates(entry) {
   return Array.from(new Set(values.map(compactKey).filter(Boolean)));
 }
 
-function itemNames(actor) {
-  return (actor?.items || []).map(item => {
+function itemNames(actor, extraItems = []) {
+  const actorItems = Array.from(actor?.items || []);
+  const plannedItems = asArray(extraItems);
+  return [...actorItems, ...plannedItems].map(item => {
     const identities = identityCandidates(item);
     const nameKey = compactKey(entryName(item));
     if (nameKey && !identities.includes(nameKey)) identities.push(nameKey);
@@ -134,14 +136,23 @@ function itemNames(actor) {
   });
 }
 
-function hasActorItemNamed(actor, expectedName, expectedKinds = [], expectedRefs = []) {
+function plannedItemCandidates(mutationPlan) {
+  return [
+    ...asArray(mutationPlan?.add?.items),
+    ...asArray(mutationPlan?.create?.items),
+    ...asArray(mutationPlan?.itemGrants),
+  ];
+}
+
+function hasActorItemNamed(actor, expectedName, expectedKinds = [], expectedRefs = [], mutationPlan = null) {
   const expectedKeys = Array.from(new Set([
     compactKey(expectedName),
     ...asArray(expectedRefs).map(compactKey),
   ].filter(Boolean)));
   if (!expectedKeys.length) return true;
   const kinds = expectedKinds.map(kind => normalizeText(kind).replace(/\s+/g, '')).filter(Boolean);
-  return itemNames(actor).some(entry => {
+  const extraItems = plannedItemCandidates(mutationPlan);
+  return itemNames(actor, extraItems).some(entry => {
     if (kinds.length && !(kinds.includes(entry.type) || kinds.some(kind => entry.systemType.includes(kind)))) return false;
     return expectedKeys.some(key => entry.identities.includes(key));
   });
@@ -300,7 +311,7 @@ export function buildLevelUpFinalizationReceipt(manifest, progressionSession) {
   };
 }
 
-export function auditLevelUpActorAfterFinalization(actor, manifest, progressionSession) {
+export function auditLevelUpActorAfterFinalization(actor, manifest, progressionSession, mutationPlan = null) {
   const errors = [];
   const warnings = [];
   if (!manifest) return { ok: true, errors, warnings };
@@ -320,7 +331,7 @@ export function auditLevelUpActorAfterFinalization(actor, manifest, progressionS
   if (fpValue !== fpMax) errors.push(`Force Points did not refill to max (${fpValue}/${fpMax})`);
 
   for (const check of expectedItemChecks(manifest, progressionSession)) {
-    if (!hasActorItemNamed(actor, check.name, check.itemKinds, check.refs)) {
+    if (!hasActorItemNamed(actor, check.name, check.itemKinds, check.refs, mutationPlan)) {
       const label = check.name || asArray(check.refs).find(Boolean) || 'unknown selection';
       errors.push(`Missing ${check.kind}: ${label}`);
     }

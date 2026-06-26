@@ -40,6 +40,7 @@ import {
   getDroidAcquisitionBlockReason,
   isDroidProgressionActor,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js';
+import { collectKnownForceSecrets, collectKnownForceTechniques, forceKnowledgeToLedgerEntries } from '/systems/foundryvtt-swse/scripts/utils/force-knowledge.js';
 
 export class ProgressionFinalizer {
   /**
@@ -1363,6 +1364,8 @@ export class ProgressionFinalizer {
       );
     }
 
+    this._applyForceKnowledgePostApply(set, actor, compiledAbilityItems.postApply);
+
     if (sessionState.mode === 'levelup' && levelUpManifest) {
       set['flags.swse.levelUpEntitlementManifest'] = levelUpManifest;
       set['flags.swse.levelUpFinalizationReceipt'] = buildLevelUpFinalizationReceipt(levelUpManifest, sessionState.progressionSession);
@@ -1804,7 +1807,7 @@ export class ProgressionFinalizer {
     // paths. Unknown values are unsafe and should be ignored until the picker
     // can provide a real canonical skill key.
     if (!resolved) {
-      swseLogger.debug('[ProgressionFinalizer] Ignoring unknown skill key during finalization', { raw });
+      swseLogger.warn('[ProgressionFinalizer] Ignoring unknown skill key during finalization', { raw });
       return '';
     }
 
@@ -2913,14 +2916,14 @@ export class ProgressionFinalizer {
     const sessionId = sessionState.sessionId || 'unknown';
     const itemSpecs = [];
     const deleteItems = [];
-    const postApply = { starshipManeuverNames: [], starshipManeuverRemoveItemIds: [] };
+    const postApply = { starshipManeuverNames: [], starshipManeuverRemoveItemIds: [], forceTechniqueEntries: [], forceSecretEntries: [] };
     const domainConfig = [
       { key: 'feats', type: 'feat', docGetter: (entry) => ProgressionContentAuthority.getFeatDocument(entry), allowDuplicates: false },
       { key: 'talents', type: 'talent', docGetter: (entry) => ProgressionContentAuthority.getTalentDocument(entry), allowDuplicates: false },
       { key: 'forcePowers', type: 'force-power', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'power'), allowDuplicates: true },
       { key: 'forceRegimens', type: 'force-regimen', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'regimen'), allowDuplicates: false },
-      { key: 'forceTechniques', type: 'forcetechnique', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'technique'), allowDuplicates: false },
-      { key: 'forceSecrets', type: 'forcesecret', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'secret'), allowDuplicates: false },
+      { key: 'forceTechniques', type: 'force-technique', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'technique'), allowDuplicates: false },
+      { key: 'forceSecrets', type: 'force-secret', docGetter: (entry) => ProgressionContentAuthority.getForceDocument(entry, 'secret'), allowDuplicates: false },
       { key: 'medicalSecrets', type: 'feat', docGetter: async (entry) => { await MedicalSecretRegistry.ensureInitialized(); return MedicalSecretRegistry.getDocumentByRef(entry); }, allowDuplicates: false },
     ];
 
@@ -3024,6 +3027,14 @@ export class ProgressionFinalizer {
               grantSubtype: baseItem.system.provenance?.grantSubtype || 'progression',
             };
           }
+          if (domain.key === 'forceTechniques') {
+            baseItem.system.forceDomain = 'technique';
+            baseItem.system.tags = Array.from(new Set([...(Array.isArray(baseItem.system.tags) ? baseItem.system.tags : []), 'force_technique']));
+          }
+          if (domain.key === 'forceSecrets') {
+            baseItem.system.forceDomain = 'secret';
+            baseItem.system.tags = Array.from(new Set([...(Array.isArray(baseItem.system.tags) ? baseItem.system.tags : []), 'force_secret']));
+          }
           if (domain.key === 'forceTechniques' && forcePowerMasteryChoice) {
             baseItem.system.repeatable = true;
             baseItem.system.choice = foundry.utils.mergeObject(baseItem.system.choice || {}, forcePowerMasteryChoice, { inplace: false, recursive: true, overwrite: true });
@@ -3066,6 +3077,12 @@ export class ProgressionFinalizer {
           }, { inplace: false, recursive: true });
 
           itemSpecs.push(baseItem);
+          if (domain.key === 'forceTechniques') {
+            postApply.forceTechniqueEntries.push(this._buildForceKnowledgePostApplyEntry(baseItem, rawEntry, selectionIdentity, sessionId));
+          }
+          if (domain.key === 'forceSecrets') {
+            postApply.forceSecretEntries.push(this._buildForceKnowledgePostApplyEntry(baseItem, rawEntry, selectionIdentity, sessionId));
+          }
           existingBySessionMarker.add(sessionMarker);
           if (!allowDuplicateForEntry) existingByTypeAndName.add(dedupeKey);
         }

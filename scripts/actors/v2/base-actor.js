@@ -2,7 +2,6 @@
 import { SWSEActorBase } from "/systems/foundryvtt-swse/scripts/actors/base/swse-actor-base.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
-import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { AbilityExecutionCoordinator } from "/systems/foundryvtt-swse/scripts/engine/abilities/ability-execution-coordinator.js";
 import { computeCharacterDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/character-actor.js";
 import { computeNpcDerived } from "/systems/foundryvtt-swse/scripts/actors/v2/npc-actor.js";
@@ -128,15 +127,10 @@ export class SWSEV2BaseActor extends SWSEActorBase {
         }
       }
 
-      // Phase 0: Apply modifiers to derived data
-      // Get all modifiers and aggregated map
-      const allModifiers = await ModifierEngine.getAllModifiers(this);
-      const modifierMap = await ModifierEngine.aggregateAll(this);
-
-      // Apply modifiers to skills, defenses, HP, and other values
-      // Use new pattern: computeModifierBundle() + applyComputedBundle()
-      const bundle = ModifierEngine.computeModifierBundle(this, modifierMap, allModifiers);
-      ModifierEngine.applyComputedBundle(this, bundle);
+      // DerivedCalculator.computeAll() is the authoritative, already-modified
+      // derived snapshot. Do not run ModifierEngine.computeModifierBundle() here:
+      // that legacy pass adds the same static modifiers a second time, which
+      // overcounts Skill Focus and other passive bonuses on sheet/roll totals.
 
       system.derived.meta ??= {};
       system.derived.meta.lastAsyncRecalcMs = Date.now();

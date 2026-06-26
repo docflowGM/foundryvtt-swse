@@ -58,6 +58,8 @@ function loadCache() {
 
 function saveCache(data) {
   try {
+    // Remove stale entry first to free quota before writing new data
+    localStorage.removeItem(CACHE_KEY);
     localStorage.setItem(CACHE_KEY, JSON.stringify(data));
   } catch (err) {
     console.warn('SWSE Store | Cache save failed:', err);

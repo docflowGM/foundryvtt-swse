@@ -95,6 +95,23 @@
     </div>
   </section>
 
+  <section class="gm-job-lifecycle-shelves swse-ui-panel" aria-label="Contract lifecycle shelves">
+    <div class="gm-job-lifecycle-shelves-head">
+      <span class="gm-command-eyebrow">LIFECYCLE SHELVES</span>
+      <strong>Simple board, structured mission state underneath</strong>
+      <p>Current, Drafts, and Archived are computed from each job's status so archive/restore and payout flows remain recoverable.</p>
+    </div>
+    <div class="gm-job-lifecycle-shelf-row">
+      {{#each jobBoard.shelves}}
+      <div class="gm-job-lifecycle-shelf-card {{this.id}}">
+        <span>{{this.label}}</span>
+        <strong>{{this.count}}</strong>
+        <em>{{this.hint}}</em>
+      </div>
+      {{/each}}
+    </div>
+  </section>
+
   <nav class="gm-job-tabbar gm-phase3-job-tabbar swse-ui-panel" aria-label="Job board sections">
     <button type="button" class="gm-job-tab is-active" data-job-tab-switch="board">
       <span>Pipeline</span><em>{{jobBoard.stats.total}}</em>
@@ -107,6 +124,9 @@
     </button>
     <button type="button" class="gm-job-tab" data-job-tab-switch="settlement">
       <span>Settlement</span><em>{{jobBoard.payoutItems.length}}</em>
+    </button>
+    <button type="button" class="gm-job-tab" data-job-tab-switch="archive">
+      <span>Archive</span><em>{{jobBoard.archiveItems.length}}</em>
     </button>
   </nav>
 

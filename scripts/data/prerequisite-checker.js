@@ -70,6 +70,7 @@ import { FeatChoiceResolver, normalizeFeatChoiceKey } from "/systems/foundryvtt-
 import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
 import { getClassAutoGrants } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/autogrants/class-autogrants.js";
 import { CANONICAL_SKILL_DEFS } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
+import { collectKnownForceSecrets, collectKnownForceTechniques, forceKnowledgeEntryMatchesName } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
 import { actorMeetsDroidSystemRequirement, resolveDroidSystemIdentity } from "/systems/foundryvtt-swse/scripts/domain/droids/droid-part-schema.js";
 
 function matchesForceSensitivity(value) {
@@ -929,7 +930,7 @@ export class PrerequisiteChecker {
 
         // Check Force Techniques
         if (prereqs.forceTechniques) {
-            const techniqueCheck = checkForceTechniques(actor, prereqs.forceTechniques);
+            const techniqueCheck = checkForceTechniques(actor, prereqs.forceTechniques, pending);
             details.forceTechniques = techniqueCheck;
             if (!techniqueCheck.met) {
                 missing.push(`${prereqs.forceTechniques.count} Force Technique(s) (you have ${techniqueCheck.actual})`);
@@ -1291,7 +1292,7 @@ export class PrerequisiteChecker {
                 };
             }
             case 'force_technique': {
-                const known = actor.items?.filter(i => i.type === 'feat' && i.system?.tags?.includes('force_technique')).length ?? 0;
+                const known = collectKnownForceTechniques(actor, pending).length;
                 const met = known >= 1;
                 return {
                     met,
@@ -1299,7 +1300,7 @@ export class PrerequisiteChecker {
                 };
             }
             case 'force_secret': {
-                const known = actor.items?.filter(i => i.type === 'feat' && i.system?.tags?.includes('force_secret')).length ?? 0;
+                const known = collectKnownForceSecrets(actor, pending).length;
                 const met = known >= 1;
                 return {
                     met,
@@ -1669,22 +1670,26 @@ export class PrerequisiteChecker {
     }
 
     static _checkForceTechniqueCondition(prereq, actor, pending) {
-        const hasTechnique = actor.items?.some(i =>
-            (i.type === 'forcetechnique' || i.type === 'force-technique') && i.name === prereq.name
-        );
+        const requiredName = prereq.name || prereq.technique || prereq.key || '';
+        const known = collectKnownForceTechniques(actor, pending);
+        const hasTechnique = requiredName
+            ? known.some(entry => forceKnowledgeEntryMatchesName(entry, requiredName))
+            : known.length > 0;
         return {
             met: hasTechnique,
-            message: !hasTechnique ? `Requires Force Technique: ${prereq.name}` : ''
+            message: !hasTechnique ? `Requires Force Technique: ${requiredName || 'any Force Technique'}` : ''
         };
     }
 
     static _checkForceSecretCondition(prereq, actor, pending) {
-        const hasSecret = actor.items?.some(i =>
-            i.type === 'feat' && i.system?.tags?.includes('force_secret') && i.name === prereq.name
-        );
+        const requiredName = prereq.name || prereq.secret || prereq.key || '';
+        const known = collectKnownForceSecrets(actor, pending);
+        const hasSecret = requiredName
+            ? known.some(entry => forceKnowledgeEntryMatchesName(entry, requiredName))
+            : known.length > 0;
         return {
             met: hasSecret,
-            message: !hasSecret ? `Requires Force Secret: ${prereq.name}` : ''
+            message: !hasSecret ? `Requires Force Secret: ${requiredName || 'any Force Secret'}` : ''
         };
     }
 
@@ -3724,23 +3729,20 @@ function checkForcePowers(actor, requiredPowers, pending = {}) {
 /**
  * Check Force Technique count.
  */
-function checkForceTechniques(actor, techniqueReq) {
+function checkForceTechniques(actor, techniqueReq, pending = null) {
     if (!actor || !techniqueReq) {
         return { met: true };
     }
 
-    const actorTechniques = actor.items?.filter(i =>
-        i.type === 'forcetechnique' || i.type === 'force-technique' ||
-        i.system?.tags?.includes('force_technique')
-    ) || [];
-
+    const actorTechniques = collectKnownForceTechniques(actor, pending);
     const actual = actorTechniques.length;
-    const required = techniqueReq.count || 1;
+    const required = techniqueReq.count || techniqueReq.minimum || techniqueReq.min || 1;
 
     return {
         met: actual >= required,
         actual,
-        required
+        required,
+        known: actorTechniques.map(entry => entry.name).filter(Boolean)
     };
 }
 

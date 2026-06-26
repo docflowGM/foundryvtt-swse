@@ -1119,6 +1119,20 @@ export class SWSEStore extends BaseSWSEAppV2 {
       .sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
   }
 
+  _buildVehiclePassengerOptions() {
+    const counts = new Map();
+    for (const item of this.storeInventory?.allItems || []) {
+      if (storeItemCategoryKey(item) !== 'vehicles') continue;
+      const key = getVehiclePassengerGroup(item);
+      if (!key) continue;
+      counts.set(key, (counts.get(key) || 0) + 1);
+    }
+    const order = ['none', 'one', 'small-party', 'squad', 'platoon', 'company', 'battalion', 'mass-transport', 'unknown'];
+    return [...counts.entries()]
+      .map(([key, count]) => ({ key, count, label: getVehiclePassengerGroupLabel(key), active: this.currentVehiclePassenger === key }))
+      .sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
+  }
+
   _buildVehicleCargoOptions() {
     const counts = new Map();
     for (const item of this.storeInventory?.allItems || []) {

@@ -28,6 +28,7 @@ export class GMJobBoardSurfaceController {
     if (!this._assertGM('open the GM Job Board')) return;
 
     this._wireJobBoardTabs(pageElement, signal);
+    this._wireLifecycleShelves(pageElement, signal);
     this._wireWizardControls(pageElement, signal);
     this._wireContractWizardEnhancements(pageElement, signal);
     this._wireContractRewardDrops(pageElement, signal);
@@ -38,6 +39,7 @@ export class GMJobBoardSurfaceController {
     this._wireSelectionButtons(pageElement, signal);
     this._wireStatusButtons(pageElement, signal);
     this._wireObjectiveButtons(pageElement, signal);
+    this._wireConsequenceButtons(pageElement, signal);
     this._wirePayoutForms(pageElement, signal);
     this._wireItemAwardForms(pageElement, signal);
     this._wireAssetAwardForms(pageElement, signal);
@@ -97,6 +99,18 @@ export class GMJobBoardSurfaceController {
     let initial = 'board';
     try { initial = globalThis.localStorage?.getItem?.(storageKey) || 'board'; } catch (_err) {}
     setActiveTab(initial, { persist: false });
+  }
+
+  _wireLifecycleShelves(pageElement, signal) {
+    pageElement.querySelectorAll('[data-job-shelf-select]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const activeLifecycleShelf = String(event.currentTarget.dataset.jobShelfSelect || '').trim();
+        if (!activeLifecycleShelf) return;
+        this.host?.patchSurfaceState?.('jobs', { activeLifecycleShelf }, { render: false });
+        await requestShellRender(this.host, { reason: 'gm-job-lifecycle-shelf', surfaceId: 'jobs' });
+      }, { signal });
+    });
   }
 
   _wireWizardControls(pageElement, signal) {
@@ -975,7 +989,7 @@ export class GMJobBoardSurfaceController {
   }
 
   _wireStatusButtons(pageElement, signal) {
-    pageElement.querySelectorAll('[data-job-status-action]').forEach((button) => {
+    pageElement.querySelectorAll('[data-job-status-action], [data-job-transition-action]').forEach((button) => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
         if (!this._assertGM('change job status')) return;
@@ -983,7 +997,8 @@ export class GMJobBoardSurfaceController {
         const status = event.currentTarget.dataset.status;
         if (!threadId || !status) return;
         const statusNote = this._readStatusNote(pageElement, threadId);
-        await mutateShellOnly(this.host, () => HolonetMessengerService.threadAction({ actor: null, threadId, action: 'set-job-status', status, statusNote }), { reason: 'gm-job-status-update', surfaceId: 'jobs' });
+        const allowOverride = event.currentTarget.dataset.jobStatusOverride === 'true';
+        await mutateShellOnly(this.host, () => HolonetMessengerService.transitionJobStatus({ actor: null, threadId, status, statusNote, allowOverride }), { reason: allowOverride ? 'gm-job-status-override' : 'gm-job-status-transition', surfaceId: 'jobs' });
         this.host.selectedJobThreadId = threadId;
         await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
       }, { signal });
@@ -991,6 +1006,53 @@ export class GMJobBoardSurfaceController {
   }
 
   _wireObjectiveButtons(pageElement, signal) {
+    pageElement.querySelectorAll('form[data-job-objective-upsert-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!this._assertGM('change job objectives')) return;
+        const data = new FormData(form);
+        const threadId = String(data.get('threadId') || form.dataset.threadId || '').trim();
+        const objectivePatch = this._objectivePatchFromForm(data);
+        if (!threadId || !objectivePatch?.title) {
+          ui.notifications?.warn?.('Objective text is required.');
+          return;
+        }
+        await mutateShellOnly(this.host, () => HolonetMessengerService.threadAction({ actor: null, threadId, action: 'upsert-job-objective', objectivePatch }), { reason: objectivePatch.id ? 'gm-job-objective-edit' : 'gm-job-objective-add', surfaceId: 'jobs' });
+        this.host.selectedJobThreadId = threadId;
+        form.reset();
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('[data-job-objective-delete]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        if (!this._assertGM('delete job objectives')) return;
+        const threadId = event.currentTarget.dataset.threadId;
+        const objectiveId = event.currentTarget.dataset.objectiveId;
+        if (!threadId || !objectiveId) return;
+        const confirmed = globalThis.confirm?.('Delete this objective from the job? This removes its objective reward from future payout calculations.') === true;
+        if (!confirmed) return;
+        const objectiveNote = this._readObjectiveNote(pageElement, objectiveId, event.currentTarget);
+        await mutateShellOnly(this.host, () => HolonetMessengerService.threadAction({ actor: null, threadId, action: 'delete-job-objective', objectiveId, objectiveNote }), { reason: 'gm-job-objective-delete', surfaceId: 'jobs' });
+        this.host.selectedJobThreadId = threadId;
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('[data-job-objective-submit]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const threadId = event.currentTarget.dataset.threadId;
+        const objectiveId = event.currentTarget.dataset.objectiveId;
+        if (!threadId || !objectiveId) return;
+        const objectiveNote = this._readObjectiveNote(pageElement, objectiveId, event.currentTarget);
+        await mutateShellOnly(this.host, () => HolonetMessengerService.threadAction({ actor: null, threadId, action: 'submit-job-objective', objectiveId, objectiveNote }), { reason: 'job-objective-submit', surfaceId: 'jobs' });
+        this.host.selectedJobThreadId = threadId;
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
+      }, { signal });
+    });
+
     pageElement.querySelectorAll('[data-job-objective-action]').forEach((button) => {
       button.addEventListener('click', async (event) => {
         event.preventDefault();
@@ -1006,6 +1068,88 @@ export class GMJobBoardSurfaceController {
       }, { signal });
     });
   }
+
+  _objectivePatchFromForm(data) {
+    const text = (key) => String(data.get(key) || '').trim();
+    const number = (key) => Math.max(0, Math.floor(Number(data.get(key) || 0) || 0));
+    const tier = text('tier') || text('type') || 'secondary';
+    const patch = {
+      id: text('objectiveId') || text('id') || '',
+      type: text('type') || tier,
+      tier,
+      title: text('title'),
+      description: text('description'),
+      memo: text('memo'),
+      rewardCredits: number('rewardCredits'),
+      rewardXp: number('rewardXp'),
+      rewardItems: text('rewardItems'),
+      status: text('status') || 'open',
+      note: text('note')
+    };
+    patch.required = data.has('required') || tier === 'primary';
+    if (!patch.id) delete patch.id;
+    return patch;
+  }
+
+  _wireConsequenceButtons(pageElement, signal) {
+    pageElement.querySelectorAll('form[data-job-consequence-upsert-form]').forEach((form) => {
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!this._assertGM('change job faction consequences')) return;
+        const data = new FormData(form);
+        const threadId = String(data.get('threadId') || form.dataset.threadId || '').trim();
+        const jobPatch = this._consequencePatchFromForm(data);
+        if (!threadId || !jobPatch?.factionName) {
+          ui.notifications?.warn?.('Faction name is required for a consequence row.');
+          return;
+        }
+        await mutateShellOnly(this.host, () => HolonetMessengerService.threadAction({ actor: null, threadId, action: 'upsert-job-consequence', jobPatch }), { reason: jobPatch.key ? 'gm-job-consequence-edit' : 'gm-job-consequence-add', surfaceId: 'jobs' });
+        this.host.selectedJobThreadId = threadId;
+        if (!jobPatch.key) form.reset();
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
+      }, { signal });
+    });
+
+    pageElement.querySelectorAll('[data-job-consequence-delete]').forEach((button) => {
+      button.addEventListener('click', async (event) => {
+        event.preventDefault();
+        if (!this._assertGM('delete job faction consequences')) return;
+        const threadId = event.currentTarget.dataset.threadId;
+        const consequenceKey = event.currentTarget.dataset.consequenceKey;
+        if (!threadId || !consequenceKey) return;
+        const confirmed = globalThis.confirm?.('Delete this faction consequence from the job? Existing applied relationship history is preserved, but future completion/failure calculations will not use this row.') === true;
+        if (!confirmed) return;
+        await mutateShellOnly(this.host, () => HolonetMessengerService.threadAction({ actor: null, threadId, action: 'delete-job-consequence', status: consequenceKey }), { reason: 'gm-job-consequence-delete', surfaceId: 'jobs' });
+        this.host.selectedJobThreadId = threadId;
+        await (requestShellRender(this.host, { reason: 'gm-controller-refresh' }));
+      }, { signal });
+    });
+  }
+
+  _consequencePatchFromForm(data) {
+    const text = (key) => String(data.get(key) || '').trim();
+    const number = (key) => Math.trunc(Number(data.get(key) || 0) || 0);
+    const type = text('type') || 'additional';
+    const patch = {
+      key: text('consequenceKey') || text('key') || '',
+      id: text('consequenceKey') || text('id') || '',
+      type,
+      role: text('role') || (type === 'issuer' ? 'Issuer' : type === 'rival' ? 'Rival' : 'Additional'),
+      factionId: text('factionId'),
+      factionName: text('factionName'),
+      successDelta: number('successDelta'),
+      failureDelta: number('failureDelta'),
+      notes: text('notes'),
+      rival: type === 'rival',
+      note: text('note')
+    };
+    if (!patch.key) {
+      delete patch.key;
+      delete patch.id;
+    }
+    return patch;
+  }
+
 
 
   _readStatusNote(pageElement, threadId = '') {

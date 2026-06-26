@@ -4,7 +4,6 @@ import { applyActorUpdateAtomic } from "/systems/foundryvtt-swse/scripts/utils/a
 import { MutationInterceptor } from "/systems/foundryvtt-swse/scripts/governance/mutation/MutationInterceptor.js";
 import { determineLevelFromXP } from "/systems/foundryvtt-swse/scripts/engine/shared/xp-system.js";
 import { DerivedCalculator } from "/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js";
-import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { MutationApplicationError } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-errors.js";
 import { PrerequisiteIntegrityChecker } from "/systems/foundryvtt-swse/scripts/governance/integrity/prerequisite-integrity-checker.js";
 import { PreflightValidator } from "/systems/foundryvtt-swse/scripts/governance/enforcement/preflight-validator.js";
@@ -242,23 +241,12 @@ export const ActorEngine = {
         }
 
         // ========================================
-        // PHASE 3: Apply modifier bundle
+        // PHASE 3: Modifier bundle legacy pass removed
         // ========================================
-        if (observabilityEnabled) {
-          SWSELogger.debug(`[RECOMPUTE] ModifierEngine.computeModifierBundle() starting...`, { actor: actor.name });
-        }
-        const allModifiers = await ModifierEngine.getAllModifiers(actor);
-        const modifierMap = await ModifierEngine.aggregateAll(actor);
-        const modifierBundle = ModifierEngine.computeModifierBundle(actor, modifierMap, allModifiers);
-        ModifierEngine.applyComputedBundle(actor, modifierBundle);
-        if (observabilityEnabled) {
-          SWSELogger.debug(`[RECOMPUTE] ModifierEngine.applyComputedBundle() completed`, {
-            actor: actor.name,
-            modifierCount: actor.system?.derived?.modifiers?.all?.length || 0,
-            hpAdjustment: actor.system?.derived?.hp?.adjustment,
-            babAdjustment: actor.system?.derived?.babAdjustment
-          });
-        }
+        // DerivedCalculator.computeAll() already applies static/passive modifiers
+        // and writes system.derived.modifiers for UI breakdown. Running the old
+        // ModifierEngine.computeModifierBundle() pass after that is non-idempotent
+        // and double-counts static modifiers such as Skill Focus.
       } finally {
         actor._isDerivedCalcCycle = false;
       }
@@ -2426,11 +2414,9 @@ export const ActorEngine = {
         const progressionDerivedUpdates = await DerivedCalculator.computeAll(actor);
         this._applyDerivedUpdates(actor, progressionDerivedUpdates);
 
-        // Step 2: Apply all modifiers
-        const progressionModifiers = await ModifierEngine.getAllModifiers(actor);
-        const progressionModifierMap = await ModifierEngine.aggregateAll(actor);
-        const progressionBundle = ModifierEngine.computeModifierBundle(actor, progressionModifierMap, progressionModifiers);
-        ModifierEngine.applyComputedBundle(actor, progressionBundle);
+        // Step 2: no separate modifier-bundle pass. DerivedCalculator.computeAll()
+        // already includes static/passive modifiers. A second pass double-counts
+        // skill focus, defense feats, BAB modifiers, and similar static sources.
 
         SWSELogger.log(`[PROGRESSION] ✅ Progression applied to ${actor.name}:`, {
           mutationCount: (itemsToDelete.length > 0 ? 1 : 0) + (itemsToCreate.length > 0 ? 1 : 0) + 1,

@@ -24,6 +24,9 @@ import { buildEntityDialogContext } from "/systems/foundryvtt-swse/scripts/dialo
 import { validateItemData } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/validation.js";
 import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
 
+const EFFECT_WIZARD_DRAFT_FLAG = 'effectWizardDraft';
+const EFFECT_WIZARD_CONFIRM_STATES = Object.freeze(['delete-effect', 'convert-effect-basic', 'clear-draft']);
+
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
 
@@ -105,6 +108,1134 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     if (!this.item?.id) return 'create';
     // Preserve the pre-shell behavior: existing item sheets open editable.
     return 'edit';
+  }
+
+  #createDefaultEffectWizardState(mode = 'basic') {
+    const normalizedMode = String(mode || '').toLowerCase() === 'advanced' ? 'advanced' : 'basic';
+    return {
+      open: false,
+      mode: normalizedMode,
+      step: 0,
+      draft: {
+        name: normalizedMode === 'advanced' ? 'Advanced SWSE Effect' : 'New SWSE Effect',
+        description: '',
+        icon: 'icons/svg/aura.svg',
+        tags: [],
+        target: null,
+        operation: 'increase',
+        amount: 1,
+        bonusType: 'untyped',
+        application: 'equipped',
+        activeState: 'enabled',
+        scope: 'self',
+        filterType: 'all',
+        filterValue: '',
+        duration: 'until-deactivated',
+        transfer: true,
+        conditions: [],
+        targetId: '',
+        targetSearch: '',
+        presetId: '',
+        rawPath: '',
+        advancedMode: 2,
+        advancedValue: '1',
+        priority: 20,
+        iconChoice: 'aura',
+        draftSavedAt: '',
+        editEffectId: '',
+        editMode: '',
+        sourceEffectName: ''
+      }
+    };
+  }
+
+  #getEffectWizardState() {
+    if (!this._effectWizardState || typeof this._effectWizardState !== 'object') {
+      this._effectWizardState = this.#createDefaultEffectWizardState('basic');
+    }
+    const step = Number(this._effectWizardState.step ?? 0);
+    this._effectWizardState.step = Math.max(0, Math.min(4, Number.isFinite(step) ? step : 0));
+    this._effectWizardState.mode = String(this._effectWizardState.mode || '').toLowerCase() === 'advanced' ? 'advanced' : 'basic';
+    this._effectWizardState.draft = {
+      ...this.#createDefaultEffectWizardState(this._effectWizardState.mode).draft,
+      ...(this._effectWizardState.draft ?? {})
+    };
+    return this._effectWizardState;
+  }
+
+  #getSavedEffectWizardDraft() {
+    const saved = this.item?.getFlag?.('foundryvtt-swse', EFFECT_WIZARD_DRAFT_FLAG) ?? null;
+    if (!saved || typeof saved !== 'object') return null;
+    const mode = String(saved.mode || '').toLowerCase() === 'advanced' ? 'advanced' : 'basic';
+    const draft = saved.draft && typeof saved.draft === 'object' ? saved.draft : null;
+    if (!draft) return null;
+    return {
+      mode,
+      savedAt: String(saved.savedAt || ''),
+      step: Number(saved.step ?? 0) || 0,
+      draft: { ...this.#createDefaultEffectWizardState(mode).draft, ...draft }
+    };
+  }
+
+  #buildSavedEffectWizardContext() {
+    const saved = this.#getSavedEffectWizardDraft();
+    if (!saved) return { exists: false };
+    const name = String(saved.draft?.name || '').trim() || (saved.mode === 'advanced' ? 'Advanced SWSE Effect' : 'New SWSE Effect');
+    const savedAt = String(saved.savedAt || '');
+    let savedAtLabel = 'Saved draft';
+    if (savedAt) {
+      try { savedAtLabel = new Date(savedAt).toLocaleString(); } catch { savedAtLabel = savedAt; }
+    }
+    return {
+      exists: true,
+      mode: saved.mode,
+      name,
+      savedAt,
+      savedAtLabel,
+      label: saved.mode === 'advanced' ? 'Advanced draft' : 'Basic draft'
+    };
+  }
+
+  #normalizeEffectWizardDraftForStorage(draft = {}) {
+    const allowed = this.#createDefaultEffectWizardState('basic').draft;
+    const clean = {};
+    for (const key of Object.keys(allowed)) {
+      const value = draft?.[key];
+      if (Array.isArray(value)) clean[key] = value.map(entry => String(entry || '').trim()).filter(Boolean);
+      else if (value && typeof value === 'object') clean[key] = foundry.utils?.deepClone?.(value) ?? { ...value };
+      else if (value != null) clean[key] = value;
+    }
+    return clean;
+  }
+
+  async #persistEffectWizardDraft({ notify = true } = {}) {
+    if (!this.item?.setFlag) return false;
+    const state = this.#getEffectWizardState();
+    const savedAt = new Date().toISOString();
+    state.draft.draftSavedAt = savedAt;
+    const payload = {
+      version: 1,
+      mode: state.mode,
+      step: Number(state.step ?? 0) || 0,
+      savedAt,
+      itemId: this.item?.id ?? null,
+      itemName: this.item?.name ?? '',
+      draft: this.#normalizeEffectWizardDraftForStorage(state.draft)
+    };
+    await this.item.setFlag('foundryvtt-swse', EFFECT_WIZARD_DRAFT_FLAG, payload);
+    if (notify) ui.notifications?.info?.('Effect wizard draft saved on this item.');
+    return true;
+  }
+
+  async #clearEffectWizardDraft({ notify = true } = {}) {
+    if (!this.item?.unsetFlag) return false;
+    await this.item.unsetFlag('foundryvtt-swse', EFFECT_WIZARD_DRAFT_FLAG);
+    if (notify) ui.notifications?.info?.('Effect wizard draft cleared.');
+    return true;
+  }
+
+  #buildEffectActionConfirmContext() {
+    const state = this._effectActionConfirmState;
+    if (!state?.open || !EFFECT_WIZARD_CONFIRM_STATES.includes(String(state.type || ''))) return { open: false };
+    const effect = state.effectId ? this.#getEffectDocument(state.effectId) : null;
+    return {
+      open: true,
+      type: state.type,
+      effectId: state.effectId || '',
+      title: state.title || 'Confirm Effect Action',
+      message: state.message || '',
+      detail: state.detail || (effect ? (effect.name || effect.label || 'Active Effect') : ''),
+      confirmLabel: state.confirmLabel || 'Confirm',
+      cancelLabel: state.cancelLabel || 'Cancel',
+      tone: state.tone || 'warn'
+    };
+  }
+
+  async #openEffectActionConfirm(state = {}) {
+    const type = String(state.type || '');
+    if (!EFFECT_WIZARD_CONFIRM_STATES.includes(type)) return false;
+    this._effectActionConfirmState = { ...state, type, open: true };
+    await this.#renderEffectWizardChange();
+    return true;
+  }
+
+  #clearEffectActionConfirmState() {
+    this._effectActionConfirmState = null;
+  }
+
+  #effectWizardIcons() {
+    return [
+      { id: 'aura', label: 'Aura', glyph: '✦', icon: 'icons/svg/aura.svg' },
+      { id: 'defense', label: 'Defense', glyph: '⬢', icon: 'icons/svg/shield.svg' },
+      { id: 'skill', label: 'Skill', glyph: '◆', icon: 'icons/svg/d20.svg' },
+      { id: 'attack', label: 'Attack', glyph: '⌖', icon: 'icons/svg/sword.svg' },
+      { id: 'force', label: 'Force', glyph: '✧', icon: 'icons/svg/upgrade.svg' },
+      { id: 'status', label: 'Status', glyph: '◈', icon: 'icons/svg/statuses.svg' }
+    ];
+  }
+
+  #findEffectWizardTarget(targetId = '') {
+    const id = String(targetId || '').trim();
+    if (!id) return null;
+    for (const group of EffectIntentEngine.wizardTargets()) {
+      const target = (group.targets ?? []).find(entry => entry.id === id);
+      if (target) return foundry.utils?.deepClone?.(target) ?? { ...target, intent: { ...(target.intent ?? {}) } };
+    }
+    return null;
+  }
+
+  #findEffectWizardOperation(operationId = '') {
+    const id = String(operationId || '').trim();
+    return EffectIntentEngine.wizardOperations().find(entry => entry.id === id) ?? EffectIntentEngine.wizardOperations()[0];
+  }
+
+  #effectWizardFilterValueOptions(filterType = '') {
+    const options = EffectIntentEngine.options();
+    const type = String(filterType || 'all').trim();
+    if (type === 'weapon-group') return options.weaponGroups ?? [];
+    if (type === 'weapon-category') return options.weaponCategories ?? [];
+    if (type === 'skill') return options.skills ?? [];
+    if (type === 'damage-type') return options.damageTypes ?? [];
+    if (type === 'force-descriptor') return options.forceDescriptors ?? [];
+    return [];
+  }
+
+  #effectWizardDefaultFilterValue(filterType = '', draft = {}) {
+    const options = this.#effectWizardFilterValueOptions(filterType);
+    if (filterType === 'skill' && draft?.targetId) {
+      const target = this.#findEffectWizardTarget(draft.targetId);
+      const targetSkill = target?.intent?.category === 'skill' ? String(target.intent.target || '') : '';
+      if (targetSkill && options.some(option => String(option.value) === targetSkill)) return targetSkill;
+    }
+    return options[0]?.value ?? '';
+  }
+
+  #effectWizardFilterValuePlaceholder(filterType = '') {
+    const type = String(filterType || 'all').trim();
+    if (type === 'custom') return 'Describe the GM/table condition';
+    if (type === 'this-item' || type === 'all') return 'No additional value required';
+    if (type === 'weapon-group') return 'Choose a weapon group';
+    if (type === 'weapon-category') return 'Choose an attack category';
+    if (type === 'skill') return 'Choose a skill';
+    if (type === 'damage-type') return 'Choose a damage type';
+    if (type === 'force-descriptor') return 'Choose a Force descriptor';
+    return 'Optional context value';
+  }
+
+  #findEffectWizardCondition(conditionId = '') {
+    const id = String(conditionId || '').trim();
+    if (!id) return null;
+    for (const group of EffectIntentEngine.wizardConditionGroups()) {
+      const condition = (group.conditions ?? []).find(entry => entry.id === id);
+      if (condition) return { ...condition, groupId: group.id, groupMode: group.mode || 'toggle' };
+    }
+    return null;
+  }
+
+  #effectWizardSelectedConditionIds(draft = {}) {
+    return new Set(Array.isArray(draft.conditions) ? draft.conditions.map(entry => String(entry || '').trim()).filter(Boolean) : []);
+  }
+
+  #effectWizardConditionSelected(condition = {}, draft = {}) {
+    const selectedIds = this.#effectWizardSelectedConditionIds(draft);
+    if (selectedIds.has(condition.id)) return true;
+    if (condition.application) return String(draft.application || 'equipped') === String(condition.application);
+    if (condition.scope) return String(draft.scope || 'self') === String(condition.scope);
+    if (condition.filterType) {
+      return String(draft.filterType || 'all') === String(condition.filterType)
+        && String(draft.filterValue || '') === String(condition.filterValue || '');
+    }
+    if (condition.category && condition.target) {
+      const target = this.#findEffectWizardTarget(draft.targetId);
+      return String(target?.intent?.category || '') === String(condition.category)
+        && String(target?.intent?.target || '') === String(condition.target);
+    }
+    return false;
+  }
+
+  #appendEffectWizardNote(draft = {}, note = '') {
+    const text = String(note || '').trim();
+    if (!text) return;
+    const current = String(draft.note || '').trim();
+    if (!current) {
+      draft.note = text;
+      return;
+    }
+    if (!current.toLowerCase().includes(text.toLowerCase())) draft.note = `${current}; ${text}`;
+  }
+
+  #applyEffectWizardConditionToDraft(condition = {}) {
+    const state = this.#getEffectWizardState();
+    const draft = state.draft ?? {};
+    const selectedIds = this.#effectWizardSelectedConditionIds(draft);
+    const wasSelected = selectedIds.has(condition.id);
+
+    if (condition.groupMode === 'single') {
+      for (const group of EffectIntentEngine.wizardConditionGroups()) {
+        if (group.id !== condition.groupId) continue;
+        for (const entry of group.conditions ?? []) selectedIds.delete(entry.id);
+      }
+      selectedIds.add(condition.id);
+    } else if (wasSelected) {
+      selectedIds.delete(condition.id);
+    } else {
+      selectedIds.add(condition.id);
+    }
+
+    if (condition.application) {
+      draft.application = condition.application;
+      draft.activeState = condition.activeState || (condition.application === 'manual' ? 'disabled' : draft.activeState || 'enabled');
+      if (condition.application !== 'manual' && draft.activeState !== 'disabled') draft.activeState = 'enabled';
+    }
+
+    if (condition.scope) {
+      draft.scope = condition.scope;
+      if (condition.transfer === false) draft.transfer = false;
+      else if (['self', 'item'].includes(condition.scope) && draft.transfer !== false) draft.transfer = true;
+    }
+
+    if (condition.filterType) {
+      if (wasSelected && condition.groupMode !== 'single') {
+        draft.filterType = 'all';
+        draft.filterValue = '';
+      } else {
+        draft.filterType = condition.filterType;
+        draft.filterValue = condition.filterValue || this.#effectWizardDefaultFilterValue(condition.filterType, draft);
+      }
+    }
+
+    if (condition.category && condition.target) {
+      const targetId = this.#effectWizardTargetIdFromIntent({ category: condition.category, target: condition.target, filterType: draft.filterType || 'all', filterValue: draft.filterValue || '' });
+      const target = this.#findEffectWizardTarget(targetId);
+      if (target) {
+        draft.targetId = target.id;
+        draft.target = { label: target.label, id: target.id };
+      }
+      if (condition.transfer === false) draft.transfer = false;
+    }
+
+    if (!wasSelected && condition.note) this.#appendEffectWizardNote(draft, condition.note);
+    draft.conditions = Array.from(selectedIds);
+    state.draft = draft;
+    state.open = true;
+    return state;
+  }
+
+  #effectWizardTechnicalPreview() {
+    const state = this.#getEffectWizardState();
+    const draft = state.draft ?? {};
+    if (state.mode === 'advanced') {
+      const operation = this.#findEffectWizardOperation(draft.operation || 'increase');
+      const rawPath = this.#effectWizardAdvancedPath() || 'No raw path selected';
+      const rawMode = Number(draft.advancedMode ?? operation?.advancedMode ?? 2) || 2;
+      const value = String(draft.advancedValue ?? draft.amount ?? '1');
+      return [
+        'Type: Advanced ActiveEffect change',
+        `Attribute Path: ${rawPath}`,
+        `Mode: ${rawMode} (${operation?.label || 'Raw mode'})`,
+        `Value: ${value}`,
+        `Priority: ${Number(draft.priority ?? 20) || 20}`,
+        `Transfer: ${draft.transfer !== false}`,
+        `Starts Disabled: ${draft.activeState === 'disabled'}`,
+        'Flags: foundryvtt-swse.advancedEffect + effectWizard metadata'
+      ].join('\n');
+    }
+    const target = this.#findEffectWizardTarget(draft.targetId);
+    if (!target) return 'No Basic payload yet. Choose a target card first.';
+    const intent = this.#effectWizardIntentFromDraft();
+    return EffectIntentEngine.getIntentTechnicalRows(intent, { item: this.item })
+      .map(row => `${row.label}: ${row.value}`)
+      .join('\n');
+  }
+
+  #effectWizardTargetIdFromIntent(intent = {}) {
+    const category = String(intent?.category || '').trim();
+    const target = String(intent?.target || '').trim();
+    const filterType = String(intent?.filterType || 'all').trim();
+    const filterValue = String(intent?.filterValue || '').trim();
+    let fallback = '';
+    for (const group of EffectIntentEngine.wizardTargets()) {
+      for (const entry of group.targets ?? []) {
+        const entryIntent = entry.intent ?? {};
+        if (String(entryIntent.category || '') !== category) continue;
+        if (String(entryIntent.target || '') !== target) continue;
+        if (!fallback) fallback = entry.id;
+        const entryFilterType = String(entryIntent.filterType || 'all').trim();
+        const entryFilterValue = String(entryIntent.filterValue || '').trim();
+        if (entryFilterType === filterType && entryFilterValue === filterValue) return entry.id;
+      }
+    }
+    return fallback;
+  }
+
+  #effectWizardEditableDescription(effect = {}, intent = {}) {
+    const raw = String(effect?.description || '').trim();
+    if (!raw) return '';
+    const summary = EffectIntentEngine.describeIntent(intent);
+    if (raw === summary) return '';
+    const generatedSuffix = `\n\n${summary}`;
+    if (raw.endsWith(generatedSuffix)) return raw.slice(0, -generatedSuffix.length).trim();
+    return raw;
+  }
+
+  #applyEffectWizardIntentToDraft(intent = {}, { name = '', description = '', icon = '', effectId = '', editMode = '' } = {}) {
+    const state = this.#getEffectWizardState();
+    const normalized = EffectIntentEngine.normalizeIntent(intent);
+    const targetId = this.#effectWizardTargetIdFromIntent(normalized);
+    const target = this.#findEffectWizardTarget(targetId);
+    state.draft.name = String(name || state.draft.name || 'New SWSE Effect');
+    state.draft.description = String(description || state.draft.description || '');
+    state.draft.icon = icon || state.draft.icon || 'icons/svg/aura.svg';
+    state.draft.operation = normalized.operation || 'increase';
+    state.draft.amount = Math.max(1, Number(normalized.amount ?? 1) || 1);
+    state.draft.bonusType = normalized.bonusType || 'untyped';
+    state.draft.application = normalized.application || 'equipped';
+    state.draft.activeState = normalized.activeState || 'enabled';
+    state.draft.scope = normalized.scope || 'self';
+    state.draft.filterType = normalized.filterType || 'all';
+    state.draft.filterValue = normalized.filterValue || '';
+    state.draft.duration = normalized.duration || 'until-deactivated';
+    state.draft.transfer = normalized.transfer !== false;
+    state.draft.conditions = Array.isArray(normalized.conditions) ? normalized.conditions : [];
+    state.draft.note = normalized.note || '';
+    state.draft.targetId = target?.id || '';
+    state.draft.target = target ? { label: target.label, id: target.id } : null;
+    state.draft.editEffectId = String(effectId || '');
+    state.draft.editMode = String(editMode || '');
+    state.draft.sourceEffectName = String(name || '');
+    state.step = target ? 4 : 1;
+    state.open = true;
+    return state;
+  }
+
+  #seedEffectWizardFromEffect(effect, { mode = null } = {}) {
+    if (!effect) return null;
+    const source = effect.toObject?.() ?? (foundry.utils?.deepClone?.(effect) ?? { ...effect });
+    const hasIntent = EffectIntentEngine.hasIntent(source);
+    const effectId = source._id || source.id || effect.id || effect._id || '';
+    if (hasIntent && mode !== 'advanced') {
+      this._effectWizardState = this.#createDefaultEffectWizardState('basic');
+      return this.#applyEffectWizardIntentToDraft(EffectIntentEngine.getIntent(source), {
+        name: source.name || source.label || 'SWSE Effect',
+        description: this.#effectWizardEditableDescription(source, EffectIntentEngine.getIntent(source)),
+        icon: source.icon || source.img || 'icons/svg/aura.svg',
+        effectId,
+        editMode: 'basic'
+      });
+    }
+    const changes = Array.isArray(source.changes) ? source.changes : [];
+    const first = changes[0] ?? {};
+    this._effectWizardState = this.#createDefaultEffectWizardState('advanced');
+    const state = this.#getEffectWizardState();
+    state.open = true;
+    state.step = 4;
+    state.draft.name = source.name || source.label || 'Advanced SWSE Effect';
+    state.draft.description = String(source.description || '');
+    state.draft.icon = source.icon || source.img || 'icons/svg/aura.svg';
+    state.draft.rawPath = String(first.key || '');
+    state.draft.advancedMode = Number(first.mode ?? 2) || 2;
+    state.draft.advancedValue = String(first.value ?? '');
+    state.draft.amount = Math.max(1, Math.abs(Number(first.value ?? 1) || 1));
+    const operation = EffectIntentEngine.wizardOperations().find(entry => Number(entry.advancedMode ?? 2) === state.draft.advancedMode) ?? EffectIntentEngine.wizardOperations()[0];
+    state.draft.operation = operation?.id || 'increase';
+    state.draft.priority = Number(first.priority ?? 20) || 20;
+    state.draft.transfer = source.transfer !== false;
+    state.draft.activeState = source.disabled === true ? 'disabled' : 'enabled';
+    state.draft.editEffectId = String(effectId || '');
+    state.draft.editMode = 'advanced';
+    state.draft.sourceEffectName = String(source.name || source.label || '');
+    const wizardFlags = source.flags?.['foundryvtt-swse']?.effectWizard ?? source.flags?.swse?.effectWizard ?? null;
+    if (Array.isArray(wizardFlags?.tags)) state.draft.tags = wizardFlags.tags;
+    return state;
+  }
+
+  #isValidEffectWizardRawPath(value = '') {
+    const path = String(value || '').trim();
+    if (!path) return false;
+    if (/\s/.test(path)) return false;
+    if (!/^[a-zA-Z_$][\w$]*(\.[a-zA-Z_$][\w$]*)+$/.test(path)) return false;
+    return ['system.', 'flags.', 'prototypeToken.', 'name', 'img'].some(prefix => path === prefix.replace(/\.$/, '') || path.startsWith(prefix));
+  }
+
+  #effectWizardIntentFromDraft() {
+    const state = this.#getEffectWizardState();
+    const draft = state.draft ?? {};
+    const target = this.#findEffectWizardTarget(draft.targetId) ?? draft.target ?? null;
+    const operation = this.#findEffectWizardOperation(draft.operation || 'increase');
+    const targetIntent = target?.intent ?? {};
+    const noteParts = [];
+    if (draft.note) noteParts.push(String(draft.note));
+    if (String(draft.filterType || 'all') === 'custom') noteParts.push(String(draft.filterValue || 'GM adjudicated condition'));
+    const filterType = draft.filterType && draft.filterType !== 'all'
+      ? draft.filterType
+      : (targetIntent.filterType || 'all');
+    const filterValue = draft.filterType && draft.filterType !== 'all'
+      ? (draft.filterValue || '')
+      : (targetIntent.filterValue || '');
+    return EffectIntentEngine.normalizeIntent({
+      ...targetIntent,
+      application: draft.application || 'equipped',
+      activeState: draft.activeState || 'enabled',
+      scope: draft.scope || targetIntent.scope || 'self',
+      operation: operation?.intentOperation || draft.operation || 'increase',
+      category: targetIntent.category || draft.category || 'defense',
+      target: targetIntent.target || draft.target || 'reflex',
+      amount: Number(draft.amount ?? 1) || 1,
+      bonusType: draft.bonusType || 'untyped',
+      duration: draft.duration || 'until-deactivated',
+      transfer: targetIntent.transfer === false ? false : draft.transfer !== false,
+      filterType,
+      filterValue,
+      conditions: Array.isArray(draft.conditions) ? draft.conditions : [],
+      note: noteParts.filter(Boolean).join('; ')
+    });
+  }
+
+  #effectWizardAdvancedPath() {
+    const state = this.#getEffectWizardState();
+    const draft = state.draft ?? {};
+    const target = this.#findEffectWizardTarget(draft.targetId) ?? null;
+    return String(draft.rawPath || target?.advancedPath || '').trim();
+  }
+
+  #effectWizardPlainPreview() {
+    const state = this.#getEffectWizardState();
+    const draft = state.draft ?? {};
+    if (state.mode === 'advanced') {
+      const key = this.#effectWizardAdvancedPath();
+      const operation = this.#findEffectWizardOperation(draft.operation || 'increase');
+      const value = String(draft.advancedValue || draft.amount || '1');
+      if (!key) return 'Choose a target card or enter a raw SWSE/Foundry path.';
+      return `${draft.name || 'Advanced SWSE Effect'} will apply ${operation?.label || 'Add'} ${value} to ${key}.`;
+    }
+    const target = this.#findEffectWizardTarget(draft.targetId);
+    if (!target) return 'Choose a target to preview the Basic effect.';
+    return EffectIntentEngine.describeIntent(this.#effectWizardIntentFromDraft());
+  }
+
+  #effectWizardRawPathState() {
+    const state = this.#getEffectWizardState();
+    const draft = state.draft ?? {};
+    const path = this.#effectWizardAdvancedPath();
+    if (state.mode !== 'advanced') return { required: false, valid: true, path: '', message: '' };
+    if (!String(path || '').trim()) {
+      return { required: true, valid: false, path: '', message: 'Choose a target card or enter a raw SWSE/Foundry path.' };
+    }
+    if (/\s/.test(path)) {
+      return { required: true, valid: false, path, message: 'Raw paths cannot contain spaces.' };
+    }
+    if (!this.#isValidEffectWizardRawPath(path)) {
+      return { required: true, valid: false, path, message: 'Path must be a dotted property path beginning with system., flags., prototypeToken., name, or img.' };
+    }
+    return { required: true, valid: true, path, message: 'Valid raw path.' };
+  }
+
+  #effectWizardStepValidation(stepOverride = null) {
+    const state = this.#getEffectWizardState();
+    const mode = state.mode === 'advanced' ? 'advanced' : 'basic';
+    const draft = state.draft ?? {};
+    const step = stepOverride == null ? Number(state.step ?? 0) || 0 : Number(stepOverride) || 0;
+    const target = this.#findEffectWizardTarget(draft.targetId);
+    const operation = this.#findEffectWizardOperation(draft.operation || 'increase');
+    const amount = Number(draft.amount ?? 0);
+    const advancedValue = String(draft.advancedValue ?? '').trim();
+    const rawPath = this.#effectWizardRawPathState();
+    const filterType = String(draft.filterType || 'all').trim();
+    const filterValue = String(draft.filterValue || '').trim();
+    const filterNeedsValue = !!filterType && !['all', 'this-item'].includes(filterType);
+    const messages = [];
+    if (step === 0 && !String(draft.name || '').trim()) messages.push('Name the effect before moving on.');
+    if (step === 1) {
+      if (mode === 'advanced') {
+        if (!rawPath.valid) messages.push(rawPath.message);
+      } else if (!target) messages.push('Choose a target card for this Basic effect.');
+    }
+    if (step === 2) {
+      if (!operation) messages.push('Choose how the target changes.');
+      if (!Number.isFinite(amount) || amount <= 0) messages.push('Enter an amount greater than zero.');
+      if (mode === 'advanced' && !advancedValue) messages.push('Enter the raw value this effect should write.');
+    }
+    if (step === 3 && mode === 'basic' && filterNeedsValue && !filterValue) {
+      messages.push('Choose or describe the selected context filter value.');
+    }
+    if (step === 4) {
+      if (!String(draft.name || '').trim()) messages.push('Name the effect before creating it.');
+      if (mode === 'advanced') {
+        if (!rawPath.valid) messages.push(rawPath.message);
+      } else if (!target) messages.push('Choose a target card before creating this effect.');
+      if (!operation) messages.push('Choose a modifier before creating this effect.');
+      if (!Number.isFinite(amount) || amount <= 0) messages.push('Enter an amount greater than zero.');
+      if (mode === 'basic' && filterNeedsValue && !filterValue) messages.push('Choose or describe the selected context filter value.');
+    }
+    return {
+      step,
+      valid: messages.length === 0,
+      messages,
+      message: messages[0] || '',
+      tone: messages.length ? 'warn' : 'ok'
+    };
+  }
+
+  #canEnterEffectWizardStep(nextStep = 0) {
+    const targetStep = Math.max(0, Math.min(4, Number(nextStep) || 0));
+    for (let index = 0; index < targetStep; index += 1) {
+      if (!this.#effectWizardStepValidation(index).valid) return false;
+    }
+    return true;
+  }
+
+  #buildEffectWizardContext({ editable = true } = {}) {
+    const state = this.#getEffectWizardState();
+    const mode = state.mode === 'advanced' ? 'advanced' : 'basic';
+    const step = Math.max(0, Math.min(4, Number(state.step ?? 0) || 0));
+    const draft = state.draft ?? {};
+    const target = this.#findEffectWizardTarget(draft.targetId);
+    const operation = this.#findEffectWizardOperation(draft.operation || 'increase');
+    const definitions = [
+      { label: 'Effect Identity', summary: 'Name, icon, and tags', description: 'Give the effect a readable name, short description, icon, and category tags.' },
+      { label: 'Choose Target', summary: 'What stat it affects', description: 'Pick a plain-language target card. Advanced mode can use the card path or a custom raw path.' },
+      { label: 'Choose Modifier', summary: 'How it changes', description: 'Choose the operation, amount, and bonus type. Basic mode only exposes safe SWSE operations.' },
+      { label: 'Conditions', summary: 'When it applies', description: 'Decide whether this is always active, equipped, activated, carried, manual, or narrowed by a context filter.' },
+      { label: 'Review & Create', summary: 'Confirm and save', description: 'Review the plain-English effect and technical payload before creating the Active Effect.' }
+    ];
+    const steps = definitions.map((entry, index) => ({
+      ...entry,
+      index,
+      number: index + 1,
+      active: index === step,
+      complete: index < step,
+      value: index === 0 ? (draft.name || '') : index === 1 ? (target?.label || '') : index === 2 ? `${operation?.symbol || '+'}${draft.amount || 1} ${draft.bonusType || 'untyped'}` : ''
+    }));
+    const current = steps[step] ?? steps[0];
+    const modeLabel = mode === 'advanced' ? 'Advanced / Raw' : 'Basic';
+    const iconChoices = this.#effectWizardIcons().map(icon => ({ ...icon, selected: (draft.iconChoice || 'aura') === icon.id }));
+    const tagChoices = ['Defense', 'Skill', 'Attack', 'Damage', 'Movement', 'Resource', 'Condition', 'Force', 'Item'].map(label => ({
+      label,
+      selected: Array.isArray(draft.tags) && draft.tags.includes(label)
+    }));
+    const presetCards = (EffectIntentEngine.options().presets ?? []).map(preset => ({
+      id: preset.id,
+      label: preset.label,
+      description: preset.description,
+      selected: String(draft.presetId || '') === String(preset.id || '')
+    }));
+    const targetSearch = String(draft.targetSearch || '').trim().toLowerCase();
+    const targetGroups = EffectIntentEngine.wizardTargets()
+      .map(group => ({
+        ...group,
+        targets: (group.targets ?? [])
+          .map(entry => ({
+            ...entry,
+            selected: draft.targetId === entry.id,
+            showPath: mode === 'advanced',
+            searchable: `${entry.label} ${entry.description} ${entry.advancedPath} ${entry.intent?.category || ''} ${entry.intent?.target || ''}`.toLowerCase()
+          }))
+          .filter(entry => !targetSearch || entry.searchable.includes(targetSearch))
+      }))
+      .filter(group => (group.targets ?? []).length > 0);
+    const operations = EffectIntentEngine.wizardOperations()
+      .filter(entry => mode === 'advanced' || entry.basic)
+      .map(entry => ({ ...entry, selected: (draft.operation || 'increase') === entry.id, disabled: mode !== 'advanced' && !entry.basic }));
+    const bonusTypes = EffectIntentEngine.options().bonusTypes.map(type => ({
+      ...type,
+      selected: String(draft.bonusType || 'untyped').toLowerCase() === String(type.value).toLowerCase()
+    }));
+    const conditionGroups = EffectIntentEngine.wizardConditionGroups().map(group => ({
+      ...group,
+      conditions: (group.conditions ?? []).map(condition => ({
+        ...condition,
+        selected: this.#effectWizardConditionSelected(condition, draft),
+        automationHint: condition.filterType === 'custom' || condition.scope === 'target' || condition.scope === 'area' || condition.transfer === false ? 'Reminder' : 'Automated where supported'
+      }))
+    }));
+    const optionData = EffectIntentEngine.options();
+    const scopeOptions = (optionData.scopes ?? []).map(option => ({
+      ...option,
+      selected: String(draft.scope || 'self') === String(option.value),
+      label: option.manualOnly ? `${option.label} · reminder` : option.label
+    }));
+    const durationOptions = (optionData.durations ?? []).map(option => ({
+      ...option,
+      selected: String(draft.duration || 'until-deactivated') === String(option.value),
+      label: option.automation === 'reminder' ? `${option.label} · GM tracked` : option.label
+    }));
+    const filterTypeOptions = (optionData.filterTypes ?? []).map(option => ({
+      ...option,
+      selected: String(draft.filterType || 'all') === String(option.value),
+      label: option.automation === 'reminder' ? `${option.label} · reminder` : option.label
+    }));
+    const filterValueOptions = this.#effectWizardFilterValueOptions(draft.filterType).map(option => ({
+      ...option,
+      selected: String(draft.filterValue || '') === String(option.value)
+    }));
+    const hasFilterValueOptions = filterValueOptions.length > 0;
+    const filterValueEditable = String(draft.filterType || 'all') === 'custom';
+    const rawPath = this.#effectWizardAdvancedPath();
+    const rawPathState = this.#effectWizardRawPathState();
+    const rawPathValid = rawPathState.valid;
+    const plainPreview = this.#effectWizardPlainPreview();
+    const intent = mode === 'basic' && target ? this.#effectWizardIntentFromDraft() : null;
+    const support = intent ? EffectIntentEngine.getAutomationSupport(intent, { item: this.item }) : null;
+    const mathPreview = intent ? EffectIntentEngine.getEffectMathPreview(intent, { actor: this.item?.actor ?? null, item: this.item }) : null;
+    const stepValidation = this.#effectWizardStepValidation(step);
+    const reviewValidation = this.#effectWizardStepValidation(4);
+    const canCreate = !!editable && reviewValidation.valid;
+    const canGoForward = step < 4 && stepValidation.valid;
+    const advancedMode = Number(draft.advancedMode ?? operation?.advancedMode ?? 2) || 2;
+    const editingEffectId = String(draft.editEffectId || '').trim();
+    const editingEffect = editingEffectId ? this.#getEffectDocument(editingEffectId) : null;
+    const isEditing = !!editingEffect;
+    return {
+      open: !!state.open,
+      editable: !!editable,
+      mode,
+      modeLabel,
+      isBasicMode: mode === 'basic',
+      isAdvancedMode: mode === 'advanced',
+      step,
+      progress: Math.max(20, Math.min(100, (step + 1) * 20)),
+      steps,
+      current,
+      draft: { ...draft, rawPath, advancedMode },
+      iconChoices,
+      tagChoices,
+      presetCards,
+      hasPresetCards: presetCards.length > 0,
+      editing: {
+        active: isEditing,
+        effectId: editingEffectId,
+        name: editingEffect?.name || editingEffect?.label || draft.sourceEffectName || '',
+        mode: draft.editMode || mode,
+        label: isEditing ? `Editing ${editingEffect?.name || editingEffect?.label || 'Active Effect'}` : ''
+      },
+      targetGroups,
+      hasTargetResults: targetGroups.some(group => (group.targets ?? []).length > 0),
+      operations,
+      bonusTypes,
+      conditionGroups,
+      scopeOptions,
+      durationOptions,
+      filterTypeOptions,
+      filterValueOptions,
+      hasFilterValueOptions,
+      filterValueEditable,
+      filterValuePlaceholder: this.#effectWizardFilterValuePlaceholder(draft.filterType),
+      canGoBack: step > 0,
+      canGoForward,
+      isFinalStep: step >= 4,
+      isStepIdentity: step === 0,
+      isStepTarget: step === 1,
+      isStepModifier: step === 2,
+      isStepConditions: step === 3,
+      isStepReview: step === 4,
+      canCreate,
+      primaryCreateLabel: isEditing ? 'Update Effect' : 'Create Effect',
+      closeCreateLabel: isEditing ? 'Update & Close' : 'Create & Close',
+      rawPathValid,
+      rawPathState,
+      validation: stepValidation,
+      reviewValidation,
+      savedDraft: this.#buildSavedEffectWizardContext(),
+      actionConfirm: this.#buildEffectActionConfirmContext(),
+      stackingHelp: EffectIntentEngine.wizardStackingHelp(draft.bonusType || 'untyped'),
+      support,
+      mathPreview,
+      hasMathPreview: !!mathPreview,
+      preview: {
+        title: draft.name || (mode === 'advanced' ? 'Advanced SWSE Effect' : 'New SWSE Effect'),
+        summary: plainPreview,
+        target: mode === 'advanced' ? (rawPath || 'Not chosen') : (target?.label || 'Not chosen'),
+        modifier: mode === 'advanced'
+          ? `${operation?.label || 'Add'} ${draft.advancedValue || draft.amount || 1}`
+          : `${operation?.symbol || '+'}${draft.amount || 1} ${draft.bonusType || 'untyped'}`,
+        active: `${draft.application || 'equipped'} · ${draft.duration || 'until-deactivated'}`,
+        technical: this.#effectWizardTechnicalPreview()
+      }
+    };
+  }
+
+
+  async #renderEffectWizardChange() {
+    this._entityDialogActiveTab = 'effects';
+    await this.#renderPreservingEntityView({ force: true });
+  }
+
+  async #openEffectWizard(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!this.#canMutateEntityEffects()) {
+      ui.notifications?.warn?.('Switch to Edit mode before changing Active Effects.');
+      return;
+    }
+    const requested = String(event.currentTarget?.dataset?.effectWizardOpen || '').toLowerCase();
+    const saved = requested === 'saved' ? this.#getSavedEffectWizardDraft() : null;
+    const mode = saved?.mode ?? (requested === 'advanced' ? 'advanced' : 'basic');
+    this._effectWizardState = this.#createDefaultEffectWizardState(mode);
+    this._effectWizardState.open = true;
+    this._effectWizardState.step = saved ? Math.max(0, Math.min(4, Number(saved.step ?? 0) || 0)) : 0;
+    if (saved?.draft) {
+      this._effectWizardState.draft = {
+        ...this._effectWizardState.draft,
+        ...saved.draft,
+        draftSavedAt: saved.savedAt || saved.draft.draftSavedAt || ''
+      };
+    }
+    await this.#renderEffectWizardChange();
+  }
+
+  async #closeEffectWizard(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const state = this.#getEffectWizardState();
+    state.open = false;
+    await this.#renderEffectWizardChange();
+  }
+
+  async #onEffectWizardMode(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const state = this.#getEffectWizardState();
+    const mode = String(event.currentTarget?.dataset?.effectWizardMode || '').toLowerCase() === 'advanced' ? 'advanced' : 'basic';
+    if (state.mode === mode) return;
+    const priorDraft = state.draft ?? {};
+    this._effectWizardState = this.#createDefaultEffectWizardState(mode);
+    this._effectWizardState.open = true;
+    this._effectWizardState.step = state.step ?? 0;
+    this._effectWizardState.draft = {
+      ...this._effectWizardState.draft,
+      ...priorDraft,
+      name: priorDraft.name || this._effectWizardState.draft.name
+    };
+    await this.#renderEffectWizardChange();
+  }
+
+  async #onEffectWizardStep(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const state = this.#getEffectWizardState();
+    const nextStep = Number(event.currentTarget?.dataset?.effectWizardStepSelect ?? 0);
+    const targetStep = Math.max(0, Math.min(4, Number.isFinite(nextStep) ? nextStep : 0));
+    if (targetStep > Number(state.step ?? 0) && !this.#canEnterEffectWizardStep(targetStep)) {
+      const validation = this.#effectWizardStepValidation(state.step);
+      ui.notifications?.warn?.(validation.message || 'Complete the current wizard step first.');
+      state.open = true;
+      await this.#renderEffectWizardChange();
+      return;
+    }
+    state.step = targetStep;
+    state.open = true;
+    await this.#renderEffectWizardChange();
+  }
+
+  async #onEffectWizardNav(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const state = this.#getEffectWizardState();
+    const direction = String(event.currentTarget?.dataset?.effectWizardNav || 'next').toLowerCase();
+    const delta = direction === 'back' ? -1 : 1;
+    if (delta > 0) {
+      const validation = this.#effectWizardStepValidation(state.step);
+      if (!validation.valid) {
+        ui.notifications?.warn?.(validation.message || 'Complete the current wizard step first.');
+        state.open = true;
+        await this.#renderEffectWizardChange();
+        return;
+      }
+    }
+    state.step = Math.max(0, Math.min(4, Number(state.step ?? 0) + delta));
+    state.open = true;
+    await this.#renderEffectWizardChange();
+  }
+
+
+  async #onEffectWizardField(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const state = this.#getEffectWizardState();
+    const draft = state.draft ?? {};
+    const field = String(event.currentTarget?.dataset?.effectWizardField || '').trim();
+    if (!field) return;
+    const control = event.currentTarget;
+    let value = control?.type === 'checkbox' ? !!control.checked : control?.value;
+    if (['amount', 'priority', 'advancedMode'].includes(field)) value = Number(value) || (field === 'priority' ? 20 : 1);
+    if (field === 'transfer') value = value !== false;
+    if (field === 'filterType') {
+      const prior = String(draft.filterType || 'all');
+      const next = String(value || 'all');
+      draft.filterType = next;
+      if (prior !== next) draft.filterValue = this.#effectWizardDefaultFilterValue(next, draft);
+    } else if (field === 'duration') {
+      draft.duration = String(value || 'until-deactivated');
+    } else {
+      draft[field] = value;
+    }
+    if (field === 'amount' && (!draft.advancedValue || /^-?\d+(\.\d+)?$/.test(String(draft.advancedValue)))) {
+      const amount = Math.max(0, Number(draft.amount ?? 1) || 1);
+      draft.advancedValue = String(draft.operation === 'decrease' ? -Math.abs(amount) : amount);
+    }
+    if (field === 'advancedValue') {
+      const numeric = Number(value);
+      if (Number.isFinite(numeric) && numeric !== 0) draft.amount = Math.abs(numeric);
+    }
+    state.draft = draft;
+    state.open = true;
+    await this.#renderEffectWizardChange();
+  }
+
+  async #onEffectWizardPreset(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const presetId = String(event.currentTarget?.dataset?.effectWizardPreset || '').trim();
+    const preset = EffectIntentEngine.getPreset(presetId);
+    if (!preset?.intent) return;
+    const previous = this.#getEffectWizardState();
+    this._effectWizardState = this.#createDefaultEffectWizardState('basic');
+    this._effectWizardState.open = true;
+    this.#applyEffectWizardIntentToDraft(preset.intent, {
+      name: preset.label || previous.draft?.name || 'New SWSE Effect',
+      description: preset.description || previous.draft?.description || '',
+      icon: previous.draft?.icon || 'icons/svg/aura.svg'
+    });
+    const nextState = this.#getEffectWizardState();
+    nextState.step = 1;
+    nextState.draft.presetId = preset.id;
+    nextState.open = true;
+    await this.#renderEffectWizardChange();
+  }
+
+  async #onEffectWizardIcon(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const state = this.#getEffectWizardState();
+    const iconId = String(event.currentTarget?.dataset?.effectWizardIcon || 'aura');
+    const icon = this.#effectWizardIcons().find(entry => entry.id === iconId) ?? this.#effectWizardIcons()[0];
+    state.draft.iconChoice = icon.id;
+    state.draft.icon = icon.icon;
+    state.open = true;
+    await this.#renderEffectWizardChange();
+  }
+
+  async #onEffectWizardTag(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const state = this.#getEffectWizardState();
+    const tag = String(event.currentTarget?.dataset?.effectWizardTag || '').trim();
+    if (!tag) return;
+    const tags = new Set(Array.isArray(state.draft.tags) ? state.draft.tags : []);
+    tags.has(tag) ? tags.delete(tag) : tags.add(tag);
+    state.draft.tags = Array.from(tags);
+    state.open = true;
+    await this.#renderEffectWizardChange();
+  }
+
+  async #onEffectWizardTarget(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const state = this.#getEffectWizardState();
+    const targetId = String(event.currentTarget?.dataset?.effectWizardTarget || '').trim();
+    const target = this.#findEffectWizardTarget(targetId);
+    if (!target) return;
+    state.draft.targetId = target.id;
+    state.draft.target = { label: target.label, id: target.id };
+    if (state.mode === 'advanced' && target.advancedPath) state.draft.rawPath = target.advancedPath;
+    if (target.intent?.transfer === false) state.draft.transfer = false;
+    if (String(state.draft.filterType || 'all') === 'skill' && !state.draft.filterValue) {
+      state.draft.filterValue = this.#effectWizardDefaultFilterValue('skill', state.draft);
+    }
+    state.open = true;
+    await this.#renderEffectWizardChange();
+  }
+
+  async #onEffectWizardOperation(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const state = this.#getEffectWizardState();
+    const operationId = String(event.currentTarget?.dataset?.effectWizardOperation || 'increase').trim();
+    const operation = this.#findEffectWizardOperation(operationId);
+    if (!operation) return;
+    state.draft.operation = operation.id;
+    state.draft.advancedMode = Number(operation.advancedMode ?? state.draft.advancedMode ?? 2) || 2;
+    if (['increase', 'decrease'].includes(operation.id)) {
+      const amount = Math.max(0, Number(state.draft.amount ?? 1) || 1);
+      state.draft.advancedValue = String(operation.id === 'decrease' ? -Math.abs(amount) : amount);
+    }
+    state.open = true;
+    await this.#renderEffectWizardChange();
+  }
+
+  async #onEffectWizardCondition(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const id = String(event.currentTarget?.dataset?.effectWizardCondition || '').trim();
+    const selected = this.#findEffectWizardCondition(id);
+    if (!selected) return;
+    this.#applyEffectWizardConditionToDraft(selected);
+    await this.#renderEffectWizardChange();
+  }
+
+  async #onEffectWizardAmountNudge(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    const state = this.#getEffectWizardState();
+    const delta = Number(event.currentTarget?.dataset?.effectWizardAmountNudge || 0) || 0;
+    const current = Number(state.draft.amount ?? 1) || 1;
+    state.draft.amount = Math.max(0, current + delta);
+    if (!state.draft.advancedValue || /^-?\d+(\.\d+)?$/.test(String(state.draft.advancedValue))) {
+      state.draft.advancedValue = String(state.draft.operation === 'decrease' ? -Math.abs(state.draft.amount) : state.draft.amount);
+    }
+    state.open = true;
+    await this.#renderEffectWizardChange();
+  }
+
+  async #onEffectWizardSaveDraft(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!this.#canMutateEntityEffects()) return;
+    await this.#persistEffectWizardDraft({ notify: true });
+  }
+
+  async #onEffectWizardClearDraft(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!this.#canMutateEntityEffects()) return;
+    await this.#openEffectActionConfirm({
+      type: 'clear-draft',
+      title: 'Clear Saved Effect Draft?',
+      message: 'This removes the saved wizard draft from this item. The current open wizard state will stay available until the sheet closes.',
+      confirmLabel: 'Clear Draft',
+      tone: 'warn'
+    });
+  }
+
+  async #onEffectActionCancel(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.#clearEffectActionConfirmState();
+    await this.#renderEffectWizardChange();
+  }
+
+  async #onEffectActionConfirm(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!this.#canMutateEntityEffects()) return;
+    const state = this._effectActionConfirmState;
+    this.#clearEffectActionConfirmState();
+    if (!state?.type) {
+      await this.#renderEffectWizardChange();
+      return;
+    }
+    if (state.type === 'clear-draft') {
+      await this.#clearEffectWizardDraft({ notify: true });
+      await this.#renderEffectWizardChange();
+      return;
+    }
+    if (state.type === 'delete-effect') {
+      const effectId = state.effectId;
+      if (effectId) await this.item.deleteEmbeddedDocuments('ActiveEffect', [effectId], { source: 'swse-entity-dialog-delete-effect' });
+      await this.#renderPreservingEntityView({ force: true });
+      return;
+    }
+    if (state.type === 'convert-effect-basic') {
+      const effectId = state.effectId;
+      const effect = this.#getEffectDocument(effectId);
+      const update = effect ? EffectIntentEngine.buildBasicConversionUpdateData(effect.toObject?.() ?? effect) : null;
+      if (update?._id) {
+        await this.item.updateEmbeddedDocuments('ActiveEffect', [update], { source: 'swse-entity-dialog-convert-effect-basic' });
+        ui.notifications?.info?.(`Converted ${effect.name || 'Advanced effect'} to Basic.`);
+      }
+      await this.#renderPreservingEntityView({ force: true });
+    }
+  }
+
+  #buildEffectWizardEffectData() {
+    const state = this.#getEffectWizardState();
+    const draft = state.draft ?? {};
+    const name = String(draft.name || '').trim() || (state.mode === 'advanced' ? 'Advanced SWSE Effect' : 'New SWSE Effect');
+    if (state.mode === 'advanced') {
+      const operation = this.#findEffectWizardOperation(draft.operation || 'increase');
+      const key = this.#effectWizardAdvancedPath();
+      if (!this.#isValidEffectWizardRawPath(key)) throw new Error('Choose a valid raw SWSE/Foundry path before creating this Advanced effect.');
+      const numericAmount = Number(draft.amount ?? 1) || 1;
+      const value = draft.advancedValue != null && String(draft.advancedValue).trim() !== ''
+        ? String(draft.advancedValue).trim()
+        : String(operation?.id === 'decrease' ? -Math.abs(numericAmount) : numericAmount);
+      const effectData = EffectIntentEngine.buildAdvancedEffectData({
+        name,
+        key,
+        mode: Number(draft.advancedMode ?? operation?.advancedMode ?? 2) || 2,
+        value,
+        priority: Number(draft.priority ?? 20) || 20
+      });
+      effectData.icon = draft.icon || 'icons/svg/aura.svg';
+      effectData.disabled = draft.activeState === 'disabled';
+      effectData.transfer = draft.transfer !== false;
+      if (draft.description) effectData.description = String(draft.description);
+      effectData.flags = effectData.flags ?? {};
+      effectData.flags['foundryvtt-swse'] = {
+        ...(effectData.flags['foundryvtt-swse'] ?? {}),
+        effectWizard: { mode: 'advanced', tags: Array.isArray(draft.tags) ? draft.tags : [], createdFromWizard: true }
+      };
+      return effectData;
+    }
+    const target = this.#findEffectWizardTarget(draft.targetId);
+    if (!target) throw new Error('Choose a target before creating this Basic effect.');
+    const intent = this.#effectWizardIntentFromDraft();
+    const effectData = EffectIntentEngine.buildActiveEffectData(intent, { name });
+    effectData.icon = draft.icon || 'icons/svg/aura.svg';
+    const engineDescription = effectData.description || EffectIntentEngine.describeIntent(intent);
+    effectData.description = draft.description ? `${String(draft.description).trim()}\n\n${engineDescription}` : engineDescription;
+    effectData.flags = effectData.flags ?? {};
+    effectData.flags['foundryvtt-swse'] = {
+      ...(effectData.flags['foundryvtt-swse'] ?? {}),
+      effectWizard: {
+        mode: 'basic',
+        tags: Array.isArray(draft.tags) ? draft.tags : [],
+        targetId: target.id,
+        targetLabel: target.label,
+        createdFromWizard: true
+      }
+    };
+    return effectData;
+  }
+
+  async #onEffectWizardCreate(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!this.#canMutateEntityEffects()) return;
+    const closeAfter = event.currentTarget?.dataset?.effectWizardCreate === 'close';
+    let effectData;
+    try {
+      effectData = this.#buildEffectWizardEffectData();
+    } catch (err) {
+      ui.notifications?.warn?.(err?.message || 'Effect wizard draft is incomplete.');
+      return;
+    }
+    const state = this.#getEffectWizardState();
+    const editEffectId = String(state.draft?.editEffectId || '').trim();
+    const existing = editEffectId ? this.#getEffectDocument(editEffectId) : null;
+    if (closeAfter) state.open = false;
+    if (existing) {
+      const stampedData = EffectIntentEngine.stampLifecycle(effectData, { actor: this.item?.actor });
+      if (state.mode === 'advanced') {
+        stampedData.flags = stampedData.flags ?? {};
+        stampedData.flags['foundryvtt-swse'] = {
+          ...(stampedData.flags['foundryvtt-swse'] ?? {}),
+          '-=effectIntent': null,
+          '-=effectLifecycle': null
+        };
+      }
+      await this.item.updateEmbeddedDocuments('ActiveEffect', [{ _id: editEffectId, ...stampedData }], { source: 'swse-effect-wizard-update' });
+      if (this.#getSavedEffectWizardDraft()) await this.#clearEffectWizardDraft({ notify: false });
+      this._entityDialogDirty = false;
+      await this.#renderPreservingEntityView({ force: true });
+      ui.notifications?.info?.(`Updated Active Effect: ${effectData.name}`);
+      return;
+    }
+    const created = await this.#createEmbeddedActiveEffect(effectData, { source: 'swse-effect-wizard-create' });
+    if (created) {
+      if (this.#getSavedEffectWizardDraft()) await this.#clearEffectWizardDraft({ notify: false });
+      ui.notifications?.info?.(`Created Active Effect: ${effectData.name}`);
+    }
   }
 
   #setEntityDialogMode(mode) {
@@ -293,7 +1424,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
         control.setAttribute('aria-readonly', 'true');
       });
       form.querySelectorAll('button').forEach((button) => {
-        if (button.matches('.close-btn, .entity-dialog-edit, .entity-dialog-window-control')) return;
+        if (button.matches('.close-btn, .entity-dialog-edit, .entity-dialog-window-control, [data-effect-wizard-close]')) return;
         button.disabled = true;
       });
     } else {
@@ -357,6 +1488,12 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
 
     if (key === 'escape') {
       event.preventDefault();
+      const wizardState = this.#getEffectWizardState();
+      if (wizardState.open) {
+        wizardState.open = false;
+        this.#renderEffectWizardChange();
+        return;
+      }
       if (this.#getEntityDialogMode() === 'view') {
         this.close();
       } else {
@@ -418,6 +1555,19 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     const entityMode = this.#getEntityDialogMode();
     const editable = baseEditable && entityMode !== 'view';
 
+    const entityDialog = buildEntityDialogContext({
+      item: itemData,
+      system: systemData,
+      editable,
+      baseEditable,
+      actorCredits,
+      actor,
+      mode: entityMode,
+      dirty: !!this._entityDialogDirty,
+      effects: itemEffects
+    });
+    entityDialog.effectWizard = this.#buildEffectWizardContext({ editable: entityDialog.effectEditor?.editable });
+
     const context = {
       item: itemData,
       system: systemData,
@@ -432,17 +1582,7 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       actorCredits: actorCredits,
       activeTab: this._entityDialogActiveTab || 'data', // Preserve selected entity tab across safe rerenders
       bladeColorOptions: Object.entries(BLADE_COLOR_MAP).map(([name, hex]) => ({ name, hex, label: name.charAt(0).toUpperCase() + name.slice(1) })),
-      entityDialog: buildEntityDialogContext({
-        item: itemData,
-        system: systemData,
-        editable,
-        baseEditable,
-        actorCredits,
-        actor,
-        mode: entityMode,
-        dirty: !!this._entityDialogDirty,
-        effects: itemEffects
-      }),
+      entityDialog,
       labels: {
         sheetTitle: itemData.name ?? this.item?.name ?? "Item"
       }
@@ -822,16 +1962,16 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     if (!this.#canMutateEntityEffects()) return;
     const effectId = event.currentTarget?.dataset?.entityEffectDelete;
     if (!effectId) return;
-    const confirmed = await Dialog.confirm({
+    const effect = this.#getEffectDocument(effectId);
+    await this.#openEffectActionConfirm({
+      type: 'delete-effect',
+      effectId,
       title: 'Delete Active Effect?',
-      content: '<p>This removes the effect from this item. This cannot be undone.</p>',
-      yes: () => true,
-      no: () => false,
-      defaultYes: false
+      message: 'This removes the effect from this item. This cannot be undone.',
+      detail: effect?.name || effect?.label || 'Active Effect',
+      confirmLabel: 'Delete Effect',
+      tone: 'danger'
     });
-    if (!confirmed) return;
-    await this.item.deleteEmbeddedDocuments('ActiveEffect', [effectId], { source: 'swse-entity-dialog-delete-effect' });
-    await this.#renderPreservingEntityView({ force: true });
   }
 
   async #onDuplicateEffect(event) {
@@ -850,7 +1990,24 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
   }
 
 
-  #onLoadAdvancedEffectAsBasic(event) {
+  async #onEditEffectWithWizard(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (!this.#canMutateEntityEffects()) return;
+    const effectId = event.currentTarget?.dataset?.entityEffectEditWizard;
+    const mode = String(event.currentTarget?.dataset?.effectWizardEditMode || '').toLowerCase() === 'advanced' ? 'advanced' : null;
+    const effect = this.#getEffectDocument(effectId);
+    if (!effect) return;
+    const seeded = this.#seedEffectWizardFromEffect(effect, { mode });
+    if (!seeded) {
+      ui.notifications?.warn?.('This effect could not be loaded into the wizard. Use the raw drawer instead.');
+      return;
+    }
+    ui.notifications?.info?.('Loaded the existing effect into the Effect Wizard. Review and update it when ready.');
+    await this.#renderEffectWizardChange();
+  }
+
+  async #onLoadAdvancedEffectAsBasic(event) {
     event.preventDefault();
     event.stopPropagation();
     if (!this.#canMutateEntityEffects()) return;
@@ -862,8 +2019,28 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       ui.notifications?.warn?.(conversion?.description || 'This Advanced effect cannot be translated to Basic safely yet.');
       return;
     }
-    this.#applyBasicEffectIntentToBuilder(conversion.intent, { name: effect.name || effect.label || 'Converted Basic Effect' });
-    ui.notifications?.info?.('Loaded the recognized Advanced effect into the Basic builder. Review it, then add or convert when ready.');
+    const effectName = effect.name || effect.label || 'Converted Basic Effect';
+    this._effectWizardState = this.#createDefaultEffectWizardState('basic');
+    this._effectWizardState.open = true;
+    this._effectWizardState.step = 4;
+    this._effectWizardState.draft.name = effectName;
+    this._effectWizardState.draft.operation = conversion.intent?.operation || 'increase';
+    this._effectWizardState.draft.amount = Number(conversion.intent?.amount ?? 1) || 1;
+    this._effectWizardState.draft.bonusType = conversion.intent?.bonusType || 'untyped';
+    this._effectWizardState.draft.application = conversion.intent?.application || 'always';
+    this._effectWizardState.draft.transfer = conversion.intent?.transfer !== false;
+    const wantedCategory = conversion.intent?.category;
+    const wantedTarget = conversion.intent?.target;
+    for (const group of EffectIntentEngine.wizardTargets()) {
+      const match = (group.targets ?? []).find(target => target.intent?.category === wantedCategory && String(target.intent?.target || '') === String(wantedTarget || ''));
+      if (match) {
+        this._effectWizardState.draft.targetId = match.id;
+        this._effectWizardState.draft.target = { label: match.label, id: match.id };
+        break;
+      }
+    }
+    ui.notifications?.info?.('Loaded the recognized Advanced effect into the Effect Wizard. Review it, then create or convert when ready.');
+    await this.#renderEffectWizardChange();
   }
 
   async #onConvertAdvancedEffectToBasic(event) {
@@ -878,19 +2055,15 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       ui.notifications?.warn?.(conversion?.description || 'This Advanced effect cannot be translated to Basic safely yet.');
       return;
     }
-    const confirmed = await Dialog.confirm({
+    await this.#openEffectActionConfirm({
+      type: 'convert-effect-basic',
+      effectId,
       title: 'Convert Advanced Effect to Basic?',
-      content: `<p>This adds a Basic SWSE intent and moves the raw change rows into an Advanced backup flag so the same bonus is not applied twice.</p><p><strong>${conversion.description}</strong></p>`,
-      yes: () => true,
-      no: () => false,
-      defaultYes: true
+      message: 'This adds a Basic SWSE intent and moves the raw change rows into an Advanced backup flag so the same bonus is not applied twice.',
+      detail: conversion.description || effect.name || effect.label || 'Advanced effect',
+      confirmLabel: 'Convert to Basic',
+      tone: 'ok'
     });
-    if (!confirmed) return;
-    const update = EffectIntentEngine.buildBasicConversionUpdateData(effect.toObject?.() ?? effect);
-    if (!update?._id) return;
-    await this.item.updateEmbeddedDocuments('ActiveEffect', [update], { source: 'swse-entity-dialog-convert-effect-basic' });
-    ui.notifications?.info?.(`Converted ${effect.name || 'Advanced effect'} to Basic.`);
-    await this.#renderPreservingEntityView({ force: true });
   }
 
 
@@ -960,19 +2133,36 @@ export class SWSEItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     return { updated: updates.length };
   }
 
-  #syncEntityEffectControls(root) {
-    this.#updateBasicEffectPreview(root);
-    root?.querySelectorAll?.('[data-effect-basic-builder] select, [data-effect-basic-builder] input')?.forEach((control) => {
-      control.addEventListener('input', () => this.#updateBasicEffectPreview(root));
-      control.addEventListener('change', () => this.#updateBasicEffectPreview(root));
+  #syncEffectWizardControls(root) {
+    root?.querySelectorAll?.('[data-effect-wizard-open]')?.forEach((button) => button.addEventListener('click', this.#openEffectWizard.bind(this)));
+    root?.querySelectorAll?.('[data-effect-wizard-close]')?.forEach((button) => button.addEventListener('click', this.#closeEffectWizard.bind(this)));
+    root?.querySelectorAll?.('[data-effect-wizard-mode]')?.forEach((button) => button.addEventListener('click', this.#onEffectWizardMode.bind(this)));
+    root?.querySelectorAll?.('[data-effect-wizard-step-select]')?.forEach((button) => button.addEventListener('click', this.#onEffectWizardStep.bind(this)));
+    root?.querySelectorAll?.('[data-effect-wizard-nav]')?.forEach((button) => button.addEventListener('click', this.#onEffectWizardNav.bind(this)));
+    root?.querySelectorAll?.('[data-effect-wizard-field]')?.forEach((control) => {
+      const eventName = control.tagName === 'SELECT' || control.type === 'checkbox' ? 'change' : 'input';
+      control.addEventListener(eventName, this.#onEffectWizardField.bind(this));
     });
-    root?.querySelectorAll?.('[data-effect-preset]')?.forEach((button) => button.addEventListener('click', this.#onApplyEffectPreset.bind(this)));
-    this.#syncEffectTermLibrary(root);
-    root?.querySelector?.('[data-entity-effect-create-basic]')?.addEventListener('click', this.#onCreateBasicEffect.bind(this));
-    root?.querySelector?.('[data-entity-effect-create-advanced]')?.addEventListener('click', this.#onCreateAdvancedEffect.bind(this));
+    root?.querySelectorAll?.('[data-effect-wizard-preset]')?.forEach((button) => button.addEventListener('click', this.#onEffectWizardPreset.bind(this)));
+    root?.querySelectorAll?.('[data-effect-wizard-icon]')?.forEach((button) => button.addEventListener('click', this.#onEffectWizardIcon.bind(this)));
+    root?.querySelectorAll?.('[data-effect-wizard-tag]')?.forEach((button) => button.addEventListener('click', this.#onEffectWizardTag.bind(this)));
+    root?.querySelectorAll?.('[data-effect-wizard-target]')?.forEach((button) => button.addEventListener('click', this.#onEffectWizardTarget.bind(this)));
+    root?.querySelectorAll?.('[data-effect-wizard-operation]')?.forEach((button) => button.addEventListener('click', this.#onEffectWizardOperation.bind(this)));
+    root?.querySelectorAll?.('[data-effect-wizard-condition]')?.forEach((button) => button.addEventListener('click', this.#onEffectWizardCondition.bind(this)));
+    root?.querySelectorAll?.('[data-effect-wizard-amount-nudge]')?.forEach((button) => button.addEventListener('click', this.#onEffectWizardAmountNudge.bind(this)));
+    root?.querySelectorAll?.('[data-effect-wizard-save-draft]')?.forEach((button) => button.addEventListener('click', this.#onEffectWizardSaveDraft.bind(this)));
+    root?.querySelectorAll?.('[data-effect-wizard-clear-draft]')?.forEach((button) => button.addEventListener('click', this.#onEffectWizardClearDraft.bind(this)));
+    root?.querySelectorAll?.('[data-effect-wizard-create]')?.forEach((button) => button.addEventListener('click', this.#onEffectWizardCreate.bind(this)));
+    root?.querySelectorAll?.('[data-effect-action-confirm]')?.forEach((button) => button.addEventListener('click', this.#onEffectActionConfirm.bind(this)));
+    root?.querySelectorAll?.('[data-effect-action-cancel]')?.forEach((button) => button.addEventListener('click', this.#onEffectActionCancel.bind(this)));
+  }
+
+  #syncEntityEffectControls(root) {
+    this.#syncEffectWizardControls(root);
     root?.querySelectorAll?.('[data-entity-effect-toggle]')?.forEach((button) => button.addEventListener('click', this.#onToggleEffect.bind(this)));
     root?.querySelectorAll?.('[data-entity-effect-delete]')?.forEach((button) => button.addEventListener('click', this.#onDeleteEffect.bind(this)));
     root?.querySelectorAll?.('[data-entity-effect-duplicate]')?.forEach((button) => button.addEventListener('click', this.#onDuplicateEffect.bind(this)));
+    root?.querySelectorAll?.('[data-entity-effect-edit-wizard]')?.forEach((button) => button.addEventListener('click', this.#onEditEffectWithWizard.bind(this)));
     root?.querySelectorAll?.('[data-entity-effect-load-basic]')?.forEach((button) => button.addEventListener('click', this.#onLoadAdvancedEffectAsBasic.bind(this)));
     root?.querySelectorAll?.('[data-entity-effect-convert-basic]')?.forEach((button) => button.addEventListener('click', this.#onConvertAdvancedEffectToBasic.bind(this)));
     root?.querySelectorAll?.('[data-entity-effect-add-raw-change]')?.forEach((button) => button.addEventListener('click', this.#onAddRawEffectChange.bind(this)));

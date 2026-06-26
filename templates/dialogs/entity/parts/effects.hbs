@@ -1,188 +1,50 @@
 <section class="tab {{#if (eq activeTab 'effects')}}active{{/if}} swse-entity-dialog__effects-tab" data-tab="effects">
-  <div class="item-editor__section swse-entity-dialog__effects-head">
+  <div class="item-editor__section swse-entity-dialog__effects-head swse-entity-dialog__effects-head--phase1">
     <div>
       <h3 class="item-editor__section-title">Active Effects</h3>
-      <p class="swse-entity-dialog__field-note">Basic effects use plain-English sentence parts. Advanced effects preserve raw Foundry change rows for complex system attributes.</p>
+      <p class="swse-entity-dialog__field-note">Create effects through the guided wizard. Existing effects remain editable below.</p>
     </div>
     <div class="swse-entity-dialog__effect-summary">{{entityDialog.effectEditor.summary}}</div>
   </div>
 
-  <div class="swse-entity-dialog__effects-mode-grid">
-    <section class="item-editor__section swse-entity-dialog__effects-basic">
-      <div class="swse-entity-dialog__section-headline">
-        <h3 class="item-editor__section-title">Basic Builder</h3>
-        <span class="swse-entity-dialog__mode-pill">Player-facing</span>
+  <section class="swse-entity-dialog__effect-command-deck" aria-label="Effect builder launcher">
+    <div class="swse-entity-dialog__effect-metric-strip">
+      <div class="swse-entity-dialog__effect-metric"><strong>{{entityDialog.effectEditor.count}}</strong><span>Total</span></div>
+      <div class="swse-entity-dialog__effect-metric"><strong>{{entityDialog.effectEditor.enabledCount}}</strong><span>Enabled</span></div>
+      <div class="swse-entity-dialog__effect-metric"><strong>{{entityDialog.effectEditor.basicCount}}</strong><span>Basic</span></div>
+      <div class="swse-entity-dialog__effect-metric"><strong>{{entityDialog.effectEditor.advancedCount}}</strong><span>Advanced</span></div>
+    </div>
+
+    {{#if entityDialog.effectWizard.savedDraft.exists}}
+    <div class="swse-entity-dialog__effect-draft-card">
+      <div>
+        <span>{{entityDialog.effectWizard.savedDraft.label}}</span>
+        <strong>{{entityDialog.effectWizard.savedDraft.name}}</strong>
+        <small>Saved {{entityDialog.effectWizard.savedDraft.savedAtLabel}}</small>
       </div>
-
-      <div class="swse-entity-dialog__preset-library" data-effect-preset-library>
-        <div class="swse-entity-dialog__mini-headline">
-          <span>Start from a preset</span>
-          <small>One click fills the sentence builder.</small>
-        </div>
-        <div class="swse-entity-dialog__preset-grid">
-          {{#each entityDialog.effectEditor.options.presets}}
-          <button type="button" class="swse-entity-dialog__preset-card" data-effect-preset="{{this.id}}" title="{{this.description}}" {{#unless ../entityDialog.effectEditor.editable}}disabled{{/unless}}>
-            <strong>{{this.label}}</strong>
-            <span>{{this.description}}</span>
-          </button>
-          {{/each}}
-        </div>
+      <div class="swse-entity-dialog__effect-draft-actions">
+        <button type="button" class="swse-btn swse-btn--small swse-btn--primary" data-effect-wizard-open="saved" {{#unless entityDialog.effectEditor.editable}}disabled{{/unless}}>Resume Draft</button>
+        <button type="button" class="swse-btn swse-btn--small" data-effect-wizard-clear-draft {{#unless entityDialog.effectEditor.editable}}disabled{{/unless}}>Clear</button>
       </div>
+    </div>
+    {{/if}}
 
-      <div class="swse-entity-dialog__sentence-builder" data-effect-basic-builder>
-        <div class="form-field form-field--full">
-          <label>Effect Name</label>
-          <input type="text" data-effect-basic-name value="New SWSE Effect" placeholder="e.g., Superior Armor Plating" />
-        </div>
+    <div class="swse-entity-dialog__effect-launch-grid">
+      <article class="swse-entity-dialog__effect-launch-card swse-entity-dialog__effect-launch-card--basic">
+        <div class="swse-entity-dialog__effect-launch-kicker">Player-facing path</div>
+        <h4>Guided Effect Wizard</h4>
+        <p>Build common bonuses through plain-language steps: identity, target, modifier, conditions, and review.</p>
+        <button type="button" class="swse-btn swse-btn--primary" data-effect-wizard-open="basic" {{#unless entityDialog.effectEditor.editable}}disabled{{/unless}}>+ New Effect</button>
+      </article>
 
-        <div class="swse-entity-dialog__sentence-row">
-          <span>If / When</span>
-          <select data-effect-basic-application>
-            {{#each entityDialog.effectEditor.options.applications}}
-            <option value="{{this.value}}" {{#if (eq this.value ../entityDialog.effectEditor.options.defaults.application)}}selected{{/if}}>{{this.label}}</option>
-            {{/each}}
-          </select>
-
-          <span>State</span>
-          <select data-effect-basic-active-state>
-            <option value="enabled" selected>Enabled</option>
-            <option value="disabled">Disabled at first</option>
-          </select>
-        </div>
-
-        <div class="swse-entity-dialog__sentence-row">
-          <span>Who</span>
-          <select data-effect-basic-scope>
-            {{#each entityDialog.effectEditor.options.scopes}}
-            <option value="{{this.value}}" {{#if (eq this.value ../entityDialog.effectEditor.options.defaults.scope)}}selected{{/if}}>{{this.label}}</option>
-            {{/each}}
-          </select>
-
-          <span>Does</span>
-          <select data-effect-basic-operation>
-            {{#each entityDialog.effectEditor.options.operations}}
-            <option value="{{this.value}}" {{#if (eq this.value ../entityDialog.effectEditor.options.defaults.operation)}}selected{{/if}}>{{this.label}}</option>
-            {{/each}}
-          </select>
-        </div>
-
-        <div class="swse-entity-dialog__sentence-row">
-          <span>What</span>
-          <select data-effect-basic-category>
-            {{#each entityDialog.effectEditor.options.categories}}
-            <option value="{{this.value}}" {{#if (eq this.value ../entityDialog.effectEditor.options.defaults.category)}}selected{{/if}}>{{this.label}}</option>
-            {{/each}}
-          </select>
-
-          <span>Target</span>
-          <input type="text" data-effect-basic-target value="{{entityDialog.effectEditor.options.defaults.target}}" placeholder="reflex / mechanics / dex" />
-        </div>
-
-        <div class="swse-entity-dialog__sentence-row swse-entity-dialog__sentence-row--scope">
-          <span>Limit</span>
-          <select data-effect-basic-filter-type>
-            {{#each entityDialog.effectEditor.options.filterTypes}}
-            <option value="{{this.value}}" {{#if (eq this.value ../entityDialog.effectEditor.options.defaults.filterType)}}selected{{/if}}>{{this.label}}</option>
-            {{/each}}
-          </select>
-
-          <span>Value</span>
-          <input type="text" data-effect-basic-filter-value value="{{entityDialog.effectEditor.options.defaults.filterValue}}" placeholder="pistols / lightsabers / energy / leave blank" />
-        </div>
-        <p class="swse-entity-dialog__field-note">Use Limit to avoid broad modifiers. Weapon group, damage type, item-only, target, and area scopes are saved as contextual effects until a matching roll/action call site can honor them.</p>
-
-        <div class="swse-entity-dialog__sentence-row">
-          <span>By</span>
-          <input type="number" data-effect-basic-amount value="{{entityDialog.effectEditor.options.defaults.amount}}" min="0" step="1" />
-
-          <span>Type</span>
-          <select data-effect-basic-bonus-type>
-            {{#each entityDialog.effectEditor.options.bonusTypes}}
-            <option value="{{this.value}}" {{#if (eq this.value ../entityDialog.effectEditor.options.defaults.bonusType)}}selected{{/if}}>{{this.label}}</option>
-            {{/each}}
-          </select>
-        </div>
-
-        <div class="swse-entity-dialog__sentence-row">
-          <span>Duration</span>
-          <input type="text" data-effect-basic-duration value="until-deactivated" placeholder="until-deactivated / 1 round / encounter" />
-          <label class="swse-entity-dialog__inline-check"><input type="checkbox" data-effect-basic-transfer checked /> Apply to character</label>
-        </div>
-
-        <div class="form-field form-field--full">
-          <label>GM Note / Reminder</label>
-          <input type="text" data-effect-basic-note value="" placeholder="Optional reminder shown on the effect card" />
-        </div>
-
-        <div class="swse-entity-dialog__effect-preview" data-effect-basic-preview>
-          When equipped, self gains +1 untyped to Reflex Defense until deactivated.
-        </div>
-        <div class="swse-entity-dialog__automation-preview" data-effect-automation-preview data-support="automated">
-          <strong>Automated</strong>
-          <span>The modifier engine can apply this Basic effect automatically when its trigger is active.</span>
-        </div>
-        <div class="swse-entity-dialog__math-preview" data-effect-math-preview data-preview-status="no-actor">
-          <strong>Preview math</strong>
-          <span>Owned actor values will appear here when this effect can be evaluated.</span>
-        </div>
-
-        <button type="button" class="swse-btn swse-btn--primary" data-entity-effect-create-basic {{#unless entityDialog.effectEditor.editable}}disabled{{/unless}}>+ Add Basic Effect</button>
-      </div>
-    </section>
-
-    <section class="item-editor__section swse-entity-dialog__term-library" data-effect-term-library>
-      <div class="swse-entity-dialog__section-headline">
-        <h3 class="item-editor__section-title">Term Library</h3>
-        <span class="swse-entity-dialog__mode-pill">Drag / Click</span>
-      </div>
-      <p class="swse-entity-dialog__field-note">Drag terms into the Basic Builder or click a chip to fill the matching sentence part. Use search to narrow the library.</p>
-      <input type="search" class="swse-entity-dialog__term-search" data-effect-term-search placeholder="Search defenses, attributes, damage types, bonuses..." />
-      <div class="swse-entity-dialog__term-groups" data-entity-preserve-scroll="effect-terms">
-        {{#each entityDialog.effectEditor.options.termLibrary}}
-        <details class="swse-entity-dialog__term-group" open>
-          <summary>{{this.label}}</summary>
-          <div class="swse-entity-dialog__term-chip-list">
-            {{#each this.terms}}
-            <button type="button" class="swse-entity-dialog__term-chip" draggable="true" data-effect-term data-effect-term-field="{{this.field}}" data-effect-term-value="{{this.value}}" data-effect-term-category="{{this.category}}" data-effect-term-target="{{this.target}}" data-effect-term-filter-type="{{this.filterType}}" data-effect-term-filter-value="{{this.filterValue}}" {{#unless ../../entityDialog.effectEditor.editable}}disabled{{/unless}}>{{this.label}}</button>
-            {{/each}}
-          </div>
-        </details>
-        {{/each}}
-      </div>
-    </section>
-
-    <section class="item-editor__section swse-entity-dialog__effects-advanced-create">
-      <div class="swse-entity-dialog__section-headline">
-        <h3 class="item-editor__section-title">Advanced Builder</h3>
-        <span class="swse-entity-dialog__mode-pill swse-entity-dialog__mode-pill--advanced">Coder-facing</span>
-      </div>
-      <p class="swse-entity-dialog__field-note">Use this only when the Basic builder cannot describe the effect. Raw changes are preserved exactly and can target complex Foundry/SWSE paths.</p>
-      <div class="swse-entity-dialog__advanced-create" data-effect-advanced-builder>
-        <div class="form-field form-field--full">
-          <label>Effect Name</label>
-          <input type="text" data-effect-advanced-name value="Advanced SWSE Effect" />
-        </div>
-        <div class="form-field form-field--full">
-          <label>Raw Attribute Path</label>
-          <input type="text" data-effect-advanced-key value="" placeholder="system.derived.defenses.reflex.total" />
-        </div>
-        <div class="swse-entity-dialog__sentence-row">
-          <span>Mode</span>
-          <select data-effect-advanced-mode>
-            <option value="2" selected>Add</option>
-            <option value="5">Override</option>
-            <option value="0">Custom</option>
-            <option value="1">Multiply</option>
-            <option value="3">Downgrade</option>
-            <option value="4">Upgrade</option>
-          </select>
-          <span>Value</span>
-          <input type="text" data-effect-advanced-value value="" placeholder="2" />
-        </div>
-        <button type="button" class="swse-btn" data-entity-effect-create-advanced {{#unless entityDialog.effectEditor.editable}}disabled{{/unless}}>+ Add Advanced Effect</button>
-      </div>
-    </section>
-  </div>
+      <article class="swse-entity-dialog__effect-launch-card swse-entity-dialog__effect-launch-card--advanced">
+        <div class="swse-entity-dialog__effect-launch-kicker">Coder-facing path</div>
+        <h4>Advanced Raw Wizard</h4>
+        <p>Start the same wizard in raw-path mode when a complex Foundry/SWSE attribute path is required.</p>
+        <button type="button" class="swse-btn" data-effect-wizard-open="advanced" {{#unless entityDialog.effectEditor.editable}}disabled{{/unless}}>+ Advanced Effect</button>
+      </article>
+    </div>
+  </section>
 
   <section class="item-editor__section swse-entity-dialog__effects-list" data-entity-preserve-scroll="effect-list">
     <h3 class="item-editor__section-title">Existing Effects</h3>
@@ -203,6 +65,9 @@
             </div>
             <p class="swse-entity-dialog__effect-summary-text">{{this.summary}}</p>
             {{#if this.support.description}}<p class="swse-entity-dialog__automation-note">{{this.support.description}}</p>{{/if}}
+            {{#if this.hasLifecycle}}
+            <p class="swse-entity-dialog__automation-note swse-entity-dialog__automation-note--lifecycle">Lifecycle managed · {{this.lifecycleLabel}}</p>
+            {{/if}}
             {{#if this.preview}}
               {{#if this.preview.available}}
               <div class="swse-entity-dialog__card-math-preview" data-preview-status="ready">
@@ -238,8 +103,13 @@
           <label class="swse-entity-dialog__inline-check"><input type="checkbox" name="effects.{{this.id}}.enabled" value="true" {{#if this.enabled}}checked{{/if}} /> Enabled</label>
           <label class="swse-entity-dialog__inline-check"><input type="checkbox" name="effects.{{this.id}}.transfer" value="true" {{#if this.transfer}}checked{{/if}} /> Apply to character</label>
           <button type="button" class="swse-btn swse-btn--small" data-entity-effect-toggle="{{this.id}}" data-effect-enabled="{{this.enabled}}">{{#if this.enabled}}Disable{{else}}Enable{{/if}}</button>
+          {{#if this.hasIntent}}
+          <button type="button" class="swse-btn swse-btn--small swse-btn--primary" data-entity-effect-edit-wizard="{{this.id}}">Edit in Wizard</button>
+          {{else}}
+          <button type="button" class="swse-btn swse-btn--small" data-entity-effect-edit-wizard="{{this.id}}" data-effect-wizard-edit-mode="advanced">Edit Raw Wizard</button>
+          {{/if}}
           {{#if this.canConvertToBasic}}
-          <button type="button" class="swse-btn swse-btn--small" data-entity-effect-load-basic="{{this.id}}">Use in Basic Builder</button>
+          <button type="button" class="swse-btn swse-btn--small" data-entity-effect-load-basic="{{this.id}}">Use in Wizard</button>
           <button type="button" class="swse-btn swse-btn--small swse-btn--primary" data-entity-effect-convert-basic="{{this.id}}">Convert to Basic</button>
           {{/if}}
           <button type="button" class="swse-btn swse-btn--small" data-entity-effect-duplicate="{{this.id}}">Duplicate</button>
@@ -282,4 +152,23 @@
       <div class="swse-entity-dialog__empty-state">No Active Effects yet. Use Basic for common SWSE effects, or Advanced for raw Foundry paths.</div>
     {{/if}}
   </section>
+
+
+  {{#if entityDialog.effectWizard.actionConfirm.open}}
+  <div class="swse-effect-action-confirm swse-effect-action-confirm--{{entityDialog.effectWizard.actionConfirm.tone}}" data-effect-action-confirm-modal>
+    <button type="button" class="swse-effect-action-confirm__backdrop" data-effect-action-cancel aria-label="Cancel effect action"></button>
+    <section class="swse-effect-action-confirm__panel" role="dialog" aria-modal="true" aria-label="{{entityDialog.effectWizard.actionConfirm.title}}">
+      <div class="swse-effect-action-confirm__kicker">Effect Control Confirmation</div>
+      <h4>{{entityDialog.effectWizard.actionConfirm.title}}</h4>
+      <p>{{entityDialog.effectWizard.actionConfirm.message}}</p>
+      {{#if entityDialog.effectWizard.actionConfirm.detail}}<strong>{{entityDialog.effectWizard.actionConfirm.detail}}</strong>{{/if}}
+      <footer>
+        <button type="button" class="swse-btn" data-effect-action-cancel>{{entityDialog.effectWizard.actionConfirm.cancelLabel}}</button>
+        <button type="button" class="swse-btn swse-btn--primary" data-effect-action-confirm>{{entityDialog.effectWizard.actionConfirm.confirmLabel}}</button>
+      </footer>
+    </section>
+  </div>
+  {{/if}}
+
+  {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/effect-builder-wizard.hbs}}
 </section>

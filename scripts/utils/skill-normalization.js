@@ -118,7 +118,7 @@ export function canonicalizeSkillKey(rawKey) {
   }
 
   const key = String(rawKey).trim();
-  if (!key) {
+  if (!key || /^(null|undefined|nan)$/i.test(key)) {
     return null;
   }
 
@@ -179,7 +179,8 @@ export function normalizeSkillMap(rawSkills, options = {}) {
   const input = rawSkills && typeof rawSkills === 'object' ? rawSkills : {};
 
   for (const [rawKey, rawValue] of Object.entries(input)) {
-    const skillKey = canonicalizeSkillKey(rawKey) || rawKey;
+    const skillKey = canonicalizeSkillKey(rawKey);
+    if (!skillKey || !CANONICAL_SKILL_DEFS[skillKey]) continue;
     normalized[skillKey] = normalizeSkillEntry(skillKey, rawValue);
   }
 

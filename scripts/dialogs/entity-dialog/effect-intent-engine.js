@@ -138,6 +138,28 @@ export const EFFECT_FILTER_TYPES = Object.freeze([
   { value: 'custom', label: 'Custom / GM condition', automation: 'reminder' }
 ]);
 
+export const EFFECT_DURATIONS = Object.freeze([
+  { value: 'until-deactivated', label: 'Until deactivated', automation: 'direct', description: 'Persists until the item/effect is disabled or removed.' },
+  { value: 'encounter', label: 'Encounter', automation: 'lifecycle', description: 'Managed by the basic effect lifecycle and expires at encounter end.' },
+  { value: '1-round', label: '1 round', automation: 'lifecycle', description: 'Managed by the basic effect lifecycle and expires after one round.' },
+  { value: '2-rounds', label: '2 rounds', automation: 'lifecycle', description: 'Managed by the basic effect lifecycle and expires after two rounds.' },
+  { value: '3-rounds', label: '3 rounds', automation: 'lifecycle', description: 'Managed by the basic effect lifecycle and expires after three rounds.' },
+  { value: 'until-start-next-turn', label: 'Until start of next turn', automation: 'lifecycle', description: 'Managed by the basic effect lifecycle and expires at the actor\'s next turn start.' },
+  { value: 'until-end-next-turn', label: 'Until end of next turn', automation: 'lifecycle', description: 'Managed by the basic effect lifecycle and expires at the actor\'s next turn/end timing.' },
+  { value: 'permanent', label: 'Permanent', automation: 'direct', description: 'Permanent until manually removed.' },
+  { value: 'custom', label: 'Custom / GM tracked', automation: 'reminder', description: 'Saved as a reminder; timing is handled at the table.' }
+]);
+
+export const FORCE_DESCRIPTOR_TERMS = Object.freeze([
+  { value: 'light', label: 'Light Side' },
+  { value: 'dark', label: 'Dark Side' },
+  { value: 'telekinetic', label: 'Telekinetic' },
+  { value: 'mind', label: 'Mind-affecting' },
+  { value: 'control', label: 'Control' },
+  { value: 'sense', label: 'Sense' },
+  { value: 'alter', label: 'Alter' }
+]);
+
 export const WEAPON_GROUP_TERMS = Object.freeze([
   { value: 'pistols', label: 'Pistols' },
   { value: 'rifles', label: 'Rifles' },
@@ -218,6 +240,151 @@ export const EFFECT_PRESETS = Object.freeze([
     intent: { application: 'manual', scope: 'area', operation: 'increase', category: 'attack', target: 'allies', amount: 1, bonusType: ModifierType.CIRCUMSTANCE, duration: 'encounter', transfer: false, filterType: 'all', filterValue: '', note: 'Declaration only. GM confirms affected tokens.' }
   }
 ]);
+
+export const EFFECT_WIZARD_TARGET_GROUPS = Object.freeze([
+  {
+    id: 'defenses',
+    label: 'Defenses',
+    icon: 'shield-halved',
+    targets: [
+      { id: 'defense.reflex', label: 'Reflex Defense', icon: 'shield-halved', description: 'How hard you are to hit by attacks.', intent: { category: 'defense', target: 'reflex' }, advancedPath: 'system.derived.defenses.reflex.total' },
+      { id: 'defense.fortitude', label: 'Fortitude Defense', icon: 'heart-pulse', description: 'Resists poison, disease, and physical strain.', intent: { category: 'defense', target: 'fortitude' }, advancedPath: 'system.derived.defenses.fortitude.total' },
+      { id: 'defense.will', label: 'Will Defense', icon: 'brain', description: 'Resists fear, persuasion, and mind-affecting effects.', intent: { category: 'defense', target: 'will' }, advancedPath: 'system.derived.defenses.will.total' },
+      { id: 'defense.threshold', label: 'Damage Threshold', icon: 'shield-virus', description: 'Damage needed to move the actor down the condition track.', intent: { category: 'threshold', target: 'damageThreshold' }, advancedPath: 'system.derived.damageThreshold.total' }
+    ]
+  },
+  {
+    id: 'skills',
+    label: 'Skills',
+    icon: 'brain',
+    targets: SKILL_TARGETS.map(skill => ({
+      id: `skill.${skill.value}`,
+      label: skill.label,
+      icon: skill.value === 'use-the-force' ? 'wand-magic-sparkles' : skill.value === 'initiative' ? 'stopwatch' : skill.value === 'perception' ? 'eye' : 'brain',
+      description: `Adds a bonus or penalty to ${skill.label} checks.`,
+      intent: { category: 'skill', target: skill.value, filterType: 'skill', filterValue: skill.value },
+      advancedPath: `system.derived.skills.${canonicalSkillTarget(skill.value)}.total`
+    }))
+  },
+  {
+    id: 'combat',
+    label: 'Attacks & Damage',
+    icon: 'crosshairs',
+    targets: [
+      { id: 'attack.all', label: 'Attack Rolls', icon: 'crosshairs', description: 'General attack-roll modifiers.', intent: { category: 'attack', target: 'all' }, advancedPath: 'system.derived.attack.bonus' },
+      { id: 'attack.melee', label: 'Melee Attack Rolls', icon: 'hand-fist', description: 'Melee-only attack-roll modifiers.', intent: { category: 'attack', target: 'melee', filterType: 'weapon-category', filterValue: 'melee' }, advancedPath: 'system.derived.attack.melee.bonus' },
+      { id: 'attack.ranged', label: 'Ranged Attack Rolls', icon: 'crosshairs', description: 'Ranged-only attack-roll modifiers.', intent: { category: 'attack', target: 'ranged', filterType: 'weapon-category', filterValue: 'ranged' }, advancedPath: 'system.derived.attack.ranged.bonus' },
+      { id: 'damage.all', label: 'Damage Rolls', icon: 'burst', description: 'General weapon damage-roll modifiers.', intent: { category: 'damage', target: 'all' }, advancedPath: 'system.derived.damage.bonus' }
+    ]
+  },
+  {
+    id: 'body',
+    label: 'Body & Movement',
+    icon: 'person-running',
+    targets: [
+      { id: 'hp.max', label: 'Hit Points Maximum', icon: 'heart-pulse', description: 'Maximum hit points.', intent: { category: 'hp', target: 'max' }, advancedPath: 'system.hp.max' },
+      { id: 'speed.base', label: 'Speed', icon: 'person-running', description: 'Squares moved with a move action.', intent: { category: 'speed', target: 'base' }, advancedPath: 'system.speed' },
+      { id: 'initiative.total', label: 'Initiative', icon: 'stopwatch', description: 'Initiative check modifiers.', intent: { category: 'initiative', target: 'total' }, advancedPath: 'system.derived.skills.initiative.total' }
+    ]
+  },
+  {
+    id: 'force',
+    label: 'Force & Destiny',
+    icon: 'wand-magic-sparkles',
+    targets: [
+      { id: 'force.activation', label: 'Force Power Activation', icon: 'wand-magic-sparkles', description: 'Force power activation checks, separate from generic skill bonuses.', intent: { category: 'force', target: 'activation' }, advancedPath: 'system.derived.skills.useTheForce.total' },
+      { id: 'skill.use-the-force.quick', label: 'Use the Force Skill', icon: 'jedi', description: 'The Use the Force skill itself.', intent: { category: 'skill', target: 'use-the-force', filterType: 'skill', filterValue: 'use-the-force' }, advancedPath: 'system.derived.skills.useTheForce.total' }
+    ]
+  },
+  {
+    id: 'status',
+    label: 'Status / Reminder',
+    icon: 'circle-info',
+    targets: CONDITION_TARGETS.map(status => ({
+      id: `condition.${status.value}`,
+      label: status.label,
+      icon: 'circle-info',
+      description: `Creates a visible ${status.label} reminder/status entry.`,
+      intent: { category: 'condition', target: status.value, transfer: false },
+      advancedPath: ''
+    }))
+  }
+]);
+
+export const EFFECT_WIZARD_OPERATIONS = Object.freeze([
+  { id: 'increase', label: 'Add Bonus', symbol: '+', description: 'Increase the target by this amount.', basic: true, intentOperation: 'increase', advancedMode: 2 },
+  { id: 'decrease', label: 'Subtract / Penalty', symbol: '-', description: 'Decrease the target by this amount.', basic: true, intentOperation: 'decrease', advancedMode: 2 },
+  { id: 'override', label: 'Override', symbol: '=', description: 'Force a raw path to an exact value.', basic: false, advancedMode: 5 },
+  { id: 'multiply', label: 'Multiply', symbol: 'x', description: 'Multiply a raw path by this value.', basic: false, advancedMode: 1 },
+  { id: 'downgrade', label: 'Minimum / Downgrade', symbol: 'v', description: 'Foundry downgrade mode for raw paths.', basic: false, advancedMode: 3 },
+  { id: 'upgrade', label: 'Maximum / Upgrade', symbol: '^', description: 'Foundry upgrade mode for raw paths.', basic: false, advancedMode: 4 }
+]);
+
+export const EFFECT_WIZARD_CONDITION_GROUPS = Object.freeze([
+  {
+    id: 'application',
+    label: 'Application',
+    mode: 'single',
+    conditions: [
+      { id: 'always', label: 'Always active', icon: 'infinity', application: 'always', description: 'Applies while owned.' },
+      { id: 'equipped', label: 'While equipped', icon: 'shield', application: 'equipped', description: 'Applies only while the item is equipped.' },
+      { id: 'activated', label: 'While activated', icon: 'bolt', application: 'activated', description: 'Applies only while the item/effect is activated.' },
+      { id: 'carried', label: 'While carried', icon: 'briefcase', application: 'carried', description: 'Applies while the item is carried.' },
+      { id: 'manual', label: 'Manual toggle', icon: 'toggle-on', application: 'manual', activeState: 'disabled', description: 'The GM/player controls the effect manually; it starts disabled by default.' }
+    ]
+  },
+  {
+    id: 'scope',
+    label: 'Who Is Affected',
+    mode: 'single',
+    conditions: [
+      { id: 'scope-self', label: 'Self', icon: 'user', scope: 'self', description: 'Apply to the owning actor.' },
+      { id: 'scope-this-item', label: 'This item only', icon: 'link', scope: 'item', filterType: 'this-item', filterValue: '', description: 'Apply only when this item is the roll source.' },
+      { id: 'scope-target', label: 'Target reminder', icon: 'bullseye', scope: 'target', transfer: false, note: 'Target effect: apply or adjudicate manually against selected targets.', description: 'Preserve a target-facing declaration without automatically changing another actor.' },
+      { id: 'scope-area', label: 'Area / allies', icon: 'users', scope: 'area', transfer: false, note: 'Area/allies effect: GM adjudicates affected actors.', description: 'Preserve an area or ally declaration without automatic actor changes.' }
+    ]
+  },
+  {
+    id: 'context',
+    label: 'Context Filters',
+    mode: 'toggle',
+    conditions: [
+      { id: 'this-item', label: 'This item rolls', icon: 'link', filterType: 'this-item', filterValue: '', description: 'Narrow this effect to rolls made by this item.' },
+      { id: 'weapon-melee', label: 'Melee attacks', icon: 'hand-fist', filterType: 'weapon-category', filterValue: 'melee', description: 'Narrow this effect to melee attacks.' },
+      { id: 'weapon-ranged', label: 'Ranged attacks', icon: 'crosshairs', filterType: 'weapon-category', filterValue: 'ranged', description: 'Narrow this effect to ranged attacks.' },
+      { id: 'weapon-lightsaber', label: 'Lightsabers', icon: 'wand-sparkles', filterType: 'weapon-group', filterValue: 'lightsabers', description: 'Narrow this effect to lightsaber rolls.' },
+      { id: 'force-sensitive-only', label: 'Force-sensitive only', icon: 'sparkles', filterType: 'custom', filterValue: 'force-sensitive', note: 'Force-sensitive only.', description: 'Reminder-only gate for Force-sensitive users until a runtime actor-trait predicate exists.' },
+      { id: 'while-armored', label: 'While armored', icon: 'shield-halved', filterType: 'custom', filterValue: 'while-armored', note: 'Only while wearing armor.', description: 'Reminder-only armor-state gate when the exact armor automation is not available.' },
+      { id: 'against-melee', label: 'Against melee', icon: 'shield-virus', filterType: 'custom', filterValue: 'against-melee', note: 'Only against melee attacks.', description: 'Reminder-only target context for defenses or other non-roll-time effects.' },
+      { id: 'against-ranged', label: 'Against ranged', icon: 'crosshairs', filterType: 'custom', filterValue: 'against-ranged', note: 'Only against ranged attacks.', description: 'Reminder-only target context for defenses or other non-roll-time effects.' },
+      { id: 'gm-adjudicated', label: 'GM adjudicated', icon: 'user-gear', filterType: 'custom', filterValue: 'gm-adjudicated', note: 'GM adjudicated condition.', description: 'Preserve this as a reminder when automation cannot know the context.' }
+    ]
+  },
+  {
+    id: 'status',
+    label: 'Status Reminders',
+    mode: 'toggle',
+    conditions: [
+      { id: 'status-prone', label: 'Prone', icon: 'person-falling', category: 'condition', target: 'prone', transfer: false, note: 'Status reminder: prone.', description: 'Convert this draft into a Prone status reminder.' },
+      { id: 'status-flat-footed', label: 'Flat-footed', icon: 'eye-slash', category: 'condition', target: 'flat-footed', transfer: false, note: 'Status reminder: flat-footed.', description: 'Convert this draft into a Flat-Footed status reminder.' },
+      { id: 'status-stunned', label: 'Stunned', icon: 'burst', category: 'condition', target: 'stunned', transfer: false, note: 'Status reminder: stunned.', description: 'Convert this draft into a Stunned status reminder.' },
+      { id: 'status-concealed', label: 'Concealed', icon: 'cloud', category: 'condition', target: 'concealed', transfer: false, note: 'Status reminder: concealed.', description: 'Convert this draft into a Concealed status reminder.' }
+    ]
+  }
+]);
+
+export const EFFECT_WIZARD_STACKING_HELP = Object.freeze({
+  [ModifierType.UNTYPED]: 'Untyped bonuses stack with everything unless a specific rule says otherwise.',
+  [ModifierType.CIRCUMSTANCE]: 'Circumstance bonuses usually stack with other bonus types, but only the largest circumstance bonus applies.',
+  [ModifierType.COMPETENCE]: 'Competence bonuses do not stack with other competence bonuses; keep the largest.',
+  [ModifierType.ENHANCEMENT]: 'Enhancement bonuses do not stack with other enhancement bonuses; keep the largest.',
+  [ModifierType.EQUIPMENT]: 'Equipment bonuses do not stack with other equipment bonuses; keep the largest.',
+  [ModifierType.INSIGHT]: 'Insight bonuses do not stack with other insight bonuses; keep the largest.',
+  [ModifierType.MORALE]: 'Morale bonuses do not stack with other morale bonuses; keep the largest.',
+  [ModifierType.DODGE]: 'Dodge bonuses stack, but can be lost when the character is denied Dexterity to Reflex.',
+  [ModifierType.PENALTY]: 'Penalties stack unless a rule names the same source and says otherwise.'
+});
+
 
 export const EFFECT_TERM_LIBRARY = Object.freeze([
   {
@@ -334,6 +501,7 @@ const DEFAULT_INTENT = Object.freeze({
   transfer: true,
   filterType: 'all',
   filterValue: '',
+  conditions: [],
   note: ''
 });
 
@@ -608,6 +776,11 @@ function filterTypeLabel(value) {
   return EFFECT_FILTER_TYPES.find(opt => opt.value === value)?.label ?? 'All matching rolls / stats';
 }
 
+function durationLabel(value = '') {
+  const key = normalizeDurationKey(value);
+  return EFFECT_DURATIONS.find(opt => opt.value === key)?.label ?? (key ? key.replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'Until deactivated');
+}
+
 function filterValueLabel(filterType, value) {
   const raw = String(value ?? '').trim();
   if (!raw) return '';
@@ -615,7 +788,7 @@ function filterValueLabel(filterType, value) {
   if (filterType === 'weapon-category') return WEAPON_CATEGORY_TERMS.find(opt => opt.value === raw)?.label ?? raw.replace(/[-_]+/g, ' ');
   if (filterType === 'skill') return SKILL_TARGETS.find(opt => opt.value === raw)?.label ?? raw.replace(/[-_]+/g, ' ');
   if (filterType === 'damage-type') return DAMAGE_TYPE_TERMS.find(opt => opt.value === raw)?.label ?? raw.replace(/[-_]+/g, ' ');
-  if (filterType === 'force-descriptor') return raw.replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+  if (filterType === 'force-descriptor') return FORCE_DESCRIPTOR_TERMS.find(opt => opt.value === raw)?.label ?? raw.replace(/[-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   return raw.replace(/[-_]+/g, ' ');
 }
 
@@ -634,7 +807,7 @@ function filterPhrase(intent = {}) {
   if (filterType === 'skill') return ` for ${filterValueLabel(filterType, filterValue) || 'the selected skill'}`;
   if (filterType === 'damage-type') return ` when dealing ${filterValueLabel(filterType, filterValue) || 'the selected'} damage`;
   if (filterType === 'force-descriptor') return ` for ${filterValueLabel(filterType, filterValue) || 'the selected'} Force powers`;
-  if (filterType === 'custom') return ' when the custom GM condition is true';
+  if (filterType === 'custom') return ` when ${filterValueLabel(filterType, filterValue) || 'the custom GM condition'} is true`;
   return '';
 }
 
@@ -802,6 +975,8 @@ export class EffectIntentEngine {
       damageTypes: DAMAGE_TYPE_TERMS,
       conditions: CONDITION_TARGETS,
       filterTypes: EFFECT_FILTER_TYPES,
+      durations: EFFECT_DURATIONS,
+      forceDescriptors: FORCE_DESCRIPTOR_TERMS,
       weaponGroups: WEAPON_GROUP_TERMS,
       weaponCategories: WEAPON_CATEGORY_TERMS,
       presets: EFFECT_PRESETS,
@@ -813,6 +988,28 @@ export class EffectIntentEngine {
       ],
       defaults: { ...DEFAULT_INTENT }
     };
+  }
+
+  static wizardTargets() {
+    return foundry?.utils?.deepClone?.(EFFECT_WIZARD_TARGET_GROUPS) ?? EFFECT_WIZARD_TARGET_GROUPS.map(group => ({
+      ...group,
+      targets: (group.targets ?? []).map(target => ({ ...target, intent: { ...(target.intent ?? {}) } }))
+    }));
+  }
+
+  static wizardOperations() {
+    return foundry?.utils?.deepClone?.(EFFECT_WIZARD_OPERATIONS) ?? EFFECT_WIZARD_OPERATIONS.map(entry => ({ ...entry }));
+  }
+
+  static wizardConditionGroups() {
+    return foundry?.utils?.deepClone?.(EFFECT_WIZARD_CONDITION_GROUPS) ?? EFFECT_WIZARD_CONDITION_GROUPS.map(group => ({
+      ...group,
+      conditions: (group.conditions ?? []).map(condition => ({ ...condition }))
+    }));
+  }
+
+  static wizardStackingHelp(bonusType = ModifierType.UNTYPED) {
+    return EFFECT_WIZARD_STACKING_HELP[String(bonusType || ModifierType.UNTYPED).toLowerCase()] ?? EFFECT_WIZARD_STACKING_HELP[ModifierType.UNTYPED];
   }
 
   static getPreset(presetId) {
@@ -862,6 +1059,15 @@ export class EffectIntentEngine {
           : intent.scope === 'item'
             ? 'This effect is scoped to the item. It is preserved and shown, but no current call site can automate that stat yet.'
             : 'Target and area effects are shown for the table, but are not automatically applied to other actors yet.'
+      };
+    }
+    if (String(intent.filterType || '') === 'custom') {
+      return {
+        level: 'reminder',
+        label: 'Reminder only',
+        tone: 'reminder',
+        autoApplies: false,
+        description: `This effect is gated by ${filterValueLabel(intent.filterType, intent.filterValue) || 'a custom GM condition'} and is preserved for table adjudication rather than automatic math.`
       };
     }
     if (hasContextFilter(intent)) {
@@ -936,6 +1142,9 @@ export class EffectIntentEngine {
     if (intent.filterType === 'skill' && intent.filterValue && intent.category !== 'skill') intent.category = 'skill';
     if (intent.filterType === 'skill' && intent.filterValue) intent.target = intent.filterValue;
     intent.transfer = intent.transfer !== false && intent.transfer !== 'false';
+    intent.conditions = asArray(intent.conditions)
+      .map(entry => String(entry || '').trim())
+      .filter(Boolean);
     intent.note = String(intent.note || '').trim();
     return intent;
   }
@@ -1093,6 +1302,34 @@ export class EffectIntentEngine {
   }
 
 
+  static getModifierTarget(rawIntent = {}) {
+    return categoryToTarget(this.normalizeIntent(rawIntent));
+  }
+
+  static getIntentTechnicalRows(rawIntent = {}, { item = null, effect = null } = {}) {
+    const intent = this.normalizeIntent(rawIntent);
+    const support = this.getAutomationSupport(intent, { item, effect });
+    const target = categoryToTarget(intent) || 'intent-only / no modifier target';
+    const amount = Number(intent.amount || 0) * operationSign(intent.operation);
+    const signed = `${amount >= 0 ? '+' : ''}${amount}`;
+    const rows = [
+      ['Type', 'Basic SWSE intent'],
+      ['Modifier Target', target],
+      ['Target Label', targetLabel(intent)],
+      ['Operation', `${intent.operation} (${signed})`],
+      ['Bonus Type', intent.operation === 'decrease' ? ModifierType.PENALTY : intent.bonusType],
+      ['Application', intent.application],
+      ['Scope', intent.scope],
+      ['Duration', durationLabel(intent.duration)],
+      ['Filter', intent.filterType === 'all' ? 'All matching rolls / stats' : `${filterTypeLabel(intent.filterType)}${intent.filterValue ? `: ${filterValueLabel(intent.filterType, intent.filterValue)}` : ''}`],
+      ['Transfer', intent.transfer ? 'true' : 'false'],
+      ['Automation', `${support.label} — ${support.description}`]
+    ];
+    if (intent.conditions?.length) rows.push(['Condition Chips', intent.conditions.join(', ')]);
+    if (intent.note) rows.push(['GM Note', intent.note]);
+    return rows.map(([label, value]) => ({ label, value }));
+  }
+
   static getPreviewTargetValue(actor = null, target = '') {
     if (!actor) return null;
     const paths = actorPreviewPathsForTarget(target);
@@ -1246,6 +1483,7 @@ export class EffectIntentEngine {
       preview,
       lifecycle,
       hasLifecycle: !!lifecycle,
+      lifecycleLabel: lifecycle?.duration ? durationLabel(lifecycle.duration) : '',
       hasPreview: !!preview?.available,
       conversion,
       canConvertToBasic: !!conversion?.isConvertible,

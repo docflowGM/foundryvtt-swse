@@ -1,54 +1,78 @@
 {{!-- GM Jobs board columns and selected job sections. --}}
-<section class="gm-job-tab-panel gm-job-tab-panel--board is-active" data-job-tab-panel="board" aria-label="Mission pipeline">
-  <div class="job-board-shell gm-phase9-job-shell gm-phase3-job-shell gm-job-board-only-shell">
-    <section class="job-board-command swse-ui-panel gm-phase9-job-command gm-phase3-job-kanban">
+<section class="gm-job-tab-panel is-active" data-job-tab-panel="board" aria-label="Mission pipeline">
+  <div class="job-board-shell gm-phase9-job-shell gm-job-board-only-shell">
+    <section class="job-board-command swse-ui-panel gm-phase9-job-command">
       <div class="job-board-section-header">
         <div>
           <span class="gm-command-eyebrow">CONTRACT BOARD</span>
           <h3>Mission Pipeline</h3>
         </div>
-        <span class="job-board-help">Select a contract to hydrate the dossier, review, and settlement rails.</span>
+        <span class="job-board-help">Drag-free status board. Select a card, then use Dossier or Settlement for detailed work.</span>
       </div>
-      <div class="job-board-columns">
-        {{#each jobBoard.columns}}
-        <section class="job-board-column gm-phase3-job-column" data-job-column="{{this.id}}">
-          <header>
-            <div>
-              <h4>{{this.label}}</h4>
-              <p>{{this.hint}}</p>
-            </div>
-            <span>{{this.count}}</span>
-          </header>
-          <div class="job-card-stack">
-            {{#each this.jobs}}
-            <button type="button" class="job-board-card {{this.statusTone}} {{#if (eq this.threadId ../../jobBoard.selectedJob.threadId)}}is-selected{{/if}}" data-job-select="{{this.threadId}}" data-swse-drag-kind="job" data-swse-drag-id="{{this.threadId}}" data-swse-drag-thread-id="{{this.threadId}}" data-swse-drag-name="{{this.title}}" data-swse-drag-faction-id="{{this.factionId}}" data-swse-drag-source="job-board">
-              <div class="job-card-topline">
-                <span class="job-board-chip {{this.statusTone}}">{{this.statusLabel}}</span>
-                {{#if this.needsAttention}}<span class="job-board-chip attention">Needs GM</span>{{/if}}
-              </div>
-              <div class="job-card-title">{{this.title}}</div>
-              <div class="job-card-client">{{this.clientLabel}}{{#if this.factionName}} - {{this.factionName}}{{/if}}</div>
-              <div class="job-card-progress">
-                <span>{{this.requiredProgressLabel}}</span>
-                <span>{{this.optionalProgressLabel}}</span>
-              </div>
-              <div class="job-card-reward">{{this.rewards.approvedCreditsLabel}} - {{this.rewards.approvedXpLabel}}</div>
-              <div class="job-card-footer">
-                <span>{{this.participantCount}} participant(s)</span>
-                <span>{{this.messageCount}} events</span>
-                {{#if this.updatedAtLabel}}<span>{{this.updatedAtLabel}}</span>{{/if}}
-              </div>
-            </button>
-            {{else}}
-            <div class="job-column-empty">No jobs here.</div>
-            {{/each}}
-          </div>
-        </section>
+      <div class="job-board-lifecycle-shelves" aria-label="Contract lifecycle shelves">
+        {{#each jobBoard.shelves}}
+        <button type="button" class="job-board-shelf-tab {{this.id}} {{#if this.isActive}}is-active{{/if}}" data-job-shelf-select="{{this.id}}" aria-pressed="{{#if this.isActive}}true{{else}}false{{/if}}">
+          <span class="job-board-shelf-label">{{this.label}}</span>
+          <span class="job-board-shelf-count">{{this.count}}</span>
+          <small>{{this.hint}}</small>
+        </button>
         {{/each}}
+      </div>
+
+      <div class="job-board-active-shelf" data-job-active-shelf="{{jobBoard.activeShelfId}}">
+        <div class="job-board-active-shelf-head">
+          <div>
+            <span class="gm-command-eyebrow">{{jobBoard.activeShelf.label}}</span>
+            <h4>{{jobBoard.activeShelf.hint}}</h4>
+          </div>
+          <span class="job-board-chip">{{jobBoard.visibleJobCount}} job{{#unless (eq jobBoard.visibleJobCount 1)}}s{{/unless}}</span>
+        </div>
+
+        <div class="job-board-status-groups">
+          {{#each jobBoard.activeShelfGroups}}
+          <section class="job-board-status-group {{this.tone}}" data-job-status-group="{{this.status}}">
+            <header class="job-board-status-group-header">
+              <span class="job-board-status-dot {{this.tone}}"></span>
+              <div>
+                <h4>{{this.label}}</h4>
+                <p>{{this.count}} contract{{#unless (eq this.count 1)}}s{{/unless}}</p>
+              </div>
+              <hr>
+            </header>
+            <div class="job-card-stack job-card-stack--shelf">
+              {{#each this.jobs}}
+              <button type="button" class="job-board-card {{this.statusTone}} {{#if this.needsAttention}}attention{{/if}}" data-job-select="{{this.threadId}}" data-swse-drag-kind="job" data-swse-drag-id="{{this.threadId}}" data-swse-drag-thread-id="{{this.threadId}}" data-swse-drag-name="{{this.title}}" data-swse-drag-faction-id="{{this.factionId}}" data-swse-drag-source="job-board">
+                {{#if this.needsAttention}}<span class="job-board-attention-ribbon">Needs Review</span>{{/if}}
+                <div class="job-card-topline">
+                  <span class="job-board-chip {{this.statusTone}}">{{this.statusLabel}}</span>
+                  {{#if this.reviewCount}}<span class="job-board-chip attention">{{this.reviewCount}} pending</span>{{/if}}
+                </div>
+                <div class="job-card-title">{{this.title}}</div>
+                <div class="job-card-client">{{this.clientLabel}}{{#if this.factionName}} - {{this.factionName}}{{/if}}</div>
+                <div class="job-card-progress job-card-progress--bar">
+                  <span>{{this.requiredProgressLabel}}</span>
+                  <span>{{this.optionalProgressLabel}}</span>
+                </div>
+                <div class="job-card-reward">{{this.rewards.payableCreditsLabel}} - {{this.rewards.payableXpLabel}}</div>
+                <div class="job-card-footer">
+                  <span>{{this.participantCount}} participant(s)</span>
+                  <span>{{this.messageCount}} event{{#unless (eq this.messageCount 1)}}s{{/unless}}</span>
+                </div>
+              </button>
+              {{/each}}
+            </div>
+          </section>
+          {{else}}
+          <div class="job-board-shelf-empty">
+            <strong>{{jobBoard.activeShelf.emptyLabel}}</strong>
+            <span>Switch shelves or create a new contract to populate this view.</span>
+          </div>
+          {{/each}}
+        </div>
       </div>
     </section>
 
-    <aside class="job-board-rail swse-ui-panel gm-phase9-job-rail gm-phase3-job-rail gm-job-quick-rail">
+    <aside class="job-board-rail swse-ui-panel gm-phase9-job-rail gm-job-quick-rail">
       {{#if jobBoard.selectedJob}}
       <div class="job-board-section-header compact gm-phase9-dossier-header">
         <div>
@@ -61,8 +85,8 @@
       <div class="gm-phase9-dossier-metrics" aria-label="Selected contract summary">
         <span><strong>{{jobBoard.selectedJob.requiredProgressLabel}}</strong>Required</span>
         <span><strong>{{jobBoard.selectedJob.optionalProgressLabel}}</strong>Optional</span>
-        <span><strong>{{jobBoard.selectedJob.rewards.approvedCreditsLabel}}</strong>Credits</span>
-        <span><strong>{{jobBoard.selectedJob.rewards.approvedXpLabel}}</strong>XP</span>
+        <span><strong>{{jobBoard.selectedJob.rewards.payableCreditsLabel}}</strong>Credits</span>
+        <span><strong>{{jobBoard.selectedJob.rewards.payableXpLabel}}</strong>XP</span>
       </div>
 
       <div class="job-detail-client gm-phase9-client-card">
@@ -95,9 +119,9 @@
   </div>
 </section>
 
-<section class="gm-job-tab-panel gm-job-tab-panel--dossier" data-job-tab-panel="dossier" aria-label="Selected job dossier">
-  <div class="gm-job-dossier-layout gm-phase3-dossier-layout">
-    <section class="swse-ui-panel gm-job-dossier-main gm-phase3-dossier-main">
+<section class="gm-job-tab-panel" data-job-tab-panel="dossier" aria-label="Selected job dossier">
+  <div class="gm-job-dossier-layout">
+    <section class="swse-ui-panel gm-job-dossier-main">
       {{#if jobBoard.selectedJob}}
       <div class="job-board-section-header compact gm-phase9-dossier-header">
         <div>
@@ -111,8 +135,8 @@
         <div class="gm-phase9-dossier-metrics" aria-label="Selected contract summary">
           <span><strong>{{jobBoard.selectedJob.requiredProgressLabel}}</strong>Required</span>
           <span><strong>{{jobBoard.selectedJob.optionalProgressLabel}}</strong>Optional</span>
-          <span><strong>{{jobBoard.selectedJob.rewards.approvedCreditsLabel}}</strong>Credits</span>
-          <span><strong>{{jobBoard.selectedJob.rewards.approvedXpLabel}}</strong>XP</span>
+          <span><strong>{{jobBoard.selectedJob.rewards.payableCreditsLabel}}</strong>Credits</span>
+          <span><strong>{{jobBoard.selectedJob.rewards.payableXpLabel}}</strong>XP</span>
         </div>
         <div class="job-detail-client gm-phase9-client-card">
           {{#if jobBoard.selectedJob.clientImage}}<img src="{{jobBoard.selectedJob.clientImage}}" alt="{{jobBoard.selectedJob.clientLabel}}">{{/if}}
@@ -141,56 +165,168 @@
       </div>
       {{/if}}
 
-      {{#if jobBoard.selectedJob.hasFactionConsequences}}
-      <div class="job-detail-block gm-job-consequence-panel">
-        <h4>Faction Consequences</h4>
-        <div class="gm-job-consequence-list">
-          {{#each jobBoard.selectedJob.consequenceEntries}}
-          <div class="gm-job-consequence-row {{#if this.isRival}}is-rival{{/if}}">
-            <span class="gm-command-eyebrow">{{this.role}}</span>
-            <strong>{{this.factionName}}</strong>
-            <span>Success {{this.successLabel}} · Failure {{this.failureLabel}}</span>
-            {{#if this.notes}}<em>{{this.notes}}</em>{{/if}}
+      <div class="job-detail-block gm-job-consequence-panel gm-phase11-consequence-panel">
+        <div class="job-objective-section-head">
+          <div>
+            <h4>Faction Consequences</h4>
+            <p>Structured relationship deltas applied when the mission succeeds or fails. These can be adjusted while the job is live.</p>
           </div>
-          {{/each}}
+          <span class="job-board-chip attention">{{jobBoard.selectedJob.consequenceCount}} consequence</span>
         </div>
-      </div>
-      {{/if}}
-
-      <div class="job-detail-block gm-phase9-objective-block">
-        <h4>Objectives</h4>
-        <div class="job-objective-list">
-          {{#each jobBoard.selectedJob.objectives}}
-          <article class="job-objective-card {{this.statusTone}}">
-            <div class="job-objective-head">
-              <span class="job-board-chip {{this.type}}">{{this.typeLabel}}</span>
-              <span class="job-board-chip {{this.statusTone}}">{{this.statusLabel}}</span>
-              <span class="job-board-chip required">{{this.requiredLabel}}</span>
+        <div class="gm-job-consequence-list gm-phase11-consequence-list">
+          {{#each jobBoard.selectedJob.consequenceEntries}}
+          <article class="gm-job-consequence-row gm-phase11-consequence-row {{#if this.isRival}}is-rival{{/if}} {{#if this.wasApplied}}is-applied{{/if}}">
+            <div class="gm-phase11-consequence-readout">
+              <span class="gm-command-eyebrow">{{this.roleLabel}}</span>
+              <strong>{{this.factionName}}</strong>
+              <span><b class="{{this.successTone}}">Success {{this.successLabel}}</b> · <b class="{{this.failureTone}}">Failure {{this.failureLabel}}</b></span>
+              {{#if this.notes}}<em>{{this.notes}}</em>{{/if}}
+              {{#if this.wasApplied}}<small>Applied: {{this.appliedLabel}}</small>{{/if}}
+              {{#if this.wasReversed}}<small>Corrected: {{this.reversedLabel}}</small>{{/if}}
             </div>
-            <strong>{{this.title}}</strong>
-            {{#if this.description}}<p>{{this.description}}</p>{{/if}}
-            <div class="job-objective-rewards">
-              {{#if this.rewardCreditsLabel}}<span>{{this.rewardCreditsLabel}}</span>{{/if}}
-              {{#if this.rewardXpLabel}}<span>{{this.rewardXpLabel}}</span>{{/if}}
-              {{#if this.rewardItems}}<span>{{this.rewardItems}}</span>{{/if}}
-            </div>
-            <label class="job-objective-note"><span>GM Review Note</span><textarea rows="2" data-job-objective-note-for="{{this.id}}" placeholder="Optional approval/rejection/failure note"></textarea></label>
-            <div class="job-objective-actions">
-              <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}" data-objective-status="approved">Approve</button>
-              <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}" data-objective-status="rejected">Reject</button>
-              <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}" data-objective-status="failed">Fail</button>
-              <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}" data-objective-status="open">Reopen</button>
-            </div>
+            <details class="gm-phase11-consequence-editor">
+              <summary>Edit</summary>
+              <form class="gm-job-consequence-form" data-job-consequence-upsert-form data-thread-id="{{../jobBoard.selectedJob.threadId}}">
+                <input type="hidden" name="threadId" value="{{../jobBoard.selectedJob.threadId}}">
+                <input type="hidden" name="consequenceKey" value="{{this.key}}">
+                <label>Role
+                  <select name="type">
+                    <option value="issuer" {{#if this.isIssuer}}selected{{/if}}>Issuer</option>
+                    <option value="additional" {{#if this.isAdditional}}selected{{/if}}>Additional</option>
+                    <option value="rival" {{#if this.isRival}}selected{{/if}}>Rival / Opposed</option>
+                  </select>
+                </label>
+                <label>Faction<input type="text" name="factionName" value="{{this.factionName}}" placeholder="Faction name"></label>
+                <label>Success Δ<input type="number" name="successDelta" step="1" value="{{this.successDelta}}"></label>
+                <label>Failure Δ<input type="number" name="failureDelta" step="1" value="{{this.failureDelta}}"></label>
+                <label class="gm-phase11-consequence-wide">Notes<textarea name="notes" rows="2">{{this.notes}}</textarea></label>
+                <button type="submit" class="swse-ui-button">Save Consequence</button>
+                {{#if this.canDelete}}<button type="button" class="swse-ui-button danger" data-job-consequence-delete data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-consequence-key="{{this.key}}">Delete</button>{{/if}}
+              </form>
+            </details>
           </article>
+          {{else}}
+          <p class="placeholder">No faction consequences yet. Add one below if this mission should affect relationships.</p>
+          {{/each}}
+        </div>
+        <form class="gm-job-consequence-form gm-phase11-consequence-add" data-job-consequence-upsert-form data-thread-id="{{jobBoard.selectedJob.threadId}}">
+          <input type="hidden" name="threadId" value="{{jobBoard.selectedJob.threadId}}">
+          <select name="type" aria-label="Consequence type">
+            <option value="additional">Additional</option>
+            <option value="rival">Rival / Opposed</option>
+            <option value="issuer">Issuer</option>
+          </select>
+          <input type="text" name="factionName" placeholder="Faction name">
+          <input type="number" name="successDelta" step="1" value="1" aria-label="Success delta">
+          <input type="number" name="failureDelta" step="1" value="-1" aria-label="Failure delta">
+          <input type="text" name="notes" placeholder="Consequence notes">
+          <button type="submit" class="swse-ui-button primary">Add Consequence</button>
+        </form>
+      </div>
+
+      <div class="job-detail-block gm-phase9-objective-block gm-phase10-objective-review-block">
+        <div class="job-objective-section-head">
+          <div>
+            <h4>Objectives</h4>
+            <p>Tiered objectives can be submitted, reviewed, edited, reopened, or deleted while the mission is live.</p>
+          </div>
+          <span class="job-board-chip attention">{{jobBoard.selectedJob.reviewCount}} review</span>
+        </div>
+
+        <form class="job-objective-upsert-form job-objective-add-form" data-job-objective-upsert-form data-thread-id="{{jobBoard.selectedJob.threadId}}">
+          <input type="hidden" name="threadId" value="{{jobBoard.selectedJob.threadId}}">
+          <select name="tier" aria-label="Objective tier">
+            <option value="primary">Primary</option>
+            <option value="secondary" selected>Secondary</option>
+            <option value="tertiary">Tertiary</option>
+          </select>
+          <input type="text" name="title" placeholder="Add objective to this mission">
+          <input type="number" name="rewardCredits" min="0" step="1" placeholder="cr">
+          <input type="number" name="rewardXp" min="0" step="1" placeholder="XP">
+          <button type="submit" class="swse-ui-button primary">Add</button>
+        </form>
+
+        <div class="job-objective-group-list">
+          {{#each jobBoard.selectedJob.objectiveGroups}}
+          <section class="job-objective-group {{this.tone}}">
+            <header class="job-objective-group-head">
+              <div>
+                <span class="job-board-chip {{this.tone}}">{{this.label}}</span>
+                <strong>{{this.progressLabel}}</strong>
+              </div>
+              {{#if this.reviewCount}}<span class="job-board-chip attention">{{this.reviewCount}} pending</span>{{/if}}
+            </header>
+            <div class="job-objective-list">
+              {{#each this.objectives}}
+              <article class="job-objective-card {{this.statusTone}} tier-{{this.tierTone}}">
+                <div class="job-objective-head">
+                  <span class="job-board-chip {{this.tierTone}}">{{this.tierLabel}}</span>
+                  <span class="job-board-chip {{this.statusTone}}">{{this.reviewBadge}}</span>
+                  <span class="job-board-chip required">{{this.requiredLabel}}</span>
+                </div>
+                <strong>{{this.title}}</strong>
+                {{#if this.description}}<p>{{this.description}}</p>{{/if}}
+                <div class="job-objective-rewards">
+                  {{#if this.rewardCreditsLabel}}<span>{{this.rewardCreditsLabel}}</span>{{/if}}
+                  {{#if this.rewardXpLabel}}<span>{{this.rewardXpLabel}}</span>{{/if}}
+                  {{#if this.rewardItems}}<span>{{this.rewardItems}}</span>{{/if}}
+                  {{#if this.hasRewardItemUuids}}<span>Attached item reward</span>{{/if}}
+                  {{#if this.hasRewardAssetActors}}<span>Shared asset reward</span>{{/if}}
+                </div>
+                <div class="job-objective-review-meta">
+                  {{#if this.submittedAtLabel}}<span>Submitted {{this.submittedAtLabel}}</span>{{/if}}
+                  {{#if this.reviewedAtLabel}}<span>Reviewed {{this.reviewedAtLabel}}</span>{{/if}}
+                  {{#if this.reviewNote}}<em>{{this.reviewNote}}</em>{{/if}}
+                </div>
+
+                <details class="job-objective-edit">
+                  <summary>Edit objective</summary>
+                  <form class="job-objective-upsert-form" data-job-objective-upsert-form data-thread-id="{{../../jobBoard.selectedJob.threadId}}">
+                    <input type="hidden" name="threadId" value="{{../../jobBoard.selectedJob.threadId}}">
+                    <input type="hidden" name="objectiveId" value="{{this.id}}">
+                    <input type="hidden" name="status" value="{{this.status}}">
+                    <select name="tier">
+                      <option value="primary" {{#if this.isPrimaryTier}}selected{{/if}}>Primary</option>
+                      <option value="secondary" {{#if this.isSecondaryTier}}selected{{/if}}>Secondary</option>
+                      <option value="tertiary" {{#if this.isTertiaryTier}}selected{{/if}}>Tertiary</option>
+                    </select>
+                    <input type="text" name="title" value="{{this.title}}" placeholder="Objective text">
+                    <textarea name="description" rows="2" placeholder="Objective details">{{this.description}}</textarea>
+                    <input type="number" name="rewardCredits" min="0" step="1" value="{{this.rewardCredits}}" placeholder="Credits">
+                    <input type="number" name="rewardXp" min="0" step="1" value="{{this.rewardXp}}" placeholder="XP">
+                    <input type="text" name="rewardItems" value="{{this.rewardItems}}" placeholder="Item / asset reward note">
+                    <label class="job-inline-check"><input type="checkbox" name="required" {{#if this.required}}checked{{/if}}> Required for payout</label>
+                    <button type="submit" class="swse-ui-button">Save Objective</button>
+                  </form>
+                </details>
+
+                <label class="job-objective-note"><span>Review / Submit Note</span><textarea rows="2" data-job-objective-note-for="{{this.id}}" placeholder="Optional approval, rejection, failure, or submission note"></textarea></label>
+                <div class="job-objective-actions">
+                  {{#if this.canSubmit}}<button type="button" class="swse-ui-button" data-job-objective-submit data-thread-id="{{../../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}">Submit</button>{{/if}}
+                  {{#if this.canReview}}
+                  <button type="button" class="swse-ui-button primary" data-job-objective-action data-thread-id="{{../../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}" data-objective-status="approved">Approve</button>
+                  <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{../../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}" data-objective-status="rejected">Reject</button>
+                  {{/if}}
+                  <button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{../../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}" data-objective-status="failed">Fail</button>
+                  {{#if this.canReopen}}<button type="button" class="swse-ui-button" data-job-objective-action data-thread-id="{{../../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}" data-objective-status="open">Reopen</button>{{/if}}
+                  <button type="button" class="swse-ui-button danger" data-job-objective-delete data-thread-id="{{../../jobBoard.selectedJob.threadId}}" data-objective-id="{{this.id}}">Delete</button>
+                </div>
+              </article>
+              {{/each}}
+            </div>
+          </section>
+          {{else}}
+          <p class="placeholder">No objectives yet. Add one above.</p>
           {{/each}}
         </div>
       </div>
+
       {{else}}
       <p class="placeholder">Select a job to inspect its dossier.</p>
       {{/if}}
     </section>
 
-    <aside class="swse-ui-panel gm-job-dossier-side gm-phase3-dossier-side">
+    <aside class="swse-ui-panel gm-job-dossier-side">
       {{#if jobBoard.selectedJob}}
       <div class="job-detail-block gm-job-lifecycle-block">
         <h4>Lifecycle</h4>
@@ -199,10 +335,20 @@
           <textarea rows="2" data-job-status-note data-thread-id="{{jobBoard.selectedJob.threadId}}" placeholder="Optional reason for status override / lifecycle change"></textarea>
         </label>
         <div class="job-detail-actions gm-phase9-status-actions">
-          {{#each jobBoard.statusActions}}
-          <button type="button" class="swse-ui-button" data-job-status-action data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-status="{{this.value}}">{{this.label}}</button>
+          {{#each jobBoard.selectedJob.transitionActions}}
+          <button type="button" class="swse-ui-button {{#if this.isPrimary}}primary{{/if}} {{this.tone}}" data-job-transition-action="{{this.action}}" data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-from-status="{{this.fromStatus}}" data-status="{{this.toStatus}}">{{this.label}}</button>
+          {{else}}
+          <span class="placeholder">No legal lifecycle transition is available.</span>
           {{/each}}
         </div>
+        <details class="gm-job-status-override">
+          <summary>Advanced status override</summary>
+          <div class="job-detail-actions gm-phase9-status-actions">
+            {{#each jobBoard.statusActions}}
+            <button type="button" class="swse-ui-button" data-job-status-action data-job-status-override="true" data-thread-id="{{../jobBoard.selectedJob.threadId}}" data-status="{{this.value}}">{{this.label}}</button>
+            {{/each}}
+          </div>
+        </details>
       </div>
 
       <div class="job-detail-block">
@@ -240,21 +386,40 @@
   </div>
 </section>
 
-<section class="gm-job-tab-panel gm-job-tab-panel--settlement" data-job-tab-panel="settlement" aria-label="Job reward settlement">
-  <div class="gm-job-settlement-layout gm-phase3-settlement-layout">
+<section class="gm-job-tab-panel" data-job-tab-panel="settlement" aria-label="Job reward settlement">
+  <div class="gm-job-settlement-layout">
     <section class="swse-ui-panel job-detail-block job-payout-panel gm-phase9-payout-panel">
       {{#if jobBoard.selectedJob}}
       <div class="job-board-section-header compact">
         <div>
           <span class="gm-command-eyebrow">SELECTED CONTRACT</span>
-          <h3>Distribution Console</h3>
+          <h3>Reward Distribution</h3>
         </div>
         <span class="job-board-chip {{jobBoard.selectedJob.statusTone}}">{{jobBoard.selectedJob.statusLabel}}</span>
       </div>
-      <div class="job-reward-summary">
-        <span>Credits: <strong>{{jobBoard.selectedJob.rewards.approvedCreditsLabel}}</strong></span>
-        <span>XP: <strong>{{jobBoard.selectedJob.rewards.approvedXpLabel}}</strong></span>
-        <span>Items: <strong>{{jobBoard.selectedJob.rewards.itemSummary}}</strong></span>
+      <div class="job-payout-summary-panel" aria-label="Computed approved payout summary">
+        <div class="job-payout-summary-top">
+          <div>
+            <span class="gm-command-eyebrow">PAYABLE TOTAL</span>
+            <strong>{{jobBoard.selectedJob.rewards.payableCreditsLabel}}</strong>
+          </div>
+          <div>
+            <span class="gm-command-eyebrow">APPROVED XP</span>
+            <strong>{{jobBoard.selectedJob.rewards.payableXpLabel}}</strong>
+          </div>
+        </div>
+        <div class="job-payout-breakdown-grid">
+          {{#each jobBoard.selectedJob.rewards.breakdownRows}}
+          <span class="{{#if this.strong}}strong{{/if}}"><em>{{this.label}}</em><b>{{this.value}}</b></span>
+          {{/each}}
+        </div>
+        <div class="job-payout-reward-lines">
+          <span><i class="fa-solid fa-box-open"></i> {{jobBoard.selectedJob.rewards.itemSummary}}</span>
+          <span><i class="fa-solid fa-shuttle-space"></i> {{jobBoard.selectedJob.rewards.assetSummary}}</span>
+        </div>
+        {{#if jobBoard.selectedJob.rewards.hasPendingReview}}
+        <p class="job-payout-pending-note"><i class="fa-solid fa-triangle-exclamation"></i> {{jobBoard.selectedJob.rewards.pendingReviewLabel}}</p>
+        {{/if}}
       </div>
 
       <form class="job-payout-form job-distribution-form" data-job-distribution-form>
@@ -283,7 +448,7 @@
           {{/each}}
         </div>
         <label>Amount
-          <input type="number" name="amount" min="0" step="1" value="{{jobBoard.selectedJob.rewards.totalCredits}}">
+          <input type="number" name="amount" min="0" step="1" value="{{jobBoard.selectedJob.rewards.payableCredits}}">
         </label>
         {{#if jobBoard.partyFundEnabled}}
         <label>Party fund cut %
@@ -293,7 +458,7 @@
         <button type="submit" class="swse-ui-button bulletin-primary-action">Distribute Credits</button>
       </form>
 
-      {{#if jobBoard.selectedJob.rewards.approvedXp}}
+      {{#if jobBoard.selectedJob.rewards.payableXp}}
       <form class="job-payout-form job-xp-form" data-job-xp-form>
         <input type="hidden" name="threadId" value="{{jobBoard.selectedJob.threadId}}">
         <label>XP mode
@@ -317,16 +482,16 @@
           {{/each}}
         </div>
         <label>XP Amount
-          <input type="number" name="amount" min="0" step="1" value="{{jobBoard.selectedJob.rewards.approvedXp}}">
+          <input type="number" name="amount" min="0" step="1" value="{{jobBoard.selectedJob.rewards.payableXp}}">
         </label>
         <button type="submit" class="swse-ui-button bulletin-primary-action">Award XP</button>
       </form>
       {{/if}}
 
-      {{#if jobBoard.selectedJob.hasAttachedItemRewards}}
+      {{#if jobBoard.selectedJob.rewards.hasItemRewards}}
       <form class="job-payout-form" data-job-award-items-form>
         <input type="hidden" name="threadId" value="{{jobBoard.selectedJob.threadId}}">
-        {{#each jobBoard.selectedJob.rewardItemUuids}}<input type="hidden" name="itemUuids" value="{{this}}">{{/each}}
+        {{#each jobBoard.selectedJob.rewards.itemUuids}}<input type="hidden" name="itemUuids" value="{{this}}">{{/each}}
         <label>Item distribution
           <select name="distributionMode">
             {{#each jobBoard.itemDistributionModes}}<option value="{{this.value}}">{{this.label}}</option>{{/each}}
@@ -347,17 +512,17 @@
           <p class="placeholder">No actor participants are attached to this job yet.</p>
           {{/each}}
         </div>
-        <button type="submit" class="swse-ui-button">Award Attached Items</button>
+        <button type="submit" class="swse-ui-button">Award Approved Items</button>
       </form>
       {{/if}}
 
-      {{#if jobBoard.selectedJob.hasAssetRewardCandidates}}
+      {{#if jobBoard.selectedJob.rewards.hasAssetRewards}}
       <form class="job-payout-form" data-job-award-asset-form>
         <input type="hidden" name="threadId" value="{{jobBoard.selectedJob.threadId}}">
         <label>Shared asset reward
           <select name="assetActorId">
-            {{#each jobBoard.selectedJob.assetRewardCandidates}}
-            <option value="{{this.id}}">{{this.name}} — {{this.typeLabel}}</option>
+            {{#each jobBoard.selectedJob.rewards.assetRows}}
+            <option value="{{this.actorId}}">{{this.label}} — {{this.typeLabel}} ({{this.source}})</option>
             {{/each}}
           </select>
         </label>
@@ -379,7 +544,7 @@
         <button type="submit" class="swse-ui-button">Grant Shared Droid / Ship</button>
       </form>
       {{else}}
-      <p class="placeholder">No droid or ship actors are available to grant as a shared job reward.</p>
+      <p class="placeholder">No approved droid, ship, or vehicle rewards are attached to this contract yet.</p>
       {{/if}}
 
       <details class="gm-job-legacy-settlement">
@@ -394,7 +559,7 @@
             </select>
           </label>
           <label>Amount
-            <input type="number" name="amount" min="0" step="1" value="{{jobBoard.selectedJob.rewards.totalCredits}}">
+            <input type="number" name="amount" min="0" step="1" value="{{jobBoard.selectedJob.rewards.payableCredits}}">
           </label>
           {{#if jobBoard.partyFundEnabled}}
           <label>Party fund cut %
@@ -408,27 +573,5 @@
       <p class="placeholder">Select a job before distributing rewards.</p>
       {{/if}}
     </section>
-
-    <aside class="swse-ui-panel job-queue-panel gm-job-settlement-queue gm-phase3-settlement-queue">
-      <div class="job-board-section-header compact">
-        <div>
-          <span class="gm-command-eyebrow">PAYOUT QUEUE</span>
-          <h3>Completed Contracts</h3>
-        </div>
-        <span class="job-board-chip payout">{{jobBoard.payoutItems.length}}</span>
-      </div>
-      <div class="gm-job-payout-queue-grid">
-        {{#each jobBoard.payoutItems}}
-        <article class="job-queue-card gm-phase9-queue-card">
-          <span class="job-board-chip payout">Ready</span>
-          <strong>{{this.title}}</strong>
-          <p>{{this.rewards.approvedCreditsLabel}} - {{this.rewards.approvedXpLabel}}</p>
-          <button type="button" class="swse-ui-button" data-job-select="{{this.threadId}}" data-job-tab-switch="settlement">Distribute Rewards</button>
-        </article>
-        {{else}}
-        <p class="placeholder">No completed contracts are waiting on payout.</p>
-        {{/each}}
-      </div>
-    </aside>
   </div>
 </section>

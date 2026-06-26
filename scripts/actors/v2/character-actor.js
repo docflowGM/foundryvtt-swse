@@ -10,6 +10,7 @@ import { EncumbranceEngine } from "/systems/foundryvtt-swse/scripts/engine/encum
 import { InventoryEngine } from "/systems/foundryvtt-swse/scripts/engine/inventory/InventoryEngine.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { normalizeSkillMap } from "/systems/foundryvtt-swse/scripts/utils/skill-normalization.js";
+import { collectKnownForceSecrets, collectKnownForceTechniques } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
 
 /**
  * Compute the minimal v2-derived fields for Characters.
@@ -626,41 +627,37 @@ function mirrorTalents(actor, system) {
 }
 
 function mirrorForceTechniques(actor, system) {
-  const techniques = (actor?.items ?? []).filter(i => i.type === 'feat' && (i.system?.tags ?? []).includes('force_technique'));
-  const list = [];
-
-  for (const t of techniques) {
-    const data = t.system ?? {};
-    const entry = {
-      id: t.id,
-      name: t.name,
-      prerequisite: data.prerequisite ?? '',
-      summary: summarizeText(data.benefit ?? data.description ?? data.normalText ?? '', 160)
+  const list = collectKnownForceTechniques(actor).map((known) => {
+    const item = known.entry || {};
+    const data = item.system ?? {};
+    return {
+      id: known.id || item.id || item._id || known.key,
+      name: known.name || item.name || 'Force Technique',
+      prerequisite: data.prerequisite ?? data.prerequisites ?? '',
+      summary: summarizeText(data.benefit ?? data.description ?? data.normalText ?? '', 160),
+      source: known.source || 'unknown'
     };
-    list.push(entry);
-  }
+  });
 
-  list.sort((a, b) => a.name.localeCompare(b.name));
+  list.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
   system.derived.forceTechniques.list = list;
   system.derived.forceTechniques.count = list.length;
 }
 
 function mirrorForceSecrets(actor, system) {
-  const secrets = (actor?.items ?? []).filter(i => i.type === 'feat' && (i.system?.tags ?? []).includes('force_secret'));
-  const list = [];
-
-  for (const s of secrets) {
-    const data = s.system ?? {};
-    const entry = {
-      id: s.id,
-      name: s.name,
-      prerequisite: data.prerequisite ?? '',
-      summary: summarizeText(data.benefit ?? data.description ?? data.normalText ?? '', 160)
+  const list = collectKnownForceSecrets(actor).map((known) => {
+    const item = known.entry || {};
+    const data = item.system ?? {};
+    return {
+      id: known.id || item.id || item._id || known.key,
+      name: known.name || item.name || 'Force Secret',
+      prerequisite: data.prerequisite ?? data.prerequisites ?? '',
+      summary: summarizeText(data.benefit ?? data.description ?? data.normalText ?? '', 160),
+      source: known.source || 'unknown'
     };
-    list.push(entry);
-  }
+  });
 
-  list.sort((a, b) => a.name.localeCompare(b.name));
+  list.sort((a, b) => String(a.name || '').localeCompare(String(b.name || '')));
   system.derived.forceSecrets.list = list;
   system.derived.forceSecrets.count = list.length;
 }

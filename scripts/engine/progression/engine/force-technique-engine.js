@@ -16,6 +16,7 @@
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ForceRegistry } from "/systems/foundryvtt-swse/scripts/engine/registries/force-registry.js";
+import { collectKnownForceTechniques } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
 
 export class ForceTechniqueEngine {
   /**
@@ -46,9 +47,9 @@ export class ForceTechniqueEngine {
    */
   static async applySelected(actor, selectedItems = []) {
     const existing = new Set(
-      actor.items
-        .filter(i => i.type === 'force-technique' || (i.type === 'feat' && i.system?.tags?.includes('force_technique')))
-        .map(i => i.name.toLowerCase())
+      collectKnownForceTechniques(actor)
+        .map(entry => String(entry.name || '').toLowerCase())
+        .filter(Boolean)
     );
 
     const filtered = selectedItems.filter(

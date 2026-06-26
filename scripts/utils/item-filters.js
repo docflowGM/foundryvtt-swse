@@ -1,3 +1,5 @@
+import { isKnownForceSecretItem, isKnownForceTechniqueItem } from '/systems/foundryvtt-swse/scripts/utils/force-knowledge.js';
+
 /**
  * Item Type Filtering Utility
  * PHASE C: Centralized item type filters to prevent scattered .filter() calls
@@ -43,14 +45,14 @@ export function getForcePowers(items) {
  * Get all force techniques from items collection
  */
 export function getForceTechniques(items) {
-  return (items || []).filter(i => i.type === 'force-technique' || i.type === 'forcetechnique' || (i.type === 'feat' && i.system?.tags?.includes('force_technique')));
+  return (items || []).filter(isKnownForceTechniqueItem);
 }
 
 /**
  * Get all force secrets from items collection
  */
 export function getForceSecrets(items) {
-  return (items || []).filter(i => i.type === 'force-secret' || i.type === 'forcesecret' || (i.type === 'feat' && i.system?.tags?.includes('force_secret')));
+  return (items || []).filter(isKnownForceSecretItem);
 }
 
 /**

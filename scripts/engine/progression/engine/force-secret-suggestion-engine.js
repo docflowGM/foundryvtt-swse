@@ -25,6 +25,7 @@ import {
 } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/suggestion-constants.js";
 import { DSPEngine } from "/systems/foundryvtt-swse/scripts/engine/darkside/dsp-engine.js";
 import { ForceChoiceContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/force-choice-context.js";
+import { collectKnownForceTechniques } from "/systems/foundryvtt-swse/scripts/utils/force-knowledge.js";
 
 export const FORCE_SECRET_TIERS = {
   PERFECT_FIT: 6,          // All conditions met + high archetype match
@@ -295,10 +296,9 @@ export class ForceSecretSuggestionEngine {
     const techniques = [];
 
     if (actor) {
-      // From full actor (levelup/play mode)
-      actor.items
-        .filter(item => item.type === ITEM_TYPES.FEAT && item.system?.featType === ITEM_TYPES.FEAT_TYPE_FORCE)
-        .forEach(tech => techniques.push(tech.name));
+      collectKnownForceTechniques(actor).forEach(tech => {
+        if (tech?.name) techniques.push(tech.name);
+      });
     }
 
     const existingNames = new Set(techniques.map((technique) => this._normalizePowerName(technique)));

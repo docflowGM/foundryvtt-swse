@@ -9708,3 +9708,638 @@ form[id^="SWSEV2CharacterSheet"] .swse-sheet-v2-shell--concept .swse-tablet-cont
   border-color: rgba(100, 220, 255, 0.34);
   background: linear-gradient(135deg, rgba(11, 28, 43, 0.84), rgba(12, 16, 28, 0.8));
 }
+
+/* Phase 1 job lifecycle shelves: concept-aligned data model preview. */
+.gm-job-lifecycle-shelves {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gm-job-lifecycle-shelves-head {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.gm-job-lifecycle-shelves-head strong {
+  color: var(--swse-text-strong, #e6fbff);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.gm-job-lifecycle-shelves-head p {
+  margin: 0;
+  color: var(--swse-text-muted, rgba(222, 245, 255, 0.62));
+  font-size: 0.8rem;
+}
+
+.gm-job-lifecycle-shelf-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.gm-job-lifecycle-shelf-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.25rem 0.65rem;
+  min-height: 4.25rem;
+  padding: 0.75rem 0.85rem;
+  overflow: hidden;
+  border: 1px solid rgba(112, 226, 255, 0.18);
+  border-radius: 0.75rem;
+  background: linear-gradient(145deg, rgba(6, 19, 35, 0.76), rgba(3, 8, 18, 0.62));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+}
+
+.gm-job-lifecycle-shelf-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: rgba(112, 226, 255, 0.75);
+  box-shadow: 0 0 14px rgba(112, 226, 255, 0.35);
+}
+
+.gm-job-lifecycle-shelf-card.drafts::before { background: rgba(255, 209, 102, 0.8); }
+.gm-job-lifecycle-shelf-card.archived::before { background: rgba(170, 185, 205, 0.62); }
+
+.gm-job-lifecycle-shelf-card span {
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(223, 248, 255, 0.78);
+}
+
+.gm-job-lifecycle-shelf-card strong {
+  grid-row: span 2;
+  align-self: center;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 1.6rem;
+  color: rgba(112, 226, 255, 0.95);
+}
+
+.gm-job-lifecycle-shelf-card em {
+  color: rgba(223, 248, 255, 0.52);
+  font-size: 0.72rem;
+  font-style: normal;
+  line-height: 1.35;
+}
+
+@media (max-width: 980px) {
+  .gm-job-lifecycle-shelf-row { grid-template-columns: 1fr; }
+}
+
+/* Job Board Phase 3 - tiered objective review workflow */
+.gm-phase10-objective-review-block {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.job-objective-section-head,
+.job-objective-group-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.job-objective-section-head p {
+  margin: 0.25rem 0 0;
+  color: rgba(226, 232, 240, 0.64);
+  font-size: 0.8rem;
+}
+
+.job-objective-add-form,
+.job-objective-upsert-form {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.job-objective-add-form {
+  grid-template-columns: minmax(6rem, 0.55fr) minmax(14rem, 2fr) minmax(5.5rem, 0.55fr) minmax(5.5rem, 0.55fr) auto;
+  align-items: center;
+  padding: 0.55rem;
+  border: 1px dashed rgba(91, 213, 255, 0.24);
+  border-radius: 12px;
+  background: rgba(0, 12, 24, 0.28);
+}
+
+.job-objective-upsert-form input,
+.job-objective-upsert-form textarea,
+.job-objective-upsert-form select {
+  min-width: 0;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(91, 210, 255, 0.23);
+  background: rgba(0, 12, 24, 0.56);
+  color: var(--swse-text, #dff6ff);
+  padding: 0.42rem 0.52rem;
+}
+
+.job-objective-group-list {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.job-objective-group {
+  display: grid;
+  gap: 0.55rem;
+  border-left: 2px solid rgba(91, 213, 255, 0.28);
+  padding-left: 0.7rem;
+}
+
+.job-objective-group.primary { border-left-color: rgba(91, 213, 255, 0.62); }
+.job-objective-group.secondary { border-left-color: rgba(34, 211, 238, 0.42); }
+.job-objective-group.tertiary { border-left-color: rgba(148, 163, 184, 0.38); }
+
+.job-objective-group-head > div {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.job-objective-group-head strong {
+  color: rgba(226, 232, 240, 0.76);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.72rem;
+}
+
+.job-objective-card.tier-primary { border-color: rgba(91, 213, 255, 0.32); }
+.job-objective-card.tier-secondary { border-color: rgba(34, 211, 238, 0.22); }
+.job-objective-card.tier-tertiary { border-color: rgba(148, 163, 184, 0.18); }
+.job-objective-card.approved { border-color: rgba(74, 222, 128, 0.34); background: rgba(20, 83, 45, 0.14); }
+.job-objective-card.rejected,
+.job-objective-card.failed { border-color: rgba(248, 113, 113, 0.34); background: rgba(127, 29, 29, 0.14); }
+
+.job-objective-review-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  color: rgba(203, 213, 225, 0.6);
+  font-size: 0.72rem;
+}
+
+.job-objective-review-meta em {
+  flex-basis: 100%;
+  color: rgba(226, 232, 240, 0.72);
+}
+
+.job-objective-edit {
+  border: 1px solid rgba(91, 210, 255, 0.12);
+  border-radius: 10px;
+  padding: 0.45rem 0.55rem;
+  background: rgba(0, 0, 0, 0.14);
+}
+
+.job-objective-edit summary {
+  cursor: pointer;
+  color: rgba(190, 230, 255, 0.82);
+  font-size: 0.72rem;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.job-objective-edit[open] summary { margin-bottom: 0.5rem; }
+
+.job-objective-actions .danger,
+.swse-ui-button.danger {
+  border-color: rgba(248, 113, 113, 0.36);
+  color: #fecaca;
+}
+
+.job-objective-actions .danger:hover,
+.swse-ui-button.danger:hover {
+  background: rgba(127, 29, 29, 0.28);
+}
+
+@media (max-width: 1100px) {
+  .job-objective-add-form {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Phase 4 job-board payout summary: approved rewards only, complexity hidden behind a computed rail. */
+.job-payout-summary-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.9rem;
+  border: 1px solid rgba(125, 255, 178, 0.28);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(125, 255, 178, 0.09), rgba(3, 10, 20, 0.72));
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.025), 0 0 18px rgba(125,255,178,0.06);
+}
+
+.job-payout-summary-top {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.job-payout-summary-top > div {
+  min-width: 0;
+  padding: 0.65rem;
+  border: 1px solid rgba(112, 226, 255, 0.16);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.job-payout-summary-top strong {
+  display: block;
+  margin-top: 0.15rem;
+  color: #7dffb2;
+  font-family: var(--swse-font-display, var(--font-display, monospace));
+  font-size: 1.55rem;
+  line-height: 1;
+  letter-spacing: 0.03em;
+}
+
+.job-payout-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(135px, 1fr));
+  gap: 0.45rem;
+}
+
+.job-payout-breakdown-grid span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.12rem;
+  padding: 0.45rem 0.55rem;
+  border: 1px solid rgba(112, 226, 255, 0.12);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.job-payout-breakdown-grid span.strong {
+  border-color: rgba(125, 255, 178, 0.28);
+  background: rgba(125, 255, 178, 0.07);
+}
+
+.job-payout-breakdown-grid em {
+  color: rgba(223, 248, 255, 0.52);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.62rem;
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.job-payout-breakdown-grid b {
+  color: rgba(223, 248, 255, 0.88);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.76rem;
+}
+
+.job-payout-reward-lines {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  color: rgba(223, 248, 255, 0.72);
+  font-size: 0.78rem;
+  line-height: 1.35;
+}
+
+.job-payout-reward-lines span {
+  display: flex;
+  gap: 0.45rem;
+  align-items: flex-start;
+}
+
+.job-payout-reward-lines i {
+  color: rgba(112, 226, 255, 0.82);
+  margin-top: 0.15rem;
+}
+
+.job-payout-pending-note {
+  display: flex;
+  gap: 0.45rem;
+  align-items: center;
+  margin: 0;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid rgba(255, 200, 87, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 200, 87, 0.08);
+  color: #ffd166;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+}
+
+/* Phase 11 Job Board: structured faction consequences */
+.gm-phase11-consequence-panel {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.gm-phase11-consequence-list {
+  gap: 0.6rem;
+}
+
+.gm-phase11-consequence-row {
+  grid-template-columns: 1fr;
+  align-items: stretch;
+  padding: 0.6rem;
+  border-radius: 10px;
+}
+
+.gm-phase11-consequence-row.is-applied {
+  box-shadow: inset 3px 0 0 rgba(125, 255, 178, 0.55);
+}
+
+.gm-phase11-consequence-readout {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.gm-phase11-consequence-readout b {
+  font-weight: 800;
+}
+
+.gm-phase11-consequence-readout .positive {
+  color: var(--swse-success, #7dffb2);
+}
+
+.gm-phase11-consequence-readout .negative {
+  color: var(--swse-danger, #ff8b8b);
+}
+
+.gm-phase11-consequence-readout .neutral {
+  color: var(--swse-holo-muted, #8fb8c5);
+}
+
+.gm-phase11-consequence-readout small {
+  color: var(--swse-holo-muted, #8fb8c5);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.gm-phase11-consequence-editor summary {
+  margin-top: 0.35rem;
+  color: var(--swse-accent, #7ee7ff);
+  cursor: pointer;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gm-job-consequence-form {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.9fr) minmax(140px, 1.4fr) 90px 90px minmax(160px, 1fr) auto;
+  gap: 0.45rem;
+  align-items: end;
+  margin-top: 0.5rem;
+}
+
+.gm-job-consequence-form label {
+  display: grid;
+  gap: 0.25rem;
+  color: var(--swse-holo-muted, #8fb8c5);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.gm-job-consequence-form input,
+.gm-job-consequence-form select,
+.gm-job-consequence-form textarea {
+  min-width: 0;
+  width: 100%;
+  border: 1px solid rgba(126, 231, 255, 0.18);
+  border-radius: 7px;
+  background: rgba(0, 0, 0, 0.28);
+  color: var(--swse-holo-text, #d8f7ff);
+  padding: 0.45rem 0.5rem;
+}
+
+.gm-job-consequence-form textarea {
+  resize: vertical;
+}
+
+.gm-phase11-consequence-wide {
+  grid-column: span 2;
+}
+
+.gm-phase11-consequence-add {
+  padding-top: 0.7rem;
+  border-top: 1px solid rgba(126, 231, 255, 0.12);
+}
+
+@media (max-width: 1180px) {
+  .gm-job-consequence-form {
+    grid-template-columns: 1fr 1fr;
+  }
+  .gm-phase11-consequence-wide {
+    grid-column: 1 / -1;
+  }
+}
+
+
+/* Phase 6: concept-aligned Job Board lifecycle shelves */
+.swse-sheet-v2-shell--gm-datapad .job-board-lifecycle-shelves {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.45rem;
+  margin: 0.45rem 0 0.75rem;
+  padding: 0.35rem;
+  border: 1px solid rgba(112, 226, 255, 0.14);
+  border-radius: 0.8rem;
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-shelf-tab {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: "label count" "hint hint";
+  gap: 0.12rem 0.45rem;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 0.62rem;
+  padding: 0.6rem 0.75rem;
+  color: rgba(223, 248, 255, 0.68);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-shelf-tab:hover,
+.swse-sheet-v2-shell--gm-datapad .job-board-shelf-tab.is-active {
+  color: var(--swse-cyan, #70e2ff);
+  border-color: rgba(112, 226, 255, 0.34);
+  background: rgba(112, 226, 255, 0.1);
+  box-shadow: inset 0 0 18px rgba(112, 226, 255, 0.08);
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-shelf-tab.drafts.is-active {
+  color: var(--swse-gold, #ffd166);
+  border-color: rgba(255, 209, 102, 0.34);
+  background: rgba(255, 209, 102, 0.08);
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-shelf-tab.archived.is-active {
+  color: rgba(223, 248, 255, 0.72);
+  border-color: rgba(180, 200, 220, 0.22);
+  background: rgba(180, 200, 220, 0.07);
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-shelf-label {
+  grid-area: label;
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-shelf-count {
+  grid-area: count;
+  min-width: 1.45rem;
+  height: 1.45rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: rgba(112, 226, 255, 0.14);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-shelf-tab small {
+  grid-area: hint;
+  color: rgba(223, 248, 255, 0.42);
+  font-size: 0.68rem;
+  line-height: 1.25;
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-active-shelf {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  gap: 0.7rem;
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-active-shelf-head,
+.swse-sheet-v2-shell--gm-datapad .job-board-status-group-header {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-active-shelf-head {
+  justify-content: space-between;
+  padding: 0.35rem 0.15rem 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-active-shelf-head h4,
+.swse-sheet-v2-shell--gm-datapad .job-board-status-group-header h4 {
+  margin: 0;
+  color: rgba(223, 248, 255, 0.88);
+  font-size: 0.88rem;
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-active-shelf-head p,
+.swse-sheet-v2-shell--gm-datapad .job-board-status-group-header p {
+  margin: 0.1rem 0 0;
+  color: rgba(223, 248, 255, 0.42);
+  font-size: 0.72rem;
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-status-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.95rem;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-status-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-status-group-header hr {
+  flex: 1;
+  border: 0;
+  border-top: 1px solid rgba(112, 226, 255, 0.12);
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-status-dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  transform: rotate(45deg);
+  border-radius: 0.12rem;
+  background: var(--swse-cyan, #70e2ff);
+  box-shadow: 0 0 10px rgba(112, 226, 255, 0.28);
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-status-dot.draft { background: #ffd166; box-shadow: 0 0 10px rgba(255, 209, 102, 0.22); }
+.swse-sheet-v2-shell--gm-datapad .job-board-status-dot.attention { background: #ffc857; box-shadow: 0 0 10px rgba(255, 200, 87, 0.24); }
+.swse-sheet-v2-shell--gm-datapad .job-board-status-dot.success { background: #7dffb2; box-shadow: 0 0 10px rgba(125, 255, 178, 0.22); }
+.swse-sheet-v2-shell--gm-datapad .job-board-status-dot.danger { background: #ff8b8b; box-shadow: 0 0 10px rgba(255, 139, 139, 0.22); }
+.swse-sheet-v2-shell--gm-datapad .job-board-status-dot.muted { background: rgba(223, 248, 255, 0.45); box-shadow: none; }
+
+.swse-sheet-v2-shell--gm-datapad .job-card-stack--shelf {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.65rem;
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: rgba(112, 226, 255, 0.75);
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-card.attention::before { background: #ffc857; }
+.swse-sheet-v2-shell--gm-datapad .job-board-card.success::before { background: #7dffb2; }
+.swse-sheet-v2-shell--gm-datapad .job-board-card.danger::before { background: #ff8b8b; }
+.swse-sheet-v2-shell--gm-datapad .job-board-card.muted::before { background: rgba(223, 248, 255, 0.42); }
+
+.swse-sheet-v2-shell--gm-datapad .job-board-attention-ribbon {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.18rem 0.55rem;
+  border-bottom-left-radius: 0.55rem;
+  border-left: 1px solid rgba(255, 200, 87, 0.32);
+  border-bottom: 1px solid rgba(255, 200, 87, 0.32);
+  color: #ffc857;
+  background: rgba(255, 200, 87, 0.12);
+  font-family: var(--swse-font-mono, monospace);
+  font-size: 0.58rem;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-shelf-empty {
+  display: grid;
+  place-items: center;
+  min-height: 10rem;
+  padding: 1.25rem;
+  border: 1px dashed rgba(112, 226, 255, 0.2);
+  border-radius: 0.9rem;
+  color: rgba(223, 248, 255, 0.54);
+  text-align: center;
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.swse-sheet-v2-shell--gm-datapad .job-board-shelf-empty strong {
+  color: rgba(223, 248, 255, 0.82);
+  font-family: var(--swse-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}

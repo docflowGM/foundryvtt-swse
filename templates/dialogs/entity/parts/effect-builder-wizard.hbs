@@ -1,0 +1,336 @@
+{{#if entityDialog.effectWizard.open}}
+<div class="swse-effect-wizard" data-effect-wizard data-effect-wizard-mode="{{entityDialog.effectWizard.mode}}" data-effect-wizard-step="{{entityDialog.effectWizard.step}}">
+  <button type="button" class="swse-effect-wizard__backdrop" data-effect-wizard-close aria-label="Close effect builder"></button>
+
+  <section class="swse-effect-wizard__modal" role="dialog" aria-modal="true" aria-label="Effect Builder Wizard">
+    <header class="swse-effect-wizard__titlebar">
+      <div class="swse-effect-wizard__emblem">✦</div>
+      <div class="swse-effect-wizard__titlecopy">
+        <div class="swse-effect-wizard__eyebrow">Active Effect · Holopad Forge</div>
+        <h3>Effect Builder</h3>
+      </div>
+      <div class="swse-effect-wizard__mode-switch" aria-label="Wizard mode">
+        <button type="button" class="{{#if entityDialog.effectWizard.isBasicMode}}is-active{{/if}}" data-effect-wizard-mode="basic">Basic</button>
+        <button type="button" class="{{#if entityDialog.effectWizard.isAdvancedMode}}is-active{{/if}}" data-effect-wizard-mode="advanced">Advanced / Raw</button>
+      </div>
+      <button type="button" class="swse-effect-wizard__close" data-effect-wizard-close aria-label="Close">×</button>
+    </header>
+
+    {{#if entityDialog.effectWizard.editing.active}}
+    <div class="swse-effect-wizard__edit-banner">
+      <strong>{{entityDialog.effectWizard.editing.label}}</strong>
+      <span>Creating from this wizard will update the existing Active Effect instead of adding a duplicate.</span>
+    </div>
+    {{/if}}
+
+    <div class="swse-effect-wizard__body">
+      <nav class="swse-effect-wizard__steps" aria-label="Effect build sequence">
+        <div class="swse-effect-wizard__rail-label">Build Sequence</div>
+        <div class="swse-effect-wizard__progress"><span style="width: {{entityDialog.effectWizard.progress}}%;"></span></div>
+        {{#each entityDialog.effectWizard.steps}}
+        <button type="button" class="swse-effect-wizard__step {{#if this.active}}is-active{{/if}} {{#if this.complete}}is-complete{{/if}}" data-effect-wizard-step-select="{{this.index}}">
+          <span class="swse-effect-wizard__step-no">{{#if this.complete}}✓{{else}}{{this.number}}{{/if}}</span>
+          <span class="swse-effect-wizard__step-copy">
+            <strong>{{this.label}}</strong>
+            <small>{{this.summary}}</small>
+            {{#if this.value}}<em>{{this.value}}</em>{{/if}}
+          </span>
+        </button>
+        {{/each}}
+        <p class="swse-effect-wizard__rail-note">Basic mode writes safe SWSE intent metadata. Advanced mode preserves exact raw Foundry paths.</p>
+      </nav>
+
+      <main class="swse-effect-wizard__stage">
+        <section class="swse-effect-wizard__pane">
+          <div class="swse-effect-wizard__pane-kicker">Step {{entityDialog.effectWizard.current.number}} of 5</div>
+          <h4>{{entityDialog.effectWizard.current.label}}</h4>
+          <p>{{entityDialog.effectWizard.current.description}}</p>
+          {{#unless entityDialog.effectWizard.validation.valid}}
+          <div class="swse-effect-wizard__validation swse-effect-wizard__validation--{{entityDialog.effectWizard.validation.tone}}">
+            <strong>Needs attention</strong>
+            <span>{{entityDialog.effectWizard.validation.message}}</span>
+          </div>
+          {{/unless}}
+
+          {{#if entityDialog.effectWizard.isStepIdentity}}
+          <div class="swse-effect-wizard__identity-grid">
+            <div class="swse-effect-wizard__icon-grid" aria-label="Effect icon">
+              {{#each entityDialog.effectWizard.iconChoices}}
+              <button type="button" class="swse-effect-wizard__icon-choice {{#if this.selected}}is-selected{{/if}}" data-effect-wizard-icon="{{this.id}}" title="{{this.label}}">{{this.glyph}}</button>
+              {{/each}}
+            </div>
+            <div class="swse-effect-wizard__fields">
+              <label class="swse-effect-wizard__field">
+                <span>Effect Name</span>
+                <input type="text" value="{{entityDialog.effectWizard.draft.name}}" data-effect-wizard-field="name" placeholder="Combat Gloves +2, Battle Meditation, Sensor Suite…" />
+              </label>
+              <label class="swse-effect-wizard__field">
+                <span>Short Description</span>
+                <textarea rows="3" data-effect-wizard-field="description" placeholder="One line your players will understand at a glance.">{{entityDialog.effectWizard.draft.description}}</textarea>
+              </label>
+            </div>
+          </div>
+          <div class="swse-effect-wizard__chip-row" aria-label="Effect tags">
+            {{#each entityDialog.effectWizard.tagChoices}}
+            <button type="button" class="swse-effect-wizard__chip {{#if this.selected}}is-selected{{/if}}" data-effect-wizard-tag="{{this.label}}">{{this.label}}</button>
+            {{/each}}
+          </div>
+          {{#if entityDialog.effectWizard.hasPresetCards}}
+          <section class="swse-effect-wizard__preset-panel">
+            <div class="swse-effect-wizard__preset-head">
+              <strong>Quick Start Presets</strong>
+              <span>Seed the wizard from common SWSE effect patterns, then adjust the target and math.</span>
+            </div>
+            <div class="swse-effect-wizard__preset-grid">
+              {{#each entityDialog.effectWizard.presetCards}}
+              <button type="button" class="swse-effect-wizard__preset-card {{#if this.selected}}is-selected{{/if}}" data-effect-wizard-preset="{{this.id}}">
+                <strong>{{this.label}}</strong>
+                <span>{{this.description}}</span>
+              </button>
+              {{/each}}
+            </div>
+          </section>
+          {{/if}}
+          {{/if}}
+
+          {{#if entityDialog.effectWizard.isStepTarget}}
+          {{#if entityDialog.effectWizard.isAdvancedMode}}
+          <label class="swse-effect-wizard__field swse-effect-wizard__raw-field {{#unless entityDialog.effectWizard.rawPathValid}}is-invalid{{/unless}}">
+            <span>Advanced Raw Attribute Path</span>
+            <input type="text" value="{{entityDialog.effectWizard.draft.rawPath}}" data-effect-wizard-field="rawPath" placeholder="system.derived.defenses.reflex.total" />
+            {{#if entityDialog.effectWizard.rawPathValid}}
+            <small class="is-ok">{{entityDialog.effectWizard.rawPathState.message}} You can also pick a card below to fill this automatically.</small>
+            {{else}}
+            <small class="is-warn">{{entityDialog.effectWizard.rawPathState.message}}</small>
+            {{/if}}
+          </label>
+          {{/if}}
+          <label class="swse-effect-wizard__field swse-effect-wizard__target-search">
+            <span>Search Targets</span>
+            <input type="search" value="{{entityDialog.effectWizard.draft.targetSearch}}" data-effect-wizard-field="targetSearch" placeholder="Search reflex, perception, attack, damage, Force…" />
+          </label>
+          <div class="swse-effect-wizard__target-groups">
+            {{#if entityDialog.effectWizard.hasTargetResults}}
+            {{#each entityDialog.effectWizard.targetGroups}}
+            <section class="swse-effect-wizard__target-group">
+              <h5>{{this.label}}</h5>
+              <div class="swse-effect-wizard__target-grid">
+                {{#each this.targets}}
+                <button type="button" class="swse-effect-wizard__target-card {{#if this.selected}}is-selected{{/if}}" data-effect-wizard-target="{{this.id}}">
+                  <strong>{{this.label}}</strong>
+                  <span>{{this.description}}</span>
+                  {{#if this.showPath}}<code>{{this.advancedPath}}</code>{{/if}}
+                </button>
+                {{/each}}
+              </div>
+            </section>
+            {{/each}}
+            {{else}}
+            <div class="swse-effect-wizard__empty-result">No target cards match that search. Clear the search or switch to Advanced / Raw.</div>
+            {{/if}}
+          </div>
+          {{/if}}
+
+          {{#if entityDialog.effectWizard.isStepModifier}}
+          <div class="swse-effect-wizard__operation-grid">
+            {{#each entityDialog.effectWizard.operations}}
+            <button type="button" class="swse-effect-wizard__operation {{#if this.selected}}is-selected{{/if}}" data-effect-wizard-operation="{{this.id}}" {{#if this.disabled}}disabled{{/if}}>
+              <b>{{this.symbol}}</b>
+              <strong>{{this.label}}</strong>
+              <span>{{this.description}}</span>
+            </button>
+            {{/each}}
+          </div>
+          <div class="swse-effect-wizard__modifier-grid">
+            <label class="swse-effect-wizard__field">
+              <span>Amount</span>
+              <div class="swse-effect-wizard__stepper">
+                <button type="button" data-effect-wizard-amount-nudge="-1">−</button>
+                <input type="number" value="{{entityDialog.effectWizard.draft.amount}}" data-effect-wizard-field="amount" min="0" step="1" />
+                <button type="button" data-effect-wizard-amount-nudge="1">+</button>
+              </div>
+            </label>
+            <label class="swse-effect-wizard__field">
+              <span>Bonus Type</span>
+              <select data-effect-wizard-field="bonusType">
+                {{#each entityDialog.effectWizard.bonusTypes}}
+                <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                {{/each}}
+              </select>
+            </label>
+            {{#if entityDialog.effectWizard.isAdvancedMode}}
+            <label class="swse-effect-wizard__field">
+              <span>Raw Mode</span>
+              <select data-effect-wizard-field="advancedMode">
+                <option value="2" {{#if (eq entityDialog.effectWizard.draft.advancedMode 2)}}selected{{/if}}>Add</option>
+                <option value="5" {{#if (eq entityDialog.effectWizard.draft.advancedMode 5)}}selected{{/if}}>Override</option>
+                <option value="1" {{#if (eq entityDialog.effectWizard.draft.advancedMode 1)}}selected{{/if}}>Multiply</option>
+                <option value="3" {{#if (eq entityDialog.effectWizard.draft.advancedMode 3)}}selected{{/if}}>Downgrade</option>
+                <option value="4" {{#if (eq entityDialog.effectWizard.draft.advancedMode 4)}}selected{{/if}}>Upgrade</option>
+              </select>
+            </label>
+            <label class="swse-effect-wizard__field">
+              <span>Raw Value</span>
+              <input type="text" value="{{entityDialog.effectWizard.draft.advancedValue}}" data-effect-wizard-field="advancedValue" placeholder="2, -2, @attributes.dex.mod" />
+            </label>
+            {{/if}}
+          </div>
+          <div class="swse-effect-wizard__stacking-help"><strong>Stacking:</strong> {{entityDialog.effectWizard.stackingHelp}}</div>
+          {{/if}}
+
+          {{#if entityDialog.effectWizard.isStepConditions}}
+          <div class="swse-effect-wizard__condition-groups">
+            {{#each entityDialog.effectWizard.conditionGroups}}
+            <section class="swse-effect-wizard__condition-group">
+              <h5>{{this.label}}</h5>
+              <div class="swse-effect-wizard__chip-row">
+                {{#each this.conditions}}
+                <button type="button" class="swse-effect-wizard__chip swse-effect-wizard__chip--condition {{#if this.selected}}is-selected{{/if}}" data-effect-wizard-condition="{{this.id}}" title="{{this.description}}">
+                  <span class="swse-effect-wizard__chip-label">{{this.label}}</span>
+                  {{#if this.automationHint}}<small>{{this.automationHint}}</small>{{/if}}
+                </button>
+                {{/each}}
+              </div>
+            </section>
+            {{/each}}
+          </div>
+
+          {{#if entityDialog.effectWizard.isBasicMode}}
+          <section class="swse-effect-wizard__context-panel">
+            <div class="swse-effect-wizard__context-head">
+              <strong>Context Details</strong>
+              <span>Fine tune scope, duration, and roll filters without writing predicate code.</span>
+            </div>
+            <div class="swse-effect-wizard__context-grid">
+              <label class="swse-effect-wizard__field">
+                <span>Scope</span>
+                <select data-effect-wizard-field="scope">
+                  {{#each entityDialog.effectWizard.scopeOptions}}
+                  <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label class="swse-effect-wizard__field">
+                <span>Duration</span>
+                <select data-effect-wizard-field="duration">
+                  {{#each entityDialog.effectWizard.durationOptions}}
+                  <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label class="swse-effect-wizard__field">
+                <span>Context Filter</span>
+                <select data-effect-wizard-field="filterType">
+                  {{#each entityDialog.effectWizard.filterTypeOptions}}
+                  <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              {{#if entityDialog.effectWizard.hasFilterValueOptions}}
+              <label class="swse-effect-wizard__field">
+                <span>Filter Value</span>
+                <select data-effect-wizard-field="filterValue">
+                  {{#each entityDialog.effectWizard.filterValueOptions}}
+                  <option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              {{else}}
+                {{#if entityDialog.effectWizard.filterValueEditable}}
+                <label class="swse-effect-wizard__field">
+                  <span>Filter Value</span>
+                  <input type="text" value="{{entityDialog.effectWizard.draft.filterValue}}" data-effect-wizard-field="filterValue" placeholder="{{entityDialog.effectWizard.filterValuePlaceholder}}" />
+                </label>
+                {{else}}
+                <div class="swse-effect-wizard__field swse-effect-wizard__field--static">
+                  <span>Filter Value</span>
+                  <small>{{entityDialog.effectWizard.filterValuePlaceholder}}</small>
+                </div>
+                {{/if}}
+              {{/if}}
+            </div>
+          </section>
+          {{/if}}
+
+          {{#if entityDialog.effectWizard.support}}
+          <div class="swse-effect-wizard__support-card swse-effect-wizard__support-card--{{entityDialog.effectWizard.support.tone}}">
+            <strong>{{entityDialog.effectWizard.support.label}}</strong>
+            <span>{{entityDialog.effectWizard.support.description}}</span>
+          </div>
+          {{/if}}
+
+          <div class="swse-effect-wizard__modifier-grid">
+            <label class="swse-effect-wizard__inline-check"><input type="checkbox" data-effect-wizard-field="transfer" {{#if entityDialog.effectWizard.draft.transfer}}checked{{/if}} /> Apply to character</label>
+            <label class="swse-effect-wizard__field">
+              <span>Starts</span>
+              <select data-effect-wizard-field="activeState">
+                <option value="enabled" {{#if (eq entityDialog.effectWizard.draft.activeState 'enabled')}}selected{{/if}}>Enabled</option>
+                <option value="disabled" {{#if (eq entityDialog.effectWizard.draft.activeState 'disabled')}}selected{{/if}}>Disabled</option>
+              </select>
+            </label>
+            <label class="swse-effect-wizard__field swse-effect-wizard__field--wide">
+              <span>GM Note / Custom Condition</span>
+              <input type="text" value="{{entityDialog.effectWizard.draft.note}}" data-effect-wizard-field="note" placeholder="Only while raging, while target is flat-footed, etc." />
+            </label>
+          </div>
+          {{/if}}
+
+          {{#if entityDialog.effectWizard.isStepReview}}
+          <div class="swse-effect-wizard__review-preview">
+            <span>Plain-English Preview</span>
+            <strong>{{entityDialog.effectWizard.preview.summary}}</strong>
+            {{#if entityDialog.effectWizard.support}}
+            <small class="swse-effect-wizard__support-line swse-effect-wizard__support-line--{{entityDialog.effectWizard.support.tone}}">{{entityDialog.effectWizard.support.label}} · {{entityDialog.effectWizard.support.description}}</small>
+            {{/if}}
+          </div>
+          {{#if entityDialog.effectWizard.hasMathPreview}}
+          <div class="swse-effect-wizard__review-preview">
+            <span>Math Preview</span>
+            {{#if entityDialog.effectWizard.mathPreview.available}}
+            <strong>{{entityDialog.effectWizard.mathPreview.label}}: {{entityDialog.effectWizard.mathPreview.before}} → {{entityDialog.effectWizard.mathPreview.after}}</strong>
+            <small>{{entityDialog.effectWizard.mathPreview.description}}</small>
+            {{else}}
+            <strong>{{entityDialog.effectWizard.mathPreview.label}}</strong>
+            <small>{{entityDialog.effectWizard.mathPreview.description}}</small>
+            {{/if}}
+          </div>
+          {{/if}}
+          <details class="swse-effect-wizard__technical-preview" open>
+            <summary>Technical Preview</summary>
+            <code>{{entityDialog.effectWizard.preview.technical}}</code>
+          </details>
+          {{#unless entityDialog.effectWizard.canCreate}}
+          <p class="swse-effect-wizard__helper swse-effect-wizard__helper--warn">{{entityDialog.effectWizard.reviewValidation.message}}</p>
+          {{/unless}}
+          {{/if}}
+        </section>
+      </main>
+
+      <aside class="swse-effect-wizard__preview">
+        <div class="swse-effect-wizard__preview-label">Live Hologram</div>
+        <h4>{{entityDialog.effectWizard.preview.title}}</h4>
+        <p>{{entityDialog.effectWizard.preview.summary}}</p>
+        <dl>
+          <div><dt>Target</dt><dd>{{entityDialog.effectWizard.preview.target}}</dd></div>
+          <div><dt>Modifier</dt><dd>{{entityDialog.effectWizard.preview.modifier}}</dd></div>
+          <div><dt>Active</dt><dd>{{entityDialog.effectWizard.preview.active}}</dd></div>
+          {{#if entityDialog.effectWizard.support}}<div><dt>Automation</dt><dd>{{entityDialog.effectWizard.support.label}}</dd></div>{{/if}}
+        </dl>
+      </aside>
+    </div>
+
+    <footer class="swse-effect-wizard__footer">
+      <button type="button" class="swse-btn" data-effect-wizard-nav="back" {{#unless entityDialog.effectWizard.canGoBack}}disabled{{/unless}}>Back</button>
+      <div class="swse-effect-wizard__footer-actions">
+        <button type="button" class="swse-btn" data-effect-wizard-save-draft>Save Draft</button>
+        {{#unless entityDialog.effectWizard.isFinalStep}}
+        <button type="button" class="swse-btn swse-btn--primary" data-effect-wizard-nav="next" {{#unless entityDialog.effectWizard.canGoForward}}disabled{{/unless}}>Next</button>
+        {{else}}
+        <button type="button" class="swse-btn swse-btn--primary" data-effect-wizard-create="create" {{#unless entityDialog.effectWizard.canCreate}}disabled{{/unless}}>{{entityDialog.effectWizard.primaryCreateLabel}}</button>
+        <button type="button" class="swse-btn" data-effect-wizard-create="close" {{#unless entityDialog.effectWizard.canCreate}}disabled{{/unless}}>{{entityDialog.effectWizard.closeCreateLabel}}</button>
+        {{/unless}}
+      </div>
+    </footer>
+  </section>
+</div>
+{{/if}}

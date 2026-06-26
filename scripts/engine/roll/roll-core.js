@@ -21,6 +21,7 @@
  */
 
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import ModifierUtils from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierUtils.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
@@ -88,13 +89,20 @@ export class RollCore {
 
     try {
       // === STEP 1: Gather Modifiers via ModifierEngine ===
-      const baseModifiers = await ModifierEngine.getAllModifiers(actor);
+      // Some callers, notably skill rolls, pass a baseBonus that is already the
+      // fully derived static total. In that mode, only contextual roll-time
+      // modifiers may be added here; otherwise passive/static modifiers such as
+      // Skill Focus are counted once in derived data and again in RollCore.
+      const skipStaticModifiers = rollOptions.skipStaticModifiers === true || context?.skipStaticModifiers === true;
+      const baseModifiers = skipStaticModifiers ? [] : await ModifierEngine.getAllModifiers(actor);
       const contextualModifiers = ModifierEngine.getEffectIntentModifiersForContext(actor, {
         context,
         includeBroad: false
-      });
+      }).filter(modifier => ModifierEngine.isModifierAllowedInContext(actor, modifier, context, { staticSheet: false }));
       const allModifiers = [...baseModifiers, ...contextualModifiers];
-      const modifierTotal = await ModifierEngine.aggregateTarget(actor, domain, { context });
+      const modifierTotal = skipStaticModifiers
+        ? ModifierUtils.calculateModifierTotal(contextualModifiers, domain)
+        : await ModifierEngine.aggregateTarget(actor, domain, { context });
 
       // === STEP 2: Determine Base Roll ===
       const baseDice = rollOptions.baseDice || '1d20';

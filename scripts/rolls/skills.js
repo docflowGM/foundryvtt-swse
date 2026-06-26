@@ -163,7 +163,11 @@ export async function rollSkill(actor, skillKey, options = {}) {
       baseDice: '1d20',
       useForce: options?.useForcePoint === true,
       isTakeX: skillIsTakeX,
-      takeXValue: skillTakeXValue
+      takeXValue: skillTakeXValue,
+      // canonicalTotal is system.derived.skills[skillKey].total, which already
+      // contains permanent/static bonuses. RollCore should only add contextual
+      // roll-time modifiers for skill rolls.
+      skipStaticModifiers: true
     },
     context: {
       skillKey: effectiveSkillKey,

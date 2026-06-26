@@ -23,7 +23,7 @@
         </div>
       </section>
 
-      {{#if lightsaberConstruction.available}}
+      {{#if lightsaberConstruction.showCallout}}
       <section class="swse-lightsaber-construction-callout panel">
         <div>
           <span class="callout-eyebrow">Milestone Ready</span>
@@ -180,7 +180,7 @@
                 <div class="panel-head compact"><span>Chassis</span><span class="hint">{{lightsaber.chassis.length}} frames</span></div>
                 <div class="ls-tab-card-grid">
                   {{#each lightsaber.chassis}}
-                  <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}}" data-action="select-lightsaber-chassis" data-key="{{id}}" data-lightsaber-inspect-type="chassis" data-lightsaber-inspect-key="{{id}}" data-component-type="chassis" title="{{description}}">
+                  <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}}" data-action="inspect-lightsaber-component" data-key="{{optionKey}}" data-lightsaber-inspect-type="chassis" data-lightsaber-inspect-key="{{optionKey}}" data-component-type="chassis" title="{{description}}">
                     <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
                     <span class="card-desc">{{description}}</span>
                     <span class="card-tags"><span class="tag">DC {{system.baseBuildDc}}</span><span class="tag">{{system.chassisId}}</span></span>

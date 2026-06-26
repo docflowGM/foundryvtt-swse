@@ -668,9 +668,11 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       const hasSelfBuilt = LightsaberConstructionEngine.hasSelfBuiltLightsaber(this.actor);
       const deferred = this.actor?.getFlag?.('foundryvtt-swse', 'lightsaberConstructionDeferred') === true;
       const available = !!eligibility.eligible && !hasSelfBuilt;
+      const alreadyInConstructionMode = this.mode === 'construct' || this.routeIntent === 'lightsaber-construction';
       return {
         visible: available || deferred || this.routeIntent === 'lightsaber-construction' || this.mode === 'construct',
         available,
+        showCallout: available && !alreadyInConstructionMode,
         eligible: !!eligibility.eligible,
         deferred,
         hasSelfBuilt,
@@ -3061,12 +3063,16 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         bladeHex,
         visualProfile: lightsaberVisualProfile,
         hiltKind,
-        chassis: this._catalogs.chassis.map(option => ({
-          ...option,
-          description: this._stripHtml(option.system?.description || option.description),
-          cost: Number(option.system?.baseCost ?? option.system?.cost ?? option.cost ?? 0) || 0,
-          selected: option.id === this._lightsaber.selectedChassisId || option.system?.chassisId === this._lightsaber.selectedChassisId
-        })),
+        chassis: this._catalogs.chassis.map(option => {
+          const optionKey = this._getLightsaberComponentKey(option) || option.id || option._id || option.system?.chassisId || option.name || null;
+          return {
+            ...option,
+            optionKey,
+            description: this._stripHtml(option.system?.description || option.description),
+            cost: Number(option.system?.baseCost ?? option.system?.cost ?? option.cost ?? 0) || 0,
+            selected: optionKey === this._lightsaber.selectedChassisId || option.id === this._lightsaber.selectedChassisId || option.system?.chassisId === this._lightsaber.selectedChassisId
+          };
+        }),
         crystals: this._catalogs.crystals.map(option => {
           const optionKey = this._getLightsaberComponentKey(option) || option.id || option._id;
           const bladeColor = option.system?.lightsaber?.bladeColor || option.bladeColor || 'Varies';
