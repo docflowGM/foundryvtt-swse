@@ -198,13 +198,27 @@ export class GMContactActorizerService {
       }
     }, { renderSheet: false });
 
-    const linked = await BulletinContactRegistry.saveContact({
-      ...contact,
-      actorId: actor.id,
-      actorUuid: actorUuid(actor),
-      actorName: actor.name,
-      promotedAt: nowIso()
-    });
+    let linked;
+    try {
+      linked = await BulletinContactRegistry.saveContact({
+        ...contact,
+        actorId: actor.id,
+        actorUuid: actorUuid(actor),
+        actorName: actor.name,
+        promotedAt: nowIso()
+      });
+      if (!linked) throw new Error('Registry did not confirm the contact link');
+    } catch (linkErr) {
+      // The actor was created but linking it to the source contact failed. Delete
+      // the orphan so a subsequent drag/drop does not create a duplicate actor
+      // for the same contact.
+      try { await actor.delete?.(); } catch (_deleteErr) {}
+      return {
+        source: 'bulletin-contact',
+        created: false,
+        error: `Failed to link contact actor: ${linkErr?.message ?? 'unknown error'}`
+      };
+    }
 
     return {
       source: 'bulletin-contact',

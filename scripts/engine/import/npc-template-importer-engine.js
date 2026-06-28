@@ -353,9 +353,16 @@ export class NPCTemplateImporterEngine {
     // Create the actor (includes biography in initial data)
     const actor = await Actor.create(actorData);
 
-    // Now add items (weapons, feats, talents, etc.)
+    // Now add items (weapons, feats, talents, etc.). If item creation fails,
+    // delete the actor instead of leaving a partial statblock NPC with HP and
+    // defenses but no weapons/feats/talents.
     if (actor) {
-      await this._addItemsToActor(actor, statblock);
+      const itemResult = await this._addItemsToActor(actor, statblock);
+      if (itemResult && itemResult.success === false) {
+        SWSELogger.error(`[NPCTemplateImporterEngine] Item creation failed for ${actor.name}; removing partial import.`);
+        try { await actor.delete?.(); } catch (_deleteErr) {}
+        return null;
+      }
     }
 
     return actor;
@@ -529,10 +536,13 @@ export class NPCTemplateImporterEngine {
       try {
         await ActorEngine.createEmbeddedDocuments(actor, 'Item', items, { source: 'npc-template-importer' });
         SWSELogger.log(`[NPCTemplateImporterEngine] Added ${items.length} items to ${actor.name}`);
+        return { success: true, intended: items.length, created: items.length };
       } catch (err) {
         SWSELogger.warn(`[NPCTemplateImporterEngine] Error adding items to actor:`, err);
+        return { success: false, intended: items.length, created: 0, error: err?.message };
       }
     }
+    return { success: true, intended: 0, created: 0 };
   }
 
   /**

@@ -463,13 +463,20 @@ export class FactionRegistryService {
       }
     };
     const actor = await Actor.create(actorData, { renderSheet: false });
-    await this.upsertFactionContact(faction.id, {
-      ...contact,
-      actorId: actor.id,
-      actorUuid: actorUuid(actor),
-      actorName: actor.name,
-      promotedAt: nowIso()
-    });
+    try {
+      await this.upsertFactionContact(faction.id, {
+        ...contact,
+        actorId: actor.id,
+        actorUuid: actorUuid(actor),
+        actorName: actor.name,
+        promotedAt: nowIso()
+      });
+    } catch (linkErr) {
+      // The actor was created but linking it back to the faction contact failed.
+      // Delete the orphan so a later promotion does not create a duplicate.
+      try { await actor.delete?.(); } catch (_deleteErr) {}
+      return { faction: this.findFaction(faction.id), contact: undefined, created: false, error: `Failed to link contact actor: ${linkErr?.message ?? 'unknown error'}` };
+    }
     return { faction: this.findFaction(faction.id), contact: this.findFactionContact(faction.id, contact.id)?.contact, actor, created: true };
   }
 
