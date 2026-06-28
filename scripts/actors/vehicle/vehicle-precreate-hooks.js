@@ -16,7 +16,10 @@ import { normalizeVehicleImportData } from "/systems/foundryvtt-swse/scripts/eng
 import { normalizeVehicleWeaponImportData, createVehicleWeaponItems } from "/systems/foundryvtt-swse/scripts/engine/import/vehicle-weapon-import-normalizer.js";
 
 const SYSTEM_ID = 'foundryvtt-swse';
-const MAPPING_PATH = 'modules/foundryvtt-swse/VEHICLE_AUDIT_MAPPING.json';
+// This is a SYSTEM (served from systems/foundryvtt-swse/), not a module, and the
+// mapping file lives under tools/. The previous 'modules/foundryvtt-swse/...' path
+// always 404'd, silently disabling vehicle category auto-fill.
+const MAPPING_PATH = 'systems/foundryvtt-swse/tools/VEHICLE_AUDIT_MAPPING.json';
 
 // Canonical vehicle categories (from audit prompt)
 const CANONICAL_CATEGORIES = {

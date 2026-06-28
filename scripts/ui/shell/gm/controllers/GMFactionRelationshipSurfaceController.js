@@ -600,15 +600,40 @@ export class GMFactionRelationshipSurfaceController {
   }
 
 
+  _isSafeImagePath(value) {
+    const v = String(value || '').trim();
+    if (!v) return false;
+    // Reject control characters and dangerous protocols outright.
+    if (/[\u0000-\u001f]/.test(v)) return false;
+    if (/^(javascript|data|vbscript|file):/i.test(v)) return false;
+    // Allow https and same-origin Foundry data paths; reject everything else
+    // (including http:// and unknown schemes).
+    if (/^https:\/\//i.test(v)) return true;
+    if (/^(icons\/|systems\/|modules\/|worlds\/|assets\/)/i.test(v)) return true;
+    // A relative path with no scheme is treated as a local Foundry data path.
+    if (!/^[a-z][a-z0-9+.-]*:/i.test(v)) return true;
+    return false;
+  }
+
   _wireFactionImagePreviews(pageElement, signal) {
-    const fallbackIcon = '<i class="fa-solid fa-image"></i>';
     const sync = (input) => {
       const value = String(input?.value || '').trim();
       const host = input?.closest?.('.gm-faction-image-field') || input?.closest?.('form') || pageElement;
       const preview = host?.querySelector?.('.gm-faction-image-preview');
       if (!preview) return;
-      preview.classList.toggle('is-empty', !value);
-      preview.innerHTML = value ? `<img src="${value.replaceAll('"', '&quot;')}" alt="">` : fallbackIcon;
+      const safe = this._isSafeImagePath(value);
+      preview.classList.toggle('is-empty', !safe);
+      // DOM-build (no innerHTML) so an untrusted/dropped path can't inject markup.
+      if (safe) {
+        const img = document.createElement('img');
+        img.src = value;
+        img.alt = '';
+        preview.replaceChildren(img);
+      } else {
+        const icon = document.createElement('i');
+        icon.className = 'fa-solid fa-image';
+        preview.replaceChildren(icon);
+      }
     };
 
     pageElement.querySelectorAll('[data-gm-faction-image-input]').forEach((input) => {
@@ -709,24 +734,4 @@ export class GMFactionRelationshipSurfaceController {
       const actor = String(pageElement.querySelector('[data-gm-faction-filter="actorId"]')?.value || '').trim();
       const relationship = String(pageElement.querySelector('[data-gm-faction-filter="relationshipType"]')?.value || '').trim();
       const status = String(pageElement.querySelector('[data-gm-faction-filter="status"]')?.value || '').trim();
-      const missingOnly = pageElement.querySelector('[data-gm-faction-filter="missingRegistry"]')?.checked === true;
-      pageElement.querySelectorAll('[data-gm-faction-filter-row]').forEach((row) => {
-        const haystack = String(row.dataset.search || '').toLowerCase();
-        const actorMatch = !actor || row.dataset.actorId === actor;
-        const relationshipMatch = !relationship || row.dataset.relationshipType === relationship;
-        const statusMatch = !status || row.dataset.status === status;
-        const missingMatch = !missingOnly || row.dataset.registryMissing === 'true';
-        const queryMatch = !query || haystack.includes(query);
-        row.hidden = !(actorMatch && relationshipMatch && statusMatch && missingMatch && queryMatch);
-      });
-    };
-    controls.forEach((control) => control.addEventListener('input', apply, { signal }));
-    controls.forEach((control) => control.addEventListener('change', apply, { signal }));
-    apply();
-  }
-
-  destroy() {
-    this._abort?.abort?.();
-    this._abort = null;
-  }
-}
+      const missingOnly = pageElement.querySelector('[data-gm-faction-filter="missingRegistry

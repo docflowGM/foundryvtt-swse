@@ -21,48 +21,35 @@ export class DamageEngine {
   static async applyDamage(actor, damage, options = {}) {
     const {
       damageType = 'normal',
-      targetTempHP = true,
       forceMassiveDamageCheck = false
     } = options;
 
     if (!actor || damage < 0) return { success: false, reason: 'Invalid actor or negative damage' };
 
     const hp = actor.system.hp || {};
-    let finalDamage = damage;
-
-    // Consume temp HP first (if enabled)
-    if (targetTempHP && (hp.temp || 0) > 0) {
-      const tempAbsorbed = Math.min(hp.temp, finalDamage);
-      finalDamage -= tempAbsorbed;
-    }
-
-    // CRITICAL: Do NOT subtract DT from damage.
-    // DT is a threshold trigger, not a damage reduction.
-    // ThresholdEngine handles DT logic separately.
-
-    // ========================================
-    // PHASE 3: Route through ActorEngine
-    // ========================================
     const oldHP = hp.value || 0;
-    const newHP = Math.max(0, oldHP - finalDamage);
-
-    // Check if condition shift needed (before mutation)
     const maxHP = actor.system.hp?.max || 1;
-    const isMassiveDamage = forceMassiveDamageCheck || finalDamage >= maxHP / 2;
-    const conditionShiftNeeded = (newHP <= 0) || isMassiveDamage;
 
-    // Apply damage & condition logic through ActorEngine (single mutation)
+    // Massive-damage is a property of the incoming hit, computed from RAW damage.
+    const isMassiveDamage = forceMassiveDamageCheck || damage >= maxHP / 2;
+
+    // IMPORTANT: Do NOT pre-consume temp HP (or DT) here. The full mitigation
+    // chain — SR → DR → Temp HP → HP — plus threshold/condition-track handling is
+    // owned by DamageResolutionEngine (via ActorEngine.applyDamage), which also
+    // persists temp-HP depletion. Subtracting temp HP here as well double-counted
+    // it. Pass the RAW damage through and let the single authority resolve it.
     try {
       const result = await ActorEngine.applyDamage(actor, {
-        amount: finalDamage,
+        amount: damage,
         type: damageType,
         source: 'combat-damage',
-        conditionShift: conditionShiftNeeded
+        options
       });
 
       return {
         success: true,
-        damageApplied: finalDamage,
+        // HP actually lost after full mitigation (resolution.damageToHP).
+        damageApplied: result.applied ?? damage,
         oldHP,
         newHP: result.newHP,
         isMassiveDamage,

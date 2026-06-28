@@ -218,10 +218,11 @@ function _warnMissingProblemPacks(phase) {
  *  - init / setup: snapshot only (game.packs is empty/partial by design here).
  *  - ready: snapshot + one focused warning per missing problem pack.
  *
- * Retains the historical export name so docs and SWSE.debug.* keep working, but
- * it no longer constructs, registers, or mutates anything.
+ * Retains the historical name as a deprecated alias (see below) so docs and
+ * SWSE.debug.* keep working, but it no longer constructs, registers, or mutates
+ * anything.
  */
-export function repairCriticalCompendiumPacks(phase = "manual") {
+export function diagnoseCriticalCompendiumPacks(phase = "manual") {
   _logHookSnapshot(phase);
 
   const totalPacks = game?.packs?.size ?? null;
@@ -256,13 +257,23 @@ export function repairCriticalCompendiumPacks(phase = "manual") {
   return snapshot;
 }
 
+/**
+ * @deprecated Renamed to diagnoseCriticalCompendiumPacks(). The old name implied
+ * it could repair pack registration; it cannot (diagnostic only). Kept as an
+ * alias for backward compatibility.
+ */
+export function repairCriticalCompendiumPacks(phase = "manual") {
+  SWSELogger.warn("[CompendiumPackRegistrationDiagnostics] repairCriticalCompendiumPacks() is deprecated and is diagnostic only (it does not repair). Use diagnoseCriticalCompendiumPacks().");
+  return diagnoseCriticalCompendiumPacks(phase);
+}
+
 export function registerCompendiumPackRegistrationRepair() {
   if (registered) return;
   registered = true;
 
   const run = (phase) => {
     try {
-      return repairCriticalCompendiumPacks(phase);
+      return diagnoseCriticalCompendiumPacks(phase);
     } catch (err) {
       SWSELogger.warn("[CompendiumPackRegistrationDiagnostics] Diagnostic run failed", err);
       console.error("[SWSE-COMPENDIUM-REG] Diagnostic run threw:", err?.message, err?.stack || err);
@@ -277,8 +288,12 @@ export function registerCompendiumPackRegistrationRepair() {
 
   globalThis.SWSE ??= {};
   globalThis.SWSE.debug ??= {};
+  globalThis.SWSE.debug.diagnoseCriticalCompendiumPacks = () => run("manual");
   // Preserved name for backward compatibility; now diagnostic-only (no mutation).
-  globalThis.SWSE.debug.repairCriticalCompendiumPacks = () => run("manual");
+  globalThis.SWSE.debug.repairCriticalCompendiumPacks = () => {
+    SWSELogger.warn("[CompendiumPackRegistrationDiagnostics] SWSE.debug.repairCriticalCompendiumPacks() is deprecated and is diagnostic only. Use SWSE.debug.diagnoseCriticalCompendiumPacks().");
+    return run("manual");
+  };
   globalThis.SWSE.debug.criticalCompendiumPackStatus = () => ({
     runs: diagnosticRuns,
     keys: _allPackKeys(),

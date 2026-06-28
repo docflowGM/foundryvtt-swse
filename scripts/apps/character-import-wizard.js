@@ -103,19 +103,25 @@ export class CharacterImportWizard extends BaseSWSEAppV2 {
     const previewContent = preview.querySelector('.preview-content');
     if (!previewContent) return;
 
+    // Escape imported values before injecting into HTML. Import data is external
+    // and untrusted, so interpolating it raw into innerHTML is an injection risk.
+    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (ch) => (
+      { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]
+    ));
+
     let content = `
-      <p><strong>Name:</strong> ${data.name || 'Unknown'}</p>
-      <p><strong>Type:</strong> ${data.type || 'Unknown'}</p>
+      <p><strong>Name:</strong> ${esc(data.name || 'Unknown')}</p>
+      <p><strong>Type:</strong> ${esc(data.type || 'Unknown')}</p>
     `;
 
     if (data.system?.level) {
-      content += `<p><strong>Level:</strong> ${data.system.level}</p>`;
+      content += `<p><strong>Level:</strong> ${esc(data.system.level)}</p>`;
     }
     if (data.system?.race) {
-      content += `<p><strong>Species:</strong> ${data.system.race}</p>`;
+      content += `<p><strong>Species:</strong> ${esc(data.system.race)}</p>`;
     }
     if (data.items) {
-      content += `<p><strong>Items:</strong> ${data.items.length}</p>`;
+      content += `<p><strong>Items:</strong> ${esc(Array.isArray(data.items) ? data.items.length : 0)}</p>`;
     }
 
     previewContent.innerHTML = content;

@@ -41,6 +41,7 @@ import { FeatEffectApplier, initializeFeatEffectsHooks } from "./scripts/engine/
 import { FeatPackSeeder } from "./scripts/registries/feat-pack-seeder.js";
 import { RollEngine } from "./scripts/engine/roll-engine.js";
 import { registerForceExecutorChatHooks } from "./scripts/engine/force/force-executor.js";
+import { registerActionEconomyHooks } from "./scripts/engine/combat/action/action-economy-hooks.js";
 import { registerConsularTalentActions } from "./scripts/engine/talent/consular-talent-actions.js";
 import { registerSentinelTalentActions } from "./scripts/engine/talent/sentinel-talent-actions.js";
 import { registerLightsaberTalentActions } from "./scripts/engine/talent/lightsaber-talent-actions.js";
@@ -170,6 +171,7 @@ Hooks.once("init", async () => {
   initializeSentinelGovernance();
   registerCompendiumDirectoryClickRepair();
   registerForceExecutorChatHooks();
+  registerActionEconomyHooks();
   registerConsularTalentActions();
   registerSentinelTalentActions();
   registerLightsaberTalentActions();

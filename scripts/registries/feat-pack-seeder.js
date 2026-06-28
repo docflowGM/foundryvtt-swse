@@ -129,7 +129,7 @@ export class FeatPackSeeder {
         if (!pack) {
             summary.status = "missing-pack";
             SWSELogger.warn("[FeatPackSeeder] Cannot seed feats because foundryvtt-swse.feats is not registered.", summary);
-            console.warn("[SWSE-FEAT-SEEDER] feats pack is not in game.packs — seeding cannot proceed. Run SWSE.debug.repairCriticalCompendiumPacks() first.");
+            console.warn("[SWSE-FEAT-SEEDER] feats pack is not in game.packs — seeding cannot proceed. Run SWSE.debug.diagnoseCriticalCompendiumPacks() to inspect pack registration.");
             return summary;
         }
 

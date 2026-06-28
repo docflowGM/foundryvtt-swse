@@ -50,32 +50,20 @@ async function auditPack(name, packPath, categories = {}) {
     samples: []
   };
 
-  // Foundry document descriptions live under system.*, not at the top level.
-  // Older/scraped rows may use a top-level description, so accept either, and
-  // fall back to system.effect / system.text for types that carry text there.
-  const hasDescription = (doc) => {
-    const candidates = [doc.system?.description, doc.system?.effect, doc.system?.text, doc.description];
-    return candidates.some((value) => {
-      if (typeof value === 'string') return value.trim() !== '';
-      if (value && typeof value === 'object' && typeof value.value === 'string') return value.value.trim() !== '';
-      return false;
-    });
-  };
-
   docs.forEach((doc, idx) => {
     if (doc._error) return;
 
     // Count missing fields
-    if (!hasDescription(doc)) stats.missingDesc++;
+    if (!doc.description || doc.description === '') stats.missingDesc++;
     if (!doc.img || doc.img === '') stats.missingImg++;
     if (doc.img && (doc.img.includes('icons/svg') || doc.img.includes('modules/'))) stats.genericImg++;
     if (!doc.type) stats.missingType++;
 
     // Collect samples of problematic items
-    if (idx < 3 && (!hasDescription(doc) || !doc.img)) {
+    if (idx < 3 && (!doc.description || !doc.img)) {
       stats.samples.push({
         name: doc.name || '(unnamed)',
-        hasDesc: hasDescription(doc),
+        hasDesc: !!doc.description && doc.description !== '',
         hasImg: !!doc.img && doc.img !== '',
       });
     }

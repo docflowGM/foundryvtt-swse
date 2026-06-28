@@ -1397,6 +1397,17 @@ function parsePositiveCredits(amount) {
 }
 
 export class HolonetMessengerService {
+  /**
+   * Trusted GM-authority check for socket-relayed requests.
+   *
+   * GM status is derived ONLY from the looked-up requesting user on the GM host.
+   * It must never be inferred from a client-supplied recipient id (e.g. a 'gm:'
+   * prefix), which any player can forge in a socket payload.
+   */
+  static _isRequesterGm(requesterId) {
+    return requesterId ? Boolean(game.users?.get(requesterId)?.isGM) : Boolean(game.user?.isGM);
+  }
+
 
   static async auditStorage(options = {}) {
     return MessengerMaintenanceService.audit(options);
@@ -2572,7 +2583,7 @@ export class HolonetMessengerService {
     const actorRecipient = this._recipientForActorContext(actor, { senderUserId: requesterId ?? game.user?.id, senderRecipientId });
     const currentId = senderRecipientId || actorRecipient?.id;
     const requesterIsGm = requesterId ? Boolean(game.users?.get(requesterId)?.isGM) : Boolean(game.user?.isGM);
-    const isGm = Boolean(requesterIsGm || currentId?.startsWith('gm:'));
+    const isGm = requesterIsGm; // trusted: do not grant GM via client-supplied currentId
     const isRecipient = invite.recipientId === currentId || (invite.recipientActorId && actor?.id === invite.recipientActorId);
     const isSender = invite.fromRecipientId === currentId;
     if (!isGm && !isRecipient && !(action === 'cancel-game-invite' && isSender)) return false;
@@ -3932,7 +3943,7 @@ export class HolonetMessengerService {
     const actor = actorId ? game.actors?.get(actorId) : null;
     const senderRecipient = this._recipientForActorContext(actor, { senderUserId: requesterId ?? game.user?.id, senderRecipientId });
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
-    const requesterIsGm = Boolean(requester?.isGM || senderRecipient?.id?.startsWith('gm:'));
+    const requesterIsGm = HolonetMessengerService._isRequesterGm(requesterId);
     if (!requesterIsGm && !hasRecipient(thread.participants, senderRecipient?.id)) return false;
 
     if (recipientId === PARTY_FUND_RECIPIENT_ID) {
@@ -4079,7 +4090,7 @@ export class HolonetMessengerService {
     const transfer = message?.metadata?.creditTransfer;
     if (!message || transfer?.kind !== 'creditRequest') return false;
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
-    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    const requesterIsGm = HolonetMessengerService._isRequesterGm(requesterId);
     const currentId = senderRecipientId || currentRecipientId();
     const actor = actorId ? game.actors?.get(actorId) : requester?.character;
     const entry = safeArray(transfer.entries).find(e => e.recipientId === currentId || (actor?.id && e.actorId === actor.id));
@@ -4206,7 +4217,7 @@ export class HolonetMessengerService {
     const actor = actorId ? game.actors?.get(actorId) : null;
     const senderRecipient = this._recipientForActorContext(actor, { senderUserId: requesterId ?? game.user?.id, senderRecipientId });
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
-    const requesterIsGm = Boolean(requester?.isGM || senderRecipient?.id?.startsWith('gm:'));
+    const requesterIsGm = HolonetMessengerService._isRequesterGm(requesterId);
     if (!requesterIsGm && !hasRecipient(thread.participants, senderRecipient?.id)) return false;
     const recipientIdList = safeArray(recipientIds).length ? safeArray(recipientIds) : [recipientId];
     const recipients = this._normalizeRecipientIds(recipientIdList)
@@ -4326,7 +4337,7 @@ export class HolonetMessengerService {
     const actor = actorId ? game.actors?.get(actorId) : null;
     const actorRecipient = this._recipientForActorContext(actor, { senderUserId: requesterId ?? game.user?.id, senderRecipientId });
     const currentId = senderRecipientId || actorRecipient?.id;
-    const isGm = Boolean((requesterId && game.users?.get(requesterId)?.isGM) || currentId?.startsWith('gm:')); 
+    const isGm = HolonetMessengerService._isRequesterGm(requesterId); 
     const canManage = isGm || meta.ownerId === currentId;
     let needsThreadOnlySync = false;
 
@@ -4999,7 +5010,7 @@ export class HolonetMessengerService {
     const value = parsePositiveCredits(amount);
     if (!value) return false;
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
-    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    const requesterIsGm = HolonetMessengerService._isRequesterGm(requesterId);
     if (!requesterIsGm) return false;
 
     if (recipientId === PARTY_FUND_RECIPIENT_ID) {
@@ -5073,7 +5084,7 @@ export class HolonetMessengerService {
     if (!value) return false;
     const mode = String(payoutMode || 'single');
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
-    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    const requesterIsGm = HolonetMessengerService._isRequesterGm(requesterId);
     if (!requesterIsGm) return false;
 
     const actorTargets = safeArray(thread?.participants)
@@ -5174,7 +5185,7 @@ export class HolonetMessengerService {
     const value = Math.max(0, Math.floor(Number(amount) || 0));
     if (!value) return false;
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
-    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    const requesterIsGm = HolonetMessengerService._isRequesterGm(requesterId);
     if (!requesterIsGm) return false;
 
     const mode = String(payoutMode || 'single');
@@ -5335,7 +5346,7 @@ export class HolonetMessengerService {
 
   static async _gmAwardJobAssetAccess({ thread, assetActorId = '', recipientIds = [], primaryActorId = '', requesterId = null, senderRecipientId = null } = {}) {
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
-    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    const requesterIsGm = HolonetMessengerService._isRequesterGm(requesterId);
     if (!requesterIsGm) return false;
 
     const cleanAssetId = String(assetActorId || '').replace(/^Actor\./, '').trim();
@@ -5408,7 +5419,7 @@ export class HolonetMessengerService {
     const recipient = recipientId === PARTY_FUND_RECIPIENT_ID ? null : this._recipientFromStableId(recipientId);
     const targetActor = recipient?.actorId ? game.actors?.get(recipient.actorId) : null;
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
-    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    const requesterIsGm = HolonetMessengerService._isRequesterGm(requesterId);
 
     if (asJobPayout && requesterIsGm) {
       return this._gmAtomicJobCreditPayout({ thread, amount: value, recipientId, targetActor, requesterId, senderRecipientId, partyFundCutPercent });
@@ -5563,7 +5574,7 @@ export class HolonetMessengerService {
     const transfer = message?.metadata?.creditTransfer;
     if (!message || !transfer) return false;
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
-    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    const requesterIsGm = HolonetMessengerService._isRequesterGm(requesterId);
     const currentId = senderRecipientId || currentRecipientId();
 
     if (['complete', 'declined', 'cancelled', 'failed'].includes(transfer.status)) return false;
@@ -5658,7 +5669,7 @@ export class HolonetMessengerService {
     const value = parsePositiveCredits(amount);
     if (!value) return false;
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
-    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    const requesterIsGm = HolonetMessengerService._isRequesterGm(requesterId);
     const actor = actorId ? game.actors?.get(actorId) : requester?.character;
     if (!requesterIsGm) {
       if (!actor) return false;
@@ -5734,7 +5745,7 @@ export class HolonetMessengerService {
     const actor = actorId ? game.actors?.get(actorId) : null;
     const senderRecipient = this._recipientForActorContext(actor, { senderUserId: requesterId ?? game.user?.id, senderRecipientId });
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
-    const requesterIsGm = Boolean(requester?.isGM || senderRecipient?.id?.startsWith('gm:'));
+    const requesterIsGm = HolonetMessengerService._isRequesterGm(requesterId);
     if (!requesterIsGm && !hasRecipient(thread.participants, senderRecipient?.id)) return false;
 
     const ids = safeArray(assetIds).map(id => String(id || '').replace(/^Actor\./, '')).filter(Boolean);
@@ -5817,7 +5828,7 @@ export class HolonetMessengerService {
     const transfer = message?.metadata?.itemTransfer;
     if (!message || !transfer) return false;
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
-    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    const requesterIsGm = HolonetMessengerService._isRequesterGm(requesterId);
     const currentId = senderRecipientId || currentRecipientId();
     this._tradeLifecycleLog('debug', 'GM/item transfer resolver action received.', transfer, {
       phase: 'resolver.item.action',
@@ -6794,7 +6805,7 @@ export class HolonetMessengerService {
     const transfer = message?.metadata?.assetTransfer;
     if (!message || !transfer) return false;
     const requester = requesterId ? game.users?.get(requesterId) : game.user;
-    const requesterIsGm = Boolean(requester?.isGM || senderRecipientId?.startsWith('gm:'));
+    const requesterIsGm = HolonetMessengerService._isRequesterGm(requesterId);
     const currentId = senderRecipientId || currentRecipientId();
     this._tradeLifecycleLog('debug', 'GM/asset transfer resolver action received.', transfer, {
       phase: 'resolver.asset.action',

@@ -646,6 +646,17 @@ export class UpgradeService {
       description: upgrade.description ?? ''
     }];
 
+    // Validate funds BEFORE mutating the item. Previously the upgrade was
+    // installed first and the cost was only charged if affordable, so an actor
+    // who could not pay received the upgrade for free. Block up front instead.
+    const upgradeCost = upgrade.cost ?? 0;
+    if (upgradeCost > 0) {
+      const fundCheck = LedgerService.validateFunds(actor, upgradeCost);
+      if (!fundCheck.ok) {
+        throw new Error(`Insufficient credits to install ${upgrade.name}: need ${upgradeCost}${fundCheck.reason ? ` (${fundCheck.reason})` : ''}`);
+      }
+    }
+
     if (item.isEmbedded && actor) {
       await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{ _id: item.id, 'system.installedUpgrades': nextInstalled }]);
     } else {
@@ -653,12 +664,9 @@ export class UpgradeService {
       await item.update({ 'system.installedUpgrades': nextInstalled });
     }
 
-    if ((upgrade.cost ?? 0) > 0) {
-      const fundCheck = LedgerService.validateFunds(actor, upgrade.cost);
-      if (fundCheck.ok) {
-        const creditPlan = LedgerService.buildCreditDelta(actor, upgrade.cost);
-        await ActorEngine.applyMutationPlan(actor, creditPlan);
-      }
+    if (upgradeCost > 0) {
+      const creditPlan = LedgerService.buildCreditDelta(actor, upgradeCost);
+      await ActorEngine.applyMutationPlan(actor, creditPlan);
     }
 
     return { success: true };

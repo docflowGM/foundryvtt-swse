@@ -31,6 +31,19 @@ function success(message) {
 /**
  * Validate species-languages.json
  */
+function readJsonl(filePath) {
+  const content = fs.readFileSync(filePath, 'utf8');
+  const lines = content.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+  const records = [];
+  let bad = 0;
+  for (const line of lines) {
+    try { records.push(JSON.parse(line)); }
+    catch { bad++; }
+  }
+  if (bad > 0) warn(`${path.basename(filePath)}: ${bad} malformed JSONL line(s) skipped`);
+  return records;
+}
+
 function validateSpeciesLanguages() {
   console.log('\n📋 Validating species-languages.json...');
 
@@ -49,8 +62,14 @@ function validateSpeciesLanguages() {
     return;
   }
 
+  // Actual species entries live under data.species; the file also carries a
+  // top-level "note" string. Older versions stored species at the root.
+  const speciesMap = (data && typeof data === 'object' && data.species && typeof data.species === 'object')
+    ? data.species
+    : data;
+
   // Check for duplicate species keys
-  const speciesKeys = Object.keys(data);
+  const speciesKeys = Object.keys(speciesMap);
   const uniqueKeys = new Set(speciesKeys);
 
   if (speciesKeys.length !== uniqueKeys.size) {
@@ -61,7 +80,7 @@ function validateSpeciesLanguages() {
 
   // Validate each species entry
   let validCount = 0;
-  for (const [key, species] of Object.entries(data)) {
+  for (const [key, species] of Object.entries(speciesMap)) {
     if (!species.languages || !Array.isArray(species.languages)) {
       error(`Species "${key}" has invalid or missing languages array`);
       continue;
@@ -72,7 +91,8 @@ function validateSpeciesLanguages() {
     }
 
     // Check for empty language strings
-    const emptyLanguages = species.languages.filter(lang => !lang || lang.trim() === '');
+    // Language entries may be plain strings or objects (partial/understand-only forms).
+    const emptyLanguages = species.languages.filter(lang => !lang || (typeof lang === 'string' && lang.trim() === ''));
     if (emptyLanguages.length > 0) {
       error(`Species "${key}" has empty language entries`);
     }
@@ -141,24 +161,26 @@ function validateFeatCombatActions() {
     return;
   }
 
-  if (!Array.isArray(data)) {
-    error('feat-combat-actions.json should be an array');
-    return;
-  }
+  // The file is a keyed object map (id -> action); older versions used an array.
+  const actions = Array.isArray(data) ? data.map((a, i) => [String(i), a]) : Object.entries(data);
 
-  success(`${data.length} feat combat actions found`);
+  success(`${actions.length} feat combat actions found`);
 
   // Validate each action
   let validCount = 0;
-  for (const action of data) {
+  for (const [key, action] of actions) {
+    if (!action || typeof action !== 'object') {
+      error(`Action "${key}" is not a valid object`);
+      continue;
+    }
     if (!action.name) {
-      error('Action missing name field');
+      error(`Action "${key}" missing name field`);
       continue;
     }
     validCount++;
   }
 
-  success(`${validCount}/${data.length} actions valid`);
+  success(`${validCount}/${actions.length} actions valid`);
 }
 
 /**
@@ -202,8 +224,8 @@ function validateNonheroic() {
   // Validate templates
   if (fs.existsSync(templatesPath)) {
     try {
-      const templates = JSON.parse(fs.readFileSync(templatesPath, 'utf8'));
-      success(`${Object.keys(templates).length} nonheroic templates found`);
+      const templates = readJsonl(templatesPath);
+      success(`${templates.length} nonheroic templates found`);
     } catch (e) {
       error(`Failed to parse nonheroic_templates.json: ${e.message}`);
     }
@@ -214,8 +236,8 @@ function validateNonheroic() {
   // Validate units
   if (fs.existsSync(unitsPath)) {
     try {
-      const units = JSON.parse(fs.readFileSync(unitsPath, 'utf8'));
-      success(`${Object.keys(units).length} nonheroic units found`);
+      const units = readJsonl(unitsPath);
+      success(`${units.length} nonheroic units found`);
     } catch (e) {
       error(`Failed to parse nonheroic_units.json: ${e.message}`);
     }
@@ -255,12 +277,9 @@ function validateExtraSkillUses() {
   // Validate each entry
   let validCount = 0;
   for (const skillUse of data) {
-    if (!skillUse.name) {
-      error('Skill use missing name field');
-      continue;
-    }
-    if (!skillUse.skill) {
-      error(`Skill use "${skillUse.name}" missing skill field`);
+    // Records describe an "application" with DC/time/effect; skill is optional.
+    if (!skillUse.application) {
+      error('Skill use missing application field');
       continue;
     }
     validCount++;
