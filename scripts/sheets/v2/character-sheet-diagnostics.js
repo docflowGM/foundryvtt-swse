@@ -10,6 +10,14 @@
  *   SWSE_SHEET_DIAG.printLastReport()        // Print stored report
  */
 
+// Perf gate: expensive DOM diagnostics run only when a debug setting is enabled.
+function _swseDiagnosticsEnabled() {
+  try {
+    return game?.settings?.get?.('foundryvtt-swse', 'debugMode') === true
+      || game?.settings?.get?.('foundryvtt-swse', 'postRenderDiagnostics') === true;
+  } catch { return false; }
+}
+
 class CharacterSheetDiagnostics {
   constructor() {
     this.lastReport = null;
@@ -329,6 +337,7 @@ class CharacterSheetDiagnostics {
    * @param {Application} app - Optional app instance (if not provided, will look up)
    */
   snapshot(label = '', app = null) {
+    if (!_swseDiagnosticsEnabled()) return null;
     // If app not provided, try to look it up
     if (!app) {
       app = this.getSheetInstance();
@@ -534,6 +543,7 @@ class CharacterSheetDiagnostics {
    * @param {Application} app - Optional app instance (if not provided, will look up)
    */
   inspectHeightChain(app = null) {
+    if (!_swseDiagnosticsEnabled()) return null;
     if (!app) {
       app = this.getSheetInstance();
     }
@@ -584,6 +594,7 @@ class CharacterSheetDiagnostics {
    * @param {Application} app - Optional app instance (if not provided, will look up)
    */
   listOverflowingElements(app = null) {
+    if (!_swseDiagnosticsEnabled()) return null;
     if (!app) {
       app = this.getSheetInstance();
     }
@@ -622,6 +633,7 @@ class CharacterSheetDiagnostics {
    * @param {Application} app - Optional app instance (if not provided, will look up)
    */
   inspectAppState(app = null) {
+    if (!_swseDiagnosticsEnabled()) return null;
     if (!app) {
       app = this.getSheetInstance();
     }

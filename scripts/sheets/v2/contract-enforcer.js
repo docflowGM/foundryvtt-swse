@@ -20,6 +20,14 @@
 
 import { SentinelEngine } from "/systems/foundryvtt-swse/scripts/governance/sentinel/sentinel-core.js";
 
+// Perf gate: contract-enforcement DOM inspection runs only when a debug setting is on.
+function _swseDiagnosticsEnabled() {
+  try {
+    return game?.settings?.get?.('foundryvtt-swse', 'debugMode') === true
+      || game?.settings?.get?.('foundryvtt-swse', 'postRenderDiagnostics') === true;
+  } catch { return false; }
+}
+
 export class CharacterSheetContractEnforcer {
   static #violationCounts = new Map();
   static #layerInitialized = false;
@@ -483,6 +491,7 @@ export class CharacterSheetContractEnforcer {
    * Reports comprehensive summary to Sentinel
    */
   static validateAndReport(element) {
+    if (!_swseDiagnosticsEnabled()) return;
     const result = this.validate(element);
 
     // Log to console for immediate visibility
@@ -900,6 +909,7 @@ export class CharacterSheetContractEnforcer {
    * Call this to see exactly which elements are scrollable and why
    */
   static debugScrollOwners(element) {
+    if (!_swseDiagnosticsEnabled()) return;
     // console.log('\n╔════════════════════════════════════════════════════════════════╗');
     // console.log('║   DEBUG: REAL SHEET-LEVEL VERTICAL SCROLL OWNERS (REFINED)    ║');
     // console.log('╚════════════════════════════════════════════════════════════════╝\n');
@@ -971,6 +981,7 @@ export class CharacterSheetContractEnforcer {
    * DEBUG: Print the one remaining inner panel scroller
    */
   static debugIllegalPanelScrollers(element) {
+    if (!_swseDiagnosticsEnabled()) return;
     // console.log('\n╔════════════════════════════════════════════════════════════════╗');
     // console.log('║      DEBUG: ILLEGAL INNER PANEL SCROLLERS                      ║');
     // console.log('╚════════════════════════════════════════════════════════════════╝\n');
@@ -1005,6 +1016,7 @@ export class CharacterSheetContractEnforcer {
    * DEBUG: Check why .window-content min-height is not 0
    */
   static debugWindowContentMinHeight(element) {
+    if (!_swseDiagnosticsEnabled()) return;
     // console.log('\n╔════════════════════════════════════════════════════════════════╗');
     // console.log('║      DEBUG: .WINDOW-CONTENT MIN-HEIGHT ISSUE                   ║');
     // console.log('╚════════════════════════════════════════════════════════════════╝\n');
@@ -1044,6 +1056,7 @@ export class CharacterSheetContractEnforcer {
    * Identifies where the height constraint is lost
    */
   static debugHeightChain(element) {
+    if (!_swseDiagnosticsEnabled()) return;
     // console.log('\n╔════════════════════════════════════════════════════════════════╗');
     // console.log('║              DEBUG: HEIGHT CONSTRAINT CHAIN AUDIT               ║');
     // console.log('╚════════════════════════════════════════════════════════════════╝\n');

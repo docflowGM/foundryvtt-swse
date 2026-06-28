@@ -933,7 +933,15 @@ function getFieldType(fieldName) {
  * This catches hydration bugs before they reach the template layer.
  * Also reports violations to Sentinel for system-wide tracking.
  */
+function _swseDiagnosticsEnabled() {
+  try {
+    return game?.settings?.get?.('foundryvtt-swse', 'debugMode') === true
+      || game?.settings?.get?.('foundryvtt-swse', 'postRenderDiagnostics') === true;
+  } catch { return false; }
+}
+
 function validateContextContract(context, sheetName) {
+  if (!_swseDiagnosticsEnabled()) return;
   const requiredKeys = [
     'equipment', 'armor', 'weapons',           // Inventory spread
     'followerSlots', 'followerTalentBadges',  // Follower context
@@ -4731,7 +4739,7 @@ const forcePoints = [];
       ev.preventDefault();
       ev.stopPropagation();
       try {
-        const created = await this.actor.createEmbeddedDocuments('Item', [{
+        const created = await ActorEngine.createEmbeddedDocuments(this.actor, 'Item', [{
           name: 'New Attack',
           type: 'weapon',
           system: {}

@@ -7,6 +7,14 @@
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
+// Perf gate: context serializability check (structuredClone) runs only in debug.
+function _swseDiagnosticsEnabled() {
+  try {
+    return game?.settings?.get?.('foundryvtt-swse', 'debugMode') === true
+      || game?.settings?.get?.('foundryvtt-swse', 'postRenderDiagnostics') === true;
+  } catch { return false; }
+}
+
 export class RenderAssertions {
   /**
    * Verify sheet render completed successfully
@@ -160,6 +168,7 @@ export class RenderAssertions {
    * Assert context is serializable (AppV2 requirement)
    */
   static assertContextSerializable(context, componentName) {
+    if (!_swseDiagnosticsEnabled()) return true;
     try {
       structuredClone(context);
       swseLogger.debug(`✓ [${componentName}] Context is serializable`);

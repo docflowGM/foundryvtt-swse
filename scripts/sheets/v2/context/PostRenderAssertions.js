@@ -217,7 +217,9 @@ export class PostRenderAssertions {
 
   static runAll(html, context, visiblePanels = null) {
     const diagnostics = this._diagnosticsEnabled();
-    if (diagnostics) console.groupCollapsed?.('[PostRender] Registry-Driven Panel DOM Assertions');
+    // Perf: skip all post-render DOM assertion work during normal play.
+    if (!diagnostics) return;
+    console.groupCollapsed?.('[PostRender] Registry-Driven Panel DOM Assertions');
 
     try {
       const shellSurface = context?.shellSurface ?? context?.shell?.surface ?? null;
