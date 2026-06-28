@@ -618,6 +618,18 @@ export class TransactionEngine {
       return { success: false, transactionId: transferId, error };
     }
 
+    // Capture pre-transfer snapshots so both actors can be restored if a leg
+    // fails and the compensating refund cannot complete (two-actor atomicity).
+    let fromSnapshot = null;
+    let toSnapshot = null;
+    try {
+      const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+      fromSnapshot = await SnapshotManager.createSnapshot(fromActor, `${transactionContext} sender before transfer ${transferId}`);
+      toSnapshot = await SnapshotManager.createSnapshot(toActor, `${transactionContext} recipient before transfer ${transferId}`);
+    } catch (snapErr) {
+      swseLogger.warn('[TransactionEngine.creditTransfer] snapshot failed; falling back to compensating-refund rollback only', { ...logContext, error: snapErr.message });
+    }
+
     swseLogger.debug('[TransactionEngine.creditTransfer] debit leg starting', logContext);
     const debit = await this.executeCreditAdjustment({
       actor: fromActor,
@@ -684,6 +696,18 @@ export class TransactionEngine {
           refundTransactionId: refund.transactionId,
           error: refund.error
         });
+        // Last-resort: restore both actors to their pre-transfer state so the
+        // sender is not left debited when the compensating refund also failed.
+        try {
+          if (fromSnapshot || toSnapshot) {
+            const { SnapshotManager } = await import('/systems/foundryvtt-swse/scripts/engine/progression/utils/snapshot-manager.js');
+            if (fromSnapshot) await SnapshotManager.restoreSnapshot(fromActor, fromSnapshot.timestamp ?? fromSnapshot);
+            if (toSnapshot) await SnapshotManager.restoreSnapshot(toActor, toSnapshot.timestamp ?? toSnapshot);
+            swseLogger.warn('[TransactionEngine.creditTransfer] restored both actors from snapshot after refund failure', logContext);
+          }
+        } catch (restoreErr) {
+          swseLogger.error('[TransactionEngine.creditTransfer] snapshot restore FAILED after refund failure; manual reconciliation required', { ...logContext, error: restoreErr.message });
+        }
       } else {
         swseLogger.warn('[TransactionEngine.creditTransfer] debit refunded after credit leg failure', {
           ...logContext,

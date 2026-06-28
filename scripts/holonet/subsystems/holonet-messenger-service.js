@@ -4756,6 +4756,10 @@ export class HolonetMessengerService {
       case 'gm-mark-trade-reconciled':
       case 'gm-archive-trade':
       case 'gm-unarchive-trade': {
+        // GM-only override actions: gate at the router (defense in depth) in
+        // addition to the downstream check. isGm is derived only from the
+        // looked-up requesting user.
+        if (!isGm) return false;
         await this._gmOverrideTradeConsoleState({ thread, recordId, action, memo, requesterId, senderRecipientId, requestId });
         break;
       }
@@ -4814,10 +4818,12 @@ export class HolonetMessengerService {
         break;
       }
       case 'charge-party-fund': {
+        if (!isGm) return false; // GM-only: gate at router in addition to callee
         await this._gmChargePartyFund({ thread, amount, requesterId, senderRecipientId });
         break;
       }
       case 'pay-from-party-fund': {
+        if (!isGm) return false; // GM-only: gate at router in addition to callee
         await this._gmPayFromPartyFund({ thread, amount, recipientId, requesterId, senderRecipientId });
         break;
       }
@@ -5484,7 +5490,9 @@ export class HolonetMessengerService {
   }
 
   static async _gmOverrideTradeConsoleState({ thread, recordId, action, memo = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
-    if (!recordId || !game.user?.isGM && !(requesterId && game.users?.get(requesterId)?.isGM) && !senderRecipientId?.startsWith('gm:')) return false;
+    // GM authority is derived only from the looked-up requesting user — never
+    // from the client-supplied senderRecipientId 'gm:' prefix.
+    if (!recordId || !HolonetMessengerService._isRequesterGm(requesterId)) return false;
     const message = await HolonetStorage.getRecord(recordId);
     const trade = this._getTradeTransferFromMessage(message);
     if (!message || !trade?.transfer) return false;

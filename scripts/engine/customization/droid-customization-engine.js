@@ -26,6 +26,7 @@ import { DROID_SYSTEMS } from '/systems/foundryvtt-swse/scripts/data/droid-syste
 import { computeDroidPartCost, getAllDroidPartDefinitions, getDroidCostFactor, hydrateDroidPart, normalizeDroidPartId } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { LedgerService } from '/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js';
+import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
 
 
 function asArray(value) {
@@ -302,21 +303,35 @@ export class DroidCustomizationEngine {
         this.#applyAdditionToDroidSystems(actor, droidSystems, systemDef);
       }
 
-      // Build mutation plan
-      const creditDelta = LedgerService.buildCreditDelta(actor, preview.preview.netCost);
-
-      // MUTATION AUTHORITY: ActorEngine is the sole path for committing state changes
-      // This is the only point where droid/actor data is written
-      // UI must never bypass this through direct update() calls
-      const mutationPlan = {
-        set: {
-          ...creditDelta.set,
-          'system.installedSystems': installedSystems,
-          'system.droidSystems': droidSystems
+      // Route credit movement + asset mutation through TransactionEngine so the
+      // customization is atomic AND recorded in the credit audit trail. Wallet and
+      // asset are the same droid actor; the transaction merges both legs into one
+      // snapshotted mutation and rolls back on failure.
+      const netCost = Number(preview.preview.netCost) || 0;
+      const txn = await TransactionEngine.executeAssetCustomizationTransaction({
+        actor,
+        assetActor: actor,
+        assetMutationPlan: {
+          set: {
+            'system.installedSystems': installedSystems,
+            'system.droidSystems': droidSystems
+          }
+        },
+        cost: Math.max(0, netCost),
+        resaleCredit: Math.max(0, -netCost),
+        transactionContext: 'owned-customization',
+        reason: 'Droid customization',
+        audit: {
+          source: 'droid-customization',
+          systemsAdded: preview.preview.systemsAdded,
+          systemsRemoved: preview.preview.systemsRemoved,
+          assetActorId: actor.id
         }
-      };
+      }, { source: 'DroidCustomizationEngine.applyDroidCustomization', validate: true, rederive: true });
 
-      await ActorEngine.applyMutationPlan(actor, mutationPlan);
+      if (!txn?.success) {
+        return { success: false, error: txn?.error ?? 'Customization transaction failed' };
+      }
 
       return {
         success: true,
