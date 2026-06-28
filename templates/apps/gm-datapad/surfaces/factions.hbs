@@ -29,14 +29,23 @@
         <form class="gm-faction-registry-form" data-gm-faction-registry-form>
           <input type="hidden" name="id" value="{{this.id}}">
           <div class="gm-faction-card-command gm-faction-card-shell">
-            <div class="gm-faction-card-title-block">
-              <span class="gm-command-eyebrow">Faction Dossier</span>
-              <h4>{{this.name}}</h4>
-              <div class="gm-faction-meta-strip">
-                <span>{{this.type}}</span>
-                <span>Scale {{this.scale}}</span>
-                {{#if this.planetSystem}}<span>{{this.planetSystem}}</span>{{/if}}
-                {{#if this.leader}}<span>Leader: {{this.leader}}</span>{{/if}}
+            <div class="gm-faction-card-ident">
+              <div class="gm-faction-emblem {{#unless this.image}}is-empty{{/unless}}" aria-label="Faction image for {{this.name}}">
+                {{#if this.image}}
+                  <img src="{{this.image}}" alt="{{this.name}} emblem">
+                {{else}}
+                  <i class="fa-solid fa-flag-swallowtail" aria-hidden="true"></i>
+                {{/if}}
+              </div>
+              <div class="gm-faction-card-title-block">
+                <span class="gm-command-eyebrow">Faction Dossier</span>
+                <h4>{{this.name}}</h4>
+                <div class="gm-faction-meta-strip">
+                  <span>{{this.type}}</span>
+                  <span>Scale {{this.scale}}</span>
+                  {{#if this.planetSystem}}<span>{{this.planetSystem}}</span>{{/if}}
+                  {{#if this.leader}}<span>Leader: {{this.leader}}</span>{{/if}}
+                </div>
               </div>
             </div>
             <div class="gm-faction-command-side">
@@ -101,6 +110,9 @@
               <label>Score<input type="number" name="score" step="1" value="{{this.score}}"></label>
               <label>Starting Score<input type="number" name="startingScore" step="1" value="{{this.startingScore}}"></label>
               <label>Leader<input type="text" name="leader" value="{{this.leader}}"></label>
+              <label class="gm-faction-image-field is-wide">Faction Image / Sigil<input type="text" name="image" value="{{this.image}}" placeholder="Drop an image file/path, actor portrait, or paste an image URL" data-smart-image-input="true" data-gm-faction-image-input>
+                <span class="gm-faction-image-preview {{#unless this.image}}is-empty{{/unless}}" aria-hidden="true">{{#if this.image}}<img src="{{this.image}}" alt="">{{else}}<i class="fa-solid fa-image"></i>{{/if}}</span>
+              </label>
               <label>Source<select name="source">{{#each ../factionManager.sourceTypes}}<option value="{{this.value}}" {{#if (eq this.value ../source)}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
               <label>Status<input type="text" name="status" value="{{this.status}}"></label>
               <label class="is-wide">Benefits<textarea name="benefits" rows="2">{{this.benefits}}</textarea></label>
@@ -151,7 +163,7 @@
           {{/if}}
           <div class="gm-faction-contact-list">
             {{#each this.contacts}}
-            <article class="gm-faction-contact-card {{#if this.isFocused}}is-focused{{/if}}" data-search="{{this.searchText}}" data-swse-drag-kind="contact" data-swse-drag-id="{{this.id}}" data-swse-drag-contact-id="{{this.id}}" data-swse-drag-faction-id="{{../id}}" data-swse-drag-name="{{this.name}}" data-swse-drag-uuid="{{this.actorUuid}}" data-swse-drag-source="factions">
+            <article class="gm-faction-contact-card {{#if this.isFocused}}is-focused{{/if}}" data-search="{{this.searchText}}" data-swse-drag-kind="contact" data-swse-drag-id="{{this.id}}" data-swse-drag-contact-id="{{this.id}}" data-swse-drag-faction-id="{{../id}}" data-swse-drag-name="{{this.name}}" data-swse-drag-uuid="{{this.actorUuid}}" data-swse-drag-source="factions" title="Drag this contact to the Actors sidebar to create/link a barebones NPC actor, or onto the canvas to create a linked token.">
               <div class="gm-faction-contact-summary">
                 <span class="gm-command-eyebrow">NPC Dossier</span>
                 <strong>{{this.name}}</strong>
@@ -169,7 +181,7 @@
                 {{#if this.gmNotes}}<p class="gm-dossier-contact-note is-gm"><strong>GM:</strong> {{this.gmNotes}}</p>{{/if}}
                 {{#if this.secret}}<p class="gm-dossier-contact-note is-secret"><strong>Secret:</strong> {{this.secret}}</p>{{/if}}
                 {{#if this.hasLinkedIntel}}<small class="gm-dossier-contact-line"><i class="fa-solid fa-file-shield"></i> Linked Intel IDs: {{this.linkedIntelIdsLabel}}</small>{{/if}}
-                {{#if this.hasActorLink}}<small class="gm-faction-contact-actor">Linked Actor: {{this.actorLinkLabel}}</small>{{else}}<small class="gm-faction-contact-actor muted">Lightweight contact · no actor created</small>{{/if}}
+                {{#if this.hasActorLink}}<small class="gm-faction-contact-actor">Linked Actor: {{this.actorLinkLabel}}</small>{{else}}<small class="gm-faction-contact-actor muted">Lightweight contact · no actor created · drag to Actors sidebar to actorize</small>{{/if}}
                 <div class="gm-faction-job-stats mini">
                   <span>Jobs: <strong>{{this.jobStats.total}}</strong></span>
                   <span>Open: <strong>{{this.jobStats.open}}</strong></span>
@@ -394,6 +406,11 @@
             <div class="gm-wizard-grid two"><label>Faction Name<input type="text" name="name" placeholder="Republic Remnant / Black Sun / CorSec" required></label><label>Type<input type="text" name="type" placeholder="Government, syndicate, guild..."></label></div>
             <div class="gm-wizard-grid three"><label>Planet<input type="text" name="planet" placeholder="Coruscant"></label><label>System / Region<input type="text" name="system" placeholder="Core Worlds"></label><label>Scale<input type="number" name="scale" min="1" max="20" value="3"></label></div>
             <div class="gm-wizard-grid two"><label>Leader / Public Face<input type="text" name="leader" placeholder="Director Vex, Unknown"></label><label>Starting Score<input type="number" name="score" step="1" value="0" class="gm-wizard-score-input"></label></div>
+            <label class="gm-faction-image-field gm-faction-wizard-image-field">Faction Image / Sigil
+              <input type="text" name="image" placeholder="Drop an image file/path, actor portrait, or paste an image URL" data-smart-image-input="true" data-gm-faction-image-input>
+              <span class="gm-faction-image-preview is-empty" aria-hidden="true"><i class="fa-solid fa-image"></i></span>
+              <small>Optional. Drag an image file onto this field to upload it, drag an existing image path, or drop an Actor/compendium Actor to use that portrait as the faction emblem.</small>
+            </label>
           </div>
           <div class="gm-wizard-card"><span class="gm-command-eyebrow">PRIMARY RELATIONSHIP TYPE</span>
             <select name="relationshipType">{{#each factionManager.relationshipTypes}}<option value="{{this.value}}">{{this.label}}</option>{{/each}}</select>

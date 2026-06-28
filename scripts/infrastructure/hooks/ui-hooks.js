@@ -23,6 +23,7 @@ import registerStoreSheetHooks from "/systems/foundryvtt-swse/scripts/infrastruc
 import registerMentorSheetHooks from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/mentor-sheet-hooks.js";
 import registerActorSidebarControls from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/actor-sidebar-controls.js";
 import registerCustomRollSidebarControl from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/custom-roll-sidebar-control.js";
+import registerGMContactCanvasDropHooks from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/gm-contact-canvas-drop-hooks.js";
 import { registerChatInteractionBridge } from "/systems/foundryvtt-swse/scripts/ui/chat/chat-interaction-bridge.js";
 import { registerHolonetChatCards } from "/systems/foundryvtt-swse/scripts/chat/holonet-chat-card.js";
 import { registerStoreReceiptChatCards } from "/systems/foundryvtt-swse/scripts/chat/store-receipt-chat.js";
@@ -66,6 +67,7 @@ export function registerUIHooks() {
 
     // Actor sidebar controls (Chargen, Store, Templates)
     registerActorSidebarControls();
+    registerGMContactCanvasDropHooks();
 
     // Chat sidebar custom roll launcher
     registerCustomRollSidebarControl();

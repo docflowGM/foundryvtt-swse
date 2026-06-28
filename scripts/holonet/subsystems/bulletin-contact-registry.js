@@ -79,6 +79,10 @@ function normalizeContact(raw = {}) {
     sector: cleanString(raw.sector),
     defaultCategory: cleanString(raw.defaultCategory || raw.category, 'general'),
     notes: cleanString(raw.notes),
+    actorId: cleanString(raw.actorId),
+    actorUuid: cleanString(raw.actorUuid),
+    actorName: cleanString(raw.actorName),
+    promotedAt: raw.promotedAt || null,
     system: raw.system === true,
     createdAt: raw.createdAt || now,
     updatedAt: raw.updatedAt || now,
@@ -166,7 +170,10 @@ export class BulletinContactRegistry {
       ...normalized,
       kindLabel: normalized.kind.replace(/\b\w/g, (letter) => letter.toUpperCase()),
       imageLabel: normalized.imageUrl ? 'Image set' : 'No image',
-      lastUsedLabel: normalized.lastUsedAt ? new Date(normalized.lastUsedAt).toLocaleString() : 'Never used'
+      lastUsedLabel: normalized.lastUsedAt ? new Date(normalized.lastUsedAt).toLocaleString() : 'Never used',
+      hasActorLink: Boolean(normalized.actorUuid || normalized.actorId),
+      actorLinkLabel: normalized.actorName || normalized.actorUuid || normalized.actorId || '',
+      promotedLabel: normalized.promotedAt ? new Date(normalized.promotedAt).toLocaleString() : ''
     };
   }
 }

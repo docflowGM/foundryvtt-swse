@@ -1,133 +1,61 @@
-{{!-- GM Datapad jobs surface — command tabs + contract wizard overlay. --}}
-<div class="gm-datapad-page gm-datapad-jobs gm-phase2-page gm-phase9-jobs gm-phase3-jobs gm-v2-surface gm-v2-surface--jobs" data-shell-surface="jobs" data-gm-wizard-scope="jobs" data-job-board-tabs>
-  <div class="page-header job-board-header gm-phase2-header">
+{{!-- GM Datapad jobs surface — focused command tabs + contract wizard overlay. --}}
+<div class="gm-datapad-page gm-datapad-jobs gm-phase2-page gm-phase9-jobs gm-phase3-jobs gm-v2-surface gm-v2-surface--jobs gm-jobboard-tabs-v8 gm-jobboard-workspaces-v9" data-shell-surface="jobs" data-gm-wizard-scope="jobs" data-job-board-tabs>
+  <div class="page-header job-board-header gm-phase2-header gm-jobboard-v8-header">
     <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
     <div class="gm-app-header-copy">
       <span class="gm-command-eyebrow">HOLONET CONTRACT EXCHANGE</span>
       <h2>Job Board</h2>
-      <p>Mission pipeline, objective review, and settlement control.</p>
+      <p>Mission pipeline, objective review, settlement, contacts, and archive are split into focused command tabs.</p>
     </div>
-    <div class="job-board-header-actions gm-phase2-header-actions gm-phase3-job-header-actions">
-      <span class="job-board-chip attention">{{jobBoard.stats.review}} Review</span>
-      <span class="job-board-chip payout">{{jobBoard.stats.payout}} Payout</span>
+    <div class="job-board-header-actions gm-phase2-header-actions gm-phase3-job-header-actions gm-jobboard-v8-header-actions">
+      {{#if jobBoard.stats.review}}<span class="job-board-chip attention">{{jobBoard.stats.review}} Review</span>{{/if}}
+      {{#if jobBoard.stats.payout}}<span class="job-board-chip payout">{{jobBoard.stats.payout}} Payout</span>{{/if}}
       <button type="button" class="swse-ui-button primary gm-phase2-primary" data-gm-wizard-open="contract" data-clear-job-prefill="true">
         <i class="fa-solid fa-plus"></i> New Contract
       </button>
     </div>
   </div>
 
-  {{#if jobBoard.creation.hasSavedContacts}}
-  <section class="gm-job-saved-contacts-strip swse-ui-panel" aria-label="Saved Job Board contacts">
-    <div class="gm-job-saved-contacts-strip-head">
-      <div>
-        <span class="gm-command-eyebrow">SAVED CONTACTS</span>
-        <strong>{{jobBoard.creation.savedContacts.length}} reusable issuer{{#unless (eq jobBoard.creation.savedContacts.length 1)}}s{{/unless}}</strong>
-        <p>Pick a saved client/NPC profile to start a contract without retyping issuer details.</p>
-      </div>
-      <button type="button" class="swse-ui-button" data-job-manage-saved-contacts><i class="fa-solid fa-address-book"></i> Manage in Dossier</button>
+  <section class="gm-jobboard-v8-command-bar swse-ui-panel" aria-label="Job board command overview">
+    <div class="gm-jobboard-v8-command-copy">
+      <span class="gm-command-eyebrow">COMMAND CENTER</span>
+      <strong>{{jobBoard.stats.total}} contract{{#unless (eq jobBoard.stats.total 1)}}s{{/unless}} tracked</strong>
+      <p>Use the tabs below to reduce clutter: board work, dossiers, reviews, payouts, contacts, archive, and drafts each get their own space.</p>
     </div>
-    <div class="gm-job-saved-contact-row compact">
-      {{#each jobBoard.creation.savedContacts}}
-      <button type="button" class="gm-job-saved-contact-card {{this.tone}}" data-job-saved-contact-open="{{this.key}}">
-        <span class="gm-job-saved-contact-avatar">
-          {{#if this.hasImage}}<img src="{{this.image}}" alt="">{{else}}<i class="fa-solid fa-user-secret"></i>{{/if}}
-        </span>
-        <span class="gm-job-saved-contact-copy">
-          <strong>{{this.label}}</strong>
-          <em>{{#if this.role}}{{this.role}}{{else}}{{this.group}}{{/if}}</em>
-        </span>
-      </button>
-      {{/each}}
+    <div class="gm-jobboard-v8-kpis" aria-label="Job board counts">
+      <span class="gm-jobboard-v8-kpi"><strong>{{jobBoard.stats.open}}</strong><em>Open</em></span>
+      <span class="gm-jobboard-v8-kpi"><strong>{{jobBoard.stats.active}}</strong><em>Active</em></span>
+      <span class="gm-jobboard-v8-kpi attention"><strong>{{jobBoard.stats.review}}</strong><em>Review</em></span>
+      <span class="gm-jobboard-v8-kpi payout"><strong>{{jobBoard.stats.payout}}</strong><em>Payout</em></span>
+      <span class="gm-jobboard-v8-kpi muted"><strong>{{jobBoard.stats.archived}}</strong><em>Archive</em></span>
     </div>
   </section>
-  {{/if}}
-
-  <section class="gm-job-draft-recovery swse-ui-panel" data-job-draft-recovery hidden>
-    <div>
-      <span class="gm-command-eyebrow">RECOVERABLE CONTRACT DRAFT</span>
-      <strong>Unconfirmed job draft saved locally</strong>
-      <p>Last autosave: <span data-job-draft-time>unknown</span>. Continue where you left off or discard it.</p>
-    </div>
-    <div class="gm-faction-row-actions">
-      <button type="button" class="swse-ui-button primary" data-job-draft-restore>Continue Draft</button>
-      <button type="button" class="swse-ui-button danger" data-job-draft-discard>Discard Draft</button>
-    </div>
-  </section>
-
-  <div class="job-board-metrics gm-phase2-metrics gm-phase9-metrics gm-phase3-job-metrics" aria-label="Job board status">
-    <span class="gm-phase9-metric"><strong>{{jobBoard.stats.total}}</strong>Total</span>
-    <span class="gm-phase9-metric"><strong>{{jobBoard.stats.open}}</strong>Open</span>
-    <span class="gm-phase9-metric"><strong>{{jobBoard.stats.active}}</strong>Active</span>
-    <span class="gm-phase9-metric attention"><strong>{{jobBoard.stats.review}}</strong>Review</span>
-    <span class="gm-phase9-metric payout"><strong>{{jobBoard.stats.payout}}</strong>Ready to Pay</span>
-    <span class="gm-phase9-metric muted"><strong>{{jobBoard.stats.archived}}</strong>Archived</span>
-  </div>
 
   {{#if jobBoard.hasIssuerFilter}}
-  <section class="gm-job-issuer-filter-banner swse-ui-panel" aria-label="Active job board issuer filter">
-    <div>
-      <span class="gm-command-eyebrow">ISSUER FILTER ACTIVE</span>
-      <strong>{{jobBoard.issuerFilter.label}}</strong>
-      <p>Showing {{jobBoard.stats.total}} of {{jobBoard.stats.unfilteredTotal}} contract{{#unless (eq jobBoard.stats.unfilteredTotal 1)}}s{{/unless}}. {{jobBoard.stats.hiddenByFilter}} hidden by this faction/contact filter.</p>
-    </div>
-    <div class="gm-faction-row-actions">
-      <button type="button" class="swse-ui-button" data-job-filter-clear>Show All Jobs</button>
-      <button type="button" class="swse-ui-button primary" data-gm-wizard-open="contract">New Contract From This Issuer</button>
+  <section class="gm-job-tab-panel gm-jobboard-v8-alert-panel" data-job-tab-panel="issuer" aria-label="Active job board issuer filter">
+    <div class="gm-jobboard-v8-filter-card swse-ui-panel">
+      <div>
+        <span class="gm-command-eyebrow">ISSUER FILTER ACTIVE</span>
+        <strong>{{jobBoard.issuerFilter.label}}</strong>
+        <p>Showing {{jobBoard.stats.total}} of {{jobBoard.stats.unfilteredTotal}} contract{{#unless (eq jobBoard.stats.unfilteredTotal 1)}}s{{/unless}}. {{jobBoard.stats.hiddenByFilter}} hidden by this faction/contact filter.</p>
+      </div>
+      <div class="gm-faction-row-actions">
+        <button type="button" class="swse-ui-button" data-job-filter-clear>Show All Jobs</button>
+        <button type="button" class="swse-ui-button primary" data-gm-wizard-open="contract">New Contract From This Issuer</button>
+      </div>
     </div>
   </section>
   {{/if}}
 
-  <section class="gm-phase9-job-ops-strip gm-phase3-job-ops-strip swse-ui-panel" aria-label="Job board operations summary">
-    <div>
-      <span class="gm-command-eyebrow">PIPELINE</span>
-      <strong>{{jobBoard.stats.open}} open / {{jobBoard.stats.active}} active</strong>
-      <p>Track contract lifecycle without mixing review and payout controls into the board.</p>
-    </div>
-    <div>
-      <span class="gm-command-eyebrow">REVIEW</span>
-      <strong>{{jobBoard.stats.review}} objective review{{#unless (eq jobBoard.stats.review 1)}}s{{/unless}}</strong>
-      <p>Claims awaiting GM review before settlement.</p>
-    </div>
-    <div>
-      <span class="gm-command-eyebrow">SETTLEMENT</span>
-      <strong>{{jobBoard.stats.payout}} ready to pay</strong>
-      <p>Credits, XP, items, and shared assets are handled in the Settlement tab.</p>
-    </div>
-  </section>
-
-  <section class="gm-job-lifecycle-shelves swse-ui-panel" aria-label="Contract lifecycle shelves">
-    <div class="gm-job-lifecycle-shelves-head">
-      <span class="gm-command-eyebrow">LIFECYCLE SHELVES</span>
-      <strong>Simple board, structured mission state underneath</strong>
-      <p>Current, Drafts, and Archived are computed from each job's status so archive/restore and payout flows remain recoverable.</p>
-    </div>
-    <div class="gm-job-lifecycle-shelf-row">
-      {{#each jobBoard.shelves}}
-      <div class="gm-job-lifecycle-shelf-card {{this.id}}">
-        <span>{{this.label}}</span>
-        <strong>{{this.count}}</strong>
-        <em>{{this.hint}}</em>
-      </div>
-      {{/each}}
-    </div>
-  </section>
-
-  <nav class="gm-job-tabbar gm-phase3-job-tabbar swse-ui-panel" aria-label="Job board sections">
-    <button type="button" class="gm-job-tab is-active" data-job-tab-switch="board">
-      <span>Pipeline</span><em>{{jobBoard.stats.total}}</em>
-    </button>
-    <button type="button" class="gm-job-tab" data-job-tab-switch="dossier">
-      <span>Dossier</span><em>{{#if jobBoard.selectedJob}}1{{else}}0{{/if}}</em>
-    </button>
-    <button type="button" class="gm-job-tab" data-job-tab-switch="review">
-      <span>Review</span><em>{{jobBoard.reviewItems.length}}</em>
-    </button>
-    <button type="button" class="gm-job-tab" data-job-tab-switch="settlement">
-      <span>Settlement</span><em>{{jobBoard.payoutItems.length}}</em>
-    </button>
-    <button type="button" class="gm-job-tab" data-job-tab-switch="archive">
-      <span>Archive</span><em>{{jobBoard.archiveItems.length}}</em>
-    </button>
+  <nav class="gm-job-tabbar gm-phase3-job-tabbar gm-jobboard-v8-tabs swse-ui-panel" aria-label="Job board sections">
+    <button type="button" class="gm-job-tab is-active" data-job-tab-switch="board"><i class="fa-solid fa-table-columns"></i><span>Pipeline</span><em>{{jobBoard.visibleJobCount}}</em></button>
+    <button type="button" class="gm-job-tab" data-job-tab-switch="dossier"><i class="fa-solid fa-folder-open"></i><span>Dossier</span><em>{{#if jobBoard.selectedJob}}1{{else}}0{{/if}}</em></button>
+    <button type="button" class="gm-job-tab" data-job-tab-switch="review"><i class="fa-solid fa-list-check"></i><span>Review</span><em>{{jobBoard.reviewItems.length}}</em></button>
+    <button type="button" class="gm-job-tab" data-job-tab-switch="settlement"><i class="fa-solid fa-coins"></i><span>Settle</span><em>{{#if jobBoard.selectedJob}}1{{else}}0{{/if}}</em></button>
+    <button type="button" class="gm-job-tab" data-job-tab-switch="payout"><i class="fa-solid fa-money-bill-transfer"></i><span>Payout Queue</span><em>{{jobBoard.payoutItems.length}}</em></button>
+    <button type="button" class="gm-job-tab" data-job-tab-switch="contacts"><i class="fa-solid fa-address-book"></i><span>Contacts</span><em>{{jobBoard.creation.savedContacts.length}}</em></button>
+    <button type="button" class="gm-job-tab" data-job-tab-switch="archive"><i class="fa-solid fa-box-archive"></i><span>Archive</span><em>{{jobBoard.archiveItems.length}}</em></button>
+    <button type="button" class="gm-job-tab" data-job-tab-switch="drafts"><i class="fa-solid fa-floppy-disk"></i><span>Drafts</span><em>{{#if jobBoard.creation.openWizard}}1{{else}}0{{/if}}</em></button>
   </nav>
 
   {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/contract-wizard.hbs" }}
@@ -136,6 +64,115 @@
     {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/kanban-and-detail.hbs" }}
     {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/review-payout-queues.hbs" }}
   {{else}}
-    {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/empty-state.hbs" }}
+    <section class="gm-job-tab-panel is-active" data-job-tab-panel="board" aria-label="Empty mission pipeline">
+      {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/jobs/empty-state.hbs" }}
+    </section>
   {{/if}}
+
+  <section class="gm-job-tab-panel" data-job-tab-panel="contacts" aria-label="Saved job contacts">
+    <div class="gm-jobboard-v8-tab-layout gm-jobboard-v8-contacts-layout">
+      <section class="gm-job-saved-contacts-strip swse-ui-panel gm-jobboard-v8-tab-card">
+        <div class="gm-job-saved-contacts-strip-head">
+          <div>
+            <span class="gm-command-eyebrow">SAVED CONTACTS</span>
+            <strong>{{jobBoard.creation.savedContacts.length}} reusable issuer{{#unless (eq jobBoard.creation.savedContacts.length 1)}}s{{/unless}}</strong>
+            <p>Reusable clients and NPC profiles. Pick one to prefill a contract without crowding the main pipeline.</p>
+          </div>
+          <button type="button" class="swse-ui-button primary" data-gm-wizard-open="contract" data-clear-job-prefill="true"><i class="fa-solid fa-plus"></i> Manual Contract</button>
+        </div>
+        <div class="gm-job-saved-contact-row compact gm-jobboard-v8-contact-grid">
+          {{#each jobBoard.creation.savedContacts}}
+          <button type="button" class="gm-job-saved-contact-card {{this.tone}}" data-job-saved-contact-open="{{this.key}}">
+            <span class="gm-job-saved-contact-avatar">
+              {{#if this.hasImage}}<img src="{{this.image}}" alt="">{{else}}<i class="fa-solid fa-user-secret"></i>{{/if}}
+            </span>
+            <span class="gm-job-saved-contact-copy">
+              <strong>{{this.label}}</strong>
+              <em>{{#if this.role}}{{this.role}}{{else}}{{this.group}}{{/if}}</em>
+            </span>
+          </button>
+          {{else}}
+          <p class="placeholder">No saved issuers yet. Save clients from the contract wizard or create a contract from a faction/contact.</p>
+          {{/each}}
+        </div>
+      </section>
+
+      {{#if jobBoard.hasIssuerFilter}}
+      <aside class="swse-ui-panel gm-jobboard-v8-tab-card gm-jobboard-v8-side-card">
+        <span class="gm-command-eyebrow">ACTIVE ISSUER FILTER</span>
+        <strong>{{jobBoard.issuerFilter.label}}</strong>
+        <p>{{jobBoard.stats.hiddenByFilter}} contract{{#unless (eq jobBoard.stats.hiddenByFilter 1)}}s{{/unless}} hidden by this filter.</p>
+        <button type="button" class="swse-ui-button" data-job-filter-clear>Show All Jobs</button>
+        <button type="button" class="swse-ui-button primary" data-gm-wizard-open="contract">New From Issuer</button>
+      </aside>
+      {{/if}}
+    </div>
+  </section>
+
+  <section class="gm-job-tab-panel" data-job-tab-panel="archive" aria-label="Archived contracts">
+    <section class="swse-ui-panel gm-jobboard-v8-tab-card gm-jobboard-v8-archive-panel">
+      <div class="job-board-section-header compact">
+        <div>
+          <span class="gm-command-eyebrow">ARCHIVE</span>
+          <h3>Paid, Archived, and Failed Contracts</h3>
+          <p>Closed work is separated from the live pipeline so the board stays readable.</p>
+        </div>
+        <span class="job-board-chip muted">{{jobBoard.archiveItems.length}}</span>
+      </div>
+      <div class="gm-jobboard-v8-archive-grid">
+        {{#each jobBoard.archiveItems}}
+        <article class="job-board-card jb-card {{this.statusTone}}" style="--jb-progress: {{this.progressPercent}}%;">
+          <div class="jb-card-top">
+            <div class="jb-card-poster">
+              <span class="jb-card-avatar">◆</span>
+              <span class="jb-card-poster-copy"><span class="pn">{{this.clientLabel}}</span><span class="po">{{this.statusLabel}}</span></span>
+            </div>
+            <span class="job-board-chip {{this.statusTone}}">{{this.statusLabel}}</span>
+          </div>
+          <strong class="jb-card-title">{{this.title}}</strong>
+          <p class="jb-card-brief">{{#if this.briefingBody}}{{this.briefingBody}}{{else}}No archived briefing text recorded.{{/if}}</p>
+          <div class="jb-card-foot">
+            <div class="jb-reward-inline"><span class="cr swse-signed swse-signed--positive">{{this.rewards.payableCreditsLabel}}</span><span class="xp">{{this.rewards.payableXpLabel}}</span></div>
+            <button type="button" class="swse-ui-button" data-job-select="{{this.threadId}}" data-job-tab-switch="dossier">Inspect</button>
+          </div>
+        </article>
+        {{else}}
+        <p class="placeholder">No paid, archived, or failed contracts yet.</p>
+        {{/each}}
+      </div>
+    </section>
+  </section>
+
+  <section class="gm-job-tab-panel" data-job-tab-panel="drafts" aria-label="Job drafts and lifecycle shelves">
+    <div class="gm-jobboard-v8-tab-layout">
+      <section class="gm-job-draft-recovery swse-ui-panel gm-jobboard-v8-tab-card" data-job-draft-recovery hidden>
+        <div>
+          <span class="gm-command-eyebrow">RECOVERABLE CONTRACT DRAFT</span>
+          <strong>Unconfirmed job draft saved locally</strong>
+          <p>Last autosave: <span data-job-draft-time>unknown</span>. Continue where you left off or discard it.</p>
+        </div>
+        <div class="gm-faction-row-actions">
+          <button type="button" class="swse-ui-button primary" data-job-draft-restore>Continue Draft</button>
+          <button type="button" class="swse-ui-button danger" data-job-draft-discard>Discard Draft</button>
+        </div>
+      </section>
+
+      <section class="gm-job-lifecycle-shelves swse-ui-panel gm-jobboard-v8-tab-card" aria-label="Contract lifecycle shelves">
+        <div class="gm-job-lifecycle-shelves-head">
+          <span class="gm-command-eyebrow">LIFECYCLE SHELVES</span>
+          <strong>Current, Drafts, and Archived</strong>
+          <p>Computed from contract status and kept here as a management reference instead of stacked above the board.</p>
+        </div>
+        <div class="gm-job-lifecycle-shelf-row">
+          {{#each jobBoard.shelves}}
+          <div class="gm-job-lifecycle-shelf-card {{this.id}}">
+            <span>{{this.label}}</span>
+            <strong>{{this.count}}</strong>
+            <em>{{this.hint}}</em>
+          </div>
+          {{/each}}
+        </div>
+      </section>
+    </div>
+  </section>
 </div>

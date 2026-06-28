@@ -99,9 +99,9 @@
             </form>
             <div class="bulletin-contact-list">
               {{#each bulletinContacts}}
-              <div class="bulletin-contact-row">
+              <div class="bulletin-contact-row" data-swse-drag-kind="bulletin-contact" data-swse-drag-id="{{this.id}}" data-swse-drag-contact-id="{{this.id}}" data-swse-drag-name="{{this.label}}" data-swse-drag-uuid="{{this.actorUuid}}" data-swse-drag-source="bulletin" title="Drag this contact to the Actors sidebar to create/link a barebones NPC actor, or onto the canvas to create a linked token.">
                 <span><strong>{{this.label}}</strong><em>{{this.kindLabel}} - {{this.defaultCategory}}</em></span>
-                <small>{{this.imageLabel}} - used {{this.useCount}} - last {{this.lastUsedLabel}}</small>
+                <small>{{this.imageLabel}} - used {{this.useCount}} - last {{this.lastUsedLabel}}{{#if this.hasActorLink}} - Actor: {{this.actorLinkLabel}}{{else}} - Drag to Actors sidebar to create NPC{{/if}}</small>
                 <div class="bulletin-contact-actions">
                   <button type="button" class="swse-ui-button" data-action="bulletin-edit-contact" data-contact-id="{{this.id}}">Edit</button>
                   <button type="button" class="swse-ui-button" data-action="bulletin-clone-contact" data-contact-id="{{this.id}}">Clone</button>

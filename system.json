@@ -147,7 +147,21 @@
     "styles/system/atlas-surface.css",
     "styles/system/games-table-unification.css",
     "styles/system/transmission-alchemy-polish.css",
-    "styles/system/concept-parity-hardening.css"
+    "styles/system/concept-parity-hardening.css",
+    "styles/system/holonet-inner-phase1.css",
+    "styles/system/holonet-messenger-phase2.css",
+    "styles/system/holonet-messenger-phase3.css",
+    "styles/system/holonet-jobboard-phase4.css",
+    "styles/system/holonet-jobboard-phase5.css",
+    "styles/system/holonet-phase6-responsive.css",
+    "styles/system/holonet-phase7-lifecycle-intel.css",
+    "styles/system/holonet-gm-jobboard-phase8-tabs.css",
+    "styles/system/holonet-gm-jobboard-phase9-workspaces.css",
+    "styles/system/gm-intel-wizard-phase10.css",
+    "styles/system/gm-wizard-modal-smartdrop-phase11.css",
+    "styles/system/gm-party-manager-modal-phase16.css",
+    "styles/system/gm-datapad-viewport-phase17.css",
+    "styles/system/gm-faction-images-phase20.css"
   ],
   "languages": [
     {

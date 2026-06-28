@@ -578,6 +578,16 @@ export class HolonetDecryptionService {
   static get skillLabels() { return SKILL_LABELS; }
   static get analysisModes() { return ANALYSIS_MODES; }
   static analysisModeOptions() { return analysisModeOptions(); }
+  static skillOptions({ selected = [] } = {}) {
+    const selectedSet = new Set(normalizeSkills(selected));
+    return Object.entries(SKILL_LABELS).map(([value, label]) => ({
+      value,
+      label,
+      icon: SKILL_ICONS[value] || '•',
+      selected: selectedSet.has(value)
+    }));
+  }
+  static defaultSkillsForMode(modeId = 'glyphCipher') { return [...analysisConfig(modeId).defaultSkills]; }
   static modePlaybook(modeId = 'glyphCipher') { return modePlaybook(analysisConfig(modeId).id); }
   static modeTone(modeId = 'glyphCipher') { return modeTone(analysisConfig(modeId).id); }
 

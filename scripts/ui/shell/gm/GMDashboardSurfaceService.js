@@ -7,6 +7,7 @@ import { GMHealingTrigger } from '/systems/foundryvtt-swse/scripts/holonet/subsy
 import { GameSessionStore } from '/systems/foundryvtt-swse/scripts/games/game-session-store.js';
 import { SOURCE_FAMILY, DELIVERY_STATE } from '/systems/foundryvtt-swse/scripts/holonet/contracts/enums.js';
 import { GMHouseRulesSurfaceService } from './GMHouseRulesSurfaceService.js';
+import { GMPartyRosterService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-party-roster-service.js';
 
 function safeNumber(value, fallback = 0) {
   const numeric = Number(value);
@@ -82,7 +83,7 @@ export class GMDashboardSurfaceService {
         id: 'workspace',
         label: 'Owned Actors',
         value: badgeCounts.workspace ?? 0,
-        detail: `${partyStatus.partyActors} player-linked`,
+        detail: `${partyStatus.partyActors} roster member${partyStatus.partyActors === 1 ? '' : 's'}`,
         tone: 'info',
         route: 'workspace'
       }
@@ -262,7 +263,7 @@ export class GMDashboardSurfaceService {
   static async _buildPartyStatus() {
     const partyState = await HolonetStateService.getPartyState();
     const players = game.users?.filter((user) => !user.isGM) ?? [];
-    const partyActors = players.filter((user) => user.character).length;
+    const partyActors = GMPartyRosterService.getPartyActors({ ownedOnly: false }).length;
 
     return {
       players: players.length,

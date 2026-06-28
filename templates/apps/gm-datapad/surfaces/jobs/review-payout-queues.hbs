@@ -28,7 +28,7 @@
   </section>
 </section>
 
-<section class="gm-job-tab-panel" data-job-tab-panel="settlement" aria-label="Payout queue">
+<section class="gm-job-tab-panel" data-job-tab-panel="payout" aria-label="Payout queue">
   <section class="swse-ui-panel job-queue-panel gm-job-payout-queue-panel">
     <div class="job-board-section-header compact">
       <div>
@@ -43,7 +43,7 @@
         <span class="job-board-chip payout">Ready</span>
         <strong>{{this.title}}</strong>
         <p>{{this.rewards.payableCreditsLabel}} - {{this.rewards.payableXpLabel}}</p>
-        <button type="button" class="swse-ui-button" data-job-select="{{this.threadId}}" data-job-tab-switch="settlement">Distribute Rewards</button>
+        <button type="button" class="swse-ui-button" data-job-select="{{this.threadId}}" data-job-tab-switch="settlement">Settle Selected</button>
       </article>
       {{else}}
       <p class="placeholder">No completed contracts are waiting on payout.</p>

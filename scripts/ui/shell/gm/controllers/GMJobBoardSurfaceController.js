@@ -12,6 +12,7 @@ import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/
 import { FactionJobBridgeService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/FactionJobBridgeService.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
+import { GMSmartFormDropService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-smart-form-drop-service.js';
 
 export class GMJobBoardSurfaceController {
   constructor(host) {
@@ -44,6 +45,7 @@ export class GMJobBoardSurfaceController {
     this._wireItemAwardForms(pageElement, signal);
     this._wireAssetAwardForms(pageElement, signal);
     this._wireIssuerButtons(pageElement, signal);
+    GMSmartFormDropService.bind(pageElement, { signal });
   }
 
   destroy() {

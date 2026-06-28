@@ -1,4 +1,4 @@
-{{!-- GM Datapad Intel surface — guided modal wizard surface. --}}
+{{!-- GM Datapad Intel surface - guided modal wizard surface. --}}
 <div class="gm-datapad-page gm-datapad-intel gm-phase4-intel gm-phase5-intel gm-intel-wizard-surface flexcol gm-v2-surface gm-v2-surface--intel" data-shell-surface="intel" data-gm-intel-scope>
   <div class="page-header gm-app-header gm-intel-header gm-phase2-header">
     <button class="back-button swse-ui-button" data-nav-to="home">Back</button>
@@ -117,7 +117,7 @@
   </div>
 
   {{#if intelManager.modal.isEditor}}
-  <div class="gm-intel-modal-layer" data-intel-modal="editor">
+  <div class="gm-intel-modal-layer gm-shell-modal-layer" data-intel-modal="editor" role="dialog" aria-modal="true">
     <form class="gm-intel-modal gm-intel-wizard" data-intel-form data-intel-wizard data-current-page="1">
       <input type="hidden" name="recordId" value="{{intelManager.editor.recordId}}">
       <header class="gm-intel-modal-head">
@@ -140,7 +140,7 @@
 
       <div class="gm-intel-wizard-body">
         <section class="gm-intel-wizard-page" data-intel-page="1">
-          <span class="gm-command-eyebrow">Step 1 — Identity</span>
+          <span class="gm-command-eyebrow">Step 1 - Identity</span>
           <h4>What is this Intel?</h4>
           <div class="gm-intel-form-grid">
             <label class="is-wide">Title<input type="text" name="title" value="{{intelManager.editor.title}}" placeholder="Intercepted Black Sun transmission" required></label>
@@ -154,28 +154,29 @@
         </section>
 
         <section class="gm-intel-wizard-page" data-intel-page="2">
-          <span class="gm-command-eyebrow">Step 2 — Content</span>
-          <h4>What do players eventually learn?</h4>
-          <div class="gm-intel-form-grid">
-            <label class="is-wide">Summary<textarea name="summary" rows="2" placeholder="Short GM index summary.">{{intelManager.editor.summary}}</textarea></label>
-            <label class="is-wide">Player-Facing Body<textarea name="publicBody" rows="5" placeholder="What players can eventually see.">{{intelManager.editor.publicBody}}</textarea></label>
-            <label class="is-wide">Redacted Body<textarea name="redactedBody" rows="4" placeholder="Optional partial/blurred version.">{{intelManager.editor.redactedBody}}</textarea></label>
-            <label class="is-wide">Full Truth / Decoded Body<textarea name="fullBody" rows="5" placeholder="Complete truth / decoded version.">{{intelManager.editor.fullBody}}</textarea></label>
-            <label class="is-wide">GM Notes<textarea name="gmNotes" rows="4" placeholder="Private notes, future hooks, consequences.">{{intelManager.editor.gmNotes}}</textarea></label>
+          <span class="gm-command-eyebrow">Step 2 - Content</span>
+          <h4>Write the clue text clearly</h4>
+          <p class="gm-intel-step-help">Use this page to separate what the players see now, what they recover after decoding, and what only the GM knows. The main message is usually the <strong>Player-visible message</strong>; the decoded answer goes in <strong>Decoded truth</strong>.</p>
+          <div class="gm-intel-form-grid gm-intel-content-grid">
+            <label class="is-wide gm-intel-field-help" data-tooltip="A short label for the GM index. This is not the full handout text." title="A short label for the GM index. This is not the full handout text.">Summary for GM index<textarea name="summary" rows="2" placeholder="Example: Cassik found an encrypted Rebel shipping note.">{{intelManager.editor.summary}}</textarea><small>Short internal summary shown on cards and search results.</small></label>
+            <label class="is-wide gm-intel-field-help is-primary-writing" data-tooltip="This is the actual message or handout text players read when the intel is visible." title="This is the actual message or handout text players read when the intel is visible.">Player-visible message<textarea name="publicBody" rows="6" placeholder="Write the message/rumor/handout exactly as players should initially see it.">{{intelManager.editor.publicBody}}</textarea><small>This is the main place to write what the message says.</small></label>
+            <label class="is-wide gm-intel-field-help" data-tooltip="Optional teaser text for a partially decoded or damaged version. Leave blank if players should see the full player-visible message." title="Optional teaser text for a partially decoded or damaged version.">Partial / redacted preview<textarea name="redactedBody" rows="4" placeholder="Optional: a scrambled, blurred, partial, or damaged version shown before full decoding.">{{intelManager.editor.redactedBody}}</textarea><small>Use this only when the first reveal should be incomplete or corrupted.</small></label>
+            <label class="is-wide gm-intel-field-help" data-tooltip="The full answer revealed after a successful codebreaker, Force resonance, or GM reveal." title="The full answer revealed after a successful decode.">Decoded truth / final reveal<textarea name="fullBody" rows="6" placeholder="Write the complete truth players learn after decoding or solving the intel.">{{intelManager.editor.fullBody}}</textarea><small>This is what the codebreaker unlocks. If left blank, the player-visible message is used.</small></label>
+            <label class="is-wide gm-intel-field-help" data-tooltip="Private GM-only context, future hooks, false leads, or consequences." title="Private GM-only context, future hooks, false leads, or consequences.">GM-only notes<textarea name="gmNotes" rows="4" placeholder="Private notes, future hooks, consequences.">{{intelManager.editor.gmNotes}}</textarea><small>Never shown to players by default.</small></label>
           </div>
         </section>
 
         <section class="gm-intel-wizard-page" data-intel-page="3">
-          <span class="gm-command-eyebrow">Step 3 — Links & Visibility</span>
+          <span class="gm-command-eyebrow">Step 3 - Links & Visibility</span>
           <h4>Where does this Intel belong?</h4>
           <div class="gm-intel-form-grid">
             <label>Visibility<select name="visibilityMode">{{#each intelManager.visibilityOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
             <label>Linked Faction<select name="linkedFactionId">{{#each intelManager.factionOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
             <label>Linked NPC / Contact<select name="linkedContactId">{{#each intelManager.contactOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
-            <label>Actor UUID<input type="text" name="linkedActorUuid" value="{{intelManager.editor.linkedActorUuid}}" placeholder="Actor.xxxxx"></label>
+            <label data-smart-document-zone data-smart-doc-kind="actor" data-smart-target="linkedActorUuid" data-smart-hint="Drop an Actor here to link this Intel to that NPC, PC, droid, or vehicle.">Actor UUID<input type="text" name="linkedActorUuid" value="{{intelManager.editor.linkedActorUuid}}" placeholder="Drop Actor or Compendium Actor"></label>
             <label>Job Thread ID<input type="text" name="linkedJobThreadId" value="{{intelManager.editor.linkedJobThreadId}}"></label>
-            <label>Scene UUID<input type="text" name="linkedSceneUuid" value="{{intelManager.editor.linkedSceneUuid}}"></label>
-            <label>Item UUID<input type="text" name="linkedItemUuid" value="{{intelManager.editor.linkedItemUuid}}"></label>
+            <label data-smart-document-zone data-smart-doc-kind="scene" data-smart-target="linkedSceneUuid" data-smart-hint="Drop a Scene here to link this Intel to a location or encounter map.">Scene UUID<input type="text" name="linkedSceneUuid" value="{{intelManager.editor.linkedSceneUuid}}" placeholder="Drop Scene"></label>
+            <label data-smart-document-zone data-smart-doc-kind="item" data-smart-target="linkedItemUuid" data-smart-hint="Drop an Item or compendium Item here to link this Intel to an artifact, weapon, clue, or reward.">Item UUID<input type="text" name="linkedItemUuid" value="{{intelManager.editor.linkedItemUuid}}" placeholder="Drop Item or Compendium Item"></label>
             <label>User IDs<input type="text" name="visibilityUserIds" value="{{intelManager.editor.visibilityUserIds}}" placeholder="optional, comma-separated"></label>
             <label>Actor IDs<input type="text" name="visibilityActorIds" value="{{intelManager.editor.visibilityActorIds}}" placeholder="optional, comma-separated"></label>
             <label class="gm-faction-checkbox-label is-wide"><input type="checkbox" name="dossierCommit" {{#if intelManager.editor.dossierCommit}}checked{{/if}}> Commit to player dossier later</label>
@@ -183,40 +184,56 @@
         </section>
 
         <section class="gm-intel-wizard-page" data-intel-page="4">
-          <span class="gm-command-eyebrow">Step 4 — Encryption / Decode Rules</span>
-          <h4>Does this Intel require a codebreaker?</h4>
+          <span class="gm-command-eyebrow">Step 4 - Encryption / Decode Rules</span>
+          <h4>Does this Intel need to be solved before the final reveal?</h4>
+          <p class="gm-intel-step-help">Turn on the codebreaker when players should roll skills, make guesses, or attune through the Force before they can read the decoded truth or open the lockbox.</p>
           <div class="gm-intel-cipher-editor is-wide">
-            <div class="gm-intel-cipher-head">
-              <label class="gm-faction-checkbox-label"><input type="checkbox" name="skillGateEnabled" {{#if intelManager.editor.skillGateEnabled}}checked{{/if}}> Encrypted transmission / codebreaker lock</label>
-              <span>These rules control the player decode console before a lockbox can open.</span>
+            <div class="gm-intel-cipher-head gm-intel-toggle-card" data-tooltip="When enabled, players must solve this Intel through the decode console before the final reveal or lockbox can open." title="When enabled, players must solve this Intel through the decode console before the final reveal or lockbox can open.">
+              <label class="gm-faction-checkbox-label"><input type="checkbox" name="skillGateEnabled" {{#if intelManager.editor.skillGateEnabled}}checked{{/if}}> Require codebreaker / skill unlock</label>
+              <span>Off = players can read the player-visible message normally. On = the selected skills and difficulty below control the unlock.</span>
             </div>
             <div class="gm-intel-form-grid gm-intel-cipher-grid">
-              <label class="is-wide gm-intel-analysis-mode">Analysis Mode<select name="decryptionMode">{{#each intelManager.decryptionModeOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.icon}} {{this.label}}</option>{{/each}}</select></label>
-              {{#if intelManager.selectedModeCard}}
-              <div class="gm-intel-mode-summary is-wide">
-                <div class="gm-intel-mode-summary-icon">{{intelManager.selectedModeCard.icon}}</div>
-                <div><strong>{{intelManager.selectedModeCard.label}}</strong><p>{{intelManager.selectedModeCard.description}}</p><small>Recommended skills: {{intelManager.selectedModeCard.skillList}}</small></div>
+              <label class="is-wide gm-intel-analysis-mode gm-intel-field-help" data-tooltip="Choose what kind of puzzle this feels like. The dropdown below changes the help text and recommended skills." title="Choose what kind of puzzle this feels like.">Decode style<select name="decryptionMode" data-intel-mode-select-control>{{#each intelManager.decryptionModeOptions}}<option value="{{this.value}}" data-default-skills="{{this.skillCsv}}" data-description="{{this.description}}" {{#if this.selected}}selected{{/if}}>{{this.icon}} {{this.label}}</option>{{/each}}</select><small>Use Force Resonance for holocrons, Sith echoes, Force visions, and vergences. It allows Use the Force.</small></label>
+              <div class="gm-intel-mode-summary-stack is-wide">
+                {{#each intelManager.decryptionModeCards}}
+                <div class="gm-intel-mode-summary {{#if this.selected}}is-active{{/if}}" data-intel-mode-summary="{{this.value}}">
+                  <div class="gm-intel-mode-summary-icon">{{this.icon}}</div>
+                  <div><strong>{{this.label}}</strong><p>{{this.description}}</p><small>Recommended skills: {{this.skillList}}</small>{{#if this.playbookText}}<em>{{this.playbookText}}</em>{{/if}}</div>
+                </div>
+                {{/each}}
               </div>
-              {{/if}}
-              <div class="gm-intel-mode-card-grid is-wide">{{#each intelManager.decryptionModeCards}}<button type="button" class="gm-intel-mode-card {{this.className}}" data-intel-mode-select="{{this.value}}"><b>{{this.icon}} {{this.label}}</b><span>{{this.description}}</span><small>{{this.skillList}}</small></button>{{/each}}</div>
-              <label>Primary Skill<input type="text" name="skillGateSkill" value="{{intelManager.editor.skillGateSkill}}" placeholder="useComputer"></label>
-              <label class="is-wide">Allowed Skill Buttons<input type="text" name="skillGateSkills" value="{{intelManager.editor.skillGateSkills}}" placeholder="useComputer, mechanics, knowledgeTechnology"></label>
-              <label>Reveal DC<input type="number" name="skillGateDc" min="0" step="1" value="{{intelManager.editor.skillGateDc}}"></label>
-              <label>Encryption Level<input type="number" name="cipherLevel" min="1" max="35" step="1" value="{{intelManager.editor.cipherLevel}}"></label>
-              <label>Cipher Alphabet<select name="cipherMode">{{#each intelManager.cipherModeOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
-              <label>Pre-Cracked %<input type="number" name="cipherPreReveal" min="0" max="100" step="1" value="{{intelManager.editor.cipherPreReveal}}"></label>
-              <label class="gm-faction-checkbox-label"><input type="checkbox" name="cipherGlyphs" {{#if intelManager.editor.cipherGlyphs}}checked{{/if}}> Glyph cipher</label>
-              <label class="gm-faction-checkbox-label"><input type="checkbox" name="cipherTranspose" {{#if intelManager.editor.cipherTranspose}}checked{{/if}}> Transposition layer</label>
-              <label class="gm-faction-checkbox-label"><input type="checkbox" name="cipherFailEnabled" {{#if intelManager.editor.cipherFailEnabled}}checked{{/if}}> Fail state</label>
-              <label>Fail Mode<select name="cipherFailType">{{#each intelManager.cipherFailTypeOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
-              <label>Failed Roll Limit<input type="number" name="cipherFailedRollLimit" min="1" max="30" step="1" value="{{intelManager.editor.cipherFailedRollLimit}}"></label>
-              <label>Trace Max<input type="number" name="cipherTraceMax" min="1" max="30" step="1" value="{{intelManager.editor.cipherTraceMax}}"></label>
+
+              <label class="gm-intel-field-help" data-tooltip="Pick a preset and the wizard fills in the reveal DC and encryption complexity. You can still manually adjust the numbers after." title="Pick a preset and the wizard fills in the reveal DC and complexity.">Difficulty preset<select name="skillGateDifficulty" data-intel-difficulty-select>{{#each intelManager.difficultyOptions}}<option value="{{this.value}}" data-dc="{{this.dc}}" data-level="{{this.level}}" data-description="{{this.description}}" {{#if this.selected}}selected{{/if}}>{{this.summary}}</option>{{/each}}</select><small data-intel-difficulty-summary>{{intelManager.selectedDifficulty.description}}</small></label>
+              <label class="gm-intel-field-help" data-tooltip="The target number players must meet with one of the allowed skills." title="The target number players must meet with one of the allowed skills.">Reveal DC<input type="number" name="skillGateDc" min="0" step="1" value="{{intelManager.editor.skillGateDc}}"></label>
+              <label class="gm-intel-field-help" data-tooltip="Controls how complex the visual cipher is. Higher values make the player puzzle denser." title="Controls how complex the visual cipher is.">Cipher complexity<input type="number" name="cipherLevel" min="1" max="35" step="1" value="{{intelManager.editor.cipherLevel}}"></label>
+              <label class="gm-intel-field-help" data-tooltip="Substitution is the normal symbol-swap puzzle. Caesar is simpler and easier to reason through." title="Substitution is normal; Caesar is simpler.">Cipher alphabet<select name="cipherMode">{{#each intelManager.cipherModeOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+              <label class="gm-intel-field-help" data-tooltip="How much of the puzzle starts already solved. Higher values are easier." title="How much of the puzzle starts already solved.">Pre-cracked %<input type="number" name="cipherPreReveal" min="0" max="100" step="1" value="{{intelManager.editor.cipherPreReveal}}"></label>
+
+              <details class="gm-intel-skill-picker is-wide" open data-tooltip="Choose every skill button players are allowed to use while solving this Intel." title="Choose every skill players are allowed to use while solving this Intel.">
+                <summary><span>Skills allowed</span><b data-intel-skill-summary></b></summary>
+                <div class="gm-intel-skill-grid">
+                  {{#each intelManager.skillOptions}}
+                  <label class="gm-intel-skill-option {{#if this.selected}}is-selected{{/if}}" data-tooltip="Allow players to roll {{this.label}} against this Intel." title="Allow players to roll {{this.label}} against this Intel."><input type="checkbox" name="skillGateSkills" value="{{this.value}}" data-intel-skill-option data-skill-label="{{this.label}}" {{#if this.selected}}checked{{/if}}><span>{{this.icon}}</span><b>{{this.label}}</b></label>
+                  {{/each}}
+                </div>
+                <small>Pick all skills that make sense. Force Resonance should include <strong>Use the Force</strong>.</small>
+              </details>
+
+              <div class="gm-intel-toggle-grid is-wide">
+                <label class="gm-intel-toggle-card" data-tooltip="Show encoded symbols instead of plain letters in the puzzle. Good for alien ciphers and ancient script." title="Show encoded symbols instead of plain letters."><input type="checkbox" name="cipherGlyphs" {{#if intelManager.editor.cipherGlyphs}}checked{{/if}}><span><b>Glyph cipher</b><small>Use symbols instead of letters.</small></span></label>
+                <label class="gm-intel-toggle-card" data-tooltip="Adds a second scrambling layer. Use this only when the puzzle should feel harder." title="Adds a second scrambling layer."><input type="checkbox" name="cipherTranspose" {{#if intelManager.editor.cipherTranspose}}checked{{/if}}><span><b>Transposition layer</b><small>Harder double-scramble.</small></span></label>
+                <label class="gm-intel-toggle-card" data-tooltip="If enabled, too many failed checks can lock, trace, corrupt, or otherwise fail the Intel." title="Too many failed checks can fail the Intel."><input type="checkbox" name="cipherFailEnabled" {{#if intelManager.editor.cipherFailEnabled}}checked{{/if}}><span><b>Fail state</b><small>Failure can matter.</small></span></label>
+              </div>
+
+              <label class="gm-intel-field-help" data-tooltip="Attempts means a limited number of failed rolls. Trace means a mounting danger meter." title="Attempts means failed roll limit; trace means a danger meter.">Fail mode<select name="cipherFailType">{{#each intelManager.cipherFailTypeOptions}}<option value="{{this.value}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}</select></label>
+              <label class="gm-intel-field-help" data-tooltip="How many failed checks are allowed when Fail Mode is Attempts." title="How many failed checks are allowed.">Failed roll limit<input type="number" name="cipherFailedRollLimit" min="1" max="30" step="1" value="{{intelManager.editor.cipherFailedRollLimit}}"></label>
+              <label class="gm-intel-field-help" data-tooltip="How high the trace meter can rise before the Intel locks or fails." title="How high trace can rise before failure.">Trace max<input type="number" name="cipherTraceMax" min="1" max="30" step="1" value="{{intelManager.editor.cipherTraceMax}}"></label>
             </div>
           </div>
         </section>
 
         <section class="gm-intel-wizard-page" data-intel-page="5">
-          <span class="gm-command-eyebrow">Step 5 — Lockbox Reward</span>
+          <span class="gm-command-eyebrow">Step 5 - Lockbox Reward</span>
           <h4>Does decoding reveal credits or items?</h4>
           <div class="gm-intel-lockbox-editor is-wide">
             <div class="gm-intel-lockbox-head">
@@ -226,7 +243,7 @@
             <div class="gm-intel-form-grid gm-intel-lockbox-grid">
               <label>Lockbox Label<input type="text" name="lockboxLabel" value="{{intelManager.editor.lockboxLabel}}" placeholder="Encrypted Lockbox"></label>
               <label>Credits Inside<input type="number" name="lockboxCredits" min="0" step="1" value="{{intelManager.editor.lockboxCredits}}"></label>
-              <label class="is-wide">Item UUIDs<textarea name="lockboxItems" rows="3" placeholder="Compendium.swse.items.ItemId | 1 | Optional Display Name">{{intelManager.editor.lockboxItems}}</textarea></label>
+              <label class="is-wide" data-smart-document-zone data-smart-doc-kind="item" data-smart-target="lockboxItems" data-smart-hint="Drop Items here. Each drop adds a lockbox reward line with UUID, quantity, and item name.">Item UUIDs<textarea name="lockboxItems" rows="3" data-smart-append="item" placeholder="Drop Item or Compendium Item - stored as UUID | 1 | Name">{{intelManager.editor.lockboxItems}}</textarea></label>
               <label class="is-wide">Lockbox Notes<textarea name="lockboxNotes" rows="2" placeholder="Private reward notes or claim instructions.">{{intelManager.editor.lockboxNotes}}</textarea></label>
             </div>
             <p class="gm-intel-lockbox-help">Players can claim contents only after the Intel decrypts. Credits use the Transaction Engine.</p>
@@ -234,7 +251,7 @@
         </section>
 
         <section class="gm-intel-wizard-page" data-intel-page="6">
-          <span class="gm-command-eyebrow">Step 6 — Review</span>
+          <span class="gm-command-eyebrow">Step 6 - Review</span>
           <h4>Save the Intel draft</h4>
           <div class="gm-intel-review-card">
             <strong>{{#if intelManager.editor.title}}{{intelManager.editor.title}}{{else}}Untitled Intel{{/if}}</strong>

@@ -1,0 +1,230 @@
+/* Phase 10: GM Intel wizard clarity and codebreaker UX repairs. */
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-step-help {
+  margin: 0 0 12px;
+  padding: 9px 11px;
+  border: 1px solid rgba(0, 229, 255, 0.18);
+  border-radius: 10px;
+  background: rgba(0, 229, 255, 0.06);
+  color: rgba(221, 250, 255, 0.84);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-field-help small,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-skill-picker > small,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-toggle-card small {
+  display: block;
+  margin-top: 4px;
+  color: rgba(185, 237, 245, 0.68);
+  font: 600 10px var(--swse-font-body, sans-serif);
+  letter-spacing: normal;
+  line-height: 1.35;
+  text-transform: none;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-content-grid .is-primary-writing {
+  border: 1px solid rgba(125, 255, 178, 0.28);
+  border-radius: 12px;
+  padding: 9px;
+  background: linear-gradient(135deg, rgba(125, 255, 178, 0.08), rgba(0, 229, 255, 0.04));
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-modal input[type="checkbox"] {
+  width: 16px !important;
+  min-width: 16px !important;
+  height: 16px !important;
+  min-height: 16px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  accent-color: #7dffb2;
+  cursor: pointer;
+  flex: 0 0 auto;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-cipher-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-cipher-head .gm-faction-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  color: #e7fbff;
+  font-size: 11px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-mode-card-grid {
+  display: none !important;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-mode-summary-stack {
+  display: grid;
+  gap: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-mode-summary {
+  display: none;
+  grid-template-columns: 42px 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 11px 12px;
+  border: 1px solid rgba(0, 229, 255, 0.22);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.09), rgba(3, 8, 18, 0.74));
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-mode-summary.is-active {
+  display: grid;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-mode-summary-icon {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(0, 229, 255, 0.32);
+  border-radius: 11px;
+  background: rgba(0, 229, 255, 0.09);
+  color: #70e2ff;
+  font-size: 21px;
+  box-shadow: inset 0 0 18px rgba(0, 229, 255, 0.1);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-mode-summary strong {
+  display: block;
+  color: #e7fbff;
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-mode-summary p {
+  margin: 0 0 5px;
+  color: rgba(221, 250, 255, 0.8);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-mode-summary em {
+  display: block;
+  margin-top: 5px;
+  color: rgba(255, 209, 102, 0.82);
+  font: 600 10px var(--swse-font-body, sans-serif);
+  line-height: 1.35;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-skill-picker {
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(1, 9, 18, 0.58);
+  padding: 0;
+  overflow: hidden;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-skill-picker summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  color: rgba(128, 238, 255, 0.88);
+  font: 900 10px var(--swse-font-mono, monospace);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  list-style: none;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-skill-picker summary::-webkit-details-marker {
+  display: none;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-skill-picker summary b {
+  color: #e7fbff;
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-align: right;
+  text-transform: none;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-skill-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 7px;
+  padding: 0 10px 10px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-skill-option {
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  padding: 8px 9px;
+  border: 1px solid rgba(0, 229, 255, 0.16);
+  border-radius: 9px;
+  background: rgba(0, 229, 255, 0.055);
+  cursor: pointer;
+  transition: border-color 140ms ease, background 140ms ease, box-shadow 140ms ease;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-skill-option:hover,
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-skill-option.is-selected {
+  border-color: rgba(125, 255, 178, 0.42);
+  background: rgba(125, 255, 178, 0.08);
+  box-shadow: inset 0 0 16px rgba(125, 255, 178, 0.08);
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-skill-option span {
+  color: #70e2ff;
+  font-size: 14px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-skill-option b {
+  color: #e7fbff;
+  font: 800 11px var(--swse-font-body, sans-serif);
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-toggle-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-toggle-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 10px 11px;
+  border: 1px solid rgba(0, 229, 255, 0.18);
+  border-radius: 11px;
+  background: rgba(1, 9, 18, 0.58);
+  cursor: pointer;
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-toggle-card:has(input:checked) {
+  border-color: rgba(125, 255, 178, 0.42);
+  background: linear-gradient(135deg, rgba(125, 255, 178, 0.08), rgba(1, 9, 18, 0.72));
+}
+
+.swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-toggle-card b {
+  display: block;
+  color: #e7fbff;
+  font-size: 11px;
+}
+
+@media (max-width: 980px) {
+  .swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-toggle-grid {
+    grid-template-columns: 1fr;
+  }
+  .swse-sheet-v2-shell--gm-datapad .gm-v2-surface--intel .gm-intel-cipher-head {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}

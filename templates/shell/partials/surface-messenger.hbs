@@ -58,6 +58,11 @@
         <span>{{localize "SWSE.ShellUI.Jobs"}}</span>
         {{#if vm.jobThreads.length}}<span class="pip">{{vm.jobThreads.length}}</span>{{/if}}
       </button>
+      <button class='hl-appbtn {{#if (eq vm.appMode "intel")}}on{{/if}}' data-holonet-action="set-app-mode" data-app-mode="intel" type="button" title="Intel">
+        <span class="ic">◈</span>
+        <span>Intel</span>
+        {{#if vm.intelBoard.count}}<span class="pip">{{vm.intelBoard.count}}</span>{{/if}}
+      </button>
       {{#if vm.canCreateJobs}}
       <button class="hl-appbtn gm" data-holonet-action="open-compose" type="button" title="{{localize 'SWSE.ShellUI.GMPost'}}">
         <span class="ic">＋</span>
@@ -68,61 +73,360 @@
 
     <main class="hl-main-area">
       {{#if (eq vm.appMode "jobs")}}
-      <section class="hl-jobboard-view swse-panel">
-        <header class="hl-jobboard-head">
-          <div>
-            <div class="hl-label hl-label--accent">{{localize "SWSE.ShellUI.JobBoard"}}</div>
-            <h2>{{localize "SWSE.ShellUI.ActiveHolocomContracts"}}</h2>
-            <p>{{localize "SWSE.ShellUI.OpenAcceptedAndCompletedJobSignalsRoutedThrough"}}</p>
-          </div>
-          <div class="hl-jobboard-controls" aria-label="{{localize 'SWSE.ShellUI.JobBoardFilters'}}">
-            <span class="hl-jobboard-tab on">{{localize "SWSE.ShellUI.All"}}</span>
-            <span class="hl-jobboard-tab">{{localize "SWSE.ShellUI.Open"}}</span>
-            <span class="hl-jobboard-tab">{{localize "SWSE.ShellUI.Accepted"}}</span>
-            <span class="hl-jobboard-tab">{{localize "SWSE.ShellUI.Completed"}}</span>
-          </div>
-        </header>
-        {{#if vm.hasJobThreads}}
-        <div class="hl-job-grid">
-          {{#each vm.jobThreads}}
-          <button class="hl-job-card swse-messenger-thread" data-thread-id="{{this.id}}" type="button">
-            <div class="hl-job-card-top">
-              <span class="hl-job-giver">{{#if this.job.issuer.label}}{{this.job.issuer.label}}{{else}}{{#if this.ownerLabel}}{{this.ownerLabel}}{{else}}Holonet Contact{{/if}}{{/if}}</span>
-              <span class="hl-job-status">{{#if this.job.statusLabel}}{{this.job.statusLabel}}{{else}}Open{{/if}}</span>
-            </div>
-            {{#if this.job.issuer}}
-            <div class="hl-job-issuer-strip">
-              {{#if this.job.issuer.hasImage}}<img src="{{this.job.issuer.image}}" alt="{{this.job.issuer.label}}">{{/if}}
-              <div>
-                <strong>{{this.job.issuer.label}}</strong>
-                <span>{{this.job.issuer.typeLabel}}{{#if this.job.issuer.subline}} · {{this.job.issuer.subline}}{{/if}}</span>
+      <section class="hl-jobboard-view jb-root jb-root--holonet swse-panel" aria-label="{{localize 'SWSE.ShellUI.JobBoard'}}">
+        <header class="jb-head hl-jobboard-head">
+          <div class="jb-head-top">
+            <div class="jb-brand">
+              <span class="jb-brand-mark">◆</span>
+              <div class="jb-brand-tt">
+                <span class="t">{{localize "SWSE.ShellUI.JobBoard"}}</span>
+                <span class="s">{{localize "SWSE.ShellUI.ActiveHolocomContracts"}}</span>
               </div>
             </div>
+            <div class="jb-head-actions">
+              {{#if vm.jobBoard.stats.attention}}<span class="hl-chip warn jb-attention-chip">{{vm.jobBoard.stats.attention}} attention</span>{{/if}}
+              {{#if vm.canCreateJobs}}<button class="hl-btn-accent jb-new-contract" data-holonet-action="open-compose" type="button">{{localize "SWSE.ShellUI.PostNewJob"}}</button>{{/if}}
+            </div>
+          </div>
+
+          <div class="jb-shelf jb-shelf--interactive" aria-label="{{localize 'SWSE.ShellUI.JobBoardFilters'}}">
+            {{#each vm.jobBoard.filterOptions}}
+            <button type="button" class="jb-shelf-tab {{this.tone}} {{#if this.isActive}}on{{/if}}" data-holonet-action="set-job-board-filter" data-job-filter="{{this.id}}" aria-pressed="{{#if this.isActive}}true{{else}}false{{/if}}">
+              <span>{{this.label}}</span><span class="jb-shelf-count">{{this.count}}</span>
+            </button>
+            {{/each}}
+          </div>
+
+          <form class="jb-subbar hl-jobboard-search" data-holonet-action="thread-filter">
+            <label class="jb-search">
+              <span class="ic">⌕</span>
+              <input type="search" name="threadSearch" value="{{vm.threadSearch}}" placeholder="Search contracts, issuers, factions..." aria-label="{{localize 'SWSE.ShellUI.SearchThreads'}}">
+            </label>
+            <label class="hl-thread-filter-toggle jb-archive-toggle">
+              <input type="checkbox" name="includeArchived" value="true" {{#if vm.includeArchived}}checked{{/if}}>
+              <span>{{localize "SWSE.ShellUI.Archived"}}</span>
+            </label>
+            <button class="hl-icon-btn" type="submit">{{localize "SWSE.ShellUI.Filter"}}</button>
+            {{#if vm.hasThreadSearch}}<button class="hl-ghost-btn" data-holonet-action="clear-thread-filter" type="button">{{localize "SWSE.ShellUI.Clear"}}</button>{{/if}}
+          </form>
+          <div class="jb-active-filter-strip">
+            <span class="hl-chip">Showing {{vm.jobBoard.visibleJobCount}} / {{vm.jobBoard.stats.total}}</span>
+            <span class="hl-chip {{vm.jobBoard.activeFilter}}">{{vm.jobBoard.activeFilterLabel}}</span>
+            {{#if vm.jobBoard.hiddenByFilter}}<span class="hl-chip muted">{{vm.jobBoard.hiddenByFilter}} hidden by lifecycle filter</span>{{/if}}
+          </div>
+        </header>
+
+        {{#if vm.jobBoard.hasJobs}}
+        <div class="jb-content jb-content--holonet has-detail jb-content--phase5">
+          <div class="jb-scroll">
+            {{#each vm.jobBoard.groups}}
+            <section class="jb-group jb-group--{{this.id}}" data-job-status-group="{{this.id}}">
+              <header class="jb-group-hd">
+                <span class="jb-group-dot {{this.tone}}"></span>
+                <span class="jb-group-lbl">{{this.label}}</span>
+                <span class="jb-group-count">{{this.count}}</span>
+                <hr>
+              </header>
+              <div class="jb-cards grid">
+                {{#each this.items}}
+                <button class="hl-job-card jb-card {{this.statusTone}} {{#if this.isSelected}}on{{/if}} {{#if this.needsAttention}}attention{{/if}} {{#if this.isPendingInvite}}pending-invite{{/if}}" data-holonet-action="select-job" data-thread-id="{{this.id}}" type="button" style="--jb-progress: {{this.progressPercent}}%;">
+                  {{#if this.needsAttention}}<span class="jb-attn">{{#if this.isPendingInvite}}{{localize "SWSE.ShellUI.InvitePending"}}{{else}}Needs Review{{/if}}</span>{{/if}}
+                  <div class="jb-card-top">
+                    <div class="jb-card-poster">
+                      <span class="jb-card-avatar">
+                        {{#if this.hasIssuerImage}}<img src="{{this.issuerImage}}" alt="{{this.issuerLabel}}">{{else}}◆{{/if}}
+                      </span>
+                      <span class="jb-card-poster-copy">
+                        <span class="pn">{{this.issuerLabel}}</span>
+                        <span class="po">{{#if this.issuerTypeLine}}{{this.issuerTypeLine}}{{else}}Holonet Contract Authority{{/if}}</span>
+                      </span>
+                    </div>
+                    <span class="jb-status {{this.statusTone}}"><span class="d"></span>{{this.statusLabel}}</span>
+                  </div>
+
+                  <div class="jb-card-title">{{this.title}}</div>
+                  <div class="jb-card-brief">{{this.preview}}</div>
+
+                  <div class="jb-card-tags">
+                    <span class="hl-chip job">{{localize "SWSE.ShellUI.Job"}}</span>
+                    {{#if this.factionLabel}}<span class="hl-chip party">{{this.factionLabel}}</span>{{/if}}
+                    {{#if this.canManage}}<span class="hl-chip owner">{{localize "SWSE.ShellUI.Owner"}}</span>{{/if}}
+                  </div>
+
+                  <div class="jb-prog" aria-label="Contract objective progress">
+                    <span class="jb-prog-bar"><i style="width: {{this.progressPercent}}%;"></i></span>
+                    <span class="jb-prog-lbl">{{this.objectiveSummary}}</span>
+                  </div>
+
+                  <div class="jb-card-foot">
+                    <span class="jb-reward-inline">
+                      <span class="cr">{{this.rewardCreditsLabel}}</span>
+                      {{#if this.rewardXpLabel}}<span class="xp">{{this.rewardXpLabel}}</span>{{/if}}
+                    </span>
+                    <span class="jb-card-meta">{{this.progress.requiredLabel}}</span>
+                  </div>
+                </button>
+                {{/each}}
+              </div>
+            </section>
+            {{/each}}
+          </div>
+
+          <aside class="jb-detail jb-detail--holonet jb-detail--phase5">
+            {{#if vm.jobBoard.selectedJob}}
+            <header class="jb-detail-hd">
+              <div class="jb-detail-poster">
+                <span class="jb-card-avatar jb-detail-avatar">
+                  {{#if vm.jobBoard.selectedJob.hasIssuerImage}}<img src="{{vm.jobBoard.selectedJob.issuerImage}}" alt="{{vm.jobBoard.selectedJob.issuerLabel}}">{{else}}◆{{/if}}
+                </span>
+                <div>
+                  <span class="hl-label">Mission Dossier</span>
+                  <h3 class="jb-detail-title">{{vm.jobBoard.selectedJob.title}}</h3>
+                </div>
+              </div>
+              <span class="jb-status {{vm.jobBoard.selectedJob.statusTone}}"><span class="d"></span>{{vm.jobBoard.selectedJob.statusLabel}}</span>
+            </header>
+
+            <div class="jb-detail-body">
+              <section class="jb-payout">
+                <div class="jb-payout-top">
+                  <span class="jb-payout-tot">{{vm.jobBoard.selectedJob.rewardCreditsLabel}}</span>
+                  {{#if vm.jobBoard.selectedJob.rewardXpLabel}}<span class="jb-payout-xp">{{vm.jobBoard.selectedJob.rewardXpLabel}}</span>{{/if}}
+                </div>
+                <div class="jb-payout-break">
+                  <span><b>Base</b> {{vm.jobBoard.selectedJob.reward.baseCreditsLabel}}</span>
+                  <span><b>Objectives</b> {{vm.jobBoard.selectedJob.reward.objectiveCreditsLabel}}</span>
+                </div>
+                <div class="jb-payout-note"><span>◇</span>{{vm.jobBoard.selectedJob.reward.itemSummary}} · {{vm.jobBoard.selectedJob.reward.assetSummary}}</div>
+              </section>
+
+              <section class="jb-sec jb-issuer-dossier">
+                <div class="jb-sec-hd"><span class="jb-sec-lbl">Issuer</span></div>
+                <div class="hl-job-issuer-card jb-issuer-card">
+                  {{#if vm.jobBoard.selectedJob.hasIssuerImage}}<img src="{{vm.jobBoard.selectedJob.issuerImage}}" alt="{{vm.jobBoard.selectedJob.issuerLabel}}">{{/if}}
+                  <div>
+                    <strong>{{vm.jobBoard.selectedJob.issuerLabel}}</strong>
+                    <small>{{#if vm.jobBoard.selectedJob.issuerTypeLine}}{{vm.jobBoard.selectedJob.issuerTypeLine}}{{else}}Holonet Contract Authority{{/if}}</small>
+                    {{#if vm.jobBoard.selectedJob.factionLabel}}<em>{{vm.jobBoard.selectedJob.factionLabel}}</em>{{/if}}
+                  </div>
+                </div>
+              </section>
+
+              {{#if vm.jobBoard.selectedJob.briefingBody}}
+              <section class="jb-sec">
+                <div class="jb-sec-hd"><span class="jb-sec-lbl">Briefing</span></div>
+                <p class="jb-detail-brief">{{vm.jobBoard.selectedJob.briefingBody}}</p>
+                {{#if vm.jobBoard.selectedJob.briefingInstructions}}<p class="jb-detail-brief jb-detail-brief--muted">{{vm.jobBoard.selectedJob.briefingInstructions}}</p>{{/if}}
+              </section>
+              {{/if}}
+
+              {{#if vm.jobBoard.selectedJob.hasObjectives}}
+              <section class="jb-sec">
+                <div class="jb-sec-hd">
+                  <span class="jb-sec-lbl">Objectives</span>
+                  <span class="jb-obj-prog">{{vm.jobBoard.selectedJob.objectiveSummary}}</span>
+                </div>
+                {{#if vm.jobBoard.selectedJob.canManage}}
+                <form class="jb-bulk-review-form" data-holonet-action="job-objective-bulk-status" data-thread-id="{{vm.jobBoard.selectedJob.id}}">
+                  <input type="hidden" name="threadId" value="{{vm.jobBoard.selectedJob.id}}">
+                  <input class="hl-input" type="text" name="objectiveNote" placeholder="Optional GM bulk review note">
+                  <button class="jb-mini ok" type="submit" name="bulkObjectiveStatus" value="approved">Approve Pending</button>
+                  <button class="jb-mini no" type="submit" name="bulkObjectiveStatus" value="rejected">Reject Pending</button>
+                  <button class="jb-mini" type="submit" name="bulkObjectiveStatus" value="open">Reopen Failed</button>
+                </form>
+                {{/if}}
+                <div class="jb-obj-list">
+                  {{#each vm.jobBoard.selectedJob.objectives}}
+                  <article class="jb-obj {{this.statusTone}} {{#if this.isRequired}}required{{/if}}">
+                    <span class="jb-obj-check" aria-hidden="true">{{#if (eq this.status "approved")}}✓{{else}}•{{/if}}</span>
+                    <div class="jb-obj-mid">
+                      <div class="jb-obj-line">
+                        <span class="jb-obj-tier {{this.tierTone}}">{{this.tierLabel}}</span>
+                        <strong class="jb-obj-text">{{this.label}}</strong>
+                      </div>
+                      {{#if this.description}}<div class="jb-obj-meta">{{this.description}}</div>{{/if}}
+                      <div class="jb-obj-meta">
+                        {{#if this.rewardCreditsLabel}}<span class="rw">{{this.rewardCreditsLabel}}</span>{{/if}}
+                        {{#if this.rewardXpLabel}}<span class="rwx">{{this.rewardXpLabel}}</span>{{/if}}
+                        {{#if this.reviewNote}}<span>{{this.reviewNote}}</span>{{/if}}
+                      </div>
+                    </div>
+                    <div class="jb-obj-rt">
+                      <span class="jb-obj-badge {{this.statusTone}}">{{this.statusLabel}}</span>
+                      <div class="jb-obj-actions" data-job-objective-card>
+                        <textarea data-objective-action-note rows="2" placeholder="{{this.actionNotePlaceholder}}"></textarea>
+                        <div class="jb-obj-action-row">
+                          {{#if this.canSubmit}}<button type="button" class="jb-mini ok" data-holonet-action="job-objective-submit" data-thread-id="{{../vm.jobBoard.selectedJob.id}}" data-objective-id="{{this.id}}">Submit</button>{{/if}}
+                          {{#if this.canFail}}<button type="button" class="jb-mini no" data-holonet-action="job-objective-fail" data-thread-id="{{../vm.jobBoard.selectedJob.id}}" data-objective-id="{{this.id}}">Fail</button>{{/if}}
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                  {{/each}}
+                </div>
+              </section>
+              {{/if}}
+
+              {{#if vm.jobBoard.selectedJob.hasFactionConsequences}}
+              <section class="jb-sec">
+                <div class="jb-sec-hd"><span class="jb-sec-lbl">Faction Consequences</span></div>
+                <div class="jb-cons">
+                  {{#each vm.jobBoard.selectedJob.consequenceEntries}}
+                  <div class="jb-cons-row {{#if this.isRival}}rival{{/if}}">
+                    <div class="jb-cons-fac">
+                      <div class="fn">{{this.factionName}}</div>
+                      <div class="fnote">{{this.label}}{{#if this.notes}} · {{this.notes}}{{/if}}</div>
+                    </div>
+                    <div class="jb-cons-delta up swse-signed swse-signed--{{this.successTone}}"><span class="lbl">Success</span>{{this.successDeltaLabel}}</div>
+                    <div class="jb-cons-delta down swse-signed swse-signed--{{this.failureTone}}"><span class="lbl">Failure</span>{{this.failureDeltaLabel}}</div>
+                  </div>
+                  {{/each}}
+                </div>
+              </section>
+              {{/if}}
+
+              {{#if vm.jobBoard.selectedJob.hasParticipants}}
+              <section class="jb-sec">
+                <div class="jb-sec-hd"><span class="jb-sec-lbl">Participants</span></div>
+                <div class="jb-party">
+                  {{#each vm.jobBoard.selectedJob.participants}}
+                  <span class="jb-party-chip"><span class="g">{{#if this.avatar}}<img src="{{this.avatar}}" alt="">{{else}}◇{{/if}}</span>{{this.label}}</span>
+                  {{/each}}
+                </div>
+              </section>
+              {{/if}}
+
+              {{#if vm.jobBoard.selectedJob.hasTimeline}}
+              <section class="jb-sec">
+                <div class="jb-sec-hd"><span class="jb-sec-lbl">Timeline</span></div>
+                <div class="jb-timeline">
+                  {{#each vm.jobBoard.selectedJob.timeline}}
+                  <div class="jb-tl">
+                    <div class="jb-tl-mark"><span class="jb-tl-dot"></span><span class="jb-tl-line"></span></div>
+                    <div class="jb-tl-body"><div class="jb-tl-lbl"><b>{{this.label}}</b></div><div class="jb-tl-at">{{this.atLabel}}{{#if this.detail}} · {{this.detail}}{{/if}}</div></div>
+                  </div>
+                  {{/each}}
+                </div>
+              </section>
+              {{/if}}
+            </div>
+
+            <footer class="jb-detail-foot">
+              {{#if vm.jobBoard.selectedJob.isPendingInvite}}
+              <div class="row">
+                <button class="jb-big-btn pos" data-holonet-action="thread-action" data-thread-action="accept-invite" data-thread-id="{{vm.jobBoard.selectedJob.id}}" type="button">{{localize "SWSE.ShellUI.Accept"}}</button>
+                <button class="jb-big-btn ghost" data-holonet-action="thread-action" data-thread-action="decline-invite" data-thread-id="{{vm.jobBoard.selectedJob.id}}" type="button">{{localize "SWSE.ShellUI.Decline"}}</button>
+              </div>
+              {{/if}}
+              <button class="jb-big-btn" data-holonet-action="set-app-mode" data-app-mode="chat" data-thread-id="{{vm.jobBoard.selectedJob.id}}" type="button">Open Transmission</button>
+            </footer>
+            {{else}}
+            <div class="jb-empty jb-empty--rail">
+              <div class="glyph">◆</div>
+              <div class="t">No Contract Selected</div>
+              <div class="s">Select a job card to inspect it.</div>
+            </div>
             {{/if}}
-            <h3>{{this.title}}</h3>
-            <p>{{this.preview}}</p>
-            <div class="hl-job-tags">
-              <span class="hl-chip job">{{localize "SWSE.ShellUI.Job"}}</span>
-              {{#if this.isPendingInvite}}<span class="hl-chip warn">{{localize "SWSE.ShellUI.InvitePending"}}</span>{{/if}}
-              {{#if this.canManage}}<span class="hl-chip owner">{{localize "SWSE.ShellUI.Owner"}}</span>{{/if}}
-            </div>
-            <div class="hl-job-card-foot">
-              <strong>{{#if this.job.rewardCreditsLabel}}{{this.job.rewardCreditsLabel}}{{else}}{{#if this.job.rewardCredits}}{{this.job.rewardCredits}} cr{{else}}Reward TBD{{/if}}{{/if}}</strong>
-              <span>{{#if this.job.hasObjectives}}{{this.job.objectives.length}} objective(s){{else}}No objectives logged{{/if}}</span>
-            </div>
-          </button>
-          {{/each}}
+          </aside>
         </div>
         {{else}}
-        <div class="hl-job-empty">
-          <div class="hl-conv-empty-icon">◆</div>
-          <div class="hl-label">{{localize "SWSE.ShellUI.NoJobSignalsAvailable"}}</div>
+        <div class="hl-job-empty jb-empty">
+          <div class="glyph">◆</div>
+          <div class="t">{{localize "SWSE.ShellUI.NoJobSignalsAvailable"}}</div>
+          <div class="s">No contracts match the current Holonet filter.</div>
           {{#if vm.canCreateJobs}}<button class="hl-btn-accent" data-holonet-action="open-compose" type="button">{{localize "SWSE.ShellUI.PostNewJob"}}</button>{{/if}}
         </div>
         {{/if}}
       </section>
+      {{else if (eq vm.appMode "intel")}}
+      <section class="hl-intel-view swse-panel" aria-label="Intel Archive">
+        <header class="hl-intel-head">
+          <div>
+            <div class="hl-label hl-label--accent">Intel Archive</div>
+            <h2>Shared information packets</h2>
+            <p>Capture rumors, clues, NPC notes, mission leads, and discoveries as reusable Holopad intel.</p>
+          </div>
+          <div class="hl-intel-stats">
+            <span class="hl-chip party">{{vm.intelBoard.count}} packets</span>
+            <span class="hl-chip">{{vm.intelBoard.partyCount}} party</span>
+            <span class="hl-chip job">{{vm.intelBoard.jobCount}} job-linked</span>
+            {{#if vm.intelBoard.hiddenBySearch}}<span class="hl-chip muted">{{vm.intelBoard.hiddenBySearch}} hidden</span>{{/if}}
+          </div>
+        </header>
+
+        <form class="hl-intel-filter" data-holonet-action="intel-filter">
+          <label class="jb-search">
+            <span class="ic">⌕</span>
+            <input type="search" name="intelSearch" value="{{vm.intelBoard.intelSearch}}" placeholder="Search intel, NPCs, rumors, tags..." aria-label="Search intel packets">
+          </label>
+          <button class="hl-icon-btn" type="submit">Filter</button>
+          {{#if vm.intelBoard.hasIntelSearch}}<button class="hl-ghost-btn" data-holonet-action="clear-intel-filter" type="button">Clear</button>{{/if}}
+        </form>
+
+        <div class="hl-intel-layout">
+          <section class="hl-intel-list">
+            {{#if vm.intelBoard.hasItems}}
+            {{#each vm.intelBoard.items}}
+            <article class="hl-intel-card {{#if this.isPartyIntel}}party{{/if}} {{#if this.isJobIntel}}job{{/if}} {{#if this.isUnread}}unread{{/if}}">
+              <header>
+                <div>
+                  <div class="hl-label">{{this.sourceThreadTitle}}</div>
+                  <h3>{{this.title}}</h3>
+                </div>
+                <span class="hl-chip">{{this.timeLabel}}</span>
+              </header>
+              <p>{{this.summary}}</p>
+              {{#if this.hasTags}}
+              <div class="hl-intel-tags">
+                {{#each this.tags}}<span class="hl-chip">#{{this}}</span>{{/each}}
+              </div>
+              {{/if}}
+              <footer>
+                <span>{{this.sourceLabel}} · {{this.visibilityLabel}}</span>
+                {{#if this.canOpenThread}}<button type="button" class="hl-icon-btn" data-holonet-action="set-app-mode" data-app-mode="chat" data-thread-id="{{this.threadId}}">Open Thread</button>{{/if}}
+              </footer>
+            </article>
+            {{/each}}
+            {{else}}
+            <div class="jb-empty hl-intel-empty">
+              <div class="glyph">◈</div>
+              <div class="t">No Intel Saved</div>
+              <div class="s">Create an intel packet from a party, job, or side-thread transmission so players can review it later.</div>
+            </div>
+            {{/if}}
+          </section>
+
+          <aside class="hl-intel-compose">
+            <div class="hl-info-label">Create Intel Packet</div>
+            {{#if vm.intelBoard.canCreate}}
+            <form data-holonet-action="create-intel-note" data-thread-id="{{vm.intelBoard.selectedThreadId}}">
+              <label class="hl-field-label">Save To
+                <select class="hl-select" name="threadId">
+                  {{#each vm.intelBoard.threadOptions}}
+                  <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.kind}} // {{this.label}}</option>
+                  {{/each}}
+                </select>
+              </label>
+              <label class="hl-field-label">Intel Title
+                <input class="hl-input" type="text" name="intelTitle" placeholder="Steve the Space Pirate">
+              </label>
+              <label class="hl-field-label">Information
+                <textarea class="hl-composer-ta" name="intelBody" rows="7" placeholder="Write the clue, rumor, NPC note, or discovery here."></textarea>
+              </label>
+              <label class="hl-field-label">Tags
+                <input class="hl-input" type="text" name="intelTags" placeholder="npc, dagobah, rebellion">
+              </label>
+              <button class="hl-btn-accent" type="submit">Save Intel</button>
+              <p class="hl-intel-help">Intel is posted into the chosen thread and indexed here for everyone who can see that thread.</p>
+            </form>
+            {{else}}
+            <p class="hl-intel-help">Join or create a thread before saving intel.</p>
+            {{/if}}
+          </aside>
+        </div>
+      </section>
       {{else}}
-      <div class="hl-ms-root {{#if vm.selectedThread}}has-thread{{/if}} {{#if vm.selectedThread.job}}info-open{{/if}}">
+      <div class="hl-ms-root hl-ms-root--phase2 {{#if vm.selectedThread}}has-thread info-open{{/if}}">
     <aside class="swse-messenger-threads swse-panel hl-tlist">
       <div class="hl-tlist-top">
         <div class="hl-tlist-hd">
@@ -147,139 +451,52 @@
         {{#if vm.hasThreadSearch}}<button class="hl-ghost-btn" data-holonet-action="clear-thread-filter" type="button">{{localize "SWSE.ShellUI.Clear"}}</button>{{/if}}
       </form>
 
-      <div class="swse-messenger-thread-list hl-tlist-scroll">
+      <div class="swse-messenger-thread-list hl-tlist-scroll hl-thread-groups">
         {{#if vm.threads.length}}
-          <div class="hl-cat hl-cat--requests">
-            <div class="hl-cat-label">{{localize "SWSE.ShellUI.HolocomRequests"}}</div>
-            {{#each vm.threads}}
-            {{#if this.isPendingInvite}}
-            <div class="hl-invite hl-invite--rail">
-              <div class="hl-invite-badge"><span class="hl-pulse-dot"></span><strong>{{this.title}}</strong></div>
-              <div class="hl-subtle">{{this.preview}}</div>
-              <div class="hl-action-row">
-                <button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-invite" data-thread-id="{{this.id}}" type="button">{{localize "SWSE.ShellUI.Accept"}}</button>
-                <button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-invite" data-thread-id="{{this.id}}" type="button">{{localize "SWSE.ShellUI.Decline"}}</button>
-              </div>
+          {{#each vm.threadGroups}}
+          {{#if this.hasItems}}
+          <section class="hl-cat hl-cat--{{this.id}}">
+            <div class="hl-cat-label">
+              <span class="hl-cat-label__main"><span aria-hidden="true">{{this.icon}}</span>{{localize this.labelKey}}</span>
+              <span class="hl-cat-label__count">{{this.count}}</span>
             </div>
-            {{/if}}
-            {{/each}}
-          </div>
-
-          <div class="hl-cat">
-            <div class="hl-cat-label">{{localize "SWSE.ShellUI.Channels"}}</div>
-            {{#each vm.threads}}
-            {{#if this.isParty}}
-            <button class="swse-messenger-thread hl-titem {{#if (eq ../vm.selectedThreadId this.id)}}active on{{/if}} {{#if this.isPendingInvite}}swse-messenger-thread--invite hl-titem--invite{{/if}} {{#if this.isMuted}}swse-messenger-thread--muted hl-titem--muted{{/if}}" data-thread-id="{{this.id}}" type="button">
-              <span class="hl-titem-icon">{{#if this.isJob}}◆{{else}}{{#if this.isParty}}#{{else}}{{#if this.isSide}}◇{{else}}⊕{{/if}}{{/if}}{{/if}}</span>
-              <span class="hl-titem-body">
-                <span class="hl-titem-top">
-                  <span class="swse-messenger-thread__title hl-titem-title">{{this.title}}</span>
-                  <span class="hl-titem-right">
-                    {{#if this.unreadCount}}<span class="swse-messenger-thread__badge hl-badge">{{this.unreadCount}}</span>{{/if}}
+            <div class="hl-cat-stack">
+              {{#each this.items}}
+              {{#if this.isPendingInvite}}
+              <article class="hl-invite hl-invite--rail hl-transmission-card hl-transmission-card--invite">
+                <div class="hl-invite-badge"><span class="hl-pulse-dot"></span><strong>{{this.title}}</strong></div>
+                <div class="hl-transmission-preview">{{this.preview}}</div>
+                <div class="hl-action-row">
+                  <button class="hl-btn-accent" data-holonet-action="thread-action" data-thread-action="accept-invite" data-thread-id="{{this.id}}" type="button">{{localize "SWSE.ShellUI.Accept"}}</button>
+                  <button class="hl-icon-btn" data-holonet-action="thread-action" data-thread-action="decline-invite" data-thread-id="{{this.id}}" type="button">{{localize "SWSE.ShellUI.Decline"}}</button>
+                </div>
+              </article>
+              {{else}}
+              <button class="swse-messenger-thread hl-titem hl-transmission-card {{#if (eq ../../vm.selectedThreadId this.id)}}active on{{/if}} {{#if this.isParty}}hl-titem--party{{/if}} {{#if this.isJob}}hl-titem--job{{/if}} {{#if this.isSide}}hl-titem--side{{/if}} {{#if this.isPrivate}}hl-titem--private{{/if}} {{#if this.isMuted}}swse-messenger-thread--muted hl-titem--muted{{/if}}" data-thread-id="{{this.id}}" type="button">
+                <span class="hl-titem-icon" aria-hidden="true">{{this.kindGlyph}}</span>
+                <span class="hl-titem-body">
+                  <span class="hl-titem-top">
+                    <span class="swse-messenger-thread__title hl-titem-title">{{this.title}}</span>
+                    <span class="hl-titem-right">
+                      {{#if this.timeLabel}}<span class="hl-titem-time">{{this.timeLabel}}</span>{{/if}}
+                      {{#if this.unreadCount}}<span class="swse-messenger-thread__badge hl-badge">{{this.unreadCount}}</span>{{/if}}
+                    </span>
+                  </span>
+                  <span class="swse-messenger-thread__preview hl-titem-preview">{{this.preview}}</span>
+                  <span class="swse-messenger-thread__chips hl-titem-chips">
+                    <span class="swse-messenger-chip hl-chip">{{this.kindLabel}}</span>
+                    {{#if this.isPendingInvite}}<span class="swse-messenger-chip swse-messenger-chip--invite hl-chip warn">{{localize "SWSE.ShellUI.Invite"}}</span>{{/if}}
+                    {{#if this.isMuted}}<span class="swse-messenger-chip swse-messenger-chip--muted hl-chip muted">{{localize "SWSE.ShellUI.Muted"}}</span>{{/if}}
+                    {{#if this.canManage}}<span class="swse-messenger-chip swse-messenger-chip--owner hl-chip owner">{{localize "SWSE.ShellUI.Owner"}}</span>{{/if}}
                   </span>
                 </span>
-                <span class="swse-messenger-thread__preview hl-titem-preview">{{this.preview}}</span>
-                <span class="swse-messenger-thread__chips hl-titem-chips">
-                  {{#if this.isParty}}<span class="swse-messenger-chip swse-messenger-chip--party hl-chip party">{{localize "SWSE.ShellUI.Party"}}</span>{{/if}}
-                  {{#if this.isSide}}<span class="swse-messenger-chip swse-messenger-chip--side hl-chip">{{localize "SWSE.ShellUI.Side"}}</span>{{/if}}
-                  {{#if this.isJob}}<span class="swse-messenger-chip swse-messenger-chip--job hl-chip job">{{localize "SWSE.ShellUI.Job"}}</span>{{/if}}
-                  {{#if this.isPrivate}}<span class="swse-messenger-chip swse-messenger-chip--private hl-chip private">{{localize "SWSE.ShellUI.Private"}}</span>{{/if}}
-                  {{#if this.isPendingInvite}}<span class="swse-messenger-chip swse-messenger-chip--invite hl-chip warn">{{localize "SWSE.ShellUI.Invite"}}</span>{{/if}}
-                  {{#if this.isMuted}}<span class="swse-messenger-chip swse-messenger-chip--muted hl-chip muted">{{localize "SWSE.ShellUI.Muted"}}</span>{{/if}}
-                  {{#if this.canManage}}<span class="swse-messenger-chip swse-messenger-chip--owner hl-chip owner">{{localize "SWSE.ShellUI.Owner"}}</span>{{/if}}
-                </span>
-              </span>
-            </button>
-            {{/if}}
-            {{/each}}
-          </div>
-
-          <div class="hl-cat">
-            <div class="hl-cat-label">{{localize "SWSE.ShellUI.JobSignals"}}</div>
-            {{#each vm.threads}}
-            {{#if this.isJob}}
-            <button class="swse-messenger-thread hl-titem {{#if (eq ../vm.selectedThreadId this.id)}}active on{{/if}} {{#if this.isPendingInvite}}swse-messenger-thread--invite hl-titem--invite{{/if}} {{#if this.isMuted}}swse-messenger-thread--muted hl-titem--muted{{/if}}" data-thread-id="{{this.id}}" type="button">
-              <span class="hl-titem-icon">{{#if this.isJob}}◆{{else}}{{#if this.isParty}}#{{else}}{{#if this.isSide}}◇{{else}}⊕{{/if}}{{/if}}{{/if}}</span>
-              <span class="hl-titem-body">
-                <span class="hl-titem-top">
-                  <span class="swse-messenger-thread__title hl-titem-title">{{this.title}}</span>
-                  <span class="hl-titem-right">
-                    {{#if this.unreadCount}}<span class="swse-messenger-thread__badge hl-badge">{{this.unreadCount}}</span>{{/if}}
-                  </span>
-                </span>
-                <span class="swse-messenger-thread__preview hl-titem-preview">{{this.preview}}</span>
-                <span class="swse-messenger-thread__chips hl-titem-chips">
-                  {{#if this.isParty}}<span class="swse-messenger-chip swse-messenger-chip--party hl-chip party">{{localize "SWSE.ShellUI.Party"}}</span>{{/if}}
-                  {{#if this.isSide}}<span class="swse-messenger-chip swse-messenger-chip--side hl-chip">{{localize "SWSE.ShellUI.Side"}}</span>{{/if}}
-                  {{#if this.isJob}}<span class="swse-messenger-chip swse-messenger-chip--job hl-chip job">{{localize "SWSE.ShellUI.Job"}}</span>{{/if}}
-                  {{#if this.isPrivate}}<span class="swse-messenger-chip swse-messenger-chip--private hl-chip private">{{localize "SWSE.ShellUI.Private"}}</span>{{/if}}
-                  {{#if this.isPendingInvite}}<span class="swse-messenger-chip swse-messenger-chip--invite hl-chip warn">{{localize "SWSE.ShellUI.Invite"}}</span>{{/if}}
-                  {{#if this.isMuted}}<span class="swse-messenger-chip swse-messenger-chip--muted hl-chip muted">{{localize "SWSE.ShellUI.Muted"}}</span>{{/if}}
-                  {{#if this.canManage}}<span class="swse-messenger-chip swse-messenger-chip--owner hl-chip owner">{{localize "SWSE.ShellUI.Owner"}}</span>{{/if}}
-                </span>
-              </span>
-            </button>
-            {{/if}}
-            {{/each}}
-          </div>
-
-          <div class="hl-cat">
-            <div class="hl-cat-label">{{localize "SWSE.ShellUI.SideDeals"}}</div>
-            {{#each vm.threads}}
-            {{#if this.isSide}}
-            <button class="swse-messenger-thread hl-titem {{#if (eq ../vm.selectedThreadId this.id)}}active on{{/if}} {{#if this.isPendingInvite}}swse-messenger-thread--invite hl-titem--invite{{/if}} {{#if this.isMuted}}swse-messenger-thread--muted hl-titem--muted{{/if}}" data-thread-id="{{this.id}}" type="button">
-              <span class="hl-titem-icon">{{#if this.isJob}}◆{{else}}{{#if this.isParty}}#{{else}}{{#if this.isSide}}◇{{else}}⊕{{/if}}{{/if}}{{/if}}</span>
-              <span class="hl-titem-body">
-                <span class="hl-titem-top">
-                  <span class="swse-messenger-thread__title hl-titem-title">{{this.title}}</span>
-                  <span class="hl-titem-right">
-                    {{#if this.unreadCount}}<span class="swse-messenger-thread__badge hl-badge">{{this.unreadCount}}</span>{{/if}}
-                  </span>
-                </span>
-                <span class="swse-messenger-thread__preview hl-titem-preview">{{this.preview}}</span>
-                <span class="swse-messenger-thread__chips hl-titem-chips">
-                  {{#if this.isParty}}<span class="swse-messenger-chip swse-messenger-chip--party hl-chip party">{{localize "SWSE.ShellUI.Party"}}</span>{{/if}}
-                  {{#if this.isSide}}<span class="swse-messenger-chip swse-messenger-chip--side hl-chip">{{localize "SWSE.ShellUI.Side"}}</span>{{/if}}
-                  {{#if this.isJob}}<span class="swse-messenger-chip swse-messenger-chip--job hl-chip job">{{localize "SWSE.ShellUI.Job"}}</span>{{/if}}
-                  {{#if this.isPrivate}}<span class="swse-messenger-chip swse-messenger-chip--private hl-chip private">{{localize "SWSE.ShellUI.Private"}}</span>{{/if}}
-                  {{#if this.isPendingInvite}}<span class="swse-messenger-chip swse-messenger-chip--invite hl-chip warn">{{localize "SWSE.ShellUI.Invite"}}</span>{{/if}}
-                  {{#if this.isMuted}}<span class="swse-messenger-chip swse-messenger-chip--muted hl-chip muted">{{localize "SWSE.ShellUI.Muted"}}</span>{{/if}}
-                  {{#if this.canManage}}<span class="swse-messenger-chip swse-messenger-chip--owner hl-chip owner">{{localize "SWSE.ShellUI.Owner"}}</span>{{/if}}
-                </span>
-              </span>
-            </button>
-            {{/if}}
-            {{/each}}
-          </div>
-
-          <div class="hl-cat">
-            <div class="hl-cat-label">{{localize "SWSE.ShellUI.Private"}}</div>
-            {{#each vm.threads}}
-            {{#if this.isPrivate}}
-            <button class="swse-messenger-thread hl-titem {{#if (eq ../vm.selectedThreadId this.id)}}active on{{/if}} {{#if this.isPendingInvite}}swse-messenger-thread--invite hl-titem--invite{{/if}} {{#if this.isMuted}}swse-messenger-thread--muted hl-titem--muted{{/if}}" data-thread-id="{{this.id}}" type="button">
-              <span class="hl-titem-icon">{{#if this.isJob}}◆{{else}}{{#if this.isParty}}#{{else}}{{#if this.isSide}}◇{{else}}⊕{{/if}}{{/if}}{{/if}}</span>
-              <span class="hl-titem-body">
-                <span class="hl-titem-top">
-                  <span class="swse-messenger-thread__title hl-titem-title">{{this.title}}</span>
-                  <span class="hl-titem-right">
-                    {{#if this.unreadCount}}<span class="swse-messenger-thread__badge hl-badge">{{this.unreadCount}}</span>{{/if}}
-                  </span>
-                </span>
-                <span class="swse-messenger-thread__preview hl-titem-preview">{{this.preview}}</span>
-                <span class="swse-messenger-thread__chips hl-titem-chips">
-                  {{#if this.isParty}}<span class="swse-messenger-chip swse-messenger-chip--party hl-chip party">{{localize "SWSE.ShellUI.Party"}}</span>{{/if}}
-                  {{#if this.isSide}}<span class="swse-messenger-chip swse-messenger-chip--side hl-chip">{{localize "SWSE.ShellUI.Side"}}</span>{{/if}}
-                  {{#if this.isJob}}<span class="swse-messenger-chip swse-messenger-chip--job hl-chip job">{{localize "SWSE.ShellUI.Job"}}</span>{{/if}}
-                  {{#if this.isPrivate}}<span class="swse-messenger-chip swse-messenger-chip--private hl-chip private">{{localize "SWSE.ShellUI.Private"}}</span>{{/if}}
-                  {{#if this.isPendingInvite}}<span class="swse-messenger-chip swse-messenger-chip--invite hl-chip warn">{{localize "SWSE.ShellUI.Invite"}}</span>{{/if}}
-                  {{#if this.isMuted}}<span class="swse-messenger-chip swse-messenger-chip--muted hl-chip muted">{{localize "SWSE.ShellUI.Muted"}}</span>{{/if}}
-                  {{#if this.canManage}}<span class="swse-messenger-chip swse-messenger-chip--owner hl-chip owner">{{localize "SWSE.ShellUI.Owner"}}</span>{{/if}}
-                </span>
-              </span>
-            </button>
-            {{/if}}
-            {{/each}}
-          </div>
+              </button>
+              {{/if}}
+              {{/each}}
+            </div>
+          </section>
+          {{/if}}
+          {{/each}}
         {{else}}
           <div class="swse-messenger-empty hl-empty">{{localize "SWSE.ShellUI.NoTransmissionsYetStartAThreadOrWait"}}</div>
         {{/if}}
@@ -487,9 +704,9 @@
               </div>
               {{/if}}
               {{#each vm.messages}}
-              <div class="hl-message-anchor {{#if this.isHighlighted}}hl-message-anchor--highlight{{/if}}" data-holonet-message-id="{{this.id}}" data-holonet-record-id="{{this.id}}" {{#if this.isHighlighted}}data-holonet-highlight="true"{{/if}}>
+              <div class="hl-message-anchor hl-message-anchor--phase3 {{#if this.hasCreditTransfer}}hl-message-anchor--card{{/if}} {{#if this.hasItemTransfer}}hl-message-anchor--card{{/if}} {{#if this.hasAssetTransfer}}hl-message-anchor--card{{/if}} {{#if this.hasGameInvite}}hl-message-anchor--card{{/if}} {{#if this.hasReceipt}}hl-message-anchor--card{{/if}} {{#if this.hasJobCard}}hl-message-anchor--card{{/if}} {{#if this.isSystem}}hl-message-anchor--system{{/if}} {{#if this.isHighlighted}}hl-message-anchor--highlight{{/if}}" data-holonet-message-id="{{this.id}}" data-holonet-record-id="{{this.id}}" {{#if this.isHighlighted}}data-holonet-highlight="true"{{/if}}> 
                 {{#if this.hasCreditTransfer}}
-                <article class="swse-msg-system hl-credit-card-wrap">
+                <article class="swse-msg-system hl-credit-card-wrap hl-message-card-wrap hl-message-card-wrap--credit">
                   <div class="hl-credit-card hl-credit-card--bank">
                     <div class="hl-credit-card-shimmer"></div>
                     <div class="hl-credit-title">{{localize "SWSE.ShellUI.CoruscantCreditUnion"}}</div>
@@ -520,7 +737,7 @@
                 </article>
                 {{else}}
                 {{#if this.hasItemTransfer}}
-                <article class="swse-msg-system hl-item-card-wrap">
+                <article class="swse-msg-system hl-item-card-wrap hl-message-card-wrap hl-message-card-wrap--trade">
                   <div class="hl-attach-card hl-item-transfer-card">
                     <div class="hl-credit-title">{{localize "SWSE.ShellUI.ItemTransfer"}}</div>
                     <div class="hl-credit-line"><strong>{{this.itemTransfer.fromLabel}}</strong> → <strong>{{this.itemTransfer.toLabel}}</strong></div>
@@ -570,7 +787,7 @@
                 </article>
                 {{else}}
                 {{#if this.hasAssetTransfer}}
-                <article class="swse-msg-system hl-item-card-wrap">
+                <article class="swse-msg-system hl-item-card-wrap hl-message-card-wrap hl-message-card-wrap--trade">
                   <div class="hl-attach-card hl-item-transfer-card hl-asset-transfer-card">
                     <div class="hl-credit-title">{{localize "SWSE.ShellUI.ShipDroidAssetTransfer"}}</div>
                     <div class="hl-credit-line"><strong>{{this.assetTransfer.fromLabel}}</strong> → <strong>{{this.assetTransfer.toLabel}}</strong></div>
@@ -618,7 +835,7 @@
                 </article>
                 {{else}}
                 {{#if this.hasGameInvite}}
-                <article class="swse-msg-system hl-game-invite-card-wrap">
+                <article class="swse-msg-system hl-game-invite-card-wrap hl-message-card-wrap hl-message-card-wrap--game">
                   <div class="hl-attach-card hl-game-invite-card">
                     <div class="hl-credit-title">{{localize "SWSE.ShellUI.HolopadGameInvite"}}</div>
                     <div class="hl-title">{{this.gameInvite.gameTitle}}</div>
@@ -636,8 +853,23 @@
                   </div>
                 </article>
                 {{else}}
+                {{#if this.hasJobCard}}
+                <article class="swse-msg-system hl-job-embed-wrap hl-message-card-wrap hl-message-card-wrap--job">
+                  <div class="hl-job-embed hl-job-embed--phase3">
+                    <div class="hl-credit-title">{{localize "SWSE.ShellUI.JobBoard"}}</div>
+                    <div class="hl-title">{{#if this.job.title}}{{this.job.title}}{{else}}{{localize "SWSE.ShellUI.JobSignal"}}{{/if}}</div>
+                    {{#if this.job.summary}}<div class="hl-credit-memo">{{this.job.summary}}</div>{{/if}}
+                    {{#if this.job.description}}<div class="hl-credit-memo">{{this.job.description}}</div>{{/if}}
+                    <div class="hl-job-embed-meta">
+                      {{#if this.job.statusLabel}}<span class="hl-chip job">{{this.job.statusLabel}}</span>{{/if}}
+                      {{#if this.job.rewardCreditsLabel}}<span class="hl-credit-status">{{this.job.rewardCreditsLabel}}</span>{{/if}}
+                      {{#if this.job.issuerLabel}}<span class="hl-chip">{{this.job.issuerLabel}}</span>{{/if}}
+                    </div>
+                  </div>
+                </article>
+                {{else}}
                 {{#if this.hasReceipt}}
-                <article class="swse-msg-system hl-receipt-card-wrap">
+                <article class="swse-msg-system hl-receipt-card-wrap hl-message-card-wrap hl-message-card-wrap--receipt">
                   <div class="hl-receipt-card">
                     <div class="hl-credit-title">{{this.receipt.title}}</div>
                     {{#if this.receipt.amountLabel}}<div class="hl-credit-amount">{{this.receipt.amountLabel}}</div>{{/if}}
@@ -646,16 +878,26 @@
                 </article>
                 {{else}}
                 {{#if this.isSystem}}
-                <article class="swse-msg-system hl-sys-msg">
+                <article class="swse-msg-system hl-sys-msg hl-message-divider">
                   <span class="hl-sys-line"></span><span>{{{this.bodyHtml}}}</span><span class="hl-sys-line"></span>
                 </article>
                 {{else}}
-                <article class="swse-msg-row hl-msg {{#if this.isOwn}}swse-msg-row--own own{{else}}swse-msg-row--other other{{/if}} {{#if this.isUnread}}swse-msg-row--unread{{/if}}">
+                <article class="swse-msg-row hl-msg hl-msg--phase3 {{#if this.isOwn}}swse-msg-row--own own{{else}}swse-msg-row--other other{{/if}} {{#if this.isUnread}}swse-msg-row--unread{{/if}} {{#if this.hasSecretNote}}hl-msg--secret{{/if}}">
                   {{#if this.isOther}}
                     {{#if this.senderAvatar}}<img class="swse-msg-avatar hl-avatar" src="{{this.senderAvatar}}" alt="">{{else}}<span class="swse-msg-avatar swse-msg-avatar--blank hl-avatar hl-avatar--blank">◇</span>{{/if}}
                   {{/if}}
-                  <div class="swse-msg-bubble hl-msg-bubble {{#if this.isOwn}}swse-msg-bubble--own{{else}}swse-msg-bubble--other{{/if}}">
-                    {{#unless this.sameSenderAsPrevious}}<div class="swse-msg__sender hl-msg-meta">{{this.senderLabel}}</div>{{/unless}}
+                  <div class="swse-msg-bubble hl-msg-bubble hl-msg-bubble--phase3 {{#if this.isOwn}}swse-msg-bubble--own{{else}}swse-msg-bubble--other{{/if}}">
+                    {{#unless this.sameSenderAsPrevious}}<div class="swse-msg__sender hl-msg-meta"><span class="hl-msg-sender-dot"></span><span>{{this.senderLabel}}</span></div>{{/unless}}
+                    {{#if this.hasIntelNote}}
+                    <div class="hl-intel-message-card">
+                      <div class="hl-credit-title">◈ Intel Packet</div>
+                      <h4>{{this.intelNote.title}}</h4>
+                      <div class="hl-msg-text">{{{this.bodyHtml}}}</div>
+                      {{#if this.intelNote.hasTags}}
+                      <div class="hl-intel-tags">{{#each this.intelNote.tags}}<span class="hl-chip">#{{this}}</span>{{/each}}</div>
+                      {{/if}}
+                    </div>
+                    {{else}}
                     {{#if this.hasSecretNote}}
                     <div class="hl-secret-note-card {{#if this.secretNote.isSealed}}is-sealed{{/if}}" data-record-id="{{this.id}}" {{#if this.secretNote.canAutoDestroy}}data-secret-note-expire-ms="{{this.secretNote.expiresAtMs}}"{{/if}}>
                       <div class="hl-secret-note-head">
@@ -732,12 +974,14 @@
                     </div>
                     {{/if}}
                     {{/if}}
+                    {{/if}}
                     <div class="swse-msg__time hl-msg-time">
                       <span>{{this.createdAt}}</span>
                       {{#if this.canPin}}{{#if this.isPinned}}<button type="button" class="hl-pin-btn" data-holonet-action="thread-action" data-thread-action="unpin-message" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}">{{localize "SWSE.ShellUI.Unpin"}}</button>{{else}}<button type="button" class="hl-pin-btn" data-holonet-action="thread-action" data-thread-action="pin-message" data-thread-id="{{../vm.selectedThread.id}}" data-record-id="{{this.id}}">{{localize "SWSE.ShellUI.Pin"}}</button>{{/if}}{{/if}}
                     </div>
                   </div>
                 </article>
+                {{/if}}
                 {{/if}}
                 {{/if}}
                 {{/if}}
@@ -752,7 +996,7 @@
           </div>
 
           {{#if vm.selectedThread.canSend}}
-          <form class="swse-messenger-composer hl-composer hl-composer--concept" data-holonet-action="send-message" data-thread-id="{{vm.selectedThread.id}}">
+          <form class="swse-messenger-composer hl-composer hl-composer--concept hl-composer--phase3" data-holonet-action="send-message" data-thread-id="{{vm.selectedThread.id}}">
             <div class="hl-composer-meta-row">
               {{#if vm.isGm}}
               <label class="swse-messenger-field swse-messenger-field--inline hl-persona-row">
@@ -768,7 +1012,7 @@
                 <input type="text" name="imageUrl" placeholder="{{localize 'SWSE.ShellUI.OptionalImagePathOrURL'}}">
               </label>
             </div>
-            <div class="hl-attach-dock">
+            <div class="hl-attach-dock hl-attach-dock--phase3">
               <button class="hl-attach-btn" type="button" title="{{localize 'SWSE.ShellUI.AttachOrTransfer'}}">⊞</button>
               <div class="hl-attach-menu-inline">
                 {{#if vm.transferPolicy.creditsEnabled}}
@@ -789,7 +1033,7 @@
                 <b>{{localize "SWSE.ShellUI.DropItemToAttach"}}</b><span>{{localize "SWSE.ShellUI.CompendiumItemsBecomeHolonetCards"}}</span>
               </div>
             </div>
-            <div class="hl-composer-input-row">
+            <div class="hl-composer-input-row hl-composer-input-row--phase3">
               <textarea class="hl-composer-ta" name="body" rows="2" placeholder="Message {{vm.selectedThread.title}}..." data-holonet-editor="message"></textarea>
               <button type="submit" class="swse-btn swse-btn--primary hl-send-btn"><span>{{localize "SWSE.ShellUI.Send"}}</span><span aria-hidden="true">▶</span></button>
             </div>

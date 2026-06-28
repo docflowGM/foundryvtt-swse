@@ -9,6 +9,7 @@
 
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { HealingEmitter } from '../emitters/healing-emitter.js';
+import { GMPartyRosterService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-party-roster-service.js';
 
 export class GMHealingTrigger {
   /**
@@ -149,7 +150,9 @@ export class GMHealingTrigger {
     const ineligible = [];
     const reasons = { not_eligible: 0, alive: 0, character: 0 };
 
-    for (const actor of game.actors || []) {
+    const rosterActors = GMPartyRosterService.getPartyActors({ ownedOnly: false });
+    const actors = rosterActors.length ? rosterActors : Array.from(game.actors || []);
+    for (const actor of actors) {
       if (this.isEligibleForHealing(actor)) {
         eligible.push({ id: actor.id, name: actor.name });
       } else {

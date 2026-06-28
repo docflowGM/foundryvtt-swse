@@ -10,8 +10,10 @@ import {
   INTEL_STATUS
 } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
 import { DossierDragDropService } from '/systems/foundryvtt-swse/scripts/ui/dragdrop/dossier-drag-drop-service.js';
+import { HolonetDecryptionService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-decryption-service.js';
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { confirmGmDatapadModal } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-datapad-modal.js';
+import { GMSmartFormDropService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-smart-form-drop-service.js';
 
 function text(formData, key) {
   return String(formData.get(key) ?? '').trim();
@@ -26,6 +28,20 @@ function splitCsv(value = '') {
     .split(',')
     .map(part => part.trim())
     .filter(Boolean);
+}
+
+function multiValues(formData, key) {
+  return formData.getAll(key)
+    .map(value => String(value || '').trim())
+    .filter(Boolean);
+}
+
+function defaultSkillsForMode(mode = 'glyphCipher') {
+  try {
+    return HolonetDecryptionService.defaultSkillsForMode(mode);
+  } catch (_err) {
+    return ['useComputer'];
+  }
 }
 
 function parseLockboxItems(value = '') {
@@ -45,6 +61,12 @@ function parseLockboxItems(value = '') {
 
 function intelPayloadFromForm(formData) {
   const skillGateEnabled = checked(formData, 'skillGateEnabled');
+  const decryptionMode = text(formData, 'decryptionMode') || 'glyphCipher';
+  const selectedSkills = multiValues(formData, 'skillGateSkills');
+  const fallbackSkills = splitCsv(text(formData, 'skillGateSkill')).length ? splitCsv(text(formData, 'skillGateSkill')) : defaultSkillsForMode(decryptionMode);
+  const gateSkills = Array.from(new Set((selectedSkills.length ? selectedSkills : fallbackSkills).filter(Boolean)));
+  if (decryptionMode === 'forceResonance' && !gateSkills.includes('useTheForce')) gateSkills.unshift('useTheForce');
+  const primarySkill = gateSkills[0] || 'useComputer';
   return {
     title: text(formData, 'title') || 'Untitled Intel',
     kind: text(formData, 'kind'),
@@ -79,11 +101,11 @@ function intelPayloadFromForm(formData) {
     dossierCommit: checked(formData, 'dossierCommit'),
     skillGate: {
       enabled: skillGateEnabled,
-      skill: text(formData, 'skillGateSkill'),
-      skills: splitCsv(text(formData, 'skillGateSkills') || text(formData, 'skillGateSkill')),
+      skill: primarySkill,
+      skills: gateSkills,
       dc: Number(text(formData, 'skillGateDc')) || 0,
       level: Number(text(formData, 'cipherLevel')) || 12,
-      decryptionMode: text(formData, 'decryptionMode') || 'glyphCipher',
+      decryptionMode,
       cipherMode: text(formData, 'cipherMode'),
       glyphs: checked(formData, 'cipherGlyphs'),
       transpose: checked(formData, 'cipherTranspose'),
@@ -119,6 +141,7 @@ export class GMIntelSurfaceController {
     this._wireIntelActions(pageElement, signal);
     this._wireForms(pageElement, signal);
     this._wireWizardControls(pageElement, signal);
+    GMSmartFormDropService.bind(pageElement, { signal });
   }
 
   destroy() {
@@ -154,6 +177,10 @@ export class GMIntelSurfaceController {
   }
 
   _wireIntelActions(pageElement, signal) {
+    this._wireModeDropdown(pageElement, signal);
+    this._wireDifficultyDropdown(pageElement, signal);
+    this._wireSkillPicker(pageElement, signal);
+
     pageElement.querySelectorAll('[data-intel-mode-select]').forEach((button) => {
       button.addEventListener('click', (event) => {
         event.preventDefault();
@@ -297,6 +324,70 @@ export class GMIntelSurfaceController {
           ui.notifications?.info?.('Use the delivery buttons above: Secret Note, Messenger, Bulletin, or Intel Locker.');
         }
       }, { signal });
+    });
+  }
+
+
+  _wireModeDropdown(pageElement, signal) {
+    pageElement.querySelectorAll('[data-intel-mode-select-control]').forEach((select) => {
+      const update = () => {
+        const mode = select.value || 'glyphCipher';
+        pageElement.querySelectorAll('[data-intel-mode-summary]').forEach((summary) => {
+          summary.classList.toggle('is-active', summary.dataset.intelModeSummary === mode);
+        });
+        const option = select.selectedOptions?.[0];
+        const defaults = String(option?.dataset?.defaultSkills || '')
+          .split(',')
+          .map(entry => entry.trim())
+          .filter(Boolean);
+        if (defaults.length) {
+          pageElement.querySelectorAll('[data-intel-skill-option]').forEach((input) => {
+            input.checked = defaults.includes(input.value);
+            const card = input.closest('.gm-intel-skill-option');
+            if (card) card.classList.toggle('is-selected', input.checked);
+          });
+          this._syncSkillSummary(pageElement);
+        }
+      };
+      select.addEventListener('change', update, { signal });
+    });
+  }
+
+  _wireDifficultyDropdown(pageElement, signal) {
+    pageElement.querySelectorAll('[data-intel-difficulty-select]').forEach((select) => {
+      const update = () => {
+        const option = select.selectedOptions?.[0];
+        const dc = option?.dataset?.dc;
+        const level = option?.dataset?.level;
+        const dcInput = pageElement.querySelector('input[name="skillGateDc"]');
+        const levelInput = pageElement.querySelector('input[name="cipherLevel"]');
+        if (dcInput && dc) dcInput.value = dc;
+        if (levelInput && level) levelInput.value = level;
+        const summary = pageElement.querySelector('[data-intel-difficulty-summary]');
+        if (summary && option) summary.textContent = option.dataset.description || `${option.textContent || 'Preset'} selected.`;
+      };
+      select.addEventListener('change', update, { signal });
+    });
+  }
+
+  _wireSkillPicker(pageElement, signal) {
+    pageElement.querySelectorAll('[data-intel-skill-option]').forEach((input) => {
+      const update = () => {
+        const card = input.closest('.gm-intel-skill-option');
+        if (card) card.classList.toggle('is-selected', input.checked);
+        this._syncSkillSummary(pageElement);
+      };
+      input.addEventListener('change', update, { signal });
+      update();
+    });
+    this._syncSkillSummary(pageElement);
+  }
+
+  _syncSkillSummary(pageElement) {
+    const checkedSkills = Array.from(pageElement.querySelectorAll('[data-intel-skill-option]:checked'));
+    const labels = checkedSkills.map(input => input.dataset.skillLabel || input.value).filter(Boolean);
+    pageElement.querySelectorAll('[data-intel-skill-summary]').forEach((summary) => {
+      summary.textContent = labels.length ? labels.join(', ') : 'No skills selected yet';
     });
   }
 

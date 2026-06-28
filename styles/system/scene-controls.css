@@ -106,3 +106,34 @@ nav#sidebar-tabs .swse-directory-launcher-row,
   display: none !important;
   pointer-events: none !important;
 }
+
+/* GM Datapad contact actorization drop target. */
+.actor-directory.swse-contact-actorize-drop-active,
+.actors-sidebar.swse-contact-actorize-drop-active,
+#actors.swse-contact-actorize-drop-active,
+[data-document-name="Actor"].swse-contact-actorize-drop-active {
+  position: relative;
+  outline: 2px solid color-mix(in srgb, var(--swse-theme-accent, #69e6ff) 78%, white);
+  outline-offset: -4px;
+  box-shadow: inset 0 0 24px color-mix(in srgb, var(--swse-theme-accent, #69e6ff) 25%, transparent);
+}
+
+.actor-directory.swse-contact-actorize-drop-active::after,
+.actors-sidebar.swse-contact-actorize-drop-active::after,
+#actors.swse-contact-actorize-drop-active::after,
+[data-document-name="Actor"].swse-contact-actorize-drop-active::after {
+  content: "Drop GM contact to create/link NPC actor";
+  position: absolute;
+  inset: auto 0 0 0;
+  z-index: 10;
+  padding: 0.55rem 0.75rem;
+  background: rgba(3, 11, 18, 0.94);
+  border-top: 1px solid color-mix(in srgb, var(--swse-theme-accent, #69e6ff) 55%, transparent);
+  color: color-mix(in srgb, var(--swse-theme-accent, #69e6ff) 86%, white);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-align: center;
+  text-transform: uppercase;
+  pointer-events: none;
+}

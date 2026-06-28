@@ -16,6 +16,8 @@ import { HolonetComposerAssist } from '/systems/foundryvtt-swse/scripts/ui/holon
 import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/request-shell-render.js';
 import { GMCombatRecoveryService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/gm-combat-recovery-service.js';
 import { HolonetMessengerService } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-messenger-service.js';
+import { GMSmartFormDropService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-smart-form-drop-service.js';
+import { DossierDragDropService } from '/systems/foundryvtt-swse/scripts/ui/dragdrop/dossier-drag-drop-service.js';
 
 export class GMBulletinSurfaceController {
   constructor(host) {
@@ -48,6 +50,8 @@ export class GMBulletinSurfaceController {
     this._wireStateForms(pageElement, signal);
     this._wireSecretNoteConsole(pageElement, signal);
     this._wirePartyRecoveryActions(pageElement, signal);
+    GMSmartFormDropService.bind(pageElement, { signal });
+    DossierDragDropService.bindDragSources(pageElement, { signal });
   }
 
   _wireSecretNoteConsole(pageElement, signal) {
@@ -444,9 +448,9 @@ export class GMBulletinSurfaceController {
       dropzone.addEventListener('drop', (event) => {
         event.preventDefault();
         dropzone.classList.remove('is-dragover');
-        const raw = event.dataTransfer?.getData('text/plain') || event.dataTransfer?.getData('text/uri-list') || '';
+        const raw = event.dataTransfer?.getData('text/uri-list') || event.dataTransfer?.getData('text/plain') || '';
         const path = String(raw || '').trim();
-        if (!path) return;
+        if (!path || path.startsWith('{') || path.startsWith('[')) return;
         input.value = path;
         input.dispatchEvent(new Event('input', { bubbles: true }));
         input.dispatchEvent(new Event('change', { bubbles: true }));

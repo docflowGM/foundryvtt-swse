@@ -46,11 +46,17 @@ import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store
 import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-session-store.js";
 import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js";
 import { computeCenteredPosition, resetApplicationCentering } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
+import { GMPartyRosterService } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-party-roster-service.js";
 
 const GM_TABLET_BASE_WIDTH = 1440;
 const GM_TABLET_BASE_HEIGHT = 900;
 const GM_TABLET_MIN_WIDTH = Math.round(GM_TABLET_BASE_WIDTH * 0.55);
 const GM_TABLET_MIN_HEIGHT = Math.round(GM_TABLET_BASE_HEIGHT * 0.55);
+const GM_TABLET_VIEWPORT_MARGIN = 8;
+const GM_TABLET_MIN_SAFE_WIDTH = 360;
+const GM_TABLET_MIN_SAFE_HEIGHT = 260;
+const GM_TABLET_COMPACT_WIDTH = 460;
+const GM_TABLET_COMPACT_HEIGHT = 76;
 
 export class GMDatapad extends BaseSWSEAppV2 {
   static DEFAULT_OPTIONS = {
@@ -99,6 +105,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       }
       existing._shouldCenterOnRender = false;
       existing._gmTabletHasManualPlacement = true;
+      if (existing._gmTabletMinimized) existing._setGmDatapadMinimized(false);
       existing.render(false);
       existing.bringToFront?.();
       return existing;
@@ -163,6 +170,10 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this._gmTabletHasManualPlacement = false;
     this._gmSidebarCollapsed = false;
     this._gmSurfaceFocused = false;
+    this._gmTabletMinimized = false;
+    this._gmTabletPreMinimizeRect = null;
+    this._gmViewportResizeHandler = null;
+    this._gmViewportResizeFrame = null;
   }
 
 
@@ -292,7 +303,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     })();
     const partyUsers = Array.from(game.users ?? []).filter((user) => !user.isGM);
     const onlinePlayers = partyUsers.filter((user) => user.active).length;
-    const partyActors = partyUsers.map((user) => user.character).filter(Boolean);
+    const partyActors = GMPartyRosterService.getPartyActors({ ownedOnly: false });
     const readHp = (actor) => {
       const hp = actor?.system?.attributes?.hp ?? actor?.system?.health ?? {};
       const value = number(hp.value ?? hp.current ?? actor?.system?.hp?.value);
@@ -929,44 +940,60 @@ export class GMDatapad extends BaseSWSEAppV2 {
   _computeGmDatapadSafePosition({ width = GM_TABLET_BASE_WIDTH, height = GM_TABLET_BASE_HEIGHT, expanded = false } = {}) {
     const viewportW = Math.max(1, window.innerWidth || GM_TABLET_BASE_WIDTH);
     const viewportH = Math.max(1, window.innerHeight || GM_TABLET_BASE_HEIGHT);
-
-    // The GM datapad is a frameless canvas app, so leave room for Foundry's
-    // bottom UI/hotbar. This keeps the shared shell bottom rail visible instead
-    // of letting it hide behind the viewport chrome.
-    const topInset = expanded ? 16 : 24;
-    const bottomInset = expanded ? 118 : 132;
-    const maxHeight = Math.max(GM_TABLET_MIN_HEIGHT, viewportH - topInset - bottomInset);
-    const safeHeight = Math.min(Number(height) || GM_TABLET_BASE_HEIGHT, GM_TABLET_BASE_HEIGHT, maxHeight);
-
-    const pos = computeCenteredPosition(Number(width) || GM_TABLET_BASE_WIDTH, safeHeight);
-    pos.height = safeHeight;
-    pos.top = Math.max(topInset, Math.min(pos.top, viewportH - safeHeight - bottomInset));
-
-    // If the viewport is very short, prefer a visible bottom rail over perfect centering.
-    if (pos.top + pos.height > viewportH - bottomInset) {
-      pos.top = Math.max(topInset, viewportH - bottomInset - pos.height);
-    }
-
-    return pos;
+    const margin = expanded ? GM_TABLET_VIEWPORT_MARGIN : Math.max(GM_TABLET_VIEWPORT_MARGIN, 12);
+    const maxWidth = Math.max(120, viewportW - margin * 2);
+    const maxHeight = Math.max(96, viewportH - margin * 2);
+    const desiredWidth = expanded ? maxWidth : (Number(width) || GM_TABLET_BASE_WIDTH);
+    const desiredHeight = expanded ? maxHeight : (Number(height) || GM_TABLET_BASE_HEIGHT);
+    const safeWidth = Math.min(Math.max(desiredWidth, Math.min(GM_TABLET_MIN_WIDTH, maxWidth)), maxWidth);
+    const safeHeight = Math.min(Math.max(desiredHeight, Math.min(GM_TABLET_MIN_HEIGHT, maxHeight)), maxHeight);
+    const centered = computeCenteredPosition(safeWidth, safeHeight);
+    return this._clampGmDatapadPosition({
+      left: Number(centered?.left ?? Math.round((viewportW - safeWidth) / 2)),
+      top: Number(centered?.top ?? Math.round((viewportH - safeHeight) / 2)),
+      width: safeWidth,
+      height: safeHeight
+    });
   }
 
-  _clampGmDatapadPosition(pos = {}) {
+  _computeGmDatapadCompactPosition() {
     const viewportW = Math.max(1, window.innerWidth || GM_TABLET_BASE_WIDTH);
     const viewportH = Math.max(1, window.innerHeight || GM_TABLET_BASE_HEIGHT);
-    const width = Math.min(Math.max(Number(pos.width) || GM_TABLET_BASE_WIDTH, GM_TABLET_MIN_WIDTH), Math.max(GM_TABLET_MIN_WIDTH, viewportW - 16));
-    const height = Math.min(Math.max(Number(pos.height) || GM_TABLET_BASE_HEIGHT, GM_TABLET_MIN_HEIGHT), Math.max(GM_TABLET_MIN_HEIGHT, viewportH - 16));
-    const maxLeft = Math.max(8, viewportW - width - 8);
-    const maxTop = Math.max(8, viewportH - height - 8);
+    const margin = GM_TABLET_VIEWPORT_MARGIN;
+    const width = Math.min(GM_TABLET_COMPACT_WIDTH, Math.max(260, viewportW - margin * 2));
+    const height = Math.min(GM_TABLET_COMPACT_HEIGHT, Math.max(58, viewportH - margin * 2));
     return {
-      left: Math.min(Math.max(Number(pos.left) || 8, 8), maxLeft),
-      top: Math.min(Math.max(Number(pos.top) || 8, 8), maxTop),
+      left: Math.max(margin, viewportW - width - margin),
+      top: Math.max(margin, viewportH - height - margin),
       width,
       height
     };
   }
 
-  _applyGmDatapadPosition(pos = {}, { manual = false } = {}) {
-    const next = this._clampGmDatapadPosition(pos);
+  _clampGmDatapadPosition(pos = {}, { compact = false } = {}) {
+    const viewportW = Math.max(1, window.innerWidth || GM_TABLET_BASE_WIDTH);
+    const viewportH = Math.max(1, window.innerHeight || GM_TABLET_BASE_HEIGHT);
+    const margin = GM_TABLET_VIEWPORT_MARGIN;
+    const maxWidth = Math.max(compact ? 120 : 160, viewportW - margin * 2);
+    const maxHeight = Math.max(compact ? 58 : 96, viewportH - margin * 2);
+    const minWidth = compact ? Math.min(260, maxWidth) : Math.min(GM_TABLET_MIN_WIDTH, maxWidth);
+    const minHeight = compact ? Math.min(58, maxHeight) : Math.min(GM_TABLET_MIN_HEIGHT, maxHeight);
+    const desiredWidth = Number(pos.width) || (compact ? GM_TABLET_COMPACT_WIDTH : GM_TABLET_BASE_WIDTH);
+    const desiredHeight = Number(pos.height) || (compact ? GM_TABLET_COMPACT_HEIGHT : GM_TABLET_BASE_HEIGHT);
+    const width = Math.min(Math.max(desiredWidth, minWidth), maxWidth);
+    const height = Math.min(Math.max(desiredHeight, minHeight), maxHeight);
+    const maxLeft = Math.max(margin, viewportW - width - margin);
+    const maxTop = Math.max(margin, viewportH - height - margin);
+    return {
+      left: Math.min(Math.max(Number(pos.left) || margin, margin), maxLeft),
+      top: Math.min(Math.max(Number(pos.top) || margin, margin), maxTop),
+      width,
+      height
+    };
+  }
+
+  _applyGmDatapadPosition(pos = {}, { manual = false, compact = false } = {}) {
+    const next = this._clampGmDatapadPosition(pos, { compact });
     if (manual) {
       this._gmTabletHasManualPlacement = true;
       this._shouldCenterOnRender = false;
@@ -980,9 +1007,15 @@ export class GMDatapad extends BaseSWSEAppV2 {
       el.style.setProperty('top', `${next.top}px`, 'important');
       el.style.setProperty('width', `${next.width}px`, 'important');
       el.style.setProperty('height', `${next.height}px`, 'important');
+      el.style.setProperty('max-width', 'calc(100vw - 16px)', 'important');
+      el.style.setProperty('max-height', 'calc(100vh - 16px)', 'important');
       el.style.setProperty('--swse-tablet-scaled-width', `${next.width}px`);
       el.style.setProperty('--swse-tablet-scaled-height', `${next.height}px`);
+      el.style.setProperty('--swse-gm-datapad-viewport-height', `${next.height}px`);
+      el.classList.toggle('is-gm-datapad-minimized', this._gmTabletMinimized === true);
+      el.dataset.gmDatapadMinimized = this._gmTabletMinimized === true ? 'true' : 'false';
     }
+    this._syncGmDatapadViewportState();
     return next;
   }
 
@@ -1089,19 +1122,79 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
   async _minimizeSharedHolopadWindow() {
     try {
-      if (typeof this.minimize === 'function') {
-        await this.minimize();
-        return;
-      }
-      const appRoot = this.element?.closest?.('.application') || this.element;
-      const nativeMinimize = appRoot?.querySelector?.('[data-action="minimize"], .window-header .header-button.minimize');
-      if (nativeMinimize) nativeMinimize.click();
+      this._setGmDatapadMinimized(this._gmTabletMinimized !== true);
     } catch (err) {
       SWSELogger.warn('[GM Datapad] Failed to minimize shared holopad window.', err);
     }
   }
 
+  _setGmDatapadMinimized(minimized = true) {
+    if (minimized) {
+      if (!this._gmTabletMinimized) {
+        this._gmTabletPreMinimizeRect = {
+          left: Number(this.position?.left) || 0,
+          top: Number(this.position?.top) || 0,
+          width: Number(this.position?.width) || GM_TABLET_BASE_WIDTH,
+          height: Number(this.position?.height) || GM_TABLET_BASE_HEIGHT
+        };
+      }
+      this._gmTabletExpanded = false;
+      this._gmTabletMinimized = true;
+      this._applyGmDatapadPosition(this._computeGmDatapadCompactPosition(), { manual: true, compact: true });
+      return;
+    }
+
+    if (!this._gmTabletMinimized) return;
+    const restore = this._gmTabletPreMinimizeRect || this._computeGmDatapadSafePosition({
+      width: GM_TABLET_BASE_WIDTH,
+      height: GM_TABLET_BASE_HEIGHT
+    });
+    this._gmTabletMinimized = false;
+    this._gmTabletPreMinimizeRect = null;
+    this._applyGmDatapadPosition(restore, { manual: true });
+  }
+
+  _syncGmDatapadViewportState() {
+    const root = this.element instanceof HTMLElement ? this.element : this.element?.[0];
+    if (!(root instanceof HTMLElement)) return;
+    const minimized = this._gmTabletMinimized === true;
+    const shell = root.querySelector?.('.swse-sheet-v2-shell--gm-datapad');
+    root.classList.toggle('is-gm-datapad-minimized', minimized);
+    root.classList.add('is-gm-datapad-viewport-bound');
+    root.dataset.gmDatapadMinimized = minimized ? 'true' : 'false';
+    shell?.classList?.toggle?.('is-gm-datapad-minimized', minimized);
+    shell?.classList?.add?.('is-gm-datapad-viewport-bound');
+    root.querySelectorAll?.('[data-action="tablet-minimize"]').forEach((button) => {
+      button.setAttribute('title', minimized ? 'Restore GM datapad' : 'Minimize GM datapad');
+      button.setAttribute('aria-label', minimized ? 'Restore GM datapad' : 'Minimize GM datapad');
+      button.textContent = minimized ? '▣' : '−';
+    });
+  }
+
+  _wireGmDatapadViewportGuards() {
+    if (this._gmViewportResizeHandler) return;
+    this._gmViewportResizeHandler = () => {
+      if (this._gmViewportResizeFrame) return;
+      this._gmViewportResizeFrame = window.requestAnimationFrame(() => {
+        this._gmViewportResizeFrame = null;
+        if (!this.element || this.closing) return;
+        if (this._gmTabletMinimized) {
+          this._applyGmDatapadPosition(this._computeGmDatapadCompactPosition(), { compact: true });
+          return;
+        }
+        this._applyGmDatapadPosition({
+          left: Number(this.position?.left) || GM_TABLET_VIEWPORT_MARGIN,
+          top: Number(this.position?.top) || GM_TABLET_VIEWPORT_MARGIN,
+          width: Number(this.position?.width) || GM_TABLET_BASE_WIDTH,
+          height: Number(this.position?.height) || GM_TABLET_BASE_HEIGHT
+        });
+      });
+    };
+    window.addEventListener('resize', this._gmViewportResizeHandler, { passive: true });
+  }
+
   _toggleSharedHolopadExpand() {
+    if (this._gmTabletMinimized) this._setGmDatapadMinimized(false);
     if (this._gmTabletExpanded) {
       const saved = this._gmTabletPreExpandRect;
       if (saved) this._applyGmDatapadPosition(saved, { manual: true });
@@ -1150,7 +1243,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
             top: startTop + (moveEv.clientY - startY),
             width: Number(this.position?.width) || root.getBoundingClientRect().width || GM_TABLET_BASE_WIDTH,
             height: Number(this.position?.height) || root.getBoundingClientRect().height || GM_TABLET_BASE_HEIGHT
-          }, { manual: true });
+          }, { manual: true, compact: this._gmTabletMinimized === true });
         };
         const onEnd = () => {
           window.removeEventListener('pointermove', onMove);
@@ -1170,6 +1263,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     handles.forEach((handle) => {
       handle.addEventListener('pointerdown', (ev) => {
         if (ev.button !== 0) return;
+        if (this._gmTabletMinimized) this._setGmDatapadMinimized(false);
         ev.preventDefault();
         ev.stopPropagation();
         const dir = String(handle.dataset.resizeDir || 'se').toLowerCase();
@@ -1253,6 +1347,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
     if (!(root instanceof HTMLElement)) return;
 
     this._centerGmDatapadOnFirstRender();
+    this._wireGmDatapadViewportGuards();
+    this._syncGmDatapadViewportState();
     this._wireSharedHolopadFrameEvents(root);
 
     // Mirror actor holopad home affordances: all shell/home controls route to GM home.
@@ -2015,6 +2111,14 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
   async close(options = {}) {
     if (this.constructor._activeInstance === this) this.constructor._activeInstance = null;
+    if (this._gmViewportResizeHandler) {
+      window.removeEventListener('resize', this._gmViewportResizeHandler);
+      this._gmViewportResizeHandler = null;
+    }
+    if (this._gmViewportResizeFrame) {
+      window.cancelAnimationFrame?.(this._gmViewportResizeFrame);
+      this._gmViewportResizeFrame = null;
+    }
     resetApplicationCentering(this);
     return super.close(options);
   }
@@ -2023,6 +2127,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
    * Navigate to a different page within the datapad
    */
   async _navigateTo(pageId) {
+    if (this._gmTabletMinimized) this._setGmDatapadMinimized(false);
     const targetPage = GMSurfaceRegistry.hasSurface(pageId) ? pageId : 'home';
 
     if (targetPage !== pageId) {

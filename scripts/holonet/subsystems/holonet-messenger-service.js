@@ -40,9 +40,9 @@ const THREAD_TYPE = Object.freeze({
   JOB: 'job'
 });
 
-const DEFAULT_MESSAGE_LIMIT = 75;
-const MESSAGE_BATCH_SIZE = 75;
-const MAX_MESSAGE_LIMIT = 500;
+const DEFAULT_MESSAGE_LIMIT = 50;
+const MESSAGE_BATCH_SIZE = 50;
+const MAX_MESSAGE_LIMIT = 400;
 
 const PARTY_FUND_RECIPIENT_ID = 'party-fund';
 
@@ -269,6 +269,435 @@ function previewText(value = '', length = 88) {
   const text = String(value).replace(/\s+/g, ' ').trim();
   if (text.length <= length) return text;
   return `${text.slice(0, Math.max(0, length - 1))}…`;
+}
+
+function formatHolonetStamp(value = null) {
+  const date = value ? new Date(value) : null;
+  if (!date || Number.isNaN(date.getTime())) return '';
+  const now = new Date();
+  const ageMs = Math.max(0, now.getTime() - date.getTime());
+  const ageHours = ageMs / 3600000;
+  if (ageHours < 1) {
+    const minutes = Math.max(1, Math.floor(ageMs / 60000));
+    return `${minutes}m`;
+  }
+  if (ageHours < 24) return `${Math.floor(ageHours)}h`;
+  if (ageHours < 24 * 7) return `${Math.floor(ageHours / 24)}d`;
+  try {
+    return date.toLocaleDateString(game.i18n?.lang || undefined, { month: 'short', day: 'numeric' });
+  } catch (_err) {
+    return date.toISOString().slice(5, 10);
+  }
+}
+
+function buildMessengerThreadGroups(threads = []) {
+  const all = safeArray(threads);
+  const active = all.filter(thread => !thread.isPendingInvite);
+  const buckets = [
+    { id: 'requests', labelKey: 'SWSE.ShellUI.HolocomRequests', icon: '!', items: all.filter(thread => thread.isPendingInvite) },
+    { id: 'channels', labelKey: 'SWSE.ShellUI.Channels', icon: '#', items: active.filter(thread => thread.isParty) },
+    { id: 'jobs', labelKey: 'SWSE.ShellUI.JobSignals', icon: '◆', items: active.filter(thread => thread.isJob) },
+    { id: 'side', labelKey: 'SWSE.ShellUI.SideDeals', icon: '◇', items: active.filter(thread => thread.isSide) },
+    { id: 'private', labelKey: 'SWSE.ShellUI.Private', icon: '⊕', items: active.filter(thread => thread.isPrivate && !thread.isJob && !thread.isParty && !thread.isSide) }
+  ];
+  return buckets.map(bucket => ({ ...bucket, count: bucket.items.length, hasItems: bucket.items.length > 0 }));
+}
+
+
+function jobBoardToneForStatus(status = 'posted') {
+  switch (normalizeJobStatus(status)) {
+    case 'draft': return 'drafts';
+    case 'posted': return 'open';
+    case 'accepted':
+    case 'inProgress': return 'active';
+    case 'review':
+    case 'complete': return 'review';
+    case 'paid': return 'completed';
+    case 'archived': return 'archived';
+    case 'failed': return 'failed';
+    default: return 'open';
+  }
+}
+
+function jobBoardGroupIdForStatus(status = 'posted') {
+  switch (normalizeJobStatus(status)) {
+    case 'draft': return 'drafts';
+    case 'posted': return 'open';
+    case 'accepted':
+    case 'inProgress': return 'active';
+    case 'review':
+    case 'complete': return 'review';
+    case 'paid': return 'completed';
+    case 'archived':
+    case 'failed': return 'archived';
+    default: return 'open';
+  }
+}
+
+
+function normalizeJobBoardFilter(value = 'all') {
+  const id = String(value || 'all').trim().toLowerCase();
+  const map = {
+    all: 'all',
+    open: 'open',
+    active: 'active',
+    review: 'review',
+    completed: 'completed',
+    complete: 'review',
+    archived: 'archived',
+    failed: 'archived',
+    drafts: 'drafts',
+    draft: 'drafts',
+    attention: 'attention',
+    needsreview: 'attention',
+    needsattention: 'attention'
+  };
+  return map[id] || 'all';
+}
+
+function jobBoardFilterOptions(stats = {}, activeFilter = 'all') {
+  const filter = normalizeJobBoardFilter(activeFilter);
+  const rows = [
+    { id: 'all', label: 'All', count: stats.total || 0, tone: 'all' },
+    { id: 'open', label: 'Open', count: stats.open || 0, tone: 'open' },
+    { id: 'active', label: 'Active', count: stats.active || 0, tone: 'active' },
+    { id: 'review', label: 'Review', count: stats.review || 0, tone: 'review' },
+    { id: 'completed', label: 'Completed', count: stats.completed || 0, tone: 'completed' },
+    { id: 'archived', label: 'Archived', count: stats.archived || 0, tone: 'archived' },
+    { id: 'drafts', label: 'Drafts', count: stats.drafts || 0, tone: 'drafts' },
+    { id: 'attention', label: 'Needs Attention', count: stats.attention || 0, tone: 'attention' }
+  ];
+  return rows.map(row => ({ ...row, isActive: row.id === filter, hasItems: row.count > 0 }));
+}
+
+function filterJobsForBoard(jobs = [], activeFilter = 'all') {
+  const filter = normalizeJobBoardFilter(activeFilter);
+  if (filter === 'all') return safeArray(jobs);
+  if (filter === 'attention') return safeArray(jobs).filter(job => job.needsAttention);
+  return safeArray(jobs).filter(job => job.groupId === filter);
+}
+
+function jobObjectiveProgress(objectives = []) {
+  const all = safeArray(objectives);
+  const doneStatuses = new Set(['approved']);
+  const submittedStatuses = new Set(['claimed', 'submitted', 'pendingReview']);
+  const required = all.filter(objective => objective.isRequired || objective.required || normalizeObjectiveTier(objective.tier || objective.type) === 'primary');
+  const optional = all.filter(objective => !required.includes(objective));
+  const done = all.filter(objective => doneStatuses.has(normalizeObjectiveStatus(objective.status))).length;
+  const submitted = all.filter(objective => submittedStatuses.has(normalizeObjectiveStatus(objective.status))).length;
+  const countDone = list => list.filter(objective => doneStatuses.has(normalizeObjectiveStatus(objective.status))).length;
+  const requiredDone = countDone(required);
+  const optionalDone = countDone(optional);
+  const total = all.length;
+  return {
+    total,
+    done,
+    submitted,
+    requiredTotal: required.length,
+    requiredDone,
+    optionalTotal: optional.length,
+    optionalDone,
+    requiredLabel: required.length ? `${requiredDone}/${required.length} required` : 'No required objectives',
+    optionalLabel: optional.length ? `${optionalDone}/${optional.length} optional` : 'No optional objectives',
+    percent: total ? Math.round((done / total) * 100) : 0,
+    hasObjectives: total > 0,
+    hasSubmitted: submitted > 0
+  };
+}
+
+function jobBoardObjectiveVm(objective = {}, index = 0) {
+  const status = normalizeObjectiveStatus(objective.status || 'open');
+  const tier = normalizeObjectiveTier(objective.tier || objective.type || (index === 0 ? 'primary' : 'secondary'));
+  const credits = parsePositiveCredits(objective.rewardCredits ?? objective.credits ?? 0);
+  const xp = Math.max(0, Math.floor(Number(objective.rewardXp ?? objective.xp ?? 0) || 0));
+  return {
+    ...objective,
+    id: String(objective.id || objective.objectiveId || `objective-${index + 1}`),
+    label: jobObjectiveLabel(objective),
+    title: jobObjectiveLabel(objective),
+    description: String(objective.description || objective.memo || '').trim(),
+    tier,
+    type: String(objective.type || tier || 'secondary').trim() || 'secondary',
+    tierLabel: tier === 'primary' ? 'Primary' : tier === 'tertiary' ? 'Tertiary' : 'Secondary',
+    tierTone: tier,
+    isRequired: Boolean(objective.required || tier === 'primary'),
+    requiredLabel: objective.required || tier === 'primary' ? 'Required' : 'Optional',
+    status,
+    statusLabel: jobObjectiveStatusLabel(status),
+    statusTone: status === 'approved'
+      ? 'approved'
+      : status === 'rejected' || status === 'failed'
+        ? 'failed'
+        : isSubmittedObjectiveStatus(status)
+          ? 'submitted'
+          : 'open',
+    canSubmit: !['submitted', 'pendingReview', 'approved', 'rejected', 'failed'].includes(status),
+    canFail: !['approved', 'rejected', 'failed'].includes(status),
+    canReopen: ['submitted', 'pendingReview', 'rejected', 'failed'].includes(status),
+    canReview: Boolean(game.user?.isGM),
+    actionNotePlaceholder: status === 'failed' ? 'Why did this fail?' : 'Add evidence, context, or a note for the GM',
+    rewardCredits: credits,
+    rewardCreditsLabel: credits ? formatCredits(credits) : '',
+    rewardXp: xp,
+    rewardXpLabel: xp ? `${xp.toLocaleString()} XP` : '',
+    hasReward: Boolean(credits || xp || String(objective.rewardItems || '').trim() || safeArray(objective.rewardItemUuids).length || safeArray(objective.rewardAssetActorIds).length),
+    submittedAtLabel: objective.submittedAt ? formatHolonetStamp(objective.submittedAt) : '',
+    reviewedAtLabel: objective.reviewedAt ? formatHolonetStamp(objective.reviewedAt) : '',
+    reviewNote: String(objective.reviewNote || '').trim()
+  };
+}
+
+function jobBoardRewardSummary(job = {}, objectives = []) {
+  const approvedObjectives = safeArray(objectives).filter(objective => normalizeObjectiveStatus(objective.status) === 'approved');
+  const baseCredits = parsePositiveCredits(job.rewardCredits);
+  const baseXp = Math.max(0, Math.floor(Number(job.rewardXp || 0) || 0));
+  const objectiveCredits = approvedObjectives.reduce((sum, objective) => sum + parsePositiveCredits(objective.rewardCredits), 0);
+  const objectiveXp = approvedObjectives.reduce((sum, objective) => sum + Math.max(0, Math.floor(Number(objective.rewardXp || 0) || 0)), 0);
+  const totalCredits = baseCredits + objectiveCredits;
+  const totalXp = baseXp + objectiveXp;
+  const itemText = String(job.rewardItems || '').trim();
+  const itemUuids = uniqueStringArray([
+    ...uniqueStringArray(job.rewardItemUuids),
+    ...approvedObjectives.flatMap(objective => uniqueStringArray(objective.rewardItemUuids))
+  ]);
+  const assetIds = uniqueStringArray([
+    ...uniqueStringArray(job.rewardAssetActorIds),
+    ...approvedObjectives.flatMap(objective => uniqueStringArray(objective.rewardAssetActorIds))
+  ]).filter(Boolean);
+  return {
+    baseCredits,
+    baseCreditsLabel: baseCredits ? formatCredits(baseCredits) : 'No base credits',
+    objectiveCredits,
+    objectiveCreditsLabel: objectiveCredits ? formatCredits(objectiveCredits) : 'No objective credits',
+    totalCredits,
+    totalCreditsLabel: totalCredits ? formatCredits(totalCredits) : 'Reward TBD',
+    totalXp,
+    totalXpLabel: totalXp ? `${totalXp.toLocaleString()} XP` : '',
+    itemText,
+    itemSummary: itemText || (itemUuids.length ? `${itemUuids.length} attached item${itemUuids.length === 1 ? '' : 's'}` : 'No item rewards'),
+    assetSummary: assetIds.length ? `${assetIds.length} shared asset${assetIds.length === 1 ? '' : 's'}` : 'No shared assets',
+    hasItems: Boolean(itemText || itemUuids.length),
+    hasAssets: assetIds.length > 0,
+    hasAny: Boolean(totalCredits || totalXp || itemText || itemUuids.length || assetIds.length)
+  };
+}
+
+function jobBoardTimelineForThread(thread = {}, job = {}) {
+  const statusHistory = safeArray(job.statusHistory).map(entry => ({
+    id: String(entry.id || entry.at || `status-${Math.random()}`),
+    label: entry.to ? `Status: ${normalizeJobStatus(entry.to)}` : 'Status updated',
+    detail: String(entry.note || entry.action || '').trim(),
+    at: entry.at || null,
+    atLabel: entry.at ? formatHolonetStamp(entry.at) : 'No timestamp'
+  }));
+  const messageRows = safeArray(thread.messages)
+    .slice(-6)
+    .map(message => ({
+      id: String(message.id || `message-${Math.random()}`),
+      label: previewText(message.body || message.metadata?.eventType || 'Holonet event', 72),
+      detail: message.sender?.label || message.sender?.name || message.type || 'Thread event',
+      at: message.createdAt || null,
+      atLabel: message.createdAt ? formatHolonetStamp(message.createdAt) : 'No timestamp'
+    }));
+  return [...statusHistory, ...messageRows]
+    .sort((a, b) => new Date(b.at || 0) - new Date(a.at || 0))
+    .slice(0, 8);
+}
+
+function buildHolonetJobBoardVm(jobThreads = [], selectedThreadId = null, activeFilter = 'all') {
+  const threads = safeArray(jobThreads);
+  const selectedId = String(selectedThreadId || '').trim();
+  const jobs = threads.map(thread => {
+    const job = thread.job || {};
+    const status = normalizeJobStatus(job.status || 'posted');
+    const objectives = normalizeJobObjectiveEntries(job).map(jobBoardObjectiveVm);
+    const progress = jobObjectiveProgress(objectives);
+    const reviewCount = progress.submitted;
+    const reward = jobBoardRewardSummary(job, objectives);
+    const rewardCreditsLabel = job.rewardCreditsLabel || reward.totalCreditsLabel || (job.rewardCredits ? formatCredits(job.rewardCredits) : 'Reward TBD');
+    const rewardXpLabel = job.rewardXpLabel || reward.totalXpLabel || '';
+    const issuer = job.issuer?.label ? job.issuer : normalizeJobIssuerDisplay(job);
+    const issuerLabel = issuer.label || thread.ownerLabel || 'Holonet Contact';
+    const consequenceEntries = safeArray(job.consequenceEntries).length ? safeArray(job.consequenceEntries) : normalizeJobConsequenceEntries(job);
+    const participants = safeArray(thread.participants).map(participant => ({
+      id: participant.id,
+      label: participant.label || participant.actorName || participant.systemLabel || participant.id || 'Participant',
+      avatar: participant.avatar || '',
+      typeLabel: participant.typeLabel || participant.recipientType || 'Participant'
+    }));
+    const timeline = jobBoardTimelineForThread(thread, job);
+    return {
+      ...thread,
+      job,
+      status,
+      statusTone: jobBoardToneForStatus(status),
+      groupId: jobBoardGroupIdForStatus(status),
+      statusLabel: job.statusLabel || String(status || 'Posted'),
+      reviewCount,
+      needsAttention: Boolean(thread.isPendingInvite || reviewCount || ['review', 'complete'].includes(status)),
+      progress,
+      progressPercent: progress.percent,
+      objectives,
+      hasObjectives: objectives.length > 0,
+      objectiveSummary: progress.hasObjectives ? `${progress.done}/${progress.total} complete` : 'No objectives logged',
+      requiredProgressLabel: progress.requiredLabel,
+      optionalProgressLabel: progress.optionalLabel,
+      reward,
+      rewardCreditsLabel,
+      rewardXpLabel,
+      issuer,
+      issuerLabel,
+      issuerTypeLine: [issuer.typeLabel, issuer.subline].filter(Boolean).join(' · '),
+      hasIssuerImage: Boolean(issuer.hasImage && issuer.image),
+      issuerImage: issuer.image || '',
+      hasIssuer: Boolean(issuer.label || issuer.name || issuer.factionName),
+      factionLabel: job.factionName || issuer.factionName || '',
+      consequenceEntries,
+      hasFactionConsequences: consequenceEntries.length > 0,
+      participants,
+      hasParticipants: participants.length > 0,
+      timeline,
+      hasTimeline: timeline.length > 0,
+      cardSubtitle: [issuerLabel, job.factionName || issuer.factionName].filter(Boolean).join(' · '),
+      briefingBody: String(job.briefing?.body || job.description || job.brief || thread.preview || '').trim(),
+      briefingInstructions: String(job.briefing?.instructions || job.instructions || '').trim(),
+      briefingOocNote: String(job.briefing?.oocNote || '').trim(),
+      canManage: Boolean(thread.canManage || game.user?.isGM),
+      canAccept: Boolean(thread.isPendingInvite),
+      isSelected: selectedId ? String(thread.id) === selectedId : false
+    };
+  });
+  const normalizedFilter = normalizeJobBoardFilter(activeFilter);
+  const stats = {
+    total: jobs.length,
+    open: jobs.filter(job => job.groupId === 'open').length,
+    active: jobs.filter(job => job.groupId === 'active').length,
+    review: jobs.filter(job => job.groupId === 'review').length,
+    completed: jobs.filter(job => job.groupId === 'completed').length,
+    archived: jobs.filter(job => job.groupId === 'archived').length,
+    drafts: jobs.filter(job => job.groupId === 'drafts').length,
+    attention: jobs.filter(job => job.needsAttention).length
+  };
+  const visibleJobs = filterJobsForBoard(jobs, normalizedFilter);
+  const groups = [
+    { id: 'open', label: 'Open Signals', hint: 'Unclaimed public contracts', tone: 'open' },
+    { id: 'active', label: 'Active Missions', hint: 'Accepted or in-progress work', tone: 'active' },
+    { id: 'review', label: 'Review / Settlement', hint: 'Claims and payouts need attention', tone: 'review' },
+    { id: 'completed', label: 'Completed', hint: 'Paid contracts', tone: 'completed' },
+    { id: 'archived', label: 'Archived / Failed', hint: 'Closed records', tone: 'archived' },
+    { id: 'drafts', label: 'Drafts', hint: 'GM-only drafts', tone: 'drafts' }
+  ].map(group => {
+    const items = visibleJobs.filter(job => job.groupId === group.id);
+    return { ...group, items, count: items.length, hasItems: items.length > 0 };
+  }).filter(group => group.hasItems);
+  const selectedJob = visibleJobs.find(job => selectedId && String(job.id || job.threadId) === selectedId)
+    || visibleJobs.find(job => job.needsAttention)
+    || visibleJobs[0]
+    || jobs.find(job => selectedId && String(job.id || job.threadId) === selectedId)
+    || null;
+  if (selectedJob) selectedJob.isSelected = true;
+  return {
+    jobs: visibleJobs,
+    allJobs: jobs,
+    groups,
+    stats,
+    filterOptions: jobBoardFilterOptions(stats, normalizedFilter),
+    activeFilter: normalizedFilter,
+    activeFilterLabel: jobBoardFilterOptions(stats, normalizedFilter).find(row => row.isActive)?.label || 'All',
+    selectedJob,
+    hasSelectedJob: Boolean(selectedJob),
+    hasGroups: groups.length > 0,
+    hasJobs: visibleJobs.length > 0,
+    hasAnyJobs: jobs.length > 0,
+    visibleJobCount: visibleJobs.length,
+    hiddenByFilter: Math.max(0, jobs.length - visibleJobs.length)
+  };
+}
+
+function intelTagList(value = '') {
+  return Array.from(new Set(String(value || '')
+    .split(/[#,;\n]+/)
+    .map(entry => entry.trim().replace(/^#/, ''))
+    .filter(Boolean)))
+    .slice(0, 8);
+}
+
+function intelNoteSummary(note = {}, fallbackBody = '') {
+  return previewText(note.body || fallbackBody || note.title || '', 180);
+}
+
+function intelRecordVm(record = {}, thread = null, participantId = '') {
+  const note = record?.metadata?.intelNote || {};
+  const tags = intelTagList(safeArray(note.tags).length ? safeArray(note.tags).join(',') : note.tags || record?.metadata?.intelTags || '');
+  const sourceThread = thread || null;
+  const senderLabel = record?.sender?.actorName || record?.sender?.systemLabel || record?.metadata?.senderLabel || 'Unknown Source';
+  const recipients = safeArray(record?.recipients);
+  const visibleRecipients = recipients.filter(recipient => !String(recipient?.id || '').startsWith('gm:'));
+  return {
+    id: record.id,
+    recordId: record.id,
+    threadId: record.threadId || sourceThread?.id || '',
+    title: String(note.title || record.title || previewText(record.body || 'Intel Packet', 56) || 'Intel Packet').trim(),
+    body: String(note.body || record.body || '').trim(),
+    summary: intelNoteSummary(note, record.body),
+    sourceLabel: String(note.sourceLabel || senderLabel).trim() || 'Unknown Source',
+    sourceThreadTitle: sourceThread?.title || 'Holonet Thread',
+    createdAt: note.createdAt || record.createdAt || '',
+    timeLabel: formatHolonetStamp(note.createdAt || record.createdAt || record.updatedAt),
+    updatedAt: record.updatedAt || record.createdAt || '',
+    tags,
+    hasTags: tags.length > 0,
+    isPartyIntel: Boolean(note.partyIntel || sourceThread?.isParty || sourceThread?.metadata?.threadType === THREAD_TYPE.PARTY),
+    isJobIntel: Boolean(sourceThread?.metadata?.threadType === THREAD_TYPE.JOB),
+    visibilityLabel: visibleRecipients.length > 1 ? `${visibleRecipients.length} recipients` : (visibleRecipients[0] ? recipientDisplayName(visibleRecipients[0]) : 'Thread recipients'),
+    canOpenThread: Boolean(record.threadId || sourceThread?.id),
+    isUnread: typeof record.isUnreadBy === 'function' ? record.isUnreadBy(participantId) : false
+  };
+}
+
+function buildHolonetIntelVm(threads = [], selectedThreadId = '', options = {}) {
+  const participantId = currentRecipientId();
+  const rows = [];
+  for (const thread of safeArray(threads)) {
+    for (const record of safeArray(thread.messages)) {
+      if (!record?.metadata?.intelNote) continue;
+      rows.push(intelRecordVm(record, thread, participantId));
+    }
+  }
+  rows.sort((a, b) => new Date(b.updatedAt || b.createdAt || 0) - new Date(a.updatedAt || a.createdAt || 0));
+  const intelSearch = String(options.search || options.intelSearch || '').trim();
+  const intelNeedle = intelSearch.toLowerCase();
+  const filteredRows = intelNeedle
+    ? rows.filter(row => [row.title, row.summary, row.body, row.sourceLabel, row.sourceThreadTitle, safeArray(row.tags).join(' ')]
+      .some(value => String(value || '').toLowerCase().includes(intelNeedle)))
+    : rows;
+  const selectedThread = safeArray(threads).find(thread => String(thread.id || '') === String(selectedThreadId || '')) || null;
+  const threadOptions = safeArray(threads)
+    .filter(thread => !thread.isPendingInvite && thread.canSend)
+    .map(thread => ({
+      id: thread.id,
+      label: thread.title || thread.ownerLabel || 'Holonet Thread',
+      kind: thread.isParty ? 'Party' : thread.isJob ? 'Job' : thread.isSide ? 'Side' : 'Private',
+      selected: selectedThread ? thread.id === selectedThread.id : false
+    }));
+  return {
+    items: filteredRows,
+    allItems: rows,
+    hasItems: filteredRows.length > 0,
+    hasAnyItems: rows.length > 0,
+    count: filteredRows.length,
+    totalCount: rows.length,
+    hiddenBySearch: Math.max(0, rows.length - filteredRows.length),
+    intelSearch,
+    hasIntelSearch: Boolean(intelSearch),
+    partyCount: rows.filter(row => row.isPartyIntel).length,
+    jobCount: rows.filter(row => row.isJobIntel).length,
+    selectedThreadId: selectedThread?.id || threadOptions[0]?.id || '',
+    selectedThreadTitle: selectedThread?.title || threadOptions[0]?.label || '',
+    threadOptions,
+    hasThreadOptions: threadOptions.length > 0,
+    canCreate: threadOptions.length > 0
+  };
 }
 
 function normalizedMessageLimit(value, fallback = DEFAULT_MESSAGE_LIMIT) {
@@ -629,6 +1058,8 @@ function normalizeJobConsequenceEntries(job = {}) {
       failureDelta: Number(entry?.failureDelta || 0) || 0,
       successDeltaLabel: signedDelta(entry?.successDelta || 0),
       failureDeltaLabel: signedDelta(entry?.failureDelta || 0),
+      successTone: Number(entry?.successDelta || 0) > 0 ? 'positive' : Number(entry?.successDelta || 0) < 0 ? 'negative' : 'neutral',
+      failureTone: Number(entry?.failureDelta || 0) > 0 ? 'positive' : Number(entry?.failureDelta || 0) < 0 ? 'negative' : 'neutral',
       notes: String(entry?.notes || '').trim(),
       isRival
     };
@@ -1405,7 +1836,10 @@ export class HolonetMessengerService {
         canEnter: game.user?.isGM && !isParticipant,
         title: this._threadTitle(hydrated, participantId, actor),
         subtitle: this._threadSubtitle(hydrated, participantId),
-        preview: previewText(lastMessage?.body ?? (pendingInvite ? 'Holochat invitation pending.' : ''), 84)
+        preview: previewText(lastMessage?.body ?? (pendingInvite ? 'Holochat invitation pending.' : ''), 84),
+        timeLabel: formatHolonetStamp(lastMessage?.createdAt || hydrated.updatedAt || hydrated.createdAt),
+        kindGlyph: meta.threadType === THREAD_TYPE.JOB ? '◆' : (meta.threadType === THREAD_TYPE.PARTY ? '#' : (meta.threadType === THREAD_TYPE.SIDE ? '◇' : '⊕')),
+        kindLabel: meta.threadType === THREAD_TYPE.JOB ? 'Job' : (meta.threadType === THREAD_TYPE.PARTY ? 'Party' : (meta.threadType === THREAD_TYPE.SIDE ? 'Side' : 'Private'))
       });
     }
 
@@ -1473,6 +1907,8 @@ export class HolonetMessengerService {
       gameInvite: gameInvite ? this._gameInviteVm(message, gameInvite, actor, participantId) : null,
       hasSecretNote: Boolean(secretNote),
       secretNote: secretNote ? this._secretNoteVm(message, secretNote, actor, participantId) : null,
+      hasIntelNote: Boolean(message.metadata?.intelNote),
+      intelNote: message.metadata?.intelNote ? intelRecordVm(message, null, participantId) : null,
       hasReceipt: Boolean(receipt),
       receipt,
       hasJobCard: Boolean(job),
@@ -1908,15 +2344,22 @@ export class HolonetMessengerService {
     const pinnedMessages = messages.filter(m => m.isPinned);
     const presence = getActorPresence(actor);
     const requestedAppMode = String(options.appMode || '').trim().toLowerCase();
-    const appMode = requestedAppMode === 'jobs' ? 'jobs' : 'chat';
+    const appMode = ['jobs', 'intel'].includes(requestedAppMode) ? requestedAppMode : 'chat';
     const jobThreads = threads.filter(thread => thread.isJob);
+    const jobBoardFilter = normalizeJobBoardFilter(options.jobBoardFilter || options.jobFilter || 'all');
+    const intelSearch = String(options.intelSearch || '').trim();
+    const jobBoard = buildHolonetJobBoardVm(jobThreads, selectedThreadId, jobBoardFilter);
+    const intelBoard = buildHolonetIntelVm(threads, selectedThreadId, { search: intelSearch });
 
     return {
       id: 'messenger',
       title: 'Messenger',
       appMode,
       jobThreads,
+      jobBoard,
+      intelBoard,
       hasJobThreads: jobThreads.length > 0,
+      hasIntel: intelBoard.hasItems,
       actorName: actor?.name ?? '',
       actorId: actor?.id ?? null,
       actorCredits: creditsOf(actor),
@@ -1924,9 +2367,13 @@ export class HolonetMessengerService {
       isGm: Boolean(game.user?.isGM),
       unreadCount: threads.reduce((sum, t) => sum + (t.unreadCount || 0), 0),
       threads,
+      threadGroups: buildMessengerThreadGroups(threads),
       threadSearch,
       includeArchived,
       hasThreadSearch: Boolean(threadSearch),
+      jobBoardFilter,
+      intelSearch,
+      hasIntelSearch: Boolean(intelSearch),
       selectedThreadId,
       selectedThread: selectedThreadVm,
       messages,
@@ -3247,6 +3694,68 @@ export class HolonetMessengerService {
     return { threadId: result.threadId, messageId: result.messageId };
   }
 
+
+  static async _gmCreateIntelNote({ thread, actorId = null, title = '', body = '', tags = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+    if (!thread) return false;
+    const cleanBody = String(body || '').trim();
+    const cleanTitle = String(title || '').trim() || previewText(cleanBody, 72) || 'Intel Packet';
+    if (!cleanBody && !cleanTitle) return false;
+    const actor = actorId ? game.actors?.get(actorId) : null;
+    const senderRecipient = this._recipientForActorContext(actor, { senderUserId: requesterId || game.user?.id, senderRecipientId });
+    const requesterIsGm = Boolean((requesterId && game.users?.get(requesterId)?.isGM) || (!requesterId && game.user?.isGM));
+    if (!requesterIsGm && !hasRecipient(thread.participants, senderRecipient?.id)) return false;
+    this._ensureGmObservers(thread);
+    const meta = getThreadMeta(thread);
+    if (senderRecipient?.id?.startsWith('gm:') && requesterIsGm && !hasRecipient(thread.participants, senderRecipient.id)) {
+      meta.gmObserverIds = Array.from(new Set([...safeArray(meta.gmObserverIds), senderRecipient.id]));
+    }
+    const recipients = this._messageRecipientsForThread(thread);
+    const sender = senderRecipient?.id?.startsWith('persona:custom:')
+      ? HolonetSender.fromActor(null, recipientDisplayName(senderRecipient), recipientAvatar(senderRecipient))
+      : this.getSenderForActor(actor, game.user?.name);
+    const createdAt = nowIso();
+    const tagRows = intelTagList(tags);
+    const note = {
+      id: foundry.utils.randomID(16),
+      title: cleanTitle,
+      body: cleanBody,
+      tags: tagRows,
+      partyIntel: meta.threadType === THREAD_TYPE.PARTY,
+      createdAt,
+      createdBy: senderRecipient?.id || requesterId || game.user?.id || null,
+      sourceThreadId: thread.id,
+      sourceLabel: recipientDisplayName(senderRecipient)
+    };
+    const message = MessengerSource.createMessage({
+      sender,
+      audience: HolonetAudience.threadParticipants(recipients.map(r => r.id)),
+      body: cleanBody || cleanTitle,
+      threadId: thread.id,
+      metadata: {
+        categoryId: HolonetPreferences.CATEGORIES.MESSAGES,
+        senderRecipientId: senderRecipient?.id ?? null,
+        intelNote: note,
+        intelTags: tagRows,
+        mentions: extractMentions(cleanBody)
+      }
+    });
+    message.intent = INTENT_TYPE.PLAYER_MESSAGE;
+    message.recipients = recipients;
+    message.projections = [
+      { surfaceType: SURFACE_TYPE.MESSENGER_THREAD, recordId: message.id, isPinned: true, metadata: { threadId: thread.id, intelNote: true } },
+      { surfaceType: SURFACE_TYPE.HOME_FEED, recordId: message.id, isPinned: false, metadata: { threadId: thread.id, intelNote: true } }
+    ];
+    const result = await HolonetThreadService.publishMessageToThread({
+      thread,
+      message,
+      senderRecipient,
+      publishOptions: { skipSocket: true },
+      markSenderRead: Boolean(senderRecipient?.id)
+    });
+    if (result?.ok) this._emitMessengerSync(this._threadSyncPayload(result.threadId, { messageId: result.messageId, requestId, requesterId, intelNote: true }));
+    return result?.ok ? { threadId: result.threadId, messageId: result.messageId, requestId } : false;
+  }
+
   static async _publishSystemMessage(thread, body, metadata = {}) {
     this._ensureGmObservers(thread);
     const recipients = this._messageRecipientsForThread(thread);
@@ -3800,8 +4309,8 @@ export class HolonetMessengerService {
   }
 
 
-  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, statusNote = '', allowStatusOverride = false, objectiveId = null, objectiveStatus = null, objectiveNote = '', jobPatch = null, objectivePatch = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', payoutMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', assetActorId = '', primaryActorId = '' }) {
-    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, statusNote: String(statusNote || '').trim(), objectiveId: objectiveId ? String(objectiveId) : null, objectiveStatus: objectiveStatus ? String(objectiveStatus) : null, objectiveNote: String(objectiveNote || '').trim(), itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, payoutMode: String(payoutMode || distributionMode || '').trim(), tradeIntent: String(tradeIntent || '').trim(), requestedCredits: Number(requestedCredits || 0) || 0, requestedItemsNote: String(requestedItemsNote || '').trim(), assetIds: safeArray(assetIds).map(String).filter(Boolean), counterCredits: Number(counterCredits || 0) || 0, counterItemIds: safeArray(counterItemIds).map(String).filter(Boolean), counterAssetIds: safeArray(counterAssetIds).map(String).filter(Boolean), counterMemo: String(counterMemo || '').trim(), assetActorId: String(assetActorId || '').trim(), primaryActorId: String(primaryActorId || '').trim(), jobPatch: jobPatch && typeof jobPatch === 'object' ? jobPatch : null, objectivePatch: objectivePatch && typeof objectivePatch === 'object' ? objectivePatch : null, requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
+  static async threadAction({ actor, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, statusNote = '', allowStatusOverride = false, objectiveId = null, objectiveStatus = null, objectiveNote = '', bulkObjectiveStatus = '', intelTitle = '', intelBody = '', intelTags = '', jobPatch = null, objectivePatch = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', payoutMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', assetActorId = '', primaryActorId = '' }) {
+    const payload = { actorId: actor?.id ?? null, threadId, action, recipientIds, amount, recipientId, recordId, partyFundCutPercent, status, statusNote: String(statusNote || '').trim(), objectiveId: objectiveId ? String(objectiveId) : null, objectiveStatus: objectiveStatus ? String(objectiveStatus) : null, bulkObjectiveStatus: String(bulkObjectiveStatus || '').trim(), objectiveNote: String(objectiveNote || '').trim(), intelTitle: String(intelTitle || '').trim(), intelBody: String(intelBody || '').trim(), intelTags: String(intelTags || '').trim(), itemUuids: safeArray(itemUuids).map(String).filter(Boolean), items: safeArray(items), memo: String(memo || '').trim(), splitMode, distributionMode, payoutMode: String(payoutMode || distributionMode || '').trim(), tradeIntent: String(tradeIntent || '').trim(), requestedCredits: Number(requestedCredits || 0) || 0, requestedItemsNote: String(requestedItemsNote || '').trim(), assetIds: safeArray(assetIds).map(String).filter(Boolean), counterCredits: Number(counterCredits || 0) || 0, counterItemIds: safeArray(counterItemIds).map(String).filter(Boolean), counterAssetIds: safeArray(counterAssetIds).map(String).filter(Boolean), counterMemo: String(counterMemo || '').trim(), assetActorId: String(assetActorId || '').trim(), primaryActorId: String(primaryActorId || '').trim(), jobPatch: jobPatch && typeof jobPatch === 'object' ? jobPatch : null, objectivePatch: objectivePatch && typeof objectivePatch === 'object' ? objectivePatch : null, requesterId: game.user?.id ?? null, senderRecipientId: currentRecipientId() };
     if (!game.user?.isGM) {
       const requestId = HolonetSocketService.emitRequest('thread-action', payload);
       return { pending: true, requestId, threadId };
@@ -3809,7 +4318,7 @@ export class HolonetMessengerService {
     return this._gmThreadAction(payload);
   }
 
-  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, statusNote = '', objectiveId = null, objectiveStatus = null, objectiveNote = '', jobPatch = null, objectivePatch = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', payoutMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', assetActorId = '', primaryActorId = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
+  static async _gmThreadAction({ actorId, threadId, action, recipientIds = [], amount = null, recipientId = null, recordId = null, partyFundCutPercent = null, status = null, statusNote = '', objectiveId = null, objectiveStatus = null, objectiveNote = '', bulkObjectiveStatus = '', intelTitle = '', intelBody = '', intelTags = '', jobPatch = null, objectivePatch = null, itemUuids = [], items = [], memo = '', splitMode = '', distributionMode = '', payoutMode = '', tradeIntent = '', requestedCredits = 0, requestedItemsNote = '', assetIds = [], counterCredits = 0, counterItemIds = [], counterAssetIds = [], counterMemo = '', assetActorId = '', primaryActorId = '', requesterId = null, senderRecipientId = null, requestId = null } = {}) {
     const thread = await HolonetStorage.getThread(threadId);
     if (!thread) return false;
     this._ensureGmObservers(thread);
@@ -3973,6 +4482,11 @@ export class HolonetMessengerService {
         await this._gmDeleteJobFactionConsequence({ thread, consequenceKey: status || objectiveId, requesterId, senderRecipientId, note: statusNote || objectiveNote });
         break;
       }
+      case 'create-intel-note': {
+        if (!canManage && !hasRecipient(thread.participants, currentId)) return false;
+        await this._gmCreateIntelNote({ thread, actorId, title: intelTitle, body: intelBody || memo, tags: intelTags, requesterId, senderRecipientId, requestId });
+        break;
+      }
       case 'submit-job-objective': {
         meta.job ??= {};
         const objectives = normalizeJobObjectiveEntries(meta.job);
@@ -4008,6 +4522,50 @@ export class HolonetMessengerService {
         await this._publishSystemMessage(thread, objectiveStatusSystemBody(objective, previousObjectiveStatus, 'submitted', cleanObjectiveNote), { eventType: 'job-objective-submitted', objectiveId: objective.id, status: 'submitted', note: cleanObjectiveNote });
         break;
       }
+      case 'fail-job-objective': {
+        meta.job ??= {};
+        const objectives = normalizeJobObjectiveEntries(meta.job);
+        const objective = objectives.find(entry => entry.id === String(objectiveId));
+        if (!objective) return false;
+        const previousObjectiveStatus = normalizeObjectiveStatus(objective.status || 'open');
+        if (['approved', 'rejected', 'failed'].includes(previousObjectiveStatus)) return false;
+        const objectiveAt = nowIso();
+        const cleanObjectiveNote = String(objectiveNote || '').trim();
+        objective.status = 'failed';
+        objective.submittedBy = objective.submittedBy || currentId || requesterId || game.user?.id || null;
+        objective.submittedAt = objective.submittedAt || objectiveAt;
+        objective.reviewedBy = requesterId || game.user?.id || null;
+        objective.reviewedAt = objectiveAt;
+        objective.reviewNote = cleanObjectiveNote;
+        objective.updatedAt = objectiveAt;
+        objective.statusHistory = [
+          ...safeArray(objective.statusHistory),
+          { id: foundry.utils.randomID(12), action: 'objective-failed', from: previousObjectiveStatus, to: 'failed', status: 'failed', at: objectiveAt, by: currentId || requesterId || game.user?.id || null, note: cleanObjectiveNote }
+        ];
+        meta.job.objectives = objectives;
+        const previousJobStatus = normalizeJobStatus(meta.job.status || 'posted');
+        const failedRequired = objective.required === true || String(objective.type || objective.tier || '').toLowerCase() === 'primary';
+        if (failedRequired && !['paid', 'archived'].includes(previousJobStatus)) {
+          meta.job.status = 'failed';
+          meta.job.lifecycleShelf = jobLifecycleShelf('failed');
+          meta.job.failedAt = objectiveAt;
+        } else {
+          meta.job.status = previousJobStatus;
+          meta.job.lifecycleShelf = jobLifecycleShelf(previousJobStatus);
+        }
+        meta.job.updatedAt = objectiveAt;
+        meta.job.statusHistory = [
+          ...safeArray(meta.job.statusHistory),
+          jobStatusHistoryEntry({ from: previousObjectiveStatus, to: 'failed', by: currentId || requesterId || game.user?.id || null, note: cleanObjectiveNote, action: 'objective-failed', objectiveId: objective.id }),
+          ...(meta.job.status === 'failed' && previousJobStatus !== 'failed' ? [jobStatusHistoryEntry({ from: previousJobStatus, to: 'failed', by: currentId || requesterId || game.user?.id || null, note: 'Required objective failed.', action: 'job-failed' })] : [])
+        ];
+        await HolonetStorage.saveThread(thread);
+        await this._publishSystemMessage(thread, objectiveStatusSystemBody(objective, previousObjectiveStatus, 'failed', cleanObjectiveNote), { eventType: 'job-objective-failed', objectiveId: objective.id, status: 'failed', note: cleanObjectiveNote });
+        if (meta.job.status === 'failed') {
+          await this._applyJobFactionConsequences({ thread, status: 'failed', requesterId });
+        }
+        break;
+      }
       case 'set-job-status':
       case 'override-job-status': {
         if (!isGm) return false;
@@ -4021,6 +4579,72 @@ export class HolonetMessengerService {
           requestId,
           allowOverride: allowStatusOverride || action === 'override-job-status'
         });
+        break;
+      }
+      case 'bulk-set-job-objective-status': {
+        if (!isGm) return false;
+        meta.job ??= {};
+        const nextObjectiveStatus = normalizeObjectiveStatus(bulkObjectiveStatus || objectiveStatus || status || 'approved');
+        if (!JOB_OBJECTIVE_STATUSES.includes(nextObjectiveStatus)) return false;
+        const objectives = normalizeJobObjectiveEntries(meta.job);
+        const targetStatuses = nextObjectiveStatus === 'open'
+          ? new Set(['rejected', 'failed'])
+          : new Set(['claimed', 'submitted', 'pendingReview']);
+        const objectiveAt = nowIso();
+        const cleanObjectiveNote = String(objectiveNote || statusNote || '').trim();
+        const changed = [];
+        for (const objective of objectives) {
+          const previousObjectiveStatus = normalizeObjectiveStatus(objective.status || 'open');
+          if (!targetStatuses.has(previousObjectiveStatus)) continue;
+          objective.status = nextObjectiveStatus;
+          if (isReviewedObjectiveStatus(nextObjectiveStatus)) {
+            objective.reviewedBy = requesterId || game.user?.id || null;
+            objective.reviewedAt = objectiveAt;
+            objective.reviewNote = cleanObjectiveNote;
+          }
+          if (nextObjectiveStatus === 'open') {
+            objective.submittedBy = null;
+            objective.submittedAt = null;
+            objective.reviewedBy = null;
+            objective.reviewedAt = null;
+            objective.reviewNote = '';
+          }
+          objective.updatedAt = objectiveAt;
+          objective.statusHistory = [
+            ...safeArray(objective.statusHistory),
+            { id: foundry.utils.randomID(12), action: objectiveStatusActionName(previousObjectiveStatus, nextObjectiveStatus), from: previousObjectiveStatus, to: nextObjectiveStatus, status: nextObjectiveStatus, at: objectiveAt, by: requesterId || game.user?.id || null, note: cleanObjectiveNote }
+          ];
+          changed.push({ objective, previousObjectiveStatus });
+        }
+        if (!changed.length) return false;
+        meta.job.objectives = objectives;
+        meta.job.schemaVersion = Math.max(2, Number(meta.job.schemaVersion || 0) || 0);
+        meta.job.lifecycleVersion = Math.max(1, Number(meta.job.lifecycleVersion || 0) || 0);
+        const previousJobStatus = normalizeJobStatus(meta.job.status || 'posted');
+        if (nextObjectiveStatus === 'approved' && ['review', 'complete'].includes(previousJobStatus)) {
+          const required = objectives.filter(entry => entry.required === true || String(entry.type || entry.tier || '').toLowerCase() === 'primary');
+          const allRequiredApproved = required.length > 0 && required.every(entry => normalizeObjectiveStatus(entry.status || '') === 'approved');
+          const stillNeedsReview = objectives.some(entry => isSubmittedObjectiveStatus(entry.status));
+          if (allRequiredApproved && !stillNeedsReview) meta.job.status = 'complete';
+          else meta.job.status = previousJobStatus;
+        } else if (nextObjectiveStatus === 'failed' && objectives.some(entry => (entry.required === true || String(entry.type || entry.tier || '').toLowerCase() === 'primary') && normalizeObjectiveStatus(entry.status) === 'failed')) {
+          meta.job.status = 'failed';
+          meta.job.failedAt = meta.job.failedAt || objectiveAt;
+        } else if (nextObjectiveStatus === 'open' && ['failed', 'complete', 'review'].includes(previousJobStatus)) {
+          meta.job.status = 'inProgress';
+        } else {
+          meta.job.status = previousJobStatus;
+        }
+        meta.job.lifecycleShelf = jobLifecycleShelf(meta.job.status);
+        meta.job.updatedAt = objectiveAt;
+        meta.job.statusHistory = [
+          ...safeArray(meta.job.statusHistory),
+          jobStatusHistoryEntry({ from: previousJobStatus, to: meta.job.status, by: requesterId || game.user?.id || null, note: cleanObjectiveNote || `${changed.length} objective${changed.length === 1 ? '' : 's'} updated.`, action: 'bulk-objective-status-transition' })
+        ];
+        await HolonetStorage.saveThread(thread);
+        await this._publishSystemMessage(thread, `${changed.length} objective${changed.length === 1 ? '' : 's'} marked ${jobObjectiveStatusLabel(nextObjectiveStatus).toLowerCase()}.${cleanObjectiveNote ? ` GM note: ${cleanObjectiveNote}` : ''}`, { eventType: 'job-objective-bulk-status-changed', status: nextObjectiveStatus, note: cleanObjectiveNote, count: changed.length });
+        if (String(meta.job.status || '') === 'complete') await this._applyJobFactionConsequences({ thread, status: 'complete', requesterId });
+        if (String(meta.job.status || '') === 'failed') await this._applyJobFactionConsequences({ thread, status: 'failed', requesterId });
         break;
       }
       case 'set-job-objective-status': {

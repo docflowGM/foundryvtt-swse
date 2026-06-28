@@ -18,6 +18,7 @@ import { HealingRules } from '/systems/foundryvtt-swse/scripts/houserules/adapte
 import { StatusEffectsMechanics } from '/systems/foundryvtt-swse/scripts/houserules/houserule-status-effects.js';
 import { PoisonEngine } from '/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js';
 import { PoisonRegistry } from '/systems/foundryvtt-swse/scripts/engine/poison/poison-registry.js';
+import { GMPartyRosterService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-party-roster-service.js';
 
 const MANAGED_ACTOR_TYPES = new Set(['character', 'npc', 'droid', 'vehicle', 'beast']);
 const SYSTEM_ID = 'foundryvtt-swse';
@@ -128,8 +129,8 @@ export class GMCombatRecoveryService {
     return [
       {
         id: 'party',
-        label: 'Whole Party',
-        description: 'Player-owned party actors. Droids/vehicles remain excluded from rest benefits.',
+        label: 'GM Party Roster',
+        description: 'Actors explicitly managed by the GM party roster. Droids/vehicles remain excluded from rest benefits.',
         count: cards.filter((card) => card.partyActor).length
       },
       {
@@ -158,12 +159,7 @@ export class GMCombatRecoveryService {
   }
 
   static isPartyActor(actor) {
-    if (!actor) return false;
-    if (actor.hasPlayerOwner === true) return true;
-    if (this.getOwnerNames(actor).length > 0) return true;
-    // Character actors without a current owner are still treated as party candidates
-    // so a GM can recover newly-created or unassigned PCs from the party target.
-    return actor.type === 'character';
+    return GMPartyRosterService.isPartyMember(actor);
   }
 
   static resolveTargetActors({ targetMode = 'party', actorIds = [] } = {}) {
@@ -690,6 +686,9 @@ export class GMCombatRecoveryService {
         break;
       case 'full-organic-recovery':
         result = await this.fullOrganicRecovery({ actors: target.actors, target });
+        break;
+      case 'full-health':
+        result = await this.restoreFullHealth({ actors: target.actors, target });
         break;
       default:
         result = { success: false, error: `Unknown combat recovery group action: ${action}` };
@@ -1230,6 +1229,90 @@ export class GMCombatRecoveryService {
     return { success: true, action: 'clear-encounter-effects', target, affected, skipped, removedCount, message: `Cleared ${removedCount} encounter effect${removedCount === 1 ? '' : 's'}${targetLabel}: ${affected.length} actor${affected.length === 1 ? '' : 's'} affected, ${skipped.length} skipped.` };
   }
 
+  static _getHpSnapshot(actor) {
+    const hp = actor?.system?.hp ?? actor?.system?.attributes?.hp ?? {};
+    const value = safeNumber(hp.value ?? hp.current, 0);
+    const max = safeNumber(hp.max ?? hp.maximum, 0);
+    return { value, max };
+  }
+
+  static async restoreFullHealth({ actors = this.getPartyActors(), target = null, resetCondition = true, resetSecondWind = true } = {}) {
+    const restored = [];
+    const skipped = [];
+
+    for (const actor of actors ?? []) {
+      if (!actor) continue;
+
+      try {
+        const { value: hpValue, max: hpMax } = this._getHpSnapshot(actor);
+        if (hpMax <= 0) {
+          skipped.push({ id: actor.id, name: actor.name, reason: 'hp_max_unavailable' });
+          continue;
+        }
+
+        const hpRecovered = Math.max(0, hpMax - hpValue);
+        if (hpRecovered > 0) await ActorEngine.applyHealing(actor, hpRecovered, 'gm-combat-full-health');
+
+        let conditionReset = false;
+        let secondWindReset = false;
+        let conditionError = '';
+        let secondWindError = '';
+
+        if (resetCondition) {
+          try {
+            await ActorEngine.setConditionStep(actor, 0, 'gm-combat-full-health');
+            conditionReset = true;
+          } catch (err) {
+            conditionError = err?.message || 'condition_reset_failed';
+          }
+        }
+
+        if (resetSecondWind && !this.isVehicle(actor)) {
+          try {
+            await ActorEngine.resetSecondWind(actor);
+            secondWindReset = true;
+          } catch (err) {
+            secondWindError = err?.message || 'second_wind_reset_failed';
+          }
+        }
+
+        restored.push({
+          id: actor.id,
+          name: actor.name,
+          hpRecovered,
+          hpMax,
+          conditionReset,
+          secondWindReset,
+          conditionError,
+          secondWindError,
+          mechanical: this.isDroid(actor) || this.isVehicle(actor)
+        });
+      } catch (err) {
+        skipped.push({ id: actor.id, name: actor.name, reason: err?.message || 'full_health_failed' });
+      }
+    }
+
+    Hooks.callAll('swseGmCombatRecoveryCompleted', {
+      action: 'full-health',
+      target,
+      restored,
+      skipped
+    });
+
+    const targetLabel = target?.label ? ` for ${target.label}` : '';
+    const hpTotal = restored.reduce((sum, row) => sum + (safeNumber(row.hpRecovered, 0) || 0), 0);
+    return {
+      success: true,
+      action: 'full-health',
+      target,
+      restored,
+      healed: restored,
+      skipped,
+      hpTotal,
+      message: `Full health${targetLabel} complete: ${restored.length} restored, ${hpTotal} HP recovered, ${skipped.length} skipped.`
+    };
+  }
+
   static async fullOrganicRecovery({ actors = this.getPartyActors(), target = null } = {}) {
     const recovered = [];
     const skipped = [];
@@ -1381,6 +1464,10 @@ export class GMCombatRecoveryService {
           if (amountToRepair > 0) await ActorEngine.applyHealing(actor, amountToRepair, 'gm-combat-recovery-repair-full');
           await ActorEngine.setConditionStep(actor, 0, 'gm-combat-recovery-repair-full');
           return this.recordAndReturnActorAction({ success: true, action, affected: [{ id: actor.id, name: actor.name }], message: `${actor.name} repaired to full operational status.` }, action, actor);
+        }
+        case 'full-health': {
+          const result = await this.restoreFullHealth({ actors: [actor], target: { label: actor.name, actors: [actor] } });
+          return this.recordAndReturnActorAction(result, action, actor);
         }
         case 'apply-status-effect':
           return this.recordAndReturnActorAction(await this.applyStatusEffectToActors({ actors: [actor], target: { label: actor.name, actors: [actor] }, effectId }), action, actor);

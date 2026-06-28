@@ -8,6 +8,7 @@ import { requestShellRender } from '/systems/foundryvtt-swse/scripts/ui/shell/re
 import { LocationRegistryService } from '/systems/foundryvtt-swse/scripts/locations/location-registry-service.js';
 import { mutateShellOnly } from '/systems/foundryvtt-swse/scripts/ui/shell/mutate-and-repaint.js';
 import { confirmGmDatapadModal } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-datapad-modal.js';
+import { GMSmartFormDropService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-smart-form-drop-service.js';
 
 function text(formData, key) { return String(formData.get(key) ?? '').trim(); }
 function number(formData, key) { return Number(formData.get(key) || 0) || 0; }
@@ -94,6 +95,8 @@ export class GMFactionRelationshipSurfaceController {
     DossierDragDropService.bindDragSources(pageElement, { signal });
     this._wireFilters(pageElement, signal);
     this._wireWizardControls(pageElement, signal);
+    this._wireFactionImagePreviews(pageElement, signal);
+    GMSmartFormDropService.bind(pageElement, { signal });
 
     pageElement.querySelectorAll('form[data-gm-faction-create-form]').forEach((form) => {
       form.addEventListener('submit', async (event) => {
@@ -107,6 +110,7 @@ export class GMFactionRelationshipSurfaceController {
           system: text(data, 'system'),
           scale: number(data, 'scale') || 1,
           leader: text(data, 'leader'),
+          image: text(data, 'image'),
           score: number(data, 'score'),
           startingScore: number(data, 'score'),
           benefits: text(data, 'benefits'),
@@ -176,6 +180,7 @@ export class GMFactionRelationshipSurfaceController {
           system: text(data, 'system'),
           scale: number(data, 'scale') || 1,
           leader: text(data, 'leader'),
+          image: text(data, 'image'),
           score: number(data, 'score'),
           startingScore: number(data, 'startingScore'),
           benefits: text(data, 'benefits'),
@@ -592,6 +597,25 @@ export class GMFactionRelationshipSurfaceController {
 
   async _refresh(reason = 'gm-controller-refresh') {
     await requestShellRender(this.host, { reason, surfaceId: 'factions' });
+  }
+
+
+  _wireFactionImagePreviews(pageElement, signal) {
+    const fallbackIcon = '<i class="fa-solid fa-image"></i>';
+    const sync = (input) => {
+      const value = String(input?.value || '').trim();
+      const host = input?.closest?.('.gm-faction-image-field') || input?.closest?.('form') || pageElement;
+      const preview = host?.querySelector?.('.gm-faction-image-preview');
+      if (!preview) return;
+      preview.classList.toggle('is-empty', !value);
+      preview.innerHTML = value ? `<img src="${value.replaceAll('"', '&quot;')}" alt="">` : fallbackIcon;
+    };
+
+    pageElement.querySelectorAll('[data-gm-faction-image-input]').forEach((input) => {
+      sync(input);
+      input.addEventListener('input', () => sync(input), { signal });
+      input.addEventListener('change', () => sync(input), { signal });
+    });
   }
 
 

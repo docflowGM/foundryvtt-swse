@@ -73,12 +73,12 @@ export class MessengerSurfaceController {
     return globalThis.CSS?.escape ? globalThis.CSS.escape(String(value || '')) : String(value || '').replace(/[^a-zA-Z0-9_-]/g, '\\$&');
   }
 
-  _defaultMessageLimit() { return 75; }
+  _defaultMessageLimit() { return 50; }
 
   _nextMessageLimit(current = null) {
     const raw = Number(current ?? this._shellSurfaceOptions?.messageLimit ?? this._defaultMessageLimit());
     const base = Number.isFinite(raw) ? raw : this._defaultMessageLimit();
-    return Math.min(500, Math.max(this._defaultMessageLimit(), Math.floor(base) + this._defaultMessageLimit()));
+    return Math.min(400, Math.max(this._defaultMessageLimit(), Math.floor(base) + this._defaultMessageLimit()));
   }
 
   _shouldScrollAfterThreadAction(action = '') {
@@ -90,7 +90,7 @@ export class MessengerSurfaceController {
       'cancel-asset-transfer', 'approve-asset-transfer', 'offer-asset-counter',
       'accept-asset-counter', 'approve-asset-counter', 'decline-asset-counter',
       'accept-game-invite', 'decline-game-invite', 'cancel-game-invite',
-      'set-job-status', 'set-job-objective-status', 'award-job-items',
+      'set-job-status', 'set-job-objective-status', 'bulk-set-job-objective-status', 'submit-job-objective', 'fail-job-objective', 'create-intel-note', 'award-job-items',
       'archive-thread', 'unarchive-thread', 'pin-message', 'unpin-message'
     ].includes(String(action || ''));
   }
@@ -488,6 +488,9 @@ export class MessengerSurfaceController {
       ...(options.compositionMode ? { compositionMode: options.compositionMode } : {}),
       ...(options.threadSearch != null ? { threadSearch: String(options.threadSearch || '') } : {}),
       ...(options.includeArchived != null ? { includeArchived: Boolean(options.includeArchived) } : {}),
+      ...(options.appMode != null ? { appMode: String(options.appMode || 'chat') } : {}),
+      ...(options.jobBoardFilter != null ? { jobBoardFilter: String(options.jobBoardFilter || 'all') } : {}),
+      ...(options.intelSearch != null ? { intelSearch: String(options.intelSearch || '') } : {}),
       ...(options.highlightRecordId != null ? { highlightRecordId: String(options.highlightRecordId || '') } : {}),
       ...(options.messageLimit != null ? { messageLimit: Number(options.messageLimit) || this._defaultMessageLimit() } : {})
     });
@@ -507,7 +510,10 @@ export class MessengerSurfaceController {
       '.hl-messages',
       '.hl-info-panel',
       '.hl-job-grid',
-      '.hl-jobboard-view'
+      '.hl-jobboard-view',
+      '.jb-scroll',
+      '.hl-intel-list',
+      '.hl-intel-compose'
     ];
 
     const findScrollTarget = (target) => {
@@ -630,9 +636,75 @@ export class MessengerSurfaceController {
       el.addEventListener('click', async (ev) => {
         ev.preventDefault();
         ev.stopPropagation();
-        const appMode = String(el.dataset.appMode || 'chat').trim().toLowerCase() === 'jobs' ? 'jobs' : 'chat';
-        await this.setSurface('messenger', { appMode, compose: false, source: 'messenger' });
-        await this._refreshMessengerSurface({ appMode, compose: false, source: 'messenger' });
+        const requestedAppMode = String(el.dataset.appMode || 'chat').trim().toLowerCase();
+        const appMode = ['jobs', 'intel'].includes(requestedAppMode) ? requestedAppMode : 'chat';
+        const threadId = String(el.dataset.threadId || this._shellSurfaceOptions?.threadId || '').trim();
+        const nextOptions = {
+          appMode,
+          compose: false,
+          source: 'messenger',
+          jobBoardFilter: this._shellSurfaceOptions?.jobBoardFilter || 'all',
+          intelSearch: this._shellSurfaceOptions?.intelSearch || ''
+        };
+        if (threadId) nextOptions.threadId = threadId;
+        await this.setSurface('messenger', nextOptions);
+        await this._refreshMessengerSurface(nextOptions);
+      });
+    });
+
+    messengerRoot.querySelectorAll('[data-holonet-action="select-job"][data-thread-id]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const threadId = String(ev.currentTarget.dataset.threadId || '').trim();
+        if (!threadId) return;
+        const nextOptions = { threadId, appMode: 'jobs', compose: false, source: 'messenger', jobBoardFilter: this._shellSurfaceOptions?.jobBoardFilter || 'all', messageLimit: this._defaultMessageLimit(), highlightRecordId: '' };
+        await this.setSurface('messenger', nextOptions);
+        await this._refreshMessengerSurface(nextOptions);
+      });
+    });
+
+    messengerRoot.querySelectorAll('[data-holonet-action="set-job-board-filter"][data-job-filter]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const jobBoardFilter = String(ev.currentTarget.dataset.jobFilter || 'all').trim() || 'all';
+        const threadId = String(this._shellSurfaceOptions?.threadId || '').trim();
+        const nextOptions = { appMode: 'jobs', compose: false, source: 'messenger', jobBoardFilter, messageLimit: this._defaultMessageLimit(), highlightRecordId: '' };
+        if (threadId) nextOptions.threadId = threadId;
+        await this.setSurface('messenger', nextOptions);
+        await this._refreshMessengerSurface(nextOptions);
+      });
+    });
+
+    messengerRoot.querySelectorAll('form[data-holonet-action="intel-filter"]').forEach(form => {
+      form.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const data = new FormData(form);
+        const intelSearch = String(data.get('intelSearch') || '').trim();
+        this.patchSurfaceOptions?.({ intelSearch, appMode: 'intel', source: 'messenger' }, { render: false });
+        await this._refreshMessengerSurface({ intelSearch, appMode: 'intel', source: 'messenger' });
+      });
+      form.querySelectorAll('input[name="intelSearch"]').forEach(input => {
+        input.addEventListener('input', () => {
+          const intelSearch = String(input.value || '').trim();
+          this.patchSurfaceOptions?.({ intelSearch, appMode: 'intel', source: 'messenger' }, { render: false });
+          if (this._messengerFilterDebounce) window.clearTimeout(this._messengerFilterDebounce);
+          this._messengerFilterDebounce = window.setTimeout(() => {
+            this._messengerFilterDebounce = null;
+            void this._refreshMessengerSurface({ intelSearch, appMode: 'intel', source: 'messenger' });
+          }, 250);
+        });
+      });
+    });
+
+    messengerRoot.querySelectorAll('[data-holonet-action="clear-intel-filter"]').forEach(el => {
+      el.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        this.patchSurfaceOptions?.({ intelSearch: '', appMode: 'intel', source: 'messenger' }, { render: false });
+        await this._refreshMessengerSurface({ intelSearch: '', appMode: 'intel', source: 'messenger' });
       });
     });
 
@@ -1186,6 +1258,57 @@ export class MessengerSurfaceController {
         const result = await HolonetMessengerService.threadAction({ actor, threadId, action: 'set-job-objective-status', objectiveId, objectiveStatus, objectiveNote });
         this._noteMessengerPendingResult(result);
         await this._refreshMessengerSurface({ threadId, compose: false, scrollToBottom: true });
+      });
+    });
+
+
+    messengerRoot.querySelectorAll('form[data-holonet-action="job-objective-bulk-status"]').forEach(form => {
+      form.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const data = new FormData(form);
+        const threadId = String(form.dataset.threadId || data.get('threadId') || '').trim();
+        const bulkObjectiveStatus = String(ev.submitter?.value || data.get('bulkObjectiveStatus') || '').trim();
+        const objectiveNote = String(data.get('objectiveNote') || '').trim();
+        if (!threadId || !bulkObjectiveStatus) return;
+        const result = await HolonetMessengerService.threadAction({ actor, threadId, action: 'bulk-set-job-objective-status', bulkObjectiveStatus, objectiveNote });
+        this._noteMessengerPendingResult(result);
+        await this._refreshMessengerSurface({ threadId, appMode: 'jobs', compose: false, scrollToBottom: false });
+      });
+    });
+
+    messengerRoot.querySelectorAll('form[data-holonet-action="create-intel-note"]').forEach(form => {
+      form.addEventListener('submit', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const data = new FormData(form);
+        const threadId = String(data.get('threadId') || form.dataset.threadId || '').trim();
+        const intelTitle = String(data.get('intelTitle') || '').trim();
+        const intelBody = String(data.get('intelBody') || '').trim();
+        const intelTags = String(data.get('intelTags') || '').trim();
+        if (!threadId || (!intelTitle && !intelBody)) return;
+        const result = await HolonetMessengerService.threadAction({ actor, threadId, action: 'create-intel-note', intelTitle, intelBody, intelTags });
+        this._noteMessengerPendingResult(result);
+        this._clearMessengerFormDraft(form);
+        form.reset();
+        await this._refreshMessengerSurface({ threadId, appMode: 'intel', compose: false, scrollToBottom: false });
+      });
+    });
+
+    messengerRoot.querySelectorAll('[data-holonet-action="job-objective-submit"], [data-holonet-action="job-objective-fail"]').forEach(button => {
+      button.addEventListener('click', async (ev) => {
+        ev.preventDefault();
+        ev.stopPropagation();
+        const current = ev.currentTarget;
+        const threadId = String(current.dataset.threadId || '').trim();
+        const objectiveId = String(current.dataset.objectiveId || '').trim();
+        const action = current.dataset.holonetAction === 'job-objective-fail' ? 'fail-job-objective' : 'submit-job-objective';
+        const noteInput = current.closest('[data-job-objective-card]')?.querySelector?.('[data-objective-action-note]');
+        const objectiveNote = String(noteInput?.value || '').trim();
+        if (!threadId || !objectiveId) return;
+        const result = await HolonetMessengerService.threadAction({ actor, threadId, action, objectiveId, objectiveNote });
+        this._noteMessengerPendingResult(result);
+        await this._refreshMessengerSurface({ threadId, appMode: 'jobs', compose: false, scrollToBottom: false });
       });
     });
 

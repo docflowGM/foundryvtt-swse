@@ -1,5 +1,5 @@
 {{!-- GM Jobs contract wizard — Phase 2 step-through overlay. Field names preserve data-job-create-form contract. --}}
-<section class="gm-wizard-overlay gm-phase9-contract-wizard {{#if jobBoard.creation.openWizard}}is-open{{/if}}" data-gm-wizard="contract" {{#unless jobBoard.creation.openWizard}}hidden{{/unless}} aria-label="Contract Wizard">
+<section class="gm-wizard-overlay gm-shell-modal-layer gm-phase9-contract-wizard {{#if jobBoard.creation.openWizard}}is-open{{/if}}" data-gm-wizard="contract" {{#unless jobBoard.creation.openWizard}}hidden{{/unless}} aria-label="Contract Wizard" role="dialog" aria-modal="true">
   <form class="gm-wizard-panel job-contract-form" data-job-create-form data-gm-wizard-form="contract" data-job-has-prefill="{{#if jobBoard.creation.prefill}}true{{else}}false{{/if}}" novalidate>
     <header class="gm-wizard-bar">
       <div class="gm-wizard-steps" aria-label="Contract wizard steps">
@@ -100,7 +100,7 @@
           <p class="placeholder">No known factions, notable NPCs, or previous job clients yet. Use the custom client fields below.</p>
           {{/if}}
         </div>
-        <div class="gm-wizard-card">
+        <div class="gm-wizard-card" data-smart-document-zone data-smart-doc-kind="actor" data-smart-hint="Drop an Actor or compendium Actor here to prefill the client name, portrait, issuer UUID, and reusable contact fields.">
           <span class="gm-command-eyebrow">CLIENT IDENTIFICATION</span>
           <input type="hidden" name="issuerType" value="{{jobBoard.creation.prefill.issuer.type}}">
           <input type="hidden" name="issuerSource" value="{{jobBoard.creation.prefill.issuer.source}}">
@@ -120,9 +120,9 @@
                 {{#each jobBoard.creation.clientTypes}}<option value="{{this.value}}" {{#if (eq this.value ../jobBoard.creation.prefill.client.type)}}selected{{/if}}>{{this.label}}</option>{{/each}}
               </select>
             </label>
-            <label for="cwiz-clientName">Client / NPC Name<input id="cwiz-clientName" type="text" name="clientName" placeholder="Rebel Alliance · Black Sun Vigo · Master Tholos" value="{{jobBoard.creation.prefill.client.name}}"></label>
+            <label for="cwiz-clientName" data-smart-document-zone data-smart-doc-kind="actor" data-smart-hint="Drop an Actor here to use that Actor as the job client.">Client / NPC Name<input id="cwiz-clientName" type="text" name="clientName" placeholder="Drop Actor or type Rebel Alliance · Black Sun Vigo · Master Tholos" value="{{jobBoard.creation.prefill.client.name}}"></label>
             <label for="cwiz-clientFaction">Faction Anchor<input id="cwiz-clientFaction" type="text" name="clientFaction" placeholder="Optional faction relationship anchor" value="{{jobBoard.creation.prefill.client.factionName}}"></label>
-            <label for="cwiz-clientImage">Client Image / Sigil<input id="cwiz-clientImage" type="text" name="clientImage" placeholder="icons/svg/mystery-man.svg" value="{{jobBoard.creation.prefill.client.imageUrl}}"></label>
+            <label for="cwiz-clientImage" data-smart-image-dropzone data-smart-hint="Drop an image file, image path, or Actor here. Actor drops use the Actor portrait.">Client Image / Sigil<input id="cwiz-clientImage" type="text" name="clientImage" data-smart-image-input="true" placeholder="Drop image or Actor portrait" value="{{jobBoard.creation.prefill.client.imageUrl}}"></label>
           </div>
           <label class="gm-inline-check"><input type="checkbox" name="clientSave" {{#if jobBoard.creation.prefill.client.saveForReuse}}checked{{/if}}> Save as reusable contact — appears at top of this wizard next time</label>
         </div>

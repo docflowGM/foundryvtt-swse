@@ -858,6 +858,8 @@ export class GMJobBoardSurfaceService {
     const approvedRequired = requiredObjectives.filter(objective => objective.isApproved).length;
     const approvedOptional = optionalObjectives.filter(objective => objective.isApproved).length;
     const reviewCount = objectives.filter(objective => objective.needsReview).length;
+    const approvedObjectiveCount = approvedRequired + approvedOptional;
+    const objectiveProgressPercent = objectives.length ? Math.round((approvedObjectiveCount / objectives.length) * 100) : 0;
     const flatItemUuids = uniqueStrings(job?.rewardItemUuids);
     const approvedObjectiveItemUuids = objectives.filter(objective => objective.isApproved).flatMap(objective => safeArray(objective.rewardItemUuids));
     const itemUuids = rewards.itemUuids?.length ? rewards.itemUuids : uniqueStrings([...flatItemUuids, ...approvedObjectiveItemUuids]);
@@ -907,6 +909,7 @@ export class GMJobBoardSurfaceService {
       hasObjectiveGroups: objectiveGroups.length > 0,
       requiredProgressLabel: `${approvedRequired}/${Math.max(1, requiredObjectives.length)} required`,
       optionalProgressLabel: `${approvedOptional}/${optionalObjectives.length} optional`,
+      progressPercent: objectiveProgressPercent,
       reviewCount,
       needsAttention: reviewCount > 0 || status === 'complete',
       participantCount: participants.length,

@@ -3342,3 +3342,234 @@
   line-height: 1;
   flex-shrink: 0;
 }
+
+/* Lightsaber forge SVG chassis visuals from the concept rack */
+.swse-item-customization-workbench .ls-chassis-hero-visual,
+.swse-customization-stage .ls-chassis-hero-visual {
+  width: 100%;
+  min-width: 78px;
+  height: 168px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.swse-item-customization-workbench .ls-chassis-hero-visual .swse-lightsaber-chassis-svg,
+.swse-customization-stage .ls-chassis-hero-visual .swse-lightsaber-chassis-svg {
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--blade-color, #00bfff) 45%, transparent));
+}
+
+.swse-item-customization-workbench .ls-chassis-option-card,
+.swse-customization-stage .ls-chassis-option-card {
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr);
+  grid-template-areas:
+    "art top"
+    "art desc"
+    "art tags";
+  column-gap: 10px;
+  align-items: start;
+  min-height: 132px;
+}
+
+.swse-item-customization-workbench .ls-chassis-option-card .ls-chassis-card-art,
+.swse-customization-stage .ls-chassis-option-card .ls-chassis-card-art {
+  grid-area: art;
+  height: 114px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(0, 240, 255, 0.22);
+  background: radial-gradient(circle at 50% 15%, rgba(0, 240, 255, 0.12), rgba(4, 8, 22, 0.72) 58%);
+  overflow: hidden;
+}
+
+.swse-item-customization-workbench .ls-chassis-option-card .ls-chassis-card-art .swse-lightsaber-chassis-svg,
+.swse-customization-stage .ls-chassis-option-card .ls-chassis-card-art .swse-lightsaber-chassis-svg {
+  height: 138px;
+  width: auto;
+  transform: translateY(-6px);
+}
+
+.swse-item-customization-workbench .ls-chassis-option-card .card-top,
+.swse-customization-stage .ls-chassis-option-card .card-top { grid-area: top; }
+.swse-item-customization-workbench .ls-chassis-option-card .card-desc,
+.swse-customization-stage .ls-chassis-option-card .card-desc { grid-area: desc; }
+.swse-item-customization-workbench .ls-chassis-option-card .card-tags,
+.swse-customization-stage .ls-chassis-option-card .card-tags { grid-area: tags; }
+
+.swse-item-customization-workbench .ls-finish-picker,
+.swse-customization-stage .ls-finish-picker {
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(4, 8, 22, 0.58);
+  padding: 10px;
+  margin: 10px 0 12px;
+}
+
+.swse-item-customization-workbench .ls-finish-picker-head,
+.swse-customization-stage .ls-finish-picker-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: baseline;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.swse-item-customization-workbench .ls-finish-picker-head span,
+.swse-customization-stage .ls-finish-picker-head span {
+  color: var(--swse-theme-cyan, #00f0ff);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.swse-item-customization-workbench .ls-finish-picker-head small,
+.swse-customization-stage .ls-finish-picker-head small {
+  color: rgba(214, 247, 255, 0.62);
+  font-size: 0.64rem;
+  text-align: right;
+}
+
+.swse-item-customization-workbench .ls-finish-options,
+.swse-customization-stage .ls-finish-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(104px, 1fr));
+  gap: 8px;
+}
+
+.swse-item-customization-workbench .ls-finish-option,
+.swse-customization-stage .ls-finish-option {
+  position: relative;
+  min-height: 92px;
+  border: 1px solid rgba(0, 240, 255, 0.18);
+  border-radius: 7px;
+  background: linear-gradient(180deg, rgba(7, 14, 32, 0.94), rgba(10, 4, 22, 0.82));
+  color: rgba(224, 248, 255, 0.82);
+  padding: 7px 7px 8px;
+  display: grid;
+  grid-template-columns: 22px minmax(0, 1fr);
+  grid-template-rows: 58px auto;
+  grid-template-areas:
+    "chip preview"
+    "label label";
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.swse-item-customization-workbench .ls-finish-option:hover,
+.swse-customization-stage .ls-finish-option:hover,
+.swse-item-customization-workbench .ls-finish-option.selected,
+.swse-customization-stage .ls-finish-option.selected {
+  border-color: var(--finish-accent, var(--swse-theme-cyan, #00f0ff));
+  box-shadow: 0 0 12px color-mix(in srgb, var(--finish-accent, #00f0ff) 34%, transparent);
+}
+
+.swse-item-customization-workbench .ls-finish-chip,
+.swse-customization-stage .ls-finish-chip {
+  grid-area: chip;
+  width: 18px;
+  height: 42px;
+  justify-self: center;
+  border-radius: 999px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--finish-accent, #00f0ff) 35%, #ffffff), var(--finish-accent, #00f0ff), #10131b);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--finish-accent, #00f0ff) 38%, transparent);
+}
+
+.swse-item-customization-workbench .ls-finish-preview,
+.swse-customization-stage .ls-finish-preview {
+  grid-area: preview;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.swse-item-customization-workbench .ls-finish-preview .swse-lightsaber-chassis-svg,
+.swse-customization-stage .ls-finish-preview .swse-lightsaber-chassis-svg {
+  height: 82px;
+  width: auto;
+  transform: translateY(-6px);
+}
+
+.swse-item-customization-workbench .ls-finish-label,
+.swse-customization-stage .ls-finish-label {
+  grid-area: label;
+  font-size: 0.65rem;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.swse-item-customization-workbench .swse-lightsaber-chassis-svg .ls-svg-hilt,
+.swse-customization-stage .swse-lightsaber-chassis-svg .ls-svg-hilt {
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.55));
+}
+
+.swse-item-customization-workbench .swse-lightsaber-chassis-svg .ls-svg-blades,
+.swse-customization-stage .swse-lightsaber-chassis-svg .ls-svg-blades {
+  pointer-events: none;
+}
+
+.swse-item-customization-workbench .swse-lightsaber-chassis-svg .ls-blade-aura,
+.swse-customization-stage .swse-lightsaber-chassis-svg .ls-blade-aura,
+.swse-item-customization-workbench .swse-lightsaber-chassis-svg .ls-blade-emitter-flare,
+.swse-customization-stage .swse-lightsaber-chassis-svg .ls-blade-emitter-flare,
+.swse-item-customization-workbench .swse-lightsaber-chassis-svg .ls-blade-tip-spark,
+.swse-customization-stage .swse-lightsaber-chassis-svg .ls-blade-tip-spark {
+  mix-blend-mode: screen;
+}
+
+.swse-item-customization-workbench .swse-lightsaber-chassis-svg .ls-blade-core,
+.swse-customization-stage .swse-lightsaber-chassis-svg .ls-blade-core {
+  paint-order: stroke;
+}
+
+.swse-item-customization-workbench .swse-lightsaber-chassis-svg .ls-blade-hotline,
+.swse-customization-stage .swse-lightsaber-chassis-svg .ls-blade-hotline {
+  mix-blend-mode: screen;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .swse-item-customization-workbench .ls-chassis-hero-visual .ls-blade-aura--mid,
+  .swse-customization-stage .ls-chassis-hero-visual .ls-blade-aura--mid {
+    animation: swse-ls-blade-aura-pulse 2.45s ease-in-out infinite;
+  }
+
+  .swse-item-customization-workbench .ls-chassis-hero-visual .ls-blade-emitter-flare,
+  .swse-customization-stage .ls-chassis-hero-visual .ls-blade-emitter-flare {
+    animation: swse-ls-blade-flare-pulse 2.45s ease-in-out infinite;
+  }
+
+  .swse-item-customization-workbench .ls-chassis-hero-visual .ls-blade-hotline,
+  .swse-customization-stage .ls-chassis-hero-visual .ls-blade-hotline {
+    animation: swse-ls-blade-energy-run 1.85s linear infinite;
+  }
+
+  .swse-item-customization-workbench .ls-chassis-hero-visual .ls-svg-blade--quillon .ls-blade-hotline,
+  .swse-customization-stage .ls-chassis-hero-visual .ls-svg-blade--quillon .ls-blade-hotline {
+    animation-duration: 1.25s;
+  }
+}
+
+@keyframes swse-ls-blade-aura-pulse {
+  0%, 100% { opacity: 0.24; }
+  50% { opacity: 0.38; }
+}
+
+@keyframes swse-ls-blade-flare-pulse {
+  0%, 100% { opacity: 0.76; }
+  50% { opacity: 1; }
+}
+
+@keyframes swse-ls-blade-energy-run {
+  to { stroke-dashoffset: -64; }
+}

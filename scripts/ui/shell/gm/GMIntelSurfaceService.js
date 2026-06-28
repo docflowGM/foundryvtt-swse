@@ -267,7 +267,8 @@ export class GMIntelSurfaceService {
       : cleanString(modalRecordId || surfaceState.selectedRecordId || surfaceState.focusedRecordId || visibleCards[0]?.recordId || '');
     const selectedRecord = selectedRecordId ? await HolonetIntelService.getIntelById(selectedRecordId) : null;
     const selectedCard = selectedRecord ? cardFromRecord(selectedRecord, factions) : null;
-    const editor = editorFromRecord(selectedRecord);
+    const modalDefaults = modal?.defaults && typeof modal.defaults === 'object' ? modal.defaults : {};
+    const editor = editorFromRecord(selectedRecord, selectedRecord ? {} : modalDefaults);
     const factionOptions = [{ value: '', label: 'No linked faction', selected: !editor.linkedFactionId }, ...factions.map(faction => ({
       value: faction.id,
       label: faction.name,

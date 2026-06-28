@@ -1,0 +1,762 @@
+/* SWSE Holonet inner rebuild - Phase 4: Job Board browsing surfaces.
+   Scope: Messenger Job Board guts and GM Job Board browsing panel only. */
+
+.swse-shell-surface--messenger .jb-root--holonet,
+.gm-datapad-jobs .jb-root--gm {
+  --jb-accent: var(--accent, #7fdfe6);
+  --jb-gold: #e6c36a;
+  --jb-green: #77e6a5;
+  --jb-red: #ef6b5f;
+  --jb-ink: var(--ink, #e9faff);
+  --jb-muted: var(--ink-faint, #86a2a8);
+  --jb-panel: rgba(5, 7, 14, 0.54);
+  --jb-panel-2: rgba(16, 20, 34, 0.72);
+  --jb-line: rgba(127, 223, 230, 0.18);
+  --jb-line-strong: rgba(127, 223, 230, 0.38);
+  min-height: 0;
+}
+
+.swse-shell-surface--messenger .jb-root--holonet {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  overflow: hidden;
+  padding: 12px;
+}
+
+.swse-shell-surface--messenger .jb-root--holonet::before,
+.gm-datapad-jobs .jb-root--gm .jb-board-panel::before {
+  background:
+    linear-gradient(90deg, transparent, rgba(127, 223, 230, 0.06), transparent),
+    radial-gradient(circle at 20% 0%, rgba(127, 223, 230, 0.10), transparent 38%);
+}
+
+.swse-shell-surface--messenger .jb-head,
+.gm-datapad-jobs .jb-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 0 0 auto;
+  padding: 2px 2px 10px;
+  border-bottom: 1px solid rgba(127, 223, 230, 0.14);
+}
+
+.swse-shell-surface--messenger .jb-head-top,
+.gm-datapad-jobs .jb-head-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.swse-shell-surface--messenger .jb-brand,
+.gm-datapad-jobs .jb-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.swse-shell-surface--messenger .jb-brand-mark,
+.gm-datapad-jobs .jb-brand-mark {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: 9px;
+  color: var(--jb-accent);
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.15), rgba(127, 223, 230, 0.05));
+  border: 1px solid rgba(127, 223, 230, 0.34);
+  box-shadow: inset 0 0 18px rgba(127, 223, 230, 0.12), 0 0 20px rgba(127, 223, 230, 0.10);
+  font-family: var(--font-display, monospace);
+  font-size: 20px;
+}
+
+.gm-datapad-jobs .jb-brand-mark.gm {
+  color: var(--jb-gold);
+  border-color: rgba(230, 195, 106, 0.34);
+  background: linear-gradient(135deg, rgba(230, 195, 106, 0.14), rgba(230, 195, 106, 0.04));
+}
+
+.swse-shell-surface--messenger .jb-brand-tt,
+.gm-datapad-jobs .jb-brand-tt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.swse-shell-surface--messenger .jb-brand-tt .t,
+.gm-datapad-jobs .jb-brand-tt .t {
+  color: var(--jb-accent);
+  font-family: var(--font-display, monospace);
+  font-size: 23px;
+  letter-spacing: 0.22em;
+  line-height: 1;
+  text-transform: uppercase;
+  text-shadow: 0 0 16px rgba(127, 223, 230, 0.34);
+}
+
+.gm-datapad-jobs .jb-brand-tt .t { color: var(--jb-gold); }
+
+.swse-shell-surface--messenger .jb-brand-tt .s,
+.gm-datapad-jobs .jb-brand-tt .s {
+  color: var(--jb-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swse-shell-surface--messenger .jb-head-actions,
+.gm-datapad-jobs .jb-head-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.swse-shell-surface--messenger .jb-shelf,
+.gm-datapad-jobs .jb-shelf {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 11px;
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(127, 223, 230, 0.13);
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.28);
+}
+
+.swse-shell-surface--messenger .jb-shelf-tab,
+.gm-datapad-jobs .jb-shelf-tab {
+  min-width: 0;
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  color: var(--jb-muted);
+  background: transparent;
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.gm-datapad-jobs button.jb-shelf-tab { cursor: pointer; }
+
+.swse-shell-surface--messenger .jb-shelf-tab.on,
+.gm-datapad-jobs .jb-shelf-tab.on,
+.gm-datapad-jobs .jb-shelf-tab.is-active {
+  color: var(--jb-accent);
+  border-color: rgba(127, 223, 230, 0.32);
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.15), rgba(127, 223, 230, 0.05));
+  box-shadow: inset 0 0 18px rgba(127, 223, 230, 0.12);
+}
+
+.gm-datapad-jobs .jb-shelf-tab.on,
+.gm-datapad-jobs .jb-shelf-tab.is-active {
+  color: var(--jb-gold);
+  border-color: rgba(230, 195, 106, 0.34);
+  background: linear-gradient(135deg, rgba(230, 195, 106, 0.14), rgba(230, 195, 106, 0.05));
+}
+
+.swse-shell-surface--messenger .jb-shelf-count,
+.gm-datapad-jobs .jb-shelf-count {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  background: rgba(127, 223, 230, 0.12);
+  font-weight: 700;
+}
+
+.gm-datapad-jobs .jb-shelf-tab small {
+  display: none;
+}
+
+.swse-shell-surface--messenger .jb-subbar,
+.gm-datapad-jobs .jb-subbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.swse-shell-surface--messenger .jb-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 240px;
+}
+
+.swse-shell-surface--messenger .jb-search .ic {
+  position: absolute;
+  left: 11px;
+  color: var(--jb-muted);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.swse-shell-surface--messenger .jb-search input {
+  width: 100%;
+  min-height: 34px;
+  padding: 8px 10px 8px 31px;
+  border-radius: 9px;
+  border: 1px solid rgba(127, 223, 230, 0.18);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--jb-ink);
+  outline: none;
+}
+
+.swse-shell-surface--messenger .jb-search input:focus {
+  border-color: rgba(127, 223, 230, 0.48);
+  box-shadow: 0 0 14px rgba(127, 223, 230, 0.16);
+}
+
+.swse-shell-surface--messenger .jb-content--holonet {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-shell-surface--messenger .jb-scroll,
+.gm-datapad-jobs .jb-scroll {
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(127, 223, 230, 0.32) transparent;
+}
+
+.swse-shell-surface--messenger .jb-scroll {
+  height: 100%;
+  padding: 2px 3px 4px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.gm-datapad-jobs .jb-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.swse-shell-surface--messenger .jb-group,
+.gm-datapad-jobs .jb-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse-shell-surface--messenger .jb-group-hd,
+.gm-datapad-jobs .jb-group-hd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  padding: 0 2px;
+}
+
+.swse-shell-surface--messenger .jb-group-dot,
+.gm-datapad-jobs .jb-group-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  transform: rotate(45deg);
+  border-radius: 2px;
+  background: var(--jb-accent);
+  box-shadow: 0 0 10px rgba(127, 223, 230, 0.36);
+}
+
+.swse-shell-surface--messenger .jb-group-dot.active,
+.gm-datapad-jobs .jb-group-dot.active { background: var(--jb-green); box-shadow: 0 0 10px rgba(119, 230, 165, 0.34); }
+.swse-shell-surface--messenger .jb-group-dot.review,
+.gm-datapad-jobs .jb-group-dot.review,
+.swse-shell-surface--messenger .jb-group-dot.drafts,
+.gm-datapad-jobs .jb-group-dot.drafts { background: var(--jb-gold); box-shadow: 0 0 10px rgba(230, 195, 106, 0.34); }
+.swse-shell-surface--messenger .jb-group-dot.archived,
+.gm-datapad-jobs .jb-group-dot.archived { background: var(--jb-muted); box-shadow: none; }
+.swse-shell-surface--messenger .jb-group-dot.failed,
+.gm-datapad-jobs .jb-group-dot.failed { background: var(--jb-red); box-shadow: 0 0 10px rgba(239, 107, 95, 0.30); }
+
+.swse-shell-surface--messenger .jb-group-lbl,
+.gm-datapad-jobs .jb-group-lbl {
+  color: var(--jb-ink);
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.swse-shell-surface--messenger .jb-group-count,
+.gm-datapad-jobs .jb-group-count {
+  color: var(--jb-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+}
+
+.swse-shell-surface--messenger .jb-group-hd hr,
+.gm-datapad-jobs .jb-group-hd hr {
+  flex: 1 1 auto;
+  border: 0;
+  border-top: 1px solid rgba(127, 223, 230, 0.13);
+}
+
+.swse-shell-surface--messenger .jb-cards.grid,
+.gm-datapad-jobs .jb-cards.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
+
+.swse-shell-surface--messenger .jb-card,
+.gm-datapad-jobs .jb-card {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 13px 14px 13px 17px;
+  border-radius: 13px;
+  border: 1px solid rgba(127, 223, 230, 0.14);
+  background:
+    linear-gradient(150deg, rgba(28, 32, 49, 0.78), rgba(7, 9, 18, 0.62)),
+    radial-gradient(circle at 15% 0%, rgba(127, 223, 230, 0.08), transparent 42%);
+  color: var(--jb-ink);
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.swse-shell-surface--messenger .jb-card::before,
+.gm-datapad-jobs .jb-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--jb-accent);
+  opacity: 0.68;
+  transition: opacity 160ms ease;
+}
+
+.swse-shell-surface--messenger .jb-card.active::before,
+.gm-datapad-jobs .jb-card.active::before,
+.swse-shell-surface--messenger .jb-card.accepted::before,
+.swse-shell-surface--messenger .jb-card.inProgress::before,
+.swse-shell-surface--messenger .jb-card.active::before,
+.gm-datapad-jobs .jb-card.active::before { background: var(--jb-green); }
+.swse-shell-surface--messenger .jb-card.review::before,
+.swse-shell-surface--messenger .jb-card.complete::before,
+.gm-datapad-jobs .jb-card.review::before,
+.gm-datapad-jobs .jb-card.complete::before { background: var(--jb-gold); }
+.swse-shell-surface--messenger .jb-card.failed::before,
+.gm-datapad-jobs .jb-card.failed::before { background: var(--jb-red); }
+.swse-shell-surface--messenger .jb-card.archived::before,
+.gm-datapad-jobs .jb-card.archived::before { background: var(--jb-muted); opacity: 0.42; }
+
+.swse-shell-surface--messenger .jb-card:hover,
+.gm-datapad-jobs .jb-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(127, 223, 230, 0.42);
+  box-shadow: 0 13px 28px rgba(0, 0, 0, 0.36), 0 0 24px rgba(127, 223, 230, 0.13);
+}
+
+.swse-shell-surface--messenger .jb-card:hover::before,
+.gm-datapad-jobs .jb-card:hover::before { opacity: 1; }
+
+.swse-shell-surface--messenger .jb-card.attention,
+.gm-datapad-jobs .jb-card.attention {
+  border-color: rgba(230, 195, 106, 0.32);
+  box-shadow: 0 9px 22px rgba(0, 0, 0, 0.30), 0 0 20px rgba(230, 195, 106, 0.08);
+}
+
+.swse-shell-surface--messenger .jb-attn,
+.gm-datapad-jobs .jb-attn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  padding: 3px 8px;
+  border: 0;
+  border-left: 1px solid rgba(230, 195, 106, 0.30);
+  border-bottom: 1px solid rgba(230, 195, 106, 0.30);
+  border-radius: 0 13px 0 9px;
+  color: var(--jb-gold);
+  background: rgba(230, 195, 106, 0.12);
+  font-family: var(--font-mono, monospace);
+  font-size: 7.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-shell-surface--messenger .jb-card-top,
+.gm-datapad-jobs .jb-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.swse-shell-surface--messenger .jb-card-poster,
+.gm-datapad-jobs .jb-card-poster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.swse-shell-surface--messenger .jb-card-avatar,
+.gm-datapad-jobs .jb-card-avatar {
+  width: 31px;
+  height: 31px;
+  border-radius: 9px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--jb-accent);
+  background: rgba(127, 223, 230, 0.10);
+  border: 1px solid rgba(127, 223, 230, 0.24);
+  font-family: var(--font-display, monospace);
+  font-size: 17px;
+  overflow: hidden;
+}
+
+.swse-shell-surface--messenger .jb-card-avatar img,
+.gm-datapad-jobs .jb-card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.swse-shell-surface--messenger .jb-card-poster-copy,
+.gm-datapad-jobs .jb-card-poster-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.swse-shell-surface--messenger .jb-card-poster .pn,
+.gm-datapad-jobs .jb-card-poster .pn {
+  min-width: 0;
+  color: var(--jb-ink);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swse-shell-surface--messenger .jb-card-poster .po,
+.gm-datapad-jobs .jb-card-poster .po {
+  color: var(--jb-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swse-shell-surface--messenger .jb-status,
+.gm-datapad-jobs .jb-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  color: var(--jb-accent);
+  background: rgba(127, 223, 230, 0.06);
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.swse-shell-surface--messenger .jb-status .d,
+.gm-datapad-jobs .jb-status .d {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.swse-shell-surface--messenger .jb-status.active,
+.swse-shell-surface--messenger .jb-status.accepted,
+.swse-shell-surface--messenger .jb-status.inProgress,
+.gm-datapad-jobs .jb-status.active,
+.gm-datapad-jobs .jb-status.accepted,
+.gm-datapad-jobs .jb-status.inProgress { color: var(--jb-green); background: rgba(119, 230, 165, 0.06); }
+.swse-shell-surface--messenger .jb-status.review,
+.swse-shell-surface--messenger .jb-status.complete,
+.gm-datapad-jobs .jb-status.review,
+.gm-datapad-jobs .jb-status.complete { color: var(--jb-gold); background: rgba(230, 195, 106, 0.08); }
+.swse-shell-surface--messenger .jb-status.archived,
+.gm-datapad-jobs .jb-status.archived { color: var(--jb-muted); background: rgba(160, 170, 175, 0.06); }
+.swse-shell-surface--messenger .jb-status.failed,
+.gm-datapad-jobs .jb-status.failed { color: var(--jb-red); background: rgba(239, 107, 95, 0.08); }
+
+.swse-shell-surface--messenger .jb-card-title,
+.gm-datapad-jobs .jb-card-title {
+  color: var(--jb-ink);
+  font-family: var(--font-syne, var(--font-body, sans-serif));
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.2;
+  padding-right: 44px;
+}
+
+.swse-shell-surface--messenger .jb-card-brief,
+.gm-datapad-jobs .jb-card-brief {
+  color: var(--jb-muted);
+  font-size: 11.5px;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.swse-shell-surface--messenger .jb-card-tags,
+.gm-datapad-jobs .jb-card-tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.swse-shell-surface--messenger .jb-prog,
+.gm-datapad-jobs .jb-prog {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.swse-shell-surface--messenger .jb-prog-bar,
+.gm-datapad-jobs .jb-prog-bar {
+  flex: 1 1 auto;
+  height: 5px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.42);
+  border: 1px solid rgba(127, 223, 230, 0.12);
+}
+
+.swse-shell-surface--messenger .jb-prog-bar i,
+.gm-datapad-jobs .jb-prog-bar i {
+  display: block;
+  height: 100%;
+  min-width: 4px;
+  width: var(--jb-progress, 52%);
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--jb-accent), var(--jb-green));
+  box-shadow: 0 0 10px rgba(127, 223, 230, 0.30);
+}
+
+.swse-shell-surface--messenger .jb-prog-lbl,
+.gm-datapad-jobs .jb-prog-lbl {
+  flex: 0 0 auto;
+  color: var(--jb-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: 8.5px;
+  white-space: nowrap;
+}
+
+.swse-shell-surface--messenger .jb-card-foot,
+.gm-datapad-jobs .jb-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 9px;
+  border-top: 1px solid rgba(127, 223, 230, 0.11);
+}
+
+.swse-shell-surface--messenger .jb-reward-inline,
+.gm-datapad-jobs .jb-reward-inline {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.swse-shell-surface--messenger .jb-reward-inline .cr,
+.gm-datapad-jobs .jb-reward-inline .cr {
+  color: var(--jb-green);
+  font-family: var(--font-mono, monospace);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.swse-shell-surface--messenger .jb-reward-inline .xp,
+.gm-datapad-jobs .jb-reward-inline .xp {
+  color: var(--jb-gold);
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.swse-shell-surface--messenger .jb-card-meta,
+.gm-datapad-jobs .jb-card-meta {
+  color: var(--jb-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  text-align: right;
+}
+
+.swse-shell-surface--messenger .jb-empty,
+.gm-datapad-jobs .jb-empty {
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  padding: 30px 18px;
+  color: var(--jb-muted);
+  text-align: center;
+  border-radius: 12px;
+  border: 1px dashed rgba(127, 223, 230, 0.18);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.swse-shell-surface--messenger .jb-empty .glyph,
+.gm-datapad-jobs .jb-empty .glyph {
+  color: rgba(127, 223, 230, 0.38);
+  font-family: var(--font-display, monospace);
+  font-size: 42px;
+}
+
+.swse-shell-surface--messenger .jb-empty .t,
+.gm-datapad-jobs .jb-empty .t {
+  color: var(--jb-ink);
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.swse-shell-surface--messenger .jb-empty .s,
+.gm-datapad-jobs .jb-empty .s {
+  max-width: 300px;
+  color: var(--jb-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.gm-datapad-jobs .jb-root--gm {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.gm-datapad-jobs .jb-board-panel,
+.gm-datapad-jobs .jb-quick-rail {
+  min-height: 0;
+  overflow: hidden;
+  border-color: rgba(127, 223, 230, 0.16);
+  background:
+    linear-gradient(160deg, rgba(19, 20, 31, 0.74), rgba(3, 4, 10, 0.40)),
+    radial-gradient(circle at 20% 0%, rgba(230, 195, 106, 0.08), transparent 44%);
+}
+
+.gm-datapad-jobs .jb-board-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gm-datapad-jobs .jb-content {
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gm-datapad-jobs .jb-quick-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gm-datapad-jobs .jb-empty--rail {
+  min-height: 100%;
+}
+
+@media (max-width: 1180px) {
+  .gm-datapad-jobs .jb-root--gm {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .swse-shell-surface--messenger .jb-shelf,
+  .gm-datapad-jobs .jb-shelf {
+    flex-wrap: wrap;
+  }
+
+  .swse-shell-surface--messenger .jb-shelf-tab,
+  .gm-datapad-jobs .jb-shelf-tab {
+    flex: 1 1 150px;
+  }
+
+  .swse-shell-surface--messenger .jb-cards.grid,
+  .gm-datapad-jobs .jb-cards.grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.swse-shell-surface--messenger .jb-card.attention::before,
+.gm-datapad-jobs .jb-card.attention::before { background: var(--jb-gold); }
+.swse-shell-surface--messenger .jb-card.claimed::before,
+.gm-datapad-jobs .jb-card.claimed::before,
+.swse-shell-surface--messenger .jb-card.success::before,
+.gm-datapad-jobs .jb-card.success::before { background: var(--jb-green); }
+.swse-shell-surface--messenger .jb-card.danger::before,
+.gm-datapad-jobs .jb-card.danger::before { background: var(--jb-red); }
+.swse-shell-surface--messenger .jb-card.muted::before,
+.gm-datapad-jobs .jb-card.muted::before { background: var(--jb-muted); opacity: 0.45; }
+
+.swse-shell-surface--messenger .jb-status.attention,
+.gm-datapad-jobs .jb-status.attention { color: var(--jb-gold); background: rgba(230, 195, 106, 0.08); }
+.swse-shell-surface--messenger .jb-status.claimed,
+.gm-datapad-jobs .jb-status.claimed,
+.swse-shell-surface--messenger .jb-status.success,
+.gm-datapad-jobs .jb-status.success { color: var(--jb-green); background: rgba(119, 230, 165, 0.07); }
+.swse-shell-surface--messenger .jb-status.danger,
+.gm-datapad-jobs .jb-status.danger { color: var(--jb-red); background: rgba(239, 107, 95, 0.08); }
+.swse-shell-surface--messenger .jb-status.muted,
+.gm-datapad-jobs .jb-status.muted { color: var(--jb-muted); background: rgba(160, 170, 175, 0.06); }

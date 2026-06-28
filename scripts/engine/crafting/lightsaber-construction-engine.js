@@ -354,6 +354,7 @@ export class LightsaberConstructionEngine {
       accessoryIds: Array.isArray(cfg.accessoryIds) ? [...cfg.accessoryIds] : [],
       bladeColor: flags.bladeColor ?? cfg.bladeColor ?? 'blue',
       lightsaberStyle: flags.lightsaberStyle ?? cfg.lightsaberStyle ?? item?.system?.visual?.lightsaberStyle ?? 'auto',
+      chassisFinish: flags.chassisFinish ?? flags.lightsaberChassisFinish ?? cfg.chassisFinish ?? item?.system?.visual?.chassisFinish ?? 'steel',
       builtBy: flags.builtBy ?? null,
       attunedBy: flags.attunedBy ?? null,
       selfBuilt: !!flags.builtBy
@@ -456,20 +457,25 @@ export class LightsaberConstructionEngine {
       'flags.swse.bladeColor': config?.bladeColor || 'blue',
       'flags.foundryvtt-swse.lightsaberStyle': config?.lightsaberStyle || config?.styleKey || 'auto',
       'flags.swse.lightsaberStyle': config?.lightsaberStyle || config?.styleKey || 'auto',
+      'flags.foundryvtt-swse.chassisFinish': config?.chassisFinish || 'steel',
+      'flags.swse.chassisFinish': config?.chassisFinish || 'steel',
       'system.visual.lightsaberStyle': config?.lightsaberStyle || config?.styleKey || 'auto',
+      'system.visual.chassisFinish': config?.chassisFinish || 'steel',
       'flags.foundryvtt-swse.lightsaberConfig': {
         chassisId: resolvedChassisId,
         crystalId: crystal.id,
         accessoryIds: accessories.map(a => a.id),
         bladeColor: config?.bladeColor || 'blue',
-        lightsaberStyle: config?.lightsaberStyle || config?.styleKey || 'auto'
+        lightsaberStyle: config?.lightsaberStyle || config?.styleKey || 'auto',
+        chassisFinish: config?.chassisFinish || 'steel'
       },
       'flags.swse.lightsaberConfig': {
         chassisId: resolvedChassisId,
         crystalId: crystal.id,
         accessoryIds: accessories.map(a => a.id),
         bladeColor: config?.bladeColor || 'blue',
-        lightsaberStyle: config?.lightsaberStyle || config?.styleKey || 'auto'
+        lightsaberStyle: config?.lightsaberStyle || config?.styleKey || 'auto',
+        chassisFinish: config?.chassisFinish || 'steel'
       }
     };
     if (damageTypeOverride) update['system.damageType'] = String(damageTypeOverride).toLowerCase();
@@ -616,7 +622,8 @@ export class LightsaberConstructionEngine {
           actor.id,
           game.time.worldTime,
           config.bladeColor,
-          config.lightsaberStyle || config.styleKey || 'auto'
+          config.lightsaberStyle || config.styleKey || 'auto',
+          config.chassisFinish || 'steel'
         );
 
         const created = await ActorEngine.createEmbeddedDocuments(actor, "Item", [newWeapon]);
@@ -771,7 +778,7 @@ export class LightsaberConstructionEngine {
    * Injects builder metadata
    * @private
    */
-  static #createBuiltLightsaber(chassis, crystal, accessories, builderId, builtAt, bladeColor = null, lightsaberStyle = 'auto') {
+  static #createBuiltLightsaber(chassis, crystal, accessories, builderId, builtAt, bladeColor = null, lightsaberStyle = 'auto', chassisFinish = 'steel') {
     // Clone chassis as base
     const baseData = typeof chassis.toObject === "function" ? chassis.toObject() : foundry.utils.deepClone(chassis);
 
@@ -803,7 +810,12 @@ export class LightsaberConstructionEngine {
       name: newName,
       system: {
         ...baseData.system,
-        modifiers
+        modifiers,
+        visual: {
+          ...(baseData.system?.visual || {}),
+          lightsaberStyle: lightsaberStyle || 'auto',
+          chassisFinish: chassisFinish || 'steel'
+        }
       },
       flags: {
         ...baseData.flags,
@@ -814,12 +826,14 @@ export class LightsaberConstructionEngine {
           attunedBy: null,
           bladeColor: bladeColor || "blue",
           lightsaberStyle: lightsaberStyle || 'auto',
+          chassisFinish: chassisFinish || 'steel',
           lightsaberConfig: {
             chassisId: chassis.system?.chassisId ?? null,
             crystalId: crystal.id,
             accessoryIds: accessories.map(a => a.id),
             bladeColor: bladeColor || "blue",
-            lightsaberStyle: lightsaberStyle || 'auto'
+            lightsaberStyle: lightsaberStyle || 'auto',
+            chassisFinish: chassisFinish || 'steel'
           }
         },
         swse: {
@@ -829,12 +843,14 @@ export class LightsaberConstructionEngine {
           attunedBy: null,
           bladeColor: bladeColor || "blue",
           lightsaberStyle: lightsaberStyle || 'auto',
+          chassisFinish: chassisFinish || 'steel',
           lightsaberConfig: {
             chassisId: chassis.system?.chassisId ?? null,
             crystalId: crystal.id,
             accessoryIds: accessories.map(a => a.id),
             bladeColor: bladeColor || "blue",
-            lightsaberStyle: lightsaberStyle || 'auto'
+            lightsaberStyle: lightsaberStyle || 'auto',
+            chassisFinish: chassisFinish || 'steel'
           }
         }
       }

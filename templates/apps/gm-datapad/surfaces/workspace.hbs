@@ -23,6 +23,184 @@
     </div>
   </section>
 
+
+
+  <section class="swse-ui-panel gm-party-manager gm-phase2-panel" data-party-manager>
+    <header class="gm-party-manager__header">
+      <div>
+        <span class="gm-command-eyebrow">PARTY AUTHORITY</span>
+        <h3>Manage Party Members</h3>
+        <p>Choose who counts as the active party for healing, recovery targeting, dashboards, and GM workflows. NPC helpers, followers, beasts, droids, vehicles, and temporary guides can all be party members.</p>
+      </div>
+      <div class="gm-party-manager__actions">
+        <button type="button" class="swse-ui-button gm-party-full-health-button" data-party-full-health title="Restore every current party member to maximum HP, reset condition, and refresh second wind where applicable."><i class="fa-solid fa-heart-pulse"></i> Full Party Health</button>
+        <button type="button" class="swse-ui-button gm-party-add-button" data-party-open-picker><i class="fa-solid fa-plus"></i> Add Member</button>
+      </div>
+    </header>
+
+    <div class="gm-party-manager__stats">
+      <span><strong>{{partyManager.summary.total}}</strong><em>Total</em></span>
+      <span><strong>{{partyManager.summary.playerLinked}}</strong><em>Player-linked</em></span>
+      <span><strong>{{partyManager.summary.gmAdded}}</strong><em>GM-added</em></span>
+      <span><strong>{{partyManager.summary.npcs}}</strong><em>NPC/Beast</em></span>
+      <span><strong>{{partyManager.summary.droids}}</strong><em>Droids</em></span>
+      <span><strong>{{partyManager.summary.vehicles}}</strong><em>Vehicles</em></span>
+    </div>
+
+    <div class="gm-party-manager__drop-row">
+      <div class="gm-party-drop-zone is-add" data-party-drop-zone="add">
+        <i class="fa-solid fa-user-plus"></i>
+        <strong>Drop actors here to add</strong>
+        <span>{{partyManager.dropHint}}</span>
+      </div>
+      <div class="gm-party-drop-zone is-remove" data-party-drop-zone="remove">
+        <i class="fa-solid fa-trash-can"></i>
+        <strong>Drop party cards here to remove</strong>
+        <span>{{partyManager.removeHint}}</span>
+      </div>
+    </div>
+
+    {{#if partyManager.hasMembers}}
+    <div class="gm-party-member-grid">
+      {{#each partyManager.members}}
+      <article class="gm-party-member-card gm-party-member-card--modal {{this.typeChipClass}} {{this.partySource}}" draggable="true" data-party-drag-actor-id="{{this.id}}" data-workspace-actor-card="{{this.id}}">
+        <div class="gm-party-member-summary gm-party-member-summary--modal" role="button" tabindex="0" data-party-member-open="{{this.id}}" aria-controls="gm-party-member-modal-{{this.id}}" aria-label="Manage {{this.name}}">
+          <img src="{{this.img}}" alt="{{this.name}}">
+          <div class="gm-party-member-card__main">
+            <strong>{{this.name}}</strong>
+            <span>{{this.typeLabel}} · {{this.ownerLabel}}</span>
+            <small title="{{this.partySourceDetail}}">{{this.partySourceLabel}}</small>
+          </div>
+          <div class="gm-party-member-card__status">
+            <span class="type-chip {{this.typeChipClass}}">{{this.typeLabel}}</span>
+            <span class="chip {{this.hpTone}}">{{this.hpLabel}}</span>
+            <span class="chip">{{this.conditionLabel}}</span>
+            <span class="chip">{{this.forcePointsLabel}}</span>
+          </div>
+          <div class="gm-party-member-card__quick">
+            <button type="button" class="gm-party-full-health-mini" data-actor-full-health="{{this.id}}" title="Restore {{this.name}} to full health"><i class="fa-solid fa-heart-pulse"></i></button>
+            <button type="button" class="gm-party-remove-button" title="Remove {{this.name}} from party" data-party-remove-actor="{{this.id}}"><i class="fa-solid fa-trash-can"></i></button>
+            <button type="button" class="gm-party-manage-button" data-party-member-open="{{this.id}}" aria-controls="gm-party-member-modal-{{this.id}}" title="Open command modal for {{this.name}}"><i class="fa-solid fa-up-right-and-down-left-from-center"></i> Manage</button>
+          </div>
+        </div>
+      </article>
+
+      <div class="gm-party-member-command-modal" id="gm-party-member-modal-{{this.id}}" data-party-member-modal="{{this.id}}" hidden>
+        <div class="gm-party-member-command-modal__shade" data-party-member-close="{{this.id}}"></div>
+        <section class="gm-party-member-command-modal__panel" role="dialog" aria-modal="true" aria-labelledby="gm-party-member-modal-title-{{this.id}}">
+          <header class="gm-party-member-command-modal__header">
+            <div class="gm-party-member-command-modal__identity">
+              <img src="{{this.img}}" alt="{{this.name}}">
+              <div>
+                <span class="gm-command-eyebrow">PARTY MEMBER COMMANDS</span>
+                <h3 id="gm-party-member-modal-title-{{this.id}}">{{this.name}}</h3>
+                <p>{{this.typeLabel}} · {{this.ownerLabel}} · {{this.partySourceLabel}}</p>
+              </div>
+            </div>
+            <button type="button" class="gm-party-picker-close" data-party-member-close="{{this.id}}" aria-label="Close party member commands"><i class="fa-solid fa-xmark"></i></button>
+          </header>
+
+          <div class="gm-party-member-command-modal__body">
+            <section class="gm-party-command-section">
+              <header>
+                <span class="gm-command-eyebrow">STATUS SNAPSHOT</span>
+                <p>Current combat and progression state for this party member.</p>
+              </header>
+              <div class="gm-party-member-vitals">
+                <span><b>{{this.hpLabel}}</b><em>Health</em></span>
+                <span><b>{{this.conditionLabel}}</b><em>Condition</em></span>
+                <span><b>{{this.forcePointsLabel}}</b><em>Force Points</em></span>
+                <span><b>{{this.levelLabel}}</b><em>Progression</em></span>
+                {{#if this.canUseXpControls}}<span><b>{{this.xpProgressLabel}}</b><em>XP Progress</em></span>{{/if}}
+              </div>
+            </section>
+
+            <section class="gm-party-command-section">
+              <header>
+                <span class="gm-command-eyebrow">COMMON ACTIONS</span>
+                <p>Fast GM commands for the selected party member.</p>
+              </header>
+              <div class="gm-party-member-action-grid">
+                <button type="button" class="swse-ui-button gm-workspace-full-health-action" data-actor-full-health="{{this.id}}" title="Restore {{this.name}} to maximum HP, reset condition, and refresh second wind where applicable."><i class="fa-solid fa-heart-pulse"></i> Full Health</button>
+                <button type="button" class="swse-ui-button" data-party-actor-rest="short-rest" data-actor-id="{{this.id}}" title="Run the short-rest recovery workflow for this actor. Droids and vehicles remain excluded from organic rest healing."><i class="fa-solid fa-mug-hot"></i> Short Rest</button>
+                <button type="button" class="swse-ui-button" data-party-actor-rest="extended-rest" data-actor-id="{{this.id}}" title="Run the extended-rest recovery workflow for this actor. Droids and vehicles remain excluded from organic rest healing."><i class="fa-solid fa-bed"></i> Full Rest</button>
+                <button type="button" class="swse-ui-button" data-party-restore-force="{{this.id}}" title="Restore this actor's Force Points to maximum if they have a Force Point pool."><i class="fa-solid fa-sparkles"></i> Restore FP</button>
+                <button type="button" class="swse-ui-button" data-party-open-intel="{{this.id}}" title="Open the GM Intel wizard with this actor linked as the Intel subject."><i class="fa-solid fa-file-shield"></i> Give Intel</button>
+                <button type="button" class="swse-ui-button" data-party-open-job="{{this.id}}" title="Open the Job Board contract wizard with this actor noted as the mission focus."><i class="fa-solid fa-clipboard-list"></i> Assign Job</button>
+                <button type="button" class="swse-ui-button" data-open-actor="{{this.id}}"><i class="fa-solid fa-address-card"></i> Open Sheet</button>
+              </div>
+            </section>
+
+            {{#if this.canUseXpControls}}
+            <section class="gm-party-command-section">
+              <header>
+                <span class="gm-command-eyebrow">ADVANCEMENT</span>
+                <p>Add XP without forcing immediate progression. Players can level up when they are ready.</p>
+              </header>
+              <div class="gm-party-advancement-row">
+                <form class="gm-party-xp-form" data-party-xp-form="{{this.id}}">
+                  <label><span>Add XP</span><input type="number" name="xpAmount" min="0" step="50" placeholder="Custom XP"></label>
+                  <button type="submit" class="swse-ui-button">Apply XP</button>
+                  <div class="gm-party-xp-presets">
+                    <button type="button" data-party-xp-preset="250" data-actor-id="{{this.id}}">+250</button>
+                    <button type="button" data-party-xp-preset="500" data-actor-id="{{this.id}}">+500</button>
+                    <button type="button" data-party-xp-preset="1000" data-actor-id="{{this.id}}">+1k</button>
+                    <button type="button" data-party-xp-preset="2000" data-actor-id="{{this.id}}">+2k</button>
+                  </div>
+                </form>
+                {{#if this.canGrantLevelUpXp}}
+                <button type="button" class="swse-ui-button gm-party-levelup-xp-button" data-party-level-up="{{this.id}}" title="Grant enough XP for {{this.name}} to qualify for their next level. This does not open or force the level-up flow."><i class="fa-solid fa-arrow-up-right-dots"></i> Grant Level-Up XP</button>
+                {{/if}}
+              </div>
+            </section>
+            {{/if}}
+          </div>
+
+          <footer class="gm-party-member-command-modal__footer">
+            <button type="button" class="gm-party-remove-button" title="Remove from party" data-party-remove-actor="{{this.id}}"><i class="fa-solid fa-trash-can"></i> Remove from Party</button>
+            <button type="button" class="swse-ui-button" data-party-member-close="{{this.id}}">Close</button>
+          </footer>
+        </section>
+      </div>
+
+      {{/each}}
+    </div>
+    {{else}}
+    <div class="gm-party-empty">No active party members. Drop a player character, NPC, follower, droid, beast, or vehicle into the add zone.</div>
+    {{/if}}
+
+    <div class="gm-party-picker-modal" data-party-picker-modal hidden>
+      <div class="gm-party-picker-modal__shade" data-party-close-picker></div>
+      <section class="gm-party-picker-modal__panel" role="dialog" aria-modal="true" aria-label="Add party members">
+        <header>
+          <div>
+            <span class="gm-command-eyebrow">ADD PARTY MEMBER</span>
+            <h3>Choose from GM actors</h3>
+            <p>Use this when drag-and-drop is inconvenient. Player-linked actors removed from the party can be re-added here.</p>
+          </div>
+          <button type="button" class="gm-party-picker-close" data-party-close-picker><i class="fa-solid fa-xmark"></i></button>
+        </header>
+        <label class="gm-party-picker-search">
+          <span>Search actors</span>
+          <input type="search" placeholder="Filter by name, type, or owner…" data-party-picker-search>
+        </label>
+        {{#if partyManager.hasAvailableActors}}
+        <div class="gm-party-picker-list">
+          {{#each partyManager.availableActors}}
+          <button type="button" class="gm-party-picker-row {{#if this.partyExplicitlyExcluded}}is-excluded{{/if}}" data-party-picker-row data-party-search="{{this.name}} {{this.typeLabel}} {{this.ownerLabel}} {{this.partySourceLabel}}" data-party-add-actor="{{this.id}}">
+            <img src="{{this.img}}" alt="{{this.name}}">
+            <span><strong>{{this.name}}</strong><em>{{this.typeLabel}} · {{this.ownerLabel}}</em><small>{{this.partySourceLabel}}</small></span>
+            <b>+</b>
+          </button>
+          {{/each}}
+        </div>
+        {{else}}
+        <div class="gm-party-empty">Every visible GM actor is already in the party roster.</div>
+        {{/if}}
+      </section>
+    </div>
+  </section>
+
   <div class="workspace-content gm-phase2-workspace-content">
     {{#each rosterSections}}
     <section class="swse-ui-panel workspace-roster-section gm-phase2-panel" data-workspace-roster="{{this.id}}">
@@ -33,22 +211,25 @@
       {{#if this.actors.length}}
       <div class="gm-workspace-card-grid">
         {{#each this.actors}}
-        <article class="gm-workspace-card {{#if this.inParty}}in-party{{/if}}" data-workspace-actor-card="{{this.id}}">
+        <article class="gm-workspace-card {{#if this.inParty}}in-party{{/if}}" data-workspace-actor-card="{{this.id}}" draggable="true" data-party-drag-actor-id="{{this.id}}">
           <div class="gm-workspace-img"><img src="{{this.img}}" alt="{{this.name}}"></div>
           <div class="gm-workspace-name">{{this.name}}</div>
           <div class="gm-workspace-meta">{{this.type}} · {{this.ownerLabel}}</div>
           <div class="gm-workspace-chip-row">
             <span class="type-chip {{this.typeChipClass}}">{{this.typeLabel}}</span>
             <span class="chip {{this.hpTone}}">{{this.hpLabel}}</span>
-            <button type="button" class="gm-workspace-party-chip {{#if this.inParty}}in{{/if}}" data-workspace-party-toggle="{{this.id}}">{{#if this.inParty}}● Party{{else}}+ Add to Party{{/if}}</button>
+            <button type="button" class="gm-workspace-party-chip {{#if this.inParty}}in{{/if}}" title="{{this.partySourceDetail}}" data-workspace-party-toggle="{{this.id}}">{{#if this.inParty}}● Party{{else}}+ Add to Party{{/if}}</button>
           </div>
           <div class="workspace-actor-actions gm-workspace-actions">
             <button class="swse-ui-button" data-open-actor="{{this.id}}">Open Sheet</button>
+            <button class="swse-ui-button gm-workspace-full-health-action" title="Restore {{this.name}} to maximum HP, reset condition, and refresh second wind where applicable." data-actor-full-health="{{this.id}}">Full Health</button>
             <button class="swse-ui-button" data-nav-to="healing">Recovery</button>
             <button class="swse-ui-button" data-nav-to="bulletin">Message</button>
           </div>
           <div class="gm-workspace-quick-amounts">
+            {{#if this.canUseXpControls}}
             <div class="gm-workspace-qa-row"><span>Add XP</span><div><button type="button" data-workspace-xp-grant="250" data-actor-id="{{this.id}}">+250</button><button type="button" data-workspace-xp-grant="500" data-actor-id="{{this.id}}">+500</button><button type="button" data-workspace-xp-grant="1000" data-actor-id="{{this.id}}">+1k</button><button type="button" data-workspace-xp-grant="2000" data-actor-id="{{this.id}}">+2k</button></div></div>
+            {{/if}}
             <div class="gm-workspace-qa-row"><span>Credits</span><div><button type="button" class="pos" data-workspace-credit-adjust="100" data-actor-id="{{this.id}}">+100</button><button type="button" class="pos" data-workspace-credit-adjust="500" data-actor-id="{{this.id}}">+500</button><button type="button" class="pos" data-workspace-credit-adjust="1000" data-actor-id="{{this.id}}">+1k</button><button type="button" class="neg" data-workspace-credit-adjust="-500" data-actor-id="{{this.id}}">−500</button></div></div>
           </div>
         </article>

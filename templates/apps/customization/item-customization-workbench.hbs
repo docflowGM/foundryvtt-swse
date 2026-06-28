@@ -93,12 +93,8 @@
             <div class="hero-grid">
               <div class="hero-art {{#if isLightsaber}}hero-art--lightsaber{{/if}}">
                 {{#if isLightsaber}}
-                <div class="ls-blade-render ls-blade-render--hero-vertical {{lightsaber.renderStyleClass}}" style="--blade-color: {{lightsaber.bladeHex}};" aria-label="{{currentItem.name}} blade preview">
-                  <span class="ls-blade ls-left"></span>
-                  <span class="ls-hilt"></span>
-                  <span class="ls-blade ls-right"></span>
-                  <span class="ls-crossguard ls-crossguard-a"></span>
-                  <span class="ls-crossguard ls-crossguard-b"></span>
+                <div class="ls-chassis-hero-visual" style="--blade-color: {{lightsaber.bladeHex}};" aria-label="{{currentItem.name}} blade preview">
+                  {{{lightsaber.heroSvg}}}
                 </div>
                 {{else}}
                 <img src="{{currentItem.img}}" alt="{{currentItem.name}}">
@@ -184,12 +180,29 @@
                 {{/each}}
               </nav>
 
+              <section class="ls-finish-picker" aria-label="Lightsaber chassis finish">
+                <div class="ls-finish-picker-head">
+                  <span>Chassis Finish</span>
+                  <small>Cosmetic SVG theme · selected: {{lightsaber.selectedFinishLabel}}</small>
+                </div>
+                <div class="ls-finish-options">
+                  {{#each lightsaber.finishOptions}}
+                  <button type="button" class="ls-finish-option {{#if selected}}selected{{/if}}" data-action="set-lightsaber-finish" data-key="{{key}}" title="{{label}}">
+                    <span class="ls-finish-chip" style="--finish-accent: {{accent}};"></span>
+                    <span class="ls-finish-preview">{{{previewSvg}}}</span>
+                    <span class="ls-finish-label">{{label}}</span>
+                  </button>
+                  {{/each}}
+                </div>
+              </section>
+
               {{#if lightsaber.tabChassis}}
               <section class="ls-tab-panel" data-lightsaber-tab-panel="chassis">
                 <div class="panel-head compact"><span>Chassis</span><span class="hint">{{lightsaber.chassis.length}} frames</span></div>
                 <div class="ls-tab-card-grid">
                   {{#each lightsaber.chassis}}
-                  <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}}" data-action="inspect-lightsaber-component" data-key="{{optionKey}}" data-lightsaber-inspect-type="chassis" data-lightsaber-inspect-key="{{optionKey}}" data-component-type="chassis" title="{{description}}">
+                  <button type="button" class="config-card ls-option-card ls-chassis-option-card {{#if selected}}selected{{/if}}" data-action="inspect-lightsaber-component" data-key="{{optionKey}}" data-lightsaber-inspect-type="chassis" data-lightsaber-inspect-key="{{optionKey}}" data-component-type="chassis" title="{{description}}">
+                    <span class="ls-chassis-card-art">{{{visualSvg}}}</span>
                     <span class="card-top"><span class="card-name">{{name}}</span><span class="card-cost">{{cost}} cr</span></span>
                     <span class="card-desc">{{description}}</span>
                     <span class="card-tags"><span class="tag">DC {{system.baseBuildDc}}</span><span class="tag">{{system.chassisId}}</span></span>
@@ -217,26 +230,6 @@
               <section class="ls-tab-panel" data-lightsaber-tab-panel="hilt">
                 <div class="panel-head compact"><span>Hilt Accessories</span><span class="hint">{{lightsaber.slotState.usedSlots}}/{{lightsaber.slotState.totalAvailable}} slots</span></div>
                 {{#if lightsaber.slotState.techSpecialistBonus}}<p class="panel-note">Tech Specialist grants one additional hilt modification slot during construction.</p>{{/if}}
-                <div class="ls-style-picker" aria-label="Lightsaber visual style">
-                  <div class="ls-style-picker-head">
-                    <span>Visual Style</span>
-                    <small>Cosmetic silhouette · selected: {{lightsaber.selectedStyleLabel}}</small>
-                  </div>
-                  <div class="ls-style-options">
-                    {{#each lightsaber.styleOptions}}
-                    <button type="button" class="ls-style-option {{#if selected}}selected{{/if}}" data-action="set-lightsaber-style" data-key="{{key}}" title="{{hint}}">
-                      <span class="ls-style-mini ls-blade-render {{previewClass}}" style="--blade-color: {{../lightsaber.bladeHex}};">
-                        <span class="ls-blade ls-left"></span>
-                        <span class="ls-hilt"></span>
-                        <span class="ls-blade ls-right"></span>
-                        <span class="ls-crossguard ls-crossguard-a"></span>
-                        <span class="ls-crossguard ls-crossguard-b"></span>
-                      </span>
-                      <span class="ls-style-label">{{label}}</span>
-                    </button>
-                    {{/each}}
-                  </div>
-                </div>
                 <div class="ls-tab-card-grid">
                   {{#each lightsaber.accessories}}
                   <button type="button" class="config-card ls-option-card {{#if selected}}selected{{/if}} {{#if incompatible}}disabled{{/if}}" data-action="inspect-lightsaber-component" data-key="{{optionKey}}" data-lightsaber-inspect-type="accessory" data-lightsaber-inspect-key="{{optionKey}}" data-component-type="accessory" title="{{description}}">
@@ -256,7 +249,7 @@
                   <article><span>Crystal</span><strong>{{lightsaber.review.crystalName}}</strong></article>
                   <article><span>Hilt</span><strong>{{lightsaber.review.accessoryNames}}</strong></article>
                   <article><span>Blade Color</span><strong class="ls-color-name-strip">{{#each lightsaber.review.bladeColorParts}}<span class="{{className}}" {{#if style}}style="{{style}}"{{/if}}>{{label}}</span>{{/each}}</strong></article>
-                  <article><span>Style</span><strong>{{lightsaber.review.styleLabel}}</strong></article>
+                  <article><span>Finish</span><strong>{{lightsaber.review.finishLabel}}</strong></article>
                   <article><span>Damage</span><strong>{{lightsaber.review.damage}}</strong></article>
                   <article><span>Critical</span><strong>{{lightsaber.review.critical}}</strong></article>
                   <article><span>Damage Type</span><strong>{{lightsaber.review.damageType}}</strong></article>

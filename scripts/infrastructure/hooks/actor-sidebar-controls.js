@@ -17,6 +17,8 @@ import { ShellRouter } from "/systems/foundryvtt-swse/scripts/ui/shell/ShellRout
 import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
 import { NPCTemplateImporter } from "/systems/foundryvtt-swse/scripts/apps/npc-template-importer.js";
 import { GMDatapad } from "/systems/foundryvtt-swse/scripts/apps/gm-datapad.js";
+import { DossierDragDropService } from "/systems/foundryvtt-swse/scripts/ui/dragdrop/dossier-drag-drop-service.js";
+import { GMContactActorizerService } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-contact-actorizer-service.js";
 
 function onClickChargen(app) {
   // Chargen requires an actor
@@ -248,6 +250,63 @@ function makeDirectoryButton({ className, icon, label, action, onClick }) {
   return button;
 }
 
+
+function dataTransferHasDossierPayload(event) {
+  try {
+    const types = Array.from(event?.dataTransfer?.types || []);
+    return types.includes(DossierDragDropService.MIME);
+  } catch (_err) {
+    return false;
+  }
+}
+
+async function onDropGmContactToActorDirectory(event, root) {
+  const payload = DossierDragDropService.readPayload(event);
+  if (!GMContactActorizerService.isActorizablePayload(payload)) return false;
+
+  event.preventDefault();
+  event.stopPropagation();
+  event.stopImmediatePropagation?.();
+  root?.classList?.remove?.('swse-contact-actorize-drop-active');
+
+  try {
+    const result = await GMContactActorizerService.actorizePayload(payload);
+    const actor = result?.actor;
+    const label = actor?.name || result?.label || payload?.name || 'GM contact';
+    ui.notifications?.info?.(`${result?.created ? 'Created NPC actor' : 'Linked existing NPC actor'}: ${label}.`);
+    try {
+      ui.actors?.render?.(true);
+    } catch (_err) {
+      ui.actors?.render?.({ force: true });
+    }
+    actor?.sheet?.render?.(true);
+  } catch (err) {
+    SWSELogger.error('[Actor Sidebar] Could not actorize GM contact drop:', err);
+    ui.notifications?.error?.(err?.message || 'Could not create an Actor from that GM contact.');
+  }
+  return true;
+}
+
+function bindContactActorizeDropZone(root) {
+  if (!root || root.dataset.swseContactActorizeDropBound === 'true') return;
+  root.dataset.swseContactActorizeDropBound = 'true';
+  root.addEventListener('dragover', (event) => {
+    if (!game.user?.isGM || !dataTransferHasDossierPayload(event)) return;
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'copy';
+    root.classList.add('swse-contact-actorize-drop-active');
+  });
+  root.addEventListener('dragleave', (event) => {
+    if (!root.contains(event.relatedTarget)) {
+      root.classList.remove('swse-contact-actorize-drop-active');
+    }
+  });
+  root.addEventListener('drop', (event) => {
+    if (!game.user?.isGM || !dataTransferHasDossierPayload(event)) return;
+    onDropGmContactToActorDirectory(event, root);
+  });
+}
+
 function ensureActorDirectoryLaunchers(app = null, html = null) {
   cleanupMisplacedDirectoryLaunchers();
   if (!(game.user?.isGM ?? false)) return false;
@@ -255,6 +314,7 @@ function ensureActorDirectoryLaunchers(app = null, html = null) {
   const hookRoot = getActorDirectoryElement(html);
   const root = getLiveActorDirectoryRoot(hookRoot);
   if (!isActorDirectoryRoot(root)) return false;
+  bindContactActorizeDropZone(root);
   if (root.querySelector('.swse-gm-datapad-launcher')) return true;
 
   const actionBar = findDirectoryActionBar(root);
