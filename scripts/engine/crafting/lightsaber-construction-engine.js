@@ -610,11 +610,13 @@ export class LightsaberConstructionEngine {
 
       // Step 9: ATOMIC MUTATION - Only on success
       try {
-        // 9a: Deduct credits
+        // Build ONE transactional plan so credit deduction and item creation
+        // succeed or fail together. Previously these were two separate calls:
+        // if item creation failed after the credit debit, the actor lost credits
+        // and received no lightsaber. applyMutationPlan({ transactional: true })
+        // snapshots the actor and rolls back every leg if any step fails.
         const creditPlan = LedgerService.buildCreditDelta(actor, totalCost);
-        await ActorEngine.applyMutationPlan(actor, creditPlan);
 
-        // 9b: Create new weapon from chassis template
         const newWeapon = this.#createBuiltLightsaber(
           chassis,
           crystal,
@@ -626,8 +628,22 @@ export class LightsaberConstructionEngine {
           config.chassisFinish || 'steel'
         );
 
-        const created = await ActorEngine.createEmbeddedDocuments(actor, "Item", [newWeapon]);
-        const itemId = created[0]?.id;
+        // Track existing item ids so we can resolve the newly-created lightsaber
+        // after the plan applies (applyMutationPlan does not return created docs).
+        const beforeItemIds = new Set((actor.items ?? []).map((i) => i.id));
+
+        await ActorEngine.applyMutationPlan(actor, {
+          set: { ...(creditPlan.set || {}) },
+          add: { items: [newWeapon] }
+        }, {
+          transactional: true,
+          source: 'LightsaberConstructionEngine.attemptConstruction'
+        });
+
+        const created = (actor.items ?? []).find(
+          (i) => !beforeItemIds.has(i.id) && i.name === newWeapon.name
+        );
+        const itemId = created?.id;
 
         if (!itemId) {
           throw new Error("Failed to create lightsaber item");

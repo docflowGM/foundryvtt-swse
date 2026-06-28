@@ -5687,10 +5687,33 @@ export class HolonetMessengerService {
       if (!debit.success) return false;
     }
     const before = getPartyFundBalance();
-    const after = await setPartyFundBalance(before + value);
-    await appendPartyFundLedger({ type: 'contribution', amount: value, fromActorId: actor?.id ?? null, threadId: thread.id, requesterId });
-    await this._publishSystemMessage(thread, `${actor?.name ?? 'GM Ledger'} contributed ${formatCredits(value)} to the Party Fund. New balance: ${formatCredits(after)}.`, { eventType: 'party-fund-contribution', amount: value, fromActorId: actor?.id ?? null });
-    return true;
+    try {
+      const after = await setPartyFundBalance(before + value);
+      await appendPartyFundLedger({ type: 'contribution', amount: value, fromActorId: actor?.id ?? null, threadId: thread.id, requesterId });
+      await this._publishSystemMessage(thread, `${actor?.name ?? 'GM Ledger'} contributed ${formatCredits(value)} to the Party Fund. New balance: ${formatCredits(after)}.`, { eventType: 'party-fund-contribution', amount: value, fromActorId: actor?.id ?? null });
+      return true;
+    } catch (fundErr) {
+      // The fund update failed after the actor was already debited. Restore the
+      // fund balance and refund the actor so a contribution can never silently
+      // lose the player's credits.
+      SWSELogger.error('[Holonet] Party Fund contribution failed after debit; rolling back', fundErr);
+      try { await setPartyFundBalance(before); } catch (_e) {}
+      if (!requesterIsGm && actor) {
+        try {
+          await TransactionEngine.executeCreditAdjustment({
+            actor,
+            amount: value,
+            reason: 'Holonet party fund contribution rollback',
+            transactionContext: 'holonet-party-fund-contribution',
+            audit: { source: 'party-fund-contribution-rollback', threadId: thread.id, requesterId }
+          }, { source: 'HolonetMessengerService.partyFundContributionRollback', validate: true, rederive: true });
+        } catch (refundErr) {
+          SWSELogger.error('[Holonet] Party Fund contribution refund FAILED; actor may be over-charged', refundErr);
+        }
+      }
+      await this._publishSystemMessage(thread, `${actor?.name ?? 'GM Ledger'}'s ${formatCredits(value)} Party Fund contribution failed and was reverted.`, { eventType: 'party-fund-failed' });
+      return false;
+    }
   }
 
   static async _gmChargePartyFund({ thread, amount, requesterId = null } = {}) {
@@ -5723,14 +5746,28 @@ export class HolonetMessengerService {
       return false;
     }
     await setPartyFundBalance(before - value);
-    const payout = await TransactionEngine.executeCreditAdjustment({
-      actor: targetActor,
-      amount: value,
-      reason: 'Holonet party fund payout',
-      transactionContext: 'holonet-party-fund-payout',
-      audit: { source: 'party-fund-payout', threadId: thread.id, requesterId }
-    }, { source: 'HolonetMessengerService.partyFundPayout', validate: true, rederive: true });
-    if (!payout.success) return false;
+    let payout;
+    try {
+      payout = await TransactionEngine.executeCreditAdjustment({
+        actor: targetActor,
+        amount: value,
+        reason: 'Holonet party fund payout',
+        transactionContext: 'holonet-party-fund-payout',
+        audit: { source: 'party-fund-payout', threadId: thread.id, requesterId }
+      }, { source: 'HolonetMessengerService.partyFundPayout', validate: true, rederive: true });
+    } catch (grantErr) {
+      SWSELogger.error('[Holonet] Party Fund payout grant threw; restoring fund balance', grantErr);
+      payout = { success: false };
+    }
+    if (!payout.success) {
+      // The actor was not paid, so restore the fund balance. Without this the
+      // fund would be reduced while the recipient received nothing.
+      try { await setPartyFundBalance(before); } catch (restoreErr) {
+        SWSELogger.error('[Holonet] Party Fund payout rollback FAILED; fund balance may be short', restoreErr);
+      }
+      await this._publishSystemMessage(thread, `Party Fund payout to ${targetActor.name} failed and was reverted.`, { eventType: 'party-fund-payout-failed' });
+      return false;
+    }
     await appendPartyFundLedger({ type: 'payout', amount: -value, toActorId: targetActor.id, threadId: thread.id, requesterId });
     await this._publishSystemMessage(thread, `Party Fund paid ${formatCredits(value)} to ${targetActor.name}. New balance: ${formatCredits(before - value)}.`, { eventType: 'party-fund-payout', amount: value, toActorId: targetActor.id });
     return true;

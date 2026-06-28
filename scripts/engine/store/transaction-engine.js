@@ -981,7 +981,8 @@ export class TransactionEngine {
       cost = 0,
       reason = '',
       transactionContext = 'store-custom-approval',
-      audit = {}
+      audit = {},
+      assetUpdates = {}
     } = context;
 
     const {
@@ -1121,7 +1122,10 @@ export class TransactionEngine {
         });
       }
 
-      await ActorEngine.updateActor(freshAsset, assetUpdate, {
+      // Merge any caller-supplied asset-specific updates (e.g. droid FINALIZED
+      // state) so they apply atomically with the credit debit and ownership link.
+      const mergedAssetUpdate = { ...(assetUpdate || {}), ...(assetUpdates || {}) };
+      await ActorEngine.updateActor(freshAsset, mergedAssetUpdate, {
         source: `${source}.${transactionContext}.asset`,
         skipValidation: false
       });

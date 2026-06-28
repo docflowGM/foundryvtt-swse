@@ -208,50 +208,60 @@ export class GMApprovalOperationsService {
     }
 
     try {
-      let transactionId = null;
-      if (cost > 0) {
-        const creditResult = await TransactionEngine.executeCreditAdjustment({
-          actor: ownerActor,
-          amount: -cost,
-          reason: `GM approved pending droid build: ${actor.name}`,
-          transactionContext: 'store-custom-approval',
-          audit: {
-            approvalType: 'droid',
-            itemName: actor.name,
-            itemNames: [actor.name],
-            itemCount: 1,
-            ownerActorId: ownerActor.id,
-            ownerActorName: ownerActor.name,
-            draftActorId: actor.id,
-            source: 'GM Datapad - Pending Droid Approval'
-          }
-        }, {
-          source: 'GMApprovalOperationsService.approveDroid',
-          validate: true,
-          rederive: true
-        });
-        if (!creditResult.success) {
-          ui?.notifications?.error?.(`Failed to approve droid credits from ${ownerActor.name}: ${creditResult.error}`);
-          return false;
+      // Credit debit, ownership link, and droid FINALIZE state apply as ONE
+      // atomic transaction (both owner and droid are snapshotted and rolled back
+      // together if any leg fails). Previously credits were deducted first and
+      // the droid finalized in separate updates, so a later failure could leave
+      // the owner charged for a droid that stayed PENDING.
+      const approvalResult = await TransactionEngine.executeAssetApprovalTransaction({
+        actor: ownerActor,
+        assetActor: actor,
+        cost,
+        reason: `GM approved pending droid build: ${actor.name}`,
+        transactionContext: 'store-custom-approval',
+        audit: {
+          approvalType: 'droid',
+          itemName: actor.name,
+          itemNames: [actor.name],
+          itemCount: 1,
+          ownerActorId: ownerActor.id,
+          ownerActorName: ownerActor.name,
+          draftActorId: actor.id,
+          source: 'GM Datapad - Pending Droid Approval'
+        },
+        assetUpdates: {
+          'system.droidSystems.stateMode': 'FINALIZED',
+          'system.ownedByActorId': ownerActor.id,
+          'system.ownedByActorName': ownerActor.name
         }
-        transactionId = creditResult.transactionId ?? null;
-      }
+      }, {
+        source: 'GMApprovalOperationsService.approveDroid',
+        validate: true,
+        rederive: true
+      });
 
-      await ActorEngine.updateActor(actor, {
-        'system.droidSystems.stateMode': 'FINALIZED',
-        'system.ownedByActorId': ownerActor.id,
-        'system.ownedByActorName': ownerActor.name
-      });
-      const buildHistory = Array.isArray(droidData.buildHistory) ? [...droidData.buildHistory] : [];
-      buildHistory.push({
-        timestamp: Date.now(),
-        action: 'approved',
-        approvedAt: new Date().toLocaleString(),
-        ownerActorId: ownerActor.id,
-        ownerActorName: ownerActor.name,
-        transactionId
-      });
-      await ActorEngine.updateActor(actor, { 'system.droidSystems.buildHistory': buildHistory });
+      if (!approvalResult?.success) {
+        ui?.notifications?.error?.(`Failed to approve droid: ${approvalResult?.error ?? 'transaction failed'}`);
+        return false;
+      }
+      const transactionId = approvalResult.transactionId ?? null;
+
+      // Non-critical: append the build-history audit entry after the atomic
+      // approval. A failure here leaves the droid correctly finalized and paid.
+      try {
+        const buildHistory = Array.isArray(droidData.buildHistory) ? [...droidData.buildHistory] : [];
+        buildHistory.push({
+          timestamp: Date.now(),
+          action: 'approved',
+          approvedAt: new Date().toLocaleString(),
+          ownerActorId: ownerActor.id,
+          ownerActorName: ownerActor.name,
+          transactionId
+        });
+        await ActorEngine.updateActor(actor, { 'system.droidSystems.buildHistory': buildHistory });
+      } catch (historyErr) {
+        SWSELogger.warn('[GMApprovalOperationsService] Droid approved but build-history append failed', historyErr);
+      }
 
       Hooks.call('swseApprovalResolved', {
         approval: {
