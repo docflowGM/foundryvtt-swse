@@ -117,7 +117,12 @@ export class PoisonEngine {
       malkite: !!malkite,
       requiresAttackExceedsFortitude: !!malkite
     };
-    await resolvedWeapon.update({ 'flags.swse.appliedPoison': coating });
+    if (resolvedWeapon.actor) {
+      await ActorEngine.updateOwnedItems(resolvedWeapon.actor, [{ _id: resolvedWeapon.id, 'flags.swse.appliedPoison': coating }]);
+    } else {
+      // @mutation-exception: world-item - unowned weapon (compendium/world), no owning actor to route through
+      await resolvedWeapon.update({ 'flags.swse.appliedPoison': coating });
+    }
     await this._postUtilityChat(actor, `<h2>${escapeHtml(resolvedPoison.name)} Applied</h2><p><strong>${escapeHtml(resolvedWeapon.name)}</strong> is coated. The poison will trigger the next time the weapon damages a valid target.</p>`);
     return { success: true, weapon: resolvedWeapon, poison: resolvedPoison, coating };
   }
@@ -251,8 +256,15 @@ export class PoisonEngine {
     });
     if (!coating.intrinsic) {
       const remaining = Math.max(0, Number(coating.remainingTriggers ?? 1) - 1);
-      if (remaining <= 0) await weapon.update({ 'flags.swse.appliedPoison': null });
-      else await weapon.update({ 'flags.swse.appliedPoison.remainingTriggers': remaining });
+      const coatingUpdate = remaining <= 0
+        ? { 'flags.swse.appliedPoison': null }
+        : { 'flags.swse.appliedPoison.remainingTriggers': remaining };
+      if (weapon.actor) {
+        await ActorEngine.updateOwnedItems(weapon.actor, [{ _id: weapon.id, ...coatingUpdate }]);
+      } else {
+        // @mutation-exception: world-item - unowned weapon, no owning actor to route through
+        await weapon.update(coatingUpdate);
+      }
     }
     return result;
   }

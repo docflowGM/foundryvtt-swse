@@ -185,7 +185,7 @@ export class Batch1Validation {
     this.results.totalTests++;
 
     try {
-      const { DerivedCalculator } = await import("/systems/foundryvtt-swse/derived-calculator.js");
+      const { DerivedCalculator } = await import("/systems/foundryvtt-swse/scripts/actors/derived/derived-calculator.js");
       const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
 
       // Instrument DerivedCalculator.computeAll()

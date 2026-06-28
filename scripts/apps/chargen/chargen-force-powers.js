@@ -182,8 +182,8 @@ export async function _calculateForcePowerSuggestions(powers) {
   }
 
   try {
-    const { SuggestionService } = await import("/systems/foundryvtt-swse/SuggestionService.js");
-    const { UNIFIED_TIERS } = await import("/systems/foundryvtt-swse/suggestion-unified-tiers.js");
+    const { SuggestionService } = await import("/systems/foundryvtt-swse/scripts/engine/suggestion/SuggestionService.js");
+    const { UNIFIED_TIERS } = await import("/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-unified-tiers.js");
 
     const tempActor = this._createTempActorForValidation();
     if (!tempActor) {

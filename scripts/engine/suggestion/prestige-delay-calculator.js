@@ -25,7 +25,7 @@ let PrerequisiteChecker = null;
 async function _ensurePrerequisiteChecker() {
   if (!PrerequisiteChecker) {
     try {
-      const module = await import("/systems/foundryvtt-swse/scripts/engine/progression/prerequisites/prerequisite-checker.js");
+      const module = await import("/systems/foundryvtt-swse/scripts/engine/progression/prerequisite-checker.js");
       PrerequisiteChecker = module.PrerequisiteChecker;
     } catch (err) {
       SWSELogger.error("[PrestigeDelayCalculator] Failed to load PrerequisiteChecker:", err);

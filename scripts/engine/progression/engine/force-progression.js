@@ -134,13 +134,8 @@ export class ForceProgressionEngine {
 
         // Filter by prerequisites if needed (must be done separately due to async)
         if (filters.checkPrerequisites) {
-            const { PrerequisiteValidator } = await import("/systems/foundryvtt-swse/scripts/engine/utils/prerequisite-validator.js");
             availablePowers = availablePowers.filter(p => {
                 const assessment = AbilityEngine.evaluateAcquisition(actor, p);
-                const legacy = PrerequisiteValidator.checkFeatPrerequisites(p, actor);
-                if (assessment.legal !== legacy.valid) {
-                    console.warn('Force power prereq mismatch detected', { power: p.name, assessment, legacy });
-                }
                 return assessment.legal;
             });
         }

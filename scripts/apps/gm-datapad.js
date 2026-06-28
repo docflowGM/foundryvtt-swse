@@ -1020,8 +1020,14 @@ export class GMDatapad extends BaseSWSEAppV2 {
   }
 
 
-  _wireSharedHolopadFrameEvents(root) {
-    this._shieldSharedHolopadWindowControls(root);
+  _wireSharedHolopadFrameEvents(root, signal) {
+    // `signal` (an AbortController.signal from _onRender) scopes every listener
+    // bound here to the current render, so re-renders cannot stack duplicate
+    // minimize/close/expand handlers that would toggle each other and make the
+    // control appear dead.
+    const opts = signal ? { signal } : undefined;
+
+    this._shieldSharedHolopadWindowControls(root, signal);
     this._wireSharedHolopadControlHitboxFallback(root);
 
     root.querySelectorAll('[data-action="tablet-close"]').forEach(el => {
@@ -1029,7 +1035,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
         ev.preventDefault();
         ev.stopPropagation();
         this.close();
-      });
+      }, opts);
     });
 
     root.querySelectorAll('[data-action="tablet-minimize"]').forEach(el => {
@@ -1037,7 +1043,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
         ev.preventDefault();
         ev.stopPropagation();
         await this._minimizeSharedHolopadWindow?.();
-      });
+      }, opts);
     });
 
     root.querySelectorAll('[data-shell-chrome="top"], [data-action="tablet-drag"], .swse-sheet-v2-shell--gm-datapad').forEach(el => {
@@ -1048,13 +1054,13 @@ export class GMDatapad extends BaseSWSEAppV2 {
         ev.preventDefault();
         ev.stopPropagation();
         await this._minimizeSharedHolopadWindow?.();
-      });
+      }, opts);
     });
 
     root.querySelector('[data-action="tablet-expand"]')?.addEventListener('click', (ev) => {
       ev.preventDefault();
       this._toggleSharedHolopadExpand();
-    });
+    }, opts);
 
     this._wireSharedHolopadDrag(root);
     this._wireSharedHolopadResize(root);
@@ -1062,16 +1068,17 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
 
 
-  _shieldSharedHolopadWindowControls(root) {
+  _shieldSharedHolopadWindowControls(root, signal) {
     const controls = root?.querySelectorAll?.('[data-shell-window-control], [data-no-drag="true"], .swse-tablet-no-drag, .swse-tablet-hardware-rail, .swse-tablet-top-right-rail') || [];
     controls.forEach((control) => {
       const stopWindowDrag = (ev) => {
         ev.stopPropagation();
       };
-      control.addEventListener('pointerdown', stopWindowDrag, { capture: true });
-      control.addEventListener('mousedown', stopWindowDrag, { capture: true });
-      control.addEventListener('dblclick', stopWindowDrag, { capture: true });
-      control.addEventListener('dragstart', stopWindowDrag, { capture: true });
+      const captureOpts = signal ? { capture: true, signal } : { capture: true };
+      control.addEventListener('pointerdown', stopWindowDrag, captureOpts);
+      control.addEventListener('mousedown', stopWindowDrag, captureOpts);
+      control.addEventListener('dblclick', stopWindowDrag, captureOpts);
+      control.addEventListener('dragstart', stopWindowDrag, captureOpts);
     });
   }
 
@@ -1349,14 +1356,21 @@ export class GMDatapad extends BaseSWSEAppV2 {
     this._centerGmDatapadOnFirstRender();
     this._wireGmDatapadViewportGuards();
     this._syncGmDatapadViewportState();
-    this._wireSharedHolopadFrameEvents(root);
+
+    // Per-render listener scope: abort listeners bound during the previous render
+    // before re-binding, so frame/nav controls are never bound more than once.
+    this._gmFrameAbort?.abort();
+    this._gmFrameAbort = new AbortController();
+    const frameSignal = this._gmFrameAbort.signal;
+
+    this._wireSharedHolopadFrameEvents(root, frameSignal);
 
     // Mirror actor holopad home affordances: all shell/home controls route to GM home.
     root.querySelectorAll('[data-action="tablet-home"], [data-shell-action="open-home"], [data-shell-action="return-to-home"]').forEach(btn => {
       btn.addEventListener('click', (ev) => {
         ev.preventDefault();
         this._navigateTo('home');
-      });
+      }, { signal: frameSignal });
     });
 
     // Wire app card clicks
@@ -1364,15 +1378,16 @@ export class GMDatapad extends BaseSWSEAppV2 {
       btn.addEventListener('click', (ev) => {
         const appId = ev.currentTarget.dataset.appCard;
         this._navigateTo(appId);
-      });
+      }, { signal: frameSignal });
     });
 
-    // Wire nav buttons
-    root.querySelectorAll('[data-nav-to]').forEach(btn => {
+    // Wire nav buttons. Exclude tablet-home: it is already wired above as a Home
+    // affordance, and binding it here too would navigate to 'home' twice.
+    root.querySelectorAll('[data-nav-to]:not([data-action="tablet-home"])').forEach(btn => {
       btn.addEventListener('click', (ev) => {
         const pageId = ev.currentTarget.dataset.navTo;
         this._navigateTo(pageId);
-      });
+      }, { signal: frameSignal });
     });
 
     this._wireGmDatapadV2Chrome(root);
@@ -2111,6 +2126,9 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
   async close(options = {}) {
     if (this.constructor._activeInstance === this) this.constructor._activeInstance = null;
+    // Tear down per-render frame/nav listeners.
+    this._gmFrameAbort?.abort();
+    this._gmFrameAbort = null;
     if (this._gmViewportResizeHandler) {
       window.removeEventListener('resize', this._gmViewportResizeHandler);
       this._gmViewportResizeHandler = null;

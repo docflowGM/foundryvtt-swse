@@ -3109,8 +3109,13 @@ export const ActorEngine = {
     const {
       validate = true,
       rederive = true,
+      transactional = false,
       source = 'ActorEngine.applyMutationPlan'
     } = options;
+
+    // When transactional, holds a pre-plan snapshot of the target actor used to
+    // roll back a partially-applied plan if any operation fails.
+    let _txnSnapshot = null;
 
     try {
       if (!actor) {
@@ -3142,6 +3147,15 @@ export const ActorEngine = {
       // Phase 1: Validate plan structure (if enabled)
       if (validate) {
         this._validateMutationPlan(plan);
+      }
+
+      // Transactional mode: capture the target actor's pre-plan state so a
+      // failure partway through the strict-order application can be reverted.
+      // (Reverts the target actor only — world actors created by the CREATE
+      // bucket are not removed by this restore, so transactional mode is meant
+      // for actor-local plans such as progression finalization.)
+      if (transactional) {
+        _txnSnapshot = actor.toObject(true);
       }
 
       // Phase 2: Apply operations in strict order
@@ -3188,6 +3202,27 @@ export const ActorEngine = {
         source,
         error: error.message
       });
+
+      // Transactional rollback: restore the target actor to its pre-plan state.
+      // If the restore itself fails, flag the error so callers know the actor
+      // may be in a partial state.
+      if (_txnSnapshot) {
+        try {
+          await this.restoreFromSnapshot(actor, _txnSnapshot, { source: `${source}:rollback` });
+          SWSELogger.warn('ActorEngine.applyMutationPlan: rolled back to pre-plan snapshot after failure', {
+            actor: actor?.id,
+            source
+          });
+        } catch (restoreErr) {
+          error.partialMutationPossible = true;
+          SWSELogger.error('ActorEngine.applyMutationPlan: rollback FAILED; actor may be in a partial state', {
+            actor: actor?.id,
+            source,
+            restoreError: restoreErr?.message
+          });
+        }
+      }
+
       throw error;
     }
   },
@@ -4269,9 +4304,9 @@ export const ActorEngine = {
    *
    * Two separate storage surfaces:
    *   system.attributes  — canonical persisted ability scores { base, racial, enhancement, temp }.
-   *                        Defined in SWSECharacterDataModel schema; schema guarantees existence
-   *                        for fully-initialized actors. Initialized here as a defensive backstop
-   *                        for mid-creation actors only. Do NOT include derived fields (total, mod).
+   *                        Shape is defined by template.json (no TypeDataModel is registered for
+   *                        actors at runtime), so existence is NOT schema-guaranteed. Initialized
+   *                        here as a defensive backstop. Do NOT include derived fields (total, mod).
    *   system.abilities   — read-only compatibility mirror. Rebuilt from system.attributes on every
    *                        prepareDerivedData() call. Initialized here for non-character actor types
    *                        that lack system.attributes in their schema, and as a compat backstop.

@@ -248,7 +248,7 @@ export class RageEngine {
     const nextSpent = Math.min(usesPerDay, (ledger.spent ?? 0) + 1);
 
     if (mode === "channelRage" || mode === "channel") {
-      await actor.update({
+      await ActorEngine.updateActor(actor, {
         "flags.swse.rageActive": false,
         "flags.swse.rageChannelActive": true,
         "flags.swse.rageChannelStartedAt": Date.now(),
@@ -257,11 +257,11 @@ export class RageEngine {
         "flags.swse.rageUsesSpentDate": ledger.date,
         "flags.swse.rageActionMode": action.activation,
         "flags.swse.rageCanEndAtWill": action.canEndAtWill
-      });
+      }, { source: 'RageEngine.channelRage' });
       return { mode: "channelRage", duration, usesPerDay, usesSpent: nextSpent, action };
     }
 
-    await actor.update({
+    await ActorEngine.updateActor(actor, {
       "flags.swse.rageActive": true,
       "flags.swse.rageChannelActive": false,
       "flags.swse.rageRoundsRemaining": duration,
@@ -272,7 +272,7 @@ export class RageEngine {
       "flags.swse.rageActionMode": action.activation,
       "flags.swse.rageCanEndAtWill": action.canEndAtWill,
       "flags.swse.rageAttackDamageBonus": this.getRageAttackDamageBonus(actor)
-    });
+    }, { source: 'RageEngine.activateRage' });
     return { mode: "rage", duration, usesPerDay, usesSpent: nextSpent, action };
   }
 

@@ -3254,6 +3254,10 @@ export class ProgressionFinalizer {
         source: 'ProgressionFinalizer.finalize',
         validate: true,
         rederive: true,
+        // Progression finalization is actor-local; roll the actor back to its
+        // pre-plan state if any operation in the plan fails, so a level-up can
+        // never leave a half-applied character.
+        transactional: true,
       });
       await this._syncPostApplyState(actor, mutationPlan);
       return { success: true, result: { actorId: actor.id } };

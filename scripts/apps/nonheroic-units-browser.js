@@ -48,7 +48,22 @@ async _prepareContext(options) {
     if (this.units.length === 0) {
       try {
         const response = await fetch('systems/foundryvtt-swse/data/nonheroic/nonheroic_units.json');
-        this.units = await response.json();
+        // This data file is JSONL (one JSON object per line), not a JSON array,
+        // so parse it line-by-line rather than calling response.json().
+        const text = await response.text();
+        this.units = text
+          .split('\n')
+          .map(line => line.trim())
+          .filter(line => line.length > 0)
+          .map(line => {
+            try {
+              return JSON.parse(line);
+            } catch (lineErr) {
+              swseLogger.warn('Skipping malformed nonheroic unit line:', lineErr);
+              return null;
+            }
+          })
+          .filter(unit => unit !== null);
         this.filteredUnits = [...this.units];
       } catch (error) {
         swseLogger.error('Failed to load nonheroic units:', error);

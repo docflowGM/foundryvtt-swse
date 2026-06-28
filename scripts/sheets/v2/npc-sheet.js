@@ -1952,7 +1952,7 @@ export class SWSEV2NpcSheet extends
     root.querySelector('[data-action="add-npc-weapon"]')?.addEventListener('click', async (ev) => {
       ev.preventDefault();
       try {
-        const created = await this.actor.createEmbeddedDocuments('Item', [{
+        const created = await ActorEngine.createEmbeddedDocuments(this.actor, 'Item', [{
           name: 'New Attack',
           type: 'weapon',
           system: {}
@@ -2118,9 +2118,10 @@ export class SWSEV2NpcSheet extends
       if (path === 'system.level') mirror['system.npcStatblock.core.level'] = value;
     }
 
-    await this.actor.update({ ...flat, ...mirror }, {
+    await ActorEngine.updateActor(this.actor, { ...flat, ...mirror }, {
       render: false,
       diff: true,
+      source: 'npc-statblock-authority-edit',
       swse: {
         source: 'npc-statblock-authority-edit',
         fieldName

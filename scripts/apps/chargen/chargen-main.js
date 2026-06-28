@@ -1910,9 +1910,9 @@ export default class CharacterGenerator extends SWSEApplicationV2 {
         return;
       }
 
-      const { getAvailableForcePowers } = await import("/systems/foundryvtt-swse/scripts/apps/chargen/chargen-force-powers.js");
-      const { ForceOptionSuggestionEngine } = await import("/systems/foundryvtt-swse/ForceOptionSuggestionEngine.js");
-      const { MentorSuggestionDialog } = await import("/systems/foundryvtt-swse/scripts/apps/mentor-suggestion-dialog.js");
+      const { _getAvailableForcePowers: getAvailableForcePowers } = await import("/systems/foundryvtt-swse/scripts/apps/chargen/chargen-force-powers.js");
+      const { ForceOptionSuggestionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/suggestion/ForceOptionSuggestionEngine.js");
+      const { MentorSuggestionDialog } = await import("/systems/foundryvtt-swse/scripts/mentor/mentor-suggestion-dialog.js");
 
       const availablePowers = await getAvailableForcePowers(this.actor, this.characterData);
 

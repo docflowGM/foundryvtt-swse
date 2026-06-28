@@ -147,9 +147,11 @@ export class StarshipManeuversEngine {
       ? { id: maneuverRef, itemId: maneuverRef, uuid: maneuverRef }
       : maneuverRef;
 
+    const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
+
     const directItem = vehicle.items?.get?.(ref.itemId || ref.id);
     if (directItem) {
-      await directItem.update({ 'system.spent': Boolean(spent) });
+      await ActorEngine.updateOwnedItems(vehicle, [{ _id: directItem.id, 'system.spent': Boolean(spent) }]);
       return true;
     }
 
@@ -158,7 +160,7 @@ export class StarshipManeuversEngine {
     const owner = game?.actors?.get?.(actorId);
     const item = owner?.items?.get?.(itemId);
     if (item) {
-      await item.update({ 'system.spent': Boolean(spent) });
+      await ActorEngine.updateOwnedItems(owner, [{ _id: item.id, 'system.spent': Boolean(spent) }]);
       return true;
     }
 

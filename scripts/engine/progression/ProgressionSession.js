@@ -343,6 +343,10 @@ export class ProgressionSession {
 
     this.isCommitting = true;
 
+    // Captured just before the first mutation so a mid-commit failure can be
+    // rolled back to the exact pre-session actor state.
+    let preCommitSnapshot = null;
+
     try {
       // Validate before commit
       const preview = await this.preview();
@@ -437,7 +441,12 @@ export class ProgressionSession {
         Object.assign(updates, this.stagedChanges.pendingActorUpdates);
       }
 
-      // Apply all updates atomically through ActorEngine (PHASE 2 COMPLIANCE)
+      // Capture a pre-commit snapshot of the live actor. Restoring this snapshot
+      // fully reverts field updates AND any items created below, so the commit
+      // is effectively transactional even though it spans multiple operations.
+      preCommitSnapshot = this.actor.toObject(true);
+
+      // Apply all field updates through ActorEngine (single atomic document update)
       swseLogger.log(`[SESSION] Applying ${Object.keys(updates).length} updates through ActorEngine...`);
       await ActorEngine.updateActor(this.actor, updates);
 
@@ -478,6 +487,23 @@ export class ProgressionSession {
     } catch (err) {
       this.isCommitting = false;
       swseLogger.error(`[SESSION] Commit failed:`, err);
+
+      // Roll the actor back to its exact pre-commit state so a partial mutation
+      // (fields applied but item creation failed, etc.) cannot leave a
+      // half-finished character. If the restore itself fails, flag the error so
+      // callers know the actor may still be in a partial state.
+      if (preCommitSnapshot) {
+        try {
+          await ActorEngine.restoreFromSnapshot(this.actor, preCommitSnapshot, {
+            source: 'progression-session-commit-rollback'
+          });
+          swseLogger.warn(`[SESSION] Commit failed; actor restored to pre-commit snapshot`);
+        } catch (restoreErr) {
+          err.partialMutationPossible = true;
+          swseLogger.error(`[SESSION] Commit failed AND snapshot restore failed; actor may be in a partial state`, restoreErr);
+        }
+      }
+
       throw err;
     }
   }
@@ -501,8 +527,11 @@ export class ProgressionSession {
       return;
     }
 
-    // For now, rollback just clears staged changes
-    // In a more advanced implementation, we might restore the actor from snapshot
+    // rollback() is only valid pre-commit (it throws above if already committed),
+    // and commit() is what applies mutations — so before commit there is nothing
+    // applied to the actor and clearing staged changes is a complete rollback.
+    // Mid-commit failures are reverted via ActorEngine.restoreFromSnapshot() in
+    // commit()'s catch block.
     this.stagedChanges = {
       species: null,
       background: null,
