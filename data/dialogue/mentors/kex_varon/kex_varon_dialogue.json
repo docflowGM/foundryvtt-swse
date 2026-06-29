@@ -9,7 +9,7 @@
     "voiceStyle": "Calm, deliberate, unemotional. Speaks like someone who already knows the outcome.",
     "values": "Discipline, patience, professionalism, results",
     "tooltip": "Kex reflects your character through the lens of the relentless, professional hunt",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/Kex.png",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/Kex.webp",
     "dialogues": {
       "classPaths": {
         "bounty_hunter": {

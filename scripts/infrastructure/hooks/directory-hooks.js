@@ -4,7 +4,7 @@
  * Safe V13 pattern - no sidebar or layout contamination
  */
 
-import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
+import { launchNewProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { TemplateCharacterCreator } from "/systems/foundryvtt-swse/scripts/apps/template-character-creator.js";
 
 /**
@@ -37,7 +37,7 @@ function handleRenderActorDirectory(app, html, data) {
   guidedBtn.addEventListener('click', async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    await CharacterGenerator.open();
+    await launchNewProgression({ actorType: 'character' });
   });
 
   // Create "Template Character" button

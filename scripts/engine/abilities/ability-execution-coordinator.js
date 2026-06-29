@@ -24,6 +24,38 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 export class AbilityExecutionCoordinator {
 
+  static _actorAbilityRegistrationSignature(actor) {
+    if (!actor) return null;
+    const abilities = Array.from(actor?.items ?? [])
+      .filter(item => ["talent", "feat", "species", "force-power"].includes(item?.type))
+      .map(item => [
+        item?.id ?? item?._id ?? 'no-id',
+        item?.type ?? 'unknown',
+        item?._stats?.modifiedTime ?? item?._source?._stats?.modifiedTime ?? item?.system?._version ?? '',
+        item?.system?.executionModel ?? '',
+        item?.system?.subType ?? '',
+        item?.system?.abilityMeta?.version ?? ''
+      ].join(':'))
+      .sort()
+      .join('|');
+
+    const speciesState = JSON.stringify({
+      race: actor?.system?.race ?? null,
+      species: actor?.system?.species ?? null
+    });
+
+    return [actor?.id ?? 'no-actor-id', actor?.type ?? 'actor', speciesState, abilities].join('|');
+  }
+
+  static _hasUsableRegistration(actor) {
+    return !!actor
+      && actor._passiveModifiers && typeof actor._passiveModifiers === 'object'
+      && actor._passiveStateNotes && typeof actor._passiveStateNotes === 'object'
+      && Array.isArray(actor._ruleTokens)
+      && actor._unlockGrants && typeof actor._unlockGrants === 'object';
+  }
+
+
   /**
    * Register all abilities on an actor at boot time.
    * Handles PASSIVE, ACTIVE, ATTACK_OPTION, UNLOCK, PROGRESSION, and FORCE_POWER execution models.
@@ -44,6 +76,13 @@ export class AbilityExecutionCoordinator {
    * @param {Object} actor - The actor document
    */
   static registerActorAbilities(actor) {
+    const registrationSignature = this._actorAbilityRegistrationSignature(actor);
+    if (registrationSignature
+      && actor?._swseAbilityRegistrationSignature === registrationSignature
+      && this._hasUsableRegistration(actor)) {
+      return;
+    }
+
     // ========================================
     // CRITICAL: Reset all ability collections
     // Ensures we rebuild from scratch, not accumulate
@@ -92,5 +131,6 @@ export class AbilityExecutionCoordinator {
 
     // PHASE 4E: Finalize rule collection into frozen snapshots
     ruleCollector.finalize(actor);
+    if (registrationSignature) actor._swseAbilityRegistrationSignature = registrationSignature;
   }
 }

@@ -126,7 +126,7 @@ export class AlliesSurfaceController {
         case 'build-minion':
           return this._buildMinion(target.dataset.slotId);
         case 'build-beast':
-          return this._notify('Beast companion creation is not implemented yet. A GM can drag a beast/nonheroic NPC into Allies as a linked actor.');
+          return this._buildBeast(target.dataset.slotId);
         case 'manage-ally':
         case 'open-actor':
         case 'open-contact-actor':
@@ -223,6 +223,16 @@ export class AlliesSurfaceController {
     const { launchMinionCreation } = await import('/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js');
     await launchMinionCreation(this._actor, { slotId: slotId || null, source: 'allies' });
     this._requestRender('allies-build-minion');
+  }
+
+  async _buildBeast(slotId) {
+    if (slotId) await AlliesSurfaceService.reopenCompanionSlot(this._actor, slotId);
+    const beast = await AlliesSurfaceService.createBareBeastCompanion(this._actor, { slotId: slotId || null });
+    if (beast) {
+      ui?.notifications?.info?.(`Created beast companion: ${beast.name}`);
+      beast.sheet?.render?.(true);
+    }
+    this._requestRender('allies-build-beast');
   }
 
   _openActor(actorId) {

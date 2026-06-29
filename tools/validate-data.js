@@ -31,19 +31,6 @@ function success(message) {
 /**
  * Validate species-languages.json
  */
-function readJsonl(filePath) {
-  const content = fs.readFileSync(filePath, 'utf8');
-  const lines = content.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-  const records = [];
-  let bad = 0;
-  for (const line of lines) {
-    try { records.push(JSON.parse(line)); }
-    catch { bad++; }
-  }
-  if (bad > 0) warn(`${path.basename(filePath)}: ${bad} malformed JSONL line(s) skipped`);
-  return records;
-}
-
 function validateSpeciesLanguages() {
   console.log('\n📋 Validating species-languages.json...');
 
@@ -224,7 +211,11 @@ function validateNonheroic() {
   // Validate templates
   if (fs.existsSync(templatesPath)) {
     try {
-      const templates = readJsonl(templatesPath);
+      const templates = JSON.parse(fs.readFileSync(templatesPath, 'utf8'));
+      if (!Array.isArray(templates)) {
+        error('nonheroic_templates.json should be a JSON array');
+        return;
+      }
       success(`${templates.length} nonheroic templates found`);
     } catch (e) {
       error(`Failed to parse nonheroic_templates.json: ${e.message}`);
@@ -236,7 +227,11 @@ function validateNonheroic() {
   // Validate units
   if (fs.existsSync(unitsPath)) {
     try {
-      const units = readJsonl(unitsPath);
+      const units = JSON.parse(fs.readFileSync(unitsPath, 'utf8'));
+      if (!Array.isArray(units)) {
+        error('nonheroic_units.json should be a JSON array');
+        return;
+      }
       success(`${units.length} nonheroic units found`);
     } catch (e) {
       error(`Failed to parse nonheroic_units.json: ${e.message}`);

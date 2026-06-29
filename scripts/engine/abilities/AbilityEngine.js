@@ -58,7 +58,119 @@ function emitAbilityTrace(label, payload = {}) {
   }
 }
 
+
+function stableAbilityStringify(value, depth = 0) {
+  if (depth > 5) return '...';
+  if (value === null || value === undefined) return String(value);
+  const type = typeof value;
+  if (type === 'number' || type === 'boolean' || type === 'string') return JSON.stringify(value);
+  if (type !== 'object') return JSON.stringify(String(value));
+  if (Array.isArray(value)) return `[${value.map(entry => stableAbilityStringify(entry, depth + 1)).join(',')}]`;
+  const keys = Object.keys(value).sort();
+  return `{${keys.map(key => `${JSON.stringify(key)}:${stableAbilityStringify(value[key], depth + 1)}`).join(',')}}`;
+}
+
+function duplicateAbilityAssessment(value) {
+  if (!value || typeof value !== 'object') return value;
+  try {
+    if (typeof foundry?.utils?.duplicate === 'function') return foundry.utils.duplicate(value);
+  } catch (_err) {
+    // fall through
+  }
+  try {
+    return structuredClone(value);
+  } catch (_err) {
+    return JSON.parse(JSON.stringify(value));
+  }
+}
+
 export class AbilityEngine {
+  static _acquisitionCache = new Map();
+  static _acquisitionCacheOrder = [];
+  static _acquisitionCacheMax = 800;
+
+  static _actorCacheSignature(actor) {
+    if (!actor) return 'no-actor';
+    const revision = actor?._stats?.modifiedTime
+      ?? actor?._source?._stats?.modifiedTime
+      ?? actor?.system?._version
+      ?? actor?.system?.modifiedTime
+      ?? null;
+    const itemSignature = Array.from(actor?.items ?? [])
+      .map(item => [
+        item?.id ?? item?._id ?? 'no-id',
+        item?.type ?? 'unknown',
+        item?._stats?.modifiedTime ?? item?._source?._stats?.modifiedTime ?? item?.system?._version ?? '',
+        item?.name ?? ''
+      ].join(':'))
+      .join('|');
+
+    if (revision) {
+      return [actor?.id ?? actor?._id ?? 'no-id', actor?.type ?? 'unknown', revision, actor?.items?.size ?? actor?.items?.length ?? 0, itemSignature].join('::');
+    }
+
+    // Projection/test actors may not have Foundry revision metadata. Fall back
+    // to a compact stable signature so cached legality does not leak across
+    // different actor snapshots.
+    return stableAbilityStringify({
+      id: actor?.id ?? actor?._id ?? null,
+      type: actor?.type ?? null,
+      system: actor?.system ?? null,
+      items: Array.from(actor?.items ?? []).map(item => ({
+        id: item?.id ?? item?._id ?? null,
+        type: item?.type ?? null,
+        name: item?.name ?? null,
+        system: item?.system ?? null
+      }))
+    });
+  }
+
+  static _candidateCacheSignature(candidate) {
+    if (typeof candidate === 'string') return `string:${candidate.trim().toLowerCase()}`;
+    if (!candidate || typeof candidate !== 'object') return 'no-candidate';
+    return stableAbilityStringify({
+      id: candidate?._id ?? candidate?.id ?? candidate?.uuid ?? null,
+      type: candidate?.type ?? null,
+      name: candidate?.name ?? null,
+      system: candidate?.system ?? null,
+      flags: candidate?.flags ?? null
+    });
+  }
+
+  static _pendingCacheSignature(pending = {}) {
+    return stableAbilityStringify(pending || {});
+  }
+
+  static _buildAcquisitionCacheKey(actor, candidate, pending = {}) {
+    return [
+      this._actorCacheSignature(actor),
+      this._candidateCacheSignature(candidate),
+      this._pendingCacheSignature(pending)
+    ].join('||');
+  }
+
+  static _getCachedAcquisition(cacheKey) {
+    if (!cacheKey) return null;
+    const entry = this._acquisitionCache.get(cacheKey);
+    return entry ? duplicateAbilityAssessment(entry) : null;
+  }
+
+  static _setCachedAcquisition(cacheKey, assessment) {
+    if (!cacheKey || !assessment || typeof assessment !== 'object') return;
+    this._acquisitionCache.set(cacheKey, duplicateAbilityAssessment(assessment));
+    const existing = this._acquisitionCacheOrder.indexOf(cacheKey);
+    if (existing >= 0) this._acquisitionCacheOrder.splice(existing, 1);
+    this._acquisitionCacheOrder.push(cacheKey);
+    while (this._acquisitionCacheOrder.length > this._acquisitionCacheMax) {
+      const stale = this._acquisitionCacheOrder.shift();
+      if (stale) this._acquisitionCache.delete(stale);
+    }
+  }
+
+  static clearAcquisitionCache() {
+    this._acquisitionCache.clear();
+    this._acquisitionCacheOrder.length = 0;
+  }
   /**
    * Evaluate whether an actor can acquire a candidate item.
    *
@@ -87,6 +199,10 @@ export class AbilityEngine {
       };
     }
 
+    const cacheKey = this._buildAcquisitionCacheKey(actor, candidate, pending);
+    const cached = this._getCachedAcquisition(cacheKey);
+    if (cached) return cached;
+
     try {
       emitAbilityTrace('EVALUATE_START', {
         actorName: actor?.name || null,
@@ -100,7 +216,7 @@ export class AbilityEngine {
       const droidBlockReason = getDroidAcquisitionBlockReason(actor, candidate, pending)
         || getOrganicDroidAcquisitionBlockReason(actor, candidate, pending);
       if (droidBlockReason) {
-        return {
+        const assessment = {
           legal: false,
           eligible: false,
           permanentlyBlocked: true,
@@ -113,6 +229,8 @@ export class AbilityEngine {
           warnings: [],
           evaluation: { details: { droidChassisGate: droidBlockReason }, met: false },
         };
+        this._setCachedAcquisition(cacheKey, assessment);
+        return duplicateAbilityAssessment(assessment);
       }
 
       // Detect candidate type (fix operator precedence)
@@ -171,7 +289,7 @@ export class AbilityEngine {
         detailsKeys: Object.keys(result?.details || {}),
       });
 
-      return {
+      const assessment = {
         legal,
         eligible: legal,                 // Phase 4 alias — legal right now
         permanentlyBlocked: false,       // PrerequisiteChecker doesn't distinguish; assume temporary
@@ -189,6 +307,8 @@ export class AbilityEngine {
         // Phase 3 detailed evaluation (for debugging / diagnostics)
         evaluation: { details: result.details || {}, met: legal },
       };
+      this._setCachedAcquisition(cacheKey, assessment);
+      return duplicateAbilityAssessment(assessment);
     } catch (err) {
       emitAbilityTrace('EVALUATE_FAILED', {
         actorName: actor?.name || null,

@@ -9,7 +9,7 @@
     "voiceStyle": "Dry, impatient, dismissive. Always sounds like this assignment is beneath him.",
     "values": "Subtlety, competence, secrecy, survival through intelligence",
     "tooltip": "Skindar reflects your character through the lens of espionage and deniable power",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/Marl_Skindar.png",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/Marl_Skindar.webp",
     "dialogues": {
       "classPaths": {
         "corporate_agent": {

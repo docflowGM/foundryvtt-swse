@@ -67,8 +67,8 @@ function getActorLevel(actor) {
 
 function buildMentorPortraitMarkup(portrait, mentorName) {
   const safeName = escapeHtml(mentorName || 'Mentor');
-  const safePortrait = escapeHtml(portrait || 'systems/foundryvtt-swse/assets/mentors/salty.png');
-  return `<img class="prog-l1-survey-stage__mentor-image prog-holo-media__image" src="${safePortrait}" alt="${safeName}" title="${safeName}" onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.png';"/>`;
+  const safePortrait = escapeHtml(portrait || 'systems/foundryvtt-swse/assets/mentors/salty.webp');
+  return `<img class="prog-l1-survey-stage__mentor-image prog-holo-media__image" src="${safePortrait}" alt="${safeName}" title="${safeName}" onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.webp';"/>`;
 }
 
 function buildProgressDots(totalQuestions, activeIndex, answeredCount, phase) {

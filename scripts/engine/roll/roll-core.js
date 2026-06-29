@@ -456,35 +456,32 @@ export class RollCore {
   }
 
   /**
-   * Critical Hit Confirmation Handler (Phase 5 Stub)
+   * Critical Hit Handler.
    *
-   * STRUCTURE for future implementation:
-   *  - Threat detection: natural d20 result
-   *  - Confirmation roll: separate 1d20 + same modifiers
-   *  - Crit threat range: expandable per weapon/feat
-   *  - Damage multiplier: applies post-roll
-   *
-   * Currently a stub - full implementation in Phase 5.
+   * Saga Edition does not use a D&D-style confirmation roll. If the attack
+   * result has already been identified as a legal critical threat by the attack
+   * resolver, the critical is confirmed immediately and the weapon multiplier is
+   * returned for the damage resolver. This method is kept as a compatibility
+   * surface for older callers that expected a "critical threat" hook.
    *
    * @param {Object} options
-   * @param {boolean} options.threatDetected - Natural 20 or threat range hit
+   * @param {boolean} options.threatDetected - Whether the attack resolver found a legal threat
    * @param {number} options.baseD20 - Base d20 result before modifiers
    * @param {Actor} options.actor - Acting character
-   * @param {string} options.weaponId - Weapon item ID (for threat range lookup)
+   * @param {string} options.weaponId - Weapon item ID for multiplier lookup
+   * @param {Object} options.weapon - Optional weapon document/data
+   * @param {number|string} options.critMultiplier - Optional pre-resolved multiplier
    *
-   * @returns {Object} {
-   *   threat: boolean (in threat range),
-   *   confirmedCrit: boolean (confirmation succeeded),
-   *   confirmationRoll: Roll (if rolled),
-   *   damageMultiplier: number (default 1x, crit is typically 2x)
-   * }
+   * @returns {Object} Critical result. confirmationRoll is always null in SWSE.
    */
   static async handleCriticalThreat(options = {}) {
     const {
       threatDetected = false,
       baseD20 = 0,
       actor = null,
-      weaponId = null
+      weaponId = null,
+      weapon = null,
+      critMultiplier = null
     } = options;
 
     if (!threatDetected || baseD20 === 0) {
@@ -496,18 +493,28 @@ export class RollCore {
       };
     }
 
-    // PHASE 5: To be implemented
-    // - Roll confirmation (1d20 + same modifiers)
-    // - Compare vs target defense
-    // - Set damageMultiplier to 2 if confirmed
+    const resolvedWeapon = weapon || actor?.items?.get?.(weaponId) || null;
+    const rawMultiplier = critMultiplier
+      ?? resolvedWeapon?.system?.critMultiplier
+      ?? resolvedWeapon?.system?.criticalMultiplier
+      ?? resolvedWeapon?.critMultiplier
+      ?? resolvedWeapon?.criticalMultiplier
+      ?? 2;
+    const numericMultiplier = Number(String(rawMultiplier).replace(/^x/i, '')) || 2;
+    const damageMultiplier = Math.max(1, numericMultiplier);
 
-    swseLogger.debug('[RollCore] Critical threat detected but confirmation not yet implemented');
+    swseLogger.debug('[RollCore] Critical threat accepted under SWSE rules', {
+      actor: actor?.name ?? null,
+      weaponId,
+      baseD20,
+      damageMultiplier
+    });
 
     return {
       threat: true,
-      confirmedCrit: false,
+      confirmedCrit: true,
       confirmationRoll: null,
-      damageMultiplier: 1
+      damageMultiplier
     };
   }
 }

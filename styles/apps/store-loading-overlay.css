@@ -1,9 +1,0 @@
-/**
- * @deprecated Legacy green store loading overlay. The shell-native Rendarr
- * splash is authoritative. Defensive hide rule prevents stale DOM from blocking
- * store clicks if an old world/session still has overlay markup in place.
- */
-.swse-store-loading-overlay {
-  display: none !important;
-  pointer-events: none !important;
-}

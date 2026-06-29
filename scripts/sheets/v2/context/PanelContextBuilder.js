@@ -19,7 +19,7 @@ import { validatePanel } from './PanelValidators.js';
 import { buildHpViewModel, buildDefensesViewModel, buildAttributesViewModel, buildIdentityViewModel } from '/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/context.js';
 import { UpgradeService } from '/systems/foundryvtt-swse/scripts/engine/upgrades/UpgradeService.js';
 import { FeatChoiceResolver } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js';
-import { CurrentConditionResolver } from '/systems/foundryvtt-swse/scripts/engine/effects/current-condition-resolver.js';
+import { ActorEffectsAggregator } from '/systems/foundryvtt-swse/scripts/engine/effects/actor-effects-aggregator.js';
 import { CANONICAL_SKILL_DEFS, canonicalizeSkillKey } from '/systems/foundryvtt-swse/scripts/utils/skill-normalization.js';
 import { isFeatLikeItem, isForcePowerItem, isPlaceholderSheetItem, isTalentLikeItem } from '/systems/foundryvtt-swse/scripts/utils/item-classification.js';
 import { addItemEditorTrace, summarizeActorItems } from '/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js';
@@ -175,7 +175,7 @@ export class PanelContextBuilder {
     });
 
     const currentConditionPenalty = _conditionDefFor(ctCurrent);
-    const currentConditions = CurrentConditionResolver.build(this.actor);
+    const currentConditions = ActorEffectsAggregator.collect(this.actor);
     const currentConditionNotes = currentConditions.notes;
 
     const panel = {

@@ -28,6 +28,137 @@ import {
 import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/entity-dialog/effect-intent-engine.js";
 
 export class ModifierEngine {
+
+  static _modifierSourceCache = new Map();
+  static _aggregateCache = new Map();
+  static _breakdownCache = new Map();
+  static _modifierCacheOrder = [];
+  static _aggregateCacheOrder = [];
+  static _breakdownCacheOrder = [];
+  static _modifierCacheMax = 160;
+  static _aggregateCacheMax = 160;
+  static _breakdownCacheMax = 160;
+
+  static _cloneCacheValue(value) {
+    if (value == null || typeof value !== 'object') return value;
+    try {
+      if (typeof structuredClone === 'function') return structuredClone(value);
+    } catch (_err) {
+      // Fall through.
+    }
+    try {
+      return foundry?.utils?.deepClone?.(value) ?? JSON.parse(JSON.stringify(value));
+    } catch (_err) {
+      return JSON.parse(JSON.stringify(value));
+    }
+  }
+
+  static _rememberBounded(cache, order, key, value, max) {
+    if (!key) return;
+    cache.set(key, this._cloneCacheValue(value));
+    const existing = order.indexOf(key);
+    if (existing >= 0) order.splice(existing, 1);
+    order.push(key);
+    while (order.length > max) {
+      const stale = order.shift();
+      if (stale) cache.delete(stale);
+    }
+  }
+
+  static clearCaches(actorId = null) {
+    if (!actorId) {
+      this._modifierSourceCache.clear();
+      this._aggregateCache.clear();
+      this._breakdownCache.clear();
+      this._modifierCacheOrder.length = 0;
+      this._aggregateCacheOrder.length = 0;
+      this._breakdownCacheOrder.length = 0;
+      return;
+    }
+    const prefix = `${actorId}|`;
+    for (const key of Array.from(this._modifierSourceCache.keys())) {
+      if (key.startsWith(prefix)) this._modifierSourceCache.delete(key);
+    }
+    for (const key of Array.from(this._aggregateCache.keys())) {
+      if (key.startsWith(prefix)) this._aggregateCache.delete(key);
+    }
+    for (const key of Array.from(this._breakdownCache.keys())) {
+      if (key.startsWith(prefix)) this._breakdownCache.delete(key);
+    }
+    this._modifierCacheOrder = this._modifierCacheOrder.filter(key => !key.startsWith(prefix));
+    this._aggregateCacheOrder = this._aggregateCacheOrder.filter(key => !key.startsWith(prefix));
+    this._breakdownCacheOrder = this._breakdownCacheOrder.filter(key => !key.startsWith(prefix));
+  }
+
+  static _safeJson(value) {
+    try { return JSON.stringify(value ?? null); }
+    catch (_err) { return 'unserializable'; }
+  }
+
+  static _targetsSignature(targets = []) {
+    if (!Array.isArray(targets) || targets.length === 0) return '';
+    return targets.map(target => String(target || '')).filter(Boolean).sort().join('|');
+  }
+
+  static _actorModifierSourceSignature(actor) {
+    if (!actor?.id) return null;
+    const attributes = actor?.system?.attributes ?? actor?.system?.abilities ?? {};
+    const strength = attributes?.str ?? attributes?.strength ?? {};
+    const sourceState = {
+      race: actor?.system?.race ?? null,
+      species: actor?.system?.species ?? null,
+      profession: actor?.system?.profession ?? null,
+      level: actor?.system?.level ?? actor?.system?.progression?.level ?? null,
+      size: actor?.system?.size ?? null,
+      skills: actor?.system?.skills ?? null,
+      strength: {
+        base: strength?.base ?? null,
+        racial: strength?.racial ?? strength?.species ?? null,
+        enhancement: strength?.enhancement ?? strength?.misc ?? null,
+        temp: strength?.temp ?? null
+      },
+      conditionTrack: actor?.system?.conditionTrack ?? null,
+      customModifiers: actor?.system?.customModifiers ?? null,
+      systemActiveEffects: actor?.system?.activeEffects ?? null,
+      flagsSwse: actor?.flags?.swse ?? null,
+      flagsSystem: actor?.flags?.['foundryvtt-swse'] ?? null,
+      talentFlags: actor?.system?.talentFlags ?? null,
+      armorProficiencies: actor?.system?.proficiencies?.armor ?? actor?.system?.armorProficiencies ?? null
+    };
+
+    const itemSignature = Array.from(actor?.items ?? [])
+      .map(item => [
+        item?.id ?? item?._id ?? 'no-id',
+        item?.type ?? 'unknown',
+        item?._stats?.modifiedTime ?? item?._source?._stats?.modifiedTime ?? item?.system?._version ?? '',
+        item?.system?.equipped ?? item?.system?.isEquipped ?? '',
+        item?.system?.activated ?? item?.system?.active ?? '',
+        item?.system?.quantity ?? '',
+        item?.system?.uses?.value ?? item?.system?.ammo?.value ?? ''
+      ].join(':'))
+      .sort()
+      .join('|');
+
+    const effectSignature = Array.from(actor?.effects ?? [])
+      .map(effect => [
+        effect?.id ?? effect?._id ?? 'no-id',
+        effect?._stats?.modifiedTime ?? effect?._source?._stats?.modifiedTime ?? '',
+        effect?.disabled === true ? 'disabled' : 'enabled',
+        effect?.origin ?? ''
+      ].join(':'))
+      .sort()
+      .join('|');
+
+    return [
+      actor.id,
+      actor.type ?? 'actor',
+      actor._swseAbilityRegistrationSignature ?? '',
+      this._safeJson(sourceState),
+      itemSignature,
+      effectSignature
+    ].join('|');
+  }
+
   /**
    * Collect all modifiers from every source for an actor
    *
@@ -124,6 +255,11 @@ export class ModifierEngine {
   static async getAllModifiers(actor) {
     if (!actor) return [];
 
+    const cacheKey = this._actorModifierSourceSignature(actor);
+    if (cacheKey && this._modifierSourceCache.has(cacheKey)) {
+      return this._cloneCacheValue(this._modifierSourceCache.get(cacheKey));
+    }
+
     const modifiers = [];
 
     try {
@@ -175,7 +311,8 @@ export class ModifierEngine {
 
       swseLogger.debug(`[ModifierEngine] Collected ${modifiers.length} modifiers for ${actor.name}`);
 
-      return modifiers;
+      if (cacheKey) this._rememberBounded(this._modifierSourceCache, this._modifierCacheOrder, cacheKey, modifiers, this._modifierCacheMax);
+      return this._cloneCacheValue(modifiers);
     } catch (err) {
       swseLogger.error(`[ModifierEngine] Error collecting modifiers for ${actor?.name}:`, err);
       return [];
@@ -348,6 +485,11 @@ export class ModifierEngine {
    * @returns {Object<string, number>} Map of target → total modifier value
    */
   static async aggregateAll(actor) {
+    const cacheKey = this._actorModifierSourceSignature(actor);
+    if (cacheKey && this._aggregateCache.has(cacheKey)) {
+      return this._cloneCacheValue(this._aggregateCache.get(cacheKey));
+    }
+
     const allModifiers = await this.getAllModifiers(actor);
     const aggregated = {};
 
@@ -374,7 +516,8 @@ export class ModifierEngine {
       }
     }
 
-    return aggregated;
+    if (cacheKey) this._rememberBounded(this._aggregateCache, this._aggregateCacheOrder, cacheKey, aggregated, this._aggregateCacheMax);
+    return this._cloneCacheValue(aggregated);
   }
 
   /**
@@ -389,6 +532,11 @@ export class ModifierEngine {
   static async aggregateTarget(actor, target, options = {}) {
     const context = options?.context ?? {};
     const hasRuntimeContext = this._hasRuntimeContext(context);
+    if (!hasRuntimeContext) {
+      const aggregated = await this.aggregateAll(actor);
+      return Number(aggregated?.[target] || 0) || 0;
+    }
+
     const baseModifiers = await this.getAllModifiers(actor);
     const contextualModifiers = hasRuntimeContext
       ? this.getEffectIntentModifiersForContext(actor, { context, includeBroad: false })
@@ -444,9 +592,18 @@ export class ModifierEngine {
    * @returns {Object}
    */
   static async buildModifierBreakdown(actor, targets = []) {
+    const sourceKey = this._actorModifierSourceSignature(actor);
+    const targetKey = this._targetsSignature(targets);
+    const cacheKey = sourceKey && targetKey ? `${sourceKey}|breakdown|${targetKey}` : null;
+    if (cacheKey && this._breakdownCache.has(cacheKey)) {
+      return this._cloneCacheValue(this._breakdownCache.get(cacheKey));
+    }
+
     const allModifiers = await this.getAllModifiers(actor);
     const staticModifiers = allModifiers.filter(mod => this.isModifierAllowedInContext(actor, mod, {}, { staticSheet: true }));
-    return ModifierUtils.buildModifierBreakdown(staticModifiers, targets);
+    const breakdown = ModifierUtils.buildModifierBreakdown(staticModifiers, targets);
+    if (cacheKey) this._rememberBounded(this._breakdownCache, this._breakdownCacheOrder, cacheKey, breakdown, this._breakdownCacheMax);
+    return this._cloneCacheValue(breakdown);
   }
 
   /**

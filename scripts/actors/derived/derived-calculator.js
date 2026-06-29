@@ -39,6 +39,92 @@ import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/en
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 
 export class DerivedCalculator {
+  static _computeCache = new Map();
+  static _computeCacheOrder = [];
+  static _computeCacheMax = 120;
+  static _computeInFlight = new Map();
+
+  static _cloneUpdates(value) {
+    if (value == null || typeof value !== 'object') return value;
+    try {
+      if (typeof structuredClone === 'function') return structuredClone(value);
+    } catch (_err) {
+      // Fall through to Foundry/JSON clone.
+    }
+    try {
+      return foundry?.utils?.deepClone?.(value) ?? JSON.parse(JSON.stringify(value));
+    } catch (_err) {
+      return JSON.parse(JSON.stringify(value));
+    }
+  }
+
+  static _rememberComputeResult(key, updates) {
+    if (!key) return;
+    this._computeCache.set(key, this._cloneUpdates(updates));
+    const existing = this._computeCacheOrder.indexOf(key);
+    if (existing >= 0) this._computeCacheOrder.splice(existing, 1);
+    this._computeCacheOrder.push(key);
+    while (this._computeCacheOrder.length > this._computeCacheMax) {
+      const stale = this._computeCacheOrder.shift();
+      if (stale) this._computeCache.delete(stale);
+    }
+  }
+
+  static clearCaches(actorId = null) {
+    if (!actorId) {
+      this._computeCache.clear();
+      this._computeCacheOrder.length = 0;
+      this._computeInFlight.clear();
+      try { ModifierEngine.clearCaches?.(); } catch (_err) { /* best-effort cache clear */ }
+      try { DefenseCalculator.clearCaches?.(); } catch (_err) { /* best-effort cache clear */ }
+      try { BABCalculator.clearCaches?.(); } catch (_err) { /* best-effort cache clear */ }
+      return;
+    }
+
+    const prefix = `${actorId}|`;
+    for (const key of Array.from(this._computeCache.keys())) {
+      if (key.startsWith(prefix)) this._computeCache.delete(key);
+    }
+    for (const key of Array.from(this._computeInFlight.keys())) {
+      if (key.startsWith(prefix)) this._computeInFlight.delete(key);
+    }
+    this._computeCacheOrder = this._computeCacheOrder.filter(key => !key.startsWith(prefix));
+    try { ModifierEngine.clearCaches?.(actorId); } catch (_err) { /* best-effort cache clear */ }
+    try { DefenseCalculator.clearCaches?.(actorId); } catch (_err) { /* best-effort cache clear */ }
+  }
+
+  static getActorComputeSignature(actor) {
+    if (!actor?.id) return null;
+    const actorRevision = actor?._stats?.modifiedTime
+      ?? actor?._source?._stats?.modifiedTime
+      ?? actor?.system?._version
+      ?? actor?.system?.modifiedTime
+      ?? null;
+    if (!actorRevision) return null;
+
+    const items = Array.from(actor?.items ?? [])
+      .map(item => [
+        item?.id ?? item?._id ?? 'no-id',
+        item?.type ?? 'unknown',
+        item?._stats?.modifiedTime ?? item?._source?._stats?.modifiedTime ?? item?.system?._version ?? '',
+        item?.system?.quantity ?? '',
+        item?.system?.equipped ?? item?.system?.isEquipped ?? '',
+        item?.system?.uses?.value ?? item?.system?.ammo?.value ?? ''
+      ].join(':'))
+      .sort()
+      .join('|');
+
+    const effects = Array.from(actor?.effects ?? [])
+      .map(effect => [
+        effect?.id ?? effect?._id ?? 'no-id',
+        effect?._stats?.modifiedTime ?? effect?._source?._stats?.modifiedTime ?? '',
+        effect?.disabled === true ? 'disabled' : 'enabled'
+      ].join(':'))
+      .sort()
+      .join('|');
+
+    return [actor.id, actor.type ?? 'actor', actorRevision, items, effects].join('|');
+  }
 
   /**
    * Resolve class levels from the canonical progression ledger when present,
@@ -97,9 +183,19 @@ export class DerivedCalculator {
    * @returns {Promise<Object>} update object to apply to derived system fields
    */
   static async computeAll(actor) {
-    try {
-      // PHASE 3 AUDITING: Record derived recalculation
-      MutationIntegrityLayer.recordDerivedRecalc();
+    const cacheKey = this.getActorComputeSignature(actor);
+    if (cacheKey && this._computeCache.has(cacheKey)) {
+      return this._cloneUpdates(this._computeCache.get(cacheKey));
+    }
+    if (cacheKey && this._computeInFlight.has(cacheKey)) {
+      const updates = await this._computeInFlight.get(cacheKey);
+      return this._cloneUpdates(updates);
+    }
+
+    const computePromise = (async () => {
+      try {
+        // PHASE 3 AUDITING: Record derived recalculation
+        MutationIntegrityLayer.recordDerivedRecalc();
 
       const prog = actor.system.progression || {};
       const classLevels = this._resolveClassLevels(actor, prog.classLevels || []);
@@ -345,11 +441,16 @@ export class DerivedCalculator {
       const halfLevel = getEffectiveHalfLevel(actor);
       const isDroid = actor?.type === 'droid' || actor.system.isDroid || false;
       const droidUntrainedSkills = ['acrobatics', 'climb', 'jump', 'perception'];
-      const hasForceIntuition = this._hasTalentNamed(actor, 'Force Intuition');
-      const hasForceDeception = this._hasTalentNamed(actor, 'Force Deception');
-      const hasForceTreatment = this._hasTalentNamed(actor, 'Force Treatment');
-      const hasForcePersuasion = this._hasTalentNamed(actor, 'Force Persuasion');
-      const hasInsightOfTheForce = this._hasTalentNamed(actor, 'Insight of the Force');
+      const talentNames = this._getTalentNameSet(actor);
+      const hasTalentNamed = (name) => talentNames.has(this._normalizeNameKey(name));
+      const hasForceIntuition = hasTalentNamed('Force Intuition');
+      const hasForceDeception = hasTalentNamed('Force Deception');
+      const hasForceTreatment = hasTalentNamed('Force Treatment');
+      const hasForcePersuasion = hasTalentNamed('Force Persuasion');
+      const hasInsightOfTheForce = hasTalentNamed('Insight of the Force');
+      const skillFocusModifierBonuses = this._getSkillFocusModifierBonusesBySkill(allModifiers);
+      const logicUpgradeSkillSwapTargets = this._getLogicUpgradeSkillSwapTargetSet(actor);
+      const passiveStateSkillModifiers = this._getPassiveStateSkillModifiers(actor);
 
       // Get occupation bonus from actor flags
       let occupationBonus = null;
@@ -439,7 +540,7 @@ export class DerivedCalculator {
         // Add training/rank bonus.
         // Under ranked mode: use ranks directly; under standard mode: use trained +5 bonus.
         // Store the exact contribution values so the sheet math display mirrors this calculator.
-        const logicUpgradeSkillSwap = this._hasLogicUpgradeSkillSwapForSkill(actor, skillKey);
+        const logicUpgradeSkillSwap = logicUpgradeSkillSwapTargets.has(this._normalizeChoiceKey(skillKey));
         const rankedMode = isRankedModeEnabled();
         let isTrained = Boolean(
           skill.trained ||
@@ -496,7 +597,7 @@ export class DerivedCalculator {
         // Skill Focus modifier to avoid a second +5.
         const rawFeatBonus = Number(modifierMap[`skill.${skillKey}`] || 0) || 0;
         // Always compute the total SF modifier contribution (not gated on checkbox).
-        const skillFocusModifierBonus = this._getSkillFocusModifierBonusForSkill(allModifiers, skillKey);
+        const skillFocusModifierBonus = skillFocusModifierBonuses[skillKey] || 0;
         // If checkbox is ticked: remove ALL SF modifiers (checkbox already added +5 above).
         // If checkbox is not ticked: cap SF contribution at 5 (non-stackable).
         const effectiveSFBonus = skill.focused
@@ -511,56 +612,18 @@ export class DerivedCalculator {
         const featBonus = nonFocusModifierBonus + effectiveSFBonus;
         total += featBonus;
 
-        // PHASE 4: Get state-dependent modifiers for this skill
+        // PHASE 4: Get state-dependent modifiers for this skill.
+        // The expensive actor item/meta scan is precomputed once per derived pass;
+        // each skill only evaluates the already-normalized state modifier entries.
         let stateBonus = 0;
         try {
-          if (actor?.items) {
-            const skillContext = { skillName: skillKey };
-            for (const item of actor.items) {
-              if (item.system?.executionModel !== 'PASSIVE' || item.system?.subType !== 'STATE') {
-                continue;
-              }
-
-              const meta = item.system?.abilityMeta;
-              if (!meta?.modifiers || !Array.isArray(meta.modifiers)) {
-                continue;
-              }
-
-              // Apply each modifier in the PASSIVE/STATE item
-              for (const modifier of meta.modifiers) {
-                const scopedModifier = {
-                  ...modifier,
-                  mechanicsMode: modifier.mechanicsMode || meta.mechanicsMode,
-                  applicationScope: modifier.applicationScope || meta.applicationScope,
-                  staticSheetPolicy: modifier.staticSheetPolicy || meta.staticSheetPolicy,
-                  requiresRuntimeContext: modifier.requiresRuntimeContext ?? meta.requiresRuntimeContext,
-                  requiresSelectedChoice: modifier.requiresSelectedChoice ?? meta.requiresSelectedChoice,
-                  predicateRequirements: modifier.predicateRequirements || meta.predicateRequirements || []
-                };
-
-                if (!ModifierEngine.isModifierAllowedInContext(actor, scopedModifier, skillContext, { staticSheet: true })) {
-                  continue;
-                }
-
-                // Check if this modifier applies to skill checks or this specific skill
-                const targets = Array.isArray(modifier.target) ? modifier.target : [modifier.target];
-                const appliesToSkill = targets.some(t =>
-                  t === 'skill' ||
-                  t === `skill.${skillKey}` ||
-                  t === `skill.bonus`
-                );
-
-                if (!appliesToSkill) continue;
-
-                // Evaluate predicates (all must be true)
-                const predicates = modifier.predicates || [];
-                const predicatesMatch = evaluateStatePredicates(actor, predicates, skillContext);
-
-                if (predicatesMatch && modifier.value) {
-                  stateBonus += modifier.value;
-                }
-              }
-            }
+          const skillContext = { skillName: skillKey };
+          const skillTarget = `skill.${skillKey}`;
+          for (const entry of passiveStateSkillModifiers) {
+            if (!entry.targets.has('skill') && !entry.targets.has(skillTarget) && !entry.targets.has('skill.bonus')) continue;
+            if (!ModifierEngine.isModifierAllowedInContext(actor, entry.modifier, skillContext, { staticSheet: true })) continue;
+            const predicatesMatch = evaluateStatePredicates(actor, entry.predicates, skillContext);
+            if (predicatesMatch && entry.value) stateBonus += entry.value;
           }
         } catch (err) {
           swseLogger.error(`Error evaluating PASSIVE/STATE for skill ${skillKey}:`, err);
@@ -828,64 +891,152 @@ export class DerivedCalculator {
         );
       }
 
-      swseLogger.debug(`DerivedCalculator computed for ${actor.name}`, { updates });
+        swseLogger.debug(`DerivedCalculator computed for ${actor.name}`, { updates });
 
-      return updates;
-    } catch (err) {
-      swseLogger.error(`DerivedCalculator.computeAll failed for ${actor?.name ?? 'unknown'}`, err);
-      throw err;
+        return updates;
+      } catch (err) {
+        swseLogger.error(`DerivedCalculator.computeAll failed for ${actor?.name ?? 'unknown'}`, err);
+        throw err;
+      }
+    })();
+
+    if (cacheKey) this._computeInFlight.set(cacheKey, computePromise);
+
+    try {
+      const updates = await computePromise;
+      if (cacheKey) this._rememberComputeResult(cacheKey, updates);
+      return this._cloneUpdates(updates);
+    } finally {
+      if (cacheKey) this._computeInFlight.delete(cacheKey);
     }
   }
 
+  static _normalizeNameKey(value) {
+    return String(value || '').trim().toLowerCase();
+  }
+
+  static _normalizeChoiceKey(value) {
+    return String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+
+  static _getTalentNameSet(actor) {
+    const names = new Set();
+    if (!actor?.items) return names;
+    for (const item of actor.items) {
+      if (item?.type !== 'talent') continue;
+      const name = this._normalizeNameKey(item?.name);
+      if (name) names.add(name);
+    }
+    return names;
+  }
+
+  static _collectChoiceCandidates(value, candidates = []) {
+    if (value === undefined || value === null) return candidates;
+    if (Array.isArray(value)) {
+      for (const entry of value) this._collectChoiceCandidates(entry, candidates);
+      return candidates;
+    }
+    if (typeof value === 'object') {
+      for (const key of ['id', 'value', 'key', 'slug', 'skill', 'skillKey', 'selectedSkill', 'label', 'name']) {
+        this._collectChoiceCandidates(value[key], candidates);
+      }
+      return candidates;
+    }
+    candidates.push(value);
+    return candidates;
+  }
+
+  static _getLogicUpgradeSkillSwapTargetSet(actor) {
+    const targets = new Set();
+    if (!actor?.items) return targets;
+
+    for (const item of actor.items) {
+      if (this._normalizeNameKey(item?.name) !== 'logic upgrade: skill swap') continue;
+      const candidates = [];
+      this._collectChoiceCandidates(item?.system?.selectedChoice, candidates);
+      this._collectChoiceCandidates(item?.system?.selectedChoices, candidates);
+      for (const candidate of candidates) {
+        const normalized = this._normalizeChoiceKey(candidate);
+        if (normalized && normalized !== 'usetheforce') targets.add(normalized);
+      }
+    }
+
+    return targets;
+  }
+
+  static _getPassiveStateSkillModifiers(actor) {
+    const entries = [];
+    if (!actor?.items) return entries;
+
+    for (const item of actor.items) {
+      if (item?.system?.executionModel !== 'PASSIVE' || item?.system?.subType !== 'STATE') continue;
+
+      const meta = item?.system?.abilityMeta;
+      if (!meta?.modifiers || !Array.isArray(meta.modifiers)) continue;
+
+      for (const modifier of meta.modifiers) {
+        const targetValues = Array.isArray(modifier?.target) ? modifier.target : [modifier?.target];
+        const targets = new Set(targetValues.map(target => String(target || '')).filter(Boolean));
+        if (!targets.has('skill') && !targets.has('skill.bonus') && !Array.from(targets).some(target => target.startsWith('skill.'))) continue;
+
+        const scopedModifier = {
+          ...modifier,
+          mechanicsMode: modifier.mechanicsMode || meta.mechanicsMode,
+          applicationScope: modifier.applicationScope || meta.applicationScope,
+          staticSheetPolicy: modifier.staticSheetPolicy || meta.staticSheetPolicy,
+          requiresRuntimeContext: modifier.requiresRuntimeContext ?? meta.requiresRuntimeContext,
+          requiresSelectedChoice: modifier.requiresSelectedChoice ?? meta.requiresSelectedChoice,
+          predicateRequirements: modifier.predicateRequirements || meta.predicateRequirements || []
+        };
+
+        entries.push({
+          modifier: scopedModifier,
+          targets,
+          predicates: Array.isArray(modifier.predicates) ? modifier.predicates : [],
+          value: Number(modifier.value || 0) || 0
+        });
+      }
+    }
+
+    return entries;
+  }
+
   static _hasTalentNamed(actor, talentName) {
-    const target = String(talentName || '').trim().toLowerCase();
-    if (!target || !actor?.items) return false;
-    return Array.from(actor.items).some(item => item?.type === 'talent' && String(item?.name || '').trim().toLowerCase() === target);
+    const target = this._normalizeNameKey(talentName);
+    return !!target && this._getTalentNameSet(actor).has(target);
   }
 
 
   static _hasLogicUpgradeSkillSwapForSkill(actor, skillKey) {
-    const target = String(skillKey || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const target = this._normalizeChoiceKey(skillKey);
     if (!target || target === 'usetheforce') return false;
-    if (!actor?.items) return false;
-    const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    for (const item of actor.items) {
-      if (String(item?.name || '').toLowerCase() !== 'logic upgrade: skill swap') continue;
-      const choice = item.system?.selectedChoice ?? item.system?.selectedChoices;
-      const candidates = [];
-      const visit = (value) => {
-        if (!value) return;
-        if (Array.isArray(value)) return value.forEach(visit);
-        if (typeof value === 'object') {
-          for (const key of ['id', 'value', 'skill', 'skillKey', 'label', 'name']) visit(value[key]);
-          return;
-        }
-        candidates.push(value);
-      };
-      visit(choice);
-      if (candidates.some(candidate => normalize(candidate) === target)) return true;
-    }
-    return false;
+    return this._getLogicUpgradeSkillSwapTargetSet(actor).has(target);
   }
 
 
-  static _getSkillFocusModifierBonusForSkill(modifiers = [], skillKey) {
+  static _getSkillFocusModifierBonusesBySkill(modifiers = []) {
     const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const target = normalize(skillKey);
-    if (!target || !Array.isArray(modifiers)) return 0;
+    const totals = {};
+    if (!Array.isArray(modifiers)) return totals;
 
-    let total = 0;
     for (const mod of modifiers) {
       if (!mod || mod.enabled === false) continue;
       const modTarget = String(mod.target || '').replace(/^skill\./i, '');
-      if (normalize(modTarget) !== target) continue;
+      const normalizedTarget = normalize(modTarget);
+      if (!normalizedTarget) continue;
 
       const sourceText = `${mod.sourceName || ''} ${mod.description || ''} ${mod.id || ''} ${mod.sourceId || ''}`;
       if (!/skill\s*focus|skill[_-]?focus/i.test(sourceText)) continue;
       const value = Number(mod.value || 0) || 0;
-      if (value > 0) total += value;
+      if (value > 0) totals[normalizedTarget] = (totals[normalizedTarget] || 0) + value;
     }
-    return total;
+
+    return totals;
+  }
+
+  static _getSkillFocusModifierBonusForSkill(modifiers = [], skillKey) {
+    const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    return this._getSkillFocusModifierBonusesBySkill(modifiers)[normalize(skillKey)] || 0;
   }
 
   static _hasSkillFocusModifierForSkill(actor, skillKey) {

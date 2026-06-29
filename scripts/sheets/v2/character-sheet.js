@@ -11,7 +11,6 @@ import { DropResolutionEngine } from "/systems/foundryvtt-swse/scripts/engine/in
 import { AdoptionEngine } from "/systems/foundryvtt-swse/scripts/engine/interactions/adoption-engine.js";
 import { AdoptOrAddDialog } from "/systems/foundryvtt-swse/scripts/apps/adopt-or-add-dialog.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
-import { LightsaberConstructionApp } from "/systems/foundryvtt-swse/scripts/applications/lightsaber/lightsaber-construction-app.js";
 import { LightsaberConstructionEngine } from "/systems/foundryvtt-swse/scripts/engine/crafting/lightsaber-construction-engine.js";
 import { openItemCustomization } from "/systems/foundryvtt-swse/scripts/apps/customization/item-customization-router.js";
 import { openForceAlchemyWorkbench } from "/systems/foundryvtt-swse/scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
@@ -88,6 +87,7 @@ import { PanelVisibilityManager } from "/systems/foundryvtt-swse/scripts/sheets/
 import { applyResourceNumberAnimations } from "/systems/foundryvtt-swse/scripts/sheets/v2/shared/resource-number-animations.js";
 import { ExtraSkillUseRegistry } from "/systems/foundryvtt-swse/scripts/utils/extra-skill-use-registry.js";
 import { traceLog, actorSummary, payloadSummary } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
+import { SWSEPerf } from "/systems/foundryvtt-swse/scripts/utils/performance-utils.js";
 import { captureHydrationSnapshot, emitHydrationError, emitHydrationWarning, getRecentHydrationMutation, recordHydrationMutation, summarizeBiographyPanel, summarizeDefensePanel } from "/systems/foundryvtt-swse/scripts/utils/hydration-diagnostics.js";
 // Phase 8: Character sheet decomposition - import focused modules
 import { registerListeners } from "/systems/foundryvtt-swse/scripts/sheets/v2/character-sheet/listeners.js";
@@ -1075,6 +1075,13 @@ export class SWSEV2CharacterSheet extends
     // Initialize visibility manager for lazy panel building
     this.visibilityManager = new PanelVisibilityManager(this);
 
+    // Display-only panel view-model cache.  This caches normalized render
+    // contexts, never authoritative actor/item data.  It is invalidated by
+    // compact actor/item revision signatures so repeated UI-only renders can
+    // reuse heavy panel rows without changing gameplay state.
+    this._panelViewModelCache = new Map();
+    this._panelViewModelCacheOrder = [];
+
     // Phase 9: Tier-aware help system (per-character, persisted)
     // Initialize from actor flags or default to CORE
     this._helpLevel = HelpModeManager.initializeForActor(document);
@@ -1151,7 +1158,15 @@ export class SWSEV2CharacterSheet extends
     if (this._isRendering) {
       this._pendingRenderArgs = args;
       this._hasQueuedRender = true;
-      console.warn("[SWSEV2CharacterSheet] ⚠️ Render called while already rendering — QUEUED follow-up render");
+      SWSEPerf.mark('CharacterSheet.render queued while rendering', {
+        actorId: this.actor?.id,
+        actorName: this.actor?.name,
+        shellSurface: this._shellSurface,
+        args
+      });
+      if (SWSEPerf.enabled()) {
+        console.warn("[SWSEV2CharacterSheet] ⚠️ Render called while already rendering — QUEUED follow-up render");
+      }
       const recentHydrationMutation = getRecentHydrationMutation(this);
       if (recentHydrationMutation) {
         emitHydrationWarning('SHEET_RENDER_QUEUED', {
@@ -1166,6 +1181,15 @@ export class SWSEV2CharacterSheet extends
 
     this._isRendering = true;
     this._renderCount++;
+    const renderReason = this.__swseShellRenderReason || this.__swseRenderReason || (args?.[0] === true ? 'forced-render' : 'render');
+    const renderTimer = SWSEPerf.start('CharacterSheet.render', {
+      actorId: this.actor?.id,
+      actorName: this.actor?.name,
+      actorType: this.actor?.type,
+      surface: this._shellSurface,
+      reason: renderReason,
+      renderCount: this._renderCount
+    });
 
     try {
       // Phase 6: Capture UI state before rerender so it can be restored after
@@ -1179,6 +1203,7 @@ export class SWSEV2CharacterSheet extends
       return await super.render(...args);
       // swseLogger.debug(`[SWSEV2CharacterSheet] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
     } finally {
+      renderTimer.end({ queuedFollowup: this._hasQueuedRender === true });
       this._isRendering = false;
 
       if (this._hasQueuedRender) {
@@ -2687,6 +2712,7 @@ export class SWSEV2CharacterSheet extends
     // Phase 6: Clear UI state on close (will be fresh on next open)
     this.uiStateManager.clear();
     this.visibilityManager.clearCache();
+    this._clearPanelViewModelCache?.();
 
     // Reset centering state so the next open re-centers cleanly
     this._shouldCenterOnRender = true; // Enable re-centering on next open
@@ -2719,6 +2745,12 @@ export class SWSEV2CharacterSheet extends
   ============================================================ */
 
   async _prepareContext(options) {
+    const contextTimer = SWSEPerf.start('CharacterSheet.prepareContext', {
+      actorId: this.document?.id,
+      actorName: this.document?.name,
+      actorType: this.document?.type,
+      surface: this._shellSurface
+    });
     const actor = this.document;
     const system = actor.system;
     const sheetEditable = canUseActorSheetEditControls(this, actor);
@@ -2765,13 +2797,15 @@ export class SWSEV2CharacterSheet extends
     const derived = foundry.utils.duplicate(actor.system?.derived ?? {});
 
     if (useVehicleSheet) {
-      return this._prepareVehicleActorSheetContext({
+      const vehicleContext = await this._prepareVehicleActorSheetContext({
         actor,
         rawContext,
         context,
         actorModeContext,
         derived
       });
+      contextTimer.end({ mode: 'vehicle' });
+      return vehicleContext;
     }
 
     if (useNpcConceptSheet) {
@@ -3448,7 +3482,7 @@ const forcePoints = [];
     // Fallback: data/combat-actions.json.  The sheet keeps a lookup map so
     // clicking a card has the same hydrated data that rendered the card.
     let combatActions = { groups: [] };
-    const combatActionLookup = {};
+    let combatActionLookup = {};
     const economyOrder = ['full-round', 'standard', 'move', 'swift', 'free', 'reaction'];
     const economyLabel = (value) => String(value || 'standard')
       .split('-')
@@ -3549,7 +3583,18 @@ const forcePoints = [];
       combatActionLookup[key] = row;
     };
 
-    try {
+    const combatActionCacheKey = this._buildCombatActionCacheKey({ actor, actionEconomyTurnState });
+    const cachedCombatActions = this._getCachedCombatActionContext(combatActionCacheKey);
+    if (cachedCombatActions) {
+      combatActions = foundry.utils.duplicate(cachedCombatActions.combatActions ?? { groups: [] });
+      combatActionLookup = foundry.utils.duplicate(cachedCombatActions.combatActionLookup ?? {});
+    } else try {
+      const combatTimer = SWSEPerf.start('CharacterSheet.combatActionsContext', {
+        actorId: this.actor?.id,
+        actorName: this.actor?.name,
+        surface: this._shellSurface,
+        activeTab: this.visibilityManager?.currentTab ?? null
+      });
       const grouped = {};
       let loadedAny = false;
 
@@ -3646,6 +3691,8 @@ const forcePoints = [];
           }]
         });
       }
+      this._setCachedCombatActionContext(combatActionCacheKey, { combatActions, combatActionLookup });
+      combatTimer.end({ groups: combatActions.groups.length, actions: Object.keys(combatActionLookup).length });
     } catch (err) {
       console.warn('[SWSE] Failed to load combat actions:', err);
       // Gracefully degrade - will show empty state
@@ -3859,12 +3906,12 @@ const forcePoints = [];
     const panelsToBuild = this.visibilityManager.getPanelsToBuild(this.document);
     const panelsToSkip = this.visibilityManager.getPanelsSkipped(this.document);
 
-    // CRITICAL: Always build shell/chrome and high-risk ledger panels. The
-    // concept sheet keeps tab DOM alive while switching tabs client-side, so
-    // first render must hydrate the ledgers that players can reveal without a
-    // full AppV2 context rebuild. Otherwise Feats/Talents/Gear appear empty
-    // until an Add button causes a mutation-driven render.
-    const alwaysHydratedPanels = [
+    // CRITICAL: The sheet surface keeps tab DOM alive while switching tabs
+    // client-side, so it still needs full panel hydration. Shell-hosted apps
+    // (home/progression/customization/store/etc.) do not expose those hidden
+    // sheet tabs and should not pay the cost of rebuilding every ledger panel.
+    const shouldHydrateFullSheetPanels = this._shellSurface === 'sheet';
+    const alwaysHydratedPanels = shouldHydrateFullSheetPanels ? [
       'portraitPanel',
       'biographyPanel',
       'healthPanel',
@@ -3881,6 +3928,11 @@ const forcePoints = [];
       'languagesPanel',
       'darkSidePanel',
       'resourcesPanel'
+    ] : [
+      'portraitPanel',
+      'healthPanel',
+      'defensePanel',
+      'resourcesPanel'
     ];
     for (const requiredPanel of alwaysHydratedPanels) {
       if (!panelsToBuild.includes(requiredPanel)) panelsToBuild.push(requiredPanel);
@@ -3895,15 +3947,28 @@ const forcePoints = [];
       shellSurface: this._shellSurface
     });
 
-    // Build visible panels + cached hidden panels
+    // Build visible panels + cached hidden panels.  Panel contexts are display
+    // view-models and can be reused across rerenders when the actor/item
+    // revision signature is unchanged.
+    const panelCacheSignature = this._buildPanelViewModelCacheSignature(actor);
     panelContexts = {};
     for (const panelName of panelsToBuild) {
       const startTime = performance.now();
       const builderMethod = `build${panelName.charAt(0).toUpperCase() + panelName.slice(1)}`;
+      const panelCacheKey = panelCacheSignature ? `${panelName}::${panelCacheSignature}` : null;
 
       if (typeof panelBuilder[builderMethod] === 'function') {
+        const cachedPanel = this._getCachedPanelViewModel(panelName, panelCacheKey);
+        if (cachedPanel) {
+          panelContexts[panelName] = cachedPanel;
+          this.panelDiagnostics.recordPanelBuild(panelName, 0);
+          this.visibilityManager.markPanelBuilt(panelName);
+          continue;
+        }
+
         try {
           panelContexts[panelName] = panelBuilder[builderMethod]();
+          this._setCachedPanelViewModel(panelName, panelCacheKey, panelContexts[panelName]);
           const duration = performance.now() - startTime;
           this.panelDiagnostics.recordPanelBuild(panelName, duration);
           this.visibilityManager.markPanelBuilt(panelName);
@@ -4335,6 +4400,7 @@ const forcePoints = [];
     // Store context for post-render assertions
     this._currentContext = serializableContext;
 
+    contextTimer.end({ mode: 'character', panelCount: Object.keys(panelContexts || {}).length });
     return serializableContext;
   }
 
@@ -9767,6 +9833,118 @@ const forcePoints = [];
     }
 
     return { Persistence, Engine, Policy };
+  }
+
+
+  _buildPanelViewModelCacheSignature(actor) {
+    if (!actor) return null;
+    const actorRevision = actor?._stats?.modifiedTime
+      ?? actor?._source?._stats?.modifiedTime
+      ?? actor?.system?._version
+      ?? null;
+    if (!actorRevision) return null;
+
+    const itemSignature = Array.from(actor?.items ?? [])
+      .map(item => [
+        item?.id ?? item?._id ?? 'no-id',
+        item?.type ?? 'unknown',
+        item?._stats?.modifiedTime ?? item?._source?._stats?.modifiedTime ?? item?.system?._version ?? '',
+        item?.system?.equipped ?? '',
+        item?.system?.quantity ?? '',
+        item?.system?.uses?.value ?? '',
+        item?.system?.ammo?.value ?? item?.system?.ammunition?.value ?? ''
+      ].join(':'))
+      .join('|');
+
+    return [
+      actor?.id ?? 'no-actor',
+      actor?.type ?? 'unknown',
+      actorRevision,
+      actor?.items?.size ?? 0,
+      this.isEditable === true ? 'editable' : 'readonly',
+      this._helpLevel ?? '',
+      this._shellSurface ?? 'sheet',
+      itemSignature
+    ].join('::');
+  }
+
+  _getCachedPanelViewModel(panelName, cacheKey) {
+    if (!panelName || !cacheKey) return null;
+    const cache = this._panelViewModelCache;
+    const entry = cache?.get?.(panelName);
+    if (!entry || entry.key !== cacheKey) return null;
+    try {
+      return foundry.utils.duplicate(entry.value ?? {});
+    } catch (_err) {
+      cache.delete(panelName);
+      return null;
+    }
+  }
+
+  _setCachedPanelViewModel(panelName, cacheKey, value) {
+    if (!panelName || !cacheKey || value === undefined) return;
+    const cache = this._panelViewModelCache ??= new Map();
+    const order = this._panelViewModelCacheOrder ??= [];
+    try {
+      cache.set(panelName, {
+        key: cacheKey,
+        value: foundry.utils.duplicate(value ?? {})
+      });
+      const existing = order.indexOf(panelName);
+      if (existing >= 0) order.splice(existing, 1);
+      order.push(panelName);
+      while (order.length > 24) {
+        const stale = order.shift();
+        if (stale) cache.delete(stale);
+      }
+    } catch (_err) {
+      cache.delete(panelName);
+    }
+  }
+
+  _clearPanelViewModelCache() {
+    this._panelViewModelCache?.clear?.();
+    if (Array.isArray(this._panelViewModelCacheOrder)) this._panelViewModelCacheOrder.length = 0;
+  }
+
+  _buildCombatActionCacheKey({ actor, actionEconomyTurnState } = {}) {
+    const itemSignature = Array.from(actor?.items ?? [])
+      .map(item => `${item.id}:${item.type}:${item._stats?.modifiedTime ?? item.system?._version ?? ''}`)
+      .join('|');
+    const economySignature = actionEconomyTurnState
+      ? JSON.stringify({
+          standard: actionEconomyTurnState.standard,
+          move: actionEconomyTurnState.move,
+          swift: actionEconomyTurnState.swift,
+          reactions: actionEconomyTurnState.reactions,
+          fullRound: actionEconomyTurnState.fullRound,
+          combatId: game?.combat?.id ?? null,
+          turn: game?.combat?.turn ?? null,
+          round: game?.combat?.round ?? null
+        })
+      : 'no-combat';
+    return [
+      actor?.id ?? 'no-actor',
+      actor?._stats?.modifiedTime ?? actor?.system?._version ?? '',
+      actor?.items?.size ?? 0,
+      itemSignature,
+      economySignature
+    ].join('::');
+  }
+
+  _getCachedCombatActionContext(cacheKey) {
+    if (!cacheKey) return null;
+    const cache = this._combatActionContextCache;
+    if (!cache || cache.key !== cacheKey) return null;
+    return cache.value ?? null;
+  }
+
+  _setCachedCombatActionContext(cacheKey, value) {
+    if (!cacheKey || !value) return;
+    this._combatActionContextCache = {
+      key: cacheKey,
+      value: foundry.utils.duplicate(value)
+    };
   }
 
   _normalizeActionEconomyType(value) {

@@ -19,11 +19,6 @@ const SYSTEM_ID = 'foundryvtt-swse';
  */
 const CALLOUT_DEFS = [
   {
-    id: 'actionPaletteFirstOpen',
-    selector: '.swse-action-palette, .action-palette-toggle',
-    role: 'both'
-  },
-  {
     id: 'tacticalOverlayFirstOpen',
     selector: '.tactical-overlay-toggle, [data-control="tactical-overlay"]',
     role: 'gm'

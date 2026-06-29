@@ -4,6 +4,60 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
  * Debouncing, throttling, and other optimization helpers
  */
 
+
+/**
+ * Whether optional SWSE performance diagnostics should emit logs.
+ * Disabled by default; intentionally separate from normal gameplay behavior.
+ */
+export function isPerformanceDiagnosticsEnabled() {
+  try {
+    return game?.settings?.get?.('foundryvtt-swse', 'performanceDiagnostics') === true
+      || game?.settings?.get?.('foundryvtt-swse', 'debugMode') === true;
+  } catch (_err) {
+    return false;
+  }
+}
+
+/**
+ * Tiny disabled-by-default performance timer.
+ * The object is cheap when diagnostics are off and avoids noisy production logs.
+ */
+export const SWSEPerf = {
+  enabled: isPerformanceDiagnosticsEnabled,
+
+  start(label, metadata = {}) {
+    if (!isPerformanceDiagnosticsEnabled()) {
+      return { end: () => 0 };
+    }
+
+    const started = performance.now();
+    return {
+      end(extra = {}) {
+        const duration = performance.now() - started;
+        try {
+          SWSELogger.log(`SWSE PERF | ${label}: ${duration.toFixed(2)}ms`, {
+            ...metadata,
+            ...extra,
+            duration
+          });
+        } catch (_err) {
+          // Never let diagnostics interfere with gameplay.
+        }
+        return duration;
+      }
+    };
+  },
+
+  mark(label, metadata = {}) {
+    if (!isPerformanceDiagnosticsEnabled()) return;
+    try {
+      SWSELogger.log(`SWSE PERF | ${label}`, metadata);
+    } catch (_err) {
+      // Diagnostics only.
+    }
+  }
+};
+
 /**
  * Debounce function calls - waits for calls to stop before executing
  * @param {Function} func - Function to debounce

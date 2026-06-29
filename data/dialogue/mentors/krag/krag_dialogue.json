@@ -9,7 +9,7 @@
     "voiceStyle": "Low, direct, confident. Speaks like someone who never needs to repeat himself.",
     "values": "Loyalty, strength, reputation, results",
     "tooltip": "Krag reflects your character through raw presence and uncompromising enforcement",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/krag.png",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/krag.webp",
     "dialogues": {
       "classPaths": {
         "enforcer": {

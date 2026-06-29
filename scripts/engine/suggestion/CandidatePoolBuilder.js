@@ -14,11 +14,102 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { TalentCandidateEnricher } from "/systems/foundryvtt-swse/scripts/engine/suggestion/TalentCandidateEnricher.js";
 import { logSuggestionTrace } from "/systems/foundryvtt-swse/scripts/engine/suggestion/suggestion-trace-controls.js";
 
+
+function stableCandidateStringify(value, depth = 0) {
+  if (depth > 4) return '...';
+  if (value === null || value === undefined) return String(value);
+  if (typeof value !== 'object') return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(v => stableCandidateStringify(v, depth + 1)).join(',')}]`;
+  const keys = Object.keys(value).sort();
+  return `{${keys.map(key => `${JSON.stringify(key)}:${stableCandidateStringify(value[key], depth + 1)}`).join(',')}}`;
+}
+
+function candidateId(candidate) {
+  return String(candidate?._id ?? candidate?.id ?? candidate?.uuid ?? candidate?.name ?? '').trim();
+}
+
+function candidateTreeId(candidate) {
+  return candidate?.system?.talent_tree
+    || candidate?.system?.talentTree
+    || candidate?.system?.tree
+    || candidate?.system?.tree_id
+    || candidate?.treeId
+    || candidate?.treeName;
+}
+
 /**
  * Filters candidate pools based on slot context
  * Implements domain-enforcement rules to prevent leakage
  */
 export class CandidatePoolBuilder {
+  static _candidatePoolCache = new Map();
+  static _candidatePoolCacheOrder = [];
+  static _candidatePoolCacheMax = 80;
+
+  static _actorCacheSignature(actor) {
+    if (!actor) return 'no-actor';
+    const actorRevision = actor?._stats?.modifiedTime
+      ?? actor?._source?._stats?.modifiedTime
+      ?? actor?.system?._version
+      ?? null;
+    const itemSignature = Array.from(actor?.items ?? [])
+      .map(item => `${item?.id ?? item?._id ?? 'no-id'}:${item?.type ?? 'unknown'}:${item?._stats?.modifiedTime ?? item?._source?._stats?.modifiedTime ?? item?.system?._version ?? ''}`)
+      .join('|');
+    return [actor?.id ?? 'no-id', actor?.type ?? 'unknown', actorRevision ?? 'no-revision', actor?.items?.size ?? 0, itemSignature].join('::');
+  }
+
+  static _slotCacheSignature(slotContext) {
+    if (!slotContext || typeof slotContext !== 'object') return 'no-slot';
+    return stableCandidateStringify(slotContext);
+  }
+
+  static _candidatesCacheSignature(candidates = []) {
+    return [
+      candidates.length,
+      candidates.map(candidate => `${candidateId(candidate)}:${candidate?.type ?? ''}:${candidate?.system?.talent_tree ?? candidate?.system?.talentTree ?? ''}`).join('|')
+    ].join('::');
+  }
+
+  static _buildCacheKey(actor, slotContext, allCandidates) {
+    return [
+      this._actorCacheSignature(actor),
+      this._slotCacheSignature(slotContext),
+      this._candidatesCacheSignature(allCandidates)
+    ].join('||');
+  }
+
+  static _getCachedCandidateIds(cacheKey) {
+    if (!cacheKey) return null;
+    const entry = this._candidatePoolCache.get(cacheKey);
+    if (!entry) return null;
+    return Array.isArray(entry.ids) ? [...entry.ids] : null;
+  }
+
+  static _setCachedCandidateIds(cacheKey, candidates) {
+    if (!cacheKey || !Array.isArray(candidates)) return;
+    const ids = candidates.map(candidateId).filter(Boolean);
+    this._candidatePoolCache.set(cacheKey, { ids });
+    const existing = this._candidatePoolCacheOrder.indexOf(cacheKey);
+    if (existing >= 0) this._candidatePoolCacheOrder.splice(existing, 1);
+    this._candidatePoolCacheOrder.push(cacheKey);
+    while (this._candidatePoolCacheOrder.length > this._candidatePoolCacheMax) {
+      const staleKey = this._candidatePoolCacheOrder.shift();
+      if (staleKey) this._candidatePoolCache.delete(staleKey);
+    }
+  }
+
+  static _resolveCachedCandidates(allCandidates, cachedIds, slotContext) {
+    if (!Array.isArray(allCandidates) || !Array.isArray(cachedIds)) return [];
+    const byId = new Map(allCandidates.map(candidate => [candidateId(candidate), candidate]));
+    const resolved = cachedIds.map(id => byId.get(id)).filter(Boolean);
+    if (slotContext?.slotKind === 'talent') {
+      for (const candidate of resolved) {
+        TalentCandidateEnricher.enrich(candidate, candidateTreeId(candidate));
+      }
+    }
+    return resolved;
+  }
+
   /**
    * Build a filtered candidate pool for the active slot
    * @param {Object} actor - Actor document
@@ -33,6 +124,18 @@ export class CandidatePoolBuilder {
         { hasActor: !!actor, hasSlotContext: !!slotContext, hasAllCandidates: !!allCandidates }
       );
       return { slotContext, filteredCandidates: [] };
+    }
+
+    const cacheKey = options?.disableCandidatePoolCache ? null : this._buildCacheKey(actor, slotContext, allCandidates);
+    const cachedIds = this._getCachedCandidateIds(cacheKey);
+    if (cachedIds) {
+      const cachedCandidates = this._resolveCachedCandidates(allCandidates, cachedIds, slotContext);
+      logSuggestionTrace(
+        options,
+        `[CandidatePoolBuilder] Slot ${slotContext.slotKind}/${slotContext.slotType}: ` +
+          `${allCandidates.length} -> ${cachedCandidates.length} candidates (cache hit)`
+      );
+      return { slotContext, filteredCandidates: cachedCandidates };
     }
 
     let filteredCandidates = [];
@@ -72,6 +175,8 @@ export class CandidatePoolBuilder {
         SWSELogger.warn(`[CandidatePoolBuilder] Unknown slot kind: ${slotContext.slotKind}`);
         filteredCandidates = [];
     }
+
+    this._setCachedCandidateIds(cacheKey, filteredCandidates);
 
     logSuggestionTrace(
       options,

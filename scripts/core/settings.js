@@ -49,6 +49,16 @@ game.settings.register('foundryvtt-swse', 'postRenderDiagnostics', {
   default: false
 });
 
+
+game.settings.register('foundryvtt-swse', 'performanceDiagnostics', {
+  name: 'Performance Diagnostics',
+  hint: 'Enable lightweight SWSE performance timing logs for sheets, progression, and panel builders. Disabled by default.',
+  scope: 'client',
+  config: true,
+  type: Boolean,
+  default: false
+});
+
   game.settings.register("foundryvtt-swse", "darkSideMaxMultiplier", {
     name: "Dark Side Max Multiplier",
     hint: "Multiplier applied to Wisdom score to determine maximum Dark Side Score.",

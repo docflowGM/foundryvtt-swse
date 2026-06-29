@@ -9,7 +9,7 @@
     "voiceStyle": "Measured, authoritative, introspective. Speaks in deliberate, controlled language.",
     "values": "Discipline, balance, service, controlled strength",
     "tooltip": "Dezmin reflects your character through disciplined balance and Imperial duty",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/dezmin.png",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/dezmin.webp",
     "dialogues": {
       "classPaths": {
         "imperial_knight": {

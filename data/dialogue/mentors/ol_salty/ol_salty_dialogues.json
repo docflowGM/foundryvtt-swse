@@ -9,7 +9,7 @@
     "voiceStyle": "Boisterous, irreverent, teasing. Speaks in tales, colloquialisms, and pirate flavor.",
     "values": "Wit, self-preservation, boldness, freedom and profit",
     "tooltip": "Ol' Salty reflects your character through a scoundrel's irreverent lens",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/salty.png",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/salty.webp",
 
     "dialogues": {
       "classPaths": {

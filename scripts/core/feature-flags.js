@@ -96,11 +96,6 @@ const FEATURES = {
   },
 
   // UI & Tools
-  'action-palette': {
-    label: 'Recommended',
-    status: 'stable',
-    description: 'Quick-access combat action buttons'
-  },
   'store-ui': {
     label: 'Advanced',
     status: 'stable',

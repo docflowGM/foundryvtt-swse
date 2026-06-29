@@ -95,11 +95,11 @@ function _normalizeMentorLookup(value) {
  */
 export function resolveMentorPortraitPath(portraitPath) {
     if (!portraitPath) {
-        return 'systems/foundryvtt-swse/assets/mentors/salty.png';
+        return 'systems/foundryvtt-swse/assets/mentors/salty.webp';
     }
 
     let resolved = String(portraitPath).trim();
-    if (!resolved) return 'systems/foundryvtt-swse/assets/mentors/salty.png';
+    if (!resolved) return 'systems/foundryvtt-swse/assets/mentors/salty.webp';
 
     // Dialogue data and some older apps use repository-relative asset paths.
     // Foundry templates need system-relative URLs, so normalize once here.
@@ -114,7 +114,7 @@ export function resolveMentorPortraitPath(portraitPath) {
         else resolved = `systems/foundryvtt-swse/${resolved.replace(/^\/+/, '')}`;
     }
 
-    // Guard against old cached paths like systems/foundryvtt-swse/foundryvtt-swse/assets/mentors/miraj.png.
+    // Guard against old cached paths like systems/foundryvtt-swse/foundryvtt-swse/assets/mentors/miraj.webp.
     resolved = resolved.replace(
         /^systems\/foundryvtt-swse\/foundryvtt-swse\/assets\/mentors\//i,
         'systems/foundryvtt-swse/assets/mentors/'

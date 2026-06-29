@@ -21,7 +21,6 @@ import { GearSuggestions } from "/systems/foundryvtt-swse/scripts/engine/suggest
 import { buildStoreSuggestionContext } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/store-suggestion-context.js";
 import { MentorProseGenerator } from "/systems/foundryvtt-swse/scripts/engine/suggestion/equipment/mentor-prose-generator.js";
 import { ReviewThreadAssembler } from "/systems/foundryvtt-swse/scripts/apps/store/review-thread-assembler.js";
-import { StoreLoadingOverlay } from "/systems/foundryvtt-swse/scripts/apps/store/store-loading-overlay.js";
 import { StoreCardInteractions } from "/systems/foundryvtt-swse/scripts/apps/store/store-card-interactions.js";
 import { resolveStoreGlyph } from "/systems/foundryvtt-swse/scripts/apps/store/store-glyph-map.js";
 import {
@@ -295,11 +294,7 @@ export class SWSEStore extends BaseSWSEAppV2 {
     const skipOverlay = SettingsHelper.getSafe('storeSkipLoadingOverlay', false);
     const reduceMotion = game.user?.getFlag?.('core', 'reduce-motion') ?? false;
 
-    this.loadingOverlay = new StoreLoadingOverlay({
-      useAurebesh,
-      reduceMotion,
-      skipOverlay
-    });
+    this.loadingOverlay = null;
 
     this._onCheckoutComplete = typeof options.onCheckoutComplete === 'function' ? options.onCheckoutComplete : null;
     this._onStoreClosed = typeof options.onClose === 'function' ? options.onClose : null;

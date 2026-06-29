@@ -9,7 +9,7 @@
     "voiceStyle": "Fast-talking, enthusiastic, playful. Treats danger like a game he’s already winning.",
     "values": "Freedom, flexibility, cleverness, momentum",
     "tooltip": "Lucky Jack reflects your character through chaos, intuition, and creative survival",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/Jack.png",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/Jack.webp",
     "dialogues": {
       "classPaths": {
         "improviser": {

@@ -96,19 +96,20 @@ Run these manually on a fresh actor in Foundry before releasing:
 Most species ability registry entries are suspected to be display-only or partially unwired. Known confirmed cases:
 
 - Attribute bonuses: wired and correct
-- Reroll grants: stubbed (see B below)
+- Reroll grants: item-owned reroll metadata wired in the audit closeout pass (see B below); data population depth still depends on species/feat/talent records.
 - Skill bonuses, movement modifiers, senses, natural weapons, activated abilities: **audit needed**
 
 Do not add new parallel species/reroll systems before this audit completes.
 
 ### B — Reroll grants wiring
 
-`SpeciesRerollHandler._getItemGrantedRerolls()` was added as an empty stub (`return []`) to stop a TypeError crash on every skill roll. Real species, feat, and talent reroll grants are not yet wired. Wiring requires:
+**Status: partially closed in the audit closeout pass.** `SpeciesRerollHandler._getItemGrantedRerolls()` now reads actor-owned reroll metadata from Special Ability/feat/talent/species items, including `flags.swse.grantsReroll`, `system.specialAbility.rerolls`, and `system.abilityMeta.rerollGrants`. Once-per-encounter rerolls are filtered through `usedSpeciesTraits` and reroll-used/reset flag writes route through `ActorEngine`.
 
-1. Define a reroll grant schema on feat/talent/species items (`system.abilityMeta.rerollGrants` or equivalent)
-2. Populate existing species/feat/talent data that should grant rerolls
-3. Implement `_getItemGrantedRerolls` to read that schema
-4. Validate with `SpeciesRerollHandler.getApplicableRerolls` tests
+Remaining work is now data and runtime validation, not the empty hook:
+
+1. Continue populating species/feat/talent rows that should grant rerolls
+2. Validate with `SpeciesRerollHandler.getApplicableRerolls` tests
+3. Runtime-test skill reroll chat buttons on an actor with an owned passive reroll item
 
 ### C — Force Point rescue lifecycle / unconscious damage rule
 

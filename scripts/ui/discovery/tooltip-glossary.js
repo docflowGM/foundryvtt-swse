@@ -605,35 +605,6 @@ export const TooltipGlossary = {
     notes: 'Deferred to Phase 8+. Item-sheet specific.'
   },
 
-  // ========================================================================
-  // ACTION PALETTE & UI (Tier 2) — Future use
-  // ========================================================================
-
-  ActionPalette: {
-    key: 'ActionPalette',
-    label: 'Action Palette',
-    category: 'ui-feature',
-    tier: 'tier2',
-    short: 'Quick access to your frequent actions',
-    long: 'Customize this palette with your most-used actions, abilities, and spells for quick access during gameplay.',
-    hasBreakdown: false,
-    i18nPrefix: 'SWSE.Discovery.Tooltip.ActionPalette',
-    tags: ['ui', 'action', 'feature'],
-    notes: 'Deferred to Phase 8+. UI-focused; no breakdown needed.'
-  },
-
-  PaletteMode: {
-    key: 'PaletteMode',
-    label: 'Palette Mode',
-    category: 'ui-feature',
-    tier: 'tier2',
-    short: 'Toggle between palette modes',
-    long: 'Different palette configurations for different situations. E.g., "Combat" for combat actions, "Roleplay" for social actions.',
-    hasBreakdown: false,
-    i18nPrefix: 'SWSE.Discovery.Tooltip.PaletteMode',
-    tags: ['ui', 'feature'],
-    notes: 'Deferred to Phase 8+.'
-  },
 
   ActionDisabled: {
     key: 'ActionDisabled',

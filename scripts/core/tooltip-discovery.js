@@ -60,7 +60,7 @@ const ENHANCED_TOOLTIPS = {
       • Automatic effect application
 
       Right-click for advanced options.`,
-    relatedConcepts: ['combat-automation', 'action-palette'],
+    relatedConcepts: ['combat-automation'],
     keyButton: true,
     suggestionPriority: 3
   },

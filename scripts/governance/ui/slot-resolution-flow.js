@@ -60,10 +60,61 @@ export class SlotResolutionFlow {
    * @private
    */
   static _getAvailableSlots(actor, slotType) {
-    // This is a stub - actual implementation depends on SlotEngine
-    // For now, read from actor.system.progression.slots or similar
-    const slots = actor.system.progression?.slots || {};
-    return slots[slotType] || 0;
+    if (!actor) return 0;
+    const progression = actor.system?.progression || {};
+
+    if (slotType === 'feat') {
+      if (Array.isArray(progression.featSlots)) return progression.featSlots.length;
+      const legacy = this._legacySlotCount(progression.slots?.feat ?? progression.slots?.feats);
+      if (legacy !== null) return legacy;
+      return Number(actor.system?.featsRequired ?? 0) || 0;
+    }
+
+    if (slotType === 'talent') {
+      if (Array.isArray(progression.talentSlots)) return progression.talentSlots.length;
+      const legacy = this._legacySlotCount(progression.slots?.talent ?? progression.slots?.talents);
+      if (legacy !== null) return legacy;
+      return 0;
+    }
+
+    if (slotType === 'forcePower') {
+      const structured = progression.forcePowerSlots;
+      if (structured && typeof structured === 'object') {
+        const expected = Number(structured.expected ?? structured.max ?? structured.total);
+        if (Number.isFinite(expected)) return Math.max(0, expected);
+      }
+      const legacy = this._legacySlotCount(progression.slots?.forcePower ?? progression.slots?.forcePowers);
+      if (legacy !== null) return legacy;
+      return Number(actor.system?.freeForcePowers?.max ?? 0) || 0;
+    }
+
+    return 0;
+  }
+
+  /**
+   * Read older slot-count shapes without taking ownership over progression math.
+   * @private
+   */
+  static _legacySlotCount(value) {
+    if (Array.isArray(value)) return value.length;
+    if (Number.isFinite(Number(value))) return Math.max(0, Number(value));
+    if (value && typeof value === 'object') {
+      const count = Number(value.total ?? value.expected ?? value.max ?? value.available);
+      if (Number.isFinite(count)) return Math.max(0, count);
+    }
+    return null;
+  }
+
+  /**
+   * Does this slot type still structurally exist on the actor?
+   * @private
+   */
+  static _slotTypeExists(actor, slotType) {
+    const progression = actor?.system?.progression || {};
+    if (slotType === 'feat') return Array.isArray(progression.featSlots) || progression.slots?.feat !== undefined || progression.slots?.feats !== undefined || actor?.system?.featsRequired !== undefined;
+    if (slotType === 'talent') return Array.isArray(progression.talentSlots) || progression.slots?.talent !== undefined || progression.slots?.talents !== undefined;
+    if (slotType === 'forcePower') return progression.forcePowerSlots !== undefined || progression.slots?.forcePower !== undefined || progression.slots?.forcePowers !== undefined || actor?.system?.freeForcePowers?.max !== undefined;
+    return false;
   }
 
   /**
@@ -84,9 +135,8 @@ export class SlotResolutionFlow {
    * @static
    */
   static calculateRefund(actor, slotType, itemRemoved) {
-    // Only refund if slot still structurally exists
-    const slots = actor.system.progression?.slots || {};
-    const slotExists = slots[slotType] !== undefined;
+    // Only refund if the slot bucket still structurally exists on the actor.
+    const slotExists = this._slotTypeExists(actor, slotType);
 
     if (!slotExists) {
       SWSELogger.log('[SLOT] No refund - slot no longer exists:', {

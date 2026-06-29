@@ -24,8 +24,6 @@
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 import { DROID_SYSTEMS } from '/systems/foundryvtt-swse/scripts/data/droid-systems.js';
 import { computeDroidPartCost, getAllDroidPartDefinitions, getDroidCostFactor, hydrateDroidPart, normalizeDroidPartId } from '/systems/foundryvtt-swse/scripts/data/droid-part-schema.js';
-import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
-import { LedgerService } from '/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js';
 import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
 
 

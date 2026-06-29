@@ -9,7 +9,7 @@
     "voiceStyle": "Playful, flirtatious, cocky. Never takes a fight—or a conversation—too seriously.",
     "values": "Freedom, skill, confidence, living fast",
     "tooltip": "Rajma reflects your character through speed, style, and lethal confidence",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/rajma.png",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/rajma.webp",
     "dialogues": {
       "classPaths": {
         "gunslinger": {

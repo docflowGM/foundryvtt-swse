@@ -65,7 +65,7 @@ function buildProgressDots(totalQuestions, activeIndex, answeredCount, phase) {
 function buildMentorPortraitMarkup(portrait, mentorName) {
   const safeName = escapeHtml(mentorName || 'Mentor');
   const safePortrait = escapeHtml(resolveMentorPortraitPath(portrait));
-  return `<img class="prog-l1-survey-stage__mentor-image prog-holo-media__image" src="${safePortrait}" alt="${safeName}" title="${safeName}" onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.png';"/>`;
+  return `<img class="prog-l1-survey-stage__mentor-image prog-holo-media__image" src="${safePortrait}" alt="${safeName}" title="${safeName}" onerror="this.onerror=null; this.src='systems/foundryvtt-swse/assets/mentors/salty.webp';"/>`;
 }
 
 function buildCompletionTags(surveySummary, topMatches = []) {

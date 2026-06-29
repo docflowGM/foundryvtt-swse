@@ -9,7 +9,7 @@
     "voiceStyle": "Cold, precise, technical. Speaks in assessments, calculations, and inevitabilities.",
     "values": "Preparation, precision, efficiency, outcomes",
     "tooltip": "Rax reflects your character through calculated engineering dominance",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/Rax.png",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/Rax.webp",
     "dialogues": {
       "classPaths": {
         "military_engineer": {

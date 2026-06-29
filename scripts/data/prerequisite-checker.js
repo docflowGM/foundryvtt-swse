@@ -65,7 +65,7 @@ import { actorIsDroidLike, actorMeetsMinimumSize, getActorSpeciesNames, namesMat
 import { actorIsCyborgLike, getOrganicDroidAcquisitionBlockReason, isForceSensitivityName } from "/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js";
 import { resolveClassModel } from "/systems/foundryvtt-swse/scripts/engine/progression/utils/class-resolution.js";
 import { SkillRegistry } from "/systems/foundryvtt-swse/scripts/engine/progression/skills/skill-registry.js";
-import { getCanonicalBenefitText, getCanonicalContentAuthority, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/prerequisite-authority.js";
+import { getCanonicalBenefitText, getCanonicalContentAuthority, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/authority/prerequisite-text-helpers.js";
 import { FeatChoiceResolver, normalizeFeatChoiceKey } from "/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-choice-resolver.js";
 import { PROGRESSION_RULES } from "/systems/foundryvtt-swse/scripts/engine/progression/data/progression-data.js";
 import { getClassAutoGrants } from "/systems/foundryvtt-swse/scripts/engine/progression/engine/autogrants/class-autogrants.js";

@@ -1162,7 +1162,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       mentorName: 'Delta',
       mentorTitle: 'FIELD MOD SPECIALIST',
       mentorHead: 'DELTA · FIELD MOD SPECIALIST',
-      mentorPortrait: 'systems/foundryvtt-swse/assets/mentors/delta.png',
+      mentorPortrait: 'systems/foundryvtt-swse/assets/mentors/delta.webp',
       mentorText
     };
   }
@@ -1179,7 +1179,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
       mentorName: 'Miraj',
       mentorTitle: 'SABER WORKBENCH GUIDE',
       mentorHead: 'MIRAJ · SABER WORKBENCH GUIDE',
-      mentorPortrait: 'systems/foundryvtt-swse/assets/mentors/miraj.png',
+      mentorPortrait: 'systems/foundryvtt-swse/assets/mentors/miraj.webp',
       mentorText
     };
   }
@@ -1480,7 +1480,7 @@ export class ItemCustomizationWorkbench extends BaseSWSEAppV2 {
         mentorName: 'Delta',
         mentorTitle: 'FIELD MOD SPECIALIST',
         mentorHead: 'DELTA · FIELD MOD SPECIALIST',
-        mentorPortrait: 'systems/foundryvtt-swse/assets/mentors/delta.png',
+        mentorPortrait: 'systems/foundryvtt-swse/assets/mentors/delta.webp',
         mentorText
       };
     }
