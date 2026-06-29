@@ -903,26 +903,31 @@ export class TransactionEngine {
       };
 
       const assetPlans = Array.isArray(assetMutationPlan) ? assetMutationPlan : [assetMutationPlan];
-      const assetAuditPlan = {
-        set: {
-          [`flags.foundryvtt-swse.transactions.${transactionId}`]: {
-            ...walletAudit,
-            actorId: targetAsset.id,
-            actorName: targetAsset.name,
-            walletActorId: walletActor.id,
-            walletActorName: walletActor.name,
-            source: `${source}.asset`,
-            audit: {
-              ...walletAudit.audit,
-              walletActorId: walletActor.id,
-              walletActorName: walletActor.name
+      const sameActorCustomization = targetAsset.id === walletActor.id;
+      const assetAuditPlan = sameActorCustomization
+        ? null
+        : {
+            set: {
+              [`flags.foundryvtt-swse.transactions.${transactionId}`]: {
+                ...walletAudit,
+                actorId: targetAsset.id,
+                actorName: targetAsset.name,
+                walletActorId: walletActor.id,
+                walletActorName: walletActor.name,
+                source: `${source}.asset`,
+                audit: {
+                  ...walletAudit.audit,
+                  walletActorId: walletActor.id,
+                  walletActorName: walletActor.name
+                }
+              }
             }
-          }
-        }
-      };
-      const mergedAssetPlan = mergeMutationPlans(...assetPlans, assetAuditPlan);
+          };
+      const mergedAssetPlan = assetAuditPlan
+        ? mergeMutationPlans(...assetPlans, assetAuditPlan)
+        : mergeMutationPlans(...assetPlans);
 
-      if (targetAsset.id === walletActor.id) {
+      if (sameActorCustomization) {
         await ActorEngine.applyMutationPlan(walletActor, mergeMutationPlans(walletPlan, mergedAssetPlan), {
           validate,
           rederive,

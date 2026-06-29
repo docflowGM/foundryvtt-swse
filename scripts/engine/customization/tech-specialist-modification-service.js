@@ -548,7 +548,7 @@ async function clearFormerSignatureDevice(actor, signature) {
       const next = keep.find(entry => entry.id === nextActive);
       if (next) applyTraitSystemUpdatesToActor(set, subject, TRAIT_BY_ID.get(next.traitId), 1);
     }
-    await subject.update(set);
+    await ActorEngine.updateActor(subject, set, { source: 'TechSpecialist.clearFormerSignatureDevice' });
     return;
   }
   const update = itemUpdateBase(subject);
@@ -562,7 +562,12 @@ async function clearFormerSignatureDevice(actor, signature) {
     const next = keep.find(entry => entry.id === nextActive);
     if (next) applyTraitSystemUpdatesToItem(update, subject, TRAIT_BY_ID.get(next.traitId), 1);
   }
-  await subject.update(update);
+  if (subject?.actor) {
+    await ActorEngine.updateOwnedItems(subject.actor, [{ _id: subject.id, ...update }]);
+  } else {
+    // @mutation-exception: world-item - unowned item, no actor to route through
+    await subject.update(update);
+  }
 }
 
 export class TechSpecialistModificationService {

@@ -24,6 +24,7 @@
 import SWSEApplicationV2 from '/systems/foundryvtt-swse/scripts/apps/base/swse-application-v2.js';
 import { SWSEDialogV2 } from '/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
+import { SWSEPerf } from '/systems/foundryvtt-swse/scripts/utils/performance-utils.js';
 import { RecoverySessionDialog } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/dialogs/recovery-session-dialog.js';
 import { centerApplicationDuringStartup } from '/systems/foundryvtt-swse/scripts/utils/sheet-position.js';
 import { ConditionalStepResolver } from './conditional-step-resolver.js';
@@ -379,11 +380,43 @@ export class ProgressionShell extends SWSEApplicationV2 {
     return node instanceof HTMLElement ? node : null;
   }
 
+  _getProgressionScrollCandidates(root) {
+    if (!(root instanceof HTMLElement)) return [];
+    const selectors = [
+      '[data-prog-scroll-key]',
+      '[data-region]',
+      '[data-shell-region]',
+      '.prog-intro-stage',
+      '.prog-quickref-stage',
+      '.prog-details-panel-no-frame',
+      '.talent-choice-list',
+      '.talent-graph-viewport',
+      '.language-list',
+      '.skills-list',
+      '.feat-list',
+      '.force-power-list',
+      '.class-list',
+      '.swse-scrollframe',
+      '.scrollframe'
+    ];
+    const candidates = new Set([root]);
+    for (const el of root.querySelectorAll(selectors.join(','))) {
+      if (el instanceof HTMLElement) candidates.add(el);
+    }
+    const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    if (active && root.contains(active)) {
+      candidates.add(active);
+      const keyedAncestor = active.closest?.('[data-prog-scroll-key], [data-region], [data-shell-region]');
+      if (keyedAncestor instanceof HTMLElement) candidates.add(keyedAncestor);
+    }
+    return Array.from(candidates);
+  }
+
   _captureProgressionScrollSnapshots(rootOverride = null) {
     const root = rootOverride instanceof HTMLElement ? rootOverride : this._getRenderableRoot();
     if (!(root instanceof HTMLElement)) return [];
     const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-    const nodes = [root, ...root.querySelectorAll('*')];
+    const nodes = this._getProgressionScrollCandidates(root);
     const snapshots = nodes
       .filter(el => el instanceof HTMLElement)
       .filter(el => el.scrollTop > 0 || el.scrollLeft > 0)
@@ -977,7 +1010,15 @@ export class ProgressionShell extends SWSEApplicationV2 {
   async render(...args) {
     // Render loop prevention: block recursive render calls during active render
     if (this._isRendering) {
-      console.warn("[ProgressionShell] ⚠️ Render called while already rendering — BLOCKED (loop prevention)");
+      SWSEPerf.mark('ProgressionShell.render blocked while rendering', {
+        actorId: this.actor?.id,
+        actorName: this.actor?.name,
+        mode: this.mode,
+        stepId: this.currentStep?.id ?? this.steps?.[this.currentStepIndex]?.id ?? null
+      });
+      if (SWSEPerf.enabled()) {
+        console.warn("[ProgressionShell] ⚠️ Render called while already rendering — BLOCKED (loop prevention)");
+      }
       return this;
     }
 
@@ -1080,26 +1121,29 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const renderRoot = this.getRootElement?.() ?? this.element;
     const scrollSnapshots = [
       ...(Array.isArray(this._pendingScrollSnapshots) ? this._pendingScrollSnapshots : []),
-      ...captureScrollPositions(renderRoot),
+      ...this._captureProgressionScrollSnapshots(renderRoot),
     ];
     this._pendingScrollSnapshots = null;
 
     this._isRendering = true;
     this._renderCount++;
+    const renderTimer = SWSEPerf.start('ProgressionShell.render', {
+      actorId: this.actor?.id,
+      actorName: this.actor?.name,
+      mode: this.mode,
+      renderCount: this._renderCount,
+      stepId: this.currentStep?.id ?? this.steps?.[this.currentStepIndex]?.id ?? null,
+      snapshots: scrollSnapshots.length
+    });
 
-    console.log(`[ProgressionShell] RENDER START (#${this._renderCount}) position:`, this.position);
+    if (SWSEPerf.enabled()) console.log(`[ProgressionShell] RENDER START (#${this._renderCount}) position:`, this.position);
     const result = await super.render(...args);
     const restoreAfterRender = () => this._restoreProgressionScrollSnapshots(scrollSnapshots, this.getRootElement?.() ?? this.element);
     restoreAfterRender();
-    await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+    await new Promise(resolve => requestAnimationFrame(resolve));
     restoreAfterRender();
-    // Some step surfaces rehydrate their own virtualized/overflow regions after the
-    // first paint. Restore again on delayed ticks so focus/selection renders do not
-    // snap the current step back to the top.
-    setTimeout(restoreAfterRender, 0);
-    setTimeout(restoreAfterRender, 75);
-    setTimeout(restoreAfterRender, 175);
-    console.log(`[ProgressionShell] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
+    if (SWSEPerf.enabled()) console.log(`[ProgressionShell] RENDER COMPLETE (#${this._renderCount}) position:`, this.position);
+    renderTimer.end({ snapshots: scrollSnapshots.length });
 
     this._isRendering = false;
     return result;

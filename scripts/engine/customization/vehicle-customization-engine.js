@@ -27,8 +27,6 @@
 import { SWSELogger } from '/systems/foundryvtt-swse/scripts/core/logger.js';
 import { VEHICLE_SYSTEM_DEFINITIONS } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-system-definitions.js';
 import { VehicleSlotGovernanceEngine } from '/systems/foundryvtt-swse/scripts/domain/vehicles/vehicle-slot-governance.js';
-import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
-import { LedgerService } from '/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js';
 import { TransactionEngine } from '/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js';
 
 export class VehicleCustomizationEngine {

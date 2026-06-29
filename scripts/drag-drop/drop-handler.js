@@ -12,6 +12,7 @@ import { TalentSlotValidator } from "/systems/foundryvtt-swse/scripts/engine/pro
 import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js";
 import { buildPendingSpeciesContext } from "/systems/foundryvtt-swse/scripts/engine/progression/helpers/build-pending-species-context.js";
 import { applyCanonicalSpeciesToActor } from "/systems/foundryvtt-swse/scripts/engine/progression/helpers/apply-canonical-species-to-actor.js";
+import { cloneDroppedItemData } from "/systems/foundryvtt-swse/scripts/engine/interactions/dropped-item-clone.js";
 
 export class DropHandler {
 
@@ -140,7 +141,7 @@ export class DropHandler {
 
         if (entry) {
           const item = await pack.getDocument(entry._id);
-          return item ? item.toObject() : null;
+          return item ? cloneDroppedItemData(item) : null;
         }
       }
 
@@ -150,7 +151,7 @@ export class DropHandler {
         (!itemType || i.type === itemType)
       );
 
-      return worldItem ? worldItem.toObject() : null;
+      return worldItem ? cloneDroppedItemData(worldItem) : null;
     };
 
     // Add feats
@@ -247,7 +248,7 @@ export class DropHandler {
     }
 
     // Create the species embedded item first (species document on the actor).
-    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [species.toObject()]);
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [cloneDroppedItemData(species)]);
 
     // Route through the canonical species materialization pipeline so drag/drop gets the
     // same full package as chargen finalization: attributes, movement, languages, passive
@@ -372,7 +373,7 @@ export class DropHandler {
     }
 
     // PHASE 8: Use ActorEngine for atomic creation
-    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [classItem.toObject()]);
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [cloneDroppedItemData(classItem)]);
 
     ui.notifications.info(`Added ${classItem.name} class to ${actor.name}`);
     return true;
@@ -467,7 +468,7 @@ export class DropHandler {
     }
 
     // PHASE 8: Use ActorEngine for atomic creation
-    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [power.toObject()]);
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [cloneDroppedItemData(power)]);
     ui.notifications.info(`${actor.name} learned ${power.name}`);
     return true;
   }
@@ -503,7 +504,7 @@ export class DropHandler {
     }
 
     // PHASE 8: Use ActorEngine for atomic creation
-    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [feat.toObject()]);
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [cloneDroppedItemData(feat)]);
     ui.notifications.info(`${actor.name} gained feat: ${feat.name}`);
     return true;
   }
@@ -557,7 +558,7 @@ export class DropHandler {
     // ====================================================
 
     // PHASE 8: Use ActorEngine for atomic creation
-    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [talent.toObject()]);
+    await ActorEngine.createEmbeddedDocuments(actor, 'Item', [cloneDroppedItemData(talent)]);
     ui.notifications.info(`${actor.name} gained talent: ${talent.name}`);
     return true;
   }
@@ -565,7 +566,7 @@ export class DropHandler {
   static async handleDefaultDrop(actor, item) {
     // Standard item addition
     // PHASE 8: Use ActorEngine for atomic creation
-    const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [item.toObject()]);
+    const created = await ActorEngine.createEmbeddedDocuments(actor, 'Item', [cloneDroppedItemData(item)]);
 
     if (created && created.length > 0) {
       ui.notifications.info(`Added ${item.name} to ${actor.name}`);

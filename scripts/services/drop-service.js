@@ -11,6 +11,7 @@
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { cloneDroppedItemData } from "/systems/foundryvtt-swse/scripts/engine/interactions/dropped-item-clone.js";
 
 /* -------------------------------------------------------------------------- */
 /* ITEM TYPE VALIDATION MATRIX                                                */
@@ -145,8 +146,7 @@ export class DropService {
       await ActorEngine.moveEmbeddedDocuments(sourceActor, targetActor, "Item", [item.id]);
     } else {
       // Compendium item — create embedded copy
-      const itemData = item.toObject();
-      delete itemData._id;
+      const itemData = cloneDroppedItemData(item);
       await ActorEngine.createEmbeddedDocuments(targetActor, "Item", [itemData]);
     }
 
