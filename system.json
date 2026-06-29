@@ -71,7 +71,6 @@
     "styles/dialogs/entity-dialog.css",
     "styles/apps/chargen/chargen.css",
     "scripts/ui/dialogue/dialogue-effects.css",
-    "scripts/ui/action-palette/action-palette.css",
     "styles/progression-framework/progression-foundation-integration.css",
     "styles/progression-framework/foundation/tokens.css",
     "styles/progression-framework/foundation/effects.css",
