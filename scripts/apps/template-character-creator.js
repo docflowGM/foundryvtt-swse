@@ -315,8 +315,8 @@ async _prepareContext(options) {
     this.close();
 
     // Open regular character generator
-    const CharacterGenerator = (await import("/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js")).default;
-    await CharacterGenerator.open();
+    const { launchNewProgression } = await import("/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js");
+    await launchNewProgression({ actorType: 'character' });
   }
 
   /**

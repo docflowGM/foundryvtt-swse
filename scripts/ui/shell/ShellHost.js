@@ -786,15 +786,8 @@ export function ShellHostMixin(BaseClass) {
       }
 
       try {
-        const { VehicleModificationApp } = await import('/systems/foundryvtt-swse/scripts/apps/vehicle-modification-app.js');
-        const ownerActor = options.ownerActor?.type && options.ownerActor.type !== 'vehicle'
-          ? options.ownerActor
-          : this._resolveAssetOwnerActor(targetVehicle);
-
-        await VehicleModificationApp.open(ownerActor, {
-          targetVehicle,
-          vehicleActor: targetVehicle,
-          mode: 'shipyard',
+        const { VehicleCustomizationRouter } = await import('/systems/foundryvtt-swse/scripts/applications/vehicle/vehicle-customization-router.js');
+        VehicleCustomizationRouter.openVehicleCustomization(targetVehicle, {
           contextMode: options.contextMode || 'modifyExisting',
           source: options.source || 'asset-shipyard'
         });

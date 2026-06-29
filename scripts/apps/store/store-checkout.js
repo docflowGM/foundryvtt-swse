@@ -16,9 +16,8 @@ import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system
 import { ProgressionRules } from "/systems/foundryvtt-swse/scripts/engine/progression/ProgressionRules.js";
 import { normalizeCredits } from "/systems/foundryvtt-swse/scripts/utils/credit-normalization.js";
 import { calculateFinalCost } from "/systems/foundryvtt-swse/scripts/engine/store/pricing.js";
-import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
-import { VehicleModificationApp } from "/systems/foundryvtt-swse/scripts/apps/vehicle-modification-app.js";
+import { VehicleCustomizationRouter } from "/systems/foundryvtt-swse/scripts/applications/vehicle/vehicle-customization-router.js";
 import { VehicleModificationManager } from "/systems/foundryvtt-swse/scripts/apps/vehicle-modification-manager.js";
 import { launchNewProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
 import { getRandomDialogue } from "/systems/foundryvtt-swse/scripts/apps/store/store-shared.js";
@@ -654,8 +653,7 @@ export async function createCustomStarship(actor, closeCallback) {
         }
 
         // Launch store-construction shipyard lane
-        await VehicleModificationApp.open(actor, {
-            mode: 'shipyard',
+        VehicleCustomizationRouter.openVehicleCustomization(actor, {
             contextMode: 'storeConstruction'
         });
     } catch (err) {

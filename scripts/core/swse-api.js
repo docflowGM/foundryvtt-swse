@@ -13,7 +13,8 @@ function getDevMode() {
   return game.modules.get('_dev-mode')?.active ?? false;
 }
 
-import CharacterGenerator from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-main.js";
+import { launchNewProgression } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/progression-entry.js";
+import { ChargenShell } from "/systems/foundryvtt-swse/scripts/apps/progression-framework/chargen-shell.js";
 import { auditCSSHealth } from "/systems/foundryvtt-swse/scripts/core/css-auditor.js";
 import {
   v2Assert,
@@ -118,7 +119,8 @@ async function smokeTest() {
  * @returns {Promise<CharacterGenerator|ProgressionShell>}
  */
 async function openCharGen(actor = null) {
-  return await CharacterGenerator.open(actor, { actorType: actor?.type || 'character' });
+  if (!actor) return launchNewProgression({ actorType: 'character' });
+  return ChargenShell.open(actor, { actorType: actor.type || 'character' });
 }
 
 /**
