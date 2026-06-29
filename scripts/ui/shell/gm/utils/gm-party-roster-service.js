@@ -12,6 +12,12 @@ const SYSTEM_ID = 'foundryvtt-swse';
 const PARTY_FLAG = 'gmPartyMember';
 const MANAGED_TYPES = new Set(['character', 'npc', 'droid', 'vehicle', 'beast']);
 
+async function actorEngine() {
+  const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  if (!ActorEngine) throw new Error('ActorEngine unavailable for GM party roster mutation.');
+  return ActorEngine;
+}
+
 function safeCollection(collection) {
   if (!collection) return [];
   if (Array.isArray(collection)) return collection;
@@ -119,8 +125,11 @@ export class GMPartyRosterService {
   }
 
   static async setPartyMember(actor, included) {
-    if (!actor?.setFlag) throw new Error('Actor does not support flag updates.');
-    return actor.setFlag(SYSTEM_ID, PARTY_FLAG, included === true);
+    if (!actor) throw new Error('Actor does not support flag updates.');
+    const ActorEngine = await actorEngine();
+    return ActorEngine.updateActorFlags(actor, SYSTEM_ID, PARTY_FLAG, included === true, {
+      meta: { guardKey: 'gm-party-roster' }
+    });
   }
 
   static async addMember(actor) {
@@ -132,8 +141,11 @@ export class GMPartyRosterService {
   }
 
   static async clearOverride(actor) {
-    if (!actor?.unsetFlag) throw new Error('Actor does not support flag updates.');
-    return actor.unsetFlag(SYSTEM_ID, PARTY_FLAG);
+    if (!actor) throw new Error('Actor does not support flag updates.');
+    const ActorEngine = await actorEngine();
+    return ActorEngine.unsetActorFlag(actor, SYSTEM_ID, PARTY_FLAG, {
+      meta: { guardKey: 'gm-party-roster' }
+    });
   }
 
   static summarizeActors(actorCards = []) {

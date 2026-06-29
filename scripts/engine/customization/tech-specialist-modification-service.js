@@ -563,10 +563,31 @@ async function clearFormerSignatureDevice(actor, signature) {
     if (next) applyTraitSystemUpdatesToItem(update, subject, TRAIT_BY_ID.get(next.traitId), 1);
   }
   if (subject?.actor) {
-    await ActorEngine.updateOwnedItems(subject.actor, [{ _id: subject.id, ...update }]);
+    await ActorEngine.updateOwnedItems(subject.actor, [{ _id: subject.id, ...update }], { source: 'TechSpecialist.clearFormerSignatureDevice' });
   } else {
-    // @mutation-exception: world-item - unowned item, no actor to route through
+    // @mutation-exception: world-item - unowned item has no actor mutation boundary
     await subject.update(update);
+  }
+}
+
+async function markSubjectSignatureDevice(subject, value) {
+  if (!subject) return;
+  const updatePath = `flags.${FLAG_SCOPE}.${TECH_FLAG}.signatureDevice`;
+  if (subject.documentName === 'Actor') {
+    await ActorEngine.updateActorFlags(subject, FLAG_SCOPE, `${TECH_FLAG}.signatureDevice`, value, {
+      meta: { guardKey: 'tech-specialist-signature-subject' }
+    });
+    return;
+  }
+  if (subject.actor) {
+    await ActorEngine.updateOwnedItems(subject.actor, [{ _id: subject.id, [updatePath]: value }], {
+      source: 'TechSpecialist.markSubjectSignatureDevice'
+    });
+    return;
+  }
+  if (subject.update) {
+    // @mutation-exception: world-item - unowned item has no actor mutation boundary
+    await subject.update({ [updatePath]: value });
   }
 }
 
@@ -633,8 +654,10 @@ export class TechSpecialistModificationService {
       subjectType: this.classifySubject(subject, options),
       designatedAt: game?.time?.worldTime ?? Date.now()
     };
-    await actor.setFlag(FLAG_SCOPE, `${TECH_FLAG}.signatureDevice`, payload);
-    if (subject?.setFlag) await subject.setFlag(FLAG_SCOPE, `${TECH_FLAG}.signatureDevice`, true);
+    await ActorEngine.updateActorFlags(actor, FLAG_SCOPE, `${TECH_FLAG}.signatureDevice`, payload, {
+      meta: { guardKey: 'tech-specialist-signature-owner' }
+    });
+    await markSubjectSignatureDevice(subject, true);
     ui.notifications.info(`${subject.name} designated as Signature Device.`);
     return { success: true };
   }

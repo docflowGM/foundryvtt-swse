@@ -7,16 +7,54 @@
  * Structure: [{scope, target, frequency, outcome, sourceTraitName, sourceTraitId}]
  */
 
-import { SPECIES_TRAIT_TYPES } from "/systems/foundryvtt-swse/scripts/species/species-trait-types.js";
+import { SPECIES_TRAIT_TYPES, FREQUENCIES, SKILL_DISPLAY_NAMES } from "/systems/foundryvtt-swse/scripts/species/species-trait-types.js";
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { registerChatInteractionBridge } from "/systems/foundryvtt-swse/scripts/ui/chat/chat-interaction-bridge.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 
 /**
  * Handler for species reroll abilities
  */
+const REROLL_GRANT_CACHE_LIMIT = 300;
+const ITEM_REROLL_GRANT_CACHE = new Map();
+const SKILL_NAME_TO_KEY = (() => {
+  const map = new Map();
+  for (const [key, label] of Object.entries(SKILL_DISPLAY_NAMES ?? {})) {
+    map.set(String(key).toLowerCase(), key);
+    map.set(String(label).toLowerCase(), key);
+    map.set(String(label).toLowerCase().replace(/[^a-z0-9]/g, ''), key);
+  }
+  // Common source-text aliases.
+  map.set('knowledge life science', 'knowledgeLifeSciences');
+  map.set('knowledge lifescience', 'knowledgeLifeSciences');
+  map.set('knowledgelifescience', 'knowledgeLifeSciences');
+  map.set('knowledge physical science', 'knowledgePhysicalSciences');
+  map.set('knowledge physicalscience', 'knowledgePhysicalSciences');
+  map.set('knowledgephysicalscience', 'knowledgePhysicalSciences');
+  map.set('knowledge social science', 'knowledgeSocialSciences');
+  map.set('knowledge socialscience', 'knowledgeSocialSciences');
+  map.set('knowledgesocialscience', 'knowledgeSocialSciences');
+  return map;
+})();
+
+function boundedSet(map, key, value, limit) {
+  if (!key) return;
+  if (map.has(key)) map.delete(key);
+  map.set(key, value);
+  while (map.size > limit) {
+    const firstKey = map.keys().next().value;
+    if (firstKey === undefined) break;
+    map.delete(firstKey);
+  }
+}
+
+function cloneRerollGrants(grants = []) {
+  return grants.map(grant => ({ ...grant }));
+}
+
 export class SpeciesRerollHandler {
 
   /**
@@ -32,6 +70,9 @@ export class SpeciesRerollHandler {
       ...this._getItemGrantedRerolls(actor)
     ];
     return speciesRerolls.filter(reroll => {
+      if (this._isRerollGrantUsed(actor, reroll)) {
+        return false;
+      }
       // Check if this reroll applies to the skill or 'any' roll
       if (reroll.scope !== 'skill' && reroll.scope !== 'any') {
         return false;
@@ -58,6 +99,9 @@ export class SpeciesRerollHandler {
     ];
 
     return speciesRerolls.filter(reroll => {
+      if (this._isRerollGrantUsed(actor, reroll)) {
+        return false;
+      }
       // Check scope matches
       if (reroll.scope === 'any') {return true;}
       if (reroll.scope === rollType) {return true;}
@@ -157,14 +201,23 @@ export class SpeciesRerollHandler {
    * @private
    */
   static async _markTraitUsed(actor, traitId) {
-    const species = SpeciesTraitEngine.getActorSpecies(actor);
-    if (!species) {return;}
+    if (!actor || !traitId) return;
 
-    // Store used traits in actor flags
-    const usedTraits = actor.getFlag('foundryvtt-swse', 'usedSpeciesTraits') || [];
+    // Store used traits in actor flags. Route through ActorEngine so the reroll
+    // lifecycle does not bypass the system mutation boundary.
+    const usedTraits = Array.isArray(actor.getFlag?.('foundryvtt-swse', 'usedSpeciesTraits'))
+      ? [...actor.getFlag('foundryvtt-swse', 'usedSpeciesTraits')]
+      : [];
     if (!usedTraits.includes(traitId)) {
       usedTraits.push(traitId);
-      await actor.setFlag('foundryvtt-swse', 'usedSpeciesTraits', usedTraits);
+      if (ActorEngine?.updateActorFlags) {
+        await ActorEngine.updateActorFlags(actor, 'foundryvtt-swse', 'usedSpeciesTraits', usedTraits, {
+          meta: { guardKey: 'species-reroll-used' }
+        });
+      } else {
+        // mutation-exception fallback-only: ActorEngine should exist in normal runtime.
+        await actor.setFlag?.('foundryvtt-swse', 'usedSpeciesTraits', usedTraits);
+      }
     }
   }
 
@@ -173,7 +226,15 @@ export class SpeciesRerollHandler {
    * @param {Actor} actor - The actor to reset traits for
    */
   static async resetEncounterTraits(actor) {
-    await actor.unsetFlag('foundryvtt-swse', 'usedSpeciesTraits');
+    if (!actor) return;
+    if (ActorEngine?.unsetActorFlag) {
+      await ActorEngine.unsetActorFlag(actor, 'foundryvtt-swse', 'usedSpeciesTraits', {
+        meta: { guardKey: 'species-reroll-reset' }
+      });
+      return;
+    }
+    // mutation-exception fallback-only: ActorEngine should exist in normal runtime.
+    await actor.unsetFlag?.('foundryvtt-swse', 'usedSpeciesTraits');
   }
 
   /**
@@ -344,12 +405,146 @@ export class SpeciesRerollHandler {
   }
 
   /**
-   * Collect reroll grants from embedded items (e.g. talents, feats with reroll metadata).
-   * Currently no item schema exposes reroll grants — returns empty array as safe stub.
+   * Collect reroll grants from embedded items (species special abilities, feats,
+   * talents, or GM-dropped passive ability items). This closes the Phase 8
+   * backlog hook that previously returned an empty array even though the
+   * Special Abilities compendium already carries grantsReroll metadata.
+   *
    * @private
    */
-  static _getItemGrantedRerolls(_actor) {
-    return [];
+  static _getItemGrantedRerolls(actor) {
+    if (!actor?.items) return [];
+
+    const cacheKey = this._itemRerollGrantCacheKey(actor);
+    const cached = cacheKey ? ITEM_REROLL_GRANT_CACHE.get(cacheKey) : null;
+    if (cached) return cloneRerollGrants(cached);
+
+    const grants = [];
+    for (const item of actor.items ?? []) {
+      const sources = this._collectRerollGrantSources(item);
+      if (!sources.length) continue;
+
+      sources.forEach((grant, index) => {
+        grants.push(...this._normalizeRerollGrant(grant, item, index));
+      });
+    }
+
+    if (cacheKey) boundedSet(ITEM_REROLL_GRANT_CACHE, cacheKey, cloneRerollGrants(grants), REROLL_GRANT_CACHE_LIMIT);
+    return grants;
+  }
+
+  static clearCaches() {
+    ITEM_REROLL_GRANT_CACHE.clear();
+  }
+
+  static _collectRerollGrantSources(item) {
+    const scopes = [
+      item?.flags?.swse,
+      item?.flags?.['foundryvtt-swse'],
+      item?.system,
+      item?.system?.abilityMeta,
+      item?.system?.specialAbility
+    ].filter(Boolean);
+
+    const grants = [];
+    for (const scope of scopes) {
+      for (const key of ['grantsReroll', 'grantReroll', 'rerollGrants', 'rerolls']) {
+        const value = scope?.[key];
+        if (Array.isArray(value)) grants.push(...value);
+        else if (value && typeof value === 'object') grants.push(value);
+      }
+    }
+    return grants;
+  }
+
+  static _normalizeRerollGrant(grant, item, index = 0) {
+    if (!grant || typeof grant !== 'object') return [];
+
+    const rawTargets = Array.isArray(grant.target ?? grant.targets)
+      ? (grant.target ?? grant.targets)
+      : [grant.target ?? grant.targets ?? 'any'];
+
+    return rawTargets.map((target, targetIndex) => {
+      const normalizedTarget = this._normalizeRerollTarget(target);
+      const scope = this._normalizeRerollScope(grant.scope, normalizedTarget);
+      const frequency = this._normalizeRerollFrequency(grant.frequency ?? grant.uses ?? grant.limit ?? grant.limitedUse);
+      const outcome = this._normalizeRerollOutcome(grant.outcome ?? grant.result ?? grant.keepResult ?? grant.acceptWorse);
+      const sourceTraitId = String(grant.sourceTraitId ?? grant.id ?? `${item.id ?? item._id ?? item.name}:${index}:${targetIndex}`);
+      const sourceTraitName = String(grant.sourceTraitName ?? grant.name ?? item.name ?? 'Reroll');
+      const limited = frequency === FREQUENCIES.ONCE_PER_ENCOUNTER || grant.type === SPECIES_TRAIT_TYPES.ONCE_PER_ENCOUNTER;
+
+      return {
+        ...grant,
+        id: sourceTraitId,
+        name: sourceTraitName,
+        scope,
+        target: normalizedTarget,
+        frequency,
+        outcome,
+        acceptWorse: outcome !== 'keep_better',
+        type: limited ? SPECIES_TRAIT_TYPES.ONCE_PER_ENCOUNTER : (grant.type ?? SPECIES_TRAIT_TYPES.REROLL),
+        sourceTraitId,
+        sourceTraitName,
+        sourceItemId: item.id ?? item._id ?? null,
+        sourceItemName: item.name ?? null
+      };
+    });
+  }
+
+  static _normalizeRerollScope(scope, target) {
+    const raw = String(scope ?? '').trim().toLowerCase();
+    if (raw.includes('attack')) return 'attack';
+    if (raw.includes('any') || target === 'any') return 'any';
+    if (raw.includes('skill') || SKILL_NAME_TO_KEY.has(String(target ?? '').toLowerCase())) return 'skill';
+    return 'skill';
+  }
+
+  static _normalizeRerollTarget(target) {
+    if (target === null || target === undefined || target === '') return 'any';
+    const raw = String(target).trim();
+    const lowered = raw.toLowerCase();
+    if (['any', 'all', '*'].includes(lowered)) return 'any';
+    const compact = lowered.replace(/[^a-z0-9]/g, '');
+    return SKILL_NAME_TO_KEY.get(lowered) ?? SKILL_NAME_TO_KEY.get(compact) ?? raw;
+  }
+
+  static _normalizeRerollFrequency(frequency) {
+    const raw = String(frequency ?? FREQUENCIES.AT_WILL).trim().toLowerCase();
+    if (raw.includes('encounter')) return FREQUENCIES.ONCE_PER_ENCOUNTER;
+    if (raw.includes('day')) return FREQUENCIES.ONCE_PER_DAY;
+    if (raw.includes('round')) return FREQUENCIES.ONCE_PER_ROUND;
+    return FREQUENCIES.AT_WILL;
+  }
+
+  static _normalizeRerollOutcome(outcome) {
+    if (outcome === false) return 'keep_better';
+    if (outcome === true) return 'must_accept';
+    const raw = String(outcome ?? 'must_accept').trim().toLowerCase().replace(/[-\s]+/g, '_');
+    if (raw.includes('better') || raw.includes('keep_best') || raw.includes('keep_high')) return 'keep_better';
+    return 'must_accept';
+  }
+
+  static _isRerollGrantUsed(actor, reroll) {
+    if (!actor || !reroll) return false;
+    const limited = reroll.type === SPECIES_TRAIT_TYPES.ONCE_PER_ENCOUNTER
+      || reroll.frequency === FREQUENCIES.ONCE_PER_ENCOUNTER;
+    if (!limited) return false;
+
+    const used = actor.getFlag?.('foundryvtt-swse', 'usedSpeciesTraits');
+    return Array.isArray(used) && used.includes(reroll.id ?? reroll.sourceTraitId);
+  }
+
+  static _itemRerollGrantCacheKey(actor) {
+    const itemSig = Array.from(actor.items ?? [])
+      .map(item => [
+        item.id ?? item._id ?? '',
+        item.type ?? '',
+        item.name ?? '',
+        item._stats?.modifiedTime ?? item._stats?.lastModified ?? item.system?._revision ?? item.system?.version ?? ''
+      ].join(':'))
+      .sort()
+      .join('|');
+    return `${actor.id ?? actor._id ?? 'actor'}::${itemSig}`;
   }
 
 }

@@ -606,12 +606,27 @@ async function loadMinionCreator() {
 }
 
 async function updateActor(actor, data, options = {}) {
-  try {
-    const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
-    return ActorEngine.updateActor(actor, data, options);
-  } catch {
-    return actor.update(data, options);
+  const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  if (!ActorEngine?.updateActor) {
+    throw new Error('ActorEngine unavailable for Allies surface actor mutation');
   }
+  return ActorEngine.updateActor(actor, data, options);
+}
+
+async function updateActorFlag(actor, scope, key, value, options = {}) {
+  const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  if (!ActorEngine?.updateActorFlags) {
+    throw new Error('ActorEngine unavailable for Allies surface flag mutation');
+  }
+  return ActorEngine.updateActorFlags(actor, scope, key, value, options);
+}
+
+async function unsetActorFlag(actor, scope, key, options = {}) {
+  const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+  if (!ActorEngine?.unsetActorFlag) {
+    throw new Error('ActorEngine unavailable for Allies surface flag mutation');
+  }
+  return ActorEngine.unsetActorFlag(actor, scope, key, options);
 }
 
 function intelKindLabel(value = '') {
@@ -998,7 +1013,7 @@ export class AlliesSurfaceService {
         reopenedAt: Date.now()
       };
     });
-    if (changed) await actor.setFlag(SYSTEM_ID, 'followerSlots', updated);
+    if (changed) await updateActorFlag(actor, SYSTEM_ID, 'followerSlots', updated, { meta: { guardKey: 'allies-reopen-slot' } });
     return changed;
   }
 
@@ -1279,7 +1294,7 @@ export class AlliesSurfaceService {
     const nextFactions = factions.some(faction => faction.id === normalized.id)
       ? factions.map(faction => faction.id === normalized.id ? { ...faction, ...normalized } : faction)
       : [...factions, normalized];
-    await ownerActor.setFlag(SYSTEM_ID, 'factions', nextFactions);
+    await updateActorFlag(ownerActor, SYSTEM_ID, 'factions', nextFactions, { meta: { guardKey: 'allies-factions' } });
     Hooks.callAll('swseActorFactionRelationshipsUpdated', { actor: ownerActor, relationships: FactionRegistryService.getActorRelationships(ownerActor), suggestion: normalized });
     return true;
   }
@@ -1294,7 +1309,7 @@ export class AlliesSurfaceService {
       return false;
     }
     if (relationship) await FactionRegistryService.removeActorRelationship(ownerActor, relationship.id);
-    await ownerActor.setFlag(SYSTEM_ID, 'factions', legacy.filter(faction => faction.id !== factionId && faction.factionId !== factionId));
+    await updateActorFlag(ownerActor, SYSTEM_ID, 'factions', legacy.filter(faction => faction.id !== factionId && faction.factionId !== factionId), { meta: { guardKey: 'allies-factions' } });
     return true;
   }
 
@@ -1322,7 +1337,7 @@ export class AlliesSurfaceService {
       notes: '',
       accommodations: {}
     });
-    await ownerActor.setFlag(SYSTEM_ID, 'bases', [...bases, next]);
+    await updateActorFlag(ownerActor, SYSTEM_ID, 'bases', [...bases, next], { meta: { guardKey: 'allies-bases' } });
     return true;
   }
 
@@ -1334,14 +1349,14 @@ export class AlliesSurfaceService {
     const nextBases = index >= 0
       ? bases.map(base => base.id === baseId ? { ...base, ...normalized } : base)
       : [...bases, normalized];
-    await ownerActor.setFlag(SYSTEM_ID, 'bases', nextBases);
+    await updateActorFlag(ownerActor, SYSTEM_ID, 'bases', nextBases, { meta: { guardKey: 'allies-bases' } });
     return true;
   }
 
   static async removeBase(ownerActor, baseId) {
     if (!ownerActor || !baseId) return false;
     const bases = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'bases')).map(normalizeBaseForStorage);
-    await ownerActor.setFlag(SYSTEM_ID, 'bases', bases.filter(base => base.id !== baseId));
+    await updateActorFlag(ownerActor, SYSTEM_ID, 'bases', bases.filter(base => base.id !== baseId), { meta: { guardKey: 'allies-bases' } });
     return true;
   }
 
@@ -1370,7 +1385,7 @@ export class AlliesSurfaceService {
       bases: '',
       statistics: ''
     }, {}, { isGM: true });
-    await ownerActor.setFlag(SYSTEM_ID, 'organizations', [...organizations, next]);
+    await updateActorFlag(ownerActor, SYSTEM_ID, 'organizations', [...organizations, next], { meta: { guardKey: 'allies-organizations' } });
     return true;
   }
 
@@ -1387,7 +1402,7 @@ export class AlliesSurfaceService {
     const nextOrganizations = organizations.some(org => org.id === organizationId)
       ? organizations.map(org => org.id === organizationId ? { ...org, ...normalized } : org)
       : [...organizations, normalized];
-    await ownerActor.setFlag(SYSTEM_ID, 'organizations', nextOrganizations);
+    await updateActorFlag(ownerActor, SYSTEM_ID, 'organizations', nextOrganizations, { meta: { guardKey: 'allies-organizations' } });
 
     const orgScoreDelta = parseInteger(normalized.score, 0) - parseInteger(existing.score, 0);
 
@@ -1469,7 +1484,7 @@ export class AlliesSurfaceService {
     }
     const organizations = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'organizations'))
       .map(entry => normalizeOrganizationForStorage(entry, entry, { isGM: true }));
-    await ownerActor.setFlag(SYSTEM_ID, 'organizations', organizations.filter(org => org.id !== organizationId));
+    await updateActorFlag(ownerActor, SYSTEM_ID, 'organizations', organizations.filter(org => org.id !== organizationId), { meta: { guardKey: 'allies-organizations' } });
     return true;
   }
 
@@ -1500,10 +1515,10 @@ export class AlliesSurfaceService {
       dismissedAt: Date.now()
     };
 
-    await ownerActor.setFlag(SYSTEM_ID, 'previouslyHiredAllies', uniqueEntries([
+    await updateActorFlag(ownerActor, SYSTEM_ID, 'previouslyHiredAllies', uniqueEntries([
       ...asArray(ownerActor.getFlag?.(SYSTEM_ID, 'previouslyHiredAllies')).filter(entry => (entry.id || entry.actorId) !== ally.id),
       historyEntry
-    ]));
+    ]), { meta: { guardKey: 'allies-dismiss' } });
 
     await this._removeActiveLink(ownerActor, ally, kind);
 
@@ -1511,12 +1526,12 @@ export class AlliesSurfaceService {
       const updatedSlots = slots.map(entry => entry.id === slot.id
         ? { ...entry, createdActorId: null, dismissedActorId: ally.id, dismissedAt: Date.now() }
         : entry);
-      await ownerActor.setFlag(SYSTEM_ID, 'followerSlots', updatedSlots);
+      await updateActorFlag(ownerActor, SYSTEM_ID, 'followerSlots', updatedSlots, { meta: { guardKey: 'allies-follower-slots' } });
     }
 
-    await ally.setFlag(SYSTEM_ID, 'dismissedAlly', true);
-    await ally.setFlag(SYSTEM_ID, 'dismissedFromOwnerId', ownerActor.id);
-    await ally.setFlag(SYSTEM_ID, 'dismissedAt', Date.now());
+    await updateActorFlag(ally, SYSTEM_ID, 'dismissedAlly', true, { meta: { guardKey: 'allies-dismiss' } });
+    await updateActorFlag(ally, SYSTEM_ID, 'dismissedFromOwnerId', ownerActor.id, { meta: { guardKey: 'allies-dismiss' } });
+    await updateActorFlag(ally, SYSTEM_ID, 'dismissedAt', Date.now(), { meta: { guardKey: 'allies-dismiss' } });
     if (kind === 'follower') await updateActor(ally, { 'flags.swse.follower.active': false }, { source: 'Allies.dismissFollower' });
     if (['minion', 'privateer'].includes(kind)) await updateActor(ally, { 'flags.swse.minion.active': false }, { source: 'Allies.dismissMinion' });
     if (kind === 'beast') await updateActor(ally, { 'flags.swse.beast.active': false }, { source: 'Allies.dismissBeast' });
@@ -1549,15 +1564,15 @@ export class AlliesSurfaceService {
       const updatedSlots = slots.map(slot => slot.id === entry.slotId
         ? { ...slot, createdActorId: ally.id, rehireAt: Date.now(), dismissedActorId: null }
         : slot);
-      await ownerActor.setFlag(SYSTEM_ID, 'followerSlots', updatedSlots);
+      await updateActorFlag(ownerActor, SYSTEM_ID, 'followerSlots', updatedSlots, { meta: { guardKey: 'allies-follower-slots' } });
     } else if (entry.slotSnapshot && !slots.some(slot => slot.id === entry.slotSnapshot.id)) {
-      await ownerActor.setFlag(SYSTEM_ID, 'followerSlots', [...slots, { ...entry.slotSnapshot, createdActorId: ally.id, rehireAt: Date.now() }]);
+      await updateActorFlag(ownerActor, SYSTEM_ID, 'followerSlots', [...slots, { ...entry.slotSnapshot, createdActorId: ally.id, rehireAt: Date.now() }], { meta: { guardKey: 'allies-follower-slots' } });
     }
 
-    await ownerActor.setFlag(SYSTEM_ID, 'previouslyHiredAllies', history.filter(item => (item.id || item.actorId) !== actorId));
-    await ally.unsetFlag?.(SYSTEM_ID, 'dismissedAlly');
-    await ally.unsetFlag?.(SYSTEM_ID, 'dismissedFromOwnerId');
-    await ally.unsetFlag?.(SYSTEM_ID, 'dismissedAt');
+    await updateActorFlag(ownerActor, SYSTEM_ID, 'previouslyHiredAllies', history.filter(item => (item.id || item.actorId) !== actorId), { meta: { guardKey: 'allies-rehire' } });
+    await unsetActorFlag(ally, SYSTEM_ID, 'dismissedAlly', { meta: { guardKey: 'allies-rehire' } });
+    await unsetActorFlag(ally, SYSTEM_ID, 'dismissedFromOwnerId', { meta: { guardKey: 'allies-rehire' } });
+    await unsetActorFlag(ally, SYSTEM_ID, 'dismissedAt', { meta: { guardKey: 'allies-rehire' } });
     if (kind === 'follower') await updateActor(ally, { 'flags.swse.follower.active': true }, { source: 'Allies.rehireFollower' });
     if (['minion', 'privateer'].includes(kind)) await updateActor(ally, { 'flags.swse.minion.active': true }, { source: 'Allies.rehireMinion' });
     if (kind === 'beast') await updateActor(ally, { 'flags.swse.beast.active': true }, { source: 'Allies.rehireBeast' });
@@ -1589,11 +1604,11 @@ export class AlliesSurfaceService {
     };
 
     await this._addActiveLink(ownerActor, link, kind);
-    await droppedActor.setFlag(SYSTEM_ID, 'assignedAllyOwnerId', ownerActor.id);
-    await droppedActor.setFlag(SYSTEM_ID, 'assignedAllyKind', kind);
-    await droppedActor.setFlag(SYSTEM_ID, 'assignedAllySource', 'GM Assignment');
-    await droppedActor.setFlag(SYSTEM_ID, 'assignedAllySyncMode', 'manual');
-    await droppedActor.unsetFlag?.(SYSTEM_ID, 'dismissedAlly');
+    await updateActorFlag(droppedActor, SYSTEM_ID, 'assignedAllyOwnerId', ownerActor.id, { meta: { guardKey: 'allies-assignment' } });
+    await updateActorFlag(droppedActor, SYSTEM_ID, 'assignedAllyKind', kind, { meta: { guardKey: 'allies-assignment' } });
+    await updateActorFlag(droppedActor, SYSTEM_ID, 'assignedAllySource', 'GM Assignment', { meta: { guardKey: 'allies-assignment' } });
+    await updateActorFlag(droppedActor, SYSTEM_ID, 'assignedAllySyncMode', 'manual', { meta: { guardKey: 'allies-assignment' } });
+    await unsetActorFlag(droppedActor, SYSTEM_ID, 'dismissedAlly', { meta: { guardKey: 'allies-assignment' } });
 
     const ownerUser = game.users?.find?.(u => u.character?.id === ownerActor.id);
     if (ownerUser) {
@@ -1607,7 +1622,7 @@ export class AlliesSurfaceService {
   static async requestBeastLevelUp(ownerActor, beastId) {
     const beast = game.actors?.get?.(beastId);
     if (!ownerActor || !beast) return false;
-    await beast.setFlag(SYSTEM_ID, 'beastLevelUpRequested', true);
+    await updateActorFlag(beast, SYSTEM_ID, 'beastLevelUpRequested', true, { meta: { guardKey: 'allies-beast-level-up' } });
     await ChatMessage.create({
       speaker: ChatMessage.getSpeaker({ actor: ownerActor }),
       content: `<div class="swse-chat-card"><h3>Beast Advancement Request</h3><p>${ownerActor.name} requests GM approval to level up ${beast.name}.</p></div>`,
@@ -1628,13 +1643,13 @@ export class AlliesSurfaceService {
   static async _removeActiveLink(ownerActor, ally, kind) {
     const id = ally.id;
     if (kind === 'follower') {
-      await ownerActor.setFlag(SYSTEM_ID, 'followers', asArray(ownerActor.getFlag?.(SYSTEM_ID, 'followers')).filter(entry => (entry.id || entry.actorId) !== id));
+      await updateActorFlag(ownerActor, SYSTEM_ID, 'followers', asArray(ownerActor.getFlag?.(SYSTEM_ID, 'followers')).filter(entry => (entry.id || entry.actorId) !== id), { meta: { guardKey: 'allies-link-remove' } });
     } else if (['minion', 'privateer'].includes(kind)) {
-      await ownerActor.setFlag(SYSTEM_ID, 'minions', asArray(ownerActor.getFlag?.(SYSTEM_ID, 'minions')).filter(entry => (entry.id || entry.actorId) !== id));
+      await updateActorFlag(ownerActor, SYSTEM_ID, 'minions', asArray(ownerActor.getFlag?.(SYSTEM_ID, 'minions')).filter(entry => (entry.id || entry.actorId) !== id), { meta: { guardKey: 'allies-link-remove' } });
     } else if (kind === 'beast') {
-      await ownerActor.setFlag(SYSTEM_ID, 'beasts', asArray(ownerActor.getFlag?.(SYSTEM_ID, 'beasts')).filter(entry => (entry.id || entry.actorId) !== id));
+      await updateActorFlag(ownerActor, SYSTEM_ID, 'beasts', asArray(ownerActor.getFlag?.(SYSTEM_ID, 'beasts')).filter(entry => (entry.id || entry.actorId) !== id), { meta: { guardKey: 'allies-link-remove' } });
     } else {
-      await ownerActor.setFlag(SYSTEM_ID, 'assignedAllies', asArray(ownerActor.getFlag?.(SYSTEM_ID, 'assignedAllies')).filter(entry => (entry.id || entry.actorId) !== id));
+      await updateActorFlag(ownerActor, SYSTEM_ID, 'assignedAllies', asArray(ownerActor.getFlag?.(SYSTEM_ID, 'assignedAllies')).filter(entry => (entry.id || entry.actorId) !== id), { meta: { guardKey: 'allies-link-remove' } });
     }
     await updateActor(ownerActor, {
       'system.ownedActors': asArray(ownerActor.system?.ownedActors).filter(entry => (entry.id || entry.actorId) !== id)
@@ -1643,13 +1658,13 @@ export class AlliesSurfaceService {
 
   static async _addActiveLink(ownerActor, link, kind) {
     if (kind === 'follower') {
-      await ownerActor.setFlag(SYSTEM_ID, 'followers', uniqueEntries([...asArray(ownerActor.getFlag?.(SYSTEM_ID, 'followers')), link]));
+      await updateActorFlag(ownerActor, SYSTEM_ID, 'followers', uniqueEntries([...asArray(ownerActor.getFlag?.(SYSTEM_ID, 'followers')), link]), { meta: { guardKey: 'allies-link-add' } });
     } else if (['minion', 'privateer'].includes(kind)) {
-      await ownerActor.setFlag(SYSTEM_ID, 'minions', uniqueEntries([...asArray(ownerActor.getFlag?.(SYSTEM_ID, 'minions')), link]));
+      await updateActorFlag(ownerActor, SYSTEM_ID, 'minions', uniqueEntries([...asArray(ownerActor.getFlag?.(SYSTEM_ID, 'minions')), link]), { meta: { guardKey: 'allies-link-add' } });
     } else if (kind === 'beast') {
-      await ownerActor.setFlag(SYSTEM_ID, 'beasts', uniqueEntries([...asArray(ownerActor.getFlag?.(SYSTEM_ID, 'beasts')), link]));
+      await updateActorFlag(ownerActor, SYSTEM_ID, 'beasts', uniqueEntries([...asArray(ownerActor.getFlag?.(SYSTEM_ID, 'beasts')), link]), { meta: { guardKey: 'allies-link-add' } });
     } else {
-      await ownerActor.setFlag(SYSTEM_ID, 'assignedAllies', uniqueEntries([...asArray(ownerActor.getFlag?.(SYSTEM_ID, 'assignedAllies')), link]));
+      await updateActorFlag(ownerActor, SYSTEM_ID, 'assignedAllies', uniqueEntries([...asArray(ownerActor.getFlag?.(SYSTEM_ID, 'assignedAllies')), link]), { meta: { guardKey: 'allies-link-add' } });
     }
     await updateActor(ownerActor, {
       'system.ownedActors': uniqueEntries([...asArray(ownerActor.system?.ownedActors), link])
