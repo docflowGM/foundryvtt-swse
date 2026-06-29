@@ -37,12 +37,6 @@
       "status": "temporary",
       "planned_removal": "Phase 4 - consolidate variants"
     },
-    "styles/archive/sheets-v3/v3/core/layout.css": {
-      "reason": "Archived V3 experimental sheet system - not in active use",
-      "violations": "various flex and layout properties",
-      "status": "permanent",
-      "comment": "Archive code is intentionally preserved; violations are not blocking"
-    },
     "styles/apps/swse-templates-consolidated.css": {
       "reason": "Application UI templates - different governance domain from character sheet",
       "violations": "various",
