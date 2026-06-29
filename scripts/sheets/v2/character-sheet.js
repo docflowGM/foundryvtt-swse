@@ -1076,6 +1076,13 @@ export class SWSEV2CharacterSheet extends
     // Initialize visibility manager for lazy panel building
     this.visibilityManager = new PanelVisibilityManager(this);
 
+    // Display-only panel view-model cache.  This caches normalized render
+    // contexts, never authoritative actor/item data.  It is invalidated by
+    // compact actor/item revision signatures so repeated UI-only renders can
+    // reuse heavy panel rows without changing gameplay state.
+    this._panelViewModelCache = new Map();
+    this._panelViewModelCacheOrder = [];
+
     // Phase 9: Tier-aware help system (per-character, persisted)
     // Initialize from actor flags or default to CORE
     this._helpLevel = HelpModeManager.initializeForActor(document);
@@ -2706,6 +2713,7 @@ export class SWSEV2CharacterSheet extends
     // Phase 6: Clear UI state on close (will be fresh on next open)
     this.uiStateManager.clear();
     this.visibilityManager.clearCache();
+    this._clearPanelViewModelCache?.();
 
     // Reset centering state so the next open re-centers cleanly
     this._shouldCenterOnRender = true; // Enable re-centering on next open
@@ -3940,15 +3948,28 @@ const forcePoints = [];
       shellSurface: this._shellSurface
     });
 
-    // Build visible panels + cached hidden panels
+    // Build visible panels + cached hidden panels.  Panel contexts are display
+    // view-models and can be reused across rerenders when the actor/item
+    // revision signature is unchanged.
+    const panelCacheSignature = this._buildPanelViewModelCacheSignature(actor);
     panelContexts = {};
     for (const panelName of panelsToBuild) {
       const startTime = performance.now();
       const builderMethod = `build${panelName.charAt(0).toUpperCase() + panelName.slice(1)}`;
+      const panelCacheKey = panelCacheSignature ? `${panelName}::${panelCacheSignature}` : null;
 
       if (typeof panelBuilder[builderMethod] === 'function') {
+        const cachedPanel = this._getCachedPanelViewModel(panelName, panelCacheKey);
+        if (cachedPanel) {
+          panelContexts[panelName] = cachedPanel;
+          this.panelDiagnostics.recordPanelBuild(panelName, 0);
+          this.visibilityManager.markPanelBuilt(panelName);
+          continue;
+        }
+
         try {
           panelContexts[panelName] = panelBuilder[builderMethod]();
+          this._setCachedPanelViewModel(panelName, panelCacheKey, panelContexts[panelName]);
           const duration = performance.now() - startTime;
           this.panelDiagnostics.recordPanelBuild(panelName, duration);
           this.visibilityManager.markPanelBuilt(panelName);
@@ -9813,6 +9834,78 @@ const forcePoints = [];
     }
 
     return { Persistence, Engine, Policy };
+  }
+
+
+  _buildPanelViewModelCacheSignature(actor) {
+    if (!actor) return null;
+    const actorRevision = actor?._stats?.modifiedTime
+      ?? actor?._source?._stats?.modifiedTime
+      ?? actor?.system?._version
+      ?? null;
+    if (!actorRevision) return null;
+
+    const itemSignature = Array.from(actor?.items ?? [])
+      .map(item => [
+        item?.id ?? item?._id ?? 'no-id',
+        item?.type ?? 'unknown',
+        item?._stats?.modifiedTime ?? item?._source?._stats?.modifiedTime ?? item?.system?._version ?? '',
+        item?.system?.equipped ?? '',
+        item?.system?.quantity ?? '',
+        item?.system?.uses?.value ?? '',
+        item?.system?.ammo?.value ?? item?.system?.ammunition?.value ?? ''
+      ].join(':'))
+      .join('|');
+
+    return [
+      actor?.id ?? 'no-actor',
+      actor?.type ?? 'unknown',
+      actorRevision,
+      actor?.items?.size ?? 0,
+      this.isEditable === true ? 'editable' : 'readonly',
+      this._helpLevel ?? '',
+      this._shellSurface ?? 'sheet',
+      itemSignature
+    ].join('::');
+  }
+
+  _getCachedPanelViewModel(panelName, cacheKey) {
+    if (!panelName || !cacheKey) return null;
+    const cache = this._panelViewModelCache;
+    const entry = cache?.get?.(panelName);
+    if (!entry || entry.key !== cacheKey) return null;
+    try {
+      return foundry.utils.duplicate(entry.value ?? {});
+    } catch (_err) {
+      cache.delete(panelName);
+      return null;
+    }
+  }
+
+  _setCachedPanelViewModel(panelName, cacheKey, value) {
+    if (!panelName || !cacheKey || value === undefined) return;
+    const cache = this._panelViewModelCache ??= new Map();
+    const order = this._panelViewModelCacheOrder ??= [];
+    try {
+      cache.set(panelName, {
+        key: cacheKey,
+        value: foundry.utils.duplicate(value ?? {})
+      });
+      const existing = order.indexOf(panelName);
+      if (existing >= 0) order.splice(existing, 1);
+      order.push(panelName);
+      while (order.length > 24) {
+        const stale = order.shift();
+        if (stale) cache.delete(stale);
+      }
+    } catch (_err) {
+      cache.delete(panelName);
+    }
+  }
+
+  _clearPanelViewModelCache() {
+    this._panelViewModelCache?.clear?.();
+    if (Array.isArray(this._panelViewModelCacheOrder)) this._panelViewModelCacheOrder.length = 0;
   }
 
   _buildCombatActionCacheKey({ actor, actionEconomyTurnState } = {}) {

@@ -1063,7 +1063,25 @@ export class ProgressionShell extends SWSEApplicationV2 {
     const captureScrollPositions = (root) => {
       if (!(root instanceof HTMLElement)) return [];
       const active = document.activeElement instanceof HTMLElement ? document.activeElement : null;
-      const nodes = [root, ...root.querySelectorAll('*')];
+      const scrollCandidateSelector = [
+        '[data-prog-scroll-key]',
+        '[data-region]',
+        '[data-shell-region]',
+        '[class*="scroll"]',
+        '[class*="rail"]',
+        '[class*="list"]',
+        '[class*="body"]',
+        '[class*="surface"]',
+        '[class*="content"]'
+      ].join(',');
+      const candidateNodes = [root, ...root.querySelectorAll(scrollCandidateSelector)];
+      let nodes = Array.from(new Set(candidateNodes));
+      if (!nodes.some(el => el instanceof HTMLElement && (el.scrollTop > 0 || el.scrollLeft > 0))) {
+        // Fallback preserves older path-based scroll restoration for unusual custom
+        // subregions. In normal progression layouts the candidate selector avoids
+        // scanning every descendant on every render.
+        nodes = [root, ...root.querySelectorAll('*')];
+      }
       const snapshots = nodes
         .filter(el => el instanceof HTMLElement)
         .filter(el => el.scrollTop > 0 || el.scrollLeft > 0)

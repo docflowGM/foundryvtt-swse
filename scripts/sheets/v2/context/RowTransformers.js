@@ -97,11 +97,94 @@ function isNaturalWeaponItem(item) {
  */
 
 export class RowTransformers {
+  static _rowCache = new Map();
+  static _rowCacheOrder = [];
+  static _rowCacheMax = 600;
+
+  static _duplicateRow(row) {
+    try {
+      if (typeof foundry?.utils?.duplicate === 'function') return foundry.utils.duplicate(row);
+    } catch (_err) {
+      // fall through
+    }
+    try {
+      return structuredClone(row);
+    } catch (_err) {
+      try {
+        return JSON.parse(JSON.stringify(row));
+      } catch (_jsonErr) {
+        return row;
+      }
+    }
+  }
+
+  static _itemRevisionSignature(item) {
+    if (!item) return 'no-item';
+    const actor = item.actor ?? null;
+    const actorRevision = actor?._stats?.modifiedTime
+      ?? actor?._source?._stats?.modifiedTime
+      ?? actor?.system?._version
+      ?? '';
+    const itemRevision = item?._stats?.modifiedTime
+      ?? item?._source?._stats?.modifiedTime
+      ?? item?.system?._version
+      ?? '';
+    return [
+      actor?.id ?? actor?._id ?? '',
+      actorRevision,
+      item?.id ?? item?._id ?? '',
+      item?.uuid ?? '',
+      item?.type ?? '',
+      itemRevision,
+      item?.name ?? '',
+      item?.img ?? '',
+      item?.system?.equipped ?? '',
+      item?.system?.quantity ?? '',
+      item?.system?.uses?.value ?? '',
+      item?.system?.ammo?.value ?? item?.system?.ammunition?.value ?? '',
+      item?.system?.activated ?? item?.system?.active ?? '',
+      item?.flags?.swse?.equipped ?? '',
+      item?.flags?.swse?.autoEquipped ?? '',
+      item?.flags?.swse?.isNaturalWeapon ?? ''
+    ].join('::');
+  }
+
+  static _buildRowCacheKey(kind, item, isEditable = false) {
+    return [kind, isEditable === true ? 'editable' : 'readonly', this._itemRevisionSignature(item)].join('||');
+  }
+
+  static _getCachedRow(kind, item, isEditable = false) {
+    const key = this._buildRowCacheKey(kind, item, isEditable);
+    const row = this._rowCache.get(key);
+    return row ? this._duplicateRow(row) : null;
+  }
+
+  static _storeCachedRow(kind, item, isEditable = false, row = null) {
+    if (!row) return row;
+    const key = this._buildRowCacheKey(kind, item, isEditable);
+    this._rowCache.set(key, this._duplicateRow(row));
+    const existing = this._rowCacheOrder.indexOf(key);
+    if (existing >= 0) this._rowCacheOrder.splice(existing, 1);
+    this._rowCacheOrder.push(key);
+    while (this._rowCacheOrder.length > this._rowCacheMax) {
+      const stale = this._rowCacheOrder.shift();
+      if (stale) this._rowCache.delete(stale);
+    }
+    return this._duplicateRow(row);
+  }
+
+  static clearRowCache() {
+    this._rowCache.clear();
+    this._rowCacheOrder.length = 0;
+  }
   /**
    * Transform an item into a generic inventory ledger row
    * PHASE 5: Include natural weapons as auto-equipped
    */
   static toInventoryRow(item, isEditable) {
+    const cached = this._getCachedRow('inventory', item, isEditable);
+    if (cached) return cached;
+
     // Natural weapons are always armed, but class starter equipment that carries
     // flags.swse.autoEquipped remains a normal item that can be unequipped.
     // Keep this in sync with combat attack hydration: the Gear tab and Combat tab
@@ -128,7 +211,7 @@ export class RowTransformers {
       || (isNaturalWeapon && truthy(item.flags?.swse?.autoEquipped))
       || isNaturalWeapon;
 
-    return {
+    const row = {
       id: item.id,
       uuid: item.uuid,
       name: item.name || 'Unnamed Item',
@@ -173,14 +256,17 @@ export class RowTransformers {
       canEdit: isEditable,
       canDelete: isEditable
     };
+    return this._storeCachedRow('inventory', item, isEditable, row);
   }
 
   /**
    * Transform armor item into summary display
    */
   static toArmorSummaryRow(item) {
+    const cached = this._getCachedRow('armor-summary', item, false);
+    if (cached) return cached;
     const armor = resolveArmorData(item);
-    return {
+    const row = {
       id: item.id,
       uuid: item.uuid,
       name: item.name || 'Unnamed Armor',
@@ -202,15 +288,18 @@ export class RowTransformers {
       currentSR: armor.currentSR,
       armorStats: armor
     };
+    return this._storeCachedRow('armor-summary', item, false, row);
   }
 
   /**
    * Transform a talent item into a ledger row
    */
   static toTalentRow(item, isEditable) {
+    const cached = this._getCachedRow('talent', item, isEditable);
+    if (cached) return cached;
     const tree = safeText(item.system?.tree ?? item.system?.talentTree ?? item.system?.talent_tree, 'General');
 
-    return {
+    const row = {
       id: item.id,
       uuid: item.uuid,
       name: item.name || 'Unnamed Talent',
@@ -232,13 +321,16 @@ export class RowTransformers {
       canEdit: isEditable,
       canDelete: isEditable
     };
+    return this._storeCachedRow('talent', item, isEditable, row);
   }
 
   /**
    * Transform a feat item into a ledger row
    */
   static toFeatRow(item, isEditable) {
-    return {
+    const cached = this._getCachedRow('feat', item, isEditable);
+    if (cached) return cached;
+    const row = {
       id: item.id,
       uuid: item.uuid,
       name: item.name || 'Unnamed Feat',
@@ -257,13 +349,16 @@ export class RowTransformers {
       canEdit: isEditable,
       canDelete: isEditable
     };
+    return this._storeCachedRow('feat', item, isEditable, row);
   }
 
   /**
    * Transform a maneuver item into a ledger row
    */
   static toManeuverRow(item, isEditable) {
-    return {
+    const cached = this._getCachedRow('maneuver', item, isEditable);
+    if (cached) return cached;
+    const row = {
       id: item.id,
       uuid: item.uuid,
       name: item.name || 'Unnamed Maneuver',
@@ -282,6 +377,7 @@ export class RowTransformers {
       canEdit: isEditable,
       canDelete: isEditable
     };
+    return this._storeCachedRow('maneuver', item, isEditable, row);
   }
 
   /**
