@@ -9,7 +9,7 @@
     "voiceStyle": "Calm, observant, gently probing. Speaks in metaphor and invitation rather than command.",
     "values": "Curiosity, patience, self-mastery, openness",
     "tooltip": "Vera reflects your character through exploration of the Force beyond Jedi and Sith",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/vera.png",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/vera.webp",
     "dialogues": {
       "classPaths": {
         "force_adept": {

@@ -9,7 +9,7 @@
     "voiceStyle": "Calm, curious, faintly amused. Speaks like a scientist who has already crossed lines others argue about.",
     "values": "Practicality, innovation, curiosity, results over ideology",
     "tooltip": "Urza reflects your character through living technology and pragmatic bioengineering",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/urza.png",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/urza.webp",
     "dialogues": {
       "classPaths": {
         "shaper": {

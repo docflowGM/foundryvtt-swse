@@ -1298,7 +1298,7 @@ export class ProgressionShell extends SWSEApplicationV2 {
    */
   _initializeMentorState() {
     const olSaltyData = resolveMentorData('Scoundrel') || {};
-    const portraitPath = olSaltyData.portrait || resolveMentorPortraitPath('systems/foundryvtt-swse/assets/mentors/salty.png');
+    const portraitPath = olSaltyData.portrait || resolveMentorPortraitPath('systems/foundryvtt-swse/assets/mentors/salty.webp');
 
     this.mentor = {
       id: 'ol-salty',

@@ -9,7 +9,7 @@
     "voiceStyle": "Fast-talking, confident, teasing. Masks experience with bravado.",
     "values": "Freedom, skill, momentum, self-reliance",
     "tooltip": "Mayu reflects your character through speed, instinct, and daring",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/mayu.png",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/mayu.webp",
     "dialogues": {
       "classPaths": {
         "ace_pilot": {

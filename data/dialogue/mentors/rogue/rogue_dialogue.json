@@ -9,7 +9,7 @@
     "voiceStyle": "Confident, amused, unapologetic. Speaks like someone who has already escaped.",
     "values": "Freedom, autonomy, adaptability, self-sovereignty",
     "tooltip": "Rogue reflects your character through radical freedom and life beyond the law",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/Rogue.png",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/Rogue.webp",
     "dialogues": {
       "classPaths": {
         "outlaw": {

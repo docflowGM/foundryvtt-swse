@@ -9,7 +9,7 @@
     "voiceStyle": "Calm, deliberate, metaphor-rich. Speaks as a teacher whose lessons unfold over time.",
     "values": "Discipline, honor, balance, restraint",
     "tooltip": "Master Zhen reflects your character through discipline, balance, and the way of the empty hand",
-    "avatar": "systems/foundryvtt-swse/assets/mentors/zhen.png",
+    "avatar": "systems/foundryvtt-swse/assets/mentors/zhen.webp",
     "dialogues": {
       "classPaths": {
         "martial_arts_master": {
