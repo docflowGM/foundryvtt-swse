@@ -8,7 +8,7 @@
 
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
-import { getDamageAbilityContribution, getHalfLevelDamageBonus, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus, isVehicleWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { getDamageAbilityContribution, getHalfLevelDamageBonus, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus, isRangedWeapon as isRawRangedWeapon, isVehicleWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class WeaponsEngine {
@@ -448,14 +448,17 @@ export class WeaponsEngine {
     const abilityMod = getDamageAbilityContribution(actor, weapon);
     const enhancement = getWeaponFlatDamageBonus(weapon);
 
+    const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
+    const speciesBonus = isRawRangedWeapon(weapon) ? (speciesCombat.rangedDamage || 0) : (speciesCombat.meleeDamage || 0);
+
     const components = {
       '½ Level': halfLvl,
       'Ability': abilityMod,
       'Enhancement': enhancement
     };
+    if (speciesBonus !== 0) components['Species'] = speciesBonus;
 
-    const total =
-      halfLvl + abilityMod + enhancement;
+    const total = halfLvl + abilityMod + enhancement + speciesBonus;
 
     return { total, components };
   }

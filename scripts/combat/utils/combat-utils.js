@@ -4,6 +4,8 @@ import { SchemaAdapters } from '../../utils/schema-adapters.js';
 import { isNpcStatblockMode } from '../../actors/npc/npc-mode-adapter.js';
 import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
 import { getDamageAbilityContribution, getHalfLevelDamageBonus, getRangePenalty, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus, isMeleeWeapon as isRawMeleeWeapon, isRangedWeapon as isRawRangedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
 
 /**
  * Modern SWSE Combat Utilities (v13+)
@@ -329,17 +331,56 @@ export function hasDexToDamageTalent(actor) {
   return false;
 }
 
+function computePassiveStateDamageBonus(actor, weapon, context = {}) {
+  let stateBonus = 0;
+  try {
+    if (!actor?.items) return 0;
+    const enrichedContext = { ...context, weapon };
+    for (const item of actor.items) {
+      if (item.system?.executionModel !== 'PASSIVE' || item.system?.subType !== 'STATE') continue;
+      const modifiers = item.system?.abilityMeta?.modifiers;
+      if (!Array.isArray(modifiers)) continue;
+      const meta = item.system?.abilityMeta || {};
+      for (const modifier of modifiers) {
+        const scopedModifier = {
+          ...modifier,
+          mechanicsMode: modifier.mechanicsMode || meta.mechanicsMode,
+          applicationScope: modifier.applicationScope || meta.applicationScope,
+          staticSheetPolicy: modifier.staticSheetPolicy || meta.staticSheetPolicy,
+          requiresRuntimeContext: modifier.requiresRuntimeContext ?? meta.requiresRuntimeContext,
+          requiresSelectedChoice: modifier.requiresSelectedChoice ?? meta.requiresSelectedChoice,
+          predicateRequirements: modifier.predicateRequirements || meta.predicateRequirements || []
+        };
+        if (!ModifierEngine.isModifierAllowedInContext(actor, scopedModifier, enrichedContext, { staticSheet: false })) continue;
+        const targets = Array.isArray(modifier.target) ? modifier.target : [modifier.target];
+        const appliesToDamage = targets.some((target) => {
+          const normalized = String(target || '').toLowerCase();
+          return normalized === 'damage' || normalized === 'damage.bonus' || normalized === 'damage.ranged' || normalized === 'damage.melee';
+        });
+        if (!appliesToDamage) continue;
+        const predicates = Array.isArray(modifier.predicates) ? modifier.predicates : [];
+        if (!evaluateStatePredicates(actor, predicates, enrichedContext)) continue;
+        stateBonus += Number(modifier.value || 0);
+      }
+    }
+  } catch (err) {
+    console.warn('[SWSE] Failed to calculate PASSIVE/STATE damage bonus:', err);
+  }
+  return stateBonus;
+}
+
 /**
- * Compute SWSE RAW damage bonus.
- * - Half level
- * - Ability-based (STR or DEX)
- * - Two-handed melee weapons add 2x STR (not light weapons)
- * - Talents may allow DEX for melee damage
+ * Compute SWSE RAW damage bonus — canonical implementation.
+ * All roll functions and UI previews call this single function so displayed
+ * math and actual roll math are always identical.
  *
- * @param {Actor} actor - The actor
- * @param {Item} weapon - The weapon
- * @param {Object} [options] - Options
- * @param {boolean} [options.forceTwoHanded] - Force two-handed calculation
+ * Includes: ½ heroic level, ability modifier, flat weapon bonus, species
+ * combat bonus, optional dex-to-damage talent override, PASSIVE/STATE bonuses.
+ *
+ * @param {Actor} actor
+ * @param {Item} weapon
+ * @param {Object} [options]
+ * @param {boolean} [options.forceTwoHanded]
  * @returns {number}
  */
 export function computeDamageBonus(actor, weapon, options = {}) {
@@ -371,6 +412,7 @@ export function computeDamageBonus(actor, weapon, options = {}) {
   }
 
   bonus += abilityContribution;
+  bonus += computePassiveStateDamageBonus(actor, weapon, options);
 
   return bonus;
 }
