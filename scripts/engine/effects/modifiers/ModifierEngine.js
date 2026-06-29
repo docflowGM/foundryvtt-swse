@@ -31,10 +31,13 @@ export class ModifierEngine {
 
   static _modifierSourceCache = new Map();
   static _aggregateCache = new Map();
+  static _breakdownCache = new Map();
   static _modifierCacheOrder = [];
   static _aggregateCacheOrder = [];
+  static _breakdownCacheOrder = [];
   static _modifierCacheMax = 160;
   static _aggregateCacheMax = 160;
+  static _breakdownCacheMax = 160;
 
   static _cloneCacheValue(value) {
     if (value == null || typeof value !== 'object') return value;
@@ -66,8 +69,10 @@ export class ModifierEngine {
     if (!actorId) {
       this._modifierSourceCache.clear();
       this._aggregateCache.clear();
+      this._breakdownCache.clear();
       this._modifierCacheOrder.length = 0;
       this._aggregateCacheOrder.length = 0;
+      this._breakdownCacheOrder.length = 0;
       return;
     }
     const prefix = `${actorId}|`;
@@ -77,13 +82,22 @@ export class ModifierEngine {
     for (const key of Array.from(this._aggregateCache.keys())) {
       if (key.startsWith(prefix)) this._aggregateCache.delete(key);
     }
+    for (const key of Array.from(this._breakdownCache.keys())) {
+      if (key.startsWith(prefix)) this._breakdownCache.delete(key);
+    }
     this._modifierCacheOrder = this._modifierCacheOrder.filter(key => !key.startsWith(prefix));
     this._aggregateCacheOrder = this._aggregateCacheOrder.filter(key => !key.startsWith(prefix));
+    this._breakdownCacheOrder = this._breakdownCacheOrder.filter(key => !key.startsWith(prefix));
   }
 
   static _safeJson(value) {
     try { return JSON.stringify(value ?? null); }
     catch (_err) { return 'unserializable'; }
+  }
+
+  static _targetsSignature(targets = []) {
+    if (!Array.isArray(targets) || targets.length === 0) return '';
+    return targets.map(target => String(target || '')).filter(Boolean).sort().join('|');
   }
 
   static _actorModifierSourceSignature(actor) {
@@ -518,6 +532,11 @@ export class ModifierEngine {
   static async aggregateTarget(actor, target, options = {}) {
     const context = options?.context ?? {};
     const hasRuntimeContext = this._hasRuntimeContext(context);
+    if (!hasRuntimeContext) {
+      const aggregated = await this.aggregateAll(actor);
+      return Number(aggregated?.[target] || 0) || 0;
+    }
+
     const baseModifiers = await this.getAllModifiers(actor);
     const contextualModifiers = hasRuntimeContext
       ? this.getEffectIntentModifiersForContext(actor, { context, includeBroad: false })
@@ -573,9 +592,18 @@ export class ModifierEngine {
    * @returns {Object}
    */
   static async buildModifierBreakdown(actor, targets = []) {
+    const sourceKey = this._actorModifierSourceSignature(actor);
+    const targetKey = this._targetsSignature(targets);
+    const cacheKey = sourceKey && targetKey ? `${sourceKey}|breakdown|${targetKey}` : null;
+    if (cacheKey && this._breakdownCache.has(cacheKey)) {
+      return this._cloneCacheValue(this._breakdownCache.get(cacheKey));
+    }
+
     const allModifiers = await this.getAllModifiers(actor);
     const staticModifiers = allModifiers.filter(mod => this.isModifierAllowedInContext(actor, mod, {}, { staticSheet: true }));
-    return ModifierUtils.buildModifierBreakdown(staticModifiers, targets);
+    const breakdown = ModifierUtils.buildModifierBreakdown(staticModifiers, targets);
+    if (cacheKey) this._rememberBounded(this._breakdownCache, this._breakdownCacheOrder, cacheKey, breakdown, this._breakdownCacheMax);
+    return this._cloneCacheValue(breakdown);
   }
 
   /**
