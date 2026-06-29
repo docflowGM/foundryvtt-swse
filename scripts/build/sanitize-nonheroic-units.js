@@ -209,18 +209,19 @@ function main() {
 
   swseLogger.log('Reading nonheroic_units.json...');
 
-  // Read file line by line (JSONL format)
-  const rawData = fs.readFileSync(inputFile, 'utf8');
-  const lines = rawData.trim().split('\n');
+  // Read as a standard JSON array.
+  const rawEntries = JSON.parse(fs.readFileSync(inputFile, 'utf8'));
+  if (!Array.isArray(rawEntries)) {
+    throw new Error('nonheroic_units.json must contain a JSON array');
+  }
 
-  swseLogger.log(`Found ${lines.length} entries`);
+  swseLogger.log(`Found ${rawEntries.length} entries`);
 
   const sanitizedEntries = [];
   let skipped = 0;
 
-  lines.forEach((line, index) => {
+  rawEntries.forEach((rawEntry, index) => {
     try {
-      const rawEntry = JSON.parse(line);
 
       // Skip entries with no name or all zero ability scores
       if (!rawEntry.name || rawEntry.name === '') {
