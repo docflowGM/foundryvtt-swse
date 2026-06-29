@@ -39,6 +39,87 @@ import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/en
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 
 export class DerivedCalculator {
+  static _computeCache = new Map();
+  static _computeCacheOrder = [];
+  static _computeCacheMax = 120;
+  static _computeInFlight = new Map();
+
+  static _cloneUpdates(value) {
+    if (value == null || typeof value !== 'object') return value;
+    try {
+      if (typeof structuredClone === 'function') return structuredClone(value);
+    } catch (_err) {
+      // Fall through to Foundry/JSON clone.
+    }
+    try {
+      return foundry?.utils?.deepClone?.(value) ?? JSON.parse(JSON.stringify(value));
+    } catch (_err) {
+      return JSON.parse(JSON.stringify(value));
+    }
+  }
+
+  static _rememberComputeResult(key, updates) {
+    if (!key) return;
+    this._computeCache.set(key, this._cloneUpdates(updates));
+    const existing = this._computeCacheOrder.indexOf(key);
+    if (existing >= 0) this._computeCacheOrder.splice(existing, 1);
+    this._computeCacheOrder.push(key);
+    while (this._computeCacheOrder.length > this._computeCacheMax) {
+      const stale = this._computeCacheOrder.shift();
+      if (stale) this._computeCache.delete(stale);
+    }
+  }
+
+  static clearCaches(actorId = null) {
+    if (!actorId) {
+      this._computeCache.clear();
+      this._computeCacheOrder.length = 0;
+      this._computeInFlight.clear();
+      return;
+    }
+
+    const prefix = `${actorId}|`;
+    for (const key of Array.from(this._computeCache.keys())) {
+      if (key.startsWith(prefix)) this._computeCache.delete(key);
+    }
+    for (const key of Array.from(this._computeInFlight.keys())) {
+      if (key.startsWith(prefix)) this._computeInFlight.delete(key);
+    }
+    this._computeCacheOrder = this._computeCacheOrder.filter(key => !key.startsWith(prefix));
+  }
+
+  static getActorComputeSignature(actor) {
+    if (!actor?.id) return null;
+    const actorRevision = actor?._stats?.modifiedTime
+      ?? actor?._source?._stats?.modifiedTime
+      ?? actor?.system?._version
+      ?? actor?.system?.modifiedTime
+      ?? null;
+    if (!actorRevision) return null;
+
+    const items = Array.from(actor?.items ?? [])
+      .map(item => [
+        item?.id ?? item?._id ?? 'no-id',
+        item?.type ?? 'unknown',
+        item?._stats?.modifiedTime ?? item?._source?._stats?.modifiedTime ?? item?.system?._version ?? '',
+        item?.system?.quantity ?? '',
+        item?.system?.equipped ?? item?.system?.isEquipped ?? '',
+        item?.system?.uses?.value ?? item?.system?.ammo?.value ?? ''
+      ].join(':'))
+      .sort()
+      .join('|');
+
+    const effects = Array.from(actor?.effects ?? [])
+      .map(effect => [
+        effect?.id ?? effect?._id ?? 'no-id',
+        effect?._stats?.modifiedTime ?? effect?._source?._stats?.modifiedTime ?? '',
+        effect?.disabled === true ? 'disabled' : 'enabled'
+      ].join(':'))
+      .sort()
+      .join('|');
+
+    return [actor.id, actor.type ?? 'actor', actorRevision, items, effects].join('|');
+  }
 
   /**
    * Resolve class levels from the canonical progression ledger when present,
@@ -97,9 +178,19 @@ export class DerivedCalculator {
    * @returns {Promise<Object>} update object to apply to derived system fields
    */
   static async computeAll(actor) {
-    try {
-      // PHASE 3 AUDITING: Record derived recalculation
-      MutationIntegrityLayer.recordDerivedRecalc();
+    const cacheKey = this.getActorComputeSignature(actor);
+    if (cacheKey && this._computeCache.has(cacheKey)) {
+      return this._cloneUpdates(this._computeCache.get(cacheKey));
+    }
+    if (cacheKey && this._computeInFlight.has(cacheKey)) {
+      const updates = await this._computeInFlight.get(cacheKey);
+      return this._cloneUpdates(updates);
+    }
+
+    const computePromise = (async () => {
+      try {
+        // PHASE 3 AUDITING: Record derived recalculation
+        MutationIntegrityLayer.recordDerivedRecalc();
 
       const prog = actor.system.progression || {};
       const classLevels = this._resolveClassLevels(actor, prog.classLevels || []);
@@ -828,12 +919,23 @@ export class DerivedCalculator {
         );
       }
 
-      swseLogger.debug(`DerivedCalculator computed for ${actor.name}`, { updates });
+        swseLogger.debug(`DerivedCalculator computed for ${actor.name}`, { updates });
 
-      return updates;
-    } catch (err) {
-      swseLogger.error(`DerivedCalculator.computeAll failed for ${actor?.name ?? 'unknown'}`, err);
-      throw err;
+        return updates;
+      } catch (err) {
+        swseLogger.error(`DerivedCalculator.computeAll failed for ${actor?.name ?? 'unknown'}`, err);
+        throw err;
+      }
+    })();
+
+    if (cacheKey) this._computeInFlight.set(cacheKey, computePromise);
+
+    try {
+      const updates = await computePromise;
+      if (cacheKey) this._rememberComputeResult(cacheKey, updates);
+      return this._cloneUpdates(updates);
+    } finally {
+      if (cacheKey) this._computeInFlight.delete(cacheKey);
     }
   }
 

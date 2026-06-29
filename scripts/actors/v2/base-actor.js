@@ -112,25 +112,48 @@ export class SWSEV2BaseActor extends SWSEActorBase {
    * @private
    */
   async _computeDerivedAsync(system) {
+    const signature = DerivedCalculator.getActorComputeSignature?.(this) ?? null;
+
+    // Foundry can call prepareDerivedData multiple times for the same document
+    // revision during sheet repaint/point-edit flows. Coalesce identical async
+    // derived requests so one small field edit does not fan out into repeated
+    // DerivedCalculator passes and follow-up renders for unchanged inputs.
+    if (signature) {
+      if (this._swseDerivedAsyncInFlightSignature === signature) return;
+      if (this._swseDerivedAsyncAppliedSignature === signature) return;
+      this._swseDerivedAsyncInFlightSignature = signature;
+    }
+
     try {
       const updates = await DerivedCalculator.computeAll(this);
+      let changed = false;
 
-      // Merge computed values into system.derived
+      // Merge computed values into system.derived, but only mark the actor for a
+      // follow-up repaint when the authoritative derived snapshot actually
+      // differs. This preserves the point-edit pattern: actor updates still
+      // recalc once, but no extra async repaint is requested for identical totals.
       if (updates) {
         for (const [path, value] of Object.entries(updates)) {
           const parts = path.split('.');
           if (parts.length === 3 && parts[0] === 'system' && parts[1] === 'derived') {
             // system.derived.field → system.derived[field]
             const field = parts[2];
-            system.derived[field] = value;
+            if (!this._swseDerivedValuesEqual(system.derived?.[field], value)) {
+              system.derived[field] = value;
+              changed = true;
+            }
           }
         }
       }
+
+      if (signature) this._swseDerivedAsyncAppliedSignature = signature;
 
       // DerivedCalculator.computeAll() is the authoritative, already-modified
       // derived snapshot. Do not run ModifierEngine.computeModifierBundle() here:
       // that legacy pass adds the same static modifiers a second time, which
       // overcounts Skill Focus and other passive bonuses on sheet/roll totals.
+
+      if (!changed) return;
 
       system.derived.meta ??= {};
       system.derived.meta.lastAsyncRecalcMs = Date.now();
@@ -167,6 +190,19 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     } catch (err) {
       // Log but don't throw - derived computation is non-critical
       console.warn(`Failed to compute derived values for ${this.name}:`, err);
+    } finally {
+      if (signature && this._swseDerivedAsyncInFlightSignature === signature) {
+        this._swseDerivedAsyncInFlightSignature = null;
+      }
+    }
+  }
+
+  _swseDerivedValuesEqual(left, right) {
+    if (left === right) return true;
+    try {
+      return JSON.stringify(left) === JSON.stringify(right);
+    } catch (_err) {
+      return false;
     }
   }
 
