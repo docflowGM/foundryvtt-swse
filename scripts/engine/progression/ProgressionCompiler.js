@@ -499,9 +499,13 @@ export class ProgressionCompiler {
     // (This is handled by the UI layer, but we can double-check here)
 
     // Phase 3: Resolve
+    // Canonical level field is system.level (defined in template.json). The
+    // previous 'system.progression.level' was a phantom path — never read and
+    // not in the template — and diverged from ProgressionSession, which writes
+    // system.level.
     return {
       set: {
-        'system.progression.level': (snapshot.level || 1) + 1
+        'system.level': (snapshot.level || 1) + 1
       },
       add: {
         classLevels: [{ classId, level: 1 }]

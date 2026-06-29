@@ -302,7 +302,7 @@ export class ArchitectureGovernance {
       ],
       requiredPatterns: [
         'All state writes via progressionSession.commitSelection()',
-        'All legality checks via PrerequisiteChecker.evaluateAcquisition()',
+        'All legality checks via AbilityEngine.evaluateAcquisition()',
         'All mutations via MutationPlan.compileFromProjection() + apply()',
         'All invalidation via ProgressionReconciler.reconcileAfterCommit()',
       ],
@@ -323,7 +323,7 @@ export class ArchitectureGovernance {
     lines.push('## Core Rules');
     lines.push('');
     lines.push('### 1. PrerequisiteChecker is the sole rules authority');
-    lines.push('✅ DO: Check legality via PrerequisiteChecker.evaluateAcquisition()');
+    lines.push('✅ DO: Check legality via AbilityEngine.evaluateAcquisition() (public facade over PrerequisiteChecker)');
     lines.push('❌ DON\'T: Write custom prerequisite logic in steps/suggestion/advisory');
     lines.push('❌ DON\'T: Duplicate prerequisite checks elsewhere');
     lines.push('');

@@ -58,7 +58,7 @@
  */
 
 import { ForecastEngine } from './forecast-engine.js';
-import { PrerequisiteChecker } from '/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js';
+import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 import { swseLogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 
 export class SuggestionContextAdapter {
@@ -238,12 +238,10 @@ export class SuggestionContextAdapter {
 
     return options.filter(option => {
       try {
-        // Use PrerequisiteChecker for legality
-        const result = PrerequisiteChecker.checkFeatPrerequisites(
-          shell.actor,
-          option
-        );
-        return result.met === true;
+        // Use AbilityEngine.evaluateAcquisition — the public legality facade over
+        // PrerequisiteChecker (adds droid gating + correct feat/talent routing).
+        const result = AbilityEngine.evaluateAcquisition(shell.actor, option);
+        return result.legal === true;
       } catch (err) {
         swseLogger.warn('[SuggestionContextAdapter] Error checking legality:', err);
         // If check fails, exclude the option (fail safe)
