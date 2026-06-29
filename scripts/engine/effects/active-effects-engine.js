@@ -1,6 +1,16 @@
 /**
  * ActiveEffectsEngine — Phase D Persistent Effects
  * Temporary modifiers with duration tracking and auto-expiration
+ *
+ * EFFECT AUTHORITY NOTE (classification, do not migrate here):
+ * SWSE currently has TWO effect systems running in parallel:
+ *   1. This engine's custom `actor.system.activeEffects` array — temporary,
+ *      duration-tracked modifiers consumed by ModifierEngine.
+ *   2. Foundry `ActiveEffect` documents — created by feat/force systems and read
+ *      by ModifierEngine only when they carry SWSE intent metadata.
+ * Picking a single runtime authority (and migrating one into the other) is a
+ * deliberate architecture decision tracked separately; this engine remains the
+ * authority for the custom `system.activeEffects` store only.
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";

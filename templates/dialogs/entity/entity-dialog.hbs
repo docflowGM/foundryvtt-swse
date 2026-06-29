@@ -29,38 +29,38 @@
       </div>
     </div>
 
-    {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/header.hbs}}
-    {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/tabs.hbs}}
+    {{> "systems/foundryvtt-swse/templates/dialogs/entity/parts/header.hbs"}}
+    {{> "systems/foundryvtt-swse/templates/dialogs/entity/parts/tabs.hbs"}}
 
     <section class="item-editor__body swse-entity-dialog__body" data-entity-preserve-scroll="body">
       <div class="tab {{#if (eq activeTab 'data')}}active{{/if}}" data-tab="data">
         {{#if entityDialog.isWeapon}}
-          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-weapon.hbs}}
+          {{> "systems/foundryvtt-swse/templates/dialogs/entity/parts/body-weapon.hbs"}}
         {{else if entityDialog.isShield}}
-          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-shield.hbs}}
+          {{> "systems/foundryvtt-swse/templates/dialogs/entity/parts/body-shield.hbs"}}
         {{else if entityDialog.isArmor}}
-          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-armor.hbs}}
+          {{> "systems/foundryvtt-swse/templates/dialogs/entity/parts/body-armor.hbs"}}
         {{else if entityDialog.isItem}}
-          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-item.hbs}}
+          {{> "systems/foundryvtt-swse/templates/dialogs/entity/parts/body-item.hbs"}}
         {{else if entityDialog.isFeat}}
-          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-feat.hbs}}
+          {{> "systems/foundryvtt-swse/templates/dialogs/entity/parts/body-feat.hbs"}}
         {{else if entityDialog.isTalent}}
-          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-talent.hbs}}
+          {{> "systems/foundryvtt-swse/templates/dialogs/entity/parts/body-talent.hbs"}}
         {{else if entityDialog.isForcePower}}
-          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-force-power.hbs}}
+          {{> "systems/foundryvtt-swse/templates/dialogs/entity/parts/body-force-power.hbs"}}
         {{else if entityDialog.isCustomSkill}}
-          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-custom-skill.hbs}}
+          {{> "systems/foundryvtt-swse/templates/dialogs/entity/parts/body-custom-skill.hbs"}}
         {{else}}
-          {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/body-unsupported.hbs}}
+          {{> "systems/foundryvtt-swse/templates/dialogs/entity/parts/body-unsupported.hbs"}}
         {{/if}}
 
-        {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/validation-panel.hbs}}
+        {{> "systems/foundryvtt-swse/templates/dialogs/entity/parts/validation-panel.hbs"}}
       </div>
 
-      {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/description.hbs}}
-      {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/effects.hbs}}
+      {{> "systems/foundryvtt-swse/templates/dialogs/entity/parts/description.hbs"}}
+      {{> "systems/foundryvtt-swse/templates/dialogs/entity/parts/effects.hbs"}}
     </section>
 
-    {{> systems/foundryvtt-swse/templates/dialogs/entity/parts/footer.hbs}}
+    {{> "systems/foundryvtt-swse/templates/dialogs/entity/parts/footer.hbs"}}
   </section>
 </form>

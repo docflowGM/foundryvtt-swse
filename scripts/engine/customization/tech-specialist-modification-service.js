@@ -1,4 +1,5 @@
 import { TransactionEngine } from "/systems/foundryvtt-swse/scripts/engine/store/transaction-engine.js";
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { LedgerService } from "/systems/foundryvtt-swse/scripts/engine/store/ledger-service.js";
 import { rollSkill } from "/systems/foundryvtt-swse/scripts/rolls/skills.js";
 import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
@@ -644,12 +645,19 @@ export class TechSpecialistModificationService {
       const set = { [`flags.${FLAG_SCOPE}.${TECH_FLAG}.activeTraitId`]: traitRecordId };
       if (previous) applyTraitSystemUpdatesToActor(set, subject, TRAIT_BY_ID.get(previous.traitId), -1);
       applyTraitSystemUpdatesToActor(set, subject, TRAIT_BY_ID.get(next.traitId), 1);
-      await subject.update(set);
+      // Mechanical trait change → route through ActorEngine so derived data recalcs.
+      await ActorEngine.updateActor(subject, set, { source: 'TechSpecialist.toggleActiveSignatureTrait' });
     } else {
       const update = { [`flags.${FLAG_SCOPE}.${TECH_FLAG}.activeTraitId`]: traitRecordId };
       if (previous) applyTraitSystemUpdatesToItem(update, subject, TRAIT_BY_ID.get(previous.traitId), -1);
       applyTraitSystemUpdatesToItem(update, subject, TRAIT_BY_ID.get(next.traitId), 1);
-      await subject.update(update);
+      // Mechanical trait change on an owned item → route through ActorEngine.
+      if (subject?.actor) {
+        await ActorEngine.updateOwnedItems(subject.actor, [{ _id: subject.id, ...update }]);
+      } else {
+        // @mutation-exception: world-item - unowned item, no actor to route through
+        await subject.update(update);
+      }
     }
     ui.notifications.info(`${subject.name} active Signature trait changed.`);
     return { success: true };

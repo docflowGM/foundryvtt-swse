@@ -19,7 +19,10 @@ export function sanitizeHTML(html, options = {}) {
 
   const {
     allowedTags = ['b', 'i', 'u', 'em', 'strong', 'br', 'p', 'span', 'div', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'ul', 'ol', 'li'],
-    allowedAttributes = ['class', 'id', 'style', 'data-tooltip'],
+    // 'style' and 'id' are intentionally NOT default-allowed for untrusted
+    // content (inline style enables overlay/hiding tricks; id can collide with
+    // app DOM). Callers that need them must pass allowedAttributes explicitly.
+    allowedAttributes = ['class', 'data-tooltip'],
     stripScripts = true,
     stripEvents = true
   } = options;

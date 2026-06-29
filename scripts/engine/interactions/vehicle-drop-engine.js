@@ -13,6 +13,7 @@
  */
 
 import { VehicleCrewAssignmentService } from "/systems/foundryvtt-swse/scripts/engine/crew/vehicle-crew-assignment-service.js";
+import { cloneDroppedItemData } from "/systems/foundryvtt-swse/scripts/engine/interactions/dropped-item-clone.js";
 
 /**
  *
@@ -217,7 +218,7 @@ export class VehicleDropEngine {
         createEmbedded: [
           {
             type: 'Item',
-            data: weapon.toObject()
+            data: cloneDroppedItemData(weapon)
           }
         ]
       },
@@ -277,7 +278,7 @@ export class VehicleDropEngine {
         createEmbedded: [
           {
             type: 'Item',
-            data: item.toObject()
+            data: cloneDroppedItemData(item)
           }
         ]
       },

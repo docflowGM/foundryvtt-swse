@@ -644,9 +644,13 @@ export class CombatEngine {
         return this.executeCoupDeGrace(actor);
       }
 
-      // Future: Add other universal actions here
-      console.warn(`Combat action ${key} not yet implemented`);
-      return;
+      // Future: Add other universal actions here.
+      // No automated resolver yet — tell the user to resolve it manually instead
+      // of silently doing nothing. (No action economy was spent above, so this
+      // does not change gameplay.)
+      console.warn(`Combat action ${key} has no automated resolver`);
+      ui?.notifications?.info?.('This combat action has no automation yet — resolve it manually.');
+      return { success: false, reason: 'No resolver', manual: true, actionKey: key };
     }
 
     // Item-based actions. Species activated abilities are materialized as

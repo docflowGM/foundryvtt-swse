@@ -28,6 +28,7 @@
  */
 
 import { ActorAbilityBridge } from "/systems/foundryvtt-swse/scripts/adapters/ActorAbilityBridge.js";
+import { cloneDroppedItemData } from "/systems/foundryvtt-swse/scripts/engine/interactions/dropped-item-clone.js";
 
 export class DropResolutionEngine {
   static _recentDropKeys = new Map();
@@ -533,7 +534,7 @@ function handleClass(actor, item) {
  * @returns {Object} mutationPlan with createEmbedded
  */
 function _createItemMutation(item, acquisition = null) {
-  const data = item.toObject?.() ?? foundry.utils.deepClone(item);
+  const data = cloneDroppedItemData(item);
 
   if (acquisition && typeof acquisition === 'object') {
     data.system = { ...(data.system ?? {}) };
