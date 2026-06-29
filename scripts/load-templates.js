@@ -271,14 +271,7 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/levelup.hbs',
   'systems/foundryvtt-swse/templates/apps/npc-levelup-entry.hbs',
   'systems/foundryvtt-swse/templates/apps/levelup-engine-ui.hbs',
-  'systems/foundryvtt-swse/templates/apps/chargen-background-mentor-suggestion.hbs',
-  'systems/foundryvtt-swse/templates/apps/chargen-class-required-dialog.hbs',
-  'systems/foundryvtt-swse/templates/apps/chargen-custom-language.hbs',
-  'systems/foundryvtt-swse/templates/apps/chargen-droid-import.hbs',
-  'systems/foundryvtt-swse/templates/apps/chargen-feat-suggestions-dialog.hbs',
-  'systems/foundryvtt-swse/templates/apps/chargen-skill-focus.hbs',
   'systems/foundryvtt-swse/templates/apps/choices/feat-choice-dialog.hbs',
-  'systems/foundryvtt-swse/templates/apps/chargen-template-selection.hbs',
   'systems/foundryvtt-swse/templates/apps/chargen/ability-rolling.hbs',
 
   // ==============================
