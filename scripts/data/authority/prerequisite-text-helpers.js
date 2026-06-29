@@ -1,13 +1,6 @@
-// Compatibility wrapper for canonical prerequisite/content authority.
-// Static authority data now lives under scripts/data/authority/.
-
-import { normalizeAuthorityKey } from "./authority/authority-key-normalizer.js";
-import { FEAT_PREREQUISITE_AUTHORITY } from "./authority/feat-prerequisite-authority.js";
-import { TALENT_PREREQUISITE_AUTHORITY } from "./authority/talent-prerequisite-authority.js";
-
-export { normalizeAuthorityKey };
-export { FEAT_PREREQUISITE_AUTHORITY } from "./authority/feat-prerequisite-authority.js";
-export { TALENT_PREREQUISITE_AUTHORITY } from "./authority/talent-prerequisite-authority.js";
+import { normalizeAuthorityKey } from "./authority-key-normalizer.js";
+import { FEAT_PREREQUISITE_AUTHORITY } from "./feat-prerequisite-authority.js";
+import { TALENT_PREREQUISITE_AUTHORITY } from "./talent-prerequisite-authority.js";
 
 export function getCanonicalContentAuthority(type, name) {
   const key = normalizeAuthorityKey(name);

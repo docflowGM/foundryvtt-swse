@@ -23,7 +23,7 @@
  */
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
-import { getCanonicalBenefitText, getCanonicalDescriptionText, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/prerequisite-authority.js";
+import { getCanonicalBenefitText, getCanonicalDescriptionText, getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/authority/prerequisite-text-helpers.js";
 
 /**
  * Internal normalized talent entry

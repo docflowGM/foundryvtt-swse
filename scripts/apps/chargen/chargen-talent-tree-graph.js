@@ -6,7 +6,7 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getTalentTreeName } from "/systems/foundryvtt-swse/scripts/apps/chargen/chargen-property-accessor.js";
-import { getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/prerequisite-authority.js";
+import { getCanonicalPrerequisiteText } from "/systems/foundryvtt-swse/scripts/data/authority/prerequisite-text-helpers.js";
 
 /**
  * Parse prerequisites string to extract talent dependencies

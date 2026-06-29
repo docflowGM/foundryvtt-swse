@@ -372,7 +372,7 @@ export class SWSEActorSheet extends ActorSheet {
   async _onAddSkill(event) { event.preventDefault(); const skills = foundry.utils.duplicate(this.actor.system.customSkills || []); skills.push({ name: "New Skill", value: 0, ability: "str" }); await this.actor.update({"system.customSkills": skills}); }
   // @mutation-exception: legacy-disabled-sheet
   async _onRemoveSkill(event) { event.preventDefault(); const idx = Number(event.currentTarget.closest(".list-entry")?.dataset.index); const skills = foundry.utils.duplicate(this.actor.system.customSkills || []); skills.splice(idx, 1); await this.actor.update({"system.customSkills": skills}); }
-  async _onLevelUp(event) { event.preventDefault(); const { SWSELevelUp } = await import("./apps/swse-levelup.js"); return SWSELevelUp.openEnhanced(this.actor); }
+  async _onLevelUp(event) { event.preventDefault(); const { launchProgression } = await import("./apps/progression-framework/progression-entry.js"); return launchProgression(this.actor); }
   // @mutation-exception: legacy-disabled-sheet
   async _onSecondWind(event) { event.preventDefault(); if (this.actor.system.secondWind.uses <= 0) { ui.notifications.warn("No Second Wind uses remaining!"); return; } const healing = this.actor.system.secondWind.healing || 0; const newHP = Math.min(this.actor.system.hp.value + healing, this.actor.system.hp.max); await this.actor.update({ "system.hp.value": newHP, "system.secondWind.uses": this.actor.system.secondWind.uses - 1 }); ui.notifications.info(`Second Wind! Healed ${healing} HP.`); }
 }
