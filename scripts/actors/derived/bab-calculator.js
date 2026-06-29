@@ -57,6 +57,50 @@ const NONHEROIC_BAB_PROGRESSION = [
 ];
 
 export class BABCalculator {
+  static _babCache = new Map();
+  static _babCacheOrder = [];
+  static _babCacheMax = 160;
+  static _classDataLoaderPromise = null;
+
+  static clearCaches() {
+    this._babCache.clear();
+    this._babCacheOrder.length = 0;
+  }
+
+  static _rememberBab(key, value) {
+    if (!key) return;
+    this._babCache.set(key, value);
+    const existing = this._babCacheOrder.indexOf(key);
+    if (existing >= 0) this._babCacheOrder.splice(existing, 1);
+    this._babCacheOrder.push(key);
+    while (this._babCacheOrder.length > this._babCacheMax) {
+      const stale = this._babCacheOrder.shift();
+      if (stale) this._babCache.delete(stale);
+    }
+  }
+
+  static _classLevelsSignature(classLevels = [], adjustment = 0) {
+    if (!Array.isArray(classLevels) || classLevels.length === 0) return null;
+    const levels = classLevels
+      .map(entry => [
+        String(entry?.class || '').trim().toLowerCase(),
+        Number(entry?.level || 1) || 1
+      ])
+      .filter(([className]) => !!className)
+      .sort((a, b) => a[0].localeCompare(b[0]))
+      .map(([className, level]) => `${className}:${level}`)
+      .join('|');
+    if (!levels) return null;
+    return `${levels}|adj:${Number(adjustment) || 0}`;
+  }
+
+  static async _getClassDataLoader() {
+    if (!this._classDataLoaderPromise) {
+      this._classDataLoaderPromise = import("/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js");
+    }
+    return this._classDataLoaderPromise;
+  }
+
   /**
    * Resolve class level progression from every supported class-data shape.
    * During the canonical migration some callers receive loader data, some
@@ -136,8 +180,12 @@ export class BABCalculator {
       return 0;
     }
 
+    const adjustment = Number(options?.adjustment || 0) || 0;
+    const cacheKey = this._classLevelsSignature(classLevels, adjustment);
+    if (cacheKey && this._babCache.has(cacheKey)) return this._babCache.get(cacheKey);
+
     // Lazy-load only when calculating, not at boot time
-    const { getClassData } = await import("/systems/foundryvtt-swse/scripts/engine/progression/utils/class-data-loader.js");
+    const { getClassData } = await this._getClassDataLoader();
 
     let totalBAB = 0;
 
@@ -192,7 +240,8 @@ export class BABCalculator {
     }
 
     // Apply modifier adjustment (Phase 0)
-    const adjustment = options?.adjustment || 0;
-    return totalBAB + adjustment;
+    const result = totalBAB + adjustment;
+    if (cacheKey) this._rememberBab(cacheKey, result);
+    return result;
   }
 }

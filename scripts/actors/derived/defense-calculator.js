@@ -316,6 +316,273 @@ function getSystemActiveDefenseBonus(actor, defenseType) {
 
 export class DefenseCalculator {
 
+  static _defenseSourceCache = new Map();
+  static _defenseSourceCacheOrder = [];
+  static _defenseSourceCacheMax = 120;
+  static _saveBonusCache = new Map();
+  static _saveBonusCacheOrder = [];
+  static _saveBonusCacheMax = 160;
+
+  static clearCaches(actorId = null) {
+    if (!actorId) {
+      this._defenseSourceCache.clear();
+      this._defenseSourceCacheOrder.length = 0;
+      this._saveBonusCache.clear();
+      this._saveBonusCacheOrder.length = 0;
+      return;
+    }
+
+    const prefix = `${actorId}|`;
+    for (const key of Array.from(this._defenseSourceCache.keys())) {
+      if (key.startsWith(prefix)) this._defenseSourceCache.delete(key);
+    }
+    this._defenseSourceCacheOrder = this._defenseSourceCacheOrder.filter(key => !key.startsWith(prefix));
+  }
+
+  static _rememberBounded(cache, order, key, value, max) {
+    if (!key) return;
+    cache.set(key, value);
+    const existing = order.indexOf(key);
+    if (existing >= 0) order.splice(existing, 1);
+    order.push(key);
+    while (order.length > max) {
+      const stale = order.shift();
+      if (stale) cache.delete(stale);
+    }
+  }
+
+  static _safeJson(value) {
+    try { return JSON.stringify(value ?? null); }
+    catch (_err) { return 'unserializable'; }
+  }
+
+  static _actorDefenseSourceSignature(actor) {
+    if (!actor?.id) return null;
+
+    const itemSignature = Array.from(actor?.items ?? [])
+      .map(item => [
+        item?.id ?? item?._id ?? 'no-id',
+        item?.type ?? 'unknown',
+        item?.name ?? '',
+        item?._stats?.modifiedTime ?? item?._source?._stats?.modifiedTime ?? item?.system?._version ?? '',
+        item?.system?.equipped ?? item?.system?.isEquipped ?? '',
+        item?.system?.activated ?? item?.system?.active ?? '',
+        item?.system?.quantity ?? ''
+      ].join(':'))
+      .sort()
+      .join('|');
+
+    const effectSignature = Array.from(actor?.effects ?? [])
+      .map(effect => [
+        effect?.id ?? effect?._id ?? 'no-id',
+        effect?._stats?.modifiedTime ?? effect?._source?._stats?.modifiedTime ?? '',
+        effect?.disabled === true ? 'disabled' : 'enabled',
+        effect?.origin ?? ''
+      ].join(':'))
+      .sort()
+      .join('|');
+
+    const relevantState = {
+      race: actor?.system?.race ?? null,
+      species: actor?.system?.species ?? null,
+      speciesTraitBonuses: actor?.system?.speciesTraitBonuses ?? null,
+      speciesCombatBonuses: actor?.system?.speciesCombatBonuses ?? null,
+      speciesPassiveBonuses: actor?.flags?.swse?.speciesPassiveBonuses ?? null,
+      abilityRegistration: actor?._swseAbilityRegistrationSignature ?? null
+    };
+
+    return [
+      actor.id,
+      actor.type ?? 'actor',
+      itemSignature,
+      effectSignature,
+      this._safeJson(relevantState)
+    ].join('|');
+  }
+
+  static _getDefenseSourceProfile(actor) {
+    const cacheKey = this._actorDefenseSourceSignature(actor);
+    if (cacheKey && this._defenseSourceCache.has(cacheKey)) return this._defenseSourceCache.get(cacheKey);
+
+    const talentNames = new Set();
+    const armorProficiencyCandidates = new Set();
+    const defenseArmorRules = new Set();
+    const defenseAbilityRules = new Map();
+    const passiveStateDefenseModifiers = [];
+    let hasArmorSpecialistArmorMastery = false;
+    let hasKnightArmorMastery = false;
+
+    for (const item of actor?.items ?? []) {
+      const type = item?.type;
+      const name = String(item?.name || '').trim().toLowerCase();
+
+      if (type === 'talent') {
+        if (name) talentNames.add(name);
+        if (name === 'armor mastery') {
+          const treeId = String(item?.system?.treeId || '').trim();
+          const text = getTalentText(item);
+          if (treeId === '17cec542331cb4e4'
+            || text.includes('maximum dexterity')
+            || text.includes('max dexterity')
+            || text.includes('max dex')) {
+            hasArmorSpecialistArmorMastery = true;
+          }
+          if (treeId === 'ea01d740c91888b3'
+            || (text.includes('heroic level') && text.includes('half armor bonus'))
+            || text.includes('counts as armored and improved armored defense')) {
+            hasKnightArmorMastery = true;
+          }
+        }
+      }
+
+      if (type === 'feat') {
+        if (name.includes('armor proficiency')) {
+          if (name.includes('heavy')) armorProficiencyCandidates.add('heavy');
+          else if (name.includes('medium')) armorProficiencyCandidates.add('medium');
+          else if (name.includes('light')) armorProficiencyCandidates.add('light');
+        }
+
+        const armorRules = item?.system?.abilityMeta?.defenseArmorRules;
+        if (Array.isArray(armorRules)) {
+          for (const rule of armorRules) {
+            const ruleType = String(rule?.type || '').toUpperCase();
+            if (ruleType) defenseArmorRules.add(ruleType);
+          }
+        }
+
+        const abilityRules = item?.system?.abilityMeta?.defenseAbilityRules;
+        if (Array.isArray(abilityRules)) {
+          for (const rule of abilityRules) {
+            if (String(rule?.type || '').toUpperCase() !== 'USE_BETTER_ABILITY') continue;
+            const rawDefense = String(rule?.defense || '').trim();
+            if (!rawDefense) continue;
+            const defense = this._normalizeDefenseKey(rawDefense);
+            const abilities = Array.isArray(rule.abilities)
+              ? rule.abilities.map(a => String(a || '').toLowerCase().slice(0, 3)).filter(Boolean)
+              : [];
+            if (defense && abilities.length && !defenseAbilityRules.has(defense)) {
+              defenseAbilityRules.set(defense, { ...rule, abilities, sourceName: item.name });
+            }
+          }
+        }
+      }
+
+      if (item?.system?.executionModel === 'PASSIVE' && item?.system?.subType === 'STATE') {
+        const meta = item?.system?.abilityMeta;
+        if (Array.isArray(meta?.modifiers)) {
+          for (const modifier of meta.modifiers) {
+            const targets = new Set((Array.isArray(modifier?.target) ? modifier.target : [modifier?.target])
+              .map(target => String(target || ''))
+              .filter(Boolean));
+            if (!targets.has('defense') && !Array.from(targets).some(target => target.startsWith('defense.'))) continue;
+            passiveStateDefenseModifiers.push({
+              modifier: {
+                ...modifier,
+                mechanicsMode: modifier.mechanicsMode || meta.mechanicsMode,
+                applicationScope: modifier.applicationScope || meta.applicationScope,
+                staticSheetPolicy: modifier.staticSheetPolicy || meta.staticSheetPolicy,
+                requiresRuntimeContext: modifier.requiresRuntimeContext ?? meta.requiresRuntimeContext,
+                requiresSelectedChoice: modifier.requiresSelectedChoice ?? meta.requiresSelectedChoice,
+                predicateRequirements: modifier.predicateRequirements || meta.predicateRequirements || []
+              },
+              targets,
+              predicates: Array.isArray(modifier.predicates) ? modifier.predicates : [],
+              value: Number(modifier.value || 0) || 0
+            });
+          }
+        }
+      }
+    }
+
+    const profile = {
+      talentNames,
+      armorProficiencyCandidates,
+      defenseArmorRules,
+      defenseAbilityRules,
+      passiveStateDefenseModifiers,
+      hasArmorSpecialistArmorMastery,
+      hasKnightArmorMastery
+    };
+
+    if (cacheKey) this._rememberBounded(this._defenseSourceCache, this._defenseSourceCacheOrder, cacheKey, profile, this._defenseSourceCacheMax);
+    return profile;
+  }
+
+  static _hasTalent(profile, talentName) {
+    const wanted = String(talentName || '').trim().toLowerCase();
+    return !!wanted && profile?.talentNames?.has(wanted) === true;
+  }
+
+  static _actorHasArmorProficiencyFromProfile(actor, armor, profile) {
+    const required = getArmorCategory(armor);
+    const requiredRank = armorRank(required);
+    if (!requiredRank) return false;
+
+    if (isArmoredSpaceSuitArmor(armor) && this._hasTalent(profile, 'Armored Spacer')) return true;
+
+    const candidates = new Set(profile?.armorProficiencyCandidates ?? []);
+    const armorProficiency = actor?.system?.armorProficiency;
+    if (armorProficiency && typeof armorProficiency === 'object') {
+      for (const [key, value] of Object.entries(armorProficiency)) {
+        if (value === true) candidates.add(key);
+      }
+    }
+
+    const structured = actor?.system?.proficiencies?.armor;
+    if (structured instanceof Set) for (const entry of structured) candidates.add(entry);
+    else if (Array.isArray(structured)) for (const entry of structured) candidates.add(entry);
+    else if (structured && typeof structured === 'object') {
+      for (const [key, value] of Object.entries(structured)) {
+        if (value === true) candidates.add(key);
+      }
+    }
+
+    const legacyList = actor?.system?.armorProficiencies;
+    if (Array.isArray(legacyList)) for (const entry of legacyList) candidates.add(entry);
+
+    const unlockArmor = actor?._unlockGrants?.proficiencies?.armor;
+    if (unlockArmor instanceof Set) for (const entry of unlockArmor) candidates.add(entry);
+    else if (Array.isArray(unlockArmor)) for (const entry of unlockArmor) candidates.add(entry);
+
+    return Array.from(candidates).some(candidate => armorRank(candidate) >= requiredRank);
+  }
+
+  static _resolveDefenseAbilityFromProfile(actor, defenseKey, defaultAbilityKey, getAbilityMod, profile) {
+    const fallbackKey = String(defaultAbilityKey || '').toLowerCase().slice(0, 3);
+    let best = { key: fallbackKey, mod: getAbilityMod(fallbackKey, 0), sourceName: null };
+    const rule = profile?.defenseAbilityRules?.get?.(this._normalizeDefenseKey(defenseKey));
+    if (!rule) return best;
+
+    for (const ability of rule.abilities) {
+      const mod = getAbilityMod(ability, 0);
+      if (mod > best.mod) best = { key: ability, mod, sourceName: rule.sourceName };
+    }
+    return best;
+  }
+
+  static _sumPassiveStateDefenseModifiers(actor, profile, defenseType, context = {}) {
+    try {
+      const entries = profile?.passiveStateDefenseModifiers ?? [];
+      if (!entries.length) return 0;
+      const defenseKey = this._normalizeDefenseKey(defenseType);
+      const defenseTarget = `defense.${defenseKey}`;
+      const isStaticSheetContext = !context || Object.keys(context).length === 0;
+      let stateBonus = 0;
+
+      for (const entry of entries) {
+        if (!entry.targets.has('defense') && !entry.targets.has(defenseTarget)) continue;
+        if (!ModifierEngine.isModifierAllowedInContext(actor, entry.modifier, context, { staticSheet: isStaticSheetContext })) continue;
+        if (!evaluateStatePredicates(actor, entry.predicates, context)) continue;
+        if (entry.value) stateBonus += entry.value;
+      }
+
+      return stateBonus;
+    } catch (err) {
+      swseLogger.error('DefenseCalculator._sumPassiveStateDefenseModifiers:', err);
+      return 0;
+    }
+  }
+
   static _numberOrZero(value) {
     const num = Number(value);
     return Number.isFinite(num) ? num : 0;
@@ -418,6 +685,7 @@ export class DefenseCalculator {
     const defensesState = actor.system?.defenses ?? {};
     const abilitiesState = actor.system?.abilities ?? {};
     const isDroidActor = actor.type === 'droid' || actor.system?.isDroid === true;
+    const defenseProfile = this._getDefenseSourceProfile(actor);
 
     const [computedFortClassBonus, computedRefClassBonus, computedWillClassBonus] = await Promise.all([
       this._getSaveBonus(safeClassLevels, 'fort'),
@@ -430,9 +698,9 @@ export class DefenseCalculator {
     const refAdjust = Number(adjustments.ref ?? 0) || 0;
     const willAdjust = Number(adjustments.will ?? 0) || 0;
 
-    const fortStateBonus = await this._getStateModifiers(actor, 'fortitude', context) + getSystemActiveDefenseBonus(actor, 'fortitude');
-    const refStateBonus = await this._getStateModifiers(actor, 'reflex', context) + getSystemActiveDefenseBonus(actor, 'reflex');
-    const willStateBonus = await this._getStateModifiers(actor, 'will', context) + getSystemActiveDefenseBonus(actor, 'will');
+    const fortStateBonus = this._sumPassiveStateDefenseModifiers(actor, defenseProfile, 'fortitude', context) + getSystemActiveDefenseBonus(actor, 'fortitude');
+    const refStateBonus = this._sumPassiveStateDefenseModifiers(actor, defenseProfile, 'reflex', context) + getSystemActiveDefenseBonus(actor, 'reflex');
+    const willStateBonus = this._sumPassiveStateDefenseModifiers(actor, defenseProfile, 'will', context) + getSystemActiveDefenseBonus(actor, 'will');
 
     const isEnergyShieldArmor = (item) => item?.type === 'armor' && isEnergyShieldItem(item);
 
@@ -442,12 +710,12 @@ export class DefenseCalculator {
     // contribution like worn armor does.
     const equippedArmor = actor.items?.find(item => item.type === 'armor' && item.system?.equipped && !isEnergyShieldArmor(item)) ?? null;
     const equippedArmorStats = equippedArmor ? resolveArmorData(equippedArmor) : null;
-    const armorProficient = equippedArmor ? actorHasArmorProficiency(actor, equippedArmor) : false;
-    const hasKnightArmorMastery = actorHasKnightArmorMastery(actor);
-    const hasArmoredDefense = actorHasTalent(actor, 'Armored Defense') || hasKnightArmorMastery;
-    const hasImprovedArmoredDefense = actorHasTalent(actor, 'Improved Armored Defense') || hasKnightArmorMastery;
-    const hasArmorMastery = actorHasArmorSpecialistArmorMastery(actor);
-    const hasSecondSkin = actorHasTalent(actor, 'Second Skin');
+    const armorProficient = equippedArmor ? this._actorHasArmorProficiencyFromProfile(actor, equippedArmor, defenseProfile) : false;
+    const hasKnightArmorMastery = defenseProfile.hasKnightArmorMastery;
+    const hasArmoredDefense = this._hasTalent(defenseProfile, 'Armored Defense') || hasKnightArmorMastery;
+    const hasImprovedArmoredDefense = this._hasTalent(defenseProfile, 'Improved Armored Defense') || hasKnightArmorMastery;
+    const hasArmorMastery = defenseProfile.hasArmorSpecialistArmorMastery;
+    const hasSecondSkin = this._hasTalent(defenseProfile, 'Second Skin');
 
     const getAbilityMod = (abilityKey, fallback = 0) => {
       const candidate = resolveDefenseAbilityCandidate(actor, abilityKey);
@@ -486,7 +754,7 @@ export class DefenseCalculator {
     const willSpeciesBonus = this._collectSpeciesDefenseBonus(actor, 'will');
 
     let reflexAbilityKey = String(reflexState.ability || 'dex').toLowerCase();
-    let reflexAbilityResolution = resolveDefenseAbility(actor, 'reflex', reflexAbilityKey, getAbilityMod);
+    let reflexAbilityResolution = this._resolveDefenseAbilityFromProfile(actor, 'reflex', reflexAbilityKey, getAbilityMod, defenseProfile);
     reflexAbilityKey = reflexAbilityResolution.key;
     let reflexAbilityMod = reflexAbilityResolution.mod;
     const reflexClassBonus = Number(computedRefClassBonus ?? reflexState.classBonus ?? 0) || 0;
@@ -528,7 +796,7 @@ export class DefenseCalculator {
     let fortAbilityKey = isDroidActor ? 'str' : String(fortitudeState.ability || fortDefaultAbility).toLowerCase();
     let fortAbilityResolution = { key: fortAbilityKey, mod: getAbilityMod(fortAbilityKey, 0), sourceName: null };
     if (!isDroidActor) {
-      fortAbilityResolution = resolveDefenseAbility(actor, 'fortitude', fortAbilityKey, getAbilityMod);
+      fortAbilityResolution = this._resolveDefenseAbilityFromProfile(actor, 'fortitude', fortAbilityKey, getAbilityMod, defenseProfile);
       fortAbilityKey = fortAbilityResolution.key;
     }
     const fortAbilityMod = fortAbilityResolution.mod;
@@ -544,18 +812,18 @@ export class DefenseCalculator {
     const fortTotal = Math.max(1, fortBase + fortMiscBonus + fortSpeciesBonus + fortStateBonus + fortAdjust + conditionPenalty);
 
     let willAbilityKey = String(willState.ability || 'wis').toLowerCase();
-    const willAbilityResolution = resolveDefenseAbility(actor, 'will', willAbilityKey, getAbilityMod);
+    const willAbilityResolution = this._resolveDefenseAbilityFromProfile(actor, 'will', willAbilityKey, getAbilityMod, defenseProfile);
     willAbilityKey = willAbilityResolution.key;
     const willAbilityMod = willAbilityResolution.mod;
     const willClassBonus = Number(computedWillClassBonus ?? willState.classBonus ?? 0) || 0;
     const willMiscBonus = getMiscBonus(willState);
-    const willArmorBonus = hasDefenseArmorRule(actor, 'APPLY_ARMOR_FORT_EQUIPMENT_TO_WILL')
+    const willArmorBonus = defenseProfile.defenseArmorRules.has('APPLY_ARMOR_FORT_EQUIPMENT_TO_WILL')
       && equippedArmor
       && armorProficient
       ? Number(equippedArmorStats?.fortitudeBonus ?? 0) || 0
       : 0;
     const willBase = 10 + heroicLevel + willClassBonus + willAbilityMod;
-    const psychicCitadelBonus = getPsychicCitadelWillBonus(actor, heroicLevel);
+    const psychicCitadelBonus = this._hasTalent(defenseProfile, 'Psychic Citadel') ? getForceAdeptTalentClassLevel(actor, heroicLevel) : 0;
     const willTotal = Math.max(1, willBase + willMiscBonus + willSpeciesBonus + willArmorBonus + psychicCitadelBonus + willStateBonus + willAdjust + conditionPenalty);
 
     const flatFootedBase = reflexBase;
@@ -725,6 +993,9 @@ export class DefenseCalculator {
       return 0;
     }
 
+    const cacheKey = `${saveKey}|${uniqueClasses.map(name => String(name || '').trim().toLowerCase()).sort().join('|')}`;
+    if (this._saveBonusCache.has(cacheKey)) return this._saveBonusCache.get(cacheKey);
+
     const classDataList = await Promise.all(
       uniqueClasses.map(className => getClassData(className))
     );
@@ -744,6 +1015,7 @@ export class DefenseCalculator {
       maxBonus = Math.max(maxBonus, classBonus);
     }
 
+    this._rememberBounded(this._saveBonusCache, this._saveBonusCacheOrder, cacheKey, maxBonus, this._saveBonusCacheMax);
     return maxBonus;
   }
 

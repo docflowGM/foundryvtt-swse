@@ -76,6 +76,8 @@ export class DerivedCalculator {
       this._computeCacheOrder.length = 0;
       this._computeInFlight.clear();
       try { ModifierEngine.clearCaches?.(); } catch (_err) { /* best-effort cache clear */ }
+      try { DefenseCalculator.clearCaches?.(); } catch (_err) { /* best-effort cache clear */ }
+      try { BABCalculator.clearCaches?.(); } catch (_err) { /* best-effort cache clear */ }
       return;
     }
 
@@ -88,6 +90,7 @@ export class DerivedCalculator {
     }
     this._computeCacheOrder = this._computeCacheOrder.filter(key => !key.startsWith(prefix));
     try { ModifierEngine.clearCaches?.(actorId); } catch (_err) { /* best-effort cache clear */ }
+    try { DefenseCalculator.clearCaches?.(actorId); } catch (_err) { /* best-effort cache clear */ }
   }
 
   static getActorComputeSignature(actor) {
