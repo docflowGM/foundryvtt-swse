@@ -75,6 +75,7 @@ export class DerivedCalculator {
       this._computeCache.clear();
       this._computeCacheOrder.length = 0;
       this._computeInFlight.clear();
+      try { ModifierEngine.clearCaches?.(); } catch (_err) { /* best-effort cache clear */ }
       return;
     }
 
@@ -86,6 +87,7 @@ export class DerivedCalculator {
       if (key.startsWith(prefix)) this._computeInFlight.delete(key);
     }
     this._computeCacheOrder = this._computeCacheOrder.filter(key => !key.startsWith(prefix));
+    try { ModifierEngine.clearCaches?.(actorId); } catch (_err) { /* best-effort cache clear */ }
   }
 
   static getActorComputeSignature(actor) {
@@ -441,6 +443,7 @@ export class DerivedCalculator {
       const hasForceTreatment = this._hasTalentNamed(actor, 'Force Treatment');
       const hasForcePersuasion = this._hasTalentNamed(actor, 'Force Persuasion');
       const hasInsightOfTheForce = this._hasTalentNamed(actor, 'Insight of the Force');
+      const skillFocusModifierBonuses = this._getSkillFocusModifierBonusesBySkill(allModifiers);
 
       // Get occupation bonus from actor flags
       let occupationBonus = null;
@@ -587,7 +590,7 @@ export class DerivedCalculator {
         // Skill Focus modifier to avoid a second +5.
         const rawFeatBonus = Number(modifierMap[`skill.${skillKey}`] || 0) || 0;
         // Always compute the total SF modifier contribution (not gated on checkbox).
-        const skillFocusModifierBonus = this._getSkillFocusModifierBonusForSkill(allModifiers, skillKey);
+        const skillFocusModifierBonus = skillFocusModifierBonuses[skillKey] || 0;
         // If checkbox is ticked: remove ALL SF modifiers (checkbox already added +5 above).
         // If checkbox is not ticked: cap SF contribution at 5 (non-stackable).
         const effectiveSFBonus = skill.focused
@@ -971,23 +974,29 @@ export class DerivedCalculator {
   }
 
 
-  static _getSkillFocusModifierBonusForSkill(modifiers = [], skillKey) {
+  static _getSkillFocusModifierBonusesBySkill(modifiers = []) {
     const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
-    const target = normalize(skillKey);
-    if (!target || !Array.isArray(modifiers)) return 0;
+    const totals = {};
+    if (!Array.isArray(modifiers)) return totals;
 
-    let total = 0;
     for (const mod of modifiers) {
       if (!mod || mod.enabled === false) continue;
       const modTarget = String(mod.target || '').replace(/^skill\./i, '');
-      if (normalize(modTarget) !== target) continue;
+      const normalizedTarget = normalize(modTarget);
+      if (!normalizedTarget) continue;
 
       const sourceText = `${mod.sourceName || ''} ${mod.description || ''} ${mod.id || ''} ${mod.sourceId || ''}`;
       if (!/skill\s*focus|skill[_-]?focus/i.test(sourceText)) continue;
       const value = Number(mod.value || 0) || 0;
-      if (value > 0) total += value;
+      if (value > 0) totals[normalizedTarget] = (totals[normalizedTarget] || 0) + value;
     }
-    return total;
+
+    return totals;
+  }
+
+  static _getSkillFocusModifierBonusForSkill(modifiers = [], skillKey) {
+    const normalize = (value) => String(value || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    return this._getSkillFocusModifierBonusesBySkill(modifiers)[normalize(skillKey)] || 0;
   }
 
   static _hasSkillFocusModifierForSkill(actor, skillKey) {
