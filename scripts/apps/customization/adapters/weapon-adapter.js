@@ -2,6 +2,10 @@
 /**
  * Weapon Customization Adapter
  * Handles modifications for blasters, melee weapons, etc. (but not lightsabers)
+ *
+ * @deprecated The active workbench uses ItemCustomizationWorkbench plus the
+ * CustomizationWorkflow/UpgradeSlotEngine pipeline. This adapter is a legacy
+ * prototype and is not exported from adapters/index.js.
  */
 
 import CustomizationAdapterBase from "/systems/foundryvtt-swse/scripts/apps/customization/adapters/customization-adapter-base.js";

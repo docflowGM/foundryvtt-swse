@@ -5,7 +5,9 @@
  * No UI side-effects. No implicit mutations.
  * Returns structured validation objects only.
  *
- * NOTE: Full implementation pending. Currently provides safe stubs.
+ * @deprecated The active customization/upgrade path is UpgradeService ->
+ * CustomizationWorkflow/UpgradeSlotEngine -> ActorEngine. Keep this class only
+ * for legacy modification app imports; do not add new behavior here.
  */
 
 export class UpgradeRulesEngine {

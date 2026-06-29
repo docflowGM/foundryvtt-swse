@@ -3,6 +3,10 @@
  * Lightsaber Customization Adapter (Phase 3)
  * Handles modifications for lightsabers as a first-class category.
  * Separate from generic weapon mods: crystals, emitters, focusing hardware, forms, etc.
+ *
+ * @deprecated Lightsaber customization is handled by the dedicated lightsaber
+ * workbench/customization workflow. This adapter is a legacy prototype and is
+ * not exported from adapters/index.js.
  */
 
 import CustomizationAdapterBase from "/systems/foundryvtt-swse/scripts/apps/customization/adapters/customization-adapter-base.js";

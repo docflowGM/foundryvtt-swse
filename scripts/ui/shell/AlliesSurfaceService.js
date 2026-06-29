@@ -12,6 +12,7 @@ import { SWSELogger } from '/systems/foundryvtt-swse/scripts/utils/logger.js';
 import { getHeroicLevel } from '/systems/foundryvtt-swse/scripts/actors/derived/level-split.js';
 import { FactionRegistryService } from '/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js';
 import { HolonetIntelService, INTEL_REVEAL_STATE } from '/systems/foundryvtt-swse/scripts/holonet/subsystems/holonet-intel-service.js';
+import { createActor } from '/systems/foundryvtt-swse/scripts/core/document-api-v13.js';
 
 const SYSTEM_ID = 'foundryvtt-swse';
 const TAB_IDS = new Set(['companions', 'factions', 'contacts', 'intel', 'bases', 'organizations']);
@@ -1617,6 +1618,90 @@ export class AlliesSurfaceService {
       }, { source: 'Allies.assignDroppedActor.ownership' });
     }
     return true;
+  }
+
+  static async createBareBeastCompanion(ownerActor, { slotId = null, name = null } = {}) {
+    if (!ownerActor) throw new Error('No owner actor selected for beast companion creation.');
+    const slots = asArray(ownerActor.getFlag?.(SYSTEM_ID, 'followerSlots'));
+    const slot = slotId ? slots.find(entry => entry?.id === slotId) : null;
+    const talentName = cleanString(slot?.talentName || slot?.talent || slot?.source || 'Beast Companion');
+    const ownerLevel = Math.max(1, Number(getHeroicLevel(ownerActor) || ownerActor.system?.level || 1));
+    const beastName = cleanString(name) || `${ownerActor.name}'s Beast Companion`;
+    const actorData = {
+      name: beastName,
+      type: 'npc',
+      img: 'icons/svg/pawprint.svg',
+      system: {
+        level: ownerLevel,
+        details: { biography: { value: `Barebones beast companion created from ${talentName}. A GM should replace this shell with the correct beast statblock when ready.` } },
+        npcProfile: {
+          kind: 'beast',
+          owner: { actorId: ownerActor.id, name: ownerActor.name, talent: talentName },
+          syncMode: 'gm-manual',
+          creationMode: 'barebones-allies-shell'
+        },
+        progression: {
+          isFollower: true,
+          isBeast: true,
+          ownerId: ownerActor.id,
+          ownerName: ownerActor.name,
+          sourceTalent: talentName,
+          syncMode: 'gm-manual'
+        }
+      },
+      flags: {
+        swse: {
+          beast: {
+            ownerId: ownerActor.id,
+            ownerName: ownerActor.name,
+            slotId,
+            talent: talentName,
+            kind: 'beast',
+            active: true,
+            creationMode: 'barebones-allies-shell'
+          }
+        },
+        [SYSTEM_ID]: {
+          assignedAllyOwnerId: ownerActor.id,
+          assignedAllyKind: 'beast',
+          assignedAllySource: talentName,
+          assignedAllySyncMode: 'gm-manual'
+        }
+      }
+    };
+
+    const beast = await createActor(actorData, { renderSheet: false });
+    if (!beast) throw new Error('Could not create beast companion actor.');
+
+    const link = {
+      id: beast.id,
+      actorId: beast.id,
+      name: beast.name,
+      kind: 'beast',
+      dependentKind: 'beast',
+      img: actorPortrait(beast),
+      talent: talentName,
+      syncMode: 'gm-manual',
+      slotId,
+      createdAt: Date.now()
+    };
+    await this._addActiveLink(ownerActor, link, 'beast');
+
+    if (slotId && slots.length) {
+      const updatedSlots = slots.map(entry => entry?.id === slotId
+        ? { ...entry, createdActorId: beast.id, actorId: beast.id, createdAt: Date.now() }
+        : entry);
+      await updateActorFlag(ownerActor, SYSTEM_ID, 'followerSlots', updatedSlots, { meta: { guardKey: 'allies-beast-slot-create' } });
+    }
+
+    const ownerUser = game.users?.find?.(u => u.character?.id === ownerActor.id);
+    if (ownerUser) {
+      await updateActor(beast, {
+        ownership: { [ownerUser.id]: CONST.DOCUMENT_OWNERSHIP_LEVELS.OWNER }
+      }, { source: 'Allies.createBareBeastCompanion.ownership' });
+    }
+
+    return beast;
   }
 
   static async requestBeastLevelUp(ownerActor, beastId) {
