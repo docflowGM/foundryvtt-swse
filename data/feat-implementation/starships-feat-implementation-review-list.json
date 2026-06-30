@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "phase": "9C",
+  "scope": "Starships of the Galaxy implementation source-review list",
+  "items": [
+    {
+      "name": "Starship Tactics",
+      "description": "Adds Starship Maneuvers to the Starship Maneuver Suite equal to 1 + Wisdom modifier, minimum 1; repeatable; Gunnery Specialist has an alternate Gunner-only selection rule.",
+      "proposedBucket": "Starship & Vehicle",
+      "proposedSubbucket": "Starship Maneuvers",
+      "proposedImplementationMode": "progression_choice_grant",
+      "reason": "The metadata shape is right, but implemented_correct requires verifying the actual maneuver picker, repeatable grant storage, and Gunnery Specialist alternate qualification behavior."
+    },
+    {
+      "name": "Tactical Genius",
+      "description": "Regain all spent Starship Maneuvers at the end of any round in which the character rolls a natural 20 on an attack roll.",
+      "proposedBucket": "Starship & Vehicle",
+      "proposedSubbucket": "Starship Maneuvers",
+      "proposedImplementationMode": "triggered_resource_recovery_hook",
+      "reason": "The catalog has correct metadata, but implemented_correct requires an actual natural-20 attack-roll trigger plus starship maneuver spent-state recovery."
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "phase": "9C",
+  "scope": "Starships of the Galaxy feat implementation accuracy audit",
+  "sourceBook": "Starships of the Galaxy",
+  "featCount": 3,
+  "statusCounts": {
+    "implemented_partial": 2,
+    "metadata_correct": 1
+  },
+  "reviewCount": 2,
+  "ok": 15,
+  "warnings": [],
+  "errors": []
+}
