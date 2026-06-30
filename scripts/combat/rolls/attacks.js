@@ -1,19 +1,22 @@
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { ForceExecutor } from "/systems/foundryvtt-swse/scripts/engine/force/force-executor.js";
-import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
-import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
-import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
-import { getDamageAbilityContribution, getHalfLevelDamageBonus, getRangePenalty, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus, isVehicleWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
-import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-engine.js";
-import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import { resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { damageContextForReaction, damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
+// Canonical roll math — both this file and weapons-engine.js delegate here so
+// tooltips/breakdowns always reflect the same formula as actual rolls.
+import {
+  resolveAttackBonus,
+  resolveDamageBonus,
+  getTargetActorFromOptions,
+  rapidAlchemyState,
+  weaponMatchesId
+} from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 
 // ============================================
 // FILE: rolls/attacks.js (Upgraded for SWSE v13+)
@@ -21,191 +24,14 @@ import { damageContextForReaction, damageTypesFromContext } from "/systems/found
 // - Uses updated Actor data model
 // - Integrates CT penalties, attack penalties, cover, etc.
 // - Performance optimized, fail-safe, RAW-accurate
+//
+// Attack/damage bonus math lives in combat-roll-math.js (resolveAttackBonus /
+// resolveDamageBonus). weapons-engine.js calls the same resolvers for
+// tooltips, so breakdowns and rolls always agree.
 // ============================================
-
-function getTargetActorFromOptions(options = {}) {
-  return options.target ?? game.user?.targets?.first?.()?.actor ?? null;
-}
 
 function hasFightingDefensivelyEffect(actor) {
   return Array.from(actor?.effects ?? []).some(effect => effect?.flags?.swse?.combatAction === 'fighting-defensively');
-}
-
-function actorHasTalentNamed(actor, names = []) {
-  const wanted = new Set((Array.isArray(names) ? names : [names])
-    .map(name => String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ''))
-    .filter(Boolean));
-  if (!wanted.size) return false;
-  try {
-    return Array.from(actor?.items ?? []).some(item => {
-      if (item?.type !== 'talent') return false;
-      const key = String(item.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
-      return wanted.has(key);
-    });
-  } catch (_err) {
-    return false;
-  }
-}
-
-
-function actorHasFeatNamed(actor, names = []) {
-  const wanted = new Set((Array.isArray(names) ? names : [names])
-    .map(name => String(name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ''))
-    .filter(Boolean));
-  if (!wanted.size) return false;
-  try {
-    return Array.from(actor?.items ?? []).some(item => {
-      if (item?.type !== 'feat') return false;
-      const key = String(item.name || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '');
-      return wanted.has(key);
-    });
-  } catch (_err) {
-    return false;
-  }
-}
-
-function inquisitionAttackBonus(actor, context = {}) {
-  if (!actorHasTalentNamed(actor, 'Inquisition')) return 0;
-  const target = getTargetActorFromOptions(context);
-  if (!target || !actorHasFeatNamed(target, 'Force Sensitivity')) return 0;
-  return 1;
-}
-
-function unsettlingPresenceAttackPenalty(actor) {
-  const state = actor?.getFlag?.('swse', 'forceAdept.unsettlingPresence') ?? null;
-  if (!state || state.encounterId !== currentCombatEncounterId()) return 0;
-  return Number(state.attackPenalty ?? -2) || -2;
-}
-
-function actorIsProficientForAttack(actor, weapon) {
-  const explicit = weapon?.system?.proficient;
-  if (explicit !== false) return true;
-  return actorHasTalentNamed(actor, 'Spacehound') && isVehicleWeapon(weapon);
-}
-
-function asArray(value) {
-  return Array.isArray(value) ? value : value == null ? [] : [value];
-}
-
-function normalizeRollKey(value = '') {
-  return String(value ?? '')
-    .trim()
-    .replace(/\s+/g, '-')
-    .replace(/[^a-zA-Z0-9_-]/g, '')
-    .toLowerCase();
-}
-
-function buildEffectIntentRollContext(weapon, options = {}, extra = {}) {
-  const system = weapon?.system ?? {};
-  const weaponGroup = options.weaponGroup
-    ?? system.weaponGroup
-    ?? system.group
-    ?? system.proficiencyGroup
-    ?? system.category
-    ?? '';
-  const weaponCategory = options.weaponCategory
-    ?? options.attackType
-    ?? system.weaponCategory
-    ?? system.category
-    ?? system.type
-    ?? system.meleeOrRanged
-    ?? system.weaponRangeType
-    ?? '';
-  const damageType = options.damageType
-    ?? system.damageType
-    ?? system.damage?.type
-    ?? '';
-  const damageTypes = [
-    ...asArray(options.damageTypes),
-    ...asArray(system.damageTypes),
-    ...asArray(damageType)
-  ].map(normalizeRollKey).filter(Boolean);
-
-  return {
-    ...(options || {}),
-    ...(extra || {}),
-    item: weapon,
-    itemId: weapon?.id ?? weapon?._id ?? options.itemId ?? options.weaponId ?? '',
-    weapon,
-    weaponId: weapon?.id ?? weapon?._id ?? options.weaponId ?? '',
-    weaponGroup,
-    group: weaponGroup,
-    weaponCategory,
-    category: weaponCategory,
-    attackType: weaponCategory,
-    damageType,
-    damageTypes,
-    customTags: Array.isArray(options.customTags) ? options.customTags : []
-  };
-}
-
-function getBasicEffectIntentBonus(actor, target, weapon, options = {}, extra = {}) {
-  try {
-    return ModifierEngine.getEffectIntentModifierTotalForContext(actor, target, buildEffectIntentRollContext(weapon, options, extra), { includeBroad: true });
-  } catch (err) {
-    console.warn(`[SWSE] Failed to apply Basic effect intents for ${target}`, err);
-    return 0;
-  }
-}
-
-
-function currentCombatEncounterId() {
-  return game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
-}
-
-function actorHpValueForSithEffects(actor) {
-  return Number(actor?.system?.hp?.value ?? actor?.system?.hitPoints?.value ?? actor?.system?.attributes?.hp?.value ?? 1) || 0;
-}
-
-function sourceActorStillThreatening(sourceActorId) {
-  if (!sourceActorId) return true;
-  const source = game?.actors?.get?.(sourceActorId) ?? null;
-  if (!source) return true;
-  return actorHpValueForSithEffects(source) > 0;
-}
-
-function activeSithCommanderEffect(actor, key) {
-  const state = actor?.getFlag?.('swse', `sithCommander.${key}`) ?? null;
-  if (!state || state.encounterId !== currentCombatEncounterId()) return null;
-  if (key === 'focusTerror') {
-    const round = Number(game?.combat?.round ?? 0) || 0;
-    const expires = Number(state.expiresAfterRound ?? 0) || 0;
-    if (expires > 0 && round > expires) return null;
-  }
-  if (key === 'inciteRage' && !sourceActorStillThreatening(state.sourceActorId)) return null;
-  return state;
-}
-
-function sithCommanderAttackModifier(actor) {
-  let total = 0;
-  const focus = activeSithCommanderEffect(actor, 'focusTerror');
-  if (focus) total += Number(focus.attackPenalty ?? -2) || -2;
-  const rage = activeSithCommanderEffect(actor, 'inciteRage');
-  if (rage) total += Number(rage.attackBonus ?? 1) || 1;
-  return total;
-}
-
-function weaponMatchesId(weapon, id) {
-  if (!weapon || !id) return false;
-  return String(weapon.id ?? weapon._id ?? '') === String(id);
-}
-
-function rapidAlchemyState(actor) {
-  const state = actor?.getFlag?.('swse', 'rapidAlchemy') ?? null;
-  if (!state || state.encounterId !== currentCombatEncounterId()) return null;
-  return state;
-}
-
-function rapidAlchemyAttackBonus(actor, weapon) {
-  const state = rapidAlchemyState(actor);
-  if (!state?.active || state?.sacrificed === true) return 0;
-  return weaponMatchesId(weapon, state.weaponId) ? Number(state.attackBonus ?? 2) || 2 : 0;
-}
-
-function rapidAlchemyDamageBonus(actor, weapon) {
-  const state = rapidAlchemyState(actor);
-  if (!state?.sacrificePending) return 0;
-  return weaponMatchesId(weapon, state.weaponId) ? Number(state.damageBonus ?? 5) || 5 : 0;
 }
 
 async function clearRapidAlchemyDamageBonus(actor, weapon) {
@@ -216,12 +42,6 @@ async function clearRapidAlchemyDamageBonus(actor, weapon) {
 
 function forceItemState(weapon) {
   return weapon?.getFlag?.('swse', 'forceItem') ?? weapon?.flags?.swse?.forceItem ?? null;
-}
-
-function forceItemAttackBonus(actor, weapon) {
-  const state = forceItemState(weapon);
-  if (String(state?.attuned?.actorId ?? '') !== String(actor?.id ?? '')) return 0;
-  return Number(state.attuned.attackBonus ?? 1) || 1;
 }
 
 function firstWeaponDamageDieFormula(weapon) {
@@ -359,131 +179,6 @@ function stepDamageDieFormula(baseFormula, steps = 0) {
 }
 
 /**
- * Compute complete attack bonus from all SWSE factors.
- * PHASE 4: Includes state-dependent modifiers
- *
- * @param {Actor} actor
- * @param {Item} weapon
- * @param {string} actionId - Optional action ID for talent bonus lookup (e.g., 'melee-attack', 'ranged-attack')
- * @param {Object} context - Optional context for state predicates (weapon, attackType, etc.)
- * @returns {number}
- */
-function computeAttackBonus(actor, weapon, actionId = null, context = {}) {
-  // Statblock NPCs can use stored totals until explicitly leveled.
-  if (actor?.type === 'npc' && isNpcStatblockMode(actor)) {
-    const npc = weapon?.flags?.swse?.npc;
-    if (npc?.useFlat === true && Number.isFinite(npc.flatAttackBonus)) {
-      return Number(npc.flatAttackBonus) || 0;
-    }
-  }
-
-  const bab = SchemaAdapters.getBAB(actor);
-  const attackOptionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
-
-  // RAW attack rolls use BAB + ability modifier. They do not add half level;
-  // BAB already carries the level-based attack progression. Feat rules such as
-  // Weapon Finesse and Mighty Throw may add/substitute ability contribution in
-  // the combat-option resolver so the base weapon formula stays canonical.
-  const abilityMod = SchemaAdapters.getAbilityMod(actor, getWeaponAttackAbility(actor, weapon)) + Number(attackOptionModifiers.attackAbilityBonus || 0);
-
-  const miscBonus = getWeaponFlatAttackBonus(weapon);
-  const rangePenalty = getRangePenalty(weapon, context);
-  const rageModifiers = RageEngine.collectAttackModifiers(actor, weapon, context);
-
-  // Condition Track penalty (read from authoritative derived source)
-  // CANONICAL: DerivedCalculator computes and stores this in system.derived.damage.conditionPenalty
-  // Also applied to skill totals in DerivedCalculator.computeAll() (line 339-340)
-  const ctPenalty = actor.system?.derived?.damage?.conditionPenalty ??
-                    actor.system?.conditionTrack?.penalty ??
-                    0;
-
-  // Attack penalties applied from Active Effects
-  const attackPenalty = actor.system.attackPenalty ?? 0;
-
-  // Weapon proficiency
-  const proficient = actorIsProficientForAttack(actor, weapon);
-  const proficiencyPenalty = proficient ? 0 : -5;
-
-  // Talent bonuses from linked talents
-  let talentBonus = 0;
-  const TalentActionLinker = window.SWSE?.TalentActionLinker;
-  if (actionId && TalentActionLinker?.MAPPING) {
-    const bonusInfo = TalentActionLinker.calculateBonusForAction(actor, actionId);
-    talentBonus = bonusInfo.value;
-  }
-
-  // PHASE 4: Get state-dependent modifiers
-  let stateBonus = 0;
-  try {
-    if (actor?.items) {
-      const enrichedContext = { weapon, ...context };
-      for (const item of actor.items) {
-        if (item.system?.executionModel !== 'PASSIVE' || item.system?.subType !== 'STATE') {
-          continue;
-        }
-
-        const meta = item.system?.abilityMeta;
-        if (!meta?.modifiers || !Array.isArray(meta.modifiers)) {
-          continue;
-        }
-
-        // Apply each modifier in the PASSIVE/STATE item
-        for (const modifier of meta.modifiers) {
-          // Check if this modifier applies to attack rolls
-          const targets = Array.isArray(modifier.target) ? modifier.target : [modifier.target];
-          const appliesToAttack = targets.some(t => t === 'attack' || t === 'attack.bonus');
-
-          if (!appliesToAttack) continue;
-
-          // Evaluate predicates (all must be true)
-          const predicates = modifier.predicates || [];
-          const predicatesMatch = evaluateStatePredicates(actor, predicates, enrichedContext);
-
-          // Generic PASSIVE/STATE attack modifiers are now fail-closed unless
-          // explicitly marked safe. Most migrated feat rows used placeholder
-          // +2 attack modifiers for text-only riders; curated attack options
-          // and selected-weapon modifier handling live in CombatOptionResolver.
-          if (modifier.allowLegacyStateAttackBonus !== true) continue;
-
-          if (predicatesMatch && modifier.value) {
-            stateBonus += modifier.value;
-          }
-        }
-      }
-    }
-  } catch (err) {
-    console.error('Error evaluating PASSIVE/STATE in attack bonus:', err);
-  }
-
-  // User-friendly Basic Active Effect intents. These include broad attack
-  // bonuses and scoped roll-time effects such as +2 with pistols or +1 with
-  // ranged attacks. Context matching happens in EffectIntentEngine so scoped
-  // bonuses cannot leak into unrelated attack rolls.
-  const basicEffectBonus = getBasicEffectIntentBonus(actor, 'global.attack', weapon, context, { rollType: 'attack' });
-
-  // Total attack bonus (RAW)
-  return (
-    bab +
-    abilityMod +
-    miscBonus +
-    rangePenalty +
-    attackPenalty +
-    ctPenalty +
-    proficiencyPenalty +
-    talentBonus +
-    stateBonus +
-    (attackOptionModifiers.attackBonus || 0) +
-    (rageModifiers.attackBonus || 0) +
-    sithCommanderAttackModifier(actor) +
-    inquisitionAttackBonus(actor, context) +
-    unsettlingPresenceAttackPenalty(actor) +
-    rapidAlchemyAttackBonus(actor, weapon) +
-    forceItemAttackBonus(actor, weapon) +
-    basicEffectBonus
-  );
-}
-
-/**
  * Roll an attack with a weapon using SWSE rules.
  */
 export async function rollAttack(actor, weapon, options = {}) {
@@ -517,7 +212,10 @@ export async function rollAttack(actor, weapon, options = {}) {
 
   try {
   const sequencePenalty = Number(rollOptions.sequencePenalty ?? 0);
-  const atkBonus = computeAttackBonus(actor, weapon, null, rollOptions) + getFightingDefensivelyAttackPenalty(actor, rollOptions) + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
+  // resolveAttackBonus provides the canonical total; roll-invocation-only
+  // modifiers (fightingDefensively, customModifier, situationalBonus,
+  // sequencePenalty) are intentionally added here, not inside the resolver.
+  const atkBonus = resolveAttackBonus(actor, weapon, null, rollOptions).total + getFightingDefensivelyAttackPenalty(actor, rollOptions) + Number(rollOptions.customModifier || 0) + Number(rollOptions.situationalBonus || 0) + sequencePenalty;
 
   const rollFormula = `1d20 + ${atkBonus}`;
   const roll = await RollEngine.safeRoll(rollFormula, actor?.getRollData?.() ?? {}, { actor, domain: 'combat.attack', context: { weaponId: weapon?.id ?? null } });
@@ -646,26 +344,6 @@ export async function rollAttack(actor, weapon, options = {}) {
 }
 
 /**
- * Compute SWSE damage bonus for a weapon
- */
-function computeDamageBonus(actor, weapon, context = {}) {
-  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
-  if (optionModifiers?.flags?.damageBaseOnly === true) {
-    return getWeaponFlatDamageBonus(weapon);
-  }
-
-  const halfLvl = getHalfLevelDamageBonus(actor, weapon, { ...context, weapon, isWeaponDamage: true });
-
-  let bonus = halfLvl + getWeaponFlatDamageBonus(weapon);
-  bonus += getDamageAbilityContribution(actor, weapon);
-  bonus += RageEngine.collectAttackModifiers(actor, weapon, context).damageBonus || 0;
-  bonus += rapidAlchemyDamageBonus(actor, weapon);
-  bonus += getBasicEffectIntentBonus(actor, 'global.damage', weapon, context, { rollType: 'damage' });
-
-  return bonus;
-}
-
-/**
  * Roll damage for a weapon.
  */
 export async function rollDamage(actor, weapon, options = {}) {
@@ -686,8 +364,11 @@ export async function rollDamage(actor, weapon, options = {}) {
     isIon: rollOptions.ion === true,
     contextTags: rollOptions.damageMode === 'stun' || rollOptions.stun === true ? ['stun'] : []
   });
+  // optionModifiers is still needed for die-formula modifiers (damageDieStepIncreases,
+  // damageExtraWeaponDice, criticalDamageDieStepBonus). The flat dmgBonus comes
+  // from the canonical resolver which already incorporates optionModifiers.damageBonus.
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
-  const dmgBonus = computeDamageBonus(actor, weapon, rollOptions) + (optionModifiers.damageBonus || 0);
+  const dmgBonus = resolveDamageBonus(actor, weapon, rollOptions).total;
 
   const criticalStepBonus = (rollOptions?.critical === true || rollOptions?.isCritical === true) ? Number(optionModifiers.criticalDamageDieStepBonus || 0) : 0;
   const base = stepDamageDieFormula(weapon.system?.damage ?? weapon.damage ?? '1d6', (optionModifiers.damageDieStepIncreases ?? 0) + criticalStepBonus);
@@ -755,9 +436,10 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   }
 
   const targetName = _firstTargetName();
-  const atkBonus = computeAttackBonus(actor, weapon, null, options);
+  const atkBonus = resolveAttackBonus(actor, weapon, null, options).total;
+  // optionModifiers still needed for die-formula and effect modifiers below.
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, options);
-  const dmgBonus = computeDamageBonus(actor, weapon, options) + (optionModifiers.damageBonus || 0);
+  const dmgBonus = resolveDamageBonus(actor, weapon, options).total;
   const workflowContext = summarizeCombatWorkflowContext(options.combatContext ?? options.workflowContext ?? null, { actor, weapon });
   const ammoSpend = await AmmoSystem.spendForWorkflow(actor, weapon, {
     workflowContext,

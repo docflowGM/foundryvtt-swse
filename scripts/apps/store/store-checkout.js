@@ -1670,7 +1670,7 @@ export async function buildDroidFromTemplate(actor, closeCallback) {
 
     try {
         // Try to get droid-templates compendium
-        const templatePack = game.packs.get('foundryvtt-swse.droid-templates');
+        const templatePack = game.packs.get('foundryvtt-swse.droids');
 
         if (!templatePack) {
             ui.notifications.warn(storeI18n('SWSE.Store.Notifications.NoDroidTemplatesCompendium'));

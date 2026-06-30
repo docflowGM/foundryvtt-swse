@@ -462,7 +462,6 @@ export const SWSE_TEMPLATES = [
   // ==============================
   // Direct full-path partial includes not reached by older top-level template groups
   // ==============================
-  'systems/foundryvtt-swse/templates/actors/npc/npc-summary-hud.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-header-dossier.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-abilities-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-gear-panel.hbs',

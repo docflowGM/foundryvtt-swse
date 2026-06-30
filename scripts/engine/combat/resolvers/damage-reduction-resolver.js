@@ -19,6 +19,8 @@
  * - DR applied after SR, before Temp HP
  */
 
+import { isLightsaberWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+
 
 function normalizeKey(value) {
   return String(value ?? '')
@@ -265,20 +267,8 @@ export class DamageReductionResolver {
    */
   static _shouldBypassDR(weapon) {
     if (!weapon) return false;
-
-    const name = (weapon.name || '').toLowerCase();
-    const type = (weapon.system?.weaponType || '').toLowerCase();
-
-    // Lightsabers bypass DR
-    if (name.includes('lightsaber') || type.includes('lightsaber')) {
-      return true;
-    }
-
-    // Check for explicit bypass flag
-    if (weapon.system?.bypassDR === true) {
-      return true;
-    }
-
+    if (isLightsaberWeapon(weapon)) return true;
+    if (weapon.system?.bypassDR === true) return true;
     return false;
   }
 

@@ -53,7 +53,7 @@ export class SWSECombatAutomation {
 
         if (actor.type === 'character') {
           // PHASE 3: Route through ActorEngine
-          const { ActorEngine } = await import("/systems/foundryvtt-swse/actor-engine.js");
+          const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
           await ActorEngine.resetSecondWind(actor);
         }
       }

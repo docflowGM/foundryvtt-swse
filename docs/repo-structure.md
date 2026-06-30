@@ -137,11 +137,6 @@ CSS stylesheets for UI rendering organized by component:
   - HOLONET_*.md - Phase summary reports
 - **repo-structure.md** - This file (repository organization)
 
-### archive/
-- **root-cleanup/** - Archived root-level files from Phase 7 cleanup
-  - APPLY_METADATA.js - Archived metadata application utility
-  - repo_skeleton.txt - Archived repository skeleton reference
-
 ## Key Architectural Notes
 
 ### v2 as Canonical Runtime

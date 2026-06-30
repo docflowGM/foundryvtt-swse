@@ -1,0 +1,33 @@
+{{!-- Maneuvers Panel
+     Pure display — no logic, no mutations
+     Reads: maneuverPanel.* (from panel context)
+     rootSelector: .maneuvers-panel
+--}}
+
+<section class="maneuvers-panel holo-panel">
+
+  <header class="section-bar">
+    <h3 class="section-header">{{localize "SWSE.CharacterSheet.Sections.Maneuvers"}} ({{maneuverPanel.totalCount}})</h3>
+  </header>
+
+  {{#if maneuverPanel.hasEntries}}
+    <div class="maneuvers-ledger swse-dense-grid">
+      {{#each maneuverPanel.entries}}
+        <div class="maneuver-row svg-row-backed swse-dense-card" data-item-id="{{this.id}}">
+          <div class="maneuver-name">{{this.name}}</div>
+          {{#if this.source}}
+            <div class="maneuver-source muted">{{this.source}}</div>
+          {{/if}}
+          {{#if this.summary}}
+            <div class="maneuver-summary muted">{{this.summary}}</div>
+          {{/if}}
+        </div>
+      {{/each}}
+    </div>
+  {{else}}
+    <div class="muted empty-state">
+      <p>{{maneuverPanel.emptyMessage}}</p>
+    </div>
+  {{/if}}
+
+</section>
