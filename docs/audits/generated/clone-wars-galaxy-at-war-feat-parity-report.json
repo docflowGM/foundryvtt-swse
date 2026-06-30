@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-06-30T14:33:16.852Z",
+  "phase": "7B",
+  "sourcebooks": [
+    "Clone Wars Campaign Guide",
+    "Galaxy at War"
+  ],
+  "catalogFeatCount": 401,
+  "packFeatCount": 401,
+  "expectedFeatCount": 67,
+  "presentExpectedFeatCount": 67,
+  "sourceMatchedCount": 67,
+  "cloneWarsCount": 20,
+  "galaxyAtWarCount": 47,
+  "cloneWarsCatalogCount": 20,
+  "galaxyAtWarCatalogCount": 47,
+  "runtimeClassifiedCount": 67,
+  "selectedChoiceCount": 5,
+  "notForceReviewedCount": 2,
+  "forceContextOnlyCount": 2,
+  "combatOptionCount": 10,
+  "vehicleContextCount": 5,
+  "skillContextCount": 0,
+  "taxonomyCorrections": [],
+  "sourceReviewQueue": [],
+  "outOfScope": [
+    "Clone Wars organizations, species, prestige classes, talents, droids, and vehicles are outside feat parity unless directly referenced by a feat prerequisite or effect.",
+    "Galaxy at War military units, hardware, bases, and encounter rules are outside feat parity unless directly referenced by a feat prerequisite or effect.",
+    "Vehicle/starship automation belongs in vehicle/gunnery systems, not static character feat math."
+  ],
+  "recommendedNextWork": [
+    "Run this audit after applying previous parity zips to ensure all Clone Wars and Galaxy at War feats are present and source-attributed.",
+    "Implement clear combat-option/rider feats through attack workflow options rather than passive numeric modifiers.",
+    "Implement vehicle/gunnery feats only after confirming their hooks in the vehicle/starship roll pipeline.",
+    "Keep Force-word title feats classified by mechanics, not title; Destructive Force and Force of Personality remain general feats.",
+    "Move any remaining scaffold modifiers into explicit rules metadata or runtime hooks before broad feat automation."
+  ],
+  "findings": []
+}
