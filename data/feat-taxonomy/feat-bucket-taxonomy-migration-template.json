@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "status": "template_only",
+  "description": "Future migration template. This file intentionally contains no feat assignments in Phase 7C.5.",
+  "assignmentShape": {
+    "featName": "Example Feat",
+    "bucket": "combat",
+    "subbucket": "attack_options",
+    "secondaryBuckets": ["weapon_armor"],
+    "taxonomyConfidence": "high",
+    "taxonomyReviewed": true,
+    "sourceReviewReason": "Only required when taxonomyConfidence is source_review_required."
+  },
+  "assignments": []
+}
