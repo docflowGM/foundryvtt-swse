@@ -99,7 +99,7 @@ export class DroidBuilderApp extends SWSEApplication {
     if (this.mode !== 'TEMPLATE' || !this.templateId) return;
 
     try {
-      const templatePack = game.packs.get('foundryvtt-swse.droid-templates');
+      const templatePack = game.packs.get('foundryvtt-swse.droids');
       if (templatePack) {
         const templateActor = await templatePack.getDocument(this.templateId);
         if (templateActor?.system?.droidSystems) {

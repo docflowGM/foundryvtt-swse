@@ -105,8 +105,6 @@ export const SWSE_TEMPLATES = [
   // ==============================
   // V2 Actor Sheets
   // ==============================
-  'systems/foundryvtt-swse/templates/actors/character/v2/character-sheet.hbs',
-  'systems/foundryvtt-swse/templates/actors/vehicle/v2/vehicle-sheet.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-sheet-content.hbs',
 
   // ==============================
@@ -210,11 +208,6 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-concept-content.hbs',
 
   // ==============================
-  // Legacy NPC Partials
-  // ==============================
-  'systems/foundryvtt-swse/templates/actors/npc/npc-image.hbs',
-
-  // ==============================
   // Shared Partials
   // ==============================
   'systems/foundryvtt-swse/templates/actors/shared/partials/current-conditions-panel.hbs',
@@ -264,12 +257,8 @@ export const SWSE_TEMPLATES = [
   // ==============================
   // Progression Applications (Legacy & New Shell)
   // ==============================
-  'systems/foundryvtt-swse/templates/apps/chargen.hbs',
-  'systems/foundryvtt-swse/templates/apps/levelup.hbs',
   'systems/foundryvtt-swse/templates/apps/npc-levelup-entry.hbs',
-  'systems/foundryvtt-swse/templates/apps/levelup-engine-ui.hbs',
   'systems/foundryvtt-swse/templates/apps/choices/feat-choice-dialog.hbs',
-  'systems/foundryvtt-swse/templates/apps/chargen/ability-rolling.hbs',
 
   // ==============================
   // Progression Framework (New Shell System)
@@ -319,10 +308,6 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/species-details.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/starship-maneuver-details.hbs',
   'systems/foundryvtt-swse/templates/apps/progression-framework/details-panel/talent-details.hbs',
-
-  // Progression (Legacy)
-  'systems/foundryvtt-swse/templates/apps/progression/attribute-method.hbs',
-  'systems/foundryvtt-swse/templates/apps/progression/sidebar.hbs',
 
   // Chat
   'systems/foundryvtt-swse/templates/chat/progression-session-summary.hbs',
@@ -445,11 +430,6 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/droid/droid-image-blueprint.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/droid-image-operational.hbs',
   'systems/foundryvtt-swse/templates/actors/droid/v2/partials/droid-build-status-card.hbs',
-  'systems/foundryvtt-swse/templates/actors/npc/npc-core-stats.hbs',
-  'systems/foundryvtt-swse/templates/actors/npc/npc-diagnostics-block.hbs',
-  'systems/foundryvtt-swse/templates/actors/npc/npc-specials-block.hbs',
-  'systems/foundryvtt-swse/templates/actors/npc/npc-talent-block.hbs',
-  'systems/foundryvtt-swse/templates/actors/npc/npc-weapon-block.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-beast-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-mode-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/npc/v2/partials/npc-mount-panel.hbs',
@@ -476,8 +456,6 @@ export const SWSE_TEMPLATES = [
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-subsystem-detail-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-turn-phase-panel.hbs',
   'systems/foundryvtt-swse/templates/actors/vehicle/v2/partials/vehicle-weapon-mount-panel.hbs',
-  'systems/foundryvtt-swse/templates/actors/vehicle/vehicle-callouts.hbs',
-  'systems/foundryvtt-swse/templates/actors/vehicle/vehicle-image.hbs',
   'systems/foundryvtt-swse/templates/components/hud.hbs',
   'systems/foundryvtt-swse/templates/components/narrator.hbs',
   'systems/foundryvtt-swse/templates/components/stepper.hbs',
