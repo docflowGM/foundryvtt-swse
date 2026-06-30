@@ -1,5 +1,6 @@
 import { SKILL_CHALLENGE_EFFECT_TYPES } from '/systems/foundryvtt-swse/scripts/engine/skill-challenges/SkillChallengeConstants.js';
 import { SkillChallengeState } from '/systems/foundryvtt-swse/scripts/engine/skill-challenges/SkillChallengeState.js';
+import { SkillChallengeFeatHooks } from '/systems/foundryvtt-swse/scripts/engine/skill-challenges/SkillChallengeFeatHooks.js';
 import { SkillChallengeStore } from '/systems/foundryvtt-swse/scripts/engine/skill-challenges/SkillChallengeStore.js';
 
 function titleCase(value = '') {
@@ -95,6 +96,8 @@ function decorateChallenge(challenge = {}) {
     secondarySkillsText: normalized.secondarySkills.map(skill => [skill.slug, skill.dc, skill.label, skill.notes].filter(value => value !== '').join(':')).join('\n'),
     effectsText: normalized.effects.map(effect => [effect.type, effect.label, effect.notes, Object.keys(effect.parameters || {}).length ? JSON.stringify(effect.parameters) : ''].filter(value => value !== '').join(':')).join('\n'),
     decoratedEffects: normalized.effects.map(effect => decorateEffect(effect, normalized)),
+    featOptions: SkillChallengeFeatHooks.getTrackerOptions(normalized),
+    hasFeatOptions: SkillChallengeFeatHooks.getTrackerOptions(normalized).length > 0,
     recentHistory: [...normalized.history].reverse().slice(0, 8).map(entry => ({
       ...entry,
       timestampLabel: formatDate(entry.timestamp),
@@ -142,9 +145,9 @@ export class GMSkillChallengeSurfaceService {
         gmNotes: ''
       },
       readiness: {
-        phase: '3.5D',
+        phase: '3.5E',
         wired: true,
-        note: 'Manual tracker, GM-confirmed roll submissions, and safe challenge effects are active.'
+        note: 'Manual tracker, GM-confirmed roll submissions, safe challenge effects, and Skill Challenge feat hooks are active.'
       }
     };
   }

@@ -1,6 +1,6 @@
-# Skill Challenge Roll Integration - Phase 3.5C
+# Skill Challenge Roll Integration - Phase 3.5D
 
-Phase 3.5C connects normal skill rolls to the Skill Challenge tracker without replacing the skill math pipeline.
+Phase 3.5D connects normal skill rolls to the Skill Challenge tracker without replacing the skill math pipeline.
 
 ## Boundary
 

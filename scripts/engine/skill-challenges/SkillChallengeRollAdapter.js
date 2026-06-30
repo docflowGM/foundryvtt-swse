@@ -1,6 +1,7 @@
 import { SkillChallengeEngine } from './SkillChallengeEngine.js';
 import { SkillChallengeRules } from './SkillChallengeRules.js';
 import { SkillChallengeState } from './SkillChallengeState.js';
+import { SkillChallengeFeatHooks } from './SkillChallengeFeatHooks.js';
 import { SkillChallengeStore } from './SkillChallengeStore.js';
 
 function cleanString(value, fallback = '') {
@@ -72,6 +73,7 @@ function decorateChallengeForCard(challenge = {}, rollContext = {}) {
   const dc = numberOrNull(rollContext.dc) ?? SkillChallengeRules.getDcForSkill(normalized, rollContext.skillSlug);
   const outcome = SkillChallengeRules.resolveRollAgainstChallenge(normalized, { ...rollContext, dc });
   const adjusted = SkillChallengeEngine.previewRollOutcome(normalized, { ...rollContext, dc });
+  const featOptions = SkillChallengeFeatHooks.getReactionOptions(normalized, { ...rollContext, dc }, adjusted);
 
   return {
     ...normalized,
@@ -83,6 +85,8 @@ function decorateChallengeForCard(challenge = {}, rollContext = {}) {
     outcomeLabel: outcomeLabel(adjusted),
     outcomeTone: adjusted.outcome === 'success' ? 'ok' : adjusted.outcome === 'failure' ? 'warn' : 'review',
     message: adjusted.messages?.join(' ') || 'GM review required.',
+    featOptions,
+    hasFeatOptions: featOptions.length > 0,
     successPreview: Math.max(0, Math.min(normalized.targetSuccesses, normalized.successes + Number(adjusted.successesDelta || 0))),
     failurePreview: Math.max(0, Math.min(normalized.failureLimit, normalized.failures + Number(adjusted.failuresDelta || 0)))
   };
@@ -206,6 +210,14 @@ export class SkillChallengeRollAdapter {
       next = SkillChallengeEngine.ignoreRoll(challenge, rollContext);
     } else if (action === 'gm-review') {
       next = SkillChallengeEngine.markRollForReview(challenge, rollContext);
+    } else if (action === 'feat-catastrophic-avoidance') {
+      next = SkillChallengeEngine.applyCatastrophicAvoidance(challenge, rollContext);
+    } else if (action === 'feat-last-resort') {
+      next = SkillChallengeEngine.applyLastResort(challenge, {
+        actorId: cleanString(button?.dataset?.actorId),
+        actorName: cleanString(button?.dataset?.actorName),
+        rollContext
+      });
     }
 
     if (!next) return null;

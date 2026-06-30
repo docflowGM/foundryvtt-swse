@@ -1,0 +1,243 @@
+{
+  "audit": "skill-challenge-complete-phase35f",
+  "generatedAt": "2026-06-30T12:29:01.875Z",
+  "ok": 47,
+  "errors": 0,
+  "checks": [
+    {
+      "id": "file:scripts/engine/skill-challenges/SkillChallengeConstants.js",
+      "ok": true,
+      "detail": "scripts/engine/skill-challenges/SkillChallengeConstants.js exists."
+    },
+    {
+      "id": "file:scripts/engine/skill-challenges/SkillChallengeState.js",
+      "ok": true,
+      "detail": "scripts/engine/skill-challenges/SkillChallengeState.js exists."
+    },
+    {
+      "id": "file:scripts/engine/skill-challenges/SkillChallengeRules.js",
+      "ok": true,
+      "detail": "scripts/engine/skill-challenges/SkillChallengeRules.js exists."
+    },
+    {
+      "id": "file:scripts/engine/skill-challenges/SkillChallengeEffectResolver.js",
+      "ok": true,
+      "detail": "scripts/engine/skill-challenges/SkillChallengeEffectResolver.js exists."
+    },
+    {
+      "id": "file:scripts/engine/skill-challenges/SkillChallengeFeatHooks.js",
+      "ok": true,
+      "detail": "scripts/engine/skill-challenges/SkillChallengeFeatHooks.js exists."
+    },
+    {
+      "id": "file:scripts/engine/skill-challenges/SkillChallengeEngine.js",
+      "ok": true,
+      "detail": "scripts/engine/skill-challenges/SkillChallengeEngine.js exists."
+    },
+    {
+      "id": "file:scripts/engine/skill-challenges/SkillChallengeStore.js",
+      "ok": true,
+      "detail": "scripts/engine/skill-challenges/SkillChallengeStore.js exists."
+    },
+    {
+      "id": "file:scripts/engine/skill-challenges/SkillChallengeRollAdapter.js",
+      "ok": true,
+      "detail": "scripts/engine/skill-challenges/SkillChallengeRollAdapter.js exists."
+    },
+    {
+      "id": "file:scripts/ui/shell/gm/GMSkillChallengeSurfaceService.js",
+      "ok": true,
+      "detail": "scripts/ui/shell/gm/GMSkillChallengeSurfaceService.js exists."
+    },
+    {
+      "id": "file:scripts/ui/shell/gm/controllers/GMSkillChallengeSurfaceController.js",
+      "ok": true,
+      "detail": "scripts/ui/shell/gm/controllers/GMSkillChallengeSurfaceController.js exists."
+    },
+    {
+      "id": "file:templates/apps/gm/skill-challenges/skill-challenge-surface.hbs",
+      "ok": true,
+      "detail": "templates/apps/gm/skill-challenges/skill-challenge-surface.hbs exists."
+    },
+    {
+      "id": "file:templates/chat/skill-challenge-card.hbs",
+      "ok": true,
+      "detail": "templates/chat/skill-challenge-card.hbs exists."
+    },
+    {
+      "id": "file:data/skill-challenges/skill-challenge-system-model.json",
+      "ok": true,
+      "detail": "data/skill-challenges/skill-challenge-system-model.json exists."
+    },
+    {
+      "id": "file:data/skill-challenges/skill-challenge-effects.json",
+      "ok": true,
+      "detail": "data/skill-challenges/skill-challenge-effects.json exists."
+    },
+    {
+      "id": "file:data/skill-challenges/skill-challenge-feat-hooks.json",
+      "ok": true,
+      "detail": "data/skill-challenges/skill-challenge-feat-hooks.json exists."
+    },
+    {
+      "id": "file:data/skill-challenges/sample-skill-challenges.json",
+      "ok": true,
+      "detail": "data/skill-challenges/sample-skill-challenges.json exists."
+    },
+    {
+      "id": "settings:registered",
+      "ok": true,
+      "detail": "Skill Challenge world setting is registered from core settings."
+    },
+    {
+      "id": "gm-datapad:nav",
+      "ok": true,
+      "detail": "GM Datapad exposes Skill Challenges in navigation/counts."
+    },
+    {
+      "id": "surface:service-registered",
+      "ok": true,
+      "detail": "GM shell service is registered."
+    },
+    {
+      "id": "surface:controller-registered",
+      "ok": true,
+      "detail": "GM shell controller is registered."
+    },
+    {
+      "id": "engine:createChallenge",
+      "ok": true,
+      "detail": "Engine implements createChallenge."
+    },
+    {
+      "id": "engine:startChallenge",
+      "ok": true,
+      "detail": "Engine implements startChallenge."
+    },
+    {
+      "id": "engine:submitRoll",
+      "ok": true,
+      "detail": "Engine implements submitRoll."
+    },
+    {
+      "id": "engine:recoverFailure",
+      "ok": true,
+      "detail": "Engine implements recoverFailure."
+    },
+    {
+      "id": "engine:advanceTimedChallenge",
+      "ok": true,
+      "detail": "Engine implements advanceTimedChallenge."
+    },
+    {
+      "id": "engine:applyCatastrophicAvoidance",
+      "ok": true,
+      "detail": "Engine implements applyCatastrophicAvoidance."
+    },
+    {
+      "id": "engine:applyLastResort",
+      "ok": true,
+      "detail": "Engine implements applyLastResort."
+    },
+    {
+      "id": "engine:applyRecoveryFeat",
+      "ok": true,
+      "detail": "Engine implements applyRecoveryFeat."
+    },
+    {
+      "id": "effects:applyCatastrophicFailure",
+      "ok": true,
+      "detail": "Effect resolver supports applyCatastrophicFailure."
+    },
+    {
+      "id": "effects:applyRestrictedSkills",
+      "ok": true,
+      "detail": "Effect resolver supports applyRestrictedSkills."
+    },
+    {
+      "id": "effects:buildRecoveryOutcome",
+      "ok": true,
+      "detail": "Effect resolver supports buildRecoveryOutcome."
+    },
+    {
+      "id": "effects:buildSecondEffortOutcome",
+      "ok": true,
+      "detail": "Effect resolver supports buildSecondEffortOutcome."
+    },
+    {
+      "id": "effects:advanceTimedChallenge",
+      "ok": true,
+      "detail": "Effect resolver supports advanceTimedChallenge."
+    },
+    {
+      "id": "feat-hook:Catastrophic Avoidance",
+      "ok": true,
+      "detail": "Feat hook includes Skill Challenge: Catastrophic Avoidance."
+    },
+    {
+      "id": "feat-hook:Last Resort",
+      "ok": true,
+      "detail": "Feat hook includes Skill Challenge: Last Resort."
+    },
+    {
+      "id": "feat-hook:Recovery",
+      "ok": true,
+      "detail": "Feat hook includes Skill Challenge: Recovery."
+    },
+    {
+      "id": "roll-adapter:review-card",
+      "ok": true,
+      "detail": "Roll adapter posts and resolves GM review cards."
+    },
+    {
+      "id": "roll-adapter:gm-only",
+      "ok": true,
+      "detail": "GM review actions are GM-gated."
+    },
+    {
+      "id": "skill-roll:wired",
+      "ok": true,
+      "detail": "Normal skill rolls feed the adapter after canonical skill math posts."
+    },
+    {
+      "id": "chat-bridge:wired",
+      "ok": true,
+      "detail": "Chat buttons resolve through the adapter."
+    },
+    {
+      "id": "controller:json-effect-lines",
+      "ok": true,
+      "detail": "Effect-line parser preserves JSON parameters after colon delimiters."
+    },
+    {
+      "id": "controller:manual-entry",
+      "ok": true,
+      "detail": "GM tracker supports manual/off-sheet roll entries."
+    },
+    {
+      "id": "controller:post-summary",
+      "ok": true,
+      "detail": "GM tracker can post a public summary to chat."
+    },
+    {
+      "id": "template:manual-entry",
+      "ok": true,
+      "detail": "Template exposes manual roll/ability/Force entry."
+    },
+    {
+      "id": "template:post-summary",
+      "ok": true,
+      "detail": "Template exposes Post Summary action."
+    },
+    {
+      "id": "feat-catalog:skill-challenge-feats",
+      "ok": true,
+      "detail": "Skill Challenge feats exist in feat catalog."
+    },
+    {
+      "id": "feat-catalog:metadata-only-static-exclude",
+      "ok": true,
+      "detail": "Skill Challenge feats are excluded from static sheet math."
+    }
+  ]
+}

@@ -9064,7 +9064,9 @@
       "page": 25,
       "tags": [
         "feat",
-        "general"
+        "general",
+        "skill-challenge",
+        "skill-challenge-hook"
       ],
       "bonus_feat_for": [],
       "uses": {
@@ -9073,40 +9075,44 @@
         "perDay": false
       },
       "costNumeric": 0,
-      "executionModel": "PASSIVE",
+      "executionModel": "REACTION",
       "abilityMeta": {
-        "executionModel": "PASSIVE",
+        "executionModel": "REACTION",
         "subType": "RULE",
-        "mechanicsMode": "manual_punted",
-        "applicationScope": "skill_challenge_table_context",
-        "staticSheetPolicy": "manual_punted",
-        "requiresRuntimeContext": false,
+        "mechanicsMode": "skill_challenge_hook",
+        "applicationScope": "skill_challenge_runtime",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
         "requiresSelectedChoice": false,
-        "conditionSummary": "Skill Challenge: Catastrophic Avoidance reduces the frequency/severity of catastrophic failures; skill challenge resolution remains GM/table-managed.",
+        "conditionSummary": "Once per Skill Challenge, GM can apply this feat from the review card: catastrophic failure triggers only at the feat threshold and counts as one failure.",
         "predicateRequirements": [],
-        "metadataPhase": "phase17-next-feat-batch",
-        "metadataNotes": "Phase 17 clears the remaining Phase 16 active backlog by implementing engine-supported skill/reroll/attack-option rules where possible, and explicitly reclassifying table-state/picker-heavy feats as manual, punted, or deferred instead of leaving them as unincorporated placeholders.",
-        "implementationStatus": "punted_to_skill_challenge_table_resolution",
-        "description": "Skill Challenge: Catastrophic Avoidance reduces the frequency/severity of catastrophic failures; skill challenge resolution remains GM/table-managed.",
+        "metadataPhase": "phase35e-skill-challenge-feat-hooks",
+        "metadataNotes": "Skill Challenge feats are implemented as GM-confirmed runtime hooks inside the Skill Challenge tracker/review workflow. They do not alter static skill math.",
+        "implementationStatus": "implemented_skill_challenge_hook",
+        "description": "Once per Skill Challenge, GM can apply this feat from the review card: catastrophic failure triggers only at the feat threshold and counts as one failure.",
         "modifiers": [
           {
-            "target": "metadata",
+            "target": "skillChallengeRuntime",
             "value": 0,
-            "type": "untyped",
-            "enabled": false,
+            "type": "runtime-hook",
+            "enabled": true,
             "priority": 500,
-            "description": "Skill Challenge: Catastrophic Avoidance reduces the frequency/severity of catastrophic failures; skill challenge resolution remains GM/table-managed.",
-            "mechanicsMode": "metadata_only",
-            "applicationScope": "skill_challenge_table_context",
+            "description": "Once per Skill Challenge, GM can apply this feat from the review card: catastrophic failure triggers only at the feat threshold and counts as one failure.",
+            "mechanicsMode": "skill_challenge_hook",
+            "applicationScope": "skill_challenge_runtime",
             "staticSheetPolicy": "exclude",
-            "metadataPhase": "phase17-next-feat-batch"
+            "metadataPhase": "phase35e-skill-challenge-feat-hooks"
           }
         ],
         "skillChallengeRules": [
           {
             "type": "SKILL_CHALLENGE_CATASTROPHIC_AVOIDANCE",
-            "manualResolution": true,
-            "description": "Skill Challenge: Catastrophic Avoidance reduces the frequency/severity of catastrophic failures; skill challenge resolution remains GM/table-managed."
+            "manualResolution": false,
+            "requiresSubsystem": "skill-challenges",
+            "oncePerSkillChallenge": true,
+            "gmConfirmed": true,
+            "staticSheetPolicy": "exclude",
+            "description": "Once per Skill Challenge, GM can apply this feat from the review card: catastrophic failure triggers only at the feat threshold and counts as one failure."
           }
         ]
       },
@@ -41797,7 +41803,9 @@
         "feat",
         "general",
         "grapple",
-        "reroll"
+        "reroll",
+        "skill-challenge",
+        "skill-challenge-hook"
       ],
       "bonus_feat_for": [],
       "uses": {
@@ -41806,40 +41814,44 @@
         "perDay": false
       },
       "costNumeric": 0,
-      "executionModel": "PASSIVE",
+      "executionModel": "REACTION",
       "abilityMeta": {
-        "executionModel": "PASSIVE",
+        "executionModel": "REACTION",
         "subType": "RULE",
-        "mechanicsMode": "manual_punted",
-        "applicationScope": "skill_challenge_table_context",
-        "staticSheetPolicy": "manual_punted",
-        "requiresRuntimeContext": false,
+        "mechanicsMode": "skill_challenge_hook",
+        "applicationScope": "skill_challenge_runtime",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
         "requiresSelectedChoice": false,
-        "conditionSummary": "Skill Challenge: Last Resort grants a reroll on a third failed Skill Challenge check, keeping the better result; skill challenge tracking remains GM/table-managed.",
+        "conditionSummary": "Once per Skill Challenge, GM can record this feat when a third failure would end the challenge, creating a reroll/keep-better-result opportunity.",
         "predicateRequirements": [],
-        "metadataPhase": "phase17-next-feat-batch",
-        "metadataNotes": "Phase 17 clears the remaining Phase 16 active backlog by implementing engine-supported skill/reroll/attack-option rules where possible, and explicitly reclassifying table-state/picker-heavy feats as manual, punted, or deferred instead of leaving them as unincorporated placeholders.",
-        "implementationStatus": "punted_to_skill_challenge_table_resolution",
-        "description": "Skill Challenge: Last Resort grants a reroll on a third failed Skill Challenge check, keeping the better result; skill challenge tracking remains GM/table-managed.",
+        "metadataPhase": "phase35e-skill-challenge-feat-hooks",
+        "metadataNotes": "Skill Challenge feats are implemented as GM-confirmed runtime hooks inside the Skill Challenge tracker/review workflow. They do not alter static skill math.",
+        "implementationStatus": "implemented_skill_challenge_hook",
+        "description": "Once per Skill Challenge, GM can record this feat when a third failure would end the challenge, creating a reroll/keep-better-result opportunity.",
         "modifiers": [
           {
-            "target": "metadata",
+            "target": "skillChallengeRuntime",
             "value": 0,
-            "type": "untyped",
-            "enabled": false,
+            "type": "runtime-hook",
+            "enabled": true,
             "priority": 500,
-            "description": "Skill Challenge: Last Resort grants a reroll on a third failed Skill Challenge check, keeping the better result; skill challenge tracking remains GM/table-managed.",
-            "mechanicsMode": "metadata_only",
-            "applicationScope": "skill_challenge_table_context",
+            "description": "Once per Skill Challenge, GM can record this feat when a third failure would end the challenge, creating a reroll/keep-better-result opportunity.",
+            "mechanicsMode": "skill_challenge_hook",
+            "applicationScope": "skill_challenge_runtime",
             "staticSheetPolicy": "exclude",
-            "metadataPhase": "phase17-next-feat-batch"
+            "metadataPhase": "phase35e-skill-challenge-feat-hooks"
           }
         ],
         "skillChallengeRules": [
           {
-            "type": "SKILL_CHALLENGE_LAST_RESORT_REROLL",
-            "manualResolution": true,
-            "description": "Skill Challenge: Last Resort grants a reroll on a third failed Skill Challenge check, keeping the better result; skill challenge tracking remains GM/table-managed."
+            "type": "SKILL_CHALLENGE_LAST_RESORT",
+            "manualResolution": false,
+            "requiresSubsystem": "skill-challenges",
+            "oncePerSkillChallenge": true,
+            "gmConfirmed": true,
+            "staticSheetPolicy": "exclude",
+            "description": "Once per Skill Challenge, GM can record this feat when a third failure would end the challenge, creating a reroll/keep-better-result opportunity."
           }
         ]
       },
@@ -45760,6 +45772,8 @@
         "defense",
         "feat",
         "general",
+        "skill-challenge",
+        "skill-challenge-hook",
         "survivability"
       ],
       "bonus_feat_for": [],
@@ -45769,40 +45783,44 @@
         "perDay": false
       },
       "costNumeric": 0,
-      "executionModel": "PASSIVE",
+      "executionModel": "REACTION",
       "abilityMeta": {
-        "executionModel": "PASSIVE",
+        "executionModel": "REACTION",
         "subType": "RULE",
-        "mechanicsMode": "manual_punted",
-        "applicationScope": "skill_challenge_table_context",
-        "staticSheetPolicy": "manual_punted",
-        "requiresRuntimeContext": false,
+        "mechanicsMode": "skill_challenge_hook",
+        "applicationScope": "skill_challenge_runtime",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
         "requiresSelectedChoice": false,
-        "conditionSummary": "Skill Challenge: Recovery treats a Skill Challenge as having the Recovery effect; skill challenge recovery structure remains GM/table-managed.",
+        "conditionSummary": "Once per Skill Challenge, GM can apply this feat from the tracker to remove one accumulated failure when appropriate.",
         "predicateRequirements": [],
-        "metadataPhase": "phase17-next-feat-batch",
-        "metadataNotes": "Phase 17 clears the remaining Phase 16 active backlog by implementing engine-supported skill/reroll/attack-option rules where possible, and explicitly reclassifying table-state/picker-heavy feats as manual, punted, or deferred instead of leaving them as unincorporated placeholders.",
-        "implementationStatus": "punted_to_skill_challenge_table_resolution",
-        "description": "Skill Challenge: Recovery treats a Skill Challenge as having the Recovery effect; skill challenge recovery structure remains GM/table-managed.",
+        "metadataPhase": "phase35e-skill-challenge-feat-hooks",
+        "metadataNotes": "Skill Challenge feats are implemented as GM-confirmed runtime hooks inside the Skill Challenge tracker/review workflow. They do not alter static skill math.",
+        "implementationStatus": "implemented_skill_challenge_hook",
+        "description": "Once per Skill Challenge, GM can apply this feat from the tracker to remove one accumulated failure when appropriate.",
         "modifiers": [
           {
-            "target": "metadata",
+            "target": "skillChallengeRuntime",
             "value": 0,
-            "type": "untyped",
-            "enabled": false,
+            "type": "runtime-hook",
+            "enabled": true,
             "priority": 500,
-            "description": "Skill Challenge: Recovery treats a Skill Challenge as having the Recovery effect; skill challenge recovery structure remains GM/table-managed.",
-            "mechanicsMode": "metadata_only",
-            "applicationScope": "skill_challenge_table_context",
+            "description": "Once per Skill Challenge, GM can apply this feat from the tracker to remove one accumulated failure when appropriate.",
+            "mechanicsMode": "skill_challenge_hook",
+            "applicationScope": "skill_challenge_runtime",
             "staticSheetPolicy": "exclude",
-            "metadataPhase": "phase17-next-feat-batch"
+            "metadataPhase": "phase35e-skill-challenge-feat-hooks"
           }
         ],
         "skillChallengeRules": [
           {
-            "type": "SKILL_CHALLENGE_RECOVERY_EFFECT",
-            "manualResolution": true,
-            "description": "Skill Challenge: Recovery treats a Skill Challenge as having the Recovery effect; skill challenge recovery structure remains GM/table-managed."
+            "type": "SKILL_CHALLENGE_RECOVERY",
+            "manualResolution": false,
+            "requiresSubsystem": "skill-challenges",
+            "oncePerSkillChallenge": true,
+            "gmConfirmed": true,
+            "staticSheetPolicy": "exclude",
+            "description": "Once per Skill Challenge, GM can apply this feat from the tracker to remove one accumulated failure when appropriate."
           }
         ]
       },
@@ -48690,13 +48708,13 @@
         "mechanicsMode": "manual_gm_managed",
         "applicationScope": "temporary_talent_selection_gm_managed",
         "staticSheetPolicy": "exclude",
-        "requiresRuntimeContext": true,
-        "requiresSelectedChoice": true,
-        "conditionSummary": "Resilient Talent requires a once-per-day temporary talent choice from a class you have levels in; keep it metadata-only until a temporary talent picker/duration workflow exists.",
+        "requiresRuntimeContext": false,
+        "requiresSelectedChoice": false,
+        "conditionSummary": "Resilient Talent requires a once-per-day temporary talent picker from classes you have levels in, so it is deferred to dedicated picker/effect UI.",
         "predicateRequirements": [],
-        "metadataPhase": "phase3-galaxy-intrigue-parity",
-        "metadataNotes": "Phase 3 marks this as a persistent/runtime choice feat: it needs a temporary talent picker and duration tracker, not static sheet math.",
-        "implementationStatus": "metadata_only_until_temporary_talent_picker",
+        "metadataPhase": "phase17-next-feat-batch",
+        "metadataNotes": "Phase 17 clears the remaining Phase 16 active backlog by implementing engine-supported skill/reroll/attack-option rules where possible, and explicitly reclassifying table-state/picker-heavy feats as manual, punted, or deferred instead of leaving them as unincorporated placeholders.",
+        "implementationStatus": "punted_gm_managed_phase22",
         "description": "Resilient Talent grants a temporary talent with time-sensitive limits. The GM should assign/remove that temporary talent rather than the system guessing timing and eligibility.",
         "modifiers": [
           {
@@ -48704,13 +48722,11 @@
             "value": 0,
             "type": "untyped",
             "enabled": false,
-            "description": "Resilient Talent requires a temporary talent choice and one-minute duration tracking; resolve through GM/table management until a dedicated picker exists.",
+            "description": "Resilient Talent grants a temporary talent with time-sensitive limits. The GM should assign/remove that temporary talent rather than the system guessing timing and eligibility.",
             "mechanicsMode": "metadata_only",
             "applicationScope": "temporary_talent_selection_gm_managed",
             "staticSheetPolicy": "exclude",
-            "metadataPhase": "phase3-galaxy-intrigue-parity",
-            "requiresSelectedChoice": true,
-            "requiresRuntimeContext": true
+            "metadataPhase": "phase22-force-regimen-skill-swap"
           }
         ],
         "talentRules": [

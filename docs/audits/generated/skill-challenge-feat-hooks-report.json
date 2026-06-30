@@ -1,0 +1,275 @@
+{
+  "phase": "3.5E",
+  "generatedAt": "2026-06-30T12:29:01.798Z",
+  "ok": 46,
+  "warnings": 0,
+  "errors": 0,
+  "results": [
+    {
+      "status": "ok",
+      "message": "scripts/engine/skill-challenges/SkillChallengeFeatHooks.js exists",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "scripts/engine/skill-challenges/SkillChallengeState.js exists",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "scripts/engine/skill-challenges/SkillChallengeEngine.js exists",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "scripts/engine/skill-challenges/SkillChallengeRollAdapter.js exists",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "scripts/ui/shell/gm/GMSkillChallengeSurfaceService.js exists",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "scripts/ui/shell/gm/controllers/GMSkillChallengeSurfaceController.js exists",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "templates/chat/skill-challenge-card.hbs exists",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "templates/apps/gm/skill-challenges/skill-challenge-surface.hbs exists",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "data/skill-challenges/skill-challenge-feat-hooks.json exists",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "docs/design/skill-challenge-feat-hooks-phase35e.md exists",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "Feat hook includes SKILL_CHALLENGE_CATASTROPHIC_AVOIDANCE",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "Feat hook includes SKILL_CHALLENGE_LAST_RESORT",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "Feat hook includes SKILL_CHALLENGE_RECOVERY",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "SkillChallengeState persists featUsage",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "Engine exposes Catastrophic Avoidance action",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "Engine exposes Last Resort action",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "Engine exposes Recovery feat action",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "Roll adapter resolves feat review-card actions",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "GM surface decorates tracker feat options",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "GM controller resolves tracker feat actions",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "Chat review card renders feat reactions",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "GM tracker renders feat panel",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "catalog Skill Challenge: Catastrophic Avoidance mechanicsMode is skill_challenge_hook",
+      "detail": {
+        "value": "skill_challenge_hook"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "catalog Skill Challenge: Catastrophic Avoidance remains excluded from static sheet math",
+      "detail": {
+        "value": "exclude"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "catalog Skill Challenge: Catastrophic Avoidance implementationStatus is implemented_skill_challenge_hook",
+      "detail": {
+        "value": "implemented_skill_challenge_hook"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "catalog Skill Challenge: Catastrophic Avoidance has GM-confirmed SKILL_CHALLENGE_CATASTROPHIC_AVOIDANCE rule",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "pack Skill Challenge: Catastrophic Avoidance mechanicsMode is skill_challenge_hook",
+      "detail": {
+        "value": "skill_challenge_hook"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "pack Skill Challenge: Catastrophic Avoidance remains excluded from static sheet math",
+      "detail": {
+        "value": "exclude"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "pack Skill Challenge: Catastrophic Avoidance implementationStatus is implemented_skill_challenge_hook",
+      "detail": {
+        "value": "implemented_skill_challenge_hook"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "pack Skill Challenge: Catastrophic Avoidance has GM-confirmed SKILL_CHALLENGE_CATASTROPHIC_AVOIDANCE rule",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "catalog Skill Challenge: Last Resort mechanicsMode is skill_challenge_hook",
+      "detail": {
+        "value": "skill_challenge_hook"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "catalog Skill Challenge: Last Resort remains excluded from static sheet math",
+      "detail": {
+        "value": "exclude"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "catalog Skill Challenge: Last Resort implementationStatus is implemented_skill_challenge_hook",
+      "detail": {
+        "value": "implemented_skill_challenge_hook"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "catalog Skill Challenge: Last Resort has GM-confirmed SKILL_CHALLENGE_LAST_RESORT rule",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "pack Skill Challenge: Last Resort mechanicsMode is skill_challenge_hook",
+      "detail": {
+        "value": "skill_challenge_hook"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "pack Skill Challenge: Last Resort remains excluded from static sheet math",
+      "detail": {
+        "value": "exclude"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "pack Skill Challenge: Last Resort implementationStatus is implemented_skill_challenge_hook",
+      "detail": {
+        "value": "implemented_skill_challenge_hook"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "pack Skill Challenge: Last Resort has GM-confirmed SKILL_CHALLENGE_LAST_RESORT rule",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "catalog Skill Challenge: Recovery mechanicsMode is skill_challenge_hook",
+      "detail": {
+        "value": "skill_challenge_hook"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "catalog Skill Challenge: Recovery remains excluded from static sheet math",
+      "detail": {
+        "value": "exclude"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "catalog Skill Challenge: Recovery implementationStatus is implemented_skill_challenge_hook",
+      "detail": {
+        "value": "implemented_skill_challenge_hook"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "catalog Skill Challenge: Recovery has GM-confirmed SKILL_CHALLENGE_RECOVERY rule",
+      "detail": {}
+    },
+    {
+      "status": "ok",
+      "message": "pack Skill Challenge: Recovery mechanicsMode is skill_challenge_hook",
+      "detail": {
+        "value": "skill_challenge_hook"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "pack Skill Challenge: Recovery remains excluded from static sheet math",
+      "detail": {
+        "value": "exclude"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "pack Skill Challenge: Recovery implementationStatus is implemented_skill_challenge_hook",
+      "detail": {
+        "value": "implemented_skill_challenge_hook"
+      }
+    },
+    {
+      "status": "ok",
+      "message": "pack Skill Challenge: Recovery has GM-confirmed SKILL_CHALLENGE_RECOVERY rule",
+      "detail": {}
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-30T12:00:04.692Z",
+  "generatedAt": "2026-06-30T12:16:38.519Z",
   "phase": "3.5A",
   "strict": true,
   "summary": {
@@ -192,7 +192,7 @@
       "type": "model",
       "subject": "skill-challenge-effects.json",
       "status": "ok",
-      "message": "6 challenge effects modeled."
+      "message": "7 challenge effects modeled."
     },
     {
       "type": "model",

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "phase": "3.5E",
+  "source": "Galaxy of Intrigue",
+  "staticSheetPolicy": "exclude",
+  "rulesNote": "Skill Challenge feats are runtime challenge hooks. They do not modify actor static skill math and must be resolved through GM-confirmed Skill Challenge tracker or review-card actions.",
+  "hooks": [
+    {
+      "featName": "Skill Challenge: Catastrophic Avoidance",
+      "slug": "skill-challenge-catastrophic-avoidance",
+      "ruleType": "SKILL_CHALLENGE_CATASTROPHIC_AVOIDANCE",
+      "trigger": "A GM-reviewed roll would trigger the Catastrophic Failure challenge effect for the acting hero.",
+      "action": "feat-catastrophic-avoidance",
+      "frequency": "once_per_skill_challenge_per_actor",
+      "uiSurface": "skill_roll_review_card",
+      "implementation": "GM button reduces the catastrophic result to one accumulated failure and records feat usage on the challenge state.",
+      "automationLimits": "The system does not spend resources or force rerolls automatically. The GM confirms the reaction."
+    },
+    {
+      "featName": "Skill Challenge: Last Resort",
+      "slug": "skill-challenge-last-resort",
+      "ruleType": "SKILL_CHALLENGE_LAST_RESORT",
+      "trigger": "A GM-reviewed result would reach the challenge failure limit, normally ending the challenge.",
+      "action": "feat-last-resort",
+      "frequency": "once_per_skill_challenge_per_actor",
+      "uiSurface": "skill_roll_review_card_and_gm_tracker",
+      "implementation": "GM button records the reroll opportunity and feat usage without applying the triggering third failure; the replacement roll is resolved through the normal skill roll path.",
+      "automationLimits": "The system does not roll on the player's behalf and does not choose the better result automatically."
+    },
+    {
+      "featName": "Skill Challenge: Recovery",
+      "slug": "skill-challenge-recovery",
+      "ruleType": "SKILL_CHALLENGE_RECOVERY",
+      "trigger": "The active Skill Challenge has at least one accumulated failure and a participant has the feat available.",
+      "action": "feat-recovery",
+      "frequency": "once_per_skill_challenge_per_actor",
+      "uiSurface": "gm_tracker",
+      "implementation": "GM tracker button removes one accumulated failure and records feat usage on the challenge state.",
+      "automationLimits": "The system does not decide narrative eligibility; the GM applies it when the table agrees it is appropriate."
+    }
+  ]
+}

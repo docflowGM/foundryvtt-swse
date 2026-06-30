@@ -5598,3 +5598,24 @@
 .swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-effect.is-disabled {
   opacity: 0.55;
 }
+
+/* Skill Challenge feat hooks - Phase 3.5E */
+.swse-skill-challenge-feat-options,
+.swse-skill-challenge-feat-option {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.swse-skill-challenge-feat-options h5 {
+  margin: 0 0 0.35rem;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.swse-skill-challenge-feat-option.is-muted {
+  opacity: 0.68;
+}

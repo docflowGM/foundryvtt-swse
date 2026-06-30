@@ -2,6 +2,7 @@ import { SKILL_CHALLENGE_EFFECT_TYPES, SKILL_CHALLENGE_STATUS } from './SkillCha
 import { SkillChallengeEffectResolver } from './SkillChallengeEffectResolver.js';
 import { SkillChallengeRules } from './SkillChallengeRules.js';
 import { SkillChallengeState } from './SkillChallengeState.js';
+import { SkillChallengeFeatHooks } from './SkillChallengeFeatHooks.js';
 
 function stamp(challenge) {
   return {
@@ -182,6 +183,66 @@ export class SkillChallengeEngine {
       action: 'effect-timed-advance',
       note: `Timed Challenge adjusted by ${delta}. ${remaining} ${Math.abs(remaining) === 1 ? unit : `${unit}s`} remaining.`
     });
+  }
+
+
+  static applyCatastrophicAvoidance(challenge, rollContext = {}) {
+    const normalized = SkillChallengeState.normalize(challenge);
+    const actorId = rollContext.actorId ?? '';
+    const actorName = rollContext.actorName ?? '';
+    const preview = this.previewRollOutcome(normalized, rollContext);
+    const adjusted = SkillChallengeFeatHooks.applyCatastrophicAvoidance(preview, { actorName });
+    const withUsage = SkillChallengeFeatHooks.markFeatUsed(normalized, {
+      ruleType: SkillChallengeFeatHooks.FEATS.catastrophicAvoidance.ruleType,
+      actorId,
+      actorName,
+      featName: SkillChallengeFeatHooks.FEATS.catastrophicAvoidance.name,
+      note: 'Catastrophic Avoidance applied from GM review card.'
+    });
+
+    return stamp(SkillChallengeRules.applyOutcome(withUsage, {
+      ...adjusted,
+      action: 'feat-catastrophic-avoidance',
+      actorId,
+      actorName,
+      rollMessageId: rollContext.rollMessageId ?? adjusted.rollMessageId ?? '',
+      note: adjusted.messages?.join(' ') || 'GM applied Skill Challenge: Catastrophic Avoidance.'
+    }));
+  }
+
+  static applyLastResort(challenge, { actorId = '', actorName = '', rollContext = {} } = {}) {
+    const normalized = SkillChallengeState.normalize(challenge);
+    const withUsage = SkillChallengeFeatHooks.markFeatUsed(normalized, {
+      ruleType: SkillChallengeFeatHooks.FEATS.lastResort.ruleType,
+      actorId,
+      actorName,
+      featName: SkillChallengeFeatHooks.FEATS.lastResort.name,
+      note: 'Last Resort reroll opportunity recorded; GM applies the better result after reroll.'
+    });
+
+    return stamp(SkillChallengeRules.applyOutcome(withUsage, SkillChallengeFeatHooks.buildLastResortOutcome({ actorId, actorName, rollContext })));
+  }
+
+  static applyRecoveryFeat(challenge, { actorId = '', actorName = '' } = {}) {
+    const normalized = SkillChallengeState.normalize(challenge);
+    if (normalized.failures <= 0) {
+      return this.addHistory(stamp(normalized), {
+        action: 'feat-recovery-unavailable',
+        actorId,
+        actorName,
+        note: 'Skill Challenge: Recovery is available, but there are no accumulated failures to remove.'
+      });
+    }
+
+    const withUsage = SkillChallengeFeatHooks.markFeatUsed(normalized, {
+      ruleType: SkillChallengeFeatHooks.FEATS.recovery.ruleType,
+      actorId,
+      actorName,
+      featName: SkillChallengeFeatHooks.FEATS.recovery.name,
+      note: 'Recovery feat removed one accumulated failure with GM approval.'
+    });
+
+    return stamp(SkillChallengeRules.applyOutcome(withUsage, SkillChallengeFeatHooks.buildRecoveryFeatOutcome({ actorId, actorName })));
   }
 
   static manualAdjust(challenge, { successesDelta = 0, failuresDelta = 0, note = '' } = {}) {

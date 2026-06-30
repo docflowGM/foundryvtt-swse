@@ -1,6 +1,6 @@
 # Skill Challenge Readiness Report
 
-Generated: 2026-06-30T12:00:04.692Z
+Generated: 2026-06-30T12:16:38.519Z
 
 ## Summary
 
@@ -40,5 +40,5 @@ Generated: 2026-06-30T12:00:04.692Z
 - **OK** feat: Skill Challenge: Recovery - Mechanics mode is manual_punted. Expected metadata/manual while subsystem is absent.
 - **OK** feat: Skill Challenge: Recovery - Future rule hook SKILL_CHALLENGE_RECOVERY has metadata entries.
 - **OK** model: skill-challenge-system-model.json - System model should define challenge, rollContext, and outcome shapes.
-- **OK** model: skill-challenge-effects.json - 6 challenge effects modeled.
+- **OK** model: skill-challenge-effects.json - 7 challenge effects modeled.
 - **OK** model: sample-skill-challenges.json - 1 sample challenges modeled.

@@ -6,7 +6,7 @@ Run:
 node scripts/dev/audit-skill-challenge-roll-integration.mjs --strict
 ```
 
-The audit verifies that Phase 3.5C:
+The audit verifies that Phase 3.5D:
 
 - hooks after canonical skill roll chat rendering,
 - does not duplicate skill math,

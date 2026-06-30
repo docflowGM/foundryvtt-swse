@@ -34,13 +34,30 @@ function parseEffectParameters(raw = '') {
   }
 }
 
+function splitDelimitedLine(line = '', expectedHeadParts = 3) {
+  const textValue = String(line || '');
+  const parts = [];
+  let cursor = 0;
+  for (let index = 0; index < expectedHeadParts; index += 1) {
+    const separator = textValue.indexOf(':', cursor);
+    if (separator < 0) break;
+    parts.push(textValue.slice(cursor, separator).trim());
+    cursor = separator + 1;
+  }
+  parts.push(textValue.slice(cursor).trim());
+  while (parts.length < expectedHeadParts + 1) parts.push('');
+  return parts;
+}
+
 function parseEffectLines(value = '') {
   return String(value || '')
     .split(/\r?\n/g)
     .map(line => line.trim())
     .filter(Boolean)
     .map(line => {
-      const [type = '', label = '', notes = '', parameters = ''] = line.split(':').map(part => part.trim());
+      // Preserve JSON effect parameters after the third delimiter. This supports
+      // lines such as timedChallenge:Timed Challenge::{"limit":6,"remaining":6}.
+      const [type = '', label = '', notes = '', parameters = ''] = splitDelimitedLine(line, 3);
       return SkillChallengeState.normalizeEffectEntry({
         type,
         label: label || type,
@@ -50,6 +67,36 @@ function parseEffectLines(value = '') {
       });
     })
     .filter(entry => entry.type || entry.label);
+}
+
+function escapeHtml(value = '') {
+  return globalThis.foundry?.utils?.escapeHTML?.(String(value ?? '')) ?? String(value ?? '');
+}
+
+async function postChallengeSummaryToChat(challenge, reason = 'summary') {
+  const normalized = SkillChallengeState.normalize(challenge);
+  const title = escapeHtml(normalized.name);
+  const brief = escapeHtml(normalized.playerBrief || normalized.gmNotes || '');
+  const status = escapeHtml(normalized.status);
+  const successText = escapeHtml(normalized.successText || '');
+  const failureText = escapeHtml(normalized.failureText || '');
+  const skills = normalized.primarySkills
+    .map(skill => `${escapeHtml(skill.label || skill.slug)} DC ${Number(skill.dc) || 0}`)
+    .join(', ');
+  const content = `
+    <section class="swse-chat-card swse-skill-challenge-public-card">
+      <header><h3>Skill Challenge: ${title}</h3></header>
+      <p><strong>Status:</strong> ${status} · <strong>Progress:</strong> ${normalized.successes}/${normalized.targetSuccesses} successes, ${normalized.failures}/${normalized.failureLimit} failures</p>
+      ${brief ? `<p>${brief}</p>` : ''}
+      ${skills ? `<p><strong>Primary Skills:</strong> ${skills}</p>` : ''}
+      ${successText ? `<p><strong>Success:</strong> ${successText}</p>` : ''}
+      ${failureText ? `<p><strong>Failure:</strong> ${failureText}</p>` : ''}
+      <p class="swse-muted">Posted by the GM from the Skill Challenge tracker (${escapeHtml(reason)}).</p>
+    </section>`;
+  await globalThis.ChatMessage?.create?.({
+    user: globalThis.game?.user?.id,
+    content
+  });
 }
 
 function challengeFromForm(form) {
@@ -182,6 +229,20 @@ export class GMSkillChallengeSurfaceController {
     }
 
 
+    if (action === 'feat-recovery' || action === 'feat-last-resort') {
+      const challenge = await this._getSelected(challengeId);
+      if (!challenge) return;
+      const actorId = button.dataset.actorId || '';
+      const actorName = button.dataset.actorName || '';
+      const next = action === 'feat-recovery'
+        ? SkillChallengeEngine.applyRecoveryFeat(challenge, { actorId, actorName })
+        : SkillChallengeEngine.applyLastResort(challenge, { actorId, actorName });
+      await SkillChallengeStore.saveChallenge(next);
+      this._select(next.id);
+      await this._refresh(`skill-challenge-${action}`);
+      return;
+    }
+
     if (action === 'recover-failure' || action === 'second-effort' || action === 'timed-minus' || action === 'timed-plus') {
       const challenge = await this._getSelected(challengeId);
       if (!challenge) return;
@@ -241,6 +302,14 @@ export class GMSkillChallengeSurfaceController {
       return;
     }
 
+    if (action === 'post-summary') {
+      const challenge = await this._getSelected(challengeId);
+      if (!challenge) return;
+      await postChallengeSummaryToChat(challenge, 'tracker summary');
+      await this._refresh('skill-challenge-post-summary');
+      return;
+    }
+
     if (action === 'clear-completed') {
       const count = await SkillChallengeStore.clearCompleted();
       globalThis.ui?.notifications?.info?.(`Cleared ${count} completed Skill Challenge tracker${count === 1 ? '' : 's'}.`);
@@ -250,9 +319,14 @@ export class GMSkillChallengeSurfaceController {
   }
 
   async _onSubmit(event) {
-    const form = event.target?.closest?.('form[data-skill-challenge-create-form], form[data-skill-challenge-edit-form]');
+    const form = event.target?.closest?.('form[data-skill-challenge-create-form], form[data-skill-challenge-edit-form], form[data-skill-challenge-roll-form]');
     if (!form) return;
     event.preventDefault();
+
+    if (form.matches('[data-skill-challenge-roll-form]')) {
+      await this._submitManualRoll(form);
+      return;
+    }
 
     const created = challengeFromForm(form);
     const existing = created.id ? await SkillChallengeStore.getById(created.id) : null;
@@ -265,6 +339,37 @@ export class GMSkillChallengeSurfaceController {
     this._select(next.id);
     globalThis.ui?.notifications?.info?.(`Saved Skill Challenge: ${next.name}`);
     await this._refresh('skill-challenge-save');
+  }
+
+  async _submitManualRoll(form) {
+    const formData = new FormData(form);
+    const challengeId = text(formData, 'challengeId') || this.host?.getSurfaceState?.('skill-challenges')?.selectedChallengeId || '';
+    const challenge = await this._getSelected(challengeId);
+    if (!challenge) return;
+
+    const rollContext = {
+      actorId: text(formData, 'actorId'),
+      actorName: text(formData, 'actorName', 'GM Entry'),
+      skillSlug: text(formData, 'skillSlug', 'gm-entry'),
+      skillLabel: text(formData, 'skillLabel', text(formData, 'skillSlug', 'GM Entry')),
+      total: number(formData, 'total', 0),
+      dc: number(formData, 'dc', 0),
+      rollMessageId: ''
+    };
+    const mode = text(formData, 'outcomeMode', 'suggested');
+    const next = mode === 'success'
+      ? SkillChallengeEngine.acceptRollAsSuccess(challenge, rollContext)
+      : mode === 'failure'
+        ? SkillChallengeEngine.acceptRollAsFailure(challenge, rollContext)
+        : mode === 'ignore'
+          ? SkillChallengeEngine.ignoreRoll(challenge, rollContext)
+          : SkillChallengeEngine.submitRoll(challenge, rollContext);
+
+    await SkillChallengeStore.saveChallenge(next);
+    this._select(next.id);
+    globalThis.ui?.notifications?.info?.(`Recorded Skill Challenge entry: ${next.name}`);
+    form.reset?.();
+    await this._refresh('skill-challenge-manual-roll');
   }
 }
 

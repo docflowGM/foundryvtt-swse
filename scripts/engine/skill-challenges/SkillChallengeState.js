@@ -94,6 +94,7 @@ export class SkillChallengeState {
       secondarySkills: cleanArray(raw.secondarySkills).map(this.normalizeSkillEntry).filter(entry => entry.slug || entry.label),
       effects: cleanArray(raw.effects).map(this.normalizeEffectEntry).filter(entry => entry.type || entry.label),
       participants: cleanArray(raw.participants).map(this.normalizeParticipant).filter(entry => entry.actorId || entry.name),
+      featUsage: cleanArray(raw.featUsage).map(this.normalizeFeatUsage).filter(entry => entry.key || entry.ruleType),
       history: cleanArray(raw.history).map(this.normalizeHistoryEntry),
       createdAt: cleanString(raw.createdAt, timestamp),
       updatedAt: cleanString(raw.updatedAt, timestamp)
@@ -130,6 +131,21 @@ export class SkillChallengeState {
       name: cleanString(entry.name, 'Unknown Participant'),
       active: entry.active !== false,
       notes: cleanString(entry.notes)
+    };
+  }
+
+  static normalizeFeatUsage(entry = {}) {
+    const ruleType = cleanString(entry.ruleType || entry.type);
+    const actorId = cleanString(entry.actorId);
+    const key = cleanString(entry.key, `${ruleType}:${actorId}`);
+    return {
+      key,
+      ruleType,
+      actorId,
+      actorName: cleanString(entry.actorName),
+      featName: cleanString(entry.featName),
+      usedAt: cleanString(entry.usedAt, nowIso()),
+      note: cleanString(entry.note)
     };
   }
 

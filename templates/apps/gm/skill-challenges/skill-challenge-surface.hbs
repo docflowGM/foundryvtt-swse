@@ -118,8 +118,37 @@
             <button type="button" class="swse-btn swse-btn--ok" data-skill-challenge-action="success" data-challenge-id="{{activeChallenge.id}}">Mark Succeeded</button>
             <button type="button" class="swse-btn swse-btn--warn" data-skill-challenge-action="failure" data-challenge-id="{{activeChallenge.id}}">Mark Failed</button>
             <button type="button" class="swse-btn swse-btn--ghost" data-skill-challenge-action="cancel" data-challenge-id="{{activeChallenge.id}}">Cancel</button>
+            <button type="button" class="swse-btn swse-btn--ghost" data-skill-challenge-action="post-summary" data-challenge-id="{{activeChallenge.id}}">Post Summary</button>
             <button type="button" class="swse-btn swse-btn--danger" data-skill-challenge-action="delete" data-challenge-id="{{activeChallenge.id}}">Delete</button>
           </nav>
+
+          <section class="swse-panel swse-panel--inset swse-skill-challenge-roll-entry">
+            <header class="swse-panel__header">
+              <h4>GM Roll / Ability / Force Entry</h4>
+              <span class="swse-muted">Use this for off-sheet, ability, Force, equipment, or narrative checks.</span>
+            </header>
+            <form data-skill-challenge-roll-form>
+              <input type="hidden" name="challengeId" value="{{activeChallenge.id}}">
+              <div class="swse-form-row">
+                <label>Actor <input type="text" name="actorName" placeholder="GM Entry"></label>
+                <label>Key <input type="text" name="skillSlug" placeholder="mechanics / ability.int / force.power"></label>
+                <label>Label <input type="text" name="skillLabel" placeholder="Mechanics / Intelligence / Force power"></label>
+              </div>
+              <div class="swse-form-row">
+                <label>Total <input type="number" name="total" value="0"></label>
+                <label>DC <input type="number" name="dc" value="0"></label>
+                <label>Result
+                  <select name="outcomeMode">
+                    <option value="suggested">Use total vs DC</option>
+                    <option value="success">Force success</option>
+                    <option value="failure">Force failure</option>
+                    <option value="ignore">Record only</option>
+                  </select>
+                </label>
+                <button type="submit" class="swse-btn swse-btn--primary swse-btn--sm">Record Entry</button>
+              </div>
+            </form>
+          </section>
 
           <section class="swse-skill-challenge-columns">
             <div class="swse-panel swse-panel--inset">
@@ -129,6 +158,24 @@
                   <li><strong>{{this.label}}</strong> <span>DC {{this.dc}}</span> {{#if this.notes}}<em>{{this.notes}}</em>{{/if}}</li>
                 {{/each}}
               </ul>
+            </div>
+            <div class="swse-panel swse-panel--inset">
+              <h4>Skill Challenge Feats</h4>
+              {{#if activeChallenge.hasFeatOptions}}
+                <ul class="swse-clean-list">
+                  {{#each activeChallenge.featOptions}}
+                    <li class="swse-skill-challenge-feat-option {{#unless this.eligible}}is-muted{{/unless}}">
+                      <strong>{{this.featName}}</strong>
+                      <span>{{this.actorName}} — {{this.reason}}</span>
+                      {{#if this.eligible}}
+                        <button type="button" class="swse-btn swse-btn--xs swse-btn--accent" data-skill-challenge-action="{{this.action}}" data-challenge-id="{{../activeChallenge.id}}" data-actor-id="{{this.actorId}}" data-actor-name="{{this.actorName}}">{{this.label}}</button>
+                      {{/if}}
+                    </li>
+                  {{/each}}
+                </ul>
+              {{else}}
+                <p>Add participants with Skill Challenge feats to surface once-per-challenge reactions here.</p>
+              {{/if}}
             </div>
             <div class="swse-panel swse-panel--inset">
               <h4>Effects</h4>

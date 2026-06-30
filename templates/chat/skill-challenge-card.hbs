@@ -37,6 +37,15 @@
 
           <p class="swse-skill-challenge-review-message">{{this.message}}</p>
 
+          {{#if this.hasFeatOptions}}
+            <div class="swse-skill-challenge-feat-options">
+              <h5>Skill Challenge feat reactions</h5>
+              {{#each this.featOptions}}
+                <p><strong>{{this.featName}}</strong> — {{this.actorName}}: {{this.summary}}</p>
+              {{/each}}
+            </div>
+          {{/if}}
+
           {{#unless ../isGm}}
             <p class="swse-skill-challenge-review-message">This card is whispered to the GM for confirmation.</p>
           {{/unless}}
@@ -48,6 +57,11 @@
               <button type="button" class="swse-btn swse-btn--warn" data-skill-challenge-chat-action="accept-failure" data-challenge-id="{{this.id}}">Count Failure</button>
               <button type="button" class="swse-btn swse-btn--ghost" data-skill-challenge-chat-action="ignore-roll" data-challenge-id="{{this.id}}">Do Not Count</button>
               <button type="button" class="swse-btn swse-btn--ghost" data-skill-challenge-chat-action="gm-review" data-challenge-id="{{this.id}}">Review Later</button>
+              {{#each this.featOptions}}
+                {{#if this.eligible}}
+                  <button type="button" class="swse-btn swse-btn--accent" data-skill-challenge-chat-action="{{this.action}}" data-challenge-id="{{../id}}" data-actor-id="{{this.actorId}}" data-actor-name="{{this.actorName}}">{{this.label}}</button>
+                {{/if}}
+              {{/each}}
             </footer>
           {{/if}}
         </div>
