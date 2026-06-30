@@ -1,0 +1,86 @@
+{
+  "schemaVersion": 1,
+  "phase": "9C",
+  "scope": "Starships of the Galaxy feat implementation accuracy audit",
+  "accuracyPolicy": {
+    "implementedCorrectDefinition": "A feat is implemented_correct only when the current runtime behavior or deliberate metadata/manual policy matches the feat's actual rules shape. Metadata presence alone is not sufficient.",
+    "partialDefinition": "A feat is implemented_partial when the catalog contains useful metadata or partial hooks, but the rule requires a runtime workflow, picker, resource system, or trigger that is not proven implemented.",
+    "metadataCorrectDefinition": "A feat is metadata_correct when its rule is intentionally not automatable in this system scope and the catalog explicitly prevents false static automation while giving the GM/player the correct source-reference handling."
+  },
+  "sourceBook": "Starships of the Galaxy",
+  "expectedFeatCount": 3,
+  "feats": [
+    {
+      "name": "Starship Tactics",
+      "sourcebook": "Starships of the Galaxy",
+      "descriptionSummary": "Adds a number of Starship Maneuvers to the character's Starship Maneuver Suite equal to 1 + Wisdom modifier, minimum 1; repeatable; Gunnery Specialist can qualify for Gunner maneuvers under the special rule.",
+      "taxonomy": {
+        "bucket": "Starship & Vehicle",
+        "subbucket": "Starship Maneuvers",
+        "tags": ["starship", "vehicle", "pilot", "maneuver_suite", "progression_choice", "repeatable"]
+      },
+      "expectedImplementation": {
+        "mode": "progression_choice_grant",
+        "home": "starship_maneuver_suite_progression",
+        "requiresRuntimeSystems": ["starship maneuver registry", "progression picker", "repeatable grant tracking", "Gunnery Specialist alternate qualification handling"],
+        "staticSheetPolicy": "exclude"
+      },
+      "observedImplementation": {
+        "status": "implemented_partial",
+        "observedMode": "grant_unlock_metadata",
+        "notes": "Catalog abilityMeta contains grantRules for STARSHIP_MANEUVERS and excludes static sheet math, which is the right shape, but this audit does not prove the full maneuver-suite picker, repeatable grant accounting, or Gunnery Specialist alternate selection restriction exists."
+      },
+      "accuracyFinding": "partial_correct_shape",
+      "priority": "high",
+      "nextStep": "Verify or implement the starship maneuver suite picker and repeatable grant accounting before marking implemented_correct."
+    },
+    {
+      "name": "Tactical Genius",
+      "sourcebook": "Starships of the Galaxy",
+      "descriptionSummary": "Regain all spent Starship Maneuvers at the end of any round in which the character rolls a natural 20 on an attack roll; normally only a natural 20 on a Pilot check to activate a Starship Maneuver restores all maneuvers.",
+      "taxonomy": {
+        "bucket": "Starship & Vehicle",
+        "subbucket": "Starship Maneuvers",
+        "tags": ["starship", "vehicle", "maneuver_recovery", "natural_20", "attack_roll_trigger", "resource_recovery"]
+      },
+      "expectedImplementation": {
+        "mode": "triggered_resource_recovery_hook",
+        "home": "starship_maneuver_resource_engine",
+        "requiresRuntimeSystems": ["starship maneuver spent-state tracking", "attack-roll natural-20 round trigger", "end-of-round recovery timing"],
+        "staticSheetPolicy": "exclude"
+      },
+      "observedImplementation": {
+        "status": "implemented_partial",
+        "observedMode": "resource_metadata",
+        "notes": "Catalog abilityMeta correctly describes the recovery trigger and excludes static sheet math, but this audit does not prove that attack rolls, round timing, or maneuver spent-state are actually wired to recover maneuvers."
+      },
+      "accuracyFinding": "partial_correct_shape",
+      "priority": "medium",
+      "nextStep": "Implement or verify a Tactical Genius hook after a real starship maneuver resource engine exists."
+    },
+    {
+      "name": "Starship Designer",
+      "sourcebook": "Starships of the Galaxy",
+      "descriptionSummary": "Allows designing starships from scratch and custom starship modifications with Mechanics checks, cost/time scaling, aid rules, failed-attempt escalation, emplacement/hull/hyperdrive/shield/weapon customization examples, and GM permission for other modifications.",
+      "taxonomy": {
+        "bucket": "Starship & Vehicle",
+        "subbucket": "Starship Systems & Metadata",
+        "tags": ["starship", "design", "custom_modification", "mechanics_procedure", "metadata_only", "consult_sotg"]
+      },
+      "expectedImplementation": {
+        "mode": "metadata_only_consult_sotg",
+        "home": "gm_player_source_reference",
+        "requiresRuntimeSystems": [],
+        "staticSheetPolicy": "exclude"
+      },
+      "observedImplementation": {
+        "status": "metadata_correct",
+        "observedMode": "manual_punted_metadata",
+        "notes": "Catalog abilityMeta explicitly punts Starship Designer to GM/player handling and excludes static sheet math. This matches the project decision that Starship Designer is intentionally unimplementable as normal automation and should remain a source-reference feat."
+      },
+      "accuracyFinding": "correct_metadata_policy",
+      "priority": "none",
+      "nextStep": "Keep as metadata-only with GM-facing consult-SOTG language. Do not add fake static bonuses."
+    }
+  ]
+}

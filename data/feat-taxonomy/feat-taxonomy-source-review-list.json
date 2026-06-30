@@ -1,0 +1,86 @@
+{
+  "generatedAt": "2026-06-30T14:56:23.700Z",
+  "count": 10,
+  "items": [
+    {
+      "name": "Destructive Force",
+      "sourcebook": "Galaxy at War",
+      "description": "When you deal damage to an object or Vehicle that equals or exceeds the target's Damage Threshold and reduces the target to 0 Hit Points, you deal 1 die of damage (of the same type as the damage used in the attack) to all targets, including allies, that are adjacent to the Vehicle or object.",
+      "proposedBucket": "Starship & Vehicle",
+      "proposedSubbucket": "Gunnery & Weapons",
+      "reason": "Name suggests Force, but catalog benefit is vehicle/object damage splash; confirm exact source context before automation."
+    },
+    {
+      "name": "Collateral Damage",
+      "sourcebook": "Scum and Villainy",
+      "description": "When you deal damage with a single, non- Area Attack using the Rapid Shot Feat, once per turn on your turn, you can immediately make a second attack at a -2 penalty against a second target within 2 squares of the first. If this attack hits, you deal half the original attack's damage to that target.",
+      "proposedBucket": "Weapon & Armor",
+      "proposedSubbucket": "Multiattack & Dual Weapon",
+      "reason": "Catalog metadata suggests more than one plausible home; consult source text before using this taxonomy for automation."
+    },
+    {
+      "name": "Unwavering Resolve",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "description": "You gain a +5 insight bonus to Will Defense against Deception and Persuasion checks.",
+      "proposedBucket": "Skills",
+      "proposedSubbucket": "Stealth & Perception",
+      "reason": "Catalog metadata suggests more than one plausible home; consult source text before using this taxonomy for automation."
+    },
+    {
+      "name": "Experienced Medic",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "description": "You can perform Surgery on a number of creatures equal to your Intelligence modifier (minimum 2) simultaneously. You make Treat Injury checks for each individual creature as normal.",
+      "proposedBucket": "Recovery & Survival",
+      "proposedSubbucket": "Healing & Natural Recovery",
+      "reason": "Catalog metadata suggests more than one plausible home; consult source text before using this taxonomy for automation."
+    },
+    {
+      "name": "Pall of the Dark Side",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "description": "You can add one-half your Dark Side Score (Minimum 1) to any Use the Force checks made to resist attempts to detect you with the Sense Force application of the Use the Force skill.",
+      "proposedBucket": "Force",
+      "proposedSubbucket": "Force Training & Powers",
+      "reason": "Catalog metadata suggests more than one plausible home; consult source text before using this taxonomy for automation."
+    },
+    {
+      "name": "Warrior Heritage",
+      "sourcebook": "Star Wars Saga Edition",
+      "description": "Gain a bonus to Will Defense when using an Atlatl or Cesta.",
+      "proposedBucket": "Species & Origin",
+      "proposedSubbucket": "Species Traits",
+      "reason": "Catalog metadata suggests more than one plausible home; consult source text before using this taxonomy for automation."
+    },
+    {
+      "name": "Force of Personality",
+      "sourcebook": "Galaxy at War",
+      "description": "You can use either your Wisdom modifier or your Charisma modifier to determine your Will Defense.",
+      "proposedBucket": "Character",
+      "proposedSubbucket": "Ability & Defenses",
+      "reason": "Name contains Force, but benefit changes Will Defense ability basis; confirm source context before automation."
+    },
+    {
+      "name": "Unleashed",
+      "sourcebook": "The Force Unleashed Campaign Guide",
+      "description": "You can activate Unleashed Abilities by spending a Destiny Point. You must also have the Force Sensitivity Feat in order to activate Force Unleashed Abilities for Force Powers and Force Talents.",
+      "proposedBucket": "Force",
+      "proposedSubbucket": "Force Point & Destiny",
+      "reason": "Catalog metadata suggests more than one plausible home; consult source text before using this taxonomy for automation."
+    },
+    {
+      "name": "Jedi Familiarity",
+      "sourcebook": "Clone Wars Campaign Guide",
+      "description": "Once per encounter, when you are targeted or affected by a Force Power or Force Talent originating from an ally, you gain one temporary Force Point, which must be spent before the end of the encounter or it goes away. If the Force Power or Force Talent damages you or moves you down the Condition Track, you do not gain the benefit of this Feat.",
+      "proposedBucket": "Force",
+      "proposedSubbucket": "Force Point & Destiny",
+      "reason": "Catalog metadata suggests more than one plausible home; consult source text before using this taxonomy for automation."
+    },
+    {
+      "name": "Resilient Talent",
+      "sourcebook": "Galaxy of Intrigue",
+      "description": "Once per day, you may gain the benefit of any talent from a class you have levels in for 1 minute. You may use this talent even if you do not meet its prerequisites.",
+      "proposedBucket": "Social & Intrigue",
+      "proposedSubbucket": "Persuasion & Influence",
+      "reason": "Catalog metadata suggests more than one plausible home; consult source text before using this taxonomy for automation."
+    }
+  ]
+}

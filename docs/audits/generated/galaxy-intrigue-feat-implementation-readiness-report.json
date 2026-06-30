@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "phase": "9D-galaxy-of-intrigue-implementation-accuracy",
+  "scope": "Galaxy of Intrigue feats only. This audit separates implementation presence from implementation correctness, and explicitly rechecks Skill Challenge feats after the Phase 3.5 subsystem work.",
+  "totals": {
+    "featsAudited": 30,
+    "reviewQueue": 8,
+    "errors": 0,
+    "warnings": 0
+  },
+  "byAccuracy": {
+    "implemented_partial": 26,
+    "implemented_correct": 1,
+    "source_review_required": 2,
+    "metadata_correct": 1
+  },
+  "byMode": {
+    "temporary_choice_swap": 1,
+    "condition_track_hook": 2,
+    "reaction_prompt": 2,
+    "rage_mode_toggle": 1,
+    "skill_substitution": 1,
+    "reaction_skill_rider": 1,
+    "skill_movement_option": 1,
+    "skill_dc_modifier": 1,
+    "charge_attack_option": 1,
+    "force_suite_recovery": 1,
+    "temporary_talent_choice": 1,
+    "skill_action_economy": 2,
+    "reroll_hook": 1,
+    "attack_option": 1,
+    "attack_rider_choice": 1,
+    "attack_of_opportunity_replacement": 2,
+    "skill_modifier_and_action_option": 1,
+    "cover_context_modifier": 1,
+    "persistent_choice_resource": 1,
+    "defensive_fighting_modifier": 1,
+    "condition_track_area_rider": 1,
+    "skill_challenge_hook": 3,
+    "ally_reaction_prompt": 1,
+    "weapon_handling_override": 1
+  },
+  "reviewQueue": [
+    {
+      "name": "Adaptable Talent",
+      "proposedBucket": "Character",
+      "proposedSubbucket": "General Passive",
+      "proposedImplementationMode": "temporary_choice_swap"
+    },
+    {
+      "name": "Forceful Recovery",
+      "proposedBucket": "Force",
+      "proposedSubbucket": "Force Point & Destiny",
+      "proposedImplementationMode": "force_suite_recovery"
+    },
+    {
+      "name": "Recurring Success",
+      "proposedBucket": "Character",
+      "proposedSubbucket": "General Passive",
+      "proposedImplementationMode": "persistent_choice_resource"
+    },
+    {
+      "name": "Skill Challenge: Catastrophic Avoidance",
+      "proposedBucket": "Skills",
+      "proposedSubbucket": "Skill Challenge",
+      "proposedImplementationMode": "skill_challenge_hook"
+    },
+    {
+      "name": "Skill Challenge: Last Resort",
+      "proposedBucket": "Skills",
+      "proposedSubbucket": "Skill Challenge",
+      "proposedImplementationMode": "skill_challenge_hook"
+    },
+    {
+      "name": "Skill Challenge: Recovery",
+      "proposedBucket": "Skills",
+      "proposedSubbucket": "Skill Challenge",
+      "proposedImplementationMode": "skill_challenge_hook"
+    },
+    {
+      "name": "Stand Tall",
+      "proposedBucket": "Leadership & Allies",
+      "proposedSubbucket": "Teamwork & Aid Another",
+      "proposedImplementationMode": "ally_reaction_prompt"
+    },
+    {
+      "name": "Wookiee Grip",
+      "proposedBucket": "Species & Origin",
+      "proposedSubbucket": "Species Traits",
+      "proposedImplementationMode": "weapon_handling_override"
+    }
+  ],
+  "errors": [],
+  "warnings": []
+}

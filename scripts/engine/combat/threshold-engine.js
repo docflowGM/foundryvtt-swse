@@ -37,6 +37,7 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
+import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 
 /* -------------------------------------------------------------------------- */
 /*  COMBAT END HOOKS (Per-encounter feat flags)                              */
@@ -118,15 +119,24 @@ export class ThresholdEngine {
     }
 
     const modifierTotal = modifiers.reduce((sum, m) => sum + Number(m.value || 0), 0);
+    const implantStunBonus = String(context?.damageType ?? '').toLowerCase() === 'stun'
+      ? ImplantEffectRules.getStunDamageThresholdBonus(actor)
+      : 0;
+    const implantBreakdown = implantStunBonus
+      ? [{ label: 'Nerve Reinforcement Implant', value: implantStunBonus }]
+      : [];
 
     return {
       base,
-      modifierTotal,
-      total: base + modifierTotal,
-      breakdown: modifiers.map(m => ({
-        label: m.label,
-        value: m.value
-      }))
+      modifierTotal: modifierTotal + implantStunBonus,
+      total: base + modifierTotal + implantStunBonus,
+      breakdown: [
+        ...modifiers.map(m => ({
+          label: m.label,
+          value: m.value
+        })),
+        ...implantBreakdown
+      ]
     };
   }
 

@@ -1,0 +1,3392 @@
+{
+  "schemaVersion": 1,
+  "phase": "9A-core-rulebook-implementation-accuracy",
+  "scope": "Saga Edition Core Rulebook feats only. This audit separates implementation presence from implementation correctness.",
+  "generatedFrom": "phase8 feat catalog metadata plus current repository implementation markers; source benefit text is preserved as short descriptions for review.",
+  "rules": [
+    "A feat is not implemented correctly just because it exists in the catalog.",
+    "Action-option feats must expose an action/toggle/prompt and apply the correct contextual math; they must not be collapsed into flat passive bonuses.",
+    "Scoped feats must preserve their selected skill, weapon, armor, or Force-power choice.",
+    "Manual/procedure feats are correct only when explicitly metadata/manual and excluded from static sheet math.",
+    "Source-review feats are not implementation failures; they are intentionally withheld from automation until exact timing/target rules are verified."
+  ],
+  "entries": [
+    {
+      "name": "Advanced Melee Weapon Proficiency",
+      "slug": "advanced-melee-weapon-proficiency",
+      "source": "Saga Edition Core Rulebook",
+      "page": 85,
+      "description": "You are proficient with advanced melee weapons and do not take the -5 penalty when using them.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Weapon Proficiency",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "scoped_choice_static",
+        "home": "progression_choice_resolver_and_actor_math",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as scoped_choice_static, rather than merely marking Advanced Melee Weapon Proficiency as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "UNLOCK",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "grant_unlock",
+        "abilityMetaScope": "progression_or_proficiency_grant",
+        "ruleTypes": [],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Armor Proficiency (heavy)",
+      "slug": "armor-proficiency-heavy",
+      "source": "Saga Edition Core Rulebook",
+      "page": 85,
+      "description": "When you wear Heavy Armor, you take no Armor Check Penalty on attack rolls or Skill Checks. Additionally, you benefit from all of the armor's special Equipment bonuses (if any).",
+      "prerequisite": "Armor Proficiency (Light) Feat, Armor Proficiency (Medium) Feat",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Armor Proficiency",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "scoped_choice_static",
+        "home": "progression_choice_resolver_and_actor_math",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as scoped_choice_static, rather than merely marking Armor Proficiency (heavy) as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "UNLOCK",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "grant",
+        "abilityMetaScope": "proficiency_grant",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Armor Proficiency (light)",
+      "slug": "armor-proficiency-light",
+      "source": "Saga Edition Core Rulebook",
+      "page": 85,
+      "description": "When you wear Light Armor, you take no Armor Check Penalty on attack rolls or Skill Checks. Additionally, you benefit from all of the armor's special Equipment bonuses (if any).",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Armor Proficiency",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "scoped_choice_static",
+        "home": "progression_choice_resolver_and_actor_math",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as scoped_choice_static, rather than merely marking Armor Proficiency (light) as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "UNLOCK",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "grant",
+        "abilityMetaScope": "proficiency_grant",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Armor Proficiency (medium)",
+      "slug": "armor-proficiency-medium",
+      "source": "Saga Edition Core Rulebook",
+      "page": 85,
+      "description": "When you wear Medium Armor, you take no Armor Check Penalty on attack rolls or Skill Checks. Additionally, you benefit from all of the armor's special Equipment bonuses (if any).",
+      "prerequisite": "Armor Proficiency (Light) Feat",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Armor Proficiency",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "scoped_choice_static",
+        "home": "progression_choice_resolver_and_actor_math",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as scoped_choice_static, rather than merely marking Armor Proficiency (medium) as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "UNLOCK",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "grant",
+        "abilityMetaScope": "proficiency_grant",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Burst Fire",
+      "slug": "burst-fire",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "When using a ranged weapon with Autofire capability, and that you are Proficient with, in Autofire mode, you may fire a short burst as a single attack against a single target. You take a -5 penalty on your attack roll, but deal +2 dice of damage. The effects of this Feat do not stack with the extra damage provided by the Deadeye or Rapid Shot feats. If yo...",
+      "prerequisite": "Proficient with Heavy Weapons",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Area & Explosives",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Burst Fire as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_option_phase7_refined",
+        "abilityMetaMode": "active",
+        "abilityMetaScope": "attack_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected attack_option implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Careful Shot",
+      "slug": "careful-shot",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "If you Aim before making a ranged attack, you gain a +1 bonus on your attack roll.",
+      "prerequisite": "Point-Blank Shot Feat, Base Attack Bonus +2",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Ranged",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "conditional_roll_modifier",
+        "home": "roll_context_resolver",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as conditional_roll_modifier, rather than merely marking Careful Shot as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_option_phase7",
+        "abilityMetaMode": "active",
+        "abilityMetaScope": "attack_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected conditional_roll_modifier implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Cleave",
+      "slug": "cleave",
+      "source": "Saga Edition Core Rulebook",
+      "page": 85,
+      "description": "If you deal an opponent enough damage to reduce its hit points to 0, you get an immediate extra melee attack against another opponent within your reach. The extra attack is with the same weapon and at the same attack bonus as the attack that dropped the previous opponent. You can use this ability once per round.",
+      "prerequisite": "Strength 13, Power Attack Feat",
+      "taxonomy": {
+        "bucket": "Character",
+        "subbucket": "Hit Points & Durability",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "reaction_prompt",
+        "home": "chat_reaction_prompt_or_combat_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as reaction_prompt, rather than merely marking Cleave as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "rider_effect_phase7",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "extra_attack_on_drop",
+        "ruleTypes": [
+          "EXTRA_ATTACK"
+        ],
+        "modifierTargets": [
+          "attack:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Combat Reflexes",
+      "slug": "combat-reflexes",
+      "source": "Saga Edition Core Rulebook",
+      "page": 85,
+      "description": "When opponents leave themselves open, you may make a number of additional Attacks of Opportunity equal to your Dexterity modifier. With this Feat, you may also make Attacks of Opportunity while Flat-Footed. You can still only make one attack for each triggered Attack of Opportunity.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Defense & Avoidance",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "reaction_prompt",
+        "home": "chat_reaction_prompt_or_combat_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as reaction_prompt, rather than merely marking Combat Reflexes as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "passive_capability",
+        "abilityMetaScope": "reaction_attack_context",
+        "ruleTypes": [],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Coordinated Attack",
+      "slug": "coordinated-attack",
+      "source": "Saga Edition Core Rulebook",
+      "page": 85,
+      "description": "You are automatically successful when using the Aid Another action to aid an ally's attack, or suppress an enemy as long as the target is adjacent to you or within Point-Blank Range.",
+      "prerequisite": "Base Attack Bonus +2",
+      "taxonomy": {
+        "bucket": "Leadership & Allies",
+        "subbucket": "Teamwork & Aid Another",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "skill_action_option",
+        "home": "skill_action_or_chat_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as skill_action_option, rather than merely marking Coordinated Attack as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "teamwork_action_rule",
+        "abilityMetaScope": "aid_another_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "source_review_required",
+        "confidence": "medium",
+        "rationale": "The source benefit is contextual enough that implementation accuracy should be confirmed against the book and in-world workflow behavior before coding.",
+        "correctiveAction": "Consult the Core Rulebook text, then promote to a concrete implementation mode or metadata/manual policy."
+      },
+      "sourceReviewReason": "Contextual action/reaction mechanics require book-context confirmation and in-world workflow testing before marking complete.",
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Cybernetic Surgery",
+      "slug": "cybernetic-surgery",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "You can install Cybernetic Devices on living beings. The surgical procedure takes 1 hour of uninterrupted work, after which you must make a DC 20 Treat Injury check. If the check succeeds, the Cybernetic Device is installed correctly. If the check fails, the device is not properly installed; however, you can try again after another uninterrupted hour of s...",
+      "prerequisite": "Trained in Treat Injury",
+      "taxonomy": {
+        "bucket": "Cybernetics & Implants",
+        "subbucket": "Implants & Procedures",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "procedure_metadata",
+        "home": "gm_procedure_metadata",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as procedure_metadata, rather than merely marking Cybernetic Surgery as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "manual_punted",
+        "abilityMetaScope": "gm_player_cybernetic_surgery",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "metadata_correct",
+        "confidence": "high",
+        "rationale": "The feat is intentionally handled as metadata/manual or by an existing non-feat workflow, which is the correct implementation boundary for now.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "low",
+      "risk": "low"
+    },
+    {
+      "name": "Dodge",
+      "slug": "dodge",
+      "source": "Saga Edition Core Rulebook",
+      "page": 84,
+      "description": "During your turn, you designate an opponent and receive a +1 dodge bonus to your Reflex Defense against attacks from that opponent. You can select a new opponent on any action. A situation that makes you lose your Dexterity bonus to Reflex Defense (if any) also makes you lose dodge bonuses. Also, dodge bonuses stack with each other, unlike most other type...",
+      "prerequisite": "Dexterity 13",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Defense & Avoidance",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "reaction_prompt",
+        "home": "chat_reaction_prompt_or_combat_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as reaction_prompt, rather than merely marking Dodge as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "MODIFIER",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "targeted_defense_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "defense.reflex:1"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Double Attack",
+      "slug": "double-attack",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "Choose a single Exotic Weapon or weapon group with which you are proficient. When you use the Full Attack action, you may make one additional attack when wielding such a weapon. However, you take a -5 penalty on all attack rolls until your next turn because you're trading precision for speed.",
+      "prerequisite": "Base Attack Bonus +6",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Multiattack & Dual Weapon",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Double Attack as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "conditional_choice_required",
+        "abilityMetaScope": "roll_or_action_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "attack:2"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Dreadful Rage",
+      "slug": "dreadful-rage",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "While Raging, your Rage bonus on melee attack rolls and melee damage rolls increases to +5.",
+      "prerequisite": "Rage Species Trait, Base Attack Bonus +1",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Damage & Threshold",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "conditional_roll_modifier",
+        "home": "roll_context_resolver",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as conditional_roll_modifier, rather than merely marking Dreadful Rage as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "rage_rule_phase9",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "rage_context",
+        "ruleTypes": [
+          "RAGE_ATTACK_DAMAGE_BONUS_OVERRIDE"
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected conditional_roll_modifier implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Dual Weapon Mastery I",
+      "slug": "dual-weapon-mastery-i",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "When you attack with two weapons, or with both ends of a double weapon as part of a Full Attack Action, you take a -5 penalty (Instead of a -10 penalty) on all attack rolls until the start of your next turn. You only gain this reduced penalty if you are wielding a weapon with which you are proficient.",
+      "prerequisite": "Dexterity 13, Base Attack Bonus +1",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Multiattack & Dual Weapon",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "conditional_roll_modifier",
+        "home": "roll_context_resolver",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as conditional_roll_modifier, rather than merely marking Dual Weapon Mastery I as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "multiattack_penalty_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Dual Weapon Mastery II",
+      "slug": "dual-weapon-mastery-ii",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "When you attack with two weapons, or with both ends of a double weapon as part of a Full Attack Action, you take a -2 penalty (Instead of a -10 penalty) on all attack rolls until the start of your next turn. You only gain this reduced penalty if you are wielding a weapon with which you are proficient.",
+      "prerequisite": "Dexterity 15, Dual Weapon Mastery I, Base Attack Bonus +6",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Multiattack & Dual Weapon",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "conditional_roll_modifier",
+        "home": "roll_context_resolver",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as conditional_roll_modifier, rather than merely marking Dual Weapon Mastery II as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "multiattack_penalty_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Dual Weapon Mastery III",
+      "slug": "dual-weapon-mastery-iii",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "When you attack with two weapons, or with both ends of a double weapon as part of a Full Attack Action, you take no penalty on your attack rolls. You only gain this benefit if you are wielding a weapon with which you are proficient.",
+      "prerequisite": "Dexterity 17, Dual Weapon Mastery I, Dual Weapon Mastery II, Base Attack Bonus +11",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Multiattack & Dual Weapon",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "conditional_roll_modifier",
+        "home": "roll_context_resolver",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as conditional_roll_modifier, rather than merely marking Dual Weapon Mastery III as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "multiattack_penalty_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Exotic Weapon Proficiency",
+      "slug": "exotic-weapon-proficiency",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "Select a single weapon from either the Exotic Weapons (Melee) or Exotic Weapons (Ranged) weapon groups; you make attack rolls with the selected weapon without penalty.",
+      "prerequisite": "Base Attack Bonus +1",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Weapon Proficiency",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "scoped_choice_static",
+        "home": "progression_choice_resolver_and_actor_math",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as scoped_choice_static, rather than merely marking Exotic Weapon Proficiency as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "grant_choice_required",
+        "abilityMetaScope": "proficiency_grant_choice",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Extra Rage",
+      "slug": "extra-rage",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "You can Rage one additional time per day.",
+      "prerequisite": "Rage Species Trait",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Melee & Close Combat",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "resource_rule",
+        "home": "actor_resource_tracker",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as resource_rule, rather than merely marking Extra Rage as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "rage_rule_phase9",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "rage_context",
+        "ruleTypes": [
+          "RAGE_USES_BONUS"
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected resource_rule implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "low"
+    },
+    {
+      "name": "Extra Second Wind",
+      "slug": "extra-second-wind",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "You can catch your Second Wind one additional time per day, but you can still only catch a Second Wind once per encounter.",
+      "prerequisite": "Trained in Endurance",
+      "taxonomy": {
+        "bucket": "Recovery & Survival",
+        "subbucket": "Second Wind & Recovery",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "resource_rule",
+        "home": "actor_resource_tracker",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as resource_rule, rather than merely marking Extra Second Wind as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RESOURCE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "resource_rule_phase7",
+        "abilityMetaMode": "passive_resource",
+        "abilityMetaScope": "secondWind_resource",
+        "ruleTypes": [],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected resource_rule implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "low"
+    },
+    {
+      "name": "Far Shot",
+      "slug": "far-shot",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "When you use a ranged weapon against targets at Short, Medium, or Long Range, the Range category is considered one less. In other words, you take no penalty on ranged attack rolls made at Short Range, a -2 penalty on ranged attack rolls made against targets at Medium Range, and a -5 penalty on ranged attack rolls made against targets at Long Range.",
+      "prerequisite": "Point-Blank Shot",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Ranged",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "conditional_roll_modifier",
+        "home": "roll_context_resolver",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as conditional_roll_modifier, rather than merely marking Far Shot as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "passive_roll_option_phase7",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "roll_context_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected conditional_roll_modifier implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Fast Talk",
+      "slug": "fast-talk",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "You may make a Persuasion check to feint in combat as a swift action instead of a standard action.",
+      "prerequisite": "Trained in Persuasion",
+      "taxonomy": {
+        "bucket": "Skills",
+        "subbucket": "Social Skills",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "skill_action_option",
+        "home": "skill_action_or_chat_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as skill_action_option, rather than merely marking Fast Talk as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "skill_use_rule",
+        "abilityMetaScope": "deception_feint_action_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "source_review_required",
+        "confidence": "medium",
+        "rationale": "The source benefit is contextual enough that implementation accuracy should be confirmed against the book and in-world workflow behavior before coding.",
+        "correctiveAction": "Consult the Core Rulebook text, then promote to a concrete implementation mode or metadata/manual policy."
+      },
+      "sourceReviewReason": "Contextual action/reaction mechanics require book-context confirmation and in-world workflow testing before marking complete.",
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Force Boon",
+      "slug": "force-boon",
+      "source": "Saga Edition Core Rulebook",
+      "page": 94,
+      "description": "You gain three additional Force Points at each level.",
+      "prerequisite": "Force Sensitivity",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Point & Destiny",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "force_point_rule",
+        "home": "force_point_engine",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as force_point_rule, rather than merely marking Force Boon as present?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "RESOURCE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "resource_rule_phase7",
+        "abilityMetaMode": "passive_resource",
+        "abilityMetaScope": "forcePoints_resource",
+        "ruleTypes": [],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected force_point_rule implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "low"
+    },
+    {
+      "name": "Force Sensitivity",
+      "slug": "force-sensitivity",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "You can make Use the Force checks, and Use the Force is considered a Class Skill for you. In addition, whenever you gain a Talent, you have the option of selecting a Force Talent instead. You must meet the prerequisites of the Force Talent to select it.",
+      "prerequisite": "Cannot be a Droid",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Training & Powers",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "force_power_selection",
+        "home": "force_power_selection_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as force_power_selection, rather than merely marking Force Sensitivity as present?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "UNLOCK",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "grant_unlock",
+        "abilityMetaScope": "system_access",
+        "ruleTypes": [],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Force Training",
+      "slug": "force-training",
+      "source": "Saga Edition Core Rulebook",
+      "page": 94,
+      "description": "You add to your Force Power Suite a number of Force Powers equal to 1 + your Wisdom modifier (Minimum 1). You can add the same Force Power more than once.",
+      "prerequisite": "Force Sensitivity, Trained in Use the Force.",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Training & Powers",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "force_power_selection",
+        "home": "force_power_selection_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as force_power_selection, rather than merely marking Force Training as present?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "grant_unlock",
+        "abilityMetaScope": "progression_entitlement",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "attack:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Frightful Presence",
+      "slug": "frightful-presence",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "As a standard action, you may make a Persuasion check to intimidate all enemies within 6 squares. On a success, targets move -1 step down the condition track.",
+      "prerequisite": "Charisma 15",
+      "taxonomy": {
+        "bucket": "Social & Intrigue",
+        "subbucket": "Persuasion & Influence",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "skill_action_option",
+        "home": "skill_action_or_chat_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as skill_action_option, rather than merely marking Frightful Presence as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "active_action",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "source_review_required",
+        "confidence": "medium",
+        "rationale": "The source benefit is contextual enough that implementation accuracy should be confirmed against the book and in-world workflow behavior before coding.",
+        "correctiveAction": "Consult the Core Rulebook text, then promote to a concrete implementation mode or metadata/manual policy."
+      },
+      "sourceReviewReason": "Contextual action/reaction mechanics require book-context confirmation and in-world workflow testing before marking complete.",
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Great Cleave",
+      "slug": "great-cleave",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "As the Cleave Feat, except that you have no limit to the number of times you can use it per round.",
+      "prerequisite": "Strength 13, Cleave, Power Attack, Base Attack Bonus +4.",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Melee & Close Combat",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "reaction_prompt",
+        "home": "chat_reaction_prompt_or_combat_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as reaction_prompt, rather than merely marking Great Cleave as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "rider_effect_phase7",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "extra_attack_on_drop",
+        "ruleTypes": [
+          "EXTRA_ATTACK_LIMIT_OVERRIDE"
+        ],
+        "modifierTargets": [
+          "attack:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Great Fortitude",
+      "slug": "great-fortitude",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You gain a +2 bonus to your Fortitude Defense.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Character",
+        "subbucket": "Defenses",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "static_sheet_math",
+        "home": "actor_derived_calculators",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as static_sheet_math, rather than merely marking Great Fortitude as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "MODIFIER",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "passive",
+        "abilityMetaScope": "static_actor",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "defense.fortitude:2"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected static_sheet_math implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Heavy Weapon Proficiency",
+      "slug": "heavy-weapon-proficiency",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You are proficient with heavy weapons and do not take the -5 penalty when using them.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Weapon Proficiency",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "scoped_choice_static",
+        "home": "progression_choice_resolver_and_actor_math",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as scoped_choice_static, rather than merely marking Heavy Weapon Proficiency as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "UNLOCK",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "grant_unlock",
+        "abilityMetaScope": "progression_or_proficiency_grant",
+        "ruleTypes": [],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Heroic Surge",
+      "slug": "heroic-surge",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "Once per encounter, you may take an additional standard or move action on your turn.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Mobility & Positioning",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "resource_rule",
+        "home": "actor_resource_tracker",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as resource_rule, rather than merely marking Heroic Surge as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "action_economy_phase10",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "non_numeric_rule",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "attack:2"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected resource_rule implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "low"
+    },
+    {
+      "name": "Hew",
+      "slug": "hew",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "When you use Power Attack, you ignore an amount of damage reduction equal to your base attack bonus.",
+      "prerequisite": "Power Attack",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Damage & Threshold",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "conditional_roll_modifier",
+        "home": "roll_context_resolver",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as conditional_roll_modifier, rather than merely marking Hew as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "power_attack_damage_reduction_context",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "source_review_required",
+        "confidence": "medium",
+        "rationale": "The source benefit is contextual enough that implementation accuracy should be confirmed against the book and in-world workflow behavior before coding.",
+        "correctiveAction": "Consult the Core Rulebook text, then promote to a concrete implementation mode or metadata/manual policy."
+      },
+      "sourceReviewReason": "Contextual action/reaction mechanics require book-context confirmation and in-world workflow testing before marking complete.",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Improved Charge",
+      "slug": "improved-charge",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "You can make a Charge without having to move in a straight line, and you can alter your direction when making a Charge to avoid obstacles. All other Charge rules apply.",
+      "prerequisite": "Dexterity 13, Dodge, Mobility",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Mobility & Positioning",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Improved Charge as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "movement_attack_option_phase11",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "charge_movement_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "attack:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected attack_option implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Improved Damage Threshold",
+      "slug": "improved-damage-threshold",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You increase your Damage Threshold by 5 points.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Defense & Avoidance",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "static_sheet_math",
+        "home": "actor_derived_calculators",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as static_sheet_math, rather than merely marking Improved Damage Threshold as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "MODIFIER",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "damage_threshold_rule_phase8",
+        "abilityMetaMode": "passive_resource",
+        "abilityMetaScope": "damageThreshold_resource",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "defense.damageThreshold:5"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected static_sheet_math implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Improved Defenses",
+      "slug": "improved-defenses",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You gain a +1 bonus to your Reflex Defense, Fortitude Defense, and Will Defense.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Character",
+        "subbucket": "Defenses",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "static_sheet_math",
+        "home": "actor_derived_calculators",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as static_sheet_math, rather than merely marking Improved Defenses as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "MODIFIER",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "passive",
+        "abilityMetaScope": "static_actor",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "defense.fortitude:1",
+          "defense.reflex:1",
+          "defense.will:1"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected static_sheet_math implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Improved Disarm",
+      "slug": "improved-disarm",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You gain a +5 bonus on any melee attack roll made to Disarm an opponent. In addition, if you fail to Disarm an opponent, he doesn't get to make a free attack against you.",
+      "prerequisite": "Intelligence 13, Melee Defense",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Attack Options",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Improved Disarm as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_option_phase7_refined",
+        "abilityMetaMode": "active",
+        "abilityMetaScope": "attack_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected attack_option implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Improved Grapple",
+      "slug": "improved-grapple",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You gain a +5 bonus on grapple checks and do not provoke attacks of opportunity when initiating a grapple.",
+      "prerequisite": "Int 13, Grapple",
+      "taxonomy": {
+        "bucket": "Skills",
+        "subbucket": "Skill Training & Focus",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "grapple_rider",
+        "home": "grapple_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as grapple_rider, rather than merely marking Improved Grapple as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "grapple_attack_context",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "not_implemented",
+        "confidence": "high",
+        "rationale": "No reliable runtime implementation was detected for the expected grapple_rider behavior.",
+        "correctiveAction": "Implement through grapple_workflow; do not approximate with an unrelated flat bonus."
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "low"
+    },
+    {
+      "name": "Improved Knock Prone",
+      "slug": "improved-knock-prone",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You gain a +5 bonus on attack rolls made to knock an opponent prone.",
+      "prerequisite": "Int 13, Knock Prone",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Melee & Close Combat",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Improved Knock Prone as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_option_phase9",
+        "abilityMetaMode": "active",
+        "abilityMetaScope": "attack_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "attack:5"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected attack_option implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Improved Stun",
+      "slug": "improved-stun",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You gain a +5 bonus on attack rolls made to stun an opponent.",
+      "prerequisite": "Int 13, Stun",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Attack Options",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Improved Stun as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "attack_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "not_implemented",
+        "confidence": "high",
+        "rationale": "No reliable runtime implementation was detected for the expected attack_option behavior.",
+        "correctiveAction": "Implement through combat_option_resolver; do not approximate with an unrelated flat bonus."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Knock Prone",
+      "slug": "knock-prone",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You may attempt to knock an opponent prone with a melee attack. If successful, the target falls prone.",
+      "prerequisite": "Int 13",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Melee & Close Combat",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Knock Prone as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_option_phase10",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "attack_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "attack:2"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected attack_option implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Lightning Reflexes",
+      "slug": "lightning-reflexes",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You gain a +2 bonus to your Reflex Defense.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Character",
+        "subbucket": "Defenses",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "static_sheet_math",
+        "home": "actor_derived_calculators",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as static_sheet_math, rather than merely marking Lightning Reflexes as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "MODIFIER",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "passive",
+        "abilityMetaScope": "static_actor",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "defense.reflex:2"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected static_sheet_math implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Linguist",
+      "slug": "linguist",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You gain a number of additional Languages equal to 1 + your Intelligence modifier (Minimum 1).",
+      "prerequisite": "Intelligence 13",
+      "taxonomy": {
+        "bucket": "Skills",
+        "subbucket": "Knowledge & Languages",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "language_selection",
+        "home": "chargen_language_selection",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as language_selection, rather than merely marking Linguist as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "implemented",
+        "abilityMetaScope": "chargen_language_step",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "metadata_correct",
+        "confidence": "high",
+        "rationale": "The feat is intentionally handled as metadata/manual or by an existing non-feat workflow, which is the correct implementation boundary for now.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "low",
+      "risk": "low"
+    },
+    {
+      "name": "Martial Arts I",
+      "slug": "martial-arts-i",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "Damage dealt by your Unarmed Attacks increases by one die step. In addition, you gain a +1 dodge bonus to your Reflex Defense. Additionally, you do not provoke Attacks of Opportunity with Unarmed Attacks.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Grapple & Unarmed",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "static_sheet_math",
+        "home": "actor_derived_calculators",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as static_sheet_math, rather than merely marking Martial Arts I as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "MODIFIER",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "passive",
+        "abilityMetaScope": "static_actor_and_unarmed_rule_hook",
+        "ruleTypes": [
+          "UNARMED_DAMAGE_STEP",
+          "UNARMED_DOES_NOT_PROVOKE_AOO"
+        ],
+        "modifierTargets": [
+          "defense.reflex:1"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Martial Arts II",
+      "slug": "martial-arts-ii",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "Damage dealt by your Unarmed attacks increases by one die step. In addition, you gain a +1 dodge bonus to your Reflex Defense (Which stacks with the dodge bonus granted by the Martial Arts I Feat).",
+      "prerequisite": "Martial Arts I, Base Attack Bonus +3.",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Grapple & Unarmed",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "static_sheet_math",
+        "home": "actor_derived_calculators",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as static_sheet_math, rather than merely marking Martial Arts II as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "MODIFIER",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "passive",
+        "abilityMetaScope": "static_actor_and_unarmed_rule_hook",
+        "ruleTypes": [
+          "UNARMED_DAMAGE_STEP"
+        ],
+        "modifierTargets": [
+          "defense.reflex:1"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Martial Arts III",
+      "slug": "martial-arts-iii",
+      "source": "Saga Edition Core Rulebook",
+      "page": 86,
+      "description": "Damage dealt by your Unarmed attacks increases by one die step. In addition, you gain a +1 dodge bonus to your Reflex Defense (Which stacks with the dodge bonuses granted by the Martial Arts I and Martial Arts II Feats).",
+      "prerequisite": "Martial Arts I, Martial Arts II, Base Attack Bonus +6",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Grapple & Unarmed",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "static_sheet_math",
+        "home": "actor_derived_calculators",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as static_sheet_math, rather than merely marking Martial Arts III as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "MODIFIER",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "passive",
+        "abilityMetaScope": "static_actor_and_unarmed_rule_hook",
+        "ruleTypes": [
+          "UNARMED_DAMAGE_STEP"
+        ],
+        "modifierTargets": [
+          "defense.reflex:1"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Melee Defense",
+      "slug": "melee-defense",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "When you use a Standard Action to make a melee attack, you can take a penalty of up to -5 on your attack roll and add the same number (up to +5) as a dodge bonus to your Reflex Defense. This number may not exceed your Base Attack Bonus. The changes to attack rolls and Reflex Defense last until the start of your next turn.",
+      "prerequisite": "Intelligence 13",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Defense & Avoidance",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Melee Defense as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_option_phase7",
+        "abilityMetaMode": "active",
+        "abilityMetaScope": "attack_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected attack_option implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Mobility",
+      "slug": "mobility",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "You get a +5 dodge bonus to Reflex Defense against Attacks of Opportunity caused when you move out of or into a threatened area.",
+      "prerequisite": "Dexterity 13, Dodge",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Defense & Avoidance",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "reaction_prompt",
+        "home": "chat_reaction_prompt_or_combat_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as reaction_prompt, rather than merely marking Mobility as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "MODIFIER",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "movement_aoo_defense_metadata_phase25",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "contextual_defense",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "defense.reflex:5"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Mounted Combat",
+      "slug": "mounted-combat",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "You can make a DC 20 Ride check as a Swift Action to spur your living Mount to move faster than its normal speed. If the check fails, your Mount's Speed does not increase and it moves -1 step on the Condition Track. If the check succeeds, your Mount's Speed increases by 2 squares until the start of your next turn. You cannot Take 10 on this check. Your Mo...",
+      "prerequisite": "Trained in Ride",
+      "taxonomy": {
+        "bucket": "Starship & Vehicle",
+        "subbucket": "Pilot & Maneuvers",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "reaction_prompt",
+        "home": "chat_reaction_prompt_or_combat_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as reaction_prompt, rather than merely marking Mounted Combat as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "reaction_skill_rule_phase10",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "non_numeric_rule",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "skill:2"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "source_review_required",
+        "confidence": "medium",
+        "rationale": "The source benefit is contextual enough that implementation accuracy should be confirmed against the book and in-world workflow behavior before coding.",
+        "correctiveAction": "Consult the Core Rulebook text, then promote to a concrete implementation mode or metadata/manual policy."
+      },
+      "sourceReviewReason": "Contextual action/reaction mechanics require book-context confirmation and in-world workflow testing before marking complete.",
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Natural Leader",
+      "slug": "natural-leader",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "You become the leader of an Organization of your design. The Organization has a scale equal to one-half your Heroic Level plus your Charisma bonus and continues to grow in scale as you gain levels. You automatically begin with a +10 bonus to your Organization Score for your new Organization.",
+      "prerequisite": "Charisma 13",
+      "taxonomy": {
+        "bucket": "Leadership & Allies",
+        "subbucket": "Command & Organization",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "organization_metadata",
+        "home": "gm_metadata_or_organization_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as organization_metadata, rather than merely marking Natural Leader as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "organization_rule_phase10",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "non_numeric_rule",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "skill:1"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "source_review_required",
+        "confidence": "medium",
+        "rationale": "The source benefit is contextual enough that implementation accuracy should be confirmed against the book and in-world workflow behavior before coding.",
+        "correctiveAction": "Consult the Core Rulebook text, then promote to a concrete implementation mode or metadata/manual policy."
+      },
+      "sourceReviewReason": "Contextual action/reaction mechanics require book-context confirmation and in-world workflow testing before marking complete.",
+      "priority": "low",
+      "risk": "low"
+    },
+    {
+      "name": "Pin",
+      "slug": "pin",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "If you succeed on a Grappling attack and your opponent fails the opposed Grapple check, your opponent is automatically Pinned until the start of your next turn. A Pinned creature can't move or take any Actions while Pinned, and it loses its Dexterity bonus (if any) to Reflex Defense.",
+      "prerequisite": "Base Attack Bonus +1",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Grapple & Unarmed",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "grapple_rider",
+        "home": "grapple_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as grapple_rider, rather than merely marking Pin as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "rider_effect_phase7",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "grapple_rider",
+        "ruleTypes": [
+          "GRAPPLE_RIDER"
+        ],
+        "modifierTargets": [
+          "attack:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "low"
+    },
+    {
+      "name": "Point-Blank Shot",
+      "slug": "point-blank-shot",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You get a +1 bonus on attack and damage rolls with ranged weapons against opponents within Point-Blank Range.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Ranged",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "conditional_roll_modifier",
+        "home": "roll_context_resolver",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as conditional_roll_modifier, rather than merely marking Point-Blank Shot as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "roll_modifier_consumed_phase9",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "ranged_attack_range_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "attack.bonus:1",
+          "damage.ranged:1"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected conditional_roll_modifier implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Power Attack",
+      "slug": "power-attack",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "On your turn, before making an attack roll, you may choose to subtract a number from all melee attack rolls and add the same number to all melee damage rolls. This number may not exceed your Base Attack Bonus. The penalty on attacks and bonus on damage rolls applies until the start of your next turn.",
+      "prerequisite": "Strength 13",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Attack Options",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Power Attack as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_option_phase7",
+        "abilityMetaMode": "active",
+        "abilityMetaScope": "attack_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected attack_option implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Powerful Charge",
+      "slug": "powerful-charge",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "When you Charge, you gain an additional +2 bonus on your melee attack roll. If your melee attack hits, you deal additional damage equal to one-half your level.",
+      "prerequisite": "Medium or larger size, Base Attack Bonus +1",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Mobility & Positioning",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Powerful Charge as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_option_phase7_refined",
+        "abilityMetaMode": "active",
+        "abilityMetaScope": "attack_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected attack_option implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Precise Shot",
+      "slug": "precise-shot",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "You can shoot or throw a ranged weapon at an opponent engaged in melee combat with one or more of your allies without taking the standard -5 penalty.",
+      "prerequisite": "Point-Blank Shot",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Ranged",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "conditional_roll_modifier",
+        "home": "roll_context_resolver",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as conditional_roll_modifier, rather than merely marking Precise Shot as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_option_phase7",
+        "abilityMetaMode": "active",
+        "abilityMetaScope": "attack_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Quick Draw",
+      "slug": "quick-draw",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "You can Draw or Holster a Weapon as a Swift Action instead of a Move Action.",
+      "prerequisite": "Base Attack Bonus +1",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Weapon Proficiency",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "manual_workflow",
+        "home": "gm_or_dedicated_workbench",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as manual_workflow, rather than merely marking Quick Draw as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "passive_capability",
+        "abilityMetaScope": "action_economy_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "not_implemented",
+        "confidence": "high",
+        "rationale": "No reliable runtime implementation was detected for the expected manual_workflow behavior.",
+        "correctiveAction": "Implement through gm_or_dedicated_workbench; do not approximate with an unrelated flat bonus."
+      },
+      "sourceReviewReason": "",
+      "priority": "low",
+      "risk": "low"
+    },
+    {
+      "name": "Rapid Shot",
+      "slug": "rapid-shot",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "When using a ranged weapon with which you are proficient, you may fire two shots as a single attack against a single target. You take a -2 penalty on your attack roll, but you deal +1 die of damage with a successful attack.",
+      "prerequisite": "Base Attack Bonus +1",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Attack Options",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Rapid Shot as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_option_phase7",
+        "abilityMetaMode": "active",
+        "abilityMetaScope": "attack_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected attack_option implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Rapid Strike",
+      "slug": "rapid-strike",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "When using a melee weapon with which you are proficient, you may make two strikes as a single attack against a single target. You take a -2 penalty on your attack roll, but deal +1 die of damage with a successful attack.",
+      "prerequisite": "Base Attack Bonus +1",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Attack Options",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Rapid Strike as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_option_phase7",
+        "abilityMetaMode": "active",
+        "abilityMetaScope": "attack_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected attack_option implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Running Attack",
+      "slug": "running-attack",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "When making an attack with a melee or ranged weapon, you can move both before and after the attack, provided that the total distance moved is not greater than your Speed.",
+      "prerequisite": "Dexterity 13",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Mobility & Positioning",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Running Attack as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_option_phase7",
+        "abilityMetaMode": "active",
+        "abilityMetaScope": "attack_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Saber Throw",
+      "slug": "saber-throw",
+      "source": "Saga Edition Core Rulebook",
+      "page": 94,
+      "description": "You may throw your lightsaber as a ranged attack using Use the Force instead of a ranged attack roll. The lightsaber returns to your hand at the end of the turn.",
+      "prerequisite": "Trained in Use the Force",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Lightsaber & Weapon Styles",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Saber Throw as present?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_option_phase10",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "attack_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "attack:2"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "source_review_required",
+        "confidence": "medium",
+        "rationale": "The source benefit is contextual enough that implementation accuracy should be confirmed against the book and in-world workflow behavior before coding.",
+        "correctiveAction": "Consult the Core Rulebook text, then promote to a concrete implementation mode or metadata/manual policy."
+      },
+      "sourceReviewReason": "Contextual action/reaction mechanics require book-context confirmation and in-world workflow testing before marking complete.",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Shake It Off",
+      "slug": "shake-it-off",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You can spend two Swift Actions instead of three to move +1 step along the Condition Track.",
+      "prerequisite": "Constitution 13, Trained in Endurance",
+      "taxonomy": {
+        "bucket": "Recovery & Survival",
+        "subbucket": "Endurance & Environmental",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "recovery_rule",
+        "home": "condition_recovery_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as recovery_rule, rather than merely marking Shake It Off as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "condition_track_action",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "low"
+    },
+    {
+      "name": "Skill Focus",
+      "slug": "skill-focus",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "Choose one Skill in which you are Trained. You gain a +5 competence bonus on all Skill Checks made with that Skill.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Skills",
+        "subbucket": "Skill Training & Focus",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "scoped_choice_static",
+        "home": "progression_choice_resolver_and_actor_math",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as scoped_choice_static, rather than merely marking Skill Focus as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "MODIFIER",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "passive_choice_required",
+        "abilityMetaScope": "selected_skill_static_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "undefined:5"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected scoped_choice_static implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Skill Training",
+      "slug": "skill-training",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "Choose one Untrained Skill from your list of Class Skills. You become Trained in that Skill.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Skills",
+        "subbucket": "Skill Training & Focus",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "scoped_choice_static",
+        "home": "progression_choice_resolver_and_actor_math",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as scoped_choice_static, rather than merely marking Skill Training as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "UNLOCK",
+        "abilityMetaStatus": "skill_training_implemented",
+        "abilityMetaMode": "grant_unlock",
+        "abilityMetaScope": "progression_entitlement",
+        "ruleTypes": [],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected scoped_choice_static implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Spring Attack",
+      "slug": "spring-attack",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "When making a melee attack, you may move both before and after the attack, up to your speed, without provoking attacks of opportunity from the target.",
+      "prerequisite": "Dex 13, Mobility",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Mobility & Positioning",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Spring Attack as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_option_phase10",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "attack_option",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "attack:2"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected attack_option implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Stealthy",
+      "slug": "stealthy",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "You gain a +2 bonus on Stealth checks and may reroll a failed Stealth check once per encounter.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Skills",
+        "subbucket": "Stealth & Perception",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "skill_reroll_hook",
+        "home": "skill_roll_chat_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as skill_reroll_hook, rather than merely marking Stealthy as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "skill_reroll_with_bonus_phase8_implemented",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "reroll_or_resource_context",
+        "ruleTypes": [],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected skill_reroll_hook implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "low"
+    },
+    {
+      "name": "Strong in the Force",
+      "slug": "strong-in-the-force",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "When you spend a Force Point to adjust the result of an attack roll, Skill Check, or Ability Check, you roll d8s instead of d6s.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Point & Destiny",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "force_point_rule",
+        "home": "force_point_engine",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as force_point_rule, rather than merely marking Strong in the Force as present?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "RESOURCE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "resource_rule_phase7",
+        "abilityMetaMode": "passive_resource",
+        "abilityMetaScope": "forcePoints_resource",
+        "ruleTypes": [],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected force_point_rule implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "low"
+    },
+    {
+      "name": "Surgical Expertise",
+      "slug": "surgical-expertise",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You can perform Surgery in 10 minutes.",
+      "prerequisite": "Trained in Treat Injury",
+      "taxonomy": {
+        "bucket": "Recovery & Survival",
+        "subbucket": "Healing & Natural Recovery",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "procedure_metadata",
+        "home": "gm_procedure_metadata",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as procedure_metadata, rather than merely marking Surgical Expertise as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "skill_use_rule",
+        "abilityMetaScope": "treat_injury_surgery_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "not_implemented",
+        "confidence": "high",
+        "rationale": "No reliable runtime implementation was detected for the expected procedure_metadata behavior.",
+        "correctiveAction": "Implement through gm_procedure_metadata; do not approximate with an unrelated flat bonus."
+      },
+      "sourceReviewReason": "",
+      "priority": "low",
+      "risk": "low"
+    },
+    {
+      "name": "Tech Specialist",
+      "slug": "tech-specialist",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "You can modify a device, suit of Armor, Weapon, Droid, or Vehicle so that it gains a special trait. Specific traits are given on the table below. You may perform only one modification at a time. Unless noted otherwise, you cannot grant more than one benefit to a single device, suit of Armor, Weapon, Droid, or Vehicle, and you cannot apply the same benefit...",
+      "prerequisite": "Trained in Mechanics",
+      "taxonomy": {
+        "bucket": "Tech & Equipment",
+        "subbucket": "Gear Modification",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "manual_workflow",
+        "home": "gm_or_dedicated_workbench",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as manual_workflow, rather than merely marking Tech Specialist as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "customization_context",
+        "abilityMetaScope": "workbench_garage_shipyard_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "metadata_correct",
+        "confidence": "high",
+        "rationale": "The feat is intentionally handled as metadata/manual or by an existing non-feat workflow, which is the correct implementation boundary for now.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "low",
+      "risk": "low"
+    },
+    {
+      "name": "Throw",
+      "slug": "throw",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "If you successfully Trip an opponent with a Grapple attack, the opponent falls Prone in any unoccupied space you desire up to 1 square beyond your reach and take bludgeoning damage equal to your Unarmed attack damage. A Thrown opponent is no longer considered Grappled.",
+      "prerequisite": "Trip, Base Attack Bonus +1",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Grapple & Unarmed",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "grapple_rider",
+        "home": "grapple_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as grapple_rider, rather than merely marking Throw as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "rider_effect_phase7",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "grapple_rider",
+        "ruleTypes": [
+          "GRAPPLE_RIDER"
+        ],
+        "modifierTargets": [
+          "attack:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "low"
+    },
+    {
+      "name": "Toughness",
+      "slug": "toughness",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "You gain +1 Hit Point per Character Level.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Character",
+        "subbucket": "Hit Points & Durability",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "static_sheet_math",
+        "home": "actor_derived_calculators",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as static_sheet_math, rather than merely marking Toughness as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "MODIFIER",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "hp_resource_rule_phase8",
+        "abilityMetaMode": "passive_resource",
+        "abilityMetaScope": "hitPoints_resource",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "hp.max:5"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected static_sheet_math implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Trip",
+      "slug": "trip",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "If you succeed on a Grappling attack and your opponent fails the opposed Grapple check, it falls Prone in its space and is no longer considered Grappled. A Prone opponent takes a -5 penalty on melee attack rolls. Melee attacks made against a Prone target gain a +5 bonus, while ranged attack made against a prone target take a -5 penalty.",
+      "prerequisite": "Base Attack Bonus +1",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Grapple & Unarmed",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "grapple_rider",
+        "home": "grapple_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as grapple_rider, rather than merely marking Trip as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "rider_effect_phase7",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "grapple_rider",
+        "ruleTypes": [
+          "GRAPPLE_RIDER"
+        ],
+        "modifierTargets": [
+          "attack:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "low"
+    },
+    {
+      "name": "Triple Attack",
+      "slug": "triple-attack",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "Choose a single Exotic Weapon or weapon group. When you use the Full Attack Action, you may make one additional attack when wielding such a Weapon. However, you take a -5 penalty on all attack rolls until your next turn because you're trading precision for speed. The extra attack and penalty stack with those of Double Attack.",
+      "prerequisite": "Base Attack Bonus +11, Double Attack (Chosen Weapon)",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Multiattack & Dual Weapon",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Triple Attack as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "conditional_choice_required",
+        "abilityMetaScope": "roll_or_action_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "attack:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Trustworthy",
+      "slug": "trustworthy",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "You gain a +2 bonus on Persuasion checks and may reroll a failed Persuasion check once per encounter.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Skills",
+        "subbucket": "Social Skills",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "skill_reroll_hook",
+        "home": "skill_roll_chat_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as skill_reroll_hook, rather than merely marking Trustworthy as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "skill_bonus_reroll_phase10",
+        "abilityMetaMode": "passive",
+        "abilityMetaScope": "skill_roll_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "skill:2"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected skill_reroll_hook implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "low"
+    },
+    {
+      "name": "Two-Weapon Fighting",
+      "slug": "two-weapon-fighting",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "You reduce the penalty for fighting with two weapons by 2.",
+      "prerequisite": "Dex 13",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Multiattack & Dual Weapon",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "conditional_roll_modifier",
+        "home": "roll_context_resolver",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as conditional_roll_modifier, rather than merely marking Two-Weapon Fighting as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "multiattack_penalty_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Vehicular Combat",
+      "slug": "vehicular-combat",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "Once per round (as a Reaction), when you are piloting a Vehicle or Starship, you may negate a weapon hit by making a successful Pilot check. The DC of the Skill Check is equal to the result of the attack roll you wish to negate. In addition, while you are piloting a Vehicle, you are considered proficient with pilot-operated Vehicle Weapons.",
+      "prerequisite": "Trained in Pilot",
+      "taxonomy": {
+        "bucket": "Starship & Vehicle",
+        "subbucket": "Pilot & Maneuvers",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "vehicle_starship_reaction",
+        "home": "vehicle_starship_workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as vehicle_starship_reaction, rather than merely marking Vehicular Combat as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "rider_effect_phase7",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "vehicle_reaction_context",
+        "ruleTypes": [
+          "REACTION",
+          "PROFICIENCY_GRANT"
+        ],
+        "modifierTargets": [
+          "attack:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Weapon Finesse",
+      "slug": "weapon-finesse",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "When using a Light Melee Weapon or a Lightsaber, you may use your Dexterity modifier instead of your Strength modifier on attack rolls.",
+      "prerequisite": "Base Attack Bonus +1",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Weapon Focus & Specialization",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "conditional_roll_modifier",
+        "home": "roll_context_resolver",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as conditional_roll_modifier, rather than merely marking Weapon Finesse as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_ability_rule_phase9",
+        "abilityMetaMode": "passive",
+        "abilityMetaScope": "weapon_attack_ability",
+        "ruleTypes": [
+          "ATTACK_ABILITY_SUBSTITUTION"
+        ],
+        "modifierTargets": [
+          "attack:2"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "Observed metadata/code shape matches the expected conditional_roll_modifier implementation; no flat-bonus substitution was detected in this audit entry.",
+        "correctiveAction": ""
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Weapon Focus",
+      "slug": "weapon-focus",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "Choose a single Exotic Weapon or weapon group, you gain a +1 bonus on all attack rolls you make using the selected Exotic Weapon or weapon group.",
+      "prerequisite": "Proficient with Chosen Weapon",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Weapon Proficiency",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "scoped_choice_static",
+        "home": "progression_choice_resolver_and_actor_math",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as scoped_choice_static, rather than merely marking Weapon Focus as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "passive",
+        "abilityMetaScope": "selected_weapon_roll_context",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "attack.bonus:1"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Weapon Proficiency",
+      "slug": "weapon-proficiency",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "Choose one Weapon Group. You are proficient with all weapons of the selected group. Weapon Groups include the following: - Simple Weapons (includes Simple Weapons (Melee), Simple Weapons (Ranged), and Grenades) - Pistols - Rifles - Lightsabers - Heavy Weapons (includes both Heavy Weapons and Vehicle Weapons) - Advanced Melee Weapons",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Starship & Vehicle",
+        "subbucket": "Gunnery & Weapons",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "scoped_choice_static",
+        "home": "progression_choice_resolver_and_actor_math",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as scoped_choice_static, rather than merely marking Weapon Proficiency as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "grant_unlock",
+        "abilityMetaScope": "progression_or_proficiency_grant",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "attack:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Weapon Proficiency (Heavy Weapons)",
+      "slug": "weapon-proficiency-heavy-weapons",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You are proficient with heavy weapons and do not take the -5 penalty when using them.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Weapon Proficiency",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "scoped_choice_static",
+        "home": "progression_choice_resolver_and_actor_math",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as scoped_choice_static, rather than merely marking Weapon Proficiency (Heavy Weapons) as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "UNLOCK",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "grant_unlock",
+        "abilityMetaScope": "progression_or_system_access",
+        "ruleTypes": [],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Weapon Proficiency (Pistols)",
+      "slug": "weapon-proficiency-pistols",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You are proficient with pistols and do not take the -5 penalty when using them.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Weapon Proficiency",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "scoped_choice_static",
+        "home": "progression_choice_resolver_and_actor_math",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as scoped_choice_static, rather than merely marking Weapon Proficiency (Pistols) as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "UNLOCK",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "grant_unlock",
+        "abilityMetaScope": "progression_or_system_access",
+        "ruleTypes": [],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Weapon Proficiency (Rifles)",
+      "slug": "weapon-proficiency-rifles",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You are proficient with rifles and do not take the -5 penalty when using them.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Weapon Proficiency",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "scoped_choice_static",
+        "home": "progression_choice_resolver_and_actor_math",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as scoped_choice_static, rather than merely marking Weapon Proficiency (Rifles) as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "UNLOCK",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "grant_unlock",
+        "abilityMetaScope": "progression_or_system_access",
+        "ruleTypes": [],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Weapon Proficiency (Simple Weapons)",
+      "slug": "weapon-proficiency-simple-weapons",
+      "source": "Saga Edition Core Rulebook",
+      "page": 87,
+      "description": "You are proficient with simple weapons and do not take the -5 penalty when using them.",
+      "prerequisite": "None",
+      "taxonomy": {
+        "bucket": "Weapon & Armor",
+        "subbucket": "Weapon Proficiency",
+        "source": "existing_metadata"
+      },
+      "expected": {
+        "mode": "scoped_choice_static",
+        "home": "progression_choice_resolver_and_actor_math",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as scoped_choice_static, rather than merely marking Weapon Proficiency (Simple Weapons) as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "UNLOCK",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "grant_unlock",
+        "abilityMetaScope": "progression_or_system_access",
+        "ruleTypes": [],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Some repo support exists or the feat is represented in choices/metadata, but the audit cannot prove complete runtime behavior, selected-scope handling, prompts, or breakdown parity.",
+        "correctiveAction": "Add targeted tests and complete missing runtime/UI support before marking this feat implemented_correct."
+      },
+      "sourceReviewReason": "",
+      "priority": "high",
+      "risk": "low"
+    },
+    {
+      "name": "Whirlwind Attack",
+      "slug": "whirlwind-attack",
+      "source": "Saga Edition Core Rulebook",
+      "page": 88,
+      "description": "As a Full-Round Action, you can make an Area Attack with your melee weapon, striking every target within your reach. This Whirlwind Attack uses the Area Attack rules; you make one attack roll and apply the result to every target in range.",
+      "prerequisite": "Dexterity 13, Intelligence 13, Melee Defense, Base Attack Bonus +4",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Area & Explosives",
+        "source": "phase9a_review_override"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "combat_option_resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, rather than merely marking Whirlwind Attack as present?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "rider_effect_phase7",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "multi_target_melee_action",
+        "ruleTypes": [
+          "MULTI_TARGET_ATTACK_ACTION"
+        ],
+        "modifierTargets": [
+          "attack:0"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "source_review_required",
+        "confidence": "medium",
+        "rationale": "The source benefit is contextual enough that implementation accuracy should be confirmed against the book and in-world workflow behavior before coding.",
+        "correctiveAction": "Consult the Core Rulebook text, then promote to a concrete implementation mode or metadata/manual policy."
+      },
+      "sourceReviewReason": "Contextual action/reaction mechanics require book-context confirmation and in-world workflow testing before marking complete.",
+      "priority": "high",
+      "risk": "medium"
+    }
+  ]
+}

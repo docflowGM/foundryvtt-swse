@@ -11,6 +11,7 @@ import { registerHouseRuleSettings } from "/systems/foundryvtt-swse/scripts/sett
 import { registerGameSettings } from "/systems/foundryvtt-swse/scripts/games/game-settings.js";
 import { registerFactionRegistrySettings } from "/systems/foundryvtt-swse/scripts/allies/faction-registry-service.js";
 import { registerLocationRegistrySettings } from "/systems/foundryvtt-swse/scripts/locations/location-registry-service.js";
+import { registerSkillChallengeSettings } from "/systems/foundryvtt-swse/scripts/engine/skill-challenges/SkillChallengeStore.js";
 
 /**
  * System settings for SWSE
@@ -638,6 +639,9 @@ game.settings.register('foundryvtt-swse', 'themePromptShown', {
 
   // Register Holonet settings (bulletin system)
   registerHolonetSettings();
+
+  // Register Skill Challenge tracker settings
+  registerSkillChallengeSettings();
 
   SWSELogger.log('SWSE | Settings registered');
 }

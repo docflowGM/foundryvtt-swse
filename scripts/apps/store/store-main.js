@@ -134,6 +134,7 @@ function storeItemCategoryKey(itemOrView = {}) {
   if (raw.includes('weapon')) return 'weapons';
   if (raw.includes('armor')) return 'armor';
   if (raw.includes('droid')) return 'droids';
+  if (raw.includes('implant')) return 'implants';
   if (raw.includes('vehicle') || raw.includes('ship') || raw.includes('speeder') || raw.includes('walker')) return 'vehicles';
   if (raw.includes('gear') || raw.includes('equipment') || raw.includes('medical') || raw.includes('security') || raw.includes('survival') || raw.includes('tech') || raw.includes('tool')) return 'gear';
   return raw.replace(/\s+/g, '-');
@@ -529,11 +530,12 @@ export class SWSEStore extends BaseSWSEAppV2 {
       weapons: storeI18n('SWSE.Store.Navigation.Weapons'),
       armor: storeI18n('SWSE.Store.Navigation.Armor'),
       gear: storeI18n('SWSE.Store.Navigation.Equipment'),
+      implants: 'Implants',
       equipment: storeI18n('SWSE.Store.Navigation.Equipment'),
       vehicles: storeI18n('SWSE.Store.Navigation.Vehicles'),
       droids: storeI18n('SWSE.Store.Navigation.Droids')
     };
-    const canonicalOrder = ['weapons', 'armor', 'gear', 'equipment', 'vehicles', 'droids'];
+    const canonicalOrder = ['weapons', 'armor', 'implants', 'gear', 'equipment', 'vehicles', 'droids'];
     const labels = new Map();
     const counts = new Map();
     for (const item of allItems) {

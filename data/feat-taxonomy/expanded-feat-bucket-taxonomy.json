@@ -1,0 +1,108 @@
+{
+  "version": 1,
+  "generatedAt": "2026-06-30T14:55:43.743Z",
+  "intent": "Expanded two-level feat taxonomy for feat picker browsing and implementation backlog planning.",
+  "rules": [
+    "Every feat receives one primary bucket and one primary subbucket.",
+    "Secondary buckets may be used for cross-context discoverability.",
+    "Active subbuckets in data/feat-buckets-and-subbuckets.json must contain at least two feats.",
+    "Force classification requires Force mechanics, prerequisites, or source context; title keywords alone are not sufficient.",
+    "GM / Metadata entries must carry a review or manual-policy reason."
+  ],
+  "buckets": {
+    "Combat": [
+      "Melee & Close Combat",
+      "Ranged Combat",
+      "Area & Explosives",
+      "Grapple & Unarmed",
+      "Mobility & Positioning",
+      "Defense & Avoidance",
+      "Condition Track",
+      "Damage & Threshold",
+      "Attack Options"
+    ],
+    "Weapon & Armor": [
+      "Weapon Proficiency",
+      "Weapon Focus & Specialization",
+      "Armor Proficiency & Use",
+      "Multiattack & Dual Weapon",
+      "Lightsaber & Weapon Styles"
+    ],
+    "Force": [
+      "Force Training & Powers",
+      "Force Point & Destiny",
+      "Dark Side",
+      "Lightsaber & Force Techniques",
+      "Force Tradition & Regimens"
+    ],
+    "Skills": [
+      "Skill Training & Focus",
+      "Knowledge & Recall",
+      "Mechanics & Use Computer",
+      "Treat Injury & Healing",
+      "Stealth & Perception",
+      "Social Skills",
+      "Skill Challenge",
+      "Skill Reroll & Substitution"
+    ],
+    "Tech & Equipment": [
+      "Gear Modification",
+      "Repair & Maintenance",
+      "Demolitions & Devices",
+      "Shields & Equipment Defense",
+      "Equipment Access & Utility"
+    ],
+    "Droid": [
+      "Droid Systems",
+      "Droid Shields",
+      "Droid Repair",
+      "Droid Combat",
+      "Droid Interface & Control"
+    ],
+    "Cybernetics & Implants": [
+      "Implants & Procedures"
+    ],
+    "Starship & Vehicle": [
+      "Pilot & Maneuvers",
+      "Gunnery & Weapons",
+      "Vehicle Defense",
+      "Crew & Squadron",
+      "Starship Systems & Metadata"
+    ],
+    "Recovery & Survival": [
+      "Second Wind & Recovery",
+      "Healing & Natural Recovery",
+      "Endurance & Environmental",
+      "Resistance & Immunity"
+    ],
+    "Social & Intrigue": [
+      "Persuasion & Influence",
+      "Deception & Espionage",
+      "Contacts & Reputation",
+      "Investigation & Information"
+    ],
+    "Species & Origin": [
+      "Species Traits",
+      "Cultural Background",
+      "Faction & Era"
+    ],
+    "Leadership & Allies": [
+      "Teamwork & Aid",
+      "Followers & Companions",
+      "Command & Morale",
+      "Squad Tactics"
+    ],
+    "Character": [
+      "General Passive",
+      "Ability & Defenses",
+      "Hit Points & Durability",
+      "Background & Destiny"
+    ],
+    "GM / Metadata": [
+      "Manual Adjudication",
+      "Source Reference & Procedure",
+      "Review Needed",
+      "Subsystem Missing"
+    ]
+  }
+}

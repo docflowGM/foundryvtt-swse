@@ -2,6 +2,7 @@ const DESCRIPTION_FILES = Object.freeze({
   vehicle: 'systems/foundryvtt-swse/data/store/vehicle-store-descriptions.json',
   weapon: 'systems/foundryvtt-swse/data/store/weapon-store-descriptions.json',
   equipment: 'systems/foundryvtt-swse/data/store/equipment-store-descriptions.json',
+  implant: 'systems/foundryvtt-swse/data/store/implant-store-descriptions.json',
   armor: 'systems/foundryvtt-swse/data/store/armor-store-descriptions.json',
   droid: 'systems/foundryvtt-swse/data/store/droid-store-descriptions.json',
   modification: 'systems/foundryvtt-swse/data/store/modification-store-descriptions.json'
@@ -30,6 +31,7 @@ function inferDatasetKeys(item) {
   if (type === 'armor') keys.add('armor');
   if (type === 'droid') keys.add('droid');
   if (type === 'equipment' || type === 'tool' || type === 'tech') keys.add('equipment');
+  if (type === 'implant' || category.includes('implant') || subcategory.includes('implant') || pack.includes('implant')) keys.add('implant');
 
   if (subcategory.includes('upgrade') || category.includes('upgrade') || pack.includes('modification')) {
     keys.add('modification');

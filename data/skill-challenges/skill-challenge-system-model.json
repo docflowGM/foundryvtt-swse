@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "phase": "3.5A",
+  "source": "Galaxy of Intrigue",
+  "status": "foundation_only",
+  "description": "Canonical target shape for future SWSE Skill Challenge state. This is metadata/skeleton only and is not yet wired into runtime.",
+  "storagePolicy": {
+    "templates": "data or future compendium entries",
+    "activeState": "future world setting or scene flag",
+    "actorMath": "consume existing skill roll totals; do not duplicate skill calculations"
+  },
+  "challenge": {
+    "id": "string",
+    "name": "string",
+    "source": "string",
+    "cl": "number",
+    "complexity": "number",
+    "targetSuccesses": "number",
+    "failureLimit": "number",
+    "successes": "number",
+    "failures": "number",
+    "status": "draft | active | succeeded | failed | cancelled",
+    "sceneId": "string optional",
+    "playerBrief": "string",
+    "gmNotes": "string",
+    "successText": "string",
+    "failureText": "string",
+    "primarySkills": [
+      {
+        "slug": "mechanics",
+        "label": "Mechanics",
+        "dc": 30,
+        "useLimit": null,
+        "requiresGmApproval": true,
+        "notes": "string"
+      }
+    ],
+    "secondarySkills": [],
+    "effects": [
+      {
+        "type": "catastrophicFailure",
+        "label": "Catastrophic Failure",
+        "enabled": true,
+        "parameters": {
+          "threshold": 10,
+          "extraFailures": 1
+        },
+        "notes": "Failed checks by 10 or more count as additional failures."
+      }
+    ],
+    "participants": [
+      {
+        "actorId": "string",
+        "tokenId": "string optional",
+        "name": "string",
+        "active": true,
+        "notes": "string"
+      }
+    ],
+    "history": []
+  },
+  "rollContext": {
+    "actorId": "string",
+    "tokenId": "string optional",
+    "skillSlug": "string",
+    "total": "number",
+    "dc": "number optional; defaults from challenge skill entry",
+    "rollMessageId": "string optional",
+    "declaredUse": "string optional",
+    "gmReviewRequired": true
+  },
+  "outcome": {
+    "outcome": "success | failure | ignored | gm_review",
+    "counted": "boolean",
+    "successesDelta": "number",
+    "failuresDelta": "number",
+    "messages": []
+  }
+}

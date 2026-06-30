@@ -1,0 +1,12 @@
+{
+  "phase": "phase-9g-kotor-implementation-accuracy",
+  "totalFeatsAudited": 20,
+  "reviewListCount": 14,
+  "counts": {
+    "implemented_correct": 6,
+    "implemented_partial": 14
+  },
+  "warnings": [],
+  "errors": [],
+  "generatedAt": "static-generation"
+}

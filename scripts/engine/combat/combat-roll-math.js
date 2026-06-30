@@ -31,6 +31,7 @@ import {
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
+import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal helpers
@@ -88,6 +89,7 @@ function unsettlingPresenceAttackPenalty(actor) {
 function actorIsProficientForAttack(actor, weapon) {
   const explicit = weapon?.system?.proficient;
   if (explicit !== false) return true;
+  if (ImplantEffectRules.ignoresWeaponProficiencyPenalty(actor, weapon)) return true;
   return actorHasTalentNamed(actor, 'Spacehound') && isVehicleWeapon(weapon);
 }
 

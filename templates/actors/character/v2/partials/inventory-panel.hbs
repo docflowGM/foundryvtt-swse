@@ -40,6 +40,8 @@
     </button>
   </div>
 
+  {{> "systems/foundryvtt-swse/templates/actors/character/v2/partials/gear/implants-panel.hbs"}}
+
   {{#if inventoryPanel.hasEntries}}
 
     {{#each inventoryPanel.grouped as |items group|}}

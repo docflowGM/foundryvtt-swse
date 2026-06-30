@@ -6,6 +6,8 @@
  * stable shape for inventory, store, quantity, and later skill-use hooks.
  */
 
+import { ImplantRules } from '/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js';
+
 import {
   EQUIPMENT_CATEGORY_OPTIONS,
   EQUIPMENT_BUCKET_OPTIONS,
@@ -113,6 +115,11 @@ export function resolveEquipmentData(itemOrSystem = {}) {
   const traits = normalizeList(system.traits);
   const properties = normalizeList(system.properties);
   const skillHooks = Array.isArray(system.skillHooks) ? system.skillHooks : [];
+  const implantRules = system.implantRules && typeof system.implantRules === 'object' ? system.implantRules : {};
+  const implantItem = { ...(itemOrSystem ?? {}), type: itemOrSystem.type ?? 'equipment', system };
+  const isImplant = ImplantRules.isImplantItem(implantItem);
+  const isActiveImplant = ImplantRules.isActiveImplantItem(implantItem);
+  const implantActiveByOwnership = ImplantRules._truthy?.(implantRules.activeByOwnership) === true;
   const quantity = Math.max(1, toNumber(system.quantity ?? system.equippedQty, 1));
   const weight = toNumber(system.weight, 0);
   const cost = Math.max(0, Math.round(toNumber(system.cost ?? system.costNumeric, 0)));
@@ -154,6 +161,21 @@ export function resolveEquipmentData(itemOrSystem = {}) {
     gearTemplateSecondary: system.gearTemplateSecondary ?? '',
     equipped: !!system.equipped || !!system.equippable?.equipped,
     integrated: !!system.integrated,
+    installed: !!system.installed || !!system.usage?.installed,
+    active: !!system.active || !!system.activated || !!system.usage?.active,
+    implantRules: {
+      countAsImplant: isImplant,
+      activeByOwnership: implantActiveByOwnership,
+      notes: implantRules.notes ?? ''
+    },
+    isImplant,
+    isActiveImplant,
+    implantStatusLabel: isActiveImplant ? 'Active Implant' : isImplant ? 'Tagged Implant' : 'Not Implant',
+    implantPenaltyNote: isActiveImplant
+      ? 'If the actor lacks Implant Training, this active implant applies -2 Will Defense and +1 extra Condition Track step when worsened.'
+      : isImplant
+        ? 'Tagged as an implant. Mark it equipped, installed, integrated, active, or active-by-ownership for implant drawbacks to apply.'
+        : '',
     sizeIncreaseApplied: !!system.sizeIncreaseApplied,
     tags,
     tagsText: tags.join(', '),

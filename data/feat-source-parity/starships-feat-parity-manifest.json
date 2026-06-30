@@ -1,0 +1,108 @@
+{
+  "schemaVersion": 1,
+  "phase": "phase-2-starships-of-the-galaxy",
+  "scope": {
+    "sourceBook": "Starships of the Galaxy",
+    "sourceShortName": "SOTG",
+    "intent": "Audit Starships of the Galaxy feat parity without forcing vehicle/starship subsystem automation where the current system is not ready or where the source rule is better handled by the table.",
+    "nonGoal": "Do not build a starship construction economy/workbench from this audit. Starship Designer is intentionally metadata-only."
+  },
+  "policy": {
+    "starshipDesigner": {
+      "classification": "metadata_only_consult_source",
+      "implementationStatus": "metadata_only_consult_sotg",
+      "mechanicsMode": "metadata_only",
+      "applicationScope": "gm_player_starship_design_reference",
+      "staticSheetPolicy": "exclude",
+      "uiNote": "Starship Designer is intentionally metadata-only. For ship design, rebuilds, and custom modifications, consult Starships of the Galaxy with your GM.",
+      "reason": "The feat depends on open-ended ship design, long-form construction time/cost adjudication, GM benchmarking, and campaign-economy assumptions. Automating it would create false precision and a brittle parallel starship design subsystem."
+    }
+  },
+  "expectedStarshipsEntries": [
+    {
+      "name": "Starship Designer",
+      "sourceRole": "new_sotg_feat",
+      "automationClass": "metadata_only_consult_source",
+      "requiredPrerequisiteText": ["Tech Specialist", "Trained in Mechanics"],
+      "requiresSourceReference": true
+    },
+    {
+      "name": "Starship Tactics",
+      "sourceRole": "new_sotg_feat",
+      "automationClass": "choice_grant_manual_maneuver_resource",
+      "requiredPrerequisiteText": ["Trained in Pilot"],
+      "requiresSelectedChoice": true,
+      "notes": "Should preserve the selected maneuver choice and expose it as metadata/resource support; full maneuver execution belongs to the starship maneuver subsystem."
+    },
+    {
+      "name": "Tactical Genius",
+      "sourceRole": "new_sotg_feat",
+      "automationClass": "conditional_resource_refresh",
+      "requiredPrerequisiteText": ["Starship Tactics", "Vehicular Combat", "Trained in Pilot"],
+      "requiresRuntimeContext": true,
+      "notes": "Future automation can hook natural-20 attack events to starship maneuver refresh when the maneuver resource is authoritative."
+    },
+    {
+      "name": "Tech Specialist",
+      "sourceRole": "web_enhancement_cross_reference",
+      "automationClass": "manual_workflow_reference",
+      "requiredPrerequisiteText": ["Trained in Mechanics"],
+      "notes": "Needed as prerequisite support for Starship Designer. Full Tech Specialist workflow remains separate UI/workbench scope."
+    },
+    {
+      "name": "Burst Fire",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note"
+    },
+    {
+      "name": "Coordinated Attack",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note"
+    },
+    {
+      "name": "Deadeye",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note"
+    },
+    {
+      "name": "Dodge",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note"
+    },
+    {
+      "name": "Dual Weapon Mastery I",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note"
+    },
+    {
+      "name": "Dual Weapon Mastery II",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note"
+    },
+    {
+      "name": "Dual Weapon Mastery III",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note"
+    },
+    {
+      "name": "Far Shot",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note"
+    },
+    {
+      "name": "Improved Defenses",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note"
+    },
+    {
+      "name": "Rapid Shot",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note"
+    },
+    {
+      "name": "Triple Attack",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note"
+    }
+  ]
+}

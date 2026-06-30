@@ -22,6 +22,7 @@ const SURFACE_IMPORTS = {
   factions: () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMFactionRelationshipSurfaceService.js'),
   intel: () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMIntelSurfaceService.js'),
   locations: () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMLocationsSurfaceService.js'),
+  'skill-challenges': () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMSkillChallengeSurfaceService.js'),
   settings: () => import('/systems/foundryvtt-swse/scripts/ui/shell/gm/GMSettingsSurfaceService.js')
 };
 
@@ -38,6 +39,7 @@ const SERVICE_EXPORTS = {
   factions: 'GMFactionRelationshipSurfaceService',
   intel: 'GMIntelSurfaceService',
   locations: 'GMLocationsSurfaceService',
+  'skill-challenges': 'GMSkillChallengeSurfaceService',
   settings: 'GMSettingsSurfaceService'
 };
 

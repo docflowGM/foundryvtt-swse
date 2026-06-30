@@ -1,0 +1,42 @@
+{
+  "summary": {
+    "phase": "phase-3-galaxy-of-intrigue",
+    "sourcebook": "Galaxy of Intrigue",
+    "checkedAt": "2026-06-30T11:50:24.734Z",
+    "catalogFeatCount": 401,
+    "packFeatCount": 401,
+    "expectedFeatCount": 30,
+    "presentExpectedFeatCount": 30,
+    "galaxyOfIntrigueCatalogFeatCount": 29,
+    "errorCount": 0,
+    "warningCount": 1,
+    "okCount": 30
+  },
+  "skillChallengeSubsystem": {
+    "minimumViableProduct": "GM-authored challenge card with CL, complexity, success/failure targets, primary skills, DCs, effects, participant checks, chat output, and manual override controls.",
+    "preferredSlot": "scripts/apps/skill-challenges/skill-challenge-app.js for UI, scripts/engine/skill-challenges/SkillChallengeEngine.js for pure state transitions, data/skill-challenges/*.json for example templates.",
+    "doNotSlotInto": [
+      "Actor static skill math",
+      "Feat static bonus aggregation",
+      "Combat-only action resolution"
+    ]
+  },
+  "skillChallengeFeatPolicy": {
+    "implementationStatus": "metadata_only_until_skill_challenge_subsystem",
+    "staticSheetPolicy": "exclude_static_math",
+    "gmNote": "This feat only applies inside a Galaxy of Intrigue Skill Challenge. Track it on the Skill Challenge card/app or resolve with the GM at the table.",
+    "reason": "Galaxy of Intrigue Skill Challenges are encounter-like, party-facing progress clocks with successes, failures, complexity, effects, participation, and narrative consequences. They do not map cleanly to actor static bonuses."
+  },
+  "findings": [
+    {
+      "kind": "warning",
+      "code": "SOURCE_REVIEW_REQUIRED",
+      "message": "Forceful Recovery needs manual source verification before automated parity claims.",
+      "context": {
+        "name": "Forceful Recovery",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "notes": "Appears in the Galaxy of Intrigue feat listing/index scan, but the current catalog entry is sourced to The Force Unleashed Campaign Guide. Preserve as review-only until the book/source collision is manually verified."
+      }
+    }
+  ]
+}

@@ -23,6 +23,7 @@ import { ActorEffectsAggregator } from '/systems/foundryvtt-swse/scripts/engine/
 import { CANONICAL_SKILL_DEFS, canonicalizeSkillKey } from '/systems/foundryvtt-swse/scripts/utils/skill-normalization.js';
 import { isFeatLikeItem, isForcePowerItem, isPlaceholderSheetItem, isTalentLikeItem } from '/systems/foundryvtt-swse/scripts/utils/item-classification.js';
 import { addItemEditorTrace, summarizeActorItems } from '/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js';
+import { ImplantRules } from '/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js';
 
 function safePanelNumber(value, fallback = 0) {
   let candidate = value;
@@ -289,6 +290,10 @@ export class PanelContextBuilder {
       const rulesBonus = (Number(derivedDefense?.stateBonus ?? 0) || 0) + (Number(derivedDefense?.adjustment ?? 0) || 0);
       const sizeModifier = Number(derivedDefense?.sizeModifier ?? 0) || 0;
       const conditionPenalty = Number(derivedDefense?.conditionPenalty ?? this.derived?.damage?.conditionPenalty ?? 0) || 0;
+      const implantWillPenalty = systemKey === 'will'
+        ? (Number(derivedDefense?.implantWillPenalty ?? this.derived?.implants?.willPenalty ?? 0) || 0)
+        : 0;
+      const implantWillPenaltyClass = implantWillPenalty > 0 ? 'mod--positive' : implantWillPenalty < 0 ? 'mod--negative' : 'mod--zero';
       // Reflex levelContribution already represents the SWSE heroic/armor
       // replacement term. Fortitude/Will armor bonuses are still additive.
       const armorTotalTerm = systemKey === 'reflex' ? 0 : armorBonus;
@@ -301,7 +306,8 @@ export class PanelContextBuilder {
         + rulesBonus
         + sizeModifier
         + miscMod
-        + conditionPenalty;
+        + conditionPenalty
+        + implantWillPenalty;
       // The sheet displays the same total as the player-facing formula.  Some
       // older derived defense payloads miss species/rules penalties even though
       // the breakdown has them, so do not let a stale cached total contradict
@@ -340,13 +346,25 @@ export class PanelContextBuilder {
         miscModClass,
         miscPath: `system.defenses.${systemKey}.misc.user.extra`,
         conditionPenalty,
+        implantWillPenalty,
+        implantWillPenaltyClass,
+        hasImplantWillPenalty: implantWillPenalty !== 0,
         canEdit: this.sheet.isEditable
       };
     });
 
+    const implantState = this.derived?.implants ?? null;
     const panel = {
       defenses,
       hasDefenses: defenses.length > 0,
+      implantState,
+      hasActiveImplant: implantState?.hasImplant === true,
+      implantTraining: implantState?.hasImplantTraining === true,
+      implantSummary: implantState?.hasImplant
+        ? (implantState?.hasImplantTraining
+          ? 'Implant active; Implant Training suppresses implant drawbacks.'
+          : 'Implant active; -2 Will Defense and +1 extra Condition Track step when worsened.')
+        : '',
       canEdit: this.sheet.isEditable
     };
 
@@ -497,12 +515,48 @@ export class PanelContextBuilder {
       hasUpgradeableItems
     });
 
+    const isDroidActor = String(this.actor?.type ?? '').toLowerCase() === 'droid' || this.actor?.system?.isDroid === true;
+    const implantRows = entries.filter(entry => entry.type === 'equipment' && (entry.isImplant || entry.isActiveImplant));
+    const implantState = ImplantRules.getImplantState(this.actor);
+    const implantEffects = implantState?.effects ?? {};
+    const effectChips = [];
+    if (Number(implantEffects.maxHpBonus || 0) !== 0) effectChips.push({ label: `Max HP +${Number(implantEffects.maxHpBonus || 0)}`, tone: 'safe' });
+    if (implantEffects.ignoreWeaponProficiencyPenalty) effectChips.push({ label: 'No weapon nonprof penalty', tone: 'safe' });
+    if (implantEffects.knowledgeSkillReroll) effectChips.push({ label: 'Knowledge reroll', tone: 'safe' });
+    if (implantEffects.poisonImmunity) effectChips.push({ label: 'Poison immunity', tone: 'safe' });
+    if (Number(implantEffects.stunDamageThresholdBonus || 0) !== 0) effectChips.push({ label: `Stun DT +${Number(implantEffects.stunDamageThresholdBonus || 0)}`, tone: 'safe' });
+    if (Number(implantEffects.naturalHealingMultiplier || 1) > 1) effectChips.push({ label: 'Natural healing x2', tone: 'safe' });
+    if (implantEffects.lowLightVision) effectChips.push({ label: 'Low-light vision', tone: 'safe' });
+    if (implantEffects.darkvision) effectChips.push({ label: 'Darkvision', tone: 'safe' });
+    if (implantEffects.forceAffectsDroids) effectChips.push({ label: 'Droid Force link: GM', tone: 'manual' });
+    const implantPanel = {
+      available: !isDroidActor,
+      isDroidActor,
+      entries: implantRows,
+      hasEntries: implantRows.length > 0,
+      hasActiveImplant: implantState.hasImplant === true,
+      hasImplantTraining: implantState.hasImplantTraining === true,
+      willPenalty: Number(implantState.willPenalty || 0),
+      extraConditionStep: Number(implantState.extraConditionStep || 0),
+      effects: implantEffects,
+      effectChips: effectChips.map((chip) => ({ ...chip, className: chip.tone === 'manual' ? 'is-warning' : 'is-safe' })),
+      hasEffectChips: effectChips.length > 0,
+      summary: implantState.hasImplant
+        ? (implantState.hasImplantTraining
+          ? 'Active implant detected; Implant Training suppresses generic implant drawbacks. Specific implant effects still apply.'
+          : 'Active implant detected; generic implant drawbacks and specific implant effects apply.')
+        : 'No active implants detected.',
+      emptyMessage: 'No gear is currently tagged as an implant. Edit an equipment item or use the item controls to mark one as an implant.',
+      canEdit: this.sheet.isEditable
+    };
+
     const panel = {
       entries,
       grouped,
       hasEntries: entries.length > 0,
       totalWeight,
       equippedArmor,
+      implantPanel,
       emptyMessage: 'No equipment found.',
       canEdit: this.sheet.isEditable,
       hasUpgradeableItems

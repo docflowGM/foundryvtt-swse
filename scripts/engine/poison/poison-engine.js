@@ -5,6 +5,7 @@ import { ConditionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/core/logger.js";
 import { PoisonRegistry, normalizePoisonKey } from './poison-registry.js';
 import { activeEffectChangeType } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
+import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 
 const TURN_TICK_HOOKS = ['combatTurn', 'combatTurnChange'];
 
@@ -652,6 +653,7 @@ export class PoisonEngine {
   }
 
   static _hasPoisonImmunity(actor) {
+    if (ImplantEffectRules.getPoisonImmunity(actor)) return true;
     if (actor?.system?.immunities?.poison === true) return true;
     const species = actor?.system?.immunities?.species?.immune || [];
     if (species.some(entry => normalizePoisonKey(entry?.key || entry?.name || entry) === 'poison')) return true;

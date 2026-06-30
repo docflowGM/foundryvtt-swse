@@ -1,0 +1,144 @@
+{
+  "phase": "3.5D",
+  "ok": 26,
+  "errors": 0,
+  "implementedEffects": [
+    "catastrophicFailure",
+    "restrictedSkills",
+    "recovery",
+    "secondEffort",
+    "timedChallenge"
+  ],
+  "checks": [
+    {
+      "id": "phase:file-exists",
+      "status": "ok",
+      "message": "Skill Challenge effects metadata file exists."
+    },
+    {
+      "id": "phase:metadata-version",
+      "status": "ok",
+      "message": "Effects metadata is marked for Phase 3.5D schema version 2."
+    },
+    {
+      "id": "metadata:catastrophicFailure",
+      "status": "ok",
+      "message": "catastrophicFailure is represented in effect metadata."
+    },
+    {
+      "id": "constants:catastrophicFailure",
+      "status": "ok",
+      "message": "catastrophicFailure has a stable effect identifier."
+    },
+    {
+      "id": "metadata:restrictedSkills",
+      "status": "ok",
+      "message": "restrictedSkills is represented in effect metadata."
+    },
+    {
+      "id": "constants:restrictedSkills",
+      "status": "ok",
+      "message": "restrictedSkills has a stable effect identifier."
+    },
+    {
+      "id": "metadata:recovery",
+      "status": "ok",
+      "message": "recovery is represented in effect metadata."
+    },
+    {
+      "id": "constants:recovery",
+      "status": "ok",
+      "message": "recovery has a stable effect identifier."
+    },
+    {
+      "id": "metadata:secondEffort",
+      "status": "ok",
+      "message": "secondEffort is represented in effect metadata."
+    },
+    {
+      "id": "constants:secondEffort",
+      "status": "ok",
+      "message": "secondEffort has a stable effect identifier."
+    },
+    {
+      "id": "metadata:timedChallenge",
+      "status": "ok",
+      "message": "timedChallenge is represented in effect metadata."
+    },
+    {
+      "id": "constants:timedChallenge",
+      "status": "ok",
+      "message": "timedChallenge has a stable effect identifier."
+    },
+    {
+      "id": "state:default-parameters",
+      "status": "ok",
+      "message": "State normalization applies safe default parameters for implemented effects."
+    },
+    {
+      "id": "resolver:catastrophic",
+      "status": "ok",
+      "message": "Catastrophic Failure adjusts failed roll outcomes before GM accepts suggested results."
+    },
+    {
+      "id": "resolver:restricted",
+      "status": "ok",
+      "message": "Restricted Skills downgrades unlisted skills to GM review."
+    },
+    {
+      "id": "resolver:recovery",
+      "status": "ok",
+      "message": "Recovery can remove one accumulated failure through a GM action."
+    },
+    {
+      "id": "resolver:second-effort",
+      "status": "ok",
+      "message": "Second Effort records a GM-approved retry/additional attempt without mutating roll math."
+    },
+    {
+      "id": "resolver:timed",
+      "status": "ok",
+      "message": "Timed Challenge supports a GM-adjusted countdown."
+    },
+    {
+      "id": "engine:effect-actions",
+      "status": "ok",
+      "message": "Engine exposes effect actions for the GM tracker."
+    },
+    {
+      "id": "controller:effect-actions",
+      "status": "ok",
+      "message": "GM surface controller handles effect action buttons."
+    },
+    {
+      "id": "controller:json-params",
+      "status": "ok",
+      "message": "GM form parser accepts optional JSON effect parameters."
+    },
+    {
+      "id": "service:decorates-effects",
+      "status": "ok",
+      "message": "GM surface service decorates effects for display and controls."
+    },
+    {
+      "id": "template:effect-controls",
+      "status": "ok",
+      "message": "GM template exposes manual effect controls."
+    },
+    {
+      "id": "css:effect-styles",
+      "status": "ok",
+      "message": "GM datapad CSS includes basic effect control styling."
+    },
+    {
+      "id": "no-feat-hooks-yet",
+      "status": "ok",
+      "message": "Phase 3.5D still does not implement Skill Challenge feat hooks."
+    },
+    {
+      "id": "no-dice-reroll",
+      "status": "ok",
+      "message": "Challenge effects do not roll dice or duplicate the skill roller."
+    }
+  ]
+}

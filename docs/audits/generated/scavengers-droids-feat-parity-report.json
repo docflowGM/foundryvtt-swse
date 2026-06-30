@@ -1,0 +1,45 @@
+{
+  "summary": {
+    "phase": "phase-5-scavengers-guide-to-droids",
+    "sourcebook": "Scavenger's Guide to Droids",
+    "checkedAt": "2026-06-30T14:04:09.097Z",
+    "catalogFeatCount": 401,
+    "packFeatCount": 401,
+    "expectedFeatCount": 17,
+    "presentExpectedFeatCount": 17,
+    "scavengersDroidsCatalogFeatCount": 17,
+    "metadataAlignedCount": 17,
+    "errorCount": 0,
+    "warningCount": 0,
+    "okCount": 17
+  },
+  "droidRulesNotInThisPhase": [
+    {
+      "domain": "stock_droid_chassis",
+      "reason": "This is chargen/species-chassis work and should be handled in the character creation/data model track."
+    },
+    {
+      "domain": "droid_manufacturer_traits",
+      "reason": "Manufacturer traits are chassis/model traits and should be modeled as droid-origin traits, not feats."
+    },
+    {
+      "domain": "droid_equipment_and_accessories",
+      "reason": "Needs equipment catalogs, installation state, and store categorization work."
+    },
+    {
+      "domain": "droids_as_equipment_and_actorization",
+      "reason": "Needs a separate actorization/equipment companion architecture and should not be hidden inside feat parity."
+    },
+    {
+      "domain": "droid_codex_stat_blocks",
+      "reason": "These are NPC/stock model data imports and token/actor creation work, not feat automation."
+    }
+  ],
+  "recommendedNextWork": [
+    "Add action-card candidates for Aiming Accuracy, Distracting Droid, Slammer, and Tool Frenzy after confirming the current action-card architecture.",
+    "Add damage-workflow hooks for Damage Conversion and Ion Shielding only after condition-track prompts can be GM-confirmed.",
+    "Add shield workflow support before automating Droid Shield Mastery or Shield Surge.",
+    "Audit droid chassis/species traits separately from feats."
+  ],
+  "findings": []
+}

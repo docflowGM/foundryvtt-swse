@@ -67,7 +67,7 @@ export function activateInventoryUI(sheet, html, { signal } = {}) {
   });
 
   // Delete/Remove/toggle item state
-  html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="edit"], [data-action="configure"], [data-action="force-alchemy"], [data-action="toggle-activated"]').forEach(button => {
+  html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="edit"], [data-action="configure"], [data-action="force-alchemy"], [data-action="toggle-activated"], [data-action="toggle-implant-tag"], [data-action="toggle-implant-installed"], [data-action="toggle-implant-active"]').forEach(button => {
     button.addEventListener("click", async (event) => {
       event.preventDefault();
       const action = button.dataset.action;
@@ -102,6 +102,15 @@ export function activateInventoryUI(sheet, html, { signal } = {}) {
         }
         case "toggle-activated":
           await InventoryEngine.toggleActivated(sheet.actor, itemId);
+          break;
+        case "toggle-implant-tag":
+          await InventoryEngine.toggleImplantTag(sheet.actor, itemId);
+          break;
+        case "toggle-implant-installed":
+          await InventoryEngine.toggleImplantInstalled(sheet.actor, itemId);
+          break;
+        case "toggle-implant-active":
+          await InventoryEngine.toggleImplantActive(sheet.actor, itemId);
           break;
       }
     }, { signal });

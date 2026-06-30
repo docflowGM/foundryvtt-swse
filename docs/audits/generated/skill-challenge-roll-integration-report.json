@@ -1,0 +1,97 @@
+{
+  "phase": "3.5C",
+  "ok": 18,
+  "errors": 0,
+  "checks": [
+    {
+      "id": "adapter:exists",
+      "status": "ok",
+      "message": "Skill Challenge roll adapter exists."
+    },
+    {
+      "id": "adapter:posts-review-card",
+      "status": "ok",
+      "message": "Adapter can post GM review cards from completed skill rolls."
+    },
+    {
+      "id": "adapter:active-challenges-only",
+      "status": "ok",
+      "message": "Adapter filters to active Skill Challenges only."
+    },
+    {
+      "id": "adapter:no-skill-math",
+      "status": "ok",
+      "message": "Adapter does not duplicate skill roll math."
+    },
+    {
+      "id": "adapter:gm-resolution",
+      "status": "ok",
+      "message": "Adapter requires GM confirmation for tracker mutations."
+    },
+    {
+      "id": "roller:imports-adapter",
+      "status": "ok",
+      "message": "Canonical skill roller imports the Skill Challenge adapter."
+    },
+    {
+      "id": "roller:after-chat-post",
+      "status": "ok",
+      "message": "Skill Challenge review happens after the normal holo roll card is posted."
+    },
+    {
+      "id": "roller:flags-context",
+      "status": "ok",
+      "message": "Skill roll chat flags include enough context for review cards."
+    },
+    {
+      "id": "bridge:handler",
+      "status": "ok",
+      "message": "Chat interaction bridge has a Skill Challenge review button handler."
+    },
+    {
+      "id": "bridge:binds-buttons",
+      "status": "ok",
+      "message": "Chat interaction bridge binds Skill Challenge review buttons."
+    },
+    {
+      "id": "engine:preview",
+      "status": "ok",
+      "message": "Engine supports previewing suggested roll outcomes."
+    },
+    {
+      "id": "engine:accept-suggested",
+      "status": "ok",
+      "message": "Engine can accept suggested roll outcomes."
+    },
+    {
+      "id": "engine:accept-success",
+      "status": "ok",
+      "message": "Engine can force-count a roll as success."
+    },
+    {
+      "id": "engine:accept-failure",
+      "status": "ok",
+      "message": "Engine can force-count a roll as failure."
+    },
+    {
+      "id": "engine:ignore-review",
+      "status": "ok",
+      "message": "Engine can ignore or defer a roll without changing progress."
+    },
+    {
+      "id": "template:gm-actions",
+      "status": "ok",
+      "message": "Chat card exposes GM confirmation actions."
+    },
+    {
+      "id": "controller:external-refresh",
+      "status": "ok",
+      "message": "GM surface refreshes when chat review updates a challenge."
+    },
+    {
+      "id": "no-feat-hooks-yet",
+      "status": "ok",
+      "message": "Phase 3.5C does not implement Skill Challenge feat hooks yet."
+    }
+  ]
+}

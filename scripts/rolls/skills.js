@@ -13,6 +13,7 @@ import { SpeciesRerollHandler } from "/systems/foundryvtt-swse/scripts/species/s
 import { SkillFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/skills/skill-feat-resolver.js";
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
+import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 
 
 const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
@@ -196,7 +197,10 @@ export async function rollSkill(actor, skillKey, options = {}) {
     const total = chatRoll?.total ?? rollResult.finalTotal ?? 'unknown';
     const flavor = `${actor.name} used ${skillLabel} and got ${total}.`;
 
-    const rerollOptions = SkillFeatResolver.buildRerollChatOptions(actor, effectiveSkillKey, chatRoll, skillContext);
+    const rerollOptions = [
+      ...SkillFeatResolver.buildRerollChatOptions(actor, effectiveSkillKey, chatRoll, skillContext),
+      ...ImplantEffectRules.buildKnowledgeRerollOptions(actor, effectiveSkillKey, chatRoll)
+    ];
 
     await SWSEChat.postRoll({
       roll: chatRoll,

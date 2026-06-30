@@ -21,6 +21,7 @@ import { SecondWindRules } from "/systems/foundryvtt-swse/scripts/engine/combat/
 import { MutationNormalizationService } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-normalization-service.js";
 import { MutationBoundaryService } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-boundary-service.js";
 import { normalizeActiveEffectDataForRuntime } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
+import { ImplantRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js";
 
 /**
  * ActorEngine
@@ -1632,7 +1633,9 @@ export const ActorEngine = {
       const conditionCapVariant = HouseRuleService.getAll()?.conditionCapVariant?.value ?? 'STANDARD';
       const conditionCap = ({ STANDARD: 5, VARIANT_6: 6, VARIANT_UNLIMITED: 999 })[conditionCapVariant?.toUpperCase?.()] ?? 5;
       const currentCondition = Number(actor.system.conditionTrack?.current || 0);
-      const newCondition = Math.min(conditionCap, Math.max(0, currentCondition + direction));
+      const implantExtraStep = ImplantRules.getConditionTrackExtraStep(actor, direction);
+      const effectiveDirection = direction > 0 ? direction + implantExtraStep : direction;
+      const newCondition = Math.min(conditionCap, Math.max(0, currentCondition + effectiveDirection));
 
       if (newCondition === currentCondition) {
         SWSELogger.debug(`${actor.name} condition shift had no effect (at boundary)`);
@@ -1650,6 +1653,7 @@ export const ActorEngine = {
       SWSELogger.log(`Condition ${directionLabel} for ${actor.name} (now: ${newCondition})`, {
         source,
         requestedShift: direction,
+        implantExtraStep,
         appliedShift: newCondition - currentCondition
       });
 

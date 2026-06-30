@@ -1,0 +1,204 @@
+{
+  "generatedAt": "2026-06-30T12:16:38.519Z",
+  "phase": "3.5A",
+  "strict": true,
+  "summary": {
+    "ok": 32,
+    "warning": 0,
+    "error": 0
+  },
+  "results": [
+    {
+      "type": "file",
+      "subject": "scripts/engine/skill-challenges/SkillChallengeConstants.js",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "scripts/engine/skill-challenges/SkillChallengeState.js",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "scripts/engine/skill-challenges/SkillChallengeRules.js",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "scripts/engine/skill-challenges/SkillChallengeEffectResolver.js",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "scripts/engine/skill-challenges/SkillChallengeEngine.js",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "scripts/engine/skill-challenges/SkillChallengeStore.js",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "scripts/engine/skill-challenges/SkillChallengeRollAdapter.js",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "scripts/ui/shell/gm/GMSkillChallengeSurfaceService.js",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "scripts/ui/shell/gm/controllers/GMSkillChallengeSurfaceController.js",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "templates/apps/gm/skill-challenges/skill-challenge-surface.hbs",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "templates/chat/skill-challenge-card.hbs",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "data/skill-challenges/skill-challenge-system-model.json",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "data/skill-challenges/skill-challenge-effects.json",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "data/skill-challenges/sample-skill-challenges.json",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "data/feat-source-parity/skill-challenge-feat-readiness-manifest.json",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "docs/design/skill-challenge-system-fit.md",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "file",
+      "subject": "docs/audits/skill-challenge-feat-readiness.md",
+      "status": "ok",
+      "message": "Required foundation file exists."
+    },
+    {
+      "type": "feat",
+      "subject": "Skill Challenge: Catastrophic Avoidance",
+      "status": "ok",
+      "message": "Source is Galaxy of Intrigue."
+    },
+    {
+      "type": "feat",
+      "subject": "Skill Challenge: Catastrophic Avoidance",
+      "status": "ok",
+      "message": "Static sheet policy is manual_punted. Expected exclude/manual while subsystem is absent."
+    },
+    {
+      "type": "feat",
+      "subject": "Skill Challenge: Catastrophic Avoidance",
+      "status": "ok",
+      "message": "Mechanics mode is manual_punted. Expected metadata/manual while subsystem is absent."
+    },
+    {
+      "type": "feat",
+      "subject": "Skill Challenge: Catastrophic Avoidance",
+      "status": "ok",
+      "message": "Future rule hook SKILL_CHALLENGE_CATASTROPHIC_AVOIDANCE has metadata entries."
+    },
+    {
+      "type": "feat",
+      "subject": "Skill Challenge: Last Resort",
+      "status": "ok",
+      "message": "Source is Galaxy of Intrigue."
+    },
+    {
+      "type": "feat",
+      "subject": "Skill Challenge: Last Resort",
+      "status": "ok",
+      "message": "Static sheet policy is manual_punted. Expected exclude/manual while subsystem is absent."
+    },
+    {
+      "type": "feat",
+      "subject": "Skill Challenge: Last Resort",
+      "status": "ok",
+      "message": "Mechanics mode is manual_punted. Expected metadata/manual while subsystem is absent."
+    },
+    {
+      "type": "feat",
+      "subject": "Skill Challenge: Last Resort",
+      "status": "ok",
+      "message": "Future rule hook SKILL_CHALLENGE_LAST_RESORT has metadata entries."
+    },
+    {
+      "type": "feat",
+      "subject": "Skill Challenge: Recovery",
+      "status": "ok",
+      "message": "Source is Galaxy of Intrigue."
+    },
+    {
+      "type": "feat",
+      "subject": "Skill Challenge: Recovery",
+      "status": "ok",
+      "message": "Static sheet policy is manual_punted. Expected exclude/manual while subsystem is absent."
+    },
+    {
+      "type": "feat",
+      "subject": "Skill Challenge: Recovery",
+      "status": "ok",
+      "message": "Mechanics mode is manual_punted. Expected metadata/manual while subsystem is absent."
+    },
+    {
+      "type": "feat",
+      "subject": "Skill Challenge: Recovery",
+      "status": "ok",
+      "message": "Future rule hook SKILL_CHALLENGE_RECOVERY has metadata entries."
+    },
+    {
+      "type": "model",
+      "subject": "skill-challenge-system-model.json",
+      "status": "ok",
+      "message": "System model should define challenge, rollContext, and outcome shapes."
+    },
+    {
+      "type": "model",
+      "subject": "skill-challenge-effects.json",
+      "status": "ok",
+      "message": "7 challenge effects modeled."
+    },
+    {
+      "type": "model",
+      "subject": "sample-skill-challenges.json",
+      "status": "ok",
+      "message": "1 sample challenges modeled."
+    }
+  ]
+}

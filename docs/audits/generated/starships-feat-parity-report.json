@@ -1,0 +1,331 @@
+{
+  "generatedAt": "2026-06-30T11:44:18.979Z",
+  "phase": "phase-2-starships-of-the-galaxy",
+  "scope": {
+    "sourceBook": "Starships of the Galaxy",
+    "sourceShortName": "SOTG",
+    "intent": "Audit Starships of the Galaxy feat parity without forcing vehicle/starship subsystem automation where the current system is not ready or where the source rule is better handled by the table.",
+    "nonGoal": "Do not build a starship construction economy/workbench from this audit. Starship Designer is intentionally metadata-only."
+  },
+  "policy": {
+    "starshipDesigner": {
+      "classification": "metadata_only_consult_source",
+      "implementationStatus": "metadata_only_consult_sotg",
+      "mechanicsMode": "metadata_only",
+      "applicationScope": "gm_player_starship_design_reference",
+      "staticSheetPolicy": "exclude",
+      "uiNote": "Starship Designer is intentionally metadata-only. For ship design, rebuilds, and custom modifications, consult Starships of the Galaxy with your GM.",
+      "reason": "The feat depends on open-ended ship design, long-form construction time/cost adjudication, GM benchmarking, and campaign-economy assumptions. Automating it would create false precision and a brittle parallel starship design subsystem."
+    }
+  },
+  "summary": {
+    "manifestEntries": 15,
+    "catalogFeatCount": 401,
+    "packFeatCount": 401,
+    "ok": 15,
+    "warnings": 0,
+    "errors": 0
+  },
+  "entries": [
+    {
+      "name": "Starship Designer",
+      "sourceRole": "new_sotg_feat",
+      "automationClass": "metadata_only_consult_source",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "observed": {
+        "catalogCount": 1,
+        "packCount": 1,
+        "catalogHasStarshipsSource": true,
+        "packHasStarshipsSource": true,
+        "prerequisiteText": "Tech Specialist, Trained in Mechanics",
+        "mechanicsMode": "metadata_only",
+        "implementationStatus": "metadata_only_consult_sotg",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": false,
+        "requiresSelectedChoice": false
+      }
+    },
+    {
+      "name": "Starship Tactics",
+      "sourceRole": "new_sotg_feat",
+      "automationClass": "choice_grant_manual_maneuver_resource",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "observed": {
+        "catalogCount": 1,
+        "packCount": 1,
+        "catalogHasStarshipsSource": true,
+        "packHasStarshipsSource": true,
+        "prerequisiteText": "Vehicular Combat, Trained in Pilot",
+        "mechanicsMode": "grant_unlock",
+        "implementationStatus": "starship_tactics_metadata_phase13",
+        "staticSheetPolicy": "not_a_modifier",
+        "requiresRuntimeContext": false,
+        "requiresSelectedChoice": true
+      }
+    },
+    {
+      "name": "Tactical Genius",
+      "sourceRole": "new_sotg_feat",
+      "automationClass": "conditional_resource_refresh",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "observed": {
+        "catalogCount": 1,
+        "packCount": 1,
+        "catalogHasStarshipsSource": true,
+        "packHasStarshipsSource": true,
+        "prerequisiteText": "Starship Tactics, Vehicular Combat, Trained in Pilot",
+        "mechanicsMode": "conditional",
+        "implementationStatus": "starship_maneuver_metadata_phase17",
+        "staticSheetPolicy": "resource_metadata",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false
+      }
+    },
+    {
+      "name": "Tech Specialist",
+      "sourceRole": "web_enhancement_cross_reference",
+      "automationClass": "manual_workflow_reference",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "observed": {
+        "catalogCount": 1,
+        "packCount": 1,
+        "catalogHasStarshipsSource": true,
+        "packHasStarshipsSource": true,
+        "prerequisiteText": "Trained in Mechanics",
+        "mechanicsMode": "customization_context",
+        "implementationStatus": "phase21_contextual_customization_ui",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": false,
+        "requiresSelectedChoice": false
+      }
+    },
+    {
+      "name": "Burst Fire",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "observed": {
+        "catalogCount": 1,
+        "packCount": 1,
+        "catalogHasStarshipsSource": true,
+        "packHasStarshipsSource": true,
+        "prerequisiteText": "Proficient with Heavy Weapons",
+        "mechanicsMode": "active",
+        "implementationStatus": "attack_option_phase7_refined",
+        "staticSheetPolicy": "roll_context_only",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false
+      }
+    },
+    {
+      "name": "Coordinated Attack",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "observed": {
+        "catalogCount": 1,
+        "packCount": 1,
+        "catalogHasStarshipsSource": true,
+        "packHasStarshipsSource": true,
+        "prerequisiteText": "Base Attack Bonus +2",
+        "mechanicsMode": "teamwork_action_rule",
+        "implementationStatus": "coordinated_attack_metadata_phase13",
+        "staticSheetPolicy": "not_a_modifier",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": true
+      }
+    },
+    {
+      "name": "Deadeye",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "observed": {
+        "catalogCount": 1,
+        "packCount": 1,
+        "catalogHasStarshipsSource": true,
+        "packHasStarshipsSource": true,
+        "prerequisiteText": "Point-Blank Shot, Precise Shot, Base Attack Bonus +4",
+        "mechanicsMode": "active",
+        "implementationStatus": "attack_option_phase7",
+        "staticSheetPolicy": "roll_context_only",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false
+      }
+    },
+    {
+      "name": "Dodge",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "observed": {
+        "catalogCount": 1,
+        "packCount": 1,
+        "catalogHasStarshipsSource": true,
+        "packHasStarshipsSource": true,
+        "prerequisiteText": "Dexterity 13",
+        "mechanicsMode": "conditional",
+        "implementationStatus": "",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": true
+      }
+    },
+    {
+      "name": "Dual Weapon Mastery I",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "observed": {
+        "catalogCount": 1,
+        "packCount": 1,
+        "catalogHasStarshipsSource": true,
+        "packHasStarshipsSource": true,
+        "prerequisiteText": "Dexterity 13, Base Attack Bonus +1",
+        "mechanicsMode": "conditional",
+        "implementationStatus": "multiattack_metadata_phase14",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false
+      }
+    },
+    {
+      "name": "Dual Weapon Mastery II",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "observed": {
+        "catalogCount": 1,
+        "packCount": 1,
+        "catalogHasStarshipsSource": true,
+        "packHasStarshipsSource": true,
+        "prerequisiteText": "Dexterity 15, Dual Weapon Mastery I, Base Attack Bonus +6",
+        "mechanicsMode": "conditional",
+        "implementationStatus": "multiattack_metadata_phase14",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false
+      }
+    },
+    {
+      "name": "Dual Weapon Mastery III",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "observed": {
+        "catalogCount": 1,
+        "packCount": 1,
+        "catalogHasStarshipsSource": true,
+        "packHasStarshipsSource": true,
+        "prerequisiteText": "Dexterity 17, Dual Weapon Mastery I, Dual Weapon Mastery II, Base Attack Bonus +11",
+        "mechanicsMode": "conditional",
+        "implementationStatus": "multiattack_metadata_phase14",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false
+      }
+    },
+    {
+      "name": "Far Shot",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "observed": {
+        "catalogCount": 1,
+        "packCount": 1,
+        "catalogHasStarshipsSource": true,
+        "packHasStarshipsSource": true,
+        "prerequisiteText": "Point-Blank Shot",
+        "mechanicsMode": "conditional",
+        "implementationStatus": "passive_roll_option_phase7",
+        "staticSheetPolicy": "roll_context_only",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false
+      }
+    },
+    {
+      "name": "Improved Defenses",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "observed": {
+        "catalogCount": 1,
+        "packCount": 1,
+        "catalogHasStarshipsSource": true,
+        "packHasStarshipsSource": true,
+        "prerequisiteText": "None",
+        "mechanicsMode": "passive",
+        "implementationStatus": "",
+        "staticSheetPolicy": "include",
+        "requiresRuntimeContext": false,
+        "requiresSelectedChoice": false
+      }
+    },
+    {
+      "name": "Rapid Shot",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "observed": {
+        "catalogCount": 1,
+        "packCount": 1,
+        "catalogHasStarshipsSource": true,
+        "packHasStarshipsSource": true,
+        "prerequisiteText": "Base Attack Bonus +1",
+        "mechanicsMode": "active",
+        "implementationStatus": "attack_option_phase7",
+        "staticSheetPolicy": "roll_context_only",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": true
+      }
+    },
+    {
+      "name": "Triple Attack",
+      "sourceRole": "additional_sotg_vehicle_note",
+      "automationClass": "core_feat_with_vehicle_note",
+      "status": "ok",
+      "warnings": [],
+      "errors": [],
+      "observed": {
+        "catalogCount": 1,
+        "packCount": 1,
+        "catalogHasStarshipsSource": true,
+        "packHasStarshipsSource": true,
+        "prerequisiteText": "Base Attack Bonus +11, Double Attack (Chosen Weapon)",
+        "mechanicsMode": "conditional_choice_required",
+        "implementationStatus": "",
+        "staticSheetPolicy": "manual_or_contextual_only",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": true
+      }
+    }
+  ]
+}

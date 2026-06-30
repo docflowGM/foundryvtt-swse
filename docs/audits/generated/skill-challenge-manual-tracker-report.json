@@ -1,0 +1,136 @@
+{
+  "generatedAt": "2026-06-30T12:16:38.575Z",
+  "phase": "3.5B",
+  "scope": "GM manual Skill Challenge tracker",
+  "summary": {
+    "ok": 25,
+    "errors": 0
+  },
+  "checks": [
+    {
+      "id": "exists:scripts/engine/skill-challenges/SkillChallengeConstants.js",
+      "ok": true,
+      "detail": "scripts/engine/skill-challenges/SkillChallengeConstants.js"
+    },
+    {
+      "id": "exists:scripts/engine/skill-challenges/SkillChallengeState.js",
+      "ok": true,
+      "detail": "scripts/engine/skill-challenges/SkillChallengeState.js"
+    },
+    {
+      "id": "exists:scripts/engine/skill-challenges/SkillChallengeRules.js",
+      "ok": true,
+      "detail": "scripts/engine/skill-challenges/SkillChallengeRules.js"
+    },
+    {
+      "id": "exists:scripts/engine/skill-challenges/SkillChallengeEffectResolver.js",
+      "ok": true,
+      "detail": "scripts/engine/skill-challenges/SkillChallengeEffectResolver.js"
+    },
+    {
+      "id": "exists:scripts/engine/skill-challenges/SkillChallengeEngine.js",
+      "ok": true,
+      "detail": "scripts/engine/skill-challenges/SkillChallengeEngine.js"
+    },
+    {
+      "id": "exists:scripts/engine/skill-challenges/SkillChallengeStore.js",
+      "ok": true,
+      "detail": "scripts/engine/skill-challenges/SkillChallengeStore.js"
+    },
+    {
+      "id": "exists:scripts/engine/skill-challenges/SkillChallengeRollAdapter.js",
+      "ok": true,
+      "detail": "scripts/engine/skill-challenges/SkillChallengeRollAdapter.js"
+    },
+    {
+      "id": "exists:scripts/ui/shell/gm/GMSkillChallengeSurfaceService.js",
+      "ok": true,
+      "detail": "scripts/ui/shell/gm/GMSkillChallengeSurfaceService.js"
+    },
+    {
+      "id": "exists:scripts/ui/shell/gm/controllers/GMSkillChallengeSurfaceController.js",
+      "ok": true,
+      "detail": "scripts/ui/shell/gm/controllers/GMSkillChallengeSurfaceController.js"
+    },
+    {
+      "id": "exists:templates/apps/gm/skill-challenges/skill-challenge-surface.hbs",
+      "ok": true,
+      "detail": "templates/apps/gm/skill-challenges/skill-challenge-surface.hbs"
+    },
+    {
+      "id": "exists:templates/chat/skill-challenge-card.hbs",
+      "ok": true,
+      "detail": "templates/chat/skill-challenge-card.hbs"
+    },
+    {
+      "id": "exists:data/skill-challenges/skill-challenge-system-model.json",
+      "ok": true,
+      "detail": "data/skill-challenges/skill-challenge-system-model.json"
+    },
+    {
+      "id": "exists:data/skill-challenges/skill-challenge-effects.json",
+      "ok": true,
+      "detail": "data/skill-challenges/skill-challenge-effects.json"
+    },
+    {
+      "id": "exists:data/skill-challenges/sample-skill-challenges.json",
+      "ok": true,
+      "detail": "data/skill-challenges/sample-skill-challenges.json"
+    },
+    {
+      "id": "surface-registry:skill-challenges-import",
+      "ok": true,
+      "detail": "GM surface registry exposes the Skill Challenges surface."
+    },
+    {
+      "id": "controller-registry:skill-challenges",
+      "ok": true,
+      "detail": "GM controller registry binds the Skill Challenges controller."
+    },
+    {
+      "id": "shell-surface:partial",
+      "ok": true,
+      "detail": "Shell surface renders the GM Skill Challenges partial."
+    },
+    {
+      "id": "gm-datapad:known-route",
+      "ok": true,
+      "detail": "GM Datapad route list includes skill-challenges."
+    },
+    {
+      "id": "gm-datapad:badge-count",
+      "ok": true,
+      "detail": "GM Datapad loads active Skill Challenge badge count."
+    },
+    {
+      "id": "gm-datapad:app-card",
+      "ok": true,
+      "detail": "GM Datapad app card is present."
+    },
+    {
+      "id": "settings:registered",
+      "ok": true,
+      "detail": "Skill Challenge world setting is registered from core settings."
+    },
+    {
+      "id": "store:write-enabled",
+      "ok": true,
+      "detail": "Store write paths are enabled for GM tracker state."
+    },
+    {
+      "id": "store:internal-setting",
+      "ok": true,
+      "detail": "Skill Challenge state is internal world setting data."
+    },
+    {
+      "id": "controller:manual-actions",
+      "ok": true,
+      "detail": "Controller supports manual tracker actions."
+    },
+    {
+      "id": "controller:no-roll-capture",
+      "ok": true,
+      "detail": "Phase 3.5B does not wire skill-roll chat automation."
+    }
+  ]
+}

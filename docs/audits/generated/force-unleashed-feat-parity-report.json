@@ -1,0 +1,39 @@
+{
+  "generatedAt": "2026-06-30T14:07:21.313Z",
+  "phase": "phase-6-force-unleashed-campaign-guide",
+  "sourcebook": "The Force Unleashed Campaign Guide",
+  "catalogFeatCount": 401,
+  "packFeatCount": 401,
+  "expectedFeatCount": 31,
+  "presentExpectedFeatCount": 31,
+  "sourceMatchedCount": 31,
+  "forceUnleashedCatalogCount": 31,
+  "runtimeClassifiedCount": 31,
+  "forcePowerScopedCount": 6,
+  "outOfScopePolicyCount": 4,
+  "outOfScope": [
+    {
+      "id": "unleashed_abilities_subsystem",
+      "reason": "The Unleashed feat can be metadata, but full Destiny Point fueled Unleashed Ability activation requires a separate ability/subsystem implementation."
+    },
+    {
+      "id": "force_power_resolution_engine",
+      "reason": "Forceful power riders should wait for a proper Force power activation/result workflow rather than becoming static Use the Force modifiers."
+    },
+    {
+      "id": "new_combat_maneuver_engine",
+      "reason": "Bantha Rush, autofire shape changes, soft cover followups, and adjacent ally bonuses need combat-option/result context."
+    },
+    {
+      "id": "rage_ui_rewrite",
+      "reason": "Rage feats should use the existing rage state/context hooks and should not trigger a sheet rewrite in this phase."
+    }
+  ],
+  "recommendedNextWork": [
+    "Add a Force power activation context bridge so Forceful Grip/Slam/Stun/Throw/Saber Throw/Weapon can apply their +2 only to the named power checks.",
+    "Add a second-wind hook for Forceful Recovery to restore one expended Force power by GM/player selection.",
+    "Add combat option/action-card candidates for Angled Throw, Strafe, Mighty Throw, and Improved Bantha Rush.",
+    "Treat Unleashed as a capability until a Destiny Point/Unleashed Ability subsystem exists."
+  ],
+  "findings": []
+}

@@ -1,0 +1,90 @@
+{
+  "generatedAt": "2026-06-30T12:49:23.929Z",
+  "summary": {
+    "ok": 11,
+    "warnings": 1,
+    "errors": 4
+  },
+  "checks": [
+    {
+      "id": "file:scripts/engine/implants/ImplantRules.js",
+      "status": "ok",
+      "detail": "present"
+    },
+    {
+      "id": "file:scripts/actors/derived/defense-calculator.js",
+      "status": "ok",
+      "detail": "present"
+    },
+    {
+      "id": "file:scripts/governance/actor-engine/actor-engine.js",
+      "status": "ok",
+      "detail": "present"
+    },
+    {
+      "id": "file:scripts/actors/v2/base-actor.js",
+      "status": "ok",
+      "detail": "present"
+    },
+    {
+      "id": "file:data/feat-catalog.json",
+      "status": "error",
+      "detail": "missing"
+    },
+    {
+      "id": "file:packs/feats.db",
+      "status": "error",
+      "detail": "missing"
+    },
+    {
+      "id": "implant-rules:will-penalty",
+      "status": "ok",
+      "detail": "exports Will Defense penalty resolver"
+    },
+    {
+      "id": "implant-rules:ct-extra-step",
+      "status": "ok",
+      "detail": "exports extra condition step resolver"
+    },
+    {
+      "id": "implant-rules:training-exception",
+      "status": "ok",
+      "detail": "detects Implant Training exception"
+    },
+    {
+      "id": "implant-rules:item-flags",
+      "status": "ok",
+      "detail": "supports explicit item flags"
+    },
+    {
+      "id": "defense:implant-will-penalty",
+      "status": "ok",
+      "detail": "Will Defense includes implant penalty term"
+    },
+    {
+      "id": "actor-engine:implant-ct-extra-step",
+      "status": "ok",
+      "detail": "positive condition shifts include implant extra step"
+    },
+    {
+      "id": "base-actor:derived-implant-state",
+      "status": "ok",
+      "detail": "derived implant state is exposed"
+    },
+    {
+      "id": "catalog:implant-training",
+      "status": "error",
+      "detail": "Implant Training missing"
+    },
+    {
+      "id": "catalog:cybernetic-surgery",
+      "status": "error",
+      "detail": "Cybernetic Surgery missing"
+    },
+    {
+      "id": "catalog:implant-training-metadata",
+      "status": "warning",
+      "detail": "Implant Training suppression metadata incomplete"
+    }
+  ]
+}

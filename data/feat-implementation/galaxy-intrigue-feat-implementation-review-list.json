@@ -1,0 +1,87 @@
+{
+  "schemaVersion": 1,
+  "phase": "9D-galaxy-of-intrigue-source-review-list",
+  "purpose": "GOI feats where runtime correctness, source collision, or subsystem hook parity should be checked before implementation is marked complete.",
+  "entries": [
+    {
+      "name": "Adaptable Talent",
+      "description": "Prerequisites: None Effect: Choose one Talent that you meet the prerequisites for, from a Class you possess. Once per day, after at least 6 hours of rest, you can choose to swap out one of your current Talents for the Talent you chose for this Feat. The Talent you swap out cannot be the prerequisite for any other Talent you have. You can swap back to your original Talent after at least 6 hours of rest. Source URL: https://swse.fandom.com/wiki/Adaptable_Talent",
+      "currentObservedStatus": "conditional_choice_required",
+      "proposedBucket": "Character",
+      "proposedSubbucket": "General Passive",
+      "proposedImplementationMode": "temporary_choice_swap",
+      "reason": "Persistent talent swap needs a selected talent and rest timing. Current metadata captures choice-required behavior, but no complete rest-gated swap workflow is proven.",
+      "nextDecision": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+    },
+    {
+      "name": "Forceful Recovery",
+      "description": "Prerequisites: Force Sensitivity , Force Training Effect: Whenever you catch a Second Wind , choose one expended Force Power and return that power to your Force Power Suite . Source URL: https://swse.fandom.com/wiki/Forceful_Recovery",
+      "currentObservedStatus": "second_wind_rule_phase8_hardened",
+      "proposedBucket": "Force",
+      "proposedSubbucket": "Force Point & Destiny",
+      "proposedImplementationMode": "force_suite_recovery",
+      "reason": "Catalog/source collision: surfaced during GOI scan but catalog sources it to The Force Unleashed. Also needs exact Force-suite recovery timing verification.",
+      "nextDecision": "Consult Galaxy of Intrigue/source collision context before moving to implementation."
+    },
+    {
+      "name": "Recurring Success",
+      "description": "Prerequisites: None Effect: When you select this Feat, choose one Talent or Feat that can normally be used once per encounter. You can use that Talent or Feat one additional time per encounter. Special: You can select this Feat multiple times. Each time you do so, you must choose a different Talent or Feat to gain the benefits of this Feat. Source URL: https://swse.fandom.com/wiki/Recurring_Success",
+      "currentObservedStatus": "conditional_choice_required",
+      "proposedBucket": "Character",
+      "proposedSubbucket": "General Passive",
+      "proposedImplementationMode": "persistent_choice_resource",
+      "reason": "Correct shape requires choosing a once-per-encounter talent/feat and increasing its per-encounter uses. Needs source verification plus integration with per-encounter resource tracking.",
+      "nextDecision": "Consult Galaxy of Intrigue/source collision context before moving to implementation."
+    },
+    {
+      "name": "Skill Challenge: Catastrophic Avoidance",
+      "description": "Catastrophic Failures in a Skill Challenge occur less frequently, and with milder results.",
+      "currentObservedStatus": "punted_to_skill_challenge_table_resolution",
+      "proposedBucket": "Skills",
+      "proposedSubbucket": "Skill Challenge",
+      "proposedImplementationMode": "skill_challenge_hook",
+      "reason": "After Phase 3.5E this should be a runtime Skill Challenge hook. Current catalog still appears to carry manual-punted metadata, so this audit flags outdated metadata/hook parity.",
+      "nextDecision": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+    },
+    {
+      "name": "Skill Challenge: Last Resort",
+      "description": "Reroll a third failed Skill Check during a Skill Challenge, keeping the better result.",
+      "currentObservedStatus": "punted_to_skill_challenge_table_resolution",
+      "proposedBucket": "Skills",
+      "proposedSubbucket": "Skill Challenge",
+      "proposedImplementationMode": "skill_challenge_hook",
+      "reason": "After Phase 3.5E this should be a runtime Skill Challenge hook. Current catalog still appears to carry manual-punted metadata, so this audit flags outdated metadata/hook parity.",
+      "nextDecision": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+    },
+    {
+      "name": "Skill Challenge: Recovery",
+      "description": "Treat a Skill Challenge as if it had the Recovery effect.",
+      "currentObservedStatus": "punted_to_skill_challenge_table_resolution",
+      "proposedBucket": "Skills",
+      "proposedSubbucket": "Skill Challenge",
+      "proposedImplementationMode": "skill_challenge_hook",
+      "reason": "After Phase 3.5E this should be a runtime Skill Challenge hook. Current catalog still appears to carry manual-punted metadata, so this audit flags outdated metadata/hook parity.",
+      "nextDecision": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+    },
+    {
+      "name": "Stand Tall",
+      "description": "Prerequisites: None Effect: Once per encounter when you take damage, all allies who are within 6 squares of you and within your line of sight can, as a Reaction , make a single attack on the target that damaged you. Source URL: https://swse.fandom.com/wiki/Stand_Tall",
+      "currentObservedStatus": "table_context_metadata_phase17",
+      "proposedBucket": "Leadership & Allies",
+      "proposedSubbucket": "Teamwork & Aid Another",
+      "proposedImplementationMode": "ally_reaction_prompt",
+      "reason": "Correct shape is once-per-encounter damage trigger allowing allies within 6 squares/LoS to attack. Metadata is correct to avoid static math, but full automation is table/map-context heavy.",
+      "nextDecision": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+    },
+    {
+      "name": "Wookiee Grip",
+      "description": "Prerequisites: Strength 13 Effect: When using a weapon in which you are proficient and that normally requires two hands, you can wield that weapon with a single hand. You take a -2 penalty to attack rolls with the weapon when it is used in this manner. Source URL: https://swse.fandom.com/wiki/Wookiee_Grip",
+      "currentObservedStatus": "species_rule_phase10_executable_hook",
+      "proposedBucket": "Species & Origin",
+      "proposedSubbucket": "Species Traits",
+      "proposedImplementationMode": "weapon_handling_override",
+      "reason": "Correct shape is two-handed weapon in one hand with -2 attack in that mode. Metadata exists; consuming weapon-handling and attack breakdown parity need proof.",
+      "nextDecision": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+    }
+  ]
+}

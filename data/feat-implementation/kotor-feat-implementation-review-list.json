@@ -1,0 +1,167 @@
+{
+  "phase": "phase-9g-kotor-implementation-accuracy",
+  "sourcebook": "Knights of the Old Republic Campaign Guide",
+  "purpose": "Separate list of feats that are not fully implementation-correct yet or need careful implementation review. Includes name, description, and proposed bucket/subbucket.",
+  "entries": [
+    {
+      "name": "Accelerated Strike",
+      "description": "Once per encounter, when using only weapons with which you are proficient, you can take a Full Attack Action as a Standard Action.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Action Economy",
+      "proposedImplementationMode": "encounter_action_option",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs an encounter action button or combat option that changes action economy; a flat attack modifier would be wrong.",
+      "expectedRuleShape": "Once per encounter, take a Full Attack as a Standard Action when using only proficient weapons.",
+      "observedImplementation": "Current metadata correctly says this is action economy rather than an attack bonus, but there is no proven runtime action card / full-attack-as-standard workflow."
+    },
+    {
+      "name": "Conditioning",
+      "description": "You can reroll any Strength - or Constitution -based Skill Checks for Skills that you are Trained in. The result of the reroll must be accepted even if it is worse. Additionally, once per encounter you can add your Strength modifier to your Fortitude Defense as a Reaction ; this bonus lasts until the beginning of your next turn.",
+      "proposedBucket": "Skills",
+      "proposedSubbucket": "Skill Reroll & Substitution",
+      "proposedImplementationMode": "skill_reroll_and_reaction_defense",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Correct implementation requires both a skill reroll hook and a temporary defense reaction.",
+      "expectedRuleShape": "Reroll trained Strength- or Constitution-based skill checks; once per encounter add Strength modifier to Fortitude Defense as a reaction until next turn.",
+      "observedImplementation": "Metadata recognizes reroll/resource context but does not prove trained Str/Con skill detection, reroll prompt, encounter usage, or reaction Fortitude duration."
+    },
+    {
+      "name": "Force Readiness",
+      "description": "You can spend Force Points as a Free Action, even if it is not your turn. All other restrictions to Force Point use still apply.",
+      "proposedBucket": "Force",
+      "proposedSubbucket": "Force Point & Destiny",
+      "proposedImplementationMode": "force_point_timing_rule",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs Force Point spend workflow integration; not a static Force feat bonus.",
+      "expectedRuleShape": "Spend Force Points as a Free Action even outside your turn, while all other Force Point restrictions still apply.",
+      "observedImplementation": "Metadata/resource rule exists, but no proven Force Point spending gate checks out-of-turn permission from this feat."
+    },
+    {
+      "name": "Gearhead",
+      "description": "Once per encounter, you can make Mechanics and Use Computer checks more quickly than normal. A check requiring a Full-Round Action can be attempted as a Standard Action, a check requiring a Standard Action can be attempted as a Move Action, and a check requiring a Move Action can be attempted as a Swift Action. Checks requiring multiple Swift Actions can be reduced by one Swift Action. Checks requiring more than a Full-Round Action can be attempted in one-half the amount of time required at a -10 penalty.",
+      "proposedBucket": "Skills",
+      "proposedSubbucket": "Mechanics & Use Computer",
+      "proposedImplementationMode": "skill_time_reduction_action",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs skill-use workflow/action economy support, not a skill bonus.",
+      "expectedRuleShape": "Once per encounter, reduce Mechanics/Use Computer check time by one action step or halve long tasks at -10.",
+      "observedImplementation": "Metadata-only skill-use timing rule; no proven Mechanics/Use Computer action-time picker or once-per-encounter usage tracking."
+    },
+    {
+      "name": "Implant Training",
+      "description": "You are not moved an extra step down the Condition Track when you would normally be moved down the Condition Track.",
+      "proposedBucket": "Cybernetics & Implants",
+      "proposedSubbucket": "Implants & Procedures",
+      "proposedImplementationMode": "implant_penalty_suppression",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Correct runtime home is ImplantRules/defense/condition-track hooks; metadata alone is insufficient.",
+      "expectedRuleShape": "Suppress extra condition-track step and -2 Will Defense penalty from active implants.",
+      "observedImplementation": "Catalog contains resource rules for suppressing implant CT and Will penalties, but this repo baseline does not include the ImplantRules runtime engine; if the earlier implant phases are merged, this should become implemented_correct."
+    },
+    {
+      "name": "Increased Agility",
+      "description": "You increase your Climb Speed, Swim Speed and Jump distance by +2 squares and do not lose your Dexterity bonus to Reflex Defense when climbing.",
+      "proposedBucket": "Recovery & Survival",
+      "proposedSubbucket": "Mobility & Movement",
+      "proposedImplementationMode": "movement_capability",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs derived movement and climbing defense integration.",
+      "expectedRuleShape": "+2 squares to climb speed, swim speed, and jump distance; retain Dexterity bonus to Reflex while climbing.",
+      "observedImplementation": "Structured rules exist as metadata, but no proof the movement/Reflex while climbing calculators consume them."
+    },
+    {
+      "name": "Logic Upgrade: Self-Defense",
+      "description": "Grant yourself +2 to the Defense of your choice for 1 round.",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Systems",
+      "proposedImplementationMode": "temporary_defense_choice_action",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs droid action/picker workflow; static defense bonus would be wrong.",
+      "expectedRuleShape": "Droid-only active logic upgrade choosing one defense to gain +2 for 1 round.",
+      "observedImplementation": "Metadata identifies temporary defense choice and selected choice requirement, but no proven action button, defense picker, duration, or usage tracking."
+    },
+    {
+      "name": "Logic Upgrade: Tactician",
+      "description": "Grant a +5 bonus to attack with a successful Aid Another attempt.",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Systems",
+      "proposedImplementationMode": "aid_another_attack_support",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs Aid Another workflow integration, not self attack math.",
+      "expectedRuleShape": "Droid Aid Another support that can grant +5 to an ally attack after a successful Aid Another attempt.",
+      "observedImplementation": "Metadata says no self attack bonus and Aid Another support, but no proven Aid Another hook that changes the ally bonus to +5."
+    },
+    {
+      "name": "Poison Resistance",
+      "description": "You gain a +5 bonus to your Fortitude Defense when attacked by Poison. If the attack succeeds, you take only half damage.",
+      "proposedBucket": "Recovery & Survival",
+      "proposedSubbucket": "Poison & Disease",
+      "proposedImplementationMode": "poison_defense_and_damage_reduction",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs PoisonEngine integration.",
+      "expectedRuleShape": "+5 Fortitude Defense against poison; if poison succeeds, take half damage.",
+      "observedImplementation": "Metadata-only conditional defense note; no proven PoisonEngine hook for +5 Fortitude or half damage on poison success."
+    },
+    {
+      "name": "Quick Skill",
+      "description": "Once per encounter, you can Take 10 when rushed on a single Skill Check for a Skill you are Trained in, unless the Skill description explicitly forbids it. Alternatively, you can Take 20 when using a Skill you are Trained in at half the normal time required.",
+      "proposedBucket": "Skills",
+      "proposedSubbucket": "Skill Training & Focus",
+      "proposedImplementationMode": "take10_take20_skill_rule",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs skill-use modal integration.",
+      "expectedRuleShape": "Once per encounter, Take 10 while rushed on one trained skill check, or Take 20 in half normal time for a trained skill.",
+      "observedImplementation": "Metadata-only skill-use economy rule with selected skill requirement; no proven Take 10/Take 20 workflow or encounter tracking."
+    },
+    {
+      "name": "Republic Military Training",
+      "description": "Once per encounter, as a Reaction, you gain Damage Reduction 10 against an incoming attack if you have Cover from the attacker. You can gain the Damage Reduction as long as you have Cover, even if your opponent uses Aim to ignore your Cover bonus to Reflex Defense.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Defense & Avoidance",
+      "proposedImplementationMode": "incoming_damage_reaction",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs damage intake reaction workflow and cover context.",
+      "expectedRuleShape": "Once per encounter reaction: gain DR 10 against incoming attack if you have cover from the attacker, even if Aim ignores cover Reflex bonus.",
+      "observedImplementation": "Metadata-only reaction note; no proven incoming damage hook, cover context, or once-per-encounter reaction prompt."
+    },
+    {
+      "name": "Sith Military Training",
+      "description": "Once per encounter, as a Reaction when you reduce a target to 0 Hit Points or deal damage that exceeds the target's Damage Threshold, you can activate this Feat to cause all enemies within 6 squares of that target to take a -2 penalty to all Defenses until the end of your next turn. This is a Mind-Affecting effect.",
+      "proposedBucket": "Social & Intrigue",
+      "proposedSubbucket": "Fear & Morale",
+      "proposedImplementationMode": "defense_debuff_reaction",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs combat event trigger plus area targeting and status/duration support.",
+      "expectedRuleShape": "Once per encounter reaction after reducing target to 0 HP or exceeding DT; enemies within 6 squares of that target take -2 to all defenses until end of your next turn; mind-affecting.",
+      "observedImplementation": "Metadata correctly captures trigger and defense debuff concept, but no proven target set, range, duration, mind-affecting immunity, or reaction prompt."
+    },
+    {
+      "name": "Tumble Defense",
+      "description": "When an opponent attempts to Tumble through a square you threaten with a melee weapon with which you are proficient, add your Base Attack Bonus to the DC of the Acrobatics check made to Tumble. If the target fails the Acrobatics check to Tumble, you can make an Attack of Opportunity against that opponent as normal.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Defense & Avoidance",
+      "proposedImplementationMode": "opponent_skill_dc_modifier",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs movement/zone-control interaction; actor defense bonus would be wrong.",
+      "expectedRuleShape": "When an opponent tumbles through a threatened square, add your BAB to that Acrobatics DC and allow normal AoO on failure.",
+      "observedImplementation": "Metadata-only conditional defense note; no proven enemy Acrobatics/Tumble DC hook or threatened-square context."
+    },
+    {
+      "name": "Withdrawal Strike",
+      "description": "When taking this Feat, select a single Exotic Weapon (Melee) or melee weapon group with which you are proficient. When wielding that chosen Exotic Weapon (Melee) or melee weapon from the chosen group, adjacent opponents may not Withdraw from squares you threaten. They may still make Acrobatics checks to Tumble as normal.",
+      "proposedBucket": "Weapon & Armor",
+      "proposedSubbucket": "Weapon Proficiency",
+      "proposedImplementationMode": "threatened_square_withdrawal_rule",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs choice capture plus movement action enforcement.",
+      "expectedRuleShape": "Choose one melee weapon group or melee exotic weapon; adjacent opponents cannot Withdraw from squares you threaten while you wield that choice.",
+      "observedImplementation": "Metadata captures required persistent choice and disables false numeric modifier, but no proven selected-choice enforcement or movement/withdraw hook."
+    }
+  ],
+  "summary": {
+    "entries": 14,
+    "statuses": {
+      "implemented_partial": 14
+    }
+  }
+}

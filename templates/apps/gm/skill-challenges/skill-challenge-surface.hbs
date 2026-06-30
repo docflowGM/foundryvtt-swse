@@ -1,0 +1,282 @@
+<section class="gm-datapad-page swse-gm-skill-challenges gm-v2-surface gm-v2-surface--skill-challenges swse-skill-challenge-surface" data-shell-surface="skill-challenges" data-gm-surface="skill-challenges">
+  <header class="gm-v2-surface__header swse-skill-challenge-header">
+    <div>
+      <p class="gm-v2-surface__eyebrow">Galaxy of Intrigue Encounter Subsystem</p>
+      <h2>{{title}}</h2>
+      <p>{{subtitle}}</p>
+    </div>
+    <div class="swse-skill-challenge-summary">
+      <span class="swse-chip">{{activeCount}} active</span>
+      <span class="swse-chip">{{completedCount}} completed</span>
+      <span class="swse-chip">Phase {{readiness.phase}}</span>
+    </div>
+  </header>
+
+  <div class="swse-skill-challenge-grid">
+    <aside class="swse-skill-challenge-list" aria-label="Skill Challenge trackers">
+      <div class="swse-panel swse-panel--stacked">
+        <header class="swse-panel__header">
+          <h3>Trackers</h3>
+          <button type="button" class="swse-btn swse-btn--sm" data-skill-challenge-action="new">
+            <i class="fa-solid fa-plus"></i> New
+          </button>
+        </header>
+
+        {{#if hasChallenges}}
+          <div class="swse-skill-challenge-list__items">
+            {{#each challenges}}
+              <button type="button"
+                      class="swse-skill-challenge-list__item {{this.statusTone}} {{#if (eq ../selectedChallengeId this.id)}}is-selected{{/if}}"
+                      data-skill-challenge-action="select"
+                      data-challenge-id="{{this.id}}">
+                <span class="swse-skill-challenge-list__title">{{this.name}}</span>
+                <span class="swse-skill-challenge-list__meta">{{this.statusLabel}} · {{this.successes}}/{{this.targetSuccesses}} S · {{this.failures}}/{{this.failureLimit}} F</span>
+              </button>
+            {{/each}}
+          </div>
+          <button type="button" class="swse-btn swse-btn--ghost swse-btn--block" data-skill-challenge-action="clear-completed">
+            Clear completed trackers
+          </button>
+        {{else}}
+          <div class="swse-empty-state swse-empty-state--compact">
+            <h3>No Skill Challenges yet</h3>
+            <p>Create one from a Galaxy of Intrigue template, a custom scene, or an encrypted-intel-style objective.</p>
+          </div>
+        {{/if}}
+      </div>
+
+      <form class="swse-panel swse-skill-challenge-form" data-skill-challenge-create-form>
+        <header class="swse-panel__header">
+          <h3>Create Tracker</h3>
+          <button type="submit" class="swse-btn swse-btn--primary swse-btn--sm">Save</button>
+        </header>
+        <input type="hidden" name="id" value="">
+        <input type="hidden" name="status" value="draft">
+        <label>Name <input type="text" name="name" value="{{createDefaults.name}}"></label>
+        <div class="swse-form-row">
+          <label>CL <input type="number" name="cl" min="0" value="{{createDefaults.cl}}"></label>
+          <label>Complexity <input type="number" name="complexity" min="0" value="{{createDefaults.complexity}}"></label>
+        </div>
+        <div class="swse-form-row">
+          <label>Successes <input type="number" name="targetSuccesses" min="1" value="{{createDefaults.targetSuccesses}}"></label>
+          <label>Failures <input type="number" name="failureLimit" min="1" value="{{createDefaults.failureLimit}}"></label>
+        </div>
+        <label>Primary skills <textarea name="primarySkillsText" rows="3" placeholder="slug:dc:Label">{{createDefaults.primarySkillsText}}</textarea></label>
+        <label>Effects <textarea name="effectsText" rows="2" placeholder="catastrophicFailure:Catastrophic Failure::{}">{{createDefaults.effectsText}}</textarea></label>
+        <label>Player brief <textarea name="playerBrief" rows="2">{{createDefaults.playerBrief}}</textarea></label>
+        <label>Success text <textarea name="successText" rows="2">{{createDefaults.successText}}</textarea></label>
+        <label>Failure text <textarea name="failureText" rows="2">{{createDefaults.failureText}}</textarea></label>
+        <label>GM notes <textarea name="gmNotes" rows="2">{{createDefaults.gmNotes}}</textarea></label>
+        <input type="hidden" name="source" value="Galaxy of Intrigue">
+        <textarea name="secondarySkillsText" hidden></textarea>
+      </form>
+    </aside>
+
+    <main class="swse-skill-challenge-main">
+      {{#if activeChallenge}}
+        <article class="swse-panel swse-skill-challenge-card {{activeChallenge.statusTone}}" data-challenge-id="{{activeChallenge.id}}">
+          <header class="swse-panel__header swse-skill-challenge-card__header">
+            <div>
+              <p class="swse-panel__eyebrow">{{activeChallenge.source}} · CL {{activeChallenge.cl}} · Complexity {{activeChallenge.complexity}}</p>
+              <h3>{{activeChallenge.name}}</h3>
+              <p>{{activeChallenge.playerBrief}}</p>
+            </div>
+            <span class="swse-status-pill {{activeChallenge.statusTone}}">{{activeChallenge.statusLabel}}</span>
+          </header>
+
+          <section class="swse-skill-challenge-progress-grid">
+            <div class="swse-progress-card">
+              <header>
+                <strong>Successes</strong>
+                <span>{{activeChallenge.successes}} / {{activeChallenge.targetSuccesses}}</span>
+              </header>
+              <div class="swse-pips" aria-label="Success progress">
+                {{#each activeChallenge.successPips}}<span class="swse-pip {{#if this.filled}}is-filled{{/if}}"></span>{{/each}}
+              </div>
+              <div class="swse-button-row">
+                <button type="button" class="swse-btn swse-btn--sm" data-skill-challenge-action="success-minus" data-challenge-id="{{activeChallenge.id}}">-</button>
+                <button type="button" class="swse-btn swse-btn--sm swse-btn--primary" data-skill-challenge-action="success-plus" data-challenge-id="{{activeChallenge.id}}">+ Success</button>
+              </div>
+            </div>
+            <div class="swse-progress-card">
+              <header>
+                <strong>Failures</strong>
+                <span>{{activeChallenge.failures}} / {{activeChallenge.failureLimit}}</span>
+              </header>
+              <div class="swse-pips swse-pips--danger" aria-label="Failure progress">
+                {{#each activeChallenge.failurePips}}<span class="swse-pip {{#if this.filled}}is-filled{{/if}}"></span>{{/each}}
+              </div>
+              <div class="swse-button-row">
+                <button type="button" class="swse-btn swse-btn--sm" data-skill-challenge-action="failure-minus" data-challenge-id="{{activeChallenge.id}}">-</button>
+                <button type="button" class="swse-btn swse-btn--sm swse-btn--warn" data-skill-challenge-action="failure-plus" data-challenge-id="{{activeChallenge.id}}">+ Failure</button>
+              </div>
+            </div>
+          </section>
+
+          <nav class="swse-button-row swse-button-row--wrap" aria-label="Skill Challenge lifecycle">
+            <button type="button" class="swse-btn swse-btn--primary" data-skill-challenge-action="start" data-challenge-id="{{activeChallenge.id}}">Start</button>
+            <button type="button" class="swse-btn swse-btn--ok" data-skill-challenge-action="success" data-challenge-id="{{activeChallenge.id}}">Mark Succeeded</button>
+            <button type="button" class="swse-btn swse-btn--warn" data-skill-challenge-action="failure" data-challenge-id="{{activeChallenge.id}}">Mark Failed</button>
+            <button type="button" class="swse-btn swse-btn--ghost" data-skill-challenge-action="cancel" data-challenge-id="{{activeChallenge.id}}">Cancel</button>
+            <button type="button" class="swse-btn swse-btn--ghost" data-skill-challenge-action="post-summary" data-challenge-id="{{activeChallenge.id}}">Post Summary</button>
+            <button type="button" class="swse-btn swse-btn--danger" data-skill-challenge-action="delete" data-challenge-id="{{activeChallenge.id}}">Delete</button>
+          </nav>
+
+          <section class="swse-panel swse-panel--inset swse-skill-challenge-roll-entry">
+            <header class="swse-panel__header">
+              <h4>GM Roll / Ability / Force Entry</h4>
+              <span class="swse-muted">Use this for off-sheet, ability, Force, equipment, or narrative checks.</span>
+            </header>
+            <form data-skill-challenge-roll-form>
+              <input type="hidden" name="challengeId" value="{{activeChallenge.id}}">
+              <div class="swse-form-row">
+                <label>Actor <input type="text" name="actorName" placeholder="GM Entry"></label>
+                <label>Key <input type="text" name="skillSlug" placeholder="mechanics / ability.int / force.power"></label>
+                <label>Label <input type="text" name="skillLabel" placeholder="Mechanics / Intelligence / Force power"></label>
+              </div>
+              <div class="swse-form-row">
+                <label>Total <input type="number" name="total" value="0"></label>
+                <label>DC <input type="number" name="dc" value="0"></label>
+                <label>Result
+                  <select name="outcomeMode">
+                    <option value="suggested">Use total vs DC</option>
+                    <option value="success">Force success</option>
+                    <option value="failure">Force failure</option>
+                    <option value="ignore">Record only</option>
+                  </select>
+                </label>
+                <button type="submit" class="swse-btn swse-btn--primary swse-btn--sm">Record Entry</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="swse-skill-challenge-columns">
+            <div class="swse-panel swse-panel--inset">
+              <h4>Primary Skills</h4>
+              <ul class="swse-clean-list">
+                {{#each activeChallenge.primarySkills}}
+                  <li><strong>{{this.label}}</strong> <span>DC {{this.dc}}</span> {{#if this.notes}}<em>{{this.notes}}</em>{{/if}}</li>
+                {{/each}}
+              </ul>
+            </div>
+            <div class="swse-panel swse-panel--inset">
+              <h4>Skill Challenge Feats</h4>
+              {{#if activeChallenge.hasFeatOptions}}
+                <ul class="swse-clean-list">
+                  {{#each activeChallenge.featOptions}}
+                    <li class="swse-skill-challenge-feat-option {{#unless this.eligible}}is-muted{{/unless}}">
+                      <strong>{{this.featName}}</strong>
+                      <span>{{this.actorName}} — {{this.reason}}</span>
+                      {{#if this.eligible}}
+                        <button type="button" class="swse-btn swse-btn--xs swse-btn--accent" data-skill-challenge-action="{{this.action}}" data-challenge-id="{{../activeChallenge.id}}" data-actor-id="{{this.actorId}}" data-actor-name="{{this.actorName}}">{{this.label}}</button>
+                      {{/if}}
+                    </li>
+                  {{/each}}
+                </ul>
+              {{else}}
+                <p>Add participants with Skill Challenge feats to surface once-per-challenge reactions here.</p>
+              {{/if}}
+            </div>
+            <div class="swse-panel swse-panel--inset">
+              <h4>Effects</h4>
+              <ul class="swse-clean-list">
+                {{#each activeChallenge.decoratedEffects}}
+                  <li class="swse-skill-challenge-effect {{#unless this.enabled}}is-disabled{{/unless}}">
+                    <strong>{{this.label}}</strong>
+                    {{#if this.summary}}<span>{{this.summary}}</span>{{/if}}
+                    {{#if this.notes}}<em>{{this.notes}}</em>{{/if}}
+                    {{#if this.parameterLabel}}<small>{{this.parameterLabel}}</small>{{/if}}
+                    {{#if this.isRecovery}}
+                      <button type="button" class="swse-btn swse-btn--xs swse-btn--ok" data-skill-challenge-action="recover-failure" data-challenge-id="{{../activeChallenge.id}}">Recover Failure</button>
+                    {{/if}}
+                    {{#if this.isSecondEffort}}
+                      <button type="button" class="swse-btn swse-btn--xs" data-skill-challenge-action="second-effort" data-challenge-id="{{../activeChallenge.id}}">Record Second Effort</button>
+                    {{/if}}
+                    {{#if this.isTimedChallenge}}
+                      <span class="swse-skill-challenge-timer">{{this.timedRemaining}} {{this.timedUnit}} remaining</span>
+                      <button type="button" class="swse-btn swse-btn--xs" data-skill-challenge-action="timed-minus" data-challenge-id="{{../activeChallenge.id}}">- Time</button>
+                      <button type="button" class="swse-btn swse-btn--xs" data-skill-challenge-action="timed-plus" data-challenge-id="{{../activeChallenge.id}}">+ Time</button>
+                    {{/if}}
+                  </li>
+                {{/each}}
+              </ul>
+            </div>
+          </section>
+
+          <section class="swse-skill-challenge-columns">
+            <div class="swse-panel swse-panel--inset">
+              <header class="swse-panel__header">
+                <h4>Participants</h4>
+                <button type="button" class="swse-btn swse-btn--sm" data-skill-challenge-action="add-selected-token" data-challenge-id="{{activeChallenge.id}}">Add selected token</button>
+              </header>
+              {{#if activeChallenge.participants.length}}
+                <ul class="swse-clean-list">
+                  {{#each activeChallenge.participants}}
+                    <li>
+                      <strong>{{this.name}}</strong>
+                      <button type="button" class="swse-btn swse-btn--xs swse-btn--ghost" data-skill-challenge-action="remove-participant" data-challenge-id="{{../activeChallenge.id}}" data-actor-id="{{this.actorId}}">Remove</button>
+                    </li>
+                  {{/each}}
+                </ul>
+              {{else}}
+                <p>No participants yet. Select a token on the canvas and add it here.</p>
+              {{/if}}
+            </div>
+            <div class="swse-panel swse-panel--inset">
+              <h4>Outcomes</h4>
+              <p><strong>Success:</strong> {{activeChallenge.successText}}</p>
+              <p><strong>Failure:</strong> {{activeChallenge.failureText}}</p>
+              <p><strong>GM Notes:</strong> {{activeChallenge.gmNotes}}</p>
+            </div>
+          </section>
+
+          <details class="swse-panel swse-panel--inset swse-skill-challenge-edit">
+            <summary>Edit tracker metadata</summary>
+            <form data-skill-challenge-edit-form>
+              <input type="hidden" name="id" value="{{activeChallenge.id}}">
+              <input type="hidden" name="status" value="{{activeChallenge.status}}">
+              <input type="hidden" name="source" value="{{activeChallenge.source}}">
+              <label>Name <input type="text" name="name" value="{{activeChallenge.name}}"></label>
+              <div class="swse-form-row">
+                <label>CL <input type="number" name="cl" min="0" value="{{activeChallenge.cl}}"></label>
+                <label>Complexity <input type="number" name="complexity" min="0" value="{{activeChallenge.complexity}}"></label>
+                <label>Successes <input type="number" name="targetSuccesses" min="1" value="{{activeChallenge.targetSuccesses}}"></label>
+                <label>Failures <input type="number" name="failureLimit" min="1" value="{{activeChallenge.failureLimit}}"></label>
+              </div>
+              <label>Primary skills <textarea name="primarySkillsText" rows="3">{{activeChallenge.primarySkillsText}}</textarea></label>
+              <label>Secondary skills <textarea name="secondarySkillsText" rows="2">{{activeChallenge.secondarySkillsText}}</textarea></label>
+              <label>Effects <textarea name="effectsText" rows="2">{{activeChallenge.effectsText}}</textarea></label>
+              <label>Player brief <textarea name="playerBrief" rows="2">{{activeChallenge.playerBrief}}</textarea></label>
+              <label>Success text <textarea name="successText" rows="2">{{activeChallenge.successText}}</textarea></label>
+              <label>Failure text <textarea name="failureText" rows="2">{{activeChallenge.failureText}}</textarea></label>
+              <label>GM notes <textarea name="gmNotes" rows="3">{{activeChallenge.gmNotes}}</textarea></label>
+              <button type="submit" class="swse-btn swse-btn--primary">Save changes</button>
+            </form>
+          </details>
+
+          <section class="swse-panel swse-panel--inset">
+            <h4>Recent History</h4>
+            {{#if activeChallenge.recentHistory.length}}
+              <ol class="swse-history-list">
+                {{#each activeChallenge.recentHistory}}
+                  <li>
+                    <strong>{{this.timestampLabel}}</strong>
+                    <span>{{this.note}}</span>
+                    {{#if this.deltaLabel}}<em>{{this.deltaLabel}}</em>{{/if}}
+                  </li>
+                {{/each}}
+              </ol>
+            {{else}}
+              <p>No tracker history yet.</p>
+            {{/if}}
+          </section>
+        </article>
+      {{else}}
+        <div class="swse-empty-state">
+          <h3>No selected Skill Challenge</h3>
+          <p>Create a tracker to begin manually counting successes and failures.</p>
+        </div>
+      {{/if}}
+    </main>
+  </div>
+</section>

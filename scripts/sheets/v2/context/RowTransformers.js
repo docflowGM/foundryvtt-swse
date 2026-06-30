@@ -1,4 +1,5 @@
 import { WeaponVisualProfileResolver } from "/systems/foundryvtt-swse/scripts/engine/visuals/weapon-visual-profile-resolver.js";
+import { ImplantRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js";
 import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
 
@@ -143,6 +144,11 @@ export class RowTransformers {
       item?.system?.uses?.value ?? '',
       item?.system?.ammo?.value ?? item?.system?.ammunition?.value ?? '',
       item?.system?.activated ?? item?.system?.active ?? '',
+      item?.system?.installed ?? '',
+      item?.system?.integrated ?? '',
+      item?.system?.implantRules?.countAsImplant ?? '',
+      item?.system?.implantRules?.activeByOwnership ?? '',
+      item?.system?.implantRules?.notes ?? '',
       item?.flags?.swse?.equipped ?? '',
       item?.flags?.swse?.autoEquipped ?? '',
       item?.flags?.swse?.isNaturalWeapon ?? ''
@@ -201,6 +207,9 @@ export class RowTransformers {
     const isLightsaber = visualProfile.isLightsaber;
     const armorStats = item.type === 'armor' ? resolveArmorData(item) : null;
     const isEnergyShield = armorStats?.isEnergyShield === true;
+    const isImplant = ImplantRules.isImplantItem(item);
+    const isActiveImplant = ImplantRules.isActiveImplantItem(item);
+    const implantStatusLabel = isActiveImplant ? 'Active Implant' : isImplant ? 'Implant' : '';
     const canToggleActivated = isLightsaber || isEnergyShield || typeof item.system?.activated === 'boolean';
     const activated = visualProfile.active || item.system?.activated === true || item.system?.active === true || (isEnergyShield && armorStats?.activated === true);
     const equipped = truthy(item.system?.equipped)
@@ -227,6 +236,15 @@ export class RowTransformers {
       activated,
       isLightsaber,
       isEnergyShield,
+      isImplant,
+      isActiveImplant,
+      installed: item.system?.installed === true || item.system?.usage?.installed === true || item.system?.integrated === true || item.system?.usage?.integrated === true,
+      implantStatusLabel,
+      implantPenaltyTitle: isActiveImplant
+        ? 'Active implant: applies -2 Will Defense and +1 extra Condition Track step unless the actor has Implant Training.'
+        : isImplant
+          ? 'Tagged implant. Mark equipped/installed/integrated/active to apply implant drawbacks.'
+          : '',
       shieldRating: armorStats?.shieldRating ?? safeNumber(item.system?.shieldRating, 0),
       currentSR: armorStats?.currentSR ?? safeNumber(item.system?.currentSR, 0),
       armorStats,
@@ -250,6 +268,8 @@ export class RowTransformers {
         isLightsaber ? 'lightsaber' : '',
         activated ? 'active' : 'inactive',
         equipped ? 'equipped' : 'unequipped',
+        isImplant ? 'implant-tagged' : '',
+        isActiveImplant ? 'implant-active' : '', 
         isNaturalWeapon ? 'natural-weapon' : '',
         item.system?.rarity ? `rarity-${item.system.rarity}` : ''
       ].filter(Boolean).join(' '),

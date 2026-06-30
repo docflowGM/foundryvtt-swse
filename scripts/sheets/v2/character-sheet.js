@@ -6329,7 +6329,7 @@ const forcePoints = [];
     });
 
     // Delete/Remove item
-    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="toggle-activated"], [data-action="edit"], [data-action="configure"]').forEach(button => {
+    html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="toggle-activated"], [data-action="edit"], [data-action="configure"], [data-action="toggle-implant-tag"], [data-action="toggle-implant-installed"], [data-action="toggle-implant-active"]').forEach(button => {
       button.addEventListener("click", async (event) => {
         event.preventDefault();
         const action = button.dataset.action;
@@ -6348,6 +6348,15 @@ const forcePoints = [];
             break;
           case "toggle-activated":
             await InventoryEngine.toggleActivated(this.actor, itemId);
+            break;
+          case "toggle-implant-tag":
+            await InventoryEngine.toggleImplantTag(this.actor, itemId);
+            break;
+          case "toggle-implant-installed":
+            await InventoryEngine.toggleImplantInstalled(this.actor, itemId);
+            break;
+          case "toggle-implant-active":
+            await InventoryEngine.toggleImplantActive(this.actor, itemId);
             break;
           case "edit":
             item.sheet.render(true);

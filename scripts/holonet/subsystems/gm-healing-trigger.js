@@ -10,6 +10,7 @@
 import { ActorEngine } from '/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js';
 import { HealingEmitter } from '../emitters/healing-emitter.js';
 import { GMPartyRosterService } from '/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-party-roster-service.js';
+import { ImplantEffectRules } from '/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js';
 
 export class GMHealingTrigger {
   /**
@@ -124,11 +125,22 @@ export class GMHealingTrigger {
 
       // Perform recovery
       const result = await RecoveryMechanics.performRecovery(actor);
+      let hpRecovered = Number(result.hpRecovered ?? 0) || 0;
+      const naturalHealingMultiplier = ImplantEffectRules.getNaturalHealingMultiplier(actor);
+      let implantExtraHealing = 0;
+      if (result.success && hpRecovered > 0 && naturalHealingMultiplier > 1) {
+        implantExtraHealing = hpRecovered * (naturalHealingMultiplier - 1);
+        const extraResult = await ActorEngine.applyHealing(actor, implantExtraHealing, 'implant-regenerative-natural-healing');
+        implantExtraHealing = Number(extraResult?.applied ?? implantExtraHealing) || 0;
+        hpRecovered += implantExtraHealing;
+      }
 
       return {
         success: result.success,
-        hpRecovered: result.hpRecovered ?? 0,
+        hpRecovered,
         vitalityRecovered: result.vitalityRecovered ?? 0,
+        implantExtraHealing,
+        naturalHealingMultiplier,
         error: result.error ?? result.message
       };
     } catch (err) {

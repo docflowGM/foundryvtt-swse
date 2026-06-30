@@ -25,6 +25,7 @@ import { ClassesDB } from "/systems/foundryvtt-swse/scripts/data/classes-db.js";
 import { normalizeClassId } from "/systems/foundryvtt-swse/scripts/data/class-normalizer.js";
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { getLevelSplit } from "/systems/foundryvtt-swse/scripts/actors/derived/level-split.js";
+import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 
 export class HPCalculator {
   /**
@@ -81,13 +82,15 @@ export class HPCalculator {
 
     const baseHP = Math.max(1, maxHP);
     const adjustment = options?.adjustment || 0;
-    const finalHP = Math.max(1, baseHP + adjustment);
+    const implantAdjustment = ImplantEffectRules.getMaxHpBonus(actor);
+    const finalHP = Math.max(1, baseHP + adjustment + implantAdjustment);
 
     return {
       base: baseHP,
       max: finalHP,
       value: finalHP,
-      adjustment
+      adjustment,
+      implantAdjustment
     };
   }
 }

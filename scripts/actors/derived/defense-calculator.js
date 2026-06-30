@@ -21,6 +21,7 @@ import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine
 import { getReflexSizeModifier } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { isEnergyShieldItem, resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
+import { ImplantRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js";
 
 function getActorFeatItems(actor) {
   try {
@@ -824,7 +825,8 @@ export class DefenseCalculator {
       : 0;
     const willBase = 10 + heroicLevel + willClassBonus + willAbilityMod;
     const psychicCitadelBonus = this._hasTalent(defenseProfile, 'Psychic Citadel') ? getForceAdeptTalentClassLevel(actor, heroicLevel) : 0;
-    const willTotal = Math.max(1, willBase + willMiscBonus + willSpeciesBonus + willArmorBonus + psychicCitadelBonus + willStateBonus + willAdjust + conditionPenalty);
+    const implantWillPenalty = ImplantRules.getWillDefensePenalty(actor);
+    const willTotal = Math.max(1, willBase + willMiscBonus + willSpeciesBonus + willArmorBonus + psychicCitadelBonus + willStateBonus + willAdjust + conditionPenalty + implantWillPenalty);
 
     const flatFootedBase = reflexBase;
     // Flat-footed removes a positive Dexterity bonus, but never removes a
@@ -876,6 +878,7 @@ export class DefenseCalculator {
         miscBonus: willMiscBonus,
         armorBonus: willArmorBonus,
         psychicCitadelBonus,
+        implantWillPenalty,
         abilityKey: willAbilityKey,
         abilityMod: willAbilityMod,
         conditionPenalty

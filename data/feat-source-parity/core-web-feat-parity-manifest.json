@@ -1,0 +1,651 @@
+{
+  "schemaVersion": 2,
+  "phase": "1-core-web-feats",
+  "scope": "Star Wars Saga Edition core rulebook feat families plus Saga Edition Web Enhancement 1: Tech Specialist",
+  "purpose": "Conservative source-parity manifest used by scripts/dev/audit-core-web-feat-parity.mjs. This file tracks feat presence, choice scoping, prerequisite shape, and implementation classification. It intentionally avoids copying full protected rules text.",
+  "sourceNotes": [
+    "Core rulebook feat families are represented as families where the Foundry catalog may use one document with a required choice or multiple scoped feat documents.",
+    "Tech Specialist comes from Saga Edition Web Enhancement 1 and is treated as a manual workflow until a dedicated modification UI exists.",
+    "Do not treat this manifest as rules text. It is implementation metadata for parity auditing. Add page references or internal notes locally as needed.",
+    "Updated against foundryvtt-swse-main (3).zip on 2026-06-30: removed Devastating Attack and Improved Initiative from Phase 1 expectations because the current SWSE catalog/source pass does not support them as core feats. Devastating Attack appears in stat blocks as a talent/special action, not as a feat entry. Improved Initiative is not a SWSE core feat entry in the uploaded source scan."
+  ],
+  "implementationClasses": {
+    "passiveActorMath": "Should alter actor-derived stats or roll math without a modal after acquisition.",
+    "passiveRollMath": "Should alter an attack/skill/ability roll when context matches.",
+    "activeCombatOption": "Should appear as an optional combat toggle/action and affect a specific roll/action.",
+    "scopedChoice": "Requires a selected skill, weapon group, weapon, attack category, or similar scope at acquisition.",
+    "manualWorkflow": "Requires a dedicated workflow/app or GM handling; acquisition can be legal but effect should be advisory until workflow exists.",
+    "advisory": "Rules impact is mostly descriptive, tactical, or too contextual for safe automation."
+  },
+  "families": [
+    {
+      "id": "armor-proficiency",
+      "name": "Armor Proficiency",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "passiveActorMath"
+      ],
+      "requiredScopes": [
+        "light",
+        "medium",
+        "heavy"
+      ],
+      "aliases": [
+        "Armor Proficiency (light)",
+        "Armor Proficiency (medium)",
+        "Armor Proficiency (heavy)"
+      ],
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustHavePrerequisites": true,
+        "mustNotGrantAllScopesFromSingleUnscopedDoc": true
+      }
+    },
+    {
+      "id": "weapon-proficiency",
+      "name": "Weapon Proficiency",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "passiveRollMath"
+      ],
+      "requiredScopes": [
+        "simple weapons",
+        "pistols",
+        "rifles",
+        "heavy weapons",
+        "advanced melee weapons",
+        "lightsabers"
+      ],
+      "aliases": [
+        "Weapon Proficiency (simple weapons)",
+        "Weapon Proficiency (pistols)",
+        "Weapon Proficiency (rifles)",
+        "Weapon Proficiency (heavy weapons)",
+        "Weapon Proficiency (advanced melee weapons)",
+        "Weapon Proficiency (lightsabers)"
+      ],
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustAffectProficiencyPenalty": true
+      }
+    },
+    {
+      "id": "weapon-focus",
+      "name": "Weapon Focus",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "passiveRollMath"
+      ],
+      "requiredScopeKind": "weaponGroupOrWeapon",
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustRequireProficiency": true,
+        "mustAffectAttackBreakdown": true
+      }
+    },
+    {
+      "id": "skill-focus",
+      "name": "Skill Focus",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "passiveActorMath"
+      ],
+      "requiredScopeKind": "skill",
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustRequireTrainedSkillOrEquivalent": true,
+        "mustAffectSkillBreakdown": true
+      }
+    },
+    {
+      "id": "skill-training",
+      "name": "Skill Training",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "passiveActorMath"
+      ],
+      "requiredScopeKind": "skill",
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustGrantTrainedSkill": true,
+        "mustRespectClassAndIntSelections": false
+      }
+    },
+    {
+      "id": "force-training",
+      "name": "Force Training",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "manualWorkflow"
+      ],
+      "checks": {
+        "mustRequireForceSensitivity": true,
+        "mustOpenForcePowerSelectionWorkflow": true,
+        "repeatable": true
+      }
+    },
+    {
+      "id": "double-attack",
+      "name": "Double Attack",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "activeCombatOption"
+      ],
+      "requiredScopeKind": "weaponGroup",
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustRequireBAB": true,
+        "mustExposeFullAttackOption": true
+      }
+    },
+    {
+      "id": "triple-attack",
+      "name": "Triple Attack",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "activeCombatOption"
+      ],
+      "requiredScopeKind": "weaponGroup",
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustRequireDoubleAttack": true,
+        "mustExposeFullAttackOption": true
+      }
+    },
+    {
+      "id": "triple-crit",
+      "name": "Triple Crit",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "passiveRollMath"
+      ],
+      "requiredScopeKind": "weaponGroupOrWeapon",
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustAffectCriticalMultiplierOrDamage": true
+      }
+    },
+    {
+      "id": "exotic-weapon-proficiency",
+      "name": "Exotic Weapon Proficiency",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "passiveRollMath"
+      ],
+      "requiredScopeKind": "weapon",
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustAffectProficiencyPenalty": true
+      }
+    },
+    {
+      "id": "dual-weapon-mastery",
+      "name": "Dual Weapon Mastery",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "requiredTiers": [
+        "I",
+        "II",
+        "III"
+      ],
+      "aliases": [
+        "Dual Weapon Mastery I",
+        "Dual Weapon Mastery II",
+        "Dual Weapon Mastery III"
+      ],
+      "checks": {
+        "mustHaveTieredDocs": true,
+        "mustAffectTwoWeaponPenalty": true
+      }
+    },
+    {
+      "id": "martial-arts",
+      "name": "Martial Arts",
+      "source": "core",
+      "implementationClass": [
+        "passiveActorMath",
+        "passiveRollMath"
+      ],
+      "requiredTiers": [
+        "I",
+        "II",
+        "III"
+      ],
+      "aliases": [
+        "Martial Arts I",
+        "Martial Arts II",
+        "Martial Arts III"
+      ],
+      "checks": {
+        "mustHaveTieredDocs": true,
+        "mustAffectUnarmedDamageOrReflex": true
+      }
+    }
+  ],
+  "singleFeats": [
+    {
+      "name": "Bantha Rush",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "checks": {
+        "mustRequireStrength": true
+      }
+    },
+    {
+      "name": "Burst Fire",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustRequireWeaponProficiencyHeavyWeapons": true,
+        "mustAffectAttackAndDamageFormula": true
+      }
+    },
+    {
+      "name": "Careful Shot",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustAffectAimedRangedAttack": true
+      }
+    },
+    {
+      "name": "Cleave",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "checks": {
+        "mustRequireStrength": true
+      }
+    },
+    {
+      "name": "Combat Reflexes",
+      "source": "core",
+      "implementationClass": [
+        "passiveActorMath"
+      ],
+      "checks": {
+        "mustAffectAttacksOfOpportunity": true
+      }
+    },
+    {
+      "name": "Coordinated Attack",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustAffectAidAnotherAttack": true
+      }
+    },
+    {
+      "name": "Crush",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "checks": {
+        "mustRequirePin": true
+      }
+    },
+    {
+      "name": "Cybernetic Surgery",
+      "source": "core",
+      "implementationClass": [
+        "manualWorkflow"
+      ],
+      "checks": {
+        "mustRemainManualUntilSurgeryWorkflowExists": true
+      }
+    },
+    {
+      "name": "Deadeye",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustAffectAimedRangedDamage": true
+      }
+    },
+    {
+      "name": "Dodge",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveActorMath"
+      ],
+      "checks": {
+        "mustAllowDesignatedTarget": true
+      }
+    },
+    {
+      "name": "Far Shot",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustAffectRangePenalty": true
+      }
+    },
+    {
+      "name": "Force Boon",
+      "source": "core",
+      "implementationClass": [
+        "passiveActorMath"
+      ],
+      "checks": {
+        "mustAffectForcePointMaximum": true
+      }
+    },
+    {
+      "name": "Force Sensitivity",
+      "source": "core",
+      "implementationClass": [
+        "passiveActorMath"
+      ],
+      "checks": {
+        "mustUnlockUseTheForceAndForceFeatPrereqs": true
+      }
+    },
+    {
+      "name": "Improved Charge",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustAffectChargePenalty": true
+      }
+    },
+    {
+      "name": "Improved Damage Threshold",
+      "source": "core",
+      "implementationClass": [
+        "passiveActorMath"
+      ],
+      "checks": {
+        "mustAffectDamageThresholdBreakdown": true
+      }
+    },
+    {
+      "name": "Improved Defenses",
+      "source": "core",
+      "implementationClass": [
+        "passiveActorMath"
+      ],
+      "checks": {
+        "mustAffectRefFortWillBreakdowns": true
+      }
+    },
+    {
+      "name": "Improved Disarm",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustAffectDisarmAction": true
+      }
+    },
+    {
+      "name": "Improved Grapple",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustAffectGrappleAction": true
+      }
+    },
+    {
+      "name": "Linguist",
+      "source": "core",
+      "implementationClass": [
+        "manualWorkflow"
+      ],
+      "checks": {
+        "handledByChargenLanguageStep": true
+      }
+    },
+    {
+      "name": "Melee Defense",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveActorMath"
+      ],
+      "checks": {
+        "mustExposeAttackPenaltyForReflexBonusToggle": true
+      }
+    },
+    {
+      "name": "Mighty Swing",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustAffectMeleeDamageAfterSwiftActions": true
+      }
+    },
+    {
+      "name": "Pin",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "checks": {
+        "mustAffectGrappleAction": true
+      }
+    },
+    {
+      "name": "Point Blank Shot",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustAffectRangedAttackAndDamageWithinRange": true
+      }
+    },
+    {
+      "name": "Power Attack",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustExposeAttackPenaltyDamageBonusInput": true
+      }
+    },
+    {
+      "name": "Precise Shot",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustAffectFiringIntoMeleePenalty": true
+      }
+    },
+    {
+      "name": "Quick Draw",
+      "source": "core",
+      "implementationClass": [
+        "advisory"
+      ],
+      "checks": {
+        "mustAppearInActionsOrNotes": true
+      }
+    },
+    {
+      "name": "Rapid Shot",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustAffectRangedAttackAndDamageFormula": true
+      }
+    },
+    {
+      "name": "Rapid Strike",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustAffectMeleeAttackAndDamageFormula": true
+      }
+    },
+    {
+      "name": "Running Attack",
+      "source": "core",
+      "implementationClass": [
+        "advisory"
+      ],
+      "checks": {
+        "mustAppearInActionsOrNotes": true
+      }
+    },
+    {
+      "name": "Shake It Off",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "checks": {
+        "mustAffectRecoverAction": true
+      }
+    },
+    {
+      "name": "Sniper",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustAffectSoftCoverWhenAiming": true
+      }
+    },
+    {
+      "name": "Starship Designer",
+      "source": "core",
+      "implementationClass": [
+        "manualWorkflow"
+      ],
+      "checks": {
+        "mustRemainManualUntilStarshipDesignWorkflowExists": true
+      }
+    },
+    {
+      "name": "Strong in the Force",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustAffectForcePointDie": true
+      }
+    },
+    {
+      "name": "Toughness",
+      "source": "core",
+      "implementationClass": [
+        "passiveActorMath"
+      ],
+      "checks": {
+        "mustAffectHitPointBreakdown": true
+      }
+    },
+    {
+      "name": "Trip",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "checks": {
+        "mustAffectMeleeAttackOrGrappleTripOption": true
+      }
+    },
+    {
+      "name": "Vehicular Combat",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "checks": {
+        "mustAffectVehicleHitNegationWorkflow": true
+      }
+    },
+    {
+      "name": "Weapon Finesse",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "checks": {
+        "mustAffectEligibleMeleeAttackAbilitySelection": true
+      }
+    },
+    {
+      "name": "Whirlwind Attack",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "checks": {
+        "mustExposeAreaMeleeAttackOption": true
+      }
+    },
+    {
+      "name": "Tech Specialist",
+      "source": "web-enhancement-1",
+      "implementationClass": [
+        "manualWorkflow"
+      ],
+      "checks": {
+        "mustRequireTrainedMechanics": true,
+        "mustExposeManualModificationWarning": true,
+        "mustNotFakePermanentItemModificationWithoutWorkflow": true
+      }
+    }
+  ],
+  "exclusions": [
+    {
+      "name": "Devastating Attack",
+      "reason": "Treat as talent/special-action terminology, not a core feat family for Phase 1 feat parity."
+    },
+    {
+      "name": "Improved Initiative",
+      "reason": "Not present as a SWSE core feat in the uploaded source scan or current repo feat catalog; do not require it for Phase 1."
+    }
+  ]
+}
