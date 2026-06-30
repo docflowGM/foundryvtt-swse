@@ -154,6 +154,82 @@ export class InventoryEngine {
     }
   }
 
+
+  /**
+   * Toggle whether an equipment item explicitly counts as a Saga implant.
+   * This is intentionally explicit so generic cybernetics/prostheses are not
+   * swept into KOTOR-style implant drawbacks by name alone.
+   */
+  static async toggleImplantTag(actor, itemId) {
+    const item = actor?.items?.get?.(itemId);
+    if (!actor || !item || item.type !== "equipment") return;
+
+    const current = item.system?.implantRules?.countAsImplant === true;
+    const next = !current;
+
+    const update = {
+      _id: itemId,
+      "system.implantRules.countAsImplant": next
+    };
+
+    if (!next) {
+      update["system.installed"] = false;
+      update["system.active"] = false;
+      update["system.implantRules.activeByOwnership"] = false;
+    }
+
+    await ActorEngine.updateOwnedItems(actor, [update], {
+      source: "InventoryEngine.toggleImplantTag"
+    });
+  }
+
+  /**
+   * Toggle implant installed state. Installed implies the item is a tagged
+   * implant, but does not force the active state.
+   */
+  static async toggleImplantInstalled(actor, itemId) {
+    const item = actor?.items?.get?.(itemId);
+    if (!actor || !item || item.type !== "equipment") return;
+
+    const current = item.system?.installed === true || item.system?.usage?.installed === true;
+    const next = !current;
+
+    const update = {
+      _id: itemId,
+      "system.implantRules.countAsImplant": true,
+      "system.installed": next
+    };
+
+    if (!next) update["system.active"] = false;
+
+    await ActorEngine.updateOwnedItems(actor, [update], {
+      source: "InventoryEngine.toggleImplantInstalled"
+    });
+  }
+
+  /**
+   * Toggle implant active state. Active implies tagged + installed, because
+   * only active/installed implants trigger penalties.
+   */
+  static async toggleImplantActive(actor, itemId) {
+    const item = actor?.items?.get?.(itemId);
+    if (!actor || !item || item.type !== "equipment") return;
+
+    const current = item.system?.active === true || item.system?.activated === true;
+    const next = !current;
+
+    const update = {
+      _id: itemId,
+      "system.implantRules.countAsImplant": true,
+      "system.installed": next ? true : (item.system?.installed === true),
+      "system.active": next
+    };
+
+    await ActorEngine.updateOwnedItems(actor, [update], {
+      source: "InventoryEngine.toggleImplantActive"
+    });
+  }
+
   /**
    * Increment quantity for stackable items.
    * Weapons and armor cannot be incremented (unique instances).

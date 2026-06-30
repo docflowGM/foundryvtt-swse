@@ -1,0 +1,66 @@
+[
+  {
+    "id": "implant-bio-stabilizer",
+    "slug": "implant-bio-stabilizer",
+    "name": "Bio-Stabilizer Implant",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
+    "cost": 1750,
+    "description": "Bio-Stabilizer Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active. Install/activate through the actor Gear > Implants panel when the GM confirms it is in use."
+  },
+  {
+    "id": "implant-cardio",
+    "slug": "implant-cardio",
+    "name": "Cardio Implant",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
+    "cost": 4000,
+    "description": "Cardio Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active. Install/activate through the actor Gear > Implants panel when the GM confirms it is in use."
+  },
+  {
+    "id": "implant-combat",
+    "slug": "implant-combat",
+    "name": "Combat Implant",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
+    "cost": 5000,
+    "description": "Combat Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active. Install/activate through the actor Gear > Implants panel when the GM confirms it is in use."
+  },
+  {
+    "id": "implant-memory",
+    "slug": "implant-memory",
+    "name": "Memory Implant",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
+    "cost": 2000,
+    "description": "Memory Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active. Install/activate through the actor Gear > Implants panel when the GM confirms it is in use."
+  },
+  {
+    "id": "implant-nerve-reinforcement",
+    "slug": "implant-nerve-reinforcement",
+    "name": "Nerve Reinforcement Implant",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
+    "cost": 5000,
+    "description": "Nerve Reinforcement Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active. Install/activate through the actor Gear > Implants panel when the GM confirms it is in use."
+  },
+  {
+    "id": "implant-regenerative",
+    "slug": "implant-regenerative",
+    "name": "Regenerative Implant",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
+    "cost": 4250,
+    "description": "Regenerative Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active. Install/activate through the actor Gear > Implants panel when the GM confirms it is in use."
+  },
+  {
+    "id": "implant-sensory",
+    "slug": "implant-sensory",
+    "name": "Sensory Implant",
+    "sourcebook": "Knights of the Old Republic Campaign Guide",
+    "cost": 2500,
+    "description": "Sensory Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active. Install/activate through the actor Gear > Implants panel when the GM confirms it is in use."
+  },
+  {
+    "id": "implant-subelectronic-converter",
+    "slug": "implant-subelectronic-converter",
+    "name": "Subelectronic Converter",
+    "sourcebook": "Jedi Academy Training Manual",
+    "cost": 23000,
+    "description": "A specialized implant-grade converter from the Jedi Academy Training Manual. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active. Install/activate through the actor Gear > Implants panel when the GM confirms it is in use."
+  }
+]

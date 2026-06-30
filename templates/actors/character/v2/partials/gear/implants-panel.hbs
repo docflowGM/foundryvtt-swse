@@ -1,0 +1,188 @@
+{{!--
+  Non-droid Gear Tab Implant Manager
+
+  This partial intentionally manages only explicit implant metadata/state.
+  Generic cybernetics and prostheses should stay untagged unless the GM wants
+  KOTOR-style implant drawbacks to apply.
+--}}
+{{#if inventoryPanel.implantPanel.available}}
+<section class="gear-implants-panel {{#if inventoryPanel.implantPanel.hasActiveImplant}}has-active-implant{{/if}} {{#unless inventoryPanel.implantPanel.hasImplantTraining}}{{#if inventoryPanel.implantPanel.hasActiveImplant}}is-penalized{{/if}}{{/unless}}">
+  <header class="gear-implants-panel__header">
+    <div>
+      <span class="gear-implants-panel__eyebrow">Implants</span>
+      <h3>Implant Management</h3>
+      <p>{{inventoryPanel.implantPanel.summary}}</p>
+    </div>
+    <div class="gear-implants-panel__rules">
+      <span class="gear-implants-panel__chip {{#if inventoryPanel.implantPanel.hasImplantTraining}}is-safe{{else}}is-warning{{/if}}">
+        Implant Training: {{#if inventoryPanel.implantPanel.hasImplantTraining}}Yes{{else}}No{{/if}}
+      </span>
+      <span class="gear-implants-panel__chip {{#if inventoryPanel.implantPanel.willPenalty}}is-warning{{else}}is-safe{{/if}}">
+        Will {{numberFormat inventoryPanel.implantPanel.willPenalty decimals=0 sign=true}}
+      </span>
+      <span class="gear-implants-panel__chip {{#if inventoryPanel.implantPanel.extraConditionStep}}is-warning{{else}}is-safe{{/if}}">
+        CT +{{inventoryPanel.implantPanel.extraConditionStep}} step
+      </span>
+    </div>
+  </header>
+
+  {{#if inventoryPanel.implantPanel.hasEntries}}
+  <div class="gear-implants-panel__list">
+    {{#each inventoryPanel.implantPanel.entries}}
+    <article class="gear-implant-row {{#if isActiveImplant}}is-active{{/if}}" data-item-id="{{id}}">
+      <img class="gear-implant-row__icon" src="{{img}}" alt="{{name}}" />
+      <div class="gear-implant-row__body">
+        <div class="gear-implant-row__name">{{name}}</div>
+        <div class="gear-implant-row__meta">
+          {{#if isActiveImplant}}Active implant{{else}}Tagged implant{{/if}}
+          {{#if implantPenaltyTitle}} — {{implantPenaltyTitle}}{{/if}}
+        </div>
+      </div>
+      <div class="gear-implant-row__actions">
+        <button type="button" class="gear-implant-action" data-action="toggle-implant-tag" data-item-id="{{id}}" title="Toggle whether this item counts as an implant">{{#if isImplant}}Untag{{else}}Tag{{/if}}</button>
+        <button type="button" class="gear-implant-action" data-action="toggle-implant-installed" data-item-id="{{id}}" title="Toggle installed state">{{#if installed}}Uninstall{{else}}Install{{/if}}</button>
+        <button type="button" class="gear-implant-action gear-implant-action--primary" data-action="toggle-implant-active" data-item-id="{{id}}" title="Toggle active implant state">{{#if isActiveImplant}}Deactivate{{else}}Activate{{/if}}</button>
+        <button type="button" class="gear-implant-action" data-action="edit" data-item-id="{{id}}" title="Open item sheet">Edit</button>
+      </div>
+    </article>
+    {{/each}}
+  </div>
+  {{else}}
+  <div class="gear-implants-panel__empty">
+    <p>{{inventoryPanel.implantPanel.emptyMessage}}</p>
+    <p class="gear-implants-panel__hint">Tip: create or edit an equipment item, then enable <strong>Counts as Implant</strong>. Droid systems are intentionally excluded from this panel.</p>
+  </div>
+  {{/if}}
+</section>
+{{/if}}
+
+<style>
+.gear-implants-panel {
+  border: 1px solid rgba(122, 191, 255, 0.28);
+  border-radius: 8px;
+  background: linear-gradient(135deg, rgba(35, 64, 92, 0.18), rgba(10, 10, 10, 0.5));
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.gear-implants-panel.is-penalized {
+  border-color: rgba(255, 120, 120, 0.45);
+  box-shadow: 0 0 10px rgba(255, 80, 80, 0.1);
+}
+.gear-implants-panel__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+.gear-implants-panel__eyebrow {
+  display: block;
+  font-size: 10px;
+  text-transform: uppercase;
+  color: #8fbde8;
+  letter-spacing: 0.12em;
+  margin-bottom: 2px;
+}
+.gear-implants-panel h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #dbeeff;
+}
+.gear-implants-panel p {
+  margin: 3px 0 0;
+  color: #aebdcc;
+  font-size: 12px;
+}
+.gear-implants-panel__rules {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+.gear-implants-panel__chip {
+  border: 1px solid rgba(255,255,255,0.14);
+  border-radius: 999px;
+  padding: 3px 7px;
+  font-size: 11px;
+  color: #ddd;
+  background: rgba(0,0,0,0.28);
+  white-space: nowrap;
+}
+.gear-implants-panel__chip.is-safe { color: #a7f0c0; border-color: rgba(115, 220, 150, 0.35); }
+.gear-implants-panel__chip.is-warning { color: #ffb2b2; border-color: rgba(255, 120, 120, 0.4); }
+.gear-implants-panel__list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.gear-implant-row {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 6px;
+  background: rgba(0,0,0,0.28);
+  padding: 7px;
+}
+.gear-implant-row.is-active {
+  border-color: rgba(255, 145, 145, 0.42);
+  background: rgba(90, 20, 20, 0.18);
+}
+.gear-implant-row__icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 4px;
+  background: rgba(0,0,0,0.35);
+}
+.gear-implant-row__name {
+  font-weight: 700;
+  font-size: 13px;
+  color: #f2f7ff;
+}
+.gear-implant-row__meta {
+  color: #aab7c3;
+  font-size: 11px;
+  margin-top: 2px;
+}
+.gear-implant-row__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 5px;
+}
+.gear-implant-action {
+  font-size: 11px;
+  padding: 3px 7px;
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: 4px;
+  background: rgba(255,255,255,0.06);
+  color: #ddd;
+}
+.gear-implant-action--primary {
+  border-color: rgba(122, 191, 255, 0.45);
+  color: #dbeeff;
+}
+.gear-implants-panel__empty {
+  border: 1px dashed rgba(255,255,255,0.14);
+  border-radius: 6px;
+  padding: 10px;
+  background: rgba(0,0,0,0.2);
+}
+.gear-implants-panel__hint {
+  color: #8e9baa !important;
+}
+@media (max-width: 760px) {
+  .gear-implants-panel__header,
+  .gear-implant-row {
+    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .gear-implant-row__actions,
+  .gear-implants-panel__rules { justify-content: flex-start; }
+}
+</style>

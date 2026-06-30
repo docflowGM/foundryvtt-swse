@@ -1,0 +1,54 @@
+{
+  "schemaVersion": 1,
+  "policyId": "swse-implant-tagging-policy",
+  "title": "Implant and Cybernetics Tagging Policy",
+  "summary": "Implants are a narrow rules category. Cybernetics, prosthetics, biotech, and droid systems remain separate unless explicitly tagged by a GM.",
+  "rulesAuthority": "scripts/engine/implants/ImplantRules.js",
+  "allowedRuntimeModes": [
+    "metadata_only",
+    "explicit_implant_penalty_runtime"
+  ],
+  "classification": {
+    "implant": {
+      "countsAsImplant": true,
+      "requiresExplicitTag": true,
+      "activeStateRequired": true,
+      "affectedByImplantTraining": true
+    },
+    "cybernetic_prosthesis": {
+      "countsAsImplant": false,
+      "requiresExplicitTag": false,
+      "activeStateRequired": false,
+      "affectedByImplantTraining": false
+    },
+    "cybernetic_enhancement": {
+      "countsAsImplant": false,
+      "requiresExplicitTag": false,
+      "activeStateRequired": false,
+      "affectedByImplantTraining": false
+    },
+    "biotech": {
+      "countsAsImplant": false,
+      "requiresExplicitTag": false,
+      "activeStateRequired": false,
+      "affectedByImplantTraining": false
+    },
+    "droid_system": {
+      "countsAsImplant": false,
+      "requiresExplicitTag": false,
+      "activeStateRequired": false,
+      "affectedByImplantTraining": false
+    }
+  },
+  "staticSheetPolicy": {
+    "implantPenalty": "derived_runtime_rule",
+    "cyberneticSurgery": "exclude",
+    "genericCybernetics": "exclude_from_implant_penalty"
+  },
+  "uiCopy": {
+    "implantBadge": "Implant",
+    "activeImplantBadge": "Active Implant",
+    "nonImplantCyberneticNote": "Cybernetic item only. Does not trigger implant penalties unless explicitly tagged as an Implant.",
+    "sourceConsultNote": "Consult the relevant source book and your GM for installation, surgery, price, availability, and failure consequences."
+  }
+}

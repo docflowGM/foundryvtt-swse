@@ -23,6 +23,7 @@ import { ActorEffectsAggregator } from '/systems/foundryvtt-swse/scripts/engine/
 import { CANONICAL_SKILL_DEFS, canonicalizeSkillKey } from '/systems/foundryvtt-swse/scripts/utils/skill-normalization.js';
 import { isFeatLikeItem, isForcePowerItem, isPlaceholderSheetItem, isTalentLikeItem } from '/systems/foundryvtt-swse/scripts/utils/item-classification.js';
 import { addItemEditorTrace, summarizeActorItems } from '/systems/foundryvtt-swse/scripts/debug/item-editor-trace.js';
+import { ImplantRules } from '/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js';
 
 function safePanelNumber(value, fallback = 0) {
   let candidate = value;
@@ -514,12 +515,34 @@ export class PanelContextBuilder {
       hasUpgradeableItems
     });
 
+    const isDroidActor = String(this.actor?.type ?? '').toLowerCase() === 'droid' || this.actor?.system?.isDroid === true;
+    const implantRows = entries.filter(entry => entry.type === 'equipment' && (entry.isImplant || entry.isActiveImplant));
+    const implantState = ImplantRules.getImplantState(this.actor);
+    const implantPanel = {
+      available: !isDroidActor,
+      isDroidActor,
+      entries: implantRows,
+      hasEntries: implantRows.length > 0,
+      hasActiveImplant: implantState.hasImplant === true,
+      hasImplantTraining: implantState.hasImplantTraining === true,
+      willPenalty: Number(implantState.willPenalty || 0),
+      extraConditionStep: Number(implantState.extraConditionStep || 0),
+      summary: implantState.hasImplant
+        ? (implantState.hasImplantTraining
+          ? 'Active implant detected; Implant Training suppresses implant drawbacks.'
+          : 'Active implant detected; -2 Will Defense and +1 extra Condition Track step apply.')
+        : 'No active implants detected.',
+      emptyMessage: 'No gear is currently tagged as an implant. Edit an equipment item or use the item controls to mark one as an implant.',
+      canEdit: this.sheet.isEditable
+    };
+
     const panel = {
       entries,
       grouped,
       hasEntries: entries.length > 0,
       totalWeight,
       equippedArmor,
+      implantPanel,
       emptyMessage: 'No equipment found.',
       canEdit: this.sheet.isEditable,
       hasUpgradeableItems

@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "policyId": "cybernetic-surgery-manual-procedure",
+  "source": {
+    "book": "Star Wars Saga Edition Core Rulebook",
+    "feat": "Cybernetic Surgery",
+    "relatedFeats": [
+      "Surgical Expertise",
+      "Implant Training"
+    ]
+  },
+  "classification": {
+    "implementationStatus": "manual_gm_player_procedure_reference",
+    "mechanicsMode": "procedure_reference",
+    "applicationScope": "cybernetic_installation_procedure",
+    "staticSheetPolicy": "exclude",
+    "rulesAutomationPolicy": "no_passive_automation"
+  },
+  "gmFacingNote": "Cybernetic Surgery is a medical procedure, not a passive modifier. Use the source rules with your GM for time, tools, Treat Injury checks, failure/retry handling, and what item becomes installed.",
+  "guardrails": [
+    "Do not grant a static actor bonus from Cybernetic Surgery.",
+    "Do not automatically install cybernetics or implants when the feat is acquired.",
+    "Do not classify generic cybernetics or prostheses as KOTOR-style implants unless an item is explicitly tagged as an implant.",
+    "Do not apply Implant Training benefits through Cybernetic Surgery; Implant Training remains the feat that suppresses implant penalties.",
+    "Surgical Expertise may shorten applicable surgery procedure time, but should not become a passive sheet modifier."
+  ],
+  "futureSubsystemHint": {
+    "optional": true,
+    "suggestedEngine": "scripts/engine/cybernetics/CyberneticProcedureEngine.js",
+    "suggestedApp": "scripts/apps/cybernetics/cybernetics-workbench.js",
+    "summary": "A future procedure tracker could record surgeon, patient, item, tools, elapsed time, Treat Injury result, failure/retry state, and installed item activation after GM confirmation."
+  }
+}

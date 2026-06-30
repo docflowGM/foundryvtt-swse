@@ -34,6 +34,7 @@ const Category = {
   WEAPONS: 'Weapons',
   ARMOR: 'Armor',
   MEDICAL: 'Medical',
+  IMPLANTS: 'Implants',
   TECH: 'Tech',
   TOOLS: 'Tools',
   SURVIVAL: 'Survival',
@@ -149,6 +150,7 @@ function categorizeEquipment(item) {
   const { cat, sub } = categorizeEquipmentForStore(item);
   const allowed = new Set([
     Category.MEDICAL,
+    Category.IMPLANTS,
     Category.TECH,
     Category.TOOLS,
     Category.SURVIVAL,

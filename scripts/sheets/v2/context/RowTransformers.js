@@ -144,6 +144,11 @@ export class RowTransformers {
       item?.system?.uses?.value ?? '',
       item?.system?.ammo?.value ?? item?.system?.ammunition?.value ?? '',
       item?.system?.activated ?? item?.system?.active ?? '',
+      item?.system?.installed ?? '',
+      item?.system?.integrated ?? '',
+      item?.system?.implantRules?.countAsImplant ?? '',
+      item?.system?.implantRules?.activeByOwnership ?? '',
+      item?.system?.implantRules?.notes ?? '',
       item?.flags?.swse?.equipped ?? '',
       item?.flags?.swse?.autoEquipped ?? '',
       item?.flags?.swse?.isNaturalWeapon ?? ''
@@ -233,6 +238,7 @@ export class RowTransformers {
       isEnergyShield,
       isImplant,
       isActiveImplant,
+      installed: item.system?.installed === true || item.system?.usage?.installed === true || item.system?.integrated === true || item.system?.usage?.integrated === true,
       implantStatusLabel,
       implantPenaltyTitle: isActiveImplant
         ? 'Active implant: applies -2 Will Defense and +1 extra Condition Track step unless the actor has Implant Training.'

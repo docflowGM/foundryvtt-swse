@@ -10,6 +10,7 @@
 export const EQUIPMENT_BUCKETS = Object.freeze({
   comlinks: { label: 'Comlinks', category: 'tech', storeCategory: 'Tech', storeSubcategory: 'Communications' },
   medical: { label: 'Medical', category: 'medical', storeCategory: 'Medical', storeSubcategory: 'Medical Gear' },
+  implants: { label: 'Implants', category: 'implant', storeCategory: 'Implants', storeSubcategory: 'Implants' },
   other: { label: 'Other', category: 'gear', storeCategory: 'Equipment', storeSubcategory: 'General Gear' },
   security: { label: 'Security', category: 'security', storeCategory: 'Security', storeSubcategory: 'Security & Detection' },
   survival: { label: 'Survival', category: 'survival', storeCategory: 'Survival', storeSubcategory: 'Survival & Life Support' },
@@ -23,6 +24,7 @@ export const EQUIPMENT_CATEGORY_OPTIONS = Object.freeze([
   { value: 'gear', label: 'Gear' },
   { value: 'consumable', label: 'Consumable' },
   { value: 'medical', label: 'Medical' },
+  { value: 'implant', label: 'Implant' },
   { value: 'security', label: 'Security' },
   { value: 'survival', label: 'Survival' },
   { value: 'tech', label: 'Tech' },
@@ -62,6 +64,7 @@ const TYPE_LABELS = Object.freeze({
   consumable: 'Consumable',
   container: 'Container',
   cybernetic: 'Cybernetic',
+  implant: 'Implant',
   detection: 'Detection',
   explosive: 'Explosive',
   gear: 'Gear',
@@ -157,6 +160,7 @@ function equipmentBucketFromId(id = '') {
   const text = String(id ?? '').toLowerCase();
   if (text.startsWith('medical-')) return 'medical';
   if (text.startsWith('comms-')) return 'comlinks';
+  if (text.startsWith('implant-')) return 'implants';
   if (text.startsWith('computer-') || text.startsWith('cyber-') || text.startsWith('upgrade-universal-')) return 'tech';
   if (text.startsWith('detect-') || text.startsWith('explosive-')) return 'security';
   if (text.startsWith('life-') || text.startsWith('survival-')) return 'survival';
@@ -285,7 +289,8 @@ export function normalizeEquipmentSystem(system = {}, context = {}) {
     ...normalizeList(normalized.tags),
     bucket,
     equipmentType,
-    itemRole
+    itemRole,
+    normalized.isImplant === true || normalized.implant === true || bucket === 'implants' ? 'implant' : ''
   ]).map((entry) => slugifyEquipment(entry, entry.toLowerCase()));
   const traits = unique([
     ...normalizeList(normalized.traits),
@@ -316,6 +321,11 @@ export function normalizeEquipmentSystem(system = {}, context = {}) {
     size: normalized.size || 'Small',
     equipped: normalized.equipped === true || normalized.equippable?.equipped === true,
     integrated: normalized.integrated === true,
+    installed: normalized.installed === true,
+    active: normalized.active === true,
+    isImplant: normalized.isImplant === true || normalized.implant === true || bucket === 'implants',
+    implant: normalized.implant === true || normalized.isImplant === true || bucket === 'implants',
+    implantCategory: normalized.implantCategory || (bucket === 'implants' ? 'implant' : ''),
     description: String(normalized.description ?? ''),
     notes: String(normalized.notes ?? ''),
     sourcebook: String(normalized.sourcebook ?? normalized.source ?? ''),
@@ -349,7 +359,9 @@ export function normalizeEquipmentSystem(system = {}, context = {}) {
       skillLinked: Array.isArray(normalized.skillHooks) && normalized.skillHooks.length > 0,
       consumable,
       container: itemRole === 'container',
-      upgrade: itemRole === 'upgrade'
+      upgrade: itemRole === 'upgrade',
+      implant: normalized.isImplant === true || normalized.implant === true || bucket === 'implants',
+      requiresImplantTrainingToSuppressPenalties: normalized.isImplant === true || normalized.implant === true || bucket === 'implants'
     },
     skillHooks: normalizeSkillHooks(normalized.skillHooks),
     normalizationStatus: normalized.normalizationStatus || 'equipment-phase1-normalized'

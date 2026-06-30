@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 2,
+  "phase": "implants-phase4e-store-catalog",
+  "policy": "Only explicitly tagged active implant items trigger ImplantRules penalties. Generic cybernetics, prostheses, biotech, and droid systems remain distinct.",
+  "sources": [
+    "Knights of the Old Republic Campaign Guide",
+    "Jedi Academy Training Manual"
+  ],
+  "implants": [
+    {
+      "id": "implant-bio-stabilizer",
+      "name": "Bio-Stabilizer Implant",
+      "cost": 1750,
+      "currency": "credits",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "storeCategory": "Implants",
+      "storeSubcategory": "KOTOR Implants",
+      "countsAsImplant": true,
+      "implantTrainingRelevant": true,
+      "staticSheetPolicy": "exclude_until_installed_active",
+      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+    },
+    {
+      "id": "implant-cardio",
+      "name": "Cardio Implant",
+      "cost": 4000,
+      "currency": "credits",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "storeCategory": "Implants",
+      "storeSubcategory": "KOTOR Implants",
+      "countsAsImplant": true,
+      "implantTrainingRelevant": true,
+      "staticSheetPolicy": "exclude_until_installed_active",
+      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+    },
+    {
+      "id": "implant-combat",
+      "name": "Combat Implant",
+      "cost": 5000,
+      "currency": "credits",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "storeCategory": "Implants",
+      "storeSubcategory": "KOTOR Implants",
+      "countsAsImplant": true,
+      "implantTrainingRelevant": true,
+      "staticSheetPolicy": "exclude_until_installed_active",
+      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+    },
+    {
+      "id": "implant-memory",
+      "name": "Memory Implant",
+      "cost": 2000,
+      "currency": "credits",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "storeCategory": "Implants",
+      "storeSubcategory": "KOTOR Implants",
+      "countsAsImplant": true,
+      "implantTrainingRelevant": true,
+      "staticSheetPolicy": "exclude_until_installed_active",
+      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+    },
+    {
+      "id": "implant-nerve-reinforcement",
+      "name": "Nerve Reinforcement Implant",
+      "cost": 5000,
+      "currency": "credits",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "storeCategory": "Implants",
+      "storeSubcategory": "KOTOR Implants",
+      "countsAsImplant": true,
+      "implantTrainingRelevant": true,
+      "staticSheetPolicy": "exclude_until_installed_active",
+      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+    },
+    {
+      "id": "implant-regenerative",
+      "name": "Regenerative Implant",
+      "cost": 4250,
+      "currency": "credits",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "storeCategory": "Implants",
+      "storeSubcategory": "KOTOR Implants",
+      "countsAsImplant": true,
+      "implantTrainingRelevant": true,
+      "staticSheetPolicy": "exclude_until_installed_active",
+      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+    },
+    {
+      "id": "implant-sensory",
+      "name": "Sensory Implant",
+      "cost": 2500,
+      "currency": "credits",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "storeCategory": "Implants",
+      "storeSubcategory": "KOTOR Implants",
+      "countsAsImplant": true,
+      "implantTrainingRelevant": true,
+      "staticSheetPolicy": "exclude_until_installed_active",
+      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+    },
+    {
+      "id": "implant-subelectronic-converter",
+      "name": "Subelectronic Converter",
+      "cost": 23000,
+      "currency": "credits",
+      "sourcebook": "Jedi Academy Training Manual",
+      "storeCategory": "Implants",
+      "storeSubcategory": "JATM Implants",
+      "countsAsImplant": true,
+      "implantTrainingRelevant": true,
+      "staticSheetPolicy": "exclude_until_installed_active",
+      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+    }
+  ]
+}

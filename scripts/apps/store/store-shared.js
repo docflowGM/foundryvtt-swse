@@ -905,6 +905,7 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
     if (lower.includes('weapon')) return 'weapons';
     if (lower.includes('armor')) return 'armor';
     if (lower.includes('droid')) return 'droids';
+    if (lower.includes('implant')) return 'implants';
     if (lower.includes('vehicle') || lower.includes('starship') || lower.includes('ship')) return 'vehicles';
     if (lower.includes('gear') || lower.includes('equipment') || lower.includes('medical') || lower.includes('tech') || lower.includes('tool') || lower.includes('survival') || lower.includes('security')) return 'gear';
     return lower.replace(/\s+/g, '-');
@@ -914,6 +915,7 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
     weapons: storeI18n('SWSE.Store.Navigation.Weapons'),
     armor: storeI18n('SWSE.Store.Navigation.Armor'),
     gear: storeI18n('SWSE.Store.Navigation.Equipment'),
+    implants: 'Implants',
     vehicles: storeI18n('SWSE.Store.Navigation.Vehicles'),
     droids: storeI18n('SWSE.Store.Navigation.Droids')
   };
@@ -1128,6 +1130,7 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
       weapons: storeI18n('SWSE.Store.Navigation.AllWeapons'),
       armor: storeI18n('SWSE.Store.Navigation.AllCategory', { category }),
       gear: storeI18n('SWSE.Store.Navigation.AllCategory', { category }),
+      implants: 'All Implants',
       droids: 'All Droids',
       vehicles: 'All Vehicles'
     };
@@ -1185,7 +1188,7 @@ export function buildStoreNavigationModel(inventory = {}, options = {}) {
   }
 
   // Normalize top-level order: Weapons first, then the big store departments.
-  const priorityOrder = ['weapons', 'armor', 'gear', 'vehicles', 'droids'];
+  const priorityOrder = ['weapons', 'armor', 'implants', 'gear', 'vehicles', 'droids'];
   topCategories.sort((a, b) => {
     const aIdx = priorityOrder.indexOf(a.key);
     const bIdx = priorityOrder.indexOf(b.key);

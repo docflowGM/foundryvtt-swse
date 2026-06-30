@@ -9064,9 +9064,7 @@
       "page": 25,
       "tags": [
         "feat",
-        "general",
-        "skill-challenge",
-        "skill-challenge-hook"
+        "general"
       ],
       "bonus_feat_for": [],
       "uses": {
@@ -9075,44 +9073,40 @@
         "perDay": false
       },
       "costNumeric": 0,
-      "executionModel": "REACTION",
+      "executionModel": "PASSIVE",
       "abilityMeta": {
-        "executionModel": "REACTION",
+        "executionModel": "PASSIVE",
         "subType": "RULE",
-        "mechanicsMode": "skill_challenge_hook",
-        "applicationScope": "skill_challenge_runtime",
-        "staticSheetPolicy": "exclude",
-        "requiresRuntimeContext": true,
+        "mechanicsMode": "manual_punted",
+        "applicationScope": "skill_challenge_table_context",
+        "staticSheetPolicy": "manual_punted",
+        "requiresRuntimeContext": false,
         "requiresSelectedChoice": false,
-        "conditionSummary": "Once per Skill Challenge, GM can apply this feat from the review card: catastrophic failure triggers only at the feat threshold and counts as one failure.",
+        "conditionSummary": "Skill Challenge: Catastrophic Avoidance reduces the frequency/severity of catastrophic failures; skill challenge resolution remains GM/table-managed.",
         "predicateRequirements": [],
-        "metadataPhase": "phase35e-skill-challenge-feat-hooks",
-        "metadataNotes": "Skill Challenge feats are implemented as GM-confirmed runtime hooks inside the Skill Challenge tracker/review workflow. They do not alter static skill math.",
-        "implementationStatus": "implemented_skill_challenge_hook",
-        "description": "Once per Skill Challenge, GM can apply this feat from the review card: catastrophic failure triggers only at the feat threshold and counts as one failure.",
+        "metadataPhase": "phase17-next-feat-batch",
+        "metadataNotes": "Phase 17 clears the remaining Phase 16 active backlog by implementing engine-supported skill/reroll/attack-option rules where possible, and explicitly reclassifying table-state/picker-heavy feats as manual, punted, or deferred instead of leaving them as unincorporated placeholders.",
+        "implementationStatus": "punted_to_skill_challenge_table_resolution",
+        "description": "Skill Challenge: Catastrophic Avoidance reduces the frequency/severity of catastrophic failures; skill challenge resolution remains GM/table-managed.",
         "modifiers": [
           {
-            "target": "skillChallengeRuntime",
+            "target": "metadata",
             "value": 0,
-            "type": "runtime-hook",
-            "enabled": true,
+            "type": "untyped",
+            "enabled": false,
             "priority": 500,
-            "description": "Once per Skill Challenge, GM can apply this feat from the review card: catastrophic failure triggers only at the feat threshold and counts as one failure.",
-            "mechanicsMode": "skill_challenge_hook",
-            "applicationScope": "skill_challenge_runtime",
+            "description": "Skill Challenge: Catastrophic Avoidance reduces the frequency/severity of catastrophic failures; skill challenge resolution remains GM/table-managed.",
+            "mechanicsMode": "metadata_only",
+            "applicationScope": "skill_challenge_table_context",
             "staticSheetPolicy": "exclude",
-            "metadataPhase": "phase35e-skill-challenge-feat-hooks"
+            "metadataPhase": "phase17-next-feat-batch"
           }
         ],
         "skillChallengeRules": [
           {
             "type": "SKILL_CHALLENGE_CATASTROPHIC_AVOIDANCE",
-            "manualResolution": false,
-            "requiresSubsystem": "skill-challenges",
-            "oncePerSkillChallenge": true,
-            "gmConfirmed": true,
-            "staticSheetPolicy": "exclude",
-            "description": "Once per Skill Challenge, GM can apply this feat from the review card: catastrophic failure triggers only at the feat threshold and counts as one failure."
+            "manualResolution": true,
+            "description": "Skill Challenge: Catastrophic Avoidance reduces the frequency/severity of catastrophic failures; skill challenge resolution remains GM/table-managed."
           }
         ]
       },
@@ -33880,7 +33874,10 @@
         "support",
         "survivability",
         "tech",
-        "utility"
+        "utility",
+        "cybernetics",
+        "procedure_reference",
+        "manual_gm_player"
       ],
       "bonus_feat_for": [],
       "uses": {
@@ -33893,17 +33890,17 @@
       "abilityMeta": {
         "executionModel": "PASSIVE",
         "subType": "RULE",
-        "mechanicsMode": "manual_punted",
-        "applicationScope": "gm_player_cybernetic_surgery",
-        "staticSheetPolicy": "manual_punted",
-        "requiresRuntimeContext": false,
+        "mechanicsMode": "procedure_reference",
+        "applicationScope": "cybernetic_installation_procedure",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
         "requiresSelectedChoice": false,
-        "conditionSummary": "Cybernetic Surgery is punted to GM/player handling; cybernetic installation remains a table/workbench procedure.",
+        "conditionSummary": "Cybernetic Surgery is a medical procedure, not a passive modifier. Use the source rules with your GM for time, tools, Treat Injury checks, failure/retry handling, and what item becomes installed.",
         "predicateRequirements": [],
-        "metadataPhase": "phase16-next-feat-batch",
-        "metadataNotes": "Phase 16 applies the latest user triage, implements another description-guided feat batch, and keeps positioning/GM-heavy rules as explicit metadata instead of false numeric bonuses.",
-        "implementationStatus": "punted_to_gm_player",
-        "description": "Cybernetic Surgery is punted to GM/player handling; cybernetic installation remains a table/workbench procedure.",
+        "metadataPhase": "implants-phase-4c-cybernetic-surgery-policy",
+        "metadataNotes": "Cybernetic Surgery is procedure authority only. It does not apply static bonuses, install items automatically, or suppress implant penalties.",
+        "implementationStatus": "manual_gm_player_procedure_reference",
+        "description": "Cybernetic Surgery is a medical procedure, not a passive modifier. Use the source rules with your GM for time, tools, Treat Injury checks, failure/retry handling, and what item becomes installed.",
         "modifiers": [
           {
             "target": "metadata",
@@ -33911,14 +33908,31 @@
             "type": "untyped",
             "enabled": false,
             "priority": 500,
-            "description": "Cybernetic Surgery is punted to GM/player handling; cybernetic installation remains a table/workbench procedure.",
-            "mechanicsMode": "metadata_only",
-            "applicationScope": "gm_player_cybernetic_surgery",
+            "description": "Cybernetic Surgery is a medical procedure, not a passive modifier. Use the source rules with your GM for time, tools, Treat Injury checks, failure/retry handling, and what item becomes installed.",
+            "mechanicsMode": "procedure_reference",
+            "applicationScope": "cybernetic_installation_procedure",
             "staticSheetPolicy": "exclude",
-            "metadataPhase": "phase16-next-feat-batch"
+            "metadataPhase": "implants-phase-4c-cybernetic-surgery-policy"
           }
         ],
-        "puntedTo": "GM/player"
+        "puntedTo": "GM/player",
+        "rulesAutomationPolicy": "no_passive_automation",
+        "gmFacingNote": "Cybernetic Surgery is a medical procedure, not a passive modifier. Use the source rules with your GM for time, tools, Treat Injury checks, failure/retry handling, and what item becomes installed.",
+        "sourceReferenceNote": "Consult the Star Wars Saga Edition Core Rulebook Cybernetic Surgery rules for procedure details; this system records the feat as procedure authority only.",
+        "procedureReference": {
+          "type": "cybernetic_installation",
+          "skill": "treatInjury",
+          "requiresGMAdjudication": true,
+          "consultSourceRules": true,
+          "source": "Star Wars Saga Edition Core Rulebook",
+          "automationBoundary": "manual_procedure_reference"
+        },
+        "guardrails": [
+          "Do not grant a static actor bonus from Cybernetic Surgery.",
+          "Do not automatically install cybernetics or implants when the feat is acquired.",
+          "Do not classify generic cybernetics or prostheses as KOTOR-style implants unless an item is explicitly tagged as an implant.",
+          "Do not apply Implant Training benefits through Cybernetic Surgery; Implant Training remains the feat that suppresses implant penalties."
+        ]
       },
       "grantsActions": [],
       "grantsBonuses": {
@@ -33933,7 +33947,13 @@
       "archetype": "",
       "playstyle": "",
       "tier": 0,
-      "iconPath": "icons/svg/upgrade.svg"
+      "iconPath": "icons/svg/upgrade.svg",
+      "implementationStatus": "manual_gm_player_procedure_reference",
+      "mechanicsMode": "procedure_reference",
+      "applicationScope": "cybernetic_installation_procedure",
+      "staticSheetPolicy": "exclude",
+      "gmFacingNote": "Cybernetic Surgery is a medical procedure, not a passive modifier. Use the source rules with your GM for time, tools, Treat Injury checks, failure/retry handling, and what item becomes installed.",
+      "sourceReferenceNote": "Consult the Star Wars Saga Edition Core Rulebook Cybernetic Surgery rules for procedure details; this system records the feat as procedure authority only."
     },
     "effects": [],
     "folder": null,
@@ -41803,9 +41823,7 @@
         "feat",
         "general",
         "grapple",
-        "reroll",
-        "skill-challenge",
-        "skill-challenge-hook"
+        "reroll"
       ],
       "bonus_feat_for": [],
       "uses": {
@@ -41814,44 +41832,40 @@
         "perDay": false
       },
       "costNumeric": 0,
-      "executionModel": "REACTION",
+      "executionModel": "PASSIVE",
       "abilityMeta": {
-        "executionModel": "REACTION",
+        "executionModel": "PASSIVE",
         "subType": "RULE",
-        "mechanicsMode": "skill_challenge_hook",
-        "applicationScope": "skill_challenge_runtime",
-        "staticSheetPolicy": "exclude",
-        "requiresRuntimeContext": true,
+        "mechanicsMode": "manual_punted",
+        "applicationScope": "skill_challenge_table_context",
+        "staticSheetPolicy": "manual_punted",
+        "requiresRuntimeContext": false,
         "requiresSelectedChoice": false,
-        "conditionSummary": "Once per Skill Challenge, GM can record this feat when a third failure would end the challenge, creating a reroll/keep-better-result opportunity.",
+        "conditionSummary": "Skill Challenge: Last Resort grants a reroll on a third failed Skill Challenge check, keeping the better result; skill challenge tracking remains GM/table-managed.",
         "predicateRequirements": [],
-        "metadataPhase": "phase35e-skill-challenge-feat-hooks",
-        "metadataNotes": "Skill Challenge feats are implemented as GM-confirmed runtime hooks inside the Skill Challenge tracker/review workflow. They do not alter static skill math.",
-        "implementationStatus": "implemented_skill_challenge_hook",
-        "description": "Once per Skill Challenge, GM can record this feat when a third failure would end the challenge, creating a reroll/keep-better-result opportunity.",
+        "metadataPhase": "phase17-next-feat-batch",
+        "metadataNotes": "Phase 17 clears the remaining Phase 16 active backlog by implementing engine-supported skill/reroll/attack-option rules where possible, and explicitly reclassifying table-state/picker-heavy feats as manual, punted, or deferred instead of leaving them as unincorporated placeholders.",
+        "implementationStatus": "punted_to_skill_challenge_table_resolution",
+        "description": "Skill Challenge: Last Resort grants a reroll on a third failed Skill Challenge check, keeping the better result; skill challenge tracking remains GM/table-managed.",
         "modifiers": [
           {
-            "target": "skillChallengeRuntime",
+            "target": "metadata",
             "value": 0,
-            "type": "runtime-hook",
-            "enabled": true,
+            "type": "untyped",
+            "enabled": false,
             "priority": 500,
-            "description": "Once per Skill Challenge, GM can record this feat when a third failure would end the challenge, creating a reroll/keep-better-result opportunity.",
-            "mechanicsMode": "skill_challenge_hook",
-            "applicationScope": "skill_challenge_runtime",
+            "description": "Skill Challenge: Last Resort grants a reroll on a third failed Skill Challenge check, keeping the better result; skill challenge tracking remains GM/table-managed.",
+            "mechanicsMode": "metadata_only",
+            "applicationScope": "skill_challenge_table_context",
             "staticSheetPolicy": "exclude",
-            "metadataPhase": "phase35e-skill-challenge-feat-hooks"
+            "metadataPhase": "phase17-next-feat-batch"
           }
         ],
         "skillChallengeRules": [
           {
-            "type": "SKILL_CHALLENGE_LAST_RESORT",
-            "manualResolution": false,
-            "requiresSubsystem": "skill-challenges",
-            "oncePerSkillChallenge": true,
-            "gmConfirmed": true,
-            "staticSheetPolicy": "exclude",
-            "description": "Once per Skill Challenge, GM can record this feat when a third failure would end the challenge, creating a reroll/keep-better-result opportunity."
+            "type": "SKILL_CHALLENGE_LAST_RESORT_REROLL",
+            "manualResolution": true,
+            "description": "Skill Challenge: Last Resort grants a reroll on a third failed Skill Challenge check, keeping the better result; skill challenge tracking remains GM/table-managed."
           }
         ]
       },
@@ -45772,8 +45786,6 @@
         "defense",
         "feat",
         "general",
-        "skill-challenge",
-        "skill-challenge-hook",
         "survivability"
       ],
       "bonus_feat_for": [],
@@ -45783,44 +45795,40 @@
         "perDay": false
       },
       "costNumeric": 0,
-      "executionModel": "REACTION",
+      "executionModel": "PASSIVE",
       "abilityMeta": {
-        "executionModel": "REACTION",
+        "executionModel": "PASSIVE",
         "subType": "RULE",
-        "mechanicsMode": "skill_challenge_hook",
-        "applicationScope": "skill_challenge_runtime",
-        "staticSheetPolicy": "exclude",
-        "requiresRuntimeContext": true,
+        "mechanicsMode": "manual_punted",
+        "applicationScope": "skill_challenge_table_context",
+        "staticSheetPolicy": "manual_punted",
+        "requiresRuntimeContext": false,
         "requiresSelectedChoice": false,
-        "conditionSummary": "Once per Skill Challenge, GM can apply this feat from the tracker to remove one accumulated failure when appropriate.",
+        "conditionSummary": "Skill Challenge: Recovery treats a Skill Challenge as having the Recovery effect; skill challenge recovery structure remains GM/table-managed.",
         "predicateRequirements": [],
-        "metadataPhase": "phase35e-skill-challenge-feat-hooks",
-        "metadataNotes": "Skill Challenge feats are implemented as GM-confirmed runtime hooks inside the Skill Challenge tracker/review workflow. They do not alter static skill math.",
-        "implementationStatus": "implemented_skill_challenge_hook",
-        "description": "Once per Skill Challenge, GM can apply this feat from the tracker to remove one accumulated failure when appropriate.",
+        "metadataPhase": "phase17-next-feat-batch",
+        "metadataNotes": "Phase 17 clears the remaining Phase 16 active backlog by implementing engine-supported skill/reroll/attack-option rules where possible, and explicitly reclassifying table-state/picker-heavy feats as manual, punted, or deferred instead of leaving them as unincorporated placeholders.",
+        "implementationStatus": "punted_to_skill_challenge_table_resolution",
+        "description": "Skill Challenge: Recovery treats a Skill Challenge as having the Recovery effect; skill challenge recovery structure remains GM/table-managed.",
         "modifiers": [
           {
-            "target": "skillChallengeRuntime",
+            "target": "metadata",
             "value": 0,
-            "type": "runtime-hook",
-            "enabled": true,
+            "type": "untyped",
+            "enabled": false,
             "priority": 500,
-            "description": "Once per Skill Challenge, GM can apply this feat from the tracker to remove one accumulated failure when appropriate.",
-            "mechanicsMode": "skill_challenge_hook",
-            "applicationScope": "skill_challenge_runtime",
+            "description": "Skill Challenge: Recovery treats a Skill Challenge as having the Recovery effect; skill challenge recovery structure remains GM/table-managed.",
+            "mechanicsMode": "metadata_only",
+            "applicationScope": "skill_challenge_table_context",
             "staticSheetPolicy": "exclude",
-            "metadataPhase": "phase35e-skill-challenge-feat-hooks"
+            "metadataPhase": "phase17-next-feat-batch"
           }
         ],
         "skillChallengeRules": [
           {
-            "type": "SKILL_CHALLENGE_RECOVERY",
-            "manualResolution": false,
-            "requiresSubsystem": "skill-challenges",
-            "oncePerSkillChallenge": true,
-            "gmConfirmed": true,
-            "staticSheetPolicy": "exclude",
-            "description": "Once per Skill Challenge, GM can apply this feat from the tracker to remove one accumulated failure when appropriate."
+            "type": "SKILL_CHALLENGE_RECOVERY_EFFECT",
+            "manualResolution": true,
+            "description": "Skill Challenge: Recovery treats a Skill Challenge as having the Recovery effect; skill challenge recovery structure remains GM/table-managed."
           }
         ]
       },

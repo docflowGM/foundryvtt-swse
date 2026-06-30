@@ -50,6 +50,13 @@ export const STORE_GLYPHS = {
     label: 'Droids'
   },
 
+  // Implants / cybernetic augmentations
+  implant: {
+    aurebesh: 'I',
+    ascii: '◍',
+    label: 'Implants'
+  },
+
   // Generic Gear / Equipment (utility)
   gear: {
     aurebesh: 'O',      // Generic circular glyph
@@ -90,6 +97,8 @@ export function resolveStoreGlyph(category, itemType, useAurebesh = true) {
     glyphKey = 'vehicle';
   } else if (itemType === 'droid') {
     glyphKey = 'droid';
+  } else if (String(category || '').toLowerCase().includes('implant')) {
+    glyphKey = 'implant';
   }
 
   const glyph = STORE_GLYPHS[glyphKey] || STORE_GLYPHS.unknown;
