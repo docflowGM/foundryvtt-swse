@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "phase": "9B-web-enhancement-implementation-accuracy",
+  "scope": "Saga Edition Web Enhancement 1 / Tech Specialist feat implementation accuracy. This audit separates a working customization service from complete rules-accurate implementation.",
+  "generatedFrom": "Uploaded current repo baseline plus source text from Saga Edition Web Enhancement 1.",
+  "rules": [
+    "A feat is not implemented correctly just because the feat exists or has a matching app/service name.",
+    "Tech Specialist is a procedure/workbench feat: correctness requires target selection, legal trait list, upfront credit cost, Mechanics DC, failure cost loss, one-modification limit, target-specific mechanical application, and clear handling for downtime/assistance.",
+    "A partial implementation is still useful, but it must not be marked implemented_correct if key source procedures are only hinted, omitted, or manually adjudicated.",
+    "Additional non-Web-Enhancement traits in the same UI must be clearly separated from the base Tech Specialist feat so source-accurate audits are not polluted."
+  ],
+  "entries": [
+    {
+      "name": "Tech Specialist",
+      "slug": "tech-specialist",
+      "source": "Saga Edition Web Enhancement 1",
+      "currentCatalogSourceObserved": "Saga Edition Core Rulebook",
+      "page": null,
+      "description": "You can modify a device, suit of armor, weapon, droid, or vehicle so it gains one special Tech Specialist trait. The feat requires Mechanics training, an upfront modification cost of one-tenth the target cost or 1,000 credits, one day per 1,000 credits of modification cost, and a DC 20 Mechanics check that cannot use Take 10 or Take 20. Failure loses spent credits. Other Mechanics-trained helpers can assist and reduce the time proportionately.",
+      "prerequisite": "Trained in Mechanics",
+      "taxonomy": {
+        "bucket": "Tech & Equipment",
+        "subbucket": "Gear Modification",
+        "source": "source_text_and_existing_metadata"
+      },
+      "expected": {
+        "mode": "procedure_workbench",
+        "home": "customization_workbench_and_tech_specialist_modification_service",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "requiredRuntimeFeatures": [
+          "feat and Mechanics trained prerequisite gate",
+          "target selection for device, armor, weapon, droid, and vehicle",
+          "legal Tech Specialist trait list matching the source categories",
+          "one active/base Tech Specialist modification per target unless another rule explicitly permits more",
+          "upfront credit cost: max(10% target cost, 1000 credits)",
+          "DC 20 Mechanics check with no Take 10 or Take 20 for the base feat",
+          "failure spends credits and applies no trait",
+          "success records the trait and applies the correct mechanical item/actor/vehicle mutation",
+          "market-value or cost metadata should reflect base cost plus double modification cost, or remain explicitly manual",
+          "downtime and helper-assistance handling should be explicit, even if GM-managed"
+        ],
+        "accuracyQuestion": "Does the current Tech Specialist service implement the source procedure and trait effects accurately, or does it merely provide a partial customization UI?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "procedure_or_customization_workbench",
+        "abilityMetaStatus": "absent_on_catalog_entry",
+        "abilityMetaMode": "absent_on_catalog_entry",
+        "abilityMetaScope": "absent_on_catalog_entry",
+        "implementationEvidence": [
+          "scripts/engine/customization/tech-specialist-modification-service.js defines Tech Specialist trait records for armor, device, droid, vehicle, and weapon categories.",
+          "The service checks for Tech Specialist, Mechanics training, validates funds, rolls Mechanics, charges credits through the Transaction Engine, records installed traits, and applies item/actor updates.",
+          "Customization workbench and customization bay apps expose Tech Specialist actions through this service."
+        ],
+        "implementationConcerns": [
+          "The catalog source is currently observed as Saga Edition Core Rulebook even though the source material is Saga Edition Web Enhancement 1.",
+          "The service includes Additional Upgrade Slot as a Tech Specialist device trait, which is not part of the Web Enhancement 1 Tech Specialist trait table and should be separated, source-tagged, or reviewed.",
+          "Downtime, helper assistance, and market-value recalculation are not proven as enforced runtime workflows; some appear to be GM-facing hints or metadata only.",
+          "The dialog can expose Take 10 for Signature Device contexts. That might be valid for another rule, but the base Tech Specialist feat explicitly forbids Take 10/Take 20 and the audit should ensure this exception is never applied to the base feat alone.",
+          "The audit cannot prove every mutation kind participates in all final attack, damage, armor, skill, vehicle, and droid breakdowns without targeted runtime tests."
+        ],
+        "ruleTypes": [
+          "procedure_workbench",
+          "credit_transaction",
+          "mechanics_check",
+          "item_mutation",
+          "actor_or_vehicle_mutation"
+        ],
+        "modifierTargets": [
+          "armor.maxDex",
+          "armor.fortitudeEquipmentBonus",
+          "armor.reflexArmorBonus",
+          "device.strengthOrDurabilityOrSkillBonus",
+          "droid.abilityEnhancement",
+          "vehicle.dexterityOrSpeedOrShields",
+          "weapon.attackOrDamageOrSelectiveFire"
+        ],
+        "effectCount": 15
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "The current repo has a real Tech Specialist modification service and UI integration, so this is not unimplemented. However, source attribution is wrong in the observed catalog entry, at least one trait appears outside the Web Enhancement 1 source table, and downtime/helper/market-value behavior plus final derived-breakdown parity are not fully proven. Therefore it should not be marked implemented_correct yet.",
+        "correctiveAction": "Add targeted tests for every Tech Specialist trait, separate or source-tag non-Web-Enhancement traits, correct source attribution, and explicitly document whether downtime/helper/market-value steps are GM-managed or automated."
+      },
+      "sourceReviewReason": "Verify whether Additional Upgrade Slot belongs to another source or project-specific customization layer, and confirm Signature Device Take 10 interaction should never apply to base Tech Specialist alone.",
+      "priority": "high",
+      "risk": "medium"
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "phase": "9B-web-enhancement-source-review-list",
+  "purpose": "Feats or rule interactions where implementation classification or runtime accuracy should be verified against Saga Edition Web Enhancement 1 before marking implemented_correct.",
+  "entries": [
+    {
+      "name": "Tech Specialist",
+      "description": "Allows a Mechanics-trained character to modify a device, armor, weapon, droid, or vehicle by paying an upfront cost, spending downtime, making a DC 20 Mechanics check without Take 10/Take 20, and applying one listed Tech Specialist trait on success. Failure loses spent credits.",
+      "currentObservedStatus": "implemented_partial",
+      "proposedBucket": "Tech & Equipment",
+      "proposedSubbucket": "Gear Modification",
+      "proposedImplementationMode": "procedure_workbench",
+      "reason": "The customization service is substantial, but exact source fidelity still needs targeted verification for source attribution, non-source trait separation, no-Take-10 enforcement for the base feat, downtime/helper handling, market-value metadata, and derived-math parity for all trait targets.",
+      "nextDecision": "Correct catalog/source metadata and add trait-by-trait tests before marking Tech Specialist implemented_correct."
+    }
+  ]
+}
