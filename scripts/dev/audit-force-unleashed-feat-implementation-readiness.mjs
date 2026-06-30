@@ -5,6 +5,7 @@ import path from "node:path";
 const ROOT = process.cwd();
 const backlogPath = path.join(ROOT, "data/feat-implementation/force-unleashed-feat-implementation-backlog.json");
 const reviewPath = path.join(ROOT, "data/feat-implementation/force-unleashed-feat-implementation-review-list.json");
+const phase10aOverridesPath = path.join(ROOT, "data/feat-implementation/phase10a-runtime-status-overrides.json");
 const strict = process.argv.includes("--strict");
 const EXPECTED_TOTAL = 31;
 const ALLOWED_STATUSES = new Set(["implemented_correct", "implemented_partial", "implemented_incorrect", "not_implemented", "metadata_correct", "source_review_required"]);
@@ -15,11 +16,66 @@ function readJson(file) {
   return JSON.parse(fs.readFileSync(file, "utf8"));
 }
 
+function normalizeKey(value) {
+  return String(value ?? "").trim().toLowerCase();
+}
+
+function loadPhase10aOverrides(sourcebook) {
+  if (!fs.existsSync(phase10aOverridesPath)) return new Map();
+  const payload = readJson(phase10aOverridesPath);
+  const overrides = Array.isArray(payload.overrides) ? payload.overrides : [];
+  const byName = new Map();
+  for (const override of overrides) {
+    if (normalizeKey(override.sourcebook) !== normalizeKey(sourcebook)) continue;
+    if (!override.name) {
+      warnings.push("Phase 10A override missing name; skipped.");
+      continue;
+    }
+    byName.set(override.name, override);
+  }
+  return byName;
+}
+
+function applyPhase10aOverride(entry, override) {
+  if (!override) return entry;
+  return {
+    ...entry,
+    expected: {
+      ...(entry.expected ?? {}),
+      mode: override.implementationMode ?? entry.expected?.mode,
+      home: Array.isArray(override.runtimeHome) ? override.runtimeHome.join("; ") : entry.expected?.home
+    },
+    observed: {
+      ...(entry.observed ?? {}),
+      phase10aRuntimeHome: Array.isArray(override.runtimeHome) ? override.runtimeHome : [],
+      phase10aObservedImplementation: override.observedImplementation ?? null
+    },
+    accuracy: {
+      ...(entry.accuracy ?? {}),
+      status: override.status ?? entry.accuracy?.status,
+      confidence: override.confidence ?? entry.accuracy?.confidence,
+      rationale: override.reason ?? entry.accuracy?.rationale,
+      correctiveAction: override.accuracyFinding ?? entry.accuracy?.correctiveAction
+    },
+    phase10aOverride: {
+      phase: "phase-10a-runtime-status-overrides",
+      reason: override.reason ?? "",
+      runtimeHome: Array.isArray(override.runtimeHome) ? override.runtimeHome : []
+    }
+  };
+}
+
 if (!fs.existsSync(backlogPath)) errors.push(`Missing backlog: ${backlogPath}`);
 if (!fs.existsSync(reviewPath)) errors.push(`Missing review list: ${reviewPath}`);
 
-const backlog = fs.existsSync(backlogPath) ? readJson(backlogPath) : { entries: [] };
+const rawBacklog = fs.existsSync(backlogPath) ? readJson(backlogPath) : { entries: [] };
 const review = fs.existsSync(reviewPath) ? readJson(reviewPath) : { entries: [] };
+const overrides = loadPhase10aOverrides("The Force Unleashed Campaign Guide");
+const backlog = {
+  ...rawBacklog,
+  entries: (rawBacklog.entries || []).map(entry => applyPhase10aOverride(entry, overrides.get(entry.name)))
+};
+const appliedOverrides = (backlog.entries || []).filter(entry => entry.phase10aOverride).map(entry => entry.name);
 
 if (!Array.isArray(backlog.entries)) errors.push("Backlog entries must be an array.");
 if (!Array.isArray(review.entries)) errors.push("Review-list entries must be an array.");
@@ -62,7 +118,7 @@ const counts = (backlog.entries || []).reduce((acc, entry) => {
 }, {});
 
 console.log(`Force Unleashed feat implementation audit: ${(backlog.entries || []).length} feats.`);
-console.log(JSON.stringify({ counts, reviewQueue: (review.entries || []).length, warnings: warnings.length, errors: errors.length }, null, 2));
+console.log(JSON.stringify({ counts, reviewQueue: (review.entries || []).length, phase10aOverridesApplied: appliedOverrides, warnings: warnings.length, errors: errors.length }, null, 2));
 if (warnings.length) console.warn(warnings.map(w => `WARN: ${w}`).join("\n"));
 if (errors.length) console.error(errors.map(e => `ERROR: ${e}`).join("\n"));
 if (strict && errors.length) process.exit(1);
