@@ -289,6 +289,10 @@ export class PanelContextBuilder {
       const rulesBonus = (Number(derivedDefense?.stateBonus ?? 0) || 0) + (Number(derivedDefense?.adjustment ?? 0) || 0);
       const sizeModifier = Number(derivedDefense?.sizeModifier ?? 0) || 0;
       const conditionPenalty = Number(derivedDefense?.conditionPenalty ?? this.derived?.damage?.conditionPenalty ?? 0) || 0;
+      const implantWillPenalty = systemKey === 'will'
+        ? (Number(derivedDefense?.implantWillPenalty ?? this.derived?.implants?.willPenalty ?? 0) || 0)
+        : 0;
+      const implantWillPenaltyClass = implantWillPenalty > 0 ? 'mod--positive' : implantWillPenalty < 0 ? 'mod--negative' : 'mod--zero';
       // Reflex levelContribution already represents the SWSE heroic/armor
       // replacement term. Fortitude/Will armor bonuses are still additive.
       const armorTotalTerm = systemKey === 'reflex' ? 0 : armorBonus;
@@ -301,7 +305,8 @@ export class PanelContextBuilder {
         + rulesBonus
         + sizeModifier
         + miscMod
-        + conditionPenalty;
+        + conditionPenalty
+        + implantWillPenalty;
       // The sheet displays the same total as the player-facing formula.  Some
       // older derived defense payloads miss species/rules penalties even though
       // the breakdown has them, so do not let a stale cached total contradict
@@ -340,13 +345,25 @@ export class PanelContextBuilder {
         miscModClass,
         miscPath: `system.defenses.${systemKey}.misc.user.extra`,
         conditionPenalty,
+        implantWillPenalty,
+        implantWillPenaltyClass,
+        hasImplantWillPenalty: implantWillPenalty !== 0,
         canEdit: this.sheet.isEditable
       };
     });
 
+    const implantState = this.derived?.implants ?? null;
     const panel = {
       defenses,
       hasDefenses: defenses.length > 0,
+      implantState,
+      hasActiveImplant: implantState?.hasImplant === true,
+      implantTraining: implantState?.hasImplantTraining === true,
+      implantSummary: implantState?.hasImplant
+        ? (implantState?.hasImplantTraining
+          ? 'Implant active; Implant Training suppresses implant drawbacks.'
+          : 'Implant active; -2 Will Defense and +1 extra Condition Track step when worsened.')
+        : '',
       canEdit: this.sheet.isEditable
     };
 

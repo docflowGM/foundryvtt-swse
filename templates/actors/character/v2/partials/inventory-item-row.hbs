@@ -216,6 +216,34 @@
   background: rgba(120, 220, 255, 0.15);
 }
 
+
+.implant-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  min-height: 20px;
+  padding: 2px 5px;
+  border: 1px solid #7b68ee;
+  border-radius: 999px;
+  color: #c9c2ff;
+  background: rgba(123, 104, 238, 0.12);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.implant-indicator.is-active {
+  border-color: #ffcc66;
+  color: #ffe4a3;
+  background: rgba(255, 204, 102, 0.14);
+  box-shadow: 0 0 8px rgba(255, 204, 102, 0.18);
+}
+
+.inventory-item-row.implant-active {
+  border-color: rgba(255, 204, 102, 0.45);
+}
+
 /* SECONDARY ROW: Management actions */
 .item-row-actions {
   display: flex;
@@ -380,6 +408,7 @@
       {{/if}}
 
       {{#if equipped}}<span class="equipped-indicator" title="Equipped">✓</span>{{/if}}
+      {{#if isImplant}}<span class="implant-indicator {{#if isActiveImplant}}is-active{{/if}}" title="{{implantPenaltyTitle}}">{{#if isActiveImplant}}IMP!{{else}}IMP{{/if}}</span>{{/if}}
     </div>
 
     {{!-- MORE BUTTON (toggles secondary actions) --}}

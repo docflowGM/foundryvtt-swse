@@ -186,6 +186,42 @@
     </div>
   </section>
 
+
+  <section class="item-editor__section swse-entity-dialog__implant-panel">
+    <h3 class="item-editor__section-title">Implant / Cybernetics Rules</h3>
+    <p class="swse-entity-dialog__hint">Use this only for KOTOR-style implants or explicit bio-implant gear. Generic cybernetic prostheses should remain untagged unless the GM wants implant drawbacks to apply.</p>
+
+    <div class="item-editor__grid item-editor__grid--two-col">
+      <div class="form-field">
+        <label>Implant Status</label>
+        <input type="text" value="{{entityDialog.equipment.implantStatusLabel}}" disabled />
+      </div>
+
+      <div class="form-field">
+        <label>Implant Notes</label>
+        <input type="text" name="system.implantRules.notes" value="{{entityDialog.equipment.implantRules.notes}}" placeholder="Source/page, GM ruling, procedure notes" />
+      </div>
+    </div>
+
+    <div class="swse-entity-dialog__toggle-grid">
+      <input type="hidden" name="system.implantRules.countAsImplant" value="false" />
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.implantRules.countAsImplant" value="true" {{#if entityDialog.equipment.implantRules.countAsImplant}}checked{{/if}} /> Counts as Implant</label>
+
+      <input type="hidden" name="system.installed" value="false" />
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.installed" value="true" {{#if entityDialog.equipment.installed}}checked{{/if}} /> Installed</label>
+
+      <input type="hidden" name="system.active" value="false" />
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.active" value="true" {{#if entityDialog.equipment.active}}checked{{/if}} /> Active</label>
+
+      <input type="hidden" name="system.implantRules.activeByOwnership" value="false" />
+      <label class="swse-entity-dialog__toggle"><input type="checkbox" name="system.implantRules.activeByOwnership" value="true" {{#if entityDialog.equipment.implantRules.activeByOwnership}}checked{{/if}} /> Active While Owned</label>
+    </div>
+
+    {{#if entityDialog.equipment.implantPenaltyNote}}
+      <p class="swse-entity-dialog__field-note swse-entity-dialog__field-note--implant">{{entityDialog.equipment.implantPenaltyNote}}</p>
+    {{/if}}
+  </section>
+
   <section class="item-editor__section">
     <h3 class="item-editor__section-title">Workbench / Store Hooks</h3>
 

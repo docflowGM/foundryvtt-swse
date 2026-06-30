@@ -11,6 +11,13 @@
       </div>
     </header>
 
+
+    {{#if defensePanel.hasActiveImplant}}
+      <div class="defense-implant-summary {{#unless defensePanel.implantTraining}}is-penalized{{/unless}}" title="Implant rules summary">
+        {{defensePanel.implantSummary}}
+      </div>
+    {{/if}}
+
     <div class="defenses-container defenses-container--rows">
       {{#each defensePanel.defenses as |def|}}
         <div class="defense-row defense-{{def.key}}">
@@ -66,6 +73,14 @@
                   <span class="defense-breakdown-value {{def.rulesBonusClass}}">{{numberFormat def.rulesBonus decimals=0 sign=true}}</span>
                 </div>
               {{/if}}
+
+              {{#if def.hasImplantWillPenalty}}
+                <div class="defense-breakdown-row">
+                  <span class="defense-breakdown-label">Implant Penalty</span>
+                  <span class="defense-breakdown-value {{def.implantWillPenaltyClass}}">{{numberFormat def.implantWillPenalty decimals=0 sign=true}}</span>
+                </div>
+              {{/if}}
+
               <div class="defense-breakdown-row defense-breakdown-row--editable">
                 <label class="defense-breakdown-label" for="defense-misc-{{def.key}}">Misc Modifier</label>
                 <input id="defense-misc-{{def.key}}"
@@ -87,3 +102,20 @@
     </div>
   </div>
 </section>
+
+<style>
+.defense-implant-summary {
+  margin: 0 0 8px;
+  padding: 6px 8px;
+  border: 1px solid rgba(123, 104, 238, 0.45);
+  border-radius: 4px;
+  color: #d6d0ff;
+  background: rgba(123, 104, 238, 0.10);
+  font-size: 12px;
+}
+.defense-implant-summary.is-penalized {
+  border-color: rgba(255, 204, 102, 0.5);
+  color: #ffe4a3;
+  background: rgba(255, 204, 102, 0.10);
+}
+</style>

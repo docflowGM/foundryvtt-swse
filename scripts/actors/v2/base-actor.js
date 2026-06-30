@@ -11,6 +11,7 @@ import { shouldSkipDerivedData } from "/systems/foundryvtt-swse/scripts/utils/ha
 import { computeXpDerived } from "/systems/foundryvtt-swse/scripts/engine/progression/xp-engine.js";
 import { SWSEInitiative } from "/systems/foundryvtt-swse/scripts/engine/combat/SWSEInitiative.js";
 import { PoisonEngine } from "/systems/foundryvtt-swse/scripts/engine/poison/poison-engine.js";
+import { ImplantRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js";
 
 /**
  * SWSE V2 Base Actor
@@ -330,6 +331,7 @@ export class SWSEV2BaseActor extends SWSEActorBase {
     system.derived.damage.conditionPersistent = persistent;
     system.derived.damage.conditionHelpless = helpless;
     system.derived.damage.conditionPenalty = this.getConditionPenalty(step);
+    system.derived.implants = ImplantRules.getImplantState(this);
   }
 
   /* ------------------------------------------------------------------------ */

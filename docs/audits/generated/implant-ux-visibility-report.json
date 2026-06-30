@@ -1,0 +1,110 @@
+{
+  "generatedAt": "2026-06-30T12:55:30.375Z",
+  "phase": "Implants Phase 4B - UX and Visibility",
+  "ok": 17,
+  "errors": 0,
+  "checks": [
+    {
+      "id": "resolver-imports-implant-rules",
+      "file": "scripts/items/equipment-data-resolver.js",
+      "ok": true,
+      "detail": "equipment resolver should expose ImplantRules-derived display state"
+    },
+    {
+      "id": "resolver-exposes-is-implant",
+      "file": "scripts/items/equipment-data-resolver.js",
+      "ok": true,
+      "detail": "equipment context should include implant tagging and active state"
+    },
+    {
+      "id": "resolver-exposes-notes",
+      "file": "scripts/items/equipment-data-resolver.js",
+      "ok": true,
+      "detail": "equipment context should preserve GM implant notes"
+    },
+    {
+      "id": "item-sheet-has-implant-section",
+      "file": "templates/dialogs/entity/parts/body-item.hbs",
+      "ok": true,
+      "detail": "item sheet should have explicit implant/cybernetics section"
+    },
+    {
+      "id": "item-sheet-counts-as-implant",
+      "file": "templates/dialogs/entity/parts/body-item.hbs",
+      "ok": true,
+      "detail": "item sheet should expose explicit implant marker"
+    },
+    {
+      "id": "item-sheet-installed-active",
+      "file": "templates/dialogs/entity/parts/body-item.hbs",
+      "ok": true,
+      "detail": "item sheet should expose installed/active controls"
+    },
+    {
+      "id": "item-sheet-active-by-ownership",
+      "file": "templates/dialogs/entity/parts/body-item.hbs",
+      "ok": true,
+      "detail": "item sheet should expose active-by-ownership escape hatch"
+    },
+    {
+      "id": "item-sheet-cautions-generic-cybernetics",
+      "file": "templates/dialogs/entity/parts/body-item.hbs",
+      "ok": true,
+      "detail": "item sheet should caution against broad cybernetic classification"
+    },
+    {
+      "id": "row-transformer-imports-implant-rules",
+      "file": "scripts/sheets/v2/context/RowTransformers.js",
+      "ok": true,
+      "detail": "inventory rows should derive implant badges through ImplantRules"
+    },
+    {
+      "id": "row-transformer-adds-implant-row-state",
+      "file": "scripts/sheets/v2/context/RowTransformers.js",
+      "ok": true,
+      "detail": "inventory row context should include implant badge metadata"
+    },
+    {
+      "id": "inventory-row-shows-badge",
+      "file": "templates/actors/character/v2/partials/inventory-item-row.hbs",
+      "ok": true,
+      "detail": "inventory row should display implant badge"
+    },
+    {
+      "id": "inventory-row-active-warning",
+      "file": "templates/actors/character/v2/partials/inventory-item-row.hbs",
+      "ok": true,
+      "detail": "active implants should be visually distinct"
+    },
+    {
+      "id": "defense-panel-builder-includes-implant-penalty",
+      "file": "scripts/sheets/v2/context/PanelContextBuilder.js",
+      "ok": true,
+      "detail": "defense panel context should include implant Will penalty"
+    },
+    {
+      "id": "defense-panel-total-includes-implant",
+      "file": "scripts/sheets/v2/context/PanelContextBuilder.js",
+      "ok": true,
+      "detail": "defense panel visible math should include implant Will penalty"
+    },
+    {
+      "id": "defense-panel-summary-context",
+      "file": "scripts/sheets/v2/context/PanelContextBuilder.js",
+      "ok": true,
+      "detail": "defense panel should include actor implant summary"
+    },
+    {
+      "id": "defense-panel-renders-summary",
+      "file": "templates/actors/character/v2/partials/defenses-panel.hbs",
+      "ok": true,
+      "detail": "defense panel should render implant state summary"
+    },
+    {
+      "id": "defense-panel-renders-breakdown",
+      "file": "templates/actors/character/v2/partials/defenses-panel.hbs",
+      "ok": true,
+      "detail": "defense breakdown should show implant penalty line"
+    }
+  ]
+}
