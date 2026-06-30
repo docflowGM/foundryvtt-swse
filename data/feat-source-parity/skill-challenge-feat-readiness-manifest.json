@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "phase": "3.5A",
+  "source": "Galaxy of Intrigue",
+  "policy": {
+    "currentImplementation": "metadata_only",
+    "staticSheetPolicy": "exclude",
+    "futureHookType": "skill_challenge_reaction",
+    "doNotImplementAs": [
+      "passive skill bonus",
+      "actor static skill math",
+      "combat attack option",
+      "general reroll pool"
+    ]
+  },
+  "expectedFeats": [
+    {
+      "name": "Skill Challenge: Catastrophic Avoidance",
+      "expectedSource": "Galaxy of Intrigue",
+      "expectedPage": 25,
+      "futureRuleType": "SKILL_CHALLENGE_CATASTROPHIC_AVOIDANCE",
+      "recommendedStatus": "metadata_only_until_skill_challenge_subsystem",
+      "summary": "Catastrophic failures in Skill Challenges occur less frequently and with milder results."
+    },
+    {
+      "name": "Skill Challenge: Last Resort",
+      "expectedSource": "Galaxy of Intrigue",
+      "expectedPage": 26,
+      "futureRuleType": "SKILL_CHALLENGE_LAST_RESORT",
+      "recommendedStatus": "metadata_only_until_skill_challenge_subsystem",
+      "summary": "Reroll a third failed Skill Check during a Skill Challenge, keeping the better result."
+    },
+    {
+      "name": "Skill Challenge: Recovery",
+      "expectedSource": "Galaxy of Intrigue",
+      "expectedPage": 26,
+      "futureRuleType": "SKILL_CHALLENGE_RECOVERY",
+      "recommendedStatus": "metadata_only_until_skill_challenge_subsystem",
+      "summary": "Treat a Skill Challenge as if it had the Recovery challenge effect."
+    }
+  ]
+}

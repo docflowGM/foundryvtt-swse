@@ -545,6 +545,18 @@ async function handleSkillRerollButton(event, button, message) {
   ui?.notifications?.warn?.('Skill reroll resolver is not available.');
 }
 
+async function handleSkillChallengeReviewButton(event, button, message) {
+  event.preventDefault();
+
+  const { SkillChallengeRollAdapter } = await import('/systems/foundryvtt-swse/scripts/engine/skill-challenges/SkillChallengeRollAdapter.js');
+  if (typeof SkillChallengeRollAdapter.resolveReviewAction === 'function') {
+    await SkillChallengeRollAdapter.resolveReviewAction(button, { message });
+    return;
+  }
+
+  ui?.notifications?.warn?.('Skill Challenge roll resolver is not available.');
+}
+
 function bind(root, selector, key, handler, message) {
   root.querySelectorAll(selector).forEach(button => {
     if (!markBound(button, key)) return;
@@ -588,6 +600,7 @@ export class ChatInteractionBridge {
     bind(root, '[data-store-action]', 'StoreReceiptAction', handleStoreReceiptAction, message);
     bind(root, '.species-reroll-btn', 'SpeciesReroll', handleSpeciesRerollButton, message);
     bind(root, '.swse-skill-reroll-btn', 'SkillReroll', handleSkillRerollButton, message);
+    bind(root, '[data-skill-challenge-chat-action]', 'SkillChallengeReview', handleSkillChallengeReviewButton, message);
     bind(root, '.swse-attack-reroll-btn', 'AttackReroll', handleAttackRerollButton, message);
     bind(root, '.swse-temp-defense-btn', 'TemporaryDefense', handleTemporaryDefenseButton, message);
 

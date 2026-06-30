@@ -47,6 +47,7 @@ import { GameSessionStore } from "/systems/foundryvtt-swse/scripts/games/game-se
 import { GameCreditEscrowService } from "/systems/foundryvtt-swse/scripts/games/wagers/game-credit-escrow-service.js";
 import { computeCenteredPosition, resetApplicationCentering } from "/systems/foundryvtt-swse/scripts/utils/sheet-position.js";
 import { GMPartyRosterService } from "/systems/foundryvtt-swse/scripts/ui/shell/gm/utils/gm-party-roster-service.js";
+import { SkillChallengeStore } from "/systems/foundryvtt-swse/scripts/engine/skill-challenges/SkillChallengeStore.js";
 
 const GM_TABLET_BASE_WIDTH = 1440;
 const GM_TABLET_BASE_HEIGHT = 900;
@@ -254,7 +255,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
 
   _getGmShellSurfaceId(pageId) {
     const id = String(pageId || 'home');
-    const known = new Set(['home', 'jobs', 'trade', 'bulletin', 'house-rules', 'store', 'approvals', 'settings', 'healing', 'workspace', 'factions', 'intel', 'locations']);
+    const known = new Set(['home', 'jobs', 'trade', 'bulletin', 'house-rules', 'store', 'approvals', 'settings', 'healing', 'workspace', 'factions', 'intel', 'locations', 'skill-challenges']);
     return `gm-${known.has(id) ? id : 'error'}`;
   }
 
@@ -380,7 +381,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
     const byId = new Map(apps.map((app) => [app.id, app]));
     const pick = (ids) => ids.map((id) => byId.get(id)).filter(Boolean);
     return [
-      { label: 'Operations', tone: (counts.jobs || counts.trade) ? 'crit' : 'stable', countLabel: `${Number(counts.jobs ?? 0) + Number(counts.trade ?? 0)} active`, apps: pick(['jobs', 'trade', 'healing', 'workspace', 'factions', 'intel', 'locations']) },
+      { label: 'Operations', tone: (counts.jobs || counts.trade) ? 'crit' : 'stable', countLabel: `${Number(counts.jobs ?? 0) + Number(counts.trade ?? 0)} active`, apps: pick(['jobs', 'trade', 'healing', 'workspace', 'factions', 'intel', 'locations', 'skill-challenges']) },
       { label: 'Economy', tone: (counts.store || counts.approvals) ? 'warn' : 'stable', countLabel: `${Number(counts.store ?? 0) + Number(counts.approvals ?? 0)} queued`, apps: pick(['store', 'approvals']) },
       { label: 'Holonet', tone: counts.bulletin ? 'info' : 'stable', countLabel: `${Number(counts.bulletin ?? 0)} signals`, apps: pick(['bulletin']) },
       { label: 'Configuration', tone: 'stable', countLabel: 'ready', apps: pick(['house-rules', 'settings']) }
@@ -426,6 +427,14 @@ export class GMDatapad extends BaseSWSEAppV2 {
       SWSELogger.warn('[GMDatapad] Unable to load healing summary for home badge counts:', err);
     }
 
+    let skillChallengeCount = 0;
+    try {
+      const skillChallenges = await SkillChallengeStore.getAll();
+      skillChallengeCount = skillChallenges.filter((challenge) => challenge.status === 'active').length;
+    } catch (err) {
+      SWSELogger.warn('[GMDatapad] Unable to load Skill Challenge badge count:', err);
+    }
+
     const pendingDroids = this.pendingDroids?.length ?? 0;
     const storeApprovals = this.storeApprovals?.length ?? 0;
     const pendingSales = this.pendingSales?.length ?? 0;
@@ -451,6 +460,7 @@ export class GMDatapad extends BaseSWSEAppV2 {
       workspace: game.actors.filter((actor) => actor.isOwner).length,
       intel: intelCount,
       locations: LocationRegistryService.summarizeForWorkspace().count,
+      skillChallenges: skillChallengeCount,
       factions: globalThis.SWSEFactionRegistryService?.summarizeForWorkspace?.().count ?? 0
     };
   }
@@ -1342,7 +1352,8 @@ export class GMDatapad extends BaseSWSEAppV2 {
       { id: 'workspace', code: 'WRK', label: 'Workspace', icon: 'fa-solid fa-users', description: 'GM actor access', badgeCount: counts.workspace ?? 0, status: 'Actors', statusTone: '', badgeType: 'info' },
       { id: 'factions', code: 'DOS', label: 'Dossier', icon: 'fa-solid fa-user-secret', description: 'Factions, named contacts, standings, and future Intel hooks', badgeCount: counts.factions ?? 0, status: 'Influence', statusTone: (counts.factions ?? 0) ? 'info' : '', badgeType: 'info', featured: true },
       { id: 'intel', code: 'INT', label: 'Intel', icon: 'fa-solid fa-file-shield', description: 'Clues, rumors, dossiers, and staged player reveals', badgeCount: counts.intel ?? 0, status: 'Classified', statusTone: (counts.intel ?? 0) ? 'info' : '', badgeType: 'info', featured: true },
-      { id: 'locations', code: 'LOC', label: 'Locations', icon: 'fa-solid fa-map-location-dot', description: 'Planets, cities, POIs, Atlas facts, encounter seeds, and scene launchers', badgeCount: counts.locations ?? 0, status: 'Atlas', statusTone: (counts.locations ?? 0) ? 'info' : '', badgeType: 'info', featured: true }
+      { id: 'locations', code: 'LOC', label: 'Locations', icon: 'fa-solid fa-map-location-dot', description: 'Planets, cities, POIs, Atlas facts, encounter seeds, and scene launchers', badgeCount: counts.locations ?? 0, status: 'Atlas', statusTone: (counts.locations ?? 0) ? 'info' : '', badgeType: 'info', featured: true },
+      { id: 'skill-challenges', code: 'SKL', label: 'Skill Challenges', icon: 'fa-solid fa-chart-simple', description: 'GM encounter progress tracker for complex skill scenes', badgeCount: counts.skillChallenges ?? 0, status: 'Tracker', statusTone: (counts.skillChallenges ?? 0) ? 'info' : '', badgeType: 'info', featured: true }
     ];
   }
 

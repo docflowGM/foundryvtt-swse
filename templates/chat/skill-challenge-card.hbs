@@ -1,0 +1,61 @@
+<article class="swse-chat-card swse-skill-challenge-chat-card" data-swse-chat-surface="skill-challenge-review" data-skill-challenge-review-card="true">
+  <header class="swse-skill-challenge-chat-card__header">
+    <p class="swse-chat-card__eyebrow">Skill Challenge Roll Review · Phase {{phase}}</p>
+    <h3>{{roll.actorName}} rolls {{roll.skillLabel}}</h3>
+    <p>
+      Total <strong>{{roll.total}}</strong>{{#if roll.dc}} vs DC <strong>{{roll.dc}}</strong>{{/if}}.
+      Choose how this roll affects an active Skill Challenge.
+    </p>
+  </header>
+
+  {{#if challengeOptions.length}}
+    <section class="swse-skill-challenge-review-options">
+      {{#each challengeOptions}}
+        <div class="swse-skill-challenge-review-option {{this.outcomeTone}}" data-skill-challenge-id="{{this.id}}">
+          <header>
+            <div>
+              <h4>{{this.name}}</h4>
+              <p>{{this.source}} · {{this.status}} · {{this.successes}}/{{this.targetSuccesses}} successes · {{this.failures}}/{{this.failureLimit}} failures</p>
+            </div>
+            <span class="swse-status-pill {{this.outcomeTone}}">{{this.outcomeLabel}}</span>
+          </header>
+
+          <dl class="swse-skill-challenge-review-grid">
+            <div>
+              <dt>Skill</dt>
+              <dd>{{this.matchedSkillLabel}}{{#unless this.skillListed}} <em>GM discretion</em>{{/unless}}</dd>
+            </div>
+            <div>
+              <dt>DC</dt>
+              <dd>{{#if this.dc}}{{this.dc}}{{else}}GM set{{/if}}</dd>
+            </div>
+            <div>
+              <dt>Preview</dt>
+              <dd>{{this.successPreview}}/{{this.targetSuccesses}} S · {{this.failurePreview}}/{{this.failureLimit}} F</dd>
+            </div>
+          </dl>
+
+          <p class="swse-skill-challenge-review-message">{{this.message}}</p>
+
+          {{#unless ../isGm}}
+            <p class="swse-skill-challenge-review-message">This card is whispered to the GM for confirmation.</p>
+          {{/unless}}
+
+          {{#if ../isGm}}
+            <footer class="swse-skill-challenge-actions">
+              <button type="button" class="swse-btn swse-btn--primary" data-skill-challenge-chat-action="accept-suggested" data-challenge-id="{{this.id}}">Accept Suggested</button>
+              <button type="button" class="swse-btn swse-btn--ok" data-skill-challenge-chat-action="accept-success" data-challenge-id="{{this.id}}">Count Success</button>
+              <button type="button" class="swse-btn swse-btn--warn" data-skill-challenge-chat-action="accept-failure" data-challenge-id="{{this.id}}">Count Failure</button>
+              <button type="button" class="swse-btn swse-btn--ghost" data-skill-challenge-chat-action="ignore-roll" data-challenge-id="{{this.id}}">Do Not Count</button>
+              <button type="button" class="swse-btn swse-btn--ghost" data-skill-challenge-chat-action="gm-review" data-challenge-id="{{this.id}}">Review Later</button>
+            </footer>
+          {{/if}}
+        </div>
+      {{/each}}
+    </section>
+  {{else}}
+    <section class="swse-skill-challenge-outcome">
+      <p>No active Skill Challenge currently matches this skill roll.</p>
+    </section>
+  {{/if}}
+</article>

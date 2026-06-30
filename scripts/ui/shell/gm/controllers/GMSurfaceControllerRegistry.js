@@ -18,6 +18,7 @@ import { GMWorkspaceSurfaceController } from './GMWorkspaceSurfaceController.js'
 import { GMFactionRelationshipSurfaceController } from './GMFactionRelationshipSurfaceController.js';
 import { GMIntelSurfaceController } from './GMIntelSurfaceController.js';
 import { GMLocationsSurfaceController } from './GMLocationsSurfaceController.js';
+import { GMSkillChallengeSurfaceController } from './GMSkillChallengeSurfaceController.js';
 
 const CONTROLLERS = Object.freeze({
   approvals: GMApprovalsSurfaceController,
@@ -31,7 +32,8 @@ const CONTROLLERS = Object.freeze({
   workspace: GMWorkspaceSurfaceController,
   factions: GMFactionRelationshipSurfaceController,
   intel: GMIntelSurfaceController,
-  locations: GMLocationsSurfaceController
+  locations: GMLocationsSurfaceController,
+  'skill-challenges': GMSkillChallengeSurfaceController
 });
 
 const ACTIVE = new WeakMap();

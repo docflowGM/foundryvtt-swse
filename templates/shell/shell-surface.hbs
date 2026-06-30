@@ -148,6 +148,10 @@
     {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/locations.hbs"}}
   {{/if}}
 
+  {{#if (eq shellSurface "gm-skill-challenges")}}
+    {{> "systems/foundryvtt-swse/templates/apps/gm/skill-challenges/skill-challenge-surface.hbs"}}
+  {{/if}}
+
   {{#if (eq shellSurface "gm-settings")}}
     {{> "systems/foundryvtt-swse/templates/apps/gm-datapad/surfaces/settings.hbs"}}
   {{/if}}

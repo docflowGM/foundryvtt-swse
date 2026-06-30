@@ -5336,3 +5336,265 @@
   gap: 8px;
   margin-top: 12px;
 }
+
+/* Skill Challenges: Phase 3.5B GM manual tracker */
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-surface {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 100%;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-header,
+.swse-sheet-v2-shell--gm-datapad .swse-panel__header,
+.swse-sheet-v2-shell--gm-datapad .swse-button-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-button-row--wrap {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-summary {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-chip,
+.swse-sheet-v2-shell--gm-datapad .swse-status-pill {
+  border: 1px solid rgba(0, 229, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(0, 229, 255, 0.08);
+  color: #dff8ff;
+  padding: 5px 9px;
+  font: 800 10px var(--swse-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-status-pill.ok { border-color: rgba(141, 255, 189, 0.5); color: #8dffbd; }
+.swse-sheet-v2-shell--gm-datapad .swse-status-pill.warn { border-color: rgba(255, 207, 118, 0.52); color: #ffcf76; }
+.swse-sheet-v2-shell--gm-datapad .swse-status-pill.crit { border-color: rgba(255, 104, 104, 0.56); color: #ff9a9a; }
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.75fr) minmax(420px, 1.6fr);
+  gap: 14px;
+  min-height: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-list,
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-panel {
+  border: 1px solid rgba(0, 229, 255, 0.18);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(4, 18, 32, 0.84), rgba(2, 9, 18, 0.78));
+  box-shadow: inset 0 0 24px rgba(0, 229, 255, 0.04);
+  padding: 12px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-panel--inset {
+  background: rgba(1, 9, 18, 0.46);
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-panel--stacked {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-list__items {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  max-height: 340px;
+  overflow: auto;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-list__item {
+  width: 100%;
+  border: 1px solid rgba(0, 229, 255, 0.18);
+  border-radius: 10px;
+  background: rgba(0, 229, 255, 0.06);
+  color: #e7fbff;
+  padding: 9px 10px;
+  text-align: left;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-list__item.is-selected {
+  border-color: rgba(0, 229, 255, 0.58);
+  box-shadow: 0 0 18px rgba(0, 229, 255, 0.12);
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-list__title,
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-list__meta {
+  display: block;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-list__title {
+  font-weight: 800;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-list__meta {
+  color: rgba(194, 240, 255, 0.68);
+  font: 700 10px var(--swse-font-mono, monospace);
+  margin-top: 3px;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-progress-grid,
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-progress-card {
+  border: 1px solid rgba(0, 229, 255, 0.16);
+  border-radius: 12px;
+  background: rgba(1, 9, 18, 0.54);
+  padding: 12px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-progress-card header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-pips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  min-height: 18px;
+  margin: 8px 0 10px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-pip {
+  width: 14px;
+  height: 14px;
+  border: 1px solid rgba(0, 229, 255, 0.38);
+  border-radius: 999px;
+  background: rgba(1, 9, 18, 0.8);
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-pip.is-filled {
+  background: rgba(0, 229, 255, 0.75);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.35);
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-pips--danger .swse-pip {
+  border-color: rgba(255, 104, 104, 0.42);
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-pips--danger .swse-pip.is-filled {
+  background: rgba(255, 104, 104, 0.72);
+  box-shadow: 0 0 8px rgba(255, 104, 104, 0.25);
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-btn {
+  border: 1px solid rgba(0, 229, 255, 0.26);
+  border-radius: 9px;
+  background: rgba(0, 229, 255, 0.08);
+  color: #e7fbff;
+  padding: 7px 10px;
+  font: 800 11px var(--swse-font-mono, monospace);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-btn--xs { padding: 3px 6px; font-size: 9px; }
+.swse-sheet-v2-shell--gm-datapad .swse-btn--sm { padding: 5px 8px; font-size: 10px; }
+.swse-sheet-v2-shell--gm-datapad .swse-btn--block { width: 100%; justify-content: center; }
+.swse-sheet-v2-shell--gm-datapad .swse-btn--primary { border-color: rgba(0, 229, 255, 0.56); color: #00e5ff; }
+.swse-sheet-v2-shell--gm-datapad .swse-btn--ok { border-color: rgba(141, 255, 189, 0.52); color: #8dffbd; }
+.swse-sheet-v2-shell--gm-datapad .swse-btn--warn { border-color: rgba(255, 207, 118, 0.52); color: #ffcf76; }
+.swse-sheet-v2-shell--gm-datapad .swse-btn--danger { border-color: rgba(255, 104, 104, 0.56); color: #ff9a9a; }
+.swse-sheet-v2-shell--gm-datapad .swse-btn--ghost { background: rgba(255, 255, 255, 0.03); }
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-form,
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-edit form {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-form label,
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-edit label {
+  color: rgba(128, 238, 255, 0.78);
+  font: 800 10px var(--swse-font-mono, monospace);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-form input,
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-form textarea,
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-edit input,
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-edit textarea {
+  width: 100%;
+  margin-top: 4px;
+  border: 1px solid rgba(0, 229, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(1, 9, 18, 0.86);
+  color: #e7fbff;
+  padding: 8px 9px;
+  font: 500 12px var(--swse-font-body, sans-serif);
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-clean-list,
+.swse-sheet-v2-shell--gm-datapad .swse-history-list {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-clean-list li,
+.swse-sheet-v2-shell--gm-datapad .swse-history-list li {
+  margin: 5px 0;
+}
+
+@media (max-width: 980px) {
+  .swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-grid,
+  .swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-progress-grid,
+  .swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-effect {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.45rem 0.5rem;
+  border: 1px solid rgba(119, 214, 255, 0.18);
+  border-radius: 0.5rem;
+  background: rgba(6, 18, 32, 0.45);
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-effect small,
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-timer {
+  font-size: 0.78rem;
+  opacity: 0.78;
+}
+
+.swse-sheet-v2-shell--gm-datapad .swse-skill-challenge-effect.is-disabled {
+  opacity: 0.55;
+}

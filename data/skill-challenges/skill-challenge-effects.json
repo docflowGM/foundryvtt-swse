@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 2,
+  "phase": "3.5D",
+  "source": "Galaxy of Intrigue",
+  "effects": [
+    {
+      "type": "catastrophicFailure",
+      "label": "Catastrophic Failure",
+      "automationTier": "implemented_safe_preview",
+      "defaultParameters": {
+        "threshold": 10,
+        "extraFailures": 1
+      },
+      "summary": "A failed check that misses by a large margin can count as more than one failure.",
+      "implementationNote": "GM-confirmed roll previews add the extra failure before the GM accepts the suggested result."
+    },
+    {
+      "type": "restrictedSkills",
+      "label": "Restricted Skills",
+      "automationTier": "implemented_safe_preview",
+      "defaultParameters": {
+        "mode": "listedOnly"
+      },
+      "summary": "Only listed skills count automatically; other approaches require GM review.",
+      "implementationNote": "The roll adapter only auto-offers listed skills. The effect resolver also downgrades unlisted rolls to GM review if they reach the engine."
+    },
+    {
+      "type": "recovery",
+      "label": "Recovery",
+      "automationTier": "implemented_manual_tracker_action",
+      "defaultParameters": {
+        "recoverFailures": 1,
+        "requiresGmApproval": true
+      },
+      "summary": "Allows the GM to remove accumulated failures when the challenge rules allow recovery.",
+      "implementationNote": "Implemented as a GM-facing Recover Failure tracker action. It does not infer whether a player qualifies automatically."
+    },
+    {
+      "type": "secondEffort",
+      "label": "Second Effort",
+      "automationTier": "implemented_manual_tracker_action",
+      "defaultParameters": {
+        "requiresGmApproval": true
+      },
+      "summary": "Records an allowed additional attempt or retry opportunity.",
+      "implementationNote": "Implemented as a GM-facing history action only. It does not reroll dice or spend resources automatically."
+    },
+    {
+      "type": "timedChallenge",
+      "label": "Timed Challenge",
+      "automationTier": "implemented_manual_tracker_action",
+      "defaultParameters": {
+        "limit": 6,
+        "remaining": 6,
+        "unit": "step",
+        "autoFailAtZero": false
+      },
+      "summary": "The challenge has a round, turn, or abstract pressure track.",
+      "implementationNote": "Implemented as a GM-adjusted countdown. It can optionally mark the challenge failed when remaining reaches zero."
+    },
+    {
+      "type": "changingObjectives",
+      "label": "Changing Objectives",
+      "automationTier": "advisory_initially",
+      "summary": "The list of useful skills, DCs, or goals can shift as the scene changes.",
+      "implementationNote": "Represent as editable GM metadata until objective transitions are modeled."
+    },
+    {
+      "type": "lastResort",
+      "label": "Last Resort",
+      "automationTier": "feat_hook_later",
+      "summary": "A reroll/rescue hook tied to a failing challenge state.",
+      "implementationNote": "Reserved for Phase 3.5E because it belongs to Skill Challenge feat/reaction handling."
+    }
+  ]
+}

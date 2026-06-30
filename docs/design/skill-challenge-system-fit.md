@@ -1,111 +1,114 @@
-# Skill Challenge System Fit
+# Skill Challenge System Fit - Phase 3.5A
+
+## Summary
+
+Skill Challenges should be implemented as a GM-authored encounter/progress subsystem, not as passive feat automation or actor static skill math.
+
+The closest existing pattern in this codebase is the encrypted Intel/decryption workflow: the GM defines an objective, the system tracks progress and failure pressure, players contribute checks, and the result reveals or withholds an outcome. Skill Challenges should reuse that design philosophy without coupling to Holonet Intel records.
 
 ## What a Skill Challenge is
 
-A Skill Challenge is an optional *Galaxy of Intrigue* scene framework for resolving complex, group-facing obstacles through multiple skill checks. Instead of one character making one check, the party accumulates progress through repeated contributions. Published examples use:
+A Skill Challenge is a structured scene where the party accumulates a target number of successes before reaching a failure limit. It can represent slicing, investigation, negotiations, infiltration, chase pressure, survival, battlefield coordination, social maneuvering, or other complex obstacles.
 
-- challenge level;
-- complexity;
-- a target number of successes;
-- a failure limit;
-- suggested primary skills and DCs;
-- challenge effects such as Recovery, Opposed DC, Extreme Success, Containment, Individual Effort, Timed Challenge, and Degrees of Failure;
-- explicit success and failure consequences.
+The Skill Challenge subsystem should own:
 
-In practice, it is closer to a noncombat encounter tracker than a feat bonus.
+- Challenge identity and source reference.
+- CL, complexity, success target, and failure limit.
+- Primary and secondary skills with DCs.
+- Active participants.
+- Challenge effects such as Catastrophic Failure or Recovery.
+- Roll history.
+- GM notes, player brief, success text, and failure text.
+- Final status.
 
-## How it should be implemented
+The existing skill roller should still own actor skill math.
 
-The correct Foundry shape is a dedicated subsystem:
+## Architectural slot
+
+Recommended future locations:
 
 ```text
-scripts/engine/skill-challenges/SkillChallengeRules.js
 scripts/engine/skill-challenges/SkillChallengeEngine.js
-scripts/apps/skill-challenges/skill-challenge-app.js
-scripts/chat/skill-challenge-chat.js
-templates/apps/skill-challenges/skill-challenge-app.hbs
+scripts/engine/skill-challenges/SkillChallengeRules.js
+scripts/engine/skill-challenges/SkillChallengeState.js
+scripts/engine/skill-challenges/SkillChallengeStore.js
+scripts/engine/skill-challenges/SkillChallengeEffectResolver.js
+scripts/engine/skill-challenges/SkillChallengeRollAdapter.js
+scripts/ui/shell/gm/GMSkillChallengeSurfaceService.js
+scripts/ui/shell/gm/controllers/GMSkillChallengeSurfaceController.js
+templates/apps/gm/skill-challenges/skill-challenge-surface.hbs
+templates/chat/skill-challenge-card.hbs
 data/skill-challenges/*.json
 ```
 
-Optional later expansion:
+Phase 3.5A adds those files as skeletons or metadata only. It does not register the surface, add settings, attach chat listeners, or mutate actor data.
 
-```text
-packs/skill-challenges.db
-scripts/apps/gm-datapad integration point
-```
+## GM Datapad fit
 
-## Where it fits in the current architecture
+Skill Challenges should become a GM Datapad surface after the foundation phase.
 
-### Engine layer
+Recommended UI shape:
 
-`SkillChallengeEngine` should own challenge state transitions:
+- Left: active challenges, templates, completed history.
+- Center: selected challenge tracker with successes/failures and primary skill buttons.
+- Right: effects, consequences, GM notes, participants, and source reference.
 
-- create challenge state;
-- accept a completed skill roll;
-- compare total against the challenge's DC rule;
-- add successes or failures;
-- apply challenge effects;
-- detect completion;
-- produce a chat/view model.
+The GM should be able to manually increment/decrement successes and failures before roll automation exists. This mirrors the practical table workflow and avoids over-automation.
 
-It should be pure and testable. It should not directly render UI or mutate actors.
+## Roll flow
 
-### App layer
+Recommended future flow:
 
-`skill-challenge-app.js` should be the GM/player surface for a running challenge:
+1. GM starts a Skill Challenge.
+2. Player rolls a normal skill using the existing skill roller.
+3. A chat card offers Apply to Skill Challenge when relevant.
+4. GM confirms whether the roll counts.
+5. The SkillChallengeEngine updates challenge progress.
+6. Chat posts a progress summary.
 
-- list participants;
-- show success/failure counters;
-- show available primary skills and DCs;
-- allow GM overrides;
-- allow accepting/rejecting proposed checks;
-- expose eligible feat actions when a participant has a Skill Challenge feat.
+Do not create a duplicate skill formula inside SkillChallengeEngine.
 
-### Chat layer
+## Feat policy
 
-`skill-challenge-chat.js` should produce progress cards:
+The Galaxy of Intrigue Skill Challenge feats remain metadata-only until this subsystem exists.
 
-- challenge started;
-- check submitted;
-- check accepted/rejected;
-- progress updated;
-- challenge succeeded/failed;
-- GM manually adjusted state.
+They should eventually be implemented as challenge reactions/hooks:
 
-### Existing skill roll math
+- Skill Challenge: Catastrophic Avoidance -> modifies catastrophic failure handling.
+- Skill Challenge: Last Resort -> permits a special reroll/recovery moment during a failing challenge.
+- Skill Challenge: Recovery -> grants or alters the Recovery challenge effect.
 
-Do **not** duplicate skill math. The subsystem should consume already-finalized skill roll totals from the existing skill roll path. This keeps the Skill Challenge engine from becoming a second skill calculator.
+They should not become passive bonuses in actor skill math.
 
-### Combat compatibility
+## Phase plan
 
-A challenge may run during combat, but CombatEngine should not own the challenge. Combat actions may reference an active challenge id, but success/failure state belongs to the Skill Challenge subsystem.
+### Phase 3.5A - Foundation only
 
-## How Skill Challenge feats would work later
+- Add metadata model.
+- Add sample challenge templates.
+- Add effect definitions.
+- Add skeleton engine/state/rules/store/adapter files.
+- Add skeleton GM surface service/controller/templates.
+- Add readiness audit.
 
-The current feat data should remain metadata-only until the subsystem exists.
+### Phase 3.5B - GM manual tracker
 
-Once the app exists:
+- Register a GM Datapad surface.
+- Add world setting or scene flag persistence.
+- Create/edit/start/complete challenges.
+- Manual success/failure adjustment.
+- Post summary to chat.
 
-- `Skill Challenge: Recovery` should let the running challenge behave as though the Recovery challenge effect is present when the participant is eligible.
-- `Skill Challenge: Last Resort` should expose a once-per-challenge or rules-limited reroll affordance when the relevant failure condition is reached.
-- `Skill Challenge: Catastrophic Avoidance` should adjust catastrophic failure handling inside the challenge resolution flow.
+### Phase 3.5C - Roll integration
 
-These are app/encounter effects. They should never appear as always-on actor skill modifiers.
+- Add Apply to Skill Challenge from skill roll chat cards.
+- Require GM confirmation by default.
+- Record roll history.
 
-## MVP plan
+### Phase 3.5D - Challenge effects
 
-1. Add JSON model and pure engine tests.
-2. Add GM-created challenge cards with manual primary skill/DC entry.
-3. Allow skill roll totals to be submitted to the active challenge.
-4. Add GM accept/reject/override controls.
-5. Add chat progress cards.
-6. Add Skill Challenge feat hooks.
-7. Add example templates from Galaxy of Intrigue only after the generic engine works.
+- Automate safe effects such as Catastrophic Failure, Recovery, Restricted Skills, Timed Challenge, and Second Effort.
 
-## Things to avoid
+### Phase 3.5E - Feat hooks
 
-- Do not add static skill bonuses for Skill Challenge feats.
-- Do not make the character sheet the source of truth.
-- Do not require every Skill Challenge to be pre-authored in compendium form.
-- Do not wire this through CombatEngine as if all challenges are combat encounters.
-- Do not automate narrative consequences without GM confirmation.
+- Convert Skill Challenge feats from metadata-only to challenge reaction hooks.

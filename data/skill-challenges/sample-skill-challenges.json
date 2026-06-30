@@ -1,0 +1,84 @@
+{
+  "schemaVersion": 2,
+  "phase": "3.5D",
+  "samples": [
+    {
+      "id": "disable-tracking-device",
+      "name": "Disable the Tracking Device",
+      "source": "Galaxy of Intrigue inspired template",
+      "cl": 9,
+      "complexity": 2,
+      "targetSuccesses": 8,
+      "failureLimit": 3,
+      "successes": 0,
+      "failures": 0,
+      "status": "draft",
+      "playerBrief": "Disable the tracker before it transmits your location or becomes unsafe to remove.",
+      "gmNotes": "Use this as a model for a slicer/mechanic scene. Adjust DCs for party level.",
+      "primarySkills": [
+        {
+          "slug": "useComputer",
+          "label": "Use Computer",
+          "dc": 28,
+          "useLimit": null,
+          "requiresGmApproval": true,
+          "notes": "Analyze the signal, spoof security, or isolate the transmitter."
+        },
+        {
+          "slug": "knowledgeTechnology",
+          "label": "Knowledge (Technology)",
+          "dc": 28,
+          "useLimit": null,
+          "requiresGmApproval": true,
+          "notes": "Identify the device architecture and possible safety bypasses."
+        },
+        {
+          "slug": "mechanics",
+          "label": "Mechanics",
+          "dc": 30,
+          "useLimit": null,
+          "requiresGmApproval": true,
+          "notes": "Physically isolate or remove the tracker."
+        }
+      ],
+      "secondarySkills": [],
+      "effects": [
+        {
+          "type": "catastrophicFailure",
+          "label": "Catastrophic Failure",
+          "enabled": true,
+          "parameters": {
+            "threshold": 10,
+            "extraFailures": 1
+          },
+          "notes": "A failed check by 10 or more counts as an additional failure."
+        },
+        {
+          "type": "restrictedSkills",
+          "label": "Restricted Skills",
+          "enabled": true,
+          "parameters": {
+            "mode": "listedOnly"
+          },
+          "notes": "Only the listed technical skills count without GM approval."
+        },
+        {
+          "type": "timedChallenge",
+          "label": "Timed Challenge",
+          "enabled": true,
+          "parameters": {
+            "limit": 6,
+            "remaining": 6,
+            "unit": "round",
+            "autoFailAtZero": false
+          },
+          "notes": "Use the countdown when the tracker is actively transmitting or overheating."
+        }
+      ],
+      "successText": "The device is disabled or removed safely.",
+      "failureText": "The device remains active, transmits, explodes, or forces a costly compromise.",
+      "participants": [],
+      "history": []
+    }
+  ]
+}

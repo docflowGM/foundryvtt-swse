@@ -1,97 +1,79 @@
 {
   "schemaVersion": 1,
-  "sourcebook": "Galaxy of Intrigue",
-  "status": "design_reference_not_runtime",
-  "summary": "Skill Challenges are optional party-facing structured scenes resolved by multiple skill checks, usually tracking a target number of successes before a smaller number of failures. They are encounter-like workflows, not static actor math.",
-  "coreModel": {
-    "challenge": {
-      "id": "string",
-      "name": "string",
-      "challengeLevel": "number",
-      "complexity": "number",
-      "successTarget": "number",
-      "failureLimit": "number",
-      "primarySkills": [
-        {
-          "skill": "string",
-          "dc": "number | opposed | gm_defined",
-          "description": "string",
-          "limits": "optional string"
-        }
-      ],
-      "secondaryOptions": [
-        {
-          "label": "string",
-          "effect": "string",
-          "manual": true
-        }
-      ],
-      "effects": [
-        "antagonist",
-        "catastrophicFailure",
-        "changingObjectives",
-        "closeCall",
-        "containment",
-        "degenerating",
-        "degreesOfFailure",
-        "degreesOfSuccess",
-        "extremeSuccess",
-        "individualEffort",
-        "opposedDC",
-        "recovery",
-        "restrictedSkills",
-        "secondEffort",
-        "timedChallenge"
-      ],
-      "successOutcome": "string",
-      "failureOutcome": "string"
-    },
-    "state": {
-      "successes": 0,
-      "failures": 0,
-      "roundOrBeat": 0,
-      "participants": [],
-      "log": [],
-      "isComplete": false,
-      "outcome": "pending | success | failure | gm_closed"
-    }
+  "phase": "3.5A",
+  "source": "Galaxy of Intrigue",
+  "status": "foundation_only",
+  "description": "Canonical target shape for future SWSE Skill Challenge state. This is metadata/skeleton only and is not yet wired into runtime.",
+  "storagePolicy": {
+    "templates": "data or future compendium entries",
+    "activeState": "future world setting or scene flag",
+    "actorMath": "consume existing skill roll totals; do not duplicate skill calculations"
   },
-  "recommendedArchitecture": {
-    "engine": "scripts/engine/skill-challenges/SkillChallengeEngine.js",
-    "rules": "scripts/engine/skill-challenges/SkillChallengeRules.js",
-    "app": "scripts/apps/skill-challenges/skill-challenge-app.js",
-    "chat": "scripts/chat/skill-challenge-chat.js",
-    "templates": "templates/apps/skill-challenges/skill-challenge-app.hbs",
-    "data": "data/skill-challenges/*.json",
-    "optionalCompendium": "packs/skill-challenges.db"
+  "challenge": {
+    "id": "string",
+    "name": "string",
+    "source": "string",
+    "cl": "number",
+    "complexity": "number",
+    "targetSuccesses": "number",
+    "failureLimit": "number",
+    "successes": "number",
+    "failures": "number",
+    "status": "draft | active | succeeded | failed | cancelled",
+    "sceneId": "string optional",
+    "playerBrief": "string",
+    "gmNotes": "string",
+    "successText": "string",
+    "failureText": "string",
+    "primarySkills": [
+      {
+        "slug": "mechanics",
+        "label": "Mechanics",
+        "dc": 30,
+        "useLimit": null,
+        "requiresGmApproval": true,
+        "notes": "string"
+      }
+    ],
+    "secondarySkills": [],
+    "effects": [
+      {
+        "type": "catastrophicFailure",
+        "label": "Catastrophic Failure",
+        "enabled": true,
+        "parameters": {
+          "threshold": 10,
+          "extraFailures": 1
+        },
+        "notes": "Failed checks by 10 or more count as additional failures."
+      }
+    ],
+    "participants": [
+      {
+        "actorId": "string",
+        "tokenId": "string optional",
+        "name": "string",
+        "active": true,
+        "notes": "string"
+      }
+    ],
+    "history": []
   },
-  "integrationPoints": {
-    "skillRolls": "Reuse existing actor skill roll/skill math. The challenge app should consume finalized roll totals instead of recalculating skills.",
-    "chatCards": "Emit progress cards after each accepted check, with GM controls for accept, reject, convert to aid another, or manually adjust successes/failures.",
-    "feats": "Skill Challenge feats stay metadata-only until the app exists; then the app can read actor feat slugs and expose eligible buttons/reroll/effect toggles.",
-    "combat": "Allow use during combat, but keep state in the challenge engine, not in CombatEngine. Combat actions can reference a running challenge by id.",
-    "gmDatapad": "Optional launcher/monitor panel after MVP. Do not make GM Datapad the source of truth."
+  "rollContext": {
+    "actorId": "string",
+    "tokenId": "string optional",
+    "skillSlug": "string",
+    "total": "number",
+    "dc": "number optional; defaults from challenge skill entry",
+    "rollMessageId": "string optional",
+    "declaredUse": "string optional",
+    "gmReviewRequired": true
   },
-  "phasePlan": [
-    {
-      "phase": "SC-0",
-      "title": "Metadata and audit only",
-      "deliverable": "Current Phase 3 manifest and design reference."
-    },
-    {
-      "phase": "SC-1",
-      "title": "Engine and JSON model",
-      "deliverable": "Pure state transition functions plus tests for successes, failures, complexity, effects, and manual overrides."
-    },
-    {
-      "phase": "SC-2",
-      "title": "GM app and chat card",
-      "deliverable": "Create/edit/run a Skill Challenge; accept skill rolls; emit progress chat cards."
-    },
-    {
-      "phase": "SC-3",
-      "title": "Feat hooks",
-      "deliverable": "Skill Challenge: Recovery, Last Resort, and Catastrophic Avoidance appear as app-level options when a participant has the feat."
-    }
-  ]
+  "outcome": {
+    "outcome": "success | failure | ignored | gm_review",
+    "counted": "boolean",
+    "successesDelta": "number",
+    "failuresDelta": "number",
+    "messages": []
+  }
 }
