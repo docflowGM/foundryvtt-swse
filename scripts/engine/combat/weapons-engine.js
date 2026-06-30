@@ -8,8 +8,10 @@
 
 import { SWSELogger as swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ModifierSource, ModifierType, createModifier } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierTypes.js";
-import { getDamageAbilityContribution, getHalfLevelDamageBonus, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus, isRangedWeapon as isRawRangedWeapon, isVehicleWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
-import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
+import { isVehicleWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+// Breakdown delegates to the canonical roll-math resolvers so tooltips always
+// reflect the exact same math used by actual attack/damage rolls (attacks.js).
+import { resolveAttackBonus, resolveDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 
 export class WeaponsEngine {
 
@@ -412,55 +414,18 @@ export class WeaponsEngine {
     if (!actor || !weapon || weapon.type !== 'weapon') {
       return { total: 0, components: {} };
     }
-
-    const bab = actor.system?.derived?.bab ?? actor.system?.bab ?? 0;
-    const abilityKey = getWeaponAttackAbility(actor, weapon);
-    const abilityMod = SchemaAdapters.getAbilityMod(actor, abilityKey);
-    const enhancement = getWeaponFlatAttackBonus(weapon);
-
-    const proficient = this.isProficientForAttack(actor, weapon);
-
-    const proficiencyPenalty = proficient ? 0 : -5;
-
-    const total =
-      bab +
-      abilityMod +
-      enhancement +
-      proficiencyPenalty;
-
-    return {
-      total,
-      components: {
-        'BAB': bab,
-        [`Ability (${abilityKey.toUpperCase()})`]: abilityMod,
-        'Enhancement': enhancement,
-        'Proficiency': proficiencyPenalty
-      }
-    };
+    // Delegates to canonical resolver — identical math to actual attack rolls.
+    const result = resolveAttackBonus(actor, weapon);
+    return { total: result.total, components: result.components };
   }
 
   static getDamageBonusBreakdown(actor, weapon) {
     if (!actor || !weapon || weapon.type !== 'weapon') {
       return { total: 0, components: {} };
     }
-
-    const halfLvl = getHalfLevelDamageBonus(actor, weapon, { weapon, isWeaponDamage: true });
-    const abilityMod = getDamageAbilityContribution(actor, weapon);
-    const enhancement = getWeaponFlatDamageBonus(weapon);
-
-    const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
-    const speciesBonus = isRawRangedWeapon(weapon) ? (speciesCombat.rangedDamage || 0) : (speciesCombat.meleeDamage || 0);
-
-    const components = {
-      '½ Level': halfLvl,
-      'Ability': abilityMod,
-      'Enhancement': enhancement
-    };
-    if (speciesBonus !== 0) components['Species'] = speciesBonus;
-
-    const total = halfLvl + abilityMod + enhancement + speciesBonus;
-
-    return { total, components };
+    // Delegates to canonical resolver — identical math to actual damage rolls.
+    const result = resolveDamageBonus(actor, weapon);
+    return { total: result.total, components: result.components };
   }
 
   /* ============================================================
