@@ -1,0 +1,239 @@
+{
+  "phase": "phase-5-scavengers-guide-to-droids",
+  "sourcebook": "Scavenger's Guide to Droids",
+  "sourcebookShort": "SGtD",
+  "purpose": "Audit and classify Scavenger's Guide to Droids feat parity without broad droid-system automation creep.",
+  "sourceBasis": {
+    "uploadedPdf": "SW Saga - Scavenger's Guide to Droids (optimized).pdf",
+    "tocObservedSections": [
+      "Chapter I: Droid Heroes",
+      "Table 1-3: Feats",
+      "Feats",
+      "Droid Talents",
+      "Chapter III: Droid Equipment",
+      "Chapter IV: Droid Codex"
+    ],
+    "notes": [
+      "The uploaded PDF contents identify the droid hero chapter, feat section, droid equipment chapter, and droid codex as distinct rule domains.",
+      "This phase is feat parity and readiness only. Droid chassis, equipment, pricing, and codex actorization should be separate subsystems/phases."
+    ]
+  },
+  "expectedFeats": [
+    {
+      "name": "Aiming Accuracy",
+      "page": 18,
+      "classification": "attack_option_contextual",
+      "mechanicsMode": "conditional_attack_option",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "metadata_ready",
+      "notes": "Requires aim/full-round action context, target persistence, and next-attack timing."
+    },
+    {
+      "name": "Damage Conversion",
+      "page": 18,
+      "classification": "damage_threshold_reaction",
+      "mechanicsMode": "damage_workflow_reaction",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "future_damage_workflow_hook",
+      "notes": "Should be GM/player confirmed when qualifying non-area, non-ion, non-Force damage would move the droid down the condition track."
+    },
+    {
+      "name": "Distracting Droid",
+      "page": 19,
+      "classification": "skill_attack_action",
+      "mechanicsMode": "active_skill_vs_will",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "action_card_candidate",
+      "notes": "Area enemy selection and can-see/can-hear adjudication should remain GM-confirmed."
+    },
+    {
+      "name": "Droid Focus",
+      "page": 19,
+      "classification": "scoped_choice_droid_degree",
+      "mechanicsMode": "conditional_choice_required",
+      "staticSheetPolicy": "roll_context_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": true,
+      "choiceDomain": ["1st-Degree", "2nd-Degree", "3rd-Degree", "4th-Degree", "5th-Degree"],
+      "automationReadiness": "choice_metadata_ready",
+      "notes": "Repeatable by different droid degree. Bonuses require target/source droid-degree context."
+    },
+    {
+      "name": "Droid Shield Mastery",
+      "page": 20,
+      "classification": "shield_action_rule",
+      "mechanicsMode": "shield_recharge_action",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "requires_shield_subsystem",
+      "notes": "Should attach to a future personal/droid shield recharge action, not static defenses."
+    },
+    {
+      "name": "Erratic Target",
+      "page": 20,
+      "classification": "movement_for_dodge_tradeoff",
+      "mechanicsMode": "gm_managed_toggle",
+      "staticSheetPolicy": "contextual_toggle_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "manual_toggle_candidate",
+      "notes": "Movement reduction and dodge bonus are turn/position context, not passive Reflex math."
+    },
+    {
+      "name": "Ion Shielding",
+      "page": 20,
+      "classification": "ion_damage_condition_track_rule",
+      "mechanicsMode": "damage_type_condition_track_rule",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "future_damage_workflow_hook",
+      "notes": "Only relevant when ion damage exceeds DT and would worsen condition."
+    },
+    {
+      "name": "Logic Upgrade: Skill Swap",
+      "page": 20,
+      "classification": "progression_choice_skill_training",
+      "mechanicsMode": "choice_required_progression",
+      "staticSheetPolicy": "derived_skill_training",
+      "requiresRuntimeContext": false,
+      "requiresSelectedChoice": true,
+      "automationReadiness": "implemented_progression_choice",
+      "notes": "Should remain chargen/progression choice metadata, not a generic roll bonus."
+    },
+    {
+      "name": "Mechanical Martial Arts",
+      "page": 21,
+      "classification": "unarmed_hit_rider",
+      "mechanicsMode": "attack_result_rider",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "future_attack_result_hook",
+      "notes": "Requires hit confirmation and one-round target penalty tracking."
+    },
+    {
+      "name": "Multi-Targeting",
+      "page": 21,
+      "classification": "aim_state_tracker",
+      "mechanicsMode": "active_aim_metadata",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "action_state_candidate",
+      "notes": "Needs aim-state persistence across rounds/targets before automation."
+    },
+    {
+      "name": "Pincer",
+      "page": 21,
+      "classification": "grapple_action_rider",
+      "mechanicsMode": "grapple_context_rule",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "future_grapple_workflow_hook",
+      "notes": "Depends on Pin/Crush feat ownership and a grapple workflow."
+    },
+    {
+      "name": "Pinpoint Accuracy",
+      "page": 21,
+      "classification": "aiming_accuracy_rider",
+      "mechanicsMode": "attack_result_rider",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "future_attack_result_hook",
+      "notes": "Rider should trigger from a qualifying Aiming Accuracy hit."
+    },
+    {
+      "name": "Sensor Link",
+      "page": 21,
+      "classification": "ally_sensor_share",
+      "mechanicsMode": "table_context_metadata",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "metadata_only_until_sensor_link_ui",
+      "notes": "Awareness sharing and Aid Another availability are table-contextual."
+    },
+    {
+      "name": "Shield Surge",
+      "page": 22,
+      "classification": "vehicle_shield_reaction",
+      "mechanicsMode": "vehicle_damage_reaction",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "requires_vehicle_shield_damage_workflow",
+      "notes": "Must not be implemented as actor static mitigation. Requires vehicle shield state."
+    },
+    {
+      "name": "Slammer",
+      "page": 22,
+      "classification": "special_melee_attack",
+      "mechanicsMode": "attack_option",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "action_card_candidate",
+      "notes": "Special attack with appendage and threshold rider; not a passive unarmed damage bonus."
+    },
+    {
+      "name": "Tool Frenzy",
+      "page": 22,
+      "classification": "special_tool_appendage_attack",
+      "mechanicsMode": "attack_option_with_reflex_penalty",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "action_card_candidate",
+      "notes": "Needs temporary Reflex penalty and appendage damage source selection."
+    },
+    {
+      "name": "Turn and Burn",
+      "page": 22,
+      "classification": "mobility_reaction_resource",
+      "mechanicsMode": "withdraw_action_metadata",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "manual_action_metadata",
+      "notes": "Withdraw replacement and Force Point reaction require movement/combat timing adjudication."
+    }
+  ],
+  "droidRulesNotInThisPhase": [
+    {
+      "domain": "stock_droid_chassis",
+      "reason": "This is chargen/species-chassis work and should be handled in the character creation/data model track."
+    },
+    {
+      "domain": "droid_manufacturer_traits",
+      "reason": "Manufacturer traits are chassis/model traits and should be modeled as droid-origin traits, not feats."
+    },
+    {
+      "domain": "droid_equipment_and_accessories",
+      "reason": "Needs equipment catalogs, installation state, and store categorization work."
+    },
+    {
+      "domain": "droids_as_equipment_and_actorization",
+      "reason": "Needs a separate actorization/equipment companion architecture and should not be hidden inside feat parity."
+    },
+    {
+      "domain": "droid_codex_stat_blocks",
+      "reason": "These are NPC/stock model data imports and token/actor creation work, not feat automation."
+    }
+  ],
+  "recommendedNextWork": [
+    "Add action-card candidates for Aiming Accuracy, Distracting Droid, Slammer, and Tool Frenzy after confirming the current action-card architecture.",
+    "Add damage-workflow hooks for Damage Conversion and Ion Shielding only after condition-track prompts can be GM-confirmed.",
+    "Add shield workflow support before automating Droid Shield Mastery or Shield Surge.",
+    "Audit droid chassis/species traits separately from feats."
+  ]
+}
