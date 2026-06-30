@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "phase": "phase-10a-runtime-status-overrides",
+  "purpose": "Surgical Phase 10A overlay for implementation-readiness audits where current runtime inspection proves an earlier Phase 9 status was stale, or where a known wrong-shape implementation must remain blocked until corrected.",
+  "rules": [
+    "These overrides are audit/status overlays only; they do not create parallel feat runtime systems.",
+    "Use existing runtime engines and registries as the source of proof.",
+    "implemented_correct overrides require concrete runtime consumers, not metadata alone.",
+    "implemented_incorrect overrides preserve fail-closed guards for known wrong-shape automation."
+  ],
+  "overrides": [
+    {
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "name": "Implant Training",
+      "status": "implemented_correct",
+      "confidence": "high",
+      "reason": "Current runtime has ImplantRules, DefenseCalculator, and ActorEngine condition-shift integration. ImplantRules.hasImplantTraining suppresses active implant Will penalties and extra downward condition-track steps, DefenseCalculator includes ImplantRules.getWillDefensePenalty in Will Defense math, and ActorEngine.applyConditionShift consults ImplantRules.getConditionTrackExtraStep.",
+      "implementationMode": "implant_penalty_suppression",
+      "runtimeHome": [
+        "scripts/engine/implants/ImplantRules.js",
+        "scripts/actors/derived/defense-calculator.js",
+        "scripts/governance/actor-engine/actor-engine.js"
+      ],
+      "observedImplementation": "Runtime suppression is implemented in existing implant/defense/condition engines; not merely metadata.",
+      "accuracyFinding": "Promote from implemented_partial to implemented_correct for current repo state."
+    },
+    {
+      "sourcebook": "The Force Unleashed Campaign Guide",
+      "name": "Advantageous Attack",
+      "status": "implemented_incorrect",
+      "confidence": "high",
+      "reason": "Keep blocked: source rule is a damage rider against an enemy who has not yet acted, while current catalog observation still identifies wrong-shape ATTACK_OPTION/attack-option metadata. Do not promote until runtime damage timing context is implemented and wrong-shape metadata is quarantined or replaced.",
+      "implementationMode": "damage_result_timing_hook",
+      "runtimeHome": [
+        "scripts/engine/combat/combat-option-resolver.js",
+        "scripts/engine/combat/combat-roll-math.js",
+        "scripts/combat/rolls/attacks.js"
+      ],
+      "observedImplementation": "Wrong-shape implementation remains intentionally classified as implemented_incorrect.",
+      "accuracyFinding": "Phase 10A locks the guardrail so future audits do not accidentally count this as partial/correct merely because metadata exists."
+    }
+  ]
+}
