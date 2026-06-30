@@ -14,6 +14,8 @@
  * tagged/flagged as implants.
  */
 
+import { ImplantEffectRules } from '/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js';
+
 const SYSTEM_ID = 'foundryvtt-swse';
 
 const IMPLANT_TAGS = new Set([
@@ -32,7 +34,12 @@ const IMPLANT_TRAINING_SLUGS = new Set([
 
 export class ImplantRules {
   static getWillDefensePenalty(actor) {
-    return this.hasActiveImplant(actor) && !this.hasImplantTraining(actor) ? -2 : 0;
+    const genericImplantPenalty = this.hasActiveImplant(actor) && !this.hasImplantTraining(actor) ? -2 : 0;
+    const specificImplantPenalty = ImplantEffectRules.getSpecificWillDefensePenalty(actor);
+    // Avoid double-dipping when a specific implant has its own -2 Will penalty.
+    // The harsher penalty wins; multiple specific penalties can still stack if
+    // future source material explicitly requires it.
+    return Math.min(genericImplantPenalty, specificImplantPenalty);
   }
 
   static shouldApplyExtraConditionStep(actor) {
@@ -54,14 +61,15 @@ export class ImplantRules {
     return {
       hasImplant,
       hasImplantTraining: hasTraining,
-      willPenalty: hasImplant && !hasTraining ? -2 : 0,
+      willPenalty: this.getWillDefensePenalty(actor),
       extraConditionStep: hasImplant && !hasTraining ? 1 : 0,
       source: activeImplants.length > 0 ? 'item' : actorFlagged ? 'actor-flag' : 'none',
       activeImplants: activeImplants.map(item => ({
         id: item.id ?? item._id ?? '',
         name: item.name ?? 'Unnamed Implant',
         type: item.type ?? 'equipment'
-      }))
+      })),
+      effects: ImplantEffectRules.getEffectSummary(actor)
     };
   }
 
@@ -80,9 +88,21 @@ export class ImplantRules {
     const system = item.system ?? {};
     const usage = system.usage ?? {};
 
-    // Prefer explicit installed/integrated/equipped semantics when available.
-    if (system.installed === true || system.integrated === true || system.equipped === true) return true;
-    if (usage.installed === true || usage.integrated === true || usage.equipped === true) return true;
+    const installedLike = system.installed === true
+      || system.integrated === true
+      || system.equipped === true
+      || usage.installed === true
+      || usage.integrated === true
+      || usage.equipped === true;
+
+    // New implant rows expose a distinct Active toggle. If that field exists,
+    // require both installed/equipped/integrated state and Active=true. Older
+    // equipment without the explicit field keeps the prior installed/equipped behavior.
+    if (Object.prototype.hasOwnProperty.call(system, 'active') || Object.prototype.hasOwnProperty.call(usage, 'active')) {
+      return installedLike && (system.active === true || usage.active === true);
+    }
+
+    if (installedLike) return true;
 
     // If the item explicitly opts into implant rules, assume it counts while owned.
     if (this._truthy(system?.implantRules?.activeByOwnership)) return true;
@@ -170,6 +190,15 @@ export class ImplantRules {
     if (typeof value === 'string') return /^(true|yes|y|1|active|installed|equipped|integrated)$/i.test(value.trim());
     return false;
   }
+}
+
+try {
+  globalThis.game ??= {};
+  game.swse ??= {};
+  game.swse.implants ??= {};
+  game.swse.implants.ImplantRules = ImplantRules;
+} catch (_err) {
+  // Foundry globals unavailable during syntax/audit runs.
 }
 
 export default ImplantRules;

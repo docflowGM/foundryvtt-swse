@@ -13,7 +13,7 @@ import { SpeciesRerollHandler } from "/systems/foundryvtt-swse/scripts/species/s
 import { SkillFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/skills/skill-feat-resolver.js";
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
-import { SkillChallengeRollAdapter } from "/systems/foundryvtt-swse/scripts/engine/skill-challenges/SkillChallengeRollAdapter.js";
+import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 
 
 const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
@@ -197,9 +197,12 @@ export async function rollSkill(actor, skillKey, options = {}) {
     const total = chatRoll?.total ?? rollResult.finalTotal ?? 'unknown';
     const flavor = `${actor.name} used ${skillLabel} and got ${total}.`;
 
-    const rerollOptions = SkillFeatResolver.buildRerollChatOptions(actor, effectiveSkillKey, chatRoll, skillContext);
+    const rerollOptions = [
+      ...SkillFeatResolver.buildRerollChatOptions(actor, effectiveSkillKey, chatRoll, skillContext),
+      ...ImplantEffectRules.buildKnowledgeRerollOptions(actor, effectiveSkillKey, chatRoll)
+    ];
 
-    const skillRollMessage = await SWSEChat.postRoll({
+    await SWSEChat.postRoll({
       roll: chatRoll,
       actor,
       flavor,
@@ -207,12 +210,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
         swse: {
           skillRoll: true,
           skillKey: effectiveSkillKey,
-          skillLabel,
           skillUseKey: skillContext.useKey ?? null,
-          actorId: actor?.id ?? null,
-          actorName: actor?.name ?? null,
-          total,
-          dc: options?.dc ?? null,
           featSkillBonuses: featSkillBonuses.bonuses,
           rerollOptions
         }
@@ -236,15 +234,6 @@ export async function rollSkill(actor, skillKey, options = {}) {
         showRollCompanion: options?.showRollCompanion !== false,
         targetContext: options?.targetContext ?? null
       }
-    });
-
-    await SkillChallengeRollAdapter.postRollReviewCardFromSkillRoll({
-      actor,
-      message: skillRollMessage,
-      skillSlug: effectiveSkillKey,
-      skillLabel,
-      total,
-      dc: options?.dc ?? null
     });
 
     // PHASE 5: Offer species reroll if applicable

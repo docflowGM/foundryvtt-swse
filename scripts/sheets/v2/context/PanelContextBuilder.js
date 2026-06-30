@@ -518,6 +518,17 @@ export class PanelContextBuilder {
     const isDroidActor = String(this.actor?.type ?? '').toLowerCase() === 'droid' || this.actor?.system?.isDroid === true;
     const implantRows = entries.filter(entry => entry.type === 'equipment' && (entry.isImplant || entry.isActiveImplant));
     const implantState = ImplantRules.getImplantState(this.actor);
+    const implantEffects = implantState?.effects ?? {};
+    const effectChips = [];
+    if (Number(implantEffects.maxHpBonus || 0) !== 0) effectChips.push({ label: `Max HP +${Number(implantEffects.maxHpBonus || 0)}`, tone: 'safe' });
+    if (implantEffects.ignoreWeaponProficiencyPenalty) effectChips.push({ label: 'No weapon nonprof penalty', tone: 'safe' });
+    if (implantEffects.knowledgeSkillReroll) effectChips.push({ label: 'Knowledge reroll', tone: 'safe' });
+    if (implantEffects.poisonImmunity) effectChips.push({ label: 'Poison immunity', tone: 'safe' });
+    if (Number(implantEffects.stunDamageThresholdBonus || 0) !== 0) effectChips.push({ label: `Stun DT +${Number(implantEffects.stunDamageThresholdBonus || 0)}`, tone: 'safe' });
+    if (Number(implantEffects.naturalHealingMultiplier || 1) > 1) effectChips.push({ label: 'Natural healing x2', tone: 'safe' });
+    if (implantEffects.lowLightVision) effectChips.push({ label: 'Low-light vision', tone: 'safe' });
+    if (implantEffects.darkvision) effectChips.push({ label: 'Darkvision', tone: 'safe' });
+    if (implantEffects.forceAffectsDroids) effectChips.push({ label: 'Droid Force link: GM', tone: 'manual' });
     const implantPanel = {
       available: !isDroidActor,
       isDroidActor,
@@ -527,10 +538,13 @@ export class PanelContextBuilder {
       hasImplantTraining: implantState.hasImplantTraining === true,
       willPenalty: Number(implantState.willPenalty || 0),
       extraConditionStep: Number(implantState.extraConditionStep || 0),
+      effects: implantEffects,
+      effectChips: effectChips.map((chip) => ({ ...chip, className: chip.tone === 'manual' ? 'is-warning' : 'is-safe' })),
+      hasEffectChips: effectChips.length > 0,
       summary: implantState.hasImplant
         ? (implantState.hasImplantTraining
-          ? 'Active implant detected; Implant Training suppresses implant drawbacks.'
-          : 'Active implant detected; -2 Will Defense and +1 extra Condition Track step apply.')
+          ? 'Active implant detected; Implant Training suppresses generic implant drawbacks. Specific implant effects still apply.'
+          : 'Active implant detected; generic implant drawbacks and specific implant effects apply.')
         : 'No active implants detected.',
       emptyMessage: 'No gear is currently tagged as an implant. Edit an equipment item or use the item controls to mark one as an implant.',
       canEdit: this.sheet.isEditable

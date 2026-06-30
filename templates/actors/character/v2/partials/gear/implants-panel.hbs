@@ -26,6 +26,14 @@
     </div>
   </header>
 
+  {{#if inventoryPanel.implantPanel.hasEffectChips}}
+  <div class="gear-implants-panel__effects">
+    {{#each inventoryPanel.implantPanel.effectChips}}
+    <span class="gear-implants-panel__chip {{className}}">{{label}}</span>
+    {{/each}}
+  </div>
+  {{/if}}
+
   {{#if inventoryPanel.implantPanel.hasEntries}}
   <div class="gear-implants-panel__list">
     {{#each inventoryPanel.implantPanel.entries}}
@@ -93,6 +101,11 @@
   margin: 3px 0 0;
   color: #aebdcc;
   font-size: 12px;
+}
+.gear-implants-panel__effects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 .gear-implants-panel__rules {
   display: flex;
@@ -183,6 +196,11 @@
     align-items: stretch;
   }
   .gear-implant-row__actions,
-  .gear-implants-panel__rules { justify-content: flex-start; }
+  .gear-implants-panel__effects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.gear-implants-panel__rules { justify-content: flex-start; }
 }
 </style>

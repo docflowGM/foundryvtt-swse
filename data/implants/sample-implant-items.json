@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "items": [
     {
       "_id": "implant-bio-stabilizer",
@@ -12,15 +12,17 @@
           "cybernetic",
           "gear",
           "augmentation",
-          "implant-training-relevant"
+          "implant-training-relevant",
+          "implant-effect-ready",
+          "runtime_poison_immunity"
         ],
         "cost": 1750,
         "weight": 0,
         "size": "Tiny",
         "availability": "Restricted",
         "quantity": 1,
-        "description": "<p>Bio-Stabilizer Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p>",
-        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p>",
+        "description": "<p>Bio-Stabilizer Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p><p><strong>Implant Effect:</strong> Immune to poison while installed and active.</p>",
+        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p><p><strong>Implemented effect:</strong> Immune to poison while installed and active.</p>",
         "sourcebook": "Knights of the Old Republic Campaign Guide",
         "source": "Knights of the Old Republic Campaign Guide",
         "page": null,
@@ -84,10 +86,21 @@
           "implant": true,
           "requiresImplantTrainingToSuppressPenalties": true,
           "willDefensePenaltyWithoutTraining": -2,
-          "conditionTrackExtraStepWithoutTraining": 1
+          "conditionTrackExtraStepWithoutTraining": 1,
+          "implantEffectId": "implant-bio-stabilizer",
+          "implantEffectImplemented": "runtime_poison_immunity",
+          "implantEffectSummary": "Immune to poison while installed and active.",
+          "poisonImmunity": true
         },
         "skillHooks": [],
-        "normalizationStatus": "implant-phase4e-store-ready"
+        "normalizationStatus": "implant-phase4e-store-ready",
+        "implantEffectId": "implant-bio-stabilizer",
+        "implantEffects": {
+          "implantEffectId": "implant-bio-stabilizer",
+          "effectMode": "runtime_poison_immunity",
+          "poisonImmunity": true,
+          "summary": "Immune to poison while installed and active."
+        }
       },
       "effects": [],
       "folder": null,
@@ -99,7 +112,9 @@
         "foundryvtt-swse": {
           "equipmentBucket": "implants",
           "isImplant": true,
-          "implantPhase": "phase4e-store-catalog"
+          "implantPhase": "phase4e-store-catalog",
+          "implantEffectId": "implant-bio-stabilizer",
+          "implantEffectPhase": "phase4f-effects"
         }
       }
     },
@@ -114,15 +129,17 @@
           "cybernetic",
           "gear",
           "augmentation",
-          "implant-training-relevant"
+          "implant-training-relevant",
+          "implant-effect-ready",
+          "runtime_static"
         ],
         "cost": 4000,
         "weight": 0,
         "size": "Tiny",
         "availability": "Restricted",
         "quantity": 1,
-        "description": "<p>Cardio Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p>",
-        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p>",
+        "description": "<p>Cardio Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p><p><strong>Implant Effect:</strong> +5 maximum hit points while installed and active.</p>",
+        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p><p><strong>Implemented effect:</strong> +5 maximum hit points while installed and active.</p>",
         "sourcebook": "Knights of the Old Republic Campaign Guide",
         "source": "Knights of the Old Republic Campaign Guide",
         "page": null,
@@ -186,10 +203,21 @@
           "implant": true,
           "requiresImplantTrainingToSuppressPenalties": true,
           "willDefensePenaltyWithoutTraining": -2,
-          "conditionTrackExtraStepWithoutTraining": 1
+          "conditionTrackExtraStepWithoutTraining": 1,
+          "implantEffectId": "implant-cardio",
+          "maxHpBonus": 5,
+          "implantEffectImplemented": "runtime_static",
+          "implantEffectSummary": "+5 maximum hit points while installed and active."
         },
         "skillHooks": [],
-        "normalizationStatus": "implant-phase4e-store-ready"
+        "normalizationStatus": "implant-phase4e-store-ready",
+        "implantEffectId": "implant-cardio",
+        "implantEffects": {
+          "implantEffectId": "implant-cardio",
+          "effectMode": "runtime_static",
+          "maxHpBonus": 5,
+          "summary": "+5 maximum hit points while installed and active."
+        }
       },
       "effects": [],
       "folder": null,
@@ -201,7 +229,9 @@
         "foundryvtt-swse": {
           "equipmentBucket": "implants",
           "isImplant": true,
-          "implantPhase": "phase4e-store-catalog"
+          "implantPhase": "phase4e-store-catalog",
+          "implantEffectId": "implant-cardio",
+          "implantEffectPhase": "phase4f-effects"
         }
       }
     },
@@ -216,15 +246,17 @@
           "cybernetic",
           "gear",
           "augmentation",
-          "implant-training-relevant"
+          "implant-training-relevant",
+          "implant-effect-ready",
+          "runtime_attack_math"
         ],
         "cost": 5000,
         "weight": 0,
         "size": "Tiny",
         "availability": "Restricted",
         "quantity": 1,
-        "description": "<p>Combat Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p>",
-        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p>",
+        "description": "<p>Combat Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p><p><strong>Implant Effect:</strong> Eliminates weapon nonproficiency penalties while installed and active.</p>",
+        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p><p><strong>Implemented effect:</strong> Eliminates weapon nonproficiency penalties while installed and active.</p>",
         "sourcebook": "Knights of the Old Republic Campaign Guide",
         "source": "Knights of the Old Republic Campaign Guide",
         "page": null,
@@ -288,10 +320,21 @@
           "implant": true,
           "requiresImplantTrainingToSuppressPenalties": true,
           "willDefensePenaltyWithoutTraining": -2,
-          "conditionTrackExtraStepWithoutTraining": 1
+          "conditionTrackExtraStepWithoutTraining": 1,
+          "implantEffectId": "implant-combat",
+          "ignoreWeaponProficiencyPenalty": true,
+          "implantEffectImplemented": "runtime_attack_math",
+          "implantEffectSummary": "Eliminates weapon nonproficiency penalties while installed and active."
         },
         "skillHooks": [],
-        "normalizationStatus": "implant-phase4e-store-ready"
+        "normalizationStatus": "implant-phase4e-store-ready",
+        "implantEffectId": "implant-combat",
+        "implantEffects": {
+          "implantEffectId": "implant-combat",
+          "effectMode": "runtime_attack_math",
+          "ignoreWeaponProficiencyPenalty": true,
+          "summary": "Eliminates weapon nonproficiency penalties while installed and active."
+        }
       },
       "effects": [],
       "folder": null,
@@ -303,7 +346,9 @@
         "foundryvtt-swse": {
           "equipmentBucket": "implants",
           "isImplant": true,
-          "implantPhase": "phase4e-store-catalog"
+          "implantPhase": "phase4e-store-catalog",
+          "implantEffectId": "implant-combat",
+          "implantEffectPhase": "phase4f-effects"
         }
       }
     },
@@ -318,15 +363,17 @@
           "cybernetic",
           "gear",
           "augmentation",
-          "implant-training-relevant"
+          "implant-training-relevant",
+          "implant-effect-ready",
+          "runtime_chat_reroll_hook"
         ],
         "cost": 2000,
         "weight": 0,
         "size": "Tiny",
         "availability": "Restricted",
         "quantity": 1,
-        "description": "<p>Memory Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p>",
-        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p>",
+        "description": "<p>Memory Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p><p><strong>Implant Effect:</strong> Provides Knowledge reroll chat metadata while installed and active.</p>",
+        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p><p><strong>Implemented effect:</strong> Provides Knowledge reroll chat metadata while installed and active.</p>",
         "sourcebook": "Knights of the Old Republic Campaign Guide",
         "source": "Knights of the Old Republic Campaign Guide",
         "page": null,
@@ -390,10 +437,21 @@
           "implant": true,
           "requiresImplantTrainingToSuppressPenalties": true,
           "willDefensePenaltyWithoutTraining": -2,
-          "conditionTrackExtraStepWithoutTraining": 1
+          "conditionTrackExtraStepWithoutTraining": 1,
+          "implantEffectId": "implant-memory",
+          "knowledgeSkillReroll": true,
+          "implantEffectImplemented": "runtime_chat_reroll_hook",
+          "implantEffectSummary": "Provides Knowledge reroll chat metadata while installed and active."
         },
         "skillHooks": [],
-        "normalizationStatus": "implant-phase4e-store-ready"
+        "normalizationStatus": "implant-phase4e-store-ready",
+        "implantEffectId": "implant-memory",
+        "implantEffects": {
+          "implantEffectId": "implant-memory",
+          "effectMode": "runtime_chat_reroll_hook",
+          "knowledgeSkillReroll": true,
+          "summary": "Provides Knowledge reroll chat metadata while installed and active."
+        }
       },
       "effects": [],
       "folder": null,
@@ -405,7 +463,9 @@
         "foundryvtt-swse": {
           "equipmentBucket": "implants",
           "isImplant": true,
-          "implantPhase": "phase4e-store-catalog"
+          "implantPhase": "phase4e-store-catalog",
+          "implantEffectId": "implant-memory",
+          "implantEffectPhase": "phase4f-effects"
         }
       }
     },
@@ -420,15 +480,17 @@
           "cybernetic",
           "gear",
           "augmentation",
-          "implant-training-relevant"
+          "implant-training-relevant",
+          "implant-effect-ready",
+          "runtime_threshold_math"
         ],
         "cost": 5000,
         "weight": 0,
         "size": "Tiny",
         "availability": "Restricted",
         "quantity": 1,
-        "description": "<p>Nerve Reinforcement Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p>",
-        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p>",
+        "description": "<p>Nerve Reinforcement Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p><p><strong>Implant Effect:</strong> +5 damage threshold against stun damage while installed and active.</p>",
+        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p><p><strong>Implemented effect:</strong> +5 damage threshold against stun damage while installed and active.</p>",
         "sourcebook": "Knights of the Old Republic Campaign Guide",
         "source": "Knights of the Old Republic Campaign Guide",
         "page": null,
@@ -492,10 +554,21 @@
           "implant": true,
           "requiresImplantTrainingToSuppressPenalties": true,
           "willDefensePenaltyWithoutTraining": -2,
-          "conditionTrackExtraStepWithoutTraining": 1
+          "conditionTrackExtraStepWithoutTraining": 1,
+          "implantEffectId": "implant-nerve-reinforcement",
+          "stunDamageThresholdBonus": 5,
+          "implantEffectImplemented": "runtime_threshold_math",
+          "implantEffectSummary": "+5 damage threshold against stun damage while installed and active."
         },
         "skillHooks": [],
-        "normalizationStatus": "implant-phase4e-store-ready"
+        "normalizationStatus": "implant-phase4e-store-ready",
+        "implantEffectId": "implant-nerve-reinforcement",
+        "implantEffects": {
+          "implantEffectId": "implant-nerve-reinforcement",
+          "effectMode": "runtime_threshold_math",
+          "stunDamageThresholdBonus": 5,
+          "summary": "+5 damage threshold against stun damage while installed and active."
+        }
       },
       "effects": [],
       "folder": null,
@@ -507,7 +580,9 @@
         "foundryvtt-swse": {
           "equipmentBucket": "implants",
           "isImplant": true,
-          "implantPhase": "phase4e-store-catalog"
+          "implantPhase": "phase4e-store-catalog",
+          "implantEffectId": "implant-nerve-reinforcement",
+          "implantEffectPhase": "phase4f-effects"
         }
       }
     },
@@ -522,15 +597,17 @@
           "cybernetic",
           "gear",
           "augmentation",
-          "implant-training-relevant"
+          "implant-training-relevant",
+          "implant-effect-ready",
+          "runtime_helper_ready"
         ],
         "cost": 4250,
         "weight": 0,
         "size": "Tiny",
         "availability": "Restricted",
         "quantity": 1,
-        "description": "<p>Regenerative Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p>",
-        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p>",
+        "description": "<p>Regenerative Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p><p><strong>Implant Effect:</strong> Doubles natural healing while installed and active. Exposed through ImplantEffectRules for rest/healing workflows.</p>",
+        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p><p><strong>Implemented effect:</strong> Doubles natural healing while installed and active. Exposed through ImplantEffectRules for rest/healing workflows.</p>",
         "sourcebook": "Knights of the Old Republic Campaign Guide",
         "source": "Knights of the Old Republic Campaign Guide",
         "page": null,
@@ -594,10 +671,21 @@
           "implant": true,
           "requiresImplantTrainingToSuppressPenalties": true,
           "willDefensePenaltyWithoutTraining": -2,
-          "conditionTrackExtraStepWithoutTraining": 1
+          "conditionTrackExtraStepWithoutTraining": 1,
+          "implantEffectId": "implant-regenerative",
+          "naturalHealingMultiplier": 2,
+          "implantEffectImplemented": "runtime_helper_ready",
+          "implantEffectSummary": "Doubles natural healing while installed and active. Exposed through ImplantEffectRules for rest/healing workflows."
         },
         "skillHooks": [],
-        "normalizationStatus": "implant-phase4e-store-ready"
+        "normalizationStatus": "implant-phase4e-store-ready",
+        "implantEffectId": "implant-regenerative",
+        "implantEffects": {
+          "implantEffectId": "implant-regenerative",
+          "effectMode": "runtime_helper_ready",
+          "naturalHealingMultiplier": 2,
+          "summary": "Doubles natural healing while installed and active. Exposed through ImplantEffectRules for rest/healing workflows."
+        }
       },
       "effects": [],
       "folder": null,
@@ -609,7 +697,9 @@
         "foundryvtt-swse": {
           "equipmentBucket": "implants",
           "isImplant": true,
-          "implantPhase": "phase4e-store-catalog"
+          "implantPhase": "phase4e-store-catalog",
+          "implantEffectId": "implant-regenerative",
+          "implantEffectPhase": "phase4f-effects"
         }
       }
     },
@@ -624,15 +714,17 @@
           "cybernetic",
           "gear",
           "augmentation",
-          "implant-training-relevant"
+          "implant-training-relevant",
+          "implant-effect-ready",
+          "runtime_derived_visibility"
         ],
         "cost": 2500,
         "weight": 0,
         "size": "Tiny",
         "availability": "Restricted",
         "quantity": 1,
-        "description": "<p>Sensory Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p>",
-        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p>",
+        "description": "<p>Sensory Implant is an implant from the Knights of the Old Republic Campaign Guide. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p><p><strong>Implant Effect:</strong> Grants low-light vision and darkvision while installed and active.</p>",
+        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p><p><strong>Implemented effect:</strong> Grants low-light vision and darkvision while installed and active.</p>",
         "sourcebook": "Knights of the Old Republic Campaign Guide",
         "source": "Knights of the Old Republic Campaign Guide",
         "page": null,
@@ -696,10 +788,27 @@
           "implant": true,
           "requiresImplantTrainingToSuppressPenalties": true,
           "willDefensePenaltyWithoutTraining": -2,
-          "conditionTrackExtraStepWithoutTraining": 1
+          "conditionTrackExtraStepWithoutTraining": 1,
+          "implantEffectId": "implant-sensory",
+          "visionModes": [
+            "lowLightVision",
+            "darkvision"
+          ],
+          "implantEffectImplemented": "runtime_derived_visibility",
+          "implantEffectSummary": "Grants low-light vision and darkvision while installed and active."
         },
         "skillHooks": [],
-        "normalizationStatus": "implant-phase4e-store-ready"
+        "normalizationStatus": "implant-phase4e-store-ready",
+        "implantEffectId": "implant-sensory",
+        "implantEffects": {
+          "implantEffectId": "implant-sensory",
+          "effectMode": "runtime_derived_visibility",
+          "visionModes": [
+            "lowLightVision",
+            "darkvision"
+          ],
+          "summary": "Grants low-light vision and darkvision while installed and active."
+        }
       },
       "effects": [],
       "folder": null,
@@ -711,7 +820,9 @@
         "foundryvtt-swse": {
           "equipmentBucket": "implants",
           "isImplant": true,
-          "implantPhase": "phase4e-store-catalog"
+          "implantPhase": "phase4e-store-catalog",
+          "implantEffectId": "implant-sensory",
+          "implantEffectPhase": "phase4f-effects"
         }
       }
     },
@@ -726,15 +837,17 @@
           "cybernetic",
           "gear",
           "augmentation",
-          "implant-training-relevant"
+          "implant-training-relevant",
+          "implant-effect-ready",
+          "metadata_plus_will_penalty"
         ],
         "cost": 23000,
         "weight": 0,
         "size": "Tiny",
         "availability": "Restricted",
         "quantity": 1,
-        "description": "<p>A specialized implant-grade converter from the Jedi Academy Training Manual. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p>",
-        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p>",
+        "description": "<p>A specialized implant-grade converter from the Jedi Academy Training Manual. Treat as an implant for system tagging, store placement, and Implant Training penalty/suppression rules once installed and active.</p><p><strong>Implant Effect:</strong> Metadata/manual except for -2 Will Defense while installed and active. GM adjudicates droid-targeting Force interactions.</p>",
+        "notes": "<p><strong>Implant:</strong> If installed and active, this item counts as an implant. Characters without Implant Training suffer the implant Will Defense penalty and extra condition-track worsening from ImplantRules.</p><p><strong>Implemented effect:</strong> Subelectronic Converter is intentionally metadata/manual except for its -2 Will Defense penalty while installed and active. Consult Jedi Academy Training Manual for droid-targeting Force power adjudication.</p>",
         "sourcebook": "Jedi Academy Training Manual",
         "source": "Jedi Academy Training Manual",
         "page": null,
@@ -758,7 +871,7 @@
         "isImplant": true,
         "implant": true,
         "implantCategory": "jatm-implant",
-        "implantTrainingRelevant": true,
+        "implantTrainingRelevant": false,
         "traits": [
           "implant",
           "cybernetic",
@@ -798,10 +911,35 @@
           "implant": true,
           "requiresImplantTrainingToSuppressPenalties": true,
           "willDefensePenaltyWithoutTraining": -2,
-          "conditionTrackExtraStepWithoutTraining": 1
+          "conditionTrackExtraStepWithoutTraining": 1,
+          "implantEffectId": "implant-subelectronic-converter",
+          "metadataOnlyExceptWillPenalty": true,
+          "willDefensePenalty": -2,
+          "forceAffectsDroids": true,
+          "implantEffectImplemented": "metadata_plus_will_penalty",
+          "implantEffectSummary": "Metadata/manual except for -2 Will Defense while installed and active. GM adjudicates droid-targeting Force interactions."
         },
-        "skillHooks": [],
-        "normalizationStatus": "implant-phase4e-store-ready"
+        "skillHooks": [
+          {
+            "skill": "useTheForce",
+            "useKey": "mind-affecting-force-on-droids",
+            "mode": "metadata_enables",
+            "bonus": null,
+            "source": "Subelectronic Converter",
+            "note": "Allows GM-adjudicated use of normally mind-affecting Force powers against droids; applies -2 Will Defense while active."
+          }
+        ],
+        "normalizationStatus": "implant-phase4e-store-ready",
+        "implantEffectId": "implant-subelectronic-converter",
+        "implantEffects": {
+          "implantEffectId": "implant-subelectronic-converter",
+          "effectMode": "metadata_plus_will_penalty",
+          "metadataOnlyExceptWillPenalty": true,
+          "willDefensePenalty": -2,
+          "forceAffectsDroids": true,
+          "summary": "Metadata/manual except for -2 Will Defense while installed and active. GM adjudicates droid-targeting Force interactions."
+        },
+        "staticSheetPolicy": "metadata_only_except_will_penalty"
       },
       "effects": [],
       "folder": null,
@@ -813,7 +951,9 @@
         "foundryvtt-swse": {
           "equipmentBucket": "implants",
           "isImplant": true,
-          "implantPhase": "phase4e-store-catalog"
+          "implantPhase": "phase4e-store-catalog",
+          "implantEffectId": "implant-subelectronic-converter",
+          "implantEffectPhase": "phase4f-effects"
         }
       }
     }

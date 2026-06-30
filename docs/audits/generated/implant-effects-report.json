@@ -1,0 +1,283 @@
+{
+  "generatedAt": "2026-06-30T13:54:37.638Z",
+  "phase": "implants-phase4f-effects",
+  "ok": 55,
+  "errors": 0,
+  "checks": [
+    {
+      "id": "effect-rules-module",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "effect-data-catalog",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "effect-data:implant-bio-stabilizer",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "effect-data:implant-cardio",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "effect-data:implant-combat",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "effect-data:implant-memory",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "effect-data:implant-nerve-reinforcement",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "effect-data:implant-regenerative",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "effect-data:implant-sensory",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "effect-data:implant-subelectronic-converter",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "hook:scripts/engine/implants/ImplantRules.js",
+      "status": "ok",
+      "detail": "Expected ImplantEffectRules import/reference or implant effect UI projection."
+    },
+    {
+      "id": "hook:scripts/engine/poison/poison-engine.js",
+      "status": "ok",
+      "detail": "Expected ImplantEffectRules import/reference or implant effect UI projection."
+    },
+    {
+      "id": "hook:scripts/actors/derived/hp-calculator.js",
+      "status": "ok",
+      "detail": "Expected ImplantEffectRules import/reference or implant effect UI projection."
+    },
+    {
+      "id": "hook:scripts/engine/combat/combat-roll-math.js",
+      "status": "ok",
+      "detail": "Expected ImplantEffectRules import/reference or implant effect UI projection."
+    },
+    {
+      "id": "hook:scripts/engine/combat/threshold-engine.js",
+      "status": "ok",
+      "detail": "Expected ImplantEffectRules import/reference or implant effect UI projection."
+    },
+    {
+      "id": "hook:scripts/holonet/subsystems/gm-healing-trigger.js",
+      "status": "ok",
+      "detail": "Expected ImplantEffectRules import/reference or implant effect UI projection."
+    },
+    {
+      "id": "hook:scripts/rolls/skills.js",
+      "status": "ok",
+      "detail": "Expected ImplantEffectRules import/reference or implant effect UI projection."
+    },
+    {
+      "id": "hook:scripts/sheets/v2/context/PanelContextBuilder.js",
+      "status": "ok",
+      "detail": "Expected ImplantEffectRules import/reference or implant effect UI projection."
+    },
+    {
+      "id": "reference:implant-bio-stabilizer",
+      "status": "ok",
+      "detail": "Missing implantEffects metadata."
+    },
+    {
+      "id": "reference:implant-cardio",
+      "status": "ok",
+      "detail": "Missing implantEffects metadata."
+    },
+    {
+      "id": "reference:implant-combat",
+      "status": "ok",
+      "detail": "Missing implantEffects metadata."
+    },
+    {
+      "id": "reference:implant-memory",
+      "status": "ok",
+      "detail": "Missing implantEffects metadata."
+    },
+    {
+      "id": "reference:implant-nerve-reinforcement",
+      "status": "ok",
+      "detail": "Missing implantEffects metadata."
+    },
+    {
+      "id": "reference:implant-regenerative",
+      "status": "ok",
+      "detail": "Missing implantEffects metadata."
+    },
+    {
+      "id": "reference:implant-sensory",
+      "status": "ok",
+      "detail": "Missing implantEffects metadata."
+    },
+    {
+      "id": "reference:implant-subelectronic-converter",
+      "status": "ok",
+      "detail": "Missing implantEffects metadata."
+    },
+    {
+      "id": "bio-stabilizer-poison-immunity",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "subelectronic-policy",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment.db:implant-bio-stabilizer",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment.db:implant-cardio",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment.db:implant-combat",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment.db:implant-memory",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment.db:implant-nerve-reinforcement",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment.db:implant-regenerative",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment.db:implant-sensory",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment.db:implant-subelectronic-converter",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment.db:bio-stabilizer-poison-immunity",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment-tech.db:implant-bio-stabilizer",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment-tech.db:implant-cardio",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment-tech.db:implant-combat",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment-tech.db:implant-memory",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment-tech.db:implant-nerve-reinforcement",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment-tech.db:implant-regenerative",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment-tech.db:implant-sensory",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment-tech.db:implant-subelectronic-converter",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "packs/equipment-tech.db:bio-stabilizer-poison-immunity",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "sample:implant-bio-stabilizer",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "sample:implant-cardio",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "sample:implant-combat",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "sample:implant-memory",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "sample:implant-nerve-reinforcement",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "sample:implant-regenerative",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "sample:implant-sensory",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "sample:implant-subelectronic-converter",
+      "status": "ok",
+      "detail": ""
+    },
+    {
+      "id": "sample:bio-stabilizer-poison-immunity",
+      "status": "ok",
+      "detail": ""
+    }
+  ]
+}

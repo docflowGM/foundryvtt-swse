@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 2,
-  "phase": "implants-phase4e-store-catalog",
+  "schemaVersion": 3,
+  "phase": "implants-phase4f-effects",
   "policy": "Only explicitly tagged active implant items trigger ImplantRules penalties. Generic cybernetics, prostheses, biotech, and droid systems remain distinct.",
   "sources": [
     "Knights of the Old Republic Campaign Guide",
@@ -17,8 +17,15 @@
       "storeSubcategory": "KOTOR Implants",
       "countsAsImplant": true,
       "implantTrainingRelevant": true,
-      "staticSheetPolicy": "exclude_until_installed_active",
-      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+      "staticSheetPolicy": "runtime_when_installed_active",
+      "notes": "Immune to poison while installed and active.",
+      "implementationStatus": "implemented_effects_phase4f",
+      "implantEffects": {
+        "implantEffectId": "implant-bio-stabilizer",
+        "effectMode": "runtime_poison_immunity",
+        "poisonImmunity": true,
+        "summary": "Immune to poison while installed and active."
+      }
     },
     {
       "id": "implant-cardio",
@@ -30,8 +37,15 @@
       "storeSubcategory": "KOTOR Implants",
       "countsAsImplant": true,
       "implantTrainingRelevant": true,
-      "staticSheetPolicy": "exclude_until_installed_active",
-      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+      "staticSheetPolicy": "runtime_when_installed_active",
+      "notes": "+5 maximum hit points while installed and active.",
+      "implementationStatus": "implemented_effects_phase4f",
+      "implantEffects": {
+        "implantEffectId": "implant-cardio",
+        "effectMode": "runtime_static",
+        "maxHpBonus": 5,
+        "summary": "+5 maximum hit points while installed and active."
+      }
     },
     {
       "id": "implant-combat",
@@ -43,8 +57,15 @@
       "storeSubcategory": "KOTOR Implants",
       "countsAsImplant": true,
       "implantTrainingRelevant": true,
-      "staticSheetPolicy": "exclude_until_installed_active",
-      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+      "staticSheetPolicy": "runtime_when_installed_active",
+      "notes": "Eliminates weapon nonproficiency penalties while installed and active.",
+      "implementationStatus": "implemented_effects_phase4f",
+      "implantEffects": {
+        "implantEffectId": "implant-combat",
+        "effectMode": "runtime_attack_math",
+        "ignoreWeaponProficiencyPenalty": true,
+        "summary": "Eliminates weapon nonproficiency penalties while installed and active."
+      }
     },
     {
       "id": "implant-memory",
@@ -56,8 +77,15 @@
       "storeSubcategory": "KOTOR Implants",
       "countsAsImplant": true,
       "implantTrainingRelevant": true,
-      "staticSheetPolicy": "exclude_until_installed_active",
-      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+      "staticSheetPolicy": "runtime_when_installed_active",
+      "notes": "Provides Knowledge reroll chat metadata while installed and active.",
+      "implementationStatus": "implemented_effects_phase4f",
+      "implantEffects": {
+        "implantEffectId": "implant-memory",
+        "effectMode": "runtime_chat_reroll_hook",
+        "knowledgeSkillReroll": true,
+        "summary": "Provides Knowledge reroll chat metadata while installed and active."
+      }
     },
     {
       "id": "implant-nerve-reinforcement",
@@ -69,8 +97,15 @@
       "storeSubcategory": "KOTOR Implants",
       "countsAsImplant": true,
       "implantTrainingRelevant": true,
-      "staticSheetPolicy": "exclude_until_installed_active",
-      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+      "staticSheetPolicy": "runtime_when_installed_active",
+      "notes": "+5 damage threshold against stun damage while installed and active.",
+      "implementationStatus": "implemented_effects_phase4f",
+      "implantEffects": {
+        "implantEffectId": "implant-nerve-reinforcement",
+        "effectMode": "runtime_threshold_math",
+        "stunDamageThresholdBonus": 5,
+        "summary": "+5 damage threshold against stun damage while installed and active."
+      }
     },
     {
       "id": "implant-regenerative",
@@ -82,8 +117,15 @@
       "storeSubcategory": "KOTOR Implants",
       "countsAsImplant": true,
       "implantTrainingRelevant": true,
-      "staticSheetPolicy": "exclude_until_installed_active",
-      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+      "staticSheetPolicy": "runtime_when_installed_active",
+      "notes": "Doubles natural healing while installed and active. Exposed through ImplantEffectRules for rest/healing workflows.",
+      "implementationStatus": "implemented_effects_phase4f",
+      "implantEffects": {
+        "implantEffectId": "implant-regenerative",
+        "effectMode": "runtime_helper_ready",
+        "naturalHealingMultiplier": 2,
+        "summary": "Doubles natural healing while installed and active. Exposed through ImplantEffectRules for rest/healing workflows."
+      }
     },
     {
       "id": "implant-sensory",
@@ -95,8 +137,18 @@
       "storeSubcategory": "KOTOR Implants",
       "countsAsImplant": true,
       "implantTrainingRelevant": true,
-      "staticSheetPolicy": "exclude_until_installed_active",
-      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+      "staticSheetPolicy": "runtime_when_installed_active",
+      "notes": "Grants low-light vision and darkvision while installed and active.",
+      "implementationStatus": "implemented_effects_phase4f",
+      "implantEffects": {
+        "implantEffectId": "implant-sensory",
+        "effectMode": "runtime_derived_visibility",
+        "visionModes": [
+          "lowLightVision",
+          "darkvision"
+        ],
+        "summary": "Grants low-light vision and darkvision while installed and active."
+      }
     },
     {
       "id": "implant-subelectronic-converter",
@@ -108,8 +160,17 @@
       "storeSubcategory": "JATM Implants",
       "countsAsImplant": true,
       "implantTrainingRelevant": true,
-      "staticSheetPolicy": "exclude_until_installed_active",
-      "notes": "Store/catalog item only. ImplantRules penalties apply only after the item is explicitly installed and active on a non-droid character."
+      "staticSheetPolicy": "metadata_only_except_will_penalty",
+      "notes": "Subelectronic Converter is intentionally metadata/manual except for its -2 Will Defense penalty while installed and active. Consult Jedi Academy Training Manual for droid-targeting Force power adjudication.",
+      "implementationStatus": "implemented_effects_phase4f",
+      "implantEffects": {
+        "implantEffectId": "implant-subelectronic-converter",
+        "effectMode": "metadata_plus_will_penalty",
+        "metadataOnlyExceptWillPenalty": true,
+        "willDefensePenalty": -2,
+        "forceAffectsDroids": true,
+        "summary": "Metadata/manual except for -2 Will Defense while installed and active. GM adjudicates droid-targeting Force interactions."
+      }
     }
   ]
 }
