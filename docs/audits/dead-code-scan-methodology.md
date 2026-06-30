@@ -100,3 +100,32 @@ Evidence:
    anywhere in the codebase (easy first filter).
 3. Dynamic-import-aware analysis (e.g., Rollup bundle analysis) would give more
    accurate results than static regex.
+
+---
+
+## Runtime-Orphan Confirmation Pass — June 2026 (PR 9)
+
+16 user-identified suspects across droid, vehicle, store, armor, and progression systems.
+
+### Disposition Summary
+
+| File | Lines | Decision | Evidence |
+|------|-------|----------|----------|
+| `scripts/applications/droid/droid-customization-router.js` | 65 | **DELETED** | Zero path refs, zero symbol refs. ShellHost.js routes droid garage internally at lines 671/697/961 without this class. Vehicle equivalent active via dynamic import (ShellHost:789); droid equivalent was never wired. |
+| `scripts/apps/store/store-id-fixer.js` | 223 | **DELETED** | Zero imports from any other file. Labeled "DIAGNOSTIC ONLY"; `fixInvalidIds` marked `@deprecated`. The `SWSEStore` global in other files refers to the UI store class (`store/store.js`), not this utility. |
+| `scripts/armor/armor-upgrade-system.js` | 312 | **DELETED** | Zero imports. Superseded by `scripts/engine/upgrades/UpgradeService.js`, which is the canonical upgrade facade with `installUpgrade`/`removeUpgrade` covering all item types including armor. |
+| `scripts/engine/combat/weapons/weapons-engine.js` | 217 | **DELETED** | Zero path refs, zero symbol refs. Canonical is `scripts/engine/combat/weapons-engine.js` (718 lines). |
+| `scripts/apps/maintenance/maintenance-app.js` | 62 | **RETAINED** | Zero code imports, but `templates/apps/maintenance.hbs` exists. May be invoked from macros or GM console. Maintenance flagged as sensitive system. |
+| `scripts/applications/vehicle/vehicle-customization-router.js` | — | **RETAINED** | Dynamically imported by `ShellHost.js:789` via `await import(...)`. Live. |
+| 10 files in `levelup/`, `progression/` pickers | — | **MISSING** | Not present on current branch — already removed in earlier work. |
+
+### Key Lesson: Dynamic Import Blind Spot
+
+`vehicle-customization-router.js` showed zero static import references yet was live because
+`ShellHost.js:789` uses `await import('/systems/.../vehicle-customization-router.js')`.
+Static regex analysis cannot catch `import(variable)` or `import(templateLiteral)` patterns.
+
+**Protocol for future dynamic-import verification:**
+1. Search for `await import(` across the entire codebase
+2. Check `_open*For*` methods in ShellHost.js and ShellRouter.js specifically
+3. For droid/vehicle/customization systems, always check ShellHost.js before deleting
