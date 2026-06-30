@@ -1,0 +1,1249 @@
+{
+  "schemaVersion": 1,
+  "phase": "9D-galaxy-of-intrigue-implementation-accuracy",
+  "scope": "Galaxy of Intrigue feats only. This audit separates implementation presence from implementation correctness, and explicitly rechecks Skill Challenge feats after the Phase 3.5 subsystem work.",
+  "generatedFrom": "Phase 8 feat catalog metadata, Phase 3 Galaxy of Intrigue parity manifest, current abilityMeta implementation markers, and source-derived benefit summaries.",
+  "rules": [
+    "A feat is not implemented correctly just because it has metadata.",
+    "Action-option, reaction, and replacement feats must expose timing/target/resource behavior rather than flat static bonuses.",
+    "Skill Challenge feats are correct only if catalog metadata and runtime SkillChallengeFeatHooks agree.",
+    "Table-positioning feats may be metadata/partial when map-state, line-of-sight, or ally trigger automation is not proven.",
+    "Source collisions must remain source_review_required until book attribution is resolved."
+  ],
+  "entries": [
+    {
+      "name": "Adaptable Talent",
+      "slug": "adaptable-talent",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: None Effect: Choose one Talent that you meet the prerequisites for, from a Class you possess. Once per day, after at least 6 hours of rest, you can choose to swap out one of your current Talents for the Talent you chose for this Feat. The Talent you swap out cannot be the prerequisite for any other Talent you have. You can swap back to your original Talent after at least 6 hours of rest. Source URL: https://swse.fandom.com/wiki/Adaptable_Talent",
+      "taxonomy": {
+        "bucket": "Character",
+        "subbucket": "General Passive",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "temporary_choice_swap",
+        "home": "talent/progression choice manager",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as temporary_choice_swap, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "conditional_choice_required",
+        "abilityMetaScope": "roll_or_action_context",
+        "staticSheetPolicy": "manual_or_contextual_only",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "attack"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Persistent talent swap needs a selected talent and rest timing. Current metadata captures choice-required behavior, but no complete rest-gated swap workflow is proven.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Bone Crusher",
+      "slug": "bone-crusher",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Crush , Pin Effect: When you deal damage to a Grappled opponent, the opponent also moves -1 step along the Condition Track . Source URL: https://swse.fandom.com/wiki/Bone_Crusher",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Grapple & Unarmed",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "condition_track_hook",
+        "home": "grapple damage / condition-track listener",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as condition_track_hook, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "condition_track_rider_metadata_phase14",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "condition_track_rider",
+        "staticSheetPolicy": "exclude",
+        "ruleTypes": [
+          "MOVE_GRAPPLED_TARGET_CT_ON_DAMAGE"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape is a damage-to-grappled-target rider. Current metadata records a CT rider, but runtime listener/target-state verification is still required.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Brilliant Defense",
+      "slug": "brilliant-defense",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Intelligence 13 Effect: Once per encounter, you can add your Intelligence modifier to your Reflex Defense as a Reaction ; this benefit lasts until the start of your next turn. Source URL: https://swse.fandom.com/wiki/Brilliant_Defense",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Defense & Avoidance",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "reaction_prompt",
+        "home": "defense reaction workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as reaction_prompt, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "reaction_rule_phase10",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "reaction_context",
+        "staticSheetPolicy": "exclude",
+        "ruleTypes": [
+          "TEMP_DEFENSE_BONUS_ABILITY_MOD"
+        ],
+        "modifierTargets": [
+          "attack"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape is once-per-encounter reaction to add Intelligence modifier to Reflex. Metadata shape is right; needs prompt/resource tracking tests.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Channel Rage",
+      "slug": "channel-rage",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Rage Species Trait Effect: Once per day, instead of entering into a Rage, you gain a +5 bonus to your Will Defense until the end of the encounter. This bonus counts as using your Rage ability for that day. Source URL: https://swse.fandom.com/wiki/Channel_Rage",
+      "taxonomy": {
+        "bucket": "Species & Origin",
+        "subbucket": "Species Traits",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "rage_mode_toggle",
+        "home": "species/rage state workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as rage_mode_toggle, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "rage_rule_phase9",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "rage_context",
+        "staticSheetPolicy": "contextual_only",
+        "ruleTypes": [
+          "RAGE_ALTERNATE_MODE"
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape is alternate Rage use granting Will bonus. Metadata exists, but rage-state activation/consumption is not proven.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Cut the Red Tape",
+      "slug": "cut-the-red-tape",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Trained in Knowledge (Bureaucracy) Effect: You can use your Knowledge (Bureaucracy) modifier instead of your Gather Information modifier when making Gather Information checks. If you are entitled to a Gather Information check reroll, you can reroll your Knowledge (Bureaucracy) check instead (subject to the same circumstances and limitations). You are considered Trained in the Gather Information skill for the purposes of this check. Source URL: https://swse.fandom.com/wiki/Cut_the_Red_Tape",
+      "taxonomy": {
+        "bucket": "Skills",
+        "subbucket": "Social Skills",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "skill_substitution",
+        "home": "skill roll adapter",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as skill_substitution, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "skill_use_substitution_phase8",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "skill_or_grapple_context",
+        "staticSheetPolicy": "contextual_only",
+        "ruleTypes": [
+          null
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "medium",
+        "rationale": "Implementation metadata correctly models Knowledge (bureaucracy) substitution for Gather Information contexts, including reroll inheritance.",
+        "correctiveAction": "No corrective action required beyond regression coverage."
+      },
+      "priority": "low",
+      "risk": "low"
+    },
+    {
+      "name": "Demoralizing Strike",
+      "slug": "demoralizing-strike",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Charisma 13 Effect: When you successfully deal damage to an opponent with an Attack of Opportunity , you can immediately make a Persuasion check to Intimidate the opponent as a Free Action . Source URL: https://swse.fandom.com/wiki/Demoralizing_Strike",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Attack Options",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "reaction_skill_rider",
+        "home": "attack of opportunity damage rider",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as reaction_skill_rider, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "aoo_skill_rider_phase16",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "aoo_damage_intimidate_context",
+        "staticSheetPolicy": "reaction_metadata",
+        "ruleTypes": [
+          "FREE_SKILL_CHECK_AFTER_AOO_DAMAGE"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape is free Persuasion/Intimidate after damaging with an AoO. Metadata exists; automatic AoO-damage trigger and prompt are not proven.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Disturbing Presence",
+      "slug": "disturbing-presence",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Trained in Deception Effect: If you succeed on a DC 15 Deception check, you can move through the Threatened area or Fighting Space of an enemy as part of your move action without provoking an attack of opportunity. Each Threatened space or occupied space that you move through in this manner counts as 2 squares of movement. Normal: You can Tumble through an occupied enemy square only by using the Acrobatics Skill. Source URL: https://swse.fandom.com/wiki/Disturbing_Presence",
+      "taxonomy": {
+        "bucket": "Skills",
+        "subbucket": "Stealth & Perception",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "skill_movement_option",
+        "home": "movement / threatened-space action helper",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as skill_movement_option, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "skill_use_rule_phase16",
+        "abilityMetaMode": "skill_use_rule",
+        "abilityMetaScope": "deception_movement_context",
+        "staticSheetPolicy": "skill_use_context_only",
+        "ruleTypes": [
+          "MOVEMENT_THROUGH_THREATENED_WITH_DECEPTION"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape is a Deception check to move through threatened/occupied spaces without AoO. Metadata exists but map/path validation is table-context heavy.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Expert Briber",
+      "slug": "expert-briber",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Charisma 13 Effect: When using the Haggle or Bribery applications of the Persuasion skill, you reduce the DC to reduce the price of the item haggled over by 10. Source URL: https://swse.fandom.com/wiki/Expert_Briber",
+      "taxonomy": {
+        "bucket": "Social & Intrigue",
+        "subbucket": "Persuasion & Influence",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "skill_dc_modifier",
+        "home": "Persuasion Haggle/Bribery skill-use resolver",
+        "shouldBeStaticFlatBonus": true,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as skill_dc_modifier, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "skill_use_rule_phase11",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "persuasion_haggle_bribery_context",
+        "staticSheetPolicy": "skill_use_context_only",
+        "ruleTypes": [
+          "SKILL_USE_DC_ADJUSTMENT"
+        ],
+        "modifierTargets": [
+          "attack"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape is lower DC for Haggle/Bribery use cases. Metadata exists; exact skill-use UI and DC override path needs proof.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Flèche",
+      "slug": "fl-che",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Base Attack Bonus +1 Effect: Once per encounter, when you Charge , you can turn any natural attack roll of 17+ into a Critical Hit. Source URL: https://swse.fandom.com/wiki/Fl%C3%A8che",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Mobility & Positioning",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "charge_attack_option",
+        "home": "combat attack-option workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as charge_attack_option, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "fleche_attack_option_phase12",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "attack_option",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "attack"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape is once-per-encounter charge option turning 17+ natural attack into crit. Metadata exists; charge flag and natural-roll crit expansion need tests.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Forceful Recovery",
+      "slug": "forceful-recovery",
+      "source": "The Force Unleashed Campaign Guide",
+      "description": "Prerequisites: Force Sensitivity , Force Training Effect: Whenever you catch a Second Wind , choose one expended Force Power and return that power to your Force Power Suite . Source URL: https://swse.fandom.com/wiki/Forceful_Recovery",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Point & Destiny",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "force_suite_recovery",
+        "home": "Second Wind / Force suite recovery hook",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as force_suite_recovery, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "RULE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "second_wind_rule_phase8_hardened",
+        "abilityMetaMode": "passive_resource",
+        "abilityMetaScope": "secondWind_resource",
+        "staticSheetPolicy": "resource_only",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "attack"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "source_review_required",
+        "confidence": "medium",
+        "rationale": "Catalog/source collision: surfaced during GOI scan but catalog sources it to The Force Unleashed. Also needs exact Force-suite recovery timing verification.",
+        "correctiveAction": "Consult Galaxy of Intrigue/source collision context before moving to implementation."
+      },
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Resilient Talent",
+      "slug": "resilient-talent",
+      "source": "Galaxy of Intrigue",
+      "description": "Once per day, you may gain the benefit of any talent from a class you have levels in for 1 minute. You may use this talent even if you do not meet its prerequisites.",
+      "taxonomy": {
+        "bucket": "Character",
+        "subbucket": "General Passive",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "temporary_talent_choice",
+        "home": "talent choice metadata / GM resolution",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as temporary_talent_choice, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "punted_gm_managed_phase22",
+        "abilityMetaMode": "manual_gm_managed",
+        "abilityMetaScope": "temporary_talent_selection_gm_managed",
+        "staticSheetPolicy": "exclude",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "metadata_correct",
+        "confidence": "high",
+        "rationale": "This is correctly not static sheet math. It requires a temporary talent choice and prerequisite bypass timing; keep as GM/picker metadata until a talent-temporary-state subsystem exists.",
+        "correctiveAction": "Keep excluded from static math; add dedicated picker/subsystem only if later requested."
+      },
+      "priority": "low",
+      "risk": "medium"
+    },
+    {
+      "name": "Intimidating Presence",
+      "slug": "intimidating-presence",
+      "source": "Galaxy of Intrigue",
+      "description": "You may use Persuasion to intimidate as a swift action instead of a standard action.",
+      "taxonomy": {
+        "bucket": "Social & Intrigue",
+        "subbucket": "Persuasion & Influence",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "skill_action_economy",
+        "home": "Persuasion Intimidate skill-use resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as skill_action_economy, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "intimidating_presence_metadata_phase13",
+        "abilityMetaMode": "skill_use_rule",
+        "abilityMetaScope": "persuasion_intimidate_action_context",
+        "staticSheetPolicy": "skill_use_context_only",
+        "ruleTypes": [
+          "INTIMIDATE_AS_SWIFT_ACTION"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape is Intimidate as swift action. Metadata exists; action-cost UI and skill-use entry need proof.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Frightening Presence",
+      "slug": "frightening-presence",
+      "source": "Galaxy of Intrigue",
+      "description": "When you use Frightful Presence, targets that fail their Will Defense check move -2 steps down the condition track instead of -1.",
+      "taxonomy": {
+        "bucket": "Social & Intrigue",
+        "subbucket": "Persuasion & Influence",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "condition_track_hook",
+        "home": "Frightful Presence rider",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as condition_track_hook, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "condition_track_rider_metadata_phase14",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "condition_track_rider",
+        "staticSheetPolicy": "exclude",
+        "ruleTypes": [
+          "FRIGHTFUL_PRESENCE_CT_STEPS_OVERRIDE"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape modifies Frightful Presence result from -1 CT to -2 CT. Metadata exists; needs linkage to the Frightful Presence action and target resolution.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Desperate Gambit",
+      "slug": "desperate-gambit",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: None Effect: Once per turn, when you miss on an attack roll, you reroll the attack, but you take a -2 penalty to Reflex Defense until the end of your next turn. If your first attack missed because you rolled a Natural 1, you can still use this Feat, but you take a -5 penalty to Reflex Defense instead. You must accept the result of the second roll, even if it's worse than the first. Source URL: https://swse.fandom.com/wiki/Desperate_Gambit",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Attack Options",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "reroll_hook",
+        "home": "attack roll reroll / defense penalty workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as reroll_hook, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_reroll_with_penalty_implemented",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "reroll_or_resource_context",
+        "staticSheetPolicy": "manual_or_contextual_only",
+        "ruleTypes": [],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape is once-per-turn miss reroll with Reflex penalty. Metadata says implemented, but resource timing and defense penalty duration require tests.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Grazing Shot",
+      "slug": "grazing-shot",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Point-Blank Shot Effect: When you successfully make a ranged attack against a single target, you can make a second attack roll against an additional target that is in direct line of sight, and no farther than 6 squares from the original target. If the second attack roll succeeds, make a single damage roll, and divide the damage equally between the two targets. If the second attack roll fails, you deal no damage to either target. Source URL: https://swse.fandom.com/wiki/Grazing_Shot",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Ranged",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "attack_option",
+        "home": "ranged follow-up target workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_option, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "ranged_followup_metadata_phase16",
+        "abilityMetaMode": "active",
+        "abilityMetaScope": "ranged_multi_target_attack_option",
+        "staticSheetPolicy": "roll_context_metadata",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape is a second attack against a nearby additional target after a successful ranged attack. Metadata exists; target selection and LoS/range validation are not proven.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Hobbling Strike",
+      "slug": "hobbling-strike",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Sneak Attack or Rapid Shot or Rapid Strike . Effect: Whenever you would deal extra damage by using Sneak Attack , Rapid Shot , or Rapid Strike , you can reduce the target's Speed by 1 square until the end of the encounter, instead of dealing the extra damage. Source URL: https://swse.fandom.com/wiki/Hobbling_Strike",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Mobility & Positioning",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "attack_rider_choice",
+        "home": "extra damage replacement rider",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_rider_choice, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "attack_rider_metadata_phase16",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "extra_damage_tradeoff_speed_reduction",
+        "staticSheetPolicy": "roll_context_metadata",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape lets user trade extra damage from Sneak Attack/Rapid Shot/Rapid Strike for speed reduction. Metadata exists; chooser/toggle and duration tracking need proof.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Improved Opportunistic Trickery",
+      "slug": "improved-opportunistic-trickery",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Combat Reflexes , Opportunistic Trickery Effect: Whenever an opponent provokes an Attack of Opportunity from you, once per turn you can sacrifice the attack to reduce the target's Reflex Defense by 5 until the end of the target's next turn. Source URL: https://swse.fandom.com/wiki/Improved_Opportunistic_Trickery",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Defense & Avoidance",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "attack_of_opportunity_replacement",
+        "home": "AoO reaction/replacement workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_of_opportunity_replacement, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "improved_opportunistic_trickery_phase12",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "explicit_rider_or_attack_option",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "attack"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape sacrifices AoO to apply Reflex penalty. Metadata exists; AoO trigger/replacement and once-per-turn control need tests.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Indomitable Personality",
+      "slug": "indomitable-personality",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Charisma 13 Effect: Once per encounter, you can add your Charisma modifier to your Will Defense as a Reaction ; this benefit lasts until the end of your next turn. Source URL: https://swse.fandom.com/wiki/Indomitable_Personality",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Defense & Avoidance",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "reaction_prompt",
+        "home": "defense reaction workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as reaction_prompt, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "reaction_rule_phase10",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "reaction_context",
+        "staticSheetPolicy": "exclude",
+        "ruleTypes": [
+          "TEMP_DEFENSE_BONUS_ABILITY_MOD"
+        ],
+        "modifierTargets": [
+          "attack"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape is once-per-encounter reaction adding Charisma modifier to Will. Metadata exists; prompt/resource/duration proof needed.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Master of Disguise",
+      "slug": "master-of-disguise",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Trained in Deception , Charisma 13 Effect: You gain a +5 insight bonus to your Deception check when creating a Deceptive Appearance . In addition, you can rush the process by taking a -2 penalty to the Deception check. Normal: When you rush the creation of a Deceptive Appearance , you take a -10 penalty to your Deception check. Source URL: https://swse.fandom.com/wiki/Master_of_Disguise",
+      "taxonomy": {
+        "bucket": "Social & Intrigue",
+        "subbucket": "Deception & Disguise",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "skill_modifier_and_action_option",
+        "home": "Deception disguise skill-use resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as skill_modifier_and_action_option, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "master_of_disguise_skill_bonus_phase13",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "skill_roll_context",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape is +5 insight to Deceptive Appearance and optional rushed creation penalty. Metadata exists; exact skill-use specialization and rush option need UI tests.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Meat Shield",
+      "slug": "meat-shield",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Point-Blank Shot , Precise Shot , Base Attack Bonus +4 Effect: Whenever an opponent attacks you while in Cover provided by another character, creature, or Droid, you are treated as being in Cover from attacks by that opponent. Source URL: https://swse.fandom.com/wiki/Meat_Shield",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Defense & Avoidance",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "cover_context_modifier",
+        "home": "cover/targeting defense workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as cover_context_modifier, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "cover_defense_metadata_phase17",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "soft_cover_defense_context",
+        "staticSheetPolicy": "defense_context_only",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape depends on cover being provided by another character/creature/droid. Metadata is safer than flat bonus, but cover-provider context is not proven.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Opportunistic Trickery",
+      "slug": "opportunistic-trickery",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Combat Reflexes , Sneak Attack Effect: Whenever an opponent provokes an Attack of Opportunity from you, once per turn you can sacrifice that attack to reduce the target's Reflex Defense by 2 for the following round. Source URL: https://swse.fandom.com/wiki/Opportunistic_Trickery",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Defense & Avoidance",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "attack_of_opportunity_replacement",
+        "home": "AoO reaction/replacement workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as attack_of_opportunity_replacement, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "opportunistic_trickery_phase12",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "explicit_rider_or_attack_option",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "attack"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape sacrifices AoO to reduce Reflex by 2. Metadata exists; trigger and duration proof needed.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Recurring Success",
+      "slug": "recurring-success",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: None Effect: When you select this Feat, choose one Talent or Feat that can normally be used once per encounter. You can use that Talent or Feat one additional time per encounter. Special: You can select this Feat multiple times. Each time you do so, you must choose a different Talent or Feat to gain the benefits of this Feat. Source URL: https://swse.fandom.com/wiki/Recurring_Success",
+      "taxonomy": {
+        "bucket": "Character",
+        "subbucket": "General Passive",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "persistent_choice_resource",
+        "home": "encounter resource tracker",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as persistent_choice_resource, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "",
+        "abilityMetaMode": "conditional_choice_required",
+        "abilityMetaScope": "roll_or_action_context",
+        "staticSheetPolicy": "manual_or_contextual_only",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "attack"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "source_review_required",
+        "confidence": "medium",
+        "rationale": "Correct shape requires choosing a once-per-encounter talent/feat and increasing its per-encounter uses. Needs source verification plus integration with per-encounter resource tracking.",
+        "correctiveAction": "Consult Galaxy of Intrigue/source collision context before moving to implementation."
+      },
+      "priority": "high",
+      "risk": "high"
+    },
+    {
+      "name": "Resolute Stance",
+      "slug": "resolute-stance",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Base Attack Bonus +1 Effect: When you Fight Defensively , you gain a +2 morale bonus to your Will Defense . If you make no attacks until your next turn, you gain a +5 morale bonus to your Will Defense until the start of your next turn. Normal: When you Fight Defensively you only get a dodge bonus to your Reflex Defense . Source URL: https://swse.fandom.com/wiki/Resolute_Stance",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Defense & Avoidance",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "defensive_fighting_modifier",
+        "home": "Fight Defensively option resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as defensive_fighting_modifier, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "conditional_defense_phase10",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "defense_context",
+        "staticSheetPolicy": "contextual_only",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "attack"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape modifies Will bonus while Fighting Defensively and changes value based on whether attacks are made. Metadata exists; action-state tracking not proven.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Sadistic Strike",
+      "slug": "sadistic-strike",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: None Effect: When you deliver a Coup de Grace to a Helpless creature, all opponents within line of sight move -1 step on the Condition Track until the end of encounter. Source URL: https://swse.fandom.com/wiki/Sadistic_Strike",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Condition Track",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "condition_track_area_rider",
+        "home": "coup-de-grace / line-of-sight CT listener",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as condition_track_area_rider, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "condition_track_listener_phase14",
+        "abilityMetaMode": "conditional",
+        "abilityMetaScope": "condition_track_trigger",
+        "staticSheetPolicy": "exclude",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape applies CT penalty to opponents in line of sight after Coup de Grace. Metadata exists; helpless/coup/LoS multi-target automation not proven.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "high"
+    },
+    {
+      "name": "Silver Tongue",
+      "slug": "silver-tongue",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Trained in Persuasion Effect: You can Intimidate or Change Attitude as a Standard Action . Normal: To Intimidate or Change Attitude requires a Full-Round Action . Source URL: https://swse.fandom.com/wiki/Silver_Tongue",
+      "taxonomy": {
+        "bucket": "Social & Intrigue",
+        "subbucket": "Persuasion & Influence",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "skill_action_economy",
+        "home": "Persuasion skill-use resolver",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as skill_action_economy, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "silver_tongue_metadata_phase13",
+        "abilityMetaMode": "skill_use_rule",
+        "abilityMetaScope": "persuasion_action_context",
+        "staticSheetPolicy": "skill_use_context_only",
+        "ruleTypes": [
+          "PERSUASION_STANDARD_ACTION"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape changes Intimidate/Change Attitude action cost. Metadata exists; action-cost UI/runtime path not proven.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Skill Challenge: Catastrophic Avoidance",
+      "slug": "skill-challenge-catastrophic-avoidance",
+      "source": "Galaxy of Intrigue",
+      "description": "Catastrophic Failures in a Skill Challenge occur less frequently, and with milder results.",
+      "taxonomy": {
+        "bucket": "Skills",
+        "subbucket": "Skill Challenge",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "skill_challenge_hook",
+        "home": "SkillChallengeFeatHooks runtime",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as skill_challenge_hook, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "punted_to_skill_challenge_table_resolution",
+        "abilityMetaMode": "manual_punted",
+        "abilityMetaScope": "skill_challenge_table_context",
+        "staticSheetPolicy": "manual_punted",
+        "ruleTypes": [
+          "SKILL_CHALLENGE_CATASTROPHIC_AVOIDANCE"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "After Phase 3.5E this should be a runtime Skill Challenge hook. Current catalog still appears to carry manual-punted metadata, so this audit flags outdated metadata/hook parity.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Skill Challenge: Last Resort",
+      "slug": "skill-challenge-last-resort",
+      "source": "Galaxy of Intrigue",
+      "description": "Reroll a third failed Skill Check during a Skill Challenge, keeping the better result.",
+      "taxonomy": {
+        "bucket": "Skills",
+        "subbucket": "Skill Challenge",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "skill_challenge_hook",
+        "home": "SkillChallengeFeatHooks runtime",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as skill_challenge_hook, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "punted_to_skill_challenge_table_resolution",
+        "abilityMetaMode": "manual_punted",
+        "abilityMetaScope": "skill_challenge_table_context",
+        "staticSheetPolicy": "manual_punted",
+        "ruleTypes": [
+          "SKILL_CHALLENGE_LAST_RESORT_REROLL"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "After Phase 3.5E this should be a runtime Skill Challenge hook. Current catalog still appears to carry manual-punted metadata, so this audit flags outdated metadata/hook parity.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Skill Challenge: Recovery",
+      "slug": "skill-challenge-recovery",
+      "source": "Galaxy of Intrigue",
+      "description": "Treat a Skill Challenge as if it had the Recovery effect.",
+      "taxonomy": {
+        "bucket": "Skills",
+        "subbucket": "Skill Challenge",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "skill_challenge_hook",
+        "home": "SkillChallengeFeatHooks runtime",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as skill_challenge_hook, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "punted_to_skill_challenge_table_resolution",
+        "abilityMetaMode": "manual_punted",
+        "abilityMetaScope": "skill_challenge_table_context",
+        "staticSheetPolicy": "manual_punted",
+        "ruleTypes": [
+          "SKILL_CHALLENGE_RECOVERY_EFFECT"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "After Phase 3.5E this should be a runtime Skill Challenge hook. Current catalog still appears to carry manual-punted metadata, so this audit flags outdated metadata/hook parity.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Stand Tall",
+      "slug": "stand-tall",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: None Effect: Once per encounter when you take damage, all allies who are within 6 squares of you and within your line of sight can, as a Reaction , make a single attack on the target that damaged you. Source URL: https://swse.fandom.com/wiki/Stand_Tall",
+      "taxonomy": {
+        "bucket": "Leadership & Allies",
+        "subbucket": "Teamwork & Aid Another",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "ally_reaction_prompt",
+        "home": "nearby ally reaction attack workflow",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": true,
+        "accuracyQuestion": "Does the runtime implementation behave as ally_reaction_prompt, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "table_context_metadata_phase17",
+        "abilityMetaMode": "manual_punted",
+        "abilityMetaScope": "nearby_ally_or_positioning_context",
+        "staticSheetPolicy": "manual_or_table_context",
+        "ruleTypes": [
+          "NEARBY_ALLIES_REACTION_ATTACK_ON_DAMAGE"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape is once-per-encounter damage trigger allowing allies within 6 squares/LoS to attack. Metadata is correct to avoid static math, but full automation is table/map-context heavy.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "high"
+    },
+    {
+      "name": "Wookiee Grip",
+      "slug": "wookiee-grip",
+      "source": "Galaxy of Intrigue",
+      "description": "Prerequisites: Strength 13 Effect: When using a weapon in which you are proficient and that normally requires two hands, you can wield that weapon with a single hand. You take a -2 penalty to attack rolls with the weapon when it is used in this manner. Source URL: https://swse.fandom.com/wiki/Wookiee_Grip",
+      "taxonomy": {
+        "bucket": "Species & Origin",
+        "subbucket": "Species Traits",
+        "source": "phase8_taxonomy_or_phase9d_review"
+      },
+      "expected": {
+        "mode": "weapon_handling_override",
+        "home": "weapon handling / attack math",
+        "shouldBeStaticFlatBonus": false,
+        "shouldExposeActionOrPrompt": false,
+        "accuracyQuestion": "Does the runtime implementation behave as weapon_handling_override, instead of only providing generic metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "abilityMetaStatus": "species_rule_phase10_executable_hook",
+        "abilityMetaMode": "passive",
+        "abilityMetaScope": "rule_hook",
+        "staticSheetPolicy": "contextual_only",
+        "ruleTypes": [
+          "WEAPON_HANDLING_OVERRIDE"
+        ],
+        "modifierTargets": [],
+        "effectCount": 0
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "high",
+        "rationale": "Correct shape is two-handed weapon in one hand with -2 attack in that mode. Metadata exists; consuming weapon-handling and attack breakdown parity need proof.",
+        "correctiveAction": "Add targeted runtime tests and/or implementation glue before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    }
+  ]
+}
