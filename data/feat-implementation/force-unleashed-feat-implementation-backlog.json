@@ -1,0 +1,1560 @@
+{
+  "schemaVersion": 1,
+  "phase": "9F-force-unleashed-implementation-accuracy",
+  "scope": "The Force Unleashed Campaign Guide feats only. This audit separates implementation presence from implementation correctness for Forceful power feats, Force Point riders, rage feats, cover/autofire/positioning options, and Unleashed capability metadata.",
+  "generatedFrom": "Current repo feat catalog, Phase 6 Force Unleashed source-parity manifest, targeted code search for supported rule families, and source-derived benefit summaries.",
+  "rules": [
+    "A feat is not implemented correctly just because it has metadata.",
+    "Wrong-shape metadata is marked implemented_incorrect, not implemented_partial or implemented_correct.",
+    "Scoped Forceful power feats must apply only to the named Force power activation/result context.",
+    "Force Point riders require a runtime spend prompt and result hook; they must not be passive Force bonuses.",
+    "Rage feats require active rage state context, not always-on skill, damage, or action modifiers.",
+    "Combat maneuver, cover, autofire, soft-cover, and positioning feats require combat context/action/result hooks.",
+    "Unleashed remains metadata until a Destiny Point / Unleashed Ability subsystem exists."
+  ],
+  "entries": [
+    {
+      "name": "Advantageous Attack",
+      "slug": "advantageous-attack",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 32,
+      "description": "When you make a successful attack against an enemy who has not yet acted in combat, you add your full Heroic Level to damage rolls.",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Damage & Threshold",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "damage_result_timing_hook",
+        "home": "combat damage resolution / initiative timing",
+        "sourceClassification": "combat_timing_damage_rider",
+        "sourceMechanicsMode": "conditional_damage_rider",
+        "forcePower": null,
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match damage_result_timing_hook, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "attack_option",
+        "abilityMetaImplementationStatus": "advantageousAttack_attack_option_phase13",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_incorrect",
+        "confidence": "high",
+        "rationale": "The catalog metadata describes an attack bonus keyed to target speed, but the source rule is a damage rider against an enemy who has not yet acted. This is the exact kind of wrong-shape implementation that must not count as implemented.",
+        "correctiveAction": "Replace or quarantine wrong-shape metadata/runtime behavior before any implementation is marked correct."
+      },
+      "priority": "high",
+      "risk": "high"
+    },
+    {
+      "name": "Advantageous Cover",
+      "slug": "advantageous-cover",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 32,
+      "description": "When you have Cover, you take no damage from Area Attacks, even if the attack roll exceeds your Reflex Defense.",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Defense & Avoidance",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "cover_area_damage_rule",
+        "home": "cover / area attack damage workflow",
+        "sourceClassification": "cover_area_attack_rule",
+        "sourceMechanicsMode": "cover_context_rule",
+        "forcePower": null,
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match cover_area_damage_rule, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "action_or_reaction_hook",
+        "abilityMetaImplementationStatus": "action_metadata_phase14",
+        "staticSheetPolicy": "exclude",
+        "ruleTypes": [
+          "COVER_BENEFIT_UPGRADE"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Metadata preserves the cover context, but no proven runtime hook reduces or alters area-attack damage using cover state. Correct implementation needs area attack + cover result context, not static defense.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Angled Throw",
+      "slug": "angled-throw",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 32,
+      "description": "When throwing a Grenade or grenadelike weapon, you can attempt to bounce it off a wall or other surface close to your target. If you attack roll exceeds a Reflex Defense of 15, you ignore Cover and Improved Cover (but not Total Cover) with your attack.",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Area & Explosives",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "grenade_cover_bypass_option",
+        "home": "attack option resolver + cover adjudication",
+        "sourceClassification": "grenade_cover_bypass_option",
+        "sourceMechanicsMode": "conditional_attack_option",
+        "forcePower": null,
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match grenade_cover_bypass_option, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "attack_option",
+        "abilityMetaImplementationStatus": "angledThrow_attack_option_phase13",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Attack-option metadata exists, but the runtime must verify grenade/grenadelike thrown attack, bounce permissibility, Reflex 15 threshold, and cover vs total cover distinction. Current metadata is not enough for fully correct automation.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Bad Feeling",
+      "slug": "bad-feeling",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 32,
+      "description": "You can always take a Move Action during a Surprise Round, even if you are Surprised. If you are not Surprised, you can take this Move Action in addition to any other Actions you are normally allowed to take in the Surprise Round.",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Action Economy",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "surprise_round_action_capability",
+        "home": "initiative/surprise-round action economy",
+        "sourceClassification": "surprise_round_capability",
+        "sourceMechanicsMode": "passive_capability",
+        "forcePower": null,
+        "staticSheetPolicy": "capability_metadata",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match surprise_round_action_capability, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "passive_capability",
+        "abilityMetaApplicationScope": "surprise_round_context",
+        "abilityMetaImplementationStatus": "bad_feeling_metadata_phase13",
+        "staticSheetPolicy": "not_a_modifier",
+        "ruleTypes": [
+          "SURPRISE_ROUND_MOVE_ACTION"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Action metadata exists, but a real surprise-round action economy hook is not proven. Correct implementation grants/permits a Move Action during surprise rounds without altering ordinary action totals.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "high"
+    },
+    {
+      "name": "Blaster Barrage",
+      "slug": "blaster-barrage",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 33,
+      "description": "When you make an attack with a weapon set on Autofire that deals damage to at least one target within the designated area, you grant a +2 circumstance bonus on any of your allies' Autofire attacks made against that same target until the beginning of your next turn.",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Area & Explosives",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "autofire_ally_bonus_context",
+        "home": "autofire attack result + ally/team context",
+        "sourceClassification": "autofire_ally_bonus_context",
+        "sourceMechanicsMode": "conditional_ally_bonus",
+        "forcePower": null,
+        "staticSheetPolicy": "roll_context_metadata",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match autofire_ally_bonus_context, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "autofire_ally_bonus_context",
+        "abilityMetaImplementationStatus": "autofire_rider_metadata_phase17",
+        "staticSheetPolicy": "roll_context_metadata",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Autofire rider metadata exists, but full correctness requires an autofire result hook and ally participation context. It should not be a passive attack bonus.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "high"
+    },
+    {
+      "name": "Controlled Rage",
+      "slug": "controlled-rage",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 33,
+      "description": "You enter a Rage as a Free Action. Your Rage ends 1 round after you declare it is finished.",
+      "taxonomy": {
+        "bucket": "Recovery & Survival",
+        "subbucket": "Endurance & Resilience",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "rage_action_state_rule",
+        "home": "rage state manager",
+        "sourceClassification": "rage_state_rule",
+        "sourceMechanicsMode": "rage_runtime_rule",
+        "forcePower": null,
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match rage_action_state_rule, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "rage_context",
+        "abilityMetaImplementationStatus": "rage_rule_phase9",
+        "staticSheetPolicy": "contextual_only",
+        "ruleTypes": [
+          "RAGE_ACTION_MODE"
+        ],
+        "modifierTargets": [],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "not_implemented",
+        "confidence": "medium",
+        "rationale": "Requires free-action rage entry/end control. The current metadata does not prove a rage-state runtime flow that changes activation/ending action cost.",
+        "correctiveAction": "Implement the expected runtime/action/subsystem hook or leave as metadata with a clear blocker."
+      },
+      "priority": "high",
+      "risk": "high"
+    },
+    {
+      "name": "Crossfire",
+      "slug": "crossfire",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 33,
+      "description": "If you miss when making a ranged attack against a target that has Soft Cover (that is, Cover provided by another character, creature, or Droid), you can immediately make an attack roll (with the same weapon and at the same attack bonus) against the target that is providing the Soft Cover. You can only use this Feat once per round.",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Attack Options",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "ranged_miss_soft_cover_followup",
+        "home": "attack result hook + soft cover target identification",
+        "sourceClassification": "ranged_miss_soft_cover_followup",
+        "sourceMechanicsMode": "conditional_followup_attack",
+        "forcePower": null,
+        "staticSheetPolicy": "roll_context_metadata",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match ranged_miss_soft_cover_followup, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "ranged_miss_soft_cover_followup",
+        "abilityMetaImplementationStatus": "attack_option_phase17",
+        "staticSheetPolicy": "roll_context_metadata",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Metadata exists, but full correctness requires detecting a missed ranged attack due to soft cover and identifying the soft-cover provider for the follow-up attack.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Crush",
+      "slug": "crush",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "If you successfully Pin an opponent with a Grapple attack (see Pin Feat for more details), you can immediately deal bludgeoning damage to it equal to your Unarmed damage or claw damage, whichever is greater.",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Grapple & Unarmed",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "grapple_pin_damage_rider",
+        "home": "grapple / pin workflow",
+        "sourceClassification": "grapple_pin_rider",
+        "sourceMechanicsMode": "grapple_context_rule",
+        "forcePower": null,
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match grapple_pin_damage_rider, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "grapple_rider",
+        "abilityMetaImplementationStatus": "rider_effect_phase7",
+        "staticSheetPolicy": "contextual_only",
+        "ruleTypes": [
+          "GRAPPLE_RIDER"
+        ],
+        "modifierTargets": [
+          "attack"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Metadata/source classification exists, but a correct implementation needs a successful Pin/grapple state and damage rider. It is not a Force feat and should not become static damage.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "high"
+    },
+    {
+      "name": "Cunning Attack",
+      "slug": "cunning-attack",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "You gain a +2 bonus on attack rolls against a Flat-Footed enemy or one who is denied its Dexterity bonus to its Reflex Defense.",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Attack Options",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "conditional_attack_bonus",
+        "home": "combat option resolver",
+        "sourceClassification": "flat_footed_attack_bonus",
+        "sourceMechanicsMode": "conditional_attack_bonus",
+        "forcePower": null,
+        "staticSheetPolicy": "roll_context_only",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match conditional_attack_bonus, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "attack_option",
+        "abilityMetaImplementationStatus": "cunningAttack_attack_option_phase13",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "The metadata is a passive attack-option rule against flat-footed/Dex-denied targets, and the combat option resolver supports contextual feat rules rather than static sheet math. Keep regression tests for target-state predicates.",
+        "correctiveAction": "No implementation change required; add regression tests if absent."
+      },
+      "priority": "low",
+      "risk": "low"
+    },
+    {
+      "name": "Focused Rage",
+      "slug": "focused-rage",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "While Raging, you can use Skills that require patience and concentration, at a -5 penalty.",
+      "taxonomy": {
+        "bucket": "Recovery & Survival",
+        "subbucket": "Endurance & Resilience",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "rage_skill_permission",
+        "home": "rage state + skill roll context",
+        "sourceClassification": "rage_skill_permission",
+        "sourceMechanicsMode": "rage_skill_context_rule",
+        "forcePower": null,
+        "staticSheetPolicy": "contextual_only",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match rage_skill_permission, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "rage_context",
+        "abilityMetaImplementationStatus": "rage_rule_phase9_partial",
+        "staticSheetPolicy": "contextual_only",
+        "ruleTypes": [
+          "RAGE_ALLOW_PATIENCE_SKILLS",
+          "rage"
+        ],
+        "modifierTargets": [],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "not_implemented",
+        "confidence": "medium",
+        "rationale": "Requires allowing patience/concentration-type skill usage while raging at the correct contextual penalty. No proven rage skill-permission hook exists.",
+        "correctiveAction": "Implement the expected runtime/action/subsystem hook or leave as metadata with a clear blocker."
+      },
+      "priority": "high",
+      "risk": "high"
+    },
+    {
+      "name": "Forceful Blast",
+      "slug": "forceful-blast",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "When you damage a Large or smaller creature with a Grenade or Thermal Detonator, compare the result of your attack roll to the target's Fortitude Defense. If your result equals or exceeds the target's Fortitude Defense, you can move the target 1 square in any direction as a Free Action. If the Grenade deals damage to multiple eligible creatures, you can use this benefit against all of them. You can't move a target that's being Grabbed or Grappled, and you can't move a target into a solid object or into another creature's Fighting Space.",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Area & Explosives",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "grenade_hit_rider",
+        "home": "grenade attack result hook",
+        "sourceClassification": "grenade_hit_rider",
+        "sourceMechanicsMode": "conditional_attack_rider",
+        "forcePower": null,
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match grenade_hit_rider, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "attack_option",
+        "abilityMetaImplementationStatus": "forcefulBlast_attack_option_phase13",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Metadata identifies a grenade/thermal detonator rider, but full correctness requires a hit-result rider with push/prone/forced-movement handling. It is not a Force feat despite the name.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Forceful Grip",
+      "slug": "forceful-grip",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "You gain a +2 bonus on Use the Force checks made to activate Force Grip.",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Training & Powers",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "scoped_force_power_activation_bonus",
+        "home": "Force power activation / Use the Force context",
+        "sourceClassification": "force_power_activation_bonus",
+        "sourceMechanicsMode": "scoped_use_the_force_bonus",
+        "forcePower": "Force Grip",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match scoped_force_power_activation_bonus, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "skill_roll_context",
+        "abilityMetaImplementationStatus": "force_power_skill_bonus_phase14",
+        "staticSheetPolicy": "exclude",
+        "ruleTypes": [
+          "feat"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Skill bonus metadata exists, but full correctness requires Force power activation context that applies +2 only to Force Grip activation checks and never to generic Use the Force.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Forceful Recovery",
+      "slug": "forceful-recovery",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "Whenever you catch a Second Wind, choose one expended Force Power and return that power to your Force Power Suite.",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Point & Destiny",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "second_wind_force_power_recovery",
+        "home": "second wind + Force suite recovery",
+        "sourceClassification": "second_wind_force_power_recovery",
+        "sourceMechanicsMode": "second_wind_force_power_recovery",
+        "forcePower": null,
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match second_wind_force_power_recovery, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "RULE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "passive_resource",
+        "abilityMetaApplicationScope": "secondWind_resource",
+        "abilityMetaImplementationStatus": "second_wind_rule_phase8_hardened",
+        "staticSheetPolicy": "resource_only",
+        "ruleTypes": [
+          "REGAIN_FORCE_POWER_ON_USE"
+        ],
+        "modifierTargets": [
+          "attack"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "not_implemented",
+        "confidence": "medium",
+        "rationale": "Requires a second-wind hook and player/GM choice of one expended Force power to return to the suite. No proven hook exists.",
+        "correctiveAction": "Implement the expected runtime/action/subsystem hook or leave as metadata with a clear blocker."
+      },
+      "priority": "high",
+      "risk": "high"
+    },
+    {
+      "name": "Forceful Saber Throw",
+      "slug": "forceful-saber-throw",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "You gain a +2 bonus on Use the Force checks made to activate Saber Throw.",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Training & Powers",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "scoped_force_power_activation_bonus",
+        "home": "Force power activation / Use the Force context",
+        "sourceClassification": "force_power_activation_bonus",
+        "sourceMechanicsMode": "scoped_use_the_force_bonus",
+        "forcePower": "Saber Throw",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match scoped_force_power_activation_bonus, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "skill_roll_context",
+        "abilityMetaImplementationStatus": "forceful_saber_throw_skill_bonus_phase13",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "feat"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Skill bonus metadata exists, but full correctness requires activation context for Saber Throw only.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Forceful Slam",
+      "slug": "forceful-slam",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "You gain a +2 bonus on Use the Force checks made to activate Force Slam.",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Training & Powers",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "scoped_force_power_activation_bonus",
+        "home": "Force power activation / Use the Force context",
+        "sourceClassification": "force_power_activation_bonus",
+        "sourceMechanicsMode": "scoped_use_the_force_bonus",
+        "forcePower": "Force Slam",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match scoped_force_power_activation_bonus, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "skill_roll_context",
+        "abilityMetaImplementationStatus": "force_power_skill_bonus_phase14",
+        "staticSheetPolicy": "exclude",
+        "ruleTypes": [
+          "feat"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Skill bonus metadata exists, but full correctness requires activation context for Force Slam only.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Forceful Strike",
+      "slug": "forceful-strike",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "You may spend a Force Point to move a target -1 step down the condition track when using Force Stun.",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Point & Destiny",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "force_point_power_result_rider",
+        "home": "Force power result + Force Point spend prompt",
+        "sourceClassification": "force_point_condition_track_rider",
+        "sourceMechanicsMode": "force_point_power_rider",
+        "forcePower": "Force Stun",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match force_point_power_result_rider, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "force_power_rider",
+        "abilityMetaImplementationStatus": "force_power_rider_metadata_phase14",
+        "staticSheetPolicy": "exclude",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Rider metadata exists, but full correctness requires a Force Stun result hook, Force Point spend prompt, and condition-track application.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "high",
+      "risk": "high"
+    },
+    {
+      "name": "Forceful Stun",
+      "slug": "forceful-stun",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "You gain a +2 bonus on Use the Force checks made to activate Force Stun.",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Training & Powers",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "scoped_force_power_activation_bonus",
+        "home": "Force power activation / Use the Force context",
+        "sourceClassification": "force_power_activation_bonus",
+        "sourceMechanicsMode": "scoped_use_the_force_bonus",
+        "forcePower": "Force Stun",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match scoped_force_power_activation_bonus, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "skill_roll_context",
+        "abilityMetaImplementationStatus": "forceful_stun_skill_bonus_phase13",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "feat"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Skill bonus metadata exists, but full correctness requires activation context for Force Stun only.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Forceful Telekinesis",
+      "slug": "forceful-telekinesis",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "You may spend a Force Point to move a target -1 step down the condition track when using Move Object.",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Point & Destiny",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "force_point_power_result_rider",
+        "home": "Force power result + Force Point spend prompt",
+        "sourceClassification": "force_point_condition_track_rider",
+        "sourceMechanicsMode": "force_point_power_rider",
+        "forcePower": "Move Object",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match force_point_power_result_rider, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "force_power_rider",
+        "abilityMetaImplementationStatus": "force_power_rider_metadata_phase14",
+        "staticSheetPolicy": "exclude",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Rider metadata exists, but full correctness requires a Move Object result hook, Force Point spend prompt, and condition-track application.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "high",
+      "risk": "high"
+    },
+    {
+      "name": "Forceful Throw",
+      "slug": "forceful-throw",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "You gain a +2 bonus on Use the Force checks made to activate Move Object.",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Training & Powers",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "scoped_force_power_activation_bonus",
+        "home": "Force power activation / Use the Force context",
+        "sourceClassification": "force_power_activation_bonus",
+        "sourceMechanicsMode": "scoped_use_the_force_bonus",
+        "forcePower": "Move Object",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match scoped_force_power_activation_bonus, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "skill_use_context",
+        "abilityMetaImplementationStatus": "skill_bonus_phase11",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "untyped"
+        ],
+        "modifierTargets": [
+          "attack"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "not_implemented",
+        "confidence": "medium",
+        "rationale": "This should be +2 only when activating Move Object, but no matching scoped skill-bonus metadata/hook is proven in the current catalog snapshot.",
+        "correctiveAction": "Implement the expected runtime/action/subsystem hook or leave as metadata with a clear blocker."
+      },
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Forceful Vitality",
+      "slug": "forceful-vitality",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "You gain a +2 bonus on Endurance checks and may reroll a failed Endurance check once per encounter.",
+      "taxonomy": {
+        "bucket": "Recovery & Survival",
+        "subbucket": "Endurance & Resilience",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "skill_bonus_and_encounter_reroll",
+        "home": "skill feat resolver + encounter use tracking",
+        "sourceClassification": "endurance_bonus_and_reroll",
+        "sourceMechanicsMode": "skill_context_bonus_and_reroll",
+        "forcePower": null,
+        "staticSheetPolicy": "roll_context_only",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match skill_bonus_and_encounter_reroll, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "skill_roll_context",
+        "abilityMetaImplementationStatus": "skill_bonus_reroll_phase11",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "forceful-vitality-endurance-reroll",
+          "untyped"
+        ],
+        "modifierTargets": [
+          "attack"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Skill bonus/reroll metadata exists and the skill feat resolver can read those rule families, but full correctness requires once-per-encounter failed Endurance reroll usage tracking.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Forceful Weapon",
+      "slug": "forceful-weapon",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "You gain a +2 bonus on Use the Force checks made to activate Battle Strike.",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Training & Powers",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "scoped_force_power_activation_bonus",
+        "home": "Force power activation / Use the Force context",
+        "sourceClassification": "force_power_activation_bonus",
+        "sourceMechanicsMode": "scoped_use_the_force_bonus",
+        "forcePower": "Battle Strike",
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match scoped_force_power_activation_bonus, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "skill_roll_context",
+        "abilityMetaImplementationStatus": "forceful_weapon_skill_bonus_phase13",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "feat"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Skill bonus metadata exists, but full correctness requires activation context for Battle Strike only.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "high",
+      "risk": "medium"
+    },
+    {
+      "name": "Forceful Will",
+      "slug": "forceful-will",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "You gain a +2 bonus on Will Defense against mind-affecting effects and may reroll a failed Will Defense check once per encounter.",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Defenses",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "conditional_defense_and_reroll",
+        "home": "contextual defense + reroll tracking",
+        "sourceClassification": "mind_affecting_will_defense_and_reroll",
+        "sourceMechanicsMode": "conditional_defense_and_reroll",
+        "forcePower": null,
+        "staticSheetPolicy": "conditional_only",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match conditional_defense_and_reroll, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "contextual_defense",
+        "abilityMetaImplementationStatus": "mind_affecting_will_phase12",
+        "staticSheetPolicy": "contextual_only",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "defense.will"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Conditional Will metadata exists, but full correctness requires mind-affecting context and once-per-encounter failed Will reroll handling. It must not become always-on Will Defense.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Improved Bantha Rush",
+      "slug": "improved-bantha-rush",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 34,
+      "description": "When making a Bantha Rush, you push your opponent a number of additional squares away from you equal to half your Strength modifier (Round down, minimum 2 squares pushed total).",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Mobility & Positioning",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "combat_maneuver_distance_rule",
+        "home": "Bantha Rush maneuver workflow",
+        "sourceClassification": "bantha_rush_push_distance",
+        "sourceMechanicsMode": "combat_maneuver_context_rule",
+        "forcePower": null,
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match combat_maneuver_distance_rule, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "bantha_rush_push_distance",
+        "abilityMetaImplementationStatus": "bantha_rush_rider_metadata_phase16",
+        "staticSheetPolicy": "roll_context_metadata",
+        "ruleTypes": [
+          "BANTHA_RUSH_PUSH_DISTANCE"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Metadata exists, but full correctness requires Bantha Rush maneuver resolution and push-distance adjustment. It should not be static attack/damage math.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Informer",
+      "slug": "informer",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 35,
+      "description": "You can use your Perception modifier instead of your Gather Information modifier when making Gather Information checks. You are considered Trained in the Gather Information skill. If you are entitled to a Gather Information check reroll, you can reroll your Perception check instead (subject to the same circumstances and limitations). Additionally, when you have favorable conditions for your Gather Information check (such as from operating on your home planet), you reduce by half the time it takes to make a Gather Information check.",
+      "taxonomy": {
+        "bucket": "Skills",
+        "subbucket": "Knowledge & Information",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "skill_use_substitution",
+        "home": "skill feat resolver",
+        "sourceClassification": "skill_use_substitution",
+        "sourceMechanicsMode": "skill_use_substitution",
+        "forcePower": null,
+        "staticSheetPolicy": "skill_context_only",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match skill_use_substitution, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "skill_use_substitution_context",
+        "abilityMetaImplementationStatus": "informer_skill_substitution_phase15",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "informer-gather-information-with-perception"
+        ],
+        "modifierTargets": [],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_correct",
+        "confidence": "high",
+        "rationale": "The feat uses skillUseSubstitutions/considered-trained metadata, and the skill feat resolver supports skill-use substitutions. This matches the implementation shape; keep tests for related Gather Information applications.",
+        "correctiveAction": "No implementation change required; add regression tests if absent."
+      },
+      "priority": "low",
+      "risk": "low"
+    },
+    {
+      "name": "Mighty Throw",
+      "slug": "mighty-throw",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 35,
+      "description": "You can add your Strength modifier (in addition to your Dexterity modifier) to your ranged attack bonus when using Thrown Weapons (including Grenades and grenadelike weapons). Also, you can increase the length of each Range category by a number of squares equal to your Strength modifier.",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Thrown Weapons",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "thrown_weapon_attack_formula_and_range",
+        "home": "combat option resolver + range-band rules",
+        "sourceClassification": "thrown_weapon_attack_stat_override",
+        "sourceMechanicsMode": "conditional_attack_formula",
+        "forcePower": null,
+        "staticSheetPolicy": "runtime_predicate_only",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match thrown_weapon_attack_formula_and_range, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "passive",
+        "abilityMetaApplicationScope": "thrown_weapon_attack",
+        "abilityMetaImplementationStatus": "attack_ability_rule_phase9",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "ATTACK_ABILITY_BONUS",
+          "RANGE_EXTENSION_NOTE"
+        ],
+        "modifierTargets": [
+          "attack"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "The combat option resolver supports ATTACK_ABILITY_BONUS for thrown weapons, but full correctness also requires extending range categories by Strength modifier. Do not mark correct until range-band math is proven.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Powerful Rage",
+      "slug": "powerful-rage",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 35,
+      "description": "You gain a +4 bonus to Strength checks and Strength -based Skill Checks when Raging.",
+      "taxonomy": {
+        "bucket": "Recovery & Survival",
+        "subbucket": "Endurance & Resilience",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "rage_state_damage_bonus",
+        "home": "rage state + damage roll context",
+        "sourceClassification": "rage_strength_skill_bonus",
+        "sourceMechanicsMode": "rage_skill_context_bonus",
+        "forcePower": null,
+        "staticSheetPolicy": "contextual_only",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match rage_state_damage_bonus, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "rage_context",
+        "abilityMetaImplementationStatus": "rage_rule_phase9",
+        "staticSheetPolicy": "contextual_only",
+        "ruleTypes": [
+          "RAGE_STRENGTH_SKILL_BONUS",
+          "untyped"
+        ],
+        "modifierTargets": [],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "not_implemented",
+        "confidence": "medium",
+        "rationale": "Requires rage-state damage handling. No proven runtime hook applies only while raging.",
+        "correctiveAction": "Implement the expected runtime/action/subsystem hook or leave as metadata with a clear blocker."
+      },
+      "priority": "high",
+      "risk": "high"
+    },
+    {
+      "name": "Rapport",
+      "slug": "rapport",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 36,
+      "description": "When using the Aid Another Action, you grant an additional +2 insight bonus on Skill Checks and attack rolls to the character you are assisting. This bonus does not stack with any bonus provided by the Noble's Coordinate Talent.",
+      "taxonomy": {
+        "bucket": "Leadership & Allies",
+        "subbucket": "Aid Another & Teamwork",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "aid_another_bonus_and_range",
+        "home": "Aid Another / team support workflow",
+        "sourceClassification": "aid_another_support_bonus",
+        "sourceMechanicsMode": "aid_another_metadata",
+        "forcePower": null,
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match aid_another_bonus_and_range, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "aid_another_context",
+        "abilityMetaImplementationStatus": "aid_another_rule_phase11",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "attack"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Metadata can describe the support relationship, but correct automation needs Aid Another context, ally range/communication, and target action connection.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Strafe",
+      "slug": "strafe",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 36,
+      "description": "When you make an Autofire attack, instead of attacking a 2-square-by-2-square area, you may attack a line 1 square wide and 4 squares long.",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Area & Explosives",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "autofire_shape_attack_option",
+        "home": "autofire action card / area template",
+        "sourceClassification": "autofire_line_attack_option",
+        "sourceMechanicsMode": "combat_option_rule",
+        "forcePower": null,
+        "staticSheetPolicy": "exclude",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match autofire_shape_attack_option, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "attack_option",
+        "abilityMetaImplementationStatus": "attack_option_phase10",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "attack"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "not_implemented",
+        "confidence": "medium",
+        "rationale": "Requires a specific autofire attack shape option. No proven action card/template hook exists.",
+        "correctiveAction": "Implement the expected runtime/action/subsystem hook or leave as metadata with a clear blocker."
+      },
+      "priority": "high",
+      "risk": "high"
+    },
+    {
+      "name": "Swarm",
+      "slug": "swarm",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 37,
+      "description": "You gain a +1 circumstance bonus on melee attack rolls for each allied character adjacent to your target.",
+      "taxonomy": {
+        "bucket": "Combat",
+        "subbucket": "Mobility & Positioning",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "target_position_context_bonus",
+        "home": "adjacency/target positioning combat context",
+        "sourceClassification": "adjacent_allies_melee_bonus",
+        "sourceMechanicsMode": "target_position_context_bonus",
+        "forcePower": null,
+        "staticSheetPolicy": "roll_context_metadata",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match target_position_context_bonus, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "attack_option",
+        "abilityMetaImplementationStatus": "attack_option_phase10",
+        "staticSheetPolicy": "roll_context_only",
+        "ruleTypes": [
+          "ATTACK_OPTION"
+        ],
+        "modifierTargets": [
+          "attack"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Metadata can express positioning context, but full correctness requires target adjacency/ally count checks in attack or damage context.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    },
+    {
+      "name": "Unleashed",
+      "slug": "unleashed",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 37,
+      "description": "You can activate Unleashed Abilities by spending a Destiny Point. You must also have the Force Sensitivity Feat in order to activate Force Unleashed Abilities for Force Powers and Force Talents.",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Point & Destiny",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "unleashed_capability_unlock",
+        "home": "Destiny Point / Unleashed ability subsystem metadata",
+        "sourceClassification": "unleashed_ability_access",
+        "sourceMechanicsMode": "grant_unlock",
+        "forcePower": null,
+        "staticSheetPolicy": "capability_metadata",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match unleashed_capability_unlock, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "general",
+        "subType": "RULE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "grant_unlock",
+        "abilityMetaApplicationScope": "unleashed_ability_access",
+        "abilityMetaImplementationStatus": "unlock_metadata_phase16",
+        "staticSheetPolicy": "capability_metadata",
+        "ruleTypes": [
+          "SYSTEM_ACCESS"
+        ],
+        "modifierTargets": [
+          "metadata"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "metadata_correct",
+        "confidence": "high",
+        "rationale": "Correctly treated as capability metadata until a dedicated Destiny Point and Unleashed Ability activation subsystem exists. Do not fake static automation.",
+        "correctiveAction": "Keep as explicit metadata until the named subsystem exists; do not add fake automation."
+      },
+      "priority": "low",
+      "risk": "high"
+    },
+    {
+      "name": "Unstoppable Force",
+      "slug": "unstoppable-force",
+      "source": "The Force Unleashed Campaign Guide",
+      "sourcePage": 35,
+      "description": "You gain a +5 insight bonus to Fortitude Defense and Will Defense against any attack or effect requiring a Use the Force check.",
+      "taxonomy": {
+        "bucket": "Force",
+        "subbucket": "Force Defenses",
+        "source": "phase9f source-derived classification"
+      },
+      "expected": {
+        "mode": "conditional_force_defense_bonus",
+        "home": "contextual defense against Force effects",
+        "sourceClassification": "utf_based_defense_bonus",
+        "sourceMechanicsMode": "conditional_defense_bonus",
+        "forcePower": null,
+        "staticSheetPolicy": "conditional_only",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": false,
+        "mustNotBeFlatStaticBonus": true,
+        "accuracyQuestion": "Does runtime behavior match conditional_force_defense_bonus, including required context/timing, rather than merely having metadata or a flat passive modifier?"
+      },
+      "observed": {
+        "featType": "force",
+        "subType": "STATE",
+        "executionModel": "PASSIVE",
+        "catalogSource": "The Force Unleashed Campaign Guide",
+        "abilityMetaMechanicsMode": "conditional",
+        "abilityMetaApplicationScope": "defense_context",
+        "abilityMetaImplementationStatus": "conditional_defense_phase10",
+        "staticSheetPolicy": "contextual_only",
+        "ruleTypes": [],
+        "modifierTargets": [
+          "attack"
+        ],
+        "hasEnabledUnconditionalStaticNumericModifier": false
+      },
+      "accuracy": {
+        "status": "implemented_partial",
+        "confidence": "medium",
+        "rationale": "Metadata/context summary may exist, but full correctness requires target-effect context for Force powers and should not become always-on defenses.",
+        "correctiveAction": "Add runtime verification/tests and the missing context hook before marking implemented_correct."
+      },
+      "priority": "medium",
+      "risk": "medium"
+    }
+  ],
+  "summary": {
+    "total": 31,
+    "accuracyCounts": {
+      "implemented_incorrect": 1,
+      "implemented_partial": 21,
+      "not_implemented": 6,
+      "implemented_correct": 2,
+      "metadata_correct": 1
+    },
+    "implementationModes": {
+      "damage_result_timing_hook": 1,
+      "cover_area_damage_rule": 1,
+      "grenade_cover_bypass_option": 1,
+      "surprise_round_action_capability": 1,
+      "autofire_ally_bonus_context": 1,
+      "rage_action_state_rule": 1,
+      "ranged_miss_soft_cover_followup": 1,
+      "grapple_pin_damage_rider": 1,
+      "conditional_attack_bonus": 1,
+      "rage_skill_permission": 1,
+      "grenade_hit_rider": 1,
+      "scoped_force_power_activation_bonus": 6,
+      "second_wind_force_power_recovery": 1,
+      "force_point_power_result_rider": 2,
+      "skill_bonus_and_encounter_reroll": 1,
+      "conditional_defense_and_reroll": 1,
+      "combat_maneuver_distance_rule": 1,
+      "skill_use_substitution": 1,
+      "thrown_weapon_attack_formula_and_range": 1,
+      "rage_state_damage_bonus": 1,
+      "aid_another_bonus_and_range": 1,
+      "autofire_shape_attack_option": 1,
+      "target_position_context_bonus": 1,
+      "unleashed_capability_unlock": 1,
+      "conditional_force_defense_bonus": 1
+    },
+    "reviewQueueCount": 28
+  }
+}

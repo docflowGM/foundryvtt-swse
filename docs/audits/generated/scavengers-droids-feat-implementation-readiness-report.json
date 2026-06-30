@@ -1,0 +1,168 @@
+{
+  "phase": "9E-scavengers-guide-to-droids-implementation-accuracy",
+  "totalFeats": 17,
+  "accuracyCounts": {
+    "implemented_partial": 7,
+    "not_implemented": 7,
+    "implemented_correct": 2,
+    "metadata_correct": 1
+  },
+  "implementationModes": {
+    "attack_option_next_attack": 1,
+    "damage_workflow_reaction": 1,
+    "active_skill_vs_will_action": 1,
+    "scoped_choice_roll_and_defense_modifier": 1,
+    "shield_recharge_action_rule": 1,
+    "movement_for_defense_toggle": 1,
+    "damage_threshold_hook": 1,
+    "progression_choice_skill_training": 1,
+    "unarmed_hit_rider_debuff": 1,
+    "aim_action_timing_override": 1,
+    "grapple_pin_swift_maintenance": 1,
+    "aiming_accuracy_hit_rider": 1,
+    "sensor_broadcast_aid_another": 1,
+    "vehicle_shield_reaction": 1,
+    "special_melee_attack_action": 1,
+    "special_unarmed_attack_action": 1,
+    "withdraw_action_and_force_point_reaction": 1
+  },
+  "reviewQueue": [
+    {
+      "name": "Aiming Accuracy",
+      "description": "Prerequisites: Droid , Point-Blank Shot , Precise Shot Effect: If you Aim at a target as a Full-Round Action (instead of two Swift Actions ), you gain a +5 bonus to your next attack made with a weapon with which you are proficient in the following round against that target. The target must remain in your line of sight. Source URL: https://swse.fandom.com/wiki/Aiming_Accuracy",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Combat",
+      "proposedImplementationMode": "attack_option_next_attack",
+      "currentObservedStatus": "implemented_partial",
+      "whyUnsureOrNeedsReview": "Metadata exposes an attack option with +5, but full-round aim timing, next-round/next-attack target persistence, and line-of-sight gating are not proven end-to-end. It is not a flat static bonus, which is good, but it is not fully verified."
+    },
+    {
+      "name": "Damage Conversion",
+      "description": "Prerequisites: Droid , Dexterity 13 Effect: When you take damage from an attack against you (other than an Area Attack , or an attack that deals Ion or Force damage) and that damage equals or exceeds your Damage Threshold , you can take an additional 10 points of damage instead of moving down the Condition Track . Each subsequent time you use this Feat in a single encounter, the additional damage you take increases by 5 points. Source URL: https://swse.fandom.com/wiki/Damage_Conversion",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Combat",
+      "proposedImplementationMode": "damage_workflow_reaction",
+      "currentObservedStatus": "implemented_partial",
+      "whyUnsureOrNeedsReview": "Metadata describes conversion of condition-track movement to escalating extra damage, but current damage workflow does not prove a GM/player reaction choice, encounter use escalation, or exclusions for area, ion, and Force damage. Correct implementation must be a threshold reaction, not a passive bonus."
+    },
+    {
+      "name": "Distracting Droid",
+      "description": "Prerequisites: Droid Effect: As a Standard Action , make a Persuasion check against the Will Defense of all enemies that are within 6 squares of you and that can see or hear you, as determined by the Gamemaster. If the check equals or exceeds an enemy's Will Defense , the enemy loses one Move Action on its next turn. If the attack exceeds an enemy's Will Defense by 10 or more, the enemy is also Flat-Footed until the start of your next turn. This is a Mind-Affecting effect. Source URL: https://swse.fandom.com/wiki/Distracting_Droid",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Combat",
+      "proposedImplementationMode": "active_skill_vs_will_action",
+      "currentObservedStatus": "not_implemented",
+      "whyUnsureOrNeedsReview": "Requires a standard-action Persuasion check against nearby enemies Will Defense with loss of Move Action and possible flat-footed rider. No action card or multi-target Will workflow is proven."
+    },
+    {
+      "name": "Droid Focus",
+      "description": "Prerequisites: Trained in Mechanics and Use Computer Effect: Select a degree of Droid ( 1st-Degree , 2nd-Degree , 3rd-Degree , 4th-Degree , or 5th-Degree ). You gain a +1 bonus to Deception , Mechanics , Perception , Persuasion , and Use Computer checks when used on or against a Droid of the selected degree, and a +1 bonus to all Defenses against attack rolls and Skill Checks made by Droids of the selected degree. Special: You can gain this Feat multiple times. Its effects do not stack. Each time you take this Feat, it applies to a different degree of Droid ( 1st-Degree , 2nd-Degree , 3rd-Degree , 4th-Degree , or 5th-Degree ). Source URL: https://swse.fandom.com/wiki/Droid_Focus",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Repair",
+      "proposedImplementationMode": "scoped_choice_roll_and_defense_modifier",
+      "currentObservedStatus": "implemented_partial",
+      "whyUnsureOrNeedsReview": "Choice metadata exists for selected droid degree and rules describe skill/defense context, but runtime application against selected target droid degree is not proven. Correct shape is contextual, not static global skill/defense bonuses."
+    },
+    {
+      "name": "Droid Shield Mastery",
+      "description": "Prerequisites: Droid , Shield Generator ( Droid Accessory ) Effect: You automatically succeed on Endurance checks to restore your Shield Rating by 5 points (up to your normal Shield Rating ). Additionally, you replenish your shields in two Swift Actions . Normal: Three Swift Actions and a DC 20 Endurance check are normally required to restore lost shield power. Source URL: https://swse.fandom.com/wiki/Droid_Shield_Mastery",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Systems",
+      "proposedImplementationMode": "shield_recharge_action_rule",
+      "currentObservedStatus": "implemented_partial",
+      "whyUnsureOrNeedsReview": "Metadata and prerequisites exist, but shield recharge action automation is not proven. Correct implementation must alter shield recovery action cost/check behavior, not static defenses."
+    },
+    {
+      "name": "Erratic Target",
+      "description": "Prerequisites: Droid , Hovering or Flying Locomotion, Dexterity 13, Dodge Effect: You can reduce your Speed by up to 2 squares to increase your Dodge bonus by 1 for each square of speed you give up, until the start of your next turn. You must move at least 2 squares to gain this benefit. Special: To use this Feat you must be equipped with and using Hovering or Flying Locomotion. Source URL: https://swse.fandom.com/wiki/Erratic_Target Automation: Punted to GM/player handling. The player/GM should manually decide how much speed is sacrificed after moving and apply the matching Dodge bonus until the start of the next turn.",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Systems",
+      "proposedImplementationMode": "movement_for_defense_toggle",
+      "currentObservedStatus": "not_implemented",
+      "whyUnsureOrNeedsReview": "Requires trading up to 2 squares of speed after moving with hover/flying locomotion for a temporary Dodge bonus. No movement-state or temporary defense toggle is proven."
+    },
+    {
+      "name": "Mechanical Martial Arts",
+      "description": "Prerequisites: Droid , Martial Arts I , Base Attack Bonus +1 Effect: When you successfully damage an enemy with an Unarmed Attack , the enemy takes a -5 penalty to all melee attack rolls and damage rolls until the start of your next turn. Special: If you strike an organic enemy while using this Feat during an Attack of Opportunity , the penalty lasts until the start of the enemy's next turn. Source URL: https://swse.fandom.com/wiki/Mechanical_Martial_Arts",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Combat",
+      "proposedImplementationMode": "unarmed_hit_rider_debuff",
+      "currentObservedStatus": "implemented_partial",
+      "whyUnsureOrNeedsReview": "Metadata/prerequisites exist, but no proven hit rider applies the melee attack/damage penalty duration, including the opportunity-attack duration variant. Not a static unarmed bonus."
+    },
+    {
+      "name": "Multi-Targeting",
+      "description": "Prerequisites: Droid , Intelligence 13 Effect: You can use Swift Actions across more than one round to Aim at a target with a weapon with which you are proficient. You can attack different targets prior to the completion of your Aim Action. If the subject of your Aim is out of your line of sight for any reason, you lose your Aim and must start again. Normal: You must normally use two consecutive Swift Actions in the same round to Aim . Source URL: https://swse.fandom.com/wiki/Multi-Targeting",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Combat",
+      "proposedImplementationMode": "aim_action_timing_override",
+      "currentObservedStatus": "not_implemented",
+      "whyUnsureOrNeedsReview": "Requires relaxing the normal consecutive swift-action aim restriction across rounds and allowing other attacks before the aim completes. No aim-state tracker behavior is proven."
+    },
+    {
+      "name": "Pincer",
+      "description": "Prerequisites: Droid , Claw or Hand Appendage, Base Attack Bonus +1, Pin , Crush Effect: When you successfully Pin an enemy, you can maintain the Pin beyond 1 round and can make subsequent Grapple checks against the Pinned enemy as a Swift Action . You can apply the Crush Feat whenever your subsequent checks are successful. Normal: Grapple checks are a Standard Action . The Pin Feat must be rerolled each round as a new Grapple check. Special: You must have a Claw or Hand Appendage to use this Feat. Source URL: https://swse.fandom.com/wiki/Pincer",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Combat",
+      "proposedImplementationMode": "grapple_pin_swift_maintenance",
+      "currentObservedStatus": "not_implemented",
+      "whyUnsureOrNeedsReview": "Requires persistent pin maintenance and subsequent grapple checks as swift actions plus Crush interaction. No full grapple workflow hook is proven."
+    },
+    {
+      "name": "Pinpoint Accuracy",
+      "description": "Prerequisites: Droid , Aiming Accuracy , Point-Blank Shot , Precise Shot Effect: When using the Aiming Accuracy Feat, a target you damage cannot take the Recover Action until the end of its next turn. Source URL: https://swse.fandom.com/wiki/Pinpoint_Accuracy",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Combat",
+      "proposedImplementationMode": "aiming_accuracy_hit_rider",
+      "currentObservedStatus": "implemented_partial",
+      "whyUnsureOrNeedsReview": "Metadata describes the Aiming Accuracy rider, but no proven runtime target effect prevents Recover until the end of the target next turn after qualifying damage."
+    },
+    {
+      "name": "Sensor Link",
+      "description": "Prerequisites: Droid or Cyborg Hybrid Effect: As a Swift Action , you can broadcast the input from your audio, visual, and special sensors to a Droid ally, Comlink , communications system, or holographic receiver within 24 squares. That ally is aware of anything you are aware of, and can use the Aid Another Action to aid on your Perception checks even if you do not have line of sight to one another. If both you and your ally have Sensor Link, you share information simultaneously, granting a +2 bonus to Perception checks. Special: Cyborg Hybrids with built-in Subcutaneous Comlink can also take this Feat. Source URL: https://swse.fandom.com/wiki/Sensor_Link",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Systems",
+      "proposedImplementationMode": "sensor_broadcast_aid_another",
+      "currentObservedStatus": "metadata_correct",
+      "whyUnsureOrNeedsReview": "This is mostly table/scene information sharing and Aid Another eligibility. Metadata/source-reference is correct until a sensor-sharing or perception-assist subsystem exists."
+    },
+    {
+      "name": "Shield Surge",
+      "description": "Prerequisites: Droid or Cyborg Hybrid , Trained in Mechanics Effect: As a Reaction , when your Vehicle takes damage above its Shield Rating , after the Shield Rating is reduced you can reduce the amount of damage sustained by the Vehicle by an amount up to the remaining Shield Rating . However, the Shield Rating is immediately reduced by one point for every point of damage reduced. Special: The Recharge Shields Action cannot be used on the Vehicle until a full round after the use of Shield Surge. You must have a Scomp Link or similar direct data link to the Vehicle to use this Feat. Source URL: https://swse.fandom.com/wiki/Shield_Surge",
+      "proposedBucket": "Starship & Vehicle",
+      "proposedSubbucket": "Starship Systems & Metadata",
+      "proposedImplementationMode": "vehicle_shield_reaction",
+      "currentObservedStatus": "not_implemented",
+      "whyUnsureOrNeedsReview": "Requires a reaction when a vehicle takes damage above SR, spending remaining SR to reduce damage. No vehicle shield reaction workflow is proven."
+    },
+    {
+      "name": "Slammer",
+      "description": "Prerequisites: Droid , Small size or larger, 2+ Appendages , Strength 13 Effect: As a Standard Action , you slam two of your Appendages together from either side of an enemy, crushing your target between them. Make a melee attack. If the attack is successful, you deal Unarmed damage with double your Strength bonus. If you also exceed the target's Damage Threshold , it has a Persistent Condition that can only be removed with 8 hours of rest or a DC 20 Treat Injury check. Special: If you also have the Crush Feat, increase your Unarmed damage by 1 die when using Slammer. Source URL: https://swse.fandom.com/wiki/Slammer",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Combat",
+      "proposedImplementationMode": "special_melee_attack_action",
+      "currentObservedStatus": "not_implemented",
+      "whyUnsureOrNeedsReview": "Requires a standard-action special melee attack, double Strength bonus, and persistent condition rider on threshold exceedance. No action card or rider is proven."
+    },
+    {
+      "name": "Tool Frenzy",
+      "description": "Prerequisites: Droid , Small size or larger, 2+ Tool Appendages Effect: As a Standard Action , using Appendages not normally considered Weapons , you can make several strikes as a single attack against a single target. Make an Unarmed melee attack with a +2 bonus; until the end of your next turn, you take a -2 penalty to your Reflex Defense . Use the damage die of the highest rated Appendage when determining damage. Special: True melee or ranged Weapons are not considered Tools for the purposes of this Feat. Source URL: https://swse.fandom.com/wiki/Tool_Frenzy",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Combat",
+      "proposedImplementationMode": "special_unarmed_attack_action",
+      "currentObservedStatus": "not_implemented",
+      "whyUnsureOrNeedsReview": "Requires a standard-action tool-appendage attack with +2 attack, appendage damage die selection, and temporary -2 Reflex. No action card or temporary penalty workflow is proven."
+    },
+    {
+      "name": "Turn and Burn",
+      "description": "Prerequisites: Droid ; Hovering , Flying , Wheeled , or Tracked Locomotion; Dexterity 13 Effect: When using the Withdraw Action, you can move up to 2 squares to escape Threatened squares without provoking an Attack of Opportunity , and you can move your Speed. You can spend a Force Point as a Reaction to an enemy ending its movement adjacent to you to Withdraw . Normal: When using the Withdraw Action, you can normally move only 1 square to escape a Threatened square without provoking an Attack of Opportunity and can move only up to half your Speed. Special: You must be equipped with Hovering , Flying , Wheeled , or Tracked Locomotion to use this Feat. Source URL: https://swse.fandom.com/wiki/Turn_and_Burn",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Systems",
+      "proposedImplementationMode": "withdraw_action_and_force_point_reaction",
+      "currentObservedStatus": "implemented_partial",
+      "whyUnsureOrNeedsReview": "Metadata recognizes the Force Point/reaction/mobility context, but no proven reaction prompt allows Force Point spending to withdraw when an enemy ends movement adjacent. It should not be a Force feat despite Force Point spending."
+    }
+  ],
+  "warnings": [],
+  "errors": []
+}
