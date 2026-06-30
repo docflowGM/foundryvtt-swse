@@ -1,0 +1,245 @@
+{
+  "phase": "phase-9k-scum-and-villainy-implementation-accuracy",
+  "sourcebook": "Scum and Villainy",
+  "purpose": "Separate list of Scum and Villainy feats that are not fully implementation-correct yet. Includes feat name, description, proposed bucket/subbucket, expected rule shape, observed implementation, and concern.",
+  "entries": [
+    {
+      "name": "Close Combat Escape",
+      "description": "When you successfully use Acrobatics to escape a Grapple, you can spend a Swift Action to make a single attack with a melee weapon or an Unarmed attack against the opponent that had Grappled you. If the attack hits, it deals normal damage, and your opponent is considered Flat-Footed until the start of its next turn.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Grapple & Unarmed",
+      "proposedImplementationMode": "escape_grapple_followup_attack",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Correct metadata concept, but not runtime-correct until grapple escape and flat-footed state lifecycles are wired.",
+      "expectedRuleShape": "After successfully using Acrobatics to escape a grapple, spend a swift action to make a melee/unarmed attack against the grappler; on hit normal damage and target flat-footed until next turn.",
+      "observedImplementation": "actionRules contains ESCAPE_GRAPPLE_AND_ATTACK metadata, but no proven Acrobatics escape success hook, swift-action spend, follow-up attack launch, or flat-footed duration consumer exists."
+    },
+    {
+      "name": "Collateral Damage",
+      "description": "When you deal damage with a single, non- Area Attack using the Rapid Shot Feat, once per turn on your turn, you can immediately make a second attack at a -2 penalty against a second target within 2 squares of the first. If this attack hits, you deal half the original attack's damage to that target.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Ranged Options",
+      "proposedImplementationMode": "rapid_shot_secondary_attack_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Wrong to treat as a flat attack bonus; needs a post-hit secondary attack workflow.",
+      "expectedRuleShape": "Once per turn after damaging with a single non-area Rapid Shot attack, immediately make a second attack at -2 against another target within 2 squares; on hit deal half original damage.",
+      "observedImplementation": "RIDER_EFFECT metadata describes the secondary attack, but no proven post-damage Rapid Shot trigger, target picker, half-damage carryover, or once-per-turn usage tracker exists."
+    },
+    {
+      "name": "Deceptive Drop",
+      "description": "During the Surprise Round, if you damage a Flat-Footed target, that target is also knocked Prone if your attack roll also exceeds the target's Fortitude Defense. The target adds its size modifier to its Fortitude Defense: - Colossal, +50; - Gargantuan, +20; - Huge, +10; - Large, +5; - Medium and smaller, +0.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Condition Track",
+      "proposedImplementationMode": "surprise_round_prone_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs post-hit secondary defense comparison and prone application.",
+      "expectedRuleShape": "During surprise round, if you damage a flat-footed target and the attack roll exceeds size-adjusted Fortitude, knock target prone.",
+      "observedImplementation": "riderRules metadata captures trigger, secondary check, size modifiers, and prone effect, but no proven surprise-round/flat-footed post-hit resolver applies the prone state."
+    },
+    {
+      "name": "Duck and Cover",
+      "description": "Whenever you are the target of an Area Attack that misses, once per turn you can Move 2 squares as a Reaction. This movement does not provoke Attacks of Opportunity.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Defense & Avoidance",
+      "proposedImplementationMode": "area_attack_miss_reposition_reaction",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Metadata correct, runtime positioning/reaction workflow missing.",
+      "expectedRuleShape": "Once per turn when targeted by an area attack that misses, move 2 squares as a reaction without provoking.",
+      "observedImplementation": "reactionRules metadata exists, but no area-attack miss interception, reaction prompt, grid movement, AoO suppression, or once-per-turn usage tracker is proven."
+    },
+    {
+      "name": "Fleet-Footed",
+      "description": "If you Move both before and after you make an attack using the Running Attack Feat, your Speed is increased by 2 squares until the end of your turn.",
+      "proposedBucket": "Recovery & Survival",
+      "proposedSubbucket": "Mobility & Endurance",
+      "proposedImplementationMode": "running_attack_speed_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs turn movement tracker and temporary speed state.",
+      "expectedRuleShape": "If using Running Attack and moving before and after the attack, increase speed by 2 squares until end of turn.",
+      "observedImplementation": "actionRules metadata exists, but no movement segmentation/Running Attack state consumer or temporary speed lifecycle is proven."
+    },
+    {
+      "name": "Friends in Low Places",
+      "description": "Whenever you would acquire a license for a Restricted or Military object, you can substitute a Gather Information check for a Knowledge (Bureaucracy) check. Reduce the Black Market cost multiplier of such items by 1.",
+      "proposedBucket": "Social & Intrigue",
+      "proposedSubbucket": "Contacts & Reputation",
+      "proposedImplementationMode": "license_black_market_context",
+      "currentObservedStatus": "source_review_required",
+      "implementationAccuracyConcern": "Likely commerce/store hook, but should be reviewed before automation because it changes economy/licensing behavior.",
+      "expectedRuleShape": "Substitute Gather Information for Knowledge (bureaucracy) for license acquisition and reduce restricted/military black market multipliers as source specifies.",
+      "observedImplementation": "commerceRules metadata exists, but no proven store/license/black-market consumer was found in this audit; exact source interaction should be checked against store transaction rules."
+    },
+    {
+      "name": "Hasty Modification",
+      "description": "You can exchange a Trait you have applied to a piece of Equipment or Droid for another one by spending 1 minute to make a DC 20 Mechanics check. If you succeed, the Equipment loses the old Trait and gains a new Trait until the end of the encounter, at which point the device loses all Traits previously acquired through use of the Tech Specialist Feat.",
+      "proposedBucket": "Tech & Equipment",
+      "proposedSubbucket": "Gear Modification",
+      "proposedImplementationMode": "temporary_tech_specialist_swap",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Depends on Tech Specialist/customization UI and timed temporary modifications.",
+      "expectedRuleShape": "Temporarily modify an item using Tech Specialist-style trait swapping as source specifies, with time/action/DC/duration restrictions.",
+      "observedImplementation": "customizationCapabilities defer to dedicated customization picker; no proven temporary trait swap duration/reset workflow was found."
+    },
+    {
+      "name": "Hideous Visage",
+      "description": "Once per encounter, as a Swift Action, you can make a Deception check against one opponent that can see you. If the check equals or exceeds the opponent's Will Defense, you move the target 1 square away from you and it takes a -1 penalty on all attacks until the start of your next turn. This is a Mind-Affecting Fear effect.",
+      "proposedBucket": "Social & Intrigue",
+      "proposedSubbucket": "Intimidation & Fear",
+      "proposedImplementationMode": "deception_vs_will_fear_power",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs active skill-use action workflow and target-state application.",
+      "expectedRuleShape": "Once per encounter swift Deception vs Will to push/penalize a target as described by the feat.",
+      "observedImplementation": "skillUseRules metadata exists, but no proven skill-use action card, Will comparison, target push, attack penalty, duration, or encounter usage tracker is wired."
+    },
+    {
+      "name": "Impersonate",
+      "description": "You can make a Deception check to alter your features to that of a specific person. This Feat also allows you to change your voice to match the target's. You always treat impersonating a person as a Moderate Deception.",
+      "proposedBucket": "Skills",
+      "proposedSubbucket": "Deception",
+      "proposedImplementationMode": "deception_impersonation_permission",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Mostly a skill-use permission and table context; not a static Deception bonus.",
+      "expectedRuleShape": "Allows Shapeshift-based impersonation / disguise use as described, interacting with Deception context and identity matching.",
+      "observedImplementation": "skillUseRules metadata exists; no dedicated Shapeshift/identity/disguise workflow is proven."
+    },
+    {
+      "name": "Impetuous Move",
+      "description": "When you catch a Second Wind, you can choose to regain only half of the Hit Points you normally would with a Second Wind and immediately Move up to half of your Speed. This movement does not provoke Attacks of Opportunity.",
+      "proposedBucket": "Recovery & Survival",
+      "proposedSubbucket": "Second Wind",
+      "proposedImplementationMode": "second_wind_half_heal_move_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs Second Wind UI option and movement state application.",
+      "expectedRuleShape": "When catching Second Wind, optionally regain half normal HP and immediately move up to half speed without provoking.",
+      "observedImplementation": "resourceRules.secondWind metadata exists, but no proven Second Wind option prompt that alters healing amount and grants movement exists."
+    },
+    {
+      "name": "Impulsive Flight",
+      "description": "You can Withdraw one extra square using the Withdraw Action.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Mobility & Positioning",
+      "proposedImplementationMode": "withdraw_movement_bonus",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs movement-action workflow and map path validation.",
+      "expectedRuleShape": "Improves Withdraw movement as source specifies while preserving positioning/AoO restrictions.",
+      "observedImplementation": "actionRules metadata exists, but no proven Withdraw action movement validator/consumer exists."
+    },
+    {
+      "name": "Knife Trick",
+      "description": "If you have a concealed weapon, you Threaten squares as though armed with a melee weapon. When you can make an Attack of Opportunity, you can draw a weapon you have successfully concealed on your person and make a single attack against the target. If you choose not to draw your concealed weapon and attack with it, you cannot make the Attack of Opportunity unless you would otherwise normally be able to do so.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Grapple & Unarmed",
+      "proposedImplementationMode": "concealed_weapon_threat_and_aoo",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Partially represented but not runtime-complete.",
+      "expectedRuleShape": "Concealed weapon lets the character threaten and draw/use it for attacks of opportunity as source specifies.",
+      "observedImplementation": "rules include concealed-threat metadata and an ATTACK_OPTION for opportunity attacks, but no proven threatened-square recalculation, concealed weapon state, or AoO draw workflow exists."
+    },
+    {
+      "name": "Lightning Draw",
+      "description": "Once per encounter, you can draw a holstered weapon and attack as a single Standard Action.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Action Economy",
+      "proposedImplementationMode": "draw_and_attack_action",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs inventory draw/action economy integration.",
+      "expectedRuleShape": "Draw and fire/attack as a standard action as specified by source timing.",
+      "observedImplementation": "actionRules has DRAW_AND_ATTACK_AS_STANDARD_ACTION but no proven item draw state + attack action launcher exists."
+    },
+    {
+      "name": "Metamorph",
+      "description": "As a Full-Round Action, you can change your mass when you use your Shapeshift Species Trait, increasing or decreasing your size by one step. You can maintain this form for a number of rounds per day equal to your Constitution score. If you reduce your size to Small, you gain a +1 size bonus to your Reflex Defense and a +5 size bonus on Stealth checks, but your Carrying Capacity is three-quarters of what it was prior to your use of Metamorph. If you increase your size to Large, you take a -1 penalty to your Reflex Defense and a -5 penalty on Stealth checks. However, your Carrying Capacity doubles, you gain a +5 size bonus to your Damage Threshold, and your Reach increases by 1 square.",
+      "proposedBucket": "Species & Origin",
+      "proposedSubbucket": "Species Traits",
+      "proposedImplementationMode": "shapeshift_size_active_state",
+      "currentObservedStatus": "source_review_required",
+      "implementationAccuracyConcern": "Needs exact source context and a shapechange/size state subsystem before marking correct.",
+      "expectedRuleShape": "Shapeshift can alter size one step for limited duration with resulting size modifiers and constraints.",
+      "observedImplementation": "activeRules/metadata captures shapeshift size context, but no size-selection UI, duration tracking, or derived size modifier recalculation is proven."
+    },
+    {
+      "name": "Opportunistic Retreat",
+      "description": "Whenever an opponent provokes an Attack of Opportunity from you, once per turn you can sacrifice the attack to move a number of squares equal to one-half your Speed. Moving in this way does not provoke Attacks of Opportunity.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Mobility & Positioning",
+      "proposedImplementationMode": "trade_aoo_for_movement_reaction",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs AoO/reaction and movement workflow.",
+      "expectedRuleShape": "Forgo an attack of opportunity to move up to half speed without provoking.",
+      "observedImplementation": "reactionRules metadata exists, but no AoO opportunity interception, forgo-choice prompt, or movement path consumer is proven."
+    },
+    {
+      "name": "Resurgence",
+      "description": "When you catch your Second Wind, you immediately gain a Move Action to be used immediately.",
+      "proposedBucket": "Recovery & Survival",
+      "proposedSubbucket": "Second Wind",
+      "proposedImplementationMode": "second_wind_bonus_move_action",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs Second Wind action hook and temporary action grant.",
+      "expectedRuleShape": "When catching Second Wind, immediately gain a move action to use right away.",
+      "observedImplementation": "resourceRules.secondWind metadata exists, but no proven Second Wind action economy consumer grants an immediate move action."
+    },
+    {
+      "name": "Signature Device",
+      "description": "You designate a single weapon, suit of armor, vehicle, or other item as your Signature Item. When making Mechanics checks to modify that piece of Equipment, you can Take 10 on the check. In addition, you can allow the device to gain two Traits from the Tech Specialist feat. To install the second Trait, you must succeed on a DC 30 Mechanics check. Once installed, the device can use only one Trait at a time, and switching from one Trait to the other requires a Swift Action to adjust the item's settings. You can have only one Signature Device at a time, but you can designate another device as your Signature Item (the former item loses all benefits gained from this Feat).",
+      "proposedBucket": "Tech & Equipment",
+      "proposedSubbucket": "Gear Modification",
+      "proposedImplementationMode": "signature_device_customization_context",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Likely substantial customization support, but not proven fully correct by this audit.",
+      "expectedRuleShape": "Designate one item as signature device, allow Take 10 on modifications, allow two Tech Specialist traits with DC 30 and swift trait switching while only one trait active.",
+      "observedImplementation": "customizationCapabilities contains SIGNATURE_DEVICE, secondTrait, take10, activeTraitToggle metadata; full runtime correctness requires verifying designation persistence, Tech Specialist rules, DC 30, trait switching, and active-trait exclusivity."
+    },
+    {
+      "name": "Stay Up",
+      "description": "Once per encounter, when you would normally take damage from an attack, you can instead choose to take half damage and move -1 step along the Condition Track.",
+      "proposedBucket": "Recovery & Survival",
+      "proposedSubbucket": "Damage Delay & Mitigation",
+      "proposedImplementationMode": "incoming_damage_reaction_tradeoff",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs damage reaction prompt and atomic damage/CT mutation.",
+      "expectedRuleShape": "Once per encounter when taking attack damage, halve damage and move -1 CT instead.",
+      "observedImplementation": "reactionRules metadata exists, but no proven incoming damage interception, half-damage rewrite, CT application, or usage tracking exists."
+    },
+    {
+      "name": "Superior Tech",
+      "description": "Select one of the following: Armor, Weapons, Droids, Vehicles, or Devices. You can install advanced Traits when modifying the selected type of equipment. These Traits replace the Traits granted by the Tech Specialist Feat. You may still use the Tech Specialist options if you so choose. You must pay one-fifth the cost of the Device, Armor, Weapon, Droid, or vehicle you wish to modify or 2,000 credits, whichever is more, before beginning the modification. This fee replaces the normal cost of modification from the Tech Specialist Feat. Completing the modification requires 1 day per 1,000 credits of the modification's cost. At the end of this time, make a DC 30 Mechanics check; you cannot Take 10 or Take 20 on this check. If the check succeeds, the modification is completed successfully, and the object gains the desired Trait. If the check fails, you lose all credits spent on making the modification, and the object does not gain the desired Trait. However, you can start over from scratch if you wish. Only characters with the Tech Specialist Feat can assist you, reducing proportionately the time needed to complete the modification. At the end of the modification process, they can make a Mechanics check to aid your check. The market value of a modified item is equal to the base cost of the item plus double the cost of the modifications made to it (not including credits wasted on failed modification attempts).",
+      "proposedBucket": "Tech & Equipment",
+      "proposedSubbucket": "Gear Modification",
+      "proposedImplementationMode": "advanced_tech_specialist_customization",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Substantial metadata/UI intent exists but not proven fully source-correct.",
+      "expectedRuleShape": "With chosen category, install advanced traits replacing Tech Specialist options with cost/DC/time restrictions.",
+      "observedImplementation": "customizationCapabilities includes SUPERIOR_TECH_MODIFICATION, category requirement, DC 30, transaction-engine note; exact advanced trait table, cost/time, category validation, and UI coverage need verification."
+    },
+    {
+      "name": "Tactical Advantage",
+      "description": "When you successfully damage an opponent using an Attack of Opportunity, you can immediately move 1 square in any direction. This movement does not provoke Attacks of Opportunity.",
+      "proposedBucket": "Leadership & Allies",
+      "proposedSubbucket": "Tactics & Teamwork",
+      "proposedImplementationMode": "aoo_damage_reposition_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs AoO hit/damage trigger and movement application.",
+      "expectedRuleShape": "After successfully damaging with an attack of opportunity, move 1 square without provoking.",
+      "observedImplementation": "reactionRules metadata exists, but no proven post-AoO damage hook or grid movement consumer exists."
+    },
+    {
+      "name": "Wicked Strike",
+      "description": "When you damage a target with a single, non- Area Attack using the Rapid Strike Feat, once per turn on your turn, you can immediately make a second attack at a -2 penalty against a second target within your reach. If this attack hits, you deal half of the original attack's damage to that target.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Melee Options",
+      "proposedImplementationMode": "rapid_strike_secondary_attack_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs follow-up attack workflow, not just an attack option flag.",
+      "expectedRuleShape": "Once per turn after damaging with a single non-area Rapid Strike attack, make a second attack at -2 against another target within reach; on hit deal half original damage.",
+      "observedImplementation": "ATTACK_OPTION metadata describes followupAttack, but no proven post-damage Rapid Strike target picker, half-damage carryover, or once-per-turn tracker exists."
+    }
+  ],
+  "summary": {
+    "entries": 21,
+    "statuses": {
+      "implemented_partial": 19,
+      "source_review_required": 2
+    }
+  }
+}
