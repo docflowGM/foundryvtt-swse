@@ -1,261 +1,108 @@
 {
-  "schemaVersion": 1,
-  "phase": "7C.5",
-  "status": "skeleton_only",
-  "intent": {
-    "description": "Defines the expanded feat bucket and subbucket taxonomy for future feat metadata migration without modifying existing feat records.",
-    "noCatalogMutation": true,
-    "primaryBucketRequiredInFuture": true,
-    "primarySubbucketRequiredInFuture": true,
-    "secondaryBucketsAllowed": true,
-    "tagsRemainCrossCuttingSearchHints": true,
-    "taxonomyReviewRule": "Do not classify feats from title keywords alone. Use prerequisites, benefit text, runtime mechanics, and source context. If classification is 50/50, mark the feat for source review instead of guessing."
-  },
-  "futureFeatFields": {
-    "bucket": "Primary top-level feat bucket used by the feat browser.",
-    "subbucket": "Primary subbucket within the selected bucket.",
-    "secondaryBuckets": "Optional additional discoverability buckets; never replaces the primary bucket.",
-    "taxonomyConfidence": "high | medium | source_review_required",
-    "taxonomyReviewed": "Boolean indicating whether a human/source-aware pass reviewed the assignment.",
-    "sourceReviewReason": "Required when taxonomyConfidence is source_review_required."
-  },
-  "buckets": [
-    {
-      "id": "combat",
-      "label": "Combat",
-      "description": "Personal-scale tactical combat feats: attacks, riders, defenses, movement, and condition pressure.",
-      "subbuckets": [
-        { "id": "melee", "label": "Melee" },
-        { "id": "ranged", "label": "Ranged" },
-        { "id": "unarmed", "label": "Unarmed" },
-        { "id": "grapple", "label": "Grapple" },
-        { "id": "area_explosive", "label": "Area / Explosive" },
-        { "id": "thrown_weapons", "label": "Thrown Weapons" },
-        { "id": "mounted_combat", "label": "Mounted Combat" },
-        { "id": "charge_movement", "label": "Charge / Movement" },
-        { "id": "defense_avoidance", "label": "Defense / Avoidance" },
-        { "id": "condition_track", "label": "Condition Track" },
-        { "id": "damage_threshold", "label": "Damage / Threshold" },
-        { "id": "critical_hits", "label": "Critical Hits" },
-        { "id": "attack_options", "label": "Attack Options" },
-        { "id": "action_economy", "label": "Action Economy" }
-      ]
-    },
-    {
-      "id": "weapon_armor",
-      "label": "Weapon & Armor",
-      "description": "Weapon and armor proficiency, specialization, multiattack, shields, and build-defining equipment combat feats.",
-      "subbuckets": [
-        { "id": "weapon_proficiency", "label": "Weapon Proficiency" },
-        { "id": "weapon_focus", "label": "Weapon Focus" },
-        { "id": "weapon_specialization", "label": "Weapon Specialization" },
-        { "id": "advanced_weapon_training", "label": "Advanced Weapon Training" },
-        { "id": "armor_proficiency", "label": "Armor Proficiency" },
-        { "id": "armor_optimization", "label": "Armor Optimization" },
-        { "id": "shield_use", "label": "Shield Use" },
-        { "id": "dual_weapon", "label": "Dual Weapon" },
-        { "id": "multiattack", "label": "Multiattack" },
-        { "id": "lightsaber_style", "label": "Lightsaber Form / Weapon Style" }
-      ]
-    },
-    {
-      "id": "force",
-      "label": "Force",
-      "description": "Feats that require or modify Force mechanics, Force powers, Force points, destiny, dark side mechanics, traditions, or Force regimens.",
-      "classificationGuardrail": "The word Force in the feat name is not sufficient for this bucket.",
-      "subbuckets": [
-        { "id": "force_training", "label": "Force Training" },
-        { "id": "use_the_force", "label": "Use the Force" },
-        { "id": "force_power_modifier", "label": "Force Power Modifier" },
-        { "id": "force_technique_secret_adjacent", "label": "Force Technique / Secret Adjacent" },
-        { "id": "force_point", "label": "Force Point" },
-        { "id": "destiny_point", "label": "Destiny Point" },
-        { "id": "dark_side", "label": "Dark Side" },
-        { "id": "force_tradition", "label": "Force Tradition" },
-        { "id": "force_regimen", "label": "Force Regimen" },
-        { "id": "unleashed_metadata", "label": "Unleashed / Metadata" }
-      ]
-    },
-    {
-      "id": "skills",
-      "label": "Skills",
-      "description": "Skill training, bonuses, rerolls, substitutions, permissions, and Skill Challenge interactions.",
-      "subbuckets": [
-        { "id": "skill_training", "label": "Skill Training" },
-        { "id": "skill_focus", "label": "Skill Focus" },
-        { "id": "knowledge", "label": "Knowledge" },
-        { "id": "mechanics", "label": "Mechanics" },
-        { "id": "use_computer", "label": "Use Computer" },
-        { "id": "treat_injury", "label": "Treat Injury" },
-        { "id": "persuasion", "label": "Persuasion" },
-        { "id": "deception", "label": "Deception" },
-        { "id": "stealth", "label": "Stealth" },
-        { "id": "perception", "label": "Perception" },
-        { "id": "survival", "label": "Survival" },
-        { "id": "endurance", "label": "Endurance" },
-        { "id": "pilot", "label": "Pilot" },
-        { "id": "initiative", "label": "Initiative" },
-        { "id": "skill_reroll", "label": "Skill Reroll" },
-        { "id": "skill_substitution", "label": "Skill Substitution" },
-        { "id": "skill_challenge", "label": "Skill Challenge" }
-      ]
-    },
-    {
-      "id": "tech_equipment",
-      "label": "Tech & Equipment",
-      "description": "Gear, tools, devices, repair, demolitions, item modification, shields, and equipment workflows.",
-      "subbuckets": [
-        { "id": "gear_modification", "label": "Gear Modification" },
-        { "id": "repair_maintenance", "label": "Repair / Maintenance" },
-        { "id": "demolitions", "label": "Demolitions" },
-        { "id": "devices", "label": "Devices" },
-        { "id": "shields", "label": "Shields" },
-        { "id": "medical_equipment", "label": "Medical Equipment" },
-        { "id": "survival_gear", "label": "Survival Gear" },
-        { "id": "security", "label": "Security" },
-        { "id": "crafting_upgrade", "label": "Crafting / Upgrade" },
-        { "id": "equipment_access", "label": "Equipment Access" }
-      ]
-    },
-    {
-      "id": "droid",
-      "label": "Droid",
-      "description": "Droid-specific body, systems, shields, repairs, followers, and droid rules interactions.",
-      "subbuckets": [
-        { "id": "droid_systems", "label": "Droid Systems" },
-        { "id": "droid_shields", "label": "Droid Shields" },
-        { "id": "droid_repair", "label": "Droid Repair" },
-        { "id": "droid_chassis", "label": "Droid Chassis" },
-        { "id": "droid_combat", "label": "Droid Combat" },
-        { "id": "droid_interface", "label": "Droid Interface" },
-        { "id": "restraining_bolt", "label": "Restraining Bolt" },
-        { "id": "droid_followers", "label": "Droid Followers" },
-        { "id": "droid_recovery", "label": "Droid Recovery" }
-      ]
-    },
-    {
-      "id": "cybernetics_implants",
-      "label": "Cybernetics & Implants",
-      "description": "Implant and cybernetic-specific feats, penalties, procedures, and source-reference mechanics.",
-      "subbuckets": [
-        { "id": "implants", "label": "Implants" },
-        { "id": "cybernetic_surgery", "label": "Cybernetic Surgery" },
-        { "id": "cybernetic_prostheses", "label": "Cybernetic Prostheses" },
-        { "id": "bio_implants", "label": "Bio-Implants" },
-        { "id": "implant_penalties", "label": "Implant Penalties" },
-        { "id": "medical_procedure", "label": "Medical Procedure" },
-        { "id": "metadata_source_reference", "label": "Metadata / Source Reference" }
-      ]
-    },
-    {
-      "id": "starship_vehicle",
-      "label": "Starship & Vehicle",
-      "description": "Vehicle-scale rules, pilots, gunners, crew, starship maneuvers, tactics, and vehicle design references.",
-      "subbuckets": [
-        { "id": "pilot", "label": "Pilot" },
-        { "id": "gunnery", "label": "Gunnery" },
-        { "id": "vehicular_combat", "label": "Vehicular Combat" },
-        { "id": "starship_maneuvers", "label": "Starship Maneuvers" },
-        { "id": "starship_tactics", "label": "Starship Tactics" },
-        { "id": "crew_squadron", "label": "Crew / Squadron" },
-        { "id": "vehicle_defense", "label": "Vehicle Defense" },
-        { "id": "vehicle_repair", "label": "Vehicle Repair" },
-        { "id": "design_metadata", "label": "Design / Metadata" }
-      ]
-    },
-    {
-      "id": "recovery_survival",
-      "label": "Recovery & Survival",
-      "description": "Second wind, healing, survival, environmental resistance, condition resilience, and recovery feats.",
-      "subbuckets": [
-        { "id": "second_wind", "label": "Second Wind" },
-        { "id": "natural_healing", "label": "Natural Healing" },
-        { "id": "condition_recovery", "label": "Condition Recovery" },
-        { "id": "poison_disease", "label": "Poison / Disease" },
-        { "id": "environmental_survival", "label": "Environmental Survival" },
-        { "id": "damage_resistance", "label": "Damage Resistance" },
-        { "id": "stun_resistance", "label": "Stun Resistance" },
-        { "id": "fatigue_exhaustion", "label": "Fatigue / Exhaustion" }
-      ]
-    },
-    {
-      "id": "social_intrigue",
-      "label": "Social & Intrigue",
-      "description": "Social encounters, deception, influence, reputation, contacts, investigation, and intrigue-scene mechanics.",
-      "subbuckets": [
-        { "id": "persuasion", "label": "Persuasion" },
-        { "id": "deception", "label": "Deception" },
-        { "id": "gather_information", "label": "Gather Information" },
-        { "id": "reputation", "label": "Reputation" },
-        { "id": "contacts", "label": "Contacts" },
-        { "id": "investigation", "label": "Investigation" },
-        { "id": "interrogation", "label": "Interrogation" },
-        { "id": "noble_politics", "label": "Noble / Politics" },
-        { "id": "espionage", "label": "Espionage" }
-      ]
-    },
-    {
-      "id": "species_origin",
-      "label": "Species & Origin",
-      "description": "Species-gated, origin, background, lineage, tradition, faction, culture, and era feats.",
-      "subbuckets": [
-        { "id": "species", "label": "Species" },
-        { "id": "near_human_variant", "label": "Near-Human Variant" },
-        { "id": "background", "label": "Background" },
-        { "id": "tradition", "label": "Tradition" },
-        { "id": "faction", "label": "Faction" },
-        { "id": "culture", "label": "Culture" },
-        { "id": "heritage", "label": "Heritage" },
-        { "id": "era", "label": "Era" }
-      ]
-    },
-    {
-      "id": "leadership_allies",
-      "label": "Leadership & Allies",
-      "description": "Followers, companions, squads, command, morale, teamwork, and ally coordination feats.",
-      "subbuckets": [
-        { "id": "followers", "label": "Followers" },
-        { "id": "companions", "label": "Companions" },
-        { "id": "squads", "label": "Squads" },
-        { "id": "command", "label": "Command" },
-        { "id": "aid_another", "label": "Aid Another" },
-        { "id": "tactics", "label": "Tactics" },
-        { "id": "morale", "label": "Morale" },
-        { "id": "teamwork", "label": "Teamwork" }
-      ]
-    },
-    {
-      "id": "character",
-      "label": "Character",
-      "description": "General character development feats that do not fit a more specific subsystem bucket.",
-      "subbuckets": [
-        { "id": "general_passive", "label": "General Passive" },
-        { "id": "ability_score", "label": "Ability Score" },
-        { "id": "hit_points", "label": "Hit Points" },
-        { "id": "defenses", "label": "Defenses" },
-        { "id": "destiny_background", "label": "Destiny / Background" },
-        { "id": "level_gated", "label": "Level-Gated" },
-        { "id": "miscellaneous", "label": "Miscellaneous" }
-      ]
-    },
-    {
-      "id": "gm_metadata",
-      "label": "GM / Metadata",
-      "description": "Visible feats that require manual adjudication, source reference, missing subsystems, procedure handling, or taxonomy review.",
-      "subbuckets": [
-        { "id": "manual_adjudication", "label": "Manual Adjudication" },
-        { "id": "source_reference", "label": "Source Reference" },
-        { "id": "procedure", "label": "Procedure" },
-        { "id": "subsystem_missing", "label": "Subsystem Missing" },
-        { "id": "review_needed", "label": "Review Needed" },
-        { "id": "deprecated_legacy", "label": "Deprecated / Legacy" }
-      ]
-    }
+  "version": 1,
+  "generatedAt": "2026-06-30T14:55:43.743Z",
+  "intent": "Expanded two-level feat taxonomy for feat picker browsing and implementation backlog planning.",
+  "rules": [
+    "Every feat receives one primary bucket and one primary subbucket.",
+    "Secondary buckets may be used for cross-context discoverability.",
+    "Active subbuckets in data/feat-buckets-and-subbuckets.json must contain at least two feats.",
+    "Force classification requires Force mechanics, prerequisites, or source context; title keywords alone are not sufficient.",
+    "GM / Metadata entries must carry a review or manual-policy reason."
   ],
-  "migrationPolicy": {
-    "phase7c5": "Define taxonomy only. Do not mutate existing feat metadata.",
-    "futurePhase": "Map current feats to primary bucket/subbucket only after source-aware review or high-confidence manifest rules.",
-    "forceKeywordGuardrail": "Feat names containing Force, forceful, or forced movement must not be classified as Force unless prerequisites/benefit/rules context prove Force mechanics.",
-    "metadataBucketGuardrail": "GM / Metadata assignments must include an explicit reason and should not hide automatable feats."
+  "buckets": {
+    "Combat": [
+      "Melee & Close Combat",
+      "Ranged Combat",
+      "Area & Explosives",
+      "Grapple & Unarmed",
+      "Mobility & Positioning",
+      "Defense & Avoidance",
+      "Condition Track",
+      "Damage & Threshold",
+      "Attack Options"
+    ],
+    "Weapon & Armor": [
+      "Weapon Proficiency",
+      "Weapon Focus & Specialization",
+      "Armor Proficiency & Use",
+      "Multiattack & Dual Weapon",
+      "Lightsaber & Weapon Styles"
+    ],
+    "Force": [
+      "Force Training & Powers",
+      "Force Point & Destiny",
+      "Dark Side",
+      "Lightsaber & Force Techniques",
+      "Force Tradition & Regimens"
+    ],
+    "Skills": [
+      "Skill Training & Focus",
+      "Knowledge & Recall",
+      "Mechanics & Use Computer",
+      "Treat Injury & Healing",
+      "Stealth & Perception",
+      "Social Skills",
+      "Skill Challenge",
+      "Skill Reroll & Substitution"
+    ],
+    "Tech & Equipment": [
+      "Gear Modification",
+      "Repair & Maintenance",
+      "Demolitions & Devices",
+      "Shields & Equipment Defense",
+      "Equipment Access & Utility"
+    ],
+    "Droid": [
+      "Droid Systems",
+      "Droid Shields",
+      "Droid Repair",
+      "Droid Combat",
+      "Droid Interface & Control"
+    ],
+    "Cybernetics & Implants": [
+      "Implants & Procedures"
+    ],
+    "Starship & Vehicle": [
+      "Pilot & Maneuvers",
+      "Gunnery & Weapons",
+      "Vehicle Defense",
+      "Crew & Squadron",
+      "Starship Systems & Metadata"
+    ],
+    "Recovery & Survival": [
+      "Second Wind & Recovery",
+      "Healing & Natural Recovery",
+      "Endurance & Environmental",
+      "Resistance & Immunity"
+    ],
+    "Social & Intrigue": [
+      "Persuasion & Influence",
+      "Deception & Espionage",
+      "Contacts & Reputation",
+      "Investigation & Information"
+    ],
+    "Species & Origin": [
+      "Species Traits",
+      "Cultural Background",
+      "Faction & Era"
+    ],
+    "Leadership & Allies": [
+      "Teamwork & Aid",
+      "Followers & Companions",
+      "Command & Morale",
+      "Squad Tactics"
+    ],
+    "Character": [
+      "General Passive",
+      "Ability & Defenses",
+      "Hit Points & Durability",
+      "Background & Destiny"
+    ],
+    "GM / Metadata": [
+      "Manual Adjudication",
+      "Source Reference & Procedure",
+      "Review Needed",
+      "Subsystem Missing"
+    ]
   }
 }
