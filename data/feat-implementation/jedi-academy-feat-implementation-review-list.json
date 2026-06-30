@@ -1,0 +1,101 @@
+{
+  "phase": "phase-9h-jedi-academy-implementation-accuracy",
+  "sourcebook": "Jedi Academy Training Manual",
+  "purpose": "Separate list of Jedi Academy feats that are not fully implementation-correct yet. Includes feat name, description, proposed bucket/subbucket, expected rule shape, observed implementation, and concern.",
+  "entries": [
+    {
+      "name": "Fast Surge",
+      "description": "On your turn, you can catch a Second Wind as a Free Action instead of a Swift Action.",
+      "proposedBucket": "Recovery & Survival",
+      "proposedSubbucket": "Second Wind & Recovery",
+      "proposedImplementationMode": "second_wind_action_economy",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs Second Wind workflow integration; it is not a Force feat and not an attack/skill modifier.",
+      "expectedRuleShape": "On your turn, use Second Wind as a Free Action instead of a Swift Action.",
+      "observedImplementation": "Catalog text is present and later taxonomy work should treat this as not a Force feat, but this repo baseline still has featType force and only disabled metadata noting it is not an attack bonus. No proven Second Wind action-economy hook consumes it."
+    },
+    {
+      "name": "Follow Through",
+      "description": "If you deal enough damage to your opponent with a melee attack to reduce it to 0 Hit Points, you can immediately move up to your Speed. You can use this ability once per turn.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Mobility & Positioning",
+      "proposedImplementationMode": "drop_target_movement_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Correct implementation is an after-damage event/action prompt, not a passive bonus.",
+      "expectedRuleShape": "Once per turn, after reducing an opponent to 0 HP with a melee attack, immediately move up to speed; with Cleave, may move before the Cleave extra melee attack.",
+      "observedImplementation": "Metadata disables an old numeric attack modifier and describes the non-numeric rider, but no proven combat event hook tracks melee drop-to-0, once-per-turn use, movement grant, or Cleave timing."
+    },
+    {
+      "name": "Force Regimen Mastery",
+      "description": "You learn a number of Force Regimens equal to 1 + your Wisdom modifier (minimum 1).",
+      "proposedBucket": "Force",
+      "proposedSubbucket": "Force Regimens",
+      "proposedImplementationMode": "force_regimen_picker_grant",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Requires dedicated UI/picker and progression recalculation; metadata is the right placeholder but not full implementation.",
+      "expectedRuleShape": "Grant Force Regimen selections equal to 1 + Wisdom modifier, repeatable; permanent Wisdom increases grant additional regimens based on feat count.",
+      "observedImplementation": "Metadata correctly points at a Force regimen picker/cards workflow, but the dedicated Force Regimen picker/subsystem is intentionally not proven here."
+    },
+    {
+      "name": "Intuitive Initiative",
+      "description": "You may reroll your Initiative check and take the better result. You must keep the new result even if it is worse.",
+      "proposedBucket": "Skills",
+      "proposedSubbucket": "Initiative",
+      "proposedImplementationMode": "initiative_reroll_hook",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs initiative-roll reroll hook; a static Initiative bonus would be wrong.",
+      "expectedRuleShape": "Reroll Initiative and take the better result, while following the feat wording/reroll constraints.",
+      "observedImplementation": "Current metadata is non-static and excludes sheet math, but no proven Initiative roll card/reroll prompt consumes this feat."
+    },
+    {
+      "name": "Keen Force Mind",
+      "description": "You gain a +2 bonus on Use the Force checks made to activate mind-affecting Force powers.",
+      "proposedBucket": "Force",
+      "proposedSubbucket": "Force Training & Powers",
+      "proposedImplementationMode": "scoped_force_power_utf_modifier",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs Force power tag/context filtering; global Use the Force bonus would be wrong.",
+      "expectedRuleShape": "+2 bonus on Use the Force checks made to activate mind-affecting Force powers only.",
+      "observedImplementation": "Metadata states the correct scope and excludes static sheet math, but no proven Force power activation pipeline applies +2 only to mind-affecting powers."
+    },
+    {
+      "name": "Long Haft Strike",
+      "description": "When you use a Lightsaber Pike or a Long-Handle Lightsaber, you can attack with both ends of the weapon, treating it as a double weapon.",
+      "proposedBucket": "Weapon & Armor",
+      "proposedSubbucket": "Weapon Properties & Styles",
+      "proposedImplementationMode": "weapon_property_context",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs weapon data and attack-workflow integration; not a blanket dual-weapon feat.",
+      "expectedRuleShape": "When using a Lightsaber Pike or Long-Handle Lightsaber, attack with both ends by treating it as a double weapon. Ignore unrelated homebrew expansion text.",
+      "observedImplementation": "Metadata captures the correct weapon-property context and excludes static sheet math, but no proven weapon-property/attack option logic treats those weapons as double weapons while the feat is owned."
+    },
+    {
+      "name": "Relentless Attack",
+      "description": "Choose one weapon group or Exotic Weapon for which you have the Double Attack Feat. Whenever you miss a target with that weapon, you gain a +2 competence bonus on your next attack roll made before the end of your next turn against the missed target.",
+      "proposedBucket": "Weapon & Armor",
+      "proposedSubbucket": "Multiattack & Dual Weapon",
+      "proposedImplementationMode": "selected_weapon_miss_followup_bonus",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs scoped selection and target-specific combat state. A flat attack bonus would be wrong.",
+      "expectedRuleShape": "Choose a weapon group/exotic weapon for which you have Double Attack; after missing a target with that weapon, gain +2 competence on the next attack against that same target before end of next turn. Repeatable for different choices.",
+      "observedImplementation": "Metadata marks selected-choice/manual mapping and prevents false static modifiers, but no proven selected-choice validation, miss trigger, same-target tracking, duration, or competence bonus hook exists."
+    },
+    {
+      "name": "Unswerving Resolve",
+      "description": "Whenever you are targeted by a Fear effect or Mind-Affecting effect that fails to affect you, you gain a temporary Force Point. If this Force Point is not used before the end of your next turn, it goes away. If you negate the contingent effect in any way, you do not gain the benefit of this Feat.",
+      "proposedBucket": "Force",
+      "proposedSubbucket": "Force Point & Destiny",
+      "proposedImplementationMode": "temporary_force_point_reaction",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs effect-resolution trigger and temporary resource lifecycle; not a static Force Point increase.",
+      "expectedRuleShape": "When a fear or mind-affecting effect targets you and fails to affect you, gain a temporary Force Point until end of next turn; no benefit if you negate the contingent effect.",
+      "observedImplementation": "Metadata captures the resource/timing context, but no proven fear/mind-affecting resistance event, temporary Force Point grant, expiry, or negation exception hook exists."
+    }
+  ],
+  "summary": {
+    "entries": 8,
+    "statuses": {
+      "implemented_partial": 8
+    }
+  }
+}
