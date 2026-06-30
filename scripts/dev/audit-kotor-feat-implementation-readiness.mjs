@@ -6,6 +6,7 @@ const strict = process.argv.includes('--strict');
 const root = process.cwd();
 const backlogPath = path.join(root, 'data/feat-implementation/kotor-feat-implementation-backlog.json');
 const reviewPath = path.join(root, 'data/feat-implementation/kotor-feat-implementation-review-list.json');
+const phase10aOverridesPath = path.join(root, 'data/feat-implementation/phase10a-runtime-status-overrides.json');
 
 const expectedNames = [
   'Accelerated Strike','Conditioning','Critical Strike','Flurry','Force Readiness','Gearhead','Implant Training',
@@ -25,6 +26,40 @@ function readJson(file) {
   return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
 function fail(errors, msg) { errors.push(msg); }
+function normalizeKey(value) { return String(value ?? '').trim().toLowerCase(); }
+
+function loadPhase10aOverrides(sourcebook, warnings) {
+  if (!fs.existsSync(phase10aOverridesPath)) return new Map();
+  const payload = readJson(phase10aOverridesPath);
+  const overrides = Array.isArray(payload.overrides) ? payload.overrides : [];
+  const byName = new Map();
+  for (const override of overrides) {
+    if (normalizeKey(override.sourcebook) !== normalizeKey(sourcebook)) continue;
+    if (!override.name) {
+      warnings.push('Phase 10A override missing name; skipped.');
+      continue;
+    }
+    byName.set(override.name, override);
+  }
+  return byName;
+}
+
+function applyPhase10aOverride(feat, override) {
+  if (!override) return feat;
+  return {
+    ...feat,
+    implementationStatus: override.status ?? feat.implementationStatus,
+    implementationMode: override.implementationMode ?? feat.implementationMode,
+    observedImplementation: override.observedImplementation ?? feat.observedImplementation,
+    accuracyFinding: override.accuracyFinding ?? feat.accuracyFinding,
+    phase10aOverride: {
+      phase: 'phase-10a-runtime-status-overrides',
+      confidence: override.confidence ?? null,
+      reason: override.reason ?? '',
+      runtimeHome: Array.isArray(override.runtimeHome) ? override.runtimeHome : []
+    }
+  };
+}
 
 const errors = [];
 const warnings = [];
@@ -34,7 +69,10 @@ if (!fs.existsSync(reviewPath)) fail(errors, `Missing ${reviewPath}`);
 if (!errors.length) {
   const backlog = readJson(backlogPath);
   const review = readJson(reviewPath);
-  const feats = Array.isArray(backlog.feats) ? backlog.feats : [];
+  const rawFeats = Array.isArray(backlog.feats) ? backlog.feats : [];
+  const overrides = loadPhase10aOverrides(backlog.sourcebook, warnings);
+  const feats = rawFeats.map(feat => applyPhase10aOverride(feat, overrides.get(feat.name)));
+  const appliedOverrides = feats.filter(feat => feat.phase10aOverride).map(feat => feat.name);
   const byName = new Map(feats.map(f => [f.name, f]));
   for (const name of expectedNames) {
     if (!byName.has(name)) fail(errors, `Missing KOTOR feat in backlog: ${name}`);
@@ -79,6 +117,7 @@ if (!errors.length) {
     totalFeatsAudited: feats.length,
     reviewListCount: reviewEntries.length,
     counts,
+    phase10aOverridesApplied: appliedOverrides,
     warnings,
     errors,
     generatedAt: new Date().toISOString()
@@ -93,6 +132,10 @@ if (!errors.length) {
     '## Status counts',
     '',
     ...Object.entries(counts).sort().map(([k,v]) => `- ${k}: ${v}`),
+    '',
+    '## Phase 10A runtime overrides applied',
+    '',
+    ...(appliedOverrides.length ? appliedOverrides.map(name => `- ${name}`) : ['- None']),
     '',
     '## Warnings',
     '',
