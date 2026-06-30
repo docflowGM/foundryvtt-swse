@@ -8340,7 +8340,7 @@
   },
   {
     "_id": "29173ea2d8416eea",
-    "name": "Fl\u00e8che",
+    "name": "Flèche",
     "type": "feat",
     "img": "icons/svg/upgrade.svg",
     "system": {
@@ -8385,7 +8385,7 @@
             ],
             "enabled": false,
             "priority": 500,
-            "description": "Fl\u00e8che: Converted from false attack bonus to a charge critical-threshold option.",
+            "description": "Flèche: Converted from false attack bonus to a charge critical-threshold option.",
             "mechanicsMode": "metadata_only",
             "applicationScope": "explicit_rule_metadata",
             "staticSheetPolicy": "exclude",
@@ -8412,7 +8412,7 @@
           {
             "type": "ATTACK_OPTION",
             "id": "fleche",
-            "label": "Fl\u00e8che",
+            "label": "Flèche",
             "control": "toggle",
             "requiresCharge": true,
             "requiresAttackType": "melee",
@@ -30999,7 +30999,7 @@
             "doesNotStackWith": [
               "Coordinate"
             ],
-            "description": "When using Aid Another, grant an additional +2 insight bonus to the ally\u2019s attack roll or skill check."
+            "description": "When using Aid Another, grant an additional +2 insight bonus to the ally’s attack roll or skill check."
           }
         ]
       },
@@ -31637,12 +31637,12 @@
         "staticSheetPolicy": "roll_context_only",
         "requiresRuntimeContext": true,
         "requiresSelectedChoice": false,
-        "conditionSummary": "A successful Aid Another attempt can grant +5 to an ally\u2019s attack.",
+        "conditionSummary": "A successful Aid Another attempt can grant +5 to an ally’s attack.",
         "predicateRequirements": [],
         "metadataPhase": "phase11-feat-implementation-continuation",
         "metadataNotes": "Phase 11 uses refreshed descriptions to replace manual/scaffold metadata with executable defense/skill/attack-option rules or explicit safe metadata for future hooks.",
         "status": "aid_another_rule_phase11",
-        "description": "A successful Aid Another attempt can grant +5 to an ally\u2019s attack.",
+        "description": "A successful Aid Another attempt can grant +5 to an ally’s attack.",
         "aidAnotherRules": [
           {
             "type": "AID_ANOTHER_ATTACK_BONUS_REPLACEMENT",
@@ -31650,7 +31650,7 @@
             "appliesTo": [
               "attack"
             ],
-            "description": "When your Aid Another attempt succeeds, grant a +5 bonus to the ally\u2019s attack roll."
+            "description": "When your Aid Another attempt succeeds, grant a +5 bonus to the ally’s attack roll."
           }
         ]
       },
@@ -32614,7 +32614,7 @@
             "targetDefense": "will",
             "bonusType": "circumstance",
             "duration": "sameTargetFutureChecks",
-            "description": "After succeeding on a Persuasion check against a target\u2019s Will Defense, later Persuasion checks against that target gain favorable circumstances."
+            "description": "After succeeding on a Persuasion check against a target’s Will Defense, later Persuasion checks against that target gain favorable circumstances."
           }
         ]
       },
@@ -33243,11 +33243,11 @@
   },
   {
     "_id": "b0feacaeae4860e9",
-    "name": "Ter\u00e4s K\u00e4si Training",
+    "name": "Teräs Käsi Training",
     "type": "feat",
     "img": "icons/svg/upgrade.svg",
     "system": {
-      "description": "<p><strong>Prerequisites:</strong> Strength<br>13,<br>Martial Arts I</p>\n<p><strong>Effect:</strong> Once per round when you make a successful<br>Unarmed Attack<br>, you reduce the target&#x27;s<br>Damage Threshold<br>by 5 when determining the effect of the attack.</p>\n<p><strong>Special:</strong> If you have the<br>Ter\u00e4s K\u00e4si Basics<br>Talent, you are considered to be one size category larger when determining the damage of your<br>Unarmed Attacks<br>.</p>\n<p><em>Source URL: https://swse.fandom.com/wiki/Ter%C3%A4s_K%C3%A4si_Training</em></p>",
+      "description": "<p><strong>Prerequisites:</strong> Strength<br>13,<br>Martial Arts I</p>\n<p><strong>Effect:</strong> Once per round when you make a successful<br>Unarmed Attack<br>, you reduce the target&#x27;s<br>Damage Threshold<br>by 5 when determining the effect of the attack.</p>\n<p><strong>Special:</strong> If you have the<br>Teräs Käsi Basics<br>Talent, you are considered to be one size category larger when determining the damage of your<br>Unarmed Attacks<br>.</p>\n<p><em>Source URL: https://swse.fandom.com/wiki/Ter%C3%A4s_K%C3%A4si_Training</em></p>",
       "source": "Star Wars Saga Edition",
       "slug": "ter-s-k-si-training",
       "featType": "martial_arts",
@@ -33288,7 +33288,7 @@
             "predicates": [],
             "enabled": false,
             "priority": 500,
-            "description": "Ter\u00e4s K\u00e4si Training: Removed old +2 attack scaffold; feat changes Damage Threshold for a successful unarmed attack.",
+            "description": "Teräs Käsi Training: Removed old +2 attack scaffold; feat changes Damage Threshold for a successful unarmed attack.",
             "mechanicsMode": "manual",
             "applicationScope": "metadata_only",
             "staticSheetPolicy": "exclude",
@@ -33313,7 +33313,7 @@
           {
             "type": "ATTACK_OPTION",
             "option": "terasKasiThreshold",
-            "label": "Ter\u00e4s K\u00e4si Threshold",
+            "label": "Teräs Käsi Threshold",
             "control": "passive",
             "requiresAttackType": "melee",
             "requiresUnarmed": true,
@@ -44232,7 +44232,7 @@
     "type": "feat",
     "img": "icons/svg/upgrade.svg",
     "system": {
-      "description": "<p><strong>Prerequisites:</strong> Tech Specialist<br>,<br>Trained<br>in<br>Mechanics</p>\n<p><strong>Effect:</strong> You can design a<br>Starship<br>from scratch. Doing so takes a minimum of 30 days and a DC 25<br>Mechanics<br>check, adding 1 to the DC and 1 to the time for every additional 100,000 credits of the design&#x27;s final cost beyond the first 100,000 credits (even a genius Starship Designer can spend years working out the blueprints for a Star Destroyer). Other characters<br>Trained<br>in the<br>Mechanics<br>skill may use the<br>Aid Another<br>action to assist your<br>Mechanics<br>check; if any assisting character also has the Starship Designer Feat, divide the Starship&#x27;s cost by the number of characters who have this Feat (including the primary designer) when determining the time required.<br><br>When making<br>Starship Modifications<br>, you never treat the work as though it were a<br>Nonstandard Modification<br>, even if it normally would be. Additionally, you can make custom modifications to Starships. Each of these modifications has a base cost of 5,000 credits (multiplied by the Starship Size Cost Modifier) and requires a DC 25<br>Mechanics<br>check. On a failed check, the modification fails; you must spend half again as much time and money to make a second attempt, and you gain a +2 bonus on your<br>Mechanics<br>check for each attempt after the first.<br><br>Installation of a custom modification normally takes one day per 5,000 credits of the final cost. The same system can be customized multiple times, but doing so becomes increasingly difficult and expensive. For every previous custom modification on a given system, increase the DC by 5 and the base cost by 10,000 credits. No system can be customized more than three times. Multiple benefits from successive customizations stack. Typical customizations are described below. The Gamemaster may allow other modifications.<br><br>- Add Emplacement: You add 1 unused Emplacement Point to a Starship.<br>- Improve Hull: You add a number of Hit Points to a Starship equal to 1/2 its Strength score (rounded down to the nearest multiple of 10).<br>- Improve Hyperdrive: You can reengineer a hyperdrive to improve its class by 1 step. The hyperdrive obeys all the restrictions of its new class.<br>- Improve Shields: The Shield Rating of the shields is increased by 5.<br>- Improve Weapons: You grant one Vehicle Weapon a +1 Equipment bonus on attack rolls.</p>\n<h3>Additional Starship Design Rules</h3><p>Reference Book:<br>Star Wars Saga Edition Web Enhancements<br>(<br>Jedi Counseling<br>)<br><br>Q:<br>I&#x27;ve run into some issues with the Starship Design rules in<br>Starships of the Galaxy<br>. It seems that you can&#x27;t make any existing Starships using these rules and starting with a Stock Starship. Am I doing something wrong?<br><br>A:<br>Probably not. A vast number of individual Starships have been created over the last few decades since<br>A New Hope<br>came out, and at no point was there a cohesive Starship design system to guide authors of fiction or gaming products. As such, it is effectively impossible to reverse-engineer a design system that covers all these varied examples- or, at least, any such system would be so complex that it wouldn&#x27;t be easy to use in a game.<br><br>Given that, we designed the system from the point of the typical hero who might be interested in modifying an existing Starship or scratch-building a new one. This hero doesn&#x27;t have the benefit of vast numbers of the best engineers and test pilots in the galaxy (like at the Corellian Engineering Corporation), nor does this hero have an entire star system dedicated to the building of city-sized Starships with mass-production facilities to match (like at Kuat Drive Yards).<br><br>This hero, instead, is relegated to building &quot;A typical new Starship from a typical production facility,&quot; as noted at the bottom of Table 3\u20138:<br>Stock Ship Types<br>. The Stock Starships are designed to reflect that, making it possible to make something decent and functional, but not something that would easily outshine the big name starships.<br><br>For example, a hero could build a decent light freighter, something comparable to a<br>YT-1300<br>in stats and price.<br><br>The biggest difference? The<br>YT-1300<br>would have a lot of extra<br>Emplacement Points<br>left over- and that&#x27;s precisely what the Corellian Engineering Corporation is known for. Think about it: if any yahoo on a backwater planet could build a freighter that&#x27;s just as good, why would the YT-series freighters sell so well throughout the galaxy?<br><br>Since most heroes won&#x27;t ever control a galaxy-spanning corporate giant and be able to use these resources, it seems a little silly to spend page space exploring the ins and outs of galactic-scale mass production. Similarly, we might give broad outlines of supply and demand by listing a planet&#x27;s major exports and imports, but we won&#x27;t be creating rules that account for macroeconomic cycles, unemployment, inflation, and so forth. (Let&#x27;s face it: Most of us are just here to shoot Stormtroopers.)<br><br>Now, if you as the GM want to build Starships beyond what the<br>Stock Starships<br>can manage, there&#x27;s really not a reason for you to hamstring yourself with those rules: just write up stats that seem like a good challenge for your players, using similar Starships as benchmarks for things like price, appropriate game statistics for that type of ship, and so forth.<br><br>And if you and your players really want more comprehensive rules that go beyond those in the book, by all means do so! You might look at<br>Gear Templates<br>to get some inspiration for coming up with appropriate special benefits and restrictions for different manufacturers.<br><br>Alternatively, you might allow manufacturers to come up with &quot;Proprietary&quot; Stock Starships that are better than the typical ones listed in the book. For example, Kuat Drive Yards might have a really good &quot;Stock Star Destroyer&quot; and Corellian Engineering Corporation might have an outstanding &quot;Stock YT-Series,&quot; and they use these as the baseline for producing several similar Starship designs.<br><br>Q:<br>When building a new design from a Stock Starship, can you remove or replace existing systems that come with the stock ship? For example, could I take those high-performance engines off a stock interceptor and use the cash to buy other systems?<br><br>A:<br>You can, but it&#x27;s not very efficient. You get only 1/4 the listed value of any system you remove from a Starship, even a Stock Starship.<br><br>Stock Starships usually get their starting systems at a substantial discount because they are so well integrated into the baseline design. Removing them requires a lot of inefficient workarounds, resulting in a lower price comparable to selling a used Starship component.</p>\n<p><em>Source URL: https://swse.fandom.com/wiki/Starship_Designer</em></p>",
+      "description": "<p><strong>Prerequisites:</strong> Tech Specialist<br>,<br>Trained<br>in<br>Mechanics</p>\n<p><strong>Effect:</strong> You can design a<br>Starship<br>from scratch. Doing so takes a minimum of 30 days and a DC 25<br>Mechanics<br>check, adding 1 to the DC and 1 to the time for every additional 100,000 credits of the design&#x27;s final cost beyond the first 100,000 credits (even a genius Starship Designer can spend years working out the blueprints for a Star Destroyer). Other characters<br>Trained<br>in the<br>Mechanics<br>skill may use the<br>Aid Another<br>action to assist your<br>Mechanics<br>check; if any assisting character also has the Starship Designer Feat, divide the Starship&#x27;s cost by the number of characters who have this Feat (including the primary designer) when determining the time required.<br><br>When making<br>Starship Modifications<br>, you never treat the work as though it were a<br>Nonstandard Modification<br>, even if it normally would be. Additionally, you can make custom modifications to Starships. Each of these modifications has a base cost of 5,000 credits (multiplied by the Starship Size Cost Modifier) and requires a DC 25<br>Mechanics<br>check. On a failed check, the modification fails; you must spend half again as much time and money to make a second attempt, and you gain a +2 bonus on your<br>Mechanics<br>check for each attempt after the first.<br><br>Installation of a custom modification normally takes one day per 5,000 credits of the final cost. The same system can be customized multiple times, but doing so becomes increasingly difficult and expensive. For every previous custom modification on a given system, increase the DC by 5 and the base cost by 10,000 credits. No system can be customized more than three times. Multiple benefits from successive customizations stack. Typical customizations are described below. The Gamemaster may allow other modifications.<br><br>- Add Emplacement: You add 1 unused Emplacement Point to a Starship.<br>- Improve Hull: You add a number of Hit Points to a Starship equal to 1/2 its Strength score (rounded down to the nearest multiple of 10).<br>- Improve Hyperdrive: You can reengineer a hyperdrive to improve its class by 1 step. The hyperdrive obeys all the restrictions of its new class.<br>- Improve Shields: The Shield Rating of the shields is increased by 5.<br>- Improve Weapons: You grant one Vehicle Weapon a +1 Equipment bonus on attack rolls.</p>\n<h3>Additional Starship Design Rules</h3><p>Reference Book:<br>Star Wars Saga Edition Web Enhancements<br>(<br>Jedi Counseling<br>)<br><br>Q:<br>I&#x27;ve run into some issues with the Starship Design rules in<br>Starships of the Galaxy<br>. It seems that you can&#x27;t make any existing Starships using these rules and starting with a Stock Starship. Am I doing something wrong?<br><br>A:<br>Probably not. A vast number of individual Starships have been created over the last few decades since<br>A New Hope<br>came out, and at no point was there a cohesive Starship design system to guide authors of fiction or gaming products. As such, it is effectively impossible to reverse-engineer a design system that covers all these varied examples- or, at least, any such system would be so complex that it wouldn&#x27;t be easy to use in a game.<br><br>Given that, we designed the system from the point of the typical hero who might be interested in modifying an existing Starship or scratch-building a new one. This hero doesn&#x27;t have the benefit of vast numbers of the best engineers and test pilots in the galaxy (like at the Corellian Engineering Corporation), nor does this hero have an entire star system dedicated to the building of city-sized Starships with mass-production facilities to match (like at Kuat Drive Yards).<br><br>This hero, instead, is relegated to building &quot;A typical new Starship from a typical production facility,&quot; as noted at the bottom of Table 3–8:<br>Stock Ship Types<br>. The Stock Starships are designed to reflect that, making it possible to make something decent and functional, but not something that would easily outshine the big name starships.<br><br>For example, a hero could build a decent light freighter, something comparable to a<br>YT-1300<br>in stats and price.<br><br>The biggest difference? The<br>YT-1300<br>would have a lot of extra<br>Emplacement Points<br>left over- and that&#x27;s precisely what the Corellian Engineering Corporation is known for. Think about it: if any yahoo on a backwater planet could build a freighter that&#x27;s just as good, why would the YT-series freighters sell so well throughout the galaxy?<br><br>Since most heroes won&#x27;t ever control a galaxy-spanning corporate giant and be able to use these resources, it seems a little silly to spend page space exploring the ins and outs of galactic-scale mass production. Similarly, we might give broad outlines of supply and demand by listing a planet&#x27;s major exports and imports, but we won&#x27;t be creating rules that account for macroeconomic cycles, unemployment, inflation, and so forth. (Let&#x27;s face it: Most of us are just here to shoot Stormtroopers.)<br><br>Now, if you as the GM want to build Starships beyond what the<br>Stock Starships<br>can manage, there&#x27;s really not a reason for you to hamstring yourself with those rules: just write up stats that seem like a good challenge for your players, using similar Starships as benchmarks for things like price, appropriate game statistics for that type of ship, and so forth.<br><br>And if you and your players really want more comprehensive rules that go beyond those in the book, by all means do so! You might look at<br>Gear Templates<br>to get some inspiration for coming up with appropriate special benefits and restrictions for different manufacturers.<br><br>Alternatively, you might allow manufacturers to come up with &quot;Proprietary&quot; Stock Starships that are better than the typical ones listed in the book. For example, Kuat Drive Yards might have a really good &quot;Stock Star Destroyer&quot; and Corellian Engineering Corporation might have an outstanding &quot;Stock YT-Series,&quot; and they use these as the baseline for producing several similar Starship designs.<br><br>Q:<br>When building a new design from a Stock Starship, can you remove or replace existing systems that come with the stock ship? For example, could I take those high-performance engines off a stock interceptor and use the cash to buy other systems?<br><br>A:<br>You can, but it&#x27;s not very efficient. You get only 1/4 the listed value of any system you remove from a Starship, even a Stock Starship.<br><br>Stock Starships usually get their starting systems at a substantial discount because they are so well integrated into the baseline design. Removing them requires a lot of inefficient workarounds, resulting in a lower price comparable to selling a used Starship component.</p>\n<p><em>Source URL: https://swse.fandom.com/wiki/Starship_Designer</em></p>",
       "source": "Starships of the Galaxy",
       "slug": "starship-designer",
       "featType": "general",
@@ -48690,13 +48690,13 @@
         "mechanicsMode": "manual_gm_managed",
         "applicationScope": "temporary_talent_selection_gm_managed",
         "staticSheetPolicy": "exclude",
-        "requiresRuntimeContext": false,
-        "requiresSelectedChoice": false,
-        "conditionSummary": "Resilient Talent requires a once-per-day temporary talent picker from classes you have levels in, so it is deferred to dedicated picker/effect UI.",
+        "requiresRuntimeContext": true,
+        "requiresSelectedChoice": true,
+        "conditionSummary": "Resilient Talent requires a once-per-day temporary talent choice from a class you have levels in; keep it metadata-only until a temporary talent picker/duration workflow exists.",
         "predicateRequirements": [],
-        "metadataPhase": "phase17-next-feat-batch",
-        "metadataNotes": "Phase 17 clears the remaining Phase 16 active backlog by implementing engine-supported skill/reroll/attack-option rules where possible, and explicitly reclassifying table-state/picker-heavy feats as manual, punted, or deferred instead of leaving them as unincorporated placeholders.",
-        "implementationStatus": "punted_gm_managed_phase22",
+        "metadataPhase": "phase3-galaxy-intrigue-parity",
+        "metadataNotes": "Phase 3 marks this as a persistent/runtime choice feat: it needs a temporary talent picker and duration tracker, not static sheet math.",
+        "implementationStatus": "metadata_only_until_temporary_talent_picker",
         "description": "Resilient Talent grants a temporary talent with time-sensitive limits. The GM should assign/remove that temporary talent rather than the system guessing timing and eligibility.",
         "modifiers": [
           {
@@ -48704,11 +48704,13 @@
             "value": 0,
             "type": "untyped",
             "enabled": false,
-            "description": "Resilient Talent grants a temporary talent with time-sensitive limits. The GM should assign/remove that temporary talent rather than the system guessing timing and eligibility.",
+            "description": "Resilient Talent requires a temporary talent choice and one-minute duration tracking; resolve through GM/table management until a dedicated picker exists.",
             "mechanicsMode": "metadata_only",
             "applicationScope": "temporary_talent_selection_gm_managed",
             "staticSheetPolicy": "exclude",
-            "metadataPhase": "phase22-force-regimen-skill-swap"
+            "metadataPhase": "phase3-galaxy-intrigue-parity",
+            "requiresSelectedChoice": true,
+            "requiresRuntimeContext": true
           }
         ],
         "talentRules": [

@@ -1,0 +1,156 @@
+{
+  "schemaVersion": 1,
+  "phase": "phase-3-galaxy-of-intrigue",
+  "sourcebook": "Galaxy of Intrigue",
+  "scope": {
+    "primary": "Galaxy of Intrigue Chapter 1 feats",
+    "secondary": "Galaxy of Intrigue Chapter 2 Skill Challenges subsystem fit",
+    "policy": "Audit and classify before automating. Do not implement Skill Challenge feat automation until a dedicated Skill Challenge encounter/app workflow exists."
+  },
+  "expectedFeats": [
+    {
+      "name": "Adaptable Talent",
+      "classification": "choice_required_manual_or_contextual"
+    },
+    {
+      "name": "Bone Crusher",
+      "classification": "combat_contextual"
+    },
+    {
+      "name": "Brilliant Defense",
+      "classification": "conditional_defense_contextual"
+    },
+    {
+      "name": "Channel Rage",
+      "classification": "species_trait_contextual"
+    },
+    {
+      "name": "Cut the Red Tape",
+      "classification": "skill_social_contextual"
+    },
+    {
+      "name": "Demoralizing Strike",
+      "classification": "combat_social_contextual"
+    },
+    {
+      "name": "Disturbing Presence",
+      "classification": "skill_social_contextual"
+    },
+    {
+      "name": "Expert Briber",
+      "classification": "skill_social_contextual"
+    },
+    {
+      "name": "Flèche",
+      "classification": "combat_contextual",
+      "aliases": [
+        "Fleche"
+      ]
+    },
+    {
+      "name": "Forceful Recovery",
+      "classification": "source_review_required",
+      "notes": "Appears in the Galaxy of Intrigue feat listing/index scan, but the current catalog entry is sourced to The Force Unleashed Campaign Guide. Preserve as review-only until the book/source collision is manually verified."
+    },
+    {
+      "name": "Resilient Talent",
+      "classification": "temporary_talent_choice_required",
+      "requiresSelectedChoice": true
+    },
+    {
+      "name": "Intimidating Presence",
+      "classification": "skill_action_economy_contextual"
+    },
+    {
+      "name": "Frightening Presence",
+      "classification": "condition_track_contextual"
+    },
+    {
+      "name": "Desperate Gambit",
+      "classification": "combat_reaction_contextual"
+    },
+    {
+      "name": "Grazing Shot",
+      "classification": "combat_contextual"
+    },
+    {
+      "name": "Hobbling Strike",
+      "classification": "combat_contextual"
+    },
+    {
+      "name": "Improved Opportunistic Trickery",
+      "classification": "reaction_contextual"
+    },
+    {
+      "name": "Indomitable Personality",
+      "classification": "defense_contextual"
+    },
+    {
+      "name": "Master of Disguise",
+      "classification": "skill_social_contextual"
+    },
+    {
+      "name": "Meat Shield",
+      "classification": "combat_reaction_contextual"
+    },
+    {
+      "name": "Opportunistic Trickery",
+      "classification": "reaction_contextual"
+    },
+    {
+      "name": "Recurring Success",
+      "classification": "persistent_choice_required",
+      "requiresSelectedChoice": true
+    },
+    {
+      "name": "Resolute Stance",
+      "classification": "combat_contextual"
+    },
+    {
+      "name": "Sadistic Strike",
+      "classification": "combat_contextual"
+    },
+    {
+      "name": "Silver Tongue",
+      "classification": "skill_social_contextual"
+    },
+    {
+      "name": "Skill Challenge: Catastrophic Avoidance",
+      "classification": "skill_challenge_metadata_only",
+      "requiresSkillChallengeSubsystem": true
+    },
+    {
+      "name": "Skill Challenge: Last Resort",
+      "classification": "skill_challenge_metadata_only",
+      "requiresSkillChallengeSubsystem": true
+    },
+    {
+      "name": "Skill Challenge: Recovery",
+      "classification": "skill_challenge_metadata_only",
+      "requiresSkillChallengeSubsystem": true
+    },
+    {
+      "name": "Stand Tall",
+      "classification": "reaction_or_defense_contextual"
+    },
+    {
+      "name": "Wookiee Grip",
+      "classification": "species_or_strength_contextual"
+    }
+  ],
+  "skillChallengeFeatPolicy": {
+    "implementationStatus": "metadata_only_until_skill_challenge_subsystem",
+    "staticSheetPolicy": "exclude_static_math",
+    "gmNote": "This feat only applies inside a Galaxy of Intrigue Skill Challenge. Track it on the Skill Challenge card/app or resolve with the GM at the table.",
+    "reason": "Galaxy of Intrigue Skill Challenges are encounter-like, party-facing progress clocks with successes, failures, complexity, effects, participation, and narrative consequences. They do not map cleanly to actor static bonuses."
+  },
+  "skillChallengeSubsystemRecommendation": {
+    "minimumViableProduct": "GM-authored challenge card with CL, complexity, success/failure targets, primary skills, DCs, effects, participant checks, chat output, and manual override controls.",
+    "preferredSlot": "scripts/apps/skill-challenges/skill-challenge-app.js for UI, scripts/engine/skill-challenges/SkillChallengeEngine.js for pure state transitions, data/skill-challenges/*.json for example templates.",
+    "doNotSlotInto": [
+      "Actor static skill math",
+      "Feat static bonus aggregation",
+      "Combat-only action resolution"
+    ]
+  }
+}
