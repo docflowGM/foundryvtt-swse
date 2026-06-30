@@ -1,0 +1,14 @@
+{
+  "ok": true,
+  "warnings": [],
+  "errors": [],
+  "summary": {
+    "totalFeatsAudited": 47,
+    "counts": {
+      "implemented_correct": 9,
+      "implemented_partial": 38
+    },
+    "reviewListCount": 38
+  },
+  "generatedAt": "2026-06-30T16:04:59.256Z"
+}

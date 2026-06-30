@@ -1,0 +1,431 @@
+{
+  "phase": "phase-9j-galaxy-at-war-implementation-accuracy",
+  "sourcebook": "Galaxy at War",
+  "purpose": "Separate list of Galaxy at War feats that are not fully implementation-correct yet. Includes feat name, description, proposed bucket/subbucket, expected rule shape, observed implementation, and concern.",
+  "entries": [
+    {
+      "name": "Acrobatic Strike",
+      "description": "If you succeed in Tumbling to avoid an Attack of Opportunity, you gain a +2 competence bonus on the next attack roll you make against that foe as long as the attack occurs before the end of your current turn.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Mobility & Positioning",
+      "proposedImplementationMode": "post_skill_success_attack_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs a transient rider from skill-use resolution to a specific foe/next attack.",
+      "expectedRuleShape": "After a successful Tumble to avoid an AoO, gain +2 competence on the next attack against that foe before end of current turn.",
+      "observedImplementation": "RIDER_EFFECT metadata exists, but no proven Acrobatics/Tumble success-to-next-attack state consumer exists in the uploaded baseline."
+    },
+    {
+      "name": "Assured Attack",
+      "description": "Whenever you deal damage to a target with an attack and you roll multiple damage dice, you can reroll the lowest damage die but must keep the second result, even if it is worse.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Damage & Threshold",
+      "proposedImplementationMode": "damage_die_reroll_hook",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Correct metadata shape, missing damage roll reroll prompt/consumer.",
+      "expectedRuleShape": "After dealing damage with multiple damage dice, reroll the lowest damage die and keep the second result.",
+      "observedImplementation": "damageRerolls metadata exists, but no damage-reroll consumer was found in scripts."
+    },
+    {
+      "name": "Autofire Assault",
+      "description": "When wielding a weapon for which you possess the Weapon Focus Feat, and you target the same area with an Autofire attack that you made an Autofire attack against on your last turn, the penalty on the Autofire attack is reduced to -2 (-1 if using a Braced Autofire -only weapon or the Controlled Burst Talent) and you deal +1 die of damage on a hit.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Area & Explosives",
+      "proposedImplementationMode": "autofire_sustained_area_attack_option",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs persistent last-autofire-area tracking and selected Weapon Focus validation.",
+      "expectedRuleShape": "With a Weapon Focus weapon, repeat autofire into the same area as last turn to reduce autofire penalty and add +1 weapon die.",
+      "observedImplementation": "ATTACK_OPTION metadata includes same-area context, attack modifier, and extra die; CombatOptionResolver can consume attack/damage dice but sameAutofireAreaAsLastTurn tracking is not proven."
+    },
+    {
+      "name": "Bantha Herder",
+      "description": "When you damage a Large or smaller creature with a ranged attack with a weapon you are proficient with, compare the result of your attack roll to the target's Will Defense. If your result equals or exceeds the target's Will Defense, you can move the target 1 square in any direction as a Free Action. If your ranged attack deals damage to multiple eligible creatures, you can use this benefit against all of them. You can't move a target that's being Grabbed or Grappled, and you can't move a target into a solid object or into another creature's Fighting Space.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Ranged Options",
+      "proposedImplementationMode": "ranged_hit_will_push_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs post-hit target effect resolution with Will comparison and forced movement UI.",
+      "expectedRuleShape": "On damaging a Large-or-smaller target with a ranged proficient attack, compare attack total to Will; on success push 1 square.",
+      "observedImplementation": "ATTACK_OPTION metadata carries a targetEffectsOnHit conditional push; attack cards preserve targetEffectsOnHit flags, but no automatic push/Will comparison resolver was found."
+    },
+    {
+      "name": "Bantha Rush",
+      "description": "After making a successful melee attack against an opponent up to one size category larger than you, you can choose to move that opponent 1 square in any direction as a Free Action. You can't Bantha Rush an opponent that's being Grabbed or Grappled, and you can't Bantha Rush your opponent into a solid object or another creature's Fighting Space.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Mobility & Positioning",
+      "proposedImplementationMode": "melee_hit_push_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs forced-movement rider handling, size validation, and grid destination validation.",
+      "expectedRuleShape": "After a successful melee attack, push an eligible target 1 square as a free action.",
+      "observedImplementation": "RIDER_EFFECT metadata exists, but no proven post-hit push resolver or destination picker exists."
+    },
+    {
+      "name": "Battering Attack",
+      "description": "Whenever you successfully move a creature with the Bantha Rush Feat, you also knock that target Prone.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Mobility & Positioning",
+      "proposedImplementationMode": "bantha_rush_prone_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Blocked by Bantha Rush rider implementation and prone effect application.",
+      "expectedRuleShape": "When Bantha Rush successfully moves a creature, also knock it prone.",
+      "observedImplementation": "RIDER_EFFECT metadata exists, but Bantha Rush itself is not fully resolved automatically."
+    },
+    {
+      "name": "Burst of Speed",
+      "description": "As a Move Action, you can Move up to twice your speed. At the end of your movement, you move -1 step along the Condition Track.",
+      "proposedBucket": "Recovery & Survival",
+      "proposedSubbucket": "Mobility & Endurance",
+      "proposedImplementationMode": "movement_action_condition_track_cost",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs action card or movement workflow that applies the CT cost.",
+      "expectedRuleShape": "As a move action, move up to twice speed, then move -1 step down the Condition Track.",
+      "observedImplementation": "movementRules metadata exists, but no movement/action card consumer or CT-cost application was found."
+    },
+    {
+      "name": "Charging Fire",
+      "description": "When you Charge, you may make a ranged attack instead of a melee attack at the end of your movement. Unlike a normal Charge, your momentum does not help you overcome your target, so you gain no bonus on your attack roll. As with a normal Charge, you still take a -2 penalty to your Reflex Defense.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Mobility & Positioning",
+      "proposedImplementationMode": "charge_ranged_attack_option",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs charge-state and temporary defense penalty handling.",
+      "expectedRuleShape": "Charge but make a ranged attack at the end; suppress normal charge attack bonus and still take -2 Reflex.",
+      "observedImplementation": "ATTACK_OPTION metadata exists; attack suppression can be represented, but Reflex penalty lifecycle/state application is not proven."
+    },
+    {
+      "name": "Delay Damage",
+      "description": "Once per encounter, you may delay the effects of damage taken until the end of your next turn.",
+      "proposedBucket": "Recovery & Survival",
+      "proposedSubbucket": "Damage Delay & Mitigation",
+      "proposedImplementationMode": "damage_deferral_reaction",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs reaction prompt, damage escrow, and expiration application.",
+      "expectedRuleShape": "Once per encounter, delay the effects of damage until the end of your next turn.",
+      "observedImplementation": "resourceRules metadata exists, but no incoming-damage interception and delayed damage lifecycle was found."
+    },
+    {
+      "name": "Destructive Force",
+      "description": "When you deal damage to an object or Vehicle that equals or exceeds the target's Damage Threshold and reduces the target to 0 Hit Points, you deal 1 die of damage (of the same type as the damage used in the attack) to all targets, including allies, that are adjacent to the Vehicle or object.",
+      "proposedBucket": "Starship & Vehicle",
+      "proposedSubbucket": "Gunnery & Weapons",
+      "proposedImplementationMode": "destroyed_object_vehicle_damage_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs post-damage destruction detection and adjacent target damage workflow. Not a Force feat.",
+      "expectedRuleShape": "When damage destroys an object/vehicle and meets DT, deal 1 die of same damage to adjacent targets including allies.",
+      "observedImplementation": "ATTACK_OPTION targetEffectsOnHit metadata exists, but no resolver for destroyed-object/vehicle adjacency splash was found."
+    },
+    {
+      "name": "Disabler",
+      "description": "When making a ranged attack with an Ion Weapon with which you are proficient, you gain one of the following benefits, depending on the kind of weapon you use. - Ion Grenade: When you use an Ion Grenade, the Grenade's Burst radius is 3 squares instead of 2 squares. - Ion Pistol: When you use an Ion Pistol, the damage dice increase from d6 to d8. - Ion Rifle: You treat the Ion Rifle as an Accurate Weapon.",
+      "proposedBucket": "Weapon & Armor",
+      "proposedSubbucket": "Weapon Family Rules",
+      "proposedImplementationMode": "ion_weapon_family_rules",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Partially implemented for damage dice only; needs area radius and weapon-property consumers.",
+      "expectedRuleShape": "Ion Grenade larger burst; Ion Pistol damage dice improve; Ion Rifle becomes Accurate.",
+      "observedImplementation": "WEAPON_DAMAGE_DIE_STEP for ion pistol is consumable; burst-radius and accurate-property override consumers are not proven."
+    },
+    {
+      "name": "Dive for Cover",
+      "description": "Once per turn, as a Reaction to being targeted by a ranged attack, you can make a Jump check to Long Jump. If you land in a square that provides you with Cover from your attacker, you gain the normal Cover bonus against the attack, even if you didn't have Cover at the time the attack was made. When you use this Feat, you always land Prone.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Defense & Avoidance",
+      "proposedImplementationMode": "ranged_attack_reaction_cover_jump",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs reaction workflow with movement and cover validation.",
+      "expectedRuleShape": "Once per turn as reaction to being targeted by a ranged attack, long jump to cover and land prone.",
+      "observedImplementation": "Action/reaction metadata only; no incoming-ranged-attack prompt, jump roll, movement, cover validation, or prone state was found."
+    },
+    {
+      "name": "Force of Personality",
+      "description": "You can use either your Wisdom modifier or your Charisma modifier to determine your Will Defense.",
+      "proposedBucket": "Character",
+      "proposedSubbucket": "Ability & Defenses",
+      "proposedImplementationMode": "static_defense_ability_substitution",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs derived defense integration and tooltip parity. Not a Force feat.",
+      "expectedRuleShape": "Use Wisdom or Charisma modifier for Will Defense.",
+      "observedImplementation": "static_actor metadata exists, but no defense-calculator consumer for this feat was found in the uploaded baseline."
+    },
+    {
+      "name": "Fortifying Recovery",
+      "description": "When you take the Recover Action, you also gain a number of Bonus Hit Points equal to 2 x your Constitution bonus (Minimum 2). Damage is subtracted from the Bonus Hit Points first, and any Bonus Hit Points remaining at the end of encounter are lost. Bonus Hit Points do not stack.",
+      "proposedBucket": "Recovery & Survival",
+      "proposedSubbucket": "Healing & Natural Recovery",
+      "proposedImplementationMode": "recover_action_bonus_hp",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs Recover action integration and temporary bonus HP lifecycle.",
+      "expectedRuleShape": "When taking Recover, gain bonus HP equal to 2x Con bonus, minimum 2, lost at encounter end and non-stacking.",
+      "observedImplementation": "resourceRules.recoverAction metadata exists, but no proven Recover action consumer/temporary HP lifecycle was found."
+    },
+    {
+      "name": "Friendly Fire Avoidance",
+      "description": "You may choose to exclude a number of squares equal to your Dexterity modifier from the area of effect of your autofire attacks.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Area & Explosives",
+      "proposedImplementationMode": "autofire_square_exclusion",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs targeting template support and excluded-square picker.",
+      "expectedRuleShape": "Exclude Dex modifier number of squares from autofire area.",
+      "observedImplementation": "ATTACK_OPTION flag exists, but no autofire-template/square-exclusion consumer was found."
+    },
+    {
+      "name": "Grappling Strike",
+      "description": "When you hit with a melee attack, you may initiate a grapple as a free action without provoking an attack of opportunity.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Grapple & Unarmed",
+      "proposedImplementationMode": "melee_hit_free_grapple_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs grapple workflow hook and AoO suppression.",
+      "expectedRuleShape": "On melee hit, initiate a grapple as a free action without provoking an AoO.",
+      "observedImplementation": "RIDER_EFFECT metadata exists, but no post-hit free grapple workflow was found."
+    },
+    {
+      "name": "Headstrong",
+      "description": "You gain a +2 bonus on Will Defense against fear effects and may reroll a failed Will Defense check once per encounter.",
+      "proposedBucket": "Recovery & Survival",
+      "proposedSubbucket": "Mental Resilience",
+      "proposedImplementationMode": "fear_will_defense_and_reroll",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs contextual Will defense resolver and failed-defense reroll prompt.",
+      "expectedRuleShape": "+2 Will Defense vs fear and once per encounter failed Will Defense reroll.",
+      "observedImplementation": "contextual defense metadata exists but no incoming fear-defense/reroll consumer was found."
+    },
+    {
+      "name": "Low Profile",
+      "description": "You gain cover from enemies at long range and may reroll Stealth checks made to avoid detection.",
+      "proposedBucket": "Skills",
+      "proposedSubbucket": "Stealth & Perception",
+      "proposedImplementationMode": "range_cover_and_stealth_reroll",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Partially correct for reroll only; needs long-range cover/attack context.",
+      "expectedRuleShape": "Gain cover from enemies at long range and reroll Stealth checks to avoid detection.",
+      "observedImplementation": "Stealth reroll metadata is consumable by SkillFeatResolver, but long-range cover is not proven."
+    },
+    {
+      "name": "Mission Specialist",
+      "description": "Choose one Skill in which you are Trained. Allies who are not Trained in that Skill gain a +2 competence bonus to the Skill while they are within 12 squares of you.",
+      "proposedBucket": "Leadership & Allies",
+      "proposedSubbucket": "Aid Another & Teamwork",
+      "proposedImplementationMode": "ally_skill_aura_choice",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs selected-skill tracking and ally aura resolver.",
+      "expectedRuleShape": "Choose a trained skill; untrained allies within 12 squares gain +2 competence to that skill.",
+      "observedImplementation": "Choice-required metadata exists, but no aura/ally-distance skill bonus consumer was found."
+    },
+    {
+      "name": "Never Surrender",
+      "description": "The first time you would be reduced to 0 Hit Points in an encounter, you can make an Endurance check as a Reaction, with a DC equal to the number of points of damage being dealt to you. If your check succeeds, you are instead reduced to 1 Hit Point.",
+      "proposedBucket": "Recovery & Survival",
+      "proposedSubbucket": "Damage Delay & Mitigation",
+      "proposedImplementationMode": "zero_hp_reaction_endurance_check",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs damage interception, once-per-encounter usage, Endurance check, and HP floor application.",
+      "expectedRuleShape": "First time per encounter you would drop to 0 HP, make Endurance vs incoming damage; on success drop to 1 HP instead.",
+      "observedImplementation": "action/reaction metadata exists only; no incoming lethal damage interception was found."
+    },
+    {
+      "name": "Officer Candidacy Training",
+      "description": "You gain a +2 bonus to your Rank and Privilege Organization Score.",
+      "proposedBucket": "Leadership & Allies",
+      "proposedSubbucket": "Organization & Command",
+      "proposedImplementationMode": "organization_score_bonus",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs organization-score integration or explicit GM metadata display.",
+      "expectedRuleShape": "+2 to Rank and Privilege Organization Score.",
+      "observedImplementation": "organization_score metadata exists; Allies/organization UI exists, but no automatic score modifier consumer was found."
+    },
+    {
+      "name": "Pistoleer",
+      "description": "When you make a ranged attack with a Pistol with which you are proficient, you gain one of the following benefits, depending on the kind of Pistol you use. - Blaster Pistol: You treat the Blaster Pistol as an Accurate Weapon. - Heavy Blaster Pistol: You do not treat the Heavy Blaster Pistol as an Inaccurate Weapon. - Hold-Out Blaster Pistol: If you fire a Hold-Out Blaster Pistol at a target that has not yet acted in combat, you gain a +2 bonus to your attack rolls with that weapon against that target. This bonus applies to all such attacks until the target attacks.",
+      "proposedBucket": "Weapon & Armor",
+      "proposedSubbucket": "Weapon Family Rules",
+      "proposedImplementationMode": "pistol_family_rules",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Partially correct; needs property override and target acting lifecycle.",
+      "expectedRuleShape": "Blaster Pistol Accurate; Heavy Blaster Pistol not Inaccurate; Hold-Out Blaster +2 vs target not yet acted until target attacks.",
+      "observedImplementation": "Rules include WEAPON_PROPERTY_OVERRIDE and ATTACK_OPTION; attack bonus can be consumed, but weapon property override and duration-until-target-attacks are not proven."
+    },
+    {
+      "name": "Predictive Defense",
+      "description": "You can use either your Dexterity modifier or your Intelligence modifier to determine your Reflex Defense.",
+      "proposedBucket": "Character",
+      "proposedSubbucket": "Ability & Defenses",
+      "proposedImplementationMode": "static_defense_ability_substitution",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs derived defense integration and tooltip parity.",
+      "expectedRuleShape": "Use Dexterity or Intelligence modifier for Reflex Defense.",
+      "observedImplementation": "static_actor metadata exists, but no defense-calculator consumer was found."
+    },
+    {
+      "name": "Reckless Charge",
+      "description": "When you charge, you gain a +2 bonus on melee attack rolls but take a -2 penalty to Reflex Defense until the start of your next turn.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Mobility & Positioning",
+      "proposedImplementationMode": "charge_attack_defense_tradeoff",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Partially correct; needs charge-state and defense penalty duration handling.",
+      "expectedRuleShape": "When charging, +2 melee attack and -2 Reflex until start of next turn.",
+      "observedImplementation": "ATTACK_OPTION attack modifier is consumable; temporary Reflex penalty lifecycle is not proven."
+    },
+    {
+      "name": "Resilient Reflexes",
+      "description": "You gain a +2 bonus on Reflex Defense against effects that target Dexterity and may reroll a failed check once per encounter.",
+      "proposedBucket": "Character",
+      "proposedSubbucket": "Ability & Defenses",
+      "proposedImplementationMode": "contextual_defense_and_reroll",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs contextual defense/reroll workflow.",
+      "expectedRuleShape": "+2 Reflex vs effects targeting Dexterity and once per encounter failed check/reroll.",
+      "observedImplementation": "contextual defense metadata exists, but no defense-effect target/reroll consumer was found."
+    },
+    {
+      "name": "Resilient Strength",
+      "description": "You can use either your Strength modifier or your Constitution modifier to determine your Fortitude Defense.",
+      "proposedBucket": "Character",
+      "proposedSubbucket": "Ability & Defenses",
+      "proposedImplementationMode": "static_defense_ability_substitution",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs derived defense integration and tooltip parity.",
+      "expectedRuleShape": "Use Strength or Constitution modifier for Fortitude Defense.",
+      "observedImplementation": "static_actor metadata exists, but no defense-calculator consumer was found."
+    },
+    {
+      "name": "Resilient Will",
+      "description": "You gain a +2 bonus on Will Defense against effects that target Wisdom and may reroll a failed check once per encounter.",
+      "proposedBucket": "Character",
+      "proposedSubbucket": "Ability & Defenses",
+      "proposedImplementationMode": "contextual_defense_and_reroll",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs contextual defense/reroll workflow.",
+      "expectedRuleShape": "+2 Will vs effects targeting Wisdom and once per encounter failed check/reroll.",
+      "observedImplementation": "contextual defense metadata exists, but no defense-effect target/reroll consumer was found."
+    },
+    {
+      "name": "Riflemaster",
+      "description": "When you make a ranged attack with a Rifle with which you are proficient, you gain one of the following benefits, depending on the kind of Rifle you use. - Blaster Carbine: You can Brace a Blaster Carbine set to Autofire, even though it is not an Autofire -only weapon. - Blaster Rifle: You treat the Blaster Rifle as an Accurate Weapon. - Heavy Blaster Rifle: When you use a Heavy Blaster Rifle, the damage dice increase from d10 to d12. - Light Repeating Blaster: You treat the Light Repeating Blaster as if it were Medium instead of Large.",
+      "proposedBucket": "Weapon & Armor",
+      "proposedSubbucket": "Weapon Family Rules",
+      "proposedImplementationMode": "rifle_family_rules",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Partially correct for damage dice only; needs weapon-property and brace/size handling.",
+      "expectedRuleShape": "Blaster Carbine can brace autofire; Blaster Rifle Accurate; Heavy Blaster Rifle d10 to d12; Light Repeating Blaster treated Medium.",
+      "observedImplementation": "WEAPON_DAMAGE_DIE_STEP for Heavy Blaster Rifle is consumable; other weapon-property/size/brace rules are not proven."
+    },
+    {
+      "name": "Risk Taker",
+      "description": "You fall only if you fail a Climb check by 10 or more. Additionally, if you make a Jump check and fail to land on a safe or solid surface (such as if you fall into a pit or fail to clear a stream of lava), you can spend a Force Point as a Free Action and add the result of the Force Point roll to your distance jumped. However, you must land in the first available safe square.",
+      "proposedBucket": "Skills",
+      "proposedSubbucket": "Mobility Skills",
+      "proposedImplementationMode": "climb_jump_force_point_skill_use",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs skill-use-specific workflow and resource spend prompt.",
+      "expectedRuleShape": "Fall only if Climb fails by 10+; spend Force Point after unsafe Jump to add FP result to distance and land first safe square.",
+      "observedImplementation": "skill_use metadata exists, but no Climb/Jump failure threshold or Force Point distance prompt was found."
+    },
+    {
+      "name": "Savage Attack",
+      "description": "Choose one weapon groups or Exotic Weapon you have selected for the Double Attack Feat. When you use a Full Attack Action and successfully hit the target with your first attack, you deal +1 die of damage on each successful attack remaining in the Full Attack made against that target.",
+      "proposedBucket": "Weapon & Armor",
+      "proposedSubbucket": "Multiattack & Dual Weapon",
+      "proposedImplementationMode": "full_attack_damage_rider_choice",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs selected choice, full-attack state tracking, and remaining attack damage rider.",
+      "expectedRuleShape": "Choose Double Attack weapon; after first hit in full attack, remaining hits against same target deal +1 weapon die.",
+      "observedImplementation": "Choice-required metadata exists but no full-attack sequence/first-hit/same-target consumer was found."
+    },
+    {
+      "name": "Scavenger",
+      "description": "You can spend 1 hour scavenging materials from other Vehicles or objects. When you do so, you make a Perception check to determine the value of the parts scavenged. You produce raw materials equal in value to the result of your Perception check x 30 credits. You must apply these raw materials toward the cost of construction of a single object (see Build Object), and you can scavenge parts for only a single object at any given time. Additionally, you can scavenge raw materials only once for any given object you are attempting to build.",
+      "proposedBucket": "Tech & Equipment",
+      "proposedSubbucket": "Scavenging & Crafting",
+      "proposedImplementationMode": "perception_scavenge_build_materials",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs GM crafting/scavenging workflow and material ledger.",
+      "expectedRuleShape": "Spend 1 hour, Perception check, generate raw materials worth check x30 credits for one construction project.",
+      "observedImplementation": "skill_use_rule metadata exists, but no scavenge/crafting material ledger workflow was found."
+    },
+    {
+      "name": "Slippery Maneuver",
+      "description": "You can apply the effects of the Dodge Feat against attacks made from two opponents. In addition, when you use the Withdraw Action to move away from a target against whom you use the Dodge Feat, you can move at your full Speed. You still provoke an Attack of Opportunity if you must move more than 1 square to escape a Threatened Area.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Defense & Avoidance",
+      "proposedImplementationMode": "dodge_multi_target_withdraw_rule",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs Dodge target state and Withdraw workflow.",
+      "expectedRuleShape": "Dodge applies against two opponents; Withdraw from Dodge target at full speed.",
+      "observedImplementation": "movementRules metadata exists, but no Dodge multi-target or withdraw movement consumer was found."
+    },
+    {
+      "name": "Sniper",
+      "description": "You always ignore Soft Cover (that is, Cover provided by a character, creature, or Droid) when you make a ranged attack.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Ranged Options",
+      "proposedImplementationMode": "soft_cover_suppression",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs cover-type-specific integration; current flag may not affect final Reflex/cover math.",
+      "expectedRuleShape": "Always ignore soft cover from creatures/droids on ranged attacks.",
+      "observedImplementation": "ATTACK_OPTION suppresses softCoverFromCreature, but cover suppression consumer only clearly recognizes generic cover flags in the uploaded baseline."
+    },
+    {
+      "name": "Sport Hunter",
+      "description": "When you make a ranged attack with a slugthrower or sporting weapon with which you are proficient, you gain one of the following benefits, depending on the kind of weapon you use. - Slugthrower Pistol: When you use a Slugthrower Pistol at Point-Blank Range, you deal +1 die of damage with the weapon. - Slugthrower Rifle: When you use a Slugthrower Rifle, the damage dice increase from d8 to d12. - Sporting Blaster Pistol: When you use a Sporting Blaster Pistol, reroll any result of 1 on the damage dice until you get a result other than 1. - Sporting Blaster Rifle: When using a Sporting Blaster Rifle, you gain a +1 bonus to attack rolls when you Aim before firing.",
+      "proposedBucket": "Weapon & Armor",
+      "proposedSubbucket": "Weapon Family Rules",
+      "proposedImplementationMode": "sporting_weapon_family_rules",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Partially correct; needs damage die reroll consumer and weapon property/context validation.",
+      "expectedRuleShape": "Slugthrower pistol +1 die at point blank; slugthrower rifle d8 to d12; sporting blaster pistol reroll 1s; sporting rifle +1 attack when aiming.",
+      "observedImplementation": "Damage die and aimed attack options are consumable; damage-reroll-1s and all weapon-family conditions are not fully proven."
+    },
+    {
+      "name": "Staggering Attack",
+      "description": "When using a melee weapon with which you are proficient, you can make an attack that disrupts an enemy's concentration. You take a -2 penalty on your attack roll, and if your attack deals damage, the target takes a -2 penalty to Skill Checks until the end of your next turn. Alternatively, you can take a -5 penalty to your attack roll, and if your attack deals damage, the target takes a -5 penalty to Skill Checks until end of your next turn.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Attack Options",
+      "proposedImplementationMode": "melee_attack_skill_penalty_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs hit effect application and duration tracking.",
+      "expectedRuleShape": "Choose -2 or -5 melee attack option; on damage target takes matching skill-check penalty until end of next turn.",
+      "observedImplementation": "ATTACK_OPTION metadata can apply attack penalty and passes targetEffectsOnHit, but no target skill-penalty state application/lifecycle was found."
+    },
+    {
+      "name": "Steadying Position",
+      "description": "When you are Prone and Aim before making a ranged attack, your target does not benefit from its Dexterity bonus to its Reflex Defense.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Ranged Options",
+      "proposedImplementationMode": "aimed_prone_target_defense_suppression",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs target defense component suppression in attack resolution.",
+      "expectedRuleShape": "When prone and aiming before ranged attack, target loses Dex bonus to Reflex Defense.",
+      "observedImplementation": "ATTACK_OPTION targetDefenseFlags metadata exists, but no consumer for ignoreDexBonusToReflex was found."
+    },
+    {
+      "name": "Triple Crit Specialist",
+      "description": "When you score a critical hit with the selected weapon group, you deal triple damage and move the target -1 step down the condition track.",
+      "proposedBucket": "Weapon & Armor",
+      "proposedSubbucket": "Critical Hits",
+      "proposedImplementationMode": "critical_multiplier_and_ct_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs critical rider effect application and CT movement lifecycle.",
+      "expectedRuleShape": "Critical hits with selected weapon group deal triple damage and move target -1 CT.",
+      "observedImplementation": "Critical multiplier can be represented, but critical targetEffectsOnCritical/CT rider application is not proven."
+    },
+    {
+      "name": "Wounding Strike",
+      "description": "Once per encounter, you may move a target -1 step down the condition track when you hit with a melee attack.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Condition Track",
+      "proposedImplementationMode": "once_per_encounter_melee_hit_ct_rider",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs hit prompt, CT application, and usage tracking.",
+      "expectedRuleShape": "Once per encounter, on melee hit move target -1 step down CT.",
+      "observedImplementation": "resourceRules/metadata exists, but no once-per-encounter hit rider consumer was found."
+    }
+  ],
+  "summary": {
+    "entries": 38,
+    "statuses": {
+      "implemented_partial": 38
+    }
+  }
+}
