@@ -1,0 +1,178 @@
+{
+  "phase": "phase-9i-clone-wars-implementation-accuracy",
+  "sourcebook": "Clone Wars Campaign Guide",
+  "purpose": "Separate list of Clone Wars feats that are not fully implementation-correct yet. Includes feat name, description, proposed bucket/subbucket, expected rule shape, observed implementation, and concern.",
+  "entries": [
+    {
+      "name": "Artillery Shot",
+      "description": "When you make an attack with a Burst or Splash weapon with which you are proficient against a target at greater than Point-Blank Range, you can affect two additional squares adjacent to the normal Burst radius or Splash area.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Area & Explosives",
+      "proposedImplementationMode": "area_attack_option",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs area-template/targeting workflow support; cannot be considered runtime-correct yet.",
+      "expectedRuleShape": "Burst/Splash proficient attack beyond point-blank affects two additional adjacent squares.",
+      "observedImplementation": "Metadata has a plausible ATTACK_OPTION with areaBonusSquares, but no current code consumer for areaBonusSquares was found in the uploaded baseline."
+    },
+    {
+      "name": "Coordinated Barrage",
+      "description": "When you Aid Another ally's attack, for every 3 points that the ally's attack roll beats the target's Reflex Defense, the attack deals +1 die of damage. The maximum number of bonus damage dice the attack receives is equal to the number of allies with this Feat that aided on the attack roll or +5 dice, whichever is lower.",
+      "proposedBucket": "Leadership & Allies",
+      "proposedSubbucket": "Aid Another & Teamwork",
+      "proposedImplementationMode": "aid_another_damage_scaling_hook",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Requires Aid Another/ally-count/margin-over-Reflex damage rider workflow.",
+      "expectedRuleShape": "When aiding an ally attack, add +1 damage die per 3 points over Reflex, capped by aiding allies with the feat or +5 dice.",
+      "observedImplementation": "aidAnotherRules metadata exists with the right shape, but no runtime consumer for aidAnotherRules was found in the uploaded baseline."
+    },
+    {
+      "name": "Droidcraft",
+      "description": "You can use the Repair Droid aspect of the Mechanics skill in 10 minutes.",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Repair",
+      "proposedImplementationMode": "skill_use_time_override",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs Mechanics/Repair Droid action timing display or GM workflow hook.",
+      "expectedRuleShape": "Repair Droid aspect of Mechanics takes 10 minutes.",
+      "observedImplementation": "skillUseRules metadata exists and blocks static bonuses, but no skillUseRules runtime consumer was found in the uploaded baseline."
+    },
+    {
+      "name": "Experienced Medic",
+      "description": "You can perform Surgery on a number of creatures equal to your Intelligence modifier (minimum 2) simultaneously. You make Treat Injury checks for each individual creature as normal.",
+      "proposedBucket": "Recovery & Survival",
+      "proposedSubbucket": "Healing & Medical Procedures",
+      "proposedImplementationMode": "treat_injury_surgery_capacity_rule",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Correct as metadata but not an automated Treat Injury procedure workflow.",
+      "expectedRuleShape": "Perform Surgery on creatures equal to Intelligence modifier, minimum 2, simultaneously; make checks separately.",
+      "observedImplementation": "skillUseRules-style metadata exists, but no runtime surgery/capacity workflow consumer was found."
+    },
+    {
+      "name": "Expert Droid Repair",
+      "description": "You can use Repair Droid to a number of Droids equal to your Intelligence modifier (Minimum 2) simultaneously. You make Mechanics checks for each Droid as normal.",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Repair",
+      "proposedImplementationMode": "repair_droid_capacity_rule",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs Mechanics/Repair Droid procedure workflow support.",
+      "expectedRuleShape": "Use Repair Droid on a number of droids equal to Intelligence modifier, minimum 2, simultaneously.",
+      "observedImplementation": "skillUseRules metadata exists, but no skillUseRules runtime consumer was found in the uploaded baseline."
+    },
+    {
+      "name": "Flash and Clear",
+      "description": "When you damage a target with a Burst or Splash weapon, you gain Concealment against that target until the beginning of your next turn.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Area & Explosives",
+      "proposedImplementationMode": "attack_rider_concealment",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs hit-resolution effect application and expiry tracking.",
+      "expectedRuleShape": "After damaging a target with Burst/Splash weapon, gain concealment against that target until beginning of next turn.",
+      "observedImplementation": "ATTACK_OPTION targetEffectsOnHit metadata exists. CombatOptionResolver collects targetEffectsOnHit, but no proven concealment-state application/lifecycle was found."
+    },
+    {
+      "name": "Flood of Fire",
+      "description": "When you make an Area Attack with a weapon set on Autofire, and you are proficient with that weapon, all targets in the area lose all dodge or deflection bonuses to Reflex Defense against the Autofire attack.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Area & Explosives",
+      "proposedImplementationMode": "autofire_target_defense_suppression",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs target-defense component suppression in the attack resolution path.",
+      "expectedRuleShape": "Autofire area targets lose dodge/deflection bonuses to Reflex Defense against the attack.",
+      "observedImplementation": "ATTACK_OPTION targetEffectsOnHit metadata exists, but no consumer for IGNORE_TARGET_DODGE_DEFLECTION_TO_REFLEX was found."
+    },
+    {
+      "name": "Grand Army of the Republic Training",
+      "description": "If you wear Armor that provides an Equipment bonus to your Fortitude Defense, and you are proficient with that Armor, you also apply the Armor's Equipment bonus to your Will Defense.",
+      "proposedBucket": "Weapon & Armor",
+      "proposedSubbucket": "Armor Optimization",
+      "proposedImplementationMode": "equipped_armor_will_defense_rule",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs defense calculator integration and tooltip/breakdown parity.",
+      "expectedRuleShape": "If proficient in armor that gives Fortitude equipment bonus, also apply that armor equipment bonus to Will Defense.",
+      "observedImplementation": "Metadata describes equipped armor contextual defense, but no proven derived-defense hook consumes this feat in the uploaded baseline."
+    },
+    {
+      "name": "Gunnery Specialist",
+      "description": "While you are the Gunner of a Vehicle, you are considered proficient with Vehicle Weapons. Additionally, once per encounter, you can reroll an attack roll made with a Vehicle Weapon, though you must keep the second result, even if it is worse. You can declare this reroll after you learn the result of the attack roll, but before damage is resolved.",
+      "proposedBucket": "Starship & Vehicle",
+      "proposedSubbucket": "Gunnery & Weapons",
+      "proposedImplementationMode": "vehicle_weapon_proficiency_and_reroll",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs vehicle role context, proficiency override, and reroll lifecycle tracking.",
+      "expectedRuleShape": "While gunner of a vehicle, count as proficient with vehicle weapons; once per encounter reroll a vehicle weapon attack and keep second result.",
+      "observedImplementation": "Metadata captures attack reroll context, but no proven vehicle-role proficiency hook or once-per-encounter vehicle weapon reroll prompt was found."
+    },
+    {
+      "name": "Jedi Familiarity",
+      "description": "Once per encounter, when you are targeted or affected by a Force Power or Force Talent originating from an ally, you gain one temporary Force Point, which must be spent before the end of the encounter or it goes away. If the Force Power or Force Talent damages you or moves you down the Condition Track, you do not gain the benefit of this Feat.",
+      "proposedBucket": "Force",
+      "proposedSubbucket": "Force Point & Destiny",
+      "proposedImplementationMode": "temporary_force_point_reaction",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs Force power/talent target event, ally validation, damage/CT exclusion, once-per-encounter tracking, and temp FP expiry.",
+      "expectedRuleShape": "Once per encounter, when targeted/affected by an ally Force power/talent that does not damage or move you down CT, gain a temporary Force Point for the encounter.",
+      "observedImplementation": "resourceRules metadata exists, but current code appears to collect resource notes rather than trigger this event and temporary resource lifecycle automatically."
+    },
+    {
+      "name": "Leader of Droids",
+      "description": "Whenever you provide a beneficial, Mind-Affecting effect to your allies, you may select from among these allies a number of Droids equal to your Intelligence modifier (minimum 1). The Droids you designate ignore their Mind-Affecting immunity with regards to this effect, provided they are willing to ignore this immunity.",
+      "proposedBucket": "Droid",
+      "proposedSubbucket": "Droid Interface",
+      "proposedImplementationMode": "mind_affecting_droid_immunity_bypass",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Correct implementation is a targeted effect prompt, not passive math.",
+      "expectedRuleShape": "When you provide a beneficial mind-affecting effect to allies, choose willing droids up to Intelligence modifier to ignore mind-affecting immunity for that effect.",
+      "observedImplementation": "Metadata/table-context note exists, but no automatic mind-affecting ally effect distribution or droid immunity-bypass prompt was found."
+    },
+    {
+      "name": "Overwhelming Attack",
+      "description": "You must spend two Swift Actions in the same round to activate this Feat. If your target attempts to use a Talent, Feat, or other ability to negate your attack (Such as Block, Deflect, or Vehicular Combat), the target takes a -5 penalty to any attack rolls or Skill Checks it makes to negate the attack. This effect applies to the next attack you make before the end of the same round.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Attack Options",
+      "proposedImplementationMode": "swift_action_attack_negation_penalty",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs action economy and negation-attempt integration.",
+      "expectedRuleShape": "Spend two swift actions; target takes -5 on rolls/checks to negate your next attack before end of round.",
+      "observedImplementation": "ATTACK_OPTION metadata includes requiresSwiftActions and targetEffectsOnHit, but no proven swift-action spending or Block/Deflect/Vehicular Combat negation hook consumes the penalty."
+    },
+    {
+      "name": "Spray Shot",
+      "description": "When you have a weapon set on Autofire, you can reduce the area targeted by your Autofire attack to 1 square.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Area & Explosives",
+      "proposedImplementationMode": "autofire_area_override",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs autofire targeting/template integration.",
+      "expectedRuleShape": "With weapon set on Autofire, reduce the Autofire target area to 1 square.",
+      "observedImplementation": "ATTACK_OPTION metadata has autofireAreaSquares and suppresses defaultAutofireArea, but no current code consumer for autofireAreaSquares/default-area suppression was found."
+    },
+    {
+      "name": "Unwavering Resolve",
+      "description": "You gain a +5 insight bonus to Will Defense against Deception and Persuasion checks.",
+      "proposedBucket": "Social & Intrigue",
+      "proposedSubbucket": "Persuasion & Influence Defense",
+      "proposedImplementationMode": "conditional_will_defense_bonus",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs social-skill attack/defense workflow or Will defense contextual resolver.",
+      "expectedRuleShape": "+5 insight to Will Defense against Deception and Persuasion checks.",
+      "observedImplementation": "conditionalDefenseBonuses metadata exists, but no runtime consumer for conditionalDefenseBonuses was found in the uploaded baseline."
+    },
+    {
+      "name": "Wary Defender",
+      "description": "When you use the Fight Defensively Action, you gain a +2 competence bonus to your Fortitude Defense and Will Defense until the beginning of your next turn.",
+      "proposedBucket": "Combat",
+      "proposedSubbucket": "Defense & Positioning",
+      "proposedImplementationMode": "fight_defensively_defense_bonus",
+      "currentObservedStatus": "implemented_partial",
+      "implementationAccuracyConcern": "Needs Fight Defensively state/effect lifecycle and defense breakdown support.",
+      "expectedRuleShape": "When using Fight Defensively, gain +2 competence to Fortitude and Will until beginning of next turn.",
+      "observedImplementation": "conditionalDefenseBonuses metadata exists, but no consumer was found that applies the temporary Fortitude/Will bonus when Fight Defensively is used."
+    }
+  ],
+  "summary": {
+    "entries": 15,
+    "statuses": {
+      "implemented_partial": 15
+    }
+  }
+}
