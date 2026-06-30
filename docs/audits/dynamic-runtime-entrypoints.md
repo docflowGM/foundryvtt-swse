@@ -89,6 +89,8 @@ Two test/audit files had wrong root-level paths. Canonical files exist at `scrip
 | `scripts/governance/sentinel/integration-tests.js:64` | `/systems/foundryvtt-swse/feat-state.js` | `/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-state.js` |
 | `scripts/engine/combat/damage-engine-test.js:189` | `/systems/foundryvtt-swse/mutation-integrity-layer.js` | `/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js` |
 
+**Note:** `scripts/governance/sentinel/integration-tests.js` was subsequently deleted as a pure test harness file (PR 11). Its stale import path was fixed before deletion. The file is no longer present.
+
 ---
 
 ## 2. `game.swse` Namespace (Console / Macro Accessible)
