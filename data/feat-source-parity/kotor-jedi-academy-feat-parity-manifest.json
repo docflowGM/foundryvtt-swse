@@ -1,0 +1,411 @@
+{
+  "phase": "phase-7a-kotor-jedi-academy",
+  "sourcebooks": [
+    "Knights of the Old Republic Campaign Guide",
+    "Jedi Academy Training Manual"
+  ],
+  "purpose": "Audit and classify KOTOR + Jedi Academy Training Manual feat parity after global taxonomy cleanup. Use mechanics/source context rather than title keywords.",
+  "sourceBasis": {
+    "uploadedPdfs": [
+      "SAGA EDITION - Knights of the Old Republic Campaign Guide.pdf",
+      "SW Saga - Jedi Academy Training Manual (optimized).pdf"
+    ],
+    "observedSections": [
+      "KOTOR Chapter 2: Heroic Traits / Feats",
+      "JATM feat entries from Power of the Force / equipment and training material"
+    ],
+    "notes": [
+      "This phase is source parity and implementation-fit auditing, not a broad runtime implementation pass.",
+      "Classification must use prerequisites, benefit text, runtime mechanics, and source context, not title words such as Force, Surge, or Strike.",
+      "Ambiguous classification should be marked source_review rather than forced into a tag."
+    ]
+  },
+  "expectedFeats": [
+    {
+      "name": "Accelerated Strike",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "encounter_action_economy",
+      "mechanicsMode": "conditional",
+      "applicationScope": "non_numeric_rule",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "action_card_candidate",
+      "notes": "Once per encounter full attack as standard action with proficient weapons; not an attack bonus."
+    },
+    {
+      "name": "Conditioning",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "trained_strength_constitution_skill_reroll_and_fort_reaction",
+      "mechanicsMode": "conditional",
+      "applicationScope": "reroll_or_resource_context",
+      "staticSheetPolicy": "manual_or_contextual_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "partial_skill_reroll_supported",
+      "notes": "Skill reroll plus once-per-encounter Fortitude reaction; should not be unconditional Fortitude."
+    },
+    {
+      "name": "Critical Strike",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "melee_critical_attack_option",
+      "mechanicsMode": "active",
+      "applicationScope": "melee_critical_attack_option",
+      "staticSheetPolicy": "roll_context_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "attack_option_candidate",
+      "notes": "Two swift action setup for next melee attack with Weapon Focus weapon."
+    },
+    {
+      "name": "Flurry",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "melee_attack_option_with_reflex_penalty",
+      "mechanicsMode": "active",
+      "applicationScope": "attack_option",
+      "staticSheetPolicy": "roll_context_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "attack_option_supported",
+      "notes": "Light weapons/lightsabers only; +2 melee attack and -5 Reflex until next turn."
+    },
+    {
+      "name": "Force Readiness",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "force_point_timing_resource_rule",
+      "mechanicsMode": "passive_resource",
+      "applicationScope": "force_point_timing_context",
+      "staticSheetPolicy": "resource_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "resource_metadata_ready",
+      "notes": "Not a Force feat by prerequisite; resource timing rule.",
+      "titleKeywordReviewed": true
+    },
+    {
+      "name": "Gearhead",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "mechanics_use_computer_time_rule",
+      "mechanicsMode": "skill_use_rule",
+      "applicationScope": "mechanics_use_computer_time_context",
+      "staticSheetPolicy": "skill_use_context_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "skill_use_metadata_ready",
+      "notes": "Time/economy skill-use rule for Mechanics/Use Computer."
+    },
+    {
+      "name": "Implant Training",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "implant_penalty_suppression",
+      "mechanicsMode": "passive_capability",
+      "applicationScope": "implant_condition_track_context",
+      "staticSheetPolicy": "condition_metadata",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "implemented_by_implant_rules",
+      "notes": "Suppresses active implant Will penalty and extra CT step; relies on explicit implant tags."
+    },
+    {
+      "name": "Improved Rapid Strike",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "rapid_strike_attack_option_upgrade",
+      "mechanicsMode": "conditional",
+      "applicationScope": "attack_option",
+      "staticSheetPolicy": "roll_context_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "attack_option_candidate",
+      "notes": "Light melee/lightsaber Rapid Strike upgrade; not static damage."
+    },
+    {
+      "name": "Increased Agility",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "movement_and_climbing_capability",
+      "mechanicsMode": "passive_capability",
+      "applicationScope": "movement_climb_swim_jump_context",
+      "staticSheetPolicy": "derived_metadata",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "movement_metadata_ready",
+      "notes": "Climb/swim/jump distance and climbing Reflex handling."
+    },
+    {
+      "name": "Logic Upgrade: Self-Defense",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "droid_temporary_defense_choice",
+      "mechanicsMode": "active",
+      "applicationScope": "temporary_defense_choice_context",
+      "staticSheetPolicy": "resource_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": true,
+      "automationReadiness": "action_card_candidate",
+      "notes": "Droid-only active choice among defenses."
+    },
+    {
+      "name": "Logic Upgrade: Tactician",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "droid_aid_another_attack_bonus_upgrade",
+      "mechanicsMode": "conditional",
+      "applicationScope": "aid_another_context",
+      "staticSheetPolicy": "roll_context_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "aid_another_hook_candidate",
+      "notes": "Droid Aid Another attack support; not self attack bonus."
+    },
+    {
+      "name": "Mandalorian Training",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "charging_fire_attack_option_rider",
+      "mechanicsMode": "conditional",
+      "applicationScope": "attack_option",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "attack_option_candidate",
+      "notes": "Charging Fire-specific attack rider."
+    },
+    {
+      "name": "Poison Resistance",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "poison_defense_and_damage_mitigation",
+      "mechanicsMode": "conditional",
+      "applicationScope": "targeted_defense_context",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "poison_engine_candidate",
+      "notes": "+5 Fortitude against poison and half damage if poison succeeds."
+    },
+    {
+      "name": "Power Blast",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "ranged_attack_damage_tradeoff",
+      "mechanicsMode": "active",
+      "applicationScope": "attack_option",
+      "staticSheetPolicy": "roll_context_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "attack_option_supported",
+      "notes": "Ranged attack option; explicit slider/tradeoff."
+    },
+    {
+      "name": "Quick Skill",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "selected_skill_take10_take20_economy",
+      "mechanicsMode": "skill_use_rule",
+      "applicationScope": "take10_take20_skill_context",
+      "staticSheetPolicy": "skill_use_context_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": true,
+      "automationReadiness": "selected_skill_metadata_ready",
+      "notes": "Requires persistent selected skill; affects take 10/take 20 timing."
+    },
+    {
+      "name": "Republic Military Training",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "cover_reaction_damage_reduction",
+      "mechanicsMode": "conditional",
+      "applicationScope": "action_or_reaction_hook",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "reaction_hook_candidate",
+      "notes": "Incoming attack while behind cover; not passive DR."
+    },
+    {
+      "name": "Sith Military Training",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "drop_or_dt_reaction_defense_debuff",
+      "mechanicsMode": "active",
+      "applicationScope": "defense_debuff_reaction_context",
+      "staticSheetPolicy": "reaction_metadata",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "reaction_hook_candidate",
+      "notes": "Once-per-encounter reaction debuff around defeated/DT-exceeded target."
+    },
+    {
+      "name": "Sniper Shot",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "ranged_attack_option_with_reflex_penalty",
+      "mechanicsMode": "active",
+      "applicationScope": "attack_option",
+      "staticSheetPolicy": "roll_context_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "attack_option_supported",
+      "notes": "Ranged attack option with Reflex penalty rider."
+    },
+    {
+      "name": "Tumble Defense",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "enemy_tumble_dc_increase",
+      "mechanicsMode": "conditional",
+      "applicationScope": "targeted_defense_context",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "movement_opportunity_hook_candidate",
+      "notes": "Opponent Acrobatics/Tumble DC context; not actor defense."
+    },
+    {
+      "name": "Withdrawal Strike",
+      "sourcebook": "Knights of the Old Republic Campaign Guide",
+      "classification": "selected_melee_weapon_withdrawal_lockdown",
+      "mechanicsMode": "conditional_choice_required",
+      "applicationScope": "roll_or_action_context",
+      "staticSheetPolicy": "manual_or_contextual_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": true,
+      "automationReadiness": "selected_weapon_opportunity_hook_candidate",
+      "notes": "Requires chosen melee group/exotic weapon."
+    },
+    {
+      "name": "Fast Surge",
+      "sourcebook": "Jedi Academy Training Manual",
+      "classification": "second_wind_action_economy",
+      "mechanicsMode": "passive_resource",
+      "applicationScope": "secondWind_resource",
+      "staticSheetPolicy": "resource_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "second_wind_rule_supported",
+      "notForceFeat": true,
+      "notes": "No Force prerequisite; despite Surge in the name, this is a second wind action-economy feat."
+    },
+    {
+      "name": "Follow Through",
+      "sourcebook": "Jedi Academy Training Manual",
+      "classification": "melee_drop_target_movement_rider",
+      "mechanicsMode": "conditional",
+      "applicationScope": "rider_effect",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "attack_result_hook_candidate",
+      "notes": "After melee damage drops a target; interacts with Cleave."
+    },
+    {
+      "name": "Force Regimen Mastery",
+      "sourcebook": "Jedi Academy Training Manual",
+      "classification": "force_regimen_grant",
+      "mechanicsMode": "grant_unlock",
+      "applicationScope": "force_regimen_picker_and_force_tab_cards",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": false,
+      "requiresSelectedChoice": true,
+      "automationReadiness": "implemented_picker_or_stub_ready",
+      "forceFeat": true,
+      "notes": "Force Sensitivity/Use the Force prerequisite; requires regimen picker/cards rather than static math."
+    },
+    {
+      "name": "Intuitive Initiative",
+      "sourcebook": "Jedi Academy Training Manual",
+      "classification": "use_the_force_initiative_reroll",
+      "mechanicsMode": "conditional",
+      "applicationScope": "skill_roll_context",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "skill_reroll_candidate",
+      "forceFeat": true,
+      "notes": "Use the Force prerequisite/context; Initiative reroll."
+    },
+    {
+      "name": "Keen Force Mind",
+      "sourcebook": "Jedi Academy Training Manual",
+      "classification": "mind_affecting_force_power_utf_bonus",
+      "mechanicsMode": "conditional",
+      "applicationScope": "skill_roll_context",
+      "staticSheetPolicy": "exclude",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "force_power_activation_context_needed",
+      "forceFeat": true,
+      "notes": "+2 Use the Force only for mind-affecting Force powers."
+    },
+    {
+      "name": "Long Haft Strike",
+      "sourcebook": "Jedi Academy Training Manual",
+      "classification": "lightsaber_pike_double_weapon_property",
+      "mechanicsMode": "conditional",
+      "applicationScope": "weapon_property_context",
+      "staticSheetPolicy": "weapon_metadata",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "weapon_property_metadata_ready",
+      "notes": "Lightsaber Pike/Long-handle Lightsaber double-weapon treatment; ignore fandom homebrew expansion."
+    },
+    {
+      "name": "Relentless Attack",
+      "sourcebook": "Jedi Academy Training Manual",
+      "classification": "double_attack_selected_weapon_rider",
+      "mechanicsMode": "conditional_choice_required",
+      "applicationScope": "roll_or_action_context",
+      "staticSheetPolicy": "manual_or_contextual_only",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": true,
+      "automationReadiness": "selected_weapon_attack_option_candidate",
+      "notes": "Requires matching Double Attack selected weapon context."
+    },
+    {
+      "name": "Unswerving Resolve",
+      "sourcebook": "Jedi Academy Training Manual",
+      "classification": "fear_mind_affecting_failed_effect_resource_rider",
+      "mechanicsMode": "conditional",
+      "applicationScope": "resist_fear_mind_affecting_resource_context",
+      "staticSheetPolicy": "resource_metadata",
+      "requiresRuntimeContext": true,
+      "requiresSelectedChoice": false,
+      "automationReadiness": "reaction_resource_metadata_ready",
+      "notes": "Temporary Force Point/resource rider after fear/mind-affecting effect fails to affect you."
+    }
+  ],
+  "taxonomyCorrections": [
+    {
+      "name": "Fast Surge",
+      "reason": "No Force prerequisite and benefit is Second Wind action economy; current source context supports general/resource classification, not Force feat classification.",
+      "from": {
+        "featType": "force",
+        "tags": [
+          "force"
+        ]
+      },
+      "to": {
+        "featType": "general",
+        "removeTags": [
+          "force"
+        ],
+        "addTags": [
+          "taxonomy_reviewed",
+          "not_force_feat",
+          "second_wind",
+          "action_economy"
+        ]
+      }
+    }
+  ],
+  "sourceReviewQueue": [],
+  "outOfScope": [
+    {
+      "id": "full_force_regimen_effects",
+      "reason": "Force Regimen Mastery may grant regimen picks, but individual regimen text/effects need their own source pass and picker/card data."
+    },
+    {
+      "id": "complete_reaction_engine",
+      "reason": "Republic/Sith Military Training, Conditioning, and Unswerving Resolve need combat/result/reaction contexts before full automation."
+    },
+    {
+      "id": "weapon_choice_execution",
+      "reason": "Withdrawal Strike and Relentless Attack need persistent weapon choice and tactical context before full roll enforcement."
+    }
+  ],
+  "recommendedNextWork": [
+    "Implement or harden attack option cards for Critical Strike, Improved Rapid Strike, Mandalorian Training, and selected KOTOR melee/ranged options.",
+    "Add poison defense hook so Poison Resistance and Bio-Stabilizer Implant share a single poison-immunity/resistance path.",
+    "Create source-reviewed Force Regimen entries before expanding Force Regimen Mastery beyond entitlement/picker metadata.",
+    "Build a reaction/result hook backlog for Conditioning, Republic Military Training, Sith Military Training, and Unswerving Resolve."
+  ]
+}

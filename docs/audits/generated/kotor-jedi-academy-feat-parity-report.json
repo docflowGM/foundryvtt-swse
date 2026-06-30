@@ -1,0 +1,67 @@
+{
+  "generatedAt": "2026-06-30T14:22:32.814Z",
+  "phase": "phase-7a-kotor-jedi-academy",
+  "sourcebooks": [
+    "Knights of the Old Republic Campaign Guide",
+    "Jedi Academy Training Manual"
+  ],
+  "catalogFeatCount": 401,
+  "packFeatCount": 401,
+  "expectedFeatCount": 28,
+  "presentExpectedFeatCount": 28,
+  "sourceMatchedCount": 28,
+  "kotorCount": 20,
+  "jatmCount": 8,
+  "kotorCatalogCount": 20,
+  "jatmCatalogCount": 8,
+  "runtimeClassifiedCount": 28,
+  "selectedChoiceCount": 5,
+  "notForceReviewedCount": 1,
+  "forceContextCount": 3,
+  "taxonomyCorrections": [
+    {
+      "name": "Fast Surge",
+      "reason": "No Force prerequisite and benefit is Second Wind action economy; current source context supports general/resource classification, not Force feat classification.",
+      "from": {
+        "featType": "force",
+        "tags": [
+          "force"
+        ]
+      },
+      "to": {
+        "featType": "general",
+        "removeTags": [
+          "force"
+        ],
+        "addTags": [
+          "taxonomy_reviewed",
+          "not_force_feat",
+          "second_wind",
+          "action_economy"
+        ]
+      }
+    }
+  ],
+  "sourceReviewQueue": [],
+  "outOfScope": [
+    {
+      "id": "full_force_regimen_effects",
+      "reason": "Force Regimen Mastery may grant regimen picks, but individual regimen text/effects need their own source pass and picker/card data."
+    },
+    {
+      "id": "complete_reaction_engine",
+      "reason": "Republic/Sith Military Training, Conditioning, and Unswerving Resolve need combat/result/reaction contexts before full automation."
+    },
+    {
+      "id": "weapon_choice_execution",
+      "reason": "Withdrawal Strike and Relentless Attack need persistent weapon choice and tactical context before full roll enforcement."
+    }
+  ],
+  "recommendedNextWork": [
+    "Implement or harden attack option cards for Critical Strike, Improved Rapid Strike, Mandalorian Training, and selected KOTOR melee/ranged options.",
+    "Add poison defense hook so Poison Resistance and Bio-Stabilizer Implant share a single poison-immunity/resistance path.",
+    "Create source-reviewed Force Regimen entries before expanding Force Regimen Mastery beyond entitlement/picker metadata.",
+    "Build a reaction/result hook backlog for Conditioning, Republic Military Training, Sith Military Training, and Unswerving Resolve."
+  ],
+  "findings": []
+}

@@ -1823,7 +1823,7 @@
       "description": "<p><strong>Prerequisites:</strong> None</p>\n<p><strong>Effect:</strong> On your turn, you can catch a<br>Second Wind<br>as a<br>Free Action<br>instead of a<br>Swift Action<br>.</p>\n<p><em>Source URL: https://swse.fandom.com/wiki/Fast_Surge</em></p>",
       "source": "Jedi Academy Training Manual",
       "slug": "fast-surge",
-      "featType": "force",
+      "featType": "general",
       "subType": "RULE",
       "prerequisites": "None",
       "prerequisite": "None",
@@ -1843,12 +1843,13 @@
         "defense",
         "execution_mapped_phase8",
         "feat",
-        "force",
         "free_action",
+        "not_force_feat",
         "recovery",
         "resource_second_wind",
         "second_wind",
-        "survivability"
+        "survivability",
+        "taxonomy_reviewed"
       ],
       "bonus_feat_for": [
         "fec1f8af44fcc35a"
@@ -1904,7 +1905,12 @@
         "metadataPhase": "phase8-feat-implementation-continuation",
         "metadataNotes": "Phase 3 classification separates true static sheet bonuses from roll/target/action/choice-specific mechanics.",
         "status": "second_wind_rule_phase8_hardened",
-        "description": "Fast Surge: catch Second Wind as a Free Action on your turn; false attack modifier disabled."
+        "description": "Fast Surge: catch Second Wind as a Free Action on your turn; false attack modifier disabled.",
+        "taxonomyReview": {
+          "phase": "phase-7a-kotor-jedi-academy",
+          "result": "not_force_feat",
+          "reason": "Fast Surge has no Force prerequisite and changes Second Wind action economy; name keyword should not make it a Force feat."
+        }
       },
       "grantsActions": [],
       "grantsBonuses": {
@@ -33874,10 +33880,7 @@
         "support",
         "survivability",
         "tech",
-        "utility",
-        "cybernetics",
-        "procedure_reference",
-        "manual_gm_player"
+        "utility"
       ],
       "bonus_feat_for": [],
       "uses": {
@@ -33890,17 +33893,17 @@
       "abilityMeta": {
         "executionModel": "PASSIVE",
         "subType": "RULE",
-        "mechanicsMode": "procedure_reference",
-        "applicationScope": "cybernetic_installation_procedure",
-        "staticSheetPolicy": "exclude",
-        "requiresRuntimeContext": true,
+        "mechanicsMode": "manual_punted",
+        "applicationScope": "gm_player_cybernetic_surgery",
+        "staticSheetPolicy": "manual_punted",
+        "requiresRuntimeContext": false,
         "requiresSelectedChoice": false,
-        "conditionSummary": "Cybernetic Surgery is a medical procedure, not a passive modifier. Use the source rules with your GM for time, tools, Treat Injury checks, failure/retry handling, and what item becomes installed.",
+        "conditionSummary": "Cybernetic Surgery is punted to GM/player handling; cybernetic installation remains a table/workbench procedure.",
         "predicateRequirements": [],
-        "metadataPhase": "implants-phase-4c-cybernetic-surgery-policy",
-        "metadataNotes": "Cybernetic Surgery is procedure authority only. It does not apply static bonuses, install items automatically, or suppress implant penalties.",
-        "implementationStatus": "manual_gm_player_procedure_reference",
-        "description": "Cybernetic Surgery is a medical procedure, not a passive modifier. Use the source rules with your GM for time, tools, Treat Injury checks, failure/retry handling, and what item becomes installed.",
+        "metadataPhase": "phase16-next-feat-batch",
+        "metadataNotes": "Phase 16 applies the latest user triage, implements another description-guided feat batch, and keeps positioning/GM-heavy rules as explicit metadata instead of false numeric bonuses.",
+        "implementationStatus": "punted_to_gm_player",
+        "description": "Cybernetic Surgery is punted to GM/player handling; cybernetic installation remains a table/workbench procedure.",
         "modifiers": [
           {
             "target": "metadata",
@@ -33908,31 +33911,14 @@
             "type": "untyped",
             "enabled": false,
             "priority": 500,
-            "description": "Cybernetic Surgery is a medical procedure, not a passive modifier. Use the source rules with your GM for time, tools, Treat Injury checks, failure/retry handling, and what item becomes installed.",
-            "mechanicsMode": "procedure_reference",
-            "applicationScope": "cybernetic_installation_procedure",
+            "description": "Cybernetic Surgery is punted to GM/player handling; cybernetic installation remains a table/workbench procedure.",
+            "mechanicsMode": "metadata_only",
+            "applicationScope": "gm_player_cybernetic_surgery",
             "staticSheetPolicy": "exclude",
-            "metadataPhase": "implants-phase-4c-cybernetic-surgery-policy"
+            "metadataPhase": "phase16-next-feat-batch"
           }
         ],
-        "puntedTo": "GM/player",
-        "rulesAutomationPolicy": "no_passive_automation",
-        "gmFacingNote": "Cybernetic Surgery is a medical procedure, not a passive modifier. Use the source rules with your GM for time, tools, Treat Injury checks, failure/retry handling, and what item becomes installed.",
-        "sourceReferenceNote": "Consult the Star Wars Saga Edition Core Rulebook Cybernetic Surgery rules for procedure details; this system records the feat as procedure authority only.",
-        "procedureReference": {
-          "type": "cybernetic_installation",
-          "skill": "treatInjury",
-          "requiresGMAdjudication": true,
-          "consultSourceRules": true,
-          "source": "Star Wars Saga Edition Core Rulebook",
-          "automationBoundary": "manual_procedure_reference"
-        },
-        "guardrails": [
-          "Do not grant a static actor bonus from Cybernetic Surgery.",
-          "Do not automatically install cybernetics or implants when the feat is acquired.",
-          "Do not classify generic cybernetics or prostheses as KOTOR-style implants unless an item is explicitly tagged as an implant.",
-          "Do not apply Implant Training benefits through Cybernetic Surgery; Implant Training remains the feat that suppresses implant penalties."
-        ]
+        "puntedTo": "GM/player"
       },
       "grantsActions": [],
       "grantsBonuses": {
@@ -33947,13 +33933,7 @@
       "archetype": "",
       "playstyle": "",
       "tier": 0,
-      "iconPath": "icons/svg/upgrade.svg",
-      "implementationStatus": "manual_gm_player_procedure_reference",
-      "mechanicsMode": "procedure_reference",
-      "applicationScope": "cybernetic_installation_procedure",
-      "staticSheetPolicy": "exclude",
-      "gmFacingNote": "Cybernetic Surgery is a medical procedure, not a passive modifier. Use the source rules with your GM for time, tools, Treat Injury checks, failure/retry handling, and what item becomes installed.",
-      "sourceReferenceNote": "Consult the Star Wars Saga Edition Core Rulebook Cybernetic Surgery rules for procedure details; this system records the feat as procedure authority only."
+      "iconPath": "icons/svg/upgrade.svg"
     },
     "effects": [],
     "folder": null,
