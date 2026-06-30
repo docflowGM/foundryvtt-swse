@@ -186,7 +186,7 @@ export class DamageEngineTest {
 
     try {
       // Get violation summary
-      const { MutationIntegrityLayer } = await import("/systems/foundryvtt-swse/mutation-integrity-layer.js");
+      const { MutationIntegrityLayer } = await import("/systems/foundryvtt-swse/scripts/governance/sentinel/mutation-integrity-layer.js");
       const summary = MutationIntegrityLayer.getViolationSummary();
 
       console.log('Mutation violations:', summary.violations);

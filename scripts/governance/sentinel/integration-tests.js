@@ -61,7 +61,7 @@ export const SentinelIntegrationTests = {
       MutationIntegrityLayer._activeTransaction = null;
 
       // Import FeatState dynamically to avoid circular deps
-      const { FeatState } = await import("/systems/foundryvtt-swse/feat-state.js");
+      const { FeatState } = await import("/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-state.js");
 
       await FeatState.addFeat(actor, 'Test Feat');
 
