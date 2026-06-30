@@ -1,0 +1,2045 @@
+{
+  "generatedAt": "2026-06-30T11:39:27.539Z",
+  "phase": "1-core-web-feats",
+  "scope": "Star Wars Saga Edition core rulebook feat families plus Saga Edition Web Enhancement 1: Tech Specialist",
+  "inputs": {
+    "manifestPath": "data/feat-source-parity/core-web-feat-parity-manifest.json",
+    "packPath": "packs/feats.db",
+    "catalogPath": "data/feat-catalog.json",
+    "effectPath": "data/feat-effects.json",
+    "prereqAuthorityPath": "scripts/data/authority/feat-prerequisite-authority.js",
+    "packDocCount": 401,
+    "catalogDocCount": 401,
+    "combinedNamedDocCount": 802,
+    "uniqueNamedDocCount": 401,
+    "hasFeatEffects": true,
+    "hasPrereqAuthority": true
+  },
+  "exclusions": [
+    {
+      "name": "Devastating Attack",
+      "reason": "Treat as talent/special-action terminology, not a core feat family for Phase 1 feat parity."
+    },
+    {
+      "name": "Improved Initiative",
+      "reason": "Not present as a SWSE core feat in the uploaded source scan or current repo feat catalog; do not require it for Phase 1."
+    }
+  ],
+  "counts": {
+    "ok": 51,
+    "warning": 0,
+    "error": 0
+  },
+  "results": [
+    {
+      "kind": "family",
+      "id": "armor-proficiency",
+      "name": "Armor Proficiency",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "passiveActorMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 3,
+        "matchedNames": [
+          "Armor Proficiency (heavy)",
+          "Armor Proficiency (light)",
+          "Armor Proficiency (medium)"
+        ]
+      },
+      "choice": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "3 scoped/tiered docs",
+          "3 docs mention choice/scope fields"
+        ]
+      },
+      "prereq": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "3 matched docs contain prerequisite-like text",
+          "feat-prerequisite-authority.js contains this feat/family name"
+        ]
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "data/feat-effects.json contains this feat/family name",
+          "3 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustHavePrerequisites": true,
+        "mustNotGrantAllScopesFromSingleUnscopedDoc": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "family",
+      "id": "weapon-proficiency",
+      "name": "Weapon Proficiency",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 5,
+        "matchedNames": [
+          "Weapon Proficiency",
+          "Weapon Proficiency (Heavy Weapons)",
+          "Weapon Proficiency (Pistols)",
+          "Weapon Proficiency (Rifles)",
+          "Weapon Proficiency (Simple Weapons)"
+        ]
+      },
+      "choice": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "4 scoped/tiered docs",
+          "5 docs mention choice/scope fields"
+        ]
+      },
+      "prereq": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "5 matched docs contain prerequisite-like text",
+          "feat-prerequisite-authority.js contains this feat/family name"
+        ]
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "data/feat-effects.json contains this feat/family name",
+          "5 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustAffectProficiencyPenalty": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "family",
+      "id": "weapon-focus",
+      "name": "Weapon Focus",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Weapon Focus"
+        ]
+      },
+      "choice": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 docs mention choice/scope fields"
+        ]
+      },
+      "prereq": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain prerequisite-like text",
+          "feat-prerequisite-authority.js contains this feat/family name"
+        ]
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustRequireProficiency": true,
+        "mustAffectAttackBreakdown": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "family",
+      "id": "skill-focus",
+      "name": "Skill Focus",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "passiveActorMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Skill Focus"
+        ]
+      },
+      "choice": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 docs mention choice/scope fields"
+        ]
+      },
+      "prereq": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain prerequisite-like text",
+          "feat-prerequisite-authority.js contains this feat/family name"
+        ]
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "data/feat-effects.json contains this feat/family name",
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustRequireTrainedSkillOrEquivalent": true,
+        "mustAffectSkillBreakdown": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "family",
+      "id": "skill-training",
+      "name": "Skill Training",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "passiveActorMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Skill Training"
+        ]
+      },
+      "choice": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 docs mention choice/scope fields"
+        ]
+      },
+      "prereq": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain prerequisite-like text",
+          "feat-prerequisite-authority.js contains this feat/family name"
+        ]
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustGrantTrainedSkill": true,
+        "mustRespectClassAndIntSelections": false
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "family",
+      "id": "force-training",
+      "name": "Force Training",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "manualWorkflow"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Force Training"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain prerequisite-like text",
+          "feat-prerequisite-authority.js contains this feat/family name"
+        ]
+      },
+      "effect": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "checks": {
+        "mustRequireForceSensitivity": true,
+        "mustOpenForcePowerSelectionWorkflow": true,
+        "repeatable": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "family",
+      "id": "double-attack",
+      "name": "Double Attack",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "activeCombatOption"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Double Attack"
+        ]
+      },
+      "choice": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 docs mention choice/scope fields"
+        ]
+      },
+      "prereq": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain prerequisite-like text",
+          "feat-prerequisite-authority.js contains this feat/family name"
+        ]
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustRequireBAB": true,
+        "mustExposeFullAttackOption": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "family",
+      "id": "triple-attack",
+      "name": "Triple Attack",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "activeCombatOption"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Triple Attack"
+        ]
+      },
+      "choice": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 docs mention choice/scope fields"
+        ]
+      },
+      "prereq": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain prerequisite-like text",
+          "feat-prerequisite-authority.js contains this feat/family name"
+        ]
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustRequireDoubleAttack": true,
+        "mustExposeFullAttackOption": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "family",
+      "id": "triple-crit",
+      "name": "Triple Crit",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Triple Crit"
+        ]
+      },
+      "choice": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 docs mention choice/scope fields"
+        ]
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustAffectCriticalMultiplierOrDamage": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "family",
+      "id": "exotic-weapon-proficiency",
+      "name": "Exotic Weapon Proficiency",
+      "source": "core",
+      "implementationClass": [
+        "scopedChoice",
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Exotic Weapon Proficiency"
+        ]
+      },
+      "choice": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 docs mention choice/scope fields"
+        ]
+      },
+      "prereq": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain prerequisite-like text",
+          "feat-prerequisite-authority.js contains this feat/family name"
+        ]
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustHaveChoiceOrScopedDocs": true,
+        "mustAffectProficiencyPenalty": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "family",
+      "id": "dual-weapon-mastery",
+      "name": "Dual Weapon Mastery",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 3,
+        "matchedNames": [
+          "Dual Weapon Mastery I",
+          "Dual Weapon Mastery II",
+          "Dual Weapon Mastery III"
+        ]
+      },
+      "choice": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "3 scoped/tiered docs",
+          "3 docs mention choice/scope fields"
+        ]
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "data/feat-effects.json contains this feat/family name",
+          "3 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustHaveTieredDocs": true,
+        "mustAffectTwoWeaponPenalty": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "family",
+      "id": "martial-arts",
+      "name": "Martial Arts",
+      "source": "core",
+      "implementationClass": [
+        "passiveActorMath",
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 3,
+        "matchedNames": [
+          "Martial Arts I",
+          "Martial Arts II",
+          "Martial Arts III"
+        ]
+      },
+      "choice": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "3 scoped/tiered docs",
+          "3 docs mention choice/scope fields"
+        ]
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "3 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustHaveTieredDocs": true,
+        "mustAffectUnarmedDamageOrReflex": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "bantharush",
+      "name": "Bantha Rush",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Bantha Rush"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain prerequisite-like text",
+          "feat-prerequisite-authority.js contains this feat/family name"
+        ]
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustRequireStrength": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "burstfire",
+      "name": "Burst Fire",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Burst Fire"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain prerequisite-like text",
+          "feat-prerequisite-authority.js contains this feat/family name"
+        ]
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustRequireWeaponProficiencyHeavyWeapons": true,
+        "mustAffectAttackAndDamageFormula": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "carefulshot",
+      "name": "Careful Shot",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Careful Shot"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectAimedRangedAttack": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "cleave",
+      "name": "Cleave",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Cleave"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain prerequisite-like text",
+          "feat-prerequisite-authority.js contains this feat/family name"
+        ]
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustRequireStrength": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "combatreflexes",
+      "name": "Combat Reflexes",
+      "source": "core",
+      "implementationClass": [
+        "passiveActorMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Combat Reflexes"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectAttacksOfOpportunity": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "coordinatedattack",
+      "name": "Coordinated Attack",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Coordinated Attack"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "data/feat-effects.json contains this feat/family name",
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectAidAnotherAttack": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "crush",
+      "name": "Crush",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Crush"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain prerequisite-like text",
+          "feat-prerequisite-authority.js contains this feat/family name"
+        ]
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustRequirePin": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "cyberneticsurgery",
+      "name": "Cybernetic Surgery",
+      "source": "core",
+      "implementationClass": [
+        "manualWorkflow"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Cybernetic Surgery"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "checks": {
+        "mustRemainManualUntilSurgeryWorkflowExists": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "deadeye",
+      "name": "Deadeye",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Deadeye"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectAimedRangedDamage": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "dodge",
+      "name": "Dodge",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveActorMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Dodge"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "data/feat-effects.json contains this feat/family name",
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAllowDesignatedTarget": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "farshot",
+      "name": "Far Shot",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Far Shot"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "data/feat-effects.json contains this feat/family name",
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectRangePenalty": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "forceboon",
+      "name": "Force Boon",
+      "source": "core",
+      "implementationClass": [
+        "passiveActorMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Force Boon"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "data/feat-effects.json contains this feat/family name",
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectForcePointMaximum": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "forcesensitivity",
+      "name": "Force Sensitivity",
+      "source": "core",
+      "implementationClass": [
+        "passiveActorMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Force Sensitivity"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain prerequisite-like text",
+          "feat-prerequisite-authority.js contains this feat/family name"
+        ]
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustUnlockUseTheForceAndForceFeatPrereqs": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "improvedcharge",
+      "name": "Improved Charge",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Improved Charge"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectChargePenalty": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "improveddamagethreshold",
+      "name": "Improved Damage Threshold",
+      "source": "core",
+      "implementationClass": [
+        "passiveActorMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Improved Damage Threshold"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "data/feat-effects.json contains this feat/family name",
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectDamageThresholdBreakdown": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "improveddefenses",
+      "name": "Improved Defenses",
+      "source": "core",
+      "implementationClass": [
+        "passiveActorMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Improved Defenses"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "data/feat-effects.json contains this feat/family name",
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectRefFortWillBreakdowns": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "improveddisarm",
+      "name": "Improved Disarm",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Improved Disarm"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "data/feat-effects.json contains this feat/family name",
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectDisarmAction": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "improvedgrapple",
+      "name": "Improved Grapple",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Improved Grapple"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "data/feat-effects.json contains this feat/family name",
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectGrappleAction": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "linguist",
+      "name": "Linguist",
+      "source": "core",
+      "implementationClass": [
+        "manualWorkflow"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Linguist"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "checks": {
+        "handledByChargenLanguageStep": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "meleedefense",
+      "name": "Melee Defense",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveActorMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Melee Defense"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustExposeAttackPenaltyForReflexBonusToggle": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "mightyswing",
+      "name": "Mighty Swing",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Mighty Swing"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectMeleeDamageAfterSwiftActions": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "pin",
+      "name": "Pin",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Pin"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectGrappleAction": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "pointblankshot",
+      "name": "Point Blank Shot",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Point-Blank Shot"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectRangedAttackAndDamageWithinRange": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "powerattack",
+      "name": "Power Attack",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Power Attack"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustExposeAttackPenaltyDamageBonusInput": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "preciseshot",
+      "name": "Precise Shot",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Precise Shot"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "data/feat-effects.json contains this feat/family name",
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectFiringIntoMeleePenalty": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "quickdraw",
+      "name": "Quick Draw",
+      "source": "core",
+      "implementationClass": [
+        "advisory"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Quick Draw"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "checks": {
+        "mustAppearInActionsOrNotes": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "rapidshot",
+      "name": "Rapid Shot",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Rapid Shot"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectRangedAttackAndDamageFormula": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "rapidstrike",
+      "name": "Rapid Strike",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption",
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Rapid Strike"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectMeleeAttackAndDamageFormula": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "runningattack",
+      "name": "Running Attack",
+      "source": "core",
+      "implementationClass": [
+        "advisory"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Running Attack"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "checks": {
+        "mustAppearInActionsOrNotes": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "shakeitoff",
+      "name": "Shake It Off",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Shake It Off"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectRecoverAction": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "sniper",
+      "name": "Sniper",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Sniper"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectSoftCoverWhenAiming": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "starshipdesigner",
+      "name": "Starship Designer",
+      "source": "core",
+      "implementationClass": [
+        "manualWorkflow"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Starship Designer"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "checks": {
+        "mustRemainManualUntilStarshipDesignWorkflowExists": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "strongintheforce",
+      "name": "Strong in the Force",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Strong in the Force"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectForcePointDie": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "toughness",
+      "name": "Toughness",
+      "source": "core",
+      "implementationClass": [
+        "passiveActorMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Toughness"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "data/feat-effects.json contains this feat/family name",
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectHitPointBreakdown": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "trip",
+      "name": "Trip",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Trip"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectMeleeAttackOrGrappleTripOption": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "vehicularcombat",
+      "name": "Vehicular Combat",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Vehicular Combat"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectVehicleHitNegationWorkflow": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "weaponfinesse",
+      "name": "Weapon Finesse",
+      "source": "core",
+      "implementationClass": [
+        "passiveRollMath"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Weapon Finesse"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustAffectEligibleMeleeAttackAbilitySelection": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "whirlwindattack",
+      "name": "Whirlwind Attack",
+      "source": "core",
+      "implementationClass": [
+        "activeCombatOption"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Whirlwind Attack"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "effect": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain automation-relevant text"
+        ]
+      },
+      "checks": {
+        "mustExposeAreaMeleeAttackOption": true
+      },
+      "severity": "ok"
+    },
+    {
+      "kind": "single",
+      "id": "techspecialist",
+      "name": "Tech Specialist",
+      "source": "web-enhancement-1",
+      "implementationClass": [
+        "manualWorkflow"
+      ],
+      "presence": {
+        "ok": true,
+        "count": 1,
+        "matchedNames": [
+          "Tech Specialist"
+        ]
+      },
+      "choice": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "prereq": {
+        "required": true,
+        "ok": true,
+        "evidence": [
+          "1 matched docs contain prerequisite-like text",
+          "feat-prerequisite-authority.js contains this feat/family name"
+        ]
+      },
+      "effect": {
+        "required": false,
+        "ok": true,
+        "evidence": []
+      },
+      "checks": {
+        "mustRequireTrainedMechanics": true,
+        "mustExposeManualModificationWarning": true,
+        "mustNotFakePermanentItemModificationWithoutWorkflow": true
+      },
+      "severity": "ok"
+    }
+  ]
+}
