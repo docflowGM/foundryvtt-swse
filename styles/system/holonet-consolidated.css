@@ -1,0 +1,4689 @@
+/*
+ * SWSE Holonet inner surfaces - phase 1 shared visual system.
+ * Scope intentionally avoids the datapad/shell host. This file only styles
+ * Messenger guts and GM Job Board guts so later layout rebuild phases have a
+ * consistent component language to build on.
+ */
+
+.swse-shell-surface--messenger,
+.gm-datapad-jobs {
+  --holo-cyan: #7fdfe6;
+  --holo-cyan-soft: rgba(127, 223, 230, 0.16);
+  --holo-cyan-line: rgba(127, 223, 230, 0.28);
+  --holo-cyan-faint: rgba(127, 223, 230, 0.08);
+  --holo-gold: #f0c86a;
+  --holo-green: #7dffb2;
+  --holo-red: #ff8b8b;
+  --holo-amber: #ffc857;
+  --holo-bg-deep: rgba(5, 6, 14, 0.78);
+  --holo-bg-panel: rgba(12, 13, 24, 0.84);
+  --holo-bg-panel-2: rgba(21, 22, 37, 0.76);
+  --holo-bg-card: rgba(13, 16, 30, 0.78);
+  --holo-ink: #eefcff;
+  --holo-ink-dim: rgba(238, 252, 255, 0.72);
+  --holo-ink-faint: rgba(238, 252, 255, 0.46);
+  --holo-shadow: 0 18px 42px rgba(0, 0, 0, 0.34);
+  --holo-glow: 0 0 22px rgba(127, 223, 230, 0.13);
+  --holo-font-body: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --holo-font-mono: "JetBrains Mono", "Roboto Mono", ui-monospace, monospace;
+  color: var(--holo-ink);
+}
+
+/* Shared holo component language ------------------------------------------------ */
+.swse-shell-surface--messenger :is(.swse-panel, .hl-tlist, .hl-conv, .hl-info-panel, .hl-jobboard-view, .hl-compose-card, .hl-composition-panel, .hl-attach-card, .hl-credit-card, .hl-receipt-card, .hl-secret-note-card),
+.gm-datapad-jobs :is(.swse-ui-panel, .job-board-command, .job-board-rail, .job-detail-block, .job-queue-panel, .gm-phase9-payout-panel, .gm-job-payout-queue-panel, .gm-job-review-tab-panel, .gm-wizard-card) {
+  background:
+    linear-gradient(155deg, rgba(127, 223, 230, 0.065), rgba(16, 17, 31, 0.72) 38%, rgba(0, 0, 0, 0.34)),
+    var(--holo-bg-panel) !important;
+  border: 1px solid var(--holo-cyan-line) !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.045), var(--holo-shadow), var(--holo-glow) !important;
+  color: var(--holo-ink) !important;
+}
+
+.swse-shell-surface--messenger :is(.swse-panel, .hl-tlist, .hl-conv, .hl-info-panel, .hl-jobboard-view, .hl-compose-card, .hl-composition-panel),
+.gm-datapad-jobs :is(.swse-ui-panel, .job-board-command, .job-board-rail, .job-detail-block) {
+  overflow: hidden;
+}
+
+.swse-shell-surface--messenger :is(.hl-tlist, .hl-conv, .hl-info-panel, .hl-jobboard-view)::before,
+.gm-datapad-jobs :is(.job-board-command, .job-board-rail, .job-detail-block, .job-queue-panel)::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(127, 223, 230, 0.12), transparent 34%),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025), transparent 18%, transparent 82%, rgba(255, 255, 255, 0.018));
+  opacity: 0.75;
+}
+
+.swse-shell-surface--messenger :is(.hl-tlist, .hl-conv, .hl-info-panel, .hl-jobboard-view),
+.gm-datapad-jobs :is(.job-board-command, .job-board-rail, .job-detail-block, .job-queue-panel) {
+  position: relative;
+}
+
+.swse-shell-surface--messenger :is(.hl-tlist, .hl-conv, .hl-info-panel, .hl-jobboard-view) > *,
+.gm-datapad-jobs :is(.job-board-command, .job-board-rail, .job-detail-block, .job-queue-panel) > * {
+  position: relative;
+  z-index: 1;
+}
+
+.swse-shell-surface--messenger :is(.hl-label, .swse-panel__title, .hl-info-label),
+.gm-datapad-jobs :is(.gm-command-eyebrow, .job-board-section-header > div > span:first-child, .job-objective-section-head h4) {
+  color: var(--holo-cyan) !important;
+  font-family: var(--holo-font-mono) !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.22em !important;
+  text-transform: uppercase !important;
+  text-shadow: 0 0 12px rgba(127, 223, 230, 0.25) !important;
+}
+
+.swse-shell-surface--messenger :is(.hl-subtle, .hl-titem-preview, .hl-titem-time, .hl-help),
+.gm-datapad-jobs :is(.placeholder, .job-board-help, .job-card-client, .job-card-footer, .job-status-note, .job-objective-note) {
+  color: var(--holo-ink-faint) !important;
+}
+
+.swse-shell-surface--messenger :is(.hl-chip, .hl-badge, .hl-job-status),
+.gm-datapad-jobs :is(.job-board-chip, .gm-command-chip, .job-board-shelf-count) {
+  align-items: center;
+  background: rgba(127, 223, 230, 0.08) !important;
+  border: 1px solid rgba(127, 223, 230, 0.26) !important;
+  border-radius: 999px !important;
+  color: var(--holo-cyan) !important;
+  display: inline-flex;
+  font-family: var(--holo-font-mono) !important;
+  font-size: 8px !important;
+  font-weight: 700 !important;
+  gap: 5px;
+  letter-spacing: 0.13em !important;
+  line-height: 1 !important;
+  min-height: 20px;
+  padding: 4px 8px !important;
+  text-transform: uppercase !important;
+  white-space: nowrap;
+}
+
+.swse-shell-surface--messenger :is(.hl-chip.warn, .hl-job-status.warn),
+.gm-datapad-jobs :is(.job-board-chip.attention, .job-board-chip.warning, .job-board-card.attention .job-board-chip) {
+  background: rgba(255, 200, 87, 0.10) !important;
+  border-color: rgba(255, 200, 87, 0.36) !important;
+  color: var(--holo-amber) !important;
+}
+
+.swse-shell-surface--messenger :is(.hl-chip.gm-vis, .hl-appbtn.gm),
+.gm-datapad-jobs :is(.job-board-chip.payout, .job-board-chip.review, .job-board-shelf-tab.drafts) {
+  background: rgba(240, 200, 106, 0.10) !important;
+  border-color: rgba(240, 200, 106, 0.36) !important;
+  color: var(--holo-gold) !important;
+}
+
+.swse-shell-surface--messenger :is(.hl-chip.danger, .hl-icon-btn.red),
+.gm-datapad-jobs :is(.job-board-chip.danger, .job-board-card.danger, .job-board-card.failed) {
+  border-color: rgba(255, 139, 139, 0.34) !important;
+  color: var(--holo-red) !important;
+}
+
+.swse-shell-surface--messenger :is(.hl-chip.success, .hl-job-status.success),
+.gm-datapad-jobs :is(.job-board-chip.success, .job-board-card.success, .job-board-card.approved) {
+  border-color: rgba(125, 255, 178, 0.34) !important;
+  color: var(--holo-green) !important;
+}
+
+.swse-shell-surface--messenger :is(.hl-icon-btn, .hl-ghost-btn, .hl-btn-accent, .hl-send-btn, .hl-attach-btn, .hl-new-btn),
+.gm-datapad-jobs :is(.swse-ui-button, .gm-job-tab, .job-board-shelf-tab, .gm-wizard-close, .gm-wizard-step) {
+  border-radius: 9px !important;
+  font-family: var(--holo-font-mono) !important;
+  letter-spacing: 0.13em !important;
+  text-transform: uppercase !important;
+  transition: border-color 140ms ease, background 140ms ease, box-shadow 140ms ease, transform 140ms ease !important;
+}
+
+.swse-shell-surface--messenger :is(.hl-icon-btn, .hl-ghost-btn, .hl-attach-btn, .hl-new-btn),
+.gm-datapad-jobs :is(.swse-ui-button, .gm-job-tab, .job-board-shelf-tab) {
+  background: rgba(0, 0, 0, 0.28) !important;
+  border: 1px solid rgba(127, 223, 230, 0.22) !important;
+  color: var(--holo-ink-dim) !important;
+}
+
+.swse-shell-surface--messenger :is(.hl-icon-btn:hover, .hl-ghost-btn:hover, .hl-attach-btn:hover, .hl-new-btn:hover),
+.gm-datapad-jobs :is(.swse-ui-button:hover, .gm-job-tab:hover, .job-board-shelf-tab:hover) {
+  background: rgba(127, 223, 230, 0.10) !important;
+  border-color: rgba(127, 223, 230, 0.48) !important;
+  box-shadow: 0 0 18px rgba(127, 223, 230, 0.14) !important;
+  color: var(--holo-cyan) !important;
+  transform: translateY(-1px);
+}
+
+.swse-shell-surface--messenger :is(.hl-btn-accent, .hl-send-btn),
+.gm-datapad-jobs :is(.swse-ui-button.primary, .bulletin-primary-action, .gm-wizard-footer .primary) {
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.22), rgba(127, 223, 230, 0.08)) !important;
+  border: 1px solid rgba(127, 223, 230, 0.52) !important;
+  box-shadow: 0 0 20px rgba(127, 223, 230, 0.14) !important;
+  color: var(--holo-cyan) !important;
+}
+
+.swse-shell-surface--messenger :is(input, select, textarea),
+.gm-datapad-jobs :is(input, select, textarea) {
+  background: rgba(0, 0, 0, 0.34) !important;
+  border: 1px solid rgba(127, 223, 230, 0.20) !important;
+  border-radius: 8px !important;
+  color: var(--holo-ink) !important;
+}
+
+.swse-shell-surface--messenger :is(input:focus, select:focus, textarea:focus),
+.gm-datapad-jobs :is(input:focus, select:focus, textarea:focus) {
+  border-color: rgba(127, 223, 230, 0.58) !important;
+  box-shadow: 0 0 14px rgba(127, 223, 230, 0.16) !important;
+  outline: none !important;
+}
+
+.swse-shell-surface--messenger ::placeholder,
+.gm-datapad-jobs ::placeholder {
+  color: var(--holo-ink-faint) !important;
+}
+
+.swse-shell-surface--messenger :is(.hl-tlist-scroll, .hl-messages, .hl-info-panel, .hl-compose-scroll, .hl-jobboard-view),
+.gm-datapad-jobs :is(.job-board-status-groups, .job-card-stack, .job-board-rail, .gm-job-dossier-main, .job-objective-list, .gm-job-review-grid, .gm-job-payout-queue-grid) {
+  scrollbar-color: rgba(127, 223, 230, 0.28) transparent;
+  scrollbar-width: thin;
+}
+
+.swse-shell-surface--messenger :is(.hl-tlist-scroll, .hl-messages, .hl-info-panel, .hl-compose-scroll, .hl-jobboard-view)::-webkit-scrollbar,
+.gm-datapad-jobs :is(.job-board-status-groups, .job-card-stack, .job-board-rail, .gm-job-dossier-main, .job-objective-list, .gm-job-review-grid, .gm-job-payout-queue-grid)::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.swse-shell-surface--messenger :is(.hl-tlist-scroll, .hl-messages, .hl-info-panel, .hl-compose-scroll, .hl-jobboard-view)::-webkit-scrollbar-thumb,
+.gm-datapad-jobs :is(.job-board-status-groups, .job-card-stack, .job-board-rail, .gm-job-dossier-main, .job-objective-list, .gm-job-review-grid, .gm-job-payout-queue-grid)::-webkit-scrollbar-thumb {
+  background: rgba(127, 223, 230, 0.24);
+  border-radius: 999px;
+}
+
+/* Messenger guts ---------------------------------------------------------------- */
+.swse-shell-surface--messenger .hl-shell {
+  background: transparent !important;
+  gap: 10px !important;
+}
+
+.swse-shell-surface--messenger .hl-applist {
+  background: rgba(0, 0, 0, 0.30) !important;
+  border: 1px solid rgba(127, 223, 230, 0.16) !important;
+  border-radius: 10px !important;
+  box-shadow: inset 0 0 18px rgba(127, 223, 230, 0.055) !important;
+  padding: 8px 6px !important;
+}
+
+.swse-shell-surface--messenger .hl-appbtn {
+  background: transparent !important;
+  border: 1px solid transparent !important;
+  border-radius: 8px !important;
+  color: var(--holo-ink-faint) !important;
+  min-height: 52px;
+}
+
+.swse-shell-surface--messenger .hl-appbtn:hover,
+.swse-shell-surface--messenger .hl-appbtn.on {
+  background: rgba(127, 223, 230, 0.10) !important;
+  border-color: rgba(127, 223, 230, 0.32) !important;
+  box-shadow: inset 0 0 14px rgba(127, 223, 230, 0.13) !important;
+  color: var(--holo-cyan) !important;
+}
+
+.swse-shell-surface--messenger .hl-appbtn .ic {
+  color: currentColor !important;
+  font-size: 22px !important;
+  line-height: 1 !important;
+  text-shadow: 0 0 12px rgba(127, 223, 230, 0.28);
+}
+
+.swse-shell-surface--messenger .hl-tlist-top,
+.swse-shell-surface--messenger .hl-conv-header,
+.swse-shell-surface--messenger .hl-info-header,
+.swse-shell-surface--messenger .hl-jobboard-head {
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.08), rgba(0, 0, 0, 0.18)) !important;
+  border-bottom: 1px solid rgba(127, 223, 230, 0.16) !important;
+}
+
+.swse-shell-surface--messenger .hl-titem,
+.swse-shell-surface--messenger .hl-job-card,
+.swse-shell-surface--messenger .hl-recipient-row,
+.swse-shell-surface--messenger .hl-inventory-item-row,
+.swse-shell-surface--messenger .hl-item-row {
+  background: linear-gradient(135deg, rgba(21, 24, 40, 0.72), rgba(4, 6, 15, 0.54)) !important;
+  border: 1px solid rgba(127, 223, 230, 0.14) !important;
+  border-radius: 11px !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.24) !important;
+  color: var(--holo-ink) !important;
+}
+
+.swse-shell-surface--messenger .hl-titem::before,
+.swse-shell-surface--messenger .hl-job-card::before {
+  background: var(--holo-cyan) !important;
+  box-shadow: 0 0 12px rgba(127, 223, 230, 0.30);
+  content: "";
+  inset: 0 auto 0 0;
+  opacity: 0.45;
+  position: absolute;
+  width: 3px;
+}
+
+.swse-shell-surface--messenger .hl-titem:hover,
+.swse-shell-surface--messenger .hl-titem.active,
+.swse-shell-surface--messenger .hl-titem.on,
+.swse-shell-surface--messenger .hl-job-card:hover {
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.14), rgba(6, 8, 18, 0.58)) !important;
+  border-color: rgba(127, 223, 230, 0.44) !important;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.32), 0 0 22px rgba(127, 223, 230, 0.16) !important;
+  transform: translateY(-1px);
+}
+
+.swse-shell-surface--messenger .hl-titem--invite::before,
+.swse-shell-surface--messenger .hl-job-card.attention::before {
+  background: var(--holo-amber) !important;
+  box-shadow: 0 0 12px rgba(255, 200, 87, 0.32);
+}
+
+.swse-shell-surface--messenger .hl-msg {
+  gap: 9px !important;
+  max-width: 100% !important;
+}
+
+.swse-shell-surface--messenger .hl-msg.own,
+.swse-shell-surface--messenger .swse-msg-row--own {
+  margin-left: 14% !important;
+}
+
+.swse-shell-surface--messenger .hl-msg.other,
+.swse-shell-surface--messenger .swse-msg-row--other {
+  margin-right: 14% !important;
+}
+
+.swse-shell-surface--messenger .hl-msg-bubble {
+  background: linear-gradient(145deg, rgba(31, 35, 56, 0.88), rgba(7, 8, 18, 0.78)) !important;
+  border: 1px solid rgba(127, 223, 230, 0.18) !important;
+  border-radius: 16px 16px 16px 5px !important;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.26) !important;
+  color: var(--holo-ink) !important;
+  line-height: 1.5 !important;
+  padding: 10px 13px !important;
+}
+
+.swse-shell-surface--messenger .hl-msg.own .hl-msg-bubble,
+.swse-shell-surface--messenger .swse-msg-row--own .hl-msg-bubble {
+  background: linear-gradient(145deg, rgba(127, 223, 230, 0.18), rgba(11, 19, 31, 0.86)) !important;
+  border-color: rgba(127, 223, 230, 0.34) !important;
+  border-radius: 16px 16px 5px 16px !important;
+}
+
+.swse-shell-surface--messenger .hl-msg-meta,
+.swse-shell-surface--messenger .hl-msg-time {
+  color: var(--holo-ink-faint) !important;
+  font-family: var(--holo-font-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.08em !important;
+}
+
+.swse-shell-surface--messenger .hl-sys-msg {
+  color: var(--holo-ink-faint) !important;
+  font-family: var(--holo-font-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase;
+}
+
+.swse-shell-surface--messenger .hl-sys-line {
+  background: rgba(127, 223, 230, 0.18) !important;
+}
+
+.swse-shell-surface--messenger .hl-composer {
+  background: linear-gradient(180deg, rgba(127, 223, 230, 0.06), rgba(0, 0, 0, 0.26)) !important;
+  border-top: 1px solid rgba(127, 223, 230, 0.18) !important;
+  padding: 11px 12px 12px !important;
+}
+
+.swse-shell-surface--messenger .hl-composer-ta {
+  min-height: 54px !important;
+  resize: vertical !important;
+}
+
+.swse-shell-surface--messenger .hl-info-section,
+.swse-shell-surface--messenger .hl-job-detail-card,
+.swse-shell-surface--messenger .hl-job-objective-card,
+.swse-shell-surface--messenger .hl-job-consequence-card {
+  border-bottom: 1px solid rgba(127, 223, 230, 0.10) !important;
+}
+
+.swse-shell-surface--messenger .hl-empty,
+.swse-shell-surface--messenger .hl-job-empty,
+.swse-shell-surface--messenger .hl-conv-empty {
+  color: var(--holo-ink-faint) !important;
+  text-align: center;
+}
+
+/* Player job board guts --------------------------------------------------------- */
+.swse-shell-surface--messenger .hl-jobboard-view {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  padding: 14px !important;
+}
+
+.swse-shell-surface--messenger .hl-jobboard-head {
+  align-items: flex-end !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  gap: 14px !important;
+  justify-content: space-between !important;
+  padding: 13px 14px !important;
+}
+
+.swse-shell-surface--messenger .hl-jobboard-head h2 {
+  color: var(--holo-ink) !important;
+  font-family: var(--holo-font-body) !important;
+  font-size: 20px !important;
+  margin: 2px 0 3px !important;
+}
+
+.swse-shell-surface--messenger .hl-jobboard-head p {
+  color: var(--holo-ink-faint) !important;
+  margin: 0 !important;
+}
+
+.swse-shell-surface--messenger .hl-jobboard-controls {
+  background: rgba(0, 0, 0, 0.28) !important;
+  border: 1px solid rgba(127, 223, 230, 0.16) !important;
+  border-radius: 10px !important;
+  display: flex !important;
+  gap: 4px !important;
+  padding: 4px !important;
+}
+
+.swse-shell-surface--messenger .hl-jobboard-tab {
+  border-radius: 7px !important;
+  color: var(--holo-ink-faint) !important;
+  font-family: var(--holo-font-mono) !important;
+  font-size: 9px !important;
+  letter-spacing: 0.14em !important;
+  padding: 7px 10px !important;
+  text-transform: uppercase !important;
+}
+
+.swse-shell-surface--messenger .hl-jobboard-tab.on {
+  background: rgba(127, 223, 230, 0.13) !important;
+  color: var(--holo-cyan) !important;
+}
+
+.swse-shell-surface--messenger .hl-job-grid {
+  display: grid !important;
+  gap: 10px !important;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+  overflow-y: auto !important;
+  padding: 2px 4px 6px 0 !important;
+}
+
+.swse-shell-surface--messenger .hl-job-card {
+  align-items: stretch !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  min-height: 178px !important;
+  padding: 13px 14px 13px 17px !important;
+  position: relative !important;
+  text-align: left !important;
+}
+
+.swse-shell-surface--messenger .hl-job-card h3 {
+  color: var(--holo-ink) !important;
+  font-family: var(--holo-font-body) !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  line-height: 1.22 !important;
+  margin: 0 !important;
+}
+
+.swse-shell-surface--messenger .hl-job-card p {
+  color: var(--holo-ink-faint) !important;
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+  margin: 0 !important;
+}
+
+.swse-shell-surface--messenger .hl-job-card-foot {
+  border-top: 1px solid rgba(127, 223, 230, 0.10) !important;
+  color: var(--holo-ink-faint) !important;
+  margin-top: auto !important;
+  padding-top: 9px !important;
+}
+
+.swse-shell-surface--messenger .hl-job-card-foot strong {
+  color: var(--holo-green) !important;
+  font-family: var(--holo-font-mono) !important;
+}
+
+/* GM job board guts ------------------------------------------------------------- */
+.gm-datapad-jobs .gm-phase2-primary,
+.gm-datapad-jobs .gm-phase3-job-ops-strip,
+.gm-datapad-jobs .gm-phase9-job-ops-strip,
+.gm-datapad-jobs .gm-job-tabbar {
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.07), rgba(0, 0, 0, 0.24)) !important;
+  border: 1px solid rgba(127, 223, 230, 0.18) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--holo-glow) !important;
+}
+
+.gm-datapad-jobs .job-board-shell {
+  display: grid !important;
+  gap: 12px !important;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px) !important;
+  min-height: 0 !important;
+}
+
+.gm-datapad-jobs .job-board-section-header {
+  align-items: flex-start !important;
+  border-bottom: 1px solid rgba(127, 223, 230, 0.13) !important;
+  display: flex !important;
+  gap: 12px !important;
+  justify-content: space-between !important;
+  margin: -2px -2px 12px !important;
+  padding: 2px 2px 12px !important;
+}
+
+.gm-datapad-jobs .job-board-section-header h3,
+.gm-datapad-jobs .job-board-section-header h4,
+.gm-datapad-jobs .gm-phase2-header h2,
+.gm-datapad-jobs .job-card-title,
+.gm-datapad-jobs .gm-phase9-dossier-header h3 {
+  color: var(--holo-ink) !important;
+  font-family: var(--holo-font-body) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.gm-datapad-jobs .job-board-lifecycle-shelves,
+.gm-datapad-jobs .gm-job-tabbar {
+  background: rgba(0, 0, 0, 0.28) !important;
+  border: 1px solid rgba(127, 223, 230, 0.14) !important;
+  border-radius: 11px !important;
+  display: flex !important;
+  gap: 5px !important;
+  padding: 5px !important;
+}
+
+.gm-datapad-jobs .job-board-shelf-tab,
+.gm-datapad-jobs .gm-job-tab {
+  flex: 1 1 0;
+  min-height: 46px;
+  padding: 8px 10px !important;
+  text-align: center !important;
+}
+
+.gm-datapad-jobs .job-board-shelf-tab.is-active,
+.gm-datapad-jobs .gm-job-tab.is-active {
+  background: rgba(127, 223, 230, 0.13) !important;
+  border-color: rgba(127, 223, 230, 0.40) !important;
+  box-shadow: inset 0 0 18px rgba(127, 223, 230, 0.13) !important;
+  color: var(--holo-cyan) !important;
+}
+
+.gm-datapad-jobs .job-board-status-group-header {
+  align-items: center !important;
+  display: flex !important;
+  gap: 9px !important;
+  padding: 2px 0 !important;
+}
+
+.gm-datapad-jobs .job-board-status-dot {
+  background: var(--holo-cyan) !important;
+  border-radius: 2px !important;
+  box-shadow: 0 0 10px rgba(127, 223, 230, 0.30) !important;
+  display: inline-block !important;
+  height: 8px !important;
+  transform: rotate(45deg);
+  width: 8px !important;
+}
+
+.gm-datapad-jobs .job-board-status-group-header hr {
+  border: 0 !important;
+  border-top: 1px solid rgba(127, 223, 230, 0.12) !important;
+  flex: 1;
+}
+
+.gm-datapad-jobs .job-card-stack,
+.gm-datapad-jobs .job-board-status-groups {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+}
+
+.gm-datapad-jobs .job-board-card,
+.gm-datapad-jobs .job-queue-card,
+.gm-datapad-jobs .job-objective-card,
+.gm-datapad-jobs .gm-phase11-consequence-row,
+.gm-datapad-jobs .gm-job-lifecycle-shelf-card {
+  background: linear-gradient(160deg, rgba(22, 25, 42, 0.82), rgba(5, 7, 18, 0.62)) !important;
+  border: 1px solid rgba(127, 223, 230, 0.15) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.26) !important;
+  color: var(--holo-ink) !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.gm-datapad-jobs .job-board-card::before,
+.gm-datapad-jobs .job-queue-card::before,
+.gm-datapad-jobs .job-objective-card::before,
+.gm-datapad-jobs .gm-phase11-consequence-row::before {
+  background: var(--holo-cyan) !important;
+  box-shadow: 0 0 14px rgba(127, 223, 230, 0.28) !important;
+  content: "";
+  inset: 0 auto 0 0;
+  opacity: 0.55;
+  position: absolute;
+  width: 3px;
+}
+
+.gm-datapad-jobs .job-board-card.attention::before,
+.gm-datapad-jobs .job-queue-card.attention::before,
+.gm-datapad-jobs .job-objective-card.review::before {
+  background: var(--holo-amber) !important;
+  box-shadow: 0 0 14px rgba(255, 200, 87, 0.32) !important;
+}
+
+.gm-datapad-jobs .job-board-card.success::before,
+.gm-datapad-jobs .job-board-card.approved::before,
+.gm-datapad-jobs .job-objective-card.success::before {
+  background: var(--holo-green) !important;
+  box-shadow: 0 0 14px rgba(125, 255, 178, 0.30) !important;
+}
+
+.gm-datapad-jobs .job-board-card.danger::before,
+.gm-datapad-jobs .job-board-card.failed::before,
+.gm-datapad-jobs .gm-phase11-consequence-row.is-rival::before {
+  background: var(--holo-red) !important;
+  box-shadow: 0 0 14px rgba(255, 139, 139, 0.30) !important;
+}
+
+.gm-datapad-jobs .job-board-card:hover,
+.gm-datapad-jobs .job-queue-card:hover,
+.gm-datapad-jobs .job-objective-card:hover {
+  background: linear-gradient(160deg, rgba(127, 223, 230, 0.13), rgba(5, 7, 18, 0.66)) !important;
+  border-color: rgba(127, 223, 230, 0.42) !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.34), 0 0 24px rgba(127, 223, 230, 0.16) !important;
+  transform: translateY(-1px) !important;
+}
+
+.gm-datapad-jobs .job-card-progress--bar {
+  background: rgba(0, 0, 0, 0.30) !important;
+  border: 1px solid rgba(127, 223, 230, 0.12) !important;
+  border-radius: 8px !important;
+  color: var(--holo-ink-dim) !important;
+  font-family: var(--holo-font-mono) !important;
+  font-size: 9px !important;
+  gap: 8px !important;
+  padding: 6px 8px !important;
+}
+
+.gm-datapad-jobs .job-card-reward,
+.gm-datapad-jobs .job-payout-summary-top strong,
+.gm-datapad-jobs .gm-phase9-dossier-metrics strong {
+  color: var(--holo-green) !important;
+  font-family: var(--holo-font-mono) !important;
+  text-shadow: 0 0 12px rgba(125, 255, 178, 0.16) !important;
+}
+
+.gm-datapad-jobs .gm-phase9-dossier-metrics,
+.gm-datapad-jobs .job-payout-breakdown-grid,
+.gm-datapad-jobs .job-board-metrics,
+.gm-datapad-jobs .gm-phase2-metrics {
+  display: grid !important;
+  gap: 8px !important;
+  grid-template-columns: repeat(auto-fit, minmax(112px, 1fr)) !important;
+}
+
+.gm-datapad-jobs .gm-phase9-dossier-metrics > span,
+.gm-datapad-jobs .job-board-metrics > *,
+.gm-datapad-jobs .gm-phase2-metrics > * {
+  background: rgba(0, 0, 0, 0.26) !important;
+  border: 1px solid rgba(127, 223, 230, 0.14) !important;
+  border-radius: 10px !important;
+  color: var(--holo-ink-faint) !important;
+  padding: 9px 10px !important;
+}
+
+.gm-datapad-jobs .job-detail-client,
+.gm-datapad-jobs .gm-phase9-client-card,
+.gm-datapad-jobs .job-participant-row,
+.gm-datapad-jobs .gm-job-saved-contact-row {
+  background: rgba(0, 0, 0, 0.25) !important;
+  border: 1px solid rgba(127, 223, 230, 0.14) !important;
+  border-radius: 10px !important;
+  color: var(--holo-ink-dim) !important;
+}
+
+.gm-datapad-jobs .job-objective-group-head,
+.gm-datapad-jobs .job-objective-head,
+.gm-datapad-jobs .job-objective-section-head {
+  background: rgba(0, 0, 0, 0.22) !important;
+  border: 1px solid rgba(127, 223, 230, 0.10) !important;
+  border-radius: 10px !important;
+  padding: 9px 10px !important;
+}
+
+.gm-datapad-jobs .job-objective-upsert-form,
+.gm-datapad-jobs .gm-job-consequence-form,
+.gm-datapad-jobs .job-payout-form,
+.gm-datapad-jobs .job-xp-form,
+.gm-datapad-jobs .job-distribution-form {
+  background: rgba(0, 0, 0, 0.22) !important;
+  border: 1px dashed rgba(127, 223, 230, 0.20) !important;
+  border-radius: 11px !important;
+  padding: 10px !important;
+}
+
+.gm-datapad-jobs .job-board-attention-ribbon {
+  background: rgba(255, 200, 87, 0.16) !important;
+  border-bottom: 1px solid rgba(255, 200, 87, 0.30) !important;
+  border-left: 1px solid rgba(255, 200, 87, 0.30) !important;
+  border-bottom-left-radius: 8px !important;
+  color: var(--holo-amber) !important;
+  font-family: var(--holo-font-mono) !important;
+  font-size: 8px !important;
+  letter-spacing: 0.12em !important;
+  padding: 4px 8px !important;
+  text-transform: uppercase !important;
+}
+
+.gm-datapad-jobs .job-board-empty-state,
+.gm-datapad-jobs .job-board-shelf-empty {
+  background: rgba(0, 0, 0, 0.24) !important;
+  border: 1px dashed rgba(127, 223, 230, 0.22) !important;
+  border-radius: 12px !important;
+  color: var(--holo-ink-faint) !important;
+  padding: 24px !important;
+  text-align: center !important;
+}
+
+@media (max-width: 980px) {
+  .gm-datapad-jobs .job-board-shell {
+    grid-template-columns: 1fr !important;
+  }
+
+  .swse-shell-surface--messenger .hl-jobboard-head,
+  .gm-datapad-jobs .job-board-section-header {
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+}
+
+/*
+ * SWSE Holonet Messenger - phase 2 guts rebuild.
+ * This layer is intentionally scoped to the Messenger inner surface. It does
+ * not style or resize the datapad/shell host.
+ */
+
+.swse-shell-surface--messenger.swse-holonet-comm {
+  --hm2-cyan: var(--holo-cyan, #7fdfe6);
+  --hm2-cyan-rgb: 127, 223, 230;
+  --hm2-gold: var(--holo-gold, #f0c86a);
+  --hm2-green: var(--holo-green, #7dffb2);
+  --hm2-red: var(--holo-red, #ff8b8b);
+  --hm2-ink: var(--holo-ink, #eefcff);
+  --hm2-ink-dim: var(--holo-ink-dim, rgba(238, 252, 255, 0.72));
+  --hm2-ink-faint: var(--holo-ink-faint, rgba(238, 252, 255, 0.46));
+  --hm2-panel: rgba(10, 12, 23, 0.88);
+  --hm2-panel-2: rgba(15, 18, 32, 0.84);
+  --hm2-glass: rgba(127, 223, 230, 0.08);
+  --hm2-line: rgba(127, 223, 230, 0.22);
+  --hm2-line-bright: rgba(127, 223, 230, 0.42);
+  --hm2-shadow: 0 18px 44px rgba(0, 0, 0, 0.36);
+}
+
+/* Main messenger surface ------------------------------------------------------ */
+.swse-shell-surface--messenger.swse-holonet-comm .hl-main-area {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 {
+  display: grid !important;
+  grid-template-columns: 284px minmax(0, 1fr) !important;
+  gap: 10px !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 > .hl-tlist,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 > .hl-conv {
+  min-width: 0 !important;
+  min-height: 0 !important;
+}
+
+/* Thread rail ----------------------------------------------------------------- */
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-tlist {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(var(--hm2-cyan-rgb), 0.16), transparent 35%),
+    linear-gradient(180deg, rgba(17, 19, 34, 0.92), rgba(5, 6, 14, 0.86)) !important;
+  border-color: rgba(var(--hm2-cyan-rgb), 0.20) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-tlist-top {
+  border-bottom: 1px solid rgba(var(--hm2-cyan-rgb), 0.14) !important;
+  flex: 0 0 auto !important;
+  padding: 12px 12px 10px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-tlist-hd {
+  align-items: flex-start !important;
+  display: flex !important;
+  gap: 10px !important;
+  justify-content: space-between !important;
+  margin: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-tlist-hd .hl-label {
+  display: block !important;
+  line-height: 1.2 !important;
+  margin-bottom: 4px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-new-btn {
+  align-items: center !important;
+  border-radius: 10px !important;
+  display: inline-flex !important;
+  flex: 0 0 32px !important;
+  height: 32px !important;
+  justify-content: center !important;
+  min-width: 32px !important;
+  padding: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-search-form {
+  border-bottom: 1px solid rgba(var(--hm2-cyan-rgb), 0.10) !important;
+  display: grid !important;
+  flex: 0 0 auto !important;
+  gap: 7px !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  padding: 10px 12px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-search-wrap {
+  grid-column: 1 / -1 !important;
+  min-width: 0 !important;
+  position: relative !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-search {
+  background: rgba(0, 0, 0, 0.34) !important;
+  border-color: rgba(var(--hm2-cyan-rgb), 0.18) !important;
+  border-radius: 9px !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 11px !important;
+  height: 34px !important;
+  letter-spacing: 0.04em !important;
+  padding-left: 30px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-search-icon {
+  color: rgba(var(--hm2-cyan-rgb), 0.58) !important;
+  font-size: 14px !important;
+  left: 10px !important;
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-thread-filter-toggle {
+  align-items: center !important;
+  color: var(--hm2-ink-faint) !important;
+  display: inline-flex !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 9px !important;
+  gap: 6px !important;
+  letter-spacing: 0.12em !important;
+  min-height: 28px !important;
+  text-transform: uppercase !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-search-form > button {
+  align-self: center !important;
+  min-height: 28px !important;
+  padding: 5px 9px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-thread-groups {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  gap: 12px !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 10px 10px 12px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-thread-groups .hl-cat {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  margin: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-cat-label {
+  align-items: center !important;
+  color: var(--hm2-ink-faint) !important;
+  display: flex !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 8px !important;
+  gap: 8px !important;
+  letter-spacing: 0.22em !important;
+  line-height: 1 !important;
+  padding: 0 2px !important;
+  text-transform: uppercase !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-cat-label::after {
+  background: linear-gradient(90deg, rgba(var(--hm2-cyan-rgb), 0.28), transparent) !important;
+  content: "" !important;
+  flex: 1 1 auto !important;
+  height: 1px !important;
+  min-width: 20px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-cat-label__main {
+  align-items: center !important;
+  display: inline-flex !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-cat-label__main > span {
+  color: var(--hm2-cyan) !important;
+  font-size: 11px !important;
+  letter-spacing: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-cat-label__count {
+  align-items: center !important;
+  background: rgba(var(--hm2-cyan-rgb), 0.10) !important;
+  border: 1px solid rgba(var(--hm2-cyan-rgb), 0.22) !important;
+  border-radius: 999px !important;
+  color: var(--hm2-cyan) !important;
+  display: inline-flex !important;
+  height: 16px !important;
+  justify-content: center !important;
+  letter-spacing: 0 !important;
+  min-width: 16px !important;
+  padding: 0 5px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-cat-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-transmission-card,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem {
+  --thread-accent: var(--hm2-cyan);
+  background:
+    linear-gradient(110deg, rgba(var(--hm2-cyan-rgb), 0.08), transparent 34%),
+    linear-gradient(160deg, rgba(21, 24, 39, 0.84), rgba(0, 0, 0, 0.26)) !important;
+  border: 1px solid rgba(var(--hm2-cyan-rgb), 0.14) !important;
+  border-radius: 12px !important;
+  box-shadow: inset 3px 0 0 var(--thread-accent), 0 8px 18px rgba(0, 0, 0, 0.20) !important;
+  color: var(--hm2-ink) !important;
+  overflow: hidden !important;
+  padding: 10px !important;
+  position: relative !important;
+  transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease, background 150ms ease !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem {
+  display: grid !important;
+  gap: 9px !important;
+  grid-template-columns: 25px minmax(0, 1fr) !important;
+  margin: 0 !important;
+  text-align: left !important;
+  width: 100% !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-transmission-card::after {
+  background: linear-gradient(100deg, transparent 0%, rgba(255, 255, 255, 0.08) 48%, transparent 72%) !important;
+  content: "" !important;
+  inset: 0 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  transform: translateX(-120%) !important;
+  transition: transform 380ms ease, opacity 180ms ease !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-transmission-card:hover,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem:hover,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem.on,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem.active {
+  border-color: rgba(var(--hm2-cyan-rgb), 0.42) !important;
+  box-shadow: inset 3px 0 0 var(--thread-accent), 0 14px 28px rgba(0, 0, 0, 0.30), 0 0 24px rgba(var(--hm2-cyan-rgb), 0.14) !important;
+  transform: translateY(-1px) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-transmission-card:hover::after,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem.on::after,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem.active::after {
+  opacity: 1 !important;
+  transform: translateX(120%) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem--job { --thread-accent: var(--hm2-gold); }
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem--party { --thread-accent: var(--hm2-green); }
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem--side { --thread-accent: #7dc8ff; }
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem--private { --thread-accent: var(--hm2-cyan); }
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem-icon {
+  align-items: center !important;
+  background: rgba(0, 0, 0, 0.30) !important;
+  border: 1px solid rgba(var(--hm2-cyan-rgb), 0.18) !important;
+  border-radius: 8px !important;
+  color: var(--thread-accent) !important;
+  display: flex !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 13px !important;
+  height: 25px !important;
+  justify-content: center !important;
+  line-height: 1 !important;
+  text-shadow: 0 0 12px currentColor !important;
+  width: 25px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem-body {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
+  min-width: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem-top {
+  align-items: center !important;
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: space-between !important;
+  min-width: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem-title {
+  color: var(--hm2-ink) !important;
+  font-family: var(--holo-font-body, system-ui, sans-serif) !important;
+  font-size: 12.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.01em !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem-right {
+  align-items: center !important;
+  display: inline-flex !important;
+  flex: 0 0 auto !important;
+  gap: 5px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem-time {
+  color: var(--hm2-ink-faint) !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 8px !important;
+  letter-spacing: 0.05em !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem-preview,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-transmission-preview {
+  color: var(--hm2-ink-faint) !important;
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem-chips {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+  margin-top: 2px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-titem-chips .hl-chip {
+  min-height: 17px !important;
+  padding: 3px 6px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-transmission-card--invite {
+  --thread-accent: var(--hm2-gold);
+  background: linear-gradient(145deg, rgba(240, 200, 106, 0.12), rgba(0, 0, 0, 0.32)) !important;
+  border-color: rgba(240, 200, 106, 0.36) !important;
+}
+
+/* Conversation and info rail --------------------------------------------------- */
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-conv {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-conv-header {
+  align-items: flex-start !important;
+  background:
+    linear-gradient(135deg, rgba(var(--hm2-cyan-rgb), 0.10), rgba(0, 0, 0, 0.14) 48%, rgba(240, 200, 106, 0.05)) !important;
+  border-bottom: 1px solid rgba(var(--hm2-cyan-rgb), 0.16) !important;
+  display: flex !important;
+  flex: 0 0 auto !important;
+  gap: 12px !important;
+  justify-content: space-between !important;
+  padding: 12px 14px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-conv-header-left {
+  min-width: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-conv-header .hl-title,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-compose-shell .hl-title {
+  color: var(--hm2-ink) !important;
+  font-family: var(--holo-font-body, system-ui, sans-serif) !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.18 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-thread-actions {
+  align-items: center !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  justify-content: flex-end !important;
+  max-width: 48% !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-thread-actions .hl-icon-btn,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-thread-actions .hl-btn-accent {
+  font-size: 8px !important;
+  min-height: 27px !important;
+  padding: 5px 8px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-chat-layout {
+  display: grid !important;
+  flex: 1 1 auto !important;
+  gap: 10px !important;
+  grid-template-columns: minmax(0, 1fr) 304px !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 10px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-chat-column {
+  background: rgba(0, 0, 0, 0.18) !important;
+  border: 1px solid rgba(var(--hm2-cyan-rgb), 0.10) !important;
+  border-radius: 12px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-messages {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(var(--hm2-cyan-rgb), 0.08), transparent 32%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(0, 0, 0, 0.20)) !important;
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 14px !important;
+  position: relative !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-anchor {
+  display: contents !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-anchor--highlight :is(.hl-msg-bubble, .hl-credit-card, .hl-attach-card, .hl-secret-note-card) {
+  outline: 1px solid rgba(255, 200, 87, 0.62) !important;
+  box-shadow: 0 0 24px rgba(255, 200, 87, 0.18) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-info-panel {
+  background:
+    linear-gradient(180deg, rgba(19, 22, 36, 0.88), rgba(4, 5, 12, 0.82)) !important;
+  border-color: rgba(var(--hm2-cyan-rgb), 0.18) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0 !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-info-panel .hl-info-section {
+  border-bottom: 1px solid rgba(var(--hm2-cyan-rgb), 0.10) !important;
+  padding: 12px 13px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-info-person {
+  align-items: center !important;
+  background: rgba(0, 0, 0, 0.16) !important;
+  border: 1px solid rgba(var(--hm2-cyan-rgb), 0.08) !important;
+  border-radius: 9px !important;
+  display: grid !important;
+  gap: 4px 8px !important;
+  grid-template-columns: 28px minmax(0, 1fr) !important;
+  margin-bottom: 6px !important;
+  padding: 7px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-info-person .hl-avatar {
+  grid-row: span 2 !important;
+  height: 28px !important;
+  width: 28px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-info-person b,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-info-person small,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-info-person em {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Compose mode ----------------------------------------------------------------- */
+.swse-shell-surface--messenger.swse-holonet-comm .hl-compose-shell {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-compose-scroll {
+  display: grid !important;
+  gap: 12px !important;
+  grid-template-columns: minmax(0, 1.1fr) minmax(280px, 0.9fr) !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 12px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-compose-card,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-job-compose,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-persona-compose {
+  align-self: start !important;
+  border-radius: 13px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 10px !important;
+  padding: 14px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-compose-card {
+  grid-row: span 2 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-mode-grid,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-recipient-grid,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-form-grid {
+  gap: 8px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-mode-card,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-recipient-row {
+  background: rgba(0, 0, 0, 0.22) !important;
+  border: 1px solid rgba(var(--hm2-cyan-rgb), 0.14) !important;
+  border-radius: 10px !important;
+  padding: 9px 10px !important;
+}
+
+/* Composer dock ---------------------------------------------------------------- */
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composer--concept {
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.12), rgba(0, 0, 0, 0.30)) !important;
+  border-top: 1px solid rgba(var(--hm2-cyan-rgb), 0.16) !important;
+  flex: 0 0 auto !important;
+  padding: 10px 12px 12px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composer-meta-row {
+  align-items: center !important;
+  display: grid !important;
+  gap: 8px !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  margin-bottom: 8px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composer-tools {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 7px !important;
+  min-width: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attach-dock {
+  background: rgba(0, 0, 0, 0.18) !important;
+  border: 1px solid rgba(var(--hm2-cyan-rgb), 0.10) !important;
+  border-radius: 10px !important;
+  display: grid !important;
+  gap: 8px !important;
+  grid-template-columns: 38px minmax(0, 1fr) !important;
+  margin-bottom: 8px !important;
+  padding: 8px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attach-menu-inline {
+  display: grid !important;
+  gap: 6px !important;
+  grid-template-columns: repeat(auto-fit, minmax(108px, 1fr)) !important;
+  min-width: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attach-opt {
+  align-items: center !important;
+  display: flex !important;
+  gap: 7px !important;
+  justify-content: flex-start !important;
+  min-height: 34px !important;
+  padding: 6px 8px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-drop-zone--compact {
+  grid-column: 1 / -1 !important;
+  margin: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composer-input-row {
+  align-items: flex-end !important;
+  display: grid !important;
+  gap: 9px !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composer-ta {
+  border-radius: 12px !important;
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  min-height: 56px !important;
+  resize: vertical !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-send-btn {
+  align-items: center !important;
+  display: inline-flex !important;
+  height: 40px !important;
+  justify-content: center !important;
+  padding: 0 14px !important;
+}
+
+/* Empty state ------------------------------------------------------------------ */
+.swse-shell-surface--messenger.swse-holonet-comm .hl-empty,
+.swse-shell-surface--messenger.swse-holonet-comm .swse-messenger-empty {
+  align-items: center !important;
+  color: var(--hm2-ink-faint) !important;
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-direction: column !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 11px !important;
+  justify-content: center !important;
+  letter-spacing: 0.16em !important;
+  min-height: 180px !important;
+  padding: 28px !important;
+  text-align: center !important;
+  text-transform: uppercase !important;
+}
+
+/* Responsive guardrails -------------------------------------------------------- */
+@media (max-width: 1180px) {
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 {
+    grid-template-columns: 248px minmax(0, 1fr) !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-chat-layout {
+    grid-template-columns: minmax(0, 1fr) 268px !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-thread-actions {
+    max-width: 56% !important;
+  }
+}
+
+@media (max-width: 980px) {
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 {
+    grid-template-columns: 220px minmax(0, 1fr) !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-chat-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-info-panel {
+    display: none !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-compose-scroll {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-tlist {
+    display: none !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-thread-actions {
+    max-width: none !important;
+  }
+}
+
+/*
+ * SWSE Holonet Messenger - phase 3 message/composer polish.
+ * Scoped to the Messenger guts only. This layer assumes phase 1 and phase 2
+ * are loaded and intentionally leaves the datapad/shell host alone.
+ */
+
+.swse-shell-surface--messenger.swse-holonet-comm {
+  --hm3-cyan: var(--hm2-cyan, #7fdfe6);
+  --hm3-cyan-rgb: var(--hm2-cyan-rgb, 127, 223, 230);
+  --hm3-gold: var(--hm2-gold, #f0c86a);
+  --hm3-green: var(--hm2-green, #7dffb2);
+  --hm3-red: var(--hm2-red, #ff8b8b);
+  --hm3-ink: var(--hm2-ink, #eefcff);
+  --hm3-ink-dim: var(--hm2-ink-dim, rgba(238, 252, 255, 0.72));
+  --hm3-ink-faint: var(--hm2-ink-faint, rgba(238, 252, 255, 0.46));
+  --hm3-panel: rgba(8, 10, 20, 0.86);
+  --hm3-panel-2: rgba(16, 19, 34, 0.88);
+  --hm3-line: rgba(var(--hm3-cyan-rgb), 0.18);
+  --hm3-line-bright: rgba(var(--hm3-cyan-rgb), 0.38);
+  --hm3-card-shadow: 0 12px 32px rgba(0, 0, 0, 0.34), 0 0 18px rgba(var(--hm3-cyan-rgb), 0.06);
+}
+
+/* Message stream ------------------------------------------------------------- */
+.swse-shell-surface--messenger.swse-holonet-comm .hl-chat-column {
+  background:
+    radial-gradient(circle at 20% 5%, rgba(var(--hm3-cyan-rgb), 0.08), transparent 32%),
+    linear-gradient(180deg, rgba(5, 6, 14, 0.16), rgba(0, 0, 0, 0.20)) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-messages {
+  gap: 10px !important;
+  padding: 14px 14px 12px !important;
+  position: relative !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-messages::before {
+  background:
+    linear-gradient(to right, rgba(var(--hm3-cyan-rgb), 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.018) 1px, transparent 1px) !important;
+  background-size: 38px 38px !important;
+  content: "" !important;
+  inset: 0 !important;
+  opacity: 0.55 !important;
+  pointer-events: none !important;
+  position: absolute !important;
+  z-index: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-anchor--phase3 {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-anchor--phase3 + .hl-message-anchor--phase3 {
+  margin-top: 2px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-anchor--highlight {
+  animation: hl-phase3-message-highlight 1.4s ease-out 1 !important;
+  border-radius: 14px !important;
+}
+
+@keyframes hl-phase3-message-highlight {
+  0% { box-shadow: 0 0 0 0 rgba(var(--hm3-cyan-rgb), 0.50); }
+  45% { box-shadow: 0 0 0 7px rgba(var(--hm3-cyan-rgb), 0.12); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--hm3-cyan-rgb), 0); }
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-window-notice {
+  align-items: center !important;
+  background: rgba(0, 0, 0, 0.34) !important;
+  border: 1px dashed rgba(var(--hm3-cyan-rgb), 0.22) !important;
+  border-radius: 11px !important;
+  color: var(--hm3-ink-faint) !important;
+  display: flex !important;
+  gap: 10px !important;
+  justify-content: center !important;
+  padding: 8px 10px !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Standard message bubbles ---------------------------------------------------- */
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg--phase3 {
+  align-items: flex-end !important;
+  display: flex !important;
+  gap: 9px !important;
+  max-width: min(74ch, 100%) !important;
+  position: relative !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg--phase3.own {
+  margin-left: auto !important;
+  padding-left: 12% !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg--phase3.other {
+  margin-right: auto !important;
+  padding-right: 9% !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg--phase3 .hl-avatar {
+  background:
+    radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.25), transparent 34%),
+    linear-gradient(135deg, rgba(var(--hm3-cyan-rgb), 0.18), rgba(0, 0, 0, 0.42)) !important;
+  border: 1px solid rgba(var(--hm3-cyan-rgb), 0.26) !important;
+  box-shadow: 0 0 12px rgba(var(--hm3-cyan-rgb), 0.10) !important;
+  color: var(--hm3-cyan) !important;
+  height: 30px !important;
+  object-fit: cover !important;
+  width: 30px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg-bubble--phase3 {
+  background:
+    linear-gradient(135deg, rgba(28, 32, 52, 0.94), rgba(7, 9, 19, 0.88)) !important;
+  border: 1px solid rgba(var(--hm3-cyan-rgb), 0.17) !important;
+  border-radius: 16px 16px 16px 5px !important;
+  box-shadow: 0 7px 20px rgba(0, 0, 0, 0.30) !important;
+  color: var(--hm3-ink) !important;
+  line-height: 1.5 !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  padding: 10px 12px 8px !important;
+  position: relative !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg-bubble--phase3::before {
+  background: linear-gradient(90deg, rgba(var(--hm3-cyan-rgb), 0.36), transparent) !important;
+  content: "" !important;
+  height: 2px !important;
+  left: 12px !important;
+  opacity: 0.62 !important;
+  position: absolute !important;
+  right: 12px !important;
+  top: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg--phase3.own .hl-msg-bubble--phase3 {
+  background:
+    linear-gradient(135deg, rgba(var(--hm3-cyan-rgb), 0.17), rgba(8, 10, 19, 0.90)) !important;
+  border-color: rgba(var(--hm3-cyan-rgb), 0.36) !important;
+  border-radius: 16px 16px 5px 16px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32), 0 0 18px rgba(var(--hm3-cyan-rgb), 0.10) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg--phase3.swse-msg-row--unread .hl-msg-bubble--phase3 {
+  border-color: rgba(240, 200, 106, 0.52) !important;
+  box-shadow: 0 0 0 1px rgba(240, 200, 106, 0.14), 0 0 20px rgba(240, 200, 106, 0.10) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg-meta {
+  align-items: center !important;
+  color: var(--hm3-cyan) !important;
+  display: flex !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  gap: 6px !important;
+  letter-spacing: 0.16em !important;
+  margin: 0 0 5px !important;
+  text-transform: uppercase !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg-sender-dot {
+  background: var(--hm3-cyan) !important;
+  border-radius: 999px !important;
+  box-shadow: 0 0 8px rgba(var(--hm3-cyan-rgb), 0.72) !important;
+  display: inline-block !important;
+  flex: 0 0 5px !important;
+  height: 5px !important;
+  width: 5px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg-text,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg-text p {
+  color: var(--hm3-ink) !important;
+  font-size: 13px !important;
+  line-height: 1.52 !important;
+  margin: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg-text a {
+  color: var(--hm3-cyan) !important;
+  text-decoration: none !important;
+  text-shadow: 0 0 8px rgba(var(--hm3-cyan-rgb), 0.24) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg-time {
+  align-items: center !important;
+  border-top: 1px solid rgba(var(--hm3-cyan-rgb), 0.08) !important;
+  color: var(--hm3-ink-faint) !important;
+  display: flex !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 8.5px !important;
+  gap: 8px !important;
+  justify-content: flex-end !important;
+  letter-spacing: 0.08em !important;
+  margin-top: 8px !important;
+  padding-top: 5px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-pin-btn {
+  background: rgba(240, 200, 106, 0.08) !important;
+  border: 1px solid rgba(240, 200, 106, 0.26) !important;
+  border-radius: 999px !important;
+  color: var(--hm3-gold) !important;
+  cursor: pointer !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 8px !important;
+  letter-spacing: 0.12em !important;
+  padding: 2px 7px !important;
+  text-transform: uppercase !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg-image {
+  border: 1px solid rgba(var(--hm3-cyan-rgb), 0.20) !important;
+  border-radius: 12px !important;
+  box-shadow: var(--hm3-card-shadow) !important;
+  display: block !important;
+  margin-top: 9px !important;
+  max-height: 260px !important;
+  object-fit: contain !important;
+  width: min(100%, 420px) !important;
+}
+
+/* System, pinned, and special cards ----------------------------------------- */
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-divider {
+  align-items: center !important;
+  color: var(--hm3-ink-faint) !important;
+  display: flex !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 10px !important;
+  gap: 10px !important;
+  justify-content: center !important;
+  letter-spacing: 0.08em !important;
+  margin: 7px 0 !important;
+  text-align: center !important;
+  text-transform: uppercase !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-sys-line {
+  background: linear-gradient(90deg, transparent, rgba(var(--hm3-cyan-rgb), 0.24), transparent) !important;
+  flex: 1 1 auto !important;
+  height: 1px !important;
+  max-width: 160px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-pinned-strip {
+  background: rgba(240, 200, 106, 0.055) !important;
+  border: 1px solid rgba(240, 200, 106, 0.18) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 0 18px rgba(240, 200, 106, 0.06) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+  padding: 10px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-pin-msg {
+  align-items: center !important;
+  background: rgba(0, 0, 0, 0.26) !important;
+  border: 1px solid rgba(240, 200, 106, 0.24) !important;
+  border-radius: 9px !important;
+  color: var(--hm3-ink-dim) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  font-size: 11px !important;
+  gap: 8px !important;
+  padding: 7px 10px !important;
+  text-align: left !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-pin-msg:hover {
+  background: rgba(240, 200, 106, 0.09) !important;
+  color: var(--hm3-ink) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-card-wrap {
+  display: flex !important;
+  justify-content: center !important;
+  margin: 3px auto !important;
+  max-width: min(520px, 100%) !important;
+  width: 100% !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-credit-card,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attach-card,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-receipt-card,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-job-embed {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(var(--hm3-cyan-rgb), 0.12), transparent 34%),
+    linear-gradient(145deg, rgba(17, 20, 34, 0.96), rgba(4, 6, 14, 0.90)) !important;
+  border: 1px solid rgba(var(--hm3-cyan-rgb), 0.24) !important;
+  border-radius: 14px !important;
+  box-shadow: var(--hm3-card-shadow) !important;
+  overflow: hidden !important;
+  padding: 13px 14px !important;
+  position: relative !important;
+  width: 100% !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-credit-card::before,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attach-card::before,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-receipt-card::before,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-job-embed::before {
+  background: linear-gradient(180deg, var(--hm3-cyan), transparent) !important;
+  content: "" !important;
+  inset: 0 auto 0 0 !important;
+  opacity: 0.65 !important;
+  position: absolute !important;
+  width: 3px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-card-wrap--credit .hl-credit-card,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-partyfund-card {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(125, 255, 178, 0.16), transparent 38%),
+    linear-gradient(145deg, rgba(13, 28, 20, 0.94), rgba(5, 8, 15, 0.90)) !important;
+  border-color: rgba(125, 255, 178, 0.34) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-card-wrap--credit .hl-credit-card::before,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-partyfund-card::before {
+  background: linear-gradient(180deg, var(--hm3-green), transparent) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-card-wrap--job .hl-job-embed,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-card-wrap--game .hl-game-invite-card {
+  background:
+    radial-gradient(circle at 12% 0%, rgba(240, 200, 106, 0.16), transparent 38%),
+    linear-gradient(145deg, rgba(31, 22, 8, 0.94), rgba(5, 8, 15, 0.90)) !important;
+  border-color: rgba(240, 200, 106, 0.34) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-card-wrap--job .hl-job-embed::before,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-card-wrap--game .hl-game-invite-card::before {
+  background: linear-gradient(180deg, var(--hm3-gold), transparent) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-credit-title {
+  color: var(--hm3-cyan) !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.24em !important;
+  margin-bottom: 6px !important;
+  text-transform: uppercase !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-credit-amount {
+  color: var(--hm3-green) !important;
+  font-family: var(--holo-font-display, var(--holo-font-mono, ui-monospace, monospace)) !important;
+  font-size: 28px !important;
+  letter-spacing: 0.05em !important;
+  line-height: 1 !important;
+  margin: 4px 0 8px !important;
+  text-shadow: 0 0 18px rgba(125, 255, 178, 0.24) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-credit-line,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-credit-memo,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-credit-status {
+  color: var(--hm3-ink-dim) !important;
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-credit-status {
+  color: var(--hm3-gold) !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 9.5px !important;
+  letter-spacing: 0.12em !important;
+  margin-top: 8px !important;
+  text-transform: uppercase !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-credit-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 7px !important;
+  margin-top: 10px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attachments {
+  display: grid !important;
+  gap: 7px !important;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+  margin-top: 8px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attachment-card {
+  align-items: center !important;
+  background: rgba(0, 0, 0, 0.30) !important;
+  border: 1px solid rgba(var(--hm3-cyan-rgb), 0.15) !important;
+  border-radius: 10px !important;
+  color: var(--hm3-ink) !important;
+  display: grid !important;
+  gap: 2px 8px !important;
+  grid-template-columns: 34px minmax(0, 1fr) !important;
+  min-width: 0 !important;
+  padding: 7px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attachment-card img,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attachment-card > span {
+  align-items: center !important;
+  background: rgba(var(--hm3-cyan-rgb), 0.08) !important;
+  border: 1px solid rgba(var(--hm3-cyan-rgb), 0.16) !important;
+  border-radius: 8px !important;
+  color: var(--hm3-cyan) !important;
+  display: flex !important;
+  grid-row: span 2 !important;
+  height: 34px !important;
+  justify-content: center !important;
+  object-fit: cover !important;
+  width: 34px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attachment-card b {
+  color: var(--hm3-ink) !important;
+  font-size: 11px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attachment-card small {
+  color: var(--hm3-ink-faint) !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 8.5px !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-counter-offer,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-counter-form {
+  background: rgba(240, 200, 106, 0.06) !important;
+  border: 1px solid rgba(240, 200, 106, 0.20) !important;
+  border-radius: 10px !important;
+  display: grid !important;
+  gap: 7px !important;
+  margin-top: 9px !important;
+  padding: 9px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-counter-form label {
+  color: var(--hm3-ink-dim) !important;
+  display: grid !important;
+  gap: 4px !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 9px !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-counter-form input,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-counter-form select,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-counter-form textarea {
+  background: rgba(0, 0, 0, 0.34) !important;
+  border: 1px solid rgba(var(--hm3-cyan-rgb), 0.18) !important;
+  border-radius: 8px !important;
+  color: var(--hm3-ink) !important;
+  min-height: 30px !important;
+  padding: 7px 9px !important;
+}
+
+/* Secret notes and decryption console --------------------------------------- */
+.swse-shell-surface--messenger.swse-holonet-comm .hl-secret-note-card {
+  background:
+    radial-gradient(circle at 5% 0%, rgba(255, 139, 139, 0.14), transparent 36%),
+    rgba(0, 0, 0, 0.30) !important;
+  border: 1px solid rgba(255, 139, 139, 0.26) !important;
+  border-radius: 13px !important;
+  display: grid !important;
+  gap: 9px !important;
+  padding: 11px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-secret-note-head {
+  align-items: center !important;
+  display: grid !important;
+  gap: 9px !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-secret-note-sigil {
+  align-items: center !important;
+  background: rgba(255, 139, 139, 0.10) !important;
+  border: 1px solid rgba(255, 139, 139, 0.32) !important;
+  border-radius: 11px !important;
+  color: var(--hm3-red) !important;
+  display: inline-flex !important;
+  font-size: 20px !important;
+  height: 38px !important;
+  justify-content: center !important;
+  width: 38px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-secret-note-head h4 {
+  color: var(--hm3-ink) !important;
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+  margin: 2px 0 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-decryption-console {
+  background: rgba(0, 0, 0, 0.34) !important;
+  border: 1px solid rgba(var(--hm3-cyan-rgb), 0.20) !important;
+  border-radius: 12px !important;
+  box-shadow: inset 0 0 20px rgba(var(--hm3-cyan-rgb), 0.05) !important;
+  display: grid !important;
+  gap: 9px !important;
+  padding: 10px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-decryption-head,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-decryption-actions,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-decryption-log {
+  align-items: center !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 7px !important;
+  justify-content: space-between !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-decryption-grid {
+  background: rgba(0, 0, 0, 0.30) !important;
+  border: 1px dashed rgba(var(--hm3-cyan-rgb), 0.18) !important;
+  border-radius: 9px !important;
+  color: var(--hm3-cyan) !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px 8px !important;
+  padding: 9px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-decryption-cell {
+  background: rgba(var(--hm3-cyan-rgb), 0.06) !important;
+  border: 1px solid rgba(var(--hm3-cyan-rgb), 0.12) !important;
+  border-radius: 6px !important;
+  display: inline-grid !important;
+  min-width: 22px !important;
+  padding: 2px 4px !important;
+  text-align: center !important;
+}
+
+/* Composer ------------------------------------------------------------------ */
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composer--phase3 {
+  background:
+    radial-gradient(circle at 10% 0%, rgba(var(--hm3-cyan-rgb), 0.10), transparent 34%),
+    linear-gradient(180deg, rgba(9, 11, 22, 0.92), rgba(0, 0, 0, 0.36)) !important;
+  border-top: 1px solid rgba(var(--hm3-cyan-rgb), 0.18) !important;
+  box-shadow: 0 -12px 24px rgba(0, 0, 0, 0.24) !important;
+  display: grid !important;
+  gap: 8px !important;
+  padding: 10px 12px 12px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composer-meta-row {
+  align-items: stretch !important;
+  display: grid !important;
+  gap: 8px !important;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-persona-row,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-holostill-row {
+  align-items: center !important;
+  background: rgba(0, 0, 0, 0.28) !important;
+  border: 1px solid rgba(var(--hm3-cyan-rgb), 0.16) !important;
+  border-radius: 9px !important;
+  display: grid !important;
+  gap: 6px !important;
+  grid-template-columns: auto minmax(0, 1fr) !important;
+  margin: 0 !important;
+  padding: 7px 9px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-persona-row span,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-holostill-row span {
+  color: var(--hm3-ink-faint) !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 8px !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-persona-row select,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-holostill-row input {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--hm3-ink) !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 11px !important;
+  min-width: 0 !important;
+  outline: none !important;
+  padding: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attach-dock--phase3 {
+  align-items: stretch !important;
+  display: grid !important;
+  gap: 8px !important;
+  grid-template-columns: auto minmax(0, 1fr) minmax(210px, 0.7fr) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attach-btn {
+  align-items: center !important;
+  align-self: stretch !important;
+  background: rgba(var(--hm3-cyan-rgb), 0.08) !important;
+  border: 1px solid rgba(var(--hm3-cyan-rgb), 0.24) !important;
+  border-radius: 11px !important;
+  box-shadow: inset 0 0 18px rgba(var(--hm3-cyan-rgb), 0.08) !important;
+  color: var(--hm3-cyan) !important;
+  display: inline-flex !important;
+  font-size: 20px !important;
+  justify-content: center !important;
+  min-height: 48px !important;
+  width: 42px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attach-menu-inline {
+  display: grid !important;
+  gap: 6px !important;
+  grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attach-opt {
+  align-items: center !important;
+  background: rgba(var(--hm3-cyan-rgb), 0.055) !important;
+  border: 1px solid rgba(var(--hm3-cyan-rgb), 0.15) !important;
+  border-radius: 10px !important;
+  color: var(--hm3-ink-dim) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 8px !important;
+  gap: 3px !important;
+  justify-content: center !important;
+  letter-spacing: 0.10em !important;
+  min-height: 48px !important;
+  padding: 7px 5px !important;
+  text-transform: uppercase !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attach-opt:hover {
+  background: rgba(var(--hm3-cyan-rgb), 0.13) !important;
+  border-color: rgba(var(--hm3-cyan-rgb), 0.38) !important;
+  color: var(--hm3-cyan) !important;
+  transform: translateY(-1px) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attach-opt--secret {
+  background: rgba(255, 139, 139, 0.065) !important;
+  border-color: rgba(255, 139, 139, 0.20) !important;
+  color: var(--hm3-red) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attach-opt-icon {
+  color: currentColor !important;
+  font-size: 20px !important;
+  line-height: 1 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-drop-zone--compact {
+  align-items: center !important;
+  background: rgba(0, 0, 0, 0.26) !important;
+  border: 1px dashed rgba(var(--hm3-cyan-rgb), 0.22) !important;
+  border-radius: 10px !important;
+  color: var(--hm3-ink-faint) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2px !important;
+  justify-content: center !important;
+  min-height: 48px !important;
+  padding: 7px 9px !important;
+  text-align: center !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-drop-zone--compact b {
+  color: var(--hm3-cyan) !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 9px !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-drop-zone--compact span {
+  font-size: 10px !important;
+  line-height: 1.25 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composer-input-row--phase3 {
+  align-items: flex-end !important;
+  display: grid !important;
+  gap: 8px !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composer-ta {
+  background: rgba(0, 0, 0, 0.38) !important;
+  border: 1px solid rgba(var(--hm3-cyan-rgb), 0.22) !important;
+  border-radius: 12px !important;
+  color: var(--hm3-ink) !important;
+  font-size: 13px !important;
+  line-height: 1.42 !important;
+  min-height: 58px !important;
+  outline: none !important;
+  padding: 10px 12px !important;
+  resize: vertical !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composer-ta:focus {
+  border-color: rgba(var(--hm3-cyan-rgb), 0.48) !important;
+  box-shadow: 0 0 18px rgba(var(--hm3-cyan-rgb), 0.14), inset 0 0 16px rgba(var(--hm3-cyan-rgb), 0.035) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-send-btn {
+  align-items: center !important;
+  background: linear-gradient(135deg, rgba(var(--hm3-cyan-rgb), 0.20), rgba(var(--hm3-cyan-rgb), 0.08)) !important;
+  border: 1px solid rgba(var(--hm3-cyan-rgb), 0.42) !important;
+  border-radius: 12px !important;
+  box-shadow: 0 0 18px rgba(var(--hm3-cyan-rgb), 0.11) !important;
+  color: var(--hm3-cyan) !important;
+  display: inline-flex !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  font-size: 10px !important;
+  gap: 8px !important;
+  height: 58px !important;
+  justify-content: center !important;
+  letter-spacing: 0.16em !important;
+  min-width: 92px !important;
+  padding: 0 14px !important;
+  text-transform: uppercase !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-send-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(var(--hm3-cyan-rgb), 0.30), rgba(var(--hm3-cyan-rgb), 0.13)) !important;
+  box-shadow: 0 0 26px rgba(var(--hm3-cyan-rgb), 0.20) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Composition modal cards ---------------------------------------------------- */
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composition-panel {
+  background:
+    radial-gradient(circle at 18% 0%, rgba(var(--hm3-cyan-rgb), 0.14), transparent 38%),
+    linear-gradient(160deg, rgba(20, 22, 36, 0.98), rgba(7, 7, 14, 0.98)) !important;
+  border: 1px solid rgba(var(--hm3-cyan-rgb), 0.30) !important;
+  border-radius: 15px !important;
+  box-shadow: 0 40px 80px rgba(0, 0, 0, 0.65), 0 0 48px rgba(var(--hm3-cyan-rgb), 0.12) !important;
+  overflow: hidden !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composition-head {
+  background: rgba(0, 0, 0, 0.24) !important;
+  border-bottom: 1px solid rgba(var(--hm3-cyan-rgb), 0.16) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-bank-banner {
+  background: linear-gradient(135deg, rgba(125, 255, 178, 0.12), rgba(0, 0, 0, 0.28)) !important;
+  border: 1px solid rgba(125, 255, 178, 0.24) !important;
+  border-radius: 12px !important;
+  color: var(--hm3-green) !important;
+  font-family: var(--holo-font-mono, ui-monospace, monospace) !important;
+  letter-spacing: 0.14em !important;
+  padding: 10px 12px !important;
+  text-transform: uppercase !important;
+}
+
+@media (max-width: 1120px) {
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-attach-dock--phase3 {
+    grid-template-columns: auto minmax(0, 1fr) !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-drop-zone--compact {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+@media (max-width: 860px) {
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-msg--phase3.own,
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-msg--phase3.other {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-composer-meta-row,
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-composer-input-row--phase3 {
+    grid-template-columns: 1fr !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-send-btn {
+    width: 100% !important;
+  }
+}
+
+/* SWSE Holonet inner rebuild - Phase 4: Job Board browsing surfaces.
+   Scope: Messenger Job Board guts and GM Job Board browsing panel only. */
+
+.swse-shell-surface--messenger .jb-root--holonet,
+.gm-datapad-jobs .jb-root--gm {
+  --jb-accent: var(--accent, #7fdfe6);
+  --jb-gold: #e6c36a;
+  --jb-green: #77e6a5;
+  --jb-red: #ef6b5f;
+  --jb-ink: var(--ink, #e9faff);
+  --jb-muted: var(--ink-faint, #86a2a8);
+  --jb-panel: rgba(5, 7, 14, 0.54);
+  --jb-panel-2: rgba(16, 20, 34, 0.72);
+  --jb-line: rgba(127, 223, 230, 0.18);
+  --jb-line-strong: rgba(127, 223, 230, 0.38);
+  min-height: 0;
+}
+
+.swse-shell-surface--messenger .jb-root--holonet {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 100%;
+  overflow: hidden;
+  padding: 12px;
+}
+
+.swse-shell-surface--messenger .jb-root--holonet::before,
+.gm-datapad-jobs .jb-root--gm .jb-board-panel::before {
+  background:
+    linear-gradient(90deg, transparent, rgba(127, 223, 230, 0.06), transparent),
+    radial-gradient(circle at 20% 0%, rgba(127, 223, 230, 0.10), transparent 38%);
+}
+
+.swse-shell-surface--messenger .jb-head,
+.gm-datapad-jobs .jb-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 0 0 auto;
+  padding: 2px 2px 10px;
+  border-bottom: 1px solid rgba(127, 223, 230, 0.14);
+}
+
+.swse-shell-surface--messenger .jb-head-top,
+.gm-datapad-jobs .jb-head-top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.swse-shell-surface--messenger .jb-brand,
+.gm-datapad-jobs .jb-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.swse-shell-surface--messenger .jb-brand-mark,
+.gm-datapad-jobs .jb-brand-mark {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  border-radius: 9px;
+  color: var(--jb-accent);
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.15), rgba(127, 223, 230, 0.05));
+  border: 1px solid rgba(127, 223, 230, 0.34);
+  box-shadow: inset 0 0 18px rgba(127, 223, 230, 0.12), 0 0 20px rgba(127, 223, 230, 0.10);
+  font-family: var(--font-display, monospace);
+  font-size: 20px;
+}
+
+.gm-datapad-jobs .jb-brand-mark.gm {
+  color: var(--jb-gold);
+  border-color: rgba(230, 195, 106, 0.34);
+  background: linear-gradient(135deg, rgba(230, 195, 106, 0.14), rgba(230, 195, 106, 0.04));
+}
+
+.swse-shell-surface--messenger .jb-brand-tt,
+.gm-datapad-jobs .jb-brand-tt {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.swse-shell-surface--messenger .jb-brand-tt .t,
+.gm-datapad-jobs .jb-brand-tt .t {
+  color: var(--jb-accent);
+  font-family: var(--font-display, monospace);
+  font-size: 23px;
+  letter-spacing: 0.22em;
+  line-height: 1;
+  text-transform: uppercase;
+  text-shadow: 0 0 16px rgba(127, 223, 230, 0.34);
+}
+
+.gm-datapad-jobs .jb-brand-tt .t { color: var(--jb-gold); }
+
+.swse-shell-surface--messenger .jb-brand-tt .s,
+.gm-datapad-jobs .jb-brand-tt .s {
+  color: var(--jb-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swse-shell-surface--messenger .jb-head-actions,
+.gm-datapad-jobs .jb-head-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.swse-shell-surface--messenger .jb-shelf,
+.gm-datapad-jobs .jb-shelf {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 11px;
+  background: rgba(0, 0, 0, 0.32);
+  border: 1px solid rgba(127, 223, 230, 0.13);
+  box-shadow: inset 0 0 18px rgba(0, 0, 0, 0.28);
+}
+
+.swse-shell-surface--messenger .jb-shelf-tab,
+.gm-datapad-jobs .jb-shelf-tab {
+  min-width: 0;
+  flex: 1 1 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  color: var(--jb-muted);
+  background: transparent;
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: default;
+}
+
+.gm-datapad-jobs button.jb-shelf-tab { cursor: pointer; }
+
+.swse-shell-surface--messenger .jb-shelf-tab.on,
+.gm-datapad-jobs .jb-shelf-tab.on,
+.gm-datapad-jobs .jb-shelf-tab.is-active {
+  color: var(--jb-accent);
+  border-color: rgba(127, 223, 230, 0.32);
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.15), rgba(127, 223, 230, 0.05));
+  box-shadow: inset 0 0 18px rgba(127, 223, 230, 0.12);
+}
+
+.gm-datapad-jobs .jb-shelf-tab.on,
+.gm-datapad-jobs .jb-shelf-tab.is-active {
+  color: var(--jb-gold);
+  border-color: rgba(230, 195, 106, 0.34);
+  background: linear-gradient(135deg, rgba(230, 195, 106, 0.14), rgba(230, 195, 106, 0.05));
+}
+
+.swse-shell-surface--messenger .jb-shelf-count,
+.gm-datapad-jobs .jb-shelf-count {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+  background: rgba(127, 223, 230, 0.12);
+  font-weight: 700;
+}
+
+.gm-datapad-jobs .jb-shelf-tab small {
+  display: none;
+}
+
+.swse-shell-surface--messenger .jb-subbar,
+.gm-datapad-jobs .jb-subbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.swse-shell-surface--messenger .jb-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+  flex: 1 1 240px;
+}
+
+.swse-shell-surface--messenger .jb-search .ic {
+  position: absolute;
+  left: 11px;
+  color: var(--jb-muted);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.swse-shell-surface--messenger .jb-search input {
+  width: 100%;
+  min-height: 34px;
+  padding: 8px 10px 8px 31px;
+  border-radius: 9px;
+  border: 1px solid rgba(127, 223, 230, 0.18);
+  background: rgba(0, 0, 0, 0.35);
+  color: var(--jb-ink);
+  outline: none;
+}
+
+.swse-shell-surface--messenger .jb-search input:focus {
+  border-color: rgba(127, 223, 230, 0.48);
+  box-shadow: 0 0 14px rgba(127, 223, 230, 0.16);
+}
+
+.swse-shell-surface--messenger .jb-content--holonet {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.swse-shell-surface--messenger .jb-scroll,
+.gm-datapad-jobs .jb-scroll {
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(127, 223, 230, 0.32) transparent;
+}
+
+.swse-shell-surface--messenger .jb-scroll {
+  height: 100%;
+  padding: 2px 3px 4px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.gm-datapad-jobs .jb-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.swse-shell-surface--messenger .jb-group,
+.gm-datapad-jobs .jb-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.swse-shell-surface--messenger .jb-group-hd,
+.gm-datapad-jobs .jb-group-hd {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 24px;
+  padding: 0 2px;
+}
+
+.swse-shell-surface--messenger .jb-group-dot,
+.gm-datapad-jobs .jb-group-dot {
+  width: 8px;
+  height: 8px;
+  flex: 0 0 auto;
+  transform: rotate(45deg);
+  border-radius: 2px;
+  background: var(--jb-accent);
+  box-shadow: 0 0 10px rgba(127, 223, 230, 0.36);
+}
+
+.swse-shell-surface--messenger .jb-group-dot.active,
+.gm-datapad-jobs .jb-group-dot.active { background: var(--jb-green); box-shadow: 0 0 10px rgba(119, 230, 165, 0.34); }
+.swse-shell-surface--messenger .jb-group-dot.review,
+.gm-datapad-jobs .jb-group-dot.review,
+.swse-shell-surface--messenger .jb-group-dot.drafts,
+.gm-datapad-jobs .jb-group-dot.drafts { background: var(--jb-gold); box-shadow: 0 0 10px rgba(230, 195, 106, 0.34); }
+.swse-shell-surface--messenger .jb-group-dot.archived,
+.gm-datapad-jobs .jb-group-dot.archived { background: var(--jb-muted); box-shadow: none; }
+.swse-shell-surface--messenger .jb-group-dot.failed,
+.gm-datapad-jobs .jb-group-dot.failed { background: var(--jb-red); box-shadow: 0 0 10px rgba(239, 107, 95, 0.30); }
+
+.swse-shell-surface--messenger .jb-group-lbl,
+.gm-datapad-jobs .jb-group-lbl {
+  color: var(--jb-ink);
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.swse-shell-surface--messenger .jb-group-count,
+.gm-datapad-jobs .jb-group-count {
+  color: var(--jb-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+}
+
+.swse-shell-surface--messenger .jb-group-hd hr,
+.gm-datapad-jobs .jb-group-hd hr {
+  flex: 1 1 auto;
+  border: 0;
+  border-top: 1px solid rgba(127, 223, 230, 0.13);
+}
+
+.swse-shell-surface--messenger .jb-cards.grid,
+.gm-datapad-jobs .jb-cards.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 10px;
+  align-items: stretch;
+}
+
+.swse-shell-surface--messenger .jb-card,
+.gm-datapad-jobs .jb-card {
+  position: relative;
+  min-width: 0;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding: 13px 14px 13px 17px;
+  border-radius: 13px;
+  border: 1px solid rgba(127, 223, 230, 0.14);
+  background:
+    linear-gradient(150deg, rgba(28, 32, 49, 0.78), rgba(7, 9, 18, 0.62)),
+    radial-gradient(circle at 15% 0%, rgba(127, 223, 230, 0.08), transparent 42%);
+  color: var(--jb-ink);
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+}
+
+.swse-shell-surface--messenger .jb-card::before,
+.gm-datapad-jobs .jb-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: var(--jb-accent);
+  opacity: 0.68;
+  transition: opacity 160ms ease;
+}
+
+.swse-shell-surface--messenger .jb-card.active::before,
+.gm-datapad-jobs .jb-card.active::before,
+.swse-shell-surface--messenger .jb-card.accepted::before,
+.swse-shell-surface--messenger .jb-card.inProgress::before,
+.swse-shell-surface--messenger .jb-card.active::before,
+.gm-datapad-jobs .jb-card.active::before { background: var(--jb-green); }
+.swse-shell-surface--messenger .jb-card.review::before,
+.swse-shell-surface--messenger .jb-card.complete::before,
+.gm-datapad-jobs .jb-card.review::before,
+.gm-datapad-jobs .jb-card.complete::before { background: var(--jb-gold); }
+.swse-shell-surface--messenger .jb-card.failed::before,
+.gm-datapad-jobs .jb-card.failed::before { background: var(--jb-red); }
+.swse-shell-surface--messenger .jb-card.archived::before,
+.gm-datapad-jobs .jb-card.archived::before { background: var(--jb-muted); opacity: 0.42; }
+
+.swse-shell-surface--messenger .jb-card:hover,
+.gm-datapad-jobs .jb-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(127, 223, 230, 0.42);
+  box-shadow: 0 13px 28px rgba(0, 0, 0, 0.36), 0 0 24px rgba(127, 223, 230, 0.13);
+}
+
+.swse-shell-surface--messenger .jb-card:hover::before,
+.gm-datapad-jobs .jb-card:hover::before { opacity: 1; }
+
+.swse-shell-surface--messenger .jb-card.attention,
+.gm-datapad-jobs .jb-card.attention {
+  border-color: rgba(230, 195, 106, 0.32);
+  box-shadow: 0 9px 22px rgba(0, 0, 0, 0.30), 0 0 20px rgba(230, 195, 106, 0.08);
+}
+
+.swse-shell-surface--messenger .jb-attn,
+.gm-datapad-jobs .jb-attn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 2;
+  padding: 3px 8px;
+  border: 0;
+  border-left: 1px solid rgba(230, 195, 106, 0.30);
+  border-bottom: 1px solid rgba(230, 195, 106, 0.30);
+  border-radius: 0 13px 0 9px;
+  color: var(--jb-gold);
+  background: rgba(230, 195, 106, 0.12);
+  font-family: var(--font-mono, monospace);
+  font-size: 7.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.swse-shell-surface--messenger .jb-card-top,
+.gm-datapad-jobs .jb-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.swse-shell-surface--messenger .jb-card-poster,
+.gm-datapad-jobs .jb-card-poster {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.swse-shell-surface--messenger .jb-card-avatar,
+.gm-datapad-jobs .jb-card-avatar {
+  width: 31px;
+  height: 31px;
+  border-radius: 9px;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--jb-accent);
+  background: rgba(127, 223, 230, 0.10);
+  border: 1px solid rgba(127, 223, 230, 0.24);
+  font-family: var(--font-display, monospace);
+  font-size: 17px;
+  overflow: hidden;
+}
+
+.swse-shell-surface--messenger .jb-card-avatar img,
+.gm-datapad-jobs .jb-card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.swse-shell-surface--messenger .jb-card-poster-copy,
+.gm-datapad-jobs .jb-card-poster-copy {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.swse-shell-surface--messenger .jb-card-poster .pn,
+.gm-datapad-jobs .jb-card-poster .pn {
+  min-width: 0;
+  color: var(--jb-ink);
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swse-shell-surface--messenger .jb-card-poster .po,
+.gm-datapad-jobs .jb-card-poster .po {
+  color: var(--jb-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.swse-shell-surface--messenger .jb-status,
+.gm-datapad-jobs .jb-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+  padding: 3px 8px;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+  color: var(--jb-accent);
+  background: rgba(127, 223, 230, 0.06);
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.swse-shell-surface--messenger .jb-status .d,
+.gm-datapad-jobs .jb-status .d {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.swse-shell-surface--messenger .jb-status.active,
+.swse-shell-surface--messenger .jb-status.accepted,
+.swse-shell-surface--messenger .jb-status.inProgress,
+.gm-datapad-jobs .jb-status.active,
+.gm-datapad-jobs .jb-status.accepted,
+.gm-datapad-jobs .jb-status.inProgress { color: var(--jb-green); background: rgba(119, 230, 165, 0.06); }
+.swse-shell-surface--messenger .jb-status.review,
+.swse-shell-surface--messenger .jb-status.complete,
+.gm-datapad-jobs .jb-status.review,
+.gm-datapad-jobs .jb-status.complete { color: var(--jb-gold); background: rgba(230, 195, 106, 0.08); }
+.swse-shell-surface--messenger .jb-status.archived,
+.gm-datapad-jobs .jb-status.archived { color: var(--jb-muted); background: rgba(160, 170, 175, 0.06); }
+.swse-shell-surface--messenger .jb-status.failed,
+.gm-datapad-jobs .jb-status.failed { color: var(--jb-red); background: rgba(239, 107, 95, 0.08); }
+
+.swse-shell-surface--messenger .jb-card-title,
+.gm-datapad-jobs .jb-card-title {
+  color: var(--jb-ink);
+  font-family: var(--font-syne, var(--font-body, sans-serif));
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 1.2;
+  padding-right: 44px;
+}
+
+.swse-shell-surface--messenger .jb-card-brief,
+.gm-datapad-jobs .jb-card-brief {
+  color: var(--jb-muted);
+  font-size: 11.5px;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.swse-shell-surface--messenger .jb-card-tags,
+.gm-datapad-jobs .jb-card-tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.swse-shell-surface--messenger .jb-prog,
+.gm-datapad-jobs .jb-prog {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.swse-shell-surface--messenger .jb-prog-bar,
+.gm-datapad-jobs .jb-prog-bar {
+  flex: 1 1 auto;
+  height: 5px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.42);
+  border: 1px solid rgba(127, 223, 230, 0.12);
+}
+
+.swse-shell-surface--messenger .jb-prog-bar i,
+.gm-datapad-jobs .jb-prog-bar i {
+  display: block;
+  height: 100%;
+  min-width: 4px;
+  width: var(--jb-progress, 52%);
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--jb-accent), var(--jb-green));
+  box-shadow: 0 0 10px rgba(127, 223, 230, 0.30);
+}
+
+.swse-shell-surface--messenger .jb-prog-lbl,
+.gm-datapad-jobs .jb-prog-lbl {
+  flex: 0 0 auto;
+  color: var(--jb-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: 8.5px;
+  white-space: nowrap;
+}
+
+.swse-shell-surface--messenger .jb-card-foot,
+.gm-datapad-jobs .jb-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 9px;
+  border-top: 1px solid rgba(127, 223, 230, 0.11);
+}
+
+.swse-shell-surface--messenger .jb-reward-inline,
+.gm-datapad-jobs .jb-reward-inline {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+
+.swse-shell-surface--messenger .jb-reward-inline .cr,
+.gm-datapad-jobs .jb-reward-inline .cr {
+  color: var(--jb-green);
+  font-family: var(--font-mono, monospace);
+  font-size: 13px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.swse-shell-surface--messenger .jb-reward-inline .xp,
+.gm-datapad-jobs .jb-reward-inline .xp {
+  color: var(--jb-gold);
+  font-family: var(--font-mono, monospace);
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+.swse-shell-surface--messenger .jb-card-meta,
+.gm-datapad-jobs .jb-card-meta {
+  color: var(--jb-muted);
+  font-family: var(--font-mono, monospace);
+  font-size: 8px;
+  text-align: right;
+}
+
+.swse-shell-surface--messenger .jb-empty,
+.gm-datapad-jobs .jb-empty {
+  min-height: 260px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  padding: 30px 18px;
+  color: var(--jb-muted);
+  text-align: center;
+  border-radius: 12px;
+  border: 1px dashed rgba(127, 223, 230, 0.18);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.swse-shell-surface--messenger .jb-empty .glyph,
+.gm-datapad-jobs .jb-empty .glyph {
+  color: rgba(127, 223, 230, 0.38);
+  font-family: var(--font-display, monospace);
+  font-size: 42px;
+}
+
+.swse-shell-surface--messenger .jb-empty .t,
+.gm-datapad-jobs .jb-empty .t {
+  color: var(--jb-ink);
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.swse-shell-surface--messenger .jb-empty .s,
+.gm-datapad-jobs .jb-empty .s {
+  max-width: 300px;
+  color: var(--jb-muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.gm-datapad-jobs .jb-root--gm {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 12px;
+  align-items: stretch;
+}
+
+.gm-datapad-jobs .jb-board-panel,
+.gm-datapad-jobs .jb-quick-rail {
+  min-height: 0;
+  overflow: hidden;
+  border-color: rgba(127, 223, 230, 0.16);
+  background:
+    linear-gradient(160deg, rgba(19, 20, 31, 0.74), rgba(3, 4, 10, 0.40)),
+    radial-gradient(circle at 20% 0%, rgba(230, 195, 106, 0.08), transparent 44%);
+}
+
+.gm-datapad-jobs .jb-board-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gm-datapad-jobs .jb-content {
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.gm-datapad-jobs .jb-quick-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gm-datapad-jobs .jb-empty--rail {
+  min-height: 100%;
+}
+
+@media (max-width: 1180px) {
+  .gm-datapad-jobs .jb-root--gm {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  .swse-shell-surface--messenger .jb-shelf,
+  .gm-datapad-jobs .jb-shelf {
+    flex-wrap: wrap;
+  }
+
+  .swse-shell-surface--messenger .jb-shelf-tab,
+  .gm-datapad-jobs .jb-shelf-tab {
+    flex: 1 1 150px;
+  }
+
+  .swse-shell-surface--messenger .jb-cards.grid,
+  .gm-datapad-jobs .jb-cards.grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.swse-shell-surface--messenger .jb-card.attention::before,
+.gm-datapad-jobs .jb-card.attention::before { background: var(--jb-gold); }
+.swse-shell-surface--messenger .jb-card.claimed::before,
+.gm-datapad-jobs .jb-card.claimed::before,
+.swse-shell-surface--messenger .jb-card.success::before,
+.gm-datapad-jobs .jb-card.success::before { background: var(--jb-green); }
+.swse-shell-surface--messenger .jb-card.danger::before,
+.gm-datapad-jobs .jb-card.danger::before { background: var(--jb-red); }
+.swse-shell-surface--messenger .jb-card.muted::before,
+.gm-datapad-jobs .jb-card.muted::before { background: var(--jb-muted); opacity: 0.45; }
+
+.swse-shell-surface--messenger .jb-status.attention,
+.gm-datapad-jobs .jb-status.attention { color: var(--jb-gold); background: rgba(230, 195, 106, 0.08); }
+.swse-shell-surface--messenger .jb-status.claimed,
+.gm-datapad-jobs .jb-status.claimed,
+.swse-shell-surface--messenger .jb-status.success,
+.gm-datapad-jobs .jb-status.success { color: var(--jb-green); background: rgba(119, 230, 165, 0.07); }
+.swse-shell-surface--messenger .jb-status.danger,
+.gm-datapad-jobs .jb-status.danger { color: var(--jb-red); background: rgba(239, 107, 95, 0.08); }
+.swse-shell-surface--messenger .jb-status.muted,
+.gm-datapad-jobs .jb-status.muted { color: var(--jb-muted); background: rgba(160, 170, 175, 0.06); }
+
+/* SWSE Holonet Job Board Phase 5: selected mission dossier + detail rail polish.
+   Scoped to Holonet Messenger guts and GM Job Board guts; leaves the datapad shell host alone. */
+
+.swse-holonet-comm .jb-content--phase5,
+.gm-datapad-jobs .job-board-kanban-layout {
+  min-height: 0;
+}
+
+.swse-holonet-comm .jb-content--phase5.has-detail {
+  grid-template-columns: minmax(0, 1fr) minmax(310px, 380px);
+  align-items: stretch;
+}
+
+.swse-holonet-comm .jb-content--phase5 .jb-scroll {
+  padding-right: 2px;
+}
+
+.swse-holonet-comm .jb-content--phase5 .jb-card.on,
+.swse-holonet-comm .jb-content--phase5 .jb-card:focus-visible {
+  border-color: color-mix(in oklch, var(--accent, #7fdfe6) 72%, transparent);
+  background:
+    linear-gradient(135deg, oklch(.85 .18 200 / .15), oklch(.14 .04 282 / .62)),
+    oklch(0 0 0 / .24);
+  box-shadow:
+    0 0 0 1px oklch(.85 .18 200 / .18) inset,
+    0 0 26px oklch(.85 .18 200 / .18),
+    0 14px 32px oklch(0 0 0 / .38);
+}
+
+.swse-holonet-comm .jb-content--phase5 .jb-card.on::after {
+  content: "ACTIVE DOSSIER";
+  position: absolute;
+  right: 8px;
+  bottom: 7px;
+  font-family: var(--font-mono, monospace);
+  font-size: 7px;
+  letter-spacing: .16em;
+  color: var(--accent, #7fdfe6);
+  opacity: .72;
+}
+
+.swse-holonet-comm .jb-detail--phase5,
+.gm-datapad-jobs .jb-detail--phase5 {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid oklch(.85 .18 200 / .22);
+  background:
+    radial-gradient(ellipse at 20% 0%, oklch(.85 .18 200 / .10), transparent 48%),
+    linear-gradient(180deg, oklch(.15 .045 282 / .78), oklch(0 0 0 / .34));
+  box-shadow:
+    inset 0 1px 0 oklch(1 0 0 / .05),
+    inset 0 0 42px oklch(.85 .18 200 / .04),
+    0 16px 36px oklch(0 0 0 / .32);
+}
+
+.swse-holonet-comm .jb-detail--phase5::before,
+.gm-datapad-jobs .jb-detail--phase5::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, oklch(.85 .18 200 / .16), transparent 18%, transparent 82%, oklch(.85 .18 200 / .08)),
+    repeating-linear-gradient(0deg, transparent 0 8px, oklch(1 0 0 / .018) 8px 9px);
+  opacity: .58;
+  z-index: 0;
+}
+
+.swse-holonet-comm .jb-detail--phase5 > *,
+.gm-datapad-jobs .jb-detail--phase5 > * {
+  position: relative;
+  z-index: 1;
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-detail-hd,
+.gm-datapad-jobs .jb-detail--phase5 .jb-detail-hd,
+.gm-datapad-jobs .jb-detail--gm-dossier .gm-phase9-dossier-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 15px;
+  border-bottom: 1px solid oklch(.85 .18 200 / .16);
+  background:
+    linear-gradient(135deg, oklch(.85 .18 200 / .09), transparent 62%),
+    oklch(0 0 0 / .22);
+}
+
+.swse-holonet-comm .jb-detail-poster,
+.gm-datapad-jobs .jb-detail-poster {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.swse-holonet-comm .jb-detail-avatar,
+.gm-datapad-jobs .jb-detail-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: 1px solid oklch(.85 .18 200 / .32);
+  background: oklch(.85 .18 200 / .10);
+  box-shadow: inset 0 0 18px oklch(.85 .18 200 / .12), 0 0 18px oklch(.85 .18 200 / .10);
+  color: var(--accent, #7fdfe6);
+  font-family: var(--font-display, monospace);
+  font-size: 22px;
+}
+
+.swse-holonet-comm .jb-card-avatar img,
+.swse-holonet-comm .jb-party-chip .g img,
+.gm-datapad-jobs .jb-card-avatar img,
+.gm-datapad-jobs .jb-party-chip .g img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  display: block;
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-detail-title,
+.gm-datapad-jobs .jb-detail--phase5 .jb-detail-title,
+.gm-datapad-jobs .jb-detail--gm-dossier .gm-phase9-dossier-header h3 {
+  margin: 2px 0 0;
+  color: var(--ink, #e9fbff);
+  font-family: var(--font-syne, system-ui, sans-serif);
+  font-size: 18px;
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -.02em;
+  text-shadow: 0 0 18px oklch(.85 .18 200 / .16);
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-detail-body,
+.gm-datapad-jobs .jb-detail--phase5 .jb-detail-body,
+.gm-datapad-jobs .jb-detail--gm-dossier {
+  scrollbar-width: thin;
+  scrollbar-color: oklch(.85 .18 200 / .24) transparent;
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-detail-body,
+.gm-datapad-jobs .jb-detail--phase5 .jb-detail-body {
+  padding: 14px;
+  gap: 13px;
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-payout,
+.gm-datapad-jobs .jb-detail--phase5 .jb-payout,
+.gm-datapad-jobs .job-payout-summary-card {
+  border-radius: 12px;
+  border: 1px solid oklch(.82 .19 145 / .28);
+  background:
+    linear-gradient(135deg, oklch(.82 .19 145 / .11), oklch(0 0 0 / .28)),
+    oklch(0 0 0 / .18);
+  box-shadow: inset 0 0 24px oklch(.82 .19 145 / .045);
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-payout-tot,
+.gm-datapad-jobs .jb-detail--phase5 .jb-payout-tot,
+.gm-datapad-jobs .job-payout-summary-card strong {
+  color: var(--pos, #7dffad);
+  font-family: var(--font-display, monospace);
+  font-size: 28px;
+  letter-spacing: .035em;
+  text-shadow: 0 0 16px oklch(.82 .19 145 / .25);
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-payout-break,
+.gm-datapad-jobs .jb-detail--phase5 .jb-payout-break {
+  padding-top: 2px;
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-payout-note,
+.gm-datapad-jobs .jb-detail--phase5 .jb-payout-note {
+  border-top: 1px solid oklch(.82 .19 145 / .14);
+  padding-top: 7px;
+  line-height: 1.35;
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-sec,
+.gm-datapad-jobs .jb-detail--phase5 .jb-sec,
+.gm-datapad-jobs .jb-detail--gm-dossier .job-detail-block {
+  border: 1px solid oklch(.85 .18 200 / .12);
+  border-radius: 12px;
+  padding: 11px;
+  background:
+    linear-gradient(180deg, oklch(.85 .18 200 / .035), transparent),
+    oklch(0 0 0 / .20);
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-sec-lbl,
+.gm-datapad-jobs .jb-detail--phase5 .jb-sec-lbl,
+.gm-datapad-jobs .jb-detail--gm-dossier .job-detail-block h4,
+.gm-datapad-jobs .jb-detail--gm-dossier .gm-command-eyebrow {
+  color: var(--accent, #7fdfe6);
+  text-shadow: 0 0 12px oklch(.85 .18 200 / .18);
+}
+
+.swse-holonet-comm .jb-issuer-card,
+.gm-datapad-jobs .jb-issuer-card,
+.gm-datapad-jobs .gm-phase9-client-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-radius: 11px;
+  border: 1px solid oklch(.85 .18 200 / .14);
+  background: oklch(0 0 0 / .22);
+}
+
+.swse-holonet-comm .jb-issuer-card img,
+.gm-datapad-jobs .jb-issuer-card img,
+.gm-datapad-jobs .gm-phase9-client-card img {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid oklch(.85 .18 200 / .28);
+}
+
+.swse-holonet-comm .jb-detail-brief {
+  margin: 0;
+  color: var(--ink-dim, #b8d8dc);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.swse-holonet-comm .jb-detail-brief--muted {
+  color: var(--ink-faint, #78989c);
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: .04em;
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-obj,
+.gm-datapad-jobs .jb-detail--phase5 .jb-obj,
+.gm-datapad-jobs .jb-detail--gm-dossier .gm-phase10-objective-card {
+  border-radius: 10px;
+  background: oklch(0 0 0 / .24);
+  border-color: oklch(.85 .18 200 / .14);
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-obj.approved,
+.gm-datapad-jobs .jb-detail--phase5 .jb-obj.approved,
+.gm-datapad-jobs .jb-detail--gm-dossier .gm-phase10-objective-card.approved {
+  border-color: oklch(.82 .19 145 / .25);
+  background: oklch(.82 .19 145 / .06);
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-obj.submitted,
+.gm-datapad-jobs .jb-detail--phase5 .jb-obj.submitted,
+.gm-datapad-jobs .jb-detail--gm-dossier .gm-phase10-objective-card.pendingReview,
+.gm-datapad-jobs .jb-detail--gm-dossier .gm-phase10-objective-card.submitted,
+.gm-datapad-jobs .jb-detail--gm-dossier .gm-phase10-objective-card.claimed {
+  border-color: oklch(.88 .17 95 / .28);
+  background: oklch(.88 .17 95 / .06);
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-obj.failed,
+.gm-datapad-jobs .jb-detail--phase5 .jb-obj.failed,
+.gm-datapad-jobs .jb-detail--gm-dossier .gm-phase10-objective-card.failed,
+.gm-datapad-jobs .jb-detail--gm-dossier .gm-phase10-objective-card.rejected {
+  border-color: oklch(.70 .22 25 / .25);
+  background: oklch(.70 .22 25 / .06);
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-obj-check,
+.gm-datapad-jobs .jb-detail--phase5 .jb-obj-check {
+  color: var(--accent, #7fdfe6);
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-obj.approved .jb-obj-check,
+.gm-datapad-jobs .jb-detail--phase5 .jb-obj.approved .jb-obj-check {
+  color: #06210f;
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-obj-badge.submitted,
+.gm-datapad-jobs .jb-detail--phase5 .jb-obj-badge.submitted {
+  color: var(--zero, #ffe070);
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-obj-badge.failed,
+.gm-datapad-jobs .jb-detail--phase5 .jb-obj-badge.failed {
+  color: var(--neg, #ff6a5f);
+}
+
+.swse-holonet-comm .jb-cons-row,
+.gm-datapad-jobs .jb-cons-row,
+.gm-datapad-jobs .gm-phase11-consequence-row {
+  border-radius: 10px;
+  background: oklch(0 0 0 / .23);
+  border-color: oklch(.85 .18 200 / .13);
+}
+
+.swse-holonet-comm .jb-cons-row.rival,
+.gm-datapad-jobs .jb-cons-row.rival,
+.gm-datapad-jobs .gm-phase11-consequence-row.is-rival {
+  border-color: oklch(.70 .22 25 / .25);
+  background: oklch(.70 .22 25 / .055);
+}
+
+.swse-holonet-comm .jb-party-chip,
+.gm-datapad-jobs .jb-party-chip,
+.gm-datapad-jobs .job-participant-pill {
+  border-color: oklch(.85 .18 200 / .16);
+  background: oklch(0 0 0 / .24);
+}
+
+.swse-holonet-comm .jb-party-chip .g,
+.gm-datapad-jobs .jb-party-chip .g {
+  overflow: hidden;
+}
+
+.swse-holonet-comm .jb-timeline,
+.gm-datapad-jobs .jb-timeline,
+.gm-datapad-jobs .job-timeline {
+  padding: 2px 0 0 2px;
+}
+
+.swse-holonet-comm .jb-detail--phase5 .jb-detail-foot,
+.gm-datapad-jobs .jb-detail--phase5 .jb-detail-foot {
+  border-top-color: oklch(.85 .18 200 / .16);
+  background: linear-gradient(180deg, oklch(0 0 0 / .10), oklch(0 0 0 / .34));
+}
+
+.gm-datapad-jobs .jb-detail--gm-rail {
+  padding: 0;
+}
+
+.gm-datapad-jobs .jb-detail--gm-rail .jb-detail-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.gm-datapad-jobs .jb-detail--gm-dossier {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0;
+}
+
+.gm-datapad-jobs .jb-detail--gm-dossier > .gm-job-dossier-topline,
+.gm-datapad-jobs .jb-detail--gm-dossier > .job-detail-block {
+  margin-inline: 14px;
+}
+
+.gm-datapad-jobs .jb-detail--gm-dossier > .gm-job-dossier-topline {
+  margin-top: 14px;
+}
+
+.gm-datapad-jobs .jb-detail--gm-dossier > .job-detail-block:last-child {
+  margin-bottom: 14px;
+}
+
+.gm-datapad-jobs .jb-dossier-metrics,
+.gm-datapad-jobs .gm-phase9-dossier-metrics {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.gm-datapad-jobs .jb-dossier-metrics span,
+.gm-datapad-jobs .gm-phase9-dossier-metrics span {
+  border-radius: 9px;
+  border: 1px solid oklch(.85 .18 200 / .14);
+  background: oklch(0 0 0 / .24);
+  padding: 8px 9px;
+}
+
+.gm-datapad-jobs .jb-dossier-metrics strong,
+.gm-datapad-jobs .gm-phase9-dossier-metrics strong {
+  color: var(--accent, #7fdfe6);
+}
+
+.gm-datapad-jobs .gm-job-dossier-layout {
+  align-items: stretch;
+}
+
+@media (max-width: 1180px) {
+  .swse-holonet-comm .jb-content--phase5.has-detail {
+    grid-template-columns: 1fr;
+  }
+
+  .swse-holonet-comm .jb-detail--phase5 {
+    min-height: 420px;
+  }
+}
+
+@media (max-width: 980px) {
+  .gm-datapad-jobs .job-board-kanban-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .gm-datapad-jobs .jb-detail--gm-rail {
+    min-height: 420px;
+  }
+}
+
+/*
+ * SWSE Holonet Phase 6: responsive polish, scroll containment, and cleanup.
+ * This layer is intentionally scoped to the Messenger / Job Board guts and
+ * leaves the datapad shell host untouched.
+ */
+
+.swse-shell-surface--messenger.swse-holonet-comm,
+.gm-datapad-jobs {
+  --holonet-phase6-min-rail: 238px;
+  --holonet-phase6-detail: clamp(300px, 28vw, 390px);
+  --holonet-phase6-gap: 10px;
+}
+
+/* Containment: the inner apps should scroll their own rails, not stretch the host. */
+.swse-shell-surface--messenger.swse-holonet-comm :is(.hl-main-area, .hl-ms-root, .hl-ms-root--phase2, .hl-conv, .hl-chat-layout, .hl-chat-column, .hl-tlist, .hl-info-panel, .hl-jobboard-view, .jb-root, .jb-content, .jb-scroll, .jb-detail, .jb-detail-body),
+.gm-datapad-jobs :is(.job-board-shell, .job-board-command, .job-board-active-shelf, .job-board-status-groups, .job-card-stack, .job-board-kanban-layout, .job-board-rail, .gm-job-dossier-layout, .gm-job-dossier-main, .jb-detail, .jb-detail-body) {
+  min-width: 0 !important;
+  min-height: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-main-area,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-jobboard-view,
+.gm-datapad-jobs .job-board-shell,
+.gm-datapad-jobs .job-board-command {
+  overflow: hidden !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm :is(.hl-thread-groups, .hl-tlist-scroll, .hl-messages, .hl-compose-scroll, .hl-info-panel, .jb-scroll, .jb-detail-body),
+.gm-datapad-jobs :is(.job-board-status-groups, .job-board-rail, .gm-job-dossier-main, .gm-job-review-grid, .gm-job-payout-queue-grid, .jb-detail-body) {
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+/* Prevent very long names, rewards, or generated labels from blowing out grids. */
+.swse-shell-surface--messenger.swse-holonet-comm :is(.hl-title, .hl-titem-title, .hl-titem-preview, .hl-subtle, .jb-card-title, .jb-card-brief, .jb-detail-title, .jb-detail-brief, .jb-card-meta, .jb-group-lbl, .jb-prog-lbl),
+.gm-datapad-jobs :is(.jb-card-title, .jb-card-brief, .jb-detail-title, .jb-detail-brief, .jb-card-meta, .jb-group-lbl, .jb-prog-lbl, .job-card-title, .job-card-client) {
+  min-width: 0 !important;
+  overflow-wrap: anywhere;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm :is(.hl-chip, .hl-badge, .jb-status, .jb-shelf-tab, .jb-reward-inline, .hl-icon-btn, .hl-btn-accent, .hl-ghost-btn),
+.gm-datapad-jobs :is(.job-board-chip, .jb-status, .jb-shelf-tab, .jb-reward-inline, .swse-ui-button, .jb-big-btn) {
+  max-width: 100%;
+}
+
+/* Messenger: make the three-zone layout resilient between concept-size and narrow Foundry windows. */
+.swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 {
+  grid-template-columns: minmax(var(--holonet-phase6-min-rail), 284px) minmax(0, 1fr) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-chat-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(276px, var(--holonet-phase6-detail)) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-conv-header,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composer-meta-row,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-thread-actions,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-credit-actions,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-action-row {
+  flex-wrap: wrap !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-thread-actions {
+  justify-content: flex-end !important;
+  row-gap: 6px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composer-input-row--phase3 {
+  align-items: stretch !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-composer-ta {
+  min-width: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attach-menu-inline {
+  min-width: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attach-opt {
+  min-width: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attach-opt span:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-anchor,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg-bubble,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-message-card-wrap,
+.swse-shell-surface--messenger.swse-holonet-comm :is(.hl-credit-card, .hl-receipt-card, .hl-job-embed, .hl-secret-note-card, .hl-attach-card) {
+  max-width: 100% !important;
+  min-width: 0 !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .hl-msg-image,
+.swse-shell-surface--messenger.swse-holonet-comm .hl-attachment-card img {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+/* Job Board: preserve the dossier/card relationship without crushing cards. */
+.swse-shell-surface--messenger.swse-holonet-comm .jb-root--holonet,
+.gm-datapad-jobs .jb-root--gm {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--holonet-phase6-gap) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .jb-content--holonet.has-detail,
+.swse-shell-surface--messenger.swse-holonet-comm .jb-content--phase5.has-detail {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, var(--holonet-phase6-detail)) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .jb-cards.grid,
+.gm-datapad-jobs .jb-cards.grid,
+.gm-datapad-jobs .job-card-stack--shelf {
+  grid-template-columns: repeat(auto-fill, minmax(min(260px, 100%), 1fr)) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .jb-head-top,
+.swse-shell-surface--messenger.swse-holonet-comm .jb-subbar,
+.gm-datapad-jobs .jb-head-top,
+.gm-datapad-jobs .jb-subbar {
+  align-items: flex-start !important;
+  flex-wrap: wrap !important;
+  row-gap: 8px !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .jb-head-actions,
+.gm-datapad-jobs .jb-head-actions {
+  min-width: min(100%, 280px) !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .jb-shelf,
+.gm-datapad-jobs .jb-shelf {
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: none;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .jb-shelf::-webkit-scrollbar,
+.gm-datapad-jobs .jb-shelf::-webkit-scrollbar {
+  display: none;
+}
+
+
+.swse-shell-surface--messenger.swse-holonet-comm .jb-detail--phase5,
+.gm-datapad-jobs .jb-detail--phase5 {
+  max-height: 100% !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .jb-detail-body,
+.gm-datapad-jobs .jb-detail-body {
+  overflow-y: auto !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .jb-detail-foot,
+.gm-datapad-jobs .jb-detail-foot {
+  flex: 0 0 auto !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .jb-detail-foot .row,
+.gm-datapad-jobs .jb-detail-foot .row {
+  flex-wrap: wrap !important;
+}
+
+.swse-shell-surface--messenger.swse-holonet-comm .jb-detail-foot .row > *,
+.gm-datapad-jobs .jb-detail-foot .row > * {
+  min-width: min(140px, 100%) !important;
+}
+
+.gm-datapad-jobs .job-board-kanban-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, var(--holonet-phase6-detail)) !important;
+  min-height: 0 !important;
+}
+
+.gm-datapad-jobs .gm-job-dossier-layout {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, var(--holonet-phase6-detail)) !important;
+  min-height: 0 !important;
+}
+
+.gm-datapad-jobs .gm-phase9-dossier-metrics,
+.gm-datapad-jobs .jb-dossier-metrics {
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)) !important;
+}
+
+.gm-datapad-jobs .jb-cons-row,
+.swse-shell-surface--messenger.swse-holonet-comm .jb-cons-row {
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+}
+
+/* Undo older responsive rules that hid the transmission rail too early. */
+@media (min-width: 761px) and (max-width: 900px) {
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 {
+    grid-template-columns: minmax(220px, 248px) minmax(0, 1fr) !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-tlist {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 1280px) {
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-chat-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 320px) !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .jb-content--holonet.has-detail,
+  .swse-shell-surface--messenger.swse-holonet-comm .jb-content--phase5.has-detail,
+  .gm-datapad-jobs .job-board-kanban-layout,
+  .gm-datapad-jobs .gm-job-dossier-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 330px) !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-chat-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-info-panel {
+    display: none !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .jb-content--holonet.has-detail,
+  .swse-shell-surface--messenger.swse-holonet-comm .jb-content--phase5.has-detail,
+  .gm-datapad-jobs .job-board-kanban-layout,
+  .gm-datapad-jobs .gm-job-dossier-layout {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .jb-detail--phase5,
+  .gm-datapad-jobs .jb-detail--phase5,
+  .gm-datapad-jobs .job-board-rail {
+    max-height: none !important;
+    min-height: min(420px, 55vh) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-hud-r,
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-partyfund-pill,
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-presence-form {
+    display: none !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-main-area > .hl-ms-root--phase2 {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-ms-root--phase2 .hl-tlist {
+    display: none !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-conv-header {
+    align-items: stretch !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-conv-header-left,
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-thread-actions {
+    width: 100% !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-thread-actions {
+    justify-content: flex-start !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-attach-dock--phase3,
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-composer-input-row--phase3,
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-composer-meta-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .jb-shelf-tab,
+  .gm-datapad-jobs .jb-shelf-tab {
+    flex: 0 0 auto !important;
+    min-width: max-content !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-send-btn {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .jb-cards.grid,
+  .gm-datapad-jobs .jb-cards.grid,
+  .gm-datapad-jobs .job-card-stack--shelf {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .jb-cons-row,
+  .gm-datapad-jobs .jb-cons-row {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .jb-cons-delta,
+  .gm-datapad-jobs .jb-cons-delta {
+    align-items: flex-start !important;
+  }
+}
+
+@media (max-width: 620px) {
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-hud-title small,
+  .swse-shell-surface--messenger.swse-holonet-comm .jb-brand-tt .s,
+  .gm-datapad-jobs .jb-brand-tt .s {
+    display: none !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-hud-title,
+  .swse-shell-surface--messenger.swse-holonet-comm .jb-brand-tt .t,
+  .gm-datapad-jobs .jb-brand-tt .t {
+    letter-spacing: 0.14em !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .jb-card-top,
+  .gm-datapad-jobs .jb-card-top,
+  .swse-shell-surface--messenger.swse-holonet-comm .jb-detail-hd,
+  .gm-datapad-jobs .jb-detail-hd {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .jb-status,
+  .gm-datapad-jobs .jb-status {
+    align-self: flex-start !important;
+  }
+
+  .swse-shell-surface--messenger.swse-holonet-comm .hl-msg.own {
+    margin-left: 6% !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .swse-shell-surface--messenger.swse-holonet-comm *,
+  .swse-shell-surface--messenger.swse-holonet-comm *::before,
+  .swse-shell-surface--messenger.swse-holonet-comm *::after,
+  .gm-datapad-jobs *,
+  .gm-datapad-jobs *::before,
+  .gm-datapad-jobs *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* SWSE Holonet Phase 7 - lifecycle UX, intel archive, signed-color language, and repaint containment */
+.swse-shell-surface--messenger {
+  --hl-pos: #65e692;
+  --hl-neg: #ff6b6b;
+  --hl-warn: #ffd166;
+  --hl-info: #7fdfe6;
+  --hl-card-contain: layout style paint;
+}
+
+.swse-shell-surface--messenger .hl-message-anchor,
+.swse-shell-surface--messenger .hl-titem,
+.swse-shell-surface--messenger .jb-card,
+.swse-shell-surface--messenger .jb-obj,
+.swse-shell-surface--messenger .hl-intel-card,
+.gm-datapad .job-objective-card,
+.gm-datapad .job-pipeline-card {
+  contain: var(--hl-card-contain);
+  content-visibility: auto;
+  contain-intrinsic-size: 96px;
+}
+
+.swse-shell-surface--messenger .hl-messages,
+.swse-shell-surface--messenger .jb-scroll,
+.swse-shell-surface--messenger .hl-intel-list {
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.swse-signed,
+.swse-shell-surface--messenger .positive,
+.gm-datapad .positive {
+  font-variant-numeric: tabular-nums;
+}
+
+.swse-signed--positive,
+.swse-shell-surface--messenger .positive,
+.gm-datapad .positive {
+  color: var(--hl-pos) !important;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--hl-pos) 30%, transparent);
+}
+
+.swse-signed--negative,
+.swse-shell-surface--messenger .negative,
+.gm-datapad .negative {
+  color: var(--hl-neg) !important;
+  text-shadow: 0 0 10px color-mix(in srgb, var(--hl-neg) 28%, transparent);
+}
+
+.swse-signed--neutral,
+.swse-shell-surface--messenger .neutral,
+.gm-datapad .neutral {
+  color: var(--ink-faint, #8a8b93) !important;
+}
+
+.swse-shell-surface--messenger .jb-group--open .jb-group-dot,
+.swse-shell-surface--messenger .jb-status.open .d { background: var(--hl-info); box-shadow: 0 0 8px var(--hl-info); }
+.swse-shell-surface--messenger .jb-group--active .jb-group-dot,
+.swse-shell-surface--messenger .jb-status.active .d { background: var(--hl-pos); box-shadow: 0 0 8px var(--hl-pos); }
+.swse-shell-surface--messenger .jb-group--review .jb-group-dot,
+.swse-shell-surface--messenger .jb-status.review .d,
+.swse-shell-surface--messenger .jb-obj.submitted .jb-obj-check { background: var(--hl-warn); box-shadow: 0 0 8px var(--hl-warn); }
+.swse-shell-surface--messenger .jb-group--archived .jb-group-dot,
+.swse-shell-surface--messenger .jb-status.failed .d,
+.swse-shell-surface--messenger .jb-obj.failed .jb-obj-check { background: var(--hl-neg); box-shadow: 0 0 8px var(--hl-neg); }
+
+.swse-shell-surface--messenger .jb-obj.approved { border-color: color-mix(in srgb, var(--hl-pos) 34%, transparent); background: color-mix(in srgb, var(--hl-pos) 8%, transparent); }
+.swse-shell-surface--messenger .jb-obj.submitted { border-color: color-mix(in srgb, var(--hl-warn) 34%, transparent); background: color-mix(in srgb, var(--hl-warn) 7%, transparent); }
+.swse-shell-surface--messenger .jb-obj.failed { border-color: color-mix(in srgb, var(--hl-neg) 34%, transparent); background: color-mix(in srgb, var(--hl-neg) 8%, transparent); }
+
+.swse-shell-surface--messenger .jb-obj-rt {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+  min-width: 112px;
+}
+
+.swse-shell-surface--messenger .jb-obj-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: min(160px, 100%);
+}
+
+.swse-shell-surface--messenger .jb-obj-actions textarea {
+  width: 100%;
+  min-height: 42px;
+  resize: vertical;
+  border-radius: 7px;
+  border: 1px solid color-mix(in srgb, var(--hl-info) 24%, transparent);
+  background: rgba(0,0,0,.28);
+  color: var(--ink, #e8fbff);
+  font: 10.5px/1.35 var(--font-body, system-ui, sans-serif);
+  padding: 6px 8px;
+}
+
+.swse-shell-surface--messenger .jb-obj-action-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.swse-shell-surface--messenger .jb-mini.ok,
+.gm-datapad .jb-mini.ok { color: var(--hl-pos); border-color: color-mix(in srgb, var(--hl-pos) 35%, transparent); }
+.swse-shell-surface--messenger .jb-mini.no,
+.gm-datapad .jb-mini.no { color: var(--hl-neg); border-color: color-mix(in srgb, var(--hl-neg) 35%, transparent); }
+
+.swse-shell-surface--messenger .hl-intel-view {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.swse-shell-surface--messenger .hl-intel-head {
+  flex: 0 0 auto;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-end;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--hl-info) 18%, transparent);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(127,223,230,.09), rgba(0,0,0,.22));
+}
+
+.swse-shell-surface--messenger .hl-intel-head h2 {
+  margin: 2px 0 4px;
+  font-size: 22px;
+  letter-spacing: .04em;
+  color: var(--ink, #e8fbff);
+}
+
+.swse-shell-surface--messenger .hl-intel-head p,
+.swse-shell-surface--messenger .hl-intel-help {
+  margin: 0;
+  color: var(--ink-faint, #9aa6b2);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.swse-shell-surface--messenger .hl-intel-stats {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.swse-shell-surface--messenger .hl-intel-layout {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 320px;
+  gap: 12px;
+  overflow: hidden;
+}
+
+.swse-shell-surface--messenger .hl-intel-list {
+  min-height: 0;
+  overflow: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+  align-content: start;
+  padding-right: 4px;
+}
+
+.swse-shell-surface--messenger .hl-intel-card,
+.swse-shell-surface--messenger .hl-intel-compose,
+.swse-shell-surface--messenger .hl-intel-message-card {
+  border: 1px solid color-mix(in srgb, var(--hl-info) 18%, transparent);
+  border-radius: 12px;
+  background: linear-gradient(155deg, rgba(127,223,230,.08), rgba(0,0,0,.32));
+  box-shadow: inset 0 0 18px rgba(127,223,230,.05), 0 8px 18px rgba(0,0,0,.25);
+}
+
+.swse-shell-surface--messenger .hl-intel-card {
+  position: relative;
+  padding: 12px 13px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.swse-shell-surface--messenger .hl-intel-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  border-radius: 12px 0 0 12px;
+  background: var(--hl-info);
+  opacity: .75;
+}
+
+.swse-shell-surface--messenger .hl-intel-card.party::before { background: var(--hl-pos); }
+.swse-shell-surface--messenger .hl-intel-card.job::before { background: var(--hl-warn); }
+.swse-shell-surface--messenger .hl-intel-card.unread { border-color: color-mix(in srgb, var(--hl-warn) 45%, transparent); }
+
+.swse-shell-surface--messenger .hl-intel-card header,
+.swse-shell-surface--messenger .hl-intel-card footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.swse-shell-surface--messenger .hl-intel-card h3 {
+  margin: 2px 0 0;
+  color: var(--ink, #e8fbff);
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.swse-shell-surface--messenger .hl-intel-card p {
+  margin: 0;
+  color: var(--ink-dim, #b5c9cf);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.swse-shell-surface--messenger .hl-intel-card footer {
+  align-items: center;
+  color: var(--ink-faint, #9aa6b2);
+  font-size: 10px;
+  border-top: 1px solid rgba(127,223,230,.10);
+  padding-top: 8px;
+}
+
+.swse-shell-surface--messenger .hl-intel-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+
+.swse-shell-surface--messenger .hl-intel-compose {
+  min-height: 0;
+  overflow: auto;
+  padding: 14px;
+}
+
+.swse-shell-surface--messenger .hl-intel-compose form,
+.swse-shell-surface--messenger .hl-field-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.swse-shell-surface--messenger .hl-intel-compose form { gap: 11px; }
+
+.swse-shell-surface--messenger .hl-field-label {
+  color: var(--hl-info);
+  font: 10px/1.3 var(--font-mono, monospace);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.swse-shell-surface--messenger .hl-intel-message-card {
+  padding: 11px 12px;
+}
+
+.swse-shell-surface--messenger .hl-intel-message-card h4 {
+  margin: 3px 0 7px;
+  color: var(--ink, #e8fbff);
+  font-size: 14px;
+}
+
+@media (max-width: 980px) {
+  .swse-shell-surface--messenger .hl-intel-layout { grid-template-columns: 1fr; }
+  .swse-shell-surface--messenger .hl-intel-compose { order: -1; }
+  .swse-shell-surface--messenger .jb-obj { grid-template-columns: auto 1fr; }
+  .swse-shell-surface--messenger .jb-obj-rt { grid-column: 1 / -1; align-items: stretch; }
+  .swse-shell-surface--messenger .jb-obj-actions { width: 100%; }
+}
+
+/* SWSE Holonet Phase 8: GM Job Board tab decomposition and declutter pass.
+   Scope: GM Job Board guts only. Does not touch datapad shell host chrome. */
+.gm-datapad-jobs.gm-jobboard-tabs-v8 {
+  --gm-job-v8-panel: color-mix(in srgb, #0a1118 88%, #14313d 12%);
+  --gm-job-v8-panel-2: color-mix(in srgb, #0d1620 86%, #2c2133 14%);
+  --gm-job-v8-line: rgba(127, 223, 230, 0.18);
+  --gm-job-v8-line-strong: rgba(127, 223, 230, 0.34);
+  --gm-job-v8-cyan: #7fdfe6;
+  --gm-job-v8-gold: #e3c16d;
+  --gm-job-v8-green: #79e58e;
+  --gm-job-v8-red: #ff6c64;
+  --gm-job-v8-muted: rgba(214, 239, 243, 0.58);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 0;
+}
+
+.gm-datapad-jobs.gm-jobboard-tabs-v8 .gm-jobboard-v8-header {
+  margin-bottom: 0;
+  border: 1px solid var(--gm-job-v8-line);
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.08), rgba(0, 0, 0, 0.22));
+}
+
+.gm-datapad-jobs.gm-jobboard-tabs-v8 .gm-jobboard-v8-header-actions {
+  align-items: center;
+  gap: 8px;
+}
+
+.gm-jobboard-v8-command-bar {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  padding: 12px 14px;
+  border-color: var(--gm-job-v8-line);
+  background: linear-gradient(120deg, rgba(127, 223, 230, 0.07), rgba(0, 0, 0, 0.22));
+}
+
+.gm-jobboard-v8-command-copy {
+  min-width: 0;
+}
+
+.gm-jobboard-v8-command-copy strong {
+  display: block;
+  margin-top: 2px;
+  color: var(--gm-job-v8-cyan);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gm-jobboard-v8-command-copy p {
+  margin: 4px 0 0;
+  color: var(--gm-job-v8-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.gm-jobboard-v8-kpis {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(72px, 1fr));
+  gap: 7px;
+  min-width: min(520px, 100%);
+}
+
+.gm-jobboard-v8-kpi {
+  border: 1px solid rgba(127, 223, 230, 0.16);
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  padding: 8px 10px;
+  text-align: center;
+  box-shadow: inset 0 0 18px rgba(127, 223, 230, 0.04);
+}
+
+.gm-jobboard-v8-kpi strong {
+  display: block;
+  color: var(--gm-job-v8-cyan);
+  font-family: var(--font-display, ui-monospace, monospace);
+  font-size: 22px;
+  line-height: 0.95;
+}
+
+.gm-jobboard-v8-kpi em {
+  display: block;
+  margin-top: 3px;
+  color: var(--gm-job-v8-muted);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 8px;
+  font-style: normal;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.gm-jobboard-v8-kpi.attention strong { color: var(--gm-job-v8-gold); }
+.gm-jobboard-v8-kpi.payout strong { color: var(--gm-job-v8-green); }
+.gm-jobboard-v8-kpi.muted strong { color: rgba(214, 239, 243, 0.48); }
+
+.gm-datapad-jobs.gm-jobboard-tabs-v8 > .gm-job-saved-contacts-strip,
+.gm-datapad-jobs.gm-jobboard-tabs-v8 > .gm-job-draft-recovery,
+.gm-datapad-jobs.gm-jobboard-tabs-v8 > .job-board-metrics,
+.gm-datapad-jobs.gm-jobboard-tabs-v8 > .gm-job-issuer-filter-banner,
+.gm-datapad-jobs.gm-jobboard-tabs-v8 > .gm-phase9-job-ops-strip,
+.gm-datapad-jobs.gm-jobboard-tabs-v8 > .gm-job-lifecycle-shelves {
+  display: none !important;
+}
+
+.gm-jobboard-v8-tabs {
+  display: grid;
+  grid-template-columns: repeat(8, minmax(84px, 1fr));
+  gap: 6px;
+  padding: 7px;
+  margin: 0;
+  border-color: var(--gm-job-v8-line);
+  background: rgba(0, 0, 0, 0.28);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.gm-jobboard-v8-tabs .gm-job-tab {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 9px;
+  border: 1px solid rgba(127, 223, 230, 0.12);
+  border-radius: 9px;
+  background: rgba(4, 10, 15, 0.62);
+  color: rgba(214, 239, 243, 0.64);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: border-color 120ms ease, background 120ms ease, color 120ms ease, box-shadow 120ms ease;
+}
+
+.gm-jobboard-v8-tabs .gm-job-tab i {
+  color: var(--gm-job-v8-cyan);
+  opacity: 0.7;
+}
+
+.gm-jobboard-v8-tabs .gm-job-tab span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gm-jobboard-v8-tabs .gm-job-tab em {
+  min-width: 22px;
+  border-radius: 999px;
+  padding: 2px 5px;
+  color: #071014;
+  background: rgba(127, 223, 230, 0.68);
+  font-style: normal;
+  font-weight: 700;
+  text-align: center;
+}
+
+.gm-jobboard-v8-tabs .gm-job-tab:hover,
+.gm-jobboard-v8-tabs .gm-job-tab.is-active {
+  color: #effcff;
+  border-color: var(--gm-job-v8-line-strong);
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.16), rgba(0, 0, 0, 0.26));
+  box-shadow: inset 0 0 18px rgba(127, 223, 230, 0.09), 0 0 16px rgba(127, 223, 230, 0.08);
+}
+
+.gm-jobboard-v8-tabs .gm-job-tab.is-active i { opacity: 1; }
+.gm-jobboard-v8-tabs .gm-job-tab[data-job-tab-switch="review"] em,
+.gm-jobboard-v8-tabs .gm-job-tab[data-job-tab-switch="drafts"] em { background: rgba(227, 193, 109, 0.82); }
+.gm-jobboard-v8-tabs .gm-job-tab[data-job-tab-switch="payout"] em,
+.gm-jobboard-v8-tabs .gm-job-tab[data-job-tab-switch="settlement"] em { background: rgba(121, 229, 142, 0.82); }
+.gm-jobboard-v8-tabs .gm-job-tab[data-job-tab-switch="archive"] em { background: rgba(214, 239, 243, 0.48); }
+
+.gm-jobboard-tabs-v8 .gm-job-tab-panel {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.gm-jobboard-tabs-v8 .gm-job-tab-panel.is-active {
+  display: block;
+}
+
+.gm-jobboard-tabs-v8 .gm-job-tab-panel[hidden] {
+  display: none !important;
+}
+
+.gm-jobboard-tabs-v8 .gm-job-tab-panel[data-job-tab-panel="board"] .job-board-shell,
+.gm-jobboard-tabs-v8 .gm-job-tab-panel[data-job-tab-panel="dossier"] .gm-job-dossier-layout,
+.gm-jobboard-tabs-v8 .gm-job-tab-panel[data-job-tab-panel="settlement"] .gm-job-settlement-layout {
+  max-height: min(74vh, 820px);
+  min-height: 0;
+  overflow: hidden;
+}
+
+.gm-jobboard-tabs-v8 .gm-job-tab-panel[data-job-tab-panel="board"] .job-board-status-groups,
+.gm-jobboard-tabs-v8 .gm-job-tab-panel[data-job-tab-panel="dossier"] .gm-job-dossier-main,
+.gm-jobboard-tabs-v8 .gm-job-tab-panel[data-job-tab-panel="dossier"] .gm-job-dossier-side,
+.gm-jobboard-tabs-v8 .gm-job-tab-panel[data-job-tab-panel="settlement"] .job-payout-panel {
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(127, 223, 230, 0.32) rgba(0, 0, 0, 0.18);
+}
+
+.gm-jobboard-v8-tab-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+  gap: 12px;
+  min-height: 0;
+}
+
+.gm-jobboard-v8-tab-card {
+  border-color: var(--gm-job-v8-line) !important;
+  background: linear-gradient(145deg, rgba(14, 25, 35, 0.86), rgba(0, 0, 0, 0.26)) !important;
+  box-shadow: inset 0 0 24px rgba(127, 223, 230, 0.035);
+}
+
+.gm-jobboard-v8-side-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-self: start;
+  padding: 14px;
+}
+
+.gm-jobboard-v8-side-card strong {
+  color: var(--gm-job-v8-gold);
+  font-family: var(--font-mono, ui-monospace, monospace);
+}
+
+.gm-jobboard-v8-side-card p {
+  color: var(--gm-job-v8-muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.gm-jobboard-v8-contacts-layout:not(:has(.gm-jobboard-v8-side-card)) {
+  grid-template-columns: 1fr;
+}
+
+.gm-jobboard-v8-contact-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+}
+
+.gm-jobboard-v8-contact-grid .gm-job-saved-contact-card {
+  min-height: 76px;
+  border-color: rgba(127, 223, 230, 0.16);
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.gm-jobboard-v8-archive-panel {
+  max-height: min(74vh, 820px);
+  overflow: auto;
+}
+
+.gm-jobboard-v8-archive-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+  padding-top: 10px;
+}
+
+.gm-jobboard-v8-archive-grid .jb-card {
+  min-height: 190px;
+}
+
+.gm-jobboard-tabs-v8 .job-queue-panel {
+  max-height: min(74vh, 820px);
+  overflow: auto;
+  border-color: var(--gm-job-v8-line) !important;
+  background: linear-gradient(145deg, rgba(14, 25, 35, 0.84), rgba(0, 0, 0, 0.24)) !important;
+}
+
+.gm-jobboard-tabs-v8 .job-queue-card,
+.gm-jobboard-tabs-v8 .gm-phase9-queue-card {
+  border-color: rgba(127, 223, 230, 0.14);
+  background: linear-gradient(145deg, rgba(13, 22, 32, 0.88), rgba(0, 0, 0, 0.28));
+}
+
+.gm-jobboard-tabs-v8 .job-queue-card strong {
+  color: #effcff;
+}
+
+.gm-jobboard-tabs-v8 .job-queue-card p {
+  color: var(--gm-job-v8-muted);
+}
+
+.gm-jobboard-tabs-v8 .swse-signed--positive,
+.gm-jobboard-tabs-v8 .positive,
+.gm-jobboard-tabs-v8 .success,
+.gm-jobboard-tabs-v8 .up {
+  color: var(--gm-job-v8-green) !important;
+}
+
+.gm-jobboard-tabs-v8 .swse-signed--negative,
+.gm-jobboard-tabs-v8 .negative,
+.gm-jobboard-tabs-v8 .danger,
+.gm-jobboard-tabs-v8 .down {
+  color: var(--gm-job-v8-red) !important;
+}
+
+.gm-jobboard-tabs-v8 .gm-job-draft-recovery[hidden] {
+  display: flex !important;
+  opacity: 0.62;
+}
+
+.gm-jobboard-tabs-v8 .gm-job-draft-recovery[hidden]::after {
+  content: "No recoverable local draft detected";
+  display: block;
+  color: var(--gm-job-v8-muted);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.gm-jobboard-tabs-v8 .gm-job-draft-recovery[hidden] > * {
+  display: none !important;
+}
+
+.gm-jobboard-tabs-v8 .gm-job-lifecycle-shelf-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px;
+}
+
+.gm-jobboard-tabs-v8 .gm-job-lifecycle-shelf-card {
+  border: 1px solid rgba(127, 223, 230, 0.14);
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 12px;
+}
+
+.gm-jobboard-tabs-v8 .gm-job-lifecycle-shelf-card strong {
+  color: var(--gm-job-v8-cyan);
+  font-family: var(--font-display, ui-monospace, monospace);
+  font-size: 28px;
+}
+
+.gm-jobboard-tabs-v8 .gm-job-lifecycle-shelf-card em {
+  display: block;
+  color: var(--gm-job-v8-muted);
+  font-style: normal;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+@media (max-width: 1180px) {
+  .gm-jobboard-v8-command-bar {
+    grid-template-columns: 1fr;
+  }
+  .gm-jobboard-v8-kpis,
+  .gm-jobboard-v8-tabs {
+    grid-template-columns: repeat(4, minmax(90px, 1fr));
+  }
+  .gm-jobboard-v8-tab-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .gm-jobboard-v8-kpis,
+  .gm-jobboard-v8-tabs {
+    grid-template-columns: repeat(2, minmax(120px, 1fr));
+  }
+  .gm-jobboard-v8-tabs .gm-job-tab {
+    grid-template-columns: auto 1fr auto;
+  }
+  .gm-jobboard-v8-header {
+    align-items: stretch;
+  }
+  .gm-jobboard-v8-header-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+}
+
+/* SWSE Holonet Phase 9: GM Job Board focused workspaces.
+   Scope: GM Job Board guts only. Keeps datapad shell host untouched. */
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 {
+  --gm-job-v9-bg: rgba(3, 9, 13, 0.76);
+  --gm-job-v9-panel: rgba(9, 19, 27, 0.88);
+  --gm-job-v9-line: rgba(127, 223, 230, 0.18);
+  --gm-job-v9-line-strong: rgba(127, 223, 230, 0.38);
+  --gm-job-v9-cyan: #7fdfe6;
+  --gm-job-v9-gold: #e3c16d;
+  --gm-job-v9-green: #79e58e;
+  --gm-job-v9-red: #ff6c64;
+  --gm-job-v9-muted: rgba(214, 239, 243, 0.58);
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-jobboard-v8-command-bar {
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 460px);
+  padding: 10px 12px;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-jobboard-v8-command-copy p {
+  max-width: 780px;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-jobboard-v8-kpis {
+  grid-template-columns: repeat(5, minmax(58px, 1fr));
+  min-width: 0;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-jobboard-v8-kpi {
+  padding: 6px 8px;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-jobboard-v8-kpi strong {
+  font-size: 18px;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-job-dossier-layout,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-job-settlement-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) !important;
+  max-height: min(76vh, 860px) !important;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-job-dossier-main,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-phase9-payout-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden !important;
+  border-color: var(--gm-job-v9-line) !important;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(127, 223, 230, 0.07), transparent 34%),
+    linear-gradient(145deg, rgba(14, 25, 35, 0.92), rgba(0, 0, 0, 0.30)) !important;
+}
+
+.gm-job-dossier-workspace,
+.gm-job-settlement-workspace {
+  display: grid;
+  grid-template-columns: 190px minmax(0, 1fr);
+  gap: 12px;
+  min-height: 0;
+  flex: 1;
+  margin-top: 12px;
+  overflow: hidden;
+}
+
+.gm-job-subtabbar {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-height: 0;
+  padding: 8px;
+  border: 1px solid var(--gm-job-v9-line);
+  border-radius: 14px;
+  background: rgba(0, 0, 0, 0.30);
+  box-shadow: inset 0 0 24px rgba(127, 223, 230, 0.035);
+  align-self: start;
+  position: sticky;
+  top: 0;
+}
+
+.gm-job-subtab {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  border: 1px solid rgba(127, 223, 230, 0.12);
+  border-radius: 10px;
+  background: rgba(4, 10, 15, 0.66);
+  color: rgba(214, 239, 243, 0.66);
+  cursor: pointer;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  padding: 9px 10px;
+  text-align: left;
+  text-transform: uppercase;
+  transition: background 140ms ease, border-color 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.gm-job-subtab i {
+  color: var(--gm-job-v9-cyan);
+  opacity: 0.72;
+  text-align: center;
+}
+
+.gm-job-subtab span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gm-job-subtab em {
+  min-width: 22px;
+  border-radius: 999px;
+  padding: 2px 6px;
+  background: rgba(127, 223, 230, 0.62);
+  color: #071014;
+  font-style: normal;
+  font-weight: 800;
+  text-align: center;
+}
+
+.gm-job-subtab:hover,
+.gm-job-subtab.is-active {
+  color: #effcff;
+  border-color: var(--gm-job-v9-line-strong);
+  background: linear-gradient(135deg, rgba(127, 223, 230, 0.17), rgba(0, 0, 0, 0.28));
+  transform: translateX(2px);
+}
+
+.gm-job-subtab.is-active {
+  box-shadow: inset 3px 0 0 var(--gm-job-v9-cyan), inset 0 0 18px rgba(127, 223, 230, 0.08);
+}
+
+.gm-job-subtab[data-job-subtab-switch="objectives"] em,
+.gm-job-subtab[data-job-subtab-switch="reputation"] em { background: rgba(227, 193, 109, 0.86); }
+.gm-job-subtab[data-job-subtab-switch="legacy"] i,
+.gm-job-subtab[data-job-subtab-switch="legacy"].is-active { color: var(--gm-job-v9-gold); }
+
+.gm-job-subtab-panels {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.gm-job-subtab-panel {
+  min-height: 0;
+  height: 100%;
+  overflow: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(127, 223, 230, 0.32) rgba(0, 0, 0, 0.18);
+}
+
+.gm-job-subtab-panel[hidden],
+.gm-job-subtab-panel:not(.is-active) {
+  display: none !important;
+}
+
+.gm-job-subtab-panel.is-active {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.gm-job-briefing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.gm-job-briefing-grid article,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-job-subtab-panel > .job-detail-block,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-job-subtab-panel .job-payout-summary-panel,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-job-subtab-panel .job-payout-form,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-job-subtab-panel .gm-job-legacy-settlement {
+  border: 1px solid rgba(127, 223, 230, 0.14);
+  border-radius: 13px;
+  background: rgba(0, 0, 0, 0.22);
+  box-shadow: inset 0 0 18px rgba(127, 223, 230, 0.03);
+}
+
+.gm-job-briefing-grid article {
+  padding: 12px;
+}
+
+.gm-job-briefing-grid p {
+  margin: 6px 0 0;
+  color: rgba(214, 239, 243, 0.76);
+  font-size: 12px;
+  line-height: 1.55;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-job-subtab-panel > .job-detail-block {
+  padding: 13px;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-job-consequence-panel,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-phase9-objective-block,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-job-lifecycle-block {
+  margin: 0;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .job-objective-add-form,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-phase11-consequence-add {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  backdrop-filter: blur(6px);
+  background: rgba(5, 12, 18, 0.86);
+  border: 1px solid rgba(127, 223, 230, 0.18);
+  border-radius: 12px;
+  padding: 8px;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .job-objective-card,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-phase11-consequence-row,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .job-participant-row,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .job-timeline-row {
+  content-visibility: auto;
+  contain-intrinsic-size: 120px;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .job-payout-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 13px;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .job-payout-form .job-recipient-picker,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .job-payout-form button,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-job-legacy-settlement {
+  grid-column: 1 / -1;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .job-payout-summary-panel {
+  margin: 0;
+  padding: 14px;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-job-legacy-settlement {
+  padding: 12px;
+  border-color: rgba(227, 193, 109, 0.28);
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-job-legacy-settlement summary {
+  color: var(--gm-job-v9-gold);
+  cursor: pointer;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .job-detail-actions.gm-phase9-status-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 8px;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .swse-signed--positive,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .positive,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .success,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .up,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 [class*="successTone"] {
+  color: var(--gm-job-v9-green) !important;
+}
+
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .swse-signed--negative,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .negative,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .danger,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 .down,
+.gm-datapad-jobs.gm-jobboard-workspaces-v9 [class*="failureTone"] {
+  color: var(--gm-job-v9-red) !important;
+}
+
+@media (max-width: 1180px) {
+  .gm-datapad-jobs.gm-jobboard-workspaces-v9 .gm-jobboard-v8-command-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .gm-job-dossier-workspace,
+  .gm-job-settlement-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .gm-job-subtabbar {
+    position: static;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  }
+
+  .gm-job-subtab:hover,
+  .gm-job-subtab.is-active {
+    transform: translateY(-1px);
+  }
+
+  .gm-job-briefing-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .gm-datapad-jobs.gm-jobboard-workspaces-v9 .job-payout-form {
+    grid-template-columns: 1fr;
+  }
+
+  .gm-job-subtabbar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
