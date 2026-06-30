@@ -70,21 +70,45 @@ The following entries were removed from `scripts/load-templates.js` and
 
 ---
 
-## 4. Missing Templates — Requires Developer Attention
+## 4. Missing Template Resolutions (PR 12)
 
-These template paths are referenced by active JavaScript files but the template
-files do not exist. **Do not delete the JS references** — they mark features that
-need new templates or route fixes.
+All 4 missing templates from the initial audit have been resolved.
 
-| Template path | Referenced by | Impact |
-|---|---|---|
-| `templates/actors/character/v2/partials/maneuvers-panel.hbs` | `scripts/sheets/v2/context/PANEL_REGISTRY.js:485` | Character maneuvers panel will fail to render |
-| `templates/apps/sentinel-dashboard.hbs` | `scripts/governance/sentinel/sentinel-dashboard.js:27` | Sentinel governance dashboard cannot open |
-| `templates/apps/progression-framework/steps/droid-degree-step.hbs` | `scripts/apps/progression-framework/steps/droid-degree-step.js:143` | Droid degree selection step will fail to render |
-| `templates/apps/progression-framework/steps/droid-model-step.hbs` | `scripts/apps/progression-framework/steps/droid-model-step.js:186` | Droid model selection step will fail to render |
+### 4.1 maneuvers-panel.hbs — CREATED
 
-These are out of scope for this audit pass. The progression framework and
-sentinel governance areas are treated as sensitive systems.
+| Field | Value |
+|---|---|
+| Template path | `templates/actors/character/v2/partials/maneuvers-panel.hbs` |
+| Referenced by | `scripts/sheets/v2/context/PANEL_REGISTRY.js:485` (metadata field) |
+| Runtime impact | The `template` field in PANEL_REGISTRY is documentation-only metadata; no `renderTemplate()` call uses it at runtime. However, all 14 sibling panels in the same PANEL_REGISTRY have corresponding real files in `templates/actors/character/v2/partials/`. This was the only gap. |
+| Resolution | Created minimal stub template matching the panel context contract (`maneuverPanel.{entries, hasEntries, totalCount, emptyMessage}`, row shape: `id/name/source/summary`, rootSelector: `.maneuvers-panel`). |
+
+### 4.2 sentinel-dashboard.hbs — DEFERRED (caller is dead code)
+
+| Field | Value |
+|---|---|
+| Template path | `templates/apps/sentinel-dashboard.hbs` |
+| Referenced by | `scripts/governance/sentinel/sentinel-dashboard.js:27` |
+| Caller status | `SentinelDashboard` class has zero callers outside its own file. No dynamic import, no `game.swse.*`, no `window.*`, no `globalThis.*`, no `Hooks.on` self-registration. The class is exported but never imported. It is dead code. |
+| Resolution | No template created. Template path cannot be reached at runtime. Intentionally deferred — if `SentinelDashboard` is wired into the system in a future PR, the template should be created then. |
+
+### 4.3 droid-degree-step.hbs — DEFERRED (caller is deprecated/orphaned)
+
+| Field | Value |
+|---|---|
+| Template path | `templates/apps/progression-framework/steps/droid-degree-step.hbs` |
+| Referenced by | `scripts/apps/progression-framework/steps/droid-degree-step.js:143` |
+| Caller status | File is labeled **DEPRECATED / ORPHANED** at line 1 of its source: "Droid first-time construction now runs through DroidBuilder/Garage Construction Mode … this standalone step is intentionally not wired into the progression spine." Zero static imports from any other file. |
+| Resolution | No template created. Template path cannot be reached at runtime. Intentionally deferred pending decision on whether the deprecated file should be deleted. |
+
+### 4.4 droid-model-step.hbs — DEFERRED (caller is deprecated/orphaned)
+
+| Field | Value |
+|---|---|
+| Template path | `templates/apps/progression-framework/steps/droid-model-step.hbs` |
+| Referenced by | `scripts/apps/progression-framework/steps/droid-model-step.js:186` |
+| Caller status | File is labeled **DEPRECATED / ORPHANED** at line 1 of its source, same note as droid-degree-step.js. Zero static imports from any other file. |
+| Resolution | No template created. Template path cannot be reached at runtime. Intentionally deferred pending decision on whether the deprecated file should be deleted. |
 
 ---
 
