@@ -92,23 +92,23 @@ All 4 missing templates from the initial audit have been resolved.
 | Caller status | `SentinelDashboard` class has zero callers outside its own file. No dynamic import, no `game.swse.*`, no `window.*`, no `globalThis.*`, no `Hooks.on` self-registration. The class is exported but never imported. It is dead code. |
 | Resolution | No template created. Template path cannot be reached at runtime. Intentionally deferred — if `SentinelDashboard` is wired into the system in a future PR, the template should be created then. |
 
-### 4.3 droid-degree-step.hbs — DEFERRED (caller is deprecated/orphaned)
+### 4.3 droid-degree-step.hbs — CALLER REMOVED (PR 13)
 
 | Field | Value |
 |---|---|
 | Template path | `templates/apps/progression-framework/steps/droid-degree-step.hbs` |
-| Referenced by | `scripts/apps/progression-framework/steps/droid-degree-step.js:143` |
-| Caller status | File is labeled **DEPRECATED / ORPHANED** at line 1 of its source: "Droid first-time construction now runs through DroidBuilder/Garage Construction Mode … this standalone step is intentionally not wired into the progression spine." Zero static imports from any other file. |
-| Resolution | No template created. Template path cannot be reached at runtime. Intentionally deferred pending decision on whether the deprecated file should be deleted. |
+| Caller | `scripts/apps/progression-framework/steps/droid-degree-step.js` (deleted) |
+| Caller status | Labeled **DEPRECATED / ORPHANED** at line 1: "Droid first-time construction now runs through DroidBuilder/Garage Construction Mode … this standalone step is intentionally not wired into the progression spine." Zero static imports, zero dynamic imports, zero game.swse/window/globalThis/Hooks/CONFIG registrations. |
+| Resolution | Caller file deleted. Template path is no longer referenced anywhere in the codebase. No template needed. |
 
-### 4.4 droid-model-step.hbs — DEFERRED (caller is deprecated/orphaned)
+### 4.4 droid-model-step.hbs — CALLER REMOVED (PR 13)
 
 | Field | Value |
 |---|---|
 | Template path | `templates/apps/progression-framework/steps/droid-model-step.hbs` |
-| Referenced by | `scripts/apps/progression-framework/steps/droid-model-step.js:186` |
-| Caller status | File is labeled **DEPRECATED / ORPHANED** at line 1 of its source, same note as droid-degree-step.js. Zero static imports from any other file. |
-| Resolution | No template created. Template path cannot be reached at runtime. Intentionally deferred pending decision on whether the deprecated file should be deleted. |
+| Caller | `scripts/apps/progression-framework/steps/droid-model-step.js` (deleted) |
+| Caller status | Labeled **DEPRECATED / ORPHANED** at line 1, same note as droid-degree-step.js. Zero static imports, zero dynamic imports, zero game.swse/window/globalThis/Hooks/CONFIG registrations. |
+| Resolution | Caller file deleted. Template path is no longer referenced anywhere in the codebase. No template needed. |
 
 ---
 
