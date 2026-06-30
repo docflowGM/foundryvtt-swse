@@ -1,4 +1,5 @@
-import { DefenseSystem } from '../engine/DefenseSystem.js';
+// DefenseSystem no longer exists; canonical replacement is DefenseCalculator in
+// scripts/actors/derived/defense-calculator.js. Import removed (was also unused).
 import { SWSELogger } from '../utils/logger.js';
 import { SWSEActorDataModel } from './actor-data-model.js';
 import { SpeciesTraitEngine } from '../engine/systems/species/species-trait-engine.js';
