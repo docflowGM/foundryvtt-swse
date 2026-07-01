@@ -14,6 +14,79 @@
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import TalentActionLinker from "/systems/foundryvtt-swse/scripts/engine/talent/talent-action-linker.js";
 
+const CORE_MANUAL_COMBAT_ACTIONS = [
+  {
+    _id: "core-attack-of-opportunity",
+    name: "Attack of Opportunity",
+    type: "combat-action",
+    img: "icons/svg/sword.svg",
+    system: {
+      key: "attack-of-opportunity",
+      domain: "character",
+      category: "combat",
+      crewPosition: null,
+      actionType: "reaction",
+      actionTypeRaw: "reaction",
+      cost: 1,
+      summary: "Make a melee attack as a reaction when the GM determines a target provokes.",
+      notes: "Make a melee attack as a reaction when the GM determines a target provokes. The system does not auto-detect threatened squares, adjacency, line of sight, reach, movement path, Withdraw/Tumble exceptions, or whether the target can be seen.",
+      notesAdvanced: "Manual/guided action: use the normal melee attack workflow after the table confirms the provoking event and legal target. AoO trigger predicates are intentionally metadata/manual until a reliable spatial/threatened-square authority exists.",
+      restriction: "GM/player confirms the target provokes and is a legal melee target.",
+      requirements: [],
+      examples: [],
+      relatedSkills: [
+        {
+          skill: "Attack Roll (melee)",
+          outcome: "Resolve as a normal melee attack after AoO legality is adjudicated."
+        }
+      ],
+      ammoConsumption: null,
+      tags: ["attack", "reaction", "attackOfOpportunity", "manualSpatial"],
+      sourcebook: null,
+      page: null,
+      executable: true,
+      trigger: "manual",
+      toggleable: false,
+      resolutionMode: "attack",
+      actionCost: "reaction",
+      automationBoundary: "metadata",
+      gmManaged: true,
+      manualResolution: true,
+      contextTags: [
+        "attack",
+        "reaction",
+        "attackOfOpportunity",
+        "melee",
+        "manualSpatial"
+      ],
+      requiredContext: [
+        "GM/player confirms provoking action",
+        "GM/player confirms threatened square/reach/adjacency",
+        "GM/player confirms line of sight / target can be seen",
+        "GM/player confirms no Withdraw, Tumble, or special exception prevents the AoO"
+      ],
+      ruleData: {
+        attackOfOpportunity: true,
+        areaAttack: false,
+        spatialPredicatePolicy: "metadata_manual",
+        manualTrigger: true,
+        provocationDetection: "manual",
+        usesNormalMeleeAttackWorkflow: true
+      }
+    },
+    effects: [],
+    folder: null,
+    sort: 4.5,
+    ownership: { default: 0 },
+    flags: {
+      swse: {
+        coreInjected: true,
+        phase: "phase-10i-spatial-predicate-policy"
+      }
+    }
+  }
+];
+
 export class CombatActionsMapper {
 
   static _initialized = false;
@@ -41,6 +114,7 @@ export class CombatActionsMapper {
         this._combatActions = await this._loadJsonFallback('data/combat-actions.json', 'combatAction');
         SWSELogger.log('SWSE | Loaded combat actions from JSON fallback');
       }
+      this._combatActions = this._ensureCoreManualCombatActions(this._combatActions);
 
       // Load extra skill uses - use correct pack ID (extraskilluses not extra-skill-uses)
       this._extraSkillUses =
@@ -102,6 +176,21 @@ export class CombatActionsMapper {
       SWSELogger.error(`SWSE | Error loading JSON fallback from ${path}:`, err);
       return [];
     }
+  }
+
+  static _ensureCoreManualCombatActions(actions = []) {
+    const existingKeys = new Set(actions.map(action => action?.system?.key ?? action?.key ?? action?._id).filter(Boolean));
+    const existingNames = new Set(actions.map(action => String(action?.name ?? '').trim().toLowerCase()).filter(Boolean));
+    const injected = [];
+
+    for (const action of CORE_MANUAL_COMBAT_ACTIONS) {
+      const key = action.system?.key;
+      const name = String(action.name ?? '').trim().toLowerCase();
+      if ((key && existingKeys.has(key)) || (name && existingNames.has(name))) continue;
+      injected.push(action);
+    }
+
+    return injected.length ? [...actions, ...injected] : actions;
   }
 
   /**
