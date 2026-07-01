@@ -1,0 +1,44 @@
+{
+  "schemaVersion": 1,
+  "phase": "phase-10g-damage-timing-rider-wiring",
+  "purpose": "Wire the Phase 10F DamageTimingRiderAdapter into the existing DamageEngine to mutate declarative damage packets before ActorEngine.applyDamage enters DamageResolutionEngine.",
+  "implementedAdapter": "damage-timing-rider-adapter",
+  "wiringPoint": "scripts/engine/combat/damage-engine.js",
+  "runtimeHomes": [
+    "scripts/engine/combat/damage-engine.js",
+    "scripts/engine/combat/damage-timing-rider-adapter.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/engine/combat/damage-resolution-engine.js"
+  ],
+  "implementationScope": [
+    "Import DamageTimingRiderAdapter in DamageEngine.",
+    "Build a base declarative damage packet with sourceActor and targetActor context.",
+    "Apply DamageTimingRiderAdapter.applyToDamagePacket before ActorEngine.applyDamage.",
+    "Return rider audit fields from DamageEngine.applyDamage result."
+  ],
+  "nonGoals": [
+    "No direct HP mutation.",
+    "No edits to ActorEngine authority internals.",
+    "No duplicate DamageResolutionEngine.",
+    "No automatic promotion of Advantageous Attack to implemented_correct until old wrong-shape metadata is quarantined."
+  ],
+  "advantageousAttackStatus": {
+    "before10G": "implementation_path_ready_but_unwired",
+    "after10G": "damage_engine_wired_partial",
+    "remainingBeforeCorrect": [
+      "Ensure all attack-to-damage UI flows pass attacker/sourceActor, targetActor, hit, and targetHasActedThisEncounter when available.",
+      "Quarantine or remove wrong-shape attack-option metadata for Advantageous Attack.",
+      "Add focused tests proving target-not-acted damage bonus and no attack bonus mutation."
+    ]
+  },
+  "unlocksPhase9Families": [
+    "DamageEngine callers now receive damage timing rider support before canonical damage resolution.",
+    "Advantageous Attack compatibility rider can affect real damage packets when sourceActor/attacker context is supplied.",
+    "Applied damage rider audit data is returned from DamageEngine.applyDamage."
+  ],
+  "remainingWork": [
+    "Audit all damage callsites for attacker/sourceActor and target context propagation.",
+    "Add chat/UI display for damageTimingRiders.",
+    "Add exact combat acted-state flags instead of relying on conservative turn-order inference."
+  ]
+}
