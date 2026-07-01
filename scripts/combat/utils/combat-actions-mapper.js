@@ -28,9 +28,9 @@ const CORE_MANUAL_COMBAT_ACTIONS = [
       actionType: "reaction",
       actionTypeRaw: "reaction",
       cost: 1,
-      summary: "Make a single immediate attack as a reaction when the GM determines a target provokes.",
-      notes: "Reaction. Make one immediate attack against a provoking opponent when the GM determines the target provokes. The system does not auto-detect threatened squares, adjacency, reach, line of sight, movement path, Withdraw/Tumble exceptions, or whether the target can be seen.",
-      notesAdvanced: "Manual/guided action: use the normal eligible-weapon attack workflow after the table confirms the provoking event and legal target. Default limit is one Attack of Opportunity per round; Combat Reflexes can increase the number, but still only one AoO per provoking action. You cannot make an Attack of Opportunity while flat-footed. AoO trigger predicates are intentionally metadata/manual until a reliable spatial/threatened-square authority exists.",
+      summary: "Make a single immediate attack by spending a reaction when the GM determines a target provokes.",
+      notes: "Reaction. Spend one available reaction to make an immediate attack against a provoking opponent when the GM determines the target provokes. The system does not auto-detect threatened squares, adjacency, reach, line of sight, movement path, Withdraw/Tumble exceptions, or whether the target can be seen.",
+      notesAdvanced: "Manual/guided action: use the normal eligible-weapon attack workflow after the table confirms the provoking event and legal target. This consumes the actor's reaction resource rather than tracking a separate AoO-per-round pool. Combat Reflexes should increase the actor's available reactions; it does not remove the one-AoO-per-provoking-action limit. You cannot make an Attack of Opportunity while flat-footed. AoO trigger predicates are intentionally metadata/manual until a reliable spatial/threatened-square authority exists.",
       restriction: "GM/player confirms the target provokes, is in a threatened square/reach, and is a legal target. Eligible attacks use melee weapons, natural weapons, pistols, weapons with folded retractable stocks, or unarmed attacks if the actor has Martial Arts I.",
       requirements: [],
       examples: [],
@@ -72,6 +72,9 @@ const CORE_MANUAL_COMBAT_ACTIONS = [
         attackOfOpportunity: true,
         areaAttack: false,
         actionEconomy: "reaction",
+        consumesReaction: true,
+        reactionResource: "reaction",
+        reactionCost: 1,
         spatialPredicatePolicy: "metadata_manual",
         manualTrigger: true,
         provocationDetection: "manual",
@@ -81,8 +84,7 @@ const CORE_MANUAL_COMBAT_ACTIONS = [
         eligibleWeaponCategories: ["melee", "natural", "pistol", "foldedRetractableStock"],
         unarmedRequiresFeat: "Martial Arts I",
         cannotUseWhileFlatFooted: true,
-        defaultMaxPerRound: 1,
-        combatReflexesMayIncreaseLimit: true,
+        combatReflexesIncreasesReactionCapacity: true,
         maxPerProvokingAction: 1,
         withdrawPreventsProvocation: true,
         successfulTumblePreventsProvocation: true,
@@ -514,7 +516,7 @@ export class CombatActionsMapper {
 
   static _notReady() {
     SWSELogger.warn('CombatActionsMapper used before initialization completed.');
-    return { combatActions: [], extraUses: [], hasActions: false };
+    return { combatActions: [], extraUses, hasActions: false };
   }
 }
 
