@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "phase": "phase-10d-reaction-adapter-implementation",
+  "purpose": "Implement the first Phase 10 adapter slice by allowing abilityMeta.reactionRules metadata to register into the existing ReactionRegistry and flow through ReactionEngine.",
+  "implementedAdapter": "reaction-registry-feat-adapter",
+  "classificationFrom10B": "exists_partial_needs_adapters",
+  "contractFrom10C": "reaction-registry-feat-adapter",
+  "runtimeHomes": [
+    "scripts/engine/combat/reactions/reaction-engine.js",
+    "scripts/engine/combat/reactions/reaction-registry.js",
+    "scripts/engine/combat/reactions/reaction-rule-adapter.js",
+    "scripts/engine/abilities/ActivationLimitEngine.js"
+  ],
+  "implementationScope": [
+    "Read abilityMeta.reactionRules from owned feat/talent items.",
+    "Normalize metadata-backed rules into ReactionRegistry-compatible definitions.",
+    "Register metadata-backed definitions through the existing ReactionRegistry.",
+    "Expose metadata-backed reaction keys to ReactionEngine.getAvailableReactions().",
+    "Ensure resolveReaction() can resolve metadata-backed reactions for the defender before registry lookup.",
+    "Provide a safe metadata-backed handler that posts/manual-surfaces unsupported effects without direct actor mutation."
+  ],
+  "nonGoals": [
+    "No new reaction engine.",
+    "No direct actor.system mutation.",
+    "No full implementation of every individual reaction feat in this slice.",
+    "No movement-grid, incoming-damage, or target-effect mutation behavior yet."
+  ],
+  "unlocksPhase9Families": [
+    "reactionRules metadata no longer silently disappears",
+    "simple metadata-backed reaction availability",
+    "once-per-round and once-per-encounter reaction limits through existing ReactionEngine / ActivationLimitEngine",
+    "manual-resolution chat path for unsupported reaction effects"
+  ],
+  "exampleFeatsUnlockedForNextPromotionReview": [
+    "Conditioning",
+    "Republic Military Training",
+    "Sith Military Training",
+    "Acrobatic Dodge",
+    "Grab Back",
+    "Mounted Defense",
+    "Dive for Cover",
+    "Duck and Cover",
+    "Opportunistic Retreat",
+    "Tactical Advantage"
+  ],
+  "remainingWork": [
+    "Add dedicated handlers for reactions that mutate damage, movement, conditions, or target state.",
+    "Add event producers for incoming attack missed, incoming damage taken, and post-hit events where not already emitted.",
+    "Promote individual feats only after their handler/effect behavior is implemented and tested."
+  ]
+}
