@@ -1,0 +1,59 @@
+{
+  "schemaVersion": 1,
+  "phase": "phase-10e-target-effect-adapter-implementation",
+  "purpose": "Implement the Phase 10 P0 combat-target-effect-adapter contract by adding a runtime consumer for targetEffectsOnHit and targetEffectsOnCritical payloads collected by CombatOptionResolver.",
+  "implementedAdapter": "combat-target-effect-adapter",
+  "classificationFrom10B": "exists_partial_needs_adapters",
+  "contractFrom10C": "combat-target-effect-adapter",
+  "runtimeHomes": [
+    "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/combat/rolls/attacks.js",
+    "scripts/engine/combat/combat-target-effect-adapter.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/engine/combat/ConditionTrackRules.js"
+  ],
+  "implementationScope": [
+    "Consume targetEffectsOnHit and targetEffectsOnCritical payloads already carried by attack results.",
+    "Normalize target effect metadata into safe application plans.",
+    "Apply supported condition-track shift effects through ActorEngine.setConditionStep.",
+    "Apply persistent condition flag through ActorEngine.setConditionPersistent when requested.",
+    "Surface unsupported target effects as manual notes instead of silently dropping them."
+  ],
+  "nonGoals": [
+    "No duplicate attack option resolver.",
+    "No direct target actor mutation.",
+    "No direct HP damage mutation.",
+    "No automatic movement, prone, flat-footed, attack penalty, or custom active-effect handler in this slice."
+  ],
+  "supportedEffectTypes": [
+    "condition-track-shift",
+    "condition-track-move",
+    "condition-track-step",
+    "target-condition-track-shift",
+    "target-condition-track-move",
+    "move-target-ct",
+    "ct-shift",
+    "ct-step",
+    "move-condition-track",
+    "move-target-condition-track"
+  ],
+  "unlocksPhase9Families": [
+    "targetEffectsOnHit no longer remain only inert chat/context data",
+    "targetEffectsOnCritical has a supported adapter path",
+    "condition-track hit/critical riders can be promoted from metadata-only partials after individual metadata is normalized",
+    "unsupported target effects become visible manual notes rather than silent failures"
+  ],
+  "exampleFeatsUnlockedForNextPromotionReview": [
+    "Wounding Strike",
+    "Staggering Attack",
+    "Triple Crit Specialist",
+    "Crush",
+    "Forceful Strike",
+    "Forceful Telekinesis"
+  ],
+  "remainingWork": [
+    "Wire UI/chat buttons to call CombatTargetEffectAdapter.applyFromAttackResult where automatic application is desired.",
+    "Add dedicated handlers for prone, flat-footed, penalties, movement interruption, and custom active-effect target riders.",
+    "Normalize individual feat metadata to supported target effect types before promotion."
+  ]
+}
