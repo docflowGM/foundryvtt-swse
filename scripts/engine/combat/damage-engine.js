@@ -12,9 +12,12 @@
  * NEVER subtract DT from damage amount.
  *
  * PHASE 3: Routed through ActorEngine for deterministic mutation control
+ * PHASE 10G: Damage timing feat riders are applied as declarative packet
+ * mutations before ActorEngine.applyDamage() enters DamageResolutionEngine.
  */
 
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { DamageTimingRiderAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-timing-rider-adapter.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
 export class DamageEngine {
@@ -39,12 +42,27 @@ export class DamageEngine {
     // persists temp-HP depletion. Subtracting temp HP here as well double-counted
     // it. Pass the RAW damage through and let the single authority resolve it.
     try {
-      const result = await ActorEngine.applyDamage(actor, {
+      const basePacket = {
         amount: damage,
         type: damageType,
-        source: 'combat-damage',
+        source: options.source ?? 'combat-damage',
+        sourceActor: options.sourceActor ?? options.attacker ?? options.actor ?? null,
+        targetActor: options.targetActor ?? actor,
         options
+      };
+
+      const riderPlan = DamageTimingRiderAdapter.applyToDamagePacket(basePacket, {
+        ...options,
+        attacker: options.attacker ?? options.sourceActor ?? options.actor ?? null,
+        targetActor: options.targetActor ?? actor,
+        hit: options.hit ?? options.isHit ?? true,
+        isHit: options.isHit ?? options.hit ?? true,
+        critical: options.critical ?? options.isCritical ?? false,
+        isCritical: options.isCritical ?? options.critical ?? false,
+        damageType
       });
+
+      const result = await ActorEngine.applyDamage(actor, riderPlan.damagePacket);
 
       return {
         success: true,
@@ -54,7 +72,10 @@ export class DamageEngine {
         newHP: result.newHP,
         isMassiveDamage,
         conditionShifted: result.conditionShifted,
-        reason: 'Damage applied'
+        reason: 'Damage applied',
+        damageTimingRiders: riderPlan.appliedRiders ?? [],
+        damageBeforeRiders: riderPlan.originalAmount,
+        damageAfterRiders: riderPlan.finalAmount
       };
     } catch (err) {
       console.error('[DamageEngine] Error applying damage:', err);
