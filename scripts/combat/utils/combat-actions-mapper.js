@@ -28,21 +28,21 @@ const CORE_MANUAL_COMBAT_ACTIONS = [
       actionType: "reaction",
       actionTypeRaw: "reaction",
       cost: 1,
-      summary: "Make a melee attack as a reaction when the GM determines a target provokes.",
-      notes: "Make a melee attack as a reaction when the GM determines a target provokes. The system does not auto-detect threatened squares, adjacency, line of sight, reach, movement path, Withdraw/Tumble exceptions, or whether the target can be seen.",
-      notesAdvanced: "Manual/guided action: use the normal melee attack workflow after the table confirms the provoking event and legal target. AoO trigger predicates are intentionally metadata/manual until a reliable spatial/threatened-square authority exists.",
-      restriction: "GM/player confirms the target provokes and is a legal melee target.",
+      summary: "Make a single immediate attack as a reaction when the GM determines a target provokes.",
+      notes: "Reaction. Make one immediate attack against a provoking opponent when the GM determines the target provokes. The system does not auto-detect threatened squares, adjacency, reach, line of sight, movement path, Withdraw/Tumble exceptions, or whether the target can be seen.",
+      notesAdvanced: "Manual/guided action: use the normal eligible-weapon attack workflow after the table confirms the provoking event and legal target. Default limit is one Attack of Opportunity per round; Combat Reflexes can increase the number, but still only one AoO per provoking action. You cannot make an Attack of Opportunity while flat-footed. AoO trigger predicates are intentionally metadata/manual until a reliable spatial/threatened-square authority exists.",
+      restriction: "GM/player confirms the target provokes, is in a threatened square/reach, and is a legal target. Eligible attacks use melee weapons, natural weapons, pistols, weapons with folded retractable stocks, or unarmed attacks if the actor has Martial Arts I.",
       requirements: [],
       examples: [],
       relatedSkills: [
         {
-          skill: "Attack Roll (melee)",
-          outcome: "Resolve as a normal melee attack after AoO legality is adjudicated."
+          skill: "Attack Roll",
+          outcome: "Resolve as a normal eligible attack after AoO legality is adjudicated."
         }
       ],
       ammoConsumption: null,
       tags: ["attack", "reaction", "attackOfOpportunity", "manualSpatial"],
-      sourcebook: null,
+      sourcebook: "Star Wars Saga Edition Core Rulebook",
       page: null,
       executable: true,
       trigger: "manual",
@@ -57,21 +57,36 @@ const CORE_MANUAL_COMBAT_ACTIONS = [
         "reaction",
         "attackOfOpportunity",
         "melee",
+        "pistol",
         "manualSpatial"
       ],
       requiredContext: [
-        "GM/player confirms provoking action",
+        "GM/player confirms provoking action or movement out of threatened square",
         "GM/player confirms threatened square/reach/adjacency",
         "GM/player confirms line of sight / target can be seen",
-        "GM/player confirms no Withdraw, Tumble, or special exception prevents the AoO"
+        "GM/player confirms actor is not flat-footed",
+        "GM/player confirms no Withdraw, successful Tumble, involuntary movement, or special exception prevents the AoO",
+        "GM/player confirms the selected weapon is AoO-eligible"
       ],
       ruleData: {
         attackOfOpportunity: true,
         areaAttack: false,
+        actionEconomy: "reaction",
         spatialPredicatePolicy: "metadata_manual",
         manualTrigger: true,
         provocationDetection: "manual",
-        usesNormalMeleeAttackWorkflow: true
+        threatenedAreaDetection: "manual",
+        visibilityDetection: "manual",
+        usesNormalAttackWorkflow: true,
+        eligibleWeaponCategories: ["melee", "natural", "pistol", "foldedRetractableStock"],
+        unarmedRequiresFeat: "Martial Arts I",
+        cannotUseWhileFlatFooted: true,
+        defaultMaxPerRound: 1,
+        combatReflexesMayIncreaseLimit: true,
+        maxPerProvokingAction: 1,
+        withdrawPreventsProvocation: true,
+        successfulTumblePreventsProvocation: true,
+        involuntaryMovementDoesNotProvoke: true
       }
     },
     effects: [],
