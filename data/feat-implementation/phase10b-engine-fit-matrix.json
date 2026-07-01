@@ -1,0 +1,279 @@
+{
+  "schemaVersion": 1,
+  "phase": "phase-10b-engine-fit-matrix",
+  "purpose": "Classify Phase 9 feat implementation families by current runtime fit: exists wholecloth, exists partially and needs adapters, exists partially and needs refactor, or does not exist yet.",
+  "classificationDefinitions": {
+    "exists_wholecloth": "Runtime home already exists and is appropriate; remaining work is mostly metadata normalization/tests for individual feats.",
+    "exists_partial_needs_adapters": "A reusable runtime home exists, but Phase 9 feats need thin adapters, registry entries, event bridges, or metadata-to-runtime mapping.",
+    "exists_partial_needs_refactor": "Some supporting runtime exists, but the available shape is too shallow or bypasses the right lifecycle; implement by refactoring around the existing authority, not by adding a parallel engine.",
+    "missing_runtime": "No meaningful runtime home was found; implementation requires a new authority/module, still routed through existing mutation and chat boundaries."
+  },
+  "rules": [
+    "Use every part of the buffalo: prefer existing engines, registries, and mutation authorities over parallel systems.",
+    "Feat metadata is not implementation proof unless a runtime consumer reads and enforces it.",
+    "Wrong-shape automation remains implemented_incorrect until replaced or quarantined.",
+    "New runtime adapters must route actor mutation through ActorEngine and resource limits through ActivationLimitEngine or existing resource services."
+  ],
+  "families": [
+    {
+      "id": "attack_option_math",
+      "classification": "exists_wholecloth",
+      "runtimeHomes": [
+        "scripts/engine/combat/combat-option-resolver.js",
+        "scripts/combat/rolls/attacks.js",
+        "scripts/engine/combat/combat-utils.js"
+      ],
+      "phase9Examples": [
+        "Power Attack",
+        "Rapid Shot",
+        "Rapid Strike",
+        "Flurry",
+        "Sniper Shot",
+        "Power Blast",
+        "Critical Strike",
+        "Improved Rapid Strike"
+      ],
+      "evidence": "CombatOptionResolver already discovers ATTACK_OPTION rules, hydrates toggles/sliders/passive options, validates weapon/context gates, and contributes attack, damage, extra weapon dice, defense modifiers, critical threat, and target effect data.",
+      "nextStep": "Normalize remaining attack-option feats into abilityMeta.rules and add targeted tests for option gating, sliders, and breakdown parity."
+    },
+    {
+      "id": "weapon_rule_modifiers_and_riders",
+      "classification": "exists_wholecloth",
+      "runtimeHomes": [
+        "scripts/engine/combat/combat-option-resolver.js"
+      ],
+      "phase9Examples": [
+        "Weapon Focus",
+        "Weapon Finesse",
+        "Triple Crit Specialist",
+        "Martial Arts line",
+        "selected weapon damage/attack feats"
+      ],
+      "evidence": "The resolver consumes WEAPON_DAMAGE_DIE_STEP, UNARMED_DAMAGE_STEP, ATTACK_ABILITY_SUBSTITUTION, ATTACK_ABILITY_BONUS, WEAPON_ATTACK_BONUS, WEAPON_DAMAGE_BONUS, EXTEND_CRITICAL_RANGE, CRITICAL_RIDER, HIT_RIDER, and WEAPON_CRITICAL_MULTIPLIER_MIN.",
+      "nextStep": "Prefer this existing rule vocabulary for weapon-bound feats before creating any new feat-specific runtime."
+    },
+    {
+      "id": "implant_penalty_suppression",
+      "classification": "exists_wholecloth",
+      "runtimeHomes": [
+        "scripts/engine/implants/ImplantRules.js",
+        "scripts/actors/derived/defense-calculator.js",
+        "scripts/governance/actor-engine/actor-engine.js"
+      ],
+      "phase9Examples": [
+        "Implant Training"
+      ],
+      "evidence": "ImplantRules detects active implants and Implant Training, suppresses Will and condition-track drawbacks, and is consumed by defense and condition/damage flows.",
+      "nextStep": "Keep Phase 10A override: Implant Training is implemented_correct in the current repo state. Add regression tests rather than a new subsystem."
+    },
+    {
+      "id": "reaction_framework",
+      "classification": "exists_partial_needs_adapters",
+      "runtimeHomes": [
+        "scripts/engine/combat/reactions/reaction-engine.js",
+        "scripts/engine/combat/reactions/reaction-registry.js",
+        "scripts/engine/abilities/ActivationLimitEngine.js"
+      ],
+      "phase9Examples": [
+        "Conditioning",
+        "Republic Military Training",
+        "Sith Military Training",
+        "Tactical Genius",
+        "Bad Feeling style timing reactions",
+        "Crossfire-style follow-up reactions"
+      ],
+      "evidence": "ReactionEngine and ReactionRegistry exist and resolve registered reactions, but many Phase 9 feat reactions are not yet registered or connected to the exact combat event that triggers them.",
+      "nextStep": "Add feat-specific reaction registry entries and small event adapters. Do not create a second reaction engine."
+    },
+    {
+      "id": "activation_and_encounter_limits",
+      "classification": "exists_partial_needs_adapters",
+      "runtimeHomes": [
+        "scripts/engine/abilities/ActivationLimitEngine.js",
+        "scripts/engine/abilities/AbilityExecutionRouter.js",
+        "scripts/engine/feats/encounter-use-tracker.js"
+      ],
+      "phase9Examples": [
+        "once per encounter feats",
+        "attack rerolls",
+        "temporary defense activations",
+        "Gearhead",
+        "Quick Skill"
+      ],
+      "evidence": "ActivationLimitEngine can gate round/encounter/day-like use, and AbilityExecutionRouter is the intended activation entry point, but many feat actions still need adapters to route through it.",
+      "nextStep": "Bind feat action cards/buttons to AbilityExecutionRouter or EncounterUseTracker consistently; keep DAY persistence caveat visible."
+    },
+    {
+      "id": "damage_resolution_and_threshold_riders",
+      "classification": "exists_partial_needs_adapters",
+      "runtimeHomes": [
+        "scripts/governance/actor-engine/actor-engine.js",
+        "scripts/engine/combat/damage-resolution-engine.js",
+        "scripts/engine/combat/threshold-engine.js",
+        "scripts/engine/feats/meta-resource-feat-resolver.js"
+      ],
+      "phase9Examples": [
+        "Advantageous Attack",
+        "Ion Shielding",
+        "Galactic Alliance Military Training",
+        "Forceful Strike",
+        "Forceful Telekinesis",
+        "Crush"
+      ],
+      "evidence": "DamageResolutionEngine already centralizes pure damage, mitigation, threshold, and condition-track outcomes, and MetaResourceFeatResolver already feeds some damage/condition rules. Missing pieces are pre/post-hit adapters for attacker-side timing/rider feats.",
+      "nextStep": "Add attacker/target result hooks around attack success and damage resolution; keep Advantageous Attack implemented_incorrect until its wrong-shape attack option is replaced by this hook."
+    },
+    {
+      "id": "force_points_and_meta_resources",
+      "classification": "exists_partial_needs_adapters",
+      "runtimeHomes": [
+        "scripts/engine/force/force-engine.js",
+        "scripts/engine/force/force-points-service.js",
+        "scripts/engine/feats/meta-resource-feat-resolver.js",
+        "scripts/governance/actor-engine/actor-engine.js"
+      ],
+      "phase9Examples": [
+        "Force Readiness",
+        "Force Boon",
+        "Strong in the Force",
+        "Instinctive Attack",
+        "Forceful Recovery"
+      ],
+      "evidence": "Force point spend/max/die-size and some reroll/recovery metadata bridges exist, but out-of-turn/free-action permission and several spend-result riders need explicit action/event adapters.",
+      "nextStep": "Implement Force Readiness as a Force Point spend permission adapter, not as a Force feat bonus. Continue using ActorEngine/ForcePointsService for mutation."
+    },
+    {
+      "id": "force_power_activation_context",
+      "classification": "exists_partial_needs_refactor",
+      "runtimeHomes": [
+        "scripts/engine/force/force-engine.js",
+        "scripts/engine/abilities/AbilityExecutionRouter.js"
+      ],
+      "phase9Examples": [
+        "Forceful Grip",
+        "Forceful Slam",
+        "Forceful Stun",
+        "Forceful Throw",
+        "Forceful Weapon",
+        "Forceful Saber Throw"
+      ],
+      "evidence": "ForceEngine currently covers DC, Force Point spend, natural 20 recovery, dark side points, descriptor modifiers, and cost checks, while AbilityExecutionRouter delegates force-power activations. It does not yet expose a rich named-power activation/result context for scoped bonuses.",
+      "nextStep": "Refactor force-power activation through a named power context that can consume scoped feat metadata before/after rolls; avoid hardcoding each Forceful feat."
+    },
+    {
+      "id": "second_wind_and_recovery_rules",
+      "classification": "exists_partial_needs_adapters",
+      "runtimeHomes": [
+        "scripts/engine/combat/SecondWindRules.js",
+        "scripts/engine/feats/meta-resource-feat-resolver.js",
+        "scripts/governance/actor-engine/actor-engine.js"
+      ],
+      "phase9Examples": [
+        "Fast Surge",
+        "Extra Second Wind",
+        "Forceful Recovery",
+        "Improved Second Wind",
+        "Regenerative Healing"
+      ],
+      "evidence": "MetaResourceFeatResolver can read second-wind rule families including free action, condition recovery, Force power recovery, movement grants, extra healing, and delayed healing. Some effects still need UI choice/pending-state adapters.",
+      "nextStep": "Wire pending choice flows for recovered Force powers and movement grants into existing second-wind UX."
+    },
+    {
+      "id": "skill_use_timing_take10_take20",
+      "classification": "exists_partial_needs_refactor",
+      "runtimeHomes": [
+        "scripts/apps/progression-framework/steps/skills-step.js",
+        "scripts/actors/derived/skill-calculator.js",
+        "scripts/engine/feats/meta-resource-feat-resolver.js"
+      ],
+      "phase9Examples": [
+        "Gearhead",
+        "Quick Skill",
+        "Conditioning skill reroll half",
+        "Forceful Vitality",
+        "Focused Rage"
+      ],
+      "evidence": "Skill derivation and progression exist, and attack reroll/temporary defense feat bridges exist, but there is no proven generic skill-use action modal that owns action cost, Take 10/Take 20, rushed checks, time reduction, or failed-skill rerolls.",
+      "nextStep": "Create a skill-use runtime adapter/modal that consumes feat metadata and uses ActivationLimitEngine for encounter limits. Do not overload derived skill totals."
+    },
+    {
+      "id": "cover_area_autofire_soft_cover",
+      "classification": "exists_partial_needs_refactor",
+      "runtimeHomes": [
+        "scripts/engine/combat/combat-option-resolver.js",
+        "scripts/engine/combat/damage-resolution-engine.js",
+        "scripts/combat/rolls/attacks.js"
+      ],
+      "phase9Examples": [
+        "Advantageous Cover",
+        "Angled Throw",
+        "Blaster Barrage",
+        "Crossfire",
+        "Strafe",
+        "Forceful Blast"
+      ],
+      "evidence": "The attack option resolver has area/autofire/weapon gates and damage resolution can resolve mitigated damage, but grid template shape, cover provider identity, soft cover miss redirection, and multi-target area outcomes are not unified into a single context object yet.",
+      "nextStep": "Refactor attack result context for area/template attacks so cover, soft-cover providers, ally bonuses, and per-target riders can attach safely."
+    },
+    {
+      "id": "poison_disease_hazards",
+      "classification": "missing_runtime",
+      "runtimeHomes": [],
+      "phase9Examples": [
+        "Poison Resistance",
+        "disease/poison conditional Fortitude feats",
+        "hazard-style delayed effects"
+      ],
+      "evidence": "No dedicated poison/disease/hazard condition authority was identified in this pass. Current metadata can describe conditional defense, but there is no proven PoisonEngine-style hook for Fortitude targeting, half damage, delayed saves, or ongoing track effects.",
+      "nextStep": "Introduce a small PoisonDiseaseHazardRules authority that feeds defense context and damage-resolution context, with ActorEngine as the mutation boundary."
+    },
+    {
+      "id": "movement_threatened_square_control",
+      "classification": "missing_runtime",
+      "runtimeHomes": [],
+      "phase9Examples": [
+        "Tumble Defense",
+        "Withdrawal Strike",
+        "Mobile Combatant",
+        "Lightsaber Evasion movement rider",
+        "Uncanny Instincts movement rider"
+      ],
+      "evidence": "Some reactions can report movement permissions, but there is no general movement/action authority that validates threatened squares, Withdraw, Tumble DC changes, or forced movement against the canvas/grid.",
+      "nextStep": "Add movement-control authority only when canvas/action enforcement is ready; until then keep these feats partial/manual."
+    },
+    {
+      "id": "aid_another_teamwork_support",
+      "classification": "exists_partial_needs_adapters",
+      "runtimeHomes": [
+        "scripts/engine/abilities/ActivationLimitEngine.js",
+        "scripts/engine/feats/meta-resource-feat-resolver.js"
+      ],
+      "phase9Examples": [
+        "Coordinated Attack",
+        "Rapport",
+        "Logic Upgrade: Tactician",
+        "Blaster Barrage ally bonus"
+      ],
+      "evidence": "There are resource and activation primitives, but no proven Aid Another support workflow that owns helper, target, recipient, success, stacking, range, and expiration.",
+      "nextStep": "Implement a small AidAnotherSupportAdapter instead of adding flat ally bonuses to sheets."
+    },
+    {
+      "id": "rage_state",
+      "classification": "missing_runtime",
+      "runtimeHomes": [],
+      "phase9Examples": [
+        "Controlled Rage",
+        "Focused Rage",
+        "Powerful Rage"
+      ],
+      "evidence": "No dedicated rage-state authority was identified. Rage feats should not become always-on Strength, skill, or action modifiers.",
+      "nextStep": "Create a RageStateRules adapter only after defining the rage lifecycle/state flag, skill permission behavior, and duration handling."
+    }
+  ],
+  "summary": {
+    "exists_wholecloth": 3,
+    "exists_partial_needs_adapters": 6,
+    "exists_partial_needs_refactor": 3,
+    "missing_runtime": 3
+  }
+}
