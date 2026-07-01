@@ -1,0 +1,13 @@
+{
+  "phase": "phase-10b-engine-fit-matrix",
+  "familyCount": 15,
+  "counts": {
+    "exists_wholecloth": 3,
+    "exists_partial_needs_adapters": 6,
+    "exists_partial_needs_refactor": 3,
+    "missing_runtime": 3
+  },
+  "warnings": [],
+  "errors": [],
+  "generatedAt": "2026-07-01T11:38:24.545Z"
+}
