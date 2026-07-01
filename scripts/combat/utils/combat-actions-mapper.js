@@ -516,7 +516,7 @@ export class CombatActionsMapper {
 
   static _notReady() {
     SWSELogger.warn('CombatActionsMapper used before initialization completed.');
-    return { combatActions: [], extraUses, hasActions: false };
+    return { combatActions: [], extraUses: [], hasActions: false };
   }
 }
 
