@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "phase": "phase-10f-damage-timing-rider-adapter-implementation",
+  "purpose": "Implement the Phase 10 P0 damage-timing-rider-adapter contract by adding a pre-ActorEngine.applyDamage packet adapter for hit/damage timing riders.",
+  "implementedAdapter": "damage-timing-rider-adapter",
+  "classificationFrom10B": "exists_partial_needs_adapters",
+  "contractFrom10C": "damage-timing-rider-adapter",
+  "runtimeHomes": [
+    "scripts/engine/combat/damage-timing-rider-adapter.js",
+    "scripts/governance/actor-engine/actor-engine.js",
+    "scripts/engine/combat/damage-resolution-engine.js",
+    "scripts/engine/combat/threshold-engine.js",
+    "scripts/engine/feats/meta-resource-feat-resolver.js"
+  ],
+  "implementationScope": [
+    "Collect feat/talent damage timing metadata from abilityMeta.damageTimingRules, damageRiders, damageRules, targetDamageRules, and abilityMeta.rules.",
+    "Provide a compatibility rule for Advantageous Attack so it is modeled as a target-not-acted damage rider rather than an attack bonus.",
+    "Build a declarative modified damage packet before ActorEngine.applyDamage runs.",
+    "Preserve applied rider audit data in damagePacket.options.damageTimingRiders.",
+    "Expose targetHasActedThisEncounter helper for future attack/damage context wiring."
+  ],
+  "nonGoals": [
+    "No direct HP mutation.",
+    "No duplicate DamageResolutionEngine.",
+    "No automatic attack roll or chat UI integration in this slice.",
+    "No post-resolution target effects; those belong to CombatTargetEffectAdapter or later dedicated handlers."
+  ],
+  "supportedRuleFamilies": [
+    "damage-rider",
+    "damage-bonus",
+    "successful-hit-damage-rider",
+    "post-hit-damage-rider",
+    "pre-damage-rider",
+    "advantageous-attack",
+    "target-not-acted-damage-rider"
+  ],
+  "advantageousAttackHandling": {
+    "statusAfter10F": "implementation_path_ready",
+    "reason": "The adapter now has a built-in compatibility rule that adds one-half actor level to damage when the target has not acted yet. This replaces the wrong-shape attack-bonus approach at the adapter layer, but audit promotion should wait until the damage UI/workflow calls the adapter."
+  },
+  "unlocksPhase9Families": [
+    "target-not-acted damage riders",
+    "successful-hit damage riders",
+    "pre-damage packet mutation before mitigation/threshold",
+    "damage rider audit trail in damagePacket.options"
+  ],
+  "exampleFeatsUnlockedForNextPromotionReview": [
+    "Advantageous Attack",
+    "Forceful Strike",
+    "Forceful Telekinesis",
+    "Crush",
+    "Delay Damage",
+    "Damage Conversion",
+    "Never Surrender"
+  ],
+  "remainingWork": [
+    "Wire rollDamage or damage-application UI to call DamageTimingRiderAdapter.applyToDamagePacket before ActorEngine.applyDamage.",
+    "Normalize individual feat metadata to supported damage timing rule types.",
+    "Add exact acted-this-encounter flags on combat turn start/end instead of relying on conservative combat order inference.",
+    "Promote Advantageous Attack out of implemented_incorrect only after the wrong-shape metadata is quarantined and the damage workflow calls the adapter."
+  ]
+}
