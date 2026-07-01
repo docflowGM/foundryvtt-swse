@@ -1,0 +1,493 @@
+{
+  "schemaVersion": 1,
+  "phase": "phase-10c-adapter-contracts",
+  "purpose": "Define the first implementation contracts for Phase 10 adapter work. These contracts convert Phase 9 feat metadata families into runtime behavior while reusing existing engines instead of creating parallel systems.",
+  "nonNegotiableBehavior": [
+    "Think Before Coding: each adapter must name the existing SSOT it extends before code is written.",
+    "Simplicity First: adapters should map metadata to existing engines; they should not become new broad subsystems unless the runtime is truly missing.",
+    "Surgical Changes: start with one adapter family at a time and keep mutation boundaries intact.",
+    "Goal-Driven Execution: every adapter must list the Phase 9 feats it unlocks and the tests/audits that prove it."
+  ],
+  "globalRules": [
+    "All actor mutations must route through ActorEngine or an existing engine that delegates to ActorEngine.",
+    "All per-round/per-encounter activation limits must route through ReactionEngine, ActivationLimitEngine, EncounterUseTracker, or an existing resource service.",
+    "Reaction work must reuse ReactionEngine and ReactionRegistry; do not create a parallel reaction engine.",
+    "Damage work must reuse ActorEngine.applyDamage and DamageResolutionEngine; do not bypass the damage pipeline.",
+    "Attack option math must reuse CombatOptionResolver; do not duplicate attack/damage option math.",
+    "Skill-use feats must not alter derived skill totals unless the feat actually grants a passive bonus.",
+    "Metadata-only fields are not implementation until an adapter consumes them."
+  ],
+  "adapters": [
+    {
+      "id": "reaction-registry-feat-adapter",
+      "priority": "P0",
+      "status": "contract_ready",
+      "classificationFrom10B": "exists_partial_needs_adapters",
+      "existingRuntimeHomes": [
+        "scripts/engine/combat/reactions/reaction-engine.js",
+        "scripts/engine/combat/reactions/reaction-registry.js",
+        "scripts/engine/abilities/ActivationLimitEngine.js",
+        "scripts/engine/abilities/AbilityExecutionRouter.js"
+      ],
+      "mustReuse": [
+        "ReactionEngine",
+        "ReactionRegistry",
+        "ActivationLimitEngine",
+        "AbilityExecutionRouter",
+        "ActorEngine"
+      ],
+      "mustNotCreate": [
+        "ParallelReactionEngine",
+        "PerFeatReactionListenerSprawl",
+        "DirectActorMutationFromReactionHandlers"
+      ],
+      "inputMetadataFamilies": [
+        "abilityMeta.reactionRules",
+        "abilityMeta.rules where type is REACTION",
+        "system.derived.reactions",
+        "reaction registry entries"
+      ],
+      "requiredEventContext": [
+        "trigger",
+        "actor",
+        "targetActor",
+        "attackType",
+        "damageType",
+        "rollTotal",
+        "missed",
+        "flatFooted",
+        "fightingDefensively",
+        "weapon",
+        "sourceItem"
+      ],
+      "outputContract": [
+        "available reaction options for chat/UI prompts",
+        "validated reaction result",
+        "optional mutation plan routed through ActorEngine",
+        "activation usage recorded through existing limit engine"
+      ],
+      "unlocksPhase9Feats": [
+        "Conditioning",
+        "Republic Military Training",
+        "Sith Military Training",
+        "Acrobatic Dodge",
+        "Grab Back",
+        "Mounted Defense",
+        "Stay Up",
+        "Dive for Cover",
+        "Duck and Cover",
+        "Opportunistic Retreat",
+        "Tactical Advantage"
+      ],
+      "firstImplementationSlice": [
+        "Add registry-backed metadata loader for simple reactionRules.",
+        "Add audit guard that reactionRules cannot be called missing_runtime while ReactionEngine exists.",
+        "Implement one non-mutating reaction prompt first, then one ActorEngine mutation reaction."
+      ],
+      "doneWhen": [
+        "reactionRules metadata can produce ReactionRegistry entries without hardcoding each feat in ReactionEngine.",
+        "per-round/per-encounter limits are enforced by ActivationLimitEngine or existing reaction limit pathways.",
+        "reaction handlers never mutate actor.system directly."
+      ]
+    },
+    {
+      "id": "combat-target-effect-adapter",
+      "priority": "P0",
+      "status": "contract_ready",
+      "classificationFrom10B": "exists_partial_needs_adapters",
+      "existingRuntimeHomes": [
+        "scripts/engine/combat/combat-option-resolver.js",
+        "scripts/combat/rolls/attacks.js",
+        "scripts/governance/actor-engine/actor-engine.js",
+        "scripts/engine/combat/ConditionTrackRules.js"
+      ],
+      "mustReuse": [
+        "CombatOptionResolver",
+        "ActorEngine",
+        "ConditionTrackRules",
+        "existing attack roll result context"
+      ],
+      "mustNotCreate": [
+        "SecondCombatOptionResolver",
+        "DirectTargetConditionMutation",
+        "FlatBonusReplacementForTargetEffects"
+      ],
+      "inputMetadataFamilies": [
+        "targetEffectsOnHit",
+        "targetEffectsOnCritical",
+        "HIT_RIDER",
+        "CRITICAL_RIDER",
+        "WEAPON_CRITICAL_MULTIPLIER_MIN targetEffectsOnCritical"
+      ],
+      "requiredEventContext": [
+        "attacker",
+        "targetActor",
+        "weapon",
+        "attackRoll",
+        "hit",
+        "critical",
+        "damageApplied",
+        "thresholdExceeded",
+        "combatOptions",
+        "sourceFeat"
+      ],
+      "outputContract": [
+        "target mutation plan or chat-confirmed manual rider",
+        "condition-track movement through ActorEngine",
+        "temporary active effect through ActorEngine",
+        "chat card summary of rider application"
+      ],
+      "unlocksPhase9Feats": [
+        "Wounding Strike",
+        "Staggering Attack",
+        "Triple Crit Specialist",
+        "Bantha Herder",
+        "Bantha Rush",
+        "Deceptive Drop",
+        "Halt",
+        "Heavy Hitter",
+        "Mechanical Martial Arts",
+        "Tool Frenzy"
+      ],
+      "firstImplementationSlice": [
+        "Consume targetEffectsOnHit from CombatOptionResolver.collectAttackModifiers output.",
+        "Support one safe effect type first: condition-track shift on target after confirmed hit.",
+        "Gate target mutation behind explicit hit/critical result context."
+      ],
+      "doneWhen": [
+        "collected targetEffectsOnHit no longer die in the roll result payload.",
+        "one target CT rider can be applied safely through ActorEngine.",
+        "unsupported target effect types produce visible chat/manual notes rather than silent failure."
+      ]
+    },
+    {
+      "id": "damage-timing-rider-adapter",
+      "priority": "P0",
+      "status": "contract_ready",
+      "classificationFrom10B": "exists_partial_needs_adapters",
+      "existingRuntimeHomes": [
+        "scripts/governance/actor-engine/actor-engine.js",
+        "scripts/engine/combat/damage-resolution-engine.js",
+        "scripts/engine/combat/threshold-engine.js",
+        "scripts/engine/feats/meta-resource-feat-resolver.js"
+      ],
+      "mustReuse": [
+        "ActorEngine.applyDamage",
+        "DamageResolutionEngine",
+        "ThresholdEngine",
+        "MetaResourceFeatResolver"
+      ],
+      "mustNotCreate": [
+        "ParallelDamageEngine",
+        "DirectHPMutation",
+        "AttackBonusHackForDamageRider"
+      ],
+      "inputMetadataFamilies": [
+        "damageRules",
+        "conditionTrack resourceRules",
+        "successful hit damage riders",
+        "target has not acted timing predicates",
+        "damage threshold riders"
+      ],
+      "requiredEventContext": [
+        "attacker",
+        "targetActor",
+        "weapon",
+        "hit",
+        "damageFormula",
+        "damageTotal",
+        "targetHasActedThisEncounter",
+        "thresholdMeasuredDamage",
+        "damageType"
+      ],
+      "outputContract": [
+        "modified damage packet before ActorEngine.applyDamage",
+        "post-resolution rider result",
+        "condition-track rider through ActorEngine",
+        "audit-visible reason for any damage mutation"
+      ],
+      "unlocksPhase9Feats": [
+        "Advantageous Attack",
+        "Forceful Strike",
+        "Forceful Telekinesis",
+        "Crush",
+        "Stay Up",
+        "Delay Damage",
+        "Damage Conversion",
+        "Never Surrender"
+      ],
+      "firstImplementationSlice": [
+        "Fix Advantageous Attack by replacing wrong-shape attack bonus with a post-hit damage rider predicate.",
+        "Expose targetHasActedThisEncounter in attack/damage context.",
+        "Add audit that damage riders cannot be encoded as attack bonuses."
+      ],
+      "doneWhen": [
+        "Advantageous Attack can leave implemented_incorrect.",
+        "damage changes happen before or through ActorEngine.applyDamage, never direct HP mutation.",
+        "timing predicates are explicit and testable."
+      ]
+    },
+    {
+      "id": "skill-use-rule-adapter",
+      "priority": "P1",
+      "status": "contract_ready",
+      "classificationFrom10B": "exists_partial_needs_refactor",
+      "existingRuntimeHomes": [
+        "scripts/engine/skills/skill-feat-resolver.js",
+        "scripts/actors/derived/skill-calculator.js",
+        "scripts/engine/abilities/ActivationLimitEngine.js"
+      ],
+      "mustReuse": [
+        "SkillFeatResolver",
+        "SkillCalculator",
+        "ActivationLimitEngine",
+        "ActorEngine"
+      ],
+      "mustNotCreate": [
+        "PassiveSkillBonusForActionPermission",
+        "DirectDerivedSkillMutation",
+        "SecondSkillCalculator"
+      ],
+      "inputMetadataFamilies": [
+        "abilityMeta.skillUseRules",
+        "abilityMeta.skillUseSubstitutions",
+        "abilityMeta.skillRerolls",
+        "take10/take20 permission metadata",
+        "skill action time reduction metadata"
+      ],
+      "requiredEventContext": [
+        "actor",
+        "skillKey",
+        "skillUseId",
+        "actionCost",
+        "dc",
+        "take10",
+        "take20",
+        "rushed",
+        "encounterLimit",
+        "targetActor"
+      ],
+      "outputContract": [
+        "skill-use option list",
+        "resolved roll instruction or substitution",
+        "usage tracking result",
+        "post-roll rider or manual note"
+      ],
+      "unlocksPhase9Feats": [
+        "Gearhead",
+        "Quick Skill",
+        "Combat Trickery",
+        "Intimidator",
+        "Improved Sleight of Hand",
+        "Wilderness First Aid",
+        "Hyperblazer",
+        "Fast Talk",
+        "Experienced Medic"
+      ],
+      "firstImplementationSlice": [
+        "Add read-only skill-use option collector first.",
+        "Wire one non-mutating rule: allow/forbid Take 10 or Take 20 in a specific context.",
+        "Only then add roll/result mutation workflows."
+      ],
+      "doneWhen": [
+        "skillUseRules has a runtime consumer.",
+        "skill-use feats no longer require fake passive skill totals.",
+        "encounter-limited skill uses use existing activation/encounter tracking."
+      ]
+    },
+    {
+      "id": "aid-another-support-adapter",
+      "priority": "P1",
+      "status": "contract_ready",
+      "classificationFrom10B": "exists_partial_needs_adapters",
+      "existingRuntimeHomes": [
+        "scripts/engine/abilities/ActivationLimitEngine.js",
+        "scripts/engine/feats/meta-resource-feat-resolver.js",
+        "scripts/governance/actor-engine/actor-engine.js"
+      ],
+      "mustReuse": [
+        "ActivationLimitEngine",
+        "ActorEngine",
+        "existing chat/action card patterns"
+      ],
+      "mustNotCreate": [
+        "StaticAllyBonusForAidAnother",
+        "DirectActorMutationFromAidAnother"
+      ],
+      "inputMetadataFamilies": [
+        "abilityMeta.aidAnotherRules",
+        "teamwork bonus metadata",
+        "ally range/aura metadata"
+      ],
+      "requiredEventContext": [
+        "helperActor",
+        "recipientActor",
+        "targetActor",
+        "aidMode",
+        "skillOrAttack",
+        "success",
+        "rangeSquares",
+        "duration"
+      ],
+      "outputContract": [
+        "recipient bonus or target penalty active effect",
+        "chat-visible Aid Another result",
+        "optional encounter usage tracking"
+      ],
+      "unlocksPhase9Feats": [
+        "Coordinated Attack",
+        "Coordinated Barrage",
+        "Logic Upgrade: Tactician",
+        "Suppression Fire",
+        "Mission Specialist"
+      ],
+      "firstImplementationSlice": [
+        "Define Aid Another result context without mutating actors.",
+        "Support one simple ally attack bonus/penalty case through active effect or chat prompt.",
+        "Leave complex positioning/fear riders manual until cover/movement context exists."
+      ],
+      "doneWhen": [
+        "aidAnotherRules metadata has a runtime consumer.",
+        "Aid Another bonuses are scoped to a result/context, not permanent actor math.",
+        "unsupported complex riders are surfaced visibly."
+      ]
+    },
+    {
+      "id": "force-power-context-adapter",
+      "priority": "P2",
+      "status": "contract_ready",
+      "classificationFrom10B": "exists_partial_needs_refactor",
+      "existingRuntimeHomes": [
+        "scripts/engine/force/force-engine.js",
+        "scripts/engine/abilities/AbilityExecutionRouter.js",
+        "scripts/engine/feats/meta-resource-feat-resolver.js"
+      ],
+      "mustReuse": [
+        "ForceEngine",
+        "AbilityExecutionRouter",
+        "ActorEngine",
+        "ForcePointsService"
+      ],
+      "mustNotCreate": [
+        "PerForcePowerFeatHardcoding",
+        "SecondForceEngine",
+        "DirectForcePointMutation"
+      ],
+      "inputMetadataFamilies": [
+        "scoped force power activation bonus metadata",
+        "force point spend result metadata",
+        "named force power context metadata"
+      ],
+      "requiredEventContext": [
+        "actor",
+        "forcePowerItem",
+        "powerName",
+        "useTheForceRoll",
+        "targetActor",
+        "forcePointSpent",
+        "activationResult"
+      ],
+      "outputContract": [
+        "scoped Use the Force modifier",
+        "post-result rider",
+        "Force Point cost/result note",
+        "ActorEngine mutation plan where needed"
+      ],
+      "unlocksPhase9Feats": [
+        "Forceful Grip",
+        "Forceful Slam",
+        "Forceful Stun",
+        "Forceful Throw",
+        "Forceful Weapon",
+        "Forceful Saber Throw",
+        "Force Regimen Mastery"
+      ],
+      "firstImplementationSlice": [
+        "Expose normalized forcePowerContext from AbilityExecutionRouter to ForceEngine.",
+        "Support scoped activation bonuses for named power matching only.",
+        "Defer post-result condition/rider effects until CombatTargetEffectAdapter is available."
+      ],
+      "doneWhen": [
+        "named Forceful feats are not modeled as generic Use the Force bonuses.",
+        "force power scoped bonuses can be audited by source power name.",
+        "Force Point spends remain routed through existing force/resource services."
+      ]
+    },
+    {
+      "id": "area-autofire-context-adapter",
+      "priority": "P2",
+      "status": "contract_ready",
+      "classificationFrom10B": "exists_partial_needs_refactor",
+      "existingRuntimeHomes": [
+        "scripts/engine/combat/combat-option-resolver.js",
+        "scripts/engine/combat/damage-resolution-engine.js",
+        "scripts/combat/rolls/attacks.js"
+      ],
+      "mustReuse": [
+        "CombatOptionResolver",
+        "DamageResolutionEngine",
+        "ActorEngine"
+      ],
+      "mustNotCreate": [
+        "ParallelAreaAttackDamagePipeline",
+        "StaticAutofireBonusSubstitution"
+      ],
+      "inputMetadataFamilies": [
+        "areaBonusSquares",
+        "autofireAreaSquares",
+        "excluded autofire squares",
+        "selected target inside area",
+        "soft cover provider metadata"
+      ],
+      "requiredEventContext": [
+        "attacker",
+        "template",
+        "targets",
+        "selectedTarget",
+        "coverProviders",
+        "areaShape",
+        "autofireSquares",
+        "evasionApplied"
+      ],
+      "outputContract": [
+        "normalized area attack result context",
+        "per-target damage modifiers",
+        "manual notes for unsupported template edits",
+        "no direct HP mutation"
+      ],
+      "unlocksPhase9Feats": [
+        "Artillery Shot",
+        "Spray Shot",
+        "Friendly Fire Avoidance",
+        "Targeted Area",
+        "Advantageous Cover",
+        "Angled Throw",
+        "Blaster Barrage",
+        "Crossfire",
+        "Forceful Blast",
+        "Strafe"
+      ],
+      "firstImplementationSlice": [
+        "Build read-only normalized area/autofire context from an attack result.",
+        "Surface unsupported template edits as chat/manual prompts.",
+        "Add one per-target damage modifier case only after the context is stable."
+      ],
+      "doneWhen": [
+        "area/autofire feat metadata no longer silently disappears.",
+        "per-target area modifiers can be applied before/after Evasion as specified.",
+        "cover/soft-cover provider identity is explicit in the context."
+      ]
+    }
+  ],
+  "summary": {
+    "totalAdapters": 7,
+    "byPriority": {
+      "P0": 3,
+      "P1": 2,
+      "P2": 2
+    },
+    "byStatus": {
+      "contract_ready": 7
+    }
+  }
+}
