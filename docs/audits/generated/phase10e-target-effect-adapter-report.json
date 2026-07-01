@@ -1,0 +1,9 @@
+{
+  "phase": "phase-10e-target-effect-adapter-implementation",
+  "errors": [],
+  "warnings": [
+    "Attack UI does not call CombatTargetEffectAdapter yet; this phase adds the safe consumer API."
+  ],
+  "ok": true,
+  "generatedAt": "2026-07-01T00:00:00.000Z"
+}
