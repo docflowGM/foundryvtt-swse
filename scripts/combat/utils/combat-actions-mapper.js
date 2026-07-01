@@ -406,11 +406,14 @@ export class CombatActionsMapper {
       actionTypeRaw: system.actionTypeRaw ?? system.action?.type ?? system.actionType,
       cost: system.cost,
       notes: system.notes,
+      notesAdvanced: system.notesAdvanced,
+      restriction: system.restriction,
       description: system.description ?? system.notes,
       relatedSkills: system.relatedSkills ?? [],
       dc: system.dc,
       outcome: system.outcome,
       when: system.when,
+      trigger: system.trigger,
       resolutionMode: system.resolutionMode,
       manualResolution: system.manualResolution,
       gmManaged: system.gmManaged,
@@ -457,7 +460,10 @@ export class CombatActionsMapper {
     if (!relatedSkills) {return false;}
 
     return relatedSkills.some(skill => {
-      const name = skill?.toLowerCase() ?? '';
+      const raw = typeof skill === 'string'
+        ? skill
+        : skill?.skill ?? skill?.name ?? skill?.label ?? '';
+      const name = String(raw).toLowerCase();
       return name.includes(displayNameLower) || name.includes(skillKey.toLowerCase());
     });
   }
