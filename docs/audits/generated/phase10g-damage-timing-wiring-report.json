@@ -1,0 +1,9 @@
+{
+  "phase": "phase-10g-damage-timing-rider-wiring",
+  "errors": [],
+  "warnings": [
+    "Damage callsites still need a follow-up context audit to ensure attacker/sourceActor and targetHasActedThisEncounter are supplied everywhere possible."
+  ],
+  "ok": true,
+  "generatedAt": "2026-07-01T00:00:00.000Z"
+}
