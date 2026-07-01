@@ -1,0 +1,9 @@
+{
+  "phase": "phase-10f-damage-timing-rider-adapter-implementation",
+  "errors": [],
+  "warnings": [
+    "Damage workflow or UI is not yet wired to call DamageTimingRiderAdapter.applyToDamagePacket before ActorEngine.applyDamage."
+  ],
+  "ok": true,
+  "generatedAt": "2026-07-01T00:00:00.000Z"
+}
