@@ -1,0 +1,122 @@
+{
+  "schemaVersion": 1,
+  "phase": "phase-10h-damage-context-callsite-audit",
+  "purpose": "Audit DamageEngine.applyDamage callsites after Phase 10G wiring to determine which paths can truthfully supply attacker/sourceActor, targetActor, hit, critical, and timing context for DamageTimingRiderAdapter.",
+  "relationshipTo10G": "Phase 10G wired DamageTimingRiderAdapter into DamageEngine. Phase 10H classifies and scopes the callsites so context is propagated only where it is truthful.",
+  "rules": [
+    "Do not invent an attacker for manual or environmental damage.",
+    "Attack-resolution callsites should pass attacker/sourceActor, targetActor, weapon, hit, critical, and damage context where available.",
+    "Recurring, poison, collision, and manual damage should not trigger attacker feat damage riders unless they have a real source actor and represent a successful attack or rider-eligible damage event.",
+    "Advantageous Attack remains not implemented_correct until wrong-shape attack metadata is quarantined and a focused test proves damage-only behavior."
+  ],
+  "callsites": [
+    {
+      "path": "scripts/engine/combat/CombatEngine.js",
+      "callsite": "CombatEngine.resolveAttack -> DamageEngine.applyDamage(target, damage)",
+      "classification": "safe_to_wire_attack_context",
+      "hasAttacker": true,
+      "hasTarget": true,
+      "hasWeapon": true,
+      "hasHitContext": true,
+      "shouldTriggerDamageRiders": true,
+      "recommendedOptions": [
+        "sourceActor: attacker",
+        "attacker",
+        "targetActor: target",
+        "weapon",
+        "hit: true",
+        "isHit: true",
+        "critical/isCritical from attack roll when available",
+        "damageType from weapon combat damage type",
+        "targetHasActedThisEncounter when exact combat state exists"
+      ],
+      "phase10hFinding": "This is the primary callsite for Advantageous Attack and other successful-hit damage riders. It should be the first code wiring target."
+    },
+    {
+      "path": "scripts/apps/damage-app.js",
+      "callsite": "DamageApp._applyDamage -> DamageEngine.applyDamage(this.actor, dmg, { bypassDT })",
+      "classification": "manual_damage_no_attacker",
+      "hasAttacker": false,
+      "hasTarget": true,
+      "hasWeapon": false,
+      "hasHitContext": false,
+      "shouldTriggerDamageRiders": false,
+      "recommendedOptions": [
+        "source: manual-damage",
+        "targetActor: this.actor",
+        "manualDamage: true",
+        "skipDamageTimingRiders: true"
+      ],
+      "phase10hFinding": "Manual GM damage should not trigger feat damage riders unless the GM explicitly supplies source context later."
+    },
+    {
+      "path": "scripts/engine/poison/poison-engine.js",
+      "callsite": "PoisonEngine._resolvePoisonDamage / poison damage paths -> DamageEngine.applyDamage(targetActor, amount, ...)",
+      "classification": "subsystem_source_context_not_attack_damage_rider",
+      "hasAttacker": true,
+      "hasTarget": true,
+      "hasWeapon": false,
+      "hasHitContext": true,
+      "shouldTriggerDamageRiders": false,
+      "recommendedOptions": [
+        "sourceActor when poison has sourceActor",
+        "targetActor",
+        "source: poison name",
+        "poisonDamage: true",
+        "skipDamageTimingRiders: true unless a poison-specific feat explicitly opts in"
+      ],
+      "phase10hFinding": "Poison has a source actor but is its own subsystem. It should preserve source context for logging but not trigger weapon hit damage riders by default."
+    },
+    {
+      "path": "scripts/engine/combat/recurring-damage-engine.js",
+      "callsite": "RecurringDamageEngine.tickRecurringDamage -> DamageEngine.applyDamage(actor, roll.total, ...)",
+      "classification": "recurring_subsystem_damage",
+      "hasAttacker": "sometimes_via_instance",
+      "hasTarget": true,
+      "hasWeapon": false,
+      "hasHitContext": false,
+      "shouldTriggerDamageRiders": false,
+      "recommendedOptions": [
+        "sourceActor resolved from instance source actor when available",
+        "targetActor: actor",
+        "recurringDamage: true",
+        "skipDamageTimingRiders: true"
+      ],
+      "phase10hFinding": "Recurring damage should preserve source metadata but should not re-trigger on-hit damage riders each tick."
+    },
+    {
+      "path": "scripts/engine/combat/subsystems/vehicle/vehicle-collisions.js",
+      "callsite": "VehicleCollisions.ram -> DamageEngine.applyDamage(target, damage)",
+      "classification": "vehicle_collision_subsystem_damage",
+      "hasAttacker": true,
+      "hasTarget": true,
+      "hasWeapon": false,
+      "hasHitContext": false,
+      "shouldTriggerDamageRiders": false,
+      "recommendedOptions": [
+        "sourceActor: attacker",
+        "targetActor: target",
+        "source: vehicle-collision",
+        "collisionDamage: true",
+        "skipDamageTimingRiders: true unless a collision-specific feat opts in"
+      ],
+      "phase10hFinding": "Vehicle collision damage has a source actor but is not a normal weapon hit. It should not trigger Advantageous Attack."
+    }
+  ],
+  "summary": {
+    "totalCallsitesReviewed": 5,
+    "safeToWireAttackContext": 1,
+    "manualOrSubsystemNoDefaultRiders": 4,
+    "primaryAdvantageousAttackPath": "scripts/engine/combat/CombatEngine.js"
+  },
+  "nextImplementationRecommendation": {
+    "phase": "phase-10i",
+    "goal": "Patch CombatEngine.resolveAttack to pass exact attack context into DamageEngine.applyDamage, and patch manual/subsystem callsites with skipDamageTimingRiders guards where appropriate.",
+    "minimumAcceptance": [
+      "CombatEngine damage calls pass attacker/sourceActor, targetActor, weapon, hit/isHit, critical/isCritical, and damageType.",
+      "Manual damage app passes skipDamageTimingRiders: true.",
+      "Recurring/collision subsystem damage passes skipDamageTimingRiders: true unless explicitly opted in.",
+      "Audit proves Advantageous Attack can only modify damage in attack-context calls."
+    ]
+  }
+}
