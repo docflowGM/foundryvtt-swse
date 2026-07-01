@@ -1,0 +1,12 @@
+{
+  "phase": "phase-10h-damage-context-callsite-audit",
+  "errors": [],
+  "warnings": [
+    "CombatEngine.resolveAttack still appears to call DamageEngine.applyDamage without full attacker/target/weapon/hit context. Phase 10I should patch this first.",
+    "DamageApp manual damage does not explicitly pass skipDamageTimingRiders: true. Phase 10I should add this guard.",
+    "RecurringDamageEngine does not explicitly skip damage timing riders; recurring ticks should not retrigger on-hit riders by default.",
+    "VehicleCollisions.ram does not explicitly skip damage timing riders; collision damage should not trigger weapon-hit riders by default."
+  ],
+  "ok": true,
+  "generatedAt": "2026-07-01T00:00:00.000Z"
+}
