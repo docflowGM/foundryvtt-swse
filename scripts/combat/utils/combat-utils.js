@@ -6,7 +6,6 @@ import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-
 import { getDamageAbilityContribution, getHalfLevelDamageBonus, getRangePenalty, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus, isMeleeWeapon as isRawMeleeWeapon, isRangedWeapon as isRawRangedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
-import { ScopedCombatFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feat/scoped-combat-feat-resolver.js";
 
 /**
  * Modern SWSE Combat Utilities (v13+)
@@ -28,15 +27,6 @@ import { ScopedCombatFeatResolver } from "/systems/foundryvtt-swse/scripts/engin
 export function getConditionPenalty(ctStep) {
   const penalties = [0, -1, -2, -5, -10, 0];
   return penalties[Math.clamp(ctStep, 0, 5)] ?? 0;
-}
-
-function attackContextForWeapon(weapon, options = {}) {
-  if (options?.attackType || options?.weaponType) return { ...options, weapon };
-  return {
-    ...options,
-    weapon,
-    attackType: isRawRangedWeapon(weapon) && !isRawMeleeWeapon(weapon) ? 'ranged' : 'melee'
-  };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -89,7 +79,6 @@ export function computeAttackBonus(actor, weapon, options = {}) {
   const aePenalty = actor.system.attackPenalty ?? 0;
   const proficient = weapon.system?.proficient ?? true;
   const proficiencyPenalty = proficient ? 0 : -5;
-  const featAttackBonus = ScopedCombatFeatResolver.getBonus(actor, weapon, 'attack', attackContextForWeapon(weapon, options));
 
   return (
     bab +
@@ -99,8 +88,7 @@ export function computeAttackBonus(actor, weapon, options = {}) {
     speciesAttackBonus +
     aePenalty +
     ctPenalty +
-    proficiencyPenalty +
-    featAttackBonus
+    proficiencyPenalty
   );
 }
 
@@ -306,9 +294,8 @@ export function computeDamageBonus(actor, weapon, options = {}) {
     if (dexMod > strMod) abilityContribution = (isTwoHanded && !isLight) ? dexMod * 2 : dexMod;
   }
 
-  const context = attackContextForWeapon(weapon, options);
+  const context = { ...options, weapon };
   bonus += abilityContribution;
-  bonus += ScopedCombatFeatResolver.getBonus(actor, weapon, 'damage', context);
   bonus += computePassiveStateDamageBonus(actor, weapon, context);
 
   return bonus;
