@@ -7,6 +7,7 @@
  * - actor.system.attributes.con.* changes
  * - actor.system.hp.bonus changes
  * - Class item create/update/delete
+ * - HP-affecting feat create/update/delete, such as Toughness
  *
  * Guard:
  * - Skips if options.meta.guardKey === "hp-recompute" (prevents recursion)
@@ -15,6 +16,19 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { traceLog, actorSummary } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
+
+function normalizeFeatName(value) {
+  return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function itemAffectsHpMax(item) {
+  if (!item) return false;
+  if (item.type === 'class') return true;
+  if (item.type !== 'feat') return false;
+  if (normalizeFeatName(item.name) === 'toughness') return true;
+  const rules = item.system?.abilityMeta?.resourceRules?.hitPoints;
+  return Array.isArray(rules) && rules.length > 0;
+}
 
 export class HPRecomputeHooks {
   static _initialized = false;
@@ -94,50 +108,36 @@ export class HPRecomputeHooks {
   }
 
   /**
-   * On class item CREATE, UPDATE, or DELETE, recompute HP
+   * On class or HP-affecting feat CREATE, UPDATE, or DELETE, recompute HP.
    * @private
    */
   static _registerItemHooks() {
-    // createItem hook
+    const maybeRecomputeFromItem = async (item, reason) => {
+      if (!itemAffectsHpMax(item)) return;
+      if (!item.actor) return;
+
+      SWSELogger.debug(`[HPRecomputeHooks] HP-affecting item ${reason} for ${item.actor.name}`, {
+        item: item.name,
+        itemType: item.type
+      });
+
+      try {
+        await ActorEngine.recomputeHP(item.actor, { fromHook: true });
+      } catch (err) {
+        SWSELogger.error(`[HPRecomputeHooks] Failed to recompute HP after item ${reason}`, { error: err });
+      }
+    };
+
     Hooks.on("createItem", async (item, options, userId) => {
-      if (item.type !== "class") return;
-      if (!item.actor) return;
-
-      SWSELogger.debug(`[HPRecomputeHooks] Class item created for ${item.actor.name}`);
-
-      try {
-        await ActorEngine.recomputeHP(item.actor, { fromHook: true });
-      } catch (err) {
-        SWSELogger.error(`[HPRecomputeHooks] Failed to recompute HP after class item create`, { error: err });
-      }
+      await maybeRecomputeFromItem(item, 'create');
     });
 
-    // updateItem hook
     Hooks.on("updateItem", async (item, data, options, userId) => {
-      if (item.type !== "class") return;
-      if (!item.actor) return;
-
-      SWSELogger.debug(`[HPRecomputeHooks] Class item updated for ${item.actor.name}`);
-
-      try {
-        await ActorEngine.recomputeHP(item.actor, { fromHook: true });
-      } catch (err) {
-        SWSELogger.error(`[HPRecomputeHooks] Failed to recompute HP after class item update`, { error: err });
-      }
+      await maybeRecomputeFromItem(item, 'update');
     });
 
-    // deleteItem hook
     Hooks.on("deleteItem", async (item, options, userId) => {
-      if (item.type !== "class") return;
-      if (!item.actor) return;
-
-      SWSELogger.debug(`[HPRecomputeHooks] Class item deleted for ${item.actor.name}`);
-
-      try {
-        await ActorEngine.recomputeHP(item.actor, { fromHook: true });
-      } catch (err) {
-        SWSELogger.error(`[HPRecomputeHooks] Failed to recompute HP after class item delete`, { error: err });
-      }
+      await maybeRecomputeFromItem(item, 'delete');
     });
   }
 }
