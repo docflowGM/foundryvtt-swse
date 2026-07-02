@@ -6,6 +6,7 @@ import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-
 import { getDamageAbilityContribution, getHalfLevelDamageBonus, getRangePenalty, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus, isMeleeWeapon as isRawMeleeWeapon, isRangedWeapon as isRawRangedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
+import { ScopedCombatFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feat/scoped-combat-feat-resolver.js";
 
 /**
  * Modern SWSE Combat Utilities (v13+)
@@ -16,26 +17,26 @@ import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine
  */
 
 /* -------------------------------------------------------------------------- */
-/* CONDITION TRACK PENALTIES (RAW, numeric CT 0–5)                             */
+/* CONDITION TRACK PENALTIES (RAW, numeric CT 0-5)                             */
 /* -------------------------------------------------------------------------- */
 
 /**
  * Get RAW SWSE condition penalty based on CT step.
- *
- * CT levels (RAW SWSE):
- * - 0: Normal (0 penalty)
- * - 1: Shaken (-1 penalty)
- * - 2: Frightened (-2 penalty)
- * - 3: Panicked (-5 penalty)
- * - 4: Cowering (-10 penalty)
- * - 5: Helpless (can't act, no numeric penalty)
- *
- * @param {number} ctStep - Integer 0–5
+ * @param {number} ctStep - Integer 0-5
  * @returns {number} Penalty value
  */
 export function getConditionPenalty(ctStep) {
-  const penalties = [0, -1, -2, -5, -10, 0]; // Helpless = 0 (can't act, numeric penalty irrelevant)
+  const penalties = [0, -1, -2, -5, -10, 0];
   return penalties[Math.clamp(ctStep, 0, 5)] ?? 0;
+}
+
+function attackContextForWeapon(weapon, options = {}) {
+  if (options?.attackType || options?.weaponType) return { ...options, weapon };
+  return {
+    ...options,
+    weapon,
+    attackType: isRawRangedWeapon(weapon) && !isRawMeleeWeapon(weapon) ? 'ranged' : 'melee'
+  };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -48,10 +49,10 @@ export function getConditionPenalty(ctStep) {
  *
  * @param {Actor} actor
  * @param {Item} weapon
+ * @param {Object} [options]
  * @returns {number} Final attack bonus
  */
-export function computeAttackBonus(actor, weapon) {
-  // Statblock NPCs can use stored totals until explicitly leveled.
+export function computeAttackBonus(actor, weapon, options = {}) {
   if (actor?.type === 'npc' && isNpcStatblockMode(actor)) {
     const npc = weapon?.flags?.swse?.npc;
     if (npc?.useFlat === true && Number.isFinite(npc.flatAttackBonus)) {
@@ -60,26 +61,18 @@ export function computeAttackBonus(actor, weapon) {
   }
 
   const bab = SchemaAdapters.getBAB(actor);
-
-  // RAW attack rolls use BAB + ability modifier. They do not add half level;
-  // level scaling is already represented by BAB.
   const attr = getWeaponAttackAbility(actor, weapon);
   const abilityMod = SchemaAdapters.getAbilityMod(actor, attr);
-
-  // Weapon-based attack bonuses only. Do not reuse damage bonuses here.
   const misc = getWeaponFlatAttackBonus(weapon);
   const rangePenalty = getRangePenalty(weapon);
 
-  // Species combat bonuses (from SpeciesTraitEngine)
   const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
   const speciesAttackBonus = (isRawRangedWeapon(weapon) && !isRawMeleeWeapon(weapon) ? (speciesCombat.rangedAttack || 0) : (speciesCombat.meleeAttack || 0));
 
-  // Condition Track penalties (read from authoritative derived source)
   const ctPenalty = actor.system?.derived?.damage?.conditionPenalty ??
                     actor.system?.conditionTrack?.penalty ??
                     0;
 
-  // REGRESSION GUARD: Detect mismatch between system and derived penalties
   if (SettingsHelper.getBoolean('devMode', false) &&
       actor.system?.conditionTrack &&
       actor.system?.conditionTrack?.penalty !== undefined &&
@@ -93,12 +86,10 @@ export function computeAttackBonus(actor, weapon) {
     );
   }
 
-  // Active Effect attack penalties (your refactor uses system.attackPenalty)
   const aePenalty = actor.system.attackPenalty ?? 0;
-
-  // Weapon proficiency penalty (RAW: –5)
   const proficient = weapon.system?.proficient ?? true;
   const proficiencyPenalty = proficient ? 0 : -5;
+  const featAttackBonus = ScopedCombatFeatResolver.getBonus(actor, weapon, 'attack', attackContextForWeapon(weapon, options));
 
   return (
     bab +
@@ -108,110 +99,70 @@ export function computeAttackBonus(actor, weapon) {
     speciesAttackBonus +
     aePenalty +
     ctPenalty +
-    proficiencyPenalty
+    proficiencyPenalty +
+    featAttackBonus
   );
 }
 
 /**
- * Calculate effective critical threat range with EXTEND_CRITICAL_RANGE modifiers
- * @param {Actor} actor - The attacking actor
- * @param {Item} weapon - The weapon being used
- * @returns {number} The adjusted critical threat range (minimum 2)
+ * Calculate effective critical threat range with EXTEND_CRITICAL_RANGE modifiers.
  */
 export function getEffectiveCritRange(actor, weapon) {
   const baseCritRange = weapon.system?.critRange || 20;
-
   if (!actor) return baseCritRange;
-
   const ctx = new ResolutionContext(actor);
   const critRules = ctx.getRuleInstances(RULES.EXTEND_CRITICAL_RANGE);
-
   let bonus = 0;
   const weaponProf = weapon.system?.proficiency;
-
   for (const rule of critRules) {
-    if (rule.proficiency === weaponProf) {
-      bonus += rule.by || 0;
-    }
+    if (rule.proficiency === weaponProf) bonus += rule.by || 0;
   }
-
-  // Ensure crit range never drops below 2 (natural rule)
   return Math.max(2, baseCritRange - bonus);
 }
 
 /**
- * Get critical damage bonus formula from CRITICAL_DAMAGE_BONUS rules
- * @param {Actor} actor - The attacking actor
- * @param {Item} weapon - The weapon being used
- * @returns {string} Bonus formula (e.g., "1d6" or "+2") to add to damage, or empty string
+ * Get critical damage bonus formula from CRITICAL_DAMAGE_BONUS rules.
  */
 export function getCriticalDamageBonus(actor, weapon) {
   if (!actor || !weapon) return '';
-
   const ctx = new ResolutionContext(actor);
   const critBonusRules = ctx.getRuleInstances(RULES.CRITICAL_DAMAGE_BONUS);
-
   const bonuses = [];
   const weaponProf = weapon.system?.proficiency;
-
   for (const rule of critBonusRules) {
-    if (rule.proficiency === weaponProf && rule.bonus) {
-      bonuses.push(String(rule.bonus));
-    }
+    if (rule.proficiency === weaponProf && rule.bonus) bonuses.push(String(rule.bonus));
   }
-
-  // Join multiple bonuses with +
   return bonuses.length > 0 ? bonuses.join(' + ') : '';
 }
 
 /**
- * Get critical damage multiplier with MODIFY_CRITICAL_MULTIPLIER overrides
- * @param {Actor} actor - The attacking actor
- * @param {Item} weapon - The weapon being used
- * @returns {number} Critical multiplier (default 2, overridden by highest matching rule)
+ * Get critical damage multiplier with MODIFY_CRITICAL_MULTIPLIER overrides.
  */
 export function getCriticalMultiplier(actor, weapon) {
   const defaultMultiplier = weapon.system?.critMultiplier || 2;
-
   if (!actor || !weapon) return defaultMultiplier;
-
   const ctx = new ResolutionContext(actor);
   const multRules = ctx.getRuleInstances(RULES.MODIFY_CRITICAL_MULTIPLIER);
-
   let highestMultiplier = defaultMultiplier;
   const weaponProf = weapon.system?.proficiency;
-
   for (const rule of multRules) {
-    if (rule.proficiency === weaponProf && rule.multiplier) {
-      // Take the highest multiplier if multiple rules apply
-      highestMultiplier = Math.max(highestMultiplier, rule.multiplier);
-    }
+    if (rule.proficiency === weaponProf && rule.multiplier) highestMultiplier = Math.max(highestMultiplier, rule.multiplier);
   }
-
   return highestMultiplier;
 }
 
 /**
- * Get critical confirmation bonus from CRITICAL_CONFIRM_BONUS rules
- * @param {Actor} actor - The attacking actor
- * @param {Item} weapon - The weapon being used
- * @returns {number} Total confirmation bonus
+ * Get critical confirmation bonus from CRITICAL_CONFIRM_BONUS rules.
  */
 export function getCriticalConfirmBonus(actor, weapon) {
   if (!actor || !weapon) return 0;
-
   const ctx = new ResolutionContext(actor);
   const confirmRules = ctx.getRuleInstances(RULES.CRITICAL_CONFIRM_BONUS);
-
   let bonus = 0;
   const weaponProf = weapon.system?.proficiency;
-
   for (const rule of confirmRules) {
-    if (rule.proficiency === weaponProf && rule.bonus) {
-      bonus += rule.bonus || 0;
-    }
+    if (rule.proficiency === weaponProf && rule.bonus) bonus += rule.bonus || 0;
   }
-
   return bonus;
 }
 
@@ -219,41 +170,24 @@ export function getCriticalConfirmBonus(actor, weapon) {
 /* DAMAGE BONUS CALCULATION                                                    */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Determine if a weapon is a melee weapon
- * @param {Item} weapon - The weapon item
- * @returns {boolean}
- */
+/** Determine if a weapon is a melee weapon. */
 export function isMeleeWeapon(weapon) {
   const range = (weapon.system?.range || '').toLowerCase();
   return range === 'melee' || range === '';
 }
 
-/**
- * Determine if a weapon is a light weapon (smaller than character size)
- * Light weapons do NOT get 2x STR bonus when used two-handed
- * @param {Item} weapon - The weapon item
- * @param {Actor} actor - The actor wielding the weapon
- * @returns {boolean}
- */
+/** Determine if a weapon is a light weapon. */
 export function isLightWeapon(weapon, actor) {
-  // Check explicit light weapon flag
-  if (weapon.system?.isLight === true) {return true;}
+  if (weapon.system?.isLight === true) return true;
 
-  // Check weapon size vs actor size
   const weaponSize = (weapon.system?.size || '').toLowerCase();
   const actorSize = (actor.system?.size || 'medium').toLowerCase();
-
   const sizeOrder = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
   const actorSizeIndex = sizeOrder.indexOf(actorSize);
   const weaponSizeIndex = sizeOrder.indexOf(weaponSize);
 
-  // Weapon is light if it's smaller than character size
-  if (weaponSizeIndex !== -1 && actorSizeIndex !== -1) {
-    return weaponSizeIndex < actorSizeIndex;
-  }
+  if (weaponSizeIndex !== -1 && actorSizeIndex !== -1) return weaponSizeIndex < actorSizeIndex;
 
-  // Check name for common light weapons
   const name = (weapon.name || '').toLowerCase();
   const lightWeapons = [
     'knife', 'dagger', 'vibrodagger', 'shiv', 'stiletto',
@@ -262,22 +196,13 @@ export function isLightWeapon(weapon, actor) {
   return lightWeapons.some(lw => name.includes(lw));
 }
 
-/**
- * Determine if a weapon should be wielded two-handed
- * @param {Item} weapon - The weapon item
- * @param {Actor} actor - The actor wielding the weapon
- * @returns {boolean}
- */
+/** Determine if a weapon should be wielded two-handed. */
 export function isTwoHandedWeapon(weapon, actor) {
-  // Check explicit flag
-  if (weapon.system?.twoHanded === true) {return true;}
-  if (weapon.system?.hands === 2) {return true;}
+  if (weapon.system?.twoHanded === true) return true;
+  if (weapon.system?.hands === 2) return true;
 
-  // Check weapon category/type
   const category = (weapon.system?.category || weapon.system?.subcategory || '').toLowerCase();
   const name = (weapon.name || '').toLowerCase();
-
-  // Two-handed weapon categories
   const twoHandedCategories = [
     'two-handed', 'twohanded', '2h', '2-handed',
     'heavy', 'rifle', 'carbine', 'repeating',
@@ -286,33 +211,21 @@ export function isTwoHandedWeapon(weapon, actor) {
     'double-bladed', 'double bladed'
   ];
 
-  if (twoHandedCategories.some(cat => category.includes(cat) || name.includes(cat))) {
-    return true;
-  }
+  if (twoHandedCategories.some(cat => category.includes(cat) || name.includes(cat))) return true;
 
-  // Check weapon size - weapons larger than character size require two hands
   const weaponSize = (weapon.system?.size || '').toLowerCase();
   const actorSize = (actor.system?.size || 'medium').toLowerCase();
-
   const sizeOrder = ['fine', 'diminutive', 'tiny', 'small', 'medium', 'large', 'huge', 'gargantuan', 'colossal'];
   const actorSizeIndex = sizeOrder.indexOf(actorSize);
   const weaponSizeIndex = sizeOrder.indexOf(weaponSize);
 
-  // Weapons one size larger than character require two hands
-  if (weaponSizeIndex !== -1 && actorSizeIndex !== -1) {
-    return weaponSizeIndex > actorSizeIndex;
-  }
+  if (weaponSizeIndex !== -1 && actorSizeIndex !== -1) return weaponSizeIndex > actorSizeIndex;
 
   return false;
 }
 
-/**
- * Check if actor has a talent that allows DEX for melee damage
- * @param {Actor} actor - The actor
- * @returns {boolean}
- */
+/** Check if actor has a talent that allows DEX for melee damage. */
 export function hasDexToDamageTalent(actor) {
-  // Common talents that allow DEX for damage
   const dexDamageTalents = [
     'weapon finesse',
     'dexterous damage',
@@ -321,11 +234,9 @@ export function hasDexToDamageTalent(actor) {
   ];
 
   for (const item of actor.items) {
-    if (item.type !== 'talent' && item.type !== 'feat') {continue;}
+    if (item.type !== 'talent' && item.type !== 'feat') continue;
     const name = (item.name || '').toLowerCase();
-    if (dexDamageTalents.some(t => name.includes(t))) {
-      return true;
-    }
+    if (dexDamageTalents.some(t => name.includes(t))) return true;
   }
 
   return false;
@@ -371,23 +282,11 @@ function computePassiveStateDamageBonus(actor, weapon, context = {}) {
 
 /**
  * Compute SWSE RAW damage bonus — canonical implementation.
- * All roll functions and UI previews call this single function so displayed
- * math and actual roll math are always identical.
- *
- * Includes: ½ heroic level, ability modifier, flat weapon bonus, species
- * combat bonus, optional dex-to-damage talent override, PASSIVE/STATE bonuses.
- *
- * @param {Actor} actor
- * @param {Item} weapon
- * @param {Object} [options]
- * @param {boolean} [options.forceTwoHanded]
- * @returns {number}
  */
 export function computeDamageBonus(actor, weapon, options = {}) {
   const halfLvl = getHalfLevelDamageBonus(actor, weapon, { ...options, weapon, isWeaponDamage: true });
   let bonus = halfLvl + getWeaponFlatDamageBonus(weapon);
 
-  // Species combat bonuses (from SpeciesTraitEngine)
   const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
   const isRangedWeapon = !!weapon.system?.ranged;
   const speciesDamageBonus = (isRangedWeapon ? (speciesCombat.rangedDamage || 0) : (speciesCombat.meleeDamage || 0));
@@ -401,79 +300,52 @@ export function computeDamageBonus(actor, weapon, options = {}) {
     forceTwoHanded: options.forceTwoHanded
   });
 
-  // Preserve the existing opt-in talent behavior without changing RAW defaults:
-  // melee/thrown weapons use STR unless a talent explicitly allows a better DEX damage path.
   if ((isMeleeWeapon(weapon) || weapon.system?.thrown === true) && hasDexToDamageTalent(actor)) {
     const dexMod = SchemaAdapters.getAbilityMod(actor, 'dex');
     const strMod = SchemaAdapters.getAbilityMod(actor, 'str');
-    if (dexMod > strMod) {
-      abilityContribution = (isTwoHanded && !isLight) ? dexMod * 2 : dexMod;
-    }
+    if (dexMod > strMod) abilityContribution = (isTwoHanded && !isLight) ? dexMod * 2 : dexMod;
   }
 
+  const context = attackContextForWeapon(weapon, options);
   bonus += abilityContribution;
-  bonus += computePassiveStateDamageBonus(actor, weapon, options);
+  bonus += ScopedCombatFeatResolver.getBonus(actor, weapon, 'damage', context);
+  bonus += computePassiveStateDamageBonus(actor, weapon, context);
 
   return bonus;
 }
 
 /* -------------------------------------------------------------------------- */
-/* COVER / CONCEALMENT / FLANKING                                               */
+/* COVER / CONCEALMENT / FLANKING                                              */
 /* -------------------------------------------------------------------------- */
 
-/**
- * RAW cover bonuses to Reflex.
- * @param {string} type - "none", "partial", "cover", "improved"
- */
+/** RAW cover bonuses to Reflex. */
 export function getCoverBonus(type) {
-  const table = {
-    none: 0,
-    partial: 2,
-    cover: 5,
-    improved: 10
-  };
+  const table = { none: 0, partial: 2, cover: 5, improved: 10 };
   return table[type] ?? 0;
 }
 
-/**
- * Concealment miss chances.
- * @param {string} type - "none", "partial", "total"
- */
+/** Concealment miss chances. */
 export function getConcealmentMissChance(type) {
-  const table = {
-    none: 0,
-    partial: 20,
-    concealment: 20,
-    total: 50
-  };
+  const table = { none: 0, partial: 20, concealment: 20, total: 50 };
   return table[type] ?? 0;
 }
 
-/**
- * Check concealment outcome.
- * @param {number} missChance - percentage
- * @returns {boolean} true = hit; false = miss
- */
+/** Check concealment outcome. */
 export function checkConcealmentHit(missChance) {
   const roll = Math.floor(Math.random() * 100) + 1;
   return roll > missChance;
 }
 
-/**
- * RAW flanking bonus.
- */
+/** RAW flanking bonus. */
 export function getFlankingBonus(isFlanking) {
   return isFlanking ? 2 : 0;
 }
 
 /* -------------------------------------------------------------------------- */
-/* SIZE MODIFIERS (Optional but recommended)                                    */
+/* SIZE MODIFIERS                                                              */
 /* -------------------------------------------------------------------------- */
 
-/**
- * SWSE uses opposed size mods for certain attacks.
- * You can integrate your size system here.
- */
+/** SWSE uses opposed size mods for certain attacks. */
 export function getSizeModifier(size) {
   const table = {
     fine: +8,
@@ -491,24 +363,20 @@ export function getSizeModifier(size) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* ACTIVE EFFECT HELPERS                                                        */
+/* ACTIVE EFFECT HELPERS                                                       */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Extracts an Active Effect modification for a given path.
- * Used by damage, attack, defense calculations.
- */
+/** Extracts an Active Effect modification for a given path. */
 export function getEffectModifier(actor, key) {
   let total = 0;
 
   for (const effect of actor.effects ?? []) {
-    if (effect.disabled) {continue;}
+    if (effect.disabled) continue;
 
     for (const [path, update] of Object.entries(effect.updates ?? {})) {
-      if (path !== key) {continue;}
+      if (path !== key) continue;
 
       const value = Number(update.value ?? 0);
-
       switch (update.mode) {
         case 'ADD': total += value; break;
         case 'MULTIPLY': total *= value; break;
@@ -521,20 +389,14 @@ export function getEffectModifier(actor, key) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* COMPLETE ATTACK RESOLUTION (OPTIONAL FUTURE USE)                             */
+/* COMPLETE ATTACK RESOLUTION (OPTIONAL FUTURE USE)                            */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Run attack resolution after the attack roll.
- * This is optional & future-ready—SWSERoll doesn't use it yet,
- * but your Hit Engine can plug into this.
- */
+/** Run attack resolution after the attack roll. */
 export function resolveAttackAgainstTarget(attackRoll, target, options = {}) {
   const ref = target.system.defenses?.reflex?.total ?? 10;
   const cover = getCoverBonus(options.coverType ?? 'none');
-
   const finalRef = ref + cover;
-
   return {
     hit: attackRoll.total >= finalRef,
     reflex: finalRef
