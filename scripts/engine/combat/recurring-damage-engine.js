@@ -266,7 +266,8 @@ export class RecurringDamageEngine {
         recurringDamage: true,
         recurringDamageInstance: instance,
         hook,
-        targetTempHP: true
+        targetTempHP: true,
+        skipDamageTimingRiders: true
       });
       await this._postRecurringChat(actor, instance, "ticked", roll);
 
