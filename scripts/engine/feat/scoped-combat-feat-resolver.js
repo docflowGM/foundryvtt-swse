@@ -1,6 +1,3 @@
-import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
-import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
-
 function normalizeToken(value) {
   return String(value ?? '')
     .trim()
@@ -96,42 +93,6 @@ function explicitFeatBonus(item, weapon, target, context = {}) {
   return 0;
 }
 
-function passiveStateBonus(actor, weapon, target, context = {}) {
-  let total = 0;
-  const enrichedContext = { ...context, weapon };
-  for (const item of actor?.items ?? []) {
-    if (item?.system?.executionModel !== 'PASSIVE' || item?.system?.subType !== 'STATE') continue;
-    const modifiers = item.system?.abilityMeta?.modifiers;
-    if (!Array.isArray(modifiers)) continue;
-    const meta = item.system?.abilityMeta ?? {};
-    for (const modifier of modifiers) {
-      const scopedModifier = {
-        ...modifier,
-        mechanicsMode: modifier.mechanicsMode || meta.mechanicsMode,
-        applicationScope: modifier.applicationScope || meta.applicationScope,
-        staticSheetPolicy: modifier.staticSheetPolicy || meta.staticSheetPolicy,
-        requiresRuntimeContext: modifier.requiresRuntimeContext ?? meta.requiresRuntimeContext,
-        requiresSelectedChoice: modifier.requiresSelectedChoice ?? meta.requiresSelectedChoice,
-        selectedChoice: modifier.selectedChoice ?? item.system?.selectedChoice ?? item.system?.selectedChoices ?? null,
-        predicateRequirements: modifier.predicateRequirements || meta.predicateRequirements || []
-      };
-      if (!ModifierEngine.isModifierAllowedInContext(actor, scopedModifier, enrichedContext, { staticSheet: false })) continue;
-      const targets = Array.isArray(modifier.target) ? modifier.target : [modifier.target];
-      const applies = targets.some((entry) => {
-        const normalized = String(entry || '').toLowerCase();
-        if (target === 'attack') return normalized === 'attack' || normalized === 'attack.roll' || normalized === 'attack.bonus' || normalized.startsWith('attack.');
-        if (target === 'damage') return normalized === 'damage' || normalized === 'damage.bonus' || normalized === 'damage.ranged' || normalized === 'damage.melee' || normalized.startsWith('damage.');
-        return false;
-      });
-      if (!applies) continue;
-      const predicates = Array.isArray(modifier.predicates) ? modifier.predicates : [];
-      if (!evaluateStatePredicates(actor, predicates, { ...enrichedContext, modifier: scopedModifier })) continue;
-      total += Number(modifier.value || 0);
-    }
-  }
-  return total;
-}
-
 export class ScopedCombatFeatResolver {
   static getBonus(actor, weapon, target, context = {}) {
     let total = 0;
@@ -142,7 +103,6 @@ export class ScopedCombatFeatResolver {
         if (item?.type !== 'feat') continue;
         total += explicitFeatBonus(item, weapon, target, enrichedContext);
       }
-      total += passiveStateBonus(actor, weapon, target, enrichedContext);
     } catch (err) {
       console.warn(`[SWSE] Failed to calculate scoped ${target} feat bonus:`, err);
     }
