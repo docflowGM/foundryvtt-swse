@@ -14,6 +14,7 @@
  */
 
 import { ReactionRegistry } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-registry.js";
+import { ReactionRuleAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/reactions/reaction-rule-adapter.js";
 import { ActivationLimitEngine, LimitType } from "/systems/foundryvtt-swse/scripts/engine/abilities/ActivationLimitEngine.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
@@ -117,6 +118,15 @@ function collectItemReactionKeys(item) {
   return keys;
 }
 
+function ensureMetadataBackedReactionsRegistered(actor) {
+  try {
+    return ReactionRuleAdapter.ensureActorReactionRulesRegistered(actor);
+  } catch (err) {
+    SWSELogger?.warn?.("[ReactionEngine] Failed to register metadata-backed reactions", { error: err?.message ?? err });
+    return [];
+  }
+}
+
 function collectActorReactionKeys(actor) {
   const keys = new Set();
   const derived = actor?.system?.derived?.reactions;
@@ -134,58 +144,47 @@ function collectActorReactionKeys(actor) {
     }
   }
 
+  for (const key of ReactionRuleAdapter.collectActorReactionKeys(actor)) {
+    if (key) keys.add(key);
+  }
+
   return Array.from(keys);
+}
+
+function getRegisteredReactionForActor(actor, reactionKey) {
+  const rawKey = String(reactionKey ?? "").trim();
+  const normalizedKey = normalizeReactionKey(rawKey);
+  if (actor) ensureMetadataBackedReactionsRegistered(actor);
+  return ReactionRegistry.getReaction(rawKey)
+    ?? ReactionRegistry.getReaction(normalizedKey)
+    ?? null;
 }
 
 export class ReactionEngine {
   /**
-   * Get available reactions for a defender in a given attack context
-   *
-   * Phase 1: Returns metadata only. Does not execute handlers.
-   *
-   * @param {Actor} defender - The defending actor
-   * @param {Object} attackContext - Context of the attack
-   *   - attacker: Actor
-   *   - weapon: Item
-   *   - attackType: 'melee' | 'ranged'
-   *   - damageTypes: string[]
-   *   - trigger: 'ON_ATTACK_DECLARED'
-   * @returns {Object[]} Array of available reaction metadata
+   * Get available reactions for a defender in a given attack context.
    */
   static getAvailableReactions(defender, attackContext = {}) {
-    if (!defender) {
-      return [];
-    }
+    if (!defender) return [];
 
-    // Get defender reaction keys from derived data and owned ability metadata.
-    // Talent/feat cleanup phases surface reaction-capable abilities via
-    // abilityMeta rather than mutating permanent derived data.
+    ensureMetadataBackedReactionsRegistered(defender);
+
     const reactionKeys = collectActorReactionKeys(defender);
-    if (!Array.isArray(reactionKeys) || reactionKeys.length === 0) {
-      return [];
-    }
+    if (!Array.isArray(reactionKeys) || reactionKeys.length === 0) return [];
 
     const available = [];
 
     for (const reactionKey of reactionKeys) {
-      const reactionDef = ReactionRegistry.getReaction(reactionKey);
+      const reactionDef = ReactionRegistry.getReaction(reactionKey) ?? ReactionRegistry.getReaction(normalizeReactionKey(reactionKey));
 
       if (!reactionDef) {
         console.warn(`ReactionEngine: Reaction "${reactionKey}" not found in registry`);
         continue;
       }
 
-      // Check if reaction's trigger matches
-      if (reactionDef.trigger !== attackContext.trigger) {
-        continue;
-      }
+      if (reactionDef.trigger !== attackContext.trigger) continue;
+      if (!this._evaluateConditions(reactionDef.conditions, attackContext)) continue;
 
-      // Evaluate conditions
-      if (!this._evaluateConditions(reactionDef.conditions, attackContext)) {
-        continue;
-      }
-
-      // Passed all checks - reaction is available
       available.push({
         key: reactionDef.key,
         label: reactionDef.label,
@@ -197,32 +196,13 @@ export class ReactionEngine {
     return available;
   }
 
-  /**
-   * Evaluate reaction conditions against attack context
-   * Phase 1: Basic condition checking only
-   *
-   * @private
-   * @param {Object} conditions
-   * @param {Object} attackContext
-   * @returns {boolean}
-   */
   static _evaluateConditions(conditions, attackContext) {
-    if (!conditions) {
-      return true;
-    }
+    if (!conditions) return true;
 
-    // Check attack type restrictions
     if (conditions.validAttackTypes && Array.isArray(conditions.validAttackTypes)) {
-      if (conditions.validAttackTypes.length > 0) {
-        if (!conditions.validAttackTypes.includes(attackContext.attackType)) {
-          return false;
-        }
-      }
+      if (conditions.validAttackTypes.length > 0 && !conditions.validAttackTypes.includes(attackContext.attackType)) return false;
     }
 
-    // Check damage type restrictions. Use the shared damage-type vocabulary so
-    // e.g. sonic can count as energy for mitigation but still carry its original
-    // sonic tag for exclusions like Deflect.
     const attackDamageTypes = expandDamageTypeAliases(uniqueDamageTypes([
       attackContext.damageTypes,
       attackContext.damageType,
@@ -231,42 +211,28 @@ export class ReactionEngine {
     const originalDamageTypes = uniqueDamageTypes(attackContext.originalDamageTypes ?? attackContext.damageTypes ?? attackContext.damageType);
 
     if (conditions.validDamageTypes && Array.isArray(conditions.validDamageTypes) && conditions.validDamageTypes.length > 0) {
-      if (!damageTypesMatch(attackDamageTypes, conditions.validDamageTypes)) {
-        return false;
-      }
+      if (!damageTypesMatch(attackDamageTypes, conditions.validDamageTypes)) return false;
     }
 
     if (conditions.excludedDamageTypes && Array.isArray(conditions.excludedDamageTypes) && conditions.excludedDamageTypes.length > 0) {
-      if (damageTypesMatch(originalDamageTypes, conditions.excludedDamageTypes)) {
-        return false;
-      }
+      if (damageTypesMatch(originalDamageTypes, conditions.excludedDamageTypes)) return false;
     }
 
-    if (conditions.rejectSonicDeflection === true && attackContext.sonicCannotBeDeflected === true) {
-      return false;
-    }
+    if (conditions.rejectSonicDeflection === true && attackContext.sonicCannotBeDeflected === true) return false;
 
     if (conditions.requiresFightingDefensively === true) {
-      if (attackContext.fightingDefensively !== true && attackContext.defenderFightingDefensively !== true) {
-        return false;
-      }
+      if (attackContext.fightingDefensively !== true && attackContext.defenderFightingDefensively !== true) return false;
     }
 
     if (conditions.requiresNotFlatFooted === true) {
-      if (attackContext.flatFooted === true || attackContext.defenderFlatFooted === true) {
-        return false;
-      }
+      if (attackContext.flatFooted === true || attackContext.defenderFlatFooted === true) return false;
     }
 
     if (conditions.requiresAttackMissed === true) {
-      if (attackContext.attackMissed !== true && attackContext.missed !== true) {
-        return false;
-      }
+      if (attackContext.attackMissed !== true && attackContext.missed !== true) return false;
     }
 
-    if (conditions.requiresReactionKey && attackContext.reactionKey !== conditions.requiresReactionKey) {
-      return false;
-    }
+    if (conditions.requiresReactionKey && attackContext.reactionKey !== conditions.requiresReactionKey) return false;
 
     if (conditions.requiresWeaponText) {
       const wanted = (Array.isArray(conditions.requiresWeaponText) ? conditions.requiresWeaponText : [conditions.requiresWeaponText])
@@ -281,58 +247,19 @@ export class ReactionEngine {
         weapon?.system?.type,
         ...(Array.isArray(weapon?.system?.properties) ? weapon.system.properties : [])
       ].map(normalizeText).join(" ");
-      if (wanted.length && !wanted.some(value => weaponText.includes(value))) {
-        return false;
-      }
+      if (wanted.length && !wanted.some(value => weaponText.includes(value))) return false;
     }
 
     return true;
   }
 
-  /**
-   * Resolve a reaction - PHASE 5 Enhanced version
-   *
-   * Pipeline:
-   * 1. Validate reaction exists
-   * 2. Check frequency limit (once per round)
-   * 3. Verify cost available (Force Points if applicable)
-   * 4. Call reaction handler
-   * 5. Deduct cost
-   * 6. Record activation
-   * 7. Post result to chat
-   *
-   * @param {Object} options - Resolution options
-   *   - reactionKey: string (Reaction ID)
-   *   - defender: Actor (reacting defender)
-   *   - attacker: Actor (attacking actor)
-   *   - attackContext: Object (attack details)
-   *   - forcePointCost: number (optional, default 0)
-   *
-   * @returns {Promise<Object>} Resolution result
-   *   - success: boolean
-   *   - error: string | null
-   *   - modifiedDamage: number | null
-   *   - resultMessage: string | null
-   */
   static async resolveReaction(options = {}) {
     const { reactionKey, defender, attacker, attackContext = {}, forcePointCost = 0 } = options;
 
-    // ─── 1. Validate reaction exists ─────────────────────────────────────────
     if (!reactionKey) {
       return {
         success: false,
         error: 'No reaction key provided',
-        modifiedDamage: null,
-        resultMessage: null
-      };
-    }
-
-    const reactionDef = ReactionRegistry.getReaction(reactionKey);
-
-    if (!reactionDef) {
-      return {
-        success: false,
-        error: `Reaction "${reactionKey}" not found`,
         modifiedDamage: null,
         resultMessage: null
       };
@@ -347,8 +274,20 @@ export class ReactionEngine {
       };
     }
 
+    const reactionDef = getRegisteredReactionForActor(defender, reactionKey);
+
+    if (!reactionDef) {
+      return {
+        success: false,
+        error: `Reaction "${reactionKey}" not found`,
+        modifiedDamage: null,
+        resultMessage: null
+      };
+    }
+
+    const resolvedReactionKey = reactionDef.key ?? normalizeReactionKey(reactionKey);
+
     try {
-      // ─── 2. Check frequency limit ────────────────────────────────────────
       const usage = reactionDef.usage ?? {};
       const limitType = usage.perEncounter === true
         ? LimitType.ENCOUNTER
@@ -362,14 +301,14 @@ export class ReactionEngine {
       if (limitType) {
         const limitCheck = ActivationLimitEngine.canActivate(
           defender,
-          reactionKey,
+          resolvedReactionKey,
           limitType,
           Number.isFinite(maxUses) && maxUses > 0 ? maxUses : 1
         );
 
         if (!limitCheck.allowed) {
           const cadence = limitType === LimitType.ENCOUNTER ? 'encounter' : 'round';
-          SWSELogger.log(`[ReactionEngine] BLOCKED "${reactionKey}": ${limitCheck.reason}`);
+          SWSELogger.log(`[ReactionEngine] BLOCKED "${resolvedReactionKey}": ${limitCheck.reason}`);
           await SWSEChat.postMessage({
             flavor: `❌ ${reactionDef.label}`,
             content: `Reaction already used this ${cadence}`,
@@ -384,12 +323,11 @@ export class ReactionEngine {
         }
       }
 
-      // ─── 3. Verify cost ───────────────────────────────────────────────────
       if (forcePointCost > 0) {
         const currentForce = defender.system?.forcePoints?.value ?? 0;
         if (currentForce < forcePointCost) {
           const reason = `Insufficient Force Points (need ${forcePointCost}, have ${currentForce})`;
-          SWSELogger.log(`[ReactionEngine] BLOCKED "${reactionKey}": ${reason}`);
+          SWSELogger.log(`[ReactionEngine] BLOCKED "${resolvedReactionKey}": ${reason}`);
           await SWSEChat.postMessage({
             flavor: `❌ ${reactionDef.label}`,
             content: reason,
@@ -404,7 +342,6 @@ export class ReactionEngine {
         }
       }
 
-      // ─── 4. Call reaction handler ──────────────────────────────────────────
       let result = null;
 
       try {
@@ -415,7 +352,7 @@ export class ReactionEngine {
         };
         result = await reactionDef.handler(enrichedContext);
       } catch (err) {
-        SWSELogger.error(`[ReactionEngine] Handler error for "${reactionKey}":`, err);
+        SWSELogger.error(`[ReactionEngine] Handler error for "${resolvedReactionKey}":`, err);
         result = {
           error: err.message,
           modifiedDamage: null,
@@ -423,19 +360,16 @@ export class ReactionEngine {
         };
       }
 
-      // ─── 5. Deduct cost ───────────────────────────────────────────────────
       if (forcePointCost > 0) {
         await ActorEngine.updateActor(defender, {
           'system.forcePoints.value': Math.max(0, (defender.system?.forcePoints?.value ?? 0) - forcePointCost)
         });
       }
 
-      // ─── 6. Record activation ──────────────────────────────────────────────
       if (limitType) {
-        ActivationLimitEngine.recordActivation(defender, reactionKey, limitType);
+        ActivationLimitEngine.recordActivation(defender, resolvedReactionKey, limitType);
       }
 
-      // ─── 7. Post result ────────────────────────────────────────────────────
       const resultMsg = result?.resultMessage ?? `${reactionDef.label} triggered`;
       await SWSEChat.postMessage({
         flavor: `✓ ${reactionDef.label}`,
@@ -443,7 +377,7 @@ export class ReactionEngine {
         actor: defender
       });
 
-      SWSELogger.log(`[ReactionEngine] SUCCESS: "${reactionKey}" resolved for ${defender.name}`);
+      SWSELogger.log(`[ReactionEngine] SUCCESS: "${resolvedReactionKey}" resolved for ${defender.name}`);
 
       return {
         success: true,
@@ -463,50 +397,24 @@ export class ReactionEngine {
     }
   }
 
-  /**
-   * Reset round-specific reaction state
-   * PHASE 5: Reset per-round reaction limits for all combatants
-   *
-   * Called at the start of each combat round.
-   * Allows each actor to use their once-per-round reactions again.
-   *
-   * @param {Combat} combat
-   */
   static resetRoundState(combat) {
-    if (!combat) {
-      return;
-    }
+    if (!combat) return;
 
-    // Get all actors in combat
     const combatants = combat.combatants ?? [];
 
     for (const combatant of combatants) {
       const actor = combatant.actor;
       if (!actor) continue;
-
-      // Reset per-round reaction limits
       ActivationLimitEngine.resetRoundLimits(actor);
     }
 
     SWSELogger.log(`[ReactionEngine] Round state reset for ${combatants.length} combatants`);
   }
 
-  /**
-   * Get reactions available for an actor's turn in a combat
-   * Phase 1: Simple eligibility check
-   *
-   * @param {Actor} actor
-   * @param {Combat} combat
-   * @returns {string[]} Reaction keys available to this actor
-   */
   static getActorReactions(actor, combat = null) {
-    if (!actor || !actor.system?.derived?.reactions) {
-      return [];
-    }
-
-    return Array.isArray(actor.system.derived.reactions)
-      ? actor.system.derived.reactions
-      : [];
+    if (!actor) return [];
+    ensureMetadataBackedReactionsRegistered(actor);
+    return collectActorReactionKeys(actor);
   }
 
   /* ============================================================
@@ -520,7 +428,7 @@ export class ReactionEngine {
     const attacker = normalized.attacker ?? null;
     const attackContext = normalized.attackContext ?? {};
 
-    const entry = ReactionRegistry.getReaction?.(reactionKey) ?? null;
+    const entry = getRegisteredReactionForActor(defender, reactionKey);
 
     if (!entry) {
       ui?.notifications?.warn?.(`No reaction handler found for ${reactionKey}`);
