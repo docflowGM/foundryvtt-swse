@@ -24,7 +24,8 @@ export class DamageEngine {
   static async applyDamage(actor, damage, options = {}) {
     const {
       damageType = 'normal',
-      forceMassiveDamageCheck = false
+      forceMassiveDamageCheck = false,
+      skipDamageTimingRiders = false
     } = options;
 
     if (!actor || damage < 0) return { success: false, reason: 'Invalid actor or negative damage' };
@@ -51,7 +52,13 @@ export class DamageEngine {
         options
       };
 
-      const riderPlan = DamageTimingRiderAdapter.applyToDamagePacket(basePacket, {
+      const riderPlan = skipDamageTimingRiders ? {
+        damagePacket: basePacket,
+        appliedRiders: [],
+        originalAmount: damage,
+        finalAmount: damage,
+        skipped: true
+      } : DamageTimingRiderAdapter.applyToDamagePacket(basePacket, {
         ...options,
         attacker: options.attacker ?? options.sourceActor ?? options.actor ?? null,
         targetActor: options.targetActor ?? actor,
@@ -75,7 +82,8 @@ export class DamageEngine {
         reason: 'Damage applied',
         damageTimingRiders: riderPlan.appliedRiders ?? [],
         damageBeforeRiders: riderPlan.originalAmount,
-        damageAfterRiders: riderPlan.finalAmount
+        damageAfterRiders: riderPlan.finalAmount,
+        damageTimingRidersSkipped: riderPlan.skipped === true
       };
     } catch (err) {
       console.error('[DamageEngine] Error applying damage:', err);
