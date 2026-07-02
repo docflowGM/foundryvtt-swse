@@ -100,7 +100,9 @@ export class DamageApp extends BaseSWSEAppV2 {
     if (double) dmg *= 2;
 
     const result = await DamageEngine.applyDamage(this.actor, dmg, {
-      bypassDT: this.bypassDT
+      bypassDT: this.bypassDT,
+      source: 'manual-damage-app',
+      skipDamageTimingRiders: true
     });
 
     ui.notifications.info(`${result.reason}: ${result.newHP} HP`);
