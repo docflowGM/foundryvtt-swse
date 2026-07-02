@@ -8,6 +8,7 @@
  * - actor.system.hp.bonus changes
  * - Class item create/update/delete
  * - HP-affecting feat create/update/delete, such as Toughness
+ * - Durable feat rule normalization for Toughness and Improved Damage Threshold
  *
  * Guard:
  * - Skips if options.meta.guardKey === "hp-recompute" (prevents recursion)
@@ -28,6 +29,52 @@ function itemAffectsHpMax(item) {
   if (normalizeFeatName(item.name) === 'toughness') return true;
   const rules = item.system?.abilityMeta?.resourceRules?.hitPoints;
   return Array.isArray(rules) && rules.length > 0;
+}
+
+function normalizeTarget(value) {
+  return String(value ?? '').trim().toLowerCase();
+}
+
+function hasModifierTarget(item, targetNames = []) {
+  const targets = new Set(targetNames.map(normalizeTarget));
+  const modifiers = item?.system?.abilityMeta?.modifiers;
+  if (!Array.isArray(modifiers)) return false;
+  for (const modifier of modifiers) {
+    const modifierTargets = Array.isArray(modifier?.target) ? modifier.target : [modifier?.target];
+    if (modifierTargets.some(target => targets.has(normalizeTarget(target)))) return true;
+  }
+  return false;
+}
+
+function featRuleNormalizationPatch(item) {
+  if (!item || item.type !== 'feat') return null;
+  const featName = normalizeFeatName(item.name);
+  const resourceRules = item.system?.abilityMeta?.resourceRules ?? {};
+  const patch = { _id: item.id };
+
+  if (featName === 'toughness' && !Array.isArray(resourceRules.hitPoints)) {
+    patch['system.abilityMeta.resourceRules.hitPoints'] = [
+      {
+        type: 'MAX_BONUS_PER_LEVEL',
+        value: 1,
+        source: 'Toughness'
+      }
+    ];
+  }
+
+  if (featName === 'improved damage threshold'
+    && !Array.isArray(resourceRules.damageThreshold)
+    && !hasModifierTarget(item, ['defense.damageThreshold', 'damageThreshold', 'damage.threshold'])) {
+    patch['system.abilityMeta.resourceRules.damageThreshold'] = [
+      {
+        type: 'FLAT_BONUS',
+        value: 5,
+        source: 'Improved Damage Threshold'
+      }
+    ];
+  }
+
+  return Object.keys(patch).length > 1 ? patch : null;
 }
 
 export class HPRecomputeHooks {
@@ -112,6 +159,25 @@ export class HPRecomputeHooks {
    * @private
    */
   static _registerItemHooks() {
+    const maybeNormalizeFeatRules = async (item, options = {}) => {
+      if (options?.swseFeatRuleNormalization === true) return false;
+      if (!item?.actor) return false;
+      const patch = featRuleNormalizationPatch(item);
+      if (!patch) return false;
+
+      try {
+        await ActorEngine.updateEmbeddedDocuments(item.actor, 'Item', [patch], {
+          source: 'Phase11A.feat-rule-normalization',
+          swseFeatRuleNormalization: true,
+          render: false
+        });
+        return true;
+      } catch (err) {
+        SWSELogger.error(`[HPRecomputeHooks] Failed to normalize durable feat rules for ${item.name}`, { error: err });
+        return false;
+      }
+    };
+
     const maybeRecomputeFromItem = async (item, reason) => {
       if (!itemAffectsHpMax(item)) return;
       if (!item.actor) return;
@@ -129,10 +195,12 @@ export class HPRecomputeHooks {
     };
 
     Hooks.on("createItem", async (item, options, userId) => {
+      await maybeNormalizeFeatRules(item, options);
       await maybeRecomputeFromItem(item, 'create');
     });
 
     Hooks.on("updateItem", async (item, data, options, userId) => {
+      await maybeNormalizeFeatRules(item, options);
       await maybeRecomputeFromItem(item, 'update');
     });
 
