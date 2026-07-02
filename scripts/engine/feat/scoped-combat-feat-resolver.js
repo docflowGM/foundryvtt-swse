@@ -80,25 +80,11 @@ function isPointBlankContext(context = {}) {
   return band === 'point-blank' || band === 'pointblank';
 }
 
-function isFarShotContext(weapon, context = {}) {
-  if (!isRangedWeapon(weapon, context)) return false;
-  if (context.rangePenalty !== undefined || context.modifiers?.rangePenalty !== undefined) return false;
-  const band = String(context.rangeBand || context.range || context.rangeCategory || weapon?.system?.rangeBand || '')
-    .toLowerCase()
-    .replace(/_/g, '-');
-  return band === 'short' || band === 'medium' || band === 'long';
-}
-
 function explicitFeatBonus(item, weapon, target, context = {}) {
   const key = featBaseKey(item);
   if (key === 'point-blank-shot') {
     if (!isRangedWeapon(weapon, context) || !isPointBlankContext(context)) return 0;
     return target === 'attack' || target === 'damage' ? 1 : 0;
-  }
-
-  if (key === 'far-shot') {
-    if (target !== 'attack' || !isFarShotContext(weapon, context)) return 0;
-    return 2;
   }
 
   if (!weaponMatchesSelectedChoice(item, weapon)) return 0;
