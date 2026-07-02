@@ -1,14 +1,14 @@
 /**
  * ACTIVE Execution Model - Subtype Enum
  *
- * Defines the 2 formal subtypes for active abilities.
- * Each active ability MUST declare its subType from this enum.
+ * Defines the formal subtypes for active abilities.
  */
 
 export const ACTIVE_SUBTYPES = {
   EFFECT: "EFFECT",
   MODE: "MODE",
-  ACTION: "ACTION"
+  ACTION: "ACTION",
+  STATE: "STATE"
 };
 
 const ACTIVE_SUBTYPE_ALIASES = Object.freeze({
