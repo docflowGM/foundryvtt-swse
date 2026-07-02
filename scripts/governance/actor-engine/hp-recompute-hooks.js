@@ -8,7 +8,7 @@
  * - actor.system.hp.bonus changes
  * - Class item create/update/delete
  * - HP-affecting feat create/update/delete, such as Toughness
- * - Durable feat rule normalization for Toughness, Improved Damage Threshold, and static defense feats
+ * - Durable feat rule normalization for Toughness, Improved Damage Threshold, static defense feats, and attack option feats
  *
  * Guard:
  * - Skips if options.meta.guardKey === "hp-recompute" (prevents recursion)
@@ -50,6 +50,15 @@ function hasExistingModifierImplementation(item) {
   return Array.isArray(item?.system?.abilityMeta?.modifiers) && item.system.abilityMeta.modifiers.length > 0;
 }
 
+function hasExistingAttackOptionImplementation(item) {
+  const meta = item?.system?.abilityMeta ?? {};
+  if (meta.attackOption && typeof meta.attackOption === 'object') return true;
+  const rules = Array.isArray(meta.rules) ? meta.rules : [];
+  if (rules.some(rule => rule?.type === 'ATTACK_OPTION' || rule?.option || rule?.id)) return true;
+  const primitives = Array.isArray(meta.primitives) ? meta.primitives : [];
+  return primitives.some(primitive => primitive?.type === 'ATTACK_OPTION' || primitive?.data?.option || primitive?.data?.id);
+}
+
 function staticDefenseModifiersForFeat(featName) {
   switch (featName) {
     case 'improved defenses':
@@ -79,6 +88,35 @@ function staticDefenseModifiersForFeat(featName) {
           description: 'Improved Defenses: Will'
         }
       ];
+    default:
+      return null;
+  }
+}
+
+function attackOptionForFeat(featName) {
+  switch (featName) {
+    case 'power attack':
+      return { type: 'ATTACK_OPTION', option: 'powerAttack' };
+    case 'melee defense':
+      return { type: 'ATTACK_OPTION', option: 'meleeDefense' };
+    case 'rapid shot':
+      return { type: 'ATTACK_OPTION', option: 'rapidShot' };
+    case 'rapid strike':
+      return { type: 'ATTACK_OPTION', option: 'rapidStrike' };
+    case 'careful shot':
+      return { type: 'ATTACK_OPTION', option: 'carefulShot' };
+    case 'deadeye':
+      return { type: 'ATTACK_OPTION', option: 'deadeye' };
+    case 'burst fire':
+      return { type: 'ATTACK_OPTION', option: 'burstFire' };
+    case 'powerful charge':
+      return { type: 'ATTACK_OPTION', option: 'powerfulCharge' };
+    case 'charging fire':
+      return { type: 'ATTACK_OPTION', option: 'chargingFire' };
+    case 'improved disarm':
+      return { type: 'ATTACK_OPTION', option: 'improvedDisarm' };
+    case 'mighty swing':
+      return { type: 'ATTACK_OPTION', option: 'mightySwing' };
     default:
       return null;
   }
@@ -120,6 +158,14 @@ function featRuleNormalizationPatch(item) {
     patch['system.abilityMeta.applicationScope'] = 'static_actor';
     patch['system.abilityMeta.staticSheetPolicy'] = 'include';
     patch['system.abilityMeta.modifiers'] = defenseModifiers;
+  }
+
+  const attackOption = attackOptionForFeat(featName);
+  if (attackOption && !hasExistingAttackOptionImplementation(item)) {
+    patch['system.executionModel'] = 'ACTIVE';
+    patch['system.subType'] = 'ATTACK_OPTION';
+    patch['system.abilityMeta.mechanicsMode'] = 'attack_option';
+    patch['system.abilityMeta.attackOption'] = attackOption;
   }
 
   return Object.keys(patch).length > 1 ? patch : null;
