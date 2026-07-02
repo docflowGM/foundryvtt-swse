@@ -71,7 +71,14 @@ export class VehicleCollisions {
     });
 
     /* ROUTE THROUGH DAMAGE ENGINE */
-    const damageResult = await DamageEngine.applyDamage(target, damage);
+    const damageResult = await DamageEngine.applyDamage(target, damage, {
+      source: 'vehicle-collision',
+      sourceActor: attacker,
+      attacker,
+      targetActor: target,
+      damageType: 'collision',
+      skipDamageTimingRiders: true
+    });
 
     /* CHECK THRESHOLD */
     const thresholdResult = ThresholdEngine.evaluateThreshold({
