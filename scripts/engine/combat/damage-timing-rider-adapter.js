@@ -94,6 +94,39 @@ function ruleType(rule = {}) {
   return normalizeToken(rule.type ?? rule.ruleType ?? rule.kind ?? rule.mode ?? "");
 }
 
+function isAdvantageousAttackSource(rule = {}, item = null) {
+  const candidates = [
+    rule.sourceName,
+    rule.name,
+    rule.label,
+    rule.feat,
+    rule.featName,
+    item?.name
+  ];
+  return candidates.some(value => normalizeToken(value) === "advantageous-attack");
+}
+
+function hasAttackBonusShape(rule = {}) {
+  const type = ruleType(rule);
+  const domain = normalizeToken(rule.domain ?? rule.appliesTo ?? rule.target ?? rule.stat ?? rule.roll ?? "");
+  const bonusType = normalizeToken(rule.bonusType ?? rule.modifierType ?? rule.bonus?.type ?? rule.bonus?.domain ?? "");
+  return [
+    "attack-bonus",
+    "attack-modifier",
+    "attack-roll-bonus",
+    "to-hit-bonus"
+  ].includes(type)
+    || ["attack", "attack-roll", "to-hit"].includes(domain)
+    || ["attack", "attack-roll", "to-hit"].includes(bonusType)
+    || rule.attackBonus !== undefined
+    || rule.attackModifier !== undefined
+    || rule.toHitBonus !== undefined;
+}
+
+function isQuarantinedDamageTimingRule(rule = {}, item = null) {
+  return isAdvantageousAttackSource(rule, item) && hasAttackBonusShape(rule);
+}
+
 function isDamageRiderRule(rule = {}) {
   const type = ruleType(rule);
   return [
@@ -112,6 +145,7 @@ function collectDamageTimingRules(item) {
   const rules = [];
   const push = rule => {
     if (!rule || typeof rule !== "object") return;
+    if (isQuarantinedDamageTimingRule(rule, item)) return;
     if (isDamageRiderRule(rule)) rules.push({ ...rule, sourceName: rule.sourceName ?? item?.name, sourceId: rule.sourceId ?? item?.id ?? item?._id ?? null });
   };
 
@@ -124,8 +158,52 @@ function collectDamageTimingRules(item) {
     }
   }
 
-  for (const rule of asArray(meta.rules)) push(rule);
+  for (const key of ["rules", "attackRules", "attackModifiers", "attackBonuses", "combatRules"]) {
+    const value = meta[key];
+    if (Array.isArray(value)) value.forEach(push);
+    else if (value && typeof value === "object") {
+      if (Array.isArray(value.rules)) value.rules.forEach(push);
+      else Object.values(value).forEach(entry => Array.isArray(entry) ? entry.forEach(push) : push(entry));
+    }
+  }
+
   return rules;
+}
+
+function collectQuarantinedDamageTimingRules(item) {
+  const meta = item?.system?.abilityMeta ?? {};
+  const quarantined = [];
+  const push = rule => {
+    if (!rule || typeof rule !== "object") return;
+    if (!isQuarantinedDamageTimingRule(rule, item)) return;
+    quarantined.push({
+      sourceName: rule.sourceName ?? item?.name ?? "Damage Rider Metadata",
+      sourceId: rule.sourceId ?? item?.id ?? item?._id ?? null,
+      reason: "wrong_shape_attack_bonus_metadata",
+      message: `${rule.sourceName ?? item?.name ?? "Damage Rider Metadata"}: attack-bonus shaped metadata was ignored by the damage rider adapter. Advantageous Attack is handled by the built-in damage rider compatibility rule.`,
+      rule
+    });
+  };
+
+  for (const key of [
+    "rules",
+    "attackRules",
+    "attackModifiers",
+    "attackBonuses",
+    "combatRules",
+    "damageTimingRules",
+    "damageRiders",
+    "damageRules",
+    "targetDamageRules"
+  ]) {
+    const value = meta[key];
+    if (Array.isArray(value)) value.forEach(push);
+    else if (value && typeof value === "object") {
+      if (Array.isArray(value.rules)) value.rules.forEach(push);
+      else Object.values(value).forEach(entry => Array.isArray(entry) ? entry.forEach(push) : push(entry));
+    }
+  }
+  return quarantined;
 }
 
 function hasFeat(actor, featName) {
@@ -157,6 +235,15 @@ function collectActorDamageTimingRules(actor) {
   }
   rules.push(...builtInCompatibilityRules(actor));
   return rules;
+}
+
+function collectActorQuarantinedDamageTimingRules(actor) {
+  const quarantined = [];
+  for (const item of actorItems(actor)) {
+    if (item?.system?.disabled === true) continue;
+    quarantined.push(...collectQuarantinedDamageTimingRules(item));
+  }
+  return quarantined;
 }
 
 function resolveDamageBonus(rule = {}, context = {}) {
@@ -204,6 +291,10 @@ export class DamageTimingRiderAdapter {
     return collectActorDamageTimingRules(actor);
   }
 
+  static collectQuarantinedRules(actor) {
+    return collectActorQuarantinedDamageTimingRules(actor);
+  }
+
   static targetHasActedThisEncounter(actor, context = {}) {
     return hasActedThisEncounter(actor, context);
   }
@@ -217,6 +308,7 @@ export class DamageTimingRiderAdapter {
     const manualNotes = [];
     let amount = baseAmount;
 
+    manualNotes.push(...collectActorQuarantinedDamageTimingRules(attacker));
     for (const rule of collectActorDamageTimingRules(attacker)) {
       if (!ruleMatches(rule, { ...context, attacker, targetActor, damagePacket: originalPacket })) continue;
       const bonus = resolveDamageBonus(rule, { ...context, attacker, targetActor });
