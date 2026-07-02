@@ -1,7 +1,7 @@
 /**
  * ACTIVE Execution Model - Contract Validators
  *
- * Enforces strict validation of ACTIVE ability structure.
+ * Enforces validation of ACTIVE ability structure.
  * Each subtype must satisfy its contract before runtime registration.
  *
  * ════════════════════════════════════════════════════════════════════════════
@@ -30,8 +30,8 @@
  *     range: 6,
  *     selection: {
  *       type: "FIXED" | "FORMULA" | "ALL_IN_AREA",
- *       value: 2,                 // used if FIXED
- *       formula: "CHA_MOD",        // used if FORMULA
+ *       value: 2,
+ *       formula: "CHA_MOD",
  *       minimum: 1,
  *       maximum: null
  *     }
@@ -101,6 +101,8 @@ export class ActiveContractValidator {
         return this.validateMode(meta);
       case ACTIVE_SUBTYPES.ACTION:
         return this.validateAction(meta);
+      case ACTIVE_SUBTYPES.STATE:
+        return this.validateState(meta);
       default:
         throw new Error(`Unknown ACTIVE subType: ${rawSubType}`);
     }
@@ -155,5 +157,14 @@ export class ActiveContractValidator {
       throw new Error("ACTIVE ACTION missing combatActions");
 
     return true;
+  }
+
+  /**
+   * STATE is a legacy metadata-only active subtype used by migrated talents.
+   * It represents a note/state hook for future automation, not an executable
+   * action, so it is valid as long as abilityMeta exists.
+   */
+  static validateState(meta) {
+    return !!meta;
   }
 }
