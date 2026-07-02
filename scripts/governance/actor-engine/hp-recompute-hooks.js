@@ -8,7 +8,7 @@
  * - actor.system.hp.bonus changes
  * - Class item create/update/delete
  * - HP-affecting feat create/update/delete, such as Toughness
- * - Durable feat rule normalization for Toughness and Improved Damage Threshold
+ * - Durable feat rule normalization for Toughness, Improved Damage Threshold, and static defense feats
  *
  * Guard:
  * - Skips if options.meta.guardKey === "hp-recompute" (prevents recursion)
@@ -46,6 +46,62 @@ function hasModifierTarget(item, targetNames = []) {
   return false;
 }
 
+function staticDefenseModifiersForFeat(featName) {
+  switch (featName) {
+    case 'great fortitude':
+      return [
+        {
+          target: 'defense.fortitude',
+          type: 'untyped',
+          value: 2,
+          enabled: true,
+          priority: 500,
+          description: 'Great Fortitude bonus'
+        }
+      ];
+    case 'lightning reflexes':
+      return [
+        {
+          target: 'defense.reflex',
+          type: 'untyped',
+          value: 2,
+          enabled: true,
+          priority: 500,
+          description: 'Lightning Reflexes bonus'
+        }
+      ];
+    case 'improved defenses':
+      return [
+        {
+          target: 'defense.reflex',
+          type: 'untyped',
+          value: 1,
+          enabled: true,
+          priority: 500,
+          description: 'Improved Defenses: Reflex'
+        },
+        {
+          target: 'defense.fortitude',
+          type: 'untyped',
+          value: 1,
+          enabled: true,
+          priority: 500,
+          description: 'Improved Defenses: Fortitude'
+        },
+        {
+          target: 'defense.will',
+          type: 'untyped',
+          value: 1,
+          enabled: true,
+          priority: 500,
+          description: 'Improved Defenses: Will'
+        }
+      ];
+    default:
+      return null;
+  }
+}
+
 function featRuleNormalizationPatch(item) {
   if (!item || item.type !== 'feat') return null;
   const featName = normalizeFeatName(item.name);
@@ -72,6 +128,16 @@ function featRuleNormalizationPatch(item) {
         source: 'Improved Damage Threshold'
       }
     ];
+  }
+
+  const defenseModifiers = staticDefenseModifiersForFeat(featName);
+  if (defenseModifiers && !hasModifierTarget(item, defenseModifiers.map(modifier => modifier.target))) {
+    patch['system.executionModel'] = 'PASSIVE';
+    patch['system.subType'] = 'MODIFIER';
+    patch['system.abilityMeta.mechanicsMode'] = 'passive';
+    patch['system.abilityMeta.applicationScope'] = 'static_actor';
+    patch['system.abilityMeta.staticSheetPolicy'] = 'include';
+    patch['system.abilityMeta.modifiers'] = defenseModifiers;
   }
 
   return Object.keys(patch).length > 1 ? patch : null;
