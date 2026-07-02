@@ -69,6 +69,98 @@ function actorHasFeatNamed(actor, names = []) {
   }
 }
 
+function normalizeProficiencyKey(value = '') {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9]+/g, '')
+    .replace(/weapons$/, 'weapon');
+}
+
+function weaponProficiencyCandidates(weapon) {
+  const system = weapon?.system ?? {};
+  const values = [
+    weapon?.name,
+    system.proficiency,
+    system.proficiencyGroup,
+    system.weaponProficiency,
+    system.weaponGroup,
+    system.group,
+    system.weaponCategory,
+    system.category,
+    system.subcategory,
+    system.type,
+    system.weaponType
+  ];
+  const candidates = new Set(values.map(normalizeProficiencyKey).filter(Boolean));
+  const text = values.filter(Boolean).join(' ').toLowerCase();
+  if (text.includes('simple')) candidates.add('simpleweapon');
+  if (text.includes('pistol')) candidates.add('pistol');
+  if (text.includes('rifle')) candidates.add('rifle');
+  if (text.includes('heavy')) candidates.add('heavyweapon');
+  if (text.includes('advanced') && text.includes('melee')) candidates.add('advancedmeleeweapon');
+  if (text.includes('lightsaber')) candidates.add('lightsaber');
+  return candidates;
+}
+
+function actorWeaponProficiencyKeys(actor) {
+  const keys = new Set();
+  const addKey = (value) => {
+    const key = normalizeProficiencyKey(value);
+    if (key) keys.add(key);
+  };
+
+  try {
+    const structured = actor?.system?.proficiencies?.weapon;
+    if (structured instanceof Set) for (const entry of structured) addKey(entry);
+    else if (Array.isArray(structured)) for (const entry of structured) addKey(entry);
+    else if (structured && typeof structured === 'object') {
+      for (const [key, value] of Object.entries(structured)) if (value === true) addKey(key);
+    }
+
+    const legacy = actor?.system?.weaponProficiencies ?? actor?.system?.proficiencies?.weapons;
+    if (Array.isArray(legacy)) for (const entry of legacy) addKey(entry);
+    else if (legacy && typeof legacy === 'object') {
+      for (const [key, value] of Object.entries(legacy)) if (value === true) addKey(key);
+    }
+
+    const unlockWeapon = actor?._unlockGrants?.proficiencies?.weapon;
+    if (unlockWeapon instanceof Set) for (const entry of unlockWeapon) addKey(entry);
+    else if (Array.isArray(unlockWeapon)) for (const entry of unlockWeapon) addKey(entry);
+
+    for (const item of actor?.items ?? []) {
+      if (item?.type !== 'feat') continue;
+      const name = normalizeProficiencyKey(item.name);
+      if (name === 'advancedmeleeweaponproficiency') addKey('advancedmeleeweapon');
+      if (name === 'lightsaberproficiency' || name === 'weaponproficiencylightsaber') addKey('lightsaber');
+      if (!name.startsWith('weaponproficiency')) continue;
+      if (name.includes('simple')) addKey('simpleweapon');
+      if (name.includes('pistol')) addKey('pistol');
+      if (name.includes('rifle')) addKey('rifle');
+      if (name.includes('heavy')) addKey('heavyweapon');
+      if (name.includes('advancedmelee')) addKey('advancedmeleeweapon');
+      if (name.includes('lightsaber')) addKey('lightsaber');
+    }
+  } catch (_err) {
+    return keys;
+  }
+
+  return keys;
+}
+
+function actorHasWeaponProficiencyForWeapon(actor, weapon) {
+  const candidates = weaponProficiencyCandidates(weapon);
+  if (!candidates.size) return false;
+  const proficiencies = actorWeaponProficiencyKeys(actor);
+  for (const candidate of candidates) {
+    if (proficiencies.has(candidate)) return true;
+    if (candidate.endsWith('weapon') && proficiencies.has(candidate.replace(/weapon$/, ''))) return true;
+    if (proficiencies.has(`${candidate}weapon`)) return true;
+  }
+  return false;
+}
+
 function currentCombatEncounterId() {
   return game?.combat?.started && game.combat?.id ? game.combat.id : 'out-of-combat';
 }
@@ -90,7 +182,8 @@ function actorIsProficientForAttack(actor, weapon) {
   const explicit = weapon?.system?.proficient;
   if (explicit !== false) return true;
   if (ImplantEffectRules.ignoresWeaponProficiencyPenalty(actor, weapon)) return true;
-  return actorHasTalentNamed(actor, 'Spacehound') && isVehicleWeapon(weapon);
+  if (actorHasTalentNamed(actor, 'Spacehound') && isVehicleWeapon(weapon)) return true;
+  return actorHasWeaponProficiencyForWeapon(actor, weapon);
 }
 
 function asArray(value) {
