@@ -8,7 +8,7 @@
  * - actor.system.hp.bonus changes
  * - Class item create/update/delete
  * - HP-affecting feat create/update/delete, such as Toughness
- * - Durable feat rule normalization for Toughness, Improved Damage Threshold, static defense feats, attack option feats, and resource feats
+ * - Durable feat rule normalization for Toughness, Improved Damage Threshold, static defense feats, attack option feats, resource feats, and Second Wind feats
  *
  * Guard:
  * - Skips if options.meta.guardKey === "hp-recompute" (prevents recursion)
@@ -162,6 +162,103 @@ function resourceRulePatchForFeat(featName) {
             type: 'EXTRA_DAILY_USE_MULTIPLIER',
             value: 1,
             source: 'Extra Second Wind'
+          }
+        ]
+      };
+    case 'fast surge':
+      return {
+        key: 'secondWind',
+        rules: [
+          {
+            type: 'ACTION_COST',
+            action: 'free',
+            source: 'Fast Surge'
+          }
+        ]
+      };
+    case 'vitality surge':
+      return {
+        key: 'secondWind',
+        rules: [
+          {
+            type: 'ALLOW_ABOVE_HALF_HP',
+            source: 'Vitality Surge'
+          }
+        ]
+      };
+    case 'recovering surge':
+      return {
+        key: 'secondWind',
+        rules: [
+          {
+            type: 'CONDITION_RECOVERY_ON_USE',
+            steps: 1,
+            source: 'Recovering Surge'
+          }
+        ]
+      };
+    case 'resurgence':
+      return {
+        key: 'secondWind',
+        rules: [
+          {
+            type: 'GRANT_MOVE_ACTION_ON_USE',
+            source: 'Resurgence'
+          }
+        ]
+      };
+    case 'unstoppable combatant':
+      return {
+        key: 'secondWind',
+        rules: [
+          {
+            type: 'IGNORE_ENCOUNTER_CAP',
+            source: 'Unstoppable Combatant'
+          }
+        ]
+      };
+    case 'resurgent vitality':
+      return {
+        key: 'secondWind',
+        rules: [
+          {
+            type: 'EXTRA_HEALING_CON_MOD_MULTIPLIER',
+            multiplier: 1,
+            minimum: 0,
+            source: 'Resurgent Vitality'
+          }
+        ]
+      };
+    case 'forceful recovery':
+      return {
+        key: 'secondWind',
+        rules: [
+          {
+            type: 'REGAIN_FORCE_POWER_ON_USE',
+            source: 'Forceful Recovery'
+          }
+        ]
+      };
+    case 'impetuous move':
+      return {
+        key: 'secondWind',
+        rules: [
+          {
+            type: 'HALF_HEALING_FOR_MOVEMENT',
+            source: 'Impetuous Move'
+          }
+        ]
+      };
+    case 'regenerative healing':
+      return {
+        key: 'secondWind',
+        rules: [
+          {
+            type: 'DELAYED_HEALING_ON_USE',
+            amountPerTurn: 5,
+            limit: 'fullHpOrEncounterEnd',
+            oncePer: 'day',
+            source: 'Regenerative Healing'
           }
         ]
       };
