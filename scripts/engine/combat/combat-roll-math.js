@@ -32,6 +32,7 @@ import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/co
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
+import { ScopedCombatFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feat/scoped-combat-feat-resolver.js";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Internal helpers
@@ -407,11 +408,12 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   const unsettlingMod = unsettlingPresenceAttackPenalty(actor);
   const rapidAlchemyMod = rapidAlchemyAttackBonus(actor, weapon);
   const forceItemMod = forceItemAttackBonus(actor, weapon);
+  const scopedFeatBonus = ScopedCombatFeatResolver.getBonus(actor, weapon, 'attack', context);
 
   const total =
     bab + abilityMod + miscBonus + rangePenalty + attackPenalty + ctPenalty +
     proficiencyPenalty + talentBonus + stateBonus + combatOptionBonus + rageBonus +
-    sithMod + inquisitionMod + unsettlingMod + rapidAlchemyMod + forceItemMod + basicEffectBonus;
+    sithMod + inquisitionMod + unsettlingMod + rapidAlchemyMod + forceItemMod + basicEffectBonus + scopedFeatBonus;
 
   const components = { 'BAB': bab };
   components[`Ability (${abilityKey.toUpperCase()})`] = abilityMod;
@@ -430,6 +432,7 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   if (rapidAlchemyMod !== 0) components['Rapid Alchemy'] = rapidAlchemyMod;
   if (forceItemMod !== 0) components['Force Item'] = forceItemMod;
   if (basicEffectBonus !== 0) components['Effect Intent'] = basicEffectBonus;
+  if (scopedFeatBonus !== 0) components['Scoped Feat'] = scopedFeatBonus;
 
   return { total, components, flags: {} };
 }
@@ -469,8 +472,9 @@ export function resolveDamageBonus(actor, weapon, context = {}) {
   const rapidAlchemyMod = rapidAlchemyDamageBonusInternal(actor, weapon);
   const basicEffectBonus = getBasicEffectIntentBonus(actor, 'global.damage', weapon, context, { rollType: 'damage' });
   const combatOptionDamage = optionModifiers.damageBonus || 0;
+  const scopedFeatDamage = ScopedCombatFeatResolver.getBonus(actor, weapon, 'damage', context);
 
-  const total = halfLvl + enhancement + abilityMod + rageMod + rapidAlchemyMod + basicEffectBonus + combatOptionDamage;
+  const total = halfLvl + enhancement + abilityMod + rageMod + rapidAlchemyMod + basicEffectBonus + combatOptionDamage + scopedFeatDamage;
 
   const components = {};
   if (halfLvl !== 0) components['½ Level'] = halfLvl;
@@ -480,6 +484,7 @@ export function resolveDamageBonus(actor, weapon, context = {}) {
   if (rapidAlchemyMod !== 0) components['Rapid Alchemy'] = rapidAlchemyMod;
   if (basicEffectBonus !== 0) components['Effect Intent'] = basicEffectBonus;
   if (combatOptionDamage !== 0) components['Combat Option'] = combatOptionDamage;
+  if (scopedFeatDamage !== 0) components['Scoped Feat'] = scopedFeatDamage;
 
   return { total, components, flags: { damageBaseOnly: false } };
 }
