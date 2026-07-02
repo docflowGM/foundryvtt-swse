@@ -8,7 +8,7 @@
  * - actor.system.hp.bonus changes
  * - Class item create/update/delete
  * - HP-affecting feat create/update/delete, such as Toughness
- * - Durable feat rule normalization for Toughness, Improved Damage Threshold, static defense feats, and attack option feats
+ * - Durable feat rule normalization for Toughness, Improved Damage Threshold, static defense feats, attack option feats, and resource feats
  *
  * Guard:
  * - Skips if options.meta.guardKey === "hp-recompute" (prevents recursion)
@@ -57,6 +57,11 @@ function hasExistingAttackOptionImplementation(item) {
   if (rules.some(rule => rule?.type === 'ATTACK_OPTION' || rule?.option || rule?.id)) return true;
   const primitives = Array.isArray(meta.primitives) ? meta.primitives : [];
   return primitives.some(primitive => primitive?.type === 'ATTACK_OPTION' || primitive?.data?.option || primitive?.data?.id);
+}
+
+function hasExistingResourceRule(item, resourceKey) {
+  const rules = item?.system?.abilityMeta?.resourceRules?.[resourceKey];
+  return Array.isArray(rules) && rules.length > 0;
 }
 
 function staticDefenseModifiersForFeat(featName) {
@@ -124,6 +129,47 @@ function attackOptionForFeat(featName) {
   }
 }
 
+function resourceRulePatchForFeat(featName) {
+  switch (featName) {
+    case 'force boon':
+      return {
+        key: 'forcePoints',
+        rules: [
+          {
+            type: 'MAX_BONUS',
+            value: 3,
+            source: 'Force Boon'
+          }
+        ]
+      };
+    case 'strong in the force':
+      return {
+        key: 'forcePoints',
+        rules: [
+          {
+            type: 'DIE_SIZE',
+            value: 8,
+            dieSize: 8,
+            source: 'Strong in the Force'
+          }
+        ]
+      };
+    case 'extra second wind':
+      return {
+        key: 'secondWind',
+        rules: [
+          {
+            type: 'EXTRA_DAILY_USE_MULTIPLIER',
+            value: 1,
+            source: 'Extra Second Wind'
+          }
+        ]
+      };
+    default:
+      return null;
+  }
+}
+
 function featRuleNormalizationPatch(item) {
   if (!item || item.type !== 'feat') return null;
   const featName = normalizeFeatName(item.name);
@@ -150,6 +196,14 @@ function featRuleNormalizationPatch(item) {
         source: 'Improved Damage Threshold'
       }
     ];
+  }
+
+  const resourceRule = resourceRulePatchForFeat(featName);
+  if (resourceRule && !hasExistingResourceRule(item, resourceRule.key)) {
+    patch[`system.abilityMeta.resourceRules.${resourceRule.key}`] = resourceRule.rules;
+    patch['system.executionModel'] = 'PASSIVE';
+    patch['system.subType'] = 'RESOURCE';
+    patch['system.abilityMeta.mechanicsMode'] = 'passive_resource';
   }
 
   const defenseModifiers = staticDefenseModifiersForFeat(featName);
