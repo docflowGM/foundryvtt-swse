@@ -34,7 +34,7 @@ const IMPLANT_TRAINING_SLUGS = new Set([
 
 export class ImplantRules {
   static getWillDefensePenalty(actor) {
-    const genericImplantPenalty = this.hasActiveImplant(actor) && !this.hasImplantTraining(actor) ? -2 : 0;
+    const genericImplantPenalty = ImplantRules.hasActiveImplant(actor) && !ImplantRules.hasImplantTraining(actor) ? -2 : 0;
     const specificImplantPenalty = ImplantEffectRules.getSpecificWillDefensePenalty(actor);
     // Avoid double-dipping when a specific implant has its own -2 Will penalty.
     // The harsher penalty wins; multiple specific penalties can still stack if
@@ -43,25 +43,25 @@ export class ImplantRules {
   }
 
   static shouldApplyExtraConditionStep(actor) {
-    return this.hasActiveImplant(actor) && !this.hasImplantTraining(actor);
+    return ImplantRules.hasActiveImplant(actor) && !ImplantRules.hasImplantTraining(actor);
   }
 
   static getConditionTrackExtraStep(actor, direction = 0) {
     const numericDirection = Number(direction || 0);
     if (numericDirection <= 0) return 0;
-    return this.shouldApplyExtraConditionStep(actor) ? 1 : 0;
+    return ImplantRules.shouldApplyExtraConditionStep(actor) ? 1 : 0;
   }
 
   static getImplantState(actor) {
-    const activeImplants = this.getActiveImplantItems(actor);
-    const actorFlagged = this._actorHasImplantFlag(actor);
+    const activeImplants = ImplantRules.getActiveImplantItems(actor);
+    const actorFlagged = ImplantRules._actorHasImplantFlag(actor);
     const hasImplant = activeImplants.length > 0 || actorFlagged;
-    const hasTraining = this.hasImplantTraining(actor);
+    const hasTraining = ImplantRules.hasImplantTraining(actor);
 
     return {
       hasImplant,
       hasImplantTraining: hasTraining,
-      willPenalty: this.getWillDefensePenalty(actor),
+      willPenalty: ImplantRules.getWillDefensePenalty(actor),
       extraConditionStep: hasImplant && !hasTraining ? 1 : 0,
       source: activeImplants.length > 0 ? 'item' : actorFlagged ? 'actor-flag' : 'none',
       activeImplants: activeImplants.map(item => ({
@@ -73,9 +73,13 @@ export class ImplantRules {
     };
   }
 
+  static hasActiveImplant(actor) {
+    return ImplantRules.getActiveImplantItems(actor).length > 0 || ImplantRules._actorHasImplantFlag(actor);
+  }
+
   static getActiveImplantItems(actor) {
     try {
-      return Array.from(actor?.items ?? []).filter(item => this.isActiveImplantItem(item));
+      return Array.from(actor?.items ?? []).filter(item => ImplantRules.isActiveImplantItem(item));
     } catch (_err) {
       return [];
     }
@@ -83,7 +87,7 @@ export class ImplantRules {
 
   static isActiveImplantItem(item) {
     if (!item || item.type !== 'equipment') return false;
-    if (!this.isImplantItem(item)) return false;
+    if (!ImplantRules.isImplantItem(item)) return false;
 
     const system = item.system ?? {};
     const usage = system.usage ?? {};
@@ -105,14 +109,14 @@ export class ImplantRules {
     if (installedLike) return true;
 
     // If the item explicitly opts into implant rules, assume it counts while owned.
-    if (this._truthy(system?.implantRules?.activeByOwnership)) return true;
+    if (ImplantRules._truthy(system?.implantRules?.activeByOwnership)) return true;
 
     return false;
   }
 
   static isImplantItem(item) {
     const system = item?.system ?? {};
-    if (this._truthy(system?.implantRules?.countAsImplant)) return true;
+    if (ImplantRules._truthy(system?.implantRules?.countAsImplant)) return true;
     if (system?.implantRules?.countAsImplant === false) return false;
 
     const candidates = [
@@ -129,15 +133,15 @@ export class ImplantRules {
       ...(Array.isArray(item?.flags?.[SYSTEM_ID]?.tags) ? item.flags[SYSTEM_ID].tags : [])
     ];
 
-    return candidates.some(value => this._matchesImplantToken(value));
+    return candidates.some(value => ImplantRules._matchesImplantToken(value));
   }
 
   static hasImplantTraining(actor) {
     try {
       return Array.from(actor?.items ?? []).some(item => {
         if (item?.type !== 'feat' || item?.system?.disabled === true) return false;
-        const slug = this._normalizeSlug(item.system?.slug || item.slug || item.name);
-        const flagId = this._normalizeSlug(item.flags?.swse?.id || item.flags?.[SYSTEM_ID]?.id || '');
+        const slug = ImplantRules._normalizeSlug(item.system?.slug || item.slug || item.name);
+        const flagId = ImplantRules._normalizeSlug(item.flags?.swse?.id || item.flags?.[SYSTEM_ID]?.id || '');
         return IMPLANT_TRAINING_SLUGS.has(slug) || flagId.endsWith('implant-training') || flagId.endsWith('implant_training');
       });
     } catch (_err) {
@@ -165,11 +169,11 @@ export class ImplantRules {
       swseFlags.implants
     ];
 
-    return candidates.some(value => this._truthy(value));
+    return candidates.some(value => ImplantRules._truthy(value));
   }
 
   static _matchesImplantToken(value) {
-    const token = this._normalizeSlug(value);
+    const token = ImplantRules._normalizeSlug(value);
     if (!token) return false;
     if (IMPLANT_TAGS.has(token)) return true;
     return /(^|[-_])bio[-_]?implant($|[-_])/.test(token) || /(^|[-_])implant($|[-_])/.test(token);
