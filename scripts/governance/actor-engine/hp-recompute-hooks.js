@@ -48,28 +48,6 @@ function hasModifierTarget(item, targetNames = []) {
 
 function staticDefenseModifiersForFeat(featName) {
   switch (featName) {
-    case 'great fortitude':
-      return [
-        {
-          target: 'defense.fortitude',
-          type: 'untyped',
-          value: 2,
-          enabled: true,
-          priority: 500,
-          description: 'Great Fortitude bonus'
-        }
-      ];
-    case 'lightning reflexes':
-      return [
-        {
-          target: 'defense.reflex',
-          type: 'untyped',
-          value: 2,
-          enabled: true,
-          priority: 500,
-          description: 'Lightning Reflexes bonus'
-        }
-      ];
     case 'improved defenses':
       return [
         {
