@@ -109,6 +109,8 @@ function attackOptionForFeat(featName) {
       return { type: 'ATTACK_OPTION', option: 'deadeye' };
     case 'burst fire':
       return { type: 'ATTACK_OPTION', option: 'burstFire' };
+    case 'far shot':
+      return { type: 'ATTACK_OPTION', option: 'farShot' };
     case 'powerful charge':
       return { type: 'ATTACK_OPTION', option: 'powerfulCharge' };
     case 'charging fire':
