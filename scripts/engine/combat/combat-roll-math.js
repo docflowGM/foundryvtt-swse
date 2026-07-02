@@ -187,6 +187,17 @@ function actorIsProficientForAttack(actor, weapon) {
   return actorHasWeaponProficiencyForWeapon(actor, weapon);
 }
 
+function shootingIntoMeleePenalty(actor, context = {}) {
+  const applies = context.shootingIntoMelee === true
+    || context.firingIntoMelee === true
+    || context.rangedIntoMelee === true
+    || context.targetInMelee === true;
+  if (!applies) return 0;
+  if (actorHasFeatNamed(actor, 'Precise Shot')) return 0;
+  const penalty = Number(context.shootingIntoMeleePenalty ?? context.firingIntoMeleePenalty ?? -5);
+  return Number.isFinite(penalty) ? penalty : -5;
+}
+
 function asArray(value) {
   return Array.isArray(value) ? value : value == null ? [] : [value];
 }
@@ -322,24 +333,7 @@ export function rapidAlchemyAttackBonus(actor, weapon) {
 // Canonical resolvers
 // ─────────────────────────────────────────────────────────────────────────────
 
-/**
- * Resolve the complete attack bonus for a weapon from all SWSE factors.
- *
- * This is the single source of truth used by both actual attack rolls
- * (attacks.js) and the debug/tooltip breakdown (weapons-engine.js).
- *
- * Roll-invocation-only modifiers (fightingDefensively, customModifier,
- * situationalBonus, sequencePenalty) are NOT included here — they are
- * added explicitly in attacks.js after this function returns.
- *
- * @param {Actor} actor
- * @param {Item} weapon
- * @param {string|null} actionId - TalentActionLinker action key, if any
- * @param {Object} context - Roll/sheet context (rangeBand, target, etc.)
- * @returns {{ total: number, components: Object, flags: Object }}
- */
 export function resolveAttackBonus(actor, weapon, actionId = null, context = {}) {
-  // NPC statblock: honour stored flat bonus unchanged
   if (actor?.type === 'npc' && isNpcStatblockMode(actor)) {
     const npc = weapon?.flags?.swse?.npc;
     if (npc?.useFlat === true && Number.isFinite(npc.flatAttackBonus)) {
@@ -350,23 +344,15 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
 
   const bab = SchemaAdapters.getBAB(actor);
   const attackOptionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
-
-  // RAW: BAB + ability mod. BAB already carries level-based attack progression.
-  // Weapon Finesse / Mighty Throw ability substitutions live in the option resolver.
   const abilityKey = getWeaponAttackAbility(actor, weapon);
   const abilityMod = SchemaAdapters.getAbilityMod(actor, abilityKey) + Number(attackOptionModifiers.attackAbilityBonus || 0);
 
   const miscBonus = getWeaponFlatAttackBonus(weapon);
   const rangePenalty = getRangePenalty(weapon, context);
+  const firingIntoMeleePenalty = shootingIntoMeleePenalty(actor, context);
   const rageModifiers = RageEngine.collectAttackModifiers(actor, weapon, context);
-
-  // Condition Track penalty — authoritative derived source
-  const ctPenalty = actor.system?.derived?.damage?.conditionPenalty ??
-                    actor.system?.conditionTrack?.penalty ?? 0;
-
-  // Active-effect attack penalty (computed by DerivedCalculator)
+  const ctPenalty = actor.system?.derived?.damage?.conditionPenalty ?? actor.system?.conditionTrack?.penalty ?? 0;
   const attackPenalty = actor.system?.attackPenalty ?? 0;
-
   const proficient = actorIsProficientForAttack(actor, weapon);
   const proficiencyPenalty = proficient ? 0 : -5;
 
@@ -390,7 +376,6 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
           const appliesToAttack = targets.some(t => t === 'attack' || t === 'attack.bonus');
           if (!appliesToAttack) continue;
           const predicatesMatch = evaluateStatePredicates(actor, modifier.predicates || [], enrichedContext);
-          // Fail-closed: only allow explicitly opted-in legacy state attack bonuses
           if (modifier.allowLegacyStateAttackBonus !== true) continue;
           if (predicatesMatch && modifier.value) stateBonus += modifier.value;
         }
@@ -411,7 +396,7 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   const scopedFeatBonus = ScopedCombatFeatResolver.getBonus(actor, weapon, 'attack', context);
 
   const total =
-    bab + abilityMod + miscBonus + rangePenalty + attackPenalty + ctPenalty +
+    bab + abilityMod + miscBonus + rangePenalty + firingIntoMeleePenalty + attackPenalty + ctPenalty +
     proficiencyPenalty + talentBonus + stateBonus + combatOptionBonus + rageBonus +
     sithMod + inquisitionMod + unsettlingMod + rapidAlchemyMod + forceItemMod + basicEffectBonus + scopedFeatBonus;
 
@@ -419,6 +404,7 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   components[`Ability (${abilityKey.toUpperCase()})`] = abilityMod;
   if (miscBonus !== 0) components['Enhancement'] = miscBonus;
   if (rangePenalty !== 0) components['Range Penalty'] = rangePenalty;
+  if (firingIntoMeleePenalty !== 0) components['Firing Into Melee'] = firingIntoMeleePenalty;
   if (attackPenalty !== 0) components['Attack Penalty'] = attackPenalty;
   if (ctPenalty !== 0) components['CT Penalty'] = ctPenalty;
   if (proficiencyPenalty !== 0) components['Proficiency'] = proficiencyPenalty;
@@ -437,25 +423,9 @@ export function resolveAttackBonus(actor, weapon, actionId = null, context = {})
   return { total, components, flags: {} };
 }
 
-/**
- * Resolve the complete flat damage bonus for a weapon from all SWSE factors.
- *
- * This is the single source of truth used by both actual damage rolls
- * (attacks.js) and the debug/tooltip breakdown (weapons-engine.js).
- *
- * Die-formula modifiers (damageDieStepIncreases, damageExtraWeaponDice,
- * criticalDamageDieStepBonus) are NOT included here — they govern the
- * die expression itself and are handled in attacks.js at roll time.
- *
- * @param {Actor} actor
- * @param {Item} weapon
- * @param {Object} context - Roll/sheet context
- * @returns {{ total: number, components: Object, flags: Object }}
- */
 export function resolveDamageBonus(actor, weapon, context = {}) {
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, context);
 
-  // damageBaseOnly: only weapon's own flat bonus applies (plus any option bonus)
   if (optionModifiers?.flags?.damageBaseOnly === true) {
     const enhancement = getWeaponFlatDamageBonus(weapon);
     const optDmgBonus = optionModifiers.damageBonus || 0;
