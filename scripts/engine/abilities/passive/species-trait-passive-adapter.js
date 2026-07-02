@@ -96,18 +96,15 @@ export class SpeciesTraitPassiveAdapter {
       const record = SPECIES_MAP.get(String(raceName).toLowerCase());
       if (!record) return;
 
-      // Only structuralTraits are considered for auto-passive.
+      // Only structural/canonical traits are considered for auto-passive.
       // activatedAbilities and conditionalTraits are out of scope by invariant.
-      const traits = Array.isArray(record.structuralTraits) ? record.structuralTraits : [];
+      const traits = this._collectPassiveCandidateTraits(record);
       if (traits.length === 0) return;
 
       for (const trait of traits) {
         const text = String(trait?.description ?? "").trim();
-        if (!text) continue;
-
-        // Hard refuse if any deny token appears.
         const lower = text.toLowerCase();
-        if (DENY_TOKENS.some(t => lower.includes(t))) {
+        if (text && DENY_TOKENS.some(t => lower.includes(t))) {
           continue;
         }
 
@@ -120,6 +117,19 @@ export class SpeciesTraitPassiveAdapter {
       // Intentionally silent. Species registry should never break actor preparation.
       // If desired, wire into SWSE debug logger in a later phase.
     }
+  }
+
+  static _collectPassiveCandidateTraits(record) {
+    const byId = new Map();
+    const add = (trait) => {
+      if (!trait || typeof trait !== "object") return;
+      const key = String(trait.id ?? trait.name ?? "").trim().toLowerCase();
+      if (!key || byId.has(key)) return;
+      byId.set(key, trait);
+    };
+    for (const trait of Array.isArray(record?.structuralTraits) ? record.structuralTraits : []) add(trait);
+    for (const trait of Array.isArray(record?.canonicalTraits) ? record.canonicalTraits : []) add(trait);
+    return Array.from(byId.values());
   }
 
   /**
@@ -146,7 +156,10 @@ export class SpeciesTraitPassiveAdapter {
     }
 
     // 3) Defense bonuses: "+1 species bonus to Reflex Defense"
-    const defenseMods = this._extractDefenseBonuses(description);
+    const defenseMods = [
+      ...this._extractDefenseTraitNameBonuses(trait),
+      ...this._extractDefenseBonuses(description)
+    ];
     if (defenseMods.length) {
       out.push(this._makeModifierAbility(speciesName, trait, defenseMods));
     }
@@ -196,6 +209,22 @@ export class SpeciesTraitPassiveAdapter {
     return mods;
   }
 
+  static _extractDefenseTraitNameBonuses(trait) {
+    const name = String(trait?.name ?? '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, ' ')
+      .trim();
+    switch (name) {
+      case 'great fortitude':
+        return [{ target: 'defense.fortitude', type: 'untyped', value: 2 }];
+      case 'lightning reflexes':
+        return [{ target: 'defense.reflex', type: 'untyped', value: 2 }];
+      default:
+        return [];
+    }
+  }
+
   static _extractDefenseBonuses(text) {
     const mods = [];
     // Match "bonus to" or "bonus on" for Defense bonuses (e.g., "+2 species bonus to Reflex Defense", "+2 species bonus on Will Defense")
@@ -207,6 +236,14 @@ export class SpeciesTraitPassiveAdapter {
       const def = String(m[2]).toLowerCase();
       // Use full names (fortitude, reflex, will) to match feat definitions and RollCore domains
       mods.push({ target: `defense.${def}`, type: "untyped", value: val });
+    }
+
+    // Natural Armor / other named static species defense bonuses.
+    const naturalArmor = /([+-]\d+)\s+Natural\s+Armor\s+bonus\s+to\s+(?:their\s+)?Reflex\s+Defense/gi;
+    while ((m = naturalArmor.exec(text)) !== null) {
+      const val = Number(m[1]);
+      if (!Number.isFinite(val)) continue;
+      mods.push({ target: "defense.reflex", type: "untyped", value: val });
     }
 
     // Damage Threshold
