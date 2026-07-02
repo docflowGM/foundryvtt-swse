@@ -46,6 +46,10 @@ function hasModifierTarget(item, targetNames = []) {
   return false;
 }
 
+function hasExistingModifierImplementation(item) {
+  return Array.isArray(item?.system?.abilityMeta?.modifiers) && item.system.abilityMeta.modifiers.length > 0;
+}
+
 function staticDefenseModifiersForFeat(featName) {
   switch (featName) {
     case 'improved defenses':
@@ -109,7 +113,7 @@ function featRuleNormalizationPatch(item) {
   }
 
   const defenseModifiers = staticDefenseModifiersForFeat(featName);
-  if (defenseModifiers && !hasModifierTarget(item, defenseModifiers.map(modifier => modifier.target))) {
+  if (defenseModifiers && !hasExistingModifierImplementation(item)) {
     patch['system.executionModel'] = 'PASSIVE';
     patch['system.subType'] = 'MODIFIER';
     patch['system.abilityMeta.mechanicsMode'] = 'passive';
