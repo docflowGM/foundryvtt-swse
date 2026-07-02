@@ -43,16 +43,23 @@ export class DamageEngine {
     // persists temp-HP depletion. Subtracting temp HP here as well double-counted
     // it. Pass the RAW damage through and let the single authority resolve it.
     try {
+      const source = options.source ?? 'combat-damage';
+      const nonWeaponDamageTypes = new Set(['poison', 'collision', 'recurring', 'hazard', 'environmental']);
+      const effectiveSkipDamageTimingRiders = skipDamageTimingRiders === true
+        || options.recurringDamage === true
+        || nonWeaponDamageTypes.has(String(damageType || '').trim().toLowerCase())
+        || ['manual-damage-app', 'vehicle-collision', 'poison-damage', 'recurring-damage'].includes(String(source || '').trim().toLowerCase());
+
       const basePacket = {
         amount: damage,
         type: damageType,
-        source: options.source ?? 'combat-damage',
+        source,
         sourceActor: options.sourceActor ?? options.attacker ?? options.actor ?? null,
         targetActor: options.targetActor ?? actor,
         options
       };
 
-      const riderPlan = skipDamageTimingRiders ? {
+      const riderPlan = effectiveSkipDamageTimingRiders ? {
         damagePacket: basePacket,
         appliedRiders: [],
         originalAmount: damage,
