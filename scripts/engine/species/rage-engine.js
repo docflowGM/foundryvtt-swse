@@ -189,6 +189,9 @@ export class RageEngine {
         }
       }
     }
+    if (hasFeat(actor, "Controlled Rage")) {
+      return { activation: "swift", canEndAtWill: true, sourceName: "Controlled Rage" };
+    }
     return { activation: "swift", canEndAtWill: false, sourceName: "Rage" };
   }
 
@@ -295,7 +298,44 @@ export class RageEngine {
     }
 
     await ActorEngine.updateActor(actor, updates, { source: 'RageEngine.endRage' });
-    return { ended: true, appliedAftereffect: wasRaging };
+    return { ended: true, wasRaging };
+  }
+
+  static async tickRageRound(actor) {
+    if (!this.isRaging(actor)) return { active: false };
+    const current = Number(actorFlag(actor, "rageRoundsRemaining", 0)) || 0;
+    const next = Math.max(0, current - 1);
+    if (next <= 0) {
+      const ended = await this.endRage(actor);
+      return { active: false, expired: true, ended };
+    }
+    await ActorEngine.updateActor(actor, { "flags.swse.rageRoundsRemaining": next }, { source: 'RageEngine.tickRageRound' });
+    return { active: true, roundsRemaining: next };
+  }
+
+  static getStrengthCheckBonus(actor, context = {}) {
+    if (!this.isRaging(actor) || !this.hasPowerfulRage(actor)) return 0;
+    const skill = normalizeName(context?.skill ?? context?.skillId ?? context?.ability ?? "");
+    if (skill && !["strength", "str", "climb", "jump", "swim"].includes(skill)) return 0;
+    return this.getRageAttackDamageBonus(actor);
+  }
+
+  static applyStrengthCheckBonus(actor, total, context = {}) {
+    const bonus = this.getStrengthCheckBonus(actor, context);
+    return { total: Number(total || 0) + bonus, bonus, source: bonus ? "Powerful Rage" : null };
+  }
+
+  static buildStateSnapshot(actor) {
+    return {
+      hasRage: this.hasRageTrait(actor),
+      active: this.isRaging(actor),
+      channeling: this.isChannelingRage(actor),
+      uses: this.getRageUseLedger(actor),
+      durationRounds: this.getRageDurationRounds(actor),
+      action: this.getRageActionMode(actor),
+      attackDamageBonus: this.getRageAttackDamageBonus(actor),
+      powerfulRage: this.hasPowerfulRage(actor)
+    };
   }
 
   static getCurrentRageConditionNotes(actor) {
@@ -303,6 +343,7 @@ export class RageEngine {
     if (this.isRaging(actor)) {
       const bonus = this.getRageAttackDamageBonus(actor);
       const duration = Number(actorFlag(actor, "rageRoundsRemaining", this.getRageDurationRounds(actor))) || this.getRageDurationRounds(actor);
+      const action = this.getRageActionMode(actor);
       const restrictionText = this.hasPowerfulRage(actor)
         ? "Powerful Rage active; concentration/patience restriction suppressed for sheet display."
         : "Cannot use skills requiring patience or concentration (GM-enforced).";
@@ -311,7 +352,7 @@ export class RageEngine {
         label: "Raging",
         type: "rage",
         severity: "warning",
-        text: `+${bonus} Rage bonus to melee attack and melee damage; ${duration} round${duration === 1 ? "" : "s"} remaining. ${restrictionText}`
+        text: `+${bonus} Rage bonus to melee attack and melee damage; ${duration} round${duration === 1 ? "" : "s"} remaining. ${restrictionText}${action.canEndAtWill ? " Controlled Rage: can end Rage at will." : ""}`
       });
     }
 
