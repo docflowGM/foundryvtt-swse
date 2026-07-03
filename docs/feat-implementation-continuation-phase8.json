@@ -11,7 +11,8 @@
     "Do not add conditional bonuses to static sheet totals.",
     "Use existing engines rather than parallel feat systems.",
     "Convert false scaffold attack modifiers into explicit resource rules or attack options.",
-    "Only automate high-confidence mechanics; leave complex prompt/UI flows as partial metadata when the engine cannot fully apply them yet."
+    "Only automate high-confidence mechanics; leave complex prompt/UI flows as partial metadata when the engine cannot fully apply them yet.",
+    "Every combat feat implementation must declare its action economy cost or identify the established action/feat it rides."
   ],
   "implementedGroups": {
     "hitPointAndDamageThresholdRules": [
@@ -94,7 +95,9 @@
       {
         "feat": "Flurry",
         "implementation": "ATTACK_OPTION flurry",
-        "effect": "+2 melee attack with light/lightsaber weapon context and -5 Reflex rider until next turn"
+        "effect": "+2 melee attack with light/lightsaber weapon context and -5 Reflex rider until next turn",
+        "status": "implemented_correct",
+        "actionEconomy": "ridesAttack"
       },
       {
         "feat": "Rebel Military Training",
@@ -102,24 +105,118 @@
         "effect": "Running Attack rider granting +2 dodge Reflex until next turn"
       }
     ],
-    "weaponDamageRuleHooks": [
+    "conversationCombatFeatPass": [
       {
-        "ruleType": "UNARMED_DAMAGE_STEP",
-        "consumer": "CombatOptionResolver and attacks.js",
-        "usedBy": ["Martial Arts I", "Martial Arts II", "Martial Arts III"],
-        "effect": "Steps the unarmed base damage die upward before rolling damage."
+        "feat": "Cleave",
+        "status": "implemented_correct_with_manual_target_resolution",
+        "implementation": "reaction/manual prompt from target-dropped-to-zero events",
+        "actionEconomy": "free immediate extra melee attack rider after qualifying melee drop-to-0 trigger",
+        "consumer": "CoreCombatReactionFeatActions, updateActor HP watcher, swse.damageApplied, swse.cleaveAvailable"
       },
       {
-        "ruleType": "WEAPON_DAMAGE_DIE_STEP",
-        "consumer": "CombatOptionResolver and attacks.js",
-        "usedBy": ["Primitive Warrior"],
-        "effect": "Adds extra weapon damage dice when the weapon group matches."
+        "feat": "Great Cleave",
+        "status": "implemented_correct",
+        "implementation": "EXTRA_ATTACK_LIMIT_OVERRIDE for cleaveExtraAttack",
+        "actionEconomy": "same free Cleave rider; removes once-per-round limit",
+        "consumer": "CoreCombatReactionFeatActions.getCleaveLimit"
       },
       {
-        "ruleType": "UNARMED_DOES_NOT_PROVOKE_AOO",
-        "consumer": "CombatOptionResolver flags",
-        "usedBy": ["Martial Arts I"],
-        "effect": "Exposes a contextual flag that unarmed attacks do not provoke attacks of opportunity."
+        "feat": "Frightening Cleave",
+        "status": "implemented_correct_with_manual_target_resolution",
+        "implementation": "CLEAVE_RIDER_EFFECT emitted from swse.cleaveUsed",
+        "actionEconomy": "passive rider after Cleave use",
+        "consumer": "CoreCombatReactionFeatActions.getFrighteningCleaveRider and swse.frighteningCleaveAvailable"
+      },
+      {
+        "feat": "Combat Reflexes",
+        "status": "implemented_correct",
+        "implementation": "REACTION_CAPACITY_OVERRIDE and flat-footed opportunity permission",
+        "actionEconomy": "passive reaction-capacity modifier",
+        "consumer": "ActionEconomyPersistence.getReactionMax"
+      },
+      {
+        "feat": "Power Attack",
+        "status": "implemented_correct",
+        "implementation": "ATTACK_OPTION powerAttack plus two-handed/object-vehicle edge cases",
+        "actionEconomy": "ridesAttack",
+        "consumer": "CombatOptionResolver and CoreAttackOptionActionEconomy"
+      },
+      {
+        "feat": "Rapid Shot",
+        "status": "implemented_correct",
+        "implementation": "ATTACK_OPTION rapidShot plus Strength-below-13 penalty correction",
+        "actionEconomy": "ridesAttackAmmo",
+        "consumer": "CombatOptionResolver, CoreAttackOptionRuntimePatches, AmmoSystem"
+      },
+      {
+        "feat": "Melee Defense",
+        "status": "implemented_correct",
+        "implementation": "ATTACK_OPTION meleeDefense BAB slider with Reflex dodge rider",
+        "actionEconomy": "ridesAttack",
+        "consumer": "CombatOptionResolver and CoreAttackOptionActionEconomy"
+      },
+      {
+        "feat": "Rapid Strike",
+        "status": "implemented_correct",
+        "implementation": "ATTACK_OPTION rapidStrike",
+        "actionEconomy": "ridesAttack",
+        "consumer": "CombatOptionResolver and CoreAttackOptionActionEconomy"
+      },
+      {
+        "feat": "Careful Shot",
+        "status": "implemented_correct",
+        "implementation": "ATTACK_OPTION carefulShot with auto Aim prerequisite if missing",
+        "actionEconomy": "autoAimIfMissing; Aim consumes two swift actions before the attack when not already aimed",
+        "consumer": "CoreAttackOptionActionEconomy"
+      },
+      {
+        "feat": "Deadeye",
+        "status": "implemented_correct",
+        "implementation": "ATTACK_OPTION deadeye with auto Aim prerequisite if missing",
+        "actionEconomy": "autoAimIfMissing; Aim consumes two swift actions before the attack when not already aimed",
+        "consumer": "CoreAttackOptionActionEconomy"
+      },
+      {
+        "feat": "Burst Fire",
+        "status": "implemented_correct",
+        "implementation": "ATTACK_OPTION burstFire",
+        "actionEconomy": "ridesAttackAmmo; ammunition cost handled by AmmoSystem",
+        "consumer": "CombatOptionResolver, CoreAttackOptionActionEconomy, AmmoSystem"
+      },
+      {
+        "feat": "Powerful Charge",
+        "status": "implemented_correct",
+        "implementation": "ATTACK_OPTION powerfulCharge with auto Charge prerequisite if missing",
+        "actionEconomy": "autoChargeIfMissing; Charge consumes standard action before attack when not already charging",
+        "consumer": "CoreAttackOptionActionEconomy"
+      },
+      {
+        "feat": "Charging Fire",
+        "status": "implemented_correct",
+        "implementation": "ATTACK_OPTION chargingFire with auto Charge prerequisite if missing",
+        "actionEconomy": "autoChargeIfMissing; Charge consumes standard action before ranged attack when not already charging",
+        "consumer": "CoreAttackOptionActionEconomy"
+      },
+      {
+        "feat": "Improved Disarm",
+        "status": "implemented_correct",
+        "implementation": "ATTACK_OPTION improvedDisarm",
+        "actionEconomy": "ridesAttack",
+        "consumer": "CombatOptionResolver and CoreAttackOptionActionEconomy"
+      },
+      {
+        "feat": "Mighty Swing",
+        "status": "implemented_correct",
+        "implementation": "ATTACK_OPTION mightySwing",
+        "actionEconomy": "spendSwiftActions; consumes two swift actions before attack roll",
+        "consumer": "CoreAttackOptionActionEconomy"
+      },
+      {
+        "feat": "Running Attack",
+        "status": "implemented_correct_as_split_movement_rider",
+        "implementation": "ATTACK_OPTION runningAttack movement rider",
+        "actionEconomy": "standardAttackPlusMove riderOnly; marks splitMovementBeforeAfterAttack and does not replace or auto-spend the attack action",
+        "consumer": "CoreAttackOptionActionEconomy and movement workflow/UI"
       }
     ]
   },
@@ -129,6 +226,12 @@
     "scripts/actors/derived/derived-calculator.js",
     "scripts/combat/rolls/attacks.js",
     "scripts/engine/combat/combat-option-resolver.js",
+    "scripts/engine/combat/full-attack-executor.js",
+    "scripts/engine/feats/core-attack-option-action-economy.js",
+    "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+    "scripts/engine/feats/core-attack-option-runtime-patches.js",
+    "scripts/engine/feats/core-combat-reaction-normalization-hooks.js",
+    "scripts/engine/feats/core-combat-reaction-runtime-patches.js",
     "scripts/engine/feats/meta-resource-feat-resolver.js",
     "scripts/governance/actor-engine/actor-engine.js"
   ],
@@ -144,6 +247,10 @@
     {
       "area": "Defense riders from attack options",
       "reason": "CombatOptionResolver now emits defenseModifiers, but runtime application/display of temporary defense riders depends on the caller/UI using that payload."
+    },
+    {
+      "area": "Running Attack token movement UI",
+      "reason": "Running Attack is now correctly represented as a split-movement rider, but token movement before/after the attack depends on the movement workflow/UI honoring splitMovementBeforeAfterAttack."
     }
   ],
   "validation": {
@@ -152,7 +259,11 @@
       "scripts/governance/actor-engine/actor-engine.js",
       "scripts/actors/derived/derived-calculator.js",
       "scripts/engine/combat/combat-option-resolver.js",
-      "scripts/combat/rolls/attacks.js"
+      "scripts/combat/rolls/attacks.js",
+      "scripts/engine/feats/core-attack-option-action-economy.js",
+      "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+      "scripts/engine/feats/core-combat-reaction-normalization-hooks.js",
+      "scripts/engine/feats/core-combat-reaction-runtime-patches.js"
     ],
     "jsonl": "packs/feats.db parsed as valid JSONL with 419 rows",
     "runtimeFoundryTested": false
