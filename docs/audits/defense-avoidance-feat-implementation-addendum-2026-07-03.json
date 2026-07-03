@@ -1,0 +1,76 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-03",
+  "purpose": "Record the focused Defense & Avoidance sub-bucket pass from the strict Combat bucket.",
+  "policy": {
+    "engineReuse": "Use existing attack-option, reaction, and damage-threshold seams. Do not create a parallel defense engine.",
+    "staticVsConditional": "Static bonuses and damage-threshold rules are normalized as concrete metadata. Situational feats remain advisory until the combat workflow supplies exact context.",
+    "alreadyCovered": "Flurry and Melee Defense are already handled by core attack-option hooks. Combat Reflexes is already handled by core combat reaction hooks."
+  },
+  "alreadyImplementedElsewhere": [
+    { "name": "Flurry", "reason": "Core attack-option feat." },
+    { "name": "Melee Defense", "reason": "Core attack-option feat." },
+    { "name": "Combat Reflexes", "reason": "Core combat reaction feat." }
+  ],
+  "implementedEntries": [
+    {
+      "name": "Great Fortitude",
+      "status": "implemented_static_defense_metadata",
+      "mechanic": "Adds STATIC_DEFENSE_BONUS +2 to Fortitude Defense."
+    },
+    {
+      "name": "Lightning Reflexes",
+      "status": "implemented_static_defense_metadata",
+      "mechanic": "Adds STATIC_DEFENSE_BONUS +2 to Reflex Defense."
+    },
+    {
+      "name": "Improved Damage Threshold",
+      "status": "implemented_damage_threshold_metadata",
+      "mechanic": "Normalizes to resourceRules.damageThreshold FLAT_BONUS +5 for MetaResourceFeatResolver damage-threshold consumers."
+    },
+    {
+      "name": "Fight Through Pain",
+      "status": "implemented_damage_threshold_metadata",
+      "mechanic": "Normalizes to resourceRules.damageThreshold USE_WILL_AS_BASE with useBest=true."
+    },
+    {
+      "name": "Tumble Defense",
+      "status": "implemented_advisory_defense_metadata",
+      "mechanic": "Stores tumble/movement defense metadata. Requires movement/AoO workflow context before application."
+    },
+    {
+      "name": "Predictive Defense",
+      "status": "implemented_advisory_defense_metadata",
+      "mechanic": "Stores predictive/conditional defense metadata. Requires chosen/incoming attack context before application."
+    },
+    {
+      "name": "Moving Target",
+      "status": "implemented_advisory_defense_metadata",
+      "mechanic": "Stores movement-dependent Reflex defense metadata. Requires proof of movement in workflow context."
+    },
+    {
+      "name": "Trench Warrior",
+      "status": "implemented_advisory_defense_metadata",
+      "mechanic": "Stores cover/entrenched-position defense metadata. Exact cover state remains workflow/GM adjudicated."
+    },
+    {
+      "name": "Cunning Attack",
+      "status": "implemented_advisory_attack_context_metadata",
+      "mechanic": "Stores target-vulnerability attack metadata. Actual attack modifier belongs to attack workflow once target state is known."
+    },
+    {
+      "name": "Resilient Strength",
+      "status": "implemented_advisory_resilience_metadata",
+      "mechanic": "Stores condition/strength resilience metadata. Exact modifier waits for condition workflow context."
+    },
+    {
+      "name": "Wary Defender",
+      "status": "implemented_advisory_defense_metadata",
+      "mechanic": "Stores defensive awareness/surprise-context metadata. Exact application waits for workflow context."
+    }
+  ],
+  "changedFiles": [
+    "scripts/engine/feats/defense-avoidance-feat-normalization-hooks.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}
