@@ -4,6 +4,7 @@ import { DamageMitigationManager } from "/systems/foundryvtt-swse/scripts/engine
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
 import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
+import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 
 /**
  * DamageResolutionEngine — Unified damage orchestration
@@ -207,7 +208,39 @@ export class DamageResolutionEngine {
     // final HP loss. This preserves ActorEngine as the mutation authority while
     // allowing packet-level special damage semantics.
     const maxHP = system.hp?.max ?? 100;
-    const hpDamageBeforeSpecial = Math.max(0, Number(mitigationResult.hpDamage) || 0);
+    let hpDamageBeforeSpecial = Math.max(0, Number(mitigationResult.hpDamage) || 0);
+    let voluntaryConditionShift = 0;
+
+    const conditionTrackFeatRules = MetaResourceFeatResolver.getConditionTrackRules(actor);
+    const useDamageConversion = options.damageConversion === true
+      || options.useDamageConversion === true
+      || options.spendCtToReduceDamage === true;
+    if (useDamageConversion && conditionTrackFeatRules.spendCtToReduceDamage && hpDamageBeforeSpecial > 0) {
+      const conditionCap = ConditionTrackRules.getConditionStepCap();
+      if (result.conditionBefore < conditionCap) {
+        const reduction = Math.min(
+          hpDamageBeforeSpecial,
+          Math.max(0, Number(conditionTrackFeatRules.damageReductionAmount ?? 10) || 10)
+        );
+        if (reduction > 0) {
+          hpDamageBeforeSpecial = Math.max(0, hpDamageBeforeSpecial - reduction);
+          voluntaryConditionShift = 1;
+          result.damageConversion = {
+            applied: true,
+            reduction,
+            conditionShift: voluntaryConditionShift,
+            source: 'Damage Conversion'
+          };
+        }
+      } else {
+        result.damageConversion = {
+          applied: false,
+          reason: 'Condition track is already at the maximum step',
+          source: 'Damage Conversion'
+        };
+      }
+    }
+
     const hpDamageMultiplierRaw = Number(options?.hpDamageMultiplier);
     const hpDamageMultiplier = Number.isFinite(hpDamageMultiplierRaw) && hpDamageMultiplierRaw >= 0
       ? hpDamageMultiplierRaw
@@ -279,7 +312,8 @@ export class DamageResolutionEngine {
        PHASE 4: CONDITION TRACK IMPACT
        ================================================================= */
 
-    result.conditionAfter = result.conditionBefore;
+    result.conditionAfter = Math.min(ConditionTrackRules.getConditionStepCap(), result.conditionBefore + voluntaryConditionShift);
+    result.conditionDelta = voluntaryConditionShift;
     result.conditionPersistent = false;
 
     // Threshold exceeded with HP remaining: use ThresholdEngine rule result (supports house rules)
@@ -287,7 +321,6 @@ export class DamageResolutionEngine {
       let thresholdShift = Math.max(0, Number(result.thresholdRuleResult?.totalCTShift ?? 1));
 
       // Apply feat-based damage rules (metadata-driven, not hardcoded)
-      const { MetaResourceFeatResolver } = await import("/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js");
       const damageRules = MetaResourceFeatResolver.getDamageRules(actor);
 
       // FEAT: Galactic Alliance Military Training - prevent first CT worsening per encounter
@@ -308,8 +341,8 @@ export class DamageResolutionEngine {
         thresholdShift = Math.min(1, thresholdShift);
       }
 
-      result.conditionDelta = thresholdShift;
-      result.conditionAfter = Math.min(ConditionTrackRules.getConditionStepCap(), result.conditionBefore + thresholdShift);
+      result.conditionDelta += thresholdShift;
+      result.conditionAfter = Math.min(ConditionTrackRules.getConditionStepCap(), result.conditionAfter + thresholdShift);
       result.conditionPersistent = (result.thresholdRuleResult?.ctShifts || []).some(shift => shift?.persistent === true);
 
       if (damageType === 'stun' && result.thresholdRuleResult?.stunKnockout === true) {
