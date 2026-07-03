@@ -62,9 +62,9 @@ const ATTACK_OPTION_ECONOMY = {
   },
   runningAttack: {
     label: 'Running Attack',
-    economy: 'autoMoveIfMissing',
-    prerequisite: 'move',
-    description: 'If the attack is not already part of movement, spend a Move action first, then resolve the single attack.'
+    economy: 'splitMovementRider',
+    riderFor: 'standardAttack',
+    description: 'No extra roll-time spend. It marks that movement may be split before and after this single attack; movement/action spending belongs to the movement workflow.'
   },
   mightySwing: {
     label: 'Mighty Swing',
@@ -102,10 +102,6 @@ function aimedContext(options = {}) {
 
 function chargeContext(options = {}) {
   return contextFlag(options, 'charge', 'charging', 'isCharge', 'chargeAction', 'chargeActionSpent', 'chargingFire');
-}
-
-function moveContext(options = {}) {
-  return contextFlag(options, 'move', 'moving', 'isMove', 'moveAction', 'moveActionSpent', 'runningAttack');
 }
 
 function autoPrerequisites(options = {}) {
@@ -178,22 +174,6 @@ async function spendChargePrerequisite(actor, weapon, optionId, options = {}, sp
   return null;
 }
 
-async function spendMovePrerequisite(actor, weapon, optionId, options = {}, spends = []) {
-  const spend = await spendOne(actor, 'move', {
-    source: 'Running Attack',
-    sourceName: 'Running Attack',
-    actionName: 'Running Attack',
-    prerequisiteFor: optionId,
-    weaponId: weapon?.id ?? null,
-    moveAttack: true
-  }, options);
-  spends.push(spend);
-  if (spend?.allowed === false || spend?.permitted === false) {
-    return spendFailed(optionId, spend?.policyResult?.reason ?? spend?.engineResult?.violations?.join?.(', ') ?? 'Running Attack requires a Move action.', spends);
-  }
-  return null;
-}
-
 export function getCoreAttackOptionEconomy(optionId) {
   return ATTACK_OPTION_ECONOMY[optionId] ?? null;
 }
@@ -207,10 +187,9 @@ export function prepareCoreAttackOptionRollContext(options = {}) {
   const combatOptions = { ...(options.combatOptions ?? options.attackOptions ?? {}) };
   const needsAim = selectedCombatFlag({ combatOptions }, 'carefulShot') || selectedCombatFlag({ combatOptions }, 'deadeye');
   const needsCharge = selectedCombatFlag({ combatOptions }, 'powerfulCharge') || selectedCombatFlag({ combatOptions }, 'chargingFire');
-  const needsMove = selectedCombatFlag({ combatOptions }, 'runningAttack');
+  const needsRunningAttack = selectedCombatFlag({ combatOptions }, 'runningAttack');
   const alreadyAimed = aimedContext(options);
   const alreadyCharged = chargeContext(options);
-  const alreadyMoved = moveContext(options);
   const auto = { ...(options.swseAutoPrerequisites ?? {}) };
 
   if (needsAim) {
@@ -227,12 +206,10 @@ export function prepareCoreAttackOptionRollContext(options = {}) {
     auto.charge = !alreadyCharged;
   }
 
-  if (needsMove) {
-    prepared.move = true;
-    prepared.moving = true;
+  if (needsRunningAttack) {
     prepared.runningAttack = true;
+    prepared.splitMovementBeforeAfterAttack = true;
     prepared.combatOptions = combatOptions;
-    auto.move = !alreadyMoved;
   }
 
   if (selectedCombatFlag({ combatOptions }, 'chargingFire')) {
@@ -283,14 +260,6 @@ export async function spendCoreAttackOptionCosts(actor, weapon, options = {}) {
     }
   }
 
-  if (selectedCombatFlag(options, 'runningAttack') && auto.move === true) {
-    const failure = await spendMovePrerequisite(actor, weapon, 'runningAttack', options, spends);
-    if (failure) {
-      await rollback();
-      return { ...failure, selectedOptions, economy, rollback: async () => false };
-    }
-  }
-
   if (selectedCombatFlag(options, 'mightySwing')) {
     for (let i = 0; i < 2; i += 1) {
       const spend = await spendOne(actor, 'swift', {
@@ -324,8 +293,7 @@ export async function spendCoreAttackOptionCosts(actor, weapon, options = {}) {
     const rule = ATTACK_OPTION_ECONOMY[optionId];
     if (!rule || rule.economy === 'spendSwiftActions') continue;
     const autoSpent = (rule.prerequisite === 'aim' && auto.aim === true)
-      || (rule.prerequisite === 'charge' && auto.charge === true)
-      || (rule.prerequisite === 'move' && auto.move === true);
+      || (rule.prerequisite === 'charge' && auto.charge === true);
     spends.push({
       allowed: true,
       permitted: true,
