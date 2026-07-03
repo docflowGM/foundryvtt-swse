@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-03",
+  "purpose": "Record the focused Rage sub-bucket implementation pass following strict Combat bucket validation.",
+  "implementedFeats": [
+    {
+      "name": "Extra Rage",
+      "status": "implemented",
+      "mechanic": "Normalizes to RAGE_USES_BONUS +1 and RageEngine retains a name fallback for existing actors/items."
+    },
+    {
+      "name": "Dreadful Rage",
+      "status": "implemented",
+      "mechanic": "Normalizes to RAGE_ATTACK_DAMAGE_BONUS_OVERRIDE 5 and RageEngine retains a name fallback for existing actors/items."
+    },
+    {
+      "name": "Controlled Rage",
+      "status": "implemented",
+      "mechanic": "Normalizes to RAGE_ACTION_MODE with canEndAtWill=true and RageEngine now has a name fallback for existing actors/items."
+    }
+  ],
+  "changedFiles": [
+    "scripts/engine/feats/rage-feat-normalization-hooks.js",
+    "scripts/engine/species/rage-engine.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ],
+  "notes": [
+    "This pass reuses the existing RageEngine instead of creating a parallel rage subsystem.",
+    "The normalizer writes passive RAGE_* rules onto actor-owned feat items when they are created or updated.",
+    "Existing actors without normalized rule metadata still benefit from RageEngine name fallbacks for Extra Rage, Dreadful Rage, and Controlled Rage."
+  ]
+}
