@@ -16,6 +16,29 @@ function actorHasFeat(actor, featName) {
   }
 }
 
+function actorGrappleRules(actor) {
+  const rules = [];
+  try {
+    for (const item of Array.from(actor?.items ?? [])) {
+      if (!['feat', 'talent'].includes(item?.type) || item?.system?.disabled === true) continue;
+      const grappleRules = item?.system?.abilityMeta?.grappleRules;
+      if (!Array.isArray(grappleRules)) continue;
+      for (const rule of grappleRules) rules.push({ ...rule, sourceName: item.name, sourceId: item.id });
+    }
+  } catch (_err) {
+    // Treat malformed actor/items as having no grapple rules.
+  }
+  return rules;
+}
+
+function findGrappleRule(actor, type, predicate = null) {
+  return actorGrappleRules(actor).find(rule => rule?.type === type && (!predicate || predicate(rule)));
+}
+
+function actorHasGrappleCapability(actor, type, fallbackFeatName, predicate = null) {
+  return !!findGrappleRule(actor, type, predicate) || actorHasFeat(actor, fallbackFeatName);
+}
+
 function actorFrom(value) {
   return value?.actor ?? value ?? null;
 }
@@ -42,7 +65,20 @@ function selectedTargets() {
 
 export class GrappleFeatActions {
   static canUse(actor, featName) {
-    return !!actor && actorHasFeat(actor, featName);
+    if (!actor) return false;
+    const normalized = normalizeFeatName(featName);
+    switch (normalized) {
+      case 'grappling strike':
+        return actorHasGrappleCapability(actor, 'POST_HIT_GRAB_ATTEMPT', 'Grappling Strike');
+      case 'multi grab':
+        return actorHasGrappleCapability(actor, 'MULTI_GRAB', 'Multi-Grab');
+      case 'grab back':
+        return actorHasGrappleCapability(actor, 'REACTION_GRAB_BACK', 'Grab Back');
+      case 'pincer':
+        return actorHasGrappleCapability(actor, 'PIN_MAINTENANCE_AND_CRUSH', 'Pincer');
+      default:
+        return actorHasFeat(actor, featName);
+    }
   }
 
   /**
@@ -58,7 +94,7 @@ export class GrappleFeatActions {
       ui?.notifications?.warn?.('Select one target before using Grappling Strike.');
       return null;
     }
-    if (!actorHasFeat(attacker, 'Grappling Strike')) {
+    if (!actorHasGrappleCapability(attacker, 'POST_HIT_GRAB_ATTEMPT', 'Grappling Strike')) {
       ui?.notifications?.warn?.(`${attacker.name} lacks the Grappling Strike feat.`);
       return null;
     }
@@ -79,15 +115,16 @@ export class GrappleFeatActions {
    * SWSEGrappling.attemptGrab path.
    */
   static async multiGrab(attacker, targets = null, options = {}) {
+    const rule = findGrappleRule(attacker, 'MULTI_GRAB');
     const candidates = uniqueActors(Array.isArray(targets) ? targets : selectedTargets());
-    const maxTargets = Math.max(1, Number(options.maxTargets ?? 2) || 2);
+    const maxTargets = Math.max(1, Number(options.maxTargets ?? rule?.maxTargets ?? 2) || 2);
     const chosen = candidates.filter(actor => actor?.id !== attacker?.id).slice(0, maxTargets);
 
     if (!attacker || !chosen.length) {
       ui?.notifications?.warn?.('Select one or two targets before using Multi-Grab.');
       return [];
     }
-    if (!actorHasFeat(attacker, 'Multi-Grab')) {
+    if (!rule && !actorHasFeat(attacker, 'Multi-Grab')) {
       ui?.notifications?.warn?.(`${attacker.name} lacks the Multi-Grab feat.`);
       return [];
     }
@@ -97,7 +134,7 @@ export class GrappleFeatActions {
       const result = await SWSEGrappling.attemptGrab(attacker, target, {
         ...options,
         actionId: options.actionId ?? 'multi-grab',
-        source: 'Multi-Grab'
+        source: rule?.source ?? 'Multi-Grab'
       });
       results.push(result);
     }
@@ -115,7 +152,7 @@ export class GrappleFeatActions {
       ui?.notifications?.warn?.('Select the triggering opponent before using Grab Back.');
       return null;
     }
-    if (!actorHasFeat(defender, 'Grab Back')) {
+    if (!actorHasGrappleCapability(defender, 'REACTION_GRAB_BACK', 'Grab Back')) {
       ui?.notifications?.warn?.(`${defender.name} lacks the Grab Back feat.`);
       return null;
     }
@@ -139,7 +176,7 @@ export class GrappleFeatActions {
       ui?.notifications?.warn?.('Select one pinned target before using Pincer.');
       return null;
     }
-    if (!actorHasFeat(attacker, 'Pincer')) {
+    if (!actorHasGrappleCapability(attacker, 'PIN_MAINTENANCE_AND_CRUSH', 'Pincer')) {
       ui?.notifications?.warn?.(`${attacker.name} lacks the Pincer feat.`);
       return null;
     }
