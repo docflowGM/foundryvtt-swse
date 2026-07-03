@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-03",
+  "purpose": "Demarcate combat feats implemented during the SWSE Foundry v13/v2 feat implementation conversation. This addendum intentionally overrides older generated backlog statuses where those generated files still say implemented_partial or source_review_required.",
+  "statusPolicy": {
+    "implemented_correct": "Runtime behavior, normalization metadata, and action economy/rider semantics are represented in code.",
+    "implemented_correct_with_manual_target_resolution": "Core trigger/rider logic is implemented, but final target selection or table adjudication remains manual because the system does not yet own all grid/LOS decisions.",
+    "implemented_correct_as_split_movement_rider": "Feat is correctly represented as a movement/action rider, with token-movement UX left to the movement workflow/UI."
+  },
+  "totalFullyImplementedOrCorrectedInConversation": 23,
+  "newCombatFeatPassCount": 17,
+  "earlierSameConversationFeatPassCount": 6,
+  "implementedFeats": [
+    {
+      "name": "Cleave",
+      "status": "implemented_correct_with_manual_target_resolution",
+      "implementation": "Normalizes to cleaveExtraAttack reaction rule; HP-drop watcher and swse.damageApplied emit swse.cleaveAvailable; chat prompt/manual helper surfaces the extra attack.",
+      "actionEconomy": "Free immediate extra melee attack rider after qualifying melee drop-to-0 trigger; manual target selection remains required.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-combat-reaction-normalization-hooks.js",
+        "scripts/engine/feats/core-combat-reaction-runtime-patches.js"
+      ]
+    },
+    {
+      "name": "Great Cleave",
+      "status": "implemented_correct",
+      "implementation": "Normalizes to EXTRA_ATTACK_LIMIT_OVERRIDE for cleaveExtraAttack and removes Cleave's once-per-round gate.",
+      "actionEconomy": "Same free Cleave rider; unlimited uses per round as long as each trigger qualifies.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-combat-reaction-normalization-hooks.js",
+        "scripts/engine/feats/core-combat-reaction-runtime-patches.js"
+      ]
+    },
+    {
+      "name": "Frightening Cleave",
+      "status": "implemented_correct_with_manual_target_resolution",
+      "implementation": "Normalizes to CLEAVE_RIDER_EFFECT; swse.cleaveUsed emits swse.frighteningCleaveAvailable and chat prompt.",
+      "actionEconomy": "Passive rider after Cleave use; eligible enemy/LOS selection remains GM/UI adjudicated.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-combat-reaction-normalization-hooks.js",
+        "scripts/engine/feats/core-combat-reaction-runtime-patches.js"
+      ]
+    },
+    {
+      "name": "Combat Reflexes",
+      "status": "implemented_correct",
+      "implementation": "Normalizes to REACTION_CAPACITY_OVERRIDE and patches ActionEconomyPersistence.getReactionMax.",
+      "actionEconomy": "Passive reaction capacity increase: base reactions plus Dexterity modifier; also permits opportunity attacks while flat-footed.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-combat-reaction-normalization-hooks.js",
+        "scripts/engine/feats/core-combat-reaction-runtime-patches.js"
+      ]
+    },
+    {
+      "name": "Power Attack",
+      "status": "implemented_correct",
+      "implementation": "ATTACK_OPTION powerAttack plus two-handed and object/vehicle runtime edge cases.",
+      "actionEconomy": "Rides the selected melee attack action.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+        "scripts/engine/feats/core-attack-option-runtime-patches.js",
+        "scripts/engine/feats/core-attack-option-action-economy.js"
+      ]
+    },
+    {
+      "name": "Rapid Shot",
+      "status": "implemented_correct",
+      "implementation": "ATTACK_OPTION rapidShot plus Strength-below-13 non-vehicle penalty correction.",
+      "actionEconomy": "Rides the selected ranged attack action; ammo is handled by AmmoSystem when applicable.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+        "scripts/engine/feats/core-attack-option-runtime-patches.js",
+        "scripts/engine/feats/core-attack-option-action-economy.js"
+      ]
+    },
+    {
+      "name": "Flurry",
+      "status": "implemented_correct",
+      "implementation": "ATTACK_OPTION flurry; +2 melee attack when wielding only light weapons/lightsabers, with -5 Reflex rider until next turn.",
+      "actionEconomy": "Rides the selected melee attack action.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+        "scripts/engine/feats/core-attack-option-runtime-patches.js",
+        "scripts/engine/feats/core-attack-option-action-economy.js"
+      ]
+    },
+    {
+      "name": "Melee Defense",
+      "status": "implemented_correct",
+      "implementation": "ATTACK_OPTION meleeDefense BAB-limited slider; converts selected melee attack penalty into Reflex dodge rider.",
+      "actionEconomy": "Rides the selected melee attack action.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+        "scripts/engine/feats/core-attack-option-action-economy.js"
+      ]
+    },
+    {
+      "name": "Rapid Strike",
+      "status": "implemented_correct",
+      "implementation": "ATTACK_OPTION rapidStrike; -2 melee attack for +1 weapon die damage.",
+      "actionEconomy": "Rides the selected melee attack action.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+        "scripts/engine/feats/core-attack-option-action-economy.js"
+      ]
+    },
+    {
+      "name": "Careful Shot",
+      "status": "implemented_correct",
+      "implementation": "ATTACK_OPTION carefulShot with Aim prerequisite support.",
+      "actionEconomy": "If Aim is already present, rides the aimed attack; otherwise auto-spends Aim as two swift actions before the attack.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+        "scripts/engine/feats/core-attack-option-action-economy.js"
+      ]
+    },
+    {
+      "name": "Deadeye",
+      "status": "implemented_correct",
+      "implementation": "ATTACK_OPTION deadeye with Aim prerequisite support.",
+      "actionEconomy": "If Aim is already present, rides the aimed attack; otherwise auto-spends Aim as two swift actions before the attack.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+        "scripts/engine/feats/core-attack-option-action-economy.js"
+      ]
+    },
+    {
+      "name": "Burst Fire",
+      "status": "implemented_correct",
+      "implementation": "ATTACK_OPTION burstFire; -5 attack, +2 weapon dice, autofire/ammo metadata.",
+      "actionEconomy": "Rides the selected ranged attack action; ammo cost is delegated to AmmoSystem.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+        "scripts/engine/feats/core-attack-option-action-economy.js"
+      ]
+    },
+    {
+      "name": "Powerful Charge",
+      "status": "implemented_correct",
+      "implementation": "ATTACK_OPTION powerfulCharge with Charge prerequisite support.",
+      "actionEconomy": "If Charge context already exists, rides the charge attack; otherwise auto-spends the Charge standard action before the attack.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+        "scripts/engine/feats/core-attack-option-action-economy.js"
+      ]
+    },
+    {
+      "name": "Charging Fire",
+      "status": "implemented_correct",
+      "implementation": "ATTACK_OPTION chargingFire with Charge prerequisite support and ranged charge context.",
+      "actionEconomy": "If Charge context already exists, rides the charge attack; otherwise auto-spends the Charge standard action before the ranged attack.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+        "scripts/engine/feats/core-attack-option-action-economy.js"
+      ]
+    },
+    {
+      "name": "Improved Disarm",
+      "status": "implemented_correct",
+      "implementation": "ATTACK_OPTION improvedDisarm; disarm-only melee attack modifier and failed-counterattack suppression metadata.",
+      "actionEconomy": "Rides the selected disarm attack action.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+        "scripts/engine/feats/core-attack-option-action-economy.js"
+      ]
+    },
+    {
+      "name": "Mighty Swing",
+      "status": "implemented_correct",
+      "implementation": "ATTACK_OPTION mightySwing; adds one weapon die to next melee attack.",
+      "actionEconomy": "Consumes two swift actions before the attack roll; rollback is supported if later roll/ammo flow fails.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+        "scripts/engine/feats/core-attack-option-action-economy.js",
+        "scripts/combat/rolls/attacks.js"
+      ]
+    },
+    {
+      "name": "Running Attack",
+      "status": "implemented_correct_as_split_movement_rider",
+      "implementation": "ATTACK_OPTION runningAttack; marks splitMovementBeforeAfterAttack for movement workflow/UI.",
+      "actionEconomy": "Standard attack plus move rider; does not replace the attack action and does not auto-spend movement during the roll.",
+      "primaryFiles": [
+        "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+        "scripts/engine/feats/core-attack-option-action-economy.js"
+      ]
+    },
+    {
+      "name": "Sniper",
+      "status": "implemented_correct",
+      "implementation": "Normalizes and patches ranged soft-cover suppression.",
+      "actionEconomy": "Passive roll-context modifier; no extra action cost.",
+      "primaryFiles": [
+        "scripts/engine/feats/sniper-normalization-hooks.js",
+        "scripts/engine/feats/sniper-runtime-patches.js"
+      ]
+    },
+    {
+      "name": "Dual Weapon Mastery I",
+      "status": "implemented_correct",
+      "implementation": "Normalizes DWM I and exposes dual-wield combat shape/penalty behavior.",
+      "actionEconomy": "Passive modifier to full-attack/two-weapon penalty; full attack economy is spent by FullAttackExecutor.",
+      "primaryFiles": [
+        "scripts/engine/feats/dual-weapon-mastery-normalization-hooks.js",
+        "scripts/engine/feats/dual-wield-runtime-patches.js",
+        "scripts/engine/combat/full-attack-executor.js"
+      ]
+    },
+    {
+      "name": "Dual Weapon Mastery II",
+      "status": "implemented_correct",
+      "implementation": "Normalizes DWM II and exposes dual-wield combat shape/penalty behavior.",
+      "actionEconomy": "Passive modifier to full-attack/two-weapon penalty; full attack economy is spent by FullAttackExecutor.",
+      "primaryFiles": [
+        "scripts/engine/feats/dual-weapon-mastery-normalization-hooks.js",
+        "scripts/engine/feats/dual-wield-runtime-patches.js",
+        "scripts/engine/combat/full-attack-executor.js"
+      ]
+    },
+    {
+      "name": "Dual Weapon Mastery III",
+      "status": "implemented_correct",
+      "implementation": "Normalizes DWM III and exposes dual-wield combat shape/penalty behavior.",
+      "actionEconomy": "Passive modifier to full-attack/two-weapon penalty; full attack economy is spent by FullAttackExecutor.",
+      "primaryFiles": [
+        "scripts/engine/feats/dual-weapon-mastery-normalization-hooks.js",
+        "scripts/engine/feats/dual-wield-runtime-patches.js",
+        "scripts/engine/combat/full-attack-executor.js"
+      ]
+    },
+    {
+      "name": "Pistoleer",
+      "status": "implemented_correct",
+      "implementation": "Normalizes and patches pistol-specific accurate/inaccurate/hold-out blaster effects.",
+      "actionEconomy": "Passive roll-context weapon-quality/attack modifier; no extra action cost.",
+      "primaryFiles": [
+        "scripts/engine/feats/pistoleer-normalization-hooks.js",
+        "scripts/engine/feats/pistoleer-runtime-patches.js"
+      ]
+    },
+    {
+      "name": "Riflemaster",
+      "status": "implemented_correct",
+      "implementation": "Normalizes and patches rifle-specific accurate/brace/autofire/damage/size effects.",
+      "actionEconomy": "Passive roll-context weapon-quality/property modifier; no extra action cost.",
+      "primaryFiles": [
+        "scripts/engine/feats/riflemaster-normalization-hooks.js",
+        "scripts/engine/feats/riflemaster-runtime-patches.js"
+      ]
+    }
+  ],
+  "sourceAuditFilesUpdated": [
+    "docs/feat-implementation-continuation-phase8.json"
+  ],
+  "generatedBacklogFilesNotRewritten": [
+    "data/feat-implementation/core-rulebook-feat-implementation-backlog.json",
+    "data/feat-implementation/kotor-feat-implementation-backlog.json",
+    "data/feat-implementation/*-review-list.json"
+  ],
+  "notes": [
+    "The generated backlog JSON files can be regenerated or patched in a separate scripted pass. This addendum is the authoritative manual demarcation for the conversation implementation pass.",
+    "Manual target resolution remains intentional for Cleave and Frightening Cleave because the current system does not yet own all legal target, reach, LOS, and enemy-selection decisions."
+  ]
+}
