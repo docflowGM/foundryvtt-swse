@@ -33,28 +33,32 @@ function payloadForFeat(name) {
         key: 'opportunisticShooter',
         label: 'Opportunistic Shooter',
         source: 'Opportunistic Shooter',
-        trigger: 'RANGED_OPPORTUNITY_CONTEXT',
+        trigger: 'ATTACK_OF_OPPORTUNITY',
         action: 'reaction',
         requiresAttackType: ['ranged'],
-        manualResolution: true,
         requiresWorkflowValidation: true,
         effect: {
-          type: 'RANGED_OPPORTUNITY_ATTACK_ADVISORY',
-          rangedAttack: true,
-          triggerContextRequired: true,
-          note: 'Allows a ranged opportunity/reaction attack only when the reaction workflow confirms the triggering condition, target legality, and line of sight/effect.'
+          type: 'ATTACK_BONUS',
+          target: 'attack.roll',
+          value: 2,
+          bonusType: 'feat',
+          appliesTo: 'attacksOfOpportunity',
+          requiresRangedWeapon: true
         },
-        summary: 'Stores ranged opportunity-shot reaction metadata. Exact trigger and target legality are supplied by the combat/reaction workflow.'
+        summary: 'Gain a +2 feat bonus on attacks of opportunity made with ranged weapons.'
       }],
       attackOptionRules: [{
-        type: 'RANGED_REACTION_ATTACK_ADVISORY',
+        type: 'CONDITIONAL_ATTACK_BONUS',
         id: 'opportunisticShooter',
         label: 'Opportunistic Shooter',
         source: 'Opportunistic Shooter',
-        trigger: 'rangedOpportunityContext',
+        value: 2,
+        bonusType: 'feat',
+        appliesTo: 'attacksOfOpportunity',
         requiresAttackType: 'ranged',
+        requiresWeaponCategory: ['ranged'],
         requiresWorkflowValidation: true,
-        summary: 'Ranged reaction attack metadata for workflows that expose opportunity-shot triggers.'
+        summary: 'Adds +2 to attacks of opportunity with ranged weapons when the workflow confirms ranged AoO context.'
       }]
     };
   }
@@ -62,20 +66,28 @@ function payloadForFeat(name) {
   if (normalized === 'mighty throw') {
     return {
       attackOptionRules: [{
-        type: 'THROWN_WEAPON_ATTACK_ADVISORY',
+        type: 'THROWN_WEAPON_ATTACK_MODIFIER',
         id: 'mightyThrow',
         label: 'Mighty Throw',
         source: 'Mighty Throw',
         trigger: 'thrownWeaponAttack',
         requiresAttackType: 'ranged',
-        requiresWeaponCategory: ['thrown', 'grenade', 'improvisedThrown'],
+        requiresWeaponCategory: ['thrown', 'grenade', 'grenadelike', 'improvisedThrown'],
         requiresWorkflowValidation: true,
-        abilityContext: {
-          thrownWeapon: true,
-          strengthRelevant: true,
-          note: 'Marks thrown-weapon attack context for later workflow math. Do not broadly replace ranged ability math without a confirmed thrown-weapon attack packet.'
+        attackBonus: {
+          type: 'ABILITY_MODIFIER_ADDITION',
+          ability: 'strength',
+          stacksWithExistingAbilityModifier: true,
+          note: 'Add Strength modifier in addition to Dexterity modifier on ranged attack rolls with thrown weapons.'
         },
-        summary: 'Stores thrown-weapon ranged attack metadata. Exact attack/damage math mutation waits for a workflow-confirmed thrown-weapon context.'
+        rangeMutation: {
+          type: 'RANGE_CATEGORY_EXTENSION',
+          valueAbility: 'strength',
+          unit: 'squares',
+          appliesToEachRangeCategory: true,
+          note: 'Increase the length of each range category by squares equal to the actor Strength modifier.'
+        },
+        summary: 'For thrown weapons, including grenades and grenadelike weapons, add Strength modifier to ranged attack bonus in addition to Dexterity and extend each range category by Strength modifier squares.'
       }]
     };
   }
