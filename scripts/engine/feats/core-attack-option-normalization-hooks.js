@@ -164,6 +164,139 @@ function chargingFireOption() {
   };
 }
 
+function improvedChargeOption() {
+  return {
+    type: 'ATTACK_OPTION',
+    id: 'improvedCharge',
+    label: 'Improved Charge',
+    control: 'flag',
+    requiresAttackType: 'melee',
+    requiresCharge: true,
+    suppresses: ['chargeReflexPenalty'],
+    defenseModifier: {
+      target: 'defense.reflex',
+      type: 'untyped',
+      value: 2,
+      duration: 'untilStartOfNextTurn',
+      offsets: 'chargeReflexPenalty'
+    },
+    actionEconomy: {
+      type: 'autoChargeIfMissing',
+      spend: 'ridesCharge',
+      riderFor: 'charge'
+    },
+    source: 'Improved Charge',
+    summary: 'Charge rider: removes the normal -2 Reflex penalty from a charge while preserving the charge attack action.'
+  };
+}
+
+function deftChargeOption() {
+  return {
+    type: 'ATTACK_OPTION',
+    id: 'deftCharge',
+    label: 'Deft Charge',
+    control: 'flag',
+    requiresCharge: true,
+    movementRider: true,
+    chargeMovementRider: true,
+    actionEconomy: {
+      type: 'autoChargeIfMissing',
+      spend: 'ridesCharge',
+      riderFor: 'charge',
+      movementRider: true
+    },
+    source: 'Deft Charge',
+    summary: 'Charge movement rider: flags that the charge path uses Deft Charge movement permissions; path legality remains table/GM adjudicated.'
+  };
+}
+
+function recklessChargeOption() {
+  return {
+    type: 'ATTACK_OPTION',
+    id: 'recklessCharge',
+    label: 'Reckless Charge',
+    control: 'toggle',
+    requiresAttackType: 'melee',
+    requiresCharge: true,
+    attackModifier: 2,
+    defenseModifier: {
+      target: 'defense.reflex',
+      type: 'untyped',
+      value: -2,
+      duration: 'untilStartOfNextTurn'
+    },
+    actionEconomy: {
+      type: 'autoChargeIfMissing',
+      spend: 'ridesCharge',
+      riderFor: 'charge'
+    },
+    source: 'Reckless Charge',
+    summary: 'Charge rider: take an additional Reflex penalty until your next turn to gain an additional charge attack bonus.'
+  };
+}
+
+function springAttackOption() {
+  return {
+    type: 'ATTACK_OPTION',
+    id: 'springAttack',
+    label: 'Spring Attack',
+    control: 'flag',
+    requiresAttackType: 'melee',
+    requiresSingleAttack: true,
+    movementRider: true,
+    actionEconomy: {
+      type: 'standardAttackPlusMove',
+      spend: 'riderOnly',
+      riderFor: 'standardAttack',
+      movementRider: true,
+      movementSplit: 'beforeAndAfterAttack',
+      moveActionRequired: true,
+      replacesStandardAttackCost: false
+    },
+    source: 'Spring Attack',
+    summary: 'Movement rider: allows movement before and after a single melee attack; movement validation remains with the movement workflow/GM.'
+  };
+}
+
+function banthaRushOption() {
+  return {
+    type: 'ATTACK_OPTION',
+    id: 'banthaRush',
+    label: 'Bantha Rush',
+    control: 'flag',
+    requiresAttackType: 'melee',
+    requiresManeuver: 'banthaRush',
+    targetPushSquares: 1,
+    actionEconomy: {
+      type: 'standardAttackManeuver',
+      spend: 'ridesAttack',
+      riderFor: 'meleeAttack'
+    },
+    source: 'Bantha Rush',
+    summary: 'Melee attack maneuver rider: on a qualifying hit, push the target 1 square; target size/path legality remains GM adjudicated.'
+  };
+}
+
+function improvedBanthaRushOption() {
+  return {
+    type: 'ATTACK_OPTION',
+    id: 'improvedBanthaRush',
+    label: 'Improved Bantha Rush',
+    control: 'flag',
+    requiresAttackType: 'melee',
+    requiresManeuver: 'banthaRush',
+    enhances: ['banthaRush'],
+    targetPushSquares: 2,
+    actionEconomy: {
+      type: 'banthaRushRider',
+      spend: 'riderOnly',
+      riderFor: 'banthaRush'
+    },
+    source: 'Improved Bantha Rush',
+    summary: 'Bantha Rush rider: improves the pushed distance for a qualifying Bantha Rush; target/path legality remains GM adjudicated.'
+  };
+}
+
 function runningAttackOption() {
   return {
     type: 'ATTACK_OPTION',
@@ -246,6 +379,12 @@ function optionForFeat(name) {
   if (normalized === 'burst fire') return burstFireOption();
   if (normalized === 'powerful charge') return powerfulChargeOption();
   if (normalized === 'charging fire') return chargingFireOption();
+  if (normalized === 'improved charge') return improvedChargeOption();
+  if (normalized === 'deft charge') return deftChargeOption();
+  if (normalized === 'reckless charge') return recklessChargeOption();
+  if (normalized === 'spring attack') return springAttackOption();
+  if (normalized === 'bantha rush') return banthaRushOption();
+  if (normalized === 'improved bantha rush') return improvedBanthaRushOption();
   if (normalized === 'running attack') return runningAttackOption();
   if (normalized === 'improved disarm') return improvedDisarmOption();
   if (normalized === 'mighty swing') return mightySwingOption();
