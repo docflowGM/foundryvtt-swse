@@ -15,6 +15,13 @@ function getAttackOptionRules(item) {
   return Array.isArray(rules) ? rules : [];
 }
 
+function actorHasFeat(actor, featName) {
+  const wanted = normalizeKey(featName);
+  return actorItems(actor).some(item => item?.type === 'feat'
+    && item?.system?.disabled !== true
+    && normalizeKey(item?.name) === wanted);
+}
+
 function actionMatches(rule = {}, actionId = '') {
   const wanted = normalizeKey(actionId);
   if (!wanted) return false;
@@ -22,17 +29,26 @@ function actionMatches(rule = {}, actionId = '') {
   return Array.isArray(rule.aliases) && rule.aliases.some(alias => normalizeKey(alias) === wanted);
 }
 
-function collectActionSpeedMutations(actor, actionId) {
-  const mutations = [];
+function collectActionRules(actor, actionId, type) {
+  const matches = [];
   for (const item of actorItems(actor)) {
     if (item?.type !== 'feat' || item?.system?.disabled === true) continue;
     for (const rule of getAttackOptionRules(item)) {
-      if (rule?.type !== 'ACTION_SPEED_MUTATION') continue;
+      if (rule?.type !== type) continue;
       if (!actionMatches(rule, actionId)) continue;
-      mutations.push({ ...rule, sourceName: item.name, sourceId: item.id });
+      if (rule.prerequisiteFeat && !actorHasFeat(actor, rule.prerequisiteFeat)) continue;
+      matches.push({ ...rule, sourceName: item.name, sourceId: item.id });
     }
   }
-  return mutations;
+  return matches;
+}
+
+function collectActionSpeedMutations(actor, actionId) {
+  return collectActionRules(actor, actionId, 'ACTION_SPEED_MUTATION');
+}
+
+function collectActionCompositionMutations(actor, actionId) {
+  return collectActionRules(actor, actionId, 'ACTION_COMPOSITION_MUTATION');
 }
 
 function costRank(cost) {
@@ -44,6 +60,10 @@ function costRank(cost) {
 export class ActionSpeedFeatResolver {
   static getActionSpeedMutations(actor, actionId) {
     return collectActionSpeedMutations(actor, actionId);
+  }
+
+  static getActionCompositionMutations(actor, actionId) {
+    return collectActionCompositionMutations(actor, actionId);
   }
 
   static resolveActionCost(actor, actionId, baseCost, context = {}) {
@@ -67,6 +87,21 @@ export class ActionSpeedFeatResolver {
       cost: bestCost,
       mutated: !!applied,
       mutation: applied,
+      mutations
+    };
+  }
+
+  static resolveActionComposition(actor, actionId, context = {}) {
+    const mutations = collectActionCompositionMutations(actor, actionId);
+    const valid = mutations.filter(mutation => {
+      if (mutation.requiresWorkflowValidation === true && context?.validated !== true && context?.workflowValidated !== true) return false;
+      if (mutation.usesPerEncounter && context?.encounterUsesRemaining === 0) return false;
+      return true;
+    });
+    return {
+      actionId,
+      available: valid.length > 0,
+      mutation: valid[0] ?? null,
       mutations
     };
   }
