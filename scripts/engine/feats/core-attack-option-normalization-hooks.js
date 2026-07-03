@@ -171,14 +171,17 @@ function runningAttackOption() {
     label: 'Running Attack',
     control: 'flag',
     actionEconomy: {
-      type: 'move',
-      spend: 'autoIfMissing',
-      replacesStandardAttackCost: true,
-      riderFor: 'move'
+      type: 'standardAttackPlusMove',
+      spend: 'riderOnly',
+      riderFor: 'standardAttack',
+      movementRider: true,
+      movementSplit: 'beforeAndAfterAttack',
+      moveActionRequired: true,
+      replacesStandardAttackCost: false
     },
     requiresSingleAttack: true,
     source: 'Running Attack',
-    summary: 'Make one melee or ranged attack during a move action. If a move action has not already been spent for the attack, spend it before rolling.'
+    summary: 'Allows movement before and after a single melee or ranged attack, up to the normal movement allowed by the move action. It does not replace the attack action cost.'
   };
 }
 
