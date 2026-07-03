@@ -21,6 +21,7 @@ import { registerMobilePrompt } from "/systems/foundryvtt-swse/scripts/ui/mobile
 import LightsaberLightSync from "/systems/foundryvtt-swse/scripts/utils/lightsaber-light-sync.js";
 import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
 import { FeatActionListeners } from "/systems/foundryvtt-swse/scripts/engine/feats/feat-action-listeners.js";
+import { registerGrappleFeatActions } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-feat-actions.js";
 
 /**
  * Register initialization hooks
@@ -67,6 +68,10 @@ export function registerInitHooks() {
         // Initialize feat action listeners (Sadistic Strike, Stay Up, etc.)
         FeatActionListeners.initialize();
         SWSELogger.log('Feat Action Listeners initialized');
+
+        // Expose assisted grapple feat helpers for sheets/macros/action bars.
+        registerGrappleFeatActions();
+        SWSELogger.log('Grapple Feat Actions initialized');
 
         // Initialize Combat Action Browser (Token HUD button)
         SWSECombatActionBrowser.init();
