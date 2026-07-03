@@ -95,11 +95,31 @@ function rulesForFeat(name) {
   }
 
   if (normalized === 'lightning draw') {
-    return [drawWeaponSpeedMutation({
+    return [{
+      type: 'ACTION_COMPOSITION_MUTATION',
       id: 'lightningDraw',
       label: 'Lightning Draw',
-      source: 'Lightning Draw'
-    })];
+      actionId: 'lightningDrawAttack',
+      aliases: ['drawAndAttack', 'drawWeaponAndAttack', 'drawHolsteredWeaponAndAttack'],
+      prerequisiteFeat: 'Quick Draw',
+      usesPerEncounter: 1,
+      composedActions: ['drawHolsteredWeapon', 'attack'],
+      composedActionCost: 'standard',
+      actionEconomy: {
+        spend: 'standard',
+        combines: ['drawHolsteredWeapon', 'attack'],
+        mutatesEstablishedAction: true,
+        workflowRequired: true
+      },
+      weaponAction: {
+        mustBeHolstered: true,
+        drawWeapon: true,
+        attackWithDrawnWeapon: true,
+        concealmentOrHolsterStateAdvisory: true
+      },
+      source: 'Lightning Draw',
+      summary: 'Once per encounter, combines drawing a holstered weapon and attacking with it into a single standard action. Requires Quick Draw and workflow validation of the holstered weapon context.'
+    }];
   }
 
   if (normalized === 'improved stun') {
