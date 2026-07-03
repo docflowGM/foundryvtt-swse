@@ -1,10 +1,11 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "date": "2026-07-03",
   "purpose": "Record the focused Attack Options sub-bucket pass from the strict Combat bucket.",
   "policy": {
-    "scope": "This small sub-bucket covers Rapid Reaction, Lightning Draw, and Improved Stun.",
+    "scope": "This small sub-bucket covers Rapid Reaction, Quick Draw, Lightning Draw, and Improved Stun.",
     "actionSpeedMutation": "When a feat clearly changes the speed/cost of an established combat action, model it as ACTION_SPEED_MUTATION metadata and provide a resolver seam for the action workflow to consume after validation.",
+    "actionCompositionMutation": "When a feat combines established actions into one action, model it as ACTION_COMPOSITION_MUTATION metadata and expose it through ActionSpeedFeatResolver.resolveActionComposition after validation.",
     "timingAutomation": "Reaction windows and stun-specific packet mutation are exposed as structured metadata only until a dedicated workflow supplies the exact trigger/context.",
     "noBroadDamageMutation": "Improved Stun metadata must not alter normal damage, non-stun attacks, or targets that are not eligible for stun effects."
   },
@@ -15,9 +16,14 @@
       "mechanic": "Stores reaction/timing metadata. Exact trigger and reaction availability require combat/reaction workflow context."
     },
     {
-      "name": "Lightning Draw",
+      "name": "Quick Draw",
       "status": "implemented_action_speed_mutation_metadata",
-      "mechanic": "Normalizes to ACTION_SPEED_MUTATION for the drawWeapon action, mutating the validated Draw/Ready Weapon action from move to free. ActionSpeedFeatResolver.resolveActionCost exposes the mutation to future action workflows."
+      "mechanic": "Normalizes to ACTION_SPEED_MUTATION for Draw/Holster Weapon, mutating the validated action from move to swift. Includes advisory combined feat riders for Dual Weapon Mastery I and Weapon Proficiency (Lightsabers)."
+    },
+    {
+      "name": "Lightning Draw",
+      "status": "implemented_action_composition_metadata",
+      "mechanic": "Normalizes to ACTION_COMPOSITION_MUTATION. Once per encounter, if Quick Draw is present and workflow validation passes, combines drawing a holstered weapon and attacking with it into one standard action."
     },
     {
       "name": "Improved Stun",
