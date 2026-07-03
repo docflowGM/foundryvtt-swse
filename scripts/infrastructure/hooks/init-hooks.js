@@ -31,6 +31,8 @@ import { registerSniperNormalizationHooks } from "/systems/foundryvtt-swse/scrip
 import { registerSniperRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/sniper-runtime-patches.js";
 import { registerDualWeaponMasteryNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/dual-weapon-mastery-normalization-hooks.js";
 import { registerDualWieldRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/dual-wield-runtime-patches.js";
+import { registerCoreCombatReactionNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/core-combat-reaction-normalization-hooks.js";
+import { registerCoreCombatReactionRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/core-combat-reaction-runtime-patches.js";
 
 /**
  * Register initialization hooks
@@ -105,6 +107,11 @@ export function registerInitHooks() {
         registerDualWeaponMasteryNormalizationHooks();
         registerDualWieldRuntimePatches();
         SWSELogger.log('Dual Weapon Mastery and Dual Wield Shape Hooks initialized');
+
+        // Normalize and expose core combat reaction feats such as Cleave and Combat Reflexes.
+        registerCoreCombatReactionNormalizationHooks();
+        registerCoreCombatReactionRuntimePatches();
+        SWSELogger.log('Core Combat Reaction Feat Hooks initialized');
 
         // Initialize Combat Action Browser (Token HUD button)
         SWSECombatActionBrowser.init();
