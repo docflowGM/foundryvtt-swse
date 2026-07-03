@@ -33,6 +33,8 @@ import { registerDualWeaponMasteryNormalizationHooks } from "/systems/foundryvtt
 import { registerDualWieldRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/dual-wield-runtime-patches.js";
 import { registerCoreCombatReactionNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/core-combat-reaction-normalization-hooks.js";
 import { registerCoreCombatReactionRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/core-combat-reaction-runtime-patches.js";
+import { registerCoreAttackOptionNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-normalization-hooks.js";
+import { registerCoreAttackOptionRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-runtime-patches.js";
 
 /**
  * Register initialization hooks
@@ -112,6 +114,11 @@ export function registerInitHooks() {
         registerCoreCombatReactionNormalizationHooks();
         registerCoreCombatReactionRuntimePatches();
         SWSELogger.log('Core Combat Reaction Feat Hooks initialized');
+
+        // Normalize and patch core attack-option feats such as Power Attack, Rapid Shot, and Flurry.
+        registerCoreAttackOptionNormalizationHooks();
+        registerCoreAttackOptionRuntimePatches();
+        SWSELogger.log('Core Attack Option Feat Hooks initialized');
 
         // Initialize Combat Action Browser (Token HUD button)
         SWSECombatActionBrowser.init();
