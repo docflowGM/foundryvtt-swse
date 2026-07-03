@@ -1,10 +1,11 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "date": "2026-07-03",
   "purpose": "Record the focused Attack Options sub-bucket pass from the strict Combat bucket.",
   "policy": {
     "scope": "This small sub-bucket covers Rapid Reaction, Lightning Draw, and Improved Stun.",
-    "timingAutomation": "Draw-weapon timing, reaction windows, and stun-specific packet mutation are exposed as structured metadata only until a dedicated workflow supplies the exact trigger/context.",
+    "actionSpeedMutation": "When a feat clearly changes the speed/cost of an established combat action, model it as ACTION_SPEED_MUTATION metadata and provide a resolver seam for the action workflow to consume after validation.",
+    "timingAutomation": "Reaction windows and stun-specific packet mutation are exposed as structured metadata only until a dedicated workflow supplies the exact trigger/context.",
     "noBroadDamageMutation": "Improved Stun metadata must not alter normal damage, non-stun attacks, or targets that are not eligible for stun effects."
   },
   "implementedEntries": [
@@ -15,8 +16,8 @@
     },
     {
       "name": "Lightning Draw",
-      "status": "implemented_draw_weapon_timing_metadata",
-      "mechanic": "Stores draw/ready weapon timing metadata. Actual draw timing and inventory/holster legality require an inventory/action workflow."
+      "status": "implemented_action_speed_mutation_metadata",
+      "mechanic": "Normalizes to ACTION_SPEED_MUTATION for the drawWeapon action, mutating the validated Draw/Ready Weapon action from move to free. ActionSpeedFeatResolver.resolveActionCost exposes the mutation to future action workflows."
     },
     {
       "name": "Improved Stun",
@@ -26,6 +27,7 @@
   ],
   "changedFiles": [
     "scripts/engine/feats/attack-options-feat-normalization-hooks.js",
+    "scripts/engine/feats/action-speed-feat-resolver.js",
     "scripts/infrastructure/hooks/init-hooks.js"
   ]
 }
