@@ -22,6 +22,7 @@ import { initializeDiscoverySystem, onDiscoveryReady } from "./scripts/ui/discov
 import { initializeSentinelGovernance } from "./scripts/governance/sentinel/sentinel-init.js";
 import { MutationInterceptor } from "./scripts/governance/mutation/MutationInterceptor.js";
 import { ActorEngine } from "./scripts/governance/actor-engine/actor-engine.js";
+import { ConditionTrackFeatActions } from "./scripts/engine/feats/condition-track-feat-actions.js";
 import { SystemInitHooks } from "./scripts/engine/progression/hooks/system-init-hooks.js";
 import { registerHandlebarsHelpers as registerSystemHandlebarsHelpers } from "./helpers/handlebars/index.js";
 import { PoisonEngine } from "./scripts/engine/poison/poison-engine.js";
@@ -83,6 +84,7 @@ Hooks.once("init", async () => {
     data: SWSEData,
     SWSE: SWSE,
     ActorEngine,
+    ConditionTrackFeatActions,
     RollEngine,
     EntityCreateBrowser,
     openEntityCreateBrowser,
@@ -91,6 +93,7 @@ Hooks.once("init", async () => {
 
   globalThis.SWSE ??= {};
   globalThis.SWSE.ActorEngine = ActorEngine;
+  globalThis.SWSE.ConditionTrackFeatActions = ConditionTrackFeatActions;
   globalThis.SWSE.RollEngine = RollEngine;
   globalThis.SWSE.EntityCreateBrowser = EntityCreateBrowser;
   globalThis.SWSE.openEntityCreateBrowser = openEntityCreateBrowser;
@@ -386,4 +389,3 @@ function registerSettings() {
     default: false
   });
 }
-
