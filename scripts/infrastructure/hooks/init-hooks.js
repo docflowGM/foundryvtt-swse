@@ -23,6 +23,7 @@ import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.
 import { FeatActionListeners } from "/systems/foundryvtt-swse/scripts/engine/feats/feat-action-listeners.js";
 import { registerGrappleFeatActions } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-feat-actions.js";
 import { registerGrappleRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-runtime-patches.js";
+import { registerRiflemasterNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/riflemaster-normalization-hooks.js";
 
 /**
  * Register initialization hooks
@@ -77,6 +78,10 @@ export function registerInitHooks() {
         // Patch canonical SWSEGrappling methods for metadata-backed feats and RAW tie behavior.
         registerGrappleRuntimePatches();
         SWSELogger.log('Grapple Runtime Patches initialized');
+
+        // Normalize Riflemaster separately from Rifle Master-style talent aliases.
+        registerRiflemasterNormalizationHooks();
+        SWSELogger.log('Riflemaster Normalization Hooks initialized');
 
         // Initialize Combat Action Browser (Token HUD button)
         SWSECombatActionBrowser.init();
