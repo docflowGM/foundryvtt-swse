@@ -69,7 +69,7 @@ export class GrappleFeatActions {
     const normalized = normalizeFeatName(featName);
     switch (normalized) {
       case 'grappling strike':
-        return actorHasGrappleCapability(actor, 'POST_HIT_GRAB_ATTEMPT', 'Grappling Strike');
+        return false;
       case 'multi grab':
         return actorHasGrappleCapability(actor, 'MULTI_GRAB', 'Multi-Grab');
       case 'grab back':
@@ -82,29 +82,13 @@ export class GrappleFeatActions {
   }
 
   /**
-   * Grappling Strike: after a melee hit, initiate a grab/grapple follow-up.
-   *
-   * This helper intentionally delegates the actual grab sequence to SWSEGrappling
-   * so the canonical grapple attack, Reflex check, legality checks, state engine,
-   * and chat output remain in one place.
+   * Grappling Strike was present in generated/bad data, but it is not a valid
+   * SWSE feat for this ruleset. Keep the helper as a safe no-op so stale UI
+   * buttons or macros do not route into a fake feat implementation.
    */
-  static async grapplingStrike(attacker, target = null, options = {}) {
-    target = actorFrom(target) ?? SWSEGrappling.getTargetActor?.(options);
-    if (!attacker || !target) {
-      ui?.notifications?.warn?.('Select one target before using Grappling Strike.');
-      return null;
-    }
-    if (!actorHasGrappleCapability(attacker, 'POST_HIT_GRAB_ATTEMPT', 'Grappling Strike')) {
-      ui?.notifications?.warn?.(`${attacker.name} lacks the Grappling Strike feat.`);
-      return null;
-    }
-
-    return SWSEGrappling.attemptGrab(attacker, target, {
-      ...options,
-      actionId: options.actionId ?? 'grappling-strike',
-      source: 'Grappling Strike',
-      skipLegalityConfirm: options.skipLegalityConfirm === true
-    });
+  static async grapplingStrike(_attacker, _target = null, _options = {}) {
+    ui?.notifications?.warn?.('Grappling Strike is not a valid SWSE feat in this system.');
+    return null;
   }
 
   /**
