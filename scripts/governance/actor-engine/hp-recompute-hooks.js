@@ -8,7 +8,7 @@
  * - actor.system.hp.bonus changes
  * - Class item create/update/delete
  * - HP-affecting feat create/update/delete, such as Toughness
- * - Durable feat rule normalization for Toughness, Improved Damage Threshold, static defense feats, attack option feats, resource feats, and Second Wind feats
+ * - Durable feat rule normalization for Toughness, Improved Damage Threshold, static defense feats, attack option feats, resource feats, Second Wind feats, and condition-track feats
  *
  * Guard:
  * - Skips if options.meta.guardKey === "hp-recompute" (prevents recursion)
@@ -259,6 +259,61 @@ function resourceRulePatchForFeat(featName) {
             limit: 'fullHpOrEncounterEnd',
             oncePer: 'day',
             source: 'Regenerative Healing'
+          }
+        ]
+      };
+    case 'ion shielding':
+      return {
+        key: 'damage',
+        rules: [
+          {
+            type: 'CAP_ION_DAMAGE_CT_TO_1_STEP',
+            source: 'Ion Shielding'
+          }
+        ]
+      };
+    case 'galactic alliance military training':
+      return {
+        key: 'damage',
+        rules: [
+          {
+            type: 'PREVENT_FIRST_THRESHOLD_EXCEEDANCE_PER_ENCOUNTER',
+            source: 'Galactic Alliance Military Training'
+          }
+        ]
+      };
+    case 'damage conversion':
+      return {
+        key: 'conditionTrack',
+        rules: [
+          {
+            type: 'SPEND_CT_TO_REDUCE_DAMAGE',
+            damageReduction: 10,
+            source: 'Damage Conversion'
+          }
+        ]
+      };
+    case 'shake it off':
+      return {
+        key: 'conditionTrack',
+        rules: [
+          {
+            type: 'SWIFT_ACTION_CONDITION_RECOVERY',
+            swiftActionCost: 2,
+            source: 'Shake It Off'
+          }
+        ]
+      };
+    case 'sadistic strike':
+      return {
+        key: 'conditionTrack',
+        rules: [
+          {
+            type: 'MOVE_TARGET_CT_ON_COUP_DE_GRACE',
+            steps: 1,
+            target: 'opponentsInLineOfSight',
+            duration: 'encounter',
+            source: 'Sadistic Strike'
           }
         ]
       };
