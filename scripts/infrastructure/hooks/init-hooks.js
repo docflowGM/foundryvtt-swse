@@ -42,6 +42,7 @@ import { registerMobilityPositioningFeatNormalizationHooks } from "/systems/foun
 import { registerDefenseAvoidanceFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/defense-avoidance-feat-normalization-hooks.js";
 import { registerAttackOptionsFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/attack-options-feat-normalization-hooks.js";
 import { registerMeleeCloseCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/melee-close-combat-feat-normalization-hooks.js";
+import { registerRangedCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/ranged-combat-feat-normalization-hooks.js";
 
 /**
  * Register initialization hooks
@@ -154,6 +155,10 @@ export function registerInitHooks() {
         // Normalize Melee & Close Combat feats into melee/full-attack metadata.
         registerMeleeCloseCombatFeatNormalizationHooks();
         SWSELogger.log('Melee & Close Combat Feat Hooks initialized');
+
+        // Normalize Ranged Combat feats into ranged-reaction and thrown-weapon metadata.
+        registerRangedCombatFeatNormalizationHooks();
+        SWSELogger.log('Ranged Combat Feat Hooks initialized');
 
         // Initialize Combat Action Browser (Token HUD button)
         SWSECombatActionBrowser.init();
