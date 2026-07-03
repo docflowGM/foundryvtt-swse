@@ -164,6 +164,24 @@ function chargingFireOption() {
   };
 }
 
+function runningAttackOption() {
+  return {
+    type: 'ATTACK_OPTION',
+    id: 'runningAttack',
+    label: 'Running Attack',
+    control: 'flag',
+    actionEconomy: {
+      type: 'move',
+      spend: 'autoIfMissing',
+      replacesStandardAttackCost: true,
+      riderFor: 'move'
+    },
+    requiresSingleAttack: true,
+    source: 'Running Attack',
+    summary: 'Make one melee or ranged attack during a move action. If a move action has not already been spent for the attack, spend it before rolling.'
+  };
+}
+
 function improvedDisarmOption() {
   return {
     type: 'ATTACK_OPTION',
@@ -225,6 +243,7 @@ function optionForFeat(name) {
   if (normalized === 'burst fire') return burstFireOption();
   if (normalized === 'powerful charge') return powerfulChargeOption();
   if (normalized === 'charging fire') return chargingFireOption();
+  if (normalized === 'running attack') return runningAttackOption();
   if (normalized === 'improved disarm') return improvedDisarmOption();
   if (normalized === 'mighty swing') return mightySwingOption();
   if (normalized === 'flurry') return flurryOption();
