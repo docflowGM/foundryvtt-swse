@@ -26,6 +26,7 @@
 import { rollAttack } from "/systems/foundryvtt-swse/scripts/combat/rolls/attacks.js";
 import { encodeCombatWorkflowContext, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
+import { ActionEconomyConsumption } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-consumption.js";
 import {
   buildFullAttackSequence,
   showFullAttackDialog,
@@ -93,6 +94,31 @@ async function _rollbackFullAttackAmmo(actor, spendResults = []) {
       console.warn('[FullAttackExecutor] Failed to rollback ammunition spend:', err);
     }
   }
+}
+
+async function _spendFullAttackEconomy(actor, actionType, sequence, options = {}) {
+  const sheet = options.sheet ?? null;
+  const metadata = {
+    source: 'full-attack-executor',
+    actionId: options.actionId ?? 'full-attack',
+    actionName: options.actionName ?? sequence.packageType,
+    combatContext: options.combatContext ?? null,
+    packageType: sequence.packageType,
+    attackCount: sequence.attacks?.length ?? 0
+  };
+
+  if (sheet && typeof sheet._applyActionEconomy === 'function') {
+    const allowed = await sheet._applyActionEconomy(actionType, metadata);
+    return {
+      allowed: allowed !== false,
+      permitted: allowed !== false,
+      committed: allowed !== false,
+      source: 'sheet',
+      rollback: async () => false
+    };
+  }
+
+  return ActionEconomyConsumption.spend(actor, actionType, metadata, options);
 }
 
 /**
@@ -299,14 +325,10 @@ export class FullAttackExecutor {
     const actionType = options.actionCostOverride ?? sequence.actionType ?? 'full-round';
     const sheet = options.sheet ?? null;
 
-    if (sheet && typeof sheet._applyActionEconomy === 'function') {
-      const allowed = await sheet._applyActionEconomy(actionType, {
-        source: 'full-attack-executor',
-        actionId:   options.actionId   ?? 'full-attack',
-        actionName: options.actionName ?? sequence.packageType,
-        combatContext: options.combatContext ?? null,
-      });
-      if (!allowed) {return null;}
+    const economySpend = await _spendFullAttackEconomy(actor, actionType, sequence, { ...options, sheet });
+    if (economySpend?.allowed === false || economySpend?.permitted === false) {
+      ui?.notifications?.warn?.(economySpend?.reason || 'Full Attack action economy could not be spent.');
+      return null;
     }
 
     // 4. Resolve shared target (first token target, or null)
@@ -411,4 +433,3 @@ export class FullAttackExecutor {
     return available;
   }
 }
-
