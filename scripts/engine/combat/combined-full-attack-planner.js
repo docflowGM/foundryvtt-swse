@@ -15,12 +15,6 @@ function normalizeKey(value) {
     .toLowerCase();
 }
 
-function sameWeapon(a, b) {
-  const aid = String(a?.id ?? a?._id ?? a?.uuid ?? '');
-  const bid = String(b?.id ?? b?._id ?? b?.uuid ?? '');
-  return !!aid && !!bid && aid === bid;
-}
-
 function roman(level) {
   return ['I', 'II', 'III'][Math.max(0, Math.min(2, Number(level || 0) - 1))] ?? '';
 }
@@ -64,30 +58,35 @@ function multiattackPenalty(actor, slot, mode) {
   };
 }
 
-function attackRow({ slot, label, source, attackNumber, dualPenalty, multiPenalty, multiApplies }) {
-  const multi = multiApplies ? multiPenalty.final : 0;
-  const dual = dualPenalty.final || 0;
-  const finalPenalty = Math.min(0, dual + multi);
+function combinedPenalty({ shape, multiPenalty, mode }) {
+  const dual = shape.usingDualWield ? Number(shape.penalty?.final ?? 0) : 0;
+  const multi = mode === 'none' ? 0 : Number(multiPenalty?.final ?? 0);
+  return Math.min(0, dual + multi);
+}
+
+function attackRow({ slot, label, source, attackNumber, penalties }) {
+  const handRole = slot?.handRole ?? null;
   return {
     weapon: slot?.weapon ?? null,
     label,
     attackNumber,
-    handRole: slot?.handRole ?? null,
-    weaponRole: slot?.handRole ?? null,
+    handRole,
+    weaponRole: handRole,
     source,
-    isOffhandAttack: ['offhand', 'double-secondary'].includes(slot?.handRole),
-    isMainHandAttack: ['main', 'double-primary'].includes(slot?.handRole),
+    attackSource: source,
+    isOffhandAttack: ['offhand', 'double-secondary'].includes(handRole),
+    isMainHandAttack: ['main', 'double-primary'].includes(handRole),
     isLightWeapon: slot?.isLightWeapon === true,
     isNaturalWeapon: slot?.isNaturalWeapon === true,
     isUnarmed: slot?.isUnarmed === true,
     effectiveSize: slot?.effectiveSize ?? '',
     effectiveQualities: slot?.effectiveQualities ?? [],
-    dualWieldPenalty: dual,
-    multiattackPenalty: multi,
-    finalPenalty,
+    dualWieldPenalty: penalties.dual,
+    multiattackPenalty: penalties.multi,
+    finalPenalty: penalties.final,
     penaltyBreakdown: [
-      ...(dual ? [{ label: dualPenalty.source, value: dual, type: 'dualWield' }] : []),
-      ...(multi ? [{ label: multiPenalty.source, value: multi, type: 'multiattack' }] : [])
+      ...(penalties.dual ? [{ label: penalties.dualSource, value: penalties.dual, type: 'dualWield' }] : []),
+      ...(penalties.multi ? [{ label: penalties.multiSource, value: penalties.multi, type: 'multiattack' }] : [])
     ]
   };
 }
@@ -113,6 +112,13 @@ export class CombinedFullAttackPlanner {
 
     const multiPenalty = multiattackPenalty(actor, stackSlot, mode);
     const dualPenalty = shape.penalty;
+    const penalties = {
+      dual: shape.usingDualWield ? Number(dualPenalty?.final ?? 0) : 0,
+      dualSource: dualPenalty?.source ?? 'Two-Weapon Fighting',
+      multi: mode === 'none' ? 0 : Number(multiPenalty.final ?? 0),
+      multiSource: multiPenalty.source,
+      final: combinedPenalty({ shape, multiPenalty, mode })
+    };
     const attacks = [];
 
     if (shape.mainHand?.weapon) {
@@ -121,9 +127,7 @@ export class CombinedFullAttackPlanner {
         label: `${shape.mainHand.name} — ${shape.mainHand.handRole === 'double-primary' ? 'Primary End' : 'Main Hand'}`,
         source: 'base',
         attackNumber: attacks.length + 1,
-        dualPenalty,
-        multiPenalty,
-        multiApplies: mode !== 'none'
+        penalties
       }));
     }
 
@@ -133,9 +137,7 @@ export class CombinedFullAttackPlanner {
         label: `${stackSlot.name} — Double Attack`,
         source: 'doubleAttack',
         attackNumber: attacks.length + 1,
-        dualPenalty,
-        multiPenalty,
-        multiApplies: true
+        penalties
       }));
     }
 
@@ -145,9 +147,7 @@ export class CombinedFullAttackPlanner {
         label: `${stackSlot.name} — Triple Attack`,
         source: 'tripleAttack',
         attackNumber: attacks.length + 1,
-        dualPenalty,
-        multiPenalty,
-        multiApplies: true
+        penalties
       }));
     }
 
@@ -157,9 +157,7 @@ export class CombinedFullAttackPlanner {
         label: `${shape.offHand.name} — ${shape.usingDoubleWeapon ? 'Secondary End' : 'Off Hand'}`,
         source: shape.usingDoubleWeapon ? 'doubleWeaponSecondary' : 'offhand',
         attackNumber: attacks.length + 1,
-        dualPenalty,
-        multiPenalty,
-        multiApplies: mode !== 'none'
+        penalties
       }));
     }
 
@@ -168,12 +166,14 @@ export class CombinedFullAttackPlanner {
     const breakdown = [];
     if (shape.usingDualWield) {
       const dwm = shape.dualWeaponMasteryLevel ? ` via Dual Weapon Mastery ${roman(shape.dualWeaponMasteryLevel)}` : '';
-      breakdown.push(`${shape.mode}: base -10 two-weapon penalty${dwm}; final ${dualPenalty.final}.`);
+      breakdown.push(`${shape.mode}: base -10 two-weapon penalty${dwm}; final ${penalties.dual}.`);
     }
     if (mode !== 'none') {
       const reduction = multiPenalty.reduction ? `, Multiattack Proficiency reduction +${multiPenalty.reduction}` : '';
-      breakdown.push(`${multiPenalty.source}: base ${multiPenalty.base}${reduction}; final ${multiPenalty.final}.`);
+      breakdown.push(`${multiPenalty.source}: base ${multiPenalty.base}${reduction}; final ${penalties.multi}.`);
     }
+    breakdown.push(`Combined penalty applied to every attack: ${penalties.final}.`);
+    breakdown.push(`Attack ownership: base/double/triple attacks use ${stackSlot?.handRole ?? 'main'}; dual-wield attack uses ${shape.offHand?.handRole ?? 'offhand'}.`);
     breakdown.push(`Total attacks: ${attacks.length}.`);
 
     return {
@@ -181,7 +181,9 @@ export class CombinedFullAttackPlanner {
       planner: 'combinedFullAttack',
       actionType: 'full-round',
       mode,
+      selectedAttackStackHand: stackSlot?.handRole ?? null,
       shape,
+      combinedPenalty: penalties.final,
       attacks,
       warnings: [],
       breakdown
