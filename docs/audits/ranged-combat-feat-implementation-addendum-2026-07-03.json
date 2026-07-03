@@ -1,22 +1,22 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "date": "2026-07-03",
   "purpose": "Record the focused Ranged Combat sub-bucket pass from the strict Combat bucket.",
   "policy": {
     "scope": "This sub-bucket covers Opportunistic Shooter and Mighty Throw.",
-    "reactionContext": "Ranged opportunity/reaction attacks are stored as reaction metadata only until the combat/reaction workflow supplies the exact trigger, target legality, and line of sight/effect context.",
-    "thrownWeaponContext": "Thrown-weapon feat metadata must not broadly mutate ranged attacks. Apply attack or damage changes only after a workflow confirms a thrown-weapon attack packet."
+    "reactionContext": "Opportunistic Shooter is now concrete metadata: +2 feat bonus to attacks of opportunity with ranged weapons, applied only after the workflow confirms ranged AoO context.",
+    "thrownWeaponContext": "Mighty Throw is now concrete thrown-weapon metadata: add Strength modifier in addition to Dexterity on thrown-weapon ranged attack rolls and extend each range category by Strength modifier squares. It must not mutate non-thrown ranged attacks."
   },
   "implementedEntries": [
     {
       "name": "Opportunistic Shooter",
-      "status": "implemented_ranged_reaction_metadata",
-      "mechanic": "Stores ranged opportunity-shot reaction metadata and matching attack-option metadata for future reaction workflows."
+      "status": "implemented_conditional_ranged_aoo_attack_bonus_metadata",
+      "mechanic": "Adds +2 feat bonus to attacks of opportunity with ranged weapons when the workflow confirms ranged AoO context."
     },
     {
       "name": "Mighty Throw",
-      "status": "implemented_thrown_weapon_advisory_metadata",
-      "mechanic": "Stores thrown-weapon ranged attack metadata. No broad ranged attack or damage mutation is applied without confirmed thrown-weapon context."
+      "status": "implemented_thrown_weapon_attack_and_range_metadata",
+      "mechanic": "For thrown weapons, including grenades and grenadelike weapons, add Strength modifier to the ranged attack bonus in addition to Dexterity and increase each range category by Strength modifier squares."
     }
   ],
   "changedFiles": [
