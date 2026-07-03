@@ -5,6 +5,11 @@ function normalizeName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
+function asArray(value) {
+  if (value === undefined || value === null) return [];
+  return Array.isArray(value) ? value : [value];
+}
+
 function hasReactionRule(item, key) {
   const rules = item?.system?.abilityMeta?.reactionRules;
   const normalizedKey = String(key ?? '').toLowerCase();
@@ -16,6 +21,11 @@ function hasReactionRule(item, key) {
       || Object.values(rules).flat().some(rule => String(rule?.key ?? rule?.id ?? rule?.reactionKey ?? '').toLowerCase() === normalizedKey);
   }
   return false;
+}
+
+function hasRuleType(item, type) {
+  const wanted = String(type ?? '').toUpperCase();
+  return asArray(item?.system?.abilityMeta?.rules).some(rule => String(rule?.type ?? '').toUpperCase() === wanted);
 }
 
 function cleaveReactionRule() {
@@ -39,27 +49,45 @@ function cleaveReactionRule() {
   };
 }
 
-function combatReflexesReactionRule() {
+function combatReflexesCapacityRule() {
   return {
-    key: 'combatReflexesOpportunityAttack',
-    label: 'Combat Reflexes: Additional Attack of Opportunity',
-    trigger: 'ON_OPPORTUNITY_ATTACK_AVAILABLE',
-    description: 'You may make additional attacks of opportunity equal to your Dexterity modifier and may make attacks of opportunity while flat-footed. You can still only make one attack for each triggered opportunity.',
-    action: 'reaction',
-    manualResolution: true,
-    effect: {
-      type: 'ATTACK_OF_OPPORTUNITY_CAP_OVERRIDE',
-      extraUsesAbility: 'dexterity',
-      allowWhileFlatFooted: true,
-      oneAttackPerTrigger: true
-    }
+    type: 'REACTION_CAPACITY_OVERRIDE',
+    label: 'Combat Reflexes: Additional Reactions',
+    source: 'Combat Reflexes',
+    reactionBasis: 'attacksOfOpportunity',
+    baseReactions: 1,
+    addAbilityModifier: 'dexterity',
+    minimum: 1,
+    allowOpportunityAttackWhileFlatFooted: true,
+    oneAttackPerOpportunityTrigger: true
   };
 }
 
-function ruleForFeat(name) {
-  const normalized = normalizeName(name);
-  if (normalized === 'cleave') return cleaveReactionRule();
-  if (normalized === 'combat reflexes') return combatReflexesReactionRule();
+function patchForFeat(item) {
+  const normalized = normalizeName(item?.name);
+  if (normalized === 'cleave') {
+    const rule = cleaveReactionRule();
+    if (hasReactionRule(item, rule.key)) return null;
+    return {
+      'system.abilityMeta.mechanicsMode': 'reaction_rule',
+      'system.abilityMeta.reactionRules': [
+        ...asArray(item.system?.abilityMeta?.reactionRules),
+        rule
+      ]
+    };
+  }
+
+  if (normalized === 'combat reflexes') {
+    if (hasRuleType(item, 'REACTION_CAPACITY_OVERRIDE')) return null;
+    return {
+      'system.abilityMeta.mechanicsMode': 'reaction_capacity_rule',
+      'system.abilityMeta.rules': [
+        ...asArray(item.system?.abilityMeta?.rules),
+        combatReflexesCapacityRule()
+      ]
+    };
+  }
+
   return null;
 }
 
@@ -67,19 +95,15 @@ async function normalizeCoreCombatReactionFeat(item, options = {}) {
   if (options?.swseCoreCombatReactionNormalization === true) return false;
   if (!item?.actor || item.type !== 'feat') return false;
 
-  const rule = ruleForFeat(item.name);
-  if (!rule || hasReactionRule(item, rule.key)) return false;
+  const featPatch = patchForFeat(item);
+  if (!featPatch) return false;
 
   try {
     await ActorEngine.updateEmbeddedDocuments(item.actor, 'Item', [{
       _id: item.id,
       'system.executionModel': 'PASSIVE',
       'system.subType': 'RULE',
-      'system.abilityMeta.mechanicsMode': 'reaction_rule',
-      'system.abilityMeta.reactionRules': [
-        ...(Array.isArray(item.system?.abilityMeta?.reactionRules) ? item.system.abilityMeta.reactionRules : []),
-        rule
-      ]
+      ...featPatch
     }], {
       source: 'CoreCombatReactionFeats.normalization',
       swseCoreCombatReactionNormalization: true,
