@@ -45,6 +45,25 @@ export function registerHouseRuleSettings() {
         default: false
     });
 
+    // Multiple Attacks House Rules
+    game.settings.register('foundryvtt-swse', 'allowOffhandDoubleTripleAttacks', {
+        name: 'Allow Off-Hand Double/Triple Attacks',
+        hint: 'House rule. If enabled, the off-hand weapon or secondary end of a double weapon can receive its own Double Attack and Triple Attack extra attacks during combined full attacks. Disabled preserves RAW-style main-hand attack stacking.',
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: false
+    });
+
+    game.settings.register('foundryvtt-swse', 'autoGrantDoubleTripleAttackByBAB', {
+        name: 'Auto-Grant Double/Triple Attack by BAB',
+        hint: 'House rule. If enabled, actors are treated as having Double Attack and Triple Attack with a proficient weapon group once they meet the feat BAB requirements. Disabled requires the feats as normal.',
+        scope: 'world',
+        config: true,
+        type: Boolean,
+        default: false
+    });
+
     // Dark Side Prestige Access House Rule
     game.settings.register('foundryvtt-swse', 'enableDarkSideTreeAccess', {
         name: 'Dark Side Prestige Access to Lightsaber Trees',
@@ -190,7 +209,7 @@ export async function addClassTreeAccess(classId, treeId) {
 }
 
 /**
- * Helper: Remove tree access from a class
+ * Helper: Remove tree access to a class
  */
 export async function removeClassTreeAccess(classId, treeId) {
     const overrides = getClassTreeOverrides();
