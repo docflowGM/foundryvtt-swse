@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-03",
+  "purpose": "Record the first Species & Origin / Species Traits pass after the strict Combat bucket completion.",
+  "policy": {
+    "scope": "This pass covers the generated Species & Origin -> Species Traits sub-bucket.",
+    "metadataOnly": "Species-origin feats vary across senses, movement, recovery, resistance, military training, weapon heritage, social, survival, rage, and background mechanics. This pass classifies all listed feats as speciesOriginRules metadata only and performs no roll, defense, recovery, movement, damage, or range mutation.",
+    "futureIntegration": "Future focused passes should consume primary source text and connect individual groups to existing engines such as species rerolls, rage, skill modifiers, movement, recovery, weapon, and resistance workflows."
+  },
+  "implementedEntries": [
+    {
+      "group": "Species Traits",
+      "status": "registered_metadata_only_normalization",
+      "mechanic": "Registers the existing species-origin feat normalization hook so all mapped species-origin feats gain structured speciesOriginRules metadata on owned feat items."
+    }
+  ],
+  "changedFiles": [
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ],
+  "existingNormalizer": "scripts/engine/feats/species-origin-feat-normalization-hooks.js"
+}
