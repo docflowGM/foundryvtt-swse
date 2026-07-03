@@ -1,12 +1,12 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "date": "2026-07-03",
-  "purpose": "Record the focused Damage & Threshold sub-bucket pass from the strict Combat bucket.",
+  "purpose": "Record the focused Damage & Threshold plus deferred Attack Combo pass from the strict Combat bucket.",
   "policy": {
-    "scope": "This sub-bucket covers Delay Damage, Dreadful Rage, Advantageous Attack, Attack Combo (Ranged), and Hew.",
+    "scope": "This pass covers Delay Damage, Dreadful Rage, Advantageous Attack, Attack Combo (Ranged), Attack Combo (Melee), Attack Combo (Fire and Strike), and Hew.",
     "engineReuse": "Dreadful Rage is already handled by the existing Rage feat normalization hook. Do not duplicate Rage rules here.",
     "invalidEntries": "Delay Damage is a class feature, not a feat. Hew is invalid as SWSE feat per strict Combat audit. Do not implement either as a feat.",
-    "comboAndDamageContext": "Advantageous Attack and Attack Combo (Ranged) are stored as structured workflow metadata until exact trigger/bonus context is supplied by source text or a dedicated combo workflow."
+    "comboAndDamageContext": "Advantageous Attack and the Attack Combo feats are stored as structured workflow metadata until exact source trigger/bonus text or a dedicated combo workflow can consume them."
   },
   "implementedEntries": [
     {
@@ -18,6 +18,16 @@
       "name": "Attack Combo (Ranged)",
       "status": "implemented_attack_combo_sequence_metadata",
       "mechanic": "Stores ranged attack-combo sequence metadata for a future combo workflow to consume."
+    },
+    {
+      "name": "Attack Combo (Melee)",
+      "status": "implemented_attack_combo_sequence_metadata",
+      "mechanic": "Stores melee attack-combo sequence metadata for a future combo workflow to consume."
+    },
+    {
+      "name": "Attack Combo (Fire and Strike)",
+      "status": "implemented_attack_combo_sequence_metadata",
+      "mechanic": "Stores mixed ranged+melee attack-combo sequence metadata for a future combo workflow to consume."
     }
   ],
   "alreadyImplementedElsewhere": [
