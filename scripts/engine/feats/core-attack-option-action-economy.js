@@ -38,27 +38,27 @@ const ATTACK_OPTION_ECONOMY = {
   },
   carefulShot: {
     label: 'Careful Shot',
-    economy: 'requiresAimContext',
+    economy: 'autoAimIfMissing',
     prerequisite: 'aim',
-    description: 'Does not spend the aim action here. The attack option only applies when the roll context already indicates the actor aimed.'
+    description: 'If the actor has not already aimed, spend the Aim prerequisite first, then resolve the attack option.'
   },
   deadeye: {
     label: 'Deadeye',
-    economy: 'requiresAimContext',
+    economy: 'autoAimIfMissing',
     prerequisite: 'aim',
-    description: 'Does not spend the aim action here. The attack option only applies when the roll context already indicates the actor aimed.'
+    description: 'If the actor has not already aimed, spend the Aim prerequisite first, then resolve the attack option.'
   },
   powerfulCharge: {
     label: 'Powerful Charge',
-    economy: 'requiresChargeContext',
+    economy: 'autoChargeIfMissing',
     prerequisite: 'charge',
-    description: 'Does not spend a second action. It modifies a melee attack that is already being made as part of a charge action.'
+    description: 'If the attack is not already part of a charge, spend the Charge prerequisite first, then resolve the melee attack option.'
   },
   chargingFire: {
     label: 'Charging Fire',
-    economy: 'chargeAttackRider',
+    economy: 'autoChargeIfMissing',
     prerequisite: 'charge',
-    description: 'Does not spend a second action. It converts the charge attack context into a ranged Charging Fire attack.'
+    description: 'If the attack is not already part of a charge, spend the Charge prerequisite first, then resolve the ranged Charging Fire attack.'
   },
   mightySwing: {
     label: 'Mighty Swing',
@@ -98,6 +98,10 @@ function chargeContext(options = {}) {
   return contextFlag(options, 'charge', 'charging', 'isCharge', 'chargeAction', 'chargeActionSpent', 'chargingFire');
 }
 
+function autoPrerequisites(options = {}) {
+  return options?.swseAutoPrerequisites ?? {};
+}
+
 function noOp(reason = 'no-core-attack-option-cost') {
   return {
     allowed: true,
@@ -112,18 +116,56 @@ function noOp(reason = 'no-core-attack-option-cost') {
   };
 }
 
-function prerequisiteFailure(optionId, message, economy = []) {
+function spendFailed(optionId, message, spends = [], economy = []) {
   return {
     allowed: false,
     permitted: false,
-    committed: false,
+    committed: spends.some(entry => entry?.committed),
     reason: message,
     failedOption: optionId,
-    prerequisiteMissing: true,
-    spends: [],
+    spends,
     economy,
     rollback: async () => false
   };
+}
+
+async function spendOne(actor, actionType, metadata, options) {
+  return ActionEconomyConsumption.spend(actor, actionType, metadata, options);
+}
+
+async function spendAimPrerequisite(actor, weapon, options = {}, spends = []) {
+  for (let i = 0; i < 2; i += 1) {
+    const spend = await spendOne(actor, 'swift', {
+      source: 'Aim',
+      sourceName: 'Aim',
+      actionName: 'Aim',
+      prerequisiteFor: 'Careful Shot/Deadeye',
+      weaponId: weapon?.id ?? null,
+      swiftIndex: i + 1,
+      requiredSwiftActions: 2
+    }, options);
+    spends.push(spend);
+    if (spend?.allowed === false || spend?.permitted === false) {
+      return spendFailed('aim', spend?.policyResult?.reason ?? spend?.engineResult?.violations?.join?.(', ') ?? 'Careful Shot and Deadeye require Aim; Aim requires two swift actions.', spends);
+    }
+  }
+  return null;
+}
+
+async function spendChargePrerequisite(actor, weapon, optionId, options = {}, spends = []) {
+  const spend = await spendOne(actor, 'standard', {
+    source: 'Charge',
+    sourceName: 'Charge',
+    actionName: optionId === 'chargingFire' ? 'Charging Fire' : 'Powerful Charge',
+    prerequisiteFor: optionId,
+    weaponId: weapon?.id ?? null,
+    chargeAttack: true
+  }, options);
+  spends.push(spend);
+  if (spend?.allowed === false || spend?.permitted === false) {
+    return spendFailed(optionId, spend?.policyResult?.reason ?? spend?.engineResult?.violations?.join?.(', ') ?? 'Charge prerequisite could not be spent.', spends);
+  }
+  return null;
 }
 
 export function getCoreAttackOptionEconomy(optionId) {
@@ -137,12 +179,32 @@ export function auditCoreAttackOptionEconomy(options = {}) {
 export function prepareCoreAttackOptionRollContext(options = {}) {
   const prepared = { ...options };
   const combatOptions = { ...(options.combatOptions ?? options.attackOptions ?? {}) };
-  if (selectedCombatFlag({ combatOptions }, 'chargingFire')) {
+  const needsAim = selectedCombatFlag({ combatOptions }, 'carefulShot') || selectedCombatFlag({ combatOptions }, 'deadeye');
+  const needsCharge = selectedCombatFlag({ combatOptions }, 'powerfulCharge') || selectedCombatFlag({ combatOptions }, 'chargingFire');
+  const alreadyAimed = aimedContext(options);
+  const alreadyCharged = chargeContext(options);
+  const auto = { ...(options.swseAutoPrerequisites ?? {}) };
+
+  if (needsAim) {
+    prepared.aim = true;
+    prepared.aimed = true;
+    prepared.combatOptions = combatOptions;
+    auto.aim = !alreadyAimed;
+  }
+
+  if (needsCharge) {
     prepared.charge = true;
+    prepared.charging = true;
+    prepared.combatOptions = combatOptions;
+    auto.charge = !alreadyCharged;
+  }
+
+  if (selectedCombatFlag({ combatOptions }, 'chargingFire')) {
     prepared.chargingFire = true;
     prepared.attackType = prepared.attackType ?? 'ranged';
-    prepared.combatOptions = combatOptions;
   }
+
+  if (Object.keys(auto).length) prepared.swseAutoPrerequisites = auto;
   return prepared;
 }
 
@@ -150,6 +212,7 @@ export async function spendCoreAttackOptionCosts(actor, weapon, options = {}) {
   const spends = [];
   const selectedOptions = selectedOptionIds(options);
   const economy = auditCoreAttackOptionEconomy(options);
+  const auto = autoPrerequisites(options);
   const rollback = async () => {
     for (const spend of [...spends].reverse()) {
       try { await spend?.rollback?.(); } catch (_err) {}
@@ -160,17 +223,33 @@ export async function spendCoreAttackOptionCosts(actor, weapon, options = {}) {
   if (!actor) return { ...noOp('missing-actor'), allowed: false, permitted: false };
   if (!selectedOptions.length) return noOp();
 
-  if ((selectedCombatFlag(options, 'carefulShot') || selectedCombatFlag(options, 'deadeye')) && !aimedContext(options)) {
-    return prerequisiteFailure('aim', 'Careful Shot and Deadeye require the actor to have aimed before the attack.', economy);
+  if ((selectedCombatFlag(options, 'carefulShot') || selectedCombatFlag(options, 'deadeye')) && auto.aim === true) {
+    const failure = await spendAimPrerequisite(actor, weapon, options, spends);
+    if (failure) {
+      await rollback();
+      return { ...failure, selectedOptions, economy, rollback: async () => false };
+    }
   }
 
-  if (selectedCombatFlag(options, 'powerfulCharge') && !chargeContext(options)) {
-    return prerequisiteFailure('powerfulCharge', 'Powerful Charge requires the attack to be part of a charge action.', economy);
+  if (selectedCombatFlag(options, 'powerfulCharge') && auto.charge === true) {
+    const failure = await spendChargePrerequisite(actor, weapon, 'powerfulCharge', options, spends);
+    if (failure) {
+      await rollback();
+      return { ...failure, selectedOptions, economy, rollback: async () => false };
+    }
+  }
+
+  if (selectedCombatFlag(options, 'chargingFire') && auto.charge === true) {
+    const failure = await spendChargePrerequisite(actor, weapon, 'chargingFire', options, spends);
+    if (failure) {
+      await rollback();
+      return { ...failure, selectedOptions, economy, rollback: async () => false };
+    }
   }
 
   if (selectedCombatFlag(options, 'mightySwing')) {
     for (let i = 0; i < 2; i += 1) {
-      const spend = await ActionEconomyConsumption.spend(actor, 'swift', {
+      const spend = await spendOne(actor, 'swift', {
         source: 'Mighty Swing',
         sourceName: 'Mighty Swing',
         actionName: 'Mighty Swing',
@@ -200,6 +279,7 @@ export async function spendCoreAttackOptionCosts(actor, weapon, options = {}) {
   for (const optionId of selectedOptions) {
     const rule = ATTACK_OPTION_ECONOMY[optionId];
     if (!rule || rule.economy === 'spendSwiftActions') continue;
+    const autoSpent = (rule.prerequisite === 'aim' && auto.aim === true) || (rule.prerequisite === 'charge' && auto.charge === true);
     spends.push({
       allowed: true,
       permitted: true,
@@ -207,7 +287,9 @@ export async function spendCoreAttackOptionCosts(actor, weapon, options = {}) {
       noOp: true,
       optionId,
       economy: rule.economy,
-      reason: rule.description,
+      prerequisite: rule.prerequisite ?? null,
+      autoPrerequisiteSpent: autoSpent,
+      reason: autoSpent ? `${rule.description} Prerequisite action was auto-spent before the roll.` : rule.description,
       rollback: async () => false
     });
   }
@@ -218,6 +300,7 @@ export async function spendCoreAttackOptionCosts(actor, weapon, options = {}) {
     options,
     selectedOptions,
     economy,
+    autoPrerequisites: auto,
     spends,
     source: 'CoreAttackOptionActionEconomy'
   });
@@ -228,6 +311,7 @@ export async function spendCoreAttackOptionCosts(actor, weapon, options = {}) {
     committed: spends.some(entry => entry?.committed),
     selectedOptions,
     economy,
+    autoPrerequisites: auto,
     spends,
     rollback
   };
