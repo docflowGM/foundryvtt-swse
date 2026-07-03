@@ -1,5 +1,6 @@
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
 import { DualWieldCombatShapeResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/dual-wield-combat-shape-resolver.js";
+import { CombinedFullAttackPlanner } from "/systems/foundryvtt-swse/scripts/engine/combat/combined-full-attack-planner.js";
 
 let registered = false;
 
@@ -15,7 +16,11 @@ export function registerDualWieldRuntimePatches() {
 
   globalThis.SWSE ??= {};
   globalThis.SWSE.DualWieldCombatShapeResolver = DualWieldCombatShapeResolver;
-  if (globalThis.game?.swse) globalThis.game.swse.DualWieldCombatShapeResolver = DualWieldCombatShapeResolver;
+  globalThis.SWSE.CombinedFullAttackPlanner = CombinedFullAttackPlanner;
+  if (globalThis.game?.swse) {
+    globalThis.game.swse.DualWieldCombatShapeResolver = DualWieldCombatShapeResolver;
+    globalThis.game.swse.CombinedFullAttackPlanner = CombinedFullAttackPlanner;
+  }
 }
 
 export default registerDualWieldRuntimePatches;
