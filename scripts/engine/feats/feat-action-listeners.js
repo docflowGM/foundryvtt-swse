@@ -32,6 +32,25 @@ function actorHasFeat(actor, featName) {
   }
 }
 
+function actorGrappleRules(actor) {
+  const rules = [];
+  try {
+    for (const item of Array.from(actor?.items ?? [])) {
+      if (!['feat', 'talent'].includes(item?.type) || item?.system?.disabled === true) continue;
+      const grappleRules = item?.system?.abilityMeta?.grappleRules;
+      if (!Array.isArray(grappleRules)) continue;
+      for (const rule of grappleRules) rules.push({ ...rule, sourceName: item.name, sourceId: item.id });
+    }
+  } catch (_err) {
+    // Treat malformed actor/items as having no grapple rules.
+  }
+  return rules;
+}
+
+function findGrappleRule(actor, type, predicate = null) {
+  return actorGrappleRules(actor).find(rule => rule?.type === type && (!predicate || predicate(rule)));
+}
+
 function conditionStep(actor) {
   return Math.max(0, Number(actor?.system?.conditionTrack?.current ?? 0) || 0);
 }
@@ -234,14 +253,23 @@ export class FeatActionListeners {
     Hooks.on('swse.grappleManeuver', async (context = {}) => {
       const { attacker, defender, maneuver, result } = context;
       if (!attacker || !defender) return;
-      if (!['throw', 'crush'].includes(String(maneuver ?? result?.maneuver ?? '').toLowerCase())) return;
+
+      const maneuverKey = String(maneuver ?? result?.maneuver ?? '').toLowerCase();
+      if (!['throw', 'crush'].includes(maneuverKey)) return;
       if (!hasDamagePayload(result?.damage ?? context.damage)) return;
-      if (!actorHasFeat(attacker, 'Bone Crusher')) return;
+
+      const metadataRule = findGrappleRule(attacker, 'CONDITION_SHIFT_ON_GRAPPLE_DAMAGE', rule => {
+        const maneuvers = Array.isArray(rule.maneuvers) ? rule.maneuvers : [rule.maneuver].filter(Boolean);
+        return !maneuvers.length || maneuvers.map(value => String(value).toLowerCase()).includes(maneuverKey);
+      });
+      if (!metadataRule && !actorHasFeat(attacker, 'Bone Crusher')) return;
       if (!canWorsenCondition(defender)) return;
+
+      const steps = Math.max(1, Number(metadataRule?.steps ?? 1) || 1);
 
       try {
         const oldCT = conditionStep(defender);
-        await ActorEngine.applyConditionShift(defender, 1, 'Bone Crusher');
+        await ActorEngine.applyConditionShift(defender, steps, metadataRule?.source ?? 'Bone Crusher');
         const newCT = conditionStep(defender);
 
         SWSELogger.log(
@@ -250,7 +278,7 @@ export class FeatActionListeners {
         );
 
         ui.notifications.info(
-          `${attacker.name} uses Bone Crusher: ${defender.name} moved -1 step on the Condition Track.`
+          `${attacker.name} uses ${metadataRule?.source ?? 'Bone Crusher'}: ${defender.name} moved -${steps} step${steps === 1 ? '' : 's'} on the Condition Track.`
         );
       } catch (err) {
         SWSELogger.error('[FeatActionListeners] Bone Crusher error:', err);
