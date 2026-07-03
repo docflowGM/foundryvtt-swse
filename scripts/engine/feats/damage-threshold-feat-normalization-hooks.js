@@ -19,7 +19,7 @@ function hasDamageThresholdRule(item, source) {
   return getAttackOptionRules(item).some(rule => normalizeName(rule?.source ?? rule?.sourceName ?? '') === wanted);
 }
 
-function attackComboRule({ id, label, source, sequenceType, requiredAttackTypes, trigger, sequenceNote }) {
+function attackComboRule({ id, label, source, sequenceType, requiredAttackTypes, trigger, sequenceNote, exactBenefit = false }) {
   return {
     type: 'ATTACK_COMBO_SEQUENCE',
     id,
@@ -32,11 +32,27 @@ function attackComboRule({ id, label, source, sequenceType, requiredAttackTypes,
     requiresWorkflowValidation: true,
     sequence: {
       requiredHits: 2,
+      consecutiveHits: true,
       sameTarget: true,
-      sameEncounterOrTurnContext: true,
+      sameTurn: true,
       note: sequenceNote
     },
-    summary: `Stores ${label} sequence metadata. No attack or damage modifier is applied until a dedicated combo workflow confirms the sequence.`
+    benefit: exactBenefit ? {
+      type: 'EXTRA_DAMAGE_DIE_ON_FOLLOWUP_ATTACKS',
+      extraDamageDice: 1,
+      appliesUntil: 'endOfNextTurn',
+      includesAttacksOfOpportunity: true,
+      includesReactionAttacks: true,
+      stacksWithOtherExtraDamage: true,
+      requiresWorkflowValidation: true
+    } : {
+      type: 'ATTACK_COMBO_BENEFIT_ADVISORY',
+      requiresSourceTextBeforeMutation: true,
+      requiresWorkflowValidation: true
+    },
+    summary: exactBenefit
+      ? `${label}: after two consecutive qualifying hits against one target during the same turn, additional qualifying attacks until the end of the actor's next turn deal +1 die of damage on a hit.`
+      : `Stores ${label} sequence metadata. No attack or damage modifier is applied until a dedicated combo workflow confirms the sequence and exact source benefit.`
   };
 }
 
@@ -50,14 +66,19 @@ function payloadForFeat(name) {
         id: 'advantageousAttack',
         label: 'Advantageous Attack',
         source: 'Advantageous Attack',
-        trigger: 'advantageousAttackContext',
+        trigger: 'targetHasNotActedInCombat',
         requiresWorkflowValidation: true,
         damageMutation: {
-          type: 'DAMAGE_BONUS_ADVISORY',
-          contextRequired: true,
-          note: 'Damage mutation requires the attack workflow to confirm the Advantageous Attack trigger and target eligibility before applying any bonus.'
+          type: 'HEROIC_LEVEL_DAMAGE_REPLACEMENT',
+          normalContribution: 'halfHeroicLevel',
+          replacementContribution: 'fullHeroicLevel',
+          netBonusFormula: 'ceil(heroicLevel / 2)',
+          appliesTo: 'damage.roll',
+          requiresSuccessfulAttack: true,
+          requiresTargetNotYetActedInCombat: true,
+          note: 'On a successful attack against a target who has not yet acted in combat, use full Heroic Level for damage instead of the usual half Heroic Level contribution.'
         },
-        summary: 'Stores Advantageous Attack damage-rider metadata. Exact damage mutation waits for workflow-confirmed trigger context.'
+        summary: 'When a successful attack hits an enemy who has not yet acted in combat, add full Heroic Level to damage rolls instead of one-half Heroic Level.'
       }]
     };
   }
@@ -71,7 +92,8 @@ function payloadForFeat(name) {
         sequenceType: 'ranged',
         requiredAttackTypes: ['ranged'],
         trigger: 'rangedAttackComboSequence',
-        sequenceNote: 'Exact combo timing and benefit require the attack-combo workflow to track qualifying ranged hits.'
+        exactBenefit: true,
+        sequenceNote: 'Track two consecutive ranged hits against the same target during the same turn.'
       })]
     };
   }
@@ -83,9 +105,10 @@ function payloadForFeat(name) {
         label: 'Attack Combo (Melee)',
         source: 'Attack Combo (Melee)',
         sequenceType: 'melee',
-        requiredAttackTypes: ['melee'],
+        requiredAttackTypes: ['melee', 'unarmed'],
         trigger: 'meleeAttackComboSequence',
-        sequenceNote: 'Exact combo timing and benefit require the attack-combo workflow to track qualifying melee hits.'
+        exactBenefit: true,
+        sequenceNote: 'Track two consecutive melee and/or unarmed hits against the same target during the same turn.'
       })]
     };
   }
