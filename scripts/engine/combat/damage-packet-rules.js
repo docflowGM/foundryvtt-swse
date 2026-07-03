@@ -40,6 +40,133 @@ function hasOwnedTalent(actor, names = []) {
   return actor?.items?.some?.(item => item?.type === 'talent' && hasName(item, names)) === true;
 }
 
+function hasOwnedFeat(actor, names = []) {
+  return actor?.items?.some?.(item => item?.type === 'feat' && hasName(item, names)) === true;
+}
+
+function targetId(target = null) {
+  return target?.id ?? target?._id ?? null;
+}
+
+function packetTargetId(packet = {}, target = null) {
+  return targetId(target) ?? packet.targetActorId ?? packet.workflowContext?.targetId ?? packet.options?.targetId ?? null;
+}
+
+function selectedCombatValue(options = {}, id) {
+  const combat = options?.combatOptions ?? options?.attackOptions ?? options?.workflowContext?.combatOptions ?? options?.combatContext?.combatOptions ?? {};
+  const value = combat?.[id];
+  if (value === true) return 1;
+  if (value === false || value === undefined || value === null || value === '') return 0;
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : 0;
+}
+
+function hasContextTag(packet = {}, tag = '') {
+  const tags = new Set(asArray(packet?.workflowContext?.contextTags).map(normalizeKey));
+  return tags.has(normalizeKey(tag));
+}
+
+function contextValue(packet = {}, key, fallback = undefined) {
+  const context = packet.workflowContext ?? {};
+  const options = packet.options ?? {};
+  const ruleData = context.ruleData ?? {};
+  const combatContext = options.combatContext ?? options.workflowContext ?? {};
+  const damage = context.damage ?? {};
+  return options[key]
+    ?? ruleData[key]
+    ?? damage[key]
+    ?? context[key]
+    ?? combatContext?.ruleData?.[key]
+    ?? combatContext?.damage?.[key]
+    ?? fallback;
+}
+
+function selectedTargetedAreaTargetId(packet = {}) {
+  const explicit = contextValue(packet, 'targetedAreaTargetId')
+    ?? contextValue(packet, 'targetedAreaSelectedTargetId')
+    ?? contextValue(packet, 'selectedTargetedAreaTargetId')
+    ?? contextValue(packet, 'selectedAreaTargetId');
+  if (explicit) return String(explicit);
+  const data = contextValue(packet, 'targetedArea') ?? contextValue(packet, 'targetedAreaSelection');
+  if (data && typeof data === 'object') {
+    return data.targetId ?? data.targetActorId ?? data.id ?? null;
+  }
+  return null;
+}
+
+function weaponIsProficient(packet = {}) {
+  const weapon = packet.options?.weapon ?? null;
+  if (!weapon) return true;
+  const candidates = [
+    weapon?.system?.proficient,
+    weapon?.system?.isProficient,
+    weapon?.flags?.swse?.proficient,
+    packet.options?.weaponProficient,
+    packet.workflowContext?.ruleData?.weaponProficient
+  ];
+  for (const value of candidates) {
+    if (value === false || value === 'false') return false;
+    if (value === true || value === 'true') return true;
+  }
+  return true;
+}
+
+function targetedAreaSelected(packet = {}) {
+  return selectedCombatValue(packet.options, 'targetedArea') > 0
+    || asBool(contextValue(packet, 'targetedArea'))
+    || asBool(contextValue(packet, 'targetedAreaActive'))
+    || hasContextTag(packet, 'targetedArea');
+}
+
+function targetedAreaCanApply(packet = {}, target = null) {
+  if (!targetedAreaSelected(packet)) return false;
+  if (packet.flags?.targetedAreaPreEvasionApplied === true) return false;
+  if (!packet.sourceActor || !hasOwnedFeat(packet.sourceActor, ['Targeted Area'])) return false;
+  if (weaponIsProficient(packet) === false) return false;
+  const context = packet.workflowContext ?? {};
+  const ruleData = context.ruleData ?? {};
+  const isArea = packet.flags?.areaAttack === true
+    || context.attack?.isArea === true
+    || ruleData.areaAttack === true
+    || hasContextTag(packet, 'areaAttack');
+  if (!isArea) return false;
+  if (packet.disposition?.hit !== true) return false;
+  const selectedTargetId = selectedTargetedAreaTargetId(packet);
+  if (!selectedTargetId) return false;
+  return String(selectedTargetId) === String(packetTargetId(packet, target));
+}
+
+function applyTargetedAreaPreEvasion(packet = {}, target = null) {
+  if (!targetedAreaCanApply(packet, target)) return packet;
+  const bonus = 5;
+  packet.rawAmount = Math.max(0, asNumber(packet.rawAmount ?? packet.amount, 0)) + bonus;
+  packet.amount = Math.max(0, asNumber(packet.amount, 0)) + bonus;
+  packet.flags.targetedAreaPreEvasionApplied = true;
+  packet.flags.targetedAreaDamageBonus = bonus;
+  packet.flags.targetedAreaTiming = 'preEvasion';
+  packet.breakdown = Array.isArray(packet.breakdown) ? packet.breakdown : [];
+  packet.breakdown.push({ label: 'Targeted Area', value: bonus, type: 'damage', timing: 'preEvasion' });
+  if (Array.isArray(packet.components) && packet.components.length) {
+    const index = packet.components.findIndex(component => normalizeKey(component?.source ?? component?.label ?? '') === 'targeted-area');
+    if (index >= 0) {
+      packet.components[index] = {
+        ...packet.components[index],
+        amount: Math.max(0, asNumber(packet.components[index].amount, 0)) + bonus
+      };
+    } else {
+      packet.components.push({
+        amount: bonus,
+        type: packet.type ?? 'normal',
+        damageTypes: asArray(packet.damageTypes ?? packet.flags?.damageTypes),
+        originalDamageTypes: asArray(packet.originalDamageTypes ?? packet.flags?.originalDamageTypes),
+        source: 'Targeted Area',
+        flags: { targetedArea: true, timing: 'preEvasion' }
+      });
+    }
+  }
+  return packet;
+}
+
 export function getDamageTargetCategory(target = null) {
   const type = normalizeKey(target?.type ?? '');
   const systemType = normalizeKey(target?.system?.type ?? target?.system?.vehicleType ?? target?.system?.creatureType ?? target?.system?.actorType ?? '');
@@ -74,11 +201,6 @@ export function getEvasionState(target = null) {
     || hasOwnedTalent(target, ['Evasion']);
 
   return { evasion, improved };
-}
-
-function hasContextTag(packet = {}, tag = '') {
-  const tags = new Set(asArray(packet?.workflowContext?.contextTags).map(normalizeKey));
-  return tags.has(normalizeKey(tag));
 }
 
 function evasionCanApply(packet = {}) {
@@ -159,6 +281,8 @@ export function applyTargetDamagePacketRules(packet = {}, target = null) {
   next.flags.force = typeContext.expanded.includes('force');
   next.options.damageTypes = typeContext.expanded;
 
+  applyTargetedAreaPreEvasion(next, target);
+
   let amount = baseDamageAmount(next);
   let multiplier = asNumber(next.multiplier ?? next.disposition?.multiplier, 1);
 
@@ -177,7 +301,7 @@ export function applyTargetDamagePacketRules(packet = {}, target = null) {
       next.flags.evasionNegatedDamage = true;
     } else if (evasion.improved && next.disposition?.hit === true) {
       multiplier = multiplier * 0.5;
-      amount = Math.max(0, Math.floor(rawAmount * multiplier));
+      amount = Math.max(0, Math.floor(asNumber(next.rawAmount ?? rawAmount, rawAmount) * multiplier));
       next.disposition.multiplier = multiplier;
       next.disposition.reason = `${target.name} takes half damage from the area attack because of Improved Evasion.`;
       next.flags.improvedEvasionHalvedDamage = true;
