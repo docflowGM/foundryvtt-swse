@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-03",
+  "purpose": "Record the focused Attack Options sub-bucket pass from the strict Combat bucket.",
+  "policy": {
+    "scope": "This small sub-bucket covers Rapid Reaction, Lightning Draw, and Improved Stun.",
+    "timingAutomation": "Draw-weapon timing, reaction windows, and stun-specific packet mutation are exposed as structured metadata only until a dedicated workflow supplies the exact trigger/context.",
+    "noBroadDamageMutation": "Improved Stun metadata must not alter normal damage, non-stun attacks, or targets that are not eligible for stun effects."
+  },
+  "implementedEntries": [
+    {
+      "name": "Rapid Reaction",
+      "status": "implemented_reaction_timing_metadata",
+      "mechanic": "Stores reaction/timing metadata. Exact trigger and reaction availability require combat/reaction workflow context."
+    },
+    {
+      "name": "Lightning Draw",
+      "status": "implemented_draw_weapon_timing_metadata",
+      "mechanic": "Stores draw/ready weapon timing metadata. Actual draw timing and inventory/holster legality require an inventory/action workflow."
+    },
+    {
+      "name": "Improved Stun",
+      "status": "implemented_stun_attack_option_metadata",
+      "mechanic": "Stores stun-only attack metadata for stun-damage workflows. No mutation is applied to normal or non-stun attacks in this pass."
+    }
+  ],
+  "changedFiles": [
+    "scripts/engine/feats/attack-options-feat-normalization-hooks.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}
