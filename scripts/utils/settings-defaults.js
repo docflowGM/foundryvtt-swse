@@ -117,6 +117,8 @@ export const SETTINGS_DEFAULTS = {
     weaponRangeMultiplier: 1.0,
     armoredDefenseForAll: false,
     trackBlasterCharges: false,
+    allowOffhandDoubleTripleAttacks: false,
+    autoGrantDoubleTripleAttackByBAB: false,
 
     // Second Wind
     secondWindImproved: false,
