@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-03",
+  "purpose": "Validate the generated strict Combat feat bucket before further runtime implementation. The generated taxonomy is not authoritative; source validation gates implementation.",
+  "inputs": {
+    "generatedBucket": "docs/audits/generated/feat-taxonomy-application-report.json#/bucketSummary/Combat",
+    "wikiReference": "https://swse.fandom.com/wiki/Feats",
+    "bookReference": "Uploaded Saga Edition sourcebooks in the project workspace"
+  },
+  "policy": {
+    "validFeatAnywhere": "A feat may be valid even if it is species-, droid-, era-, beast-, or NPC-oriented. Missing from the main wiki page is not by itself enough to delete it.",
+    "implementationGate": "Only implement entries with validationStatus confirmed_feat or confirmed_feat_special_source. Entries marked source_review_required must be checked against primary source text before code changes. Entries marked invalid_not_swse_feat must not be implemented.",
+    "taxonomyCaveat": "Generated bucket placement may be wrong even when the feat is real. Runtime implementation should be based on feat text and existing engines, not just the Combat label."
+  },
+  "summary": {
+    "strictCombatBucketTotal": 68,
+    "confirmedFeatOrSpecialSourceCount": 58,
+    "invalidNotSwseFeatCount": 2,
+    "sourceReviewRequiredCount": 8,
+    "invalidNotSwseFeats": [
+      "Spring Attack",
+      "Reckless Charge"
+    ],
+    "sourceReviewRequired": [
+      "Wounding Strike",
+      "Friendly Fire Avoidance",
+      "Heroic Surge",
+      "Grappling Strike",
+      "Improved Knock Prone",
+      "Knock Prone",
+      "Delay Damage",
+      "Hew"
+    ]
+  },
+  "validatedEntries": [
+    { "name": "Spray Shot", "validationStatus": "confirmed_feat", "sourceHint": "Clone Wars Campaign Guide" },
+    { "name": "Whirlwind Attack", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
+    { "name": "Flood of Fire", "validationStatus": "confirmed_feat", "sourceHint": "Clone Wars Campaign Guide" },
+    { "name": "Targeted Area", "validationStatus": "confirmed_feat", "sourceHint": "Unknown Regions" },
+    { "name": "Forceful Blast", "validationStatus": "confirmed_feat", "sourceHint": "Galaxy at War" },
+    { "name": "Strafe", "validationStatus": "confirmed_feat", "sourceHint": "Force Unleashed Campaign Guide" },
+    { "name": "Friendly Fire Avoidance", "validationStatus": "source_review_required", "sourceHint": "Not confirmed in checked wiki/book snippets; do not implement until primary source is found." },
+    { "name": "Mobility", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
+    { "name": "Improved Charge", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
+    { "name": "Wounding Strike", "validationStatus": "source_review_required", "sourceHint": "Not confirmed in checked wiki/book snippets; may be a misbucketed talent/ability." },
+    { "name": "Deft Charge", "validationStatus": "confirmed_feat", "sourceHint": "Rebellion Era Campaign Guide" },
+    { "name": "Tactical Advantage", "validationStatus": "confirmed_feat", "sourceHint": "Scum and Villainy" },
+    { "name": "Spring Attack", "validationStatus": "invalid_not_swse_feat", "sourceHint": "D&D-style feat name; no SWSE feat source found. Removed from runtime." },
+    { "name": "Improved Bantha Rush", "validationStatus": "confirmed_feat", "sourceHint": "Force Unleashed Campaign Guide" },
+    { "name": "Reckless Charge", "validationStatus": "invalid_not_swse_feat", "sourceHint": "No SWSE feat source found. Removed from runtime." },
+    { "name": "Running Attack", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
+    { "name": "Opportunistic Retreat", "validationStatus": "confirmed_feat", "sourceHint": "Scum and Villainy" },
+    { "name": "Impulsive Flight", "validationStatus": "confirmed_feat", "sourceHint": "Scum and Villainy" },
+    { "name": "Heroic Surge", "validationStatus": "source_review_required", "sourceHint": "Not confirmed in checked wiki/book snippets; do not implement until primary source is found." },
+    { "name": "Steadying Position", "validationStatus": "confirmed_feat", "sourceHint": "Galaxy at War" },
+    { "name": "Bantha Herder", "validationStatus": "confirmed_feat", "sourceHint": "Galaxy at War" },
+    { "name": "Charging Fire", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
+    { "name": "Powerful Charge", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
+    { "name": "Fleet-Footed", "validationStatus": "confirmed_feat", "sourceHint": "Scum and Villainy" },
+    { "name": "Cornered", "validationStatus": "confirmed_feat", "sourceHint": "Scum and Villainy" },
+    { "name": "Bantha Rush", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
+    { "name": "Battering Attack", "validationStatus": "confirmed_feat", "sourceHint": "Galaxy at War" },
+    { "name": "Throw", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
+    { "name": "Grappling Strike", "validationStatus": "source_review_required", "sourceHint": "Not confirmed in checked wiki/book snippets; review before implementation." },
+    { "name": "Attack Combo (Fire and Strike)", "validationStatus": "confirmed_feat", "sourceHint": "Legacy Era Campaign Guide" },
+    { "name": "Attack Combo (Melee)", "validationStatus": "confirmed_feat", "sourceHint": "Legacy Era Campaign Guide" },
+    { "name": "Crush", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
+    { "name": "Multi-Grab", "validationStatus": "confirmed_feat", "sourceHint": "Legacy Era Campaign Guide" },
+    { "name": "Rancor Crush", "validationStatus": "confirmed_feat", "sourceHint": "Legacy Era Campaign Guide" },
+    { "name": "Trip", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
+    { "name": "Knock Heads", "validationStatus": "confirmed_feat", "sourceHint": "Legacy Era Campaign Guide" },
+    { "name": "Pin", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
+    { "name": "Grab Back", "validationStatus": "confirmed_feat", "sourceHint": "Unknown Regions" },
+    { "name": "Flurry", "validationStatus": "confirmed_feat", "sourceHint": "Knights of the Old Republic Campaign Guide" },
+    { "name": "Tumble Defense", "validationStatus": "confirmed_feat", "sourceHint": "Knights of the Old Republic Campaign Guide" },
+    { "name": "Predictive Defense", "validationStatus": "confirmed_feat", "sourceHint": "Galaxy at War" },
+    { "name": "Moving Target", "validationStatus": "confirmed_feat", "sourceHint": "Rebellion Era Campaign Guide" },
+    { "name": "Melee Defense", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
+    { "name": "Combat Reflexes", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
+    { "name": "Trench Warrior", "validationStatus": "confirmed_feat", "sourceHint": "Clone Wars Campaign Guide" },
+    { "name": "Cunning Attack", "validationStatus": "confirmed_feat", "sourceHint": "Force Unleashed Campaign Guide" },
+    { "name": "Improved Damage Threshold", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
+    { "name": "Great Fortitude", "validationStatus": "confirmed_feat", "sourceHint": "Core/general defense feat; review exact source page before math implementation." },
+    { "name": "Fight Through Pain", "validationStatus": "confirmed_feat", "sourceHint": "Galaxy at War" },
+    { "name": "Resilient Strength", "validationStatus": "confirmed_feat", "sourceHint": "Galaxy at War" },
+    { "name": "Lightning Reflexes", "validationStatus": "confirmed_feat", "sourceHint": "Core/general defense feat; review exact source page before math implementation." },
+    { "name": "Wary Defender", "validationStatus": "confirmed_feat", "sourceHint": "Clone Wars Campaign Guide" },
+    { "name": "Rapid Reaction", "validationStatus": "confirmed_feat", "sourceHint": "Rebellion Era Campaign Guide" },
+    { "name": "Lightning Draw", "validationStatus": "confirmed_feat", "sourceHint": "Scum and Villainy" },
+    { "name": "Improved Stun", "validationStatus": "confirmed_feat_special_source", "sourceHint": "Likely item/weapon-condition feat; source text must be checked before implementation." },
+    { "name": "Accelerated Strike", "validationStatus": "confirmed_feat", "sourceHint": "Knights of the Old Republic Campaign Guide" },
+    { "name": "Great Cleave", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
+    { "name": "Improved Knock Prone", "validationStatus": "source_review_required", "sourceHint": "Not confirmed in checked wiki/book snippets; review before implementation." },
+    { "name": "Extra Rage", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook; species/rage-gated feat" },
+    { "name": "Controlled Rage", "validationStatus": "confirmed_feat", "sourceHint": "Force Unleashed Campaign Guide; species/rage-gated feat" },
+    { "name": "Knock Prone", "validationStatus": "source_review_required", "sourceHint": "Not confirmed in checked wiki/book snippets; review before implementation." },
+    { "name": "Opportunistic Shooter", "validationStatus": "confirmed_feat", "sourceHint": "Galaxy at War" },
+    { "name": "Mighty Throw", "validationStatus": "confirmed_feat", "sourceHint": "Force Unleashed Campaign Guide" },
+    { "name": "Delay Damage", "validationStatus": "source_review_required", "sourceHint": "Not confirmed in checked wiki/book snippets; may be a talent/action name." },
+    { "name": "Dreadful Rage", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook; species/rage-gated feat" },
+    { "name": "Advantageous Attack", "validationStatus": "confirmed_feat", "sourceHint": "Force Unleashed Campaign Guide" },
+    { "name": "Attack Combo (Ranged)", "validationStatus": "confirmed_feat", "sourceHint": "Legacy Era Campaign Guide" },
+    { "name": "Hew", "validationStatus": "source_review_required", "sourceHint": "Not confirmed in checked wiki/book snippets; review before implementation." }
+  ],
+  "runtimeCleanupApplied": {
+    "removedInvalidRuntimeEntries": [
+      "Spring Attack",
+      "Reckless Charge"
+    ],
+    "updatedFiles": [
+      "scripts/engine/feats/core-attack-option-normalization-hooks.js",
+      "scripts/engine/feats/core-attack-option-action-economy.js"
+    ]
+  },
+  "nextImplementationGuidance": [
+    "Proceed only with confirmed entries whose mechanics map to existing engines.",
+    "Treat species/rage/droid/beast feats as valid feats but do not expose them universally if prerequisites/source context restrict them.",
+    "Do not implement source_review_required entries until the exact primary source text is found.",
+    "Do not re-add Spring Attack or Reckless Charge unless a primary SWSE source is later produced."
+  ]
+}
