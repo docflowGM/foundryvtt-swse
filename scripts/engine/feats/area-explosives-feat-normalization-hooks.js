@@ -69,7 +69,7 @@ function rulesForFeat(name) {
       label: 'Targeted Area',
       control: 'toggle',
       requiresAreaAttack: true,
-      damageModifier: 5,
+      requiresProficientWeapon: true,
       actionEconomy: {
         type: 'riderOnly',
         spend: 'ridesAreaAttack',
@@ -85,12 +85,15 @@ function rulesForFeat(name) {
       },
       damageMutation: {
         advisoryOnly: false,
-        timing: 'roll-side-damage-bonus',
+        packetLevel: true,
         value: 5,
-        note: 'Applies +5 damage to the selected qualifying target. The selected target is not automatically resolved from canvas geometry.'
+        timing: 'preEvasion',
+        appliesOnlyToSelectedHitTarget: true,
+        requiresProficientWeapon: true,
+        note: 'Applied by DamagePacketRules before Evasion is evaluated. Spatial target eligibility is not resolved from canvas geometry.'
       },
       source: 'Targeted Area',
-      summary: 'Area/explosive rider: when a successful area attack hits at least one target, select one hit target in the area to take +5 damage before Evasion.'
+      summary: 'Area/explosive rider: when a successful proficient area attack hits at least one target, select one hit target in the area to take +5 damage before Evasion.'
     }];
   }
 
