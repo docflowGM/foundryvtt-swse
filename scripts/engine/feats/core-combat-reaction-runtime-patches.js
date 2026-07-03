@@ -65,6 +65,12 @@ function hasReactionRule(actor, ruleKey) {
   });
 }
 
+function hasRuleType(actor, type) {
+  const wanted = String(type ?? '').toUpperCase();
+  return actorItems(actor).some(item => Array.isArray(item?.system?.abilityMeta?.rules)
+    && item.system.abilityMeta.rules.some(rule => String(rule?.type ?? '').toUpperCase() === wanted));
+}
+
 function actorHpValue(actor) {
   const candidates = [
     actor?.system?.attributes?.hp?.value,
@@ -98,18 +104,47 @@ function updateHasHpChange(changes = {}) {
   return keys.some(key => getPropertyByPath(changes, key) !== undefined);
 }
 
+function cleaveLimitForActor(actor) {
+  return CoreCombatReactionFeatActions.hasGreatCleave(actor) ? 'unlimited' : 'oncePerRound';
+}
+
+function cleaveAlreadyUsed(context = {}, actor = null) {
+  if (cleaveLimitForActor(actor) === 'unlimited') return false;
+  return context.alreadyUsedThisRound === true || context.cleaveUsedThisRound === true;
+}
+
 async function postCleaveAvailableMessage({ attacker, target, context = {} }) {
   if (!attacker || !target) return null;
   const actorName = attacker.name ?? 'Actor';
   const targetName = target.name ?? 'target';
+  const limitText = CoreCombatReactionFeatActions.hasGreatCleave(attacker)
+    ? 'Great Cleave removes the normal once-per-round Cleave limit.'
+    : 'Cleave can normally be used once per round.';
   return createChatMessage({
     speaker: ChatMessage.getSpeaker?.({ actor: attacker }) ?? { alias: actorName },
-    content: `<div class="swse-chat-card swse-cleave-prompt"><h3>Cleave Available</h3><p><strong>${actorName}</strong> reduced <strong>${targetName}</strong> to 0 HP. You may make one immediate extra melee attack against a different opponent within reach using the same weapon and attack bonus.</p><p><em>GM/player activation: choose a valid target and roll the extra attack manually if applicable.</em></p></div>`,
+    content: `<div class="swse-chat-card swse-cleave-prompt"><h3>Cleave Available</h3><p><strong>${actorName}</strong> reduced <strong>${targetName}</strong> to 0 HP. You may make one immediate extra melee attack against a different opponent within reach using the same weapon and attack bonus.</p><p><em>${limitText} GM/player activation: choose a valid target and roll the extra attack manually if applicable.</em></p></div>`,
     flags: {
       'foundryvtt-swse': {
         cleavePrompt: true,
+        greatCleave: CoreCombatReactionFeatActions.hasGreatCleave(attacker),
         actorId: attacker.id ?? attacker._id ?? null,
         targetId: target.id ?? target._id ?? null,
+        context
+      }
+    }
+  });
+}
+
+async function postFrighteningCleaveMessage({ actor, context = {} }) {
+  if (!actor || !CoreCombatReactionFeatActions.hasFrighteningCleave(actor)) return null;
+  const actorName = actor.name ?? 'Actor';
+  return createChatMessage({
+    speaker: ChatMessage.getSpeaker?.({ actor }) ?? { alias: actorName },
+    content: `<div class="swse-chat-card swse-frightening-cleave-prompt"><h3>Frightening Cleave</h3><p><strong>${actorName}</strong> used Cleave. Each enemy within 6 squares and line of sight takes a stacking -1 mind-affecting penalty to Reflex Defense, attack rolls, and skill checks against ${actorName} until the end of the encounter, to a maximum penalty of -5.</p><p><em>Apply to visible eligible enemies, or use the emitted <code>swse.frighteningCleaveAvailable</code> event for automation.</em></p></div>`,
+    flags: {
+      'foundryvtt-swse': {
+        frighteningCleavePrompt: true,
+        actorId: actor.id ?? actor._id ?? null,
         context
       }
     }
@@ -122,6 +157,24 @@ function findEligibleCleaveAttackers(target, context = {}) {
     return [explicitAttacker];
   }
   return [];
+}
+
+function emitCleaveUsed(actor, context = {}) {
+  if (!actor) return;
+  const event = {
+    actor,
+    sourceActor: actor,
+    limit: cleaveLimitForActor(actor),
+    greatCleave: CoreCombatReactionFeatActions.hasGreatCleave(actor),
+    frighteningCleave: CoreCombatReactionFeatActions.hasFrighteningCleave(actor),
+    ...context
+  };
+  Hooks.callAll?.('swse.cleaveUsed', event);
+  if (CoreCombatReactionFeatActions.hasFrighteningCleave(actor)) {
+    const rider = CoreCombatReactionFeatActions.getFrighteningCleaveRider(actor, event);
+    Hooks.callAll?.('swse.frighteningCleaveAvailable', { actor, rider, context: event });
+    if (event.postFrighteningCleaveChat !== false) postFrighteningCleaveMessage({ actor, context: event });
+  }
 }
 
 function emitTargetDropped(target, context = {}) {
@@ -137,7 +190,9 @@ function emitTargetDropped(target, context = {}) {
   Hooks.callAll?.('swse.targetDroppedToZero', event);
   Hooks.callAll?.('swse.targetDropped', event);
   for (const attacker of findEligibleCleaveAttackers(target, event)) {
-    Hooks.callAll?.('swse.cleaveAvailable', { attacker, target, context: event });
+    const cleaveEvent = { attacker, actor: attacker, target, context: event, limit: cleaveLimitForActor(attacker) };
+    Hooks.callAll?.('swse.cleaveAvailable', cleaveEvent);
+    emitCleaveUsed(attacker, { ...event, target, trigger: 'targetDroppedToZero' });
     if (event.postChat !== false) postCleaveAvailableMessage({ attacker, target, context: event });
   }
 }
@@ -147,8 +202,16 @@ export class CoreCombatReactionFeatActions {
     return actorHasFeat(actor, 'cleave') || hasReactionRule(actor, 'cleaveExtraAttack');
   }
 
+  static hasGreatCleave(actor) {
+    return actorHasFeat(actor, 'great cleave') || hasRuleType(actor, 'EXTRA_ATTACK_LIMIT_OVERRIDE');
+  }
+
+  static hasFrighteningCleave(actor) {
+    return actorHasFeat(actor, 'frightening cleave') || hasRuleType(actor, 'CLEAVE_RIDER_EFFECT');
+  }
+
   static hasCombatReflexes(actor) {
-    return actorHasFeat(actor, 'combat reflexes') || hasReactionRule(actor, 'combatReflexesOpportunityAttack');
+    return actorHasFeat(actor, 'combat reflexes') || hasReactionRule(actor, 'combatReflexesOpportunityAttack') || hasRuleType(actor, 'REACTION_CAPACITY_OVERRIDE');
   }
 
   static getAttacksOfOpportunityPerRound(actor) {
@@ -167,7 +230,7 @@ export class CoreCombatReactionFeatActions {
 
   static canUseCleave(actor, context = {}) {
     if (!this.hasCleave(actor)) return false;
-    if (context.alreadyUsedThisRound === true || context.cleaveUsedThisRound === true) return false;
+    if (cleaveAlreadyUsed(context, actor)) return false;
     const attackType = normalizeKey(context.attackType ?? context.rangeType ?? '');
     if (attackType && attackType !== 'melee') return false;
     if (context.targetReducedToZero === false || context.targetDropped === false) return false;
@@ -176,20 +239,49 @@ export class CoreCombatReactionFeatActions {
     return true;
   }
 
+  static getCleaveLimit(actor) {
+    return cleaveLimitForActor(actor);
+  }
+
   static describeCleave(actor, context = {}) {
     const available = this.canUseCleave(actor, context);
+    const limit = cleaveLimitForActor(actor);
     return {
       available,
-      label: 'Cleave: Extra Melee Attack',
-      oncePerRound: true,
+      label: limit === 'unlimited' ? 'Great Cleave: Extra Melee Attack' : 'Cleave: Extra Melee Attack',
+      oncePerRound: limit !== 'unlimited',
+      unlimitedPerRound: limit === 'unlimited',
       sameWeapon: true,
       sameAttackBonus: true,
       targetMustBeDifferent: true,
       targetMustBeWithinReach: true,
+      frighteningCleave: this.hasFrighteningCleave(actor),
       reason: available
         ? 'Cleave is available.'
         : 'Cleave is unavailable for the supplied context.'
     };
+  }
+
+  static getFrighteningCleaveRider(actor, context = {}) {
+    if (!this.hasFrighteningCleave(actor)) return null;
+    return {
+      label: 'Frightening Cleave',
+      source: 'Frightening Cleave',
+      actor,
+      rangeSquares: 6,
+      requiresLineOfSight: true,
+      targets: 'enemies',
+      mindAffecting: true,
+      penalty: -1,
+      stackLimit: -5,
+      duration: 'encounter',
+      appliesTo: ['defense.reflex', 'attack', 'skillChecksAgainstSource'],
+      context
+    };
+  }
+
+  static notifyCleaveUsed(actor, context = {}) {
+    emitCleaveUsed(actor, context);
   }
 
   static notifyTargetDropped(target, context = {}) {
@@ -223,7 +315,8 @@ function registerCleaveHpHooks() {
         attackType: options?.attackType,
         weapon: options?.weapon,
         source: 'updateActor.hpWatcher',
-        postChat: options?.postCleaveChat
+        postChat: options?.postCleaveChat,
+        postFrighteningCleaveChat: options?.postFrighteningCleaveChat
       });
     }
   });
