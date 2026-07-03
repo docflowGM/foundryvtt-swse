@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-03",
+  "purpose": "Count remaining feats in the broader combat-mechanics implementation queue, not only the literal Combat taxonomy bucket.",
+  "sourceFiles": [
+    "docs/audits/generated/feat-taxonomy-application-report.json",
+    "docs/audits/combat-feat-implementation-status-addendum-2026-07-03.json"
+  ],
+  "methodology": {
+    "strictCombatBucket": "Only feats under bucketSummary.Combat in the generated taxonomy report.",
+    "broadActionableCombatMechanics": "Feats whose taxonomy subbucket strongly implies combat runtime work: attack/damage roll options, defenses, reactions, full attacks, grapples, combat movement/action riders, vehicle/gunnery, damage threshold/condition, second wind/combat recovery, armor/proficiency, droid combat/systems, combat teamwork, and combat equipment/demolitions. This excludes ambiguous Force/species/social/skill feats unless already demarcated implemented in the addendum or part of one of the counted subbuckets.",
+    "implementedOverride": "The implementation status addendum is treated as authoritative over older generated backlog statuses. Its 23 implemented/corrected feats are subtracted from the broad queue."
+  },
+  "strictCombatBucketCount": {
+    "total": 68,
+    "implementedOrCorrectedFromAddendumWithinStrictBucket": 7,
+    "remaining": 61,
+    "implementedStrictBucketFeats": [
+      "Great Cleave",
+      "Running Attack",
+      "Charging Fire",
+      "Powerful Charge",
+      "Flurry",
+      "Melee Defense",
+      "Combat Reflexes"
+    ]
+  },
+  "broadActionableCombatMechanicsCount": {
+    "includedTaxonomyGroups": [
+      {
+        "bucket": "Combat",
+        "subbuckets": "all",
+        "count": 68
+      },
+      {
+        "bucket": "Droid",
+        "subbuckets": ["Droid Combat", "Droid Systems"],
+        "count": 17
+      },
+      {
+        "bucket": "Starship & Vehicle",
+        "subbuckets": "all",
+        "count": 35
+      },
+      {
+        "bucket": "Character",
+        "subbuckets": ["Hit Points & Durability", "Ability & Defenses"],
+        "count": 15
+      },
+      {
+        "bucket": "Weapon & Armor",
+        "subbuckets": "all",
+        "count": 41
+      },
+      {
+        "bucket": "Recovery & Survival",
+        "subbuckets": ["Second Wind & Recovery", "Endurance & Environmental"],
+        "count": 23
+      },
+      {
+        "bucket": "Leadership & Allies",
+        "subbuckets": ["Teamwork & Aid"],
+        "count": 18
+      },
+      {
+        "bucket": "Tech & Equipment",
+        "subbuckets": ["Demolitions & Devices"],
+        "count": 4
+      }
+    ],
+    "includedAddendumOnlyImplementedFeatsOutsideCountedTaxonomyGroups": [
+      "Frightening Cleave",
+      "Improved Disarm"
+    ],
+    "totalCandidates": 223,
+    "implementedOrCorrectedFromAddendum": 23,
+    "remaining": 200
+  },
+  "notCountedInBroadActionableTotalYet": {
+    "reason": "These areas contain many combat-looking feats, but the taxonomy alone is not enough to mark them actionable without source text or a finer implementation-home audit. They should be reviewed in the next pass rather than counted as ready implementation backlog.",
+    "examples": [
+      "Force feats with combat names but unclear force-point/power interactions",
+      "Species & Origin feats with military/combat flavor but mixed social, skill, and passive species mechanics",
+      "Social & Intrigue strike/presence feats that may depend on morale, fear, Persuasion, or condition-track workflows",
+      "Skills feats that may be combat-adjacent but primarily alter skill usage or skill rerolls"
+    ]
+  },
+  "recommendedNextImplementationPools": [
+    {
+      "pool": "Combat bucket leftovers",
+      "remaining": 61,
+      "why": "Highest confidence because taxonomy already places them in Combat."
+    },
+    {
+      "pool": "Weapon & Armor leftovers",
+      "remainingEstimateAfterAddendum": 38,
+      "why": "Likely maps to attack options, weapon qualities, proficiency metadata, or full-attack sequencing."
+    },
+    {
+      "pool": "Starship & Vehicle leftovers",
+      "remainingEstimateAfterAddendum": 27,
+      "why": "Many map to vehicle gunnery, vehicle defense, or vehicle action riders."
+    },
+    {
+      "pool": "Droid combat/systems leftovers",
+      "remainingEstimateAfterAddendum": 15,
+      "why": "Likely maps to droid-specific attack, defense, repair, or tactical action riders."
+    }
+  ],
+  "caveats": [
+    "The broad total is intentionally conservative-actionable, not every feat with a combat-sounding name in the full 401-feat taxonomy.",
+    "Generated backlog files may still show stale statuses; this audit subtracts only the explicit implementation addendum count.",
+    "Some feats in the broad remaining count may already have older partial implementations that still need runtime verification before they can be subtracted."
+  ]
+}
