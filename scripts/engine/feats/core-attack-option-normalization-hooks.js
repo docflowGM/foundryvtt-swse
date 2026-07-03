@@ -210,31 +210,6 @@ function deftChargeOption() {
   };
 }
 
-function recklessChargeOption() {
-  return {
-    type: 'ATTACK_OPTION',
-    id: 'recklessCharge',
-    label: 'Reckless Charge',
-    control: 'toggle',
-    requiresAttackType: 'melee',
-    requiresCharge: true,
-    attackModifier: 2,
-    defenseModifier: {
-      target: 'defense.reflex',
-      type: 'untyped',
-      value: -2,
-      duration: 'untilStartOfNextTurn'
-    },
-    actionEconomy: {
-      type: 'autoChargeIfMissing',
-      spend: 'ridesCharge',
-      riderFor: 'charge'
-    },
-    source: 'Reckless Charge',
-    summary: 'Charge rider: take an additional Reflex penalty until your next turn to gain an additional charge attack bonus.'
-  };
-}
-
 function banthaRushOption() {
   return {
     type: 'ATTACK_OPTION',
@@ -358,7 +333,6 @@ function optionForFeat(name) {
   if (normalized === 'charging fire') return chargingFireOption();
   if (normalized === 'improved charge') return improvedChargeOption();
   if (normalized === 'deft charge') return deftChargeOption();
-  if (normalized === 'reckless charge') return recklessChargeOption();
   if (normalized === 'bantha rush') return banthaRushOption();
   if (normalized === 'improved bantha rush') return improvedBanthaRushOption();
   if (normalized === 'running attack') return runningAttackOption();
