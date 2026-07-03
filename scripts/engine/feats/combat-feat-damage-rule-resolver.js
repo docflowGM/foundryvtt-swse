@@ -146,15 +146,20 @@ async function setComboState(actor, state) {
   await actor.setFlag?.('foundryvtt-swse', 'attackComboState', state);
 }
 
+function skipPending(state = {}, ruleId = '') {
+  return asArray(state?.skipNextDamageRuleIds).map(normalizeKey).includes(normalizeKey(ruleId));
+}
+
 function activeComboDamageRules(actor, weapon, context = {}) {
   const state = currentComboState(actor);
   const attackType = weaponAttackType(weapon, context);
-  const skipRuleIds = new Set(asArray(context.attackComboActivatedThisAttack ?? context.workflowContext?.attackCombo?.activatedRuleIds).map(normalizeKey));
+  const explicitSkipRuleIds = new Set(asArray(context.attackComboActivatedThisAttack ?? context.workflowContext?.attackCombo?.activatedRuleIds).map(normalizeKey));
   const nowRound = combatRound();
   return collectAttackComboRules(actor).filter(rule => {
     if (rule?.benefit?.type !== 'EXTRA_DAMAGE_DIE_ON_FOLLOWUP_ATTACKS') return false;
     if (!attackTypeMatches(rule, attackType)) return false;
-    if (skipRuleIds.has(normalizeKey(rule.id))) return false;
+    if (explicitSkipRuleIds.has(normalizeKey(rule.id))) return false;
+    if (skipPending(state, rule.id)) return false;
     const active = state?.active?.[rule.id];
     if (!active) return false;
     if (active.targetId && targetIdFromContext(context) && String(active.targetId) !== String(targetIdFromContext(context))) return false;
@@ -165,7 +170,7 @@ function activeComboDamageRules(actor, weapon, context = {}) {
 
 export class CombatFeatDamageRuleResolver {
   static getDamageFormulaParts(actor, weapon, context = {}, baseFormula = '') {
-    const parts = { flatBonus: 0, diceFormula: '', breakdown: [] };
+    const parts = { flatBonus: 0, extraWeaponDice: 0, diceFormula: '', breakdown: [] };
 
     for (const rule of collectDamageRiders(actor)) {
       const mutation = rule?.damageMutation;
@@ -184,6 +189,7 @@ export class CombatFeatDamageRuleResolver {
     if (extraDice > 0) {
       const die = primaryDamageDieFormula(baseFormula || weapon?.system?.damage || weapon?.system?.damageFormula || '');
       if (die) {
+        parts.extraWeaponDice = extraDice;
         parts.diceFormula = `${extraDice}${die.slice(1)}`;
         for (const rule of comboRules) {
           parts.breakdown.push({ label: rule.label ?? 'Attack Combo', value: `+${rule?.benefit?.extraDamageDice ?? 1} die`, type: 'damageDice' });
@@ -206,6 +212,7 @@ export class CombatFeatDamageRuleResolver {
     const state = currentComboState(actor);
     state.sequences ??= {};
     state.active ??= {};
+    state.skipNextDamageRuleIds = asArray(state.skipNextDamageRuleIds);
     const turnKey = combatTurnKey();
     const activatedRuleIds = [];
 
@@ -228,12 +235,21 @@ export class CombatFeatDamageRuleResolver {
           expiresAfterRound: combatRound() + 1,
           source: rule.source ?? rule.label ?? rule.id
         };
+        if (!state.skipNextDamageRuleIds.includes(rule.id)) state.skipNextDamageRuleIds.push(rule.id);
         activatedRuleIds.push(rule.id);
       }
     }
 
     await setComboState(actor, state);
     return activatedRuleIds.length ? { activatedRuleIds, activatedThisAttack: true } : null;
+  }
+
+  static async clearPendingComboDamageSkips(actor) {
+    const state = currentComboState(actor);
+    if (!asArray(state.skipNextDamageRuleIds).length) return false;
+    state.skipNextDamageRuleIds = [];
+    await setComboState(actor, state);
+    return true;
   }
 }
 
