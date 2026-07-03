@@ -157,7 +157,7 @@ function grappleRulesForFeat(featureName) {
   }
 }
 
-function weaponDamageRulesForFeature(featureName, itemType) {
+function weaponDamageRulesForFeature(featureName) {
   switch (featureName) {
     case 'rifle master':
       return [{
@@ -167,23 +167,6 @@ function weaponDamageRulesForFeature(featureName, itemType) {
         value: 2,
         source: 'Rifle Master',
         label: 'Rifle Master'
-      }];
-    case 'weapon specialization':
-      if (itemType !== 'feat') return null;
-      return [{
-        type: 'WEAPON_DAMAGE_BONUS',
-        selectedChoice: true,
-        value: 2,
-        source: 'Weapon Specialization',
-        label: 'Weapon Specialization'
-      }];
-    case 'greater weapon specialization':
-      return [{
-        type: 'WEAPON_DAMAGE_BONUS',
-        selectedChoice: true,
-        value: 2,
-        source: 'Greater Weapon Specialization',
-        label: 'Greater Weapon Specialization'
       }];
     default:
       return null;
@@ -242,7 +225,7 @@ function featureRuleNormalizationPatch(item) {
     }
   }
 
-  const weaponDamageRules = weaponDamageRulesForFeature(featureName, item.type);
+  const weaponDamageRules = weaponDamageRulesForFeature(featureName);
   if (weaponDamageRules && !hasExistingAbilityRuleType(item, ['WEAPON_DAMAGE_BONUS', 'WEAPON_DAMAGE_DIE_STEP'])) {
     appendAbilityRulesPatch(patch, weaponDamageRules);
   }
