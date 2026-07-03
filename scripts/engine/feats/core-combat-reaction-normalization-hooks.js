@@ -49,6 +49,34 @@ function cleaveReactionRule() {
   };
 }
 
+function greatCleaveLimitRule() {
+  return {
+    type: 'EXTRA_ATTACK_LIMIT_OVERRIDE',
+    label: 'Great Cleave: No Cleave Limit',
+    source: 'Great Cleave',
+    appliesTo: 'cleaveExtraAttack',
+    limit: 'unlimited',
+    removeOncePerRoundLimit: true
+  };
+}
+
+function frighteningCleaveRiderRule() {
+  return {
+    type: 'CLEAVE_RIDER_EFFECT',
+    label: 'Frightening Cleave',
+    source: 'Frightening Cleave',
+    trigger: 'ON_CLEAVE_USED',
+    rangeSquares: 6,
+    requiresLineOfSight: true,
+    targets: 'enemies',
+    mindAffecting: true,
+    penalty: -1,
+    stackLimit: -5,
+    duration: 'encounter',
+    appliesTo: ['defense.reflex', 'attack', 'skillChecksAgainstSource']
+  };
+}
+
 function combatReflexesCapacityRule() {
   return {
     type: 'REACTION_CAPACITY_OVERRIDE',
@@ -63,6 +91,15 @@ function combatReflexesCapacityRule() {
   };
 }
 
+function appendRules(item, rulesToAdd) {
+  const existing = asArray(item.system?.abilityMeta?.rules);
+  const newRules = rulesToAdd.filter(rule => !hasRuleType(item, rule.type));
+  if (!newRules.length) return null;
+  return {
+    'system.abilityMeta.rules': [...existing, ...newRules]
+  };
+}
+
 function patchForFeat(item) {
   const normalized = normalizeName(item?.name);
   if (normalized === 'cleave') {
@@ -74,6 +111,24 @@ function patchForFeat(item) {
         ...asArray(item.system?.abilityMeta?.reactionRules),
         rule
       ]
+    };
+  }
+
+  if (normalized === 'great cleave') {
+    const patch = appendRules(item, [greatCleaveLimitRule()]);
+    if (!patch) return null;
+    return {
+      'system.abilityMeta.mechanicsMode': 'cleave_limit_rule',
+      ...patch
+    };
+  }
+
+  if (normalized === 'frightening cleave') {
+    const patch = appendRules(item, [frighteningCleaveRiderRule()]);
+    if (!patch) return null;
+    return {
+      'system.abilityMeta.mechanicsMode': 'cleave_rider_rule',
+      ...patch
     };
   }
 
