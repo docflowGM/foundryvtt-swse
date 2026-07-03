@@ -7,8 +7,7 @@
  * Registered feats:
  * - Sadistic Strike: Move opponent -1 step on CT when delivering Coup de Grace
  * - Damage Conversion / Stay Up-style rules: spend a CT step to reduce incoming damage
- * - (Future) Rancor Crush: Move opponent -1 step on CT when using Crush feat
- * - (Future) Bone Crusher: Move grappled opponent -1 step on CT after damage
+ * - Bone Crusher: Move damaged grappled opponent -1 step on CT after grapple damage
  * - (Future) Forceful Strike: Spend Force Point to move target -1 step on CT with Force Stun
  * - (Future) Forceful Telekinesis: Spend Force Point to move target -1 step on CT with Move Object
  */
@@ -17,6 +16,21 @@ import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engin
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
 import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+
+function normalizeFeatName(value) {
+  return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+}
+
+function actorHasFeat(actor, featName) {
+  const wanted = normalizeFeatName(featName);
+  try {
+    return Array.from(actor?.items ?? []).some(item => item?.type === 'feat'
+      && item?.system?.disabled !== true
+      && normalizeFeatName(item?.name) === wanted);
+  } catch (_err) {
+    return false;
+  }
+}
 
 function conditionStep(actor) {
   return Math.max(0, Number(actor?.system?.conditionTrack?.current ?? 0) || 0);
@@ -38,6 +52,12 @@ function uniqueActors(values = []) {
   return out;
 }
 
+function hasDamagePayload(value) {
+  if (!value) return false;
+  const total = Number(value.total ?? value.damage ?? value.damageApplied ?? value.applied?.damageApplied ?? value.applied?.damage ?? 0);
+  return Number.isFinite(total) && total > 0;
+}
+
 export class FeatActionListeners {
   /**
    * Initialize all feat action listeners.
@@ -48,9 +68,8 @@ export class FeatActionListeners {
 
     this._registerSadisticStrike();
     this._registerStayUp();
+    this._registerBoneCrusher();
     // Future listeners will be registered here
-    // this._registerRancorCrush();
-    // this._registerBoneCrusher();
     // this._registerForcefulStrike();
     // this._registerForcefulTelekinesis();
   }
@@ -201,24 +220,45 @@ export class FeatActionListeners {
   }
 
   /* ---------------------------------------- */
-  /* FUTURE: RANCOR CRUSH                     */
+  /* BONE CRUSHER                             */
   /* ---------------------------------------- */
-  // static _registerRancorCrush() {
-  //   // Listen for Crush feat activation
-  //   // When Crush feat is resolved:
-  //   //   - Check if attacker has Rancor Crush
-  //   //   - If yes: Move target -1 step on CT
-  // }
+  /**
+   * Bone Crusher: when grapple damage is successfully applied to a grappled
+   * opponent, move that opponent -1 step on the condition track.
+   *
+   * The current grapple system emits swse.grappleManeuver after Throw/Crush.
+   * This listener deliberately requires a damage payload so non-damaging
+   * grapple maneuvers such as Trip do not trigger the feat.
+   */
+  static _registerBoneCrusher() {
+    Hooks.on('swse.grappleManeuver', async (context = {}) => {
+      const { attacker, defender, maneuver, result } = context;
+      if (!attacker || !defender) return;
+      if (!['throw', 'crush'].includes(String(maneuver ?? result?.maneuver ?? '').toLowerCase())) return;
+      if (!hasDamagePayload(result?.damage ?? context.damage)) return;
+      if (!actorHasFeat(attacker, 'Bone Crusher')) return;
+      if (!canWorsenCondition(defender)) return;
 
-  /* ---------------------------------------- */
-  /* FUTURE: BONE CRUSHER                     */
-  /* ---------------------------------------- */
-  // static _registerBoneCrusher() {
-  //   // Listen for grapple damage application
-  //   // When grapple damage is applied to grappled opponent:
-  //   //   - Check if attacker has Bone Crusher
-  //   //   - If yes: Move target -1 step on CT
-  // }
+      try {
+        const oldCT = conditionStep(defender);
+        await ActorEngine.applyConditionShift(defender, 1, 'Bone Crusher');
+        const newCT = conditionStep(defender);
+
+        SWSELogger.log(
+          `[FeatActionListeners] Bone Crusher applied by ${attacker.name}: ` +
+          `${defender.name} moved from CT ${oldCT} to CT ${newCT}`
+        );
+
+        ui.notifications.info(
+          `${attacker.name} uses Bone Crusher: ${defender.name} moved -1 step on the Condition Track.`
+        );
+      } catch (err) {
+        SWSELogger.error('[FeatActionListeners] Bone Crusher error:', err);
+      }
+    });
+
+    SWSELogger.log('[FeatActionListeners] Bone Crusher listener registered');
+  }
 
   /* ---------------------------------------- */
   /* FUTURE: FORCEFUL STRIKE                  */
