@@ -1,0 +1,78 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-03",
+  "purpose": "Record the focused Grapple & Unarmed sub-bucket pass from the strict Combat bucket.",
+  "policy": {
+    "engineReuse": "Use the existing SWSEGrappling, GrappleStateEngine, GrappleLegalityEngine, grapple runtime patches, and GrappleFeatActions. Do not create a parallel grapple subsystem.",
+    "spatialAutomation": "Movement/position outcomes such as Throw placement, Knock Heads setup, and Battering Attack impact positioning remain advisory until a dedicated spatial workflow exists.",
+    "invalidEntries": "Do not implement Grappling Strike as a feat. It was rejected by the strict Combat validity audit. Existing helper access is hard-blocked as a safe no-op."
+  },
+  "implementedEntries": [
+    {
+      "name": "Pin",
+      "status": "implemented_grapple_rule_metadata",
+      "mechanic": "Normalizes to UNLOCK_GRAPPLE_MANEUVER pin and delegates to SWSEGrappling.attemptPin."
+    },
+    {
+      "name": "Trip",
+      "status": "implemented_grapple_rule_metadata",
+      "mechanic": "Normalizes to UNLOCK_GRAPPLE_MANEUVER trip and delegates to the existing advanced grapple Trip path."
+    },
+    {
+      "name": "Throw",
+      "status": "implemented_grapple_rule_metadata",
+      "mechanic": "Normalizes to UNLOCK_GRAPPLE_MANEUVER throw and delegates to the existing advanced grapple Throw path. Final placement remains advisory."
+    },
+    {
+      "name": "Crush",
+      "status": "implemented_grapple_rule_metadata",
+      "mechanic": "Normalizes to UNLOCK_GRAPPLE_MANEUVER crush and delegates to the existing Crush Pinned Opponent path."
+    },
+    {
+      "name": "Rancor Crush",
+      "status": "implemented_grapple_rule_metadata",
+      "mechanic": "Normalizes Crush unlock metadata plus CONDITION_SHIFT_ON_GRAPPLE_MANEUVER for -1 CT step on successful Crush."
+    },
+    {
+      "name": "Multi-Grab",
+      "status": "implemented_action_helper_metadata",
+      "mechanic": "Normalizes to MULTI_GRAB and delegates to GrappleFeatActions.multiGrab, which performs canonical grab attempts against up to two selected targets."
+    },
+    {
+      "name": "Grab Back",
+      "status": "implemented_reaction_helper_metadata",
+      "mechanic": "Normalizes to REACTION_GRAB_BACK and delegates to GrappleFeatActions.grabBack. Trigger detection remains reaction-workflow/advisory."
+    },
+    {
+      "name": "Knock Heads",
+      "status": "implemented_advisory_grapple_metadata",
+      "mechanic": "Stores multi-target grapple rider metadata. Exact target setup and damage/effect resolution remain GM/player adjudicated."
+    },
+    {
+      "name": "Battering Attack",
+      "status": "implemented_advisory_grapple_metadata",
+      "mechanic": "Stores grapple-position impact rider metadata. Exact spatial setup and collateral target handling remain GM/player adjudicated."
+    }
+  ],
+  "deferredEntries": [
+    {
+      "name": "Attack Combo (Fire and Strike)",
+      "reason": "Confirmed feat, but this is better handled in an attack-combo/ranged-melee combo pass rather than the grapple engine pass."
+    },
+    {
+      "name": "Attack Combo (Melee)",
+      "reason": "Confirmed feat, but this is better handled in an attack-combo/melee combo pass rather than the grapple engine pass."
+    }
+  ],
+  "excludedEntries": [
+    {
+      "name": "Grappling Strike",
+      "reason": "Invalid as SWSE feat per strict Combat validity audit. Removed from new normalization and hard-blocked in existing helper access."
+    }
+  ],
+  "changedFiles": [
+    "scripts/engine/feats/grapple-feat-normalization-hooks.js",
+    "scripts/engine/feats/grapple-feat-actions.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}
