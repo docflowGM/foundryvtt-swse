@@ -6,6 +6,7 @@ import { ReactionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/r
 import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import { resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 import { AmmoSystem } from "/systems/foundryvtt-swse/scripts/engine/inventory/ammo-system.js";
+import { prepareCoreAttackOptionRollContext, spendCoreAttackOptionCosts } from "/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-action-economy.js";
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { damageContextForReaction, damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 // Canonical roll math — both this file and weapons-engine.js delegate here so
@@ -148,7 +149,6 @@ function buildReactionContextForAttack(attacker, defender, weapon, attackTotal) 
   };
 }
 
-
 function getPrimaryDamageDieFormula(baseFormula) {
   const match = String(baseFormula ?? '').match(/(?:^|[^\d])(\d*)d(\d+)/i);
   if (!match) return null;
@@ -182,7 +182,7 @@ function stepDamageDieFormula(baseFormula, steps = 0) {
  * Roll an attack with a weapon using SWSE rules.
  */
 export async function rollAttack(actor, weapon, options = {}) {
-  const rollOptions = mergeCombatWorkflowContextIntoRollOptions(options, options?.combatContext ?? options?.workflowContext ?? null);
+  const rollOptions = prepareCoreAttackOptionRollContext(mergeCombatWorkflowContextIntoRollOptions(options, options?.combatContext ?? options?.workflowContext ?? null));
   if (!actor || !weapon) {
     ui.notifications.error('Missing actor or weapon for attack roll.');
     return null;
@@ -200,17 +200,25 @@ export async function rollAttack(actor, weapon, options = {}) {
     contextTags: rollOptions.damageMode === 'stun' || rollOptions.stun === true ? ['stun'] : []
   });
   const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
-  const ammoSpend = await AmmoSystem.spendForWorkflow(actor, weapon, {
+  const actionOptionSpend = await spendCoreAttackOptionCosts(actor, weapon, rollOptions);
+  if (actionOptionSpend?.allowed === false || actionOptionSpend?.permitted === false) {
+    ui?.notifications?.warn?.(actionOptionSpend.reason || 'Selected attack option action cost could not be paid.');
+    return null;
+  }
+  let ammoSpend = null;
+
+  try {
+  ammoSpend = await AmmoSystem.spendForWorkflow(actor, weapon, {
     workflowContext,
     options: rollOptions,
     optionModifiers
   });
   if (ammoSpend?.success === false) {
+    await actionOptionSpend?.rollback?.();
     ui?.notifications?.error?.(ammoSpend.message || `${weapon.name} does not have enough ammunition.`);
     return null;
   }
 
-  try {
   const sequencePenalty = Number(rollOptions.sequencePenalty ?? 0);
   // resolveAttackBonus provides the canonical total; roll-invocation-only
   // modifiers (fightingDefensively, customModifier, situationalBonus,
@@ -257,7 +265,7 @@ export async function rollAttack(actor, weapon, options = {}) {
     roll,
     actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
-    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions, workflowContext: damageWorkflowContext, targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [], targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [] } },
+    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions, workflowContext: damageWorkflowContext, targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [], targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [], actionOptionSpend } },
     context: {
       type: 'attack',
       weaponId: weapon.id,
@@ -334,11 +342,13 @@ export async function rollAttack(actor, weapon, options = {}) {
     actionId: attackResult.actionId
   };
   attackResult.ammoSpend = ammoSpend;
+  attackResult.actionOptionSpend = actionOptionSpend;
   return attackResult;
   } catch (err) {
     if (ammoSpend?.spent) {
       await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
     }
+    await actionOptionSpend?.rollback?.();
     throw err;
   }
 }
@@ -430,28 +440,37 @@ function _firstTargetName() {
  * Does NOT reference defenses; narration is supplemental only
  */
 export async function rollAttackAndDamageWithNarration(actor, weapon, options = {}) {
+  const rollOptions = prepareCoreAttackOptionRollContext(options);
   if (!actor || !weapon) {
     ui.notifications.error('Missing actor or weapon for attack roll.');
     return null;
   }
 
   const targetName = _firstTargetName();
-  const atkBonus = resolveAttackBonus(actor, weapon, null, options).total;
+  const atkBonus = resolveAttackBonus(actor, weapon, null, rollOptions).total;
   // optionModifiers still needed for die-formula and effect modifiers below.
-  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, options);
-  const dmgBonus = resolveDamageBonus(actor, weapon, options).total;
-  const workflowContext = summarizeCombatWorkflowContext(options.combatContext ?? options.workflowContext ?? null, { actor, weapon });
-  const ammoSpend = await AmmoSystem.spendForWorkflow(actor, weapon, {
+  const optionModifiers = CombatOptionResolver.collectAttackModifiers(actor, weapon, rollOptions);
+  const dmgBonus = resolveDamageBonus(actor, weapon, rollOptions).total;
+  const workflowContext = summarizeCombatWorkflowContext(rollOptions.combatContext ?? rollOptions.workflowContext ?? null, { actor, weapon });
+  const actionOptionSpend = await spendCoreAttackOptionCosts(actor, weapon, rollOptions);
+  if (actionOptionSpend?.allowed === false || actionOptionSpend?.permitted === false) {
+    ui?.notifications?.warn?.(actionOptionSpend.reason || 'Selected attack option action cost could not be paid.');
+    return null;
+  }
+  let ammoSpend = null;
+
+  try {
+  ammoSpend = await AmmoSystem.spendForWorkflow(actor, weapon, {
     workflowContext,
-    options,
+    options: rollOptions,
     optionModifiers
   });
   if (ammoSpend?.success === false) {
+    await actionOptionSpend?.rollback?.();
     ui?.notifications?.error?.(ammoSpend.message || `${weapon.name} does not have enough ammunition.`);
     return null;
   }
 
-  try {
   const rollFormula = `1d20 + ${atkBonus}`;
   const dmgBase = stepDamageDieFormula(weapon.system?.damage ?? weapon.damage ?? '1d6', optionModifiers.damageDieStepIncreases ?? 0);
   const dmgExtraDice = buildExtraWeaponDiceFormula(dmgBase, optionModifiers.damageExtraWeaponDice ?? optionModifiers.damageDiceStepBonus ?? 0);
@@ -464,14 +483,14 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
   const dmgTotal = damageRoll?.total;
 
   // Post attack roll card
-  const target = getTargetActorFromOptions(options);
+  const target = getTargetActorFromOptions(rollOptions);
   const targetReflex = getTargetReflex(target);
   const isHit = targetReflex != null ? attackRoll.total >= targetReflex : null;
   const attackD20 = attackRoll?.dice?.[0]?.results?.[0]?.result ?? null;
   const isCritical = Number(attackD20) === 20;
   const reactionContext = buildReactionContextForAttack(actor, target, weapon, attackRoll.total);
   const attackRerollOptions = MetaResourceFeatResolver.buildAttackRerollChatOptions(actor, weapon, attackRoll, {
-    ...options,
+    ...rollOptions,
     formula: rollFormula,
     weaponId: weapon.id,
     isHit,
@@ -482,7 +501,7 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
     roll: attackRoll,
     actor,
     flavor: `${weapon.name} Attack Roll (Bonus ${atkBonus >= 0 ? '+' : ''}${atkBonus})`,
-    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions, targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [], targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [] } },
+    flags: { swse: { attackRoll: true, weaponId: weapon.id, attackRerollOptions, targetEffectsOnHit: optionModifiers.targetEffectsOnHit || [], targetEffectsOnCritical: optionModifiers.targetEffectsOnCritical || [], actionOptionSpend } },
     context: {
       type: 'attack',
       weaponId: weapon.id,
@@ -527,11 +546,12 @@ export async function rollAttackAndDamageWithNarration(actor, weapon, options = 
     }
   }
 
-  return { attack: attackRoll, damage: damageRoll, ammoSpend };
+  return { attack: attackRoll, damage: damageRoll, ammoSpend, actionOptionSpend };
   } catch (err) {
     if (ammoSpend?.spent) {
       await AmmoSystem.rollbackSpend(actor, weapon, ammoSpend);
     }
+    await actionOptionSpend?.rollback?.();
     throw err;
   }
 }
