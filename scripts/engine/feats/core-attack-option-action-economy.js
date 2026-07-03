@@ -84,12 +84,6 @@ const ATTACK_OPTION_ECONOMY = {
     riderFor: 'charge',
     description: 'If the attack is not already part of a charge, spend the Charge prerequisite first; the feat flags Deft Charge movement permissions for the charge path.'
   },
-  recklessCharge: {
-    label: 'Reckless Charge',
-    economy: 'autoChargeIfMissing',
-    prerequisite: 'charge',
-    description: 'If the attack is not already part of a charge, spend the Charge prerequisite first; the feat adds its attack bonus and Reflex penalty rider.'
-  },
   runningAttack: {
     label: 'Running Attack',
     economy: 'splitMovementRider',
@@ -216,7 +210,7 @@ export function prepareCoreAttackOptionRollContext(options = {}) {
   const prepared = { ...options };
   const combatOptions = { ...(options.combatOptions ?? options.attackOptions ?? {}) };
   const needsAim = selectedCombatFlag({ combatOptions }, 'carefulShot') || selectedCombatFlag({ combatOptions }, 'deadeye');
-  const chargeOptionIds = ['powerfulCharge', 'chargingFire', 'improvedCharge', 'deftCharge', 'recklessCharge'];
+  const chargeOptionIds = ['powerfulCharge', 'chargingFire', 'improvedCharge', 'deftCharge'];
   const needsCharge = chargeOptionIds.some(id => selectedCombatFlag({ combatOptions }, id));
   const needsRunningAttack = selectedCombatFlag({ combatOptions }, 'runningAttack');
   const needsBanthaRush = selectedCombatFlag({ combatOptions }, 'banthaRush') || selectedCombatFlag({ combatOptions }, 'improvedBanthaRush');
@@ -283,7 +277,7 @@ export async function spendCoreAttackOptionCosts(actor, weapon, options = {}) {
     }
   }
 
-  const selectedAutoChargeOption = ['powerfulCharge', 'chargingFire', 'improvedCharge', 'deftCharge', 'recklessCharge'].find(optionId => selectedCombatFlag(options, optionId));
+  const selectedAutoChargeOption = ['powerfulCharge', 'chargingFire', 'improvedCharge', 'deftCharge'].find(optionId => selectedCombatFlag(options, optionId));
   if (selectedAutoChargeOption && auto.charge === true) {
     const failure = await spendChargePrerequisite(actor, weapon, selectedAutoChargeOption, options, spends);
     if (failure) {
