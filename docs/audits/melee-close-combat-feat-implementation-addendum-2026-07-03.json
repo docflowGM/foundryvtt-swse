@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-03",
+  "purpose": "Record the focused Melee & Close Combat sub-bucket pass from the strict Combat bucket.",
+  "policy": {
+    "actionSpeedMutation": "When a feat changes the action cost of an established combat action, model it as ACTION_SPEED_MUTATION metadata and expose it through ActionSpeedFeatResolver after workflow validation.",
+    "alreadyCovered": "Great Cleave is already normalized by core combat reaction hooks as an EXTRA_ATTACK_LIMIT_OVERRIDE for Cleave. Extra Rage and Controlled Rage are already handled by Rage feat normalization.",
+    "invalidEntries": "Do not implement Improved Knock Prone or Knock Prone as feats. They were rejected by the strict Combat validity audit."
+  },
+  "implementedEntries": [
+    {
+      "name": "Accelerated Strike",
+      "status": "implemented_action_speed_mutation_metadata",
+      "mechanic": "Once per encounter, when the workflow confirms only proficient weapons are being used, mutates fullAttack from full-round to standard."
+    }
+  ],
+  "alreadyImplementedElsewhere": [
+    { "name": "Great Cleave", "reason": "Core combat reaction normalization already provides the Cleave limit override." },
+    { "name": "Extra Rage", "reason": "Rage feat normalization already handles daily rage use expansion." },
+    { "name": "Controlled Rage", "reason": "Rage feat normalization already handles controlled/swift rage action metadata." }
+  ],
+  "excludedEntries": [
+    { "name": "Improved Knock Prone", "reason": "Invalid as SWSE feat per strict Combat validity audit." },
+    { "name": "Knock Prone", "reason": "Invalid as SWSE feat per strict Combat validity audit." }
+  ],
+  "changedFiles": [
+    "scripts/engine/feats/action-speed-feat-resolver.js",
+    "scripts/engine/feats/melee-close-combat-feat-normalization-hooks.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}
