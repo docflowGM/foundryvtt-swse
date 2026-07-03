@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-03",
+  "purpose": "Record the focused Mobility & Positioning sub-bucket pass from the strict Combat bucket.",
+  "policy": {
+    "spatialAutomation": "Do not automate pathfinding, adjacency, threatened squares, line of sight, or token placement in this pass. Store metadata until a movement/AoO workflow supplies reliable spatial context.",
+    "alreadyCovered": "Charge, Bantha Rush, Improved Bantha Rush, Running Attack, Charging Fire, Powerful Charge, Improved Charge, and Deft Charge are already normalized by core attack-option hooks.",
+    "invalidEntries": "Do not implement Wounding Strike, Spring Attack, Reckless Charge, or Heroic Surge as feats. They were rejected by the strict Combat validity audit."
+  },
+  "implementedEntries": [
+    {
+      "name": "Bantha Herder",
+      "status": "implemented_hit_rider_metadata",
+      "mechanic": "On a damaging ranged hit, compare the attack roll to Will Defense; if successful, advisory metadata allows moving the target 1 square in any direction."
+    },
+    {
+      "name": "Fleet-Footed",
+      "status": "implemented_speed_metadata",
+      "mechanic": "Records a +2-square movement speed bonus for sheet or movement-aware workflows."
+    },
+    {
+      "name": "Tactical Advantage",
+      "status": "implemented_positioning_advisory_metadata",
+      "mechanic": "Records positioning-dependent tactical metadata; no automatic modifier until workflow supplies exact battlefield context."
+    },
+    {
+      "name": "Opportunistic Retreat",
+      "status": "implemented_reaction_movement_advisory_metadata",
+      "mechanic": "Records retreat/repositioning opportunity metadata without choosing a destination or validating threatened squares."
+    },
+    {
+      "name": "Impulsive Flight",
+      "status": "implemented_reaction_movement_advisory_metadata",
+      "mechanic": "Records flight/repositioning opportunity metadata without automating path or destination."
+    },
+    {
+      "name": "Steadying Position",
+      "status": "implemented_positioning_state_advisory_metadata",
+      "mechanic": "Records stable/stationary positioning state metadata for later attack workflows."
+    },
+    {
+      "name": "Cornered",
+      "status": "implemented_conditional_state_advisory_metadata",
+      "mechanic": "Records cornered/no-escape conditional state metadata. Exact bonus application waits for a workflow-provided cornered context."
+    }
+  ],
+  "excludedEntries": [
+    { "name": "Wounding Strike", "reason": "Invalid as SWSE feat per strict Combat validity audit." },
+    { "name": "Spring Attack", "reason": "Invalid as SWSE feat per strict Combat validity audit." },
+    { "name": "Reckless Charge", "reason": "Invalid as SWSE feat per strict Combat validity audit." },
+    { "name": "Heroic Surge", "reason": "Invalid as SWSE feat per strict Combat validity audit." }
+  ],
+  "changedFiles": [
+    "scripts/engine/feats/mobility-positioning-feat-normalization-hooks.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}
