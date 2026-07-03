@@ -19,6 +19,27 @@ function hasDamageThresholdRule(item, source) {
   return getAttackOptionRules(item).some(rule => normalizeName(rule?.source ?? rule?.sourceName ?? '') === wanted);
 }
 
+function attackComboRule({ id, label, source, sequenceType, requiredAttackTypes, trigger, sequenceNote }) {
+  return {
+    type: 'ATTACK_COMBO_SEQUENCE',
+    id,
+    label,
+    source,
+    comboFamily: 'attackCombo',
+    sequenceType,
+    trigger,
+    requiresAttackType: requiredAttackTypes,
+    requiresWorkflowValidation: true,
+    sequence: {
+      requiredHits: 2,
+      sameTarget: true,
+      sameEncounterOrTurnContext: true,
+      note: sequenceNote
+    },
+    summary: `Stores ${label} sequence metadata. No attack or damage modifier is applied until a dedicated combo workflow confirms the sequence.`
+  };
+}
+
 function payloadForFeat(name) {
   const normalized = normalizeName(name);
 
@@ -43,24 +64,43 @@ function payloadForFeat(name) {
 
   if (normalized === 'attack combo ranged') {
     return {
-      attackOptionRules: [{
-        type: 'ATTACK_COMBO_SEQUENCE',
+      attackOptionRules: [attackComboRule({
         id: 'attackComboRanged',
         label: 'Attack Combo (Ranged)',
         source: 'Attack Combo (Ranged)',
-        comboFamily: 'attackCombo',
         sequenceType: 'ranged',
+        requiredAttackTypes: ['ranged'],
         trigger: 'rangedAttackComboSequence',
-        requiresAttackType: 'ranged',
-        requiresWorkflowValidation: true,
-        sequence: {
-          requiredHits: 2,
-          sameTarget: true,
-          sameEncounterOrTurnContext: true,
-          note: 'Exact combo timing and benefit require the attack-combo workflow to track qualifying ranged hits.'
-        },
-        summary: 'Stores ranged attack-combo sequence metadata. No attack or damage modifier is applied until a dedicated combo workflow confirms the sequence.'
-      }]
+        sequenceNote: 'Exact combo timing and benefit require the attack-combo workflow to track qualifying ranged hits.'
+      })]
+    };
+  }
+
+  if (normalized === 'attack combo melee') {
+    return {
+      attackOptionRules: [attackComboRule({
+        id: 'attackComboMelee',
+        label: 'Attack Combo (Melee)',
+        source: 'Attack Combo (Melee)',
+        sequenceType: 'melee',
+        requiredAttackTypes: ['melee'],
+        trigger: 'meleeAttackComboSequence',
+        sequenceNote: 'Exact combo timing and benefit require the attack-combo workflow to track qualifying melee hits.'
+      })]
+    };
+  }
+
+  if (normalized === 'attack combo fire and strike') {
+    return {
+      attackOptionRules: [attackComboRule({
+        id: 'attackComboFireAndStrike',
+        label: 'Attack Combo (Fire and Strike)',
+        source: 'Attack Combo (Fire and Strike)',
+        sequenceType: 'mixed_ranged_melee',
+        requiredAttackTypes: ['ranged', 'melee'],
+        trigger: 'fireAndStrikeAttackComboSequence',
+        sequenceNote: 'Exact combo timing and benefit require the attack-combo workflow to track a qualifying ranged hit and melee hit sequence against the same target.'
+      })]
     };
   }
 
