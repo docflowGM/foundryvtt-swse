@@ -53,6 +53,12 @@ function isPistolAttack(weapon, context = {}) {
   return text.includes('pistol') || text.includes('hold-out-blaster') || text.includes('heavy-blaster');
 }
 
+function rangeBand(context = {}) {
+  const key = normalizeKey(context.rangeBand ?? context.rangeCategory ?? context.range ?? '');
+  if (key === 'pointblank' || key === 'point-blank' || key === 'close') return 'point-blank';
+  return key;
+}
+
 function targetHasNotActed(context = {}) {
   if (context.targetNotActedInCombat === true || context.targetHasNotActed === true || context.targetNotActed === true) return true;
   if (context.flatFootedTarget === true || context.targetFlatFooted === true || context.deniedDexBonus === true) return true;
@@ -63,6 +69,26 @@ function targetHasNotActed(context = {}) {
   return flags.has('targetNotActedInCombat') || flags.has('targetHasNotActed') || flags.has('targetNotActed');
 }
 
+function addBreakdown(result, label, value, type) {
+  result.breakdown ??= [];
+  if (!result.breakdown.some(entry => entry?.label === label && entry?.type === type)) {
+    result.breakdown.push({ label, value, type });
+  }
+}
+
+function addAttackBonus(result, value, label) {
+  result.attackBonus = Number(result.attackBonus ?? 0) + value;
+  addBreakdown(result, label, value, 'attack');
+}
+
+function applyAccurateShortRangeBonus(result, context, label) {
+  if (rangeBand(context) !== 'short') return;
+  if (result.flags?.[`swse.${label}.shortRangeBonusApplied`] === true) return;
+  result.flags ??= {};
+  result.flags[`swse.${label}.shortRangeBonusApplied`] = true;
+  addAttackBonus(result, 2, label);
+}
+
 function applyPistoleer(result, actor, weapon, context = {}) {
   if (!actor || !weapon || !isPistolAttack(weapon, context)) return result;
   const text = weaponText(weapon);
@@ -70,24 +96,31 @@ function applyPistoleer(result, actor, weapon, context = {}) {
   const hasRule = hasPistoleerRule(actor, 'WEAPON_ATTACK_BONUS') || hasPistoleerRule(actor, 'WEAPON_PROPERTY_OVERRIDE');
   if (!hasFeat && !hasRule) return result;
 
-  if (text.includes('blaster-pistol') && !text.includes('heavy-blaster-pistol') && !text.includes('hold-out-blaster-pistol')) {
-    result.flags ??= {};
+  result.flags ??= {};
+
+  const regularBlasterPistol = text.includes('blaster-pistol')
+    && !text.includes('heavy-blaster-pistol')
+    && !text.includes('hold-out-blaster-pistol');
+
+  // Correct any generic metadata over-match from "blaster-pistol" text rules.
+  if (!regularBlasterPistol && result.flags['weaponProperty.accurate'] === true) {
+    delete result.flags['weaponProperty.accurate'];
+  }
+
+  if (regularBlasterPistol) {
     result.flags['weaponProperty.accurate'] = true;
-    result.breakdown ??= [];
-    result.breakdown.push({ label: 'Pistoleer: Blaster Pistol Accurate', value: 0, type: 'weaponProperty' });
+    addBreakdown(result, 'Pistoleer: Blaster Pistol Accurate', 0, 'weaponProperty');
+    applyAccurateShortRangeBonus(result, context, 'Pistoleer: Accurate Short Range');
   }
 
   if (text.includes('heavy-blaster-pistol')) {
-    result.flags ??= {};
     result.flags['weaponProperty.inaccurate'] = false;
-    result.breakdown ??= [];
-    result.breakdown.push({ label: 'Pistoleer: Heavy Blaster Pistol Not Inaccurate', value: 0, type: 'weaponProperty' });
+    result.flags.inaccurateSuppressed = true;
+    addBreakdown(result, 'Pistoleer: Heavy Blaster Pistol Not Inaccurate', 0, 'weaponProperty');
   }
 
   if (text.includes('hold-out-blaster-pistol') && targetHasNotActed(context)) {
-    result.attackBonus = Number(result.attackBonus ?? 0) + 2;
-    result.breakdown ??= [];
-    result.breakdown.push({ label: 'Pistoleer: Hold-Out Blaster Opening Shot', value: 2, type: 'attack' });
+    addAttackBonus(result, 2, 'Pistoleer: Hold-Out Blaster Opening Shot');
   }
 
   return result;
