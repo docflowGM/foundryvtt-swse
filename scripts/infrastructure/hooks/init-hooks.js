@@ -43,6 +43,7 @@ import { registerDefenseAvoidanceFeatNormalizationHooks } from "/systems/foundry
 import { registerAttackOptionsFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/attack-options-feat-normalization-hooks.js";
 import { registerMeleeCloseCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/melee-close-combat-feat-normalization-hooks.js";
 import { registerRangedCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/ranged-combat-feat-normalization-hooks.js";
+import { registerDamageThresholdFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/damage-threshold-feat-normalization-hooks.js";
 
 /**
  * Register initialization hooks
@@ -159,6 +160,10 @@ export function registerInitHooks() {
         // Normalize Ranged Combat feats into ranged-reaction and thrown-weapon metadata.
         registerRangedCombatFeatNormalizationHooks();
         SWSELogger.log('Ranged Combat Feat Hooks initialized');
+
+        // Normalize Damage & Threshold feats into damage-rider and combo metadata.
+        registerDamageThresholdFeatNormalizationHooks();
+        SWSELogger.log('Damage & Threshold Feat Hooks initialized');
 
         // Initialize Combat Action Browser (Token HUD button)
         SWSECombatActionBrowser.init();
