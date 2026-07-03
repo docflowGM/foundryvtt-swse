@@ -1,0 +1,57 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-03",
+  "purpose": "Record the focused Area & Explosives sub-bucket pass from the strict Combat bucket.",
+  "policy": {
+    "canvasSpatialAutomation": "Do not automate canvas geometry in this pass. Spatial targeting, template placement, line of sight, line of effect, and final affected targets remain metadata/advisory until a dedicated AoE workflow exists.",
+    "autofireFeats": "Autofire-based feats are modeled as riders on an autofire-capable attack instead of as independent attack systems.",
+    "explosiveAreaFeats": "Explosive/area feats remain advisory and may mutate damage only where the mutation is direct and selected by the user."
+  },
+  "implementedEntries": [
+    {
+      "name": "Targeted Area",
+      "status": "implemented_damage_rider",
+      "mechanic": "Attack option requiring area attack context. Adds +5 damage when selected. Target eligibility remains advisory/spatial."
+    },
+    {
+      "name": "Spray Shot",
+      "status": "implemented_autofire_rider_metadata",
+      "mechanic": "Attack option requiring ranged autofire and area attack context. No canvas targeting automation."
+    },
+    {
+      "name": "Flood of Fire",
+      "status": "implemented_autofire_rider_metadata",
+      "mechanic": "Attack option requiring ranged autofire and area attack context. Suppression/affected target geometry is advisory."
+    },
+    {
+      "name": "Strafe",
+      "status": "implemented_autofire_rider_metadata",
+      "mechanic": "Attack option requiring ranged autofire context. Movement-line/path targeting is advisory."
+    },
+    {
+      "name": "Forceful Blast",
+      "status": "implemented_explosive_advisory_metadata",
+      "mechanic": "Attack option requiring area attack context. Blast positioning and forced movement remain advisory."
+    },
+    {
+      "name": "Whirlwind Attack",
+      "status": "implemented_spatial_advisory_metadata",
+      "mechanic": "Full-round melee area metadata. Reach and target selection remain advisory."
+    },
+    {
+      "name": "Mobility",
+      "status": "implemented_movement_defense_advisory",
+      "mechanic": "Stores advisory +5 dodge bonus against movement-provoked attacks of opportunity for future AoO workflow context."
+    }
+  ],
+  "excludedEntries": [
+    {
+      "name": "Friendly Fire Avoidance",
+      "reason": "Invalid as SWSE feat per strict Combat validity audit."
+    }
+  ],
+  "changedFiles": [
+    "scripts/engine/feats/area-explosives-feat-normalization-hooks.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}
