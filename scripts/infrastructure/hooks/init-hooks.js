@@ -23,6 +23,7 @@ import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.
 import { FeatActionListeners } from "/systems/foundryvtt-swse/scripts/engine/feats/feat-action-listeners.js";
 import { registerGrappleFeatActions } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-feat-actions.js";
 import { registerGrappleRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-runtime-patches.js";
+import { registerGrappleFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-feat-normalization-hooks.js";
 import { registerRiflemasterNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/riflemaster-normalization-hooks.js";
 import { registerRiflemasterRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/riflemaster-runtime-patches.js";
 import { registerPistoleerNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/pistoleer-normalization-hooks.js";
@@ -84,6 +85,10 @@ export function registerInitHooks() {
         // Initialize feat action listeners (Sadistic Strike, Stay Up, etc.)
         FeatActionListeners.initialize();
         SWSELogger.log('Feat Action Listeners initialized');
+
+        // Normalize grapple feats into metadata consumed by the existing Grapple engine.
+        registerGrappleFeatNormalizationHooks();
+        SWSELogger.log('Grapple Feat Normalization Hooks initialized');
 
         // Expose assisted grapple feat helpers for sheets/macros/action bars.
         registerGrappleFeatActions();
