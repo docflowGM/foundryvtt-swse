@@ -19,6 +19,36 @@ function hasAttackOptionRule(item, source) {
   return getAttackOptionRules(item).some(rule => normalizeName(rule?.source ?? rule?.sourceName ?? '') === wanted);
 }
 
+function drawWeaponSpeedMutation({ id, label, source, combinedEffects = [] }) {
+  return {
+    type: 'ACTION_SPEED_MUTATION',
+    id,
+    label,
+    actionId: 'drawOrHolsterWeapon',
+    aliases: ['draw', 'drawWeapon', 'holsterWeapon', 'drawOrHolster', 'drawOrReadyWeapon', 'readyWeapon'],
+    baseActionCost: 'move',
+    mutatedActionCost: 'swift',
+    timing: 'whenDrawingOrHolsteringAWeapon',
+    requiresWorkflowValidation: true,
+    actionEconomy: {
+      baseAction: 'drawOrHolsterWeapon',
+      from: 'move',
+      to: 'swift',
+      spend: 'swift',
+      mutatesEstablishedAction: true,
+      workflowRequired: true
+    },
+    weaponAction: {
+      drawOrHolsterWeapon: true,
+      appliesToHeldOrCarriedWeapon: true,
+      concealmentOrHolsterStateAdvisory: true
+    },
+    combinedEffects,
+    source,
+    summary: 'Mutates the established Draw/Holster Weapon action from a move action to a swift action when the action workflow validates the weapon/draw context.'
+  };
+}
+
 function rulesForFeat(name) {
   const normalized = normalizeName(name);
 
@@ -38,33 +68,38 @@ function rulesForFeat(name) {
     }];
   }
 
+  if (normalized === 'quick draw') {
+    return [drawWeaponSpeedMutation({
+      id: 'quickDraw',
+      label: 'Quick Draw',
+      source: 'Quick Draw',
+      combinedEffects: [
+        {
+          requiresFeat: 'Dual Weapon Mastery I',
+          actionId: 'drawOrHolsterTwoWeapons',
+          actionCost: 'swift',
+          requiresBothHandsFree: true,
+          requiresOneHandedWeapons: true,
+          advisoryOnly: true,
+          summary: 'Combined feat rider: draw or holster two one-handed weapons with a single swift action when both hands are free.'
+        },
+        {
+          requiresFeat: 'Weapon Proficiency (Lightsabers)',
+          actionId: 'drawAndIgniteLightsaber',
+          actionCost: 'swift',
+          advisoryOnly: true,
+          summary: 'Combined feat rider: draw and ignite a lightsaber as a single swift action.'
+        }
+      ]
+    })];
+  }
+
   if (normalized === 'lightning draw') {
-    return [{
-      type: 'ACTION_SPEED_MUTATION',
+    return [drawWeaponSpeedMutation({
       id: 'lightningDraw',
       label: 'Lightning Draw',
-      actionId: 'drawWeapon',
-      aliases: ['draw', 'drawOrReadyWeapon', 'readyWeapon'],
-      baseActionCost: 'move',
-      mutatedActionCost: 'free',
-      timing: 'whenDrawingOrReadyingAWeapon',
-      requiresWorkflowValidation: true,
-      actionEconomy: {
-        baseAction: 'drawWeapon',
-        from: 'move',
-        to: 'free',
-        spend: 'free',
-        mutatesEstablishedAction: true,
-        workflowRequired: true
-      },
-      weaponAction: {
-        drawOrReadyWeapon: true,
-        appliesToHeldOrCarriedWeapon: true,
-        concealmentOrHolsterStateAdvisory: true
-      },
-      source: 'Lightning Draw',
-      summary: 'Mutates the established Draw/Ready Weapon action from a move action to a free action when the action workflow validates the weapon/draw context.'
-    }];
+      source: 'Lightning Draw'
+    })];
   }
 
   if (normalized === 'improved stun') {
