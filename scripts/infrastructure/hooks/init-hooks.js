@@ -24,6 +24,8 @@ import { FeatActionListeners } from "/systems/foundryvtt-swse/scripts/engine/fea
 import { registerGrappleFeatActions } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-feat-actions.js";
 import { registerGrappleRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-runtime-patches.js";
 import { registerRiflemasterNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/riflemaster-normalization-hooks.js";
+import { registerPistoleerNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/pistoleer-normalization-hooks.js";
+import { registerPistoleerRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/pistoleer-runtime-patches.js";
 
 /**
  * Register initialization hooks
@@ -82,6 +84,11 @@ export function registerInitHooks() {
         // Normalize Riflemaster separately from Rifle Master-style talent aliases.
         registerRiflemasterNormalizationHooks();
         SWSELogger.log('Riflemaster Normalization Hooks initialized');
+
+        // Normalize and patch Pistoleer pistol-specific benefits.
+        registerPistoleerNormalizationHooks();
+        registerPistoleerRuntimePatches();
+        SWSELogger.log('Pistoleer Feat Hooks initialized');
 
         // Initialize Combat Action Browser (Token HUD button)
         SWSECombatActionBrowser.init();
