@@ -8,7 +8,9 @@
  * - actor.system.hp.bonus changes
  * - Class item create/update/delete
  * - HP-affecting feat create/update/delete, such as Toughness
- * - Durable feat rule normalization for Toughness, Improved Damage Threshold, static defense feats, attack option feats, resource feats, Second Wind feats, condition-track feats, and grapple feats
+ * - Durable feat/talent rule normalization for Toughness, Improved Damage Threshold, static defense feats,
+ *   attack option feats, resource feats, Second Wind feats, condition-track feats, grapple feats,
+ *   and weapon damage rules such as Rifle Master
  *
  * Guard:
  * - Skips if options.meta.guardKey === "hp-recompute" (prevents recursion)
@@ -18,7 +20,7 @@ import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-e
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { traceLog, actorSummary } from "/systems/foundryvtt-swse/scripts/utils/mutation-trace.js";
 
-function normalizeFeatName(value) {
+function normalizeFeatureName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
@@ -26,7 +28,7 @@ function itemAffectsHpMax(item) {
   if (!item) return false;
   if (item.type === 'class') return true;
   if (item.type !== 'feat') return false;
-  if (normalizeFeatName(item.name) === 'toughness') return true;
+  if (normalizeFeatureName(item.name) === 'toughness') return true;
   const rules = item.system?.abilityMeta?.resourceRules?.hitPoints;
   return Array.isArray(rules) && rules.length > 0;
 }
@@ -69,8 +71,23 @@ function hasExistingGrappleRules(item) {
   return Array.isArray(rules) && rules.length > 0;
 }
 
-function staticDefenseModifiersForFeat(featName) {
-  switch (featName) {
+function hasExistingAbilityRuleType(item, ruleTypes = []) {
+  const wanted = new Set((Array.isArray(ruleTypes) ? ruleTypes : [ruleTypes]).map(String));
+  const rules = item?.system?.abilityMeta?.rules;
+  if (!Array.isArray(rules)) return false;
+  return rules.some(rule => wanted.has(String(rule?.type ?? '')));
+}
+
+function appendAbilityRulesPatch(patch, rules = []) {
+  if (!Array.isArray(rules) || !rules.length) return;
+  patch['system.abilityMeta.rules'] = rules;
+  patch['system.executionModel'] = 'PASSIVE';
+  patch['system.subType'] = 'RULE';
+  patch['system.abilityMeta.mechanicsMode'] = 'passive_rule';
+}
+
+function staticDefenseModifiersForFeat(featureName) {
+  switch (featureName) {
     case 'improved defenses':
       return [
         { target: 'defense.reflex', type: 'untyped', value: 1, enabled: true, priority: 500, description: 'Improved Defenses: Reflex' },
@@ -82,8 +99,8 @@ function staticDefenseModifiersForFeat(featName) {
   }
 }
 
-function attackOptionForFeat(featName) {
-  switch (featName) {
+function attackOptionForFeat(featureName) {
+  switch (featureName) {
     case 'power attack': return { type: 'ATTACK_OPTION', option: 'powerAttack' };
     case 'melee defense': return { type: 'ATTACK_OPTION', option: 'meleeDefense' };
     case 'rapid shot': return { type: 'ATTACK_OPTION', option: 'rapidShot' };
@@ -100,8 +117,8 @@ function attackOptionForFeat(featName) {
   }
 }
 
-function resourceRulePatchForFeat(featName) {
-  switch (featName) {
+function resourceRulePatchForFeat(featureName) {
+  switch (featureName) {
     case 'force boon': return { key: 'forcePoints', rules: [{ type: 'MAX_BONUS', value: 3, source: 'Force Boon' }] };
     case 'strong in the force': return { key: 'forcePoints', rules: [{ type: 'DIE_SIZE', value: 8, dieSize: 8, source: 'Strong in the Force' }] };
     case 'extra second wind': return { key: 'secondWind', rules: [{ type: 'EXTRA_DAILY_USE_MULTIPLIER', value: 1, source: 'Extra Second Wind' }] };
@@ -123,83 +140,111 @@ function resourceRulePatchForFeat(featName) {
   }
 }
 
-function grappleRulesForFeat(featName) {
-  switch (featName) {
-    case 'grapple resistance':
-      return [{ type: 'RESIST_GRAB_AND_GRAPPLE', bonus: 5, source: 'Grapple Resistance' }];
-    case 'pin':
-      return [{ type: 'UNLOCK_GRAPPLE_MANEUVER', maneuver: 'pin', source: 'Pin' }];
-    case 'trip':
-      return [{ type: 'UNLOCK_GRAPPLE_MANEUVER', maneuver: 'trip', source: 'Trip' }];
-    case 'crush':
-      return [{ type: 'UNLOCK_GRAPPLE_MANEUVER', maneuver: 'crush', source: 'Crush' }];
-    case 'throw':
-      return [{ type: 'UNLOCK_GRAPPLE_MANEUVER', maneuver: 'throw', source: 'Throw' }];
-    case 'rancor crush':
-      return [{ type: 'CONDITION_SHIFT_ON_GRAPPLE_MANEUVER', maneuver: 'crush', steps: 1, source: 'Rancor Crush' }];
-    case 'bone crusher':
-      return [{ type: 'CONDITION_SHIFT_ON_GRAPPLE_DAMAGE', maneuvers: ['throw', 'crush'], steps: 1, source: 'Bone Crusher' }];
-    case 'pincer':
-      return [{ type: 'PIN_MAINTENANCE_AND_CRUSH', source: 'Pincer' }];
-    case 'grappling strike':
-      return [{ type: 'POST_HIT_GRAB_ATTEMPT', action: 'free', source: 'Grappling Strike' }];
-    case 'multi grab':
-      return [{ type: 'MULTI_GRAB', maxTargets: 2, source: 'Multi-Grab' }];
-    case 'grab back':
-      return [{ type: 'REACTION_GRAB_BACK', trigger: 'missedGrabOrGrapple', source: 'Grab Back' }];
+function grappleRulesForFeat(featureName) {
+  switch (featureName) {
+    case 'grapple resistance': return [{ type: 'RESIST_GRAB_AND_GRAPPLE', bonus: 5, source: 'Grapple Resistance' }];
+    case 'pin': return [{ type: 'UNLOCK_GRAPPLE_MANEUVER', maneuver: 'pin', source: 'Pin' }];
+    case 'trip': return [{ type: 'UNLOCK_GRAPPLE_MANEUVER', maneuver: 'trip', source: 'Trip' }];
+    case 'crush': return [{ type: 'UNLOCK_GRAPPLE_MANEUVER', maneuver: 'crush', source: 'Crush' }];
+    case 'throw': return [{ type: 'UNLOCK_GRAPPLE_MANEUVER', maneuver: 'throw', source: 'Throw' }];
+    case 'rancor crush': return [{ type: 'CONDITION_SHIFT_ON_GRAPPLE_MANEUVER', maneuver: 'crush', steps: 1, source: 'Rancor Crush' }];
+    case 'bone crusher': return [{ type: 'CONDITION_SHIFT_ON_GRAPPLE_DAMAGE', maneuvers: ['throw', 'crush'], steps: 1, source: 'Bone Crusher' }];
+    case 'pincer': return [{ type: 'PIN_MAINTENANCE_AND_CRUSH', source: 'Pincer' }];
+    case 'grappling strike': return [{ type: 'POST_HIT_GRAB_ATTEMPT', action: 'free', source: 'Grappling Strike' }];
+    case 'multi grab': return [{ type: 'MULTI_GRAB', maxTargets: 2, source: 'Multi-Grab' }];
+    case 'grab back': return [{ type: 'REACTION_GRAB_BACK', trigger: 'missedGrabOrGrapple', source: 'Grab Back' }];
+    default: return null;
+  }
+}
+
+function weaponDamageRulesForFeature(featureName, itemType) {
+  switch (featureName) {
+    case 'rifle master':
+      return [{
+        type: 'WEAPON_DAMAGE_BONUS',
+        weaponGroups: ['rifle', 'rifles'],
+        requiresAttackType: 'ranged',
+        value: 2,
+        source: 'Rifle Master',
+        label: 'Rifle Master'
+      }];
+    case 'weapon specialization':
+      if (itemType !== 'feat') return null;
+      return [{
+        type: 'WEAPON_DAMAGE_BONUS',
+        selectedChoice: true,
+        value: 2,
+        source: 'Weapon Specialization',
+        label: 'Weapon Specialization'
+      }];
+    case 'greater weapon specialization':
+      return [{
+        type: 'WEAPON_DAMAGE_BONUS',
+        selectedChoice: true,
+        value: 2,
+        source: 'Greater Weapon Specialization',
+        label: 'Greater Weapon Specialization'
+      }];
     default:
       return null;
   }
 }
 
-function featRuleNormalizationPatch(item) {
-  if (!item || item.type !== 'feat') return null;
-  const featName = normalizeFeatName(item.name);
+function featureRuleNormalizationPatch(item) {
+  if (!item || !['feat', 'talent'].includes(item.type)) return null;
+  const featureName = normalizeFeatureName(item.name);
   const resourceRules = item.system?.abilityMeta?.resourceRules ?? {};
   const patch = { _id: item.id };
 
-  if (featName === 'toughness' && !Array.isArray(resourceRules.hitPoints)) {
+  if (item.type === 'feat' && featureName === 'toughness' && !Array.isArray(resourceRules.hitPoints)) {
     patch['system.abilityMeta.resourceRules.hitPoints'] = [{ type: 'MAX_BONUS_PER_LEVEL', value: 1, source: 'Toughness' }];
   }
 
-  if (featName === 'improved damage threshold'
+  if (item.type === 'feat' && featureName === 'improved damage threshold'
     && !Array.isArray(resourceRules.damageThreshold)
     && !hasModifierTarget(item, ['defense.damageThreshold', 'damageThreshold', 'damage.threshold'])) {
     patch['system.abilityMeta.resourceRules.damageThreshold'] = [{ type: 'FLAT_BONUS', value: 5, source: 'Improved Damage Threshold' }];
   }
 
-  const resourceRule = resourceRulePatchForFeat(featName);
-  if (resourceRule && !hasExistingResourceRule(item, resourceRule.key)) {
-    patch[`system.abilityMeta.resourceRules.${resourceRule.key}`] = resourceRule.rules;
-    patch['system.executionModel'] = 'PASSIVE';
-    patch['system.subType'] = 'RESOURCE';
-    patch['system.abilityMeta.mechanicsMode'] = 'passive_resource';
+  if (item.type === 'feat') {
+    const resourceRule = resourceRulePatchForFeat(featureName);
+    if (resourceRule && !hasExistingResourceRule(item, resourceRule.key)) {
+      patch[`system.abilityMeta.resourceRules.${resourceRule.key}`] = resourceRule.rules;
+      patch['system.executionModel'] = 'PASSIVE';
+      patch['system.subType'] = 'RESOURCE';
+      patch['system.abilityMeta.mechanicsMode'] = 'passive_resource';
+    }
+
+    const grappleRules = grappleRulesForFeat(featureName);
+    if (grappleRules && !hasExistingGrappleRules(item)) {
+      patch['system.abilityMeta.grappleRules'] = grappleRules;
+      patch['system.executionModel'] = ['grapple resistance', 'rancor crush', 'bone crusher'].includes(featureName) ? 'PASSIVE' : 'ACTIVE';
+      patch['system.subType'] = 'GRAPPLE';
+      patch['system.abilityMeta.mechanicsMode'] = 'grapple';
+    }
+
+    const defenseModifiers = staticDefenseModifiersForFeat(featureName);
+    if (defenseModifiers && !hasExistingModifierImplementation(item)) {
+      patch['system.executionModel'] = 'PASSIVE';
+      patch['system.subType'] = 'MODIFIER';
+      patch['system.abilityMeta.mechanicsMode'] = 'passive';
+      patch['system.abilityMeta.applicationScope'] = 'static_actor';
+      patch['system.abilityMeta.staticSheetPolicy'] = 'include';
+      patch['system.abilityMeta.modifiers'] = defenseModifiers;
+    }
+
+    const attackOption = attackOptionForFeat(featureName);
+    if (attackOption && !hasExistingAttackOptionImplementation(item)) {
+      patch['system.executionModel'] = 'ACTIVE';
+      patch['system.subType'] = 'ATTACK_OPTION';
+      patch['system.abilityMeta.mechanicsMode'] = 'attack_option';
+      patch['system.abilityMeta.attackOption'] = attackOption;
+    }
   }
 
-  const grappleRules = grappleRulesForFeat(featName);
-  if (grappleRules && !hasExistingGrappleRules(item)) {
-    patch['system.abilityMeta.grappleRules'] = grappleRules;
-    patch['system.executionModel'] = ['grapple resistance', 'rancor crush', 'bone crusher'].includes(featName) ? 'PASSIVE' : 'ACTIVE';
-    patch['system.subType'] = 'GRAPPLE';
-    patch['system.abilityMeta.mechanicsMode'] = 'grapple';
-  }
-
-  const defenseModifiers = staticDefenseModifiersForFeat(featName);
-  if (defenseModifiers && !hasExistingModifierImplementation(item)) {
-    patch['system.executionModel'] = 'PASSIVE';
-    patch['system.subType'] = 'MODIFIER';
-    patch['system.abilityMeta.mechanicsMode'] = 'passive';
-    patch['system.abilityMeta.applicationScope'] = 'static_actor';
-    patch['system.abilityMeta.staticSheetPolicy'] = 'include';
-    patch['system.abilityMeta.modifiers'] = defenseModifiers;
-  }
-
-  const attackOption = attackOptionForFeat(featName);
-  if (attackOption && !hasExistingAttackOptionImplementation(item)) {
-    patch['system.executionModel'] = 'ACTIVE';
-    patch['system.subType'] = 'ATTACK_OPTION';
-    patch['system.abilityMeta.mechanicsMode'] = 'attack_option';
-    patch['system.abilityMeta.attackOption'] = attackOption;
+  const weaponDamageRules = weaponDamageRulesForFeature(featureName, item.type);
+  if (weaponDamageRules && !hasExistingAbilityRuleType(item, ['WEAPON_DAMAGE_BONUS', 'WEAPON_DAMAGE_DIE_STEP'])) {
+    appendAbilityRulesPatch(patch, weaponDamageRules);
   }
 
   return Object.keys(patch).length > 1 ? patch : null;
@@ -262,10 +307,10 @@ export class HPRecomputeHooks {
   }
 
   static _registerItemHooks() {
-    const maybeNormalizeFeatRules = async (item, options = {}) => {
+    const maybeNormalizeFeatureRules = async (item, options = {}) => {
       if (options?.swseFeatRuleNormalization === true) return false;
       if (!item?.actor) return false;
-      const patch = featRuleNormalizationPatch(item);
+      const patch = featureRuleNormalizationPatch(item);
       if (!patch) return false;
 
       try {
@@ -276,7 +321,7 @@ export class HPRecomputeHooks {
         });
         return true;
       } catch (err) {
-        SWSELogger.error(`[HPRecomputeHooks] Failed to normalize durable feat rules for ${item.name}`, { error: err });
+        SWSELogger.error(`[HPRecomputeHooks] Failed to normalize durable feature rules for ${item.name}`, { error: err });
         return false;
       }
     };
@@ -298,12 +343,12 @@ export class HPRecomputeHooks {
     };
 
     Hooks.on("createItem", async (item, options, userId) => {
-      await maybeNormalizeFeatRules(item, options);
+      await maybeNormalizeFeatureRules(item, options);
       await maybeRecomputeFromItem(item, 'create');
     });
 
     Hooks.on("updateItem", async (item, data, options, userId) => {
-      await maybeNormalizeFeatRules(item, options);
+      await maybeNormalizeFeatureRules(item, options);
       await maybeRecomputeFromItem(item, 'update');
     });
 
