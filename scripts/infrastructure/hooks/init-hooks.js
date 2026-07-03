@@ -29,6 +29,7 @@ import { registerPistoleerNormalizationHooks } from "/systems/foundryvtt-swse/sc
 import { registerPistoleerRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/pistoleer-runtime-patches.js";
 import { registerSniperNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/sniper-normalization-hooks.js";
 import { registerSniperRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/sniper-runtime-patches.js";
+import { registerDualWeaponMasteryNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/dual-weapon-mastery-normalization-hooks.js";
 
 /**
  * Register initialization hooks
@@ -98,6 +99,10 @@ export function registerInitHooks() {
         registerSniperNormalizationHooks();
         registerSniperRuntimePatches();
         SWSELogger.log('Sniper Feat Hooks initialized');
+
+        // Normalize Dual Weapon Mastery I/II/III slugs for the full-attack engine.
+        registerDualWeaponMasteryNormalizationHooks();
+        SWSELogger.log('Dual Weapon Mastery Normalization Hooks initialized');
 
         // Initialize Combat Action Browser (Token HUD button)
         SWSECombatActionBrowser.init();
