@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-03",
+  "purpose": "Record the focused Damage & Threshold sub-bucket pass from the strict Combat bucket.",
+  "policy": {
+    "scope": "This sub-bucket covers Delay Damage, Dreadful Rage, Advantageous Attack, Attack Combo (Ranged), and Hew.",
+    "engineReuse": "Dreadful Rage is already handled by the existing Rage feat normalization hook. Do not duplicate Rage rules here.",
+    "invalidEntries": "Delay Damage is a class feature, not a feat. Hew is invalid as SWSE feat per strict Combat audit. Do not implement either as a feat.",
+    "comboAndDamageContext": "Advantageous Attack and Attack Combo (Ranged) are stored as structured workflow metadata until exact trigger/bonus context is supplied by source text or a dedicated combo workflow."
+  },
+  "implementedEntries": [
+    {
+      "name": "Advantageous Attack",
+      "status": "implemented_damage_rider_metadata",
+      "mechanic": "Stores conditional damage-rider metadata. No damage mutation occurs until workflow-confirmed trigger and target eligibility exist."
+    },
+    {
+      "name": "Attack Combo (Ranged)",
+      "status": "implemented_attack_combo_sequence_metadata",
+      "mechanic": "Stores ranged attack-combo sequence metadata for a future combo workflow to consume."
+    }
+  ],
+  "alreadyImplementedElsewhere": [
+    {
+      "name": "Dreadful Rage",
+      "reason": "Rage feat normalization already stores RAGE_ATTACK_DAMAGE_BONUS_OVERRIDE with +5 attack and +5 damage."
+    }
+  ],
+  "excludedEntries": [
+    {
+      "name": "Delay Damage",
+      "reason": "Invalid for feat implementation; this is a class feature, not a feat."
+    },
+    {
+      "name": "Hew",
+      "reason": "Invalid as SWSE feat per strict Combat validity audit."
+    }
+  ],
+  "changedFiles": [
+    "scripts/engine/feats/damage-threshold-feat-normalization-hooks.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}
