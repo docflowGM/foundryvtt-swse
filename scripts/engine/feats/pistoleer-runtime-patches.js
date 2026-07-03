@@ -1,4 +1,5 @@
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
+import { EffectiveWeaponQualityResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/effective-weapon-quality-resolver.js";
 
 let registered = false;
 
@@ -81,7 +82,13 @@ function addAttackBonus(result, value, label) {
   addBreakdown(result, label, value, 'attack');
 }
 
-function applyAccurateShortRangeBonus(result, context, label) {
+function applyAccurateShortRangeBonus(result, weapon, context, label) {
+  const qualities = EffectiveWeaponQualityResolver.resolve(weapon, {
+    ...(context ?? {}),
+    effectiveWeaponQualities: result.effectiveWeaponQualities,
+    flags: result.flags
+  });
+  if (!qualities.has('accurate')) return;
   if (rangeBand(context) !== 'short') return;
   if (result.flags?.[`swse.${label}.shortRangeBonusApplied`] === true) return;
   result.flags ??= {};
@@ -108,15 +115,13 @@ function applyPistoleer(result, actor, weapon, context = {}) {
   }
 
   if (regularBlasterPistol) {
-    result.flags['weaponProperty.accurate'] = true;
-    addBreakdown(result, 'Pistoleer: Blaster Pistol Accurate', 0, 'weaponProperty');
-    applyAccurateShortRangeBonus(result, context, 'Pistoleer: Accurate Short Range');
+    EffectiveWeaponQualityResolver.apply(result, [{ quality: 'accurate', mode: 'add', label: 'Pistoleer: Blaster Pistol gains Accurate' }], 'Pistoleer');
+    applyAccurateShortRangeBonus(result, weapon, context, 'Pistoleer: Accurate Short Range');
   }
 
   if (text.includes('heavy-blaster-pistol')) {
-    result.flags['weaponProperty.inaccurate'] = false;
+    EffectiveWeaponQualityResolver.apply(result, [{ quality: 'inaccurate', mode: 'remove', label: 'Pistoleer: Heavy Blaster Pistol loses Inaccurate' }], 'Pistoleer');
     result.flags.inaccurateSuppressed = true;
-    addBreakdown(result, 'Pistoleer: Heavy Blaster Pistol Not Inaccurate', 0, 'weaponProperty');
   }
 
   if (text.includes('hold-out-blaster-pistol') && targetHasNotActed(context)) {
