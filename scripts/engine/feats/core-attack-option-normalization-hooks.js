@@ -235,29 +235,6 @@ function recklessChargeOption() {
   };
 }
 
-function springAttackOption() {
-  return {
-    type: 'ATTACK_OPTION',
-    id: 'springAttack',
-    label: 'Spring Attack',
-    control: 'flag',
-    requiresAttackType: 'melee',
-    requiresSingleAttack: true,
-    movementRider: true,
-    actionEconomy: {
-      type: 'standardAttackPlusMove',
-      spend: 'riderOnly',
-      riderFor: 'standardAttack',
-      movementRider: true,
-      movementSplit: 'beforeAndAfterAttack',
-      moveActionRequired: true,
-      replacesStandardAttackCost: false
-    },
-    source: 'Spring Attack',
-    summary: 'Movement rider: allows movement before and after a single melee attack; movement validation remains with the movement workflow/GM.'
-  };
-}
-
 function banthaRushOption() {
   return {
     type: 'ATTACK_OPTION',
@@ -382,7 +359,6 @@ function optionForFeat(name) {
   if (normalized === 'improved charge') return improvedChargeOption();
   if (normalized === 'deft charge') return deftChargeOption();
   if (normalized === 'reckless charge') return recklessChargeOption();
-  if (normalized === 'spring attack') return springAttackOption();
   if (normalized === 'bantha rush') return banthaRushOption();
   if (normalized === 'improved bantha rush') return improvedBanthaRushOption();
   if (normalized === 'running attack') return runningAttackOption();
