@@ -27,6 +27,8 @@ import { registerRiflemasterNormalizationHooks } from "/systems/foundryvtt-swse/
 import { registerRiflemasterRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/riflemaster-runtime-patches.js";
 import { registerPistoleerNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/pistoleer-normalization-hooks.js";
 import { registerPistoleerRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/pistoleer-runtime-patches.js";
+import { registerSniperNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/sniper-normalization-hooks.js";
+import { registerSniperRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/sniper-runtime-patches.js";
 
 /**
  * Register initialization hooks
@@ -91,6 +93,11 @@ export function registerInitHooks() {
         registerPistoleerNormalizationHooks();
         registerPistoleerRuntimePatches();
         SWSELogger.log('Pistoleer Feat Hooks initialized');
+
+        // Normalize and patch Sniper soft-cover suppression.
+        registerSniperNormalizationHooks();
+        registerSniperRuntimePatches();
+        SWSELogger.log('Sniper Feat Hooks initialized');
 
         // Initialize Combat Action Browser (Token HUD button)
         SWSECombatActionBrowser.init();
