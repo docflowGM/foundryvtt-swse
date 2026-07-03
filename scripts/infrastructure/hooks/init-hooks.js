@@ -35,6 +35,7 @@ import { registerCoreCombatReactionNormalizationHooks } from "/systems/foundryvt
 import { registerCoreCombatReactionRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/core-combat-reaction-runtime-patches.js";
 import { registerCoreAttackOptionNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-normalization-hooks.js";
 import { registerCoreAttackOptionRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-runtime-patches.js";
+import { registerRageFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/rage-feat-normalization-hooks.js";
 
 /**
  * Register initialization hooks
@@ -119,6 +120,10 @@ export function registerInitHooks() {
         registerCoreAttackOptionNormalizationHooks();
         registerCoreAttackOptionRuntimePatches();
         SWSELogger.log('Core Attack Option Feat Hooks initialized');
+
+        // Normalize Rage feat modifiers into the Rage engine rule contract.
+        registerRageFeatNormalizationHooks();
+        SWSELogger.log('Rage Feat Hooks initialized');
 
         // Initialize Combat Action Browser (Token HUD button)
         SWSECombatActionBrowser.init();
