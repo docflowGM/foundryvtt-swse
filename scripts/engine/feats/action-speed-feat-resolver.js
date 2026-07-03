@@ -57,6 +57,19 @@ function costRank(cost) {
   return ranks[key] ?? 99;
 }
 
+function workflowValidated(mutation = {}, context = {}) {
+  if (mutation.requiresWorkflowValidation !== true) return true;
+  return context?.validated === true || context?.workflowValidated === true;
+}
+
+function encounterUseAvailable(mutation = {}, context = {}) {
+  if (!mutation.usesPerEncounter) return true;
+  const explicit = context?.encounterUsesRemainingByRule?.[mutation.id]
+    ?? context?.encounterUsesRemainingBySource?.[mutation.source]
+    ?? context?.encounterUsesRemaining;
+  return explicit === undefined || Number(explicit) > 0;
+}
+
 export class ActionSpeedFeatResolver {
   static getActionSpeedMutations(actor, actionId) {
     return collectActionSpeedMutations(actor, actionId);
@@ -73,9 +86,8 @@ export class ActionSpeedFeatResolver {
     for (const mutation of mutations) {
       const nextCost = mutation.mutatedActionCost ?? mutation.actionEconomy?.to ?? mutation.actionEconomy?.spend;
       if (!nextCost) continue;
-      if (mutation.requiresWorkflowValidation === true && context?.validated !== true && context?.workflowValidated !== true) {
-        continue;
-      }
+      if (!workflowValidated(mutation, context)) continue;
+      if (!encounterUseAvailable(mutation, context)) continue;
       if (!bestCost || costRank(nextCost) < costRank(bestCost)) {
         bestCost = nextCost;
         applied = mutation;
@@ -93,11 +105,7 @@ export class ActionSpeedFeatResolver {
 
   static resolveActionComposition(actor, actionId, context = {}) {
     const mutations = collectActionCompositionMutations(actor, actionId);
-    const valid = mutations.filter(mutation => {
-      if (mutation.requiresWorkflowValidation === true && context?.validated !== true && context?.workflowValidated !== true) return false;
-      if (mutation.usesPerEncounter && context?.encounterUsesRemaining === 0) return false;
-      return true;
-    });
+    const valid = mutations.filter(mutation => workflowValidated(mutation, context) && encounterUseAvailable(mutation, context));
     return {
       actionId,
       available: valid.length > 0,
