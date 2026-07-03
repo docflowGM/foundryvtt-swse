@@ -88,17 +88,6 @@ function rulesForFeat(name) {
     ];
   }
 
-  if (normalized === 'grappling strike') {
-    return [{
-      type: 'POST_HIT_GRAB_ATTEMPT',
-      source: 'Grappling Strike',
-      trigger: 'afterSuccessfulMeleeAttack',
-      actionId: 'grappling-strike',
-      delegatesTo: 'SWSEGrappling.attemptGrab',
-      summary: 'After a qualifying melee hit, use the canonical grab sequence as the follow-up.'
-    }];
-  }
-
   if (normalized === 'multi grab' || normalized === 'multi-grab') {
     return [{
       type: 'MULTI_GRAB',
