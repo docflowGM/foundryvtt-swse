@@ -40,13 +40,21 @@ function rulesForFeat(name) {
 
   if (normalized === 'lightning draw') {
     return [{
-      type: 'DRAW_WEAPON_TIMING_ADVISORY',
+      type: 'ACTION_SPEED_MUTATION',
       id: 'lightningDraw',
       label: 'Lightning Draw',
-      trigger: 'drawWeaponOrInitiativeContext',
+      actionId: 'drawWeapon',
+      aliases: ['draw', 'drawOrReadyWeapon', 'readyWeapon'],
+      baseActionCost: 'move',
+      mutatedActionCost: 'free',
+      timing: 'whenDrawingOrReadyingAWeapon',
+      requiresWorkflowValidation: true,
       actionEconomy: {
         baseAction: 'drawWeapon',
-        improvedTiming: true,
+        from: 'move',
+        to: 'free',
+        spend: 'free',
+        mutatesEstablishedAction: true,
         workflowRequired: true
       },
       weaponAction: {
@@ -55,7 +63,7 @@ function rulesForFeat(name) {
         concealmentOrHolsterStateAdvisory: true
       },
       source: 'Lightning Draw',
-      summary: 'Stores draw-weapon timing metadata. Actual draw timing and weapon/holster legality require an inventory/action workflow.'
+      summary: 'Mutates the established Draw/Ready Weapon action from a move action to a free action when the action workflow validates the weapon/draw context.'
     }];
   }
 
