@@ -39,6 +39,7 @@ import { registerCoreAttackOptionRuntimePatches } from "/systems/foundryvtt-swse
 import { registerRageFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/rage-feat-normalization-hooks.js";
 import { registerAreaExplosivesFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/area-explosives-feat-normalization-hooks.js";
 import { registerMobilityPositioningFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/mobility-positioning-feat-normalization-hooks.js";
+import { registerDefenseAvoidanceFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/defense-avoidance-feat-normalization-hooks.js";
 
 /**
  * Register initialization hooks
@@ -139,6 +140,10 @@ export function registerInitHooks() {
         // Normalize Mobility & Positioning feats into movement, reaction, or positioning metadata.
         registerMobilityPositioningFeatNormalizationHooks();
         SWSELogger.log('Mobility & Positioning Feat Hooks initialized');
+
+        // Normalize Defense & Avoidance feats into defense and threshold metadata.
+        registerDefenseAvoidanceFeatNormalizationHooks();
+        SWSELogger.log('Defense & Avoidance Feat Hooks initialized');
 
         // Initialize Combat Action Browser (Token HUD button)
         SWSECombatActionBrowser.init();
