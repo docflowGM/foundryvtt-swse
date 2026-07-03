@@ -20,27 +20,43 @@ function hasAreaExplosivesRule(item, source) {
     && (String(rule?.type ?? '') === 'ATTACK_OPTION' || String(rule?.type ?? '').startsWith('AREA_') || String(rule?.type ?? '').startsWith('MOVEMENT_')));
 }
 
-function advisoryAreaRule({ id, label, shape, targeting, actionType = 'standard', requiresAttackType = 'ranged', summary, source }) {
-  return {
+function advisoryAreaRule({ id, label, shape, targeting, actionType = 'standard', requiresAttackType = 'ranged', requiresAutofire = false, requiresAreaAttack = false, autofireRider = false, explosiveRider = false, damageModifier = null, summary, source }) {
+  const rule = {
     type: 'ATTACK_OPTION',
     id,
     label,
-    control: 'flag',
+    control: damageModifier ? 'toggle' : 'flag',
     requiresAttackType,
+    requiresAutofire,
+    requiresAreaAttack,
     actionEconomy: {
       type: actionType,
-      spend: actionType === 'full-round' ? 'fullRoundAction' : 'ridesAttack'
+      spend: autofireRider ? 'ridesAutofire' : (actionType === 'full-round' ? 'fullRoundAction' : 'ridesAttack'),
+      riderFor: autofireRider ? 'autofire' : (explosiveRider ? 'explosiveOrAreaAttack' : undefined)
     },
     areaEffect: {
       advisoryOnly: true,
       shape,
       targeting,
+      autofireRider,
+      explosiveRider,
       canvasAutomation: false,
       note: 'Spatial targeting, template placement, line of sight, line of effect, and final affected targets remain GM/player adjudicated.'
     },
     source,
     summary
   };
+
+  if (Number.isFinite(Number(damageModifier))) {
+    rule.damageModifier = Number(damageModifier);
+    rule.damageMutation = {
+      advisoryOnly: false,
+      timing: 'roll-side-damage-bonus',
+      note: 'Damage mutation is applied only when this option is selected; spatial target eligibility remains advisory.'
+    };
+  }
+
+  return rule;
 }
 
 function rulesForFeat(name) {
@@ -54,15 +70,27 @@ function rulesForFeat(name) {
       control: 'toggle',
       requiresAreaAttack: true,
       damageModifier: 5,
+      actionEconomy: {
+        type: 'riderOnly',
+        spend: 'ridesAreaAttack',
+        riderFor: 'areaAttack'
+      },
       areaEffect: {
         advisoryOnly: true,
+        explosiveRider: true,
         targetSelection: 'singleHitTargetWithinArea',
         timing: 'afterSuccessfulAreaAttackBeforeEvasion',
         canvasAutomation: false,
         note: 'Select one target hit by the area attack. That target takes +5 damage before Evasion is applied.'
       },
+      damageMutation: {
+        advisoryOnly: false,
+        timing: 'roll-side-damage-bonus',
+        value: 5,
+        note: 'Applies +5 damage to the selected qualifying target. The selected target is not automatically resolved from canvas geometry.'
+      },
       source: 'Targeted Area',
-      summary: 'When a successful area attack hits at least one target, select one hit target in the area to take +5 damage before Evasion.'
+      summary: 'Area/explosive rider: when a successful area attack hits at least one target, select one hit target in the area to take +5 damage before Evasion.'
     }];
   }
 
@@ -83,11 +111,14 @@ function rulesForFeat(name) {
     return [advisoryAreaRule({
       id: 'sprayShot',
       label: 'Spray Shot',
-      shape: 'spray',
-      targeting: 'areaTargets',
+      shape: 'autofireSpray',
+      targeting: 'autofireAreaTargets',
       requiresAttackType: 'ranged',
+      requiresAutofire: true,
+      requiresAreaAttack: true,
+      autofireRider: true,
       source: 'Spray Shot',
-      summary: 'Advisory ranged area/spray action. Exact affected squares and targets are spatial and GM/player adjudicated.'
+      summary: 'Autofire rider: marks an autofire spray/area attack. Exact affected squares and targets are spatial and GM/player adjudicated.'
     })];
   }
 
@@ -95,11 +126,14 @@ function rulesForFeat(name) {
     return [advisoryAreaRule({
       id: 'floodOfFire',
       label: 'Flood of Fire',
-      shape: 'suppressionArea',
-      targeting: 'areaTargets',
+      shape: 'autofireSuppressionArea',
+      targeting: 'autofireAreaTargets',
       requiresAttackType: 'ranged',
+      requiresAutofire: true,
+      requiresAreaAttack: true,
+      autofireRider: true,
       source: 'Flood of Fire',
-      summary: 'Advisory ranged area fire action. Spatial area, allies, enemies, and final affected targets remain GM/player adjudicated.'
+      summary: 'Autofire rider: marks a ranged autofire area/suppression attack. Spatial area, allies, enemies, and final affected targets remain GM/player adjudicated.'
     })];
   }
 
@@ -110,8 +144,10 @@ function rulesForFeat(name) {
       shape: 'blast',
       targeting: 'areaTargets',
       requiresAttackType: 'ranged',
+      requiresAreaAttack: true,
+      explosiveRider: true,
       source: 'Forceful Blast',
-      summary: 'Advisory blast/area action. Knockback or blast positioning is metadata only until spatial automation exists.'
+      summary: 'Explosive/area rider: blast positioning and forced-movement adjudication are metadata only until spatial automation exists.'
     })];
   }
 
@@ -122,8 +158,10 @@ function rulesForFeat(name) {
       shape: 'movementLine',
       targeting: 'lineOrPathTargets',
       requiresAttackType: 'ranged',
+      requiresAutofire: true,
+      autofireRider: true,
       source: 'Strafe',
-      summary: 'Advisory movement-line area action. Flight/path geometry and affected squares remain GM/player adjudicated.'
+      summary: 'Autofire rider: movement-line attack metadata. Flight/path geometry and affected squares remain GM/player adjudicated.'
     })];
   }
 
