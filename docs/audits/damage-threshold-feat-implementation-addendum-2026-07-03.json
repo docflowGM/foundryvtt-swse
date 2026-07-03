@@ -1,29 +1,29 @@
 {
-  "schemaVersion": 3,
+  "schemaVersion": 4,
   "date": "2026-07-03",
-  "purpose": "Record the focused Damage & Threshold plus deferred Attack Combo pass from the strict Combat bucket.",
+  "purpose": "Record the focused Damage & Threshold plus Attack Combo runtime pass from the strict Combat bucket.",
   "policy": {
     "scope": "This pass covers Delay Damage, Dreadful Rage, Advantageous Attack, Attack Combo (Ranged), Attack Combo (Melee), Attack Combo (Fire and Strike), and Hew.",
     "engineReuse": "Dreadful Rage is already handled by the existing Rage feat normalization hook. Do not duplicate Rage rules here.",
     "invalidEntries": "Delay Damage is a class feature, not a feat. Hew is invalid as SWSE feat per strict Combat audit. Do not implement either as a feat.",
-    "exactMetadata": "Advantageous Attack, Attack Combo (Ranged), and Attack Combo (Melee) now have concrete rule metadata based on pinned source text. Their mutations still require workflow validation before application.",
+    "runtimeConsumers": "Advantageous Attack, Attack Combo (Ranged), and Attack Combo (Melee) now have runtime consumers through CombatOptionResolver patching and chat-message hit tracking.",
     "sourcePending": "Attack Combo (Fire and Strike) remains sequence metadata only until exact source text is pinned."
   },
   "implementedEntries": [
     {
       "name": "Advantageous Attack",
-      "status": "implemented_exact_damage_rider_metadata",
-      "mechanic": "On a successful attack against an enemy who has not yet acted in combat, use full Heroic Level for the damage contribution instead of one-half Heroic Level."
+      "status": "implemented_runtime_damage_modifier",
+      "mechanic": "When the workflow confirms a target has not acted in combat, adds the missing Heroic Level damage contribution so the attack uses full Heroic Level instead of one-half Heroic Level."
     },
     {
       "name": "Attack Combo (Ranged)",
-      "status": "implemented_exact_attack_combo_sequence_metadata",
-      "mechanic": "After two consecutive ranged hits against the same target during the same turn, additional ranged attacks until the end of the actor's next turn deal +1 die of damage on a hit."
+      "status": "implemented_runtime_combo_damage_modifier",
+      "mechanic": "Tracks consecutive ranged hits against the same target during the same turn. After activation, later qualifying ranged damage rolls until the end of the next round gain +1 weapon die; the qualifying second hit is skipped."
     },
     {
       "name": "Attack Combo (Melee)",
-      "status": "implemented_exact_attack_combo_sequence_metadata",
-      "mechanic": "After two consecutive melee and/or unarmed hits against the same target during the same turn, additional melee or unarmed attacks until the end of the actor's next turn deal +1 die of damage on a hit."
+      "status": "implemented_runtime_combo_damage_modifier",
+      "mechanic": "Tracks consecutive melee/unarmed hits against the same target during the same turn. After activation, later qualifying melee/unarmed damage rolls until the end of the next round gain +1 weapon die; the qualifying second hit is skipped."
     },
     {
       "name": "Attack Combo (Fire and Strike)",
@@ -49,6 +49,8 @@
   ],
   "changedFiles": [
     "scripts/engine/feats/damage-threshold-feat-normalization-hooks.js",
+    "scripts/engine/feats/combat-feat-damage-rule-resolver.js",
+    "scripts/engine/feats/combat-feat-damage-runtime-patches.js",
     "scripts/infrastructure/hooks/init-hooks.js"
   ]
 }
