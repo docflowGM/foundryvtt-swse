@@ -22,6 +22,7 @@ import LightsaberLightSync from "/systems/foundryvtt-swse/scripts/utils/lightsab
 import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
 import { FeatActionListeners } from "/systems/foundryvtt-swse/scripts/engine/feats/feat-action-listeners.js";
 import { registerGrappleFeatActions } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-feat-actions.js";
+import { registerGrappleRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-runtime-patches.js";
 
 /**
  * Register initialization hooks
@@ -72,6 +73,10 @@ export function registerInitHooks() {
         // Expose assisted grapple feat helpers for sheets/macros/action bars.
         registerGrappleFeatActions();
         SWSELogger.log('Grapple Feat Actions initialized');
+
+        // Patch canonical SWSEGrappling methods for metadata-backed feats and RAW tie behavior.
+        registerGrappleRuntimePatches();
+        SWSELogger.log('Grapple Runtime Patches initialized');
 
         // Initialize Combat Action Browser (Token HUD button)
         SWSECombatActionBrowser.init();
