@@ -47,12 +47,6 @@ const ATTACK_OPTION_ECONOMY = {
     riderFor: 'banthaRush',
     description: 'No separate spend. It improves the Bantha Rush rider when the selected attack is a Bantha Rush maneuver.'
   },
-  springAttack: {
-    label: 'Spring Attack',
-    economy: 'splitMovementRider',
-    riderFor: 'standardAttack',
-    description: 'No extra roll-time spend. It marks that movement may be split before and after this single melee attack; movement/action spending belongs to the movement workflow.'
-  },
   carefulShot: {
     label: 'Careful Shot',
     economy: 'autoAimIfMissing',
@@ -225,7 +219,6 @@ export function prepareCoreAttackOptionRollContext(options = {}) {
   const chargeOptionIds = ['powerfulCharge', 'chargingFire', 'improvedCharge', 'deftCharge', 'recklessCharge'];
   const needsCharge = chargeOptionIds.some(id => selectedCombatFlag({ combatOptions }, id));
   const needsRunningAttack = selectedCombatFlag({ combatOptions }, 'runningAttack');
-  const needsSpringAttack = selectedCombatFlag({ combatOptions }, 'springAttack');
   const needsBanthaRush = selectedCombatFlag({ combatOptions }, 'banthaRush') || selectedCombatFlag({ combatOptions }, 'improvedBanthaRush');
   const alreadyAimed = aimedContext(options);
   const alreadyCharged = chargeContext(options);
@@ -248,13 +241,6 @@ export function prepareCoreAttackOptionRollContext(options = {}) {
   if (needsRunningAttack) {
     prepared.runningAttack = true;
     prepared.splitMovementBeforeAfterAttack = true;
-    prepared.combatOptions = combatOptions;
-  }
-
-  if (needsSpringAttack) {
-    prepared.springAttack = true;
-    prepared.splitMovementBeforeAfterAttack = true;
-    prepared.attackType = prepared.attackType ?? 'melee';
     prepared.combatOptions = combatOptions;
   }
 
