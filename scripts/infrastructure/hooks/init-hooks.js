@@ -44,6 +44,7 @@ import { registerAttackOptionsFeatNormalizationHooks } from "/systems/foundryvtt
 import { registerMeleeCloseCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/melee-close-combat-feat-normalization-hooks.js";
 import { registerRangedCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/ranged-combat-feat-normalization-hooks.js";
 import { registerDamageThresholdFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/damage-threshold-feat-normalization-hooks.js";
+import { registerSpeciesOriginFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/species-origin-feat-normalization-hooks.js";
 
 /**
  * Register initialization hooks
@@ -164,6 +165,10 @@ export function registerInitHooks() {
         // Normalize Damage & Threshold feats into damage-rider and combo metadata.
         registerDamageThresholdFeatNormalizationHooks();
         SWSELogger.log('Damage & Threshold Feat Hooks initialized');
+
+        // Normalize Species & Origin feats into metadata-only species-origin classifications.
+        registerSpeciesOriginFeatNormalizationHooks();
+        SWSELogger.log('Species & Origin Feat Hooks initialized');
 
         // Initialize Combat Action Browser (Token HUD button)
         SWSECombatActionBrowser.init();
