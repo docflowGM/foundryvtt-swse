@@ -1,4 +1,5 @@
 import { CombatOptionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js";
+import { EffectiveWeaponQualityResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/effective-weapon-quality-resolver.js";
 
 let registered = false;
 
@@ -71,7 +72,13 @@ function addAttackBonus(result, value, label) {
   addBreakdown(result, label, value, 'attack');
 }
 
-function applyAccurateShortRangeBonus(result, context, label) {
+function applyAccurateShortRangeBonus(result, weapon, context, label) {
+  const qualities = EffectiveWeaponQualityResolver.resolve(weapon, {
+    ...(context ?? {}),
+    effectiveWeaponQualities: result.effectiveWeaponQualities,
+    flags: result.flags
+  });
+  if (!qualities.has('accurate')) return;
   if (rangeBand(context) !== 'short') return;
   if (result.flags?.[`swse.${label}.shortRangeBonusApplied`] === true) return;
   result.flags ??= {};
@@ -93,9 +100,8 @@ function applyRiflemaster(result, actor, weapon, context = {}) {
 
   const blasterRifle = text.includes('blaster-rifle') && !text.includes('heavy-blaster-rifle');
   if (blasterRifle) {
-    result.flags['weaponProperty.accurate'] = true;
-    addBreakdown(result, 'Riflemaster: Blaster Rifle Accurate', 0, 'weaponProperty');
-    applyAccurateShortRangeBonus(result, context, 'Riflemaster: Accurate Short Range');
+    EffectiveWeaponQualityResolver.apply(result, [{ quality: 'accurate', mode: 'add', label: 'Riflemaster: Blaster Rifle gains Accurate' }], 'Riflemaster');
+    applyAccurateShortRangeBonus(result, weapon, context, 'Riflemaster: Accurate Short Range');
   }
 
   if (text.includes('blaster-carbine')) {
@@ -106,6 +112,7 @@ function applyRiflemaster(result, actor, weapon, context = {}) {
 
   if (text.includes('light-repeating-blaster')) {
     result.flags.effectiveWeaponSize = 'medium';
+    EffectiveWeaponQualityResolver.apply(result, [{ quality: 'large', mode: 'remove', label: 'Riflemaster: Light Repeating Blaster is not Large for this actor' }], 'Riflemaster');
     result.flags['weaponProperty.effectiveSize'] = 'medium';
     addBreakdown(result, 'Riflemaster: Light Repeating Blaster Medium Size', 0, 'effectiveWeaponSize');
   }
