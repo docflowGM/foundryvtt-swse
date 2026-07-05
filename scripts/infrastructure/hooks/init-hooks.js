@@ -41,6 +41,7 @@ import { registerAreaExplosivesFeatNormalizationHooks } from "/systems/foundryvt
 import { registerMobilityPositioningFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/mobility-positioning-feat-normalization-hooks.js";
 import { registerMobilityPositioningRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/mobility-positioning-runtime-patches.js";
 import { registerDefenseAvoidanceFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/defense-avoidance-feat-normalization-hooks.js";
+import { registerDefenseAvoidanceRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/defense-avoidance-runtime-patches.js";
 import { registerAttackOptionsFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/attack-options-feat-normalization-hooks.js";
 import { registerMeleeCloseCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/melee-close-combat-feat-normalization-hooks.js";
 import { registerRangedCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/ranged-combat-feat-normalization-hooks.js";
@@ -55,22 +56,15 @@ import { registerCombatFeatDamageRuntimePatches } from "/systems/foundryvtt-swse
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
 
-    // Register all hook categories - called directly since we're already in init hook
     registerCombatHooks();
     registerActorHooks();
     registerUIHooks();
 
-    // Activate all registered hooks
     HooksRegistry.activateAll();
 
     SWSELogger.log('SWSE Hooks activated');
 
-    /**
-     * Ready hook - runs once after all systems are initialized
-     * This registration is valid since ready hasn't fired yet
-     */
     Hooks.once('ready', async function() {
-        // Initialize mobile mode system
         if (MobileMode?.init) {
             MobileMode.init();
             SWSELogger.log('Mobile Mode initialized');
@@ -78,110 +72,82 @@ export function registerInitHooks() {
             SWSELogger.warn('Mobile Mode system not available');
         }
 
-        // Register mobile prompt (only shows on eligible devices)
         registerMobilePrompt(isMobileCandidate);
         SWSELogger.log('Mobile Mode prompt registered');
 
-        // Initialize lightsaber light synchronization (ties blade color to token light)
         LightsaberLightSync.registerAutoSyncHooks();
         SWSELogger.log('Lightsaber Light Sync hooks registered');
 
-        // Initialize species reroll system
         registerRerollListeners();
         SWSELogger.log('Species Trait Engine initialized');
 
-        // Initialize feat action listeners (Sadistic Strike, Stay Up, etc.)
         FeatActionListeners.initialize();
         SWSELogger.log('Feat Action Listeners initialized');
 
-        // Normalize grapple feats into metadata consumed by the existing Grapple engine.
         registerGrappleFeatNormalizationHooks();
-        SWSELogger.log('Grapple Feat Normalization Hooks initialized');
-
-        // Expose assisted grapple feat helpers for sheets/macros/action bars.
         registerGrappleFeatActions();
-        SWSELogger.log('Grapple Feat Actions initialized');
-
-        // Patch canonical SWSEGrappling methods for metadata-backed feats and RAW tie behavior.
         registerGrappleRuntimePatches();
-        SWSELogger.log('Grapple Runtime Patches initialized');
+        SWSELogger.log('Grapple Feat Hooks initialized');
 
-        // Normalize and patch Riflemaster rifle-specific benefits.
         registerRiflemasterNormalizationHooks();
         registerRiflemasterRuntimePatches();
         SWSELogger.log('Riflemaster Feat Hooks initialized');
 
-        // Normalize and patch Pistoleer pistol-specific benefits.
         registerPistoleerNormalizationHooks();
         registerPistoleerRuntimePatches();
         SWSELogger.log('Pistoleer Feat Hooks initialized');
 
-        // Normalize and patch Sniper soft-cover suppression.
         registerSniperNormalizationHooks();
         registerSniperRuntimePatches();
         SWSELogger.log('Sniper Feat Hooks initialized');
 
-        // Normalize Dual Weapon Mastery I/II/III slugs and expose dual-wield combat shape.
         registerDualWeaponMasteryNormalizationHooks();
         registerDualWieldRuntimePatches();
         SWSELogger.log('Dual Weapon Mastery and Dual Wield Shape Hooks initialized');
 
-        // Normalize and expose core combat reaction feats such as Cleave and Combat Reflexes.
         registerCoreCombatReactionNormalizationHooks();
         registerCoreCombatReactionRuntimePatches();
         SWSELogger.log('Core Combat Reaction Feat Hooks initialized');
 
-        // Normalize and patch core attack-option feats such as Power Attack, Rapid Shot, and Flurry.
         registerCoreAttackOptionNormalizationHooks();
         registerCoreAttackOptionRuntimePatches();
         SWSELogger.log('Core Attack Option Feat Hooks initialized');
 
-        // Normalize Rage feat modifiers into the Rage engine rule contract.
         registerRageFeatNormalizationHooks();
         SWSELogger.log('Rage Feat Hooks initialized');
 
-        // Normalize Area & Explosives feats into attack-option or advisory metadata.
         registerAreaExplosivesFeatNormalizationHooks();
         SWSELogger.log('Area & Explosives Feat Hooks initialized');
 
-        // Normalize Mobility & Positioning feats and expose movement/attack rider helpers.
         registerMobilityPositioningFeatNormalizationHooks();
         registerMobilityPositioningRuntimePatches();
         SWSELogger.log('Mobility & Positioning Feat Hooks initialized');
 
-        // Normalize Defense & Avoidance feats into defense and threshold metadata.
         registerDefenseAvoidanceFeatNormalizationHooks();
+        registerDefenseAvoidanceRuntimePatches();
         SWSELogger.log('Defense & Avoidance Feat Hooks initialized');
 
-        // Normalize small Attack Options feats into reaction, draw, and stun metadata.
         registerAttackOptionsFeatNormalizationHooks();
         SWSELogger.log('Attack Options Feat Hooks initialized');
 
-        // Normalize Melee & Close Combat feats into melee/full-attack metadata.
         registerMeleeCloseCombatFeatNormalizationHooks();
         SWSELogger.log('Melee & Close Combat Feat Hooks initialized');
 
-        // Normalize Ranged Combat feats into ranged-reaction and thrown-weapon metadata.
         registerRangedCombatFeatNormalizationHooks();
         SWSELogger.log('Ranged Combat Feat Hooks initialized');
 
-        // Normalize Damage & Threshold feats into damage-rider and combo metadata.
         registerDamageThresholdFeatNormalizationHooks();
         SWSELogger.log('Damage & Threshold Feat Hooks initialized');
 
-        // Patch runtime damage resolution for exact combat feat damage rules.
         registerCombatFeatDamageRuntimePatches();
         SWSELogger.log('Combat Feat Damage Runtime Patches initialized');
 
-        // Normalize Species & Origin feats into metadata-only species-origin classifications.
         registerSpeciesOriginFeatNormalizationHooks();
         SWSELogger.log('Species & Origin Feat Hooks initialized');
 
-        // Initialize Combat Action Browser (Token HUD button)
         SWSECombatActionBrowser.init();
         SWSELogger.log('Combat Action Browser initialized');
 
-        // Log hook statistics
         const stats = HooksRegistry.getStats();
         SWSELogger.log(`Hooks active: ${stats.active}/${stats.total}`);
     });
