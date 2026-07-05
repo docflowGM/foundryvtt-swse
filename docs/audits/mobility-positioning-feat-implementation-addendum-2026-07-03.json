@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 5,
+  "schemaVersion": 6,
   "date": "2026-07-03",
   "purpose": "Record the focused Mobility & Positioning sub-bucket pass from the strict Combat bucket.",
   "policy": {
@@ -35,8 +35,8 @@
     },
     {
       "name": "Steadying Position",
-      "status": "implemented_positioning_state_advisory_metadata",
-      "mechanic": "Records stable/stationary positioning state metadata for later attack workflows."
+      "status": "implemented_aim_ranged_attack_rider_metadata_and_helper",
+      "mechanic": "Aim/ranged/prone rider. Runtime helper exposes target Reflex Defense mutation that removes the target Dexterity bonus when the actor is prone and aimed before a ranged attack."
     },
     {
       "name": "Cornered",
