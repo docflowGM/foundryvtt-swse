@@ -27,26 +27,6 @@ function hasMobilityPositioningRule(item, source) {
       || String(rule?.type ?? '') === 'RANGED_DAMAGE_RIDER'));
 }
 
-function advisoryRule({ id, label, trigger, actionEconomy = 'advisory', movement = {}, attack = {}, target = {}, source, summary }) {
-  return {
-    type: 'MOBILITY_POSITIONING_ADVISORY',
-    id,
-    label,
-    trigger,
-    actionEconomy,
-    movement: {
-      advisoryOnly: true,
-      canvasAutomation: false,
-      note: 'Path legality, adjacency, threatened squares, line of sight, and final token placement remain GM/player adjudicated unless a later workflow supplies that context.',
-      ...movement
-    },
-    attack,
-    target,
-    source,
-    summary
-  };
-}
-
 function rulesForFeat(name) {
   const normalized = normalizeName(name);
 
@@ -117,22 +97,25 @@ function rulesForFeat(name) {
   }
 
   if (normalized === 'steadying position') {
-    return [advisoryRule({
+    return [{
+      type: 'AIM_RANGED_ATTACK_RIDER',
       id: 'steadyingPosition',
       label: 'Steadying Position',
-      trigger: 'bracedOrStationaryPosition',
-      actionEconomy: 'positioningStateAdvisory',
-      movement: {
-        requiresStablePosition: true,
-        likelyEndsOnMovement: true
-      },
-      attack: {
-        positioningDependent: true,
-        likelyRangedOrHeavyWeapon: true
-      },
       source: 'Steadying Position',
-      summary: 'Stationary/braced-position rider. Records that the feat depends on remaining in a steady position; exact attack modifier requires workflow context.'
-    })];
+      prerequisiteFeat: 'Careful Shot',
+      trigger: 'proneAimBeforeRangedAttack',
+      requiresAttackType: 'ranged',
+      requiresAimBeforeAttack: true,
+      requiresActorProne: true,
+      targetDefenseMutation: {
+        defense: 'reflex',
+        removeTargetDexBonus: true,
+        appliesToThisAttackOnly: true,
+        advisoryOnly: true,
+        note: 'When the actor is prone and aims before making a ranged attack, the target does not benefit from its Dexterity bonus to Reflex Defense against that attack.'
+      },
+      summary: 'Aim/ranged/prone rider: with Careful Shot, when prone and aiming before a ranged attack, suppress the target Dexterity bonus to Reflex Defense for that attack.'
+    }];
   }
 
   if (normalized === 'bantha herder') {
