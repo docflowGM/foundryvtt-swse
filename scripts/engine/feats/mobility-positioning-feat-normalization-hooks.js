@@ -20,12 +20,15 @@ function hasMobilityPositioningRule(item, source) {
     && (String(rule?.type ?? '').includes('MOBILITY')
       || String(rule?.type ?? '').includes('POSITION')
       || String(rule?.type ?? '').includes('MOVEMENT')
+      || String(rule?.type ?? '').includes('RIDER')
+      || String(rule?.type ?? '').includes('ADVISORY')
       || String(rule?.type ?? '') === 'ATTACK_OPTION'
-      || String(rule?.type ?? '') === 'HIT_RIDER'));
+      || String(rule?.type ?? '') === 'HIT_RIDER'
+      || String(rule?.type ?? '') === 'RANGED_DAMAGE_RIDER'));
 }
 
-function advisoryRule({ id, label, trigger, actionEconomy = 'advisory', movement = {}, attack = {}, target = {}, defense = null, source, summary }) {
-  const rule = {
+function advisoryRule({ id, label, trigger, actionEconomy = 'advisory', movement = {}, attack = {}, target = {}, source, summary }) {
+  return {
     type: 'MOBILITY_POSITIONING_ADVISORY',
     id,
     label,
@@ -42,55 +45,75 @@ function advisoryRule({ id, label, trigger, actionEconomy = 'advisory', movement
     source,
     summary
   };
-  if (defense) rule.defenseModifier = defense;
-  return rule;
 }
 
 function rulesForFeat(name) {
   const normalized = normalizeName(name);
 
   if (normalized === 'tactical advantage') {
-    return [advisoryRule({
+    return [{
+      type: 'ATTACK_OF_OPPORTUNITY_DAMAGE_RIDER',
       id: 'tacticalAdvantage',
       label: 'Tactical Advantage',
-      trigger: 'positioningContext',
-      movement: { positioningRider: true },
-      attack: { positioningDependent: true },
       source: 'Tactical Advantage',
-      summary: 'Positioning-dependent tactical rider. The system records the feat metadata; exact battlefield condition and modifier application remain workflow/GM adjudicated.'
-    })];
+      prerequisiteFeat: 'Combat Reflexes',
+      trigger: 'damagingAttackOfOpportunity',
+      requiresAttackOfOpportunity: true,
+      requiresDamage: true,
+      selfMovementOnHit: {
+        distanceSquares: 1,
+        direction: 'any',
+        actionTiming: 'immediate',
+        provokesAttacksOfOpportunity: false,
+        advisoryOnly: true,
+        note: 'On a successful damaging Attack of Opportunity, the attacker may immediately move 1 square in any direction. Destination/path legality remains GM/player adjudicated.'
+      },
+      summary: 'ATOP rider: after successfully damaging an opponent with an Attack of Opportunity, immediately move 1 square in any direction without provoking Attacks of Opportunity.'
+    }];
   }
 
   if (normalized === 'opportunistic retreat') {
-    return [advisoryRule({
+    return [{
+      type: 'ATTACK_OF_OPPORTUNITY_REPLACEMENT_RIDER',
       id: 'opportunisticRetreat',
       label: 'Opportunistic Retreat',
-      trigger: 'opportunityOrRetreatWindow',
-      actionEconomy: 'reactionOrFreeMovementAdvisory',
-      movement: {
-        movementType: 'retreat',
-        provokesAttackOfOpportunity: 'rulesTextDependent',
-        canMoveAwayFromThreat: true
-      },
       source: 'Opportunistic Retreat',
-      summary: 'Retreat/repositioning rider. Stores the reaction/free-movement opportunity metadata without choosing a destination or validating threatened squares.'
-    })];
+      prerequisiteFeat: 'Combat Reflexes',
+      trigger: 'opponentProvokesAttackOfOpportunity',
+      frequency: {
+        limit: 1,
+        period: 'turn'
+      },
+      replaces: {
+        action: 'attackOfOpportunity',
+        sacrificeAttack: true
+      },
+      movement: {
+        distanceFormula: 'floor(speed / 2)',
+        speedFraction: 0.5,
+        provokesAttacksOfOpportunity: false,
+        advisoryOnly: true,
+        note: 'Once per turn when an opponent provokes an Attack of Opportunity, sacrifice the attack to move a number of squares equal to one-half Speed. Path and destination remain GM/player adjudicated.'
+      },
+      summary: 'ATOP replacement rider: once per turn, when an opponent provokes an Attack of Opportunity, sacrifice the attack to move half Speed without provoking Attacks of Opportunity.'
+    }];
   }
 
   if (normalized === 'impulsive flight') {
-    return [advisoryRule({
+    return [{
+      type: 'WITHDRAW_ACTION_RIDER',
       id: 'impulsiveFlight',
       label: 'Impulsive Flight',
-      trigger: 'dangerOrPanicMovementWindow',
-      actionEconomy: 'reactionMovementAdvisory',
-      movement: {
-        movementType: 'flight',
-        forcedOrVoluntary: 'rulesTextDependent',
-        canMoveAwayFromThreat: true
-      },
       source: 'Impulsive Flight',
-      summary: 'Flight/repositioning rider. The system records the movement opportunity but does not automate path or destination.'
-    })];
+      trigger: 'withdrawAction',
+      actionId: 'withdraw',
+      movement: {
+        extraWithdrawSquares: 1,
+        advisoryOnly: false,
+        note: 'When using the Withdraw action, increase the allowed withdraw movement by 1 square.'
+      },
+      summary: 'Withdraw action rider: move 1 extra square when using the Withdraw action.'
+    }];
   }
 
   if (normalized === 'steadying position') {
@@ -114,63 +137,84 @@ function rulesForFeat(name) {
 
   if (normalized === 'bantha herder') {
     return [{
-      type: 'HIT_RIDER',
+      type: 'RANGED_DAMAGE_RIDER',
       id: 'banthaHerder',
       label: 'Bantha Herder',
+      source: 'Bantha Herder',
+      trigger: 'damagingRangedAttack',
       requiresAttackType: 'ranged',
+      requiresDamage: true,
+      requiresProficientWeapon: true,
+      targetEligibility: {
+        maxSize: 'large',
+        cannotBeGrabbed: true,
+        cannotBeGrappled: true
+      },
       compareAttackRollToDefense: 'will',
-      targetEffectsOnHit: [{
+      supportsMultipleEligibleTargets: true,
+      targetEffectsOnDamage: [{
         type: 'forcedMovement',
         distanceSquares: 1,
         direction: 'any',
-        requiresDamage: true,
-        requiresAttackRollMeetsOrExceeds: 'target.will',
-        source: 'Bantha Herder',
+        actionTiming: 'free',
         advisoryOnly: true,
-        note: 'On a damaging ranged hit, compare the attack roll to Will Defense; if it equals or exceeds Will, the attacker may move the target 1 square in any direction. Destination/path legality remains GM adjudicated.'
+        restrictions: {
+          cannotMoveIntoSolidObject: true,
+          cannotMoveIntoOccupiedFightingSpace: true
+        },
+        note: 'On a damaging ranged attack with a proficient weapon against a Large or smaller target, compare the attack roll to Will Defense; on success, the attacker may move the target 1 square in any direction as a free action. No automatic token movement.'
       }],
-      source: 'Bantha Herder',
-      summary: 'On a successful damaging ranged attack, compare the attack roll to Will Defense; if successful, move the target 1 square in any direction as a free action.'
+      summary: 'Ranged damage rider: damaging ranged attack with a proficient weapon can move each eligible target 1 square if the attack roll equals or exceeds Will Defense.'
     }];
   }
 
   if (normalized === 'fleet footed' || normalized === 'fleet-footed') {
     return [{
-      type: 'MOVEMENT_SPEED_ADVISORY',
+      type: 'RUNNING_ATTACK_RIDER',
       id: 'fleetFooted',
       label: 'Fleet-Footed',
+      prerequisiteFeat: 'Running Attack',
+      trigger: 'runningAttackMoveBeforeAndAfterAttack',
       movement: {
         speedBonusSquares: 2,
-        appliesToBaseLandSpeed: true,
+        appliesUntil: 'endOfTurn',
+        requiresRunningAttack: true,
+        requiresMoveBeforeAttack: true,
+        requiresMoveAfterAttack: true,
         advisoryOnly: false,
-        note: 'Static speed bonus metadata for sheet/movement consumers. Actual movement path remains canvas-adjudicated.'
+        note: 'If the actor moves both before and after making an attack using Running Attack, speed is increased by 2 squares until the end of the actor turn.'
       },
       source: 'Fleet-Footed',
-      summary: 'Records a +2-square movement speed bonus for movement-aware sheet or action workflows.'
+      summary: 'Running Attack rider: when the actor moves both before and after the Running Attack attack, increase Speed by 2 squares until end of turn.'
     }];
   }
 
   if (normalized === 'cornered') {
-    return [advisoryRule({
+    return [{
+      type: 'ATTACK_ADVISORY_OPTION',
       id: 'cornered',
       label: 'Cornered',
-      trigger: 'noSafeEscapeOrCorneredContext',
-      actionEconomy: 'conditionalCombatStateAdvisory',
-      movement: {
-        requiresCorneredContext: true
+      source: 'Cornered',
+      trigger: 'playerSelectedCorneredAttackOption',
+      selection: {
+        key: 'cornered',
+        label: 'Cornered',
+        prompt: 'Apply Cornered? You are threatened and unable to take the Withdraw action.',
+        playerSelectable: true,
+        defaultSelected: false,
+        requiresPlayerConfirmation: true
       },
       attack: {
-        conditionalCombatBonus: true
+        bonus: 2,
+        target: 'attack.roll',
+        bonusType: 'feat',
+        appliesAgainst: 'opponentsThreateningActor',
+        requiresThreatenedByTarget: true,
+        requiresUnableToWithdraw: true,
+        advisoryOnly: true
       },
-      defense: {
-        target: 'defense.reflex',
-        type: 'conditional',
-        value: null,
-        appliesWhen: 'corneredContext'
-      },
-      source: 'Cornered',
-      summary: 'Conditional cornered-state rider. Stores metadata only until the combat workflow can supply a cornered/no-escape context.'
-    })];
+      summary: 'Opt-in advisory attack option: when selected by the player for a valid cornered attack, apply +2 to attacks against threatening opponents.'
+    }];
   }
 
   return null;
