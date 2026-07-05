@@ -105,6 +105,26 @@ function isWithdrawContext(context = {}) {
   return action === 'withdraw' || contextAffirms(context.withdraw) || contextAffirms(context.workflowContext?.withdraw);
 }
 
+function isAimContext(context = {}) {
+  const action = normalizeKey(context.actionId ?? context.actionType ?? context.workflowContext?.actionId ?? '');
+  return action === 'aim'
+    || contextAffirms(context.aim)
+    || contextAffirms(context.aimed)
+    || contextAffirms(context.aimBeforeAttack)
+    || contextAffirms(context.workflowContext?.aim)
+    || contextAffirms(context.workflowContext?.aimed)
+    || contextAffirms(context.workflowContext?.aimBeforeAttack);
+}
+
+function actorIsProne(context = {}) {
+  return contextAffirms(context.actorProne)
+    || contextAffirms(context.isProne)
+    || contextAffirms(context.prone)
+    || contextAffirms(context.workflowContext?.actorProne)
+    || contextAffirms(context.workflowContext?.isProne)
+    || contextAffirms(context.workflowContext?.prone);
+}
+
 function isDamagingHitContext(context = {}) {
   const hit = contextAffirms(context.hit) || contextAffirms(context.isHit) || contextAffirms(context.workflowContext?.hit) || contextAffirms(context.workflowContext?.isHit);
   const damage = numeric(context.damage ?? context.damageTotal ?? context.workflowContext?.damage ?? context.workflowContext?.damageTotal, 0);
@@ -180,6 +200,24 @@ function resolveWithdrawRiders(actor, context = {}) {
   const riders = collectRules(actor, 'WITHDRAW_ACTION_RIDER');
   const total = riders.reduce((sum, rider) => sum + numeric(rider?.movement?.extraWithdrawSquares, 0), 0);
   return { extraSquares: total, riders };
+}
+
+function resolveAimRangedAttackRiders(actor, context = {}) {
+  if (!actor || !isRangedAttackContext(context) || !isAimContext(context) || !actorIsProne(context)) return [];
+  return collectRules(actor, 'AIM_RANGED_ATTACK_RIDER')
+    .filter(rule => !rule.prerequisiteFeat || hasFeat(actor, rule.prerequisiteFeat))
+    .map(rule => ({
+      id: rule.id,
+      source: rule.sourceName ?? rule.source ?? rule.label,
+      label: rule.label,
+      type: 'targetDefenseMutation',
+      defense: rule.targetDefenseMutation?.defense ?? 'reflex',
+      removeTargetDexBonus: rule.targetDefenseMutation?.removeTargetDexBonus === true,
+      appliesToThisAttackOnly: rule.targetDefenseMutation?.appliesToThisAttackOnly !== false,
+      advisoryOnly: rule.targetDefenseMutation?.advisoryOnly !== false,
+      note: rule.targetDefenseMutation?.note ?? rule.summary,
+      rule
+    }));
 }
 
 function resolveAttackOfOpportunityReplacementRiders(actor, context = {}) {
@@ -319,6 +357,7 @@ function patchCombatOptionResolver() {
   CombatOptionResolver.resolvePostHitAdvisoryRiders = resolvePostHitAdvisoryRiders;
   CombatOptionResolver.resolveAttackOfOpportunityReplacementRiders = resolveAttackOfOpportunityReplacementRiders;
   CombatOptionResolver.resolveWithdrawRiders = resolveWithdrawRiders;
+  CombatOptionResolver.resolveAimRangedAttackRiders = resolveAimRangedAttackRiders;
   CombatOptionResolver.__swseMobilityPositioningRuntimePatched = true;
 }
 
@@ -330,6 +369,7 @@ export function registerMobilityPositioningRuntimePatches() {
   game.swse.feats ??= {};
   game.swse.feats.resolveRunningAttackRiders = resolveRunningAttackRiders;
   game.swse.feats.resolveWithdrawRiders = resolveWithdrawRiders;
+  game.swse.feats.resolveAimRangedAttackRiders = resolveAimRangedAttackRiders;
   game.swse.feats.resolveAttackOfOpportunityReplacementRiders = resolveAttackOfOpportunityReplacementRiders;
   game.swse.feats.getSelectableAttackAdvisories = getSelectableAttackAdvisories;
   game.swse.feats.resolvePostHitAdvisoryRiders = resolvePostHitAdvisoryRiders;
@@ -339,6 +379,7 @@ export function registerMobilityPositioningRuntimePatches() {
 export {
   resolveRunningAttackRiders,
   resolveWithdrawRiders,
+  resolveAimRangedAttackRiders,
   resolveAttackOfOpportunityReplacementRiders,
   getSelectableAttackAdvisories,
   resolvePostHitAdvisoryRiders
