@@ -46,6 +46,7 @@ import { registerRangedCombatFeatNormalizationHooks } from "/systems/foundryvtt-
 import { registerDamageThresholdFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/damage-threshold-feat-normalization-hooks.js";
 import { registerSpeciesOriginFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/species-origin-feat-normalization-hooks.js";
 import { registerCombatFeatDamageRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/combat-feat-damage-runtime-patches.js";
+import { registerDefenseFeatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/defense-feat-runtime-patches.js";
 
 /**
  * Register initialization hooks
@@ -150,6 +151,10 @@ export function registerInitHooks() {
         // Normalize Defense & Avoidance feats into defense and threshold metadata.
         registerDefenseAvoidanceFeatNormalizationHooks();
         SWSELogger.log('Defense & Avoidance Feat Hooks initialized');
+
+        // Consume static defense feat metadata through the existing ModifierEngine pipeline.
+        registerDefenseFeatRuntimePatches();
+        SWSELogger.log('Defense Feat Runtime Patches initialized');
 
         // Normalize small Attack Options feats into reaction, draw, and stun metadata.
         registerAttackOptionsFeatNormalizationHooks();
