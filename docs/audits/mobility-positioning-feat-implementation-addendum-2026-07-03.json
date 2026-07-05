@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 4,
+  "schemaVersion": 5,
   "date": "2026-07-03",
   "purpose": "Record the focused Mobility & Positioning sub-bucket pass from the strict Combat bucket.",
   "policy": {
@@ -25,13 +25,13 @@
     },
     {
       "name": "Opportunistic Retreat",
-      "status": "implemented_reaction_movement_advisory_metadata",
-      "mechanic": "Records retreat/repositioning opportunity metadata without choosing a destination or validating threatened squares."
+      "status": "implemented_atop_replacement_rider_metadata_and_helper",
+      "mechanic": "Attack-of-Opportunity replacement rider. Runtime helper exposes once-per-turn option to sacrifice the AoO and move one-half Speed without provoking Attacks of Opportunity."
     },
     {
       "name": "Impulsive Flight",
-      "status": "implemented_reaction_movement_advisory_metadata",
-      "mechanic": "Records flight/repositioning opportunity metadata without automating path or destination."
+      "status": "implemented_withdraw_action_rider_metadata_and_helper",
+      "mechanic": "Withdraw action rider. Runtime helper returns +1 extra square for Withdraw action context."
     },
     {
       "name": "Steadying Position",
