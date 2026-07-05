@@ -1,22 +1,22 @@
 {
-  "schemaVersion": 2,
+  "schemaVersion": 3,
   "date": "2026-07-03",
   "purpose": "Validate the generated strict Combat feat bucket before further runtime implementation. The generated taxonomy is not authoritative; source validation gates implementation.",
   "inputs": {
     "generatedBucket": "docs/audits/generated/feat-taxonomy-application-report.json#/bucketSummary/Combat",
     "wikiReference": "https://swse.fandom.com/wiki/Feats",
     "bookReference": "Uploaded Saga Edition sourcebooks in the project workspace",
-    "manualAdjudication": "User confirmed the prior review-required entries are invalid as feats. Delay Damage is a class feature, not a feat."
+    "manualAdjudication": "User confirmed the prior review-required entries are invalid as feats. Delay Damage is a class feature, not a feat. User later confirmed Improved Stun does not exist and must not be implemented."
   },
   "policy": {
     "validFeatAnywhere": "A feat may be valid even if it is species-, droid-, era-, beast-, NPC-oriented, or special-source. Missing from the main wiki page is not by itself enough to delete it.",
-    "implementationGate": "Only implement entries with validationStatus confirmed_feat or confirmed_feat_special_source. Entries marked invalid_not_swse_feat or invalid_class_feature_not_feat must not be implemented as feats.",
+    "implementationGate": "Only implement entries with validationStatus confirmed_feat. Entries marked invalid_not_swse_feat or invalid_class_feature_not_feat must not be implemented as feats.",
     "taxonomyCaveat": "Generated bucket placement may be wrong even when the feat is real. Runtime implementation should be based on feat text and existing engines, not just the Combat label."
   },
   "summary": {
     "strictCombatBucketTotal": 68,
-    "confirmedFeatOrSpecialSourceCount": 58,
-    "invalidNotSwseFeatCount": 9,
+    "confirmedFeatOrSpecialSourceCount": 57,
+    "invalidNotSwseFeatCount": 10,
     "invalidClassFeatureNotFeatCount": 1,
     "sourceReviewRequiredCount": 0,
     "invalidNotSwseFeats": [
@@ -28,12 +28,13 @@
       "Grappling Strike",
       "Improved Knock Prone",
       "Knock Prone",
-      "Hew"
+      "Hew",
+      "Improved Stun"
     ],
     "invalidClassFeatureNotFeat": [
       "Delay Damage"
     ],
-    "implementationEligibleCount": 58
+    "implementationEligibleCount": 57
   },
   "validatedEntries": [
     { "name": "Spray Shot", "validationStatus": "confirmed_feat", "sourceHint": "Clone Wars Campaign Guide" },
@@ -90,7 +91,7 @@
     { "name": "Wary Defender", "validationStatus": "confirmed_feat", "sourceHint": "Clone Wars Campaign Guide" },
     { "name": "Rapid Reaction", "validationStatus": "confirmed_feat", "sourceHint": "Rebellion Era Campaign Guide" },
     { "name": "Lightning Draw", "validationStatus": "confirmed_feat", "sourceHint": "Scum and Villainy" },
-    { "name": "Improved Stun", "validationStatus": "confirmed_feat_special_source", "sourceHint": "Likely item/weapon-condition feat; source text must be checked before implementation." },
+    { "name": "Improved Stun", "validationStatus": "invalid_not_swse_feat", "sourceHint": "User correction: Improved Stun does not exist as an SWSE feat. Removed from runtime planning." },
     { "name": "Accelerated Strike", "validationStatus": "confirmed_feat", "sourceHint": "Knights of the Old Republic Campaign Guide" },
     { "name": "Great Cleave", "validationStatus": "confirmed_feat", "sourceHint": "Saga Edition Core Rulebook" },
     { "name": "Improved Knock Prone", "validationStatus": "invalid_not_swse_feat", "sourceHint": "Manual adjudication: invalid as SWSE feat." },
@@ -108,11 +109,13 @@
   "runtimeCleanupApplied": {
     "removedInvalidRuntimeEntries": [
       "Spring Attack",
-      "Reckless Charge"
+      "Reckless Charge",
+      "Improved Stun"
     ],
     "updatedFiles": [
       "scripts/engine/feats/core-attack-option-normalization-hooks.js",
-      "scripts/engine/feats/core-attack-option-action-economy.js"
+      "scripts/engine/feats/core-attack-option-action-economy.js",
+      "scripts/engine/feats/attack-options-feat-normalization-hooks.js"
     ]
   },
   "nextImplementationGuidance": [
