@@ -39,6 +39,7 @@ import { registerCoreAttackOptionRuntimePatches } from "/systems/foundryvtt-swse
 import { registerRageFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/rage-feat-normalization-hooks.js";
 import { registerAreaExplosivesFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/area-explosives-feat-normalization-hooks.js";
 import { registerMobilityPositioningFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/mobility-positioning-feat-normalization-hooks.js";
+import { registerMobilityPositioningRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/mobility-positioning-runtime-patches.js";
 import { registerDefenseAvoidanceFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/defense-avoidance-feat-normalization-hooks.js";
 import { registerAttackOptionsFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/attack-options-feat-normalization-hooks.js";
 import { registerMeleeCloseCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/melee-close-combat-feat-normalization-hooks.js";
@@ -143,8 +144,9 @@ export function registerInitHooks() {
         registerAreaExplosivesFeatNormalizationHooks();
         SWSELogger.log('Area & Explosives Feat Hooks initialized');
 
-        // Normalize Mobility & Positioning feats into movement, reaction, or positioning metadata.
+        // Normalize Mobility & Positioning feats and expose movement/attack rider helpers.
         registerMobilityPositioningFeatNormalizationHooks();
+        registerMobilityPositioningRuntimePatches();
         SWSELogger.log('Mobility & Positioning Feat Hooks initialized');
 
         // Normalize Defense & Avoidance feats into defense and threshold metadata.
