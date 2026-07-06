@@ -23,8 +23,7 @@ function martialArtsProfile(actor) {
   }
   return {
     level: Math.max(0, ...owned),
-    count: owned.size,
-    hasMartialArtsI: owned.has(1)
+    count: owned.size
   };
 }
 
@@ -42,7 +41,6 @@ function patchCombatOptionResolver() {
         result.breakdown ??= [];
         result.flags.martialArtsLevel = profile.level;
         result.flags.martialArtsDodgeBonus = profile.count;
-        if (profile.hasMartialArtsI) result.flags.unarmedDoesNotProvokeAoO = true;
         result.defenseModifiers ??= [];
         result.defenseModifiers.push({
           target: 'defense.reflex',
@@ -55,7 +53,7 @@ function patchCombatOptionResolver() {
         result.breakdown.push({ label: `Martial Arts Reflex Defense (+${profile.count} dodge)`, value: profile.count, type: 'defense' });
       }
     } catch (err) {
-      SWSELogger.warn('[MartialArtsRuntime] Failed to apply martial arts modifiers', { error: err });
+      SWSELogger.warn('[MartialArtsRuntime] Failed to apply martial arts reflex metadata', { error: err });
     }
     return result;
   };
