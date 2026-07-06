@@ -19,10 +19,9 @@ function asArray(value) {
   return Array.isArray(value) ? value : [value];
 }
 
-function hasRule(rules, id, type) {
-  const wanted = String(id ?? '');
-  const wantedType = String(type ?? '').toUpperCase();
-  return asArray(rules).some(rule => String(rule?.id ?? rule?.key ?? '') === wanted && String(rule?.type ?? '').toUpperCase() === wantedType);
+function withoutExistingRules(rules, ids) {
+  const remove = new Set(ids.map(String));
+  return asArray(rules).filter(rule => !remove.has(String(rule?.id ?? rule?.key ?? '')));
 }
 
 function selectedChoiceFromItem(item) {
@@ -62,15 +61,27 @@ function autofireAssaultRule(item) {
     requiresAutofire: true,
     requiresFeatSelectedChoiceMatch: ['Weapon Focus'],
     selectedChoice: Boolean(choice),
+    requiresContextFlags: ['sameAutofireAreaAsLastTurn'],
+    excludesOptions: ['autofireSweep', 'burstFire'],
     attackMode: 'autofire',
-    attackModifier: 3,
+    areaAttack: true,
+    sameAreaAsLastTurnRequired: true,
     baseAutofirePenaltyExpected: -5,
     effectiveAutofirePenalty: -2,
+    attackModifier: 3,
+    bracedAutofireOnlyOrControlledBurstEffectivePenalty: -1,
+    bracedAutofireOnlyOrControlledBurstAttackModifier: 4,
+    conditionalAttackModifiers: [{
+      ifAnyContextFlag: ['bracedAutofireOnlyWeapon', 'controlledBurstTalent', 'controlledBurst'],
+      replacesAttackModifier: 4,
+      effectiveAutofirePenalty: -1
+    }],
     damageExtraWeaponDice: 1,
-    areaAttack: true,
-    damageOnMiss: 'half',
+    damageOnHitOnly: true,
+    damageOnMiss: 'halfWithoutExtraDie',
     criticalDoublesDamage: false,
-    summary: 'Use sustained autofire with a Weapon Focus weapon: reduce the normal autofire attack penalty from -5 to -2 and add +1 weapon die.',
+    incompatibleWith: ['Autofire Sweep', 'Burst Fire'],
+    summary: 'When you target the same area with autofire that you targeted with autofire on your last turn, reduce the normal autofire penalty to -2, or -1 with a braced autofire-only weapon or Controlled Burst, and add +1 weapon die on a hit. Cannot be used with Autofire Sweep or Burst Fire.',
     source: 'Autofire Assault'
   };
 }
@@ -86,26 +97,34 @@ function autofireSweepRule(item) {
     requiresAutofire: true,
     requiresFeatSelectedChoiceMatch: ['Weapon Focus'],
     selectedChoice: Boolean(choice),
+    excludesOptions: ['autofireAssault', 'burstFire'],
     attackMode: 'autofire',
     areaAttack: true,
     areaShape: 'cone',
+    arcDegrees: 180,
     coneLengthSquares: 6,
     originRequirement: 'visiblePointInPointBlankRange',
+    pointBlankRangeRequired: true,
     gmManagedTargets: true,
     damageOnMiss: 'half',
     criticalDoublesDamage: false,
+    compatibleTalents: ['Improved Suppression Fire'],
+    incompatibleWith: ['Autofire Assault', 'Burst Fire'],
     targetEffectsOnHit: [{
       type: 'autofire-sweep-area-metadata',
       sourceName: 'Autofire Sweep',
       areaShape: 'cone',
+      arcDegrees: 180,
       coneLengthSquares: 6,
       originRequirement: 'visiblePointInPointBlankRange',
+      pointBlankRangeRequired: true,
       gmManagedTargets: true,
       damageOnMiss: 'half',
       criticalDoublesDamage: false,
+      compatibleTalents: ['Improved Suppression Fire'],
       manualResolution: true
     }],
-    summary: 'Use autofire with a Weapon Focus weapon to target all creatures in a 6-square cone from a visible point in point-blank range.',
+    summary: 'When making autofire with a Weapon Focus weapon, attack all targets in a 6-square 180-degree cone. The cone origin can be any square in line of sight within point-blank range. Cannot be used with Autofire Assault or Burst Fire; compatible with Improved Suppression Fire.',
     source: 'Autofire Sweep'
   };
 }
@@ -125,10 +144,9 @@ async function normalizeAutofireWeaponFeat(item, options = {}) {
   if (!rulesToAdd.length) return false;
 
   const currentRules = asArray(item.system?.abilityMeta?.rules);
-  const nextRules = [...currentRules];
-  for (const rule of rulesToAdd) {
-    if (!hasRule(nextRules, rule.id, rule.type)) nextRules.push(rule);
-  }
+  const normalizedRuleIds = ['autofireAssault', 'autofireSweep'];
+  const nextRules = withoutExistingRules(currentRules, normalizedRuleIds);
+  nextRules.push(...rulesToAdd);
 
   const patch = {
     'system.executionModel': 'ACTIVE',
@@ -141,7 +159,7 @@ async function normalizeAutofireWeaponFeat(item, options = {}) {
     ...selectedChoicePatch(item)
   };
 
-  const rulesChanged = nextRules.length !== currentRules.length;
+  const rulesChanged = JSON.stringify(nextRules) !== JSON.stringify(currentRules);
   const modelChanged = item.system?.executionModel !== 'ACTIVE'
     || item.system?.subType !== 'ATTACK_OPTION'
     || item.system?.abilityMeta?.mechanicsMode !== 'selected_attack_option'
