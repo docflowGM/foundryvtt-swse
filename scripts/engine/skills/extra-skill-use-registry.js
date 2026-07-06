@@ -37,12 +37,38 @@ const BASE_EXTRA_SKILL_USES = [
     tags: ['deception', 'shapeshift', 'impersonation']
   },
   {
+    id: 'deception.disturbing-presence-movement',
+    key: 'disturbing-presence-movement',
+    skill: 'deception',
+    name: 'Move Through Threatened Area',
+    actionCost: 'part-of-move',
+    dc: 15,
+    movementCostMultiplier: 2,
+    tags: ['movement', 'deception', 'threatened-area']
+  },
+  {
     id: 'persuasion.intimidate',
     key: 'intimidate',
     skill: 'persuasion',
     name: 'Intimidate',
     actionCost: 'standard',
     tags: ['combat', 'persuasion', 'intimidate']
+  },
+  {
+    id: 'persuasion.haggle',
+    key: 'haggle',
+    skill: 'persuasion',
+    name: 'Haggle',
+    actionCost: 'varies',
+    tags: ['social', 'commerce', 'persuasion', 'haggle']
+  },
+  {
+    id: 'persuasion.bribery',
+    key: 'bribery',
+    skill: 'persuasion',
+    name: 'Bribery',
+    actionCost: 'varies',
+    tags: ['social', 'commerce', 'persuasion', 'bribery']
   },
   {
     id: 'acrobatics.tumble',
@@ -123,6 +149,16 @@ const BASE_EXTRA_SKILL_USES = [
     actionCost: 'three-swift-actions',
     trainedOnly: true,
     tags: ['technical', 'mechanics', 'vehicle', 'power']
+  },
+  {
+    id: 'endurance.restore-shields',
+    key: 'restore-shields',
+    skill: 'endurance',
+    name: 'Restore Shields',
+    actionCost: 'three-swift-actions',
+    dc: 20,
+    restoreShieldRating: 5,
+    tags: ['droid', 'endurance', 'shields']
   },
   {
     id: 'treat-injury.surgery',
