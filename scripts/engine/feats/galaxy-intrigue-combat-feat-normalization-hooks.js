@@ -88,6 +88,84 @@ function grazingShotRules() {
   }];
 }
 
+function indomitablePersonalityRules() {
+  return [{
+    type: 'DEFENSE_REACTION_RESOURCE',
+    id: 'indomitablePersonalityCharismaToWill',
+    trigger: 'willDefenseAssault',
+    defense: 'will',
+    actionType: 'reaction',
+    oncePer: 'encounter',
+    bonusAbility: 'charisma',
+    bonusType: 'untyped',
+    duration: 'untilEndOfNextTurn',
+    source: 'Indomitable Personality',
+    label: 'Indomitable Personality: Reaction adds Charisma modifier to Will Defense'
+  }];
+}
+
+function meatShieldRules() {
+  return [{
+    type: 'ADVISORY_COVER_RIDER',
+    id: 'meatShieldCoverFromSoftCoverAttacker',
+    trigger: 'opponentAttacksYouWhileInCoverProvidedByCreature',
+    requiresAttackerInCoverProvidedByCharacterCreatureOrDroid: true,
+    grantsCoverAgainstTriggeringOpponent: true,
+    advisoryOnly: true,
+    source: 'Meat Shield',
+    label: 'Meat Shield: you are treated as in Cover from an attacker using another creature as Cover'
+  }];
+}
+
+function sadisticStrikeRules() {
+  return [{
+    type: 'COUP_DE_GRACE_RIDER',
+    id: 'sadisticStrikeConditionTrackFear',
+    trigger: 'coupDeGraceDeliveredToHelplessCreature',
+    targetCondition: 'helpless',
+    affectedTargets: 'allOpponentsWithinLineOfSight',
+    conditionTrackSteps: 1,
+    duration: 'untilEndOfEncounter',
+    source: 'Sadistic Strike',
+    label: 'Sadistic Strike: opponents in line of sight move -1 CT after Coup de Grace'
+  }];
+}
+
+function standTallRules() {
+  return [{
+    type: 'ALLY_REACTION_RIDER',
+    id: 'standTallAlliesReactWhenYouTakeDamage',
+    trigger: 'sourceTakesDamage',
+    oncePer: 'encounter',
+    advisoryOnly: true,
+    allies: {
+      withinSquares: 6,
+      requiresLineOfSight: true,
+      reaction: {
+        type: 'singleAttack',
+        target: 'damagingSource'
+      }
+    },
+    source: 'Stand Tall',
+    label: 'Stand Tall: allies within 6 squares and line of sight may react with one attack'
+  }];
+}
+
+function wookieeGripRules() {
+  return [{
+    type: 'ADVISORY_WEAPON_HANDLING_RIDER',
+    id: 'wookieeGripOneHandTwoHandedWeapon',
+    requiresProficientWeapon: true,
+    requiresNormallyTwoHandedWeapon: true,
+    permitsOneHandedUse: true,
+    attackPenalty: -2,
+    appliesToAttackTypes: ['melee', 'ranged'],
+    advisoryOnly: true,
+    source: 'Wookiee Grip',
+    label: 'Wookiee Grip: one-hand a normally two-handed proficient weapon at -2 attack'
+  }];
+}
+
 function specForFeat(item) {
   switch (compact(item?.name)) {
     case 'demoralizingstrike':
@@ -96,6 +174,16 @@ function specForFeat(item) {
       return { rules: flecheRules(), executionModel: 'ACTIVE', subType: 'ATTACK_OPTION', mode: 'charge_attack_rider', scope: 'charge_attack_resolution_context' };
     case 'grazingshot':
       return { rules: grazingShotRules(), executionModel: 'ACTIVE', subType: 'COMBAT_ACTION', mode: 'special_ranged_attack_action', scope: 'two_target_ranged_attack_context' };
+    case 'indomitablepersonality':
+      return { rules: indomitablePersonalityRules(), executionModel: 'PASSIVE', subType: 'REACTION', mode: 'defense_reaction_resource', scope: 'will_defense_assault_context' };
+    case 'meatshield':
+      return { rules: meatShieldRules(), executionModel: 'PASSIVE', subType: 'STATE', mode: 'advisory_cover_rider', scope: 'incoming_attack_cover_context' };
+    case 'sadisticstrike':
+      return { rules: sadisticStrikeRules(), executionModel: 'PASSIVE', subType: 'RULE', mode: 'coup_de_grace_rider', scope: 'coup_de_grace_resolution_context' };
+    case 'standtall':
+      return { rules: standTallRules(), executionModel: 'PASSIVE', subType: 'REACTION', mode: 'ally_reaction_rider', scope: 'source_takes_damage_context' };
+    case 'wookieegrip':
+      return { rules: wookieeGripRules(), executionModel: 'PASSIVE', subType: 'STATE', mode: 'advisory_weapon_handling_rider', scope: 'two_handed_weapon_one_hand_context' };
     default:
       return null;
   }
