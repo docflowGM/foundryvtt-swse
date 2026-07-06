@@ -2,8 +2,20 @@ import { FeatStep } from '/systems/foundryvtt-swse/scripts/apps/progression-fram
 import { FeatSlotValidator } from '/systems/foundryvtt-swse/scripts/engine/progression/feats/feat-slot-validator.js';
 import { PrerequisiteChecker } from '/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js';
 import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
+import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
 
 const PATCH_FLAG = Symbol.for('swse.featHousekeepingRuntimePatches.v1');
+const HOOK_FLAG = Symbol.for('swse.featHousekeepingRuntimePatches.hooks.v1');
+
+const HOUSERULE_FEAT_GRANTS = [
+  { setting: 'weaponFinesseDefault', name: 'Weapon Finesse' },
+  { setting: 'pointBlankShotDefault', name: 'Point Blank Shot' },
+  { setting: 'powerAttackDefault', name: 'Power Attack' },
+  { setting: 'preciseShotDefault', name: 'Precise Shot' },
+  { setting: 'dodgeDefault', name: 'Dodge' },
+  { setting: 'armoredDefenseForAll', name: 'Armored Defense' },
+];
+const HOUSERULE_FEAT_SETTINGS = new Set(HOUSERULE_FEAT_GRANTS.map(entry => entry.setting));
 
 function normalizeFeatName(value) {
   return String(value || '')
@@ -26,16 +38,7 @@ function featNamesMatch(a, b) {
 }
 
 export function getHouseruleGrantedFeatNames() {
-  const grants = [
-    { setting: 'weaponFinesseDefault', name: 'Weapon Finesse' },
-    { setting: 'pointBlankShotDefault', name: 'Point Blank Shot' },
-    { setting: 'powerAttackDefault', name: 'Power Attack' },
-    { setting: 'preciseShotDefault', name: 'Precise Shot' },
-    { setting: 'dodgeDefault', name: 'Dodge' },
-    { setting: 'armoredDefenseForAll', name: 'Armored Defense' },
-  ];
-
-  return grants
+  return HOUSERULE_FEAT_GRANTS
     .filter(({ setting }) => HouseRuleService.isEnabled(setting))
     .map(({ name }) => name);
 }
@@ -62,6 +65,10 @@ function getCurrentSlotSelections(step, shell = null) {
   return Array.isArray(step?._selectedFeatIds) ? step._selectedFeatIds : [];
 }
 
+function getFeatStableId(feat) {
+  return String(feat?._id || feat?.id || feat?.name || '');
+}
+
 function hasRemainingRepeatableSlot(step, featOrId = null, shell = null) {
   const required = getRequiredFeatCount(step, shell);
   if (required <= 1) return false;
@@ -75,7 +82,39 @@ function hasRemainingRepeatableSlot(step, featOrId = null, shell = null) {
   return typeof step?._isRepeatable === 'function' && step._isRepeatable(feat?.name || featOrId);
 }
 
-async function patchRepeatableFeatSelectionUi() {
+function applyHouseruleGrantStatus(step, legal = []) {
+  const legalIds = new Set((legal || []).map(getFeatStableId));
+  const grantedIds = new Set();
+
+  for (const feat of step?._allFeats || []) {
+    if (!actorHasHouseruleGrantedFeat(feat?.name)) continue;
+    const featId = getFeatStableId(feat);
+    grantedIds.add(featId);
+    feat.isOwned = true;
+    feat.isGranted = true;
+    feat.isAvailable = false;
+    feat.unavailabilityReason = 'Granted by house rule.';
+    feat.blockingReasons = [];
+    feat.missingPrerequisites = [];
+    if (step?._availabilityByFeatId && featId) {
+      const previous = step._availabilityByFeatId.get(featId) || {};
+      step._availabilityByFeatId.set(featId, {
+        ...previous,
+        isOwned: true,
+        isGranted: true,
+        isAvailable: false,
+        unavailabilityReason: 'Granted by house rule.',
+        blockingReasons: [],
+        missingPrerequisites: [],
+      });
+    }
+  }
+
+  if (!grantedIds.size) return legal;
+  return (legal || []).filter(feat => !grantedIds.has(getFeatStableId(feat)) || !legalIds.has(getFeatStableId(feat)));
+}
+
+function patchRepeatableFeatSelectionUi() {
   if (!FeatStep?.prototype || FeatStep.prototype[PATCH_FLAG]) return;
   const proto = FeatStep.prototype;
 
@@ -91,19 +130,21 @@ async function patchRepeatableFeatSelectionUi() {
 
   const originalGetLegalFeats = proto._getLegalFeats;
   proto._getLegalFeats = async function patchedGetLegalFeats(actor, shell) {
-    const legal = typeof originalGetLegalFeats === 'function'
+    let legal = typeof originalGetLegalFeats === 'function'
       ? await originalGetLegalFeats.call(this, actor, shell)
       : [];
+
+    legal = applyHouseruleGrantStatus(this, legal);
 
     const required = getRequiredFeatCount(this, shell);
     const currentSelections = getCurrentSlotSelections(this, shell);
     if (required <= 1 || currentSelections.length >= required) return legal;
 
-    const legalIds = new Set((legal || []).map(feat => String(feat?._id || feat?.id || feat?.name || '')));
+    const legalIds = new Set((legal || []).map(getFeatStableId));
     const currentNames = currentSelections.map(entry => entry?.name || entry?.id || entry?._id || entry).filter(Boolean);
 
     for (const feat of this._allFeats || []) {
-      const featId = String(feat?._id || feat?.id || feat?.name || '');
+      const featId = getFeatStableId(feat);
       if (!featId || legalIds.has(featId)) continue;
       if (typeof this._isRepeatable !== 'function' || !this._isRepeatable(feat?.name)) continue;
       if (!currentNames.some(name => featNamesMatch(name, feat?.name))) continue;
@@ -162,7 +203,16 @@ function patchHouseruleFeatOwnership() {
   PrerequisiteChecker[PATCH_FLAG] = true;
 }
 
+function registerHouseRuleCacheInvalidation() {
+  if (globalThis[HOOK_FLAG]) return;
+  globalThis[HOOK_FLAG] = true;
+  Hooks.on('swse:houserule-changed', (key) => {
+    if (HOUSERULE_FEAT_SETTINGS.has(key)) AbilityEngine.clearAcquisitionCache?.();
+  });
+}
+
 export function registerFeatHousekeepingRuntimePatches() {
   patchHouseruleFeatOwnership();
   patchRepeatableFeatSelectionUi();
+  registerHouseRuleCacheInvalidation();
 }
