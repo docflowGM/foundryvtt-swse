@@ -28,6 +28,15 @@ const BASE_EXTRA_SKILL_USES = [
     tags: ['combat', 'deception', 'feint']
   },
   {
+    id: 'deception.impersonate-specific-person',
+    key: 'impersonate-specific-person',
+    skill: 'deception',
+    name: 'Impersonate Specific Person',
+    actionCost: 'varies',
+    dcBand: 'moderate',
+    tags: ['deception', 'shapeshift', 'impersonation']
+  },
+  {
     id: 'persuasion.intimidate',
     key: 'intimidate',
     skill: 'persuasion',
@@ -42,6 +51,17 @@ const BASE_EXTRA_SKILL_USES = [
     name: 'Tumble',
     actionCost: 'move',
     tags: ['movement', 'acrobatics', 'tumble']
+  },
+  {
+    id: 'perception.scavenge-building-materials',
+    key: 'scavenge-building-materials',
+    skill: 'perception',
+    name: 'Scavenge Building Materials',
+    actionCost: '1 hour',
+    resultDisplay: 'creditsScavenged',
+    resultMultiplier: 30,
+    resultUnit: 'credits',
+    tags: ['perception', 'scavenging', 'construction-materials']
   },
   {
     id: 'gather-information.gather-information',
@@ -78,6 +98,33 @@ const BASE_EXTRA_SKILL_USES = [
     tags: ['technical', 'mechanics', 'repair']
   },
   {
+    id: 'mechanics.repair-droid',
+    key: 'repair-droid',
+    skill: 'mechanics',
+    name: 'Repair Droid',
+    actionCost: '1 hour',
+    trainedOnly: true,
+    tags: ['technical', 'mechanics', 'repair', 'droid']
+  },
+  {
+    id: 'mechanics.recharge-shields',
+    key: 'recharge-shields',
+    skill: 'mechanics',
+    name: 'Recharge Shields',
+    actionCost: 'three-swift-actions',
+    trainedOnly: true,
+    tags: ['technical', 'mechanics', 'vehicle', 'shields']
+  },
+  {
+    id: 'mechanics.reroute-power',
+    key: 'reroute-power',
+    skill: 'mechanics',
+    name: 'Reroute Power',
+    actionCost: 'three-swift-actions',
+    trainedOnly: true,
+    tags: ['technical', 'mechanics', 'vehicle', 'power']
+  },
+  {
     id: 'treat-injury.surgery',
     key: 'surgery',
     skill: 'treatInjury',
@@ -95,6 +142,16 @@ const BASE_EXTRA_SKILL_USES = [
     trainedOnly: true,
     dc: 20,
     tags: ['medical', 'treat-injury', 'surgery', 'cybernetics']
+  },
+  {
+    id: 'treat-injury.install-bio-implant',
+    key: 'install-bio-implant',
+    skill: 'treatInjury',
+    name: 'Install Bio-Implant',
+    actionCost: '1 hour',
+    trainedOnly: true,
+    dc: 20,
+    tags: ['medical', 'treat-injury', 'surgery', 'bio-implant']
   }
 ];
 
