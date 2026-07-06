@@ -1,0 +1,68 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-06",
+  "purpose": "Record Aid Another action split and combat feat runtime support for Force Unleashed / Scum and Villainy batch.",
+  "aidAnother": {
+    "status": "split_into_three_standard_action_cards_with_rider_adapter",
+    "actions": [
+      {
+        "name": "Aid Another (Skill)",
+        "mechanic": "Standard Action. Roll same skill or ability check; DC 10 grants ally +2. Cannot Take 10. Exposes aidAnotherContext=skill."
+      },
+      {
+        "name": "Aid Another (Attack)",
+        "mechanic": "Standard Action. Attack Reflex Defense 10; success grants one ally +2 on one next attack against that opponent. Exposes aidAnotherContext=attack."
+      },
+      {
+        "name": "Aid Another (Suppress)",
+        "mechanic": "Standard Action. Attack Reflex Defense 10; success gives opponent -2 on its next attack roll. Exposes aidAnotherContext=suppress."
+      }
+    ],
+    "adapter": "AidAnotherActionAdapter injects the three cards into CombatActionsMapper, renders guided chat cards, and exposes collectAidAnotherRiders(actor, context) for feat/talent metadata."
+  },
+  "implementedEntries": [
+    {
+      "name": "Angled Throw",
+      "status": "implemented_grenade_cover_override_option",
+      "mechanic": "Active grenade/grenade-like attack option. Runtime helper resolves post-roll Cover/Improved Cover ignore when attack total exceeds Reflex 15. Total Cover is not ignored."
+    },
+    {
+      "name": "Blaster Barrage",
+      "status": "implemented_autofire_damage_rider_metadata_and_helper",
+      "mechanic": "Autofire damage rider. When Autofire damages at least one target, helper exposes target-scoped +2 circumstance bonus for allies' Autofire attacks against the same target until beginning of source next turn."
+    },
+    {
+      "name": "Crossfire",
+      "status": "implemented_soft_cover_miss_rider_metadata_and_helper",
+      "mechanic": "Ranged miss rider. If a missed target had Soft Cover, helper exposes once/round immediate attack against soft-cover provider with same weapon and same attack bonus."
+    },
+    {
+      "name": "Deadly Sniper",
+      "status": "implemented_hidden_target_first_attack_rider",
+      "mechanic": "Ranged attack modifier. When target is unaware and context indicates first attack this turn, adds +2 attack and +1 weapon die damage."
+    },
+    {
+      "name": "Desperate Gambit",
+      "status": "implemented_miss_reroll_resource_metadata_and_helper",
+      "mechanic": "Miss reroll resource. On miss, helper exposes once/turn reroll with keep-second-result and Reflex penalty metadata: -2, or -5 if the miss was a natural 1, until end of next turn."
+    },
+    {
+      "name": "Wicked Strike",
+      "status": "implemented_rapid_strike_secondary_target_hit_rider",
+      "mechanic": "Rapid Strike hit rider. On damaging single non-Area melee Rapid Strike, helper exposes once/turn immediate secondary attack at -2 against a second target within reach; hit deals half original damage."
+    }
+  ],
+  "automationBoundary": {
+    "Angled Throw": "Attack workflow must pass grenade context, selected option state, and final attack total before cover override can be consumed.",
+    "Blaster Barrage": "Autofire workflow must persist target-scoped ally bonus state and expire it at beginning of source next turn.",
+    "Crossfire": "Ranged attack workflow must pass soft-cover provider identity and enforce once/round use.",
+    "Desperate Gambit": "Attack workflow must present/spend the reroll and apply the Reflex penalty effect after use.",
+    "Wicked Strike": "Rapid Strike workflow must present/spend secondary attack and apply half original damage on hit."
+  },
+  "changedFiles": [
+    "scripts/engine/combat/aid-another-action-adapter.js",
+    "scripts/engine/feats/force-scoundrel-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/force-scoundrel-combat-runtime-patches.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}
