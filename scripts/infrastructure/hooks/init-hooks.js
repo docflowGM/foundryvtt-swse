@@ -59,8 +59,6 @@ import { registerStarshipVehicleFeatNormalizationHooks } from "/systems/foundryv
 import { registerStarshipVehicleRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/starship-vehicle-runtime-patches.js";
 import { registerAttackNegationFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/attack-negation-feat-normalization-hooks.js";
 import { registerAttackNegationRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/attack-negation-runtime-patches.js";
-import { registerSkillTeamworkFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/skill-teamwork-feat-normalization-hooks.js";
-import { registerSkillTeamworkRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/skill-teamwork-runtime-patches.js";
 import { registerCombatMobilityPowerFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/combat-mobility-power-feat-normalization-hooks.js";
 import { registerCombatMobilityPowerRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/combat-mobility-power-runtime-patches.js";
 
@@ -126,8 +124,6 @@ export function registerInitHooks() {
         registerStarshipVehicleRuntimePatches();
         registerAttackNegationFeatNormalizationHooks();
         registerAttackNegationRuntimePatches();
-        registerSkillTeamworkFeatNormalizationHooks();
-        registerSkillTeamworkRuntimePatches();
         registerCombatMobilityPowerFeatNormalizationHooks();
         registerCombatMobilityPowerRuntimePatches();
         registerSpeciesOriginFeatNormalizationHooks();
