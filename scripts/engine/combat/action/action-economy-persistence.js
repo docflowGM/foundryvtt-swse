@@ -41,11 +41,27 @@ export class ActionEconomyPersistence {
     return String(explicit);
   }
 
+  static #allowsRepeatedReactionForTrigger(metadata = {}) {
+    const candidates = [
+      metadata.reactionKey,
+      metadata.reactionFamily,
+      metadata.talentName,
+      metadata.skillUse?.key,
+      metadata.skillUse?.label,
+      metadata.source,
+      metadata.sourceName,
+      metadata.actionName
+    ].map(value => String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-'));
+    return candidates.some(value => value === 'block' || value === 'deflect' || value === 'block-deflect' || value === 'block-deflect-talent');
+  }
+
   static #hasSpentReactionForTrigger(turnState = {}, metadata = {}) {
+    if (this.#allowsRepeatedReactionForTrigger(metadata)) return false;
     const triggerKey = this.#reactionTriggerKey(metadata);
     if (!triggerKey) return false;
     return (Array.isArray(turnState.history) ? turnState.history : []).some(entry => (
       entry?.type === 'reaction'
+      && !this.#allowsRepeatedReactionForTrigger(entry?.metadata ?? {})
       && this.#reactionTriggerKey(entry?.metadata ?? {}) === triggerKey
     ));
   }
@@ -68,7 +84,8 @@ export class ActionEconomyPersistence {
         max: reactionMax,
         unlimitedByRule: true,
         limitBasis: 'trigger',
-        oneReactionPerTrigger: true
+        oneReactionPerTrigger: true,
+        repeatedTriggerExceptions: ['block', 'deflect']
       },
       history: Array.isArray(turnState.history) ? turnState.history : []
     };
@@ -217,7 +234,8 @@ export class ActionEconomyPersistence {
         max: this.getReactionMax(actor),
         unlimitedByRule: true,
         limitBasis: 'trigger',
-        oneReactionPerTrigger: true
+        oneReactionPerTrigger: true,
+        repeatedTriggerExceptions: ['block', 'deflect']
       }
     }, {
       type: 'reaction',
