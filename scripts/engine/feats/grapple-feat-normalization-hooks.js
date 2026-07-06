@@ -76,14 +76,18 @@ function rulesForFeat(name) {
       maneuverUnlock('crush', 'Rancor Crush', {
         requiresTargetState: 'pinned',
         damage: true,
+        requiresConcurrentFeatUse: ['Pin', 'Crush'],
         summary: 'Counts as a Crush unlock for actors that receive Rancor Crush without a separate Crush metadata rule.'
       }),
       {
         type: 'CONDITION_SHIFT_ON_GRAPPLE_MANEUVER',
+        id: 'rancorCrushConditionShiftOnPinCrush',
         maneuver: 'crush',
+        requiresTargetState: 'pinned',
+        requiresConcurrentFeatUse: ['Pin', 'Crush'],
         steps: 1,
         source: 'Rancor Crush',
-        summary: 'When Crush succeeds, move the target -1 step on the Condition Track.'
+        summary: 'When a Pin succeeds and Crush is used at the same time, move the target -1 step on the Condition Track in addition to Crush damage.'
       }
     ];
   }
@@ -91,11 +95,17 @@ function rulesForFeat(name) {
   if (normalized === 'multi grab' || normalized === 'multi-grab') {
     return [{
       type: 'MULTI_GRAB',
+      id: 'multiGrabTwoAdjacentTargets',
       source: 'Multi-Grab',
+      actionId: 'multi-grab',
+      actionType: 'standard',
       maxTargets: 2,
+      targetSelector: 'twoTargetsAdjacentToYou',
+      requiresEmptyHands: 2,
+      separateAttackRolls: true,
       delegatesTo: 'GrappleFeatActions.multiGrab',
       adjacencyAdvisory: true,
-      summary: 'Allows assisted grab attempts against up to two selected targets. Adjacency/anatomy remains GM/player adjudicated.'
+      summary: 'As a Standard Action, make separate Grab attacks against up to two adjacent targets. Requires two empty hands; adjacency and hand availability are workflow/GM context.'
     }];
   }
 
@@ -113,12 +123,24 @@ function rulesForFeat(name) {
   if (normalized === 'knock heads') {
     return [{
       type: 'GRAPPLE_ADVISORY_RIDER',
-      id: 'knockHeads',
+      id: 'knockHeadsMultiGrabRider',
       source: 'Knock Heads',
-      trigger: 'multipleGrappledOrGrabbedTargets',
-      requiresMultipleTargets: true,
+      trigger: 'afterSuccessfulMultiGrabAgainstTwoTargets',
+      requiresManeuver: 'multi-grab',
+      requiresTwoGrabbedTargets: true,
+      requiresTargetsAdjacentToActorAndEachOther: true,
+      immediate: true,
+      damage: {
+        automatic: true,
+        dice: '1d6',
+        abilityModifier: 'strength',
+        damageType: 'bludgeoning',
+        appliesToEachTarget: true
+      },
+      damageThresholdModifier: -5,
+      preserveGrabbedState: true,
       spatialAdvisory: true,
-      summary: 'Stores metadata for a multi-target grapple rider. Exact target configuration and damage/effect resolution remain GM/player adjudicated until a dedicated workflow exists.'
+      summary: 'After a successful Multi-Grab against two targets adjacent to you and each other, immediately deal 1d6 + Strength modifier bludgeoning damage to each, compare against DT as 5 lower, and keep both targets Grabbed.'
     }];
   }
 
