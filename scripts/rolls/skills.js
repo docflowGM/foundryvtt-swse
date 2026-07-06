@@ -48,7 +48,10 @@ function normalizeUseKey(value = '') {
 function buildSkillResultRiders(actor, effectiveSkillKey, rollTotal, skillContext = {}) {
   const riders = [];
   const useKey = normalizeUseKey(skillContext.useKey ?? skillContext.extraUseId ?? skillContext.skillUse?.key ?? skillContext.skillUse?.id ?? '');
-  if (effectiveSkillKey === 'perception' && actorHasFeat(actor, 'Scavenger') && (useKey === 'scavenge-building-materials' || useKey === 'scavenger-scavenge-building-materials')) {
+  const isScavengeUse = useKey === 'scavenge-building-materials'
+    || useKey === 'perception-scavenge-building-materials'
+    || useKey === 'scavenger-scavenge-building-materials';
+  if (effectiveSkillKey === 'perception' && actorHasFeat(actor, 'Scavenger') && isScavengeUse) {
     const credits = Math.max(0, Number(rollTotal) || 0) * 30;
     riders.push({
       id: 'scavenger-scavenged-materials-value',
