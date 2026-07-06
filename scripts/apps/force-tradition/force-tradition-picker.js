@@ -110,11 +110,30 @@ export async function openForceTraditionPicker(actor, { renderSheet = null } = {
   return selected;
 }
 
+function ensurePickerButton(root) {
+  const select = root.querySelector('.fs-tradition-select[data-action="set-force-tradition"], select[name="system.forceTradition"]');
+  if (!select || select.dataset.forceTraditionPickerEnhanced === 'true') return;
+
+  const currentLabel = getTraditionLabel(select.value);
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'mv fs-tradition-picker-btn';
+  button.dataset.action = 'open-force-tradition-picker';
+  button.textContent = currentLabel === 'No Tradition' ? 'Choose Tradition' : currentLabel;
+  button.title = 'Choose this actor\'s Force tradition';
+
+  select.dataset.forceTraditionPickerEnhanced = 'true';
+  select.style.display = 'none';
+  select.insertAdjacentElement('afterend', button);
+}
+
 function bindForceTraditionPicker(app, html) {
   const root = html instanceof HTMLElement ? html : html?.[0];
   if (!root) return;
   const actor = getActorFromSheetApp(app);
   if (!actor) return;
+
+  ensurePickerButton(root);
 
   root.querySelectorAll('[data-action="open-force-tradition-picker"]').forEach((button) => {
     if (button.dataset.forceTraditionPickerBound === 'true') return;
