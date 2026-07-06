@@ -58,7 +58,7 @@ export class SecondWindRules {
   static canUseSecondWind(actor, options = {}, featRules = {}) {
     const heroicLevel = Number(actor.system?.heroicLevel ?? actor.system?.level ?? 0);
     const isHeroic = actor.type === 'character' || heroicLevel > 0;
-    const canNonHeroicSecondWind = featRules.extraUseMultiplier > 0 || featRules.allowNonHeroicUse === true;
+    const canNonHeroicSecondWind = featRules.extraUseMultiplier > 0 || featRules.dailyUseBonus > 0 || featRules.allowNonHeroicUse === true;
 
     if (!isHeroic && !canNonHeroicSecondWind) {
       return { allowed: false, reason: `${actor.name} is not eligible to use Second Wind` };
