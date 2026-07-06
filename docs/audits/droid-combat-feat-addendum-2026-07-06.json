@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-06",
+  "purpose": "Record combat implementation pass for droid-focused feats from Galaxy at War and Scavenger's Guide to Droids.",
+  "implementedEntries": [
+    {
+      "name": "Disabler",
+      "status": "implemented_ion_weapon_mutator_runtime",
+      "mechanic": "Ion Grenade exposes burst radius 3 squares, Ion Pistol sets damage die size to d8, and Ion Rifle gains Accurate while weapon is proficient. Implemented through Disabler weapon mutation metadata and CombatOptionResolver runtime collection."
+    },
+    {
+      "name": "Aiming Accuracy",
+      "status": "implemented_full_round_aim_action_and_runtime_helper",
+      "mechanic": "Adds actor-aware Aiming Accuracy combat action for actors with the feat. The action is full-round and exposes +5 next-attack setup against the aimed target in the following round if line of sight remains."
+    },
+    {
+      "name": "Mechanical Martial Arts",
+      "status": "implemented_unarmed_hit_rider_metadata_and_helper",
+      "mechanic": "On successful damaging unarmed attack against organic target, helper exposes -5 penalty to target melee attack rolls and melee damage rolls. Normal duration is until start of source next turn; AoO duration is until start of target next turn."
+    },
+    {
+      "name": "Multi-Targeting",
+      "status": "implemented_aim_action_rider_metadata_and_helper",
+      "mechanic": "Aim action helper exposes that swift actions used to Aim can be spent across more than one round, other targets may be attacked before Aim completion, and Aim is lost if target leaves line of sight."
+    },
+    {
+      "name": "Slammer",
+      "status": "implemented_special_unarmed_attack_action_metadata_and_helper",
+      "mechanic": "Standard-action droid appendage unarmed attack metadata/helper: melee attack, unarmed damage with double Strength bonus, persistent condition if damage exceeds DT, and +1 unarmed weapon die rider when actor also has Crush."
+    },
+    {
+      "name": "Tool Frenzy",
+      "status": "implemented_special_unarmed_tool_appendage_attack_metadata_and_helper",
+      "mechanic": "Standard-action droid tool-appendage unarmed attack metadata/helper: +2 attack, use highest-rated appendage damage die, and source takes -2 Reflex until end of next turn. True melee/ranged weapons are excluded by metadata."
+    }
+  ],
+  "automationBoundary": {
+    "Disabler": "Attack/template workflow must consume areaTemplateMutations for Ion Grenade burst radius and damageDieSizeSet for Ion Pistol if the current damage formula builder does not already read these fields.",
+    "Aiming Accuracy": "Action execution must persist aimed target state and pass it into attack resolution next round. Runtime exposes getAimActionRiders and the action card points to that helper.",
+    "Mechanical Martial Arts": "Damage workflow must call getUnarmedHitRiders after unarmed damage is dealt and apply/expire the target penalty effect.",
+    "Multi-Targeting": "Aim workflow must call getAimActionRiders when validating Aim timing and line-of-sight persistence.",
+    "Slammer": "Special attack workflow must call getDroidSpecialAttackActions and construct the virtual unarmed attack/damage packet; persistent condition application remains workflow-side.",
+    "Tool Frenzy": "Special attack workflow must use existing droid appendage data to resolve highest-rated appendage damage die and apply/expire the Reflex penalty."
+  },
+  "changedFiles": [
+    "scripts/engine/feats/droid-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/droid-combat-runtime-patches.js",
+    "scripts/engine/combat/droid-combat-action-adapter.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}
