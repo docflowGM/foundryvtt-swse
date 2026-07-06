@@ -32,6 +32,7 @@ import { registerMobilityPositioningFeatNormalizationHooks } from "/systems/foun
 import { registerMobilityPositioningRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/mobility-positioning-runtime-patches.js";
 import { registerDefenseAvoidanceFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/defense-avoidance-feat-normalization-hooks.js";
 import { registerDefenseAvoidanceRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/defense-avoidance-runtime-patches.js";
+import { registerActionSpeedRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/action-speed-runtime-patches.js";
 import { registerAttackOptionsFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/attack-options-feat-normalization-hooks.js";
 import { registerMeleeCloseCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/melee-close-combat-feat-normalization-hooks.js";
 import { registerRangedCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/ranged-combat-feat-normalization-hooks.js";
@@ -75,6 +76,7 @@ export function registerInitHooks() {
         registerMobilityPositioningRuntimePatches();
         registerDefenseAvoidanceFeatNormalizationHooks();
         registerDefenseAvoidanceRuntimePatches();
+        registerActionSpeedRuntimePatches();
         registerAttackOptionsFeatNormalizationHooks();
         registerMeleeCloseCombatFeatNormalizationHooks();
         registerRangedCombatFeatNormalizationHooks();
