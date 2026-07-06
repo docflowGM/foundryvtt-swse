@@ -32,11 +32,14 @@ function actorItems(actor) {
   catch (_err) { return []; }
 }
 
-function actorHasFeat(actor, featName) {
-  const wanted = normalizeKey(featName);
-  return actorItems(actor).some(item => item?.type === 'feat'
-    && item?.system?.disabled !== true
-    && normalizeKey(item.name) === wanted);
+function abilityModifier(actor, ability) {
+  const key = normalizeKey(ability).slice(0, 3);
+  const value = actor?.system?.abilities?.[key]?.mod
+    ?? actor?.system?.attributes?.[key]?.mod
+    ?? actor?.system?.stats?.[key]?.mod
+    ?? 0;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : 0;
 }
 
 function collectRules(actor, type) {
@@ -91,6 +94,30 @@ function isRangedAttack(weapon, context = {}) {
     .filter(Boolean)
     .join(' ');
   return /ranged|blaster|pistol|rifle|bowcaster|slugthrower|grenade|thrown/.test(text);
+}
+
+function weaponText(weapon, context = {}) {
+  const system = weapon?.system ?? {};
+  return [
+    context.weaponCategory,
+    context.weaponType,
+    context.weaponGroup,
+    weapon?.name,
+    system.weaponType,
+    system.weaponGroup,
+    system.weaponCategory,
+    system.group,
+    system.category,
+    system.type,
+    system.subtype,
+    Array.isArray(system.traits) ? system.traits.join(' ') : system.traits,
+    Array.isArray(system.properties) ? system.properties.join(' ') : system.properties
+  ].map(normalizeKey).filter(Boolean).join(' ');
+}
+
+function isProficientContext(context = {}) {
+  const explicit = context.weaponProficient ?? context.isWeaponProficient ?? context.workflowContext?.weaponProficient ?? context.workflowContext?.isWeaponProficient;
+  return explicit === undefined ? true : contextAffirms(explicit);
 }
 
 function getAttackOfOpportunityDamageRiders(actor, context = {}) {
@@ -154,6 +181,112 @@ function getSpecialRangedAttackActions(actor, weapon, context = {}) {
   }));
 }
 
+function getDefenseReactionResources(actor, context = {}) {
+  if (!actor) return [];
+  const trigger = normalizeKey(context.trigger ?? context.workflowContext?.trigger ?? 'willDefenseAssault');
+  return collectRules(actor, 'DEFENSE_REACTION_RESOURCE').filter(rule => !trigger || normalizeKey(rule.trigger) === trigger).map(rule => {
+    const key = `${rule.id}:${rule.sourceId}`;
+    const bonus = abilityModifier(actor, rule.bonusAbility ?? 'charisma');
+    return {
+      id: rule.id,
+      key,
+      source: rule.sourceName ?? rule.source ?? rule.label,
+      label: rule.label,
+      type: 'defenseReactionResource',
+      actionType: rule.actionType ?? 'reaction',
+      oncePer: rule.oncePer,
+      available: EncounterUseTracker.canUse(actor, key, { oncePer: rule.oncePer }),
+      defense: rule.defense,
+      defenseBonus: bonus,
+      bonusAbility: rule.bonusAbility,
+      bonusType: rule.bonusType,
+      duration: rule.duration,
+      rule
+    };
+  });
+}
+
+async function spendDefenseReactionResource(actor, resourceKey) {
+  return EncounterUseTracker.checkAndMarkUsed(actor, resourceKey, { oncePer: 'encounter' });
+}
+
+function getCoverRiders(actor, context = {}) {
+  if (!actor) return [];
+  const qualifies = contextAffirms(context.attackerInCoverProvidedByCharacterCreatureOrDroid)
+    || contextAffirms(context.workflowContext?.attackerInCoverProvidedByCharacterCreatureOrDroid);
+  if (!qualifies) return [];
+  return collectRules(actor, 'ADVISORY_COVER_RIDER').map(rule => ({
+    id: rule.id,
+    source: rule.sourceName ?? rule.source ?? rule.label,
+    label: rule.label,
+    type: 'advisoryCoverRider',
+    grantsCoverAgainstTriggeringOpponent: rule.grantsCoverAgainstTriggeringOpponent === true,
+    advisoryOnly: rule.advisoryOnly !== false,
+    rule
+  }));
+}
+
+function getCoupDeGraceRiders(actor, context = {}) {
+  if (!actor) return [];
+  const trigger = normalizeKey(context.trigger ?? context.workflowContext?.trigger ?? 'coupDeGraceDeliveredToHelplessCreature');
+  return collectRules(actor, 'COUP_DE_GRACE_RIDER').filter(rule => !trigger || normalizeKey(rule.trigger) === trigger).map(rule => ({
+    id: rule.id,
+    source: rule.sourceName ?? rule.source ?? rule.label,
+    label: rule.label,
+    type: 'coupDeGraceRider',
+    affectedTargets: rule.affectedTargets,
+    conditionTrackSteps: rule.conditionTrackSteps,
+    duration: rule.duration,
+    rule
+  }));
+}
+
+function getAllyReactionRiders(actor, context = {}) {
+  if (!actor) return [];
+  const tookDamage = contextAffirms(context.tookDamage) || contextAffirms(context.sourceTakesDamage) || contextAffirms(context.workflowContext?.tookDamage);
+  if (!tookDamage) return [];
+  return collectRules(actor, 'ALLY_REACTION_RIDER').map(rule => {
+    const key = `${rule.id}:${rule.sourceId}`;
+    return {
+      id: rule.id,
+      key,
+      source: rule.sourceName ?? rule.source ?? rule.label,
+      label: rule.label,
+      type: 'allyReactionRider',
+      oncePer: rule.oncePer,
+      available: EncounterUseTracker.canUse(actor, key, { oncePer: rule.oncePer }),
+      advisoryOnly: rule.advisoryOnly !== false,
+      allies: rule.allies,
+      rule
+    };
+  });
+}
+
+async function spendAllyReactionRider(actor, riderKey) {
+  return EncounterUseTracker.checkAndMarkUsed(actor, riderKey, { oncePer: 'encounter' });
+}
+
+function getWeaponHandlingRiders(actor, weapon, context = {}) {
+  if (!actor || !weapon) return [];
+  const oneHanding = contextAffirms(context.oneHandingNormallyTwoHandedWeapon)
+    || contextAffirms(context.workflowContext?.oneHandingNormallyTwoHandedWeapon);
+  const normallyTwoHanded = contextAffirms(context.normallyTwoHandedWeapon)
+    || contextAffirms(context.workflowContext?.normallyTwoHandedWeapon)
+    || /two-handed|twohanded|two-hand/.test(weaponText(weapon, context));
+  if (!oneHanding || !normallyTwoHanded || !isProficientContext(context)) return [];
+  return collectRules(actor, 'ADVISORY_WEAPON_HANDLING_RIDER').map(rule => ({
+    id: rule.id,
+    source: rule.sourceName ?? rule.source ?? rule.label,
+    label: rule.label,
+    type: 'advisoryWeaponHandlingRider',
+    permitsOneHandedUse: rule.permitsOneHandedUse === true,
+    attackPenalty: Number(rule.attackPenalty ?? 0) || 0,
+    appliesToAttackTypes: asArray(rule.appliesToAttackTypes),
+    advisoryOnly: rule.advisoryOnly !== false,
+    rule
+  }));
+}
+
 function applyFlecheChargeRider(result, actor, context = {}) {
   if (!actor || !isChargeContext(context) || !optionActive(context, 'fleche')) return;
   const riders = getChargeAttackRiders(actor, context).filter(rider => rider.id === 'flecheChargeCriticalThreat17' && rider.available);
@@ -170,6 +303,14 @@ function applyFlecheChargeRider(result, actor, context = {}) {
   }
 }
 
+function collectAdvisoryCombatRiders(result, actor, weapon, context = {}) {
+  const weaponHandling = getWeaponHandlingRiders(actor, weapon, context);
+  if (!weaponHandling.length) return;
+  result.advisoryCombatModifiers = asArray(result.advisoryCombatModifiers).concat(weaponHandling);
+  result.flags ??= {};
+  result.flags.hasAdvisoryCombatModifiers = true;
+}
+
 function patchCombatOptionResolver() {
   if (CombatOptionResolver.__swseGalaxyIntrigueCombatRuntimePatched === true) return;
   const originalCollect = CombatOptionResolver.collectAttackModifiers?.bind(CombatOptionResolver);
@@ -178,8 +319,9 @@ function patchCombatOptionResolver() {
       const result = originalCollect(actor, weapon, options) ?? {};
       try {
         applyFlecheChargeRider(result, actor, options);
+        collectAdvisoryCombatRiders(result, actor, weapon, options);
       } catch (err) {
-        SWSELogger.warn('[GalaxyIntrigueCombatRuntime] Failed to apply Flèche charge rider', { error: err });
+        SWSELogger.warn('[GalaxyIntrigueCombatRuntime] Failed to apply Galaxy of Intrigue combat riders', { error: err });
       }
       return result;
     };
@@ -188,6 +330,13 @@ function patchCombatOptionResolver() {
   CombatOptionResolver.getChargeAttackRiders = getChargeAttackRiders;
   CombatOptionResolver.spendChargeAttackRider = spendChargeAttackRider;
   CombatOptionResolver.getSpecialRangedAttackActions = getSpecialRangedAttackActions;
+  CombatOptionResolver.getDefenseReactionResources = getDefenseReactionResources;
+  CombatOptionResolver.spendDefenseReactionResource = spendDefenseReactionResource;
+  CombatOptionResolver.getCoverRiders = getCoverRiders;
+  CombatOptionResolver.getCoupDeGraceRiders = getCoupDeGraceRiders;
+  CombatOptionResolver.getAllyReactionRiders = getAllyReactionRiders;
+  CombatOptionResolver.spendAllyReactionRider = spendAllyReactionRider;
+  CombatOptionResolver.getWeaponHandlingRiders = getWeaponHandlingRiders;
   CombatOptionResolver.__swseGalaxyIntrigueCombatRuntimePatched = true;
 }
 
@@ -201,6 +350,13 @@ export function registerGalaxyIntrigueCombatRuntimePatches() {
   game.swse.feats.getChargeAttackRiders = getChargeAttackRiders;
   game.swse.feats.spendChargeAttackRider = spendChargeAttackRider;
   game.swse.feats.getSpecialRangedAttackActions = getSpecialRangedAttackActions;
+  game.swse.feats.getDefenseReactionResources = getDefenseReactionResources;
+  game.swse.feats.spendDefenseReactionResource = spendDefenseReactionResource;
+  game.swse.feats.getCoverRiders = getCoverRiders;
+  game.swse.feats.getCoupDeGraceRiders = getCoupDeGraceRiders;
+  game.swse.feats.getAllyReactionRiders = getAllyReactionRiders;
+  game.swse.feats.spendAllyReactionRider = spendAllyReactionRider;
+  game.swse.feats.getWeaponHandlingRiders = getWeaponHandlingRiders;
   SWSELogger.log('[GalaxyIntrigueCombatRuntime] Runtime helpers registered');
 }
 
@@ -208,7 +364,14 @@ export {
   getAttackOfOpportunityDamageRiders,
   getChargeAttackRiders,
   spendChargeAttackRider,
-  getSpecialRangedAttackActions
+  getSpecialRangedAttackActions,
+  getDefenseReactionResources,
+  spendDefenseReactionResource,
+  getCoverRiders,
+  getCoupDeGraceRiders,
+  getAllyReactionRiders,
+  spendAllyReactionRider,
+  getWeaponHandlingRiders
 };
 
 export default registerGalaxyIntrigueCombatRuntimePatches;
