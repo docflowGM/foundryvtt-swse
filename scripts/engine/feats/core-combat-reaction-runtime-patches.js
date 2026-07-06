@@ -1,5 +1,4 @@
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { ActionEconomyPersistence } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js";
 
 let registered = false;
 
@@ -211,7 +210,9 @@ export class CoreCombatReactionFeatActions {
   }
 
   static hasCombatReflexes(actor) {
-    return actorHasFeat(actor, 'combat reflexes') || hasReactionRule(actor, 'combatReflexesOpportunityAttack') || hasRuleType(actor, 'REACTION_CAPACITY_OVERRIDE');
+    return actorHasFeat(actor, 'combat reflexes')
+      || hasRuleType(actor, 'ATTACK_OF_OPPORTUNITY_CAPACITY_OVERRIDE')
+      || hasRuleType(actor, 'REACTION_CAPACITY_OVERRIDE');
   }
 
   static getAttacksOfOpportunityPerRound(actor) {
@@ -220,8 +221,17 @@ export class CoreCombatReactionFeatActions {
     return Math.max(base, base + Math.max(0, abilityMod(actor, 'dexterity')));
   }
 
-  static getReactionMax(actor) {
-    return this.getAttacksOfOpportunityPerRound(actor);
+  static getReactionMax() {
+    return Number.MAX_SAFE_INTEGER;
+  }
+
+  static getReactionLimitPolicy() {
+    return {
+      limitBasis: 'trigger',
+      perRoundLimit: false,
+      oneReactionPerTrigger: true,
+      combatReflexesDoesNotModifyReactions: true
+    };
   }
 
   static canMakeOpportunityAttackWhileFlatFooted(actor) {
@@ -289,16 +299,6 @@ export class CoreCombatReactionFeatActions {
   }
 }
 
-function patchReactionMaximum() {
-  const originalGetReactionMax = ActionEconomyPersistence.getReactionMax.bind(ActionEconomyPersistence);
-  ActionEconomyPersistence.getReactionMax = function patchedGetReactionMax(actor) {
-    const raw = Number(originalGetReactionMax(actor));
-    const base = Number.isFinite(raw) && raw > 0 ? Math.floor(raw) : 1;
-    if (!CoreCombatReactionFeatActions.hasCombatReflexes(actor)) return base;
-    return Math.max(base, CoreCombatReactionFeatActions.getReactionMax(actor));
-  };
-}
-
 function registerCleaveHpHooks() {
   Hooks.on('updateActor', (actor, changes = {}, options = {}) => {
     if (options?.swseSkipCleaveHpWatcher === true) return;
@@ -342,7 +342,6 @@ export function registerCoreCombatReactionRuntimePatches() {
   if (registered) return;
   registered = true;
 
-  patchReactionMaximum();
   registerCleaveHpHooks();
 
   globalThis.SWSE ??= {};
