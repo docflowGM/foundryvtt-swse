@@ -49,13 +49,15 @@ The following strict Combat feats were also completed before this pass and shoul
 | Triple Crit | fully_implemented_with_required_choice | Normalized to `WEAPON_CRITICAL_MULTIPLIER_MIN` with minimum x3 and required selected-choice matching. It now sets immediate `choiceMeta` using the existing `weapon_group_or_exotic` chooser, opens the feat choice dialog when directly added without a choice, and cannot apply broadly before the player picks a proficient weapon group or qualifying weapon. Duplicate choices across repeat Triple Crit instances are rejected by the existing repeatable-choice validation. |
 | Triple Crit Specialist | fully_implemented | Normalized to `WEAPON_CRITICAL_MULTIPLIER_MIN` with minimum x3 and selected-choice matching. The existing combat resolver uses the highest critical multiplier minimum, avoiding duplicate critical multiplier stacking with Triple Crit or other sources. |
 | Sport Hunter | implemented_as_weapon_family_mutator | Implemented with a Riflemaster-style normalization hook plus runtime mutator collector. The collector enforces ranged attack, matching weapon family, proficiency, and range/Aim gates before applying each branch: slugthrower pistol at point-blank range gets +1 weapon die; slugthrower rifle increases damage dice by two size steps from d8 to d12; sporting blaster pistol emits damage-dice reroll-1s metadata; sporting blaster rifle gets +1 attack only when aiming. |
+| Relentless Attack | implemented_with_required_choice_and_followup_state | Normalized with an immediate `double_attack_weapon` choice picker, repeatable selected-choice metadata, and a selected-weapon `MISS_RIDER` that marks the missed target for a +2 competence bonus. Runtime also reads a Relentless Attack follow-up state/context and applies +2 only to the next matching selected-weapon attack against the missed target before expiry. |
+| Withdrawal Strike | implemented_as_required_choice_threat_metadata | Normalized with an immediate `melee_weapon_or_group` choice picker and selected-choice threat-control metadata. The rule marks adjacent opponents as unable to Withdraw from squares threatened by the selected melee weapon while still allowing Tumble/Acrobatics normally; final movement-block enforcement is exposed for the movement workflow. |
+| Grand Army of the Republic Training | fully_implemented | Normalized into `abilityMeta.defenseArmorRules` with `APPLY_ARMOR_FORT_EQUIPMENT_TO_WILL`, using the existing DefenseCalculator path that applies equipped proficient armor's Fortitude equipment bonus to Will Defense without adding a generic Will modifier. |
 
 ## Weapon & Armor leftovers still queued
 
 These remain the next implementation pool, pending source/rule mapping and runtime wiring:
 
-- Weapon Proficiency: Relentless Attack, Withdrawal Strike.
-- Armor Proficiency & Use: Grand Army of the Republic Training.
+- No verified Weapon & Armor leftovers remain in this pass.
 
 ## Already implemented / not part of this queue
 
