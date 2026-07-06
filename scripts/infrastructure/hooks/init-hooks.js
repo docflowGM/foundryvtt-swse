@@ -86,6 +86,8 @@ import { registerExpandedSkillFeatNormalizationHooks } from "/systems/foundryvtt
 import { registerExpandedSkillFeatAddendumNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/skill-feat-expanded-addendum-normalization-hooks.js";
 import { registerTeamFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/team-feat-normalization-hooks.js";
 import { registerTeamFeatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/team-feat-runtime-patches.js";
+import { registerRebellionSpeciesSkillFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/rebellion-species-skill-feat-normalization-hooks.js";
+import { registerRebellionSpeciesSkillFeatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js";
 
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -104,10 +106,12 @@ export function registerInitHooks() {
         registerSkillFeatRuleResolver();
         registerSkillFeatRuntimePatches();
         registerTeamFeatRuntimePatches();
+        registerRebellionSpeciesSkillFeatRuntimePatches();
         registerSkillFeatNormalizationHooks();
         registerExpandedSkillFeatNormalizationHooks();
         registerExpandedSkillFeatAddendumNormalizationHooks();
         registerTeamFeatNormalizationHooks();
+        registerRebellionSpeciesSkillFeatNormalizationHooks();
         registerAidAnotherActionAdapter();
         registerDroidCombatActionAdapter();
         registerGalaxyIntrigueCombatActionAdapter();
