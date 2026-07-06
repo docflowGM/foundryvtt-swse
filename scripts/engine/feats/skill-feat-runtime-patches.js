@@ -1,6 +1,7 @@
 import { SkillFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/skills/skill-feat-resolver.js";
 import { SkillFeatRuleResolver } from "/systems/foundryvtt-swse/scripts/engine/skills/skill-feat-rule-resolver.js";
 import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
+import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 let registered = false;
@@ -175,6 +176,18 @@ function contextAffirms(value) {
   return value === true || value === 'true' || value === 1 || value === '1';
 }
 
+function actorAbilityMod(actor, ability) {
+  const key = String(ability || '').toLowerCase().slice(0, 3);
+  if (!key) return 0;
+  const value = actor?.system?.derived?.attributes?.[key]?.mod
+    ?? actor?.system?.abilities?.[key]?.mod
+    ?? actor?.system?.attributes?.[key]?.mod
+    ?? actor?.system?.derived?.abilities?.[key]?.mod
+    ?? 0;
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : 0;
+}
+
 function currentActionCost(context = {}) {
   return normalizeKey(
     context.actionCost
@@ -318,6 +331,55 @@ function getTemporaryDefenseReactionRules(actor, context = {}) {
   return collectAbilityRules(actor, rule => normalizeKey(rule.type) === 'temporary-defense-reaction');
 }
 
+function temporaryDefenseRuleFromReaction(actor, rule) {
+  const value = rule.valueFormula === 'abilityModifier'
+    ? actorAbilityMod(actor, rule.ability)
+    : Number(rule.value ?? 0) || 0;
+  return {
+    id: rule.id ?? `${rule.sourceId}-temp-defense-reaction`,
+    sourceId: rule.sourceId,
+    sourceName: rule.source ?? rule.sourceName ?? rule.label ?? 'Temporary Defense',
+    label: rule.label ?? rule.source ?? 'Temporary Defense',
+    cost: rule.cost ?? 'reaction',
+    value,
+    valueFormula: rule.valueFormula ?? null,
+    ability: rule.ability ?? null,
+    duration: rule.duration ?? '1round',
+    roundsRemaining: Number(rule.roundsRemaining ?? 1) || 1,
+    targets: Array.isArray(rule.targets) ? rule.targets : ['defense.fortitude'],
+    description: rule.summary ?? rule.description ?? '',
+    oncePer: rule.oncePer ?? null,
+    featureKey: encounterFeatureKey('temporary-defense-reaction', rule.id ?? rule.sourceId ?? rule.label ?? 'rule'),
+    rule
+  };
+}
+
+function patchTemporaryDefenseRules() {
+  if (MetaResourceFeatResolver.__swseSkillFeatTemporaryDefensePatched === true) return;
+  const originalGet = MetaResourceFeatResolver.getTemporaryDefenseRules?.bind(MetaResourceFeatResolver);
+  const originalApply = MetaResourceFeatResolver.applyTemporaryDefenseRule?.bind(MetaResourceFeatResolver);
+
+  MetaResourceFeatResolver.getTemporaryDefenseRules = function patchedGetTemporaryDefenseRules(actor) {
+    const base = typeof originalGet === 'function' ? originalGet(actor) : [];
+    const reactionRules = getTemporaryDefenseReactionRules(actor).map(rule => temporaryDefenseRuleFromReaction(actor, rule));
+    return [...base, ...reactionRules].filter(rule => !rule.oncePer || EncounterUseTracker.canUse(actor, rule.featureKey, { oncePer: rule.oncePer }));
+  };
+
+  MetaResourceFeatResolver.applyTemporaryDefenseRule = async function patchedApplyTemporaryDefenseRule(actor, ruleOrId = null) {
+    if (typeof originalApply !== 'function') return { success: false, reason: 'Temporary defense resolver is not available.' };
+    const rule = typeof ruleOrId === 'object'
+      ? ruleOrId
+      : this.getTemporaryDefenseRules(actor).find(candidate => !ruleOrId || candidate.id === ruleOrId || candidate.sourceId === ruleOrId);
+    if (rule?.oncePer) {
+      const allowed = await EncounterUseTracker.checkAndMarkUsed(actor, rule.featureKey, { oncePer: rule.oncePer });
+      if (!allowed.allowed) return { success: false, reason: allowed.reason ?? `${rule.sourceName} has already been used.` };
+    }
+    return originalApply(actor, rule ?? ruleOrId);
+  };
+
+  MetaResourceFeatResolver.__swseSkillFeatTemporaryDefensePatched = true;
+}
+
 export const SkillFeatRuntime = {
   isSkillTrained,
   canUseDaily,
@@ -407,6 +469,7 @@ export function registerSkillFeatRuntimePatches() {
   patchSkillRerollOptions();
   patchSkillRerollButton();
   patchSkillUseSubstitution();
+  patchTemporaryDefenseRules();
   game.swse ??= {};
   game.swse.skills ??= {};
   game.swse.skills.skillFeatRuntime = SkillFeatRuntime;
