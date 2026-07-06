@@ -18,30 +18,34 @@ function martialArtsLevel(name) {
   return 0;
 }
 
+function numeral(level) {
+  return ['I', 'II', 'III'][Math.max(1, Number(level) || 1) - 1] ?? String(level);
+}
+
 function hasRule(item, id, type) {
   const wanted = String(id ?? '');
   const wantedType = String(type ?? '').toUpperCase();
   return asArray(item?.system?.abilityMeta?.rules).some(rule => String(rule?.id ?? rule?.key ?? '') === wanted && String(rule?.type ?? '').toUpperCase() === wantedType);
 }
 
-function highestStackingUnarmedStepRule(level) {
+function unarmedStepRule(level) {
   return {
     type: 'UNARMED_DAMAGE_STEP',
     id: `martialArts${level}UnarmedStep`,
-    value: level,
-    stacking: 'highest',
-    stackingKey: 'martialArtsUnarmedDamageStep',
-    source: `Martial Arts ${['I', 'II', 'III'][level - 1]}`,
-    label: `Martial Arts ${['I', 'II', 'III'][level - 1]} unarmed damage step`
+    value: 1,
+    stacking: 'stack',
+    stackingKey: `martialArts${level}UnarmedDamageStep`,
+    source: `Martial Arts ${numeral(level)}`,
+    label: `Martial Arts ${numeral(level)} unarmed damage +1 die step`
   };
 }
 
-function armedUnarmedRule(level) {
+function armedUnarmedRule() {
   return {
     type: 'UNARMED_DOES_NOT_PROVOKE_AOO',
-    id: `martialArts${level}ArmedUnarmed`,
-    source: `Martial Arts ${['I', 'II', 'III'][level - 1]}`,
-    label: `Martial Arts ${['I', 'II', 'III'][level - 1]}: unarmed attacks count as armed`
+    id: 'martialArtsArmedUnarmed',
+    source: 'Martial Arts I',
+    label: 'Martial Arts I: unarmed attacks do not provoke attacks of opportunity'
   };
 }
 
@@ -50,12 +54,12 @@ function reflexDefenseRule(level) {
     type: 'DEFENSE_BONUS',
     id: `martialArts${level}ReflexDefense`,
     target: 'reflex',
-    value: level,
+    value: 1,
     bonusType: 'dodge',
-    stacking: 'highest',
-    stackingKey: 'martialArtsReflexDefense',
-    source: `Martial Arts ${['I', 'II', 'III'][level - 1]}`,
-    label: `Martial Arts ${['I', 'II', 'III'][level - 1]} Reflex Defense`
+    stacking: 'stack',
+    stackingKey: `martialArts${level}ReflexDefense`,
+    source: `Martial Arts ${numeral(level)}`,
+    label: `Martial Arts ${numeral(level)} Reflex Defense +1 dodge`
   };
 }
 
@@ -68,11 +72,13 @@ async function normalizeMartialArtsFeat(item, options = {}) {
 
   const rules = asArray(item.system?.abilityMeta?.rules);
   const additions = [];
-  const unarmedRule = highestStackingUnarmedStepRule(level);
-  const armedRule = armedUnarmedRule(level);
+  const unarmedRule = unarmedStepRule(level);
   const defenseRule = reflexDefenseRule(level);
   if (!hasRule(item, unarmedRule.id, unarmedRule.type)) additions.push(unarmedRule);
-  if (!hasRule(item, armedRule.id, armedRule.type)) additions.push(armedRule);
+  if (level === 1) {
+    const armedRule = armedUnarmedRule();
+    if (!hasRule(item, armedRule.id, armedRule.type)) additions.push(armedRule);
+  }
   if (!hasRule(item, defenseRule.id, defenseRule.type)) additions.push(defenseRule);
   if (!additions.length) return false;
 
