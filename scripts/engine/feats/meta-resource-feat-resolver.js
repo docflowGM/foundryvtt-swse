@@ -9,6 +9,7 @@
  */
 
 import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
+import { isForcePowerItem } from "/systems/foundryvtt-swse/scripts/utils/item-classification.js";
 function normalizeName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
@@ -88,7 +89,7 @@ function attackRerollRuleMatches(rule = {}, weapon = null, context = {}) {
 
 function getForcePowerItems(actor) {
   try {
-    return Array.from(actor?.items ?? []).filter(item => item?.type === 'force-power');
+    return Array.from(actor?.items ?? []).filter(item => isForcePowerItem(item));
   } catch (_err) {
     return [];
   }
@@ -668,7 +669,7 @@ export class MetaResourceFeatResolver {
   }
 
   static getRecoverableForcePowers(actor) {
-    return getForcePowerItems(actor).filter(power => power?.system?.discarded === true);
+    return getForcePowerItems(actor).filter(power => power?.system?.discarded === true || power?.system?.spent === true);
   }
 
   static async recoverForcefulRecoveryPower(actor, powerId) {
@@ -676,14 +677,31 @@ export class MetaResourceFeatResolver {
     const pending = this.getForcefulRecoveryPending(actor);
     if (!pending) return { success: false, reason: 'No Forceful Recovery is pending.' };
     const power = actor.items?.get?.(powerId) ?? getForcePowerItems(actor).find(item => item.id === powerId || item._id === powerId);
-    if (!power || power.type !== 'force-power') return { success: false, reason: 'Force power not found.' };
-    if (power.system?.discarded !== true) return { success: false, reason: `${power.name} is not expended.` };
+    if (!power || !isForcePowerItem(power)) return { success: false, reason: 'Force power not found.' };
+    if (power.system?.discarded !== true && power.system?.spent !== true) return { success: false, reason: `${power.name} is not expended.` };
 
-    const { ForceExecutor } = await import('/systems/foundryvtt-swse/scripts/engine/force/force-executor.js');
-    const result = await ForceExecutor.recoverForcePowers(actor, [power.id]);
-    if (!result?.success) return result;
+    const { ActorEngine } = await import('/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js');
+    const { ForcePowerEffectsEngine } = await import('/systems/foundryvtt-swse/scripts/engine/force/force-power-effects-engine.js');
+    const { SWSEChat } = await import('/systems/foundryvtt-swse/scripts/chat/swse-chat.js');
+
+    await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [{
+      _id: power.id,
+      'system.discarded': false,
+      'system.spent': false,
+      'system.lastRecovered': Date.now(),
+      'flags.foundryvtt-swse.lastRecoverySource': 'forceful-recovery'
+    }], { source: 'forceful-recovery', render: false });
+
+    await ForcePowerEffectsEngine.removePowerEffects(actor, power);
     await actor.unsetFlag?.('foundryvtt-swse', 'forcefulRecoveryPending');
-    return { ...result, powerName: power.name };
+    await SWSEChat.postHTML({
+      actor,
+      content: `<div class="swse-force-recovery swse-force-recovery--forceful-recovery">
+        <h3>${actor.name} uses Forceful Recovery</h3>
+        <p><strong>${power.name}</strong> returns to the Force Power Suite after catching a Second Wind.</p>
+      </div>`
+    });
+    return { success: true, recovered: 1, powers: [power.name], powerName: power.name };
   }
 
 
