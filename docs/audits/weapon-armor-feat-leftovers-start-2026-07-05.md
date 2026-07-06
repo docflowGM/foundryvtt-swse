@@ -34,14 +34,17 @@ The following strict Combat feats were also completed before this pass and shoul
 | Tae-Jitsu Training | implemented_as_virtual_unarmed_style | Normalized as virtual-unarmed style metadata: critical unarmed damage +1 die step, primary adversary encounter mark action, plus Tae-Jitsu Expertise synergy slot. |
 | Teras Kasi Training | implemented_as_virtual_unarmed_style | Normalized as virtual-unarmed style metadata: once/round successful unarmed hit reduces target DT by 5 for current attack resolution, plus Teras Kasi Basics synergy slot for future/talent-backed virtual unarmed damage size increase. |
 | Wrruushi Training | implemented_as_virtual_unarmed_style | Normalized as virtual-unarmed style metadata: temp HP on unarmed hit, once/encounter unarmed attack vs Fortitude that suppresses Fortitude equipment bonus, light/no armor gate, plus Wrruushi Expertise synergy slot. |
+| Weapon Focus | fully_implemented | Normalized selected-choice metadata so the existing scoped combat feat resolver can apply the selected weapon/group +1 attack bonus without duplicate generic rule math. |
+| Weapon Finesse | fully_implemented | Normalized as an `ATTACK_ABILITY_SUBSTITUTION` passive rule for eligible melee weapons: light/light-melee, lightsabers, and unarmed/natural attacks use the better of Dexterity and Strength for attack rolls. |
+| Weapon Proficiency variants | fully_implemented | Weapon Proficiency (simple weapons, pistols, rifles, heavy weapons, lightsabers), Advanced Melee Weapon Proficiency, Heavy Weapon Proficiency, Lightsaber Proficiency, and Exotic Weapon Proficiency now normalize to actor `system.proficiencies.weapon` flags so canonical attack math can remove the nonproficiency penalty. Exotic proficiency also preserves the selected weapon choice when present. |
 
 ## Weapon & Armor leftovers still queued
 
 These remain the next implementation pool, pending source/rule mapping and runtime wiring:
 
 - Lightsaber & Weapon Styles: Long Haft Strike, remaining non-unarmed weapon-style feats if source-confirmed.
-- Weapon Proficiency: Exotic Weapon Proficiency, Triple Crit Specialist, Relentless Attack, Returning Bug, Sport Hunter, Savage Attack, Improvised Weapon Mastery, Weapon Focus, Withdrawal Strike, Advanced Melee Weapon Proficiency, Weapon Proficiency variants.
-- Weapon Focus & Specialization: Weapon Finesse, Halt, Autofire Assault, Critical Strike, Autofire Sweep.
+- Weapon Proficiency: Triple Crit Specialist, Relentless Attack, Returning Bug, Sport Hunter, Savage Attack, Improvised Weapon Mastery, Withdrawal Strike.
+- Weapon Focus & Specialization: Halt, Autofire Assault, Critical Strike, Autofire Sweep.
 - Armor Proficiency & Use: Grand Army of the Republic Training.
 
 ## Already implemented / not part of this queue
