@@ -1,0 +1,216 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-06",
+  "purpose": "Authoritative implementation-status addendum for feat work completed in the 2026-07-06 combat/skill/second-wind feat chat. This file marks the feats completed in this chat so future audits do not treat them as unimplemented solely because older sourcebook backlog files were generated before these runtime bridges existed.",
+  "statusDefinitions": {
+    "implemented_correct": "Runtime shape matches the feat text closely enough for current system scope and has a known consumer.",
+    "implemented_with_runtime_boundary": "The feat is normalized and consumed by the correct runtime path, but part of the real-table choice, targeting, or map movement remains an explicit UI/GM workflow boundary.",
+    "metadata_manual_boundary": "The feat is intentionally represented as metadata/advisory because the system does not automate that table procedure yet. It should not be counted as not_implemented."
+  },
+  "runtimeHomes": {
+    "combatContinuation": [
+      "docs/feat-implementation-continuation-phase8.json",
+      "scripts/engine/feats/core-combat-reaction-runtime-patches.js",
+      "scripts/engine/feats/core-attack-option-runtime-patches.js",
+      "scripts/engine/feats/core-attack-option-action-economy.js",
+      "scripts/engine/combat/combat-option-resolver.js"
+    ],
+    "skillFeatFoundation": [
+      "scripts/engine/feats/skill-feat-normalization-hooks.js",
+      "scripts/engine/feats/skill-feat-runtime-patches.js",
+      "scripts/engine/skills/skill-feat-rule-resolver.js",
+      "scripts/engine/skills/extra-skill-use-registry.js"
+    ],
+    "expandedSkillFeats": [
+      "scripts/engine/feats/skill-feat-expanded-normalization-hooks.js",
+      "scripts/engine/feats/skill-feat-expanded-addendum-normalization-hooks.js",
+      "scripts/engine/feats/skill-feat-runtime-patches.js",
+      "scripts/engine/skills/extra-skill-use-registry.js"
+    ],
+    "teamFeats": [
+      "scripts/engine/feats/team-feat-normalization-hooks.js",
+      "scripts/engine/feats/team-feat-runtime-patches.js",
+      "scripts/rolls/skills.js"
+    ],
+    "rebellionSpeciesSkillFeats": [
+      "scripts/engine/feats/rebellion-species-skill-feat-normalization-hooks.js",
+      "scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js",
+      "scripts/engine/roll/roll-core.js",
+      "scripts/rolls/skills.js"
+    ],
+    "secondWindFeats": [
+      "scripts/engine/combat/SecondWindRules.js",
+      "scripts/engine/feats/second-wind-feat-normalization-hooks.js",
+      "scripts/engine/feats/second-wind-rider-runtime-patches.js",
+      "scripts/apps/dialogs/forceful-recovery-picker.js",
+      "scripts/engine/feats/meta-resource-feat-resolver.js",
+      "scripts/governance/actor-engine/actor-engine.js"
+    ]
+  },
+  "implementedBatches": [
+    {
+      "id": "combat-continuation-phase8-chat-pass",
+      "defaultStatus": "implemented_correct",
+      "notes": "These were already recorded in docs/feat-implementation-continuation-phase8.json and are restated here to keep the chat-level implementation ledger complete.",
+      "feats": [
+        { "name": "Cleave", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "reaction/manual target resolution from target-dropped-to-zero events" },
+        { "name": "Great Cleave", "implementationStatus": "implemented_correct", "implementationMode": "Cleave extra-attack limit override" },
+        { "name": "Frightening Cleave", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "Cleave rider effect after Cleave use" },
+        { "name": "Combat Reflexes", "implementationStatus": "implemented_correct", "implementationMode": "reaction capacity override plus flat-footed opportunity permission" },
+        { "name": "Power Attack", "implementationStatus": "implemented_correct", "implementationMode": "attack option with damage/attack tradeoff and two-handed/object/vehicle handling" },
+        { "name": "Rapid Shot", "implementationStatus": "implemented_correct", "implementationMode": "attack option plus ammo/action economy handling" },
+        { "name": "Melee Defense", "implementationStatus": "implemented_correct", "implementationMode": "BAB slider attack option with Reflex dodge rider" },
+        { "name": "Rapid Strike", "implementationStatus": "implemented_correct", "implementationMode": "attack option" },
+        { "name": "Careful Shot", "implementationStatus": "implemented_correct", "implementationMode": "attack option with auto Aim prerequisite handling" },
+        { "name": "Deadeye", "implementationStatus": "implemented_correct", "implementationMode": "attack option with auto Aim prerequisite handling" },
+        { "name": "Burst Fire", "implementationStatus": "implemented_correct", "implementationMode": "attack option with ammo handling" },
+        { "name": "Powerful Charge", "implementationStatus": "implemented_correct", "implementationMode": "attack option with auto Charge prerequisite handling" },
+        { "name": "Charging Fire", "implementationStatus": "implemented_correct", "implementationMode": "attack option with ranged Charge prerequisite handling" },
+        { "name": "Improved Disarm", "implementationStatus": "implemented_correct", "implementationMode": "attack option" },
+        { "name": "Mighty Swing", "implementationStatus": "implemented_correct", "implementationMode": "attack option with two-swift-action cost" },
+        { "name": "Running Attack", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "split-movement attack rider; movement UI honors rider" }
+      ]
+    },
+    {
+      "id": "skill-feat-foundation-chat-pass",
+      "defaultStatus": "implemented_correct",
+      "feats": [
+        { "name": "Cybernetic Surgery", "implementationStatus": "metadata_manual_boundary", "implementationMode": "Treat Injury cybernetic installation procedure reference; no automatic implant transaction" },
+        { "name": "Surgical Expertise", "implementationStatus": "implemented_correct", "implementationMode": "extra skill use action-economy override for surgery/cybernetic installation" },
+        { "name": "Conditioning", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "trained Strength/Constitution skill reroll plus Fortitude reaction metadata" },
+        { "name": "Gearhead", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "Mechanics/Use Computer action economy override with encounter limit metadata" },
+        { "name": "Increased Agility", "implementationStatus": "implemented_correct", "implementationMode": "movement skill rider for climb/swim/jump and climbing Reflex retention" },
+        { "name": "Quick Skill", "implementationStatus": "metadata_manual_boundary", "implementationMode": "take-10/take-20 advisory metadata because skill-specific take-X procedure remains table-driven" },
+        { "name": "Advantageous Cover", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "area attack cover damage-negation rider requiring cover context" },
+        { "name": "Informer", "implementationStatus": "implemented_correct", "implementationMode": "Perception substitution for Gather Information extra use and reroll redirect" },
+        { "name": "Rapport", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "Aid Another rider for additional insight bonus" },
+        { "name": "Recall", "implementationStatus": "implemented_correct", "implementationMode": "once-per-day trained Knowledge reroll, keep better" }
+      ]
+    },
+    {
+      "id": "expanded-skill-feat-chat-pass",
+      "defaultStatus": "implemented_correct",
+      "feats": [
+        { "name": "Scavenger", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "Perception scavenge extra use; displays material credit value, GM arbitrated" },
+        { "name": "Impersonate", "implementationStatus": "implemented_correct", "implementationMode": "Deception extra use for impersonating a specific person" },
+        { "name": "Hideous Visage", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "combat skill action grant with fear/movement/attack penalty rider metadata" },
+        { "name": "Droidcraft", "implementationStatus": "implemented_correct", "implementationMode": "Repair Droid time override" },
+        { "name": "Experienced Medic", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "multi-target Surgery metadata with per-target checks" },
+        { "name": "Expert Droid Repair", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "multi-target Repair Droid metadata with per-target checks" },
+        { "name": "Unwavering Resolve", "implementationStatus": "implemented_correct", "implementationMode": "Will defense bonus against Deception/Persuasion checks" },
+        { "name": "Biotech Surgery", "implementationStatus": "metadata_manual_boundary", "implementationMode": "Bio-Implant installation procedure plus Surgical Expertise time override" },
+        { "name": "Vehicle Systems Expertise", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "Recharge Shields/Reroute Power action economy override" },
+        { "name": "Dive for Cover", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "reaction movement/cover rider metadata" },
+        { "name": "Fortifying Recovery", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "Recover action bonus hit point rider metadata" },
+        { "name": "Mission Specialist", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "configured aura skill bonus metadata" },
+        { "name": "Never Surrender", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "0-HP Endurance reaction gate metadata" },
+        { "name": "Risk Taker", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "Climb failure threshold override plus Jump Force Point distance rider" },
+        { "name": "Staggering Attack", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "melee attack option skill penalty rider metadata" },
+        { "name": "Droid Focus", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "configured droid-degree contextual bonuses; requires feat-choice configuration" },
+        { "name": "Droid Shield Mastery", "implementationStatus": "implemented_correct", "implementationMode": "restore shields extra-use action economy override and automatic success" },
+        { "name": "Logic Upgrade: Skill Swap", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "configured skill swap toggle metadata; requires feat-choice configuration" },
+        { "name": "Sensor Link", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "broadcast sensor action plus Perception Aid Another/mutual sharing riders" },
+        { "name": "Shield Surge", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "vehicle damage reaction rider metadata" },
+        { "name": "Cut the Red Tape", "implementationStatus": "implemented_correct", "implementationMode": "Knowledge (Bureaucracy) substitution for Gather Information" },
+        { "name": "Disturbing Presence", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "Deception movement-through-threatened-area extra use" },
+        { "name": "Expert Briber", "implementationStatus": "implemented_correct", "implementationMode": "Persuasion Haggle/Bribery DC override" },
+        { "name": "Master of Disguise", "implementationStatus": "implemented_correct", "implementationMode": "Deceptive Appearance bonus and rushed penalty override" },
+        { "name": "Silver Tongue", "implementationStatus": "implemented_correct", "implementationMode": "Persuasion Intimidate/Change Attitude action economy override" },
+        { "name": "Acrobatic Ally", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "Acrobatics extra use for hoist/toss ally" },
+        { "name": "Elder's Knowledge", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "once-per-encounter Knowledge substitution rider metadata" },
+        { "name": "Hold Together", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "vehicle damage reaction rider with Force Point cost metadata" },
+        { "name": "Hyperblazer", "implementationStatus": "implemented_correct", "implementationMode": "Use Computer astrogation/hyperspace mapping time and penalty override" }
+      ]
+    },
+    {
+      "id": "expanded-skill-feat-addendum-chat-pass",
+      "defaultStatus": "implemented_correct",
+      "feats": [
+        { "name": "Improved Sleight of Hand", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "composite Deception/Stealth opposed rider plus draw-and-palm weapon extra use" },
+        { "name": "Intimidator", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "Intimidate success rider replacing normal results" },
+        { "name": "Nikto Survival", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "configured Survival reroll by Nikto subspecies/environment" },
+        { "name": "Wilderness First Aid", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "Survival extra use and medpac-equivalent state rider" },
+        { "name": "Dreadful Countenance", "implementationStatus": "implemented_correct", "implementationMode": "Persuasion/Use the Force fear reroll metadata consumed by skill feat runtime" }
+      ]
+    },
+    {
+      "id": "team-feat-chat-pass",
+      "defaultStatus": "implemented_correct",
+      "notes": "Team Feat skill bonuses prompt for matching allies and are consumed on skill rolls; secondary movement/Aid/vehicle riders are normalized for their relevant runtime seams.",
+      "feats": [
+        { "name": "Nimble Team", "implementationStatus": "implemented_correct" },
+        { "name": "Ascension Specialists", "implementationStatus": "implemented_correct" },
+        { "name": "Tireless Squad", "implementationStatus": "implemented_correct" },
+        { "name": "Unhindered Approach", "implementationStatus": "implemented_correct" },
+        { "name": "Technical Experts", "implementationStatus": "implemented_correct" },
+        { "name": "Wary Sentries", "implementationStatus": "implemented_correct" },
+        { "name": "Unified Squadron", "implementationStatus": "implemented_with_runtime_boundary" },
+        { "name": "Mounted Regiment", "implementationStatus": "implemented_with_runtime_boundary" },
+        { "name": "Covert Operatives", "implementationStatus": "implemented_correct" },
+        { "name": "Wilderness Specialists", "implementationStatus": "implemented_correct" },
+        { "name": "Aquatic Specialists", "implementationStatus": "implemented_correct" },
+        { "name": "Medical Team", "implementationStatus": "implemented_with_runtime_boundary" },
+        { "name": "Slicer Team", "implementationStatus": "implemented_correct" }
+      ]
+    },
+    {
+      "id": "rebellion-species-skill-feat-chat-pass",
+      "defaultStatus": "implemented_correct",
+      "feats": [
+        { "name": "Mind of Reason", "implementationStatus": "implemented_correct" },
+        { "name": "Lasting Influence", "implementationStatus": "implemented_with_runtime_boundary" },
+        { "name": "Confident Success", "implementationStatus": "implemented_with_runtime_boundary" },
+        { "name": "Perfect Intuition", "implementationStatus": "implemented_correct" },
+        { "name": "Flawless Pilot", "implementationStatus": "implemented_correct" },
+        { "name": "Spacer's Surge", "implementationStatus": "implemented_correct" },
+        { "name": "Veteran Spacer", "implementationStatus": "implemented_correct" },
+        { "name": "Ample Foraging", "implementationStatus": "implemented_with_runtime_boundary" },
+        { "name": "Forest Stalker", "implementationStatus": "implemented_correct" },
+        { "name": "Keen Scent", "implementationStatus": "implemented_with_runtime_boundary" },
+        { "name": "Quick Comeback", "implementationStatus": "implemented_with_runtime_boundary" },
+        { "name": "Perfect Swimmer", "implementationStatus": "implemented_correct" },
+        { "name": "Nature Specialist", "implementationStatus": "implemented_correct" },
+        { "name": "Read the Winds", "implementationStatus": "implemented_with_runtime_boundary" },
+        { "name": "Fast Swimmer", "implementationStatus": "implemented_correct" },
+        { "name": "Mon Calamari Shipwright", "implementationStatus": "implemented_correct" },
+        { "name": "Sharp Senses", "implementationStatus": "implemented_correct" },
+        { "name": "Hunter's Instincts", "implementationStatus": "implemented_correct" },
+        { "name": "Master Tracker", "implementationStatus": "implemented_correct" },
+        { "name": "Darkness Dweller", "implementationStatus": "implemented_with_runtime_boundary" },
+        { "name": "Disarming Charm", "implementationStatus": "implemented_with_runtime_boundary" },
+        { "name": "Sure Climber", "implementationStatus": "implemented_correct" },
+        { "name": "Imperceptible Liar", "implementationStatus": "implemented_correct" },
+        { "name": "Survivor of Ryloth", "implementationStatus": "implemented_with_runtime_boundary" },
+        { "name": "Instinctive Perception", "implementationStatus": "implemented_correct" },
+        { "name": "Unwavering Focus", "implementationStatus": "implemented_with_runtime_boundary" }
+      ]
+    },
+    {
+      "id": "second-wind-feat-chat-pass",
+      "defaultStatus": "implemented_correct",
+      "notes": "Second Wind feats now resolve through SecondWindRules, second-wind rider normalization, ActorEngine.applySecondWind, and the Forceful Recovery picker where applicable.",
+      "feats": [
+        { "name": "Regenerative Healing", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "optional delayed Second Wind rider: suppress immediate healing and record 5 HP/end-of-turn delayed healing payload" },
+        { "name": "Resurgent Vitality", "implementationStatus": "implemented_correct", "implementationMode": "extra healing equal to 2 x Constitution modifier, minimum +2" },
+        { "name": "Extra Second Wind", "implementationStatus": "implemented_correct", "implementationMode": "+1 daily use, repeatable metadata, first-time Nonheroic eligibility" },
+        { "name": "Resurgence", "implementationStatus": "implemented_correct", "implementationMode": "grant immediate Move Action after Second Wind" },
+        { "name": "Impetuous Move", "implementationStatus": "implemented_with_runtime_boundary", "implementationMode": "optional half-heal movement rider via second wind options" },
+        { "name": "Fast Surge", "implementationStatus": "implemented_correct", "implementationMode": "Second Wind action cost becomes free action" },
+        { "name": "Recovering Surge", "implementationStatus": "implemented_correct", "implementationMode": "+1 condition track recovery on Second Wind" },
+        { "name": "Unstoppable Combatant", "implementationStatus": "implemented_correct", "implementationMode": "ignore encounter cap while daily uses remain" },
+        { "name": "Vitality Surge", "implementationStatus": "implemented_correct", "implementationMode": "Second Wind allowed above half HP" },
+        { "name": "Forceful Recovery", "implementationStatus": "implemented_correct", "implementationMode": "after Second Wind, modal picker recovers one expended Force power or Lightsaber Form power without spending a Force Point; empty discard pile shows no-valid-powers message and no modal" }
+      ]
+    }
+  ],
+  "summary": {
+    "implementedBatchCount": 7,
+    "featEntryCount": 116,
+    "runtimeFoundryTested": false,
+    "createdBy": "ChatGPT feat implementation chat",
+    "notes": [
+      "Entries marked implemented_with_runtime_boundary should not be reclassified as not_implemented; they have normalized rules and runtime seams, but may still depend on explicit sheet prompts, GM targeting, map movement, or future procedure UI.",
+      "Entries marked metadata_manual_boundary are intentionally manual/advisory under current project constraints and should not be automated with parallel systems."
+    ]
+  }
+}
