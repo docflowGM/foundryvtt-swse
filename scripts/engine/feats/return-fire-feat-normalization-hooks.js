@@ -102,7 +102,7 @@ function returnFireChoicePatch() {
     'system.choiceMeta.prompt': 'Choose one weapon group or exotic weapon for which you already have Weapon Focus. Return Fire does not apply to vehicle weapons or heavy weapons.',
     'system.choiceMeta.requiresOwnedFeatChoice': {
       feat: 'Weapon Focus',
-      choicePath': 'system.selectedChoice'
+      choicePath: 'system.selectedChoice'
     },
     'system.choiceMeta.excludesWeaponGroups': ['heavy weapons', 'heavy-weapons', 'vehicle weapons', 'vehicle-weapons'],
     'system.choiceMeta.excludesVehicleWeapons': true,
