@@ -544,6 +544,127 @@ function expertBriberRules() {
   }];
 }
 
+function masterOfDisguiseRules() {
+  return [
+    {
+      type: 'EXTRA_SKILL_USE_BONUS',
+      id: 'master-of-disguise-deceptive-appearance-bonus',
+      label: 'Master of Disguise',
+      skillKeys: ['deception'],
+      extraUses: ['deception.deceptive-appearance'],
+      value: 5,
+      bonusType: 'insight',
+      sourceBook: 'Galaxy of Intrigue',
+      summary: '+5 insight bonus to Deception checks when creating a Deceptive Appearance.'
+    },
+    {
+      type: 'EXTRA_SKILL_USE_PENALTY_OVERRIDE',
+      id: 'master-of-disguise-rushed-deceptive-appearance-penalty',
+      label: 'Master of Disguise: Rush Disguise',
+      skillKeys: ['deception'],
+      extraUses: ['deception.deceptive-appearance'],
+      condition: 'rushedDeceptiveAppearance',
+      normalPenalty: -10,
+      penalty: -2,
+      sourceBook: 'Galaxy of Intrigue',
+      summary: 'When rushing a Deceptive Appearance, take a -2 penalty instead of the normal -10 penalty.'
+    }
+  ];
+}
+
+function silverTongueRules() {
+  return [{
+    type: 'EXTRA_SKILL_USE_ACTION_ECONOMY_OVERRIDE',
+    id: 'silver-tongue-intimidate-change-attitude-standard-action',
+    label: 'Silver Tongue',
+    skillKeys: ['persuasion'],
+    extraUses: ['persuasion.intimidate', 'persuasion.change-attitude'],
+    actionEconomy: {
+      normalActionCost: 'full-round',
+      actionCost: 'standard',
+      appliesTo: ['intimidate', 'changeAttitude']
+    },
+    sourceBook: 'Galaxy of Intrigue',
+    summary: 'Use Intimidate or Change Attitude as a standard action instead of a full-round action.'
+  }];
+}
+
+function acrobaticAllyRules() {
+  return [{
+    type: 'EXTRA_SKILL_USE_GRANT',
+    id: 'acrobatic-ally-hoist-or-toss-ally',
+    label: 'Acrobatic Ally',
+    skillKeys: ['acrobatics'],
+    extraUse: {
+      id: 'acrobatics.acrobatic-ally',
+      key: 'acrobatic-ally',
+      name: 'Hoist or Toss Ally',
+      skill: 'acrobatics',
+      dc: 20,
+      actionCost: 'standard',
+      actorTurnEnds: true,
+      allyActionCost: 'free',
+      requiresSameInitiativeCount: true,
+      requiresAdjacentAlly: true,
+      allySizeLimit: 'sameSizeOrSmaller',
+      maxSquares: 2,
+      maxVerticalSquares: 2,
+      canProvokeAttacksOfOpportunity: true,
+      successRider: { placeAllyWithinSquares: 2, allyMayContinueTurn: true },
+      failureRider: { actorProne: true, allyProne: true, actorTurnEnds: true, allyMayTakeTurnNormally: true }
+    },
+    sourceBook: 'Unknown Regions',
+    summary: 'As a standard action, DC 20 Acrobatics to hoist or toss an adjacent same-size-or-smaller ally up to 2 squares; failure knocks both prone.'
+  }];
+}
+
+function eldersKnowledgeRules() {
+  return [{
+    type: 'CHECK_SUBSTITUTION_RIDER',
+    id: 'elders-knowledge-wisdom-check-substitution',
+    label: "Elder's Knowledge",
+    skillKeys: ['knowledgeGalacticLore', 'knowledgeSocialSciences'],
+    oncePer: 'encounter',
+    substituteFor: 'wisdomOrWisdomRelatedCheck',
+    allowedSubstitutionSkills: ['knowledgeGalacticLore', 'knowledgeSocialSciences'],
+    prerequisiteAnyFeat: ['Skill Focus (Knowledge (Galactic Lore))', 'Skill Focus (Knowledge (Social Sciences))'],
+    sourceBook: 'Unknown Regions',
+    summary: 'Once per encounter, substitute Knowledge (Galactic Lore) or Knowledge (Social Sciences) for a Wisdom or Wisdom-related check.'
+  }];
+}
+
+function holdTogetherRules() {
+  return [{
+    type: 'VEHICLE_DAMAGE_REACTION_RIDER',
+    id: 'hold-together-delay-vehicle-damage',
+    label: 'Hold Together',
+    actionCost: 'reaction',
+    cost: 'forcePoint',
+    trigger: 'vehicleTakesDamage',
+    requiresRidingOrPilotingVehicle: true,
+    vehicleSizeMax: 'colossal',
+    damageEffect: { delayUntil: 'endOfRound' },
+    sourceBook: 'Unknown Regions',
+    summary: 'As a reaction, spend a Force Point to delay the effect of damage to a Colossal-or-smaller Vehicle you are riding in or piloting until the end of the round.'
+  }];
+}
+
+function hyperblazerRules() {
+  return [{
+    type: 'EXTRA_SKILL_USE_TIME_AND_PENALTY_OVERRIDE',
+    id: 'hyperblazer-hyperspace-tangle-navigation',
+    label: 'Hyperblazer',
+    skillKeys: ['useComputer'],
+    extraUses: ['use-computer.astrogate', 'use-computer.hyperspace-mapping'],
+    appliesWhen: ['hyperspaceTangle', 'mappingNewHyperspaceRoute'],
+    calculationTimeMultiplier: 0.5,
+    penaltyMultiplier: 0.5,
+    mappingTimeMultiplier: 0.5,
+    sourceBook: 'Unknown Regions',
+    summary: 'Halve calculation time and penalties for Use Computer Astrogate checks through the Hyperspace Tangle, and halve Hyperspace Mapping time for new routes.'
+  }];
+}
+
 function rulesForExpandedSkillFeat(name) {
   const normalized = normalizeName(name);
   if (normalized === 'scavenger') return scavengeRules();
@@ -569,6 +690,12 @@ function rulesForExpandedSkillFeat(name) {
   if (normalized === 'cut the red tape') return cutTheRedTapeRules();
   if (normalized === 'disturbing presence') return disturbingPresenceRules();
   if (normalized === 'expert briber') return expertBriberRules();
+  if (normalized === 'master of disguise') return masterOfDisguiseRules();
+  if (normalized === 'silver tongue') return silverTongueRules();
+  if (normalized === 'acrobatic ally') return acrobaticAllyRules();
+  if (normalized === 'elders knowledge' || normalized === 'elder s knowledge') return eldersKnowledgeRules();
+  if (normalized === 'hold together') return holdTogetherRules();
+  if (normalized === 'hyperblazer') return hyperblazerRules();
   return [];
 }
 
