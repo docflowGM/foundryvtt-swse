@@ -50,16 +50,29 @@ function selectedChoicePatch(item) {
   };
 }
 
+function autofireRiderBase(id, label) {
+  return {
+    type: 'ATTACK_OPTION',
+    id,
+    label,
+    control: 'rider-choice',
+    riderForAttackMode: 'autofire',
+    mutationOf: 'autofire',
+    mutationGroup: 'autofireRiderMutation',
+    exclusiveAttackOptionGroup: 'autofireRiderMutation',
+    selectionField: 'autofireRiderMutation',
+    selectionSurface: 'autofireRiderPicker',
+    requiresBaseAttackMode: 'autofire',
+    requiresAttackType: 'ranged',
+    requiresAutofire: true,
+    requiresFeatSelectedChoiceMatch: ['Weapon Focus']
+  };
+}
+
 function autofireAssaultRule(item) {
   const choice = selectedChoiceFromItem(item);
   return {
-    type: 'ATTACK_OPTION',
-    id: 'autofireAssault',
-    label: 'Autofire Assault',
-    control: 'toggle',
-    requiresAttackType: 'ranged',
-    requiresAutofire: true,
-    requiresFeatSelectedChoiceMatch: ['Weapon Focus'],
+    ...autofireRiderBase('autofireAssault', 'Autofire Assault'),
     selectedChoice: Boolean(choice),
     requiresContextFlags: ['sameAutofireAreaAsLastTurn'],
     excludesOptions: ['autofireSweep', 'burstFire'],
@@ -81,7 +94,7 @@ function autofireAssaultRule(item) {
     damageOnMiss: 'halfWithoutExtraDie',
     criticalDoublesDamage: false,
     incompatibleWith: ['Autofire Sweep', 'Burst Fire'],
-    summary: 'When you target the same area with autofire that you targeted with autofire on your last turn, reduce the normal autofire penalty to -2, or -1 with a braced autofire-only weapon or Controlled Burst, and add +1 weapon die on a hit. Cannot be used with Autofire Sweep or Burst Fire.',
+    summary: 'Autofire rider mutation. After choosing Autofire, choose Autofire Assault only if you target the same area as your last-turn autofire; reduce the normal autofire penalty to -2, or -1 with a braced autofire-only weapon or Controlled Burst, and add +1 weapon die on a hit. Cannot be used with Autofire Sweep or Burst Fire.',
     source: 'Autofire Assault'
   };
 }
@@ -89,13 +102,7 @@ function autofireAssaultRule(item) {
 function autofireSweepRule(item) {
   const choice = selectedChoiceFromItem(item);
   return {
-    type: 'ATTACK_OPTION',
-    id: 'autofireSweep',
-    label: 'Autofire Sweep',
-    control: 'toggle',
-    requiresAttackType: 'ranged',
-    requiresAutofire: true,
-    requiresFeatSelectedChoiceMatch: ['Weapon Focus'],
+    ...autofireRiderBase('autofireSweep', 'Autofire Sweep'),
     selectedChoice: Boolean(choice),
     excludesOptions: ['autofireAssault', 'burstFire'],
     attackMode: 'autofire',
@@ -124,7 +131,7 @@ function autofireSweepRule(item) {
       compatibleTalents: ['Improved Suppression Fire'],
       manualResolution: true
     }],
-    summary: 'When making autofire with a Weapon Focus weapon, attack all targets in a 6-square 180-degree cone. The cone origin can be any square in line of sight within point-blank range. Cannot be used with Autofire Assault or Burst Fire; compatible with Improved Suppression Fire.',
+    summary: 'Autofire rider mutation. After choosing Autofire, choose Autofire Sweep to attack all targets in a 6-square 180-degree cone. The cone origin can be any square in line of sight within point-blank range. Cannot be used with Autofire Assault or Burst Fire; compatible with Improved Suppression Fire.',
     source: 'Autofire Sweep'
   };
 }
@@ -151,10 +158,11 @@ async function normalizeAutofireWeaponFeat(item, options = {}) {
   const patch = {
     'system.executionModel': 'ACTIVE',
     'system.subType': 'ATTACK_OPTION',
-    'system.abilityMeta.mechanicsMode': 'selected_attack_option',
+    'system.abilityMeta.mechanicsMode': 'autofire_rider_mutation_choice',
     'system.abilityMeta.applicationScope': 'weapon_focus_autofire_attack',
     'system.abilityMeta.staticSheetPolicy': 'include',
     'system.abilityMeta.requiresRuntimeContext': true,
+    'system.abilityMeta.choiceGroup': 'autofireRiderMutation',
     'system.abilityMeta.rules': nextRules,
     ...selectedChoicePatch(item)
   };
@@ -162,9 +170,10 @@ async function normalizeAutofireWeaponFeat(item, options = {}) {
   const rulesChanged = JSON.stringify(nextRules) !== JSON.stringify(currentRules);
   const modelChanged = item.system?.executionModel !== 'ACTIVE'
     || item.system?.subType !== 'ATTACK_OPTION'
-    || item.system?.abilityMeta?.mechanicsMode !== 'selected_attack_option'
+    || item.system?.abilityMeta?.mechanicsMode !== 'autofire_rider_mutation_choice'
     || item.system?.abilityMeta?.applicationScope !== 'weapon_focus_autofire_attack'
     || item.system?.abilityMeta?.requiresRuntimeContext !== true
+    || item.system?.abilityMeta?.choiceGroup !== 'autofireRiderMutation'
     || item.system?.abilityMeta?.staticSheetPolicy !== 'include';
   if (!rulesChanged && !modelChanged) return false;
 
