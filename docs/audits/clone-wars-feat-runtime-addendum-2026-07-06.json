@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-06",
+  "purpose": "Record Clone Wars feat runtime implementation pass after area/explosives and weapon/armor leftovers.",
+  "implementedEntries": [
+    {
+      "name": "Gunnery Specialist",
+      "status": "implemented_vehicle_role_runtime_metadata_and_helpers",
+      "mechanic": "While actor is in Gunner vehicle role, runtime helpers expose vehicle weapon proficiency override. Once per encounter vehicle weapon attack reroll is exposed as an attack reroll resource and uses EncounterUseTracker for spending. Starship Tactics prerequisite substitution and Gunner-maneuver limitation metadata are normalized for progression consumers."
+    },
+    {
+      "name": "Overwhelming Attack",
+      "status": "implemented_attack_negation_penalty_metadata_and_helper",
+      "mechanic": "Active attack option requiring two Swift Actions in the same round. When selected, attack resolution carries an attackNegationPenalties payload. Negation workflows can call resolveAttackNegationPenalty to apply -5 to Block, Deflect, Vehicular Combat, or similar roll/check attempts against that attack. Swift-action spending and exact end-of-round state expiration remain workflow-driven."
+    }
+  ],
+  "automationBoundary": {
+    "Gunnery Specialist": "Vehicle role context must be supplied by vehicle/crew workflow; reroll button or prompt must call spendVehicleWeaponAttackReroll on confirmed use.",
+    "Overwhelming Attack": "Attack workflow must enforce spending two Swift Actions and pass selected option state. Block/Deflect/Vehicular Combat workflows must consume resolveAttackNegationPenalty."
+  },
+  "changedFiles": [
+    "scripts/engine/feats/starship-vehicle-feat-normalization-hooks.js",
+    "scripts/engine/feats/starship-vehicle-runtime-patches.js",
+    "scripts/engine/feats/attack-negation-feat-normalization-hooks.js",
+    "scripts/engine/feats/attack-negation-runtime-patches.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}
