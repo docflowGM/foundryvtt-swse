@@ -53,6 +53,8 @@ import { registerWeaponLeftoverFeatNormalizationHooks } from "/systems/foundryvt
 import { registerWeaponMissRiderRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/weapon-miss-rider-runtime-patches.js";
 import { registerSportHunterNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/sport-hunter-normalization-hooks.js";
 import { registerSportHunterRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/sport-hunter-runtime-patches.js";
+import { registerRemainingWeaponArmorFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/remaining-weapon-armor-feat-normalization-hooks.js";
+import { registerRelentlessAttackRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/relentless-attack-runtime-patches.js";
 
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -110,6 +112,8 @@ export function registerInitHooks() {
         registerWeaponMissRiderRuntimePatches();
         registerSportHunterNormalizationHooks();
         registerSportHunterRuntimePatches();
+        registerRemainingWeaponArmorFeatNormalizationHooks();
+        registerRelentlessAttackRuntimePatches();
         registerSpeciesOriginFeatNormalizationHooks();
         SWSECombatActionBrowser.init();
         const stats = HooksRegistry.getStats();
