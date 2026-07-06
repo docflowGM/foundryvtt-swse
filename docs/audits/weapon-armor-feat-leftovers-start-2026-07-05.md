@@ -26,15 +26,23 @@ The following strict Combat feats were also completed before this pass and shoul
 | Martial Arts I | fully_implemented | Normalized as a PASSIVE STATE feat with two consumers: `abilityMeta.rules` mutates the automatic virtual Unarmed Strike via `UnarmedAttackHelper` (+1 unarmed die step and no AoO), while `abilityMeta.modifiers` gives DefenseCalculator +1 Reflex dodge. No CombatOptionResolver runtime patch is used. |
 | Martial Arts II | fully_implemented | Normalized as a PASSIVE STATE feat with `abilityMeta.rules` mutating the automatic virtual Unarmed Strike by +1 additional unarmed die step, and `abilityMeta.modifiers` giving DefenseCalculator +1 additional Reflex dodge. |
 | Martial Arts III | fully_implemented | Normalized as a PASSIVE STATE feat with `abilityMeta.rules` mutating the automatic virtual Unarmed Strike by +1 additional unarmed die step, and `abilityMeta.modifiers` giving DefenseCalculator +1 additional Reflex dodge. |
+| Echani Training | implemented_as_virtual_unarmed_style | Normalized as virtual-unarmed style metadata: single-attack Strength damage multiplier and once/encounter Fortitude follow-up to knock prone, including size/stability defense bonuses. |
+| Hijkata Training | implemented_as_virtual_unarmed_style | Normalized as virtual-unarmed style metadata: once/round unarmed AoO counter at -5, once/encounter unarmed AoO damage rider that applies a Dex-based attack penalty, plus Hijkata Expertise synergy slot. |
+| K'tara Training | implemented_as_virtual_unarmed_style | Normalized as virtual-unarmed style metadata: +1 damage die vs flat-footed target once/turn, once/encounter Fortitude follow-up to silence as a Stunning effect, plus K'tara Expertise synergy slot. |
+| K'thri Training | implemented_as_virtual_unarmed_style | Normalized as virtual-unarmed style metadata: swift unarmed attack with base unarmed damage only, once/encounter half damage on miss, light/no armor gate, plus K'thri Expertise synergy slot. |
+| Stava Training | implemented_as_virtual_unarmed_style | Normalized as virtual-unarmed style metadata: grab/grapple size-category mutators, free Grab after a charging unarmed hit, light/no armor gate, plus Stava Expertise synergy slot. |
+| Tae-Jitsu Training | implemented_as_virtual_unarmed_style | Normalized as virtual-unarmed style metadata: critical unarmed damage +1 die step, primary adversary encounter mark action, plus Tae-Jitsu Expertise synergy slot. |
+| Teras Kasi Training | implemented_as_virtual_unarmed_style | Normalized as virtual-unarmed style metadata: once/round successful unarmed hit reduces target DT by 5 for current attack resolution, plus Teras Kasi Basics synergy slot for future/talent-backed virtual unarmed damage size increase. |
+| Wrruushi Training | implemented_as_virtual_unarmed_style | Normalized as virtual-unarmed style metadata: temp HP on unarmed hit, once/encounter unarmed attack vs Fortitude that suppresses Fortitude equipment bonus, light/no armor gate, plus Wrruushi Expertise synergy slot. |
 
 ## Weapon & Armor leftovers still queued
 
 These remain the next implementation pool, pending source/rule mapping and runtime wiring:
 
-- Lightsaber & Weapon Styles: K'tara Training, Tae-Jitsu Training, Hijkata Training, Teräs Käsi Training, Long Haft Strike, Echani Training.
+- Lightsaber & Weapon Styles: Long Haft Strike, remaining non-unarmed weapon-style feats if source-confirmed.
 - Weapon Proficiency: Exotic Weapon Proficiency, Triple Crit Specialist, Relentless Attack, Returning Bug, Sport Hunter, Savage Attack, Improvised Weapon Mastery, Weapon Focus, Withdrawal Strike, Advanced Melee Weapon Proficiency, Weapon Proficiency variants.
 - Weapon Focus & Specialization: Weapon Finesse, Halt, Autofire Assault, Critical Strike, Autofire Sweep.
-- Armor Proficiency & Use: Grand Army of the Republic Training, Stava Training, K'thri Training.
+- Armor Proficiency & Use: Grand Army of the Republic Training.
 
 ## Already implemented / not part of this queue
 
