@@ -105,6 +105,42 @@ const BASE_EXTRA_SKILL_USES = [
     tags: ['movement', 'acrobatics', 'ally']
   },
   {
+    id: 'stealth.sleight-of-hand',
+    key: 'sleight-of-hand',
+    skill: 'stealth',
+    name: 'Sleight of Hand',
+    actionCost: 'varies',
+    opposedSkill: 'perception',
+    tags: ['stealth', 'sleight-of-hand', 'concealment']
+  },
+  {
+    id: 'stealth.draw-and-palm-weapon',
+    key: 'draw-and-palm-weapon',
+    skill: 'stealth',
+    name: 'Draw and Palm Weapon',
+    actionCost: 'single-action',
+    checkActionCost: 'free',
+    tags: ['stealth', 'sleight-of-hand', 'weapon', 'concealment']
+  },
+  {
+    id: 'survival.basic-survival',
+    key: 'basic-survival',
+    skill: 'survival',
+    name: 'Basic Survival',
+    actionCost: 'varies',
+    tags: ['survival', 'wilderness']
+  },
+  {
+    id: 'survival.wilderness-first-aid',
+    key: 'wilderness-first-aid',
+    skill: 'survival',
+    name: 'Wilderness First Aid',
+    actionCost: 'varies',
+    dc: 20,
+    oncePer: 'day',
+    tags: ['survival', 'wilderness', 'treat-injury', 'medpac']
+  },
+  {
     id: 'perception.scavenge-building-materials',
     key: 'scavenge-building-materials',
     skill: 'perception',
