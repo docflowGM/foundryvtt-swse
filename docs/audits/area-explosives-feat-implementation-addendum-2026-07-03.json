@@ -14,6 +14,16 @@
       "mechanic": "Attack option requiring area attack context. Adds +5 damage before Evasion when selected for one hit target. Target eligibility remains advisory/spatial."
     },
     {
+      "name": "Artillery Shot",
+      "status": "implemented_area_template_mutation_metadata_and_helper",
+      "mechanic": "Burst/Splash area rider. Runtime helper exposes two additional adjacent squares when a proficient Burst or Splash attack is made beyond point-blank range. Canvas placement and final affected squares remain workflow/GM adjudicated."
+    },
+    {
+      "name": "Flash and Clear",
+      "status": "implemented_area_damage_rider_metadata_and_helper",
+      "mechanic": "Burst/Splash damage rider. Runtime helper exposes target-scoped concealment against each damaged target until the beginning of the attacker's next turn. Effect lifecycle application remains workflow-facing metadata."
+    },
+    {
       "name": "Spray Shot",
       "status": "implemented_autofire_shape_mutation_metadata_and_helper",
       "mechanic": "Autofire rider. Runtime helper exposes selectable mutation from normal 2x2 Autofire area to a 1-square targeted area."
