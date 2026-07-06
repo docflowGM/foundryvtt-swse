@@ -64,6 +64,38 @@ function isAreaAttackContext(context = {}) {
     || contextAffirms(context.workflowContext?.areaAttack);
 }
 
+function weaponCategoryText(context = {}) {
+  return [
+    context.weaponCategory,
+    context.weaponType,
+    context.damageType,
+    context.areaType,
+    context.workflowContext?.weaponCategory,
+    context.workflowContext?.weaponType,
+    context.workflowContext?.damageType,
+    context.workflowContext?.areaType,
+    context.weapon?.name,
+    context.weapon?.system?.weaponType,
+    context.weapon?.system?.weaponGroup,
+    context.weapon?.system?.category,
+    context.weapon?.system?.type,
+    context.weapon?.system?.subtype,
+    Array.isArray(context.weapon?.system?.traits) ? context.weapon.system.traits.join(' ') : context.weapon?.system?.traits,
+    Array.isArray(context.weapon?.system?.properties) ? context.weapon.system.properties.join(' ') : context.weapon?.system?.properties
+  ].map(normalizeKey).filter(Boolean).join(' ');
+}
+
+function isBurstOrSplashContext(context = {}) {
+  const text = weaponCategoryText(context);
+  return text.includes('burst') || text.includes('splash') || contextAffirms(context.burstWeapon) || contextAffirms(context.splashWeapon) || contextAffirms(context.workflowContext?.burstWeapon) || contextAffirms(context.workflowContext?.splashWeapon);
+}
+
+function isBeyondPointBlankContext(context = {}) {
+  const band = normalizeKey(context.rangeBand ?? context.rangeCategory ?? context.range ?? context.workflowContext?.rangeBand ?? context.workflowContext?.rangeCategory ?? context.workflowContext?.range ?? '');
+  if (!band) return false;
+  return band !== 'point-blank' && band !== 'pointblank' && band !== 'close';
+}
+
 function isGrenadeContext(context = {}) {
   const type = normalizeKey(context.weaponCategory ?? context.weaponType ?? context.attackType ?? context.workflowContext?.weaponCategory ?? context.workflowContext?.weaponType ?? '');
   return ['grenade', 'thermal-detonator', 'thermaldetonator'].includes(type)
@@ -72,9 +104,9 @@ function isGrenadeContext(context = {}) {
 }
 
 function isDamagingHitContext(context = {}) {
-  const hit = contextAffirms(context.hit) || contextAffirms(context.isHit) || contextAffirms(context.workflowContext?.hit) || contextAffirms(context.workflowContext?.isHit);
+  const hit = contextAffirms(context.hit) || contextAffirms(context.isHit) || contextAffirms(context.workflowContext?.hit) || contextAffirms(context.workflowContext?.isHit) || contextAffirms(context.damagedTarget) || contextAffirms(context.workflowContext?.damagedTarget);
   const damage = numeric(context.damage ?? context.damageTotal ?? context.workflowContext?.damage ?? context.workflowContext?.damageTotal, 0);
-  return hit && damage > 0;
+  return hit && (damage > 0 || contextAffirms(context.damagedTarget) || contextAffirms(context.workflowContext?.damagedTarget));
 }
 
 function isWeaponProficientContext(context = {}) {
@@ -141,6 +173,50 @@ function resolveAutofireShapeMutations(actor, context = {}) {
   }));
 }
 
+function resolveAreaTemplateMutations(actor, context = {}) {
+  if (!actor || !isAreaAttackContext(context) || !isWeaponProficientContext(context)) return [];
+  return collectRules(actor, 'AREA_ATTACK_TEMPLATE_MUTATION').flatMap(rule => {
+    if (rule.requiresBurstOrSplashWeapon && !isBurstOrSplashContext(context)) return [];
+    if (rule.requiresBeyondPointBlankRange && !isBeyondPointBlankContext(context)) return [];
+    const mutation = rule.areaTemplateMutation ?? {};
+    return [{
+      id: rule.id,
+      source: rule.sourceName ?? rule.source ?? rule.label,
+      label: rule.label,
+      type: 'areaTemplateMutation',
+      addAdjacentSquares: mutation.addAdjacentSquares ?? 0,
+      targetSelection: mutation.targetSelection,
+      appliesToBurst: mutation.appliesToBurst === true,
+      appliesToSplash: mutation.appliesToSplash === true,
+      advisoryOnly: mutation.advisoryOnly === true,
+      canvasAutomation: mutation.canvasAutomation === true,
+      note: mutation.note ?? rule.summary,
+      rule
+    }];
+  });
+}
+
+function resolveAreaDamageRiders(actor, context = {}) {
+  if (!actor || !isAreaAttackContext(context) || !isDamagingHitContext(context)) return [];
+  return collectRules(actor, 'AREA_DAMAGE_RIDER').flatMap(rule => {
+    if (rule.requiresBurstOrSplashWeapon && !isBurstOrSplashContext(context)) return [];
+    return asArray(rule.targetEffectsOnDamage).map(effect => ({
+      id: `${rule.id}-${effect.type ?? 'effect'}`,
+      source: rule.sourceName ?? rule.source ?? rule.label,
+      label: rule.label,
+      type: effect.type,
+      advisoryOnly: effect.advisoryOnly !== false,
+      targetScoped: effect.targetScoped === true,
+      appliesAgainstDamagedTargetOnly: effect.appliesAgainstDamagedTargetOnly === true,
+      duration: effect.duration,
+      concealment: effect.concealment === true,
+      note: effect.note ?? rule.summary,
+      rule,
+      effect
+    }));
+  });
+}
+
 function resolveAutofireTargetDefenseRiders(actor, context = {}) {
   if (!actor || !isAutofireContext(context) || !isAreaAttackContext(context) || !isWeaponProficientContext(context)) return [];
   return collectRules(actor, 'AUTOFIRE_TARGET_DEFENSE_RIDER').map(rule => ({
@@ -153,7 +229,7 @@ function resolveAutofireTargetDefenseRiders(actor, context = {}) {
     removeDeflectionBonuses: rule.targetDefenseMutation?.removeDeflectionBonuses === true,
     appliesToAllTargetsInArea: rule.targetDefenseMutation?.appliesToAllTargetsInArea === true,
     appliesToThisAttackOnly: rule.targetDefenseMutation?.appliesToThisAttackOnly !== false,
-    advisoryOnly: rule.targetDefenseMutation?.advisoryOnly !== false,
+    advisoryOnly: rule.targetDefenseMutation?.advisoryOnly === true,
     note: rule.targetDefenseMutation?.note ?? rule.summary,
     rule
   }));
@@ -209,6 +285,8 @@ function getSpecialAreaAttackActions(actor) {
 function patchCombatOptionResolver() {
   if (CombatOptionResolver.__swseAreaExplosivesRuntimePatched === true) return;
   CombatOptionResolver.resolveAutofireShapeMutations = resolveAutofireShapeMutations;
+  CombatOptionResolver.resolveAreaTemplateMutations = resolveAreaTemplateMutations;
+  CombatOptionResolver.resolveAreaDamageRiders = resolveAreaDamageRiders;
   CombatOptionResolver.resolveAutofireTargetDefenseRiders = resolveAutofireTargetDefenseRiders;
   CombatOptionResolver.resolveGrenadeDamageRiders = resolveGrenadeDamageRiders;
   CombatOptionResolver.getSpecialAreaAttackActions = getSpecialAreaAttackActions;
@@ -222,6 +300,8 @@ export function registerAreaExplosivesRuntimePatches() {
   game.swse ??= {};
   game.swse.feats ??= {};
   game.swse.feats.resolveAutofireShapeMutations = resolveAutofireShapeMutations;
+  game.swse.feats.resolveAreaTemplateMutations = resolveAreaTemplateMutations;
+  game.swse.feats.resolveAreaDamageRiders = resolveAreaDamageRiders;
   game.swse.feats.resolveAutofireTargetDefenseRiders = resolveAutofireTargetDefenseRiders;
   game.swse.feats.resolveGrenadeDamageRiders = resolveGrenadeDamageRiders;
   game.swse.feats.getSpecialAreaAttackActions = getSpecialAreaAttackActions;
@@ -232,6 +312,8 @@ Hooks.once('ready', () => registerAreaExplosivesRuntimePatches());
 
 export {
   resolveAutofireShapeMutations,
+  resolveAreaTemplateMutations,
+  resolveAreaDamageRiders,
   resolveAutofireTargetDefenseRiders,
   resolveGrenadeDamageRiders,
   getSpecialAreaAttackActions
