@@ -125,6 +125,50 @@ export function getUnarmedFamilyExtraWeaponDice(actor) {
   return total;
 }
 
+export function getUnarmedStyleRules(actor) {
+  return getAllOwnedRules(actor).filter(rule => String(rule.type || '').toUpperCase().startsWith('UNARMED_STYLE_'));
+}
+
+function categorizedUnarmedStyleRules(actor) {
+  const categories = {
+    damageAbilityMultipliers: [],
+    conditionalDamageDice: [],
+    onDamageRiders: [],
+    onHitRiders: [],
+    onHitMutators: [],
+    missRiders: [],
+    reactionAttacks: [],
+    actionAttacks: [],
+    actionMarks: [],
+    grappleMutators: [],
+    criticalDamageSteps: [],
+    alternateDefenseAttacks: [],
+    talentSynergies: [],
+    all: []
+  };
+  for (const rule of getUnarmedStyleRules(actor)) {
+    const copy = foundry?.utils?.deepClone ? foundry.utils.deepClone(rule) : JSON.parse(JSON.stringify(rule));
+    categories.all.push(copy);
+    switch (String(copy.type || '').toUpperCase()) {
+      case 'UNARMED_STYLE_DAMAGE_ABILITY_MULTIPLIER': categories.damageAbilityMultipliers.push(copy); break;
+      case 'UNARMED_STYLE_CONDITIONAL_DAMAGE_DICE': categories.conditionalDamageDice.push(copy); break;
+      case 'UNARMED_STYLE_ON_DAMAGE_RIDER': categories.onDamageRiders.push(copy); break;
+      case 'UNARMED_STYLE_ON_HIT_RIDER': categories.onHitRiders.push(copy); break;
+      case 'UNARMED_STYLE_ON_HIT_MUTATOR': categories.onHitMutators.push(copy); break;
+      case 'UNARMED_STYLE_MISS_RIDER': categories.missRiders.push(copy); break;
+      case 'UNARMED_STYLE_REACTION_ATTACK': categories.reactionAttacks.push(copy); break;
+      case 'UNARMED_STYLE_ACTION_ATTACK': categories.actionAttacks.push(copy); break;
+      case 'UNARMED_STYLE_ACTION_MARK': categories.actionMarks.push(copy); break;
+      case 'UNARMED_STYLE_GRAPPLE_MUTATOR': categories.grappleMutators.push(copy); break;
+      case 'UNARMED_STYLE_CRITICAL_DAMAGE_STEP': categories.criticalDamageSteps.push(copy); break;
+      case 'UNARMED_STYLE_ALTERNATE_DEFENSE_ATTACK': categories.alternateDefenseAttacks.push(copy); break;
+      case 'UNARMED_STYLE_TALENT_SYNERGY': categories.talentSynergies.push(copy); break;
+      default: break;
+    }
+  }
+  return categories;
+}
+
 export function unarmedAttackDoesNotProvoke(actor) {
   const hasExplicitRule = getFeatRules(actor).some(rule => String(rule.type) === 'UNARMED_DOES_NOT_PROVOKE_AOO');
   return hasExplicitRule || actorHasFeat(actor, 'Martial Arts I');
@@ -210,6 +254,12 @@ export function buildVirtualUnarmedWeapon(actor, options = {}) {
   const damage = appendExtraWeaponDice(baseDamage, extraWeaponDice);
   const appendageLabel = options.appendage?.name ? ` (${options.appendage.name})` : '';
   const noProvokeOpportunity = unarmedAttackDoesNotProvoke(actor);
+  const styleRules = categorizedUnarmedStyleRules(actor);
+  const styleFlags = {
+    hasUnarmedStyles: styleRules.all.length > 0,
+    styles: [...new Set(styleRules.all.map(rule => rule.style).filter(Boolean))],
+    ruleCount: styleRules.all.length
+  };
   return {
     id: options.id ?? 'swse-virtual-unarmed',
     name: options.name ?? `Unarmed Strike${appendageLabel}`,
@@ -224,7 +274,9 @@ export function buildVirtualUnarmedWeapon(actor, options = {}) {
         martialArtsDamageApplied: true,
         unarmedExtraWeaponDice: extraWeaponDice,
         unarmedExtraWeaponDiceApplied: extraWeaponDice > 0,
-        noProvokeOpportunity
+        noProvokeOpportunity,
+        unarmedStyle: styleFlags,
+        unarmedStyleRules: styleRules.all
       }
     },
     system: {
@@ -241,9 +293,11 @@ export function buildVirtualUnarmedWeapon(actor, options = {}) {
       provokesOpportunityAttack: !noProvokeOpportunity,
       noProvokeOpportunity,
       attackOptions: {
-        noProvokeOpportunity
+        noProvokeOpportunity,
+        unarmedStyle: styleRules
       },
-      description: `Always-available unarmed strike. Damage includes size, droid appendage type when applicable, Martial Arts feat die-step increases, unarmed-family extra weapon dice from talents, and Strength modifier via the damage pipeline.${noProvokeOpportunity ? ' Martial Arts I prevents this unarmed attack from provoking attacks of opportunity.' : ''}`
+      unarmedStyle: styleRules,
+      description: `Always-available unarmed strike. Damage includes size, droid appendage type when applicable, Martial Arts feat die-step increases, unarmed-family extra weapon dice from talents, and Strength modifier via the damage pipeline.${noProvokeOpportunity ? ' Martial Arts I prevents this unarmed attack from provoking attacks of opportunity.' : ''}${styleRules.all.length ? ' Unarmed style feat riders are exposed in system.unarmedStyle and flags.swse.unarmedStyleRules for the roll workflow.' : ''}`
     }
   };
 }
@@ -258,32 +312,8 @@ export function buildUnarmedAttackContext(actor, options = {}) {
     isUnarmed: true,
     isDroidAppendage: weapon.flags.swse.droidAppendage,
     martialArtsStep: weapon.flags.swse.martialArtsStep,
-    unarmedExtraWeaponDice: weapon.flags.swse.unarmedExtraWeaponDice,
-    noProvokeOpportunity: weapon.flags.swse.noProvokeOpportunity === true,
-    provokesOpportunityAttack: weapon.system.provokesOpportunityAttack !== false,
-    damage: weapon.system.damage,
-    damageType: weapon.system.damageType,
-    range: 'Melee',
-    weaponType: 'Unarmed · Melee',
-    tags: [
-      'Always Available',
-      ...(weapon.flags.swse.martialArtsStep ? [`Martial Arts ${weapon.flags.swse.martialArtsStep}`] : []),
-      ...(weapon.flags.swse.unarmedExtraWeaponDice ? [`+${weapon.flags.swse.unarmedExtraWeaponDice} weapon die`] : []),
-      ...(weapon.flags.swse.noProvokeOpportunity ? ['No AoO'] : [])
-    ],
+    unarmedStyle: weapon.system.unarmedStyle,
+    noProvokeOpportunity: weapon.flags.swse.noProvokeOpportunity,
     weapon
   };
 }
-
-export const UnarmedAttackHelper = Object.freeze({
-  buildUnarmedAttackContext,
-  buildVirtualUnarmedWeapon,
-  getBaseUnarmedDamage,
-  getMartialArtsStep,
-  getUnarmedDamage,
-  getUnarmedFamilyExtraWeaponDice,
-  unarmedAttackDoesNotProvoke,
-  increaseDamageDie
-});
-
-export default UnarmedAttackHelper;
