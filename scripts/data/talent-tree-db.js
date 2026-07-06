@@ -437,10 +437,27 @@ export const TalentTreeDB = {
      */
     buildTalentIndex() {
         this.talentToTree.clear();
+        const addTalentKey = (key, treeId) => {
+            const raw = String(key || '').trim();
+            if (!raw || !treeId) {return;}
+
+            const aliases = [raw, raw.toLowerCase(), toStableKey(raw)]
+                .map(alias => String(alias || '').trim())
+                .filter(Boolean);
+
+            for (const alias of aliases) {
+                if (!this.talentToTree.has(alias)) {
+                    this.talentToTree.set(alias, treeId);
+                }
+            }
+        };
+
         for (const tree of this.trees.values()) {
             for (const talentId of tree.talentIds || []) {
-                if (!talentId) {continue;}
-                this.talentToTree.set(talentId, tree.id);
+                addTalentKey(talentId, tree.id);
+            }
+            for (const talentName of tree.talentNames || []) {
+                addTalentKey(talentName, tree.id);
             }
         }
     },
@@ -452,8 +469,23 @@ export const TalentTreeDB = {
      * @returns {string|null}
      */
     getTreeIdForTalent(talentId) {
-        if (!talentId) {return null;}
-        return this.talentToTree.get(talentId) || null;
+        const raw = String(talentId || '').trim();
+        if (!raw) {return null;}
+        return this.talentToTree.get(raw)
+            || this.talentToTree.get(raw.toLowerCase())
+            || this.talentToTree.get(toStableKey(raw))
+            || null;
+    },
+
+    /**
+     * Compatibility alias for older startup/audit paths.
+     * Returns the owning tree ID, not the tree object.
+     *
+     * @param {string} talentIdOrName
+     * @returns {string|null}
+     */
+    getTreeForTalent(talentIdOrName) {
+        return this.getTreeIdForTalent(talentIdOrName);
     },
 
     /**
