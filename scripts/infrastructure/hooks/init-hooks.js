@@ -39,6 +39,8 @@ import { registerRangedCombatFeatNormalizationHooks } from "/systems/foundryvtt-
 import { registerDamageThresholdFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/damage-threshold-feat-normalization-hooks.js";
 import { registerSpeciesOriginFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/species-origin-feat-normalization-hooks.js";
 import { registerCombatFeatDamageRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/combat-feat-damage-runtime-patches.js";
+import { registerWeaponArmorRiderNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/weapon-armor-rider-normalization-hooks.js";
+import { registerWeaponArmorRiderRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/weapon-armor-rider-runtime-patches.js";
 
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -82,6 +84,8 @@ export function registerInitHooks() {
         registerRangedCombatFeatNormalizationHooks();
         registerDamageThresholdFeatNormalizationHooks();
         registerCombatFeatDamageRuntimePatches();
+        registerWeaponArmorRiderNormalizationHooks();
+        registerWeaponArmorRiderRuntimePatches();
         registerSpeciesOriginFeatNormalizationHooks();
         SWSECombatActionBrowser.init();
         const stats = HooksRegistry.getStats();
