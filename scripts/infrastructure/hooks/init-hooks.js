@@ -44,6 +44,7 @@ import { registerWeaponArmorRiderRuntimePatches } from "/systems/foundryvtt-swse
 import { registerMartialArtsFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/martial-arts-feat-normalization-hooks.js";
 import { registerUnarmedStyleFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/unarmed-style-feat-normalization-hooks.js";
 import { registerAbilityMetaSchemaDefaultHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/ability-meta-schema-default-hooks.js";
+import { registerWeaponFoundationFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/weapon-foundation-feat-normalization-hooks.js";
 
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -92,6 +93,7 @@ export function registerInitHooks() {
         registerWeaponArmorRiderRuntimePatches();
         registerMartialArtsFeatNormalizationHooks();
         registerUnarmedStyleFeatNormalizationHooks();
+        registerWeaponFoundationFeatNormalizationHooks();
         registerSpeciesOriginFeatNormalizationHooks();
         SWSECombatActionBrowser.init();
         const stats = HooksRegistry.getStats();
