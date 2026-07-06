@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-06",
+  "purpose": "Record combat implementation pass for Demoralizing Strike, Flèche, and Grazing Shot from Galaxy of Intrigue.",
+  "implementedEntries": [
+    {
+      "name": "Demoralizing Strike",
+      "status": "implemented_attack_of_opportunity_damage_rider_metadata_and_helper",
+      "mechanic": "When an Attack of Opportunity successfully deals damage, helper exposes an immediate Free Action Persuasion/Intimidate extra skill use against the damaged opponent."
+    },
+    {
+      "name": "Flèche",
+      "status": "implemented_charge_attack_rider_with_encounter_use",
+      "mechanic": "Once per encounter when selected on a Charge, runtime exposes natural 17-20 as critical threat range for that charge attack and provides spendChargeAttackRider for encounter use tracking."
+    },
+    {
+      "name": "Grazing Shot",
+      "status": "implemented_special_ranged_attack_action_metadata_and_helper",
+      "mechanic": "Adds actor-aware Grazing Shot action card for actors with the feat. Runtime helper exposes two attack rolls, secondary target line-of-sight/range predicates, and one all-or-nothing split damage roll if both attacks hit."
+    }
+  ],
+  "automationBoundary": {
+    "Demoralizing Strike": "AoO damage workflow must call getAttackOfOpportunityDamageRiders after damage is dealt and launch the Persuasion Intimidate extra skill use as a Free Action.",
+    "Flèche": "Charge attack workflow must expose/select the fleche option, use the criticalThreatNaturalMin metadata during crit evaluation, and call spendChargeAttackRider after confirmed use.",
+    "Grazing Shot": "Special ranged attack workflow must call getSpecialRangedAttackActions, resolve both attack rolls before damage, verify secondary target LOS and 6-square distance, and apply split damage only if both attacks hit."
+  },
+  "changedFiles": [
+    "scripts/engine/feats/galaxy-intrigue-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/galaxy-intrigue-combat-runtime-patches.js",
+    "scripts/engine/combat/galaxy-intrigue-combat-action-adapter.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}
