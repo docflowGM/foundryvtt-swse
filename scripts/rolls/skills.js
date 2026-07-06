@@ -15,6 +15,7 @@ import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
 import { TeamFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/team-feat-runtime-patches.js";
+import { RebellionSpeciesSkillFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js";
 
 
 const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
@@ -120,25 +121,15 @@ function buildAthleticsRollSkill(actor, derivedSkills = {}) {
   return { skill, derivedSkill };
 }
 
-/**
- * Roll a skill check using unified RollCore pipeline
- * Routes through ModifierEngine to ensure passive bonuses apply
- *
- * @param {Actor} actor - The actor making the check
- * @param {string} skillKey - The skill key
- * @returns {Promise<Roll>} The skill check roll
- */
 export async function rollSkill(actor, skillKey, options = {}) {
   const utils = game.swse.utils;
   const athleticsOn = athleticsConsolidationActive();
   const requestedSkillKey = String(skillKey ?? '').trim();
   const effectiveSkillKey = athleticsOn && isAthleticsComponentKey(requestedSkillKey) ? 'athletics' : requestedSkillKey;
 
-  // === READ FROM DERIVED (SSOT) ===
   const derivedSkills = actor.system.derived?.skills;
   let derivedSkill = readDerivedSkill(derivedSkills, effectiveSkillKey);
 
-  // Get skill metadata from raw system.skills for training check
   let skill = actor.system.skills?.[effectiveSkillKey];
   if (!skill && athleticsOn && effectiveSkillKey === 'athletics') {
     const athletics = buildAthleticsRollSkill(actor, derivedSkills);
@@ -163,7 +154,6 @@ export async function rollSkill(actor, skillKey, options = {}) {
     + (Number(skill.miscMod) || 0);
   const canonicalTotal = Number.isFinite(Number(derivedSkill?.total)) ? Number(derivedSkill.total) : fallbackTotal;
 
-  // Check trained-only enforcement
   const isTrained = derivedSkill?.trained === true || skill.trained === true;
   const skillDef = skillConfig || {};
   const permission = SkillEnforcementEngine.evaluate({ actor, skillKey: effectiveSkillKey, actionType: 'check', context: { isTrained, skillDef } });
@@ -188,14 +178,14 @@ export async function rollSkill(actor, skillKey, options = {}) {
     swseLogger.warn('Team feat prompt failed; continuing with base Team Feat bonuses only.', err);
   }
 
+  const forcePointDieUpgrade = RebellionSpeciesSkillFeatRuntime.getForcePointDieUpgrade(actor, effectiveSkillKey, skillContext);
+  if (forcePointDieUpgrade) skillContext.forcePointDieUpgrade = forcePointDieUpgrade;
+
   const featSkillBonuses = SkillFeatResolver.getSkillCheckBonuses(actor, effectiveSkillKey, skillContext);
   const skillCheckMode = String(options?.checkMode || (options?.take20 === true ? 'take20' : options?.take10 === true ? 'take10' : 'roll')).toLowerCase();
   const skillTakeXValue = skillCheckMode === 'take20' ? 20 : skillCheckMode === 'take10' ? 10 : 10;
   const skillIsTakeX = skillCheckMode === 'take10' || skillCheckMode === 'take20';
 
-  // === UNIFIED ROLL EXECUTION via RollCore ===
-  // Pass derived.skills[skillKey].total as baseBonus so formula is:
-  // 1d20 + baseBonus (all permanent components) + modifierTotal (situational mods)
   const domain = `skill.${effectiveSkillKey}`;
   const rollResult = await RollCore.execute({
     actor,
@@ -204,11 +194,10 @@ export async function rollSkill(actor, skillKey, options = {}) {
     rollOptions: {
       baseDice: '1d20',
       useForce: options?.useForcePoint === true,
+      forcePointDieUpgradeSteps: forcePointDieUpgrade?.steps ?? 0,
+      forcePointDieUpgradeSource: forcePointDieUpgrade?.source ?? null,
       isTakeX: skillIsTakeX,
       takeXValue: skillTakeXValue,
-      // canonicalTotal is system.derived.skills[skillKey].total, which already
-      // contains permanent/static bonuses. RollCore should only add contextual
-      // roll-time modifiers for skill rolls.
       skipStaticModifiers: true
     },
     context: {
@@ -218,6 +207,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
       useKey: skillContext.useKey,
       featSkillBonuses: featSkillBonuses.bonuses,
       teamFeatAllyCounts: skillContext.teamFeatAllyCounts ?? null,
+      forcePointDieUpgrade: forcePointDieUpgrade ?? null,
       checkMode: skillCheckMode,
       takeXValue: skillIsTakeX ? skillTakeXValue : null
     }
@@ -228,14 +218,12 @@ export async function rollSkill(actor, skillKey, options = {}) {
     return null;
   }
 
-  // === RENDER TO CHAT ===
   const skillLabel = skill.label || utils?.string?.capitalize?.(effectiveSkillKey) || String(effectiveSkillKey || 'Skill').replace(/([a-z])([A-Z])/g, '$1 $2').replace(/[\-_]+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   let chatRoll = rollResult.roll;
   if (!chatRoll && rollResult.isTakeX) {
     chatRoll = await new Roll(String(rollResult.finalTotal), actor.getRollData?.() ?? {}).evaluate({ async: true });
   }
   if (chatRoll) {
-    // Build detailed modifier breakdown
     const total = chatRoll?.total ?? rollResult.finalTotal ?? 'unknown';
     const resultRiders = buildSkillResultRiders(actor, effectiveSkillKey, total, skillContext);
     const resultRiderText = resultRiders.length ? ` ${resultRiders.map(rider => rider.text).join(' ')}` : '';
@@ -257,6 +245,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
           skillUseKey: skillContext.useKey ?? null,
           featSkillBonuses: featSkillBonuses.bonuses,
           teamFeatAllyCounts: skillContext.teamFeatAllyCounts ?? null,
+          forcePointDieUpgrade: forcePointDieUpgrade ?? null,
           skillResultRiders: resultRiders,
           rerollOptions
         }
@@ -273,6 +262,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
         featSkillBonus: featSkillBonuses.total,
         featSkillBonuses: featSkillBonuses.bonuses,
         teamFeatAllyCounts: skillContext.teamFeatAllyCounts ?? null,
+        forcePointDieUpgrade: forcePointDieUpgrade ?? null,
         skillResultRiders: resultRiders,
         rerollOptions,
         dc: options?.dc ?? null,
@@ -284,31 +274,16 @@ export async function rollSkill(actor, skillKey, options = {}) {
       }
     });
 
-    // PHASE 5: Offer species reroll if applicable
-    // Check if actor has applicable species reroll rights for this skill
     const applicableRerolls = SpeciesRerollHandler.getApplicableRerolls(actor, effectiveSkillKey);
     if (applicableRerolls.length > 0) {
-      const rerollResult = await SpeciesRerollHandler.offerReroll(actor, effectiveSkillKey, chatRoll, {
-        skillKey: effectiveSkillKey
-      });
-      // If reroll was accepted, return the rerolled result
-      if (rerollResult && rerollResult.total !== chatRoll.total) {
-        return rerollResult;
-      }
+      const rerollResult = await SpeciesRerollHandler.offerReroll(actor, effectiveSkillKey, chatRoll, { skillKey: effectiveSkillKey });
+      if (rerollResult && rerollResult.total !== chatRoll.total) return rerollResult;
     }
   }
 
   return chatRoll;
 }
 
-/**
- * Calculate skill modifier (legacy, kept for compatibility)
- * ⚠️ DEPRECATED: Use RollCore.execute() instead, which includes ModifierEngine
- *
- * @param {Actor} actor - The actor
- * @param {string} skillKey - The skill key
- * @returns {number} The skill modifier
- */
 export function calculateSkillModifier(actor, skillKey) {
   const skill = SchemaAdapters.getSkill(actor, skillKey);
   const attributes = SchemaAdapters.getAttributes(actor);
@@ -325,9 +300,6 @@ export function calculateSkillModifier(actor, skillKey) {
   return abilityMod + trainedBonus + focusBonus + armorPenalty + miscMod;
 }
 
-/**
- * Roll skill with configuration dialog
- */
 export async function rollSkillWithConfig(actor, skillKey, options = {}) {
   try {
     return await showRollModifiersDialog({
@@ -350,5 +322,4 @@ export async function rollSkillWithConfig(actor, skillKey, options = {}) {
   }
 }
 
-// Legacy export compatibility
 export default rollSkill;
