@@ -1,3 +1,7 @@
+import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
+import { ConditionTrackFeatActions } from "/systems/foundryvtt-swse/scripts/engine/feats/condition-track-feat-actions.js";
+
 /**
  * SWSE Condition Track Sheet Component (Enhanced and RAW-accurate)
  * - GM-only persistent toggle
@@ -5,7 +9,7 @@
  * - Helpless state enforced (no Recover)
  * - Skip-prompt compatibility with CombatIntegration (turn, encounter, forever)
  * - RAW-correct penalty descriptions
- * - Future-proof for action economy integration
+ * - Action economy integration through ConditionTrackFeatActions
  */
 
 export class ConditionTrackComponent {
@@ -48,7 +52,7 @@ export class ConditionTrackComponent {
 
         <div class="ct-controls">
           <button class="ct-btn improve" data-ct="improve" ${skipForever ? 'disabled' : ''}>
-            <i class="fa-solid fa-arrow-up"></i> Recover
+            <i class="fa-solid fa-arrow-up"></i> Recover (3 Swift)
           </button>
 
           <button class="ct-btn worsen" data-ct="worsen">
@@ -136,12 +140,8 @@ export class ConditionTrackComponent {
         if (!game.user.isGM) {
           return ui.notifications.warn('Only the GM may directly set the Condition Track.');
         }
-        // PHASE 3: Route through ActorEngine
         const step = Number(ev.currentTarget.dataset.step);
-        const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-        await ActorEngine.updateActor(actor, {
-          'system.conditionTrack.current': Math.clamp(step, 0, 5)
-        });
+        await ActorEngine.setConditionStep(actor, Math.min(ConditionTrackRules.getConditionStepCap(), Math.max(0, step)), 'condition-track-ui');
       });
     });
 
@@ -152,7 +152,7 @@ export class ConditionTrackComponent {
     if (improveBtn) {
       improveBtn.addEventListener('click', async () => {
 
-        // If actor chose "never show CT prompts" — reflect that here too
+        // If actor chose "never show CT prompts" -- reflect that here too
         const skipForever = actor.getFlag('foundryvtt-swse', 'skipCtPromptsForever') === true;
         if (skipForever) {
           return ui.notifications.info('CT recovery prompts disabled for this actor.');
@@ -169,16 +169,19 @@ export class ConditionTrackComponent {
           return ui.notifications.warn('This condition is Persistent and cannot be removed by the Recover Action.');
         }
 
-        // Optional future action economy check
-        if (actor.system.actionEconomy?.swift !== undefined) {
-          const swift = actor.system.actionEconomy.swift;
-          if (!swift) {
-            return ui.notifications.warn('Not enough Swift Actions remaining to Recover.');
-          }
+        const result = await ConditionTrackFeatActions.recover(actor);
+        if (result?.complete) {
+          return ui.notifications.info(`${actor.name} completes the Recover Action and improves 1 step on the Condition Track.`);
         }
-
-        await globalThis.SWSE.ActorEngine.recoverConditionStep(actor, 'recover-action');
-        ui.notifications.info(`${actor.name} improves 1 step on the Condition Track.`);
+        if (result?.success && typeof result?.remaining === 'number') {
+          return ui.notifications.info(`${actor.name} spends a Swift Action toward recovery (${result.spent}/3).`);
+        }
+        if (result?.reason === 'Insufficient swift actions') {
+          return ui.notifications.warn('Not enough Swift Actions remaining to Recover.');
+        }
+        if (result?.reason) {
+          return ui.notifications.warn(String(result.reason));
+        }
       });
     }
 
@@ -188,7 +191,7 @@ export class ConditionTrackComponent {
     const worsenBtn = root.querySelector('[data-ct="worsen"]');
     if (worsenBtn) {
       worsenBtn.addEventListener('click', async () => {
-        await actor.moveConditionTrack(1);
+        await ActorEngine.applyConditionShift(actor, 1, 'condition-track-ui');
       });
     }
 
@@ -205,11 +208,7 @@ export class ConditionTrackComponent {
           ev.target.checked = actor.system.conditionTrack.persistent;
           return;
         }
-        // PHASE 3: Route through ActorEngine
-        const { ActorEngine } = await import("/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js");
-        await ActorEngine.updateActor(actor, {
-          'system.conditionTrack.persistent': ev.target.checked
-        });
+        await ActorEngine.setConditionPersistent(actor, ev.target.checked, 'condition-track-ui');
       });
     }
   }
