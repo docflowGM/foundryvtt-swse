@@ -7,6 +7,18 @@
 
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 
+function costDetail(rule = {}) {
+  if (rule.cost === 'forcePoint') return 'Cost: 1 Force Point';
+  if (rule.cost === 'reaction') return 'Cost: Reaction';
+  if (rule.cost) return `Cost: ${rule.cost}`;
+  return null;
+}
+
+function durationDetail(rule = {}) {
+  if (rule.duration === 'untilBeginningOfNextTurn') return 'Duration: until beginning of your next turn';
+  return rule.duration ? `Duration: ${rule.duration}` : 'Duration: 1 round';
+}
+
 export class ResourceActionAdapter {
   /**
    * Collect available resource action cards.
@@ -22,11 +34,12 @@ export class ResourceActionAdapter {
       type: 'resourceAction',
       severity: 'info',
       source: rule.sourceName,
-      text: rule.description || `Spend a Force Point to gain +${rule.value} to defenses for 1 round.`,
+      text: rule.description || `${rule.sourceName}: gain +${rule.value} to defenses.`,
       details: [
-        rule.cost === 'forcePoint' ? 'Cost: 1 Force Point' : null,
-        `Effect: +${rule.value} to defenses`,
-        'Duration: 1 round'
+        costDetail(rule),
+        `Effect: +${rule.value} to ${Array.isArray(rule.targets) ? rule.targets.map(target => String(target).replace('defense.', '')).join(', ') : 'defenses'}`,
+        durationDetail(rule),
+        rule.oncePer ? `Limit: once per ${rule.oncePer}` : null
       ].filter(Boolean),
       gmEnforced: false,
       mechanical: true,
