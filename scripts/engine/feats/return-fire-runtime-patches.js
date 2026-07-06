@@ -123,9 +123,17 @@ function isReturnFireTrigger(context = {}) {
     || (context.workflowContext?.hit === false && contextAffirms(context.workflowContext?.rangedAttack));
 }
 
-function getReturnFireUses(actor, rule) {
+function getReturnFireUses(actor) {
   if (actorHasFeat(actor, 'Combat Reflexes')) return Math.max(1, abilityModifier(actor, 'dexterity'));
   return 1;
+}
+
+function reactionSlotKeys(baseKey, uses) {
+  return Array.from({ length: Math.max(1, uses) }, (_v, i) => `${baseKey}:slot:${i + 1}`);
+}
+
+function firstAvailableSlot(actor, baseKey, uses) {
+  return reactionSlotKeys(baseKey, uses).find(key => EncounterUseTracker.canUse(actor, key, { oncePer: 'encounter' })) ?? null;
 }
 
 function getReturnFireReactions(actor, weapon, context = {}) {
@@ -138,11 +146,13 @@ function getReturnFireReactions(actor, weapon, context = {}) {
     if (!rule.choiceValues.length) return false;
     return rule.choiceValues.some(choice => weaponMatchesChoice(weapon, choice, context));
   }).map(rule => {
-    const uses = getReturnFireUses(actor, rule);
-    const key = `${rule.id}:${rule.sourceId}`;
+    const uses = getReturnFireUses(actor);
+    const baseKey = `${rule.id}:${rule.sourceId}`;
+    const availableSlot = firstAvailableSlot(actor, baseKey, uses);
     return {
       id: rule.id,
-      key,
+      key: availableSlot ?? `${baseKey}:slot:1`,
+      baseKey,
       source: rule.sourceName ?? rule.source ?? rule.label,
       label: rule.label,
       type: 'reactionAttackResource',
@@ -152,8 +162,9 @@ function getReturnFireReactions(actor, weapon, context = {}) {
       attack: rule.attack,
       oncePer: rule.oncePer ?? 'encounter',
       usesPerEncounter: uses,
+      remainingSlots: reactionSlotKeys(baseKey, uses).filter(key => EncounterUseTracker.canUse(actor, key, { oncePer: 'encounter' })).length,
       maxOncePerEnemyTurn: actorHasFeat(actor, 'Combat Reflexes'),
-      available: EncounterUseTracker.canUse(actor, key, { oncePer: 'encounter', maxUses: uses }),
+      available: !!availableSlot,
       selectedChoice: rule.choiceValues,
       rule
     };
