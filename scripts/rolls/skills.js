@@ -32,6 +32,36 @@ function readDerivedSkill(derivedSkills, skillKey) {
   return derivedSkills?.[skillKey];
 }
 
+function actorHasFeat(actor, featName) {
+  const wanted = String(featName ?? '').trim().toLowerCase();
+  try {
+    return Array.from(actor?.items ?? []).some(item => item?.type === 'feat' && item?.system?.disabled !== true && String(item?.name ?? '').trim().toLowerCase() === wanted);
+  } catch (_err) {
+    return false;
+  }
+}
+
+function normalizeUseKey(value = '') {
+  return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function buildSkillResultRiders(actor, effectiveSkillKey, rollTotal, skillContext = {}) {
+  const riders = [];
+  const useKey = normalizeUseKey(skillContext.useKey ?? skillContext.extraUseId ?? skillContext.skillUse?.key ?? skillContext.skillUse?.id ?? '');
+  if (effectiveSkillKey === 'perception' && actorHasFeat(actor, 'Scavenger') && (useKey === 'scavenge-building-materials' || useKey === 'scavenger-scavenge-building-materials')) {
+    const credits = Math.max(0, Number(rollTotal) || 0) * 30;
+    riders.push({
+      id: 'scavenger-scavenged-materials-value',
+      label: 'Scavenger',
+      text: `Scavenged raw materials worth ${credits} credits.`,
+      value: credits,
+      unit: 'credits',
+      gmArbitrated: true
+    });
+  }
+  return riders;
+}
+
 function buildAthleticsRollSkill(actor, derivedSkills = {}) {
   const systemSkills = actor?.system?.skills ?? {};
   const derivedAthletics = readDerivedSkill(derivedSkills, 'athletics') ?? {};
@@ -195,7 +225,9 @@ export async function rollSkill(actor, skillKey, options = {}) {
   if (chatRoll) {
     // Build detailed modifier breakdown
     const total = chatRoll?.total ?? rollResult.finalTotal ?? 'unknown';
-    const flavor = `${actor.name} used ${skillLabel} and got ${total}.`;
+    const resultRiders = buildSkillResultRiders(actor, effectiveSkillKey, total, skillContext);
+    const resultRiderText = resultRiders.length ? ` ${resultRiders.map(rider => rider.text).join(' ')}` : '';
+    const flavor = `${actor.name} used ${skillLabel} and got ${total}.${resultRiderText}`;
 
     const rerollOptions = [
       ...SkillFeatResolver.buildRerollChatOptions(actor, effectiveSkillKey, chatRoll, skillContext),
@@ -212,6 +244,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
           skillKey: effectiveSkillKey,
           skillUseKey: skillContext.useKey ?? null,
           featSkillBonuses: featSkillBonuses.bonuses,
+          skillResultRiders: resultRiders,
           rerollOptions
         }
       },
@@ -226,6 +259,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
         customModifier: Number(options?.customModifier || 0),
         featSkillBonus: featSkillBonuses.total,
         featSkillBonuses: featSkillBonuses.bonuses,
+        skillResultRiders: resultRiders,
         rerollOptions,
         dc: options?.dc ?? null,
         sourceElement: options?.sourceElement ?? null,
@@ -258,226 +292,49 @@ export async function rollSkill(actor, skillKey, options = {}) {
  * ⚠️ DEPRECATED: Use RollCore.execute() instead, which includes ModifierEngine
  *
  * @param {Actor} actor - The actor
- * @param {object} skill - The skill object
- * @param {string} actionId - Optional action ID for talent bonus lookup
- * @returns {number} Total skill modifier
- */
-export function calculateSkillMod(actor, skill, actionId = null) {
-  const utils = game.swse.utils;
-
-  // PHASE 3: Read ability mod from canonical derived source via SchemaAdapters
-  const abilityKey = skill.selectedAbility || 'str';
-  const abilMod = SchemaAdapters.getAbilityMod(actor, abilityKey);
-  const trained = skill.trained ? 5 : 0;
-  const focus = skill.focused ? 5 : 0;
-  const halfLvl = utils.math.halfLevel(actor.system.level);
-  const misc = skill.miscMod || 0;
-
-  // PHASE 3: Compute condition penalty from canonical derived source
-  // Fallback to getConditionPenalty() if modifiers path doesn't exist yet
-  const conditionPenalty = actor.system?.derived?.modifiers?.conditionPenalty ??
-                          SchemaAdapters.getConditionPenalty(actor) ?? 0;
-
-  let talentBonus = 0;
-
-  // Apply talent bonuses if action ID is provided and TalentActionLinker is available
-  const TalentActionLinker = window.SWSE?.TalentActionLinker;
-  if (actionId && TalentActionLinker?.MAPPING) {
-    const bonusInfo = TalentActionLinker.calculateBonusForAction(actor, actionId);
-    talentBonus = bonusInfo.value;
-  }
-
-  return abilMod + trained + focus + halfLvl + misc + conditionPenalty + talentBonus;
-}
-
-/**
- * Roll skill check with DC comparison
- * @param {Actor} actor - The actor
  * @param {string} skillKey - The skill key
- * @param {number} dc - Difficulty class
- * @returns {Promise<object>} Result with roll and success
+ * @returns {number} The skill modifier
  */
-export async function rollSkillCheck(actor, skillKey, dcOrOptions = null) {
-  const options = (dcOrOptions && typeof dcOrOptions === 'object' && !Array.isArray(dcOrOptions)) ? dcOrOptions : {};
-  const roll = await rollSkill(actor, skillKey, options);
+export function calculateSkillModifier(actor, skillKey) {
+  const skill = SchemaAdapters.getSkill(actor, skillKey);
+  const attributes = SchemaAdapters.getAttributes(actor);
 
-  if (!roll) {return null;}
+  if (!skill) return 0;
 
-  const dc = typeof dcOrOptions === 'number' ? dcOrOptions : (typeof options.dc === 'number' ? options.dc : null);
+  const abilityKey = skill.ability || 'str';
+  const abilityMod = attributes[abilityKey]?.mod || 0;
+  const trainedBonus = skill.trained ? 5 : 0;
+  const focusBonus = skill.focused ? 5 : 0;
+  const armorPenalty = skill.armorCheck ? (actor.system.armorCheckPenalty || 0) : 0;
+  const miscMod = skill.miscMod || 0;
 
-  if (typeof dc !== 'number') {
-    return { roll, success: null };
-  }
-
-  const success = roll.total >= dc;
-
-  if (success) {
-    ui.notifications.info(`Success! (${roll.total} vs DC ${dc})`);
-  } else {
-    ui.notifications.warn(`Failed! (${roll.total} vs DC ${dc})`);
-  }
-
-  return { roll, success };
+  return abilityMod + trainedBonus + focusBonus + armorPenalty + miscMod;
 }
 
 /**
- * Roll opposed skill check
- * @param {Actor} actor1 - First actor
- * @param {string} skill1 - First actor's skill
- * @param {Actor} actor2 - Second actor
- * @param {string} skill2 - Second actor's skill
- * @returns {Promise<object>} Results with winner
+ * Roll skill with configuration dialog
  */
-export async function rollOpposedCheck(actor1, skill1, actor2, skill2) {
-  const roll1 = await rollSkill(actor1, skill1);
-  const roll2 = await rollSkill(actor2, skill2);
-
-  if (!roll1 || !roll2) {return null;}
-
-  const winner = roll1.total > roll2.total ? actor1 :
-                 roll2.total > roll1.total ? actor2 : null;
-
-  return {
-    roll1,
-    roll2,
-    winner,
-    tie: winner === null
-  };
-}
-
-
-const ABILITY_LABELS = {
-  str: 'Strength',
-  dex: 'Dexterity',
-  con: 'Constitution',
-  int: 'Intelligence',
-  wis: 'Wisdom',
-  cha: 'Charisma'
-};
-
-/**
- * Roll an ability check using unified RollCore pipeline
- * Routes through ModifierEngine so all bonuses apply (species traits, feats, effects, etc.)
- *
- * @param {Actor} actor
- * @param {string} abilityKey - str|dex|con|int|wis|cha
- * @returns {Promise<Roll|null>}
- */
-export async function rollAbilityCheck(actor, abilityKey, options = {}) {
-  const utils = game.swse.utils;
-  const key = String(abilityKey || '').toLowerCase();
-
-  // Verify ability exists in derived (canonical source)
-  const ability = actor.system.derived?.attributes?.[key]
-    ?? actor.system.attributes?.[key]
-    ?? actor.system.abilities?.[key];
-  if (!ability) {
-    ui.notifications.warn(`Ability ${abilityKey} not found in derived attributes`);
-    return null;
-  }
-  const abilityTotal = Number.isFinite(Number(ability.total)) ? Number(ability.total) : Number(ability.base ?? 10);
-  const abilityMod = Number.isFinite(Number(ability.mod)) ? Number(ability.mod) : Math.floor((abilityTotal - 10) / 2);
-  const abilityLabel = ABILITY_LABELS[key] || utils?.string?.capitalize?.(key) || String(key || 'Ability').replace(/\b\w/g, c => c.toUpperCase());
-
-  let modifiers = {
-    customModifier: Number(options?.customModifier || 0),
-    situationalBonus: Number(options?.situationalBonus || 0),
-    useForcePoint: options?.useForcePoint === true,
-    checkMode: options?.checkMode || (options?.take20 === true ? 'take20' : options?.take10 === true ? 'take10' : 'roll'),
-    rollMode: options?.rollMode || ''
-  };
-
-  if (options.showDialog === true) {
-    const dialogResult = await showRollModifiersDialog({
-      title: `${abilityLabel} Check`,
-      rollType: 'ability',
+export async function rollSkillWithConfig(actor, skillKey, options = {}) {
+  try {
+    return await showRollModifiersDialog({
       actor,
-      abilityKey: key,
-      baseBonus: abilityMod,
-      showCover: false,
-      showConcealment: false
-    });
-
-    if (!dialogResult) { return null; }
-
-    modifiers = {
-      ...modifiers,
-      customModifier: Number(dialogResult.customModifier || 0),
-      situationalBonus: Number(dialogResult.situationalBonus || 0),
-      useForcePoint: dialogResult.useForcePoint === true,
-      checkMode: dialogResult.checkMode || 'roll',
-      rollMode: dialogResult.rollMode || modifiers.rollMode,
-      rollNote: dialogResult.rollNote || '',
-      targetContext: dialogResult.targetContext || null,
-      situational: dialogResult.situational || {}
-    };
-  }
-
-  const checkMode = String(modifiers.checkMode || 'roll').toLowerCase();
-  const takeXValue = checkMode === 'take20' ? 20 : checkMode === 'take10' ? 10 : 10;
-  const isTakeX = checkMode === 'take10' || checkMode === 'take20';
-
-  // === UNIFIED ROLL EXECUTION via RollCore ===
-  // This ensures ModifierEngine applies all bonuses (species traits, feats, effects, conditions)
-  const domain = `ability.${key}`;
-  const rollResult = await RollCore.execute({
-    actor,
-    domain,
-    baseBonus: abilityMod + Number(modifiers.customModifier || 0) + Number(modifiers.situationalBonus || 0),
-    rollOptions: {
-      baseDice: '1d20',
-      useForce: modifiers.useForcePoint === true,
-      isTakeX,
-      takeXValue
-    },
-    context: {
-      abilityKey: key,
-      dc: options?.dc,
-      category: options?.category,
-      label: abilityLabel,
-      rollType: 'ability',
-      checkMode,
-      customModifier: Number(modifiers.customModifier || 0),
-      situationalBonus: Number(modifiers.situationalBonus || 0),
-      targetContext: modifiers.targetContext || null,
-      rollNote: modifiers.rollNote || '',
-      situational: modifiers.situational || {}
-    }
-  });
-
-  if (!rollResult.success) {
-    ui.notifications.error(`Ability check failed: ${rollResult.error}`);
-    return null;
-  }
-
-  // === RENDER TO CHAT ===
-  let chatRoll = rollResult.roll;
-  if (!chatRoll && rollResult.isTakeX) {
-    chatRoll = await new Roll(String(rollResult.finalTotal), actor.getRollData?.() ?? {}).evaluate({ async: true });
-  }
-  if (chatRoll) {
-    await SWSEChat.postRoll({
-      roll: chatRoll,
-      actor,
-      rollMode: modifiers.rollMode || options.rollMode || null,
-      flavor: `<strong>${abilityLabel} Check</strong><br/>Modifier: ${rollResult.modifierTotal >= 0 ? '+' : ''}${rollResult.modifierTotal}`,
-      context: {
-        label: `${abilityLabel} Check`,
-        abilityKey: key,
-        rollType: 'ability',
-        dc: options?.dc,
-        customModifier: Number(modifiers.customModifier || 0),
-        situationalBonus: Number(modifiers.situationalBonus || 0),
-        checkMode,
-        takeXValue: rollResult.isTakeX ? takeXValue : null,
-        targetContext: modifiers.targetContext || null,
-        rollNote: modifiers.rollNote || '',
-        situational: modifiers.situational || {},
+      domain: `skill.${skillKey}`,
+      title: `Roll ${skillKey}`,
+      baseBonus: actor.system.skills?.[skillKey]?.total || 0,
+      defaultOptions: {
+        useForcePoint: false,
+        take10: false,
+        take20: false,
+        customModifier: 0,
         ...options
-      }
+      },
+      onRoll: (rollOptions) => rollSkill(actor, skillKey, rollOptions)
     });
+  } catch (error) {
+    swseLogger.error('Failed to open skill roll config', error);
+    return null;
   }
-
-  return rollResult;
 }
 
+// Legacy export compatibility
+export default rollSkill;
