@@ -45,6 +45,26 @@ function gunnerySpecialistRules() {
       featureKey: 'gunnery-specialist-vehicle-weapon-reroll',
       source: 'Gunnery Specialist',
       label: 'Gunnery Specialist: once per encounter vehicle weapon attack reroll'
+    },
+    {
+      type: 'FEAT_PREREQUISITE_SUBSTITUTION',
+      id: 'gunnerySpecialistSatisfiesStarshipTacticsPrerequisite',
+      satisfiesFeatPrerequisiteFor: ['Starship Tactics'],
+      substituteFor: 'specialPrerequisite',
+      source: 'Gunnery Specialist',
+      label: 'Gunnery Specialist: satisfies Starship Tactics prerequisite'
+    },
+    {
+      type: 'STARSHIP_MANEUVER_SELECTION_LIMITATION',
+      id: 'gunnerySpecialistLimitsStarshipTacticsManeuversToGunner',
+      appliesWhenSelectingForFeat: 'Starship Tactics',
+      limitedManeuverTag: 'Gunner',
+      limitationUnlessAll: {
+        trainedSkills: ['pilot'],
+        feats: ['Vehicular Combat']
+      },
+      source: 'Gunnery Specialist',
+      label: 'Gunnery Specialist: Starship Tactics may select only Gunner maneuvers unless trained in Pilot and has Vehicular Combat'
     }
   ];
 }
@@ -57,7 +77,9 @@ async function normalizeStarshipVehicleFeat(item, options = {}) {
   const currentRules = asArray(item.system?.abilityMeta?.rules);
   const nextRules = withoutExistingRules(currentRules, [
     'gunnerySpecialistVehicleWeaponProficiencyAsGunner',
-    'gunnerySpecialistVehicleWeaponReroll'
+    'gunnerySpecialistVehicleWeaponReroll',
+    'gunnerySpecialistSatisfiesStarshipTacticsPrerequisite',
+    'gunnerySpecialistLimitsStarshipTacticsManeuversToGunner'
   ]);
   nextRules.push(...gunnerySpecialistRules());
 
@@ -68,14 +90,21 @@ async function normalizeStarshipVehicleFeat(item, options = {}) {
     'system.abilityMeta.applicationScope': 'vehicle_gunner_weapon_context',
     'system.abilityMeta.staticSheetPolicy': 'include',
     'system.abilityMeta.requiresRuntimeContext': true,
-    'system.abilityMeta.rules': nextRules
+    'system.abilityMeta.rules': nextRules,
+    'system.prerequisiteSubstitutions.starshipTactics': true,
+    'system.starshipTactics.maneuverSelectionLimit': {
+      unlessTrainedSkill: 'pilot',
+      unlessFeat: 'Vehicular Combat',
+      allowedTag: 'Gunner'
+    }
   };
 
   const modelChanged = item.system?.executionModel !== 'PASSIVE'
     || item.system?.subType !== 'RULE'
     || item.system?.abilityMeta?.mechanicsMode !== 'vehicle_role_weapon_rule'
     || item.system?.abilityMeta?.applicationScope !== 'vehicle_gunner_weapon_context'
-    || item.system?.abilityMeta?.requiresRuntimeContext !== true;
+    || item.system?.abilityMeta?.requiresRuntimeContext !== true
+    || item.system?.prerequisiteSubstitutions?.starshipTactics !== true;
   const rulesChanged = JSON.stringify(nextRules) !== JSON.stringify(currentRules);
   if (!rulesChanged && !modelChanged) return false;
 
