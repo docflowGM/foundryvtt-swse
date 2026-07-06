@@ -4,6 +4,7 @@ import { SecondWindRules } from "/systems/foundryvtt-swse/scripts/engine/combat/
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 let registered = false;
+let activeSecondWindApplication = null;
 
 function normalizeKey(value = '') {
   return String(value ?? '')
@@ -31,6 +32,17 @@ function clone(value) {
 function actorItems(actor) {
   try { return Array.from(actor?.items ?? []); }
   catch (_err) { return []; }
+}
+
+function abilityMod(actor, ability = 'con') {
+  const key = String(ability || 'con').toLowerCase().slice(0, 3);
+  const value = actor?.system?.derived?.attributes?.[key]?.mod
+    ?? actor?.system?.abilities?.[key]?.mod
+    ?? actor?.system?.attributes?.[key]?.mod
+    ?? actor?.system?.derived?.abilities?.[key]?.mod
+    ?? 0;
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : 0;
 }
 
 function itemSecondWindRules(item) {
@@ -63,7 +75,15 @@ function normalizeActionCost(value) {
   return 'swift';
 }
 
-function applySecondWindConfig(rules, config = {}) {
+function addConModHealing(rules, actor, healing = {}) {
+  const multiplier = Number(healing.conModMultiplier ?? healing.extraHealingConModMultiplier ?? healing.multiplierPerConMod);
+  if (!Number.isFinite(multiplier)) return;
+  const minimum = Number.isFinite(Number(healing.minimum ?? healing.min ?? 0)) ? Number(healing.minimum ?? healing.min ?? 0) : 0;
+  const mod = abilityMod(actor, healing.ability ?? 'con');
+  rules.extraHealing += Math.max(minimum, mod * multiplier);
+}
+
+function applySecondWindConfig(rules, config = {}, actor = null) {
   const encounter = config.encounter ?? {};
   if (Number.isFinite(Number(encounter.uses ?? config.encounterUses))) {
     rules.encounterUses = Math.max(1, Number(encounter.uses ?? config.encounterUses));
@@ -73,16 +93,21 @@ function applySecondWindConfig(rules, config = {}) {
 
   const daily = config.daily ?? {};
   if (Number.isFinite(Number(daily.baseUses ?? config.dailyBaseUses))) rules.dailyBaseUses = Math.max(1, Number(daily.baseUses ?? config.dailyBaseUses));
-  if (Number.isFinite(Number(daily.flatBonus ?? config.dailyUseBonus))) rules.dailyUseBonus = Math.max(0, Number(daily.flatBonus ?? config.dailyUseBonus));
+  if (Number.isFinite(Number(daily.flatBonus ?? daily.bonusUses ?? config.dailyUseBonus))) rules.dailyUseBonus += Math.max(0, Number(daily.flatBonus ?? daily.bonusUses ?? config.dailyUseBonus));
   if (Number.isFinite(Number(daily.extraUseMultiplier ?? config.extraUseMultiplier))) rules.extraUseMultiplier += Math.max(0, Number(daily.extraUseMultiplier ?? config.extraUseMultiplier));
+  if (daily.allowNonHeroicUse === true || config.allowNonHeroicUse === true) rules.allowNonHeroicUse = true;
 
   const healing = config.healing ?? {};
-  rules.healing = { ...(rules.healing ?? {}), ...clone(healing) };
-  if (healing.mode || config.healingMode) rules.healingMode = healing.mode ?? config.healingMode;
-  if (Number.isFinite(Number(healing.hpFraction ?? config.healingFraction))) rules.healingFraction = Number(healing.hpFraction ?? config.healingFraction);
-  if (Number.isFinite(Number(healing.multiplier ?? config.healingMultiplier))) rules.healingMultiplier = Number(healing.multiplier ?? config.healingMultiplier);
-  if (Number.isFinite(Number(healing.minimum ?? config.minimumHealing))) rules.minimumHealing = Math.max(0, Number(healing.minimum ?? config.minimumHealing));
-  if (Number.isFinite(Number(healing.flatBonus ?? config.extraHealing))) rules.extraHealing += Number(healing.flatBonus ?? config.extraHealing);
+  if (healing && typeof healing === 'object') {
+    rules.healing = { ...(rules.healing ?? {}), ...clone(healing) };
+    addConModHealing(rules, actor, healing);
+  }
+  if (healing?.mode || config.healingMode) rules.healingMode = healing.mode ?? config.healingMode;
+  if (Number.isFinite(Number(healing?.hpFraction ?? config.healingFraction))) rules.healingFraction = Number(healing.hpFraction ?? config.healingFraction);
+  if (Number.isFinite(Number(healing?.multiplier ?? config.healingMultiplier))) rules.healingMultiplier = Number(healing.multiplier ?? config.healingMultiplier);
+  if (Number.isFinite(Number(healing?.minimum ?? config.minimumHealing))) rules.minimumHealing = Math.max(0, Number(healing.minimum ?? config.minimumHealing));
+  if (Number.isFinite(Number(healing?.flatBonus ?? config.extraHealing))) rules.extraHealing += Number(healing.flatBonus ?? config.extraHealing);
+  if (healing?.noImmediateHealing === true || config.noImmediateHealingOnUse === true) rules.noImmediateHealingOnUse = true;
 
   const activation = config.activation ?? {};
   if (activation.allowAboveThreshold === true || activation.allowAboveHalfHp === true || config.allowAboveHalfHp === true) {
@@ -112,12 +137,19 @@ function applySecondWindConfig(rules, config = {}) {
   if (postUse.grantStandardAction === true || config.grantStandardActionOnUse === true) rules.grantStandardActionOnUse = true;
   if (postUse.grantSwiftAction === true || config.grantSwiftActionOnUse === true) rules.grantSwiftActionOnUse = true;
   if (postUse.grantReaction === true || config.grantReactionOnUse === true) rules.grantReactionOnUse = true;
-  if (postUse.delayedHealing || config.delayedHealing) rules.delayedHealing = clone(postUse.delayedHealing ?? config.delayedHealing);
+  if (postUse.halfHealingForMovement === true || config.halfHealingForMovement === true) rules.halfHealingForMovement = true;
+  if (postUse.movement || config.movement) rules.secondWindMovement = clone(postUse.movement ?? config.movement);
+  if (postUse.delayedHealing || config.delayedHealing) {
+    rules.delayedHealing = clone(postUse.delayedHealing ?? config.delayedHealing);
+    if (rules.delayedHealing?.noImmediateHealing === true || postUse.noImmediateHealing === true || config.noImmediateHealingOnUse === true) {
+      rules.noImmediateHealingOnUse = true;
+    }
+  }
 
   return rules;
 }
 
-function applySecondWindRider(rules, rider = {}) {
+function applySecondWindRider(rules, rider = {}, actor = null) {
   const type = normalizeKey(rider.type ?? rider.ruleType ?? 'second-wind-rider');
   rules.riders.push(clone(rider));
 
@@ -131,23 +163,24 @@ function applySecondWindRider(rules, rider = {}) {
     }
     case 'second-wind-daily-uses':
       if (Number.isFinite(Number(rider.baseUses))) rules.dailyBaseUses = Math.max(1, Number(rider.baseUses));
-      if (Number.isFinite(Number(rider.bonusUses ?? rider.value))) rules.dailyUseBonus = Math.max(0, Number(rider.bonusUses ?? rider.value));
+      if (Number.isFinite(Number(rider.bonusUses ?? rider.value))) rules.dailyUseBonus += Math.max(0, Number(rider.bonusUses ?? rider.value));
+      if (rider.allowNonHeroicUse === true) rules.allowNonHeroicUse = true;
       break;
     case 'second-wind-healing':
-      applySecondWindConfig(rules, { healing: rider.healing ?? rider });
+      applySecondWindConfig(rules, { healing: rider.healing ?? rider }, actor);
       break;
     case 'second-wind-activation':
-      applySecondWindConfig(rules, { activation: rider.activation ?? rider });
+      applySecondWindConfig(rules, { activation: rider.activation ?? rider }, actor);
       break;
     case 'second-wind-action-economy':
-      applySecondWindConfig(rules, { actionEconomy: rider.actionEconomy ?? rider });
+      applySecondWindConfig(rules, { actionEconomy: rider.actionEconomy ?? rider }, actor);
       break;
     case 'second-wind-condition-recovery':
       rules.conditionRecoverySteps += Math.max(0, Number(rider.steps ?? rider.value ?? 1) || 1);
       break;
     case 'second-wind-post-use-action':
     case 'second-wind-post-use-rider':
-      applySecondWindConfig(rules, { postUse: rider.postUse ?? rider });
+      applySecondWindConfig(rules, { postUse: rider.postUse ?? rider }, actor);
       break;
     case 'second-wind-allow-above-half-hp':
       rules.allowAboveHalfHp = true;
@@ -157,7 +190,7 @@ function applySecondWindRider(rules, rider = {}) {
       rules.ignoreEncounterCap = true;
       break;
     default:
-      if (rider.config && typeof rider.config === 'object') applySecondWindConfig(rules, rider.config);
+      if (rider.config && typeof rider.config === 'object') applySecondWindConfig(rules, rider.config, actor);
       break;
   }
 }
@@ -173,19 +206,46 @@ function enrichSecondWindRules(actor, baseRules = {}) {
     encounterUses: Number(baseRules.encounterUses ?? baseRules.encounterUseCap ?? 1) || 1,
     encounterUseCap: Number(baseRules.encounterUseCap ?? baseRules.encounterUses ?? 1) || 1,
     dailyUseBonus: Number(baseRules.dailyUseBonus ?? 0) || 0,
+    allowNonHeroicUse: baseRules.allowNonHeroicUse === true,
+    noImmediateHealingOnUse: baseRules.noImmediateHealingOnUse === true,
     actionCost: normalizeActionCost(baseRules.actionCost ?? (baseRules.freeAction ? 'free' : 'swift')),
     swiftActions: Number(baseRules.swiftActions ?? 1) || 1,
     healing: { ...defaults.healing, ...(baseRules.healing ?? {}) },
     actionEconomy: { ...defaults.actionEconomy, ...(baseRules.actionEconomy ?? {}) }
   };
 
-  applySecondWindConfig(rules, actor?.system?.secondWind?.config ?? {});
-  applySecondWindConfig(rules, actor?.system?.secondWind ?? {});
+  applySecondWindConfig(rules, actor?.system?.secondWind?.config ?? {}, actor);
+  applySecondWindConfig(rules, actor?.system?.secondWind ?? {}, actor);
 
-  for (const rider of collectSecondWindRiders(actor)) applySecondWindRider(rules, rider);
+  for (const rider of collectSecondWindRiders(actor)) applySecondWindRider(rules, rider, actor);
   rules.encounterUseCap = Math.max(1, Number(rules.encounterUseCap ?? rules.encounterUses ?? 1) || 1);
   rules.encounterUses = rules.encounterUseCap;
   rules.secondWindRiders = rules.riders;
+  return rules;
+}
+
+function delayedHealingSelected(rules = {}, options = {}) {
+  const delayed = rules.delayedHealing;
+  if (!delayed) return false;
+  if (delayed.optional !== true) return true;
+  return options.delayedHealing === true
+    || options.regenerativeHealing === true
+    || options.useDelayedSecondWindHealing === true
+    || normalizeKey(options.secondWindMode) === 'regenerative-healing';
+}
+
+function applySecondWindSelections(rules = {}, options = {}) {
+  const selected = delayedHealingSelected(rules, options);
+  if (rules.delayedHealing?.optional === true && !selected) {
+    return {
+      ...rules,
+      delayedHealing: null,
+      noImmediateHealingOnUse: false
+    };
+  }
+  if (selected && (rules.delayedHealing?.noImmediateHealing === true || rules.noImmediateHealingOnUse === true)) {
+    return { ...rules, noImmediateHealingOnUse: true };
+  }
   return rules;
 }
 
@@ -203,7 +263,11 @@ function patchSecondWindRulesResolver() {
   const original = MetaResourceFeatResolver.getSecondWindRules?.bind(MetaResourceFeatResolver);
   MetaResourceFeatResolver.getSecondWindRules = function patchedGetSecondWindRules(actor) {
     const base = typeof original === 'function' ? original(actor) : {};
-    return enrichSecondWindRules(actor, base);
+    const enriched = enrichSecondWindRules(actor, base);
+    if (activeSecondWindApplication?.actor === actor) {
+      return applySecondWindSelections(enriched, activeSecondWindApplication.options ?? {});
+    }
+    return enriched;
   };
   MetaResourceFeatResolver.__swseSecondWindRiderPatched = true;
 }
@@ -216,7 +280,25 @@ function patchSecondWindEncounterUsage() {
     const activeCombatId = game.combat?.started ? game.combat.id : null;
     const beforeFlag = actor?.getFlag?.('foundryvtt-swse', 'secondWindEncounterUsed') ?? null;
     const beforeCount = readEncounterUseCount(beforeFlag, activeCombatId);
-    const result = await original(actor, options);
+    const selectedRules = applySecondWindSelections(MetaResourceFeatResolver.getSecondWindRules(actor), options);
+    const suppressImmediateHealing = selectedRules?.noImmediateHealingOnUse === true && delayedHealingSelected(selectedRules, options);
+    const originalCalculateHealing = SecondWindRules.calculateHealingAmount;
+
+    activeSecondWindApplication = { actor, options };
+    if (suppressImmediateHealing) {
+      SecondWindRules.calculateHealingAmount = function suppressedSecondWindHealing() {
+        return -Number(selectedRules.extraHealing || 0);
+      };
+    }
+
+    let result;
+    try {
+      result = await original(actor, options);
+    } finally {
+      SecondWindRules.calculateHealingAmount = originalCalculateHealing;
+      activeSecondWindApplication = null;
+    }
+
     if (result?.success && activeCombatId) {
       const rules = MetaResourceFeatResolver.getSecondWindRules(actor);
       const count = beforeCount + 1;
@@ -229,6 +311,8 @@ function patchSecondWindEncounterUsage() {
       result.encounterUsesThisEncounter = count;
       result.encounterUseCap = Number(rules.encounterUseCap ?? rules.encounterUses ?? 1) || 1;
     }
+    if (result?.success && selectedRules?.secondWindMovement) result.secondWindMovement = selectedRules.secondWindMovement;
+    if (result?.success && suppressImmediateHealing) result.immediateHealingSuppressed = true;
     return result;
   };
   ActorEngine.__swseSecondWindEncounterCountPatched = true;
@@ -237,7 +321,8 @@ function patchSecondWindEncounterUsage() {
 export const SecondWindRiderRuntime = {
   collectSecondWindRiders,
   enrichSecondWindRules,
-  applySecondWindRider
+  applySecondWindRider,
+  applySecondWindSelections
 };
 
 export function registerSecondWindRiderRuntimePatches() {
