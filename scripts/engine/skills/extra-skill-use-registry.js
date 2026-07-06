@@ -18,255 +18,36 @@ function clone(value) {
 }
 
 const BASE_EXTRA_SKILL_USES = [
-  {
-    id: 'deception.feint',
-    key: 'feint',
-    skill: 'deception',
-    name: 'Feint',
-    actionCost: 'standard',
-    opposedDefense: 'will',
-    tags: ['combat', 'deception', 'feint']
-  },
-  {
-    id: 'deception.impersonate-specific-person',
-    key: 'impersonate-specific-person',
-    skill: 'deception',
-    name: 'Impersonate Specific Person',
-    actionCost: 'varies',
-    dcBand: 'moderate',
-    tags: ['deception', 'shapeshift', 'impersonation']
-  },
-  {
-    id: 'deception.deceptive-appearance',
-    key: 'deceptive-appearance',
-    skill: 'deception',
-    name: 'Create Deceptive Appearance',
-    actionCost: 'varies',
-    rushPenalty: -10,
-    tags: ['deception', 'disguise', 'appearance']
-  },
-  {
-    id: 'deception.disturbing-presence-movement',
-    key: 'disturbing-presence-movement',
-    skill: 'deception',
-    name: 'Move Through Threatened Area',
-    actionCost: 'part-of-move',
-    dc: 15,
-    movementCostMultiplier: 2,
-    tags: ['movement', 'deception', 'threatened-area']
-  },
-  {
-    id: 'persuasion.intimidate',
-    key: 'intimidate',
-    skill: 'persuasion',
-    name: 'Intimidate',
-    actionCost: 'full-round',
-    tags: ['combat', 'persuasion', 'intimidate']
-  },
-  {
-    id: 'persuasion.change-attitude',
-    key: 'change-attitude',
-    skill: 'persuasion',
-    name: 'Change Attitude',
-    actionCost: 'full-round',
-    tags: ['social', 'persuasion', 'attitude']
-  },
-  {
-    id: 'persuasion.haggle',
-    key: 'haggle',
-    skill: 'persuasion',
-    name: 'Haggle',
-    actionCost: 'varies',
-    tags: ['social', 'commerce', 'persuasion', 'haggle']
-  },
-  {
-    id: 'persuasion.bribery',
-    key: 'bribery',
-    skill: 'persuasion',
-    name: 'Bribery',
-    actionCost: 'varies',
-    tags: ['social', 'commerce', 'persuasion', 'bribery']
-  },
-  {
-    id: 'acrobatics.tumble',
-    key: 'tumble',
-    skill: 'acrobatics',
-    name: 'Tumble',
-    actionCost: 'move',
-    tags: ['movement', 'acrobatics', 'tumble']
-  },
-  {
-    id: 'acrobatics.acrobatic-ally',
-    key: 'acrobatic-ally',
-    skill: 'acrobatics',
-    name: 'Hoist or Toss Ally',
-    actionCost: 'standard',
-    dc: 20,
-    tags: ['movement', 'acrobatics', 'ally']
-  },
-  {
-    id: 'stealth.sleight-of-hand',
-    key: 'sleight-of-hand',
-    skill: 'stealth',
-    name: 'Sleight of Hand',
-    actionCost: 'varies',
-    opposedSkill: 'perception',
-    tags: ['stealth', 'sleight-of-hand', 'concealment']
-  },
-  {
-    id: 'stealth.draw-and-palm-weapon',
-    key: 'draw-and-palm-weapon',
-    skill: 'stealth',
-    name: 'Draw and Palm Weapon',
-    actionCost: 'single-action',
-    checkActionCost: 'free',
-    tags: ['stealth', 'sleight-of-hand', 'weapon', 'concealment']
-  },
-  {
-    id: 'survival.basic-survival',
-    key: 'basic-survival',
-    skill: 'survival',
-    name: 'Basic Survival',
-    actionCost: 'varies',
-    tags: ['survival', 'wilderness']
-  },
-  {
-    id: 'survival.wilderness-first-aid',
-    key: 'wilderness-first-aid',
-    skill: 'survival',
-    name: 'Wilderness First Aid',
-    actionCost: 'varies',
-    dc: 20,
-    oncePer: 'day',
-    tags: ['survival', 'wilderness', 'treat-injury', 'medpac']
-  },
-  {
-    id: 'perception.scavenge-building-materials',
-    key: 'scavenge-building-materials',
-    skill: 'perception',
-    name: 'Scavenge Building Materials',
-    actionCost: '1 hour',
-    resultDisplay: 'creditsScavenged',
-    resultMultiplier: 30,
-    resultUnit: 'credits',
-    tags: ['perception', 'scavenging', 'construction-materials']
-  },
-  {
-    id: 'gather-information.gather-information',
-    key: 'gather-information',
-    skill: 'gatherInformation',
-    name: 'Gather Information',
-    actionCost: 'varies',
-    tags: ['social', 'investigation', 'gather-information']
-  },
-  {
-    id: 'use-computer.hack-system',
-    key: 'hack-system',
-    skill: 'use-computer',
-    name: 'Hack System',
-    actionCost: 'varies',
-    tags: ['technical', 'use-computer']
-  },
-  {
-    id: 'use-computer.astrogate',
-    key: 'astrogate',
-    skill: 'useComputer',
-    name: 'Astrogate',
-    actionCost: 'varies',
-    tags: ['technical', 'use-computer', 'astrogation', 'hyperspace']
-  },
-  {
-    id: 'use-computer.hyperspace-mapping',
-    key: 'hyperspace-mapping',
-    skill: 'useComputer',
-    name: 'Hyperspace Mapping',
-    actionCost: 'varies',
-    tags: ['technical', 'use-computer', 'astrogation', 'hyperspace-mapping']
-  },
-  {
-    id: 'mechanics.disable-device',
-    key: 'disable-device',
-    skill: 'mechanics',
-    name: 'Disable Device',
-    actionCost: 'varies',
-    tags: ['technical', 'mechanics']
-  },
-  {
-    id: 'mechanics.jury-rig',
-    key: 'jury-rig',
-    skill: 'mechanics',
-    name: 'Jury-Rig',
-    actionCost: 'full-round',
-    trainedOnly: true,
-    dc: 25,
-    tags: ['technical', 'mechanics', 'repair']
-  },
-  {
-    id: 'mechanics.repair-droid',
-    key: 'repair-droid',
-    skill: 'mechanics',
-    name: 'Repair Droid',
-    actionCost: '1 hour',
-    trainedOnly: true,
-    tags: ['technical', 'mechanics', 'repair', 'droid']
-  },
-  {
-    id: 'mechanics.recharge-shields',
-    key: 'recharge-shields',
-    skill: 'mechanics',
-    name: 'Recharge Shields',
-    actionCost: 'three-swift-actions',
-    trainedOnly: true,
-    tags: ['technical', 'mechanics', 'vehicle', 'shields']
-  },
-  {
-    id: 'mechanics.reroute-power',
-    key: 'reroute-power',
-    skill: 'mechanics',
-    name: 'Reroute Power',
-    actionCost: 'three-swift-actions',
-    trainedOnly: true,
-    tags: ['technical', 'mechanics', 'vehicle', 'power']
-  },
-  {
-    id: 'endurance.restore-shields',
-    key: 'restore-shields',
-    skill: 'endurance',
-    name: 'Restore Shields',
-    actionCost: 'three-swift-actions',
-    dc: 20,
-    restoreShieldRating: 5,
-    tags: ['droid', 'endurance', 'shields']
-  },
-  {
-    id: 'treat-injury.surgery',
-    key: 'surgery',
-    skill: 'treatInjury',
-    name: 'Surgery',
-    actionCost: '1 hour',
-    trainedOnly: true,
-    tags: ['medical', 'treat-injury', 'surgery']
-  },
-  {
-    id: 'treat-injury.install-cybernetic-device',
-    key: 'install-cybernetic-device',
-    skill: 'treatInjury',
-    name: 'Install Cybernetic Device',
-    actionCost: '1 hour',
-    trainedOnly: true,
-    dc: 20,
-    tags: ['medical', 'treat-injury', 'surgery', 'cybernetics']
-  },
-  {
-    id: 'treat-injury.install-bio-implant',
-    key: 'install-bio-implant',
-    skill: 'treatInjury',
-    name: 'Install Bio-Implant',
-    actionCost: '1 hour',
-    trainedOnly: true,
-    dc: 20,
-    tags: ['medical', 'treat-injury', 'surgery', 'bio-implant']
-  }
+  { id: 'deception.feint', key: 'feint', skill: 'deception', name: 'Feint', actionCost: 'standard', opposedDefense: 'will', tags: ['combat', 'deception', 'feint'] },
+  { id: 'deception.impersonate-specific-person', key: 'impersonate-specific-person', skill: 'deception', name: 'Impersonate Specific Person', actionCost: 'varies', dcBand: 'moderate', tags: ['deception', 'shapeshift', 'impersonation'] },
+  { id: 'deception.deceptive-appearance', key: 'deceptive-appearance', skill: 'deception', name: 'Create Deceptive Appearance', actionCost: 'varies', rushPenalty: -10, tags: ['deception', 'disguise', 'appearance'] },
+  { id: 'deception.disturbing-presence-movement', key: 'disturbing-presence-movement', skill: 'deception', name: 'Move Through Threatened Area', actionCost: 'part-of-move', dc: 15, movementCostMultiplier: 2, tags: ['movement', 'deception', 'threatened-area'] },
+  { id: 'persuasion.intimidate', key: 'intimidate', skill: 'persuasion', name: 'Intimidate', actionCost: 'full-round', tags: ['combat', 'persuasion', 'intimidate'] },
+  { id: 'persuasion.change-attitude', key: 'change-attitude', skill: 'persuasion', name: 'Change Attitude', actionCost: 'full-round', tags: ['social', 'persuasion', 'attitude'] },
+  { id: 'persuasion.haggle', key: 'haggle', skill: 'persuasion', name: 'Haggle', actionCost: 'varies', tags: ['social', 'commerce', 'persuasion', 'haggle'] },
+  { id: 'persuasion.bribery', key: 'bribery', skill: 'persuasion', name: 'Bribery', actionCost: 'varies', tags: ['social', 'commerce', 'persuasion', 'bribery'] },
+  { id: 'acrobatics.tumble', key: 'tumble', skill: 'acrobatics', name: 'Tumble', actionCost: 'move', tags: ['movement', 'acrobatics', 'tumble'] },
+  { id: 'acrobatics.acrobatic-ally', key: 'acrobatic-ally', skill: 'acrobatics', name: 'Hoist or Toss Ally', actionCost: 'standard', dc: 20, tags: ['movement', 'acrobatics', 'ally'] },
+  { id: 'stealth.sleight-of-hand', key: 'sleight-of-hand', skill: 'stealth', name: 'Sleight of Hand', actionCost: 'varies', opposedSkill: 'perception', tags: ['stealth', 'sleight-of-hand', 'concealment'] },
+  { id: 'stealth.draw-and-palm-weapon', key: 'draw-and-palm-weapon', skill: 'stealth', name: 'Draw and Palm Weapon', actionCost: 'single-action', checkActionCost: 'free', tags: ['stealth', 'sleight-of-hand', 'weapon', 'concealment'] },
+  { id: 'survival.basic-survival', key: 'basic-survival', skill: 'survival', name: 'Basic Survival', actionCost: 'varies', tags: ['survival', 'wilderness'] },
+  { id: 'survival.wilderness-first-aid', key: 'wilderness-first-aid', skill: 'survival', name: 'Wilderness First Aid', actionCost: 'varies', dc: 20, oncePer: 'day', tags: ['survival', 'wilderness', 'treat-injury', 'medpac'] },
+  { id: 'perception.scavenge-building-materials', key: 'scavenge-building-materials', skill: 'perception', name: 'Scavenge Building Materials', actionCost: '1 hour', resultDisplay: 'creditsScavenged', resultMultiplier: 30, resultUnit: 'credits', tags: ['perception', 'scavenging', 'construction-materials'] },
+  { id: 'gather-information.gather-information', key: 'gather-information', skill: 'gatherInformation', name: 'Gather Information', actionCost: 'varies', tags: ['social', 'investigation', 'gather-information'] },
+  { id: 'gather-information.learn-secret-information', key: 'learn-secret-information', skill: 'gatherInformation', name: 'Learn Secret Information', actionCost: 'varies', tags: ['social', 'investigation', 'gather-information', 'secret-information'] },
+  { id: 'use-computer.hack-system', key: 'hack-system', skill: 'use-computer', name: 'Hack System', actionCost: 'varies', tags: ['technical', 'use-computer'] },
+  { id: 'use-computer.astrogate', key: 'astrogate', skill: 'useComputer', name: 'Astrogate', actionCost: 'varies', tags: ['technical', 'use-computer', 'astrogation', 'hyperspace'] },
+  { id: 'use-computer.hyperspace-mapping', key: 'hyperspace-mapping', skill: 'useComputer', name: 'Hyperspace Mapping', actionCost: 'varies', tags: ['technical', 'use-computer', 'astrogation', 'hyperspace-mapping'] },
+  { id: 'pilot.avoid-collision', key: 'avoid-collision', skill: 'pilot', name: 'Avoid Collision', actionCost: 'reaction', tags: ['vehicle', 'pilot', 'collision'] },
+  { id: 'mechanics.disable-device', key: 'disable-device', skill: 'mechanics', name: 'Disable Device', actionCost: 'varies', tags: ['technical', 'mechanics'] },
+  { id: 'mechanics.jury-rig', key: 'jury-rig', skill: 'mechanics', name: 'Jury-Rig', actionCost: 'full-round', trainedOnly: true, dc: 25, tags: ['technical', 'mechanics', 'repair'] },
+  { id: 'mechanics.repair-droid', key: 'repair-droid', skill: 'mechanics', name: 'Repair Droid', actionCost: '1 hour', trainedOnly: true, tags: ['technical', 'mechanics', 'repair', 'droid'] },
+  { id: 'mechanics.recharge-shields', key: 'recharge-shields', skill: 'mechanics', name: 'Recharge Shields', actionCost: 'three-swift-actions', trainedOnly: true, tags: ['technical', 'mechanics', 'vehicle', 'shields'] },
+  { id: 'mechanics.reroute-power', key: 'reroute-power', skill: 'mechanics', name: 'Reroute Power', actionCost: 'three-swift-actions', trainedOnly: true, tags: ['technical', 'mechanics', 'vehicle', 'power'] },
+  { id: 'endurance.restore-shields', key: 'restore-shields', skill: 'endurance', name: 'Restore Shields', actionCost: 'three-swift-actions', dc: 20, restoreShieldRating: 5, tags: ['droid', 'endurance', 'shields'] },
+  { id: 'treat-injury.surgery', key: 'surgery', skill: 'treatInjury', name: 'Surgery', actionCost: '1 hour', trainedOnly: true, tags: ['medical', 'treat-injury', 'surgery'] },
+  { id: 'treat-injury.install-cybernetic-device', key: 'install-cybernetic-device', skill: 'treatInjury', name: 'Install Cybernetic Device', actionCost: '1 hour', trainedOnly: true, dc: 20, tags: ['medical', 'treat-injury', 'surgery', 'cybernetics'] },
+  { id: 'treat-injury.install-bio-implant', key: 'install-bio-implant', skill: 'treatInjury', name: 'Install Bio-Implant', actionCost: '1 hour', trainedOnly: true, dc: 20, tags: ['medical', 'treat-injury', 'surgery', 'bio-implant'] }
 ];
 
 export class ExtraSkillUseRegistry {
