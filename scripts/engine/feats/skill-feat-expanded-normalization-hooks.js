@@ -54,20 +54,24 @@ function scavengeRules() {
         actionCost: '1 hour',
         valueFormula: 'checkTotal * 30',
         valueUnit: 'credits',
-        applyToward: 'singleObjectConstruction',
-        oncePerObject: true
+        gmArbitrated: true
       },
       sourceBook: 'Force Unleashed Campaign Guide',
-      summary: 'Spend 1 hour scavenging Vehicles or objects; generate raw materials worth Perception check result x 30 credits for one object under construction.'
+      summary: 'Spend 1 hour scavenging Vehicles or objects; display raw materials worth Perception check result x 30 credits. GM arbitrates how those materials can be applied.'
     },
-    advisoryRule({
-      id: 'scavenger-materials-inventory-boundary',
-      label: 'Scavenger: Materials Boundary',
+    {
+      type: 'SKILL_RESULT_RIDER',
+      id: 'scavenger-display-scavenged-credit-value',
+      label: 'Scavenger: Scavenged Materials Value',
       skillKeys: ['perception'],
+      extraUses: ['perception.scavenge-building-materials'],
+      resultFormula: 'checkTotal * 30',
+      resultUnit: 'credits',
+      displayOnly: true,
+      gmArbitrated: true,
       sourceBook: 'Force Unleashed Campaign Guide',
-      summary: 'Raw materials should be tracked against a single construction project; do not automatically credit the actor.',
-      data: { automationBoundary: 'constructionLedger', preventsCreditGrant: true }
-    })
+      summary: 'Display the credit value of scavenged raw materials on the Perception result; do not add credits or inventory automatically.'
+    }
   ];
 }
 
@@ -363,6 +367,183 @@ function droidFocusRules() {
   }];
 }
 
+function droidShieldMasteryRules() {
+  return [{
+    type: 'EXTRA_SKILL_USE_ACTION_ECONOMY_OVERRIDE',
+    id: 'droid-shield-mastery-restore-shields',
+    label: 'Droid Shield Mastery',
+    skillKeys: ['endurance'],
+    extraUses: ['endurance.restore-shields'],
+    requiresDroid: true,
+    requiresAccessory: 'Shield Generator',
+    automaticSuccess: true,
+    restoresShieldRating: 5,
+    restoreCap: 'normalShieldRating',
+    actionEconomy: {
+      normalSwiftActions: 3,
+      swiftActions: 2,
+      normalDc: 20,
+      removesCheck: true
+    },
+    sourceBook: "Scavenger's Guide to Droids",
+    summary: 'Automatically succeed on Endurance checks to restore 5 Shield Rating, up to normal Shield Rating; restore shields in two swift actions instead of three.'
+  }];
+}
+
+function logicUpgradeSkillSwapRules() {
+  return [{
+    type: 'CONFIGURED_SKILL_SWAP_TOGGLE',
+    id: 'logic-upgrade-skill-swap-basic-processor',
+    label: 'Logic Upgrade: Skill Swap',
+    requiresDroid: true,
+    requiresProcessor: 'basic',
+    excludesProcessor: 'heuristic',
+    requiresConfiguration: true,
+    configurationKey: 'logicUpgradeSkillSwap',
+    repeatable: true,
+    configurationFlow: [
+      {
+        step: 'selectUntrainedSkill',
+        title: 'Select Skill to Enable',
+        skillFilter: 'untrainedOnly',
+        excludeSkills: ['useTheForce']
+      },
+      {
+        step: 'selectTrainedSkillToSuspend',
+        title: 'Select Trained Skill to Swap Out',
+        skillFilter: 'trainedOnly'
+      }
+    ],
+    activation: {
+      actionCost: 'full-round',
+      toggle: true,
+      swappedInSkillCountsAsTrained: false,
+      suppressOriginalTrainedSkillBenefits: true,
+      allowTrainedOnlyOptions: false,
+      keepHalfLevelAndAbility: true
+    },
+    sourceBook: "Scavenger's Guide to Droids",
+    summary: 'Basic-processor droid chooses an untrained non-Use the Force skill and a trained skill to suspend; as a full-round toggle, enable the selected untrained skill without trained-only benefits.'
+  }];
+}
+
+function sensorLinkRules() {
+  return [
+    {
+      type: 'COMBAT_UTILITY_ACTION_GRANT',
+      id: 'sensor-link-broadcast-sensors',
+      label: 'Sensor Link',
+      actionCost: 'swift',
+      rangeSquares: 24,
+      targetTypes: ['droidAlly', 'comlink', 'communicationsSystem', 'holographicReceiver'],
+      sharedAwareness: true,
+      sourceBook: "Scavenger's Guide to Droids",
+      summary: 'As a swift action, broadcast audio, visual, and special sensor input to an eligible ally or receiver within 24 squares.'
+    },
+    {
+      type: 'AID_ANOTHER_RIDER',
+      id: 'sensor-link-perception-aid-without-los',
+      label: 'Sensor Link: Remote Perception Aid',
+      aidAnotherContext: 'perception',
+      skillKeys: ['perception'],
+      ignoreLineOfSight: true,
+      requiresLinkedSensorTarget: true,
+      sourceBook: "Scavenger's Guide to Droids",
+      summary: 'Linked ally can Aid Another on Perception checks without line of sight. If both have Sensor Link, simultaneous sharing grants +2 Perception.'
+    },
+    {
+      type: 'SKILL_BONUS',
+      id: 'sensor-link-mutual-perception-bonus',
+      label: 'Sensor Link: Mutual Sensor Sharing',
+      skillKeys: ['perception'],
+      value: 2,
+      bonusType: 'untyped',
+      requiresContext: { mutualSensorLink: true },
+      sourceBook: "Scavenger's Guide to Droids",
+      summary: 'If both linked participants have Sensor Link, grant +2 to Perception checks.'
+    }
+  ];
+}
+
+function shieldSurgeRules() {
+  return [{
+    type: 'VEHICLE_DAMAGE_REACTION_RIDER',
+    id: 'shield-surge-vehicle-damage-reduction',
+    label: 'Shield Surge',
+    actionCost: 'reaction',
+    trigger: 'vehicleTakesDamageAboveShieldRating',
+    requiresDroidOrCyborgHybrid: true,
+    requiresSkillTrained: 'mechanics',
+    requiresDirectDataLink: true,
+    damageReduction: {
+      maxAmount: 'remainingShieldRating',
+      reducesShieldRatingByDamageReduced: true,
+      afterShieldRatingReduced: true
+    },
+    lockout: {
+      action: 'rechargeShields',
+      duration: '1 full round'
+    },
+    sourceBook: "Scavenger's Guide to Droids",
+    summary: 'Vehicle-combat reaction: after shields are reduced, reduce remaining vehicle damage by up to remaining Shield Rating, reducing Shield Rating one-for-one. Recharge Shields is locked out for one full round.'
+  }];
+}
+
+function cutTheRedTapeRules() {
+  return [{
+    type: 'EXTRA_SKILL_USE_SKILL_SUBSTITUTION',
+    id: 'cut-the-red-tape-knowledge-bureaucracy-for-gather-information',
+    label: 'Cut the Red Tape',
+    skillKeys: ['gatherInformation'],
+    extraUses: ['gather-information.gather-information'],
+    baseSkill: 'gatherInformation',
+    alternateSkill: 'knowledgeBureaucracy',
+    grantsTrainingForUse: true,
+    rerollRedirect: {
+      fromSkill: 'gatherInformation',
+      toSkill: 'knowledgeBureaucracy'
+    },
+    sourceBook: 'Galaxy of Intrigue',
+    summary: 'Use Knowledge (Bureaucracy) instead of Gather Information for Gather Information checks; rerolls redirect to the Knowledge check and the actor counts as trained for that check.'
+  }];
+}
+
+function disturbingPresenceRules() {
+  return [{
+    type: 'EXTRA_SKILL_USE_GRANT',
+    id: 'disturbing-presence-threatened-movement',
+    label: 'Disturbing Presence',
+    skillKeys: ['deception'],
+    extraUse: {
+      id: 'deception.disturbing-presence-movement',
+      key: 'disturbing-presence-movement',
+      name: 'Move Through Threatened Area',
+      skill: 'deception',
+      dc: 15,
+      actionCost: 'part-of-move',
+      movementCostMultiplier: 2,
+      avoidsAttacksOfOpportunity: true,
+      appliesTo: ['threatenedArea', 'fightingSpace']
+    },
+    sourceBook: 'Galaxy of Intrigue',
+    summary: 'DC 15 Deception lets the actor move through threatened areas or enemy fighting spaces as part of movement without provoking; each such square costs 2 squares.'
+  }];
+}
+
+function expertBriberRules() {
+  return [{
+    type: 'EXTRA_SKILL_USE_DC_OVERRIDE',
+    id: 'expert-briber-haggle-bribery-dc-reduction',
+    label: 'Expert Briber',
+    skillKeys: ['persuasion'],
+    extraUses: ['persuasion.haggle', 'persuasion.bribery'],
+    dcModifier: -10,
+    appliesTo: ['reducePriceDc'],
+    sourceBook: 'Galaxy of Intrigue',
+    summary: 'When using Persuasion Haggle or Bribery to reduce a price, reduce the DC by 10.'
+  }];
+}
+
 function rulesForExpandedSkillFeat(name) {
   const normalized = normalizeName(name);
   if (normalized === 'scavenger') return scavengeRules();
@@ -381,6 +562,13 @@ function rulesForExpandedSkillFeat(name) {
   if (normalized === 'risk taker') return riskTakerRules();
   if (normalized === 'staggering attack' || normalized === 'staggering attack gaw') return staggeringAttackGawRules();
   if (normalized === 'droid focus') return droidFocusRules();
+  if (normalized === 'droid shield mastery') return droidShieldMasteryRules();
+  if (normalized === 'logic upgrade skill swap') return logicUpgradeSkillSwapRules();
+  if (normalized === 'sensor link') return sensorLinkRules();
+  if (normalized === 'shield surge') return shieldSurgeRules();
+  if (normalized === 'cut the red tape') return cutTheRedTapeRules();
+  if (normalized === 'disturbing presence') return disturbingPresenceRules();
+  if (normalized === 'expert briber') return expertBriberRules();
   return [];
 }
 
