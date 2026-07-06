@@ -63,6 +63,51 @@ function rulesForFeat(name) {
     }];
   }
 
+  if (normalized === 'artillery shot') {
+    return [{
+      type: 'AREA_ATTACK_TEMPLATE_MUTATION',
+      id: 'artilleryShot',
+      label: 'Artillery Shot',
+      source: 'Artillery Shot',
+      requiresAreaAttack: true,
+      requiresProficientWeapon: true,
+      requiresBurstOrSplashWeapon: true,
+      requiresBeyondPointBlankRange: true,
+      areaTemplateMutation: {
+        addAdjacentSquares: 2,
+        targetSelection: 'twoAdditionalSquaresAdjacentToNormalArea',
+        appliesToBurst: true,
+        appliesToSplash: true,
+        advisoryOnly: false,
+        canvasAutomation: false,
+        note: 'When making a proficient Burst or Splash attack beyond point-blank range, affect two additional squares adjacent to the normal Burst radius or Splash area.'
+      },
+      summary: 'Burst/Splash area rider: beyond point-blank range, add two adjacent squares to the normal area.'
+    }];
+  }
+
+  if (normalized === 'flash and clear') {
+    return [{
+      type: 'AREA_DAMAGE_RIDER',
+      id: 'flashAndClear',
+      label: 'Flash and Clear',
+      source: 'Flash and Clear',
+      requiresBurstOrSplashWeapon: true,
+      requiresDamage: true,
+      targetEffectsOnDamage: [{
+        type: 'source-gains-concealment-against-target',
+        sourceName: 'Flash and Clear',
+        duration: 'untilBeginningOfSourceNextTurn',
+        targetScoped: true,
+        appliesAgainstDamagedTargetOnly: true,
+        concealment: true,
+        advisoryOnly: false,
+        note: 'After damaging a target with a Burst or Splash weapon, the attacker gains Concealment against that damaged target until the beginning of the attacker\'s next turn.'
+      }],
+      summary: 'Burst/Splash damage rider: gain target-scoped concealment against each damaged target until the beginning of your next turn.'
+    }];
+  }
+
   if (normalized === 'whirlwind attack') {
     return [{
       type: 'SPECIAL_AREA_ATTACK_ACTION',
@@ -129,7 +174,7 @@ function rulesForFeat(name) {
         removeDeflectionBonuses: true,
         appliesToAllTargetsInArea: true,
         appliesToThisAttackOnly: true,
-        advisoryOnly: true,
+        advisoryOnly: false,
         note: 'All targets in the Autofire area lose dodge and deflection bonuses to Reflex Defense against this Autofire attack.'
       },
       summary: 'Autofire rider: proficient Autofire Area Attack causes all targets in the area to lose dodge and deflection bonuses to Reflex Defense for that attack.'
