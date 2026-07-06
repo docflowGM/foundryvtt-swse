@@ -62,6 +62,8 @@ import { registerAttackNegationRuntimePatches } from "/systems/foundryvtt-swse/s
 import { registerCombatMobilityPowerFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/combat-mobility-power-feat-normalization-hooks.js";
 import { registerCombatMobilityPowerRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/combat-mobility-power-runtime-patches.js";
 import { registerAidAnotherActionAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/aid-another-action-adapter.js";
+import { registerForceScoundrelCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/force-scoundrel-combat-feat-normalization-hooks.js";
+import { registerForceScoundrelCombatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/force-scoundrel-combat-runtime-patches.js";
 
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -128,6 +130,8 @@ export function registerInitHooks() {
         registerAttackNegationRuntimePatches();
         registerCombatMobilityPowerFeatNormalizationHooks();
         registerCombatMobilityPowerRuntimePatches();
+        registerForceScoundrelCombatFeatNormalizationHooks();
+        registerForceScoundrelCombatRuntimePatches();
         registerSpeciesOriginFeatNormalizationHooks();
         SWSECombatActionBrowser.init();
         const stats = HooksRegistry.getStats();
