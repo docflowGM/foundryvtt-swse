@@ -61,6 +61,7 @@ import { registerAttackNegationFeatNormalizationHooks } from "/systems/foundryvt
 import { registerAttackNegationRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/attack-negation-runtime-patches.js";
 import { registerCombatMobilityPowerFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/combat-mobility-power-feat-normalization-hooks.js";
 import { registerCombatMobilityPowerRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/combat-mobility-power-runtime-patches.js";
+import { registerAidAnotherActionAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/aid-another-action-adapter.js";
 
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -76,6 +77,7 @@ export function registerInitHooks() {
         LightsaberLightSync.registerAutoSyncHooks();
         registerRerollListeners();
         FeatActionListeners.initialize();
+        registerAidAnotherActionAdapter();
         registerAbilityMetaSchemaDefaultHooks();
         registerGrappleFeatNormalizationHooks();
         registerGrappleFeatActions();
