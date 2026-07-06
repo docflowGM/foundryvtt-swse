@@ -136,22 +136,21 @@ function conditioningRules() {
       sourceBook: 'Knights of the Old Republic Campaign Guide',
       summary: 'Reroll a trained Strength- or Constitution-based skill check and keep the second result.'
     }),
-    advisoryRule({
+    {
+      type: 'TEMPORARY_DEFENSE_REACTION',
       id: 'conditioning-fortitude-reaction',
       label: 'Conditioning: Fortitude Reaction',
       skillKeys: ['endurance'],
+      cost: 'reaction',
+      oncePer: 'encounter',
+      targets: ['defense.fortitude'],
+      valueFormula: 'abilityModifier',
+      ability: 'str',
+      duration: 'untilBeginningOfNextTurn',
+      roundsRemaining: 1,
       sourceBook: 'Knights of the Old Republic Campaign Guide',
-      summary: 'Once per encounter as a reaction, add Strength modifier to Fortitude Defense until the beginning of your next turn.',
-      data: {
-        reaction: true,
-        oncePer: 'encounter',
-        defense: 'fortitude',
-        valueFormula: 'abilityModifier',
-        ability: 'str',
-        duration: 'untilBeginningOfNextTurn',
-        automationBoundary: 'reactionTiming'
-      }
-    })
+      summary: 'Once per encounter as a reaction, add Strength modifier to Fortitude Defense until the beginning of your next turn.'
+    }
   ];
 }
 
@@ -179,41 +178,41 @@ function gearheadRules() {
 
 function increasedAgilityRules() {
   return [
-    advisoryRule({
+    {
+      type: 'MOVEMENT_SKILL_RIDER',
       id: 'increased-agility-movement-rider',
       label: 'Increased Agility',
       skillKeys: ['climb', 'jump', 'swim', 'athletics'],
+      movementRider: true,
+      climbSpeedBonusSquares: 2,
+      swimSpeedBonusSquares: 2,
+      jumpDistanceBonusSquares: 2,
+      retainDexBonusToReflexWhileClimbing: true,
+      prerequisiteFeat: 'Conditioning',
       sourceBook: 'Knights of the Old Republic Campaign Guide',
-      summary: 'Increase climb speed, swim speed, and jump distance by 2 squares; do not lose Dexterity bonus to Reflex Defense while climbing.',
-      data: {
-        movementRider: true,
-        climbSpeedBonusSquares: 2,
-        swimSpeedBonusSquares: 2,
-        jumpDistanceBonusSquares: 2,
-        retainDexBonusToReflexWhileClimbing: true,
-        prerequisiteFeat: 'Conditioning',
-        automationBoundary: 'movementAndDefenseContext'
-      }
-    })
+      summary: 'Increase climb speed, swim speed, and jump distance by 2 squares; do not lose Dexterity bonus to Reflex Defense while climbing.'
+    }
   ];
 }
 
 function quickSkillRules() {
   return [
-    {
-      type: 'SKILL_TAKE_10_OVERRIDE',
+    advisoryRule({
       id: 'quick-skill-take-10-when-rushed',
-      label: 'Quick Skill',
+      label: 'Quick Skill: Take 10 When Rushed',
       skillKeys: ['any'],
-      requiresTrained: true,
-      oncePer: 'encounter',
-      take10: {
-        allowedWhenRushed: true,
-        unlessSkillExplicitlyForbids: true
-      },
       sourceBook: 'Knights of the Old Republic Campaign Guide',
-      summary: 'Once per encounter, take 10 when rushed on a trained skill unless that skill explicitly forbids taking 10.'
-    },
+      summary: 'Once per encounter, take 10 when rushed on a trained skill unless that skill explicitly forbids taking 10.',
+      data: {
+        requiresTrained: true,
+        oncePer: 'encounter',
+        take10: {
+          allowedWhenRushed: true,
+          unlessSkillExplicitlyForbids: true
+        },
+        automationBoundary: 'advisoryOnly'
+      }
+    }),
     advisoryRule({
       id: 'quick-skill-take-20-half-time',
       label: 'Quick Skill: Take 20 Half Time',
@@ -225,7 +224,7 @@ function quickSkillRules() {
         oncePer: 'encounter',
         take20: true,
         timeMultiplier: 0.5,
-        automationBoundary: 'taskTimeContext'
+        automationBoundary: 'advisoryOnly'
       }
     })
   ];
