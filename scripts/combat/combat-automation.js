@@ -3,6 +3,7 @@ import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/documen
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { CombatRules } from "/systems/foundryvtt-swse/scripts/engine/combat/CombatRules.js";
+import { ConditionTrackFeatActions } from "/systems/foundryvtt-swse/scripts/engine/feats/condition-track-feat-actions.js";
 
 /**
  * SWSE Combat Automation (v13+)
@@ -27,7 +28,7 @@ export class SWSECombatAutomation {
   static _registerHooks() {
 
     /**
-     * 🕒 Turn Start — Natural Condition Recovery
+     * Turn Start -- Natural Condition Recovery
      * If an actor has taken Condition Track steps, prompt them at the start
      * of their turn unless Persistent.
      */
@@ -41,7 +42,7 @@ export class SWSECombatAutomation {
     });
 
     /**
-     * ⚔ Combat Start — Reset Resources
+     * Combat Start -- Reset Resources
      * Controlled by SWSE system setting: resetResourcesOnCombat
      */
     Hooks.on('combatStart', async combat => {
@@ -60,7 +61,7 @@ export class SWSECombatAutomation {
     });
 
     /**
-     * 🧹 Combat End — Cleanup & Logging
+     * Combat End -- Cleanup & Logging
      */
     Hooks.on('combatEnd', () => {
       SWSELogger.log('SWSE | Combat ended.');
@@ -98,7 +99,7 @@ export class SWSECombatAutomation {
 
     return new Promise(resolve => {
       new SWSEDialogV2({
-        title: `${actor.name} — Recover Action`,
+        title: `${actor.name} - Recover Action`,
         content: `
           <div class="swse condition-recovery">
             <p><strong>${actor.name}</strong> may spend <strong>3 Swift Actions</strong> to move <strong>+1 step</strong> on the Condition Track.</p>
@@ -111,17 +112,21 @@ export class SWSECombatAutomation {
             icon: '<i class="fa-solid fa-heart"></i>',
             label: 'Spend Swift Toward Recovery',
             callback: async () => {
-              const result = await globalThis.SWSE.ActorEngine.recoverConditionStep(actor, 'recover-action');
+              const result = await ConditionTrackFeatActions.recover(actor);
               if (result?.complete) {
                 createChatMessage({
                   speaker: ChatMessage.getSpeaker({ actor }),
                   content: `<strong>${actor.name}</strong> completes the Recover Action and moves +1 step on the Condition Track.`
                 });
-              } else if (typeof result?.remaining === 'number') {
+              } else if (result?.success && typeof result?.remaining === 'number') {
                 createChatMessage({
                   speaker: ChatMessage.getSpeaker({ actor }),
-                  content: `<strong>${actor.name}</strong> spends a Swift Action toward recovery (${3 - result.remaining}/3).`
+                  content: `<strong>${actor.name}</strong> spends a Swift Action toward recovery (${result.spent}/3).`
                 });
+              } else if (result?.reason === 'Insufficient swift actions') {
+                ui.notifications.warn(`${actor.name} does not have an available Swift Action to spend toward recovery.`);
+              } else if (result?.reason) {
+                ui.notifications.warn(String(result.reason));
               }
               resolve(true);
             }
