@@ -48,12 +48,13 @@ The following strict Combat feats were also completed before this pass and shoul
 | Returning Bug | implemented_as_miss_rider | Normalized as a `MISS_RIDER` for missed razor bug or thud bug attacks. A generic miss-rider runtime collector now emits `targetEffectsOnMiss` so this does not masquerade as hit or damage math. |
 | Triple Crit | fully_implemented_with_required_choice | Normalized to `WEAPON_CRITICAL_MULTIPLIER_MIN` with minimum x3 and required selected-choice matching. It now sets immediate `choiceMeta` using the existing `weapon_group_or_exotic` chooser, opens the feat choice dialog when directly added without a choice, and cannot apply broadly before the player picks a proficient weapon group or qualifying weapon. Duplicate choices across repeat Triple Crit instances are rejected by the existing repeatable-choice validation. |
 | Triple Crit Specialist | fully_implemented | Normalized to `WEAPON_CRITICAL_MULTIPLIER_MIN` with minimum x3 and selected-choice matching. The existing combat resolver uses the highest critical multiplier minimum, avoiding duplicate critical multiplier stacking with Triple Crit or other sources. |
+| Sport Hunter | implemented_as_weapon_family_mutator | Implemented with a Riflemaster-style normalization hook plus runtime mutator collector. The collector enforces ranged attack, matching weapon family, proficiency, and range/Aim gates before applying each branch: slugthrower pistol at point-blank range gets +1 weapon die; slugthrower rifle increases damage dice by two size steps from d8 to d12; sporting blaster pistol emits damage-dice reroll-1s metadata; sporting blaster rifle gets +1 attack only when aiming. |
 
 ## Weapon & Armor leftovers still queued
 
 These remain the next implementation pool, pending source/rule mapping and runtime wiring:
 
-- Weapon Proficiency: Relentless Attack, Sport Hunter, Withdrawal Strike.
+- Weapon Proficiency: Relentless Attack, Withdrawal Strike.
 - Armor Proficiency & Use: Grand Army of the Republic Training.
 
 ## Already implemented / not part of this queue
