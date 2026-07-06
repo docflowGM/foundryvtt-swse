@@ -284,6 +284,8 @@ export async function rollSkill(actor, skillKey, options = {}) {
   return chatRoll;
 }
 
+export const rollSkillCheck = rollSkill;
+
 export function calculateSkillModifier(actor, skillKey) {
   const skill = SchemaAdapters.getSkill(actor, skillKey);
   const attributes = SchemaAdapters.getAttributes(actor);
