@@ -1,0 +1,60 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-06",
+  "phase": "skill-feat-batch-1-core-kotor-force-unleashed",
+  "scope": [
+    "Cybernetic Surgery",
+    "Conditioning",
+    "Surgical Expertise",
+    "Gearhead",
+    "Increased Agility",
+    "Quick Skill",
+    "Advantageous Cover",
+    "Informer",
+    "Rapport",
+    "Recall"
+  ],
+  "filesChanged": [
+    "scripts/engine/feats/skill-feat-normalization-hooks.js",
+    "scripts/engine/feats/skill-feat-runtime-patches.js",
+    "scripts/engine/skills/extra-skill-use-registry.js",
+    "scripts/infrastructure/hooks/init-hooks.js",
+    "docs/audits/skill-feat-batch-1-core-kotor-fu-2026-07-06.json"
+  ],
+  "implementationModel": {
+    "normalization": "Actor-owned feat items are normalized with abilityMeta.rules entries on create/update item hooks.",
+    "runtimeBridge": "The older SkillFeatResolver remains the chat/runtime skill resolver. skill-feat-runtime-patches.js bridges normalized SkillFeatRuleResolver reroll and substitution output into the older resolver so existing skill reroll chat behavior remains intact.",
+    "extraSkillUses": "The ExtraSkillUseRegistry now includes baseline procedure/task IDs for Gather Information, Jury-Rig, Surgery, and Install Cybernetic Device."
+  },
+  "runtimeBacked": {
+    "Conditioning": [
+      "Adds trained Strength/Constitution skill reroll metadata for Climb, Jump, Swim, Endurance, and Athletics.",
+      "Skill reroll buttons are surfaced through the existing skill chat reroll path and must keep the second result."
+    ],
+    "Informer": [
+      "Adds a Gather Information skill-use substitution allowing Perception for the Gather Information extra use.",
+      "The runtime bridge falls back to new SkillFeatRuleResolver substitutions when the older resolver has no match."
+    ],
+    "Rapport": [
+      "Adds Aid Another rider metadata consumed by the existing AidAnotherActionAdapter rider collector and displayed on guided Aid Another cards."
+    ],
+    "Recall": [
+      "Adds trained Knowledge reroll metadata, keep better result, once per day.",
+      "The runtime bridge adds day-scope tracking using actor flag foundryvtt-swse.skillFeatDailyUses."
+    ]
+  },
+  "metadataOrAdvisoryBacked": {
+    "Cybernetic Surgery": "Grants a Treat Injury cybernetic installation extra use/procedure reference with DC, time, retry, and self-install constraints. It does not auto-install cybernetics.",
+    "Surgical Expertise": "Adds a procedure time override for Surgery and Cybernetic Surgery procedures, reducing the time reference from 1 hour to 10 minutes.",
+    "Gearhead": "Adds once-per-encounter action-economy override metadata for Mechanics and Use Computer checks. A dedicated timed-task/action consumer can use it, but generic skill rolls do not spend the use yet.",
+    "Increased Agility": "Adds advisory movement/defense metadata for climb speed, swim speed, jump distance, and retaining Dexterity bonus while climbing. Movement and climbing defense context remain workflow/GM adjudicated.",
+    "Quick Skill": "Adds take-10/take-20 timing metadata. Existing generic skill roll dialog does not yet enforce the once-per-encounter Quick Skill choice.",
+    "Advantageous Cover": "Adds area-attack cover damage-negation metadata and a cover-state advisory note. Damage application still needs a cover-aware area attack consumer to fully automate it.",
+    "Conditioning Fortitude Reaction": "Adds advisory reaction metadata for adding Strength modifier to Fortitude once per encounter. Exact reaction timing remains outside the skill roll path."
+  },
+  "guardrails": [
+    "Cybernetic Surgery remains a manual procedure reference, not a passive actor modifier.",
+    "No duplicate skill reroll chat system was created; existing SkillFeatResolver chat behavior remains the runtime boundary.",
+    "No movement, cover, or cybernetic install automation was invented without a reliable workflow authority."
+  ]
+}
