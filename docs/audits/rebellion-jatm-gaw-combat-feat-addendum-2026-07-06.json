@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-06",
+  "purpose": "Record combat feat pass for Returning Bug, Zero Range, Follow Through, Relentless Attack, Deft Charge, Prime Shot, Rebel Military Training, and Destructive Force.",
+  "alreadyImplementedEntries": [
+    {
+      "name": "Returning Bug",
+      "status": "already_implemented_weapon_miss_rider",
+      "mechanic": "Existing weapon-leftover normalizer stores returningBugReturnToHandOnMiss as a MISS_RIDER for Razor Bug and Thud Bug."
+    },
+    {
+      "name": "Relentless Attack",
+      "status": "already_implemented_required_choice_and_followup_attack_state",
+      "mechanic": "Existing remaining weapon/armor normalizer requires an immediate double_attack_weapon selection and existing runtime applies +2 competence against the missed target when the target-scoped follow-up state is supplied."
+    }
+  ],
+  "implementedEntries": [
+    {
+      "name": "Zero Range",
+      "status": "implemented_point_blank_rider_modifier",
+      "mechanic": "Ranged attack against target within/adjacent to fighting space gains +1 attack and +1 weapon die damage. Runtime excludes Heavy/Vehicle weapons and Vehicle Combat; damage die is suppressed if Burst Fire or Rapid Shot is active."
+    },
+    {
+      "name": "Prime Shot",
+      "status": "implemented_selectable_point_blank_rider_modifier",
+      "mechanic": "At Short Range or closer, if no ally is closer to the target, runtime exposes +1 circumstance attack bonus."
+    },
+    {
+      "name": "Deft Charge",
+      "status": "implemented_charge_action_economy_rider_metadata_and_helper",
+      "mechanic": "After Charge attack resolution, helper exposes removal of turn-ending behavior and allowance for Swift, Reaction, and Free Actions before turn end."
+    },
+    {
+      "name": "Rebel Military Training",
+      "status": "implemented_running_attack_defense_rider_metadata_and_helper",
+      "mechanic": "When Running Attack moved before and after the attack, helper exposes +2 dodge Reflex until start of next turn."
+    },
+    {
+      "name": "Follow Through",
+      "status": "implemented_melee_drop_target_movement_rider_metadata_and_helper",
+      "mechanic": "After a melee attack reduces a target to 0 HP, helper exposes immediate movement up to Speed once/turn; with Cleave, metadata allows movement before the Cleave extra attack."
+    },
+    {
+      "name": "Destructive Force",
+      "status": "implemented_object_vehicle_destruction_adjacency_rider_metadata_and_helper",
+      "mechanic": "When object/Vehicle damage equals/exceeds DT and reduces it to 0 HP, helper exposes advisory 1 die same-type damage to all adjacent targets, including allies."
+    }
+  ],
+  "automationBoundary": {
+    "Zero Range": "Attack workflow must pass adjacent/within-fighting-space context. Runtime handles non-stacking with Burst Fire/Rapid Shot by suppressing Zero Range extra die.",
+    "Prime Shot": "Workflow must pass noAllyCloserToTarget and range band context.",
+    "Deft Charge": "Charge workflow must consume getActionEconomyRiders after charge attack resolution.",
+    "Rebel Military Training": "Running Attack workflow must pass moved-before-and-after context and apply/expire the defense effect.",
+    "Follow Through": "Damage workflow must call getDropTargetRiders when melee damage reduces a target to 0 HP; Cleave workflow must consume cleaveInteraction metadata.",
+    "Destructive Force": "Damage workflow must pass object/vehicle, DT, and destroyed-context flags and apply adjacent damage manually/workflow-side."
+  },
+  "changedFiles": [
+    "scripts/engine/feats/rebellion-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/rebellion-combat-runtime-patches.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}
