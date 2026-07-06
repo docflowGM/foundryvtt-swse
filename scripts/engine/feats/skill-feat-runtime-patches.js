@@ -107,7 +107,7 @@ async function markDailyUsed(actor, ruleId) {
 function isRuleAvailable(actor, skillKey, rule) {
   const raw = rule?.rule ?? rule;
   if (raw?.requiresTrained === true && !isSkillTrained(actor, skillKey)) return false;
-  if (rule?.oncePer === 'day' && !canUseDaily(actor, rule.id)) return false;
+  if (rule?.oncePer === 'day' && !canUseDaily(actor, dailyFeatureKey(rule.id))) return false;
   return true;
 }
 
