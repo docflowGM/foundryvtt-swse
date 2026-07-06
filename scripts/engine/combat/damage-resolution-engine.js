@@ -2,7 +2,6 @@ import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/
 import { ThresholdEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/threshold-engine.js";
 import { DamageMitigationManager } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-mitigation-manager.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
-import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 
@@ -130,18 +129,6 @@ function damageTypeExcluded(rule, damageType) {
  * DamageResolutionEngine - Unified damage orchestration
  */
 export class DamageResolutionEngine {
-  static #sizeThresholdMap = {
-    fine: 0,
-    diminutive: 0,
-    tiny: 0,
-    small: 0,
-    medium: 0,
-    large: 5,
-    huge: 10,
-    gargantuan: 20,
-    colossal: 50
-  };
-
   static async resolveDamage({ actor, damage, damageType = "normal", source = null, options = {} }) {
     if (!actor) {
       throw new Error('DamageResolutionEngine.resolveDamage: actor required');
@@ -224,7 +211,6 @@ export class DamageResolutionEngine {
       };
     }
 
-    const maxHP = system.hp?.max ?? 100;
     let hpDamageBeforeSpecial = Math.max(0, Number(mitigationResult.hpDamage) || 0);
     let voluntaryConditionShift = 0;
 
