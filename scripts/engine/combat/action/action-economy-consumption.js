@@ -140,7 +140,7 @@ export class ActionEconomyConsumption {
     if (normalizedType === 'reaction') {
       const current = Number(turnState?.reactions?.current ?? Persistence.getReactionMax?.(actor) ?? 1) || 0;
       const engineResult = current > 0
-        ? { allowed: true, turnState, consumed: { reaction: 1 }, violations: [] }
+        ? { allowed: true, turnState, consumed: { reaction: 0 }, violations: [] }
         : { allowed: false, turnState, consumed: { reaction: 0 }, violations: ['INSUFFICIENT_REACTION'] };
       const policyResult = Policy?.handle
         ? await Policy.handle({ actor, result: engineResult, actionName, context: metadata, gmOverride: options.gmOverride === true || metadata.gmOverride === true })
@@ -150,14 +150,19 @@ export class ActionEconomyConsumption {
         return { allowed: false, permitted: false, committed: false, actionType: normalizedType, engineResult, policyResult, rollback: async () => false };
       }
       if (engineResult.allowed && typeof Persistence.spendReaction === 'function') {
-        await Persistence.spendReaction(actor, combatId, { ...metadata, actionType: normalizedType });
+        const reactionResult = await Persistence.spendReaction(actor, combatId, { ...metadata, actionType: normalizedType });
+        const normalizedReactionResult = normalizeEngineResult(reactionResult, { reaction: 0 });
+        if (normalizedReactionResult.allowed === false) {
+          notifyPolicy(policyResult, normalizedReactionResult, normalizedType, options);
+          return { allowed: false, permitted: false, committed: false, actionType: normalizedType, engineResult: normalizedReactionResult, policyResult, rollback: async () => false };
+        }
         Hooks.callAll?.('swse.actionEconomySpent', { actor, actionType: normalizedType, metadata, source: 'ActionEconomyConsumption' });
         return {
           allowed: true,
           permitted: true,
           committed: true,
           actionType: normalizedType,
-          engineResult,
+          engineResult: normalizedReactionResult,
           policyResult,
           rollback: async () => {
             if (typeof Persistence.undoLast !== 'function') return false;
