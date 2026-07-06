@@ -44,6 +44,14 @@ const BASE_EXTRA_SKILL_USES = [
     tags: ['movement', 'acrobatics', 'tumble']
   },
   {
+    id: 'gather-information.gather-information',
+    key: 'gather-information',
+    skill: 'gatherInformation',
+    name: 'Gather Information',
+    actionCost: 'varies',
+    tags: ['social', 'investigation', 'gather-information']
+  },
+  {
     id: 'use-computer.hack-system',
     key: 'hack-system',
     skill: 'use-computer',
@@ -58,6 +66,35 @@ const BASE_EXTRA_SKILL_USES = [
     name: 'Disable Device',
     actionCost: 'varies',
     tags: ['technical', 'mechanics']
+  },
+  {
+    id: 'mechanics.jury-rig',
+    key: 'jury-rig',
+    skill: 'mechanics',
+    name: 'Jury-Rig',
+    actionCost: 'full-round',
+    trainedOnly: true,
+    dc: 25,
+    tags: ['technical', 'mechanics', 'repair']
+  },
+  {
+    id: 'treat-injury.surgery',
+    key: 'surgery',
+    skill: 'treatInjury',
+    name: 'Surgery',
+    actionCost: '1 hour',
+    trainedOnly: true,
+    tags: ['medical', 'treat-injury', 'surgery']
+  },
+  {
+    id: 'treat-injury.install-cybernetic-device',
+    key: 'install-cybernetic-device',
+    skill: 'treatInjury',
+    name: 'Install Cybernetic Device',
+    actionCost: '1 hour',
+    trainedOnly: true,
+    dc: 20,
+    tags: ['medical', 'treat-injury', 'surgery', 'cybernetics']
   }
 ];
 
