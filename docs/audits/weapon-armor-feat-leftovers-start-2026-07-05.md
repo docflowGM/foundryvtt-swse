@@ -37,14 +37,17 @@ The following strict Combat feats were also completed before this pass and shoul
 | Weapon Focus | fully_implemented | Normalized selected-choice metadata so the existing scoped combat feat resolver can apply the selected weapon/group +1 attack bonus without duplicate generic rule math. |
 | Weapon Finesse | fully_implemented | Normalized as an `ATTACK_ABILITY_SUBSTITUTION` passive rule for eligible melee weapons: light/light-melee, lightsabers, and unarmed/natural attacks use the better of Dexterity and Strength for attack rolls. |
 | Weapon Proficiency variants | fully_implemented | Weapon Proficiency (simple weapons, pistols, rifles, heavy weapons, lightsabers), Advanced Melee Weapon Proficiency, Heavy Weapon Proficiency, Lightsaber Proficiency, and Exotic Weapon Proficiency now normalize to actor `system.proficiencies.weapon` flags so canonical attack math can remove the nonproficiency penalty. Exotic proficiency also preserves the selected weapon choice when present. |
+| Halt | implemented_as_hit_rider | Normalized as a selected-weapon `HIT_RIDER` for attacks of opportunity. On hit, the attack workflow receives a structured rider to compare the same attack roll against the target's grapple check, stop movement, knock prone, end charge if applicable, and remove remaining actions if damage threshold is exceeded. |
+| Heavy Hitter | implemented_as_hit_rider | Normalized as a vehicle/emplacement `HIT_RIDER`. On hit, the attack workflow receives a structured rider to add +1 damage per 5 points by which the attack exceeds Reflex, and to suppress attacks/reduce speed on the target's next turn if damage threshold is exceeded. |
+| Improvised Weapon Mastery | implemented_as_hit_rider | Normalized as improvised-weapon metadata: improvised weapons are treated as simple weapons, and successful improvised weapon hits receive a single +1d6 damage rider. |
 
 ## Weapon & Armor leftovers still queued
 
 These remain the next implementation pool, pending source/rule mapping and runtime wiring:
 
 - Lightsaber & Weapon Styles: Long Haft Strike, remaining non-unarmed weapon-style feats if source-confirmed.
-- Weapon Proficiency: Triple Crit Specialist, Relentless Attack, Returning Bug, Sport Hunter, Savage Attack, Improvised Weapon Mastery, Withdrawal Strike.
-- Weapon Focus & Specialization: Halt, Autofire Assault, Critical Strike, Autofire Sweep.
+- Weapon Proficiency: Triple Crit Specialist, Relentless Attack, Returning Bug, Sport Hunter, Savage Attack, Withdrawal Strike.
+- Weapon Focus & Specialization: Autofire Assault, Critical Strike, Autofire Sweep.
 - Armor Proficiency & Use: Grand Army of the Republic Training.
 
 ## Already implemented / not part of this queue
