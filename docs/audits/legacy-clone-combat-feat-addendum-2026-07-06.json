@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-06",
+  "purpose": "Record advisory/interrupter combat feat pass for Clone Wars and Legacy Era feats.",
+  "implementedEntries": [
+    {
+      "name": "Anointed Hunter",
+      "status": "implemented_advisory_thrown_attack_modifier",
+      "mechanic": "Exposes +1 competence attack advisory for thrown weapons when movement context says the actor ended its move at least 2 squares from where it started."
+    },
+    {
+      "name": "Droid Hunter",
+      "status": "implemented_advisory_droid_damage_modifier",
+      "mechanic": "Exposes +2 damage advisory against Droid targets while proficient, or +4 if the weapon/context deals ion damage. Uses target droid metadata when supplied or actor type/species text fallback."
+    },
+    {
+      "name": "Separatist Military Training",
+      "status": "implemented_advisory_adjacent_ally_attack_modifier",
+      "mechanic": "Exposes +1 circumstance attack advisory once per turn when adjacent ally context is supplied."
+    },
+    {
+      "name": "Brink of Death",
+      "status": "implemented_damage_outcome_choice_metadata_and_helper",
+      "mechanic": "Exposes a damage-outcome choice when an attack would defeat a target: reduce to 0 HP, unconscious but alive."
+    },
+    {
+      "name": "Fatal Hit",
+      "status": "implemented_damage_outcome_choice_and_action_economy_override",
+      "mechanic": "Exposes a damage-outcome choice when an attack drops a target to 0 HP and exposes an action economy override changing Coup de Grace from full-round to standard action."
+    },
+    {
+      "name": "Galactic Alliance Military Training",
+      "status": "implemented_condition_track_interrupt_resource",
+      "mechanic": "Exposes an encounter-scoped interrupt resource that can ignore the first condition-track movement caused by an attack exceeding Damage Threshold. Uses EncounterUseTracker."
+    }
+  ],
+  "automationBoundary": {
+    "advisoryModifiers": "Attack workflow must supply movement, target, adjacency, proficiency, and damage-type context and decide whether to display/apply advisory modifiers.",
+    "damageOutcomeChoices": "Damage application workflow must present and apply the outcome choice at the defeat/drop-to-zero decision point.",
+    "conditionTrackInterrupt": "Condition track resolver must call getConditionTrackInterrupts and spendConditionTrackInterrupt before applying the first qualifying encounter condition-track movement."
+  },
+  "changedFiles": [
+    "scripts/engine/feats/legacy-clone-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/legacy-clone-combat-runtime-patches.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}
