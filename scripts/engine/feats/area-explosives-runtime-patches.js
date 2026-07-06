@@ -64,11 +64,6 @@ function isAreaAttackContext(context = {}) {
     || contextAffirms(context.workflowContext?.areaAttack);
 }
 
-function isRangedContext(context = {}) {
-  const attackType = normalizeKey(context.attackType ?? context.workflowContext?.attackType ?? context.workflowContext?.attack?.attackType ?? '');
-  return attackType === 'ranged' || contextAffirms(context.rangedAttack) || contextAffirms(context.workflowContext?.rangedAttack);
-}
-
 function isGrenadeContext(context = {}) {
   const type = normalizeKey(context.weaponCategory ?? context.weaponType ?? context.attackType ?? context.workflowContext?.weaponCategory ?? context.workflowContext?.weaponType ?? '');
   return ['grenade', 'thermal-detonator', 'thermaldetonator'].includes(type)
@@ -232,6 +227,8 @@ export function registerAreaExplosivesRuntimePatches() {
   game.swse.feats.getSpecialAreaAttackActions = getSpecialAreaAttackActions;
   SWSELogger.log('[AreaExplosivesRuntime] Runtime helpers registered');
 }
+
+Hooks.once('ready', () => registerAreaExplosivesRuntimePatches());
 
 export {
   resolveAutofireShapeMutations,
