@@ -27,6 +27,69 @@ import {
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { toStableKey } from "/systems/foundryvtt-swse/scripts/utils/stable-key.js";
 
+function createTalentTreeBuildAudit() {
+    return {
+        attempted: 0,
+        loaded: 0,
+        normalizationFailures: [],
+        missingSourceIds: [],
+        duplicateIds: [],
+        duplicateSourceIds: [],
+        duplicateStableKeys: [],
+        emptyTrees: [],
+    };
+}
+
+function describeTreeForAudit(treeOrEntry = {}) {
+    return {
+        id: treeOrEntry.id || null,
+        sourceId: treeOrEntry.sourceId || treeOrEntry._id || null,
+        name: treeOrEntry.name || treeOrEntry.system?.talent_tree || '(unnamed talent tree)',
+    };
+}
+
+function emitTalentTreeBuildAudit(audit) {
+    const hasFailures = audit.normalizationFailures.length
+        || audit.missingSourceIds.length
+        || audit.duplicateIds.length
+        || audit.duplicateSourceIds.length
+        || audit.duplicateStableKeys.length;
+
+    const payload = {
+        attempted: audit.attempted,
+        loaded: audit.loaded,
+        failed: audit.normalizationFailures.length,
+        missingSourceIds: audit.missingSourceIds.length,
+        duplicateIds: audit.duplicateIds.length,
+        duplicateSourceIds: audit.duplicateSourceIds.length,
+        duplicateStableKeys: audit.duplicateStableKeys.length,
+        emptyTrees: audit.emptyTrees.length,
+    };
+
+    if (hasFailures) {
+        SWSELogger.error('[TalentTreeDB] Talent tree load audit FAILED', {
+            ...payload,
+            normalizationFailures: audit.normalizationFailures,
+            missingSourceIds: audit.missingSourceIds,
+            duplicateIds: audit.duplicateIds,
+            duplicateSourceIds: audit.duplicateSourceIds,
+            duplicateStableKeys: audit.duplicateStableKeys,
+            emptyTrees: audit.emptyTrees,
+        });
+        return;
+    }
+
+    if (audit.emptyTrees.length) {
+        SWSELogger.warn('[TalentTreeDB] Talent tree load audit completed with empty trees', {
+            ...payload,
+            emptyTrees: audit.emptyTrees,
+        });
+        return;
+    }
+
+    SWSELogger.log(`[TalentTreeDB] Talent tree load audit PASS: ${audit.loaded}/${audit.attempted} trees loaded`);
+}
+
 export const TalentTreeDB = {
 
     // In-memory map for O(1) lookups: treeId -> normalized tree
@@ -40,6 +103,7 @@ export const TalentTreeDB = {
     talentToTree: new Map(),
 
     isBuilt: false,
+    lastBuildAudit: null,
 
     /**
      * Build talent tree registry from compendium.
@@ -54,18 +118,31 @@ export const TalentTreeDB = {
      * @returns {Promise<boolean>} - True if successful
      */
     async build() {
+        const audit = createTalentTreeBuildAudit();
+        this.lastBuildAudit = audit;
+
         try {
             const pack = game.packs.get('foundryvtt-swse.talent_trees');
             if (!pack) {
-                SWSELogger.warn('[TalentTreeDB] Talent trees compendium not found');
+                SWSELogger.error('[TalentTreeDB] Talent trees compendium not found; no talent trees can load');
                 return false;
             }
+
+            // Reset indexes so rebuilds do not hide duplicate or stale entries.
+            this.trees.clear();
+            this.sourceIndex.clear();
+            this._byId.clear();
+            this._byKey.clear();
+            this._legacyIdMap.clear();
+            this.talentToTree.clear();
+            this.isBuilt = false;
 
             // Use getIndex with expanded fields - NOT getDocuments (see note above)
             const index = await pack.getIndex({ fields: ['system', 'name', 'img'] });
             const membershipRegistry = await this._loadTalentTreeMembershipRegistry();
-            let count = 0;
             let warnings = 0;
+
+            audit.attempted = index.size ?? index.length ?? 0;
 
             for (const entry of index) {
                 try {
@@ -76,6 +153,32 @@ export const TalentTreeDB = {
                     // Validate
                     validateTalentTree(normalizedTree);
 
+                    if (!normalizedTree.sourceId) {
+                        audit.missingSourceIds.push(describeTreeForAudit(normalizedTree));
+                        warnings++;
+                    }
+                    if (this.trees.has(normalizedTree.id)) {
+                        audit.duplicateIds.push({
+                            duplicateId: normalizedTree.id,
+                            existing: describeTreeForAudit(this.trees.get(normalizedTree.id)),
+                            incoming: describeTreeForAudit(normalizedTree),
+                        });
+                        warnings++;
+                    }
+                    if (normalizedTree.sourceId && this.sourceIndex.has(normalizedTree.sourceId)) {
+                        audit.duplicateSourceIds.push({
+                            duplicateSourceId: normalizedTree.sourceId,
+                            existing: describeTreeForAudit(this.sourceIndex.get(normalizedTree.sourceId)),
+                            incoming: describeTreeForAudit(normalizedTree),
+                        });
+                        warnings++;
+                    }
+                    if (!Array.isArray(normalizedTree.talentIds) || normalizedTree.talentIds.length === 0) {
+                        if (!Array.isArray(normalizedTree.talentNames) || normalizedTree.talentNames.length === 0) {
+                            audit.emptyTrees.push(describeTreeForAudit(normalizedTree));
+                        }
+                    }
+
                     // Store by ID
                     this.trees.set(normalizedTree.id, normalizedTree);
                     this._byId.set(normalizedTree.id, normalizedTree);
@@ -84,11 +187,23 @@ export const TalentTreeDB = {
                     // Store by stable key (generate if not in compendium)
                     const key = entry.system?.key ?? toStableKey(entry.name);
                     if (key) {
+                        if (this._byKey.has(key)) {
+                            audit.duplicateStableKeys.push({
+                                duplicateStableKey: key,
+                                existing: describeTreeForAudit(this._byKey.get(key)),
+                                incoming: describeTreeForAudit(normalizedTree),
+                            });
+                            warnings++;
+                        }
                         this._byKey.set(key, normalizedTree);
                     }
-                    count++;
+                    audit.loaded++;
 
                 } catch (err) {
+                    audit.normalizationFailures.push({
+                        ...describeTreeForAudit(entry),
+                        error: err?.message || String(err),
+                    });
                     SWSELogger.error(`[TalentTreeDB] Failed to normalize tree "${entry.name}":`, err);
                     warnings++;
                 }
@@ -101,11 +216,13 @@ export const TalentTreeDB = {
             this._buildLegacyIdMap();
 
             this.isBuilt = true;
-            SWSELogger.log(`[TalentTreeDB] Built: ${count} trees loaded${warnings > 0 ? ` (${warnings} warnings)` : ''}`);
+            emitTalentTreeBuildAudit(audit);
+            SWSELogger.log(`[TalentTreeDB] Built: ${audit.loaded} trees loaded${warnings > 0 ? ` (${warnings} warnings)` : ''}`);
             return true;
 
         } catch (err) {
             SWSELogger.error('[TalentTreeDB] Failed to build:', err);
+            emitTalentTreeBuildAudit(audit);
             return false;
         }
     },
@@ -245,14 +362,6 @@ export const TalentTreeDB = {
     },
 
     /**
-     * Get a talent tree by name (case-insensitive, handles encoding issues).
-     * Less efficient than get() - prefer ID lookup when possible.
-     *
-     * @param {string} name - Tree name
-     * @returns {Object|null} - Normalized tree or null
-     */
-
-    /**
      * Lookup a talent tree by its compendium document _id.
      * This prevents drift when display names change.
      *
@@ -264,9 +373,8 @@ export const TalentTreeDB = {
         return this.sourceIndex.get(sourceId) || null;
     },
 
-byName(name) {
+    byName(name) {
         if (!name) {return null;}
-
         return findTalentTreeByName(name, this.trees);
     },
 
@@ -319,212 +427,60 @@ byName(name) {
      * @param {string} tag - Tag: "force", "droid", etc.
      * @returns {Array<Object>} - Trees with this tag
      */
-    byTag(tag) {
+    byAccessTag(tag) {
         if (!tag) {return [];}
         return this.all().filter(tree => (tree.tags || []).includes(tag));
     },
 
     /**
-     * Get talent trees by multiple tags (OR logic).
-     *
-     * @param {Array<string>} tags - Tags to search for
-     * @returns {Array<Object>} - Trees matching any of these tags
+     * Build inverse index from talent ID to tree ID.
      */
-    byTags(tags) {
-        if (!tags || tags.length === 0) {return [];}
-        const tagSet = new Set(tags);
-        return this.all().filter(tree =>
-            (tree.tags || []).some(tag => tagSet.has(tag))
-        );
+    buildTalentIndex() {
+        this.talentToTree.clear();
+        for (const tree of this.trees.values()) {
+            for (const talentId of tree.talentIds || []) {
+                if (!talentId) {continue;}
+                this.talentToTree.set(talentId, tree.id);
+            }
+        }
     },
 
     /**
-     * Get talent trees for a class (by class ID).
-     * Requires ClassesDB to be built.
+     * Resolve tree ID for a talent ID.
      *
-     * Uses the new SSOT system: classes reference trees by stable IDs.
-     * PHASE 3: talentTreeIds is now the authoritative source.
-     *
-     * @param {string} classId - Class ID
-     * @param {Object} classesDB - ClassesDB instance
-     * @returns {Array<Object>} - Trees for this class
+     * @param {string} talentId
+     * @returns {string|null}
      */
-    forClass(classId, classesDB) {
-        if (!classId || !classesDB) {return [];}
-
-        const classDef = classesDB.get(classId);
-        if (!classDef) {return [];}
-
-        // Use new ID-based talentTreeIds (PHASE 3)
-        const treeIds = classDef.talentTreeIds || [];
-
-        return treeIds
-            .map(treeId => this.get(treeId))
-            .filter(Boolean);
+    getTreeIdForTalent(talentId) {
+        if (!talentId) {return null;}
+        return this.talentToTree.get(talentId) || null;
     },
 
     /**
-     * Get count of loaded talent trees.
+     * Build backwards compatibility aliases for legacy ids and source ids.
      *
-     * @returns {number} - Number of trees
+     * @private
+     */
+    _buildLegacyIdMap() {
+        this._legacyIdMap.clear();
+        for (const tree of this.trees.values()) {
+            if (tree.sourceId) {this._legacyIdMap.set(tree.sourceId, tree);}
+            if (tree.id) {this._legacyIdMap.set(tree.id, tree);}
+            if (tree.name) {this._legacyIdMap.set(tree.name, tree);}
+        }
+    },
+
+    /**
+     * Get count of loaded trees.
+     *
+     * @returns {number}
      */
     count() {
         return this.trees.size;
     },
 
     /**
-     * Build the talentToTree inverse index (SSOT for tree ownership).
-     * Called after all trees are loaded.
-     *
-     * This enables O(1) lookup: given a talentId, find which tree owns it.
-     */
-    buildTalentIndex() {
-        this.talentToTree.clear();
-
-        for (const tree of this.trees.values()) {
-            const talentRefs = [...(tree.talentIds || []), ...(tree.talentNames || [])];
-
-            for (const talentId of talentRefs) {
-                const raw = String(talentId || '').trim();
-                if (!raw) continue;
-                this.talentToTree.set(raw, tree.id);
-                const stable = toStableKey(raw);
-                if (stable) this.talentToTree.set(stable, tree.id);
-                const normalized = normalizeTalentTreeId(raw);
-                if (normalized && normalized !== 'unknown') this.talentToTree.set(normalized, tree.id);
-            }
-        }
-
-        SWSELogger.log(`[TalentTreeDB] Built talent index: ${this.talentToTree.size} talents indexed`);
-    },
-
-    /**
-     * Build legacy ID alias layer for backwards compatibility.
-     * Maps old treeId references to normalized trees.
-     * Called after trees and talent index are built.
-     */
-    _buildLegacyIdMap() {
-        this._legacyIdMap.clear();
-        // Legacy map is populated as-needed during get() calls
-        // by checking sourceId and stable key fallbacks
-    },
-
-    /**
-     * Get the tree ID that owns a talent (SSOT query).
-     *
-     * @param {string} talentId - Talent ID
-     * @returns {string|null} - Tree ID or null if talent is unowned
-     */
-    getTreeForTalent(talentId) {
-        if (!talentId) {return null;}
-        const raw = String(talentId || '').trim();
-        if (!raw) return null;
-        return this.talentToTree.get(raw)
-            ?? this.talentToTree.get(toStableKey(raw))
-            ?? this.talentToTree.get(normalizeTalentTreeId(raw))
-            ?? null;
-    },
-
-    /**
-     * Get all talents for a tree (inverse query).
-     *
-     * @param {string} treeId - Tree ID
-     * @returns {Array<string>} - Talent IDs in this tree
-     */
-    getTalentsForTree(treeId) {
-        if (!treeId) {return [];}
-
-        const tree = this.get(treeId);
-        if (!tree) {return [];}
-        return tree.talentNames?.length ? tree.talentNames : (tree.talentIds ?? []);
-    },
-
-    /**
-     * Get all talents for multiple trees.
-     *
-     * @param {Array<string>} treeIds - Tree IDs
-     * @returns {Array<string>} - Talent IDs from all trees (deduplicated)
-     */
-    getTalentsForTrees(treeIds) {
-        if (!treeIds || treeIds.length === 0) {return [];}
-
-        const talents = new Set();
-
-        for (const treeId of treeIds) {
-            const treetalents = this.getTalentsForTree(treeId);
-            for (const tid of treetalents) {
-                talents.add(tid);
-            }
-        }
-
-        return Array.from(talents);
-    },
-
-    /**
-     * Get all available talent trees for a character (PHASE 3 runtime integration).
-     *
-     * Combines:
-     * 1. Class-specific trees (from class.system.talentTreeIds)
-     * 2. Flag-based trees (Force-sensitive → force trees, Droid → droid trees)
-     *
-     * @param {Object} actor - Actor document with class and flags
-     * @returns {Array<Object>} - Available talent trees for this character
-     */
-    getTalentTreesForCharacter(actor) {
-        if (!actor) {return [];}
-
-        const trees = new Set();
-
-        // Get class trees (if class exists)
-        if (actor.class) {
-            const classTrees = actor.class.system?.talentTreeIds || [];
-            for (const treeId of classTrees) {
-                const tree = this.get(treeId);
-                if (tree) {trees.add(tree);}
-            }
-        }
-
-        // Add flag-based trees
-        const flags = actor.system?.flags || {};
-
-        // Force-sensitive grants access to all force trees
-        if (flags.forceSensitive) {
-            const forceTrees = this.byTag('force');
-            for (const tree of forceTrees) {
-                trees.add(tree);
-            }
-        }
-
-        // Droid grants access to all droid trees
-        if (flags.droid) {
-            const droidTrees = this.byTag('droid');
-            for (const tree of droidTrees) {
-                trees.add(tree);
-            }
-        }
-
-        return Array.from(trees);
-    },
-
-    /**
-     * Get all available talents for a character (convenience method).
-     * Combines getTalentTreesForCharacter + getTalentsForTrees.
-     *
-     * @param {Object} actor - Actor document
-     * @returns {Array<string>} - All talent IDs available to this character
-     */
-    getTalentsForCharacter(actor) {
-        if (!actor) {return [];}
-
-        const trees = this.getTalentTreesForCharacter(actor);
-        const treeIds = trees.map(t => t.id);
-
-        return this.getTalentsForTrees(treeIds);
-    },
-
-    /**
      * Validate that TalentTreeDB is ready for use.
-     * Throws if not built.
      */
     ensureBuilt() {
         if (!this.isBuilt) {
@@ -532,17 +488,3 @@ byName(name) {
         }
     }
 };
-
-/**
- * CRITICAL: This is the bridge between classes and talents.
- *
- * ❌ DO NOT USE:
- * - String matching on talent tree names
- * - Storing talent tree names in class items
- * - Reading talent_tree.db directly
- *
- * ✅ ALWAYS USE:
- * - TalentTreeDB.get(treeId)
- * - TalentTreeDB.byName(name) for migration/legacy code
- * - Store tree IDs, not names
- */
