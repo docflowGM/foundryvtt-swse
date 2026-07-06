@@ -63,6 +63,16 @@ function selectedTargets() {
   }
 }
 
+function strengthModifier(actor) {
+  const value = actor?.system?.abilities?.str?.mod
+    ?? actor?.system?.abilities?.strength?.mod
+    ?? actor?.system?.attributes?.str?.mod
+    ?? actor?.system?.stats?.str?.mod
+    ?? 0;
+  const number = Number(value);
+  return Number.isFinite(number) ? number : 0;
+}
+
 export class GrappleFeatActions {
   static canUse(actor, featName) {
     if (!actor) return false;
@@ -76,6 +86,8 @@ export class GrappleFeatActions {
         return actorHasGrappleCapability(actor, 'REACTION_GRAB_BACK', 'Grab Back');
       case 'pincer':
         return actorHasGrappleCapability(actor, 'PIN_MAINTENANCE_AND_CRUSH', 'Pincer');
+      case 'knock heads':
+        return actorHasGrappleCapability(actor, 'GRAPPLE_ADVISORY_RIDER', 'Knock Heads', rule => rule.id === 'knockHeadsMultiGrabRider' || rule.source === 'Knock Heads');
       default:
         return actorHasFeat(actor, featName);
     }
@@ -123,6 +135,33 @@ export class GrappleFeatActions {
       results.push(result);
     }
     return results;
+  }
+
+  static getGrappleRiders(actor, context = {}) {
+    const trigger = normalizeFeatName(context.trigger ?? context.grappleTrigger ?? '');
+    return actorGrappleRules(actor).filter(rule => {
+      if (rule?.type !== 'GRAPPLE_ADVISORY_RIDER' && rule?.type !== 'CONDITION_SHIFT_ON_GRAPPLE_MANEUVER') return false;
+      if (!trigger) return true;
+      return normalizeFeatName(rule.trigger ?? rule.maneuver ?? '') === trigger;
+    });
+  }
+
+  static getKnockHeadsRiders(actor, context = {}) {
+    const successCount = Number(context.successfulGrabCount ?? context.grabbedTargets?.length ?? 0) || 0;
+    if (successCount < 2) return [];
+    return actorGrappleRules(actor)
+      .filter(rule => rule?.id === 'knockHeadsMultiGrabRider' || rule?.source === 'Knock Heads')
+      .map(rule => ({
+        id: rule.id ?? 'knockHeadsMultiGrabRider',
+        source: rule.sourceName ?? rule.source ?? 'Knock Heads',
+        type: 'knockHeadsMultiGrabRider',
+        damageFormula: `1d6 + ${strengthModifier(actor)}`,
+        damageType: rule.damage?.damageType ?? 'bludgeoning',
+        damageThresholdModifier: Number(rule.damageThresholdModifier ?? -5) || -5,
+        preserveGrabbedState: rule.preserveGrabbedState !== false,
+        requiresTargetsAdjacentToActorAndEachOther: rule.requiresTargetsAdjacentToActorAndEachOther === true,
+        rule
+      }));
   }
 
   /**
@@ -191,7 +230,7 @@ export class GrappleFeatActions {
   static registerGlobals() {
     globalThis.SWSE ??= {};
     globalThis.SWSE.GrappleFeatActions = GrappleFeatActions;
-    if (globalThis.game?.swse) globalThis.game.swse.GrappleFeatActions = GrappleFeatActions;
+    if (globalThis.game?.swse) game.swse.GrappleFeatActions = GrappleFeatActions;
   }
 }
 
