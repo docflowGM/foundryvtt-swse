@@ -82,6 +82,7 @@ import { registerUnknownRegionsCombatRuntimePatches } from "/systems/foundryvtt-
 import { registerSkillFeatRuleResolver } from "/systems/foundryvtt-swse/scripts/engine/skills/skill-feat-rule-resolver.js";
 import { registerSkillFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/skill-feat-normalization-hooks.js";
 import { registerSkillFeatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/skill-feat-runtime-patches.js";
+import { registerExpandedSkillFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/skill-feat-expanded-normalization-hooks.js";
 
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -100,6 +101,7 @@ export function registerInitHooks() {
         registerSkillFeatRuleResolver();
         registerSkillFeatRuntimePatches();
         registerSkillFeatNormalizationHooks();
+        registerExpandedSkillFeatNormalizationHooks();
         registerAidAnotherActionAdapter();
         registerDroidCombatActionAdapter();
         registerGalaxyIntrigueCombatActionAdapter();
