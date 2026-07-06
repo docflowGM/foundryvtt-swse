@@ -12,19 +12,23 @@
 
 import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js";
 
+const TRIGGER_LIMITED_REACTION_SENTINEL = Number.MAX_SAFE_INTEGER;
+
 export class ActionEconomyPersistence {
   // Flag storage key
   static FLAG_KEY = "actionEconomy";
   static SCOPE = "foundryvtt-swse";
 
-  static getReactionMax(actor) {
-    const raw = actor?.system?.combat?.reactionsMax
-      ?? actor?.system?.reactions?.max
-      ?? actor?.system?.actionEconomy?.reactionsMax
-      ?? actor?.getFlag?.(this.SCOPE, 'reactionsMax')
-      ?? 1;
-    const n = Number(raw);
-    return Number.isFinite(n) && n > 0 ? Math.floor(n) : 1;
+  static reactionsAreTriggerLimited() {
+    return true;
+  }
+
+  static getReactionMax(_actor) {
+    // SWSE reactions are not a once-per-round resource. A character can take
+    // any number of reactions as long as each reaction has a valid trigger;
+    // normally only one reaction may be taken per triggering action. Use a large
+    // finite sentinel so existing action-economy state remains JSON-safe.
+    return TRIGGER_LIMITED_REACTION_SENTINEL;
   }
 
   static normalizeTurnState(turnState = {}, actor = null) {
@@ -42,7 +46,9 @@ export class ActionEconomyPersistence {
       fullRoundUsed: turnState.fullRoundUsed === true,
       reactions: {
         current: reactionCurrent,
-        max: reactionMax
+        max: reactionMax,
+        unlimitedByRule: true,
+        limitBasis: 'trigger'
       },
       history: Array.isArray(turnState.history) ? turnState.history : []
     };
@@ -180,25 +186,25 @@ export class ActionEconomyPersistence {
 
   static async spendReaction(actor, combatId, metadata = {}) {
     const before = this.getTurnState(actor, combatId);
-    const current = Number(before.reactions?.current ?? 1) || 0;
-    if (current <= 0) {
-      return { allowed: false, turnState: before, violations: ['INSUFFICIENT_REACTION'] };
-    }
-
     const after = this.#pushHistory({
       ...before,
       reactions: {
-        current: current - 1,
-        max: Number(before.reactions?.max ?? 1) || 1
+        current: this.getReactionMax(actor),
+        max: this.getReactionMax(actor),
+        unlimitedByRule: true,
+        limitBasis: 'trigger'
       }
     }, {
       type: 'reaction',
       actionType: 'reaction',
       before,
-      metadata
+      metadata: {
+        ...metadata,
+        ruleBasis: 'trigger-limited'
+      }
     });
     await this.setTurnState(actor, combatId, after);
-    return { allowed: true, turnState: after, consumed: { reaction: 1 }, violations: [] };
+    return { allowed: true, turnState: after, consumed: { reaction: 0 }, violations: [] };
   }
 
   static async undoLast(actor, combatId) {
