@@ -46,6 +46,7 @@ import { registerUnarmedStyleFeatNormalizationHooks } from "/systems/foundryvtt-
 import { registerAbilityMetaSchemaDefaultHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/ability-meta-schema-default-hooks.js";
 import { registerWeaponFoundationFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/weapon-foundation-feat-normalization-hooks.js";
 import { registerUnknownRegionsWeaponFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/unknown-regions-weapon-feat-normalization-hooks.js";
+import { registerWeaponCriticalFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/weapon-critical-feat-normalization-hooks.js";
 
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -96,6 +97,7 @@ export function registerInitHooks() {
         registerUnarmedStyleFeatNormalizationHooks();
         registerWeaponFoundationFeatNormalizationHooks();
         registerUnknownRegionsWeaponFeatNormalizationHooks();
+        registerWeaponCriticalFeatNormalizationHooks();
         registerSpeciesOriginFeatNormalizationHooks();
         SWSECombatActionBrowser.init();
         const stats = HooksRegistry.getStats();
