@@ -1,5 +1,8 @@
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { FeatChoiceDialog } from "/systems/foundryvtt-swse/scripts/apps/choices/feat-choice-dialog.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
+
+const pendingChoicePrompts = new Set();
 
 function normalizeName(value) {
   return String(value ?? '')
@@ -50,6 +53,23 @@ function selectedChoicePatch(item) {
   };
 }
 
+function isTripleCritFeat(item) {
+  const name = compact(item?.name);
+  return name === 'triplecrit' || name.startsWith('triplecrit(');
+}
+
+function isTripleCritSpecialistFeat(item) {
+  const name = compact(item?.name);
+  return name === 'triplecritspecialist' || name.startsWith('triplecritspecialist(');
+}
+
+function hasStoredChoice(item) {
+  const choice = item?.system?.selectedChoice ?? item?.system?.selectedChoices ?? item?.system?.choiceMeta?.selectedChoice;
+  if (Array.isArray(choice)) return choice.length > 0;
+  if (choice && typeof choice === 'object') return Object.keys(choice).length > 0;
+  return choice !== undefined && choice !== null && String(choice).trim() !== '';
+}
+
 function longHaftStrikeRules() {
   return [
     {
@@ -89,12 +109,11 @@ function returningBugRules() {
   }];
 }
 
-function tripleCritRules(item, sourceName, id) {
-  const choice = selectedChoiceFromItem(item);
+function tripleCritRules(_item, sourceName, id) {
   return [{
     type: 'WEAPON_CRITICAL_MULTIPLIER_MIN',
     id,
-    selectedChoice: Boolean(choice),
+    selectedChoice: true,
     value: 3,
     multiplier: 3,
     minimum: 3,
@@ -107,8 +126,8 @@ function rulesForFeat(item) {
   const name = compact(item?.name);
   if (name === 'longhaftstrike') return longHaftStrikeRules();
   if (name === 'returningbug') return returningBugRules();
-  if (name === 'triplecrit' || name.startsWith('triplecrit(')) return tripleCritRules(item, 'Triple Crit', 'tripleCritCriticalMultiplierMinimum');
-  if (name === 'triplecritspecialist' || name.startsWith('triplecritspecialist(')) return tripleCritRules(item, 'Triple Crit Specialist', 'tripleCritSpecialistCriticalMultiplierMinimum');
+  if (isTripleCritFeat(item)) return tripleCritRules(item, 'Triple Crit', 'tripleCritCriticalMultiplierMinimum');
+  if (isTripleCritSpecialistFeat(item)) return tripleCritRules(item, 'Triple Crit Specialist', 'tripleCritSpecialistCriticalMultiplierMinimum');
   return [];
 }
 
@@ -116,8 +135,8 @@ function normalizedRuleIdsForFeat(item) {
   const name = compact(item?.name);
   if (name === 'longhaftstrike') return ['longHaftStrikeTreatAsDoubleWeapon', 'longHaftStrikeDualWieldEligible'];
   if (name === 'returningbug') return ['returningBugReturnToHandOnMiss'];
-  if (name === 'triplecrit' || name.startsWith('triplecrit(')) return ['tripleCritCriticalMultiplierMinimum'];
-  if (name === 'triplecritspecialist' || name.startsWith('triplecritspecialist(')) return ['tripleCritSpecialistCriticalMultiplierMinimum'];
+  if (isTripleCritFeat(item)) return ['tripleCritCriticalMultiplierMinimum'];
+  if (isTripleCritSpecialistFeat(item)) return ['tripleCritSpecialistCriticalMultiplierMinimum'];
   return [];
 }
 
@@ -127,6 +146,42 @@ function mechanicsModeForFeat(item) {
   if (name === 'returningbug') return 'weapon_miss_rider';
   if (name.startsWith('triplecrit')) return 'weapon_critical_multiplier_minimum';
   return 'weapon_rule_metadata';
+}
+
+function tripleCritChoicePatch(item) {
+  if (!isTripleCritFeat(item)) return {};
+  return {
+    'system.choiceMeta.required': true,
+    'system.choiceMeta.repeatable': true,
+    'system.choiceMeta.resolution': 'immediate',
+    'system.choiceMeta.choiceKind': 'weapon_group_or_exotic',
+    'system.choiceMeta.choiceSource': 'prerequisiteDerived',
+    'system.choiceMeta.choiceKey': 'triple_crit_weapon',
+    'system.choiceMeta.storagePath': 'system.selectedChoice',
+    'system.choiceMeta.label': 'Triple Crit Weapon',
+    'system.choiceMeta.prompt': 'Choose the proficient weapon group or qualifying weapon for Triple Crit.',
+    'system.abilityMeta.requiresSelectedChoice': true
+  };
+}
+
+function scheduleTripleCritChoicePrompt(actor, itemId) {
+  if (!actor || !itemId || !globalThis.ui || !globalThis.game?.user) return;
+  const key = `${actor.id || actor.uuid || 'actor'}:${itemId}`;
+  if (pendingChoicePrompts.has(key)) return;
+  pendingChoicePrompts.add(key);
+  globalThis.setTimeout?.(async () => {
+    try {
+      const item = actor.items?.get?.(itemId);
+      if (!item || !isTripleCritFeat(item) || hasStoredChoice(item)) return;
+      if (item.system?.choiceMeta?.required !== true) return;
+      if (actor.isOwner === false && !globalThis.game?.user?.isGM) return;
+      await FeatChoiceDialog.promptAndApply(actor, item);
+    } catch (err) {
+      SWSELogger.warn('[WeaponLeftoverNormalization] Failed to open Triple Crit choice prompt', { actorId: actor?.id, itemId, error: err });
+    } finally {
+      pendingChoicePrompts.delete(key);
+    }
+  }, 250);
 }
 
 async function normalizeWeaponLeftoverFeat(item, options = {}) {
@@ -147,6 +202,7 @@ async function normalizeWeaponLeftoverFeat(item, options = {}) {
     'system.abilityMeta.applicationScope': 'weapon_attack_resolution',
     'system.abilityMeta.staticSheetPolicy': 'include',
     'system.abilityMeta.rules': nextRules,
+    ...tripleCritChoicePatch(item),
     ...selectedChoicePatch(item)
   };
 
@@ -155,8 +211,12 @@ async function normalizeWeaponLeftoverFeat(item, options = {}) {
     || item.system?.subType !== 'STATE'
     || item.system?.abilityMeta?.mechanicsMode !== mechanicsModeForFeat(item)
     || item.system?.abilityMeta?.applicationScope !== 'weapon_attack_resolution'
-    || item.system?.abilityMeta?.staticSheetPolicy !== 'include';
-  if (!rulesChanged && !modelChanged) return false;
+    || item.system?.abilityMeta?.staticSheetPolicy !== 'include'
+    || (isTripleCritFeat(item) && (item.system?.choiceMeta?.required !== true || item.system?.choiceMeta?.choiceKind !== 'weapon_group_or_exotic' || item.system?.abilityMeta?.requiresSelectedChoice !== true));
+  if (!rulesChanged && !modelChanged) {
+    if (isTripleCritFeat(item) && !hasStoredChoice(item)) scheduleTripleCritChoicePrompt(item.actor, item.id);
+    return false;
+  }
 
   try {
     await ActorEngine.updateEmbeddedDocuments(item.actor, 'Item', [{ _id: item.id, ...patch }], {
@@ -164,6 +224,7 @@ async function normalizeWeaponLeftoverFeat(item, options = {}) {
       swseWeaponLeftoverNormalization: true,
       render: false
     });
+    if (isTripleCritFeat(item) && !hasStoredChoice(item)) scheduleTripleCritChoicePrompt(item.actor, item.id);
     return true;
   } catch (err) {
     SWSELogger.error(`[WeaponLeftoverNormalization] Failed to normalize ${item.name}`, { error: err });
