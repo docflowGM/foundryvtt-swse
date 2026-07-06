@@ -47,6 +47,7 @@ import { registerAbilityMetaSchemaDefaultHooks } from "/systems/foundryvtt-swse/
 import { registerWeaponFoundationFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/weapon-foundation-feat-normalization-hooks.js";
 import { registerUnknownRegionsWeaponFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/unknown-regions-weapon-feat-normalization-hooks.js";
 import { registerWeaponCriticalFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/weapon-critical-feat-normalization-hooks.js";
+import { registerWeaponAutofireFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/weapon-autofire-feat-normalization-hooks.js";
 
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -98,6 +99,7 @@ export function registerInitHooks() {
         registerWeaponFoundationFeatNormalizationHooks();
         registerUnknownRegionsWeaponFeatNormalizationHooks();
         registerWeaponCriticalFeatNormalizationHooks();
+        registerWeaponAutofireFeatNormalizationHooks();
         registerSpeciesOriginFeatNormalizationHooks();
         SWSECombatActionBrowser.init();
         const stats = HooksRegistry.getStats();
