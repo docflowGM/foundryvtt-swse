@@ -88,6 +88,7 @@ import { registerTeamFeatNormalizationHooks } from "/systems/foundryvtt-swse/scr
 import { registerTeamFeatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/team-feat-runtime-patches.js";
 import { registerRebellionSpeciesSkillFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/rebellion-species-skill-feat-normalization-hooks.js";
 import { registerRebellionSpeciesSkillFeatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js";
+import { registerSecondWindRiderRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/second-wind-rider-runtime-patches.js";
 
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -107,6 +108,7 @@ export function registerInitHooks() {
         registerSkillFeatRuntimePatches();
         registerTeamFeatRuntimePatches();
         registerRebellionSpeciesSkillFeatRuntimePatches();
+        registerSecondWindRiderRuntimePatches();
         registerSkillFeatNormalizationHooks();
         registerExpandedSkillFeatNormalizationHooks();
         registerExpandedSkillFeatAddendumNormalizationHooks();
