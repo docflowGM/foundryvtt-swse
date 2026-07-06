@@ -1,42 +1,52 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "date": "2026-07-03",
   "purpose": "Record the focused Area & Explosives sub-bucket pass from the strict Combat bucket.",
   "policy": {
     "canvasSpatialAutomation": "Do not automate canvas geometry in this pass. Spatial targeting, template placement, line of sight, line of effect, and final affected targets remain metadata/advisory until a dedicated AoE workflow exists.",
     "autofireFeats": "Autofire-based feats are modeled as riders on an autofire-capable attack instead of as independent attack systems.",
-    "explosiveAreaFeats": "Explosive/area feats remain advisory and may mutate damage only where the mutation is direct and selected by the user."
+    "explosiveAreaFeats": "Explosive and area feats expose runtime helpers for area shape, defense mutation, or post-damage advisory effects without moving tokens automatically."
   },
   "implementedEntries": [
     {
       "name": "Targeted Area",
       "status": "implemented_damage_rider",
-      "mechanic": "Attack option requiring area attack context. Adds +5 damage when selected. Target eligibility remains advisory/spatial."
+      "mechanic": "Attack option requiring area attack context. Adds +5 damage before Evasion when selected for one hit target. Target eligibility remains advisory/spatial."
+    },
+    {
+      "name": "Artillery Shot",
+      "status": "implemented_area_template_mutation_metadata_and_helper",
+      "mechanic": "Burst/Splash area rider. Runtime helper exposes two additional adjacent squares when a proficient Burst or Splash attack is made beyond point-blank range. Canvas placement and final affected squares remain workflow/GM adjudicated."
+    },
+    {
+      "name": "Flash and Clear",
+      "status": "implemented_area_damage_rider_metadata_and_helper",
+      "mechanic": "Burst/Splash damage rider. Runtime helper exposes target-scoped concealment against each damaged target until the beginning of the attacker's next turn. Effect lifecycle application remains workflow-facing metadata."
     },
     {
       "name": "Spray Shot",
-      "status": "implemented_autofire_rider_metadata",
-      "mechanic": "Attack option requiring ranged autofire and area attack context. No canvas targeting automation."
+      "status": "implemented_autofire_shape_mutation_metadata_and_helper",
+      "mechanic": "Autofire rider. Runtime helper exposes selectable mutation from normal 2x2 Autofire area to a 1-square targeted area."
     },
     {
       "name": "Flood of Fire",
-      "status": "implemented_autofire_rider_metadata",
-      "mechanic": "Attack option requiring ranged autofire and area attack context. Suppression/affected target geometry is advisory."
+      "status": "implemented_autofire_target_defense_rider_metadata_and_helper",
+      "mechanic": "Autofire Area Attack rider. Runtime helper exposes target Reflex mutation removing dodge and deflection bonuses for all targets in the Autofire area when weapon proficiency context passes."
     },
     {
       "name": "Strafe",
-      "status": "implemented_autofire_rider_metadata",
-      "mechanic": "Attack option requiring ranged autofire context. Movement-line/path targeting is advisory."
+      "status": "implemented_autofire_shape_mutation_metadata_and_helper",
+      "mechanic": "Autofire rider. Runtime helper exposes selectable mutation from normal 2x2 Autofire area to a 1-square-wide, 4-square-long line, with Jet Pack path special metadata advisory."
     },
     {
       "name": "Forceful Blast",
-      "status": "implemented_explosive_advisory_metadata",
-      "mechanic": "Attack option requiring area attack context. Blast positioning and forced movement remain advisory."
+      "status": "implemented_grenade_damage_rider_metadata_and_helper",
+      "mechanic": "Grenade or thermal detonator damage rider. Runtime helper checks damage context, target size/grab/grapple flags, and attack total vs Fortitude Defense, then exposes eligible 1-square forced movement advisories for each target."
     },
     {
       "name": "Whirlwind Attack",
-      "status": "implemented_spatial_advisory_metadata",
-      "mechanic": "Full-round melee area metadata. Reach and target selection remain advisory."
+      "status": "implemented_special_melee_area_action_metadata_and_helper",
+      "mechanic": "Special full-round melee Area Attack action. Runtime helper exposes one-roll-against-all-targets-within-reach action metadata; reach and final target selection remain workflow/GM adjudicated."
     },
     {
       "name": "Mobility",
@@ -52,6 +62,7 @@
   ],
   "changedFiles": [
     "scripts/engine/feats/area-explosives-feat-normalization-hooks.js",
+    "scripts/engine/feats/area-explosives-runtime-patches.js",
     "scripts/infrastructure/hooks/init-hooks.js"
   ]
 }

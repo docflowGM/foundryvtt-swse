@@ -1,13 +1,13 @@
 {
-  "schemaVersion": 4,
+  "schemaVersion": 5,
   "date": "2026-07-03",
   "purpose": "Record the focused Damage & Threshold plus Attack Combo runtime pass from the strict Combat bucket.",
   "policy": {
     "scope": "This pass covers Delay Damage, Dreadful Rage, Advantageous Attack, Attack Combo (Ranged), Attack Combo (Melee), Attack Combo (Fire and Strike), and Hew.",
     "engineReuse": "Dreadful Rage is already handled by the existing Rage feat normalization hook. Do not duplicate Rage rules here.",
     "invalidEntries": "Delay Damage is a class feature, not a feat. Hew is invalid as SWSE feat per strict Combat audit. Do not implement either as a feat.",
-    "runtimeConsumers": "Advantageous Attack, Attack Combo (Ranged), and Attack Combo (Melee) now have runtime consumers through CombatOptionResolver patching and chat-message hit tracking.",
-    "sourcePending": "Attack Combo (Fire and Strike) remains sequence metadata only until exact source text is pinned."
+    "runtimeConsumers": "Advantageous Attack, Attack Combo (Ranged), and Attack Combo (Melee) have runtime consumers through CombatOptionResolver patching and chat-message hit tracking. Attack Combo (Fire and Strike) now has runtime sequence tracking only.",
+    "sourcePending": "Attack Combo (Fire and Strike) exact benefit text could not be pinned from available sources. The runtime may track mixed ranged+melee sequence activation, but must not apply attack, damage, or action-economy mutations until exact source text is supplied."
   },
   "implementedEntries": [
     {
@@ -27,8 +27,8 @@
     },
     {
       "name": "Attack Combo (Fire and Strike)",
-      "status": "implemented_attack_combo_sequence_metadata_source_pending",
-      "mechanic": "Stores mixed ranged+melee attack-combo sequence metadata for a future combo workflow to consume after exact source text is pinned."
+      "status": "implemented_runtime_mixed_sequence_tracking_source_pending",
+      "mechanic": "Tracks same-target, same-turn mixed ranged+melee hit sequences and stores advisory activation state under attackComboState.advisoryActive. No damage mutation is applied until exact source text is pinned."
     }
   ],
   "alreadyImplementedElsewhere": [

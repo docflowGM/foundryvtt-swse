@@ -17,46 +17,12 @@ function getExistingRules(item) {
 function hasAreaExplosivesRule(item, source) {
   const wanted = normalizeName(source);
   return getExistingRules(item).some(rule => normalizeName(rule?.source ?? '') === wanted
-    && (String(rule?.type ?? '') === 'ATTACK_OPTION' || String(rule?.type ?? '').startsWith('AREA_') || String(rule?.type ?? '').startsWith('MOVEMENT_')));
-}
-
-function advisoryAreaRule({ id, label, shape, targeting, actionType = 'standard', requiresAttackType = 'ranged', requiresAutofire = false, requiresAreaAttack = false, autofireRider = false, explosiveRider = false, damageModifier = null, summary, source }) {
-  const rule = {
-    type: 'ATTACK_OPTION',
-    id,
-    label,
-    control: damageModifier ? 'toggle' : 'flag',
-    requiresAttackType,
-    requiresAutofire,
-    requiresAreaAttack,
-    actionEconomy: {
-      type: actionType,
-      spend: autofireRider ? 'ridesAutofire' : (actionType === 'full-round' ? 'fullRoundAction' : 'ridesAttack'),
-      riderFor: autofireRider ? 'autofire' : (explosiveRider ? 'explosiveOrAreaAttack' : undefined)
-    },
-    areaEffect: {
-      advisoryOnly: true,
-      shape,
-      targeting,
-      autofireRider,
-      explosiveRider,
-      canvasAutomation: false,
-      note: 'Spatial targeting, template placement, line of sight, line of effect, and final affected targets remain GM/player adjudicated.'
-    },
-    source,
-    summary
-  };
-
-  if (Number.isFinite(Number(damageModifier))) {
-    rule.damageModifier = Number(damageModifier);
-    rule.damageMutation = {
-      advisoryOnly: false,
-      timing: 'roll-side-damage-bonus',
-      note: 'Damage mutation is applied only when this option is selected; spatial target eligibility remains advisory.'
-    };
-  }
-
-  return rule;
+    && (String(rule?.type ?? '') === 'ATTACK_OPTION'
+      || String(rule?.type ?? '').startsWith('AREA_')
+      || String(rule?.type ?? '').startsWith('AUTOFIRE_')
+      || String(rule?.type ?? '').startsWith('GRENADE_')
+      || String(rule?.type ?? '').startsWith('SPECIAL_')
+      || String(rule?.type ?? '').startsWith('MOVEMENT_')));
 }
 
 function rulesForFeat(name) {
@@ -97,75 +63,184 @@ function rulesForFeat(name) {
     }];
   }
 
+  if (normalized === 'artillery shot') {
+    return [{
+      type: 'AREA_ATTACK_TEMPLATE_MUTATION',
+      id: 'artilleryShot',
+      label: 'Artillery Shot',
+      source: 'Artillery Shot',
+      requiresAreaAttack: true,
+      requiresProficientWeapon: true,
+      requiresBurstOrSplashWeapon: true,
+      requiresBeyondPointBlankRange: true,
+      areaTemplateMutation: {
+        addAdjacentSquares: 2,
+        targetSelection: 'twoAdditionalSquaresAdjacentToNormalArea',
+        appliesToBurst: true,
+        appliesToSplash: true,
+        advisoryOnly: false,
+        canvasAutomation: false,
+        note: 'When making a proficient Burst or Splash attack beyond point-blank range, affect two additional squares adjacent to the normal Burst radius or Splash area.'
+      },
+      summary: 'Burst/Splash area rider: beyond point-blank range, add two adjacent squares to the normal area.'
+    }];
+  }
+
+  if (normalized === 'flash and clear') {
+    return [{
+      type: 'AREA_DAMAGE_RIDER',
+      id: 'flashAndClear',
+      label: 'Flash and Clear',
+      source: 'Flash and Clear',
+      requiresBurstOrSplashWeapon: true,
+      requiresDamage: true,
+      targetEffectsOnDamage: [{
+        type: 'source-gains-concealment-against-target',
+        sourceName: 'Flash and Clear',
+        duration: 'untilBeginningOfSourceNextTurn',
+        targetScoped: true,
+        appliesAgainstDamagedTargetOnly: true,
+        concealment: true,
+        advisoryOnly: false,
+        note: 'After damaging a target with a Burst or Splash weapon, the attacker gains Concealment against that damaged target until the beginning of the attacker\'s next turn.'
+      }],
+      summary: 'Burst/Splash damage rider: gain target-scoped concealment against each damaged target until the beginning of your next turn.'
+    }];
+  }
+
   if (normalized === 'whirlwind attack') {
-    return [advisoryAreaRule({
+    return [{
+      type: 'SPECIAL_AREA_ATTACK_ACTION',
       id: 'whirlwindAttack',
       label: 'Whirlwind Attack',
-      shape: 'meleeReachBurst',
-      targeting: 'enemiesWithinReach',
-      actionType: 'full-round',
-      requiresAttackType: 'melee',
       source: 'Whirlwind Attack',
-      summary: 'Advisory full-round melee area action. Target selection within reach is spatial and GM/player adjudicated.'
-    })];
+      actionId: 'whirlwindAttack',
+      actionEconomy: {
+        type: 'full-round',
+        spend: 'fullRoundAction'
+      },
+      requiresAttackType: 'melee',
+      areaAttack: {
+        usesAreaAttackRules: true,
+        shape: 'meleeReachBurst',
+        targetSelection: 'allTargetsWithinReach',
+        oneAttackRollAppliedToAllTargets: true,
+        weapon: 'melee',
+        advisoryOnly: true,
+        canvasAutomation: false,
+        note: 'Full-round melee Area Attack. Make one attack roll and apply it to every target within reach. Final reach/target selection remains workflow/GM adjudicated.'
+      },
+      prerequisites: {
+        dexterity: 13,
+        intelligence: 13,
+        feats: ['Melee Defense'],
+        baseAttackBonus: 4
+      },
+      summary: 'Special full-round melee Area Attack action: one melee attack roll against every target within reach.'
+    }];
   }
 
   if (normalized === 'spray shot') {
-    return [advisoryAreaRule({
+    return [{
+      type: 'AUTOFIRE_SHAPE_MUTATION',
       id: 'sprayShot',
       label: 'Spray Shot',
-      shape: 'autofireSpray',
-      targeting: 'autofireAreaTargets',
-      requiresAttackType: 'ranged',
-      requiresAutofire: true,
-      requiresAreaAttack: true,
-      autofireRider: true,
       source: 'Spray Shot',
-      summary: 'Autofire rider: marks an autofire spray/area attack. Exact affected squares and targets are spatial and GM/player adjudicated.'
-    })];
+      requiresAutofire: true,
+      requiresWeaponSetToAutofire: true,
+      shapeMutation: {
+        from: { shape: 'square', widthSquares: 2, heightSquares: 2, areaSquares: 4 },
+        to: { shape: 'singleSquare', widthSquares: 1, heightSquares: 1, areaSquares: 1 },
+        playerSelectable: true,
+        advisoryOnly: false,
+        note: 'When using Autofire, reduce the targeted Autofire area to 1 square.'
+      },
+      summary: 'Autofire rider: reduce the Autofire targeted area from 2x2 squares to 1 square.'
+    }];
   }
 
   if (normalized === 'flood of fire') {
-    return [advisoryAreaRule({
+    return [{
+      type: 'AUTOFIRE_TARGET_DEFENSE_RIDER',
       id: 'floodOfFire',
       label: 'Flood of Fire',
-      shape: 'autofireSuppressionArea',
-      targeting: 'autofireAreaTargets',
-      requiresAttackType: 'ranged',
+      source: 'Flood of Fire',
       requiresAutofire: true,
       requiresAreaAttack: true,
-      autofireRider: true,
-      source: 'Flood of Fire',
-      summary: 'Autofire rider: marks a ranged autofire area/suppression attack. Spatial area, allies, enemies, and final affected targets remain GM/player adjudicated.'
-    })];
+      requiresProficientWeapon: true,
+      targetDefenseMutation: {
+        defense: 'reflex',
+        removeDodgeBonuses: true,
+        removeDeflectionBonuses: true,
+        appliesToAllTargetsInArea: true,
+        appliesToThisAttackOnly: true,
+        advisoryOnly: false,
+        note: 'All targets in the Autofire area lose dodge and deflection bonuses to Reflex Defense against this Autofire attack.'
+      },
+      summary: 'Autofire rider: proficient Autofire Area Attack causes all targets in the area to lose dodge and deflection bonuses to Reflex Defense for that attack.'
+    }];
   }
 
   if (normalized === 'forceful blast') {
-    return [advisoryAreaRule({
+    return [{
+      type: 'GRENADE_DAMAGE_RIDER',
       id: 'forcefulBlast',
       label: 'Forceful Blast',
-      shape: 'blast',
-      targeting: 'areaTargets',
-      requiresAttackType: 'ranged',
-      requiresAreaAttack: true,
-      explosiveRider: true,
       source: 'Forceful Blast',
-      summary: 'Explosive/area rider: blast positioning and forced-movement adjudication are metadata only until spatial automation exists.'
-    })];
+      requiresAttackType: 'grenade',
+      requiresWeaponCategory: ['grenade', 'thermalDetonator'],
+      requiresDamage: true,
+      targetEligibility: {
+        maxSize: 'large',
+        cannotBeGrabbed: true,
+        cannotBeGrappled: true
+      },
+      compareAttackRollToDefense: 'fortitude',
+      supportsMultipleEligibleTargets: true,
+      targetEffectsOnDamage: [{
+        type: 'forcedMovement',
+        distanceSquares: 1,
+        direction: 'any',
+        actionTiming: 'free',
+        advisoryOnly: true,
+        restrictions: {
+          cannotMoveIntoSolidObject: true,
+          cannotMoveIntoOccupiedFightingSpace: true
+        },
+        note: 'On grenade/thermal detonator damage against a Large or smaller target, compare the attack roll to Fortitude Defense; on success, the attacker may move the target 1 square in any direction as a free action. No automatic token movement.'
+      }],
+      prerequisites: {
+        feats: ['Weapon Proficiency (Simple Weapons)'],
+        baseAttackBonus: 1
+      },
+      summary: 'Grenade damage rider: damaging grenade/thermal detonator can move each eligible target 1 square if attack roll equals or exceeds Fortitude Defense.'
+    }];
   }
 
   if (normalized === 'strafe') {
-    return [advisoryAreaRule({
+    return [{
+      type: 'AUTOFIRE_SHAPE_MUTATION',
       id: 'strafe',
       label: 'Strafe',
-      shape: 'movementLine',
-      targeting: 'lineOrPathTargets',
-      requiresAttackType: 'ranged',
-      requiresAutofire: true,
-      autofireRider: true,
       source: 'Strafe',
-      summary: 'Autofire rider: movement-line attack metadata. Flight/path geometry and affected squares remain GM/player adjudicated.'
-    })];
+      requiresAutofire: true,
+      requiresWeaponSetToAutofire: true,
+      shapeMutation: {
+        from: { shape: 'square', widthSquares: 2, heightSquares: 2, areaSquares: 4 },
+        to: { shape: 'line', widthSquares: 1, lengthSquares: 4, areaSquares: 4 },
+        playerSelectable: true,
+        advisoryOnly: false,
+        jetPackSpecial: {
+          canTargetSquaresFlownOver: true,
+          advisoryOnly: true
+        },
+        note: 'When using Autofire, replace the normal 2x2 area with a line 1 square wide and 4 squares long. Jet Pack path targeting remains workflow/GM adjudicated.'
+      },
+      prerequisites: {
+        baseAttackBonus: 1
+      },
+      summary: 'Autofire rider: replace the normal 2x2 Autofire area with a 1x4 line; with a Jet Pack, may target squares flown over.'
+    }];
   }
 
   if (normalized === 'mobility') {
@@ -201,7 +276,7 @@ async function normalizeAreaExplosivesFeat(item, options = {}) {
       'system.executionModel': 'ACTIVE',
       'system.subType': 'RULE',
       'system.abilityMeta.mechanicsMode': 'area_explosives_metadata',
-      'system.abilityMeta.applicationScope': 'attack_option_or_advisory',
+      'system.abilityMeta.applicationScope': 'area_attack_autofire_or_explosive_context',
       'system.abilityMeta.staticSheetPolicy': 'include',
       'system.abilityMeta.rules': [
         ...getExistingRules(item),

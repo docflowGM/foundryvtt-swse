@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-06",
+  "purpose": "Record foundation for future skill-based feat implementation.",
+  "implementedFoundation": [
+    {
+      "name": "ExtraSkillUseRegistry",
+      "path": "scripts/engine/skills/extra-skill-use-registry.js",
+      "summary": "Provides stable IDs for extra skill uses/tasks such as deception.feint, persuasion.intimidate, acrobatics.tumble, use-computer.hack-system, and mechanics.disable-device. Supports dynamic registration and alternate allowed skills."
+    },
+    {
+      "name": "SkillFeatRuleResolver",
+      "path": "scripts/engine/skills/skill-feat-rule-resolver.js",
+      "summary": "Generic resolver for feat/talent/species/class skill rules. Groups rules into bonuses, extra-use bonuses, ability substitutions, skill substitutions, action economy overrides, granted extra uses, rerolls, result riders, DC overrides, Take 10 overrides, retry overrides, and advisory rules."
+    },
+    {
+      "name": "Reroll support",
+      "summary": "Reroll rules normalize to either keepBetter or keepSecond. Metadata supports oncePer limits, costs/consumes fields, mayChooseAfterRoll, appliesAfterFailureKnown, advisoryOnly, and extra-use scoping."
+    },
+    {
+      "name": "Init registration",
+      "path": "scripts/infrastructure/hooks/init-hooks.js",
+      "summary": "registerSkillFeatRuleResolver initializes the registry and exposes game.swse.skills.SkillFeatRuleResolver and game.swse.skills.ExtraSkillUseRegistry."
+    }
+  ],
+  "supportedRuleFamilies": [
+    "SKILL_BONUS",
+    "EXTRA_SKILL_USE_BONUS",
+    "SKILL_ABILITY_SUBSTITUTION",
+    "EXTRA_SKILL_USE_SKILL_SUBSTITUTION",
+    "EXTRA_SKILL_USE_GRANT",
+    "SKILL_ACTION_ECONOMY_OVERRIDE",
+    "SKILL_REROLL_RESOURCE",
+    "EXTRA_SKILL_USE_REROLL_RESOURCE",
+    "SKILL_RESULT_RIDER",
+    "SKILL_DC_OVERRIDE",
+    "SKILL_TAKE_10_OVERRIDE",
+    "SKILL_RETRY_OVERRIDE"
+  ],
+  "integrationBoundary": {
+    "currentPass": "Foundation only. It exposes resolver APIs and stable extra skill use IDs without forcing skill roll UI behavior yet.",
+    "nextPass": "Wire SkillFeatRuleResolver into skill roll dialog, skill tooltip/breakdown, extra skill use action cards, and skill chat reroll controls. Existing SkillFeatResolver remains intact and can be bridged or retired later after parity verification.",
+    "important": "Do not duplicate skill bonuses into ModifierEngine unless they are always-on global modifiers. Contextual skill feat behavior should flow through SkillFeatRuleResolver."
+  }
+}

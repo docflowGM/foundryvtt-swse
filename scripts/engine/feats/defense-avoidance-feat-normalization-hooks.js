@@ -40,24 +40,6 @@ function staticDefenseBonus({ id, label, target, value, type = 'feat', source, s
   };
 }
 
-function advisoryDefenseRule({ id, label, trigger, target = 'defense.reflex', value = null, type = 'conditional', source, summary, conditions = {} }) {
-  return {
-    type: 'DEFENSE_AVOIDANCE_ADVISORY',
-    id,
-    label,
-    trigger,
-    defenseModifier: {
-      target,
-      value,
-      type,
-      conditions
-    },
-    advisoryOnly: true,
-    source,
-    summary
-  };
-}
-
 function buildPayloadForFeat(name) {
   const normalized = normalizeName(name);
 
@@ -130,66 +112,123 @@ function buildPayloadForFeat(name) {
 
   if (normalized === 'tumble defense') {
     return {
-      defenseRules: [advisoryDefenseRule({
+      defenseRules: [{
+        type: 'TUMBLE_DC_RIDER',
         id: 'tumbleDefense',
         label: 'Tumble Defense',
-        trigger: 'acrobaticMovementOrTumbleContext',
-        target: 'defense.reflex',
         source: 'Tumble Defense',
-        summary: 'Stores tumble/movement defense metadata. Exact bonus application waits for movement/AoO workflow context.'
-      })]
+        trigger: 'opponentTumblesThroughThreatenedSquare',
+        requiresThreatenedSquare: true,
+        requiresMeleeWeapon: true,
+        requiresProficientWeapon: true,
+        disabledWhenActorFlatFooted: true,
+        dcBonus: {
+          ability: 'baseAttackBonus',
+          target: 'acrobatics.tumble.dc',
+          advisoryOnly: true
+        },
+        failureRider: {
+          type: 'attackOfOpportunityAvailable',
+          advisoryOnly: true
+        },
+        summary: 'When an opponent tumbles through a threatened square, add this actor\'s BAB to the Acrobatics Tumble DC if the actor is not flat-footed and threatens with a proficient melee weapon.'
+      }]
     };
   }
 
   if (normalized === 'predictive defense') {
     return {
-      defenseRules: [advisoryDefenseRule({
+      defenseRules: [{
+        type: 'DEFENSE_ABILITY_SUBSTITUTION_ADVISORY',
         id: 'predictiveDefense',
         label: 'Predictive Defense',
-        trigger: 'knownIncomingAttackOrChosenDefenseContext',
-        target: 'defense.reflex',
         source: 'Predictive Defense',
-        summary: 'Stores predictive/conditional defense metadata. Exact trigger and target attack context remain workflow adjudicated.'
-      })]
+        defense: 'reflex',
+        useEitherAbilityModifier: ['dexterity', 'intelligence'],
+        prerequisite: { ability: 'intelligence', minimum: 13 },
+        advisoryOnly: true,
+        summary: 'Advisory: actor may use either Dexterity or Intelligence modifier to determine Reflex Defense. Character defense ability selection remains sheet/player handled.'
+      }]
     };
   }
 
   if (normalized === 'moving target') {
     return {
-      defenseRules: [advisoryDefenseRule({
+      defenseRules: [{
+        type: 'ACTIVATED_DEFENSE_RIDER',
         id: 'movingTarget',
         label: 'Moving Target',
-        trigger: 'movedBeforeIncomingAttack',
-        target: 'defense.reflex',
         source: 'Moving Target',
-        summary: 'Stores movement-dependent Reflex defense metadata. Requires workflow context proving movement before application.'
-      })]
+        prerequisiteFeat: 'Dodge',
+        trigger: 'endTurnMovedAtLeastThreeSquares',
+        activation: {
+          distanceFromStartMinimumSquares: 3,
+          timing: 'endOfTurn',
+          expires: 'startOfNextTurn',
+          playerSelectable: true
+        },
+        defenseModifier: {
+          target: 'defense.reflex',
+          value: 1,
+          type: 'dodge'
+        },
+        summary: 'Activated defense rider: if the actor ends its turn at least 3 squares from where it started, gain +1 dodge bonus to Reflex Defense until start of next turn.'
+      }]
     };
   }
 
   if (normalized === 'trench warrior') {
     return {
-      defenseRules: [advisoryDefenseRule({
+      defenseRules: [{
+        type: 'ATTACK_ADVISORY_OPTION',
         id: 'trenchWarrior',
         label: 'Trench Warrior',
-        trigger: 'coverOrEntrenchedPositionContext',
-        target: 'defense.reflex',
         source: 'Trench Warrior',
-        summary: 'Stores cover/entrenched-position defense metadata; exact cover state remains GM/workflow adjudicated.'
-      })]
+        trigger: 'playerSelectedCoverAttackOption',
+        selection: {
+          key: 'trenchWarrior',
+          label: 'Trench Warrior',
+          prompt: 'Apply Trench Warrior? You are adjacent to cover that protects you from the target\'s ranged attacks.',
+          playerSelectable: true,
+          defaultSelected: false
+        },
+        attack: {
+          bonus: 1,
+          target: 'attack.roll',
+          bonusType: 'circumstance',
+          requiresAdjacentCoverAgainstTargetRangedAttacks: true,
+          advisoryOnly: true
+        },
+        summary: 'Opt-in advisory attack option: +1 circumstance bonus when adjacent to a wall/object that gives cover from the target\'s ranged attacks.'
+      }]
     };
   }
 
   if (normalized === 'cunning attack') {
     return {
       defenseRules: [{
-        type: 'OFFENSIVE_DEFENSE_CONTEXT_ADVISORY',
+        type: 'ATTACK_ADVISORY_OPTION',
         id: 'cunningAttack',
         label: 'Cunning Attack',
-        trigger: 'targetDeniedDexOrFlatFootedContext',
-        targetState: 'deniedDexOrFlatFooted',
         source: 'Cunning Attack',
-        summary: 'Stores target-vulnerability attack metadata. Actual attack modifier belongs to attack workflow once target state is known.'
+        trigger: 'playerSelectedTargetFlatFootedOrDeniedDex',
+        selection: {
+          key: 'cunningAttack',
+          label: 'Cunning Attack',
+          prompt: 'Apply Cunning Attack? Target is flat-footed or denied Dexterity bonus to Reflex Defense.',
+          playerSelectable: true,
+          defaultSelected: false,
+          enablesTargetDeniedDexFeatContext: true
+        },
+        attack: {
+          bonus: 2,
+          target: 'attack.roll',
+          bonusType: 'feat',
+          requiresTargetFlatFootedOrDeniedDex: true,
+          advisoryOnly: true
+        },
+        targetState: 'flatFootedOrDeniedDexToReflex',
+        summary: 'Opt-in advisory attack option: +2 attack bonus against a flat-footed target or one denied Dexterity bonus to Reflex Defense.'
       }]
     };
   }
@@ -197,26 +236,35 @@ function buildPayloadForFeat(name) {
   if (normalized === 'resilient strength') {
     return {
       defenseRules: [{
-        type: 'CONDITION_RESILIENCE_ADVISORY',
+        type: 'DEFENSE_ABILITY_SUBSTITUTION_ADVISORY',
         id: 'resilientStrength',
         label: 'Resilient Strength',
-        trigger: 'strengthOrConditionTrackContext',
         source: 'Resilient Strength',
-        summary: 'Stores resilience metadata for condition/strength related defensive handling. Exact modifier waits for condition workflow context.'
+        defense: 'fortitude',
+        useEitherAbilityModifier: ['strength', 'constitution'],
+        prerequisite: { ability: 'strength', minimum: 13 },
+        advisoryOnly: true,
+        summary: 'Advisory: actor may use either Strength or Constitution modifier to determine Fortitude Defense. Character defense ability selection remains sheet/player handled.'
       }]
     };
   }
 
   if (normalized === 'wary defender') {
     return {
-      defenseRules: [advisoryDefenseRule({
+      defenseRules: [{
+        type: 'FIGHT_DEFENSIVELY_DEFENSE_RIDER',
         id: 'waryDefender',
         label: 'Wary Defender',
-        trigger: 'defensiveAwarenessOrSurpriseContext',
-        target: 'defense.reflex',
         source: 'Wary Defender',
-        summary: 'Stores situational defensive awareness metadata; surprise/awareness context remains workflow adjudicated.'
-      })]
+        trigger: 'fightDefensivelyAction',
+        requiresFightDefensively: true,
+        expires: 'beginningOfNextTurn',
+        defenseModifiers: [
+          { target: 'defense.fortitude', value: 2, type: 'competence' },
+          { target: 'defense.will', value: 2, type: 'competence' }
+        ],
+        summary: 'Fight Defensively rider: gain +2 competence bonus to Fortitude Defense and Will Defense until beginning of next turn.'
+      }]
     };
   }
 
@@ -243,7 +291,7 @@ async function normalizeDefenseAvoidanceFeat(item, options = {}) {
       'system.executionModel': 'PASSIVE',
       'system.subType': 'RULE',
       'system.abilityMeta.mechanicsMode': 'defense_avoidance_rule',
-      'system.abilityMeta.applicationScope': 'defense_or_damage_threshold_context',
+      'system.abilityMeta.applicationScope': 'defense_attack_or_damage_threshold_context',
       'system.abilityMeta.staticSheetPolicy': 'include',
       'system.abilityMeta.defenseRules': [
         ...getDefenseRules(item),

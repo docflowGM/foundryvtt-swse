@@ -1,47 +1,47 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 6,
   "date": "2026-07-03",
   "purpose": "Record the focused Mobility & Positioning sub-bucket pass from the strict Combat bucket.",
   "policy": {
-    "spatialAutomation": "Do not automate pathfinding, adjacency, threatened squares, line of sight, or token placement in this pass. Store metadata until a movement/AoO workflow supplies reliable spatial context.",
+    "spatialAutomation": "Do not automate pathfinding, adjacency, threatened squares, line of sight, token placement, forced movement, or destination legality in this pass. Runtime helpers expose eligible rider choices for workflow/UI/GM adjudication.",
     "alreadyCovered": "Charge, Bantha Rush, Improved Bantha Rush, Running Attack, Charging Fire, Powerful Charge, Improved Charge, and Deft Charge are already normalized by core attack-option hooks.",
     "invalidEntries": "Do not implement Wounding Strike, Spring Attack, Reckless Charge, or Heroic Surge as feats. They were rejected by the strict Combat validity audit."
   },
   "implementedEntries": [
     {
       "name": "Bantha Herder",
-      "status": "implemented_hit_rider_metadata",
-      "mechanic": "On a damaging ranged hit, compare the attack roll to Will Defense; if successful, advisory metadata allows moving the target 1 square in any direction."
+      "status": "implemented_ranged_damage_rider_metadata_and_helper",
+      "mechanic": "Damaging ranged attack rider. Runtime helper checks ranged damage, proficient weapon context, target size, grabbed/grappled flags, and attack total vs Will Defense, then exposes eligible 1-square target forced movement advisories."
     },
     {
       "name": "Fleet-Footed",
-      "status": "implemented_speed_metadata",
-      "mechanic": "Records a +2-square movement speed bonus for sheet or movement-aware workflows."
+      "status": "implemented_running_attack_rider_metadata_and_helper",
+      "mechanic": "Running Attack rider. The helper returns the +2-square end-of-turn speed bonus only when workflow context confirms Running Attack plus movement before and after the attack."
     },
     {
       "name": "Tactical Advantage",
-      "status": "implemented_positioning_advisory_metadata",
-      "mechanic": "Records positioning-dependent tactical metadata; no automatic modifier until workflow supplies exact battlefield context."
+      "status": "implemented_atop_damage_rider_metadata_and_helper",
+      "mechanic": "Attack-of-Opportunity damage rider. Runtime helper exposes immediate 1-square self-movement, no AoO, after damaging Attack of Opportunity context."
     },
     {
       "name": "Opportunistic Retreat",
-      "status": "implemented_reaction_movement_advisory_metadata",
-      "mechanic": "Records retreat/repositioning opportunity metadata without choosing a destination or validating threatened squares."
+      "status": "implemented_atop_replacement_rider_metadata_and_helper",
+      "mechanic": "Attack-of-Opportunity replacement rider. Runtime helper exposes once-per-turn option to sacrifice the AoO and move one-half Speed without provoking Attacks of Opportunity."
     },
     {
       "name": "Impulsive Flight",
-      "status": "implemented_reaction_movement_advisory_metadata",
-      "mechanic": "Records flight/repositioning opportunity metadata without automating path or destination."
+      "status": "implemented_withdraw_action_rider_metadata_and_helper",
+      "mechanic": "Withdraw action rider. Runtime helper returns +1 extra square for Withdraw action context."
     },
     {
       "name": "Steadying Position",
-      "status": "implemented_positioning_state_advisory_metadata",
-      "mechanic": "Records stable/stationary positioning state metadata for later attack workflows."
+      "status": "implemented_aim_ranged_attack_rider_metadata_and_helper",
+      "mechanic": "Aim/ranged/prone rider. Runtime helper exposes target Reflex Defense mutation that removes the target Dexterity bonus when the actor is prone and aimed before a ranged attack."
     },
     {
       "name": "Cornered",
-      "status": "implemented_conditional_state_advisory_metadata",
-      "mechanic": "Records cornered/no-escape conditional state metadata. Exact bonus application waits for a workflow-provided cornered context."
+      "status": "implemented_opt_in_attack_advisory_runtime_modifier",
+      "mechanic": "Player-selectable advisory attack option. When selected in attack context, applies +2 attack bonus through CombatOptionResolver; spatial validity remains player/GM/workflow adjudicated."
     }
   ],
   "excludedEntries": [
@@ -52,6 +52,7 @@
   ],
   "changedFiles": [
     "scripts/engine/feats/mobility-positioning-feat-normalization-hooks.js",
+    "scripts/engine/feats/mobility-positioning-runtime-patches.js",
     "scripts/infrastructure/hooks/init-hooks.js"
   ]
 }

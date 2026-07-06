@@ -2,13 +2,15 @@
  * SWSE Condition Track Sheet Component (Updated for RAW + New CT System)
  * - Correct CT penalties
  * - Persistent condition restrictions
- * - Consistent with Actor.moveConditionTrack()
+ * - Consistent with ActorEngine condition mutations
  * - UI safely triggers CT updates without breaking Active Effects
  *
  * PHASE 7: All mutations routed through ActorEngine for atomic governance
  */
 import { escapeHTML } from "/systems/foundryvtt-swse/scripts/utils/security-utils.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
+import { ConditionTrackFeatActions } from "/systems/foundryvtt-swse/scripts/engine/feats/condition-track-feat-actions.js";
 
 export class ConditionTrackComponent {
 
@@ -32,6 +34,9 @@ export class ConditionTrackComponent {
   static _template(actor) {
     const current = actor.system.conditionTrack.current ?? 0;
     const persistent = actor.system.conditionTrack.persistent ?? false;
+    const shakeItOff = ConditionTrackFeatActions.canShakeItOff(actor);
+    const quickComeback = ConditionTrackFeatActions.canQuickComeback(actor);
+    const recover = ConditionTrackFeatActions.canRecover(actor);
 
     const steps = this._defineSteps();
     const penaltyText = steps[current]?.penalty || '';
@@ -46,13 +51,21 @@ export class ConditionTrackComponent {
         </div>
 
         <div class="ct-controls">
-          <button class="ct-btn improve" data-ct="improve">
+          <button class="ct-btn improve" data-ct="improve" ${recover.allowed ? '' : 'disabled'} title="Recover Action: spend 3 Swift Actions total to move +1 step">
             <i class="fa-solid fa-arrow-up"></i> Recover (3 Swift)
           </button>
 
-          <button class="ct-btn improve shake-it-off" data-ct="shake-it-off" title="Spend 2 Swift Actions to move +1 step (Shake It Off)">
-            <i class="fa-solid fa-arrow-up"></i> Shake It Off (2 Swift)
-          </button>
+          ${shakeItOff.hasRule ? `
+            <button class="ct-btn improve shake-it-off" data-ct="shake-it-off" title="Spend ${shakeItOff.swiftActionCost} Swift Actions to move +1 step (Shake It Off)" ${shakeItOff.allowed ? '' : 'disabled'}>
+              <i class="fa-solid fa-arrow-up"></i> Shake It Off (${shakeItOff.swiftActionCost} Swift)
+            </button>
+          ` : ''}
+
+          ${quickComeback.hasRule ? `
+            <button class="ct-btn improve quick-comeback" data-ct="quick-comeback" title="Spend 1 Swift Action to move +1 step (Quick Comeback)" ${quickComeback.allowed ? '' : 'disabled'}>
+              <i class="fa-solid fa-arrow-up"></i> Quick Comeback (1 Swift)
+            </button>
+          ` : ''}
 
           <button class="ct-btn worsen" data-ct="worsen">
             <i class="fa-solid fa-arrow-down"></i> Worsen
@@ -130,35 +143,44 @@ export class ConditionTrackComponent {
     const root = (container instanceof HTMLElement) ? container : (container?.[0] ?? container);
     if (!(root instanceof HTMLElement)) {return;}
 
-    // Set CT directly
     root.querySelectorAll('[data-ct="set"]').forEach(el => el.addEventListener('click', async ev => {
       await this._setCondition(actor, Number(ev.currentTarget.dataset.step));
     }));
 
-    // Improve CT (respect persistent)
-    root.querySelectorAll('[data-ct="improve"]:not(.shake-it-off)').forEach(el => el.addEventListener('click', async () => {
-      const result = await ActorEngine.recoverConditionStep(actor, 'recover-action');
+    root.querySelectorAll('[data-ct="improve"]:not(.shake-it-off):not(.quick-comeback)').forEach(el => el.addEventListener('click', async () => {
+      const result = await ConditionTrackFeatActions.recover(actor);
       if (result?.reason === 'persistent') {
         return ui.notifications.warn('Condition is Persistent and cannot be removed by the Recover Action.');
       }
-      if (result?.complete) {
-        ui.notifications.info('Recover Action complete: moved +1 step on the Condition Track.');
-      } else if (typeof result?.remaining === 'number') {
-        ui.notifications.info(`Recover Action progress: ${3 - result.remaining}/3 swift actions spent.`);
+      if (result?.reason === 'recover-blocked') {
+        return ui.notifications.warn(result.message ?? 'Recover Action is currently blocked.');
+      }
+      if (result?.reason === 'Insufficient swift actions') {
+        return ui.notifications.warn('Recover Action requires an available Swift Action.');
+      }
+      if (result?.success && result?.complete) {
+        return ui.notifications.info('Recover Action complete: moved +1 step on the Condition Track.');
+      }
+      if (result?.success && typeof result?.remaining === 'number') {
+        return ui.notifications.info(`Recover Action progress: ${result.spent}/3 swift actions spent.`);
+      }
+      if (result?.reason) {
+        return ui.notifications.warn(String(result.reason));
       }
     }));
 
-    // Shake It Off (2 Swift Actions to improve CT)
     root.querySelectorAll('[data-ct="shake-it-off"]').forEach(el => el.addEventListener('click', async () => {
       await this._handleShakeItOff(actor);
     }));
 
-    // Worsen CT
-    root.querySelectorAll('[data-ct="worsen"]').forEach(el => el.addEventListener('click', async () => {
-      await actor.moveConditionTrack(1);
+    root.querySelectorAll('[data-ct="quick-comeback"]').forEach(el => el.addEventListener('click', async () => {
+      await this._handleQuickComeback(actor);
     }));
 
-    // Persistent flag
+    root.querySelectorAll('[data-ct="worsen"]').forEach(el => el.addEventListener('click', async () => {
+      await ActorEngine.applyConditionShift(actor, 1, 'condition-track-ui');
+    }));
+
     root.querySelectorAll('[data-ct="persistent"]').forEach(el => el.addEventListener('change', async ev => {
       await ActorEngine.setConditionPersistent(actor, ev.target.checked);
     }));
@@ -169,50 +191,45 @@ export class ConditionTrackComponent {
   /* ---------------------------------------- */
 
   static async _setCondition(actor, step) {
-    return ActorEngine.setConditionStep(actor, Math.clamp(step, 0, 5));
+    const cap = ConditionTrackRules.getConditionStepCap();
+    return ActorEngine.setConditionStep(actor, Math.min(cap, Math.max(0, step)));
   }
 
-  /* ---------------------------------------- */
-  /* SHAKE IT OFF HANDLER                     */
-  /* ---------------------------------------- */
-
-  /**
-   * Handle Shake It Off feat activation.
-   * Requires: 2 Swift Actions available, Shake It Off feat, trained in Endurance.
-   * Effect: Spend 2 Swift Actions to move +1 step on CT (improve condition).
-   */
   static async _handleShakeItOff(actor) {
-    // Check if actor has Shake It Off feat via metadata
-    const { MetaResourceFeatResolver } = await import("/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js");
-    const ctRules = MetaResourceFeatResolver.getConditionTrackRules(actor);
-
-    if (!ctRules.swiftActionConditionRecovery) {
-      return ui.notifications.warn(`${actor.name} does not have the Shake It Off feat.`);
-    }
-
-    // Check if actor has enough Swift Actions available
-    const swiftActions = actor.system.actions?.swift?.available ?? 0;
-    const requiredSwiftActions = ctRules.swiftActionCost;
-    if (swiftActions < requiredSwiftActions) {
-      return ui.notifications.warn(`${actor.name} does not have ${requiredSwiftActions} Swift Actions available (has ${swiftActions}).`);
-    }
-
     try {
-      // Spend Swift Actions based on feat rule
-      const newSwiftActions = swiftActions - requiredSwiftActions;
-      await ActorEngine.updateActor(actor, { 'system.actions.swift.available': newSwiftActions });
-
-      // Move +1 step on CT (improve condition)
-      const oldCT = actor.system.conditionTrack?.current ?? 0;
-      await actor.improveConditionTrack();
-      const newCT = actor.system.conditionTrack?.current ?? 0;
+      const result = await ConditionTrackFeatActions.shakeItOff(actor);
+      if (!result?.success) {
+        if (result?.reason === 'Insufficient swift actions') {
+          return ui.notifications.warn(`${actor.name} does not have enough Swift Actions available for Shake It Off.`);
+        }
+        return ui.notifications.warn(result?.reason ?? `${actor.name} cannot use Shake It Off.`);
+      }
 
       ui.notifications.info(
-        `Shake It Off: ${actor.name} spent ${requiredSwiftActions} Swift Actions and moved from CT ${oldCT} to CT ${newCT}.`
+        `Shake It Off: ${actor.name} spent ${result.actionCost} Swift Actions and moved from CT ${result.conditionBefore} to CT ${result.conditionAfter}.`
       );
     } catch (err) {
       console.error('[ConditionTrackComponent] Shake It Off error:', err);
       ui.notifications.error(`Error applying Shake It Off: ${err.message}`);
+    }
+  }
+
+  static async _handleQuickComeback(actor) {
+    try {
+      const result = await ConditionTrackFeatActions.quickComeback(actor);
+      if (!result?.success) {
+        if (result?.reason === 'Insufficient swift actions') {
+          return ui.notifications.warn(`${actor.name} does not have enough Swift Actions available for Quick Comeback.`);
+        }
+        return ui.notifications.warn(result?.reason ?? `${actor.name} cannot use Quick Comeback.`);
+      }
+
+      ui.notifications.info(
+        `Quick Comeback: ${actor.name} spent ${result.actionCost} Swift Action and moved from CT ${result.conditionBefore} to CT ${result.conditionAfter}.`
+      );
+    } catch (err) {
+      console.error('[ConditionTrackComponent] Quick Comeback error:', err);
+      ui.notifications.error(`Error applying Quick Comeback: ${err.message}`);
     }
   }
 }

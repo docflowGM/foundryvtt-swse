@@ -5,6 +5,15 @@ import { TreatInjuryMedicalSecretResolver } from "/systems/foundryvtt-swse/scrip
 
 
 const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
+const KNOWLEDGE_SKILL_KEYS = [
+  'knowledgeBureaucracy',
+  'knowledgeGalacticLore',
+  'knowledgeLifeSciences',
+  'knowledgePhysicalSciences',
+  'knowledgeSocialSciences',
+  'knowledgeTactics',
+  'knowledgeTechnology',
+];
 
 function athleticsConsolidationActive() {
   try { return game.settings.get('foundryvtt-swse', 'athleticsConsolidation') === true; }
@@ -121,6 +130,10 @@ export class ExtraSkillUseRegistry {
 
     if (effectiveSkillKey === 'survival') {
       hydrated = this._applySurvivalFeatEnhancements(hydrated, actor);
+    }
+
+    if (this._isKnowledgeSkillKey(effectiveSkillKey)) {
+      hydrated = this._appendKnowledgeCoreUses(hydrated, effectiveSkillKey, actor);
     }
 
     return includeInaccessible ? hydrated : hydrated.filter((item) => item.accessible !== false);
@@ -243,6 +256,120 @@ export class ExtraSkillUseRegistry {
         },
       },
     ];
+  }
+
+  static _isKnowledgeSkillKey(skillKey) {
+    return KNOWLEDGE_SKILL_KEYS.includes(String(skillKey || ''));
+  }
+
+  static _knowledgeFieldLabel(skillKey) {
+    const labels = {
+      knowledgeBureaucracy: 'Bureaucracy',
+      knowledgeGalacticLore: 'Galactic Lore',
+      knowledgeLifeSciences: 'Life Sciences',
+      knowledgePhysicalSciences: 'Physical Sciences',
+      knowledgeSocialSciences: 'Social Sciences',
+      knowledgeTactics: 'Tactics',
+      knowledgeTechnology: 'Technology',
+    };
+    return labels[skillKey] || 'Knowledge';
+  }
+
+  static _buildVirtualSkillUse({ key, label, skillKey, dc, time, description, trainedOnly = false, sourceLabel = 'Core Rulebook' }) {
+    return {
+      key,
+      label,
+      name: label,
+      skillKey,
+      dc,
+      time,
+      description,
+      effect: description,
+      trainedOnly,
+      accessible: true,
+      hidden: false,
+      sourceType: 'virtual-core-skill-use',
+      sourceLabel,
+      _source: {
+        _id: key,
+        name: label,
+        type: 'extra-skill-use',
+        system: {
+          key,
+          application: label,
+          skill: skillKey,
+          dc,
+          time,
+          description,
+          effect: description,
+          trainedOnly,
+          category: 'knowledge-skill-use',
+          source: sourceLabel,
+        },
+      },
+    };
+  }
+
+  static _appendKnowledgeCoreUses(items, skillKey, actor = null) {
+    const hydrated = Array.isArray(items) ? [...items] : [];
+    const existingKeys = new Set(hydrated.map(item => compactKey(item?.key || item?.label || item?.name)).filter(Boolean));
+    const fieldLabel = this._knowledgeFieldLabel(skillKey);
+
+    const addIfMissing = (entry) => {
+      const keys = [entry.key, entry.label, entry.name].map(compactKey).filter(Boolean);
+      if (keys.some(key => existingKeys.has(key))) return;
+      const accessSource = entry?._source ?? entry;
+      const accessible = actor ? SkillUseFilter.canAccessSkillUse(actor, accessSource) : true;
+      const withAccess = { ...entry, accessible, hidden: !accessible };
+      hydrated.push(withAccess);
+      keys.forEach(key => existingKeys.add(key));
+    };
+
+    addIfMissing(this._buildVirtualSkillUse({
+      key: `${skillKey}-common-knowledge`,
+      label: 'Common Knowledge',
+      skillKey,
+      dc: 10,
+      time: 'no action / GM adjudicated',
+      trainedOnly: false,
+      description: `Answer a basic question about ${fieldLabel}. Common Knowledge is not trained-only; a DC 10 check covers basic facts related to the field of study.`,
+    }));
+
+    addIfMissing(this._buildVirtualSkillUse({
+      key: `${skillKey}-expert-knowledge`,
+      label: 'Expert Knowledge (Trained Only)',
+      skillKey,
+      dc: '15-25',
+      time: 'swift action',
+      trainedOnly: true,
+      description: `Answer a question about ${fieldLabel} requiring expertise. The DC is typically 15 for simple questions, 20 for moderate questions, or 25 for tough questions, adjusted by the GM for personal experience.`,
+    }));
+
+    if (skillKey === 'knowledgeTactics') {
+      addIfMissing(this._buildVirtualSkillUse({
+        key: 'knowledge-tactics-anticipate-enemy-strategy',
+        label: 'Anticipate Enemy Strategy (Trained Only)',
+        skillKey,
+        dc: "target's Will Defense or 10 + target CL",
+        time: 'move action',
+        trainedOnly: true,
+        sourceLabel: 'Clone Wars Campaign Guide',
+        description: "Designate a target in line of sight and make a Knowledge (Tactics) check to anticipate its likely next action. Success reveals likely movement, attack target, attack intent, or special strategy at the GM's discretion; changed circumstances can change the target's plan.",
+      }));
+
+      addIfMissing(this._buildVirtualSkillUse({
+        key: 'knowledge-tactics-battlefield-tactics',
+        label: 'Battlefield Tactics (Trained Only)',
+        skillKey,
+        dc: 20,
+        time: '3 swift actions on consecutive rounds',
+        trainedOnly: true,
+        sourceLabel: 'Clone Wars Campaign Guide',
+        description: 'If you are the Commander in a Unit during Mass Combat, use Knowledge (Tactics) to grant extra Standard Actions to other characters in your Unit. Requires three Swift Actions made on consecutive rounds to activate.',
+      }));
+    }
+
+    return hydrated;
   }
 
   static _actorHasFeat(actor, featName) {
@@ -471,6 +598,7 @@ export class ExtraSkillUseRegistry {
       "jump": "jump",
       "knowledge": "knowledge",
       "identify": "knowledge",
+      "knowledge bureaucracy": "knowledgeBureaucracy",
       "knowledge galactic lore": "knowledgeGalacticLore",
       "knowledge life sciences": "knowledgeLifeSciences",
       "knowledge physical sciences": "knowledgePhysicalSciences",

@@ -8,7 +8,7 @@ import { SWSEV2CharacterSheet } from "./scripts/sheets/v2/character-sheet.js";
 import { SWSEItemSheet } from "./scripts/items/swse-item-sheet.js";
 import { EntityCreateBrowser, openEntityCreateBrowser } from "./scripts/dialogs/entity-dialog/entity-create-browser.js";
 import { preloadHandlebarsTemplates } from "./scripts/load-templates.js";
-import { SWSEStore } from "./store/store.js";
+import { SWSEStore } from "./scripts/apps/store/store-main.js";
 import * as SWSEData from "./scripts/core/swse-data.js";
 import { WorldDataLoader } from "./scripts/core/world-data-loader.js";
 import { SWSEV2BaseActor } from "./scripts/actors/v2/base-actor.js";
@@ -17,6 +17,7 @@ import { SWSECombatant } from "./scripts/combat/swse-combatant.js";
 import { registerSystemSettings } from "./scripts/core/settings.js";
 import { UIManager } from "./scripts/ui/ui-manager.js";
 import { registerInitHooks } from "./scripts/infrastructure/hooks/init-hooks.js";
+import { registerStoreSheetHooks } from "./scripts/infrastructure/hooks/store-sheet-hooks.js";
 import { initializeSceneControls } from "./scripts/scene-controls/init.js";
 import { initializeDiscoverySystem, onDiscoveryReady } from "./scripts/ui/discovery/index.js";
 import { initializeSentinelGovernance } from "./scripts/governance/sentinel/sentinel-init.js";
@@ -43,6 +44,7 @@ import { FeatPackSeeder } from "./scripts/registries/feat-pack-seeder.js";
 import { RollEngine } from "./scripts/engine/roll-engine.js";
 import { registerForceExecutorChatHooks } from "./scripts/engine/force/force-executor.js";
 import { registerActionEconomyHooks } from "./scripts/engine/combat/action/action-economy-hooks.js";
+import { registerFeatHousekeepingRuntimePatches } from "./scripts/engine/progression/feats/feat-housekeeping-runtime-patches.js";
 import { registerConsularTalentActions } from "./scripts/engine/talent/consular-talent-actions.js";
 import { registerSentinelTalentActions } from "./scripts/engine/talent/sentinel-talent-actions.js";
 import { registerLightsaberTalentActions } from "./scripts/engine/talent/lightsaber-talent-actions.js";
@@ -50,6 +52,7 @@ import { registerJediPrestigeTalentActions } from "./scripts/engine/talent/jedi-
 import { registerSithTalentActions } from "./scripts/engine/talent/sith-talent-actions.js";
 import { registerForceAdeptTalentActions } from "./scripts/engine/talent/force-adept-talent-actions.js";
 import { registerForceAlchemyWorkbench, openForceAlchemyWorkbench } from "./scripts/apps/force-alchemy/force-alchemy-workbench-app.js";
+import { registerForceTraditionPickerHooks } from "./scripts/apps/force-tradition/force-tradition-picker.js";
 import { registerLightsaberConstructionHooks } from "./scripts/applications/lightsaber/lightsaber-router.js";
 import { initializeConceptParityDiagnostics } from "./scripts/ui/concept-parity/concept-parity-diagnostics.js";
 import { registerTokenNameSyncHooks } from "./scripts/core/token-name-sync.js";
@@ -145,7 +148,6 @@ Hooks.once("init", async () => {
     makeDefault: true
   });
 
-
   Items.registerSheet("swse", SWSEItemSheet, {
     types: SWSE.itemTypes,
     label: "SWSE Item Sheet",
@@ -168,6 +170,7 @@ Hooks.once("init", async () => {
   // Register Hook Infrastructure
   // -------------------------------
   registerInitHooks();
+  registerStoreSheetHooks();
   SystemInitHooks.registerHooks();
   initializeSceneControls();
   initializeDiscoverySystem();
@@ -175,6 +178,7 @@ Hooks.once("init", async () => {
   registerCompendiumDirectoryClickRepair();
   registerForceExecutorChatHooks();
   registerActionEconomyHooks();
+  registerFeatHousekeepingRuntimePatches();
   registerConsularTalentActions();
   registerSentinelTalentActions();
   registerLightsaberTalentActions();
@@ -182,7 +186,9 @@ Hooks.once("init", async () => {
   registerSithTalentActions();
   registerForceAdeptTalentActions();
   registerForceAlchemyWorkbench();
+  registerForceTraditionPickerHooks();
   registerLightsaberConstructionHooks();
+
   // -------------------------------
   // Feat Effect Registry + lifecycle hooks
   // Mechanical effect definitions formerly embedded in feat compendium items
@@ -241,7 +247,7 @@ Hooks.once("ready", async () => {
   initSidebarIconFallback();
 
   // Setup store shortcut
-  game.swse.openStore = actor => new SWSEStore(actor ?? null).render(true);
+  game.swse.openStore = actor => SWSEStore.open(actor ?? null);
   game.swse.repairForcePowerAbilityMeta = async (actor = null, options = {}) => {
     return actor
       ? repairActorForcePowerAbilityMeta(actor, options)

@@ -122,23 +122,6 @@ function rulesForFeat(name) {
     }];
   }
 
-  if (normalized === 'improved stun') {
-    return [{
-      type: 'STUN_ATTACK_OPTION_ADVISORY',
-      id: 'improvedStun',
-      label: 'Improved Stun',
-      trigger: 'stunDamageAttack',
-      damageMode: 'stun',
-      stunRider: {
-        workflowRequired: true,
-        damagePacketRequired: true,
-        note: 'Marks Improved Stun for stun-damage workflows. The actual stun packet mutation should occur only when the attack is confirmed as stun damage and the target is eligible.'
-      },
-      source: 'Improved Stun',
-      summary: 'Stores Improved Stun metadata for stun-damage attack workflows. Does not alter normal damage or non-stun attacks.'
-    }];
-  }
-
   return null;
 }
 
@@ -156,7 +139,7 @@ async function normalizeAttackOptionsFeat(item, options = {}) {
       'system.executionModel': 'ACTIVE',
       'system.subType': 'RULE',
       'system.abilityMeta.mechanicsMode': 'attack_options_metadata',
-      'system.abilityMeta.applicationScope': 'attack_reaction_or_stun_context',
+      'system.abilityMeta.applicationScope': 'attack_reaction_or_action_speed_context',
       'system.abilityMeta.staticSheetPolicy': 'include',
       'system.abilityMeta.attackOptionRules': [
         ...getAttackOptionRules(item),

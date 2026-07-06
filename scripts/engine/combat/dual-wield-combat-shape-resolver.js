@@ -147,11 +147,22 @@ function dualWeaponMasteryLevel(actor) {
   return level;
 }
 
-function dualWeaponPenalty(level) {
+function hasTwoWeaponFighting(actor) {
+  for (const item of actorItems(actor)) {
+    if (item?.type !== 'feat' || item.system?.disabled === true) continue;
+    const name = normalizeKey(item.name);
+    const slug = normalizeKey(item.system?.slug);
+    const text = `${name} ${slug}`;
+    if (text.includes('two-weapon-fighting')) return true;
+  }
+  return false;
+}
+
+function dualWeaponPenalty(level, twoWeaponFighting = false) {
   if (level >= 3) return 0;
   if (level === 2) return -2;
   if (level === 1) return -5;
-  return -10;
+  return twoWeaponFighting ? -8 : -10;
 }
 
 function describeWeapon(weapon, role, context = {}) {
@@ -183,11 +194,12 @@ export class DualWieldCombatShapeResolver {
     const mainHand = describeWeapon(primary, usingDoubleWeapon ? 'double-primary' : 'main', options);
     const offHand = describeWeapon(offhand, usingDoubleWeapon ? 'double-secondary' : 'offhand', options);
     const dwmLevel = dualWeaponMasteryLevel(actor);
+    const twoWeaponFighting = hasTwoWeaponFighting(actor);
     const proficient = usingDoubleWeapon
       ? mainHand?.proficient === true
       : (mainHand?.proficient === true && offHand?.proficient === true);
     const basePenalty = mode === 'singleWeapon' ? 0 : -10;
-    const finalPenalty = mode === 'singleWeapon' ? 0 : proficient ? dualWeaponPenalty(dwmLevel) : basePenalty;
+    const finalPenalty = mode === 'singleWeapon' ? 0 : proficient ? dualWeaponPenalty(dwmLevel, twoWeaponFighting) : basePenalty;
 
     return {
       mode,
@@ -198,6 +210,7 @@ export class DualWieldCombatShapeResolver {
       offHand,
       primaryEnd: usingDoubleWeapon ? mainHand : null,
       secondaryEnd: usingDoubleWeapon ? offHand : null,
+      twoWeaponFighting,
       dualWeaponMasteryLevel: dwmLevel,
       penalty: {
         base: basePenalty,
@@ -206,7 +219,9 @@ export class DualWieldCombatShapeResolver {
           ? 'Single Weapon'
           : proficient && dwmLevel > 0
             ? `Dual Weapon Mastery ${['I', 'II', 'III'][dwmLevel - 1]}`
-            : 'Two-Weapon Fighting',
+            : proficient && twoWeaponFighting
+              ? 'Two-Weapon Fighting'
+              : 'Two-Weapon Fighting (base penalty)',
         proficiencyEligible: proficient
       }
     };
@@ -244,8 +259,10 @@ export class DualWieldCombatShapeResolver {
     }
     if (shape.usingDualWield) {
       result.flags.dualWieldMode = shape.mode;
+      result.flags.twoWeaponFighting = shape.twoWeaponFighting === true;
       result.flags.dualWeaponMasteryLevel = shape.dualWeaponMasteryLevel;
       result.flags.dualWieldPenalty = shape.penalty.final;
+      result.flags.dualWieldPenaltySource = shape.penalty.source;
     }
     return result;
   }

@@ -2,108 +2,138 @@ import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/
 import { ThresholdEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/threshold-engine.js";
 import { DamageMitigationManager } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-mitigation-manager.js";
 import { ForcePointsService } from "/systems/foundryvtt-swse/scripts/engine/force/force-points-service.js";
-import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 
+function asArray(value) {
+  if (Array.isArray(value)) return value;
+  if (value === undefined || value === null) return [];
+  return [value];
+}
+
+function normalizeRuleType(value) {
+  return String(value ?? '').trim().toUpperCase();
+}
+
+function normalizeDamageType(value) {
+  return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function actorFeatRules(actor, key) {
+  const rules = [];
+  try {
+    for (const item of Array.from(actor?.items ?? [])) {
+      if (!['feat', 'talent'].includes(item?.type) || item?.system?.disabled === true) continue;
+      for (const rule of asArray(item?.system?.abilityMeta?.resourceRules?.[key])) {
+        rules.push({ ...rule, sourceName: item.name, sourceId: item.id });
+      }
+    }
+  } catch (_err) {
+    // Malformed actor/item data contributes no rule payloads.
+  }
+  return rules;
+}
+
+function firstRule(actor, key, type) {
+  const wanted = normalizeRuleType(type);
+  return actorFeatRules(actor, key).find(rule => normalizeRuleType(rule?.type) === wanted) ?? null;
+}
+
+function activeCombatId() {
+  return game?.combat?.started && game.combat?.id ? game.combat.id : null;
+}
+
+function activeCombatRound() {
+  return Number(game?.combat?.round ?? 0) || 0;
+}
+
+function isAttackContext(options = {}) {
+  if (options?.isAttack === false || options?.attack === false) return false;
+  return true;
+}
+
+function isAreaAttack(options = {}) {
+  return options?.areaAttack === true
+    || options?.isAreaAttack === true
+    || options?.attackType === 'area'
+    || options?.workflowContext?.areaAttack === true
+    || options?.workflowContext?.isAreaAttack === true
+    || options?.workflowContext?.attackType === 'area';
+}
+
+function isAimingAccuracyContext(options = {}) {
+  const actionKey = String(options?.actionKey ?? options?.workflowContext?.actionKey ?? options?.combatOptions?.actionKey ?? '').toLowerCase();
+  return options?.aimingAccuracy === true
+    || options?.useAimingAccuracy === true
+    || options?.combatOptions?.aimingAccuracy === true
+    || actionKey === 'aiming-accuracy';
+}
+
+function readEncounterUse(actor, flagName) {
+  const combatId = activeCombatId();
+  const flag = actor?.getFlag?.('foundryvtt-swse', flagName);
+  if (!combatId) return Number(flag?.count ?? 0) || 0;
+  if (!flag || flag.combatId !== combatId) return 0;
+  return Math.max(0, Number(flag.count ?? 0) || 0);
+}
+
+async function writeEncounterUse(actor, flagName, count) {
+  const combatId = activeCombatId();
+  if (!combatId) return;
+  await actor?.setFlag?.('foundryvtt-swse', flagName, { combatId, count: Math.max(0, Number(count ?? 0) || 0) });
+}
+
+function stayUpAlreadyUsed(actor) {
+  const combatId = activeCombatId();
+  const flag = actor?.getFlag?.('foundryvtt-swse', 'stayUpUsedThisEncounter');
+  return !!combatId && flag === combatId;
+}
+
+async function markStayUpUsed(actor) {
+  const combatId = activeCombatId();
+  if (combatId) await actor?.setFlag?.('foundryvtt-swse', 'stayUpUsedThisEncounter', combatId);
+}
+
+async function markQuickComebackAvailable(actor, sourceInfo = {}) {
+  const combatId = activeCombatId();
+  if (!combatId) return;
+  await actor?.setFlag?.('foundryvtt-swse', 'quickComebackAvailable', {
+    combatId,
+    round: activeCombatRound(),
+    source: sourceInfo.source ?? 'Quick Comeback',
+    workflowId: sourceInfo.workflowId ?? null,
+    message: 'Quick Comeback is available until the end of your next turn.'
+  });
+}
+
+async function markRecoverBlockedByPinpoint(actor, sourceInfo = {}) {
+  const combatId = activeCombatId();
+  if (!combatId) return;
+  await actor?.setFlag?.('foundryvtt-swse', 'recoverBlockedByPinpointAccuracy', {
+    combatId,
+    round: activeCombatRound(),
+    expiresAfterRound: activeCombatRound() + 1,
+    source: sourceInfo.source ?? 'Pinpoint Accuracy',
+    sourceActorId: sourceInfo.sourceActorId ?? null,
+    workflowId: sourceInfo.workflowId ?? null,
+    message: 'Pinpoint Accuracy prevents the Recover Action until the end of this actor\'s next turn.'
+  });
+}
+
+function damageTypeExcluded(rule, damageType) {
+  const current = normalizeDamageType(damageType);
+  return asArray(rule?.excludesDamageTypes).map(normalizeDamageType).includes(current);
+}
+
 /**
- * DamageResolutionEngine — Unified damage orchestration
- *
- * Responsibility:
- * - Pure damage calculation (no mutation)
- * - Bonus HP resolution (derived-only via ModifierEngine)
- * - HP reduction (RAW order: Bonus → HP → DT check)
- * - Damage Threshold evaluation
- * - Condition track impact
- * - Death/Destroy/Force rescue determination
- *
- * Contract:
- * - Returns calculation result only
- * - Does NOT mutate actor
- * - Does NOT write to system
- * - All mutations delegated to ActorEngine
- * - Does NOT create Active Effects (caller does)
- *
- * Data Model (V2 Canonical):
- * - HP: system.hp.value (current), system.hp.max (max)
- * - Condition: system.conditionTrack.current (0-5 numeric)
- * - Defenses: system.defenses.fortitude.total
- * - Size: system.size (string) → mapped to bonus
+ * DamageResolutionEngine - Unified damage orchestration
  */
 export class DamageResolutionEngine {
-
-  /**
-   * Size threshold bonus mapping (RAW + house rules)
-   * Maps size string to DT bonus value
-   * @private
-   */
-  static #sizeThresholdMap = {
-    fine: 0,
-    diminutive: 0,
-    tiny: 0,
-    small: 0,
-    medium: 0,
-    large: 5,
-    huge: 10,
-    gargantuan: 20,
-    colossal: 50
-  };
-
-  /**
-   * Resolve damage application.
-   *
-   * Pure calculation pipeline (V2 Locked Order):
-   * 1. Collect Bonus HP (ModifierEngine domain, highest only)
-   * 2. Apply DamageMitigationManager: SR → DR → Temp HP → HP
-   * 3. Check Damage Threshold (uses mitigated damage)
-   * 4. Calculate condition track impact
-   * 5. Determine death/destroy eligibility
-   * 6. Return complete resolution state with mitigation breakdown
-   *
-   * @param {Object} params
-   * @param {Actor} params.actor - Target actor (read-only)
-   * @param {number} params.damage - Total damage amount
-   * @param {string} [params.damageType="normal"] - Damage type (normal, fire, etc.)
-   * @param {Actor} [params.source=null] - Attacking actor (for context)
-   * @param {Object} [params.options={}] - Additional context
-   * @returns {Promise<Object>} Resolution result
-   *
-   * Result structure:
-   * {
-   *   // Before state
-   *   hpBefore: number,
-   *   bonusHpBefore: number,
-   *   conditionBefore: number,
-   *   thresholdTotal: number,
-   *
-   *   // After state
-   *   hpAfter: number,
-   *   bonusHpAfter: number,
-   *   damageToHP: number,
-   *
-   *   // Threshold check
-   *   thresholdExceeded: boolean,
-   *   thresholdBreakdown: Array,
-   *
-   *   // State changes
-   *   conditionDelta: number,
-   *   conditionAfter: number,
-   *
-   *   // Special states
-   *   unconscious: boolean,
-   *   dead: boolean,
-   *   destroyed: boolean,
-   *   forceRescueEligible: boolean
-   * }
-   */
   static async resolveDamage({ actor, damage, damageType = "normal", source = null, options = {} }) {
-
     if (!actor) {
       throw new Error('DamageResolutionEngine.resolveDamage: actor required');
     }
 
-    // Clear rescue flag at start of each damage resolution
-    // This allows each resolution to have its own rescue attempt
     await actor.unsetFlag?.('foundryvtt-swse', 'alreadyRescuedThisResolution');
 
     if (typeof damage !== 'number' || damage < 0) {
@@ -112,36 +142,23 @@ export class DamageResolutionEngine {
 
     const system = actor.system;
     const result = {
-      // Before state
       hpBefore: system.hp?.value ?? 0,
       bonusHpBefore: 0,
       conditionBefore: system.conditionTrack?.current ?? 0,
       thresholdTotal: 0,
-
-      // After state
       hpAfter: 0,
       bonusHpAfter: 0,
       damageToHP: 0,
-
-      // Threshold check
       thresholdExceeded: false,
       thresholdBreakdown: [],
       thresholdRuleResult: null,
-
-      // State changes
       conditionDelta: 0,
       conditionAfter: 0,
-
-      // Special states
       unconscious: false,
       dead: false,
       destroyed: false,
       forceRescueEligible: false
     };
-
-    /* ===================================================================
-       PHASE 1: BONUS HP (ModifierEngine domain, derived-only)
-       ================================================================= */
 
     let remainingDamage = damage;
 
@@ -151,7 +168,6 @@ export class DamageResolutionEngine {
         context: options
       });
 
-      // RAW: Only highest source applies
       if (bonusMods.length > 0) {
         result.bonusHpBefore = Math.max(...bonusMods.map(m => m.value));
 
@@ -162,14 +178,8 @@ export class DamageResolutionEngine {
         }
       }
     } catch (err) {
-      // ModifierEngine error; continue with no bonus HP
       console.warn('DamageResolutionEngine: bonus HP collection failed', err);
     }
-
-    /* ===================================================================
-       PHASE 2: DAMAGE MITIGATION (V2 Locked Order)
-       SR → DR → Temp HP → HP
-       ================================================================= */
 
     let mitigationResult = {};
     try {
@@ -182,14 +192,12 @@ export class DamageResolutionEngine {
         options
       });
 
-      // Validation (debug only)
       const issues = DamageMitigationManager.validate(mitigationResult);
       if (issues.length > 0) {
         console.warn('DamageResolutionEngine: Mitigation validation issues:', issues);
       }
     } catch (err) {
       console.warn('DamageResolutionEngine: DamageMitigationManager failed:', err);
-      // Fallback: use raw damage (no mitigation)
       mitigationResult = {
         originalDamage: remainingDamage,
         afterShield: remainingDamage,
@@ -203,40 +211,29 @@ export class DamageResolutionEngine {
       };
     }
 
-    // Apply mitigated damage to HP. Some packet rules (currently ion) keep the
-    // full incoming damage available for mitigation/threshold while reducing the
-    // final HP loss. This preserves ActorEngine as the mutation authority while
-    // allowing packet-level special damage semantics.
-    const maxHP = system.hp?.max ?? 100;
     let hpDamageBeforeSpecial = Math.max(0, Number(mitigationResult.hpDamage) || 0);
     let voluntaryConditionShift = 0;
 
-    const conditionTrackFeatRules = MetaResourceFeatResolver.getConditionTrackRules(actor);
-    const useDamageConversion = options.damageConversion === true
-      || options.useDamageConversion === true
-      || options.spendCtToReduceDamage === true;
-    if (useDamageConversion && conditionTrackFeatRules.spendCtToReduceDamage && hpDamageBeforeSpecial > 0) {
+    const stayUpRule = firstRule(actor, 'conditionTrack', 'STAY_UP_HALF_DAMAGE_AND_CT');
+    const useStayUp = options.stayUp === true || options.useStayUp === true;
+    if (useStayUp && stayUpRule && isAttackContext(options) && hpDamageBeforeSpecial > 0) {
       const conditionCap = ConditionTrackRules.getConditionStepCap();
-      if (result.conditionBefore < conditionCap) {
-        const reduction = Math.min(
-          hpDamageBeforeSpecial,
-          Math.max(0, Number(conditionTrackFeatRules.damageReductionAmount ?? 10) || 10)
-        );
-        if (reduction > 0) {
-          hpDamageBeforeSpecial = Math.max(0, hpDamageBeforeSpecial - reduction);
-          voluntaryConditionShift = 1;
-          result.damageConversion = {
-            applied: true,
-            reduction,
-            conditionShift: voluntaryConditionShift,
-            source: 'Damage Conversion'
-          };
-        }
+      if (result.conditionBefore < conditionCap && !stayUpAlreadyUsed(actor)) {
+        const multiplier = Math.max(0, Number(stayUpRule.damageMultiplier ?? 0.5) || 0.5);
+        hpDamageBeforeSpecial = Math.max(0, Math.floor(hpDamageBeforeSpecial * multiplier));
+        voluntaryConditionShift += Math.max(1, Number(stayUpRule.conditionTrackCost ?? 1) || 1);
+        await markStayUpUsed(actor);
+        result.stayUp = {
+          applied: true,
+          damageMultiplier: multiplier,
+          conditionShift: Math.max(1, Number(stayUpRule.conditionTrackCost ?? 1) || 1),
+          source: stayUpRule.sourceName ?? stayUpRule.source ?? 'Stay Up'
+        };
       } else {
-        result.damageConversion = {
+        result.stayUp = {
           applied: false,
-          reason: 'Condition track is already at the maximum step',
-          source: 'Damage Conversion'
+          reason: result.conditionBefore >= conditionCap ? 'Condition track is already at the maximum step' : 'Stay Up has already been used this encounter',
+          source: stayUpRule.sourceName ?? stayUpRule.source ?? 'Stay Up'
         };
       }
     }
@@ -248,7 +245,6 @@ export class DamageResolutionEngine {
     result.damageToHP = Math.max(0, Math.floor(hpDamageBeforeSpecial * hpDamageMultiplier));
     result.hpAfter = Math.max(0, result.hpBefore - result.damageToHP);
 
-    // Store mitigation details in result
     result.mitigation = {
       originalDamage: mitigationResult.originalDamage,
       shield: mitigationResult.shield,
@@ -261,9 +257,21 @@ export class DamageResolutionEngine {
       componentMitigation: mitigationResult.componentMitigation === true
     };
 
-    /* ===================================================================
-       PHASE 3: DAMAGE THRESHOLD CHECK
-       ================================================================= */
+    if (result.damageToHP > 0 && source && isAimingAccuracyContext(options)) {
+      const pinpointRule = firstRule(source, 'conditionTrack', 'PREVENT_TARGET_RECOVER_AFTER_AIMING_ACCURACY_DAMAGE');
+      if (pinpointRule) {
+        await markRecoverBlockedByPinpoint(actor, {
+          source: pinpointRule.sourceName ?? pinpointRule.source ?? 'Pinpoint Accuracy',
+          sourceActorId: source.id ?? source._id ?? null,
+          workflowId: options.workflowId ?? options.workflowContext?.workflowId ?? null
+        });
+        result.pinpointAccuracy = {
+          applied: true,
+          targetRecoverBlocked: true,
+          source: pinpointRule.sourceName ?? pinpointRule.source ?? 'Pinpoint Accuracy'
+        };
+      }
+    }
 
     try {
       const thresholdData = await ThresholdEngine.getDamageThreshold(actor, {
@@ -289,11 +297,6 @@ export class DamageResolutionEngine {
 
       result.thresholdExceeded = result.thresholdRuleResult?.thresholdExceeded === true;
 
-      // RAW stun damage is not an optional house rule: compare full rolled stun
-      // damage to DT, halve only HP loss, and move the target two CT steps on
-      // a threshold hit. The existing stunThresholdRule setting is retained as
-      // a compatibility alias; this guard prevents double application when it
-      // is enabled.
       if (damageType === 'stun' && result.thresholdExceeded && result.thresholdRuleResult?.addCTShift) {
         const currentShift = Math.max(0, Number(result.thresholdRuleResult.totalCTShift ?? 0));
         if (currentShift < 2) {
@@ -308,37 +311,72 @@ export class DamageResolutionEngine {
       console.warn('DamageResolutionEngine: threshold calculation failed', err);
     }
 
-    /* ===================================================================
-       PHASE 4: CONDITION TRACK IMPACT
-       ================================================================= */
-
     result.conditionAfter = Math.min(ConditionTrackRules.getConditionStepCap(), result.conditionBefore + voluntaryConditionShift);
     result.conditionDelta = voluntaryConditionShift;
     result.conditionPersistent = false;
 
-    // Threshold exceeded with HP remaining: use ThresholdEngine rule result (supports house rules)
     if (result.thresholdExceeded && result.hpAfter > 0) {
       let thresholdShift = Math.max(0, Number(result.thresholdRuleResult?.totalCTShift ?? 1));
 
-      // Apply feat-based damage rules (metadata-driven, not hardcoded)
       const damageRules = MetaResourceFeatResolver.getDamageRules(actor);
 
-      // FEAT: Galactic Alliance Military Training - prevent first CT worsening per encounter
       if (damageRules.preventFirstThresholdExceedance) {
-        const activeCombatId = game.combat?.started ? game.combat.id : null;
+        const combatId = activeCombatId();
         const firstExceededFlag = actor.getFlag?.('foundryvtt-swse', 'damageThresholdExceededThisEncounter');
-        if (activeCombatId && firstExceededFlag !== activeCombatId) {
-          // First time this encounter - prevent CT shift
+        if (combatId && firstExceededFlag !== combatId) {
           thresholdShift = 0;
-          // Mark encounter as having exceeded threshold
-          await actor.setFlag?.('foundryvtt-swse', 'damageThresholdExceededThisEncounter', activeCombatId);
+          await actor.setFlag?.('foundryvtt-swse', 'damageThresholdExceededThisEncounter', combatId);
+          result.galacticAllianceMilitaryTraining = { applied: true, preventedConditionShift: true };
         }
       }
 
-      // FEAT: Ion Shielding - cap Ion damage CT shift to 1 step
       if (damageRules.capIonDamageCtToOneStep && damageType === 'ion') {
-        // Cap to 1 step maximum for ion damage
         thresholdShift = Math.min(1, thresholdShift);
+        result.ionShielding = { applied: true, cappedConditionShift: thresholdShift };
+      }
+
+      const damageConversionRule = firstRule(actor, 'conditionTrack', 'DROID_DAMAGE_CONVERSION_THRESHOLD_REPLACEMENT');
+      const useDamageConversion = options.damageConversion === true || options.useDamageConversion === true;
+      const canUseDamageConversion = useDamageConversion
+        && damageConversionRule
+        && thresholdShift > 0
+        && isAttackContext(options)
+        && !(damageConversionRule.excludesAreaAttack === true && isAreaAttack(options))
+        && !damageTypeExcluded(damageConversionRule, damageType);
+
+      if (canUseDamageConversion) {
+        const useCount = readEncounterUse(actor, 'damageConversionUsesThisEncounter');
+        const base = Math.max(0, Number(damageConversionRule.additionalDamageBase ?? 10) || 10);
+        const increment = Math.max(0, Number(damageConversionRule.additionalDamageIncrementPerEncounterUse ?? 5) || 5);
+        const additionalDamage = base + (increment * useCount);
+        result.damageToHP += additionalDamage;
+        result.hpAfter = Math.max(0, result.hpAfter - additionalDamage);
+        result.damageConversion = {
+          applied: true,
+          additionalDamage,
+          preventedConditionShift: thresholdShift,
+          encounterUse: useCount + 1,
+          source: damageConversionRule.sourceName ?? damageConversionRule.source ?? 'Damage Conversion'
+        };
+        thresholdShift = 0;
+        await writeEncounterUse(actor, 'damageConversionUsesThisEncounter', useCount + 1);
+      } else if (useDamageConversion && damageConversionRule) {
+        result.damageConversion = {
+          applied: false,
+          reason: thresholdShift <= 0 ? 'No condition-track shift to replace' : (isAreaAttack(options) ? 'Area attacks are excluded' : (damageTypeExcluded(damageConversionRule, damageType) ? `${damageType} damage is excluded` : 'Damage Conversion was not available')),
+          source: damageConversionRule.sourceName ?? damageConversionRule.source ?? 'Damage Conversion'
+        };
+      }
+
+      if (thresholdShift > 0) {
+        const quickComebackRule = firstRule(actor, 'conditionTrack', 'QUICK_COMEBACK_SINGLE_SWIFT_RECOVERY');
+        if (quickComebackRule && isAttackContext(options)) {
+          await markQuickComebackAvailable(actor, {
+            source: quickComebackRule.sourceName ?? quickComebackRule.source ?? 'Quick Comeback',
+            workflowId: options.workflowId ?? options.workflowContext?.workflowId ?? null
+          });
+          result.quickComeback = { available: true, swiftActionCost: Number(quickComebackRule.swiftActionCost ?? 1) || 1 };
+        }
       }
 
       result.conditionDelta += thresholdShift;
@@ -356,15 +394,11 @@ export class DamageResolutionEngine {
       }
     }
 
-    /* ===================================================================
-       PHASE 5: ZERO HP LOGIC
-       ================================================================= */
-
     if (result.hpAfter <= 0) {
       result.unconscious = actor.type === 'character' || actor.type === 'npc' || actor.type === 'beast';
       result.disabled = actor.type === 'droid' || actor.type === 'object' || actor.type === 'device' || actor.type === 'vehicle';
       result.conditionDelta = Math.max(0, ConditionTrackRules.getConditionStepCap() - result.conditionBefore);
-      result.conditionAfter = ConditionTrackRules.getConditionStepCap(); // Bottom of the track / helpless or disabled
+      result.conditionAfter = ConditionTrackRules.getConditionStepCap();
 
       if (damageType === 'stun') {
         result.stunKnockout = true;
@@ -381,7 +415,6 @@ export class DamageResolutionEngine {
         result.conditionPersistent = result.conditionPersistent || (result.thresholdRuleResult?.ctShifts || []).some(shift => shift?.persistent === true);
 
         if (!preventInstantDeath) {
-          // Characters and droids may spend a Force Point to avoid death/destruction.
           if (actor.type === 'character' || actor.type === 'npc' || actor.type === 'droid') {
             result.forceRescueEligible = ForcePointsService.canRescue(actor, {
               damage: result.thresholdMeasuredDamage,

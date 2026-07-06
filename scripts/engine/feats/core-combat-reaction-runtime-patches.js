@@ -1,7 +1,7 @@
 import { createChatMessage } from "/systems/foundryvtt-swse/scripts/core/document-api-v13.js";
-import { ActionEconomyPersistence } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-economy-persistence.js";
 
 let registered = false;
+let aooMapperPatched = false;
 
 function normalizeKey(value) {
   return String(value ?? '')
@@ -113,6 +113,98 @@ function cleaveAlreadyUsed(context = {}, actor = null) {
   return context.alreadyUsedThisRound === true || context.cleaveUsedThisRound === true;
 }
 
+function isAttackOfOpportunityAction(action) {
+  return normalizeKey(action?.key ?? action?.id ?? action?.name ?? action?.system?.key) === 'attack-of-opportunity';
+}
+
+function stripReactionTags(tags = []) {
+  return Array.from(new Set((Array.isArray(tags) ? tags : []).filter(tag => normalizeKey(tag) !== 'reaction').concat(['free', 'attackOfOpportunity'])));
+}
+
+function normalizeAttackOfOpportunityActionEconomy(action) {
+  if (!isAttackOfOpportunityAction(action)) return action;
+  const correctedText = 'Attack of Opportunity is a free action using a separate AoO pool. It does not consume reactions. GM/player confirms provocation, threatened square/reach, visibility, and weapon eligibility.';
+  const correctedAdvanced = 'Manual/guided action: use the normal eligible-weapon attack workflow after the table confirms the provoking event and legal target. Attacks of opportunity are free actions, not reactions. Combat Reflexes increases attacks of opportunity per round by the Dexterity modifier and allows AoOs while flat-footed; it does not increase reactions. The normal one-AoO-per-provoking-action limit still applies.';
+
+  if (action.system && typeof action.system === 'object') {
+    return {
+      ...action,
+      system: {
+        ...action.system,
+        actionType: 'free',
+        actionTypeRaw: 'free',
+        cost: {},
+        summary: 'Make a single immediate free attack when the GM determines a target provokes an attack of opportunity.',
+        notes: correctedText,
+        notesAdvanced: correctedAdvanced,
+        tags: stripReactionTags(action.system.tags),
+        actionCost: 'free',
+        contextTags: stripReactionTags(action.system.contextTags),
+        ruleData: {
+          ...(action.system.ruleData ?? {}),
+          attackOfOpportunity: true,
+          actionEconomy: 'free',
+          consumesReaction: false,
+          reactionResource: null,
+          reactionCost: 0,
+          actionPool: 'attacksOfOpportunity',
+          combatReflexesIncreasesReactionCapacity: false,
+          combatReflexesIncreasesOpportunityAttackCapacity: true,
+          doesNotConsumeReaction: true
+        }
+      }
+    };
+  }
+
+  return {
+    ...action,
+    actionType: 'free',
+    actionCost: 'free',
+    actionTypeRaw: 'free',
+    cost: {},
+    notes: action.notes === undefined ? correctedText : correctedText,
+    notesAdvanced: action.notesAdvanced === undefined ? correctedAdvanced : correctedAdvanced,
+    contextTags: stripReactionTags(action.contextTags),
+    ruleData: {
+      ...(action.ruleData ?? {}),
+      attackOfOpportunity: true,
+      actionEconomy: 'free',
+      consumesReaction: false,
+      reactionResource: null,
+      reactionCost: 0,
+      actionPool: 'attacksOfOpportunity',
+      combatReflexesIncreasesReactionCapacity: false,
+      combatReflexesIncreasesOpportunityAttackCapacity: true,
+      doesNotConsumeReaction: true
+    }
+  };
+}
+
+function patchAttackOfOpportunityActionMapping() {
+  if (aooMapperPatched) return;
+  const Mapper = globalThis.CombatActionsMapper ?? globalThis.window?.CombatActionsMapper;
+  if (!Mapper) return;
+  aooMapperPatched = true;
+
+  if (typeof Mapper._normalizeAction === 'function') {
+    const originalNormalizeAction = Mapper._normalizeAction.bind(Mapper);
+    Mapper._normalizeAction = function swseNormalizeAoOAction(item) {
+      return normalizeAttackOfOpportunityActionEconomy(originalNormalizeAction(item));
+    };
+  }
+
+  if (typeof Mapper._ensureCoreManualCombatActions === 'function') {
+    const originalEnsureCoreManualCombatActions = Mapper._ensureCoreManualCombatActions.bind(Mapper);
+    Mapper._ensureCoreManualCombatActions = function swseEnsureAoOActionEconomy(actions = []) {
+      return originalEnsureCoreManualCombatActions(actions).map(action => normalizeAttackOfOpportunityActionEconomy(action));
+    };
+  }
+
+  if (Array.isArray(Mapper._combatActions)) {
+    Mapper._combatActions = Mapper._combatActions.map(action => normalizeAttackOfOpportunityActionEconomy(action));
+  }
+}
+
 async function postCleaveAvailableMessage({ attacker, target, context = {} }) {
   if (!attacker || !target) return null;
   const actorName = attacker.name ?? 'Actor';
@@ -211,7 +303,9 @@ export class CoreCombatReactionFeatActions {
   }
 
   static hasCombatReflexes(actor) {
-    return actorHasFeat(actor, 'combat reflexes') || hasReactionRule(actor, 'combatReflexesOpportunityAttack') || hasRuleType(actor, 'REACTION_CAPACITY_OVERRIDE');
+    return actorHasFeat(actor, 'combat reflexes')
+      || hasRuleType(actor, 'ATTACK_OF_OPPORTUNITY_CAPACITY_OVERRIDE')
+      || hasRuleType(actor, 'REACTION_CAPACITY_OVERRIDE');
   }
 
   static getAttacksOfOpportunityPerRound(actor) {
@@ -220,8 +314,17 @@ export class CoreCombatReactionFeatActions {
     return Math.max(base, base + Math.max(0, abilityMod(actor, 'dexterity')));
   }
 
-  static getReactionMax(actor) {
-    return this.getAttacksOfOpportunityPerRound(actor);
+  static getReactionMax() {
+    return Number.MAX_SAFE_INTEGER;
+  }
+
+  static getReactionLimitPolicy() {
+    return {
+      limitBasis: 'trigger',
+      perRoundLimit: false,
+      oneReactionPerTrigger: true,
+      combatReflexesDoesNotModifyReactions: true
+    };
   }
 
   static canMakeOpportunityAttackWhileFlatFooted(actor) {
@@ -289,16 +392,6 @@ export class CoreCombatReactionFeatActions {
   }
 }
 
-function patchReactionMaximum() {
-  const originalGetReactionMax = ActionEconomyPersistence.getReactionMax.bind(ActionEconomyPersistence);
-  ActionEconomyPersistence.getReactionMax = function patchedGetReactionMax(actor) {
-    const raw = Number(originalGetReactionMax(actor));
-    const base = Number.isFinite(raw) && raw > 0 ? Math.floor(raw) : 1;
-    if (!CoreCombatReactionFeatActions.hasCombatReflexes(actor)) return base;
-    return Math.max(base, CoreCombatReactionFeatActions.getReactionMax(actor));
-  };
-}
-
 function registerCleaveHpHooks() {
   Hooks.on('updateActor', (actor, changes = {}, options = {}) => {
     if (options?.swseSkipCleaveHpWatcher === true) return;
@@ -342,7 +435,8 @@ export function registerCoreCombatReactionRuntimePatches() {
   if (registered) return;
   registered = true;
 
-  patchReactionMaximum();
+  patchAttackOfOpportunityActionMapping();
+  Hooks.once?.('ready', () => patchAttackOfOpportunityActionMapping());
   registerCleaveHpHooks();
 
   globalThis.SWSE ??= {};

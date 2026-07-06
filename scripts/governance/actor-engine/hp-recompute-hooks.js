@@ -9,7 +9,7 @@
  * - Class item create/update/delete
  * - HP-affecting feat create/update/delete, such as Toughness
  * - Durable feat/talent rule normalization for Toughness, Improved Damage Threshold, static defense feats,
- *   attack option feats, resource feats, Second Wind feats, condition-track feats, grapple feats,
+ *   attack option feats, resource feats, Second Wind feats, grapple feats,
  *   and weapon damage rules such as Rifle Master
  *
  * Guard:
@@ -131,11 +131,6 @@ function resourceRulePatchForFeat(featureName) {
     case 'forceful recovery': return { key: 'secondWind', rules: [{ type: 'REGAIN_FORCE_POWER_ON_USE', source: 'Forceful Recovery' }] };
     case 'impetuous move': return { key: 'secondWind', rules: [{ type: 'HALF_HEALING_FOR_MOVEMENT', source: 'Impetuous Move' }] };
     case 'regenerative healing': return { key: 'secondWind', rules: [{ type: 'DELAYED_HEALING_ON_USE', amountPerTurn: 5, limit: 'fullHpOrEncounterEnd', oncePer: 'day', source: 'Regenerative Healing' }] };
-    case 'ion shielding': return { key: 'damage', rules: [{ type: 'CAP_ION_DAMAGE_CT_TO_1_STEP', source: 'Ion Shielding' }] };
-    case 'galactic alliance military training': return { key: 'damage', rules: [{ type: 'PREVENT_FIRST_THRESHOLD_EXCEEDANCE_PER_ENCOUNTER', source: 'Galactic Alliance Military Training' }] };
-    case 'damage conversion': return { key: 'conditionTrack', rules: [{ type: 'SPEND_CT_TO_REDUCE_DAMAGE', damageReduction: 10, source: 'Damage Conversion' }] };
-    case 'shake it off': return { key: 'conditionTrack', rules: [{ type: 'SWIFT_ACTION_CONDITION_RECOVERY', swiftActionCost: 2, source: 'Shake It Off' }] };
-    case 'sadistic strike': return { key: 'conditionTrack', rules: [{ type: 'MOVE_TARGET_CT_ON_COUP_DE_GRACE', steps: 1, target: 'opponentsInLineOfSight', duration: 'encounter', source: 'Sadistic Strike' }] };
     default: return null;
   }
 }
@@ -260,83 +255,63 @@ export class HPRecomputeHooks {
         return;
       }
 
-      const flat = foundry.utils.flattenObject(data);
-      const triggerKeys = [
-        "system.level",
-        "system.attributes.con.base",
-        "system.attributes.con.racial",
-        "system.attributes.con.enhancement",
-        "system.attributes.con.temp",
-        "system.hp.bonus"
-      ];
-      const changed = triggerKeys.some(key => key in flat);
+      const update = data?.system ?? {};
+      const needsRecompute =
+        Object.hasOwn(update, "level") ||
+        update.attributes?.con !== undefined ||
+        update.abilities?.con !== undefined ||
+        update.hp?.bonus !== undefined;
 
-      if (changed) {
-        const changedKeys = Object.keys(flat).filter(k => triggerKeys.some(tk => k === tk || k.startsWith(tk)));
-        SWSELogger.debug(`[HPRecomputeHooks] Trigger detected for ${actor.name}`, { changedKeys });
-        traceLog('HOOK:updateActor[HPRecomputeHooks]', 'triggering recomputeHP (writes back to actor via ActorEngine.updateActor)', {
-          actor: actorSummary(actor),
-          changedKeys,
-          guardKeyUsed: 'hp-recompute'
-        });
+      if (!needsRecompute) return;
 
-        try {
-          await ActorEngine.recomputeHP(actor, { fromHook: true });
-        } catch (err) {
-          SWSELogger.error(`[HPRecomputeHooks] Failed to recompute HP for ${actor.name}`, { error: err });
-        }
+      try {
+        await ActorEngine.recomputeHP(actor, { source: "HPRecomputeHooks.updateActor" });
+      } catch (err) {
+        SWSELogger.error("[HPRecomputeHooks] Actor HP recompute failed", { actorId: actor.id, error: err });
       }
     });
   }
 
   static _registerItemHooks() {
-    const maybeNormalizeFeatureRules = async (item, options = {}) => {
-      if (options?.swseFeatRuleNormalization === true) return false;
-      if (!item?.actor) return false;
-      const patch = featureRuleNormalizationPatch(item);
-      if (!patch) return false;
+    Hooks.on("createItem", async (item, options) => this._handleItemChange(item, options, "createItem"));
+    Hooks.on("updateItem", async (item, data, options) => this._handleItemChange(item, options, "updateItem"));
+    Hooks.on("deleteItem", async (item, options) => this._handleItemChange(item, options, "deleteItem"));
+  }
 
+  static async _handleItemChange(item, options, source) {
+    const actor = item?.actor;
+    if (!actor || actor.isToken) return;
+    if (options?.meta?.guardKey === "hp-recompute") return;
+
+    const patch = source !== 'deleteItem' ? featureRuleNormalizationPatch(item) : null;
+    if (patch) {
       try {
-        await ActorEngine.updateEmbeddedDocuments(item.actor, 'Item', [patch], {
-          source: 'Phase11A.feat-rule-normalization',
-          swseFeatRuleNormalization: true,
-          render: false
+        await ActorEngine.updateEmbeddedDocuments(actor, 'Item', [patch], {
+          source: `${source}.featureRuleNormalization`,
+          render: false,
+          meta: { guardKey: 'hp-recompute' }
         });
-        return true;
       } catch (err) {
-        SWSELogger.error(`[HPRecomputeHooks] Failed to normalize durable feature rules for ${item.name}`, { error: err });
-        return false;
+        SWSELogger.warn('[HPRecomputeHooks] Feature rule normalization failed', { item: item.name, error: err });
       }
-    };
+    }
 
-    const maybeRecomputeFromItem = async (item, reason) => {
-      if (!itemAffectsHpMax(item)) return;
-      if (!item.actor) return;
+    if (!itemAffectsHpMax(item)) return;
 
-      SWSELogger.debug(`[HPRecomputeHooks] HP-affecting item ${reason} for ${item.actor.name}`, {
-        item: item.name,
-        itemType: item.type
+    if (ActorEngine.isActorMutationInFlight(actor.id)) {
+      traceLog(`HOOK:${source}[HPRecomputeHooks]`, 'deferred due to in-flight mutation guard', {
+        actor: actorSummary(actor),
+        item: item?.name,
+        reason: 'actor mutation already in flight'
       });
+      SWSELogger.debug(`[HPRecomputeHooks] Deferring HP recompute for ${actor.name} after ${source} of ${item.name}`);
+      return;
+    }
 
-      try {
-        await ActorEngine.recomputeHP(item.actor, { fromHook: true });
-      } catch (err) {
-        SWSELogger.error(`[HPRecomputeHooks] Failed to recompute HP after item ${reason}`, { error: err });
-      }
-    };
-
-    Hooks.on("createItem", async (item, options, userId) => {
-      await maybeNormalizeFeatureRules(item, options);
-      await maybeRecomputeFromItem(item, 'create');
-    });
-
-    Hooks.on("updateItem", async (item, data, options, userId) => {
-      await maybeNormalizeFeatureRules(item, options);
-      await maybeRecomputeFromItem(item, 'update');
-    });
-
-    Hooks.on("deleteItem", async (item, options, userId) => {
-      await maybeRecomputeFromItem(item, 'delete');
-    });
+    try {
+      await ActorEngine.recomputeHP(actor, { source: `HPRecomputeHooks.${source}` });
+    } catch (err) {
+      SWSELogger.error("[HPRecomputeHooks] Item HP recompute failed", { actorId: actor.id, itemId: item.id, source, error: err });
+    }
   }
 }

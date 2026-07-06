@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-06",
+  "purpose": "Record combat-only feat pass for Acrobatic Strike, Momentum Strike, and Power Blast.",
+  "implementedEntries": [
+    {
+      "name": "Acrobatic Strike",
+      "status": "implemented_contextual_attack_option",
+      "mechanic": "After a successful Tumble that avoided an attack of opportunity, exposes a +2 competence attack option only when the attack workflow supplies successfulTumbleAvoidedOpportunityAttack/acrobaticStrikeAvailable context and the attack is against the relevant foe before end of current turn."
+    },
+    {
+      "name": "Momentum Strike",
+      "status": "implemented_contextual_melee_damage_die_option",
+      "mechanic": "Exposes a +1 weapon die melee attack option only while mounted/on a speeder bike and when the mount or vehicle has already moved at least its speed this turn."
+    },
+    {
+      "name": "Power Blast",
+      "status": "implemented_ranged_attack_slider_with_edge_cases",
+      "mechanic": "Active ranged slider up to BAB: subtract selected value from ranged attacks and add same value to ranged damage. Runtime suppresses damage bonus for Area Attacks, objects, and vehicles, and applies the special -5 attack penalty for Strength below 13 with non-vehicle weapons."
+    }
+  ],
+  "automationBoundary": {
+    "Acrobatic Strike": "Tumble/AoO workflow must supply the successful tumble and target-scoped state; this pass does not create a Tumble movement workflow.",
+    "Momentum Strike": "Mount/speeder workflow must supply mounted and moved-at-least-speed context flags.",
+    "Power Blast": "Attack option UI must supply selected slider value and enforce Swift Action timing; runtime handles attack/damage math and exclusions."
+  },
+  "changedFiles": [
+    "scripts/engine/feats/combat-mobility-power-feat-normalization-hooks.js",
+    "scripts/engine/feats/combat-mobility-power-runtime-patches.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}

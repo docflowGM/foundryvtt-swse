@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-06",
+  "purpose": "Record Legacy Era grapple/reaction combat feat pass.",
+  "implementedEntries": [
+    {
+      "name": "Multi-Grab",
+      "status": "tightened_existing_grapple_action_metadata",
+      "mechanic": "Standard Action grapple action. Metadata now records up to two adjacent targets, two empty hands, separate Grab attacks, and delegation to GrappleFeatActions.multiGrab."
+    },
+    {
+      "name": "Knock Heads",
+      "status": "implemented_multi_grab_rider_metadata_and_helper",
+      "mechanic": "After successful Multi-Grab against two targets, helper exposes automatic 1d6 + Strength modifier bludgeoning damage to both targets, -5 effective DT comparison, and preserve Grabbed state metadata."
+    },
+    {
+      "name": "Rancor Crush",
+      "status": "tightened_pin_crush_condition_track_rider_metadata",
+      "mechanic": "When Pin succeeds and Crush is used at the same time, metadata exposes -1 condition-track step in addition to Crush damage."
+    },
+    {
+      "name": "Return Fire",
+      "status": "implemented_required_weapon_focus_choice_reaction_resource",
+      "mechanic": "Required immediate chooser uses weapon_focus_weapon choiceKind and prerequisite-derived Weapon Focus source. Runtime helper exposes eligible reaction attacks after a ranged miss against the actor, excludes heavy/vehicle weapons, requires selected weapon match, line of sight, and weapon in hand. Normal use is once/encounter; Combat Reflexes gets Dexterity-modifier encounter slots while still no more than once per enemy turn as workflow metadata."
+    }
+  ],
+  "automationBoundary": {
+    "Multi-Grab": "Existing GrappleFeatActions.multiGrab delegates each target to SWSEGrappling.attemptGrab; adjacency and two-empty-hands validation remain workflow/GM context.",
+    "Knock Heads": "Workflow must call GrappleFeatActions.getKnockHeadsRiders after Multi-Grab results and apply damage/DT comparison to both targets.",
+    "Rancor Crush": "Pin/Crush workflow must consume CONDITION_SHIFT_ON_GRAPPLE_MANEUVER metadata when both feat uses occur together.",
+    "Return Fire": "Reaction workflow must call getReturnFireReactions on ranged miss events, present the reaction, execute the selected ranged attack, call spendReturnFire, and enforce once per enemy turn for Combat Reflexes."
+  },
+  "changedFiles": [
+    "scripts/engine/feats/grapple-feat-normalization-hooks.js",
+    "scripts/engine/feats/grapple-feat-actions.js",
+    "scripts/engine/feats/return-fire-feat-normalization-hooks.js",
+    "scripts/engine/feats/return-fire-runtime-patches.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}

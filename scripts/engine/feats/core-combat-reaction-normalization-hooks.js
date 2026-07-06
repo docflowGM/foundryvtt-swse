@@ -28,6 +28,11 @@ function hasRuleType(item, type) {
   return asArray(item?.system?.abilityMeta?.rules).some(rule => String(rule?.type ?? '').toUpperCase() === wanted);
 }
 
+function removeRuleTypes(item, types = []) {
+  const unwanted = new Set(types.map(type => String(type ?? '').toUpperCase()));
+  return asArray(item?.system?.abilityMeta?.rules).filter(rule => !unwanted.has(String(rule?.type ?? '').toUpperCase()));
+}
+
 function cleaveReactionRule() {
   return {
     key: 'cleaveExtraAttack',
@@ -79,15 +84,17 @@ function frighteningCleaveRiderRule() {
 
 function combatReflexesCapacityRule() {
   return {
-    type: 'REACTION_CAPACITY_OVERRIDE',
-    label: 'Combat Reflexes: Additional Reactions',
+    type: 'ATTACK_OF_OPPORTUNITY_CAPACITY_OVERRIDE',
+    label: 'Combat Reflexes: Additional Attacks of Opportunity',
     source: 'Combat Reflexes',
-    reactionBasis: 'attacksOfOpportunity',
-    baseReactions: 1,
+    actionPool: 'attacksOfOpportunity',
+    actionType: 'free',
+    baseAttacksOfOpportunity: 1,
     addAbilityModifier: 'dexterity',
     minimum: 1,
     allowOpportunityAttackWhileFlatFooted: true,
-    oneAttackPerOpportunityTrigger: true
+    oneAttackPerOpportunityTrigger: true,
+    doesNotModifyReactions: true
   };
 }
 
@@ -133,11 +140,14 @@ function patchForFeat(item) {
   }
 
   if (normalized === 'combat reflexes') {
-    if (hasRuleType(item, 'REACTION_CAPACITY_OVERRIDE')) return null;
+    const retainedRules = removeRuleTypes(item, [
+      'REACTION_CAPACITY_OVERRIDE',
+      'ATTACK_OF_OPPORTUNITY_CAPACITY_OVERRIDE'
+    ]);
     return {
-      'system.abilityMeta.mechanicsMode': 'reaction_capacity_rule',
+      'system.abilityMeta.mechanicsMode': 'attack_of_opportunity_capacity_rule',
       'system.abilityMeta.rules': [
-        ...asArray(item.system?.abilityMeta?.rules),
+        ...retainedRules,
         combatReflexesCapacityRule()
       ]
     };

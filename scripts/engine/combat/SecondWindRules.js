@@ -1,31 +1,64 @@
-/**
- * SecondWindRules
- *
- * Pure calculation helpers for Second Wind mechanics.
- * No actor mutations, no ActorEngine imports, no side effects.
- * All methods accept plain values (or read-only actor for data access)
- * and return plain values. ActorEngine owns all write authority.
- */
-
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
 import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/combat/ConditionTrackRules.js";
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 
+function clampNonNegativeNumber(value, fallback = 0) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? Math.max(0, numeric) : fallback;
+}
+
+function readEncounterUseCount(encounterFlag, activeCombatId) {
+  if (!activeCombatId || !encounterFlag) return 0;
+  if (typeof encounterFlag === 'string') return encounterFlag === activeCombatId ? 1 : 0;
+  if (typeof encounterFlag !== 'object') return 0;
+  const combatId = encounterFlag.combatId ?? encounterFlag.id ?? encounterFlag.encounterId ?? null;
+  if (combatId !== activeCombatId) return 0;
+  return Math.max(0, Number(encounterFlag.count ?? encounterFlag.uses ?? encounterFlag.used ?? 1) || 1);
+}
+
+function getSecondWindHpThreshold(maxHP, rules = {}) {
+  if (Number.isFinite(Number(rules.hpThresholdValue))) return Math.max(0, Number(rules.hpThresholdValue));
+  const fraction = Number.isFinite(Number(rules.hpThresholdFraction)) ? Number(rules.hpThresholdFraction) : 0.5;
+  return Math.floor(Math.max(0, Number(maxHP) || 0) * Math.max(0, fraction));
+}
+
+function getActionCost(rules = {}) {
+  return String(rules.actionCost ?? rules.actionEconomy?.action ?? (rules.freeAction ? 'free' : 'swift')).toLowerCase();
+}
+
 export class SecondWindRules {
-  /**
-   * Determine whether an actor is eligible to use Second Wind right now.
-   * Returns { allowed: bool, reason: string }.
-   * Does NOT check uses remaining — that is a separate concern.
-   *
-   * @param {Actor} actor - read-only actor reference
-   * @param {Object} [options={}] - optional flags (validateCombat)
-   * @param {Object} featRules - result of MetaResourceFeatResolver.getSecondWindRules(actor)
-   * @returns {{ allowed: boolean, reason: string }}
-   */
-  static canUseSecondWind(actor, options = {}, featRules) {
+  static defaultConfig() {
+    return {
+      schemaVersion: 2,
+      encounter: { uses: 1, ignoreCap: false },
+      daily: { baseUses: 1, extraUseMultiplier: 0, flatBonus: 0 },
+      healing: {
+        mode: 'maxQuarterMaxHpOrConScore',
+        hpFraction: 0.25,
+        abilityScore: 'con',
+        flatBonus: 0,
+        multiplier: 1,
+        minimum: 0
+      },
+      activation: { hpThresholdFraction: 0.5, allowAboveThreshold: false },
+      actionEconomy: { action: 'swift', swiftActions: 1 },
+      conditionTrack: { recoverySteps: 0 },
+      postUse: {
+        regainForcePower: false,
+        grantMoveAction: false,
+        grantMovement: false,
+        grantStandardAction: false,
+        grantSwiftAction: false,
+        grantReaction: false
+      },
+      riders: []
+    };
+  }
+
+  static canUseSecondWind(actor, options = {}, featRules = {}) {
     const heroicLevel = Number(actor.system?.heroicLevel ?? actor.system?.level ?? 0);
     const isHeroic = actor.type === 'character' || heroicLevel > 0;
-    const canNonHeroicSecondWind = featRules.extraUseMultiplier > 0;
+    const canNonHeroicSecondWind = featRules.extraUseMultiplier > 0 || featRules.dailyUseBonus > 0 || featRules.allowNonHeroicUse === true;
 
     if (!isHeroic && !canNonHeroicSecondWind) {
       return { allowed: false, reason: `${actor.name} is not eligible to use Second Wind` };
@@ -33,21 +66,27 @@ export class SecondWindRules {
 
     const currentHP = SchemaAdapters.getHP(actor);
     const maxHP = SchemaAdapters.getMaxHP(actor);
-    if (currentHP > Math.floor(maxHP / 2) && !featRules.allowAboveHalfHp) {
-      return { allowed: false, reason: 'Second Wind may only be used at half Hit Points or lower' };
+    const threshold = getSecondWindHpThreshold(maxHP, featRules);
+    const allowAboveThreshold = featRules.allowAboveHalfHp === true || featRules.allowAboveThreshold === true;
+    if (currentHP > threshold && !allowAboveThreshold) {
+      return { allowed: false, reason: `Second Wind may only be used at ${threshold} Hit Points or lower` };
     }
 
     const activeCombatId = game.combat?.started ? game.combat.id : null;
     const encounterFlag = actor.getFlag?.('foundryvtt-swse', 'secondWindEncounterUsed') ?? null;
-    if (activeCombatId && encounterFlag === activeCombatId && !featRules.ignoreEncounterCap) {
-      return { allowed: false, reason: 'Second Wind can only be used once per encounter' };
+    const encounterUseCap = Math.max(1, Number(featRules.encounterUses ?? featRules.encounterUseCap ?? 1) || 1);
+    const encounterUsed = readEncounterUseCount(encounterFlag, activeCombatId);
+    if (activeCombatId && encounterUsed >= encounterUseCap && !featRules.ignoreEncounterCap) {
+      return { allowed: false, reason: `Second Wind can only be used ${encounterUseCap} time${encounterUseCap === 1 ? '' : 's'} per encounter` };
     }
 
     if (options.validateCombat !== false) {
       const inCombat = game.combat?.combatants.some(c => c.actor?.id === actor.id);
       if (inCombat) {
         const combatant = game.combat.combatants.find(c => c.actor?.id === actor.id);
-        if (!featRules.freeAction && !combatant?.resources?.swift) {
+        const actionCost = getActionCost(featRules);
+        const swiftActions = Math.max(0, Number(featRules.swiftActions ?? featRules.actionEconomy?.swiftActions ?? (actionCost === 'swift' ? 1 : 0)) || 0);
+        if (actionCost === 'swift' && swiftActions > 0 && !combatant?.resources?.swift) {
           return { allowed: false, reason: 'Cannot use Second Wind: no swift action available' };
         }
       }
@@ -56,80 +95,52 @@ export class SecondWindRules {
     return { allowed: true, reason: '' };
   }
 
-  /**
-   * Calculate the HP healed by catching a Second Wind.
-   * RAW: max(floor(maxHP / 4), conScore).
-   *
-   * @param {number} maxHP - actor's maximum hit points
-   * @param {number} conScore - actor's Constitution score (0 for droids)
-   * @returns {number}
-   */
-  static calculateHealingAmount(maxHP, conScore) {
-    return Math.max(Math.floor(maxHP / 4), conScore);
+  static calculateHealingAmount(maxHP, conScore, rules = {}) {
+    const healing = rules.healing ?? {};
+    const fraction = Number.isFinite(Number(rules.healingFraction ?? healing.hpFraction)) ? Number(rules.healingFraction ?? healing.hpFraction) : 0.25;
+    const hpFractionAmount = Math.floor(Math.max(0, Number(maxHP) || 0) * Math.max(0, fraction));
+    const abilityAmount = Math.max(0, Number(conScore) || 0);
+    const mode = String(rules.healingMode ?? healing.mode ?? 'maxQuarterMaxHpOrConScore');
+
+    let base;
+    if (mode === 'hpFractionOnly') base = hpFractionAmount;
+    else if (mode === 'abilityScoreOnly') base = abilityAmount;
+    else if (mode === 'flatOnly') base = 0;
+    else base = Math.max(hpFractionAmount, abilityAmount);
+
+    const multiplier = Number.isFinite(Number(rules.healingMultiplier ?? healing.multiplier)) ? Number(rules.healingMultiplier ?? healing.multiplier) : 1;
+    const minimum = clampNonNegativeNumber(rules.minimumHealing ?? healing.minimum, 0);
+    return Math.max(minimum, Math.floor(base * multiplier));
   }
 
-  /**
-   * Calculate the maximum number of Second Wind uses per day/encounter.
-   * Respects the secondWindWebEnhancement houserule and feat multipliers.
-   *
-   * @param {number} conMod - Constitution modifier (0 for droids)
-   * @param {number} fortClassBonus - class bonus to Fortitude Defense
-   * @param {Object} featRules - result of MetaResourceFeatResolver.getSecondWindRules(actor)
-   * @param {boolean} hasToughAsNails - whether actor has the Tough as Nails talent
-   * @returns {number}
-   */
-  static calculateMaxUses(conMod, fortClassBonus, featRules, hasToughAsNails) {
-    const baseDailyUses = HouseRuleService.isEnabled('secondWindWebEnhancement')
-      ? Math.max(1, 1 + fortClassBonus + conMod)
-      : 1;
+  static calculateMaxUses(conMod, fortClassBonus, featRules = {}, hasToughAsNails = false) {
+    const baseDailyUses = Number.isFinite(Number(featRules.dailyBaseUses))
+      ? Math.max(1, Number(featRules.dailyBaseUses))
+      : (HouseRuleService.isEnabled('secondWindWebEnhancement') ? Math.max(1, 1 + fortClassBonus + conMod) : 1);
+    const flatBonus = Math.max(0, Number(featRules.dailyUseBonus ?? 0) || 0);
     const extraUseMultiplier = Number(featRules.extraUseMultiplier || 0) + (hasToughAsNails ? 1 : 0);
-    return Math.max(1, baseDailyUses + (baseDailyUses * extraUseMultiplier));
+    return Math.max(1, baseDailyUses + flatBonus + (baseDailyUses * extraUseMultiplier));
   }
 
-  /**
-   * Calculate the number of condition track steps recovered when catching a Second Wind.
-   * Combines the improved-second-wind houserule (+1) and any feat-granted steps.
-   *
-   * @param {Object} featRules - result of MetaResourceFeatResolver.getSecondWindRules(actor)
-   * @param {boolean} [improvedHouseRule] - whether the secondWindImproved houserule is active
-   * @returns {number} total steps to move up the condition track (0 = no recovery)
-   */
-  static calculateConditionRecovery(featRules, improvedHouseRule) {
+  static calculateConditionRecovery(featRules = {}, improvedHouseRule = false) {
     const houseRuleSteps = improvedHouseRule ? 1 : 0;
     const featSteps = Math.max(0, Number(featRules.conditionRecoverySteps || 0));
     return houseRuleSteps + featSteps;
   }
 
-  /**
-   * Determine whether an actor may use the Edge of Exhaustion variant rule
-   * (trade a condition step for 1 Second Wind use).
-   * Returns { allowed: bool, reason: string }.
-   *
-   * @param {Actor} actor - read-only actor reference
-   * @returns {{ allowed: boolean, reason: string }}
-   */
   static canUseEdgeOfExhaustion(actor) {
     const uses = actor.system.secondWind?.uses ?? 0;
-    if (uses > 0) {
-      return { allowed: false, reason: 'Second Wind uses still available (not at edge of exhaustion)' };
-    }
+    if (uses > 0) return { allowed: false, reason: 'Second Wind uses still available (not at edge of exhaustion)' };
 
-    const isHeroic = actor.type === 'character' ||
-                     (actor.type === 'npc' && actor.system.class);
-    if (!isHeroic) {
-      return { allowed: false, reason: `${actor.name} is not heroic and cannot use Edge of Exhaustion` };
-    }
+    const isHeroic = actor.type === 'character' || (actor.type === 'npc' && actor.system.class);
+    if (!isHeroic) return { allowed: false, reason: `${actor.name} is not heroic and cannot use Edge of Exhaustion` };
 
     const inCombat = game.combat?.combatants.some(c => c.actor?.id === actor.id);
-    if (!inCombat) {
-      return { allowed: false, reason: 'Edge of Exhaustion can only be used in active combat' };
-    }
+    if (!inCombat) return { allowed: false, reason: 'Edge of Exhaustion can only be used in active combat' };
 
     const currentCT = Number(actor.system.conditionTrack?.current ?? 0);
     const conditionStepCap = ConditionTrackRules.getConditionStepCap();
-    if (currentCT >= conditionStepCap) {
-      return { allowed: false, reason: 'Cannot accept condition penalty when already at helpless' };
-    }
+    if (currentCT >= conditionStepCap) return { allowed: false, reason: 'Cannot accept condition penalty when already at helpless' };
 
     return { allowed: true, reason: '' };
   }

@@ -6,7 +6,7 @@
  *
  * Registered feats:
  * - Sadistic Strike: Move opponent -1 step on CT when delivering Coup de Grace
- * - Damage Conversion / Stay Up-style rules: spend a CT step to reduce incoming damage
+ * - Stay Up: legacy pre-damage hook for half damage and CT cost
  * - Bone Crusher: Move damaged grappled opponent -1 step on CT after grapple damage
  * - (Future) Forceful Strike: Spend Force Point to move target -1 step on CT with Force Stun
  * - (Future) Forceful Telekinesis: Spend Force Point to move target -1 step on CT with Move Object
@@ -21,6 +21,20 @@ function normalizeFeatName(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 }
 
+function normalizeRuleType(value) {
+  return String(value ?? '').trim().toUpperCase();
+}
+
+function asArray(value) {
+  if (Array.isArray(value)) return value;
+  if (value === undefined || value === null) return [];
+  return [value];
+}
+
+function activeCombatId() {
+  return game?.combat?.started && game.combat?.id ? game.combat.id : null;
+}
+
 function actorHasFeat(actor, featName) {
   const wanted = normalizeFeatName(featName);
   try {
@@ -30,6 +44,26 @@ function actorHasFeat(actor, featName) {
   } catch (_err) {
     return false;
   }
+}
+
+function actorConditionTrackRules(actor) {
+  const rules = [];
+  try {
+    for (const item of Array.from(actor?.items ?? [])) {
+      if (!['feat', 'talent'].includes(item?.type) || item?.system?.disabled === true) continue;
+      for (const rule of asArray(item?.system?.abilityMeta?.resourceRules?.conditionTrack)) {
+        rules.push({ ...rule, sourceName: item.name, sourceId: item.id });
+      }
+    }
+  } catch (_err) {
+    // Treat malformed actor/items as having no condition-track rules.
+  }
+  return rules;
+}
+
+function findConditionTrackRule(actor, type) {
+  const wanted = normalizeRuleType(type);
+  return actorConditionTrackRules(actor).find(rule => normalizeRuleType(rule?.type) === wanted) ?? null;
 }
 
 function actorGrappleRules(actor) {
@@ -77,6 +111,17 @@ function hasDamagePayload(value) {
   return Number.isFinite(total) && total > 0;
 }
 
+function stayUpAlreadyUsed(actor) {
+  const combatId = activeCombatId();
+  const flag = actor?.getFlag?.('foundryvtt-swse', 'stayUpUsedThisEncounter');
+  return !!combatId && flag === combatId;
+}
+
+async function markStayUpUsed(actor) {
+  const combatId = activeCombatId();
+  if (combatId) await actor?.setFlag?.('foundryvtt-swse', 'stayUpUsedThisEncounter', combatId);
+}
+
 export class FeatActionListeners {
   /**
    * Initialize all feat action listeners.
@@ -105,9 +150,8 @@ export class FeatActionListeners {
       const { attacker, target } = context;
       if (!attacker) return;
 
-      // Check if attacker has Sadistic Strike via metadata
       const ctRules = MetaResourceFeatResolver.getConditionTrackRules(attacker);
-      if (!ctRules.moveTargetCtOnCoupDeGrace) {
+      if (!ctRules.moveTargetCtOnCoupDeGrace && !findConditionTrackRule(attacker, 'MOVE_TARGET_CT_ON_COUP_DE_GRACE')) {
         return;
       }
 
@@ -145,84 +189,70 @@ export class FeatActionListeners {
   }
 
   /* ---------------------------------------- */
-  /* STAY UP / DAMAGE CONVERSION              */
+  /* STAY UP                                  */
   /* ---------------------------------------- */
   /**
-   * Damage Conversion / Stay Up-style rule: Move 1 step down Condition Track to reduce damage.
-   * Listens for legacy pre-damage hook to allow reducing damage before it's applied.
+   * Stay Up: once per encounter, when the actor would take damage from an
+   * attack, take half damage and move -1 step on the Condition Track.
    *
-   * The modern DamageResolutionEngine also supports this as an explicit option; this
-   * listener preserves the older CombatEngine.damage-before pipeline while routing
-   * condition mutation through ActorEngine instead of actor helper methods.
+   * The modern DamageResolutionEngine handles this through explicit options.
+   * This listener only preserves the older swse.damage-before pipeline and no
+   * longer treats droid Damage Conversion as a flat damage reduction rule.
    */
   static _registerStayUp() {
-    Hooks.on('swse.damage-before', async (context) => {
-      const { target, damage } = context;
+    Hooks.on('swse.damage-before', async (context = {}) => {
+      const { target } = context;
+      const damage = Number(context.damage ?? 0) || 0;
 
-      if (!target || damage <= 0) {
-        return;
-      }
+      if (!target || damage <= 0) return;
 
-      // Check if target has Damage Conversion / Stay Up style metadata
-      const ctRules = MetaResourceFeatResolver.getConditionTrackRules(target);
-      if (!ctRules.spendCtToReduceDamage) {
-        return;
-      }
-
-      if (!canWorsenCondition(target)) {
-        return;
-      }
+      const stayUpRule = findConditionTrackRule(target, 'STAY_UP_HALF_DAMAGE_AND_CT');
+      if (!stayUpRule) return;
+      if (!canWorsenCondition(target)) return;
+      if (stayUpAlreadyUsed(target)) return;
 
       try {
-        // Calculate damage reduction using rule-defined amount
-        const damageReduction = Math.min(ctRules.damageReductionAmount, damage);
-
-        // Ask target if they want to use the rule
-        const useRule = await this._confirmStayUpUsage(target, damageReduction);
-
-        if (!useRule) {
-          return;
-        }
+        const multiplier = Math.max(0, Number(stayUpRule.damageMultiplier ?? 0.5) || 0.5);
+        const newDamage = Math.max(0, Math.floor(damage * multiplier));
+        const useRule = await this._confirmStayUpUsage(target, damage, newDamage);
+        if (!useRule) return;
 
         const oldCT = conditionStep(target);
-        await ActorEngine.applyConditionShift(target, 1, 'Damage Conversion');
+        await ActorEngine.applyConditionShift(target, 1, 'Stay Up');
+        await markStayUpUsed(target);
         const newCT = conditionStep(target);
-
-        // Reduce the incoming damage by spending the CT step
-        const newDamage = Math.max(0, damage - damageReduction);
         context.damage = newDamage;
 
         SWSELogger.log(
-          `[FeatActionListeners] Damage Conversion used by ${target.name}: ` +
-          `CT moved from ${oldCT} to ${newCT}, damage reduced from ${damage} to ${newDamage}`
+          `[FeatActionListeners] Stay Up used by ${target.name}: ` +
+          `CT moved from ${oldCT} to ${newCT}, damage changed from ${damage} to ${newDamage}`
         );
 
         ui.notifications.info(
-          `${target.name} uses Damage Conversion: Moved -1 step on CT and reduced damage by ${damageReduction} (${damage} → ${newDamage} damage).`
+          `${target.name} uses Stay Up: takes half damage (${damage} -> ${newDamage}) and moves -1 step on the Condition Track.`
         );
-
       } catch (err) {
-        SWSELogger.error('[FeatActionListeners] Damage Conversion error:', err);
+        SWSELogger.error('[FeatActionListeners] Stay Up error:', err);
       }
     });
 
-    SWSELogger.log('[FeatActionListeners] Damage Conversion listener registered');
+    SWSELogger.log('[FeatActionListeners] Stay Up listener registered');
   }
 
   /**
-   * Helper: Confirm Damage Conversion usage with the target player.
-   * Returns a promise that resolves to true if the player accepts, false otherwise.
+   * Helper: Confirm Stay Up usage with the target player.
+   * Returns true if the player accepts, false otherwise.
    * @private
    */
-  static async _confirmStayUpUsage(actor, damageReduction) {
+  static async _confirmStayUpUsage(actor, originalDamage, newDamage) {
     return new Promise((resolve) => {
       const dialog = new Dialog({
-        title: `${actor.name} - Damage Conversion`,
-        content: `<p><strong>Damage Conversion</strong>: Move 1 step down the Condition Track to reduce damage by ${damageReduction} HP?</p>`,
+        title: `${actor.name} - Stay Up`,
+        content: `<p><strong>Stay Up</strong>: Take half damage (${originalDamage} &rarr; ${newDamage}) and move -1 step on the Condition Track?</p>`,
         buttons: {
           yes: {
             icon: '<i class="fas fa-check"></i>',
-            label: 'Use Damage Conversion',
+            label: 'Use Stay Up',
             callback: () => resolve(true)
           },
           no: {
@@ -244,10 +274,6 @@ export class FeatActionListeners {
   /**
    * Bone Crusher: when grapple damage is successfully applied to a grappled
    * opponent, move that opponent -1 step on the condition track.
-   *
-   * The current grapple system emits swse.grappleManeuver after Throw/Crush.
-   * This listener deliberately requires a damage payload so non-damaging
-   * grapple maneuvers such as Trip do not trigger the feat.
    */
   static _registerBoneCrusher() {
     Hooks.on('swse.grappleManeuver', async (context = {}) => {

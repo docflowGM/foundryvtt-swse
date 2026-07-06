@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-06",
+  "purpose": "Record combat implementation pass for Unknown Regions and Rapid Assault optional-rule feats.",
+  "implementedEntries": [
+    { "name": "Acrobatic Dodge", "status": "implemented_reaction_movement_resource_metadata_and_helper", "mechanic": "Once per encounter when a melee attack misses and the actor is aware of the attacker, helper exposes advisory adjacent-square movement without provoking; metadata notes Force Point second-use restore." },
+    { "name": "Combat Trickery", "status": "implemented_special_combat_action_metadata_and_action_card", "mechanic": "Adds actor-visible Combat Trickery action. Two successive Swift Actions in same turn create Deception vs Will feint; success makes target Flat-Footed against next attack before end of next turn, with Force Point option to extend to encounter." },
+    { "name": "Frightening Cleave", "status": "implemented_cleave_rider_metadata_and_helper", "mechanic": "After successful Cleave use, helper exposes stacking mind-affecting -1 penalty to Reflex, attacks, and skill checks against source for enemies within 6 squares and line of sight, max -5." },
+    { "name": "Grab Back", "status": "implemented_grab_grapple_defense_and_counter_reaction_metadata", "mechanic": "Adds +2 Reflex vs Grab/Grapple metadata and reaction counter metadata after enemy misses with Grab/Grapple. Existing GrappleFeatActions.grabBack remains the execution path." },
+    { "name": "Halt", "status": "implemented_required_weapon_focus_choice_aoo_rider", "mechanic": "Immediate required Weapon Focus-derived choice. On qualifying AoO hit with selected weapon, helper exposes same die roll vs Grapple check, halt movement, prone, Charge-ending clause, and DT-exceeded turn-ending rider." },
+    { "name": "Heavy Hitter", "status": "implemented_vehicle_weapon_emplacement_attack_rider_metadata_and_helper", "mechanic": "For weapon emplacements/vehicle weapon systems, helper computes +1 damage per 5 attack margin over Reflex and exposes DT-exceeded next-turn attack/speed suppression metadata." },
+    { "name": "Instinctive Attack", "status": "implemented_force_point_attack_rider_metadata_and_helper", "mechanic": "When a non-droid spends a Force Point on a proficient weapon attack, helper exposes reroll attack, keep better result, and apply FP die to better result metadata." },
+    { "name": "Instinctive Defense", "status": "implemented_force_point_defense_action_metadata_and_action_card", "mechanic": "Adds actor-visible Free Action card. On own turn, spend Force Point for +2 all defenses until start of next turn." },
+    { "name": "Maniacal Charge", "status": "implemented_charge_skill_rider_metadata_and_helper", "mechanic": "Charge rider exposes free Persuasion/Intimidate against target and enemies passed within 1 square. Successful path targets cannot AoO; successful final target loses Dex/Flat-Footed until start of source next turn. Incompatible with Intimidator." },
+    { "name": "Trample", "status": "implemented_mounted_charge_rider_metadata_and_helper", "mechanic": "Mounted Charge rider exposes mount free melee attack compared against enemies charged through, natural weapon plus Strength damage, and regular end attack still allowed. Feat may be on rider or mount." },
+    { "name": "Rapid Assault", "status": "implemented_default_on_optional_rule_action_metadata_and_action_card", "mechanic": "Default-on optional rule action. Spend Force Point to make two attacks as a Standard Action while preserving normal multiattack penalties and limiting to two attacks." }
+  ],
+  "automationBoundary": {
+    "Acrobatic Dodge": "Incoming melee miss/reaction workflow must present/spend the movement resource and handle Force Point second-use restore.",
+    "Combat Trickery": "Special action workflow must track two same-turn Swift Actions, roll Deception vs Will, persist Flat-Footed state, and process optional Force Point duration extension.",
+    "Frightening Cleave": "Cleave workflow must call getCleaveRiders and apply/stack/expire the mind-affecting penalties.",
+    "Grab Back": "Grab/Grapple defense and reaction workflow must consume getGrabGrappleReactionRiders; execution should continue to use GrappleFeatActions for the counter attack.",
+    "Halt": "AoO workflow must pass hit, selected weapon, same die roll, target Grapple check, size, Charge, and DT context, then consume getAttackOfOpportunityHitRiders.",
+    "Heavy Hitter": "Vehicle/emplacement attack workflow must pass attack margin and DT context and apply resulting damage/suppression metadata.",
+    "Instinctive Attack": "Force Point attack workflow must call getForcePointAttackRiders before resolving final attack result and FP die application.",
+    "Instinctive Defense": "Special action workflow must spend the Force Point and apply/expire the +2 all-defenses effect.",
+    "Maniacal Charge": "Charge workflow must call getChargeSkillRiders, execute Persuasion/Intimidate checks, and apply path/final-target effects. Helper suppresses the rider if actor has Intimidator.",
+    "Trample": "Mounted Charge workflow must call getMountedChargeRiders and use mount natural weapon data against enemies in path.",
+    "Rapid Assault": "Optional-rule setting key is enableRapidAssaultOptionalFeat with default enabled. Multiattack workflow must spend FP, enforce two attacks maximum, and apply normal Double Attack/two-weapon penalties."
+  },
+  "changedFiles": [
+    "scripts/engine/feats/unknown-regions-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/unknown-regions-combat-runtime-patches.js",
+    "scripts/engine/combat/unknown-regions-combat-action-adapter.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ]
+}
