@@ -1,5 +1,6 @@
 import { SkillFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/skills/skill-feat-resolver.js";
 import { SkillFeatRuleResolver } from "/systems/foundryvtt-swse/scripts/engine/skills/skill-feat-rule-resolver.js";
+import { EncounterUseTracker } from "/systems/foundryvtt-swse/scripts/engine/feats/encounter-use-tracker.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 let registered = false;
@@ -13,6 +14,12 @@ function normalizeKey(value = '') {
     .replace(/-+/g, '-')
     .replace(/^-+|-+$/g, '')
     .toLowerCase();
+}
+
+function asArray(value) {
+  if (Array.isArray(value)) return value;
+  if (value === undefined || value === null) return [];
+  return [value];
 }
 
 const SKILL_ALIASES = Object.freeze({
@@ -88,6 +95,10 @@ function dailyFeatureKey(ruleId) {
   return `skillFeatDailyUses.${ruleId}`;
 }
 
+function encounterFeatureKey(prefix, ruleId) {
+  return `${prefix}-${ruleId}`;
+}
+
 function getDailyUses(actor) {
   return actor?.getFlag?.('foundryvtt-swse', 'skillFeatDailyUses') ?? actor?.flags?.['foundryvtt-swse']?.skillFeatDailyUses ?? {};
 }
@@ -138,6 +149,187 @@ function dedupeOptions(options) {
   }
   return result;
 }
+
+function actorItems(actor) {
+  try { return Array.from(actor?.items ?? []); }
+  catch (_err) { return []; }
+}
+
+function itemRules(item) {
+  return asArray(item?.system?.abilityMeta?.rules)
+    .map(rule => ({ ...rule, source: rule.source ?? item?.name, sourceName: item?.name, sourceId: item?.id }));
+}
+
+function collectAbilityRules(actor, predicate) {
+  const rules = [];
+  for (const item of actorItems(actor)) {
+    if (!['feat', 'talent', 'species', 'class'].includes(item?.type) || item?.system?.disabled === true) continue;
+    for (const rule of itemRules(item)) {
+      if (predicate(rule, item)) rules.push(rule);
+    }
+  }
+  return rules;
+}
+
+function contextAffirms(value) {
+  return value === true || value === 'true' || value === 1 || value === '1';
+}
+
+function currentActionCost(context = {}) {
+  return normalizeKey(
+    context.actionCost
+    ?? context.actionType
+    ?? context.skillUse?.actionCost
+    ?? context.skillUse?.actionType
+    ?? context.skillUse?.system?.actionCost
+    ?? context.skillUse?.system?.actionType
+    ?? ''
+  );
+}
+
+function reduceActionCost(actionCost, actionEconomy = {}) {
+  const cost = normalizeKey(actionCost);
+  if (!cost) return null;
+  if (cost === 'full-round' || cost === 'fullround') return actionEconomy.fullRoundTo ?? 'standard';
+  if (cost === 'standard') return actionEconomy.standardTo ?? 'move';
+  if (cost === 'move') return actionEconomy.moveTo ?? 'swift';
+  return null;
+}
+
+function resolveSkillActionEconomyOptions(actor, skillKey, extraUseId = null, context = {}) {
+  const runtimeSkill = toRuntimeSkillKey(skillKey) ?? skillKey;
+  const actionCost = currentActionCost(context);
+  const rules = SkillFeatRuleResolver.collectSkillActionOverrides(actor, runtimeSkill, extraUseId, context);
+  return rules.map(rule => {
+    const actionEconomy = rule.actionEconomy ?? {};
+    const featureKey = encounterFeatureKey('skill-action-economy', rule.id ?? rule.sourceId ?? rule.label ?? 'rule');
+    const reducedActionCost = reduceActionCost(actionCost, actionEconomy);
+    const longTask = contextAffirms(context.longTask)
+      || contextAffirms(context.skillUse?.longTask)
+      || contextAffirms(context.skillUse?.system?.longTask)
+      || normalizeKey(actionCost).includes('minute')
+      || normalizeKey(actionCost).includes('hour');
+    const applies = Boolean(reducedActionCost) || longTask;
+    return {
+      id: rule.id,
+      label: rule.label ?? rule.source ?? 'Skill action economy',
+      source: rule.source ?? rule.sourceName ?? rule.label,
+      sourceId: rule.sourceId,
+      skillKey: runtimeSkill,
+      extraUseId,
+      originalActionCost: actionCost || null,
+      actionCost: reducedActionCost ?? actionCost ?? null,
+      longTaskTimeMultiplier: longTask ? Number(actionEconomy.longTaskTimeMultiplier ?? 1) || 1 : 1,
+      longTaskPenalty: longTask ? Number(actionEconomy.longTaskPenalty ?? 0) || 0 : 0,
+      reduceMultiSwiftBy: Number(actionEconomy.reduceMultiSwiftBy ?? 0) || 0,
+      oncePer: rule.oncePer ?? null,
+      featureKey,
+      canUse: !rule.oncePer || EncounterUseTracker.canUse(actor, featureKey, { oncePer: rule.oncePer }),
+      applies,
+      summary: rule.summary ?? '',
+      rule
+    };
+  }).filter(option => option.applies);
+}
+
+function resolveSkillActionEconomy(actor, skillKey, extraUseId = null, context = {}) {
+  return resolveSkillActionEconomyOptions(actor, skillKey, extraUseId, context).find(option => option.canUse) ?? null;
+}
+
+async function consumeSkillActionEconomy(actor, option = null) {
+  if (!actor || !option) return { allowed: false, reason: 'Skill action economy option not found.' };
+  if (!option.oncePer) return { allowed: true };
+  return EncounterUseTracker.checkAndMarkUsed(actor, option.featureKey, { oncePer: option.oncePer });
+}
+
+function getMovementSkillRiders(actor, context = {}) {
+  const rules = collectAbilityRules(actor, rule => normalizeKey(rule.type) === 'movement-skill-rider');
+  const result = {
+    climbSpeedBonusSquares: 0,
+    swimSpeedBonusSquares: 0,
+    jumpDistanceBonusSquares: 0,
+    retainDexBonusToReflexWhileClimbing: false,
+    sources: []
+  };
+  for (const rule of rules) {
+    result.climbSpeedBonusSquares = Math.max(result.climbSpeedBonusSquares, Number(rule.climbSpeedBonusSquares ?? 0) || 0);
+    result.swimSpeedBonusSquares = Math.max(result.swimSpeedBonusSquares, Number(rule.swimSpeedBonusSquares ?? 0) || 0);
+    result.jumpDistanceBonusSquares = Math.max(result.jumpDistanceBonusSquares, Number(rule.jumpDistanceBonusSquares ?? 0) || 0);
+    result.retainDexBonusToReflexWhileClimbing ||= rule.retainDexBonusToReflexWhileClimbing === true;
+    result.sources.push({ id: rule.id, source: rule.source ?? rule.label, sourceId: rule.sourceId, rule });
+  }
+  return result;
+}
+
+function retainsDexBonusToReflexWhileClimbing(actor, context = {}) {
+  const mode = normalizeKey(context.mode ?? context.movementMode ?? context.skillKey ?? '');
+  if (mode && mode !== 'climb' && mode !== 'athletics') return false;
+  return getMovementSkillRiders(actor, context).retainDexBonusToReflexWhileClimbing === true;
+}
+
+function isAreaAttackContext(context = {}, options = {}) {
+  const attack = context.attack ?? {};
+  const ruleData = context.ruleData ?? {};
+  return attack.isArea === true
+    || contextAffirms(context.areaAttack)
+    || contextAffirms(context.isAreaAttack)
+    || contextAffirms(ruleData.areaAttack)
+    || contextAffirms(options.areaAttack)
+    || asArray(context.contextTags).map(normalizeKey).includes('area-attack')
+    || asArray(context.contextTags).map(normalizeKey).includes('areaattack');
+}
+
+function hasCoverContext(context = {}, options = {}) {
+  const defense = context.defense ?? {};
+  const targetContext = context.targetContext ?? options.targetContext ?? {};
+  const coverValue = context.cover ?? options.cover ?? defense.cover ?? targetContext.cover ?? context.targetCover ?? options.targetCover;
+  if (contextAffirms(coverValue) || contextAffirms(context.hasCover) || contextAffirms(options.hasCover)) return true;
+  const coverText = normalizeKey(coverValue ?? context.coverState ?? options.coverState ?? targetContext.coverState ?? '');
+  return ['cover', 'improved-cover', 'total-cover', 'partial-cover'].includes(coverText) || coverText.endsWith('-cover');
+}
+
+function getAreaAttackCoverDamageRules(actor, context = {}) {
+  return collectAbilityRules(actor, rule => normalizeKey(rule.type) === 'area-attack-cover-damage-negation')
+    .filter(rule => rule.requiresCover !== true || hasCoverContext(context))
+    .filter(rule => rule.appliesToAreaAttacks !== true || isAreaAttackContext(context));
+}
+
+function resolveAreaAttackCoverDamageDisposition(actor, context = {}, { disposition = null, options = {} } = {}) {
+  if (!actor || !isAreaAttackContext(context, options) || !hasCoverContext(context, options)) return null;
+  const rules = getAreaAttackCoverDamageRules(actor, context);
+  if (!rules.length) return null;
+  const source = rules[0]?.source ?? rules[0]?.label ?? 'Advantageous Cover';
+  return {
+    ...(disposition ?? {}),
+    damageAllowed: false,
+    multiplier: 0,
+    reason: `${source}: cover negates area attack damage.`,
+    hit: disposition?.hit ?? context?.damage?.hit,
+    areaAttack: true,
+    advantageousCover: true,
+    cover: true,
+    source,
+    sourceId: rules[0]?.sourceId ?? null,
+    rule: rules[0]
+  };
+}
+
+function getTemporaryDefenseReactionRules(actor, context = {}) {
+  return collectAbilityRules(actor, rule => normalizeKey(rule.type) === 'temporary-defense-reaction');
+}
+
+export const SkillFeatRuntime = {
+  isSkillTrained,
+  canUseDaily,
+  resolveSkillActionEconomyOptions,
+  resolveSkillActionEconomy,
+  consumeSkillActionEconomy,
+  getMovementSkillRiders,
+  retainsDexBonusToReflexWhileClimbing,
+  getAreaAttackCoverDamageRules,
+  resolveAreaAttackCoverDamageDisposition,
+  getTemporaryDefenseReactionRules
+};
 
 function patchSkillRerollOptions() {
   if (SkillFeatResolver.__swseSkillFeatRuleRerollPatched === true) return;
@@ -217,10 +409,7 @@ export function registerSkillFeatRuntimePatches() {
   patchSkillUseSubstitution();
   game.swse ??= {};
   game.swse.skills ??= {};
-  game.swse.skills.skillFeatRuntime = {
-    isSkillTrained,
-    canUseDaily
-  };
+  game.swse.skills.skillFeatRuntime = SkillFeatRuntime;
   SWSELogger.log('[SkillFeatRuntime] Skill feat runtime bridges registered');
 }
 
