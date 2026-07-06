@@ -32,6 +32,11 @@ function slug(value) {
     .replace(/^-+|-+$/g, '');
 }
 
+function cloneRule(rule) {
+  const deepClone = globalThis.foundry?.utils?.deepClone;
+  return deepClone ? deepClone(rule) : JSON.parse(JSON.stringify(rule));
+}
+
 function normalizeSize(actor) {
   const raw = String(
     actor?.system?.size
@@ -147,7 +152,7 @@ function categorizedUnarmedStyleRules(actor) {
     all: []
   };
   for (const rule of getUnarmedStyleRules(actor)) {
-    const copy = foundry?.utils?.deepClone ? foundry.utils.deepClone(rule) : JSON.parse(JSON.stringify(rule));
+    const copy = cloneRule(rule);
     categories.all.push(copy);
     switch (String(copy.type || '').toUpperCase()) {
       case 'UNARMED_STYLE_DAMAGE_ABILITY_MULTIPLIER': categories.damageAbilityMultipliers.push(copy); break;
