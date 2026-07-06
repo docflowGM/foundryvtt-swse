@@ -68,6 +68,8 @@ import { registerLegacyCloneCombatFeatNormalizationHooks } from "/systems/foundr
 import { registerLegacyCloneCombatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/legacy-clone-combat-runtime-patches.js";
 import { registerReturnFireFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/return-fire-feat-normalization-hooks.js";
 import { registerReturnFireRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/return-fire-runtime-patches.js";
+import { registerRebellionCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/rebellion-combat-feat-normalization-hooks.js";
+import { registerRebellionCombatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/rebellion-combat-runtime-patches.js";
 
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -140,6 +142,8 @@ export function registerInitHooks() {
         registerLegacyCloneCombatRuntimePatches();
         registerReturnFireFeatNormalizationHooks();
         registerReturnFireRuntimePatches();
+        registerRebellionCombatFeatNormalizationHooks();
+        registerRebellionCombatRuntimePatches();
         registerSpeciesOriginFeatNormalizationHooks();
         SWSECombatActionBrowser.init();
         const stats = HooksRegistry.getStats();
