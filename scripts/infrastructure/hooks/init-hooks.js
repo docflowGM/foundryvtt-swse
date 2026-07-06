@@ -55,6 +55,8 @@ import { registerSportHunterNormalizationHooks } from "/systems/foundryvtt-swse/
 import { registerSportHunterRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/sport-hunter-runtime-patches.js";
 import { registerRemainingWeaponArmorFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/remaining-weapon-armor-feat-normalization-hooks.js";
 import { registerRelentlessAttackRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/relentless-attack-runtime-patches.js";
+import { registerStarshipVehicleFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/starship-vehicle-feat-normalization-hooks.js";
+import { registerStarshipVehicleRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/starship-vehicle-runtime-patches.js";
 
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -114,6 +116,8 @@ export function registerInitHooks() {
         registerSportHunterRuntimePatches();
         registerRemainingWeaponArmorFeatNormalizationHooks();
         registerRelentlessAttackRuntimePatches();
+        registerStarshipVehicleFeatNormalizationHooks();
+        registerStarshipVehicleRuntimePatches();
         registerSpeciesOriginFeatNormalizationHooks();
         SWSECombatActionBrowser.init();
         const stats = HooksRegistry.getStats();
