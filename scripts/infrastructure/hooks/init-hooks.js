@@ -70,6 +70,9 @@ import { registerReturnFireFeatNormalizationHooks } from "/systems/foundryvtt-sw
 import { registerReturnFireRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/return-fire-runtime-patches.js";
 import { registerRebellionCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/rebellion-combat-feat-normalization-hooks.js";
 import { registerRebellionCombatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/rebellion-combat-runtime-patches.js";
+import { registerDroidCombatActionAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/droid-combat-action-adapter.js";
+import { registerDroidCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/droid-combat-feat-normalization-hooks.js";
+import { registerDroidCombatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/droid-combat-runtime-patches.js";
 
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -86,6 +89,7 @@ export function registerInitHooks() {
         registerRerollListeners();
         FeatActionListeners.initialize();
         registerAidAnotherActionAdapter();
+        registerDroidCombatActionAdapter();
         registerAbilityMetaSchemaDefaultHooks();
         registerGrappleFeatNormalizationHooks();
         registerGrappleFeatActions();
@@ -144,6 +148,8 @@ export function registerInitHooks() {
         registerReturnFireRuntimePatches();
         registerRebellionCombatFeatNormalizationHooks();
         registerRebellionCombatRuntimePatches();
+        registerDroidCombatFeatNormalizationHooks();
+        registerDroidCombatRuntimePatches();
         registerSpeciesOriginFeatNormalizationHooks();
         SWSECombatActionBrowser.init();
         const stats = HooksRegistry.getStats();
