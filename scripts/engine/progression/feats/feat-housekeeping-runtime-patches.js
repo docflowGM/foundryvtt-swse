@@ -3,8 +3,10 @@ import { FeatSlotValidator } from '/systems/foundryvtt-swse/scripts/engine/progr
 import { PrerequisiteChecker } from '/systems/foundryvtt-swse/scripts/data/prerequisite-checker.js';
 import { HouseRuleService } from '/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js';
 import { AbilityEngine } from '/systems/foundryvtt-swse/scripts/engine/abilities/AbilityEngine.js';
+import { FeatRulesAdapter } from '/systems/foundryvtt-swse/scripts/houserules/adapters/FeatRulesAdapter.js';
 
 const PATCH_FLAG = Symbol.for('swse.featHousekeepingRuntimePatches.v1');
+const ABILITY_PATCH_FLAG = Symbol.for('swse.featHousekeepingRuntimePatches.ability.v1');
 const HOOK_FLAG = Symbol.for('swse.featHousekeepingRuntimePatches.hooks.v1');
 
 const HOUSERULE_FEAT_GRANTS = [
@@ -37,10 +39,74 @@ function featNamesMatch(a, b) {
   return stripScope(left) === stripScope(right);
 }
 
+function isHouseruleFeatGrantEnabled(setting) {
+  try {
+    if (setting === 'weaponFinesseDefault') return FeatRulesAdapter.weaponFinesseDefaultEnabled();
+    if (setting === 'pointBlankShotDefault') return FeatRulesAdapter.pointBlankShotDefaultEnabled();
+    if (setting === 'powerAttackDefault') return FeatRulesAdapter.powerAttackDefaultEnabled();
+    if (setting === 'preciseShotDefault') return FeatRulesAdapter.preciseShotDefaultEnabled();
+    if (setting === 'dodgeDefault') return FeatRulesAdapter.dodgeDefaultEnabled();
+    if (typeof HouseRuleService.getBoolean === 'function') return HouseRuleService.getBoolean(setting, false);
+    if (typeof HouseRuleService.isEnabled === 'function') return HouseRuleService.isEnabled(setting);
+    if (typeof HouseRuleService.getSafe === 'function') return HouseRuleService.getSafe(setting, false);
+  } catch (_err) {
+    // fall through to disabled
+  }
+  return false;
+}
+
 export function getHouseruleGrantedFeatNames() {
   return HOUSERULE_FEAT_GRANTS
-    .filter(({ setting }) => HouseRuleService.isEnabled(setting))
+    .filter(({ setting }) => isHouseruleFeatGrantEnabled(setting))
     .map(({ name }) => name);
+}
+
+function buildHouseruleGrantedFeatEntries() {
+  return getHouseruleGrantedFeatNames().map(name => ({
+    name,
+    type: 'feat',
+    source: 'house-rule',
+    grantedBy: 'house-rule',
+    system: {
+      sourceType: 'house-rule',
+      grantedBy: 'house-rule',
+      ignorePrerequisites: true,
+    },
+    flags: {
+      swse: {
+        houseRuleGranted: true,
+        ignorePrerequisites: true,
+      },
+    },
+  }));
+}
+
+function mergeHouseruleGrantedFeatsIntoPending(pending = {}) {
+  const grants = buildHouseruleGrantedFeatEntries();
+  if (!grants.length) return pending || {};
+
+  const out = { ...(pending || {}) };
+  const grantedFeats = Array.isArray(out.grantedFeats) ? [...out.grantedFeats] : [];
+  const seen = new Set(grantedFeats.map(entry => normalizeFeatName(entry?.name || entry)).filter(Boolean));
+
+  for (const grant of grants) {
+    const key = normalizeFeatName(grant.name);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    grantedFeats.push(grant);
+  }
+
+  const existingHouseRuleNames = Array.isArray(out.houseRuleGrantedFeats) ? out.houseRuleGrantedFeats : [];
+  const houseRuleGrantedFeats = Array.from(new Set([
+    ...existingHouseRuleNames,
+    ...grants.map(grant => grant.name),
+  ].filter(Boolean)));
+
+  return {
+    ...out,
+    grantedFeats,
+    houseRuleGrantedFeats,
+  };
 }
 
 function actorHasHouseruleGrantedFeat(requiredName) {
@@ -83,7 +149,6 @@ function hasRemainingRepeatableSlot(step, featOrId = null, shell = null) {
 }
 
 function applyHouseruleGrantStatus(step, legal = []) {
-  const legalIds = new Set((legal || []).map(getFeatStableId));
   const grantedIds = new Set();
 
   for (const feat of step?._allFeats || []) {
@@ -111,7 +176,7 @@ function applyHouseruleGrantStatus(step, legal = []) {
   }
 
   if (!grantedIds.size) return legal;
-  return (legal || []).filter(feat => !grantedIds.has(getFeatStableId(feat)) || !legalIds.has(getFeatStableId(feat)));
+  return (legal || []).filter(feat => !grantedIds.has(getFeatStableId(feat)));
 }
 
 function patchRepeatableFeatSelectionUi() {
@@ -126,6 +191,14 @@ function patchRepeatableFeatSelectionUi() {
     if (!originalResult) return false;
     if (hasRemainingRepeatableSlot(this, featOrId)) return false;
     return true;
+  };
+
+  const originalBuildPendingAbilityData = proto._buildPendingAbilityData;
+  proto._buildPendingAbilityData = function patchedBuildPendingAbilityData(shell) {
+    const pending = typeof originalBuildPendingAbilityData === 'function'
+      ? originalBuildPendingAbilityData.call(this, shell)
+      : {};
+    return mergeHouseruleGrantedFeatsIntoPending(pending);
   };
 
   const originalGetLegalFeats = proto._getLegalFeats;
@@ -146,6 +219,7 @@ function patchRepeatableFeatSelectionUi() {
     for (const feat of this._allFeats || []) {
       const featId = getFeatStableId(feat);
       if (!featId || legalIds.has(featId)) continue;
+      if (actorHasHouseruleGrantedFeat(feat?.name)) continue;
       if (typeof this._isRepeatable !== 'function' || !this._isRepeatable(feat?.name)) continue;
       if (!currentNames.some(name => featNamesMatch(name, feat?.name))) continue;
 
@@ -157,11 +231,19 @@ function patchRepeatableFeatSelectionUi() {
       );
       if (!slotValidation?.valid) continue;
 
-      feat.isAvailable = true;
-      feat.isRepeatable = true;
-      feat.unavailabilityReason = '';
-      feat.blockingReasons = [];
-      feat.missingPrerequisites = [];
+      const status = {
+        ...(this._availabilityByFeatId?.get(featId) || {}),
+        isAvailable: true,
+        isRepeatable: true,
+        isOwned: false,
+        isGranted: false,
+        unavailabilityReason: '',
+        blockingReasons: [],
+        missingPrerequisites: [],
+        slotCompatible: true,
+      };
+      Object.assign(feat, status);
+      this._availabilityByFeatId?.set(featId, status);
       legal.push(feat);
       legalIds.add(featId);
     }
@@ -203,6 +285,32 @@ function patchHouseruleFeatOwnership() {
   PrerequisiteChecker[PATCH_FLAG] = true;
 }
 
+function patchHouseruleFeatPendingForAbilityEngine() {
+  if (!AbilityEngine || AbilityEngine[ABILITY_PATCH_FLAG]) return;
+
+  const originalEvaluateAcquisition = AbilityEngine.evaluateAcquisition;
+  AbilityEngine.evaluateAcquisition = function patchedEvaluateAcquisition(actor, candidate, pending = {}) {
+    const augmentedPending = mergeHouseruleGrantedFeatsIntoPending(pending);
+    return typeof originalEvaluateAcquisition === 'function'
+      ? originalEvaluateAcquisition.call(this, actor, candidate, augmentedPending)
+      : {
+          legal: false,
+          eligible: false,
+          permanentlyBlocked: true,
+          missingPrereqs: ['Evaluation unavailable'],
+          missing: ['Evaluation unavailable'],
+          blockingReasons: ['AbilityEngine.evaluateAcquisition is unavailable'],
+          reasons: ['AbilityEngine.evaluateAcquisition is unavailable'],
+          unresolved: [],
+          advisory: [],
+          warnings: [],
+          evaluation: {},
+        };
+  };
+
+  AbilityEngine[ABILITY_PATCH_FLAG] = true;
+}
+
 function registerHouseRuleCacheInvalidation() {
   if (globalThis[HOOK_FLAG]) return;
   globalThis[HOOK_FLAG] = true;
@@ -213,6 +321,7 @@ function registerHouseRuleCacheInvalidation() {
 
 export function registerFeatHousekeepingRuntimePatches() {
   patchHouseruleFeatOwnership();
+  patchHouseruleFeatPendingForAbilityEngine();
   patchRepeatableFeatSelectionUi();
   registerHouseRuleCacheInvalidation();
 }
