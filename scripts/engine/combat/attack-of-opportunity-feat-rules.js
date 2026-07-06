@@ -5,6 +5,10 @@
  * not detect threatened squares, adjacency, reach, line of sight, movement path,
  * or provocation. It only exposes actor-owned feat effects that can safely be
  * represented once the GM/player has chosen to use the AoO combat action.
+ *
+ * SWSE rules note: attacks of opportunity are free actions, not reactions. This
+ * module therefore exposes a separate AoO pool instead of touching reaction
+ * capacity. Reactions remain trigger-limited elsewhere in the action economy.
  */
 
 function actorItems(actor) {
@@ -57,7 +61,7 @@ function abilityModFromActor(actor, abilityKey) {
   return 0;
 }
 
-function reactionCapacity(actor) {
+function opportunityAttackCapacity(actor) {
   const base = 1;
   const hasCombatReflexes = hasFeat(actor, 'Combat Reflexes');
   const dexMod = abilityModFromActor(actor, 'dex');
@@ -66,9 +70,12 @@ function reactionCapacity(actor) {
     base,
     bonus: combatReflexesBonus,
     total: base + combatReflexesBonus,
-    source: hasCombatReflexes ? 'Combat Reflexes' : 'base reaction',
+    source: hasCombatReflexes ? 'Combat Reflexes' : 'base attacks of opportunity',
     hasCombatReflexes,
-    dexModifier: dexMod
+    dexModifier: dexMod,
+    actionType: 'free',
+    pool: 'attacksOfOpportunity',
+    doesNotConsumeReaction: true
   };
 }
 
@@ -81,8 +88,14 @@ export class AttackOfOpportunityFeatRules {
     return hasFeat(actor, 'Martial Arts I');
   }
 
+  static getOpportunityAttackCapacity(actor) {
+    return opportunityAttackCapacity(actor);
+  }
+
   static getReactionCapacity(actor) {
-    return reactionCapacity(actor);
+    // Backward-compatible alias for older callers. The payload is intentionally
+    // the AoO pool, not reaction economy. Prefer getOpportunityAttackCapacity().
+    return this.getOpportunityAttackCapacity(actor);
   }
 
   static getEligibility(actor) {
@@ -92,21 +105,24 @@ export class AttackOfOpportunityFeatRules {
       unarmedRequiresFeat: 'Martial Arts I',
       cannotUseWhileFlatFooted: !this.hasCombatReflexes(actor),
       combatReflexesAllowsFlatFootedAoO: this.hasCombatReflexes(actor),
-      spatialPredicatePolicy: 'metadata_manual'
+      spatialPredicatePolicy: 'metadata_manual',
+      actionType: 'free',
+      doesNotConsumeReaction: true
     };
   }
 
   static buildActionEnrichment(actor) {
-    const capacity = this.getReactionCapacity(actor);
+    const capacity = this.getOpportunityAttackCapacity(actor);
     const eligibility = this.getEligibility(actor);
     return {
       resources: [
-        `Reactions available: ${capacity.total}`,
-        capacity.hasCombatReflexes ? `Combat Reflexes: +${capacity.bonus} reactions from Dex` : 'Consumes reaction',
+        `Attacks of opportunity available: ${capacity.total}`,
+        capacity.hasCombatReflexes ? `Combat Reflexes: +${capacity.bonus} AoO from Dex` : 'AoO is a free action, not a reaction',
         eligibility.unarmedAllowed ? 'Unarmed AoO allowed: Martial Arts I' : 'Unarmed AoO requires Martial Arts I',
         eligibility.combatReflexesAllowsFlatFootedAoO ? 'Can AoO while flat-footed: Combat Reflexes' : 'Cannot AoO while flat-footed'
       ],
       ruleData: {
+        opportunityAttackCapacity: capacity,
         reactionCapacity: capacity,
         ...eligibility
       }
@@ -118,6 +134,8 @@ export class AttackOfOpportunityFeatRules {
     const enrichment = this.buildActionEnrichment(actor);
     return {
       ...action,
+      actionType: action.actionType ?? 'free',
+      cost: action.cost ?? {},
       resources: [
         ...(Array.isArray(action.resources) ? action.resources : []),
         ...enrichment.resources
