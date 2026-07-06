@@ -31,6 +31,25 @@ export class ActionEconomyPersistence {
     return TRIGGER_LIMITED_REACTION_SENTINEL;
   }
 
+  static #reactionTriggerKey(metadata = {}) {
+    const explicit = metadata.triggerId
+      ?? metadata.triggeringActionId
+      ?? metadata.triggeringEventId
+      ?? metadata.reactionTriggerId
+      ?? null;
+    if (explicit === undefined || explicit === null || explicit === '') return null;
+    return String(explicit);
+  }
+
+  static #hasSpentReactionForTrigger(turnState = {}, metadata = {}) {
+    const triggerKey = this.#reactionTriggerKey(metadata);
+    if (!triggerKey) return false;
+    return (Array.isArray(turnState.history) ? turnState.history : []).some(entry => (
+      entry?.type === 'reaction'
+      && this.#reactionTriggerKey(entry?.metadata ?? {}) === triggerKey
+    ));
+  }
+
   static normalizeTurnState(turnState = {}, actor = null) {
     const base = ActionEngine.startTurn();
     const maxReactions = this.getReactionMax(actor);
@@ -48,7 +67,8 @@ export class ActionEconomyPersistence {
         current: reactionCurrent,
         max: reactionMax,
         unlimitedByRule: true,
-        limitBasis: 'trigger'
+        limitBasis: 'trigger',
+        oneReactionPerTrigger: true
       },
       history: Array.isArray(turnState.history) ? turnState.history : []
     };
@@ -186,13 +206,18 @@ export class ActionEconomyPersistence {
 
   static async spendReaction(actor, combatId, metadata = {}) {
     const before = this.getTurnState(actor, combatId);
+    if (this.#hasSpentReactionForTrigger(before, metadata)) {
+      return { allowed: false, turnState: before, consumed: { reaction: 0 }, violations: ['REACTION_TRIGGER_ALREADY_USED'] };
+    }
+
     const after = this.#pushHistory({
       ...before,
       reactions: {
         current: this.getReactionMax(actor),
         max: this.getReactionMax(actor),
         unlimitedByRule: true,
-        limitBasis: 'trigger'
+        limitBasis: 'trigger',
+        oneReactionPerTrigger: true
       }
     }, {
       type: 'reaction',
