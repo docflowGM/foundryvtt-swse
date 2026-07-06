@@ -1,14 +1,3 @@
-/**
- * Initialization Hooks
- * System initialization and setup hooks
- *
- * @module init-hooks
- * @description
- * Manages system initialization hook registration.
- * Called from index.js during the init hook to register combat, actor, and UI hooks.
- * Also registers a ready hook for species reroll system initialization.
- */
-
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { HooksRegistry } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/hooks-registry.js";
 import { registerCombatHooks } from "/systems/foundryvtt-swse/scripts/infrastructure/hooks/combat-hooks.js";
@@ -38,6 +27,7 @@ import { registerCoreAttackOptionNormalizationHooks } from "/systems/foundryvtt-
 import { registerCoreAttackOptionRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/core-attack-option-runtime-patches.js";
 import { registerRageFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/rage-feat-normalization-hooks.js";
 import { registerAreaExplosivesFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/area-explosives-feat-normalization-hooks.js";
+import { registerAreaExplosivesRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/area-explosives-runtime-patches.js";
 import { registerMobilityPositioningFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/mobility-positioning-feat-normalization-hooks.js";
 import { registerMobilityPositioningRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/mobility-positioning-runtime-patches.js";
 import { registerDefenseAvoidanceFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/defense-avoidance-feat-normalization-hooks.js";
@@ -49,105 +39,49 @@ import { registerDamageThresholdFeatNormalizationHooks } from "/systems/foundryv
 import { registerSpeciesOriginFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/species-origin-feat-normalization-hooks.js";
 import { registerCombatFeatDamageRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/combat-feat-damage-runtime-patches.js";
 
-/**
- * Register initialization hooks
- * Called from index.js during the init hook - executes immediately since init is already running
- */
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
-
     registerCombatHooks();
     registerActorHooks();
     registerUIHooks();
-
     HooksRegistry.activateAll();
-
     SWSELogger.log('SWSE Hooks activated');
 
     Hooks.once('ready', async function() {
-        if (MobileMode?.init) {
-            MobileMode.init();
-            SWSELogger.log('Mobile Mode initialized');
-        } else {
-            SWSELogger.warn('Mobile Mode system not available');
-        }
-
+        if (MobileMode?.init) MobileMode.init(); else SWSELogger.warn('Mobile Mode system not available');
         registerMobilePrompt(isMobileCandidate);
-        SWSELogger.log('Mobile Mode prompt registered');
-
         LightsaberLightSync.registerAutoSyncHooks();
-        SWSELogger.log('Lightsaber Light Sync hooks registered');
-
         registerRerollListeners();
-        SWSELogger.log('Species Trait Engine initialized');
-
         FeatActionListeners.initialize();
-        SWSELogger.log('Feat Action Listeners initialized');
-
         registerGrappleFeatNormalizationHooks();
         registerGrappleFeatActions();
         registerGrappleRuntimePatches();
-        SWSELogger.log('Grapple Feat Hooks initialized');
-
         registerRiflemasterNormalizationHooks();
         registerRiflemasterRuntimePatches();
-        SWSELogger.log('Riflemaster Feat Hooks initialized');
-
         registerPistoleerNormalizationHooks();
         registerPistoleerRuntimePatches();
-        SWSELogger.log('Pistoleer Feat Hooks initialized');
-
         registerSniperNormalizationHooks();
         registerSniperRuntimePatches();
-        SWSELogger.log('Sniper Feat Hooks initialized');
-
         registerDualWeaponMasteryNormalizationHooks();
         registerDualWieldRuntimePatches();
-        SWSELogger.log('Dual Weapon Mastery and Dual Wield Shape Hooks initialized');
-
         registerCoreCombatReactionNormalizationHooks();
         registerCoreCombatReactionRuntimePatches();
-        SWSELogger.log('Core Combat Reaction Feat Hooks initialized');
-
         registerCoreAttackOptionNormalizationHooks();
         registerCoreAttackOptionRuntimePatches();
-        SWSELogger.log('Core Attack Option Feat Hooks initialized');
-
         registerRageFeatNormalizationHooks();
-        SWSELogger.log('Rage Feat Hooks initialized');
-
         registerAreaExplosivesFeatNormalizationHooks();
-        SWSELogger.log('Area & Explosives Feat Hooks initialized');
-
+        registerAreaExplosivesRuntimePatches();
         registerMobilityPositioningFeatNormalizationHooks();
         registerMobilityPositioningRuntimePatches();
-        SWSELogger.log('Mobility & Positioning Feat Hooks initialized');
-
         registerDefenseAvoidanceFeatNormalizationHooks();
         registerDefenseAvoidanceRuntimePatches();
-        SWSELogger.log('Defense & Avoidance Feat Hooks initialized');
-
         registerAttackOptionsFeatNormalizationHooks();
-        SWSELogger.log('Attack Options Feat Hooks initialized');
-
         registerMeleeCloseCombatFeatNormalizationHooks();
-        SWSELogger.log('Melee & Close Combat Feat Hooks initialized');
-
         registerRangedCombatFeatNormalizationHooks();
-        SWSELogger.log('Ranged Combat Feat Hooks initialized');
-
         registerDamageThresholdFeatNormalizationHooks();
-        SWSELogger.log('Damage & Threshold Feat Hooks initialized');
-
         registerCombatFeatDamageRuntimePatches();
-        SWSELogger.log('Combat Feat Damage Runtime Patches initialized');
-
         registerSpeciesOriginFeatNormalizationHooks();
-        SWSELogger.log('Species & Origin Feat Hooks initialized');
-
         SWSECombatActionBrowser.init();
-        SWSELogger.log('Combat Action Browser initialized');
-
         const stats = HooksRegistry.getStats();
         SWSELogger.log(`Hooks active: ${stats.active}/${stats.total}`);
     });
