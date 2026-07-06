@@ -37,6 +37,15 @@ const BASE_EXTRA_SKILL_USES = [
     tags: ['deception', 'shapeshift', 'impersonation']
   },
   {
+    id: 'deception.deceptive-appearance',
+    key: 'deceptive-appearance',
+    skill: 'deception',
+    name: 'Create Deceptive Appearance',
+    actionCost: 'varies',
+    rushPenalty: -10,
+    tags: ['deception', 'disguise', 'appearance']
+  },
+  {
     id: 'deception.disturbing-presence-movement',
     key: 'disturbing-presence-movement',
     skill: 'deception',
@@ -51,8 +60,16 @@ const BASE_EXTRA_SKILL_USES = [
     key: 'intimidate',
     skill: 'persuasion',
     name: 'Intimidate',
-    actionCost: 'standard',
+    actionCost: 'full-round',
     tags: ['combat', 'persuasion', 'intimidate']
+  },
+  {
+    id: 'persuasion.change-attitude',
+    key: 'change-attitude',
+    skill: 'persuasion',
+    name: 'Change Attitude',
+    actionCost: 'full-round',
+    tags: ['social', 'persuasion', 'attitude']
   },
   {
     id: 'persuasion.haggle',
@@ -77,6 +94,15 @@ const BASE_EXTRA_SKILL_USES = [
     name: 'Tumble',
     actionCost: 'move',
     tags: ['movement', 'acrobatics', 'tumble']
+  },
+  {
+    id: 'acrobatics.acrobatic-ally',
+    key: 'acrobatic-ally',
+    skill: 'acrobatics',
+    name: 'Hoist or Toss Ally',
+    actionCost: 'standard',
+    dc: 20,
+    tags: ['movement', 'acrobatics', 'ally']
   },
   {
     id: 'perception.scavenge-building-materials',
@@ -104,6 +130,22 @@ const BASE_EXTRA_SKILL_USES = [
     name: 'Hack System',
     actionCost: 'varies',
     tags: ['technical', 'use-computer']
+  },
+  {
+    id: 'use-computer.astrogate',
+    key: 'astrogate',
+    skill: 'useComputer',
+    name: 'Astrogate',
+    actionCost: 'varies',
+    tags: ['technical', 'use-computer', 'astrogation', 'hyperspace']
+  },
+  {
+    id: 'use-computer.hyperspace-mapping',
+    key: 'hyperspace-mapping',
+    skill: 'useComputer',
+    name: 'Hyperspace Mapping',
+    actionCost: 'varies',
+    tags: ['technical', 'use-computer', 'astrogation', 'hyperspace-mapping']
   },
   {
     id: 'mechanics.disable-device',
