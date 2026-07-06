@@ -3,8 +3,36 @@ import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
 let registered = false;
 
-const AUTOFIRE_RIDERS = ['autofireAssault', 'autofireSweep'];
-const SUPPRESSED_BY_AUTOFIRE_RIDER = ['burstFire'];
+const AUTOFIRE_RIDERS = ['burstFire', 'autofireAssault', 'autofireSweep'];
+const AUTOFIRE_RIDER_METADATA = {
+  burstFire: {
+    label: 'Burst Fire',
+    riderForAttackMode: 'autofire',
+    mutationOf: 'autofire',
+    mutationGroup: 'autofireRiderMutation',
+    exclusiveAttackOptionGroup: 'autofireRiderMutation',
+    selectionField: 'autofireRiderMutation',
+    selectionSurface: 'autofireRiderPicker'
+  },
+  autofireAssault: {
+    label: 'Autofire Assault',
+    riderForAttackMode: 'autofire',
+    mutationOf: 'autofire',
+    mutationGroup: 'autofireRiderMutation',
+    exclusiveAttackOptionGroup: 'autofireRiderMutation',
+    selectionField: 'autofireRiderMutation',
+    selectionSurface: 'autofireRiderPicker'
+  },
+  autofireSweep: {
+    label: 'Autofire Sweep',
+    riderForAttackMode: 'autofire',
+    mutationOf: 'autofire',
+    mutationGroup: 'autofireRiderMutation',
+    exclusiveAttackOptionGroup: 'autofireRiderMutation',
+    selectionField: 'autofireRiderMutation',
+    selectionSurface: 'autofireRiderPicker'
+  }
+};
 
 function cloneOptions(options = {}) {
   const deepClone = globalThis.foundry?.utils?.deepClone;
@@ -43,12 +71,18 @@ function normalizeAutofireRiderSelection(options = {}) {
     next.combatOptions[rider] = enabled;
     next.attackOptions[rider] = enabled;
   }
-  for (const suppressed of SUPPRESSED_BY_AUTOFIRE_RIDER) {
-    next.combatOptions[suppressed] = false;
-    next.attackOptions[suppressed] = false;
-  }
   next.flags = Array.isArray(next.flags) ? [...new Set([...next.flags, 'autofireRiderMutationSelected'])] : ['autofireRiderMutationSelected'];
   return next;
+}
+
+function decorateAutofireRiderOption(option) {
+  const meta = AUTOFIRE_RIDER_METADATA[option?.id];
+  if (!meta) return option;
+  return {
+    ...option,
+    ...meta,
+    control: option.control || 'rider-choice'
+  };
 }
 
 function patchCombatOptionResolver() {
@@ -61,19 +95,7 @@ function patchCombatOptionResolver() {
     CombatOptionResolver.summarizeAttackOptions = function patchedSummarizeAttackOptions(actor, weapon, options = {}) {
       const normalized = normalizeAutofireRiderSelection(options);
       const summary = originalSummarize(actor, weapon, normalized) ?? [];
-      return summary.map(option => {
-        if (!AUTOFIRE_RIDERS.includes(option?.id)) return option;
-        return {
-          ...option,
-          control: option.control || 'rider-choice',
-          riderForAttackMode: 'autofire',
-          mutationOf: 'autofire',
-          mutationGroup: 'autofireRiderMutation',
-          exclusiveAttackOptionGroup: 'autofireRiderMutation',
-          selectionField: 'autofireRiderMutation',
-          selectionSurface: 'autofireRiderPicker'
-        };
-      });
+      return summary.map(decorateAutofireRiderOption);
     };
   }
 
@@ -87,7 +109,7 @@ function patchCombatOptionResolver() {
       result.flags.autofireRiderExclusiveGroup = 'autofireRiderMutation';
       result.breakdown ??= [];
       if (!result.breakdown.some(entry => entry?.type === 'autofireRiderMutation' && entry?.value === selected)) {
-        result.breakdown.push({ label: `Autofire rider: ${selected}`, value: selected, type: 'autofireRiderMutation' });
+        result.breakdown.push({ label: `Autofire rider: ${AUTOFIRE_RIDER_METADATA[selected]?.label ?? selected}`, value: selected, type: 'autofireRiderMutation' });
       }
     }
     return result;
