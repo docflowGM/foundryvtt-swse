@@ -44,13 +44,16 @@ The following strict Combat feats were also completed before this pass and shoul
 | Burst Fire | implemented_as_autofire_rider_mutation | Burst Fire remains feat-gated by its own feat metadata, but the Autofire rider runtime now decorates it into the same `autofireRiderMutation` exclusive choice group as Autofire Assault and Autofire Sweep. It only appears as a rider option if the actor possesses Burst Fire. |
 | Autofire Assault | implemented_as_autofire_rider_mutation | Normalized as a rider-choice mutation for the base Autofire attack mode, not as an independent base action. It appears in the `autofireRiderMutation` choice group after Autofire is selected, requires matching owned Weapon Focus and `sameAutofireAreaAsLastTurn`, reduces the expected normal autofire penalty from -5 to -2 or -1 with braced autofire-only / Controlled Burst context, adds +1 weapon die only on a hit, and is mutually exclusive with Burst Fire and Autofire Sweep. |
 | Autofire Sweep | implemented_as_autofire_rider_mutation | Normalized as a rider-choice mutation for the base Autofire attack mode, not as an independent base action. It appears in the `autofireRiderMutation` choice group after Autofire is selected, requires matching owned Weapon Focus, emits 180-degree 6-square cone metadata from a visible point in point-blank range, and is mutually exclusive with Burst Fire and Autofire Assault while remaining compatible with Improved Suppression Fire. |
+| Long Haft Strike | implemented_as_weapon_property_override | Normalized as passive weapon property overrides for lightsaber pikes and long-handle lightsabers. Qualifying weapons expose `weaponProperty.doubleWeapon` and `weaponProperty.dualWieldEligibleAsDoubleWeapon` through the existing combat resolver instead of mutating the item permanently. |
+| Returning Bug | implemented_as_miss_rider | Normalized as a `MISS_RIDER` for missed razor bug or thud bug attacks. A generic miss-rider runtime collector now emits `targetEffectsOnMiss` so this does not masquerade as hit or damage math. |
+| Triple Crit | fully_implemented | Normalized to `WEAPON_CRITICAL_MULTIPLIER_MIN` with minimum x3 and selected-choice matching. The existing combat resolver uses the highest critical multiplier minimum, so it does not stack additively. |
+| Triple Crit Specialist | fully_implemented | Normalized to `WEAPON_CRITICAL_MULTIPLIER_MIN` with minimum x3 and selected-choice matching. The existing combat resolver uses the highest critical multiplier minimum, avoiding duplicate critical multiplier stacking with Triple Crit or other sources. |
 
 ## Weapon & Armor leftovers still queued
 
 These remain the next implementation pool, pending source/rule mapping and runtime wiring:
 
-- Lightsaber & Weapon Styles: Long Haft Strike, remaining non-unarmed weapon-style feats if source-confirmed.
-- Weapon Proficiency: Triple Crit Specialist, Relentless Attack, Returning Bug, Sport Hunter, Savage Attack, Withdrawal Strike.
+- Weapon Proficiency: Relentless Attack, Sport Hunter, Withdrawal Strike.
 - Armor Proficiency & Use: Grand Army of the Republic Training.
 
 ## Already implemented / not part of this queue
