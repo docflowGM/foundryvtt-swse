@@ -76,6 +76,9 @@ import { registerDroidCombatRuntimePatches } from "/systems/foundryvtt-swse/scri
 import { registerGalaxyIntrigueCombatActionAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/galaxy-intrigue-combat-action-adapter.js";
 import { registerGalaxyIntrigueCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/galaxy-intrigue-combat-feat-normalization-hooks.js";
 import { registerGalaxyIntrigueCombatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/galaxy-intrigue-combat-runtime-patches.js";
+import { registerUnknownRegionsCombatActionAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/unknown-regions-combat-action-adapter.js";
+import { registerUnknownRegionsCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/unknown-regions-combat-feat-normalization-hooks.js";
+import { registerUnknownRegionsCombatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/unknown-regions-combat-runtime-patches.js";
 
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -94,6 +97,7 @@ export function registerInitHooks() {
         registerAidAnotherActionAdapter();
         registerDroidCombatActionAdapter();
         registerGalaxyIntrigueCombatActionAdapter();
+        registerUnknownRegionsCombatActionAdapter();
         registerAbilityMetaSchemaDefaultHooks();
         registerGrappleFeatNormalizationHooks();
         registerGrappleFeatActions();
@@ -156,6 +160,8 @@ export function registerInitHooks() {
         registerDroidCombatRuntimePatches();
         registerGalaxyIntrigueCombatFeatNormalizationHooks();
         registerGalaxyIntrigueCombatRuntimePatches();
+        registerUnknownRegionsCombatFeatNormalizationHooks();
+        registerUnknownRegionsCombatRuntimePatches();
         registerSpeciesOriginFeatNormalizationHooks();
         SWSECombatActionBrowser.init();
         const stats = HooksRegistry.getStats();
