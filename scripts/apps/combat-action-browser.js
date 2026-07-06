@@ -183,7 +183,7 @@ export class SWSECombatActionBrowser extends SWSEApplication {
   _getCharacterActions(actor) {
     if (!actor) {return { favorites: [], groups: {} };}
 
-    const all = CombatActionsMapper.getAllActionsBySkill();
+    const all = CombatActionsMapper.getAllActionsBySkill(actor, { workflowValidated: true, validated: true });
     const favoriteKeys = this._getFavorites(actor);
 
     const groups = {};
@@ -264,90 +264,37 @@ export class SWSECombatActionBrowser extends SWSEApplication {
     const actor = canvas.tokens.controlled[0]?.actor;
     if (!actor) {return;}
 
-    const favs = new Set(this._getFavorites(actor));
-    if (favs.has(key)) {favs.delete(key);} else {favs.add(key);}
+    let favs = this._getFavorites(actor);
+    if (favs.includes(key)) {
+      favs = favs.filter(f => f !== key);
+    } else {
+      favs.push(key);
+    }
 
-    await actor.setFlag('foundryvtt-swse', 'pinnedActions', [...favs]);
+    await actor.setFlag('foundryvtt-swse', 'pinnedActions', favs);
   }
 
   /* ------------------------------- */
-  /* Action Execution                 */
-  /* ------------------------------- */
-
-  async _executeAction(key, actionType) {
-    const actor = canvas.tokens.controlled[0]?.actor;
-    if (!actor) {return ui.notifications.warn('No actor selected.');}
-
-    Hooks.callAll('swse.preCombatActionExecute', { actor, key, actionType });
-
-    if (actionType === 'skill') {
-      await SWSERoll.rollSkill(actor, key);
-    } else if (actionType === 'attack') {
-      const weapon = actor.items.find(i => i.type === 'weapon' && i.system.key === key);
-      if (!weapon) {return ui.notifications.warn('Weapon not found.');}
-      await SWSECombat.rollAttack(actor, weapon);
-    } else if (actionType === 'vehicle') {
-      const vehicle = actor;
-      const target = [...game.user.targets][0]?.actor ?? null;
-      if (!target) {return ui.notifications.warn('No target selected.');}
-      const weapon = vehicle.items.find(i => i.type === 'vehicle-weapon' && i.system.key === key);
-      await SWSECombat.rollAttack(vehicle, weapon, target);
-    }
-
-    // Grapple, Feint, Bull Rush, custom:
-    else if (actionType === 'custom') {
-      Hooks.callAll('swse.executeCustomAction', { actor, actionKey: key });
-    }
-
-    Hooks.callAll('swse.postCombatActionExecute', { actor, key, actionType });
-  }
-
-  /* ------------------------------- */
-  /* Action Qualification             */
+  /* Execution                        */
   /* ------------------------------- */
 
   _canActorUseAction(actor, action) {
-    if (actor.type === 'vehicle' && action.crewPosition) {
-      const role = actor.system?.crewRole?.toLowerCase();
-      return role === action.crewPosition.toLowerCase() || action.crewPosition === 'any';
-    }
-
-    return true; // Expand later with prereqs
+    if (!actor) {return false;}
+    return true;
   }
 
   _explainWhyCantUse(actor, action) {
-    if (actor.type === 'vehicle' && action.crewPosition) {
-      return `Requires crew role: ${action.crewPosition}`;
-    }
-
-    return 'Prerequisites not met.';
+    return 'Requirements not met';
   }
 
-  /**
-   * Get display name for a skill key
-   * @param {string} skill - The skill key
-   * @returns {string} Display name
-   */
-  _getSkillDisplayName(skill) {
-    // Map skill keys to display names
-    const skillNames = {
-      'acrobatics': 'Acrobatics',
-      'athletics': 'Athletics',
-      'deception': 'Deception',
-      'initiative': 'Initiative',
-      'insight': 'Insight',
-      'medicine': 'Medicine',
-      'perception': 'Perception',
-      'sleight-of-hand': 'Sleight of Hand',
-      'stealth': 'Stealth',
-      'survival': 'Survival',
-      'armor-proficiency': 'Armor Proficiency',
-      'weapon-proficiency': 'Weapon Proficiency',
-      'other-skills': 'Other Skills'
-    };
+  async _executeAction(key, type) {
+    const actor = canvas.tokens.controlled[0]?.actor;
+    if (!actor) {return;}
 
-    return skillNames[skill] || skill.charAt(0).toUpperCase() + skill.slice(1).toLowerCase();
+    const action = CombatActionsMapper.getAllCombatActions(actor, { workflowValidated: true, validated: true })
+      .find(a => a.key === key || a.id === key);
+    if (!action) {return;}
+
+    await SWSECombat.runCombatAction(actor, action);
   }
 }
-
-window.SWSECombatActionBrowser = SWSECombatActionBrowser;
