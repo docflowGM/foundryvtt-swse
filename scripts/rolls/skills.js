@@ -14,6 +14,7 @@ import { SkillFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/skill
 import { RageEngine } from "/systems/foundryvtt-swse/scripts/engine/species/rage-engine.js";
 import { showRollModifiersDialog } from "/systems/foundryvtt-swse/scripts/rolls/roll-config.js";
 import { ImplantEffectRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantEffectRules.js";
+import { TeamFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/team-feat-runtime-patches.js";
 
 
 const ATHLETICS_COMPONENT_KEYS = ['acrobatics', 'climb', 'jump', 'swim'];
@@ -180,6 +181,13 @@ export async function rollSkill(actor, skillKey, options = {}) {
   };
   skillContext.contextFlags = RageEngine.getSkillContextFlags(actor, skillContext.contextFlags ?? skillContext.flags ?? []);
   skillContext.flags = skillContext.contextFlags;
+
+  try {
+    Object.assign(skillContext, await TeamFeatRuntime.promptForTeamFeatAllyCounts(actor, effectiveSkillKey, skillContext));
+  } catch (err) {
+    swseLogger.warn('Team feat prompt failed; continuing with base Team Feat bonuses only.', err);
+  }
+
   const featSkillBonuses = SkillFeatResolver.getSkillCheckBonuses(actor, effectiveSkillKey, skillContext);
   const skillCheckMode = String(options?.checkMode || (options?.take20 === true ? 'take20' : options?.take10 === true ? 'take10' : 'roll')).toLowerCase();
   const skillTakeXValue = skillCheckMode === 'take20' ? 20 : skillCheckMode === 'take10' ? 10 : 10;
@@ -209,6 +217,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
       skillUse: skillContext.skillUse,
       useKey: skillContext.useKey,
       featSkillBonuses: featSkillBonuses.bonuses,
+      teamFeatAllyCounts: skillContext.teamFeatAllyCounts ?? null,
       checkMode: skillCheckMode,
       takeXValue: skillIsTakeX ? skillTakeXValue : null
     }
@@ -247,6 +256,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
           skillKey: effectiveSkillKey,
           skillUseKey: skillContext.useKey ?? null,
           featSkillBonuses: featSkillBonuses.bonuses,
+          teamFeatAllyCounts: skillContext.teamFeatAllyCounts ?? null,
           skillResultRiders: resultRiders,
           rerollOptions
         }
@@ -262,6 +272,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
         customModifier: Number(options?.customModifier || 0),
         featSkillBonus: featSkillBonuses.total,
         featSkillBonuses: featSkillBonuses.bonuses,
+        teamFeatAllyCounts: skillContext.teamFeatAllyCounts ?? null,
         skillResultRiders: resultRiders,
         rerollOptions,
         dc: options?.dc ?? null,
@@ -276,7 +287,7 @@ export async function rollSkill(actor, skillKey, options = {}) {
     // PHASE 5: Offer species reroll if applicable
     // Check if actor has applicable species reroll rights for this skill
     const applicableRerolls = SpeciesRerollHandler.getApplicableRerolls(actor, effectiveSkillKey);
-    if (applicableRerolls && applicableRerolls.length > 0) {
+    if (applicableRerolls.length > 0) {
       const rerollResult = await SpeciesRerollHandler.offerReroll(actor, effectiveSkillKey, chatRoll, {
         skillKey: effectiveSkillKey
       });
