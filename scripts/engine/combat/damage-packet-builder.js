@@ -7,6 +7,7 @@ import {
 import { RecurringDamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/recurring-damage-engine.js";
 import { damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 import { buildDamageComponents } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-component-rules.js";
+import { SkillFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/skill-feat-runtime-patches.js";
 
 function idOf(doc) {
   return doc?.id ?? doc?._id ?? null;
@@ -101,6 +102,22 @@ export function resolveDamageDisposition(workflowContext = null, options = {}) {
       reason: 'Natural 1 does not deal damage.',
       hit,
       areaAttack,
+      burstFire,
+      autofire,
+      halfDamageOnMiss,
+      damageOnMiss
+    };
+  }
+
+  const coverNegation = SkillFeatRuntime.resolveAreaAttackCoverDamageDisposition(
+    options.target ?? options.targetActor ?? context.target ?? context.targetActor ?? null,
+    context,
+    { options }
+  );
+  if (coverNegation) {
+    return {
+      ...coverNegation,
+      hit,
       burstFire,
       autofire,
       halfDamageOnMiss,
@@ -239,6 +256,7 @@ function buildBaseDamagePacket({ attacker, target, weapon, rawAmount, context, d
       areaAttack: disposition.areaAttack === true,
       burstFire: disposition.burstFire === true,
       autofire: disposition.autofire === true,
+      advantageousCover: disposition.advantageousCover === true,
       halfDamageOnMiss: disposition.halfDamageOnMiss === true,
       damageOnMiss: disposition.damageOnMiss === true,
       stun: type === 'stun',
@@ -273,6 +291,7 @@ function buildBaseDamagePacket({ attacker, target, weapon, rawAmount, context, d
       areaAttack: disposition.areaAttack === true,
       burstFire: disposition.burstFire === true,
       autofire: disposition.autofire === true,
+      advantageousCover: disposition.advantageousCover === true,
       halfDamageOnMiss: disposition.halfDamageOnMiss === true,
       damageOnMiss: disposition.damageOnMiss === true,
       stun: type === 'stun',
@@ -308,7 +327,7 @@ export function buildDamagePacket({
     isCritical: options.isCritical ?? undefined,
     critMultiplier: options.critMultiplier ?? undefined
   });
-  const disposition = resolveDamageDisposition(context, options);
+  const disposition = resolveDamageDisposition(context, { ...options, target });
   const type = resolveDamagePacketType({ weapon, workflowContext: context, options });
   const basePacket = buildBaseDamagePacket({ attacker, target, weapon, rawAmount, context, disposition, type, options });
   return finalizeDamagePacketForTarget(basePacket, target);
