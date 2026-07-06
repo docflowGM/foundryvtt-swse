@@ -258,6 +258,20 @@ function readEncounterUseCount(encounterFlag, activeCombatId) {
   return Math.max(0, Number(encounterFlag.count ?? encounterFlag.uses ?? encounterFlag.used ?? 1) || 1);
 }
 
+async function promptForcefulRecoveryIfNeeded(actor, rules = {}, options = {}) {
+  if (!rules?.regainForcePowerOnUse || options.promptForcefulRecovery === false) return null;
+  try {
+    const { promptForcefulRecoveryPower } = await import('/systems/foundryvtt-swse/scripts/apps/dialogs/forceful-recovery-picker.js');
+    return await promptForcefulRecoveryPower(actor, {
+      emptyMessage: 'There are no valid Force powers or lightsaber form powers to recover.'
+    });
+  } catch (err) {
+    SWSELogger.warn('[SecondWindRiders] Forceful Recovery picker failed', { actor: actor?.name, error: err?.message ?? err });
+    ui?.notifications?.warn?.(`Forceful Recovery picker failed: ${err.message}`);
+    return { success: false, reason: err.message };
+  }
+}
+
 function patchSecondWindRulesResolver() {
   if (MetaResourceFeatResolver.__swseSecondWindRiderPatched === true) return;
   const original = MetaResourceFeatResolver.getSecondWindRules?.bind(MetaResourceFeatResolver);
@@ -313,6 +327,9 @@ function patchSecondWindEncounterUsage() {
     }
     if (result?.success && selectedRules?.secondWindMovement) result.secondWindMovement = selectedRules.secondWindMovement;
     if (result?.success && suppressImmediateHealing) result.immediateHealingSuppressed = true;
+    if (result?.success && selectedRules?.regainForcePowerOnUse) {
+      result.forcefulRecovery = await promptForcefulRecoveryIfNeeded(actor, selectedRules, options);
+    }
     return result;
   };
   ActorEngine.__swseSecondWindEncounterCountPatched = true;
