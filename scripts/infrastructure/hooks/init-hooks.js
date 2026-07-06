@@ -90,6 +90,7 @@ import { registerRebellionSpeciesSkillFeatNormalizationHooks } from "/systems/fo
 import { registerRebellionSpeciesSkillFeatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/rebellion-species-skill-feat-runtime-patches.js";
 import { registerSecondWindRiderRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/second-wind-rider-runtime-patches.js";
 import { registerSecondWindFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/second-wind-feat-normalization-hooks.js";
+import { registerConditionTrackFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/condition-track-feat-normalization-hooks.js";
 
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -116,6 +117,7 @@ export function registerInitHooks() {
         registerTeamFeatNormalizationHooks();
         registerRebellionSpeciesSkillFeatNormalizationHooks();
         registerSecondWindFeatNormalizationHooks();
+        registerConditionTrackFeatNormalizationHooks();
         registerAidAnotherActionAdapter();
         registerDroidCombatActionAdapter();
         registerGalaxyIntrigueCombatActionAdapter();
