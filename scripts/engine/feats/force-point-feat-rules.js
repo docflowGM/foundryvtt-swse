@@ -105,10 +105,6 @@ function stepDieSize(current, steps = 0, maxDie = 12) {
   return ladder[Math.max(0, Math.min(cap, index + Math.max(0, Number(steps) || 0)))] ?? current;
 }
 
-function forceTrainingFeatCount(actor) {
-  return actorFeatItems(actor).filter(item => normalizeName(item?.name) === 'force training').length;
-}
-
 function darkSideScore(actor) {
   const value = actor?.system?.darkSide?.value
     ?? actor?.system?.darkSideScore?.value
@@ -188,20 +184,32 @@ export class ForcePointFeatRules {
     return { source: 'Core Force Point Rules', action: 'free', allowOffTurn: false, restrictionsStillApply: true };
   }
 
-  static getForceTrainingPowerBonusPerInstance(actor) {
+  static getForceTrainingAbilityScoreBonus(actor) {
     let bonus = 0;
     for (const rule of collectResourceRules(actor, 'forceTraining')) {
-      if (rule?.type !== 'FORCE_TRAINING_POWER_BONUS_PER_INSTANCE' && rule?.type !== 'FORCE_TRAINING_ABILITY_SCORE_BONUS') continue;
-      const explicit = Number(rule.powerBonusPerForceTraining ?? rule.extraPowersPerForceTraining ?? rule.valuePerInstance);
-      if (Number.isFinite(explicit)) bonus = Math.max(bonus, explicit);
-      else if (Number(rule.value ?? 0) === 4) bonus = Math.max(bonus, 2);
+      if (rule?.type !== 'FORCE_TRAINING_ABILITY_SCORE_BONUS') continue;
+      const value = Number(rule.value ?? rule.abilityScoreBonus ?? 0);
+      if (Number.isFinite(value)) bonus = Math.max(bonus, value);
     }
-    if (actorHasFeat(actor, 'Jedi Heritage')) bonus = Math.max(bonus, 2);
+    if (actorHasFeat(actor, 'Jedi Heritage')) bonus = Math.max(bonus, 4);
     return bonus;
   }
 
+  static getForceTrainingPowerBonusPerInstance(actor) {
+    // Backward-compatible accessor for old callers. Jedi Heritage is intentionally
+    // not represented as a fixed +2 slot bonus because the RAW calculation is
+    // max(1, 1 + modifier(configuredForceTrainingAbility + 4)). Low ability scores
+    // therefore can grant +0 or +1 instead of always +2.
+    for (const rule of collectResourceRules(actor, 'forceTraining')) {
+      if (rule?.type !== 'FORCE_TRAINING_POWER_BONUS_PER_INSTANCE') continue;
+      const value = Number(rule.value ?? rule.powerBonusPerForceTraining ?? rule.extraPowersPerForceTraining ?? 0);
+      if (Number.isFinite(value)) return Math.max(0, value);
+    }
+    return 0;
+  }
+
   static getForceTrainingExtraPowerTotal(actor) {
-    return this.getForceTrainingPowerBonusPerInstance(actor) * forceTrainingFeatCount(actor);
+    return this.getForceTrainingPowerBonusPerInstance(actor);
   }
 
   static getForcePointGainRules(actor) {
