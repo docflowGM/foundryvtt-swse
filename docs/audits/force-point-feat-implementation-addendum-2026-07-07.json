@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "created": "2026-07-07",
+  "bucket": "Force Point and Force Power Based Feats",
+  "scope": [
+    "Force Boon",
+    "Strong in the Force",
+    "Force Readiness",
+    "Jedi Familiarity",
+    "Pall of the Dark Side",
+    "Unstoppable Force",
+    "Confident Success",
+    "Spacer's Surge",
+    "Gungan Weapon Master",
+    "Jedi Heritage"
+  ],
+  "changedFiles": [
+    "scripts/engine/feats/force-point-feat-rules.js",
+    "scripts/engine/feats/force-point-feat-normalization-hooks.js",
+    "scripts/engine/feats/force-point-feat-actions.js",
+    "scripts/engine/feats/force-training-entitlement-runtime-patches.js",
+    "scripts/engine/feats/force-point-service-runtime-patches.js",
+    "scripts/engine/force/force-points-service.js",
+    "scripts/utils/force-points.js",
+    "scripts/infrastructure/hooks/init-hooks.js"
+  ],
+  "implemented": [
+    {
+      "feat": "Force Boon",
+      "status": "implemented_resource_rule",
+      "mechanic": "Adds +3 to Force Point maximum through normalized resourceRules.forcePoints MAX_BONUS and ForcePointsService max calculation.",
+      "runtime": "ForcePointsService.getMax uses the Force Point feat rule reader and legacy MetaResource resolver without double-counting."
+    },
+    {
+      "feat": "Strong in the Force",
+      "status": "implemented_contextual_die_size",
+      "mechanic": "Uses d8 Force Point dice for attack, skill, and ability check adjustment contexts.",
+      "runtime": "ForcePointsService.getScalingDice/getDieSize now accepts Force Point spend context, and ForcePointsUtil passes that context into rolls/dialogs."
+    },
+    {
+      "feat": "Force Readiness",
+      "status": "implemented_spend_timing_policy",
+      "mechanic": "Allows off-turn/reaction Force Point spending as a Free Action while preserving normal spend restrictions.",
+      "runtime": "ForcePointFeatRules.canSpendOffTurn and ForcePointsService validation enforce off-turn spending only when this rule is present or a caller supplies an equivalent rule."
+    },
+    {
+      "feat": "Jedi Familiarity",
+      "status": "implemented_action_helper_with_boundary",
+      "mechanic": "Once per encounter helper grants 1 temporary Force Point when an allied Force Power or Force Talent affects the actor without damage or condition-track loss.",
+      "runtime": "ForcePointFeatActions.grantJediFamiliarity writes a bonusForcePoints pool entry consumed before normal Force Points by ActorEngine.spendForcePoints.",
+      "boundary": "Automatic triggering depends on Force Power/Talent workflows calling the helper with ally/effect context."
+    },
+    {
+      "feat": "Pall of the Dark Side",
+      "status": "implemented_contextual_skill_rule_helper",
+      "mechanic": "Provides max(1, floor(Dark Side Score / 2)) bonus for Use the Force checks made to resist Sense Force detection.",
+      "runtime": "ForcePointFeatRules.getSenseForceDetectionResistanceBonus returns the bonus for Sense Force detection-resistance contexts.",
+      "boundary": "Callsites must request this helper in Sense Force resistance workflows."
+    },
+    {
+      "feat": "Unstoppable Force",
+      "status": "implemented_contextual_defense_rule_helper",
+      "mechanic": "+5 insight bonus to Fortitude and Will Defense against attacks/effects requiring a Use the Force check.",
+      "runtime": "ForcePointFeatRules.getUseTheForceDefenseBonus returns +5 for Fortitude/Will UTF contexts.",
+      "boundary": "Defense resolution callsites must request this helper when resolving Use the Force attacks/effects."
+    },
+    {
+      "feat": "Confident Success",
+      "status": "implemented_action_helper_with_level_cap",
+      "mechanic": "Successful Gather Information / Learn Secret Information grants 1 normal Force Point, capped at 3 per level and normal Force Point max.",
+      "runtime": "ForcePointFeatActions.grantConfidentSuccess uses ActorEngine.gainForcePoints and a per-level flag to enforce the feat cap."
+    },
+    {
+      "feat": "Spacer's Surge",
+      "status": "implemented_action_helper",
+      "mechanic": "Natural 20 on a Pilot check grants 1 temporary Force Point until encounter end.",
+      "runtime": "ForcePointFeatActions.grantSpacersSurge writes a temporary bonusForcePoints pool entry."
+    },
+    {
+      "feat": "Gungan Weapon Master",
+      "status": "implemented_contextual_die_step",
+      "mechanic": "When spending a Force Point on an Atlatl or Cesta attack roll, increases the FP die type one step, capped at d10.",
+      "runtime": "ForcePointFeatRules.getForcePointDieSize applies weapon-context DIE_STEP rules, and ForcePointsUtil passes weapon/roll context into ForcePointsService."
+    },
+    {
+      "feat": "Jedi Heritage",
+      "status": "implemented_force_training_entitlement_patch",
+      "mechanic": "Adds +2 Force Powers for each Force Training feat by treating Wisdom as 4 higher for Force Training slot calculation.",
+      "runtime": "force-training-entitlement-runtime-patches.js patches FeatGrantEntitlementResolver.getForceTrainingSlotsPerInstance and annotates forcePowerSlots entries."
+    }
+  ],
+  "notes": [
+    "Temporary Force Point feats use the existing flags.swse.bonusForcePoints pool, which ActorEngine.spendForcePoints already consumes before normal Force Points.",
+    "ForcePointServiceRuntime patches validation so temporary/bonus Force Points count for spend eligibility, matching ActorEngine spend behavior.",
+    "This pass intentionally exposes helper/rule APIs for event-specific feats where fully automatic triggering requires workflow-specific context not present in every legacy caller."
+  ],
+  "notLiveTested": true
+}
