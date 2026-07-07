@@ -45,6 +45,7 @@ function rulesForFeat(name) {
       requiresState: 'grappled',
       resultCondition: 'prone',
       opposed: true,
+      clearsGrapple: true,
       summary: 'Unlocks Trip Grappled Opponent through the canonical advanced grapple maneuver path.'
     })];
   }
@@ -69,6 +70,30 @@ function rulesForFeat(name) {
       damage: true,
       summary: 'Unlocks Crush Pinned Opponent through the canonical advanced grapple maneuver path.'
     })];
+  }
+
+  if (normalized === 'bone crusher') {
+    return [{
+      type: 'CONDITION_SHIFT_ON_GRAPPLE_DAMAGE',
+      id: 'boneCrusherConditionShiftOnGrappleDamage',
+      source: 'Bone Crusher',
+      trigger: 'damageToGrappledOpponent',
+      requiresTargetState: ['grappled', 'pinned'],
+      steps: 1,
+      summary: 'When you deal damage to a Grappled opponent, the target moves -1 step on the Condition Track.'
+    }];
+  }
+
+  if (normalized === 'grapple resistance') {
+    return [{
+      type: 'RESIST_GRAB_AND_GRAPPLE',
+      id: 'grappleResistancePlusFive',
+      source: 'Grapple Resistance',
+      bonus: 5,
+      modes: ['resistGrab', 'resistGrapple'],
+      objectReflexBonus: 5,
+      summary: '+5 Reflex Defense against enemy Grab/Grapple attacks, +5 opposed Grapple checks, and +5 Reflex Defense for held/carried objects when attacked.'
+    }];
   }
 
   if (normalized === 'rancor crush') {
@@ -109,6 +134,43 @@ function rulesForFeat(name) {
     }];
   }
 
+  if (normalized === 'pincer') {
+    return [{
+      type: 'PIN_MAINTENANCE_AND_CRUSH',
+      id: 'pincerMaintainPinAndCrush',
+      source: 'Pincer',
+      actionId: 'pincer',
+      actionType: 'swift',
+      requiresTargetState: 'pinned',
+      requiresAppendageType: ['claw', 'hand'],
+      canMaintainPinBeyondOneRound: true,
+      subsequentGrappleCheckActionType: 'swift',
+      mayApplyCrushOnSuccessfulCheck: true,
+      delegatesTo: 'GrappleFeatActions.pincer',
+      summary: 'While a target is already Pinned, maintain the Pin beyond 1 round with a Swift Action grapple check and apply Crush whenever the subsequent check succeeds.'
+    }];
+  }
+
+  if (normalized === 'slammer') {
+    return [{
+      type: 'SLAMMER_SPECIAL_ATTACK',
+      id: 'slammerAppendageCrushAttack',
+      source: 'Slammer',
+      actionId: 'slammer',
+      actionType: 'standard',
+      attackType: 'melee',
+      requiresDroid: true,
+      requiresMinimumSize: 'small',
+      requiresAppendageCount: 2,
+      damageAbility: 'strength',
+      damageAbilityMultiplier: 2,
+      persistentConditionOnThreshold: true,
+      crushFeatAddsUnarmedDamageDie: true,
+      delegatesTo: 'GrappleFeatActions.slammer',
+      summary: 'Standard Action special melee attack using two appendages; deals unarmed damage with double Strength bonus, marks a Persistent Condition on threshold exceedance, and gains +1 unarmed die if the actor has Crush.'
+    }];
+  }
+
   if (normalized === 'grab back') {
     return [{
       type: 'REACTION_GRAB_BACK',
@@ -130,6 +192,7 @@ function rulesForFeat(name) {
       requiresTwoGrabbedTargets: true,
       requiresTargetsAdjacentToActorAndEachOther: true,
       immediate: true,
+      delegatesTo: 'GrappleFeatActions.knockHeads',
       damage: {
         automatic: true,
         dice: '1d6',
