@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-07",
+  "scope": [
+    "Telekinetic Savant",
+    "Telekinetic Prodigy"
+  ],
+  "findings": [
+    {
+      "name": "Telekinetic Savant",
+      "status": "verified_existing_correct",
+      "mechanic": "Swift Action recovery path already counts owned Telekinetic Savant selections as per-encounter uses and recovers one spent [Telekinetic] Force Power without spending a Force Point.",
+      "evidence": [
+        "ForceExecutor.getTelekineticSavantState / recoverTelekineticSavantPower",
+        "Force suite UI Telekinetic Savant picker and descriptor guard",
+        "Force suite template button text"
+      ]
+    },
+    {
+      "name": "Telekinetic Prodigy",
+      "status": "corrected_runtime_guard",
+      "mechanic": "The Force Power selection step now suppresses the old Prodigy-only retroactive slot trigger. Prodigy grants its extra [Telekinetic] slot only when the current Force Training selection includes Move Object.",
+      "suppressedTrigger": "new-prodigy-retroactive-move-object"
+    }
+  ],
+  "changedFiles": [
+    "scripts/engine/progression/engine/telekinetic-prodigy-runtime-patches.js",
+    "scripts/infrastructure/hooks/init-hooks.js",
+    "docs/audits/telekinetic-savant-prodigy-correction-2026-07-07.json"
+  ],
+  "automationBoundary": {
+    "Telekinetic Savant": "Fully wired for force-suite recovery workflow; still depends on power cards accurately tagging [Telekinetic] powers.",
+    "Telekinetic Prodigy": "Corrects current runtime over-granting. The exact later-Wisdom/same-Force-Training historical caveat requires per-Force-Training selection provenance if that is not already stored. This fix prevents a talent-pick-only Prodigy slot and keeps the slot tied to current Force Training + Move Object selection."
+  },
+  "notLiveTested": true
+}
