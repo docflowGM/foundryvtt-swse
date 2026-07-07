@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-07-07",
+  "purpose": "Record expanded droid feat implementation pass for Scavenger's Guide to Droids and Clone Wars Campaign Guide feats requested after the initial droid combat feat pass.",
+  "skippedAsAlreadyImplemented": [
+    {
+      "name": "Aiming Accuracy",
+      "reason": "Already normalized as AIM_ACTION_VARIANT and exposed through the droid combat action adapter/runtime helper."
+    },
+    {
+      "name": "Mechanical Martial Arts",
+      "reason": "Already normalized as UNARMED_HIT_RIDER and exposed through getUnarmedHitRiders."
+    },
+    {
+      "name": "Multi-Targeting",
+      "reason": "Already normalized as AIM_ACTION_RIDER and exposed through getAimActionRiders."
+    },
+    {
+      "name": "Pincer",
+      "reason": "Already covered by the grapple feat implementation pass and not duplicated in droid-combat metadata."
+    }
+  ],
+  "implementedEntries": [
+    {
+      "name": "Leader of Droids",
+      "status": "implemented_runtime_policy_helper",
+      "mechanic": "Exposes a policy for beneficial Mind-Affecting allied effects that lets a number of willing droid allies equal to Intelligence modifier, minimum 1, ignore Mind-Affecting immunity for that effect only."
+    },
+    {
+      "name": "Turn and Burn",
+      "status": "implemented_movement_action_rider",
+      "mechanic": "Withdraw action rider exposes 2 threatened squares without AoO, full-speed Withdraw, and Force Point reaction Withdraw when an enemy ends adjacent."
+    },
+    {
+      "name": "Shield Surge",
+      "status": "implemented_vehicle_shield_reaction_helper",
+      "mechanic": "Vehicle shield reaction helper exposes damage reduction up to remaining Shield Rating after SR reduction, with equal SR cost and Recharge Shields lockout for one round."
+    },
+    {
+      "name": "Sensor Link",
+      "status": "implemented_sensor_action_helper",
+      "mechanic": "Swift action helper exposes 24-square sensor broadcast, awareness sharing, remote Perception Aid Another, and mutual Sensor Link +2 Perception bonus."
+    },
+    {
+      "name": "Pinpoint Accuracy",
+      "status": "implemented_aiming_accuracy_damage_rider",
+      "mechanic": "Damage rider exposes Recover-action lockout until the end of the target's next turn when Aiming Accuracy damages the target."
+    },
+    {
+      "name": "Logic Upgrade: Skill Swap",
+      "status": "implemented_skill_swap_action_helper",
+      "mechanic": "Full-round skill swap action metadata exposes selected untrained skill behavior, original trained-skill suppression, and Use the Force exclusion."
+    },
+    {
+      "name": "Ion Shielding",
+      "status": "implemented_threshold_rider_helper",
+      "mechanic": "Ion threshold rider exposes -1 CT instead of -2 CT when pre-halved Ion damage equals or exceeds Damage Threshold."
+    },
+    {
+      "name": "Erratic Target",
+      "status": "implemented_mobility_defense_rider",
+      "mechanic": "Movement defense rider exposes speed-to-Dodge tradeoff, up to +2 Dodge, requiring at least 2 squares moved and Hovering/Flying locomotion."
+    },
+    {
+      "name": "Droid Shield Mastery",
+      "status": "implemented_droid_shield_recharge_helper",
+      "mechanic": "Shield recharge helper exposes automatic Endurance success, 5 SR restored, and two-Swift recharge timing."
+    },
+    {
+      "name": "Droid Focus",
+      "status": "implemented_selected_degree_context_helper",
+      "mechanic": "Context helper exposes +1 selected skills on/against chosen droid degree and +1 defenses against attacks/skill checks from that degree."
+    },
+    {
+      "name": "Distracting Droid",
+      "status": "implemented_area_skill_action_helper",
+      "mechanic": "Standard action helper exposes Persuasion vs Will in 6 squares, Mind-Affecting, lose Move Action on success, and flat-footed rider on success by 10."
+    },
+    {
+      "name": "Damage Conversion",
+      "status": "implemented_threshold_replacement_reaction_helper",
+      "mechanic": "Threshold reaction helper exposes non-area, non-Ion, non-Force replacement that trades CT movement for escalating extra damage starting at +10 and increasing by +5 per encounter use."
+    }
+  ],
+  "changedFiles": [
+    "scripts/engine/feats/droid-combat-feat-normalization-hooks.js",
+    "scripts/engine/feats/droid-combat-runtime-patches.js",
+    "scripts/engine/combat/droid-combat-action-adapter.js",
+    "scripts/infrastructure/hooks/init-hooks.js",
+    "docs/audits/droid-expanded-feat-addendum-2026-07-07.json"
+  ],
+  "automationBoundary": {
+    "general": "This pass follows the existing droid-combat metadata/helper pattern. It does not introduce a second droid feat engine.",
+    "thresholdRiders": "Damage/threshold workflows must call getDroidThresholdRiders to apply Ion Shielding and Damage Conversion during damage resolution.",
+    "movementRiders": "Movement/withdraw workflows must call getDroidMovementRiders for Turn and Burn and Erratic Target.",
+    "vehicleShieldRiders": "Vehicle shield workflows must call getDroidShieldRiders for Shield Surge and Droid Shield Mastery.",
+    "droidFocus": "Droid Focus requires a selected degree value on the feat item to fully resolve its context bonus. If no degree is selected, the rule is present but returns no bonus."
+  },
+  "notLiveTested": true
+}
