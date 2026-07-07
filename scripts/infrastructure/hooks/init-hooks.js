@@ -28,6 +28,7 @@ import { registerGrappleFeatNormalizationHooks } from "/systems/foundryvtt-swse/
 import { registerForcePointFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-normalization-hooks.js";
 import { registerForcePointFeatActions } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-actions.js";
 import { registerForceTrainingEntitlementRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/force-training-entitlement-runtime-patches.js";
+import { registerForcePointServiceRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-service-runtime-patches.js";
 import { registerRiflemasterNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/riflemaster-normalization-hooks.js";
 import { registerRiflemasterRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/riflemaster-runtime-patches.js";
 import { registerPistoleerNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/pistoleer-normalization-hooks.js";
@@ -118,6 +119,7 @@ export function registerInitHooks() {
         registerForcePointFeatNormalizationHooks();
         registerForcePointFeatActions();
         registerForceTrainingEntitlementRuntimePatches();
+        registerForcePointServiceRuntimePatches();
         SWSELogger.log('Force Point Feat Hooks initialized');
 
         // Normalize and patch Riflemaster rifle-specific benefits.
