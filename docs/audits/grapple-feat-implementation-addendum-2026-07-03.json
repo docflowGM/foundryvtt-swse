@@ -1,9 +1,10 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "date": "2026-07-03",
-  "purpose": "Record the focused Grapple & Unarmed sub-bucket pass from the strict Combat bucket.",
+  "updated": "2026-07-07",
+  "purpose": "Record the focused Grapple & Unarmed sub-bucket pass from the strict Combat bucket, including the expanded 2026-07-07 grapple runtime pass.",
   "policy": {
-    "engineReuse": "Use the existing SWSEGrappling, GrappleStateEngine, GrappleLegalityEngine, grapple runtime patches, and GrappleFeatActions. Do not create a parallel grapple subsystem.",
+    "engineReuse": "Use the existing SWSEGrappling, GrappleStateEngine, GrappleLegalityEngine, grapple runtime patches, DamageSystem, ActorEngine, and GrappleFeatActions. Do not create a parallel grapple subsystem.",
     "spatialAutomation": "Movement/position outcomes such as Throw placement, Knock Heads setup, and Battering Attack impact positioning remain advisory until a dedicated spatial workflow exists.",
     "invalidEntries": "Do not implement Grappling Strike as a feat. It was rejected by the strict Combat validity audit. Existing helper access is hard-blocked as a safe no-op."
   },
@@ -16,7 +17,7 @@
     {
       "name": "Trip",
       "status": "implemented_grapple_rule_metadata",
-      "mechanic": "Normalizes to UNLOCK_GRAPPLE_MANEUVER trip and delegates to the existing advanced grapple Trip path."
+      "mechanic": "Normalizes to UNLOCK_GRAPPLE_MANEUVER trip and delegates to the existing advanced grapple Trip path. Trip now records that it clears the grapple after knocking the target Prone."
     },
     {
       "name": "Throw",
@@ -34,19 +35,39 @@
       "mechanic": "Normalizes Crush unlock metadata plus CONDITION_SHIFT_ON_GRAPPLE_MANEUVER for -1 CT step on successful Crush."
     },
     {
+      "name": "Bone Crusher",
+      "status": "implemented_runtime_damage_hook",
+      "mechanic": "Normalizes to CONDITION_SHIFT_ON_GRAPPLE_DAMAGE. The expanded grapple runtime patch hooks DamageSystem.applyPacketToActor and applies -1 CT through ActorEngine.applyConditionShift when the source damages a grappled or pinned opponent."
+    },
+    {
+      "name": "Grapple Resistance",
+      "status": "implemented_grapple_rule_metadata",
+      "mechanic": "Normalizes to RESIST_GRAB_AND_GRAPPLE +5. Existing SWSEGrappling and MetaResourceFeatResolver consume it for Reflex Defense against Grab and opposed Grapple resistance. Held/carried object Reflex bonus is recorded as metadata for object-attack workflows."
+    },
+    {
       "name": "Multi-Grab",
       "status": "implemented_action_helper_metadata",
-      "mechanic": "Normalizes to MULTI_GRAB and delegates to GrappleFeatActions.multiGrab, which performs canonical grab attempts against up to two selected targets."
+      "mechanic": "Normalizes to MULTI_GRAB and delegates to GrappleFeatActions.multiGrab, which performs canonical grab attempts against up to two selected targets. If two grabs succeed and Knock Heads is available, the helper can invoke Knock Heads when requested."
+    },
+    {
+      "name": "Knock Heads",
+      "status": "implemented_action_helper_with_spatial_boundary",
+      "mechanic": "Normalizes the Multi-Grab rider and delegates to GrappleFeatActions.knockHeads. The helper rolls 1d6 + Strength modifier bludgeoning damage for each of two targets, applies damage through DamageSystem, and measures threshold as damage +5 to represent the target's Damage Threshold being treated as 5 lower. Target adjacency remains GM/player confirmed."
+    },
+    {
+      "name": "Pincer",
+      "status": "implemented_action_helper_metadata",
+      "mechanic": "Normalizes to PIN_MAINTENANCE_AND_CRUSH. GrappleFeatActions.pincer checks an already Pinned target, uses the canonical Pin path for the Swift Action maintenance check, and delegates Crush to SWSEGrappling.crushPinnedOpponent when the check succeeds. Appendage eligibility remains metadata/workflow-gated."
+    },
+    {
+      "name": "Slammer",
+      "status": "implemented_special_attack_helper",
+      "mechanic": "Normalizes to SLAMMER_SPECIAL_ATTACK. GrappleFeatActions.slammer builds a virtual unarmed appendage attack, rolls a melee attack, rolls unarmed damage with double Strength modifier, adds one unarmed damage die if the actor has Crush, applies damage through DamageSystem, and marks Persistent Condition through ActorEngine when the damage exceeds the target's Damage Threshold. Droid size/appendage prerequisites remain metadata/workflow-gated."
     },
     {
       "name": "Grab Back",
       "status": "implemented_reaction_helper_metadata",
       "mechanic": "Normalizes to REACTION_GRAB_BACK and delegates to GrappleFeatActions.grabBack. Trigger detection remains reaction-workflow/advisory."
-    },
-    {
-      "name": "Knock Heads",
-      "status": "implemented_advisory_grapple_metadata",
-      "mechanic": "Stores multi-target grapple rider metadata. Exact target setup and damage/effect resolution remain GM/player adjudicated."
     },
     {
       "name": "Battering Attack",
@@ -73,6 +94,7 @@
   "changedFiles": [
     "scripts/engine/feats/grapple-feat-normalization-hooks.js",
     "scripts/engine/feats/grapple-feat-actions.js",
+    "scripts/engine/feats/grapple-expanded-runtime-patches.js",
     "scripts/infrastructure/hooks/init-hooks.js"
   ]
 }
