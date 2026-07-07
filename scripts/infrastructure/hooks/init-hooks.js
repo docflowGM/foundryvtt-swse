@@ -23,6 +23,7 @@ import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.
 import { FeatActionListeners } from "/systems/foundryvtt-swse/scripts/engine/feats/feat-action-listeners.js";
 import { registerGrappleFeatActions } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-feat-actions.js";
 import { registerGrappleRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-runtime-patches.js";
+import { registerGrappleExpandedRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-expanded-runtime-patches.js";
 import { registerGrappleFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-feat-normalization-hooks.js";
 import { registerRiflemasterNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/riflemaster-normalization-hooks.js";
 import { registerRiflemasterRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/riflemaster-runtime-patches.js";
@@ -50,7 +51,7 @@ import { registerDefenseFeatRuntimePatches } from "/systems/foundryvtt-swse/scri
 
 /**
  * Register initialization hooks
- * Called from index.js during the init hook - executes immediately since init is already running
+ * Called from index.js during the init hook - executes immediately since we're already in init hook
  */
 export function registerInitHooks() {
     SWSELogger.log('Registering SWSE hook categories');
@@ -105,6 +106,10 @@ export function registerInitHooks() {
         // Patch canonical SWSEGrappling methods for metadata-backed feats and RAW tie behavior.
         registerGrappleRuntimePatches();
         SWSELogger.log('Grapple Runtime Patches initialized');
+
+        // Patch expanded grapple feat riders that hook damage/action helpers.
+        registerGrappleExpandedRuntimePatches();
+        SWSELogger.log('Expanded Grapple Feat Runtime Patches initialized');
 
         // Normalize and patch Riflemaster rifle-specific benefits.
         registerRiflemasterNormalizationHooks();
