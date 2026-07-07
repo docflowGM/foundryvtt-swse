@@ -24,6 +24,16 @@ function withoutExistingRules(rules, ids) {
   return asArray(rules).filter(rule => !remove.has(String(rule?.id ?? rule?.key ?? '')));
 }
 
+function getConfiguredChoice(item) {
+  return item?.system?.choice?.value
+    ?? item?.system?.choice?.selected
+    ?? item?.system?.selectedChoice
+    ?? item?.system?.abilityMeta?.choice
+    ?? item?.system?.abilityMeta?.selectedDegree
+    ?? item?.flags?.swse?.selectedDegree
+    ?? null;
+}
+
 function disablerRules() {
   return [
     {
@@ -84,6 +94,20 @@ function aimingAccuracyRules() {
   }];
 }
 
+function pinpointAccuracyRules() {
+  return [{
+    type: 'AIMING_ACCURACY_DAMAGE_RIDER',
+    id: 'pinpointAccuracyRecoverBlock',
+    requiresDroid: true,
+    requiresAimingAccuracy: true,
+    requiresDamageDealt: true,
+    targetCannotRecover: true,
+    duration: 'untilEndOfTargetNextTurn',
+    source: 'Pinpoint Accuracy',
+    label: 'Pinpoint Accuracy: target damaged by Aiming Accuracy cannot Recover until end of its next turn'
+  }];
+}
+
 function mechanicalMartialArtsRules() {
   return [{
     type: 'UNARMED_HIT_RIDER',
@@ -114,6 +138,188 @@ function multiTargetingRules() {
     losesAimIfTargetOutOfLineOfSight: true,
     source: 'Multi-Targeting',
     label: 'Multi-Targeting: Aim swift actions may be spent across more than one round'
+  }];
+}
+
+function turnAndBurnRules() {
+  return [{
+    type: 'WITHDRAW_ACTION_RIDER',
+    id: 'turnAndBurnWithdrawRider',
+    requiresDroid: true,
+    requiresLocomotion: ['hovering', 'flying', 'wheeled', 'tracked'],
+    threatenedSquaresWithoutOpportunity: 2,
+    movementLimit: 'speed',
+    normalThreatenedSquaresWithoutOpportunity: 1,
+    normalMovementLimit: 'halfSpeed',
+    forcePointReaction: {
+      trigger: 'enemyEndsMovementAdjacentToYou',
+      action: 'withdraw',
+      actionCost: 'reaction'
+    },
+    source: 'Turn and Burn',
+    label: 'Turn and Burn: enhanced Withdraw and Force Point reaction Withdraw'
+  }];
+}
+
+function shieldSurgeRules() {
+  return [{
+    type: 'VEHICLE_SHIELD_DAMAGE_REDUCTION_REACTION',
+    id: 'shieldSurgeDirectLinkReaction',
+    requiresDroidOrCyborgHybrid: true,
+    requiresTrainedSkill: 'mechanics',
+    requiresDirectDataLink: true,
+    trigger: 'vehicleTakesDamageAboveShieldRating',
+    timing: 'afterShieldRatingReduced',
+    damageReductionLimit: 'remainingShieldRating',
+    shieldRatingCostPerDamageReduced: 1,
+    blockRechargeShieldsForRounds: 1,
+    actionCost: 'reaction',
+    source: 'Shield Surge',
+    label: 'Shield Surge: spend remaining vehicle SR to reduce vehicle damage after SR is reduced'
+  }];
+}
+
+function sensorLinkRules() {
+  return [{
+    type: 'SENSOR_LINK_ACTION',
+    id: 'sensorLinkBroadcast',
+    requiresDroidOrCyborgHybrid: true,
+    actionCost: 'swift',
+    rangeSquares: 24,
+    targetTypes: ['droidAlly', 'comlink', 'communicationsSystem', 'holographicReceiver'],
+    sharesAwareness: true,
+    enablesAidAnotherPerceptionWithoutLineOfSight: true,
+    mutualSensorLinkPerceptionBonus: 2,
+    source: 'Sensor Link',
+    label: 'Sensor Link: broadcast sensors and enable remote Perception Aid Another; mutual links grant +2 Perception'
+  }];
+}
+
+function logicUpgradeSkillSwapRules() {
+  return [{
+    type: 'DROID_SKILL_SWAP_ACTION',
+    id: 'logicUpgradeSkillSwapAction',
+    requiresDroid: true,
+    requiresProcessor: 'basic',
+    actionCost: 'full-round',
+    selectedSkill: null,
+    excludesSkills: ['useTheForce'],
+    swapOutRequiresTrainedSkill: true,
+    swappedInCountsAsTrained: false,
+    permitsUntrainedAttempt: true,
+    suppressesOriginalTrainedSkillBenefitWhileSwapped: true,
+    source: 'Logic Upgrade: Skill Swap',
+    label: 'Logic Upgrade: Skill Swap: full-round temporary swap from a trained skill to selected untrained skill'
+  }];
+}
+
+function ionShieldingRules() {
+  return [{
+    type: 'ION_DAMAGE_THRESHOLD_RIDER',
+    id: 'ionShieldingReduceIonCT',
+    requiresDroidOrCyborgHybrid: true,
+    trigger: 'preHalvedIonDamageEqualsOrExceedsDamageThreshold',
+    conditionTrackSteps: 1,
+    replacesConditionTrackSteps: 2,
+    source: 'Ion Shielding',
+    label: 'Ion Shielding: ion damage threshold event moves only -1 CT step instead of -2'
+  }];
+}
+
+function erraticTargetRules() {
+  return [{
+    type: 'MOBILITY_DODGE_TRADEOFF',
+    id: 'erraticTargetSpeedForDodge',
+    requiresDroid: true,
+    requiresLocomotion: ['hovering', 'flying'],
+    maxSpeedReductionSquares: 2,
+    dodgeBonusPerSpeedSquare: 1,
+    minimumSquaresMoved: 2,
+    duration: 'untilStartOfSourceNextTurn',
+    source: 'Erratic Target',
+    label: 'Erratic Target: reduce speed by up to 2 to gain matching Dodge bonus after moving at least 2 squares'
+  }];
+}
+
+function droidShieldMasteryRules() {
+  return [{
+    type: 'DROID_SHIELD_RECHARGE_RIDER',
+    id: 'droidShieldMasteryFastRecharge',
+    requiresDroid: true,
+    requiresAccessory: 'shieldGenerator',
+    autoSucceedEnduranceCheck: true,
+    restoreShieldRating: 5,
+    swiftActionsRequired: 2,
+    normalSwiftActionsRequired: 3,
+    normalEnduranceDC: 20,
+    source: 'Droid Shield Mastery',
+    label: 'Droid Shield Mastery: automatically restore 5 SR with two Swift Actions'
+  }];
+}
+
+function leaderOfDroidsRules() {
+  return [{
+    type: 'DROID_MIND_AFFECTING_IMMUNITY_BRIDGE',
+    id: 'leaderOfDroidsMindAffectingBridge',
+    trigger: 'beneficialMindAffectingEffectProvidedToAllies',
+    maxDroidsFormula: 'max(1, intelligenceModifier)',
+    requiresWillingDroidAllies: true,
+    immunityIgnoredForThisEffectOnly: true,
+    source: 'Leader of Droids',
+    label: 'Leader of Droids: willing droid allies can ignore Mind-Affecting immunity for your beneficial effect'
+  }];
+}
+
+function droidFocusRules(item) {
+  return [{
+    type: 'DROID_FOCUS_CONTEXT_BONUS',
+    id: 'droidFocusSelectedDegree',
+    selectedDegree: getConfiguredChoice(item),
+    allowedDegrees: ['1st-degree', '2nd-degree', '3rd-degree', '4th-degree', '5th-degree'],
+    skillBonus: 1,
+    skills: ['deception', 'mechanics', 'perception', 'persuasion', 'useComputer'],
+    appliesWhenUsedOnOrAgainstSelectedDegree: true,
+    defenseBonus: 1,
+    defenses: ['reflex', 'fortitude', 'will'],
+    appliesAgainstAttacksAndSkillChecksFromSelectedDegree: true,
+    source: 'Droid Focus',
+    label: 'Droid Focus: +1 selected skills on/against chosen droid degree and +1 defenses against that degree'
+  }];
+}
+
+function distractingDroidRules() {
+  return [{
+    type: 'AREA_SKILL_ATTACK_ACTION',
+    id: 'distractingDroidPersuasionPulse',
+    actionKey: 'distracting-droid',
+    actionName: 'Distracting Droid',
+    requiresDroid: true,
+    actionCost: 'standard',
+    skill: 'persuasion',
+    targetDefense: 'will',
+    rangeSquares: 6,
+    requiresTargetCanSeeOrHearSource: true,
+    mindAffecting: true,
+    onSuccess: { loseMoveActionNextTurn: true },
+    onSuccessBy10: { flatFootedUntilStartOfSourceNextTurn: true },
+    source: 'Distracting Droid',
+    label: 'Distracting Droid: Persuasion vs Will in 6 squares; success costs target a Move Action, success by 10 also flat-foots'
+  }];
+}
+
+function damageConversionRules() {
+  return [{
+    type: 'DAMAGE_THRESHOLD_REPLACEMENT_REACTION',
+    id: 'damageConversionExtraDamageInsteadOfCT',
+    requiresDroid: true,
+    trigger: 'attackDamageEqualsOrExceedsDamageThreshold',
+    excludesAreaAttack: true,
+    excludesDamageTypes: ['ion', 'force'],
+    baseExtraDamage: 10,
+    additionalExtraDamagePerPriorEncounterUse: 5,
+    replaceConditionTrackShift: true,
+    source: 'Damage Conversion',
+    label: 'Damage Conversion: take escalating extra damage instead of threshold CT movement'
   }];
 }
 
@@ -180,10 +386,34 @@ function specForFeat(item) {
       return { rules: disablerRules(), executionModel: 'PASSIVE', subType: 'RULE', mode: 'ion_weapon_mutator', scope: 'ion_weapon_attack_resolution' };
     case 'aimingaccuracy':
       return { rules: aimingAccuracyRules(), executionModel: 'ACTIVE', subType: 'COMBAT_ACTION', mode: 'aim_action_variant', scope: 'full_round_aim_context' };
+    case 'pinpointaccuracy':
+      return { rules: pinpointAccuracyRules(), executionModel: 'PASSIVE', subType: 'STATE', mode: 'aiming_accuracy_hit_rider', scope: 'aiming_accuracy_damage_context' };
     case 'mechanicalmartialarts':
       return { rules: mechanicalMartialArtsRules(), executionModel: 'PASSIVE', subType: 'STATE', mode: 'unarmed_hit_rider', scope: 'unarmed_damage_target_context' };
     case 'multitargeting':
       return { rules: multiTargetingRules(), executionModel: 'PASSIVE', subType: 'RULE', mode: 'aim_action_rider', scope: 'aim_action_timing_context' };
+    case 'turnandburn':
+      return { rules: turnAndBurnRules(), executionModel: 'ACTIVE', subType: 'COMBAT_ACTION', mode: 'withdraw_action_rider', scope: 'movement_opportunity_context' };
+    case 'shieldsurge':
+      return { rules: shieldSurgeRules(), executionModel: 'REACTION', subType: 'VEHICLE', mode: 'vehicle_shield_damage_reduction', scope: 'vehicle_damage_resolution_context' };
+    case 'sensorlink':
+      return { rules: sensorLinkRules(), executionModel: 'ACTIVE', subType: 'UTILITY', mode: 'sensor_link_action', scope: 'sensor_perception_aid_context' };
+    case 'logicupgradeskillswap':
+      return { rules: logicUpgradeSkillSwapRules(), executionModel: 'ACTIVE', subType: 'SKILL', mode: 'droid_skill_swap_action', scope: 'skill_training_swap_context' };
+    case 'ionshielding':
+      return { rules: ionShieldingRules(), executionModel: 'PASSIVE', subType: 'DEFENSE', mode: 'ion_threshold_rider', scope: 'ion_damage_threshold_context' };
+    case 'erratictarget':
+      return { rules: erraticTargetRules(), executionModel: 'ACTIVE', subType: 'DEFENSE', mode: 'mobility_dodge_tradeoff', scope: 'movement_defense_context' };
+    case 'droidshieldmastery':
+      return { rules: droidShieldMasteryRules(), executionModel: 'ACTIVE', subType: 'SHIELD', mode: 'droid_shield_recharge_rider', scope: 'droid_shield_recharge_context' };
+    case 'leaderofdroids':
+      return { rules: leaderOfDroidsRules(), executionModel: 'PASSIVE', subType: 'SUPPORT', mode: 'droid_mind_affecting_bridge', scope: 'beneficial_mind_affecting_allied_context' };
+    case 'droidfocus':
+      return { rules: droidFocusRules(item), executionModel: 'PASSIVE', subType: 'SKILL', mode: 'droid_focus_context_bonus', scope: 'selected_droid_degree_context' };
+    case 'distractingdroid':
+      return { rules: distractingDroidRules(), executionModel: 'ACTIVE', subType: 'COMBAT_ACTION', mode: 'area_skill_attack_action', scope: 'persuasion_vs_will_area_context' };
+    case 'damageconversion':
+      return { rules: damageConversionRules(), executionModel: 'REACTION', subType: 'DEFENSE', mode: 'damage_threshold_replacement', scope: 'damage_threshold_resolution_context' };
     case 'slammer':
       return { rules: slammerRules(), executionModel: 'ACTIVE', subType: 'COMBAT_ACTION', mode: 'special_unarmed_attack_action', scope: 'droid_appendage_attack_context' };
     case 'toolfrenzy':
