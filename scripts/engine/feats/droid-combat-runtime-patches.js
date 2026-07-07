@@ -13,6 +13,7 @@ function asArray(value) {
 function normalizeKey(value = '') {
   return String(value ?? '')
     .trim()
+    .replace(/[’']/g, '')
     .replace(/([a-z0-9])([A-Z])/g, '$1-$2')
     .replace(/[\s_]+/g, '-')
     .replace(/[^a-zA-Z0-9-]/g, '')
@@ -47,6 +48,10 @@ function collectRules(actor, type) {
     }
   }
   return out;
+}
+
+function collectRuleTypes(actor, types = []) {
+  return types.flatMap(type => collectRules(actor, type));
 }
 
 function weaponText(weapon, context = {}) {
@@ -93,6 +98,16 @@ function isDroidActor(actor) {
   return values.map(normalizeKey).some(value => value.includes('droid')) || contextAffirms(system.isDroid);
 }
 
+function isCyborgHybridActor(actor) {
+  const system = actor?.system ?? {};
+  const values = [actor?.type, actor?.name, system.actorType, system.creatureType, system.details?.type, system.details?.creatureType, system.species, system.details?.species, system.template, system.details?.template];
+  return values.map(normalizeKey).some(value => value.includes('cyborg-hybrid') || value.includes('cyborghybrid')) || contextAffirms(system.isCyborgHybrid);
+}
+
+function isDroidOrCyborgHybridActor(actor) {
+  return isDroidActor(actor) || isCyborgHybridActor(actor);
+}
+
 function isOrganicTarget(context = {}) {
   if (contextAffirms(context.targetIsOrganic) || contextAffirms(context.workflowContext?.targetIsOrganic)) return true;
   if (contextAffirms(context.targetIsDroid) || contextAffirms(context.workflowContext?.targetIsDroid)) return false;
@@ -100,6 +115,55 @@ function isOrganicTarget(context = {}) {
   const system = target?.system ?? {};
   const values = [target?.type, target?.name, system.actorType, system.creatureType, system.details?.type, system.details?.creatureType, system.species, system.details?.species];
   return !values.map(normalizeKey).some(value => value.includes('droid'));
+}
+
+function getAbilityModifier(actor, ability) {
+  const key = normalizeKey(ability);
+  const aliases = key === 'intelligence' || key === 'int' ? ['int', 'intelligence'] : [key];
+  for (const alias of aliases) {
+    const data = actor?.system?.abilities?.[alias] ?? actor?.system?.attributes?.[alias] ?? actor?.system?.stats?.[alias];
+    const mod = Number(data?.mod ?? data?.modifier);
+    if (Number.isFinite(mod)) return mod;
+    const score = Number(data?.score ?? data?.total ?? data?.value);
+    if (Number.isFinite(score)) return Math.floor((score - 10) / 2);
+  }
+  return 0;
+}
+
+function degreeText(value) {
+  const key = normalizeKey(value);
+  if (!key) return '';
+  if (key.includes('1') || key.includes('first')) return '1st-degree';
+  if (key.includes('2') || key.includes('second')) return '2nd-degree';
+  if (key.includes('3') || key.includes('third')) return '3rd-degree';
+  if (key.includes('4') || key.includes('fourth')) return '4th-degree';
+  if (key.includes('5') || key.includes('fifth')) return '5th-degree';
+  return key;
+}
+
+function actorDroidDegree(actor, context = {}) {
+  const system = actor?.system ?? {};
+  return degreeText(context.droidDegree
+    ?? context.targetDroidDegree
+    ?? context.sourceDroidDegree
+    ?? system.droid?.degree
+    ?? system.degree
+    ?? system.details?.degree
+    ?? system.chassis?.degree
+    ?? system.model?.degree);
+}
+
+function damageTypeText(context = {}) {
+  return [context.damageType, context.damageTypes, context.workflowContext?.damageType, context.workflowContext?.damageTypes]
+    .flatMap(value => Array.isArray(value) ? value : [value])
+    .map(normalizeKey)
+    .filter(Boolean)
+    .join(' ');
+}
+
+function hasExcludedDamageType(context = {}, excluded = []) {
+  const text = damageTypeText(context);
+  return asArray(excluded).map(normalizeKey).some(type => text.includes(type));
 }
 
 function addBreakdown(result, label, value, type) {
@@ -151,10 +215,7 @@ function applyDisabler(result, actor, weapon, context = {}) {
 function getAimActionRiders(actor, context = {}) {
   if (!actor) return [];
   const actionKey = normalizeKey(context.actionKey ?? context.workflowContext?.actionKey ?? 'aim');
-  const rules = [
-    ...collectRules(actor, 'AIM_ACTION_VARIANT'),
-    ...collectRules(actor, 'AIM_ACTION_RIDER')
-  ];
+  const rules = collectRuleTypes(actor, ['AIM_ACTION_VARIANT', 'AIM_ACTION_RIDER']);
   return rules.filter(rule => {
     if (rule.requiresDroid && !isDroidActor(actor)) return false;
     if (rule.requiresProficientWeapon && !isProficientContext(context)) return false;
@@ -230,6 +291,193 @@ function getDroidSpecialAttackActions(actor, context = {}) {
   });
 }
 
+function getAimingAccuracyDamageRiders(actor, context = {}) {
+  if (!actor || !isDroidActor(actor)) return [];
+  const usedAimingAccuracy = contextAffirms(context.aimingAccuracy) || normalizeKey(context.actionKey ?? context.workflowContext?.actionKey ?? '') === 'aiming-accuracy';
+  const damaged = contextAffirms(context.damageDealt) || contextAffirms(context.workflowContext?.damageDealt);
+  if (!usedAimingAccuracy || !damaged) return [];
+  return collectRules(actor, 'AIMING_ACCURACY_DAMAGE_RIDER').map(rule => ({
+    id: rule.id,
+    source: rule.sourceName ?? rule.source,
+    label: rule.label,
+    type: 'aimingAccuracyDamageRider',
+    targetCannotRecover: rule.targetCannotRecover === true,
+    duration: rule.duration,
+    rule
+  }));
+}
+
+function getDroidMovementRiders(actor, context = {}) {
+  if (!actor || !isDroidActor(actor)) return [];
+  return collectRuleTypes(actor, ['WITHDRAW_ACTION_RIDER', 'MOBILITY_DODGE_TRADEOFF']).map(rule => ({
+    id: rule.id,
+    source: rule.sourceName ?? rule.source,
+    label: rule.label,
+    type: rule.type === 'WITHDRAW_ACTION_RIDER' ? 'withdrawActionRider' : 'mobilityDodgeTradeoff',
+    actionCost: rule.actionCost,
+    threatenedSquaresWithoutOpportunity: rule.threatenedSquaresWithoutOpportunity,
+    movementLimit: rule.movementLimit,
+    forcePointReaction: rule.forcePointReaction,
+    maxSpeedReductionSquares: rule.maxSpeedReductionSquares,
+    dodgeBonusPerSpeedSquare: rule.dodgeBonusPerSpeedSquare,
+    minimumSquaresMoved: rule.minimumSquaresMoved,
+    duration: rule.duration,
+    requiresLocomotion: rule.requiresLocomotion,
+    rule
+  }));
+}
+
+function getDroidShieldRiders(actor, context = {}) {
+  if (!actor || (!isDroidOrCyborgHybridActor(actor) && !isDroidActor(actor))) return [];
+  return collectRuleTypes(actor, ['VEHICLE_SHIELD_DAMAGE_REDUCTION_REACTION', 'DROID_SHIELD_RECHARGE_RIDER']).map(rule => ({
+    id: rule.id,
+    source: rule.sourceName ?? rule.source,
+    label: rule.label,
+    type: rule.type === 'VEHICLE_SHIELD_DAMAGE_REDUCTION_REACTION' ? 'vehicleShieldDamageReductionReaction' : 'droidShieldRechargeRider',
+    actionCost: rule.actionCost,
+    trigger: rule.trigger,
+    damageReductionLimit: rule.damageReductionLimit,
+    shieldRatingCostPerDamageReduced: rule.shieldRatingCostPerDamageReduced,
+    blockRechargeShieldsForRounds: rule.blockRechargeShieldsForRounds,
+    autoSucceedEnduranceCheck: rule.autoSucceedEnduranceCheck === true,
+    restoreShieldRating: rule.restoreShieldRating,
+    swiftActionsRequired: rule.swiftActionsRequired,
+    requiresDirectDataLink: rule.requiresDirectDataLink === true,
+    rule
+  }));
+}
+
+function getDroidSensorActions(actor, context = {}) {
+  if (!actor || !isDroidOrCyborgHybridActor(actor)) return [];
+  return collectRules(actor, 'SENSOR_LINK_ACTION').map(rule => ({
+    id: rule.id,
+    source: rule.sourceName ?? rule.source,
+    label: rule.label,
+    type: 'sensorLinkAction',
+    actionCost: rule.actionCost,
+    rangeSquares: rule.rangeSquares,
+    targetTypes: rule.targetTypes,
+    sharesAwareness: rule.sharesAwareness === true,
+    enablesAidAnotherPerceptionWithoutLineOfSight: rule.enablesAidAnotherPerceptionWithoutLineOfSight === true,
+    mutualSensorLinkPerceptionBonus: rule.mutualSensorLinkPerceptionBonus,
+    rule
+  }));
+}
+
+function getDroidSkillSwapActions(actor, context = {}) {
+  if (!actor || !isDroidActor(actor)) return [];
+  return collectRules(actor, 'DROID_SKILL_SWAP_ACTION').map(rule => ({
+    id: rule.id,
+    source: rule.sourceName ?? rule.source,
+    label: rule.label,
+    type: 'droidSkillSwapAction',
+    actionCost: rule.actionCost,
+    selectedSkill: rule.selectedSkill,
+    excludesSkills: rule.excludesSkills,
+    swapOutRequiresTrainedSkill: rule.swapOutRequiresTrainedSkill === true,
+    swappedInCountsAsTrained: rule.swappedInCountsAsTrained === true,
+    permitsUntrainedAttempt: rule.permitsUntrainedAttempt === true,
+    suppressesOriginalTrainedSkillBenefitWhileSwapped: rule.suppressesOriginalTrainedSkillBenefitWhileSwapped === true,
+    rule
+  }));
+}
+
+function getDroidThresholdRiders(actor, context = {}) {
+  if (!actor) return [];
+  const isArea = contextAffirms(context.areaAttack) || contextAffirms(context.workflowContext?.areaAttack);
+  return collectRuleTypes(actor, ['ION_DAMAGE_THRESHOLD_RIDER', 'DAMAGE_THRESHOLD_REPLACEMENT_REACTION']).filter(rule => {
+    if (rule.requiresDroid && !isDroidActor(actor)) return false;
+    if (rule.requiresDroidOrCyborgHybrid && !isDroidOrCyborgHybridActor(actor)) return false;
+    if (rule.excludesAreaAttack && isArea) return false;
+    if (hasExcludedDamageType(context, rule.excludesDamageTypes)) return false;
+    return true;
+  }).map(rule => {
+    const priorUses = Number(context.priorEncounterUses ?? context.workflowContext?.priorEncounterUses ?? actor?.getFlag?.('foundryvtt-swse', 'damageConversionUsesThisEncounter') ?? 0) || 0;
+    const extraDamage = Number(rule.baseExtraDamage ?? 0) + (Number(rule.additionalExtraDamagePerPriorEncounterUse ?? 0) * Math.max(0, priorUses));
+    return {
+      id: rule.id,
+      source: rule.sourceName ?? rule.source,
+      label: rule.label,
+      type: rule.type === 'ION_DAMAGE_THRESHOLD_RIDER' ? 'ionDamageThresholdRider' : 'damageThresholdReplacementReaction',
+      conditionTrackSteps: rule.conditionTrackSteps,
+      replacesConditionTrackSteps: rule.replacesConditionTrackSteps,
+      replaceConditionTrackShift: rule.replaceConditionTrackShift === true,
+      baseExtraDamage: rule.baseExtraDamage,
+      additionalExtraDamagePerPriorEncounterUse: rule.additionalExtraDamagePerPriorEncounterUse,
+      extraDamage,
+      trigger: rule.trigger,
+      rule
+    };
+  });
+}
+
+function getLeaderOfDroidsPolicy(actor, context = {}) {
+  if (!actor) return null;
+  const rule = collectRules(actor, 'DROID_MIND_AFFECTING_IMMUNITY_BRIDGE')[0];
+  if (!rule) return null;
+  const beneficial = context.beneficial !== false && contextAffirms(context.mindAffecting ?? context.workflowContext?.mindAffecting);
+  if (context.requireMatchingContext && !beneficial) return null;
+  return {
+    id: rule.id,
+    source: rule.sourceName ?? rule.source,
+    label: rule.label,
+    type: 'droidMindAffectingImmunityBridge',
+    maxDroids: Math.max(1, getAbilityModifier(actor, 'intelligence')),
+    requiresWillingDroidAllies: rule.requiresWillingDroidAllies === true,
+    immunityIgnoredForThisEffectOnly: rule.immunityIgnoredForThisEffectOnly === true,
+    rule
+  };
+}
+
+function getDroidFocusBonuses(actor, context = {}) {
+  if (!actor) return { skillBonus: 0, defenseBonus: 0, rules: [] };
+  const skill = normalizeKey(context.skill ?? context.skillKey ?? context.workflowContext?.skill ?? '');
+  const targetDegree = degreeText(context.targetDroidDegree ?? actorDroidDegree(context.targetActor ?? context.target, context));
+  const sourceDegree = degreeText(context.sourceDroidDegree ?? actorDroidDegree(context.sourceActor ?? context.attacker, context));
+  let skillBonus = 0;
+  let defenseBonus = 0;
+  const applied = [];
+  for (const rule of collectRules(actor, 'DROID_FOCUS_CONTEXT_BONUS')) {
+    const selected = degreeText(rule.selectedDegree);
+    if (!selected) continue;
+    const skills = asArray(rule.skills).map(normalizeKey);
+    if (targetDegree && targetDegree === selected && (!skill || skills.includes(skill))) {
+      skillBonus = Math.max(skillBonus, Number(rule.skillBonus ?? 0) || 0);
+      applied.push(rule);
+    }
+    if (sourceDegree && sourceDegree === selected) {
+      defenseBonus = Math.max(defenseBonus, Number(rule.defenseBonus ?? 0) || 0);
+      applied.push(rule);
+    }
+  }
+  return {
+    skillBonus,
+    defenseBonus,
+    rules: applied.map(rule => ({ id: rule.id, source: rule.sourceName ?? rule.source, selectedDegree: rule.selectedDegree, label: rule.label }))
+  };
+}
+
+function getDistractingDroidActions(actor, context = {}) {
+  if (!actor || !isDroidActor(actor)) return [];
+  return collectRules(actor, 'AREA_SKILL_ATTACK_ACTION').filter(rule => normalizeKey(rule.actionKey) === 'distracting-droid').map(rule => ({
+    id: rule.id,
+    key: rule.actionKey,
+    source: rule.sourceName ?? rule.source,
+    name: rule.actionName,
+    label: rule.label,
+    type: 'areaSkillAttackAction',
+    actionCost: rule.actionCost,
+    skill: rule.skill,
+    targetDefense: rule.targetDefense,
+    rangeSquares: rule.rangeSquares,
+    mindAffecting: rule.mindAffecting === true,
+    requiresTargetCanSeeOrHearSource: rule.requiresTargetCanSeeOrHearSource === true,
+    onSuccess: rule.onSuccess,
+    onSuccessBy10: rule.onSuccessBy10,
+    rule
+  }));
+}
+
 function patchCombatOptionResolver() {
   if (CombatOptionResolver.__swseDroidCombatRuntimePatched === true) return;
   const originalCollect = CombatOptionResolver.collectAttackModifiers?.bind(CombatOptionResolver);
@@ -238,8 +486,12 @@ function patchCombatOptionResolver() {
       const result = originalCollect(actor, weapon, options) ?? {};
       try {
         applyDisabler(result, actor, weapon, options);
+        const focus = getDroidFocusBonuses(actor, options);
+        if (focus.skillBonus || focus.defenseBonus) {
+          result.droidFocus = focus;
+        }
       } catch (err) {
-        SWSELogger.warn('[DroidCombatRuntime] Failed to apply Disabler weapon mutations', { error: err });
+        SWSELogger.warn('[DroidCombatRuntime] Failed to apply droid combat weapon/context rules', { error: err });
       }
       return result;
     };
@@ -247,6 +499,15 @@ function patchCombatOptionResolver() {
   CombatOptionResolver.getAimActionRiders = getAimActionRiders;
   CombatOptionResolver.getUnarmedHitRiders = getUnarmedHitRiders;
   CombatOptionResolver.getDroidSpecialAttackActions = getDroidSpecialAttackActions;
+  CombatOptionResolver.getAimingAccuracyDamageRiders = getAimingAccuracyDamageRiders;
+  CombatOptionResolver.getDroidMovementRiders = getDroidMovementRiders;
+  CombatOptionResolver.getDroidShieldRiders = getDroidShieldRiders;
+  CombatOptionResolver.getDroidSensorActions = getDroidSensorActions;
+  CombatOptionResolver.getDroidSkillSwapActions = getDroidSkillSwapActions;
+  CombatOptionResolver.getDroidThresholdRiders = getDroidThresholdRiders;
+  CombatOptionResolver.getLeaderOfDroidsPolicy = getLeaderOfDroidsPolicy;
+  CombatOptionResolver.getDroidFocusBonuses = getDroidFocusBonuses;
+  CombatOptionResolver.getDistractingDroidActions = getDistractingDroidActions;
   CombatOptionResolver.__swseDroidCombatRuntimePatched = true;
 }
 
@@ -259,9 +520,31 @@ export function registerDroidCombatRuntimePatches() {
   game.swse.feats.getAimActionRiders = getAimActionRiders;
   game.swse.feats.getUnarmedHitRiders = getUnarmedHitRiders;
   game.swse.feats.getDroidSpecialAttackActions = getDroidSpecialAttackActions;
+  game.swse.feats.getAimingAccuracyDamageRiders = getAimingAccuracyDamageRiders;
+  game.swse.feats.getDroidMovementRiders = getDroidMovementRiders;
+  game.swse.feats.getDroidShieldRiders = getDroidShieldRiders;
+  game.swse.feats.getDroidSensorActions = getDroidSensorActions;
+  game.swse.feats.getDroidSkillSwapActions = getDroidSkillSwapActions;
+  game.swse.feats.getDroidThresholdRiders = getDroidThresholdRiders;
+  game.swse.feats.getLeaderOfDroidsPolicy = getLeaderOfDroidsPolicy;
+  game.swse.feats.getDroidFocusBonuses = getDroidFocusBonuses;
+  game.swse.feats.getDistractingDroidActions = getDistractingDroidActions;
   SWSELogger.log('[DroidCombatRuntime] Runtime helpers registered');
 }
 
-export { getAimActionRiders, getUnarmedHitRiders, getDroidSpecialAttackActions };
+export {
+  getAimActionRiders,
+  getUnarmedHitRiders,
+  getDroidSpecialAttackActions,
+  getAimingAccuracyDamageRiders,
+  getDroidMovementRiders,
+  getDroidShieldRiders,
+  getDroidSensorActions,
+  getDroidSkillSwapActions,
+  getDroidThresholdRiders,
+  getLeaderOfDroidsPolicy,
+  getDroidFocusBonuses,
+  getDistractingDroidActions
+};
 
 export default registerDroidCombatRuntimePatches;
