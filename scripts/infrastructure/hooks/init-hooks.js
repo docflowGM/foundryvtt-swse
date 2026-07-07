@@ -25,6 +25,9 @@ import { registerGrappleFeatActions } from "/systems/foundryvtt-swse/scripts/eng
 import { registerGrappleRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-runtime-patches.js";
 import { registerGrappleExpandedRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-expanded-runtime-patches.js";
 import { registerGrappleFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/grapple-feat-normalization-hooks.js";
+import { registerForcePointFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-normalization-hooks.js";
+import { registerForcePointFeatActions } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-actions.js";
+import { registerForceTrainingEntitlementRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/force-training-entitlement-runtime-patches.js";
 import { registerRiflemasterNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/riflemaster-normalization-hooks.js";
 import { registerRiflemasterRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/riflemaster-runtime-patches.js";
 import { registerPistoleerNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/pistoleer-normalization-hooks.js";
@@ -110,6 +113,12 @@ export function registerInitHooks() {
         // Patch expanded grapple feat riders that hook damage/action helpers.
         registerGrappleExpandedRuntimePatches();
         SWSELogger.log('Expanded Grapple Feat Runtime Patches initialized');
+
+        // Normalize and expose Force Point / Force Power feat helpers.
+        registerForcePointFeatNormalizationHooks();
+        registerForcePointFeatActions();
+        registerForceTrainingEntitlementRuntimePatches();
+        SWSELogger.log('Force Point Feat Hooks initialized');
 
         // Normalize and patch Riflemaster rifle-specific benefits.
         registerRiflemasterNormalizationHooks();
