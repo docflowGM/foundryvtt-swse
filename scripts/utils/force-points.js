@@ -29,12 +29,14 @@ export class ForcePointsUtil {
 
     const { reason = 'boost', useDarkSide = false } = options;
 
-    // Get heroic scaling from ForcePointsService (canonical source)
-    const { diceCount, dieSize } = await ForcePointsService.getScalingDice(actor);
+    // Get heroic scaling from ForcePointsService (canonical source). Pass the
+    // roll context so feats like Gungan Weapon Master can alter the die size for
+    // specific weapon/roll uses without changing global Force Point dice.
+    const { diceCount, dieSize } = await ForcePointsService.getScalingDice(actor, { ...options, reason });
     const forceDice = `${diceCount}${dieSize}`;
 
     // Roll the dice with heroic scaling
-    const roll = await globalThis.SWSE.RollEngine.safeRoll(forceDice, {}, { domain: 'force-point' });
+    const roll = await globalThis.SWSE.RollEngine.safeRoll(forceDice, {}, { domain: 'force-point', context: { ...options, reason } });
 
     // For multiple dice, take the highest
     let bonus = 0;
@@ -48,7 +50,7 @@ export class ForcePointsUtil {
     let darkSideBonus = 0;
     let darkSideUsed = false;
     if (useDarkSide) {
-      const darkSideRoll = await globalThis.SWSE.RollEngine.safeRoll(`1${dieSize}`, {}, { domain: 'force-point.dark-side' });
+      const darkSideRoll = await globalThis.SWSE.RollEngine.safeRoll(`1${dieSize}`, {}, { domain: 'force-point.dark-side', context: { ...options, reason } });
       darkSideBonus = darkSideRoll.total;
       darkSideUsed = true;
     }
@@ -102,12 +104,14 @@ export class ForcePointsUtil {
    * Show dialog for spending Force Point with optional Dark Side temptation
    * @param {Actor} actor - The actor spending the Force Point
    * @param {string} reason - The reason for spending the Force Point
+   * @param {Object} options - Additional Force Point context
    * @returns {Promise<Object|null>} The result object or null if cancelled
    */
-  static async showForcePointDialog(actor, reason = 'boost') {
+  static async showForcePointDialog(actor, reason = 'boost', options = {}) {
     const canDarkSide = this.canUseDarkSide(actor);
-    const diceDesc = await ForcePointsService.getFormulaDisplay(actor);
-    const { diceCount, dieSize } = await ForcePointsService.getScalingDice(actor);
+    const context = { ...options, reason };
+    const diceDesc = await ForcePointsService.getFormulaDisplay(actor, context);
+    const { diceCount, dieSize } = await ForcePointsService.getScalingDice(actor, context);
 
     return new Promise((resolve) => {
       const dialog = new SWSEDialogV2({
