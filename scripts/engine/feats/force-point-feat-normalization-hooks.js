@@ -109,7 +109,7 @@ function rulesForFeat(name) {
       subType: 'RESOURCE',
       mechanicsMode: 'force_training_slots',
       resourceRules: {
-        forceTraining: [{ type: 'FORCE_TRAINING_ABILITY_SCORE_BONUS', ability: 'wis', value: 4, powerBonusPerForceTraining: 2, source: 'Jedi Heritage', summary: 'Treat Wisdom as 4 higher for Force Training power count, granting 2 extra Force Powers per Force Training feat.' }]
+        forceTraining: [{ type: 'FORCE_TRAINING_ABILITY_SCORE_BONUS', ability: 'configuredForceTrainingAbility', value: 4, source: 'Jedi Heritage', summary: 'For Force Training power count only, treat the configured Force Training ability score as 4 higher before calculating its modifier.' }]
       }
     };
   }
