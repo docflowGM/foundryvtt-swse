@@ -29,6 +29,9 @@ import { registerForcePointFeatNormalizationHooks } from "/systems/foundryvtt-sw
 import { registerForcePointFeatActions } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-actions.js";
 import { registerForceTrainingEntitlementRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/force-training-entitlement-runtime-patches.js";
 import { registerForcePointServiceRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-service-runtime-patches.js";
+import { registerDroidCombatFeatNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/droid-combat-feat-normalization-hooks.js";
+import { registerDroidCombatRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/droid-combat-runtime-patches.js";
+import { registerDroidCombatActionAdapter } from "/systems/foundryvtt-swse/scripts/engine/combat/droid-combat-action-adapter.js";
 import { registerRiflemasterNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/riflemaster-normalization-hooks.js";
 import { registerRiflemasterRuntimePatches } from "/systems/foundryvtt-swse/scripts/engine/feats/riflemaster-runtime-patches.js";
 import { registerPistoleerNormalizationHooks } from "/systems/foundryvtt-swse/scripts/engine/feats/pistoleer-normalization-hooks.js";
@@ -121,6 +124,12 @@ export function registerInitHooks() {
         registerForceTrainingEntitlementRuntimePatches();
         registerForcePointServiceRuntimePatches();
         SWSELogger.log('Force Point Feat Hooks initialized');
+
+        // Normalize, expose, and inject droid-focused combat/utility feat helpers.
+        registerDroidCombatFeatNormalizationHooks();
+        registerDroidCombatRuntimePatches();
+        registerDroidCombatActionAdapter();
+        SWSELogger.log('Droid Combat Feat Hooks initialized');
 
         // Normalize and patch Riflemaster rifle-specific benefits.
         registerRiflemasterNormalizationHooks();
