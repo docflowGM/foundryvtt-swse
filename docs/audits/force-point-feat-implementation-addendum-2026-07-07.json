@@ -1,6 +1,7 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "created": "2026-07-07",
+  "updated": "2026-07-07",
   "bucket": "Force Point and Force Power Based Feats",
   "scope": [
     "Force Boon",
@@ -85,14 +86,16 @@
     {
       "feat": "Jedi Heritage",
       "status": "implemented_force_training_entitlement_patch",
-      "mechanic": "Adds +2 Force Powers for each Force Training feat by treating Wisdom as 4 higher for Force Training slot calculation.",
-      "runtime": "force-training-entitlement-runtime-patches.js patches FeatGrantEntitlementResolver.getForceTrainingSlotsPerInstance and annotates forcePowerSlots entries."
+      "mechanic": "For Force Training power entitlement only, treats the configured Force Training ability score as 4 higher before deriving the modifier and applying the minimum of 1 power.",
+      "runtime": "force-training-entitlement-runtime-patches.js patches FeatGrantEntitlementResolver.getForceTrainingSlotsPerInstance to calculate max(1, 1 + modifier(configured ability + 4)) when Jedi Heritage applies, respecting the house-rule setting that swaps WIS to CHA.",
+      "notes": "This is intentionally not a fixed +2 powers. Low WIS/CHA values can produce +0 or +1 compared to the unmodified entitlement because the minimum is applied after the adjusted ability modifier is calculated."
     }
   ],
   "notes": [
     "Temporary Force Point feats use the existing flags.swse.bonusForcePoints pool, which ActorEngine.spendForcePoints already consumes before normal Force Points.",
     "ForcePointServiceRuntime patches validation so temporary/bonus Force Points count for spend eligibility, matching ActorEngine spend behavior.",
-    "This pass intentionally exposes helper/rule APIs for event-specific feats where fully automatic triggering requires workflow-specific context not present in every legacy caller."
+    "This pass intentionally exposes helper/rule APIs for event-specific feats where fully automatic triggering requires workflow-specific context not present in every legacy caller.",
+    "Jedi Heritage applies only to Force Training power entitlement calculation; it does not mutate the actor's WIS/CHA score or affect other derived values."
   ],
   "notLiveTested": true
 }
