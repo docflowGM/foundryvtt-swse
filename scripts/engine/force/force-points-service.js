@@ -2,7 +2,7 @@
  * ForcePointsService - Authoritative Force Point rules engine
  *
  * UNIFIED ARCHITECTURE LOCK-IN:
- * - Die size authority: ModifierEngine (domain: "force.dieSize")
+ * - Die size authority: ModifierEngine (domain: "force.dieSize") plus explicit Force Point feat rule context
  * - Dice count authority: Heroic level scaling (1/2/3 dice)
  * - Max FP authority: Base (5/6/7) + floor(totalLevel / 2)
  * - Death rescue authority: DamageResolutionEngine
@@ -25,6 +25,7 @@ import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/
 import { SchemaAdapters } from "/systems/foundryvtt-swse/scripts/utils/schema-adapters.js";
 import { ForceRules } from "/systems/foundryvtt-swse/scripts/engine/force/ForceRules.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
+import { ForcePointFeatRules } from "/systems/foundryvtt-swse/scripts/engine/feats/force-point-feat-rules.js";
 
 export class ForcePointsService {
 
@@ -57,17 +58,21 @@ export class ForcePointsService {
     // Check for daily Force Points setting override
     const useDailyForcePoints = ForceRules.dailyForcePoints();
 
+    const featBonus = Math.max(
+      Number(MetaResourceFeatResolver.getForcePointMaxBonus(actor) ?? 0) || 0,
+      Number(ForcePointFeatRules.getForcePointMaxBonus(actor) ?? 0) || 0
+    );
+
     if (useDailyForcePoints) {
       // Daily FP mode: band-based (1-5: 1 FP, 6-10: 2 FP, 11-15: 3 FP, 16+: 4 FP)
       // Note: Uses total level even in daily mode
-      const featBonus = MetaResourceFeatResolver.getForcePointMaxBonus(actor);
       if (totalLevel >= 16) return 4 + featBonus;
       if (totalLevel >= 11) return 3 + featBonus;
       if (totalLevel >= 6) return 2 + featBonus;
       return 1 + featBonus;
     } else {
       // Standard mode: base + floor(totalLevel / 2)
-      return base + Math.floor(totalLevel / 2) + MetaResourceFeatResolver.getForcePointMaxBonus(actor);
+      return base + Math.floor(totalLevel / 2) + featBonus;
     }
   }
 
@@ -162,15 +167,16 @@ export class ForcePointsService {
    *
    * AUTHORITY: Heroic level scaling only
    * - Dice count: 1d (level 1-7), 2d (level 8-14), 3d (level 15+)
-   * - Die size: From ModifierEngine (force.dieSize)
+   * - Die size: From ModifierEngine plus contextual Force Point feat rules
    *
    * Usage: player rolls N dice, takes highest result
    *
    * @async
    * @param {Actor} actor - The actor
+   * @param {Object} context - Force Point spend context, such as reason/weapon
    * @returns {Promise<Object>} { diceCount: number, dieSize: string }
    */
-  static async getScalingDice(actor) {
+  static async getScalingDice(actor, context = {}) {
     if (!actor) return { diceCount: 1, dieSize: 'd6' };
 
     // Get heroic level for dice count scaling
@@ -183,43 +189,44 @@ export class ForcePointsService {
       diceCount = 2;
     }
 
-    // Get die size from ModifierEngine
-    const dieSize = await this.getDieSize(actor);
+    // Get die size from ModifierEngine and Force Point feat context.
+    const dieSize = await this.getDieSize(actor, context);
 
     return { diceCount, dieSize };
   }
 
   /**
-   * Get die size for Force Point rolls (d6 or d8)
+   * Get die size for Force Point rolls (d6, d8, d10, etc.)
    *
-   * AUTHORITY: ModifierEngine (domain: "force.dieSize")
-   * - Default: d6 (value 6)
-   * - Upgraded by: Strong in the Force feat or other sources
+   * AUTHORITY: ModifierEngine (domain: "force.dieSize") plus feat-rule context
+   * - Default is d6
+   * - Strong in the Force raises qualifying FP dice to d8
+   * - Gungan Weapon Master can raise Atlatl/Cesta attack FP dice by one step
    *
    * @async
    * @param {Actor} actor - The actor
-   * @returns {Promise<string>} Die size ('d6' or 'd8')
+   * @param {Object} context - Force Point spend context
+   * @returns {Promise<string>} Die size like 'd6', 'd8', or 'd10'
    */
-  static async getDieSize(actor) {
+  static async getDieSize(actor, context = {}) {
     if (!actor) return 'd6';
 
+    let dieSize = 6;
     try {
-      // Query ModifierEngine for die size upgrades
-      const dieSizeModifier = await ModifierEngine.aggregateTarget(actor, 'force.dieSize');
-
-      // dieSizeModifier represents the die value (6 or 8)
-      // Default is 6, upgraded to 8 by feats/talents
-      if (dieSizeModifier >= 8) {
-        return 'd8';
-      }
+      // Query ModifierEngine for generic die size upgrades.
+      const dieSizeModifier = await ModifierEngine.aggregateTarget(actor, 'force.dieSize', { context });
+      if (Number(dieSizeModifier) >= 8) dieSize = Math.max(dieSize, Number(dieSizeModifier));
     } catch (err) {
-      // Fall through to default
+      // Fall through to feat metadata.
     }
 
-    const featDieSize = MetaResourceFeatResolver.getForcePointDieSize(actor);
-    if (featDieSize >= 8) return 'd8';
+    const metaDieSize = Number(MetaResourceFeatResolver.getForcePointDieSize(actor, context) ?? 0) || 0;
+    if (metaDieSize >= 8) dieSize = Math.max(dieSize, metaDieSize);
 
-    return 'd6';
+    const featDieSize = Number(ForcePointFeatRules.getForcePointDieSize(actor, context) ?? 0) || 0;
+    if (featDieSize >= 8) dieSize = Math.max(dieSize, featDieSize);
+
+    return `d${Math.max(6, dieSize)}`;
   }
 
   /**
@@ -295,6 +302,14 @@ export class ForcePointsService {
       };
     }
 
+    if ((context.offTurn === true || context.isReaction === true) && !ForcePointFeatRules.canSpendOffTurn(actor)) {
+      return {
+        valid: false,
+        message: 'Force Points cannot be spent outside your turn without Force Readiness or another explicit rule.',
+        allowance: 0
+      };
+    }
+
     // Check not prevented from spending (e.g., by condition or effect)
     if (this._isSpendingPrevented(actor)) {
       return {
@@ -361,12 +376,13 @@ export class ForcePointsService {
    *
    * @async
    * @param {Actor} actor - The actor
+   * @param {Object} context - Force Point spend context
    * @returns {Promise<string>} Display formula
    */
-  static async getFormulaDisplay(actor) {
+  static async getFormulaDisplay(actor, context = {}) {
     if (!actor) return '1d6';
 
-    const { diceCount, dieSize } = await this.getScalingDice(actor);
+    const { diceCount, dieSize } = await this.getScalingDice(actor, context);
     if (diceCount === 1) {
       return `1${dieSize}`;
     }
