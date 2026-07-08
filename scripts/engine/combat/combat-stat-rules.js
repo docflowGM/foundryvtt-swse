@@ -72,23 +72,70 @@ function normalizeSelector(value) {
   return String(value ?? '').trim().toLowerCase().replace(/[^a-z0-9]/g, '');
 }
 
+function weaponBranchText(weapon) {
+  const system = weapon?.system ?? {};
+  const properties = Array.isArray(system.properties) ? system.properties : [];
+  const traits = Array.isArray(system.traits) ? system.traits : [];
+  return [
+    weapon?.name,
+    system.name,
+    system.meleeOrRanged,
+    system.weaponRangeType,
+    system.rangeType,
+    system.range,
+    system.rangeProfile,
+    system.rangeProfileName,
+    system.weaponGroup,
+    system.group,
+    system.weaponCategory,
+    system.category,
+    system.subcategory,
+    system.subtype,
+    system.weaponType,
+    system.type,
+    system.proficiency,
+    system.proficiencyGroup,
+    ...properties,
+    ...traits
+  ].map(value => String(value ?? '').toLowerCase()).join(' ');
+}
+
+function explicitBranch(weapon) {
+  const system = weapon?.system ?? {};
+  const explicit = String(system.meleeOrRanged ?? system.weaponRangeType ?? system.rangeType ?? '').toLowerCase().trim();
+  if (explicit.includes('ranged')) return 'ranged';
+  if (explicit.includes('melee')) return 'melee';
+  return '';
+}
+
 export function isRangedWeapon(weapon) {
   const system = weapon?.system ?? {};
-  const range = String(system.range ?? system.rangeType ?? '').toLowerCase();
-  const category = String(system.category ?? system.subcategory ?? system.weaponType ?? system.type ?? '').toLowerCase();
-  if (system.ranged === true) return true;
+  const branch = explicitBranch(weapon);
+  if (branch === 'ranged') return true;
+  if (branch === 'melee') return false;
+  if (system.ranged === true || system.isRanged === true) return true;
+  if (system.melee === true || system.isMelee === true) return false;
+
+  const range = String(system.range ?? '').toLowerCase().trim();
   if (range && range !== 'melee' && !range.includes('melee')) return true;
-  return /ranged|pistol|rifle|carbine|blaster|bow|launcher|thrown/.test(category);
+
+  return /\b(ranged|pistol|pistols|rifle|rifles|carbine|blaster|bowcaster|bow|launcher|grenade|thrown|slugthrower|missile|rocket)\b/.test(weaponBranchText(weapon));
 }
 
 export function isMeleeWeapon(weapon) {
   const system = weapon?.system ?? {};
-  const range = String(system.range ?? system.rangeType ?? '').toLowerCase();
-  const category = String(system.category ?? system.subcategory ?? system.weaponType ?? system.type ?? '').toLowerCase();
-  if (system.melee === true) return true;
+  const branch = explicitBranch(weapon);
+  if (branch === 'melee') return true;
+  if (branch === 'ranged') return false;
+  if (system.melee === true || system.isMelee === true) return true;
+  if (system.ranged === true || system.isRanged === true) return false;
   if (system.isUnarmed === true || system.properties?.includes?.('unarmed')) return true;
-  if (range === 'melee' || range === '') return true;
-  return /melee|unarmed|lightsaber|vibro|staff|pike|sword|knife|claw/.test(category);
+
+  const range = String(system.range ?? '').toLowerCase().trim();
+  if (range === 'melee') return true;
+  if (range && range !== 'melee') return false;
+
+  return /\b(melee|unarmed|lightsaber|vibro|staff|pike|sword|knife|blade|club|claw|bite)\b/.test(weaponBranchText(weapon));
 }
 
 
@@ -278,242 +325,83 @@ const ELEMENTAL_HALF_LEVEL_EXCLUSION_KEYS = new Set([
   'cryo',
   'electric',
   'electrical',
-  'electricity',
-  'elemental',
+  'energy',
   'fire',
-  'flame',
-  'heat',
+  'ion',
+  'radiation',
   'sonic'
 ]);
-const POISON_HALF_LEVEL_EXCLUSION_KEYS = new Set(['poison', 'toxin', 'venom']);
 
-function settingEnabled(key, fallback = false) {
+function damageTypesFromContext(context = {}) {
+  return [
+    context.damageType,
+    context.damage?.type,
+    context.weapon?.system?.damageType,
+    context.item?.system?.damageType,
+    ...(Array.isArray(context.damageTypes) ? context.damageTypes : []),
+    ...(Array.isArray(context.tags) ? context.tags : [])
+  ].map(value => String(value ?? '').trim().toLowerCase()).filter(Boolean);
+}
+
+function isExcludedElementalDamage(context = {}) {
+  return damageTypesFromContext(context).some(type => ELEMENTAL_HALF_LEVEL_EXCLUSION_KEYS.has(type));
+}
+
+function forcePowerDamageAddsHalfLevel() {
   try {
-    return game?.settings?.get?.('foundryvtt-swse', key) === true;
+    return game?.settings?.get?.('swse', HALF_LEVEL_DAMAGE_HOUSE_RULE_KEY) === true;
   } catch (_err) {
-    return fallback;
+    return false;
   }
 }
 
-export function forcePowerDamageAddsHalfLevel() {
-  return settingEnabled(HALF_LEVEL_DAMAGE_HOUSE_RULE_KEY, false);
+function isForcePowerDamageContext(context = {}) {
+  const type = String(context.type ?? context.rollType ?? context.sourceType ?? '').toLowerCase();
+  if (type.includes('force')) return true;
+  if (context.forcePower === true || context.isForcePower === true) return true;
+  const itemType = String(context.item?.type ?? context.power?.type ?? '').toLowerCase();
+  return itemType === 'force-power' || itemType === 'forcepower';
 }
 
-export function normalizeDamageTypeKey(value) {
-  return String(value ?? '')
-    .trim()
-    .toLowerCase()
-    .replace(/&/g, ' and ')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+function isWeaponDamageContext(context = {}) {
+  if (context.isWeaponDamage === true) return true;
+  const itemType = String(context.item?.type ?? context.weapon?.type ?? '').toLowerCase();
+  return itemType === 'weapon';
 }
 
-function addDamageTypeToken(tokens, value) {
-  if (value == null) return;
-  if (Array.isArray(value)) {
-    for (const entry of value) addDamageTypeToken(tokens, entry);
-    return;
-  }
-  if (typeof value === 'object') {
-    addDamageTypeToken(tokens, value.type);
-    addDamageTypeToken(tokens, value.damageType);
-    addDamageTypeToken(tokens, value.damage_type);
-    addDamageTypeToken(tokens, value.element);
-    addDamageTypeToken(tokens, value.energyType);
-    addDamageTypeToken(tokens, value.descriptor);
-    addDamageTypeToken(tokens, value.descriptors);
-    addDamageTypeToken(tokens, value.tags);
-    addDamageTypeToken(tokens, value.keywords);
-    addDamageTypeToken(tokens, value.category);
-    return;
-  }
-  const normalized = normalizeDamageTypeKey(value);
-  if (!normalized) return;
-  tokens.add(normalized);
-  for (const part of normalized.split('-')) {
-    if (part) tokens.add(part);
-  }
+/**
+ * Half level damage rule.
+ *
+ * Saga weapon damage normally adds one-half heroic level. Force power damage does
+ * not add half level by default in this system because many powers already encode
+ * full dice progressions; a world setting can enable it for tables that use that
+ * house rule. Elemental/energy style packets stay excluded unless explicitly
+ * weapon-backed to avoid double-scaling state/effect damage.
+ */
+export function getHalfLevelDamageBonus(actor, item = null, context = {}) {
+  const level = getEffectiveHalfLevel(actor);
+  if (!level) return 0;
+  const enriched = { ...context, item: context.item ?? item, weapon: context.weapon ?? item };
+  if (isForcePowerDamageContext(enriched) && !forcePowerDamageAddsHalfLevel()) return 0;
+  if (isExcludedElementalDamage(enriched) && !isWeaponDamageContext(enriched)) return 0;
+  return level;
 }
 
-export function collectDamageTypeKeys(source = null, context = {}) {
-  const system = source?.system ?? {};
-  const tokens = new Set();
-  addDamageTypeToken(tokens, context.damageType);
-  addDamageTypeToken(tokens, context.damageTypes);
-  addDamageTypeToken(tokens, context.damageElement);
-  addDamageTypeToken(tokens, context.element);
-  addDamageTypeToken(tokens, context.tags);
-  addDamageTypeToken(tokens, context.descriptors);
-  addDamageTypeToken(tokens, context.damageComponents);
-  addDamageTypeToken(tokens, context.combatContext?.damage?.damageComponents);
-  addDamageTypeToken(tokens, context.workflowContext?.damage?.damageComponents);
-  addDamageTypeToken(tokens, system.damageType);
-  addDamageTypeToken(tokens, system.damageTypes);
-  addDamageTypeToken(tokens, system.damage?.type);
-  addDamageTypeToken(tokens, system.damage?.damageType);
-  addDamageTypeToken(tokens, system.combat?.damage?.type);
-  addDamageTypeToken(tokens, system.combat?.damage?.damageType);
-  addDamageTypeToken(tokens, system.element);
-  addDamageTypeToken(tokens, system.energyType);
-  addDamageTypeToken(tokens, system.descriptor);
-  addDamageTypeToken(tokens, system.descriptors);
-  addDamageTypeToken(tokens, system.tags);
-  addDamageTypeToken(tokens, system.keywords);
-  return tokens;
-}
-
-export function isPoisonDamageContext(source = null, context = {}) {
-  const tokens = collectDamageTypeKeys(source, context);
-  return Array.from(tokens).some(key => POISON_HALF_LEVEL_EXCLUSION_KEYS.has(key));
-}
-
-export function isElementalDamageContext(source = null, context = {}) {
-  const tokens = collectDamageTypeKeys(source, context);
-  return Array.from(tokens).some(key => ELEMENTAL_HALF_LEVEL_EXCLUSION_KEYS.has(key));
-}
-
-export function isForcePowerDamageContext(source = null, context = {}) {
-  const sourceType = normalizeDamageTypeKey(source?.type ?? source?.documentName ?? '');
-  if (sourceType === 'force-power' || sourceType === 'forcepower') return true;
-  const keys = [
-    context.type,
-    context.rollType,
-    context.rollCategory,
-    context.category,
-    context.domain,
-    context.itemType,
-    context.sourceType,
-    context.workflowContext?.type,
-    context.workflowContext?.rollType,
-    context.workflowContext?.category,
-    context.combatContext?.type,
-    context.combatContext?.rollType,
-    context.combatContext?.category
-  ].map(normalizeDamageTypeKey).filter(Boolean);
-  return context.forcePower === true
-    || context.isForcePower === true
-    || keys.some(key => key === 'force-power' || key === 'forcepower' || key.startsWith('force-power'));
-}
-
-export function shouldApplyHalfLevelDamageBonus(actor, source = null, context = {}) {
-  if (!actor || !source) return false;
-  if (context.noHalfLevelDamage === true || context.suppressHalfLevelDamage === true) return false;
-  if (isPoisonDamageContext(source, context) || isElementalDamageContext(source, context)) return false;
-
-  if (isForcePowerDamageContext(source, context)) {
-    return forcePowerDamageAddsHalfLevel();
-  }
-
-  const sourceType = normalizeDamageTypeKey(source?.type ?? '');
-  if (sourceType === 'weapon' || sourceType === 'natural-weapon' || sourceType === 'naturalweapon') return true;
-  if (context.weapon === source || context.isWeaponDamage === true || context.weaponDamage === true) return true;
-  return isMeleeWeapon(source) || isRangedWeapon(source) || isThrownMeleeWeapon(source);
-}
-
-export function getHalfLevelDamageBonus(actor, source = null, context = {}) {
-  return shouldApplyHalfLevelDamageBonus(actor, source, context) ? getEffectiveHalfLevel(actor) : 0;
-}
-
-export function getDamageAbilitySelector(weapon) {
+export function getDamageAbilityContribution(actor, weapon) {
   const system = weapon?.system ?? {};
-  const explicit = normalizeSelector(system.damageBonus ?? system.combat?.damage?.ability ?? '');
-  if (explicit) return explicit;
+  const explicit = String(system.damageBonus ?? system.damageAbility ?? system.combat?.damage?.ability ?? '').toLowerCase();
 
-  const attackAttr = normalizeSelector(system.attackAttribute ?? system.combat?.attack?.ability ?? '');
-  if (attackAttr === '2str' || attackAttr === 'str2' || attackAttr === '2dex' || attackAttr === 'dex2') return attackAttr;
+  if (explicit === 'none' || explicit === '0' || explicit === 'false') return 0;
 
-  if (isMeleeWeapon(weapon) || isThrownMeleeWeapon(weapon)) return 'str';
-  return '';
-}
+  if (actorHasTalentNamed(actor, 'Ataru') && isLightsaberWeapon(weapon)) return SchemaAdapters.getAbilityMod(actor, 'dex');
 
-export function getDamageAbilityContribution(actor, weapon, options = {}) {
-  const selector = getDamageAbilitySelector(weapon);
-  if (!selector) return 0;
+  if (explicit.includes('str2')) return SchemaAdapters.getAbilityMod(actor, 'str') * 2;
+  if (explicit.includes('dex2')) return SchemaAdapters.getAbilityMod(actor, 'dex') * 2;
+  if (explicit.includes('str')) return SchemaAdapters.getAbilityMod(actor, 'str');
+  if (explicit.includes('dex')) return SchemaAdapters.getAbilityMod(actor, 'dex');
 
+  if (isRangedWeapon(weapon) && !isThrownMeleeWeapon(weapon)) return 0;
   const strMod = SchemaAdapters.getAbilityMod(actor, 'str');
-  const dexMod = SchemaAdapters.getAbilityMod(actor, 'dex');
-  const isLight = options.isLight === true;
-  const strengthDamageSelector = selector === 'str' || selector === 'str2' || selector === '2str';
-  const usesBlasterAndBladeTwoHanded = actorHasTalentNamed(actor, 'Blaster and Blade II')
-    && isAdvancedMeleeWeapon(weapon)
-    && actorHasEquippedPistol(actor)
-    && strengthDamageSelector;
-  const twoHanded = options.forceTwoHanded === true || options.twoHanded === true || usesBlasterAndBladeTwoHanded;
-  const usesAtaruLightsaberDamage = actorHasTalentNamed(actor, 'Ataru')
-    && isLightsaberWeapon(weapon)
-    && strengthDamageSelector;
-  const usesMasterOfEleganceDamage = actorHasTalentNamed(actor, 'Master of Elegance')
-    && isLightMeleeWeapon(weapon)
-    && strengthDamageSelector;
-
-  if (usesMasterOfEleganceDamage) {
-    return (twoHanded || selector === 'str2' || selector === '2str') ? dexMod * 2 : dexMod;
-  }
-
-  const effectiveSelector = usesAtaruLightsaberDamage
-    ? (selector === 'str2' || selector === '2str' ? '2dex' : 'dex')
-    : selector;
-
-  switch (effectiveSelector) {
-    case 'str':
-      return (twoHanded && !isLight) ? strMod * 2 : strMod;
-    case 'str2':
-    case '2str':
-      return strMod * 2;
-    case 'dex':
-      return (twoHanded && !isLight) ? dexMod * 2 : dexMod;
-    case 'dex2':
-    case '2dex':
-      return dexMod * 2;
-    default:
-      return 0;
-  }
+  if (system.twoHanded === true || system.wieldedTwoHanded === true) return Math.floor(strMod * 1.5);
+  return strMod;
 }
-
-export function getCriticalMultiplier(weapon, fallback = 2) {
-  const raw = Number(weapon?.system?.critMultiplier ?? weapon?.system?.criticalMultiplier ?? fallback);
-  return Number.isFinite(raw) && raw > 0 ? raw : fallback;
-}
-
-export function isAreaAttack(weapon, context = {}) {
-  const system = weapon?.system ?? {};
-  if (context?.isAreaAttack === true || context?.areaAttack === true) return true;
-  if (system.areaAttack === true || system.isAreaAttack === true) return true;
-  const text = [system.attackType, system.area, system.burst, system.splash, system.properties?.join?.(' ')]
-    .map(v => String(v ?? '').toLowerCase())
-    .join(' ');
-  return /area|burst|splash|cone|line|radius/.test(text);
-}
-
-export const CombatStatRules = Object.freeze({
-  DAMAGE_THRESHOLD_SIZE_BONUSES,
-  REFLEX_SIZE_MODIFIERS,
-  SIZE_ORDER,
-  getActorCombatSize,
-  collectDamageTypeKeys,
-  forcePowerDamageAddsHalfLevel,
-  getCriticalMultiplier,
-  getDamageAbilityContribution,
-  getDamageThresholdSizeBonus,
-  getHalfLevelDamageBonus,
-  getRangePenalty,
-  getReflexSizeModifier,
-  getWeaponAttackAbility,
-  getWeaponFlatAttackBonus,
-  getWeaponFlatDamageBonus,
-  isAreaAttack,
-  isElementalDamageContext,
-  isForcePowerDamageContext,
-  isPoisonDamageContext,
-  isLightsaberWeapon,
-  isLightMeleeWeapon,
-  isMeleeWeapon,
-  isRangedWeapon,
-  isVehicleWeapon,
-  isThrownMeleeWeapon,
-  normalizeCombatSize,
-  normalizeDamageTypeKey,
-  shouldApplyHalfLevelDamageBonus
-});
-
-export default CombatStatRules;
