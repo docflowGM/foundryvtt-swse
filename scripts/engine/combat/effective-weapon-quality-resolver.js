@@ -32,6 +32,7 @@ function weaponQualityCandidates(weapon) {
 }
 
 function collectBaseQualities(weapon) {
+  const system = weaponSystem(weapon);
   const qualities = new Set();
   for (const candidate of weaponQualityCandidates(weapon)) {
     if (Array.isArray(candidate)) {
