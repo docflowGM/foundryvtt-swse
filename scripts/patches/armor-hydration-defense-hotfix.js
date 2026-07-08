@@ -24,6 +24,8 @@ let originalBuildArmorSummaryPanel = null;
 let originalBuildInventoryPanel = null;
 let originalBuildDefensePanel = null;
 let originalDefenseCalculate = null;
+let effectBuilderFallbackRegistered = false;
+let effectBuilderFullTemplateRegistered = false;
 
 function asArray(value) {
   try { return Array.from(value ?? []); }
@@ -282,8 +284,9 @@ function installDefenseCalculatorPatch() {
 }
 
 function installSynchronousEffectBuilderFallback() {
+  if (effectBuilderFullTemplateRegistered) return true;
   const handlebars = getHandlebarsRuntime();
-  if (handlebars?.partials?.[EFFECT_BUILDER_PARTIAL]) return true;
+  if (handlebars?.partials?.[EFFECT_BUILDER_PARTIAL] && !effectBuilderFallbackRegistered) return true;
   if (typeof handlebars?.registerPartial !== 'function') return false;
   handlebars.registerPartial(EFFECT_BUILDER_PARTIAL, `
 {{#if entityDialog.effectWizard.open}}
@@ -308,19 +311,17 @@ function installSynchronousEffectBuilderFallback() {
   </section>
 </div>
 {{/if}}`);
+  effectBuilderFallbackRegistered = true;
   return true;
 }
 
 async function ensureEffectBuilderPartialRegistered() {
   const handlebars = getHandlebarsRuntime();
-  if (handlebars?.partials?.[EFFECT_BUILDER_PARTIAL]) return true;
+  if (effectBuilderFullTemplateRegistered && handlebars?.partials?.[EFFECT_BUILDER_PARTIAL]) return true;
 
   const loadTemplates = getLoadTemplatesFunction();
   try {
-    if (typeof loadTemplates === 'function') {
-      await loadTemplates([EFFECT_BUILDER_PARTIAL]);
-      if (handlebars?.partials?.[EFFECT_BUILDER_PARTIAL]) return true;
-    }
+    if (typeof loadTemplates === 'function') await loadTemplates([EFFECT_BUILDER_PARTIAL]);
   } catch (_err) {
     // Fall through to direct fetch/register.
   }
@@ -330,8 +331,11 @@ async function ensureEffectBuilderPartialRegistered() {
     if (!response?.ok) throw new Error(`HTTP ${response?.status ?? 'unknown'}`);
     const html = await response.text();
     handlebars?.registerPartial?.(EFFECT_BUILDER_PARTIAL, html);
+    effectBuilderFullTemplateRegistered = true;
+    effectBuilderFallbackRegistered = false;
     return true;
   } catch (err) {
+    if (handlebars?.partials?.[EFFECT_BUILDER_PARTIAL]) return true;
     console.warn('[SWSE Armor Hotfix] Effect Builder partial registration failed', {
       template: EFFECT_BUILDER_PARTIAL,
       message: err?.message || String(err),
