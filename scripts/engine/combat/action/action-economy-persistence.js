@@ -12,7 +12,8 @@
 
 import { ActionEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/action/action-engine-v2.js";
 
-const TRIGGER_LIMITED_REACTION_SENTINEL = Number.MAX_SAFE_INTEGER;
+const TRIGGER_LIMITED_REACTION_DISPLAY_MAX = 1;
+const LEGACY_TRIGGER_LIMITED_REACTION_SENTINEL = Number.MAX_SAFE_INTEGER;
 
 export class ActionEconomyPersistence {
   // Flag storage key
@@ -24,11 +25,18 @@ export class ActionEconomyPersistence {
   }
 
   static getReactionMax(_actor) {
-    // SWSE reactions are not a once-per-round resource. A character can take
-    // any number of reactions as long as each reaction has a valid trigger;
-    // normally only one reaction may be taken per triggering action. Use a large
-    // finite sentinel so existing action-economy state remains JSON-safe.
-    return TRIGGER_LIMITED_REACTION_SENTINEL;
+    // SWSE reactions are trigger-limited, not a normal finite per-round pool.
+    // Persist a small display-safe value and carry the real rule via metadata.
+    // Older actors may still have the previous Number.MAX_SAFE_INTEGER sentinel;
+    // normalizeTurnState() collapses those legacy values back to this safe value.
+    return TRIGGER_LIMITED_REACTION_DISPLAY_MAX;
+  }
+
+  static #normalizeTriggerLimitedReactionValue(value, fallback = TRIGGER_LIMITED_REACTION_DISPLAY_MAX) {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric)) return fallback;
+    if (numeric >= LEGACY_TRIGGER_LIMITED_REACTION_SENTINEL) return fallback;
+    return Math.max(0, Math.min(TRIGGER_LIMITED_REACTION_DISPLAY_MAX, numeric));
   }
 
   static #reactionTriggerKey(metadata = {}) {
@@ -70,8 +78,8 @@ export class ActionEconomyPersistence {
     const base = ActionEngine.startTurn();
     const maxReactions = this.getReactionMax(actor);
     const rawReaction = turnState.reactions ?? {};
-    const reactionMax = Math.max(1, Number(rawReaction.max ?? maxReactions) || maxReactions);
-    const reactionCurrent = Math.max(0, Math.min(reactionMax, Number(rawReaction.current ?? rawReaction.remaining ?? reactionMax) || 0));
+    const reactionMax = this.#normalizeTriggerLimitedReactionValue(rawReaction.max ?? maxReactions, maxReactions);
+    const reactionCurrent = this.#normalizeTriggerLimitedReactionValue(rawReaction.current ?? rawReaction.remaining ?? reactionMax, reactionMax);
 
     return {
       ...base,
