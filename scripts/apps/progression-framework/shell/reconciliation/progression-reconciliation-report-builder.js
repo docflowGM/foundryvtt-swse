@@ -40,18 +40,21 @@ export class ProgressionReconciliationReportBuilder {
         ownership: ownership?.diagnostics || { layer: 'ownership-classifier' },
         report: {
           layer: 'reconciliation-report-builder',
-          phase: 7,
+          phase: 8,
           ambiguousCrediting: true,
           remediationActions: true,
           classProgressionSource: 'class-compendium-ssot',
           cadenceFallback: false,
           derivedStatsAudit: true,
+          derivedStatsSanityCaps: true,
           timelineBuilder: true,
         },
       },
       warnings: [],
       status: 'ok',
     };
+
+    this._normalizeDerivedStatsAudit(report);
 
     const slotGroups = [
       ['ability score increase', report.slots.abilityIncreases],
@@ -132,6 +135,82 @@ export class ProgressionReconciliationReportBuilder {
     };
   }
 
+  _normalizeDerivedStatsAudit(report = {}) {
+    const audit = report?.derivedStats;
+    if (!audit || typeof audit !== 'object' || !Array.isArray(audit.rows)) return;
+
+    const totalLevel = Math.max(0, Number(report.totalLevel || report.totalHeroicLevel || 0) || 0);
+    const hpRow = audit.rows.find(row => row?.id === 'hp-max' || row?.type === 'hp');
+    if (hpRow) {
+      const currentHp = Number(hpRow.current ?? hpRow.currentValue);
+      const expectedHp = Number(hpRow.expected ?? hpRow.expectedValue);
+      if (Number.isFinite(currentHp) && Number.isFinite(expectedHp)) {
+        if (currentHp >= expectedHp) {
+          hpRow.status = 'ok';
+          hpRow.statusLabel = 'OK';
+          hpRow.tone = 'ok';
+          hpRow.needsAttention = false;
+          hpRow.issue = '';
+          hpRow.detail = 'Current HP is at or above the audited minimum. Campaign HP mode and rolled/custom HP may legally exceed this value.';
+        } else {
+          hpRow.status = 'issue';
+          hpRow.statusLabel = 'Current Hit Points is below the known expected minimum.';
+          hpRow.tone = 'warn';
+          hpRow.needsAttention = true;
+          hpRow.issue = 'Current Hit Points is below the known expected minimum.';
+        }
+      }
+    }
+
+    const babRow = audit.rows.find(row => row?.id === 'bab' || row?.type === 'bab');
+    if (babRow && totalLevel > 0) {
+      const rawExpected = Number(babRow.expected ?? babRow.expectedValue);
+      const currentBab = Number(babRow.current ?? babRow.currentValue);
+      const cappedExpected = Number.isFinite(rawExpected) ? Math.min(rawExpected, totalLevel) : rawExpected;
+      if (Number.isFinite(cappedExpected)) {
+        babRow.expected = cappedExpected;
+        babRow.expectedValue = cappedExpected;
+        babRow.expectedLabel = `+${cappedExpected}`;
+        if (audit.expected && typeof audit.expected === 'object') audit.expected.bab = cappedExpected;
+      }
+
+      if (Number.isFinite(currentBab)) {
+        if (currentBab > totalLevel) {
+          babRow.status = 'issue';
+          babRow.statusLabel = `BAB cannot exceed total character level ${totalLevel}.`;
+          babRow.tone = 'warn';
+          babRow.needsAttention = true;
+          babRow.issue = `BAB cannot exceed total character level ${totalLevel}.`;
+        } else if (Number.isFinite(cappedExpected) && currentBab !== cappedExpected) {
+          babRow.status = 'issue';
+          babRow.statusLabel = `BAB should be ${cappedExpected >= 0 ? '+' : ''}${cappedExpected} from capped class progression but is ${currentBab >= 0 ? '+' : ''}${currentBab}.`;
+          babRow.tone = 'warn';
+          babRow.needsAttention = true;
+          babRow.issue = babRow.statusLabel;
+        } else {
+          babRow.status = 'ok';
+          babRow.statusLabel = 'OK';
+          babRow.tone = 'ok';
+          babRow.needsAttention = false;
+          babRow.issue = '';
+        }
+      }
+    }
+
+    this._refreshDerivedStatsAuditStatus(audit);
+  }
+
+  _refreshDerivedStatsAuditStatus(audit = {}) {
+    const rows = Array.isArray(audit.rows) ? audit.rows : [];
+    const activeIssues = rows.filter(row => row?.needsAttention === true || row?.status === 'issue' || row?.status === 'warning' || row?.status === 'unavailable' || !!row?.issue);
+    audit.issueCount = activeIssues.length;
+    audit.hasIssues = activeIssues.length > 0;
+    audit.status = rows.some(row => row?.status === 'issue')
+      ? 'needs-attention'
+      : (rows.some(row => row?.status === 'warning' || row?.status === 'unavailable') ? 'review' : 'ok');
+    audit.warnings = activeIssues.map(row => `${row?.label || 'Derived stat'}: ${row?.issue || row?.statusLabel || 'Review needed'}`);
+  }
+
   _applyAmbiguousCrediting(slots = {}, ownership = {}) {
     const unknownFeats = this._summarizeItems(ownership?.rawPools?.featPools?.unknown || ownership?.featPools?.unknown || []);
     const unknownTalents = this._summarizeItems(ownership?.rawPools?.talentPools?.unknown || ownership?.talentPools?.unknown || []);
@@ -181,13 +260,6 @@ export class ProgressionReconciliationReportBuilder {
     }
   }
 
-
-  _attachRemediationActions(slots = {}) {
-    for (const group of Object.values(slots)) {
-      if (!Array.isArray(group)) continue;
-      for (const slot of group) this._attachSlotRemediation(slot);
-    }
-  }
 
   _attachSlotRemediation(slot = {}) {
     if (!slot || typeof slot !== 'object') return;
