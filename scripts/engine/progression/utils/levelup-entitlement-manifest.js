@@ -7,6 +7,7 @@
  */
 
 import {
+  BASE_CLASS_IDS,
   buildLevelUpEventContext,
   getClassLevelProgressionEntry,
   normalizeClassKey,
@@ -31,6 +32,37 @@ const NON_MATERIALIZED_FEATURES = new Set([
   'defense bonus',
   'starting feats',
 ]);
+
+const RAW_CORE_CLASS_STARTING_FEATS = Object.freeze({
+  jedi: [
+    'Force Sensitivity',
+    'Weapon Proficiency (Lightsabers)',
+    'Weapon Proficiency (Simple Weapons)',
+  ],
+  noble: [
+    'Linguist',
+    'Weapon Proficiency (Pistols)',
+    'Weapon Proficiency (Simple Weapons)',
+  ],
+  scoundrel: [
+    'Point-Blank Shot',
+    'Weapon Proficiency (Pistols)',
+    'Weapon Proficiency (Simple Weapons)',
+  ],
+  scout: [
+    'Shake It Off',
+    'Weapon Proficiency (Pistols)',
+    'Weapon Proficiency (Rifles)',
+    'Weapon Proficiency (Simple Weapons)',
+  ],
+  soldier: [
+    'Armor Proficiency (Light)',
+    'Armor Proficiency (Medium)',
+    'Weapon Proficiency (Pistols)',
+    'Weapon Proficiency (Rifles)',
+    'Weapon Proficiency (Simple Weapons)',
+  ],
+});
 
 function normalizeName(value) {
   return String(value?.name || value?.label || value || '')
@@ -115,15 +147,40 @@ function normalizeStartingFeature(feature, classModel) {
   };
 }
 
+function getRawCoreStartingFeatureFallbacks(classModel) {
+  const classKey = normalizeClassKey(classModel);
+  const nameKey = normalizeName(classModel).replace(/\s+/g, '_');
+  const key = RAW_CORE_CLASS_STARTING_FEATS[classKey] ? classKey : nameKey;
+  if (!BASE_CLASS_IDS.includes(key)) return [];
+  return (RAW_CORE_CLASS_STARTING_FEATS[key] || []).map(name => ({
+    id: name,
+    name,
+    type: 'starting_feat',
+  }));
+}
+
 function getStartingFeatOptions(classModel) {
   const startingFeatures = classModel?.startingFeatures || classModel?.system?.starting_features || classModel?.system?.startingFeatures || [];
-  return (Array.isArray(startingFeatures) ? startingFeatures : [])
-    .filter(feature => {
-      const type = featureType(feature);
-      return type === 'feat' || type === 'proficiency' || type === 'feat_grant' || type === 'starting_feat' || !type;
-    })
-    .map(feature => normalizeStartingFeature(feature, classModel))
-    .filter(Boolean);
+  const sourceFeatures = [
+    ...(Array.isArray(startingFeatures) ? startingFeatures : []),
+    ...getRawCoreStartingFeatureFallbacks(classModel),
+  ];
+  const byName = new Map();
+  for (const feature of sourceFeatures) {
+    const type = featureType(feature);
+    const name = normalizeName(feature);
+    if (!name || NON_MATERIALIZED_FEATURES.has(name) || name === 'talent') continue;
+    const isStartingFeatType = type === 'feat'
+      || type === 'proficiency'
+      || type === 'feat_grant'
+      || type === 'starting_feat'
+      || type === 'class_feature'
+      || !type;
+    if (!isStartingFeatType) continue;
+    const normalized = normalizeStartingFeature(feature, classModel);
+    if (normalized && !byName.has(name)) byName.set(name, normalized);
+  }
+  return Array.from(byName.values());
 }
 
 function isMaterializedAutomaticFeature(feature) {
@@ -206,7 +263,7 @@ export function buildLevelUpEntitlementManifest(actor, progressionSession = null
 
   return {
     kind: 'swse-level-up-entitlement-manifest',
-    version: 1,
+    version: 2,
     context,
     classId: context.selectedClassId,
     className: context.selectedClassName,
@@ -236,6 +293,7 @@ export function buildLevelUpEntitlementManifest(actor, progressionSession = null
       required: multiclassStartingFeatRequired,
       count: multiclassStartingFeatRequired ? 1 : 0,
       options: startingFeatOptions,
+      source: startingFeatOptions.length ? 'raw-core-class-starting-feats' : null,
     },
     automaticClassFeatures,
     classSkills,
