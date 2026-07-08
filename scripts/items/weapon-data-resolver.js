@@ -69,6 +69,10 @@ export const AVAILABILITY_OPTIONS = Object.freeze([
   { value: 'illegal', label: 'Illegal' }
 ]);
 
+const RANGED_CATEGORIES = new Set(['heavy', 'pistols', 'ranged-exotic', 'rifles']);
+const MELEE_CATEGORIES = new Set(['advanced', 'lightsaber', 'melee-exotic', 'natural']);
+const RANGED_TEXT_RE = /\b(blaster|rifle|pistol|carbine|bowcaster|repeating|launcher|grenade|missile|ranged)\b/i;
+
 function clone(value) {
   if (globalThis.foundry?.utils?.deepClone) return foundry.utils.deepClone(value);
   return JSON.parse(JSON.stringify(value ?? null));
@@ -80,9 +84,38 @@ function toNumber(value, fallback = 0) {
   return Number.isFinite(number) ? number : fallback;
 }
 
-function normalizeBranch(system = {}) {
-  const raw = String(system.meleeOrRanged ?? system.weaponRangeType ?? system.rangeType ?? system.range ?? '').toLowerCase();
-  if (raw === 'ranged' || raw.includes('ranged')) return 'ranged';
+function normalizeBranch(itemOrSystem = {}) {
+  const system = itemOrSystem.system ?? itemOrSystem ?? {};
+  const explicit = String(system.meleeOrRanged ?? system.weaponRangeType ?? system.rangeType ?? '').trim().toLowerCase();
+  if (explicit === 'ranged' || explicit.includes('ranged')) return 'ranged';
+  if (explicit === 'melee') {
+    const category = String(system.weaponCategory ?? system.category ?? system.weaponGroup ?? system.group ?? '').trim().toLowerCase();
+    const text = [
+      itemOrSystem.name,
+      system.name,
+      system.weaponType,
+      system.weaponGroup,
+      system.rangeProfile,
+      system.rangeProfileName,
+      system.range,
+      category
+    ].map(value => String(value ?? '')).join(' ');
+    if (!MELEE_CATEGORIES.has(category) && (RANGED_CATEGORIES.has(category) || RANGED_TEXT_RE.test(text))) return 'ranged';
+    return 'melee';
+  }
+
+  const category = String(system.weaponCategory ?? system.category ?? system.weaponGroup ?? system.group ?? '').trim().toLowerCase();
+  const text = [
+    itemOrSystem.name,
+    system.name,
+    system.weaponType,
+    system.weaponGroup,
+    system.rangeProfile,
+    system.rangeProfileName,
+    system.range,
+    category
+  ].map(value => String(value ?? '')).join(' ');
+  if (RANGED_CATEGORIES.has(category) || RANGED_TEXT_RE.test(text)) return 'ranged';
   return 'melee';
 }
 
@@ -133,7 +166,7 @@ function withCustomOption(options, value) {
 
 export function resolveWeaponData(itemOrSystem = {}) {
   const system = itemOrSystem.system ?? itemOrSystem ?? {};
-  const branch = normalizeBranch(system);
+  const branch = normalizeBranch(itemOrSystem);
   const category = String(system.weaponCategory ?? system.category ?? 'simple').trim() || 'simple';
   const ranges = normalizeRanges(system);
   const rangeSummary = String(system.range ?? '').trim() || formatRangeSummary(ranges) || (branch === 'melee' ? 'Melee' : 'Unspecified');
