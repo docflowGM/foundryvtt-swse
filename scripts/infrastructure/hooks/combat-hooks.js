@@ -24,6 +24,7 @@ import { EffectIntentEngine } from "/systems/foundryvtt-swse/scripts/dialogs/ent
 
 
 let lastCombatBannerKey = '';
+let combatTrackerSheetContextRegistered = false;
 
 async function postCombatBanner(combat) {
     if (!combat || game.user?.isGM !== true) return;
@@ -109,10 +110,95 @@ export function registerCombatHooks() {
         enabled: true // Always enabled - species traits should reset
     });
 
+    // Add an initiative-tracker context menu action for quick sheet access.
+    registerCombatTrackerSheetContextAction();
+
     // PHASE 6: FX Integration - Wire projectile FX to attack rolls
     // Triggered after attack rolls to render projectile animations
     Hooks.on('swse.postRollAttack', handlePostAttackFX);
     SWSELogger.log('Post-attack FX hook registered');
+}
+
+function registerCombatTrackerSheetContextAction() {
+    if (combatTrackerSheetContextRegistered) return;
+    combatTrackerSheetContextRegistered = true;
+
+    Hooks.on('getCombatTrackerEntryContext', (_html, options = []) => {
+        if (!Array.isArray(options)) return;
+        if (options.some(option => option?.name === 'SWSE.OpenActorSheet')) return;
+
+        options.push({
+            name: 'SWSE.OpenActorSheet',
+            icon: '<i class="fas fa-address-card"></i>',
+            condition: entry => {
+                const combatant = resolveCombatantFromTrackerEntry(entry);
+                const actor = combatant?.actor;
+                return !!actor && actorCanBeViewed(actor);
+            },
+            callback: entry => {
+                const combatant = resolveCombatantFromTrackerEntry(entry);
+                openCombatantActorSheet(combatant);
+            }
+        });
+    });
+
+    SWSELogger.log('Combat tracker sheet context action registered');
+}
+
+function actorCanBeViewed(actor) {
+    if (!actor) return false;
+    if (game.user?.isGM || actor.isOwner) return true;
+    return actor.testUserPermission?.(game.user, 'OBSERVER') === true;
+}
+
+function trackerEntryElement(entry) {
+    const candidate = entry?.currentTarget ?? entry?.target ?? entry;
+    if (candidate instanceof HTMLElement) return candidate;
+    if (candidate?.[0] instanceof HTMLElement) return candidate[0];
+    if (candidate?.element instanceof HTMLElement) return candidate.element;
+    return null;
+}
+
+function resolveCombatantFromTrackerEntry(entry) {
+    const element = trackerEntryElement(entry);
+    const host = element?.closest?.('[data-combatant-id], [data-combatant], [data-document-id], [data-entry-id], [data-token-id], li.combatant, .combatant');
+    const data = host?.dataset ?? element?.dataset ?? {};
+    const candidateIds = [
+        data.combatantId,
+        data.combatant,
+        data.documentId,
+        data.entryId,
+        data.id
+    ].filter(Boolean);
+
+    const combat = game.combat;
+    for (const id of candidateIds) {
+        const combatant = combat?.combatants?.get?.(id);
+        if (combatant) return combatant;
+    }
+
+    const tokenId = data.tokenId || data.token;
+    if (tokenId) {
+        const combatant = combat?.combatants?.find?.(candidate => candidate?.tokenId === tokenId || candidate?.token?.id === tokenId);
+        if (combatant) return combatant;
+    }
+
+    return null;
+}
+
+function openCombatantActorSheet(combatant) {
+    const actor = combatant?.actor;
+    if (!actorCanBeViewed(actor)) {
+        ui.notifications?.warn?.('You do not have permission to view that actor.');
+        return;
+    }
+
+    try {
+        actor.sheet?.render?.(true, { focus: true });
+    } catch (err) {
+        SWSELogger.warn('[CombatHooks] Failed to open combatant actor sheet', err);
+        ui.notifications?.error?.(`Unable to open ${actor?.name ?? 'combatant'} sheet.`);
+    }
 }
 
 /**
