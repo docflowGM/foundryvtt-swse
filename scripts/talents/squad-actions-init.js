@@ -3,6 +3,7 @@
  * Exposes a macro menu for Squad Actions talent (followers).
  */
 
+import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js';
 import SquadActionsMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/squad-actions-mechanics.js";
 import { SWSEDialogV2 } from "/systems/foundryvtt-swse/scripts/apps/dialogs/swse-dialog-v2.js";
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
