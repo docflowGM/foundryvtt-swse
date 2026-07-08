@@ -35,6 +35,17 @@ function toNumber(value, fallback = 0) {
   return Number.isFinite(number) ? number : fallback;
 }
 
+function getHandlebarsRuntime() {
+  return foundry?.applications?.handlebars?.Handlebars
+    ?? foundry?.applications?.handlebars?.handlebars
+    ?? globalThis.Handlebars
+    ?? null;
+}
+
+function getLoadTemplatesFunction() {
+  return foundry?.applications?.handlebars?.loadTemplates ?? null;
+}
+
 function isTruthyEquipState(value) {
   if (value === true || Number(value) === 1) return true;
   if (value && typeof value === 'object' && !Array.isArray(value)) {
@@ -271,9 +282,10 @@ function installDefenseCalculatorPatch() {
 }
 
 function installSynchronousEffectBuilderFallback() {
-  if (globalThis.Handlebars?.partials?.[EFFECT_BUILDER_PARTIAL]) return true;
-  if (typeof globalThis.Handlebars?.registerPartial !== 'function') return false;
-  globalThis.Handlebars.registerPartial(EFFECT_BUILDER_PARTIAL, `
+  const handlebars = getHandlebarsRuntime();
+  if (handlebars?.partials?.[EFFECT_BUILDER_PARTIAL]) return true;
+  if (typeof handlebars?.registerPartial !== 'function') return false;
+  handlebars.registerPartial(EFFECT_BUILDER_PARTIAL, `
 {{#if entityDialog.effectWizard.open}}
 <div class="swse-effect-wizard" data-effect-wizard data-effect-wizard-mode="{{entityDialog.effectWizard.mode}}" data-effect-wizard-step="{{entityDialog.effectWizard.step}}">
   <button type="button" class="swse-effect-wizard__backdrop" data-effect-wizard-close aria-label="Close effect builder"></button>
@@ -300,10 +312,14 @@ function installSynchronousEffectBuilderFallback() {
 }
 
 async function ensureEffectBuilderPartialRegistered() {
+  const handlebars = getHandlebarsRuntime();
+  if (handlebars?.partials?.[EFFECT_BUILDER_PARTIAL]) return true;
+
+  const loadTemplates = getLoadTemplatesFunction();
   try {
-    if (typeof globalThis.loadTemplates === 'function') {
-      await globalThis.loadTemplates([EFFECT_BUILDER_PARTIAL]);
-      if (globalThis.Handlebars?.partials?.[EFFECT_BUILDER_PARTIAL]) return true;
+    if (typeof loadTemplates === 'function') {
+      await loadTemplates([EFFECT_BUILDER_PARTIAL]);
+      if (handlebars?.partials?.[EFFECT_BUILDER_PARTIAL]) return true;
     }
   } catch (_err) {
     // Fall through to direct fetch/register.
@@ -313,7 +329,7 @@ async function ensureEffectBuilderPartialRegistered() {
     const response = await fetch(EFFECT_BUILDER_PARTIAL);
     if (!response?.ok) throw new Error(`HTTP ${response?.status ?? 'unknown'}`);
     const html = await response.text();
-    globalThis.Handlebars?.registerPartial?.(EFFECT_BUILDER_PARTIAL, html);
+    handlebars?.registerPartial?.(EFFECT_BUILDER_PARTIAL, html);
     return true;
   } catch (err) {
     console.warn('[SWSE Armor Hotfix] Effect Builder partial registration failed', {
