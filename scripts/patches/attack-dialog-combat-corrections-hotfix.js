@@ -1,5 +1,6 @@
 import { SchemaAdapters } from '/systems/foundryvtt-swse/scripts/utils/schema-adapters.js';
 import { CombatOptionResolver } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-option-resolver.js';
+import { resolveAttackBonus } from '/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js';
 
 const PATCH_KEY = 'swseAttackDialogCombatCorrectionsV1';
 const RANGED_CATEGORIES = new Set(['heavy', 'pistol', 'pistols', 'rifle', 'rifles', 'ranged', 'ranged-exotic', 'simple-ranged']);
@@ -34,6 +35,11 @@ function bool(value) {
 function finiteNumber(value) {
   const n = Number(value);
   return Number.isFinite(n) ? n : null;
+}
+
+function signNumber(value) {
+  const n = Number(value) || 0;
+  return `${n >= 0 ? '+' : ''}${n}`;
 }
 
 function weaponText(weapon) {
@@ -376,6 +382,92 @@ function patchRangedOnlyRules(form) {
   addBraceAutofireToggle(form);
 }
 
+function findActorForAttackForm(form) {
+  const shell = form.closest('.swse-roll-config-shell') ?? form;
+  const actorName = shell.querySelector('.rcd-header .rcd-actor')?.textContent?.trim();
+  if (!actorName) return null;
+  return game?.actors?.find?.(actor => actor?.name === actorName) ?? null;
+}
+
+function findWeaponForAttackForm(form, actor) {
+  const sourceName = form.querySelector('.swse-roll-config-panel--summary .swse-roll-config-source b')?.textContent?.trim()
+    || form.querySelector('.swse-roll-config-source b')?.textContent?.trim();
+  if (!sourceName || !actor?.items) return null;
+  return Array.from(actor.items).find(item => item?.type === 'weapon' && item?.name === sourceName) ?? null;
+}
+
+function selectedSituationalTotal(form) {
+  let total = 0;
+  for (const name of ['charging', 'flanking', 'higherGround', 'pointBlank']) {
+    if (!form.querySelector(`[name="${name}"]`)?.checked) continue;
+    total += name === 'higherGround' || name === 'pointBlank' ? 1 : 2;
+  }
+  return total;
+}
+
+function replaceText(root, selector, text) {
+  root.querySelector(selector)?.replaceChildren(document.createTextNode(text));
+}
+
+function rebuildBreakdown(form, components, base, custom, situational) {
+  const box = form.querySelector('[data-rcd-breakdown]');
+  if (!box) return;
+  box.replaceChildren();
+  const addRow = (label, value, className = 'rcd-bd-row') => {
+    const row = document.createElement('div');
+    row.className = className;
+    const left = document.createElement('span');
+    left.className = className === 'rcd-bd-total' ? 'rcd-bd-total-label' : 'rcd-bd-label';
+    left.textContent = label;
+    const right = document.createElement('span');
+    right.className = className === 'rcd-bd-total' ? 'rcd-bd-total-val' : 'rcd-bd-val';
+    right.textContent = signNumber(value);
+    if (label === 'Custom') right.dataset.rcdCustomBd = '';
+    if (label === 'Situational') right.dataset.rcdSituationalBd = '';
+    if (className === 'rcd-bd-total') right.dataset.rcdBdTotal = '';
+    row.append(left, right);
+    box.appendChild(row);
+  };
+
+  for (const [label, value] of Object.entries(components || {})) addRow(label, value);
+  addRow('Custom', custom);
+  addRow('Situational', situational);
+  addRow('Total', base + custom + situational, 'rcd-bd-total');
+}
+
+function syncAttackDialogBase(form) {
+  if (!form?.classList?.contains('swse-roll-config-v2')) return;
+  const actor = findActorForAttackForm(form);
+  const weapon = findWeaponForAttackForm(form, actor);
+  if (!actor || !weapon) return;
+
+  const branch = normalizeWeaponForCombat(weapon) || (formLooksRanged(form) ? 'ranged' : 'melee');
+  prepareActorBabForRollConfig(actor);
+  const resolved = resolveAttackBonus(actor, weapon, null, { attackType: branch, weapon });
+  const base = Number(resolved?.total ?? 0) || 0;
+  const custom = Number(form.querySelector('[name="customModifier"]')?.value ?? 0) || 0;
+  const situational = selectedSituationalTotal(form);
+  const total = base + custom + situational;
+
+  form.dataset.baseTotal = String(base);
+  const shell = form.closest('.swse-roll-config-shell') ?? form;
+  replaceText(shell, '.rcd-formula-text', `1d20 ${signNumber(total)}`);
+  replaceText(shell, '.rcd-formula-base-mod', `base ${signNumber(base)}`);
+  replaceText(form, '.rcd-check-card[data-check-mode="roll"] .rcd-check-total', `1d20 ${signNumber(base)}`);
+  replaceText(form, '[data-rcd-preview-total]', signNumber(total));
+  replaceText(form, '[data-rcd-formula]', `1d20 ${signNumber(total)}`);
+  rebuildBreakdown(form, resolved?.components ?? { 'Canonical Attack': base }, base, custom, situational);
+}
+
+function installCanonicalPreviewSync(form) {
+  if (form.dataset.swseCanonicalAttackPreview === 'true') return;
+  form.dataset.swseCanonicalAttackPreview = 'true';
+  const update = () => setTimeout(() => syncAttackDialogBase(form), 0);
+  form.addEventListener('input', update);
+  form.addEventListener('change', update);
+  update();
+}
+
 function patchRollConfigForm(form) {
   if (!form || form.dataset.swseAttackDialogCombatCorrections === 'true') return;
   form.dataset.swseAttackDialogCombatCorrections = 'true';
@@ -384,6 +476,7 @@ function patchRollConfigForm(form) {
   patchDuplicateStaticOptions(form);
   patchRangedOnlyRules(form);
   clarifyCoverPanel(form);
+  installCanonicalPreviewSync(form);
 }
 
 function scanRollConfigForms(root = document) {
