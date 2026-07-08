@@ -6,7 +6,7 @@ import {
   forceKnowledgeKey,
 } from '/systems/foundryvtt-swse/scripts/utils/force-knowledge.js';
 
-const PATCH_ID = 'progression-finalizer-force-knowledge-post-apply';
+const PATCH_ID = 'progression-finalizer-force-knowledge-post-apply-v2';
 
 function asArray(value) {
   return Array.isArray(value) ? value : [];
@@ -35,6 +35,31 @@ function normalizePendingEntry(entry = {}, fallback = {}) {
     sourceSession: entry?.sourceSession || fallback?.sourceSession || entry?.flags?.swse?.progression?.sourceSession || null,
     source: entry?.source || fallback?.source || PATCH_ID,
   };
+}
+
+function hasForceKnowledgeEntries(postApply = {}) {
+  return asArray(postApply.forceTechniqueEntries).length > 0
+    || asArray(postApply.forceSecretEntries).length > 0;
+}
+
+function actorIsForceSensitive(actor = null) {
+  if (!actor) return false;
+  const system = actor.system || {};
+  const progression = system.progression || {};
+  if (progression.forceSensitive === true || system.forceSensitive === true) return true;
+  if (system.skills?.useTheForce?.classSkill === true || system.skills?.useTheForce?.trained === true) return true;
+  return Array.from(actor.items || []).some((item) => {
+    const name = forceKnowledgeKey(item?.name || item?.system?.name || '');
+    const type = String(item?.type || '').trim().toLowerCase();
+    return name === 'forcesensitivity'
+      || name === 'forcesensitive'
+      || type === 'force-power'
+      || type === 'forcepower'
+      || type === 'force-technique'
+      || type === 'forcetechnique'
+      || type === 'force-secret'
+      || type === 'forcesecret';
+  });
 }
 
 function mergeKnowledgeEntries(...groups) {
@@ -85,9 +110,14 @@ export function registerProgressionFinalizerForceKnowledgePatch() {
   }
 
   ProgressionFinalizer._applyForceKnowledgePostApply = function applyForceKnowledgePostApply(set = {}, actor = null, postApply = {}) {
+    // This method is called from the common finalizer path, but Force knowledge
+    // reconciliation is only meaningful when actual Force Technique/Secret items
+    // were selected. Non-Force chargen must remain a zero-cost no-op here.
+    if (!hasForceKnowledgeEntries(postApply)) return;
+    if (!actorIsForceSensitive(actor)) return;
+
     const pendingTechniques = asArray(postApply.forceTechniqueEntries).map(entry => normalizePendingEntry(entry));
     const pendingSecrets = asArray(postApply.forceSecretEntries).map(entry => normalizePendingEntry(entry));
-    if (!pendingTechniques.length && !pendingSecrets.length) return;
 
     const pending = buildPendingLedger({
       forceTechniqueEntries: pendingTechniques,
