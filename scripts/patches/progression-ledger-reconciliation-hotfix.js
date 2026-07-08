@@ -59,7 +59,7 @@ function classItemIds(item = {}) {
   ].flatMap(value => [normalizeKey(value), slugKey(value)]).filter(Boolean);
 }
 
-function normalizeClassLevelEntry(entry = {}, fallbackKey = '') {
+function normalizeClassLevelEntry(entry = {}, fallbackKey = '', source = 'unknown', priority = 99) {
   const classId = entry?.classId ?? entry?.id ?? entry?.sourceId ?? entry?.class ?? fallbackKey;
   const className = entry?.className ?? entry?.name ?? entry?.class ?? entry?.label ?? fallbackKey ?? classId;
   const level = positiveInteger(entry?.level ?? entry?.levels ?? entry?.classLevel ?? entry?.value ?? entry?.rank);
@@ -70,17 +70,19 @@ function normalizeClassLevelEntry(entry = {}, fallbackKey = '') {
     classId: slugKey(classId || className),
     className: String(className || classId || fallbackKey || '').trim(),
     level,
-    keys: Array.from(new Set(keys))
+    keys: Array.from(new Set(keys)),
+    source,
+    priority
   };
 }
 
 function collectClassLedgerRows(actor = {}) {
   const rows = [];
-  const addRows = (value) => {
+  const addRows = (value, source, priority) => {
     if (!value) return;
     if (Array.isArray(value)) {
       for (const entry of value) {
-        const row = normalizeClassLevelEntry(entry);
+        const row = normalizeClassLevelEntry(entry, '', source, priority);
         if (row) rows.push(row);
       }
       return;
@@ -89,25 +91,57 @@ function collectClassLedgerRows(actor = {}) {
       for (const [key, entry] of Object.entries(value)) {
         const row = normalizeClassLevelEntry(
           entry && typeof entry === 'object' ? { classId: key, className: key, ...entry } : { classId: key, className: key, level: entry },
-          key
+          key,
+          source,
+          priority
         );
         if (row) rows.push(row);
       }
     }
   };
 
-  addRows(actor?.system?.progression?.classLevels);
-  addRows(actor?.system?.progression?.classes);
-  addRows(actor?.system?.classes);
+  addRows(actor?.system?.progression?.classLevels, 'system.progression.classLevels', 0);
+  addRows(actor?.system?.progression?.classes, 'system.progression.classes', 1);
+  addRows(actor?.system?.classes, 'system.classes', 2);
   return rows;
 }
 
+function mergeLedgerRows(rows = []) {
+  const byKey = new Map();
+  for (const row of rows) {
+    const canonicalKey = row.classId || row.keys[0];
+    if (!canonicalKey) continue;
+    const existing = byKey.get(canonicalKey);
+    if (!existing || row.priority < existing.priority || (row.priority === existing.priority && row.level > existing.level)) {
+      byKey.set(canonicalKey, row);
+      continue;
+    }
+    for (const key of row.keys) {
+      const aliasExisting = byKey.get(key);
+      if (!aliasExisting || row.priority < aliasExisting.priority || (row.priority === aliasExisting.priority && row.level > aliasExisting.level)) {
+        byKey.set(key, row);
+      }
+    }
+  }
+
+  const unique = [];
+  const seen = new Set();
+  for (const row of byKey.values()) {
+    const identity = row.classId || row.keys.join('|');
+    if (seen.has(identity)) continue;
+    seen.add(identity);
+    unique.push(row);
+  }
+  return unique;
+}
+
 function buildAuthoritativeLedger(actor = {}) {
-  const rows = collectClassLedgerRows(actor);
+  const rawRows = collectClassLedgerRows(actor);
+  const rows = mergeLedgerRows(rawRows);
   const total = rows.reduce((sum, row) => sum + row.level, 0);
   const actorLevel = actorTotalLevel(actor);
-  if (!rows.length || !actorLevel || total !== actorLevel) return { rows: [], total, actorLevel, authoritative: false };
-  return { rows, total, actorLevel, authoritative: true };
+  if (!rows.length || !actorLevel || total !== actorLevel) return { rows: [], rawRows, total, actorLevel, authoritative: false };
+  return { rows, rawRows, total, actorLevel, authoritative: true };
 }
 
 function findLedgerRowForItem(item, rows = []) {
