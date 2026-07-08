@@ -270,8 +270,36 @@ function installDefenseCalculatorPatch() {
   };
 }
 
-async function ensureEffectBuilderPartialRegistered() {
+function installSynchronousEffectBuilderFallback() {
   if (globalThis.Handlebars?.partials?.[EFFECT_BUILDER_PARTIAL]) return true;
+  if (typeof globalThis.Handlebars?.registerPartial !== 'function') return false;
+  globalThis.Handlebars.registerPartial(EFFECT_BUILDER_PARTIAL, `
+{{#if entityDialog.effectWizard.open}}
+<div class="swse-effect-wizard" data-effect-wizard data-effect-wizard-mode="{{entityDialog.effectWizard.mode}}" data-effect-wizard-step="{{entityDialog.effectWizard.step}}">
+  <button type="button" class="swse-effect-wizard__backdrop" data-effect-wizard-close aria-label="Close effect builder"></button>
+  <section class="swse-effect-wizard__modal" role="dialog" aria-modal="true" aria-label="Effect Builder Wizard">
+    <header class="swse-effect-wizard__titlebar">
+      <div class="swse-effect-wizard__titlecopy">
+        <div class="swse-effect-wizard__eyebrow">Active Effect - Holopad Forge</div>
+        <h3>Effect Builder</h3>
+      </div>
+      <button type="button" class="swse-effect-wizard__close" data-effect-wizard-close aria-label="Close">x</button>
+    </header>
+    <div class="swse-effect-wizard__body">
+      <main class="swse-effect-wizard__stage">
+        <section class="swse-effect-wizard__pane">
+          <h4>Effect Builder Loading</h4>
+          <p>The effect builder template is being loaded. Close this panel and reopen it if the full wizard has not appeared yet.</p>
+        </section>
+      </main>
+    </div>
+  </section>
+</div>
+{{/if}}`);
+  return true;
+}
+
+async function ensureEffectBuilderPartialRegistered() {
   try {
     if (typeof globalThis.loadTemplates === 'function') {
       await globalThis.loadTemplates([EFFECT_BUILDER_PARTIAL]);
@@ -299,8 +327,16 @@ async function ensureEffectBuilderPartialRegistered() {
 function scheduleEffectBuilderPartialRegistration() {
   if (partialRegistrationStarted) return;
   partialRegistrationStarted = true;
-  Hooks.once('init', () => { void ensureEffectBuilderPartialRegistered(); });
-  Hooks.once('ready', () => { void ensureEffectBuilderPartialRegistered(); });
+  installSynchronousEffectBuilderFallback();
+  void ensureEffectBuilderPartialRegistered();
+  Hooks.once('init', () => {
+    installSynchronousEffectBuilderFallback();
+    void ensureEffectBuilderPartialRegistered();
+  });
+  Hooks.once('ready', () => {
+    installSynchronousEffectBuilderFallback();
+    void ensureEffectBuilderPartialRegistered();
+  });
 }
 
 export function registerArmorHydrationDefenseHotfix() {
