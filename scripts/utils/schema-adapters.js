@@ -34,6 +34,98 @@
 
 import { SWSELogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 
+const ABILITY_KEYS = new Set(['str', 'dex', 'con', 'int', 'wis', 'cha']);
+
+function numeric(value, fallback = null) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function scoreToMod(value) {
+  const score = numeric(value, null);
+  return score === null ? null : Math.floor((score - 10) / 2);
+}
+
+function normalizeAbilityKey(ability = '') {
+  const raw = String(ability || '').toLowerCase().replace(/[^a-z]/g, '');
+  const aliases = {
+    strength: 'str',
+    dexterity: 'dex',
+    constitution: 'con',
+    intelligence: 'int',
+    wisdom: 'wis',
+    charisma: 'cha'
+  };
+  const key = aliases[raw] ?? raw.slice(0, 3);
+  return ABILITY_KEYS.has(key) ? key : '';
+}
+
+function firstFinite(values = []) {
+  for (const value of values) {
+    const n = numeric(value, null);
+    if (n !== null) return n;
+  }
+  return null;
+}
+
+function normalizeClassKey(value = '') {
+  return String(value ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '');
+}
+
+function estimateBabForClass(className, level) {
+  const key = normalizeClassKey(className);
+  const lvl = Math.max(0, Number(level) || 0);
+  if (!lvl) return 0;
+  if (key === 'nonheroic') {
+    const table = [0, 1, 2, 3, 3, 4, 5, 6, 6, 7, 8, 9, 9, 10, 11, 12, 12, 13, 14, 15];
+    return table[Math.min(table.length, lvl) - 1] ?? 0;
+  }
+  if (/soldier|jedi|elite|gunslinger|weaponmaster|duelist|martialarts|brawler|enforcer|bodyguard|knight|master|ace|officer|vanguard/.test(key)) return lvl;
+  return Math.floor(lvl * 0.75);
+}
+
+function classLevelsFromActor(actor) {
+  const out = [];
+  const push = (name, level) => {
+    const className = String(name ?? '').trim();
+    const lvl = Number(level ?? 0) || 0;
+    if (className && lvl > 0) out.push({ className, level: lvl });
+  };
+
+  const progression = actor?.system?.progression?.classLevels;
+  if (Array.isArray(progression)) {
+    for (const entry of progression) push(entry?.className ?? entry?.name ?? entry?.class ?? entry?.id ?? entry?.classId, entry?.level ?? entry?.levels ?? entry?.value);
+  } else if (progression && typeof progression === 'object') {
+    for (const [key, entry] of Object.entries(progression)) {
+      if (entry && typeof entry === 'object') push(entry.className ?? entry.name ?? entry.class ?? key, entry.level ?? entry.levels ?? entry.value);
+      else push(key, entry);
+    }
+  }
+
+  try {
+    for (const item of Array.from(actor?.items ?? [])) {
+      if (item?.type !== 'class') continue;
+      const system = item.system ?? {};
+      push(system.className ?? system.name ?? system.classId ?? item.name, system.level ?? system.levels ?? system.classLevel ?? system.value);
+    }
+  } catch (_err) {
+    // Ignore collection failures; schema accessors must be fail-safe.
+  }
+
+  const merged = new Map();
+  for (const entry of out) {
+    const key = normalizeClassKey(entry.className);
+    if (!key) continue;
+    merged.set(key, { className: entry.className, level: Math.max(merged.get(key)?.level ?? 0, entry.level) });
+  }
+  return [...merged.values()];
+}
+
+function estimatedBabFromClasses(actor) {
+  const rows = classLevelsFromActor(actor);
+  return rows.reduce((sum, row) => sum + estimateBabForClass(row.className, row.level), 0);
+}
+
 export class SchemaAdapters {
   /**
    * ========================
@@ -188,8 +280,9 @@ export class SchemaAdapters {
    */
 
   /**
-   * Get ability modifier
-   * Canonical: system.derived.attributes[ability].mod (phase 1B reconciliation)
+   * Get ability modifier.
+   * Canonical: system.derived.attributes[ability].mod.
+   * Fallbacks intentionally cover actor sheets while derived hydration is stale.
    *
    * @param {Actor} actor
    * @param {string} ability - 'str', 'dex', 'con', 'int', 'wis', 'cha'
@@ -197,8 +290,46 @@ export class SchemaAdapters {
    */
   static getAbilityMod(actor, ability) {
     if (!actor?.system || !ability) return 0;
-    const normalized = ability.toLowerCase();
-    return actor.system?.derived?.attributes?.[normalized]?.mod ?? 0;
+    const normalized = normalizeAbilityKey(ability);
+    if (!normalized) return 0;
+
+    const attrs = actor.system?.attributes?.[normalized] ?? {};
+    const abilityData = actor.system?.abilities?.[normalized] ?? {};
+    const derivedAttr = actor.system?.derived?.attributes?.[normalized] ?? {};
+    const derivedAbility = actor.system?.derived?.abilities?.[normalized] ?? {};
+
+    const direct = firstFinite([
+      derivedAttr.mod,
+      derivedAttr.modifier,
+      derivedAbility.mod,
+      derivedAbility.modifier,
+      attrs.mod,
+      attrs.modifier,
+      abilityData.mod,
+      abilityData.modifier
+    ]);
+    if (direct !== null) return direct;
+
+    const score = firstFinite([
+      derivedAttr.total,
+      derivedAbility.total,
+      attrs.total,
+      attrs.score,
+      attrs.value,
+      abilityData.total,
+      abilityData.score,
+      abilityData.value,
+      abilityData.base,
+      attrs.base
+    ]);
+    const fromScore = scoreToMod(score);
+    if (fromScore !== null) return fromScore;
+
+    const rebuiltScore = Number(attrs.base ?? abilityData.base ?? 10)
+      + Number(attrs.species ?? attrs.racial ?? abilityData.species ?? abilityData.racial ?? 0)
+      + Number(attrs.enhancement ?? attrs.misc ?? abilityData.enhancement ?? abilityData.misc ?? 0)
+      + Number(attrs.temp ?? abilityData.temp ?? 0);
+    return scoreToMod(rebuiltScore) ?? 0;
   }
 
   /**
@@ -211,8 +342,32 @@ export class SchemaAdapters {
    */
   static getAbilityScore(actor, ability) {
     if (!actor?.system || !ability) return 10;
-    const normalized = ability.toLowerCase();
-    return actor.system?.derived?.attributes?.[normalized]?.total ?? 10;
+    const normalized = normalizeAbilityKey(ability);
+    if (!normalized) return 10;
+
+    const attrs = actor.system?.attributes?.[normalized] ?? {};
+    const abilityData = actor.system?.abilities?.[normalized] ?? {};
+    const derivedAttr = actor.system?.derived?.attributes?.[normalized] ?? {};
+    const derivedAbility = actor.system?.derived?.abilities?.[normalized] ?? {};
+
+    const score = firstFinite([
+      derivedAttr.total,
+      derivedAbility.total,
+      attrs.total,
+      attrs.score,
+      attrs.value,
+      abilityData.total,
+      abilityData.score,
+      abilityData.value,
+      abilityData.base,
+      attrs.base
+    ]);
+    if (score !== null) return score;
+
+    return Number(attrs.base ?? abilityData.base ?? 10)
+      + Number(attrs.species ?? attrs.racial ?? abilityData.species ?? abilityData.racial ?? 0)
+      + Number(attrs.enhancement ?? attrs.misc ?? abilityData.enhancement ?? abilityData.misc ?? 0)
+      + Number(attrs.temp ?? abilityData.temp ?? 0);
   }
 
   /**
@@ -256,7 +411,22 @@ export class SchemaAdapters {
    */
   static getBAB(actor) {
     if (!actor?.system) return 0;
-    return actor.system?.derived?.bab ?? 0;
+    const system = actor.system;
+    const direct = firstFinite([
+      system.derived?.bab,
+      system.derived?.bab?.total,
+      system.derived?.bab?.value,
+      system.derived?.combat?.bab,
+      system.bab,
+      system.bab?.total,
+      system.bab?.value,
+      system.baseAttackBonus,
+      system.baseAttack,
+      system.attributes?.bab?.value,
+      system.combat?.bab
+    ]);
+    if (direct !== null) return direct;
+    return estimatedBabFromClasses(actor);
   }
 
   /**
@@ -359,55 +529,4 @@ export class SchemaAdapters {
       );
     }
   }
-
-  /**
-   * Validate actor schema integrity
-   * Checks for inconsistent state across canonical and legacy paths
-   *
-   * @param {Actor} actor
-   * @returns {Object} { valid: boolean, issues: [] }
-   */
-  static validateSchema(actor) {
-    const issues = [];
-
-    if (!actor?.system) {
-      return { valid: false, issues: ['No actor.system'] };
-    }
-
-    // Check for HP inconsistency
-    const hpCanonical = actor.system?.hp?.value;
-    const hpLegacy = actor.system?.health?.current;
-    if (hpCanonical !== undefined && hpLegacy !== undefined && hpCanonical !== hpLegacy) {
-      issues.push(
-        `HP mismatch: system.hp.value=${hpCanonical}, system.health.current=${hpLegacy}`
-      );
-    }
-
-    // Check for Force Points inconsistency
-    const fpCanonical = actor.system?.forcePoints?.value;
-    const fpLegacy = actor.system?.resources?.forcePoints?.value;
-    if (fpCanonical !== undefined && fpLegacy !== undefined && fpCanonical !== fpLegacy) {
-      issues.push(
-        `Force Points mismatch: system.forcePoints.value=${fpCanonical}, ` +
-        `system.resources.forcePoints.value=${fpLegacy}`
-      );
-    }
-
-    // Check for Damage Threshold inconsistency
-    const dtCanonical = actor.system?.derived?.damageThreshold;
-    const dtLegacy = actor.system?.traits?.damageThreshold;
-    if (dtCanonical !== undefined && dtLegacy !== undefined && dtCanonical !== dtLegacy) {
-      issues.push(
-        `DT mismatch: system.derived.damageThreshold=${dtCanonical}, ` +
-        `system.traits.damageThreshold=${dtLegacy}`
-      );
-    }
-
-    return {
-      valid: issues.length === 0,
-      issues
-    };
-  }
 }
-
-export default SchemaAdapters;
