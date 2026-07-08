@@ -138,7 +138,6 @@ export function isMeleeWeapon(weapon) {
   return /\b(melee|unarmed|lightsaber|vibro|staff|pike|sword|knife|blade|club|claw|bite)\b/.test(weaponBranchText(weapon));
 }
 
-
 export function isLightMeleeWeapon(weapon) {
   if (!isMeleeWeapon(weapon)) return false;
   const system = weapon?.system ?? {};
@@ -234,7 +233,6 @@ function actorIsProficientWithWeapon(weapon) {
   return weapon?.system?.proficient !== false;
 }
 
-
 function actorHasTalentNamed(actor, names = []) {
   const wanted = new Set((Array.isArray(names) ? names : [names]).map(normalizeSelector).filter(Boolean));
   if (!wanted.size) return false;
@@ -295,7 +293,6 @@ export function getWeaponAttackAbility(actor, weapon) {
   return usesNobleFencingStyle ? 'cha' : resolved;
 }
 
-
 export function getRangePenalty(weapon, context = {}) {
   const explicit = Number(context.rangePenalty ?? context.modifiers?.rangePenalty ?? weapon?.system?.rangePenalty ?? weapon?.system?.currentRangePenalty);
   if (Number.isFinite(explicit)) return explicit;
@@ -317,6 +314,51 @@ export function getWeaponFlatDamageBonus(weapon) {
   return numeric(system.flatDamageBonus ?? system.damageFlatBonus ?? system.combat?.damage?.bonus ?? 0, 0);
 }
 
+function normalizeCriticalMultiplier(value, fallback = 2) {
+  if (value === null || value === undefined || value === '') return fallback;
+  const match = String(value).trim().match(/\d+/);
+  const parsed = match ? Number(match[0]) : Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+export function getCriticalMultiplier(weapon, fallback = 2) {
+  const system = weapon?.system ?? {};
+  return normalizeCriticalMultiplier(
+    system.criticalMultiplier
+      ?? system.critMultiplier
+      ?? system.combat?.critical?.multiplier
+      ?? system.critical?.multiplier
+      ?? system.multiplier,
+    fallback
+  );
+}
+
+export function isAreaAttack(weaponOrContext = {}, context = {}) {
+  const weapon = weaponOrContext?.system ? weaponOrContext : null;
+  const options = weapon ? context : weaponOrContext;
+  const system = weapon?.system ?? {};
+  const text = [
+    system.attackShape,
+    system.attackType,
+    system.area,
+    system.blastRadius,
+    system.burstRadius,
+    system.properties?.join?.(' '),
+    options?.attackShape,
+    options?.attackType,
+    options?.area,
+    options?.workflowContext?.attackShape,
+    options?.workflowContext?.attackType
+  ].map(value => String(value ?? '').toLowerCase()).join(' ');
+
+  return options?.areaAttack === true
+    || options?.isAreaAttack === true
+    || options?.workflowContext?.areaAttack === true
+    || options?.workflowContext?.isAreaAttack === true
+    || system.areaAttack === true
+    || system.isAreaAttack === true
+    || /\b(area|blast|burst|cone|line|splash)\b/.test(text);
+}
 
 const HALF_LEVEL_DAMAGE_HOUSE_RULE_KEY = 'forcePowerDamageAddsHalfLevel';
 const ELEMENTAL_HALF_LEVEL_EXCLUSION_KEYS = new Set([

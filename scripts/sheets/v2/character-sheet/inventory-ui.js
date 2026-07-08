@@ -70,6 +70,7 @@ export function activateInventoryUI(sheet, html, { signal } = {}) {
   html.querySelectorAll('[data-action="delete"], [data-action="equip"], [data-action="edit"], [data-action="configure"], [data-action="force-alchemy"], [data-action="toggle-activated"], [data-action="toggle-implant-tag"], [data-action="toggle-implant-installed"], [data-action="toggle-implant-active"]').forEach(button => {
     button.addEventListener("click", async (event) => {
       event.preventDefault();
+      event.stopPropagation();
       const action = button.dataset.action;
       const itemId = button.dataset.itemId || event.currentTarget.closest("[data-item-id]")?.dataset.itemId;
 
@@ -79,6 +80,7 @@ export function activateInventoryUI(sheet, html, { signal } = {}) {
 
       switch (action) {
         case "delete":
+          event.stopImmediatePropagation?.();
           await InventoryEngine.removeItem(sheet.actor, itemId);
           break;
         case "equip":
@@ -183,6 +185,8 @@ export function activateInventoryUI(sheet, html, { signal } = {}) {
   html.querySelectorAll('[data-action="delete-item"]').forEach(button => {
     button.addEventListener("click", async (event) => {
       event.preventDefault();
+      event.stopPropagation();
+      event.stopImmediatePropagation?.();
       const itemId = button.dataset.itemId;
       if (itemId) await InventoryEngine.removeItem(sheet.actor, itemId);
     }, { signal });
