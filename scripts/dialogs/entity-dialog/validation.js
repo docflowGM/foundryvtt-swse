@@ -8,7 +8,8 @@
 
 import { resolveArmorData } from "/systems/foundryvtt-swse/scripts/items/armor-data-resolver.js";
 
-const DICE_RE = /^\s*\d+d\d+(?:\s*[+-]\s*\d+)?\s*$/i;
+const DICE_TERM_RE = String.raw`\d*d\d+(?:k[hl]?\d*|d[hl]?\d*|r[<>=]?\d*|x[<>=]?\d*|cs[<>=]?\d*|cf[<>=]?\d*)*`;
+const DICE_RE = new RegExp(String.raw`^\s*(?:${DICE_TERM_RE}|\d+)(?:\s*[+\-*/]\s*(?:${DICE_TERM_RE}|\d+))*\s*$`, 'i');
 
 function toNumber(value, fallback = 0) {
   if (value === '' || value == null) return fallback;
@@ -35,7 +36,7 @@ function validateUniversal({ name, system }, issues) {
 
 function validateWeapon(system, issues) {
   if (system.damage && !DICE_RE.test(String(system.damage))) {
-    add(issues, 'system.damage', 'Weapon damage should look like 2d6 or 2d6+1.');
+    add(issues, 'system.damage', 'Weapon damage should be a Foundry dice formula such as 2d6, 2d6+1, 4d6kh3, or 4d6kl3.');
   }
   const critText = String(system.criticalRange || '20');
   const critMin = critText.includes('-') ? Number(critText.split('-')[0]) : Number(critText);
