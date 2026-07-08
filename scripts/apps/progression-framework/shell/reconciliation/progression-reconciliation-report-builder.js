@@ -9,6 +9,8 @@ import { ProgressionTimelineBuilder } from './progression-timeline-builder.js';
 
 export class ProgressionReconciliationReportBuilder {
   build(actor, entitlementPlan = {}, ownership = {}, _options = {}) {
+    const actorLevel = this._actorTotalLevel(actor, entitlementPlan);
+    const classSummaries = this._normalizedClassSummaries(actor, entitlementPlan?.classSummaries, actorLevel);
     const rawSlots = entitlementPlan?.slots || {};
     const slots = {
       abilityIncreases: this._cloneSlots(rawSlots.abilityIncreases),
@@ -20,6 +22,7 @@ export class ProgressionReconciliationReportBuilder {
       derivedStats: this._cloneDerivedStats(rawSlots.derivedStats || entitlementPlan?.derivedStats),
     };
 
+    this._dropFutureSlots(slots, actorLevel);
     this._applyAmbiguousCrediting(slots, ownership);
     this._attachRemediationActions(slots);
 
@@ -28,9 +31,9 @@ export class ProgressionReconciliationReportBuilder {
       version: 8,
       actorId: actor?.id || entitlementPlan?.actorId || null,
       actorName: actor?.name || entitlementPlan?.actorName || 'Actor',
-      totalLevel: Number(entitlementPlan?.totalLevel || 0) || 0,
-      totalHeroicLevel: Number(entitlementPlan?.totalHeroicLevel || entitlementPlan?.totalLevel || 0) || 0,
-      classSummaries: Array.isArray(entitlementPlan?.classSummaries) ? entitlementPlan.classSummaries : [],
+      totalLevel: actorLevel,
+      totalHeroicLevel: actorLevel,
+      classSummaries,
       slots,
       derivedStats: slots.derivedStats,
       ownership: this._publicOwnershipSummary(ownership),
@@ -40,13 +43,14 @@ export class ProgressionReconciliationReportBuilder {
         ownership: ownership?.diagnostics || { layer: 'ownership-classifier' },
         report: {
           layer: 'reconciliation-report-builder',
-          phase: 8,
+          phase: 9,
           ambiguousCrediting: true,
           remediationActions: true,
-          classProgressionSource: 'class-compendium-ssot',
+          classProgressionSource: 'actor-level-capped',
           cadenceFallback: false,
           derivedStatsAudit: true,
           derivedStatsSanityCaps: true,
+          futureSlotCapping: true,
           timelineBuilder: true,
         },
       },
@@ -105,6 +109,99 @@ export class ProgressionReconciliationReportBuilder {
     report.layers.timeline = report.timeline?.diagnostics || { layer: 'progression-timeline-builder' };
 
     return report;
+  }
+
+  _actorTotalLevel(actor = {}, entitlementPlan = {}) {
+    const explicit = this._positiveInteger(actor?.system?.level ?? actor?.system?.details?.level ?? actor?.system?.progression?.level);
+    if (explicit > 0) return explicit;
+    const classLevelTotal = this._actorClassLevelLedger(actor)
+      .reduce((sum, row) => sum + (Number(row?.level || 0) || 0), 0);
+    if (classLevelTotal > 0) return classLevelTotal;
+    return this._positiveInteger(entitlementPlan?.totalLevel || entitlementPlan?.totalHeroicLevel);
+  }
+
+  _actorClassLevelLedger(actor = {}) {
+    const rows = [];
+    const add = (entry = {}) => {
+      const classId = String(entry?.classId ?? entry?.id ?? entry?.sourceId ?? entry?.class ?? entry?.name ?? '').trim();
+      const className = String(entry?.className ?? entry?.name ?? entry?.class ?? entry?.label ?? classId).trim();
+      const level = this._positiveInteger(entry?.level ?? entry?.levels ?? entry?.value ?? entry?.rank);
+      if (!classId && !className) return;
+      if (level <= 0) return;
+      rows.push({ classId, className, level });
+    };
+
+    const addRows = (value) => {
+      if (!value) return;
+      if (Array.isArray(value)) {
+        for (const entry of value) add(entry);
+      } else if (typeof value === 'object') {
+        for (const [key, entry] of Object.entries(value)) {
+          add({ classId: key, className: key, ...(entry && typeof entry === 'object' ? entry : { level: entry }) });
+        }
+      }
+    };
+
+    addRows(actor?.system?.progression?.classLevels);
+    addRows(actor?.system?.classes);
+    for (const item of this._actorItems(actor).filter(entry => entry?.type === 'class')) {
+      add({
+        classId: item?.system?.classId || item?.system?.id || item?.name,
+        className: item?.system?.className || item?.name || item?.system?.classId,
+        level: item?.system?.level ?? item?.system?.levels ?? item?.system?.rank,
+      });
+    }
+    return rows;
+  }
+
+  _normalizedClassSummaries(actor = {}, rawSummaries = [], actorLevel = 0) {
+    const actorLedger = this._actorClassLevelLedger(actor);
+    const actorLedgerTotal = actorLedger.reduce((sum, row) => sum + (Number(row.level || 0) || 0), 0);
+    if (actorLevel > 0 && actorLedgerTotal === actorLevel && actorLedger.length) {
+      return actorLedger.map(row => ({
+        classId: row.classId,
+        className: row.className || row.classId,
+        level: row.level,
+        sources: ['actor-level-ledger'],
+        levelSource: 'actor.system.progression.classLevels',
+        sourceConfidence: 'high',
+        isHeroic: true,
+        isNonheroic: false,
+        isPrestige: String(row.classId || '').toLowerCase().includes('prestige') || String(row.className || '').toLowerCase().includes('imperial knight'),
+      }));
+    }
+
+    const summaries = Array.isArray(rawSummaries) ? rawSummaries : [];
+    let remaining = Math.max(0, actorLevel);
+    return summaries.map(summary => {
+      const level = Math.min(this._positiveInteger(summary?.level), remaining || this._positiveInteger(summary?.level));
+      remaining = Math.max(0, remaining - level);
+      return { ...summary, level };
+    }).filter(summary => this._positiveInteger(summary?.level) > 0);
+  }
+
+  _dropFutureSlots(slots = {}, actorLevel = 0) {
+    if (!actorLevel || actorLevel <= 0) return;
+    const withinLevel = slot => {
+      const level = this._positiveInteger(slot?.characterLevel ?? slot?.level ?? slot?.sourceLevel);
+      return level <= 0 || level <= actorLevel;
+    };
+    for (const key of ['abilityIncreases', 'generalFeats', 'heroicTalents', 'classChoices', 'classFeats', 'classTalents']) {
+      if (Array.isArray(slots[key])) slots[key] = slots[key].filter(withinLevel);
+    }
+  }
+
+  _positiveInteger(value) {
+    const numeric = Number(value);
+    return Number.isFinite(numeric) && numeric > 0 ? Math.floor(numeric) : 0;
+  }
+
+  _actorItems(actor = {}) {
+    try {
+      return Array.from(actor?.items ?? []);
+    } catch (_err) {
+      return [];
+    }
   }
 
   _cloneSlots(slots = []) {
