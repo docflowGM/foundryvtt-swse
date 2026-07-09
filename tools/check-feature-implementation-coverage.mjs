@@ -60,6 +60,50 @@ function nonEmpty(v) {
   if (typeof v === 'string') return v.trim().length > 0;
   return Boolean(v);
 }
+function walkFiles(dir, predicate, out = []) {
+  if (!fs.existsSync(dir)) return out;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const p = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name === 'node_modules' || entry.name === '.git') continue;
+      walkFiles(p, predicate, out);
+    } else if (predicate(p)) {
+      out.push(p);
+    }
+  }
+  return out;
+}
+function scanSourceFor(patterns, { root = 'scripts', maxMatches = 12 } = {}) {
+  const files = walkFiles(path.join(ROOT, root), p => /\.(mjs|js|json|hbs)$/i.test(p));
+  const out = [];
+  for (const file of files) {
+    const text = fs.readFileSync(file, 'utf8');
+    const hits = patterns.filter(pattern => {
+      if (pattern instanceof RegExp) return pattern.test(text);
+      return text.includes(String(pattern));
+    });
+    if (hits.length) {
+      out.push({
+        path: path.relative(ROOT, file),
+        matches: hits.map(hit => hit instanceof RegExp ? String(hit) : hit),
+      });
+      if (out.length >= maxMatches) break;
+    }
+  }
+  return out;
+}
+function hasMeaningfulCombatTraits(value) {
+  if (!value || typeof value !== 'object') return false;
+  const naturalArmor = Number(value.naturalArmor || 0) || 0;
+  const weaponProficiencies = Array.isArray(value.weaponProficiencies) ? value.weaponProficiencies.filter(Boolean) : [];
+  const otherTraits = Array.isArray(value.otherTraits) ? value.otherTraits.filter(Boolean) : [];
+  const rest = Object.entries(value).filter(([key]) => !['naturalArmor', 'weaponProficiencies', 'otherTraits'].includes(key));
+  return naturalArmor !== 0 || weaponProficiencies.length > 0 || otherTraits.length > 0 || rest.some(([, v]) => nonEmpty(v));
+}
+function fieldIsMeaningful(system, field) {
+  if (field === 'combatTraits') return hasMeaningfulCombatTraits(system?.combatTraits);
+  return nonEmpty(system?.[field]);
+}
 
 // ---------------------------------------------------------------------------
 // FEATS
@@ -72,7 +116,6 @@ function auditFeats() {
   // transfer:true effects = the only ones historically applied to actors.
   const transferFeatIds = new Set();
   for (const def of Object.values(defs)) {
-    const effs = def?.effects || (def?.effect ? [def.effect] : []);
     const list = Array.isArray(def?.effects) ? def.effects : [];
     const anyTransfer = list.some(e => e?.transfer === true) || def?.transfer === true;
     if (anyTransfer && def?.featId) transferFeatIds.add(def.featId);
@@ -139,19 +182,31 @@ const SPECIES_FIELDS = [
 function auditSpecies() {
   const species = readDb('packs/species.db');
   const fieldCoverage = Object.fromEntries(SPECIES_FIELDS.map(f => [f, 0]));
+  const rawFieldCoverage = Object.fromEntries(SPECIES_FIELDS.map(f => [f, 0]));
   // The combat-math SSOT parity question: do species declare flat attack/damage bonuses?
   const combatBonusSpecies = [];
+
+  const consumerEvidence = {
+    combatTraits: scanSourceFor(['combatTraits']),
+    bonusTrainedSkills: scanSourceFor(['bonusTrainedSkills']),
+    structuredBonusTrainedSkill: scanSourceFor(['bonusTrainedSkill']),
+    canonicalTraits: scanSourceFor(['canonicalTraits', 'speciesTraitIds', 'speciesTraits']),
+  };
 
   const items = species.map(sp => {
     const s = sp.system || {};
     const present = {};
+    const rawPresent = {};
     for (const field of SPECIES_FIELDS) {
-      const has = nonEmpty(s[field]);
+      const rawHas = nonEmpty(s[field]);
+      const has = fieldIsMeaningful(s, field);
+      rawPresent[field] = rawHas;
       present[field] = has;
+      if (rawHas) rawFieldCoverage[field]++;
       if (has) fieldCoverage[field]++;
     }
-    // Look for any attack/damage bonus inside combatTraits (the parity concern).
-    const ct = s.combatTraits;
+    // Look for meaningful attack/damage bonus declarations inside combatTraits.
+    const ct = hasMeaningfulCombatTraits(s.combatTraits) ? s.combatTraits : null;
     const ctStr = JSON.stringify(ct || '');
     const declaresCombatAtkDmg = /attack|damage/i.test(ctStr) && nonEmpty(ct);
     if (declaresCombatAtkDmg) combatBonusSpecies.push(sp.name);
@@ -161,11 +216,12 @@ function auditSpecies() {
       source: s.source || null,
       actsAsDroid: Boolean(s.speciesActsAsDroid),
       present,
+      rawPresent,
       declaresCombatAtkDmg,
     };
   });
 
-  return { items, fieldCoverage, combatBonusSpecies, count: species.length };
+  return { items, fieldCoverage, rawFieldCoverage, combatBonusSpecies, consumerEvidence, count: species.length };
 }
 
 // ---------------------------------------------------------------------------
@@ -181,7 +237,12 @@ const CLASS_FIELDS = [
 function auditClasses() {
   const classes = readDb('packs/classes.db');
   const nonheroic = readDb('packs/nonheroic.db');
+  const classFeatures = readJson('data/class-features.json', { abilities: [] });
   const fieldCoverage = Object.fromEntries(CLASS_FIELDS.map(f => [f, 0]));
+  const classFeatureRegistry = {
+    abilityCount: Array.isArray(classFeatures.abilities) ? classFeatures.abilities.length : 0,
+    consumerEvidence: scanSourceFor(['class-features.json'], { root: 'scripts' }),
+  };
 
   const items = classes.map(c => {
     const s = c.system || {};
@@ -201,7 +262,7 @@ function auditClasses() {
     };
   });
 
-  return { items, fieldCoverage, count: classes.length, nonheroicCount: nonheroic.length };
+  return { items, fieldCoverage, count: classes.length, nonheroicCount: nonheroic.length, classFeatureRegistry };
 }
 
 // ---------------------------------------------------------------------------
@@ -225,15 +286,15 @@ if (!NO_WRITE) {
   fs.writeFileSync(path.join(outDir, 'feat-implementation-status.json'),
     JSON.stringify({ _meta: { generatedBy: 'check-feature-implementation-coverage.mjs', total: feats.items.length, transferEffects: feats.transferCount, bucketCounts: featBuckets, note: 'Buckets are provisional static signals, not runtime verdicts.' }, feats: feats.items }, null, 2));
   fs.writeFileSync(path.join(outDir, 'species-feature-implementation-status.json'),
-    JSON.stringify({ _meta: { generatedBy: 'check-feature-implementation-coverage.mjs', total: species.count, fieldCoverage: species.fieldCoverage, speciesDeclaringCombatAtkDmg: species.combatBonusSpecies }, species: species.items }, null, 2));
+    JSON.stringify({ _meta: { generatedBy: 'check-feature-implementation-coverage.mjs', total: species.count, fieldCoverage: species.fieldCoverage, rawFieldCoverage: species.rawFieldCoverage, speciesDeclaringCombatAtkDmg: species.combatBonusSpecies, consumerEvidence: species.consumerEvidence, note: 'fieldCoverage treats default/empty combatTraits as not meaningful; rawFieldCoverage preserves literal schema population.' }, species: species.items }, null, 2));
   fs.writeFileSync(path.join(outDir, 'class-feature-implementation-status.json'),
-    JSON.stringify({ _meta: { generatedBy: 'check-feature-implementation-coverage.mjs', total: classes.count, nonheroicCount: classes.nonheroicCount, fieldCoverage: classes.fieldCoverage }, classes: classes.items }, null, 2));
+    JSON.stringify({ _meta: { generatedBy: 'check-feature-implementation-coverage.mjs', total: classes.count, nonheroicCount: classes.nonheroicCount, fieldCoverage: classes.fieldCoverage, classFeatureRegistry: classes.classFeatureRegistry }, classes: classes.items }, null, 2));
 }
 
 const summary = {
   feats: { total: feats.items.length, buckets: featBuckets, transferEffects: feats.transferCount, effectDefs: feats.effectDefCount },
-  species: { total: species.count, fieldCoverage: species.fieldCoverage, declaringCombatAtkDmg: species.combatBonusSpecies.length },
-  classes: { total: classes.count, nonheroic: classes.nonheroicCount, baseClasses: classes.items.filter(c => c.classType === 'base').map(c => c.name) },
+  species: { total: species.count, fieldCoverage: species.fieldCoverage, rawFieldCoverage: species.rawFieldCoverage, declaringCombatAtkDmg: species.combatBonusSpecies.length, consumerEvidence: species.consumerEvidence },
+  classes: { total: classes.count, nonheroic: classes.nonheroicCount, baseClasses: classes.items.filter(c => c.classType === 'base').map(c => c.name), classFeatureRegistry: classes.classFeatureRegistry },
 };
 
 if (JSON_OUT) {
@@ -245,9 +306,18 @@ if (JSON_OUT) {
   console.log(`\n  FEATS: ${summary.feats.total}  | ActiveEffect(transfer:true): ${summary.feats.transferEffects}  | effect defs: ${summary.feats.effectDefs}`);
   for (const [b, n] of Object.entries(featBuckets).sort()) console.log(`     provisional bucket ${b}: ${n}`);
   console.log(`\n  SPECIES: ${summary.species.total}  | declaring combat attack/damage traits: ${summary.species.declaringCombatAtkDmg}`);
-  for (const [f, n] of Object.entries(species.fieldCoverage)) console.log(`     ${f.padEnd(28)} ${n}/${summary.species.total}`);
+  for (const [f, n] of Object.entries(species.fieldCoverage)) {
+    const raw = species.rawFieldCoverage[f];
+    const rawSuffix = raw !== n ? ` (raw schema: ${raw}/${summary.species.total})` : '';
+    console.log(`     ${f.padEnd(28)} ${n}/${summary.species.total}${rawSuffix}`);
+  }
+  console.log('     consumer evidence:');
+  for (const [field, hits] of Object.entries(species.consumerEvidence)) {
+    console.log(`       ${field.padEnd(28)} ${hits.map(h => h.path).join(', ') || '(none in scripts/)'}`);
+  }
   console.log(`\n  CLASSES: ${summary.classes.total} (+${summary.classes.nonheroic} nonheroic)  base: ${summary.classes.baseClasses.join(', ')}`);
   for (const [f, n] of Object.entries(classes.fieldCoverage)) console.log(`     ${f.padEnd(28)} ${n}/${summary.classes.total}`);
+  console.log(`     class-features.json abilities ${summary.classes.classFeatureRegistry.abilityCount}; consumers: ${summary.classes.classFeatureRegistry.consumerEvidence.map(h => h.path).join(', ') || '(none in scripts/)'}`);
   if (!NO_WRITE) console.log('\n  Wrote 3 status JSON files to docs/audits/.');
   console.log('='.repeat(72) + '\n');
 }
