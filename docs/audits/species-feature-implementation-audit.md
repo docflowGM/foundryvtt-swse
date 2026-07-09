@@ -19,10 +19,12 @@ species.db  →  build-pending-species-context.js (entitlements)
                             └─► defense-calculator.js reads *.defenses for Ref/Fort/Will
 ```
 
-## Per-field coverage (populated / 161) and consumer status
+## Per-field coverage and consumer status
 
-| Field | Populated | Has runtime consumer? | Bucket | Notes |
-|-------|-----------|-----------------------|--------|-------|
+The updated coverage script now distinguishes **raw schema population** from **meaningful population**. This matters for `combatTraits`: every species inherits the template object, but the default object is `{ naturalArmor: 0, weaponProficiencies: [], otherTraits: [] }`, which is not a meaningful rule declaration.
+
+| Field | Meaningfully populated | Has runtime consumer? | Bucket | Notes |
+|-------|------------------------|-----------------------|--------|-------|
 | `size` | 161 | Yes (applier → system.size) | **B** | Applied at chargen; affects derived where size matters |
 | `speed` / `movement` | 161 | Yes (applier → system.speed / speciesMovement) | **B** | Multi-mode movement preserved |
 | `abilities` / `abilityMods` | 161 | Yes (progression → system.attributes) | **B** | Core stat application; highest-value to runtime-verify |
@@ -32,19 +34,19 @@ species.db  →  build-pending-species-context.js (entitlements)
 | `naturalWeapons` | 6 | Yes (applier + species-trait-engine) | **B/C** | Verify weapon items/attacks actually created |
 | `suppressedClassProficiencies` | 15 | Partial | **C** | Verify proficiency suppression applies |
 | `socialTraits` | 9 | Via canonicalTraits/traitIds? | **C** | Representation ambiguity (see below) |
-| `visionTraits` | 7 | **No direct consumer found** | **C/D** | Likely descriptive or folded into traitIds |
-| `environmentalTraits` | 5 | Unclear | **C/D** | Same |
+| `visionTraits` | 7 | Materialized indirectly when ledger classifies senses | **C** | Verify species sense flags display/apply as intended |
+| `environmentalTraits` | 5 | Materialized indirectly when ledger classifies environment | **C** | Metadata flags exist; mechanical enforcement varies |
 | `movementTraits` | 4 | Unclear | **C/D** | Distinct from `movement` (which IS applied) |
 | `forceTraits` | 2 | Unclear | **C/D** | e.g. Force-sensitive species |
 | `techTraits` | 2 | Unclear | **C/D** | — |
-| `bonusFeats` | 2 | Yes (ProgressionSession, ModifierEngine, class-feat-registry) | **B** | Low population is plausible (few species grant feats) |
-| `speciesActsAsDroid` | 2 | Yes (droid organic-rest handling) | **B** | Droid species mostly live in `droids.db` separately |
-| `combatTraits` | **161** | **No direct consumer found** | **D/E** | Populated on every species but nothing reads `system.combatTraits`; superseded by `canonicalTraits`/`speciesTraitBonuses`? Needs verification. |
-| `bonusTrainedSkills` | **1** | **No consumer found** | **D/E** | Field read by no code; likely dead or superseded by `skillBonuses` |
+| `bonusFeats` | 2 | Yes (species bonus feat compiler) | **B/C** | Conditional/freeform grants may defer |
+| `speciesActsAsDroid` | 2 | Yes (droid progression/rest handling) | **B** | Droid species mostly live in `droids.db` separately |
+| `combatTraits` | default object on all species; meaningful count now separated by tool | **No direct runtime reader found for the field itself** | **D/E** | Likely superseded by canonical trait ledger and `speciesTraitBonuses` / `speciesCombatBonuses.defenses`; do not count the default object as implementation evidence. |
+| `bonusTrainedSkills` | 1 raw field | **Plural field has no direct reader; structured `bonusTrainedSkill` trait grants are consumed** | **C** | `apply-canonical-species-to-actor.js` consumes trait grants whose source is `bonusTrainedSkill`; verify the one raw plural field is converted into that structure before chargen finalization. |
 
 ## Species combat attack/damage bonus parity (the flagged issue)
 
-**Resolved (static): species do NOT declare flat attack/damage combat bonuses.** The coverage script found **zero** species with attack/damage combat traits (the single Ithorian match was a false positive — "attack" appeared in the *Bellow* description text, not a numeric bonus).
+**Resolved (static): species do NOT declare flat attack/damage combat bonuses.** The coverage script found **zero** species with meaningful attack/damage combat traits.
 
 - The canonical resolvers (`resolveAttackBonus`/`resolveDamageBonus`) intentionally **do not** read `speciesCombatBonuses.meleeAttack/rangedAttack/meleeDamage/rangedDamage`. With no species populating those sub-keys, the resolvers are **not missing a live modifier** — the legacy `combat-utils.js` species attack/damage addition is dead for all shipped species.
 - **Species combat DEFENSE bonuses are different and ARE live:** `defense-calculator.js` reads `speciesTraitBonuses.defenses` and `speciesCombatBonuses.defenses`. That path is real and should be runtime-verified.
@@ -56,20 +58,20 @@ Ability mods, size, speed, languages, and species defense bonuses have concrete 
 
 ## Data-only / likely-dead fields (needs decision)
 
-- **`combatTraits`** (161/161, no direct reader) — either wire a consumer or confirm it's superseded by `canonicalTraits`/`speciesTraitBonuses` and stop populating it.
-- **`bonusTrainedSkills`** (1/161, no reader) — dead field; either implement or fold into `skillBonuses`.
-- **`visionTraits` / `movementTraits` / `forceTraits` / `techTraits` / `environmentalTraits`** — low population and no clear consumer; confirm whether `canonicalTraits`/`traitIds` is the authoritative representation and these are descriptive mirrors.
+- **`combatTraits`** — raw/default schema exists broadly, but no direct field reader was found. Decide whether to keep it as a deprecated mirror or stop treating it as implementation evidence.
+- **`bonusTrainedSkills`** — the raw plural field is not the runtime contract. The structured trait source `bonusTrainedSkill` is consumed by species materialization, so the remaining question is conversion/migration into that structure.
+- **`visionTraits` / `movementTraits` / `forceTraits` / `techTraits` / `environmentalTraits`** — low population and no always-direct consumer; confirm whether `canonicalTraits`/`traitIds` is the authoritative representation and these are descriptive mirrors.
 
 ## Likely broken / missing
 
-- No species field is clearly *broken* (wired-but-wrong) from static evidence. The risk is **silent no-op**: populated fields (`combatTraits`, `bonusTrainedSkills`) with no consumer read as "implemented" in data but do nothing.
-- **Representation ambiguity** (`canonicalTraits`/`traitIds` vs the individual `*Traits` fields) is the top species-side risk: two parallel trait representations where only one is authoritative.
+- No species field is clearly *broken* (wired-but-wrong) from static evidence. The risk is **silent no-op**: populated/default fields (`combatTraits`, raw `bonusTrainedSkills`) can read as "implemented" in data but may do nothing unless converted into the canonical trait ledger.
+- **Representation ambiguity** (`canonicalTraits`/`traitIds` vs the individual `*Traits` fields) is the top species-side risk: two parallel trait representations where only one should be authoritative.
 
 ## Recommended next batches (species)
 
 1. **Runtime-verify the core application** (ability mods, size, speed, languages, defense bonuses) on 2–3 representative species incl. one Force-sensitive and one droid species.
-2. **Resolve the trait-representation ambiguity**: decide whether `canonicalTraits`/`traitIds` or the `*Traits` fields are authoritative; retire the dead one.
-3. **Decide `combatTraits` / `bonusTrainedSkills`**: wire a consumer or stop populating (data hygiene).
+2. **Resolve the trait-representation ambiguity**: decide whether `canonicalTraits`/`traitIds` or the `*Traits` fields are authoritative; retire or label the mirror model.
+3. **Decide `combatTraits` / `bonusTrainedSkills`**: keep them as deprecated/source-data mirrors, or migrate data so only the canonical trait ledger is considered runtime evidence.
 4. **Verify `naturalWeapons`** actually create usable attacks, and `suppressedClassProficiencies` actually suppress.
 
 ## Limitations
