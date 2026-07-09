@@ -58,7 +58,10 @@ export class RollbackStore {
     try {
       // Update actor system data
       // PHASE 3: Route through ActorEngine
-      await ActorEngine.updateActor(actor, { system: state.system });
+      // This is an intentional full-system restore (progression rollback). Tag it
+      // so the Phase 2 boundary guard classifies it as a broad-safe progression
+      // operation rather than an unknown-caller full-system replacement.
+      await ActorEngine.updateActor(actor, { system: state.system }, { source: 'progression-rollback-restore' });
 
       // Delete all current items
       const currentItemIds = actor.items.map(i => i.id);

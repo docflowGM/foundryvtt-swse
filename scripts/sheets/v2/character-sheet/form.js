@@ -516,7 +516,11 @@ export async function handleFormSubmission(sheet, event) {
     SWSELogger.debug('[PERSISTENCE] Calling ActorEngine.updateActor...');
     // Quiet broad submit fallback: still use ActorEngine, but do not repaint every
     // open surface for normal form editing. Manual Refresh owns full reloads.
-    await mutateAndRepaint(sheet, () => ActorEngine.updateActor(currentActor, filtered, {
+    // Cross the ActorEngine boundary as flat leaf dot-paths, not a nested
+    // {system:{...}} object. ActorEngine flattens internally anyway, and a nested
+    // system object trips the Phase 2 broad-replacement boundary guard (an
+    // expandObject() form submit is many narrow leaves, not a full replacement).
+    await mutateAndRepaint(sheet, () => ActorEngine.updateActor(currentActor, foundry.utils.flattenObject(filtered), {
       source: 'character-sheet-form-submit',
       meta: { guardKey: 'character-sheet-form-submit' },
       render: false,

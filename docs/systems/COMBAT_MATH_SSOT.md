@@ -74,6 +74,31 @@ runtime that species combat bonuses are either (a) already applied by the
 resolver via ModifierEngine/effect-intent, or (b) genuinely dead data. Only then
 is the resolver numerically ≥ the legacy result and safe to swap.
 
+### Static finding (2026-07-09 review) — the exact blocker
+
+The canonical resolvers do **not** read `system.speciesCombatBonuses` /
+`system.speciesTraitBonuses.combat`; `combat-utils` adds
+`speciesCombat.meleeAttack / rangedAttack / meleeDamage / rangedDamage`. A repo
+grep finds **no write site** for those attack/damage sub-keys — only the
+`.defenses` sub-key is populated and consumed (by `defense-calculator.js`). That
+strongly suggests the species *attack/damage* bonus is legacy/unpopulated in v2,
+so migrating would be a no-op. **But absence of a static write is not proof**: a
+species sidecar or trait applier could set it at runtime.
+
+**Recommended runtime test before migrating any of the 5 consumers:** on a
+character whose species grants a flat combat bonus (e.g. a species with a melee
+or ranged attack/damage trait), log `actor.system.speciesCombatBonuses` after
+species application and compare `computeAttackBonus` vs `resolveAttackBonus().total`
+(and the damage pair). If they match (species sub-keys empty/zero), migrate the
+consumer to the resolver as a thin change. If they differ, the species bonus must
+first be modeled as a ModifierEngine/effect-intent modifier so the resolver picks
+it up — only then migrate.
+
+Verdict per consumer (static): all five are **needs-runtime-verification** — none
+is safe to migrate blindly. `vehicle-calculations.js` is additionally
+special-cased (vehicle weapons don't take personal species/feat modifiers), so it
+is closer to intentional-legacy.
+
 ## Guardrail
 
 `tools/check-combat-math-ssot.mjs` statically asserts that the roll path and the
