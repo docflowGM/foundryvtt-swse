@@ -37,6 +37,18 @@ export function getConditionPenalty(ctStep) {
  * Compute SWSE attack bonus from all components.
  * This is NOT the final attack roll function — SWSERoll handles FP + UI.
  *
+ * @deprecated LEGACY combat math. The canonical attack-bonus seam is
+ *   `resolveAttackBonus()` in scripts/engine/combat/combat-roll-math.js, which
+ *   the live attack roll path (attacks.js) and the tooltip/breakdown path
+ *   (weapons-engine.js) already use. This function predates the resolver and
+ *   omits combat-option, rage, Sith Commander, rapid alchemy, Force Item,
+ *   effect-intent, and scoped-feat modifiers (it still adds legacy species
+ *   combat bonuses the resolver does not). New code MUST call
+ *   resolveAttackBonus(). Existing consumers (enhanced-rolls.js,
+ *   enhanced-combat-system.js, vehicle-calculations.js) are migration candidates
+ *   pending numeric parity verification of species bonuses — see
+ *   docs/systems/COMBAT_MATH_SSOT.md. Kept and behavior-frozen until then.
+ *
  * @param {Actor} actor
  * @param {Item} weapon
  * @param {Object} [options]
@@ -269,7 +281,18 @@ function computePassiveStateDamageBonus(actor, weapon, context = {}) {
 }
 
 /**
- * Compute SWSE RAW damage bonus — canonical implementation.
+ * Compute SWSE RAW damage bonus.
+ *
+ * @deprecated LEGACY combat math. The canonical damage-bonus seam is
+ *   `resolveDamageBonus()` in scripts/engine/combat/combat-roll-math.js, used by
+ *   the live damage roll path (attacks.js) and the tooltip/breakdown path
+ *   (weapons-engine.js). This function omits combat-option, rage, Force Item, and
+ *   scoped-feat modifiers (it still adds legacy species combat bonuses the
+ *   resolver does not). New code MUST call resolveDamageBonus(). Existing
+ *   consumers (damage.js, enhanced-combat-system.js, CombatUIAdapter.js) are
+ *   migration candidates pending numeric parity verification of species bonuses
+ *   and dex-to-damage handling — see docs/systems/COMBAT_MATH_SSOT.md. Kept and
+ *   behavior-frozen until then.
  */
 export function computeDamageBonus(actor, weapon, options = {}) {
   const halfLvl = getHalfLevelDamageBonus(actor, weapon, { ...options, weapon, isWeaponDamage: true });
