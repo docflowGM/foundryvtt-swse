@@ -639,12 +639,20 @@ export const ActorEngine = {
       //
       // Long-term invariant: ActorEngine is the public mutation facade.
       // ========================================
+      // Derived-write authority: system.derived.* is owned by DerivedCalculator.
+      // Throws in strict mode / warns otherwise when a caller writes derived paths
+      // outside a derived-calc cycle. (Previously defined but never wired.)
+      this._validateDerivedWriteAuthority(normalizedUpdateData, actor, options);
+
       const _opCategory = this._classifyOperationIntent(normalizedUpdateData, options, actor);
       // Pass the ORIGINAL updateData (pre-normalization) so check #1 can detect whether the
       // caller explicitly passed {system:{...}} (nested) vs a flat dot-path key. After
       // _normalizeMutationForContract runs expandObject(), normalizedUpdateData.system is
       // always an object — using it here would false-positive on every safe narrow update.
-      this._auditSemanticBoundaries(updateData, flatUpdateData, actor, _opCategory, options);
+      const _boundaryFindings = this._auditSemanticBoundaries(updateData, flatUpdateData, actor, _opCategory, options);
+      // Phase 2: high-confidence findings become hard failures in strict/dev mode.
+      // Ambiguous findings stay warning-only (already logged by the audit above).
+      this._enforceStrictSemanticBoundaries(_boundaryFindings, _opCategory, actor, options);
       // Phase 3: apply guardrails — safe corrections to proven-unsafe paths.
       // Result replaces flatUpdateData as the payload that crosses the document boundary.
       const p3FlatData = this._applyPhase3Guardrails(flatUpdateData, _opCategory, actor, options);
@@ -4208,6 +4216,54 @@ export const ActorEngine = {
   /** @private — delegates to MutationBoundaryService */
   _auditEmbeddedItemBoundaries(updates, actor, options) {
     return MutationBoundaryService.auditEmbeddedItemBoundaries(updates, actor, options);
+  },
+
+  /**
+   * PHASE 2: Strict-mode enforcement of high-confidence semantic-boundary findings.
+   *
+   * The MutationBoundaryService audit is warning-only and never throws — it just
+   * returns the suspicious findings. This method decides whether to reject.
+   *
+   * STRICT/DEV mode: reject the two high-confidence unknown-caller cases —
+   *   - full-system-replacement      (caller handed a whole {system:{...}} object)
+   *   - broad-domain-key-replacement (caller replaced system.skills/defenses/
+   *                                   attributes/abilities wholesale)
+   * These only ever fire for non-broad-safe callers: the audit already skips them
+   * for allowlisted contexts (adoption, migration/repair, progression commit/
+   * finalization, canonical normalization, derived rebuild).
+   *
+   * NORMAL/PRODUCTION mode: no throw — the audit's warning already fired, and
+   * production behavior is preserved unchanged.
+   *
+   * Ambiguous findings (abilities mirror writes, unclassified broad payloads) stay
+   * warning-only even in strict mode: mirror writes are auto-redirected by the
+   * Phase 3 guardrail, and the broad-key-count heuristic is too coarse to fail on.
+   * Derived writes are enforced separately by _validateDerivedWriteAuthority().
+   *
+   * @param {Array} findings - Return value of _auditSemanticBoundaries()
+   * @param {string} operationCategory
+   * @param {Actor} actor
+   * @param {Object} options
+   * @throws {Error} In strict mode when a high-confidence violation is present.
+   * @private
+   */
+  _enforceStrictSemanticBoundaries(findings, operationCategory, actor, options = {}) {
+    if (!Array.isArray(findings) || findings.length === 0) return;
+    if (MutationInterceptor.getEnforcementLevel() !== 'strict') return;
+
+    const HIGH_CONFIDENCE = new Set(['full-system-replacement', 'broad-domain-key-replacement']);
+    const blocking = findings.filter(f => HIGH_CONFIDENCE.has(f?.reason));
+    if (blocking.length === 0) return;
+
+    const detail = blocking.map(f => `${f.key} (${f.reason})`).join(', ');
+    throw new Error(
+      `[MUTATION BOUNDARY VIOLATION] Unknown caller attempted broad replacement: ${detail}\n` +
+      `operationCategory=${operationCategory}, source=${options?.source ?? options?.meta?.source ?? 'unknown'}\n` +
+      `Broad system/domain replacement is only permitted from adoption, migration/repair, ` +
+      `progression commit/finalization, canonical normalization, or derived rebuild contexts. ` +
+      `Use leaf dot-path updates instead.\n` +
+      `Caller: ${new Error().stack.split('\n')[2]}`
+    );
   },
 
   // ========================================
