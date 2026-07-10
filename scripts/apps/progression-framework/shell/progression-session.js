@@ -92,6 +92,19 @@ export class ProgressionSession {
       // NEW: Pending entitlements & immediate choices (Phase 1)
       pendingEntitlements: [],  // Subsystem picks resolved elsewhere
       immediateChoices: [],     // Resolved immediately in owning step
+      // Follower (dependent participant) selections. These are a deliberate,
+      // load-bearing follower sub-schema consumed by follower-deriver.js,
+      // selected-rail-context.js, and follower-creator.js. Batch A / R2: declared
+      // here so they are intentional, documented, validate-capable fields rather
+      // than silent non-schema writes. Follower steps still assign them directly
+      // (whole-list replacement semantics); routing through commitSelection is a
+      // tracked follow-up.
+      followerSkills: [],
+      skillChoices: [],
+      followerLanguages: [],
+      languageChoices: [],
+      followerBackground: null,
+      backgroundChoice: null,
     };
 
     // Derived outputs (computed on demand, not hand-maintained)
@@ -612,6 +625,32 @@ export class ProgressionSession {
       immediateChoices: {
         type: 'array',
         description: 'Choice-bearing feat/talent selections resolved at their owning step',
+      },
+      // Follower (dependent participant) sub-schema (Batch A / R2). Consumed by
+      // follower-deriver.js, selected-rail-context.js, follower-creator.js.
+      followerSkills: {
+        type: 'array',
+        description: 'Follower trained-skill choices (whole-list replacement)',
+      },
+      skillChoices: {
+        type: 'array',
+        description: 'Follower skill choices mirror consumed by follower-creator',
+      },
+      followerLanguages: {
+        type: 'array',
+        description: 'Follower known/bonus language choices (whole-list replacement)',
+      },
+      languageChoices: {
+        type: 'array',
+        description: 'Follower language choices mirror consumed by follower-creator',
+      },
+      followerBackground: {
+        type: 'object',
+        description: 'Follower background selection record',
+      },
+      backgroundChoice: {
+        type: 'string',
+        description: 'Follower background id consumed by follower-creator',
       },
     };
   }

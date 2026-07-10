@@ -2931,6 +2931,12 @@ export const ActorEngine = {
     // roll back a partially-applied plan if any operation fails.
     let _txnSnapshot = null;
 
+    // CREATE-bucket world actors created during this plan (tempId → realId).
+    // Hoisted so transactional rollback can also delete them: the target-actor
+    // snapshot restore does NOT cover separately-created world actors, so without
+    // this a failed plan could orphan created actors (audit R5).
+    const tempIdMap = {};
+
     try {
       if (!actor) {
         throw new Error('applyMutationPlan() called with no actor');
@@ -2965,16 +2971,16 @@ export const ActorEngine = {
 
       // Transactional mode: capture the target actor's pre-plan state so a
       // failure partway through the strict-order application can be reverted.
-      // (Reverts the target actor only — world actors created by the CREATE
-      // bucket are not removed by this restore, so transactional mode is meant
-      // for actor-local plans such as progression finalization.)
+      // The target actor is restored from this snapshot; CREATE-bucket world
+      // actors are additionally deleted in the catch block below (see tempIdMap),
+      // so transactional mode now covers both actor-local plans (progression
+      // finalization) and plans that create world actors.
       if (transactional) {
         _txnSnapshot = actor.toObject(true);
       }
 
       // Phase 2: Apply operations in strict order
       // CREATE first (create world actors, build tempId→realId map)
-      const tempIdMap = {};
       if (plan.create && plan.create.actors && plan.create.actors.length > 0) {
         await this._applyCreateOps(plan.create.actors, tempIdMap, source);
       }
@@ -3034,6 +3040,28 @@ export const ActorEngine = {
             source,
             restoreError: restoreErr?.message
           });
+        }
+
+        // CREATE-bucket rollback (audit R5): delete any world actors created by
+        // this plan so a mid-plan failure does not orphan them. Only runs in
+        // transactional mode; best-effort, and any failure downgrades the
+        // transactional guarantee via partialMutationPossible rather than masking it.
+        const createdActorIds = Object.values(tempIdMap).filter(Boolean);
+        if (createdActorIds.length > 0) {
+          try {
+            await Actor.deleteDocuments(createdActorIds);
+            SWSELogger.warn('ActorEngine.applyMutationPlan: deleted CREATE-bucket actors during rollback', {
+              source,
+              deletedActorIds: createdActorIds
+            });
+          } catch (createRollbackErr) {
+            error.partialMutationPossible = true;
+            SWSELogger.error('ActorEngine.applyMutationPlan: CREATE-bucket rollback FAILED; created actors may be orphaned', {
+              source,
+              createdActorIds,
+              createRollbackError: createRollbackErr?.message
+            });
+          }
         }
       }
 

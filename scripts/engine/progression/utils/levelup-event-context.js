@@ -223,7 +223,12 @@ export function countClassFeatureChoicesAtLevel(classModel, level, featureType) 
   const features = Array.isArray(levelEntry?.features) ? levelEntry.features : [];
   return features
     .filter((feature) => String(feature?.type || '').toLowerCase() === String(featureType || '').toLowerCase())
-    .reduce((sum, feature) => sum + Math.max(1, Number(feature?.value || 1)), 0);
+    // Quantity primitive kept in lockstep with the entitlement manifest's
+    // featureQuantity() (value ?? quantity ?? count ?? 1) so step-activation
+    // (which uses this) and the finalizer required-selection check (which uses the
+    // manifest) can never disagree on how many choices a level owes. No-op on
+    // current data (every choice feature defaults to 1); prevents a latent soft-lock.
+    .reduce((sum, feature) => sum + Math.max(1, Number(feature?.value ?? feature?.quantity ?? feature?.count ?? 1) || 1), 0);
 }
 
 export function actorHasClass(actor, classRef) {

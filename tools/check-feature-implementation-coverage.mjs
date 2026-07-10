@@ -234,27 +234,61 @@ const CLASS_FIELDS = [
   'grants_force_points', 'starting_credits',
 ];
 
+// SWSE class-type expectations (audit addendum). Base classes are the character's
+// starter chassis and OWN the starting package; prestige classes are additive
+// specialization layers that do NOT provide a starting package and should not be
+// flagged for missing one. Coverage must therefore be measured per class type,
+// not as a single n/37 that conflates the two roles.
+//   base-start   — expected on BASE classes only. Empty on prestige is BY DESIGN.
+//   additive     — expected on prestige AND base (progression identity).
+//   universal    — expected on every class path.
+const CLASS_FIELD_EXPECTATION = {
+  hitDie: 'universal',
+  base_hp: 'universal',
+  level_progression: 'universal',
+  babProgression: 'additive',
+  defenses: 'additive',
+  talent_trees: 'additive',
+  talentTreeIds: 'additive',
+  grants_force_points: 'additive',
+  class_skills: 'base-start',
+  trainedSkills: 'base-start',
+  starting_features: 'base-start',
+  starting_credits: 'base-start',
+};
+
 function auditClasses() {
   const classes = readDb('packs/classes.db');
   const nonheroic = readDb('packs/nonheroic.db');
   const classFeatures = readJson('data/class-features.json', { abilities: [] });
+  // Overall coverage retained for backward compatibility, but the split coverage
+  // below is the interpretable signal — see CLASS_FIELD_EXPECTATION.
   const fieldCoverage = Object.fromEntries(CLASS_FIELDS.map(f => [f, 0]));
+  const baseFieldCoverage = Object.fromEntries(CLASS_FIELDS.map(f => [f, 0]));
+  const prestigeFieldCoverage = Object.fromEntries(CLASS_FIELDS.map(f => [f, 0]));
   const classFeatureRegistry = {
     abilityCount: Array.isArray(classFeatures.abilities) ? classFeatures.abilities.length : 0,
     consumerEvidence: scanSourceFor(['class-features.json'], { root: 'scripts' }),
   };
 
+  let baseCount = 0;
+  let prestigeCount = 0;
   const items = classes.map(c => {
     const s = c.system || {};
+    const isBase = s.base_class === true;
+    if (isBase) baseCount++; else prestigeCount++;
     const present = {};
     for (const field of CLASS_FIELDS) {
       const has = nonEmpty(s[field]);
       present[field] = has;
-      if (has) fieldCoverage[field]++;
+      if (has) {
+        fieldCoverage[field]++;
+        if (isBase) baseFieldCoverage[field]++; else prestigeFieldCoverage[field]++;
+      }
     }
     return {
       name: c.name,
-      classType: s.base_class === true ? 'base' : 'prestige-or-other',
+      classType: isBase ? 'base' : 'prestige-or-other',
       talentTreeCount: Array.isArray(s.talent_trees) ? s.talent_trees.length
         : (Array.isArray(s.talentTreeIds) ? s.talentTreeIds.length : 0),
       startingFeatureCount: Array.isArray(s.starting_features) ? s.starting_features.length : 0,
@@ -262,7 +296,11 @@ function auditClasses() {
     };
   });
 
-  return { items, fieldCoverage, count: classes.length, nonheroicCount: nonheroic.length, classFeatureRegistry };
+  return {
+    items, fieldCoverage, baseFieldCoverage, prestigeFieldCoverage,
+    baseCount, prestigeCount, expectation: CLASS_FIELD_EXPECTATION,
+    count: classes.length, nonheroicCount: nonheroic.length, classFeatureRegistry,
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -288,13 +326,36 @@ if (!NO_WRITE) {
   fs.writeFileSync(path.join(outDir, 'species-feature-implementation-status.json'),
     JSON.stringify({ _meta: { generatedBy: 'check-feature-implementation-coverage.mjs', total: species.count, fieldCoverage: species.fieldCoverage, rawFieldCoverage: species.rawFieldCoverage, speciesDeclaringCombatAtkDmg: species.combatBonusSpecies, consumerEvidence: species.consumerEvidence, note: 'fieldCoverage treats default/empty combatTraits as not meaningful; rawFieldCoverage preserves literal schema population.' }, species: species.items }, null, 2));
   fs.writeFileSync(path.join(outDir, 'class-feature-implementation-status.json'),
-    JSON.stringify({ _meta: { generatedBy: 'check-feature-implementation-coverage.mjs', total: classes.count, nonheroicCount: classes.nonheroicCount, fieldCoverage: classes.fieldCoverage, classFeatureRegistry: classes.classFeatureRegistry }, classes: classes.items }, null, 2));
+    JSON.stringify({ _meta: {
+      generatedBy: 'check-feature-implementation-coverage.mjs',
+      total: classes.count,
+      baseCount: classes.baseCount,
+      prestigeCount: classes.prestigeCount,
+      nonheroicCount: classes.nonheroicCount,
+      // Overall coverage is retained but conflates class roles — read the split
+      // below. Start-package fields (class_skills/starting_features/starting_credits)
+      // are expected on BASE classes only; prestige classes intentionally omit them.
+      fieldCoverage: classes.fieldCoverage,
+      baseFieldCoverage: classes.baseFieldCoverage,
+      prestigeFieldCoverage: classes.prestigeFieldCoverage,
+      fieldExpectation: classes.expectation,
+      interpretation: 'Base classes own the starting package; prestige classes are additive and are NOT expected to provide starting feats/credits or replacement class skills unless the source explicitly grants them. Measure base start-package coverage and prestige additive coverage separately.',
+      classFeatureRegistry: classes.classFeatureRegistry,
+    }, classes: classes.items }, null, 2));
 }
 
 const summary = {
   feats: { total: feats.items.length, buckets: featBuckets, transferEffects: feats.transferCount, effectDefs: feats.effectDefCount },
   species: { total: species.count, fieldCoverage: species.fieldCoverage, rawFieldCoverage: species.rawFieldCoverage, declaringCombatAtkDmg: species.combatBonusSpecies.length, consumerEvidence: species.consumerEvidence },
-  classes: { total: classes.count, nonheroic: classes.nonheroicCount, baseClasses: classes.items.filter(c => c.classType === 'base').map(c => c.name), classFeatureRegistry: classes.classFeatureRegistry },
+  classes: {
+    total: classes.count, base: classes.baseCount, prestige: classes.prestigeCount,
+    nonheroic: classes.nonheroicCount,
+    baseClasses: classes.items.filter(c => c.classType === 'base').map(c => c.name),
+    baseFieldCoverage: classes.baseFieldCoverage,
+    prestigeFieldCoverage: classes.prestigeFieldCoverage,
+    expectation: classes.expectation,
+    classFeatureRegistry: classes.classFeatureRegistry,
+  },
 };
 
 if (JSON_OUT) {
@@ -315,9 +376,27 @@ if (JSON_OUT) {
   for (const [field, hits] of Object.entries(species.consumerEvidence)) {
     console.log(`       ${field.padEnd(28)} ${hits.map(h => h.path).join(', ') || '(none in scripts/)'}`);
   }
-  console.log(`\n  CLASSES: ${summary.classes.total} (+${summary.classes.nonheroic} nonheroic)  base: ${summary.classes.baseClasses.join(', ')}`);
-  for (const [f, n] of Object.entries(classes.fieldCoverage)) console.log(`     ${f.padEnd(28)} ${n}/${summary.classes.total}`);
-  console.log(`     class-features.json abilities ${summary.classes.classFeatureRegistry.abilityCount}; consumers: ${summary.classes.classFeatureRegistry.consumerEvidence.map(h => h.path).join(', ') || '(none in scripts/)'}`);
+  const B = classes.baseCount, P = classes.prestigeCount;
+  console.log(`\n  CLASSES: ${summary.classes.total} = ${B} base + ${P} prestige/additive (+${summary.classes.nonheroic} nonheroic)`);
+  console.log(`  base: ${summary.classes.baseClasses.join(', ')}`);
+  console.log('  Coverage is split by class role (SWSE): base classes own the starting');
+  console.log('  package; prestige classes are additive and do NOT provide one.');
+  console.log(`\n    Base start-package (expected on ${B} base classes; prestige empty = by design):`);
+  for (const [f, exp] of Object.entries(classes.expectation)) {
+    if (exp !== 'base-start') continue;
+    console.log(`       ${f.padEnd(26)} base ${classes.baseFieldCoverage[f]}/${B}    prestige ${classes.prestigeFieldCoverage[f]}/${P} (n/a)`);
+  }
+  console.log(`\n    Additive progression (expected on prestige + base):`);
+  for (const [f, exp] of Object.entries(classes.expectation)) {
+    if (exp !== 'additive') continue;
+    console.log(`       ${f.padEnd(26)} base ${classes.baseFieldCoverage[f]}/${B}    prestige ${classes.prestigeFieldCoverage[f]}/${P}`);
+  }
+  console.log(`\n    Universal (expected on every class):`);
+  for (const [f, exp] of Object.entries(classes.expectation)) {
+    if (exp !== 'universal') continue;
+    console.log(`       ${f.padEnd(26)} base ${classes.baseFieldCoverage[f]}/${B}    prestige ${classes.prestigeFieldCoverage[f]}/${P}`);
+  }
+  console.log(`\n     class-features.json abilities ${summary.classes.classFeatureRegistry.abilityCount}; consumers: ${summary.classes.classFeatureRegistry.consumerEvidence.map(h => h.path).join(', ') || '(none in scripts/)'}`);
   if (!NO_WRITE) console.log('\n  Wrote 3 status JSON files to docs/audits/.');
   console.log('='.repeat(72) + '\n');
 }

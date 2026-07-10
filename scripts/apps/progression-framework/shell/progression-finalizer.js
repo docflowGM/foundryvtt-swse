@@ -41,6 +41,7 @@ import {
   isDroidProgressionActor,
 } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js';
 import { collectKnownForceSecrets, collectKnownForceTechniques, forceKnowledgeToLedgerEntries } from '/systems/foundryvtt-swse/scripts/utils/force-knowledge.js';
+import { validateFinalProgressionPrerequisites } from '/systems/foundryvtt-swse/scripts/engine/progression/validation/finalization-prerequisite-validator.js';
 
 export class ProgressionFinalizer {
   /**
@@ -160,6 +161,31 @@ export class ProgressionFinalizer {
         throw new Error(`Mutation plan invalid: ${errors}`);
       }
 
+      // R1 (Batch A): Re-validate selected choices against the FINAL canonical
+      // session state before any mutation. Step-time `isAvailable` gating is not
+      // trusted here — a post-commit backtrack/respec could have invalidated a
+      // dependent pick. Fail closed on proven-illegal selections; advisory/
+      // unresolved cases are surfaced as warnings, never as blockers.
+      const prereqRecheck = await validateFinalProgressionPrerequisites({
+        actor,
+        progressionSession: sessionState.progressionSession,
+        mode: sessionState.mode,
+        selections: this._buildSelectionsFromSession(sessionState.progressionSession),
+        manifest: finalMutationPlan?.set?.['flags.swse.levelUpEntitlementManifest'] || null,
+      });
+      if (!prereqRecheck.ok) {
+        swseLogger.error('[ProgressionFinalizer] Finalization prerequisite re-check failed — ABORTING before mutation', {
+          errors: prereqRecheck.errors,
+          warnings: prereqRecheck.warnings,
+        });
+        throw new Error(prereqRecheck.errors.join(' '));
+      }
+      if (prereqRecheck.warnings.length) {
+        swseLogger.warn('[ProgressionFinalizer] Finalization prerequisite re-check warnings', {
+          warnings: prereqRecheck.warnings,
+        });
+      }
+
       swseLogger.log('[ProgressionFinalizer] All validations passed — proceeding to mutation', {
         hasCoreData: !!finalMutationPlan.coreData,
         patchCount: Object.keys(finalMutationPlan.patches || {}).length,
@@ -167,11 +193,15 @@ export class ProgressionFinalizer {
         warningCount: validation.warnings.length,
       });
 
-      // ONLY NOW: Apply mutations through ActorEngine (no turning back)
+      // ONLY NOW: Apply mutations through ActorEngine.
+      // ActorEngine.applyMutationPlan runs transactionally (see _applyMutationPlan):
+      // on failure it rolls the actor back to its pre-plan snapshot and deletes any
+      // CREATE-bucket actors, so a failed finalize should leave the actor unchanged.
+      // Only if that rollback itself fails is error.partialMutationPossible set.
       const result = await this._applyMutationPlan(actor, finalMutationPlan);
 
       if (!result.success) {
-        // ActorEngine failed — log but don't throw (mutations may be partially applied)
+        // ActorEngine failed and (best-effort) rolled back — surface the error.
         swseLogger.error('[ProgressionFinalizer] ActorEngine failed during finalization', {
           error: result.error,
           actorId: actor.id,
@@ -263,6 +293,37 @@ export class ProgressionFinalizer {
       const validation = this._validateMutationPlan(mutationPlan, actor);
       if (!validation.isValid) {
         throw new Error(`Mutation plan invalid: ${validation.errors.join('; ')}`);
+      }
+
+      // R1 parity (Batch B / B9): single-step finalization (sheet buttons, Holonet
+      // tasks) must fail closed on illegal picks exactly like the full finalizer.
+      // Scope the re-check to the domain being finalized so unrelated stale draft
+      // entries can never block a scoped job.
+      if (itemDomains.has(domain)) {
+        const draft = sessionState.progressionSession?.draftSelections || {};
+        const scopedSelections = {};
+        for (const key of itemDomains) {
+          scopedSelections[key] = (key === domain && Array.isArray(draft[key])) ? draft[key] : [];
+        }
+        const singleStepRecheck = await validateFinalProgressionPrerequisites({
+          actor,
+          progressionSession: sessionState.progressionSession,
+          mode: sessionState.mode || 'levelup',
+          selections: scopedSelections,
+        });
+        if (!singleStepRecheck.ok) {
+          swseLogger.error('[ProgressionFinalizer] Single-step prerequisite re-check failed — ABORTING before mutation', {
+            domain,
+            errors: singleStepRecheck.errors,
+          });
+          throw new Error(singleStepRecheck.errors.join(' '));
+        }
+        if (singleStepRecheck.warnings.length) {
+          swseLogger.warn('[ProgressionFinalizer] Single-step prerequisite re-check warnings', {
+            domain,
+            warnings: singleStepRecheck.warnings,
+          });
+        }
       }
 
       const result = await this._applyMutationPlan(actor, mutationPlan);

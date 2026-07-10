@@ -49,7 +49,7 @@ Static evidence: compendium data (`packs/*.db`), data registries (`data/*.json`)
 
 - HP, BAB, defenses, level progression, talent-tree access populated for **37/37** → **B**.
 - **5 base classes** are data-complete (skills/feats/credits) → strongest, verify → A.
-- **32 prestige classes**: features live in `level_progression` (B); **`class_skills` empty** (C — verify resolution); **prerequisites data-complete** in `prestige-class-prerequisites.json` (verify enforcement is fail-closed).
+- **32 prestige classes**: features live in `level_progression` (B); **`class_skills` empty is by design** — prestige classes are additive layers, not starter chassis, so they carry no starting package (reclassified, see progression audit §0 addendum). Additive fields (talent trees / level progression / BAB / defenses) are **32/32**. **Prerequisites data-complete** in `prestige-class-prerequisites.json` (verify enforcement is fail-closed).
 - Class resolution is fail-closed (`ClassesRegistry.resolveModel` returns `null`, no fabricated fallback).
 
 ## Cross-system findings
@@ -59,7 +59,7 @@ Static evidence: compendium data (`packs/*.db`), data registries (`data/*.json`)
 1. **Silent no-op data fields:** species `combatTraits` (all 161) and `bonusTrainedSkills` have no consumer — they read as "implemented" in data but do nothing.
 2. **Dead legacy combat path:** `combat-utils.js` species attack/damage bonus reads fields no species populates (compounds the deprecated duplicate math from PR #885).
 3. **Trait-representation duplication:** two parallel species trait models (`canonicalTraits`/`traitIds` vs `*Traits`) risk drift and partial application.
-4. **Prestige `class_skills` empty** — a code path likely expects populated class skills; unclear how prestige class skills resolve.
+4. **Prestige `class_skills` empty — by design, not a gap** (reclassified). Prestige classes are additive and carry no starter skill list. Residual is the *additive* question: verify a PrC's own granted class skills (where any) add correctly — low priority. Do not backfill base-style lists.
 5. **Prerequisite enforcement uncertainty:** prestige prereqs exist as data + a checker, but it's unverified whether progression finalization *blocks* on them or only advises.
 6. **70 data-only feats** — static-bonus feats that *should* be passive modifiers are indistinguishable from genuinely-manual feats without review.
 7. **`class-features.json` (53 abilities)** — a second data-first feature registry parallel to `abilityMeta`; verify a single applier consumes it (no orphaned registry).
@@ -83,7 +83,7 @@ Static evidence: compendium data (`packs/*.db`), data registries (`data/*.json`)
 ### Recommended implementation order
 
 - **Batch 1 — Broken wiring / visibility fixes:** unconsumed species fields (`combatTraits`, `bonusTrainedSkills`), trait-representation ambiguity, `class-features.json` consumer, GoI Noble / Jedi Knight visibility.
-- **Batch 2 — Data-only → passive modifiers:** convert static-bonus bucket-D feats to `abilityMeta.modifiers`; fill prestige `class_skills` if that's the intended model.
+- **Batch 2 — Data-only → passive modifiers:** convert static-bonus bucket-D feats to `abilityMeta.modifiers`. (Prestige `class_skills` backfill removed — empty is by design; do not add base-style starter lists.)
 - **Batch 3 — Combat & tooltip parity:** finish `combat-utils` retirement after the species-parity runtime check; confirm roll = breakdown for the strong feat families.
 - **Batch 4 — Runtime hooks for conditional feats/species features:** verify UNLOCK/RULE feats and conditional species traits fire.
 - **Batch 5 — Picker/UI-blocked:** Tech Specialist, Force Regimen Mastery (held by design).
@@ -104,7 +104,7 @@ The bulk of this audit. Priority list below.
 
 1. **Base classes ×5** — create each; confirm HP, BAB, defenses, class skills, trained-skill count, starting feats, talent access at L1.
 2. **Prestige entry** — attempt a prestige class without meeting prereqs; confirm it is **blocked**.
-3. **Prestige class skills** — confirm a prestige character's class-skill list resolves correctly despite empty `class_skills`.
+3. **Prestige class skills (additive)** — where a PrC source grants class skills, confirm they add to the character's list correctly. Empty `class_skills` on prestige is by design; do not expect a base-style starter list.
 4. **Strong combat feats** — Power Attack, Rapid Shot, Grapple, Rage, Skill Focus: confirm the roll/derived total changes and the tooltip matches.
 5. **Species core** — 2–3 species (incl. one Force-sensitive, one droid): confirm ability mods, size, speed, languages, defense bonuses; log `actor.system.speciesCombatBonuses` to confirm attack/damage sub-keys are empty (parity).
 6. **Jedi Knight** — force technique/secret choices offered and applied.
