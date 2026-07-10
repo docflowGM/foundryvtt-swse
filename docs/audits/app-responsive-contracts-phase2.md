@@ -34,6 +34,7 @@ Disconnected legacy UI should be removed instead of supported.
 11. Asset Bay / owned assets, Droid Garage, and Shipyard surfaces
 12. Holonet Messenger / communications surface
 13. Allies database / companions, factions, contacts, intel, bases, organizations
+14. Upgrade Workshop shell route
 ```
 
 ## Files changed
@@ -54,6 +55,7 @@ styles/system/app-responsive-actor-creation-entry.css
 styles/system/app-responsive-assets.css
 styles/system/app-responsive-holonet.css
 styles/system/app-responsive-allies.css
+styles/system/app-responsive-upgrade.css
 docs/audits/app-responsive-contracts-phase2.md
 templates/apps/store.html                         deleted
 templates/apps/store/store.html                   deleted
@@ -79,6 +81,7 @@ styles/system/app-responsive-actor-creation-entry.css
 styles/system/app-responsive-assets.css
 styles/system/app-responsive-holonet.css
 styles/system/app-responsive-allies.css
+styles/system/app-responsive-upgrade.css
 ```
 
 The observer emits:
@@ -432,6 +435,38 @@ Behavior:
 - stacks embedded codebreaker readout above slicer tools on compact windows
 ```
 
+### Upgrade Workshop
+
+Targets:
+
+```txt
+swse-shell-surface--upgrade
+swse-upgrade-app
+upgrade-hud
+upgrade-category-tabs
+upgrade-body
+upgrade-item-rail
+upgrade-detail-pane
+upgrade-detail
+upgrade-footer-bar
+templates/shell/partials/surface-upgrade.hbs
+templates/apps/upgrade/upgrade-app.hbs
+templates/apps/upgrade/partials/upgrade-detail-pane.hbs
+```
+
+Behavior:
+
+```txt
+- compacts shell route header and return-to-sheet button
+- compacts mentor HUD while preserving item/workshop context
+- makes upgrade category tabs horizontally reachable
+- stacks item rail above detail pane in compact mode
+- bounds item rail as a compact selectable grid
+- makes detail pane the primary upgrade scroller
+- keeps installed upgrades, available upgrades, slot bars, stat chips, install/remove buttons, and footer actions reachable
+- hides low-value mentor/item descriptions on short/micro/tiny tiers
+```
+
 ## Resolution matrix to test
 
 ```txt
@@ -466,6 +501,7 @@ Actor Creation Entry: Begin New Character and Access Galactic Records launcher p
 Asset Bay: All Assets/Garage/Shipyard modes, droid and vehicle asset cards, Sheet/Modify/Grant Access actions, vehicle shipyard systems panel, EP/value/last-refit summaries, installed and removed systems.
 Holonet Messenger: Chat/Alerts/New/Jobs/Intel/GM buttons, thread search/filter/archive, compose/new transmission, job board filters/dossier/objectives, intel archive/create, chat messages, pinned transmissions, credit/item/asset/game/job cards, invite/transfer/archive/mute/leave actions.
 Allies: companions/factions/contacts/intel/bases/organizations tabs, companion lanes, faction cards, contact dossiers, intel locker, embedded codebreaker panels, Open Actor, Save Notes, Pin/Archive, Lockbox actions.
+Upgrade Workshop: category tabs, item rail selection, selected item details, slot usage, installed upgrades, available upgrades, install/remove buttons, footer actions, unavailable-item state.
 ```
 
 ## Pass criteria
@@ -484,5 +520,5 @@ Allies: companions/factions/contacts/intel/bases/organizations tabs, companion l
 
 - This pass is selector-based and conservative. Exact per-template refinements may still be needed after runtime testing.
 - It does not replace progression-specific behavior from PR #887.
-- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, actor creation launch callbacks, Asset Bay ownership/actions, Holonet threads/messages/jobs/intel/transfers/notifications, Allies links/faction/contact/intel/base/org state, vehicle EP/refit math, credits, or progression state.
+- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, actor creation launch callbacks, Asset Bay ownership/actions, Holonet threads/messages/jobs/intel/transfers/notifications, Allies links/faction/contact/intel/base/org state, Upgrade Workshop slot/cost/install/remove logic, vehicle EP/refit math, credits, or progression state.
 - Foundry runtime verification is still required.
