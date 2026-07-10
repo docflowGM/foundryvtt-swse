@@ -6,7 +6,7 @@
 
 ## Context
 
-PR #888 introduced the shared shell responsive observer and generic CSS contract. PR #887 applied progression-specific responsive behavior. This phase adds app-by-app contracts for large shell and app surfaces using actual rendered application size rather than monitor/device assumptions.
+PR #888 introduced the shared shell responsive observer and generic CSS contract. PR #887 applied progression-specific responsive behavior. This phase adds app-by-app contracts for large shell, app, and dense wizard surfaces using actual rendered application size rather than monitor/device assumptions.
 
 ## Principle
 
@@ -36,6 +36,8 @@ Disconnected legacy UI should be removed instead of supported.
 13. Allies database / companions, factions, contacts, intel, bases, organizations
 14. Upgrade Workshop shell route
 15. Home / datapad command overview surface
+16. Vehicle Import Wizard
+17. Stock Droid Import / Comparison / Conversion dialogs
 ```
 
 ## Files changed
@@ -58,6 +60,7 @@ styles/system/app-responsive-holonet.css
 styles/system/app-responsive-allies.css
 styles/system/app-responsive-upgrade.css
 styles/system/app-responsive-home.css
+styles/system/app-responsive-import-wizards.css
 docs/audits/app-responsive-contracts-phase2.md
 templates/apps/store.html                         deleted
 templates/apps/store/store.html                   deleted
@@ -65,26 +68,25 @@ templates/apps/store/store.html                   deleted
 
 ## Observer updates
 
-The observer now loads these responsive stylesheets in order:
+The observer loads the shared shell contract, the generic app contract, and each app-specific contract. Current app-specific responsive sheets:
 
 ```txt
-styles/system/shell-responsive-contract.css
-styles/system/app-responsive-contracts.css
-styles/system/app-responsive-character-sheet.css
-styles/system/app-responsive-store.css
-styles/system/app-responsive-workbench.css
-styles/system/app-responsive-games.css
-styles/system/app-responsive-gm-holopad.css
-styles/system/app-responsive-atlas.css
-styles/system/app-responsive-transmission-decryption.css
-styles/system/app-responsive-force-alchemy.css
-styles/system/app-responsive-galactic-records.css
-styles/system/app-responsive-actor-creation-entry.css
-styles/system/app-responsive-assets.css
-styles/system/app-responsive-holonet.css
-styles/system/app-responsive-allies.css
-styles/system/app-responsive-upgrade.css
-styles/system/app-responsive-home.css
+app-responsive-character-sheet.css
+app-responsive-store.css
+app-responsive-workbench.css
+app-responsive-games.css
+app-responsive-gm-holopad.css
+app-responsive-atlas.css
+app-responsive-transmission-decryption.css
+app-responsive-force-alchemy.css
+app-responsive-galactic-records.css
+app-responsive-actor-creation-entry.css
+app-responsive-assets.css
+app-responsive-holonet.css
+app-responsive-allies.css
+app-responsive-upgrade.css
+app-responsive-home.css
+app-responsive-import-wizards.css
 ```
 
 The observer emits:
@@ -499,6 +501,62 @@ Behavior:
 - keeps lock-screen overlay scrollable without changing lock flags
 ```
 
+### Vehicle Import Wizard
+
+Targets:
+
+```txt
+swse-vehicle-import-wizard
+swse-vehicle-import-header
+swse-vehicle-import-steps
+swse-vehicle-import-body
+swse-vehicle-import-filters
+swse-vehicle-import-results
+swse-vehicle-import-preview
+swse-vehicle-import-footer
+templates/apps/vehicle-import-wizard.hbs
+```
+
+Behavior:
+
+```txt
+- compacts header and four-step indicator
+- makes filter/search controls compact and scroll bounded
+- makes vehicle result list the primary browse scroller
+- converts vehicle rows into compact image/body cards
+- bounds preview art and turns preview stats into responsive grid
+- keeps replace/merge mode and preserve toggles reachable
+- keeps Back / Next / Apply Import actions reachable
+```
+
+### Stock Droid Import / Comparison / Conversion dialogs
+
+Targets:
+
+```txt
+swse-stock-droid-wizard
+droid-results
+stock-droid-comparison-dialog
+stock-droid-conversion-dialog
+templates/apps/stock-droid-import-wizard.hbs
+templates/apps/stock-droid-comparison-dialog.hbs
+templates/apps/stock-droid-conversion-dialog.hbs
+```
+
+Behavior:
+
+```txt
+- compacts droid wizard title and step indicator
+- bounds droid search/filter toolbar
+- makes droid result cards the primary selection scroller
+- stacks preview sidebar and droid detail cards on narrow windows
+- keeps statblock/convert mode cards readable and reachable
+- makes review content scrollable without losing action controls
+- makes comparison tables horizontally scrollable rather than overflowing
+- bounds conversion source/confidence/system/warning panels
+- keeps Cancel / Proceed to Builder / Close actions reachable
+```
+
 ## Resolution matrix to test
 
 ```txt
@@ -535,6 +593,10 @@ Holonet Messenger: Chat/Alerts/New/Jobs/Intel/GM buttons, thread search/filter/a
 Allies: companions/factions/contacts/intel/bases/organizations tabs, companion lanes, faction cards, contact dossiers, intel locker, embedded codebreaker panels, Open Actor, Save Notes, Pin/Archive, Lockbox actions.
 Upgrade Workshop: category tabs, item rail selection, selected item details, slot usage, installed upgrades, available upgrades, install/remove buttons, footer actions, unavailable-item state.
 Home: lock screen, HUD, actor vitals, radial/compact app launcher, app tile routing, comm feed rows, vehicle/character quick-launch footer, last-session card.
+Vehicle Import Wizard: browse filters/results, selected vehicle preview, replace/merge mode, preserve toggles, Back/Next/Apply Import.
+Stock Droid Import: search/filter results, preview, statblock/convert mode, review/apply controls.
+Stock Droid Comparison: summary stats, comparison categories, responsive comparison table, Close action.
+Stock Droid Conversion: source/confidence/inferred systems/blockers/warnings/next-step panels, Cancel and Proceed to Builder actions.
 ```
 
 ## Pass criteria
@@ -553,5 +615,5 @@ Home: lock screen, HUD, actor vitals, radial/compact app launcher, app tile rout
 
 - This pass is selector-based and conservative. Exact per-template refinements may still be needed after runtime testing.
 - It does not replace progression-specific behavior from PR #887.
-- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, actor creation launch callbacks, Asset Bay ownership/actions, Holonet threads/messages/jobs/intel/transfers/notifications, Allies links/faction/contact/intel/base/org state, Upgrade Workshop slot/cost/install/remove logic, Home routing/app metadata/lock-screen flags/comm feed state, vehicle EP/refit math, credits, or progression state.
+- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, actor creation launch callbacks, Asset Bay ownership/actions, Holonet threads/messages/jobs/intel/transfers/notifications, Allies links/faction/contact/intel/base/org state, Upgrade Workshop slot/cost/install/remove logic, Home routing/app metadata/lock-screen flags/comm feed state, Vehicle Import state/import mode/ActorEngine path, Stock Droid import/conversion/comparison state, vehicle EP/refit math, credits, or progression state.
 - Foundry runtime verification is still required.
