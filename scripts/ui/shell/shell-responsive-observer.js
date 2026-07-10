@@ -11,7 +11,16 @@
  */
 
 const OBSERVER_KEY = Symbol.for('swse.shellResponsiveObserver');
-const STYLE_ID = 'swse-shell-responsive-contract-css';
+const STYLE_IDS = Object.freeze([
+  {
+    id: 'swse-shell-responsive-contract-css',
+    href: 'systems/foundryvtt-swse/styles/system/shell-responsive-contract.css',
+  },
+  {
+    id: 'swse-app-responsive-contracts-css',
+    href: 'systems/foundryvtt-swse/styles/system/app-responsive-contracts.css',
+  },
+]);
 const DEFAULT_THRESHOLDS = Object.freeze({
   compactWidth: 1180,
   compactHeight: 760,
@@ -34,13 +43,40 @@ function resolveTarget(root, selector) {
   return root.closest?.('.swse-shell-responsive') || root.querySelector?.('.swse-shell-responsive') || root;
 }
 
-function ensureContractStylesheet() {
-  if (typeof document === 'undefined' || document.getElementById(STYLE_ID)) return;
-  const link = document.createElement('link');
-  link.id = STYLE_ID;
-  link.rel = 'stylesheet';
-  link.href = 'systems/foundryvtt-swse/styles/system/shell-responsive-contract.css';
-  document.head.appendChild(link);
+function ensureResponsiveStylesheets() {
+  if (typeof document === 'undefined') return;
+  for (const sheet of STYLE_IDS) {
+    if (document.getElementById(sheet.id)) continue;
+    const link = document.createElement('link');
+    link.id = sheet.id;
+    link.rel = 'stylesheet';
+    link.href = sheet.href;
+    document.head.appendChild(link);
+  }
+}
+
+function classifyResolutionTier(width, height, compact, narrow, tiny) {
+  if (tiny) return 'tiny';
+  if (narrow) return 'narrow';
+  if (width <= 1024 || height <= 600) return 'micro';
+  if (width <= 1280 || height <= 720) return 'small';
+  if (width <= 1380 && height <= 820) return 'laptop-short';
+  if (compact) return 'compact';
+  if (width >= 1920 && height >= 1080) return 'desktop-wide';
+  return 'desktop';
+}
+
+function clearResolutionTierClasses(target) {
+  target.classList.remove(
+    'is-shell-tier-tiny',
+    'is-shell-tier-narrow',
+    'is-shell-tier-micro',
+    'is-shell-tier-small',
+    'is-shell-tier-laptop-short',
+    'is-shell-tier-compact',
+    'is-shell-tier-desktop',
+    'is-shell-tier-desktop-wide',
+  );
 }
 
 function classify(target, rect, thresholds) {
@@ -55,6 +91,7 @@ function classify(target, rect, thresholds) {
   const laptopWideShort = width < thresholds.laptopWidth
     && height < thresholds.laptopHeight
     && width >= thresholds.compactWidth;
+  const tier = classifyResolutionTier(width, height, compact, narrow, tiny);
 
   target.classList.add('swse-shell-responsive');
   target.classList.toggle('is-shell-compact', compact);
@@ -62,16 +99,19 @@ function classify(target, rect, thresholds) {
   target.classList.toggle('is-shell-tiny', tiny);
   target.classList.toggle('is-shell-short', short);
   target.classList.toggle('is-shell-laptop-short', laptopWideShort);
+  clearResolutionTierClasses(target);
+  target.classList.add(`is-shell-tier-${tier}`);
 
   target.dataset.shellLayoutWidth = String(Math.round(width));
   target.dataset.shellLayoutHeight = String(Math.round(height));
   target.dataset.shellLayoutMode = tiny ? 'tiny' : narrow ? 'narrow' : compact ? 'compact' : 'desktop';
+  target.dataset.shellResolutionTier = tier;
 }
 
 export function observeShellResponsive(root, options = {}) {
   const target = resolveTarget(root, options.selector);
   if (!target || typeof ResizeObserver === 'undefined') return null;
-  ensureContractStylesheet();
+  ensureResponsiveStylesheets();
 
   const thresholds = {
     compactWidth: asNumber(options.compactWidth, DEFAULT_THRESHOLDS.compactWidth),
@@ -109,7 +149,7 @@ export function disconnectShellResponsive(root, options = {}) {
 }
 
 export function observeAllShellResponsive(root = document) {
-  ensureContractStylesheet();
+  ensureResponsiveStylesheets();
   const scope = root?.querySelectorAll ? root : document;
   const explicitTargets = scope.querySelectorAll?.('.swse-shell-responsive, .swse-responsive-auto') || [];
   for (const target of explicitTargets) observeShellResponsive(target);
@@ -138,7 +178,7 @@ export function observeAllShellResponsive(root = document) {
 
 export function initializeShellResponsiveObserver() {
   if (typeof window === 'undefined') return;
-  ensureContractStylesheet();
+  ensureResponsiveStylesheets();
   window.SWSEShellResponsive = {
     observe: observeShellResponsive,
     disconnect: disconnectShellResponsive,
