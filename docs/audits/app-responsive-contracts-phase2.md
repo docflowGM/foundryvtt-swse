@@ -8,7 +8,13 @@
 
 PR #888 introduced the shared shell responsive observer and generic CSS contract. PR #887 applied a progression-specific implementation. This phase adds app-family contracts for other large applications using the same shell-size classification model.
 
-This PR is now being refined app by app. The first specific refinement is the v2 concept actor sheet family. The second specific refinement is the live shell-native store surface.
+This PR is now being refined app by app. Completed app-specific refinements so far:
+
+```txt
+1. v2 concept actor sheet family
+2. live shell-native store surface
+3. live item customization / lightsaber workbench
+```
 
 ## Principle
 
@@ -27,6 +33,7 @@ scripts/ui/shell/shell-responsive-observer.js
 styles/system/app-responsive-contracts.css
 styles/system/app-responsive-character-sheet.css
 styles/system/app-responsive-store.css
+styles/system/app-responsive-workbench.css
 docs/audits/app-responsive-contracts-phase2.md
 templates/apps/store.html                         deleted
 templates/apps/store/store.html                   deleted
@@ -41,6 +48,7 @@ styles/system/shell-responsive-contract.css
 styles/system/app-responsive-contracts.css
 styles/system/app-responsive-character-sheet.css
 styles/system/app-responsive-store.css
+styles/system/app-responsive-workbench.css
 ```
 
 The final app-specific files intentionally override the broader contract for real app selectors.
@@ -163,25 +171,61 @@ templates/apps/store/store.html deleted
 
 Those templates were only found by their own unique content and were not the live shell-native store path. Responsive support for disconnected templates was removed rather than preserved.
 
-### Workbench / customization family
+### Live workbench / customization family
 
-Targets:
+Live target:
 
 ```txt
-customization-bay
-item-customization-workbench
-swse-customization-workbench
-force-alchemy-workbench
-sith-alchemy-workbench
+swse-customization-stage
+swse-customization-workarea
+```
+
+Live template:
+
+```txt
+templates/apps/customization/item-customization-workbench.hbs
 ```
 
 Compact behavior:
 
 ```txt
-- workbench layout stacks vertically
-- preview rail becomes a compact preview strip
-- detail rail becomes a bounded drawer-like panel
-- component/mod grids get primary scroll ownership
+- compacts HUD and mentor rail
+- hides mentor rail entirely in short/micro/tiny tiers
+- makes category tabs horizontally scrollable
+- stacks inventory above the workbench detail surface
+- bounds inventory as a compact selectable strip/grid
+- compacts item hero preview and hides low-value hero text on short screens
+- makes workbench content tabs horizontally scrollable
+- makes active configuration/card panes the primary scrollers
+- stacks lightsaber workspace vertically
+- bounds Selected Component Intel as a drawer-like rail
+- keeps finish picker, wizard navigation, review actions, and tech actions horizontally reachable
+```
+
+Specific selectors:
+
+```txt
+swse-customization-stage
+swse-customization-tablet
+swse-customization-screen
+swse-customization-hud
+swse-customization-mentor
+swse-customization-tabs
+swse-customization-workarea
+workbench-inventory
+inventory-list
+workbench-detail
+item-hero
+hero-grid
+workbench-content-tabs
+wcb-pane
+lightsaber-workspace
+ls-step-rail
+ls-tab-panel
+ls-forge-rail
+ls-component-intel
+ls-finish-picker
+ls-wizard-nav
 ```
 
 ### GM holopad / dashboard family
@@ -272,6 +316,25 @@ For the shell-native store surface:
 - visit Cart, Checkout, and History tabs
 - confirm card grid is the primary scroller in compact mode
 - confirm desktop layout remains grid + side rail at 1440x900 and 1920x1080
+```
+
+## Workbench smoke test
+
+For the item customization / lightsaber workbench:
+
+```txt
+- open workbench from actor sheet and confirm .swse-customization-stage is observed
+- resize to 1366x768 and confirm inventory, item hero, and details remain visible
+- resize to 1280x720 and confirm inventory becomes compact but selectable
+- resize to 1024x600 and confirm mentor/hero text no longer consume the work area
+- select weapons, armor, energy shields, and lightsabers
+- search inventory and confirm results remain scrollable
+- switch workbench tabs: modifications, structural, templates, appearance
+- inspect a modification/template and confirm detail/intel remains reachable
+- open lightsaber tuning/construction and switch chassis/crystal/hilt/color/review steps
+- confirm Selected Component Intel remains accessible as a bounded rail/drawer
+- confirm Review/Construct/Next/Back actions remain horizontally reachable
+- confirm desktop layout remains two-column inventory/detail at 1440x900 and 1920x1080
 ```
 
 ## Pass criteria
