@@ -1,7 +1,7 @@
 # Progression Responsive Layout Audit
 
 **Date:** 2026-07-10  
-**Scope:** Progression shell small-screen usability  
+**Scope:** Progression shell small-screen usability and desktop rail resizing  
 **Runtime status:** Static/layout patch only. Foundry viewport smoke testing still required.
 
 ## Problem
@@ -46,7 +46,7 @@ Do not rebuild a separate smartphone progression engine.
 Use a single progression shell with automatic responsive behavior:
 
 ```txt
-Desktop: mentor + step rail + summary + work surface + details + footer
+Desktop: mentor + step rail + resizable summary + resizable work surface + resizable details + footer
 Compact: business list first, low-value rails hidden/collapsed, utility compact, details as inspection drawer
 ```
 
@@ -99,11 +99,52 @@ compact details drawer: own vertical scroller
 footer: fixed compact height
 ```
 
+## Desktop resizable rails
+
+A follow-up patch adds desktop/tablet rail splitters between:
+
+```txt
+summary rail | work surface | details rail
+```
+
+Implementation files:
+
+```txt
+templates/apps/progression-framework/progression-shell.hbs
+scripts/apps/progression-framework/shell/progression-rail-resizer.js
+styles/progression-framework/chargen-stabilization.css
+```
+
+Behavior:
+
+```txt
+- Drag the summary splitter to resize/collapse the summary rail.
+- Drag the details splitter to resize/collapse the details rail.
+- Double-click a splitter to reset its rail width.
+- ArrowLeft/ArrowRight resize by 16px when the splitter has focus.
+- Enter/Space toggles collapsed/restored for the focused rail.
+- Widths and collapsed state persist in localStorage.
+- The work surface keeps a safe minimum width.
+- Splitters are hidden in compact mode so small screens remain business-first.
+```
+
+Client-side storage keys:
+
+```txt
+swse.progression.rails.summary.width
+swse.progression.rails.summary.collapsed
+swse.progression.rails.details.width
+swse.progression.rails.details.collapsed
+```
+
+This is presentation-only state. It does not read or mutate progression selections, actors, finalization state, or rules data.
+
 ## Runtime verification checklist
 
 Verify in Foundry at:
 
 ```txt
+1440x900
 1366x768
 1280x720
 1180x760
@@ -127,11 +168,16 @@ ask mentor button in details
 back/next footer
 long prerequisite text
 long blocker text
+summary rail drag wider/narrower/details rail drag wider/narrower
+double-click reset
+keyboard resize/toggle
+saved widths restore on rerender
+compact mode hides splitters
 ```
 
 ## Limitations
 
-- This patch is CSS-only and does not add a JS drawer close button.
+- The rail-resizer helper is loaded lazily from the template handles instead of being added to the main shell import graph.
 - It relies on modern Chromium `:has()` support, which is available in current Foundry Electron/Chromium targets.
 - Foundry runtime smoke testing is still needed to confirm exact detail panel template variants all behave correctly as drawers.
-- Large desktop behavior should remain unchanged.
+- Large desktop behavior should remain unchanged except for the new draggable splitters.
