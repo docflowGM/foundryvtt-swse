@@ -61,8 +61,8 @@ const STYLE_IDS = Object.freeze([
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-actor-creation-entry.css',
   },
   {
-    id: 'swse-app-responsive-shipyard-css',
-    href: 'systems/foundryvtt-swse/styles/system/app-responsive-shipyard.css',
+    id: 'swse-app-responsive-assets-css',
+    href: 'systems/foundryvtt-swse/styles/system/app-responsive-assets.css',
   },
 ]);
 const DEFAULT_THRESHOLDS = Object.freeze({
