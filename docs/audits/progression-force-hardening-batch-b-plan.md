@@ -128,3 +128,65 @@ Batch B cannot be declared done from static analysis. Minimum Foundry smoke set:
 5. Backtrack after a Force selection → detail rail re-hydrates the pick.
 6. Single-step "add Force secret" from the sheet == the same result inside a full level-up.
 7. Attempt an illegal Force technique (missing prereq power) → blocked at finalize (Batch A R1).
+
+---
+
+## 6. Batch B — Implementation results (2026-07-10)
+
+Investigate → verify → fix. Static verification only; runtime items still per §5. The Force
+progression system was found **largely structurally sound** — most target areas verified consistent
+statically, so the implemented change set is deliberately small (two surgical fixes), not a refactor.
+
+### Verified sound (static — no change needed)
+
+- **B1/B2/B7 — step activation ↔ entitlement agreement.** Step activation
+  (`active-step-computer._hasForceTechnique/SecretChoices` → `resolveForce*Entitlements`) and the
+  finalizer's required-selection check (`validateLevelUpRequiredSelections` →
+  `manifest.choices.force*Choices`) both derive owed counts from the **same** `level_progression`
+  features at the current class level (`countClassFeatureChoicesAtLevel` / manifest `countChoices`).
+  No "finalizer-requires-but-step-hidden" soft-lock exists for the confirmed cadence.
+- **B4/B6 — Force Power Mastery + dedupe.** Finalizer dedupe uses session-marker + type::name with
+  `allowDuplicates:false` for techniques/secrets, and FPM entries correctly bypass type::name dedupe
+  via `_getForcePowerMasteryChoice`/`_isForcePowerMasteryName` and are stamped `repeatable:true`.
+  Distinct repeats are preserved; accidental duplicates are collapsed.
+- **Cadence data** — confirmed correct and consistent across `level_progression` and
+  `class-features.json` (§0). **Not touched.**
+
+### Fixed (static-provable defects)
+
+- **B9 — single-step / full-finalizer prerequisite parity.** `finalizeSingleStep` (sheet buttons,
+  Holonet tasks) did **not** run the Batch A R1 finalization prerequisite re-check that `finalize`
+  now runs, so a single-step Force technique/secret/feat/talent add could materialize an
+  illegal pick. Fixed: `finalizeSingleStep` now runs `validateFinalProgressionPrerequisites`
+  **scoped to the domain being finalized** (so unrelated stale draft entries can never block a
+  scoped job), before `_applyMutationPlan`. Fail-closed on proven illegality; advisory → warnings.
+- **B7/B8 — count-primitive consistency.** `countClassFeatureChoicesAtLevel` (used by step
+  activation) read only `feature.value`; the manifest's `featureQuantity` (used by the finalizer
+  required-selection check) read `value ?? quantity ?? count`. Aligned the former to the latter so
+  the two authorities can never disagree on owed counts. **No-op on current data** (every choice
+  feature defaults to 1) — purely a latent soft-lock guard.
+
+### Left as runtime-verify (no static defect; do not speculatively change)
+
+- **B3 — Force regimen visibility/selection** and **B5 — detail-rail hydration on step re-entry** are
+  per-step runtime behaviors (`renderDetailsPanel`/`getSelection`, rail context) that cannot be
+  proven from source. See §5 smoke items 5.
+- **`class-features.json` consumer-less parallel representation** (§0) remains a latent drift source;
+  flagged for a future report-only parity assertion, not changed here.
+
+### Files changed (Batch B)
+
+- `scripts/apps/progression-framework/shell/progression-finalizer.js` — B9 single-step prereq parity.
+- `scripts/engine/progression/utils/levelup-event-context.js` — B7/B8 count-primitive alignment.
+
+### Checks run (all report-only, exit 0)
+
+`node --check` on both touched files + the validator; `check-progression-integrity`,
+`check-architecture-boundaries`, `check-combat-math-ssot`, `check-feature-implementation-coverage
+--no-write`. No new direct mutations; ActorEngine remains the sole gateway.
+
+### Runtime verification still needed
+
+§5 smoke set — cadence steps surface for all six classes; FPM repeats not deduped; detail-rail
+re-hydration on backtrack; **single-step add now blocks illegal Force picks (new B9 path)**; illegal
+technique blocked at full finalize (Batch A R1).

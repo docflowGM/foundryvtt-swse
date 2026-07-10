@@ -142,5 +142,33 @@
       "toolingChange": "check-feature-implementation-coverage.mjs now splits class fieldCoverage into baseFieldCoverage/prestigeFieldCoverage with per-field expectation (base-start | additive | universal)",
       "doNot": "Do not give prestige classes base-class starter packages."
     }
+  },
+  "batchB": {
+    "date": "2026-07-10",
+    "title": "Force progression hardening",
+    "runtimeVerified": false,
+    "verification": "static-only (node --check + report-only scanners)",
+    "outcome": "Force progression found largely structurally sound; two surgical fixes, no refactor.",
+    "filesChanged": [
+      "scripts/apps/progression-framework/shell/progression-finalizer.js",
+      "scripts/engine/progression/utils/levelup-event-context.js",
+      "docs/audits/progression-force-hardening-batch-b-plan.md",
+      "docs/audits/progression-runtime-integrity-status.json"
+    ],
+    "verifiedSound": {
+      "B1_B2_B7_stepActivationVsEntitlement": "consistent — both derive owed counts from level_progression at current class level",
+      "B4_B6_forcePowerMasteryAndDedupe": "correct — session-marker + type::name dedupe; FPM bypasses type::name and is repeatable",
+      "cadenceData": "correct and consistent (level_progression == class-features.json); not touched"
+    },
+    "fixed": {
+      "B9_singleStepPrereqParity": "finalizeSingleStep now runs the R1 finalization prereq re-check scoped to the finalized domain before mutation (was full-finalize only)",
+      "B7_B8_countPrimitiveConsistency": "countClassFeatureChoicesAtLevel aligned to manifest featureQuantity (value ?? quantity ?? count); no-op on current data, latent soft-lock guard"
+    },
+    "runtimeVerify": [
+      "B3 force regimen visibility/selection",
+      "B5 detail-rail hydration on step re-entry",
+      "class-features.json consumer-less parallel representation (future report-only parity assertion)"
+    ],
+    "recommendedNextBatch": "Batch C — active-step / owed-choice diagnostics (Force is the ideal first consumer)"
   }
 }

@@ -295,6 +295,37 @@ export class ProgressionFinalizer {
         throw new Error(`Mutation plan invalid: ${validation.errors.join('; ')}`);
       }
 
+      // R1 parity (Batch B / B9): single-step finalization (sheet buttons, Holonet
+      // tasks) must fail closed on illegal picks exactly like the full finalizer.
+      // Scope the re-check to the domain being finalized so unrelated stale draft
+      // entries can never block a scoped job.
+      if (itemDomains.has(domain)) {
+        const draft = sessionState.progressionSession?.draftSelections || {};
+        const scopedSelections = {};
+        for (const key of itemDomains) {
+          scopedSelections[key] = (key === domain && Array.isArray(draft[key])) ? draft[key] : [];
+        }
+        const singleStepRecheck = await validateFinalProgressionPrerequisites({
+          actor,
+          progressionSession: sessionState.progressionSession,
+          mode: sessionState.mode || 'levelup',
+          selections: scopedSelections,
+        });
+        if (!singleStepRecheck.ok) {
+          swseLogger.error('[ProgressionFinalizer] Single-step prerequisite re-check failed — ABORTING before mutation', {
+            domain,
+            errors: singleStepRecheck.errors,
+          });
+          throw new Error(singleStepRecheck.errors.join(' '));
+        }
+        if (singleStepRecheck.warnings.length) {
+          swseLogger.warn('[ProgressionFinalizer] Single-step prerequisite re-check warnings', {
+            domain,
+            warnings: singleStepRecheck.warnings,
+          });
+        }
+      }
+
       const result = await this._applyMutationPlan(actor, mutationPlan);
       if (!result.success) return result;
 
