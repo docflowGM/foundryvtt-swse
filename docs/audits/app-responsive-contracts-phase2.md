@@ -33,6 +33,7 @@ Disconnected legacy UI should be removed instead of supported.
 10. Actor Creation Entry launcher
 11. Asset Bay / owned assets, Droid Garage, and Shipyard surfaces
 12. Holonet Messenger / communications surface
+13. Allies database / companions, factions, contacts, intel, bases, organizations
 ```
 
 ## Files changed
@@ -52,6 +53,7 @@ styles/system/app-responsive-galactic-records.css
 styles/system/app-responsive-actor-creation-entry.css
 styles/system/app-responsive-assets.css
 styles/system/app-responsive-holonet.css
+styles/system/app-responsive-allies.css
 docs/audits/app-responsive-contracts-phase2.md
 templates/apps/store.html                         deleted
 templates/apps/store/store.html                   deleted
@@ -76,6 +78,7 @@ styles/system/app-responsive-galactic-records.css
 styles/system/app-responsive-actor-creation-entry.css
 styles/system/app-responsive-assets.css
 styles/system/app-responsive-holonet.css
+styles/system/app-responsive-allies.css
 ```
 
 The observer emits:
@@ -398,6 +401,37 @@ Behavior:
 - keeps pinned transmissions and attachments responsive without altering Holonet data
 ```
 
+### Allies database / companions, factions, contacts, intel, bases, organizations
+
+Targets:
+
+```txt
+swse-shell-surface--allies
+swse-allies-surface
+swse-allies-header
+swse-allies-tabs
+swse-allies-body
+swse-allies-lanes
+swse-allies-faction-list
+swse-contact-dossier-grid
+swse-intel-locker-grid
+swse-intel-decryption-console
+templates/shell/partials/surface-allies.hbs
+```
+
+Behavior:
+
+```txt
+- compacts Allies Database header and active profile card
+- makes companion/faction/contact/intel/base/org tabs horizontally reachable
+- bounds section headers, stat pills, action buttons, base notes, and GM drop zones
+- makes active section content the primary scroller
+- turns companion lanes, faction cards, contact dossiers, and intel locker cards into responsive grids
+- keeps Open Actor, faction actions, Save Notes, Pin/Archive, Codebreaker, and Lockbox actions reachable
+- bounds embedded Intel codebreaker panels so they do not consume the entire Allies surface
+- stacks embedded codebreaker readout above slicer tools on compact windows
+```
+
 ## Resolution matrix to test
 
 ```txt
@@ -431,6 +465,7 @@ Galactic Records: categories, NPC/droid records, selected preview, Import Now, C
 Actor Creation Entry: Begin New Character and Access Galactic Records launcher paths at 1366x768, 1280x720, 1024x600, and 700x900.
 Asset Bay: All Assets/Garage/Shipyard modes, droid and vehicle asset cards, Sheet/Modify/Grant Access actions, vehicle shipyard systems panel, EP/value/last-refit summaries, installed and removed systems.
 Holonet Messenger: Chat/Alerts/New/Jobs/Intel/GM buttons, thread search/filter/archive, compose/new transmission, job board filters/dossier/objectives, intel archive/create, chat messages, pinned transmissions, credit/item/asset/game/job cards, invite/transfer/archive/mute/leave actions.
+Allies: companions/factions/contacts/intel/bases/organizations tabs, companion lanes, faction cards, contact dossiers, intel locker, embedded codebreaker panels, Open Actor, Save Notes, Pin/Archive, Lockbox actions.
 ```
 
 ## Pass criteria
@@ -449,5 +484,5 @@ Holonet Messenger: Chat/Alerts/New/Jobs/Intel/GM buttons, thread search/filter/a
 
 - This pass is selector-based and conservative. Exact per-template refinements may still be needed after runtime testing.
 - It does not replace progression-specific behavior from PR #887.
-- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, actor creation launch callbacks, Asset Bay ownership/actions, Holonet threads/messages/jobs/intel/transfers/notifications, vehicle EP/refit math, credits, or progression state.
+- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, actor creation launch callbacks, Asset Bay ownership/actions, Holonet threads/messages/jobs/intel/transfers/notifications, Allies links/faction/contact/intel/base/org state, vehicle EP/refit math, credits, or progression state.
 - Foundry runtime verification is still required.
