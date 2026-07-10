@@ -11,6 +11,7 @@
  */
 
 const OBSERVER_KEY = Symbol.for('swse.shellResponsiveObserver');
+const STYLE_ID = 'swse-shell-responsive-contract-css';
 const DEFAULT_THRESHOLDS = Object.freeze({
   compactWidth: 1180,
   compactHeight: 760,
@@ -31,6 +32,15 @@ function resolveTarget(root, selector) {
   if (selector && root.matches?.(selector)) return root;
   if (selector) return root.querySelector?.(selector) || null;
   return root.closest?.('.swse-shell-responsive') || root.querySelector?.('.swse-shell-responsive') || root;
+}
+
+function ensureContractStylesheet() {
+  if (typeof document === 'undefined' || document.getElementById(STYLE_ID)) return;
+  const link = document.createElement('link');
+  link.id = STYLE_ID;
+  link.rel = 'stylesheet';
+  link.href = 'systems/foundryvtt-swse/styles/system/shell-responsive-contract.css';
+  document.head.appendChild(link);
 }
 
 function classify(target, rect, thresholds) {
@@ -61,6 +71,7 @@ function classify(target, rect, thresholds) {
 export function observeShellResponsive(root, options = {}) {
   const target = resolveTarget(root, options.selector);
   if (!target || typeof ResizeObserver === 'undefined') return null;
+  ensureContractStylesheet();
 
   const thresholds = {
     compactWidth: asNumber(options.compactWidth, DEFAULT_THRESHOLDS.compactWidth),
@@ -98,17 +109,53 @@ export function disconnectShellResponsive(root, options = {}) {
 }
 
 export function observeAllShellResponsive(root = document) {
+  ensureContractStylesheet();
   const scope = root?.querySelectorAll ? root : document;
-  const targets = scope.querySelectorAll?.('.swse-shell-responsive, .swse-responsive-auto') || [];
-  for (const target of targets) observeShellResponsive(target);
+  const explicitTargets = scope.querySelectorAll?.('.swse-shell-responsive, .swse-responsive-auto') || [];
+  for (const target of explicitTargets) observeShellResponsive(target);
+
+  const applicationTargets = scope.querySelectorAll?.(`
+    .application:has(.swse-v2-sheet),
+    .application:has(.swse-character-sheet),
+    .application:has(.lightsaber-construction-app),
+    .application:has(.customization-bay),
+    .application:has(.item-customization-workbench),
+    .application:has(.swse-customization-workbench),
+    .application:has(.gm-datapad),
+    .application:has(.gm-holopad),
+    .application:has(.swse-gm-datapad),
+    .application:has(.store-surface),
+    .application:has(.swse-store),
+    .application:has(.store-card-grid),
+    .application:has(.atlas-surface),
+    .application:has(.games-surface),
+    .application:has(.hacking-surface),
+    .application:has(.force-alchemy-workbench),
+    .application:has(.sith-alchemy-workbench)
+  `) || [];
+  for (const target of applicationTargets) observeShellResponsive(target);
 }
 
-if (typeof window !== 'undefined') {
+export function initializeShellResponsiveObserver() {
+  if (typeof window === 'undefined') return;
+  ensureContractStylesheet();
   window.SWSEShellResponsive = {
     observe: observeShellResponsive,
     disconnect: disconnectShellResponsive,
     observeAll: observeAllShellResponsive,
   };
 
-  document.addEventListener('DOMContentLoaded', () => observeAllShellResponsive(document), { once: true });
+  Hooks.once('ready', () => observeAllShellResponsive(document));
+  Hooks.on('renderApplication', (_app, html) => {
+    const root = html?.[0] || html || document;
+    queueMicrotask(() => observeAllShellResponsive(root));
+  });
+  Hooks.on('renderActorSheet', (_app, html) => {
+    const root = html?.[0] || html || document;
+    queueMicrotask(() => observeAllShellResponsive(root));
+  });
+  Hooks.on('renderItemSheet', (_app, html) => {
+    const root = html?.[0] || html || document;
+    queueMicrotask(() => observeAllShellResponsive(root));
+  });
 }
