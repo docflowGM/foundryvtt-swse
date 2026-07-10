@@ -107,5 +107,33 @@
     "Finalizer (~3.2k) and shell (~4.1k) mapped by structure + targeted reads, not full line-by-line.",
     "Scanner is regex/line-based; counts are a floor, not a census.",
     "Content semantic correctness (RAW parity per class/level) spot-checked, not exhaustive."
-  ]
+  ],
+  "batchA": {
+    "date": "2026-07-10",
+    "runtimeVerified": false,
+    "verification": "static-only (node --check + report-only scanners)",
+    "filesChanged": [
+      "scripts/engine/progression/validation/finalization-prerequisite-validator.js (new)",
+      "scripts/apps/progression-framework/shell/progression-finalizer.js",
+      "scripts/apps/progression-framework/shell/progression-session.js",
+      "scripts/governance/actor-engine/actor-engine.js",
+      "scripts/engine/progression/ProgressionSession.js (deleted)",
+      "tools/check-progression-integrity.mjs",
+      "docs/audits/progression-runtime-integrity-audit.md",
+      "docs/audits/progression-runtime-integrity-status.json"
+    ],
+    "R1_finalizationPrerequisiteRecheck": "fixed",
+    "R2_followerNonSchemaKeys": "fixed-schema-partial-routing",
+    "deadProgressionSession": "removed",
+    "createRollbackGap": "fixed",
+    "mirroredStateDrift": "documented-and-tooled",
+    "scannerDelta": { "non-schema-selection-key": "6 -> 0", "total": "48 -> 42" },
+    "architectureBoundaryImpact": "none (ActorEngine remains sole mutation gateway; validator is read-only; no new direct mutations)",
+    "runtimeVerificationNeeded": [
+      "smoke #13: illegal feat after ability respec now blocked at finalize",
+      "smoke #16: follower choices persist/materialize under declared schema",
+      "smoke #12: CREATE-bucket rollback deletes created actors on induced failure"
+    ],
+    "recommendedNextBatch": "Force progression hardening (techniques/secrets/regimens cadence, repeatable Force Power Mastery, detail-rail hydration, class cadence visibility)"
+  }
 }

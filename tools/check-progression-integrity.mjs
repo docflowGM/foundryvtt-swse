@@ -83,12 +83,31 @@ const CANONICAL_SELECTION_KEYS = new Set([
   'survey', 'prestigeSurvey', 'droid', 'pendingSpeciesContext',
   'pendingBackgroundContext', 'backgroundLedger', 'pendingEntitlements',
   'immediateChoices',
+  // Follower (dependent participant) sub-schema — declared in ProgressionSession
+  // _buildSchema() (Batch A / R2). Intentional fields, no longer non-schema.
+  'followerSkills', 'skillChoices', 'followerLanguages', 'languageChoices',
+  'followerBackground', 'backgroundChoice',
 ]);
 
 // Files allowed to write draftSelections directly (the session owner).
 const DRAFT_WRITE_ALLOW = [
   'scripts/apps/progression-framework/shell/progression-session.js',
 ];
+
+// Known transitional draft writers — deliberate direct writes tracked by the audit
+// (follower sub-schema whole-list replacement, template/preset bulk hydration, survey
+// steps). Not yet routed through commitSelection but documented and understood. Anything
+// NOT matching these is labelled "suspicious" so new bypasses stand out.
+const DRAFT_WRITE_TRANSITIONAL = [
+  /\/steps\/follower-steps\//,
+  /\/steps\/base-class-survey-step\.js$/,
+  /\/steps\/galactic-profile-step\.js$/,
+  /\/steps\/class-step\.js$/,
+  /\/progression\/template\/template-adapter\.js$/,
+];
+function classifyDraftWriter(relPath) {
+  return DRAFT_WRITE_TRANSITIONAL.some((re) => re.test(relPath)) ? 'transitional' : 'suspicious';
+}
 
 // Direct-mutation regex (mirrors check-architecture-boundaries but scoped to progression).
 const DIRECT_MUTATION =
@@ -180,7 +199,7 @@ for (const file of files) {
     const draftMatch = line.match(DRAFT_WRITE);
     if (draftMatch && !inAllowlist(relPath, DRAFT_WRITE_ALLOW)) {
       const key = draftMatch[1] || draftMatch[2] || '(dynamic)';
-      record('draft-write-bypass', file, lineNo, line, { key });
+      record('draft-write-bypass', file, lineNo, line, { key, label: classifyDraftWriter(relPath) });
       if (key !== '(dynamic)' && !CANONICAL_SELECTION_KEYS.has(key)) {
         record('non-schema-selection-key', file, lineNo, line, { key });
       }
@@ -228,7 +247,8 @@ if (AS_JSON) {
       console.log(`\n  ── ${category} (${items.length}) ──`);
       console.log(`     ${CATEGORY_INFO[category] || ''}`);
       for (const f of items.slice(0, 40)) {
-        console.log(`     ${f.file}:${f.line}${f.key ? `  [key=${f.key}]` : ''}`);
+        const tags = [f.key ? `key=${f.key}` : null, f.label ? `label=${f.label}` : null].filter(Boolean).join(' ');
+        console.log(`     ${f.file}:${f.line}${tags ? `  [${tags}]` : ''}`);
         console.log(`        ${f.text}`);
       }
       if (items.length > 40) console.log(`     … and ${items.length - 40} more`);

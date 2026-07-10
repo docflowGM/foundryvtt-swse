@@ -14,6 +14,37 @@ prior reports.
 
 ---
 
+## 0. Batch A Follow-up Status (2026-07-10)
+
+Correctness-hardening batch executed against this audit. **Static verification only**
+(`node --check` + the report-only scanners below); **no Foundry runtime verification** was
+performed — the runtime items in §14 still stand.
+
+| Item | Resolution | What changed |
+|---|---|---|
+| **R1 — finalization prerequisite re-check** | **fixed** | New `scripts/engine/progression/validation/finalization-prerequisite-validator.js` re-evaluates every player-selected class/feat/talent/Force/medical/maneuver choice against the final canonical `draftSelections` using the same commit-time seam (`AbilityEngine.evaluateAcquisition` + `buildClassGrantLedger` pending). Wired into `ProgressionFinalizer.finalize()` after plan validation and **before** `_applyMutationPlan`. Fail-closed on proven illegality; advisory/unresolved → warnings. |
+| **R2 — follower non-schema keys** | **fixed (schema) / partial (routing)** | The 6 follower keys (`followerSkills`, `skillChoices`, `followerLanguages`, `languageChoices`, `followerBackground`, `backgroundChoice`) are now declared in `ProgressionSession._buildSchema()` + initial/reset shape — they are intentional, documented, validate-capable fields. Scanner `non-schema-selection-key` findings: **6 → 0**. Direct whole-list-replacement writes are intentionally **not** routed through `commitSelection` (its singleton-merge semantics differ from list-replace and could not be runtime-verified) — tracked as transitional. |
+| **Dead `ProgressionSession`** | **removed** | `scripts/engine/progression/ProgressionSession.js` deleted (confirmed zero importers; the two `ProgressionSession` importers reference the canonical shell session). |
+| **CREATE rollback gap (R5)** | **fixed** | `ActorEngine.applyMutationPlan` now deletes CREATE-bucket world actors (`Actor.deleteDocuments`) during transactional rollback, so a failed plan no longer orphans created actors. Best-effort; a failed cleanup sets `partialMutationPossible`. Note: progression finalization never populates the CREATE bucket, so this hardens the general engine contract, not the finalize path specifically. |
+| **Mirrored-state drift (R3)** | **documented + tooled** | Authority restated below; scanner now labels each direct `draftSelections` writer `transitional` vs `suspicious`. Stale "mutations may be partially applied" finalizer comment corrected (rollback now runs). No broad mirror removal in this batch. |
+
+**Intended selection authority (canonical):**
+`progressionSession.draftSelections` is the single source of truth. `buildIntent` and
+`committedSelections` are **projections/caches only** — never authoritative. New code must
+prefer `commitSelection()` / `_commitNormalized()`; direct `draftSelections` writes are legacy
+and tracked by the scanner's `draft-write-bypass` category (`label=transitional` for known,
+documented writers; `label=suspicious` for anything new).
+
+**Runtime verification still needed (Batch A):** smoke #13 (illegal feat after ability respec
+now blocks at finalize), #16 (follower choices persist/materialize under the declared schema),
+#12 (CREATE-bucket rollback deletes created actors on induced failure). See §14.
+
+**Recommended next batch:** Force progression hardening — techniques/secrets/regimens cadence,
+repeatable Force Power Mastery, detail-rail hydration, and class cadence visibility (where both
+audits converge).
+
+---
+
 ## 1. Scope
 
 Full progression lifecycle inspected: chargen, level-up, multiclassing, prestige entry,
