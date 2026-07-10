@@ -40,6 +40,10 @@ const STYLE_IDS = Object.freeze([
     id: 'swse-app-responsive-gm-holopad-css',
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-gm-holopad.css',
   },
+  {
+    id: 'swse-app-responsive-atlas-css',
+    href: 'systems/foundryvtt-swse/styles/system/app-responsive-atlas.css',
+  },
 ]);
 const DEFAULT_THRESHOLDS = Object.freeze({
   compactWidth: 1180,
@@ -201,6 +205,11 @@ export function observeAllShellResponsive(root = document) {
     .application:has(.swse-games-concept-layout),
     .application:has(.swse-games-table-frame),
     .application:has(.swse-games-table-frame--unified),
+    .application:has(.swse-atlas-v3),
+    .application:has(.swse-atlas-surface),
+    .application:has(.swse-shell-surface--atlas),
+    .application:has(.swse-atlas-wireframe),
+    .application:has(.swse-atlas-dossier-stage),
     .application:has(.atlas-surface),
     .application:has(.games-surface),
     .application:has(.hacking-surface),
