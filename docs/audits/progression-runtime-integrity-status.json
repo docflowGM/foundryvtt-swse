@@ -67,7 +67,7 @@
     { "id": "R4", "severity": "medium", "summary": "Dead second ProgressionSession class (no importers) invites wrong-authority imports." },
     { "id": "R5", "severity": "medium", "summary": "CREATE-bucket world actors are not rolled back; follower/companion creation can orphan an actor on mid-plan failure." },
     { "id": "R6", "severity": "low-medium", "summary": "Steps import registries/DBs directly instead of ProgressionContentAuthority (19 sites)." },
-    { "id": "R7", "severity": "medium", "summary": "class_skills/starting_features/starting_credits populated for only 5/37 classes; 32 rely on finalizer fallbacks." },
+    { "id": "R7", "severity": "low", "reclassified": true, "summary": "RECLASSIFIED (not a defect): start-package fields present on all 5/5 base classes; prestige classes correctly omit them (additive layers). Additive fields 32/32 on prestige. Residual: verify prestige class-skill resolution (additive), not a base-package backfill." },
     { "id": "R8", "severity": "low-medium", "summary": "Direct draftSelections writes in survey/droid/template paths skip auto-save (23 sites)." }
   ],
   "fastestWins": [
@@ -134,6 +134,13 @@
       "smoke #16: follower choices persist/materialize under declared schema",
       "smoke #12: CREATE-bucket rollback deletes created actors on induced failure"
     ],
-    "recommendedNextBatch": "Force progression hardening (techniques/secrets/regimens cadence, repeatable Force Power Mastery, detail-rail hydration, class cadence visibility)"
+    "recommendedNextBatch": "Force progression hardening (techniques/secrets/regimens cadence, repeatable Force Power Mastery, detail-rail hydration, class cadence visibility)",
+    "classCoverageAddendum": {
+      "note": "The previous 5/37 class-start data finding was reclassified. Base class start-package coverage is measured separately from prestige-class additive progression coverage. Prestige classes are not expected to provide starting feats, starting credits, or replacement class skills unless explicitly granted.",
+      "baseStartPackageCoverage": "5/5 base classes carry class_skills, starting_features, starting_credits",
+      "prestigeAdditiveCoverage": "32/32 prestige classes carry talent_trees, level_progression, babProgression, defenses",
+      "toolingChange": "check-feature-implementation-coverage.mjs now splits class fieldCoverage into baseFieldCoverage/prestigeFieldCoverage with per-field expectation (base-start | additive | universal)",
+      "doNot": "Do not give prestige classes base-class starter packages."
+    }
   }
 }

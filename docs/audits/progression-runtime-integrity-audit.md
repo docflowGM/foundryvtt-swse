@@ -27,6 +27,17 @@ performed — the runtime items in §14 still stand.
 | **Dead `ProgressionSession`** | **removed** | `scripts/engine/progression/ProgressionSession.js` deleted (confirmed zero importers; the two `ProgressionSession` importers reference the canonical shell session). |
 | **CREATE rollback gap (R5)** | **fixed** | `ActorEngine.applyMutationPlan` now deletes CREATE-bucket world actors (`Actor.deleteDocuments`) during transactional rollback, so a failed plan no longer orphans created actors. Best-effort; a failed cleanup sets `partialMutationPossible`. Note: progression finalization never populates the CREATE bucket, so this hardens the general engine contract, not the finalize path specifically. |
 | **Mirrored-state drift (R3)** | **documented + tooled** | Authority restated below; scanner now labels each direct `draftSelections` writer `transitional` vs `suspicious`. Stale "mutations may be partially applied" finalizer comment corrected (rollback now runs). No broad mirror removal in this batch. |
+| **R7 class coverage — reclassified** | **corrected** | The prior "5/37 start-package gap" was a measurement artifact. `check-feature-implementation-coverage.mjs` now splits class coverage by role: **base start-package 5/5 (100%)**, **prestige additive 32/32**. Prestige classes are additive layers and are *not* expected to carry starting feats/credits or replacement class skills. See addendum note below. |
+
+**Class coverage addendum:** The previous 5/37 class-start data finding was reclassified. Base
+class start-package coverage is measured separately from prestige-class additive progression
+coverage. In SWSE, base classes are the starter chassis (starting feats/proficiencies, class skills,
+starting credits, foundational package); prestige classes are additive specialization layers
+(prestige talents, class features, prerequisites, BAB/defense progression, Force techniques/secrets,
+explicit level grants) and are **not** expected to provide a starting package unless the source
+explicitly grants one. Evidence: **base 5/5** carry `class_skills` / `starting_features` /
+`starting_credits`; **prestige 32/32** carry `talent_trees` / `level_progression` / `babProgression`
+/ `defenses`. Prestige classes must not be "fixed" by giving them base-class starter packages.
 
 **Intended selection authority (canonical):**
 `progressionSession.draftSelections` is the single source of truth. `buildIntent` and
@@ -39,9 +50,11 @@ documented writers; `label=suspicious` for anything new).
 now blocks at finalize), #16 (follower choices persist/materialize under the declared schema),
 #12 (CREATE-bucket rollback deletes created actors on induced failure). See §14.
 
-**Recommended next batch:** Force progression hardening — techniques/secrets/regimens cadence,
-repeatable Force Power Mastery, detail-rail hydration, and class cadence visibility (where both
-audits converge).
+**Recommended next batch:** Force progression hardening — see the grounded plan in
+`docs/audits/progression-force-hardening-batch-b-plan.md`. Note: that plan confirms the Force
+**cadence data is already correct and consistent** (Jedi Knight/Sith Apprentice/Force Adept →
+techniques at even class levels; Jedi Master/Sith Lord/Force Disciple → secrets each level ≥2), so
+Batch B is runtime/UI/finalizer verification, **not** a data fix.
 
 ---
 
@@ -87,7 +100,7 @@ Checks run (all report-only, exit 0):
 | `node tools/check-progression-integrity.mjs` | 48 findings (19 registry-bypass, 23 draft-write, 6 non-schema) |
 | `node tools/check-architecture-boundaries.mjs` | 34 (6 direct-actor-mutation, 28 registry-bypass) |
 | `node tools/check-combat-math-ssot.mjs` | parity notes only (combat scope, not progression) |
-| `node tools/check-feature-implementation-coverage.mjs --no-write` | coverage gaps: `class_skills`, `starting_features`, `starting_credits` = 5/37 classes populated |
+| `node tools/check-feature-implementation-coverage.mjs --no-write` | start-package fields present on **5/5 base classes (100%)**; **0/32 prestige (by design)**; additive fields (talent trees / level_progression / BAB / defenses) **32/32 prestige**. See §0 addendum — the earlier "5/37" reading conflated class roles. |
 
 No `package.json` / CI runner exists in the repo; tools are run directly with `node`, matching repo
 convention.
@@ -445,7 +458,7 @@ then `ActorEngine.applyMutationPlan(actor, plan, { transactional:true, validate:
 | R4 | **Dead second `ProgressionSession`** class invites accidental import of the wrong authority. | §3 | Med |
 | R5 | **CREATE-bucket not rolled back** — follower/companion creation can orphan a world actor on mid-plan failure. | §8.10 | Med |
 | R6 | **Steps import registries/DBs directly** (background/class/language/talent steps) instead of `ProgressionContentAuthority`, weakening the content read seam. | tool: 19 registry-bypass | Low-Med |
-| R7 | **Class data coverage gap** — `class_skills`, `starting_features`, `starting_credits` populated for only 5/37 classes; 32 classes rely on finalizer fallbacks (e.g. `RAW_CORE_CLASS_STARTING_FEATS`). | coverage check | Med (data, not engine) |
+| R7 | **~~Class data coverage gap~~ → RECLASSIFIED (not a defect).** Start-package fields (`class_skills`/`starting_features`/`starting_credits`) are present on **all 5 base classes**; prestige classes correctly omit them (additive layers, not starter chassis). Additive fields are **32/32** on prestige. See §0 addendum. Residual: prestige `class_skills` emptiness is an *additive* verification item (do PrC class skills add correctly?), not a base-package gap. | coverage check (split by type) | Low (verify prestige class-skill resolution) |
 | R8 | **Direct `draftSelections` writes** in survey/droid/template paths skip auto-save; a crash mid-survey loses unsaved intent. | tool: 23 draft-write | Low-Med |
 
 ---
@@ -476,9 +489,10 @@ then `ActorEngine.applyMutationPlan(actor, plan, { transactional:true, validate:
   to CREATE-bucket world actors for follower creation.
 - **Batch C — Legacy-mirror retirement (R3, R4).** Remove `buildIntent`/`committedSelections` readers,
   then the mirrors; delete the dead `ProgressionSession`.
-- **Batch D — Content-seam tightening (R6) + data backfill (R7).** Move step registry imports behind
-  `ProgressionContentAuthority`; backfill `class_skills`/`starting_features`/`starting_credits` for
-  the 32 classes now relying on fallbacks.
+- **Batch D — Content-seam tightening (R6).** Move step registry imports behind
+  `ProgressionContentAuthority`. (R7 "data backfill" is withdrawn — prestige classes should NOT be
+  given base-class starter packages; the only residual is verifying prestige class-skill resolution,
+  an additive item, not a backfill.)
 - **Batch E — Draft-write cleanup (R8).** Convert survey/droid/template direct writes to
   `commitSelection`.
 
@@ -489,7 +503,7 @@ then `ActorEngine.applyMutationPlan(actor, plan, { transactional:true, validate:
 Each item is **[runtime-verify]**; ✎ marks a step exercising a specific audit risk.
 
 1. Level-1 chargen for **each base class** (Jedi, Noble, Scoundrel, Scout, Soldier) → confirm
-   starting feats/skills/credits materialize (✎ R7 fallback path for classes lacking data).
+   starting feats/skills/credits materialize (all 5 base classes carry full start-package data).
 2. Multiclass into a second base class → multiclass starting feat offered once, granted once.
 3. Attempt an **illegal prestige class** → blocked at browser/commit.
 4. Enter a **legal prestige class** → prestige survey + grants materialize.

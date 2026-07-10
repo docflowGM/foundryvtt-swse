@@ -2,6 +2,8 @@
   "_meta": {
     "generatedBy": "check-feature-implementation-coverage.mjs",
     "total": 37,
+    "baseCount": 5,
+    "prestigeCount": 32,
     "nonheroicCount": 434,
     "fieldCoverage": {
       "hitDie": 37,
@@ -16,6 +18,53 @@
       "level_progression": 37,
       "grants_force_points": 31,
       "starting_credits": 5
+    },
+    "baseFieldCoverage": {
+      "hitDie": 5,
+      "base_hp": 5,
+      "babProgression": 5,
+      "defenses": 5,
+      "class_skills": 5,
+      "trainedSkills": 5,
+      "talent_trees": 5,
+      "talentTreeIds": 5,
+      "starting_features": 5,
+      "level_progression": 5,
+      "grants_force_points": 0,
+      "starting_credits": 5
+    },
+    "prestigeFieldCoverage": {
+      "hitDie": 32,
+      "base_hp": 32,
+      "babProgression": 32,
+      "defenses": 32,
+      "class_skills": 0,
+      "trainedSkills": 0,
+      "talent_trees": 32,
+      "talentTreeIds": 32,
+      "starting_features": 0,
+      "level_progression": 32,
+      "grants_force_points": 31,
+      "starting_credits": 0
+    },
+    "fieldExpectation": {
+      "hitDie": "universal",
+      "base_hp": "universal",
+      "level_progression": "universal",
+      "babProgression": "additive",
+      "defenses": "additive",
+      "talent_trees": "additive",
+      "talentTreeIds": "additive",
+      "grants_force_points": "additive",
+      "class_skills": "base-start",
+      "trainedSkills": "base-start",
+      "starting_features": "base-start",
+      "starting_credits": "base-start"
+    },
+    "interpretation": "Base classes own the starting package; prestige classes are additive and are NOT expected to provide starting feats/credits or replacement class skills unless the source explicitly grants them. Measure base start-package coverage and prestige additive coverage separately.",
+    "classFeatureRegistry": {
+      "abilityCount": 53,
+      "consumerEvidence": []
     }
   },
   "classes": [
