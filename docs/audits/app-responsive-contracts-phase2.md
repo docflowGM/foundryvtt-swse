@@ -1,14 +1,24 @@
 # App Responsive Contracts Phase 2
 
 **Date:** 2026-07-10  
-**Scope:** App-family responsive behavior for constrained shell/window sizes  
+**Scope:** App-by-app responsive behavior for constrained shell/window sizes  
 **Runtime status:** Static implementation only. Foundry smoke testing still required.
 
 ## Context
 
-PR #888 introduced the shared shell responsive observer and generic CSS contract. PR #887 applied a progression-specific implementation. This phase adds app-by-app responsive contracts for large shell applications using actual rendered shell size instead of monitor/device assumptions.
+PR #888 introduced the shared shell responsive observer and generic CSS contract. PR #887 applied progression-specific responsive behavior. This phase adds app-by-app contracts for large shell and app surfaces using actual rendered application size rather than monitor/device assumptions.
 
-Completed app-specific refinements so far:
+## Principle
+
+```txt
+Business content wins over decorative chrome.
+The actual application shell size matters more than the monitor size.
+Each app should have one obvious primary scroller.
+Optional rails should collapse, stack, bound, or become drawers before core content disappears.
+Disconnected legacy UI should be removed instead of supported.
+```
+
+## Completed app-specific refinements
 
 ```txt
 1. v2 concept actor sheet family
@@ -19,16 +29,7 @@ Completed app-specific refinements so far:
 6. Player Atlas / astrogation registry surface
 7. Transmission Decryption / codebreaker surface
 8. Force Artifact / Sith Alchemy workbench
-```
-
-## Principle
-
-```txt
-Business content wins over decorative chrome.
-The actual application shell size matters more than the monitor size.
-Each app should have one obvious primary scroller.
-Optional rails should collapse, stack, or become drawers before the core content disappears.
-Disconnected legacy UI should be removed instead of supported.
+9. Galactic Records Browser
 ```
 
 ## Files changed
@@ -44,6 +45,7 @@ styles/system/app-responsive-gm-holopad.css
 styles/system/app-responsive-atlas.css
 styles/system/app-responsive-transmission-decryption.css
 styles/system/app-responsive-force-alchemy.css
+styles/system/app-responsive-galactic-records.css
 docs/audits/app-responsive-contracts-phase2.md
 templates/apps/store.html                         deleted
 templates/apps/store/store.html                   deleted
@@ -64,9 +66,10 @@ styles/system/app-responsive-gm-holopad.css
 styles/system/app-responsive-atlas.css
 styles/system/app-responsive-transmission-decryption.css
 styles/system/app-responsive-force-alchemy.css
+styles/system/app-responsive-galactic-records.css
 ```
 
-The observer emits the original shell size classes:
+The observer emits:
 
 ```txt
 swse-shell-responsive
@@ -75,11 +78,6 @@ is-shell-narrow
 is-shell-tiny
 is-shell-short
 is-shell-laptop-short
-```
-
-It also emits one named tier class and one diagnostic data attribute:
-
-```txt
 is-shell-tier-tiny
 is-shell-tier-narrow
 is-shell-tier-micro
@@ -91,11 +89,11 @@ is-shell-tier-desktop-wide
 data-shell-resolution-tier
 ```
 
-## App-family contracts added
+## App contracts
 
-### Actor / character sheet family
+### Actor / character sheet
 
-Targets real v2 concept actor shell selectors:
+Targets:
 
 ```txt
 swse-sheet-v2-shell--concept
@@ -109,10 +107,9 @@ swse-concept-sidebar
 swse-concept-main
 ```
 
-Compact behavior:
+Behavior:
 
 ```txt
-- hides low-value HUD/title chrome
 - compacts portrait / identity / readout header
 - makes tabs horizontally scrollable
 - stacks body/sidebar/main vertically
@@ -120,16 +117,16 @@ Compact behavior:
 - hides sidebar/resource/readout cards in short or micro tiers
 ```
 
-### Live store / browser family
+### Live store / browser
 
-Live target/template:
+Targets:
 
 ```txt
 swse-store-surface
 templates/shell/partials/surface-store.hbs
 ```
 
-Compact behavior:
+Behavior:
 
 ```txt
 - compacts HUD and Rendarr hero header
@@ -147,9 +144,9 @@ templates/apps/store.html deleted
 templates/apps/store/store.html deleted
 ```
 
-### Live workbench / customization family
+### Item customization / lightsaber workbench
 
-Live target/template:
+Targets:
 
 ```txt
 swse-customization-stage
@@ -157,23 +154,20 @@ swse-customization-workarea
 templates/apps/customization/item-customization-workbench.hbs
 ```
 
-Compact behavior:
+Behavior:
 
 ```txt
-- compacts HUD and mentor rail
-- hides mentor rail in short/micro/tiny tiers
 - stacks inventory above workbench detail surface
 - bounds inventory as compact selectable strip/grid
 - compacts item hero preview
-- makes active configuration/card panes primary scrollers
 - stacks lightsaber workspace vertically
 - bounds Selected Component Intel as drawer-like rail
 - keeps wizard/review/tech actions horizontally reachable
 ```
 
-### Holopad Games family
+### Holopad Games
 
-Live targets/templates:
+Targets:
 
 ```txt
 swse-games-surface
@@ -184,22 +178,19 @@ templates/shell/partials/games/surface-games-detail.hbs
 templates/shell/partials/games/surface-games-table-frame.hbs
 ```
 
-Compact behavior:
+Behavior:
 
 ```txt
 - stacks library list, selected-game detail, and rail vertically
 - turns game library cards into compact auto-fit grid
 - makes selected-game detail the primary scroller
-- keeps mode chips, invite controls, and start actions horizontally reachable
 - compacts active table frame and top table bar
-- keeps table actions horizontally scrollable
-- bounds/hides telemetry on short tiers
 - makes game table body the primary play surface/scroller
 ```
 
-### GM Command Holopad / Datapad family
+### GM Command Holopad / Datapad
 
-Live targets/templates:
+Targets:
 
 ```txt
 swse-sheet-v2-shell--gm-datapad
@@ -212,21 +203,19 @@ templates/apps/gm-datapad/partials/sidebar.hbs
 templates/apps/gm-datapad/partials/surface-toolbar.hbs
 ```
 
-Compact behavior:
+Behavior:
 
 ```txt
 - stacks GM command shell vertically
 - converts sidebar into horizontal command strip
 - hides sidebar headers/footers/group labels on short tiers
-- keeps surface nav buttons and badges horizontally reachable
 - compacts shared toolbar identity/metrics/actions
-- hides toolbar metrics on very short tiers
 - makes surface scrollframe the primary GM content scroller
 ```
 
-### Player Atlas / astrogation registry family
+### Player Atlas / astrogation registry
 
-Live target/template:
+Targets:
 
 ```txt
 swse-atlas-v3
@@ -235,22 +224,19 @@ swse-shell-surface--atlas
 templates/shell/partials/surface-atlas.hbs
 ```
 
-Compact behavior:
+Behavior:
 
 ```txt
-- compacts command header and current-location strip
-- hides summary metrics on short/micro/tiny tiers
 - stacks registry rail above dossier stage
 - bounds registry rail as compact selectable list/grid
 - converts registry groups into auto-fit compact cards
 - makes dossier card the primary Atlas scroller
 - keeps chips, detail tabs, actions, notes, and reveal checks horizontally reachable
-- bounds map images on short/micro/tiny tiers
 ```
 
-### Transmission Decryption / codebreaker family
+### Transmission Decryption / codebreaker
 
-Live target/templates:
+Targets:
 
 ```txt
 swse-transmission-shell-surface
@@ -260,24 +246,20 @@ templates/shell/partials/surface-transmission-decryption.hbs
 templates/shell/partials/transmission-decryption-console.hbs
 ```
 
-Compact behavior:
+Behavior:
 
 ```txt
 - compacts shell toolbar and action buttons
-- hides low-value transmission status/kicker/ref chrome on short tiers
-- keeps Intel Locker, Expand/Standard, and Refresh actions reachable
-- compacts decryption HUD, mode switch, progress/fail meters, and status chips
 - stacks cipher readout above analysis tools rail
 - makes cipher readout the primary puzzle scroller
-- bounds analysis tools as a drawer-like rail
-- makes tactic deck, skill buttons, frequency chips, and manual alphabet responsive grids
+- bounds analysis tools as drawer-like rail
 - keeps manual guess row and footer actions horizontally reachable
 - keeps recovered payload/lockbox output scrollable after success
 ```
 
-### Force Artifact / Sith Alchemy workbench family
+### Force Artifact / Sith Alchemy workbench
 
-Live target/template:
+Targets:
 
 ```txt
 swse-force-alchemy-workbench
@@ -286,44 +268,44 @@ data-force-alchemy-root
 templates/apps/force-alchemy/force-alchemy-workbench.hbs
 ```
 
-Compact behavior:
+Behavior:
 
 ```txt
-- compacts spooky HUD while preserving actor, close button, and resource awareness
-- fades decorative surge/corruption chrome instead of letting it compete with content
+- compacts spooky HUD while keeping actor/resources/close reachable
+- fades decorative surge/corruption chrome
 - stacks current workings, rites list, and selected rite intel vertically
-- bounds Current Workings as a compact resources/project strip
-- turns rite categories into a horizontal scroll strip
+- bounds Current Workings as compact resources/project strip
 - makes rites list the primary selection scroller
-- bounds Selected Rite Intel as a drawer-like rail
-- makes the detail stepper horizontally scrollable
-- keeps target/config/ledger/action controls reachable on short screens
-- hides low-value explanatory text in short/micro/tiny tiers
+- bounds Selected Rite Intel as drawer-like rail
 ```
 
-Specific selectors:
+### Galactic Records Browser
+
+Targets:
 
 ```txt
-sa-win--phase5
-sa-hud
-sa-body
-sa-left
-sa-center
-sa-right
-sa-cats
-sa-rites
-sa-rite
-sa-detail
-sa-stepper
-sa-detail-scroll
-sa-d-block
-sa-opt
-sa-commit-row
+galactic-records-browser
+browser-content
+category-buttons
+templates-list
+preview-section
+browser-footer
+templates/apps/galactic-records-browser.hbs
+```
+
+Behavior:
+
+```txt
+- compacts Access Galactic Records header
+- turns category buttons into a horizontal scroll strip
+- makes templates list the primary browser scroller
+- converts template cards into compact icon/list cards
+- bounds selected preview so it does not eat the records list
+- keeps Close, Import Now, and Customize & Import horizontally reachable
+- overrides the template's inline layout styles externally without changing import logic
 ```
 
 ## Resolution matrix to test
-
-Test actual application window sizes, not just monitor sizes:
 
 ```txt
 1920x1080     desktop-wide regression
@@ -343,90 +325,16 @@ resized app inside 1920x1080 browser
 
 ## Smoke tests
 
-### Actor sheet
-
 ```txt
-- character, droid, NPC concept, and vehicle-shell cases
-- overview, abilities, skills, combat, talents, gear, biography tabs
-- Level Up, Store, Refresh, Settings actions
-- droid systems tab for droid actors
-- active tab owns vertical scrolling
-```
-
-### Store
-
-```txt
-- browse weapons, armor, equipment, vehicles, droids, and misc categories
-- search/filter/sort at 1366x768, 1280x720, and 1024x600
-- vehicle filters remain reachable without eating product grid
-- detail panel, cart, checkout, and history remain reachable
-```
-
-### Workbench
-
-```txt
-- select weapons, armor, energy shields, and lightsabers
-- search inventory and confirm results remain scrollable
-- switch modifications, structural, templates, appearance tabs
-- lightsaber chassis/crystal/hilt/color/review steps remain usable
-- Selected Component Intel remains accessible as bounded rail/drawer
-```
-
-### Games
-
-```txt
-- select Pazaak, Sabacc, Dejarik, and Hintaro from library
-- start solo tables where available
-- active table top actions remain horizontally reachable
-- table body remains primary play surface
-```
-
-### GM Holopad
-
-```txt
-- navigate Home, Jobs, Trade, Bulletin, House Rules, Store, Approvals, Healing, Workspace, Factions, Intel, Locations, and Skill Challenges
-- surface content owns primary vertical scroll
-- Top, Refresh, and Focus remain reachable
-- focus mode does not trap the surface
-```
-
-### Atlas
-
-```txt
-- open player Atlas and confirm .swse-atlas-v3 is observed
-- confirm data-shell-resolution-tier updates while resizing
-- search/filter locations at 1366x768, 1280x720, and 1024x600
-- select current, pinned, and lead-bearing locations
-- confirm registry rail does not consume the dossier body
-- confirm detail tabs, Pin, Mark Reviewed, reveal check buttons, and Save Notes remain reachable
-- confirm maps/facts/leads/factions/contacts/jobs/intel sections scroll inside dossier
-```
-
-### Transmission Decryption
-
-```txt
-- open encrypted Intel / Transmission Decryption and confirm .swse-transmission-shell-surface is observed
-- confirm data-shell-resolution-tier updates while resizing
-- resize to 1366x768 and confirm toolbar, cipher readout, analysis tools, and footer actions remain visible
-- resize to 1280x720 and confirm cipher readout is the primary puzzle scroller
-- resize to 1024x600 and confirm status/ref/mode notes do not consume puzzle space
-- select glyphs, use tactic buttons, use skill buttons, frequency chips, manual guess, clear guess, and refresh
-- solve or GM decrypt and confirm recovered message and lockbox claim remain reachable
-```
-
-### Force Alchemy
-
-```txt
-- open Force Artifact / Sith Alchemy workbench and confirm .sa-win--phase5 is observed
-- confirm data-shell-resolution-tier updates while resizing
-- resize to 1366x768 and confirm current workings, rites list, and selected rite intel remain visible
-- resize to 1280x720 and confirm rites list is the primary selection scroller
-- resize to 1024x600 and confirm decorative chrome/current workings do not consume rite selection space
-- switch Force, Sith Alchemy, Sith Talisman, and Specialist/Mutation categories as available
-- select eligible and locked rites
-- select targets, defenses, Force Powers, templates, traits, and GM approval checkbox where available
-- confirm cost ledger, commit/apply controls, project controls, cooldown controls, and close button remain reachable
-- confirm desktop layout remains three-column at 1440x900 and 1920x1080
+Actor sheet: character, droid, NPC concept, vehicle-shell tabs and actions.
+Store: weapons, armor, equipment, vehicles, droids, cart, checkout, history.
+Workbench: weapons, armor, energy shields, lightsabers, selected component intel.
+Games: Pazaak, Sabacc, Dejarik, Hintaro library and active tables.
+GM Holopad: Home, Jobs, Trade, Bulletin, House Rules, Store, Approvals, Healing, Workspace, Factions, Intel, Locations, Skill Challenges.
+Atlas: search/filter locations, select current/pinned/lead-bearing locations, dossier tabs/actions/notes/maps.
+Transmission Decryption: glyphs, tactic buttons, skill buttons, frequency chips, manual guess, recovered payload/lockbox.
+Force Alchemy: categories, locked/eligible rites, targets/configs/ledger/project/cooldown controls.
+Galactic Records: categories, NPC/droid records, selected preview, Import Now, Customize & Import.
 ```
 
 ## Pass criteria
@@ -436,14 +344,14 @@ resized app inside 1920x1080 browser
 - primary body scrolls
 - optional rails do not permanently consume the viewport
 - actions and footers remain reachable
-- details remain accessible as drawer/stacked panels
+- details remain accessible as drawer/stacked/bounded panels
 - desktop layout remains intact at 1440x900 and 1920x1080
 - data-shell-resolution-tier updates when resizing the app window
 ```
 
 ## Limitations
 
-- This pass is selector-based and conservative. Exact per-template class refinements may still be needed after runtime testing.
-- It does not replace the progression-specific behavior from PR #887.
-- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, dark side score, credits, or progression state.
+- This pass is selector-based and conservative. Exact per-template refinements may still be needed after runtime testing.
+- It does not replace progression-specific behavior from PR #887.
+- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, credits, or progression state.
 - Foundry runtime verification is still required.
