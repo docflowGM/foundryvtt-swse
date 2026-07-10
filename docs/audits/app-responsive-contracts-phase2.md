@@ -8,6 +8,8 @@
 
 PR #888 introduced the shared shell responsive observer and generic CSS contract. PR #887 applied a progression-specific implementation. This phase adds app-family contracts for other large applications using the same shell-size classification model.
 
+This PR is now being refined app by app. The first specific refinement is the v2 concept actor sheet family.
+
 ## Principle
 
 ```txt
@@ -22,19 +24,23 @@ Optional rails should collapse, stack, or become drawers before the core content
 ```txt
 scripts/ui/shell/shell-responsive-observer.js
 styles/system/app-responsive-contracts.css
+styles/system/app-responsive-character-sheet.css
 docs/audits/app-responsive-contracts-phase2.md
 ```
 
 ## Observer updates
 
-The observer now loads both responsive stylesheets:
+The observer now loads these responsive stylesheets in order:
 
 ```txt
 styles/system/shell-responsive-contract.css
 styles/system/app-responsive-contracts.css
+styles/system/app-responsive-character-sheet.css
 ```
 
-It continues to emit the original classes:
+The final file is app-specific and intentionally overrides the broader contract for real v2 concept actor-sheet selectors.
+
+The observer continues to emit the original classes:
 
 ```txt
 swse-shell-responsive
@@ -81,21 +87,38 @@ desktop:       default full layout
 
 ### Actor / character sheet family
 
-Targets:
+Broad fallback targets:
 
 ```txt
 swse-character-sheet
 swse-v2-sheet
 ```
 
+Specific v2 concept actor shell targets:
+
+```txt
+swse-sheet-v2-shell--concept
+swse-v2-tablet--concept
+swse-v2-screen--concept
+swse-concept-header
+swse-concept-resource-strip
+swse-concept-tabs
+swse-concept-body
+swse-concept-sidebar
+swse-concept-main
+```
+
 Compact behavior:
 
 ```txt
-- compact portrait/header grid
-- smaller portrait image
-- horizontal scrolling tabs
-- sheet body gets the primary scroller
-- tiny tier hides portrait to keep body visible
+- hides low-value HUD/title chrome
+- compacts the header into portrait / identity / readout columns
+- trims portrait, identity, badges, action row, and readout sizes
+- makes tabs horizontal-scroll instead of wrapping into the body
+- stacks body/sidebar/main vertically in compact mode
+- gives the active tab the primary vertical scroller
+- hides sidebar/resource strip/readout cards in short or micro tiers
+- tiny/micro tier keeps identity and action buttons visible while hiding portrait/readout cards
 ```
 
 ### Store / browser family
@@ -192,6 +215,22 @@ Test actual application window sizes, not just monitor sizes:
 browser zoom 125%
 Foundry sidebar open
 resized app inside 1920x1080 browser
+```
+
+## Actor sheet smoke test
+
+For character, droid, NPC concept, and vehicle-shell cases:
+
+```txt
+- open at 1440x900 and confirm desktop concept layout still has full chrome
+- resize to 1366x768 and confirm header/tabs/body are usable
+- resize to 1280x720 and confirm active tab is the primary scroller
+- resize to 1024x600 and confirm portrait/readouts no longer consume the body
+- resize to 700x900 and confirm tabs and action row remain horizontally reachable
+- switch tabs: overview, abilities, skills, combat, talents, gear, biography
+- verify action buttons remain reachable: Level Up, Store, Refresh, Settings
+- verify droid systems tab remains reachable for droid actors
+- verify vehicle/NPC shell content still scrolls and is not affected by actor-only selectors unexpectedly
 ```
 
 ## Pass criteria
