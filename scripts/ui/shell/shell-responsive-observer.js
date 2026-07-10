@@ -44,6 +44,10 @@ const STYLE_IDS = Object.freeze([
     id: 'swse-app-responsive-atlas-css',
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-atlas.css',
   },
+  {
+    id: 'swse-app-responsive-transmission-decryption-css',
+    href: 'systems/foundryvtt-swse/styles/system/app-responsive-transmission-decryption.css',
+  },
 ]);
 const DEFAULT_THRESHOLDS = Object.freeze({
   compactWidth: 1180,
@@ -210,6 +214,10 @@ export function observeAllShellResponsive(root = document) {
     .application:has(.swse-shell-surface--atlas),
     .application:has(.swse-atlas-wireframe),
     .application:has(.swse-atlas-dossier-stage),
+    .application:has(.swse-transmission-shell-surface),
+    .application:has(.swse-intel-decryption-console),
+    .application:has(.swse-transmission-grid),
+    .application:has(.swse-transmission-shell-body),
     .application:has(.atlas-surface),
     .application:has(.games-surface),
     .application:has(.hacking-surface),
