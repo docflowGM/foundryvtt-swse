@@ -31,7 +31,7 @@ Disconnected legacy UI should be removed instead of supported.
 8. Force Artifact / Sith Alchemy workbench
 9. Galactic Records Browser
 10. Actor Creation Entry launcher
-11. Shipyard / Asset Bay vehicle ownership surface
+11. Asset Bay / owned assets, Droid Garage, and Shipyard surfaces
 ```
 
 ## Files changed
@@ -49,7 +49,7 @@ styles/system/app-responsive-transmission-decryption.css
 styles/system/app-responsive-force-alchemy.css
 styles/system/app-responsive-galactic-records.css
 styles/system/app-responsive-actor-creation-entry.css
-styles/system/app-responsive-shipyard.css
+styles/system/app-responsive-assets.css
 docs/audits/app-responsive-contracts-phase2.md
 templates/apps/store.html                         deleted
 templates/apps/store/store.html                   deleted
@@ -72,7 +72,7 @@ styles/system/app-responsive-transmission-decryption.css
 styles/system/app-responsive-force-alchemy.css
 styles/system/app-responsive-galactic-records.css
 styles/system/app-responsive-actor-creation-entry.css
-styles/system/app-responsive-shipyard.css
+styles/system/app-responsive-assets.css
 ```
 
 The observer emits:
@@ -334,14 +334,16 @@ Behavior:
 - overrides the template's inline layout styles externally without changing launch callbacks
 ```
 
-### Shipyard / Asset Bay vehicle ownership
+### Asset Bay / owned assets, Droid Garage, and Shipyard
 
 Targets:
 
 ```txt
 swse-shell-surface--asset-bay
-swse-asset-bay-grid
+swse-asset-bay-toolbar
 swse-asset-bay-mode-pills
+swse-asset-bay-grid
+swse-asset-bay-card
 swse-vehicle-shipyard-panel
 swse-vehicle-shipyard-groups
 templates/shell/partials/surface-asset-bay.hbs
@@ -352,6 +354,7 @@ Behavior:
 
 ```txt
 - compacts Asset Bay header and summary toolbar
+- covers All Assets, Droid Garage, and Shipyard modes from the same live surface
 - keeps All Assets / Garage / Shipyard filters horizontally reachable
 - hides explanatory boundary note on short tiers
 - makes owned asset grid the primary scroller
@@ -393,7 +396,7 @@ Transmission Decryption: glyphs, tactic buttons, skill buttons, frequency chips,
 Force Alchemy: categories, locked/eligible rites, targets/configs/ledger/project/cooldown controls.
 Galactic Records: categories, NPC/droid records, selected preview, Import Now, Customize & Import.
 Actor Creation Entry: Begin New Character and Access Galactic Records launcher paths at 1366x768, 1280x720, 1024x600, and 700x900.
-Shipyard: Asset Bay All/Garage/Shipyard modes, Sheet/Modify/Grant Access actions, vehicle shipyard systems panel, EP/value/last-refit summaries, installed and removed systems.
+Asset Bay: All Assets/Garage/Shipyard modes, droid and vehicle asset cards, Sheet/Modify/Grant Access actions, vehicle shipyard systems panel, EP/value/last-refit summaries, installed and removed systems.
 ```
 
 ## Pass criteria
