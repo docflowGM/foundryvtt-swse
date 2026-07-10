@@ -129,12 +129,14 @@ CSS stylesheets for UI rendering organized by component:
 - **migrations/** - One-off migration scripts
   - migrate-forcepower-type.py - Force power type canonicalization (Phase 5)
 - **VALIDATION_COMMANDS.sh** - Validation helper scripts
+- **check-ability-schema-authority.mjs** - Guardrail for the v2 ability-score authority contract
 
 ## Documentation
 
 ### docs/
 - **reports/** - Phase reports and audit documentation
   - HOLONET_*.md - Phase summary reports
+- **systems/ABILITY_SCHEMA_AUTHORITY.md** - Ability-score schema authority contract
 - **repo-structure.md** - This file (repository organization)
 
 ## Key Architectural Notes
@@ -153,9 +155,10 @@ CSS stylesheets for UI rendering organized by component:
 - Utility: condition, extra-skill-use
 
 ### Actor Ability Canonicalization
-Actor ability scores stored in system.abilities with canonical IDs:
+Persistent/editable actor ability scores are stored in `system.attributes` with canonical IDs:
 - str, dex, con, int, wis, cha
-(Previously used system.attributes; all active code updated to system.abilities)
+
+Computed ability totals and modifiers are stored in `system.derived.attributes`. `system.abilities` is retained only as a legacy compatibility mirror/fallback and should not be used for new v2 writes or editable UI bindings. See `docs/systems/ABILITY_SCHEMA_AUTHORITY.md`.
 
 ### Mutation Governance
 All actor/item mutations must route through ActorEngine or be annotated with @mutation-exception.
@@ -171,4 +174,4 @@ All 55 pack files referenced in system.json have been validated:
 - All 55 packs are present in packs/ directory and listed in manifest
 
 ---
-*Last updated: Phase 7 - Repository Cleanup*
+*Last updated: Phase 1 Architecture Cleanup - Ability Schema Authority*
