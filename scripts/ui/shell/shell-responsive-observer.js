@@ -56,6 +56,10 @@ const STYLE_IDS = Object.freeze([
     id: 'swse-app-responsive-galactic-records-css',
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-galactic-records.css',
   },
+  {
+    id: 'swse-app-responsive-actor-creation-entry-css',
+    href: 'systems/foundryvtt-swse/styles/system/app-responsive-actor-creation-entry.css',
+  },
 ]);
 const DEFAULT_THRESHOLDS = Object.freeze({
   compactWidth: 1180,
@@ -233,6 +237,9 @@ export function observeAllShellResponsive(root = document) {
     .application:has(.galactic-records-browser),
     .application:has(.browser-content),
     .application:has(.templates-list),
+    .application:has(.actor-creation-entry),
+    .application:has(.entry-choices),
+    .application:has(.entry-choice-card),
     .application:has(.atlas-surface),
     .application:has(.games-surface),
     .application:has(.hacking-surface),
