@@ -72,6 +72,10 @@ const STYLE_IDS = Object.freeze([
     id: 'swse-app-responsive-allies-css',
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-allies.css',
   },
+  {
+    id: 'swse-app-responsive-upgrade-css',
+    href: 'systems/foundryvtt-swse/styles/system/app-responsive-upgrade.css',
+  },
 ]);
 const DEFAULT_THRESHOLDS = Object.freeze({
   compactWidth: 1180,
@@ -270,6 +274,11 @@ export function observeAllShellResponsive(root = document) {
     .application:has(.swse-allies-tabs),
     .application:has(.swse-contact-dossier-grid),
     .application:has(.swse-intel-locker-grid),
+    .application:has(.swse-shell-surface--upgrade),
+    .application:has(.swse-upgrade-app),
+    .application:has(.upgrade-body),
+    .application:has(.upgrade-item-rail),
+    .application:has(.upgrade-detail-pane),
     .application:has(.atlas-surface),
     .application:has(.games-surface),
     .application:has(.hacking-surface),
