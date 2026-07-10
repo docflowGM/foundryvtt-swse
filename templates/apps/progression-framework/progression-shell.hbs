@@ -26,8 +26,8 @@
      data-step-id="{{currentDescriptor.stepId}}"
      data-theme="{{themeKey}}"
      data-motion-style="{{motionStyle}}"
-     onpointerenter="import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-rail-resizer.js').then(m=>m.hydrateProgressionRailSizes(this))"
-     onfocusin="import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-rail-resizer.js').then(m=>m.hydrateProgressionRailSizes(this))"
+     onpointerenter="import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-layout-observer.js').then(m=>m.observeProgressionLayout(this)); import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-rail-resizer.js').then(m=>m.hydrateProgressionRailSizes(this))"
+     onfocusin="import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-layout-observer.js').then(m=>m.observeProgressionLayout(this)); import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-rail-resizer.js').then(m=>m.hydrateProgressionRailSizes(this))"
      style="{{{themeStyleInline}}}; {{{motionStyleInline}}};">
 <div class="swse-screen">
 
