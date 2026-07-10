@@ -1,7 +1,7 @@
 # Progression Responsive Layout Audit
 
 **Date:** 2026-07-10  
-**Scope:** Progression shell small-screen usability and desktop rail resizing  
+**Scope:** Progression shell small-screen usability, shell-size responsiveness, and desktop rail resizing  
 **Runtime status:** Static/layout patch only. Foundry viewport smoke testing still required.
 
 ## Problem
@@ -64,6 +64,33 @@ The patch updates `styles/progression-framework/chargen-stabilization.css` with 
 
 The paired width/height condition intentionally catches 1366x768 and similar low-height 16:9 laptop displays without forcing every large 1366+-wide desktop into compact mode.
 
+## Shell-size observer
+
+A follow-up adds `scripts/apps/progression-framework/shell/progression-layout-observer.js`.
+
+The observer uses `ResizeObserver` on the actual progression shell and applies layout classes based on the shell's real rendered size, not only the browser viewport:
+
+```txt
+is-prog-compact
+is-prog-narrow
+is-prog-tiny
+is-prog-short
+is-prog-laptop-short
+```
+
+This matters because the actual Foundry app can be constrained even when the monitor is not:
+
+```txt
+- resized Foundry application window
+- browser zoom
+- Foundry sidebar open
+- low-height laptop display
+- split-screen desktop use
+- tablet browser chrome
+```
+
+The observer injects class-driven compact layout CSS at runtime so the same business-first layout is applied when the shell itself becomes small.
+
 ### Auto-collapsed rails
 
 On constrained screens, the following are hidden/collapsed automatically:
@@ -116,6 +143,7 @@ Implementation files:
 ```txt
 templates/apps/progression-framework/progression-shell.hbs
 scripts/apps/progression-framework/shell/progression-rail-resizer.js
+scripts/apps/progression-framework/shell/progression-layout-observer.js
 styles/progression-framework/chargen-stabilization.css
 ```
 
@@ -152,12 +180,16 @@ Verify in Foundry at:
 1366x768
 1366x768 with Foundry sidebar open
 1280x720
-1180x760
+1280x800
 1024x768
+1024x600
 900x700
+768x1024
+700x900
 700px width
 browser zoom 125%
 Foundry sidebar open
+resized Foundry app window inside a larger browser viewport
 ```
 
 For each viewport, test:
@@ -178,11 +210,13 @@ double-click reset
 keyboard resize/toggle
 saved widths restore on rerender
 compact mode hides splitters
+observer classes update when resizing the app window
 ```
 
 ## Limitations
 
-- The rail-resizer helper is loaded lazily from the template handles instead of being added to the main shell import graph.
-- It relies on modern Chromium `:has()` support, which is available in current Foundry Electron/Chromium targets.
+- The rail-resizer and layout-observer helpers are loaded lazily from the template handles instead of being added to the main shell import graph.
+- The observer injects class-driven CSS at runtime to avoid broad style-pipeline changes.
+- It relies on modern Chromium `ResizeObserver` and `:has()` support, which are available in current Foundry Electron/Chromium targets.
 - Foundry runtime smoke testing is still needed to confirm exact detail panel template variants all behave correctly as drawers.
 - Large desktop behavior should remain unchanged except for the new draggable splitters.
