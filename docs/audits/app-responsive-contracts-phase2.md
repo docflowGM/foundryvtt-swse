@@ -32,6 +32,7 @@ Disconnected legacy UI should be removed instead of supported.
 9. Galactic Records Browser
 10. Actor Creation Entry launcher
 11. Asset Bay / owned assets, Droid Garage, and Shipyard surfaces
+12. Holonet Messenger / communications surface
 ```
 
 ## Files changed
@@ -50,6 +51,7 @@ styles/system/app-responsive-force-alchemy.css
 styles/system/app-responsive-galactic-records.css
 styles/system/app-responsive-actor-creation-entry.css
 styles/system/app-responsive-assets.css
+styles/system/app-responsive-holonet.css
 docs/audits/app-responsive-contracts-phase2.md
 templates/apps/store.html                         deleted
 templates/apps/store/store.html                   deleted
@@ -73,6 +75,7 @@ styles/system/app-responsive-force-alchemy.css
 styles/system/app-responsive-galactic-records.css
 styles/system/app-responsive-actor-creation-entry.css
 styles/system/app-responsive-assets.css
+styles/system/app-responsive-holonet.css
 ```
 
 The observer emits:
@@ -365,6 +368,36 @@ Behavior:
 - bounds removed/resold systems as a horizontal strip
 ```
 
+### Holonet Messenger / communications surface
+
+Targets:
+
+```txt
+swse-shell-surface--messenger
+swse-holonet-comm
+hl-applist
+hl-ms-root
+swse-messenger-thread-list
+hl-jobboard-view
+hl-intel-view
+templates/shell/partials/surface-messenger.hbs
+```
+
+Behavior:
+
+```txt
+- compacts Holocom HUD, presence controls, alerts, actor status, and party fund chrome
+- keeps Chat, Alerts, New, Jobs, Intel, and GM app buttons horizontally reachable
+- stacks thread rail above active conversation in compact mode
+- makes conversation/messages the primary chat scroller
+- keeps thread actions, invite actions, transfer actions, and credit/item/asset trade actions horizontally reachable
+- compacts compose mode while keeping recipient picker and Send Hail reachable
+- stacks Job Board list and mission dossier with card list as primary scroller
+- bounds Job Board mission detail as a drawer-like rail
+- stacks Intel list and Create Intel panel with intel list as primary scroller
+- keeps pinned transmissions and attachments responsive without altering Holonet data
+```
+
 ## Resolution matrix to test
 
 ```txt
@@ -397,6 +430,7 @@ Force Alchemy: categories, locked/eligible rites, targets/configs/ledger/project
 Galactic Records: categories, NPC/droid records, selected preview, Import Now, Customize & Import.
 Actor Creation Entry: Begin New Character and Access Galactic Records launcher paths at 1366x768, 1280x720, 1024x600, and 700x900.
 Asset Bay: All Assets/Garage/Shipyard modes, droid and vehicle asset cards, Sheet/Modify/Grant Access actions, vehicle shipyard systems panel, EP/value/last-refit summaries, installed and removed systems.
+Holonet Messenger: Chat/Alerts/New/Jobs/Intel/GM buttons, thread search/filter/archive, compose/new transmission, job board filters/dossier/objectives, intel archive/create, chat messages, pinned transmissions, credit/item/asset/game/job cards, invite/transfer/archive/mute/leave actions.
 ```
 
 ## Pass criteria
@@ -415,5 +449,5 @@ Asset Bay: All Assets/Garage/Shipyard modes, droid and vehicle asset cards, Shee
 
 - This pass is selector-based and conservative. Exact per-template refinements may still be needed after runtime testing.
 - It does not replace progression-specific behavior from PR #887.
-- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, actor creation launch callbacks, Asset Bay ownership/actions, vehicle EP/refit math, credits, or progression state.
+- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, actor creation launch callbacks, Asset Bay ownership/actions, Holonet threads/messages/jobs/intel/transfers/notifications, vehicle EP/refit math, credits, or progression state.
 - Foundry runtime verification is still required.
