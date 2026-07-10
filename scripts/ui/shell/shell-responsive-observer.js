@@ -64,6 +64,10 @@ const STYLE_IDS = Object.freeze([
     id: 'swse-app-responsive-assets-css',
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-assets.css',
   },
+  {
+    id: 'swse-app-responsive-holonet-css',
+    href: 'systems/foundryvtt-swse/styles/system/app-responsive-holonet.css',
+  },
 ]);
 const DEFAULT_THRESHOLDS = Object.freeze({
   compactWidth: 1180,
@@ -249,6 +253,13 @@ export function observeAllShellResponsive(root = document) {
     .application:has(.swse-asset-bay-mode-pills),
     .application:has(.swse-vehicle-shipyard-panel),
     .application:has(.swse-vehicle-shipyard-groups),
+    .application:has(.swse-shell-surface--messenger),
+    .application:has(.swse-holonet-comm),
+    .application:has(.hl-ms-root),
+    .application:has(.hl-applist),
+    .application:has(.swse-messenger-thread-list),
+    .application:has(.hl-jobboard-view),
+    .application:has(.hl-intel-view),
     .application:has(.atlas-surface),
     .application:has(.games-surface),
     .application:has(.hacking-surface),
