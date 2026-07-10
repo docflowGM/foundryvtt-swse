@@ -283,7 +283,7 @@ function registerLegacyHandlebarsHelpers() {
 
   Handlebars.registerHelper("eq", (a, b) => a === b);
   Handlebars.registerHelper("lte", (a, b) => a <= b);
-  Handlebars.registerHelper("gt", (a, b) => Number(a) > b);
+  Handlebars.registerHelper("gt", (a, b) => Number(a) > Number(b));
 
   Handlebars.registerHelper("capitalize", str =>
     typeof str === "string" ? str.charAt(0).toUpperCase() + str.slice(1) : ""
@@ -291,7 +291,7 @@ function registerLegacyHandlebarsHelpers() {
 
   Handlebars.registerHelper("json", context => JSON.stringify(context));
 
-  Handlebars.registerHelper("add", (a, b) => Number(a) + b);
+  Handlebars.registerHelper("add", (a, b) => Number(a) + Number(b));
 
   // -------------------------------
   // Custom Helpers
