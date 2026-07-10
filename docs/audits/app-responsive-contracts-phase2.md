@@ -8,7 +8,7 @@
 
 PR #888 introduced the shared shell responsive observer and generic CSS contract. PR #887 applied a progression-specific implementation. This phase adds app-family contracts for other large applications using the same shell-size classification model.
 
-This PR is now being refined app by app. The first specific refinement is the v2 concept actor sheet family.
+This PR is now being refined app by app. The first specific refinement is the v2 concept actor sheet family. The second specific refinement is the live shell-native store surface.
 
 ## Principle
 
@@ -17,6 +17,7 @@ Business content wins over decorative chrome.
 The actual application shell size matters more than the monitor size.
 Each app should have one obvious primary scroller.
 Optional rails should collapse, stack, or become drawers before the core content disappears.
+Disconnected legacy UI should be removed instead of supported.
 ```
 
 ## Files changed
@@ -25,7 +26,10 @@ Optional rails should collapse, stack, or become drawers before the core content
 scripts/ui/shell/shell-responsive-observer.js
 styles/system/app-responsive-contracts.css
 styles/system/app-responsive-character-sheet.css
+styles/system/app-responsive-store.css
 docs/audits/app-responsive-contracts-phase2.md
+templates/apps/store.html                         deleted
+templates/apps/store/store.html                   deleted
 ```
 
 ## Observer updates
@@ -36,9 +40,10 @@ The observer now loads these responsive stylesheets in order:
 styles/system/shell-responsive-contract.css
 styles/system/app-responsive-contracts.css
 styles/system/app-responsive-character-sheet.css
+styles/system/app-responsive-store.css
 ```
 
-The final file is app-specific and intentionally overrides the broader contract for real v2 concept actor-sheet selectors.
+The final app-specific files intentionally override the broader contract for real app selectors.
 
 The observer continues to emit the original classes:
 
@@ -121,23 +126,42 @@ Compact behavior:
 - tiny/micro tier keeps identity and action buttons visible while hiding portrait/readout cards
 ```
 
-### Store / browser family
+### Live store / browser family
 
-Targets:
+Live target:
 
 ```txt
-swse-store
-store-surface
-store-card-grid
+swse-store-surface
+```
+
+Live template:
+
+```txt
+templates/shell/partials/surface-store.hbs
 ```
 
 Compact behavior:
 
 ```txt
-- filter rail becomes sticky compact filter strip
-- product grid gets auto-fit card sizing
-- tiny tier reduces minimum card width
+- compacts HUD and Rendarr hero header
+- keeps credits visible while hiding low-value quote/reserve text
+- makes Browse/Cart/Checkout/History tabs horizontally scrollable
+- bounds search/filter controls so vehicle filters do not consume the page
+- makes category/family/subcategory chips horizontal scrollers
+- converts browse grid + side rail into vertical business-first layout
+- uses auto-fit product card grid sizing
+- bounds detail panel and mini-cart as drawer-like panels
+- hides product card hero art in short/micro tiers
 ```
+
+Legacy cleanup:
+
+```txt
+templates/apps/store.html deleted
+templates/apps/store/store.html deleted
+```
+
+Those templates were only found by their own unique content and were not the live shell-native store path. Responsive support for disconnected templates was removed rather than preserved.
 
 ### Workbench / customization family
 
@@ -231,6 +255,23 @@ For character, droid, NPC concept, and vehicle-shell cases:
 - verify action buttons remain reachable: Level Up, Store, Refresh, Settings
 - verify droid systems tab remains reachable for droid actors
 - verify vehicle/NPC shell content still scrolls and is not affected by actor-only selectors unexpectedly
+```
+
+## Store smoke test
+
+For the shell-native store surface:
+
+```txt
+- open store from actor sheet and confirm .swse-store-surface is observed
+- confirm data-shell-resolution-tier updates while resizing
+- browse weapons, armor, equipment, vehicles, droids, and misc categories
+- search/filter/sort at 1366x768, 1280x720, and 1024x600
+- verify vehicle filters remain reachable without eating the product grid
+- select a product and confirm detail panel remains reachable
+- add item to cart and confirm mini-cart remains reachable
+- visit Cart, Checkout, and History tabs
+- confirm card grid is the primary scroller in compact mode
+- confirm desktop layout remains grid + side rail at 1440x900 and 1920x1080
 ```
 
 ## Pass criteria
