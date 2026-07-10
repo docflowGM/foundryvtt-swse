@@ -10,6 +10,8 @@ Alpha tester screenshots showed the progression shell rendering on constrained s
 
 This is a responsive layout issue, not a progression-rules issue.
 
+A later alpha report clarified the target display: **1366x768, 16:9**. That is wide enough to avoid narrow-screen rules, but short enough that Foundry chrome, the app header, mentor rail, progress rail, utility rail, and footer can consume most of the usable vertical space. The responsive rule therefore needs to treat 1366x768 as constrained, not as a normal desktop layout.
+
 ## Old smartphone / small-screen infrastructure
 
 Searches for the old infrastructure did not find an obvious live current v2 progression path named around:
@@ -55,10 +57,12 @@ Compact: business list first, low-value rails hidden/collapsed, utility compact,
 The patch updates `styles/progression-framework/chargen-stabilization.css` with an automatic compact progression mode at constrained viewports:
 
 ```css
-@media (max-width: 1180px), (max-height: 760px) { ... }
+@media (max-width: 1180px), (max-height: 760px), (max-width: 1380px) and (max-height: 820px) { ... }
 @media (max-width: 900px) { ... }
 @media (max-width: 700px) { ... }
 ```
+
+The paired width/height condition intentionally catches 1366x768 and similar low-height 16:9 laptop displays without forcing every large 1366+-wide desktop into compact mode.
 
 ### Auto-collapsed rails
 
@@ -146,6 +150,7 @@ Verify in Foundry at:
 ```txt
 1440x900
 1366x768
+1366x768 with Foundry sidebar open
 1280x720
 1180x760
 1024x768
