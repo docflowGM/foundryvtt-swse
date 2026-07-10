@@ -60,6 +60,10 @@ const STYLE_IDS = Object.freeze([
     id: 'swse-app-responsive-actor-creation-entry-css',
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-actor-creation-entry.css',
   },
+  {
+    id: 'swse-app-responsive-shipyard-css',
+    href: 'systems/foundryvtt-swse/styles/system/app-responsive-shipyard.css',
+  },
 ]);
 const DEFAULT_THRESHOLDS = Object.freeze({
   compactWidth: 1180,
@@ -240,6 +244,11 @@ export function observeAllShellResponsive(root = document) {
     .application:has(.actor-creation-entry),
     .application:has(.entry-choices),
     .application:has(.entry-choice-card),
+    .application:has(.swse-shell-surface--asset-bay),
+    .application:has(.swse-asset-bay-grid),
+    .application:has(.swse-asset-bay-mode-pills),
+    .application:has(.swse-vehicle-shipyard-panel),
+    .application:has(.swse-vehicle-shipyard-groups),
     .application:has(.atlas-surface),
     .application:has(.games-surface),
     .application:has(.hacking-surface),
