@@ -36,6 +36,10 @@ const STYLE_IDS = Object.freeze([
     id: 'swse-app-responsive-games-css',
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-games.css',
   },
+  {
+    id: 'swse-app-responsive-gm-holopad-css',
+    href: 'systems/foundryvtt-swse/styles/system/app-responsive-gm-holopad.css',
+  },
 ]);
 const DEFAULT_THRESHOLDS = Object.freeze({
   compactWidth: 1180,
@@ -185,6 +189,11 @@ export function observeAllShellResponsive(root = document) {
     .application:has(.gm-datapad),
     .application:has(.gm-holopad),
     .application:has(.swse-gm-datapad),
+    .application:has(.swse-sheet-v2-shell--gm-datapad),
+    .application:has(.gm-command-shell-v2--concept),
+    .application:has(.gm-command-sidebar),
+    .application:has(.gm-command-surface-stage),
+    .application:has(.gm-command-surface-scrollframe),
     .application:has(.swse-store-surface),
     .application:has(.store-surface),
     .application:has(.store-card-grid),
