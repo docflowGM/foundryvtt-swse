@@ -15,6 +15,7 @@ This PR is now being refined app by app. Completed app-specific refinements so f
 2. live shell-native store surface
 3. live item customization / lightsaber workbench
 4. Holopad Games library and active table surfaces
+5. GM Command Holopad / GM Datapad shell
 ```
 
 ## Principle
@@ -36,6 +37,7 @@ styles/system/app-responsive-character-sheet.css
 styles/system/app-responsive-store.css
 styles/system/app-responsive-workbench.css
 styles/system/app-responsive-games.css
+styles/system/app-responsive-gm-holopad.css
 docs/audits/app-responsive-contracts-phase2.md
 templates/apps/store.html                         deleted
 templates/apps/store/store.html                   deleted
@@ -52,6 +54,7 @@ styles/system/app-responsive-character-sheet.css
 styles/system/app-responsive-store.css
 styles/system/app-responsive-workbench.css
 styles/system/app-responsive-games.css
+styles/system/app-responsive-gm-holopad.css
 ```
 
 The final app-specific files intentionally override the broader contract for real app selectors.
@@ -294,23 +297,56 @@ swse-games-table-status--unified
 swse-games-table-body
 ```
 
-### GM holopad / dashboard family
+### GM Command Holopad / Datapad family
 
-Targets:
+Live targets:
 
 ```txt
-gm-datapad
-gm-holopad
-swse-gm-datapad
+swse-sheet-v2-shell--gm-datapad
+gm-command-shell-v2--concept
+gm-command-sidebar
+gm-command-surface-stage
+gm-command-surface-scrollframe
+```
+
+Live templates:
+
+```txt
+templates/apps/gm-datapad.hbs
+templates/apps/gm-datapad/partials/sidebar.hbs
+templates/apps/gm-datapad/partials/surface-toolbar.hbs
 ```
 
 Compact behavior:
 
 ```txt
-- dashboard layout stacks vertically
-- navigation compresses to a horizontal scroll strip
-- body/content gets the primary scroller
-- panels are height-bounded on short screens
+- stacks the GM command shell vertically instead of preserving the full desktop side rail
+- converts the left command sidebar into a compact horizontal command strip
+- hides sidebar headers/footers/group labels on short/micro/tiny tiers
+- keeps surface navigation buttons and badges horizontally reachable
+- compacts the shared surface toolbar identity, metrics, and action rail
+- hides toolbar metrics on very short tiers
+- keeps Top, Refresh, and Focus actions reachable
+- makes the surface scrollframe the primary GM content scroller
+```
+
+Specific selectors:
+
+```txt
+swse-sheet-v2-shell--gm-datapad
+gm-datapad-tablet
+gm-datapad-screen-shell
+gm-datapad-screen
+gm-command-screen-v2--phase2
+gm-command-shell-v2--concept
+gm-command-sidebar
+gm-command-sidebar__list
+gm-command-sidebar__btn
+gm-command-surface-stage--concept
+gm-command-surface-toolbar--phase2
+gm-command-surface-toolbar__metrics
+gm-command-surface-toolbar__actions
+gm-command-surface-scrollframe--concept
 ```
 
 ### Atlas / hacking family
@@ -420,6 +456,23 @@ For Holopad Games:
 - confirm desktop layout remains three-column library and unified table frame at 1440x900 and 1920x1080
 ```
 
+## GM Holopad smoke test
+
+For the GM Command Holopad:
+
+```txt
+- open GM Datapad and confirm .swse-sheet-v2-shell--gm-datapad is observed
+- confirm data-shell-resolution-tier updates while resizing
+- resize to 1366x768 and confirm sidebar, toolbar, and content remain visible
+- resize to 1280x720 and confirm sidebar becomes a horizontal command strip
+- resize to 1024x600 and confirm sidebar labels/metrics do not consume the content
+- navigate Home, Jobs, Trade, Bulletin, House Rules, Store, Approvals, Healing, Workspace, Factions, Intel, Locations, and Skill Challenges
+- verify surface content owns the primary vertical scroll
+- verify Top, Refresh, and Focus remain reachable
+- verify focus mode does not trap the surface with no way back
+- confirm desktop layout remains left command rail + main surface at 1440x900 and 1920x1080
+```
+
 ## Pass criteria
 
 For each app family:
@@ -438,5 +491,5 @@ For each app family:
 
 - This pass is selector-based and conservative. Exact per-template class refinements may still be needed after runtime testing.
 - It does not replace the progression-specific behavior from PR #887.
-- It does not modify actor, item, rules, store transaction, game session, wager/escrow, or progression state.
+- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, or progression state.
 - Foundry runtime verification is still required.
