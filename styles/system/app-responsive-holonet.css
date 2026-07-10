@@ -1,0 +1,449 @@
+/**
+ * SWSE Holonet / Messenger Responsive Contract
+ *
+ * App-specific responsive behavior for the live Holonet communications surface,
+ * including chat, alerts access, job board, intel archive, compose flow,
+ * transfers, attachments, and thread actions. Presentation-only: does not alter
+ * thread state, transfers, item/asset trades, job contracts, intel records,
+ * notifications, permissions, or Holonet data.
+ */
+
+.application.swse-shell-responsive:has(.swse-shell-surface--messenger),
+.application.swse-shell-responsive:has(.swse-holonet-comm),
+.application.swse-shell-responsive:has(.hl-ms-root) {
+  --swse-hl-gap: 6px;
+  --swse-hl-pad: 8px;
+  --swse-hl-header-height: 76px;
+  --swse-hl-applist-height: 54px;
+  --swse-hl-thread-rail-height: 210px;
+  --swse-hl-conv-header-height: 86px;
+  --swse-hl-compose-footer-height: 54px;
+  --swse-hl-card-min: 190px;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-shell-surface--messenger,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-messenger-body,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-shell {
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-shell-surface--messenger {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--swse-hl-gap) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-messenger-header,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-hud--concept {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-hl-header-height) !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  gap: 6px !important;
+  padding: 6px 8px !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-hud-title,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-shell-surface__title {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-hud-r,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-home-header__actions,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-presence-form {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 4px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-shell-surface--messenger) .hl-partyfund-pill,
+.application.swse-shell-responsive.is-shell-short:has(.swse-shell-surface--messenger) .swse-home-header__actor,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--messenger) .hl-presence-form input[name='status'],
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--messenger) .swse-home-header__actor,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--messenger) .hl-hud-title small,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--messenger) .hl-presence-form,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--messenger) .swse-home-header__actor {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-messenger-body,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-shell {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--swse-hl-gap) !important;
+  padding: var(--swse-hl-pad) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-applist {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-hl-applist-height) !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  gap: 5px !important;
+  padding: 5px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-appbtn {
+  flex: 0 0 auto !important;
+  min-height: 34px !important;
+  min-width: 40px !important;
+  padding: 5px 8px !important;
+  white-space: nowrap !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--messenger) .hl-appbtn > span:not(.ic):not(.pip),
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--messenger) .hl-appbtn > span:not(.ic):not(.pip) {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-main-area {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Chat mode --------------------------------------------------------------- */
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-ms-root,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-chat-layout {
+  min-height: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--swse-hl-gap) !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-messenger-threads,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-tlist {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-hl-thread-rail-height) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-shell-surface--messenger) .swse-messenger-threads,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--messenger) .swse-messenger-threads,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--messenger) .swse-messenger-threads {
+  max-height: 132px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-shell-surface--messenger) .hl-tlist-hd .hl-subtle,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--messenger) .hl-tlist-hd,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--messenger) .hl-tlist-hd {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-thread-filter-form,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-search-form {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 4px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--messenger) .hl-thread-filter-toggle,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--messenger) .hl-thread-filter-toggle,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--messenger) .hl-search-form button[type='submit'] {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-messenger-thread-list,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-tlist-scroll,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-thread-groups {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-cat-stack {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(var(--swse-hl-card-min), 1fr)) !important;
+  gap: 5px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-messenger-thread,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-titem,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-invite {
+  min-height: 0 !important;
+  padding: 6px !important;
+  gap: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-shell-surface--messenger) .hl-titem-preview,
+.application.swse-shell-responsive.is-shell-short:has(.swse-shell-surface--messenger) .hl-titem-chips,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--messenger) .hl-titem-preview,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--messenger) .hl-cat-label {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-messenger-main,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-conv {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-messenger-main-head,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-conv-header {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-hl-conv-header-height) !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 6px !important;
+  padding: 6px 8px !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-shell-surface--messenger) .hl-conv-header .hl-subtle,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--messenger) .hl-conv-header .hl-subtle,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--messenger) .hl-titem-chips {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-thread-actions,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-messenger-thread-actions,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-credit-actions,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-action-row,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .jb-obj-action-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 4px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-thread-actions button,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-credit-actions button,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-action-row button,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .jb-mini,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .jb-big-btn {
+  flex: 0 0 auto !important;
+  min-height: 30px !important;
+  padding: 5px 8px !important;
+  white-space: nowrap !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-messenger-chat-column,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-chat-column {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-pinned-strip {
+  flex: 0 0 auto !important;
+  max-height: 52px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 5px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-messenger-conversation,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-messages {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 7px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-message-card-wrap,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-credit-card,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-attach-card {
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-attachments,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-transmission-attachments {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)) !important;
+  gap: 5px !important;
+}
+
+/* Compose mode ------------------------------------------------------------ */
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .swse-messenger-compose-shell,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-compose-shell {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-compose-scroll {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-mode-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-recipient-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-form-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+  gap: 5px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-shell-surface--messenger) .hl-mode-card small,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--messenger) .hl-mode-card small,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--messenger) .hl-drop-zone span,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--messenger) .hl-help {
+  display: none !important;
+}
+
+/* Job board mode ---------------------------------------------------------- */
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-jobboard-view,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .jb-root--holonet {
+  height: 100% !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .jb-head {
+  flex: 0 0 auto !important;
+  max-height: 154px !important;
+  overflow: hidden !important;
+  padding: 7px !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--messenger) .jb-head,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--messenger) .jb-head {
+  max-height: 92px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .jb-shelf,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .jb-subbar,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .jb-active-filter-strip {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  gap: 5px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .jb-content--holonet {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--swse-hl-gap) !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .jb-scroll {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .jb-cards.grid {
+  grid-template-columns: repeat(auto-fit, minmax(var(--swse-hl-card-min), 1fr)) !important;
+  gap: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .jb-detail--holonet {
+  flex: 0 0 auto !important;
+  max-height: min(42vh, 340px) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .jb-detail-body {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
+/* Intel mode -------------------------------------------------------------- */
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-intel-view {
+  height: 100% !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-intel-head,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-intel-filter {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 5px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-shell-surface--messenger) .hl-intel-head p,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--messenger) .hl-intel-stats,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--messenger) .hl-intel-head h2 {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-intel-layout {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--swse-hl-gap) !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-intel-list {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--messenger) .hl-intel-compose {
+  flex: 0 0 auto !important;
+  max-height: min(38vh, 300px) !important;
+  overflow-y: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--messenger),
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--messenger) {
+  --swse-hl-gap: 4px;
+  --swse-hl-pad: 5px;
+  --swse-hl-header-height: 46px;
+  --swse-hl-applist-height: 42px;
+  --swse-hl-thread-rail-height: 118px;
+  --swse-hl-conv-header-height: 54px;
+  --swse-hl-card-min: 132px;
+}

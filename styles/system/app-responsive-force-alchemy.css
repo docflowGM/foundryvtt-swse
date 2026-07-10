@@ -1,0 +1,343 @@
+/**
+ * SWSE Force Alchemy Responsive Contract
+ *
+ * App-specific responsive behavior for the Force Artifact / Sith Alchemy
+ * workbench. Presentation-only: does not alter rites, prerequisites, target
+ * selection, project state, dark side cost, credits, cooldowns, or item effects.
+ */
+
+.application.swse-shell-responsive:has(.sa-win--phase5),
+.application.swse-shell-responsive:has([data-force-alchemy-root]),
+.application.swse-shell-responsive:has(.swse-force-alchemy-workbench) {
+  --swse-fa-gap: 6px;
+  --swse-fa-pad: 8px;
+  --swse-fa-hud-height: 56px;
+  --swse-fa-left-height: 168px;
+  --swse-fa-right-height: min(44vh, 360px);
+  --swse-fa-rites-card-min: 184px;
+  --swse-fa-detail-block-min: 160px;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-win,
+.application.swse-shell-responsive.is-shell-compact:has([data-force-alchemy-root]) [data-force-alchemy-root] {
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  padding: var(--swse-fa-pad) !important;
+  gap: var(--swse-fa-gap) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-surge,
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-corruption,
+.application.swse-shell-responsive.is-shell-short:has(.sa-win--phase5) .sa-surge,
+.application.swse-shell-responsive.is-shell-short:has(.sa-win--phase5) .sa-corruption {
+  opacity: 0.35 !important;
+  pointer-events: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-hud {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-fa-hud-height) !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto auto !important;
+  gap: 6px !important;
+  padding: 6px 8px !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-title-wrap,
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-title {
+  min-width: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-title {
+  font-size: 14px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.sa-win--phase5) .sa-subtitle,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.sa-win--phase5) .sa-subtitle,
+.application.swse-shell-responsive.is-shell-tiny:has(.sa-win--phase5) .sa-subtitle,
+.application.swse-shell-responsive.is-shell-short:has(.sa-win--phase5) .sa-hud-tag,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.sa-win--phase5) .sa-hud-tag,
+.application.swse-shell-responsive.is-shell-tiny:has(.sa-win--phase5) .sa-hud-tag {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-ritual-telemetry {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  gap: 4px !important;
+  max-width: 260px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.sa-win--phase5) .sa-ritual-telemetry,
+.application.swse-shell-responsive.is-shell-tiny:has(.sa-win--phase5) .sa-ritual-telemetry {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-hud-actor {
+  max-width: 150px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-body {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  gap: var(--swse-fa-gap) !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-left {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-fa-left-height) !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-rows: auto auto minmax(0, 1fr) !important;
+  gap: 5px !important;
+  overflow: hidden !important;
+  padding: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.sa-win--phase5) .sa-left,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.sa-win--phase5) .sa-left,
+.application.swse-shell-responsive.is-shell-tiny:has(.sa-win--phase5) .sa-left {
+  max-height: 96px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.sa-win--phase5) .sa-left .sa-rail-head,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.sa-win--phase5) .sa-left .sa-rail-head,
+.application.swse-shell-responsive.is-shell-tiny:has(.sa-win--phase5) .sa-left .sa-rail-head {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-resources {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 5px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-res {
+  padding: 5px 6px !important;
+  min-height: 0 !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-res .v {
+  font-size: 15px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-left .sa-section {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+  gap: 5px !important;
+  overflow-y: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.sa-win--phase5) .sa-left .sa-section,
+.application.swse-shell-responsive.is-shell-tiny:has(.sa-win--phase5) .sa-left .sa-section {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-slot,
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-project,
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-cd {
+  padding: 5px 6px !important;
+  min-height: 0 !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.sa-win--phase5) .sa-slot .meta,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.sa-win--phase5) .sa-slot .meta,
+.application.swse-shell-responsive.is-shell-tiny:has(.sa-win--phase5) .sa-project .pj-meta {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-slot-actions,
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-project-actions {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  gap: 4px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-center {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--swse-fa-gap) !important;
+  overflow: hidden !important;
+  padding: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-cats {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  gap: 5px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-cat {
+  flex: 0 0 auto !important;
+  min-height: 30px !important;
+  min-width: max-content !important;
+  padding: 5px 9px !important;
+  white-space: nowrap !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.sa-win--phase5) .sa-cat,
+.application.swse-shell-responsive.is-shell-tiny:has(.sa-win--phase5) .sa-cat {
+  padding-inline: 7px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.sa-win--phase5) .sa-drop-hint,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.sa-win--phase5) .sa-drop-hint,
+.application.swse-shell-responsive.is-shell-tiny:has(.sa-win--phase5) .sa-drop-hint {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-rites {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(var(--swse-fa-rites-card-min), 1fr)) !important;
+  gap: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-rite {
+  min-height: 0 !important;
+  padding: 7px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.sa-win--phase5) .sa-rite-sum,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.sa-win--phase5) .sa-rite-sum,
+.application.swse-shell-responsive.is-shell-tiny:has(.sa-win--phase5) .sa-rite-badges,
+.application.swse-shell-responsive.is-shell-tiny:has(.sa-win--phase5) .sa-blocked-reason {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-rite-badges,
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-pills {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  gap: 4px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .bdg,
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-pill {
+  flex: 0 0 auto !important;
+  min-height: 24px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-right {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-fa-right-height) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-detail {
+  height: 100% !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--swse-fa-gap) !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-stepper {
+  flex: 0 0 auto !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  gap: 4px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-stp {
+  flex: 0 0 auto !important;
+  min-width: max-content !important;
+  padding: 4px 7px !important;
+  min-height: 28px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-detail-scroll {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-d-block {
+  padding: 8px !important;
+  margin-bottom: var(--swse-fa-gap) !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.sa-win--phase5) .sa-d-summary,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.sa-win--phase5) .sa-d-summary,
+.application.swse-shell-responsive.is-shell-tiny:has(.sa-win--phase5) .sa-d-rules {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-opt,
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-prereq,
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-ledger-row,
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-trait-group {
+  padding: 6px !important;
+  min-height: 0 !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.sa-win--phase5) .o-meta,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.sa-win--phase5) .o-meta,
+.application.swse-shell-responsive.is-shell-tiny:has(.sa-win--phase5) .sa-trait-group-title {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-commit-row,
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-detail-actions,
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-footer-actions {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  gap: 5px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-commit-row button,
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-detail-actions button,
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-footer-actions button,
+.application.swse-shell-responsive.is-shell-compact:has(.sa-win--phase5) .sa-hud-close {
+  flex: 0 0 auto !important;
+  min-height: 30px !important;
+  white-space: nowrap !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.sa-win--phase5),
+.application.swse-shell-responsive.is-shell-tiny:has(.sa-win--phase5) {
+  --swse-fa-gap: 4px;
+  --swse-fa-pad: 5px;
+  --swse-fa-hud-height: 42px;
+  --swse-fa-left-height: 82px;
+  --swse-fa-right-height: min(36vh, 260px);
+  --swse-fa-rites-card-min: 132px;
+  --swse-fa-detail-block-min: 132px;
+}

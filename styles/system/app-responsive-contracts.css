@@ -1,0 +1,390 @@
+/**
+ * SWSE App Responsive Contracts - Phase 2
+ *
+ * App-family specific rules layered on top of the shared shell responsive
+ * observer. These rules are presentation-only. They do not alter app state,
+ * actor data, item data, rules data, or transaction behavior.
+ */
+
+/* -------------------------------------------------------------------------
+   Global application tier contract
+   ------------------------------------------------------------------------- */
+
+.swse-shell-responsive {
+  --swse-app-compact-gap: 6px;
+  --swse-app-compact-padding: 8px;
+  --swse-app-compact-toolbar-height: 42px;
+  --swse-app-compact-footer-height: 44px;
+  --swse-app-drawer-max-height: min(52vh, 380px);
+  --swse-app-side-rail-max-height: 160px;
+}
+
+.swse-shell-responsive.is-shell-compact > .window-content,
+.swse-shell-responsive.is-shell-narrow > .window-content,
+.swse-shell-responsive.is-shell-short > .window-content {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.swse-shell-responsive.is-shell-compact .swse-responsive-stack,
+.swse-shell-responsive.is-shell-narrow .swse-responsive-stack {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+}
+
+.swse-shell-responsive.is-shell-compact .swse-responsive-row,
+.swse-shell-responsive.is-shell-narrow .swse-responsive-row,
+.swse-shell-responsive.is-shell-short .swse-responsive-row {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+}
+
+.swse-shell-responsive.is-shell-compact .swse-responsive-toolbar,
+.swse-shell-responsive.is-shell-narrow .swse-responsive-toolbar {
+  min-height: var(--swse-app-compact-toolbar-height) !important;
+  max-height: calc(var(--swse-app-compact-toolbar-height) * 2) !important;
+  overflow: auto !important;
+}
+
+.swse-shell-responsive.is-shell-compact .swse-responsive-drawer,
+.swse-shell-responsive.is-shell-narrow .swse-responsive-drawer {
+  max-height: var(--swse-app-drawer-max-height) !important;
+  overflow: auto !important;
+}
+
+.swse-shell-responsive.is-shell-tiny .swse-responsive-label-optional,
+.swse-shell-responsive.is-shell-short .swse-responsive-label-optional {
+  display: none !important;
+}
+
+/* -------------------------------------------------------------------------
+   Actor / character sheet family
+   ------------------------------------------------------------------------- */
+
+.application.swse-shell-responsive:has(.swse-character-sheet),
+.application.swse-shell-responsive:has(.swse-v2-sheet),
+.swse-character-sheet.swse-shell-responsive,
+.swse-v2-sheet.swse-shell-responsive {
+  --swse-sheet-compact-portrait-size: 54px;
+  --swse-sheet-compact-nav-height: 42px;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-character-sheet) .swse-character-sheet,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-v2-sheet) .swse-v2-sheet,
+.swse-character-sheet.swse-shell-responsive.is-shell-compact,
+.swse-v2-sheet.swse-shell-responsive.is-shell-compact {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-character-sheet) .sheet-header,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-v2-sheet) .sheet-header,
+.swse-character-sheet.swse-shell-responsive.is-shell-compact .sheet-header,
+.swse-v2-sheet.swse-shell-responsive.is-shell-compact .sheet-header {
+  display: grid !important;
+  grid-template-columns: var(--swse-sheet-compact-portrait-size) minmax(0, 1fr) !important;
+  gap: var(--swse-app-compact-gap) !important;
+  align-items: center !important;
+  min-height: 0 !important;
+  max-height: 96px !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-character-sheet) .profile-img,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-v2-sheet) .profile-img,
+.swse-character-sheet.swse-shell-responsive.is-shell-compact .profile-img,
+.swse-v2-sheet.swse-shell-responsive.is-shell-compact .profile-img {
+  width: var(--swse-sheet-compact-portrait-size) !important;
+  height: var(--swse-sheet-compact-portrait-size) !important;
+  min-width: var(--swse-sheet-compact-portrait-size) !important;
+  min-height: var(--swse-sheet-compact-portrait-size) !important;
+  object-fit: cover !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-character-sheet) .sheet-tabs,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-v2-sheet) .sheet-tabs,
+.swse-character-sheet.swse-shell-responsive.is-shell-compact .sheet-tabs,
+.swse-v2-sheet.swse-shell-responsive.is-shell-compact .sheet-tabs {
+  min-height: var(--swse-sheet-compact-nav-height) !important;
+  max-height: calc(var(--swse-sheet-compact-nav-height) * 2) !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  flex-wrap: nowrap !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-character-sheet) .sheet-tabs .item,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-v2-sheet) .sheet-tabs .item,
+.swse-character-sheet.swse-shell-responsive.is-shell-compact .sheet-tabs .item,
+.swse-v2-sheet.swse-shell-responsive.is-shell-compact .sheet-tabs .item {
+  flex: 0 0 auto !important;
+  min-width: max-content !important;
+  padding-inline: 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-character-sheet) .sheet-body,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-v2-sheet) .sheet-body,
+.swse-character-sheet.swse-shell-responsive.is-shell-compact .sheet-body,
+.swse-v2-sheet.swse-shell-responsive.is-shell-compact .sheet-body {
+  min-height: 0 !important;
+  overflow: auto !important;
+  padding: var(--swse-app-compact-padding) !important;
+}
+
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-character-sheet) .sheet-header,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-v2-sheet) .sheet-header,
+.swse-character-sheet.swse-shell-responsive.is-shell-tiny .sheet-header,
+.swse-v2-sheet.swse-shell-responsive.is-shell-tiny .sheet-header {
+  grid-template-columns: 1fr !important;
+}
+
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-character-sheet) .profile-img,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-v2-sheet) .profile-img,
+.swse-character-sheet.swse-shell-responsive.is-shell-tiny .profile-img,
+.swse-v2-sheet.swse-shell-responsive.is-shell-tiny .profile-img {
+  display: none !important;
+}
+
+/* -------------------------------------------------------------------------
+   Store / browser family
+   ------------------------------------------------------------------------- */
+
+.application.swse-shell-responsive:has(.swse-store),
+.application.swse-shell-responsive:has(.store-surface),
+.application.swse-shell-responsive:has(.store-card-grid) {
+  --swse-store-compact-filter-height: 92px;
+  --swse-store-compact-card-min: 170px;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store) .store-filters,
+.application.swse-shell-responsive.is-shell-compact:has(.store-surface) .store-filters,
+.application.swse-shell-responsive.is-shell-compact:has(.store-card-grid) .store-filters,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store) .filter-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.store-surface) .filter-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.store-card-grid) .filter-rail {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 5 !important;
+  max-height: var(--swse-store-compact-filter-height) !important;
+  overflow: auto !important;
+  backdrop-filter: blur(8px);
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store) .store-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.store-surface) .store-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.store-card-grid) .store-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store) .store-card-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.store-surface) .store-card-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.store-card-grid) .store-card-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(var(--swse-store-compact-card-min), 1fr)) !important;
+  gap: var(--swse-app-compact-gap) !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-store),
+.application.swse-shell-responsive.is-shell-tiny:has(.store-surface),
+.application.swse-shell-responsive.is-shell-tiny:has(.store-card-grid) {
+  --swse-store-compact-card-min: 140px;
+}
+
+/* -------------------------------------------------------------------------
+   Workbench / customization family
+   ------------------------------------------------------------------------- */
+
+.application.swse-shell-responsive:has(.customization-bay),
+.application.swse-shell-responsive:has(.item-customization-workbench),
+.application.swse-shell-responsive:has(.swse-customization-workbench),
+.application.swse-shell-responsive:has(.force-alchemy-workbench),
+.application.swse-shell-responsive:has(.sith-alchemy-workbench) {
+  --swse-workbench-detail-drawer-height: min(48vh, 360px);
+  --swse-workbench-preview-strip-height: 180px;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.customization-bay) .workbench-layout,
+.application.swse-shell-responsive.is-shell-compact:has(.item-customization-workbench) .workbench-layout,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-workbench) .workbench-layout,
+.application.swse-shell-responsive.is-shell-compact:has(.force-alchemy-workbench) .workbench-layout,
+.application.swse-shell-responsive.is-shell-compact:has(.sith-alchemy-workbench) .workbench-layout,
+.application.swse-shell-responsive.is-shell-compact:has(.customization-bay) .workbench-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.item-customization-workbench) .workbench-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-workbench) .workbench-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.force-alchemy-workbench) .workbench-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.sith-alchemy-workbench) .workbench-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.customization-bay) .preview-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.item-customization-workbench) .preview-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-workbench) .preview-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.force-alchemy-workbench) .preview-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.sith-alchemy-workbench) .preview-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.customization-bay) .workbench-preview,
+.application.swse-shell-responsive.is-shell-compact:has(.item-customization-workbench) .workbench-preview,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-workbench) .workbench-preview,
+.application.swse-shell-responsive.is-shell-compact:has(.force-alchemy-workbench) .workbench-preview,
+.application.swse-shell-responsive.is-shell-compact:has(.sith-alchemy-workbench) .workbench-preview {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-workbench-preview-strip-height) !important;
+  overflow: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.customization-bay) .detail-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.item-customization-workbench) .detail-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-workbench) .detail-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.force-alchemy-workbench) .detail-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.sith-alchemy-workbench) .detail-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.customization-bay) .details-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.item-customization-workbench) .details-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-workbench) .details-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.force-alchemy-workbench) .details-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.sith-alchemy-workbench) .details-rail {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-workbench-detail-drawer-height) !important;
+  overflow: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.customization-bay) .component-list,
+.application.swse-shell-responsive.is-shell-compact:has(.item-customization-workbench) .component-list,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-workbench) .component-list,
+.application.swse-shell-responsive.is-shell-compact:has(.force-alchemy-workbench) .component-list,
+.application.swse-shell-responsive.is-shell-compact:has(.sith-alchemy-workbench) .component-list,
+.application.swse-shell-responsive.is-shell-compact:has(.customization-bay) .mods-list,
+.application.swse-shell-responsive.is-shell-compact:has(.item-customization-workbench) .mods-list,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-workbench) .mods-list,
+.application.swse-shell-responsive.is-shell-compact:has(.force-alchemy-workbench) .mods-list,
+.application.swse-shell-responsive.is-shell-compact:has(.sith-alchemy-workbench) .mods-list,
+.application.swse-shell-responsive.is-shell-compact:has(.customization-bay) .component-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.item-customization-workbench) .component-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-customization-workbench) .component-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.force-alchemy-workbench) .component-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.sith-alchemy-workbench) .component-grid {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+}
+
+/* -------------------------------------------------------------------------
+   GM holopad / dashboard family
+   ------------------------------------------------------------------------- */
+
+.application.swse-shell-responsive:has(.gm-datapad),
+.application.swse-shell-responsive:has(.gm-holopad),
+.application.swse-shell-responsive:has(.swse-gm-datapad) {
+  --swse-gm-nav-compact-height: 46px;
+  --swse-gm-panel-compact-height: 180px;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.gm-datapad) .gm-datapad__layout,
+.application.swse-shell-responsive.is-shell-compact:has(.gm-holopad) .gm-datapad__layout,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-gm-datapad) .gm-datapad__layout,
+.application.swse-shell-responsive.is-shell-compact:has(.gm-datapad) .holopad-layout,
+.application.swse-shell-responsive.is-shell-compact:has(.gm-holopad) .holopad-layout,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-gm-datapad) .holopad-layout {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.gm-datapad) .gm-datapad__nav,
+.application.swse-shell-responsive.is-shell-compact:has(.gm-holopad) .gm-datapad__nav,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-gm-datapad) .gm-datapad__nav,
+.application.swse-shell-responsive.is-shell-compact:has(.gm-datapad) .holopad-nav,
+.application.swse-shell-responsive.is-shell-compact:has(.gm-holopad) .holopad-nav,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-gm-datapad) .holopad-nav {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-gm-nav-compact-height) !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  white-space: nowrap !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.gm-datapad) .gm-datapad__body,
+.application.swse-shell-responsive.is-shell-compact:has(.gm-holopad) .gm-datapad__body,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-gm-datapad) .gm-datapad__body,
+.application.swse-shell-responsive.is-shell-compact:has(.gm-datapad) .holopad-body,
+.application.swse-shell-responsive.is-shell-compact:has(.gm-holopad) .holopad-body,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-gm-datapad) .holopad-body {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.gm-datapad) .gm-datapad__panel,
+.application.swse-shell-responsive.is-shell-short:has(.gm-holopad) .gm-datapad__panel,
+.application.swse-shell-responsive.is-shell-short:has(.swse-gm-datapad) .gm-datapad__panel,
+.application.swse-shell-responsive.is-shell-short:has(.gm-datapad) .holopad-panel,
+.application.swse-shell-responsive.is-shell-short:has(.gm-holopad) .holopad-panel,
+.application.swse-shell-responsive.is-shell-short:has(.swse-gm-datapad) .holopad-panel {
+  max-height: var(--swse-gm-panel-compact-height) !important;
+  overflow: auto !important;
+}
+
+/* -------------------------------------------------------------------------
+   Atlas, games, hacking, and utility surfaces
+   ------------------------------------------------------------------------- */
+
+.application.swse-shell-responsive.is-shell-compact:has(.atlas-surface) .atlas-layout,
+.application.swse-shell-responsive.is-shell-compact:has(.games-surface) .games-layout,
+.application.swse-shell-responsive.is-shell-compact:has(.hacking-surface) .hacking-layout,
+.application.swse-shell-responsive.is-shell-compact:has(.atlas-surface) .atlas-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.games-surface) .games-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.hacking-surface) .hacking-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.atlas-surface) .atlas-body,
+.application.swse-shell-responsive.is-shell-compact:has(.games-surface) .games-body,
+.application.swse-shell-responsive.is-shell-compact:has(.hacking-surface) .hacking-body,
+.application.swse-shell-responsive.is-shell-compact:has(.atlas-surface) .atlas-main,
+.application.swse-shell-responsive.is-shell-compact:has(.games-surface) .games-main,
+.application.swse-shell-responsive.is-shell-compact:has(.hacking-surface) .hacking-main {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.atlas-surface) .atlas-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.games-surface) .games-rail,
+.application.swse-shell-responsive.is-shell-compact:has(.hacking-surface) .hacking-rail,
+.application.swse-shell-responsive.is-shell-short:has(.atlas-surface) .atlas-rail,
+.application.swse-shell-responsive.is-shell-short:has(.games-surface) .games-rail,
+.application.swse-shell-responsive.is-shell-short:has(.hacking-surface) .hacking-rail {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-app-side-rail-max-height) !important;
+  overflow: auto !important;
+}
+
+/* -------------------------------------------------------------------------
+   Ultra-constrained guardrails
+   ------------------------------------------------------------------------- */
+
+.swse-shell-responsive.is-shell-tiny {
+  --swse-app-compact-padding: 4px;
+  --swse-app-compact-gap: 4px;
+  --swse-app-compact-toolbar-height: 34px;
+  --swse-app-compact-footer-height: 38px;
+}
+
+.swse-shell-responsive.is-shell-tiny button,
+.swse-shell-responsive.is-shell-tiny input,
+.swse-shell-responsive.is-shell-tiny select {
+  min-height: 28px;
+}
+
+.swse-shell-responsive.is-shell-short .swse-responsive-footer,
+.swse-shell-responsive.is-shell-tiny .swse-responsive-footer {
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 10 !important;
+}

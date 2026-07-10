@@ -1,0 +1,240 @@
+/**
+ * SWSE Store Responsive Contract
+ *
+ * App-specific responsive behavior for the live shell-native Galactic Trade
+ * Exchange surface. Legacy/simple store templates are intentionally excluded.
+ */
+
+.application.swse-shell-responsive:has(.swse-store-surface) {
+  --swse-store-compact-gap: 6px;
+  --swse-store-compact-padding: 6px;
+  --swse-store-hero-compact-height: 76px;
+  --swse-store-filter-compact-height: 72px;
+  --swse-store-subnav-compact-height: 74px;
+  --swse-store-rail-drawer-height: min(42vh, 320px);
+  --swse-store-card-min: 180px;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__tablet {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__tablet {
+  grid-template-rows: auto auto auto minmax(0, 1fr) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__hud {
+  padding: 3px 8px !important;
+  min-height: 28px !important;
+  max-height: 32px !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__hud-title,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__hud-lbl {
+  font-size: 8px !important;
+  letter-spacing: 0.16em !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__hero {
+  grid-template-columns: 48px minmax(0, 1fr) auto !important;
+  gap: var(--swse-store-compact-gap) !important;
+  padding: 6px 8px !important;
+  min-height: 0 !important;
+  max-height: var(--swse-store-hero-compact-height) !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__rendarr-portrait {
+  width: 44px !important;
+  height: 44px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__rendarr-name {
+  font-size: 12px !important;
+  letter-spacing: 0.08em !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__rendarr-sub,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__rendarr-quote,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__credits-delta,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__credits-reserve {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__credits-block {
+  padding-left: 8px !important;
+  gap: 2px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__credits-val {
+  font-size: 16px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__tabs {
+  flex: 0 0 auto !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  padding: 5px 8px !important;
+  gap: 4px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__tab {
+  flex: 0 0 auto !important;
+  min-height: 28px !important;
+  min-width: max-content !important;
+  padding: 4px 8px !important;
+  font-size: 9px !important;
+  letter-spacing: 0.12em !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__screen {
+  display: grid !important;
+  grid-template-rows: auto auto auto minmax(0, 1fr) auto !important;
+  gap: var(--swse-store-compact-gap) !important;
+  padding: var(--swse-store-compact-padding) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__filters {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-store-filter-compact-height) !important;
+  overflow: auto !important;
+  padding: 4px 6px !important;
+  gap: 4px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__filter-search {
+  min-width: 160px !important;
+  padding: 3px 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__filter-lbl,
+.application.swse-shell-responsive.is-shell-short:has(.swse-store-surface) .swse-store-surface__filter-lbl {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__category-tabs,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__subnav,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__family-tabs,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__subcategory-strip {
+  flex: 0 0 auto !important;
+  flex-wrap: nowrap !important;
+  max-height: var(--swse-store-subnav-compact-height) !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  padding: 4px 6px !important;
+  gap: 4px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__category-chip,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__family-chip,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__subcat-chip {
+  flex: 0 0 auto !important;
+  padding: 3px 7px !important;
+  font-size: 8px !important;
+  letter-spacing: 0.1em !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__browse {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--swse-store-compact-gap) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__grid {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  grid-template-columns: repeat(auto-fit, minmax(var(--swse-store-card-min), 1fr)) !important;
+  gap: var(--swse-store-compact-gap) !important;
+  padding: 4px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__card {
+  min-height: 0 !important;
+  padding: 6px !important;
+  gap: 4px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__card-hero {
+  min-height: 56px !important;
+  max-height: 84px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-store-surface) .swse-store-surface__card-hero,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-store-surface) .swse-store-surface__card-hero {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__card-name {
+  font-size: 10px !important;
+  line-height: 1.15 !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__card-meta-row,
+.application.swse-shell-responsive.is-shell-short:has(.swse-store-surface) .swse-store-surface__card-cat {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__rail {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-store-rail-drawer-height) !important;
+  overflow-y: auto !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.72fr) !important;
+  gap: var(--swse-store-compact-gap) !important;
+  padding: 4px !important;
+}
+
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-store-surface) .swse-store-surface__rail,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-store-surface) .swse-store-surface__rail,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-store-surface) .swse-store-surface__rail {
+  display: flex !important;
+  flex-direction: column !important;
+  grid-template-columns: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__detail-panel,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__mini-cart {
+  min-height: 0 !important;
+  max-height: 100% !important;
+  overflow: auto !important;
+  padding: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-store-surface) .swse-store-surface__detail-body {
+  max-height: 180px !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-store-surface) .swse-store-surface__hero,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-store-surface) .swse-store-surface__hero {
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  max-height: 58px !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-store-surface) .swse-store-surface__rendarr-portrait,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-store-surface) .swse-store-surface__rendarr-portrait,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-store-surface) .swse-store-surface__hud-center,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-store-surface) .swse-store-surface__hud-center {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-store-surface),
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-store-surface) {
+  --swse-store-card-min: 132px;
+  --swse-store-filter-compact-height: 56px;
+  --swse-store-subnav-compact-height: 52px;
+  --swse-store-rail-drawer-height: min(38vh, 260px);
+}

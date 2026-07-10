@@ -1,0 +1,316 @@
+/**
+ * SWSE Atlas Responsive Contract
+ *
+ * App-specific responsive behavior for the live player Atlas / astrogation
+ * registry surface. Presentation-only: does not alter location reveal state,
+ * facts, leads, jobs, notes, or GM location data.
+ */
+
+.application.swse-shell-responsive:has(.swse-atlas-v3),
+.application.swse-shell-responsive:has(.swse-atlas-surface),
+.application.swse-shell-responsive:has(.swse-shell-surface--atlas) {
+  --swse-atlas-gap: 6px;
+  --swse-atlas-pad: 8px;
+  --swse-atlas-command-height: 76px;
+  --swse-atlas-current-height: 42px;
+  --swse-atlas-registry-height: 188px;
+  --swse-atlas-filter-height: 62px;
+  --swse-atlas-card-min: 184px;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-v3,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-surface) .swse-atlas-surface,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--atlas) .swse-shell-surface--atlas {
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  padding: var(--swse-atlas-pad) !important;
+  gap: var(--swse-atlas-gap) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-command-header {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-atlas-command-height) !important;
+  min-height: 0 !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: var(--swse-atlas-gap) !important;
+  padding: 7px 9px !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-command-copy,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-command-copy h2,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-command-copy p {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-command-copy h2 {
+  font-size: 14px !important;
+  white-space: nowrap !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-atlas-v3) .swse-atlas-command-copy > p:not(.swse-atlas-eyebrow),
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-atlas-v3) .swse-atlas-command-copy > p:not(.swse-atlas-eyebrow),
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-atlas-v3) .swse-atlas-command-copy > p {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-command-metrics {
+  flex-wrap: nowrap !important;
+  justify-content: flex-start !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  gap: 4px !important;
+  max-width: min(46vw, 360px) !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-atlas-v3) .swse-atlas-command-metrics,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-atlas-v3) .swse-atlas-command-metrics,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-atlas-v3) .swse-atlas-command-metrics {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-command-metrics span {
+  flex: 0 0 auto !important;
+  min-width: 46px !important;
+  min-height: 32px !important;
+  padding: 3px 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-current-strip {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  max-height: var(--swse-atlas-current-height) !important;
+  padding: 5px 7px !important;
+  gap: 5px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  flex-wrap: nowrap !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-atlas-v3) .swse-atlas-current-counts,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-atlas-v3) .swse-atlas-current-chain,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-atlas-v3) .swse-atlas-current-counts,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-atlas-v3) .swse-atlas-current-tag,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-atlas-v3) .swse-atlas-current-chain,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-atlas-v3) .swse-atlas-current-counts {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-wireframe {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  gap: var(--swse-atlas-gap) !important;
+  border-radius: 10px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-registry-rail {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-atlas-registry-height) !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-rows: auto auto minmax(0, 1fr) !important;
+  border-right: 0 !important;
+  border-bottom: 1px solid var(--atlas-border, rgba(112, 226, 255, 0.2)) !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-atlas-v3) .swse-atlas-registry-rail,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-atlas-v3) .swse-atlas-registry-rail,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-atlas-v3) .swse-atlas-registry-rail {
+  max-height: 132px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-rail-header {
+  padding: 6px 8px !important;
+  gap: 5px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-atlas-v3) .swse-atlas-rail-header,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-atlas-v3) .swse-atlas-rail-header,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-atlas-v3) .swse-atlas-rail-header {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-filter-panel {
+  display: grid !important;
+  grid-template-columns: minmax(140px, 1.4fr) minmax(96px, 0.8fr) minmax(96px, 0.8fr) !important;
+  gap: 5px !important;
+  margin: 5px !important;
+  padding: 6px !important;
+  max-height: var(--swse-atlas-filter-height) !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-filter-panel label {
+  gap: 2px !important;
+  min-width: 0 !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-atlas-v3) .swse-atlas-filter-panel label > span,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-atlas-v3) .swse-atlas-filter-panel label > span,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-atlas-v3) .swse-atlas-filter-panel label > span {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-filter-panel input,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-filter-panel select {
+  min-height: 28px !important;
+  padding: 4px 7px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-location-groups {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(var(--swse-atlas-card-min), 1fr)) !important;
+  gap: 5px !important;
+  overflow-y: auto !important;
+  padding: 0 5px 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-location-group {
+  min-height: 0 !important;
+  padding: 5px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-location-group header {
+  padding-bottom: 2px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-atlas-v3) .swse-atlas-location-group header span,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-atlas-v3) .swse-atlas-location-group header,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-atlas-v3) .swse-atlas-location-group header {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-location-row {
+  min-height: 0 !important;
+  padding: 5px 6px !important;
+  gap: 5px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-atlas-v3) .swse-atlas-location-copy em,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-atlas-v3) .swse-atlas-location-copy em,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-atlas-v3) .swse-atlas-location-badges {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-dossier-stage {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-dossier-card {
+  min-height: 0 !important;
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-dossier-header {
+  flex: 0 0 auto !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: var(--swse-atlas-gap) !important;
+  padding: 8px !important;
+  max-height: 118px !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-atlas-v3) .swse-atlas-dossier-header,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-atlas-v3) .swse-atlas-dossier-header,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-atlas-v3) .swse-atlas-dossier-header {
+  max-height: 82px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-dossier-header h2 {
+  font-size: 15px !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-atlas-v3) .swse-atlas-dossier-header p:not(.swse-atlas-eyebrow),
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-atlas-v3) .swse-atlas-dossier-header p,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-atlas-v3) .swse-atlas-dossier-header p {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-chip-row,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-dossier-actions,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-checks {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  gap: 5px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-chip,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-dossier-actions button,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-checks button,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-notes-panel button {
+  flex: 0 0 auto !important;
+  min-height: 28px !important;
+  padding: 4px 8px !important;
+  white-space: nowrap !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-detail-tabs {
+  flex: 0 0 auto !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  flex-wrap: nowrap !important;
+  gap: 4px !important;
+  padding: 5px 8px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-detail-tabs span {
+  flex: 0 0 auto !important;
+  min-width: max-content !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-dossier-scroll {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-dossier-section {
+  padding: 8px !important;
+  margin-bottom: var(--swse-atlas-gap) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-atlas-v3) .swse-atlas-dossier-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+  gap: var(--swse-atlas-gap) !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-atlas-v3) .swse-atlas-map-panel img,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-atlas-v3) .swse-atlas-map-panel img,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-atlas-v3) .swse-atlas-map-panel img {
+  max-height: 180px !important;
+  object-fit: contain !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-atlas-v3),
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-atlas-v3) {
+  --swse-atlas-gap: 4px;
+  --swse-atlas-pad: 5px;
+  --swse-atlas-command-height: 48px;
+  --swse-atlas-current-height: 34px;
+  --swse-atlas-registry-height: 116px;
+  --swse-atlas-filter-height: 38px;
+  --swse-atlas-card-min: 132px;
+}

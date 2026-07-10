@@ -1,0 +1,324 @@
+/**
+ * SWSE Games Responsive Contract
+ *
+ * App-specific responsive behavior for the Holopad Games library/config surface
+ * and active table mode. Presentation-only: no changes to game rules, wagering,
+ * session state, AI, escrow, or table controllers.
+ */
+
+.application.swse-shell-responsive:has(.swse-games-surface),
+.application.swse-shell-responsive:has(.swse-games-table-frame) {
+  --swse-games-compact-gap: 6px;
+  --swse-games-compact-pad: 8px;
+  --swse-games-hud-compact-height: 34px;
+  --swse-games-hero-compact-height: 88px;
+  --swse-games-list-compact-height: 180px;
+  --swse-games-rail-compact-height: min(34vh, 260px);
+  --swse-games-table-bar-height: 70px;
+  --swse-games-table-telemetry-height: 32px;
+  --swse-games-table-status-height: 30px;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-surface {
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  padding: var(--swse-games-compact-pad) !important;
+}
+
+/* Library/config mode ----------------------------------------------------- */
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-hud {
+  flex: 0 0 auto !important;
+  min-height: 0 !important;
+  max-height: var(--swse-games-hud-compact-height) !important;
+  overflow: hidden !important;
+  padding: 4px 8px !important;
+  gap: 6px !important;
+  font-size: 8px !important;
+  letter-spacing: 0.12em !important;
+  flex-direction: row !important;
+  align-items: center !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-games-surface) .swse-games-hud__left .swse-games-hud__muted,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-games-surface) .swse-games-hud__left,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-games-surface) .swse-games-hud__left {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-hero {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-games-hero-compact-height) !important;
+  overflow: hidden !important;
+  margin-top: var(--swse-games-compact-gap) !important;
+  padding: 8px !important;
+  gap: 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-games-surface) .swse-games-hero p,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-games-surface) .swse-games-hero p,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-games-surface) .swse-games-hero p {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-actor-chip {
+  min-width: 0 !important;
+  padding: 5px 7px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-actor-chip img {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-concept-layout,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-layout {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  gap: var(--swse-games-compact-gap) !important;
+  margin-top: var(--swse-games-compact-gap) !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-lib-col,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-panel {
+  min-height: 0 !important;
+  padding: 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-lib-col--list,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-panel:first-child {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-games-list-compact-height) !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-library--concept,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-library {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+  grid-auto-rows: minmax(72px, max-content) !important;
+  gap: var(--swse-games-compact-gap) !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding-right: 0 !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-card {
+  min-height: 72px !important;
+  grid-template-columns: 38px minmax(0, 1fr) !important;
+  gap: 8px !important;
+  padding: 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-card__icon,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-big-icon {
+  width: 36px !important;
+  height: 36px !important;
+  font-size: 16px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-games-surface) .swse-games-card__sub,
+.application.swse-shell-responsive.is-shell-short:has(.swse-games-surface) .swse-games-card__meta,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-games-surface) .swse-games-card__sub,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-games-surface) .swse-games-card__meta {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-lib-col--detail,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-detail,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-panel:nth-child(2) {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-lib-col--rail,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-panel:last-child {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-games-rail-compact-height) !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-games-surface) .swse-games-lib-col--rail,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-games-surface) .swse-games-lib-col--rail,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-games-surface) .swse-games-lib-col--rail {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-detail-hero {
+  padding: 8px !important;
+  max-height: 168px !important;
+  overflow: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-games-surface) .swse-games-detail-sub,
+.application.swse-shell-responsive.is-shell-short:has(.swse-games-surface) .swse-games-detail-line,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-games-surface) .swse-games-detail-sub,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-games-surface) .swse-games-detail-tags {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-spec-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-mode-grid,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-summary-grid {
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)) !important;
+  gap: var(--swse-games-compact-gap) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-config-card,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-quick-rules,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-next-box {
+  padding: 8px !important;
+  margin-top: var(--swse-games-compact-gap) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-config-row,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-start-row,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-session__actions,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-seg,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-capset,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-chip-row {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  gap: 6px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-primary,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-ghost,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-surface) .swse-games-seg button {
+  min-height: 30px !important;
+  padding: 5px 9px !important;
+  font-size: 9px !important;
+  letter-spacing: 0.1em !important;
+  white-space: nowrap !important;
+}
+
+/* Active table mode ------------------------------------------------------- */
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-surface.is-table-mode {
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  padding: var(--swse-games-compact-pad) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-table-frame--unified {
+  height: 100% !important;
+  min-height: 0 !important;
+  margin-top: 0 !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-table-console {
+  grid-template-rows: auto auto auto minmax(0, 1fr) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-tm-bar {
+  min-height: 0 !important;
+  max-height: var(--swse-games-table-bar-height) !important;
+  padding: 6px 8px !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-tm-bar__title {
+  gap: 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-table-glyph {
+  width: 38px !important;
+  height: 38px !important;
+  flex-basis: 38px !important;
+  font-size: 20px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-tm-bar__title h3 {
+  font-size: 13px !important;
+  margin: 0 !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-games-table-frame--unified) .swse-games-tm-bar__rules,
+.application.swse-shell-responsive.is-shell-short:has(.swse-games-table-frame--unified) .swse-games-tm-bar__line,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-games-table-frame--unified) .swse-games-kicker,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-games-table-frame--unified) .swse-games-table-glyph {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-tm-bar__right {
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  justify-content: flex-start !important;
+  gap: 5px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-pot-strip {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  max-width: 240px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-table-telemetry {
+  min-height: var(--swse-games-table-telemetry-height) !important;
+  max-height: var(--swse-games-table-telemetry-height) !important;
+  overflow-x: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-games-table-frame--unified) .swse-games-table-telemetry,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-games-table-frame--unified) .swse-games-table-telemetry,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-games-table-frame--unified) .swse-games-table-telemetry {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-table-chip {
+  min-width: 92px !important;
+  padding: 4px 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-table-status--unified {
+  min-height: var(--swse-games-table-status-height) !important;
+  max-height: var(--swse-games-table-status-height) !important;
+  padding: 4px 8px !important;
+  overflow-x: auto !important;
+  font-size: 10px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-games-table-frame--unified) .swse-games-table-status--unified span,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-games-table-frame--unified) .swse-games-table-status--unified span {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-table-body {
+  min-height: 0 !important;
+  overflow: auto !important;
+  padding: var(--swse-games-compact-pad) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-table-body--pazaak,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-table-body--sabacc,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-table-body--dejarik,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-games-table-frame--unified) .swse-games-table-body--hintaro {
+  min-height: 0 !important;
+  overflow: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-games-surface),
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-games-surface),
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-games-table-frame),
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-games-table-frame) {
+  --swse-games-compact-pad: 5px;
+  --swse-games-list-compact-height: 132px;
+  --swse-games-rail-compact-height: min(28vh, 200px);
+  --swse-games-table-bar-height: 52px;
+}

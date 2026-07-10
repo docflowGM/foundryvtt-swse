@@ -1,0 +1,331 @@
+/**
+ * SWSE Asset Bay Responsive Contract
+ *
+ * App-specific responsive behavior for the live Asset Bay ownership dashboard,
+ * including All Assets, Droid Garage, Shipyard mode, and the vehicle sheet
+ * Shipyard Systems panel. Presentation-only: does not alter ownership, grants,
+ * purchases, sales, installs, removals, refits, EP math, or actor data.
+ */
+
+.application.swse-shell-responsive:has(.swse-shell-surface--asset-bay),
+.application.swse-shell-responsive:has(.swse-asset-bay-grid),
+.application.swse-shell-responsive:has(.swse-vehicle-shipyard-panel) {
+  --swse-asset-gap: 6px;
+  --swse-asset-pad: 8px;
+  --swse-asset-header-height: 92px;
+  --swse-asset-toolbar-height: 76px;
+  --swse-asset-note-height: 48px;
+  --swse-asset-card-min: 210px;
+  --swse-asset-panel-summary-height: 76px;
+}
+
+/* Asset Bay / Garage / Shipyard surface ---------------------------------- */
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-shell-surface--asset-bay,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-shell-surface__body--asset-bay {
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-shell-surface--asset-bay {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--swse-asset-gap) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-shell-surface__header {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-asset-header-height) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 7px 9px !important;
+  gap: 5px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-shell-surface--asset-bay) .swse-shell-surface__subtitle,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--asset-bay) .swse-shell-surface__subtitle,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--asset-bay) .swse-shell-surface__subtitle {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-shell-surface__title {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-shell-surface__body--asset-bay {
+  flex: 1 1 auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--swse-asset-gap) !important;
+  padding: var(--swse-asset-pad) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-toolbar {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-asset-toolbar-height) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr) !important;
+  gap: var(--swse-asset-gap) !important;
+  padding: 6px 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-shell-surface--asset-bay) .swse-asset-bay-toolbar,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--asset-bay) .swse-asset-bay-toolbar,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--asset-bay) .swse-asset-bay-toolbar {
+  grid-template-columns: minmax(0, 1fr) !important;
+  max-height: 88px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-toolbar__summary,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-mode-pills {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 5px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-count,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-mode-pill {
+  flex: 0 0 auto !important;
+  min-height: 30px !important;
+  padding: 5px 8px !important;
+  white-space: nowrap !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--asset-bay) .swse-asset-bay-mode-pill span,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--asset-bay) .swse-asset-bay-mode-pill span {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-boundary-note {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-asset-note-height) !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 6px 8px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-shell-surface--asset-bay) .swse-asset-bay-boundary-note,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--asset-bay) .swse-asset-bay-boundary-note,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--asset-bay) .swse-asset-bay-boundary-note {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-grid {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(var(--swse-asset-card-min), 1fr)) !important;
+  gap: var(--swse-asset-gap) !important;
+  padding-right: 0 !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-card {
+  min-height: 0 !important;
+  padding: 7px !important;
+  display: grid !important;
+  grid-template-columns: 56px minmax(0, 1fr) !important;
+  grid-template-rows: auto auto !important;
+  gap: 7px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-card__portrait {
+  width: 56px !important;
+  height: 56px !important;
+  min-width: 56px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-card__portrait img {
+  width: 56px !important;
+  height: 56px !important;
+  object-fit: cover !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-card__body,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-card__body h3,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-card__detail,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-card__status {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-card__body h3 {
+  white-space: nowrap !important;
+  margin: 0 0 3px !important;
+  font-size: 13px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-shell-surface--asset-bay) .swse-asset-bay-card__kicker,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--asset-bay) .swse-asset-bay-card__detail,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--asset-bay) .swse-asset-bay-card__status {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-card__actions {
+  grid-column: 1 / -1 !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  gap: 5px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-shell-surface--asset-bay) .swse-asset-bay-action {
+  flex: 0 0 auto !important;
+  min-height: 30px !important;
+  padding: 5px 8px !important;
+  white-space: nowrap !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--asset-bay) .swse-asset-bay-action span,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--asset-bay) .swse-asset-bay-action span {
+  display: none !important;
+}
+
+/* Vehicle sheet Shipyard Systems panel ----------------------------------- */
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-panel,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-panel-body {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-panel-header {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 6px !important;
+  align-items: center !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-panel-title,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-panel-kicker {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-panel-body {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--swse-asset-gap) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-summary {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-asset-panel-summary-height) !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 5px !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-narrow:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-summary,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-summary,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-summary {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-summary > div {
+  min-width: 112px !important;
+  padding: 5px 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-summary em,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-summary em,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-vehicle-shipyard-panel) .swse-vehicle-panel-kicker {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-groups {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)) !important;
+  gap: var(--swse-asset-gap) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-group {
+  min-height: 0 !important;
+  padding: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-group h4 span,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-group h4,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-group h4 {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-mod-list {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 5px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-mod {
+  min-height: 0 !important;
+  padding: 6px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto auto !important;
+  gap: 5px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-mod strong,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-mod span,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-mod p {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-mod p,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-mod span,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-mod em:nth-of-type(2) {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-removed {
+  flex: 0 0 auto !important;
+  max-height: 72px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 5px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-vehicle-shipyard-panel) .swse-vehicle-shipyard-removed span {
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-shell-surface--asset-bay),
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-shell-surface--asset-bay),
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-vehicle-shipyard-panel),
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-vehicle-shipyard-panel) {
+  --swse-asset-gap: 4px;
+  --swse-asset-pad: 5px;
+  --swse-asset-header-height: 48px;
+  --swse-asset-toolbar-height: 58px;
+  --swse-asset-note-height: 0px;
+  --swse-asset-card-min: 152px;
+  --swse-asset-panel-summary-height: 46px;
+}

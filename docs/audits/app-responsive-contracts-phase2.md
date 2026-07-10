@@ -1,0 +1,619 @@
+# App Responsive Contracts Phase 2
+
+**Date:** 2026-07-10  
+**Scope:** App-by-app responsive behavior for constrained shell/window sizes  
+**Runtime status:** Static implementation only. Foundry smoke testing still required.
+
+## Context
+
+PR #888 introduced the shared shell responsive observer and generic CSS contract. PR #887 applied progression-specific responsive behavior. This phase adds app-by-app contracts for large shell, app, and dense wizard surfaces using actual rendered application size rather than monitor/device assumptions.
+
+## Principle
+
+```txt
+Business content wins over decorative chrome.
+The actual application shell size matters more than the monitor size.
+Each app should have one obvious primary scroller.
+Optional rails should collapse, stack, bound, or become drawers before core content disappears.
+Disconnected legacy UI should be removed instead of supported.
+```
+
+## Completed app-specific refinements
+
+```txt
+1. v2 concept actor sheet family
+2. live shell-native store surface
+3. live item customization / lightsaber workbench
+4. Holopad Games library and active table surfaces
+5. GM Command Holopad / GM Datapad shell
+6. Player Atlas / astrogation registry surface
+7. Transmission Decryption / codebreaker surface
+8. Force Artifact / Sith Alchemy workbench
+9. Galactic Records Browser
+10. Actor Creation Entry launcher
+11. Asset Bay / owned assets, Droid Garage, and Shipyard surfaces
+12. Holonet Messenger / communications surface
+13. Allies database / companions, factions, contacts, intel, bases, organizations
+14. Upgrade Workshop shell route
+15. Home / datapad command overview surface
+16. Vehicle Import Wizard
+17. Stock Droid Import / Comparison / Conversion dialogs
+```
+
+## Files changed
+
+```txt
+scripts/ui/shell/shell-responsive-observer.js
+styles/system/app-responsive-contracts.css
+styles/system/app-responsive-character-sheet.css
+styles/system/app-responsive-store.css
+styles/system/app-responsive-workbench.css
+styles/system/app-responsive-games.css
+styles/system/app-responsive-gm-holopad.css
+styles/system/app-responsive-atlas.css
+styles/system/app-responsive-transmission-decryption.css
+styles/system/app-responsive-force-alchemy.css
+styles/system/app-responsive-galactic-records.css
+styles/system/app-responsive-actor-creation-entry.css
+styles/system/app-responsive-assets.css
+styles/system/app-responsive-holonet.css
+styles/system/app-responsive-allies.css
+styles/system/app-responsive-upgrade.css
+styles/system/app-responsive-home.css
+styles/system/app-responsive-import-wizards.css
+docs/audits/app-responsive-contracts-phase2.md
+templates/apps/store.html                         deleted
+templates/apps/store/store.html                   deleted
+```
+
+## Observer updates
+
+The observer loads the shared shell contract, the generic app contract, and each app-specific contract. Current app-specific responsive sheets:
+
+```txt
+app-responsive-character-sheet.css
+app-responsive-store.css
+app-responsive-workbench.css
+app-responsive-games.css
+app-responsive-gm-holopad.css
+app-responsive-atlas.css
+app-responsive-transmission-decryption.css
+app-responsive-force-alchemy.css
+app-responsive-galactic-records.css
+app-responsive-actor-creation-entry.css
+app-responsive-assets.css
+app-responsive-holonet.css
+app-responsive-allies.css
+app-responsive-upgrade.css
+app-responsive-home.css
+app-responsive-import-wizards.css
+```
+
+The observer emits:
+
+```txt
+swse-shell-responsive
+is-shell-compact
+is-shell-narrow
+is-shell-tiny
+is-shell-short
+is-shell-laptop-short
+is-shell-tier-tiny
+is-shell-tier-narrow
+is-shell-tier-micro
+is-shell-tier-small
+is-shell-tier-laptop-short
+is-shell-tier-compact
+is-shell-tier-desktop
+is-shell-tier-desktop-wide
+data-shell-resolution-tier
+```
+
+## App contracts
+
+### Actor / character sheet
+
+Targets:
+
+```txt
+swse-sheet-v2-shell--concept
+swse-v2-tablet--concept
+swse-v2-screen--concept
+swse-concept-header
+swse-concept-resource-strip
+swse-concept-tabs
+swse-concept-body
+swse-concept-sidebar
+swse-concept-main
+```
+
+Behavior:
+
+```txt
+- compacts portrait / identity / readout header
+- makes tabs horizontally scrollable
+- stacks body/sidebar/main vertically
+- makes active tab the primary scroller
+- hides sidebar/resource/readout cards in short or micro tiers
+```
+
+### Live store / browser
+
+Targets:
+
+```txt
+swse-store-surface
+templates/shell/partials/surface-store.hbs
+```
+
+Behavior:
+
+```txt
+- compacts HUD and Rendarr hero header
+- keeps credits visible while hiding low-value quote/reserve text
+- makes Browse/Cart/Checkout/History tabs horizontally scrollable
+- bounds search/filter controls so vehicle filters do not consume the page
+- converts browse grid + side rail into vertical business-first layout
+- bounds detail panel and mini-cart as drawer-like panels
+```
+
+Legacy cleanup:
+
+```txt
+templates/apps/store.html deleted
+templates/apps/store/store.html deleted
+```
+
+### Item customization / lightsaber workbench
+
+Targets:
+
+```txt
+swse-customization-stage
+swse-customization-workarea
+templates/apps/customization/item-customization-workbench.hbs
+```
+
+Behavior:
+
+```txt
+- stacks inventory above workbench detail surface
+- bounds inventory as compact selectable strip/grid
+- compacts item hero preview
+- stacks lightsaber workspace vertically
+- bounds Selected Component Intel as drawer-like rail
+- keeps wizard/review/tech actions horizontally reachable
+```
+
+### Holopad Games
+
+Targets:
+
+```txt
+swse-games-surface
+swse-games-concept-layout
+swse-games-table-frame
+swse-games-table-frame--unified
+templates/shell/partials/games/surface-games-detail.hbs
+templates/shell/partials/games/surface-games-table-frame.hbs
+```
+
+Behavior:
+
+```txt
+- stacks library list, selected-game detail, and rail vertically
+- turns game library cards into compact auto-fit grid
+- makes selected-game detail the primary scroller
+- compacts active table frame and top table bar
+- makes game table body the primary play surface/scroller
+```
+
+### GM Command Holopad / Datapad
+
+Targets:
+
+```txt
+swse-sheet-v2-shell--gm-datapad
+gm-command-shell-v2--concept
+gm-command-sidebar
+gm-command-surface-stage
+gm-command-surface-scrollframe
+templates/apps/gm-datapad.hbs
+templates/apps/gm-datapad/partials/sidebar.hbs
+templates/apps/gm-datapad/partials/surface-toolbar.hbs
+```
+
+Behavior:
+
+```txt
+- stacks GM command shell vertically
+- converts sidebar into horizontal command strip
+- hides sidebar headers/footers/group labels on short tiers
+- compacts shared toolbar identity/metrics/actions
+- makes surface scrollframe the primary GM content scroller
+```
+
+### Player Atlas / astrogation registry
+
+Targets:
+
+```txt
+swse-atlas-v3
+swse-atlas-surface
+swse-shell-surface--atlas
+templates/shell/partials/surface-atlas.hbs
+```
+
+Behavior:
+
+```txt
+- stacks registry rail above dossier stage
+- bounds registry rail as compact selectable list/grid
+- converts registry groups into auto-fit compact cards
+- makes dossier card the primary Atlas scroller
+- keeps chips, detail tabs, actions, notes, and reveal checks horizontally reachable
+```
+
+### Transmission Decryption / codebreaker
+
+Targets:
+
+```txt
+swse-transmission-shell-surface
+swse-intel-decryption-console
+swse-transmission-grid
+templates/shell/partials/surface-transmission-decryption.hbs
+templates/shell/partials/transmission-decryption-console.hbs
+```
+
+Behavior:
+
+```txt
+- compacts shell toolbar and action buttons
+- stacks cipher readout above analysis tools rail
+- makes cipher readout the primary puzzle scroller
+- bounds analysis tools as drawer-like rail
+- keeps manual guess row and footer actions horizontally reachable
+- keeps recovered payload/lockbox output scrollable after success
+```
+
+### Force Artifact / Sith Alchemy workbench
+
+Targets:
+
+```txt
+swse-force-alchemy-workbench
+sa-win--phase5
+data-force-alchemy-root
+templates/apps/force-alchemy/force-alchemy-workbench.hbs
+```
+
+Behavior:
+
+```txt
+- compacts spooky HUD while keeping actor/resources/close reachable
+- fades decorative surge/corruption chrome
+- stacks current workings, rites list, and selected rite intel vertically
+- bounds Current Workings as compact resources/project strip
+- makes rites list the primary selection scroller
+- bounds Selected Rite Intel as drawer-like rail
+```
+
+### Galactic Records Browser
+
+Targets:
+
+```txt
+galactic-records-browser
+browser-content
+category-buttons
+templates-list
+preview-section
+browser-footer
+templates/apps/galactic-records-browser.hbs
+```
+
+Behavior:
+
+```txt
+- compacts Access Galactic Records header
+- turns category buttons into a horizontal scroll strip
+- makes templates list the primary browser scroller
+- converts template cards into compact icon/list cards
+- bounds selected preview so it does not eat the records list
+- keeps Close, Import Now, and Customize & Import horizontally reachable
+- overrides the template's inline layout styles externally without changing import logic
+```
+
+### Actor Creation Entry launcher
+
+Targets:
+
+```txt
+actor-creation-entry
+entry-choices
+entry-choice-card
+choice-button
+templates/apps/actor-creation-entry.hbs
+```
+
+Behavior:
+
+```txt
+- compacts Create New Actor Profile header
+- keeps Begin New Character and Access Galactic Records visible/tappable
+- shifts the two-card desktop grid into a one-column scrollable launcher on narrow/tiny windows
+- hides low-value subtitles/feature copy on short tiers
+- keeps Create New and Browse Records buttons reachable
+- overrides the template's inline layout styles externally without changing launch callbacks
+```
+
+### Asset Bay / owned assets, Droid Garage, and Shipyard
+
+Targets:
+
+```txt
+swse-shell-surface--asset-bay
+swse-asset-bay-toolbar
+swse-asset-bay-mode-pills
+swse-asset-bay-grid
+swse-asset-bay-card
+swse-vehicle-shipyard-panel
+swse-vehicle-shipyard-groups
+templates/shell/partials/surface-asset-bay.hbs
+templates/actors/vehicle/v2/partials/vehicle-shipyard-systems-panel.hbs
+```
+
+Behavior:
+
+```txt
+- compacts Asset Bay header and summary toolbar
+- covers All Assets, Droid Garage, and Shipyard modes from the same live surface
+- keeps All Assets / Garage / Shipyard filters horizontally reachable
+- hides explanatory boundary note on short tiers
+- makes owned asset grid the primary scroller
+- converts owned asset cards into compact portrait/body/action cards
+- keeps Sheet, Modify, and Grant Access actions horizontally reachable
+- compacts vehicle-sheet EP/value/last-refit summary
+- makes installed system groups the primary shipyard panel scroller
+- bounds removed/resold systems as a horizontal strip
+```
+
+### Holonet Messenger / communications surface
+
+Targets:
+
+```txt
+swse-shell-surface--messenger
+swse-holonet-comm
+hl-applist
+hl-ms-root
+swse-messenger-thread-list
+hl-jobboard-view
+hl-intel-view
+templates/shell/partials/surface-messenger.hbs
+```
+
+Behavior:
+
+```txt
+- compacts Holocom HUD, presence controls, alerts, actor status, and party fund chrome
+- keeps Chat, Alerts, New, Jobs, Intel, and GM app buttons horizontally reachable
+- stacks thread rail above active conversation in compact mode
+- makes conversation/messages the primary chat scroller
+- keeps thread actions, invite actions, transfer actions, and credit/item/asset trade actions horizontally reachable
+- compacts compose mode while keeping recipient picker and Send Hail reachable
+- stacks Job Board list and mission dossier with card list as primary scroller
+- bounds Job Board mission detail as a drawer-like rail
+- stacks Intel list and Create Intel panel with intel list as primary scroller
+- keeps pinned transmissions and attachments responsive without altering Holonet data
+```
+
+### Allies database / companions, factions, contacts, intel, bases, organizations
+
+Targets:
+
+```txt
+swse-shell-surface--allies
+swse-allies-surface
+swse-allies-header
+swse-allies-tabs
+swse-allies-body
+swse-allies-lanes
+swse-allies-faction-list
+swse-contact-dossier-grid
+swse-intel-locker-grid
+swse-intel-decryption-console
+templates/shell/partials/surface-allies.hbs
+```
+
+Behavior:
+
+```txt
+- compacts Allies Database header and active profile card
+- makes companion/faction/contact/intel/base/org tabs horizontally reachable
+- bounds section headers, stat pills, action buttons, base notes, and GM drop zones
+- makes active section content the primary scroller
+- turns companion lanes, faction cards, contact dossiers, and intel locker cards into responsive grids
+- keeps Open Actor, faction actions, Save Notes, Pin/Archive, Codebreaker, and Lockbox actions reachable
+- bounds embedded Intel codebreaker panels so they do not consume the entire Allies surface
+- stacks embedded codebreaker readout above slicer tools on compact windows
+```
+
+### Upgrade Workshop
+
+Targets:
+
+```txt
+swse-shell-surface--upgrade
+swse-upgrade-app
+upgrade-hud
+upgrade-category-tabs
+upgrade-body
+upgrade-item-rail
+upgrade-detail-pane
+upgrade-detail
+upgrade-footer-bar
+templates/shell/partials/surface-upgrade.hbs
+templates/apps/upgrade/upgrade-app.hbs
+templates/apps/upgrade/partials/upgrade-detail-pane.hbs
+```
+
+Behavior:
+
+```txt
+- compacts shell route header and return-to-sheet button
+- compacts mentor HUD while preserving item/workshop context
+- makes upgrade category tabs horizontally reachable
+- stacks item rail above detail pane in compact mode
+- bounds item rail as a compact selectable grid
+- makes detail pane the primary upgrade scroller
+- keeps installed upgrades, available upgrades, slot bars, stat chips, install/remove buttons, and footer actions reachable
+- hides low-value mentor/item descriptions on short/micro/tiny tiers
+```
+
+### Home / datapad command overview
+
+Targets:
+
+```txt
+swse-shell-surface--home
+swse-home-surface
+swse-home-hud
+swse-home-page-header
+swse-home-holo-stage
+swse-home-left-stack
+swse-home-disc-wrap
+swse-home-side-stack
+swse-home-footer
+templates/shell/partials/surface-home.hbs
+```
+
+Behavior:
+
+```txt
+- compacts HUD/status bar, page header, actor card, radial launcher, comm feed, and footer
+- converts the radial app launcher into a compact responsive app grid on constrained windows
+- keeps app tiles and footer quick-launch actions reachable
+- makes the holo-stage the primary Home scroller
+- bounds actor vitals, last session, and comm feed side cards
+- hides decorative disc/compass/quote/detail copy on short/micro/tiny tiers
+- keeps lock-screen overlay scrollable without changing lock flags
+```
+
+### Vehicle Import Wizard
+
+Targets:
+
+```txt
+swse-vehicle-import-wizard
+swse-vehicle-import-header
+swse-vehicle-import-steps
+swse-vehicle-import-body
+swse-vehicle-import-filters
+swse-vehicle-import-results
+swse-vehicle-import-preview
+swse-vehicle-import-footer
+templates/apps/vehicle-import-wizard.hbs
+```
+
+Behavior:
+
+```txt
+- compacts header and four-step indicator
+- makes filter/search controls compact and scroll bounded
+- makes vehicle result list the primary browse scroller
+- converts vehicle rows into compact image/body cards
+- bounds preview art and turns preview stats into responsive grid
+- keeps replace/merge mode and preserve toggles reachable
+- keeps Back / Next / Apply Import actions reachable
+```
+
+### Stock Droid Import / Comparison / Conversion dialogs
+
+Targets:
+
+```txt
+swse-stock-droid-wizard
+droid-results
+stock-droid-comparison-dialog
+stock-droid-conversion-dialog
+templates/apps/stock-droid-import-wizard.hbs
+templates/apps/stock-droid-comparison-dialog.hbs
+templates/apps/stock-droid-conversion-dialog.hbs
+```
+
+Behavior:
+
+```txt
+- compacts droid wizard title and step indicator
+- bounds droid search/filter toolbar
+- makes droid result cards the primary selection scroller
+- stacks preview sidebar and droid detail cards on narrow windows
+- keeps statblock/convert mode cards readable and reachable
+- makes review content scrollable without losing action controls
+- makes comparison tables horizontally scrollable rather than overflowing
+- bounds conversion source/confidence/system/warning panels
+- keeps Cancel / Proceed to Builder / Close actions reachable
+```
+
+## Resolution matrix to test
+
+```txt
+1920x1080     desktop-wide regression
+1440x900      desktop regression
+1366x768      laptop-short target
+1280x800      small laptop/tablet target
+1280x720      small/short target
+1024x768      tablet/square constrained target
+1024x600      micro/short target
+900x700       narrow window target
+768x1024      tablet portrait target
+700x900       tiny edge target
+browser zoom 125%
+Foundry sidebar open
+resized app inside 1920x1080 browser
+```
+
+## Smoke tests
+
+```txt
+Actor sheet: character, droid, NPC concept, vehicle-shell tabs and actions.
+Store: weapons, armor, equipment, vehicles, droids, cart, checkout, history.
+Workbench: weapons, armor, energy shields, lightsabers, selected component intel.
+Games: Pazaak, Sabacc, Dejarik, Hintaro library and active tables.
+GM Holopad: Home, Jobs, Trade, Bulletin, House Rules, Store, Approvals, Healing, Workspace, Factions, Intel, Locations, Skill Challenges.
+Atlas: search/filter locations, select current/pinned/lead-bearing locations, dossier tabs/actions/notes/maps.
+Transmission Decryption: glyphs, tactic buttons, skill buttons, frequency chips, manual guess, recovered payload/lockbox.
+Force Alchemy: categories, locked/eligible rites, targets/configs/ledger/project/cooldown controls.
+Galactic Records: categories, NPC/droid records, selected preview, Import Now, Customize & Import.
+Actor Creation Entry: Begin New Character and Access Galactic Records launcher paths at 1366x768, 1280x720, 1024x600, and 700x900.
+Asset Bay: All Assets/Garage/Shipyard modes, droid and vehicle asset cards, Sheet/Modify/Grant Access actions, vehicle shipyard systems panel, EP/value/last-refit summaries, installed and removed systems.
+Holonet Messenger: Chat/Alerts/New/Jobs/Intel/GM buttons, thread search/filter/archive, compose/new transmission, job board filters/dossier/objectives, intel archive/create, chat messages, pinned transmissions, credit/item/asset/game/job cards, invite/transfer/archive/mute/leave actions.
+Allies: companions/factions/contacts/intel/bases/organizations tabs, companion lanes, faction cards, contact dossiers, intel locker, embedded codebreaker panels, Open Actor, Save Notes, Pin/Archive, Lockbox actions.
+Upgrade Workshop: category tabs, item rail selection, selected item details, slot usage, installed upgrades, available upgrades, install/remove buttons, footer actions, unavailable-item state.
+Home: lock screen, HUD, actor vitals, radial/compact app launcher, app tile routing, comm feed rows, vehicle/character quick-launch footer, last-session card.
+Vehicle Import Wizard: browse filters/results, selected vehicle preview, replace/merge mode, preserve toggles, Back/Next/Apply Import.
+Stock Droid Import: search/filter results, preview, statblock/convert mode, review/apply controls.
+Stock Droid Comparison: summary stats, comparison categories, responsive comparison table, Close action.
+Stock Droid Conversion: source/confidence/inferred systems/blockers/warnings/next-step panels, Cancel and Proceed to Builder actions.
+```
+
+## Pass criteria
+
+```txt
+- business content visible immediately
+- primary body scrolls
+- optional rails do not permanently consume the viewport
+- actions and footers remain reachable
+- details remain accessible as drawer/stacked/bounded panels
+- desktop layout remains intact at 1440x900 and 1920x1080
+- data-shell-resolution-tier updates when resizing the app window
+```
+
+## Limitations
+
+- This pass is selector-based and conservative. Exact per-template refinements may still be needed after runtime testing.
+- It does not replace progression-specific behavior from PR #887.
+- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, actor creation launch callbacks, Asset Bay ownership/actions, Holonet threads/messages/jobs/intel/transfers/notifications, Allies links/faction/contact/intel/base/org state, Upgrade Workshop slot/cost/install/remove logic, Home routing/app metadata/lock-screen flags/comm feed state, Vehicle Import state/import mode/ActorEngine path, Stock Droid import/conversion/comparison state, vehicle EP/refit math, credits, or progression state.
+- Foundry runtime verification is still required.
