@@ -1,0 +1,130 @@
+{
+  "_meta": {
+    "generatedBy": "manual static audit + tools/check-progression-integrity.mjs",
+    "date": "2026-07-10",
+    "staticOnly": true,
+    "runtimeVerified": false,
+    "note": "This status file records the structural audit findings. Re-run tools/check-progression-integrity.mjs inside the repo to refresh source-shape counts."
+  },
+  "summary": {
+    "overallBucket": "B/C",
+    "verdict": "The progression pipeline has clear authority seams and several fail-closed checks, but runtime safety is not fully proven until Foundry smoke testing covers skipped/applicability-filtered steps, Force choice grants, rollback, and droid/nonheroic edge cases.",
+    "authorities": {
+      "nodeRegistry": "scripts/engine/progression/registries/progression-node-definitions.js",
+      "nodeToPluginMap": "scripts/apps/progression-framework/registries/node-descriptor-mapper.js",
+      "activeStepComputer": "scripts/apps/progression-framework/shell/active-step-computer.js",
+      "stepPluginBase": "scripts/apps/progression-framework/steps/step-plugin-base.js",
+      "finalizer": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+      "levelupManifest": "scripts/engine/progression/utils/levelup-entitlement-manifest.js",
+      "levelupFinalizationAudit": "scripts/engine/progression/utils/levelup-finalization-audit.js",
+      "mutationGateway": "scripts/governance/actor-engine/actor-engine.js"
+    },
+    "strongSignals": [
+      "Step base class defines a clean plugin contract for selection, validation, rendering, and commit behavior.",
+      "Node registry is the candidate-node SSOT and includes mode/subtype/dependency/invalidation metadata.",
+      "Node-to-plugin map is centralized and explicit.",
+      "ActiveStepComputer derives active steps from the node registry, applicability, and subtype adapter contribution.",
+      "ProgressionFinalizer compiles from canonical progressionSession.draftSelections and routes mutations through ActorEngine.",
+      "Level-up manifest is read-only and finalization validates required choices against it.",
+      "Droid forbidden selections are validated before mutation."
+    ],
+    "primaryRisks": [
+      "ActiveStepComputer hides non-applicable steps. If applicability logic is wrong, a required step can vanish before the user can choose it.",
+      "Step plugins still maintain local committed state and hydrate from draftSelections, so backtracking and rapid-click behavior need runtime stress testing.",
+      "Finalizer validation is strong for level-up choices, but chargen validation remains coarser and primarily checks class, attributes, credits, and droid state.",
+      "Force technique/secret/regimen pipelines are structurally present but choice entitlement, repeatable selection, and item materialization need runtime verification.",
+      "Subtype adapters can suppress or modify active steps after the canonical applicability pass, creating a second structural decision point that needs audit/smoke coverage.",
+      "Single-step finalization has a separate compile path from full progression finalization, so parity must be tested separately."
+    ]
+  },
+  "stepState": {
+    "bucket": "B/C",
+    "notes": [
+      "The base plugin requires getSelection, onItemCommitted, validate, and getBlockingIssues for concrete steps.",
+      "Major choice steps hydrate from progressionSession.draftSelections and commit through _commitNormalized or explicit draft updates.",
+      "Survey/review/summary/null-style steps should be treated separately because they may be display or confirmation surfaces rather than item-choice producers.",
+      "Runtime verification should focus on backtracking, rapid clicking, and whether local step state exactly mirrors canonical draftSelections after render cycles."
+    ]
+  },
+  "entitlements": {
+    "bucket": "B",
+    "coveredByManifest": [
+      "generalFeat",
+      "heroicTalent",
+      "abilityIncreases",
+      "multiclassStartingFeat",
+      "automaticClassFeatures",
+      "classSkills",
+      "forcePowerChoices",
+      "forceSecretChoices",
+      "forceTechniqueChoices",
+      "medicalSecretChoices",
+      "starshipManeuverChoices"
+    ],
+    "notes": [
+      "Level-up entitlement manifest is the read-only receiving dock for one level-up event.",
+      "Finalizer validates level-up required selections with validateLevelUpRequiredSelections before mutation.",
+      "Class features that are choices are counted; materialized automatic features become locked class-feature items."
+    ]
+  },
+  "prerequisites": {
+    "bucket": "B/C",
+    "matrix": [
+      { "domain": "class/prestige", "display": "yes", "commit": "yes for class step", "finalization": "indirect through selected class validity; runtime verify", "risk": "medium" },
+      { "domain": "feat", "display": "yes", "commit": "yes in feat step/AbilityEngine path", "finalization": "required count audited, per-feat legality should be runtime verified", "risk": "medium" },
+      { "domain": "talent", "display": "yes", "commit": "expected through talent step", "finalization": "required count audited, per-talent legality should be runtime verified", "risk": "medium" },
+      { "domain": "Force powers", "display": "yes", "commit": "expected through ForcePowerStep", "finalization": "count and item receipt audited", "risk": "medium" },
+      { "domain": "Force techniques/secrets", "display": "yes", "commit": "expected through step availability + AbilityEngine", "finalization": "count and item receipt audited", "risk": "medium-high" },
+      { "domain": "droid restrictions", "display": "partial", "commit": "partial", "finalization": "fail-closed before mutation", "risk": "low-medium" }
+    ]
+  },
+  "finalizerMutation": {
+    "bucket": "B",
+    "notes": [
+      "Finalizer validates readiness, subtype adapter readiness, document type, mutation plan shape, and then applies through ActorEngine.",
+      "The finalizer explicitly acknowledges ActorEngine failure may occur after partial mutation; this should be part of rollback smoke testing.",
+      "Post-finalization level-up audit checks class level, selected items, automatic features, and class skills."
+    ]
+  },
+  "forceProgression": {
+    "bucket": "B/C",
+    "notes": [
+      "Force technique step resolves entitlements through force-suite-resolution and builds pending class-grant state for prerequisite evaluation.",
+      "Force Power Mastery is treated as a choice-bearing repeatable technique with special identity handling.",
+      "Jedi Knight, Jedi Master, Sith Apprentice/Lord, Force Adept, and Force Disciple should be runtime-smoked because these are the highest-risk class-grant/Force-choice intersections."
+    ]
+  },
+  "droidNonheroicFollower": {
+    "bucket": "B/C",
+    "notes": [
+      "Droid builder is species-equivalent for droids; finalizer intentionally skips biological species materialization for droid progression.",
+      "Droid forbidden selections are blocked before mutation.",
+      "Nonheroic has a dedicated starting feats step and is listed as a subtype across the registry; runtime verify that heroic-only progression assumptions do not leak into this flow.",
+      "Follower/beast subtypes appear in node coverage, but they need manual smoke coverage because adapter behavior can change active steps after registry filtering."
+    ]
+  },
+  "recommendedBatches": [
+    "Batch 1: Runtime smoke and small parity fixes for step applicability vs finalizer required-choice validation.",
+    "Batch 2: Force progression hardening for technique/secret/regimen repeatable choices and detail-rail hydration.",
+    "Batch 3: Droid/nonheroic/follower edge-case hardening and adapter-specific active-step tests.",
+    "Batch 4: Rollback and single-step-vs-full-finalizer parity hardening.",
+    "Batch 5: Optional strict mode for check-progression-integrity once baseline findings are accepted."
+  ],
+  "runtimeChecklist": [
+    "Level 1 chargen for each base class.",
+    "Multiclass into a second base class.",
+    "Attempt illegal prestige class and confirm commit/finalization block.",
+    "Enter a legal prestige class.",
+    "Jedi Knight gains and applies a Force Technique.",
+    "Jedi Master, Sith Lord, and Force Disciple gain/apply Force Secrets.",
+    "Force Training selects powers and updates Force suite counts.",
+    "Human species bonus feat path.",
+    "Species with natural weapon creates a usable weapon/attack.",
+    "Standard-model droid heroic class surcharge.",
+    "Nonheroic level-up.",
+    "Progression rollback after partial level-up.",
+    "Backtrack through steps after selections.",
+    "Rapid-click through mentor dialogue and step confirmations.",
+    "Roll attack, damage, and skill after finalization to confirm derived recalculation."
+  ]
+}
