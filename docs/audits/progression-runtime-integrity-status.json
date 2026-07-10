@@ -1,0 +1,111 @@
+{
+  "audit": "progression-runtime-integrity",
+  "date": "2026-07-10",
+  "repo": "docflowGM/foundryvtt-swse",
+  "baselineCommit": "323c48c",
+  "type": "audit-report-only",
+  "runtimeFixesApplied": false,
+  "deliverables": [
+    "docs/audits/progression-runtime-integrity-audit.md",
+    "docs/audits/progression-runtime-integrity-status.json",
+    "tools/check-progression-integrity.mjs"
+  ],
+  "checksRun": [
+    { "cmd": "node --check tools/check-progression-integrity.mjs", "result": "ok" },
+    { "cmd": "node tools/check-progression-integrity.mjs", "exit": 0, "total": 48,
+      "byCategory": { "progression-registry-bypass": 19, "draft-write-bypass": 23, "non-schema-selection-key": 6, "progression-direct-mutation": 0, "legacy-session-import": 0, "step-missing-validation": 0 } },
+    { "cmd": "node tools/check-architecture-boundaries.mjs", "exit": 0, "total": 34,
+      "byCategory": { "direct-actor-mutation": 6, "progression-registry-bypass": 28 } },
+    { "cmd": "node tools/check-combat-math-ssot.mjs", "exit": 0, "note": "combat-scope parity notes only; not progression" },
+    { "cmd": "node tools/check-feature-implementation-coverage.mjs --no-write", "exit": 0,
+      "note": "class_skills=5/37, starting_features=5/37, starting_credits=5/37 populated" }
+  ],
+  "authorityMap": {
+    "canonicalSession": "scripts/apps/progression-framework/shell/progression-session.js",
+    "finalizer": "scripts/apps/progression-framework/shell/progression-finalizer.js",
+    "shell": "scripts/apps/progression-framework/shell/progression-shell.js",
+    "reconciler": "scripts/apps/progression-framework/shell/progression-reconciler.js",
+    "stepContract": "scripts/apps/progression-framework/steps/step-plugin-base.js",
+    "mutationAuthority": "scripts/governance/actor-engine/actor-engine.js",
+    "entitlementManifest": "scripts/engine/progression/utils/levelup-entitlement-manifest.js",
+    "contentSeam": "scripts/engine/progression/content/progression-content-authority.js",
+    "deadLegacy": ["scripts/engine/progression/ProgressionSession.js"],
+    "legacyMirrors": ["buildIntent", "committedSelections"]
+  },
+  "coreQuestions": {
+    "canonicalSelectionStorage": "qualified-yes",
+    "stepValidatesBeforeFinalize": "yes",
+    "prereqCheckedBeforeCommitOrFinalize": "partial-commit-only",
+    "entitlementsOncePerEvent": "yes",
+    "grantsDeduped": "yes",
+    "repeatableChoicesHandled": "yes",
+    "classGrantedItemsLocked": "yes",
+    "rollbackSafe": "yes-with-create-bucket-caveat",
+    "mutatesOutsideActorEngine": "no",
+    "derivedRecalcAfterCanonicalMutation": "yes",
+    "hiddenGrantsSurfaced": "qualified-follower-risk",
+    "rapidClickSafe": "guarded-verify",
+    "backtrackSafe": "qualified-prereq-drift",
+    "specialTracksFailClosed": "droid-nonheroic-yes-prestige-commit-only",
+    "finalStateMatchesUI": "runtime-verify"
+  },
+  "prerequisiteEnforcement": {
+    "feat": "fail-closed-at-commit; not-re-checked-at-finalize",
+    "featChoiceLegality": "fail-closed-at-commit",
+    "talentAndTreeAccess": "fail-closed-at-commit; not-re-checked-at-finalize",
+    "class": "fail-closed-at-commit; not-re-checked-at-finalize",
+    "prestigeClass": "fail-closed-at-commit; not-re-checked-at-finalize",
+    "forceTechniqueSecret": "fail-closed-at-commit; not-re-checked-at-finalize",
+    "droidRestrictions": "fail-closed-at-commit-and-finalize",
+    "requiredSelectionCounts": "fail-closed-at-finalize",
+    "nonheroicNoTalents": "fail-closed"
+  },
+  "topRisks": [
+    { "id": "R1", "severity": "high", "summary": "Prerequisites not re-verified at finalization; backtrack/respec can materialize an illegal grant." },
+    { "id": "R2", "severity": "high", "summary": "Follower steps write 6 non-schema draftSelections keys, bypassing validation/persistence; displayed follower choices may not materialize." },
+    { "id": "R3", "severity": "medium", "summary": "Triple-mirrored selection state (session + buildIntent + committedSelections) is a drift surface." },
+    { "id": "R4", "severity": "medium", "summary": "Dead second ProgressionSession class (no importers) invites wrong-authority imports." },
+    { "id": "R5", "severity": "medium", "summary": "CREATE-bucket world actors are not rolled back; follower/companion creation can orphan an actor on mid-plan failure." },
+    { "id": "R6", "severity": "low-medium", "summary": "Steps import registries/DBs directly instead of ProgressionContentAuthority (19 sites)." },
+    { "id": "R7", "severity": "medium", "summary": "class_skills/starting_features/starting_credits populated for only 5/37 classes; 32 rely on finalizer fallbacks." },
+    { "id": "R8", "severity": "low-medium", "summary": "Direct draftSelections writes in survey/droid/template paths skip auto-save (23 sites)." }
+  ],
+  "fastestWins": [
+    "W1: doc-only correction of stale 'partially applied' comment in finalizer (rollback now runs)",
+    "W2: delete unused scripts/engine/progression/ProgressionSession.js",
+    "W3: add follower keys to session schema and route through commitSelection",
+    "W4: add finalization-time prerequisite re-check (addresses R1)",
+    "W5: adopt check-progression-integrity.mjs in a check-runner, --strict after burn-down"
+  ],
+  "recommendedBatches": [
+    { "id": "A", "title": "Finalization prerequisite hardening", "addresses": ["R1"] },
+    { "id": "B", "title": "Follower canonicalization + CREATE-bucket rollback", "addresses": ["R2", "R5"] },
+    { "id": "C", "title": "Legacy-mirror retirement + dead-session deletion", "addresses": ["R3", "R4"] },
+    { "id": "D", "title": "Content-seam tightening + class data backfill", "addresses": ["R6", "R7"] },
+    { "id": "E", "title": "Draft-write cleanup", "addresses": ["R8"] }
+  ],
+  "runtimeVerificationNeeded": [
+    "Finalization prereq drift after backtrack/respec (R1, smoke #13)",
+    "Follower non-schema key consumption by follower adapter (R2, smoke #16)",
+    "CREATE-bucket rollback / orphaned follower actor on failure (R5, smoke #12)",
+    "Force slot/technique/secret cadence and detail-rail hydration (smoke #5-7)",
+    "Droid standard-model surcharge math (smoke #10)",
+    "Rapid-click Confirm under mentor async load (smoke #14)",
+    "Derived recompute after finalize (smoke #15)"
+  ],
+  "positiveFindings": [
+    "Zero direct actor/item mutations in the progression tree (all via ActorEngine).",
+    "Transactional rollback exists and is requested by the finalizer.",
+    "Dual dedupe (session marker + type::name) prevents double-grant and double-confirm.",
+    "isProcessing re-entrancy lock guards Confirm double-click.",
+    "Entitlement manifest is read-only; generated once, consumed once per level event.",
+    "Class-granted items are locked/non-editable; repeatable Force/talent choices handled correctly.",
+    "Droid and nonheroic tracks are fail-closed."
+  ],
+  "limitations": [
+    "Static audit; behavioral/ordering/async claims marked runtime-verify.",
+    "Finalizer (~3.2k) and shell (~4.1k) mapped by structure + targeted reads, not full line-by-line.",
+    "Scanner is regex/line-based; counts are a floor, not a census.",
+    "Content semantic correctness (RAW parity per class/level) spot-checked, not exhaustive."
+  ]
+}
