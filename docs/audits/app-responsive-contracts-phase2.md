@@ -30,6 +30,7 @@ Disconnected legacy UI should be removed instead of supported.
 7. Transmission Decryption / codebreaker surface
 8. Force Artifact / Sith Alchemy workbench
 9. Galactic Records Browser
+10. Actor Creation Entry launcher
 ```
 
 ## Files changed
@@ -46,6 +47,7 @@ styles/system/app-responsive-atlas.css
 styles/system/app-responsive-transmission-decryption.css
 styles/system/app-responsive-force-alchemy.css
 styles/system/app-responsive-galactic-records.css
+styles/system/app-responsive-actor-creation-entry.css
 docs/audits/app-responsive-contracts-phase2.md
 templates/apps/store.html                         deleted
 templates/apps/store/store.html                   deleted
@@ -67,6 +69,7 @@ styles/system/app-responsive-atlas.css
 styles/system/app-responsive-transmission-decryption.css
 styles/system/app-responsive-force-alchemy.css
 styles/system/app-responsive-galactic-records.css
+styles/system/app-responsive-actor-creation-entry.css
 ```
 
 The observer emits:
@@ -305,6 +308,29 @@ Behavior:
 - overrides the template's inline layout styles externally without changing import logic
 ```
 
+### Actor Creation Entry launcher
+
+Targets:
+
+```txt
+actor-creation-entry
+entry-choices
+entry-choice-card
+choice-button
+templates/apps/actor-creation-entry.hbs
+```
+
+Behavior:
+
+```txt
+- compacts Create New Actor Profile header
+- keeps Begin New Character and Access Galactic Records visible/tappable
+- shifts the two-card desktop grid into a one-column scrollable launcher on narrow/tiny windows
+- hides low-value subtitles/feature copy on short tiers
+- keeps Create New and Browse Records buttons reachable
+- overrides the template's inline layout styles externally without changing launch callbacks
+```
+
 ## Resolution matrix to test
 
 ```txt
@@ -335,6 +361,7 @@ Atlas: search/filter locations, select current/pinned/lead-bearing locations, do
 Transmission Decryption: glyphs, tactic buttons, skill buttons, frequency chips, manual guess, recovered payload/lockbox.
 Force Alchemy: categories, locked/eligible rites, targets/configs/ledger/project/cooldown controls.
 Galactic Records: categories, NPC/droid records, selected preview, Import Now, Customize & Import.
+Actor Creation Entry: Begin New Character and Access Galactic Records launcher paths at 1366x768, 1280x720, 1024x600, and 700x900.
 ```
 
 ## Pass criteria
@@ -353,5 +380,5 @@ Galactic Records: categories, NPC/droid records, selected preview, Import Now, C
 
 - This pass is selector-based and conservative. Exact per-template refinements may still be needed after runtime testing.
 - It does not replace progression-specific behavior from PR #887.
-- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, credits, or progression state.
+- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, actor creation launch callbacks, credits, or progression state.
 - Foundry runtime verification is still required.
