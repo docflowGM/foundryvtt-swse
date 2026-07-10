@@ -17,6 +17,7 @@ Completed app-specific refinements so far:
 4. Holopad Games library and active table surfaces
 5. GM Command Holopad / GM Datapad shell
 6. Player Atlas / astrogation registry surface
+7. Transmission Decryption / codebreaker surface
 ```
 
 ## Principle
@@ -40,6 +41,7 @@ styles/system/app-responsive-workbench.css
 styles/system/app-responsive-games.css
 styles/system/app-responsive-gm-holopad.css
 styles/system/app-responsive-atlas.css
+styles/system/app-responsive-transmission-decryption.css
 docs/audits/app-responsive-contracts-phase2.md
 templates/apps/store.html                         deleted
 templates/apps/store/store.html                   deleted
@@ -58,6 +60,7 @@ styles/system/app-responsive-workbench.css
 styles/system/app-responsive-games.css
 styles/system/app-responsive-gm-holopad.css
 styles/system/app-responsive-atlas.css
+styles/system/app-responsive-transmission-decryption.css
 ```
 
 The observer emits the original shell size classes:
@@ -242,24 +245,50 @@ Compact behavior:
 - bounds map images on short/micro/tiny tiers
 ```
 
+### Transmission Decryption / codebreaker family
+
+Live target/templates:
+
+```txt
+swse-transmission-shell-surface
+swse-intel-decryption-console
+swse-transmission-grid
+templates/shell/partials/surface-transmission-decryption.hbs
+templates/shell/partials/transmission-decryption-console.hbs
+```
+
+Compact behavior:
+
+```txt
+- compacts shell toolbar and action buttons
+- hides low-value transmission status/kicker/ref chrome on short tiers
+- keeps Intel Locker, Expand/Standard, and Refresh actions reachable
+- compacts decryption HUD, mode switch, progress/fail meters, and status chips
+- stacks cipher readout above analysis tools rail
+- makes cipher readout the primary puzzle scroller
+- bounds analysis tools as a drawer-like rail
+- makes tactic deck, skill buttons, frequency chips, and manual alphabet responsive grids
+- keeps manual guess row and footer actions horizontally reachable
+- keeps recovered payload/lockbox output scrollable after success
+```
+
 Specific selectors:
 
 ```txt
-swse-atlas-command-header
-swse-atlas-current-strip
-swse-atlas-wireframe
-swse-atlas-registry-rail
-swse-atlas-filter-panel
-swse-atlas-location-groups
-swse-atlas-location-row
-swse-atlas-dossier-stage
-swse-atlas-dossier-card
-swse-atlas-dossier-header
-swse-atlas-detail-tabs
-swse-atlas-dossier-scroll
-swse-atlas-dossier-section
-swse-atlas-checks
-swse-atlas-notes-panel
+swse-transmission-shell-surface
+swse-transmission-shell-toolbar
+swse-transmission-shell-body
+swse-transmission-shell--phase5
+swse-intel-decryption-console
+swse-intel-decryption-hud
+swse-intel-decryption-status
+swse-transmission-grid
+swse-intel-decryption-readout
+swse-intel-decryption-tools
+swse-transmission-tactic-deck
+swse-intel-decryption-actions
+swse-transmission-manual-row
+swse-transmission-footer
 ```
 
 ## Resolution matrix to test
@@ -341,7 +370,19 @@ resized app inside 1920x1080 browser
 - confirm registry rail does not consume the dossier body
 - confirm detail tabs, Pin, Mark Reviewed, reveal check buttons, and Save Notes remain reachable
 - confirm maps/facts/leads/factions/contacts/jobs/intel sections scroll inside dossier
-- confirm desktop layout remains registry rail + dossier at 1440x900 and 1920x1080
+```
+
+### Transmission Decryption
+
+```txt
+- open encrypted Intel / Transmission Decryption and confirm .swse-transmission-shell-surface is observed
+- confirm data-shell-resolution-tier updates while resizing
+- resize to 1366x768 and confirm toolbar, cipher readout, analysis tools, and footer actions remain visible
+- resize to 1280x720 and confirm cipher readout is the primary puzzle scroller
+- resize to 1024x600 and confirm status/ref/mode notes do not consume puzzle space
+- select glyphs, use tactic buttons, use skill buttons, frequency chips, manual guess, clear guess, and refresh
+- solve or GM decrypt and confirm recovered message and lockbox claim remain reachable
+- confirm desktop layout remains readout + tools rail at 1440x900 and 1920x1080
 ```
 
 ## Pass criteria
@@ -360,5 +401,5 @@ resized app inside 1920x1080 browser
 
 - This pass is selector-based and conservative. Exact per-template class refinements may still be needed after runtime testing.
 - It does not replace the progression-specific behavior from PR #887.
-- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, or progression state.
+- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, or progression state.
 - Foundry runtime verification is still required.
