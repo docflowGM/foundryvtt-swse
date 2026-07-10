@@ -362,6 +362,38 @@ function registerSettings() {
     scope: "world",
     config: true,
     type: Number,
+    default: 2
+  });
+
+  game.settings.register("swse", "storeSettings", {
+    name: "Store Price Settings",
+    scope: "world",
+    config: false,
+    type: Object,
+    default: { buyMultiplier: 1.0, sellMultiplier: 0.5 }
+  });
+
+  game.settings.register("swse", "storeMarkup", {
+    name: "Store Markup %",
+    scope: "world",
+    config: false,
+    type: Number,
     default: 0
+  });
+
+  game.settings.register("swse", "storeDiscount", {
+    name: "Store Discount %",
+    scope: "world",
+    config: false,
+    type: Number,
+    default: 0
+  });
+
+  // Data load flag
+  game.settings.register("swse", "dataLoaded", {
+    scope: "world",
+    config: false,
+    type: Boolean,
+    default: false
   });
 }
