@@ -35,6 +35,7 @@ Disconnected legacy UI should be removed instead of supported.
 12. Holonet Messenger / communications surface
 13. Allies database / companions, factions, contacts, intel, bases, organizations
 14. Upgrade Workshop shell route
+15. Home / datapad command overview surface
 ```
 
 ## Files changed
@@ -56,6 +57,7 @@ styles/system/app-responsive-assets.css
 styles/system/app-responsive-holonet.css
 styles/system/app-responsive-allies.css
 styles/system/app-responsive-upgrade.css
+styles/system/app-responsive-home.css
 docs/audits/app-responsive-contracts-phase2.md
 templates/apps/store.html                         deleted
 templates/apps/store/store.html                   deleted
@@ -82,6 +84,7 @@ styles/system/app-responsive-assets.css
 styles/system/app-responsive-holonet.css
 styles/system/app-responsive-allies.css
 styles/system/app-responsive-upgrade.css
+styles/system/app-responsive-home.css
 ```
 
 The observer emits:
@@ -467,6 +470,35 @@ Behavior:
 - hides low-value mentor/item descriptions on short/micro/tiny tiers
 ```
 
+### Home / datapad command overview
+
+Targets:
+
+```txt
+swse-shell-surface--home
+swse-home-surface
+swse-home-hud
+swse-home-page-header
+swse-home-holo-stage
+swse-home-left-stack
+swse-home-disc-wrap
+swse-home-side-stack
+swse-home-footer
+templates/shell/partials/surface-home.hbs
+```
+
+Behavior:
+
+```txt
+- compacts HUD/status bar, page header, actor card, radial launcher, comm feed, and footer
+- converts the radial app launcher into a compact responsive app grid on constrained windows
+- keeps app tiles and footer quick-launch actions reachable
+- makes the holo-stage the primary Home scroller
+- bounds actor vitals, last session, and comm feed side cards
+- hides decorative disc/compass/quote/detail copy on short/micro/tiny tiers
+- keeps lock-screen overlay scrollable without changing lock flags
+```
+
 ## Resolution matrix to test
 
 ```txt
@@ -502,6 +534,7 @@ Asset Bay: All Assets/Garage/Shipyard modes, droid and vehicle asset cards, Shee
 Holonet Messenger: Chat/Alerts/New/Jobs/Intel/GM buttons, thread search/filter/archive, compose/new transmission, job board filters/dossier/objectives, intel archive/create, chat messages, pinned transmissions, credit/item/asset/game/job cards, invite/transfer/archive/mute/leave actions.
 Allies: companions/factions/contacts/intel/bases/organizations tabs, companion lanes, faction cards, contact dossiers, intel locker, embedded codebreaker panels, Open Actor, Save Notes, Pin/Archive, Lockbox actions.
 Upgrade Workshop: category tabs, item rail selection, selected item details, slot usage, installed upgrades, available upgrades, install/remove buttons, footer actions, unavailable-item state.
+Home: lock screen, HUD, actor vitals, radial/compact app launcher, app tile routing, comm feed rows, vehicle/character quick-launch footer, last-session card.
 ```
 
 ## Pass criteria
@@ -520,5 +553,5 @@ Upgrade Workshop: category tabs, item rail selection, selected item details, slo
 
 - This pass is selector-based and conservative. Exact per-template refinements may still be needed after runtime testing.
 - It does not replace progression-specific behavior from PR #887.
-- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, actor creation launch callbacks, Asset Bay ownership/actions, Holonet threads/messages/jobs/intel/transfers/notifications, Allies links/faction/contact/intel/base/org state, Upgrade Workshop slot/cost/install/remove logic, vehicle EP/refit math, credits, or progression state.
+- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, actor creation launch callbacks, Asset Bay ownership/actions, Holonet threads/messages/jobs/intel/transfers/notifications, Allies links/faction/contact/intel/base/org state, Upgrade Workshop slot/cost/install/remove logic, Home routing/app metadata/lock-screen flags/comm feed state, vehicle EP/refit math, credits, or progression state.
 - Foundry runtime verification is still required.
