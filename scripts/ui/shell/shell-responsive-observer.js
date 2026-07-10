@@ -80,6 +80,10 @@ const STYLE_IDS = Object.freeze([
     id: 'swse-app-responsive-home-css',
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-home.css',
   },
+  {
+    id: 'swse-app-responsive-import-wizards-css',
+    href: 'systems/foundryvtt-swse/styles/system/app-responsive-import-wizards.css',
+  },
 ]);
 const DEFAULT_THRESHOLDS = Object.freeze({
   compactWidth: 1180,
@@ -288,6 +292,9 @@ export function observeAllShellResponsive(root = document) {
     .application:has(.swse-home-holo-stage),
     .application:has(.swse-home-disc-wrap),
     .application:has(.swse-home-footer),
+    .application:has(.swse-vehicle-import-wizard),
+    .application:has(.swse-vehicle-import-body),
+    .application:has(.swse-vehicle-import-results),
     .application:has(.atlas-surface),
     .application:has(.games-surface),
     .application:has(.hacking-surface),
