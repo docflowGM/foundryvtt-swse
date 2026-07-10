@@ -18,6 +18,7 @@ Completed app-specific refinements so far:
 5. GM Command Holopad / GM Datapad shell
 6. Player Atlas / astrogation registry surface
 7. Transmission Decryption / codebreaker surface
+8. Force Artifact / Sith Alchemy workbench
 ```
 
 ## Principle
@@ -42,6 +43,7 @@ styles/system/app-responsive-games.css
 styles/system/app-responsive-gm-holopad.css
 styles/system/app-responsive-atlas.css
 styles/system/app-responsive-transmission-decryption.css
+styles/system/app-responsive-force-alchemy.css
 docs/audits/app-responsive-contracts-phase2.md
 templates/apps/store.html                         deleted
 templates/apps/store/store.html                   deleted
@@ -61,6 +63,7 @@ styles/system/app-responsive-games.css
 styles/system/app-responsive-gm-holopad.css
 styles/system/app-responsive-atlas.css
 styles/system/app-responsive-transmission-decryption.css
+styles/system/app-responsive-force-alchemy.css
 ```
 
 The observer emits the original shell size classes:
@@ -272,23 +275,50 @@ Compact behavior:
 - keeps recovered payload/lockbox output scrollable after success
 ```
 
+### Force Artifact / Sith Alchemy workbench family
+
+Live target/template:
+
+```txt
+swse-force-alchemy-workbench
+sa-win--phase5
+data-force-alchemy-root
+templates/apps/force-alchemy/force-alchemy-workbench.hbs
+```
+
+Compact behavior:
+
+```txt
+- compacts spooky HUD while preserving actor, close button, and resource awareness
+- fades decorative surge/corruption chrome instead of letting it compete with content
+- stacks current workings, rites list, and selected rite intel vertically
+- bounds Current Workings as a compact resources/project strip
+- turns rite categories into a horizontal scroll strip
+- makes rites list the primary selection scroller
+- bounds Selected Rite Intel as a drawer-like rail
+- makes the detail stepper horizontally scrollable
+- keeps target/config/ledger/action controls reachable on short screens
+- hides low-value explanatory text in short/micro/tiny tiers
+```
+
 Specific selectors:
 
 ```txt
-swse-transmission-shell-surface
-swse-transmission-shell-toolbar
-swse-transmission-shell-body
-swse-transmission-shell--phase5
-swse-intel-decryption-console
-swse-intel-decryption-hud
-swse-intel-decryption-status
-swse-transmission-grid
-swse-intel-decryption-readout
-swse-intel-decryption-tools
-swse-transmission-tactic-deck
-swse-intel-decryption-actions
-swse-transmission-manual-row
-swse-transmission-footer
+sa-win--phase5
+sa-hud
+sa-body
+sa-left
+sa-center
+sa-right
+sa-cats
+sa-rites
+sa-rite
+sa-detail
+sa-stepper
+sa-detail-scroll
+sa-d-block
+sa-opt
+sa-commit-row
 ```
 
 ## Resolution matrix to test
@@ -382,7 +412,21 @@ resized app inside 1920x1080 browser
 - resize to 1024x600 and confirm status/ref/mode notes do not consume puzzle space
 - select glyphs, use tactic buttons, use skill buttons, frequency chips, manual guess, clear guess, and refresh
 - solve or GM decrypt and confirm recovered message and lockbox claim remain reachable
-- confirm desktop layout remains readout + tools rail at 1440x900 and 1920x1080
+```
+
+### Force Alchemy
+
+```txt
+- open Force Artifact / Sith Alchemy workbench and confirm .sa-win--phase5 is observed
+- confirm data-shell-resolution-tier updates while resizing
+- resize to 1366x768 and confirm current workings, rites list, and selected rite intel remain visible
+- resize to 1280x720 and confirm rites list is the primary selection scroller
+- resize to 1024x600 and confirm decorative chrome/current workings do not consume rite selection space
+- switch Force, Sith Alchemy, Sith Talisman, and Specialist/Mutation categories as available
+- select eligible and locked rites
+- select targets, defenses, Force Powers, templates, traits, and GM approval checkbox where available
+- confirm cost ledger, commit/apply controls, project controls, cooldown controls, and close button remain reachable
+- confirm desktop layout remains three-column at 1440x900 and 1920x1080
 ```
 
 ## Pass criteria
@@ -401,5 +445,5 @@ resized app inside 1920x1080 browser
 
 - This pass is selector-based and conservative. Exact per-template class refinements may still be needed after runtime testing.
 - It does not replace the progression-specific behavior from PR #887.
-- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, or progression state.
+- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, dark side score, credits, or progression state.
 - Foundry runtime verification is still required.
