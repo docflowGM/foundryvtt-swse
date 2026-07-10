@@ -14,6 +14,7 @@ This PR is now being refined app by app. Completed app-specific refinements so f
 1. v2 concept actor sheet family
 2. live shell-native store surface
 3. live item customization / lightsaber workbench
+4. Holopad Games library and active table surfaces
 ```
 
 ## Principle
@@ -34,6 +35,7 @@ styles/system/app-responsive-contracts.css
 styles/system/app-responsive-character-sheet.css
 styles/system/app-responsive-store.css
 styles/system/app-responsive-workbench.css
+styles/system/app-responsive-games.css
 docs/audits/app-responsive-contracts-phase2.md
 templates/apps/store.html                         deleted
 templates/apps/store/store.html                   deleted
@@ -49,6 +51,7 @@ styles/system/app-responsive-contracts.css
 styles/system/app-responsive-character-sheet.css
 styles/system/app-responsive-store.css
 styles/system/app-responsive-workbench.css
+styles/system/app-responsive-games.css
 ```
 
 The final app-specific files intentionally override the broader contract for real app selectors.
@@ -228,6 +231,69 @@ ls-finish-picker
 ls-wizard-nav
 ```
 
+### Holopad Games family
+
+Live targets:
+
+```txt
+swse-games-surface
+swse-games-concept-layout
+swse-games-table-frame
+swse-games-table-frame--unified
+```
+
+Live templates:
+
+```txt
+templates/shell/partials/games/surface-games-detail.hbs
+templates/shell/partials/games/surface-games-table-frame.hbs
+```
+
+Compact library behavior:
+
+```txt
+- compacts Games HUD and optional hero content
+- stacks library list, selected-game detail, and rail vertically
+- turns game library cards into a compact auto-fit grid
+- makes selected-game detail the primary scroller
+- bounds or hides the right rail in short/micro/tiny tiers
+- keeps game mode chips, invite controls, and start actions horizontally reachable
+```
+
+Compact active-table behavior:
+
+```txt
+- compacts the unified table frame and top table bar
+- trims rules/table lines on short tiers
+- keeps table actions horizontally scrollable
+- bounds or hides telemetry on short/micro/tiny tiers
+- keeps table status compact and horizontally scrollable
+- makes the game table body the primary scroller
+- covers Pazaak, Sabacc, Dejarik, and Hintaro active table bodies without changing rules engines
+```
+
+Specific selectors:
+
+```txt
+swse-games-surface
+swse-games-hud
+swse-games-hero
+swse-games-concept-layout
+swse-games-lib-col--list
+swse-games-lib-col--detail
+swse-games-lib-col--rail
+swse-games-library--concept
+swse-games-detail
+swse-games-config-card
+swse-games-invite-form
+swse-games-table-frame--unified
+swse-games-table-console
+swse-games-tm-bar
+swse-games-table-telemetry
+swse-games-table-status--unified
+swse-games-table-body
+```
+
 ### GM holopad / dashboard family
 
 Targets:
@@ -247,13 +313,12 @@ Compact behavior:
 - panels are height-bounded on short screens
 ```
 
-### Atlas / games / hacking family
+### Atlas / hacking family
 
 Targets:
 
 ```txt
 atlas-surface
-games-surface
 hacking-surface
 ```
 
@@ -337,6 +402,24 @@ For the item customization / lightsaber workbench:
 - confirm desktop layout remains two-column inventory/detail at 1440x900 and 1920x1080
 ```
 
+## Games smoke test
+
+For Holopad Games:
+
+```txt
+- open Games library and confirm .swse-games-surface is observed
+- confirm data-shell-resolution-tier updates while resizing
+- select Pazaak, Sabacc, Dejarik, and Hintaro from the library
+- resize to 1366x768 and confirm library list, selected detail, and action/config controls remain reachable
+- resize to 1280x720 and confirm selected-game detail is the primary scroller
+- resize to 1024x600 and confirm rail/telemetry chrome does not consume the table
+- start solo Pazaak, Sabacc, Dejarik, and Hintaro tables where available
+- confirm active table top actions remain horizontally reachable: Forfeit, Cancel, Cash Out, Next Hand/Round, Library
+- confirm active table body remains the primary scroller/play surface
+- confirm Pazaak, Sabacc, Dejarik, and Hintaro table bodies remain usable without rule/state changes
+- confirm desktop layout remains three-column library and unified table frame at 1440x900 and 1920x1080
+```
+
 ## Pass criteria
 
 For each app family:
@@ -355,5 +438,5 @@ For each app family:
 
 - This pass is selector-based and conservative. Exact per-template class refinements may still be needed after runtime testing.
 - It does not replace the progression-specific behavior from PR #887.
-- It does not modify actor, item, rules, store transaction, or progression state.
+- It does not modify actor, item, rules, store transaction, game session, wager/escrow, or progression state.
 - Foundry runtime verification is still required.
