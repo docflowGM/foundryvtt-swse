@@ -55,6 +55,7 @@ import { registerForceAlchemyWorkbench, openForceAlchemyWorkbench } from "./scri
 import { registerForceTraditionPickerHooks } from "./scripts/apps/force-tradition/force-tradition-picker.js";
 import { registerLightsaberConstructionHooks } from "./scripts/applications/lightsaber/lightsaber-router.js";
 import { initializeConceptParityDiagnostics } from "./scripts/ui/concept-parity/concept-parity-diagnostics.js";
+import { initializeShellResponsiveObserver } from "./scripts/ui/shell/shell-responsive-observer.js";
 import { registerTokenNameSyncHooks } from "./scripts/core/token-name-sync.js";
 import "./scripts/talents/squad-actions-init.js";
 import "./scripts/talents/minion-actions-init.js";
@@ -188,6 +189,7 @@ Hooks.once("init", async () => {
   registerForceAlchemyWorkbench();
   registerForceTraditionPickerHooks();
   registerLightsaberConstructionHooks();
+  initializeShellResponsiveObserver();
 
   // -------------------------------
   // Feat Effect Registry + lifecycle hooks
