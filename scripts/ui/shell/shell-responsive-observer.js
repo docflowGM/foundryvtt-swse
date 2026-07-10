@@ -32,6 +32,10 @@ const STYLE_IDS = Object.freeze([
     id: 'swse-app-responsive-workbench-css',
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-workbench.css',
   },
+  {
+    id: 'swse-app-responsive-games-css',
+    href: 'systems/foundryvtt-swse/styles/system/app-responsive-games.css',
+  },
 ]);
 const DEFAULT_THRESHOLDS = Object.freeze({
   compactWidth: 1180,
@@ -184,6 +188,10 @@ export function observeAllShellResponsive(root = document) {
     .application:has(.swse-store-surface),
     .application:has(.store-surface),
     .application:has(.store-card-grid),
+    .application:has(.swse-games-surface),
+    .application:has(.swse-games-concept-layout),
+    .application:has(.swse-games-table-frame),
+    .application:has(.swse-games-table-frame--unified),
     .application:has(.atlas-surface),
     .application:has(.games-surface),
     .application:has(.hacking-surface),
