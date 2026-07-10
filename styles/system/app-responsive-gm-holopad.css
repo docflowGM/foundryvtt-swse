@@ -1,0 +1,227 @@
+/**
+ * SWSE GM Holopad Responsive Contract
+ *
+ * App-specific responsive behavior for the live GM Datapad / command holopad.
+ * Presentation-only: does not alter GM surface routing, store governance,
+ * approvals, healing, bulletin, factions, intel, locations, or skill challenge data.
+ */
+
+.application.swse-shell-responsive:has(.swse-sheet-v2-shell--gm-datapad),
+.application.swse-shell-responsive:has(.gm-command-shell-v2--concept),
+.application.swse-shell-responsive:has(.gm-datapad-screen) {
+  --swse-gm-gap: 6px;
+  --swse-gm-pad: 8px;
+  --swse-gm-sidebar-strip-height: 86px;
+  --swse-gm-toolbar-height: 76px;
+  --swse-gm-toolbar-short-height: 48px;
+  --swse-gm-button-min: 36px;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .swse-sheet-v2-shell--gm-datapad,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-datapad-tablet,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-datapad-screen-shell,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-datapad-screen,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-screen-v2--phase2 {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-screen-v2--phase2 {
+  padding: var(--swse-gm-pad) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-shell-v2--concept {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--swse-gm-gap) !important;
+  min-height: 0 !important;
+  height: 100% !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-gm-sidebar-strip-height) !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  grid-template-rows: minmax(0, 1fr) !important;
+  gap: var(--swse-gm-gap) !important;
+  overflow: hidden !important;
+  padding: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__head,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__foot {
+  min-width: 0 !important;
+  max-width: 168px !important;
+  overflow: hidden !important;
+  padding: 4px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__head,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__head,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__head,
+.application.swse-shell-responsive.is-shell-short:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__foot,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__foot,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__foot {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__eyebrow,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__status,
+.application.swse-shell-responsive.is-shell-short:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__title {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__list {
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 4px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  padding: 2px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__group,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__divider {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__btn {
+  flex: 0 0 auto !important;
+  min-width: var(--swse-gm-button-min) !important;
+  min-height: var(--swse-gm-button-min) !important;
+  padding: 5px 8px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 5px !important;
+  white-space: nowrap !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__label,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__label,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__label {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-sidebar__badge {
+  position: static !important;
+  min-width: 16px !important;
+  height: 16px !important;
+  padding: 0 4px !important;
+  font-size: 9px !important;
+  line-height: 15px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-stage--concept {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: var(--swse-gm-gap) !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar--phase2 {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-gm-toolbar-height) !important;
+  min-height: 0 !important;
+  display: grid !important;
+  grid-template-columns: minmax(160px, 1fr) auto auto !important;
+  gap: var(--swse-gm-gap) !important;
+  padding: 6px 8px !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar--phase2,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar--phase2,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar--phase2 {
+  max-height: var(--swse-gm-toolbar-short-height) !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__identity,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__copy {
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__copy strong,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__copy em {
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-eyebrow,
+.application.swse-shell-responsive.is-shell-short:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__copy em,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-eyebrow,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__copy em,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-eyebrow,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__copy em {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__metrics,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__actions {
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  gap: 4px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__metrics,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__metrics,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__metrics {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__metric {
+  flex: 0 0 auto !important;
+  min-width: 58px !important;
+  padding: 4px 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__btn {
+  flex: 0 0 auto !important;
+  min-height: 30px !important;
+  padding: 4px 8px !important;
+  white-space: nowrap !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__btn span,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-toolbar__btn span {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .gm-command-surface-scrollframe--concept {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: auto !important;
+  padding: var(--swse-gm-pad) !important;
+  border-radius: 10px !important;
+  scrollbar-gutter: stable both-edges;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) .swse-shell-surface,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) [data-shell-surface],
+.application.swse-shell-responsive.is-shell-compact:has(.swse-sheet-v2-shell--gm-datapad) [data-application-content] {
+  min-height: 0 !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-sheet-v2-shell--gm-datapad),
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-sheet-v2-shell--gm-datapad) {
+  --swse-gm-gap: 4px;
+  --swse-gm-pad: 5px;
+  --swse-gm-sidebar-strip-height: 48px;
+  --swse-gm-toolbar-height: 46px;
+  --swse-gm-toolbar-short-height: 42px;
+  --swse-gm-button-min: 32px;
+}
