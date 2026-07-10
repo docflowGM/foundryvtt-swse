@@ -10415,8 +10415,11 @@ const forcePoints = [];
     });
 
     if (!Object.keys(allowed).length) return;
-    const expanded = foundry.utils.expandObject(allowed);
-    await ActorEngine.updateActor(this.actor, expanded, {
+    // `allowed` is already a flat map of leaf dot-paths. Pass it straight through
+    // rather than expandObject()-ing it into a nested {system:{...}} object:
+    // ActorEngine flattens internally, and a nested system object trips the
+    // Phase 2 broad-replacement boundary guard.
+    await ActorEngine.updateActor(this.actor, allowed, {
       source: 'vehicle-actor-shell-form-submit'
     });
   }

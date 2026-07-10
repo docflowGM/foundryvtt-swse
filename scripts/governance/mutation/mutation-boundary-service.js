@@ -84,16 +84,21 @@ export const MutationBoundaryService = {
    * Detects dangerous-but-currently-approved payload patterns that should be
    * understood before any hard rejection is added in later phases.
    *
-   * Warning-only — does not alter updateData, does not block updates.
+   * Warning-only — does not alter updateData, does not block updates. This
+   * service never throws; it is the evidence layer. Strict-mode ENFORCEMENT
+   * (throwing) is the caller's job — ActorEngine reads the returned findings and
+   * decides, so the service stays pure and independently testable.
    *
    * Long-term invariant: This is the evidence collection layer.
-   * Future phases may turn these warnings into enforcement after parity is proven.
    *
    * @param {Object} updateData     - Original (pre-normalization) update payload
    * @param {Object} flatData       - Flattened update payload
    * @param {Actor}  actor
    * @param {string} operationCategory
    * @param {Object} options
+   * @returns {Array<{key:string, reason:string, count?:number, examples?:string[], keyCount?:number}>}
+   *          The suspicious findings (empty array if none). Returned so the
+   *          caller can apply strict-mode enforcement to high-confidence cases.
    */
   auditSemanticBoundaries(updateData, flatData, actor, operationCategory, options) {
     // Broad-safe contexts: migration, progression, canonical normalization, derived rebuild
@@ -167,7 +172,7 @@ export const MutationBoundaryService = {
       suspicious.push({ key: `(${keyCount} flat keys)`, reason: 'broad-payload-unclassified-caller', keyCount });
     }
 
-    if (suspicious.length === 0) return; // Nothing suspicious — stay silent
+    if (suspicious.length === 0) return []; // Nothing suspicious — stay silent
 
     SWSELogger.warn('[ActorEngine:P1] Semantic boundary audit: suspicious payload', {
       actorId: actor?.id,
@@ -177,8 +182,12 @@ export const MutationBoundaryService = {
       operationCategory,
       flatKeyCount: keyCount,
       suspicious,
-      allowed: true // Phase 1: diagnostic only — update proceeds
+      // Phase 1: diagnostic. Phase 2: caller may reject high-confidence cases
+      // (full-system-replacement, broad-domain-key-replacement) in strict mode.
+      allowed: true
     });
+
+    return suspicious;
   },
 
   /**

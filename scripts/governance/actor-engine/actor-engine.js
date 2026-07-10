@@ -20,6 +20,7 @@ import { ConditionTrackRules } from "/systems/foundryvtt-swse/scripts/engine/com
 import { SecondWindRules } from "/systems/foundryvtt-swse/scripts/engine/combat/SecondWindRules.js";
 import { MutationNormalizationService } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-normalization-service.js";
 import { MutationBoundaryService } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-boundary-service.js";
+import * as PlanBuilders from "/systems/foundryvtt-swse/scripts/governance/actor-engine/plan-builders.js";
 import { normalizeActiveEffectDataForRuntime } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
 import { ImplantRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js";
 
@@ -639,12 +640,20 @@ export const ActorEngine = {
       //
       // Long-term invariant: ActorEngine is the public mutation facade.
       // ========================================
+      // Derived-write authority: system.derived.* is owned by DerivedCalculator.
+      // Throws in strict mode / warns otherwise when a caller writes derived paths
+      // outside a derived-calc cycle. (Previously defined but never wired.)
+      this._validateDerivedWriteAuthority(normalizedUpdateData, actor, options);
+
       const _opCategory = this._classifyOperationIntent(normalizedUpdateData, options, actor);
       // Pass the ORIGINAL updateData (pre-normalization) so check #1 can detect whether the
       // caller explicitly passed {system:{...}} (nested) vs a flat dot-path key. After
       // _normalizeMutationForContract runs expandObject(), normalizedUpdateData.system is
       // always an object — using it here would false-positive on every safe narrow update.
-      this._auditSemanticBoundaries(updateData, flatUpdateData, actor, _opCategory, options);
+      const _boundaryFindings = this._auditSemanticBoundaries(updateData, flatUpdateData, actor, _opCategory, options);
+      // Phase 2: high-confidence findings become hard failures in strict/dev mode.
+      // Ambiguous findings stay warning-only (already logged by the audit above).
+      this._enforceStrictSemanticBoundaries(_boundaryFindings, _opCategory, actor, options);
       // Phase 3: apply guardrails — safe corrections to proven-unsafe paths.
       // Result replaces flatUpdateData as the payload that crosses the document boundary.
       const p3FlatData = this._applyPhase3Guardrails(flatUpdateData, _opCategory, actor, options);
@@ -2722,60 +2731,8 @@ export const ActorEngine = {
    * @returns {Object} Plan object with { success, embeddedName, actor, documents, mutations }
    */
   buildEmbeddedCreatePlan(actor, embeddedName, documents) {
-    try {
-      if (!actor) {
-        return {
-          success: false,
-          reason: 'buildEmbeddedCreatePlan called with no actor'
-        };
-      }
-
-      if (!embeddedName) {
-        return {
-          success: false,
-          reason: 'buildEmbeddedCreatePlan called without embeddedName'
-        };
-      }
-
-      if (!Array.isArray(documents)) {
-        return {
-          success: false,
-          reason: 'buildEmbeddedCreatePlan requires documents array'
-        };
-      }
-
-      if (documents.length === 0) {
-        return {
-          success: true,
-          embeddedName,
-          actor,
-          documents: [],
-          mutations: []
-        };
-      }
-
-      // Build mutation for this operation
-      const mutation = {
-        type: 'createEmbedded',
-        embeddedName,
-        documents: documents.map(d => foundry.utils.deepClone(d))
-      };
-
-      return {
-        success: true,
-        embeddedName,
-        actor,
-        documents,
-        mutations: [mutation],
-        description: `Create ${documents.length} ${embeddedName}(s)`
-      };
-    } catch (err) {
-      SWSELogger.error('buildEmbeddedCreatePlan failed:', err);
-      return {
-        success: false,
-        reason: err.message
-      };
-    }
+    // Phase 6: pure builder extracted to plan-builders.js; facade delegate.
+    return PlanBuilders.buildEmbeddedCreatePlan(actor, embeddedName, documents);
   },
 
   /**
@@ -2788,60 +2745,8 @@ export const ActorEngine = {
    * @returns {Object} Plan object with { success, embeddedName, actor, ids, mutations }
    */
   buildEmbeddedDeletePlan(actor, embeddedName, ids) {
-    try {
-      if (!actor) {
-        return {
-          success: false,
-          reason: 'buildEmbeddedDeletePlan called with no actor'
-        };
-      }
-
-      if (!embeddedName) {
-        return {
-          success: false,
-          reason: 'buildEmbeddedDeletePlan called without embeddedName'
-        };
-      }
-
-      if (!Array.isArray(ids)) {
-        return {
-          success: false,
-          reason: 'buildEmbeddedDeletePlan requires ids array'
-        };
-      }
-
-      if (ids.length === 0) {
-        return {
-          success: true,
-          embeddedName,
-          actor,
-          ids: [],
-          mutations: []
-        };
-      }
-
-      // Build mutation for this operation
-      const mutation = {
-        type: 'deleteEmbedded',
-        embeddedName,
-        ids: [...ids]
-      };
-
-      return {
-        success: true,
-        embeddedName,
-        actor,
-        ids,
-        mutations: [mutation],
-        description: `Delete ${ids.length} ${embeddedName}(s)`
-      };
-    } catch (err) {
-      SWSELogger.error('buildEmbeddedDeletePlan failed:', err);
-      return {
-        success: false,
-        reason: err.message
-      };
-    }
+    // Phase 6: pure builder extracted to plan-builders.js; facade delegate.
+    return PlanBuilders.buildEmbeddedDeletePlan(actor, embeddedName, ids);
   },
 
   /**
@@ -2855,68 +2760,8 @@ export const ActorEngine = {
    * @returns {Object} Plan object with both delete and create mutations
    */
   buildEmbeddedReplacePlan(actor, embeddedName, idsToDelete, docsToCreate) {
-    try {
-      if (!actor) {
-        return {
-          success: false,
-          reason: 'buildEmbeddedReplacePlan called with no actor'
-        };
-      }
-
-      if (!embeddedName) {
-        return {
-          success: false,
-          reason: 'buildEmbeddedReplacePlan called without embeddedName'
-        };
-      }
-
-      const mutations = [];
-
-      // Add delete mutation if IDs exist
-      if (Array.isArray(idsToDelete) && idsToDelete.length > 0) {
-        mutations.push({
-          type: 'deleteEmbedded',
-          embeddedName,
-          ids: [...idsToDelete]
-        });
-      }
-
-      // Add create mutation if documents exist
-      if (Array.isArray(docsToCreate) && docsToCreate.length > 0) {
-        mutations.push({
-          type: 'createEmbedded',
-          embeddedName,
-          documents: docsToCreate.map(d => foundry.utils.deepClone(d))
-        });
-      }
-
-      if (mutations.length === 0) {
-        return {
-          success: true,
-          embeddedName,
-          actor,
-          idsToDelete: [],
-          docsToCreate: [],
-          mutations: []
-        };
-      }
-
-      return {
-        success: true,
-        embeddedName,
-        actor,
-        idsToDelete,
-        docsToCreate,
-        mutations,
-        description: `Replace ${idsToDelete?.length || 0} with ${docsToCreate?.length || 0} ${embeddedName}(s)`
-      };
-    } catch (err) {
-      SWSELogger.error('buildEmbeddedReplacePlan failed:', err);
-      return {
-        success: false,
-        reason: err.message
-      };
-    }
+    // Phase 6: pure builder extracted to plan-builders.js; facade delegate.
+    return PlanBuilders.buildEmbeddedReplacePlan(actor, embeddedName, idsToDelete, docsToCreate);
   },
 
   /**
@@ -2932,43 +2777,8 @@ export const ActorEngine = {
    * @returns {Object} Plan object
    */
   buildCloneActorPlan(actor, modifications = {}, options = {}) {
-    try {
-      if (!actor) {
-        return {
-          success: false,
-          reason: 'buildCloneActorPlan called with no actor'
-        };
-      }
-
-      // Clone actor data
-      const cloneData = actor.toObject();
-      delete cloneData._id;
-
-      // Apply modifications to clone
-      const modifiedCloneData = foundry.utils.mergeObject(cloneData, modifications);
-
-      const mutation = {
-        type: 'cloneActor',
-        originalActorId: actor.id,
-        cloneData: modifiedCloneData,
-        modifications
-      };
-
-      return {
-        success: true,
-        actor,
-        modifications,
-        cloneData: modifiedCloneData,
-        mutations: [mutation],
-        description: `Clone ${actor.name} with modifications`
-      };
-    } catch (err) {
-      SWSELogger.error('buildCloneActorPlan failed:', err);
-      return {
-        success: false,
-        reason: err.message
-      };
-    }
+    // Phase 6: pure builder extracted to plan-builders.js; facade delegate.
+    return PlanBuilders.buildCloneActorPlan(actor, modifications, options);
   },
 
   /**
@@ -4208,6 +4018,54 @@ export const ActorEngine = {
   /** @private — delegates to MutationBoundaryService */
   _auditEmbeddedItemBoundaries(updates, actor, options) {
     return MutationBoundaryService.auditEmbeddedItemBoundaries(updates, actor, options);
+  },
+
+  /**
+   * PHASE 2: Strict-mode enforcement of high-confidence semantic-boundary findings.
+   *
+   * The MutationBoundaryService audit is warning-only and never throws — it just
+   * returns the suspicious findings. This method decides whether to reject.
+   *
+   * STRICT/DEV mode: reject the two high-confidence unknown-caller cases —
+   *   - full-system-replacement      (caller handed a whole {system:{...}} object)
+   *   - broad-domain-key-replacement (caller replaced system.skills/defenses/
+   *                                   attributes/abilities wholesale)
+   * These only ever fire for non-broad-safe callers: the audit already skips them
+   * for allowlisted contexts (adoption, migration/repair, progression commit/
+   * finalization, canonical normalization, derived rebuild).
+   *
+   * NORMAL/PRODUCTION mode: no throw — the audit's warning already fired, and
+   * production behavior is preserved unchanged.
+   *
+   * Ambiguous findings (abilities mirror writes, unclassified broad payloads) stay
+   * warning-only even in strict mode: mirror writes are auto-redirected by the
+   * Phase 3 guardrail, and the broad-key-count heuristic is too coarse to fail on.
+   * Derived writes are enforced separately by _validateDerivedWriteAuthority().
+   *
+   * @param {Array} findings - Return value of _auditSemanticBoundaries()
+   * @param {string} operationCategory
+   * @param {Actor} actor
+   * @param {Object} options
+   * @throws {Error} In strict mode when a high-confidence violation is present.
+   * @private
+   */
+  _enforceStrictSemanticBoundaries(findings, operationCategory, actor, options = {}) {
+    if (!Array.isArray(findings) || findings.length === 0) return;
+    if (MutationInterceptor.getEnforcementLevel() !== 'strict') return;
+
+    const HIGH_CONFIDENCE = new Set(['full-system-replacement', 'broad-domain-key-replacement']);
+    const blocking = findings.filter(f => HIGH_CONFIDENCE.has(f?.reason));
+    if (blocking.length === 0) return;
+
+    const detail = blocking.map(f => `${f.key} (${f.reason})`).join(', ');
+    throw new Error(
+      `[MUTATION BOUNDARY VIOLATION] Unknown caller attempted broad replacement: ${detail}\n` +
+      `operationCategory=${operationCategory}, source=${options?.source ?? options?.meta?.source ?? 'unknown'}\n` +
+      `Broad system/domain replacement is only permitted from adoption, migration/repair, ` +
+      `progression commit/finalization, canonical normalization, or derived rebuild contexts. ` +
+      `Use leaf dot-path updates instead.\n` +
+      `Caller: ${new Error().stack.split('\n')[2]}`
+    );
   },
 
   // ========================================

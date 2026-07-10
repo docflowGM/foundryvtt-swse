@@ -1,0 +1,763 @@
+{
+  "_meta": {
+    "generatedBy": "check-feature-implementation-coverage.mjs",
+    "total": 37,
+    "nonheroicCount": 434,
+    "fieldCoverage": {
+      "hitDie": 37,
+      "base_hp": 37,
+      "babProgression": 37,
+      "defenses": 37,
+      "class_skills": 5,
+      "trainedSkills": 5,
+      "talent_trees": 37,
+      "talentTreeIds": 37,
+      "starting_features": 5,
+      "level_progression": 37,
+      "grants_force_points": 31,
+      "starting_credits": 5
+    }
+  },
+  "classes": [
+    {
+      "name": "Medic",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 2,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Jedi Master",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 1,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Gunslinger",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 5,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Outlaw",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 4,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Sith Apprentice",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 6,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Scoundrel",
+      "classType": "base",
+      "talentTreeCount": 11,
+      "startingFeatureCount": 3,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": true,
+        "trainedSkills": true,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": true,
+        "level_progression": true,
+        "grants_force_points": false,
+        "starting_credits": true
+      }
+    },
+    {
+      "name": "Force Adept",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 7,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Sith Lord",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 1,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Officer",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 6,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Crime Lord",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 3,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Bounty Hunter",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 5,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Independent Droid",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 2,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Martial Arts Master",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 2,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Pathfinder",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 3,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Gladiator",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 3,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Shaper",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 3,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": false,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Enforcer",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 2,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Assassin",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 4,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Droid Commander",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 3,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Noble",
+      "classType": "base",
+      "talentTreeCount": 12,
+      "startingFeatureCount": 3,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": true,
+        "trainedSkills": true,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": true,
+        "level_progression": true,
+        "grants_force_points": false,
+        "starting_credits": true
+      }
+    },
+    {
+      "name": "Charlatan",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 2,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Ace Pilot",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 6,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Vanguard",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 3,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Scout",
+      "classType": "base",
+      "talentTreeCount": 10,
+      "startingFeatureCount": 4,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": true,
+        "trainedSkills": true,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": true,
+        "level_progression": true,
+        "grants_force_points": false,
+        "starting_credits": true
+      }
+    },
+    {
+      "name": "Military Engineer",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 2,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Elite Trooper",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 9,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Melee Duelist",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 3,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Improviser",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 3,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Saboteur",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 4,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Infiltrator",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 4,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Imperial Knight",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 5,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Force Disciple",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 1,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Soldier",
+      "classType": "base",
+      "talentTreeCount": 10,
+      "startingFeatureCount": 5,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": true,
+        "trainedSkills": true,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": true,
+        "level_progression": true,
+        "grants_force_points": false,
+        "starting_credits": true
+      }
+    },
+    {
+      "name": "Jedi Knight",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 14,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Corporate Agent",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 3,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Master Privateer",
+      "classType": "prestige-or-other",
+      "talentTreeCount": 4,
+      "startingFeatureCount": 0,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": false,
+        "trainedSkills": false,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": false,
+        "level_progression": true,
+        "grants_force_points": true,
+        "starting_credits": false
+      }
+    },
+    {
+      "name": "Jedi",
+      "classType": "base",
+      "talentTreeCount": 4,
+      "startingFeatureCount": 3,
+      "present": {
+        "hitDie": true,
+        "base_hp": true,
+        "babProgression": true,
+        "defenses": true,
+        "class_skills": true,
+        "trainedSkills": true,
+        "talent_trees": true,
+        "talentTreeIds": true,
+        "starting_features": true,
+        "level_progression": true,
+        "grants_force_points": false,
+        "starting_credits": true
+      }
+    }
+  ]
+}
