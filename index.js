@@ -55,6 +55,7 @@ import { registerForceAlchemyWorkbench, openForceAlchemyWorkbench } from "./scri
 import { registerForceTraditionPickerHooks } from "./scripts/apps/force-tradition/force-tradition-picker.js";
 import { registerLightsaberConstructionHooks } from "./scripts/applications/lightsaber/lightsaber-router.js";
 import { initializeConceptParityDiagnostics } from "./scripts/ui/concept-parity/concept-parity-diagnostics.js";
+import { initializeShellResponsiveObserver } from "./scripts/ui/shell/shell-responsive-observer.js";
 import { registerTokenNameSyncHooks } from "./scripts/core/token-name-sync.js";
 import "./scripts/talents/squad-actions-init.js";
 import "./scripts/talents/minion-actions-init.js";
@@ -188,6 +189,7 @@ Hooks.once("init", async () => {
   registerForceAlchemyWorkbench();
   registerForceTraditionPickerHooks();
   registerLightsaberConstructionHooks();
+  initializeShellResponsiveObserver();
 
   // -------------------------------
   // Feat Effect Registry + lifecycle hooks
@@ -281,7 +283,7 @@ function registerLegacyHandlebarsHelpers() {
 
   Handlebars.registerHelper("eq", (a, b) => a === b);
   Handlebars.registerHelper("lte", (a, b) => a <= b);
-  Handlebars.registerHelper("gt", (a, b) => Number(a) > Number(b));
+  Handlebars.registerHelper("gt", (a, b) => Number(a) > b);
 
   Handlebars.registerHelper("capitalize", str =>
     typeof str === "string" ? str.charAt(0).toUpperCase() + str.slice(1) : ""
@@ -289,7 +291,7 @@ function registerLegacyHandlebarsHelpers() {
 
   Handlebars.registerHelper("json", context => JSON.stringify(context));
 
-  Handlebars.registerHelper("add", (a, b) => Number(a) + Number(b));
+  Handlebars.registerHelper("add", (a, b) => Number(a) + b);
 
   // -------------------------------
   // Custom Helpers
@@ -360,38 +362,6 @@ function registerSettings() {
     scope: "world",
     config: true,
     type: Number,
-    default: 2
-  });
-
-  game.settings.register("swse", "storeSettings", {
-    name: "Store Price Settings",
-    scope: "world",
-    config: false,
-    type: Object,
-    default: { buyMultiplier: 1.0, sellMultiplier: 0.5 }
-  });
-
-  game.settings.register("swse", "storeMarkup", {
-    name: "Store Markup %",
-    scope: "world",
-    config: false,
-    type: Number,
     default: 0
-  });
-
-  game.settings.register("swse", "storeDiscount", {
-    name: "Store Discount %",
-    scope: "world",
-    config: false,
-    type: Number,
-    default: 0
-  });
-
-  // Data load flag
-  game.settings.register("swse", "dataLoaded", {
-    scope: "world",
-    config: false,
-    type: Boolean,
-    default: false
   });
 }
