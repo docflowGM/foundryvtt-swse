@@ -20,6 +20,10 @@ const STYLE_IDS = Object.freeze([
     id: 'swse-app-responsive-contracts-css',
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-contracts.css',
   },
+  {
+    id: 'swse-app-responsive-character-sheet-css',
+    href: 'systems/foundryvtt-swse/styles/system/app-responsive-character-sheet.css',
+  },
 ]);
 const DEFAULT_THRESHOLDS = Object.freeze({
   compactWidth: 1180,
@@ -157,6 +161,9 @@ export function observeAllShellResponsive(root = document) {
   const applicationTargets = scope.querySelectorAll?.(`
     .application:has(.swse-v2-sheet),
     .application:has(.swse-character-sheet),
+    .application:has(.swse-concept-body),
+    .application:has(.swse-sheet-v2-shell--concept),
+    .application:has(.swse-v2-tablet--concept),
     .application:has(.lightsaber-construction-app),
     .application:has(.customization-bay),
     .application:has(.item-customization-workbench),
