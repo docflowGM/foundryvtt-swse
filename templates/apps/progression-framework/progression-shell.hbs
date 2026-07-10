@@ -26,6 +26,8 @@
      data-step-id="{{currentDescriptor.stepId}}"
      data-theme="{{themeKey}}"
      data-motion-style="{{motionStyle}}"
+     onpointerenter="import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-rail-resizer.js').then(m=>m.hydrateProgressionRailSizes(this))"
+     onfocusin="import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-rail-resizer.js').then(m=>m.hydrateProgressionRailSizes(this))"
      style="{{{themeStyleInline}}}; {{{motionStyleInline}}};">
 <div class="swse-screen">
 
@@ -100,7 +102,7 @@
     {{> "systems/foundryvtt-swse/templates/apps/progression-framework/diagnostic-banner.hbs"}}
 
     {{!-- ====================================================================
-      CONTENT ROW — summary-panel (left) + work-surface (center) + details-panel (right)
+      CONTENT ROW — summary-panel (left) + resizer + work-surface + resizer + details-panel
     ==================================================================== --}}
     <div class="prog-content-row" data-summary-collapsed="{{summaryPanelCollapsed}}">
       {{#if hasCollapsedTopRail}}
@@ -155,6 +157,16 @@
         </div>
 
       </aside>{{!-- /summary-panel --}}
+
+      <div class="prog-rail-resizer prog-rail-resizer--summary"
+           data-rail="summary"
+           role="separator"
+           aria-orientation="vertical"
+           aria-label="Resize summary rail"
+           tabindex="0"
+           onpointerdown="import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-rail-resizer.js').then(m=>m.startProgressionRailResize(event,this))"
+           onkeydown="import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-rail-resizer.js').then(m=>m.handleProgressionRailResizerKey(event,this))"
+           ondblclick="import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-rail-resizer.js').then(m=>m.resetProgressionRailResize(event,this))"></div>
 
       {{!-- ==================================================================
         WORK SURFACE — center column, primary step interaction
@@ -213,6 +225,15 @@
 
       </div>{{!-- /work-surface --}}
 
+      <div class="prog-rail-resizer prog-rail-resizer--details"
+           data-rail="details"
+           role="separator"
+           aria-orientation="vertical"
+           aria-label="Resize details rail"
+           tabindex="0"
+           onpointerdown="import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-rail-resizer.js').then(m=>m.startProgressionRailResize(event,this))"
+           onkeydown="import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-rail-resizer.js').then(m=>m.handleProgressionRailResizerKey(event,this))"
+           ondblclick="import('/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-rail-resizer.js').then(m=>m.resetProgressionRailResize(event,this))"></div>
 
       {{!-- ==================================================================
         DETAILS PANEL — always mounted on desktop; empty state when nothing focused
@@ -255,7 +276,7 @@
     <div data-region="action-footer" class="swse-ui-frame swse-progression-footer-frame">
       <footer class="swse-footer" data-font-mode="{{fontMode}}">
 
-        {{!-- ── LEFT: Back button ── --}}
+        {{!-- LEFT: Back button --}}
         <div class="action-footer__nav">
           <button type="button"
                   class="swse-btn swse-ui-button swse-btn--back"
@@ -265,7 +286,7 @@
           </button>
         </div>
 
-        {{!-- ── CENTER: Status indicators only (no step chips here) ── --}}
+        {{!-- CENTER: Status indicators only (no step chips here) --}}
         <div class="action-footer__status">
 
           {{!-- PHASE 4 UX: Footer status readout line --}}
@@ -318,7 +339,7 @@
 
         </div>
 
-        {{!-- ── RIGHT: Next / Confirm button ── --}}
+        {{!-- RIGHT: Next / Confirm button --}}
         {{#unless footer.next.hidden}}
         <div class="action-footer__confirm">
           <button type="button"
