@@ -28,6 +28,10 @@ const STYLE_IDS = Object.freeze([
     id: 'swse-app-responsive-store-css',
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-store.css',
   },
+  {
+    id: 'swse-app-responsive-workbench-css',
+    href: 'systems/foundryvtt-swse/styles/system/app-responsive-workbench.css',
+  },
 ]);
 const DEFAULT_THRESHOLDS = Object.freeze({
   compactWidth: 1180,
@@ -170,6 +174,8 @@ export function observeAllShellResponsive(root = document) {
     .application:has(.swse-v2-tablet--concept),
     .application:has(.lightsaber-construction-app),
     .application:has(.customization-bay),
+    .application:has(.swse-customization-stage),
+    .application:has(.swse-customization-workarea),
     .application:has(.item-customization-workbench),
     .application:has(.swse-customization-workbench),
     .application:has(.gm-datapad),
