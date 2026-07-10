@@ -48,6 +48,10 @@ const STYLE_IDS = Object.freeze([
     id: 'swse-app-responsive-transmission-decryption-css',
     href: 'systems/foundryvtt-swse/styles/system/app-responsive-transmission-decryption.css',
   },
+  {
+    id: 'swse-app-responsive-force-alchemy-css',
+    href: 'systems/foundryvtt-swse/styles/system/app-responsive-force-alchemy.css',
+  },
 ]);
 const DEFAULT_THRESHOLDS = Object.freeze({
   compactWidth: 1180,
@@ -218,6 +222,10 @@ export function observeAllShellResponsive(root = document) {
     .application:has(.swse-intel-decryption-console),
     .application:has(.swse-transmission-grid),
     .application:has(.swse-transmission-shell-body),
+    .application:has(.swse-force-alchemy-workbench),
+    .application:has(.sa-win--phase5),
+    .application:has([data-force-alchemy-root]),
+    .application:has(.sa-body),
     .application:has(.atlas-surface),
     .application:has(.games-surface),
     .application:has(.hacking-surface),
