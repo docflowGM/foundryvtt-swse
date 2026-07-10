@@ -1,0 +1,219 @@
+/**
+ * SWSE Character Sheet Responsive Contract
+ *
+ * App-specific responsive behavior for the v2 concept actor shell. This file is
+ * layered after the shared app responsive contracts so real actor-shell selectors
+ * override the generic `.sheet-header/.sheet-body` fallback rules.
+ */
+
+.application.swse-shell-responsive:has(.swse-concept-body),
+.application.swse-shell-responsive:has(.swse-sheet-v2-shell--concept),
+.application.swse-shell-responsive:has(.swse-v2-tablet--concept) {
+  --swse-actor-compact-gap: 6px;
+  --swse-actor-compact-padding: 8px;
+  --swse-actor-portrait-compact: 64px;
+  --swse-actor-tabs-compact-height: 38px;
+  --swse-actor-sidebar-compact-height: 132px;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-sheet-v2-shell--concept,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-v2-tablet--concept,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-v2-screen--concept,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-character-sheet-form {
+  min-height: 0 !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-sheet-v2-shell--concept {
+  padding: var(--swse-actor-compact-padding) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-hud,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-title-strip,
+.application.swse-shell-responsive.is-shell-short:has(.swse-concept-body) .swse-concept-title-strip {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-header {
+  display: grid !important;
+  grid-template-columns: var(--swse-actor-portrait-compact) minmax(0, 1fr) minmax(168px, 0.48fr) !important;
+  gap: var(--swse-actor-compact-gap) !important;
+  margin-bottom: var(--swse-actor-compact-gap) !important;
+  flex: 0 0 auto !important;
+  max-height: 172px !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-portrait-card,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-identity-card,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-readouts-card {
+  padding: 8px !important;
+  border-radius: 12px !important;
+  min-width: 0 !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-portrait-frame {
+  width: var(--swse-actor-portrait-compact) !important;
+  height: var(--swse-actor-portrait-compact) !important;
+  max-width: var(--swse-actor-portrait-compact) !important;
+  max-height: var(--swse-actor-portrait-compact) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-portrait-caption,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-identity-topline,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-operator-line,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-level-stack .half,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-xp-text {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-name {
+  margin: 0 0 4px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-name input {
+  font-size: clamp(18px, 2.4vw, 26px) !important;
+  min-height: 28px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-identity-subline,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-badges,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-action-row {
+  gap: 4px !important;
+  margin-bottom: 4px !important;
+  max-height: 34px !important;
+  overflow: hidden !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-identity-grid {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-btn,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-badge {
+  padding: 4px 8px !important;
+  font-size: 10px !important;
+  min-height: 24px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-readouts-card {
+  gap: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-stat-stack,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-defense-strip {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 4px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-stat-card,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-defense-pill {
+  padding: 5px 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-stat-card strong,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-defense-pill strong,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-level-num {
+  font-size: 16px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-command-strip {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-resource-strip {
+  flex: 0 0 auto !important;
+  max-height: 70px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  gap: var(--swse-actor-compact-gap) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-tabs {
+  flex: 0 0 auto !important;
+  min-height: var(--swse-actor-tabs-compact-height) !important;
+  max-height: calc(var(--swse-actor-tabs-compact-height) * 2) !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  gap: 4px !important;
+  scrollbar-width: thin;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-tab,
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-sheet-mode-toggle {
+  flex: 0 0 auto !important;
+  min-width: max-content !important;
+  min-height: 30px !important;
+  padding: 4px 8px !important;
+  font-size: 10px !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-body {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  gap: var(--swse-actor-compact-gap) !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-sidebar {
+  flex: 0 0 auto !important;
+  max-height: var(--swse-actor-sidebar-compact-height) !important;
+  overflow: auto !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-main {
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+
+.application.swse-shell-responsive.is-shell-compact:has(.swse-concept-body) .swse-concept-main > .tab.active {
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  padding: var(--swse-actor-compact-padding) !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-concept-body) .swse-concept-header {
+  max-height: 126px !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-concept-body) .swse-concept-resource-strip,
+.application.swse-shell-responsive.is-shell-short:has(.swse-concept-body) .swse-concept-sidebar {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-short:has(.swse-concept-body) .swse-concept-readouts-card {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-concept-body) .swse-concept-header,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-concept-body) .swse-concept-header {
+  grid-template-columns: minmax(0, 1fr) !important;
+  max-height: 104px !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-concept-body) .swse-concept-portrait-card,
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-concept-body) .swse-concept-readouts-card,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-concept-body) .swse-concept-portrait-card,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-concept-body) .swse-concept-readouts-card {
+  display: none !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-concept-body) .swse-concept-identity-card,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-concept-body) .swse-concept-identity-card {
+  padding: 6px !important;
+}
+
+.application.swse-shell-responsive.is-shell-tier-micro:has(.swse-concept-body) .swse-concept-action-row,
+.application.swse-shell-responsive.is-shell-tiny:has(.swse-concept-body) .swse-concept-action-row {
+  max-height: 30px !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  flex-wrap: nowrap !important;
+}
