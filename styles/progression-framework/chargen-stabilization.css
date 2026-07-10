@@ -1,91 +1,42 @@
 /**
  * chargen-stabilization.css
  *
- * TEMPORARY STABILIZATION: Disable decorative SVG backgrounds and frame overlays
- * This is a surgical CSS override to simplify the chargen visual presentation
- * while the hydration pipeline is being debugged and fixed.
- *
- * REVERSIBLE: Simply remove this file from system.json imports to restore full styling.
- *
- * Changes:
- * - Hides SVG decorative elements in mentor portrait zone
- * - Hides decorative frame ::before overlays on swse-ui-frame elements
- * - Hides gradient backgrounds from decorative panels
- * - Keeps all content, buttons, and layout intact
- *
- * Scope: Chargen progression shell only
- * Target: .progression-shell and nested chargen components
+ * Surgical progression-shell presentation overrides. This file is loaded after the
+ * core progression CSS, so it owns temporary stabilization, responsive behavior,
+ * and desktop rail-resizer presentation without touching progression rules.
  */
 
 /* ============================================================================
-   MENTOR RAIL: Portrait visible, holographic decorative overlays hidden
+   Decorative chrome reduction
    ============================================================================ */
 
 .progression-shell .prog-mentor__portrait::before,
-.progression-shell .prog-mentor__portrait::after {
-  /* Hide decorative SVG holographic overlays while keeping portrait image visible */
+.progression-shell .prog-mentor__portrait::after,
+.progression-shell .prog-details-placeholder--no-frame::before,
+.progression-shell .swse-ui-frame::before,
+.progression-shell .prog-step.swse-ui-frame::before,
+.progression-shell [data-region="action-footer"].swse-ui-frame::before,
+.progression-shell .swse-ui-button::before,
+.progression-shell .swse-btn::before,
+.progression-shell .prog-btn::before,
+.progression-shell .prog-utility-bar__filter-chip::before {
   display: none !important;
 }
 
-/* ============================================================================
-   DETAILS PANEL: Hide decorative frame chrome from details region
-   ============================================================================ */
+.progression-shell .swse-ui-frame,
+.progression-shell [data-region="action-footer"].swse-ui-frame,
+.progression-shell .swse-ui-button,
+.progression-shell .prog-btn,
+.progression-shell .prog-utility-bar__filter-chip {
+  background: var(--prog-bg-surface) !important;
+  border: 1px solid var(--prog-border-accent) !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+}
 
 .progression-shell [data-region="details-panel"] {
-  /* Remove decorative background elements from details panel */
   background: transparent !important;
 }
-
-.progression-shell .prog-details-placeholder--no-frame::before {
-  /* Hide any decorative overlay on placeholder */
-  display: none !important;
-}
-
-/* ============================================================================
-   UI FRAME OVERLAYS: Disable decorative frame overlays across all chargen UI
-   This removes the ::before pseudo-elements that render the decorative SVG frame background.
-   ============================================================================ */
-
-.progression-shell .swse-ui-frame::before {
-  /* Hide the decorative frame overlay background image */
-  display: none !important;
-}
-
-.progression-shell .swse-ui-frame {
-  /* Simplify background to plain solid color instead of gradient + overlay */
-  background: var(--prog-bg-surface) !important;
-  /* Reduce visual noise from shadows */
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02) !important;
-}
-
-/* ============================================================================
-   PROGRESS RAIL FRAMES: Simplify step chip backgrounds
-   ============================================================================ */
-
-.progression-shell .prog-step.swse-ui-frame::before {
-  /* Hide step chip decorative frame overlay */
-  display: none !important;
-}
-
-/* ============================================================================
-   FOOTER FRAME: Simplify footer background
-   ============================================================================ */
-
-.progression-shell [data-region="action-footer"].swse-ui-frame::before {
-  /* Hide footer decorative frame overlay */
-  display: none !important;
-}
-
-.progression-shell [data-region="action-footer"].swse-ui-frame {
-  /* Simplify footer background */
-  background: var(--prog-bg-surface) !important;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02) !important;
-}
-
-/* ============================================================================
-   ENSURE CONTENT VISIBILITY
-   Explicitly show all content elements to compensate for hidden decorative layers
-   ============================================================================ */
 
 .progression-shell .prog-mentor__name,
 .progression-shell .prog-mentor__title,
@@ -103,37 +54,7 @@
 }
 
 /* ============================================================================
-   PRESERVE LAYOUT AND SPACING
-   Do not change any layout/sizing — only remove decorative visual elements
-   ============================================================================ */
-
-/* (No spacing changes — layout remains intact) */
-
-
-/* Flatten decorative button SVG chrome across the progression shell */
-.progression-shell .swse-ui-button::before,
-.progression-shell .swse-btn::before,
-.progression-shell .prog-btn::before,
-.progression-shell .prog-utility-bar__filter-chip::before {
-  display: none !important;
-}
-
-.progression-shell .swse-ui-button,
-.progression-shell .prog-btn,
-.progression-shell .prog-utility-bar__filter-chip {
-  background: var(--prog-bg-surface) !important;
-  border: 1px solid var(--prog-border-accent) !important;
-  border-radius: 10px !important;
-  box-shadow: none !important;
-}
-
-/* ============================================================================
-   PHASE 1 RESPONSIVE PROGRESSION SHELL
-
-   Goal: keep the progression/level-up workflow usable on small laptops and
-   ultrawide monitors without changing any step logic. The shell owns the
-   viewport; rails and work/detail panels scroll independently; footer actions
-   remain visible.
+   Viewport and scroll containment
    ============================================================================ */
 
 .application.progression-shell > section.window-content,
@@ -144,6 +65,16 @@
 .application.progression-shell .prog-main-column {
   min-height: 0 !important;
   overflow: hidden !important;
+}
+
+.progression-shell {
+  --prog-summary-rail-width: 180px;
+  --prog-details-rail-width: 280px;
+  --prog-summary-rail-min: 140px;
+  --prog-summary-rail-max: 340px;
+  --prog-details-rail-min: 240px;
+  --prog-details-rail-max: 520px;
+  --prog-work-surface-min: 360px;
 }
 
 .progression-shell .swse-screen {
@@ -183,8 +114,23 @@
   overscroll-behavior: contain;
 }
 
+.progression-shell [data-region="summary-panel"] {
+  flex: 0 0 var(--prog-summary-rail-width) !important;
+  width: var(--prog-summary-rail-width) !important;
+  min-width: var(--prog-summary-rail-width) !important;
+  max-width: var(--prog-summary-rail-width) !important;
+}
+
 .progression-shell [data-region="work-surface"] {
   flex: 1 1 auto !important;
+  min-width: min(var(--prog-work-surface-min), 100%) !important;
+}
+
+.progression-shell [data-region="details-panel"] {
+  flex: 0 0 var(--prog-details-rail-width) !important;
+  width: var(--prog-details-rail-width) !important;
+  min-width: var(--prog-details-rail-width) !important;
+  max-width: var(--prog-details-rail-width) !important;
 }
 
 .progression-shell [data-region="action-footer"] {
@@ -194,7 +140,6 @@
   overflow: visible !important;
 }
 
-/* The step counter should not scroll away while browsing long feat/talent lists. */
 .progression-shell .prog-step-context-banner {
   position: sticky;
   top: 0;
@@ -202,22 +147,94 @@
   backdrop-filter: blur(8px);
 }
 
-/* The progress rail is a horizontal stepper; make overflow intentional. */
 .progression-shell .prog-progress-rail__list {
   overflow-x: auto !important;
   overflow-y: hidden !important;
   scrollbar-gutter: stable;
 }
 
+/* ============================================================================
+   Desktop rail resizers
+   ============================================================================ */
+
+.progression-shell .prog-rail-resizer {
+  flex: 0 0 8px;
+  min-width: 8px;
+  max-width: 8px;
+  align-self: stretch;
+  cursor: col-resize;
+  position: relative;
+  z-index: 42;
+  opacity: 0.78;
+  touch-action: none;
+  user-select: none;
+}
+
+.progression-shell .prog-rail-resizer::before {
+  content: '';
+  position: absolute;
+  inset: 10px 3px;
+  border-left: 1px solid rgba(80, 220, 255, 0.35);
+  box-shadow: 0 0 8px rgba(80, 220, 255, 0.25);
+}
+
+.progression-shell .prog-rail-resizer::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 3px;
+  height: 28px;
+  transform: translate(-50%, -50%);
+  border-block: 1px solid rgba(80, 220, 255, 0.25);
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(80, 220, 255, 0.18),
+    transparent
+  );
+}
+
+.progression-shell .prog-rail-resizer:hover::before,
+.progression-shell .prog-rail-resizer:focus-visible::before,
+.progression-shell .prog-rail-resizer.is-dragging::before,
+.progression-shell.is-resizing-progression-rail .prog-rail-resizer.is-dragging::before {
+  border-left-color: rgba(120, 255, 255, 0.88);
+  box-shadow: 0 0 14px rgba(80, 220, 255, 0.55);
+}
+
+.progression-shell .prog-rail-resizer:focus-visible {
+  outline: 1px solid rgba(120, 255, 255, 0.7);
+  outline-offset: -1px;
+}
+
+.progression-shell.is-resizing-progression-rail,
+.progression-shell.is-resizing-progression-rail * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
+.progression-shell.is-summary-rail-collapsed [data-region="summary-panel"],
+.progression-shell.is-summary-rail-collapsed .prog-rail-resizer--summary {
+  display: none !important;
+}
+
+.progression-shell.is-details-rail-collapsed [data-region="details-panel"],
+.progression-shell.is-details-rail-collapsed .prog-rail-resizer--details {
+  display: none !important;
+}
+
 /* Collapse low-value rails sooner on narrow sheets so the workspace stays useful. */
 @media (max-width: 1400px) {
-  .progression-shell [data-region="summary-panel"] {
+  .progression-shell [data-region="summary-panel"],
+  .progression-shell .prog-rail-resizer--summary {
     display: none !important;
   }
 }
 
 @media (max-width: 1180px) {
-  .progression-shell [data-region="details-panel"] {
+  .progression-shell [data-region="details-panel"],
+  .progression-shell .prog-rail-resizer--details {
     display: none !important;
   }
 
@@ -226,7 +243,6 @@
   }
 }
 
-/* Short screens need a denser mentor band and less decorative chrome. */
 @media (max-height: 820px) {
   .progression-shell [data-region="mentor-rail"] {
     height: 104px !important;
@@ -267,12 +283,7 @@
 }
 
 /* ============================================================================
-   PHASE 2 AUTOMATIC COMPACT PROGRESSION MODE
-
-   Small screens should see the business items first. This is not a separate
-   smartphone flow; it is a viewport-driven shell layout. The current v2 shell
-   remains the single source of truth while low-value rails collapse
-   automatically on narrow or short viewports.
+   Automatic compact progression mode
    ============================================================================ */
 
 @media (max-width: 1180px), (max-height: 760px) {
@@ -285,14 +296,13 @@
     inset: 4px !important;
   }
 
-  /* Collapse narrator/mentor, step rail, phase banner, and summary restore chrome.
-     The player can still continue; this mode prioritizes choices over furniture. */
   .progression-shell [data-region="mentor-rail"],
   .progression-shell [data-region="progress-rail"],
   .progression-shell .prog-phase-banner,
   .progression-shell .prog-collapsed-rail-tray,
   .progression-shell .prog-summary-restore,
-  .progression-shell .prog-summary-panel__collapse {
+  .progression-shell .prog-summary-panel__collapse,
+  .progression-shell .prog-rail-resizer {
     display: none !important;
     height: 0 !important;
     min-height: 0 !important;
@@ -330,7 +340,6 @@
     font-size: 11px !important;
   }
 
-  /* Utility remains available, but becomes a compact toolbar rather than a tall rail. */
   .progression-shell [data-region="utility-bar"] {
     height: var(--prog-utility-bar-height) !important;
     min-height: var(--prog-utility-bar-height) !important;
@@ -360,8 +369,6 @@
     font-size: 11px !important;
   }
 
-  /* Details become a bottom inspection drawer only when an item is focused.
-     Empty detail states are hidden so the list remains the first thing seen. */
   .progression-shell [data-region="details-panel"] {
     display: flex !important;
     position: absolute !important;
