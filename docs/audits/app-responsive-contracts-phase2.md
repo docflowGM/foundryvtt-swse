@@ -31,6 +31,7 @@ Disconnected legacy UI should be removed instead of supported.
 8. Force Artifact / Sith Alchemy workbench
 9. Galactic Records Browser
 10. Actor Creation Entry launcher
+11. Shipyard / Asset Bay vehicle ownership surface
 ```
 
 ## Files changed
@@ -48,6 +49,7 @@ styles/system/app-responsive-transmission-decryption.css
 styles/system/app-responsive-force-alchemy.css
 styles/system/app-responsive-galactic-records.css
 styles/system/app-responsive-actor-creation-entry.css
+styles/system/app-responsive-shipyard.css
 docs/audits/app-responsive-contracts-phase2.md
 templates/apps/store.html                         deleted
 templates/apps/store/store.html                   deleted
@@ -70,6 +72,7 @@ styles/system/app-responsive-transmission-decryption.css
 styles/system/app-responsive-force-alchemy.css
 styles/system/app-responsive-galactic-records.css
 styles/system/app-responsive-actor-creation-entry.css
+styles/system/app-responsive-shipyard.css
 ```
 
 The observer emits:
@@ -331,6 +334,34 @@ Behavior:
 - overrides the template's inline layout styles externally without changing launch callbacks
 ```
 
+### Shipyard / Asset Bay vehicle ownership
+
+Targets:
+
+```txt
+swse-shell-surface--asset-bay
+swse-asset-bay-grid
+swse-asset-bay-mode-pills
+swse-vehicle-shipyard-panel
+swse-vehicle-shipyard-groups
+templates/shell/partials/surface-asset-bay.hbs
+templates/actors/vehicle/v2/partials/vehicle-shipyard-systems-panel.hbs
+```
+
+Behavior:
+
+```txt
+- compacts Asset Bay header and summary toolbar
+- keeps All Assets / Garage / Shipyard filters horizontally reachable
+- hides explanatory boundary note on short tiers
+- makes owned asset grid the primary scroller
+- converts owned asset cards into compact portrait/body/action cards
+- keeps Sheet, Modify, and Grant Access actions horizontally reachable
+- compacts vehicle-sheet EP/value/last-refit summary
+- makes installed system groups the primary shipyard panel scroller
+- bounds removed/resold systems as a horizontal strip
+```
+
 ## Resolution matrix to test
 
 ```txt
@@ -362,6 +393,7 @@ Transmission Decryption: glyphs, tactic buttons, skill buttons, frequency chips,
 Force Alchemy: categories, locked/eligible rites, targets/configs/ledger/project/cooldown controls.
 Galactic Records: categories, NPC/droid records, selected preview, Import Now, Customize & Import.
 Actor Creation Entry: Begin New Character and Access Galactic Records launcher paths at 1366x768, 1280x720, 1024x600, and 700x900.
+Shipyard: Asset Bay All/Garage/Shipyard modes, Sheet/Modify/Grant Access actions, vehicle shipyard systems panel, EP/value/last-refit summaries, installed and removed systems.
 ```
 
 ## Pass criteria
@@ -380,5 +412,5 @@ Actor Creation Entry: Begin New Character and Access Galactic Records launcher p
 
 - This pass is selector-based and conservative. Exact per-template refinements may still be needed after runtime testing.
 - It does not replace progression-specific behavior from PR #887.
-- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, actor creation launch callbacks, credits, or progression state.
+- It does not modify actor, item, rules, store transaction, game session, wager/escrow, GM surface state, location reveal state, Atlas notes, Intel/decryption state, lockbox rewards, Force Alchemy rites/projects/cooldowns, Galactic Records loader/importer behavior, actor creation launch callbacks, Asset Bay ownership/actions, vehicle EP/refit math, credits, or progression state.
 - Foundry runtime verification is still required.
