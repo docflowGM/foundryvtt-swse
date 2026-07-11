@@ -3,23 +3,24 @@
 /**
  * check-combat-math-ssot.mjs — Combat roll math single-source-of-truth guard
  *
- * Static, report-only check that the canonical combat math seam
+ * Static check that the canonical combat math seam
  * (scripts/engine/combat/combat-roll-math.js: resolveAttackBonus /
  * resolveDamageBonus) remains the authority:
  *
  *   1. The roll path (scripts/combat/rolls/attacks.js) must call the resolvers.
  *   2. The breakdown/tooltip path (weapons-engine.js getAttackBonusBreakdown /
  *      getDamageBonusBreakdown) must call the resolvers.
- *   3. Report every file that still imports the DEPRECATED combat-utils math
- *      (computeAttackBonus / computeDamageBonus) so the migration list in
- *      docs/systems/COMBAT_MATH_SSOT.md stays honest.
+ *   3. The historical combat-utils computeAttackBonus / computeDamageBonus exports
+ *      must remain compatibility wrappers that delegate to the same resolvers.
+ *   4. Report files still importing the compatibility wrappers so migration debt
+ *      stays visible without implying math is forked.
  *
  * A numeric roll-vs-breakdown parity test would need a live Foundry actor/weapon
  * (SchemaAdapters, game, foundry.utils), so it cannot run in plain node. This
- * check locks the structural invariant instead: both paths delegate to the same
- * resolver, which is what guarantees numeric parity at runtime.
+ * check locks the structural invariant instead: roll, breakdown, and legacy
+ * wrapper consumers all delegate to the same resolver.
  *
- * Report-only by default; --strict exits non-zero if invariants (1) or (2) fail.
+ * Report-only by default; --strict exits non-zero if hard invariants fail.
  */
 
 import fs from 'node:fs';
@@ -53,7 +54,6 @@ function walk(dir, out = []) {
 }
 
 const problems = [];
-const notes = [];
 
 // Invariant 1: roll path delegates to resolvers.
 const attacks = read(ROLL_PATH);
@@ -74,17 +74,26 @@ if (!weaponsEngine.includes(CANONICAL.split('/').pop())) {
   problems.push(`Breakdown path ${BREAKDOWN_PATH} does not import ${CANONICAL}.`);
 }
 
-// Invariant 3: enumerate remaining consumers of the deprecated legacy math.
-const legacyConsumers = [];
+// Invariant 3: legacy compatibility exports delegate to canonical resolvers.
+const legacyText = read(LEGACY);
+if (!legacyText.includes('resolveAttackBonus(actor, weapon')) {
+  problems.push(`${LEGACY} computeAttackBonus() does not delegate to resolveAttackBonus().`);
+}
+if (!legacyText.includes('resolveDamageBonus(actor, weapon')) {
+  problems.push(`${LEGACY} computeDamageBonus() does not delegate to resolveDamageBonus().`);
+}
+
+// Invariant 4: enumerate remaining consumers of the compatibility wrappers.
+const wrapperConsumers = [];
 for (const file of walk(SCRIPTS)) {
   const rel = path.relative(ROOT, file).replaceAll(path.sep, '/');
   if (rel === LEGACY || rel === CANONICAL) continue;
   const text = fs.readFileSync(file, 'utf8');
-  const importsLegacyMath =
+  const importsWrapperMath =
     /import[^;]*\b(computeAttackBonus|computeDamageBonus)\b[^;]*from[^;]*combat-utils/.test(text) ||
     /\bcomputeAttackBonus\s*\}?\s*=\s*await import/.test(text) ||
     (text.includes('combat-utils') && /\bcompute(Attack|Damage)Bonus\b/.test(text));
-  if (importsLegacyMath) legacyConsumers.push(rel);
+  if (importsWrapperMath) wrapperConsumers.push(rel);
 }
 
 console.log('\n' + '='.repeat(72));
@@ -93,18 +102,18 @@ console.log('='.repeat(72));
 console.log(`  Canonical seam: ${CANONICAL}`);
 
 if (problems.length === 0) {
-  console.log('\n  ✅ Roll path and breakdown path both delegate to the canonical resolvers.');
+  console.log('\n  OK: roll path, breakdown path, and compatibility wrappers delegate to canonical resolvers.');
 } else {
-  console.log('\n  ❌ Invariant failures:');
+  console.log('\n  Invariant failures:');
   for (const p of problems) console.log(`     - ${p}`);
 }
 
-console.log(`\n  Deprecated combat-utils math consumers (${legacyConsumers.length}) — migration candidates:`);
-if (legacyConsumers.length === 0) {
-  console.log('     (none — legacy duplicate is fully retired)');
+console.log(`\n  Legacy wrapper consumers (${wrapperConsumers.length}) — API migration candidates:`);
+if (wrapperConsumers.length === 0) {
+  console.log('     (none — wrapper API is fully retired)');
 } else {
-  for (const c of legacyConsumers) console.log(`     - ${c}`);
-  console.log('     See docs/systems/COMBAT_MATH_SSOT.md for the parity concern before migrating.');
+  for (const c of wrapperConsumers) console.log(`     - ${c}`);
+  console.log('     These consumers inherit canonical math through combat-utils wrappers, but should eventually import combat-roll-math directly.');
 }
 console.log('='.repeat(72) + '\n');
 
