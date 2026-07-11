@@ -128,8 +128,8 @@ The identical `[0, -1, -2, -5, -10, 0]` table is hard-coded in **3 files** (`def
      - *Destiny entry point:* implemented `SWSEActiveEffectsManager.applyDestinyEffect(actor, key)` (mirrors `applyCombatActionEffect`; idempotent replace, token status), wiring the previously-undefined call from `destiny-effects.js:115`. Destiny Defense Bonus is now real too (+2 to all three defenses via `misc.auto`, summed by `DefenseCalculator`). Noble Sacrifice remains a reminder — it grants **allies** defenses and can't auto-apply cross-actor.
    - **Related instance for Phase 2:** `vehicle-dogfighting.js:157` writes an actor-level `system.attackBonus` change on vehicles — same loose-field pattern; deferred to the Phase 2 raw-`changes` inventory rather than expanded here.
 
-**Phase 2 — Bring core AE under the SSOT lens (design):**
-3. Inventory every raw `changes` key emitted by feat/talent/force generators. Decide per-key whether it should route through the modifier pipeline or remain a legitimate core-AE write, and document the allowed set. Fix the `mode: 2`-labeled-"Override" in force-power-effects-engine.
+**Phase 2 — Bring core AE under the SSOT lens (design): ✅ INVENTORY COMPLETE in this PR (see "Phase 2 Inventory" section below).**
+3. Inventoried every raw `changes` key emitted by feat/talent/force/vehicle generators (~180 distinct targets) and classified each. Headline: most of these writes hit fields **nothing reads** — the force-power derived output and the bulk of the talent capability-flag writes are inert. The documented allowed set is small. Fixes themselves are deferred to later phases (the *intent* behind the dead writes is real; only the wiring is broken). The `mode: 2`-labeled-"Override" in force-power-effects-engine is confirmed (see below).
 
 **Phase 3 — Consolidate penalties (needs tests):**
 4. Single condition-penalty function + single table + single field (a `ConditionTrackRules` helper). Use the existing `condition-penalty-regression-test.js` as the guard. Verify derived-vs-roll-time application is not double-applied before touching.
@@ -137,6 +137,67 @@ The identical `[0, -1, -2, -5, -10, 0]` table is hard-coded in **3 files** (`def
 **Phase 4 — Verify the two roll-time double-counts (Question E)** before any change: instrument a known actor and compare sheet total vs rolled total for a Skill-Focus / always-on-feat skill.
 
 ---
+
+## Phase 2 Inventory — Raw ActiveEffect `changes[]` Keys
+
+Scope: every `changes[].key` authored by the effect generators (`feat-effect-registry`, `talent-effect-engine`, `talents.js`, `talent-effects-hooks`, the `*-talent-actions` / `*-talent-mechanics` files, `force-power-effects-engine`, `species-activated-ability-engine`, `grapple-state-engine`, `lightsaber-form-engine`, the vehicle engines, and `active-effects-manager`). ~180 distinct targets. Core `applyActiveEffects()` applies all of these to prepared actor data with no filtering.
+
+**Headline:** the dominant problem is not double-counting — it is **dead writes**. A large majority of these change keys target fields that **no code reads**, or that `DerivedCalculator` overwrites every recalc. The talent/force effect layer is substantially aspirational.
+
+### Class A — Derived-authority writes → DEAD or clobbered (must never be the pattern)
+
+All authored by `force-power-effects-engine.js` (invoked live via `force-executor.js:340 applyPowerEffect`):
+
+| Key | Status | Evidence |
+|-----|--------|----------|
+| `system.derived.shield.current` | dead — 0 readers | `force-power-effects-engine.js:215`; reader grep empty |
+| `system.derived.damageReduction.energy` / `.all` | dead — 0 readers | `:252/396/432` |
+| `system.derived.defense.all` | dead — 0 readers | `:325/362/529/641` |
+| `system.derived.meleeBonus` / `weaponBonus` / `stealthBonus` / `attackBonus` / `damageBonus` | dead — 0 readers | `:535/571/703/647/605` |
+| `system.derived.damageThreshold` | dead — **clobbered** | `DerivedCalculator` writes it every recalc (`derived-calculator.js:853`) |
+
+`DerivedCalculator` owns `system.derived.*`; nothing consumes these particular sub-keys. So force-power shield/DR/defense/attack/damage effects apply an ActiveEffect that changes nothing. **The player-facing intent is real** (force powers *should* grant these) — the wiring is what's dead, so do not simply delete; redesign to route through `ModifierEngine` domains or calculator-input fields (own phase). Also fix the `mode: 2` (Foundry ADD) entries labeled "Override" at `:217/253` — Override is `mode: 5`.
+
+### Class B — Base / SSOT writes (bypass the owning authority)
+
+| Key | Authored by | Concern |
+|-----|-------------|---------|
+| `system.hp.max` | `talents.js` Toughness (+3) / Improved Toughness (+6) `:809/819` via `talent-effects-hooks` | Bypasses the HP SSOT (`ActorEngine.recomputeHP`) on the prepared layer; `DerivedCalculator` mirrors the AE-modified `hp.max` into `derived.hp`. May work, but it is exactly the raw-AE-into-a-base-authority pattern the audit flags. Route through the HP recompute inputs or a bonus, not raw AE. |
+| `system.traits.size`, `system.speed` / `system.speed.base`, `system.movement.walk`, `system.damageThreshold.species` | talent/species engines | Write stored/base or size-authority inputs directly; verify against the owning calculators before trusting. |
+
+### Class C — Calculator-input fields (legit **iff** actually read — this is the candidate "allowed set")
+
+| Key pattern | Read? | Evidence |
+|-------------|-------|----------|
+| `system.defenses.<def>.misc.auto.<source>` | **Yes** | `DefenseCalculator.getMiscBonus` (`defense-calculator.js:726-734`) — this is the pattern Phase 1 used |
+| `system.defenses.<def>.species` | **Yes** | `defense-calculator.js:605` |
+| `system.attackPenalty` | **Yes** | `combat-roll-math.js:355` (real `template.json` actor field) |
+| `system.skills.<skill>.misc` | **Suspect — likely dead** | canonical skill field is `miscMod`, not `misc` (`skill-normalization.js:157`); AE writes `.misc` |
+| `system.skills.<skill>.species` / `.bonus` / `.trained`, `system.defenses.<def>.bonus` / `.droid` | **Unverified — no obvious reader** | not found in the calculators' read paths |
+
+**Allowed set for numeric bonuses that must feed calculators = only the confirmed rows above.** Everything else numeric should route through `ModifierEngine` (intents / domains), not a raw actor-field write.
+
+### Class D — Capability / state flags (architecturally-legit AE usage, but MANY are dead)
+
+Boolean/state toggles such as `system.evasion`, `system.improvedEvasion`, `system.grapple.{pin,crush,improvedGrab}`, `system.doubleAttack.*`, `system.tripleAttack.*`, `system.combat.<group>.{ignoreDR,thresholdReduction}`, `system.attacks.*`, `system.inspire.*`, `system.leadership.*`, `system.mechanics.*`, `system.forcePowers.*`, `system.useTheForce.*`, `system.condition.{stunned,flatFooted}`, `system.concealment.total`, `system.action.limitedToSwiftAction`, `system.darkSide.*`, `system.armor.proficiency.*`, `system.dualWield.*`, `system.criticalHit.*`, `system.unarmed.*`, `system.rally.enabled`, `system.mounted.*`, `system.forceSensitive`, `system.forceVisions`, `system.secondWind.uses`, `system.damageReduction[.ignoreUntilEndOfTurn]`, etc.; plus `flags.swse.*` (`conditions.*`, `shapeshift.active`, `roller.actionRestrictions`, `defenses.denyDexToReflex`, `dexterityBased*.speciesBonus`, `metamorph.*`, `threatenedSquares.suppressed`, `attackPenalty.nextAttack`, `skillPenalty.poison`).
+
+Toggling a capability/state flag via ActiveEffect is a **legitimate** use of core AE and is *not* the audit's SSOT concern. **However**, spot-checks found **no readers** for a sample of them (`system.evasion`, `system.doubleAttack`, `system.grapple.pin`, `system.action.limitedToSwiftAction`, `system.concealment.total` all returned zero non-authoring readers). So this class is legit *in principle* but **largely aspirational in practice** and needs a systematic reader-audit to prune the dead entries. This is a content/wiring problem, not an architecture violation — lower priority than Class A/B.
+
+### Class E — Already correct / fixed in this PR
+
+`system.attackPenalty` (Fighting Defensively + light-side talent), `system.defenses.reflex.misc.auto.{combatAction,destiny}` and the `global.attack` intents (Phase 1 + follow-ups).
+
+### Class F — Vehicle subsystem (separate audit)
+
+`system.vehicle.*` (9 keys: `speed`, `handling`, `combat`, `operational`, `hyperdriven`, `fullThrottle`, `evasiveAction`, `attackPattern`, `starshipTactics`) plus the actor-level `system.attackBonus` write at `vehicle-dogfighting.js:157` (the loose-field instance noted in Phase 1). Vehicles have their own derived builder; classify these against `vehicle-derived-builder` in a dedicated pass.
+
+### Phase 2 recommendations (fixes deferred — this was inventory only)
+
+1. **Class A (force-power derived writes)** — highest value. Redesign force-power effects to route through `ModifierEngine` domains (defense/attack/damage) or confirmed calculator-input fields. Do not delete; the mechanics are intended. Fix the mislabeled `mode` while there.
+2. **Class B (`system.hp.max` via AE)** — route Toughness-style HP bonuses through the HP recompute inputs; measure for double-apply first (sensitive).
+3. **Class C** — publish the confirmed allowed set; fix or remove the `skills.*.misc` vs `miscMod` mismatch.
+4. **Class D** — systematic reader-audit; prune dead capability-flag writes (content cleanup).
+5. **Class F** — fold into a vehicle-specific effects audit.
 
 ## Explicit "Do Not Refactor Yet" List
 
