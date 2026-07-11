@@ -10,6 +10,7 @@ import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutati
 import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/force-finalizer-patch.js';
 import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/skills-languages-finalizer-patch.js';
 import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/species-background-finalizer-patch.js';
+import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-economy-finalizer-patch.js';
 import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js';
 import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/reconciliation-and-superior-skills-hotfix.js';
 import SquadActionsMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/squad-actions-mechanics.js";
