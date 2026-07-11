@@ -185,18 +185,12 @@ export const ActorEngine = {
    * Perform any derived-stat recalculation.
    * Runs after every validated update. Non-blocking.
    *
-   * PHASE 2C: ModifierEngine.applyComputedBundle() is currently IMPURE
-   * It writes directly to system.derived.* without enforcement.
-   * planned (Phase 2C): Refactor ModifierEngine.applyComputedBundle() to:
-   *   - Return computed modifier bundle instead of mutating
-   *   - Apply bundle in DerivedCalculator context only
-   *   - Prevent unauthorized writes to system.derived.*
-   * Known issues in ModifierEngine.applyComputedBundle():
-   *   - Writes system.skills.*.total directly (should be derived-only)
-   *   - Writes system.derived.initiative as number (corrupts shape)
-   *   - Writes system.derived.defenses.*.total (should be value)
-   *   - Non-idempotent (calling twice produces different results)
-   * Mitigation: Set actor._isDerivedCalcCycle = true during DerivedCalculator phase
+   * Derived math is owned by DerivedCalculator.computeAll(), applied under
+   * actor._isDerivedCalcCycle = true so the derived-write authority guard
+   * (_validateDerivedWriteAuthority) permits the write. The legacy
+   * ModifierEngine bundle pass that used to mutate system.derived.* after this
+   * has been removed (it was non-idempotent and double-counted static
+   * modifiers such as Skill Focus).
    */
   async recalcAll(actor) {
     if (!actor) throw new Error('recalcAll() called with no actor');
@@ -242,12 +236,12 @@ export const ActorEngine = {
         }
 
         // ========================================
-        // PHASE 3: Modifier bundle legacy pass removed
+        // Modifier bundle legacy pass removed
         // ========================================
         // DerivedCalculator.computeAll() already applies static/passive modifiers
-        // and writes system.derived.modifiers for UI breakdown. Running the old
-        // ModifierEngine.computeModifierBundle() pass after that is non-idempotent
-        // and double-counts static modifiers such as Skill Focus.
+        // and writes system.derived.modifiers for UI breakdown. The old
+        // ModifierEngine bundle pass that ran here has been removed: it was
+        // non-idempotent and double-counted static modifiers such as Skill Focus.
       } finally {
         actor._isDerivedCalcCycle = false;
       }

@@ -150,9 +150,9 @@ export class SWSEV2BaseActor extends SWSEActorBase {
       if (signature) this._swseDerivedAsyncAppliedSignature = signature;
 
       // DerivedCalculator.computeAll() is the authoritative, already-modified
-      // derived snapshot. Do not run ModifierEngine.computeModifierBundle() here:
-      // that legacy pass adds the same static modifiers a second time, which
-      // overcounts Skill Focus and other passive bonuses on sheet/roll totals.
+      // derived snapshot. It already folds in static/passive modifiers, so no
+      // second modifier pass runs here (a legacy bundle pass used to, and it
+      // overcounted Skill Focus and other passive bonuses on sheet/roll totals).
 
       if (!changed) return;
 

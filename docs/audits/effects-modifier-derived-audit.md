@@ -88,10 +88,10 @@ Verdict: **one primary path, several live parallel paths.** Not a single SSOT.
 
 ## Dead / Deprecated Code (Question F)
 
-- **`ModifierEngine.applyComputedBundle` (`:793`) — DEAD.** Only caller is `applyAll` (`:892`).
-- **`ModifierEngine.applyAll` (`:879`) — DEAD & self-deprecated.** Emits a deprecation warning; **zero call sites** (only a stale doc-comment reference in `passive-adapter.js:83`). The `applyAll` hits in `repair-panel.js`, `selection-modifier-hook-registry.js`, and `force-authority-engine.js` are *different* `applyAll` methods, not `ModifierEngine.applyAll`.
-- **`ModifierEngine.computeModifierBundle` (`:631`) — DEAD.** Only used by `applyAll`. `recalcAll` removed the bundle pass (`actor-engine.js:245-250`); `base-actor.js:152-155` explicitly forbids running it ("adds the same static modifiers a second time, overcounts Skill Focus"). The impurity worry in `actor-engine.js:188-199` and `docs/audits/actor-engine-responsibility-audit.md:317` is now **moot** — the code is unreachable.
-- **No dynamic references:** grep for `applyComputedBundle` / `computeModifierBundle` / `applyAll` and for `ModifierEngine[` dispatch confirms no string/bracket call sites. Phase 0 removal is safe after this confirmation.
+- **`ModifierEngine.applyComputedBundle` — was DEAD (only caller was `applyAll`). REMOVED in this PR.**
+- **`ModifierEngine.applyAll` — was DEAD & self-deprecated (deprecation warning, zero call sites). REMOVED in this PR.** The `applyAll` hits in `repair-panel.js`, `selection-modifier-hook-registry.js`, and `force-authority-engine.js` are *different* `applyAll` methods, not `ModifierEngine.applyAll`.
+- **`ModifierEngine.computeModifierBundle` — was DEAD (only used by `applyAll`). REMOVED in this PR.** `recalcAll` had already removed the runtime bundle pass; `base-actor.js` already forbade running it. The impurity worry previously tracked in `actor-engine.js` and `docs/audits/actor-engine-responsibility-audit.md:317` is now moot — the code no longer exists.
+- **No dynamic references:** grep for `applyComputedBundle` / `computeModifierBundle` / `applyAll` and for `ModifierEngine[` dispatch confirmed no string/bracket call sites before removal.
 - **`SWSEActiveEffectsManager` `updates` shape + `SWSEActorBase._applyActiveEffects` — DEAD DATA PAIR.** Writer authors `updates`, Foundry drops it (no schema field, no custom doc class), reader finds nothing. The combat-action reflex/attack bonuses this pair implements likely **do not apply at all** — a latent functional bug, not just cleanup.
 - **`skills-reference.js` `_calculateSkills` (`:272`)** reads `system.conditionTrack.penalty` — a field `DerivedCalculator` does not write (it uses `system.derived.damage.conditionPenalty`). Appears to be a stale/legacy skill calculator; flag for confirmation.
 
@@ -116,8 +116,8 @@ The identical `[0, -1, -2, -5, -10, 0]` table is hard-coded in **3 files** (`def
 
 ## Recommended Phases
 
-**Phase 0 — Zero-risk cleanup (do first):**
-1. Delete `applyComputedBundle`, `computeModifierBundle`, `applyAll` and the stale impurity comments (`actor-engine.js:188-199`). No dynamic/string refs — confirmed. Shrinks the audit surface and removes the single most misleading "is this live?" question.
+**Phase 0 — Zero-risk cleanup (do first): ✅ APPLIED in this PR.**
+1. Deleted `applyComputedBundle`, `computeModifierBundle`, `applyAll` from `ModifierEngine.js` (291 lines) and rewrote the stale impurity comments in `actor-engine.js`, `base-actor.js`, and `passive-adapter.js`. No dynamic/string refs — confirmed. Shrinks the audit surface and removes the single most misleading "is this live?" question.
 
 **Phase 1 — Resolve the combat-AE dead pair (correctness):**
 2. Runtime-confirm that `SWSEActiveEffectsManager` effects lose `.updates` on persistence and that combat-action defense/attack bonuses currently do nothing. Then decide: migrate those to Basic intents (#4) or real `changes` (#1), and either fix or delete `_applyActiveEffects()`. This is a *bug*, not just tidy-up.

@@ -80,7 +80,7 @@ export class PassiveAdapter {
    *   - Transform ability.system.abilityMeta.modifiers into canonical Modifier format
    *   - Include sourceId (ability.id), sourceType (ModifierSource.CUSTOM)
    *   - Apply stacking rules via ModifierEngine
-   *   - Inject via ModifierEngine.applyAll() during actor preparation
+   *   - Surfaced through ModifierEngine.getAllModifiers() during actor preparation
    *
    * PHASE 5: Guard against UNLOCK mixing
    *   - Reject if ability.system.grants is present
