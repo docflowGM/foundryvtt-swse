@@ -27,61 +27,17 @@ export class SWSEActorBase extends Actor {
 
   /**
    * Called by Foundry during actor data preparation.
-   * Applies Active Effects only — all math lives in data model.
+   *
+   * Foundry core applies ActiveEffect `changes[]` between prepareBaseData and
+   * prepareDerivedData, and SWSE derived math runs in the subclass. There is no
+   * custom active-effect application here: the previous `_applyActiveEffects()`
+   * consumed a non-standard `effect.updates` property that Foundry drops on
+   * persistence (no schema field / custom document class), so it never applied.
    *
    * @protected
    */
   prepareDerivedData() {
     super.prepareDerivedData();
-
-    // Apply Active Effects with basic ADD/MULTIPLY/OVERRIDE/BASE modes.
-    // This is safe and v2-compliant as it only modifies this actor's data.
-    this._applyActiveEffects();
-  }
-
-  /* -------------------------------------------------------------------------- */
-  /* ACTIVE EFFECTS                                                             */
-  /* -------------------------------------------------------------------------- */
-
-  /**
-   * Apply Active Effects to this actor's derived data.
-   * Pure calculation: no side-effects.
-   *
-   * @private
-   */
-  _applyActiveEffects() {
-    const effects = this.effects ?? [];
-    if (!effects.length) {return;}
-
-    for (const effect of effects) {
-      if (effect.disabled || !effect.updates) {continue;}
-
-      for (const [path, config] of Object.entries(effect.updates)) {
-        if (!config || typeof config.value === 'undefined') {continue;}
-
-        const mode = config.mode ?? 'ADD';
-        const value = config.value;
-
-        let current = foundry.utils.getProperty(this, path);
-        if (current === undefined) {
-          foundry.utils.setProperty(this, path, 0);
-          current = 0;
-        }
-
-        let result = current;
-
-        switch (mode) {
-          case 'ADD': result = current + value; break;
-          case 'MULTIPLY': result = current * value; break;
-          case 'OVERRIDE': result = value; break;
-          case 'BASE':
-            if (current === 0 || current === null) {result = value;}
-            break;
-        }
-
-        foundry.utils.setProperty(this, path, result);
-      }
-    }
   }
 
   /* -------------------------------------------------------------------------- */

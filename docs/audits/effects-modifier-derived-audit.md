@@ -119,8 +119,13 @@ The identical `[0, -1, -2, -5, -10, 0]` table is hard-coded in **3 files** (`def
 **Phase 0 — Zero-risk cleanup (do first): ✅ APPLIED in this PR.**
 1. Deleted `applyComputedBundle`, `computeModifierBundle`, `applyAll` from `ModifierEngine.js` (291 lines) and rewrote the stale impurity comments in `actor-engine.js`, `base-actor.js`, and `passive-adapter.js`. No dynamic/string refs — confirmed. Shrinks the audit surface and removes the single most misleading "is this live?" question.
 
-**Phase 1 — Resolve the combat-AE dead pair (correctness):**
-2. Runtime-confirm that `SWSEActiveEffectsManager` effects lose `.updates` on persistence and that combat-action defense/attack bonuses currently do nothing. Then decide: migrate those to Basic intents (#4) or real `changes` (#1), and either fix or delete `_applyActiveEffects()`. This is a *bug*, not just tidy-up.
+**Phase 1 — Resolve the combat-AE dead pair (correctness): ✅ APPLIED in this PR (migrate-to-`changes` direction).**
+2. Confirmed the `.updates` shape is dropped on persistence (no `ActiveEffect` schema field, no custom document class; target paths absent from `template.json`), so both readers were inert — `SWSEActorBase._applyActiveEffects` (ran every prepare) and `combat-utils.getEffectModifier` (also zero callers). User-facing impact: Fighting Defensively / Total Defense / Destiny attack bonuses granted a token icon + flag but no actual math.
+   - **Fix:** `SWSEActiveEffectsManager` now emits real Foundry `changes[]` (normalized via `normalizeActiveEffectChangeForRuntime`), consistent with `combat-action-bar._doCharge`. Deleted the dead `_applyActiveEffects()` and `getEffectModifier()`.
+   - **Verified readers:** `system.attackPenalty` is a base actor field (`template.json Actor.templates.base.attackPenalty`) read at `combat-roll-math.js:355`; the Reflex `system.defenses.reflex.misc.auto.combatAction` bonus is summed by `DefenseCalculator` (`defense-calculator.js:728`). So Fighting Defensively and Total Defense are now functionally restored.
+   - **Residual follow-ups (out of this migration's scope, pre-existing):**
+     - `system.attackBonus` targeted by Destiny / Charge is only a **weapon** schema field, not an actor field, and has no actor-level roll-time reader. These bonuses are now well-formed `changes` but still won't feed attack rolls until a reader is added or the target is retargeted (e.g. into the ModifierEngine attack domain). Note `_doCharge` already had this same gap.
+     - `applyDestinyEffect` is called (`destiny-effects.js:115`) but is **not defined** on `SWSEActiveEffectsManager` — the Destiny effects have no working entry point regardless of shape. Needs a decision (add the method or route destiny through another path).
 
 **Phase 2 — Bring core AE under the SSOT lens (design):**
 3. Inventory every raw `changes` key emitted by feat/talent/force generators. Decide per-key whether it should route through the modifier pipeline or remain a legitimate core-AE write, and document the allowed set. Fix the `mode: 2`-labeled-"Override" in force-power-effects-engine.

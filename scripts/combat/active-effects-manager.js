@@ -1,6 +1,6 @@
 /**
  * SWSE Active Effects Manager — Foundry v13+ Refactor
- * - Structured updates (B3 format)
+ * - Emits real Foundry ActiveEffect `changes[]` (applied by core applyActiveEffects)
  * - v13-safe document handling
  * - Condition & combat effects rewritten
  * - Token HUD integration modernized
@@ -9,6 +9,7 @@
 
 import { swseLogger } from "/systems/foundryvtt-swse/scripts/utils/logger.js";
 import { ActorEngine } from "/systems/foundryvtt-swse/scripts/governance/actor-engine/actor-engine.js";
+import { normalizeActiveEffectChangeForRuntime } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
 
 export class SWSEActiveEffectsManager {
 
@@ -19,7 +20,7 @@ export class SWSEActiveEffectsManager {
   static _buildEffect(actor, {
     name,
     icon,
-    updates = {},
+    changes = [],
     flags = {},
     duration = {},
     origin = actor?.uuid
@@ -30,7 +31,10 @@ export class SWSEActiveEffectsManager {
       origin,
       duration,
       disabled: false,
-      updates,
+      // Real Foundry ActiveEffect changes so core applyActiveEffects() folds
+      // them into prepared actor data (consumed by DefenseCalculator's misc.auto
+      // and combat-roll-math's system.attackPenalty/attackBonus).
+      changes: (Array.isArray(changes) ? changes : []).map(normalizeActiveEffectChangeForRuntime),
       flags: {
         swse: { ...flags }
       }
@@ -59,37 +63,37 @@ export class SWSEActiveEffectsManager {
     normal: {
       name: 'Normal',
       icon: 'systems/foundryvtt-swse/icons/conditions/normal.svg',
-      updates: {},
+      changes: [],
       flags: { conditionTrack: 'normal', statusId: 'normal' }
     },
     '-1': {
       name: 'Injured (-1)',
       icon: 'systems/foundryvtt-swse/icons/conditions/injured-1.svg',
-      updates: {},
+      changes: [],
       flags: { conditionTrack: '-1', statusId: 'condition-1' }
     },
     '-2': {
       name: 'Wounded (-2)',
       icon: 'systems/foundryvtt-swse/icons/conditions/injured-2.svg',
-      updates: {},
+      changes: [],
       flags: { conditionTrack: '-2', statusId: 'condition-2' }
     },
     '-5': {
       name: 'Severely Wounded (-5)',
       icon: 'systems/foundryvtt-swse/icons/conditions/injured-5.svg',
-      updates: {},
+      changes: [],
       flags: { conditionTrack: '-5', statusId: 'condition-5' }
     },
     '-10': {
       name: 'Critical (-10)',
       icon: 'systems/foundryvtt-swse/icons/conditions/injured-10.svg',
-      updates: {},
+      changes: [],
       flags: { conditionTrack: '-10', statusId: 'condition-10' }
     },
     helpless: {
       name: 'Helpless',
       icon: 'systems/foundryvtt-swse/icons/conditions/helpless.svg',
-      updates: {},
+      changes: [],
       flags: { conditionTrack: 'helpless', statusId: 'helpless' }
     }
   };
@@ -103,37 +107,37 @@ export class SWSEActiveEffectsManager {
       name: 'Fighting Defensively',
       icon: 'icons/svg/shield.svg',
       duration: { rounds: 1 },
-      updates: {
-        'system.attackPenalty': { mode: 'ADD', value: -5 },
-        'system.defenses.reflex.misc.auto.combatAction': { mode: 'ADD', value: 2 }
-      },
+      changes: [
+        { key: 'system.attackPenalty', mode: 2, value: -5 },
+        { key: 'system.defenses.reflex.misc.auto.combatAction', mode: 2, value: 2 }
+      ],
       flags: { combatAction: 'fighting-defensively', attackPenalty: -5, reflexDodgeBonus: 2 }
     },
     'total-defense': {
       name: 'Total Defense',
       icon: 'icons/svg/shield.svg',
       duration: { rounds: 1 },
-      updates: {
-        'system.defenses.reflex.misc.auto.combatAction': { mode: 'ADD', value: 5 }
-      },
+      changes: [
+        { key: 'system.defenses.reflex.misc.auto.combatAction', mode: 2, value: 5 }
+      ],
       flags: { combatAction: 'total-defense', reflexDodgeBonus: 5, gmAdjudicatesNoAttacks: true }
     },
     'cover-partial': {
       name: 'Partial Cover',
       icon: 'icons/svg/wall.svg',
-      updates: {},
+      changes: [],
       flags: { combatAction: 'cover-partial' }
     },
     'cover-full': {
       name: 'Full Cover',
       icon: 'icons/svg/wall.svg',
-      updates: {},
+      changes: [],
       flags: { combatAction: 'cover-full' }
     },
     'cover-improved': {
       name: 'Improved Cover',
       icon: 'icons/svg/wall.svg',
-      updates: {},
+      changes: [],
       flags: { combatAction: 'cover-improved' }
     }
   };
@@ -147,32 +151,32 @@ export class SWSEActiveEffectsManager {
       name: 'Destiny: Attack Bonus',
       icon: 'icons/svg/sword.svg',
       duration: { hours: 24 },
-      updates: {
-        'system.attackBonus': { mode: 'ADD', value: 2 }
-      },
+      changes: [
+        { key: 'system.attackBonus', mode: 2, value: 2 }
+      ],
       flags: { destinyEffect: 'attack-bonus', duration: '24h' }
     },
     'destiny-defense-bonus': {
       name: 'Destiny: Defense Bonus',
       icon: 'icons/svg/shield.svg',
       duration: { hours: 24 },
-      updates: {},
+      changes: [],
       flags: { destinyEffect: 'defense-bonus', duration: '24h' }
     },
     'noble-sacrifice': {
       name: 'Noble Sacrifice',
       icon: 'icons/svg/heart.svg',
       duration: { hours: 24 },
-      updates: {},
+      changes: [],
       flags: { destinyEffect: 'noble-sacrifice', duration: '24h' }
     },
     'vengeance': {
       name: 'Vengeance',
       icon: 'icons/svg/explosion.svg',
       duration: { hours: 24 },
-      updates: {
-        'system.attackBonus': { mode: 'ADD', value: 3 }
-      },
+      changes: [
+        { key: 'system.attackBonus', mode: 2, value: 3 }
+      ],
       flags: { destinyEffect: 'vengeance', duration: '24h' }
     }
   };
@@ -205,7 +209,7 @@ export class SWSEActiveEffectsManager {
     const effect = this._buildEffect(actor, {
       name: data.name,
       icon: data.icon,
-      updates: data.updates,
+      changes: data.changes,
       flags: data.flags
     });
 
@@ -237,15 +241,19 @@ export class SWSEActiveEffectsManager {
   static _combatActionDataForActor(actor, key) {
     const data = foundry.utils.deepClone(this.COMBAT_ACTION_EFFECTS[key] ?? null);
     if (!data) return null;
+    const setChangeValue = (changeKey, value) => {
+      const change = (data.changes ?? []).find(c => c.key === changeKey);
+      if (change) change.value = value;
+    };
     if (key === 'fighting-defensively') {
       const bonus = this._hasTrainedAcrobatics(actor) ? 5 : 2;
-      data.updates['system.defenses.reflex.misc.auto.combatAction'].value = bonus;
+      setChangeValue('system.defenses.reflex.misc.auto.combatAction', bonus);
       data.flags.reflexDodgeBonus = bonus;
       data.name = `Fighting Defensively (+${bonus} Ref)`;
     }
     if (key === 'total-defense') {
       const bonus = this._hasTrainedAcrobatics(actor) ? 10 : 5;
-      data.updates['system.defenses.reflex.misc.auto.combatAction'].value = bonus;
+      setChangeValue('system.defenses.reflex.misc.auto.combatAction', bonus);
       data.flags.reflexDodgeBonus = bonus;
       data.name = `Total Defense (+${bonus} Ref)`;
     }
@@ -275,7 +283,7 @@ export class SWSEActiveEffectsManager {
     const effect = this._buildEffect(actor, {
       name: data.name,
       icon: data.icon,
-      updates: data.updates,
+      changes: data.changes,
       flags: data.flags,
       duration: data.duration
     });
@@ -302,8 +310,7 @@ export class SWSEActiveEffectsManager {
       origin: actor.uuid,
       duration: data.duration ?? {},
       disabled: false,
-      changes: data.changes ?? [],
-      updates: data.updates ?? {},
+      changes: (data.changes ?? []).map(normalizeActiveEffectChangeForRuntime),
       flags: { swse: { ...(data.flags ?? {}) } }
     };
     await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', [effect]);
