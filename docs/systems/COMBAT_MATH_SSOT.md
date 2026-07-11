@@ -6,8 +6,9 @@
 
 Both return `{ total, components, flags }`. `total` is the number added to the
 roll; `components` is the labeled breakdown shown in tooltips. Because the roll
-path and the breakdown path call the **same** function, sheets/tooltips can never
-under- or over-report relative to the dice that are actually rolled.
+path, the breakdown path, and the legacy compatibility wrappers call the **same**
+resolver functions, sheets/tooltips can never under- or over-report relative to
+the dice that are actually rolled.
 
 ## Canonical flows
 
@@ -20,7 +21,7 @@ attacks.js  ──►  resolveAttackBonus(actor, weapon, null, rollOptions).tota
 
 ### Damage roll path
 ```
-attacks.js  ──►  resolveDamageBonus(actor, weapon, rollOptions).total
+attacks.js / damage.js  ──►  resolveDamageBonus(actor, weapon, rollOptions).total
 ```
 
 ### Tooltip / breakdown path
@@ -32,6 +33,15 @@ weapon-tooltip.js
 
 `WeaponsEngine.getAttackBonusBreakdown` / `getDamageBonusBreakdown` are thin
 adapters that return `{ total, components }` straight from the resolver.
+
+### Legacy compatibility-wrapper path
+```
+combat-utils.computeAttackBonus(...)  ──►  resolveAttackBonus(...).total
+combat-utils.computeDamageBonus(...)  ──►  resolveDamageBonus(...).total
+```
+
+This keeps older orchestrators such as Autofire, Full Attack, and legacy combat
+cards numerically aligned while their imports are migrated at a safer pace.
 
 ## Modifiers owned by the resolvers
 
@@ -45,63 +55,40 @@ flat-statblock mode is honored first and short-circuits to the flat bonus.
 Keep this file as **math only** — action legality, UI state, and ammo/mode
 selection belong to their own engines, not the resolver.
 
-## Legacy duplicate (deprecated)
+## Legacy API status
 
 `scripts/combat/utils/combat-utils.js` still exports `computeAttackBonus()` and
-`computeDamageBonus()`. These predate the resolvers and are **deprecated**:
+`computeDamageBonus()` for old callers, but these exports are now compatibility
+wrappers. They no longer own independent attack/damage math.
 
-- They **omit** combat-option, rage, Sith Commander, rapid alchemy, Force Item,
-  effect-intent, and scoped-feat modifiers.
-- They still add **legacy species combat bonuses**
-  (`system.speciesCombatBonuses` / `speciesTraitBonuses.combat`) and an explicit
-  dex-to-damage talent branch that the resolvers do not.
+New code should import `resolveAttackBonus()` / `resolveDamageBonus()` directly.
+Existing callers may remain temporarily because they inherit canonical math
+through the wrappers.
 
-They remain **behavior-frozen** (no delegation yet) because a blind delegate
-would silently drop those species bonuses. New code must not use them.
+### Remaining wrapper consumers to retire
 
-### Remaining consumers to migrate (with the parity concern)
+| File | Function | Status |
+|------|----------|--------|
+| `scripts/combat/rolls/enhanced-rolls.js` | `computeAttackBonus` | API migration candidate; math already canonical through wrapper |
+| `scripts/combat/systems/enhanced-combat-system.js` | both | API migration candidate; math already canonical through wrapper |
+| `scripts/engine/combat/ui/CombatUIAdapter.js` | `computeDamageBonus` | API migration candidate; math already canonical through wrapper |
+| `scripts/engine/combat/vehicles/utils/vehicle-calculations.js` | `computeAttackBonus` | evaluate separately; vehicle weapon attack path may deserve a vehicle-specific resolver |
 
-| File | Function | Parity to verify before migrating |
-|------|----------|-----------------------------------|
-| `scripts/combat/rolls/damage.js` | `computeDamageBonus` | species damage bonus + dex-to-damage vs resolver |
-| `scripts/combat/rolls/enhanced-rolls.js` | `computeAttackBonus` | species attack bonus vs resolver |
-| `scripts/combat/systems/enhanced-combat-system.js` | both | species bonuses vs resolver |
-| `scripts/engine/combat/ui/CombatUIAdapter.js` | `computeDamageBonus` | species damage bonus vs resolver |
-| `scripts/engine/combat/vehicles/utils/vehicle-calculations.js` | `computeAttackBonus` | vehicle weapon attack path |
+### Species combat bonus note
 
-**Migration rule:** before switching a consumer to the resolver, confirm at
-runtime that species combat bonuses are either (a) already applied by the
-resolver via ModifierEngine/effect-intent, or (b) genuinely dead data. Only then
-is the resolver numerically ≥ the legacy result and safe to swap.
+The old combat-utils implementation read `system.speciesCombatBonuses` /
+`system.speciesTraitBonuses.combat` attack/damage sub-keys. Static review found
+no v2 write site for those attack/damage sub-keys; only defense sub-keys appear
+to be populated and consumed. The resolver therefore became authoritative rather
+than preserving a second, likely-dead species combat path.
 
-### Static finding (2026-07-09 review) — the exact blocker
-
-The canonical resolvers do **not** read `system.speciesCombatBonuses` /
-`system.speciesTraitBonuses.combat`; `combat-utils` adds
-`speciesCombat.meleeAttack / rangedAttack / meleeDamage / rangedDamage`. A repo
-grep finds **no write site** for those attack/damage sub-keys — only the
-`.defenses` sub-key is populated and consumed (by `defense-calculator.js`). That
-strongly suggests the species *attack/damage* bonus is legacy/unpopulated in v2,
-so migrating would be a no-op. **But absence of a static write is not proof**: a
-species sidecar or trait applier could set it at runtime.
-
-**Recommended runtime test before migrating any of the 5 consumers:** on a
-character whose species grants a flat combat bonus (e.g. a species with a melee
-or ranged attack/damage trait), log `actor.system.speciesCombatBonuses` after
-species application and compare `computeAttackBonus` vs `resolveAttackBonus().total`
-(and the damage pair). If they match (species sub-keys empty/zero), migrate the
-consumer to the resolver as a thin change. If they differ, the species bonus must
-first be modeled as a ModifierEngine/effect-intent modifier so the resolver picks
-it up — only then migrate.
-
-Verdict per consumer (static): all five are **needs-runtime-verification** — none
-is safe to migrate blindly. `vehicle-calculations.js` is additionally
-special-cased (vehicle weapons don't take personal species/feat modifiers), so it
-is closer to intentional-legacy.
+If a future species implementation needs flat attack/damage bonuses, model them
+through the modifier/effect-intent pipeline so `combat-roll-math.js` picks them up
+once for rolls, tooltips, and wrapper callers.
 
 ## Guardrail
 
-`tools/check-combat-math-ssot.mjs` statically asserts that the roll path and the
-breakdown path both route through the canonical resolvers, and reports any file
-still importing the deprecated `combat-utils` math so the migration list above
-stays honest.
+`tools/check-combat-math-ssot.mjs` statically asserts that the roll path,
+breakdown path, and compatibility wrappers all route through the canonical
+resolvers. It also reports any file still importing the old wrapper API so import
+cleanup remains visible without implying math has forked.
