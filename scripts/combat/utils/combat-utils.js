@@ -1,18 +1,19 @@
 import { ResolutionContext } from '../../engine/resolution/resolution-context.js';
 import { RULES } from '../../engine/execution/rules/rule-enum.js';
-import { SchemaAdapters } from '../../utils/schema-adapters.js';
-import { isNpcStatblockMode } from '../../actors/npc/npc-mode-adapter.js';
-import { SettingsHelper } from "/systems/foundryvtt-swse/scripts/utils/settings-helper.js";
-import { getDamageAbilityContribution, getHalfLevelDamageBonus, getRangePenalty, getWeaponAttackAbility, getWeaponFlatAttackBonus, getWeaponFlatDamageBonus, isMeleeWeapon as isRawMeleeWeapon, isRangedWeapon as isRawRangedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { getHalfLevelDamageBonus, isMeleeWeapon as isRawMeleeWeapon, isRangedWeapon as isRawRangedWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
 import { ModifierEngine } from "/systems/foundryvtt-swse/scripts/engine/effects/modifiers/ModifierEngine.js";
 import { evaluateStatePredicates } from "/systems/foundryvtt-swse/scripts/engine/abilities/passive/passive-state.js";
+import { resolveAttackBonus, resolveDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 
 /**
  * Modern SWSE Combat Utilities (v13+)
- * - Condition Track integer-based penalties
- * - Combat math used by SWSERoll, DamageSystem, ActiveEffects
- * - Future-proof flanking, concealment, size mods, AE modifiers
- * - Clean, consistent, actor-centric API
+ * - Non-roll tactical helpers: cover, concealment, flanking, critical rules
+ * - Compatibility wrappers for historical combat math APIs
+ *
+ * IMPORTANT: Attack and damage bonus math is now owned by
+ * scripts/engine/combat/combat-roll-math.js. The legacy compute* exports below
+ * intentionally delegate to the canonical resolver so old call sites cannot fork
+ * roll/display math while they are being migrated.
  */
 
 /* -------------------------------------------------------------------------- */
@@ -34,20 +35,10 @@ export function getConditionPenalty(ctStep) {
 /* -------------------------------------------------------------------------- */
 
 /**
- * Compute SWSE attack bonus from all components.
- * This is NOT the final attack roll function — SWSERoll handles FP + UI.
+ * Compatibility wrapper for historical attack math callers.
  *
- * @deprecated LEGACY combat math. The canonical attack-bonus seam is
- *   `resolveAttackBonus()` in scripts/engine/combat/combat-roll-math.js, which
- *   the live attack roll path (attacks.js) and the tooltip/breakdown path
- *   (weapons-engine.js) already use. This function predates the resolver and
- *   omits combat-option, rage, Sith Commander, rapid alchemy, Force Item,
- *   effect-intent, and scoped-feat modifiers (it still adds legacy species
- *   combat bonuses the resolver does not). New code MUST call
- *   resolveAttackBonus(). Existing consumers (enhanced-rolls.js,
- *   enhanced-combat-system.js, vehicle-calculations.js) are migration candidates
- *   pending numeric parity verification of species bonuses — see
- *   docs/systems/COMBAT_MATH_SSOT.md. Kept and behavior-frozen until then.
+ * @deprecated Use resolveAttackBonus() from combat-roll-math.js for new code.
+ * Existing callers receive canonical SSOT math through this wrapper.
  *
  * @param {Actor} actor
  * @param {Item} weapon
@@ -55,53 +46,8 @@ export function getConditionPenalty(ctStep) {
  * @returns {number} Final attack bonus
  */
 export function computeAttackBonus(actor, weapon, options = {}) {
-  if (actor?.type === 'npc' && isNpcStatblockMode(actor)) {
-    const npc = weapon?.flags?.swse?.npc;
-    if (npc?.useFlat === true && Number.isFinite(npc.flatAttackBonus)) {
-      return Number(npc.flatAttackBonus) || 0;
-    }
-  }
-
-  const bab = SchemaAdapters.getBAB(actor);
-  const attr = getWeaponAttackAbility(actor, weapon);
-  const abilityMod = SchemaAdapters.getAbilityMod(actor, attr);
-  const misc = getWeaponFlatAttackBonus(weapon);
-  const rangePenalty = getRangePenalty(weapon);
-
-  const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
-  const speciesAttackBonus = (isRawRangedWeapon(weapon) && !isRawMeleeWeapon(weapon) ? (speciesCombat.rangedAttack || 0) : (speciesCombat.meleeAttack || 0));
-
-  const ctPenalty = actor.system?.derived?.damage?.conditionPenalty ??
-                    actor.system?.conditionTrack?.penalty ??
-                    0;
-
-  if (SettingsHelper.getBoolean('devMode', false) &&
-      actor.system?.conditionTrack &&
-      actor.system?.conditionTrack?.penalty !== undefined &&
-      actor.system?.derived?.damage?.conditionPenalty !== actor.system?.conditionTrack?.penalty) {
-    console.warn(
-      `[SWSE] Condition penalty mismatch detected for ${actor.name}.`,
-      {
-        systemPenalty: actor.system.conditionTrack.penalty,
-        derivedPenalty: actor.system.derived?.damage?.conditionPenalty
-      }
-    );
-  }
-
-  const aePenalty = actor.system.attackPenalty ?? 0;
-  const proficient = weapon.system?.proficient ?? true;
-  const proficiencyPenalty = proficient ? 0 : -5;
-
-  return (
-    bab +
-    abilityMod +
-    misc +
-    rangePenalty +
-    speciesAttackBonus +
-    aePenalty +
-    ctPenalty +
-    proficiencyPenalty
-  );
+  const actionId = options?.actionId ?? options?.action ?? options?.combatActionId ?? null;
+  return resolveAttackBonus(actor, weapon, actionId, options).total;
 }
 
 /**
@@ -281,47 +227,13 @@ function computePassiveStateDamageBonus(actor, weapon, context = {}) {
 }
 
 /**
- * Compute SWSE RAW damage bonus.
+ * Compatibility wrapper for historical damage math callers.
  *
- * @deprecated LEGACY combat math. The canonical damage-bonus seam is
- *   `resolveDamageBonus()` in scripts/engine/combat/combat-roll-math.js, used by
- *   the live damage roll path (attacks.js) and the tooltip/breakdown path
- *   (weapons-engine.js). This function omits combat-option, rage, Force Item, and
- *   scoped-feat modifiers (it still adds legacy species combat bonuses the
- *   resolver does not). New code MUST call resolveDamageBonus(). Existing
- *   consumers (damage.js, enhanced-combat-system.js, CombatUIAdapter.js) are
- *   migration candidates pending numeric parity verification of species bonuses
- *   and dex-to-damage handling — see docs/systems/COMBAT_MATH_SSOT.md. Kept and
- *   behavior-frozen until then.
+ * @deprecated Use resolveDamageBonus() from combat-roll-math.js for new code.
+ * Existing callers receive canonical SSOT math through this wrapper.
  */
 export function computeDamageBonus(actor, weapon, options = {}) {
-  const halfLvl = getHalfLevelDamageBonus(actor, weapon, { ...options, weapon, isWeaponDamage: true });
-  let bonus = halfLvl + getWeaponFlatDamageBonus(weapon);
-
-  const speciesCombat = actor.system?.speciesCombatBonuses || actor.system?.speciesTraitBonuses?.combat || {};
-  const isRangedWeapon = !!weapon.system?.ranged;
-  const speciesDamageBonus = (isRangedWeapon ? (speciesCombat.rangedDamage || 0) : (speciesCombat.meleeDamage || 0));
-  bonus += speciesDamageBonus;
-
-  const isLight = isLightWeapon(weapon, actor);
-  const isTwoHanded = options.forceTwoHanded || isTwoHandedWeapon(weapon, actor);
-  let abilityContribution = getDamageAbilityContribution(actor, weapon, {
-    isLight,
-    twoHanded: isTwoHanded,
-    forceTwoHanded: options.forceTwoHanded
-  });
-
-  if ((isMeleeWeapon(weapon) || weapon.system?.thrown === true) && hasDexToDamageTalent(actor)) {
-    const dexMod = SchemaAdapters.getAbilityMod(actor, 'dex');
-    const strMod = SchemaAdapters.getAbilityMod(actor, 'str');
-    if (dexMod > strMod) abilityContribution = (isTwoHanded && !isLight) ? dexMod * 2 : dexMod;
-  }
-
-  const context = { ...options, weapon };
-  bonus += abilityContribution;
-  bonus += computePassiveStateDamageBonus(actor, weapon, context);
-
-  return bonus;
+  return resolveDamageBonus(actor, weapon, options).total;
 }
 
 /* -------------------------------------------------------------------------- */
@@ -412,3 +324,10 @@ export function resolveAttackAgainstTarget(attackRoll, target, options = {}) {
     reflex: finalRef
   };
 }
+
+// Keep these raw imports semantically referenced for older utility consumers that
+// inspect this module's helper behavior during transition.
+void getHalfLevelDamageBonus;
+void isRawMeleeWeapon;
+void isRawRangedWeapon;
+void computePassiveStateDamageBonus;
