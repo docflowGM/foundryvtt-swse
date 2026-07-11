@@ -22,7 +22,6 @@ import { MutationNormalizationService } from "/systems/foundryvtt-swse/scripts/g
 import { MutationBoundaryService } from "/systems/foundryvtt-swse/scripts/governance/mutation/mutation-boundary-service.js";
 import * as PlanBuilders from "/systems/foundryvtt-swse/scripts/governance/actor-engine/plan-builders.js";
 import { normalizeActiveEffectDataForRuntime } from "/systems/foundryvtt-swse/scripts/utils/active-effect-change-utils.js";
-import { ImplantRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js";
 
 /**
  * ActorEngine
