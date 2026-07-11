@@ -1487,8 +1487,9 @@ export const ActorEngine = {
       };
 
       // RAW: Any healing while at 0 HP / disabled revives and moves +1 step up the CT.
-      if (currentHP <= 0 && currentCT > 0) {
-        updates['system.conditionTrack.current'] = Math.max(0, currentCT - 1);
+      const recoveredStep = ConditionTrackRules.resolveHealingConditionRecovery(currentHP, currentCT);
+      if (recoveredStep !== null) {
+        updates['system.conditionTrack.current'] = recoveredStep;
       }
       if (actor.type === 'droid' && newHP > 0 && actor.system?.droidState?.status === 'disabled') {
         updates['system.droidState.status'] = 'operational';
@@ -1639,36 +1640,31 @@ export const ActorEngine = {
         source
       });
 
-      const conditionCapVariant = HouseRuleService.getAll()?.conditionCapVariant?.value ?? 'STANDARD';
-      const conditionCap = ({ STANDARD: 5, VARIANT_6: 6, VARIANT_UNLIMITED: 999 })[conditionCapVariant?.toUpperCase?.()] ?? 5;
-      const currentCondition = Number(actor.system.conditionTrack?.current || 0);
-      const implantExtraStep = ImplantRules.getConditionTrackExtraStep(actor, direction);
-      const effectiveDirection = direction > 0 ? direction + implantExtraStep : direction;
-      const newCondition = Math.min(conditionCap, Math.max(0, currentCondition + effectiveDirection));
+      const shift = ConditionTrackRules.resolveConditionShift(actor, direction);
 
-      if (newCondition === currentCondition) {
+      if (shift.appliedShift === 0) {
         SWSELogger.debug(`${actor.name} condition shift had no effect (at boundary)`);
-        return { applied: 0, newCondition };
+        return { applied: 0, newCondition: shift.next };
       }
 
       // RENDER SEQUENCING FIX: Suppress intermediate renders during condition update.
       await this.updateActor(actor, {
-        'system.conditionTrack.current': newCondition
+        'system.conditionTrack.current': shift.next
       }, {
         render: false
       });
 
       const directionLabel = direction > 0 ? 'worsened' : 'improved';
-      SWSELogger.log(`Condition ${directionLabel} for ${actor.name} (now: ${newCondition})`, {
+      SWSELogger.log(`Condition ${directionLabel} for ${actor.name} (now: ${shift.next})`, {
         source,
         requestedShift: direction,
-        implantExtraStep,
-        appliedShift: newCondition - currentCondition
+        implantExtraStep: shift.implantExtraStep,
+        appliedShift: shift.appliedShift
       });
 
       return {
-        applied: newCondition - currentCondition,
-        newCondition
+        applied: shift.appliedShift,
+        newCondition: shift.next
       };
 
     } catch (err) {

@@ -9,6 +9,7 @@
  */
 
 import { HouseRuleService } from "/systems/foundryvtt-swse/scripts/engine/system/HouseRuleService.js";
+import { ImplantRules } from "/systems/foundryvtt-swse/scripts/engine/implants/ImplantRules.js";
 
 export class ConditionTrackRules {
   /**
@@ -47,6 +48,45 @@ export class ConditionTrackRules {
 
   static conditionTrackAutoApplyEnabled() {
     return HouseRuleService.getBoolean('conditionTrackAutoApply', false);
+  }
+
+  /**
+   * Resolves a condition track shift for an actor.
+   *
+   * Owns cap calculation, implant adjustment, and effective shift computation.
+   *
+   * @param {Actor} actor - target actor
+   * @param {number} direction - +1 (worse) or -1 (better)
+   * @returns {{ next: number, implantExtraStep: number, appliedShift: number }}
+   */
+  static resolveConditionShift(actor, direction) {
+    const conditionCap = ConditionTrackRules.getConditionStepCap();
+    const currentCondition = Number(actor.system.conditionTrack?.current || 0);
+    const implantExtraStep = ImplantRules.getConditionTrackExtraStep(actor, direction);
+    const effectiveDirection = direction > 0 ? direction + implantExtraStep : direction;
+    const next = Math.min(conditionCap, Math.max(0, currentCondition + effectiveDirection));
+
+    return {
+      next,
+      implantExtraStep,
+      appliedShift: next - currentCondition
+    };
+  }
+
+  /**
+   * Resolves the condition track recovery step when healing revives an actor.
+   *
+   * RAW: Any healing while at 0 HP / disabled revives and moves +1 step up the CT.
+   *
+   * @param {number} currentHP - actor HP prior to healing
+   * @param {number} currentCT - actor condition track step prior to healing
+   * @returns {number|null} the recovered condition step, or null if no recovery applies
+   */
+  static resolveHealingConditionRecovery(currentHP, currentCT) {
+    if (currentHP <= 0 && currentCT > 0) {
+      return Math.max(0, currentCT - 1);
+    }
+    return null;
   }
 
   /**
