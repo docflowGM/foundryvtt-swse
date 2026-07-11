@@ -100,7 +100,8 @@ import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
 import { resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 import { damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
-import { getCriticalDamageBonus, computeDamageBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
+import { getCriticalDamageBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
+import { resolveDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
 import { TalentEffectEngine } from "/systems/foundryvtt-swse/scripts/engine/talent/talent-effect-engine.js";
 import { isNpcStatblockMode } from "/systems/foundryvtt-swse/scripts/actors/npc/npc-mode-adapter.js";
 import { getCriticalMultiplier as getRawCriticalMultiplier, isAreaAttack } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
@@ -176,10 +177,10 @@ export async function rollDamage(actor, weapon, context = {}) {
 
 
   const baseFormula = weapon.system?.damage ?? '1d6';
-  const dmgBonus = computeDamageBonus(actor, weapon, {
+  const dmgBonus = resolveDamageBonus(actor, weapon, {
     ...rollContext,
     forceTwoHanded: rollContext.twoHanded || false
-  }) + rapidAlchemyDamageBonus(actor, weapon);
+  }).total;
 
   // Calculate talent-based damage bonuses
   const talentContext = { ...rollContext, weapon };
