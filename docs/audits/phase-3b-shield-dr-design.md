@@ -89,13 +89,22 @@ ShieldMitigationResolver  reads ONLY system.derived.shield.current/max/source   
 DamageReductionResolver   reads ONLY system.derived.damageReduction             (single representation)
 ```
 
-### Shield — recommended: **persistent resource, `system.shields` as SSOT**
+### Shield — **DECIDED (D1/D2): depleting resource, `system.shields` as SSOT**
 
+Resolved by the Shield Rating RAW addendum (Core Rulebook p.161; *Combat Skills Summary*; *Scavenger's Guide to Droids* — Recharge Shields, Shield Surge). Shield Rating is **not** a static defensive statistic; it is an expendable combat resource. The S2 "static soak" alternative is rejected as non-RAW.
+
+**RAW behavior (authority for the model):**
+- Incoming damage is absorbed by current Shield Rating first; any remaining damage passes through normally.
+- If an attack deals **more** damage than the current Shield Rating, the Shield Rating is **permanently reduced by 5** until recharged. *(The existing `ShieldMitigationResolver` already implements exactly this: `srDegraded = 5` when `damage > srCurrent` — only the persistence is missing.)*
+- **Recharge Shields** restores **+5 SR up to the shield's normal maximum** (Mechanics for vehicles/devices; Endurance for droids).
+- **Shield Surge** confirms SR is consumable: remaining SR can be spent one-for-one for additional damage prevention. *(Partial scaffolding already exists: `shieldRatingCostPerDamageReduced: 1` in `droid-combat-feat-normalization-hooks.js:174` / `droid-combat-runtime-patches.js:340`.)*
+
+**Chosen architecture:**
 - **Canonical stored state:** `system.shields = { value, max, rating, regenRate }` (already exists in the base template — no new field needed). `value` = current SR, `max`/`rating` = ceiling.
 - **DerivedCalculator** projects `system.derived.shield.{current,max,source}` from `system.shields` (+ `Item.armor.shieldRating`, + any temporary SR source). Resolver contract unchanged.
-- **Depletion becomes real:** the damage flow persists `srRemaining` back to `system.shields.value` via **ActorEngine** (the mitigation manager stays pure; a thin ActorEngine step applies the returned `srRemaining`). This is the one genuinely new behavior and needs its own review.
-- **Force Shield** grants temporary SR by raising `system.shields` through ActorEngine (option 3: ActorEngine-managed resource) — never by writing derived.
-- *Alternative (S2):* keep SR a static computed soak (no persistence), drop degradation. Simpler, less RAW-accurate. **Not recommended** but listed for the decision.
+- **ShieldMitigationResolver stays a pure calculator** — computes mitigation + `srRemaining`, mutates nothing.
+- **ActorEngine persists SR depletion** after mitigation resolves (writes `srRemaining` back to `system.shields.value`). This is the one genuinely new behavior and gets its own review. Recharge Shields (+5 up to `max`) and Shield Surge (spend SR for prevention) are ActorEngine-managed mutations of the same stored resource.
+- **Force Shield** grants temporary SR by raising `system.shields` through ActorEngine — never by writing derived.
 
 ### DR — recommended: **`system.derived.damageReduction` as the single read representation**
 
@@ -135,8 +144,8 @@ DamageReductionResolver   reads ONLY system.derived.damageReduction             
 
 ## Open decisions requiring sign-off before implementation
 
-- **D1. Shield model:** persistent depleting resource (S1, recommended) vs static computed soak (S2)? This decides whether ActorEngine gains a shield-persistence step.
-- **D2. Shield field consolidation:** adopt `system.shields` as the single stored authority and repoint the `system.shieldRating` / `system.currentSR` / sheet/card readers? (Reconciliation, not a new field.)
+- **D1. Shield model:** ✅ **DECIDED — persistent depleting resource** (per the Shield Rating RAW addendum: CRB p.161, Recharge Shields, Shield Surge). ActorEngine gains a shield-persistence step; Recharge Shields (+5 up to max) and Shield Surge (spend SR) are ActorEngine mutations of `system.shields`.
+- **D2. Shield field consolidation:** ✅ **DECIDED (shield authority) — `system.shields` is the canonical stored authority**, `derived.shield` is its projection. Still open: mechanically repointing the `system.shieldRating` / `system.currentSR` / sheet / card readers to the canonical source (reconciliation detail, not a new field), to be handled in implementation.
 - **D3. DR single representation:** collapse the resolver's three read paths into `system.derived.damageReduction` only?
 - **D4. Typed axis:** unify typed energy DR onto `derived.damageReduction.byType`, and decide the fate of the parallel `damageResistances` system (fold in vs keep separate)?
 - **D5. Scope split for implementation:** shield and DR are independent SSOTs and could be two separate implementation PRs.
