@@ -1,5 +1,15 @@
 # SWSE Architecture Audit — Independent Verification of Phase 1–3 Refactor
 
+> **RESOLUTION (Phase 4).** This document is a point-in-time audit. The runtime
+> monkey-patch stack it describes as *active* has since been removed: the seven
+> `…-finalizer-patch.js` files were folded directly into `ProgressionFinalizer` and
+> deleted, `squad-actions-init.js` no longer activates them, the dead
+> `ProgressionMetadataPlanBuilder` was fixed (its missing import repointed) and wired
+> in, and the divergent `ClassPlanBuilder` is documented as intentionally not wired
+> (class stays inline). See `docs/architecture/progression-architecture.md` for the
+> current design. The findings below are retained as the historical record that
+> motivated that work — treat them as *addressed*, not current.
+
 **Scope:** Adversarial verification of the Phase 1 (schema authority), Phase 2 (combat
 math SSOT), and Phase 3 (ProgressionFinalizer decomposition) work on branch
 `claude/swse-architecture-audit-elqhfu`.

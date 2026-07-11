@@ -6,6 +6,21 @@
  * This module is intentionally side-effect free. It does not mutate actors or call
  * ActorEngine; it returns mutation-plan fragments for ProgressionFinalizer to
  * merge, validate, and apply.
+ *
+ * ⚠️ NOT WIRED (as of Phase 4). This builder is a draft and is deliberately not
+ * imported by ProgressionFinalizer, because it is NOT behavior-equivalent to the
+ * finalizer's current inline class compilation. Known divergences:
+ *   1. selectionId fallback differs — this builder uses
+ *      `clazz.id || clazz.sourceId || clazz.classId || clazz.name || levelContext?.selectedClassId`
+ *      while the inline path uses `clazz.id || clazz.sourceId || clazz.name || null`.
+ *   2. No branch for non-chargen / non-levelup modes; the inline path still emits a
+ *      class item in that case.
+ *   3. Scope — the inline class domain also includes class auto-grants and starter
+ *      equipment (see ProgressionFinalizer._compileClassAutoGrantItems /
+ *      _compileClassStarterEquipmentItems), which this builder does not produce.
+ * Do not wire this in without first reconciling the above against the inline block
+ * in ProgressionFinalizer._compileMutationPlanBase and running a Foundry
+ * chargen + level-up smoke test. See the TODO(class) there.
  */
 
 import { buildLevelUpEventContext } from '/systems/foundryvtt-swse/scripts/engine/progression/utils/levelup-event-context.js';

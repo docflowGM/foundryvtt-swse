@@ -46,16 +46,20 @@ import { validateFinalProgressionPrerequisites } from '/systems/foundryvtt-swse/
 // wrapped ProgressionFinalizer methods (…-finalizer-patch.js, registered as an
 // import side-effect of squad-actions-init.js). Phase 4 imports them directly and
 // folds the wrapper logic into the compilation flow below, so no runtime patching
-// remains. NOTE: ProgressionMetadataPlanBuilder is intentionally NOT imported — it
-// references a module that does not exist (levelup-finalization-receipt.js) and its
-// patch was never registered; completion metadata stays on the inline path below to
-// preserve current behavior. ClassPlanBuilder is likewise not part of the live flow.
+// remains.
+//
+// ClassPlanBuilder is intentionally NOT imported: it is not behavior-equivalent to
+// the inline class compilation (divergent selectionId fallbacks, missing the
+// non-levelup item-add branch, and it never covered class auto-grants or starter
+// equipment). The class domain therefore stays inline — see the TODO at the class
+// block in _compileMutationPlanBase.
 import { AbilityScorePlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/ability-score-plan-builder.js';
 import { FeatTalentPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/feat-talent-plan-builder.js';
 import { ForcePlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/force-plan-builder.js';
 import { SkillsLanguagesPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/skills-languages-plan-builder.js';
 import { SpeciesBackgroundPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/species-background-plan-builder.js';
 import { ProgressionEconomyPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js';
+import { ProgressionMetadataPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-metadata-plan-builder.js';
 
 /* -------------------------------------------------------------------------- */
 /* PHASE 4 consolidation helpers                                              */
@@ -191,6 +195,18 @@ function phase4RemoveInlineEconomyKeys(set = {}) {
   for (const key of Object.keys(set || {})) {
     if (PHASE4_ECONOMY_SET_KEYS.has(key)) delete set[key];
   }
+}
+
+/* --- completion metadata --- */
+function phase4RemoveMetadataKeys(set = {}, mode = 'chargen') {
+  delete set['flags.swse.levelUpEntitlementManifest'];
+  delete set['flags.swse.levelUpFinalizationReceipt'];
+  delete set[`flags.foundryvtt-swse.progression.${mode}.completed`];
+  delete set['system.progression.lastCompletedMode'];
+  delete set['system.progression.completedSessionId'];
+  delete set['system.progression.completedAt'];
+  delete set['system.progression.chargenComplete'];
+  delete set['flags.foundryvtt-swse.progression.chargen.completedAt'];
 }
 
 /* --- feat / talent (strip-and-merge on _compileProgressionAbilityItems) --- */
@@ -1009,7 +1025,8 @@ export class ProgressionFinalizer {
    * builder replace its portion of the plan. Application order mirrors the
    * historical patch registration order (ability → skills → species → economy);
    * feat/talent and force are integrated inside _compileProgressionAbilityItems.
-   * Completion metadata remains on the inline path in _compileMutationPlanBase.
+   * Completion metadata is applied last (it reads the entitlement manifest that
+   * earlier steps depend on before replacing it with the builder's copy).
    */
   static async _compileMutationPlan(sessionState, actor, options = {}) {
     const plan = await this._compileMutationPlanBase(sessionState, actor, options);
@@ -1017,7 +1034,26 @@ export class ProgressionFinalizer {
     await this._applySkillsLanguagesBuilder(actor, sessionState, plan);
     await this._applySpeciesBackgroundBuilder(actor, sessionState, plan);
     this._applyProgressionEconomyBuilder(actor, sessionState, plan);
+    this._applyProgressionMetadataBuilder(actor, sessionState, plan);
     return plan;
+  }
+
+  /**
+   * PHASE 4: applies ProgressionMetadataPlanBuilder over the base plan set. The
+   * builder is behavior-equivalent to the inline metadata block in
+   * _compileMutationPlanBase: identical keys/values, and the same
+   * buildLevelUpFinalizationReceipt function. Runs last so the manifest the
+   * ability/skills builders read from plan.set is still present when they run.
+   */
+  static _applyProgressionMetadataBuilder(actor, sessionState, plan) {
+    if (!plan?.set) return;
+    const fragment = ProgressionMetadataPlanBuilder.buildSet({
+      actor,
+      sessionState,
+      levelUpManifest: plan.set['flags.swse.levelUpEntitlementManifest'] || null,
+    });
+    phase4RemoveMetadataKeys(plan.set, sessionState.mode);
+    Object.assign(plan.set, fragment);
   }
 
   /** PHASE 4: applies AbilityScorePlanBuilder over the base plan set. */
@@ -1215,6 +1251,15 @@ export class ProgressionFinalizer {
         set['system.event'] = background.name;
       }
     }
+    // PHASE 4 TODO(class): the class domain intentionally remains inline here.
+    // ClassPlanBuilder is NOT behavior-equivalent to this block and is therefore
+    // not wired: (1) its selectionId fallback differs (it adds clazz.classId /
+    // levelContext.selectedClassId to the chain used below), (2) it has no branch
+    // for non-chargen/non-levelup modes, where this code still emits a class item
+    // via the `else` below, and (3) class compilation also spans
+    // _compileClassAutoGrantItems and _compileClassStarterEquipmentItems, which the
+    // builder never covered. Wiring class safely requires reconciling all three plus
+    // a Foundry chargen/level-up smoke test.
     if (clazz) {
       const classSystemForActor = this._sanitizeClassSystemForDroid(clazz.system || {}, isDroidProgression);
       const classSelectionForActor = isDroidProgression && clazz && typeof clazz === 'object'
