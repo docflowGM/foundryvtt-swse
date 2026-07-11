@@ -7,6 +7,7 @@ import '/systems/foundryvtt-swse/scripts/patches/runtime-bugfix-hotfixes-init.js
 import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js';
 import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/ability-score-finalizer-patch.js';
 import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/feat-talent-finalizer-patch.js';
+import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/force-finalizer-patch.js';
 import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js';
 import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/reconciliation-and-superior-skills-hotfix.js';
 import SquadActionsMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/squad-actions-mechanics.js";
