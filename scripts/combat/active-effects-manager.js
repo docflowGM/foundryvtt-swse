@@ -21,10 +21,19 @@ export class SWSEActiveEffectsManager {
     name,
     icon,
     changes = [],
+    intent = null,
     flags = {},
     duration = {},
     origin = actor?.uuid
   }) {
+    const effectFlags = { swse: { ...flags } };
+    if (intent) {
+      // SWSE Basic effect intent — consumed by the ModifierEngine domains
+      // (e.g. global.attack read at attack-roll time via getBasicEffectIntentBonus).
+      // Preferred over writing loose actor fields such as system.attackBonus that
+      // have no canonical roll-time reader.
+      effectFlags['foundryvtt-swse'] = { effectIntent: intent };
+    }
     return {
       name,
       icon,
@@ -33,11 +42,9 @@ export class SWSEActiveEffectsManager {
       disabled: false,
       // Real Foundry ActiveEffect changes so core applyActiveEffects() folds
       // them into prepared actor data (consumed by DefenseCalculator's misc.auto
-      // and combat-roll-math's system.attackPenalty/attackBonus).
+      // and combat-roll-math's system.attackPenalty).
       changes: (Array.isArray(changes) ? changes : []).map(normalizeActiveEffectChangeForRuntime),
-      flags: {
-        swse: { ...flags }
-      }
+      flags: effectFlags
     };
   }
 
@@ -151,16 +158,21 @@ export class SWSEActiveEffectsManager {
       name: 'Destiny: Attack Bonus',
       icon: 'icons/svg/sword.svg',
       duration: { hours: 24 },
-      changes: [
-        { key: 'system.attackBonus', mode: 2, value: 2 }
-      ],
+      // Routed through the ModifierEngine attack domain (global.attack) instead
+      // of a loose system.attackBonus field that has no roll-time reader.
+      intent: { category: 'attack', target: 'all', operation: 'increase', amount: 2, bonusType: 'untyped', application: 'always', scope: 'self', transfer: true },
       flags: { destinyEffect: 'attack-bonus', duration: '24h' }
     },
     'destiny-defense-bonus': {
       name: 'Destiny: Defense Bonus',
       icon: 'icons/svg/shield.svg',
       duration: { hours: 24 },
-      changes: [],
+      // +2 to all three defenses via misc.auto, summed by DefenseCalculator.
+      changes: [
+        { key: 'system.defenses.reflex.misc.auto.destiny', mode: 2, value: 2 },
+        { key: 'system.defenses.fortitude.misc.auto.destiny', mode: 2, value: 2 },
+        { key: 'system.defenses.will.misc.auto.destiny', mode: 2, value: 2 }
+      ],
       flags: { destinyEffect: 'defense-bonus', duration: '24h' }
     },
     'noble-sacrifice': {
@@ -174,9 +186,8 @@ export class SWSEActiveEffectsManager {
       name: 'Vengeance',
       icon: 'icons/svg/explosion.svg',
       duration: { hours: 24 },
-      changes: [
-        { key: 'system.attackBonus', mode: 2, value: 3 }
-      ],
+      // Routed through the ModifierEngine attack domain (global.attack).
+      intent: { category: 'attack', target: 'all', operation: 'increase', amount: 3, bonusType: 'untyped', application: 'always', scope: 'self', transfer: true },
       flags: { destinyEffect: 'vengeance', duration: '24h' }
     }
   };
@@ -304,16 +315,43 @@ export class SWSEActiveEffectsManager {
 
   static async createCustomEffect(actor, data = {}) {
     if (!actor || !data?.name) return null;
-    const effect = {
+    const effect = this._buildEffect(actor, {
       name: data.name,
       icon: data.icon ?? 'icons/svg/aura.svg',
-      origin: actor.uuid,
-      duration: data.duration ?? {},
-      disabled: false,
-      changes: (data.changes ?? []).map(normalizeActiveEffectChangeForRuntime),
-      flags: { swse: { ...(data.flags ?? {}) } }
-    };
+      changes: data.changes ?? [],
+      intent: data.intent ?? null,
+      flags: data.flags ?? {},
+      duration: data.duration ?? {}
+    });
     await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', [effect]);
+    return effect;
+  }
+
+  /* -------------------------------------------------------------------------- */
+  /* DESTINY EFFECT HANDLING                                                    */
+  /* -------------------------------------------------------------------------- */
+
+  static async applyDestinyEffect(actor, key) {
+    if (!actor) return null;
+    const data = this.DESTINY_EFFECTS[key];
+    if (!data) return null;
+
+    // Replace any existing instance of the same destiny effect (idempotent).
+    const existing = actor.effects.filter(e => e.flags?.swse?.destinyEffect === data.flags?.destinyEffect);
+    if (existing.length) {
+      await ActorEngine.deleteEmbeddedDocuments(actor, 'ActiveEffect', existing.map(e => e.id));
+    }
+
+    const effect = this._buildEffect(actor, {
+      name: data.name,
+      icon: data.icon,
+      changes: data.changes ?? [],
+      intent: data.intent ?? null,
+      flags: data.flags,
+      duration: data.duration
+    });
+    await ActorEngine.createEmbeddedDocuments(actor, 'ActiveEffect', [effect]);
+    await this._applyTokenStatus(actor, data.icon);
     return effect;
   }
 
