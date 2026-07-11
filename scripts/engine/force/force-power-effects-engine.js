@@ -570,29 +570,34 @@ export class ForcePowerEffectsEngine {
     }
 
     const duration = this._parseDuration(powerItem.system.duration);
-    const icon = powerItem.img || 'icons/svg/melee.svg';
 
-    // Phase 3A: weapon enhancement affects both attack and damage rolls.
-    return [
-      this._buildIntentEffect(actor, powerItem, {
-        labelSuffix: `(+${bonus} attack)`,
-        icon,
-        duration,
-        category: 'attack',
-        target: 'all',
-        amount: bonus,
-        effectType: 'weaponEnhancement'
-      }),
-      this._buildIntentEffect(actor, powerItem, {
-        labelSuffix: `(+${bonus} damage)`,
-        icon,
-        duration,
-        category: 'damage',
-        target: 'all',
-        amount: bonus,
-        effectType: 'weaponEnhancement'
-      })
-    ];
+    // DEFERRED (Phase 3A, pending source verification): the canonical Force Weapon
+    // rules text is not present in the available sourcebooks, so mapping it to
+    // attack-only, damage-only, or attack+damage would be speculative. Left on its
+    // original (nonfunctional) system.derived.weaponBonus write — which no reader
+    // consumes — until the originating sourcebook is available. Do NOT infer a
+    // mapping. See docs/audits/effects-modifier-derived-audit.md.
+    return [{
+      label: `${powerItem.name} (+${bonus})`,
+      icon: powerItem.img || 'icons/svg/melee.svg',
+      origin: powerItem.uuid,
+      disabled: false,
+      transfer: false,
+      duration: duration,
+      changes: [
+        {
+          key: 'system.derived.weaponBonus',
+          mode: 2,
+          value: bonus.toString(),
+          priority: 20
+        }
+      ],
+      flags: {
+        swse: {
+          effectType: 'weaponEnhancement'
+        }
+      }
+    }];
   }
 
   /**
