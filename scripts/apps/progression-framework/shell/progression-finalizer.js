@@ -42,6 +42,232 @@ import {
 } from '/systems/foundryvtt-swse/scripts/engine/progression/droids/droid-progression-guards.js';
 import { collectKnownForceSecrets, collectKnownForceTechniques, forceKnowledgeToLedgerEntries } from '/systems/foundryvtt-swse/scripts/utils/force-knowledge.js';
 import { validateFinalProgressionPrerequisites } from '/systems/foundryvtt-swse/scripts/engine/progression/validation/finalization-prerequisite-validator.js';
+// PHASE 4: domain plan builders. Previously wired as runtime monkey-patches that
+// wrapped ProgressionFinalizer methods (…-finalizer-patch.js, registered as an
+// import side-effect of squad-actions-init.js). Phase 4 imports them directly and
+// folds the wrapper logic into the compilation flow below, so no runtime patching
+// remains.
+//
+// ClassPlanBuilder is intentionally NOT imported: it is not behavior-equivalent to
+// the inline class compilation (divergent selectionId fallbacks, missing the
+// non-levelup item-add branch, and it never covered class auto-grants or starter
+// equipment). The class domain therefore stays inline — see the TODO at the class
+// block in _compileMutationPlanBase.
+import { AbilityScorePlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/ability-score-plan-builder.js';
+import { FeatTalentPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/feat-talent-plan-builder.js';
+import { ForcePlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/force-plan-builder.js';
+import { SkillsLanguagesPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/skills-languages-plan-builder.js';
+import { SpeciesBackgroundPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/species-background-plan-builder.js';
+import { ProgressionEconomyPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-economy-plan-builder.js';
+import { ProgressionMetadataPlanBuilder } from '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-metadata-plan-builder.js';
+
+/* -------------------------------------------------------------------------- */
+/* PHASE 4 consolidation helpers                                              */
+/*                                                                            */
+/* These pure helpers were previously defined inside the per-domain finalizer */
+/* patch modules. They are folded in here verbatim so the finalizer can apply */
+/* each builder's fragment directly (no runtime method patching). Ordering of */
+/* application mirrors the historical patch registration order.               */
+/* -------------------------------------------------------------------------- */
+
+const PHASE4_ABILITY_KEYS = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
+const PHASE4_ABILITY_SET_KEY_RE = /^system\.attributes\.(str|dex|con|int|wis|cha)\.base$/;
+const PHASE4_SPECIES_BACKGROUND_SET_KEYS = new Set([
+  'system.species', 'system.race', 'system.background', 'system.profession',
+  'system.planetOfOrigin', 'system.event', 'flags.swse.progression.speciesSkippedForDroid', 'img',
+]);
+const PHASE4_ECONOMY_SET_KEYS = new Set([
+  'system.hp.value', 'system.hp.max', 'system.credits', 'flags.swse.progressionHistory',
+  'system.forcePoints.max', 'system.forcePoints.value', 'system.progression.lastForcePointRefresh',
+  'system.progression.lastHpGain', 'system.progression.lastCreditDelta',
+]);
+const PHASE4_FORCE_KEYS = ['forcePowers', 'forceRegimens', 'forceTechniques', 'forceSecrets'];
+
+function phase4AsArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+function phase4HasOwnKeys(value = {}) {
+  return value && typeof value === 'object' && Object.keys(value).length > 0;
+}
+
+/* --- ability-score --- */
+function phase4AbilitySelectionShouldCompile(sessionState = {}, attr = {}) {
+  return sessionState?.mode === 'chargen' || phase4HasOwnKeys(attr);
+}
+function phase4RemoveInlineAbilitySetKeys(set = {}) {
+  for (const key of Object.keys(set || {})) {
+    if (PHASE4_ABILITY_SET_KEY_RE.test(key)) delete set[key];
+  }
+  delete set['system.progression.lastAbilityIncrease'];
+  delete set['system.progression.abilityIncreaseHistory'];
+}
+function phase4BuildFinalizerAbilitySet(actor, sessionState = {}, plan = {}) {
+  const selections = sessionState?.progressionSession?.draftSelections || {};
+  const attr = selections.attributes || {};
+  if (!phase4AbilitySelectionShouldCompile(sessionState, attr)) return null;
+  const hasAttributeSelection = phase4HasOwnKeys(selections.attributes || {});
+  const attrValues = hasAttributeSelection || sessionState.mode === 'chargen'
+    ? ProgressionFinalizer._normalizeAttributeValues(attr, actor)
+    : {};
+  return AbilityScorePlanBuilder.buildSet({
+    mode: sessionState.mode,
+    actor,
+    // Chargen historically writes normalized base attrValues, not final species-adjusted totals.
+    // Level-up needs the raw attr object because it carries the increase ledger.
+    attr: sessionState.mode === 'levelup' ? attr : {},
+    attrValues,
+    manifest: plan?.set?.['flags.swse.levelUpEntitlementManifest'] || null,
+    getAllocationMode: () => ProgressionRules.getAbilityIncreaseAllocationMode?.(),
+    source: 'progression-finalizer',
+  });
+}
+function phase4AssertNonEmptyAbilitySet(set = {}, message) {
+  if (!PHASE4_ABILITY_KEYS.some(key => Object.prototype.hasOwnProperty.call(set, `system.attributes.${key}.base`))) {
+    throw new Error(message);
+  }
+}
+
+/* --- skills / languages --- */
+function phase4ShouldCompileSkillsLanguages(sessionState = {}) {
+  const selections = sessionState?.progressionSession?.draftSelections || {};
+  return sessionState.mode === 'chargen'
+    || (Array.isArray(selections.skills) && selections.skills.length > 0)
+    || (Array.isArray(selections.languages) && selections.languages.length > 0)
+    || (sessionState.mode === 'levelup' && Array.isArray(sessionState?.progressionSession?.classSkills) && sessionState.progressionSession.classSkills.length > 0);
+}
+function phase4RemoveInlineSkillLanguageKeys(set = {}) {
+  for (const key of Object.keys(set || {})) {
+    if (key.startsWith('system.skills.')) delete set[key];
+  }
+  delete set['system.languages'];
+  delete set['system.languageIds'];
+  delete set['system.progression.classSkillSources'];
+}
+function phase4LevelUpManifestFromPlan(plan = {}) {
+  return plan?.set?.['flags.swse.levelUpEntitlementManifest'] || null;
+}
+function phase4AssertNonEmptySingleStepSet(set = {}, domain) {
+  if (Object.keys(set || {}).length > 0) return;
+  if (domain === 'skills') throw new Error('Choose at least one skill before confirming.');
+  if (domain === 'languages') throw new Error('Choose at least one language before confirming.');
+}
+
+/* --- species / background --- */
+function phase4SpeciesShouldCompile(sessionState = {}) {
+  return sessionState.mode === 'chargen';
+}
+function phase4RemoveInlineSpeciesBackgroundSetKeys(set = {}) {
+  for (const key of Object.keys(set || {})) {
+    if (PHASE4_SPECIES_BACKGROUND_SET_KEYS.has(key)) delete set[key];
+  }
+}
+function phase4RemoveMatchingNaturalWeaponItems(plan = {}, builderItems = []) {
+  if (!builderItems.length || !Array.isArray(plan?.add?.items)) return;
+  const builderKeys = new Set(builderItems.map(item => `${String(item?.type || '').toLowerCase()}::${String(item?.name || '').toLowerCase()}`));
+  plan.add.items = plan.add.items.filter((item) => {
+    const key = `${String(item?.type || '').toLowerCase()}::${String(item?.name || '').toLowerCase()}`;
+    const speciesGranted = item?.flags?.swse?.speciesGranted === true
+      || item?.flags?.swse?.progression?.selectionKey === 'species-auto-grants'
+      || item?.flags?.swse?.progression?.source === 'species';
+    return !(builderKeys.has(key) && speciesGranted);
+  });
+}
+function phase4MergeDeleteItems(plan = {}, builderDelete = {}) {
+  const existing = Array.isArray(plan?.delete?.items) ? plan.delete.items : [];
+  const incoming = Array.isArray(builderDelete?.items) ? builderDelete.items : [];
+  const seen = new Set(existing.map(value => String(value)));
+  const merged = [...existing];
+  for (const item of incoming) {
+    const key = String(item);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    merged.push(item);
+  }
+  if (!plan.delete) plan.delete = {};
+  if (merged.length) plan.delete.items = merged;
+}
+
+/* --- economy --- */
+function phase4ShouldCompileEconomy(sessionState = {}) {
+  return sessionState.mode === 'chargen' || sessionState.mode === 'levelup';
+}
+function phase4RemoveInlineEconomyKeys(set = {}) {
+  for (const key of Object.keys(set || {})) {
+    if (PHASE4_ECONOMY_SET_KEYS.has(key)) delete set[key];
+  }
+}
+
+/* --- completion metadata --- */
+function phase4RemoveMetadataKeys(set = {}, mode = 'chargen') {
+  delete set['flags.swse.levelUpEntitlementManifest'];
+  delete set['flags.swse.levelUpFinalizationReceipt'];
+  delete set[`flags.foundryvtt-swse.progression.${mode}.completed`];
+  delete set['system.progression.lastCompletedMode'];
+  delete set['system.progression.completedSessionId'];
+  delete set['system.progression.completedAt'];
+  delete set['system.progression.chargenComplete'];
+  delete set['flags.foundryvtt-swse.progression.chargen.completedAt'];
+}
+
+/* --- feat / talent (strip-and-merge on _compileProgressionAbilityItems) --- */
+function phase4HasFeatTalentSelections(selections = {}) {
+  return (Array.isArray(selections.feats) && selections.feats.length > 0)
+    || (Array.isArray(selections.talents) && selections.talents.length > 0);
+}
+function phase4StripFeatTalentSelections(selections = {}) {
+  return { ...selections, feats: [], talents: [] };
+}
+function phase4MergeFeatTalentCompiledItems(base = {}, featTalent = {}) {
+  return {
+    items: [...phase4AsArray(featTalent.items), ...phase4AsArray(base.items)],
+    deleteItems: [...phase4AsArray(featTalent.deleteItems), ...phase4AsArray(base.deleteItems)],
+    postApply: {
+      ...(featTalent.postApply || {}),
+      ...(base.postApply || {}),
+      starshipManeuverNames: [
+        ...phase4AsArray((featTalent.postApply || {}).starshipManeuverNames),
+        ...phase4AsArray((base.postApply || {}).starshipManeuverNames),
+      ],
+      starshipManeuverRemoveItemIds: [
+        ...phase4AsArray((featTalent.postApply || {}).starshipManeuverRemoveItemIds),
+        ...phase4AsArray((base.postApply || {}).starshipManeuverRemoveItemIds),
+      ],
+      forceTechniqueEntries: [
+        ...phase4AsArray((featTalent.postApply || {}).forceTechniqueEntries),
+        ...phase4AsArray((base.postApply || {}).forceTechniqueEntries),
+      ],
+      forceSecretEntries: [
+        ...phase4AsArray((featTalent.postApply || {}).forceSecretEntries),
+        ...phase4AsArray((base.postApply || {}).forceSecretEntries),
+      ],
+    },
+  };
+}
+
+/* --- force (strip-and-merge on _compileProgressionAbilityItems) --- */
+function phase4HasForceSelections(selections = {}) {
+  return PHASE4_FORCE_KEYS.some((key) => Array.isArray(selections[key]) && selections[key].length > 0);
+}
+function phase4StripForceSelections(selections = {}) {
+  return { ...selections, forcePowers: [], forceRegimens: [], forceTechniques: [], forceSecrets: [] };
+}
+function phase4MergeForcePostApply(base = {}, force = {}) {
+  return {
+    ...force,
+    ...base,
+    starshipManeuverNames: [...phase4AsArray(force.starshipManeuverNames), ...phase4AsArray(base.starshipManeuverNames)],
+    starshipManeuverRemoveItemIds: [...phase4AsArray(force.starshipManeuverRemoveItemIds), ...phase4AsArray(base.starshipManeuverRemoveItemIds)],
+    forceTechniqueEntries: [...phase4AsArray(force.forceTechniqueEntries), ...phase4AsArray(base.forceTechniqueEntries)],
+    forceSecretEntries: [...phase4AsArray(force.forceSecretEntries), ...phase4AsArray(base.forceSecretEntries)],
+  };
+}
+function phase4MergeForceCompiledItems(base = {}, force = {}) {
+  return {
+    items: [...phase4AsArray(force.items), ...phase4AsArray(base.items)],
+    deleteItems: [...phase4AsArray(force.deleteItems), ...phase4AsArray(base.deleteItems)],
+    postApply: phase4MergeForcePostApply(base.postApply || {}, force.postApply || {}),
+  };
+}
 
 export class ProgressionFinalizer {
   /**
@@ -464,81 +690,52 @@ export class ProgressionFinalizer {
   }
 
   static _compileSingleStepAttributeSet(actor, attr = {}, _options = {}) {
-    const set = {};
-    const abilityKeys = ['str', 'dex', 'con', 'int', 'wis', 'cha'];
-    const isIncreaseMode = attr?.mode === 'levelup-ability-increase' || !!attr?.increases;
-
-    if (!isIncreaseMode) {
-      const values = attr?.finalValues || attr?.values || attr || {};
-      let wrote = 0;
-      for (const key of abilityKeys) {
-        const value = Number(values?.[key]?.base ?? values?.[key]?.score ?? values?.[key]?.value ?? values?.[key]);
-        if (!Number.isFinite(value) || value <= 0) continue;
-        set[`system.attributes.${key}.base`] = Math.floor(value);
-        wrote += 1;
-      }
-      if (!wrote) throw new Error('Choose ability scores before confirming.');
-      return set;
-    }
-
-    const increases = attr?.increases || {};
-    const maxPerAbility = ProgressionRules.getAbilityIncreaseAllocationMode?.() === 'allow_stacked_two' ? 2 : 1;
-    const normalized = {};
-    for (const key of abilityKeys) {
-      const delta = Math.max(0, Math.min(maxPerAbility, Number(increases?.[key] || 0) || 0));
-      if (delta <= 0) continue;
-      const currentBase = Number(actor?.system?.attributes?.[key]?.base ?? actor?.system?.abilities?.[key]?.base ?? actor?.system?.abilities?.[key]?.value ?? 10) || 10;
-      set[`system.attributes.${key}.base`] = currentBase + delta;
-      normalized[key] = delta;
-    }
-    if (!Object.keys(normalized).length) throw new Error('Choose at least one ability score increase before confirming.');
-
-    const level = Number(attr?.abilityIncreaseLevel || attr?.characterLevel || attr?.level || actor?.system?.level || actor?.system?.details?.level || 0) || null;
-    const record = {
-      level,
-      characterLevel: level,
-      increases: normalized,
-      timestamp: new Date().toISOString(),
+    // PHASE 4: delegate to AbilityScorePlanBuilder (folded in from
+    // ability-score-finalizer-patch.js). Behavior preserved verbatim.
+    const mode = attr?.mode === 'levelup-ability-increase' || attr?.increases ? 'levelup' : 'chargen';
+    const set = AbilityScorePlanBuilder.buildSet({
+      mode,
+      actor,
+      attr,
+      attrValues: mode === 'chargen' ? {} : undefined,
+      manifest: {
+        characterLevel: Number(attr?.abilityIncreaseLevel || attr?.characterLevel || attr?.level || actor?.system?.level || actor?.system?.details?.level || 0) || null,
+      },
+      getAllocationMode: () => ProgressionRules.getAbilityIncreaseAllocationMode?.(),
       source: 'single-step-progression',
-    };
-    const history = Array.isArray(actor?.system?.progression?.abilityIncreaseHistory)
-      ? actor.system.progression.abilityIncreaseHistory
-      : [];
-    const filtered = level
-      ? history.filter(entry => Number(entry?.level ?? entry?.characterLevel ?? 0) !== level)
-      : history;
-    set['system.progression.lastAbilityIncrease'] = record;
-    set['system.progression.abilityIncreaseHistory'] = [...filtered, record]
-      .sort((a, b) => Number(a?.level ?? a?.characterLevel ?? 0) - Number(b?.level ?? b?.characterLevel ?? 0));
+    });
+    phase4AssertNonEmptyAbilitySet(set, mode === 'levelup'
+      ? 'Choose at least one ability score increase before confirming.'
+      : 'Choose ability scores before confirming.');
     return set;
   }
 
   static _compileSingleStepSkillSet(skills = []) {
-    const set = {};
-    const skillEntries = this._normalizeSkillSelectionEntries(skills);
-    if (!skillEntries.length) throw new Error('Choose at least one skill before confirming.');
-    for (const s of skillEntries) {
-      const key = this._canonicalSkillKey(s?.key || s?.id || s?.skill);
-      if (!key) continue;
-      set[`system.skills.${key}.trained`] = s.trained !== undefined ? !!s.trained : true;
-      if (s.miscMod !== undefined) set[`system.skills.${key}.miscMod`] = s.miscMod || 0;
-      if (s.focused !== undefined) set[`system.skills.${key}.focused`] = !!s.focused;
-      if (s.selectedAbility !== undefined) set[`system.skills.${key}.selectedAbility`] = s.selectedAbility || '';
-    }
+    // PHASE 4: delegate to SkillsLanguagesPlanBuilder (folded in from
+    // skills-languages-finalizer-patch.js). Behavior preserved verbatim.
+    const set = SkillsLanguagesPlanBuilder.buildSkillsSet({
+      actor: null,
+      selections: { skills },
+      sessionState: { mode: 'single-step' },
+      levelUpManifest: null,
+    });
+    phase4AssertNonEmptySingleStepSet(set, 'skills');
     return set;
   }
 
   static _compileSingleStepLanguageSet(actor, languages = []) {
+    // PHASE 4: folded in from skills-languages-finalizer-patch.js. Behavior preserved.
     const entries = Array.isArray(languages) ? languages : [];
-    if (!entries.length) throw new Error('Choose at least one language before confirming.');
     const languageNames = entries.map(l => typeof l === 'string' ? l : l?.name || l?.label || l?.language || l?.value || l?.id || l?._id || l?.internalId || l?.slug).filter(Boolean);
     const languageIds = entries.map(l => typeof l === 'string' ? l : l?.internalId || l?._id || l?.id || l?.slug || l?.name).filter(Boolean);
-    const existingLanguageNames = this._extractActorLanguageNames(actor);
-    const existingLanguageIds = this._extractActorLanguageIds(actor);
-    return {
+    const existingLanguageNames = SkillsLanguagesPlanBuilder.extractActorLanguageNames(actor);
+    const existingLanguageIds = SkillsLanguagesPlanBuilder.extractActorLanguageIds(actor);
+    const set = {
       'system.languages': Array.from(new Set([...existingLanguageNames, ...languageNames])),
       'system.languageIds': Array.from(new Set([...existingLanguageIds, ...languageIds])),
     };
+    phase4AssertNonEmptySingleStepSet(entries.length ? set : {}, 'languages');
+    return set;
   }
 
   static async _compileSingleStepBackgroundSet(_actor, selections = {}) {
@@ -823,7 +1020,113 @@ export class ProgressionFinalizer {
    * @param {Object} options
    * @returns {Object} mutation plan
    */
+  /**
+   * PHASE 4: thin orchestrator. Compiles the base plan, then lets each domain
+   * builder replace its portion of the plan. Application order mirrors the
+   * historical patch registration order (ability → skills → species → economy);
+   * feat/talent and force are integrated inside _compileProgressionAbilityItems.
+   * Completion metadata is applied last (it reads the entitlement manifest that
+   * earlier steps depend on before replacing it with the builder's copy).
+   */
   static async _compileMutationPlan(sessionState, actor, options = {}) {
+    const plan = await this._compileMutationPlanBase(sessionState, actor, options);
+    this._applyAbilityScoreBuilder(actor, sessionState, plan);
+    await this._applySkillsLanguagesBuilder(actor, sessionState, plan);
+    await this._applySpeciesBackgroundBuilder(actor, sessionState, plan);
+    this._applyProgressionEconomyBuilder(actor, sessionState, plan);
+    this._applyProgressionMetadataBuilder(actor, sessionState, plan);
+    return plan;
+  }
+
+  /**
+   * PHASE 4: applies ProgressionMetadataPlanBuilder over the base plan set. The
+   * builder is behavior-equivalent to the inline metadata block in
+   * _compileMutationPlanBase: identical keys/values, and the same
+   * buildLevelUpFinalizationReceipt function. Runs last so the manifest the
+   * ability/skills builders read from plan.set is still present when they run.
+   */
+  static _applyProgressionMetadataBuilder(actor, sessionState, plan) {
+    if (!plan?.set) return;
+    const fragment = ProgressionMetadataPlanBuilder.buildSet({
+      actor,
+      sessionState,
+      levelUpManifest: plan.set['flags.swse.levelUpEntitlementManifest'] || null,
+    });
+    phase4RemoveMetadataKeys(plan.set, sessionState.mode);
+    Object.assign(plan.set, fragment);
+  }
+
+  /** PHASE 4: applies AbilityScorePlanBuilder over the base plan set. */
+  static _applyAbilityScoreBuilder(actor, sessionState, plan) {
+    const abilitySet = phase4BuildFinalizerAbilitySet(actor, sessionState, plan);
+    if (abilitySet && plan?.set) {
+      phase4RemoveInlineAbilitySetKeys(plan.set);
+      Object.assign(plan.set, abilitySet);
+    }
+  }
+
+  /** PHASE 4: applies SkillsLanguagesPlanBuilder over the base plan set. */
+  static async _applySkillsLanguagesBuilder(actor, sessionState, plan) {
+    if (!plan?.set || !phase4ShouldCompileSkillsLanguages(sessionState)) return;
+    const selections = sessionState?.progressionSession?.draftSelections || {};
+    const builderSet = await SkillsLanguagesPlanBuilder.buildSet({
+      actor,
+      selections,
+      sessionState,
+      levelUpManifest: phase4LevelUpManifestFromPlan(plan),
+    });
+    phase4RemoveInlineSkillLanguageKeys(plan.set);
+    Object.assign(plan.set, builderSet);
+  }
+
+  /** PHASE 4: applies SpeciesBackgroundPlanBuilder over the base plan. */
+  static async _applySpeciesBackgroundBuilder(actor, sessionState, plan) {
+    if (!plan?.set || !phase4SpeciesShouldCompile(sessionState)) return;
+    const selections = sessionState?.progressionSession?.draftSelections || {};
+    const backgroundsEnabled = sessionState.mode !== 'chargen' || ChargenRules.backgroundsEnabled();
+    const isDroidProgression = isDroidProgressionActor(actor, {
+      subtype: sessionState.progressionSession?.subtype,
+      droidContext: sessionState.progressionSession?.droidContext,
+      droid: selections.droid,
+    });
+    const fragment = await SpeciesBackgroundPlanBuilder.build({
+      actor,
+      sessionState,
+      selections,
+      isDroidProgression,
+      backgroundsEnabled,
+    });
+    phase4RemoveInlineSpeciesBackgroundSetKeys(plan.set);
+    Object.assign(plan.set, fragment.set || {});
+    phase4RemoveMatchingNaturalWeaponItems(plan, fragment.add?.items || []);
+    if (Array.isArray(fragment.add?.items) && fragment.add.items.length) {
+      plan.add = plan.add || { items: [] };
+      plan.add.items = [...fragment.add.items, ...(Array.isArray(plan.add.items) ? plan.add.items : [])];
+    }
+    phase4MergeDeleteItems(plan, fragment.delete || {});
+  }
+
+  /** PHASE 4: applies ProgressionEconomyPlanBuilder over the base plan set. */
+  static _applyProgressionEconomyBuilder(actor, sessionState, plan) {
+    if (!plan?.set || !phase4ShouldCompileEconomy(sessionState)) return;
+    const selections = sessionState?.progressionSession?.draftSelections || {};
+    const isDroidProgression = isDroidProgressionActor(actor, {
+      subtype: sessionState.progressionSession?.subtype,
+      droidContext: sessionState.progressionSession?.droidContext,
+      droid: selections.droid,
+    });
+    const fragment = ProgressionEconomyPlanBuilder.buildSet({
+      actor,
+      selections,
+      sessionState,
+      planSet: plan.set,
+      isDroidProgression,
+    });
+    phase4RemoveInlineEconomyKeys(plan.set);
+    Object.assign(plan.set, fragment);
+  }
+
+  static async _compileMutationPlanBase(sessionState, actor, options = {}) {
     // PHASE 1: REQUIRE canonical progressionSession. Fail loudly if missing.
     if (!sessionState.progressionSession) {
       throw new Error('compileMutationPlan requires canonical progressionSession');
@@ -948,6 +1251,15 @@ export class ProgressionFinalizer {
         set['system.event'] = background.name;
       }
     }
+    // PHASE 4 TODO(class): the class domain intentionally remains inline here.
+    // ClassPlanBuilder is NOT behavior-equivalent to this block and is therefore
+    // not wired: (1) its selectionId fallback differs (it adds clazz.classId /
+    // levelContext.selectedClassId to the chain used below), (2) it has no branch
+    // for non-chargen/non-levelup modes, where this code still emits a class item
+    // via the `else` below, and (3) class compilation also spans
+    // _compileClassAutoGrantItems and _compileClassStarterEquipmentItems, which the
+    // builder never covered. Wiring class safely requires reconciling all three plus
+    // a Foundry chargen/level-up smoke test.
     if (clazz) {
       const classSystemForActor = this._sanitizeClassSystemForDroid(clazz.system || {}, isDroidProgression);
       const classSelectionForActor = isDroidProgression && clazz && typeof clazz === 'object'
@@ -2973,7 +3285,44 @@ export class ProgressionFinalizer {
     });
   }
 
+  /**
+   * PHASE 4: item-grant compilation. Force wraps feat/talent wraps the base
+   * compiler, preserving the historical patch layering (feat/talent registered
+   * before force). Each layer routes its own selections through the owning
+   * builder and delegates the remainder downward. Folded in from
+   * feat-talent-finalizer-patch.js and force-finalizer-patch.js verbatim.
+   */
   static async _compileProgressionAbilityItems(actor, selections, sessionState) {
+    return this._compileProgressionAbilityItemsForceLayer(actor, selections, sessionState);
+  }
+
+  static async _compileProgressionAbilityItemsForceLayer(actor, selections = {}, sessionState = {}) {
+    if (!phase4HasForceSelections(selections)) {
+      return this._compileProgressionAbilityItemsFeatTalentLayer(actor, selections, sessionState);
+    }
+    const forceCompiled = await ForcePlanBuilder.build({ actor, selections, sessionState });
+    const remainingCompiled = await this._compileProgressionAbilityItemsFeatTalentLayer(
+      actor,
+      phase4StripForceSelections(selections),
+      sessionState,
+    );
+    return phase4MergeForceCompiledItems(remainingCompiled, forceCompiled);
+  }
+
+  static async _compileProgressionAbilityItemsFeatTalentLayer(actor, selections = {}, sessionState = {}) {
+    if (!phase4HasFeatTalentSelections(selections)) {
+      return this._compileProgressionAbilityItemsBase(actor, selections, sessionState);
+    }
+    const featTalentCompiled = await FeatTalentPlanBuilder.build({ actor, selections, sessionState });
+    const remainingCompiled = await this._compileProgressionAbilityItemsBase(
+      actor,
+      phase4StripFeatTalentSelections(selections),
+      sessionState,
+    );
+    return phase4MergeFeatTalentCompiledItems(remainingCompiled, featTalentCompiled);
+  }
+
+  static async _compileProgressionAbilityItemsBase(actor, selections, sessionState) {
     const sessionId = sessionState.sessionId || 'unknown';
     const itemSpecs = [];
     const deleteItems = [];

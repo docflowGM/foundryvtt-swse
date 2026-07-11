@@ -5,12 +5,10 @@
 
 import '/systems/foundryvtt-swse/scripts/patches/runtime-bugfix-hotfixes-init.js';
 import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/progression-finalizer-force-knowledge-patch.js';
-import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/ability-score-finalizer-patch.js';
-import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/feat-talent-finalizer-patch.js';
-import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/force-finalizer-patch.js';
-import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/skills-languages-finalizer-patch.js';
-import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/species-background-finalizer-patch.js';
-import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/mutation/progression-economy-finalizer-patch.js';
+// PHASE 4: the per-domain progression finalizer patches (ability-score, feat-talent,
+// force, skills-languages, species-background, progression-economy) were folded
+// directly into ProgressionFinalizer's compilation flow and their files removed, so
+// they are no longer imported here. See progression-finalizer.js (PHASE 4 sections).
 import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/choice-resolution-finalization-patch.js';
 import '/systems/foundryvtt-swse/scripts/apps/progression-framework/shell/reconciliation/reconciliation-and-superior-skills-hotfix.js';
 import SquadActionsMechanics from "/systems/foundryvtt-swse/scripts/engine/talent/squad-actions-mechanics.js";
