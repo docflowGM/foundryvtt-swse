@@ -91,19 +91,19 @@ system.derived.damageProtections = {
 ```
 Immunity = negate. Resistance = flat reduce (highest-only per type). No merge with DR.
 
-## 6. Resolver order — ✅ DECIDED
+## 6. Resolver order — ✅ DECIDED (revised)
 
 **Canonical mitigation order (signed off):**
-1. **Immunity** → negate, stop.
-2. **Shield Rating (SR)** → absorb + degrade. *Shield absorbs the attack first.*
+1. **Shield Rating (SR)** → absorb + degrade. *The shield is an external energy barrier; the attack interacts with it before the target's biology/material immunities matter.*
+2. **Immunity** (damage-type) → zero immune damage components. *SR has already resolved/depleted; immunity only blocks what would reach DR/HP.*
 3. **Damage Reduction** (generic + `DR/exception`).
-4. **Typed Resistance** (applies-to, e.g. Energy Resistance) → *modifies what gets through after SR.*
+4. **Typed Resistance** (applies-to, e.g. Energy Resistance).
 5. **HP** (Temp HP then real HP).
 6. **Special damage** (ion/stun/scale) — own rules; document interactions, do not restructure.
 
-Rule of thumb: **SR before typed resistance** — the shield absorbs the incoming attack, then resistance modifies whatever passes through — unless a specific Force power says otherwise.
+Rationale: **SR before immunity.** A poison shot against a shielded droid still resolves against SR first (SR absorbs/depletes); if damage penetrates, the droid's immunity blocks it afterward. **Implication:** when immunity cancels post-SR damage, HP takes 0 but any SR depletion caused by the incoming attack **remains valid**.
 
-> **Implementation implication (behavior change):** the current code applies immunity + typed resistance at **packet prep** (`damage-packet-rules.js:379-381`), which is *before* SR. The agreed order requires **moving the typed-resistance stage to after DR and before HP** (immunity stays first). This is a deliberate, visible change in mixed shield+resistance cases and must be covered by tests when implemented. Immunity-first is preserved (immune = no damage before any reduction).
+> **Implementation implication (behavior change):** the current code applies immunity + typed resistance at **packet prep** (`damage-packet-rules.js:379-381`), *before* SR. The agreed order requires **moving both immunity and typed resistance to after SR** — immunity right after SR (before DR), typed resistance after DR (before HP). Both are deliberate, visible changes (mixed shield + immunity/resistance cases) and must be covered by tests. Immunity is a first-class stage (D4A); see `phase-3-d4a-immunity-design.md`.
 
 ## 7. What D4 does NOT do
 
