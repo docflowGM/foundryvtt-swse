@@ -61,6 +61,7 @@ function normalizeComponents(rawComponents = [], totalDamage = 0, fallbackType =
         key: cleanLabel(component.key ?? component.id, `component-${index + 1}`),
         label: cleanLabel(component.label ?? component.name, `${types.original[0] || fallbackType || 'Damage'} component`),
         type: types.original[0] || fallbackType || 'normal',
+        tags: Array.isArray(component.tags) ? [...component.tags] : [],
         originalDamageTypes: types.original,
         damageTypes: types.expanded,
         input: amount,
@@ -144,6 +145,7 @@ function exportedComponent(component = {}) {
     key: component.key,
     label: component.label,
     type: component.type,
+    tags: Array.isArray(component.tags) ? component.tags : [],
     damageTypes: component.damageTypes,
     originalDamageTypes: component.originalDamageTypes,
     rawAmount: component.rawAmount,
@@ -152,6 +154,8 @@ function exportedComponent(component = {}) {
     afterShield: component.afterShield,
     afterDR: component.afterDR,
     afterTempHP: component.afterTempHP,
+    // remaining = amount that survives to HP; mitigation = amount removed per stage.
+    remaining: component.afterTempHP,
     mitigation: {
       shieldApplied: component.shieldApplied,
       drApplied: component.drApplied,

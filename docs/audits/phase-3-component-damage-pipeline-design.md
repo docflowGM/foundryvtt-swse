@@ -1,6 +1,19 @@
 # Phase 3 · Component-Damage Pipeline Design (D4A prerequisite)
 
-**Status:** Design only. **No code.** Prerequisite for D4A (immunity) — D4A cannot be implemented safely until the mitigation pipeline handles damage components through every stage.
+**Status:** Design + **consume-components slice IMPLEMENTED in this PR** (no new immunity/DR/resistance semantics). Ordering/reorg (immunity after SR, etc.) remains for the D4A slice.
+
+### Implementation status ✅ (consume-components slice)
+
+Minimal change making mitigation results uniformly component-shaped, without changing behaviour:
+- **`normalizeComponents` + `exportedComponent`** now carry **`tags`** and an explicit **`remaining`** per component (alongside existing `type`, `amount`, `source`, and per-stage `mitigation`). The lightsaber tag survives from the canonical packet into the mitigation layer (inert — DR-bypass behaviour unchanged).
+- **`DamageMitigationManager` single-total path** now returns a uniform 1-element `components[]` (with `componentMitigation: false`), mirroring the multi-component result shape. **The single-total math is untouched** — this only annotates the result, so downstream/UI can always rely on `components[]`.
+- **Behaviour-preserving:** single-component packets still run the unchanged single-total path (`resolveComponentMitigation` still needs >1); multi-component keeps its existing component-aware path. No immunity/DR-exception/resistance semantics added.
+- **Verified** against the real `DamageMitigationManager` + resolvers: bare legacy number, weapon energy component, lightsaber energy+tag, multi-component tag survival, and single-component fall-through (unchanged hpDamage/shield) — all pass; `node --check` clean.
+- **Deferred:** moving immunity/resistance out of packet-prep and reordering (SR → Immunity → DR → resistance) — that is the D4A slice; SR already runs first, so the pipeline is "prepared" for a post-SR immunity stage but none is added here.
+
+---
+
+_Original design below._
 
 **Finalized mitigation order:** **Shield Rating → Immunity → Damage Reduction → Typed resistance → HP → special (ion/stun/scale).**
 

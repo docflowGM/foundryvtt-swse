@@ -201,6 +201,35 @@ export class DamageMitigationManager {
       // Audit trail
       breakdown: breakdown,
 
+      // Uniform component breakdown (single-component path). This mirrors the
+      // multi-component result shape so downstream/UI can always rely on a
+      // components[] array. The single-total math above is unchanged — this only
+      // annotates it. type/tags/source come from the canonical damage packet.
+      components: [(() => {
+        const canonical = options?.damageComponents?.[0] ?? options?.canonicalPacket?.components?.[0] ?? {};
+        return {
+          key: 'component-1',
+          label: `${damageType} damage`,
+          type: canonical.type ?? damageType,
+          tags: Array.isArray(canonical.tags) ? canonical.tags : [],
+          rawAmount: damage,
+          input: damage,
+          amount: currentDamage,
+          afterShield: shieldResult.damageAfter,
+          afterDR: drResult.damageAfter,
+          afterTempHP: tempResult.damageAfter,
+          remaining: currentDamage,
+          mitigation: {
+            shieldApplied: shieldResult.srApplied,
+            drApplied: drResult.drApplied,
+            drSource: drResult.drSource,
+            tempAbsorbed: tempResult.tempAbsorbed
+          },
+          source: canonical.source ?? null
+        };
+      })()],
+      componentMitigation: false,
+
       // Convenience flags
       mitigated: damage > currentDamage,
       totalMitigation: damage - currentDamage,
