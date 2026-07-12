@@ -234,24 +234,71 @@ export function resolveComponentMitigation({ damage, actor, damageType = 'normal
   staged = syncStage(staged, 'afterShield', 'afterDR');
 
   const afterShieldTotal = staged.reduce((sum, component) => sum + Math.max(0, asNumber(component.afterShield, 0)), 0);
-  const genericDRResult = DamageReductionResolver.resolve({
-    damage: afterShieldTotal,
-    actor,
-    context: {
-      ...baseContext,
-      damageType: 'normal',
-      damageTypes: ['normal'],
-      onlyGenericDamageReduction: true
-    }
-  });
 
-  staged = distributeReduction(staged, 'afterDR', genericDRResult.drApplied, 'drApplied');
-  if (genericDRResult.drApplied > 0) {
-    staged = staged.map(component => ({
-      ...component,
-      drSource: component.drApplied > 0 ? genericDRResult.drSource || 'Generic DR' : component.drSource
-    }));
+  // D3: canonical Damage Reduction. DR applies ONCE per attack (RAW: it reduces
+  // "the damage") to the non-excepted pool, highest-only. A DR entry's exception
+  // damage type — and the lightsaber / bypass-dr component tag — remove a component
+  // from the pool (it takes no DR). Generic DR (no exceptions) still applies to the
+  // whole pool, so the all-applicable case is unchanged. Typed applies-to reduction
+  // is handled by the typed pass below (D4), not here.
+  const drWeaponBypass = DamageReductionResolver.shouldBypassDR(baseContext.weapon);
+  const drEntries = drWeaponBypass ? [] : DamageReductionResolver.getCanonicalDamageReductionEntries(actor);
+  let bestEntry = null;
+  for (const entry of drEntries) {
+    if (!bestEntry || entry.value > bestEntry.value) bestEntry = entry;
   }
+  let genericDRApplied = 0;
+  let genericDRSource = '';
+  if (bestEntry && bestEntry.value > 0) {
+    const applicableKeys = new Set(
+      staged
+        .filter(component => Math.max(0, asNumber(component.afterDR, 0)) > 0)
+        .filter(component => !DamageReductionResolver.componentBypassesDamageReduction(component, bestEntry))
+        .map(component => component.key)
+    );
+    const pool = staged
+      .filter(component => applicableKeys.has(component.key))
+      .reduce((sum, component) => sum + Math.max(0, asNumber(component.afterDR, 0)), 0);
+
+    let drValue = bestEntry.value;
+    // Attacker ability that ignores the target's DR when the attack overcomes it.
+    if (drValue > 0 && pool > drValue
+        && DamageReductionResolver.sourceIgnoresDamageReduction(source, baseContext.weapon, baseContext)) {
+      drValue = 0;
+    }
+    const reduction = Math.min(pool, Math.max(0, drValue));
+
+    if (reduction > 0) {
+      const applicableList = staged.filter(component => applicableKeys.has(component.key));
+      const lastKey = applicableList.length ? applicableList[applicableList.length - 1].key : null;
+      let assigned = 0;
+      staged = staged.map(component => {
+        if (!applicableKeys.has(component.key)) return component;
+        const before = Math.max(0, asNumber(component.afterDR, 0));
+        const share = component.key === lastKey
+          ? Math.max(0, reduction - assigned)
+          : (pool > 0 ? Math.floor(reduction * (before / pool)) : 0);
+        assigned += share;
+        const after = Math.max(0, before - share);
+        const applied = before - after;
+        if (applied <= 0) return component;
+        genericDRApplied += applied;
+        return {
+          ...component,
+          afterDR: after,
+          drApplied: Math.max(0, asNumber(component.drApplied, 0)) + applied,
+          drSource: [component.drSource, bestEntry.source || 'Damage Reduction'].filter(Boolean).join(', ')
+        };
+      });
+      if (genericDRApplied > 0) genericDRSource = bestEntry.source || 'Damage Reduction';
+    }
+  }
+  const genericDRResult = {
+    drApplied: genericDRApplied,
+    drSource: genericDRSource,
+    bypassed: drWeaponBypass,
+    damageAfter: staged.reduce((sum, component) => sum + Math.max(0, asNumber(component.afterDR, 0)), 0)
+  };
 
   const usedTypedSources = new Set();
   const typedDRResults = [];

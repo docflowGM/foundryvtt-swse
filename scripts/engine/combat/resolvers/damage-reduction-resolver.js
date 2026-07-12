@@ -185,7 +185,11 @@ export class DamageReductionResolver {
     // ========================================
 
     const weapon = context.weapon;
-    if (this._shouldBypassDR(weapon)) {
+    // Lightsaber / bypass-dr from the weapon OR the damage component tags (canonical
+    // packet). RAW: lightsabers ignore DR regardless of the attack's damage type.
+    const damageTags = (context.damageTags ?? context.damageComponents?.[0]?.tags ?? [])
+      .map(tag => String(tag).toLowerCase());
+    if (this._shouldBypassDR(weapon) || damageTags.includes('lightsaber') || damageTags.includes('bypass-dr')) {
       return {
         damageBefore: damage,
         damageAfter: damage,
@@ -207,22 +211,30 @@ export class DamageReductionResolver {
     const onlyTypedDR = context.onlyTypedDamageReduction === true || context.typedOnlyDamageReduction === true;
     const onlyGenericDR = context.onlyGenericDamageReduction === true || context.genericOnlyDamageReduction === true;
 
-    // DR can come from derived character/item aggregation or raw actor storage.
+    // D3: generic DR via canonical entries { value, exceptions[] }. A DR entry is
+    // bypassed when the incoming damage type matches one of its exceptions
+    // (DR X/exception). Highest-only. Generic item DR is included in the entries;
+    // typed applies-to item DR (resistance-style) is handled separately below.
     if (!skipGenericDR && !onlyTypedDR) {
-      const derivedDR = Number(actor.system?.derived?.damageReduction?.highestValue ?? actor.system?.derived?.damageReduction?.all ?? actor.system?.derived?.damageReduction?.value ?? 0);
-      if (derivedDR > drValue) {
-        drValue = derivedDR;
-        drSource = `Derived DR (${drValue})`;
-      }
-
-      const actorDR = Number(actor.system?.damageReduction ?? 0);
-      if (actorDR > drValue) {
-        drValue = actorDR;
-        drSource = `Actor DR (${drValue})`;
+      const pseudoComponent = {
+        type: context.damageType,
+        damageTypes: context.damageTypes ?? [],
+        originalDamageTypes: context.originalDamageTypes ?? [],
+        tags: damageTags
+      };
+      for (const entry of this.getCanonicalDamageReductionEntries(actor)) {
+        if (this.componentBypassesDamageReduction(pseudoComponent, entry)) continue;
+        if (entry.value > drValue) {
+          drValue = entry.value;
+          drSource = entry.source || `DR ${entry.value}`;
+        }
       }
     }
 
-    const itemDR = collectItemDamageReduction(actor, context, { typedOnly: onlyTypedDR, genericOnly: onlyGenericDR });
+    // Typed applies-to item DR (resistance-style) — unchanged (D4 territory). Generic
+    // item DR already came through the canonical entries above, so restrict to typed
+    // here to avoid double-reading it (and to preserve exception handling).
+    const itemDR = collectItemDamageReduction(actor, context, { typedOnly: !onlyGenericDR, genericOnly: onlyGenericDR });
     if (itemDR.value > drValue) {
       drValue = itemDR.value;
       drSource = itemDR.source || `Item DR (${drValue})`;
@@ -299,5 +311,89 @@ export class DamageReductionResolver {
     const actorDR = Number(actor.system?.damageReduction ?? 0);
     const itemDR = collectItemDamageReduction(actor, context).value;
     return Math.max(derived || 0, actorDR || 0, itemDR || 0);
+  }
+
+  /**
+   * D3: Collect canonical Damage Reduction entries { value, exceptions[], source }.
+   *
+   * Generic DR is `{ value, exceptions: [] }`; qualified DR is `DR X / exception`
+   * where the exception damage type BYPASSES the DR. This covers the generic DR
+   * sources only (base field, derived, and item DR rules). Item rules that express
+   * APPLIES-TO typed reduction (damageTypes with no exceptions) are NOT DR — they
+   * are typed resistance (D4) and remain in the resolver's typed pass.
+   *
+   * @param {Actor} actor
+   * @returns {Array<{value:number, exceptions:string[], source:string}>}
+   */
+  static getCanonicalDamageReductionEntries(actor) {
+    const entries = [];
+    const norm = (v) => asArray(v).map(normalizeKey).filter(Boolean);
+
+    const d = actor?.system?.derived?.damageReduction;
+    if (Array.isArray(d?.entries)) {
+      for (const e of d.entries) {
+        const value = Number(e?.value ?? 0) || 0;
+        if (value > 0) entries.push({ value, exceptions: norm(e?.exceptions), source: e?.source || 'Derived DR' });
+      }
+    } else {
+      const value = Number(d?.highestValue ?? d?.all ?? d?.value ?? 0) || 0;
+      if (value > 0) entries.push({ value, exceptions: norm(d?.exceptions), source: 'Derived DR' });
+    }
+
+    const base = actor?.system?.damageReduction;
+    if (base && typeof base === 'object' && !Array.isArray(base)) {
+      const value = Number(base.value ?? base.amount ?? 0) || 0;
+      if (value > 0) entries.push({ value, exceptions: norm(base.exceptions ?? base.except ?? base.bypassedBy), source: 'Actor DR' });
+    } else {
+      const value = Number(base ?? 0) || 0;
+      if (value > 0) entries.push({ value, exceptions: [], source: 'Actor DR' });
+    }
+
+    for (const item of actorItems(actor)) {
+      const rules = item?.system?.abilityMeta?.rules;
+      if (!Array.isArray(rules)) continue;
+      for (const rule of rules) {
+        const type = String(rule?.type ?? '').toUpperCase();
+        if (type !== 'DAMAGE_REDUCTION' && type !== 'CONTEXTUAL_DAMAGE_REDUCTION') continue;
+        const value = Number(rule.value ?? rule.amount ?? rule.damageReduction ?? 0) || 0;
+        if (value <= 0) continue;
+        const exceptions = norm(rule.exceptions ?? rule.except ?? rule.bypassedBy);
+        // APPLIES-TO typed reduction (damageTypes, no exceptions) = typed resistance (D4), skip.
+        if (ruleDamageTypes(rule).length && !exceptions.length) continue;
+        entries.push({ value, exceptions, source: rule.label || item.name || 'Item DR' });
+      }
+    }
+
+    return entries;
+  }
+
+  /** Public: does the weapon bypass DR (lightsaber / bypassDR)? */
+  static shouldBypassDR(weapon) {
+    return this._shouldBypassDR(weapon);
+  }
+
+  /** Public: does the attacker ignore the target's DR when it is overcome? */
+  static sourceIgnoresDamageReduction(sourceActor, weapon, context = {}) {
+    try {
+      return actorHasIgnoreDRIfOvercome(sourceActor, weapon, context);
+    } catch (_err) {
+      return false;
+    }
+  }
+
+  /**
+   * D3: is a single damage component subject to a DR entry?
+   * A component is bypassed if it carries a lightsaber / bypass-dr tag, or if its
+   * damage type (expanded) matches one of the entry's exceptions.
+   */
+  static componentBypassesDamageReduction(component, entry) {
+    const tags = (component?.tags || []).map(t => String(t).toLowerCase());
+    if (tags.includes('lightsaber') || tags.includes('bypass-dr')) return true;
+    const exceptions = new Set((entry?.exceptions || []).map(normalizeKey));
+    if (!exceptions.size) return false;
+    const compTypes = [component?.type, ...(component?.damageTypes || []), ...(component?.originalDamageTypes || [])]
+      .map(normalizeKey)
+      .filter(Boolean);
+    return compTypes.some(t => exceptions.has(t));
   }
 }

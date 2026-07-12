@@ -1,6 +1,22 @@
 # Phase 3 · D3 — Generic Damage-Reduction SSOT Design
 
-**Status:** Design document only. **No code, no resolver change, no schema migration, no ActiveEffect retargeting.** Everything below is a proposal for sign-off.
+**Status:** Design + **DR entries/exceptions IMPLEMENTED in this PR.** Immunity and typed resistance remain out of scope.
+
+### Implementation status ✅ (DR entries/exceptions)
+
+Canonical DR is now `{ value, exceptions[] }`, applied per damage component:
+- **`DamageReductionResolver.getCanonicalDamageReductionEntries(actor)`** collects generic DR sources (base `system.damageReduction` scalar → `{value, exceptions:[]}`; object with `exceptions`/`except`/`bypassedBy` → parsed; `system.derived.damageReduction` `.entries[]` or `.highestValue/.all/.value` + optional `.exceptions`; generic item DR rules). **Applies-to typed item rules** (`damageTypes`, no exceptions) are excluded — they stay in the typed pass (D4).
+- **Semantics:** DR with no exceptions applies to all; `DR X/exception` is **bypassed by** the exception damage type; **lightsaber / bypass-dr component tags** bypass DR entirely (RAW), via the canonical packet tag (plus the existing weapon-object check). **Highest-only** — no stacking.
+- **Per-component application:** the component pipeline applies the best entry **once** to the non-excepted, non-bypassed pool (RAW: DR reduces the attack once), so the all-applicable case is unchanged; excepted/lightsaber components take no DR. The shared `resolve()` (single-component path) uses the same canonical entries + exception/tag logic. `component.mitigation.drApplied` records the amount removed.
+- **Behaviour-preserving:** generic DR with no exceptions and no lightsaber is unchanged (single- and multi-component); only exception/tag-bearing sources change outcomes. Typed applies-to item DR still flows via the typed pass. Shield unchanged.
+- **Verified** against the real `DamageMitigationManager` + resolvers — all eight acceptance cases pass: DR 5 vs normal (5); DR 5/energy vs energy (0); DR 5/energy vs kinetic (5); multiple entries highest-only (10); lightsaber energy bypasses (0); non-lightsaber energy under generic DR still reduced (5); multi-component partial bypass (energy bypassed, kinetic reduced); no-DR unchanged. `node --check` clean; prior packet/component tests still green.
+- **Known edge (documented):** on the single-component path, exception matching uses the component's declared type; damage-type-alias expansion (e.g. fire→energy for `DR/energy`) is applied on the multi-component path (expanded `damageTypes`) but not derived on the single-total path unless the context carries expanded types. Item-level `exceptions` on rules are honored via canonical entries; broadening alias expansion everywhere is a small follow-up.
+
+**Non-goals kept:** no immunity, no typed resistance, no resistance reordering, no Shield Rating change, no Force Shield migration, no removal of compatibility wrappers.
+
+---
+
+_Original design below._
 
 **Scope:** D3 = the **generic** DR single-source-of-truth. **D4** (typed DR / energy resistance / the parallel `damageResistances` axis) is explicitly out of scope and remains untouched. Shield (D1/D2) is already resolved and implemented separately; DR work does not touch it.
 
