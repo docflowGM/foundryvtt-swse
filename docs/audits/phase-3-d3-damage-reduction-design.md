@@ -88,7 +88,7 @@ system.derived.damageReduction = {
 
 - **`all`** = single number, **highest-only** (RAW: no stacking). Not a sum.
 - **`sources`** = non-authoritative breakdown (for tooltips / "why is my DR 10").
-- **`byType`** reserved but unused in D3. D3 must not populate or read it; the resolver's typed item-rule path is left intact for D4.
+- **`byType`** was reserved here, but **D4 supersedes it**: per the Saga RAW addendum, typed DR is qualified DR (`DR X / exception`), modeled as `entries: [{ value, exceptions[] }]` (generic = `exceptions: []`), **not** a `byType` map. If D3 is implemented first, use `damageReduction.entries` (with an `all` convenience = highest generic) so D4 is additive. See `phase-3-d4-typed-mitigation-design.md`.
 - Keep `highestValue`/`value` as **read-compat aliases** during migration if cheap, or point the resolver straight at `.all` (it already reads `.all` first).
 
 ---
