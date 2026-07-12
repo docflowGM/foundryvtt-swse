@@ -20,6 +20,7 @@
  */
 
 import { isLightsaberWeapon } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { DamageTypeRules } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 
 
 function normalizeKey(value) {
@@ -389,11 +390,13 @@ export class DamageReductionResolver {
   static componentBypassesDamageReduction(component, entry) {
     const tags = (component?.tags || []).map(t => String(t).toLowerCase());
     if (tags.includes('lightsaber') || tags.includes('bypass-dr')) return true;
-    const exceptions = new Set((entry?.exceptions || []).map(normalizeKey));
-    if (!exceptions.size) return false;
-    const compTypes = [component?.type, ...(component?.damageTypes || []), ...(component?.originalDamageTypes || [])]
-      .map(normalizeKey)
+    const exceptions = (entry?.exceptions || []).filter(Boolean);
+    if (!exceptions.length) return false;
+    // D3.1: use the shared canonical damage-type matcher so alias expansion
+    // (fire→energy, ion→energy, …) is identical on the single- and multi-component
+    // paths. A DR X/exception is bypassed when the component counts as the exception.
+    const declared = [component?.type, ...(component?.damageTypes || []), ...(component?.originalDamageTypes || [])]
       .filter(Boolean);
-    return compTypes.some(t => exceptions.has(t));
+    return exceptions.some(exception => DamageTypeRules.matches(declared, exception));
   }
 }

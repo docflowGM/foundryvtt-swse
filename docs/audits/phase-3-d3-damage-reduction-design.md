@@ -10,7 +10,16 @@ Canonical DR is now `{ value, exceptions[] }`, applied per damage component:
 - **Per-component application:** the component pipeline applies the best entry **once** to the non-excepted, non-bypassed pool (RAW: DR reduces the attack once), so the all-applicable case is unchanged; excepted/lightsaber components take no DR. The shared `resolve()` (single-component path) uses the same canonical entries + exception/tag logic. `component.mitigation.drApplied` records the amount removed.
 - **Behaviour-preserving:** generic DR with no exceptions and no lightsaber is unchanged (single- and multi-component); only exception/tag-bearing sources change outcomes. Typed applies-to item DR still flows via the typed pass. Shield unchanged.
 - **Verified** against the real `DamageMitigationManager` + resolvers — all eight acceptance cases pass: DR 5 vs normal (5); DR 5/energy vs energy (0); DR 5/energy vs kinetic (5); multiple entries highest-only (10); lightsaber energy bypasses (0); non-lightsaber energy under generic DR still reduced (5); multi-component partial bypass (energy bypassed, kinetic reduced); no-DR unchanged. `node --check` clean; prior packet/component tests still green.
-- **Known edge (documented):** on the single-component path, exception matching uses the component's declared type; damage-type-alias expansion (e.g. fire→energy for `DR/energy`) is applied on the multi-component path (expanded `damageTypes`) but not derived on the single-total path unless the context carries expanded types. Item-level `exceptions` on rules are honored via canonical entries; broadening alias expansion everywhere is a small follow-up.
+- ~~**Known edge:** single-component path alias expansion~~ — **RESOLVED in D3.1 (below).**
+
+### D3.1 status ✅ — shared canonical damage-type matcher
+
+Hardening pass so DR exceptions (and future immunity/resistance) use one type-matching semantics:
+- **`DamageTypeRules.matches(componentTypes, ruleType)`** and **`DamageTypeRules.expand(componentTypes)`** added (wrapping the existing `hasDamageType` / `expandDamageTypeAliases`). One-way aliasing: `fire`/`cold`/`electricity`/`acid`/`sonic`/`ion`/`stun` → also count as `energy`; `energy` does **not** count as `fire`.
+- **`componentBypassesDamageReduction`** now matches exceptions via `DamageTypeRules.matches`, so the single- and multi-component paths expand aliases identically (`DR/energy` is bypassed by fire/ion, `DR/fire` is not bypassed by plain energy).
+- **Bug fixed:** `componentTypes` folded the attack-level fallback type into *every* component, so a kinetic component in a fire attack inherited `fire`→`energy` and was misclassified. It now uses each component's **own** types, falling back only when a component declares none. This was essential before D4A immunity (which asks the same "does this count as energy?" question).
+- **Verified** on both paths: `DR/energy` vs energy/fire/ion → bypassed; `DR/fire` vs fire → bypassed, vs energy → **not** bypassed; multi-component partial bypass with correct per-component types. `node --check` clean; D3 and prior suites still green.
+- **Narrow:** no immunity, no typed resistance, no Shield/Force Shield/packet changes.
 
 **Non-goals kept:** no immunity, no typed resistance, no resistance reordering, no Shield Rating change, no Force Shield migration, no removal of compatibility wrappers.
 

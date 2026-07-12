@@ -29,15 +29,19 @@ function cleanLabel(value, fallback = '') {
 }
 
 function componentTypes(component = {}, fallbackType = 'normal') {
-  const originals = uniqueDamageTypes([
+  // Use the component's OWN types. Only fall back to the attack-level type when the
+  // component declares none — otherwise a component (e.g. kinetic) would inherit the
+  // attack's primary type (e.g. fire) and be misclassified for DR exceptions,
+  // immunity, and resistance. (D3.1 correctness.)
+  const own = uniqueDamageTypes([
     component.originalDamageTypes,
     component.damageTypes,
-    component.type,
-    fallbackType
+    component.type
   ]);
+  const originals = own.length ? own : uniqueDamageTypes([fallbackType || 'normal']);
   return {
-    original: originals.length ? originals : uniqueDamageTypes([fallbackType || 'normal']),
-    expanded: expandDamageTypeAliases(originals.length ? originals : [fallbackType || 'normal'])
+    original: originals,
+    expanded: expandDamageTypeAliases(originals)
   };
 }
 

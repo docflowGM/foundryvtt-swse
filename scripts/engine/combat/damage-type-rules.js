@@ -517,6 +517,13 @@ export const DamageTypeRules = {
   normalizeDamageTypeKey,
   uniqueDamageTypes,
   expandDamageTypeAliases,
+  // Canonical damage-type matcher (D3.1). `expand` returns the alias-expanded
+  // types for a component; `matches` answers "does this component count as
+  // <ruleType>?" using one-way aliasing (fire/cold/ion/stun → energy, etc.).
+  // Shared by DR exceptions, immunity (D4A), and typed resistance (D4) so they
+  // never diverge. componentTypes may be a single type or an array.
+  expand: (componentTypes = []) => expandDamageTypeAliases(asArray(componentTypes)),
+  matches: (componentTypes, ruleType) => hasDamageType(asArray(componentTypes), ruleType),
   damageTypesFromContext,
   hasDamageType,
   damageTypesMatch,
