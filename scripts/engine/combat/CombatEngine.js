@@ -808,10 +808,29 @@ export class CombatEngine {
    */
   static async applyDamage(actor, damage, context = {}) {
 
+    // Canonical Damage Packet (Phase 3 foundation): normalize this direct
+    // resolveDamage path too, so components/type reach mitigation consistently.
+    // Shape only, behaviour-preserving (see canonical-damage-packet.js).
+    const { buildCanonicalDamagePacket } = await import("/systems/foundryvtt-swse/scripts/engine/combat/canonical-damage-packet.js");
+    const canonicalPacket = buildCanonicalDamagePacket({
+      amount: damage,
+      type: context.damageType,
+      source: context.source,
+      options: context.options
+    });
+
     const resolution = await DamageResolutionEngine.resolveDamage({
       actor,
       damage,
-      ...context
+      ...context,
+      damageType: context.damageType ?? canonicalPacket.primaryType,
+      options: {
+        ...(context.options ?? {}),
+        damageComponents: (Array.isArray(context.options?.damageComponents) && context.options.damageComponents.length)
+          ? context.options.damageComponents
+          : canonicalPacket.components,
+        canonicalPacket
+      }
     });
 
     const plan = {};

@@ -1359,12 +1359,29 @@ export const ActorEngine = {
       });
 
       const { DamageResolutionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/damage-resolution-engine.js");
+
+      // Canonical Damage Packet (Phase 3 foundation): normalize every applyDamage
+      // input to per-component { amount, type, tags, source } before mitigation, so
+      // the resolver always receives damage type/tags instead of a bare number.
+      // Shape only — behaviour-preserving: a single-component packet still falls
+      // through resolveComponentMitigation() (needs >1) to the unchanged single-total
+      // path, and the effective damageType is preserved (explicit type wins; bare
+      // numbers stay 'normal'). Immunity/DR/resistance behaviour is unchanged here.
+      const { buildCanonicalDamagePacket } = await import("/systems/foundryvtt-swse/scripts/engine/combat/canonical-damage-packet.js");
+      const canonicalPacket = buildCanonicalDamagePacket(damagePacket);
+
       const resolution = await DamageResolutionEngine.resolveDamage({
         actor,
         damage: damagePacket.amount,
-        damageType: damagePacket.type ?? 'normal',
+        damageType: damagePacket.type ?? canonicalPacket.primaryType,
         source: damagePacket.sourceActor ?? null,
-        options: damagePacket.options ?? {},
+        options: {
+          ...(damagePacket.options ?? {}),
+          damageComponents: (Array.isArray(damagePacket.options?.damageComponents) && damagePacket.options.damageComponents.length)
+            ? damagePacket.options.damageComponents
+            : canonicalPacket.components,
+          canonicalPacket
+        },
       });
 
       await this._maybeResolveForcePointRescue(actor, resolution, damagePacket);

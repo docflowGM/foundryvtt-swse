@@ -1,6 +1,18 @@
 # Phase 3 · Canonical Damage Packet — verification + design
 
-**Status:** Verification + design. **No code.** This is the prerequisite milestone before the component-damage pipeline and D4A immunity.
+**Status:** Verification + design. **Foundation plumbing IMPLEMENTED in this PR** (normalizer + chokepoint); caller migration and mitigation reads deferred.
+
+### Implementation status ✅ (foundation slice)
+
+- **`canonical-damage-packet.js`** — `buildCanonicalDamagePacket()` normalizes any input to `{ components:[{amount,type,tags,source}], amount, primaryType }`. Bare number → `type:'normal', tags:['legacy'], source:'legacy-number-damage'`; explicit type preserved; weapon (when present, no explicit type) → `weapon.system.damageType` + tags; lightsaber adds a `'lightsaber'` tag **orthogonal** to its `energy` type.
+- **`ActorEngine.applyDamage`** normalizes before `resolveDamage` and forwards `options.damageComponents` (single chokepoint — `DamageEngine.applyDamage` and `SWSEActorBase.applyDamage` both route here). `CombatEngine.applyDamage` (the only other direct `resolveDamage` caller) normalizes the same way.
+- **Behaviour-preserving by construction:** single-component packets fall through `resolveComponentMitigation` (needs >1) to the unchanged single-total path; the effective `damageType` is preserved (explicit type wins; bare numbers stay `normal`). **No immunity/DR/resistance math changed.** Compatibility wrappers kept.
+- **Verified:** `node --check` on all touched files; a normalizer test covers bare-number/legacy, explicit type, `options.damageType`, weapon-type read, lightsaber type-vs-tag split, multi-component preservation, and single-component fall-through.
+- **Deferred (next slices):** routing the bare-number callers (`rollAndApplyDamage`, `DarkSidePowers`, `chat-commands`) through the builder so they carry real weapon type; making mitigation *read* per-component `type`/`tags` (component pipeline, then D3/D4A/D4). Until then, those paths still resolve as `normal` — but now via the canonical shape.
+
+---
+
+_Original verification + design below._
 
 ## The question, answered
 
