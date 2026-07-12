@@ -98,18 +98,25 @@ function getActorDamageReduction(actor) {
  * @returns {Object} { rating, current, source } or null
  */
 function getActorShieldRating(actor) {
+  // Authority order: derived.shield (projection of the stored resource) → system.shields
+  // (stored SSOT) → legacy system.shieldRating / system.currentSR (fallback/migration only).
   const derived = actor?.system?.derived?.shield;
-  const systemRating = Number(actor?.system?.shieldRating ?? 0) || 0;
-  const systemCurrent = Number(actor?.system?.currentSR ?? 0) || 0;
+  const shields = actor?.system?.shields || {};
+  const storedMax = Number(shields.max ?? shields.rating ?? 0) || 0;
+  const storedCurrent = Number(shields.value ?? 0) || 0;
+  const legacyRating = Number(actor?.system?.shieldRating ?? 0) || 0;
+  const legacyCurrent = Number(actor?.system?.currentSR ?? 0) || 0;
 
-  const rating = derived?.max ?? systemRating;
-  const current = derived?.current ?? systemCurrent;
+  const rating = (derived?.max != null ? Number(derived.max) || 0 : 0) || storedMax || legacyRating;
+  const current = derived?.current != null
+    ? (Number(derived.current) || 0)
+    : (storedMax > 0 || storedCurrent > 0 ? storedCurrent : (legacyCurrent || rating));
 
   if (rating > 0) {
     return {
       rating,
       current,
-      source: derived ? "derived" : "system"
+      source: derived ? "derived" : (storedMax > 0 || storedCurrent > 0 ? "system.shields" : "legacy")
     };
   }
   return null;

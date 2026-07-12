@@ -1381,6 +1381,17 @@ export const ActorEngine = {
         updates['system.hp.temp'] = Math.max(0, Number(resolution.mitigation.tempHP.after) || 0);
       }
 
+      // Persist Shield Rating depletion (RAW CRB p.161: an attack exceeding the
+      // current SR permanently reduces SR by 5 until recharged). ShieldMitigationResolver
+      // stays pure; ActorEngine is the writer. system.shields is the stored SSOT — only
+      // persist when the mitigating SR came from that stored resource (marked
+      // derived.shield.stored), never from a transient force-shield effect that writes
+      // derived.shield.current directly.
+      const shieldMitigation = resolution.mitigation?.shield;
+      if (shieldMitigation && Number(shieldMitigation.degraded) > 0 && actor.system?.derived?.shield?.stored === true) {
+        updates['system.shields.value'] = Math.max(0, Number(shieldMitigation.remaining) || 0);
+      }
+
       if (resolution.conditionAfter !== undefined && resolution.conditionAfter !== (actor.system?.conditionTrack?.current ?? 0)) {
         updates['system.conditionTrack.current'] = resolution.conditionAfter;
       }
@@ -1436,6 +1447,46 @@ export const ActorEngine = {
       });
       throw err;
     }
+  },
+
+  /**
+   * Recharge Shield Rating (RAW: Recharge Shields / Restore Shields restore +5 SR,
+   * up to the shield's normal maximum). system.shields is the stored SSOT; this is
+   * the ActorEngine mutation primitive for the resource's restore operation.
+   *
+   * NOTE: this is the primitive only. Wiring it to the Recharge Shields (Mechanics)
+   * / Restore Shields (Endurance) skill-use actions is a next step — there is no
+   * dispatch surface for those actions yet (only data entries / a Shield Surge
+   * lockout descriptor reference it).
+   *
+   * @param {Actor} actor
+   * @param {Object} [options]
+   * @param {number} [options.amount=5] SR to restore (default RAW +5)
+   * @returns {Promise<{restored:number, current:number, max:number}>}
+   */
+  async rechargeShields(actor, { amount = 5 } = {}) {
+    if (!actor) {throw new Error('rechargeShields() requires actor');}
+
+    const shields = actor.system?.shields || {};
+    const max = Math.max(
+      Number(shields.max ?? shields.rating ?? 0) || 0,
+      Number(actor.system?.shieldRating ?? 0) || 0,
+      Number(actor.system?.derived?.shield?.max ?? 0) || 0
+    );
+
+    if (max <= 0) {
+      return { restored: 0, current: Number(shields.value ?? 0) || 0, max: 0 };
+    }
+
+    const current = Number(actor.system?.derived?.shield?.current ?? shields.value ?? 0) || 0;
+    const next = Math.min(max, current + (Number(amount) || 0));
+    const restored = Math.max(0, next - current);
+
+    if (restored > 0) {
+      await this.updateActor(actor, { 'system.shields.value': next });
+    }
+
+    return { restored, current: next, max };
   },
 
   /**

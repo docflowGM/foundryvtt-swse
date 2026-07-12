@@ -1,6 +1,20 @@
 # Phase 3B — Shield & Damage-Reduction SSOT Design
 
-**Status:** Design document only. **No code, no schema migration, no new actor fields, no resolver changes** are made by this phase. Everything below labeled "proposed" requires sign-off before any implementation phase begins.
+**Status:** Design document. The **shield** half (D1/D2) is now **IMPLEMENTED** (see "Shield implementation status" below). The **DR** half (D3/D4) remains design-only pending sign-off.
+
+### Shield implementation status ✅ (this PR)
+
+Implemented per the agreed shield SSOT — no schema migration, no new actor field (`system.shields` already exists), `ShieldMitigationResolver` unchanged:
+- **`DerivedCalculator`** projects `system.derived.shield = {current,max,source,stored}` from `system.shields` (legacy `system.shieldRating`/`system.currentSR` are fallback-only; vehicles excluded).
+- **`ActorEngine.applyDamage`** persists SR depletion: writes `system.shields.value = remaining` when `mitigation.shield.degraded > 0` **and** the SR came from the stored resource (`derived.shield.stored === true`) — so transient force-shield effects can't cause phantom writes.
+- **`ActorEngine.rechargeShields(actor, {amount=5})`** added as the restore primitive (+5 up to max). **Next step:** wire it to the Recharge Shields (Mechanics) / Restore Shields (Endurance) skill actions — no dispatch surface exists yet (only data entries + a Shield Surge lockout descriptor reference it).
+- **Card reader** (`immunity-resistance-adapter.getActorShieldRating`) repointed to derived.shield → system.shields → legacy. (`PanelContextBuilder` already used that precedence.)
+- **Verified** end-to-end against the real `ShieldMitigationResolver`: dmg<SR → HP & SR unchanged; dmg>SR → HP overflow + SR−5; repeated hits persist depletion; recharge +5 caps at max; force-only shields take no phantom persistence.
+- **Deferred (unchanged):** Force Shield still writes `derived.shield.current` via its own effect for the pure-force case (no stored/legacy shield present, so the projection does not emit and nothing is clobbered); migrating Force Shield to grant SR through `system.shields` belongs to the force-power shield track.
+
+---
+
+**Original design scope note:** everything below labeled "proposed" for **DR** requires sign-off before implementation. No DR code, schema migration, new field, or resolver change is made.
 
 **The question this phase must answer:** *What is the single source of truth for shields and damage reduction?*
 
