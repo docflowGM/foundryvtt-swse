@@ -91,19 +91,19 @@ system.derived.damageProtections = {
 ```
 Immunity = negate. Resistance = flat reduce (highest-only per type). No merge with DR.
 
-## 6. Proposed resolver order
+## 6. Resolver order — ✅ DECIDED
 
-**Current effective order:** immunity + typed resistance (packet prep) → **SR → DR → Temp HP**.
-
-**Proposed canonical order (for sign-off — RAW ordering of resistance vs SR needs a decision):**
+**Canonical mitigation order (signed off):**
 1. **Immunity** → negate, stop.
-2. **Shield Rating (SR)** → absorb + degrade *(RAW: SR absorbs first among reductions)*.
+2. **Shield Rating (SR)** → absorb + degrade. *Shield absorbs the attack first.*
 3. **Damage Reduction** (generic + `DR/exception`).
-4. **Typed Resistance** (applies-to, e.g. Energy Resistance).
-5. **Temp HP**.
+4. **Typed Resistance** (applies-to, e.g. Energy Resistance) → *modifies what gets through after SR.*
+5. **HP** (Temp HP then real HP).
 6. **Special damage** (ion/stun/scale) — own rules; document interactions, do not restructure.
 
-> **Open ordering question:** the current code applies typed resistance **before** SR (at packet prep), whereas RAW has SR absorb first. Whether to move resistance after SR/DR is a RAW-ordering decision to confirm before implementation. **Immunity-first** is not negotiable (immune = no damage). Note: the user's starting order listed immunity last — that is corrected here, since immunity must negate before any reduction.
+Rule of thumb: **SR before typed resistance** — the shield absorbs the incoming attack, then resistance modifies whatever passes through — unless a specific Force power says otherwise.
+
+> **Implementation implication (behavior change):** the current code applies immunity + typed resistance at **packet prep** (`damage-packet-rules.js:379-381`), which is *before* SR. The agreed order requires **moving the typed-resistance stage to after DR and before HP** (immunity stays first). This is a deliberate, visible change in mixed shield+resistance cases and must be covered by tests when implemented. Immunity-first is preserved (immune = no damage before any reduction).
 
 ## 7. What D4 does NOT do
 
@@ -128,7 +128,7 @@ Immunity = negate. Resistance = flat reduce (highest-only per type). No merge wi
 1. **DR entry shape:** land `damageReduction.{all,entries,sources}` in the D3 projection (supersede `byType`); resolver computes effective DR via exceptions.
 2. **Consolidate applies-to reduction** into the resistance layer; retire item `CONTEXTUAL_DAMAGE_REDUCTION`'s applies-to use (or route it to resistance). Remove Energy Resistance's dead DR write.
 3. **Optional protection projection** `derived.damageProtections` for single-read UI, if desired.
-4. **Ordering:** implement the agreed resolver order; add an explicit resistance stage if it moves after SR/DR.
+4. **Ordering (decided):** move the typed-resistance stage out of packet-prep to **after DR, before HP** (immunity stays first, SR before resistance). Add it as an explicit mitigation stage alongside SR/DR/TempHP; cover mixed shield+resistance cases with tests.
 
 ## Risks
 
