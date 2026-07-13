@@ -1,0 +1,134 @@
+{
+  "$schemaRef": "data/combat/damage-profiles.schema.json",
+  "sourceType": "areaProfile",
+  "notes": [
+    "Attack-shape profiles (Phase 0 audit §6). These are resolution-policy metadata, not packet schemas and not token geometry.",
+    "Area attacks: roll below 10 auto-misses, hits take full damage, misses take half, natural 20 hits all targets but does not double damage, cover can negate miss damage.",
+    "Verified = derived from SWSE core rules, not from pack heuristics."
+  ],
+  "profiles": [
+    {
+      "slug": "autofire",
+      "name": "Autofire (2x2 area)",
+      "delivery": "weapon",
+      "attackShape": "autofire",
+      "scale": "character",
+      "tags": ["weapon", "autofire", "area"],
+      "attack": {
+        "isArea": true,
+        "isAutofire": true,
+        "halfDamageOnMiss": true,
+        "noCriticalDouble": true,
+        "coverCanNegateMissDamage": true,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": "2x2",
+        "targetPolicy": "all-in-area"
+      },
+      "confidence": "verified",
+      "notes": ["-5 attack penalty (-2 braced autofire-only), consumes 10 shots. Matches combat-actions.db 'Autofire' ruleData."]
+    },
+    {
+      "slug": "burst-fire",
+      "name": "Burst Fire (feat, single target)",
+      "delivery": "weapon",
+      "attackShape": "burst-fire",
+      "scale": "character",
+      "tags": ["weapon", "burst-fire"],
+      "attack": {
+        "isArea": false,
+        "isBurstFire": true
+      },
+      "confidence": "verified",
+      "notes": ["Single target, -5 attack, +2 weapon dice, 5 shots. NOT an area attack — Evasion does not apply."]
+    },
+    {
+      "slug": "grenade-burst",
+      "name": "Grenade / explosive burst",
+      "delivery": "grenade",
+      "attackShape": "burst",
+      "scale": "character",
+      "tags": ["grenade", "explosive", "area"],
+      "attack": {
+        "isArea": true,
+        "halfDamageOnMiss": true,
+        "noCriticalDouble": true,
+        "coverCanNegateMissDamage": true,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": "burst",
+        "radius": 1,
+        "originMode": "grid-intersection",
+        "targetPolicy": "all-in-area"
+      },
+      "confidence": "verified",
+      "notes": ["Default burst radius 1 square; individual grenades may override radius."]
+    },
+    {
+      "slug": "splash",
+      "name": "Splash weapon",
+      "delivery": "weapon",
+      "attackShape": "splash",
+      "scale": "character",
+      "tags": ["weapon", "splash", "area"],
+      "attack": {
+        "isArea": true,
+        "isSplash": true,
+        "halfDamageOnMiss": true,
+        "noCriticalDouble": true,
+        "coverCanNegateMissDamage": true,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": "splash",
+        "targetPolicy": "primary-plus-adjacent"
+      },
+      "confidence": "verified",
+      "notes": ["Primary target full/half; adjacent targets compare vs. their own defense."]
+    },
+    {
+      "slug": "cone",
+      "name": "Cone area attack",
+      "attackShape": "cone",
+      "scale": "character",
+      "tags": ["area", "cone"],
+      "attack": {
+        "isArea": true,
+        "halfDamageOnMiss": true,
+        "noCriticalDouble": true,
+        "coverCanNegateMissDamage": true,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": "cone",
+        "originMode": "self",
+        "targetPolicy": "all-in-area"
+      },
+      "confidence": "verified",
+      "notes": ["Delivery stays with the owning source (weapon or force-power); size set per source."]
+    },
+    {
+      "slug": "line",
+      "name": "Line area attack",
+      "attackShape": "line",
+      "scale": "character",
+      "tags": ["area", "line"],
+      "attack": {
+        "isArea": true,
+        "halfDamageOnMiss": true,
+        "noCriticalDouble": true,
+        "coverCanNegateMissDamage": true,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": "line",
+        "originMode": "self",
+        "targetPolicy": "all-in-area"
+      },
+      "confidence": "verified",
+      "notes": ["Delivery stays with the owning source (weapon or force-power); size set per source."]
+    }
+  ]
+}

@@ -1,0 +1,685 @@
+{
+  "generatedBy": "tools/audit-damage-profiles.mjs",
+  "generatedAt": "2026-07-13T18:45:23.789Z",
+  "contract": "docs/systems/CANONICAL_DAMAGE_PACKET.md (swse.damage.packet.v2)",
+  "registrySeedCounts": {
+    "weapon": {
+      "total": 7,
+      "verified": 6,
+      "inferred": 1,
+      "manualRequired": 0
+    },
+    "vehicleWeapon": {
+      "total": 63,
+      "verified": 0,
+      "inferred": 17,
+      "manualRequired": 46
+    },
+    "forcePower": {
+      "total": 17,
+      "verified": 3,
+      "inferred": 11,
+      "manualRequired": 3
+    },
+    "unarmed": {
+      "total": 1,
+      "verified": 1,
+      "inferred": 0,
+      "manualRequired": 0
+    },
+    "naturalWeapon": {
+      "total": 3,
+      "verified": 3,
+      "inferred": 0,
+      "manualRequired": 0
+    },
+    "areaProfile": {
+      "total": 6,
+      "verified": 6,
+      "inferred": 0,
+      "manualRequired": 0
+    }
+  },
+  "weapons": {
+    "packs": [
+      "weapons.db",
+      "weapons-exotic.db",
+      "weapons-grenades.db",
+      "weapons-heavy.db",
+      "weapons-lightsabers.db",
+      "weapons-pistols.db",
+      "weapons-rifles.db",
+      "weapons-simple.db"
+    ],
+    "note": "packs/weapons.db is an aggregate duplicate of the category packs; entries are deduped by _id.",
+    "scanned": 186,
+    "withExplicitDamage": 165,
+    "withExplicitDamageType": 186,
+    "damageTypeDistribution": {
+      "energy": 104,
+      "kinetic": 56,
+      "stun": 10,
+      "sonic": 7,
+      "ion": 6,
+      "fire": 2,
+      "cold": 1
+    },
+    "traits": {
+      "lightsaber": 19,
+      "autofireCapable": 19,
+      "grenadeOrExplosive": 15,
+      "areaEffectProperty": 9,
+      "launcher": 4,
+      "stun": 11,
+      "ion": 6
+    },
+    "classification": {
+      "safeToWire": 166,
+      "inferredButNeedsReview": 0,
+      "manualRequired": 20
+    },
+    "manualRequired": [
+      "Adhesive Grenade",
+      "Concealed Dart Launcher",
+      "Concussion Missile Launcher",
+      "Electro-net",
+      "Flash Canister",
+      "Gas Grenade",
+      "Grenade Launcher",
+      "Heavy Variable Blaster",
+      "Interchangeable Weapon System",
+      "Micro Grenade Launcher",
+      "Miniature Missile Launcher",
+      "Mortar Launcher",
+      "Net",
+      "Proton Torpedo Launcher",
+      "Smoke Grenade",
+      "Snare Rifle",
+      "Tactical Tractor Beam",
+      "Targeting Laser",
+      "Variable Blaster",
+      "Wrist Rocket Launcher"
+    ],
+    "inferredButNeedsReview": [],
+    "fieldUse": {
+      "subtype": 15,
+      "chassisId": 15,
+      "constructible": 15,
+      "baseBuildDc": 15,
+      "baseCost": 15,
+      "damage": 186,
+      "damageType": 186,
+      "attackBonus": 186,
+      "attackAttribute": 186,
+      "range": 186,
+      "weight": 186,
+      "cost": 186,
+      "equipped": 186,
+      "description": 186,
+      "properties": 186,
+      "ammunition": 186,
+      "weaponCategory": 186,
+      "proficiency": 186,
+      "upgradeSlots": 15,
+      "installedUpgrades": 15,
+      "combat": 186,
+      "equippable": 186,
+      "rangeProfile": 186,
+      "weaponType": 186,
+      "traits": 186,
+      "subcategory": 171,
+      "costNumeric": 171,
+      "category": 171,
+      "schemaVersion": 171,
+      "economics": 171
+    },
+    "profileOwner": "weapon builder (buildWeaponDamagePacket) + family profiles in data/combat/damage-profiles.weapon.json; grenades overlay the areaProfile grenade-burst shape."
+  },
+  "vehicleWeapons": {
+    "pack": "vehicle-weapons.db",
+    "scanned": 64,
+    "withDamageString": 45,
+    "withParseableFormula": 38,
+    "withExplicitType": 6,
+    "withNameInferredType": 13,
+    "classification": {
+      "safeToWire": 4,
+      "inferredButNeedsReview": 13,
+      "manualRequired": 21,
+      "modifier": 6,
+      "noDirectDamage": 20
+    },
+    "byBucket": {
+      "manualRequired": [
+        "Anti-Aircraft Flak Pod [5d10x5]",
+        "Concussion Missile, Heavy [9d10x5]",
+        "Concussion Missile, Light [7d10x2]",
+        "Concussion Missile, Medium [9d10x2]",
+        "Defoliator Shell [4d10x2]",
+        "Discord Missile [Special]",
+        "Energy Bomblet Generator [8d10x5]",
+        "Fire-Linked Weapon, Optional [Special]",
+        "Gravity Well Projector [Special]",
+        "Harpoon Gun [Special]",
+        "Heavy Ordnance Launcher [5d10x5]",
+        "Ion Bomb [5d10 (Ion)]",
+        "Ion Pulse Cannon [9d10x10 (Ion, Special)]",
+        "Microtractor-Pressor [Special]",
+        "Proton Grenade [8d6]",
+        "Proton Torpedo [9d10x2]",
+        "Shieldbuster Torpedo [10d10x2]",
+        "Space Mine, Advanced [9d10x2]",
+        "Space Mine, Heavy [6d10x5]",
+        "Space Mine, Standard [7d10x2]",
+        "Tractor Beam [Special]"
+      ],
+      "noDirectDamage": [
+        "Autoblaster [null]",
+        "Chaff Gun [null]",
+        "Concussion Missile Launcher, Heavy [null]",
+        "Concussion Missile Launcher, Light [null]",
+        "Concussion Missile Launcher, Medium [null]",
+        "Defoliator Launcher [null]",
+        "Discord Missile Launcher [null]",
+        "Docking Gun [By Weapon]",
+        "Droid Jammer [null]",
+        "Gravity Mine Launcher [null]",
+        "Gravity Mine, Magnetic [null]",
+        "Gravity Mine, Standard [null]",
+        "Harpoon Gun [null]",
+        "Ion Bomb, Rack [null]",
+        "Point-Defense [null]",
+        "Proton Grenade Launcher [null]",
+        "Proton Torpedo Launcher [null]",
+        "Shieldbuster Torpedo Launcher [null]",
+        "Space Mine Launcher [null]",
+        "Space Mine Launcher, Heavy [null]"
+      ],
+      "inferredButNeedsReview": [
+        "Blaster Cannon, Heavy [5d10x2]",
+        "Blaster Cannon, Light [3d10x2]",
+        "Blaster Cannon, Medium [4d10x2]",
+        "Composite Beam Cannon [8d10]",
+        "Laser Cannon, Heavy [5d10x2]",
+        "Laser Cannon, Light [3d10x2]",
+        "Laser Cannon, Medium [4d10x2]",
+        "Mass-Driver Cannon, Heavy [7d10x2]",
+        "Mass-Driver Cannon, Standard [6d10x2]",
+        "Rail Cannon [5d10x5]",
+        "Turbolaser, Heavy [7d10x5]",
+        "Turbolaser, Light [3d10x5]",
+        "Turbolaser, Medium [5d10x5]"
+      ],
+      "modifier": [
+        "Cannon, Double [+1d10]",
+        "Cannon Enhancements [+1d10]",
+        "Cannon Enhancements, Advanced [+2d10]",
+        "Cannon, Quad [+2d10]",
+        "Fire-Linked Weapon, 2 [+1d10]",
+        "Fire-Linked Weapon, 4 [+2d10]"
+      ],
+      "safeToWire": [
+        "Ion Cannon, Hapan Triple [5d10x5 (Ion)]",
+        "Ion Cannon, Heavy [3d10x5 (Ion)]",
+        "Ion Cannon, Light [3d10x2 (Ion)]",
+        "Ion Cannon, Medium [5d10x2 (Ion)]"
+      ]
+    },
+    "profileOwner": "vehicle-weapon builder (later slice) + generated per-weapon profiles in data/combat/damage-profiles.vehicle-weapon.json; parser: scripts/engine/combat/vehicle-weapon-damage-parser.js."
+  },
+  "forcePowers": {
+    "pack": "forcepowers.db",
+    "scanned": 65,
+    "buckets": {
+      "healing": {
+        "count": 2,
+        "powers": [
+          "Vital Transfer",
+          "Dark Transfer"
+        ]
+      },
+      "no-runtime-damage": {
+        "count": 10,
+        "powers": [
+          "Farseeing",
+          "Force Track",
+          "Cryokinesis",
+          "Force Grip",
+          "Drain Energy",
+          "Inspire",
+          "Dark Rage",
+          "Kinetic Combat",
+          "Shatterpoint",
+          "Technometry"
+        ]
+      },
+      "damage": {
+        "count": 24,
+        "powers": [
+          "Force Storm (FUCG)",
+          "Force Lightning",
+          "Force Slam",
+          "Force Storm",
+          "Force Thrust",
+          "Battle Strike",
+          "Ballistakinesis",
+          "Combustion",
+          "Convection",
+          "Corruption",
+          "Detonate",
+          "Force Blast",
+          "Force Light",
+          "Force Whirlwind",
+          "Hatred",
+          "Ionize",
+          "Lightning Burst",
+          "Memory Walk",
+          "Mind Shard",
+          "Rend",
+          "Repulse",
+          "Stagger",
+          "Thought Bomb",
+          "Wound"
+        ]
+      },
+      "movement/control": {
+        "count": 26,
+        "powers": [
+          "Cloak",
+          "Force Disarm",
+          "Surge",
+          "Move Object",
+          "Rebuke",
+          "Force Slam",
+          "Malacia",
+          "Force Stun",
+          "Sever Force",
+          "Force Thrust",
+          "Mind Trick",
+          "Ballistakinesis",
+          "Blind",
+          "Crucitorn",
+          "Fear",
+          "Fold Space",
+          "Force Blast",
+          "Force Whirlwind",
+          "Ionize",
+          "Levitate",
+          "Morichro",
+          "Phase",
+          "Plant Surge",
+          "Repulse",
+          "Slow",
+          "Stagger"
+        ]
+      },
+      "area": {
+        "count": 13,
+        "powers": [
+          "Force Slam",
+          "Force Scream",
+          "Force Storm",
+          "Convection",
+          "Detonate",
+          "Fear",
+          "Force Blast",
+          "Force Light",
+          "Lightning Burst",
+          "Obscure",
+          "Plant Surge",
+          "Repulse",
+          "Thought Bomb"
+        ]
+      },
+      "mental/mind-affecting": {
+        "count": 9,
+        "powers": [
+          "Malacia",
+          "Force Stun",
+          "Mind Trick",
+          "Enlighten",
+          "Fear",
+          "Memory Walk",
+          "Mind Shard",
+          "Obscure",
+          "Thought Bomb"
+        ]
+      },
+      "defensive/mitigation": {
+        "count": 9,
+        "powers": [
+          "Negate Energy",
+          "Energy Resistance",
+          "Force Shield",
+          "Inertia",
+          "Intercept",
+          "Phase",
+          "Prescience",
+          "Resist Force",
+          "Valor"
+        ]
+      }
+    },
+    "damageCapable": 24,
+    "curatedProfiles": 17,
+    "damageCapableWithProfile": [
+      "Force Lightning",
+      "Force Slam",
+      "Force Storm",
+      "Force Thrust",
+      "Ballistakinesis",
+      "Combustion",
+      "Convection",
+      "Ionize",
+      "Lightning Burst"
+    ],
+    "damageCapableWithoutProfile": [
+      "Force Storm (FUCG)",
+      "Battle Strike",
+      "Corruption",
+      "Detonate",
+      "Force Blast",
+      "Force Light",
+      "Force Whirlwind",
+      "Hatred",
+      "Memory Walk",
+      "Mind Shard",
+      "Rend",
+      "Repulse",
+      "Stagger",
+      "Thought Bomb",
+      "Wound"
+    ],
+    "classification": {
+      "safeToWire": 0,
+      "inferredButNeedsReview": 11,
+      "manualRequired": 18
+    },
+    "policy": "No Force power damage is wired this phase; nothing is safeToWire by design. Never default Force damage to type \"force\"; dark side is a tag, not a type. Force Shield / Energy Resistance / Negate Energy remain effect/mitigation flows.",
+    "profileOwner": "curated data/combat/damage-profiles.force-power.json + future buildForcePowerDamagePacket()."
+  },
+  "unarmedAndNatural": {
+    "packs": [
+      "species.db",
+      "special-abilities.db (no naturalWeaponRiders present)",
+      "beasts.db (no naturalWeapons present)"
+    ],
+    "speciesScanned": 161,
+    "speciesWithNaturalWeapons": 6,
+    "naturalWeaponEntries": 7,
+    "withFormula": 7,
+    "withExplicitType": 7,
+    "entries": [
+      {
+        "species": "Barabel",
+        "name": "Claws",
+        "damage": "1d4",
+        "type": "slashing"
+      },
+      {
+        "species": "Barabel",
+        "name": "Bite",
+        "damage": "1d6",
+        "type": "piercing"
+      },
+      {
+        "species": "Cathar",
+        "name": "Claws",
+        "damage": "1d4",
+        "type": "slashing"
+      },
+      {
+        "species": "Noghri",
+        "name": "Claws",
+        "damage": "1d4",
+        "type": "slashing"
+      },
+      {
+        "species": "Togorian",
+        "name": "Claws",
+        "damage": "1d4",
+        "type": "slashing"
+      },
+      {
+        "species": "Trandoshan",
+        "name": "Claws",
+        "damage": "1d4",
+        "type": "slashing"
+      },
+      {
+        "species": "Wookiee",
+        "name": "Claws",
+        "damage": "1d6",
+        "type": "slashing"
+      }
+    ],
+    "unarmedPolicy": "unarmed-attack-helper.js is the unarmed authority: size-stepped dice, damageType 'bludgeoning' (aliases to kinetic), tags ['unarmed','natural-body'].",
+    "classification": {
+      "safeToWire": 7,
+      "inferredButNeedsReview": 0,
+      "manualRequired": 0
+    },
+    "profileOwner": "data/combat/damage-profiles.natural.json + future buildUnarmedDamagePacket()/buildNaturalWeaponDamagePacket(). Natural weapons keep explicit slashing/piercing/energy types; never collapsed into generic unarmed."
+  },
+  "areaShapes": {
+    "currentAuthorities": [
+      "combat-actions.db ruleData (areaAttack/halfDamageOnMiss/evasionApplies) + contextTags (autofire/burstFire/areaAttack)",
+      "damage-packet-builder.js resolveDamageDisposition() (area/autofire/burstFire flags, half-on-miss, cover negation via SkillFeatRuntime)",
+      "scripts/engine/feats/area-explosives-feat-normalization-hooks.js + weapon-autofire-feat-normalization-hooks.js (feat runtime patches)",
+      "weapon properties (Autofire, Area Effect, Grenade, Launcher) on weapon packs",
+      "Force power tags (area/burst) on forcepowers.db",
+      "vehicle ordnance families (missiles/torpedoes/mines/bombs) in vehicle-weapons.db"
+    ],
+    "shapeProfiles": [
+      "autofire",
+      "burst-fire",
+      "grenade-burst",
+      "splash",
+      "cone",
+      "line"
+    ],
+    "combatActionsWithShapeSemantics": [
+      {
+        "name": "Burst Fire",
+        "contextTags": [
+          "attack",
+          "burstFire",
+          "singleTarget"
+        ],
+        "areaAttack": false,
+        "autofire": false,
+        "burstFire": true,
+        "halfDamageOnMiss": false,
+        "evasionApplies": false
+      },
+      {
+        "name": "Area Attack (burst/splash/cone)",
+        "contextTags": [
+          "attack",
+          "areaAttack"
+        ],
+        "areaAttack": true,
+        "autofire": false,
+        "burstFire": false,
+        "halfDamageOnMiss": true,
+        "evasionApplies": true
+      },
+      {
+        "name": "Autofire",
+        "contextTags": [
+          "attack",
+          "autofire",
+          "areaAttack"
+        ],
+        "areaAttack": true,
+        "autofire": true,
+        "burstFire": false,
+        "halfDamageOnMiss": true,
+        "evasionApplies": true
+      }
+    ],
+    "weaponsWithAreaTraits": [
+      "Adhesive Grenade",
+      "Blaster Cannon",
+      "Concussion Grenade",
+      "Concussion Missile Launcher",
+      "CryoBan Grenade",
+      "EMP Grenade",
+      "Flamethrower",
+      "Frag Grenade",
+      "Gas Grenade",
+      "Grenade Launcher",
+      "Heavy Blaster Cannon",
+      "Ion Grenade",
+      "Micro Grenade Launcher",
+      "Proton Torpedo Launcher",
+      "Radiation Grenade",
+      "Rail Detonator Gun",
+      "Remote Grenade",
+      "Smoke Grenade",
+      "Stun Grenade",
+      "Thermal Detonator"
+    ],
+    "forcePowersWithAreaTags": [
+      "Force Slam",
+      "Force Scream",
+      "Force Storm",
+      "Convection",
+      "Detonate",
+      "Fear",
+      "Force Blast",
+      "Force Light",
+      "Lightning Burst",
+      "Obscure",
+      "Plant Surge",
+      "Repulse",
+      "Thought Bomb"
+    ],
+    "vehicleOrdnanceNeedingAreaMapping": [
+      "Anti-Aircraft Flak Pod",
+      "Concussion Missile, Heavy",
+      "Concussion Missile, Light",
+      "Concussion Missile, Medium",
+      "Defoliator Shell",
+      "Discord Missile",
+      "Docking Gun",
+      "Energy Bomblet Generator",
+      "Gravity Well Projector",
+      "Heavy Ordnance Launcher",
+      "Ion Bomb",
+      "Microtractor-Pressor",
+      "Proton Grenade",
+      "Proton Torpedo",
+      "Shieldbuster Torpedo",
+      "Space Mine, Advanced",
+      "Space Mine, Heavy",
+      "Space Mine, Standard",
+      "Tractor Beam"
+    ],
+    "policy": "Shape profiles are resolution-policy metadata; per-target packets are produced after hit/miss/cover resolution. No token geometry this phase."
+  },
+  "poisonBoundary": {
+    "pack": "poisons.db",
+    "scanned": 0,
+    "packNote": "packs/poisons.db is currently empty (0 bytes); the poison item type exists in template.json and the poison engine remains the schema authority.",
+    "boundary": "Poison keeps its own engine/schema and becomes a packet RIDER in a later pass. It is not a damage component and never enters SR/immunity/DR/resistance math. Only type \"poison\" HP damage with explicit printed-source support may ever become a component.",
+    "poisonsWithHpDamageFields": 0
+  },
+  "validators": [
+    {
+      "id": "weapon-damage-without-type",
+      "description": "Weapon with dice damage but no damageType",
+      "failures": 0,
+      "examples": []
+    },
+    {
+      "id": "lightsaber-without-tag",
+      "description": "Lightsaber-ish weapon not detectable as lightsaber by property/subtype/pack (would miss the DR-bypass tag)",
+      "failures": 0,
+      "examples": []
+    },
+    {
+      "id": "vehicle-weapon-parseable-without-type",
+      "description": "Vehicle weapon with parseable damage formula but no explicit or name-inferable type",
+      "failures": 13,
+      "examples": [
+        "Anti-Aircraft Flak Pod [5d10x5]",
+        "Concussion Missile, Heavy [9d10x5]",
+        "Concussion Missile, Light [7d10x2]",
+        "Concussion Missile, Medium [9d10x2]",
+        "Defoliator Shell [4d10x2]",
+        "Energy Bomblet Generator [8d10x5]",
+        "Heavy Ordnance Launcher [5d10x5]",
+        "Proton Grenade [8d6]",
+        "Proton Torpedo [9d10x2]",
+        "Shieldbuster Torpedo [10d10x2]",
+        "Space Mine, Advanced [9d10x2]",
+        "Space Mine, Heavy [6d10x5]",
+        "Space Mine, Standard [7d10x2]"
+      ]
+    },
+    {
+      "id": "force-damage-power-without-profile",
+      "description": "Damage-capable Force power with no curated profile entry",
+      "failures": 15,
+      "examples": [
+        "Force Storm (FUCG)",
+        "Battle Strike",
+        "Corruption",
+        "Detonate",
+        "Force Blast",
+        "Force Light",
+        "Force Whirlwind",
+        "Hatred",
+        "Memory Walk",
+        "Mind Shard",
+        "Rend",
+        "Repulse",
+        "Stagger",
+        "Thought Bomb",
+        "Wound"
+      ]
+    },
+    {
+      "id": "area-attack-without-shape",
+      "description": "Combat action with area semantics but no matching registry shape profile",
+      "failures": 0,
+      "examples": []
+    },
+    {
+      "id": "autofire-weapon-without-profile",
+      "description": "Autofire-capable weapon while the registry lacks the autofire shape profile",
+      "failures": 0,
+      "examples": []
+    },
+    {
+      "id": "natural-weapon-without-formula-or-type",
+      "description": "Species natural weapon missing dice formula or explicit type",
+      "failures": 0,
+      "examples": []
+    },
+    {
+      "id": "poison-as-plain-hp-damage",
+      "description": "Poison-named weapon/power modeled as plain HP damage without explicit source support (boundary check)",
+      "failures": 0,
+      "examples": []
+    }
+  ],
+  "recommendation": {
+    "nextRuntimeSlice": "character weapons first",
+    "rationale": [
+      "Character weapons are in excellent shape: 166/186 safeToWire with explicit damage + damageType — a weapon packet builder (buildWeaponDamagePacket) can wire immediately, gated on confidence \"verified\" family profiles.",
+      "Area/autofire/grenade shape overlays come second: the shape profiles are rules-verified and combat-actions already carry matching ruleData, so the overlay is mostly plumbing.",
+      "Vehicle weapons are worse but tractable: the parser already types 6 explicit-ion + 13 name-inferred entries; the ordnance families (21 manualRequired) need printed-source review before any wiring.",
+      "Force powers stay curated-only: 24 damage-capable powers, 9 with curated profiles, none wired by design this phase."
+    ],
+    "order": [
+      "1. Character weapon packet builder (safeToWire set)",
+      "2. Area/autofire/grenade shape overlays (per-target packets after hit/miss)",
+      "3. Vehicle weapon normalization + builder (explicit-ion first, then name-inferred energy/kinetic)",
+      "4. Force power curated profiles → builder (verified entries only)",
+      "5. Unarmed/natural builders (small, data already clean)",
+      "6. Riders pass (poison, burning, ion/stun CT)"
+    ]
+  }
+}

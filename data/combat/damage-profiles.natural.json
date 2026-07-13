@@ -1,0 +1,61 @@
+{
+  "$schemaRef": "data/combat/damage-profiles.schema.json",
+  "sourceType": "naturalWeapon",
+  "notes": [
+    "Unarmed + natural/racial attack profiles (Phase 0 audit §4–5).",
+    "Natural weapons are NOT generic unarmed: they keep their own explicit formula and type (species.db naturalWeapons entries). Never collapse them into the unarmed default and never assume bludgeoning.",
+    "Existing type policy: unarmed-attack-helper.js emits damageType 'bludgeoning', which DamageTypeRules normalizes to kinetic. Species natural weapons author slashing/piercing, also kinetic aliases, preserved in originalDamageTypes."
+  ],
+  "profiles": [
+    {
+      "sourceType": "unarmed",
+      "slug": "unarmed-default",
+      "name": "Unarmed strike",
+      "delivery": "unarmed",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "bludgeoning",
+      "tags": ["unarmed", "natural-body"],
+      "confidence": "verified",
+      "notes": [
+        "Formula from size table in unarmed-attack-helper.js (Medium 1d4, Small 1d3, …).",
+        "'bludgeoning' matches the existing helper output and aliases to kinetic."
+      ]
+    },
+    {
+      "slug": "natural-claws",
+      "name": "Natural weapon — claws",
+      "delivery": "natural",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "slashing",
+      "tags": ["natural-weapon"],
+      "confidence": "verified",
+      "notes": ["Formula per species entry (e.g. Barabel/Cathar/Noghri/Togorian claws 1d4 slashing)."]
+    },
+    {
+      "slug": "natural-bite",
+      "name": "Natural weapon — bite",
+      "delivery": "natural",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "piercing",
+      "tags": ["natural-weapon"],
+      "confidence": "verified",
+      "notes": ["Formula per species entry (e.g. Barabel bite 1d6 piercing)."]
+    },
+    {
+      "slug": "natural-explicit-type",
+      "name": "Natural weapon — explicit authored type",
+      "delivery": "natural",
+      "attackShape": "single-target",
+      "scale": "character",
+      "tags": ["natural-weapon"],
+      "confidence": "verified",
+      "notes": [
+        "Catch-all rule profile: whenever a species naturalWeapons entry carries an explicit type (slashing/piercing/bludgeoning/energy…), that type is authoritative — e.g. Conductive-style energy natural weapons.",
+        "Only a natural weapon with NO authored type may fall back to kinetic/bludgeoning, and that fallback is flagged by the auditor."
+      ]
+    }
+  ]
+}

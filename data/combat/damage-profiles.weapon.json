@@ -1,0 +1,109 @@
+{
+  "$schemaRef": "data/combat/damage-profiles.schema.json",
+  "sourceType": "weapon",
+  "notes": [
+    "Curated character-weapon FAMILY profiles. Per-weapon data (system.damage / system.damageType) remains the SSOT for formula and type; these profiles supply the packet v2 axes (delivery/attackShape/tags) a family shares.",
+    "Full per-weapon classification lives in docs/audits/generated/damage-profile-audit.json (regenerate with node tools/audit-damage-profiles.mjs).",
+    "Lightsaber DR bypass is tag-based ('lightsaber'), never inferred from energy type."
+  ],
+  "profiles": [
+    {
+      "slug": "weapon-single-target",
+      "name": "Standard weapon attack",
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "tags": ["weapon"],
+      "confidence": "verified",
+      "notes": ["Default profile: type/formula come from weapon.system.damageType / system.damage."]
+    },
+    {
+      "slug": "lightsaber",
+      "name": "Lightsaber family",
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": ["weapon", "lightsaber"],
+      "confidence": "verified",
+      "notes": [
+        "The 'lightsaber' tag is what bypasses DR; it does NOT bypass energy resistance or immunity.",
+        "Applies to entries with the Lightsaber property, lightsaber subtype/chassis, or lightsabers pack membership."
+      ]
+    },
+    {
+      "slug": "autofire-capable-weapon",
+      "name": "Autofire-capable weapon (mode overlay)",
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "tags": ["weapon", "autofire-capable"],
+      "confidence": "verified",
+      "notes": [
+        "Weapons with the Autofire property. Firing on autofire overlays the areaProfile 'autofire' shape; Burst Fire feat overlays 'burst-fire'.",
+        "Mode is a workflow overlay, never a permanent item rewrite."
+      ]
+    },
+    {
+      "slug": "stun-mode",
+      "name": "Stun setting (mode overlay)",
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "stun",
+      "tags": ["weapon", "stun-mode"],
+      "riders": [
+        { "kind": "stun-ct", "notes": "Condition-track consequence resolves as a rider, not a damage component." }
+      ],
+      "confidence": "verified",
+      "notes": ["Workflow override to type 'stun' while the mode is active (resolveDamagePacketType already handles this)."]
+    },
+    {
+      "slug": "ion-weapon",
+      "name": "Ion weapon",
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "ion",
+      "tags": ["weapon", "ion"],
+      "riders": [
+        { "kind": "ion-ct", "notes": "Ion condition-track behavior vs. droids/vehicles resolves as a rider." }
+      ],
+      "confidence": "verified"
+    },
+    {
+      "slug": "grenade",
+      "name": "Grenade (weapon-backed burst)",
+      "delivery": "grenade",
+      "attackShape": "burst",
+      "scale": "character",
+      "tags": ["weapon", "grenade", "explosive", "area"],
+      "attack": {
+        "isArea": true,
+        "halfDamageOnMiss": true,
+        "noCriticalDouble": true,
+        "coverCanNegateMissDamage": true,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": "burst",
+        "radius": 1,
+        "originMode": "grid-intersection",
+        "targetPolicy": "all-in-area"
+      },
+      "confidence": "verified",
+      "notes": ["Type/formula stay per-item (frag kinetic, ion grenade ion, CryoBan cold…). Non-damage grenades (adhesive) become riders later."]
+    },
+    {
+      "slug": "slugthrower",
+      "name": "Slugthrower / projectile family",
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": ["weapon", "slugthrower"],
+      "confidence": "inferred",
+      "notes": ["Name/property-based family grouping ('Projectile' property, slug pistols/rifles). Per-item damageType already says kinetic; family tag needs review before any rule hooks on it."]
+    }
+  ]
+}

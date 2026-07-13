@@ -1,0 +1,171 @@
+{
+  "$schemaRef": "data/combat/damage-profiles.schema.json",
+  "sourceType": "forcePower",
+  "notes": [
+    "Curated Force power profiles (Phase 0 audit §3). Force powers get curated profiles, never blind inference, and NEVER default to damage type 'force' — 'force-power' and 'dark-side' are tags/descriptors, not damage types.",
+    "No profile here is 'verified' for damage wiring yet: types come from pack tags/names, which is strong metadata but not printed-source verification. Runtime Force damage stays unimplemented this phase.",
+    "Powers absent from this file are classified in docs/audits/generated/damage-profile-audit.json; damage-capable powers without a profile land in manualRequired.",
+    "Defensive powers (Force Shield, Energy Resistance, Negate Energy) are encoded as mitigation-flow boundaries so nothing turns them into instant damage packets. Force Weapon stays deferred."
+  ],
+  "profiles": [
+    {
+      "slug": "force-lightning",
+      "name": "Force Lightning",
+      "delivery": "force-power",
+      "attackShape": "single-target",
+      "primaryType": "electricity",
+      "tags": ["force-power", "dark-side", "lightning"],
+      "attack": { "defense": "reflex" },
+      "confidence": "inferred",
+      "notes": ["Lightning/electrical power → electricity (energy family), per profile policy. Verify dice/CT rider against printed source before wiring."]
+    },
+    {
+      "slug": "lightning-burst",
+      "name": "Lightning Burst",
+      "delivery": "force-power",
+      "attackShape": "burst",
+      "primaryType": "electricity",
+      "tags": ["force-power", "dark-side", "lightning", "area"],
+      "attack": { "isArea": true, "halfDamageOnMiss": true, "noCriticalDouble": true, "defense": "reflex" },
+      "area": { "shape": "burst", "originMode": "self", "targetPolicy": "all-in-area" },
+      "confidence": "inferred"
+    },
+    {
+      "slug": "combustion",
+      "name": "Combustion",
+      "delivery": "force-power",
+      "attackShape": "single-target",
+      "primaryType": "fire",
+      "tags": ["force-power", "fire"],
+      "confidence": "inferred",
+      "notes": ["Pack tags include 'fire'. Possible burning rider — verify before wiring."]
+    },
+    {
+      "slug": "convection",
+      "name": "Convection",
+      "delivery": "force-power",
+      "attackShape": "single-target",
+      "primaryType": "fire",
+      "tags": ["force-power", "fire"],
+      "confidence": "inferred"
+    },
+    {
+      "slug": "cryokinesis",
+      "name": "Cryokinesis",
+      "delivery": "force-power",
+      "attackShape": "single-target",
+      "primaryType": "cold",
+      "tags": ["force-power", "cold"],
+      "confidence": "inferred"
+    },
+    {
+      "slug": "ionize",
+      "name": "Ionize",
+      "delivery": "force-power",
+      "attackShape": "single-target",
+      "primaryType": "ion",
+      "tags": ["force-power", "ion", "anti-droid"],
+      "riders": [{ "kind": "ion-ct", "notes": "Ion condition-track behavior resolves as a rider." }],
+      "confidence": "inferred"
+    },
+    {
+      "slug": "force-slam",
+      "name": "Force Slam",
+      "delivery": "force-power",
+      "attackShape": "area",
+      "primaryType": "kinetic",
+      "tags": ["force-power", "telekinetic", "area"],
+      "attack": { "isArea": true, "halfDamageOnMiss": true, "noCriticalDouble": true },
+      "confidence": "inferred",
+      "notes": ["Telekinetic impact → kinetic. Area geometry (cone vs burst) needs printed-source verification."]
+    },
+    {
+      "slug": "move-object",
+      "name": "Move Object (hurled object damage)",
+      "delivery": "force-power",
+      "attackShape": "single-target",
+      "primaryType": "kinetic",
+      "tags": ["force-power", "telekinetic"],
+      "confidence": "inferred",
+      "notes": ["Damage only when hurling objects/creatures; size-based dice per printed chart."]
+    },
+    {
+      "slug": "ballistakinesis",
+      "name": "Ballistakinesis",
+      "delivery": "force-power",
+      "attackShape": "single-target",
+      "primaryType": "kinetic",
+      "tags": ["force-power", "telekinetic"],
+      "confidence": "inferred",
+      "notes": ["Hurled small objects → kinetic."]
+    },
+    {
+      "slug": "force-thrust",
+      "name": "Force Thrust",
+      "delivery": "force-power",
+      "attackShape": "single-target",
+      "tags": ["force-power", "telekinetic", "forced-movement"],
+      "riders": [{ "kind": "forced-movement", "notes": "Push, not HP damage." }],
+      "confidence": "inferred",
+      "notes": ["Rider/effect power — no HP damage component unless the printed source adds one."]
+    },
+    {
+      "slug": "force-stun",
+      "name": "Force Stun",
+      "delivery": "force-power",
+      "attackShape": "single-target",
+      "tags": ["force-power", "mind-affecting"],
+      "riders": [{ "kind": "stun-ct", "defense": "will", "notes": "Condition-track effect, not HP damage." }],
+      "confidence": "inferred"
+    },
+    {
+      "slug": "force-grip",
+      "name": "Force Grip",
+      "delivery": "force-power",
+      "attackShape": "single-target",
+      "tags": ["force-power", "telekinetic", "dark-side"],
+      "confidence": "manualRequired",
+      "notes": ["Deals HP damage per printed source but the damage type is not stated by pack metadata — do not guess."]
+    },
+    {
+      "slug": "force-storm",
+      "name": "Force Storm",
+      "delivery": "force-power",
+      "attackShape": "area",
+      "tags": ["force-power", "dark-side", "area"],
+      "attack": { "isArea": true },
+      "confidence": "manualRequired",
+      "notes": ["Pack data conflict: system.damage says '2d6 acid' while the power reads as a lightning storm. Printed source must arbitrate before any type is assigned."]
+    },
+    {
+      "slug": "force-scream",
+      "name": "Force Scream",
+      "delivery": "force-power",
+      "attackShape": "area",
+      "tags": ["force-power", "dark-side", "area"],
+      "confidence": "manualRequired",
+      "notes": ["Likely sonic, but not stated by pack metadata — verify before typing."]
+    },
+    {
+      "slug": "negate-energy",
+      "name": "Negate Energy",
+      "tags": ["force-power", "mitigation-flow"],
+      "confidence": "verified",
+      "notes": ["BOUNDARY: stays in effect/mitigation flows (ForcePowerEffectsEngine). Never an instant damage packet."]
+    },
+    {
+      "slug": "energy-resistance",
+      "name": "Energy Resistance",
+      "tags": ["force-power", "mitigation-flow"],
+      "confidence": "verified",
+      "notes": ["BOUNDARY: feeds the typed-resistance mitigation stage (D4). Never an instant damage packet."]
+    },
+    {
+      "slug": "force-shield",
+      "name": "Force Shield",
+      "tags": ["force-power", "mitigation-flow"],
+      "confidence": "verified",
+      "notes": ["BOUNDARY: SR-granting effect flow. Untouched by this phase per standing non-goal."]
+    }
+  ]
+}
