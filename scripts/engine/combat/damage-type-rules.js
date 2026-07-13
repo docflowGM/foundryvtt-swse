@@ -189,6 +189,18 @@ export function damageTypesFromContext({ weapon = null, workflowContext = null, 
   };
 }
 
+// Canonical DAMAGE types (as opposed to effect/condition descriptors like poison,
+// disease, mind-affecting, radiation). Used to keep damage-type immunity (D4A)
+// from swallowing effect-only immunities.
+const DAMAGE_TYPE_KEYS = new Set(['kinetic', 'energy', 'fire', 'cold', 'electricity', 'acid', 'sonic', 'ion', 'stun']);
+
+export function isDamageType(type) {
+  const key = normalizeDamageTypeKey(type);
+  if (!key) return false;
+  if (DAMAGE_TYPE_KEYS.has(key)) return true;
+  return expandDamageTypeAliases([key]).some(t => DAMAGE_TYPE_KEYS.has(t));
+}
+
 export function hasDamageType(types = [], wanted = '') {
   const normalizedWanted = normalizeDamageTypeKey(wanted);
   if (!normalizedWanted) return false;
@@ -373,6 +385,33 @@ export function collectDamageProtections(actor = null) {
   return entries;
 }
 
+/**
+ * D4A: Canonical DAMAGE-TYPE immunities for an actor.
+ * Filters the collected protections to kind === 'immunity' AND a canonical damage
+ * type (energy/kinetic/ion/stun/…). Effect/condition immunities (poison, disease,
+ * mind-affecting, radiation, …) are intentionally excluded — they belong to the
+ * effect-application layer, not damage mitigation.
+ *
+ * @param {Actor} actor
+ * @returns {{ types: string[], sources: Array<{type:string, source:string}> }}
+ */
+export function collectDamageTypeImmunities(actor = null) {
+  const types = [];
+  const sources = [];
+  const seen = new Set();
+  for (const entry of collectDamageProtections(actor)) {
+    if (entry?.kind !== 'immunity') continue;
+    const key = normalizeDamageTypeKey(entry.type);
+    if (!key || !isDamageType(key)) continue;
+    if (!seen.has(key)) {
+      seen.add(key);
+      types.push(key);
+    }
+    sources.push({ type: key, source: entry.source || '' });
+  }
+  return { types, sources };
+}
+
 export function targetHasDamageImmunity(actor = null, damageTypes = []) {
   const expanded = expandDamageTypeAliases(damageTypes);
   const protections = collectDamageProtections(actor).filter(entry => entry.kind === 'immunity');
@@ -524,6 +563,8 @@ export const DamageTypeRules = {
   // never diverge. componentTypes may be a single type or an array.
   expand: (componentTypes = []) => expandDamageTypeAliases(asArray(componentTypes)),
   matches: (componentTypes, ruleType) => hasDamageType(asArray(componentTypes), ruleType),
+  isDamageType,
+  collectDamageTypeImmunities,
   damageTypesFromContext,
   hasDamageType,
   damageTypesMatch,

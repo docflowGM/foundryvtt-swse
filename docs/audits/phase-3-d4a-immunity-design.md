@@ -1,6 +1,6 @@
 # Phase 3 · D4A — Immunity Layer (implementation plan)
 
-**Status:** Plan only. **No code until approved.** No resistance implementation, no DR implementation, no shield changes.
+**Status:** ✅ **Implemented.** Damage-type immunity stage lands after SR, before DR, on both mitigation paths. Effect/condition immunity remains out of scope (documented only). See §9 for the as-built status.
 
 **Finalized mitigation order:** **Shield Rating → Immunity → Damage Reduction → Typed resistance → HP → special (ion/stun/scale).**
 
@@ -136,3 +136,41 @@ Cards/sheets read system.derived.damageImmunities for display
 - **Droid ion/stun special rules** — not folded into normal immunity; ion/stun as *damage-type* immunity is fine, but droid-specific ion/stun mechanics stay in their own rules.
 - **Vulnerability** — not implemented; not added here.
 - No resolver edits, ActiveEffect retargeting, or schema migration in this planning phase.
+
+---
+
+## 9. Implementation status (as built)
+
+**Order delivered:** `Shield Rating → Immunity → Damage Reduction → (typed resistance TBD) → Temp HP → HP`. Immunity runs **after** SR on both paths, so SR still resolves and depletes before immunity zeroes any remainder.
+
+### Canonical damage-type set + collector — `scripts/engine/combat/damage-type-rules.js`
+
+- `DAMAGE_TYPE_KEYS = {kinetic, energy, fire, cold, electricity, acid, sonic, ion, stun}` — the closed set the mitigation stage recognizes.
+- `isDamageType(type)` — normalizes then tests membership (directly or via one-way alias expansion, e.g. `fire`→`energy`). Non-damage types (`poison`, `disease`, `mind-affecting`, `radiation`) return `false`.
+- `collectDamageTypeImmunities(actor)` — walks `collectDamageProtections`, keeps only `kind === 'immunity'` entries whose type passes `isDamageType`, and returns `{ types: [...], sources: [{type, source}] }`. Poison/effect immunities are filtered out here, so they never reach the damage stage.
+- Both helpers are exposed on the `DamageTypeRules` export object.
+
+### Derived projection — `scripts/actors/derived/derived-calculator.js`
+
+- Projects `system.derived.damageImmunities = collectDamageTypeImmunities(actor)` right after the shield projection, wrapped in try/catch that falls back to `{ types: [], sources: [] }`.
+- DerivedCalculator remains the **sole** projector; raw ActiveEffects never write `system.derived.*`.
+
+### Single-total path — `scripts/engine/combat/damage-mitigation-manager.js`
+
+- **STAGE 1.5** between SR (`currentDamage = shieldResult.damageAfter`) and DR. Reads `actor.system.derived.damageImmunities.types` with a `collectDamageTypeImmunities(actor)` fallback for un-projected actors.
+- Declared types gathered from the canonical component (`options.damageComponents[0]` / `canonicalPacket.components[0]`) plus `context.damageTypes`; immunity matched via `DamageTypeRules.matches(declared, type)` (same semantics as DR exceptions). If matched, remaining damage → 0.
+- Adds an `Immunity` breakdown row, a `finalResult.immunity = { applied, types }` block, and per-component `immuneTo` + `mitigation.immunityApplied` on the uniform single-component export.
+
+### Multi-component path — `scripts/engine/combat/damage-component-mitigation.js`
+
+- Immunity stage runs after the shield stage (`afterShieldTotal`) and before DR, per component. Each component's declared types (own `type`/`damageTypes`/`originalDamageTypes`) are matched with `DamageTypeRules.matches`; a match sets that component's post-SR remainder to 0 and records `immunityApplied` + `immuneTo`.
+- Only matching components are removed — non-immune components proceed to DR/HP; the whole attack is cancelled only if every remaining component is immune.
+- `afterImmunityTotal` is computed so DR is not credited with immunity's reduction; result carries `immunity: { applied, types }`.
+
+### Tests (14/14 PASS, node harness against real resolvers)
+
+Helper filters poison out of the collected immunities; energy immunity zeroes energy and fire (alias) but not vs kinetic; fire immunity zeroes fire but not energy (no reverse alias); poison immunity leaves energy/poison-typed damage untouched (poison is not a damage type); lightsaber+energy vs energy immunity → 0 (immunity after SR, DR-bypass irrelevant); SR+immunity (12 dmg, SR 5, energy immune) → HP 0 with SR absorbing 5 / degrading 5 / immunity applied on the 7 remainder; multi-component energy+kinetic vs energy immunity removes only energy (HP 10); all-immune multi-component → HP 0.
+
+### Non-goals honored
+
+No typed resistance, no DR math change (immunity merely precedes it), no Shield Rating math change, no Force Shield, no effect/condition immunity, no removal of compatibility wrappers.

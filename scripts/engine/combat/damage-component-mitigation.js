@@ -10,7 +10,7 @@
 import { ShieldMitigationResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/shield-mitigation-resolver.js";
 import { DamageReductionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/damage-reduction-resolver.js";
 import { TempHPResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/temp-hp-resolver.js";
-import { expandDamageTypeAliases, uniqueDamageTypes } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
+import { expandDamageTypeAliases, uniqueDamageTypes, DamageTypeRules } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 
 function asArray(value) {
   if (Array.isArray(value)) return value;
@@ -76,6 +76,8 @@ function normalizeComponents(rawComponents = [], totalDamage = 0, fallbackType =
         shieldApplied: 0,
         drApplied: 0,
         tempAbsorbed: 0,
+        immunityApplied: 0,
+        immuneTo: null,
         drSource: '',
         source: component.source ?? '',
         formula: component.formula ?? '',
@@ -160,8 +162,10 @@ function exportedComponent(component = {}) {
     afterTempHP: component.afterTempHP,
     // remaining = amount that survives to HP; mitigation = amount removed per stage.
     remaining: component.afterTempHP,
+    immuneTo: component.immuneTo ?? null,
     mitigation: {
       shieldApplied: component.shieldApplied,
+      immunityApplied: component.immunityApplied ?? 0,
       drApplied: component.drApplied,
       drSource: component.drSource,
       tempAbsorbed: component.tempAbsorbed
@@ -238,6 +242,37 @@ export function resolveComponentMitigation({ damage, actor, damageType = 'normal
   staged = syncStage(staged, 'afterShield', 'afterDR');
 
   const afterShieldTotal = staged.reduce((sum, component) => sum + Math.max(0, asNumber(component.afterShield, 0)), 0);
+
+  // ========================================================================
+  // D4A: DAMAGE-TYPE IMMUNITY (after Shield Rating, before DR)
+  // ========================================================================
+  // SR has already resolved/depleted above. Immunity zeroes any REMAINING component
+  // whose type matches a damage-type immunity, using the same DamageTypeRules.matches
+  // semantics as DR exceptions. Only matching components are removed (the attack is
+  // not cancelled unless every remaining component is immune). Effect/condition
+  // immunities are out of scope. SR depletion stays valid.
+  const immunityTypes = (actor?.system?.derived?.damageImmunities?.types
+    ?? DamageTypeRules.collectDamageTypeImmunities(actor).types) || [];
+  const immuneTypesHit = new Set();
+  let immunityAppliedTotal = 0;
+  if (immunityTypes.length) {
+    staged = staged.map(component => {
+      const before = Math.max(0, asNumber(component.afterDR, 0));
+      if (before <= 0) return component;
+      const declared = [component.type, ...(component.damageTypes || []), ...(component.originalDamageTypes || [])].filter(Boolean);
+      const immuneTo = immunityTypes.find(type => DamageTypeRules.matches(declared, type)) || null;
+      if (!immuneTo) return component;
+      immunityAppliedTotal += before;
+      immuneTypesHit.add(immuneTo);
+      return {
+        ...component,
+        afterDR: 0,
+        immunityApplied: Math.max(0, asNumber(component.immunityApplied, 0)) + before,
+        immuneTo
+      };
+    });
+  }
+  const afterImmunityTotal = staged.reduce((sum, component) => sum + Math.max(0, asNumber(component.afterDR, 0)), 0);
 
   // D3: canonical Damage Reduction. DR applies ONCE per attack (RAW: it reduces
   // "the damage") to the non-excepted pool, highest-only. A DR entry's exception
@@ -359,7 +394,9 @@ export function resolveComponentMitigation({ damage, actor, damageType = 'normal
   staged = distributeReduction(staged, 'afterTempHP', tempResult.tempAbsorbed, 'tempAbsorbed');
 
   const hpDamage = staged.reduce((sum, component) => sum + Math.max(0, asNumber(component.afterTempHP, 0)), 0);
-  const drAppliedTotal = Math.max(0, afterShieldTotal - afterDRTotal);
+  // Attribute reduction correctly: immunity removed (afterShieldTotal - afterImmunityTotal),
+  // DR removed (afterImmunityTotal - afterDRTotal). Do not count immunity as DR.
+  const drAppliedTotal = Math.max(0, afterImmunityTotal - afterDRTotal);
   const drSources = [
     genericDRResult.drApplied > 0 ? genericDRResult.drSource : '',
     ...typedDRResults.filter(result => result.applied > 0).map(result => result.source)
@@ -376,6 +413,10 @@ export function resolveComponentMitigation({ damage, actor, damageType = 'normal
       degraded: shieldResult.srDegraded,
       remaining: shieldResult.srRemaining,
       source: ShieldMitigationResolver.getSRSource(actor) || 'None'
+    },
+    immunity: {
+      applied: immunityAppliedTotal,
+      types: [...immuneTypesHit]
     },
     damageReduction: {
       applied: drAppliedTotal,

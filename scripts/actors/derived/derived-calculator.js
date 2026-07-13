@@ -36,6 +36,7 @@ import { CANONICAL_SKILL_DEFS, normalizeSkillMap } from "/systems/foundryvtt-sws
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 import { isRankedModeEnabled, deriveTrainedFromRanks } from "/systems/foundryvtt-swse/scripts/engine/skills/ranked-skills-engine.js";
 import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { DamageTypeRules } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 
 export class DerivedCalculator {
@@ -896,6 +897,17 @@ export class DerivedCalculator {
             stored: true
           };
         }
+      }
+
+      // ========================================
+      // Damage-type immunities (D4A): canonical projection for UI + mitigation.
+      // Damage-type immunities only (energy/kinetic/ion/…); effect/condition
+      // immunities (poison/disease/mind-affecting) are excluded by the collector.
+      // ========================================
+      try {
+        updates['system.derived.damageImmunities'] = DamageTypeRules.collectDamageTypeImmunities(actor);
+      } catch (_err) {
+        updates['system.derived.damageImmunities'] = { types: [], sources: [] };
       }
 
       // ========================================

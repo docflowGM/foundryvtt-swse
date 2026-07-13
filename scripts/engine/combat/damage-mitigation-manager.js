@@ -34,6 +34,7 @@ import { ShieldMitigationResolver } from "/systems/foundryvtt-swse/scripts/engin
 import { DamageReductionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/damage-reduction-resolver.js";
 import { TempHPResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/temp-hp-resolver.js";
 import { resolveComponentMitigation } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-component-mitigation.js";
+import { DamageTypeRules } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 
 export class DamageMitigationManager {
   /**
@@ -120,6 +121,35 @@ export class DamageMitigationManager {
     currentDamage = shieldResult.damageAfter;
 
     // ========================================================================
+    // STAGE 1.5: DAMAGE-TYPE IMMUNITY (after SR, before DR) — D4A
+    // ========================================================================
+    // SR already resolved/depleted. If this (single-component) damage type matches
+    // a damage-type immunity, the remaining damage is zeroed. Same
+    // DamageTypeRules.matches semantics as DR exceptions; effect/condition
+    // immunities are out of scope.
+    const immunityTypes = (actor?.system?.derived?.damageImmunities?.types
+      ?? DamageTypeRules.collectDamageTypeImmunities(actor).types) || [];
+    let immunityApplied = 0;
+    let immuneTo = null;
+    if (immunityTypes.length && currentDamage > 0) {
+      const canonical = options?.damageComponents?.[0] ?? options?.canonicalPacket?.components?.[0] ?? {};
+      const declared = [canonical.type ?? damageType, ...(context.damageTypes || []), ...(canonical.damageTypes || [])].filter(Boolean);
+      immuneTo = immunityTypes.find(type => DamageTypeRules.matches(declared, type)) || null;
+      if (immuneTo) {
+        immunityApplied = currentDamage;
+        currentDamage = 0;
+      }
+    }
+
+    breakdown.push({
+      stage: 'Immunity',
+      input: shieldResult.damageAfter,
+      output: currentDamage,
+      mitigation: immunityApplied,
+      details: { immuneTo, types: immunityTypes, source: 'DamageTypeImmunity' }
+    });
+
+    // ========================================================================
     // STAGE 2: DAMAGE REDUCTION
     // ========================================================================
 
@@ -186,6 +216,11 @@ export class DamageMitigationManager {
         source: ShieldMitigationResolver.getSRSource(actor) || 'None'
       },
 
+      immunity: {
+        applied: immunityApplied,
+        types: immuneTo ? [immuneTo] : []
+      },
+
       damageReduction: {
         applied: drResult.drApplied,
         source: drResult.drSource,
@@ -219,8 +254,10 @@ export class DamageMitigationManager {
           afterDR: drResult.damageAfter,
           afterTempHP: tempResult.damageAfter,
           remaining: currentDamage,
+          immuneTo,
           mitigation: {
             shieldApplied: shieldResult.srApplied,
+            immunityApplied,
             drApplied: drResult.drApplied,
             drSource: drResult.drSource,
             tempAbsorbed: tempResult.tempAbsorbed
