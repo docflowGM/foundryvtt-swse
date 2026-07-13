@@ -1,0 +1,109 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "swse.damage-profiles.schema.v1",
+  "title": "SWSE Damage Profile Data File",
+  "description": "Data files consumed by scripts/engine/combat/damage-profile-registry.js. One packet shape, many source-specific profiles, one mitigation pipeline. Contract: docs/systems/CANONICAL_DAMAGE_PACKET.md",
+  "type": "object",
+  "required": ["sourceType", "profiles"],
+  "properties": {
+    "$schemaRef": { "type": "string" },
+    "sourceType": {
+      "description": "Default sourceType for every profile in this file (a profile may override).",
+      "enum": ["weapon", "vehicleWeapon", "forcePower", "naturalWeapon", "unarmed", "areaProfile"]
+    },
+    "notes": { "type": "array", "items": { "type": "string" } },
+    "profiles": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/profile" }
+    }
+  },
+  "definitions": {
+    "profile": {
+      "type": "object",
+      "required": ["slug", "confidence"],
+      "properties": {
+        "sourceType": {
+          "enum": ["weapon", "vehicleWeapon", "forcePower", "naturalWeapon", "unarmed", "areaProfile"]
+        },
+        "slug": { "type": "string", "pattern": "^[a-z0-9]+(-[a-z0-9]+)*$" },
+        "name": { "type": "string" },
+        "delivery": {
+          "description": "How the damage is delivered (packet v2 axis).",
+          "enum": ["weapon", "unarmed", "natural", "grenade", "force-power", "vehicle-weapon", "hazard", "poison-rider", null]
+        },
+        "attackShape": {
+          "description": "Target geometry / resolution policy (packet v2 axis).",
+          "enum": ["single-target", "autofire", "burst-fire", "burst", "splash", "cone", "line", "area", null]
+        },
+        "scale": { "enum": ["character", "vehicle", "starship", "mixed"] },
+        "primaryType": {
+          "description": "Canonical damage type of the dominant component. Authored aliases (slashing, piercing, bludgeoning, laser…) are allowed and expand via DamageTypeRules. Never default Force powers to \"force\".",
+          "type": ["string", "null"]
+        },
+        "tags": {
+          "description": "Rule hooks: lightsaber, autofire, area, grenade, explosive, force-power, dark-side, natural-weapon, unarmed, natural-body, damage-modifier…",
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "attack": {
+          "type": "object",
+          "properties": {
+            "isArea": { "type": "boolean" },
+            "isAutofire": { "type": "boolean" },
+            "isBurstFire": { "type": "boolean" },
+            "isSplash": { "type": "boolean" },
+            "halfDamageOnMiss": { "type": "boolean" },
+            "noCriticalDouble": { "type": "boolean" },
+            "coverCanNegateMissDamage": { "type": "boolean" },
+            "defense": { "enum": ["reflex", "fortitude", "will", null] }
+          },
+          "additionalProperties": false
+        },
+        "area": {
+          "type": "object",
+          "properties": {
+            "shape": { "enum": ["burst", "cone", "line", "splash", "2x2", null] },
+            "radius": { "type": ["number", "null"] },
+            "size": { "type": ["number", "null"] },
+            "originMode": { "enum": ["grid-intersection", "self", "target-square", null] },
+            "targetPolicy": { "enum": ["all-in-area", "primary-plus-adjacent", "single", null] }
+          },
+          "additionalProperties": false
+        },
+        "components": {
+          "description": "Component templates (formula-level, not rolled).",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "key": { "type": "string" },
+              "label": { "type": "string" },
+              "formula": { "type": ["string", "null"] },
+              "type": { "type": ["string", "null"] },
+              "tags": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        },
+        "riders": {
+          "description": "Secondary effects resolved after HP application (poison, ion-ct, stun-ct, burning, forced movement…). Riders never enter SR/immunity/DR/resistance math.",
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["kind"],
+            "properties": {
+              "kind": { "type": "string" },
+              "defense": { "enum": ["reflex", "fortitude", "will", null] },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "confidence": {
+          "description": "Wiring gate. Only \"verified\" profiles may drive runtime behavior.",
+          "enum": ["verified", "inferred", "manualRequired"]
+        },
+        "notes": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    }
+  }
+}
