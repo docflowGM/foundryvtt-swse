@@ -185,18 +185,12 @@ export const ActorEngine = {
    * Perform any derived-stat recalculation.
    * Runs after every validated update. Non-blocking.
    *
-   * PHASE 2C: ModifierEngine.applyComputedBundle() is currently IMPURE
-   * It writes directly to system.derived.* without enforcement.
-   * planned (Phase 2C): Refactor ModifierEngine.applyComputedBundle() to:
-   *   - Return computed modifier bundle instead of mutating
-   *   - Apply bundle in DerivedCalculator context only
-   *   - Prevent unauthorized writes to system.derived.*
-   * Known issues in ModifierEngine.applyComputedBundle():
-   *   - Writes system.skills.*.total directly (should be derived-only)
-   *   - Writes system.derived.initiative as number (corrupts shape)
-   *   - Writes system.derived.defenses.*.total (should be value)
-   *   - Non-idempotent (calling twice produces different results)
-   * Mitigation: Set actor._isDerivedCalcCycle = true during DerivedCalculator phase
+   * Derived math is owned by DerivedCalculator.computeAll(), applied under
+   * actor._isDerivedCalcCycle = true so the derived-write authority guard
+   * (_validateDerivedWriteAuthority) permits the write. The legacy
+   * ModifierEngine bundle pass that used to mutate system.derived.* after this
+   * has been removed (it was non-idempotent and double-counted static
+   * modifiers such as Skill Focus).
    */
   async recalcAll(actor) {
     if (!actor) throw new Error('recalcAll() called with no actor');
@@ -242,12 +236,12 @@ export const ActorEngine = {
         }
 
         // ========================================
-        // PHASE 3: Modifier bundle legacy pass removed
+        // Modifier bundle legacy pass removed
         // ========================================
         // DerivedCalculator.computeAll() already applies static/passive modifiers
-        // and writes system.derived.modifiers for UI breakdown. Running the old
-        // ModifierEngine.computeModifierBundle() pass after that is non-idempotent
-        // and double-counts static modifiers such as Skill Focus.
+        // and writes system.derived.modifiers for UI breakdown. The old
+        // ModifierEngine bundle pass that ran here has been removed: it was
+        // non-idempotent and double-counted static modifiers such as Skill Focus.
       } finally {
         actor._isDerivedCalcCycle = false;
       }
@@ -1365,12 +1359,29 @@ export const ActorEngine = {
       });
 
       const { DamageResolutionEngine } = await import("/systems/foundryvtt-swse/scripts/engine/combat/damage-resolution-engine.js");
+
+      // Canonical Damage Packet (Phase 3 foundation): normalize every applyDamage
+      // input to per-component { amount, type, tags, source } before mitigation, so
+      // the resolver always receives damage type/tags instead of a bare number.
+      // Shape only — behaviour-preserving: a single-component packet still falls
+      // through resolveComponentMitigation() (needs >1) to the unchanged single-total
+      // path, and the effective damageType is preserved (explicit type wins; bare
+      // numbers stay 'normal'). Immunity/DR/resistance behaviour is unchanged here.
+      const { buildCanonicalDamagePacket } = await import("/systems/foundryvtt-swse/scripts/engine/combat/canonical-damage-packet.js");
+      const canonicalPacket = buildCanonicalDamagePacket(damagePacket);
+
       const resolution = await DamageResolutionEngine.resolveDamage({
         actor,
         damage: damagePacket.amount,
-        damageType: damagePacket.type ?? 'normal',
+        damageType: damagePacket.type ?? canonicalPacket.primaryType,
         source: damagePacket.sourceActor ?? null,
-        options: damagePacket.options ?? {},
+        options: {
+          ...(damagePacket.options ?? {}),
+          damageComponents: (Array.isArray(damagePacket.options?.damageComponents) && damagePacket.options.damageComponents.length)
+            ? damagePacket.options.damageComponents
+            : canonicalPacket.components,
+          canonicalPacket
+        },
       });
 
       await this._maybeResolveForcePointRescue(actor, resolution, damagePacket);
@@ -1385,6 +1396,17 @@ export const ActorEngine = {
       }
       if (resolution.mitigation?.tempHP?.after !== undefined) {
         updates['system.hp.temp'] = Math.max(0, Number(resolution.mitigation.tempHP.after) || 0);
+      }
+
+      // Persist Shield Rating depletion (RAW CRB p.161: an attack exceeding the
+      // current SR permanently reduces SR by 5 until recharged). ShieldMitigationResolver
+      // stays pure; ActorEngine is the writer. system.shields is the stored SSOT — only
+      // persist when the mitigating SR came from that stored resource (marked
+      // derived.shield.stored), never from a transient force-shield effect that writes
+      // derived.shield.current directly.
+      const shieldMitigation = resolution.mitigation?.shield;
+      if (shieldMitigation && Number(shieldMitigation.degraded) > 0 && actor.system?.derived?.shield?.stored === true) {
+        updates['system.shields.value'] = Math.max(0, Number(shieldMitigation.remaining) || 0);
       }
 
       if (resolution.conditionAfter !== undefined && resolution.conditionAfter !== (actor.system?.conditionTrack?.current ?? 0)) {
@@ -1442,6 +1464,46 @@ export const ActorEngine = {
       });
       throw err;
     }
+  },
+
+  /**
+   * Recharge Shield Rating (RAW: Recharge Shields / Restore Shields restore +5 SR,
+   * up to the shield's normal maximum). system.shields is the stored SSOT; this is
+   * the ActorEngine mutation primitive for the resource's restore operation.
+   *
+   * NOTE: this is the primitive only. Wiring it to the Recharge Shields (Mechanics)
+   * / Restore Shields (Endurance) skill-use actions is a next step — there is no
+   * dispatch surface for those actions yet (only data entries / a Shield Surge
+   * lockout descriptor reference it).
+   *
+   * @param {Actor} actor
+   * @param {Object} [options]
+   * @param {number} [options.amount=5] SR to restore (default RAW +5)
+   * @returns {Promise<{restored:number, current:number, max:number}>}
+   */
+  async rechargeShields(actor, { amount = 5 } = {}) {
+    if (!actor) {throw new Error('rechargeShields() requires actor');}
+
+    const shields = actor.system?.shields || {};
+    const max = Math.max(
+      Number(shields.max ?? shields.rating ?? 0) || 0,
+      Number(actor.system?.shieldRating ?? 0) || 0,
+      Number(actor.system?.derived?.shield?.max ?? 0) || 0
+    );
+
+    if (max <= 0) {
+      return { restored: 0, current: Number(shields.value ?? 0) || 0, max: 0 };
+    }
+
+    const current = Number(actor.system?.derived?.shield?.current ?? shields.value ?? 0) || 0;
+    const next = Math.min(max, current + (Number(amount) || 0));
+    const restored = Math.max(0, next - current);
+
+    if (restored > 0) {
+      await this.updateActor(actor, { 'system.shields.value': next });
+    }
+
+    return { restored, current: next, max };
   },
 
   /**

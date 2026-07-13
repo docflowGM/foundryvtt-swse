@@ -34,6 +34,7 @@ import { ShieldMitigationResolver } from "/systems/foundryvtt-swse/scripts/engin
 import { DamageReductionResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/damage-reduction-resolver.js";
 import { TempHPResolver } from "/systems/foundryvtt-swse/scripts/engine/combat/resolvers/temp-hp-resolver.js";
 import { resolveComponentMitigation } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-component-mitigation.js";
+import { DamageTypeRules } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 
 export class DamageMitigationManager {
   /**
@@ -120,6 +121,35 @@ export class DamageMitigationManager {
     currentDamage = shieldResult.damageAfter;
 
     // ========================================================================
+    // STAGE 1.5: DAMAGE-TYPE IMMUNITY (after SR, before DR) — D4A
+    // ========================================================================
+    // SR already resolved/depleted. If this (single-component) damage type matches
+    // a damage-type immunity, the remaining damage is zeroed. Same
+    // DamageTypeRules.matches semantics as DR exceptions; effect/condition
+    // immunities are out of scope.
+    const immunityTypes = (actor?.system?.derived?.damageImmunities?.types
+      ?? DamageTypeRules.collectDamageTypeImmunities(actor).types) || [];
+    let immunityApplied = 0;
+    let immuneTo = null;
+    if (immunityTypes.length && currentDamage > 0) {
+      const canonical = options?.damageComponents?.[0] ?? options?.canonicalPacket?.components?.[0] ?? {};
+      const declared = [canonical.type ?? damageType, ...(context.damageTypes || []), ...(canonical.damageTypes || [])].filter(Boolean);
+      immuneTo = immunityTypes.find(type => DamageTypeRules.matches(declared, type)) || null;
+      if (immuneTo) {
+        immunityApplied = currentDamage;
+        currentDamage = 0;
+      }
+    }
+
+    breakdown.push({
+      stage: 'Immunity',
+      input: shieldResult.damageAfter,
+      output: currentDamage,
+      mitigation: immunityApplied,
+      details: { immuneTo, types: immunityTypes, source: 'DamageTypeImmunity' }
+    });
+
+    // ========================================================================
     // STAGE 2: DAMAGE REDUCTION
     // ========================================================================
 
@@ -142,6 +172,42 @@ export class DamageMitigationManager {
     });
 
     currentDamage = drResult.damageAfter;
+
+    // ========================================================================
+    // STAGE 2.5: TYPED RESISTANCE (after DR, before Temp HP/HP) — D4
+    // ========================================================================
+    // Resistance is APPLIES-TO (opposite of a DR exception): it subtracts a flat
+    // amount from damage that MATCHES the resisted type. Highest-only. Uses the same
+    // DamageTypeRules.matches semantics as DR exceptions and immunity. Runs after SR
+    // and DR so the visible order holds (SR absorbs/depletes first; only what gets
+    // past SR/DR is reduced by resistance). An immune component is already 0 here, so
+    // resistance never double-counts it.
+    const resistances = actor?.system?.derived?.damageResistances
+      ?? DamageTypeRules.collectDamageTypeResistances(actor);
+    let resistanceApplied = 0;
+    let resistanceSource = '';
+    let resistedType = null;
+    if (currentDamage > 0 && Array.isArray(resistances?.sources) && resistances.sources.length) {
+      const canonical = options?.damageComponents?.[0] ?? options?.canonicalPacket?.components?.[0] ?? {};
+      const declared = [canonical.type ?? damageType, ...(context.damageTypes || []), ...(canonical.damageTypes || [])].filter(Boolean);
+      const match = DamageTypeRules.resistanceForComponentTypes(declared, resistances);
+      if (match.amount > 0) {
+        const after = Math.max(0, currentDamage - match.amount);
+        resistanceApplied = currentDamage - after;
+        resistanceSource = match.source;
+        resistedType = match.type;
+        currentDamage = after;
+      }
+    }
+    const afterResistance = currentDamage;
+
+    breakdown.push({
+      stage: 'Typed Resistance',
+      input: drResult.damageAfter,
+      output: afterResistance,
+      mitigation: resistanceApplied,
+      details: { type: resistedType, source: resistanceSource || 'None', available: resistances?.byType ?? {} }
+    });
 
     // ========================================================================
     // STAGE 3: TEMPORARY HP
@@ -175,6 +241,7 @@ export class DamageMitigationManager {
       originalDamage: damage,
       afterShield: shieldResult.damageAfter,
       afterDR: drResult.damageAfter,
+      afterResistance: afterResistance,
       afterTempHP: tempResult.damageAfter,
       hpDamage: currentDamage,
 
@@ -186,10 +253,22 @@ export class DamageMitigationManager {
         source: ShieldMitigationResolver.getSRSource(actor) || 'None'
       },
 
+      immunity: {
+        applied: immunityApplied,
+        types: immuneTo ? [immuneTo] : []
+      },
+
       damageReduction: {
         applied: drResult.drApplied,
         source: drResult.drSource,
         bypassed: drResult.bypassed
+      },
+
+      resistance: {
+        applied: resistanceApplied,
+        source: resistanceSource,
+        type: resistedType,
+        types: resistedType ? [resistedType] : []
       },
 
       tempHP: {
@@ -200,6 +279,41 @@ export class DamageMitigationManager {
 
       // Audit trail
       breakdown: breakdown,
+
+      // Uniform component breakdown (single-component path). This mirrors the
+      // multi-component result shape so downstream/UI can always rely on a
+      // components[] array. The single-total math above is unchanged — this only
+      // annotates it. type/tags/source come from the canonical damage packet.
+      components: [(() => {
+        const canonical = options?.damageComponents?.[0] ?? options?.canonicalPacket?.components?.[0] ?? {};
+        return {
+          key: 'component-1',
+          label: `${damageType} damage`,
+          type: canonical.type ?? damageType,
+          tags: Array.isArray(canonical.tags) ? canonical.tags : [],
+          rawAmount: damage,
+          input: damage,
+          amount: currentDamage,
+          afterShield: shieldResult.damageAfter,
+          afterDR: drResult.damageAfter,
+          afterResistance: afterResistance,
+          afterTempHP: tempResult.damageAfter,
+          remaining: currentDamage,
+          immuneTo,
+          resistedBy: resistedType,
+          mitigation: {
+            shieldApplied: shieldResult.srApplied,
+            immunityApplied,
+            drApplied: drResult.drApplied,
+            drSource: drResult.drSource,
+            resistanceApplied,
+            resistanceSource,
+            tempAbsorbed: tempResult.tempAbsorbed
+          },
+          source: canonical.source ?? null
+        };
+      })()],
+      componentMitigation: false,
 
       // Convenience flags
       mitigated: damage > currentDamage,

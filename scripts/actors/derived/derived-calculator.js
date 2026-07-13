@@ -36,6 +36,7 @@ import { CANONICAL_SKILL_DEFS, normalizeSkillMap } from "/systems/foundryvtt-sws
 import { SkillRules } from "/systems/foundryvtt-swse/scripts/engine/skills/SkillRules.js";
 import { isRankedModeEnabled, deriveTrainedFromRanks } from "/systems/foundryvtt-swse/scripts/engine/skills/ranked-skills-engine.js";
 import { getDamageThresholdSizeBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-stat-rules.js";
+import { DamageTypeRules } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 import { MetaResourceFeatResolver } from "/systems/foundryvtt-swse/scripts/engine/feats/meta-resource-feat-resolver.js";
 
 export class DerivedCalculator {
@@ -860,6 +861,65 @@ export class DerivedCalculator {
         updates['system.derived.damageThreshold'] = 10;
       }
 
+      // ========================================
+      // Shield Rating (Phase 3B): project stored system.shields → derived.shield.
+      // system.shields is the canonical stored authority — a depleting combat
+      // resource (CRB p.161). derived.shield is a read-only projection consumed by
+      // ShieldMitigationResolver. Legacy system.shieldRating / system.currentSR are
+      // fallback/migration reads only, not coequal authorities. Vehicles keep their
+      // own shield handling and are not projected here.
+      // ========================================
+      if (actor.type !== 'vehicle') {
+        const shields = actor.system?.shields || {};
+        const storedValue = Number(shields.value ?? 0) || 0;
+        const storedMax = Number(shields.max ?? shields.rating ?? 0) || 0;
+        const legacyMax = Number(actor.system?.shieldRating ?? 0) || 0;
+        const legacyCurrent = Number(actor.system?.currentSR ?? 0) || 0;
+        const shieldMax = Math.max(storedMax, legacyMax);
+
+        if (shieldMax > 0 || storedValue > 0 || legacyCurrent > 0) {
+          let shieldCurrent;
+          if (storedMax > 0 || storedValue > 0) {
+            // system.shields is authoritative and reflects persisted depletion.
+            shieldCurrent = storedValue;
+          } else {
+            // Back-compat: a legacy shield with no stored resource yet reads as full.
+            shieldCurrent = legacyCurrent > 0 ? legacyCurrent : shieldMax;
+          }
+          shieldCurrent = Math.max(0, shieldMax > 0 ? Math.min(shieldCurrent, shieldMax) : shieldCurrent);
+          updates['system.derived.shield'] = {
+            current: shieldCurrent,
+            max: shieldMax,
+            source: shields.source || (shieldMax > 0 ? 'Shield' : ''),
+            // Marks this projection as backed by the stored resource, so
+            // ActorEngine only persists SR depletion for stored shields (never for
+            // transient force-shield effects that write derived.shield directly).
+            stored: true
+          };
+        }
+      }
+
+      // ========================================
+      // Damage-type immunities (D4A): canonical projection for UI + mitigation.
+      // Damage-type immunities only (energy/kinetic/ion/…); effect/condition
+      // immunities (poison/disease/mind-affecting) are excluded by the collector.
+      // ========================================
+      try {
+        updates['system.derived.damageImmunities'] = DamageTypeRules.collectDamageTypeImmunities(actor);
+      } catch (_err) {
+        updates['system.derived.damageImmunities'] = { types: [], sources: [] };
+      }
+
+      // ========================================
+      // Damage-type resistances (D4): canonical applies-to projection for UI +
+      // mitigation. Highest-only per damage type; effect/condition resistances are
+      // filtered out by the collector (same isDamageType gate as immunity).
+      // ========================================
+      try {
+        updates['system.derived.damageResistances'] = DamageTypeRules.collectDamageTypeResistances(actor);
+      } catch (_err) {
+        updates['system.derived.damageResistances'] = { types: [], byType: {}, sources: [] };
+      }
 
       // ========================================
       // Store modifier breakdown for UI

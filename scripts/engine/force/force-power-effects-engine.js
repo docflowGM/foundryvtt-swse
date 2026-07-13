@@ -191,6 +191,65 @@ export class ForcePowerEffectsEngine {
   }
 
   /**
+   * Build a single intent-bearing ActiveEffect (Phase 3A).
+   *
+   * Numeric caster self-buffs route through the ModifierEngine effect-intent
+   * domains instead of writing dead system.derived.* fields. origin is the ACTOR
+   * (not the power item) because the ModifierEngine intent collectors skip
+   * actor.effects whose origin matches /\bItem\b/ (the item-transfer dedup);
+   * these are independently-created actor buffs, not transferred item effects.
+   * Removal still keys off the forcePowerEffect provenance flag, not origin.
+   *
+   * @private
+   */
+  static _buildIntentEffect(actor, powerItem, { labelSuffix, icon, duration, category, target, amount, effectType }) {
+    return {
+      label: `${powerItem.name}${labelSuffix ? ` ${labelSuffix}` : ''}`,
+      icon: icon || powerItem.img || 'icons/svg/aura.svg',
+      origin: actor.uuid,
+      disabled: false,
+      transfer: false,
+      duration: duration || {},
+      changes: [],
+      flags: {
+        swse: { effectType: effectType || 'forcePowerIntent' },
+        'foundryvtt-swse': {
+          effectIntent: {
+            category,
+            target,
+            operation: 'increase',
+            amount,
+            bonusType: 'untyped',
+            application: 'always',
+            scope: 'self',
+            transfer: true
+          }
+        }
+      }
+    };
+  }
+
+  /**
+   * Build one intent effect per defense (reflex/fortitude/will) for "+X to all
+   * defenses" powers. A single effectIntent carries one target, so all-defense
+   * bonuses fan out into three effects.
+   * @private
+   */
+  static _buildAllDefensesIntentEffects(actor, powerItem, { icon, duration, amount }) {
+    return ['reflex', 'fortitude', 'will'].map(def =>
+      this._buildIntentEffect(actor, powerItem, {
+        labelSuffix: `(+${amount} ${def})`,
+        icon,
+        duration,
+        category: 'defense',
+        target: def,
+        amount,
+        effectType: 'defenseBonus'
+      })
+    );
+  }
+
+  /**
    * Build Force Shield effect (grants Shield Rating)
    * @private
    */
@@ -247,14 +306,13 @@ export class ForcePowerEffectsEngine {
       disabled: false,
       transfer: false,
       duration: duration,
-      changes: [
-        {
-          key: 'system.derived.damageReduction.energy',
-          mode: 2, // Override
-          value: drValue.toString(),
-          priority: 20
-        }
-      ],
+      // D4: Energy Resistance's mitigation comes from the swse flag below
+      // (effectType:'damageReduction' + drType/drValue), which collectDamageProtections
+      // reads as a canonical typed RESISTANCE entry and the typed-resistance mitigation
+      // stage applies after DR. The former `system.derived.damageReduction.energy`
+      // change was a dead raw write (no reader) and violated the "AEs never write
+      // system.derived.*" rule, so it has been removed.
+      changes: [],
       flags: {
         swse: {
           effectType: 'damageReduction',
@@ -276,28 +334,19 @@ export class ForcePowerEffectsEngine {
       return [];
     }
 
-    return [{
-      label: `${powerItem.name} (+${dtBonus} DT)`,
-      icon: powerItem.img || 'icons/svg/shield.svg',
-      origin: powerItem.uuid,
-      disabled: false,
-      transfer: false,
-      duration: { type: 'turns', duration: 1 }, // Instantaneous = 1 turn in Foundry
-      changes: [
-        {
-          key: 'system.derived.damageThreshold',
-          mode: 2, // Add
-          value: dtBonus.toString(),
-          priority: 20
-        }
-      ],
-      flags: {
-        swse: {
-          effectType: 'damageThreshold',
-          dtBonus: dtBonus
-        }
-      }
-    }];
+    // Phase 3A: +X Damage Threshold via the ModifierEngine threshold intent
+    // (defense.damageThreshold), read by DerivedCalculator's damageThresholdAdjustment.
+    return [
+      this._buildIntentEffect(actor, powerItem, {
+        labelSuffix: `(+${dtBonus} DT)`,
+        icon: powerItem.img || 'icons/svg/shield.svg',
+        duration: { type: 'turns', duration: 1 }, // Instantaneous = 1 turn in Foundry
+        category: 'threshold',
+        target: 'damageThreshold',
+        amount: dtBonus,
+        effectType: 'damageThreshold'
+      })
+    ];
   }
 
   /**
@@ -313,28 +362,13 @@ export class ForcePowerEffectsEngine {
 
     const duration = this._parseDuration(powerItem.system.duration);
 
-    return [{
-      label: `${powerItem.name} (+${defenseBonus} Defense)`,
+    // Phase 3A: +X to all defenses via ModifierEngine defense intents
+    // (was a dead system.derived.defense.all write).
+    return this._buildAllDefensesIntentEffects(actor, powerItem, {
       icon: powerItem.img || 'icons/svg/shield.svg',
-      origin: powerItem.uuid,
-      disabled: false,
-      transfer: false,
-      duration: duration,
-      changes: [
-        {
-          key: 'system.derived.defense.all',
-          mode: 2, // Add
-          value: defenseBonus.toString(),
-          priority: 20
-        }
-      ],
-      flags: {
-        swse: {
-          effectType: 'defenseBonus',
-          bonusValue: defenseBonus
-        }
-      }
-    }];
+      duration,
+      amount: defenseBonus
+    });
   }
 
   /**
@@ -350,27 +384,12 @@ export class ForcePowerEffectsEngine {
 
     const duration = this._parseDuration(powerItem.system.duration);
 
-    return [{
-      label: `${powerItem.name} (+${defenseBonus})`,
+    // Phase 3A: +X to all defenses via ModifierEngine defense intents.
+    return this._buildAllDefensesIntentEffects(actor, powerItem, {
       icon: powerItem.img || 'icons/svg/shield.svg',
-      origin: powerItem.uuid,
-      disabled: false,
-      transfer: false,
-      duration: duration,
-      changes: [
-        {
-          key: 'system.derived.defense.all',
-          mode: 2, // Add
-          value: defenseBonus.toString(),
-          priority: 20
-        }
-      ],
-      flags: {
-        swse: {
-          effectType: 'defenseBonus'
-        }
-      }
-    }];
+      duration,
+      amount: defenseBonus
+    });
   }
 
   /**
@@ -427,17 +446,17 @@ export class ForcePowerEffectsEngine {
       disabled: false,
       transfer: false,
       duration: duration,
-      changes: [
-        {
-          key: 'system.derived.damageReduction.energy',
-          mode: 2,
-          value: drValue.toString(),
-          priority: 20
-        }
-      ],
+      // D4: the former `system.derived.damageReduction.energy` change was a dead raw
+      // write (no reader) and violated the "AEs never write system.derived.*" rule, so
+      // it has been removed. Negate Energy carries no drType/drValue resistance flag
+      // today, so it is currently unwired to the mitigation pipeline (it was already a
+      // no-op). Wiring it through the canonical resistance layer (drType:'energy') is a
+      // deliberate behavior change deferred to a follow-up, not this slice.
+      changes: [],
       flags: {
         swse: {
-          effectType: 'energyNegation'
+          effectType: 'energyNegation',
+          drValue: drValue
         }
       }
     }];
@@ -467,40 +486,44 @@ export class ForcePowerEffectsEngine {
 
     const powerName = powerItem.name.toLowerCase();
     const duration = this._parseDuration(powerItem.system.duration);
-    let label, effectKey;
 
-    if (powerName.includes('prescience')) {
-      label = `${powerItem.name} (+${bonus} insight)`;
-      effectKey = 'system.derived.insight';
-    } else if (powerName.includes('surge')) {
-      label = `${powerItem.name} (+${bonus} damage)`;
-      effectKey = 'system.derived.damageBonus';
-    } else {
-      label = `${powerItem.name} (+${bonus})`;
-      effectKey = 'system.derived.bonus';
+    if (powerName.includes('surge')) {
+      // Phase 3A: Surge damage bonus via the ModifierEngine damage intent.
+      return [
+        this._buildIntentEffect(actor, powerItem, {
+          labelSuffix: `(+${bonus} damage)`,
+          icon: powerItem.img || 'icons/svg/magic.svg',
+          duration,
+          category: 'damage',
+          target: 'all',
+          amount: bonus,
+          effectType: 'damageBonus'
+        })
+      ];
     }
 
-    return [{
-      label: label,
-      icon: powerItem.img || 'icons/svg/magic.svg',
-      origin: powerItem.uuid,
-      disabled: false,
-      transfer: false,
-      duration: duration,
-      changes: [
-        {
-          key: effectKey,
-          mode: 2, // Add
-          value: bonus.toString(),
-          priority: 20
-        }
-      ],
-      flags: {
-        swse: {
-          effectType: 'enhancement'
-        }
-      }
-    }];
+    if (powerName.includes('prescience')) {
+      // DEFERRED (rules): Prescience grants an insight bonus, but the exact target
+      // (Perception vs Initiative vs defenses) needs the source text. Left on the
+      // legacy system.derived.insight write until resolved — do not guess it into
+      // a skill/defense intent.
+      return [{
+        label: `${powerItem.name} (+${bonus} insight)`,
+        icon: powerItem.img || 'icons/svg/magic.svg',
+        origin: powerItem.uuid,
+        disabled: false,
+        transfer: false,
+        duration: duration,
+        changes: [
+          { key: 'system.derived.insight', mode: 2, value: bonus.toString(), priority: 20 }
+        ],
+        flags: { swse: { effectType: 'enhancement' } }
+      }];
+    }
+
+    // Generic enhancement fallback previously wrote a meaningless
+    // system.derived.bonus with no reader — deleted as unsupported (Phase 3A).
+    return [];
   }
 
   /**
@@ -516,34 +539,22 @@ export class ForcePowerEffectsEngine {
     }
 
     const duration = this._parseDuration(powerItem.system.duration);
+    const icon = powerItem.img || 'icons/svg/combat.svg';
 
-    return [{
-      label: `${powerItem.name} (+${bonus})`,
-      icon: powerItem.img || 'icons/svg/combat.svg',
-      origin: powerItem.uuid,
-      disabled: false,
-      transfer: false,
-      duration: duration,
-      changes: [
-        {
-          key: 'system.derived.defense.all',
-          mode: 2,
-          value: bonus.toString(),
-          priority: 20
-        },
-        {
-          key: 'system.derived.meleeBonus',
-          mode: 2,
-          value: bonus.toString(),
-          priority: 20
-        }
-      ],
-      flags: {
-        swse: {
-          effectType: 'enhancement'
-        }
-      }
-    }];
+    // Phase 3A: +1/2 level to all defenses (defense intents) and to attacks
+    // (attack intent). Was dead defense.all + meleeBonus derived writes.
+    return [
+      ...this._buildAllDefensesIntentEffects(actor, powerItem, { icon, duration, amount: bonus }),
+      this._buildIntentEffect(actor, powerItem, {
+        labelSuffix: `(+${bonus} attack)`,
+        icon,
+        duration,
+        category: 'attack',
+        target: 'all',
+        amount: bonus,
+        effectType: 'enhancement'
+      })
+    ];
   }
 
   /**
@@ -559,6 +570,12 @@ export class ForcePowerEffectsEngine {
 
     const duration = this._parseDuration(powerItem.system.duration);
 
+    // DEFERRED (Phase 3A, pending source verification): the canonical Force Weapon
+    // rules text is not present in the available sourcebooks, so mapping it to
+    // attack-only, damage-only, or attack+damage would be speculative. Left on its
+    // original (nonfunctional) system.derived.weaponBonus write — which no reader
+    // consumes — until the originating sourcebook is available. Do NOT infer a
+    // mapping. See docs/audits/effects-modifier-derived-audit.md.
     return [{
       label: `${powerItem.name} (+${bonus})`,
       icon: powerItem.img || 'icons/svg/melee.svg',
@@ -593,27 +610,18 @@ export class ForcePowerEffectsEngine {
       return [];
     }
 
-    return [{
-      label: `${powerItem.name} (+${bonus} damage)`,
-      icon: powerItem.img || 'icons/svg/melee.svg',
-      origin: powerItem.uuid,
-      disabled: false,
-      transfer: false,
-      duration: { type: 'turns', duration: 1 },
-      changes: [
-        {
-          key: 'system.derived.damageBonus',
-          mode: 2,
-          value: bonus.toString(),
-          priority: 20
-        }
-      ],
-      flags: {
-        swse: {
-          effectType: 'damageBonus'
-        }
-      }
-    }];
+    // Phase 3A: Force Strike damage bonus via the ModifierEngine damage intent.
+    return [
+      this._buildIntentEffect(actor, powerItem, {
+        labelSuffix: `(+${bonus} damage)`,
+        icon: powerItem.img || 'icons/svg/melee.svg',
+        duration: { type: 'turns', duration: 1 },
+        category: 'damage',
+        target: 'all',
+        amount: bonus,
+        effectType: 'damageBonus'
+      })
+    ];
   }
 
   /**
@@ -628,34 +636,22 @@ export class ForcePowerEffectsEngine {
     }
 
     const duration = this._parseDuration(powerItem.system.duration);
+    const icon = powerItem.img || 'icons/svg/aura.svg';
 
-    return [{
-      label: `${powerItem.name} (+${bonus})`,
-      icon: powerItem.img || 'icons/svg/aura.svg',
-      origin: powerItem.uuid,
-      disabled: false,
-      transfer: false,
-      duration: duration,
-      changes: [
-        {
-          key: 'system.derived.defense.all',
-          mode: 2,
-          value: bonus.toString(),
-          priority: 20
-        },
-        {
-          key: 'system.derived.attackBonus',
-          mode: 2,
-          value: bonus.toString(),
-          priority: 20
-        }
-      ],
-      flags: {
-        swse: {
-          effectType: 'enhancement'
-        }
-      }
-    }];
+    // Phase 3A: +X to all defenses (defense intents) and to attacks (attack intent).
+    // Was dead defense.all + attackBonus derived writes.
+    return [
+      ...this._buildAllDefensesIntentEffects(actor, powerItem, { icon, duration, amount: bonus }),
+      this._buildIntentEffect(actor, powerItem, {
+        labelSuffix: `(+${bonus} attack)`,
+        icon,
+        duration,
+        category: 'attack',
+        target: 'all',
+        amount: bonus,
+        effectType: 'enhancement'
+      })
+    ];
   }
 
   /**
@@ -691,27 +687,18 @@ export class ForcePowerEffectsEngine {
 
     const duration = this._parseDuration(powerItem.system.duration);
 
-    return [{
-      label: `${powerItem.name} (+${bonus} stealth)`,
-      icon: powerItem.img || 'icons/svg/invisibility.svg',
-      origin: powerItem.uuid,
-      disabled: false,
-      transfer: false,
-      duration: duration,
-      changes: [
-        {
-          key: 'system.derived.stealthBonus',
-          mode: 2,
-          value: bonus.toString(),
-          priority: 20
-        }
-      ],
-      flags: {
-        swse: {
-          effectType: 'stealth'
-        }
-      }
-    }];
+    // Phase 3A: Cloak stealth bonus via the ModifierEngine skill intent (skill.stealth).
+    return [
+      this._buildIntentEffect(actor, powerItem, {
+        labelSuffix: `(+${bonus} stealth)`,
+        icon: powerItem.img || 'icons/svg/invisibility.svg',
+        duration,
+        category: 'skill',
+        target: 'stealth',
+        amount: bonus,
+        effectType: 'stealth'
+      })
+    ];
   }
 
   /**

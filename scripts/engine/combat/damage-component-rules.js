@@ -239,12 +239,6 @@ function protectionMatchesComponent(entry = {}, component = {}) {
   return damageTypesMatch(types, [entry.type]);
 }
 
-function resistanceAmountForComponent(component = {}, protections = []) {
-  const matches = protections.filter(entry => entry.kind === 'resistance' && protectionMatchesComponent(entry, component));
-  if (!matches.length) return null;
-  return matches.reduce((best, entry) => Math.max(best, asNumber(entry.amount, 0)), 0);
-}
-
 function immunityForComponent(component = {}, protections = []) {
   return protections.find(entry => entry.kind === 'immunity' && protectionMatchesComponent(entry, component)) ?? null;
 }
@@ -293,20 +287,11 @@ export function applyTargetComponentProtections(packet = {}, target = null) {
       }
     }
 
-    if (target && !next.suppressed) {
-      const resistanceEntries = protections.filter(entry => entry.kind === 'resistance' && protectionMatchesComponent(entry, next) && !isDamageProtectionBypassed(packet, entry, 'resistance'));
-      const resistance = resistanceEntries.length ? resistanceEntries.reduce((best, entry) => Math.max(best, asNumber(entry.amount, 0)), 0) : null;
-      if (resistance && resistance > 0) {
-        const resistanceSource = resistanceEntries.find(entry => asNumber(entry.amount, 0) === resistance)?.source || 'Typed Resistance';
-        next.amountBeforeProtection = next.amount;
-        next.amount = Math.max(0, next.amount - resistance);
-        next.protection = { kind: 'resistance', amount: resistance, source: resistanceSource };
-        if (next.amount <= 0) {
-          next.suppressed = true;
-          next.suppressionReason = `${target.name}'s resistance absorbs ${next.label}.`;
-        }
-      }
-    }
+    // D4: typed resistance is NO LONGER applied here at packet prep. It has moved into
+    // the mitigation pipeline as a stage AFTER Shield Rating and Damage Reduction (see
+    // damage-mitigation-manager.js / damage-component-mitigation.js), so that Shield
+    // Rating resolves/depletes first and only damage that gets past SR/DR is reduced by
+    // resistance. Immunity (above) still runs here at packet prep (D4A owns its move).
 
     if (next.suppressed) suppressedCount += 1;
     reducedTotal += Math.max(0, asNumber(next.amount, 0));

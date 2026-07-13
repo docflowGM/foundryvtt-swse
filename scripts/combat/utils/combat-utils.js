@@ -285,32 +285,6 @@ export function getSizeModifier(size) {
 }
 
 /* -------------------------------------------------------------------------- */
-/* ACTIVE EFFECT HELPERS                                                       */
-/* -------------------------------------------------------------------------- */
-
-/** Extracts an Active Effect modification for a given path. */
-export function getEffectModifier(actor, key) {
-  let total = 0;
-
-  for (const effect of actor.effects ?? []) {
-    if (effect.disabled) continue;
-
-    for (const [path, update] of Object.entries(effect.updates ?? {})) {
-      if (path !== key) continue;
-
-      const value = Number(update.value ?? 0);
-      switch (update.mode) {
-        case 'ADD': total += value; break;
-        case 'MULTIPLY': total *= value; break;
-        case 'OVERRIDE': total = value; break;
-      }
-    }
-  }
-
-  return total;
-}
-
-/* -------------------------------------------------------------------------- */
 /* COMPLETE ATTACK RESOLUTION (OPTIONAL FUTURE USE)                            */
 /* -------------------------------------------------------------------------- */
 
