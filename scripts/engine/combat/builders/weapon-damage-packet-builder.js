@@ -188,7 +188,9 @@ function contextTags(context = {}, options = {}) {
     context?.attack?.tags,
     context?.damage?.tags,
     options.contextTags,
-    options.tags
+    options.tags,
+    options.combatOptions?.tags,
+    options.attackOptions?.tags
   ]).map(normalizeText);
 }
 
@@ -214,6 +216,9 @@ function contextHaystack(context = {}, options = {}) {
     options.attackType,
     options.areaShape,
     options.shape,
+    options.autofireRiderMutation,
+    options.combatOptions?.autofireRiderMutation,
+    options.attackOptions?.autofireRiderMutation,
     ...contextTags(context, options)
   ].map(v => normalizeText(v)).filter(Boolean).join(' ');
 }
@@ -227,7 +232,9 @@ function contextFlag(context = {}, options = {}, keys = []) {
   const attack = context?.attack ?? {};
   const damage = context?.damage ?? {};
   const ruleData = context?.ruleData ?? {};
-  return asArray(keys).some(key => asBool(attack[key]) || asBool(damage[key]) || asBool(ruleData[key]) || asBool(options[key]));
+  const combatOptions = options.combatOptions ?? {};
+  const attackOptions = options.attackOptions ?? {};
+  return asArray(keys).some(key => asBool(attack[key]) || asBool(damage[key]) || asBool(ruleData[key]) || asBool(options[key]) || asBool(combatOptions[key]) || asBool(attackOptions[key]));
 }
 
 function readAreaShape(context = {}, options = {}) {
@@ -235,6 +242,8 @@ function readAreaShape(context = {}, options = {}) {
   const area = context?.area ?? attack.area ?? context?.ruleData?.area ?? {};
   const value = options.areaShape
     ?? options.shape
+    ?? options.combatOptions?.areaShape
+    ?? options.attackOptions?.areaShape
     ?? attack.areaShape
     ?? attack.shape
     ?? context?.ruleData?.areaShape
@@ -361,7 +370,8 @@ function reconcileDisposition(packet = {}, attack = {}, rawAmount = 0, currentAm
   const amount = Math.max(0, Math.floor(Math.max(0, asNumber(rawAmount, 0)) * multiplier));
   return {
     disposition,
-    amount: ordinaryMissBlockedDamage ? amount : Math.max(0, asNumber(currentAmount, amount))
+    amount: ordinaryMissBlockedDamage ? amount : Math.max(0, asNumber(currentAmount, amount)),
+    amountOverride: ordinaryMissBlockedDamage
   };
 }
 
@@ -462,17 +472,20 @@ export function enhanceWeaponDamagePacket(packet = {}, {
   const disposition = reconciled.disposition;
   const formula = roll?.swseDamageFormula ?? roll?.formula ?? weaponDamageFormula(weapon) ?? null;
   const components = asArray(packet.components).length
-    ? packet.components.map((component, index) => normalizeWeaponComponent(component, index, {
-      type: resolvedType,
-      damageTypes,
-      originalDamageTypes,
-      tags,
-      rawAmount,
-      amount,
-      formula,
-      source,
-      sourceId
-    }))
+    ? packet.components.map((component, index) => {
+      const componentInput = reconciled.amountOverride === true ? { ...component, amount, appliedAmount: amount } : component;
+      return normalizeWeaponComponent(componentInput, index, {
+        type: resolvedType,
+        damageTypes,
+        originalDamageTypes,
+        tags,
+        rawAmount,
+        amount,
+        formula,
+        source,
+        sourceId
+      });
+    })
     : [normalizeWeaponComponent({}, 0, {
       type: resolvedType,
       damageTypes,
