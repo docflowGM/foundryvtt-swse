@@ -69,6 +69,10 @@ function asNumber(value, fallback = 0) {
   return Number.isFinite(number) ? number : fallback;
 }
 
+function asBool(value) {
+  return value === true || value === 'true' || value === 1 || value === '1';
+}
+
 function normalizeText(value = '') {
   return String(value ?? '')
     .trim()
@@ -177,13 +181,73 @@ function isGrenadeLike(weapon = null) {
   return slug.includes('grenade') || /\bgrenade\b|\bexplosive\b/.test(text);
 }
 
+function contextTags(context = {}, options = {}) {
+  return uniqueStrings([
+    context?.contextTags,
+    context?.tags,
+    context?.attack?.tags,
+    context?.damage?.tags,
+    options.contextTags,
+    options.tags
+  ]).map(normalizeText);
+}
+
+function contextHaystack(context = {}, options = {}) {
+  return [
+    context?.workflowId,
+    context?.actionId,
+    context?.actionKey,
+    context?.actionName,
+    context?.attack?.mode,
+    context?.attack?.attackMode,
+    context?.attack?.attackType,
+    context?.damage?.mode,
+    context?.damage?.damageMode,
+    context?.ruleData?.attackShape,
+    context?.ruleData?.areaShape,
+    context?.ruleData?.shape,
+    options.workflowId,
+    options.actionId,
+    options.actionKey,
+    options.actionName,
+    options.attackMode,
+    options.attackType,
+    options.areaShape,
+    options.shape,
+    ...contextTags(context, options)
+  ].map(v => normalizeText(v)).filter(Boolean).join(' ');
+}
+
+function hasContextMarker(context = {}, options = {}, markers = []) {
+  const haystack = contextHaystack(context, options);
+  return asArray(markers).some(marker => haystack.includes(normalizeText(marker)));
+}
+
+function contextFlag(context = {}, options = {}, keys = []) {
+  const attack = context?.attack ?? {};
+  const damage = context?.damage ?? {};
+  const ruleData = context?.ruleData ?? {};
+  return asArray(keys).some(key => asBool(attack[key]) || asBool(damage[key]) || asBool(ruleData[key]) || asBool(options[key]));
+}
+
+function readAreaShape(context = {}, options = {}) {
+  const attack = context?.attack ?? {};
+  const area = context?.area ?? attack.area ?? context?.ruleData?.area ?? {};
+  const value = options.areaShape
+    ?? options.shape
+    ?? attack.areaShape
+    ?? attack.shape
+    ?? context?.ruleData?.areaShape
+    ?? context?.ruleData?.shape
+    ?? area.shape
+    ?? '';
+  return normalizeText(value);
+}
+
 function hasWorkflowMode(context = {}, options = {}, mode = '') {
   const wanted = normalizeText(mode);
-  const attack = context?.attack ?? {};
-  const ruleData = context?.ruleData ?? {};
-  const tags = Array.isArray(context?.contextTags) ? context.contextTags.map(normalizeText) : [];
-  if (wanted === 'ion') return attack.isIon === true || options.ion === true || ruleData.ion === true || tags.includes('ion');
-  if (wanted === 'stun') return attack.isStun === true || attack.damageMode === 'stun' || options.stun === true || options.damageMode === 'stun' || ruleData.damageMode === 'stun' || tags.includes('stun');
+  if (wanted === 'ion') return contextFlag(context, options, ['isIon', 'ion']) || hasContextMarker(context, options, ['ion']);
+  if (wanted === 'stun') return contextFlag(context, options, ['isStun', 'stun']) || context?.attack?.damageMode === 'stun' || options.damageMode === 'stun' || context?.ruleData?.damageMode === 'stun' || hasContextMarker(context, options, ['stun']);
   return false;
 }
 
@@ -203,38 +267,101 @@ function isWireableWeapon({ weapon = null, packet = {}, context = {}, options = 
   return true;
 }
 
-function getWireableProfile(slug) {
+function getWireableWeaponProfile(slug) {
   return damageProfileRegistry.getWireable('weapon', slug);
+}
+
+function getWireableAreaProfile(slug) {
+  return damageProfileRegistry.getWireable('areaProfile', slug);
 }
 
 function selectWeaponProfile({ weapon = null, packet = {}, context = {}, options = {} } = {}) {
   const resolvedType = normalizeDamageTypeKey(packet.type ?? options.damageType ?? context?.damage?.damageType ?? '');
 
   if (resolvedType === 'stun' || hasWorkflowMode(context, options, 'stun')) {
-    return getWireableProfile('stun-mode');
+    return getWireableWeaponProfile('stun-mode');
   }
   if (resolvedType === 'ion' || hasWorkflowMode(context, options, 'ion')) {
-    return getWireableProfile('ion-weapon');
+    return getWireableWeaponProfile('ion-weapon');
   }
-  if (isLightsaberish(weapon)) return getWireableProfile('lightsaber');
-  if (isGrenadeLike(weapon)) return getWireableProfile('grenade') ?? getWireableProfile('weapon-single-target');
-  if (isAutofireCapable(weapon)) return getWireableProfile('autofire-capable-weapon') ?? getWireableProfile('weapon-single-target');
-  return getWireableProfile('weapon-single-target');
+  if (isLightsaberish(weapon)) return getWireableWeaponProfile('lightsaber');
+  if (isGrenadeLike(weapon)) return getWireableWeaponProfile('grenade') ?? getWireableWeaponProfile('weapon-single-target');
+  if (isAutofireCapable(weapon)) return getWireableWeaponProfile('autofire-capable-weapon') ?? getWireableWeaponProfile('weapon-single-target');
+  return getWireableWeaponProfile('weapon-single-target');
 }
 
-function mergedAttackBlock(packet = {}, profile = {}) {
-  return {
-    ...EMPTY_ATTACK,
-    ...(profile.attack ?? {}),
-    ...(packet.attack ?? {})
+function selectAreaProfile({ weapon = null, context = {}, options = {} } = {}) {
+  const shape = readAreaShape(context, options);
+
+  if (contextFlag(context, options, ['isAutofire', 'autofire']) || hasContextMarker(context, options, ['autofire'])) {
+    return getWireableAreaProfile('autofire');
+  }
+  if (contextFlag(context, options, ['isBurstFire', 'burstFire']) || hasContextMarker(context, options, ['burst-fire', 'burstfire'])) {
+    return getWireableAreaProfile('burst-fire');
+  }
+  if (contextFlag(context, options, ['isSplash', 'splash']) || shape === 'splash' || hasContextMarker(context, options, ['splash'])) {
+    return getWireableAreaProfile('splash');
+  }
+  if (shape === 'cone' || contextFlag(context, options, ['isCone', 'cone']) || hasContextMarker(context, options, ['cone'])) {
+    return getWireableAreaProfile('cone');
+  }
+  if (shape === 'line' || contextFlag(context, options, ['isLine', 'line']) || hasContextMarker(context, options, ['line'])) {
+    return getWireableAreaProfile('line');
+  }
+  if (isGrenadeLike(weapon) || shape === 'burst' || hasContextMarker(context, options, ['grenade-burst'])) {
+    return getWireableAreaProfile('grenade-burst');
+  }
+
+  return null;
+}
+
+function mergedAttackBlock(packet = {}, profiles = []) {
+  return Object.assign(
+    {},
+    EMPTY_ATTACK,
+    packet.attack ?? {},
+    ...asArray(profiles).filter(Boolean).map(profile => profile.attack ?? {})
+  );
+}
+
+function mergedAreaBlock(packet = {}, profiles = []) {
+  return Object.assign(
+    {},
+    EMPTY_AREA,
+    packet.area ?? {},
+    ...asArray(profiles).filter(Boolean).map(profile => profile.area ?? {})
+  );
+}
+
+function reconcileDisposition(packet = {}, attack = {}, rawAmount = 0, currentAmount = 0) {
+  const disposition = {
+    ...(packet.disposition ?? {}),
+    areaAttack: attack.isArea === true,
+    burstFire: attack.isBurstFire === true,
+    autofire: attack.isAutofire === true,
+    halfDamageOnMiss: attack.halfDamageOnMiss === true,
+    damageOnMiss: packet.disposition?.damageOnMiss === true,
+    advantageousCover: packet.disposition?.advantageousCover === true
   };
-}
 
-function mergedAreaBlock(packet = {}, profile = {}) {
+  const profileHalfOnMiss = attack.halfDamageOnMiss === true && disposition.hit === false;
+  const coverNegated = disposition.advantageousCover === true || packet.flags?.advantageousCover === true;
+  const ordinaryMissBlockedDamage = disposition.damageAllowed === false
+    && profileHalfOnMiss
+    && !coverNegated
+    && (!disposition.reason || disposition.reason === 'Miss does not deal damage.');
+
+  if (ordinaryMissBlockedDamage) {
+    disposition.damageAllowed = true;
+    disposition.multiplier = 0.5;
+    disposition.reason = 'Miss deals half damage by area attack profile.';
+  }
+
+  const multiplier = Number.isFinite(Number(disposition.multiplier)) ? Number(disposition.multiplier) : 1;
+  const amount = Math.max(0, Math.floor(Math.max(0, asNumber(rawAmount, 0)) * multiplier));
   return {
-    ...EMPTY_AREA,
-    ...(profile.area ?? {}),
-    ...(packet.area ?? {})
+    disposition,
+    amount: ordinaryMissBlockedDamage ? amount : Math.max(0, asNumber(currentAmount, amount))
   };
 }
 
@@ -288,6 +415,11 @@ export function enhanceWeaponDamagePacket(packet = {}, {
   const profile = selectWeaponProfile({ weapon, packet, context, options });
   if (!profile) return packet;
 
+  const areaProfile = selectAreaProfile({ weapon, context, options });
+  const profiles = [profile, areaProfile].filter(Boolean);
+  const attack = mergedAttackBlock(packet, profiles);
+  const area = mergedAreaBlock(packet, profiles);
+
   const weaponType = readWeaponDamageType(weapon);
   const resolvedType = normalizeDamageTypeKey(packet.type ?? profile.primaryType ?? weaponType ?? options.damageType ?? 'normal') || 'normal';
   const sourceId = packet.sourceId ?? idOf(weapon) ?? packet.weaponId ?? null;
@@ -318,14 +450,16 @@ export function enhanceWeaponDamagePacket(packet = {}, {
 
   const tags = uniqueStrings([
     packet.tags,
-    profile.tags,
+    profiles.map(p => p.tags),
     'weapon',
     isLightsaberish(weapon) ? 'lightsaber' : null,
     isAutofireCapable(weapon) ? 'autofire-capable' : null
   ]);
 
   const rawAmount = Math.max(0, asNumber(packet.rawAmount ?? roll?.total ?? packet.amount, 0));
-  const amount = Math.max(0, asNumber(packet.amount, rawAmount));
+  const reconciled = reconcileDisposition(packet, attack, rawAmount, packet.amount);
+  const amount = reconciled.amount;
+  const disposition = reconciled.disposition;
   const formula = roll?.swseDamageFormula ?? roll?.formula ?? weaponDamageFormula(weapon) ?? null;
   const components = asArray(packet.components).length
     ? packet.components.map((component, index) => normalizeWeaponComponent(component, index, {
@@ -359,9 +493,9 @@ export function enhanceWeaponDamagePacket(packet = {}, {
     type: resolvedType,
     originalType: packet.originalType ?? weaponType ?? resolvedType,
     primaryType: resolvedType,
-    delivery: profile.delivery ?? 'weapon',
-    attackShape: profile.attackShape ?? 'single-target',
-    scale: profile.scale ?? 'character',
+    delivery: areaProfile?.delivery ?? profile.delivery ?? 'weapon',
+    attackShape: areaProfile?.attackShape ?? profile.attackShape ?? 'single-target',
+    scale: areaProfile?.scale ?? profile.scale ?? 'character',
     source,
     sourceId,
     sourceName,
@@ -375,10 +509,32 @@ export function enhanceWeaponDamagePacket(packet = {}, {
     damageTypes,
     originalDamageTypes,
     tags,
-    attack: mergedAttackBlock(packet, profile),
-    area: mergedAreaBlock(packet, profile),
+    attack,
+    area,
+    disposition,
     components,
-    riders: uniqueRiders([packet.riders, profile.riders])
+    riders: uniqueRiders([packet.riders, profiles.map(p => p.riders)]),
+    flags: {
+      ...(packet.flags ?? {}),
+      areaAttack: attack.isArea === true,
+      burstFire: attack.isBurstFire === true,
+      autofire: attack.isAutofire === true,
+      halfDamageOnMiss: attack.halfDamageOnMiss === true,
+      evasionApplies: packet.flags?.evasionApplies === true || attack.isArea === true
+    },
+    options: {
+      ...(packet.options ?? {}),
+      areaAttack: attack.isArea === true,
+      isAreaAttack: attack.isArea === true,
+      burstFire: attack.isBurstFire === true,
+      autofire: attack.isAutofire === true,
+      splash: attack.isSplash === true,
+      halfDamageOnMiss: attack.halfDamageOnMiss === true,
+      noCriticalDouble: attack.noCriticalDouble === true,
+      coverCanNegateMissDamage: attack.coverCanNegateMissDamage === true,
+      attackShape: areaProfile?.attackShape ?? profile.attackShape ?? packet.options?.attackShape ?? null,
+      areaShape: area.shape ?? packet.options?.areaShape ?? null
+    }
   };
 }
 
