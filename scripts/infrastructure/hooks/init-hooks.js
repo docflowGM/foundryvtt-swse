@@ -22,6 +22,7 @@ import LightsaberLightSync from "/systems/foundryvtt-swse/scripts/utils/lightsab
 import MobileMode from "/systems/foundryvtt-swse/scripts/ui/mobile-mode-manager.js";
 import { FeatActionListeners } from "/systems/foundryvtt-swse/scripts/engine/feats/feat-action-listeners.js";
 import { registerFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/register-feat-runtime.js";
+import { loadDefaultProfiles } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-profile-registry.js";
 
 /**
  * Register initialization hooks
@@ -64,6 +65,16 @@ export function registerInitHooks() {
         // Initialize species reroll system
         registerRerollListeners();
         SWSELogger.log('Species Trait Engine initialized');
+
+        // Load verified damage profiles used by source-family packet builders.
+        // Runtime builders remain fail-safe: if the registry cannot load, they
+        // return legacy packets unchanged instead of wiring unverified behavior.
+        try {
+            await loadDefaultProfiles();
+            SWSELogger.log('Damage Profile Registry initialized');
+        } catch (err) {
+            SWSELogger.warn('Damage Profile Registry failed to initialize', err);
+        }
 
         // Initialize feat action listeners (Sadistic Strike, Stay Up, etc.)
         FeatActionListeners.initialize();
