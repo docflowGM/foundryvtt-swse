@@ -45,14 +45,6 @@ function componentTypes(component = {}, fallbackType = 'normal') {
   };
 }
 
-function sourceKey(source = '') {
-  return String(source || 'typed-dr')
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '') || 'typed-dr';
-}
-
 function normalizeComponents(rawComponents = [], totalDamage = 0, fallbackType = 'normal') {
   const total = Math.max(0, Math.floor(asNumber(totalDamage, 0)));
   const sourceComponents = asArray(rawComponents)
@@ -78,6 +70,9 @@ function normalizeComponents(rawComponents = [], totalDamage = 0, fallbackType =
         tempAbsorbed: 0,
         immunityApplied: 0,
         immuneTo: null,
+        resistanceApplied: 0,
+        resistanceSource: '',
+        resistedBy: null,
         drSource: '',
         source: component.source ?? '',
         formula: component.formula ?? '',
@@ -159,15 +154,19 @@ function exportedComponent(component = {}) {
     input: component.input,
     afterShield: component.afterShield,
     afterDR: component.afterDR,
+    afterResistance: component.afterResistance ?? component.afterDR,
     afterTempHP: component.afterTempHP,
     // remaining = amount that survives to HP; mitigation = amount removed per stage.
     remaining: component.afterTempHP,
     immuneTo: component.immuneTo ?? null,
+    resistedBy: component.resistedBy ?? null,
     mitigation: {
       shieldApplied: component.shieldApplied,
       immunityApplied: component.immunityApplied ?? 0,
       drApplied: component.drApplied,
       drSource: component.drSource,
+      resistanceApplied: component.resistanceApplied ?? 0,
+      resistanceSource: component.resistanceSource ?? '',
       tempAbsorbed: component.tempAbsorbed
     },
     source: component.source,
@@ -175,8 +174,7 @@ function exportedComponent(component = {}) {
   };
 }
 
-function makeBreakdown({ damage, shieldResult, genericDRResult, typedDRResults, tempResult }) {
-  const afterTypedDR = typedDRResults.reduce((value, result) => Math.max(0, value - Math.max(0, asNumber(result.applied, 0))), genericDRResult.damageAfter);
+function makeBreakdown({ damage, shieldResult, afterImmunityTotal, genericDRResult, afterDRTotal, resistanceAppliedTotal, afterResistanceTotal, tempResult }) {
   return [
     {
       stage: 'Shield Rating (SR)',
@@ -193,20 +191,29 @@ function makeBreakdown({ damage, shieldResult, genericDRResult, typedDRResults, 
     },
     {
       stage: 'Damage Reduction (DR)',
-      input: shieldResult.damageAfter,
-      output: afterTypedDR,
-      mitigation: Math.max(0, shieldResult.damageAfter - afterTypedDR),
+      input: afterImmunityTotal,
+      output: afterDRTotal,
+      mitigation: Math.max(0, afterImmunityTotal - afterDRTotal),
       details: {
         genericDR: genericDRResult.drApplied,
-        typedDR: typedDRResults,
-        bypassed: genericDRResult.bypassed === true || typedDRResults.some(result => result.bypassed === true),
+        bypassed: genericDRResult.bypassed === true,
         source: 'DamageReductionResolver',
         componentAware: true
       }
     },
     {
+      stage: 'Typed Resistance',
+      input: afterDRTotal,
+      output: afterResistanceTotal,
+      mitigation: resistanceAppliedTotal,
+      details: {
+        source: 'DamageTypeResistance',
+        componentAware: true
+      }
+    },
+    {
       stage: 'Temporary HP',
-      input: afterTypedDR,
+      input: afterResistanceTotal,
       output: tempResult.damageAfter,
       mitigation: tempResult.tempAbsorbed,
       details: {
@@ -339,73 +346,67 @@ export function resolveComponentMitigation({ damage, actor, damageType = 'normal
     damageAfter: staged.reduce((sum, component) => sum + Math.max(0, asNumber(component.afterDR, 0)), 0)
   };
 
-  const usedTypedSources = new Set();
-  const typedDRResults = [];
-  staged = staged.map(component => {
-    const current = Math.max(0, asNumber(component.afterDR, 0));
-    if (current <= 0) return component;
+  const afterDRTotal = genericDRResult.damageAfter;
 
-    const typedContext = {
-      ...baseContext,
-      damageType: component.type,
-      damageTypes: component.damageTypes,
-      originalDamageTypes: component.originalDamageTypes,
-      component,
-      onlyTypedDamageReduction: true,
-      skipGenericDamageReduction: true
-    };
-    const result = DamageReductionResolver.resolve({ damage: current, actor, context: typedContext });
-    const applied = Math.max(0, asNumber(result.drApplied, 0));
-    if (applied <= 0) return component;
-
-    const key = sourceKey(result.drSource || `typed-${component.type}`);
-    if (usedTypedSources.has(key)) {
-      typedDRResults.push({
-        component: component.key,
-        label: component.label,
-        type: component.type,
-        source: result.drSource,
-        applied: 0,
-        skipped: true,
-        reason: 'Typed DR source already applied to this mixed hit.'
-      });
-      return component;
-    }
-    usedTypedSources.add(key);
-    typedDRResults.push({
-      component: component.key,
-      label: component.label,
-      type: component.type,
-      source: result.drSource,
-      applied,
-      bypassed: result.bypassed === true
+  // ========================================================================
+  // D4: TYPED RESISTANCE (after DR, before Temp HP/HP)
+  // ========================================================================
+  // Applies-to reduction (Energy Resistance, typed applies-to item rules) subtracts a
+  // flat amount from each REMAINING component whose type matches, highest-only, using
+  // the same DamageTypeRules.matches semantics as DR exceptions and immunity. This is
+  // consolidated here so the DR resolver keeps only generic / DR-exception DR. An
+  // immune component is already 0 (skipped), so resistance never double-counts it.
+  const resistances = actor?.system?.derived?.damageResistances
+    ?? DamageTypeRules.collectDamageTypeResistances(actor);
+  const resistedTypesHit = new Set();
+  let resistanceAppliedTotal = 0;
+  if (Array.isArray(resistances?.sources) && resistances.sources.length) {
+    staged = staged.map(component => {
+      const before = Math.max(0, asNumber(component.afterDR, 0));
+      if (before <= 0) return component;
+      const declared = [component.type, ...(component.damageTypes || []), ...(component.originalDamageTypes || [])].filter(Boolean);
+      const match = DamageTypeRules.resistanceForComponentTypes(declared, resistances);
+      if (match.amount <= 0) return component;
+      const after = Math.max(0, before - match.amount);
+      const applied = before - after;
+      if (applied <= 0) return component;
+      resistanceAppliedTotal += applied;
+      resistedTypesHit.add(match.type);
+      return {
+        ...component,
+        afterDR: after,
+        afterResistance: after,
+        resistanceApplied: Math.max(0, asNumber(component.resistanceApplied, 0)) + applied,
+        resistanceSource: [component.resistanceSource, match.source].filter(Boolean).join(', '),
+        resistedBy: match.type
+      };
     });
-    return {
-      ...component,
-      afterDR: Math.max(0, result.damageAfter),
-      drApplied: Math.max(0, asNumber(component.drApplied, 0)) + applied,
-      drSource: [component.drSource, result.drSource].filter(Boolean).join(', ')
-    };
-  });
+  }
+  // Record post-resistance value for components that were not resisted, too.
+  staged = staged.map(component => ({
+    ...component,
+    afterResistance: Math.max(0, asNumber(component.afterResistance ?? component.afterDR, 0))
+  }));
 
   staged = syncStage(staged, 'afterDR', 'afterTempHP');
-  const afterDRTotal = staged.reduce((sum, component) => sum + Math.max(0, asNumber(component.afterDR, 0)), 0);
-  const tempResult = TempHPResolver.resolve({ damage: afterDRTotal, actor });
+  const afterResistanceTotal = staged.reduce((sum, component) => sum + Math.max(0, asNumber(component.afterDR, 0)), 0);
+  const tempResult = TempHPResolver.resolve({ damage: afterResistanceTotal, actor });
   staged = distributeReduction(staged, 'afterTempHP', tempResult.tempAbsorbed, 'tempAbsorbed');
 
   const hpDamage = staged.reduce((sum, component) => sum + Math.max(0, asNumber(component.afterTempHP, 0)), 0);
-  // Attribute reduction correctly: immunity removed (afterShieldTotal - afterImmunityTotal),
-  // DR removed (afterImmunityTotal - afterDRTotal). Do not count immunity as DR.
+  // Attribute reduction to the correct stage: immunity (afterShieldTotal -
+  // afterImmunityTotal), DR (afterImmunityTotal - afterDRTotal), resistance
+  // (afterDRTotal - afterResistanceTotal). Never conflate them.
   const drAppliedTotal = Math.max(0, afterImmunityTotal - afterDRTotal);
   const drSources = [
-    genericDRResult.drApplied > 0 ? genericDRResult.drSource : '',
-    ...typedDRResults.filter(result => result.applied > 0).map(result => result.source)
+    genericDRResult.drApplied > 0 ? genericDRResult.drSource : ''
   ].filter(Boolean);
 
   const result = {
     originalDamage: damage,
     afterShield: shieldResult.damageAfter,
     afterDR: afterDRTotal,
+    afterResistance: afterResistanceTotal,
     afterTempHP: tempResult.damageAfter,
     hpDamage,
     shield: {
@@ -421,17 +422,19 @@ export function resolveComponentMitigation({ damage, actor, damageType = 'normal
     damageReduction: {
       applied: drAppliedTotal,
       source: drSources.join(', '),
-      bypassed: genericDRResult.bypassed === true || typedDRResults.some(entry => entry.bypassed === true),
-      genericApplied: genericDRResult.drApplied,
-      typedApplied: typedDRResults.reduce((sum, entry) => sum + Math.max(0, asNumber(entry.applied, 0)), 0),
-      typedResults: typedDRResults
+      bypassed: genericDRResult.bypassed === true,
+      genericApplied: genericDRResult.drApplied
+    },
+    resistance: {
+      applied: resistanceAppliedTotal,
+      types: [...resistedTypesHit]
     },
     tempHP: {
       absorbed: tempResult.tempAbsorbed,
       before: tempResult.tempBefore,
       after: tempResult.tempAfter
     },
-    breakdown: makeBreakdown({ damage, shieldResult, genericDRResult, typedDRResults, tempResult }),
+    breakdown: makeBreakdown({ damage, shieldResult, afterImmunityTotal, genericDRResult, afterDRTotal, resistanceAppliedTotal, afterResistanceTotal, tempResult }),
     components: staged.map(exportedComponent),
     componentMitigation: true,
     mitigated: damage > hpDamage,

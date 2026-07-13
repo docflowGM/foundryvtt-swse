@@ -174,6 +174,42 @@ export class DamageMitigationManager {
     currentDamage = drResult.damageAfter;
 
     // ========================================================================
+    // STAGE 2.5: TYPED RESISTANCE (after DR, before Temp HP/HP) — D4
+    // ========================================================================
+    // Resistance is APPLIES-TO (opposite of a DR exception): it subtracts a flat
+    // amount from damage that MATCHES the resisted type. Highest-only. Uses the same
+    // DamageTypeRules.matches semantics as DR exceptions and immunity. Runs after SR
+    // and DR so the visible order holds (SR absorbs/depletes first; only what gets
+    // past SR/DR is reduced by resistance). An immune component is already 0 here, so
+    // resistance never double-counts it.
+    const resistances = actor?.system?.derived?.damageResistances
+      ?? DamageTypeRules.collectDamageTypeResistances(actor);
+    let resistanceApplied = 0;
+    let resistanceSource = '';
+    let resistedType = null;
+    if (currentDamage > 0 && Array.isArray(resistances?.sources) && resistances.sources.length) {
+      const canonical = options?.damageComponents?.[0] ?? options?.canonicalPacket?.components?.[0] ?? {};
+      const declared = [canonical.type ?? damageType, ...(context.damageTypes || []), ...(canonical.damageTypes || [])].filter(Boolean);
+      const match = DamageTypeRules.resistanceForComponentTypes(declared, resistances);
+      if (match.amount > 0) {
+        const after = Math.max(0, currentDamage - match.amount);
+        resistanceApplied = currentDamage - after;
+        resistanceSource = match.source;
+        resistedType = match.type;
+        currentDamage = after;
+      }
+    }
+    const afterResistance = currentDamage;
+
+    breakdown.push({
+      stage: 'Typed Resistance',
+      input: drResult.damageAfter,
+      output: afterResistance,
+      mitigation: resistanceApplied,
+      details: { type: resistedType, source: resistanceSource || 'None', available: resistances?.byType ?? {} }
+    });
+
+    // ========================================================================
     // STAGE 3: TEMPORARY HP
     // ========================================================================
 
@@ -205,6 +241,7 @@ export class DamageMitigationManager {
       originalDamage: damage,
       afterShield: shieldResult.damageAfter,
       afterDR: drResult.damageAfter,
+      afterResistance: afterResistance,
       afterTempHP: tempResult.damageAfter,
       hpDamage: currentDamage,
 
@@ -225,6 +262,13 @@ export class DamageMitigationManager {
         applied: drResult.drApplied,
         source: drResult.drSource,
         bypassed: drResult.bypassed
+      },
+
+      resistance: {
+        applied: resistanceApplied,
+        source: resistanceSource,
+        type: resistedType,
+        types: resistedType ? [resistedType] : []
       },
 
       tempHP: {
@@ -252,14 +296,18 @@ export class DamageMitigationManager {
           amount: currentDamage,
           afterShield: shieldResult.damageAfter,
           afterDR: drResult.damageAfter,
+          afterResistance: afterResistance,
           afterTempHP: tempResult.damageAfter,
           remaining: currentDamage,
           immuneTo,
+          resistedBy: resistedType,
           mitigation: {
             shieldApplied: shieldResult.srApplied,
             immunityApplied,
             drApplied: drResult.drApplied,
             drSource: drResult.drSource,
+            resistanceApplied,
+            resistanceSource,
             tempAbsorbed: tempResult.tempAbsorbed
           },
           source: canonical.source ?? null

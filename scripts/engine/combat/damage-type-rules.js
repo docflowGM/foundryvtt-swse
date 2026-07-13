@@ -412,6 +412,85 @@ export function collectDamageTypeImmunities(actor = null) {
   return { types, sources };
 }
 
+/**
+ * D4: Canonical DAMAGE-TYPE resistances for an actor.
+ *
+ * Resistance is APPLIES-TO (the opposite of a DR exception, which is BYPASSED-BY):
+ * "Energy Resistance 10" subtracts 10 from matching energy damage only. Highest-only
+ * per type (RAW no-stacking). Two source families are consolidated here so the DR
+ * resolver keeps only generic/`DR X/exception` DR:
+ *   1. `kind:'resistance'` protections (species / actor / flags / AE flag / item
+ *      RESISTANCE rules) via `collectDamageProtections`.
+ *   2. Item `DAMAGE_REDUCTION` / `CONTEXTUAL_DAMAGE_REDUCTION` rules that declare
+ *      `damageTypes` and NO `exceptions` — those are applies-to (resistance), not DR.
+ *
+ * Effect/condition resistances are not damage types and are filtered out (same
+ * `isDamageType` gate as immunity).
+ *
+ * @param {Actor} actor
+ * @returns {{ types: string[], byType: Record<string, number>, sources: Array<{type:string, amount:number, source:string}> }}
+ */
+export function collectDamageTypeResistances(actor = null) {
+  const byType = {};
+  const sources = [];
+  const push = (rawType, rawAmount, source) => {
+    const key = normalizeDamageTypeKey(rawType);
+    const amount = asNumber(rawAmount, 0);
+    if (!key || !isDamageType(key) || amount <= 0) return;
+    sources.push({ type: key, amount, source: source || '' });
+    if (amount > (byType[key] ?? 0)) byType[key] = amount;
+  };
+
+  for (const entry of collectDamageProtections(actor)) {
+    if (entry?.kind !== 'resistance') continue;
+    push(entry.type, entry.amount, entry.source);
+  }
+
+  for (const item of actorItems(actor)) {
+    const rules = item?.system?.abilityMeta?.rules;
+    if (!Array.isArray(rules)) continue;
+    for (const rule of rules) {
+      const type = String(rule?.type ?? '').toUpperCase();
+      if (type !== 'DAMAGE_REDUCTION' && type !== 'CONTEXTUAL_DAMAGE_REDUCTION') continue;
+      const types = uniqueDamageTypes(rule.damageTypes ?? rule.damageType ?? rule.types);
+      const exceptions = uniqueDamageTypes(rule.exceptions ?? rule.except ?? rule.bypassedBy);
+      // Applies-to only. Generic DR and DR/exception stay in the DR resolver.
+      if (!types.length || exceptions.length) continue;
+      const amount = asNumber(rule.value ?? rule.amount ?? rule.damageReduction, 0);
+      for (const damageType of types) push(damageType, amount, item.name || rule.label || 'Item Resistance');
+    }
+  }
+
+  return { types: Object.keys(byType), byType, sources };
+}
+
+/**
+ * D4: highest-only resistance amount for a set of declared component damage types.
+ * Matching uses the shared canonical matcher (`hasDamageType`) so alias expansion
+ * (fire→energy, ion→energy, …) is identical to DR exceptions and immunity.
+ *
+ * @param {string|string[]} declaredTypes - the component's own declared types
+ * @param {{ sources: Array<{type, amount, source}> }} resistances
+ * @returns {{ amount:number, source:string, type:(string|null) }}
+ */
+export function resistanceForComponentTypes(declaredTypes = [], resistances = null) {
+  const sourceList = Array.isArray(resistances?.sources) ? resistances.sources : [];
+  const declared = asArray(declaredTypes).filter(Boolean);
+  let amount = 0;
+  let source = '';
+  let type = null;
+  for (const entry of sourceList) {
+    if (!hasDamageType(declared, entry.type)) continue;
+    const value = asNumber(entry.amount, 0);
+    if (value > amount) {
+      amount = value;
+      source = entry.source || '';
+      type = entry.type;
+    }
+  }
+  return { amount, source, type };
+}
+
 export function targetHasDamageImmunity(actor = null, damageTypes = []) {
   const expanded = expandDamageTypeAliases(damageTypes);
   const protections = collectDamageProtections(actor).filter(entry => entry.kind === 'immunity');
@@ -565,6 +644,8 @@ export const DamageTypeRules = {
   matches: (componentTypes, ruleType) => hasDamageType(asArray(componentTypes), ruleType),
   isDamageType,
   collectDamageTypeImmunities,
+  collectDamageTypeResistances,
+  resistanceForComponentTypes,
   damageTypesFromContext,
   hasDamageType,
   damageTypesMatch,

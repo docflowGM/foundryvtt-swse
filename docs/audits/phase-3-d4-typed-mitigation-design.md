@@ -1,6 +1,6 @@
 # Phase 3 · D4 — Typed Damage Mitigation Design (Qualified DR + Resistance/Immunity)
 
-**Status:** Design document only. **No code, no resolver change, no ActiveEffect retargeting, no schema migration.** Proposal for sign-off.
+**Status:** ✅ **Typed resistance implemented** (this slice). Qualified DR (`DR X/exception`) already landed in D3; immunity landed in D4A. This slice adds the typed-**resistance** mitigation stage (applies-to), consolidates "reduce type X by N" into it, moves resistance out of packet-prep to after DR, and neutralizes the dead Force `derived.damageReduction.energy` writes. See §10 for as-built status. Vulnerability and effect/condition immunity remain out of scope.
 
 **Scope:** D4 = typed damage mitigation — qualified Damage Reduction (`DR X / exception`) and the `damageResistances` / immunity axis. Shield (D1/D2) is done and untouched. Generic DR (D3) is touched only for shape-compatibility.
 
@@ -149,3 +149,42 @@ Rationale: **SR before immunity.** A poison shot against a shielded droid still 
 ## D3 ↔ D4 reconciliation (important)
 
 D4 **replaces D3's reserved `byType`** with the RAW `{value, exceptions[]}` DR entry model. If D3 is implemented first, it should use `damageReduction.entries` (with `exceptions:[]` for generic) so D4 qualified DR is additive, not a rewrite. Typed **applies-to** reduction (Energy Resistance) and immunity remain the separate resistance layer.
+
+---
+
+## 10. Implementation status (as built — typed resistance slice)
+
+**Order delivered:** `Shield Rating → Immunity → Damage Reduction → Typed Resistance → Temp HP → HP → special`. Resistance is a distinct stage **after DR, before Temp HP**, on both mitigation paths.
+
+### Canonical resistance collector + matcher — `scripts/engine/combat/damage-type-rules.js`
+
+- `collectDamageTypeResistances(actor)` → `{ types, byType, sources }`. Consolidates two families of "reduce type X by N" (applies-to):
+  1. `kind:'resistance'` protections from `collectDamageProtections` (species / actor / flags / AE `effectType:'damageReduction'`+`drType` flag / item `RESISTANCE` rules).
+  2. Item `DAMAGE_REDUCTION`/`CONTEXTUAL_DAMAGE_REDUCTION` rules that declare `damageTypes` **and no exceptions** — applies-to, so they are resistance, not DR.
+  Highest-only per damage type (`byType`); non-damage types filtered by the same `isDamageType` gate as immunity.
+- `resistanceForComponentTypes(declaredTypes, resistances)` → highest-only matching amount, using `DamageTypeRules.matches` (identical alias semantics to DR exceptions and immunity: fire/ion/… → energy).
+- Both exposed on the `DamageTypeRules` export.
+
+### Derived projection — `scripts/actors/derived/derived-calculator.js`
+
+- Projects `system.derived.damageResistances = collectDamageTypeResistances(actor)` after `damageImmunities` (try/catch fallback `{types:[],byType:{},sources:[]}`). DerivedCalculator remains the sole projector.
+
+### Mitigation stage — single-total (`damage-mitigation-manager.js`) and multi-component (`damage-component-mitigation.js`)
+
+- New **Typed Resistance** stage after DR, before Temp HP. Reads `system.derived.damageResistances` with a `collectDamageTypeResistances(actor)` fallback. Per component: highest-only subtraction against matching declared types. An immune component is already `0` before this stage, so resistance never double-counts it.
+- Records `resistance.applied` / `resistance.types` on the result, `afterResistance` in the flow, and per-component `mitigation.resistanceApplied` / `resistanceSource` + `resistedBy`. Attribution is kept distinct (immunity vs DR vs resistance never conflated).
+
+### Consolidation & cleanup
+
+- **DR resolver** (`damage-reduction-resolver.js`): the typed applies-to item-DR fold (`collectItemDamageReduction` typed pass) is removed. The resolver now handles **only** generic DR, `DR X/exception` (canonical entries), and lightsaber/bypass-DR. Generic item DR still arrives via `getCanonicalDamageReductionEntries`.
+- **Multi-component path**: the former per-component "typed DR pass" is replaced by the resistance stage (it was applies-to = resistance all along).
+- **Packet prep** (`damage-component-rules.js`): resistance is no longer applied in `applyTargetComponentProtections` (it ran pre-SR). Immunity stays there for now (D4A owns its move). Removes the visible pre-SR reduction so **SR resolves/depletes first and only post-SR/DR damage is resisted**.
+- **Force Energy Resistance / Negate Energy** (`force-power-effects-engine.js`): the dead `system.derived.damageReduction.energy` raw AE writes (no reader; violated "AEs never write `system.derived.*`") are removed. Energy Resistance keeps working via its `effectType:'damageReduction'`+`drType:'energy'` flag → canonical resistance entry. Negate Energy carried no `drType`, so it was already a no-op; wiring it through the resistance layer is a deliberate behavior change **deferred** to a follow-up.
+
+### Tests (22/22 PASS, node harness against real resolvers)
+
+Collector highest-only + poison-excluded + typed-item-DR→resistance + DR-exception-not-resistance; ER10 vs energy/fire(alias)/ vs fire-res-not-energy; multi energy+kinetic only-energy-reduced; **SR + ER: SR absorbs/degrades first, resistance only on the remainder (the agreed visible change)**; immunity+resistance no double-count; DR+resistance ordering; multiple sources highest-only; lightsaber bypasses DR but resistance still applies; typed item DR applied at the resistance stage.
+
+### Non-goals honored
+
+No Shield Rating math change, no immunity-semantics change, no DR redesign (only removed the typed-applies-to fold), no effect/condition immunity, no vulnerability, no Force Shield, no compatibility-wrapper removal, no broad UI overhaul.

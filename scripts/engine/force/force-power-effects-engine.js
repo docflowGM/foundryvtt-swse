@@ -306,14 +306,13 @@ export class ForcePowerEffectsEngine {
       disabled: false,
       transfer: false,
       duration: duration,
-      changes: [
-        {
-          key: 'system.derived.damageReduction.energy',
-          mode: 2, // Override
-          value: drValue.toString(),
-          priority: 20
-        }
-      ],
+      // D4: Energy Resistance's mitigation comes from the swse flag below
+      // (effectType:'damageReduction' + drType/drValue), which collectDamageProtections
+      // reads as a canonical typed RESISTANCE entry and the typed-resistance mitigation
+      // stage applies after DR. The former `system.derived.damageReduction.energy`
+      // change was a dead raw write (no reader) and violated the "AEs never write
+      // system.derived.*" rule, so it has been removed.
+      changes: [],
       flags: {
         swse: {
           effectType: 'damageReduction',
@@ -447,17 +446,17 @@ export class ForcePowerEffectsEngine {
       disabled: false,
       transfer: false,
       duration: duration,
-      changes: [
-        {
-          key: 'system.derived.damageReduction.energy',
-          mode: 2,
-          value: drValue.toString(),
-          priority: 20
-        }
-      ],
+      // D4: the former `system.derived.damageReduction.energy` change was a dead raw
+      // write (no reader) and violated the "AEs never write system.derived.*" rule, so
+      // it has been removed. Negate Energy carries no drType/drValue resistance flag
+      // today, so it is currently unwired to the mitigation pipeline (it was already a
+      // no-op). Wiring it through the canonical resistance layer (drType:'energy') is a
+      // deliberate behavior change deferred to a follow-up, not this slice.
+      changes: [],
       flags: {
         swse: {
-          effectType: 'energyNegation'
+          effectType: 'energyNegation',
+          drValue: drValue
         }
       }
     }];

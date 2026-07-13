@@ -911,6 +911,17 @@ export class DerivedCalculator {
       }
 
       // ========================================
+      // Damage-type resistances (D4): canonical applies-to projection for UI +
+      // mitigation. Highest-only per damage type; effect/condition resistances are
+      // filtered out by the collector (same isDamageType gate as immunity).
+      // ========================================
+      try {
+        updates['system.derived.damageResistances'] = DamageTypeRules.collectDamageTypeResistances(actor);
+      } catch (_err) {
+        updates['system.derived.damageResistances'] = { types: [], byType: {}, sources: [] };
+      }
+
+      // ========================================
       // Store modifier breakdown for UI
       // ========================================
       const skillTargets = Object.keys(actor?.system?.skills || {})

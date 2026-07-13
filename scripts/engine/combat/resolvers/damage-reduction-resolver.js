@@ -210,7 +210,6 @@ export class DamageReductionResolver {
 
     const skipGenericDR = context.skipGenericDamageReduction === true || context.skipGenericDR === true;
     const onlyTypedDR = context.onlyTypedDamageReduction === true || context.typedOnlyDamageReduction === true;
-    const onlyGenericDR = context.onlyGenericDamageReduction === true || context.genericOnlyDamageReduction === true;
 
     // D3: generic DR via canonical entries { value, exceptions[] }. A DR entry is
     // bypassed when the incoming damage type matches one of its exceptions
@@ -232,14 +231,11 @@ export class DamageReductionResolver {
       }
     }
 
-    // Typed applies-to item DR (resistance-style) — unchanged (D4 territory). Generic
-    // item DR already came through the canonical entries above, so restrict to typed
-    // here to avoid double-reading it (and to preserve exception handling).
-    const itemDR = collectItemDamageReduction(actor, context, { typedOnly: !onlyGenericDR, genericOnly: onlyGenericDR });
-    if (itemDR.value > drValue) {
-      drValue = itemDR.value;
-      drSource = itemDR.source || `Item DR (${drValue})`;
-    }
+    // D4: typed applies-to item DR (resistance-style, `DAMAGE_REDUCTION` with
+    // damageTypes and no exceptions) has been consolidated into the typed-resistance
+    // mitigation stage (see DamageTypeRules.collectDamageTypeResistances). The DR
+    // resolver now handles ONLY generic DR, `DR X/exception`, and lightsaber/bypass-DR.
+    // Generic item DR already arrives via getCanonicalDamageReductionEntries above.
 
     if (drValue <= 0) {
       return this._emptyResult(damage);
