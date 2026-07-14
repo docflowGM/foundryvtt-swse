@@ -3,7 +3,7 @@
   "$schemaVersion": 2,
   "schemaVersion": 2,
   "profileKind": "nonheroic-statblock-weapon-damage",
-  "sourceFamily": "NH-4 Unknown Regions droid statblock damage profiles",
+  "sourceFamily": "NH-4 Unknown Regions nonheroic statblock damage profiles",
   "canonPolicy": {
     "authority": "Printed Unknown Regions statblock/action rows are canonical for imported NPC play-mode attacks.",
     "rowSemantics": "Each record represents one printed statblock attack/action row, not a generic equipment definition.",
@@ -11,7 +11,7 @@
     "riders": "Stun and other non-HP effects remain typed damage/riders/tags according to the canonical packet model."
   },
   "notes": [
-    "This batch starts Unknown Regions with sourcebook-printed droid rows that have clear attack and damage expressions.",
+    "This batch expands Unknown Regions coverage with sourcebook-printed nonheroic, nonheroic-adjacent, squad, and droid rows that have clear attack and damage expressions.",
     "Rows use the same canonical runtime fields as data/combat/damage-profiles.schema.json and the NH-2 profile schema.",
     "Printed statblock attack totals are intentionally not copied into item attackBonus."
   ],
@@ -149,6 +149,528 @@
       "riders": [],
       "sourceRefs": [
         { "book": "The Unknown Regions", "page": null, "note": "Wanderer Scout Surveyor Droid stun blaster/statblock and Stun Blast action row." }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "vagaari-infiltrator-stun-baton",
+      "name": "Stun Baton",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "The Unknown Regions",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "evidence": [
+          "Vagaari Infiltrator statblock lists Medium Vagaari nonheroic 6/scoundrel 3.",
+          "Printed row: Melee stun baton +9 (2d6+4 stun)."
+        ]
+      },
+      "actor": {
+        "name": "Vagaari Infiltrator",
+        "slugs": ["vagaari-infiltrator"],
+        "kind": "nonheroic-adjacent",
+        "challengeLevel": 5
+      },
+      "match": {
+        "actorSlugs": ["vagaari-infiltrator"],
+        "rawIncludes": ["stun baton"]
+      },
+      "weapon": {
+        "printedName": "Stun Baton",
+        "rowKind": "melee",
+        "integrated": false,
+        "category": "simple",
+        "range": "melee"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "stun",
+      "tags": ["nonheroic", "weapon", "stun-baton", "stun", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Stun Baton",
+          "formula": "2d6+4",
+          "type": "stun",
+          "tags": ["base", "stun", "stun-baton"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "The Unknown Regions", "page": null, "note": "Vagaari Infiltrator stun baton row." }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "vagaari-infiltrator-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "The Unknown Regions",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "evidence": ["Vagaari Infiltrator printed row: Ranged blaster pistol +7 (3d6+1)."]
+      },
+      "actor": {
+        "name": "Vagaari Infiltrator",
+        "slugs": ["vagaari-infiltrator"],
+        "kind": "nonheroic-adjacent",
+        "challengeLevel": 5
+      },
+      "match": {
+        "actorSlugs": ["vagaari-infiltrator"],
+        "rawIncludes": ["ranged blaster pistol", "blaster pistol +7"]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "integrated": false,
+        "category": "pistols",
+        "range": null
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": ["nonheroic", "weapon", "blaster", "pistol", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Blaster Pistol",
+          "formula": "3d6+1",
+          "type": "energy",
+          "tags": ["base", "energy", "blaster", "pistol"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "The Unknown Regions", "page": null, "note": "Vagaari Infiltrator blaster pistol row." }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "vagaari-infiltrator-hold-out-blaster-pistol",
+      "name": "Hold-Out Blaster Pistol",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "The Unknown Regions",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "evidence": ["Vagaari Infiltrator printed row: Ranged hold-out blaster pistol +7 (3d4+1)."]
+      },
+      "actor": {
+        "name": "Vagaari Infiltrator",
+        "slugs": ["vagaari-infiltrator"],
+        "kind": "nonheroic-adjacent",
+        "challengeLevel": 5
+      },
+      "match": {
+        "actorSlugs": ["vagaari-infiltrator"],
+        "rawIncludes": ["hold-out blaster pistol", "hold out blaster pistol"]
+      },
+      "weapon": {
+        "printedName": "Hold-Out Blaster Pistol",
+        "rowKind": "ranged",
+        "integrated": false,
+        "category": "pistols",
+        "range": null
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": ["nonheroic", "weapon", "blaster", "pistol", "hold-out", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Hold-Out Blaster Pistol",
+          "formula": "3d4+1",
+          "type": "energy",
+          "tags": ["base", "energy", "blaster", "pistol", "hold-out"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "The Unknown Regions", "page": null, "note": "Vagaari Infiltrator hold-out blaster pistol row." }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "sandos-boys-vibroblade",
+      "name": "Vibroblade",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "The Unknown Regions",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "evidence": [
+          "Sando's Boys statblock lists Medium Human nonheroic 9/noble 5.",
+          "Printed row: Melee vibroblade +13 (2d6+3)."
+        ]
+      },
+      "actor": {
+        "name": "Sando's Boys",
+        "slugs": ["sandos-boys", "sando-s-boys"],
+        "kind": "nonheroic-adjacent",
+        "challengeLevel": 8
+      },
+      "match": {
+        "actorSlugs": ["sandos-boys", "sando-s-boys"],
+        "rawIncludes": ["vibroblade"]
+      },
+      "weapon": {
+        "printedName": "Vibroblade",
+        "rowKind": "melee",
+        "integrated": false,
+        "category": "advanced-melee",
+        "range": "melee"
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "slashing",
+      "tags": ["nonheroic", "weapon", "vibroblade", "advanced-melee", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Vibroblade",
+          "formula": "2d6+3",
+          "type": "slashing",
+          "tags": ["base", "slashing", "vibroblade"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "The Unknown Regions", "page": null, "note": "Sando's Boys vibroblade row." }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "sandos-boys-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "The Unknown Regions",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "evidence": ["Sando's Boys printed row: Ranged blaster pistol +12 (3d6+2)."]
+      },
+      "actor": {
+        "name": "Sando's Boys",
+        "slugs": ["sandos-boys", "sando-s-boys"],
+        "kind": "nonheroic-adjacent",
+        "challengeLevel": 8
+      },
+      "match": {
+        "actorSlugs": ["sandos-boys", "sando-s-boys"],
+        "rawIncludes": ["blaster pistol"]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "integrated": false,
+        "category": "pistols",
+        "range": null
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": ["nonheroic", "weapon", "blaster", "pistol", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Blaster Pistol",
+          "formula": "3d6+2",
+          "type": "energy",
+          "tags": ["base", "energy", "blaster", "pistol"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "The Unknown Regions", "page": null, "note": "Sando's Boys blaster pistol row." }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "sandos-hired-blasters-unarmed",
+      "name": "Unarmed",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "The Unknown Regions",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "evidence": [
+          "Sando's Hired Blasters statblock lists Large Human (squad) nonheroic 9/scout 1.",
+          "Printed row: Melee unarmed +11 (1d6+1).",
+          "Squad traits state the melee attack of a squad is an area attack."
+        ]
+      },
+      "actor": {
+        "name": "Sando's Hired Blasters",
+        "slugs": ["sandos-hired-blasters", "sando-s-hired-blasters"],
+        "kind": "squad-nonheroic-adjacent",
+        "challengeLevel": 6
+      },
+      "match": {
+        "actorSlugs": ["sandos-hired-blasters", "sando-s-hired-blasters"],
+        "rawIncludes": ["unarmed"]
+      },
+      "weapon": {
+        "printedName": "Unarmed",
+        "rowKind": "melee",
+        "integrated": false,
+        "category": "unarmed",
+        "range": "melee"
+      },
+      "delivery": "unarmed",
+      "attackShape": "area",
+      "scale": "character",
+      "primaryType": "kinetic",
+      "tags": ["nonheroic", "squad", "unarmed", "area", "statblock"],
+      "attack": {
+        "isArea": true,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": true,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": 10,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "all-in-area"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Squad Unarmed",
+          "formula": "1d6+1",
+          "type": "kinetic",
+          "tags": ["base", "kinetic", "unarmed", "squad"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "The Unknown Regions", "page": null, "note": "Sando's Hired Blasters squad unarmed row; squad melee attacks are area attacks." }
+      ],
+      "variants": [],
+      "notes": ["Squad melee attack geometry is not fully encoded beyond area policy; token targeting remains a later UI/runtime concern."]
+    },
+    {
+      "slug": "sandos-hired-blasters-blaster-pistol",
+      "name": "Blaster Pistol",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "The Unknown Regions",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "evidence": ["Sando's Hired Blasters printed row: Ranged blaster pistol +12 (3d6)."]
+      },
+      "actor": {
+        "name": "Sando's Hired Blasters",
+        "slugs": ["sandos-hired-blasters", "sando-s-hired-blasters"],
+        "kind": "squad-nonheroic-adjacent",
+        "challengeLevel": 6
+      },
+      "match": {
+        "actorSlugs": ["sandos-hired-blasters", "sando-s-hired-blasters"],
+        "rawIncludes": ["blaster pistol"]
+      },
+      "weapon": {
+        "printedName": "Blaster Pistol",
+        "rowKind": "ranged",
+        "integrated": false,
+        "category": "pistols",
+        "range": null
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": ["nonheroic", "squad", "weapon", "blaster", "pistol", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Blaster Pistol",
+          "formula": "3d6",
+          "type": "energy",
+          "tags": ["base", "energy", "blaster", "pistol", "squad"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "The Unknown Regions", "page": null, "note": "Sando's Hired Blasters blaster pistol row." }
+      ],
+      "variants": [],
+      "notes": []
+    },
+    {
+      "slug": "sandos-hired-blasters-blaster-carbine",
+      "name": "Blaster Carbine",
+      "confidence": "verified",
+      "reviewRequired": false,
+      "source": {
+        "book": "The Unknown Regions",
+        "status": "sourcebook-statblock",
+        "page": null,
+        "evidence": ["Sando's Hired Blasters printed row: Ranged blaster carbine +13 (3d8)."]
+      },
+      "actor": {
+        "name": "Sando's Hired Blasters",
+        "slugs": ["sandos-hired-blasters", "sando-s-hired-blasters"],
+        "kind": "squad-nonheroic-adjacent",
+        "challengeLevel": 6
+      },
+      "match": {
+        "actorSlugs": ["sandos-hired-blasters", "sando-s-hired-blasters"],
+        "rawIncludes": ["blaster carbine"]
+      },
+      "weapon": {
+        "printedName": "Blaster Carbine",
+        "rowKind": "ranged",
+        "integrated": false,
+        "category": "rifles",
+        "range": null
+      },
+      "delivery": "weapon",
+      "attackShape": "single-target",
+      "scale": "character",
+      "primaryType": "energy",
+      "tags": ["nonheroic", "squad", "weapon", "blaster", "carbine", "statblock"],
+      "attack": {
+        "isArea": false,
+        "halfDamageOnMiss": false,
+        "noCriticalDouble": false,
+        "coverCanNegateMissDamage": false,
+        "attackRollMinimum": null,
+        "defense": "reflex"
+      },
+      "area": {
+        "shape": null,
+        "radius": null,
+        "size": null,
+        "originMode": null,
+        "targetPolicy": "single"
+      },
+      "components": [
+        {
+          "key": "base",
+          "label": "Blaster Carbine",
+          "formula": "3d8",
+          "type": "energy",
+          "tags": ["base", "energy", "blaster", "carbine", "squad"]
+        }
+      ],
+      "riders": [],
+      "sourceRefs": [
+        { "book": "The Unknown Regions", "page": null, "note": "Sando's Hired Blasters blaster carbine row." }
       ],
       "variants": [],
       "notes": []
