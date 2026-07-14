@@ -1,6 +1,6 @@
 # Nonheroic Damage Profile Bulk Candidate Report
 
-Generated: 2026-07-14T13:17:36.369Z
+Generated: 2026-07-14T14:18:55.893Z
 Mode: write-candidates
 
 This report extracts candidate weapon-damage profile rows only from clean,
@@ -14,7 +14,7 @@ to canonical profile files, actor packs, compendium packs, or runtime code.
 ## Summary
 
 - Weapon compendium items scanned: 372
-- Existing profile records (already-profiled index): 28
+- Existing profile records (already-profiled index): 57
 - Source files scanned: packs/nonheroic.db, packs/npc.db, packs/beasts.db
 - Candidate rows extracted: 4352
 - Candidate files written: data/nonheroic/generated/nonheroic-weapon-damage-candidates.nonheroic.json, data/nonheroic/generated/nonheroic-weapon-damage-candidates.npc.json
@@ -23,13 +23,14 @@ to canonical profile files, actor packs, compendium packs, or runtime code.
 
 - already-profiled: 10
 - safe-ordinary-weapon-candidate: 154
-- safe-ordinary-weapon-with-delta: 1667
+- safe-ordinary-weapon-with-delta: 1402
+- ordinary-weapon-special-mode: 292
 - no-compendium-match: 514
 - ambiguous-compendium-match: 0
 - natural-or-unarmed: 1138
 - area-autofire-grenade-special: 549
 - rider-or-condition: 9
-- formula-unclear: 311
+- formula-unclear: 284
 
 ## Already Profiled (matches an existing NH profile record) (10)
 
@@ -88,20 +89,16 @@ to canonical profile files, actor packs, compendium packs, or runtime code.
 - `packs/nonheroic.db` :: Police Officer — "Blaster Pistol +5 (3d6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula equals compendium base.
 - _(114 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
 
-## Safe Ordinary Weapon Candidates With Delta (exact compendium match, obvious base+delta/base+dice) (1667)
+## Safe Ordinary Weapon Candidates With Delta (exact compendium match, obvious base+delta/base+dice) (1402)
 
 - `packs/nonheroic.db` :: Theelin Bodyguard — "Vibroblade +5 (2d6+3)" — exact match to "Vibroblade" (weapons-simple); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Dark Jedi — "Lightsaber +9 (2d8+6)" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Dark Jedi — "Lightsaber +7 (3d8+6) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-dice.
 - `packs/nonheroic.db` :: Rodian Black Sun Vigo — "Heavy Blaster Pistol +15 (3d8+9)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Rodian Black Sun Vigo — "Heavy Blaster Pistol +10 (3d8+9)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Rodian Black Sun Vigo — "Heavy Blaster Pistol +10 (3d8+9) with Double Attack" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Krath Commander — "Stun Baton +5 (2d6+3 ( Stun ))" — exact match to "Stun Baton" (weapons-simple); printed formula classified as base-plus-dice.
 - `packs/nonheroic.db` :: Krath Commander — "Blaster Pistol +7 (3d6+3)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Notorious Outlaw — "Vibroblade +9 (2d6+6)" — exact match to "Vibroblade" (weapons-simple); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Notorious Outlaw — "Vibroblade +7 (3d6+6) with Rapid Strike" — exact match to "Vibroblade" (weapons-simple); printed formula classified as base-plus-dice.
 - `packs/nonheroic.db` :: Notorious Outlaw — "Blaster Pistol +9 (3d6+4)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Notorious Outlaw — "Blaster Pistol +9 (4d6+4) with Trigger Work" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-dice.
 - `packs/nonheroic.db` :: Imperial Detention Guard — "Blaster Pistol +5 (3d6+2)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Soldier Commander — "Blaster Pistol +10 (3d6+2)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Star Destroyer Officer — "Blaster Pistol +5 (3d6+2)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
@@ -125,12 +122,60 @@ to canonical profile files, actor packs, compendium packs, or runtime code.
 - `packs/nonheroic.db` :: Core Fleet Covert Agent — "Hold-Out Blaster Pistol +4 (3d4+2)" — exact match to "Hold-Out Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: SpecForce Heavy Weapons Specialist — "Heavy Blaster Pistol +9 (3d8+1)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Jedi Commander — "Lightsaber +9 (2d8+5)" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-delta.
-- `packs/nonheroic.db` :: Jedi Commander — "Lightsaber +7 (3d8+5) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); printed formula classified as base-plus-dice.
 - `packs/nonheroic.db` :: Red Fury Pirate — "Vibroblade +10 (2d6+4)" — exact match to "Vibroblade" (weapons-simple); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Red Fury Pirate — "Heavy Blaster Pistol +9 (3d8+1)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Clone Fighter Pilot — "Blaster Pistol +8 (3d6+2)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
 - `packs/nonheroic.db` :: Rodian Thief — "Heavy Blaster Pistol +10 (3d8+4)" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
-- _(1627 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
+- `packs/nonheroic.db` :: Rodian Thief — "Heavy Blaster Pistol +10 (4d8+4) with Deadeye" — exact match to "Heavy Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-dice.
+- `packs/nonheroic.db` :: Whiphid Tracker — "Bow +6 (1d6+2)" — exact match to "Bow" (weapons-simple); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: SpecForce Elite Soldier — "Blaster Pistol +15 (3d6+6)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Detention Block Guard — "Blaster Pistol +7 (3d6+3)" — exact match to "Blaster Pistol" (weapons-pistols); printed formula classified as base-plus-delta.
+- `packs/nonheroic.db` :: Storm Commando — "Blaster Carbine +12 (3d8+3)" — exact match to "Blaster Carbine" (weapons-rifles); printed formula classified as base-plus-delta.
+- _(1362 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
+
+## Ordinary Weapon, Special Attack Mode (exact compendium match, but row expresses a mode/feat/attack-count/variant -- manual review lane) (292)
+
+- `packs/nonheroic.db` :: Dark Jedi — "Lightsaber +7 (3d8+6) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Rodian Black Sun Vigo — "Heavy Blaster Pistol +10 (3d8+9) with Double Attack" — exact match to "Heavy Blaster Pistol" (weapons-pistols); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Notorious Outlaw — "Vibroblade +7 (3d6+6) with Rapid Strike" — exact match to "Vibroblade" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Notorious Outlaw — "Blaster Pistol +9 (4d6+4) with Trigger Work" — exact match to "Blaster Pistol" (weapons-pistols); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Jedi Commander — "Lightsaber +7 (3d8+5) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: SpecForce Elite Soldier — "Blaster Rifle +15 (3d8+8) with Double Attack" — exact match to "Blaster Rifle" (weapons-rifles); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Storm Commando — "Blaster Carbine +7 (3d8+3) with Double Attack" — exact match to "Blaster Carbine" (weapons-rifles); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Dark Jedi Master — "Lightsaber +19 (3d8+12) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Sith Lord — "Lightsaber +16 (2d8+10) with Double Attack" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Sith Lord — "Lightsaber +11 (3d8+10) with Triple Attack" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Pirate Captain — "Vibroblade +4 (2d6+5) with Double Attack" — exact match to "Vibroblade" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: First Order Specialist — "Sniper Blaster Rifle +8 (3d10+1)" — exact match to "Sniper Blaster Rifle" (weapons-rifles); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Jensaarai Defender — "Lightsaber +12 (3d8+7) with Mighty Swing" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Elite Shadow Guard — "Lightsaber Pike * +20 (4d8+14; 2-Square Reach ) with Double Attack" — exact match to "Lightsaber Pike" (weapons-lightsabers); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Elite Shadow Guard — "Lightsaber Pike * +17 (4d8+14; 2-Square Reach ) with Triple Attack" — exact match to "Lightsaber Pike" (weapons-lightsabers); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Imperial Knight — "Lightsaber +13 (3d8+8) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Imperial Knight — "Lightsaber +9* (3d8+16) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Ship Gunner — "Blaster Cannon +6 (3d12+5) with Double Attack" — exact match to "Blaster Cannon" (weapons-heavy); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Ship Captain — "Vibrodagger +8 (2d4+6) with Double Attack" — exact match to "Vibrodagger" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Commando — "Vibrodagger +10 (3d4+4) with Rapid Strike" — exact match to "Vibrodagger" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Sith Bladeborn — "Sith Tremor Sword +12 (3d6+4) with Rapid Strike" — exact match to "Sith Tremor Sword" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Sith Bladeborn — "Sith Tremor Sword +9 (4d6+4) with Improved Rapid Strike" — exact match to "Sith Tremor Sword" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Fallen Jedi Sith Lord — "Lightsaber +20 (3d8+13) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Trandoshan Sergeant — "Heavy Blaster Rifle +12 (3d10+8) with Double Attack" — exact match to "Heavy Blaster Rifle" (weapons-rifles); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Trandoshan Sergeant — "Heavy Blaster Rifle +10 (5d10+8) with Double Attack" — exact match to "Heavy Blaster Rifle" (weapons-rifles); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Trandoshan Scavenger — "Vibrosword +7 (3d8+2) with Mighty Swing" — exact match to "Vibrosword" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Jedi Knight — "Lightsaber +13 (3d8+7) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Jedi Knight — "Lightsaber +12 (2d8+7) with Double Attack" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Jedi Watchman — "Lightsaber +14 (2d8+8) with Double Attack" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Jedi Watchman — "Lightsaber +9 (2d8+8) with Triple Attack" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Jedi Master — "Lightsaber +16 (3d8+8) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Jedi Master — "Lightsaber +15 (2d8+8) with Double Attack" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Coruscant Guard Veteran — "Electrostaff +11 (3d6+4) with Mighty Swing" — exact match to "Electrostaff" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Jedi Duelist — "Lightsaber +16 (3d8+13) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Jedi Duelist — "Lightsaber +18 (3d8+13) with Mighty Swing" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Jedi Duelist — "Lightsaber +13 (2d8+13) with Double Attack" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Auxiliary Inquisitor — "Short Lightsaber +4 (3d6+4) with Rapid Strike" — exact match to "Short Lightsaber" (weapons-lightsabers); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Jedi Padawan — "Lightsaber +5 (3d8+2) with Rapid Strike" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Dark Lord of the Sith — "Lightsaber +14 (2d8+12) with Double Attack" — exact match to "Lightsaber" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- `packs/nonheroic.db` :: Noghri Assassin — "Vibrodagger +8 (3d4+8) with Rapid Strike" — exact match to "Vibrodagger" (weapons-simple); row text indicates a special attack mode/feat/attack-count/variant (e.g. rapid strike, double attack, power attack, trigger work) rather than a plain base weapon damage row, so it is excluded from Lane A bulk promotion and routed to manual/variant review.
+- _(252 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
 
 ## No Compendium Match (514)
 
@@ -280,7 +325,7 @@ _None._
 - `packs/npc.db` :: Shimrra Jamaane, Supreme Overlord — "Sceptre of Power (Whip Form) +28 (1d8+21 ( Amphistaff Poison))" — row text indicates a poison/disease/condition-track/maneuver rider rather than plain damage.
 - `packs/beasts.db` :: Brintak — "Tentacle +19 (1d8+7) plus Poison" — row text indicates a poison/disease/condition-track/maneuver rider rather than plain damage.
 
-## Formula Unclear (compendium matched but dice do not obviously derive) (311)
+## Formula Unclear (compendium matched but dice do not obviously derive) (284)
 
 - `packs/nonheroic.db` :: Theelin Bodyguard — "Blaster Rifle +6 (3d8+1)" — matched "Blaster Rifle" (weapons-rifles, base 3d10); printed formula "3d8+1" is not a simple/obvious base or base+delta/base+dice relationship.
 - `packs/nonheroic.db` :: Elite Stormtrooper — "Blaster Rifle +13 (3d8+3)" — matched "Blaster Rifle" (weapons-rifles, base 3d10); printed formula "3d8+3" is not a simple/obvious base or base+delta/base+dice relationship.
@@ -291,7 +336,6 @@ _None._
 - `packs/nonheroic.db` :: Clone Trooper Veteran — "Blaster Rifle +8 (3d8)" — matched "Blaster Rifle" (weapons-rifles, base 3d10); printed formula "3d8" is not a simple/obvious base or base+delta/base+dice relationship.
 - `packs/nonheroic.db` :: SpecForce Elite Soldier — "Blaster Rifle +16 (3d8+8)" — matched "Blaster Rifle" (weapons-rifles, base 3d10); printed formula "3d8+8" is not a simple/obvious base or base+delta/base+dice relationship.
 - `packs/nonheroic.db` :: SpecForce Elite Soldier — "Blaster Rifle +15 (3d8+8)" — matched "Blaster Rifle" (weapons-rifles, base 3d10); printed formula "3d8+8" is not a simple/obvious base or base+delta/base+dice relationship.
-- `packs/nonheroic.db` :: SpecForce Elite Soldier — "Blaster Rifle +15 (3d8+8) with Double Attack" — matched "Blaster Rifle" (weapons-rifles, base 3d10); printed formula "3d8+8" is not a simple/obvious base or base+delta/base+dice relationship.
 - `packs/nonheroic.db` :: Chiss Mercenary — "Heavy Blaster Rifle +9 (3d10+2)" — matched "Heavy Blaster Rifle" (weapons-rifles, base 3d12); printed formula "3d10+2" is not a simple/obvious base or base+delta/base+dice relationship.
 - `packs/nonheroic.db` :: SpecForce Officer — "Blaster Rifle +8 (3d8+3)" — matched "Blaster Rifle" (weapons-rifles, base 3d10); printed formula "3d8+3" is not a simple/obvious base or base+delta/base+dice relationship.
 - `packs/nonheroic.db` :: Scout Trooper — "Blaster Rifle +5 (3d8)" — matched "Blaster Rifle" (weapons-rifles, base 3d10); printed formula "3d8" is not a simple/obvious base or base+delta/base+dice relationship.
@@ -322,4 +366,5 @@ _None._
 - `packs/nonheroic.db` :: Clone Jet Trooper — "Blaster Rifle +8 (4d8+1) with Deadeye" — matched "Blaster Rifle" (weapons-rifles, base 3d10); printed formula "4d8+1" is not a simple/obvious base or base+delta/base+dice relationship.
 - `packs/nonheroic.db` :: Trandoshan Bounty Hunter — "Heavy Blaster Rifle +5 (3d10+2)" — matched "Heavy Blaster Rifle" (weapons-rifles, base 3d12); printed formula "3d10+2" is not a simple/obvious base or base+delta/base+dice relationship.
 - `packs/nonheroic.db` :: Royal Handmaiden — "Sporting Blaster Pistol +6 (3d4+3)" — matched "Sporting Blaster Pistol" (weapons-pistols, base 2d6); printed formula "3d4+3" is not a simple/obvious base or base+delta/base+dice relationship.
-- _(271 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
+- `packs/nonheroic.db` :: SpecForce Marine — "Blaster Rifle +8 (3d8+1)" — matched "Blaster Rifle" (weapons-rifles, base 3d10); printed formula "3d8+1" is not a simple/obvious base or base+delta/base+dice relationship.
+- _(244 more rows in this bucket omitted from the Markdown sample; see the JSON report for the full list.)_
