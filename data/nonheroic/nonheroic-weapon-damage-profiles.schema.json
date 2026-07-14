@@ -1,0 +1,286 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "systems/foundryvtt-swse/data/nonheroic/nonheroic-weapon-damage-profiles.schema.json",
+  "title": "SWSE Nonheroic Statblock Weapon Damage Profiles",
+  "description": "Source-backed statblock weapon/action rows for NPC import hydration. Canon sourcebook rows win over generic item base damage.",
+  "type": "object",
+  "required": ["schemaVersion", "profileKind", "canonPolicy", "records"],
+  "additionalProperties": false,
+  "properties": {
+    "$schemaVersion": {
+      "type": "integer",
+      "const": 2
+    },
+    "schemaVersion": {
+      "type": "integer",
+      "const": 2
+    },
+    "profileKind": {
+      "type": "string",
+      "const": "nonheroic-statblock-weapon-damage"
+    },
+    "sourceFamily": {
+      "type": "string"
+    },
+    "canonPolicy": {
+      "type": "object",
+      "required": ["authority", "rowSemantics", "unmatchedRows"],
+      "additionalProperties": false,
+      "properties": {
+        "authority": {
+          "type": "string",
+          "description": "What is treated as canonical when hydrating imports."
+        },
+        "rowSemantics": {
+          "type": "string",
+          "description": "Clarifies whether records are printed statblock rows or generic item definitions."
+        },
+        "unmatchedRows": {
+          "type": "string",
+          "description": "How importers must behave when a row does not match a profile."
+        },
+        "riders": {
+          "type": "string",
+          "description": "How non-HP side effects should be stored."
+        }
+      }
+    },
+    "notes": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "records": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/profileRecord" }
+    },
+    "profiles": {
+      "type": "array",
+      "description": "Deprecated v1 compatibility field. New data should use records.",
+      "items": { "type": "object" }
+    }
+  },
+  "$defs": {
+    "profileRecord": {
+      "type": "object",
+      "required": ["id", "source", "actor", "match", "weapon", "damage", "resolution", "confidence"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "confidence": {
+          "type": "string",
+          "enum": ["sourcebookVerified", "sourceTextVerified", "manualRequired", "needsReview"]
+        },
+        "reviewRequired": { "type": "boolean" },
+        "source": { "$ref": "#/$defs/source" },
+        "actor": { "$ref": "#/$defs/actor" },
+        "match": { "$ref": "#/$defs/match" },
+        "weapon": { "$ref": "#/$defs/weapon" },
+        "damage": { "$ref": "#/$defs/damage" },
+        "resolution": { "$ref": "#/$defs/resolution" },
+        "area": {
+          "anyOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/area" }
+          ]
+        },
+        "riders": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/rider" }
+        },
+        "variants": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/variant" }
+        },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "required": ["book", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "book": { "type": "string" },
+        "status": { "type": "string" },
+        "page": {
+          "type": ["integer", "null"],
+          "minimum": 1
+        },
+        "citation": { "type": ["string", "null"] },
+        "evidence": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "actor": {
+      "type": "object",
+      "required": ["name", "slugs"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "slugs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/slug" }
+        },
+        "kind": { "type": ["string", "null"] },
+        "challengeLevel": { "type": ["number", "null"] }
+      }
+    },
+    "match": {
+      "type": "object",
+      "required": ["actorSlugs", "rawIncludes"],
+      "additionalProperties": false,
+      "properties": {
+        "actorSlugs": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/slug" }
+        },
+        "rawIncludes": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "weapon": {
+      "type": "object",
+      "required": ["name", "kind", "delivery", "tags"],
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "kind": {
+          "type": "string",
+          "enum": ["melee", "ranged", "special", "natural", "unarmed"]
+        },
+        "delivery": {
+          "type": "string",
+          "enum": ["weapon", "unarmed", "natural", "hazard"]
+        },
+        "integrated": { "type": "boolean" },
+        "category": { "type": ["string", "null"] },
+        "range": { "type": ["string", "null"] },
+        "tags": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/slug" }
+        }
+      }
+    },
+    "damage": {
+      "type": "object",
+      "required": ["formula", "primaryType", "types"],
+      "additionalProperties": false,
+      "properties": {
+        "formula": { "type": "string" },
+        "primaryType": { "$ref": "#/$defs/damageType" },
+        "types": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/damageType" }
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "formula": { "type": "string" },
+              "type": { "$ref": "#/$defs/damageType" },
+              "notes": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "resolution": {
+      "type": "object",
+      "required": ["attackShape", "scale", "defense", "areaAttack", "halfDamageOnMiss", "noCriticalDouble"],
+      "additionalProperties": false,
+      "properties": {
+        "attackShape": {
+          "type": "string",
+          "enum": ["single-target", "autofire", "burst-fire", "burst", "splash", "cone", "line", "area"]
+        },
+        "scale": {
+          "type": "string",
+          "enum": ["character", "vehicle", "starship", "mixed"]
+        },
+        "defense": {
+          "type": ["string", "null"],
+          "enum": ["reflex", "fortitude", "will", null]
+        },
+        "areaAttack": { "type": "boolean" },
+        "halfDamageOnMiss": { "type": "boolean" },
+        "noCriticalDouble": { "type": "boolean" },
+        "coverCanNegateMissDamage": { "type": "boolean" },
+        "attackRollMinimum": { "type": ["number", "null"] }
+      }
+    },
+    "area": {
+      "type": "object",
+      "required": ["shape", "targetPolicy"],
+      "additionalProperties": false,
+      "properties": {
+        "shape": {
+          "type": "string",
+          "enum": ["burst", "splash", "cone", "line", "autofire", "area"]
+        },
+        "radius": { "type": ["number", "null"] },
+        "lengthSquares": { "type": ["number", "null"] },
+        "widthSquares": { "type": ["number", "null"] },
+        "originMode": { "type": ["string", "null"] },
+        "targetPolicy": { "type": "string" },
+        "notes": { "type": ["string", "null"] }
+      }
+    },
+    "rider": {
+      "type": "object",
+      "required": ["kind", "appliesOn"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": { "$ref": "#/$defs/slug" },
+        "amount": { "type": ["number", "null"] },
+        "appliesOn": { "type": "string" },
+        "notes": { "type": ["string", "null"] }
+      }
+    },
+    "variant": {
+      "type": "object",
+      "required": ["id", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/slug" },
+        "label": { "type": "string" },
+        "damage": { "$ref": "#/$defs/damage" },
+        "weapon": { "$ref": "#/$defs/weapon" },
+        "resolution": { "$ref": "#/$defs/resolution" },
+        "area": {
+          "anyOf": [
+            { "type": "null" },
+            { "$ref": "#/$defs/area" }
+          ]
+        },
+        "riders": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/rider" }
+        },
+        "tags": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/slug" }
+        }
+      }
+    },
+    "damageType": {
+      "type": "string",
+      "enum": ["energy", "kinetic", "ion", "stun", "fire", "slashing", "piercing", "bludgeoning", "acid", "sonic", "cold"]
+    },
+    "slug": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    }
+  }
+}
