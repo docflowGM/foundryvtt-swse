@@ -6,14 +6,15 @@
   "sourceFamily": "NH-4 Unknown Regions beast natural attack profiles",
   "canonPolicy": {
     "authority": "Printed Unknown Regions beast statblock attack rows are canonical for imported creature play-mode attacks.",
-    "rowSemantics": "Each record represents one printed beast statblock attack/action row, not a generic natural weapon template.",
+    "rowSemantics": "Each record represents one printed beast statblock attack/action row. Natural attacks normally have no compendium weapon UUID; formula.printed remains the sourcebook authority for hydration.",
     "unmatchedRows": "Importer consumers must leave unmatched rows reference-only/manual; do not infer formulas from natural weapon names.",
     "riders": "Rend, charge multipliers, push effects, and similar non-base-damage effects remain riders/tags until the runtime explicitly supports them."
   },
   "notes": [
     "This file keeps creature/natural-weapon rows separate from humanoid/droid Unknown Regions rows while preserving the same canonical damage profile shape.",
     "Printed attack totals are intentionally not copied into item attackBonus.",
-    "Rows are sourcebook-backed and use direct printed damage expressions."
+    "Rows are sourcebook-backed and use direct printed damage expressions.",
+    "Natural attacks use formula.mode custom because there is no reusable compendium weapon UUID assumption yet."
   ],
   "records": [
     {
@@ -21,260 +22,82 @@
       "name": "Gore",
       "confidence": "verified",
       "reviewRequired": false,
-      "source": {
-        "book": "The Unknown Regions",
-        "status": "sourcebook-statblock",
-        "page": null,
-        "evidence": [
-          "Reyko statblock lists Melee gore +11 (1d8+7).",
-          "The statblock prints charge variants: gore +13 (1d8+10) when charging and gore +13 (1d8+10 x2) when charging a vehicle.",
-          "Battering Bantha Rush pushes a Large or larger vehicle 1 square on a successful charge attack."
-        ]
-      },
-      "actor": {
-        "name": "Reyko",
-        "slugs": ["reyko"],
-        "kind": "beast",
-        "challengeLevel": 5
-      },
-      "match": {
-        "actorSlugs": ["reyko"],
-        "rawIncludes": ["gore"]
-      },
-      "weapon": {
-        "printedName": "Gore",
-        "rowKind": "natural",
-        "integrated": true,
-        "category": "natural",
-        "range": "melee"
-      },
+      "source": { "book": "The Unknown Regions", "status": "sourcebook-statblock", "page": null, "evidence": ["Reyko statblock lists Melee gore +11 (1d8+7).", "The statblock prints charge variants: gore +13 (1d8+10) when charging and gore +13 (1d8+10 x2) when charging a vehicle.", "Battering Bantha Rush pushes a Large or larger vehicle 1 square on a successful charge attack."] },
+      "actor": { "name": "Reyko", "slugs": ["reyko"], "kind": "beast", "challengeLevel": 5 },
+      "match": { "actorSlugs": ["reyko"], "rawIncludes": ["gore"] },
+      "weapon": { "printedName": "Gore", "rowKind": "natural", "uuid": null, "baseSlug": null, "basePack": null, "baseFormula": null, "baseType": null, "baseFormulaPolicy": "custom", "integrated": true, "category": "natural", "range": "melee" },
+      "formula": { "mode": "custom", "printed": "1d8+7", "delta": null, "deltaSource": "printed-statblock", "typeOverride": "piercing", "notes": ["No reusable compendium weapon UUID is assumed for this natural gore attack."] },
       "delivery": "natural",
       "attackShape": "single-target",
       "scale": "character",
       "primaryType": "piercing",
       "tags": ["beast", "natural-weapon", "gore", "statblock"],
-      "attack": {
-        "isArea": false,
-        "halfDamageOnMiss": false,
-        "noCriticalDouble": false,
-        "coverCanNegateMissDamage": false,
-        "attackRollMinimum": null,
-        "defense": "reflex"
-      },
-      "area": {
-        "shape": null,
-        "radius": null,
-        "size": null,
-        "originMode": null,
-        "targetPolicy": "single"
-      },
-      "components": [
-        {
-          "key": "base",
-          "label": "Gore",
-          "formula": "1d8+7",
-          "type": "piercing",
-          "tags": ["base", "piercing", "gore", "natural-weapon"]
-        }
-      ],
+      "attack": { "isArea": false, "halfDamageOnMiss": false, "noCriticalDouble": false, "coverCanNegateMissDamage": false, "attackRollMinimum": null, "defense": "reflex" },
+      "area": { "shape": null, "radius": null, "size": null, "originMode": null, "targetPolicy": "single" },
+      "components": [{ "key": "printed", "label": "Printed Statblock Damage", "formula": "1d8+7", "type": "piercing", "tags": ["printed", "piercing", "gore", "natural-weapon"] }],
       "riders": [
-        {
-          "kind": "charge-damage-variant",
-          "defense": null,
-          "amount": null,
-          "appliesOn": "charge",
-          "notes": "Printed charge variant deals 1d8+10."
-        },
-        {
-          "kind": "vehicle-charge-damage-multiplier",
-          "defense": null,
-          "amount": 2,
-          "appliesOn": "charge-against-large-or-larger-vehicle",
-          "notes": "Printed vehicle charge variant deals 1d8+10 x2 and can push the vehicle 1 square."
-        }
+        { "kind": "charge-damage-variant", "defense": null, "amount": null, "appliesOn": "charge", "notes": "Printed charge variant deals 1d8+10." },
+        { "kind": "vehicle-charge-damage-multiplier", "defense": null, "amount": 2, "appliesOn": "charge-against-large-or-larger-vehicle", "notes": "Printed vehicle charge variant deals 1d8+10 x2 and can push the vehicle 1 square." }
       ],
-      "sourceRefs": [
-        { "book": "The Unknown Regions", "page": null, "note": "Reyko gore and Battering Bantha Rush rows." }
-      ],
+      "sourceRefs": [{ "book": "The Unknown Regions", "page": null, "note": "Reyko gore and Battering Bantha Rush rows." }],
       "variants": [
         {
           "slug": "reyko-gore-charge",
           "label": "when charging",
+          "formula": { "mode": "custom", "printed": "1d8+10", "delta": null, "deltaSource": "printed-statblock", "typeOverride": "piercing", "notes": ["Charge variant is printed directly in the statblock."] },
           "primaryType": "piercing",
           "tags": ["charge"],
-          "attack": {
-            "isArea": false,
-            "halfDamageOnMiss": false,
-            "noCriticalDouble": false,
-            "coverCanNegateMissDamage": false,
-            "attackRollMinimum": null,
-            "defense": "reflex"
-          },
-          "area": {
-            "shape": null,
-            "radius": null,
-            "size": null,
-            "originMode": null,
-            "targetPolicy": "single"
-          },
-          "components": [
-            {
-              "key": "base",
-              "label": "Gore when charging",
-              "formula": "1d8+10",
-              "type": "piercing",
-              "tags": ["base", "piercing", "gore", "natural-weapon", "charge"]
-            }
-          ],
+          "attack": { "isArea": false, "halfDamageOnMiss": false, "noCriticalDouble": false, "coverCanNegateMissDamage": false, "attackRollMinimum": null, "defense": "reflex" },
+          "area": { "shape": null, "radius": null, "size": null, "originMode": null, "targetPolicy": "single" },
+          "components": [{ "key": "printed", "label": "Gore when charging", "formula": "1d8+10", "type": "piercing", "tags": ["printed", "piercing", "gore", "natural-weapon", "charge"] }],
           "riders": []
         }
       ],
-      "notes": [
-        "Vehicle charge x2 and push are retained as riders/tags; runtime execution is a later vehicle/natural-attack integration concern."
-      ]
+      "notes": ["Vehicle charge x2 and push are retained as riders/tags; runtime execution is a later vehicle/natural-attack integration concern."]
     },
     {
       "slug": "vindinax-claw",
       "name": "Claw",
       "confidence": "verified",
       "reviewRequired": false,
-      "source": {
-        "book": "The Unknown Regions",
-        "status": "sourcebook-statblock",
-        "page": null,
-        "evidence": [
-          "Vindinax statblock lists Melee claw +7/+7 (1d4+8).",
-          "The statblock notes the attack includes 1 point of Power Attack.",
-          "Rend deals an additional 2d6 if both claw attacks hit in the same turn."
-        ]
-      },
-      "actor": {
-        "name": "Vindinax",
-        "slugs": ["vindinax"],
-        "kind": "beast",
-        "challengeLevel": 6
-      },
-      "match": {
-        "actorSlugs": ["vindinax"],
-        "rawIncludes": ["claw"]
-      },
-      "weapon": {
-        "printedName": "Claw",
-        "rowKind": "natural",
-        "integrated": true,
-        "category": "natural",
-        "range": "melee"
-      },
+      "source": { "book": "The Unknown Regions", "status": "sourcebook-statblock", "page": null, "evidence": ["Vindinax statblock lists Melee claw +7/+7 (1d4+8).", "The statblock notes the attack includes 1 point of Power Attack.", "Rend deals an additional 2d6 if both claw attacks hit in the same turn."] },
+      "actor": { "name": "Vindinax", "slugs": ["vindinax"], "kind": "beast", "challengeLevel": 6 },
+      "match": { "actorSlugs": ["vindinax"], "rawIncludes": ["claw"] },
+      "weapon": { "printedName": "Claw", "rowKind": "natural", "uuid": null, "baseSlug": null, "basePack": null, "baseFormula": null, "baseType": null, "baseFormulaPolicy": "custom", "integrated": true, "category": "natural", "range": "melee" },
+      "formula": { "mode": "custom", "printed": "1d4+8", "delta": null, "deltaSource": "printed-statblock", "typeOverride": "slashing", "notes": ["No reusable compendium weapon UUID is assumed for this natural claw attack."] },
       "delivery": "natural",
       "attackShape": "single-target",
       "scale": "character",
       "primaryType": "slashing",
       "tags": ["beast", "natural-weapon", "claw", "power-attack", "statblock"],
-      "attack": {
-        "isArea": false,
-        "halfDamageOnMiss": false,
-        "noCriticalDouble": false,
-        "coverCanNegateMissDamage": false,
-        "attackRollMinimum": null,
-        "defense": "reflex"
-      },
-      "area": {
-        "shape": null,
-        "radius": null,
-        "size": null,
-        "originMode": null,
-        "targetPolicy": "single"
-      },
-      "components": [
-        {
-          "key": "base",
-          "label": "Claw",
-          "formula": "1d4+8",
-          "type": "slashing",
-          "tags": ["base", "slashing", "claw", "natural-weapon", "power-attack"]
-        }
-      ],
-      "riders": [
-        {
-          "kind": "rend",
-          "defense": null,
-          "amount": null,
-          "appliesOn": "both-claws-hit-same-turn",
-          "notes": "If both claw attacks hit in the same turn, the vindinax rends its opponent for an additional 2d6 damage."
-        }
-      ],
-      "sourceRefs": [
-        { "book": "The Unknown Regions", "page": null, "note": "Vindinax claw row and Rend special quality." }
-      ],
+      "attack": { "isArea": false, "halfDamageOnMiss": false, "noCriticalDouble": false, "coverCanNegateMissDamage": false, "attackRollMinimum": null, "defense": "reflex" },
+      "area": { "shape": null, "radius": null, "size": null, "originMode": null, "targetPolicy": "single" },
+      "components": [{ "key": "printed", "label": "Printed Statblock Damage", "formula": "1d4+8", "type": "slashing", "tags": ["printed", "slashing", "claw", "natural-weapon", "power-attack"] }],
+      "riders": [{ "kind": "rend", "defense": null, "amount": null, "appliesOn": "both-claws-hit-same-turn", "notes": "If both claw attacks hit in the same turn, the vindinax rends its opponent for an additional 2d6 damage." }],
+      "sourceRefs": [{ "book": "The Unknown Regions", "page": null, "note": "Vindinax claw row and Rend special quality." }],
       "variants": [],
-      "notes": [
-        "The printed row includes paired claw attacks. This profile captures the printed damage formula; multiattack UI/runtime behavior remains separate."
-      ]
+      "notes": ["The printed row includes paired claw attacks. This profile captures the printed damage formula; multiattack UI/runtime behavior remains separate."]
     },
     {
       "slug": "vindinax-bite",
       "name": "Bite",
       "confidence": "verified",
       "reviewRequired": false,
-      "source": {
-        "book": "The Unknown Regions",
-        "status": "sourcebook-statblock",
-        "page": null,
-        "evidence": [
-          "Vindinax statblock lists Melee bite +7 (1d6+8).",
-          "The statblock notes the attack includes 1 point of Power Attack."
-        ]
-      },
-      "actor": {
-        "name": "Vindinax",
-        "slugs": ["vindinax"],
-        "kind": "beast",
-        "challengeLevel": 6
-      },
-      "match": {
-        "actorSlugs": ["vindinax"],
-        "rawIncludes": ["bite"]
-      },
-      "weapon": {
-        "printedName": "Bite",
-        "rowKind": "natural",
-        "integrated": true,
-        "category": "natural",
-        "range": "melee"
-      },
+      "source": { "book": "The Unknown Regions", "status": "sourcebook-statblock", "page": null, "evidence": ["Vindinax statblock lists Melee bite +7 (1d6+8).", "The statblock notes the attack includes 1 point of Power Attack."] },
+      "actor": { "name": "Vindinax", "slugs": ["vindinax"], "kind": "beast", "challengeLevel": 6 },
+      "match": { "actorSlugs": ["vindinax"], "rawIncludes": ["bite"] },
+      "weapon": { "printedName": "Bite", "rowKind": "natural", "uuid": null, "baseSlug": null, "basePack": null, "baseFormula": null, "baseType": null, "baseFormulaPolicy": "custom", "integrated": true, "category": "natural", "range": "melee" },
+      "formula": { "mode": "custom", "printed": "1d6+8", "delta": null, "deltaSource": "printed-statblock", "typeOverride": "piercing", "notes": ["No reusable compendium weapon UUID is assumed for this natural bite attack."] },
       "delivery": "natural",
       "attackShape": "single-target",
       "scale": "character",
       "primaryType": "piercing",
       "tags": ["beast", "natural-weapon", "bite", "power-attack", "statblock"],
-      "attack": {
-        "isArea": false,
-        "halfDamageOnMiss": false,
-        "noCriticalDouble": false,
-        "coverCanNegateMissDamage": false,
-        "attackRollMinimum": null,
-        "defense": "reflex"
-      },
-      "area": {
-        "shape": null,
-        "radius": null,
-        "size": null,
-        "originMode": null,
-        "targetPolicy": "single"
-      },
-      "components": [
-        {
-          "key": "base",
-          "label": "Bite",
-          "formula": "1d6+8",
-          "type": "piercing",
-          "tags": ["base", "piercing", "bite", "natural-weapon", "power-attack"]
-        }
-      ],
+      "attack": { "isArea": false, "halfDamageOnMiss": false, "noCriticalDouble": false, "coverCanNegateMissDamage": false, "attackRollMinimum": null, "defense": "reflex" },
+      "area": { "shape": null, "radius": null, "size": null, "originMode": null, "targetPolicy": "single" },
+      "components": [{ "key": "printed", "label": "Printed Statblock Damage", "formula": "1d6+8", "type": "piercing", "tags": ["printed", "piercing", "bite", "natural-weapon", "power-attack"] }],
       "riders": [],
-      "sourceRefs": [
-        { "book": "The Unknown Regions", "page": null, "note": "Vindinax bite row." }
-      ],
+      "sourceRefs": [{ "book": "The Unknown Regions", "page": null, "note": "Vindinax bite row." }],
       "variants": [],
       "notes": []
     }
