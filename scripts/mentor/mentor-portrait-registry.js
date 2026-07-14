@@ -4,9 +4,9 @@
  * Small resolver for mentor/NPC portrait paths used outside the structured
  * mentor dialogue data. Keeps store/rail surfaces from hardcoding asset paths.
  *
- * Mentor portraits are standardized on transparent PNG files in assets/mentors.
- * This registry also catches older webp/placeholder aliases that may still be
- * present in cached UI state or legacy dialogue payloads.
+ * Mentor portraits are standardized on WebP files in assets/mentors. This
+ * registry also catches older PNG/placeholder aliases that may still be present
+ * in cached UI state or legacy dialogue payloads.
  */
 
 const SYSTEM_ID = 'foundryvtt-swse';
