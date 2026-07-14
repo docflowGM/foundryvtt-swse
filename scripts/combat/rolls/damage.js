@@ -98,7 +98,7 @@ import { AbilityEngine } from "/systems/foundryvtt-swse/scripts/engine/abilities
 import { RollEngine } from "/systems/foundryvtt-swse/scripts/engine/roll-engine.js";
 import { SWSEChat } from "/systems/foundryvtt-swse/scripts/chat/swse-chat.js";
 import { mergeCombatWorkflowContextIntoRollOptions, summarizeCombatWorkflowContext } from "/systems/foundryvtt-swse/scripts/engine/combat/workflow/combat-context-serializer.js";
-import { resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
+import { buildDamagePacket, resolveDamagePacketType } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-packet-builder.js";
 import { damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 import { getCriticalDamageBonus } from "/systems/foundryvtt-swse/scripts/combat/utils/combat-utils.js";
 import { resolveDamageBonus } from "/systems/foundryvtt-swse/scripts/engine/combat/combat-roll-math.js";
@@ -379,10 +379,29 @@ export async function applyDamage(token, amount, options = {}) {
 /**
  * Roll damage + Apply damage in one step (optional helper)
  */
-export async function rollAndApplyDamage(actor, weapon, token) {
-  const roll = await rollDamage(actor, weapon);
+export async function rollAndApplyDamage(actor, weapon, token, context = {}) {
+  const target = token?.actor ?? context?.target ?? context?.targetActor ?? null;
+  const rollContext = { ...context, target };
+  const roll = await rollDamage(actor, weapon, rollContext);
   if (!roll) {return null;}
 
-  await applyDamage(token, roll.total);
+  if (!target) {
+    await applyDamage(token, roll.total);
+    return roll;
+  }
+
+  const workflowContext = rollContext.combatContext ?? rollContext.workflowContext ?? rollContext;
+  const packet = buildDamagePacket({
+    attacker: actor,
+    target,
+    weapon,
+    roll,
+    amount: roll.total,
+    workflowContext,
+    options: rollContext
+  });
+
+  const { DamageSystem } = await import('/systems/foundryvtt-swse/scripts/combat/damage-system.js');
+  await DamageSystem.applyPacketToActor(target, packet);
   return roll;
 }

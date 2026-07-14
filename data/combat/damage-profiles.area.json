@@ -20,6 +20,7 @@
         "halfDamageOnMiss": true,
         "noCriticalDouble": true,
         "coverCanNegateMissDamage": true,
+        "attackRollMinimum": 10,
         "defense": "reflex"
       },
       "area": {
@@ -27,6 +28,18 @@
         "targetPolicy": "all-in-area"
       },
       "confidence": "verified",
+      "sourceRefs": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "page": 156,
+          "note": "Autofire targets a 2x2 area, applies the autofire attack penalty, and consumes 10 shots."
+        },
+        {
+          "book": "Combat Skills Summary",
+          "page": 155,
+          "note": "Area attacks compare one attack roll against each target, deal full damage on hits and half damage on misses, and do not double damage on a natural 20."
+        }
+      ],
       "notes": ["-5 attack penalty (-2 braced autofire-only), consumes 10 shots. Matches combat-actions.db 'Autofire' ruleData."]
     },
     {
@@ -41,6 +54,13 @@
         "isBurstFire": true
       },
       "confidence": "verified",
+      "sourceRefs": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "page": 156,
+          "note": "Burst Fire uses an autofire-capable weapon against one target rather than resolving an area attack."
+        }
+      ],
       "notes": ["Single target, -5 attack, +2 weapon dice, 5 shots. NOT an area attack — Evasion does not apply."]
     },
     {
@@ -55,6 +75,7 @@
         "halfDamageOnMiss": true,
         "noCriticalDouble": true,
         "coverCanNegateMissDamage": true,
+        "attackRollMinimum": 10,
         "defense": "reflex"
       },
       "area": {
@@ -64,6 +85,18 @@
         "targetPolicy": "all-in-area"
       },
       "confidence": "verified",
+      "sourceRefs": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "page": 155,
+          "note": "Burst-radius attacks are centered on a grid intersection and resolved as area attacks."
+        },
+        {
+          "book": "Combat Skills Summary",
+          "page": 155,
+          "note": "Grenades and explosives determine the center of the burst radius at a square corner before the attack roll."
+        }
+      ],
       "notes": ["Default burst radius 1 square; individual grenades may override radius."]
     },
     {
@@ -79,6 +112,7 @@
         "halfDamageOnMiss": true,
         "noCriticalDouble": true,
         "coverCanNegateMissDamage": true,
+        "attackRollMinimum": 10,
         "defense": "reflex"
       },
       "area": {
@@ -86,6 +120,18 @@
         "targetPolicy": "primary-plus-adjacent"
       },
       "confidence": "verified",
+      "sourceRefs": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "page": 155,
+          "note": "Splash weapons resolve the primary target separately from adjacent targets."
+        },
+        {
+          "book": "Combat Skills Summary",
+          "page": 155,
+          "note": "Primary targets take full damage on a hit and half damage on a miss; adjacent targets take half damage only if hit."
+        }
+      ],
       "notes": ["Primary target full/half; adjacent targets compare vs. their own defense."]
     },
     {
@@ -99,6 +145,7 @@
         "halfDamageOnMiss": true,
         "noCriticalDouble": true,
         "coverCanNegateMissDamage": true,
+        "attackRollMinimum": 10,
         "defense": "reflex"
       },
       "area": {
@@ -107,6 +154,13 @@
         "targetPolicy": "all-in-area"
       },
       "confidence": "verified",
+      "sourceRefs": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "page": 155,
+          "note": "Cone attacks are area attacks; source-specific data determines the size."
+        }
+      ],
       "notes": ["Delivery stays with the owning source (weapon or force-power); size set per source."]
     },
     {
@@ -120,6 +174,7 @@
         "halfDamageOnMiss": true,
         "noCriticalDouble": true,
         "coverCanNegateMissDamage": true,
+        "attackRollMinimum": 10,
         "defense": "reflex"
       },
       "area": {
@@ -128,6 +183,13 @@
         "targetPolicy": "all-in-area"
       },
       "confidence": "verified",
+      "sourceRefs": [
+        {
+          "book": "Saga Edition Core Rulebook",
+          "page": 155,
+          "note": "Line attacks are area attacks; source-specific data determines the size."
+        }
+      ],
       "notes": ["Delivery stays with the owning source (weapon or force-power); size set per source."]
     }
   ]

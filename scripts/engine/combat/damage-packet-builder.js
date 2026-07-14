@@ -7,6 +7,7 @@ import {
 import { RecurringDamageEngine } from "/systems/foundryvtt-swse/scripts/engine/combat/recurring-damage-engine.js";
 import { damageTypesFromContext } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-type-rules.js";
 import { buildDamageComponents } from "/systems/foundryvtt-swse/scripts/engine/combat/damage-component-rules.js";
+import { enhanceWeaponDamagePacket } from "/systems/foundryvtt-swse/scripts/engine/combat/builders/weapon-damage-packet-builder.js";
 import { SkillFeatRuntime } from "/systems/foundryvtt-swse/scripts/engine/feats/skill-feat-runtime-patches.js";
 
 function idOf(doc) {
@@ -330,7 +331,20 @@ export function buildDamagePacket({
   const disposition = resolveDamageDisposition(context, { ...options, target });
   const type = resolveDamagePacketType({ weapon, workflowContext: context, options });
   const basePacket = buildBaseDamagePacket({ attacker, target, weapon, rawAmount, context, disposition, type, options });
-  return finalizeDamagePacketForTarget(basePacket, target);
+  const weaponPacket = enhanceWeaponDamagePacket(basePacket, {
+    actor: attacker,
+    attacker,
+    target,
+    weapon,
+    roll,
+    workflowContext: context,
+    options
+  });
+  return finalizeDamagePacketForTarget(weaponPacket, target);
+}
+
+export function buildWeaponDamagePacket(args = {}) {
+  return buildDamagePacket(args);
 }
 
 export function finalizeDamagePacketForTarget(packet = {}, target = null) {
@@ -369,6 +383,7 @@ export const DamagePacketBuilder = {
   resolveDamageDisposition,
   shouldOfferDamageRoll,
   buildDamagePacket,
+  buildWeaponDamagePacket,
   finalizeDamagePacketForTarget,
   buildDamageApplyOptions
 };
